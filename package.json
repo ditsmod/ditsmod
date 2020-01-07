@@ -30,6 +30,7 @@
     "typescript": "^3.7.4"
   },
   "dependencies": {
-    "assert-plus": "^1.0.0"
+    "assert-plus": "^1.0.0",
+    "ts-di": "^2.0.0"
   }
 }

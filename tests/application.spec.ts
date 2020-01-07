@@ -1,19 +1,21 @@
 import * as http from 'http';
 
 import { Application } from '../src/application';
-import { ApplicationOptions } from '../src/types';
+import { ApplicationOptions, Logger } from '../src/types';
 
 describe('Application', () => {
   let app: Application;
   let server: http.Server;
+  let logger: Logger;
   const port = 8081;
 
   beforeEach(done => {
+    logger = { debug: (...args: any[]) => console.log(...args) };
+
     const options: ApplicationOptions = {
-      log: {
-        debug: (...args: any[]) => console.log(...args)
-      }
+      providersPerApp: [{ provide: Logger, useValue: logger }]
     };
+
     app = new Application(options);
     server = http.createServer(app.requestListener);
     server.listen(port, done);

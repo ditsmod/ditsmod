@@ -1,11 +1,14 @@
 import * as assert from 'assert-plus';
+import { ReflectiveInjector, Provider } from 'ts-di';
 
 import { RequestListener, ApplicationOptions, Logger } from './types';
 
 export class Application {
+  log: Logger;
+  injector: ReflectiveInjector;
   protected readonly options: ApplicationOptions;
   protected serverName: string;
-  log: Logger;
+  protected providersPerApp?: Provider[];
 
   constructor(options?: ApplicationOptions) {
     assert.optionalObject(options, 'options');
@@ -14,18 +17,18 @@ export class Application {
     }
     this.options = options = { ...options };
 
-    assert.optionalObject(options.log, 'options.log');
-    if (options.log && typeof options.log.debug != 'function') {
-      throw new TypeError(
-        `Invalid "options.log.debug()" - only function are allowed, got: ${typeof options.log.debug}`
-      );
-    }
-    this.log = options.log || { debug: () => {} };
-
     assert.optionalString(options.serverName, 'options.serverName');
     this.serverName = options.serverName || 'restify-ts';
 
-    this.log.debug('Created instance of Application');
+    assert.optionalArray(options.providersPerApp, 'options.providersPerApp');
+    this.initProvidersPerApp();
+  }
+
+  protected initProvidersPerApp() {
+    this.providersPerApp = this.options.providersPerApp || [];
+    this.providersPerApp.unshift({ provide: Logger, useValue: new Logger() });
+    this.injector = ReflectiveInjector.resolveAndCreate(this.providersPerApp);
+    this.log = this.injector.get(Logger);
   }
 
   requestListener: RequestListener = (request, response) => {
