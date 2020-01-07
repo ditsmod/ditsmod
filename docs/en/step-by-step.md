@@ -9,3 +9,7 @@ We add the ability to pass options to the application constructor.
 ## Step 3.
 
 Implement DI at the application level and use it to pass a logger.
+
+## Step 4.
+
+Implement DI at the level of HTTP requests.

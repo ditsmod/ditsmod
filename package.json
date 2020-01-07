@@ -32,5 +32,8 @@
   "dependencies": {
     "assert-plus": "^1.0.0",
     "ts-di": "^2.0.0"
+  },
+  "peerDependencies": {
+    "reflect-metadata": "^0.1.13"
   }
 }
