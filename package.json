@@ -1,0 +1,30 @@
+{
+  "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
+  "name": "@restify-ts/core",
+  "homepage": "https://github.com/restify-ts/core",
+  "description": "REST framework",
+  "version": "0.0.0-alpha.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/restify-ts/core.git"
+  },
+  "main": "dist/index",
+  "types": "dist/index",
+  "directories": {
+    "lib": "src"
+  },
+  "scripts": {
+    "start": "rimraf dist && tsc && node dist/application.spec.js"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^3.5.0",
+    "@types/node": "^13.1.4",
+    "jasmine": "^3.5.0",
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.0",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.1.0",
+    "typescript": "^3.7.4"
+  }
+}
