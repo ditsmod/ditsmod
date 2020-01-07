@@ -14,7 +14,8 @@
     "lib": "src"
   },
   "scripts": {
-    "start": "rimraf dist && tsc && node dist/application.spec.js"
+    "start": "rimraf dist && tsc && node dist/application.spec.js",
+    "test": "jasmine"
   },
   "devDependencies": {
     "@types/jasmine": "^3.5.0",
