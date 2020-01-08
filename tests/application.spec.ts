@@ -41,21 +41,39 @@ describe('Application', () => {
         .on('error', done.fail);
     });
 
-    it('should get an error with statusCode == 500', done => {
+    it('should send an error with statusCode == 500', done => {
       const callback = () => {
         http
-          .get(`http://localhost:${port}/send-error`, res => {
-            const { statusCode } = res;
-            if (statusCode == 500) {
-              done();
-            } else {
-              done.fail();
-            }
+          .get(`http://localhost:${port}/send-error`, req => {
+            const { statusCode } = req;
+            expect(statusCode).toBe(500);
+            done();
           })
           .on('error', done.fail);
       };
 
       expect(callback).not.toThrow();
+    });
+
+    it('should send message from some resource', done => {
+      http
+        .get(`http://localhost:${port}/some-resource`, req => {
+          const { statusCode } = req;
+          expect(statusCode).toBe(200);
+
+          const bodyArr: any[] = [];
+          let body: string;
+
+          req
+            .on('data', chunk => bodyArr.push(chunk))
+            .on('end', () => {
+              body = Buffer.concat(bodyArr).toString();
+              expect(body).toBe('This is data of some resource');
+              done();
+            })
+            .on('error', done.fail);
+        })
+        .on('error', done.fail);
     });
   });
 });
