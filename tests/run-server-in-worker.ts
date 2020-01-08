@@ -8,6 +8,7 @@ import { ApplicationOptions, Logger, Router } from '../src/types';
 import { Request } from '../src/request';
 import { Response } from '../src/response';
 import { Injectable } from 'ts-di';
+import { Status } from '../src/http-status-codes';
 
 const logger = { debug: (...args: any[]) => console.log(...args) };
 
@@ -39,7 +40,7 @@ class Controller {
   }
 
   sendError() {
-    this.res.nodeRes.statusCode = 500;
+    this.res.nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
     this.res.send('Some error here!');
   }
 

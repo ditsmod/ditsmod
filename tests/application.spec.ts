@@ -1,5 +1,6 @@
 import * as http from 'http';
 import { Worker } from 'worker_threads';
+import { Status } from '../src/http-status-codes';
 
 describe('Application', () => {
   const port = 8081;
@@ -23,7 +24,7 @@ describe('Application', () => {
 
           const { headers, statusCode } = req;
           const { server: serverName } = headers;
-          expect(statusCode).toBe(200);
+          expect(statusCode).toBe(Status.OK);
           expect(serverName).toBe('restify-ts');
 
           const bodyArr: any[] = [];
@@ -46,7 +47,7 @@ describe('Application', () => {
         http
           .get(`http://localhost:${port}/send-error`, req => {
             const { statusCode } = req;
-            expect(statusCode).toBe(500);
+            expect(statusCode).toBe(Status.INTERNAL_SERVER_ERROR);
             done();
           })
           .on('error', done.fail);
@@ -59,7 +60,7 @@ describe('Application', () => {
       http
         .get(`http://localhost:${port}/some-resource`, req => {
           const { statusCode } = req;
-          expect(statusCode).toBe(200);
+          expect(statusCode).toBe(Status.OK);
 
           const bodyArr: any[] = [];
           let body: string;

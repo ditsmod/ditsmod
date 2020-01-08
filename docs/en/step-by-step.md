@@ -21,3 +21,7 @@ Adding a router.
 ## Step 6.
 
 Adding a service to the controller, and send messages from that service.
+
+## Step 7.
+
+Adding enum `Status` with all HTTP statuses.

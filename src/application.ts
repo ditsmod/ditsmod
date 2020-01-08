@@ -14,6 +14,7 @@ import {
 } from './types';
 import { Request } from './request';
 import { Response } from './response';
+import { Status } from './http-status-codes';
 
 export class Application {
   log: Logger;
@@ -62,7 +63,7 @@ export class Application {
     const { method, url } = req.nodeReq;
     const { handle: routeHandle, params } = this.router.find(method as HttpMethod, url);
     if (!routeHandle) {
-      res.nodeRes.statusCode = 404;
+      res.nodeRes.statusCode = Status.NOT_FOUND;
       res.send('Error: resource not found');
       return;
     }
