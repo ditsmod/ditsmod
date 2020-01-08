@@ -1,31 +1,24 @@
-import 'reflect-metadata';
 import * as http from 'http';
-
-import { Application } from '../src/application';
-import { ApplicationOptions, Logger } from '../src/types';
+import { Worker } from 'worker_threads';
 
 describe('Application', () => {
-  let app: Application;
-  let server: http.Server;
-  let logger: Logger;
   const port = 8081;
 
-  beforeEach(done => {
-    logger = { debug: (...args: any[]) => console.log(...args) };
-
-    const options: ApplicationOptions = {
-      providersPerApp: [{ provide: Logger, useValue: logger }]
-    };
-
-    app = new Application(options);
-    server = http.createServer(app.requestListener);
-    server.listen(port, done);
+  beforeAll(done => {
+    new Worker(`${__dirname}/run-server-in-worker.js`, { workerData: { port } })
+      .on('message', done)
+      .on('error', done.fail)
+      .on('exit', code => {
+        if (code !== 0) {
+          done.fail(new Error(`Worker stopped with exit code ${code}`));
+        }
+      });
   });
 
-  describe('requestListener', () => {
-    it('should to send "Hello World!" with setting header "server"', done => {
+  describe('Controller', () => {
+    it('should to send "Hello, World!" with setting header "server"', done => {
       http
-        .get(`http://localhost:${port}`, req => {
+        .get(`http://localhost:${port}/hello`, req => {
           expect(req instanceof http.IncomingMessage).toBe(true);
 
           const { headers, statusCode } = req;
@@ -40,12 +33,29 @@ describe('Application', () => {
             .on('data', chunk => bodyArr.push(chunk))
             .on('end', () => {
               body = Buffer.concat(bodyArr).toString();
-              expect(body).toBe('Hello World!');
+              expect(body).toBe('Hello, World!');
               done();
             })
             .on('error', done.fail);
         })
         .on('error', done.fail);
+    });
+
+    it('should get an error with statusCode == 500', done => {
+      const callback = () => {
+        http
+          .get(`http://localhost:${port}/send-error`, res => {
+            const { statusCode } = res;
+            if (statusCode == 500) {
+              done();
+            } else {
+              done.fail();
+            }
+          })
+          .on('error', done.fail);
+      };
+
+      expect(callback).not.toThrow();
     });
   });
 });
