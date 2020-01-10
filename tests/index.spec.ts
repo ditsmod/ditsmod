@@ -1,5 +1,6 @@
 import * as http from 'http';
 import { Worker } from 'worker_threads';
+
 import { Status } from '../src/http-status-codes';
 import { NodeRequest } from '../src/types';
 
@@ -9,11 +10,12 @@ describe('Application', () => {
   function getBody(req: NodeRequest) {
     const bodyArr: any[] = [];
 
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       req
         .on('data', chunk => bodyArr.push(chunk))
         .on('end', () => {
-          resolve(Buffer.concat(bodyArr).toString());
+          const str = Buffer.concat(bodyArr).toString();
+          resolve(str);
         })
         .on('error', reject);
     });
@@ -108,7 +110,6 @@ accept: text/plain
 host: localhost:${port}
 connection: close
 `;
-
               expect(body).toBe(str);
             })
             .then(done)

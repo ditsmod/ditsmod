@@ -45,3 +45,7 @@ Added `res.redirect()` method.
 ## Step 12.
 
 Extends the `Logger`, adding class and the` LoggerMethod` interface, as well as the `Request#toString()`, `Response#toString()` methods.
+
+## Step 13.
+
+Adding `Request#queryParams` property.

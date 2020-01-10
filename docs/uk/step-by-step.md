@@ -45,3 +45,7 @@
 ## Крок 12.
 
 Розширюємо клас `Logger`, додаємо інтерфейс `LoggerMethod`, а також методи `Request#toString()`, `Response#toString()`.
+
+## Крок 13.
+
+Додаємо властивість `Request#queryParams`.

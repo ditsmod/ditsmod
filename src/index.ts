@@ -14,5 +14,7 @@ export {
   RouteParam,
   RouterReturns,
   RequestListener,
-  Fn
+  Fn,
+  LoggerMethod,
+  RedirectStatusCodes
 } from './types';

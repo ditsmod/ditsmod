@@ -1,5 +1,6 @@
 import * as assert from 'assert-plus';
 import { Provider, ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider } from 'ts-di';
+import * as querystring from 'querystring';
 
 import {
   ApplicationOptions,
@@ -42,6 +43,9 @@ export class Application {
     this.initProvidersPerReq();
   }
 
+  /**
+   * Init providers per the application.
+   */
   protected initProvidersPerApp() {
     this.providersPerApp = this.options.providersPerApp || [];
     this.providersPerApp.unshift(Logger, Router);
@@ -50,6 +54,9 @@ export class Application {
     this.router = this.injector.get(Router);
   }
 
+  /**
+   * Init providers per the request.
+   */
   protected initProvidersPerReq() {
     this.providersPerReq = this.options.providersPerReq || [];
     this.providersPerReq.unshift(Request, Response);
@@ -59,18 +66,20 @@ export class Application {
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
     nodeRes.setHeader('Server', this.serverName);
     const { method, url } = nodeReq;
-    const { handle: routeHandle, params } = this.router.find(method as HttpMethod, url);
+    const [uri, queryString] = url.split('?');
+    const { handle: routeHandle, params } = this.router.find(method as HttpMethod, uri);
     const { req, res } = this.createReqRes(nodeReq, nodeRes);
     if (!routeHandle) {
       res.send(Status.NOT_FOUND);
       return;
     }
+    req.queryParams = querystring.parse(queryString);
     req.params = params;
 
     try {
       await routeHandle(req);
     } catch (e) {
-      this.log.debug(e);
+      this.log.fatal(e);
       throw e;
     }
   };

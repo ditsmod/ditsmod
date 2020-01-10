@@ -1,11 +1,13 @@
 import { Injectable, Inject, Injector } from 'ts-di';
 import { format } from 'util';
+import { ParsedUrlQuery } from 'querystring';
 
 import { NodeRequest, NodeReqToken, RouteParam } from './types';
 
 @Injectable()
 export class Request {
   params: RouteParam[];
+  queryParams: ParsedUrlQuery;
 
   constructor(@Inject(NodeReqToken) public readonly nodeReq: NodeRequest, public injector: Injector) {}
 
