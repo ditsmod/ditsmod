@@ -2,14 +2,14 @@ import { Router as RestifyRouter } from '@restify-ts/router';
 
 import { ApplicationOptions, Logger, Router } from '../../src/types';
 import { SomeService } from '../app/services/some.service';
-
-const logger = { debug: (...args: any[]) => console.log(...args) };
+import { AppLogger } from '../app/loggers/app.logger';
 
 export const appConfig: ApplicationOptions = {
+  serverName: 'restify-ts',
   providersPerApp: [
-    // Comment need only for good format by prettier
+    // prettier...
     SomeService,
-    { provide: Logger, useValue: logger },
+    { provide: Logger, useClass: AppLogger },
     { provide: Router, useClass: RestifyRouter }
   ]
 };
