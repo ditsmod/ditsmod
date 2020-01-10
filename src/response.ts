@@ -1,3 +1,5 @@
+import * as util from 'util';
+import * as http from 'http';
 import { Injectable, Inject } from 'ts-di';
 
 import { NodeRequest, NodeResponse, NodeReqToken, NodeResToken, RedirectStatusCodes } from './types';
@@ -7,7 +9,7 @@ import { Status, getStatusText, isSuccess } from './http-status-codes';
 @Injectable()
 export class Response {
   constructor(
-    @Inject(NodeReqToken) public readonly nodeReq: NodeRequest,
+    @Inject(NodeReqToken) protected readonly nodeReq: NodeRequest,
     @Inject(NodeResToken) public readonly nodeRes: NodeResponse,
     protected req: Request
   ) {}
@@ -41,5 +43,23 @@ export class Response {
     const str = JSON.stringify({ error: message });
     this.nodeRes.setHeader('Content-Length', Buffer.byteLength(str).toString());
     this.nodeRes.end(str);
+  }
+
+  toString() {
+    const headers = this.nodeReq.headers;
+    let headerString = '';
+    let str: string;
+
+    Object.keys(headers).forEach(k => (headerString += k + ': ' + headers[k] + '\n'));
+
+    str = util.format(
+      'HTTP/%s %s %s\n%s',
+      this.nodeReq.httpVersion,
+      this.nodeRes.statusCode,
+      http.STATUS_CODES[this.nodeRes.statusCode],
+      headerString
+    );
+
+    return str;
   }
 }

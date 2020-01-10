@@ -5,5 +5,6 @@ export function routes(app: Application): void {
   app
     .route('GET', '/hello', HelloWorldController, 'helloWorld')
     .route('GET', '/send-error', HelloWorldController, 'sendError')
-    .route('GET', '/redirect-301', HelloWorldController, 'redirect301');
+    .route('GET', '/redirect-301', HelloWorldController, 'redirect301')
+    .route('GET', '/show-log', HelloWorldController, 'showLog');
 }

@@ -41,3 +41,7 @@
 ## Крок 11.
 
 Додаємо метод `res.redirect()`.
+
+## Крок 12.
+
+Розширюємо клас `Logger`, додаємо інтерфейс `LoggerMethod`, а також методи `Request#toString()`, `Response#toString()`.

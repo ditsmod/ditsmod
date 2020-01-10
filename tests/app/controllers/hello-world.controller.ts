@@ -12,6 +12,10 @@ export class HelloWorldController {
     this.res.send('Hello, World!');
   }
 
+  showLog() {
+    this.res.send(`Node Request **************\n${this.req}\nNode Reresponse **************\n${this.res}`);
+  }
+
   redirect301() {
     this.res.redirect(Status.MOVED_PERMANTENTLY, '/hello');
   }

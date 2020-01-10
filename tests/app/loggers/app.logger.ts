@@ -1,15 +1,15 @@
 import { Logger } from '../../../src/types';
 
 export class AppLogger extends Logger {
-  info(...args: any[]) {
+  info = (...args: any[]): any => {
     console.log(...args);
-  }
+  };
 
-  debug(...args: any[]) {
+  debug = (...args: any[]): any => {
     console.log(...args);
-  }
+  };
 
-  fatal(error: Error, msg?: string, ...params: any[]) {
-    console.log(error, msg, ...params);
-  }
+  fatal = (...args: any[]): any => {
+    console.log(...args);
+  };
 }

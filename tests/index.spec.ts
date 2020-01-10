@@ -87,5 +87,34 @@ describe('Application', () => {
         })
         .on('error', done.fail);
     });
+
+    it('should to show log for request and response', done => {
+      http
+        .get({ port, path: `/show-log`, headers: { accept: 'text/plain' } }, req => {
+          const { statusCode } = req;
+          expect(statusCode).toBe(Status.OK);
+
+          getBody(req)
+            .then(body => {
+              const str = `Node Request **************
+GET /show-log HTTP/1.1
+accept: text/plain
+host: localhost:${port}
+connection: close
+
+Node Reresponse **************
+HTTP/1.1 200 OK
+accept: text/plain
+host: localhost:${port}
+connection: close
+`;
+
+              expect(body).toBe(str);
+            })
+            .then(done)
+            .catch(done.fail);
+        })
+        .on('error', done.fail);
+    });
   });
 });
