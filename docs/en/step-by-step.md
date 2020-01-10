@@ -33,3 +33,7 @@ Place the test application files the way they can be placed in a real project.
 ## Step 9.
 
 Substitute our logger for DI to replace the default application logger.
+
+## Step 10.
+
+Rewrite `Response#send()` method.

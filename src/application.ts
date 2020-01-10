@@ -63,8 +63,7 @@ export class Application {
     const { method, url } = req.nodeReq;
     const { handle: routeHandle, params } = this.router.find(method as HttpMethod, url);
     if (!routeHandle) {
-      res.nodeRes.statusCode = Status.NOT_FOUND;
-      res.send('Error: resource not found');
+      res.send(Status.NOT_FOUND);
       return;
     }
     req.params = params;

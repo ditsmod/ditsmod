@@ -8,8 +8,8 @@ export const appConfig: ApplicationOptions = {
   serverName: 'restify-ts',
   providersPerApp: [
     // prettier...
-    SomeService,
     { provide: Logger, useClass: AppLogger },
     { provide: Router, useClass: RestifyRouter }
-  ]
+  ],
+  providersPerReq: [SomeService]
 };
