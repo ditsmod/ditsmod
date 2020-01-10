@@ -12,6 +12,10 @@ export class HelloWorldController {
     this.res.send('Hello, World!');
   }
 
+  redirect301() {
+    this.res.redirect(Status.MOVED_PERMANTENTLY, '/hello');
+  }
+
   sendError() {
     this.res.nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
     this.res.send('Some error here!');

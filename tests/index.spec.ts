@@ -76,5 +76,16 @@ describe('Application', () => {
         })
         .on('error', done.fail);
     });
+
+    it('should to redirect a request', done => {
+      http
+        .get(`http://localhost:${port}/redirect-301`, req => {
+          const { statusCode, headers } = req;
+          expect(statusCode).toBe(Status.MOVED_PERMANTENTLY);
+          expect(headers && headers.location).toBe('/hello');
+          done();
+        })
+        .on('error', done.fail);
+    });
   });
 });

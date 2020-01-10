@@ -37,3 +37,7 @@ Substitute our logger for DI to replace the default application logger.
 ## Step 10.
 
 Rewrite `Response#send()` method.
+
+## Step 11.
+
+Added `res.redirect()` method.

@@ -58,10 +58,9 @@ export class Application {
 
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
     nodeRes.setHeader('Server', this.serverName);
-
-    const { req, res } = this.createReqRes(nodeReq, nodeRes);
-    const { method, url } = req.nodeReq;
+    const { method, url } = nodeReq;
     const { handle: routeHandle, params } = this.router.find(method as HttpMethod, url);
+    const { req, res } = this.createReqRes(nodeReq, nodeRes);
     if (!routeHandle) {
       res.send(Status.NOT_FOUND);
       return;
@@ -108,6 +107,8 @@ export class Application {
       const controller = req.injector.get(ClassController);
       await controller[methodOfController]();
     });
+
+    return this;
   }
 
   protected checkController<T extends TypeProvider, K extends keyof Extract<T['prototype'], string>>(
