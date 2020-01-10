@@ -1,12 +1,26 @@
 import * as http from 'http';
 import { Worker } from 'worker_threads';
 import { Status } from '../src/http-status-codes';
+import { NodeRequest } from '../src/types';
 
 describe('Application', () => {
-  const port = 8081;
+  const port = 8090;
+
+  function getBody(req: NodeRequest) {
+    const bodyArr: any[] = [];
+
+    return new Promise((resolve, reject) => {
+      req
+        .on('data', chunk => bodyArr.push(chunk))
+        .on('end', () => {
+          resolve(Buffer.concat(bodyArr).toString());
+        })
+        .on('error', reject);
+    });
+  }
 
   beforeAll(done => {
-    new Worker(`${__dirname}/run-server-in-worker.js`, { workerData: { port } })
+    new Worker(`${__dirname}/index.js`, { workerData: { port } })
       .on('message', done)
       .on('error', done.fail)
       .on('exit', code => {
@@ -27,17 +41,10 @@ describe('Application', () => {
           expect(statusCode).toBe(Status.OK);
           expect(serverName).toBe('restify-ts');
 
-          const bodyArr: any[] = [];
-          let body: string;
-
-          req
-            .on('data', chunk => bodyArr.push(chunk))
-            .on('end', () => {
-              body = Buffer.concat(bodyArr).toString();
-              expect(body).toBe('Hello, World!');
-              done();
-            })
-            .on('error', done.fail);
+          getBody(req)
+            .then(body => expect(body).toBe('Hello, World!'))
+            .then(done)
+            .catch(done.fail);
         })
         .on('error', done.fail);
     });
@@ -62,17 +69,10 @@ describe('Application', () => {
           const { statusCode } = req;
           expect(statusCode).toBe(Status.OK);
 
-          const bodyArr: any[] = [];
-          let body: string;
-
-          req
-            .on('data', chunk => bodyArr.push(chunk))
-            .on('end', () => {
-              body = Buffer.concat(bodyArr).toString();
-              expect(body).toBe('This is data of some resource');
-              done();
-            })
-            .on('error', done.fail);
+          getBody(req)
+            .then(body => expect(body).toBe('This is data of some resource'))
+            .then(done)
+            .catch(done.fail);
         })
         .on('error', done.fail);
     });

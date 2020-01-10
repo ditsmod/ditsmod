@@ -25,3 +25,7 @@ Adding a service to the controller, and send messages from that service.
 ## Step 7.
 
 Adding enum `Status` with all HTTP statuses.
+
+## Step 8.
+
+Place the test application files the way they can be placed in a real project.

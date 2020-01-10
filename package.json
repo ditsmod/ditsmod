@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start": "rimraf dist && tsc && node dist/application.spec.js",
-    "test": "jasmine"
+    "test": "rimraf dist-tests && tsc -p tests && jasmine"
   },
   "devDependencies": {
     "@restify-ts/router": "^0.0.0-alpha.1",
