@@ -36,6 +36,7 @@ export function startApplication(callback?: (err?: Error, app?: Application) => 
   });
 
   process.on('SIGINT', () => {
+    log.info('SIGINT');
     process.exit();
   });
 }

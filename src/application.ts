@@ -67,14 +67,14 @@ export class Application {
     nodeRes.setHeader('Server', this.serverName);
     const { method, url } = nodeReq;
     const [uri, queryString] = url.split('?');
-    const { handle: routeHandle, params } = this.router.find(method as HttpMethod, uri);
+    const { handle: routeHandle, params: routeParams } = this.router.find(method as HttpMethod, uri);
     const { req, res } = this.createReqRes(nodeReq, nodeRes);
     if (!routeHandle) {
       res.send(Status.NOT_FOUND);
       return;
     }
     req.queryParams = querystring.parse(queryString);
-    req.routeParams = params;
+    req.routeParams = routeParams;
 
     try {
       await routeHandle(req);

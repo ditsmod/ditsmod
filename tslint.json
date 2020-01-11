@@ -69,6 +69,7 @@
       false,
       "allow-null-check"
     ],
-    "jsdoc-format": false
+    "jsdoc-format": false,
+    "unified-signatures": false
   }
 }

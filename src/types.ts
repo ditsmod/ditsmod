@@ -53,11 +53,11 @@ export class Logger {
 export class ApplicationOptions {
   serverName?: string;
   /**
-   * Providers of services (aka plugins) for Dependecy Injection per server
+   * Providers of services (aka plugins) for Dependecy Injection per an application
    */
   providersPerApp?: Provider[];
   /**
-   * Providers of services (aka plugins) for Dependecy Injection per request
+   * Providers of services (aka plugins) for Dependecy Injection per a request
    */
   providersPerReq?: Provider[];
 }
