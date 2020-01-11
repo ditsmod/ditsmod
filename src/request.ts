@@ -6,7 +6,11 @@ import { NodeRequest, NodeReqToken, RouteParam } from './types';
 
 @Injectable()
 export class Request {
-  params: RouteParam[];
+  /**
+   * Array of route params.
+   * For example, route `/api/resource/:param1/:param2` have two params.
+   */
+  routeParams: RouteParam[];
   queryParams: ParsedUrlQuery;
 
   constructor(@Inject(NodeReqToken) public readonly nodeReq: NodeRequest, public injector: Injector) {}

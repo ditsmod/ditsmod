@@ -74,7 +74,7 @@ export class Application {
       return;
     }
     req.queryParams = querystring.parse(queryString);
-    req.params = params;
+    req.routeParams = params;
 
     try {
       await routeHandle(req);
