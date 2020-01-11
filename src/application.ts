@@ -15,7 +15,6 @@ import {
 } from './types';
 import { Request } from './request';
 import { Response } from './response';
-import { Status } from './http-status-codes';
 
 export class Application {
   log: Logger;
@@ -63,25 +62,20 @@ export class Application {
     this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.providersPerReq);
   }
 
-  requestListener: RequestListener = async (nodeReq, nodeRes) => {
+  requestListener: RequestListener = (nodeReq, nodeRes) => {
     nodeRes.setHeader('Server', this.serverName);
     const { method, url } = nodeReq;
     const [uri, queryString] = url.split('?');
-    const { handle: routeHandle, params: routeParams } = this.router.find(method as HttpMethod, uri);
+    const { handle: handleRoute, params: routeParams } = this.router.find(method as HttpMethod, uri);
     const { req, res } = this.createReqRes(nodeReq, nodeRes);
-    if (!routeHandle) {
-      res.send(Status.NOT_FOUND);
+    if (!handleRoute) {
+      res.sendNotFound();
       return;
     }
     req.queryParams = querystring.parse(queryString);
     req.routeParams = routeParams;
 
-    try {
-      await routeHandle(req);
-    } catch (e) {
-      this.log.fatal(e);
-      throw e;
-    }
+    handleRoute(res);
   };
 
   protected createReqRes(nodeReq: NodeRequest, nodeRes: NodeResponse) {
@@ -104,7 +98,7 @@ export class Application {
     this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.providersPerReq);
   }
 
-  route<T extends TypeProvider, K extends keyof T['prototype']>(
+  setRoute<T extends TypeProvider, K extends keyof T['prototype']>(
     method: HttpMethod,
     path: string,
     ClassController: T,
@@ -112,10 +106,7 @@ export class Application {
   ) {
     this.checkController(ClassController, methodOfController);
     this.unshiftProvidersPerReq(ClassController);
-    this.router.on(method, path, async (req: Request) => {
-      const controller = req.injector.get(ClassController);
-      await controller[methodOfController]();
-    });
+    this.router.on(method, path, (res: Response) => res.callHandler(ClassController, methodOfController));
 
     return this;
   }

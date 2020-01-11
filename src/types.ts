@@ -2,6 +2,8 @@ import * as http from 'http';
 import * as http2 from 'http2';
 import { Provider, InjectionToken } from 'ts-di';
 
+import { Response } from './response';
+
 export type RequestListener = (request: NodeRequest, response: NodeResponse) => void | Promise<void>;
 
 export interface LoggerMethod {
@@ -106,12 +108,14 @@ export type HttpMethod =
   | 'UNLOCK'
   | 'UNSUBSCRIBE';
 
+export type RouteHandler = (res: Response) => any;
+
 export class Router {
-  on(method: HttpMethod, path: string, handle: Fn): this {
+  on(method: HttpMethod, path: string, handle: RouteHandler): this {
     return this;
   }
 
-  all(path: string, handle: Fn): this {
+  all(path: string, handle: RouteHandler): this {
     return this;
   }
 
@@ -121,7 +125,7 @@ export class Router {
 }
 
 export class RouterReturns {
-  handle: Fn;
+  handle: RouteHandler;
   params: RouteParam[];
 }
 

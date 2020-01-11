@@ -1,6 +1,6 @@
 import * as util from 'util';
 import * as http from 'http';
-import { Injectable, Inject } from 'ts-di';
+import { Injectable, Inject, TypeProvider } from 'ts-di';
 
 import { NodeRequest, NodeResponse, NodeReqToken, NodeResToken, RedirectStatusCodes } from './types';
 import { Request } from './request';
@@ -13,6 +13,21 @@ export class Response {
     @Inject(NodeResToken) public readonly nodeRes: NodeResponse,
     protected req: Request
   ) {}
+
+  /**
+   * Called by the `Application` when a route is not found.
+   */
+  sendNotFound() {
+    this.send(Status.NOT_FOUND);
+  }
+
+  /**
+   * Called by the `Application` when a route is found.
+   */
+  callHandler<T extends TypeProvider, K extends keyof T['prototype']>(ClassController: T, methodOfController: K) {
+    const controller = this.req.injector.get(ClassController);
+    controller[methodOfController]();
+  }
 
   send(statusCode: Status, data?: string | Buffer | Uint8Array): void;
   send(data: string | Buffer | Uint8Array): void;
