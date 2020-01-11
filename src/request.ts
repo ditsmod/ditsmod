@@ -15,6 +15,13 @@ export class Request {
 
   constructor(@Inject(NodeReqToken) public readonly nodeReq: NodeRequest, public injector: Injector) {}
 
+  /**
+   * Check if the request is idempotent.
+   */
+  isIdempotent() {
+    return ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'].includes(this.nodeReq.method);
+  }
+
   toString(): string {
     let headers = '';
     Object.keys(this.nodeReq.headers).forEach(k => (headers += format('%s: %s\n', k, this.nodeReq.headers[k])));
