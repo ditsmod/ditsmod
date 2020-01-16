@@ -16,6 +16,8 @@ export class Request {
   constructor(@Inject(NodeReqToken) public readonly nodeReq: NodeRequest, public injector: Injector) {}
 
   /**
+   * Called by the `Application` before call a router.
+   *
    * In inherited class you can to use standart `decodeURI(url)` function.
    * See inheritance in the docs.
    */
@@ -24,6 +26,8 @@ export class Request {
   }
 
   /**
+   * Called by the `Application` after founded a route.
+   *
    * In inherited class you can to use standart `querystring.parse(qs: string)` method.
    * See inheritance in the docs.
    */
