@@ -41,9 +41,9 @@
   integrity sha512-Lue/mlp2egZJoHXZr4LndxDAd7i/7SQYhV0EjWfb/a4/OZ6tuVwMCVPiwkU5nsEipxEf7hmkSU7Em5VQ8P5NGA==
 
 "@types/node@^13.1.4":
-  version "13.1.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.1.6.tgz#076028d0b0400be8105b89a0a55550c86684ffec"
-  integrity sha512-Jg1F+bmxcpENHP23sVKkNuU3uaxPnsBMW0cLjleiikFKomJQbsn0Cqk2yDvQArqzZN6ABfBkZ0To7pQ8sLdWDg==
+  version "13.1.7"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.1.7.tgz#db51d28b8dfacfe4fb2d0da88f5eb0a2eca00675"
+  integrity sha512-HU0q9GXazqiKwviVxg9SI/+t/nAsGkvLDkIdxz+ObejG2nX6Si00TeLqHMoS+a/1tjH7a8YpKVQwtgHuMQsldg==
 
 ansi-styles@^3.2.1:
   version "3.2.1"
@@ -295,9 +295,9 @@ supports-color@^5.3.0:
     has-flag "^3.0.0"
 
 ts-di@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/ts-di/-/ts-di-2.1.0.tgz#6cdc1d837e0dd6287df5eecb0c659ab9567aafa1"
-  integrity sha512-JDen5Tg9bi/6lcrE/13ToGtjbU5Cq2SuPDpCsOTL6m1LC6zQ5fOqHRYq8Nz05sPlQ/S7NI4EbHrdpviLZe93Qw==
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/ts-di/-/ts-di-2.1.1.tgz#d6a87b857972bd6cdee71050554e40a4b64b3476"
+  integrity sha512-s1n2gLoShJQm3UZ4whAjztnosIBrYoBmFeC5I+NKGCVR/KPRfaRKVj20IxyaVePrgy620tXM7OnaCmd7NNjjkw==
 
 tslib@^1.7.1, tslib@^1.8.0, tslib@^1.8.1:
   version "1.10.0"
