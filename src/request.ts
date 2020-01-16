@@ -1,6 +1,6 @@
 import { Injectable, Inject, Injector } from 'ts-di';
 import { format } from 'util';
-import { ParsedUrlQuery } from 'querystring';
+import { ParsedUrlQuery, parse } from 'querystring';
 
 import { NodeRequest, NodeReqToken, RouteParam } from './types';
 
@@ -14,6 +14,22 @@ export class Request {
   queryParams: ParsedUrlQuery;
 
   constructor(@Inject(NodeReqToken) public readonly nodeReq: NodeRequest, public injector: Injector) {}
+
+  /**
+   * In inherited class you can to use standart `decodeURI(url)` function.
+   * See inheritance in the docs.
+   */
+  decodeUrl(url: string) {
+    return decodeURI(url);
+  }
+
+  /**
+   * In inherited class you can to use standart `querystring.parse(qs: string)` method.
+   * See inheritance in the docs.
+   */
+  parseQueryString(qs: string) {
+    return parse(qs);
+  }
 
   /**
    * Check if the request is idempotent.

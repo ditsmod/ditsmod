@@ -1,6 +1,5 @@
 import * as assert from 'assert-plus';
 import { Provider, ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider } from 'ts-di';
-import * as querystring from 'querystring';
 
 import {
   ApplicationOptions,
@@ -64,15 +63,15 @@ export class Application {
 
   requestListener: RequestListener = (nodeReq, nodeRes) => {
     nodeRes.setHeader('Server', this.serverName);
-    const { method, url } = nodeReq;
-    const [uri, queryString] = url.split('?');
-    const { handle: handleRoute, params: routeParams } = this.router.find(method as HttpMethod, uri);
     const { req, res } = this.createReqRes(nodeReq, nodeRes);
+    const { method, url } = nodeReq;
+    const [uri, queryString] = req.decodeUrl(url).split('?');
+    const { handle: handleRoute, params: routeParams } = this.router.find(method as HttpMethod, uri);
     if (!handleRoute) {
       res.sendNotFound();
       return;
     }
-    req.queryParams = querystring.parse(queryString);
+    req.queryParams = req.parseQueryString(queryString);
     req.routeParams = routeParams;
 
     handleRoute(res);
