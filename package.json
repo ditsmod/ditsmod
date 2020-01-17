@@ -14,7 +14,7 @@
     "lib": "src"
   },
   "scripts": {
-    "start": "rimraf dist && tsc && node dist/application.spec.js",
+    "start": "rimraf dist-tests && tsc -p tests && node dist-tests/tests/index.js",
     "test": "rimraf dist-tests && tsc -p tests && jasmine"
   },
   "devDependencies": {
