@@ -5,7 +5,7 @@ import { reflector } from 'ts-di';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
 
 import { RootModuleDecorator, ControllersDecorator } from './decorators';
-import { Server, ApplicationOptions } from './types';
+import { Server, ApplicationOptions, Logger, ServerOptions } from './types';
 import { Application } from './application';
 import { pickProperties } from './utils/pick-properties';
 import { ListenOptions } from 'net';
@@ -23,10 +23,15 @@ export function bootstrapRootModule(appModule: new (...args: any[]) => any) {
       const createSecureServer = false;
       const annotations = reflector.annotations(appModule) as RootModuleDecorator[];
       const moduleMetadata = annotations[0];
+      if (!moduleMetadata) {
+        throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
+      }
       const appOptions = pickProperties(new ApplicationOptions(), moduleMetadata);
       const app = new Application(appOptions);
-      console.log('annotations for a module:', annotations);
-      console.log('-'.repeat(repeat));
+      const log = app.injector.get(Logger) as Logger;
+
+      log.trace('annotations for a module:', annotations);
+      log.trace('-'.repeat(repeat));
 
       if (Object.keys(moduleMetadata).length) {
         if (moduleMetadata.serverModule) {
@@ -47,44 +52,51 @@ export function bootstrapRootModule(appModule: new (...args: any[]) => any) {
         if (moduleMetadata.controllers) {
           moduleMetadata.controllers.forEach(Controller => {
             const controllerMetadata: ControllersDecorator = reflector.annotations(Controller)[0];
-            const props = reflector.propMetadata(Controller);
-            for (const prop in props) {
-              for (const route of props[prop]) {
-                if (route.hasOwnProperty('method')) {
-                  let path: string;
-                  if (controllerMetadata.path == '/') {
-                    path = route.path ? `/${route.path}` : '/';
-                  } else if (!route.path) {
-                    path = controllerMetadata.path;
-                  } else {
-                    path = `${controllerMetadata.path}/${route.path}`;
-                  }
-                  app.setRoute(route.method, path, Controller, prop);
-                  console.log('set HTTP method:', route.method);
-                  console.log('set path:', path);
-                  console.log('set Controller:', Controller.name);
-                  console.log('set method:', prop);
-                  console.log('-'.repeat(repeat));
-                  break;
+            const rootPath = controllerMetadata.path;
+            const controllers = reflector.propMetadata(Controller);
+            for (const method in controllers) {
+              for (const route of controllers[method]) {
+                if (!route.hasOwnProperty('method')) {
+                  continue;
                 }
+                let path: string;
+                if (rootPath == '/') {
+                  path = route.path ? `/${route.path}` : '/';
+                } else if (!route.path) {
+                  path = rootPath;
+                } else {
+                  path = `${rootPath}/${route.path}`;
+                }
+                app.setRoute(route.method, path, Controller, method);
+                const msg = {
+                  httpMethod: route.method,
+                  path,
+                  handler: `${Controller.name} -> ${method}()`
+                };
+                log.trace(msg);
+                break;
               }
             }
           });
         }
       }
 
+      const serverOptions = moduleMetadata.serverOptions || {};
       if (createSecureServer) {
-        server = (serverModule as typeof http2).createSecureServer(app.requestListener);
+        server = (serverModule as typeof http2).createSecureServer(serverOptions, app.requestListener);
       } else {
-        server = (serverModule as typeof http | typeof https).createServer(app.requestListener);
+        server = (serverModule as typeof http | typeof https).createServer(serverOptions, app.requestListener);
       }
+
       resolve(server);
+
       if (!isMainThread) {
         const port = (workerData && workerData.port) || 9000;
         listenOptions.port = port;
       }
+
       server.listen(listenOptions, () => {
-        console.log(`INFO: ${appOptions.serverName} is running at http://localhost:${listenOptions.port}`);
+        log.info(`${appOptions.serverName} is running at http://localhost:${listenOptions.port}`);
         if (!isMainThread) {
           parentPort.postMessage('Runing worker!');
         }
