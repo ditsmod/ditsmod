@@ -61,8 +61,8 @@ export const Controller = makeDecorator('Controllers', (data: any) => data) as C
 
 type ControllerPropDecorator = (method: HttpMethods, path?: string) => any;
 
-function action(method: HttpMethods, path: string = '') {
+function route(method: HttpMethods, path: string = '') {
   return { method, path };
 }
 
-export const Action: ControllerPropDecorator = makePropDecorator('Action', action);
+export const Route: ControllerPropDecorator = makePropDecorator('Route', route);

@@ -49,18 +49,18 @@ export function bootstrapRootModule(appModule: new (...args: any[]) => any) {
             const controllerMetadata: ControllersDecorator = reflector.annotations(Controller)[0];
             const props = reflector.propMetadata(Controller);
             for (const prop in props) {
-              for (const action of props[prop]) {
-                if (action.hasOwnProperty('method')) {
+              for (const route of props[prop]) {
+                if (route.hasOwnProperty('method')) {
                   let path: string;
                   if (controllerMetadata.path == '/') {
-                    path = action.path ? `/${action.path}` : '/';
-                  } else if (!action.path) {
+                    path = route.path ? `/${route.path}` : '/';
+                  } else if (!route.path) {
                     path = controllerMetadata.path;
                   } else {
-                    path = `${controllerMetadata.path}/${action.path}`;
+                    path = `${controllerMetadata.path}/${route.path}`;
                   }
-                  app.setRoute(action.method, path, Controller, prop);
-                  console.log('set HTTP method:', action.method);
+                  app.setRoute(route.method, path, Controller, prop);
+                  console.log('set HTTP method:', route.method);
                   console.log('set path:', path);
                   console.log('set Controller:', Controller.name);
                   console.log('set method:', prop);
