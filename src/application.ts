@@ -103,25 +103,9 @@ export class Application {
     ClassController: T,
     methodOfController: K
   ) {
-    this.checkController(ClassController, methodOfController);
     this.unshiftProvidersPerReq(ClassController);
     this.router.on(method, path, (res: Response) => res.callHandler(ClassController, methodOfController));
 
     return this;
-  }
-
-  protected checkController<T extends TypeProvider, K extends keyof Extract<T['prototype'], string>>(
-    ClassController: TypeProvider,
-    methodOfController: K
-  ): void {
-    assert.string(methodOfController as string, `In Application.checkController argument 'methodOfController'`);
-
-    if (!ClassController || !ClassController.prototype) {
-      throw new TypeError(`Invalid provider - only type of TypeProvider are allowed for a route controller`);
-    }
-
-    if (typeof ClassController.prototype[methodOfController] != 'function') {
-      throw new TypeError(`Invalid method name - only method of 'classController' are allowed for a route`);
-    }
   }
 }

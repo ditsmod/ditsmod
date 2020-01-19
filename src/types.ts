@@ -1,5 +1,7 @@
 import * as http from 'http';
+import * as https from 'https';
 import * as http2 from 'http2';
+import { Http2Server, Http2ServerRequest, Http2ServerResponse, Http2SecureServer, SecureServerOptions } from 'http2';
 import { Provider, InjectionToken } from 'ts-di';
 
 import { Response } from './response';
@@ -53,19 +55,19 @@ export class Logger {
 }
 
 export class ApplicationOptions {
-  serverName?: string;
+  serverName?: string = '';
   /**
-   * Providers of services (aka plugins) for Dependecy Injection per an application
+   * Providers of services for Dependecy Injection per an application.
    */
-  providersPerApp?: Provider[];
+  providersPerApp?: Provider[] = [];
   /**
-   * Providers of services (aka plugins) for Dependecy Injection per a request
+   * Providers of services for Dependecy Injection per a request.
    */
-  providersPerReq?: Provider[];
+  providersPerReq?: Provider[] = [];
 }
 
-export type NodeRequest = http.IncomingMessage | http2.Http2ServerRequest;
-export type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
+export type NodeRequest = http.IncomingMessage | Http2ServerRequest;
+export type NodeResponse = http.ServerResponse | Http2ServerResponse;
 export const NodeReqToken = new InjectionToken<NodeRequest>('NodeRequest');
 export const NodeResToken = new InjectionToken<NodeResponse>('NodeResponse');
 
@@ -140,3 +142,33 @@ export type Fn = (...args: any[]) => any;
  * See also https://en.wikipedia.org/wiki/URL_redirection#HTTP_status_codes_3xx
  */
 export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
+
+export interface HttpServerModule {
+  createServer(requestListener?: http.RequestListener): http.Server;
+  createServer(options: http.ServerOptions, requestListener?: http.RequestListener): http.Server;
+}
+
+export interface HttpsServerModule {
+  createServer(requestListener?: http.RequestListener): https.Server;
+  createServer(options: https.ServerOptions, requestListener?: http.RequestListener): https.Server;
+}
+
+export type Http2RequestListener = (request: Http2ServerRequest, response: Http2ServerResponse) => void;
+
+export interface Http2ServerModule {
+  createServer(onRequestHandler?: Http2RequestListener): Http2Server;
+  createServer(options: http2.ServerOptions, onRequestHandler?: Http2RequestListener): Http2Server;
+  createSecureServer(onRequestHandler?: Http2RequestListener): Http2SecureServer;
+  createSecureServer(options: SecureServerOptions, onRequestHandler?: Http2RequestListener): Http2SecureServer;
+}
+
+export type ServerOptions = http.ServerOptions | https.ServerOptions | http2.ServerOptions | SecureServerOptions;
+
+export type Server = http.Server | https.Server | Http2Server | Http2SecureServer;
+
+/**
+ * It is just `{ [key: string]: any }` an object interface.
+ */
+export interface ObjectAny {
+  [key: string]: any;
+}

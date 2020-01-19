@@ -22,7 +22,7 @@ describe('Application', () => {
   }
 
   beforeAll(done => {
-    new Worker(`${__dirname}/index.js`, { workerData: { port } })
+    new Worker(`${__dirname}/main.js`, { workerData: { port } })
       .on('message', done)
       .on('error', done.fail)
       .on('exit', code => {

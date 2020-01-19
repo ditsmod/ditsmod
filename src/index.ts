@@ -18,3 +18,6 @@ export {
   LoggerMethod,
   RedirectStatusCodes
 } from './types';
+export { Module } from './decorators';
+export { bootstrapRootModule } from './bootstrap-module';
+export { pickProperties } from './utils/pick-properties';
