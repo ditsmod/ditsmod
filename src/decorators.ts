@@ -1,6 +1,3 @@
-import * as http from 'http';
-import * as https from 'https';
-import * as http2 from 'http2';
 import { ListenOptions } from 'net';
 import { makeDecorator, TypeProvider, makePropDecorator, Provider } from 'ts-di';
 
