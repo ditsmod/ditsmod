@@ -1,7 +1,8 @@
 import 'reflect-metadata';
 import { AppModule } from './app.module';
-import { bootstrapRootModule } from '../src/';
+import { BootstrapModule } from '../src/bootstrap-module';
 
-bootstrapRootModule(AppModule)
+new BootstrapModule()
+  .bootstrapRootModule(AppModule)
   .then(server => server.on('error', err => console.error(err)))
   .catch(err => console.log(err));

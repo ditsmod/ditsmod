@@ -1,108 +1,146 @@
 import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
-import { reflector } from 'ts-di';
+import { reflector, TypeProvider } from 'ts-di';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
 
 import { RootModuleDecorator, ControllersDecorator } from './decorators';
-import { Server, ApplicationOptions, Logger, ServerOptions } from './types';
+import { Server, ApplicationOptions, Logger, ServerOptions, ReflectedControllerProps } from './types';
 import { Application } from './application';
 import { pickProperties } from './utils/pick-properties';
 import { ListenOptions } from 'net';
 
-export function bootstrapRootModule(appModule: new (...args: any[]) => any) {
-  return new Promise<Server>((resolve, reject) => {
-    try {
-      const repeat = 80;
-      /**
-       * Default seting to `http` module.
-       */
-      let serverModule: RootModuleDecorator['serverModule'] = http;
-      let listenOptions: ListenOptions = { port: 8080 };
-      let server: Server;
-      const createSecureServer = false;
-      const annotations = reflector.annotations(appModule) as RootModuleDecorator[];
-      const moduleMetadata = annotations[0];
-      if (!moduleMetadata) {
-        throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
-      }
-      const appOptions = pickProperties(new ApplicationOptions(), moduleMetadata);
-      const app = new Application(appOptions);
-      const log = app.injector.get(Logger) as Logger;
+type ServerModuleType = RootModuleDecorator['serverModule'];
+type AppModuleType = new (...args: any[]) => any;
 
-      log.trace('annotations for a module:', annotations);
-      log.trace('-'.repeat(repeat));
+export class BootstrapModule {
+  app: Application;
+  log: Logger;
+  serverName: string;
+  serverModule: ServerModuleType;
+  serverOptions: ServerOptions;
+  server: Server;
+  controllers: TypeProvider[];
+  listenOptions: ListenOptions;
 
-      if (Object.keys(moduleMetadata).length) {
-        if (moduleMetadata.serverModule) {
-          serverModule = moduleMetadata.serverModule;
-          if (
-            moduleMetadata.serverOptions &&
-            moduleMetadata.serverOptions.http2CreateSecureServer &&
-            !(serverModule as typeof http2).createSecureServer
-          ) {
-            throw new TypeError(`serverModule.createSecureServer() not found (see ${appModule.name} settings)`);
-          }
-        }
+  bootstrapRootModule(appModule: AppModuleType) {
+    return new Promise<Server>((resolve, reject) => {
+      try {
+        this.prepareServerOptions(appModule);
+        this.createServer();
 
-        if (moduleMetadata.listenOptions) {
-          listenOptions = moduleMetadata.listenOptions;
-        }
-
-        if (moduleMetadata.controllers) {
-          moduleMetadata.controllers.forEach(Controller => {
-            const controllerMetadata: ControllersDecorator = reflector.annotations(Controller)[0];
-            const rootPath = controllerMetadata.path;
-            const controllers = reflector.propMetadata(Controller);
-            for (const method in controllers) {
-              for (const route of controllers[method]) {
-                if (!route.hasOwnProperty('method')) {
-                  continue;
-                }
-                let path: string;
-                if (rootPath == '/') {
-                  path = route.path ? `/${route.path}` : '/';
-                } else if (!route.path) {
-                  path = rootPath;
-                } else {
-                  path = `${rootPath}/${route.path}`;
-                }
-                app.setRoute(route.method, path, Controller, method);
-                const msg = {
-                  httpMethod: route.method,
-                  path,
-                  handler: `${Controller.name} -> ${method}()`
-                };
-                log.trace(msg);
-                break;
-              }
-            }
-          });
-        }
-      }
-
-      const serverOptions = moduleMetadata.serverOptions || {};
-      if (createSecureServer) {
-        server = (serverModule as typeof http2).createSecureServer(serverOptions, app.requestListener);
-      } else {
-        server = (serverModule as typeof http | typeof https).createServer(serverOptions, app.requestListener);
-      }
-
-      resolve(server);
-
-      if (!isMainThread) {
-        const port = (workerData && workerData.port) || 9000;
-        listenOptions.port = port;
-      }
-
-      server.listen(listenOptions, () => {
-        log.info(`${appOptions.serverName} is running at http://localhost:${listenOptions.port}`);
         if (!isMainThread) {
-          parentPort.postMessage('Runing worker!');
+          const port = (workerData && workerData.port) || 9000;
+          this.listenOptions.port = port;
         }
-      });
-    } catch (err) {
-      reject(err);
+
+        this.server.listen(this.listenOptions, () => {
+          resolve(this.server);
+          this.log.info(`${this.serverName} is running at ${this.listenOptions.host}:${this.listenOptions.port}`);
+
+          if (!isMainThread) {
+            parentPort.postMessage('Runing worker!');
+          }
+        });
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  protected prepareServerOptions(appModule: AppModuleType) {
+    this.setDefaultOptions();
+    const moduleMetadata = this.extractModuleMetadata(appModule);
+    const appOptions = pickProperties(new ApplicationOptions(), moduleMetadata);
+    const app = new Application(appOptions);
+    const log = app.injector.get(Logger) as Logger;
+    this.log = log;
+    this.app = app;
+    log.trace(moduleMetadata);
+    this.setRoutes();
+    this.checkSecureServerOption(appModule);
+  }
+
+  protected setDefaultOptions() {
+    this.serverName = 'restify-ts';
+    this.serverModule = http as ServerModuleType;
+    this.serverOptions = {} as ServerOptions;
+    this.listenOptions = { port: 8080, host: 'localhost' };
+    this.controllers = [];
+  }
+
+  protected extractModuleMetadata(appModule: AppModuleType) {
+    const annotations = reflector.annotations(appModule) as RootModuleDecorator[];
+    const moduleMetadata = annotations[0];
+    if (!moduleMetadata) {
+      throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
-  });
+    this.serverModule = moduleMetadata.serverModule || this.serverModule;
+    this.serverOptions = moduleMetadata.serverOptions || this.serverOptions;
+    this.listenOptions = moduleMetadata.listenOptions || this.listenOptions;
+    this.controllers = moduleMetadata.controllers || this.controllers;
+    return moduleMetadata;
+  }
+
+  protected setRoutes() {
+    this.controllers.forEach(Controller => {
+      const controllerMetadata: ControllersDecorator = reflector.annotations(Controller)[0];
+      if (!controllerMetadata) {
+        throw new Error(
+          `Setting routes failed: controller "${Controller.name}" does not have the "@Controller()" decorator`
+        );
+      }
+      const rootPath = controllerMetadata.path;
+      const controllerProps: ReflectedControllerProps = reflector.propMetadata(Controller);
+      for (const method in controllerProps) {
+        for (const route of controllerProps[method]) {
+          if (!route.method) {
+            // Here we have another decorator, not @Route().
+            continue;
+          }
+          let path: string;
+          if (rootPath == '/') {
+            path = route.path ? `/${route.path}` : '/';
+          } else if (!route.path) {
+            path = rootPath;
+          } else {
+            path = `${rootPath}/${route.path}`;
+          }
+          this.app.setRoute(route.method, path, Controller, method);
+
+          if (this.log.trace()) {
+            const msg = {
+              httpMethod: route.method,
+              path,
+              handler: `${Controller.name} -> ${method}()`
+            };
+            this.log.trace(msg);
+          }
+          break;
+        }
+      }
+    });
+  }
+
+  protected checkSecureServerOption(appModule: AppModuleType) {
+    if (
+      this.serverOptions &&
+      this.serverOptions.http2CreateSecureServer &&
+      !(this.serverModule as typeof http2).createSecureServer
+    ) {
+      throw new TypeError(`serverModule.createSecureServer() not found (see ${appModule.name} settings)`);
+    }
+  }
+
+  protected createServer() {
+    if (this.serverOptions.http2CreateSecureServer) {
+      const serverModule = this.serverModule as typeof http2;
+      const serverOptions = this.serverOptions as http2.SecureServerOptions;
+      this.server = serverModule.createSecureServer(serverOptions, this.app.requestListener);
+    } else {
+      const serverModule = this.serverModule as typeof http | typeof https;
+      const serverOptions = this.serverOptions as http.ServerOptions | https.ServerOptions;
+      this.server = serverModule.createServer(serverOptions, this.app.requestListener);
+    }
+  }
 }

@@ -9,11 +9,6 @@ import { SomeService } from './app/services/some.service';
 import { Logger, Router } from '../src/types';
 
 @RootModule({
-  serverName: 'restify-ts',
-  listenOptions: {
-    host: 'localhost',
-    port: 8080
-  },
   controllers: [HelloWorldController, ParamsController, SomeServiceController],
   providersPerApp: [
     { provide: Logger, useClass: AppLogger },

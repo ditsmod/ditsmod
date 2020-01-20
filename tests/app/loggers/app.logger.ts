@@ -2,6 +2,9 @@ import { Logger } from '../../../src/types';
 
 export class AppLogger extends Logger {
   trace = (...args: any[]): any => {
+    if (!args.length) {
+      return true;
+    }
     console.log(...args);
   };
 

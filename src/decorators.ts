@@ -4,7 +4,14 @@ import * as http2 from 'http2';
 import { ListenOptions } from 'net';
 import { makeDecorator, TypeProvider, makePropDecorator, Provider } from 'ts-di';
 
-import { HttpMethod as HttpMethods, HttpServerModule, HttpsServerModule, Http2ServerModule } from './types';
+import {
+  HttpMethod as HttpMethods,
+  HttpServerModule,
+  HttpsServerModule,
+  Http2ServerModule,
+  ServerOptions,
+  RouteDecoratorProps
+} from './types';
 
 export interface ModuleDecoratorFactory {
   (data?: ModuleDecorator): any;
@@ -36,9 +43,7 @@ export interface RootModuleDecoratorFactory {
 export interface RootModuleDecorator extends ModuleDecorator {
   serverName?: string;
   serverModule?: HttpServerModule | HttpsServerModule | Http2ServerModule;
-  serverOptions?: (http.ServerOptions | https.ServerOptions | http2.ServerOptions | http2.SecureServerOptions) & {
-    http2CreateSecureServer: boolean;
-  };
+  serverOptions?: ServerOptions;
   listenOptions?: ListenOptions;
   /**
    * Providers per the `Application`.
@@ -61,7 +66,7 @@ export const Controller = makeDecorator('Controllers', (data: any) => data) as C
 
 type ControllerPropDecorator = (method: HttpMethods, path?: string) => any;
 
-function route(method: HttpMethods, path: string = '') {
+function route(method: HttpMethods, path: string = ''): RouteDecoratorProps {
   return { method, path };
 }
 
