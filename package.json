@@ -17,6 +17,10 @@
     "start": "rimraf dist-tests && tsc -p tests && node dist-tests/tests/main.js",
     "test": "rimraf dist-tests && tsc -p tests && jasmine"
   },
+  "dependencies": {
+    "assert-plus": "^1.0.0",
+    "ts-di": "^2.2.0"
+  },
   "devDependencies": {
     "@restify-ts/router": "^0.0.0-alpha.1",
     "@types/assert-plus": "^1.0.4",
@@ -30,10 +34,6 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.1.0",
     "typescript": "^3.7.4"
-  },
-  "dependencies": {
-    "assert-plus": "^1.0.0",
-    "ts-di": "^2.0.0"
   },
   "peerDependencies": {
     "reflect-metadata": "^0.1.13"
