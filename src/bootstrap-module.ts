@@ -3,12 +3,12 @@ import * as https from 'https';
 import * as http2 from 'http2';
 import { reflector, TypeProvider } from 'ts-di';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
+import { ListenOptions } from 'net';
 
 import { RootModuleDecorator, ControllersDecorator } from './decorators';
 import { Server, ApplicationOptions, Logger, ServerOptions, ReflectedControllerProps } from './types';
 import { Application } from './application';
 import { pickProperties } from './utils/pick-properties';
-import { ListenOptions } from 'net';
 
 type ServerModuleType = RootModuleDecorator['serverModule'];
 type AppModuleType = new (...args: any[]) => any;

@@ -126,3 +126,12 @@ npm i
 ```
 
 Moved from `Application` to` Request` and `Response` some of the code that can be configured through inheritance.
+
+## Step 15.
+
+```bash
+git checkout step15
+npm i
+```
+
+Introduce modularity.
