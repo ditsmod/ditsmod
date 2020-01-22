@@ -2,7 +2,7 @@ import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
 import { Http2Server, Http2ServerRequest, Http2ServerResponse, Http2SecureServer, SecureServerOptions } from 'http2';
-import { Provider, InjectionToken } from 'ts-di';
+import { Provider, InjectionToken, Type, TypeProvider } from 'ts-di';
 
 import { Response } from './response';
 
@@ -178,13 +178,4 @@ export type Server = http.Server | https.Server | Http2Server | Http2SecureServe
  */
 export interface ObjectAny {
   [key: string]: any;
-}
-
-export interface RouteDecoratorProps {
-  method: HttpMethod;
-  path: string;
-}
-
-export interface ReflectedControllerProps {
-  [key: string]: RouteDecoratorProps[];
 }

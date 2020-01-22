@@ -1,14 +1,7 @@
 import { ListenOptions } from 'net';
 import { makeDecorator, TypeProvider, makePropDecorator, Provider } from 'ts-di';
 
-import {
-  HttpMethod as HttpMethods,
-  HttpServerModule,
-  HttpsServerModule,
-  Http2ServerModule,
-  ServerOptions,
-  RouteDecoratorProps
-} from './types';
+import { HttpServerModule, HttpsServerModule, Http2ServerModule, ServerOptions, HttpMethod, ObjectAny } from './types';
 
 export interface ModuleDecoratorFactory {
   (data?: ModuleDecorator): any;
@@ -59,12 +52,27 @@ export interface ControllersDecorator {
   path: string;
 }
 
-export const Controller = makeDecorator('Controllers', (data: any) => data) as ControllersDecoratorFactory;
+export const Controller = makeDecorator('Controller', (data: any) => data) as ControllersDecoratorFactory;
 
-type ControllerPropDecorator = (method: HttpMethods, path?: string) => any;
+export type RouteDecoratorFactory = (method: HttpMethod, path?: string) => RouteDecorator;
 
-function route(method: HttpMethods, path: string = ''): RouteDecoratorProps {
+export type RouteDecorator = <T>(
+  target: ObjectAny,
+  propertyName: string,
+  descriptor: TypedPropertyDescriptor<T>
+) => RouteDecoratorMetadata;
+
+export interface RouteDecoratorMetadata {
+  [key: string]: RouteMetadata[];
+}
+
+export interface RouteMetadata {
+  method: HttpMethod;
+  path: string;
+}
+
+function route(method: HttpMethod, path: string = ''): RouteMetadata {
   return { method, path };
 }
 
-export const Route: ControllerPropDecorator = makePropDecorator('Route', route);
+export const Route = makePropDecorator('Route', route) as RouteDecoratorFactory;

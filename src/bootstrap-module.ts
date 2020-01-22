@@ -5,8 +5,8 @@ import { reflector, TypeProvider } from 'ts-di';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ListenOptions } from 'net';
 
-import { RootModuleDecorator, ControllersDecorator } from './decorators';
-import { Server, ApplicationOptions, Logger, ServerOptions, ReflectedControllerProps } from './types';
+import { RootModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from './decorators';
+import { Server, ApplicationOptions, Logger, ServerOptions } from './types';
 import { Application } from './application';
 import { pickProperties } from './utils/pick-properties';
 
@@ -91,7 +91,7 @@ export class BootstrapModule {
         );
       }
       const rootPath = controllerMetadata.path;
-      const controllerProps: ReflectedControllerProps = reflector.propMetadata(Controller);
+      const controllerProps: RouteDecoratorMetadata = reflector.propMetadata(Controller);
       for (const method in controllerProps) {
         for (const route of controllerProps[method]) {
           if (!route.method) {
