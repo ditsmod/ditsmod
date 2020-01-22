@@ -3,7 +3,7 @@ import { Response } from '../../../src/response';
 import { Status } from '../../../src/http-status-codes';
 import { Controller, Route } from '../../../src/decorators';
 
-@Controller({ path: '/' })
+@Controller({ path: '' })
 export class HelloWorldController {
   constructor(private req: Request, private res: Response) {}
 

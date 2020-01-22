@@ -90,29 +90,31 @@ export class BootstrapModule {
           `Setting routes failed: controller "${Controller.name}" does not have the "@Controller()" decorator`
         );
       }
-      const rootPath = controllerMetadata.path;
-      const controllerProps: RouteDecoratorMetadata = reflector.propMetadata(Controller);
-      for (const method in controllerProps) {
-        for (const route of controllerProps[method]) {
-          if (!route.method) {
+      const pathFromRoot = controllerMetadata.path;
+      this.checkRoutePath(Controller.name, pathFromRoot);
+      const routeDecoratorMetadata = reflector.propMetadata(Controller) as RouteDecoratorMetadata;
+      for (const methodName in routeDecoratorMetadata) {
+        for (const routeMetadata of routeDecoratorMetadata[methodName]) {
+          if (!routeMetadata.method) {
             // Here we have another decorator, not @Route().
             continue;
           }
-          let path: string;
-          if (rootPath == '/') {
-            path = route.path ? `/${route.path}` : '/';
-          } else if (!route.path) {
-            path = rootPath;
+          this.checkRoutePath(Controller.name, routeMetadata.path);
+          let path = '/';
+          if (!pathFromRoot) {
+            path += routeMetadata.path;
+          } else if (!routeMetadata.path) {
+            path += pathFromRoot;
           } else {
-            path = `${rootPath}/${route.path}`;
+            path += `${pathFromRoot}/${routeMetadata.path}`;
           }
-          this.app.setRoute(route.method, path, Controller, method);
+          this.app.setRoute(routeMetadata.method, path, Controller, methodName);
 
           if (this.log.trace()) {
             const msg = {
-              httpMethod: route.method,
+              httpMethod: routeMetadata.method,
               path,
-              handler: `${Controller.name} -> ${method}()`
+              handler: `${Controller.name} -> ${methodName}()`
             };
             this.log.trace(msg);
           }
@@ -120,6 +122,14 @@ export class BootstrapModule {
         }
       }
     });
+  }
+
+  protected checkRoutePath(controllerName: string, path: string) {
+    if (path.charAt(0) == '/') {
+      throw new Error(
+        `Invalid configuration of route '${path}' (in '${controllerName}'): path cannot start with a slash`
+      );
+    }
   }
 
   protected checkSecureServerOption(appModule: AppModuleType) {

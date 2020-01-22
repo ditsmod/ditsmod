@@ -2,7 +2,7 @@ import { Request } from '../../../src/request';
 import { Response } from '../../../src/response';
 import { Controller, Route } from '../../../src/decorators';
 
-@Controller({ path: '/another' })
+@Controller({ path: 'another' })
 export class ParamsController {
   constructor(private req: Request, private res: Response) {}
 
