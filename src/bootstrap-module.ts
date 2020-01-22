@@ -118,7 +118,6 @@ export class BootstrapModule {
             };
             this.log.trace(msg);
           }
-          break;
         }
       }
     });

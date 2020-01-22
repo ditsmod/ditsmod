@@ -7,6 +7,7 @@ import { Controller, Route } from '../../../src/decorators';
 export class HelloWorldController {
   constructor(private req: Request, private res: Response) {}
 
+  @Route('GET', '')
   @Route('GET', 'hello')
   helloWorld() {
     this.res.send('Hello, World!');
