@@ -162,11 +162,8 @@ export interface Http2ServerModule {
   createSecureServer(options: SecureServerOptions, onRequestHandler?: Http2RequestListener): Http2SecureServer;
 }
 
-export type ServerOptions =
-  | http.ServerOptions
-  | https.ServerOptions
-  | http2.ServerOptions
-  | (http2.SecureServerOptions & { http2CreateSecureServer: boolean });
+export type Http2SecureServerOptions = http2.SecureServerOptions & { isHttp2SecureServer: boolean };
+export type ServerOptions = http.ServerOptions | https.ServerOptions | http2.ServerOptions | Http2SecureServerOptions;
 
 export type Server = http.Server | https.Server | Http2Server | Http2SecureServer;
 

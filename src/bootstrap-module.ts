@@ -6,9 +6,10 @@ import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ListenOptions } from 'net';
 
 import { RootModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from './decorators';
-import { Server, ApplicationOptions, Logger, ServerOptions } from './types';
+import { Server, ApplicationOptions, Logger, ServerOptions, Http2SecureServerOptions } from './types';
 import { Application } from './application';
 import { pickProperties } from './utils/pick-properties';
+import { isHttp2SecureServerOptions } from './utils/type-guards';
 
 type ServerModuleType = RootModuleDecorator['serverModule'];
 type AppModuleType = new (...args: any[]) => any;
@@ -132,20 +133,16 @@ export class BootstrapModule {
   }
 
   protected checkSecureServerOption(appModule: AppModuleType) {
-    if (
-      this.serverOptions &&
-      this.serverOptions.http2CreateSecureServer &&
-      !(this.serverModule as typeof http2).createSecureServer
-    ) {
+    const serverOptions = this.serverOptions as Http2SecureServerOptions;
+    if (serverOptions && serverOptions.isHttp2SecureServer && !(this.serverModule as typeof http2).createSecureServer) {
       throw new TypeError(`serverModule.createSecureServer() not found (see ${appModule.name} settings)`);
     }
   }
 
   protected createServer() {
-    if (this.serverOptions.http2CreateSecureServer) {
+    if (isHttp2SecureServerOptions(this.serverOptions)) {
       const serverModule = this.serverModule as typeof http2;
-      const serverOptions = this.serverOptions as http2.SecureServerOptions;
-      this.server = serverModule.createSecureServer(serverOptions, this.app.requestListener);
+      this.server = serverModule.createSecureServer(this.serverOptions, this.app.requestListener);
     } else {
       const serverModule = this.serverModule as typeof http | typeof https;
       const serverOptions = this.serverOptions as http.ServerOptions | https.ServerOptions;
