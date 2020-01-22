@@ -92,29 +92,29 @@ export class BootstrapModule {
       }
       const pathFromRoot = controllerMetadata.path;
       this.checkRoutePath(Controller.name, pathFromRoot);
-      const routeDecoratorMetadata = reflector.propMetadata(Controller) as RouteDecoratorMetadata;
-      for (const methodName in routeDecoratorMetadata) {
-        for (const routeMetadata of routeDecoratorMetadata[methodName]) {
-          if (!routeMetadata.method) {
-            // Here we have another decorator, not @Route().
+      const propMetadata = reflector.propMetadata(Controller) as RouteDecoratorMetadata;
+      for (const prop in propMetadata) {
+        for (const metadata of propMetadata[prop]) {
+          if (!metadata.httpMethod) {
+            // Here we have another decorator, not a @Route().
             continue;
           }
-          this.checkRoutePath(Controller.name, routeMetadata.path);
+          this.checkRoutePath(Controller.name, metadata.path);
           let path = '/';
           if (!pathFromRoot) {
-            path += routeMetadata.path;
-          } else if (!routeMetadata.path) {
+            path += metadata.path;
+          } else if (!metadata.path) {
             path += pathFromRoot;
           } else {
-            path += `${pathFromRoot}/${routeMetadata.path}`;
+            path += `${pathFromRoot}/${metadata.path}`;
           }
-          this.app.setRoute(routeMetadata.method, path, Controller, methodName);
+          this.app.setRoute(metadata.httpMethod, path, Controller, prop);
 
           if (this.log.trace()) {
             const msg = {
-              httpMethod: routeMetadata.method,
+              httpMethod: metadata.httpMethod,
               path,
-              handler: `${Controller.name} -> ${methodName}()`
+              handler: `${Controller.name} -> ${prop}()`
             };
             this.log.trace(msg);
           }

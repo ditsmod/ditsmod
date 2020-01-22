@@ -67,12 +67,12 @@ export interface RouteDecoratorMetadata {
 }
 
 export interface RouteMetadata {
-  method: HttpMethod;
+  httpMethod: HttpMethod;
   path: string;
 }
 
-function route(method: HttpMethod, path: string = ''): RouteMetadata {
-  return { method, path };
+function route(httpMethod: HttpMethod, path: string = ''): RouteMetadata {
+  return { httpMethod, path };
 }
 
 export const Route = makePropDecorator('Route', route) as RouteDecoratorFactory;
