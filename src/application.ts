@@ -45,7 +45,7 @@ export class Application {
    * Init providers per the application.
    */
   protected initProvidersPerApp() {
-    this.providersPerApp = this.options.providersPerApp || [];
+    this.providersPerApp = this.options.providersPerApp.slice() || [];
     this.providersPerApp.unshift(Logger, Router);
     this.injector = ReflectiveInjector.resolveAndCreate(this.providersPerApp);
     this.log = this.injector.get(Logger);
@@ -56,7 +56,7 @@ export class Application {
    * Init providers per the request.
    */
   protected initProvidersPerReq() {
-    this.providersPerReq = this.options.providersPerReq || [];
+    this.providersPerReq = this.options.providersPerReq.slice() || [];
     this.providersPerReq.unshift(Request, Response);
     this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.providersPerReq);
   }

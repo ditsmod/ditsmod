@@ -1,7 +1,15 @@
 import { ListenOptions } from 'net';
-import { makeDecorator, TypeProvider, makePropDecorator, Provider } from 'ts-di';
+import { makeDecorator, TypeProvider, makePropDecorator, Provider, Type } from 'ts-di';
 
-import { HttpServerModule, HttpsServerModule, Http2ServerModule, ServerOptions, HttpMethod, ObjectAny } from './types';
+import {
+  HttpServerModule,
+  HttpsServerModule,
+  Http2ServerModule,
+  ServerOptions,
+  HttpMethod,
+  ObjectAny,
+  ModuleWithProviders
+} from './types';
 
 export interface ModuleDecoratorFactory {
   (data?: ModuleDecorator): any;
@@ -9,6 +17,15 @@ export interface ModuleDecoratorFactory {
 }
 
 export interface ModuleDecorator {
+  /**
+   * List of modules or `ModuleWithProviders` imported by this module.
+   */
+  imports?: Array<Type<any> | ModuleWithProviders<{}> | any[]>;
+  /**
+   * List of modules, `ModuleWithProviders` or providers exported by this
+   * module.
+   */
+  exports?: Array<Type<any> | ModuleWithProviders<{}> | any[]>;
   /**
    * The application controllers.
    */

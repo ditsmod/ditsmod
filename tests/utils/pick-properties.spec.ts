@@ -1,4 +1,4 @@
-import { pickAllPropertiesAsGetters, pickPropertiesAsGetters } from '../src/utils/pick-properties';
+import { pickAllPropertiesAsGetters, pickPropertiesAsGetters } from '../../src/utils/pick-properties';
 
 describe('pickAllPropertiesAsGetters', () => {
   it('signature1: result = pickAllPropertiesAsGetters(targetObj, sourceObj)', () => {

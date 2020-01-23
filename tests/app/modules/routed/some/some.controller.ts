@@ -1,10 +1,10 @@
-import { Request } from '../../../src/request';
-import { Response } from '../../../src/response';
-import { SomeService } from '../services/some.service';
-import { Controller, Route } from '../../../src/decorators';
+import { Request } from '../../../../../src/request';
+import { Response } from '../../../../../src/response';
+import { Controller, Route } from '../../../../../src/decorators';
+import { SomeService } from '../../../services/some.service';
 
 @Controller({ path: 'some-resource' })
-export class SomeServiceController {
+export class SomeController {
   constructor(private req: Request, private res: Response, private someService: SomeService) {}
 
   @Route('GET')

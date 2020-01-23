@@ -173,3 +173,36 @@ export type Server = http.Server | https.Server | Http2Server | Http2SecureServe
 export interface ObjectAny {
   [key: string]: any;
 }
+
+export type ModuleType = new (...args: any[]) => any;
+
+export interface Route {
+  path?: string;
+  controller?: TypeProvider;
+  redirectTo?: string;
+  canActivate?: any[];
+  canActivateChild?: any[];
+  data?: ObjectAny;
+  resolve?: ObjectAny;
+  children?: this[];
+}
+
+export interface ActivatedRoute {
+  routeConfig: Route | null;
+  // url: UrlSegment[];
+  routeParams: ObjectAny;
+  queryParams: ObjectAny;
+  fragment: string;
+  data: ObjectAny;
+  controller: Type<any> | string | null;
+  root: this;
+  parent: this | null;
+  firstChild: this | null;
+  children: this[];
+  pathFromRoot: this[];
+}
+
+export interface ModuleWithProviders<T> {
+  module: Type<T>;
+  providers?: Provider[];
+}
