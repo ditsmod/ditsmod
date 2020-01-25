@@ -23,7 +23,7 @@ export interface ModuleDecorator {
    */
   providersPerMod?: Provider[];
   /**
-   * Providers per the `Request`.
+   * Providers per the request.
    */
   providersPerReq?: Provider[];
   /**
