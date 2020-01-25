@@ -13,7 +13,7 @@ export class AppLogger extends Logger {
   };
 
   debug = (...args: any[]): any => {
-    console.log(...args);
+    console.log('--------------------------------->', ...args);
   };
 
   fatal = (...args: any[]): any => {
