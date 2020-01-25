@@ -20,10 +20,16 @@ import { Response } from './response';
 export class BootstrapModule {
   protected imports: Type<any>[];
   protected exports: Type<any>[];
+  /**
+   * Providers per the module.
+   */
   protected providersPerMod: Provider[];
   protected providersPerReq: Provider[];
   protected controllers: TypeProvider[];
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
+  /**
+   * Injector per the module.
+   */
   protected injectorPerMod: ReflectiveInjector;
 
   constructor(private router: Router, private parentInjectorPerMod: ReflectiveInjector, private log: Logger) {}
@@ -45,6 +51,10 @@ export class BootstrapModule {
     this.controllers = [];
   }
 
+  /**
+   * @todo Fix flatten imports/exports in case with `ModuleWithProviders`,
+   * the providers should be respect.
+   */
   protected extractModuleMetadata(mod: ModuleType) {
     const annotations = reflector.annotations(mod) as ModuleDecorator[];
     const moduleMetadata = annotations[0];
