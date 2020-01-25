@@ -68,7 +68,7 @@ export class BootstrapRootModule {
     this.initProvidersPerApp();
     this.log.trace(moduleMetadata);
     this.checkSecureServerOption(appModule);
-    const bsMod = this.injectorPerApp.get(BootstrapModule) as BootstrapModule;
+    const bsMod = this.injectorPerApp.resolveAndInstantiate(BootstrapModule) as BootstrapModule;
     bsMod.bootstrap(appModule);
   }
 
