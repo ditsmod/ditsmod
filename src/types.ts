@@ -2,7 +2,7 @@ import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
 import { Http2Server, Http2ServerRequest, Http2ServerResponse, Http2SecureServer, SecureServerOptions } from 'http2';
-import { Provider, InjectionToken, Type, TypeProvider } from 'ts-di';
+import { Provider, InjectionToken, Type, TypeProvider, ReflectiveInjector, ResolvedReflectiveProvider } from 'ts-di';
 
 import { Response } from './response';
 
@@ -110,7 +110,21 @@ export type HttpMethod =
   | 'UNLOCK'
   | 'UNSUBSCRIBE';
 
-export type RouteHandler = (res: Response) => any;
+export type RouteHandler = () => {
+  /**
+   * Injector per module.
+   */
+  injector: ReflectiveInjector;
+  /**
+   * Resolved providers per request.
+   */
+  providers: ResolvedReflectiveProvider[];
+  controller: TypeProvider;
+  /**
+   * Method of the class controller.
+   */
+  method: string;
+};
 
 export class Router {
   on(method: HttpMethod, path: string, handle: RouteHandler): this {
@@ -206,3 +220,5 @@ export interface ModuleWithProviders<T> {
   module: Type<T>;
   providers?: Provider[];
 }
+
+export type HttpModule = HttpServerModule | HttpsServerModule | Http2ServerModule;

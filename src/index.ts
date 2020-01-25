@@ -1,4 +1,3 @@
-export { Application } from './application';
 export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './http-status-codes';
 export { Request } from './request';
 export { Response } from './response';

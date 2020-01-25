@@ -1,15 +1,7 @@
 import { ListenOptions } from 'net';
 import { makeDecorator, TypeProvider, makePropDecorator, Provider, Type } from 'ts-di';
 
-import {
-  HttpServerModule,
-  HttpsServerModule,
-  Http2ServerModule,
-  ServerOptions,
-  HttpMethod,
-  ObjectAny,
-  ModuleWithProviders
-} from './types';
+import { ServerOptions, HttpMethod, ObjectAny, ModuleWithProviders, HttpModule } from './types';
 
 export interface ModuleDecoratorFactory {
   (data?: ModuleDecorator): any;
@@ -27,10 +19,6 @@ export interface ModuleDecorator {
    */
   exports?: Array<Type<any> | ModuleWithProviders<{}> | any[]>;
   /**
-   * The application controllers.
-   */
-  controllers?: TypeProvider[];
-  /**
    * Providers per a module.
    */
   providersPerMod?: Provider[];
@@ -38,6 +26,10 @@ export interface ModuleDecorator {
    * Providers per the `Request`.
    */
   providersPerReq?: Provider[];
+  /**
+   * The application controllers.
+   */
+  controllers?: TypeProvider[];
 }
 
 export const Module = makeDecorator('Module', (data: any) => data) as ModuleDecoratorFactory;
@@ -49,7 +41,7 @@ export interface RootModuleDecoratorFactory {
 
 export interface RootModuleDecorator extends ModuleDecorator {
   serverName?: string;
-  serverModule?: HttpServerModule | HttpsServerModule | Http2ServerModule;
+  httpModule?: HttpModule;
   serverOptions?: ServerOptions;
   listenOptions?: ListenOptions;
   /**

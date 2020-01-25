@@ -14,21 +14,6 @@ export class Response {
     protected req: Request
   ) {}
 
-  /**
-   * Called by the `Application` when a route is not found.
-   */
-  sendNotFound() {
-    this.send(Status.NOT_FOUND);
-  }
-
-  /**
-   * Called by the `Application` when a route is found.
-   */
-  callHandler<T extends TypeProvider, K extends keyof T['prototype']>(ClassController: T, methodOfController: K) {
-    const controller = this.req.injector.get(ClassController);
-    controller[methodOfController]();
-  }
-
   send(statusCode: Status, data?: string | Buffer | Uint8Array): void;
   send(data: string | Buffer | Uint8Array): void;
   send(dataOrStatusCode: string | Buffer | Uint8Array | number, data?: string | Buffer | Uint8Array): void {

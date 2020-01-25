@@ -1,34 +1,46 @@
-import { reflector, TypeProvider, ReflectiveInjector, Provider, Type, resolveForwardRef } from 'ts-di';
+import {
+  reflector,
+  TypeProvider,
+  Provider,
+  Type,
+  resolveForwardRef,
+  Injectable,
+  ResolvedReflectiveProvider,
+  ReflectiveInjector
+} from 'ts-di';
 
 import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from './decorators';
-import { Logger, ModuleType, ApplicationOptions, ModuleWithProviders } from './types';
-import { Application } from './application';
-import { pickProperties } from './utils/pick-properties';
+import { Logger, ModuleType, ModuleWithProviders, Router } from './types';
 import { flatten } from './utils/ng-utils';
 import { isModuleWithProviders } from './utils/type-guards';
+import { Request } from './request';
+import { Response } from './response';
 
+@Injectable()
 export class BootstrapModule {
-  app: Application;
-  log: Logger;
-  imports: Type<any>[];
-  exports: Type<any>[];
-  controllers: TypeProvider[];
-  providersPerMod: Provider[];
-  injectorPerMod: ReflectiveInjector;
+  protected imports: Type<any>[];
+  protected exports: Type<any>[];
+  protected providersPerMod: Provider[];
+  protected providersPerReq: Provider[];
+  protected controllers: TypeProvider[];
+  protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
 
-  bootstrap(app: Application, mod: ModuleType) {
-    this.app = app;
-    this.log = app.injector.get(Logger);
-    return new Promise((resolve, reject) => {
-      try {
-        this.setDefaultOptions();
-        const moduleMetadata = this.extractModuleMetadata(mod);
-        const appOptions = pickProperties(new ApplicationOptions(), moduleMetadata);
-        resolve();
-      } catch (err) {
-        reject(err);
-      }
-    });
+  constructor(private router: Router, private parentInjectorPerMod: ReflectiveInjector, private log: Logger) {}
+
+  bootstrap(mod: ModuleType) {
+    this.setModuleDefaultOptions();
+    this.extractModuleMetadata(mod);
+    this.initProvidersPerReq();
+    this.setRoutes();
+    this.importModules();
+  }
+
+  protected setModuleDefaultOptions() {
+    this.imports = [];
+    this.exports = [];
+    this.providersPerMod = [];
+    this.providersPerReq = [];
+    this.controllers = [];
   }
 
   protected extractModuleMetadata(mod: ModuleType) {
@@ -37,14 +49,15 @@ export class BootstrapModule {
     if (!moduleMetadata) {
       throw new Error(`Module build failed: module "${mod.name}" does not have the "@Module()" decorator`);
     }
-    this.imports = flatten(moduleMetadata.imports || this.imports)
+    this.imports = flatten((moduleMetadata.imports || this.imports).slice())
       .map(resolveForwardRef)
       .map(getModule);
-    this.exports = flatten(moduleMetadata.exports || this.exports)
+    this.exports = flatten((moduleMetadata.exports || this.exports).slice())
       .map(resolveForwardRef)
       .map(getModule);
-    this.providersPerMod = moduleMetadata.providersPerMod || this.providersPerMod;
-    this.controllers = moduleMetadata.controllers || this.controllers;
+    this.providersPerMod = (moduleMetadata.providersPerMod || this.providersPerMod).slice();
+    this.providersPerReq = (moduleMetadata.providersPerReq || this.providersPerReq).slice();
+    this.controllers = (moduleMetadata.controllers || this.controllers).slice();
 
     return moduleMetadata;
 
@@ -56,11 +69,20 @@ export class BootstrapModule {
     }
   }
 
-  protected setDefaultOptions() {
-    this.imports = [];
-    this.exports = [];
-    this.providersPerMod = [];
-    this.controllers = [];
+  /**
+   * Init providers per the request.
+   */
+  protected initProvidersPerReq() {
+    this.providersPerReq.unshift(Request, Response);
+    this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.providersPerReq);
+  }
+
+  /**
+   * Inserts new `Provider` at the start of `providersPerReq` array.
+   */
+  protected unshiftProvidersPerReq(...providers: Provider[]) {
+    this.providersPerReq.unshift(...providers);
+    this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.providersPerReq);
   }
 
   protected setRoutes() {
@@ -89,7 +111,16 @@ export class BootstrapModule {
           } else {
             path += `${pathFromRoot}/${metadata.path}`;
           }
-          this.app.setRoute(metadata.httpMethod, path, Controller, prop);
+
+          this.unshiftProvidersPerReq(Controller);
+          const injector = this.parentInjectorPerMod.resolveAndCreateChild(this.providersPerMod);
+
+          this.router.on(metadata.httpMethod, path, () => ({
+            injector,
+            providers: this.resolvedProvidersPerReq,
+            controller: Controller,
+            method: prop
+          }));
 
           if (this.log.trace()) {
             const msg = {
@@ -109,6 +140,14 @@ export class BootstrapModule {
       throw new Error(
         `Invalid configuration of route '${path}' (in '${controllerName}'): path cannot start with a slash`
       );
+    }
+  }
+
+  protected importModules() {
+    for (const imp of this.imports) {
+      const injector = this.parentInjectorPerMod.resolveAndCreateChild(this.providersPerMod);
+      const bsMod = injector.get(BootstrapModule);
+      bsMod.bootstrap(imp);
     }
   }
 }
