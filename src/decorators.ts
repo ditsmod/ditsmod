@@ -40,6 +40,7 @@ export interface RootModuleDecoratorFactory {
 }
 
 export interface RootModuleDecorator extends ModuleDecorator {
+  exports?: never;
   serverName?: string;
   httpModule?: HttpModule;
   serverOptions?: ServerOptions;
