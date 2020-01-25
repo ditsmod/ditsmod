@@ -24,12 +24,14 @@ export class BootstrapModule {
   protected providersPerReq: Provider[];
   protected controllers: TypeProvider[];
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
+  protected injectorPerMod: ReflectiveInjector;
 
   constructor(private router: Router, private parentInjectorPerMod: ReflectiveInjector, private log: Logger) {}
 
   bootstrap(mod: ModuleType) {
     this.setModuleDefaultOptions();
     this.extractModuleMetadata(mod);
+    this.injectorPerMod = this.parentInjectorPerMod.resolveAndCreateChild(this.providersPerMod);
     this.initProvidersPerReq();
     this.setRoutes();
     this.importModules();
@@ -113,10 +115,9 @@ export class BootstrapModule {
           }
 
           this.unshiftProvidersPerReq(Controller);
-          const injector = this.parentInjectorPerMod.resolveAndCreateChild(this.providersPerMod);
 
           this.router.on(metadata.httpMethod, path, () => ({
-            injector,
+            injector: this.injectorPerMod,
             providers: this.resolvedProvidersPerReq,
             controller: Controller,
             method: prop
@@ -145,8 +146,7 @@ export class BootstrapModule {
 
   protected importModules() {
     for (const imp of this.imports) {
-      const injector = this.parentInjectorPerMod.resolveAndCreateChild(this.providersPerMod);
-      const bsMod = injector.get(BootstrapModule);
+      const bsMod = this.injectorPerMod.resolveAndInstantiate(BootstrapModule) as BootstrapModule;
       bsMod.bootstrap(imp);
     }
   }
