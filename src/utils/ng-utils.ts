@@ -6,7 +6,16 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { InjectionToken } from 'ts-di';
+import {
+  InjectionToken,
+  Provider,
+  Type,
+  TypeProvider,
+  ValueProvider,
+  ClassProvider,
+  ExistingProvider,
+  FactoryProvider
+} from 'ts-di';
 
 import { Route } from '../types';
 import { AppRouter } from '../app-router';
@@ -72,3 +81,29 @@ export function provideForRootGuard(router: AppRouter): any {
   }
   return 'guarded';
 }
+
+/**
+ * Flatten and normalize an array of arrays DI Providers
+ */
+export function normalizeProviders(providers: Provider[], arrayOfProviders: Provider[] = []): Array<Provider | false> {
+  providers.forEach(provider => {
+    if (provider instanceof Type) {
+      arrayOfProviders.push({ provide: provider, useClass: provider });
+    } else if (provider && typeof provider == 'object' && (provider as any).provide !== undefined) {
+      arrayOfProviders.push(provider as NormalizedProvider);
+    } else if (provider instanceof Array) {
+      normalizeProviders(provider, arrayOfProviders);
+    } else {
+      throw new Error(`Invalid provider - only instances of Provider and Type are allowed, got: ${provider}`);
+    }
+  });
+
+  return arrayOfProviders;
+}
+
+export interface NormalizedProvider
+  extends TypeProvider,
+    ValueProvider,
+    ClassProvider,
+    ExistingProvider,
+    FactoryProvider {}
