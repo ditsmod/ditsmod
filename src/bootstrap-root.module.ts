@@ -36,6 +36,7 @@ export class BootstrapRootModule {
   protected providersPerApp: Provider[];
   protected injectorPerApp: ReflectiveInjector;
   protected router: Router;
+  protected preReq: PreRequest;
 
   bootstrapRootModule(appModule: ModuleType) {
     return new Promise<Server>((resolve, reject) => {
@@ -106,6 +107,7 @@ export class BootstrapRootModule {
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.providersPerApp);
     this.log = this.injectorPerApp.get(Logger) as Logger;
     this.router = this.injectorPerApp.get(Router);
+    this.preReq = this.injectorPerApp.get(PreRequest) as PreRequest;
   }
 
   protected checkSecureServerOption(appModule: ModuleType) {
@@ -118,11 +120,10 @@ export class BootstrapRootModule {
   protected requestListener: RequestListener = (nodeReq, nodeRes) => {
     nodeRes.setHeader('Server', this.serverName);
     const { method: httpMethod, url } = nodeReq;
-    const preReq = this.injectorPerApp.get(PreRequest) as PreRequest;
-    const [uri, queryString] = preReq.decodeUrl(url).split('?');
+    const [uri, queryString] = this.preReq.decodeUrl(url).split('?');
     const { handle: handleRoute, params: routeParams } = this.router.find(httpMethod as HttpMethod, uri);
     if (!handleRoute) {
-      preReq.sendNotFound(nodeRes);
+      this.preReq.sendNotFound(nodeRes);
       return;
     }
     /**
