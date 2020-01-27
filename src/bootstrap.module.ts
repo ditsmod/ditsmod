@@ -10,16 +10,17 @@ import {
 } from 'ts-di';
 
 import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from './decorators';
-import { Logger, ModuleType, ModuleWithProviders, Router } from './types';
-import { flatten } from './utils/ng-utils';
-import { isModuleWithProviders } from './utils/type-guards';
-import { Request } from './request';
-import { Response } from './response';
+import { Logger, ModuleType, ModuleWithProviders, Router, ModuleMetadata } from './types';
+import { flatten, normalizeProviders } from './utils/ng-utils';
+import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from './utils/type-guards';
+import { pickProperties } from './utils/pick-properties';
+import { defaultProvidersPerReq, defaultProvidersPerApp } from './constants';
 
 @Injectable()
 export class BootstrapModule {
+  protected parent: this;
   protected imports: Type<any>[];
-  protected exports: Type<any>[];
+  protected exports: (Type<any> | Provider)[];
   /**
    * Providers per the module.
    */
@@ -32,15 +33,21 @@ export class BootstrapModule {
    */
   protected injectorPerMod: ReflectiveInjector;
 
-  constructor(private router: Router, private parentInjectorPerMod: ReflectiveInjector, private log: Logger) {}
+  constructor(private router: Router, private injectorPerApp: ReflectiveInjector, private log: Logger) {}
 
-  bootstrap(mod: ModuleType) {
+  bootstrap(mod: ModuleType, parent?: this) {
+    this.parent = parent;
     this.setModuleDefaultOptions();
-    this.extractModuleMetadata(mod);
-    this.injectorPerMod = this.parentInjectorPerMod.resolveAndCreateChild(this.providersPerMod);
+    const moduleMetadata = this.extractModuleMetadata(mod);
+    this.checkMetadata(moduleMetadata, mod.name);
+    Object.assign(this, moduleMetadata);
     this.initProvidersPerReq();
-    this.setRoutes();
     this.importModules();
+    if (this.parent) {
+      this.exportProviders.call(this.parent, mod);
+    }
+    this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.providersPerMod);
+    this.setRoutes();
   }
 
   protected setModuleDefaultOptions() {
@@ -56,22 +63,27 @@ export class BootstrapModule {
    * the providers should be respect.
    */
   protected extractModuleMetadata(mod: ModuleType) {
-    const annotations = reflector.annotations(mod) as ModuleDecorator[];
-    const moduleMetadata = annotations[0];
-    if (!moduleMetadata) {
-      throw new Error(`Module build failed: module "${mod.name}" does not have the "@Module()" decorator`);
+    const moduleMetadata = this.getRawModuleMetadata(mod);
+    if (!isModule(moduleMetadata) && !isRootModule(moduleMetadata)) {
+      return moduleMetadata;
     }
-    this.imports = flatten((moduleMetadata.imports || this.imports).slice())
+    const metadata = pickProperties(new ModuleMetadata(), this as any);
+    /**
+     * This is only used internally and is hidden from the public API.
+     */
+    (metadata as any).ngMetadataName = (moduleMetadata as any).ngMetadataName;
+    metadata.moduleName = mod.name;
+    metadata.imports = flatten((moduleMetadata.imports || metadata.imports).slice())
       .map(resolveForwardRef)
       .map(getModule);
-    this.exports = flatten((moduleMetadata.exports || this.exports).slice())
+    metadata.exports = flatten((moduleMetadata.exports || metadata.exports).slice())
       .map(resolveForwardRef)
       .map(getModule);
-    this.providersPerMod = (moduleMetadata.providersPerMod || this.providersPerMod).slice();
-    this.providersPerReq = (moduleMetadata.providersPerReq || this.providersPerReq).slice();
-    this.controllers = (moduleMetadata.controllers || this.controllers).slice();
+    metadata.providersPerMod = (moduleMetadata.providersPerMod || metadata.providersPerMod).slice();
+    metadata.providersPerReq = (moduleMetadata.providersPerReq || metadata.providersPerReq).slice();
+    metadata.controllers = (moduleMetadata.controllers || metadata.controllers).slice();
 
-    return moduleMetadata;
+    return metadata;
 
     function getModule(value: Type<any> | ModuleWithProviders<{}>): Type<any> {
       if (isModuleWithProviders(value)) {
@@ -81,11 +93,23 @@ export class BootstrapModule {
     }
   }
 
+  protected getRawModuleMetadata(mod: ModuleType) {
+    const annotations = reflector.annotations(mod) as ModuleDecorator[];
+    const moduleMetadata = annotations[0];
+    return moduleMetadata;
+  }
+
+  protected checkMetadata(moduleMetadata: ModuleDecorator, moduleName: string) {
+    if (!isModule(moduleMetadata) && !isRootModule(moduleMetadata)) {
+      throw new Error(`Module build failed: module "${moduleName}" does not have the "@Module()" decorator`);
+    }
+  }
+
   /**
    * Init providers per the request.
    */
   protected initProvidersPerReq() {
-    this.providersPerReq.unshift(Request, Response);
+    this.providersPerReq.unshift(...defaultProvidersPerReq);
     this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.providersPerReq);
   }
 
@@ -97,20 +121,87 @@ export class BootstrapModule {
     this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.providersPerReq);
   }
 
+  protected importModules() {
+    for (const imp of this.imports) {
+      const bsMod = this.injectorPerApp.resolveAndInstantiate(BootstrapModule) as BootstrapModule;
+      bsMod.bootstrap(imp, this);
+    }
+  }
+
+  protected exportProviders(mod: ModuleType, soughtProvider?: string) {
+    const {
+      // prettier, stop formating! :)
+      moduleName,
+      exports: modulesOrProviders,
+      imports,
+      providersPerMod,
+      providersPerReq
+    } = this.extractModuleMetadata(mod);
+    for (const moduleOrProvider of modulesOrProviders) {
+      const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType);
+      if (moduleMetadata) {
+        const reexportedModule = moduleOrProvider as ModuleType;
+        if (imports.includes(reexportedModule)) {
+          this.exportProviders(reexportedModule, reexportedModule.name);
+        } else {
+          throw new Error(`Reexports a module failed: cannot find "${reexportedModule.name}" in imports array`);
+        }
+      } else {
+        const provider = moduleOrProvider as Provider;
+        if (this.hasProvider(provider, providersPerMod)) {
+          if (!defaultProvidersPerApp.includes(provider)) {
+            this.providersPerMod.unshift(provider);
+          }
+
+          // Sought provider is found, search next provider.
+          soughtProvider = '';
+        } else if (this.hasProvider(provider, providersPerReq)) {
+          if (!defaultProvidersPerReq.includes(provider)) {
+            this.providersPerReq.unshift(provider);
+          }
+
+          // Sought provider is found, search next provider.
+          soughtProvider = '';
+        } else {
+          // Try find in imports
+          // this.importsHasProvider(provider, imports);
+        }
+      }
+    }
+
+    /**
+     * Finish recursive search, cannot find the provider.
+     */
+    if (soughtProvider) {
+      throw new Error(
+        `Exports provider failed: "${name}" ` +
+          `should includes in providersPerMod or in providersPerReq, ` +
+          `or in exports array of exported some module (see "${moduleName}")`
+      );
+    }
+  }
+
+  protected hasProvider(candidate: Provider, providers: Provider[]): boolean {
+    const normCandidate = normalizeProviders([candidate])[0];
+    const normProviders = normalizeProviders(providers);
+    return !!normProviders.find(p => p.provide === normCandidate.provide);
+  }
+
   protected setRoutes() {
     this.controllers.forEach(Controller => {
       const controllerMetadata: ControllersDecorator = reflector.annotations(Controller)[0];
-      if (!controllerMetadata) {
+      if (!isController(controllerMetadata)) {
         throw new Error(
-          `Setting routes failed: controller "${Controller.name}" does not have the "@Controller()" decorator`
+          `Setting routes failed: class "${Controller.name}" does not have the "@Controller()" decorator`
         );
       }
       const pathFromRoot = controllerMetadata.path;
+      const providersPerReq = controllerMetadata.providersPerReq;
       this.checkRoutePath(Controller.name, pathFromRoot);
       const propMetadata = reflector.propMetadata(Controller) as RouteDecoratorMetadata;
       for (const prop in propMetadata) {
         for (const metadata of propMetadata[prop]) {
-          if (!metadata.httpMethod) {
+          if (!isRoute(metadata)) {
             // Here we have another decorator, not a @Route().
             continue;
           }
@@ -125,10 +216,14 @@ export class BootstrapModule {
           }
 
           this.unshiftProvidersPerReq(Controller);
+          let resolvedProvidersPerReq: ResolvedReflectiveProvider[] = this.resolvedProvidersPerReq;
+          if (providersPerReq) {
+            resolvedProvidersPerReq = ReflectiveInjector.resolve([...this.providersPerReq, ...providersPerReq]);
+          }
 
           this.router.on(metadata.httpMethod, path, () => ({
             injector: this.injectorPerMod,
-            providers: this.resolvedProvidersPerReq,
+            providers: resolvedProvidersPerReq,
             controller: Controller,
             method: prop
           }));
@@ -151,13 +246,6 @@ export class BootstrapModule {
       throw new Error(
         `Invalid configuration of route '${path}' (in '${controllerName}'): path cannot start with a slash`
       );
-    }
-  }
-
-  protected importModules() {
-    for (const imp of this.imports) {
-      const bsMod = this.injectorPerMod.resolveAndInstantiate(BootstrapModule) as BootstrapModule;
-      bsMod.bootstrap(imp);
     }
   }
 }
