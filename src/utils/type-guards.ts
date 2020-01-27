@@ -2,6 +2,7 @@ import { ClassProvider, ExistingProvider, FactoryProvider, Provider, Type, TypeP
 
 import { normalizeProviders } from './ng-utils';
 import { ServerOptions, Http2SecureServerOptions, ModuleWithProviders } from '../types';
+import { ModuleDecorator, RootModuleDecorator, ControllersDecorator, RouteMetadata } from '../decorators';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
@@ -11,6 +12,22 @@ export function isModuleWithProviders(
   impOrExp: Type<any> | ModuleWithProviders<{}> | any[]
 ): impOrExp is ModuleWithProviders<{}> {
   return (impOrExp as ModuleWithProviders<{}>).module !== undefined;
+}
+
+export function isRootModule(moduleMetadata: RootModuleDecorator): moduleMetadata is RootModuleDecorator {
+  return moduleMetadata && (moduleMetadata as any).ngMetadataName == 'RootModule';
+}
+
+export function isModule(moduleMetadata: ModuleDecorator): moduleMetadata is ModuleDecorator {
+  return moduleMetadata && (moduleMetadata as any).ngMetadataName == 'Module';
+}
+
+export function isController(ctrlMeatada: ControllersDecorator): ctrlMeatada is ControllersDecorator {
+  return ctrlMeatada && (ctrlMeatada as any).ngMetadataName == 'Controller';
+}
+
+export function isRoute(propMeatada: RouteMetadata): propMeatada is RouteMetadata {
+  return propMeatada && (propMeatada as any).ngMetadataName == 'Route';
 }
 
 export function isTypeProvider(provider: Provider): provider is TypeProvider {
