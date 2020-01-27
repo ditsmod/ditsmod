@@ -3,7 +3,7 @@ import * as https from 'https';
 import * as http2 from 'http2';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ListenOptions } from 'net';
-import { Provider, ReflectiveInjector, reflector, ResolvedReflectiveProvider, Injector } from 'ts-di';
+import { Provider, ReflectiveInjector, reflector, ResolvedReflectiveProvider } from 'ts-di';
 
 import { RootModuleDecorator } from './decorators';
 import {
@@ -25,6 +25,7 @@ import { isHttp2SecureServerOptions } from './utils/type-guards';
 import { PreRequest } from './pre-request.service';
 import { Request } from './request';
 import { BootstrapModule } from './bootstrap.module';
+import { defaultProvidersPerApp } from './constants';
 
 export class BootstrapRootModule {
   protected log: Logger;
@@ -100,13 +101,10 @@ export class BootstrapRootModule {
    * Init providers per the application.
    */
   protected initProvidersPerApp() {
-    this.providersPerApp.unshift(Logger, Router, BootstrapModule, PreRequest, {
-      provide: ReflectiveInjector,
-      useExisting: Injector
-    });
+    this.providersPerApp.unshift(...defaultProvidersPerApp);
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.providersPerApp);
     this.log = this.injectorPerApp.get(Logger) as Logger;
-    this.router = this.injectorPerApp.get(Router);
+    this.router = this.injectorPerApp.get(Router) as Router;
     this.preReq = this.injectorPerApp.get(PreRequest) as PreRequest;
   }
 

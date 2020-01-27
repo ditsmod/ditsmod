@@ -4,8 +4,6 @@ import * as http2 from 'http2';
 import { Http2Server, Http2ServerRequest, Http2ServerResponse, Http2SecureServer, SecureServerOptions } from 'http2';
 import { Provider, InjectionToken, Type, TypeProvider, ReflectiveInjector, ResolvedReflectiveProvider } from 'ts-di';
 
-import { Response } from './response';
-
 export type RequestListener = (request: NodeRequest, response: NodeResponse) => void | Promise<void>;
 
 export interface LoggerMethod {
@@ -224,6 +222,7 @@ export interface ModuleWithProviders<T> {
 export type HttpModule = HttpServerModule | HttpsServerModule | Http2ServerModule;
 
 export class ModuleMetadata {
+  moduleName: string;
   imports: Type<any>[] = [];
   exports: (Type<any> | Provider)[] = [];
   providersPerMod: Provider[] = [];
