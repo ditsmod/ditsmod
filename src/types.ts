@@ -222,3 +222,11 @@ export interface ModuleWithProviders<T> {
 }
 
 export type HttpModule = HttpServerModule | HttpsServerModule | Http2ServerModule;
+
+export class ModuleMetadata {
+  imports: Type<any>[] = [];
+  exports: (Type<any> | Provider)[] = [];
+  providersPerMod: Provider[] = [];
+  providersPerReq: Provider[] = [];
+  controllers: TypeProvider[] = [];
+}
