@@ -60,6 +60,10 @@ export interface ControllersDecoratorFactory {
 
 export interface ControllersDecorator {
   path: string;
+  /**
+   * Providers per HTTP request.
+   */
+  providersPerReq?: Provider[];
 }
 
 export const Controller = makeDecorator('Controller', (data: any) => data) as ControllersDecoratorFactory;
