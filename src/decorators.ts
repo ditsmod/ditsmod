@@ -17,7 +17,7 @@ export interface ModuleDecorator {
    * List of modules, `ModuleWithProviders` or providers exported by this
    * module.
    */
-  exports?: Array<Type<any> | ModuleWithProviders<{}> | any[]>;
+  exports?: Array<Type<any> | ModuleWithProviders<{}> | Provider | any[]>;
   /**
    * Providers per a module.
    */
