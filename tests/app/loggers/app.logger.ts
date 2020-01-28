@@ -1,4 +1,4 @@
-import { Logger } from '../../../src/types';
+import { Logger } from '../../../src/types/types';
 
 export class AppLogger extends Logger {
   trace = (...args: any[]): any => {

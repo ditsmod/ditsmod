@@ -1,8 +1,8 @@
 import { ClassProvider, ExistingProvider, FactoryProvider, Provider, Type, TypeProvider, ValueProvider } from 'ts-di';
 
 import { normalizeProviders } from './ng-utils';
-import { ServerOptions, Http2SecureServerOptions, ModuleWithProviders } from '../types';
-import { ModuleDecorator, RootModuleDecorator, ControllersDecorator, RouteMetadata } from '../decorators';
+import { ServerOptions, Http2SecureServerOptions, ModuleWithProviders } from '../types/types';
+import { ModuleDecorator, RootModuleDecorator, ControllersDecorator, RouteMetadata } from '../types/decorators';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;

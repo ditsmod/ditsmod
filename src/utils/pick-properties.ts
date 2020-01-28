@@ -1,4 +1,4 @@
-import { ObjectAny } from '../types';
+import { ObjectAny } from '../types/types';
 
 export function pickProperties<T extends ObjectAny, TT extends T>(targetObject: T, ...sourceObjects: TT[]) {
   sourceObjects.forEach(sourceObj => {

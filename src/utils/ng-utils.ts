@@ -8,7 +8,7 @@
 
 import { InjectionToken, Provider, Type, ValueProvider, ClassProvider, ExistingProvider, FactoryProvider } from 'ts-di';
 
-import { Route } from '../types';
+import { Route } from '../types/types';
 import { AppRouter } from '../app-router';
 
 /**

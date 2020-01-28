@@ -2,7 +2,7 @@ import { Injectable, Inject, Injector } from 'ts-di';
 import { format } from 'util';
 import { ParsedUrlQuery, parse } from 'querystring';
 
-import { NodeRequest, NodeReqToken, RouteParam } from './types';
+import { NodeRequest, NodeReqToken, RouteParam } from './types/types';
 
 @Injectable()
 export class Request {

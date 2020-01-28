@@ -2,7 +2,7 @@ import * as http from 'http';
 import { Worker } from 'worker_threads';
 
 import { Status } from '../src/http-status-codes';
-import { NodeRequest } from '../src/types';
+import { NodeRequest } from '../src/types/types';
 
 describe('Application', () => {
   const port = 8090;

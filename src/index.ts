@@ -15,8 +15,8 @@ export {
   Fn,
   LoggerMethod,
   RedirectStatusCodes
-} from './types';
-export { Module, RootModule, Controller, Route } from './decorators';
+} from './types/types';
+export { Module, RootModule, Controller, Route } from './types/decorators';
 export { BootstrapModule } from './modules/bootstrap.module';
 export { BootstrapRootModule } from './modules/bootstrap-root.module';
 export { pickProperties } from './utils/pick-properties';

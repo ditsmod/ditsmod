@@ -1,4 +1,4 @@
-import { Module } from '../../../../../src/decorators';
+import { Module } from '../../../../../src/types/decorators';
 import { SomeController } from './some.controller';
 import { SomeService } from '../../../services/some.service';
 import { OtherModule } from './other.module';

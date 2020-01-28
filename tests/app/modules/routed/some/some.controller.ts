@@ -1,6 +1,6 @@
 import { Request } from '../../../../../src/request';
 import { Response } from '../../../../../src/response';
-import { Controller, Route } from '../../../../../src/decorators';
+import { Controller, Route } from '../../../../../src/types/decorators';
 import { SomeService } from '../../../services/some.service';
 
 @Controller({ path: 'some-resource' })

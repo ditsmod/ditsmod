@@ -2,7 +2,7 @@ import * as util from 'util';
 import * as http from 'http';
 import { Injectable, Inject, TypeProvider } from 'ts-di';
 
-import { NodeRequest, NodeResponse, NodeReqToken, NodeResToken, RedirectStatusCodes } from './types';
+import { NodeRequest, NodeResponse, NodeReqToken, NodeResToken, RedirectStatusCodes } from './types/types';
 import { Request } from './request';
 import { Status, getStatusText, isSuccess } from './http-status-codes';
 

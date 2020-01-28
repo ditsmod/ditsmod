@@ -1,4 +1,4 @@
-import { Module } from '../../../../../src/decorators';
+import { Module } from '../../../../../src/types/decorators';
 import { SomeService } from '../../../services/some.service';
 
 @Module({

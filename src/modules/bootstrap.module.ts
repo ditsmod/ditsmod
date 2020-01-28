@@ -9,8 +9,8 @@ import {
   ReflectiveInjector
 } from 'ts-di';
 
-import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from '../decorators';
-import { Logger, ModuleType, ModuleWithProviders, Router, ModuleMetadata } from '../types';
+import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from '../types/decorators';
+import { Logger, ModuleType, ModuleWithProviders, Router, ModuleMetadata } from '../types/types';
 import { flatten, normalizeProviders } from '../utils/ng-utils';
 import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from '../utils/type-guards';
 import { pickProperties } from '../utils/pick-properties';
