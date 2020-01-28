@@ -22,7 +22,7 @@ import {
   HttpMethod
 } from '../types/types';
 import { isHttp2SecureServerOptions } from '../utils/type-guards';
-import { PreRequest } from '../pre-request.service';
+import { PreRequest } from '../services/pre-request.service';
 import { Request } from '../request';
 import { BootstrapModule } from './bootstrap.module';
 import { defaultProvidersPerApp } from '../constants';
