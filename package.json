@@ -3,7 +3,7 @@
   "name": "@restify-ts/core",
   "homepage": "https://github.com/restify-ts/core",
   "description": "REST framework",
-  "version": "0.0.0-alpha.17",
+  "version": "0.0.0-alpha.18",
   "repository": {
     "type": "git",
     "url": "git://github.com/restify-ts/core.git"
@@ -19,11 +19,11 @@
     "test": "rimraf dist-tests/* && tsc -p tests && jasmine"
   },
   "dependencies": {
+    "@restify-ts/router": "^0.0.0-alpha.1",
     "assert-plus": "^1.0.0",
     "ts-di": "^2.2.0"
   },
   "devDependencies": {
-    "@restify-ts/router": "^0.0.0-alpha.1",
     "@types/assert-plus": "^1.0.4",
     "@types/jasmine": "^3.5.0",
     "@types/node": "^13.1.4",

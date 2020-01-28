@@ -105,7 +105,7 @@ export class BootstrapModule {
   }
 
   protected getRawModuleMetadata(mod: ModuleType) {
-    return reflector.annotations(mod).find(m => isModule(m)) as ModuleDecorator;
+    return reflector.annotations(mod).find(m => isModule(m) || isRootModule(m)) as ModuleDecorator;
   }
 
   protected checkMetadata(moduleMetadata: ModuleDecorator, moduleName: string) {

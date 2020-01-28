@@ -1,4 +1,5 @@
 import { ReflectiveInjector, Provider, Injector, forwardRef } from 'ts-di';
+import { Router as RestifyRouter } from '@restify-ts/router';
 
 import { Logger, Router } from './types/types';
 import { BootstrapModule } from './modules/bootstrap.module';
@@ -8,7 +9,7 @@ import { Response } from './response';
 
 export const defaultProvidersPerApp: Provider[] = [
   Logger,
-  Router,
+  { provide: Router, useClass: RestifyRouter },
   forwardRef(() => BootstrapModule),
   PreRequest,
   {

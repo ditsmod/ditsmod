@@ -7,3 +7,5 @@ spec
 tslint.json
 .prettierrc
 *.tgz
+*.log
+yarn.lock
