@@ -18,7 +18,6 @@ import { defaultProvidersPerReq, defaultProvidersPerApp } from './constants';
 
 @Injectable()
 export class BootstrapModule {
-  protected parent: this;
   protected imports: Type<any>[];
   protected exports: (Type<any> | Provider)[];
   /**
@@ -35,16 +34,28 @@ export class BootstrapModule {
 
   constructor(private router: Router, private injectorPerApp: ReflectiveInjector, private log: Logger) {}
 
+  /**
+   * Bootstraps a module.
+   *
+   * @param mod Module that will bootstrapped.
+   * @param parent It's module that imported our module.
+   */
   bootstrap(mod: ModuleType, parent?: this) {
-    this.parent = parent;
     this.setModuleDefaultOptions();
     const moduleMetadata = this.extractModuleMetadata(mod);
     this.checkMetadata(moduleMetadata, mod.name);
     Object.assign(this, moduleMetadata);
     this.initProvidersPerReq();
     this.importModules();
-    if (this.parent) {
-      this.exportProviders.call(this.parent, mod);
+    /**
+     * If we exported providers from our module,
+     * this only make sense for the module that will import our module.
+     *
+     * Here "parent" it's module that imported our module,
+     * so we should call `exportProviders()` method in its context.
+     */
+    if (parent) {
+      this.exportProviders.call(parent, mod);
     }
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.providersPerMod);
     this.setRoutes();
@@ -128,9 +139,13 @@ export class BootstrapModule {
     }
   }
 
-  protected exportProviders(mod: ModuleType, soughtProvider?: string) {
+  /**
+   * Called in the context of the module that imports the current module.
+   *
+   * @param mod Module from where exports providers.
+   */
+  protected exportProviders(mod: ModuleType) {
     const {
-      // prettier, stop formating! :)
       moduleName,
       exports: modulesOrProviders,
       imports,
@@ -139,45 +154,43 @@ export class BootstrapModule {
     } = this.extractModuleMetadata(mod);
     for (const moduleOrProvider of modulesOrProviders) {
       const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType);
-      if (moduleMetadata) {
+      if (isModule(moduleMetadata)) {
         const reexportedModule = moduleOrProvider as ModuleType;
         if (imports.includes(reexportedModule)) {
-          this.exportProviders(reexportedModule, reexportedModule.name);
+          this.exportProviders(reexportedModule);
         } else {
-          throw new Error(`Reexports a module failed: cannot find "${reexportedModule.name}" in imports array`);
+          throw new Error(`Reexports a module failed: cannot find ${reexportedModule.name} in "imports" array`);
         }
       } else {
+        let isFoundProvider = false;
         const provider = moduleOrProvider as Provider;
         if (this.hasProvider(provider, providersPerMod)) {
           if (!defaultProvidersPerApp.includes(provider)) {
             this.providersPerMod.unshift(provider);
           }
-
-          // Sought provider is found, search next provider.
-          soughtProvider = '';
+          isFoundProvider = true;
         } else if (this.hasProvider(provider, providersPerReq)) {
           if (!defaultProvidersPerReq.includes(provider)) {
             this.providersPerReq.unshift(provider);
           }
-
-          // Sought provider is found, search next provider.
-          soughtProvider = '';
+          isFoundProvider = true;
         } else {
           // Try find in imports
-          // this.importsHasProvider(provider, imports);
         }
-      }
-    }
 
-    /**
-     * Finish recursive search, cannot find the provider.
-     */
-    if (soughtProvider) {
-      throw new Error(
-        `Exports provider failed: "${name}" ` +
-          `should includes in providersPerMod or in providersPerReq, ` +
-          `or in exports array of exported some module (see "${moduleName}")`
-      );
+        /**
+         * Finish recursive search, cannot find the provider.
+         */
+        if (!isFoundProvider) {
+          const normProvider = normalizeProviders([provider])[0];
+          throw new Error(
+            `Exported ${normProvider.provide.name} from ${moduleName} ` +
+              `should includes in "providersPerMod" or "providersPerReq", ` +
+              `or in "exports" of imported some module.`
+          );
+        }
+        return true;
+      }
     }
   }
 

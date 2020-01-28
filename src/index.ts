@@ -17,7 +17,7 @@ export {
   LoggerMethod,
   RedirectStatusCodes
 } from './types';
-export { Module } from './decorators';
+export { Module, RootModule, Controller, Route } from './decorators';
 export { BootstrapModule } from './bootstrap.module';
 export { BootstrapRootModule } from './bootstrap-root.module';
 export { pickProperties } from './utils/pick-properties';

@@ -1,0 +1,9 @@
+.gitignore
+tests
+docs
+src
+dist-tests
+spec
+tslint.json
+.prettierrc
+*.tgz

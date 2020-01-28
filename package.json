@@ -3,7 +3,7 @@
   "name": "@restify-ts/core",
   "homepage": "https://github.com/restify-ts/core",
   "description": "REST framework",
-  "version": "0.0.0-alpha.0",
+  "version": "0.0.0-alpha.17",
   "repository": {
     "type": "git",
     "url": "git://github.com/restify-ts/core.git"
@@ -14,6 +14,7 @@
     "lib": "src"
   },
   "scripts": {
+    "transpile": "rimraf dist && tsc",
     "start": "rimraf dist-tests && tsc -p tests && node dist-tests/tests/main.js",
     "test": "rimraf dist-tests && tsc -p tests && jasmine"
   },

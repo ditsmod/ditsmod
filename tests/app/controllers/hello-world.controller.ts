@@ -2,6 +2,7 @@ import { Request } from '../../../src/request';
 import { Response } from '../../../src/response';
 import { Status } from '../../../src/http-status-codes';
 import { Controller, Route } from '../../../src/decorators';
+import { SomeService } from '../services/some.service';
 
 @Controller({ path: '' })
 export class HelloWorldController {
