@@ -164,13 +164,22 @@ export class BootstrapModule {
       } else {
         let isFoundProvider = false;
         const provider = moduleOrProvider as Provider;
+        const providerName = normalizeProviders([provider])[0].provide.name;
         if (this.hasProvider(provider, providersPerMod)) {
-          if (!defaultProvidersPerApp.includes(provider)) {
+          if (defaultProvidersPerApp.includes(provider)) {
+            this.log.warn(
+              `You cannot export ${providerName} from ${moduleName}, it's providers on an Application level`
+            );
+          } else {
             this.providersPerMod.unshift(provider);
           }
           isFoundProvider = true;
         } else if (this.hasProvider(provider, providersPerReq)) {
-          if (!defaultProvidersPerReq.includes(provider)) {
+          if (defaultProvidersPerReq.includes(provider)) {
+            this.log.warn(
+              `You cannot export ${providerName} from ${moduleName}, it's providers on an Application level`
+            );
+          } else {
             this.providersPerReq.unshift(provider);
           }
           isFoundProvider = true;
@@ -182,9 +191,8 @@ export class BootstrapModule {
          * Finish recursive search, cannot find the provider.
          */
         if (!isFoundProvider) {
-          const normProvider = normalizeProviders([provider])[0];
           throw new Error(
-            `Exported ${normProvider.provide.name} from ${moduleName} ` +
+            `Exported ${providerName} from ${moduleName} ` +
               `should includes in "providersPerMod" or "providersPerReq", ` +
               `or in "exports" of imported some module.`
           );
