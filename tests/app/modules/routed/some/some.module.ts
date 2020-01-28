@@ -5,7 +5,7 @@ import { OtherModule } from './other.module';
 
 @Module({
   imports: [OtherModule],
-  exports: [SomeService],
+  exports: [OtherModule],
   providersPerMod: [],
   providersPerReq: [],
   controllers: [SomeController]

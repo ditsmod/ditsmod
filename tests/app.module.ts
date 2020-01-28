@@ -8,8 +8,8 @@ import { Logger, Router } from '../src/types';
 import { SomeModule } from './app/modules/routed/some/some.module';
 
 @RootModule({
-  imports: [],
-  controllers: [HelloWorldController],
+  imports: [SomeModule],
+  controllers: [HelloWorldController, ParamsController],
   providersPerApp: [
     { provide: Logger, useClass: AppLogger },
     { provide: Router, useClass: RestifyRouter }
