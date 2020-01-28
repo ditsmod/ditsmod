@@ -2,4 +2,4 @@
 
 It's alpha version of `@restify-ts/core`. Work in progress.
 
-See also documentation in [English](./docs/en/step-by-step.md) or [Ukrainian](./docs/uk/step-by-step.md).
+See also [seed for @restify-ts/core project](https://github.com/restify-ts/seed).
