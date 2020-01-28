@@ -5,7 +5,7 @@ import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ListenOptions } from 'net';
 import { Provider, ReflectiveInjector, reflector, ResolvedReflectiveProvider } from 'ts-di';
 
-import { RootModuleDecorator } from './decorators';
+import { RootModuleDecorator } from '../decorators';
 import {
   Server,
   Logger,
@@ -20,12 +20,12 @@ import {
   NodeReqToken,
   NodeResToken,
   HttpMethod
-} from './types';
-import { isHttp2SecureServerOptions } from './utils/type-guards';
-import { PreRequest } from './pre-request.service';
-import { Request } from './request';
+} from '../types';
+import { isHttp2SecureServerOptions } from '../utils/type-guards';
+import { PreRequest } from '../pre-request.service';
+import { Request } from '../request';
 import { BootstrapModule } from './bootstrap.module';
-import { defaultProvidersPerApp } from './constants';
+import { defaultProvidersPerApp } from '../constants';
 
 export class BootstrapRootModule {
   protected log: Logger;

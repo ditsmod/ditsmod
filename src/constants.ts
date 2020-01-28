@@ -1,7 +1,7 @@
 import { ReflectiveInjector, Provider, Injector, forwardRef } from 'ts-di';
 
 import { Logger, Router } from './types';
-import { BootstrapModule } from './bootstrap.module';
+import { BootstrapModule } from './modules/bootstrap.module';
 import { PreRequest } from './pre-request.service';
 import { Request } from './request';
 import { Response } from './response';

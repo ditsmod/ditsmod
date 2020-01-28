@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { AppModule } from './app.module';
-import { BootstrapRootModule } from '../src/bootstrap-root.module';
+import { BootstrapRootModule } from '../src/modules/bootstrap-root.module';
 
 new BootstrapRootModule()
   .bootstrapRootModule(AppModule)

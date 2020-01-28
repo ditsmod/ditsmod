@@ -1,8 +1,8 @@
 import { Injectable, Optional, SkipSelf } from 'ts-di';
 
-import { provideRoutes, ROUTER_FORROOT_GUARD, provideForRootGuard } from './utils/ng-utils';
-import { Route, ModuleWithProviders } from './types';
-import { AppRouter } from './app-router';
+import { provideRoutes, ROUTER_FORROOT_GUARD, provideForRootGuard } from '../utils/ng-utils';
+import { Route, ModuleWithProviders } from '../types';
+import { AppRouter } from '../app-router';
 
 @Injectable()
 export class AppRouterModule {

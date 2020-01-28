@@ -18,6 +18,6 @@ export {
   RedirectStatusCodes
 } from './types';
 export { Module, RootModule, Controller, Route } from './decorators';
-export { BootstrapModule } from './bootstrap.module';
-export { BootstrapRootModule } from './bootstrap-root.module';
+export { BootstrapModule } from './modules/bootstrap.module';
+export { BootstrapRootModule } from './modules/bootstrap-root.module';
 export { pickProperties } from './utils/pick-properties';

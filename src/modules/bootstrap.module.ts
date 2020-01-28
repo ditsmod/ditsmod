@@ -9,12 +9,12 @@ import {
   ReflectiveInjector
 } from 'ts-di';
 
-import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from './decorators';
-import { Logger, ModuleType, ModuleWithProviders, Router, ModuleMetadata } from './types';
-import { flatten, normalizeProviders } from './utils/ng-utils';
-import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from './utils/type-guards';
-import { pickProperties } from './utils/pick-properties';
-import { defaultProvidersPerReq, defaultProvidersPerApp } from './constants';
+import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from '../decorators';
+import { Logger, ModuleType, ModuleWithProviders, Router, ModuleMetadata } from '../types';
+import { flatten, normalizeProviders } from '../utils/ng-utils';
+import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from '../utils/type-guards';
+import { pickProperties } from '../utils/pick-properties';
+import { defaultProvidersPerReq, defaultProvidersPerApp } from '../constants';
 
 @Injectable()
 export class BootstrapModule {
