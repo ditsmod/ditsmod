@@ -52,18 +52,6 @@ export class Logger {
   fatal: LoggerMethod = (...args: any[]): any => {};
 }
 
-export class ApplicationOptions {
-  serverName?: string = '';
-  /**
-   * Providers of services for Dependecy Injection per an application.
-   */
-  providersPerApp?: Provider[] = [];
-  /**
-   * Providers of services for Dependecy Injection per a request.
-   */
-  providersPerReq?: Provider[] = [];
-}
-
 export type NodeRequest = http.IncomingMessage | Http2ServerRequest;
 export type NodeResponse = http.ServerResponse | Http2ServerResponse;
 export const NodeReqToken = new InjectionToken<NodeRequest>('NodeRequest');

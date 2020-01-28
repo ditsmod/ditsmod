@@ -2,7 +2,6 @@ export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './http-statu
 export { Request } from './request';
 export { Response } from './response';
 export {
-  ApplicationOptions,
   HttpMethod,
   Logger,
   NodeRequest,
