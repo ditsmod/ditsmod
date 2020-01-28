@@ -105,9 +105,7 @@ export class BootstrapModule {
   }
 
   protected getRawModuleMetadata(mod: ModuleType) {
-    const annotations = reflector.annotations(mod) as ModuleDecorator[];
-    const moduleMetadata = annotations[0];
-    return moduleMetadata;
+    return reflector.annotations(mod).find(m => isModule(m)) as ModuleDecorator;
   }
 
   protected checkMetadata(moduleMetadata: ModuleDecorator, moduleName: string) {
@@ -210,8 +208,8 @@ export class BootstrapModule {
 
   protected setRoutes() {
     this.controllers.forEach(Controller => {
-      const controllerMetadata: ControllersDecorator = reflector.annotations(Controller)[0];
-      if (!isController(controllerMetadata)) {
+      const controllerMetadata = reflector.annotations(Controller).find(c => isController(c)) as ControllersDecorator;
+      if (!controllerMetadata) {
         throw new Error(
           `Setting routes failed: class "${Controller.name}" does not have the "@Controller()" decorator`
         );
@@ -221,19 +219,16 @@ export class BootstrapModule {
       this.checkRoutePath(Controller.name, pathFromRoot);
       const propMetadata = reflector.propMetadata(Controller) as RouteDecoratorMetadata;
       for (const prop in propMetadata) {
-        for (const metadata of propMetadata[prop]) {
-          if (!isRoute(metadata)) {
-            // Here we have another decorator, not a @Route().
-            continue;
-          }
-          this.checkRoutePath(Controller.name, metadata.path);
+        const routes = propMetadata[prop].filter(p => isRoute(p));
+        for (const route of routes) {
+          this.checkRoutePath(Controller.name, route.path);
           let path = '/';
           if (!pathFromRoot) {
-            path += metadata.path;
-          } else if (!metadata.path) {
+            path += route.path;
+          } else if (!route.path) {
             path += pathFromRoot;
           } else {
-            path += `${pathFromRoot}/${metadata.path}`;
+            path += `${pathFromRoot}/${route.path}`;
           }
 
           this.unshiftProvidersPerReq(Controller);
@@ -242,7 +237,7 @@ export class BootstrapModule {
             resolvedProvidersPerReq = ReflectiveInjector.resolve([...this.providersPerReq, ...providersPerReq]);
           }
 
-          this.router.on(metadata.httpMethod, path, () => ({
+          this.router.on(route.httpMethod, path, () => ({
             injector: this.injectorPerMod,
             providers: resolvedProvidersPerReq,
             controller: Controller,
@@ -251,7 +246,7 @@ export class BootstrapModule {
 
           if (this.log.trace()) {
             const msg = {
-              httpMethod: metadata.httpMethod,
+              httpMethod: route.httpMethod,
               path,
               handler: `${Controller.name} -> ${prop}()`
             };

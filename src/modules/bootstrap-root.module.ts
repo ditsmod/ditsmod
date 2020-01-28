@@ -21,7 +21,7 @@ import {
   NodeResToken,
   HttpMethod
 } from '../types/types';
-import { isHttp2SecureServerOptions } from '../utils/type-guards';
+import { isHttp2SecureServerOptions, isRootModule } from '../utils/type-guards';
 import { PreRequest } from '../services/pre-request.service';
 import { Request } from '../request';
 import { BootstrapModule } from './bootstrap.module';
@@ -82,9 +82,8 @@ export class BootstrapRootModule {
     this.providersPerApp = [];
   }
 
-  protected extractModuleMetadata(appModule: ModuleType) {
-    const annotations = reflector.annotations(appModule) as RootModuleDecorator[];
-    const moduleMetadata = annotations[0];
+  protected extractModuleMetadata(appModule: ModuleType): RootModuleDecorator {
+    const moduleMetadata = reflector.annotations(appModule).find(m => isRootModule(m)) as RootModuleDecorator;
     if (!moduleMetadata) {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
