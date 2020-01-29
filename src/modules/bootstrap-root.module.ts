@@ -52,7 +52,8 @@ export class BootstrapRootModule {
 
         this.server.listen(this.listenOptions, () => {
           resolve(this.server);
-          this.log.info(`${this.serverName} is running at ${this.listenOptions.host}:${this.listenOptions.port}`);
+          const host = this.listenOptions.host || 'localhost';
+          this.log.info(`${this.serverName} is running at ${host}:${this.listenOptions.port}`);
 
           if (!isMainThread) {
             parentPort.postMessage('Runing worker!');
