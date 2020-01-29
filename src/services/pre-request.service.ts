@@ -1,5 +1,4 @@
 import { Injectable } from 'ts-di';
-import { parse } from 'querystring';
 
 import { NodeResponse } from '../types/types';
 import { Status } from '../http-status-codes';

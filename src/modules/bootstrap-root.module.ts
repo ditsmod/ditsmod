@@ -3,9 +3,9 @@ import * as https from 'https';
 import * as http2 from 'http2';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ListenOptions } from 'net';
-import { Provider, ReflectiveInjector, reflector, ResolvedReflectiveProvider } from 'ts-di';
+import { Provider, ReflectiveInjector, reflector } from 'ts-di';
 
-import { RootModuleDecorator } from '../types/decorators';
+import { RootModuleDecorator, RootModule } from '../types/decorators';
 import {
   Server,
   Logger,
@@ -15,17 +15,16 @@ import {
   HttpModule,
   Router,
   RequestListener,
-  NodeRequest,
-  NodeResponse,
   NodeReqToken,
   NodeResToken,
-  HttpMethod
+  HttpMethod,
+  ApplicationMetadata
 } from '../types/types';
 import { isHttp2SecureServerOptions, isRootModule } from '../utils/type-guards';
 import { PreRequest } from '../services/pre-request.service';
 import { Request } from '../request';
 import { BootstrapModule } from './bootstrap.module';
-import { defaultProvidersPerApp } from '../constants';
+import { pickProperties } from '../utils/pick-properties';
 
 export class BootstrapRootModule {
   protected log: Logger;
@@ -65,42 +64,43 @@ export class BootstrapRootModule {
   }
 
   protected prepareServerOptions(appModule: ModuleType) {
-    this.setModuleDefaultOptions();
-    const moduleMetadata = this.extractModuleMetadata(appModule);
+    const appMetadata = this.mergeMetadata(appModule);
+    pickProperties(this as any, appMetadata);
+    this.log.trace('Setting server name:', this.serverName);
+    this.log.trace('Setting listen options:', this.listenOptions);
     this.initProvidersPerApp();
-    this.log.trace(moduleMetadata);
     this.checkSecureServerOption(appModule);
     const bsMod = this.injectorPerApp.resolveAndInstantiate(BootstrapModule) as BootstrapModule;
     bsMod.bootstrap(appModule);
   }
 
-  protected setModuleDefaultOptions() {
-    this.serverName = 'restify-ts';
-    this.httpModule = http as HttpModule;
-    this.serverOptions = {} as ServerOptions;
-    this.listenOptions = { port: 8080, host: 'localhost' };
-    this.providersPerApp = [];
+  /**
+   * Merge AppModule metadata with default ApplicationMetadata.
+   */
+  protected mergeMetadata(appModule: ModuleType): RootModuleDecorator {
+    const appMetadata = this.getAppModuleMetadata(appModule);
+    if (!appMetadata) {
+      throw new Error(
+        `Module build failed: module "${appModule.name}" does not have the "@${RootModule.name}()" decorator`
+      );
+    }
+
+    // Setting default metadata.
+    const metadata = new ApplicationMetadata();
+
+    Object.assign(metadata, appMetadata);
+    metadata.providersPerApp = (appMetadata.providersPerApp || metadata.providersPerApp).slice();
+    return metadata;
   }
 
-  protected extractModuleMetadata(appModule: ModuleType): RootModuleDecorator {
-    const moduleMetadata = reflector.annotations(appModule).find(m => isRootModule(m)) as RootModuleDecorator;
-    if (!moduleMetadata) {
-      throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
-    }
-    this.httpModule = moduleMetadata.httpModule || this.httpModule;
-    this.serverOptions = moduleMetadata.serverOptions || this.serverOptions;
-    this.serverOptions = { ...this.serverOptions };
-    this.listenOptions = moduleMetadata.listenOptions || this.listenOptions;
-    this.listenOptions = { ...this.listenOptions };
-    this.providersPerApp = (moduleMetadata.providersPerApp || []).slice();
-    return moduleMetadata;
+  protected getAppModuleMetadata(appModule: ModuleType): RootModuleDecorator {
+    return reflector.annotations(appModule).find(m => isRootModule(m));
   }
 
   /**
    * Init providers per the application.
    */
   protected initProvidersPerApp() {
-    this.providersPerApp.unshift(...defaultProvidersPerApp);
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.providersPerApp);
     this.log = this.injectorPerApp.get(Logger) as Logger;
     this.router = this.injectorPerApp.get(Router) as Router;
@@ -129,30 +129,20 @@ export class BootstrapRootModule {
      * @param method Method of the class controller.
      */
     const { injector, providers, controller, method } = handleRoute();
-    const req = this.createReq(nodeReq, nodeRes, injector, providers);
-    req.queryParams = req.parseQueryString(queryString);
-    req.routeParams = routeParams;
-    const ctrl = req.injector.get(controller);
-    ctrl[method]();
-  };
-
-  /**
-   * @param injector Injector per a module.
-   * @param providers Providers per request.
-   */
-  protected createReq(
-    nodeReq: NodeRequest,
-    nodeRes: NodeResponse,
-    injector: ReflectiveInjector,
-    providers: ResolvedReflectiveProvider[]
-  ) {
-    const injector1 = injector.resolveAndCreateChild([
+    const inj1 = injector.resolveAndCreateChild([
       { provide: NodeReqToken, useValue: nodeReq },
       { provide: NodeResToken, useValue: nodeRes }
     ]);
-    const injector2 = injector1.createChildFromResolved(providers);
-    return injector2.get(Request) as Request;
-  }
+    const inj2 = inj1.createChildFromResolved(providers);
+    const req = inj2.get(Request) as Request;
+    req.queryParams = req.parseQueryString(queryString);
+    req.routeParams = routeParams;
+    const ctrl = req.injector.get(controller);
+    /**
+     * @todo Delegate this call to `Request` class.
+     */
+    ctrl[method]();
+  };
 
   protected createServer() {
     if (isHttp2SecureServerOptions(this.serverOptions)) {
