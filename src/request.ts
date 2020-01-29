@@ -1,4 +1,4 @@
-import { Injectable, Inject, Injector } from 'ts-di';
+import { Injectable, Inject, Injector, TypeProvider } from 'ts-di';
 import { format } from 'util';
 import { ParsedUrlQuery, parse } from 'querystring';
 
@@ -18,11 +18,14 @@ export class Request {
   /**
    * Called by the `BootstrapModule` after founded a route.
    *
-   * In inherited class you can to use standart `querystring.parse(qs: string)` method.
-   * See inheritance in the docs.
+   * @param controller Controller class.
+   * @param method Method of the Controller.
    */
-  parseQueryString(qs: string) {
-    return parse(qs);
+  handleRoute(controller: TypeProvider, method: string, routeParams: RouteParam[], queryString: string) {
+    this.routeParams = routeParams;
+    this.queryParams = parse(queryString);
+    const ctrl = this.injector.get(controller);
+    ctrl[method]();
   }
 
   /**

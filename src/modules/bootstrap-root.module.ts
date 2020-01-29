@@ -135,13 +135,7 @@ export class BootstrapRootModule {
     ]);
     const inj2 = inj1.createChildFromResolved(providers);
     const req = inj2.get(Request) as Request;
-    req.queryParams = req.parseQueryString(queryString);
-    req.routeParams = routeParams;
-    const ctrl = req.injector.get(controller);
-    /**
-     * @todo Delegate this call to `Request` class.
-     */
-    ctrl[method]();
+    req.handleRoute(controller, method, routeParams, queryString);
   };
 
   protected createServer() {
