@@ -1,10 +1,8 @@
 import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
-import { ListenOptions } from 'net';
 import { Http2Server, Http2ServerRequest, Http2ServerResponse, Http2SecureServer, SecureServerOptions } from 'http2';
 import { Provider, InjectionToken, Type, TypeProvider, ReflectiveInjector, ResolvedReflectiveProvider } from 'ts-di';
-import { defaultProvidersPerApp, defaultProvidersPerReq } from '../constants';
 
 export type RequestListener = (request: NodeRequest, response: NodeResponse) => void | Promise<void>;
 
@@ -210,20 +208,3 @@ export interface ModuleWithProviders<T> {
 }
 
 export type HttpModule = HttpServerModule | HttpsServerModule | Http2ServerModule;
-
-export class ModuleMetadata {
-  moduleName: string;
-  imports: Type<any>[] = [];
-  exports: (Type<any> | Provider)[] = [];
-  providersPerMod: Provider[] = [];
-  providersPerReq: Provider[] = defaultProvidersPerReq;
-  controllers: TypeProvider[] = [];
-}
-
-export class ApplicationMetadata {
-  serverName?: string = 'restify-ts';
-  httpModule?: HttpModule = http;
-  serverOptions?: ServerOptions = {};
-  listenOptions?: ListenOptions = { host: 'localhost', port: 8080 };
-  providersPerApp?: Provider[] = defaultProvidersPerApp;
-}

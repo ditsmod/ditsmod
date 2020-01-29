@@ -5,7 +5,7 @@ import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ListenOptions } from 'net';
 import { Provider, ReflectiveInjector, reflector } from 'ts-di';
 
-import { RootModuleDecorator, RootModule } from '../types/decorators';
+import { RootModuleDecorator } from '../types/decorators';
 import {
   Server,
   Logger,
@@ -17,14 +17,15 @@ import {
   RequestListener,
   NodeReqToken,
   NodeResToken,
-  HttpMethod,
-  ApplicationMetadata
+  HttpMethod
 } from '../types/types';
 import { isHttp2SecureServerOptions, isRootModule } from '../utils/type-guards';
 import { PreRequest } from '../services/pre-request.service';
 import { Request } from '../request';
 import { BootstrapModule } from './bootstrap.module';
 import { pickProperties } from '../utils/pick-properties';
+import { ApplicationMetadata } from '../types/default-options';
+import { mergeOpts } from '../utils/merge-arrays-options';
 
 export class BootstrapRootModule {
   protected log: Logger;
@@ -65,10 +66,10 @@ export class BootstrapRootModule {
 
   protected prepareServerOptions(appModule: ModuleType) {
     const appMetadata = this.mergeMetadata(appModule);
-    pickProperties(this as any, appMetadata);
+    Object.assign(this, appMetadata);
+    this.initProvidersPerApp();
     this.log.trace('Setting server name:', this.serverName);
     this.log.trace('Setting listen options:', this.listenOptions);
-    this.initProvidersPerApp();
     this.checkSecureServerOption(appModule);
     const bsMod = this.injectorPerApp.resolveAndInstantiate(BootstrapModule) as BootstrapModule;
     bsMod.bootstrap(appModule);
@@ -77,19 +78,18 @@ export class BootstrapRootModule {
   /**
    * Merge AppModule metadata with default ApplicationMetadata.
    */
-  protected mergeMetadata(appModule: ModuleType): RootModuleDecorator {
-    const appMetadata = this.getAppModuleMetadata(appModule);
-    if (!appMetadata) {
-      throw new Error(
-        `Module build failed: module "${appModule.name}" does not have the "@${RootModule.name}()" decorator`
-      );
+  protected mergeMetadata(appModule: ModuleType) {
+    const modMetadata = this.getAppModuleMetadata(appModule);
+    if (!modMetadata) {
+      throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
 
     // Setting default metadata.
     const metadata = new ApplicationMetadata();
 
-    Object.assign(metadata, appMetadata);
-    metadata.providersPerApp = (appMetadata.providersPerApp || metadata.providersPerApp).slice();
+    const providersPerApp = mergeOpts(metadata.providersPerApp, modMetadata.providersPerApp);
+    pickProperties(metadata, modMetadata);
+    metadata.providersPerApp = providersPerApp;
     return metadata;
   }
 

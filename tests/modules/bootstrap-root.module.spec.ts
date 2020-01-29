@@ -19,26 +19,37 @@ fdescribe('BootstrapRootModule', () => {
     router: Router;
     preReq: PreRequest;
 
-    extractModuleMetadata(appModule: ModuleType): RootModuleDecorator {
-      return super.extractModuleMetadata(appModule);
+    mergeMetadata(appModule: ModuleType): RootModuleDecorator {
+      return super.mergeMetadata(appModule);
     }
   }
 
   const mockBs = new MockBootstrapRootModule();
 
-  @RootModule({ controllers: [] })
+  class SomeControllerClass {}
+  @RootModule({ controllers: [SomeControllerClass] })
   class ClassWithDecorators {}
 
   class ClassWithoutDecorators {}
 
-  describe('extractModuleMetadata()', () => {
-    it('should extract metatada from ClassWithDecorators', () => {
-      expect(mockBs.extractModuleMetadata(ClassWithDecorators)).toEqual(new RootModule({ controllers: [] }));
+  describe('mergeMetadata()', () => {
+    it('should merge default metatada with ClassWithDecorators metadata', () => {
+      const metadata = mockBs.mergeMetadata(ClassWithDecorators);
+      expect(metadata.serverName).toEqual('restify-ts');
+      expect(metadata.serverOptions).toEqual({});
+      expect(metadata.httpModule).toBeDefined();
+      expect(metadata.providersPerApp && metadata.providersPerApp.length).toBe(5);
+      expect(metadata.controllers).toEqual(undefined);
+      expect(metadata.exports).toEqual(undefined);
+      expect(metadata.imports).toEqual(undefined);
+      expect(metadata.listenOptions).toBeDefined();
+      expect(metadata.providersPerMod).toEqual(undefined);
+      expect(metadata.providersPerReq).toEqual(undefined);
     });
 
     it('ClassWithoutDecorators should not have metatada', () => {
       const msg = `Module build failed: module "ClassWithoutDecorators" does not have the "@RootModule()" decorator`;
-      expect(() => mockBs.extractModuleMetadata(ClassWithoutDecorators)).toThrowError(msg);
+      expect(() => mockBs.mergeMetadata(ClassWithoutDecorators)).toThrowError(msg);
     });
   });
 });

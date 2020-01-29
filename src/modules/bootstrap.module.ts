@@ -9,12 +9,17 @@ import {
   ReflectiveInjector
 } from 'ts-di';
 
-import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata, Module, Controller } from '../types/decorators';
-import { Logger, ModuleType, ModuleWithProviders, Router, ModuleMetadata } from '../types/types';
+import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from '../types/decorators';
+import { Logger, ModuleType, ModuleWithProviders, Router } from '../types/types';
 import { flatten, normalizeProviders } from '../utils/ng-utils';
 import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from '../utils/type-guards';
-import { pickProperties } from '../utils/pick-properties';
-import { defaultProvidersPerReq, defaultProvidersPerApp } from '../constants';
+import {
+  ModuleMetadata,
+  defaultProvidersPerReq,
+  defaultProvidersPerApp,
+  ApplicationMetadata
+} from '../types/default-options';
+import { mergeOpts } from '../utils/merge-arrays-options';
 
 @Injectable()
 export class BootstrapModule {
@@ -43,7 +48,7 @@ export class BootstrapModule {
   bootstrap(mod: ModuleType, importer?: this) {
     const moduleMetadata = this.mergeMetadata(mod);
     this.checkImports(moduleMetadata, mod.name);
-    pickProperties(this as any, moduleMetadata);
+    Object.assign(this, moduleMetadata);
     this.initProvidersPerReq();
     this.importControllers();
     /**
@@ -60,8 +65,8 @@ export class BootstrapModule {
     this.setRoutes();
   }
 
-  protected checkImports(moduleMetadata: ModuleMetadata, moduleName: string) {
-    if (!moduleMetadata.controllers.length && !moduleMetadata.exports.length) {
+  protected checkImports(moduleMetadata: ModuleMetadata & ApplicationMetadata, moduleName: string) {
+    if (!isRootModule(moduleMetadata) && !moduleMetadata.controllers.length && !moduleMetadata.exports.length) {
       throw new Error(`Import ${moduleName} failed: the imported module should have "controllers" or "exports" array.`);
     }
   }
@@ -75,7 +80,7 @@ export class BootstrapModule {
   protected mergeMetadata(mod: ModuleType) {
     const modMetadata = this.getRawModuleMetadata(mod);
     if (!modMetadata) {
-      throw new Error(`Module build failed: module "${mod.name}" does not have the "@${Module.name}()" decorator`);
+      throw new Error(`Module build failed: module "${mod.name}" does not have the "@Module()" decorator`);
     }
 
     /**
@@ -93,9 +98,9 @@ export class BootstrapModule {
     metadata.exports = flatten((modMetadata.exports || metadata.exports).slice())
       .map(resolveForwardRef)
       .map(getModule);
-    metadata.providersPerMod = (modMetadata.providersPerMod || metadata.providersPerMod).slice();
-    metadata.providersPerReq = (modMetadata.providersPerReq || metadata.providersPerReq).slice();
-    metadata.controllers = (modMetadata.controllers || metadata.controllers).slice();
+    metadata.providersPerMod = mergeOpts(metadata.providersPerMod, modMetadata.providersPerMod);
+    metadata.providersPerReq = mergeOpts(metadata.providersPerReq, modMetadata.providersPerReq);
+    metadata.controllers = mergeOpts(metadata.controllers, modMetadata.controllers);
 
     return metadata;
 
@@ -203,9 +208,7 @@ export class BootstrapModule {
     this.controllers.forEach(Ctrl => {
       const controllerMetadata = reflector.annotations(Ctrl).find(c => isController(c)) as ControllersDecorator;
       if (!controllerMetadata) {
-        throw new Error(
-          `Setting routes failed: class "${Ctrl.name}" does not have the "@${Controller.name}()" decorator`
-        );
+        throw new Error(`Setting routes failed: class "${Ctrl.name}" does not have the "@Controller()" decorator`);
       }
       const pathFromRoot = controllerMetadata.path;
       const providersPerReq = controllerMetadata.providersPerReq;
