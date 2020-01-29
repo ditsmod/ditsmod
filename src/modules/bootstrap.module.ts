@@ -42,6 +42,7 @@ export class BootstrapModule {
    */
   bootstrap(mod: ModuleType, importer?: this) {
     const moduleMetadata = this.mergeMetadata(mod);
+    this.checkImports(moduleMetadata, mod.name);
     pickProperties(this as any, moduleMetadata);
     this.initProvidersPerReq();
     this.importControllers();
@@ -57,6 +58,12 @@ export class BootstrapModule {
     }
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.providersPerMod);
     this.setRoutes();
+  }
+
+  protected checkImports(moduleMetadata: ModuleMetadata, moduleName: string) {
+    if (!moduleMetadata.controllers.length && !moduleMetadata.exports.length) {
+      throw new Error(`Import ${moduleName} failed: the imported module should have "controllers" or "exports" array.`);
+    }
   }
 
   /**
