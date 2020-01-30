@@ -67,7 +67,9 @@ export class BootstrapModule {
 
   protected checkImports(moduleMetadata: ModuleMetadata & ApplicationMetadata, moduleName: string) {
     if (!isRootModule(moduleMetadata) && !moduleMetadata.controllers.length && !moduleMetadata.exports.length) {
-      throw new Error(`Import ${moduleName} failed: the imported module should have "controllers" or "exports" array.`);
+      throw new Error(
+        `Import ${moduleName} failed: the imported module should have "controllers" or "exports" array with elements.`
+      );
     }
   }
 
