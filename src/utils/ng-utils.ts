@@ -7,6 +7,7 @@
  */
 
 import { InjectionToken, Provider, Type, ValueProvider, ClassProvider, ExistingProvider, FactoryProvider } from 'ts-di';
+import { format } from 'util';
 
 import { Route } from '../types/types';
 import { AppRouter } from '../app-router';
@@ -85,7 +86,7 @@ export function normalizeProviders(providers: Provider[], arrayOfProviders: Norm
     } else if (provider instanceof Array) {
       normalizeProviders(provider, arrayOfProviders);
     } else {
-      throw new Error(`Invalid provider - only instances of Provider and Type are allowed, got: ${provider}`);
+      throw new Error(format(`Invalid provider - only instances of Provider and Type are allowed, got:`, provider));
     }
   });
 

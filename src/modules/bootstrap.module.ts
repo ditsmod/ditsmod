@@ -11,7 +11,7 @@ import {
 
 import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from '../types/decorators';
 import { Logger, ModuleType, ModuleWithProviders, Router } from '../types/types';
-import { flatten, normalizeProviders } from '../utils/ng-utils';
+import { flatten, normalizeProviders, NormalizedProvider } from '../utils/ng-utils';
 import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from '../utils/type-guards';
 import {
   ModuleMetadata,
@@ -142,13 +142,12 @@ export class BootstrapModule {
    * Called in the context of the module that imports the current module.
    *
    * @param mod Module from where exports providers.
+   * @param soughtProvider Normalized provider.
    */
-  protected importProviders(mod: ModuleType) {
-    const { moduleName, exports: modulesOrProviders, imports, providersPerMod, providersPerReq } = this.mergeMetadata(
-      mod
-    );
+  protected importProviders(mod: ModuleType, soughtProvider?: NormalizedProvider) {
+    const { moduleName, exports: exp, imports, providersPerMod, providersPerReq } = this.mergeMetadata(mod);
 
-    for (const moduleOrProvider of modulesOrProviders) {
+    for (const moduleOrProvider of exp) {
       const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType);
       if (moduleMetadata) {
         const reexportedModule = moduleOrProvider as ModuleType;
@@ -158,50 +157,63 @@ export class BootstrapModule {
           throw new Error(`Reexports a module failed: cannot find ${reexportedModule.name} in "imports" array`);
         }
       } else {
-        let isFoundProvider = false;
         const provider = moduleOrProvider as Provider;
-        const providerName = normalizeProviders([provider])[0].provide.name;
-        if (this.hasProvider(provider, providersPerMod)) {
-          if (defaultProvidersPerApp.includes(provider)) {
-            this.log.warn(
-              `You cannot export ${providerName} from ${moduleName}, it's providers on an Application level`
-            );
-          } else {
-            this.providersPerMod.unshift(provider);
+        const normProvider = normalizeProviders([provider])[0];
+        if (soughtProvider && soughtProvider.provide !== normProvider.provide) {
+          continue;
+        }
+        let foundProvider = this.findAndSetProvider(normProvider, providersPerMod, providersPerReq, moduleName);
+        if (!foundProvider) {
+          for (const imp of imports) {
+            foundProvider = this.importProviders(imp, normProvider);
+            if (foundProvider) {
+              break;
+            }
           }
-          isFoundProvider = true;
-        } else if (this.hasProvider(provider, providersPerReq)) {
-          if (defaultProvidersPerReq.includes(provider)) {
-            this.log.warn(
-              `You cannot export ${providerName} from ${moduleName}, it's providers on an Application level`
-            );
-          } else {
-            this.providersPerReq.unshift(provider);
-          }
-          isFoundProvider = true;
-        } else {
-          // Try find in imports
         }
 
-        /**
-         * Finish recursive search, cannot find the provider.
-         */
-        if (!isFoundProvider) {
+        if (!foundProvider) {
+          const providerName = normProvider.provide.name;
           throw new Error(
             `Exported ${providerName} from ${moduleName} ` +
               `should includes in "providersPerMod" or "providersPerReq", ` +
-              `or in "exports" of imported some module.`
+              `or in some "exports" of imported modules.`
           );
         }
-        return true;
+
+        if (soughtProvider) {
+          return true;
+        }
       }
     }
   }
 
-  protected hasProvider(candidate: Provider, providers: Provider[]): boolean {
-    const normCandidate = normalizeProviders([candidate])[0];
-    const normProviders = normalizeProviders(providers);
-    return !!normProviders.find(p => p.provide === normCandidate.provide);
+  protected findAndSetProvider(
+    normProvider: NormalizedProvider,
+    providersPerMod: Provider[],
+    providersPerReq: Provider[],
+    moduleName: string
+  ) {
+    if (hasProvider(defaultProvidersPerApp) || hasProvider(defaultProvidersPerReq)) {
+      this.log.warn(
+        `You cannot export ${normProvider.provide.name} from ${moduleName}, it's providers on an Application level`
+      );
+    }
+
+    if (hasProvider(providersPerMod)) {
+      this.providersPerMod.unshift(normProvider);
+      return true;
+    } else if (hasProvider(providersPerReq)) {
+      this.providersPerReq.unshift(normProvider);
+      return true;
+    }
+
+    return false;
+
+    function hasProvider(providers: Provider[]) {
+      const normProviders = normalizeProviders(providers);
+      return normProviders.some(p => p.provide === normProvider.provide);
+    }
   }
 
   protected setRoutes() {
