@@ -159,10 +159,17 @@ export class BootstrapModule {
       } else {
         const provider = moduleOrProvider as Provider;
         const normProvider = normalizeProviders([provider])[0];
+        const providerName = normProvider.provide.name || normProvider.provide;
         if (soughtProvider && soughtProvider.provide !== normProvider.provide) {
           continue;
         }
-        let foundProvider = this.findAndSetProvider(normProvider, providersPerMod, providersPerReq, moduleName);
+        let foundProvider = this.findAndSetProvider(
+          normProvider,
+          providersPerMod,
+          providersPerReq,
+          moduleName,
+          providerName
+        );
         if (!foundProvider) {
           for (const imp of imports) {
             foundProvider = this.importProviders(imp, normProvider);
@@ -173,7 +180,6 @@ export class BootstrapModule {
         }
 
         if (!foundProvider) {
-          const providerName = normProvider.provide.name;
           throw new Error(
             `Exported ${providerName} from ${moduleName} ` +
               `should includes in "providersPerMod" or "providersPerReq", ` +
@@ -192,12 +198,12 @@ export class BootstrapModule {
     normProvider: NormalizedProvider,
     providersPerMod: Provider[],
     providersPerReq: Provider[],
-    moduleName: string
+    moduleName: string,
+    providerName: string
   ) {
     if (hasProvider(defaultProvidersPerApp) || hasProvider(defaultProvidersPerReq)) {
-      this.log.warn(
-        `You cannot export ${normProvider.provide.name} from ${moduleName}, it's providers on an Application level`
-      );
+      this.log.warn(`You cannot export ${providerName} from ${moduleName}, it's providers on an Application level`);
+      return true;
     }
 
     if (hasProvider(providersPerMod)) {
