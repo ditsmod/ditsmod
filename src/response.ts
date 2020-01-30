@@ -29,7 +29,7 @@ export class Response {
       data = data || getStatusText(statusCode);
     }
 
-    this.nodeRes.end(data);
+    this.nodeRes.end(data + '\n');
   }
 
   redirect(statusCode: RedirectStatusCodes, path: string) {

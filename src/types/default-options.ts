@@ -3,22 +3,12 @@ import { ListenOptions } from 'net';
 import { Type, Provider, TypeProvider, forwardRef, ReflectiveInjector, Injector } from 'ts-di';
 import { Router as RestifyRouter } from '@restify-ts/router';
 
-import { HttpModule, Logger, Router, ServerOptions } from './types';
+import { HttpModule, Logger, Router, ServerOptions, BodyParserConfig } from './types';
 import { PreRequest } from '../services/pre-request.service';
 import { BootstrapModule } from '../modules/bootstrap.module';
 import { Request } from '../request';
 import { Response } from '../response';
-
-export const defaultProvidersPerReq: Provider[] = [Request, Response];
-
-export class ModuleMetadata {
-  moduleName: string;
-  imports: Type<any>[] = [];
-  exports: (Type<any> | Provider)[] = [];
-  providersPerMod: Provider[] = [];
-  providersPerReq: Provider[] = defaultProvidersPerReq;
-  controllers: TypeProvider[] = [];
-}
+import { BodyParser } from '../services/body-parser';
 
 export const defaultProvidersPerApp: Provider[] = [
   Logger,
@@ -30,6 +20,17 @@ export const defaultProvidersPerApp: Provider[] = [
     useExisting: Injector
   }
 ];
+
+export const defaultProvidersPerReq: Provider[] = [Request, Response, BodyParser, BodyParserConfig];
+
+export class ModuleMetadata {
+  moduleName: string;
+  imports: Type<any>[] = [];
+  exports: (Type<any> | Provider)[] = [];
+  providersPerMod: Provider[] = [];
+  providersPerReq: Provider[] = defaultProvidersPerReq;
+  controllers: TypeProvider[] = [];
+}
 
 export class ApplicationMetadata {
   serverName?: string = 'restify-ts';

@@ -128,15 +128,23 @@ export class BootstrapRootModule {
      * @param injector Injector per module that tied to the route.
      * @param providers Resolved providers per request.
      * @param method Method of the class controller.
+     * @param parseBody Need or not to parse body.
      */
-    const { injector, providers, controller, method } = handleRoute();
+    const { injector, providers, controller, method, parseBody } = handleRoute();
     const inj1 = injector.resolveAndCreateChild([
       { provide: NodeReqToken, useValue: nodeReq },
       { provide: NodeResToken, useValue: nodeRes }
     ]);
     const inj2 = inj1.createChildFromResolved(providers);
     const req = inj2.get(Request) as Request;
-    req.handleRoute(controller, method, routeParams, queryString);
+    if (parseBody) {
+      req
+        .parseBody()
+        .then(() => req.handleRoute(null, controller, method, routeParams, queryString))
+        .catch(err => req.handleRoute(err, controller, method, routeParams, queryString));
+    } else {
+      req.handleRoute(null, controller, method, routeParams, queryString);
+    }
   };
 
   protected createServer() {

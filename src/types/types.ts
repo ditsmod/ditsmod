@@ -110,6 +110,10 @@ export type RouteHandler = () => {
    * Method of the class controller.
    */
   method: string;
+  /**
+   * Need or not to parse body.
+   */
+  parseBody: boolean;
 };
 
 export class Router {
@@ -208,3 +212,7 @@ export interface ModuleWithProviders<T> {
 }
 
 export type HttpModule = HttpServerModule | HttpsServerModule | Http2ServerModule;
+
+export class BodyParserConfig {
+  acceptMethods: HttpMethod[] = ['POST', 'PUT', 'PATCH'];
+}

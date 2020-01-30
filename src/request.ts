@@ -3,6 +3,7 @@ import { format } from 'util';
 import { ParsedUrlQuery, parse } from 'querystring';
 
 import { NodeRequest, NodeReqToken, RouteParam } from './types/types';
+import { BodyParser } from './services/body-parser';
 
 @Injectable()
 export class Request {
@@ -12,20 +13,35 @@ export class Request {
    */
   routeParams: RouteParam[];
   queryParams: ParsedUrlQuery;
+  rawBody: any;
+  body: any;
 
   constructor(@Inject(NodeReqToken) public readonly nodeReq: NodeRequest, public injector: Injector) {}
+
+  async parseBody() {
+    const bodyParser = this.injector.get(BodyParser) as BodyParser;
+    this.rawBody = await bodyParser.getRawBody();
+    this.body = await bodyParser.getJsonBody();
+  }
 
   /**
    * Called by the `BootstrapModule` after founded a route.
    *
+   * @param err Body parser's an error.
    * @param controller Controller class.
    * @param method Method of the Controller.
    */
-  handleRoute(controller: TypeProvider, method: string, routeParams: RouteParam[], queryString: string) {
+  async handleRoute(
+    err: Error,
+    controller: TypeProvider,
+    method: string,
+    routeParams: RouteParam[],
+    queryString: string
+  ) {
+    const ctrl = this.injector.get(controller);
     this.routeParams = routeParams;
     this.queryParams = parse(queryString);
-    const ctrl = this.injector.get(controller);
-    ctrl[method]();
+    ctrl[method](err);
   }
 
   /**

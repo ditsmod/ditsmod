@@ -10,7 +10,7 @@ import {
 } from 'ts-di';
 
 import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from '../types/decorators';
-import { Logger, ModuleType, ModuleWithProviders, Router } from '../types/types';
+import { Logger, ModuleType, ModuleWithProviders, Router, BodyParserConfig } from '../types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from '../utils/ng-utils';
 import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from '../utils/type-guards';
 import {
@@ -253,11 +253,16 @@ export class BootstrapModule {
             resolvedProvidersPerReq = ReflectiveInjector.resolve([...this.providersPerReq, ...providersPerReq]);
           }
 
+          const injectorPerReq = this.injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
+          const config = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
+          const parseBody = config.acceptMethods.includes(route.httpMethod);
+
           this.router.on(route.httpMethod, path, () => ({
             injector: this.injectorPerMod,
             providers: resolvedProvidersPerReq,
             controller: Ctrl,
-            method: prop
+            method: prop,
+            parseBody
           }));
 
           this.log.trace({
