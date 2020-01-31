@@ -234,6 +234,7 @@ export class BootstrapModule {
       const providersPerReq = controllerMetadata.providersPerReq;
       this.checkRoutePath(Ctrl.name, pathFromRoot);
       const propMetadata = reflector.propMetadata(Ctrl) as RouteDecoratorMetadata;
+
       for (const prop in propMetadata) {
         const routes = propMetadata[prop].filter(p => isRoute(p));
         for (const route of routes) {

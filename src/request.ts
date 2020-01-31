@@ -18,12 +18,6 @@ export class Request {
 
   constructor(@Inject(NodeReqToken) public readonly nodeReq: NodeRequest, public injector: Injector) {}
 
-  async parseBody() {
-    const bodyParser = this.injector.get(BodyParser) as BodyParser;
-    this.rawBody = await bodyParser.getRawBody();
-    this.body = await bodyParser.getJsonBody();
-  }
-
   /**
    * Called by the `BootstrapModule` after founded a route.
    *
@@ -32,15 +26,25 @@ export class Request {
    * @param method Method of the Controller.
    */
   async handleRoute(
-    err: Error,
     controller: TypeProvider,
     method: string,
     routeParams: RouteParam[],
-    queryString: string
+    queryString: string,
+    parseBody: boolean
   ) {
     const ctrl = this.injector.get(controller);
     this.routeParams = routeParams;
     this.queryParams = parse(queryString);
+    let err: Error;
+    if (parseBody) {
+      try {
+        const bodyParser = this.injector.get(BodyParser) as BodyParser;
+        this.rawBody = await bodyParser.getRawBody();
+        this.body = await bodyParser.getJsonBody();
+      } catch (e) {
+        err = e;
+      }
+    }
     ctrl[method](err);
   }
 

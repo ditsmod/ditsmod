@@ -137,14 +137,7 @@ export class BootstrapRootModule {
     ]);
     const inj2 = inj1.createChildFromResolved(providers);
     const req = inj2.get(Request) as Request;
-    if (parseBody) {
-      req
-        .parseBody()
-        .then(() => req.handleRoute(null, controller, method, routeParams, queryString))
-        .catch(err => req.handleRoute(err, controller, method, routeParams, queryString));
-    } else {
-      req.handleRoute(null, controller, method, routeParams, queryString);
-    }
+    req.handleRoute(controller, method, routeParams, queryString, parseBody);
   };
 
   protected createServer() {

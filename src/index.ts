@@ -14,9 +14,11 @@ export {
   RequestListener,
   Fn,
   LoggerMethod,
-  RedirectStatusCodes
+  RedirectStatusCodes,
+  BodyParserConfig
 } from './types/types';
 export { Module, RootModule, Controller, Route } from './types/decorators';
 export { BootstrapModule } from './modules/bootstrap.module';
 export { BootstrapRootModule } from './modules/bootstrap-root.module';
 export { pickProperties } from './utils/pick-properties';
+export { BodyParser } from './services/body-parser';
