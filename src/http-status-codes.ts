@@ -496,7 +496,8 @@ export const STATUS_CODE_INFO: StatusCodeInfo = {
  * get the status text from StatusCode
  */
 export function getStatusText(statusCode: Status) {
-  return STATUS_CODE_INFO[statusCode].text || 'Unknown Status';
+  const code = STATUS_CODE_INFO[statusCode];
+  return (code && code.text) || 'Unknown Status';
 }
 
 /**
