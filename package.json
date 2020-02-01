@@ -3,7 +3,7 @@
   "name": "@restify-ts/core",
   "homepage": "https://github.com/restify-ts/core",
   "description": "REST framework",
-  "version": "0.0.0-alpha.20",
+  "version": "0.0.0-alpha.21",
   "repository": {
     "type": "git",
     "url": "git://github.com/restify-ts/core.git"
