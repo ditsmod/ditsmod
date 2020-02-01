@@ -21,7 +21,7 @@ import {
   HttpMethod
 } from '../types/types';
 import { isHttp2SecureServerOptions, isRootModule } from '../utils/type-guards';
-import { PreRequest } from '../services/pre-request.service';
+import { PreRequest } from '../services/pre-request';
 import { Request } from '../request';
 import { BootstrapModule } from './bootstrap.module';
 import { pickProperties } from '../utils/pick-properties';

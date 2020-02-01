@@ -20,7 +20,6 @@ import {
   ApplicationMetadata
 } from '../types/default-options';
 import { mergeOpts } from '../utils/merge-arrays-options';
-import { Format } from '../services/format';
 
 @Injectable()
 export class BootstrapModule {

@@ -4,7 +4,7 @@ import { Type, Provider, TypeProvider, forwardRef, ReflectiveInjector, Injector 
 import { Router as RestifyRouter } from '@restify-ts/router';
 
 import { HttpModule, Logger, Router, ServerOptions, BodyParserConfig, AcceptConfig } from './types';
-import { PreRequest } from '../services/pre-request.service';
+import { PreRequest } from '../services/pre-request';
 import { BootstrapModule } from '../modules/bootstrap.module';
 import { Request } from '../request';
 import { Response } from '../response';
