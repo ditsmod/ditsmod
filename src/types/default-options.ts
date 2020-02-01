@@ -13,6 +13,9 @@ import { Format } from '../services/format';
 
 export const defaultProvidersPerApp: Provider[] = [
   Logger,
+  Format,
+  BodyParserConfig,
+  AcceptConfig,
   { provide: Router, useClass: RestifyRouter },
   forwardRef(() => BootstrapModule),
   PreRequest,
@@ -22,14 +25,7 @@ export const defaultProvidersPerApp: Provider[] = [
   }
 ];
 
-export const defaultProvidersPerReq: Provider[] = [
-  Request,
-  Response,
-  BodyParser,
-  BodyParserConfig,
-  AcceptConfig,
-  Format
-];
+export const defaultProvidersPerReq: Provider[] = [Request, Response, BodyParser];
 
 export class ModuleMetadata {
   moduleName: string;
