@@ -3,12 +3,13 @@ import { ListenOptions } from 'net';
 import { Type, Provider, TypeProvider, forwardRef, ReflectiveInjector, Injector } from 'ts-di';
 import { Router as RestifyRouter } from '@restify-ts/router';
 
-import { HttpModule, Logger, Router, ServerOptions, BodyParserConfig } from './types';
+import { HttpModule, Logger, Router, ServerOptions, BodyParserConfig, AcceptConfig } from './types';
 import { PreRequest } from '../services/pre-request.service';
 import { BootstrapModule } from '../modules/bootstrap.module';
 import { Request } from '../request';
 import { Response } from '../response';
 import { BodyParser } from '../services/body-parser';
+import { Format } from '../services/format';
 
 export const defaultProvidersPerApp: Provider[] = [
   Logger,
@@ -21,7 +22,14 @@ export const defaultProvidersPerApp: Provider[] = [
   }
 ];
 
-export const defaultProvidersPerReq: Provider[] = [Request, Response, BodyParser, BodyParserConfig];
+export const defaultProvidersPerReq: Provider[] = [
+  Request,
+  Response,
+  BodyParser,
+  BodyParserConfig,
+  AcceptConfig,
+  Format
+];
 
 export class ModuleMetadata {
   moduleName: string;
@@ -33,7 +41,7 @@ export class ModuleMetadata {
 }
 
 export class ApplicationMetadata {
-  serverName?: string = 'restify-ts';
+  serverName?: string = 'Node.js';
   httpModule?: HttpModule = http;
   serverOptions?: ServerOptions = {};
   listenOptions?: ListenOptions = { host: 'localhost', port: 8080 };

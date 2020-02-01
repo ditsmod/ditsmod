@@ -24,6 +24,8 @@ export class Request {
    * @param err Body parser's an error.
    * @param controller Controller class.
    * @param method Method of the Controller.
+   * @param parseBody Need or not to parsing a body request.
+   * @param checkAccept Need or not to checking `accept` header from a request.
    */
   async handleRoute(
     controller: TypeProvider,

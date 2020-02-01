@@ -114,6 +114,10 @@ export type RouteHandler = () => {
    * Need or not to parse body.
    */
   parseBody: boolean;
+  /**
+   * Need or not to checking `accept` header from a request.
+   */
+  checkAccept: boolean;
 };
 
 export class Router {
@@ -216,3 +220,17 @@ export type HttpModule = HttpServerModule | HttpsServerModule | Http2ServerModul
 export class BodyParserConfig {
   acceptMethods: HttpMethod[] = ['POST', 'PUT', 'PATCH'];
 }
+
+/**
+ * Set of `accept` headers from client request that are acceptable.
+ */
+export class AcceptConfig {
+  /**
+   * By default accept formats: `application/json, text/plain, application/octet-stream`;
+   */
+  formats: string[] = ['application/json', 'text/plain', 'application/octet-stream'];
+  formatters: FormattersMap;
+}
+
+export type FormattersFn = (body?: any) => string | Buffer | Uint8Array;
+export type FormattersMap = Map<string, FormattersFn>;

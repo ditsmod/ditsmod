@@ -6,7 +6,7 @@ import { NormalizedProvider, normalizeProviders } from '../../src/utils/ng-utils
 import { Module } from '../../src/types/decorators';
 import { defaultProvidersPerReq } from '../../src/types/default-options';
 
-fdescribe('BootstrapModule', () => {
+describe('BootstrapModule', () => {
   class MockBootstrapModule extends BootstrapModule {
     getRawModuleMetadata(mod: ModuleType) {
       return super.getRawModuleMetadata(mod);

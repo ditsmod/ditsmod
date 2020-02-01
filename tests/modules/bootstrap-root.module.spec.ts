@@ -63,7 +63,7 @@ describe('BootstrapRootModule', () => {
       @RootModule()
       class ClassWithDecorators {}
       const metadata = mock.mergeMetadata(ClassWithDecorators);
-      expect(metadata.serverName).toEqual('restify-ts');
+      expect(metadata.serverName).toEqual('Node.js');
       expect(metadata.serverOptions).toEqual({});
       expect(metadata.httpModule).toBeDefined();
       expect(metadata.providersPerApp).toEqual(defaultProvidersPerApp);
@@ -82,7 +82,7 @@ describe('BootstrapRootModule', () => {
       })
       class ClassWithDecorators {}
       const metadata = mock.mergeMetadata(ClassWithDecorators);
-      expect(metadata.serverName).toEqual('restify-ts');
+      expect(metadata.serverName).toEqual('Node.js');
       expect(metadata.serverOptions).toEqual({});
       expect(metadata.httpModule).toBeDefined();
       expect(metadata.providersPerApp).toEqual([...defaultProvidersPerApp, ClassWithoutDecorators]);

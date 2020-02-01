@@ -3,7 +3,7 @@
   "name": "@restify-ts/core",
   "homepage": "https://github.com/restify-ts/core",
   "description": "REST framework",
-  "version": "0.0.0-alpha.19",
+  "version": "0.0.0-alpha.20",
   "repository": {
     "type": "git",
     "url": "git://github.com/restify-ts/core.git"
@@ -21,11 +21,13 @@
   "dependencies": {
     "@restify-ts/router": "^0.0.0-alpha.1",
     "assert-plus": "^1.0.0",
+    "negotiator": "^0.6.2",
     "ts-di": "^2.2.0"
   },
   "devDependencies": {
     "@types/assert-plus": "^1.0.4",
     "@types/jasmine": "^3.5.0",
+    "@types/negotiator": "^0.6.1",
     "@types/node": "^13.1.4",
     "jasmine": "^3.5.0",
     "prettier": "^1.19.1",

@@ -10,7 +10,7 @@ import {
 } from 'ts-di';
 
 import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from '../types/decorators';
-import { Logger, ModuleType, ModuleWithProviders, Router, BodyParserConfig } from '../types/types';
+import { Logger, ModuleType, ModuleWithProviders, Router, BodyParserConfig, AcceptConfig } from '../types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from '../utils/ng-utils';
 import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from '../utils/type-guards';
 import {
@@ -20,6 +20,7 @@ import {
   ApplicationMetadata
 } from '../types/default-options';
 import { mergeOpts } from '../utils/merge-arrays-options';
+import { Format } from '../services/format';
 
 @Injectable()
 export class BootstrapModule {
@@ -255,15 +256,18 @@ export class BootstrapModule {
           }
 
           const injectorPerReq = this.injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
-          const config = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
-          const parseBody = config.acceptMethods.includes(route.httpMethod);
+          const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
+          const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
+          const acceptConfig = injectorPerReq.get(AcceptConfig) as AcceptConfig;
+          const checkAccept = !!acceptConfig.formats.length;
 
           this.router.on(route.httpMethod, path, () => ({
             injector: this.injectorPerMod,
             providers: resolvedProvidersPerReq,
             controller: Ctrl,
             method: prop,
-            parseBody
+            parseBody,
+            checkAccept
           }));
 
           this.log.trace({
