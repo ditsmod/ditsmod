@@ -1,4 +1,4 @@
-import * as util from 'util';
+import { format } from 'util';
 import * as http from 'http';
 import { Injectable, Inject } from 'ts-di';
 
@@ -26,9 +26,23 @@ export class Response {
     return this;
   }
 
+  /**
+   * Send data as is, without any conversion.
+   */
   send(data?: string | Buffer | Uint8Array, statusCode: Status = Status.OK): void {
     this.nodeRes.statusCode = statusCode;
     this.nodeRes.end(data);
+  }
+
+  /**
+   * To convert `any` type to `string` type, the `uril.format()` function is used here.
+   */
+  sendText(data?: any, statusCode: Status = Status.OK): void {
+    this.send(format(data), statusCode);
+  }
+
+  sendJson(data?: any, statusCode: Status = Status.OK): void {
+    this.send(JSON.stringify(data), statusCode);
   }
 
   redirect(statusCode: RedirectStatusCodes, path: string) {
@@ -43,7 +57,7 @@ export class Response {
 
     Object.keys(headers).forEach(k => (headerString += k + ': ' + headers[k] + '\n'));
 
-    str = util.format(
+    str = format(
       'HTTP/%s %s %s\n%s',
       this.nodeReq.httpVersion,
       this.nodeRes.statusCode,
