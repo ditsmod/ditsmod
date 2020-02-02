@@ -2,8 +2,9 @@ import { Injectable, Inject, Injector, TypeProvider } from 'ts-di';
 import { format } from 'util';
 import { ParsedUrlQuery, parse } from 'querystring';
 
-import { NodeRequest, NodeReqToken, RouteParam } from './types/types';
+import { NodeRequest, NodeReqToken, RouteParam, NodeResponse, NodeResToken } from './types/types';
 import { BodyParser } from './services/body-parser';
+import { PreRequest } from './services/pre-request';
 
 @Injectable()
 export class Request {
@@ -16,7 +17,11 @@ export class Request {
   rawBody: any;
   body: any;
 
-  constructor(@Inject(NodeReqToken) public readonly nodeReq: NodeRequest, public injector: Injector) {}
+  constructor(
+    @Inject(NodeReqToken) public readonly nodeReq: NodeRequest,
+    @Inject(NodeResToken) public readonly nodeRes: NodeResponse,
+    public injector: Injector
+  ) {}
 
   /**
    * Called by the `BootstrapModule` after founded a route.
@@ -34,18 +39,26 @@ export class Request {
     queryString: string,
     parseBody: boolean
   ) {
-    const ctrl = this.injector.get(controller);
     this.routeParams = routeParams;
-    this.queryParams = parse(queryString);
+    let ctrl: any;
+    try {
+      ctrl = this.injector.get(controller);
+    } catch (err) {
+      const preReq = this.injector.get(PreRequest);
+      preReq.sendInternalServerError(this.nodeRes, err);
+      return;
+    }
+
     let err: Error;
-    if (parseBody) {
-      try {
+    try {
+      this.queryParams = parse(queryString);
+      if (parseBody) {
         const bodyParser = this.injector.get(BodyParser) as BodyParser;
         this.rawBody = await bodyParser.getRawBody();
         this.body = await bodyParser.getJsonBody();
-      } catch (e) {
-        err = e;
       }
+    } catch (e) {
+      err = e;
     }
     ctrl[method](err);
   }
