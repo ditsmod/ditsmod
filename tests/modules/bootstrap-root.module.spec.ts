@@ -7,7 +7,7 @@ import { Provider, ReflectiveInjector } from 'ts-di';
 import { BootstrapRootModule } from '../../src/modules/bootstrap-root.module';
 import { ModuleType, Logger, HttpModule, ServerOptions, Server, Router } from '../../src/types/types';
 import { RootModuleDecorator, RootModule } from '../../src/types/decorators';
-import { PreRequest } from '../../src/services/pre-request.service';
+import { PreRequest } from '../../src/services/pre-request';
 import { defaultProvidersPerApp } from '../../src/types/default-options';
 
 describe('BootstrapRootModule', () => {
