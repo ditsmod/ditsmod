@@ -35,7 +35,7 @@ export class Response {
   }
 
   /**
-   * To convert `any` type to `string` type, the `uril.format()` function is used here.
+   * To convert `any` type to `string` type, the `util.format()` function is used here.
    */
   sendText(data?: any, statusCode: Status = Status.OK): void {
     this.send(format(data), statusCode);
