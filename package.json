@@ -21,24 +21,19 @@
   "dependencies": {
     "@restify-ts/router": "^0.0.0-alpha.1",
     "assert-plus": "^1.0.0",
-    "negotiator": "^0.6.2",
+    "reflect-metadata": "^0.1.13",
     "ts-di": "^2.2.0"
   },
   "devDependencies": {
     "@types/assert-plus": "^1.0.4",
     "@types/jasmine": "^3.5.0",
-    "@types/negotiator": "^0.6.1",
     "@types/node": "^13.1.4",
     "jasmine": "^3.5.0",
     "prettier": "^1.19.1",
-    "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.1.0",
     "typescript": "^3.7.4"
-  },
-  "peerDependencies": {
-    "reflect-metadata": "^0.1.13"
   }
 }

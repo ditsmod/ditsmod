@@ -4,7 +4,6 @@ import * as http2 from 'http2';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ListenOptions } from 'net';
 import { Provider, ReflectiveInjector, reflector } from 'ts-di';
-import Negotiator = require('negotiator');
 
 import { RootModuleDecorator } from '../types/decorators';
 import {
@@ -131,11 +130,10 @@ export class BootstrapRootModule {
      * @param method Method of the class controller.
      * @param parseBody Need or not to parse body.
      */
-    const { injector, providers, controller, method, parseBody, checkAccept } = handleRoute();
+    const { injector, providers, controller, method, parseBody } = handleRoute();
     const inj1 = injector.resolveAndCreateChild([
       { provide: NodeReqToken, useValue: nodeReq },
-      { provide: NodeResToken, useValue: nodeRes },
-      { provide: Negotiator, useValue: new Negotiator(nodeReq) }
+      { provide: NodeResToken, useValue: nodeRes }
     ]);
     const inj2 = inj1.createChildFromResolved(providers);
     const req = inj2.get(Request) as Request;

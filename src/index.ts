@@ -15,8 +15,7 @@ export {
   Fn,
   LoggerMethod,
   RedirectStatusCodes,
-  BodyParserConfig,
-  AcceptConfig
+  BodyParserConfig
 } from './types/types';
 export { Module, RootModule, Controller, Route } from './types/decorators';
 export { BootstrapModule } from './modules/bootstrap.module';

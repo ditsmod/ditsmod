@@ -3,19 +3,16 @@ import { ListenOptions } from 'net';
 import { Type, Provider, TypeProvider, forwardRef, ReflectiveInjector, Injector } from 'ts-di';
 import { Router as RestifyRouter } from '@restify-ts/router';
 
-import { HttpModule, Logger, Router, ServerOptions, BodyParserConfig, AcceptConfig } from './types';
+import { HttpModule, Logger, Router, ServerOptions, BodyParserConfig } from './types';
 import { PreRequest } from '../services/pre-request';
 import { BootstrapModule } from '../modules/bootstrap.module';
 import { Request } from '../request';
 import { Response } from '../response';
 import { BodyParser } from '../services/body-parser';
-import { Format } from '../services/format';
 
 export const defaultProvidersPerApp: Provider[] = [
   Logger,
-  Format,
   BodyParserConfig,
-  AcceptConfig,
   { provide: Router, useClass: RestifyRouter },
   forwardRef(() => BootstrapModule),
   PreRequest,
