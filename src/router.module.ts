@@ -5,7 +5,7 @@ import { Route, ModuleWithProviders } from './types/types';
 import { AppRouter } from './app-router';
 
 @Injectable()
-export class AppRouterModule {
+export class RouterModule {
   /**
    * Creates and configures a module with all the router providers and directives.
    * Optionally sets up an application listener to perform an initial navigation.
@@ -13,9 +13,9 @@ export class AppRouterModule {
    * @param routes An array of `Route` objects that define the navigation paths for the application.
    * @return The new router module.
    */
-  static forRoot(routes: Route[]): ModuleWithProviders<AppRouterModule> {
+  static forRoot(routes: Route[]): ModuleWithProviders<RouterModule> {
     return {
-      module: AppRouterModule,
+      module: RouterModule,
       providers: [
         provideRoutes(routes),
         {
@@ -32,7 +32,7 @@ export class AppRouterModule {
   /**
    * Creates a module with all the router directives and a provider registering routes.
    */
-  static forChild(routes: Route[]): ModuleWithProviders<AppRouterModule> {
-    return { module: AppRouterModule, providers: [provideRoutes(routes)] };
+  static forChild(routes: Route[]): ModuleWithProviders<RouterModule> {
+    return { module: RouterModule, providers: [provideRoutes(routes)] };
   }
 }
