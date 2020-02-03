@@ -10,7 +10,15 @@ import {
 } from 'ts-di';
 
 import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from '../types/decorators';
-import { Logger, ModuleType, ModuleWithProviders, Router, BodyParserConfig } from '../types/types';
+import {
+  Logger,
+  ModuleType,
+  ModuleWithProviders,
+  Router,
+  BodyParserConfig,
+  NodeReqToken,
+  NodeResToken
+} from '../types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from '../utils/ng-utils';
 import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from '../utils/type-guards';
 import {
@@ -203,7 +211,13 @@ export class BootstrapModule {
     moduleName: string,
     providerName: string
   ) {
-    if (hasProvider(defaultProvidersPerApp) || hasProvider(defaultProvidersPerReq)) {
+    const mergedProviders = [
+      ...defaultProvidersPerApp,
+      ...defaultProvidersPerReq,
+      { provide: NodeReqToken, useValue: 'fake' },
+      { provide: NodeResToken, useValue: 'fake' }
+    ];
+    if (hasProvider(mergedProviders)) {
       this.log.warn(`You cannot export ${providerName} from ${moduleName}, it's providers on an Application level`);
       return true;
     }
