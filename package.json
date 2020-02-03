@@ -29,6 +29,7 @@
     "@types/jasmine": "^3.5.0",
     "@types/node": "^13.1.4",
     "jasmine": "^3.5.0",
+    "jest": "^25.1.0",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.0",
     "tslint": "^5.20.1",
