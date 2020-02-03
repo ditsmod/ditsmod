@@ -5,7 +5,7 @@ import { Router as RestifyRouter } from '@restify-ts/router';
 
 import { HttpModule, Logger, Router, ServerOptions, BodyParserConfig } from './types';
 import { PreRequest } from '../services/pre-request';
-import { BootstrapModule } from '../modules/bootstrap.module';
+import { ModuleFactory } from '../module-factory';
 import { Request } from '../request';
 import { Response } from '../response';
 import { BodyParser } from '../services/body-parser';
@@ -14,7 +14,7 @@ export const defaultProvidersPerApp: Provider[] = [
   Logger,
   BodyParserConfig,
   { provide: Router, useClass: RestifyRouter },
-  forwardRef(() => BootstrapModule),
+  forwardRef(() => ModuleFactory),
   PreRequest,
   {
     provide: ReflectiveInjector,

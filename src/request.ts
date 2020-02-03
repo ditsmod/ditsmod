@@ -24,7 +24,7 @@ export class Request {
   ) {}
 
   /**
-   * Called by the `BootstrapModule` after founded a route.
+   * Called by the `ModuleFactory` after founded a route.
    *
    * @param err Body parser's an error.
    * @param controller Controller class.

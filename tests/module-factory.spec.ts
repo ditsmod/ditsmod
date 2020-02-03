@@ -1,13 +1,11 @@
-import { Provider } from 'ts-di';
+import { ModuleFactory } from '../src/module-factory';
+import { ModuleType } from '../src/types/types';
+import { NormalizedProvider } from '../src/utils/ng-utils';
+import { Module } from '../src/types/decorators';
+import { defaultProvidersPerReq } from '../src/types/default-options';
 
-import { BootstrapModule } from '../../src/modules/bootstrap.module';
-import { ModuleType } from '../../src/types/types';
-import { NormalizedProvider, normalizeProviders } from '../../src/utils/ng-utils';
-import { Module } from '../../src/types/decorators';
-import { defaultProvidersPerReq } from '../../src/types/default-options';
-
-describe('BootstrapModule', () => {
-  class MockBootstrapModule extends BootstrapModule {
+describe('ModuleFactory', () => {
+  class MockModuleFactory extends ModuleFactory {
     getRawModuleMetadata(mod: ModuleType) {
       return super.getRawModuleMetadata(mod);
     }
@@ -25,9 +23,9 @@ describe('BootstrapModule', () => {
     }
   }
 
-  let mock: MockBootstrapModule;
+  let mock: MockModuleFactory;
   beforeEach(() => {
-    mock = new MockBootstrapModule(null, null, null);
+    mock = new MockModuleFactory(null, null, null);
   });
 
   class ClassWithoutDecorators {}

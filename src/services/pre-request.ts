@@ -8,7 +8,7 @@ export class PreRequest {
   constructor(protected log: Logger) {}
 
   /**
-   * Called by the `BootstrapModule` before call a router.
+   * Called by the `ModuleFactory` before call a router.
    *
    * In inherited class you can to use standart `decodeURI(url)` function.
    * See inheritance in the docs.
@@ -18,7 +18,7 @@ export class PreRequest {
   }
 
   /**
-   * Called by the `BootstrapModule` when a route is not found.
+   * Called by the `ModuleFactory` when a route is not found.
    */
   sendNotFound(nodeRes: NodeResponse) {
     nodeRes.statusCode = Status.NOT_FOUND;

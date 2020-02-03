@@ -18,7 +18,7 @@ export {
   BodyParserConfig
 } from './types/types';
 export { Module, RootModule, Controller, Route } from './types/decorators';
-export { BootstrapModule } from './modules/bootstrap.module';
+export { ModuleFactory } from './module-factory';
 export { AppFactory } from './app-factory';
 export { pickProperties } from './utils/pick-properties';
 export { BodyParser } from './services/body-parser';

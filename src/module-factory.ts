@@ -9,7 +9,7 @@ import {
   ReflectiveInjector
 } from 'ts-di';
 
-import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from '../types/decorators';
+import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from './types/decorators';
 import {
   Logger,
   ModuleType,
@@ -18,19 +18,19 @@ import {
   BodyParserConfig,
   NodeReqToken,
   NodeResToken
-} from '../types/types';
-import { flatten, normalizeProviders, NormalizedProvider } from '../utils/ng-utils';
-import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from '../utils/type-guards';
+} from './types/types';
+import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
+import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from './utils/type-guards';
 import {
   ModuleMetadata,
   defaultProvidersPerReq,
   defaultProvidersPerApp,
   ApplicationMetadata
-} from '../types/default-options';
-import { mergeOpts } from '../utils/merge-arrays-options';
+} from './types/default-options';
+import { mergeOpts } from './utils/merge-arrays-options';
 
 @Injectable()
-export class BootstrapModule {
+export class ModuleFactory {
   protected imports: Type<any>[];
   protected exports: (Type<any> | Provider)[];
   /**
@@ -143,7 +143,7 @@ export class BootstrapModule {
 
   protected importControllers() {
     for (const imp of this.imports) {
-      const bsMod = this.injectorPerApp.resolveAndInstantiate(BootstrapModule) as BootstrapModule;
+      const bsMod = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       bsMod.bootstrap(imp, this);
     }
   }

@@ -22,7 +22,7 @@ import {
 import { isHttp2SecureServerOptions, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
-import { BootstrapModule } from './modules/bootstrap.module';
+import { ModuleFactory } from './module-factory';
 import { pickProperties } from './utils/pick-properties';
 import { ApplicationMetadata } from './types/default-options';
 import { mergeOpts } from './utils/merge-arrays-options';
@@ -72,7 +72,7 @@ export class AppFactory {
     this.log.trace('Setting server name:', this.serverName);
     this.log.trace('Setting listen options:', this.listenOptions);
     this.checkSecureServerOption(appModule);
-    const bsMod = this.injectorPerApp.resolveAndInstantiate(BootstrapModule) as BootstrapModule;
+    const bsMod = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
     bsMod.bootstrap(appModule);
   }
 
