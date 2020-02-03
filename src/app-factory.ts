@@ -5,7 +5,7 @@ import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ListenOptions } from 'net';
 import { Provider, ReflectiveInjector, reflector } from 'ts-di';
 
-import { RootModuleDecorator } from '../types/decorators';
+import { RootModuleDecorator } from './types/decorators';
 import {
   Server,
   Logger,
@@ -18,16 +18,16 @@ import {
   NodeReqToken,
   NodeResToken,
   HttpMethod
-} from '../types/types';
-import { isHttp2SecureServerOptions, isRootModule } from '../utils/type-guards';
-import { PreRequest } from '../services/pre-request';
-import { Request } from '../request';
-import { BootstrapModule } from './bootstrap.module';
-import { pickProperties } from '../utils/pick-properties';
-import { ApplicationMetadata } from '../types/default-options';
-import { mergeOpts } from '../utils/merge-arrays-options';
+} from './types/types';
+import { isHttp2SecureServerOptions, isRootModule } from './utils/type-guards';
+import { PreRequest } from './services/pre-request';
+import { Request } from './request';
+import { BootstrapModule } from './modules/bootstrap.module';
+import { pickProperties } from './utils/pick-properties';
+import { ApplicationMetadata } from './types/default-options';
+import { mergeOpts } from './utils/merge-arrays-options';
 
-export class BootstrapRootModule {
+export class AppFactory {
   protected log: Logger;
   protected serverName: string;
   protected httpModule: HttpModule;

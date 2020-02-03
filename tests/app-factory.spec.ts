@@ -4,14 +4,14 @@ import * as https from 'https';
 import * as http2 from 'http2';
 import { Provider, ReflectiveInjector } from 'ts-di';
 
-import { BootstrapRootModule } from '../../src/modules/bootstrap-root.module';
-import { ModuleType, Logger, HttpModule, ServerOptions, Server, Router } from '../../src/types/types';
-import { RootModuleDecorator, RootModule } from '../../src/types/decorators';
-import { PreRequest } from '../../src/services/pre-request';
-import { defaultProvidersPerApp } from '../../src/types/default-options';
+import { AppFactory } from '../src/app-factory';
+import { ModuleType, Logger, HttpModule, ServerOptions, Server, Router } from '../src/types/types';
+import { RootModuleDecorator, RootModule } from '../src/types/decorators';
+import { PreRequest } from '../src/services/pre-request';
+import { defaultProvidersPerApp } from '../src/types/default-options';
 
-describe('BootstrapRootModule', () => {
-  class MockBootstrapRootModule extends BootstrapRootModule {
+describe('AppFactory', () => {
+  class MockAppFactory extends AppFactory {
     log: Logger;
     serverName: string;
     httpModule: HttpModule;
@@ -36,12 +36,12 @@ describe('BootstrapRootModule', () => {
     }
   }
 
-  let mock: MockBootstrapRootModule;
+  let mock: MockAppFactory;
   class SomeControllerClass {}
   class ClassWithoutDecorators {}
 
   beforeEach(() => {
-    mock = new MockBootstrapRootModule();
+    mock = new MockAppFactory();
   });
 
   describe('getAppModuleMetadata()', () => {

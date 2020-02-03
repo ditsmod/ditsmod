@@ -19,6 +19,6 @@ export {
 } from './types/types';
 export { Module, RootModule, Controller, Route } from './types/decorators';
 export { BootstrapModule } from './modules/bootstrap.module';
-export { BootstrapRootModule } from './modules/bootstrap-root.module';
+export { AppFactory } from './app-factory';
 export { pickProperties } from './utils/pick-properties';
 export { BodyParser } from './services/body-parser';
