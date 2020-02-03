@@ -16,7 +16,7 @@
   "scripts": {
     "transpile": "rimraf dist/* && tsc",
     "start": "rimraf dist-tests/* && tsc -p tests && node dist-tests/tests/main.js",
-    "test": "rimraf dist-tests/* && tsc -p tests && jasmine"
+    "test": "jest"
   },
   "dependencies": {
     "@restify-ts/router": "^0.0.0-alpha.1",
@@ -26,12 +26,13 @@
   },
   "devDependencies": {
     "@types/assert-plus": "^1.0.4",
-    "@types/jasmine": "^3.5.0",
+    "@types/jest": "^25.1.1",
     "@types/node": "^13.1.4",
     "jasmine": "^3.5.0",
     "jest": "^25.1.0",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.0",
+    "ts-jest": "^25.1.0",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.1.0",

@@ -3,7 +3,7 @@ import { mergeOpts } from '../../src/utils/merge-arrays-options';
 describe('mergeOpts()', () => {
   it('should merge with undefined', () => {
     const defaults = ['one', 'two'];
-    const options = undefined;
+    const options: any = undefined;
     const result = mergeOpts(defaults, options);
     expect(result).toEqual(defaults);
   });
