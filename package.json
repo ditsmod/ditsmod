@@ -15,7 +15,6 @@
   },
   "scripts": {
     "transpile": "rimraf dist/* && tsc",
-    "start": "rimraf dist-tests/* && tsc -p tests && node dist-tests/tests/main.js",
     "test": "jest"
   },
   "dependencies": {
