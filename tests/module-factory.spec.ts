@@ -17,10 +17,6 @@ describe('ModuleFactory', () => {
     importProviders(mod: ModuleType, soughtProvider?: NormalizedProvider) {
       return super.importProviders(mod, soughtProvider);
     }
-
-    setRoutes() {
-      super.setRoutes();
-    }
   }
 
   let mock: MockModuleFactory;

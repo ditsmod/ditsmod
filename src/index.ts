@@ -15,10 +15,11 @@ export {
   Fn,
   LoggerMethod,
   RedirectStatusCodes,
-  BodyParserConfig
+  BodyParserConfig,
+  RouteConfig
 } from './types/types';
 export { Module, RootModule, Controller, Route } from './types/decorators';
-export { ModuleFactory } from './module-factory';
 export { AppFactory } from './app-factory';
+export { ModuleFactory } from './module-factory';
 export { pickProperties } from './utils/pick-properties';
 export { BodyParser } from './services/body-parser';

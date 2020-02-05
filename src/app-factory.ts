@@ -17,7 +17,8 @@ import {
   RequestListener,
   NodeReqToken,
   NodeResToken,
-  HttpMethod
+  HttpMethod,
+  RouteConfig
 } from './types/types';
 import { isHttp2SecureServerOptions, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
@@ -38,6 +39,8 @@ export class AppFactory {
   protected injectorPerApp: ReflectiveInjector;
   protected router: Router;
   protected preReq: PreRequest;
+  protected routesPrefixPerApp: string;
+  protected routesPerApp: RouteConfig[];
 
   bootstrapRootModule(appModule: ModuleType) {
     return new Promise<Server>((resolve, reject) => {
@@ -72,8 +75,8 @@ export class AppFactory {
     this.log.trace('Setting server name:', this.serverName);
     this.log.trace('Setting listen options:', this.listenOptions);
     this.checkSecureServerOption(appModule);
-    const bsMod = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    bsMod.bootstrap(appModule);
+    const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+    moduleFactory.bootstrap(appModule, null, this.routesPrefixPerApp);
   }
 
   /**
@@ -91,6 +94,7 @@ export class AppFactory {
     const providersPerApp = mergeOpts(metadata.providersPerApp, modMetadata.providersPerApp);
     pickProperties(metadata, modMetadata);
     metadata.providersPerApp = providersPerApp;
+    metadata.routesPerApp = metadata.routesPerApp.slice();
     return metadata;
   }
 
@@ -130,14 +134,14 @@ export class AppFactory {
      * @param method Method of the class controller.
      * @param parseBody Need or not to parse body.
      */
-    const { injector, providers, controller, method, parseBody } = handleRoute();
+    const { injector, providers, controller, method, parseBody, routeData } = handleRoute();
     const inj1 = injector.resolveAndCreateChild([
       { provide: NodeReqToken, useValue: nodeReq },
       { provide: NodeResToken, useValue: nodeRes }
     ]);
     const inj2 = inj1.createChildFromResolved(providers);
     const req = inj2.get(Request) as Request;
-    req.handleRoute(controller, method, routeParams, queryString, parseBody);
+    req.handleRoute(controller, method, routeParams, queryString, parseBody, routeData);
   };
 
   protected createServer() {

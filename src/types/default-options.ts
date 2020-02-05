@@ -3,7 +3,7 @@ import { ListenOptions } from 'net';
 import { Type, Provider, TypeProvider, forwardRef, ReflectiveInjector, Injector } from 'ts-di';
 import { Router as RestifyRouter } from '@restify-ts/router';
 
-import { HttpModule, Logger, Router, ServerOptions, BodyParserConfig } from './types';
+import { HttpModule, Logger, Router, ServerOptions, BodyParserConfig, RouteConfig } from './types';
 import { PreRequest } from '../services/pre-request';
 import { ModuleFactory } from '../module-factory';
 import { Request } from '../request';
@@ -31,6 +31,8 @@ export class ModuleMetadata {
   providersPerMod: Provider[] = [];
   providersPerReq: Provider[] = defaultProvidersPerReq;
   controllers: TypeProvider[] = [];
+  routesPrefixPerMod?: string = '';
+  routesPerMod?: RouteConfig[] = [];
 }
 
 export class ApplicationMetadata {
@@ -39,4 +41,6 @@ export class ApplicationMetadata {
   serverOptions?: ServerOptions = {};
   listenOptions?: ListenOptions = { host: 'localhost', port: 8080 };
   providersPerApp?: Provider[] = defaultProvidersPerApp;
+  routesPrefixPerApp?: string = '';
+  routesPerApp?: RouteConfig[] = [];
 }

@@ -114,6 +114,7 @@ export type RouteHandler = () => {
    * Need or not to parse body.
    */
   parseBody: boolean;
+  routeData: any;
 };
 
 export class Router {
@@ -180,30 +181,15 @@ export interface ObjectAny {
 
 export type ModuleType = new (...args: any[]) => any;
 
-export interface Route {
-  path?: string;
+export abstract class RouteConfig {
+  path: string;
   controller?: TypeProvider;
   redirectTo?: string;
   canActivate?: any[];
   canActivateChild?: any[];
-  data?: ObjectAny;
+  routeData?: any;
   resolve?: ObjectAny;
   children?: this[];
-}
-
-export interface ActivatedRoute {
-  routeConfig: Route | null;
-  // url: UrlSegment[];
-  routeParams: ObjectAny;
-  queryParams: ObjectAny;
-  fragment: string;
-  data: ObjectAny;
-  controller: Type<any> | string | null;
-  root: this;
-  parent: this | null;
-  firstChild: this | null;
-  children: this[];
-  pathFromRoot: this[];
 }
 
 export interface ModuleWithProviders<T> {

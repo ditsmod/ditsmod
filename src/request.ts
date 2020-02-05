@@ -2,7 +2,7 @@ import { Injectable, Inject, Injector, TypeProvider } from 'ts-di';
 import { format } from 'util';
 import { ParsedUrlQuery, parse } from 'querystring';
 
-import { NodeRequest, NodeReqToken, RouteParam, NodeResponse, NodeResToken } from './types/types';
+import { NodeRequest, NodeReqToken, RouteParam, NodeResponse, NodeResToken, ObjectAny } from './types/types';
 import { BodyParser } from './services/body-parser';
 import { PreRequest } from './services/pre-request';
 
@@ -12,10 +12,11 @@ export class Request {
    * Array of route params.
    * For example, route `/api/resource/:param1/:param2` have two params.
    */
-  routeParams: RouteParam[];
-  queryParams: ParsedUrlQuery;
-  rawBody: any;
-  body: any;
+  routeParams?: RouteParam[];
+  queryParams?: ParsedUrlQuery;
+  rawBody?: any;
+  body?: any;
+  routeData?: ObjectAny;
 
   constructor(
     @Inject(NodeReqToken) public readonly nodeReq: NodeRequest,
@@ -37,8 +38,10 @@ export class Request {
     method: string,
     routeParams: RouteParam[],
     queryString: string,
-    parseBody: boolean
+    parseBody: boolean,
+    routeData: any
   ) {
+    this.routeData = routeData;
     this.routeParams = routeParams;
     let ctrl: any;
     try {

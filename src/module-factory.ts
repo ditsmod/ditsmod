@@ -8,6 +8,7 @@ import {
   ResolvedReflectiveProvider,
   ReflectiveInjector
 } from 'ts-di';
+import assert = require('assert-plus');
 
 import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from './types/decorators';
 import {
@@ -17,7 +18,8 @@ import {
   Router,
   BodyParserConfig,
   NodeReqToken,
-  NodeResToken
+  NodeResToken,
+  RouteConfig
 } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from './utils/type-guards';
@@ -31,6 +33,7 @@ import { mergeOpts } from './utils/merge-arrays-options';
 
 @Injectable()
 export class ModuleFactory {
+  protected moduleName: string;
   protected imports: Type<any>[];
   protected exports: (Type<any> | Provider)[];
   /**
@@ -39,6 +42,9 @@ export class ModuleFactory {
   protected providersPerMod: Provider[];
   protected providersPerReq: Provider[];
   protected controllers: TypeProvider[];
+  protected routesPrefixPerApp: string;
+  protected routesPrefixPerMod: string;
+  protected routesPerMod: RouteConfig[];
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
   /**
    * Injector per the module.
@@ -53,12 +59,13 @@ export class ModuleFactory {
    * @param mod Module that will bootstrapped.
    * @param importer It's module that imported current module.
    */
-  bootstrap(mod: ModuleType, importer?: this) {
+  bootstrap(mod: ModuleType, importer?: this, routesPrefixPerApp?: string) {
+    this.moduleName = mod.name;
+    this.routesPrefixPerApp = routesPrefixPerApp || '';
     const moduleMetadata = this.mergeMetadata(mod);
-    this.checkImports(moduleMetadata, mod.name);
     Object.assign(this, moduleMetadata);
     this.initProvidersPerReq();
-    this.importControllers();
+    this.importRoutes();
     /**
      * If we exported providers from current module,
      * this only make sense for the module that will import current module.
@@ -70,14 +77,43 @@ export class ModuleFactory {
       this.importProviders.call(importer, mod);
     }
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.providersPerMod);
-    this.setRoutes();
+    this.checkImports(moduleMetadata, mod.name);
+    this.checkRoutePath(this.routesPrefixPerApp);
+    this.checkRoutePath(this.routesPrefixPerMod);
+    const prefix = [this.routesPrefixPerApp, this.routesPrefixPerMod].filter(s => s).join('/');
+    this.controllers.forEach(Ctrl => this.setRoutes(prefix, Ctrl));
+    this.loadRoutesConfig(prefix, this.routesPerMod);
+  }
+
+  protected loadRoutesConfig(prefix: string, configs: RouteConfig[]) {
+    for (const config of configs) {
+      const childPrefix = [prefix, config.path].filter(s => s).join('/');
+      if (config.controller) {
+        this.setRoutes(childPrefix, config.controller, config.routeData);
+      }
+      this.loadRoutesConfig(childPrefix, config.children || []);
+    }
   }
 
   protected checkImports(moduleMetadata: ModuleMetadata & ApplicationMetadata, moduleName: string) {
-    if (!isRootModule(moduleMetadata) && !moduleMetadata.controllers.length && !moduleMetadata.exports.length) {
+    assert.array(this.routesPerMod, 'routesPerMod');
+    if (
+      !isRootModule(moduleMetadata) &&
+      !moduleMetadata.controllers.length &&
+      !someController(this.routesPerMod) &&
+      !moduleMetadata.exports.length
+    ) {
       throw new Error(
-        `Import ${moduleName} failed: the imported module should have "controllers" or "exports" array with elements.`
+        `Import ${moduleName} failed: the imported module should have some controllers or "exports" array with elements.`
       );
+    }
+
+    function someController(configs: RouteConfig[]) {
+      for (const config of configs) {
+        if (config.controller || someController(config.children)) {
+          return true;
+        }
+      }
     }
   }
 
@@ -111,6 +147,8 @@ export class ModuleFactory {
     metadata.providersPerMod = mergeOpts(metadata.providersPerMod, modMetadata.providersPerMod);
     metadata.providersPerReq = mergeOpts(metadata.providersPerReq, modMetadata.providersPerReq);
     metadata.controllers = mergeOpts(metadata.controllers, modMetadata.controllers);
+    metadata.routesPrefixPerMod = modMetadata.routesPrefixPerMod || metadata.routesPrefixPerMod;
+    metadata.routesPerMod = mergeOpts(metadata.routesPerMod, modMetadata.routesPerMod);
 
     return metadata;
 
@@ -141,10 +179,10 @@ export class ModuleFactory {
     this.initProvidersPerReq();
   }
 
-  protected importControllers() {
+  protected importRoutes() {
     for (const imp of this.imports) {
-      const bsMod = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      bsMod.bootstrap(imp, this);
+      const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+      moduleFactory.bootstrap(imp, this, this.routesPrefixPerApp);
     }
   }
 
@@ -238,62 +276,51 @@ export class ModuleFactory {
     }
   }
 
-  protected setRoutes() {
-    this.controllers.forEach(Ctrl => {
-      const controllerMetadata = reflector.annotations(Ctrl).find(c => isController(c)) as ControllersDecorator;
-      if (!controllerMetadata) {
-        throw new Error(`Setting routes failed: class "${Ctrl.name}" does not have the "@Controller()" decorator`);
-      }
-      const pathFromRoot = controllerMetadata.path;
-      const providersPerReq = controllerMetadata.providersPerReq;
-      this.checkRoutePath(Ctrl.name, pathFromRoot);
-      const propMetadata = reflector.propMetadata(Ctrl) as RouteDecoratorMetadata;
+  protected setRoutes(prefix: string, Ctrl: TypeProvider, routeData?: any) {
+    const controllerMetadata = reflector.annotations(Ctrl).find(c => isController(c)) as ControllersDecorator;
+    if (!controllerMetadata) {
+      throw new Error(`Setting routes failed: class "${Ctrl.name}" does not have the "@Controller()" decorator`);
+    }
+    const providersPerReq = controllerMetadata.providersPerReq;
+    const propMetadata = reflector.propMetadata(Ctrl) as RouteDecoratorMetadata;
 
-      for (const prop in propMetadata) {
-        const routes = propMetadata[prop].filter(p => isRoute(p));
-        for (const route of routes) {
-          this.checkRoutePath(Ctrl.name, route.path);
-          let path = '/';
-          if (!pathFromRoot) {
-            path += route.path;
-          } else if (!route.path) {
-            path += pathFromRoot;
-          } else {
-            path += `${pathFromRoot}/${route.path}`;
-          }
-
-          this.unshiftProvidersPerReq(Ctrl);
-          let resolvedProvidersPerReq: ResolvedReflectiveProvider[] = this.resolvedProvidersPerReq;
-          if (providersPerReq) {
-            resolvedProvidersPerReq = ReflectiveInjector.resolve([...this.providersPerReq, ...providersPerReq]);
-          }
-
-          const injectorPerReq = this.injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
-          const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
-          const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
-
-          this.router.on(route.httpMethod, path, () => ({
-            injector: this.injectorPerMod,
-            providers: resolvedProvidersPerReq,
-            controller: Ctrl,
-            method: prop,
-            parseBody
-          }));
-
-          this.log.trace({
-            httpMethod: route.httpMethod,
-            path,
-            handler: `${Ctrl.name} -> ${prop}()`
-          });
+    for (const prop in propMetadata) {
+      const routes = propMetadata[prop].filter(p => isRoute(p));
+      for (const route of routes) {
+        this.checkRoutePath(route.path);
+        this.unshiftProvidersPerReq(Ctrl);
+        let resolvedProvidersPerReq: ResolvedReflectiveProvider[] = this.resolvedProvidersPerReq;
+        if (providersPerReq) {
+          resolvedProvidersPerReq = ReflectiveInjector.resolve([...this.providersPerReq, ...providersPerReq]);
         }
+
+        const injectorPerReq = this.injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
+        const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
+        const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
+
+        const path = [prefix, route.path].filter(s => s).join('/');
+        this.router.on(route.httpMethod, `/${path}`, () => ({
+          injector: this.injectorPerMod,
+          providers: resolvedProvidersPerReq,
+          controller: Ctrl,
+          method: prop,
+          parseBody,
+          routeData
+        }));
+
+        this.log.trace({
+          httpMethod: route.httpMethod,
+          path,
+          handler: `${Ctrl.name} -> ${prop}()`
+        });
       }
-    });
+    }
   }
 
-  protected checkRoutePath(controllerName: string, path: string) {
+  protected checkRoutePath(path: string) {
     if (path.charAt(0) == '/') {
       throw new Error(
-        `Invalid configuration of route '${path}' (in '${controllerName}'): path cannot start with a slash`
+        `Invalid configuration of route '${path}' (in '${this.moduleName}'): path cannot start with a slash`
       );
     }
   }

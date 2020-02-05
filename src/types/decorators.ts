@@ -1,7 +1,7 @@
 import { ListenOptions } from 'net';
 import { makeDecorator, TypeProvider, makePropDecorator, Provider, Type } from 'ts-di';
 
-import { ServerOptions, HttpMethod, ObjectAny, ModuleWithProviders, HttpModule } from './types';
+import { ServerOptions, HttpMethod, ObjectAny, ModuleWithProviders, HttpModule, RouteConfig } from './types';
 
 export interface ModuleDecoratorFactory {
   (data?: ModuleDecorator): any;
@@ -30,6 +30,8 @@ export interface ModuleDecorator {
    * The application controllers.
    */
   controllers?: TypeProvider[];
+  routesPrefixPerMod?: string;
+  routesPerMod?: RouteConfig[];
 }
 
 export const Module = makeDecorator('Module', (data: any) => data) as ModuleDecoratorFactory;
@@ -49,17 +51,18 @@ export interface RootModuleDecorator extends ModuleDecorator {
    * Providers per the `Application`.
    */
   providersPerApp?: Provider[];
+  routesPrefixPerApp?: string;
+  routesPerApp?: RouteConfig[];
 }
 
 export const RootModule = makeDecorator('RootModule', (data: any) => data) as RootModuleDecoratorFactory;
 
 export interface ControllersDecoratorFactory {
-  (data: ControllersDecorator): any;
-  new (data: ControllersDecorator): ControllersDecorator;
+  (data?: ControllersDecorator): any;
+  new (data?: ControllersDecorator): ControllersDecorator;
 }
 
 export interface ControllersDecorator {
-  path: string;
   /**
    * Providers per HTTP request.
    */
