@@ -10,7 +10,7 @@ import {
 } from 'ts-di';
 import assert = require('assert-plus');
 
-import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from './types/decorators';
+import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata, RoutesPrefixPerMod } from './types/decorators';
 import {
   Logger,
   ModuleType,
@@ -43,7 +43,7 @@ export class ModuleFactory {
   protected providersPerReq: Provider[];
   protected controllers: TypeProvider[];
   protected routesPrefixPerApp: string;
-  protected routesPrefixPerMod: string;
+  protected routesPrefixPerMod: RoutesPrefixPerMod[];
   protected routesPerMod: RouteConfig[];
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
   /**
@@ -59,9 +59,12 @@ export class ModuleFactory {
    * @param mod Module that will bootstrapped.
    * @param importer It's module that imported current module.
    */
-  bootstrap(mod: ModuleType, importer?: this, routesPrefixPerApp?: string) {
+  bootstrap(routesPrefixPerApp: string, routesPrefixPerMod: RoutesPrefixPerMod[], mod: ModuleType, importer?: this) {
     this.moduleName = mod.name;
     this.routesPrefixPerApp = routesPrefixPerApp || '';
+    this.routesPrefixPerMod = routesPrefixPerMod;
+    const prefixConfig = this.routesPrefixPerMod.find(config => config.module === mod);
+    const routesPrefix = (prefixConfig && prefixConfig.prefix) || '';
     const moduleMetadata = this.mergeMetadata(mod);
     Object.assign(this, moduleMetadata);
     this.initProvidersPerReq();
@@ -79,8 +82,8 @@ export class ModuleFactory {
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.providersPerMod);
     this.checkImports(moduleMetadata, mod.name);
     this.checkRoutePath(this.routesPrefixPerApp);
-    this.checkRoutePath(this.routesPrefixPerMod);
-    const prefix = [this.routesPrefixPerApp, this.routesPrefixPerMod].filter(s => s).join('/');
+    this.checkRoutePath(routesPrefix);
+    const prefix = [this.routesPrefixPerApp, routesPrefix].filter(s => s).join('/');
     this.controllers.forEach(Ctrl => this.setRoutes(prefix, Ctrl));
     this.loadRoutesConfig(prefix, this.routesPerMod);
   }
@@ -147,7 +150,6 @@ export class ModuleFactory {
     metadata.providersPerMod = mergeOpts(metadata.providersPerMod, modMetadata.providersPerMod);
     metadata.providersPerReq = mergeOpts(metadata.providersPerReq, modMetadata.providersPerReq);
     metadata.controllers = mergeOpts(metadata.controllers, modMetadata.controllers);
-    metadata.routesPrefixPerMod = modMetadata.routesPrefixPerMod || metadata.routesPrefixPerMod;
     metadata.routesPerMod = mergeOpts(metadata.routesPerMod, modMetadata.routesPerMod);
 
     return metadata;
@@ -182,7 +184,7 @@ export class ModuleFactory {
   protected importRoutes() {
     for (const imp of this.imports) {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      moduleFactory.bootstrap(imp, this, this.routesPrefixPerApp);
+      moduleFactory.bootstrap(this.routesPrefixPerApp, this.routesPrefixPerMod, imp, this);
     }
   }
 

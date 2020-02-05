@@ -9,6 +9,7 @@ import { ModuleFactory } from '../module-factory';
 import { Request } from '../request';
 import { Response } from '../response';
 import { BodyParser } from '../services/body-parser';
+import { RoutesPrefixPerMod } from './decorators';
 
 export const defaultProvidersPerApp: Provider[] = [
   Logger,
@@ -31,7 +32,6 @@ export class ModuleMetadata {
   providersPerMod: Provider[] = [];
   providersPerReq: Provider[] = defaultProvidersPerReq;
   controllers: TypeProvider[] = [];
-  routesPrefixPerMod?: string = '';
   routesPerMod?: RouteConfig[] = [];
 }
 
@@ -42,5 +42,5 @@ export class ApplicationMetadata {
   listenOptions?: ListenOptions = { host: 'localhost', port: 8080 };
   providersPerApp?: Provider[] = defaultProvidersPerApp;
   routesPrefixPerApp?: string = '';
-  routesPerApp?: RouteConfig[] = [];
+  routesPrefixPerMod?: RoutesPrefixPerMod[] = [];
 }

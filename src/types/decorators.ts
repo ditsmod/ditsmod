@@ -30,7 +30,6 @@ export interface ModuleDecorator {
    * The application controllers.
    */
   controllers?: TypeProvider[];
-  routesPrefixPerMod?: string;
   routesPerMod?: RouteConfig[];
 }
 
@@ -52,7 +51,12 @@ export interface RootModuleDecorator extends ModuleDecorator {
    */
   providersPerApp?: Provider[];
   routesPrefixPerApp?: string;
-  routesPerApp?: RouteConfig[];
+  routesPrefixPerMod?: RoutesPrefixPerMod[];
+}
+
+export interface RoutesPrefixPerMod {
+  prefix: string;
+  module: TypeProvider;
 }
 
 export const RootModule = makeDecorator('RootModule', (data: any) => data) as RootModuleDecoratorFactory;

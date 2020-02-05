@@ -5,7 +5,7 @@ import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ListenOptions } from 'net';
 import { Provider, ReflectiveInjector, reflector } from 'ts-di';
 
-import { RootModuleDecorator } from './types/decorators';
+import { RootModuleDecorator, RoutesPrefixPerMod } from './types/decorators';
 import {
   Server,
   Logger,
@@ -17,8 +17,7 @@ import {
   RequestListener,
   NodeReqToken,
   NodeResToken,
-  HttpMethod,
-  RouteConfig
+  HttpMethod
 } from './types/types';
 import { isHttp2SecureServerOptions, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
@@ -40,7 +39,7 @@ export class AppFactory {
   protected router: Router;
   protected preReq: PreRequest;
   protected routesPrefixPerApp: string;
-  protected routesPerApp: RouteConfig[];
+  protected routesPrefixPerMod: RoutesPrefixPerMod[];
 
   bootstrap(appModule: ModuleType) {
     return new Promise<Server>((resolve, reject) => {
@@ -76,7 +75,7 @@ export class AppFactory {
     this.log.trace('Setting listen options:', this.listenOptions);
     this.checkSecureServerOption(appModule);
     const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    moduleFactory.bootstrap(appModule, null, this.routesPrefixPerApp);
+    moduleFactory.bootstrap(this.routesPrefixPerApp, this.routesPrefixPerMod, appModule);
   }
 
   /**
@@ -94,7 +93,7 @@ export class AppFactory {
     const providersPerApp = mergeOpts(metadata.providersPerApp, modMetadata.providersPerApp);
     pickProperties(metadata, modMetadata);
     metadata.providersPerApp = providersPerApp;
-    metadata.routesPerApp = metadata.routesPerApp.slice();
+    metadata.routesPrefixPerMod = metadata.routesPrefixPerMod.slice();
     return metadata;
   }
 
