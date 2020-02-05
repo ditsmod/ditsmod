@@ -42,7 +42,7 @@ export class AppFactory {
   protected routesPrefixPerApp: string;
   protected routesPerApp: RouteConfig[];
 
-  bootstrapRootModule(appModule: ModuleType) {
+  bootstrap(appModule: ModuleType) {
     return new Promise<Server>((resolve, reject) => {
       try {
         this.prepareServerOptions(appModule);
