@@ -30,6 +30,9 @@ export interface ModuleDecorator {
    * The application controllers.
    */
   controllers?: TypeProvider[];
+  /**
+   * Route config array per a module.
+   */
   routesPerMod?: RouteConfig[];
 }
 

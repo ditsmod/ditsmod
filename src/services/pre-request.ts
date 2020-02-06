@@ -9,9 +9,6 @@ export class PreRequest {
 
   /**
    * Called by the `ModuleFactory` before call a router.
-   *
-   * In inherited class you can to use standart `decodeURI(url)` function.
-   * See inheritance in the docs.
    */
   decodeUrl(url: string) {
     return decodeURI(url);

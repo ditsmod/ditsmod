@@ -27,7 +27,7 @@ export class Response {
   }
 
   /**
-   * Send data as is, without any conversion.
+   * Send data as is, without any transformation.
    */
   send(data?: string | Buffer | Uint8Array, statusCode: Status = Status.OK): void {
     this.nodeRes.statusCode = statusCode;
