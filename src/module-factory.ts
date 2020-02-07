@@ -58,7 +58,7 @@ export class ModuleFactory {
     const prefixConfig = this.routesPrefixPerMod.find(config => config.module === mod);
     const routesPrefix = prefixConfig?.prefix || '';
     const moduleMetadata = this.mergeMetadata(mod);
-    Object.assign(this, moduleMetadata);
+    Object.assign(this.opts, moduleMetadata);
     this.initProvidersPerReq();
     this.importRoutes();
     /**
