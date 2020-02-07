@@ -497,7 +497,7 @@ export const STATUS_CODE_INFO: StatusCodeInfo = {
  */
 export function getStatusText(statusCode: Status) {
   const code = STATUS_CODE_INFO[statusCode];
-  return (code && code.text) || 'Unknown Status';
+  return code?.text || 'Unknown Status';
 }
 
 /**

@@ -64,7 +64,7 @@ export class ModuleFactory {
     this.routesPrefixPerApp = routesPrefixPerApp || '';
     this.routesPrefixPerMod = routesPrefixPerMod;
     const prefixConfig = this.routesPrefixPerMod.find(config => config.module === mod);
-    const routesPrefix = (prefixConfig && prefixConfig.prefix) || '';
+    const routesPrefix = prefixConfig?.prefix || '';
     const moduleMetadata = this.mergeMetadata(mod);
     Object.assign(this, moduleMetadata);
     this.initProvidersPerReq();
@@ -210,7 +210,7 @@ export class ModuleFactory {
         const provider = moduleOrProvider as Provider;
         const normProvider = normalizeProviders([provider])[0];
         const providerName = normProvider.provide.name || normProvider.provide;
-        if (soughtProvider && soughtProvider.provide !== normProvider.provide) {
+        if (soughtProvider?.provide !== normProvider.provide) {
           continue;
         }
         let foundProvider = this.findAndSetProvider(

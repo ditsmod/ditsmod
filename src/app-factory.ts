@@ -48,7 +48,7 @@ export class AppFactory {
         this.createServer();
 
         if (!isMainThread) {
-          const port = (workerData && workerData.port) || 9000;
+          const port = workerData?.port || 9000;
           this.listenOptions.port = port;
         }
 
@@ -113,7 +113,7 @@ export class AppFactory {
 
   protected checkSecureServerOption(appModule: ModuleType) {
     const serverOptions = this.serverOptions as Http2SecureServerOptions;
-    if (serverOptions && serverOptions.isHttp2SecureServer && !(this.httpModule as typeof http2).createSecureServer) {
+    if (serverOptions?.isHttp2SecureServer && !(this.httpModule as typeof http2).createSecureServer) {
       throw new TypeError(`serverModule.createSecureServer() not found (see ${appModule.name} settings)`);
     }
   }

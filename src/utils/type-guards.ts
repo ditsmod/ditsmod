@@ -15,19 +15,19 @@ export function isModuleWithProviders(
 }
 
 export function isRootModule(moduleMetadata: RootModuleDecorator): moduleMetadata is RootModuleDecorator {
-  return moduleMetadata && (moduleMetadata as any).ngMetadataName == 'RootModule';
+  return (moduleMetadata as any)?.ngMetadataName == 'RootModule';
 }
 
 export function isModule(moduleMetadata: ModuleDecorator): moduleMetadata is ModuleDecorator {
-  return moduleMetadata && (moduleMetadata as any).ngMetadataName == 'Module';
+  return (moduleMetadata as any)?.ngMetadataName == 'Module';
 }
 
 export function isController(ctrlMeatada: ControllersDecorator): ctrlMeatada is ControllersDecorator {
-  return ctrlMeatada && (ctrlMeatada as any).ngMetadataName == 'Controller';
+  return (ctrlMeatada as any)?.ngMetadataName == 'Controller';
 }
 
 export function isRoute(propMeatada: RouteMetadata): propMeatada is RouteMetadata {
-  return propMeatada && (propMeatada as any).ngMetadataName == 'Route';
+  return (propMeatada as any)?.ngMetadataName == 'Route';
 }
 
 export function isTypeProvider(provider: Provider): provider is TypeProvider {
@@ -35,19 +35,19 @@ export function isTypeProvider(provider: Provider): provider is TypeProvider {
 }
 
 export function isValueProvider(provider: Provider): provider is ValueProvider {
-  return provider && (provider as ValueProvider).useValue !== undefined;
+  return (provider as ValueProvider)?.useValue !== undefined;
 }
 
 export function isClassProvider(provider: Provider): provider is ClassProvider {
-  return provider && (provider as ClassProvider).useClass !== undefined;
+  return (provider as ClassProvider)?.useClass !== undefined;
 }
 
 export function isExistingProvider(provider: Provider): provider is ExistingProvider {
-  return provider && (provider as ExistingProvider).useExisting !== undefined;
+  return (provider as ExistingProvider)?.useExisting !== undefined;
 }
 
 export function isFactoryProvider(provider: Provider): provider is FactoryProvider {
-  return provider && (provider as FactoryProvider).useFactory !== undefined;
+  return (provider as FactoryProvider)?.useFactory !== undefined;
 }
 
 export function isProvider(provider: Provider): provider is Provider {
