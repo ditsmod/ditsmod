@@ -39,20 +39,6 @@ describe('AppFactory', () => {
     mock = new MockAppFactory();
   });
 
-  describe('getAppModuleMetadata()', () => {
-    it('should returns ClassWithDecorators metadata', () => {
-      @RootModule({ controllers: [SomeControllerClass] })
-      class ClassWithDecorators {}
-      const metadata = mock.getAppModuleMetadata(ClassWithDecorators);
-      expect(metadata).toEqual(new RootModule({ controllers: [SomeControllerClass] }));
-    });
-
-    it('should not returns any metadata', () => {
-      const metadata = mock.getAppModuleMetadata(ClassWithoutDecorators);
-      expect(metadata).toBeUndefined();
-    });
-  });
-
   describe('mergeMetadata()', () => {
     it('should set default metatada', () => {
       @RootModule()
@@ -93,6 +79,20 @@ describe('AppFactory', () => {
     it('ClassWithoutDecorators should not have metatada', () => {
       const msg = `Module build failed: module "ClassWithoutDecorators" does not have the "@RootModule()" decorator`;
       expect(() => mock.mergeMetadata(ClassWithoutDecorators)).toThrowError(msg);
+    });
+  });
+
+  describe('getAppModuleMetadata()', () => {
+    it('should returns ClassWithDecorators metadata', () => {
+      @RootModule({ controllers: [SomeControllerClass] })
+      class ClassWithDecorators {}
+      const metadata = mock.getAppModuleMetadata(ClassWithDecorators);
+      expect(metadata).toEqual(new RootModule({ controllers: [SomeControllerClass] }));
+    });
+
+    it('should not returns any metadata', () => {
+      const metadata = mock.getAppModuleMetadata(ClassWithoutDecorators);
+      expect(metadata).toBeUndefined();
     });
   });
 

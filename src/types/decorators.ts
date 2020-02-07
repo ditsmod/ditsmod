@@ -34,11 +34,11 @@ export interface RootModuleDecorator extends ModuleDecorator, Partial<Applicatio
 export const RootModule = makeDecorator('RootModule', (data: any) => data) as RootModuleDecoratorFactory;
 
 export interface ControllersDecoratorFactory {
-  (data?: ControllersDecorator): any;
-  new (data?: ControllersDecorator): ControllersDecorator;
+  (data?: ControllerDecorator): any;
+  new (data?: ControllerDecorator): ControllerDecorator;
 }
 
-export interface ControllersDecorator {
+export interface ControllerDecorator {
   /**
    * Providers per HTTP request.
    */

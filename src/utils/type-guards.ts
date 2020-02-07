@@ -2,7 +2,7 @@ import { ClassProvider, ExistingProvider, FactoryProvider, Provider, Type, TypeP
 
 import { normalizeProviders } from './ng-utils';
 import { ServerOptions, Http2SecureServerOptions, ModuleWithProviders } from '../types/types';
-import { ModuleDecorator, RootModuleDecorator, ControllersDecorator, RouteMetadata } from '../types/decorators';
+import { ModuleDecorator, RootModuleDecorator, ControllerDecorator, RouteMetadata } from '../types/decorators';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
@@ -22,7 +22,7 @@ export function isModule(moduleMetadata: ModuleDecorator): moduleMetadata is Mod
   return (moduleMetadata as any)?.ngMetadataName == 'Module';
 }
 
-export function isController(ctrlMeatada: ControllersDecorator): ctrlMeatada is ControllersDecorator {
+export function isController(ctrlMeatada: ControllerDecorator): ctrlMeatada is ControllerDecorator {
   return (ctrlMeatada as any)?.ngMetadataName == 'Controller';
 }
 
@@ -52,7 +52,7 @@ export function isFactoryProvider(provider: Provider): provider is FactoryProvid
 
 export function isProvider(provider: Provider): provider is Provider {
   provider = Array.isArray(provider) ? provider : [provider];
-  const arrProviders = normalizeProviders(provider as any);
+  const arrProviders = normalizeProviders(provider);
 
   return arrProviders.every(ok);
 

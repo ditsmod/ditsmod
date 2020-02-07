@@ -10,7 +10,7 @@ import {
 } from 'ts-di';
 import assert = require('assert-plus');
 
-import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from './types/decorators';
+import { ModuleDecorator, ControllerDecorator, RouteDecoratorMetadata } from './types/decorators';
 import {
   Logger,
   ModuleType,
@@ -271,7 +271,7 @@ export class ModuleFactory {
   }
 
   protected setRoutes(prefix: string, Ctrl: TypeProvider, routeData?: any) {
-    const controllerMetadata = reflector.annotations(Ctrl).find(c => isController(c)) as ControllersDecorator;
+    const controllerMetadata = reflector.annotations(Ctrl).find(c => isController(c)) as ControllerDecorator;
     if (!controllerMetadata) {
       throw new Error(`Setting routes failed: class "${Ctrl.name}" does not have the "@Controller()" decorator`);
     }
