@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { flatten } from '../../src/utils/ng-utils';
+import { flatten } from './ng-utils';
 
 describe('flatten', () => {
   it('should flatten an empty array', () => {

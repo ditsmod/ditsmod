@@ -3,11 +3,11 @@ import * as https from 'https';
 import * as http2 from 'http2';
 import { ReflectiveInjector } from 'ts-di';
 
-import { AppFactory } from '../src/app-factory';
-import { ModuleType, Logger, Server, Router } from '../src/types/types';
-import { RootModuleDecorator, RootModule } from '../src/types/decorators';
-import { PreRequest } from '../src/services/pre-request';
-import { defaultProvidersPerApp, ApplicationMetadata } from '../src/types/default-options';
+import { AppFactory } from './app-factory';
+import { ModuleType, Logger, Server, Router } from './types/types';
+import { RootModuleDecorator, RootModule } from './types/decorators';
+import { PreRequest } from './services/pre-request';
+import { defaultProvidersPerApp, ApplicationMetadata } from './types/default-options';
 
 describe('AppFactory', () => {
   class MockAppFactory extends AppFactory {

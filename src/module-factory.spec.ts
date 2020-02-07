@@ -1,8 +1,8 @@
-import { ModuleFactory } from '../src/module-factory';
-import { ModuleType } from '../src/types/types';
-import { NormalizedProvider } from '../src/utils/ng-utils';
-import { Module } from '../src/types/decorators';
-import { defaultProvidersPerReq, ModuleMetadata } from '../src/types/default-options';
+import { ModuleFactory } from './module-factory';
+import { ModuleType } from './types/types';
+import { NormalizedProvider } from './utils/ng-utils';
+import { Module } from './types/decorators';
+import { defaultProvidersPerReq, ModuleMetadata } from './types/default-options';
 
 describe('ModuleFactory', () => {
   class MockModuleFactory extends ModuleFactory {
