@@ -1,6 +1,6 @@
 import { ObjectAny } from '../types/types';
 
-export function pickProperties<T extends ObjectAny, TT extends T>(targetObject: T, ...sourceObjects: TT[]) {
+export function pickProperties<T extends ObjectAny, TT extends Partial<T>>(targetObject: T, ...sourceObjects: TT[]) {
   sourceObjects.forEach(sourceObj => {
     Object.keys(targetObject).forEach(prop => {
       if (sourceObj.hasOwnProperty(prop)) {

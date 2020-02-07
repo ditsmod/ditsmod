@@ -2,10 +2,12 @@ import { ModuleFactory } from '../src/module-factory';
 import { ModuleType } from '../src/types/types';
 import { NormalizedProvider } from '../src/utils/ng-utils';
 import { Module } from '../src/types/decorators';
-import { defaultProvidersPerReq } from '../src/types/default-options';
+import { defaultProvidersPerReq, ModuleMetadata } from '../src/types/default-options';
 
 describe('ModuleFactory', () => {
   class MockModuleFactory extends ModuleFactory {
+    opts = new ModuleMetadata();
+
     getRawModuleMetadata(mod: ModuleType) {
       return super.getRawModuleMetadata(mod);
     }

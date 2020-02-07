@@ -10,7 +10,7 @@ import {
 } from 'ts-di';
 import assert = require('assert-plus');
 
-import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata, RoutesPrefixPerMod } from './types/decorators';
+import { ModuleDecorator, ControllersDecorator, RouteDecoratorMetadata } from './types/decorators';
 import {
   Logger,
   ModuleType,
@@ -19,33 +19,25 @@ import {
   BodyParserConfig,
   NodeReqToken,
   NodeResToken,
-  RouteConfig
+  RouteConfig,
+  RoutesPrefixPerMod
 } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from './utils/type-guards';
-import {
-  ModuleMetadata,
-  defaultProvidersPerReq,
-  defaultProvidersPerApp,
-  ApplicationMetadata
-} from './types/default-options';
+import { ModuleMetadata, defaultProvidersPerReq, defaultProvidersPerApp } from './types/default-options';
 import { mergeOpts } from './utils/merge-arrays-options';
 
 @Injectable()
 export class ModuleFactory {
   protected moduleName: string;
-  protected imports: Type<any>[];
-  protected exports: (Type<any> | Provider)[];
-  /**
-   * Providers per the module.
-   */
-  protected providersPerMod: Provider[];
-  protected providersPerReq: Provider[];
-  protected controllers: TypeProvider[];
   protected routesPrefixPerApp: string;
   protected routesPrefixPerMod: RoutesPrefixPerMod[];
-  protected routesPerMod: RouteConfig[];
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
+
+  /**
+   * Setting default module metadata.
+   */
+  protected opts = new ModuleMetadata();
   /**
    * Injector per the module.
    */
@@ -79,13 +71,13 @@ export class ModuleFactory {
     if (importer) {
       this.importProviders.call(importer, mod);
     }
-    this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.providersPerMod);
+    this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
     this.checkImports(moduleMetadata, mod.name);
     this.checkRoutePath(this.routesPrefixPerApp);
     this.checkRoutePath(routesPrefix);
     const prefix = [this.routesPrefixPerApp, routesPrefix].filter(s => s).join('/');
-    this.controllers.forEach(Ctrl => this.setRoutes(prefix, Ctrl));
-    this.loadRoutesConfig(prefix, this.routesPerMod);
+    this.opts.controllers.forEach(Ctrl => this.setRoutes(prefix, Ctrl));
+    this.loadRoutesConfig(prefix, this.opts.routesPerMod);
   }
 
   protected loadRoutesConfig(prefix: string, configs: RouteConfig[]) {
@@ -98,12 +90,12 @@ export class ModuleFactory {
     }
   }
 
-  protected checkImports(moduleMetadata: ModuleMetadata & ApplicationMetadata, moduleName: string) {
-    assert.array(this.routesPerMod, 'routesPerMod');
+  protected checkImports(moduleMetadata: ModuleMetadata, moduleName: string) {
+    assert.array(this.opts.routesPerMod, 'routesPerMod');
     if (
-      !isRootModule(moduleMetadata) &&
+      !isRootModule(moduleMetadata as any) &&
       !moduleMetadata.controllers.length &&
-      !someController(this.routesPerMod) &&
+      !someController(this.opts.routesPerMod) &&
       !moduleMetadata.exports.length
     ) {
       throw new Error(
@@ -140,7 +132,6 @@ export class ModuleFactory {
      * This is only used internally and is hidden from the public API.
      */
     (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
-    metadata.moduleName = mod.name;
     metadata.imports = flatten((modMetadata.imports || metadata.imports).slice())
       .map(resolveForwardRef)
       .map(getModule);
@@ -170,19 +161,19 @@ export class ModuleFactory {
    * Init providers per the request.
    */
   protected initProvidersPerReq() {
-    this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.providersPerReq);
+    this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.opts.providersPerReq);
   }
 
   /**
    * Inserts new `Provider` at the start of `providersPerReq` array.
    */
   protected unshiftProvidersPerReq(...providers: Provider[]) {
-    this.providersPerReq.unshift(...providers);
+    this.opts.providersPerReq.unshift(...providers);
     this.initProvidersPerReq();
   }
 
   protected importRoutes() {
-    for (const imp of this.imports) {
+    for (const imp of this.opts.imports) {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       moduleFactory.bootstrap(this.routesPrefixPerApp, this.routesPrefixPerMod, imp, this);
     }
@@ -195,7 +186,8 @@ export class ModuleFactory {
    * @param soughtProvider Normalized provider.
    */
   protected importProviders(mod: ModuleType, soughtProvider?: NormalizedProvider) {
-    const { moduleName, exports: exp, imports, providersPerMod, providersPerReq } = this.mergeMetadata(mod);
+    const { exports: exp, imports, providersPerMod, providersPerReq } = this.mergeMetadata(mod);
+    const moduleName = mod.name;
 
     for (const moduleOrProvider of exp) {
       const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType);
@@ -263,10 +255,10 @@ export class ModuleFactory {
     }
 
     if (hasProvider(providersPerMod)) {
-      this.providersPerMod.unshift(normProvider);
+      this.opts.providersPerMod.unshift(normProvider);
       return true;
     } else if (hasProvider(providersPerReq)) {
-      this.providersPerReq.unshift(normProvider);
+      this.opts.providersPerReq.unshift(normProvider);
       return true;
     }
 
@@ -293,7 +285,7 @@ export class ModuleFactory {
         this.unshiftProvidersPerReq(Ctrl);
         let resolvedProvidersPerReq: ResolvedReflectiveProvider[] = this.resolvedProvidersPerReq;
         if (providersPerReq) {
-          resolvedProvidersPerReq = ReflectiveInjector.resolve([...this.providersPerReq, ...providersPerReq]);
+          resolvedProvidersPerReq = ReflectiveInjector.resolve([...this.opts.providersPerReq, ...providersPerReq]);
         }
 
         const injectorPerReq = this.injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);

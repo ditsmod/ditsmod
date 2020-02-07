@@ -1,14 +1,14 @@
-import { ListenOptions } from 'net';
-import { makeDecorator, TypeProvider, makePropDecorator, Provider, Type } from 'ts-di';
+import { makeDecorator, makePropDecorator, Provider, Type } from 'ts-di';
 
-import { ServerOptions, HttpMethod, ObjectAny, ModuleWithProviders, HttpModule, RouteConfig } from './types';
+import { HttpMethod, ObjectAny, ModuleWithProviders } from './types';
+import { ApplicationMetadata, AbstractModuleMetadata } from './default-options';
 
 export interface ModuleDecoratorFactory {
   (data?: ModuleDecorator): any;
   new (data?: ModuleDecorator): ModuleDecorator;
 }
 
-export interface ModuleDecorator {
+export interface ModuleDecorator extends Partial<AbstractModuleMetadata> {
   /**
    * List of modules or `ModuleWithProviders` imported by this module.
    */
@@ -18,22 +18,6 @@ export interface ModuleDecorator {
    * module.
    */
   exports?: Array<Type<any> | ModuleWithProviders<{}> | Provider | any[]>;
-  /**
-   * Providers per a module.
-   */
-  providersPerMod?: Provider[];
-  /**
-   * Providers per the request.
-   */
-  providersPerReq?: Provider[];
-  /**
-   * The application controllers.
-   */
-  controllers?: TypeProvider[];
-  /**
-   * Route config array per a module.
-   */
-  routesPerMod?: RouteConfig[];
 }
 
 export const Module = makeDecorator('Module', (data: any) => data) as ModuleDecoratorFactory;
@@ -43,23 +27,8 @@ export interface RootModuleDecoratorFactory {
   new (data?: RootModuleDecorator): RootModuleDecorator;
 }
 
-export interface RootModuleDecorator extends ModuleDecorator {
+export interface RootModuleDecorator extends ModuleDecorator, Partial<ApplicationMetadata> {
   exports?: never;
-  serverName?: string;
-  httpModule?: HttpModule;
-  serverOptions?: ServerOptions;
-  listenOptions?: ListenOptions;
-  /**
-   * Providers per the `Application`.
-   */
-  providersPerApp?: Provider[];
-  routesPrefixPerApp?: string;
-  routesPrefixPerMod?: RoutesPrefixPerMod[];
-}
-
-export interface RoutesPrefixPerMod {
-  prefix: string;
-  module: TypeProvider;
 }
 
 export const RootModule = makeDecorator('RootModule', (data: any) => data) as RootModuleDecoratorFactory;

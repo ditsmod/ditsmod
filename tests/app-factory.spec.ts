@@ -1,29 +1,24 @@
-import { ListenOptions } from 'net';
 import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
-import { Provider, ReflectiveInjector } from 'ts-di';
+import { ReflectiveInjector } from 'ts-di';
 
 import { AppFactory } from '../src/app-factory';
-import { ModuleType, Logger, HttpModule, ServerOptions, Server, Router } from '../src/types/types';
+import { ModuleType, Logger, Server, Router } from '../src/types/types';
 import { RootModuleDecorator, RootModule } from '../src/types/decorators';
 import { PreRequest } from '../src/services/pre-request';
-import { defaultProvidersPerApp } from '../src/types/default-options';
+import { defaultProvidersPerApp, ApplicationMetadata } from '../src/types/default-options';
 
 describe('AppFactory', () => {
   class MockAppFactory extends AppFactory {
     log: Logger;
-    serverName: string;
-    httpModule: HttpModule;
-    serverOptions: ServerOptions;
     server: Server;
-    listenOptions: ListenOptions;
-    providersPerApp: Provider[];
     injectorPerApp: ReflectiveInjector;
     router: Router;
     preReq: PreRequest;
+    opts = new ApplicationMetadata();
 
-    mergeMetadata(appModule: ModuleType): RootModuleDecorator {
+    mergeMetadata(appModule: ModuleType): void {
       return super.mergeMetadata(appModule);
     }
 
@@ -62,17 +57,17 @@ describe('AppFactory', () => {
     it('should set default metatada', () => {
       @RootModule()
       class ClassWithDecorators {}
-      const metadata = mock.mergeMetadata(ClassWithDecorators);
-      expect(metadata.serverName).toEqual('Node.js');
-      expect(metadata.serverOptions).toEqual({});
-      expect(metadata.httpModule).toBeDefined();
-      expect(metadata.providersPerApp).toEqual(defaultProvidersPerApp);
-      expect(metadata.controllers).toEqual(undefined);
-      expect(metadata.exports).toEqual(undefined);
-      expect(metadata.imports).toEqual(undefined);
-      expect(metadata.listenOptions).toBeDefined();
-      expect(metadata.providersPerMod).toEqual(undefined);
-      expect(metadata.providersPerReq).toEqual(undefined);
+      mock.mergeMetadata(ClassWithDecorators);
+      expect(mock.opts.serverName).toEqual('Node.js');
+      expect(mock.opts.serverOptions).toEqual({});
+      expect(mock.opts.httpModule).toBeDefined();
+      expect(mock.opts.providersPerApp).toEqual(defaultProvidersPerApp);
+      expect((mock.opts as any).controllers).toEqual(undefined);
+      expect((mock.opts as any).exports).toEqual(undefined);
+      expect((mock.opts as any).imports).toEqual(undefined);
+      expect(mock.opts.listenOptions).toBeDefined();
+      expect((mock.opts as any).providersPerMod).toEqual(undefined);
+      expect((mock.opts as any).providersPerReq).toEqual(undefined);
     });
 
     it('should merge default metatada with ClassWithDecorators metadata', () => {
@@ -81,18 +76,18 @@ describe('AppFactory', () => {
         providersPerApp: [ClassWithoutDecorators]
       })
       class ClassWithDecorators {}
-      const metadata = mock.mergeMetadata(ClassWithDecorators);
-      expect(metadata.serverName).toEqual('Node.js');
-      expect(metadata.serverOptions).toEqual({});
-      expect(metadata.httpModule).toBeDefined();
-      expect(metadata.providersPerApp).toEqual([...defaultProvidersPerApp, ClassWithoutDecorators]);
+      mock.mergeMetadata(ClassWithDecorators);
+      expect(mock.opts.serverName).toEqual('Node.js');
+      expect(mock.opts.serverOptions).toEqual({});
+      expect(mock.opts.httpModule).toBeDefined();
+      expect(mock.opts.providersPerApp).toEqual([...defaultProvidersPerApp, ClassWithoutDecorators]);
       // Ignore controllers - it's intended behavior.
-      expect(metadata.controllers).toEqual(undefined);
-      expect(metadata.exports).toEqual(undefined);
-      expect(metadata.imports).toEqual(undefined);
-      expect(metadata.listenOptions).toBeDefined();
-      expect(metadata.providersPerMod).toEqual(undefined);
-      expect(metadata.providersPerReq).toEqual(undefined);
+      expect((mock.opts as any).controllers).toEqual(undefined);
+      expect((mock.opts as any).exports).toEqual(undefined);
+      expect((mock.opts as any).imports).toEqual(undefined);
+      expect(mock.opts.listenOptions).toBeDefined();
+      expect((mock.opts as any).providersPerMod).toEqual(undefined);
+      expect((mock.opts as any).providersPerReq).toEqual(undefined);
     });
 
     it('ClassWithoutDecorators should not have metatada', () => {
@@ -109,27 +104,27 @@ describe('AppFactory', () => {
     class ClassWithDecorators {}
 
     it('should not to throw with http2 and isHttp2SecureServer == true', () => {
-      mock.serverOptions = { isHttp2SecureServer: true };
-      mock.httpModule = http2;
+      mock.opts.serverOptions = { isHttp2SecureServer: true };
+      mock.opts.httpModule = http2;
       expect(() => mock.checkSecureServerOption(ClassWithDecorators)).not.toThrow();
     });
 
     it('should to throw with http and isHttp2SecureServer == true', () => {
-      mock.serverOptions = { isHttp2SecureServer: true };
-      mock.httpModule = http;
+      mock.opts.serverOptions = { isHttp2SecureServer: true };
+      mock.opts.httpModule = http;
       const msg = 'serverModule.createSecureServer() not found (see ClassWithDecorators settings)';
       expect(() => mock.checkSecureServerOption(ClassWithDecorators)).toThrowError(msg);
     });
 
     it('should not to throw with http and isHttp2SecureServer == false', () => {
-      mock.httpModule = http;
+      mock.opts.httpModule = http;
       const msg = 'serverModule.createSecureServer() not found (see ClassWithDecorators settings)';
       expect(() => mock.checkSecureServerOption(ClassWithDecorators)).not.toThrowError(msg);
     });
 
     it('should to throw with https and isHttp2SecureServer == true', () => {
-      mock.serverOptions = { isHttp2SecureServer: true };
-      mock.httpModule = https;
+      mock.opts.serverOptions = { isHttp2SecureServer: true };
+      mock.opts.httpModule = https;
       const msg = 'serverModule.createSecureServer() not found (see ClassWithDecorators settings)';
       expect(() => mock.checkSecureServerOption(ClassWithDecorators)).toThrowError(msg);
     });

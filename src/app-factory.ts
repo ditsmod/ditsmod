@@ -2,17 +2,14 @@ import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
-import { ListenOptions } from 'net';
-import { Provider, ReflectiveInjector, reflector } from 'ts-di';
+import { ReflectiveInjector, reflector } from 'ts-di';
 
-import { RootModuleDecorator, RoutesPrefixPerMod } from './types/decorators';
+import { RootModuleDecorator } from './types/decorators';
 import {
   Server,
   Logger,
-  ServerOptions,
   Http2SecureServerOptions,
   ModuleType,
-  HttpModule,
   Router,
   RequestListener,
   NodeReqToken,
@@ -29,17 +26,13 @@ import { mergeOpts } from './utils/merge-arrays-options';
 
 export class AppFactory {
   protected log: Logger;
-  protected serverName: string;
-  protected httpModule: HttpModule;
-  protected serverOptions: ServerOptions;
   protected server: Server;
-  protected listenOptions: ListenOptions;
-  protected providersPerApp: Provider[];
   protected injectorPerApp: ReflectiveInjector;
   protected router: Router;
   protected preReq: PreRequest;
-  protected routesPrefixPerApp: string;
-  protected routesPrefixPerMod: RoutesPrefixPerMod[];
+
+  // Setting default metadata.
+  protected opts = new ApplicationMetadata();
 
   bootstrap(appModule: ModuleType) {
     return new Promise<Server>((resolve, reject) => {
@@ -49,13 +42,13 @@ export class AppFactory {
 
         if (!isMainThread) {
           const port = workerData?.port || 9000;
-          this.listenOptions.port = port;
+          this.opts.listenOptions.port = port;
         }
 
-        this.server.listen(this.listenOptions, () => {
+        this.server.listen(this.opts.listenOptions, () => {
           resolve(this.server);
-          const host = this.listenOptions.host || 'localhost';
-          this.log.info(`${this.serverName} is running at ${host}:${this.listenOptions.port}`);
+          const host = this.opts.listenOptions.host || 'localhost';
+          this.log.info(`${this.opts.serverName} is running at ${host}:${this.opts.listenOptions.port}`);
 
           if (!isMainThread) {
             parentPort.postMessage('Runing worker!');
@@ -68,33 +61,28 @@ export class AppFactory {
   }
 
   protected prepareServerOptions(appModule: ModuleType) {
-    const appMetadata = this.mergeMetadata(appModule);
-    Object.assign(this, appMetadata);
+    this.mergeMetadata(appModule);
     this.initProvidersPerApp();
-    this.log.trace('Setting server name:', this.serverName);
-    this.log.trace('Setting listen options:', this.listenOptions);
+    this.log.trace('Setting server name:', this.opts.serverName);
+    this.log.trace('Setting listen options:', this.opts.listenOptions);
     this.checkSecureServerOption(appModule);
     const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    moduleFactory.bootstrap(this.routesPrefixPerApp, this.routesPrefixPerMod, appModule);
+    moduleFactory.bootstrap(this.opts.routesPrefixPerApp, this.opts.routesPrefixPerMod, appModule);
   }
 
   /**
    * Merge AppModule metadata with default ApplicationMetadata.
    */
-  protected mergeMetadata(appModule: ModuleType) {
+  protected mergeMetadata(appModule: ModuleType): void {
     const modMetadata = this.getAppModuleMetadata(appModule);
     if (!modMetadata) {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
 
-    // Setting default metadata.
-    const metadata = new ApplicationMetadata();
-
-    const providersPerApp = mergeOpts(metadata.providersPerApp, modMetadata.providersPerApp);
-    pickProperties(metadata, modMetadata);
-    metadata.providersPerApp = providersPerApp;
-    metadata.routesPrefixPerMod = metadata.routesPrefixPerMod.slice();
-    return metadata;
+    const providersPerApp = mergeOpts(this.opts.providersPerApp, modMetadata.providersPerApp);
+    pickProperties(this.opts, modMetadata);
+    this.opts.providersPerApp = providersPerApp;
+    this.opts.routesPrefixPerMod = this.opts.routesPrefixPerMod.slice();
   }
 
   protected getAppModuleMetadata(appModule: ModuleType): RootModuleDecorator {
@@ -105,21 +93,21 @@ export class AppFactory {
    * Init providers per the application.
    */
   protected initProvidersPerApp() {
-    this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.providersPerApp);
+    this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.opts.providersPerApp);
     this.log = this.injectorPerApp.get(Logger) as Logger;
     this.router = this.injectorPerApp.get(Router) as Router;
     this.preReq = this.injectorPerApp.get(PreRequest) as PreRequest;
   }
 
   protected checkSecureServerOption(appModule: ModuleType) {
-    const serverOptions = this.serverOptions as Http2SecureServerOptions;
-    if (serverOptions?.isHttp2SecureServer && !(this.httpModule as typeof http2).createSecureServer) {
+    const serverOptions = this.opts.serverOptions as Http2SecureServerOptions;
+    if (serverOptions?.isHttp2SecureServer && !(this.opts.httpModule as typeof http2).createSecureServer) {
       throw new TypeError(`serverModule.createSecureServer() not found (see ${appModule.name} settings)`);
     }
   }
 
   protected requestListener: RequestListener = (nodeReq, nodeRes) => {
-    nodeRes.setHeader('Server', this.serverName);
+    nodeRes.setHeader('Server', this.opts.serverName);
     const { method: httpMethod, url } = nodeReq;
     const [uri, queryString] = this.preReq.decodeUrl(url).split('?');
     const { handle: handleRoute, params: routeParams } = this.router.find(httpMethod as HttpMethod, uri);
@@ -144,12 +132,12 @@ export class AppFactory {
   };
 
   protected createServer() {
-    if (isHttp2SecureServerOptions(this.serverOptions)) {
-      const serverModule = this.httpModule as typeof http2;
-      this.server = serverModule.createSecureServer(this.serverOptions, this.requestListener);
+    if (isHttp2SecureServerOptions(this.opts.serverOptions)) {
+      const serverModule = this.opts.httpModule as typeof http2;
+      this.server = serverModule.createSecureServer(this.opts.serverOptions, this.requestListener);
     } else {
-      const serverModule = this.httpModule as typeof http | typeof https;
-      const serverOptions = this.serverOptions as http.ServerOptions | https.ServerOptions;
+      const serverModule = this.opts.httpModule as typeof http | typeof https;
+      const serverOptions = this.opts.serverOptions as http.ServerOptions | https.ServerOptions;
       this.server = serverModule.createServer(serverOptions, this.requestListener);
     }
   }
