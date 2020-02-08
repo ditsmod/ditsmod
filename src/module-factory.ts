@@ -43,7 +43,7 @@ export class ModuleFactory {
    */
   protected injectorPerMod: ReflectiveInjector;
 
-  constructor(private router: Router, private injectorPerApp: ReflectiveInjector, private log: Logger) {}
+  constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector, protected log: Logger) {}
 
   /**
    * Bootstraps a module.
@@ -129,7 +129,7 @@ export class ModuleFactory {
      */
     const metadata = new ModuleMetadata();
     /**
-     * This is only used internally and is hidden from the public API.
+     * This is used only internally and is hidden from the public API.
      */
     (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
     metadata.imports = flatten((modMetadata.imports || metadata.imports).slice())
