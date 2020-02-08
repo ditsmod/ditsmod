@@ -202,10 +202,11 @@ export class ModuleFactory {
         const provider = moduleOrProvider as Provider;
         const normProvider = normalizeProviders([provider])[0];
         const providerName = normProvider.provide.name || normProvider.provide;
-        if (soughtProvider?.provide !== normProvider.provide) {
+        if (soughtProvider && soughtProvider.provide !== normProvider.provide) {
           continue;
         }
         let foundProvider = this.findAndSetProvider(
+          provider,
           normProvider,
           providersPerMod,
           providersPerReq,
@@ -237,6 +238,7 @@ export class ModuleFactory {
   }
 
   protected findAndSetProvider(
+    provider: Provider,
     normProvider: NormalizedProvider,
     providersPerMod: Provider[],
     providersPerReq: Provider[],
@@ -255,10 +257,10 @@ export class ModuleFactory {
     }
 
     if (hasProvider(providersPerMod)) {
-      this.opts.providersPerMod.unshift(normProvider);
+      this.opts.providersPerMod.unshift(provider);
       return true;
     } else if (hasProvider(providersPerReq)) {
-      this.opts.providersPerReq.unshift(normProvider);
+      this.opts.providersPerReq.unshift(provider);
       return true;
     }
 
