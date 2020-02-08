@@ -43,37 +43,56 @@ describe('AppFactory', () => {
     it('should set default metatada', () => {
       @RootModule()
       class ClassWithDecorators {}
+
       mock.mergeMetadata(ClassWithDecorators);
-      expect(mock.opts.serverName).toEqual('Node.js');
+      expect(mock.opts.serverName).toBe('Node.js');
       expect(mock.opts.serverOptions).toEqual({});
       expect(mock.opts.httpModule).toBeDefined();
+      expect(mock.opts.routesPrefixPerApp).toBe('');
+      expect(mock.opts.routesPrefixPerMod).toEqual([]);
       expect(mock.opts.providersPerApp).toEqual(defaultProvidersPerApp);
-      expect((mock.opts as any).controllers).toEqual(undefined);
-      expect((mock.opts as any).exports).toEqual(undefined);
-      expect((mock.opts as any).imports).toEqual(undefined);
       expect(mock.opts.listenOptions).toBeDefined();
-      expect((mock.opts as any).providersPerMod).toEqual(undefined);
-      expect((mock.opts as any).providersPerReq).toEqual(undefined);
+      // Ignore controllers - it's intended behavior.
+      expect((mock.opts as any).routesPerMod).toBe(undefined);
+      expect((mock.opts as any).controllers).toBe(undefined);
+      expect((mock.opts as any).exports).toBe(undefined);
+      expect((mock.opts as any).imports).toBe(undefined);
+      expect((mock.opts as any).providersPerMod).toBe(undefined);
+      expect((mock.opts as any).providersPerReq).toBe(undefined);
     });
 
     it('should merge default metatada with ClassWithDecorators metadata', () => {
+      class SomeModule {}
+      class OtherModule {}
+
+      const routesPrefixPerMod = [
+        { prefix: '', module: SomeModule },
+        { prefix: '', module: OtherModule }
+      ];
+
       @RootModule({
+        routesPrefixPerApp: 'api',
+        routesPrefixPerMod,
         controllers: [SomeControllerClass],
         providersPerApp: [ClassWithoutDecorators]
       })
       class ClassWithDecorators {}
+
       mock.mergeMetadata(ClassWithDecorators);
       expect(mock.opts.serverName).toEqual('Node.js');
       expect(mock.opts.serverOptions).toEqual({});
       expect(mock.opts.httpModule).toBeDefined();
+      expect(mock.opts.routesPrefixPerApp).toBe('api');
+      expect(mock.opts.routesPrefixPerMod).toEqual(routesPrefixPerMod);
       expect(mock.opts.providersPerApp).toEqual([...defaultProvidersPerApp, ClassWithoutDecorators]);
-      // Ignore controllers - it's intended behavior.
-      expect((mock.opts as any).controllers).toEqual(undefined);
-      expect((mock.opts as any).exports).toEqual(undefined);
-      expect((mock.opts as any).imports).toEqual(undefined);
       expect(mock.opts.listenOptions).toBeDefined();
-      expect((mock.opts as any).providersPerMod).toEqual(undefined);
-      expect((mock.opts as any).providersPerReq).toEqual(undefined);
+      // Ignore controllers - it's intended behavior.
+      expect((mock.opts as any).routesPerMod).toBe(undefined);
+      expect((mock.opts as any).controllers).toBe(undefined);
+      expect((mock.opts as any).exports).toBe(undefined);
+      expect((mock.opts as any).imports).toBe(undefined);
+      expect((mock.opts as any).providersPerMod).toBe(undefined);
+      expect((mock.opts as any).providersPerReq).toBe(undefined);
     });
 
     it('ClassWithoutDecorators should not have metatada', () => {
