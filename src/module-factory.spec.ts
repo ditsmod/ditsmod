@@ -100,8 +100,82 @@ describe('ModuleFactory', () => {
     });
   });
 
-  describe('importProviders()', () => {
-    it('should', () => {});
+  fdescribe('importProviders() and findAndSetProvider()', () => {
+    it('should import Provider11 and Provider12 from current module', () => {
+      class Provider11 {}
+      class Provider12 {}
+
+      @Module({
+        exports: [Provider11, Provider12],
+        providersPerMod: [Provider11, Provider12]
+      })
+      class Module1 {}
+
+      mock.importProviders(Module1);
+      expect(mock.opts.providersPerMod).toEqual([Provider12, Provider11]);
+    });
+
+    it('should import Provider11 and Provider12 from Module1', () => {
+      class Provider11 {}
+      class Provider12 {}
+      class Provider21 {}
+      class Provider22 {}
+      class Provider23 {}
+      class Provider24 {}
+
+      @Module({
+        exports: [Provider11, Provider12],
+        providersPerMod: [Provider11, Provider12]
+      })
+      class Module1 {}
+
+      @Module({
+        imports: [Module1],
+        exports: [Module1],
+        providersPerMod: [Provider21, Provider22, Provider23],
+        providersPerReq: [Provider24]
+      })
+      class Module2 {}
+
+      mock.importProviders(Module2);
+      expect(mock.opts.providersPerMod).toEqual([Provider12, Provider11]);
+      expect(mock.opts.providersPerReq).toEqual(defaultProvidersPerReq);
+    });
+
+    it('should import only Provider11', () => {
+      class Provider11 {}
+      class Provider12 {}
+      class Provider21 {}
+      class Provider22 {}
+      class Provider23 {}
+      class Provider24 {}
+      class Provider31 {}
+
+      @Module({
+        exports: [Provider11, Provider12],
+        providersPerMod: [Provider11, Provider12]
+      })
+      class Module1 {}
+
+      @Module({
+        imports: [Module1],
+        exports: [Provider11],
+        providersPerMod: [Provider21, Provider22, Provider23],
+        providersPerReq: [Provider24]
+      })
+      class Module2 {}
+
+      @Module({
+        imports: [Module2],
+        exports: [Module2],
+        providersPerReq: [Provider31]
+      })
+      class Module3 {}
+
+      mock.importProviders(Module3);
+      expect(mock.opts.providersPerMod).toEqual([Provider11]);
+      expect(mock.opts.providersPerReq).toEqual(defaultProvidersPerReq);
+    });
   });
 
   describe('loadRoutesConfig() and setRoutes()', () => {
