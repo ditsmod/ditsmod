@@ -66,8 +66,13 @@ export class AppFactory {
     this.log.trace('Setting server name:', this.opts.serverName);
     this.log.trace('Setting listen options:', this.opts.listenOptions);
     this.checkSecureServerOption(appModule);
-    const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    moduleFactory.bootstrap(this.opts.routesPrefixPerApp, this.opts.routesPrefixPerMod, appModule);
+    if (!this.opts.routesPrefixPerMod.some(config => config.module === appModule)) {
+      this.opts.routesPrefixPerMod.unshift({ prefix: '', module: appModule });
+    }
+    this.opts.routesPrefixPerMod.forEach(config => {
+      const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+      moduleFactory.bootstrap(this.opts.routesPrefixPerApp, config.prefix, config.module);
+    });
   }
 
   /**

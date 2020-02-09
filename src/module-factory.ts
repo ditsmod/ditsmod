@@ -31,7 +31,7 @@ import { mergeOpts } from './utils/merge-arrays-options';
 export class ModuleFactory {
   protected moduleName: string;
   protected routesPrefixPerApp: string;
-  protected routesPrefixPerMod: RoutesPrefixPerMod[];
+  protected routesPrefixPerMod: string;
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
 
   /**
@@ -51,12 +51,10 @@ export class ModuleFactory {
    * @param mod Module that will bootstrapped.
    * @param importer It's module that imported current module.
    */
-  bootstrap(routesPrefixPerApp: string, routesPrefixPerMod: RoutesPrefixPerMod[], mod: ModuleType, importer?: this) {
+  bootstrap(routesPrefixPerApp: string, routesPrefixPerMod: string, mod: ModuleType, importer?: this) {
     this.moduleName = mod.name;
     this.routesPrefixPerApp = routesPrefixPerApp || '';
-    this.routesPrefixPerMod = routesPrefixPerMod;
-    const prefixConfig = this.routesPrefixPerMod.find(config => config.module === mod);
-    const routesPrefix = prefixConfig?.prefix || '';
+    this.routesPrefixPerMod = routesPrefixPerMod || '';
     const moduleMetadata = this.mergeMetadata(mod);
     Object.assign(this.opts, moduleMetadata);
     this.initProvidersPerReq();
@@ -74,8 +72,8 @@ export class ModuleFactory {
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
     this.quickCheckImports(moduleMetadata, mod.name);
     this.checkRoutePath(this.routesPrefixPerApp);
-    this.checkRoutePath(routesPrefix);
-    const prefix = [this.routesPrefixPerApp, routesPrefix].filter(s => s).join('/');
+    this.checkRoutePath(this.routesPrefixPerMod);
+    const prefix = [this.routesPrefixPerApp, this.routesPrefixPerMod].filter(s => s).join('/');
     this.opts.controllers.forEach(Ctrl => this.setRoutes(prefix, Ctrl));
     this.loadRoutesConfig(prefix, this.opts.routesPerMod);
   }
