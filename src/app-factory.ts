@@ -115,7 +115,7 @@ export class AppFactory {
     nodeRes.setHeader('Server', this.opts.serverName);
     const { method: httpMethod, url } = nodeReq;
     const [uri, queryString] = this.preReq.decodeUrl(url).split('?');
-    const { handle: handleRoute, params: routeParams } = this.router.find(httpMethod as HttpMethod, uri);
+    const { handle: handleRoute, params } = this.router.find(httpMethod as HttpMethod, uri);
     if (!handleRoute) {
       this.preReq.sendNotFound(nodeRes);
       return;
@@ -133,7 +133,7 @@ export class AppFactory {
     ]);
     const inj2 = inj1.createChildFromResolved(providers);
     const req = inj2.get(Request) as Request;
-    req.handleRoute(controller, method, routeParams, queryString, parseBody, routeData);
+    req.handleRoute(controller, method, params, queryString, parseBody, routeData);
   };
 
   protected createServer() {

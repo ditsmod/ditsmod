@@ -9,14 +9,14 @@ import { PreRequest } from './services/pre-request';
 @Injectable()
 export class Request {
   /**
-   * Array of route params.
+   * Object with route params.
    * For example, route `/api/resource/:param1/:param2` have two params.
    */
-  routeParams?: RouteParam[];
-  queryParams?: ParsedUrlQuery;
+  routeParams?: any;
+  queryParams?: any;
   rawBody?: any;
   body?: any;
-  routeData?: ObjectAny;
+  routeData?: any;
 
   constructor(
     @Inject(NodeReqToken) public readonly nodeReq: NodeRequest,
@@ -36,13 +36,15 @@ export class Request {
   async handleRoute(
     controller: TypeProvider,
     method: string,
-    routeParams: RouteParam[],
+    routeParamsArr: RouteParam[],
     queryString: string,
     parseBody: boolean,
     routeData: any
   ) {
-    this.routeData = routeData;
+    const routeParams: ObjectAny = {};
+    routeParamsArr?.forEach(param => (routeParams[param.key] = param.value));
     this.routeParams = routeParams;
+    this.routeData = routeData;
     let ctrl: any;
     try {
       ctrl = this.injector.get(controller);
