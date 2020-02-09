@@ -18,6 +18,10 @@ describe('ModuleFactory', () => {
       return super.initProvidersPerReq();
     }
 
+    quickCheckImports(moduleMetadata: ModuleMetadata, moduleName: string) {
+      return super.quickCheckImports(moduleMetadata, moduleName);
+    }
+
     getRawModuleMetadata(mod: ModuleType) {
       return super.getRawModuleMetadata(mod);
     }
@@ -84,6 +88,71 @@ describe('ModuleFactory', () => {
     });
   });
 
+  describe('quickCheckImports()', () => {
+    it('should throw an error, when no export and no controllers', () => {
+      class Provider11 {}
+      class Provider12 {}
+
+      @Module({
+        providersPerMod: [Provider11, Provider12]
+      })
+      class Module1 {}
+
+      const moduleMetadata = mock.mergeMetadata(Module1);
+      expect(() => mock.quickCheckImports(moduleMetadata, Module1.name)).toThrow(
+        `Import Module1 failed: the imported module should have some controllers or "exports" array with elements.`
+      );
+    });
+
+    it('should throw an error, when no export and no controllers', () => {
+      class Provider11 {}
+      class Provider12 {}
+
+      @Module({
+        providersPerMod: [Provider11, Provider12]
+      })
+      class Module1 {}
+
+      @Module({
+        imports: [Module1]
+      })
+      class Module2 {}
+
+      const moduleMetadata = mock.mergeMetadata(Module2);
+      expect(() => mock.quickCheckImports(moduleMetadata, Module2.name)).toThrow(
+        `Import Module2 failed: the imported module should have some controllers or "exports" array with elements.`
+      );
+    });
+
+    it('should not throw an error, when export some provider', () => {
+      class Provider11 {}
+      class Provider12 {}
+
+      @Module({
+        exports: [Provider11],
+        providersPerMod: [Provider11, Provider12]
+      })
+      class Module1 {}
+
+      const moduleMetadata = mock.mergeMetadata(Module1);
+      expect(() => mock.quickCheckImports(moduleMetadata, Module1.name)).not.toThrow();
+    });
+
+    it('should not throw an error, when export some controller', () => {
+      class Provider11 {}
+      class Provider12 {}
+
+      @Module({
+        controllers: [Provider11],
+        providersPerMod: [Provider11, Provider12]
+      })
+      class Module1 {}
+
+      const moduleMetadata = mock.mergeMetadata(Module1);
+      expect(() => mock.quickCheckImports(moduleMetadata, Module1.name)).not.toThrow();
+    });
+  });
+
   describe('getRawModuleMetadata()', () => {
     class SomeControllerClass {}
 
@@ -100,7 +169,7 @@ describe('ModuleFactory', () => {
     });
   });
 
-  fdescribe('importProviders() and findAndSetProvider()', () => {
+  describe('importProviders() and findAndSetProvider()', () => {
     it('should import Provider11 and Provider12 from current module', () => {
       class Provider11 {}
       class Provider12 {}
@@ -159,7 +228,7 @@ describe('ModuleFactory', () => {
 
       @Module({
         imports: [Module1],
-        exports: [Provider11],
+        exports: [Provider12],
         providersPerMod: [Provider21, Provider22, Provider23],
         providersPerReq: [Provider24]
       })
@@ -173,7 +242,7 @@ describe('ModuleFactory', () => {
       class Module3 {}
 
       mock.importProviders(Module3);
-      expect(mock.opts.providersPerMod).toEqual([Provider11]);
+      expect(mock.opts.providersPerMod).toEqual([Provider12]);
       expect(mock.opts.providersPerReq).toEqual(defaultProvidersPerReq);
     });
   });

@@ -72,7 +72,7 @@ export class ModuleFactory {
       this.importProviders.call(importer, mod);
     }
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
-    this.checkImports(moduleMetadata, mod.name);
+    this.quickCheckImports(moduleMetadata, mod.name);
     this.checkRoutePath(this.routesPrefixPerApp);
     this.checkRoutePath(routesPrefix);
     const prefix = [this.routesPrefixPerApp, routesPrefix].filter(s => s).join('/');
@@ -90,7 +90,7 @@ export class ModuleFactory {
     }
   }
 
-  protected checkImports(moduleMetadata: ModuleMetadata, moduleName: string) {
+  protected quickCheckImports(moduleMetadata: ModuleMetadata, moduleName: string) {
     assert.array(this.opts.routesPerMod, 'routesPerMod');
     if (
       !isRootModule(moduleMetadata as any) &&
