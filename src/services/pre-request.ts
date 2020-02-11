@@ -32,4 +32,15 @@ export class PreRequest {
     nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
     nodeRes.end();
   }
+
+  /**
+   * Logs an error and sends the user message about a bad request error.
+   *
+   * @param err An error to logs it (not sends).
+   */
+  sendBadRequestError(nodeRes: NodeResponse, err: Error) {
+    this.log.error(err);
+    nodeRes.statusCode = Status.BAD_REQUEST;
+    nodeRes.end();
+  }
 }

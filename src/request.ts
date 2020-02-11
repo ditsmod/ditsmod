@@ -54,7 +54,6 @@ export class Request {
       return;
     }
 
-    let err: Error;
     try {
       this.queryParams = parse(queryString);
       if (parseBody) {
@@ -62,10 +61,12 @@ export class Request {
         this.rawBody = await bodyParser.getRawBody();
         this.body = await bodyParser.getJsonBody();
       }
-    } catch (e) {
-      err = e;
+    } catch (err) {
+      const preReq = this.injector.get(PreRequest);
+      preReq.sendBadRequestError(this.nodeRes, err);
+      return;
     }
-    ctrl[method](err);
+    ctrl[method]();
   }
 
   /**
