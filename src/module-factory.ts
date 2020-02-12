@@ -21,8 +21,7 @@ import {
   BodyParserConfig,
   NodeReqToken,
   NodeResToken,
-  RouteConfig,
-  RoutesPrefixPerMod
+  RouteConfig
 } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from './utils/type-guards';
