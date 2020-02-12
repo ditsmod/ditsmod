@@ -23,7 +23,7 @@ export { RootModule } from './decorators/root-module';
 export { Controller } from './decorators/controller';
 export { Route } from './decorators/route';
 export { Entity } from './decorators/entity';
-export { PrimaryKey } from './decorators/primary-key';
+export { Column } from './decorators/column';
 export { AppFactory } from './app-factory';
 export { ModuleFactory } from './module-factory';
 export { pickProperties } from './utils/pick-properties';
