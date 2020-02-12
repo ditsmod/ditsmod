@@ -18,7 +18,12 @@ export {
   BodyParserConfig,
   RouteConfig
 } from './types/types';
-export { Module, RootModule, Controller, Route } from './types/decorators';
+export { Module } from './decorators/module';
+export { RootModule } from './decorators/root-module';
+export { Controller } from './decorators/controller';
+export { Route } from './decorators/route';
+export { Entity } from './decorators/entity';
+export { PrimaryKey } from './decorators/primary-key';
 export { AppFactory } from './app-factory';
 export { ModuleFactory } from './module-factory';
 export { pickProperties } from './utils/pick-properties';

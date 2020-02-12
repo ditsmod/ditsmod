@@ -4,7 +4,7 @@ import * as http2 from 'http2';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ReflectiveInjector, reflector } from 'ts-di';
 
-import { RootModuleDecorator } from './types/decorators';
+import { RootModuleDecorator } from './decorators/root-module';
 import {
   Server,
   Logger,

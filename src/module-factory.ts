@@ -10,7 +10,9 @@ import {
 } from 'ts-di';
 import assert = require('assert-plus');
 
-import { ModuleDecorator, ControllerDecorator, RouteDecoratorMetadata } from './types/decorators';
+import { ModuleDecorator } from './decorators/module';
+import { ControllerDecorator } from './decorators/controller';
+import { RouteDecoratorMetadata } from './decorators/route';
 import {
   Logger,
   ModuleType,

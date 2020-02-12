@@ -2,7 +2,11 @@ import { ClassProvider, ExistingProvider, FactoryProvider, Provider, Type, TypeP
 
 import { normalizeProviders } from './ng-utils';
 import { ServerOptions, Http2SecureServerOptions, ModuleWithProviders } from '../types/types';
-import { ModuleDecorator, RootModuleDecorator, ControllerDecorator, RouteMetadata } from '../types/decorators';
+import { ModuleDecorator } from '../decorators/module';
+import { RootModuleDecorator } from '../decorators/root-module';
+import { ControllerDecorator } from '../decorators/controller';
+import { RouteMetadata } from '../decorators/route';
+import { EntityDecorator } from '../decorators/entity';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
@@ -24,6 +28,10 @@ export function isModule(moduleMetadata: ModuleDecorator): moduleMetadata is Mod
 
 export function isController(ctrlMeatada: ControllerDecorator): ctrlMeatada is ControllerDecorator {
   return (ctrlMeatada as any)?.ngMetadataName == 'Controller';
+}
+
+export function isEntity(metadata: EntityDecorator): metadata is EntityDecorator {
+  return (metadata as any)?.ngMetadataName == 'Entity';
 }
 
 export function isRoute(propMeatada: RouteMetadata): propMeatada is RouteMetadata {

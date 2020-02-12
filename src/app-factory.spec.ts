@@ -5,7 +5,7 @@ import { ReflectiveInjector } from 'ts-di';
 
 import { AppFactory } from './app-factory';
 import { ModuleType, Logger, Server, Router } from './types/types';
-import { RootModuleDecorator, RootModule } from './types/decorators';
+import { RootModuleDecorator, RootModule } from './decorators/root-module';
 import { PreRequest } from './services/pre-request';
 import { defaultProvidersPerApp, ApplicationMetadata } from './types/default-options';
 

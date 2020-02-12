@@ -1,15 +1,9 @@
 import { reflector, Provider } from 'ts-di';
 
-import {
-  RootModule,
-  RootModuleDecorator,
-  ModuleDecorator,
-  Module,
-  Controller,
-  Route,
-  ControllerDecorator,
-  RouteDecoratorMetadata
-} from '../types/decorators';
+import { RootModule, RootModuleDecorator } from '../decorators/root-module';
+import { ModuleDecorator, Module } from '../decorators/module';
+import { Controller, ControllerDecorator } from '../decorators/controller';
+import { Route, RouteDecoratorMetadata } from '../decorators/route';
 import { isRootModule, isModule, isController, isRoute, isProvider } from './type-guards';
 
 describe('type-guards', () => {

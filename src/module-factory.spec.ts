@@ -4,7 +4,9 @@ import { ReflectiveInjector, Injectable } from 'ts-di';
 import { ModuleFactory } from './module-factory';
 import { ModuleType, Router, RouteConfig } from './types/types';
 import { NormalizedProvider } from './utils/ng-utils';
-import { Module, Controller, Route } from './types/decorators';
+import { Module } from './decorators/module';
+import { Controller } from './decorators/controller';
+import { Route } from './decorators/route';
 import { defaultProvidersPerReq, ModuleMetadata, defaultProvidersPerApp } from './types/default-options';
 
 describe('ModuleFactory', () => {
