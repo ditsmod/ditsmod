@@ -1,6 +1,6 @@
 import { Provider, makeDecorator } from 'ts-di';
 
-export interface ControllersDecoratorFactory {
+export interface ControllerDecoratorFactory {
   (data?: ControllerDecorator): any;
   new (data?: ControllerDecorator): ControllerDecorator;
 }
@@ -12,4 +12,4 @@ export interface ControllerDecorator {
   providersPerReq?: Provider[];
 }
 
-export const Controller = makeDecorator('Controller', (data: any) => data) as ControllersDecoratorFactory;
+export const Controller = makeDecorator('Controller', (data: any) => data) as ControllerDecoratorFactory;

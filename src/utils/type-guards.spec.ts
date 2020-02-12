@@ -1,10 +1,13 @@
+import 'reflect-metadata';
 import { reflector, Provider } from 'ts-di';
 
 import { RootModule, RootModuleDecorator } from '../decorators/root-module';
 import { ModuleDecorator, Module } from '../decorators/module';
 import { Controller, ControllerDecorator } from '../decorators/controller';
 import { Route, RouteDecoratorMetadata } from '../decorators/route';
-import { isRootModule, isModule, isController, isRoute, isProvider } from './type-guards';
+import { isRootModule, isModule, isController, isRoute, isProvider, isEntity, isColumn } from './type-guards';
+import { Entity } from '../decorators/entity';
+import { Column } from '../decorators/column';
 
 describe('type-guards', () => {
   describe('isRootModule()', () => {
@@ -34,6 +37,29 @@ describe('type-guards', () => {
     it('should recognize the controller', () => {
       const metadata = reflector.annotations(ClassWithDecorators)[0] as ControllerDecorator;
       expect(isController(metadata)).toBe(true);
+    });
+  });
+
+  describe('isEntity()', () => {
+    @Entity()
+    class ClassWithDecorators {}
+
+    it('should recognize the entity', () => {
+      const metadata = reflector.annotations(ClassWithDecorators)[0];
+      expect(isEntity(metadata)).toBe(true);
+    });
+  });
+
+  describe('isColumn()', () => {
+    class ClassWithDecorators {
+      @Column()
+      prop1: number;
+    }
+
+    it('should recognize the Column of Entity and type of Column', () => {
+      const propMetadata = reflector.propMetadata(ClassWithDecorators);
+      expect(propMetadata.prop1[0] === Number).toBe(true);
+      expect(isColumn(propMetadata.prop1[1])).toBe(true);
     });
   });
 

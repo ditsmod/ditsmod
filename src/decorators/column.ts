@@ -1,5 +1,8 @@
-import { makePropDecorator } from 'ts-di';
+import { makePropTypeDecorator } from 'ts-di';
 
-export type ColumnDecoratorFactory = (type?: string) => PropertyDecorator;
+export interface ColumnsDecoratorFactory<T = any> {
+  (options?: T): any;
+  new (options?: T): T;
+}
 
-export const Column = makePropDecorator('Column') as ColumnDecoratorFactory;
+export const Column = makePropTypeDecorator('Column', (data: any) => data) as ColumnsDecoratorFactory;

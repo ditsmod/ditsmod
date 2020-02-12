@@ -18,9 +18,9 @@ export {
   BodyParserConfig,
   RouteConfig
 } from './types/types';
-export { Column } from './decorators/column';
+export { Column, ColumnsDecoratorFactory } from './decorators/column';
 export { Controller } from './decorators/controller';
-export { Entity } from './decorators/entity';
+export { Entity, EntityDecoratorFactory } from './decorators/entity';
 export { Module } from './decorators/module';
 export { RootModule } from './decorators/root-module';
 export { Route } from './decorators/route';

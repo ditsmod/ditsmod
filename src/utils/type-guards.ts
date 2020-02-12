@@ -1,12 +1,11 @@
 import { ClassProvider, ExistingProvider, FactoryProvider, Provider, Type, TypeProvider, ValueProvider } from 'ts-di';
 
 import { normalizeProviders } from './ng-utils';
-import { ServerOptions, Http2SecureServerOptions, ModuleWithProviders } from '../types/types';
+import { ServerOptions, Http2SecureServerOptions, ModuleWithProviders, ObjectAny } from '../types/types';
 import { ModuleDecorator } from '../decorators/module';
 import { RootModuleDecorator } from '../decorators/root-module';
 import { ControllerDecorator } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
-import { EntityDecorator } from '../decorators/entity';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
@@ -30,8 +29,12 @@ export function isController(ctrlMeatada: ControllerDecorator): ctrlMeatada is C
   return (ctrlMeatada as any)?.ngMetadataName == 'Controller';
 }
 
-export function isEntity(metadata: EntityDecorator): metadata is EntityDecorator {
+export function isEntity(metadata: ObjectAny): metadata is ObjectAny {
   return (metadata as any)?.ngMetadataName == 'Entity';
+}
+
+export function isColumn(metadata: ObjectAny): metadata is ObjectAny {
+  return (metadata as any)?.ngMetadataName == 'Column';
 }
 
 export function isRoute(propMeatada: RouteMetadata): propMeatada is RouteMetadata {
