@@ -5,7 +5,16 @@ import { RootModule, RootModuleDecorator } from '../decorators/root-module';
 import { ModuleDecorator, Module } from '../decorators/module';
 import { Controller, ControllerDecorator } from '../decorators/controller';
 import { Route, RouteDecoratorMetadata } from '../decorators/route';
-import { isRootModule, isModule, isController, isRoute, isProvider, isEntity, isColumn } from './type-guards';
+import {
+  isRootModule,
+  isModule,
+  isController,
+  isRoute,
+  isProvider,
+  isEntity,
+  isColumn,
+  isColumnType
+} from './type-guards';
 import { Entity } from '../decorators/entity';
 import { Column } from '../decorators/column';
 
@@ -60,6 +69,53 @@ describe('type-guards', () => {
       const propMetadata = reflector.propMetadata(ClassWithDecorators);
       expect(propMetadata.prop1[0] === Number).toBe(true);
       expect(isColumn(propMetadata.prop1[1])).toBe(true);
+    });
+  });
+
+  describe('isColumnType()', () => {
+    enum EnumType {
+      one,
+      two
+    }
+
+    class ClassWithDecorators {
+      @((Route as any)())
+      prop0: boolean; // Boolean
+      @Column()
+      prop1: string; // String
+      @Column()
+      prop2: string; // String
+      @Column()
+      prop3: string[]; // Array
+      @Column()
+      prop4: [string, number]; // Array
+      @Column()
+      prop5: []; // Array
+      @Column()
+      prop6: EnumType; // Number
+      @Column()
+      prop7: any; // Object
+      @Column()
+      prop8: void; // undefined
+      @Column()
+      prop9: never; // undefined
+      @Column()
+      // tslint:disable-next-line: ban-types
+      prop10: Object; // Object
+      @Column()
+      prop11: object; // Object
+      @Column()
+      prop12: unknown; // Object
+    }
+
+    it('should recognize the type of Column', () => {
+      const propMetadata = reflector.propMetadata(ClassWithDecorators);
+      expect(isColumnType(propMetadata.prop0[0])).toBe(false);
+
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].forEach(num => {
+        expect(isColumnType(propMetadata[`prop${num}`][0])).toBe(true);
+        expect(isColumnType(propMetadata[`prop${num}`][1])).toBe(false);
+      });
     });
   });
 

@@ -9,6 +9,8 @@ import { ModuleFactory } from '../module-factory';
 import { Request } from '../request';
 import { Response } from '../response';
 import { BodyParser } from '../services/body-parser';
+import { EntityManager } from '../services/entity-manager';
+import { EntityInjector } from '../decorators/entity';
 
 export const defaultProvidersPerApp: Provider[] = [
   Logger,
@@ -19,10 +21,14 @@ export const defaultProvidersPerApp: Provider[] = [
   {
     provide: ReflectiveInjector,
     useExisting: Injector
+  },
+  {
+    provide: EntityInjector,
+    useValue: null
   }
 ];
 
-export const defaultProvidersPerReq: Provider[] = [Request, Response, BodyParser];
+export const defaultProvidersPerReq: Provider[] = [Request, Response, BodyParser, EntityManager];
 
 export abstract class AbstractModuleMetadata {
   /**
@@ -59,4 +65,5 @@ export class ApplicationMetadata {
   providersPerApp: Provider[] = defaultProvidersPerApp;
   routesPrefixPerApp: string = '';
   routesPrefixPerMod: RoutesPrefixPerMod[] = [];
+  entities: Provider[] = [];
 }

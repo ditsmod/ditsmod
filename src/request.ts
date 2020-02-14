@@ -1,6 +1,6 @@
 import { Injectable, Inject, Injector, TypeProvider } from 'ts-di';
 import { format } from 'util';
-import { ParsedUrlQuery, parse } from 'querystring';
+import { parse } from 'querystring';
 
 import { NodeRequest, NodeReqToken, RouteParam, NodeResponse, NodeResToken, ObjectAny } from './types/types';
 import { BodyParser } from './services/body-parser';
@@ -13,6 +13,11 @@ export class Request {
    * For example, route `/api/resource/:param1/:param2` have two params.
    */
   routeParams?: any;
+  /**
+   * Array with route params.
+   * For example, route `/api/resource/:param1/:param2` have two params.
+   */
+  routeParamsArr?: RouteParam[];
   queryParams?: any;
   rawBody?: any;
   body?: any;
@@ -42,6 +47,7 @@ export class Request {
     routeData: any
   ) {
     const routeParams: ObjectAny = {};
+    this.routeParamsArr = routeParamsArr;
     routeParamsArr?.forEach(param => (routeParams[param.key] = param.value));
     this.routeParams = routeParams;
     this.routeData = routeData;

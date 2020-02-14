@@ -8,6 +8,7 @@ import { Module } from './decorators/module';
 import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
 import { defaultProvidersPerReq, ModuleMetadata, defaultProvidersPerApp } from './types/default-options';
+import { Column } from './decorators/column';
 
 describe('ModuleFactory', () => {
   @Injectable()
@@ -252,12 +253,14 @@ describe('ModuleFactory', () => {
   describe('loadRoutesConfig() and setRoutes()', () => {
     @Controller()
     class C1 {
+      @Column() // <----- Just for mix `@Route()` with another decorators.
       @Route('GET')
       method() {}
     }
     @Controller()
     class C11 {
       @Route('GET')
+      @Column() // <----- Just for mix `@Route()` with another decorators.
       method() {}
     }
     @Controller()

@@ -2,7 +2,7 @@ import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
-import { ReflectiveInjector, reflector } from 'ts-di';
+import { ReflectiveInjector, reflector, Type } from 'ts-di';
 
 import { RootModuleDecorator } from './decorators/root-module';
 import {
@@ -16,13 +16,15 @@ import {
   NodeResToken,
   HttpMethod
 } from './types/types';
-import { isHttp2SecureServerOptions, isRootModule } from './utils/type-guards';
+import { isHttp2SecureServerOptions, isRootModule, isEntity, isColumn, isColumnType } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
 import { ModuleFactory } from './module-factory';
 import { pickProperties } from './utils/pick-properties';
 import { ApplicationMetadata } from './types/default-options';
 import { mergeOpts } from './utils/merge-arrays-options';
+import { StaticEntity, EntityInjector } from './decorators/entity';
+import { ColumnDecoratorMetadata } from './decorators/column';
 
 export class AppFactory {
   protected log: Logger;
@@ -62,6 +64,7 @@ export class AppFactory {
 
   protected prepareServerOptions(appModule: ModuleType) {
     this.mergeMetadata(appModule);
+    this.setEntityMetadata();
     this.initProvidersPerApp();
     this.log.trace('Setting server name:', this.opts.serverName);
     this.log.trace('Setting listen options:', this.opts.listenOptions);
@@ -88,10 +91,47 @@ export class AppFactory {
     pickProperties(this.opts, modMetadata);
     this.opts.providersPerApp = providersPerApp;
     this.opts.routesPrefixPerMod = this.opts.routesPrefixPerMod.slice();
+    this.opts.entities = this.opts.entities.slice();
+  }
+
+  /**
+   * Settings an Entity and Column metadata.
+   */
+  protected setEntityMetadata() {
+    const resolvedProviders = ReflectiveInjector.resolve(this.opts.entities);
+    const injector = ReflectiveInjector.fromResolvedProviders(resolvedProviders);
+    this.opts.providersPerApp.unshift({ provide: EntityInjector, useValue: injector });
+
+    resolvedProviders.forEach(item => {
+      const Token = item.key.token as Type<any>;
+      const instance = injector.get(Token);
+      const Entity = instance?.constructor as typeof StaticEntity;
+      const entityMetadata = reflector.annotations(Entity).find(isEntity);
+      if (entityMetadata) {
+        const columnMetadata = reflector.propMetadata(Entity) as ColumnDecoratorMetadata;
+        // console.log(columnMetadata);
+        Entity.entityMetadata = entityMetadata;
+        Entity.columnMetadata = columnMetadata;
+        Entity.metadata = {
+          tableName: entityMetadata.tableName || Entity.name,
+          primaryColumns: [],
+          databaseService: {} as any
+        };
+        for (const prop in columnMetadata) {
+          const type = columnMetadata[prop].find(isColumnType);
+          const column = columnMetadata[prop].find(isColumn);
+          if (column.isPrimaryColumn) {
+            Entity.metadata.primaryColumns.push(prop);
+          }
+          console.log(prop, type);
+        }
+        console.log(Entity.metadata.primaryColumns);
+      }
+    });
   }
 
   protected getAppModuleMetadata(appModule: ModuleType): RootModuleDecorator {
-    return reflector.annotations(appModule).find(m => isRootModule(m));
+    return reflector.annotations(appModule).find(isRootModule);
   }
 
   /**

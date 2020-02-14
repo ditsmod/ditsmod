@@ -272,7 +272,7 @@ export class ModuleFactory {
   }
 
   protected setRoutes(prefix: string, Ctrl: TypeProvider, routeData?: any) {
-    const controllerMetadata = reflector.annotations(Ctrl).find(c => isController(c)) as ControllerDecorator;
+    const controllerMetadata = reflector.annotations(Ctrl).find(isController) as ControllerDecorator;
     if (!controllerMetadata) {
       throw new Error(`Setting routes failed: class "${Ctrl.name}" does not have the "@Controller()" decorator`);
     }
@@ -280,7 +280,7 @@ export class ModuleFactory {
     const propMetadata = reflector.propMetadata(Ctrl) as RouteDecoratorMetadata;
 
     for (const prop in propMetadata) {
-      const routes = propMetadata[prop].filter(p => isRoute(p));
+      const routes = propMetadata[prop].filter(isRoute);
       for (const route of routes) {
         this.checkRoutePath(route.path);
         this.unshiftProvidersPerReq(Ctrl);
