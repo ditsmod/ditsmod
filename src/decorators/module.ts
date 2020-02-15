@@ -1,7 +1,7 @@
 import { Type, Provider, makeDecorator } from 'ts-di';
 
-import { AbstractModuleMetadata } from '../types/default-options';
 import { ModuleWithProviders } from '../types/types';
+import { AbstractModuleMetadata } from './root-module';
 
 export interface ModuleDecoratorFactory {
   (data?: ModuleDecorator): any;

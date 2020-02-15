@@ -2,15 +2,16 @@ import 'reflect-metadata';
 import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
-import { ReflectiveInjector, Type } from 'ts-di';
+import { ReflectiveInjector } from 'ts-di';
 
 import { AppFactory } from './app-factory';
-import { ModuleType, Logger, Server, Router } from './types/types';
+import { ModuleType, Logger, Server } from './types/types';
 import { RootModuleDecorator, RootModule } from './decorators/root-module';
 import { PreRequest } from './services/pre-request';
 import { defaultProvidersPerApp, ApplicationMetadata } from './types/default-options';
 import { Entity, StaticEntity } from './decorators/entity';
 import { Column } from './decorators/column';
+import { Router } from './types/router';
 
 describe('AppFactory', () => {
   class MockAppFactory extends AppFactory {

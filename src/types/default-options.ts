@@ -1,9 +1,9 @@
 import * as http from 'http';
 import { ListenOptions } from 'net';
-import { Type, Provider, TypeProvider, forwardRef, ReflectiveInjector, Injector } from 'ts-di';
+import { Provider, forwardRef, ReflectiveInjector, Injector } from 'ts-di';
 import { Router as RestifyRouter } from '@restify-ts/router';
 
-import { HttpModule, Logger, Router, ServerOptions, BodyParserConfig, RouteConfig, RoutesPrefixPerMod } from './types';
+import { HttpModule, Logger, ServerOptions, BodyParserConfig } from './types';
 import { PreRequest } from '../services/pre-request';
 import { ModuleFactory } from '../module-factory';
 import { Request } from '../request';
@@ -11,6 +11,7 @@ import { Response } from '../response';
 import { BodyParser } from '../services/body-parser';
 import { EntityManager } from '../services/entity-manager';
 import { EntityInjector } from '../decorators/entity';
+import { Router, RoutesPrefixPerMod } from './router';
 
 export const defaultProvidersPerApp: Provider[] = [
   Logger,
@@ -29,30 +30,6 @@ export const defaultProvidersPerApp: Provider[] = [
 ];
 
 export const defaultProvidersPerReq: Provider[] = [Request, Response, BodyParser, EntityManager];
-
-export abstract class AbstractModuleMetadata {
-  /**
-   * Providers per a module.
-   */
-  providersPerMod: Provider[] = [];
-  /**
-   * Providers per the request.
-   */
-  providersPerReq: Provider[] = defaultProvidersPerReq;
-  /**
-   * The application controllers.
-   */
-  controllers: TypeProvider[] = [];
-  /**
-   * Route config array per a module.
-   */
-  routesPerMod: RouteConfig[] = [];
-}
-
-export class ModuleMetadata extends AbstractModuleMetadata {
-  imports: Type<any>[] = [];
-  exports: (Type<any> | Provider)[] = [];
-}
 
 export class ApplicationMetadata {
   serverName: string = 'Node.js';

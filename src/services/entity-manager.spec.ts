@@ -3,7 +3,7 @@ import { ReflectiveInjector } from 'ts-di';
 
 import { DatabaseMetadata, DatabaseService, Entity } from '../decorators/entity';
 import { EntityManager } from './entity-manager';
-import { RouteParam } from '../types/types';
+import { RouteParam } from '../types/router';
 
 describe('EntityManager', () => {
   interface Req {

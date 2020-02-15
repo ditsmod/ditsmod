@@ -1,6 +1,7 @@
 import { makePropDecorator } from 'ts-di';
 
-import { ObjectAny, HttpMethod } from '../types/types';
+import { ObjectAny } from '../types/types';
+import { HttpMethod } from '../types/router';
 
 export type RouteDecoratorFactory = (method: HttpMethod, path?: string) => RouteDecorator;
 

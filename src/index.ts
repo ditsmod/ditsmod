@@ -2,22 +2,18 @@ export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './http-statu
 export { Request } from './request';
 export { Response } from './response';
 export {
-  HttpMethod,
   Logger,
   NodeRequest,
   NodeResponse,
   NodeReqToken,
   NodeResToken,
-  Router,
-  RouteParam,
-  RouterReturns,
   RequestListener,
   Fn,
   LoggerMethod,
   RedirectStatusCodes,
-  BodyParserConfig,
-  RouteConfig
+  BodyParserConfig
 } from './types/types';
+export { HttpMethod, Router, RouteParam, RouterReturns, RouteConfig } from './types/router';
 export * from './decorators/column';
 export { Controller } from './decorators/controller';
 export * from './decorators/entity';

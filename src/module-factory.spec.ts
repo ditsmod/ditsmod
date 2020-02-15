@@ -2,13 +2,15 @@ import 'reflect-metadata';
 import { ReflectiveInjector, Injectable } from 'ts-di';
 
 import { ModuleFactory } from './module-factory';
-import { ModuleType, Router, RouteConfig } from './types/types';
+import { ModuleType } from './types/types';
 import { NormalizedProvider } from './utils/ng-utils';
 import { Module } from './decorators/module';
 import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
-import { defaultProvidersPerReq, ModuleMetadata, defaultProvidersPerApp } from './types/default-options';
+import { defaultProvidersPerReq, defaultProvidersPerApp } from './types/default-options';
 import { Column } from './decorators/column';
+import { ModuleMetadata } from './decorators/root-module';
+import { Router, RouteConfig } from './types/router';
 
 describe('ModuleFactory', () => {
   @Injectable()
@@ -253,14 +255,14 @@ describe('ModuleFactory', () => {
   describe('loadRoutesConfig() and setRoutes()', () => {
     @Controller()
     class C1 {
-      @Column() // <----- Just for mix `@Route()` with another decorators.
+      @Column() // <----- It's just to mix `@Route()` with another decorators.
       @Route('GET')
       method() {}
     }
     @Controller()
     class C11 {
       @Route('GET')
-      @Column() // <----- Just for mix `@Route()` with another decorators.
+      @Column() // <----- It's just to mix `@Route()` with another decorators.
       method() {}
     }
     @Controller()
