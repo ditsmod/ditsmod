@@ -6,5 +6,4 @@ export * from './decorators';
 export { AppFactory } from './app-factory';
 export { ModuleFactory } from './module-factory';
 export { pickProperties } from './utils/pick-properties';
-export { BodyParser } from './services/body-parser';
-export { EntityManager } from './services/entity-manager';
+export * from './services';
