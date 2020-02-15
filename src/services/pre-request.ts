@@ -1,7 +1,7 @@
 import { Injectable } from 'ts-di';
 
 import { NodeResponse } from '../types/server-options';
-import { Status } from '../http-status-codes';
+import { Status } from '../utils/http-status-codes';
 import { Logger } from '../types/logger';
 
 @Injectable()
