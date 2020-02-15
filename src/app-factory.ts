@@ -4,14 +4,13 @@ import * as http2 from 'http2';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ReflectiveInjector, reflector, Type } from 'ts-di';
 
-import { RootModuleDecorator } from './decorators/root-module';
+import { RootModuleDecorator, ApplicationMetadata } from './decorators/root-module';
 import { Server, Logger, Http2SecureServerOptions, ModuleType, RequestListener } from './types/types';
 import { isHttp2SecureServerOptions, isRootModule, isEntity, isColumn, isColumnType } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
 import { ModuleFactory } from './module-factory';
 import { pickProperties } from './utils/pick-properties';
-import { ApplicationMetadata } from './types/default-options';
 import { mergeOpts } from './utils/merge-arrays-options';
 import { StaticEntity, EntityInjector } from './decorators/entity';
 import { ColumnDecoratorMetadata } from './decorators/column';

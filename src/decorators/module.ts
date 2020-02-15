@@ -1,7 +1,8 @@
-import { Type, Provider, makeDecorator } from 'ts-di';
+import { Type, Provider, makeDecorator, TypeProvider } from 'ts-di';
 
 import { ModuleWithProviders } from '../types/types';
-import { AbstractModuleMetadata } from './root-module';
+import { defaultProvidersPerReq } from '../types/default-providers';
+import { RouteConfig } from '../types/router';
 
 export interface ModuleDecoratorFactory {
   (data?: ModuleDecorator): any;
@@ -21,3 +22,27 @@ export interface ModuleDecorator extends Partial<AbstractModuleMetadata> {
 }
 
 export const Module = makeDecorator('Module', (data: any) => data) as ModuleDecoratorFactory;
+
+export abstract class AbstractModuleMetadata {
+  /**
+   * Providers per a module.
+   */
+  providersPerMod: Provider[] = [];
+  /**
+   * Providers per the request.
+   */
+  providersPerReq: Provider[] = defaultProvidersPerReq;
+  /**
+   * The application controllers.
+   */
+  controllers: TypeProvider[] = [];
+  /**
+   * Route config array per a module.
+   */
+  routesPerMod: RouteConfig[] = [];
+}
+
+export class ModuleMetadata extends AbstractModuleMetadata {
+  imports: Type<any>[] = [];
+  exports: (Type<any> | Provider)[] = [];
+}

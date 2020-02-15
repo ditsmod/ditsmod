@@ -1,8 +1,11 @@
-import { makeDecorator, Provider, TypeProvider, Type } from 'ts-di';
+import * as http from 'http';
+import { ListenOptions } from 'net';
+import { makeDecorator, Provider } from 'ts-di';
 
-import { ApplicationMetadata, defaultProvidersPerReq } from '../types/default-options';
+import { defaultProvidersPerApp } from '../types/default-providers';
 import { ModuleDecorator } from './module';
-import { RouteConfig } from '../types/router';
+import { RoutesPrefixPerMod } from '../types/router';
+import { HttpModule, ServerOptions } from '../types/types';
 
 export interface RootModuleDecoratorFactory {
   (data?: RootModuleDecorator): any;
@@ -15,26 +18,16 @@ export interface RootModuleDecorator extends ModuleDecorator, Partial<Applicatio
 
 export const RootModule = makeDecorator('RootModule', (data: any) => data) as RootModuleDecoratorFactory;
 
-export abstract class AbstractModuleMetadata {
+export class ApplicationMetadata {
+  serverName: string = 'Node.js';
+  httpModule: HttpModule = http;
+  serverOptions: ServerOptions = {};
+  listenOptions: ListenOptions = { host: 'localhost', port: 8080 };
   /**
-   * Providers per a module.
+   * Providers per the `Application`.
    */
-  providersPerMod: Provider[] = [];
-  /**
-   * Providers per the request.
-   */
-  providersPerReq: Provider[] = defaultProvidersPerReq;
-  /**
-   * The application controllers.
-   */
-  controllers: TypeProvider[] = [];
-  /**
-   * Route config array per a module.
-   */
-  routesPerMod: RouteConfig[] = [];
-}
-
-export class ModuleMetadata extends AbstractModuleMetadata {
-  imports: Type<any>[] = [];
-  exports: (Type<any> | Provider)[] = [];
+  providersPerApp: Provider[] = defaultProvidersPerApp;
+  routesPrefixPerApp: string = '';
+  routesPrefixPerMod: RoutesPrefixPerMod[] = [];
+  entities: Provider[] = [];
 }

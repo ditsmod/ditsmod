@@ -4,12 +4,11 @@ import { ReflectiveInjector, Injectable } from 'ts-di';
 import { ModuleFactory } from './module-factory';
 import { ModuleType } from './types/types';
 import { NormalizedProvider } from './utils/ng-utils';
-import { Module } from './decorators/module';
+import { Module, ModuleMetadata } from './decorators/module';
 import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
-import { defaultProvidersPerReq, defaultProvidersPerApp } from './types/default-options';
+import { defaultProvidersPerReq, defaultProvidersPerApp } from './types/default-providers';
 import { Column } from './decorators/column';
-import { ModuleMetadata } from './decorators/root-module';
 import { Router, RouteConfig } from './types/router';
 
 describe('ModuleFactory', () => {
