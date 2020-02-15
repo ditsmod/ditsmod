@@ -1,6 +1,7 @@
 import { Injectable, Inject } from 'ts-di';
-import { NodeReqToken, NodeRequest, ObjectAny } from '../types/types';
+import { NodeRequest, ObjectAny } from '../types/types';
 import { BodyParserConfig } from '../types/types';
+import { NodeReqToken } from '../types/injection-tokens';
 
 @Injectable()
 export class BodyParser {

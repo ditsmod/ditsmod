@@ -13,13 +13,14 @@ import assert = require('assert-plus');
 import { ModuleDecorator } from './decorators/module';
 import { ControllerDecorator } from './decorators/controller';
 import { RouteDecoratorMetadata } from './decorators/route';
-import { Logger, ModuleType, ModuleWithProviders, BodyParserConfig, NodeReqToken, NodeResToken } from './types/types';
+import { Logger, ModuleType, ModuleWithProviders, BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from './utils/type-guards';
 import { defaultProvidersPerReq, defaultProvidersPerApp } from './types/default-options';
 import { mergeOpts } from './utils/merge-arrays-options';
 import { ModuleMetadata } from './decorators/root-module';
 import { Router, RouteConfig } from './types/router';
+import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 
 @Injectable()
 export class ModuleFactory {

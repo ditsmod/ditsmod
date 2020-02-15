@@ -5,14 +5,13 @@ export {
   Logger,
   NodeRequest,
   NodeResponse,
-  NodeReqToken,
-  NodeResToken,
   RequestListener,
   Fn,
   LoggerMethod,
   RedirectStatusCodes,
   BodyParserConfig
 } from './types/types';
+export { NodeReqToken, NodeResToken } from './types/injection-tokens';
 export { HttpMethod, Router, RouteParam, RouterReturns, RouteConfig } from './types/router';
 export * from './decorators/column';
 export { Controller } from './decorators/controller';

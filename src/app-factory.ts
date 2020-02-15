@@ -5,15 +5,7 @@ import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ReflectiveInjector, reflector, Type } from 'ts-di';
 
 import { RootModuleDecorator } from './decorators/root-module';
-import {
-  Server,
-  Logger,
-  Http2SecureServerOptions,
-  ModuleType,
-  RequestListener,
-  NodeReqToken,
-  NodeResToken
-} from './types/types';
+import { Server, Logger, Http2SecureServerOptions, ModuleType, RequestListener } from './types/types';
 import { isHttp2SecureServerOptions, isRootModule, isEntity, isColumn, isColumnType } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
@@ -24,6 +16,7 @@ import { mergeOpts } from './utils/merge-arrays-options';
 import { StaticEntity, EntityInjector } from './decorators/entity';
 import { ColumnDecoratorMetadata } from './decorators/column';
 import { Router, HttpMethod } from './types/router';
+import { NodeResToken, NodeReqToken } from './types/injection-tokens';
 
 export class AppFactory {
   protected log: Logger;

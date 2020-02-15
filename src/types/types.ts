@@ -2,7 +2,7 @@ import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
 import { Http2Server, Http2ServerRequest, Http2ServerResponse, Http2SecureServer, SecureServerOptions } from 'http2';
-import { Provider, InjectionToken, Type } from 'ts-di';
+import { Provider, Type } from 'ts-di';
 import { HttpMethod } from './router';
 
 export type RequestListener = (request: NodeRequest, response: NodeResponse) => void | Promise<void>;
@@ -55,8 +55,6 @@ export class Logger {
 
 export type NodeRequest = http.IncomingMessage | Http2ServerRequest;
 export type NodeResponse = http.ServerResponse | Http2ServerResponse;
-export const NodeReqToken = new InjectionToken<NodeRequest>('NodeRequest');
-export const NodeResToken = new InjectionToken<NodeResponse>('NodeResponse');
 
 export type Fn = (...args: any[]) => any;
 

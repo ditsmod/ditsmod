@@ -2,10 +2,11 @@ import { Injectable, Inject, Injector, TypeProvider } from 'ts-di';
 import { format } from 'util';
 import { parse } from 'querystring';
 
-import { NodeRequest, NodeReqToken, NodeResponse, NodeResToken, ObjectAny } from './types/types';
+import { NodeRequest, NodeResponse, ObjectAny } from './types/types';
 import { BodyParser } from './services/body-parser';
 import { PreRequest } from './services/pre-request';
 import { RouteParam } from './types/router';
+import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 
 @Injectable()
 export class Request {
