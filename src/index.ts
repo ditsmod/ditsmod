@@ -2,12 +2,7 @@ export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './http-statu
 export { Request } from './request';
 export { Response } from './response';
 export * from './types';
-export * from './decorators/column';
-export { Controller } from './decorators/controller';
-export * from './decorators/entity';
-export { Module } from './decorators/module';
-export { RootModule } from './decorators/root-module';
-export { Route } from './decorators/route';
+export * from './decorators';
 export { AppFactory } from './app-factory';
 export { ModuleFactory } from './module-factory';
 export { pickProperties } from './utils/pick-properties';
