@@ -16,10 +16,11 @@ import { RouteDecoratorMetadata } from './decorators/route';
 import { Logger, ModuleType, ModuleWithProviders, BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from './utils/type-guards';
-import { defaultProvidersPerReq, defaultProvidersPerApp } from './types/default-providers';
+import { defaultProvidersPerReq } from './types/default-providers';
 import { mergeOpts } from './utils/merge-arrays-options';
 import { Router, RouteConfig } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
+import { defaultProvidersPerApp } from './decorators/root-module';
 
 @Injectable()
 export class ModuleFactory {

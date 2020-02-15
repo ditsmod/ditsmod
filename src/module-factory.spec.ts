@@ -7,9 +7,10 @@ import { NormalizedProvider } from './utils/ng-utils';
 import { Module, ModuleMetadata } from './decorators/module';
 import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
-import { defaultProvidersPerReq, defaultProvidersPerApp } from './types/default-providers';
+import { defaultProvidersPerReq } from './types/default-providers';
 import { Column } from './decorators/column';
 import { Router, RouteConfig } from './types/router';
+import { defaultProvidersPerApp } from './decorators/root-module';
 
 describe('ModuleFactory', () => {
   @Injectable()
