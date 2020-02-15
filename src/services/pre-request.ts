@@ -1,7 +1,8 @@
 import { Injectable } from 'ts-di';
 
-import { NodeResponse, Logger } from '../types/types';
+import { NodeResponse } from '../types/types';
 import { Status } from '../http-status-codes';
+import { Logger } from '../types/logger';
 
 @Injectable()
 export class PreRequest {
