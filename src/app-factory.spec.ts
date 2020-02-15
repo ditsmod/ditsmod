@@ -5,13 +5,14 @@ import * as http2 from 'http2';
 import { ReflectiveInjector } from 'ts-di';
 
 import { AppFactory } from './app-factory';
-import { ModuleType, Server } from './types/types';
+import { ModuleType } from './types/types';
 import { RootModuleDecorator, RootModule, ApplicationMetadata, defaultProvidersPerApp } from './decorators/root-module';
 import { PreRequest } from './services/pre-request';
 import { Entity, StaticEntity } from './decorators/entity';
 import { Column } from './decorators/column';
 import { Router } from './types/router';
 import { Logger } from './types/logger';
+import { Server } from './types/server-options';
 
 describe('AppFactory', () => {
   class MockAppFactory extends AppFactory {

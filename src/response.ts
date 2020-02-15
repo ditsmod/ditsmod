@@ -2,7 +2,7 @@ import { format } from 'util';
 import * as http from 'http';
 import { Injectable, Inject } from 'ts-di';
 
-import { NodeRequest, NodeResponse, RedirectStatusCodes } from './types/types';
+import { NodeRequest, NodeResponse, RedirectStatusCodes } from './types/server-options';
 import { Request } from './request';
 import { Status } from './http-status-codes';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';

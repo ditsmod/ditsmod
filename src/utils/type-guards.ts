@@ -1,13 +1,14 @@
 import { ClassProvider, ExistingProvider, FactoryProvider, Provider, Type, TypeProvider, ValueProvider } from 'ts-di';
 
 import { normalizeProviders } from './ng-utils';
-import { ServerOptions, Http2SecureServerOptions, ModuleWithProviders, ObjectAny } from '../types/types';
+import { ModuleWithProviders, ObjectAny } from '../types/types';
 import { ModuleDecorator } from '../decorators/module';
 import { RootModuleDecorator } from '../decorators/root-module';
 import { ControllerDecorator } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
 import { ColumnType, ColumnMetadata } from '../decorators/column';
 import { EntityDecorator } from '../decorators/entity';
+import { ServerOptions, Http2SecureServerOptions } from '../types/server-options';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;

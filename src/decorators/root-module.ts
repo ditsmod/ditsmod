@@ -8,8 +8,9 @@ import { ModuleFactory } from '../module-factory';
 import { EntityInjector } from '../decorators/entity';
 import { ModuleDecorator } from './module';
 import { RoutesPrefixPerMod, Router } from '../types/router';
-import { HttpModule, ServerOptions, BodyParserConfig } from '../types/types';
+import { BodyParserConfig } from '../types/types';
 import { Logger } from '../types/logger';
+import { HttpModule, ServerOptions } from '../types/server-options';
 
 export const defaultProvidersPerApp: Provider[] = [
   Logger,

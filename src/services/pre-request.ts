@@ -1,6 +1,6 @@
 import { Injectable } from 'ts-di';
 
-import { NodeResponse } from '../types/types';
+import { NodeResponse } from '../types/server-options';
 import { Status } from '../http-status-codes';
 import { Logger } from '../types/logger';
 

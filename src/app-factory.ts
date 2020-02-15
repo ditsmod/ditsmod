@@ -5,7 +5,7 @@ import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ReflectiveInjector, reflector, Type } from 'ts-di';
 
 import { RootModuleDecorator, ApplicationMetadata } from './decorators/root-module';
-import { Server, Http2SecureServerOptions, ModuleType, RequestListener } from './types/types';
+import { ModuleType, RequestListener } from './types/types';
 import { isHttp2SecureServerOptions, isRootModule, isEntity, isColumn, isColumnType } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
@@ -17,6 +17,7 @@ import { ColumnDecoratorMetadata } from './decorators/column';
 import { Router, HttpMethod } from './types/router';
 import { NodeResToken, NodeReqToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
+import { Server, Http2SecureServerOptions } from './types/server-options';
 
 export class AppFactory {
   protected log: Logger;

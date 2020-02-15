@@ -1,7 +1,8 @@
 export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './http-status-codes';
 export { Request } from './request';
 export { Response } from './response';
-export { NodeRequest, NodeResponse, RequestListener, Fn, RedirectStatusCodes, BodyParserConfig } from './types/types';
+export { RequestListener, BodyParserConfig } from './types/types';
+export { NodeRequest, NodeResponse, Fn, RedirectStatusCodes } from './types/server-options';
 export { Logger, LoggerMethod } from './types/logger';
 export { NodeReqToken, NodeResToken } from './types/injection-tokens';
 export { HttpMethod, Router, RouteParam, RouterReturns, RouteConfig } from './types/router';
