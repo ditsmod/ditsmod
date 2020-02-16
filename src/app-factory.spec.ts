@@ -13,6 +13,7 @@ import { Column } from './decorators/column';
 import { Router } from './types/router';
 import { Logger } from './types/logger';
 import { Server } from './types/server-options';
+import { Module } from './decorators';
 
 describe('AppFactory', () => {
   class MockAppFactory extends AppFactory {
@@ -27,8 +28,12 @@ describe('AppFactory', () => {
       return super.mergeMetadata(appModule);
     }
 
-    getAppModuleMetadata(appModule: ModuleType): RootModuleDecorator {
-      return super.getAppModuleMetadata(appModule);
+    getAppMetadata(appModule: ModuleType): RootModuleDecorator {
+      return super.getAppMetadata(appModule);
+    }
+
+    getProvidersPerApp(mod: ModuleType) {
+      return super.getProvidersPerApp(mod);
     }
 
     checkSecureServerOption(appModule: ModuleType) {
@@ -46,6 +51,72 @@ describe('AppFactory', () => {
 
   beforeEach(() => {
     mock = new MockAppFactory();
+  });
+
+  describe('getProvidersPerApp() and importProvidersPerApp()', () => {
+    class Provider1 {}
+    class Provider2 {}
+    class Provider3 {}
+    class Provider4 {}
+    class Provider5 {}
+    class Provider6 {}
+
+    @Module({
+      providersPerApp: [Provider1]
+    })
+    class Module1 {}
+
+    @Module({
+      providersPerApp: [Provider2, Provider3, Provider4],
+      imports: [Module1]
+    })
+    class Module2 {}
+
+    @Module({
+      providersPerApp: [Provider5, Provider6],
+      imports: [Module2]
+    })
+    class Module3 {}
+
+    @Module({
+      imports: [Module3]
+    })
+    class Module4 {}
+
+    @Module({
+      imports: [Module1, [Module4]]
+    })
+    class Module5 {}
+
+    it('should have 6 providersPerApp imported from Module3', () => {
+      expect(mock.getProvidersPerApp(Module4)).toEqual([
+        Provider1,
+        Provider2,
+        Provider3,
+        Provider4,
+        Provider5,
+        Provider6
+      ]);
+    });
+
+    it('should have 9 providersPerApp imported from Module1 and Module4', () => {
+      expect(mock.getProvidersPerApp(Module5)).toEqual([
+        Provider1,
+        Provider1,
+        Provider2,
+        Provider3,
+        Provider4,
+        Provider5,
+        Provider6
+      ]);
+    });
+
+    @Module()
+    class Module6 {}
+
+    it('should have empty array of providersPerApp', () => {
+      expect(mock.getProvidersPerApp(Module6)).toEqual([]);
+    });
   });
 
   describe('mergeMetadata()', () => {
@@ -114,16 +185,16 @@ describe('AppFactory', () => {
     });
   });
 
-  describe('getAppModuleMetadata()', () => {
+  describe('getAppMetadata()', () => {
     it('should returns ClassWithDecorators metadata', () => {
       @RootModule({ controllers: [SomeControllerClass] })
       class ClassWithDecorators {}
-      const metadata = mock.getAppModuleMetadata(ClassWithDecorators);
+      const metadata = mock.getAppMetadata(ClassWithDecorators);
       expect(metadata).toEqual(new RootModule({ controllers: [SomeControllerClass] }));
     });
 
     it('should not returns any metadata', () => {
-      const metadata = mock.getAppModuleMetadata(ClassWithoutDecorators);
+      const metadata = mock.getAppMetadata(ClassWithoutDecorators);
       expect(metadata).toBeUndefined();
     });
   });

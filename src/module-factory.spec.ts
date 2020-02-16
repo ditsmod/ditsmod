@@ -9,7 +9,7 @@ import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
 import { Column } from './decorators/column';
 import { Router, RouteConfig } from './types/router';
-import { defaultProvidersPerApp } from './decorators/root-module';
+import { defaultProvidersPerApp, RootModule } from './decorators/root-module';
 
 describe('ModuleFactory', () => {
   @Injectable()
@@ -34,8 +34,8 @@ describe('ModuleFactory', () => {
       return super.mergeMetadata(mod);
     }
 
-    importProviders(mod: ModuleType, soughtProvider?: NormalizedProvider) {
-      return super.importProviders(mod, soughtProvider);
+    exportProvidersToImporter(mod: ModuleType, soughtProvider?: NormalizedProvider) {
+      return super.exportProvidersToImporter(mod, soughtProvider);
     }
 
     loadRoutesConfig(prefix: string, configs: RouteConfig[]) {
@@ -59,21 +59,25 @@ describe('ModuleFactory', () => {
       expect(metadata.exports).toEqual([]);
       expect(metadata.imports).toEqual([]);
       expect(metadata.routesPerMod).toEqual([]);
+      expect(metadata.providersPerApp).toEqual([]);
       expect(metadata.providersPerMod).toEqual([]);
       expect(metadata.providersPerReq).toEqual(defaultProvidersPerReq);
+      expect((metadata as any).ngMetadataName).toBe('Module');
     });
 
     it('should merge default metatada with ClassWithDecorators metadata', () => {
       class SomeControllerClass {}
       class C1 {}
-      class Other {}
+      class PerApp {}
+      class PerMod {}
 
       const routesPerMod = [{ path: '1', controller: C1 }];
 
       @Module({
         controllers: [SomeControllerClass],
         providersPerReq: [ClassWithoutDecorators],
-        providersPerMod: [Other],
+        providersPerApp: [PerApp],
+        providersPerMod: [PerMod],
         routesPerMod
       })
       class ClassWithDecorators {}
@@ -82,7 +86,7 @@ describe('ModuleFactory', () => {
       expect(metadata.exports).toEqual([]);
       expect(metadata.imports).toEqual([]);
       expect(metadata.routesPerMod).toEqual(routesPerMod);
-      expect(metadata.providersPerMod).toEqual([Other]);
+      expect(metadata.providersPerMod).toEqual([PerMod]);
       expect(metadata.providersPerReq).toEqual([...defaultProvidersPerReq, ClassWithoutDecorators]);
     });
 
@@ -104,7 +108,7 @@ describe('ModuleFactory', () => {
 
       const moduleMetadata = mock.mergeMetadata(Module1);
       expect(() => mock.quickCheckImports(moduleMetadata, Module1.name)).toThrow(
-        `Import Module1 failed: the imported module should have some controllers or "exports" array with elements.`
+        `Import Module1 failed: this module should have some controllers or "exports" array with elements.`
       );
     });
 
@@ -124,7 +128,7 @@ describe('ModuleFactory', () => {
 
       const moduleMetadata = mock.mergeMetadata(Module2);
       expect(() => mock.quickCheckImports(moduleMetadata, Module2.name)).toThrow(
-        `Import Module2 failed: the imported module should have some controllers or "exports" array with elements.`
+        `Import Module2 failed: this module should have some controllers or "exports" array with elements.`
       );
     });
 
@@ -173,7 +177,7 @@ describe('ModuleFactory', () => {
     });
   });
 
-  describe('importProviders() and findAndSetProvider()', () => {
+  describe('exportProvidersToImporter() and findAndSetProvider()', () => {
     it('should import Provider11 and Provider12 from current module', () => {
       class Provider11 {}
       class Provider12 {}
@@ -184,8 +188,8 @@ describe('ModuleFactory', () => {
       })
       class Module1 {}
 
-      mock.importProviders(Module1);
-      expect(mock.opts.providersPerMod).toEqual([Provider12, Provider11]);
+      mock.exportProvidersToImporter(Module1);
+      expect(mock.opts.providersPerMod).toEqual([Provider11, Provider12]);
     });
 
     it('should import Provider11 and Provider12 from Module1', () => {
@@ -210,8 +214,8 @@ describe('ModuleFactory', () => {
       })
       class Module2 {}
 
-      mock.importProviders(Module2);
-      expect(mock.opts.providersPerMod).toEqual([Provider12, Provider11]);
+      mock.exportProvidersToImporter(Module2);
+      expect(mock.opts.providersPerMod).toEqual([Provider11, Provider12]);
       expect(mock.opts.providersPerReq).toEqual(defaultProvidersPerReq);
     });
 
@@ -245,7 +249,7 @@ describe('ModuleFactory', () => {
       })
       class Module3 {}
 
-      mock.importProviders(Module3);
+      mock.exportProvidersToImporter(Module3);
       expect(mock.opts.providersPerMod).toEqual([Provider12]);
       expect(mock.opts.providersPerReq).toEqual(defaultProvidersPerReq);
     });
@@ -348,6 +352,97 @@ describe('ModuleFactory', () => {
       expect(mock.router.find('GET', '/api/2/21').handle().controller).toBe(C21);
       expect(mock.router.find('GET', '/api/3').handle().controller).toBe(C3);
       expect(mock.router.find('GET', '/api/4').handle).toBeNull();
+    });
+  });
+
+  describe('bootstrap()', () => {
+    class Provider1 {}
+    class Provider2 {}
+    class Provider3 {}
+    class Provider4 {}
+    class Provider5 {}
+    class Provider6 {}
+    class Provider7 {}
+    class Provider8 {}
+    class Provider9 {}
+
+    @Module({
+      exports: [Provider1, Provider2, Provider3],
+      providersPerMod: [Provider1, Provider2, Provider3]
+    })
+    class Module1 {}
+
+    @Module({
+      imports: [Module1],
+      exports: [Provider1, Provider3, Provider5, Provider9],
+      providersPerMod: [Provider4, Provider5, Provider6],
+      providersPerReq: [Provider7, Provider9]
+    })
+    class Module2 {}
+
+    @Module({
+      imports: [Module2],
+      exports: [Module2],
+      providersPerReq: [Provider8]
+    })
+    class Module3 {}
+
+    @RootModule({
+      imports: [Module3]
+    })
+    class Module4 {}
+
+    it(`Module3 should have Provider1, Provider3, Provider5 in providersPerMod and Provider31 in providersPerReq`, () => {
+      const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp);
+      mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+      mock.injectorPerMod = injectorPerApp;
+      mock.bootstrap('api', '', Module3);
+      expect(mock.opts.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
+      expect(mock.opts.providersPerReq).toEqual([...defaultProvidersPerReq, Provider8, Provider9]);
+      expect((mock.opts as any).ngMetadataName).toBe('Module');
+      // console.log(mock.opts);
+    });
+
+    it(`Module4 should have Provider1, Provider3, Provider5 in providersPerMod`, () => {
+      const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp);
+      mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+      mock.injectorPerMod = injectorPerApp;
+      mock.bootstrap('api', '', Module4);
+      expect(mock.opts.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
+      expect(mock.opts.providersPerReq).toEqual([...defaultProvidersPerReq, Provider9]);
+      expect((mock.opts as any).ngMetadataName).toBe('RootModule');
+    });
+
+    @Module({
+      imports: [Module3]
+    })
+    class Module5 {}
+
+    it(`should throw an error regarding the provider's absence`, () => {
+      const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp);
+      mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+      mock.injectorPerMod = injectorPerApp;
+      const errMsg = `Import Module5 failed: this module should have some controllers or "exports" array with elements.`;
+      expect(() => mock.bootstrap('api', '', Module5)).toThrow(errMsg);
+    });
+
+    @Module({
+      exports: [Provider1, Provider2, Provider3],
+      providersPerMod: [Provider1, Provider3]
+    })
+    class Module6 {}
+
+    @Module({
+      imports: [Module6]
+    })
+    class Module7 {}
+
+    it(`should throw an error about not proper provider exports`, () => {
+      const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp);
+      mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+      mock.injectorPerMod = injectorPerApp;
+      const errMsg = `Exported Provider2 from Module6 should includes in "providersPerMod" or "providersPerReq", or in some "exports" of imported modules.`;
+      expect(() => mock.bootstrap('api', '', Module7)).toThrow(errMsg);
     });
   });
 });

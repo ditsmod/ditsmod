@@ -2,11 +2,19 @@ import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
-import { ReflectiveInjector, reflector, Type } from 'ts-di';
+import { ReflectiveInjector, reflector, Type, Provider, resolveForwardRef } from 'ts-di';
 
 import { RootModuleDecorator, ApplicationMetadata } from './decorators/root-module';
-import { ModuleType, RequestListener } from './types/types';
-import { isHttp2SecureServerOptions, isRootModule, isEntity, isColumn, isColumnType } from './utils/type-guards';
+import { ModuleType, RequestListener, ModuleWithProviders } from './types/types';
+import {
+  isHttp2SecureServerOptions,
+  isRootModule,
+  isEntity,
+  isColumn,
+  isColumnType,
+  isModule,
+  isModuleWithProviders
+} from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
 import { ModuleFactory } from './module-factory';
@@ -18,6 +26,8 @@ import { Router, HttpMethod } from './types/router';
 import { NodeResToken, NodeReqToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
 import { Server, Http2SecureServerOptions } from './types/server-options';
+import { ModuleDecorator } from './decorators/module';
+import { flatten } from './utils/ng-utils';
 
 export class AppFactory {
   protected log: Logger;
@@ -58,24 +68,63 @@ export class AppFactory {
   protected prepareServerOptions(appModule: ModuleType) {
     this.mergeMetadata(appModule);
     this.setEntityMetadata();
-    this.initProvidersPerApp();
     this.log.trace('Setting server name:', this.opts.serverName);
     this.log.trace('Setting listen options:', this.opts.listenOptions);
     this.checkSecureServerOption(appModule);
     if (!this.opts.routesPrefixPerMod.some(config => config.module === appModule)) {
       this.opts.routesPrefixPerMod.unshift({ prefix: '', module: appModule });
     }
+
+    const providersPerApp: Provider[] = [];
+
+    this.opts.routesPrefixPerMod.forEach(config => {
+      providersPerApp.push(...this.getProvidersPerApp(config.module));
+    });
+
+    this.opts.providersPerApp = [...this.opts.providersPerApp, providersPerApp];
+    this.initProvidersPerApp();
+
     this.opts.routesPrefixPerMod.forEach(config => {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       moduleFactory.bootstrap(this.opts.routesPrefixPerApp, config.prefix, config.module);
     });
   }
 
+  protected getProvidersPerApp(mod: ModuleType) {
+    const modMetadata = reflector.annotations(mod).find(m => isModule(m) || isRootModule(m)) as ModuleDecorator;
+    if (!modMetadata) {
+      throw new Error(`Module build failed: module "${mod.name}" does not have the "@Module()" decorator`);
+    }
+
+    const imports = flatten((modMetadata.imports || []).slice())
+      .map(resolveForwardRef)
+      .map(getModule);
+
+    return this.importProvidersPerApp(modMetadata.providersPerApp || [], imports);
+
+    function getModule(value: Type<any> | ModuleWithProviders<{}>): Type<any> {
+      if (isModuleWithProviders(value)) {
+        return value.module;
+      }
+      return value;
+    }
+  }
+
+  protected importProvidersPerApp(prevProvidersPerApp: Provider[], imports: Type<any>[]) {
+    const providersPerApp: Provider[] = [];
+
+    for (const imp of imports) {
+      providersPerApp.push(...this.getProvidersPerApp(imp));
+    }
+
+    return [...providersPerApp, ...prevProvidersPerApp];
+  }
+
   /**
    * Merge AppModule metadata with default ApplicationMetadata.
    */
   protected mergeMetadata(appModule: ModuleType): void {
-    const modMetadata = this.getAppModuleMetadata(appModule);
+    const modMetadata = this.getAppMetadata(appModule);
     if (!modMetadata) {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
@@ -116,14 +165,14 @@ export class AppFactory {
           if (column.isPrimaryColumn) {
             Entity.metadata.primaryColumns.push(prop);
           }
-          console.log(prop, type);
+          // console.log(prop, type);
         }
-        console.log(Entity.metadata.primaryColumns);
+        // console.log(Entity.metadata.primaryColumns);
       }
     });
   }
 
-  protected getAppModuleMetadata(appModule: ModuleType): RootModuleDecorator {
+  protected getAppMetadata(appModule: ModuleType): RootModuleDecorator {
     return reflector.annotations(appModule).find(isRootModule);
   }
 

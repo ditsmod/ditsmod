@@ -22,6 +22,11 @@ import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { defaultProvidersPerApp } from './decorators/root-module';
 import { Logger } from './types/logger';
 
+/**
+ * - extracts `providersPerApp`;
+ * - creates `injectorPerMod` and `injectorPerReq`;
+ * - settings routes.
+ */
 @Injectable()
 export class ModuleFactory {
   protected moduleName: string;
@@ -47,24 +52,25 @@ export class ModuleFactory {
    * @param importer It's module that imported current module.
    */
   bootstrap(routesPrefixPerApp: string, routesPrefixPerMod: string, mod: ModuleType, importer?: this) {
-    this.moduleName = mod.name;
-    this.routesPrefixPerApp = routesPrefixPerApp || '';
-    this.routesPrefixPerMod = routesPrefixPerMod || '';
     const moduleMetadata = this.mergeMetadata(mod);
     Object.assign(this.opts, moduleMetadata);
-    this.initProvidersPerReq();
-    this.importRoutes();
     /**
      * If we exported providers from current module,
      * this only make sense for the module that will import current module.
      *
      * Here "importer" it's module that imported current module,
-     * so we should call `importProviders()` method in its context.
+     * so we should call `exportProvidersToImporter()` method in its context.
      */
     if (importer) {
-      this.importProviders.call(importer, mod);
+      this.exportProvidersToImporter.call(importer, mod);
     }
+    this.importModules();
+
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
+    this.moduleName = mod.name;
+    this.routesPrefixPerApp = routesPrefixPerApp || '';
+    this.routesPrefixPerMod = routesPrefixPerMod || '';
+    this.initProvidersPerReq();
     this.quickCheckImports(moduleMetadata, mod.name);
     this.checkRoutePath(this.routesPrefixPerApp);
     this.checkRoutePath(this.routesPrefixPerMod);
@@ -92,7 +98,7 @@ export class ModuleFactory {
       !moduleMetadata.exports.length
     ) {
       throw new Error(
-        `Import ${moduleName} failed: the imported module should have some controllers or "exports" array with elements.`
+        `Import ${moduleName} failed: this module should have some controllers or "exports" array with elements.`
       );
     }
 
@@ -131,6 +137,7 @@ export class ModuleFactory {
     metadata.exports = flatten((modMetadata.exports || metadata.exports).slice())
       .map(resolveForwardRef)
       .map(getModule);
+    metadata.providersPerApp = mergeOpts(metadata.providersPerApp, modMetadata.providersPerApp);
     metadata.providersPerMod = mergeOpts(metadata.providersPerMod, modMetadata.providersPerMod);
     metadata.providersPerReq = mergeOpts(metadata.providersPerReq, modMetadata.providersPerReq);
     metadata.controllers = mergeOpts(metadata.controllers, modMetadata.controllers);
@@ -165,7 +172,7 @@ export class ModuleFactory {
     this.initProvidersPerReq();
   }
 
-  protected importRoutes() {
+  protected importModules() {
     for (const imp of this.opts.imports) {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       moduleFactory.bootstrap(this.routesPrefixPerApp, this.routesPrefixPerMod, imp, this);
@@ -178,7 +185,7 @@ export class ModuleFactory {
    * @param mod Module from where exports providers.
    * @param soughtProvider Normalized provider.
    */
-  protected importProviders(mod: ModuleType, soughtProvider?: NormalizedProvider) {
+  protected exportProvidersToImporter(mod: ModuleType, soughtProvider?: NormalizedProvider) {
     const { exports: exp, imports, providersPerMod, providersPerReq } = this.mergeMetadata(mod);
     const moduleName = mod.name;
 
@@ -187,7 +194,7 @@ export class ModuleFactory {
       if (moduleMetadata) {
         const reexportedModule = moduleOrProvider as ModuleType;
         if (imports.includes(reexportedModule)) {
-          this.importProviders(reexportedModule);
+          this.exportProvidersToImporter(reexportedModule);
         } else {
           throw new Error(`Reexports a module failed: cannot find ${reexportedModule.name} in "imports" array`);
         }
@@ -208,7 +215,7 @@ export class ModuleFactory {
         );
         if (!foundProvider) {
           for (const imp of imports) {
-            foundProvider = this.importProviders(imp, normProvider);
+            foundProvider = this.exportProvidersToImporter(imp, normProvider);
             if (foundProvider) {
               break;
             }
@@ -250,10 +257,10 @@ export class ModuleFactory {
     }
 
     if (hasProvider(providersPerMod)) {
-      this.opts.providersPerMod.unshift(provider);
+      this.opts.providersPerMod.push(provider);
       return true;
     } else if (hasProvider(providersPerReq)) {
-      this.opts.providersPerReq.unshift(provider);
+      this.opts.providersPerReq.push(provider);
       return true;
     }
 

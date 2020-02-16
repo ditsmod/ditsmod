@@ -45,6 +45,10 @@ export abstract class AbstractModuleMetadata {
    * Route config array per a module.
    */
   routesPerMod: RouteConfig[] = [];
+  /**
+   * Providers per the `Application`.
+   */
+  providersPerApp: Provider[] = [];
 }
 
 export class ModuleMetadata extends AbstractModuleMetadata {
