@@ -81,7 +81,7 @@ export class AppFactory {
       providersPerApp.push(...this.getProvidersPerApp(config.module));
     });
 
-    this.opts.providersPerApp = [...this.opts.providersPerApp, providersPerApp];
+    this.opts.providersPerApp = [...this.opts.providersPerApp, ...providersPerApp];
     this.initProvidersPerApp();
 
     this.opts.routesPrefixPerMod.forEach(config => {

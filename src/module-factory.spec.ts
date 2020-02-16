@@ -387,11 +387,6 @@ describe('ModuleFactory', () => {
     })
     class Module3 {}
 
-    @RootModule({
-      imports: [Module3]
-    })
-    class Module4 {}
-
     it(`Module3 should have Provider1, Provider3, Provider5 in providersPerMod and Provider31 in providersPerReq`, () => {
       const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp);
       mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
@@ -402,6 +397,11 @@ describe('ModuleFactory', () => {
       expect((mock.opts as any).ngMetadataName).toBe('Module');
       // console.log(mock.opts);
     });
+
+    @RootModule({
+      imports: [Module3]
+    })
+    class Module4 {}
 
     it(`Module4 should have Provider1, Provider3, Provider5 in providersPerMod`, () => {
       const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp);

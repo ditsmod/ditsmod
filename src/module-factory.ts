@@ -65,7 +65,6 @@ export class ModuleFactory {
       this.exportProvidersToImporter.call(importer, mod);
     }
     this.importModules();
-
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
     this.moduleName = mod.name;
     this.routesPrefixPerApp = routesPrefixPerApp || '';
