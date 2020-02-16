@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import { ReflectiveInjector } from 'ts-di';
 
-import { DatabaseMetadata, DatabaseService, Entity } from '../decorators/entity';
 import { EntityManager } from './entity-manager';
-import { RouteParam } from '../types/router';
+import { RouteParam } from '../../../types/router';
+import { Entity, DatabaseMetadata, DatabaseService } from '../decorators/entity';
 
 describe('EntityManager', () => {
   interface Req {

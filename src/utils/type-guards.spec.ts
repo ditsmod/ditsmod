@@ -15,8 +15,8 @@ import {
   isColumn,
   isColumnType
 } from './type-guards';
-import { Entity } from '../decorators/entity';
-import { Column } from '../decorators/column';
+import { Column } from '../modules/orm/decorators/column';
+import { Entity } from '../modules/orm/decorators/entity';
 
 describe('type-guards', () => {
   describe('isRootModule()', () => {

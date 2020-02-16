@@ -5,12 +5,12 @@ import { Router as RestifyRouter } from '@restify-ts/router';
 
 import { PreRequest } from '../services/pre-request';
 import { ModuleFactory } from '../module-factory';
-import { EntityInjector } from '../decorators/entity';
 import { ModuleDecorator } from './module';
 import { RoutesPrefixPerMod, Router } from '../types/router';
 import { BodyParserConfig } from '../types/types';
 import { Logger } from '../types/logger';
 import { HttpModule, ServerOptions } from '../types/server-options';
+import { EntityInjector } from '../modules/orm/decorators/entity';
 
 export const defaultProvidersPerApp: Provider[] = [
   Logger,

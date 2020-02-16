@@ -1,7 +1,7 @@
 import { Injectable } from 'ts-di';
 
-import { Request } from '../request';
-import { DatabaseMetadata, EntityInjector, EntityModel } from '../decorators/entity';
+import { Request } from '../../../request';
+import { EntityInjector, EntityModel, DatabaseMetadata } from '../decorators/entity';
 
 @Injectable()
 export class EntityManager {

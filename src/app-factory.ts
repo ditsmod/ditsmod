@@ -20,14 +20,14 @@ import { Request } from './request';
 import { ModuleFactory } from './module-factory';
 import { pickProperties } from './utils/pick-properties';
 import { mergeOpts } from './utils/merge-arrays-options';
-import { StaticEntity, EntityInjector } from './decorators/entity';
-import { ColumnDecoratorMetadata } from './decorators/column';
 import { Router, HttpMethod } from './types/router';
 import { NodeResToken, NodeReqToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
 import { Server, Http2SecureServerOptions } from './types/server-options';
 import { ModuleDecorator } from './decorators/module';
 import { flatten } from './utils/ng-utils';
+import { EntityInjector, StaticEntity } from './modules/orm/decorators/entity';
+import { ColumnDecoratorMetadata } from './modules/orm/decorators/column';
 
 export class AppFactory {
   protected log: Logger;

@@ -1,6 +1,6 @@
 import { makePropTypeDecorator } from 'ts-di';
 
-import { ObjectAny } from '../types/types';
+import { ObjectAny } from '../../../types/types';
 
 export interface ColumnsDecoratorFactory<T = any> {
   (options?: T): any;

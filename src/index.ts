@@ -1,7 +1,14 @@
 export * from './utils';
 export * from './types';
-export * from './decorators';
+export { Controller } from './decorators/controller';
+export { Module } from './decorators/module';
+export { RootModule } from './decorators/root-module';
+export { Route } from './decorators/route';
 export * from './services';
+export { Column } from './modules/orm/decorators/column';
+export { Entity, EntityModel } from './modules/orm/decorators/entity';
+export { EntityManager } from './modules/orm/services/entity-manager';
+export { OrmModule } from './modules/orm/orm.module';
 export { Request } from './request';
 export { Response } from './response';
 export { AppFactory } from './app-factory';

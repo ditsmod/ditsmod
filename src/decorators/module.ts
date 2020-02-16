@@ -3,9 +3,9 @@ import { Type, Provider, makeDecorator, TypeProvider } from 'ts-di';
 import { ModuleWithProviders } from '../types/types';
 import { RouteConfig } from '../types/router';
 import { BodyParser } from '../services/body-parser';
-import { EntityManager } from '../services/entity-manager';
 import { Request } from '../request';
 import { Response } from '../response';
+import { EntityManager } from '../modules/orm/services/entity-manager';
 
 export const defaultProvidersPerReq: Provider[] = [Request, Response, BodyParser, EntityManager];
 

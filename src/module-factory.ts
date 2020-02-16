@@ -101,7 +101,7 @@ export class ModuleFactory {
       );
     }
 
-    if (isRootModule(moduleMetadata as any) && moduleMetadata.exports?.length) {
+    if (isRootModule(moduleMetadata as any) && moduleMetadata.exports.length) {
       throw new Error(
         `Import ${moduleName} failed: modules from routesPrefixPerMod should not to have "exports" array with elements.`
       );
