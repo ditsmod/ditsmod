@@ -5,29 +5,19 @@ import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ReflectiveInjector, reflector, Type, Provider, resolveForwardRef } from 'ts-di';
 
 import { RootModuleDecorator, ApplicationMetadata } from './decorators/root-module';
-import { ModuleType, RequestListener, ModuleWithProviders } from './types/types';
-import {
-  isHttp2SecureServerOptions,
-  isRootModule,
-  isEntity,
-  isColumn,
-  isColumnType,
-  isModule,
-  isModuleWithProviders
-} from './utils/type-guards';
+import { RequestListener } from './types/types';
+import { isHttp2SecureServerOptions, isRootModule, isModule, isModuleWithOptions } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
 import { ModuleFactory } from './module-factory';
 import { pickProperties } from './utils/pick-properties';
-import { mergeOpts } from './utils/merge-arrays-options';
+import { mergeArrays } from './utils/merge-arrays-options';
 import { Router, HttpMethod } from './types/router';
 import { NodeResToken, NodeReqToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
 import { Server, Http2SecureServerOptions } from './types/server-options';
-import { ModuleDecorator } from './decorators/module';
+import { ModuleDecorator, ModuleType, ModuleWithOptions } from './decorators/module';
 import { flatten } from './utils/ng-utils';
-import { EntityInjector, StaticEntity } from './modules/orm/decorators/entity';
-import { ColumnDecoratorMetadata } from './modules/orm/decorators/column';
 
 export class AppFactory {
   protected log: Logger;
@@ -67,7 +57,6 @@ export class AppFactory {
 
   protected prepareServerOptions(appModule: ModuleType) {
     this.mergeMetadata(appModule);
-    this.setEntityMetadata();
     this.log.trace('Setting server name:', this.opts.serverName);
     this.log.trace('Setting listen options:', this.opts.listenOptions);
     this.checkSecureServerOption(appModule);
@@ -102,8 +91,8 @@ export class AppFactory {
 
     return this.importProvidersPerApp(modMetadata.providersPerApp || [], imports);
 
-    function getModule(value: Type<any> | ModuleWithProviders<{}>): Type<any> {
-      if (isModuleWithProviders(value)) {
+    function getModule(value: Type<any> | ModuleWithOptions<any>): Type<any> {
+      if (isModuleWithOptions(value)) {
         return value.module;
       }
       return value;
@@ -129,47 +118,11 @@ export class AppFactory {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
 
-    const providersPerApp = mergeOpts(this.opts.providersPerApp, modMetadata.providersPerApp);
+    const providersPerApp = mergeArrays(this.opts.providersPerApp, modMetadata.providersPerApp);
     pickProperties(this.opts, modMetadata);
     this.opts.providersPerApp = providersPerApp;
     this.opts.routesPrefixPerMod = this.opts.routesPrefixPerMod.slice();
     this.opts.entities = this.opts.entities.slice();
-  }
-
-  /**
-   * Settings an Entity and Column metadata.
-   */
-  protected setEntityMetadata() {
-    const resolvedProviders = ReflectiveInjector.resolve(this.opts.entities);
-    const injector = ReflectiveInjector.fromResolvedProviders(resolvedProviders);
-    this.opts.providersPerApp.unshift({ provide: EntityInjector, useValue: injector });
-
-    resolvedProviders.forEach(item => {
-      const Token = item.key.token as Type<any>;
-      const instance = injector.get(Token);
-      const Entity = instance?.constructor as typeof StaticEntity;
-      const entityMetadata = reflector.annotations(Entity).find(isEntity);
-      if (entityMetadata) {
-        const columnMetadata = reflector.propMetadata(Entity) as ColumnDecoratorMetadata;
-        // console.log(columnMetadata);
-        Entity.entityMetadata = entityMetadata;
-        Entity.columnMetadata = columnMetadata;
-        Entity.metadata = {
-          tableName: entityMetadata.tableName || Entity.name,
-          primaryColumns: [],
-          databaseService: {} as any
-        };
-        for (const prop in columnMetadata) {
-          const type = columnMetadata[prop].find(isColumnType);
-          const column = columnMetadata[prop].find(isColumn);
-          if (column.isPrimaryColumn) {
-            Entity.metadata.primaryColumns.push(prop);
-          }
-          // console.log(prop, type);
-        }
-        // console.log(Entity.metadata.primaryColumns);
-      }
-    });
   }
 
   protected getAppMetadata(appModule: ModuleType): RootModuleDecorator {

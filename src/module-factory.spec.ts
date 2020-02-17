@@ -13,6 +13,7 @@ import { Column } from './modules/orm/decorators/column';
 describe('ModuleFactory', () => {
   @Injectable()
   class MockModuleFactory extends ModuleFactory {
+    moduleName = 'MockModule';
     opts = new ModuleMetadata();
     router: Router;
     injectorPerMod: ReflectiveInjector;
@@ -107,7 +108,7 @@ describe('ModuleFactory', () => {
 
       const moduleMetadata = mock.mergeMetadata(Module1);
       expect(() => mock.quickCheckImports(moduleMetadata)).toThrow(
-        `Import Module1 failed: this module should have some controllers or "exports" array with elements.`
+        `Import MockModule failed: this module should have some controllers or "exports" array with elements.`
       );
     });
 
@@ -127,7 +128,7 @@ describe('ModuleFactory', () => {
 
       const moduleMetadata = mock.mergeMetadata(Module2);
       expect(() => mock.quickCheckImports(moduleMetadata)).toThrow(
-        `Import Module2 failed: this module should have some controllers or "exports" array with elements.`
+        `Import MockModule failed: this module should have some controllers or "exports" array with elements.`
       );
     });
 

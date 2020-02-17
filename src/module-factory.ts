@@ -164,7 +164,7 @@ export class ModuleFactory {
       const modWitOptions = typeOrObject;
 
       modMetadata = reflector
-        .annotations(typeOrObject.module)
+        .annotations(modWitOptions.module)
         .find(m => isModule(m) || isRootModule(m)) as ModuleDecorator;
 
       modMetadata.providersPerApp = mergeArrays(modWitOptions.providersPerApp, modMetadata.providersPerApp);

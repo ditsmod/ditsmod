@@ -10,8 +10,6 @@ import { PreRequest } from './services/pre-request';
 import { Router } from './types/router';
 import { Logger } from './types/logger';
 import { Server } from './types/server-options';
-import { StaticEntity, Entity } from './modules/orm/decorators/entity';
-import { Column } from './modules/orm/decorators/column';
 import { Module, ModuleType } from './decorators/module';
 
 describe('AppFactory', () => {
@@ -37,10 +35,6 @@ describe('AppFactory', () => {
 
     checkSecureServerOption(appModule: ModuleType) {
       return super.checkSecureServerOption(appModule);
-    }
-
-    setEntityMetadata() {
-      return super.setEntityMetadata();
     }
   }
 
@@ -195,79 +189,6 @@ describe('AppFactory', () => {
     it('should not returns any metadata', () => {
       const metadata = mock.getAppMetadata(ClassWithoutDecorators);
       expect(metadata).toBeUndefined();
-    });
-  });
-
-  describe('setEntityMetadata()', () => {
-    describe('default', () => {
-      class SomeEntity {}
-
-      @Entity()
-      class MysqlEntity extends SomeEntity {}
-
-      it(`should set default entity's metadata`, () => {
-        mock.opts.entities = [SomeEntity, { provide: SomeEntity, useClass: MysqlEntity }];
-        mock.setEntityMetadata();
-        expect((SomeEntity as typeof StaticEntity).entityMetadata).toBeUndefined();
-        expect((SomeEntity as typeof StaticEntity).columnMetadata).toBeUndefined();
-        expect((MysqlEntity as typeof StaticEntity).entityMetadata).toEqual(new Entity({}));
-        expect((MysqlEntity as typeof StaticEntity).columnMetadata).toEqual(new Column({}));
-        expect((MysqlEntity as typeof StaticEntity).metadata).toEqual({
-          tableName: 'MysqlEntity',
-          primaryColumns: [],
-          databaseService: {}
-        });
-      });
-    });
-
-    describe('with some column settings', () => {
-      class SomeEntity {
-        fistName: string;
-      }
-
-      enum EnumType {
-        one,
-        two
-      }
-
-      @Entity({ tableName: 'users' })
-      class MysqlEntity extends SomeEntity {
-        @Column({ isPrimaryColumn: true })
-        id: number; // Number
-
-        @Column({ isPrimaryColumn: true })
-        prop1: boolean; // Boolean
-        @Column()
-        prop2: string; // String
-        @Column()
-        prop3: string[]; // Array
-        @Column()
-        prop4: [string, number]; // Array
-        @Column()
-        prop5: []; // Array
-        @Column()
-        prop6: EnumType; // Number
-        @Column()
-        prop7: any; // Object
-        @Column()
-        prop8: void; // undefined
-        @Column()
-        prop9: never; // undefined
-        @Column()
-        // tslint:disable-next-line: ban-types
-        prop10: Object; // Object
-        @Column()
-        prop11: object; // Object
-        @Column()
-        prop12: unknown; // Object
-      }
-
-      it(`should set default entity's metadata`, () => {
-        mock.opts.entities = [SomeEntity, { provide: SomeEntity, useClass: MysqlEntity }];
-        mock.setEntityMetadata();
-        expect((SomeEntity as any).entityMetadata).toBeUndefined();
-        expect((MysqlEntity as any).entityMetadata).toEqual(new Entity({ tableName: 'users' }));
-      });
     });
   });
 
