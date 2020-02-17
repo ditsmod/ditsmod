@@ -32,7 +32,7 @@ describe('EntityManager', () => {
 
   const injector = ReflectiveInjector.resolveAndCreate([MyDatabaseService, { provide: Model, useClass: MysqlModel }]);
   const req = { routeParamsArr: [{ key: 'postId', value: '12' }] } as Req;
-  const mock = new MockEntityManager(req as any, injector);
+  const mock = new MockEntityManager(req as any, injector, injector);
 
   describe('find()', () => {
     it('should return sql query', () => {

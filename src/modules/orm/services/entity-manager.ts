@@ -1,11 +1,11 @@
-import { Injectable } from 'ts-di';
+import { Injectable, Injector } from 'ts-di';
 
 import { Request } from '../../../request';
 import { EntityInjector, EntityModel, DatabaseMetadata } from '../decorators/entity';
 
 @Injectable()
 export class EntityManager {
-  constructor(protected req: Request, protected injector: EntityInjector) {}
+  constructor(protected req: Request, protected injector: Injector, protected entityInjector: EntityInjector) {}
 
   find(Entity: EntityModel) {
     const metadata = this.getMetadata(Entity);
@@ -35,7 +35,7 @@ export class EntityManager {
   }
 
   protected getMetadata(Entity: EntityModel) {
-    const instance = this.injector.get(Entity);
+    const instance = this.entityInjector.get(Entity);
     if (!instance) {
       throw new Error(`An error occurred during reading the Entity's metadata from "${Entity.name}"`);
     }
