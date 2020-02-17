@@ -15,9 +15,9 @@ export function isHttp2SecureServerOptions(serverOptions: ServerOptions): server
 }
 
 export function isModuleWithOptions(
-  impOrExp: Type<any> | ModuleWithOptions<{}> | any[]
-): impOrExp is ModuleWithOptions<{}> {
-  return (impOrExp as ModuleWithOptions<{}>).module !== undefined;
+  impOrExp: Type<any> | ModuleWithOptions<any> | any[]
+): impOrExp is ModuleWithOptions<any> {
+  return (impOrExp as ModuleWithOptions<any>).module !== undefined;
 }
 
 export function isRootModule(moduleMetadata: RootModuleDecorator): moduleMetadata is RootModuleDecorator {

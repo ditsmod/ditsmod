@@ -57,7 +57,12 @@ export class ModuleFactory {
    * @param mod Module that will bootstrapped.
    * @param importer It's module that imported current module.
    */
-  bootstrap(routesPrefixPerApp: string, routesPrefixPerMod: string, mod: ModuleType, importer?: this) {
+  bootstrap(
+    routesPrefixPerApp: string,
+    routesPrefixPerMod: string,
+    mod: Type<any> | ModuleWithOptions<any>,
+    importer?: this
+  ) {
     const moduleMetadata = this.mergeMetadata(mod);
     Object.assign(this.opts, moduleMetadata);
     /**
@@ -72,11 +77,11 @@ export class ModuleFactory {
     }
     this.importModules();
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
-    this.moduleName = mod.name;
+    this.moduleName = this.getModuleName(mod);
     this.routesPrefixPerApp = routesPrefixPerApp || '';
     this.routesPrefixPerMod = routesPrefixPerMod || '';
     this.initProvidersPerReq();
-    this.quickCheckImports(moduleMetadata, mod.name);
+    this.quickCheckImports(moduleMetadata);
     this.checkRoutePath(this.routesPrefixPerApp);
     this.checkRoutePath(this.routesPrefixPerMod);
     const prefix = [this.routesPrefixPerApp, this.routesPrefixPerMod].filter(s => s).join('/');
@@ -94,7 +99,7 @@ export class ModuleFactory {
     }
   }
 
-  protected quickCheckImports(moduleMetadata: ModuleMetadata, moduleName: string) {
+  protected quickCheckImports(moduleMetadata: ModuleMetadata) {
     assert.array(this.opts.routesPerMod, 'routesPerMod');
     if (
       !isRootModule(moduleMetadata as any) &&
@@ -103,13 +108,13 @@ export class ModuleFactory {
       !moduleMetadata.exports.length
     ) {
       throw new Error(
-        `Import ${moduleName} failed: this module should have some controllers or "exports" array with elements.`
+        `Import ${this.moduleName} failed: this module should have some controllers or "exports" array with elements.`
       );
     }
 
     if (isRootModule(moduleMetadata as any) && moduleMetadata.exports.length) {
       throw new Error(
-        `Import ${moduleName} failed: modules from routesPrefixPerMod should not to have "exports" array with elements.`
+        `Import ${this.moduleName} failed: modules from routesPrefixPerMod should not to have "exports" array with elements.`
       );
     }
 
@@ -122,16 +127,11 @@ export class ModuleFactory {
     }
   }
 
-  /**
-   * Merge a module metadata with default metadata.
-   *
-   * @todo Fix flatten imports/exports in case with `ModuleWithProviders`,
-   * the providers should be respect.
-   */
-  protected mergeMetadata(mod: ModuleType) {
+  protected mergeMetadata(mod: Type<any> | ModuleWithOptions<any>) {
     const modMetadata = this.getRawModuleMetadata(mod);
+    const modName = this.getModuleName(mod);
     if (!modMetadata) {
-      throw new Error(`Module build failed: module "${mod.name}" does not have the "@Module()" decorator`);
+      throw new Error(`Module build failed: module "${modName}" does not have the "@Module()" decorator`);
     }
 
     /**
@@ -142,12 +142,8 @@ export class ModuleFactory {
      * This is used only internally and is hidden from the public API.
      */
     (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
-    metadata.imports = flatten((modMetadata.imports || metadata.imports).slice())
-      .map(resolveForwardRef)
-      .map(getModule);
-    metadata.exports = flatten((modMetadata.exports || metadata.exports).slice())
-      .map(resolveForwardRef)
-      .map(getModule);
+    metadata.imports = flatten((modMetadata.imports || metadata.imports).slice()).map(resolveForwardRef);
+    metadata.exports = flatten((modMetadata.exports || metadata.exports).slice()).map(resolveForwardRef);
     metadata.providersPerApp = mergeOpts(metadata.providersPerApp, modMetadata.providersPerApp);
     metadata.providersPerMod = mergeOpts(metadata.providersPerMod, modMetadata.providersPerMod);
     metadata.providersPerReq = mergeOpts(metadata.providersPerReq, modMetadata.providersPerReq);
@@ -155,17 +151,30 @@ export class ModuleFactory {
     metadata.routesPerMod = mergeOpts(metadata.routesPerMod, modMetadata.routesPerMod);
 
     return metadata;
-
-    function getModule(value: Type<any> | ModuleWithOptions<{}>): Type<any> {
-      if (isModuleWithOptions(value)) {
-        return value.module;
-      }
-      return value;
-    }
   }
 
-  protected getRawModuleMetadata(mod: ModuleType): ModuleDecorator {
-    return reflector.annotations(mod).find(m => isModule(m) || isRootModule(m));
+  protected getModuleName(typeOrObject: Type<any> | ModuleWithOptions<any>) {
+    return isModuleWithOptions(typeOrObject) ? typeOrObject.module.name : typeOrObject.name;
+  }
+
+  protected getRawModuleMetadata(typeOrObject: Type<any> | ModuleWithOptions<any>) {
+    let modMetadata: ModuleDecorator;
+
+    if (isModuleWithOptions(typeOrObject)) {
+      const modWitOptions = typeOrObject;
+
+      modMetadata = reflector
+        .annotations(typeOrObject.module)
+        .find(m => isModule(m) || isRootModule(m)) as ModuleDecorator;
+
+      modMetadata.providersPerApp = [...(modWitOptions.providersPerApp || []), ...(modMetadata.providersPerApp || [])];
+      modMetadata.providersPerMod = [...(modWitOptions.providersPerMod || []), ...(modMetadata.providersPerMod || [])];
+      modMetadata.providersPerReq = [...(modWitOptions.providersPerReq || []), ...(modMetadata.providersPerReq || [])];
+    } else {
+      modMetadata = reflector.annotations(typeOrObject).find(m => isModule(m) || isRootModule(m)) as ModuleDecorator;
+    }
+
+    return modMetadata;
   }
 
   /**
@@ -196,9 +205,9 @@ export class ModuleFactory {
    * @param mod Module from where exports providers.
    * @param soughtProvider Normalized provider.
    */
-  protected exportProvidersToImporter(mod: ModuleType, soughtProvider?: NormalizedProvider) {
+  protected exportProvidersToImporter(mod: Type<any> | ModuleWithOptions<any>, soughtProvider?: NormalizedProvider) {
     const { exports: exp, imports, providersPerMod, providersPerReq } = this.mergeMetadata(mod);
-    const moduleName = mod.name;
+    const moduleName = this.getModuleName(mod);
 
     for (const moduleOrProvider of exp) {
       const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType);

@@ -49,17 +49,17 @@ export interface ModuleDecorator extends Partial<StaticModuleMetadata> {
   /**
    * List of modules or `ModuleWithProviders` imported by this module.
    */
-  imports?: Array<Type<any> | ModuleWithOptions<{}> | any[]>;
+  imports?: Array<Type<any> | ModuleWithOptions<any> | any[]>;
   /**
    * List of modules, `ModuleWithProviders` or providers exported by this
    * module.
    */
-  exports?: Array<Type<any> | ModuleWithOptions<{}> | Provider | any[]>;
+  exports?: Array<Type<any> | ModuleWithOptions<any> | Provider | any[]>;
 }
 
 export class ModuleMetadata extends StaticModuleMetadata {
-  imports: Type<any>[] = [];
-  exports: (Type<any> | Provider)[] = [];
+  imports: Array<Type<any> | ModuleWithOptions<any>> = [];
+  exports: Array<Type<any> | ModuleWithOptions<any> | Provider> = [];
 }
 
 export type ModuleType = new (...args: any[]) => any;

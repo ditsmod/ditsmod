@@ -1,9 +1,9 @@
 import 'reflect-metadata';
-import { ReflectiveInjector, Injectable } from 'ts-di';
+import { ReflectiveInjector, Injectable, Type } from 'ts-di';
 
 import { ModuleFactory } from './module-factory';
 import { NormalizedProvider } from './utils/ng-utils';
-import { Module, ModuleMetadata, defaultProvidersPerReq, ModuleType } from './decorators/module';
+import { Module, ModuleMetadata, defaultProvidersPerReq, ModuleType, ModuleWithOptions } from './decorators/module';
 import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
 import { Router, RouteConfig } from './types/router';
@@ -21,12 +21,12 @@ describe('ModuleFactory', () => {
       return super.initProvidersPerReq();
     }
 
-    quickCheckImports(moduleMetadata: ModuleMetadata, moduleName: string) {
-      return super.quickCheckImports(moduleMetadata, moduleName);
+    quickCheckImports(moduleMetadata: ModuleMetadata) {
+      return super.quickCheckImports(moduleMetadata);
     }
 
-    getRawModuleMetadata(mod: ModuleType) {
-      return super.getRawModuleMetadata(mod);
+    getRawModuleMetadata(typeOrObject: Type<any> | ModuleWithOptions<any>) {
+      return super.getRawModuleMetadata(typeOrObject);
     }
 
     mergeMetadata(mod: ModuleType) {
@@ -106,7 +106,7 @@ describe('ModuleFactory', () => {
       class Module1 {}
 
       const moduleMetadata = mock.mergeMetadata(Module1);
-      expect(() => mock.quickCheckImports(moduleMetadata, Module1.name)).toThrow(
+      expect(() => mock.quickCheckImports(moduleMetadata)).toThrow(
         `Import Module1 failed: this module should have some controllers or "exports" array with elements.`
       );
     });
@@ -126,7 +126,7 @@ describe('ModuleFactory', () => {
       class Module2 {}
 
       const moduleMetadata = mock.mergeMetadata(Module2);
-      expect(() => mock.quickCheckImports(moduleMetadata, Module2.name)).toThrow(
+      expect(() => mock.quickCheckImports(moduleMetadata)).toThrow(
         `Import Module2 failed: this module should have some controllers or "exports" array with elements.`
       );
     });
@@ -142,7 +142,7 @@ describe('ModuleFactory', () => {
       class Module1 {}
 
       const moduleMetadata = mock.mergeMetadata(Module1);
-      expect(() => mock.quickCheckImports(moduleMetadata, Module1.name)).not.toThrow();
+      expect(() => mock.quickCheckImports(moduleMetadata)).not.toThrow();
     });
 
     it('should not throw an error, when export some controller', () => {
@@ -156,7 +156,7 @@ describe('ModuleFactory', () => {
       class Module1 {}
 
       const moduleMetadata = mock.mergeMetadata(Module1);
-      expect(() => mock.quickCheckImports(moduleMetadata, Module1.name)).not.toThrow();
+      expect(() => mock.quickCheckImports(moduleMetadata)).not.toThrow();
     });
   });
 
