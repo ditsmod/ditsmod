@@ -1,5 +1,3 @@
-import { Provider, Type } from 'ts-di';
-
 import { HttpMethod } from './router';
 import { NodeRequest, NodeResponse } from './server-options';
 

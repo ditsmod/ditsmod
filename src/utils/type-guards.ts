@@ -14,7 +14,7 @@ export function isHttp2SecureServerOptions(serverOptions: ServerOptions): server
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
 }
 
-export function isModuleWithProviders(
+export function isModuleWithOptions(
   impOrExp: Type<any> | ModuleWithOptions<{}> | any[]
 ): impOrExp is ModuleWithOptions<{}> {
   return (impOrExp as ModuleWithOptions<{}>).module !== undefined;

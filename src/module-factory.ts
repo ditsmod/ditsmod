@@ -21,7 +21,7 @@ import { ControllerDecorator } from './decorators/controller';
 import { RouteDecoratorMetadata } from './decorators/route';
 import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
-import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from './utils/type-guards';
+import { isModuleWithOptions, isModule, isRootModule, isController, isRoute } from './utils/type-guards';
 import { mergeOpts } from './utils/merge-arrays-options';
 import { Router, RouteConfig } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
@@ -157,7 +157,7 @@ export class ModuleFactory {
     return metadata;
 
     function getModule(value: Type<any> | ModuleWithOptions<{}>): Type<any> {
-      if (isModuleWithProviders(value)) {
+      if (isModuleWithOptions(value)) {
         return value.module;
       }
       return value;
