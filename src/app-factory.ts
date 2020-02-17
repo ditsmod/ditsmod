@@ -122,7 +122,6 @@ export class AppFactory {
     pickProperties(this.opts, modMetadata);
     this.opts.providersPerApp = providersPerApp;
     this.opts.routesPrefixPerMod = this.opts.routesPrefixPerMod.slice();
-    this.opts.entities = this.opts.entities.slice();
   }
 
   protected getAppMetadata(appModule: ModuleType): RootModuleDecorator {

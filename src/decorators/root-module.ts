@@ -50,5 +50,4 @@ export class ApplicationMetadata {
   providersPerApp: Provider[] = defaultProvidersPerApp;
   routesPrefixPerApp: string = '';
   routesPrefixPerMod: RoutesPrefixPerMod[] = [];
-  entities: Provider[] = [];
 }
