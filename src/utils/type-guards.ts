@@ -1,23 +1,23 @@
 import { ClassProvider, ExistingProvider, FactoryProvider, Provider, Type, TypeProvider, ValueProvider } from 'ts-di';
 
 import { normalizeProviders } from './ng-utils';
-import { ModuleWithProviders, ObjectAny } from '../types/types';
-import { ModuleDecorator } from '../decorators/module';
+import { ModuleDecorator, ModuleWithOptions } from '../decorators/module';
 import { RootModuleDecorator } from '../decorators/root-module';
 import { ControllerDecorator } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
 import { ServerOptions, Http2SecureServerOptions } from '../types/server-options';
 import { EntityDecorator } from '../modules/orm/decorators/entity';
 import { ColumnMetadata, ColumnType } from '../modules/orm/decorators/column';
+import { ObjectAny } from '../types/types';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
 }
 
 export function isModuleWithProviders(
-  impOrExp: Type<any> | ModuleWithProviders<{}> | any[]
-): impOrExp is ModuleWithProviders<{}> {
-  return (impOrExp as ModuleWithProviders<{}>).module !== undefined;
+  impOrExp: Type<any> | ModuleWithOptions<{}> | any[]
+): impOrExp is ModuleWithOptions<{}> {
+  return (impOrExp as ModuleWithOptions<{}>).module !== undefined;
 }
 
 export function isRootModule(moduleMetadata: RootModuleDecorator): moduleMetadata is RootModuleDecorator {

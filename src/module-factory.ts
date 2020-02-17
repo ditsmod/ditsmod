@@ -10,10 +10,16 @@ import {
 } from 'ts-di';
 import assert = require('assert-plus');
 
-import { ModuleDecorator, ModuleMetadata, defaultProvidersPerReq } from './decorators/module';
+import {
+  ModuleDecorator,
+  ModuleMetadata,
+  defaultProvidersPerReq,
+  ModuleType,
+  ModuleWithOptions
+} from './decorators/module';
 import { ControllerDecorator } from './decorators/controller';
 import { RouteDecoratorMetadata } from './decorators/route';
-import { ModuleType, ModuleWithProviders, BodyParserConfig } from './types/types';
+import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isModuleWithProviders, isModule, isRootModule, isController, isRoute } from './utils/type-guards';
 import { mergeOpts } from './utils/merge-arrays-options';
@@ -150,7 +156,7 @@ export class ModuleFactory {
 
     return metadata;
 
-    function getModule(value: Type<any> | ModuleWithProviders<{}>): Type<any> {
+    function getModule(value: Type<any> | ModuleWithOptions<{}>): Type<any> {
       if (isModuleWithProviders(value)) {
         return value.module;
       }

@@ -2,9 +2,8 @@ import 'reflect-metadata';
 import { ReflectiveInjector, Injectable } from 'ts-di';
 
 import { ModuleFactory } from './module-factory';
-import { ModuleType } from './types/types';
 import { NormalizedProvider } from './utils/ng-utils';
-import { Module, ModuleMetadata, defaultProvidersPerReq } from './decorators/module';
+import { Module, ModuleMetadata, defaultProvidersPerReq, ModuleType } from './decorators/module';
 import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
 import { Router, RouteConfig } from './types/router';

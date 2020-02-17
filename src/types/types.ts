@@ -12,13 +12,6 @@ export interface ObjectAny {
   [key: string]: any;
 }
 
-export type ModuleType = new (...args: any[]) => any;
-
-export interface ModuleWithProviders<T> {
-  module: Type<T>;
-  providers?: Provider[];
-}
-
 export class BodyParserConfig {
   acceptMethods: HttpMethod[] = ['POST', 'PUT', 'PATCH'];
 }

@@ -1,6 +1,5 @@
 import { Type, Provider, makeDecorator, TypeProvider } from 'ts-di';
 
-import { ModuleWithProviders } from '../types/types';
 import { RouteConfig } from '../types/router';
 import { BodyParser } from '../services/body-parser';
 import { Request } from '../request';
@@ -14,21 +13,13 @@ export interface ModuleDecoratorFactory {
   new (data?: ModuleDecorator): ModuleDecorator;
 }
 
-export interface ModuleDecorator extends Partial<AbstractModuleMetadata> {
-  /**
-   * List of modules or `ModuleWithProviders` imported by this module.
-   */
-  imports?: Array<Type<any> | ModuleWithProviders<{}> | any[]>;
-  /**
-   * List of modules, `ModuleWithProviders` or providers exported by this
-   * module.
-   */
-  exports?: Array<Type<any> | ModuleWithProviders<{}> | Provider | any[]>;
-}
-
 export const Module = makeDecorator('Module', (data: any) => data) as ModuleDecoratorFactory;
 
-export abstract class AbstractModuleMetadata {
+export abstract class ProvidersMetadata {
+  /**
+   * Providers per the `Application`.
+   */
+  providersPerApp: Provider[] = [];
   /**
    * Providers per a module.
    */
@@ -37,6 +28,13 @@ export abstract class AbstractModuleMetadata {
    * Providers per the request.
    */
   providersPerReq: Provider[] = defaultProvidersPerReq;
+}
+
+export interface ModuleWithOptions<T> extends Partial<ProvidersMetadata> {
+  module: Type<T>;
+}
+
+export abstract class StaticModuleMetadata extends ProvidersMetadata {
   /**
    * The application controllers.
    */
@@ -45,13 +43,23 @@ export abstract class AbstractModuleMetadata {
    * Route config array per a module.
    */
   routesPerMod: RouteConfig[] = [];
-  /**
-   * Providers per the `Application`.
-   */
-  providersPerApp: Provider[] = [];
 }
 
-export class ModuleMetadata extends AbstractModuleMetadata {
+export interface ModuleDecorator extends Partial<StaticModuleMetadata> {
+  /**
+   * List of modules or `ModuleWithProviders` imported by this module.
+   */
+  imports?: Array<Type<any> | ModuleWithOptions<{}> | any[]>;
+  /**
+   * List of modules, `ModuleWithProviders` or providers exported by this
+   * module.
+   */
+  exports?: Array<Type<any> | ModuleWithOptions<{}> | Provider | any[]>;
+}
+
+export class ModuleMetadata extends StaticModuleMetadata {
   imports: Type<any>[] = [];
   exports: (Type<any> | Provider)[] = [];
 }
+
+export type ModuleType = new (...args: any[]) => any;
