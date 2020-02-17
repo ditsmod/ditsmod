@@ -36,9 +36,9 @@ describe('ModuleFactory', () => {
 
     getRawModuleMetadata<T extends ModuleDecorator>(
       typeOrObject: Type<any> | ModuleWithOptions<any>,
-      checker: (arg: RootModuleDecorator | ModuleDecorator) => boolean
+      isRoot?: boolean
     ): T {
-      return super.getRawModuleMetadata(typeOrObject, checker);
+      return super.getRawModuleMetadata(typeOrObject, isRoot);
     }
 
     mergeMetadata(mod: ModuleType) {
@@ -178,12 +178,12 @@ describe('ModuleFactory', () => {
     it('should returns ClassWithDecorators metadata', () => {
       @Module({ controllers: [SomeControllerClass] })
       class ClassWithDecorators {}
-      const metadata = mock.getRawModuleMetadata(ClassWithDecorators, m => isModule(m) || isRootModule(m));
+      const metadata = mock.getRawModuleMetadata(ClassWithDecorators);
       expect(metadata).toEqual(new Module({ controllers: [SomeControllerClass] }));
     });
 
     it('should not returns any metadata', () => {
-      const metadata = mock.getRawModuleMetadata(ClassWithoutDecorators, m => isModule(m) || isRootModule(m));
+      const metadata = mock.getRawModuleMetadata(ClassWithoutDecorators);
       expect(metadata).toBeUndefined();
     });
   });

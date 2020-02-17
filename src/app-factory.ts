@@ -81,8 +81,7 @@ export class AppFactory extends Factory {
   }
 
   protected getProvidersPerApp(mod: ModuleType) {
-    const chacker = (m: ModuleDecorator) => isModule(m) || isRootModule(m);
-    const modMetadata = this.getRawModuleMetadata(mod, chacker);
+    const modMetadata = this.getRawModuleMetadata(mod);
     const modName = this.getModuleName(mod);
     this.checkModuleMetadata(modMetadata, modName);
 
@@ -104,7 +103,7 @@ export class AppFactory extends Factory {
    * Merge AppModule metadata with default ApplicationMetadata.
    */
   protected mergeMetadata(appModule: ModuleType): void {
-    const modMetadata = this.getRawModuleMetadata<RootModuleDecorator>(appModule, isRootModule);
+    const modMetadata = this.getRawModuleMetadata<RootModuleDecorator>(appModule, true);
     if (!modMetadata) {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }

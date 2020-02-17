@@ -1,9 +1,8 @@
 import { Type, reflector } from 'ts-di';
 
-import { isModuleWithOptions } from './utils/type-guards';
+import { isModuleWithOptions, isModule, isRootModule } from './utils/type-guards';
 import { ModuleWithOptions, ModuleDecorator } from './decorators/module';
 import { mergeArrays } from './utils/merge-arrays-options';
-import { RootModuleDecorator } from './decorators/root-module';
 
 export abstract class Factory {
   protected getModuleName(typeOrObject: Type<any> | ModuleWithOptions<any>) {
@@ -18,9 +17,10 @@ export abstract class Factory {
 
   protected getRawModuleMetadata<T extends ModuleDecorator>(
     typeOrObject: Type<any> | ModuleWithOptions<any>,
-    typeGuard: (arg: RootModuleDecorator | ModuleDecorator) => boolean
+    isRoot?: boolean
   ) {
     let modMetadata: T;
+    const typeGuard = isRoot ? isRootModule : (m: ModuleDecorator) => isModule(m) || isRootModule(m);
 
     if (isModuleWithOptions(typeOrObject)) {
       const modWitOptions = typeOrObject;

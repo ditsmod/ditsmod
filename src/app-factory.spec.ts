@@ -28,9 +28,9 @@ describe('AppFactory', () => {
 
     getRawModuleMetadata<T extends ModuleDecorator>(
       typeOrObject: Type<any> | ModuleWithOptions<any>,
-      checker: (arg: RootModuleDecorator | ModuleDecorator) => boolean
+      isRoot?: boolean
     ): T {
-      return super.getRawModuleMetadata(typeOrObject, checker);
+      return super.getRawModuleMetadata(typeOrObject, isRoot);
     }
 
     getProvidersPerApp(mod: ModuleType) {
@@ -183,12 +183,12 @@ describe('AppFactory', () => {
     it('should returns ClassWithDecorators metadata', () => {
       @RootModule({ controllers: [SomeControllerClass] })
       class ClassWithDecorators {}
-      const metadata = mock.getRawModuleMetadata(ClassWithDecorators, isRootModule);
+      const metadata = mock.getRawModuleMetadata(ClassWithDecorators, true);
       expect(metadata).toEqual(new RootModule({ controllers: [SomeControllerClass] }));
     });
 
     it('should not returns any metadata', () => {
-      const metadata = mock.getRawModuleMetadata(ClassWithoutDecorators, isRootModule);
+      const metadata = mock.getRawModuleMetadata(ClassWithoutDecorators, true);
       expect(metadata).toBeUndefined();
     });
   });
