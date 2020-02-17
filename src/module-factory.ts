@@ -130,9 +130,7 @@ export class ModuleFactory {
   protected mergeMetadata(mod: Type<any> | ModuleWithOptions<any>) {
     const modMetadata = this.getRawModuleMetadata(mod);
     const modName = this.getModuleName(mod);
-    if (!modMetadata) {
-      throw new Error(`Module build failed: module "${modName}" does not have the "@Module()" decorator`);
-    }
+    this.checkModuleMetadata(modMetadata, modName);
 
     /**
      * Setting default module metadata.
@@ -157,6 +155,12 @@ export class ModuleFactory {
     return isModuleWithOptions(typeOrObject) ? typeOrObject.module.name : typeOrObject.name;
   }
 
+  protected checkModuleMetadata(modMetadata: ModuleDecorator, modName: string) {
+    if (!modMetadata) {
+      throw new Error(`Module build failed: module "${modName}" does not have the "@Module()" decorator`);
+    }
+  }
+
   protected getRawModuleMetadata(typeOrObject: Type<any> | ModuleWithOptions<any>) {
     let modMetadata: ModuleDecorator;
 
@@ -166,6 +170,9 @@ export class ModuleFactory {
       modMetadata = reflector
         .annotations(modWitOptions.module)
         .find(m => isModule(m) || isRootModule(m)) as ModuleDecorator;
+
+      const modName = this.getModuleName(modWitOptions.module);
+      this.checkModuleMetadata(modMetadata, modName);
 
       modMetadata.providersPerApp = mergeArrays(modWitOptions.providersPerApp, modMetadata.providersPerApp);
       modMetadata.providersPerMod = mergeArrays(modWitOptions.providersPerMod, modMetadata.providersPerMod);
