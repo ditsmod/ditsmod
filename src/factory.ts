@@ -24,9 +24,7 @@ export abstract class Factory {
 
     if (isModuleWithOptions(typeOrObject)) {
       const modWitOptions = typeOrObject;
-
       modMetadata = reflector.annotations(modWitOptions.module).find(typeGuard) as T;
-
       const modName = this.getModuleName(modWitOptions.module);
       this.checkModuleMetadata(modMetadata, modName);
 

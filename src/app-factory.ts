@@ -2,11 +2,11 @@ import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
-import { ReflectiveInjector, reflector, Type, Provider, resolveForwardRef } from 'ts-di';
+import { ReflectiveInjector, Type, Provider, resolveForwardRef } from 'ts-di';
 
 import { ApplicationMetadata, RootModuleDecorator } from './decorators/root-module';
 import { RequestListener } from './types/types';
-import { isHttp2SecureServerOptions, isRootModule, isModule } from './utils/type-guards';
+import { isHttp2SecureServerOptions } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
 import { ModuleFactory } from './module-factory';
@@ -16,7 +16,7 @@ import { Router, HttpMethod } from './types/router';
 import { NodeResToken, NodeReqToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
 import { Server, Http2SecureServerOptions } from './types/server-options';
-import { ModuleDecorator, ModuleType } from './decorators/module';
+import { ModuleType, ModuleWithOptions } from './decorators/module';
 import { flatten } from './utils/ng-utils';
 import { Factory } from './factory';
 
@@ -80,7 +80,7 @@ export class AppFactory extends Factory {
     });
   }
 
-  protected getProvidersPerApp(mod: ModuleType) {
+  protected getProvidersPerApp(mod: Type<any> | ModuleWithOptions<any>) {
     const modMetadata = this.getRawModuleMetadata(mod);
     const modName = this.getModuleName(mod);
     this.checkModuleMetadata(modMetadata, modName);

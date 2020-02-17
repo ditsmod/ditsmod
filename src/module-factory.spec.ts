@@ -14,9 +14,8 @@ import {
 import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
 import { Router, RouteConfig } from './types/router';
-import { defaultProvidersPerApp, RootModule, RootModuleDecorator } from './decorators/root-module';
+import { defaultProvidersPerApp, RootModule } from './decorators/root-module';
 import { Column } from './modules/orm/decorators/column';
-import { isModule, isRootModule } from './utils/type-guards';
 
 describe('ModuleFactory', () => {
   @Injectable()

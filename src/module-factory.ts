@@ -10,18 +10,12 @@ import {
 } from 'ts-di';
 import assert = require('assert-plus');
 
-import {
-  ModuleMetadata,
-  defaultProvidersPerReq,
-  ModuleType,
-  ModuleWithOptions,
-  ModuleDecorator
-} from './decorators/module';
+import { ModuleMetadata, defaultProvidersPerReq, ModuleType, ModuleWithOptions } from './decorators/module';
 import { ControllerDecorator } from './decorators/controller';
 import { RouteDecoratorMetadata } from './decorators/route';
 import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
-import { isRootModule, isController, isRoute, isModule } from './utils/type-guards';
+import { isRootModule, isController, isRoute } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
 import { Router, RouteConfig } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
