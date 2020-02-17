@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
-import { ReflectiveInjector, Type } from 'ts-di';
+import { ReflectiveInjector, Type, Provider } from 'ts-di';
 
 import { AppFactory } from './app-factory';
 import { RootModuleDecorator, RootModule, ApplicationMetadata, defaultProvidersPerApp } from './decorators/root-module';
@@ -33,7 +33,7 @@ describe('AppFactory', () => {
       return super.getRawModuleMetadata(typeOrObject, isRoot);
     }
 
-    getProvidersPerApp(mod: ModuleType) {
+    getProvidersPerApp(mod: Type<any> | ModuleWithOptions<any>) {
       return super.getProvidersPerApp(mod);
     }
 
@@ -57,6 +57,7 @@ describe('AppFactory', () => {
     class Provider4 {}
     class Provider5 {}
     class Provider6 {}
+    class Provider7 {}
 
     @Module({
       providersPerApp: [Provider1]
@@ -96,7 +97,7 @@ describe('AppFactory', () => {
       ]);
     });
 
-    it('should have 9 providersPerApp imported from Module1 and Module4', () => {
+    it('should have 7 providersPerApp imported from Module1 and Module4', () => {
       expect(mock.getProvidersPerApp(Module5)).toEqual([
         Provider1,
         Provider1,
@@ -108,11 +109,33 @@ describe('AppFactory', () => {
       ]);
     });
 
+    @Module({
+      imports: [Module4]
+    })
+    class Module6 {
+      static withOptions(providers: Provider[]): ModuleWithOptions<Module6> {
+        return { module: Module6, providersPerApp: providers };
+      }
+    }
+
+    it('should have 7 providersPerApp imported from Module4 and Module6', () => {
+      const modWithOptions = Module6.withOptions([Provider7]);
+      expect(mock.getProvidersPerApp(modWithOptions)).toEqual([
+        Provider1,
+        Provider2,
+        Provider3,
+        Provider4,
+        Provider5,
+        Provider6,
+        Provider7
+      ]);
+    });
+
     @Module()
-    class Module6 {}
+    class Module7 {}
 
     it('should have empty array of providersPerApp', () => {
-      expect(mock.getProvidersPerApp(Module6)).toEqual([]);
+      expect(mock.getProvidersPerApp(Module7)).toEqual([]);
     });
   });
 
@@ -179,7 +202,7 @@ describe('AppFactory', () => {
     });
   });
 
-  describe('getAppMetadata()', () => {
+  describe('getRawModuleMetadata()', () => {
     it('should returns ClassWithDecorators metadata', () => {
       @RootModule({ controllers: [SomeControllerClass] })
       class ClassWithDecorators {}
