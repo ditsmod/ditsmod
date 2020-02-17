@@ -22,7 +22,7 @@ import { RouteDecoratorMetadata } from './decorators/route';
 import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isModuleWithOptions, isModule, isRootModule, isController, isRoute } from './utils/type-guards';
-import { mergeOpts } from './utils/merge-arrays-options';
+import { mergeArrays } from './utils/merge-arrays-options';
 import { Router, RouteConfig } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { defaultProvidersPerApp } from './decorators/root-module';
@@ -144,11 +144,11 @@ export class ModuleFactory {
     (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
     metadata.imports = flatten((modMetadata.imports || metadata.imports).slice()).map(resolveForwardRef);
     metadata.exports = flatten((modMetadata.exports || metadata.exports).slice()).map(resolveForwardRef);
-    metadata.providersPerApp = mergeOpts(metadata.providersPerApp, modMetadata.providersPerApp);
-    metadata.providersPerMod = mergeOpts(metadata.providersPerMod, modMetadata.providersPerMod);
-    metadata.providersPerReq = mergeOpts(metadata.providersPerReq, modMetadata.providersPerReq);
-    metadata.controllers = mergeOpts(metadata.controllers, modMetadata.controllers);
-    metadata.routesPerMod = mergeOpts(metadata.routesPerMod, modMetadata.routesPerMod);
+    metadata.providersPerApp = mergeArrays(metadata.providersPerApp, modMetadata.providersPerApp);
+    metadata.providersPerMod = mergeArrays(metadata.providersPerMod, modMetadata.providersPerMod);
+    metadata.providersPerReq = mergeArrays(metadata.providersPerReq, modMetadata.providersPerReq);
+    metadata.controllers = mergeArrays(metadata.controllers, modMetadata.controllers);
+    metadata.routesPerMod = mergeArrays(metadata.routesPerMod, modMetadata.routesPerMod);
 
     return metadata;
   }
@@ -167,9 +167,9 @@ export class ModuleFactory {
         .annotations(typeOrObject.module)
         .find(m => isModule(m) || isRootModule(m)) as ModuleDecorator;
 
-      modMetadata.providersPerApp = [...(modWitOptions.providersPerApp || []), ...(modMetadata.providersPerApp || [])];
-      modMetadata.providersPerMod = [...(modWitOptions.providersPerMod || []), ...(modMetadata.providersPerMod || [])];
-      modMetadata.providersPerReq = [...(modWitOptions.providersPerReq || []), ...(modMetadata.providersPerReq || [])];
+      modMetadata.providersPerApp = mergeArrays(modWitOptions.providersPerApp, modMetadata.providersPerApp);
+      modMetadata.providersPerMod = mergeArrays(modWitOptions.providersPerMod, modMetadata.providersPerMod);
+      modMetadata.providersPerReq = mergeArrays(modWitOptions.providersPerReq, modMetadata.providersPerReq);
     } else {
       modMetadata = reflector.annotations(typeOrObject).find(m => isModule(m) || isRootModule(m)) as ModuleDecorator;
     }

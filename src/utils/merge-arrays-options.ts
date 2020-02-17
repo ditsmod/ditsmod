@@ -1,6 +1,4 @@
-/**
- * Merge array of default options with array of input options.
- */
-export function mergeOpts(defaults: any[], options: undefined | any[]) {
-  return [...defaults, ...(options || [])];
+export function mergeArrays(arr1: any[], arr2: undefined | any[]) {
+  return [...(arr1 || []), ...(arr2 || [])];
 }
+// @todo Rename file to `merge-arrays.ts`
