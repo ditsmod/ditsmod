@@ -81,7 +81,8 @@ export class AppFactory extends Factory {
   }
 
   protected getProvidersPerApp(mod: ModuleType) {
-    const modMetadata = reflector.annotations(mod).find(m => isModule(m) || isRootModule(m)) as ModuleDecorator;
+    const chacker = (m: ModuleDecorator) => isModule(m) || isRootModule(m);
+    const modMetadata = this.getRawModuleMetadata(mod, chacker);
     const modName = this.getModuleName(mod);
     this.checkModuleMetadata(modMetadata, modName);
 

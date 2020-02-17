@@ -18,14 +18,14 @@ export abstract class Factory {
 
   protected getRawModuleMetadata<T extends ModuleDecorator>(
     typeOrObject: Type<any> | ModuleWithOptions<any>,
-    checker: (arg: RootModuleDecorator | ModuleDecorator) => boolean
+    typeGuard: (arg: RootModuleDecorator | ModuleDecorator) => boolean
   ) {
     let modMetadata: T;
 
     if (isModuleWithOptions(typeOrObject)) {
       const modWitOptions = typeOrObject;
 
-      modMetadata = reflector.annotations(modWitOptions.module).find(checker) as T;
+      modMetadata = reflector.annotations(modWitOptions.module).find(typeGuard) as T;
 
       const modName = this.getModuleName(modWitOptions.module);
       this.checkModuleMetadata(modMetadata, modName);
@@ -34,7 +34,7 @@ export abstract class Factory {
       modMetadata.providersPerMod = mergeArrays(modWitOptions.providersPerMod, modMetadata.providersPerMod);
       modMetadata.providersPerReq = mergeArrays(modWitOptions.providersPerReq, modMetadata.providersPerReq);
     } else {
-      modMetadata = reflector.annotations(typeOrObject).find(checker) as T;
+      modMetadata = reflector.annotations(typeOrObject).find(typeGuard) as T;
     }
 
     return modMetadata;

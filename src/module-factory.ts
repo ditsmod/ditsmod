@@ -131,7 +131,8 @@ export class ModuleFactory extends Factory {
   }
 
   protected mergeMetadata(mod: Type<any> | ModuleWithOptions<any>) {
-    const modMetadata = this.getRawModuleMetadata(mod, m => isModule(m) || isRootModule(m));
+    const typeGuard = (m: ModuleDecorator) => isModule(m) || isRootModule(m);
+    const modMetadata = this.getRawModuleMetadata(mod, typeGuard);
     const modName = this.getModuleName(mod);
     this.checkModuleMetadata(modMetadata, modName);
 
@@ -185,10 +186,10 @@ export class ModuleFactory extends Factory {
   protected exportProvidersToImporter(mod: Type<any> | ModuleWithOptions<any>, soughtProvider?: NormalizedProvider) {
     const { exports: exp, imports, providersPerMod, providersPerReq } = this.mergeMetadata(mod);
     const moduleName = this.getModuleName(mod);
+    const typeGuard = (m: ModuleDecorator) => isModule(m) || isRootModule(m);
 
     for (const moduleOrProvider of exp) {
-      const chacker = (m: ModuleDecorator) => isModule(m) || isRootModule(m);
-      const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType, chacker);
+      const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType, typeGuard);
       if (moduleMetadata) {
         const reexportedModule = moduleOrProvider as ModuleType;
         if (imports.includes(reexportedModule)) {
