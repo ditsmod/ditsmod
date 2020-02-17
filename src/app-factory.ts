@@ -4,9 +4,9 @@ import * as http2 from 'http2';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ReflectiveInjector, reflector, Type, Provider, resolveForwardRef } from 'ts-di';
 
-import { RootModuleDecorator, ApplicationMetadata } from './decorators/root-module';
+import { ApplicationMetadata, RootModuleDecorator } from './decorators/root-module';
 import { RequestListener } from './types/types';
-import { isHttp2SecureServerOptions, isRootModule, isModule, isModuleWithOptions } from './utils/type-guards';
+import { isHttp2SecureServerOptions, isRootModule, isModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
 import { ModuleFactory } from './module-factory';
@@ -16,10 +16,11 @@ import { Router, HttpMethod } from './types/router';
 import { NodeResToken, NodeReqToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
 import { Server, Http2SecureServerOptions } from './types/server-options';
-import { ModuleDecorator, ModuleType, ModuleWithOptions } from './decorators/module';
+import { ModuleDecorator, ModuleType } from './decorators/module';
 import { flatten } from './utils/ng-utils';
+import { Factory } from './factory';
 
-export class AppFactory {
+export class AppFactory extends Factory {
   protected log: Logger;
   protected server: Server;
   protected injectorPerApp: ReflectiveInjector;
@@ -81,22 +82,11 @@ export class AppFactory {
 
   protected getProvidersPerApp(mod: ModuleType) {
     const modMetadata = reflector.annotations(mod).find(m => isModule(m) || isRootModule(m)) as ModuleDecorator;
-    if (!modMetadata) {
-      throw new Error(`Module build failed: module "${mod.name}" does not have the "@Module()" decorator`);
-    }
+    const modName = this.getModuleName(mod);
+    this.checkModuleMetadata(modMetadata, modName);
 
-    const imports = flatten((modMetadata.imports || []).slice())
-      .map(resolveForwardRef)
-      .map(getModule);
-
+    const imports = flatten((modMetadata.imports || []).slice()).map(resolveForwardRef);
     return this.importProvidersPerApp(modMetadata.providersPerApp || [], imports);
-
-    function getModule(value: Type<any> | ModuleWithOptions<any>): Type<any> {
-      if (isModuleWithOptions(value)) {
-        return value.module;
-      }
-      return value;
-    }
   }
 
   protected importProvidersPerApp(prevProvidersPerApp: Provider[], imports: Type<any>[]) {
@@ -113,7 +103,7 @@ export class AppFactory {
    * Merge AppModule metadata with default ApplicationMetadata.
    */
   protected mergeMetadata(appModule: ModuleType): void {
-    const modMetadata = this.getAppMetadata(appModule);
+    const modMetadata = this.getRawModuleMetadata<RootModuleDecorator>(appModule, isRootModule);
     if (!modMetadata) {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
@@ -122,10 +112,6 @@ export class AppFactory {
     pickProperties(this.opts, modMetadata);
     this.opts.providersPerApp = providersPerApp;
     this.opts.routesPrefixPerMod = this.opts.routesPrefixPerMod.slice();
-  }
-
-  protected getAppMetadata(appModule: ModuleType): RootModuleDecorator {
-    return reflector.annotations(appModule).find(isRootModule);
   }
 
   /**

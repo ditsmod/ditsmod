@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
-import { ReflectiveInjector } from 'ts-di';
+import { ReflectiveInjector, Type } from 'ts-di';
 
 import { AppFactory } from './app-factory';
 import { RootModuleDecorator, RootModule, ApplicationMetadata, defaultProvidersPerApp } from './decorators/root-module';
@@ -10,7 +10,8 @@ import { PreRequest } from './services/pre-request';
 import { Router } from './types/router';
 import { Logger } from './types/logger';
 import { Server } from './types/server-options';
-import { Module, ModuleType } from './decorators/module';
+import { Module, ModuleType, ModuleDecorator, ModuleWithOptions } from './decorators/module';
+import { isRootModule } from './utils/type-guards';
 
 describe('AppFactory', () => {
   class MockAppFactory extends AppFactory {
@@ -25,8 +26,11 @@ describe('AppFactory', () => {
       return super.mergeMetadata(appModule);
     }
 
-    getAppMetadata(appModule: ModuleType): RootModuleDecorator {
-      return super.getAppMetadata(appModule);
+    getRawModuleMetadata<T extends ModuleDecorator>(
+      typeOrObject: Type<any> | ModuleWithOptions<any>,
+      checker: (arg: RootModuleDecorator | ModuleDecorator) => boolean
+    ): T {
+      return super.getRawModuleMetadata(typeOrObject, checker);
     }
 
     getProvidersPerApp(mod: ModuleType) {
@@ -123,7 +127,6 @@ describe('AppFactory', () => {
       expect(mock.opts.httpModule).toBeDefined();
       expect(mock.opts.routesPrefixPerApp).toBe('');
       expect(mock.opts.routesPrefixPerMod).toEqual([]);
-      expect(mock.opts.entities).toEqual([]);
       expect(mock.opts.providersPerApp).toEqual(defaultProvidersPerApp);
       expect(mock.opts.listenOptions).toBeDefined();
       // Ignore controllers - it's intended behavior.
@@ -149,8 +152,7 @@ describe('AppFactory', () => {
         routesPrefixPerApp: 'api',
         routesPrefixPerMod,
         controllers: [SomeControllerClass],
-        providersPerApp: [ClassWithoutDecorators],
-        entities: [SomeEntity]
+        providersPerApp: [ClassWithoutDecorators]
       })
       class ClassWithDecorators {}
 
@@ -160,7 +162,6 @@ describe('AppFactory', () => {
       expect(mock.opts.httpModule).toBeDefined();
       expect(mock.opts.routesPrefixPerApp).toBe('api');
       expect(mock.opts.routesPrefixPerMod).toEqual(routesPrefixPerMod);
-      expect(mock.opts.entities).toEqual([SomeEntity]);
       expect(mock.opts.providersPerApp).toEqual([...defaultProvidersPerApp, ClassWithoutDecorators]);
       expect(mock.opts.listenOptions).toBeDefined();
       // Ignore controllers - it's intended behavior.
@@ -182,12 +183,12 @@ describe('AppFactory', () => {
     it('should returns ClassWithDecorators metadata', () => {
       @RootModule({ controllers: [SomeControllerClass] })
       class ClassWithDecorators {}
-      const metadata = mock.getAppMetadata(ClassWithDecorators);
+      const metadata = mock.getRawModuleMetadata(ClassWithDecorators, isRootModule);
       expect(metadata).toEqual(new RootModule({ controllers: [SomeControllerClass] }));
     });
 
     it('should not returns any metadata', () => {
-      const metadata = mock.getAppMetadata(ClassWithoutDecorators);
+      const metadata = mock.getRawModuleMetadata(ClassWithoutDecorators, isRootModule);
       expect(metadata).toBeUndefined();
     });
   });

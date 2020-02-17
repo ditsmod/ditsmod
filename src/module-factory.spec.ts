@@ -3,12 +3,20 @@ import { ReflectiveInjector, Injectable, Type } from 'ts-di';
 
 import { ModuleFactory } from './module-factory';
 import { NormalizedProvider } from './utils/ng-utils';
-import { Module, ModuleMetadata, defaultProvidersPerReq, ModuleType, ModuleWithOptions } from './decorators/module';
+import {
+  Module,
+  ModuleMetadata,
+  defaultProvidersPerReq,
+  ModuleType,
+  ModuleWithOptions,
+  ModuleDecorator
+} from './decorators/module';
 import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
 import { Router, RouteConfig } from './types/router';
-import { defaultProvidersPerApp, RootModule } from './decorators/root-module';
+import { defaultProvidersPerApp, RootModule, RootModuleDecorator } from './decorators/root-module';
 import { Column } from './modules/orm/decorators/column';
+import { isModule, isRootModule } from './utils/type-guards';
 
 describe('ModuleFactory', () => {
   @Injectable()
@@ -26,8 +34,11 @@ describe('ModuleFactory', () => {
       return super.quickCheckImports(moduleMetadata);
     }
 
-    getRawModuleMetadata(typeOrObject: Type<any> | ModuleWithOptions<any>) {
-      return super.getRawModuleMetadata(typeOrObject);
+    getRawModuleMetadata<T extends ModuleDecorator>(
+      typeOrObject: Type<any> | ModuleWithOptions<any>,
+      checker: (arg: RootModuleDecorator | ModuleDecorator) => boolean
+    ): T {
+      return super.getRawModuleMetadata(typeOrObject, checker);
     }
 
     mergeMetadata(mod: ModuleType) {
@@ -167,12 +178,12 @@ describe('ModuleFactory', () => {
     it('should returns ClassWithDecorators metadata', () => {
       @Module({ controllers: [SomeControllerClass] })
       class ClassWithDecorators {}
-      const metadata = mock.getRawModuleMetadata(ClassWithDecorators);
+      const metadata = mock.getRawModuleMetadata(ClassWithDecorators, m => isModule(m) || isRootModule(m));
       expect(metadata).toEqual(new Module({ controllers: [SomeControllerClass] }));
     });
 
     it('should not returns any metadata', () => {
-      const metadata = mock.getRawModuleMetadata(ClassWithoutDecorators);
+      const metadata = mock.getRawModuleMetadata(ClassWithoutDecorators, m => isModule(m) || isRootModule(m));
       expect(metadata).toBeUndefined();
     });
   });
