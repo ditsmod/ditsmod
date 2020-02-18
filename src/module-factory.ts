@@ -97,7 +97,7 @@ export class ModuleFactory extends Factory {
   protected registerSingleton(mod: Type<any>) {
     const staticThis = this.constructor as typeof ModuleFactory;
     if (!staticThis.singletons.includes(mod)) {
-      this.log.info(`Module ${mod.name} created as singleton on the Application level`);
+      this.log.debug(`Module ${mod.name} created as singleton on the Application level`);
       this.log.trace(getStackTrace());
       staticThis.singletons.push(mod);
     }
