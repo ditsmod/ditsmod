@@ -27,17 +27,6 @@ describe('AppFactory', () => {
       return super.mergeMetadata(appModule);
     }
 
-    getRawModuleMetadata<T extends ModuleDecorator>(
-      typeOrObject: Type<any> | ModuleWithOptions<any>,
-      isRoot?: boolean
-    ): T {
-      return super.getRawModuleMetadata(typeOrObject, isRoot);
-    }
-
-    getProvidersPerApp(mod: Type<any> | ModuleWithOptions<any>) {
-      return super.getProvidersPerApp(mod);
-    }
-
     checkSecureServerOption(appModule: ModuleType) {
       return super.checkSecureServerOption(appModule);
     }
@@ -53,95 +42,6 @@ describe('AppFactory', () => {
 
   beforeEach(() => {
     mock = new MockAppFactory();
-  });
-
-  describe('getProvidersPerApp() and importProvidersPerApp()', () => {
-    class Provider1 {}
-    class Provider2 {}
-    class Provider3 {}
-    class Provider4 {}
-    class Provider5 {}
-    class Provider6 {}
-    class Provider7 {}
-
-    @Module({
-      providersPerApp: [Provider1]
-    })
-    class Module1 {}
-
-    @Module({
-      providersPerApp: [Provider2, Provider3, Provider4],
-      imports: [Module1]
-    })
-    class Module2 {}
-
-    @Module({
-      providersPerApp: [Provider5, Provider6],
-      imports: [Module2]
-    })
-    class Module3 {}
-
-    @Module({
-      imports: [Module3]
-    })
-    class Module4 {}
-
-    @Module({
-      imports: [Module1, [Module4]]
-    })
-    class Module5 {}
-
-    it('should have 6 providersPerApp imported from Module3', () => {
-      expect(mock.getProvidersPerApp(Module4)).toEqual([
-        Provider1,
-        Provider2,
-        Provider3,
-        Provider4,
-        Provider5,
-        Provider6
-      ]);
-    });
-
-    it('should have 7 providersPerApp imported from Module1 and Module4', () => {
-      expect(mock.getProvidersPerApp(Module5)).toEqual([
-        Provider1,
-        Provider1,
-        Provider2,
-        Provider3,
-        Provider4,
-        Provider5,
-        Provider6
-      ]);
-    });
-
-    @Module({
-      imports: [Module4]
-    })
-    class Module6 {
-      static withOptions(providers: Provider[]): ModuleWithOptions<Module6> {
-        return { module: Module6, providersPerApp: providers };
-      }
-    }
-
-    it('should have 7 providersPerApp imported from Module4 and Module6', () => {
-      const modWithOptions = Module6.withOptions([Provider7]);
-      expect(mock.getProvidersPerApp(modWithOptions)).toEqual([
-        Provider1,
-        Provider2,
-        Provider3,
-        Provider4,
-        Provider5,
-        Provider6,
-        Provider7
-      ]);
-    });
-
-    @Module()
-    class Module7 {}
-
-    it('should have empty array of providersPerApp', () => {
-      expect(mock.getProvidersPerApp(Module7)).toEqual([]);
-    });
   });
 
   describe('mergeMetadata()', () => {
@@ -207,19 +107,6 @@ describe('AppFactory', () => {
     });
   });
 
-  describe('getRawModuleMetadata()', () => {
-    it('should returns ClassWithDecorators metadata', () => {
-      @RootModule({ controllers: [SomeControllerClass] })
-      class ClassWithDecorators {}
-      const metadata = mock.getRawModuleMetadata(ClassWithDecorators, true);
-      expect(metadata).toEqual(new RootModule({ controllers: [SomeControllerClass] }));
-    });
-
-    it('should not returns any metadata', () => {
-      const metadata = mock.getRawModuleMetadata(ClassWithoutDecorators, true);
-      expect(metadata).toBeUndefined();
-    });
-  });
   describe('checkSecureServerOption()', () => {
     @RootModule({
       controllers: [SomeControllerClass],
@@ -270,8 +157,7 @@ describe('AppFactory', () => {
     }
 
     @Module({
-      controllers: [Provider1],
-      providersPerApp: [ModuleSingleton]
+      controllers: [Provider1]
     })
     class ModuleSingleton {
       constructor() {
@@ -280,7 +166,8 @@ describe('AppFactory', () => {
     }
 
     @RootModule({
-      imports: [Module1, Module1, ModuleSingleton, ModuleSingleton]
+      imports: [Module1, Module1, ModuleSingleton, ModuleSingleton],
+      providersPerApp: [ModuleSingleton]
     })
     class Module9 {}
 

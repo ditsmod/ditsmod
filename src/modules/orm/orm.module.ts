@@ -9,14 +9,14 @@ import { EntityManager } from './services-per-req/entity-manager';
 import { EntityInjector } from './services-per-app/entity-injector';
 
 @Module({
-  providersPerApp: [EntityInjector],
+  // providersPerApp: [EntityInjector],
   providersPerReq: [EntityManager]
 })
 export class OrmModule {
   static withOptions(entities: Provider[]): ModuleWithOptions<OrmModule> {
     return {
-      module: OrmModule,
-      providersPerApp: [OrmModule, { provide: EntitiesToken, useValue: entities, multi: true }]
+      module: OrmModule
+      // providersPerApp: [OrmModule, { provide: EntitiesToken, useValue: entities, multi: true }]
     };
   }
 

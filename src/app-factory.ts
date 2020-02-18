@@ -2,11 +2,11 @@ import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
-import { ReflectiveInjector, Type, Provider, resolveForwardRef } from 'ts-di';
+import { ReflectiveInjector, reflector } from 'ts-di';
 
-import { ApplicationMetadata, RootModuleDecorator } from './decorators/root-module';
+import { ApplicationMetadata } from './decorators/root-module';
 import { RequestListener } from './types/types';
-import { isHttp2SecureServerOptions } from './utils/type-guards';
+import { isHttp2SecureServerOptions, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
 import { ModuleFactory } from './module-factory';
@@ -16,12 +16,10 @@ import { Router, HttpMethod } from './types/router';
 import { NodeResToken, NodeReqToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
 import { Server, Http2SecureServerOptions } from './types/server-options';
-import { ModuleType, ModuleWithOptions } from './decorators/module';
-import { flatten } from './utils/ng-utils';
-import { Factory } from './factory';
+import { ModuleType } from './decorators/module';
 import { getDuplicates } from './utils/get-duplicates';
 
-export class AppFactory extends Factory {
+export class AppFactory {
   protected log: Logger;
   protected server: Server;
   protected injectorPerApp: ReflectiveInjector;
@@ -63,14 +61,6 @@ export class AppFactory extends Factory {
     if (!this.opts.routesPrefixPerMod.some(config => config.module === appModule)) {
       this.opts.routesPrefixPerMod.unshift({ prefix: '', module: appModule });
     }
-
-    const providersPerApp: Provider[] = [];
-
-    this.opts.routesPrefixPerMod.forEach(config => {
-      providersPerApp.push(...this.getProvidersPerApp(config.module));
-    });
-
-    this.opts.providersPerApp = [...this.opts.providersPerApp, ...providersPerApp];
     this.initProvidersPerApp();
     const duplicates = getDuplicates(this.opts.providersPerApp);
     if (duplicates.length) {
@@ -85,30 +75,11 @@ export class AppFactory extends Factory {
     });
   }
 
-  protected getProvidersPerApp(mod: Type<any> | ModuleWithOptions<any>) {
-    const modMetadata = this.getRawModuleMetadata(mod);
-    const modName = this.getModuleName(mod);
-    this.checkModuleMetadata(modMetadata, modName);
-
-    const imports = flatten((modMetadata.imports || []).slice()).map(resolveForwardRef);
-    return this.importProvidersPerApp(modMetadata.providersPerApp || [], imports);
-  }
-
-  protected importProvidersPerApp(prevProvidersPerApp: Provider[], imports: Type<any>[]) {
-    const providersPerApp: Provider[] = [];
-
-    for (const imp of imports) {
-      providersPerApp.push(...this.getProvidersPerApp(imp));
-    }
-
-    return [...providersPerApp, ...prevProvidersPerApp];
-  }
-
   /**
    * Merge AppModule metadata with default ApplicationMetadata.
    */
   protected mergeMetadata(appModule: ModuleType): void {
-    const modMetadata = this.getRawModuleMetadata<RootModuleDecorator>(appModule, true);
+    const modMetadata = reflector.annotations(appModule).find(isRootModule);
     if (!modMetadata) {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }

@@ -33,11 +33,8 @@ describe('ModuleFactory', () => {
       return super.quickCheckImports(moduleMetadata);
     }
 
-    getRawModuleMetadata<T extends ModuleDecorator>(
-      typeOrObject: Type<any> | ModuleWithOptions<any>,
-      isRoot?: boolean
-    ): T {
-      return super.getRawModuleMetadata(typeOrObject, isRoot);
+    getRawModuleMetadata(typeOrObject: Type<any> | ModuleWithOptions<any>) {
+      return super.getRawModuleMetadata(typeOrObject);
     }
 
     mergeMetadata(mod: ModuleType) {
@@ -69,7 +66,6 @@ describe('ModuleFactory', () => {
       expect(metadata.exports).toEqual([]);
       expect(metadata.imports).toEqual([]);
       expect(metadata.routesPerMod).toEqual([]);
-      expect(metadata.providersPerApp).toEqual([]);
       expect(metadata.providersPerMod).toEqual([]);
       expect(metadata.providersPerReq).toEqual(defaultProvidersPerReq);
       expect((metadata as any).ngMetadataName).toBe('Module');
@@ -78,7 +74,6 @@ describe('ModuleFactory', () => {
     it('should merge default metatada with ClassWithDecorators metadata', () => {
       class SomeControllerClass {}
       class C1 {}
-      class PerApp {}
       class PerMod {}
 
       const routesPerMod = [{ path: '1', controller: C1 }];
@@ -86,7 +81,6 @@ describe('ModuleFactory', () => {
       @Module({
         controllers: [SomeControllerClass],
         providersPerReq: [ClassWithoutDecorators],
-        providersPerApp: [PerApp],
         providersPerMod: [PerMod],
         routesPerMod
       })

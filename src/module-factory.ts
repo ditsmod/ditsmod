@@ -10,18 +10,23 @@ import {
 } from 'ts-di';
 import assert = require('assert-plus');
 
-import { ModuleMetadata, defaultProvidersPerReq, ModuleType, ModuleWithOptions } from './decorators/module';
+import {
+  ModuleMetadata,
+  defaultProvidersPerReq,
+  ModuleType,
+  ModuleWithOptions,
+  ModuleDecorator
+} from './decorators/module';
 import { ControllerDecorator } from './decorators/controller';
 import { RouteDecoratorMetadata } from './decorators/route';
 import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
-import { isRootModule, isController, isRoute } from './utils/type-guards';
+import { isRootModule, isController, isRoute, isModule, isModuleWithOptions } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
 import { Router, RouteConfig } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { defaultProvidersPerApp } from './decorators/root-module';
 import { Logger } from './types/logger';
-import { Factory } from './factory';
 import { getStackTrace } from './utils/get-stack-trace';
 
 /**
@@ -29,7 +34,7 @@ import { getStackTrace } from './utils/get-stack-trace';
  * - settings routes.
  */
 @Injectable()
-export class ModuleFactory extends Factory {
+export class ModuleFactory {
   protected static singletons: any[] = [];
   protected moduleName: string;
   protected routesPrefixPerApp: string;
@@ -45,9 +50,7 @@ export class ModuleFactory extends Factory {
    */
   protected injectorPerMod: ReflectiveInjector;
 
-  constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector, protected log: Logger) {
-    super();
-  }
+  constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector, protected log: Logger) {}
 
   /**
    * Bootstraps a module.
@@ -112,6 +115,19 @@ export class ModuleFactory extends Factory {
       this.loadRoutesConfig(childPrefix, config.children || []);
     }
   }
+  protected getModule(mod: Type<any> | ModuleWithOptions<any>) {
+    return isModuleWithOptions(mod) ? mod.module : mod;
+  }
+
+  protected getModuleName(typeOrObject: Type<any> | ModuleWithOptions<any>) {
+    return isModuleWithOptions(typeOrObject) ? typeOrObject.module.name : typeOrObject.name;
+  }
+
+  protected checkModuleMetadata(modMetadata: ModuleDecorator, modName: string) {
+    if (!modMetadata) {
+      throw new Error(`Module build failed: module "${modName}" does not have the "@Module()" decorator`);
+    }
+  }
 
   protected quickCheckImports(moduleMetadata: ModuleMetadata) {
     assert.array(this.opts.routesPerMod, 'routesPerMod');
@@ -139,6 +155,23 @@ export class ModuleFactory extends Factory {
         }
       }
     }
+  }
+
+  protected getRawModuleMetadata(typeOrObject: Type<any> | ModuleWithOptions<any>) {
+    let modMetadata: ModuleDecorator;
+
+    if (isModuleWithOptions(typeOrObject)) {
+      const modWitOptions = typeOrObject;
+      modMetadata = reflector.annotations(modWitOptions.module).find(m => isModule(m) || isRootModule(m));
+      const modName = this.getModuleName(modWitOptions.module);
+      this.checkModuleMetadata(modWitOptions, modName);
+      modMetadata.providersPerMod = mergeArrays(modWitOptions.providersPerMod, modMetadata.providersPerMod);
+      modMetadata.providersPerReq = mergeArrays(modWitOptions.providersPerReq, modMetadata.providersPerReq);
+    } else {
+      modMetadata = reflector.annotations(typeOrObject).find(m => isModule(m) || isRootModule(m));
+    }
+
+    return modMetadata;
   }
 
   protected mergeMetadata(mod: Type<any> | ModuleWithOptions<any>) {

@@ -16,10 +16,6 @@ export const Module = makeDecorator('Module', (data: any) => data) as ModuleDeco
 
 export abstract class ProvidersMetadata {
   /**
-   * Providers per the `Application`.
-   */
-  providersPerApp: Provider[] = [];
-  /**
    * Providers per a module.
    */
   providersPerMod: Provider[] = [];
