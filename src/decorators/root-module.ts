@@ -1,22 +1,22 @@
 import * as http from 'http';
 import { ListenOptions } from 'net';
-import { makeDecorator, Provider, forwardRef, ReflectiveInjector, Injector } from 'ts-di';
+import { makeDecorator, Provider, ReflectiveInjector, Injector } from 'ts-di';
 import { Router as RestifyRouter } from '@restify-ts/router';
 
 import { PreRequest } from '../services/pre-request';
-import { ModuleFactory } from '../module-factory';
 import { ModuleDecorator } from './module';
 import { RoutesPrefixPerMod, Router } from '../types/router';
 import { BodyParserConfig } from '../types/types';
 import { Logger } from '../types/logger';
 import { HttpModule, ServerOptions } from '../types/server-options';
 import { EntityInjector } from '../modules/orm/decorators/entity';
+import { ApplicationInitStatus } from '../application-init-status';
 
 export const defaultProvidersPerApp: Provider[] = [
+  ApplicationInitStatus,
   Logger,
   BodyParserConfig,
   { provide: Router, useClass: RestifyRouter },
-  forwardRef(() => ModuleFactory),
   PreRequest,
   {
     provide: ReflectiveInjector,
