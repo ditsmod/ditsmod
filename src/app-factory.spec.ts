@@ -140,43 +140,4 @@ describe('AppFactory', () => {
       expect(() => mock.checkSecureServerOption(ClassWithDecorators)).toThrowError(msg);
     });
   });
-
-  describe('prepareServerOptions()', () => {
-    let numCallSingleton = 0;
-    let numCallNotSingleton = 0;
-    @Controller()
-    class Provider1 {}
-
-    @Module({
-      controllers: [Provider1]
-    })
-    class Module1 {
-      constructor() {
-        ++numCallNotSingleton;
-      }
-    }
-
-    @Module({
-      controllers: [Provider1]
-    })
-    class ModuleSingleton {
-      constructor() {
-        ++numCallSingleton;
-      }
-    }
-
-    @RootModule({
-      imports: [Module1, Module1, ModuleSingleton, ModuleSingleton],
-      providersPerApp: [ModuleSingleton]
-    })
-    class Module9 {}
-
-    it(`should instantiate ModuleSingleton as singleton`, () => {
-      mock.prepareServerOptions(Module9);
-      expect(mock.opts.providersPerApp.includes(ModuleSingleton));
-      expect(numCallNotSingleton).toBe(2);
-      expect(numCallSingleton).toBe(1);
-      expect((ModuleFactory as any).singletons).toEqual([ModuleSingleton]);
-    });
-  });
 });

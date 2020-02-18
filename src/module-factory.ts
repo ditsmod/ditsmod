@@ -27,7 +27,6 @@ import { Router, RouteConfig } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { defaultProvidersPerApp } from './decorators/root-module';
 import { Logger } from './types/logger';
-import { getStackTrace } from './utils/get-stack-trace';
 
 /**
  * - creates `injectorPerMod` and `injectorPerReq`;
@@ -35,7 +34,6 @@ import { getStackTrace } from './utils/get-stack-trace';
  */
 @Injectable()
 export class ModuleFactory {
-  protected static singletons: any[] = [];
   protected moduleName: string;
   protected routesPrefixPerApp: string;
   protected routesPrefixPerMod: string;
@@ -80,12 +78,7 @@ export class ModuleFactory {
     const mod = this.getModule(typeOrObject);
     this.moduleName = mod.name;
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
-    const instanceMod = this.injectorPerMod.get(mod, null);
-    if (instanceMod) {
-      this.registerSingleton(mod);
-    } else {
-      this.injectorPerMod.resolveAndInstantiate(mod);
-    }
+    this.injectorPerMod.resolveAndInstantiate(mod);
     this.routesPrefixPerApp = routesPrefixPerApp || '';
     this.routesPrefixPerMod = routesPrefixPerMod || '';
     this.initProvidersPerReq();
@@ -95,15 +88,6 @@ export class ModuleFactory {
     const prefix = [this.routesPrefixPerApp, this.routesPrefixPerMod].filter(s => s).join('/');
     this.opts.controllers.forEach(Ctrl => this.setRoutes(prefix, Ctrl));
     this.loadRoutesConfig(prefix, this.opts.routesPerMod);
-  }
-
-  protected registerSingleton(mod: Type<any>) {
-    const staticThis = this.constructor as typeof ModuleFactory;
-    if (!staticThis.singletons.includes(mod)) {
-      this.log.debug(`Module ${mod.name} created as singleton on the Application level`);
-      this.log.trace(getStackTrace());
-      staticThis.singletons.push(mod);
-    }
   }
 
   protected loadRoutesConfig(prefix: string, configs: RouteConfig[]) {
