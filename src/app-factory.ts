@@ -58,8 +58,6 @@ export class AppFactory extends Factory {
 
   protected prepareServerOptions(appModule: ModuleType) {
     this.mergeMetadata(appModule);
-    this.log.trace('Setting server name:', this.opts.serverName);
-    this.log.trace('Setting listen options:', this.opts.listenOptions);
     this.checkSecureServerOption(appModule);
     if (!this.opts.routesPrefixPerMod.some(config => config.module === appModule)) {
       this.opts.routesPrefixPerMod.unshift({ prefix: '', module: appModule });
@@ -73,6 +71,8 @@ export class AppFactory extends Factory {
 
     this.opts.providersPerApp = [...this.opts.providersPerApp, ...providersPerApp];
     this.initProvidersPerApp();
+    this.log.trace('Setting server name:', this.opts.serverName);
+    this.log.trace('Setting listen options:', this.opts.listenOptions);
 
     this.opts.routesPrefixPerMod.forEach(config => {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
