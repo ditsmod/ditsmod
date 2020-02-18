@@ -12,6 +12,7 @@ import { Logger } from './types/logger';
 import { Server } from './types/server-options';
 import { Module, ModuleType, ModuleDecorator, ModuleWithOptions } from './decorators/module';
 import { Controller } from './decorators/controller';
+import { ModuleFactory } from './module-factory';
 
 describe('AppFactory', () => {
   class MockAppFactory extends AppFactory {
@@ -254,9 +255,19 @@ describe('AppFactory', () => {
   });
 
   describe('prepareServerOptions()', () => {
-    let numberOfCall = 0;
+    let numCallSingleton = 0;
+    let numCallNotSingleton = 0;
     @Controller()
     class Provider1 {}
+
+    @Module({
+      controllers: [Provider1]
+    })
+    class Module1 {
+      constructor() {
+        ++numCallNotSingleton;
+      }
+    }
 
     @Module({
       controllers: [Provider1],
@@ -264,19 +275,21 @@ describe('AppFactory', () => {
     })
     class ModuleSingleton {
       constructor() {
-        ++numberOfCall;
+        ++numCallSingleton;
       }
     }
 
     @RootModule({
-      imports: [ModuleSingleton, ModuleSingleton]
+      imports: [Module1, Module1, ModuleSingleton, ModuleSingleton]
     })
     class Module9 {}
 
-    it(`should`, () => {
+    it(`should instantiate ModuleSingleton as singleton`, () => {
       mock.prepareServerOptions(Module9);
       expect(mock.opts.providersPerApp.includes(ModuleSingleton));
-      expect(numberOfCall).toBe(1);
+      expect(numCallNotSingleton).toBe(2);
+      expect(numCallSingleton).toBe(1);
+      expect((ModuleFactory as any).singletons).toEqual([ModuleSingleton]);
     });
   });
 });
