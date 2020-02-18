@@ -27,7 +27,5 @@ export interface DatabaseService {
   query: (...args: any[]) => any;
 }
 
-export abstract class EntityInjector extends Injector {}
-
 export abstract class Model {}
 export type EntityModel = typeof Model;

@@ -4,6 +4,7 @@ import { ReflectiveInjector } from 'ts-di';
 import { EntityManager } from './entity-manager';
 import { RouteParam } from '../../../types/router';
 import { Entity, DatabaseMetadata, DatabaseService } from '../decorators/entity';
+import { EntityInjector } from '../services-per-app/entity-injector';
 
 describe('EntityManager', () => {
   interface Req {
@@ -32,7 +33,8 @@ describe('EntityManager', () => {
 
   const injector = ReflectiveInjector.resolveAndCreate([MyDatabaseService, { provide: Model, useClass: MysqlModel }]);
   const req = { routeParamsArr: [{ key: 'postId', value: '12' }] } as Req;
-  const mock = new MockEntityManager(req as any, injector, injector);
+  const entityInjector = (injector as unknown) as EntityInjector;
+  const mock = new MockEntityManager(req as any, injector, entityInjector);
 
   describe('find()', () => {
     it('should return sql query', () => {

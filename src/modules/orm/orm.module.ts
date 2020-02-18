@@ -1,23 +1,39 @@
-import { ReflectiveInjector, Type, reflector, Provider } from 'ts-di';
+import { ReflectiveInjector, Type, reflector, Provider, Inject } from 'ts-di';
 
 import { Module, ModuleWithOptions } from '../../decorators/module';
-import { EntityInjector, StaticEntity } from './decorators/entity';
+import { StaticEntity } from './decorators/entity';
 import { isEntity, isColumnType, isColumn } from '../../utils/type-guards';
 import { ColumnDecoratorMetadata } from './decorators/column';
+import { EntitiesToken } from '../../types/injection-tokens';
+import { EntityManager } from './services-per-req/entity-manager';
+import { EntityInjector } from './services-per-app/entity-injector';
 
-@Module()
+@Module({
+  providersPerApp: [EntityInjector],
+  providersPerReq: [EntityManager]
+})
 export class OrmModule {
   static withOptions(entities: Provider[]): ModuleWithOptions<OrmModule> {
     return {
       module: OrmModule,
-      providersPerApp: [this.getProviderWithInjector(entities)]
+      providersPerApp: [OrmModule, { provide: EntitiesToken, useValue: entities, multi: true }]
     };
+  }
+
+  constructor(
+    @Inject(EntitiesToken) entities: Provider[][],
+    protected injectorPerMod: ReflectiveInjector,
+    entityInjector: EntityInjector
+  ) {
+    this.getProviderWithInjector(entities);
+    const childInjector = injectorPerMod.resolveAndCreateChild(entities);
+    entityInjector.setInjector(childInjector);
   }
 
   /**
    * Settings an Entity and Column metadata.
    */
-  protected static getProviderWithInjector(entities: Provider[] = []) {
+  protected getProviderWithInjector(entities: Provider[] = []) {
     const resolvedProviders = ReflectiveInjector.resolve(entities);
     const injector = ReflectiveInjector.fromResolvedProviders(resolvedProviders);
 
@@ -47,7 +63,5 @@ export class OrmModule {
         // console.log(Entity.metadata.primaryColumns);
       }
     });
-
-    return { provide: EntityInjector, useValue: injector };
   }
 }
