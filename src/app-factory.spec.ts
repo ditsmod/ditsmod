@@ -11,6 +11,7 @@ import { Router } from './types/router';
 import { Logger } from './types/logger';
 import { Server } from './types/server-options';
 import { Module, ModuleType, ModuleDecorator, ModuleWithOptions } from './decorators/module';
+import { Controller } from './decorators/controller';
 
 describe('AppFactory', () => {
   class MockAppFactory extends AppFactory {
@@ -38,6 +39,10 @@ describe('AppFactory', () => {
 
     checkSecureServerOption(appModule: ModuleType) {
       return super.checkSecureServerOption(appModule);
+    }
+
+    prepareServerOptions(appModule: ModuleType) {
+      return super.prepareServerOptions(appModule);
     }
   }
 
@@ -214,7 +219,6 @@ describe('AppFactory', () => {
       expect(metadata).toBeUndefined();
     });
   });
-
   describe('checkSecureServerOption()', () => {
     @RootModule({
       controllers: [SomeControllerClass],
@@ -246,6 +250,33 @@ describe('AppFactory', () => {
       mock.opts.httpModule = https;
       const msg = 'serverModule.createSecureServer() not found (see ClassWithDecorators settings)';
       expect(() => mock.checkSecureServerOption(ClassWithDecorators)).toThrowError(msg);
+    });
+  });
+
+  describe('prepareServerOptions()', () => {
+    let numberOfCall = 0;
+    @Controller()
+    class Provider1 {}
+
+    @Module({
+      controllers: [Provider1],
+      providersPerApp: [ModuleSingleton]
+    })
+    class ModuleSingleton {
+      constructor() {
+        ++numberOfCall;
+      }
+    }
+
+    @RootModule({
+      imports: [ModuleSingleton, ModuleSingleton]
+    })
+    class Module9 {}
+
+    it(`should`, () => {
+      mock.prepareServerOptions(Module9);
+      expect(mock.opts.providersPerApp.includes(ModuleSingleton));
+      expect(numberOfCall).toBe(1);
     });
   });
 });
