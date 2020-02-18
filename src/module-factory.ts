@@ -24,7 +24,6 @@ import { Logger } from './types/logger';
 import { Factory } from './factory';
 
 /**
- * - extracts `providersPerApp`;
  * - creates `injectorPerMod` and `injectorPerReq`;
  * - settings routes.
  */
@@ -144,7 +143,6 @@ export class ModuleFactory extends Factory {
     (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
     metadata.imports = flatten((modMetadata.imports || metadata.imports).slice()).map(resolveForwardRef);
     metadata.exports = flatten((modMetadata.exports || metadata.exports).slice()).map(resolveForwardRef);
-    metadata.providersPerApp = mergeArrays(metadata.providersPerApp, modMetadata.providersPerApp);
     metadata.providersPerMod = mergeArrays(metadata.providersPerMod, modMetadata.providersPerMod);
     metadata.providersPerReq = mergeArrays(metadata.providersPerReq, modMetadata.providersPerReq);
     metadata.controllers = mergeArrays(metadata.controllers, modMetadata.controllers);
