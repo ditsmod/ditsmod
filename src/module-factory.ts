@@ -51,16 +51,16 @@ export class ModuleFactory extends Factory {
   /**
    * Bootstraps a module.
    *
-   * @param mod Module that will bootstrapped.
+   * @param typeOrObject Module that will bootstrapped.
    * @param importer It's module that imported current module.
    */
   bootstrap(
     routesPrefixPerApp: string,
     routesPrefixPerMod: string,
-    mod: Type<any> | ModuleWithOptions<any>,
+    typeOrObject: Type<any> | ModuleWithOptions<any>,
     importer?: this
   ) {
-    const moduleMetadata = this.mergeMetadata(mod);
+    const moduleMetadata = this.mergeMetadata(typeOrObject);
     Object.assign(this.opts, moduleMetadata);
     /**
      * If we exported providers from current module,
@@ -70,11 +70,16 @@ export class ModuleFactory extends Factory {
      * so we should call `exportProvidersToImporter()` method in its context.
      */
     if (importer) {
-      this.exportProvidersToImporter.call(importer, mod);
+      this.exportProvidersToImporter.call(importer, typeOrObject);
     }
     this.importModules();
+    const mod = this.getModule(typeOrObject);
+    this.moduleName = mod.name;
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
-    this.moduleName = this.getModuleName(mod);
+    const instanceMod = this.injectorPerMod.get(mod, null);
+    if (!instanceMod) {
+      this.injectorPerMod.resolveAndInstantiate(mod);
+    }
     this.routesPrefixPerApp = routesPrefixPerApp || '';
     this.routesPrefixPerMod = routesPrefixPerMod || '';
     this.initProvidersPerReq();
@@ -173,12 +178,15 @@ export class ModuleFactory extends Factory {
   /**
    * Called in the context of the module that imports the current module.
    *
-   * @param mod Module from where exports providers.
+   * @param typeOrObject Module from where exports providers.
    * @param soughtProvider Normalized provider.
    */
-  protected exportProvidersToImporter(mod: Type<any> | ModuleWithOptions<any>, soughtProvider?: NormalizedProvider) {
-    const { exports: exp, imports, providersPerMod, providersPerReq } = this.mergeMetadata(mod);
-    const moduleName = this.getModuleName(mod);
+  protected exportProvidersToImporter(
+    typeOrObject: Type<any> | ModuleWithOptions<any>,
+    soughtProvider?: NormalizedProvider
+  ) {
+    const { exports: exp, imports, providersPerMod, providersPerReq } = this.mergeMetadata(typeOrObject);
+    const moduleName = this.getModuleName(typeOrObject);
 
     for (const moduleOrProvider of exp) {
       const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType);

@@ -5,6 +5,10 @@ import { ModuleWithOptions, ModuleDecorator } from './decorators/module';
 import { mergeArrays } from './utils/merge-arrays-options';
 
 export abstract class Factory {
+  protected getModule(mod: Type<any> | ModuleWithOptions<any>) {
+    return isModuleWithOptions(mod) ? mod.module : mod;
+  }
+
   protected getModuleName(typeOrObject: Type<any> | ModuleWithOptions<any>) {
     return isModuleWithOptions(typeOrObject) ? typeOrObject.module.name : typeOrObject.name;
   }
