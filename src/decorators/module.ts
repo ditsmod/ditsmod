@@ -4,9 +4,8 @@ import { RouteConfig } from '../types/router';
 import { BodyParser } from '../services/body-parser';
 import { Request } from '../request';
 import { Response } from '../response';
-import { EntityManager } from '../modules/orm/services/entity-manager';
 
-export const defaultProvidersPerReq: Provider[] = [Request, Response, BodyParser, EntityManager];
+export const defaultProvidersPerReq: Provider[] = [Request, Response, BodyParser];
 
 export interface ModuleDecoratorFactory {
   (data?: ModuleDecorator): any;
