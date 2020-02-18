@@ -9,10 +9,8 @@ import { RoutesPrefixPerMod, Router } from '../types/router';
 import { BodyParserConfig } from '../types/types';
 import { Logger } from '../types/logger';
 import { HttpModule, ServerOptions } from '../types/server-options';
-import { ApplicationInitStatus } from '../application-init-status';
 
 export const defaultProvidersPerApp: Provider[] = [
-  ApplicationInitStatus,
   Logger,
   BodyParserConfig,
   { provide: Router, useClass: RestifyRouter },
