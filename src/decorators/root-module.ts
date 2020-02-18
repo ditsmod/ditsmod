@@ -9,7 +9,6 @@ import { RoutesPrefixPerMod, Router } from '../types/router';
 import { BodyParserConfig } from '../types/types';
 import { Logger } from '../types/logger';
 import { HttpModule, ServerOptions } from '../types/server-options';
-import { EntityInjector } from '../modules/orm/decorators/entity';
 import { ApplicationInitStatus } from '../application-init-status';
 
 export const defaultProvidersPerApp: Provider[] = [
@@ -21,10 +20,6 @@ export const defaultProvidersPerApp: Provider[] = [
   {
     provide: ReflectiveInjector,
     useExisting: Injector
-  },
-  {
-    provide: EntityInjector,
-    useValue: null
   }
 ];
 
