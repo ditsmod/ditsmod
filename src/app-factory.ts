@@ -19,6 +19,7 @@ import { Server, Http2SecureServerOptions } from './types/server-options';
 import { ModuleType, ModuleWithOptions } from './decorators/module';
 import { flatten } from './utils/ng-utils';
 import { Factory } from './factory';
+import { getDuplicates } from './utils/get-duplicates';
 
 export class AppFactory extends Factory {
   protected log: Logger;
@@ -71,6 +72,10 @@ export class AppFactory extends Factory {
 
     this.opts.providersPerApp = [...this.opts.providersPerApp, ...providersPerApp];
     this.initProvidersPerApp();
+    const duplicates = getDuplicates(this.opts.providersPerApp);
+    if (duplicates.length) {
+      this.log.trace(`The duplicates in 'providersPerApp' was found: ${duplicates}`);
+    }
     this.log.trace('Setting server name:', this.opts.serverName);
     this.log.trace('Setting listen options:', this.opts.listenOptions);
 
