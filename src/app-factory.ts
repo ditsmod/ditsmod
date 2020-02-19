@@ -61,7 +61,7 @@ export class AppFactory {
     this.initProvidersPerApp();
     const duplicates = getDuplicates(this.opts.providersPerApp);
     if (duplicates.length) {
-      this.log.trace(`The duplicates in 'providersPerApp' was found: ${duplicates}`);
+      this.log.trace(`The duplicates in 'providersPerApp' was found: ${duplicates.join(', ')}`);
     }
     this.log.trace('Setting server name:', this.opts.serverName);
     this.log.trace('Setting listen options:', this.opts.listenOptions);

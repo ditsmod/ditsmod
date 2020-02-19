@@ -99,6 +99,7 @@ export class ModuleFactory {
       this.loadRoutesConfig(childPrefix, config.children || []);
     }
   }
+
   protected getModule(mod: Type<any> | ModuleWithOptions<any>) {
     return isModuleWithOptions(mod) ? mod.module : mod;
   }
