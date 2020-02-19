@@ -8,7 +8,7 @@ import {
   ResolvedReflectiveProvider,
   ReflectiveInjector
 } from 'ts-di';
-import assert = require('assert-plus');
+import * as assert from 'assert-plus';
 
 import {
   ModuleMetadata,

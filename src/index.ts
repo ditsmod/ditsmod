@@ -1,3 +1,6 @@
+import * as ORM from './modules/orm';
+
+export { ORM };
 export * from './types/injection-tokens';
 export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './utils/http-status-codes';
 export { pickProperties } from './utils/pick-properties';
@@ -10,11 +13,6 @@ export { Module } from './decorators/module';
 export { RootModule } from './decorators/root-module';
 export { Route } from './decorators/route';
 export { BodyParser } from './services/body-parser';
-export { Column } from './modules/orm/decorators/column';
-export { Entity, EntityModel } from './modules/orm/decorators/entity';
-export { EntityInjector } from './modules/orm/services-per-app/entity-injector';
-export { EntityManager } from './modules/orm/services-per-req/entity-manager';
-export { OrmModule } from './modules/orm/orm.module';
 export { Request } from './request';
 export { Response } from './response';
 export { AppFactory } from './app-factory';
