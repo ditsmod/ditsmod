@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
-import { ReflectiveInjector, Type, Provider } from 'ts-di';
+import { ReflectiveInjector } from 'ts-di';
 
 import { AppFactory } from './app-factory';
 import { RootModule, ApplicationMetadata, defaultProvidersPerApp } from './decorators/root-module';
@@ -10,9 +10,8 @@ import { PreRequest } from './services/pre-request';
 import { Router } from './types/router';
 import { Logger } from './types/logger';
 import { Server } from './types/server-options';
-import { Module, ModuleType, ModuleDecorator, ModuleWithOptions } from './decorators/module';
+import { ModuleType, Module } from './decorators/module';
 import { Controller } from './decorators/controller';
-import { ModuleFactory } from './module-factory';
 
 describe('AppFactory', () => {
   class MockAppFactory extends AppFactory {
@@ -69,7 +68,6 @@ describe('AppFactory', () => {
     it('should merge default metatada with ClassWithDecorators metadata', () => {
       class SomeModule {}
       class OtherModule {}
-      class SomeEntity {}
 
       const routesPrefixPerMod = [
         { prefix: '', module: SomeModule },
@@ -104,6 +102,31 @@ describe('AppFactory', () => {
     it('ClassWithoutDecorators should not have metatada', () => {
       const msg = `Module build failed: module "ClassWithoutDecorators" does not have the "@RootModule()" decorator`;
       expect(() => mock.mergeMetadata(ClassWithoutDecorators)).toThrowError(msg);
+    });
+  });
+
+  describe('prepareServerOptions()', () => {
+    @Controller()
+    class Ctrl {}
+
+    @Module({ controllers: [Ctrl] })
+    class Module1 {}
+
+    @RootModule({
+      routesPrefixPerApp: 'api',
+      routesPrefixPerMod: [{ prefix: 'mod1', module: Module1 }]
+    })
+    class AppModule {}
+
+    it(`should contains merged default with user metada`, () => {
+      mock.prepareServerOptions(AppModule);
+      expect(mock.opts.serverName).toBeDefined();
+      expect(mock.opts.httpModule).toBeDefined();
+      expect(mock.opts.serverOptions).toEqual({});
+      expect(mock.opts.listenOptions).toBeDefined();
+      expect(mock.opts.providersPerApp.length).toBeGreaterThan(0);
+      expect(mock.opts.routesPrefixPerApp).toBe('api');
+      expect(mock.opts.routesPrefixPerMod).toEqual([{ prefix: 'mod1', module: Module1 }]);
     });
   });
 
