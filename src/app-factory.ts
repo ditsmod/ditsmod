@@ -55,12 +55,9 @@ export class AppFactory {
     });
   }
 
-  protected prepareServerOptions(appModule: ModuleType) {
-    this.mergeMetadata(appModule);
-    this.checkSecureServerOption(appModule);
-    if (!this.opts.routesPrefixPerMod.some(config => config.module === appModule)) {
-      this.opts.routesPrefixPerMod.unshift({ prefix: '', module: appModule });
-    }
+  protected prepareServerOptions(rootModule: ModuleType) {
+    this.mergeMetadata(rootModule);
+    this.checkSecureServerOption(rootModule);
     this.initProvidersPerApp();
     const duplicates = getDuplicates(this.opts.providersPerApp);
     if (duplicates.length) {
@@ -69,9 +66,13 @@ export class AppFactory {
     this.log.trace('Setting server name:', this.opts.serverName);
     this.log.trace('Setting listen options:', this.opts.listenOptions);
 
+    const rootModulePrefix = this.opts.routesPrefixPerMod.find(config => config.module === rootModule)?.prefix || '';
+    const importer = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+    importer.bootstrap(this.opts.routesPrefixPerApp, rootModulePrefix, rootModule);
+
     this.opts.routesPrefixPerMod.forEach(config => {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      moduleFactory.bootstrap(this.opts.routesPrefixPerApp, config.prefix, config.module);
+      moduleFactory.bootstrap(this.opts.routesPrefixPerApp, config.prefix, config.module, importer);
     });
   }
 

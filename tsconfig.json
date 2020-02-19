@@ -18,6 +18,9 @@
   "include": [
     "src"
   ],
+  "exclude": [
+    "**/*.spec*"
+  ],
   "compileOnSave": false,
   "buildOnSave": false,
   "atom": { "rewriteTsconfig": false }

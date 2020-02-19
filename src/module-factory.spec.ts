@@ -3,14 +3,7 @@ import { ReflectiveInjector, Injectable, Type } from 'ts-di';
 
 import { ModuleFactory } from './module-factory';
 import { NormalizedProvider } from './utils/ng-utils';
-import {
-  Module,
-  ModuleMetadata,
-  defaultProvidersPerReq,
-  ModuleType,
-  ModuleWithOptions,
-  ModuleDecorator
-} from './decorators/module';
+import { Module, ModuleMetadata, defaultProvidersPerReq, ModuleType, ModuleWithOptions } from './decorators/module';
 import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
 import { Router, RouteConfig } from './types/router';
@@ -20,6 +13,8 @@ import { Column } from './modules/orm/decorators/column';
 describe('ModuleFactory', () => {
   @Injectable()
   class MockModuleFactory extends ModuleFactory {
+    routesPrefixPerApp: string;
+    routesPrefixPerMod: string;
     moduleName = 'MockModule';
     opts = new ModuleMetadata();
     router: Router;
@@ -384,10 +379,17 @@ describe('ModuleFactory', () => {
     })
     class Module2 {}
 
+    @Controller()
+    class Ctrl {
+      @Route('GET')
+      method() {}
+    }
+
     @Module({
       imports: [Module2],
       exports: [Module2],
-      providersPerReq: [Provider8]
+      providersPerReq: [Provider8],
+      controllers: [Ctrl]
     })
     class Module3 {}
 
@@ -396,10 +398,10 @@ describe('ModuleFactory', () => {
       mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
       mock.injectorPerMod = injectorPerApp;
       mock.bootstrap('api', '', Module3);
+      expect(mock.routesPrefixPerApp).toBe('api');
       expect(mock.opts.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
-      expect(mock.opts.providersPerReq).toEqual([...defaultProvidersPerReq, Provider8, Provider9]);
+      expect(mock.opts.providersPerReq).toEqual([Ctrl, ...defaultProvidersPerReq, Provider8, Provider9]);
       expect((mock.opts as any).ngMetadataName).toBe('Module');
-      // console.log(mock.opts);
     });
 
     @RootModule({
@@ -411,7 +413,10 @@ describe('ModuleFactory', () => {
       const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp);
       mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
       mock.injectorPerMod = injectorPerApp;
-      mock.bootstrap('api', '', Module4);
+      mock.bootstrap('some', 'other', Module4);
+      expect(mock.routesPrefixPerApp).toBe('some');
+      expect(mock.routesPrefixPerMod).toBe('other');
+      expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
       expect(mock.opts.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
       expect(mock.opts.providersPerReq).toEqual([...defaultProvidersPerReq, Provider9]);
       expect((mock.opts as any).ngMetadataName).toBe('RootModule');

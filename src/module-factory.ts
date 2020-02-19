@@ -62,6 +62,8 @@ export class ModuleFactory {
     typeOrObject: Type<any> | ModuleWithOptions<any>,
     importer?: this
   ) {
+    this.routesPrefixPerApp = routesPrefixPerApp || '';
+    this.routesPrefixPerMod = routesPrefixPerMod || '';
     const moduleMetadata = this.mergeMetadata(typeOrObject);
     Object.assign(this.opts, moduleMetadata);
     /**
@@ -79,8 +81,6 @@ export class ModuleFactory {
     this.moduleName = mod.name;
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
     this.injectorPerMod.resolveAndInstantiate(mod);
-    this.routesPrefixPerApp = routesPrefixPerApp || '';
-    this.routesPrefixPerMod = routesPrefixPerMod || '';
     this.initProvidersPerReq();
     this.quickCheckImports(moduleMetadata);
     this.checkRoutePath(this.routesPrefixPerApp);

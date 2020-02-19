@@ -8,4 +8,5 @@ tslint.json
 .prettierrc
 *.tgz
 *.log
+*.spec.*
 yarn.lock
