@@ -39,8 +39,12 @@ describe('ModuleFactory', () => {
       return super.mergeMetadata(mod);
     }
 
-    exportProvidersToImporter(mod: ModuleType, soughtProvider?: NormalizedProvider) {
-      return super.exportProvidersToImporter(mod, soughtProvider);
+    exportProvidersToImporter(
+      typeOrObject: Type<any> | ModuleWithOptions<any>,
+      isStarter: boolean,
+      soughtProvider?: NormalizedProvider
+    ) {
+      return super.exportProvidersToImporter(typeOrObject, isStarter, soughtProvider);
     }
 
     loadRoutesConfig(prefix: string, configs: RouteConfig[]) {
@@ -73,7 +77,7 @@ describe('ModuleFactory', () => {
       expect(metadata.imports).toEqual([]);
       expect(metadata.routesPerMod).toEqual([]);
       expect(metadata.providersPerMod).toEqual([]);
-      expect(metadata.providersPerReq).toEqual(defaultProvidersPerReq);
+      expect(metadata.providersPerReq).toEqual([]);
       expect((metadata as any).ngMetadataName).toBe('Module');
     });
 
@@ -97,7 +101,7 @@ describe('ModuleFactory', () => {
       expect(metadata.imports).toEqual([]);
       expect(metadata.routesPerMod).toEqual(routesPerMod);
       expect(metadata.providersPerMod).toEqual([PerMod]);
-      expect(metadata.providersPerReq).toEqual([...defaultProvidersPerReq, ClassWithoutDecorators]);
+      expect(metadata.providersPerReq).toEqual([ClassWithoutDecorators]);
     });
 
     it('ClassWithoutDecorators should not have metatada', () => {
@@ -184,84 +188,6 @@ describe('ModuleFactory', () => {
     it('should not returns any metadata', () => {
       const metadata = mock.getRawModuleMetadata(ClassWithoutDecorators);
       expect(metadata).toBeUndefined();
-    });
-  });
-
-  describe('exportProvidersToImporter() and findAndSetProvider()', () => {
-    it('export providers', () => {
-      class Provider11 {}
-      class Provider12 {}
-
-      @Module({
-        exports: [Provider11, Provider12],
-        providersPerMod: [Provider11, Provider12]
-      })
-      class Module1 {}
-
-      mock.exportProvidersToImporter(Module1);
-      expect(mock.opts.providersPerMod).toEqual([Provider11, Provider12]);
-    });
-
-    it('reexport Module1 with its providers and merge with current providers', () => {
-      class Provider11 {}
-      class Provider12 {}
-      class Provider21 {}
-      class Provider22 {}
-      class Provider23 {}
-      class Provider24 {}
-
-      @Module({
-        exports: [Provider11, Provider12],
-        providersPerMod: [Provider11, Provider12]
-      })
-      class Module1 {}
-
-      @Module({
-        imports: [Module1],
-        exports: [Module1, Provider22],
-        providersPerMod: [Provider21, Provider22, Provider23],
-        providersPerReq: [Provider24]
-      })
-      class Module2 {}
-
-      mock.exportProvidersToImporter(Module2);
-      expect(mock.opts.providersPerMod).toEqual([Provider11, Provider12, Provider22]);
-      expect(mock.opts.providersPerReq).toEqual(defaultProvidersPerReq);
-    });
-
-    it('reexport only Provider12 from Module2 -> Module1', () => {
-      class Provider11 {}
-      class Provider12 {}
-      class Provider21 {}
-      class Provider22 {}
-      class Provider23 {}
-      class Provider24 {}
-      class Provider31 {}
-
-      @Module({
-        exports: [Provider11, Provider12],
-        providersPerMod: [Provider11, Provider12]
-      })
-      class Module1 {}
-
-      @Module({
-        imports: [Module1],
-        exports: [Provider12, Provider22],
-        providersPerMod: [Provider21, Provider22, Provider23],
-        providersPerReq: [Provider24]
-      })
-      class Module2 {}
-
-      @Module({
-        imports: [Module2],
-        exports: [Module2],
-        providersPerReq: [Provider31]
-      })
-      class Module3 {}
-
-      mock.exportProvidersToImporter(Module3);
-      expect(mock.opts.providersPerMod).toEqual([Provider12, Provider22]);
-      expect(mock.opts.providersPerReq).toEqual(defaultProvidersPerReq);
     });
   });
 
@@ -366,6 +292,7 @@ describe('ModuleFactory', () => {
   });
 
   describe('bootstrap()', () => {
+    class Provider0 {}
     class Provider1 {}
     class Provider2 {}
     class Provider3 {}
@@ -377,7 +304,14 @@ describe('ModuleFactory', () => {
     class Provider9 {}
 
     @Module({
-      exports: [Provider1, Provider2, Provider3],
+      exports: [Provider0],
+      providersPerMod: [Provider0]
+    })
+    class Module0 {}
+
+    @Module({
+      imports: [Module0],
+      exports: [Module0, Provider1, Provider2, Provider3],
       providersPerMod: [Provider1, Provider2, Provider3]
     })
     class Module1 {}
@@ -398,6 +332,7 @@ describe('ModuleFactory', () => {
 
     @Module({
       imports: [Module2],
+      exports: [Module2],
       providersPerReq: [Provider9],
       controllers: [Ctrl]
     })
@@ -414,13 +349,26 @@ describe('ModuleFactory', () => {
       mock.bootstrap('api', '', Module3);
       expect(mock.routesPrefixPerApp).toBe('api');
 
+      const mod0 = mock.testOptionsMap.get(Module0);
+      expect(mod0.providersPerMod).toEqual([Provider0]);
+      expect(mod0.providersPerReq).toEqual(defaultProvidersPerReq);
+      expect((mod0 as any).ngMetadataName).toBe('Module');
+
       const mod1 = mock.testOptionsMap.get(Module1);
-      expect(mod1.providersPerMod).toEqual([Provider1, Provider2, Provider3]);
+      expect(mod1.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3]);
       expect(mod1.providersPerReq).toEqual(defaultProvidersPerReq);
       expect((mod1 as any).ngMetadataName).toBe('Module');
 
       const mod2 = mock.testOptionsMap.get(Module2);
-      expect(mod2.providersPerMod).toEqual([Provider1, Provider2, Provider3, Provider4, Provider5, Provider6]);
+      expect(mod2.providersPerMod).toEqual([
+        Provider0,
+        Provider1,
+        Provider2,
+        Provider3,
+        Provider4,
+        Provider5,
+        Provider6
+      ]);
       expect(mod2.providersPerReq).toEqual([...defaultProvidersPerReq, Provider7, Provider8]);
       expect((mod2 as any).ngMetadataName).toBe('Module');
 
@@ -441,11 +389,12 @@ describe('ModuleFactory', () => {
       mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
       mock.injectorPerMod = injectorPerApp;
       mock.bootstrap('some', 'other', Module4);
+
       expect(mock.routesPrefixPerApp).toBe('some');
       expect(mock.routesPrefixPerMod).toBe('other');
       expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
       expect(mock.opts.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
-      expect(mock.opts.providersPerReq).toEqual([...defaultProvidersPerReq, Provider9]);
+      expect(mock.opts.providersPerReq).toEqual([...defaultProvidersPerReq, Provider8]);
       expect((mock.opts as any).ngMetadataName).toBe('RootModule');
     });
 
