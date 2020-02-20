@@ -42,7 +42,7 @@ describe('ModuleFactory', () => {
     exportProvidersToImporter(
       typeOrObject: Type<any> | ModuleWithOptions<any>,
       isStarter: boolean,
-      soughtProvider?: NormalizedProvider
+      soughtProvider: NormalizedProvider
     ) {
       return super.exportProvidersToImporter(typeOrObject, isStarter, soughtProvider);
     }

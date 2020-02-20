@@ -219,7 +219,7 @@ export class ModuleFactory {
   protected exportProvidersToImporter(
     typeOrObject: Type<any> | ModuleWithOptions<any>,
     isStarter: boolean,
-    soughtProvider?: NormalizedProvider
+    soughtProvider: NormalizedProvider
   ) {
     const { exports: exp, imports, providersPerMod, providersPerReq } = this.mergeMetadata(typeOrObject);
     const moduleName = this.getModuleName(typeOrObject);
