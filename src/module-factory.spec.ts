@@ -338,7 +338,7 @@ describe('ModuleFactory', () => {
     })
     class Module3 {}
 
-    it(`Module3 should have Provider1, Provider3, Provider5 in providersPerMod and Provider31 in providersPerReq`, () => {
+    it(`case 1`, () => {
       const injectorPerApp = ReflectiveInjector.resolveAndCreate([
         ...defaultProvidersPerApp,
         { provide: Logger, useClass: MyLogger }
@@ -384,7 +384,7 @@ describe('ModuleFactory', () => {
     })
     class Module4 {}
 
-    it(`Module4 should have Provider1, Provider3, Provider5 in providersPerMod`, () => {
+    it(`case 2`, () => {
       const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
       mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
       mock.injectorPerMod = injectorPerApp;
