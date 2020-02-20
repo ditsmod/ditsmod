@@ -79,7 +79,7 @@ export class ModuleFactory {
      * so we should call `exportProvidersToImporter()` method in its context.
      */
     if (importer) {
-      this.exportProvidersToImporter.call(importer, typeOrObject);
+      this.exportProvidersToImporter.call(importer, typeOrObject, true);
     }
     this.importModules();
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
@@ -218,6 +218,7 @@ export class ModuleFactory {
    */
   protected exportProvidersToImporter(
     typeOrObject: Type<any> | ModuleWithOptions<any>,
+    isStarter: boolean,
     soughtProvider?: NormalizedProvider
   ) {
     const { exports: exp, imports, providersPerMod, providersPerReq } = this.mergeMetadata(typeOrObject);
@@ -228,7 +229,7 @@ export class ModuleFactory {
       if (moduleMetadata) {
         const reexportedModule = moduleOrProvider as ModuleType;
         if (imports.includes(reexportedModule)) {
-          this.exportProvidersToImporter(reexportedModule);
+          this.exportProvidersToImporter(reexportedModule, false, soughtProvider);
         } else {
           throw new Error(`Reexports a module failed: cannot find ${reexportedModule.name} in "imports" array`);
         }
@@ -249,7 +250,7 @@ export class ModuleFactory {
         );
         if (!foundProvider) {
           for (const imp of imports) {
-            foundProvider = this.exportProvidersToImporter(imp, normProvider);
+            foundProvider = this.exportProvidersToImporter(imp, false, normProvider);
             if (foundProvider) {
               break;
             }
@@ -270,8 +271,10 @@ export class ModuleFactory {
       }
     }
 
-    this.opts.providersPerMod = [...this.exportedProvidersPerMod, ...this.opts.providersPerMod];
-    this.opts.providersPerReq = [...this.exportedProvidersPerReq, ...this.opts.providersPerReq];
+    if (isStarter) {
+      this.opts.providersPerMod = [...this.exportedProvidersPerMod, ...this.opts.providersPerMod];
+      this.opts.providersPerReq = [...this.exportedProvidersPerReq, ...this.opts.providersPerReq];
+    }
   }
 
   protected findAndSetProvider(
