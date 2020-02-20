@@ -5,7 +5,7 @@ import { BodyParser } from '../services/body-parser';
 import { Request } from '../request';
 import { Response } from '../response';
 
-export const defaultProvidersPerReq: Provider[] = [Request, Response, BodyParser];
+export const defaultProvidersPerReq: Readonly<Provider[]> = Object.freeze([Request, Response, BodyParser]);
 
 export interface ModuleDecoratorFactory {
   (data?: ModuleDecorator): any;
@@ -22,7 +22,7 @@ export abstract class ProvidersMetadata {
   /**
    * Providers per the request.
    */
-  providersPerReq: Provider[] = defaultProvidersPerReq;
+  providersPerReq: Provider[] = defaultProvidersPerReq.slice();
 }
 
 export interface ModuleWithOptions<T> extends Partial<ProvidersMetadata> {

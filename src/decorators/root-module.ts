@@ -10,7 +10,7 @@ import { BodyParserConfig } from '../types/types';
 import { Logger } from '../types/logger';
 import { HttpModule, ServerOptions } from '../types/server-options';
 
-export const defaultProvidersPerApp: Provider[] = [
+export const defaultProvidersPerApp: Readonly<Provider[]> = Object.freeze([
   Logger,
   BodyParserConfig,
   { provide: Router, useClass: RestifyRouter },
@@ -19,7 +19,7 @@ export const defaultProvidersPerApp: Provider[] = [
     provide: ReflectiveInjector,
     useExisting: Injector
   }
-];
+]);
 
 export interface RootModuleDecoratorFactory {
   (data?: RootModuleDecorator): any;
@@ -40,7 +40,7 @@ export class ApplicationMetadata {
   /**
    * Providers per the `Application`.
    */
-  providersPerApp: Provider[] = defaultProvidersPerApp;
+  providersPerApp: Provider[] = defaultProvidersPerApp.slice();
   routesPrefixPerApp: string = '';
   routesPrefixPerMod: RoutesPrefixPerMod[] = [];
 }
