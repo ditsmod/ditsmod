@@ -22,7 +22,7 @@ export abstract class ProvidersMetadata {
   /**
    * Providers per the request.
    */
-  providersPerReq: Provider[] = defaultProvidersPerReq.slice();
+  providersPerReq: Provider[] = [];
 }
 
 export interface ModuleWithOptions<T> extends Partial<ProvidersMetadata> {
