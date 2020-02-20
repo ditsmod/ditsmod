@@ -38,15 +38,17 @@ export class ModuleFactory {
   protected routesPrefixPerApp: string;
   protected routesPrefixPerMod: string;
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
-
-  /**
-   * Setting default module metadata.
-   */
-  protected opts = new ModuleMetadata();
+  protected opts: ModuleMetadata;
+  protected exportedProvidersPerMod: Provider[] = [];
+  protected exportedProvidersPerReq: Provider[] = [];
   /**
    * Injector per the module.
    */
   protected injectorPerMod: ReflectiveInjector;
+  /**
+   * Only for testing purpose.
+   */
+  protected testOptionsMap = new Map<Type<any>, ModuleMetadata>();
 
   constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector, protected log: Logger) {}
 
@@ -64,7 +66,10 @@ export class ModuleFactory {
   ) {
     this.routesPrefixPerApp = routesPrefixPerApp || '';
     this.routesPrefixPerMod = routesPrefixPerMod || '';
+    const mod = this.getModule(typeOrObject);
+    this.moduleName = mod.name;
     const moduleMetadata = this.mergeMetadata(typeOrObject);
+    this.opts = new ModuleMetadata();
     Object.assign(this.opts, moduleMetadata);
     /**
      * If we exported providers from current module,
@@ -77,10 +82,9 @@ export class ModuleFactory {
       this.exportProvidersToImporter.call(importer, typeOrObject);
     }
     this.importModules();
-    const mod = this.getModule(typeOrObject);
-    this.moduleName = mod.name;
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
     this.injectorPerMod.resolveAndInstantiate(mod);
+    this.opts.providersPerReq.unshift(...defaultProvidersPerReq);
     this.initProvidersPerReq();
     this.quickCheckImports(moduleMetadata);
     this.checkRoutePath(this.routesPrefixPerApp);
@@ -88,6 +92,7 @@ export class ModuleFactory {
     const prefix = [this.routesPrefixPerApp, this.routesPrefixPerMod].filter(s => s).join('/');
     this.opts.controllers.forEach(Ctrl => this.setRoutes(prefix, Ctrl));
     this.loadRoutesConfig(prefix, this.opts.routesPerMod);
+    return this.testOptionsMap.set(mod, this.opts);
   }
 
   protected loadRoutesConfig(prefix: string, configs: RouteConfig[]) {
@@ -150,8 +155,8 @@ export class ModuleFactory {
       modMetadata = reflector.annotations(modWitOptions.module).find(m => isModule(m) || isRootModule(m));
       const modName = this.getModuleName(modWitOptions.module);
       this.checkModuleMetadata(modWitOptions, modName);
-      modMetadata.providersPerMod = mergeArrays(modWitOptions.providersPerMod, modMetadata.providersPerMod);
-      modMetadata.providersPerReq = mergeArrays(modWitOptions.providersPerReq, modMetadata.providersPerReq);
+      modMetadata.providersPerMod = mergeArrays(modMetadata.providersPerMod, modWitOptions.providersPerMod);
+      modMetadata.providersPerReq = mergeArrays(modMetadata.providersPerReq, modWitOptions.providersPerReq);
     } else {
       modMetadata = reflector.annotations(typeOrObject).find(m => isModule(m) || isRootModule(m));
     }
@@ -165,17 +170,17 @@ export class ModuleFactory {
     this.checkModuleMetadata(modMetadata, modName);
 
     /**
-     * Setting default module metadata.
+     * Setting initial properties of metadata.
      */
     const metadata = new ModuleMetadata();
     /**
-     * This is used only internally and is hidden from the public API.
+     * `ngMetadataName` is used only internally and is hidden from the public API.
      */
     (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
-    metadata.imports = flatten((modMetadata.imports || metadata.imports).slice()).map(resolveForwardRef);
-    metadata.exports = flatten((modMetadata.exports || metadata.exports).slice()).map(resolveForwardRef);
-    metadata.providersPerMod = mergeArrays(metadata.providersPerMod, modMetadata.providersPerMod);
-    metadata.providersPerReq = mergeArrays(metadata.providersPerReq, modMetadata.providersPerReq);
+    metadata.imports = flatten((modMetadata.imports || []).slice()).map(resolveForwardRef);
+    metadata.exports = flatten((modMetadata.exports || []).slice()).map(resolveForwardRef);
+    metadata.providersPerMod = (modMetadata.providersPerMod || []).slice();
+    metadata.providersPerReq = (modMetadata.providersPerReq || []).slice();
     metadata.controllers = mergeArrays(metadata.controllers, modMetadata.controllers);
     metadata.routesPerMod = mergeArrays(metadata.routesPerMod, modMetadata.routesPerMod);
 
@@ -200,7 +205,8 @@ export class ModuleFactory {
   protected importModules() {
     for (const imp of this.opts.imports) {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      moduleFactory.bootstrap(this.routesPrefixPerApp, this.routesPrefixPerMod, imp, this);
+      const optionsMap = moduleFactory.bootstrap(this.routesPrefixPerApp, this.routesPrefixPerMod, imp, this);
+      this.testOptionsMap = new Map([...this.testOptionsMap, ...optionsMap]);
     }
   }
 
@@ -263,6 +269,9 @@ export class ModuleFactory {
         }
       }
     }
+
+    this.opts.providersPerMod = [...this.exportedProvidersPerMod, ...this.opts.providersPerMod];
+    this.opts.providersPerReq = [...this.exportedProvidersPerReq, ...this.opts.providersPerReq];
   }
 
   protected findAndSetProvider(
@@ -285,10 +294,10 @@ export class ModuleFactory {
     }
 
     if (hasProvider(providersPerMod)) {
-      this.opts.providersPerMod.push(provider);
+      this.exportedProvidersPerMod.push(provider);
       return true;
     } else if (hasProvider(providersPerReq)) {
-      this.opts.providersPerReq.push(provider);
+      this.exportedProvidersPerReq.push(provider);
       return true;
     }
 
