@@ -5,7 +5,7 @@ import { Router as RestifyRouter } from '@ts-stack/router';
 
 import { PreRequest } from '../services/pre-request';
 import { ModuleDecorator } from './module';
-import { RoutesPrefixPerMod, Router } from '../types/router';
+import { RootModules, Router } from '../types/router';
 import { BodyParserConfig } from '../types/types';
 import { Logger } from '../types/logger';
 import { HttpModule, ServerOptions } from '../types/server-options';
@@ -42,5 +42,5 @@ export class ApplicationMetadata {
    */
   providersPerApp: Provider[] = defaultProvidersPerApp.slice();
   routesPrefixPerApp: string = '';
-  routesPrefixPerMod: RoutesPrefixPerMod[] = [];
+  rootModules: RootModules[] = [];
 }

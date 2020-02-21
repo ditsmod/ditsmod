@@ -66,13 +66,13 @@ export class AppFactory {
     this.log.trace('Setting server name:', this.opts.serverName);
     this.log.trace('Setting listen options:', this.opts.listenOptions);
 
-    const rootModulePrefix = this.opts.routesPrefixPerMod.find(config => config.module === rootModule)?.prefix || '';
+    const rootModulePrefix = this.opts.rootModules.find(config => config.rootModule === rootModule)?.prefix || '';
     const importer = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
     importer.bootstrap(this.opts.routesPrefixPerApp, rootModulePrefix, rootModule);
 
-    this.opts.routesPrefixPerMod.forEach(config => {
+    this.opts.rootModules.forEach(config => {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      moduleFactory.bootstrap(this.opts.routesPrefixPerApp, config.prefix, config.module, importer);
+      moduleFactory.bootstrap(this.opts.routesPrefixPerApp, config.prefix, config.rootModule, importer);
     });
   }
 
@@ -88,7 +88,7 @@ export class AppFactory {
     const providersPerApp = mergeArrays(this.opts.providersPerApp, modMetadata.providersPerApp);
     pickProperties(this.opts, modMetadata);
     this.opts.providersPerApp = providersPerApp;
-    this.opts.routesPrefixPerMod = this.opts.routesPrefixPerMod.slice();
+    this.opts.rootModules = this.opts.rootModules.slice();
   }
 
   /**
