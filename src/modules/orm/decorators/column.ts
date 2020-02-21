@@ -1,4 +1,4 @@
-import { makePropTypeDecorator } from 'ts-di';
+import { makePropTypeDecorator } from '@ts-stack/di';
 
 import { ObjectAny } from '../../../types/types';
 

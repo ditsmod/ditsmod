@@ -1,4 +1,4 @@
-import { makePropDecorator } from 'ts-di';
+import { makePropDecorator } from '@ts-stack/di';
 
 import { ObjectAny } from '../types/types';
 import { HttpMethod } from '../types/router';

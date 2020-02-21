@@ -1,6 +1,6 @@
 import { format } from 'util';
 import * as http from 'http';
-import { Injectable, Inject } from 'ts-di';
+import { Injectable, Inject } from '@ts-stack/di';
 
 import { NodeRequest, NodeResponse, RedirectStatusCodes } from './types/server-options';
 import { Request } from './request';

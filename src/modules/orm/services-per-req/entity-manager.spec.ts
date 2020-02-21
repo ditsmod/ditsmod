@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ReflectiveInjector } from 'ts-di';
+import { ReflectiveInjector } from '@ts-stack/di';
 
 import { EntityManager } from './entity-manager';
 import { RouteParam } from '../../../types/router';

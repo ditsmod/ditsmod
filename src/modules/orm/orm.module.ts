@@ -1,4 +1,4 @@
-import { ReflectiveInjector, Type, reflector, Provider, Inject } from 'ts-di';
+import { ReflectiveInjector, Type, reflector, Provider, Inject } from '@ts-stack/di';
 
 import { Module } from '../../decorators/module';
 import { StaticEntity } from './decorators/entity';

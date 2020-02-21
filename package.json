@@ -1,12 +1,12 @@
 {
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
-  "name": "@ts-mod/core",
-  "homepage": "https://github.com/ts-mod/core",
+  "name": "@ts-stack/mod",
+  "homepage": "https://github.com/ts-stack/mod",
   "description": "REST framework",
-  "version": "0.0.0-alpha.28",
+  "version": "1.0.0-beta.1",
   "repository": {
     "type": "git",
-    "url": "git://github.com/ts-mod/core.git"
+    "url": "git://github.com/ts-stack/mod.git"
   },
   "main": "dist/index",
   "types": "dist/index",
@@ -18,26 +18,26 @@
     "test": "jest"
   },
   "dependencies": {
-    "@ts-mod/router": "^0.0.0-alpha.1",
+    "@ts-stack/router": "^0.0.0-alpha.1",
     "assert-plus": "^1.0.0",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
+    "@ts-stack/di": "^1.0.0",
     "@types/assert-plus": "^1.0.4",
-    "@types/jest": "^25.1.1",
+    "@types/jest": "^25.1.3",
     "@types/node": "^13.1.4",
     "jasmine": "^3.5.0",
     "jest": "^25.1.0",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.0",
-    "ts-jest": "^25.1.0",
-    "tslint": "^5.20.1",
+    "ts-jest": "^25.2.1",
+    "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.1.0",
-    "typescript": "^3.7.4",
-    "ts-di": "^2.2.0"
+    "typescript": "^3.7.4"
   },
   "peerDependencies": {
-    "ts-di": "^2.2.0"
+    "@ts-stack/di": "^1.0.0"
   }
 }

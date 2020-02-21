@@ -1,7 +1,7 @@
 import * as http from 'http';
 import { ListenOptions } from 'net';
-import { makeDecorator, Provider, ReflectiveInjector, Injector } from 'ts-di';
-import { Router as RestifyRouter } from '@ts-mod/router';
+import { makeDecorator, Provider, ReflectiveInjector, Injector } from '@ts-stack/di';
+import { Router as RestifyRouter } from '@ts-stack/router';
 
 import { PreRequest } from '../services/pre-request';
 import { ModuleDecorator } from './module';

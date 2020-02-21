@@ -1,4 +1,4 @@
-import { ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider } from 'ts-di';
+import { ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider } from '@ts-stack/di';
 import { ObjectAny } from './types';
 
 /**

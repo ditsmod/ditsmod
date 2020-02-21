@@ -1,4 +1,4 @@
-import { Provider, makeDecorator } from 'ts-di';
+import { Provider, makeDecorator } from '@ts-stack/di';
 
 export interface ControllerDecoratorFactory {
   (data?: ControllerDecorator): any;

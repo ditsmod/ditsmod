@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Provider, Type, ValueProvider, ClassProvider, ExistingProvider, FactoryProvider } from 'ts-di';
+import { Provider, Type, ValueProvider, ClassProvider, ExistingProvider, FactoryProvider } from '@ts-stack/di';
 import { format } from 'util';
 
 /**

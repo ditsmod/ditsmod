@@ -1,4 +1,4 @@
-import { ClassProvider, ExistingProvider, FactoryProvider, Provider, Type, TypeProvider, ValueProvider } from 'ts-di';
+import { ClassProvider, ExistingProvider, FactoryProvider, Provider, Type, TypeProvider, ValueProvider } from '@ts-stack/di';
 
 import { normalizeProviders } from './ng-utils';
 import { ModuleDecorator, ModuleWithOptions } from '../decorators/module';

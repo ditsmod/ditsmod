@@ -1,4 +1,4 @@
-import { Injectable, Injector, Type, InjectionToken } from 'ts-di';
+import { Injectable, Injector, Type, InjectionToken } from '@ts-stack/di';
 
 @Injectable()
 export class EntityInjector implements Injector {

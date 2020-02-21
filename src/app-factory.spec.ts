@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
-import { ReflectiveInjector } from 'ts-di';
+import { ReflectiveInjector } from '@ts-stack/di';
 
 import { AppFactory } from './app-factory';
 import { RootModule, ApplicationMetadata, defaultProvidersPerApp } from './decorators/root-module';

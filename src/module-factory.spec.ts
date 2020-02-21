@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ReflectiveInjector, Injectable, Type, Provider } from 'ts-di';
+import { ReflectiveInjector, Injectable, Type, Provider } from '@ts-stack/di';
 
 import { ModuleFactory } from './module-factory';
 import { NormalizedProvider } from './utils/ng-utils';

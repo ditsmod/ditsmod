@@ -7,7 +7,7 @@ import {
   Injectable,
   ResolvedReflectiveProvider,
   ReflectiveInjector
-} from 'ts-di';
+} from '@ts-stack/di';
 import * as assert from 'assert-plus';
 
 import {

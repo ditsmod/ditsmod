@@ -1,4 +1,4 @@
-import { Injectable, Inject } from 'ts-di';
+import { Injectable, Inject } from '@ts-stack/di';
 import { ObjectAny } from '../types/types';
 import { BodyParserConfig } from '../types/types';
 import { NodeReqToken } from '../types/injection-tokens';

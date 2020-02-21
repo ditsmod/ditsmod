@@ -1,4 +1,4 @@
-import { Injectable } from 'ts-di';
+import { Injectable } from '@ts-stack/di';
 
 import { NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';

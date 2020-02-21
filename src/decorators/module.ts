@@ -1,4 +1,4 @@
-import { Type, Provider, makeDecorator, TypeProvider } from 'ts-di';
+import { Type, Provider, makeDecorator, TypeProvider } from '@ts-stack/di';
 
 import { RouteConfig } from '../types/router';
 import { BodyParser } from '../services/body-parser';

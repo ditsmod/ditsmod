@@ -2,7 +2,7 @@ import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
-import { ReflectiveInjector, reflector } from 'ts-di';
+import { ReflectiveInjector, reflector } from '@ts-stack/di';
 
 import { ApplicationMetadata } from './decorators/root-module';
 import { RequestListener } from './types/types';

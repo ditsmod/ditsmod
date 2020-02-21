@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { reflector, Provider } from 'ts-di';
+import { reflector, Provider } from '@ts-stack/di';
 
 import { RootModule, RootModuleDecorator } from '../decorators/root-module';
 import { ModuleDecorator, Module } from '../decorators/module';

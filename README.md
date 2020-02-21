@@ -1,5 +1,5 @@
-## RestifyTS Core
+## About the project
 
-It's alpha version of `@restify-ts/core`. Work in progress.
+It's beta version of `@ts-stack/mod`. Work in progress.
 
-See also [seed for @restify-ts/core project](https://github.com/restify-ts/seed).
+See also [seed for @ts-stack/mod-seed project](https://github.com/ts-stack/mod-seed).

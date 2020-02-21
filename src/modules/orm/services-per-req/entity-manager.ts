@@ -1,4 +1,4 @@
-import { Injectable, Injector } from 'ts-di';
+import { Injectable, Injector } from '@ts-stack/di';
 
 import { Request } from '../../../request';
 import { EntityModel, DatabaseMetadata } from '../decorators/entity';

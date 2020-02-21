@@ -1,4 +1,4 @@
-import { makeDecorator, Type, Injector } from 'ts-di';
+import { makeDecorator, Type, Injector } from '@ts-stack/di';
 
 export interface EntityDecoratorFactory<T = any> {
   (options?: T): any;

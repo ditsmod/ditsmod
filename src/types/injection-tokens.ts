@@ -1,4 +1,4 @@
-import { InjectionToken, Provider } from 'ts-di';
+import { InjectionToken, Provider } from '@ts-stack/di';
 
 import { NodeRequest, NodeResponse } from './server-options';
 
