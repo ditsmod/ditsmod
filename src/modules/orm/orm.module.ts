@@ -1,6 +1,6 @@
 import { ReflectiveInjector, Type, reflector, Provider, Inject } from 'ts-di';
 
-import { Module, ModuleWithOptions } from '../../decorators/module';
+import { Module } from '../../decorators/module';
 import { StaticEntity } from './decorators/entity';
 import { isEntity, isColumnType, isColumn } from '../../utils/type-guards';
 import { ColumnDecoratorMetadata } from './decorators/column';
@@ -9,17 +9,10 @@ import { EntityManager } from './services-per-req/entity-manager';
 import { EntityInjector } from './services-per-app/entity-injector';
 
 @Module({
-  // providersPerApp: [EntityInjector],
-  providersPerReq: [EntityManager]
+  providersPerReq: [EntityManager],
+  exports: [EntityManager]
 })
 export class OrmModule {
-  static withOptions(entities: Provider[]): ModuleWithOptions<OrmModule> {
-    return {
-      module: OrmModule
-      // providersPerApp: [OrmModule, { provide: EntitiesToken, useValue: entities, multi: true }]
-    };
-  }
-
   constructor(
     @Inject(EntitiesToken) entities: Provider[][],
     protected injectorPerMod: ReflectiveInjector,

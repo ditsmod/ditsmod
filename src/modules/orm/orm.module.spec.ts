@@ -2,6 +2,9 @@ import 'reflect-metadata';
 import { StaticEntity, Entity } from './decorators/entity';
 import { Column } from './decorators/column';
 import { OrmModule } from './orm.module';
+import { RootModule } from '../../decorators/root-module';
+import { EntitiesToken } from '../../types/injection-tokens';
+import { EntityInjector } from './services-per-app/entity-injector';
 
 xdescribe('OrmModule', () => {
   class MockOrmModule extends OrmModule {}
@@ -12,9 +15,13 @@ xdescribe('OrmModule', () => {
     @Entity()
     class MysqlEntity extends SomeEntity {}
 
+    const entities = [{ provide: SomeEntity, useClass: MysqlEntity }];
+    @RootModule({
+      providersPerApp: [EntityInjector, { provide: EntitiesToken, useValue: entities }]
+    })
+    class AppModule {}
+
     it(`should set default entity's metadata`, () => {
-      const entities = [SomeEntity, { provide: SomeEntity, useClass: MysqlEntity }];
-      MockOrmModule.withOptions(entities);
       expect((SomeEntity as typeof StaticEntity).entityMetadata).toBeUndefined();
       expect((SomeEntity as typeof StaticEntity).columnMetadata).toBeUndefined();
       expect((MysqlEntity as typeof StaticEntity).entityMetadata).toEqual(new Entity({}));
@@ -70,8 +77,13 @@ xdescribe('OrmModule', () => {
     }
 
     it(`should set default entity's metadata`, () => {
-      const entities = [SomeEntity, { provide: SomeEntity, useClass: MysqlEntity }];
-      MockOrmModule.withOptions(entities);
+      const entities = [{ provide: SomeEntity, useClass: MysqlEntity }];
+
+      @RootModule({
+        providersPerApp: [EntityInjector, { provide: EntitiesToken, useValue: entities }]
+      })
+      class AppModule {}
+
       expect((SomeEntity as any).entityMetadata).toBeUndefined();
       expect((MysqlEntity as any).entityMetadata).toEqual(new Entity({ tableName: 'users' }));
     });

@@ -10,3 +10,5 @@ tslint.json
 *.log
 *.spec.*
 yarn.lock
+.js
+jest.config.js
