@@ -325,9 +325,9 @@
     "@types/yargs" "^15.0.0"
     chalk "^3.0.0"
 
-"@restify-ts/router@^0.0.0-alpha.1":
+"@ts-mod/router@^0.0.0-alpha.1":
   version "0.0.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/@restify-ts/router/-/router-0.0.0-alpha.1.tgz#b5192085e66ff7fa634498b2c2c0c9069a449435"
+  resolved "https://registry.yarnpkg.com/@ts-mod/router/-/router-0.0.0-alpha.1.tgz#b5192085e66ff7fa634498b2c2c0c9069a449435"
   integrity sha512-u2lJLcLxu7L8RCuS+Ce4tjBz84IikUOLoLWh3o/VIRz81ah3eztwqnTwvDULUGT4Ozv3oSZtKHgVhhBPYqXrbA==
 
 "@sinonjs/commons@^1.7.0":
