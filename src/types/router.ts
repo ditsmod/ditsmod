@@ -1,5 +1,6 @@
 import { ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider } from '@ts-stack/di';
 import { ObjectAny } from './types';
+import { ModuleType } from '../decorators/module';
 
 /**
  * `http.METHODS`
@@ -127,5 +128,5 @@ export abstract class RouteConfig {
 
 export interface RootModules {
   prefix: string;
-  rootModule: TypeProvider;
+  rootModule: ModuleType;
 }

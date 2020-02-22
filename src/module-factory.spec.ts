@@ -3,7 +3,14 @@ import { ReflectiveInjector, Injectable, Type, Provider } from '@ts-stack/di';
 
 import { ModuleFactory } from './module-factory';
 import { NormalizedProvider } from './utils/ng-utils';
-import { Module, ModuleMetadata, defaultProvidersPerReq, ModuleType, ModuleWithOptions } from './decorators/module';
+import {
+  Module,
+  ModuleMetadata,
+  defaultProvidersPerReq,
+  ModuleType,
+  ModuleWithOptions,
+  ModuleDecorator
+} from './decorators/module';
 import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
 import { Router, RouteConfig } from './types/router';
@@ -31,8 +38,11 @@ describe('ModuleFactory', () => {
       return super.quickCheckImports(moduleMetadata);
     }
 
-    getRawModuleMetadata(typeOrObject: Type<any> | ModuleWithOptions<any>) {
-      return super.getRawModuleMetadata(typeOrObject);
+    getRawModuleMetadata<T extends ModuleDecorator>(
+      typeOrObject: Type<any> | ModuleWithOptions<any>,
+      isRoot?: boolean
+    ) {
+      return super.getRawModuleMetadata(typeOrObject, isRoot) as T;
     }
 
     mergeMetadata(mod: ModuleType) {

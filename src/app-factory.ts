@@ -2,9 +2,9 @@ import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
-import { ReflectiveInjector, reflector } from '@ts-stack/di';
+import { ReflectiveInjector, reflector, Provider, Type, resolveForwardRef } from '@ts-stack/di';
 
-import { ApplicationMetadata } from './decorators/root-module';
+import { ApplicationMetadata, RootModuleDecorator } from './decorators/root-module';
 import { RequestListener } from './types/types';
 import { isHttp2SecureServerOptions, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
@@ -16,10 +16,12 @@ import { Router, HttpMethod } from './types/router';
 import { NodeResToken, NodeReqToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
 import { Server, Http2SecureServerOptions } from './types/server-options';
-import { ModuleType } from './decorators/module';
+import { ModuleType, ModuleWithOptions } from './decorators/module';
 import { getDuplicates } from './utils/get-duplicates';
+import { flatten, normalizeProviders } from './utils/ng-utils';
+import { Factory } from './factory';
 
-export class AppFactory {
+export class AppFactory extends Factory {
   protected log: Logger;
   protected server: Server;
   protected injectorPerApp: ReflectiveInjector;
@@ -55,25 +57,48 @@ export class AppFactory {
     });
   }
 
-  protected prepareServerOptions(rootModule: ModuleType) {
-    this.mergeMetadata(rootModule);
-    this.checkSecureServerOption(rootModule);
-    this.initProvidersPerApp();
-    const duplicates = getDuplicates(this.opts.providersPerApp);
+  /**
+   * @todo Improve searching duplicates of providersPerApp.
+   * Need diff between setting from `@RootModule` and `@Module`.
+   */
+  protected prepareServerOptions(appModule: ModuleType) {
+    this.mergeMetadata(appModule);
+    this.checkSecureServerOption(appModule);
+
+    const modules = this.opts.rootModules.map(c => c.rootModule);
+    [appModule, ...modules].forEach(mod => {
+      this.opts.providersPerApp.push(...this.getProvidersPerApp(mod));
+    });
+
+    const providers = normalizeProviders(this.opts.providersPerApp).map(np => np.provide);
+    const duplicates = getDuplicates(providers).map(p => p.name || p);
     if (duplicates.length) {
-      this.log.trace(`The duplicates in 'providersPerApp' was found: ${duplicates.join(', ')}`);
+      throw new Error(`The duplicates in 'providersPerApp' was found: ${duplicates.join(', ')}`);
     }
+
+    this.initProvidersPerApp();
     this.log.trace('Setting server name:', this.opts.serverName);
     this.log.trace('Setting listen options:', this.opts.listenOptions);
 
-    const rootModulePrefix = this.opts.rootModules.find(config => config.rootModule === rootModule)?.prefix || '';
+    const rootModulePrefix = this.opts.rootModules.find(config => config.rootModule === appModule)?.prefix || '';
     const importer = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    importer.bootstrap(this.opts.routesPrefixPerApp, rootModulePrefix, rootModule);
+    importer.bootstrap(this.opts.routesPrefixPerApp, rootModulePrefix, appModule);
 
     this.opts.rootModules.forEach(config => {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       moduleFactory.bootstrap(this.opts.routesPrefixPerApp, config.prefix, config.rootModule, importer);
     });
+  }
+
+  protected getProvidersPerApp(typeOrObject: Type<any> | ModuleWithOptions<any>) {
+    const mod = this.getModule(typeOrObject);
+    const modMetadata = this.getRawModuleMetadata<RootModuleDecorator>(typeOrObject);
+    this.checkModuleMetadata(modMetadata, mod.name);
+
+    const imports = flatten((modMetadata.imports || []).slice()).map(resolveForwardRef);
+    const providersPerApp: Provider[] = [];
+    imports.forEach(imp => providersPerApp.push(...this.getProvidersPerApp(imp)));
+    return [...providersPerApp, ...(modMetadata.providersPerApp || [])];
   }
 
   /**

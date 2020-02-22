@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
-import { ReflectiveInjector } from '@ts-stack/di';
+import { ReflectiveInjector, Type, Provider } from '@ts-stack/di';
 
 import { AppFactory } from './app-factory';
 import { RootModule, ApplicationMetadata, defaultProvidersPerApp } from './decorators/root-module';
@@ -10,8 +10,9 @@ import { PreRequest } from './services/pre-request';
 import { Router, RootModules } from './types/router';
 import { Logger } from './types/logger';
 import { Server } from './types/server-options';
-import { ModuleType, Module } from './decorators/module';
+import { Module, ModuleType, ModuleDecorator, ModuleWithOptions } from './decorators/module';
 import { Controller } from './decorators/controller';
+import { ModuleFactory } from './module-factory';
 
 describe('AppFactory', () => {
   class MockAppFactory extends AppFactory {
@@ -24,6 +25,17 @@ describe('AppFactory', () => {
 
     mergeMetadata(appModule: ModuleType): void {
       return super.mergeMetadata(appModule);
+    }
+
+    getRawModuleMetadata<T extends ModuleDecorator>(
+      typeOrObject: Type<any> | ModuleWithOptions<any>,
+      isRoot?: boolean
+    ): T {
+      return super.getRawModuleMetadata(typeOrObject, isRoot);
+    }
+
+    getProvidersPerApp(mod: Type<any> | ModuleWithOptions<any>) {
+      return super.getProvidersPerApp(mod);
     }
 
     checkSecureServerOption(appModule: ModuleType) {
@@ -41,6 +53,95 @@ describe('AppFactory', () => {
 
   beforeEach(() => {
     mock = new MockAppFactory();
+  });
+
+  describe('getProvidersPerApp() and importProvidersPerApp()', () => {
+    class Provider1 {}
+    class Provider2 {}
+    class Provider3 {}
+    class Provider4 {}
+    class Provider5 {}
+    class Provider6 {}
+    class Provider7 {}
+
+    @Module({
+      providersPerApp: [Provider1]
+    })
+    class Module1 {}
+
+    @Module({
+      providersPerApp: [Provider2, Provider3, Provider4],
+      imports: [Module1]
+    })
+    class Module2 {}
+
+    @Module({
+      providersPerApp: [Provider5, Provider6],
+      imports: [Module2]
+    })
+    class Module3 {}
+
+    @Module({
+      imports: [Module3]
+    })
+    class Module4 {}
+
+    @Module({
+      imports: [Module1, [Module4]]
+    })
+    class Module5 {}
+
+    it('should have 6 providersPerApp imported from Module3', () => {
+      expect(mock.getProvidersPerApp(Module4)).toEqual([
+        Provider1,
+        Provider2,
+        Provider3,
+        Provider4,
+        Provider5,
+        Provider6
+      ]);
+    });
+
+    it('should have 7 providersPerApp imported from Module1 and Module4', () => {
+      expect(mock.getProvidersPerApp(Module5)).toEqual([
+        Provider1,
+        Provider1,
+        Provider2,
+        Provider3,
+        Provider4,
+        Provider5,
+        Provider6
+      ]);
+    });
+
+    @Module({
+      imports: [Module4]
+    })
+    class Module6 {
+      static withOptions(providers: Provider[]): ModuleWithOptions<Module6> {
+        return { module: Module6, providersPerApp: providers };
+      }
+    }
+
+    it('should have 7 providersPerApp imported from Module4 and Module6', () => {
+      const modWithOptions = Module6.withOptions([Provider7]);
+      expect(mock.getProvidersPerApp(modWithOptions)).toEqual([
+        Provider1,
+        Provider2,
+        Provider3,
+        Provider4,
+        Provider5,
+        Provider6,
+        Provider7
+      ]);
+    });
+
+    @Module()
+    class Module7 {}
+
+    it('should have empty array of providersPerApp', () => {
+      expect(mock.getProvidersPerApp(Module7)).toEqual([]);
+    });
   });
 
   describe('mergeMetadata()', () => {
@@ -68,6 +169,7 @@ describe('AppFactory', () => {
     it('should merge default metatada with ClassWithDecorators metadata', () => {
       class SomeModule {}
       class OtherModule {}
+      class SomeEntity {}
 
       const rootModules: RootModules[] = [
         { prefix: '', rootModule: SomeModule },
@@ -105,31 +207,19 @@ describe('AppFactory', () => {
     });
   });
 
-  describe('prepareServerOptions()', () => {
-    @Controller()
-    class Ctrl {}
+  describe('getRawModuleMetadata()', () => {
+    it('should returns ClassWithDecorators metadata', () => {
+      @RootModule({ controllers: [SomeControllerClass] })
+      class ClassWithDecorators {}
+      const metadata = mock.getRawModuleMetadata(ClassWithDecorators, true);
+      expect(metadata).toEqual(new RootModule({ controllers: [SomeControllerClass] }));
+    });
 
-    @Module({ controllers: [Ctrl] })
-    class Module1 {}
-
-    @RootModule({
-      routesPrefixPerApp: 'api',
-      rootModules: [{ prefix: 'mod1', rootModule: Module1 }]
-    })
-    class AppModule {}
-
-    it(`should contains merged default with user metada`, () => {
-      mock.prepareServerOptions(AppModule);
-      expect(mock.opts.serverName).toBeDefined();
-      expect(mock.opts.httpModule).toBeDefined();
-      expect(mock.opts.serverOptions).toEqual({});
-      expect(mock.opts.listenOptions).toBeDefined();
-      expect(mock.opts.providersPerApp.length).toBeGreaterThan(0);
-      expect(mock.opts.routesPrefixPerApp).toBe('api');
-      expect(mock.opts.rootModules).toEqual([{ prefix: 'mod1', rootModule: Module1 }]);
+    it('should not returns any metadata', () => {
+      const metadata = mock.getRawModuleMetadata(ClassWithoutDecorators, true);
+      expect(metadata).toBeUndefined();
     });
   });
-
   describe('checkSecureServerOption()', () => {
     @RootModule({
       controllers: [SomeControllerClass],
@@ -161,6 +251,23 @@ describe('AppFactory', () => {
       mock.opts.httpModule = https;
       const msg = 'serverModule.createSecureServer() not found (see ClassWithDecorators settings)';
       expect(() => mock.checkSecureServerOption(ClassWithDecorators)).toThrowError(msg);
+    });
+  });
+
+  describe('prepareServerOptions()', () => {
+    @Controller()
+    class Provider1 {}
+
+    const Alias = Provider1;
+
+    @RootModule({
+      providersPerApp: [Provider1, Alias]
+    })
+    class Module9 {}
+
+    it(`should throw an error about duplicates of providers`, () => {
+      const msg = `The duplicates in 'providersPerApp' was found: Provider1`;
+      expect(() => mock.prepareServerOptions(Module9)).toThrow(msg);
     });
   });
 });
