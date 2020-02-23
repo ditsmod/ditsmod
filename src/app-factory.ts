@@ -67,50 +67,50 @@ export class AppFactory extends Factory {
     this.bootstrapModuleFactory(appModule);
   }
 
-  protected bootstrapModuleFactory(appModule: ModuleType) {
-    const rootModulePrefix = this.opts.rootModules.find(config => config.rootModule === appModule)?.prefix || '';
-    const importer = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    importer.bootstrap(this.opts.routesPrefixPerApp, rootModulePrefix, appModule);
-
-    this.opts.rootModules.forEach(config => {
-      const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      moduleFactory.bootstrap(this.opts.routesPrefixPerApp, config.prefix, config.rootModule, importer);
-    });
-  }
-
-  /**
-   * @todo Improve searching duplicates of providersPerApp.
-   * Need diff between setting from `@RootModule` and `@Module`.
-   */
   protected prepareProvidersPerApp(appModule: ModuleType) {
-    const tokensFromAppModule = normalizeProviders(this.opts.providersPerApp).map(np => np.provide);
-    const uniqTokensFromAppModule = [...new Set(tokensFromAppModule)];
-
-    const providersPerApp: Provider[] = [];
+    const exportedProvidersPerApp: Provider[] = [];
     const modules = this.opts.rootModules.map(c => c.rootModule);
     [appModule, ...modules].forEach(mod => {
-      providersPerApp.push(...this.getProvidersPerApp(mod));
+      exportedProvidersPerApp.push(...this.exportProvidersPerApp(mod));
     });
 
-    const tokensFromChildModules = normalizeProviders(providersPerApp).map(np => np.provide);
-    const duplicates = getDuplicates([...uniqTokensFromAppModule, ...tokensFromChildModules]).map(p => p.name || p);
-    if (duplicates.length) {
-      throw new Error(`The duplicates in 'providersPerApp' was found: ${duplicates.join(', ')}`);
+    const declaredTokensPerApp = normalizeProviders(this.opts.providersPerApp).map(np => np.provide);
+    const exportedTokensPerApp = normalizeProviders(exportedProvidersPerApp).map(np => np.provide);
+    const duplExpPerApp = getDuplicates(exportedTokensPerApp).filter(d => !declaredTokensPerApp.includes(d));
+    if (duplExpPerApp.length) {
+      this.throwErrorProvidersUnpredictable(appModule.name, duplExpPerApp);
     }
-    this.opts.providersPerApp.push(...providersPerApp);
+    this.opts.providersPerApp.push(...exportedProvidersPerApp);
   }
 
-  protected getProvidersPerApp(typeOrObject: Type<any> | ModuleWithOptions<any>) {
+  protected exportProvidersPerApp(typeOrObject: Type<any> | ModuleWithOptions<any>) {
     const mod = this.getModule(typeOrObject);
     const modMetadata = this.getRawModuleMetadata(typeOrObject) as RootModuleDecorator | ModuleDecorator;
     this.checkModuleMetadata(modMetadata, mod.name);
 
     const imports = flatten((modMetadata.imports || []).slice()).map(resolveForwardRef);
     const providersPerApp: Provider[] = [];
-    imports.forEach(imp => providersPerApp.push(...this.getProvidersPerApp(imp)));
+    imports.forEach(imp => providersPerApp.push(...this.exportProvidersPerApp(imp)));
     const currProvidersPerApp = isRootModule(modMetadata) ? [] : modMetadata.providersPerApp || [];
 
     return [...providersPerApp, ...currProvidersPerApp];
+  }
+
+  protected bootstrapModuleFactory(appModule: ModuleType) {
+    const rootModulePrefix = this.opts.rootModules.find(config => config.rootModule === appModule)?.prefix || '';
+    const importer = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+    importer.bootstrap(this.opts.providersPerApp, this.opts.routesPrefixPerApp, rootModulePrefix, appModule);
+
+    this.opts.rootModules.forEach(config => {
+      const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+      moduleFactory.bootstrap(
+        this.opts.providersPerApp,
+        this.opts.routesPrefixPerApp,
+        config.prefix,
+        config.rootModule,
+        importer
+      );
+    });
   }
 
   /**

@@ -356,7 +356,7 @@ describe('ModuleFactory', () => {
 
       mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
       mock.injectorPerMod = injectorPerApp;
-      mock.bootstrap('api', '', Module3);
+      mock.bootstrap([], 'api', '', Module3);
       expect(mock.routesPrefixPerApp).toBe('api');
 
       const mod0 = mock.testOptionsMap.get(Module0);
@@ -398,7 +398,7 @@ describe('ModuleFactory', () => {
       const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
       mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
       mock.injectorPerMod = injectorPerApp;
-      mock.bootstrap('some', 'other', Module4);
+      mock.bootstrap([], 'some', 'other', Module4);
 
       expect(mock.routesPrefixPerApp).toBe('some');
       expect(mock.routesPrefixPerMod).toBe('other');
@@ -418,7 +418,7 @@ describe('ModuleFactory', () => {
       mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
       mock.injectorPerMod = injectorPerApp;
       const errMsg = `Import Module5 failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`;
-      expect(() => mock.bootstrap('api', '', Module5)).toThrow(errMsg);
+      expect(() => mock.bootstrap([], 'api', '', Module5)).toThrow(errMsg);
     });
 
     @Module({
@@ -437,7 +437,7 @@ describe('ModuleFactory', () => {
       mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
       mock.injectorPerMod = injectorPerApp;
       const errMsg = `Exported Provider2 from Module6 should includes in "providersPerMod" or "providersPerReq", or in some "exports" of imported modules.`;
-      expect(() => mock.bootstrap('api', '', Module7)).toThrow(errMsg);
+      expect(() => mock.bootstrap([], 'api', '', Module7)).toThrow(errMsg);
     });
   });
 });

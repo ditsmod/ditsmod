@@ -8,7 +8,6 @@ import {
   ResolvedReflectiveProvider,
   ReflectiveInjector
 } from '@ts-stack/di';
-import * as assert from 'assert-plus';
 
 import { ModuleMetadata, defaultProvidersPerReq, ModuleType, ModuleWithOptions } from './decorators/module';
 import { ControllerDecorator } from './decorators/controller';
@@ -19,9 +18,9 @@ import { isRootModule, isController, isRoute } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
 import { Router, RouteConfig } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
-import { defaultProvidersPerApp } from './decorators/root-module';
 import { Logger } from './types/logger';
 import { Factory } from './factory';
+import { getDuplicates } from './utils/get-duplicates';
 
 /**
  * - creates `injectorPerMod` and `injectorPerReq`;
@@ -33,6 +32,7 @@ export class ModuleFactory extends Factory {
   protected routesPrefixPerApp: string;
   protected routesPrefixPerMod: string;
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
+  protected allProvidersPerApp: Provider[];
   protected opts: ModuleMetadata;
   protected exportedProvidersPerMod: Provider[] = [];
   protected exportedProvidersPerReq: Provider[] = [];
@@ -56,6 +56,7 @@ export class ModuleFactory extends Factory {
    * @param importer It's module that imported current module.
    */
   bootstrap(
+    providersPerApp: Provider[],
     routesPrefixPerApp: string,
     routesPrefixPerMod: string,
     typeOrObject: Type<any> | ModuleWithOptions<any>,
@@ -68,6 +69,7 @@ export class ModuleFactory extends Factory {
     const moduleMetadata = this.mergeMetadata(typeOrObject);
     this.opts = new ModuleMetadata();
     Object.assign(this.opts, moduleMetadata);
+    this.allProvidersPerApp = providersPerApp;
     /**
      * If we exported providers from current module,
      * this only make sense for the module that will import current module.
@@ -103,7 +105,6 @@ export class ModuleFactory extends Factory {
   }
 
   protected quickCheckImports(moduleMetadata: ModuleMetadata) {
-    assert.array(this.opts.routesPerMod, 'routesPerMod');
     if (
       !isRootModule(moduleMetadata as any) &&
       !moduleMetadata.providersPerApp.length &&
@@ -173,7 +174,13 @@ export class ModuleFactory extends Factory {
   protected importModules() {
     for (const imp of this.opts.imports) {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      const optionsMap = moduleFactory.bootstrap(this.routesPrefixPerApp, this.routesPrefixPerMod, imp, this);
+      const optionsMap = moduleFactory.bootstrap(
+        this.allProvidersPerApp,
+        this.routesPrefixPerApp,
+        this.routesPrefixPerMod,
+        imp,
+        this
+      );
       this.testOptionsMap = new Map([...this.testOptionsMap, ...optionsMap]);
     }
   }
@@ -208,14 +215,7 @@ export class ModuleFactory extends Factory {
         if (soughtProvider && soughtProvider.provide !== normProvider.provide) {
           continue;
         }
-        let foundProvider = this.findAndSetProvider(
-          provider,
-          normProvider,
-          providersPerMod,
-          providersPerReq,
-          moduleName,
-          providerName
-        );
+        let foundProvider = this.findAndSetProvider(provider, normProvider, providersPerMod, providersPerReq);
         if (!foundProvider) {
           for (const imp of imports) {
             foundProvider = this.exportProvidersToImporter(imp, false, normProvider);
@@ -240,6 +240,7 @@ export class ModuleFactory extends Factory {
     }
 
     if (isStarter) {
+      this.checkProvidersUnpredictable();
       this.opts.providersPerMod = [...this.exportedProvidersPerMod, ...this.opts.providersPerMod];
       this.opts.providersPerReq = [...this.exportedProvidersPerReq, ...this.opts.providersPerReq];
     }
@@ -249,21 +250,8 @@ export class ModuleFactory extends Factory {
     provider: Provider,
     normProvider: NormalizedProvider,
     providersPerMod: Provider[],
-    providersPerReq: Provider[],
-    moduleName: string,
-    providerName: string
+    providersPerReq: Provider[]
   ) {
-    const mergedProviders = [
-      ...defaultProvidersPerApp,
-      ...defaultProvidersPerReq,
-      { provide: NodeReqToken, useValue: 'fake' },
-      { provide: NodeResToken, useValue: 'fake' }
-    ];
-    if (hasProvider(mergedProviders)) {
-      this.log.warn(`You cannot export ${providerName} from ${moduleName}, it's providers on an Application level`);
-      return true;
-    }
-
     if (hasProvider(providersPerMod)) {
       this.exportedProvidersPerMod.push(provider);
       return true;
@@ -277,6 +265,35 @@ export class ModuleFactory extends Factory {
     function hasProvider(providers: Provider[]) {
       const normProviders = normalizeProviders(providers);
       return normProviders.some(p => p.provide === normProvider.provide);
+    }
+  }
+
+  protected checkProvidersUnpredictable() {
+    const tokensPerApp = normalizeProviders(this.allProvidersPerApp).map(np => np.provide);
+
+    const declaredTokensPerMod = normalizeProviders(this.opts.providersPerMod).map(np => np.provide);
+    const exportedTokensPerMod = normalizeProviders(this.exportedProvidersPerMod).map(np => np.provide);
+    const duplExpPerMod = getDuplicates(exportedTokensPerMod).filter(d => !declaredTokensPerMod.includes(d));
+    const tokensPerMod = [...declaredTokensPerMod, ...exportedTokensPerMod];
+
+    const declaredTokensPerReq = normalizeProviders(this.opts.providersPerReq).map(np => np.provide);
+    const exportedTokensPerReq = normalizeProviders(this.exportedProvidersPerReq).map(np => np.provide);
+    const duplExpPerReq = getDuplicates(exportedTokensPerReq).filter(d => !declaredTokensPerReq.includes(d));
+
+    const mixPerApp = tokensPerApp.filter(p => {
+      if (exportedTokensPerMod.includes(p) && !declaredTokensPerMod.includes(p)) {
+        return true;
+      }
+      return exportedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
+    });
+
+    const mixPerModOrReq = [...tokensPerMod, NodeReqToken, NodeResToken].filter(p => {
+      return exportedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
+    });
+
+    const unpredictables = [...duplExpPerMod, ...duplExpPerReq, ...mixPerApp, ...mixPerModOrReq];
+    if (unpredictables.length) {
+      this.throwErrorProvidersUnpredictable(this.moduleName, unpredictables);
     }
   }
 

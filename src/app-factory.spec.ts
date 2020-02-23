@@ -33,8 +33,8 @@ describe('AppFactory', () => {
       return super.getRawModuleMetadata(typeOrObject, isRoot);
     }
 
-    getProvidersPerApp(mod: Type<any> | ModuleWithOptions<any>) {
-      return super.getProvidersPerApp(mod);
+    exportProvidersPerApp(mod: Type<any> | ModuleWithOptions<any>) {
+      return super.exportProvidersPerApp(mod);
     }
 
     checkSecureServerOption(appModule: ModuleType) {
@@ -99,7 +99,7 @@ describe('AppFactory', () => {
     class Module5 {}
 
     it('should have 6 providersPerApp imported from Module3', () => {
-      expect(mock.getProvidersPerApp(Module4)).toEqual([
+      expect(mock.exportProvidersPerApp(Module4)).toEqual([
         Provider1,
         Provider2,
         Provider3,
@@ -110,7 +110,7 @@ describe('AppFactory', () => {
     });
 
     it('should have 7 providersPerApp imported from Module1 and Module4', () => {
-      expect(mock.getProvidersPerApp(Module5)).toEqual([
+      expect(mock.exportProvidersPerApp(Module5)).toEqual([
         Provider1,
         Provider1,
         Provider2,
@@ -132,7 +132,7 @@ describe('AppFactory', () => {
 
     it('should have 7 providersPerApp imported from Module4 and Module6', () => {
       const modWithOptions = Module6.withOptions([Provider7]);
-      expect(mock.getProvidersPerApp(modWithOptions)).toEqual([
+      expect(mock.exportProvidersPerApp(modWithOptions)).toEqual([
         Provider1,
         Provider2,
         Provider3,
@@ -147,7 +147,7 @@ describe('AppFactory', () => {
     class Module7 {}
 
     it('should have empty array of providersPerApp', () => {
-      expect(mock.getProvidersPerApp(Module7)).toEqual([]);
+      expect(mock.exportProvidersPerApp(Module7)).toEqual([]);
     });
   });
 
@@ -262,15 +262,14 @@ describe('AppFactory', () => {
     });
   });
 
-  describe('prepareProvidersPerApp()', () => {
+  describe('prepareServerOptions()', () => {
     @Controller()
     class Provider1 {}
 
     const Alias = Provider1;
+    const duplicates = [Provider1, Alias];
 
-    @Module({
-      providersPerApp: [Provider1, Alias]
-    })
+    @Module({ providersPerApp: duplicates })
     class Module0 {}
 
     @RootModule({
@@ -278,19 +277,28 @@ describe('AppFactory', () => {
     })
     class RootModule1 {}
 
-    @RootModule({
-      providersPerApp: [Provider1, Alias]
-    })
-    class RootModule2 {}
-
-    it(`should to throw an error about duplicates of providers`, () => {
-      const msg = `The duplicates in 'providersPerApp' was found: Provider1`;
+    it(`case 1`, () => {
+      const msg = `Export providers in RootModule1 was failed: Unpredictable priority was found for: Provider1. You should manually add these providers.`;
       expect(() => mock.prepareServerOptions(RootModule1)).toThrow(msg);
     });
 
-    it(`should not to throw an error about duplicates of providers`, () => {
+    @RootModule({ providersPerApp: duplicates })
+    class RootModule2 {}
+
+    it(`case 2`, () => {
       expect(() => mock.prepareServerOptions(RootModule2)).not.toThrow();
       expect(mock.opts.providersPerApp.length).toBe(defaultProvidersPerApp.length + 2);
+    });
+
+    @RootModule({
+      imports: [Module0],
+      providersPerApp: duplicates
+    })
+    class RootModule3 {}
+
+    fit(`case 3`, () => {
+      expect(() => mock.prepareServerOptions(RootModule3)).not.toThrow();
+      expect(mock.opts.providersPerApp.length).toBe(9);
     });
   });
 });

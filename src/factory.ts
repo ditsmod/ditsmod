@@ -5,6 +5,13 @@ import { ModuleWithOptions, ModuleDecorator } from './decorators/module';
 import { mergeArrays } from './utils/merge-arrays-options';
 
 export abstract class Factory {
+  protected throwErrorProvidersUnpredictable(moduleName: string, duplicates: any[]) {
+    const names = duplicates.map(p => p.name || p).join(', ');
+    throw new Error(
+      `Export providers in ${moduleName} was failed: Unpredictable priority was found for: ${names}. You should manually add these providers.`
+    );
+  }
+
   protected getModule(mod: Type<any> | ModuleWithOptions<any>) {
     return isModuleWithOptions(mod) ? mod.module : mod;
   }
