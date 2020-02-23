@@ -106,12 +106,13 @@ export class ModuleFactory extends Factory {
     assert.array(this.opts.routesPerMod, 'routesPerMod');
     if (
       !isRootModule(moduleMetadata as any) &&
+      !moduleMetadata.providersPerApp.length &&
       !moduleMetadata.controllers.length &&
       !someController(this.opts.routesPerMod) &&
       !moduleMetadata.exports.length
     ) {
       throw new Error(
-        `Import ${this.moduleName} failed: this module should have some controllers or "exports" array with elements.`
+        `Import ${this.moduleName} failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`
       );
     }
 
@@ -145,6 +146,7 @@ export class ModuleFactory extends Factory {
     (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
     metadata.imports = flatten((modMetadata.imports || []).slice()).map(resolveForwardRef);
     metadata.exports = flatten((modMetadata.exports || []).slice()).map(resolveForwardRef);
+    metadata.providersPerApp = (modMetadata.providersPerApp || []).slice();
     metadata.providersPerMod = (modMetadata.providersPerMod || []).slice();
     metadata.providersPerReq = (modMetadata.providersPerReq || []).slice();
     metadata.controllers = mergeArrays(metadata.controllers, modMetadata.controllers);

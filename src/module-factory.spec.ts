@@ -132,7 +132,7 @@ describe('ModuleFactory', () => {
 
       const moduleMetadata = mock.mergeMetadata(Module1);
       expect(() => mock.quickCheckImports(moduleMetadata)).toThrow(
-        `Import MockModule failed: this module should have some controllers or "exports" array with elements.`
+        `Import MockModule failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`
       );
     });
 
@@ -152,7 +152,7 @@ describe('ModuleFactory', () => {
 
       const moduleMetadata = mock.mergeMetadata(Module2);
       expect(() => mock.quickCheckImports(moduleMetadata)).toThrow(
-        `Import MockModule failed: this module should have some controllers or "exports" array with elements.`
+        `Import MockModule failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`
       );
     });
 
@@ -417,7 +417,7 @@ describe('ModuleFactory', () => {
       const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
       mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
       mock.injectorPerMod = injectorPerApp;
-      const errMsg = `Import Module5 failed: this module should have some controllers or "exports" array with elements.`;
+      const errMsg = `Import Module5 failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`;
       expect(() => mock.bootstrap('api', '', Module5)).toThrow(errMsg);
     });
 

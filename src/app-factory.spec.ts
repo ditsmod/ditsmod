@@ -12,7 +12,6 @@ import { Logger } from './types/logger';
 import { Server } from './types/server-options';
 import { Module, ModuleType, ModuleDecorator, ModuleWithOptions } from './decorators/module';
 import { Controller } from './decorators/controller';
-import { ModuleFactory } from './module-factory';
 
 describe('AppFactory', () => {
   class MockAppFactory extends AppFactory {
@@ -44,6 +43,14 @@ describe('AppFactory', () => {
 
     prepareServerOptions(appModule: ModuleType) {
       return super.prepareServerOptions(appModule);
+    }
+
+    bootstrapModuleFactory(appModule: ModuleType) {
+      return super.bootstrapModuleFactory(appModule);
+    }
+
+    prepareProvidersPerApp(appModule: ModuleType) {
+      return super.prepareProvidersPerApp(appModule);
     }
   }
 
@@ -220,6 +227,7 @@ describe('AppFactory', () => {
       expect(metadata).toBeUndefined();
     });
   });
+
   describe('checkSecureServerOption()', () => {
     @RootModule({
       controllers: [SomeControllerClass],
@@ -254,20 +262,35 @@ describe('AppFactory', () => {
     });
   });
 
-  describe('prepareServerOptions()', () => {
+  describe('prepareProvidersPerApp()', () => {
     @Controller()
     class Provider1 {}
 
     const Alias = Provider1;
 
+    @Module({
+      providersPerApp: [Provider1, Alias]
+    })
+    class Module0 {}
+
+    @RootModule({
+      imports: [Module0]
+    })
+    class RootModule1 {}
+
     @RootModule({
       providersPerApp: [Provider1, Alias]
     })
-    class Module9 {}
+    class RootModule2 {}
 
-    it(`should throw an error about duplicates of providers`, () => {
+    it(`should to throw an error about duplicates of providers`, () => {
       const msg = `The duplicates in 'providersPerApp' was found: Provider1`;
-      expect(() => mock.prepareServerOptions(Module9)).toThrow(msg);
+      expect(() => mock.prepareServerOptions(RootModule1)).toThrow(msg);
+    });
+
+    it(`should not to throw an error about duplicates of providers`, () => {
+      expect(() => mock.prepareServerOptions(RootModule2)).not.toThrow();
+      expect(mock.opts.providersPerApp.length).toBe(defaultProvidersPerApp.length + 2);
     });
   });
 });
