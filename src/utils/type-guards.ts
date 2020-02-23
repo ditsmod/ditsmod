@@ -1,4 +1,12 @@
-import { ClassProvider, ExistingProvider, FactoryProvider, Provider, Type, TypeProvider, ValueProvider } from '@ts-stack/di';
+import {
+  ClassProvider,
+  ExistingProvider,
+  FactoryProvider,
+  Provider,
+  Type,
+  TypeProvider,
+  ValueProvider
+} from '@ts-stack/di';
 
 import { normalizeProviders } from './ng-utils';
 import { ModuleDecorator, ModuleWithOptions } from '../decorators/module';
@@ -20,11 +28,13 @@ export function isModuleWithOptions(
   return (impOrExp as ModuleWithOptions<any>).module !== undefined;
 }
 
-export function isRootModule(moduleMetadata: RootModuleDecorator): moduleMetadata is RootModuleDecorator {
+export function isRootModule(
+  moduleMetadata: RootModuleDecorator | ModuleDecorator
+): moduleMetadata is RootModuleDecorator {
   return (moduleMetadata as any)?.ngMetadataName == 'RootModule';
 }
 
-export function isModule(moduleMetadata: ModuleDecorator): moduleMetadata is ModuleDecorator {
+export function isModule(moduleMetadata: RootModuleDecorator | ModuleDecorator): moduleMetadata is ModuleDecorator {
   return (moduleMetadata as any)?.ngMetadataName == 'Module';
 }
 
