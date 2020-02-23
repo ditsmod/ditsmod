@@ -14,4 +14,8 @@ describe('getDuplicates()', () => {
     const arr: any[] = [C1, C3, C2, C3, C4, C3];
     expect(getDuplicates(arr)).toEqual([C3]);
   });
+
+  it('should return empty array', () => {
+    expect(getDuplicates(undefined)).toEqual([]);
+  });
 });
