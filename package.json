@@ -3,7 +3,7 @@
   "name": "@ts-stack/mod",
   "homepage": "https://github.com/ts-stack/mod",
   "description": "REST framework",
-  "version": "1.0.0-beta.4",
+  "version": "1.0.0-beta.5",
   "repository": {
     "type": "git",
     "url": "git://github.com/ts-stack/mod.git"
