@@ -36,6 +36,8 @@ export class ModuleFactory extends Factory {
   protected opts: ModuleMetadata;
   protected exportedProvidersPerMod: Provider[] = [];
   protected exportedProvidersPerReq: Provider[] = [];
+  protected allExportedProvidersPerMod: Provider[] = [];
+  protected allExportedProvidersPerReq: Provider[] = [];
   /**
    * Injector per the module.
    */
@@ -81,6 +83,10 @@ export class ModuleFactory extends Factory {
       this.exportProvidersToImporter.call(importer, typeOrObject, true);
     }
     this.importModules();
+
+    this.opts.providersPerMod = [...this.allExportedProvidersPerMod, ...this.opts.providersPerMod];
+    this.opts.providersPerReq = [...this.allExportedProvidersPerReq, ...this.opts.providersPerReq];
+
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
     this.injectorPerMod.resolveAndInstantiate(mod);
     this.opts.providersPerReq.unshift(...defaultProvidersPerReq);
@@ -242,8 +248,8 @@ export class ModuleFactory extends Factory {
 
     if (isStarter) {
       this.checkProvidersUnpredictable();
-      this.opts.providersPerMod = [...this.exportedProvidersPerMod, ...this.opts.providersPerMod];
-      this.opts.providersPerReq = [...this.exportedProvidersPerReq, ...this.opts.providersPerReq];
+      this.allExportedProvidersPerMod.push(...this.exportedProvidersPerMod);
+      this.allExportedProvidersPerReq.push(...this.exportedProvidersPerReq);
     }
   }
 
@@ -288,7 +294,7 @@ export class ModuleFactory extends Factory {
       return exportedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
     });
 
-    const mixPerModOrReq = [...tokensPerMod, NodeReqToken, NodeResToken].filter(p => {
+    const mixPerModOrReq = [...tokensPerMod, ...defaultProvidersPerReq, NodeReqToken, NodeResToken].filter(p => {
       return exportedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
     });
 

@@ -17,6 +17,9 @@ import { Router, RouteConfig } from './types/router';
 import { defaultProvidersPerApp, RootModule } from './decorators/root-module';
 import { Column } from './modules/orm/decorators/column';
 import { Logger } from './types/logger';
+import { AppFactory } from './app-factory';
+import { NodeReqToken } from './types/injection-tokens';
+import { Request } from './request';
 
 describe('ModuleFactory', () => {
   @Injectable()
@@ -63,6 +66,16 @@ describe('ModuleFactory', () => {
     }
   }
 
+  class MockAppFactory extends AppFactory {
+    prepareServerOptions(appModule: ModuleType) {
+      return super.prepareServerOptions(appModule);
+    }
+
+    bootstrapModuleFactory(appModule: ModuleType) {
+      return super.bootstrapModuleFactory(appModule);
+    }
+  }
+
   class MyLogger extends Logger {
     debug = (...args: any[]): any => {
       console.log(`debug:\n ${'*'.repeat(50)}\n`, ...args);
@@ -72,8 +85,11 @@ describe('ModuleFactory', () => {
   const log = new MyLogger();
 
   let mock: MockModuleFactory;
+  let mockApp: MockAppFactory;
+
   beforeEach(() => {
     mock = new MockModuleFactory(null, null, log);
+    mockApp = new MockAppFactory();
   });
 
   class ClassWithoutDecorators {}
@@ -314,135 +330,317 @@ describe('ModuleFactory', () => {
     class Provider8 {}
     class Provider9 {}
 
-    @Module({
-      exports: [Provider0],
-      providersPerMod: [Provider0]
-    })
-    class Module0 {}
+    describe(`exporting providers order`, () => {
+      @Module({
+        exports: [Provider0],
+        providersPerMod: [Provider0]
+      })
+      class Module0 {}
 
-    @Module({
-      imports: [Module0],
-      exports: [Module0, Provider1, Provider2, Provider3],
-      providersPerMod: [Provider1, Provider2, Provider3]
-    })
-    class Module1 {}
+      @Module({
+        imports: [Module0],
+        exports: [Module0, Provider1, Provider2, Provider3],
+        providersPerMod: [Provider1, Provider2, Provider3]
+      })
+      class Module1 {}
 
-    @Module({
-      imports: [Module1],
-      exports: [Provider1, Provider3, Provider5, Provider8],
-      providersPerMod: [Provider4, Provider5, Provider6],
-      providersPerReq: [Provider7, Provider8]
-    })
-    class Module2 {}
+      @Module({
+        imports: [Module1],
+        exports: [Provider1, Provider3, Provider5, Provider8],
+        providersPerMod: [Provider4, Provider5, Provider6],
+        providersPerReq: [Provider7, Provider8]
+      })
+      class Module2 {}
 
-    @Controller()
-    class Ctrl {
-      @Route('GET')
-      method() {}
-    }
+      @Controller()
+      class Ctrl {
+        @Route('GET')
+        method() {}
+      }
 
-    @Module({
-      imports: [Module2],
-      exports: [Module2],
-      providersPerReq: [Provider9],
-      controllers: [Ctrl]
-    })
-    class Module3 {}
+      @Module({
+        imports: [Module2],
+        exports: [Module2],
+        providersPerReq: [Provider9],
+        controllers: [Ctrl]
+      })
+      class Module3 {}
 
-    it(`case 1`, () => {
-      const injectorPerApp = ReflectiveInjector.resolveAndCreate([
-        ...defaultProvidersPerApp,
-        { provide: Logger, useClass: MyLogger }
-      ]);
+      it(`case 1`, () => {
+        const injectorPerApp = ReflectiveInjector.resolveAndCreate([
+          ...defaultProvidersPerApp,
+          { provide: Logger, useClass: MyLogger }
+        ]);
 
-      mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
-      mock.injectorPerMod = injectorPerApp;
-      mock.bootstrap([], 'api', '', Module3);
-      expect(mock.routesPrefixPerApp).toBe('api');
+        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+        mock.injectorPerMod = injectorPerApp;
+        mock.bootstrap([], 'api', '', Module3);
+        expect(mock.routesPrefixPerApp).toBe('api');
 
-      const mod0 = mock.testOptionsMap.get(Module0);
-      expect(mod0.providersPerMod).toEqual([Provider0]);
-      expect(mod0.providersPerReq).toEqual(defaultProvidersPerReq);
-      expect((mod0 as any).ngMetadataName).toBe('Module');
+        const mod0 = mock.testOptionsMap.get(Module0);
+        expect(mod0.providersPerMod).toEqual([Provider0]);
+        expect(mod0.providersPerReq).toEqual(defaultProvidersPerReq);
+        expect((mod0 as any).ngMetadataName).toBe('Module');
 
-      const mod1 = mock.testOptionsMap.get(Module1);
-      expect(mod1.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3]);
-      expect(mod1.providersPerReq).toEqual(defaultProvidersPerReq);
-      expect((mod1 as any).ngMetadataName).toBe('Module');
+        const mod1 = mock.testOptionsMap.get(Module1);
+        expect(mod1.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3]);
+        expect(mod1.providersPerReq).toEqual(defaultProvidersPerReq);
+        expect((mod1 as any).ngMetadataName).toBe('Module');
 
-      const mod2 = mock.testOptionsMap.get(Module2);
-      expect(mod2.providersPerMod).toEqual([
-        Provider0,
-        Provider1,
-        Provider2,
-        Provider3,
-        Provider4,
-        Provider5,
-        Provider6
-      ]);
-      expect(mod2.providersPerReq).toEqual([...defaultProvidersPerReq, Provider7, Provider8]);
-      expect((mod2 as any).ngMetadataName).toBe('Module');
+        const mod2 = mock.testOptionsMap.get(Module2);
+        expect(mod2.providersPerMod).toEqual([
+          Provider0,
+          Provider1,
+          Provider2,
+          Provider3,
+          Provider4,
+          Provider5,
+          Provider6
+        ]);
+        expect(mod2.providersPerReq).toEqual([...defaultProvidersPerReq, Provider7, Provider8]);
+        expect((mod2 as any).ngMetadataName).toBe('Module');
 
-      const mod3 = mock.testOptionsMap.get(Module3);
-      expect(mod3.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
-      expect(mod3.providersPerReq).toEqual([Ctrl, ...defaultProvidersPerReq, Provider8, Provider9]);
-      expect(mod3.controllers).toEqual([Ctrl]);
-      expect((mod3 as any).ngMetadataName).toBe('Module');
+        const mod3 = mock.testOptionsMap.get(Module3);
+        expect(mod3.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
+        expect(mod3.providersPerReq).toEqual([Ctrl, ...defaultProvidersPerReq, Provider8, Provider9]);
+        expect(mod3.controllers).toEqual([Ctrl]);
+        expect((mod3 as any).ngMetadataName).toBe('Module');
+      });
+
+      @RootModule({
+        imports: [Module3]
+      })
+      class Module4 {}
+
+      it(`case 2`, () => {
+        const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
+        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+        mock.injectorPerMod = injectorPerApp;
+        mock.bootstrap([], 'some', 'other', Module4);
+
+        expect(mock.routesPrefixPerApp).toBe('some');
+        expect(mock.routesPrefixPerMod).toBe('other');
+        expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
+        expect(mock.opts.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
+        expect(mock.opts.providersPerReq).toEqual([...defaultProvidersPerReq, Provider8]);
+        expect((mock.opts as any).ngMetadataName).toBe('RootModule');
+      });
+
+      @Module({
+        imports: [Module3]
+      })
+      class Module5 {}
+
+      it(`should throw an error regarding the provider's absence`, () => {
+        const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
+        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+        mock.injectorPerMod = injectorPerApp;
+        const errMsg = `Import Module5 failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`;
+        expect(() => mock.bootstrap([], 'api', '', Module5)).toThrow(errMsg);
+      });
+
+      @Module({
+        exports: [Provider1, Provider2, Provider3],
+        providersPerMod: [Provider1, Provider3]
+      })
+      class Module6 {}
+
+      @Module({
+        imports: [Module6]
+      })
+      class Module7 {}
+
+      it(`should throw an error about not proper provider exports`, () => {
+        const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
+        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+        mock.injectorPerMod = injectorPerApp;
+        const errMsg =
+          `Exported Provider2 from Module6 ` +
+          `should includes in "providersPerMod" or "providersPerReq", ` +
+          `or in some "exports" of imported modules. ` +
+          `Tip: "providersPerApp" no need exports, they are automatically exported.`;
+        expect(() => mock.bootstrap([], 'api', '', Module7)).toThrow(errMsg);
+      });
     });
 
-    @RootModule({
-      imports: [Module3]
-    })
-    class Module4 {}
+    describe(`unpredictable priority`, () => {
+      describe(`per a module`, () => {
+        @Module({
+          exports: [Provider1],
+          providersPerMod: [{ provide: Provider1, useClass: Provider1 }, Provider2]
+        })
+        class Module0 {}
 
-    it(`case 2`, () => {
-      const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
-      mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
-      mock.injectorPerMod = injectorPerApp;
-      mock.bootstrap([], 'some', 'other', Module4);
+        @Module({
+          exports: [Provider1, Provider2],
+          providersPerMod: [Provider1, Provider2]
+        })
+        class Module1 {}
 
-      expect(mock.routesPrefixPerApp).toBe('some');
-      expect(mock.routesPrefixPerMod).toBe('other');
-      expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
-      expect(mock.opts.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
-      expect(mock.opts.providersPerReq).toEqual([...defaultProvidersPerReq, Provider8]);
-      expect((mock.opts as any).ngMetadataName).toBe('RootModule');
-    });
+        @Module({
+          imports: [Module1],
+          exports: [Module1, Provider2, Provider3],
+          providersPerMod: [Provider2, Provider3]
+        })
+        class Module2 {}
 
-    @Module({
-      imports: [Module3]
-    })
-    class Module5 {}
+        it(`exporting duplicates of Provider2`, () => {
+          @RootModule({
+            imports: [Module2]
+          })
+          class RootModule1 {}
 
-    it(`should throw an error regarding the provider's absence`, () => {
-      const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
-      mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
-      mock.injectorPerMod = injectorPerApp;
-      const errMsg = `Import Module5 failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`;
-      expect(() => mock.bootstrap([], 'api', '', Module5)).toThrow(errMsg);
-    });
+          const msg =
+            `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+            `Provider2. You should manually add these providers.`;
+          expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
+        });
 
-    @Module({
-      exports: [Provider1, Provider2, Provider3],
-      providersPerMod: [Provider1, Provider3]
-    })
-    class Module6 {}
+        it(`exporting duplicates of Provider2, but declared in providersPerMod of root module`, () => {
+          @RootModule({
+            imports: [Module2],
+            providersPerMod: [Provider2]
+          })
+          class RootModule1 {}
 
-    @Module({
-      imports: [Module6]
-    })
-    class Module7 {}
+          expect(() => mockApp.prepareServerOptions(RootModule1)).not.toThrow();
+        });
 
-    it(`should throw an error about not proper provider exports`, () => {
-      const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
-      mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
-      mock.injectorPerMod = injectorPerApp;
-      const errMsg =
-        `Exported Provider2 from Module6 ` +
-        `should includes in "providersPerMod" or "providersPerReq", ` +
-        `or in some "exports" of imported modules. ` +
-        `Tip: "providersPerApp" no need exports, they are automatically exported.`;
-      expect(() => mock.bootstrap([], 'api', '', Module7)).toThrow(errMsg);
+        it(`exporting duplicates of Provider1 from Module1 and Module2`, () => {
+          @RootModule({
+            imports: [Module0, Module1]
+          })
+          class RootModule1 {}
+
+          const msg =
+            `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+            `Provider1. You should manually add these providers.`;
+          expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
+        });
+
+        it(`exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerMod of root module`, () => {
+          @RootModule({
+            imports: [Module0, Module1],
+            providersPerMod: [Provider1]
+          })
+          class RootModule1 {}
+
+          expect(() => mockApp.prepareServerOptions(RootModule1)).not.toThrow();
+        });
+      });
+
+      describe(`per a req`, () => {
+        @Module({
+          exports: [Provider1],
+          providersPerReq: [{ provide: Provider1, useClass: Provider1 }, Provider2]
+        })
+        class Module0 {}
+
+        @Module({
+          exports: [Provider1, Provider2],
+          providersPerReq: [Provider1, Provider2]
+        })
+        class Module1 {}
+
+        @Module({
+          imports: [Module1],
+          exports: [Module1, Provider2, Provider3],
+          providersPerReq: [Provider2, Provider3]
+        })
+        class Module2 {}
+
+        it(`exporting duplicates of Provider2`, () => {
+          @RootModule({
+            imports: [Module2]
+          })
+          class RootModule1 {}
+
+          const msg =
+            `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+            `Provider2. You should manually add these providers.`;
+          expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
+        });
+
+        it(`exporting duplicates of Provider2, but declared in providersPerReq of root module`, () => {
+          @RootModule({
+            imports: [Module2],
+            providersPerReq: [Provider2]
+          })
+          class RootModule1 {}
+
+          expect(() => mockApp.prepareServerOptions(RootModule1)).not.toThrow();
+        });
+
+        it(`exporting duplicates of Provider1 from Module1 and Module2`, () => {
+          @RootModule({
+            imports: [Module0, Module1]
+          })
+          class RootModule1 {}
+
+          const msg =
+            `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+            `Provider1. You should manually add these providers.`;
+          expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
+        });
+
+        it(`exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerReq of root module`, () => {
+          @RootModule({
+            imports: [Module0, Module1],
+            providersPerReq: [Provider1]
+          })
+          class RootModule1 {}
+
+          expect(() => mockApp.prepareServerOptions(RootModule1)).not.toThrow();
+        });
+      });
+
+      describe(`mix per app, per mod or per req`, () => {
+        it(`case 1`, () => {
+          @Module({
+            exports: [Provider0, Provider1, Request, { provide: NodeReqToken, useValue: '' }, Provider3],
+            providersPerMod: [Provider0],
+            providersPerReq: [
+              { provide: Provider1, useClass: Provider1 },
+              Provider2,
+              { provide: NodeReqToken, useValue: '' },
+              Provider3,
+              Request
+            ]
+          })
+          class Module0 {}
+
+          @RootModule({
+            imports: [Module0],
+            providersPerApp: [Provider0],
+            providersPerMod: [Provider1],
+            providersPerReq: []
+          })
+          class RootModule1 {}
+
+          const msg =
+            `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+            `Provider0, Provider1, Request, InjectionToken NodeRequest. You should manually add these providers.`;
+          expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
+        });
+
+        it(`case 2`, () => {
+          @Module({
+            exports: [Provider0, Provider1],
+            providersPerApp: [Router]
+          })
+          class Module0 {}
+
+          @RootModule({
+            imports: [Module0]
+          })
+          class RootModule1 {}
+
+          const msg =
+            `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+            `Router. You should manually add these providers.`;
+          expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
+        });
+      });
     });
   });
 });

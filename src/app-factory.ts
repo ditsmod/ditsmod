@@ -4,7 +4,7 @@ import * as http2 from 'http2';
 import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ReflectiveInjector, reflector, Provider, Type, resolveForwardRef } from '@ts-stack/di';
 
-import { ApplicationMetadata, RootModuleDecorator } from './decorators/root-module';
+import { ApplicationMetadata, RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
 import { RequestListener } from './types/types';
 import { isHttp2SecureServerOptions, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
@@ -61,6 +61,7 @@ export class AppFactory extends Factory {
     this.mergeMetadata(appModule);
     this.checkSecureServerOption(appModule);
     this.prepareProvidersPerApp(appModule);
+    this.opts.providersPerApp.unshift(...defaultProvidersPerApp);
     this.initProvidersPerApp();
     this.log.trace('Setting server name:', this.opts.serverName);
     this.log.trace('Setting listen options:', this.opts.listenOptions);
@@ -76,7 +77,9 @@ export class AppFactory extends Factory {
 
     const declaredTokensPerApp = normalizeProviders(this.opts.providersPerApp).map(np => np.provide);
     const exportedTokensPerApp = normalizeProviders(exportedProvidersPerApp).map(np => np.provide);
-    const duplExpPerApp = getDuplicates(exportedTokensPerApp).filter(d => !declaredTokensPerApp.includes(d));
+    const defaultTokens = normalizeProviders([...defaultProvidersPerApp]).map(np => np.provide);
+    const mergedTokens = [...exportedTokensPerApp, ...defaultTokens];
+    const duplExpPerApp = getDuplicates(mergedTokens).filter(d => !declaredTokensPerApp.includes(d));
     if (duplExpPerApp.length) {
       this.throwErrorProvidersUnpredictable(appModule.name, duplExpPerApp);
     }
