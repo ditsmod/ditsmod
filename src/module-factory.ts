@@ -229,7 +229,8 @@ export class ModuleFactory extends Factory {
           throw new Error(
             `Exported ${providerName} from ${moduleName} ` +
               `should includes in "providersPerMod" or "providersPerReq", ` +
-              `or in some "exports" of imported modules.`
+              `or in some "exports" of imported modules. ` +
+              `Tip: "providersPerApp" no need exports, they are automatically exported.`
           );
         }
 

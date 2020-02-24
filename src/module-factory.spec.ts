@@ -29,6 +29,7 @@ describe('ModuleFactory', () => {
     router: Router;
     injectorPerMod: ReflectiveInjector;
     testOptionsMap = new Map<Type<any>, ModuleMetadata>();
+    allProvidersPerApp: Provider[];
 
     initProvidersPerReq() {
       return super.initProvidersPerReq();
@@ -436,7 +437,11 @@ describe('ModuleFactory', () => {
       const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
       mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
       mock.injectorPerMod = injectorPerApp;
-      const errMsg = `Exported Provider2 from Module6 should includes in "providersPerMod" or "providersPerReq", or in some "exports" of imported modules.`;
+      const errMsg =
+        `Exported Provider2 from Module6 ` +
+        `should includes in "providersPerMod" or "providersPerReq", ` +
+        `or in some "exports" of imported modules. ` +
+        `Tip: "providersPerApp" no need exports, they are automatically exported.`;
       expect(() => mock.bootstrap([], 'api', '', Module7)).toThrow(errMsg);
     });
   });
