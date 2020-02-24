@@ -40,7 +40,7 @@ export class ApplicationMetadata {
   /**
    * Providers per the `Application`.
    */
-  providersPerApp: Provider[] = defaultProvidersPerApp.slice();
+  providersPerApp: Provider[] = [];
   routesPrefixPerApp: string = '';
   rootModules: RootModules[] = [];
 }

@@ -162,7 +162,7 @@ describe('AppFactory', () => {
       expect(mock.opts.httpModule).toBeDefined();
       expect(mock.opts.routesPrefixPerApp).toBe('');
       expect(mock.opts.rootModules).toEqual([]);
-      expect(mock.opts.providersPerApp).toEqual(defaultProvidersPerApp);
+      expect(mock.opts.providersPerApp).toEqual([]);
       expect(mock.opts.listenOptions).toBeDefined();
       // Ignore controllers - it's intended behavior.
       expect((mock.opts as any).routesPerMod).toBe(undefined);
@@ -197,7 +197,7 @@ describe('AppFactory', () => {
       expect(mock.opts.httpModule).toBeDefined();
       expect(mock.opts.routesPrefixPerApp).toBe('api');
       expect(mock.opts.rootModules).toEqual(rootModules);
-      expect(mock.opts.providersPerApp).toEqual([...defaultProvidersPerApp, ClassWithoutDecorators]);
+      expect(mock.opts.providersPerApp).toEqual([ClassWithoutDecorators]);
       expect(mock.opts.listenOptions).toBeDefined();
       // Ignore controllers - it's intended behavior.
       expect((mock.opts as any).routesPerMod).toBe(undefined);
@@ -289,7 +289,7 @@ describe('AppFactory', () => {
     it(`case 2`, () => {
       mock.mergeMetadata(RootModule2);
       expect(() => mock.prepareProvidersPerApp(RootModule2)).not.toThrow();
-      expect(mock.opts.providersPerApp.length).toBe(defaultProvidersPerApp.length + 2);
+      expect(mock.opts.providersPerApp.length).toBe(2);
     });
 
     @RootModule({
@@ -301,7 +301,7 @@ describe('AppFactory', () => {
     it(`case 3`, () => {
       mock.mergeMetadata(RootModule3);
       expect(() => mock.prepareProvidersPerApp(RootModule3)).not.toThrow();
-      expect(mock.opts.providersPerApp.length).toBe(defaultProvidersPerApp.length + 4);
+      expect(mock.opts.providersPerApp.length).toBe(4);
     });
 
     @RootModule({
@@ -312,7 +312,6 @@ describe('AppFactory', () => {
     it(`case 4`, () => {
       mock.mergeMetadata(RootModule4);
       expect(() => mock.prepareProvidersPerApp(RootModule4)).not.toThrow();
-      expect(mock.opts.providersPerApp.length).toBe(defaultProvidersPerApp.length);
     });
   });
 });
