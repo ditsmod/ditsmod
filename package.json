@@ -3,7 +3,7 @@
   "name": "@ts-stack/mod",
   "homepage": "https://github.com/ts-stack/mod",
   "description": "REST framework",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "repository": {
     "type": "git",
     "url": "git://github.com/ts-stack/mod.git"
@@ -35,7 +35,7 @@
     "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.1.0",
-    "typescript": "3.7.5"
+    "typescript": "^3.7.5"
   },
   "peerDependencies": {
     "@ts-stack/di": "^1.0.0"
