@@ -20,10 +20,6 @@ export abstract class ProvidersMetadata {
    */
   providersPerApp: Provider[] = [];
   /**
-   * Providers per a root of modules.
-   */
-  providersPerRoot: Provider[] = [];
-  /**
    * Providers per a module.
    */
   providersPerMod: Provider[] = [];

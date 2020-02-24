@@ -5,9 +5,9 @@ import * as http2 from 'http2';
 import { ReflectiveInjector, Type, Provider } from '@ts-stack/di';
 
 import { AppFactory } from './app-factory';
-import { RootModule, ApplicationMetadata, defaultProvidersPerApp } from './decorators/root-module';
+import { RootModule, ApplicationMetadata } from './decorators/root-module';
 import { PreRequest } from './services/pre-request';
-import { Router, RootModules } from './types/router';
+import { Router, RoutesPrefixPerMod } from './types/router';
 import { Logger } from './types/logger';
 import { Server } from './types/server-options';
 import { Module, ModuleType, ModuleDecorator, ModuleWithOptions } from './decorators/module';
@@ -161,7 +161,7 @@ describe('AppFactory', () => {
       expect(mock.opts.serverOptions).toEqual({});
       expect(mock.opts.httpModule).toBeDefined();
       expect(mock.opts.routesPrefixPerApp).toBe('');
-      expect(mock.opts.rootModules).toEqual([]);
+      expect(mock.opts.routesPrefixPerMod).toEqual([]);
       expect(mock.opts.providersPerApp).toEqual([]);
       expect(mock.opts.listenOptions).toBeDefined();
       // Ignore controllers - it's intended behavior.
@@ -176,16 +176,15 @@ describe('AppFactory', () => {
     it('should merge default metatada with ClassWithDecorators metadata', () => {
       class SomeModule {}
       class OtherModule {}
-      class SomeEntity {}
 
-      const rootModules: RootModules[] = [
-        { prefix: '', rootModule: SomeModule },
-        { prefix: '', rootModule: OtherModule }
+      const routesPrefixPerMod: RoutesPrefixPerMod[] = [
+        { prefix: '', module: SomeModule },
+        { prefix: '', module: OtherModule }
       ];
 
       @RootModule({
         routesPrefixPerApp: 'api',
-        rootModules,
+        routesPrefixPerMod,
         controllers: [SomeControllerClass],
         providersPerApp: [ClassWithoutDecorators]
       })
@@ -196,7 +195,7 @@ describe('AppFactory', () => {
       expect(mock.opts.serverOptions).toEqual({});
       expect(mock.opts.httpModule).toBeDefined();
       expect(mock.opts.routesPrefixPerApp).toBe('api');
-      expect(mock.opts.rootModules).toEqual(rootModules);
+      expect(mock.opts.routesPrefixPerMod).toEqual(routesPrefixPerMod);
       expect(mock.opts.providersPerApp).toEqual([ClassWithoutDecorators]);
       expect(mock.opts.listenOptions).toBeDefined();
       // Ignore controllers - it's intended behavior.

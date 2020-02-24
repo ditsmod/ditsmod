@@ -70,7 +70,7 @@ export class AppFactory extends Factory {
 
   protected prepareProvidersPerApp(appModule: ModuleType) {
     const exportedProvidersPerApp: Provider[] = [];
-    const modules = this.opts.rootModules.map(c => c.rootModule);
+    const modules = this.opts.routesPrefixPerMod.map(c => c.module);
     [appModule, ...modules].forEach(mod => {
       exportedProvidersPerApp.push(...this.exportProvidersPerApp(mod));
     });
@@ -100,17 +100,17 @@ export class AppFactory extends Factory {
   }
 
   protected bootstrapModuleFactory(appModule: ModuleType) {
-    const rootModulePrefix = this.opts.rootModules.find(config => config.rootModule === appModule)?.prefix || '';
+    const rootModulePrefix = this.opts.routesPrefixPerMod.find(config => config.module === appModule)?.prefix || '';
     const importer = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
     importer.bootstrap(this.opts.providersPerApp, this.opts.routesPrefixPerApp, rootModulePrefix, appModule);
 
-    this.opts.rootModules.forEach(config => {
+    this.opts.routesPrefixPerMod.forEach(config => {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       moduleFactory.bootstrap(
         this.opts.providersPerApp,
         this.opts.routesPrefixPerApp,
         config.prefix,
-        config.rootModule,
+        config.module,
         importer
       );
     });
@@ -128,7 +128,7 @@ export class AppFactory extends Factory {
     const providersPerApp = mergeArrays(this.opts.providersPerApp, modMetadata.providersPerApp);
     pickProperties(this.opts, modMetadata);
     this.opts.providersPerApp = providersPerApp;
-    this.opts.rootModules = this.opts.rootModules.slice();
+    this.opts.routesPrefixPerMod = this.opts.routesPrefixPerMod.slice();
   }
 
   /**
