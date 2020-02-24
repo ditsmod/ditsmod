@@ -8,7 +8,7 @@ export abstract class Factory {
   protected throwErrorProvidersUnpredictable(moduleName: string, duplicates: any[]) {
     const names = duplicates.map(p => p.name || p).join(', ');
     throw new Error(
-      `Export providers in ${moduleName} was failed: Unpredictable priority was found for: ${names}. You should manually add these providers.`
+      `Exporting providers in ${moduleName} was failed: Unpredictable priority was found for: ${names}. You should manually add these providers.`
     );
   }
 

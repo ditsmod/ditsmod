@@ -262,7 +262,7 @@ describe('AppFactory', () => {
     });
   });
 
-  describe('prepareServerOptions()', () => {
+  describe('prepareProvidersPerApp()', () => {
     @Controller()
     class Provider1 {}
 
@@ -278,15 +278,17 @@ describe('AppFactory', () => {
     class RootModule1 {}
 
     it(`case 1`, () => {
-      const msg = `Export providers in RootModule1 was failed: Unpredictable priority was found for: Provider1. You should manually add these providers.`;
-      expect(() => mock.prepareServerOptions(RootModule1)).toThrow(msg);
+      mock.mergeMetadata(RootModule1);
+      const msg = `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: Provider1. You should manually add these providers.`;
+      expect(() => mock.prepareProvidersPerApp(RootModule1)).toThrow(msg);
     });
 
     @RootModule({ providersPerApp: duplicates })
     class RootModule2 {}
 
     it(`case 2`, () => {
-      expect(() => mock.prepareServerOptions(RootModule2)).not.toThrow();
+      mock.mergeMetadata(RootModule2);
+      expect(() => mock.prepareProvidersPerApp(RootModule2)).not.toThrow();
       expect(mock.opts.providersPerApp.length).toBe(defaultProvidersPerApp.length + 2);
     });
 
@@ -296,9 +298,21 @@ describe('AppFactory', () => {
     })
     class RootModule3 {}
 
-    fit(`case 3`, () => {
-      expect(() => mock.prepareServerOptions(RootModule3)).not.toThrow();
-      expect(mock.opts.providersPerApp.length).toBe(9);
+    it(`case 3`, () => {
+      mock.mergeMetadata(RootModule3);
+      expect(() => mock.prepareProvidersPerApp(RootModule3)).not.toThrow();
+      expect(mock.opts.providersPerApp.length).toBe(defaultProvidersPerApp.length + 4);
+    });
+
+    @RootModule({
+      imports: []
+    })
+    class RootModule4 {}
+
+    it(`case 4`, () => {
+      mock.mergeMetadata(RootModule4);
+      expect(() => mock.prepareProvidersPerApp(RootModule4)).not.toThrow();
+      expect(mock.opts.providersPerApp.length).toBe(defaultProvidersPerApp.length);
     });
   });
 });
