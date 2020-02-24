@@ -85,11 +85,14 @@ export class ModuleFactory extends Factory {
     this.importModules();
 
     this.opts.providersPerMod = [...this.allExportedProvidersPerMod, ...this.opts.providersPerMod];
-    this.opts.providersPerReq = [...this.allExportedProvidersPerReq, ...this.opts.providersPerReq];
+    this.opts.providersPerReq = [
+      ...defaultProvidersPerReq,
+      ...this.allExportedProvidersPerReq,
+      ...this.opts.providersPerReq
+    ];
 
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
     this.injectorPerMod.resolveAndInstantiate(mod);
-    this.opts.providersPerReq.unshift(...defaultProvidersPerReq);
     this.initProvidersPerReq();
     this.quickCheckImports(moduleMetadata);
     this.checkRoutePath(this.routesPrefixPerApp);
@@ -294,7 +297,9 @@ export class ModuleFactory extends Factory {
       return exportedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
     });
 
-    const mixPerModOrReq = [...tokensPerMod, ...defaultProvidersPerReq, NodeReqToken, NodeResToken].filter(p => {
+    const defaultTokens = normalizeProviders([...defaultProvidersPerReq]).map(np => np.provide);
+    const mergedTokens = [...defaultTokens, ...tokensPerMod, NodeReqToken, NodeResToken];
+    const mixPerModOrReq = mergedTokens.filter(p => {
       return exportedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
     });
 

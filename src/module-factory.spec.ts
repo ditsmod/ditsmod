@@ -597,7 +597,13 @@ describe('ModuleFactory', () => {
       describe(`mix per app, per mod or per req`, () => {
         it(`case 1`, () => {
           @Module({
-            exports: [Provider0, Provider1, Request, { provide: NodeReqToken, useValue: '' }, Provider3],
+            exports: [
+              Provider0,
+              Provider1,
+              { provide: Request, useClass: Request },
+              { provide: NodeReqToken, useValue: '' },
+              Provider3
+            ],
             providersPerMod: [Provider0],
             providersPerReq: [
               { provide: Provider1, useClass: Provider1 },
@@ -619,7 +625,7 @@ describe('ModuleFactory', () => {
 
           const msg =
             `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
-            `Provider0, Provider1, Request, InjectionToken NodeRequest. You should manually add these providers.`;
+            `Provider0, Request, Provider1, InjectionToken NodeRequest. You should manually add these providers.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
 
