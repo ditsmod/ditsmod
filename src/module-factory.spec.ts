@@ -472,13 +472,16 @@ describe('ModuleFactory', () => {
         class Module0 {}
 
         @Module({
-          exports: [Provider1, Provider2],
-          providersPerMod: [Provider1, Provider2]
+          exports: [Provider1, Provider2]
         })
-        class Module1 {}
+        class Module1 {
+          static withOptions() {
+            return { module: Module1, providersPerMod: [Provider1, Provider2] };
+          }
+        }
 
         @Module({
-          imports: [Module1],
+          imports: [Module1.withOptions()],
           exports: [Module1, Provider2, Provider3],
           providersPerMod: [Provider2, Provider3]
         })

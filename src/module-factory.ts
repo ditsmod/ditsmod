@@ -212,7 +212,7 @@ export class ModuleFactory extends Factory {
       const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType);
       if (moduleMetadata) {
         const reexportedModule = moduleOrProvider as ModuleType;
-        if (imports.includes(reexportedModule)) {
+        if (imports.map(this.getModule).includes(reexportedModule)) {
           this.exportProvidersToImporter(reexportedModule, false, soughtProvider);
         } else {
           throw new Error(`Reexports a module failed: cannot find ${reexportedModule.name} in "imports" array`);
