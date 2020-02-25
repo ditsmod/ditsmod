@@ -9,6 +9,15 @@
 import { flatten } from './ng-utils';
 
 describe('flatten', () => {
+  it('should convert undefined to empty array', () => {
+    expect(flatten(undefined)).toEqual([]);
+  });
+
+  it('should clone an array', () => {
+    const arr: any[] = [1];
+    expect(flatten(arr)).not.toBe(arr);
+  });
+
   it('should flatten an empty array', () => {
     expect(flatten([])).toEqual([]);
   });

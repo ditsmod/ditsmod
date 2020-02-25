@@ -13,6 +13,7 @@ import { format } from 'util';
  * Flattens an array.
  */
 export function flatten(list: any[], dst?: any[]): any[] {
+  list = (list || []).slice();
   if (dst === undefined) {
     dst = list;
   }
