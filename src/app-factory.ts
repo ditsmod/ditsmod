@@ -91,10 +91,10 @@ export class AppFactory extends Factory {
     const modMetadata = this.getRawModuleMetadata(typeOrObject) as RootModuleDecorator | ModuleDecorator;
     this.checkModuleMetadata(modMetadata, mod.name);
 
-    const imports = flatten((modMetadata.imports || []).slice()).map(resolveForwardRef);
+    const imports = flatten(modMetadata.imports).map(resolveForwardRef);
     const providersPerApp: Provider[] = [];
     imports.forEach(imp => providersPerApp.push(...this.exportProvidersPerApp(imp)));
-    const currProvidersPerApp = isRootModule(modMetadata) ? [] : flatten(modMetadata.providersPerApp) || [];
+    const currProvidersPerApp = isRootModule(modMetadata) ? [] : flatten(modMetadata.providersPerApp);
 
     return [...providersPerApp, ...currProvidersPerApp];
   }
