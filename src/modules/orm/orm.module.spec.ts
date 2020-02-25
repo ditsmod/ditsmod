@@ -17,7 +17,7 @@ xdescribe('OrmModule', () => {
 
     const entities = [{ provide: SomeEntity, useClass: MysqlEntity }];
     @RootModule({
-      providersPerApp: [EntityInjector, { provide: EntitiesToken, useValue: entities }]
+      imports: [MockOrmModule.withOptions(entities)]
     })
     class AppModule {}
 
