@@ -154,11 +154,11 @@ export class ModuleFactory extends Factory {
      * `ngMetadataName` is used only internally and is hidden from the public API.
      */
     (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
-    metadata.imports = flatten((modMetadata.imports || []).slice()).map(resolveForwardRef);
-    metadata.exports = flatten((modMetadata.exports || []).slice()).map(resolveForwardRef);
-    metadata.providersPerApp = (modMetadata.providersPerApp || []).slice();
-    metadata.providersPerMod = (modMetadata.providersPerMod || []).slice();
-    metadata.providersPerReq = (modMetadata.providersPerReq || []).slice();
+    metadata.imports = flatten(modMetadata.imports).map(resolveForwardRef);
+    metadata.exports = flatten(modMetadata.exports).map(resolveForwardRef);
+    metadata.providersPerApp = flatten(modMetadata.providersPerApp);
+    metadata.providersPerMod = flatten(modMetadata.providersPerMod);
+    metadata.providersPerReq = flatten(modMetadata.providersPerReq);
     metadata.controllers = mergeArrays(metadata.controllers, modMetadata.controllers);
     metadata.routesPerMod = mergeArrays(metadata.routesPerMod, modMetadata.routesPerMod);
 

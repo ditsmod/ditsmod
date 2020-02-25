@@ -94,7 +94,7 @@ export class AppFactory extends Factory {
     const imports = flatten((modMetadata.imports || []).slice()).map(resolveForwardRef);
     const providersPerApp: Provider[] = [];
     imports.forEach(imp => providersPerApp.push(...this.exportProvidersPerApp(imp)));
-    const currProvidersPerApp = isRootModule(modMetadata) ? [] : modMetadata.providersPerApp || [];
+    const currProvidersPerApp = isRootModule(modMetadata) ? [] : flatten(modMetadata.providersPerApp) || [];
 
     return [...providersPerApp, ...currProvidersPerApp];
   }
@@ -125,7 +125,7 @@ export class AppFactory extends Factory {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
 
-    const providersPerApp = mergeArrays(this.opts.providersPerApp, modMetadata.providersPerApp);
+    const providersPerApp = flatten(modMetadata.providersPerApp);
     pickProperties(this.opts, modMetadata);
     this.opts.providersPerApp = providersPerApp;
     this.opts.routesPrefixPerMod = this.opts.routesPrefixPerMod.slice();
