@@ -11,12 +11,17 @@ import { PreRequest } from './services/pre-request';
 import { Request } from './request';
 import { ModuleFactory } from './module-factory';
 import { pickProperties } from './utils/pick-properties';
-import { mergeArrays } from './utils/merge-arrays-options';
 import { Router, HttpMethod } from './types/router';
 import { NodeResToken, NodeReqToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
 import { Server, Http2SecureServerOptions } from './types/server-options';
-import { ModuleType, ModuleWithOptions, ModuleDecorator } from './decorators/module';
+import {
+  ModuleType,
+  ModuleWithOptions,
+  ModuleDecorator,
+  ProvidersMetadata,
+  defaultProvidersPerReq
+} from './decorators/module';
 import { getDuplicates } from './utils/get-duplicates';
 import { flatten, normalizeProviders } from './utils/ng-utils';
 import { Factory } from './factory';
@@ -101,19 +106,25 @@ export class AppFactory extends Factory {
 
   protected bootstrapModuleFactory(appModule: ModuleType) {
     const rootModulePrefix = this.opts.routesPrefixPerMod.find(config => config.module === appModule)?.prefix || '';
-    const importer = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    importer.bootstrap(this.opts.providersPerApp, this.opts.routesPrefixPerApp, rootModulePrefix, appModule);
+    const globalProviders = this.getGlobalProviders(appModule);
+    const rootModule = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+    rootModule.bootstrap(globalProviders, this.opts.routesPrefixPerApp, rootModulePrefix, appModule);
 
     this.opts.routesPrefixPerMod.forEach(config => {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      moduleFactory.bootstrap(
-        this.opts.providersPerApp,
-        this.opts.routesPrefixPerApp,
-        config.prefix,
-        config.module,
-        importer
-      );
+      moduleFactory.bootstrap(globalProviders, this.opts.routesPrefixPerApp, config.prefix, config.module, rootModule);
     });
+  }
+
+  protected getGlobalProviders(appModule: ModuleType) {
+    let globalProviders = new ProvidersMetadata();
+    globalProviders.providersPerApp = this.opts.providersPerApp;
+    const rootModule = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+    const { providersPerMod, providersPerReq } = rootModule.getGlobalProviders(appModule, globalProviders);
+    globalProviders.providersPerMod = providersPerMod;
+    globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];
+    globalProviders = Object.freeze(globalProviders);
+    return globalProviders;
   }
 
   /**

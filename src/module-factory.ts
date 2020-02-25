@@ -9,7 +9,13 @@ import {
   ReflectiveInjector
 } from '@ts-stack/di';
 
-import { ModuleMetadata, defaultProvidersPerReq, ModuleType, ModuleWithOptions } from './decorators/module';
+import {
+  ModuleMetadata,
+  defaultProvidersPerReq,
+  ModuleType,
+  ModuleWithOptions,
+  ProvidersMetadata
+} from './decorators/module';
 import { ControllerDecorator } from './decorators/controller';
 import { RouteDecoratorMetadata } from './decorators/route';
 import { BodyParserConfig } from './types/types';
@@ -32,12 +38,10 @@ export class ModuleFactory extends Factory {
   protected routesPrefixPerApp: string;
   protected routesPrefixPerMod: string;
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
-  protected allProvidersPerApp: Provider[];
   protected opts: ModuleMetadata;
   protected exportedProvidersPerMod: Provider[] = [];
   protected exportedProvidersPerReq: Provider[] = [];
-  protected allExportedProvidersPerMod: Provider[] = [];
-  protected allExportedProvidersPerReq: Provider[] = [];
+  protected globalProviders: ProvidersMetadata;
   /**
    * Injector per the module.
    */
@@ -52,13 +56,30 @@ export class ModuleFactory extends Factory {
   }
 
   /**
+   * Called only by `@RootModule` before called `ModuleFactory#boostrap()`.
+   */
+  getGlobalProviders(rootModule: Type<any>, globalProviders: ProvidersMetadata) {
+    this.moduleName = this.getModuleName(rootModule);
+    const moduleMetadata = this.mergeMetadata(rootModule);
+    this.opts = new ModuleMetadata();
+    Object.assign(this.opts, moduleMetadata);
+    this.globalProviders = globalProviders;
+    this.exportProvidersToImporter(rootModule, true);
+
+    return {
+      providersPerMod: this.exportedProvidersPerMod,
+      providersPerReq: this.exportedProvidersPerReq
+    };
+  }
+
+  /**
    * Bootstraps a module.
    *
    * @param typeOrObject Module that will bootstrapped.
    * @param importer It's module that imported current module.
    */
   bootstrap(
-    providersPerApp: Provider[],
+    globalProviders: ProvidersMetadata,
     routesPrefixPerApp: string,
     routesPrefixPerMod: string,
     typeOrObject: Type<any> | ModuleWithOptions<any>,
@@ -71,7 +92,7 @@ export class ModuleFactory extends Factory {
     const moduleMetadata = this.mergeMetadata(typeOrObject);
     this.opts = new ModuleMetadata();
     Object.assign(this.opts, moduleMetadata);
-    this.allProvidersPerApp = providersPerApp;
+    this.globalProviders = globalProviders;
     /**
      * If we exported providers from current module,
      * this only make sense for the module that will import current module.
@@ -84,10 +105,14 @@ export class ModuleFactory extends Factory {
     }
     this.importModules();
 
-    this.opts.providersPerMod = [...this.allExportedProvidersPerMod, ...this.opts.providersPerMod];
+    this.opts.providersPerMod = [
+      ...globalProviders.providersPerMod,
+      ...this.exportedProvidersPerMod,
+      ...this.opts.providersPerMod
+    ];
     this.opts.providersPerReq = [
-      ...defaultProvidersPerReq,
-      ...this.allExportedProvidersPerReq,
+      ...globalProviders.providersPerReq,
+      ...this.exportedProvidersPerReq,
       ...this.opts.providersPerReq
     ];
 
@@ -123,12 +148,6 @@ export class ModuleFactory extends Factory {
     ) {
       throw new Error(
         `Import ${this.moduleName} failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`
-      );
-    }
-
-    if (isRootModule(moduleMetadata as any) && moduleMetadata.exports.length) {
-      throw new Error(
-        `Import ${this.moduleName} failed: modules from routesPrefixPerMod should not to have "exports" array with elements.`
       );
     }
 
@@ -184,7 +203,7 @@ export class ModuleFactory extends Factory {
     for (const imp of this.opts.imports) {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       const optionsMap = moduleFactory.bootstrap(
-        this.allProvidersPerApp,
+        this.globalProviders,
         this.routesPrefixPerApp,
         this.routesPrefixPerMod,
         imp,
@@ -251,8 +270,6 @@ export class ModuleFactory extends Factory {
 
     if (isStarter) {
       this.checkProvidersUnpredictable();
-      this.allExportedProvidersPerMod.push(...this.exportedProvidersPerMod);
-      this.allExportedProvidersPerReq.push(...this.exportedProvidersPerReq);
     }
   }
 
@@ -279,7 +296,7 @@ export class ModuleFactory extends Factory {
   }
 
   protected checkProvidersUnpredictable() {
-    const tokensPerApp = normalizeProviders(this.allProvidersPerApp).map(np => np.provide);
+    const tokensPerApp = normalizeProviders(this.globalProviders.providersPerApp).map(np => np.provide);
 
     const declaredTokensPerMod = normalizeProviders(this.opts.providersPerMod).map(np => np.provide);
     const exportedTokensPerMod = normalizeProviders(this.exportedProvidersPerMod).map(np => np.provide);

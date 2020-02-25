@@ -26,9 +26,7 @@ export interface RootModuleDecoratorFactory {
   new (data?: RootModuleDecorator): RootModuleDecorator;
 }
 
-export interface RootModuleDecorator extends ModuleDecorator, Partial<ApplicationMetadata> {
-  exports?: never;
-}
+export interface RootModuleDecorator extends ModuleDecorator, Partial<ApplicationMetadata> {}
 
 export const RootModule = makeDecorator('RootModule', (data: any) => data) as RootModuleDecoratorFactory;
 

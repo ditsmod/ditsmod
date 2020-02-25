@@ -14,7 +14,7 @@ export interface ModuleDecoratorFactory {
 
 export const Module = makeDecorator('Module', (data: any) => data) as ModuleDecoratorFactory;
 
-export abstract class ProvidersMetadata {
+export class ProvidersMetadata {
   /**
    * Providers per the application.
    */
