@@ -16,8 +16,10 @@ xdescribe('OrmModule', () => {
     class MysqlEntity extends SomeEntity {}
 
     const entities = [{ provide: SomeEntity, useClass: MysqlEntity }];
+    const modWithOptions = MockOrmModule.withOptions(entities);
     @RootModule({
-      imports: [MockOrmModule.withOptions(entities)]
+      imports: [modWithOptions],
+      exports: [modWithOptions]
     })
     class AppModule {}
 
