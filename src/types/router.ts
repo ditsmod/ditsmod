@@ -126,7 +126,7 @@ export abstract class RouteConfig {
   children?: this[];
 }
 
-export interface RoutesPrefixPerMod {
+export interface ImportsWithPrefix {
   prefix: string;
   module: ModuleType | ModuleWithOptions<any>;
 }

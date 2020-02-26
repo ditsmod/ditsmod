@@ -75,7 +75,7 @@ export class AppFactory extends Factory {
 
   protected prepareProvidersPerApp(appModule: ModuleType) {
     const exportedProvidersPerApp: Provider[] = [];
-    const modules = this.opts.routesPrefixPerMod.map(c => c.module);
+    const modules = this.opts.importsWithPrefix.map(c => c.module);
     [appModule, ...modules].forEach(mod => {
       exportedProvidersPerApp.push(...this.exportProvidersPerApp(mod));
     });
@@ -105,12 +105,12 @@ export class AppFactory extends Factory {
   }
 
   protected bootstrapModuleFactory(appModule: ModuleType) {
-    const rootModulePrefix = this.opts.routesPrefixPerMod.find(config => config.module === appModule)?.prefix || '';
+    const rootModulePrefix = this.opts.importsWithPrefix.find(config => config.module === appModule)?.prefix || '';
     const globalProviders = this.getGlobalProviders(appModule);
     const rootModule = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
     rootModule.bootstrap(globalProviders, this.opts.routesPrefixPerApp, rootModulePrefix, appModule);
 
-    this.opts.routesPrefixPerMod.forEach(config => {
+    this.opts.importsWithPrefix.forEach(config => {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       moduleFactory.bootstrap(globalProviders, this.opts.routesPrefixPerApp, config.prefix, config.module, rootModule);
     });
@@ -120,7 +120,7 @@ export class AppFactory extends Factory {
     let globalProviders = new ProvidersMetadata();
     globalProviders.providersPerApp = this.opts.providersPerApp;
     const rootModule = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    const { providersPerMod, providersPerReq } = rootModule.getGlobalProviders(appModule, globalProviders);
+    const { providersPerMod, providersPerReq } = rootModule.exportGlobalProviders(appModule, globalProviders);
     globalProviders.providersPerMod = providersPerMod;
     globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];
     globalProviders = Object.freeze(globalProviders);
@@ -139,7 +139,7 @@ export class AppFactory extends Factory {
     const providersPerApp = flatten(modMetadata.providersPerApp);
     pickProperties(this.opts, modMetadata);
     this.opts.providersPerApp = providersPerApp;
-    this.opts.routesPrefixPerMod = this.opts.routesPrefixPerMod.slice();
+    this.opts.importsWithPrefix = this.opts.importsWithPrefix.slice();
   }
 
   /**
