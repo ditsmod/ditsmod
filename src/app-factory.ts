@@ -70,7 +70,7 @@ export class AppFactory extends Factory {
     this.initProvidersPerApp();
     this.log.trace('Setting server name:', this.opts.serverName);
     this.log.trace('Setting listen options:', this.opts.listenOptions);
-    this.bootstrapModuleFactory(appModule);
+    return this.bootstrapModuleFactory(appModule);
   }
 
   protected prepareProvidersPerApp(appModule: ModuleType) {
@@ -102,7 +102,7 @@ export class AppFactory extends Factory {
   protected bootstrapModuleFactory(appModule: ModuleType) {
     const globalProviders = this.getGlobalProviders(appModule);
     const rootModule = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    rootModule.bootstrap(globalProviders, this.opts.prefixPerApp, '', appModule);
+    return rootModule.bootstrap(globalProviders, this.opts.prefixPerApp, '', appModule);
   }
 
   protected getGlobalProviders(appModule: ModuleType) {
