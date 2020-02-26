@@ -12,7 +12,7 @@ import { format } from 'util';
 /**
  * Flattens an array.
  */
-export function flatten(list: any[], dst?: any[]): any[] {
+export function flatten<T = any>(list: any[], dst?: any[]): T[] {
   list = (list || []).slice();
   if (dst === undefined) {
     dst = list;
