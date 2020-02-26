@@ -74,12 +74,7 @@ export class AppFactory extends Factory {
   }
 
   protected prepareProvidersPerApp(appModule: ModuleType) {
-    const exportedProvidersPerApp: Provider[] = [];
-    const modules = this.opts.importsWithPrefix.map(c => c.module);
-    [appModule, ...modules].forEach(mod => {
-      exportedProvidersPerApp.push(...this.exportProvidersPerApp(mod));
-    });
-
+    const exportedProvidersPerApp = this.exportProvidersPerApp(appModule);
     const declaredTokensPerApp = normalizeProviders(this.opts.providersPerApp).map(np => np.provide);
     const exportedTokensPerApp = normalizeProviders(exportedProvidersPerApp).map(np => np.provide);
     const defaultTokens = normalizeProviders([...defaultProvidersPerApp]).map(np => np.provide);
@@ -105,15 +100,9 @@ export class AppFactory extends Factory {
   }
 
   protected bootstrapModuleFactory(appModule: ModuleType) {
-    const rootModulePrefix = this.opts.importsWithPrefix.find(config => config.module === appModule)?.prefix || '';
     const globalProviders = this.getGlobalProviders(appModule);
     const rootModule = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    rootModule.bootstrap(globalProviders, this.opts.prefixPerApp, rootModulePrefix, appModule);
-
-    this.opts.importsWithPrefix.forEach(config => {
-      const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      moduleFactory.bootstrap(globalProviders, this.opts.prefixPerApp, config.prefix, config.module, rootModule);
-    });
+    rootModule.bootstrap(globalProviders, this.opts.prefixPerApp, '', appModule);
   }
 
   protected getGlobalProviders(appModule: ModuleType) {
@@ -139,7 +128,6 @@ export class AppFactory extends Factory {
     const providersPerApp = flatten(modMetadata.providersPerApp);
     pickProperties(this.opts, modMetadata);
     this.opts.providersPerApp = providersPerApp;
-    this.opts.importsWithPrefix = this.opts.importsWithPrefix.slice();
   }
 
   /**

@@ -161,7 +161,6 @@ describe('AppFactory', () => {
       expect(mock.opts.serverOptions).toEqual({});
       expect(mock.opts.httpModule).toBeDefined();
       expect(mock.opts.prefixPerApp).toBe('');
-      expect(mock.opts.importsWithPrefix).toEqual([]);
       expect(mock.opts.providersPerApp).toEqual([]);
       expect(mock.opts.listenOptions).toBeDefined();
       // Ignore controllers - it's intended behavior.
@@ -195,7 +194,6 @@ describe('AppFactory', () => {
       expect(mock.opts.serverOptions).toEqual({});
       expect(mock.opts.httpModule).toBeDefined();
       expect(mock.opts.prefixPerApp).toBe('api');
-      expect(mock.opts.importsWithPrefix).toEqual(importsWithPrefix);
       expect(mock.opts.providersPerApp).toEqual([ClassWithoutDecorators]);
       expect(mock.opts.listenOptions).toBeDefined();
       // Ignore controllers - it's intended behavior.

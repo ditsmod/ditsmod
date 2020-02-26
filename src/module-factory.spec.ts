@@ -25,8 +25,8 @@ describe('ModuleFactory', () => {
   @Injectable()
   class MockModuleFactory extends ModuleFactory {
     log: Logger;
-    routesPrefixPerApp: string;
-    routesPrefixPerMod: string;
+    prefixPerApp: string;
+    prefixPerMod: string;
     moduleName = 'MockModule';
     opts = new ModuleMetadata();
     router: Router;
@@ -101,7 +101,7 @@ describe('ModuleFactory', () => {
       const metadata = mock.mergeMetadata(ClassWithDecorators);
       expect(metadata.controllers).toEqual([]);
       expect(metadata.exports).toEqual([]);
-      expect(metadata.imports).toEqual([]);
+      expect(metadata.importsWithPrefix).toEqual([]);
       expect(metadata.routesPerMod).toEqual([]);
       expect(metadata.providersPerMod).toEqual([]);
       expect(metadata.providersPerReq).toEqual([]);
@@ -125,7 +125,7 @@ describe('ModuleFactory', () => {
       const metadata = mock.mergeMetadata(ClassWithDecorators);
       expect(metadata.controllers).toEqual([SomeControllerClass]);
       expect(metadata.exports).toEqual([]);
-      expect(metadata.imports).toEqual([]);
+      expect(metadata.importsWithPrefix).toEqual([]);
       expect(metadata.routesPerMod).toEqual(routesPerMod);
       expect(metadata.providersPerMod).toEqual([PerMod]);
       expect(metadata.providersPerReq).toEqual([ClassWithoutDecorators]);
@@ -375,7 +375,7 @@ describe('ModuleFactory', () => {
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
         mock.bootstrap(new ProvidersMetadata(), 'api', '', Module3);
-        expect(mock.routesPrefixPerApp).toBe('api');
+        expect(mock.prefixPerApp).toBe('api');
 
         const mod0 = mock.testOptionsMap.get(Module0);
         expect(mod0.providersPerMod).toEqual([Provider0]);
@@ -418,8 +418,8 @@ describe('ModuleFactory', () => {
         mock.injectorPerMod = injectorPerApp;
         mock.bootstrap(new ProvidersMetadata(), 'some', 'other', Module4);
 
-        expect(mock.routesPrefixPerApp).toBe('some');
-        expect(mock.routesPrefixPerMod).toBe('other');
+        expect(mock.prefixPerApp).toBe('some');
+        expect(mock.prefixPerMod).toBe('other');
         expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
         expect(mock.opts.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
         expect(mock.opts.providersPerReq).toEqual([Provider8]);

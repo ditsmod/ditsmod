@@ -22,7 +22,7 @@ import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isRootModule, isController, isRoute } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
-import { Router, RouteConfig } from './types/router';
+import { Router, RouteConfig, ImportsWithPrefix } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
 import { Factory } from './factory';
@@ -173,7 +173,23 @@ export class ModuleFactory extends Factory {
      * `ngMetadataName` is used only internally and is hidden from the public API.
      */
     (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
-    metadata.imports = flatten(modMetadata.imports).map(resolveForwardRef);
+    const importsWithPrefix = flatten<Type<any> | ModuleWithOptions<any>>(modMetadata.imports).map<ImportsWithPrefix>(
+      imp => {
+        return {
+          prefix: '',
+          module: resolveForwardRef(imp)
+        };
+      }
+    );
+    metadata.importsWithPrefix = flatten<ImportsWithPrefix>(modMetadata.importsWithPrefix).map<ImportsWithPrefix>(
+      imp => {
+        return {
+          prefix: imp.prefix,
+          module: resolveForwardRef(imp.module)
+        };
+      }
+    );
+    metadata.importsWithPrefix.push(...importsWithPrefix);
     metadata.exports = flatten(modMetadata.exports).map(resolveForwardRef);
     metadata.providersPerApp = flatten(modMetadata.providersPerApp);
     metadata.providersPerMod = flatten(modMetadata.providersPerMod);
@@ -200,9 +216,11 @@ export class ModuleFactory extends Factory {
   }
 
   protected importModules() {
-    for (const imp of this.opts.imports) {
+    for (const imp of this.opts.importsWithPrefix) {
+      const prefixPerMod = [this.prefixPerMod, imp.prefix].filter(s => s).join('/');
+      const mod = imp.module;
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      const optionsMap = moduleFactory.bootstrap(this.globalProviders, this.prefixPerApp, this.prefixPerMod, imp, this);
+      const optionsMap = moduleFactory.bootstrap(this.globalProviders, this.prefixPerApp, prefixPerMod, mod, this);
       this.testOptionsMap = new Map([...this.testOptionsMap, ...optionsMap]);
     }
   }
@@ -218,14 +236,14 @@ export class ModuleFactory extends Factory {
     isStarter: boolean,
     soughtProvider?: NormalizedProvider
   ) {
-    const { exports: exp, imports, providersPerMod, providersPerReq } = this.mergeMetadata(typeOrObject);
+    const { exports: exp, importsWithPrefix, providersPerMod, providersPerReq } = this.mergeMetadata(typeOrObject);
     const moduleName = this.getModuleName(typeOrObject);
 
     for (const moduleOrProvider of exp) {
       const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType);
       if (moduleMetadata) {
         const reexportedModule = moduleOrProvider as ModuleType;
-        if (imports.map(this.getModule).includes(reexportedModule)) {
+        if (importsWithPrefix.map(imp => this.getModule(imp.module)).includes(reexportedModule)) {
           this.exportProvidersToImporter(reexportedModule, false, soughtProvider);
         } else {
           throw new Error(`Reexports a module failed: cannot find ${reexportedModule.name} in "imports" array`);
@@ -239,8 +257,8 @@ export class ModuleFactory extends Factory {
         }
         let foundProvider = this.findAndSetProvider(provider, normProvider, providersPerMod, providersPerReq);
         if (!foundProvider) {
-          for (const imp of imports) {
-            foundProvider = this.exportProvidersToImporter(imp, false, normProvider);
+          for (const imp of importsWithPrefix) {
+            foundProvider = this.exportProvidersToImporter(imp.module, false, normProvider);
             if (foundProvider) {
               break;
             }

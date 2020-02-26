@@ -1,6 +1,6 @@
 import { Type, Provider, makeDecorator, TypeProvider } from '@ts-stack/di';
 
-import { RouteConfig } from '../types/router';
+import { RouteConfig, ImportsWithPrefix, ImportsWithPrefixDecorator } from '../types/router';
 import { BodyParser } from '../services/body-parser';
 import { Request } from '../request';
 import { Response } from '../response';
@@ -14,6 +14,9 @@ export interface ModuleDecoratorFactory {
 
 export const Module = makeDecorator('Module', (data: any) => data) as ModuleDecoratorFactory;
 
+/**
+ * @todo It should be clarified that providers can go array by array.
+ */
 export class ProvidersMetadata {
   /**
    * Providers per the application.
@@ -50,6 +53,10 @@ export interface ModuleDecorator extends Partial<StaticModuleMetadata> {
    */
   imports?: Array<Type<any> | ModuleWithOptions<any> | any[]>;
   /**
+   * Imports modules and setting some prefix per each the module.
+   */
+  importsWithPrefix?: ImportsWithPrefixDecorator[];
+  /**
    * List of modules, `ModuleWithProviders` or providers exported by this
    * module.
    */
@@ -57,7 +64,10 @@ export interface ModuleDecorator extends Partial<StaticModuleMetadata> {
 }
 
 export class ModuleMetadata extends StaticModuleMetadata {
-  imports: Array<Type<any> | ModuleWithOptions<any>> = [];
+  /**
+   * Imports modules and setting some prefix per each the module.
+   */
+  importsWithPrefix: ImportsWithPrefix[] = [];
   exports: Array<Type<any> | ModuleWithOptions<any> | Provider> = [];
 }
 

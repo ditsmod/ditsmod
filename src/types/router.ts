@@ -1,4 +1,4 @@
-import { ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider } from '@ts-stack/di';
+import { ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider, Type } from '@ts-stack/di';
 import { ObjectAny } from './types';
 import { ModuleType, ModuleWithOptions } from '../decorators/module';
 
@@ -124,6 +124,11 @@ export abstract class RouteConfig {
    * An array of child Route objects that specifies a nested route configuration.
    */
   children?: this[];
+}
+
+export interface ImportsWithPrefixDecorator {
+  prefix: string;
+  module: Type<any> | ModuleWithOptions<any> | any[];
 }
 
 export interface ImportsWithPrefix {
