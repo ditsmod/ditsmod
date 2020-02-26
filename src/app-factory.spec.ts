@@ -276,7 +276,9 @@ describe('AppFactory', () => {
 
     it(`case 1`, () => {
       mock.mergeMetadata(RootModule1);
-      const msg = `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: Provider1. You should manually add these providers.`;
+      const msg =
+        `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+        `Provider1. You should manually add these providers to RootModule1.`;
       expect(() => mock.prepareProvidersPerApp(RootModule1)).toThrow(msg);
     });
 

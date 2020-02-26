@@ -493,7 +493,7 @@ describe('ModuleFactory', () => {
 
           const msg =
             `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
-            `Provider2. You should manually add these providers.`;
+            `Provider2. You should manually add these providers to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
 
@@ -515,7 +515,7 @@ describe('ModuleFactory', () => {
 
           const msg =
             `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
-            `Provider1. You should manually add these providers.`;
+            `Provider1. You should manually add these providers to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
 
@@ -558,7 +558,7 @@ describe('ModuleFactory', () => {
 
           const msg =
             `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
-            `Provider2. You should manually add these providers.`;
+            `Provider2. You should manually add these providers to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
 
@@ -580,7 +580,7 @@ describe('ModuleFactory', () => {
 
           const msg =
             `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
-            `Provider1. You should manually add these providers.`;
+            `Provider1. You should manually add these providers to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
 
@@ -626,7 +626,7 @@ describe('ModuleFactory', () => {
 
           const msg =
             `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
-            `Provider0, Request, Provider1, InjectionToken NodeRequest. You should manually add these providers.`;
+            `Provider0, Request, Provider1, InjectionToken NodeRequest. You should manually add these providers to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
 
@@ -644,7 +644,7 @@ describe('ModuleFactory', () => {
 
           const msg =
             `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
-            `Router. You should manually add these providers.`;
+            `Router. You should manually add these providers to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
       });
@@ -689,13 +689,19 @@ describe('ModuleFactory', () => {
       })
       class Module4 {}
 
+      @Module({
+        providersPerApp: [{ provide: Logger, useClass: MyLogger }]
+      })
+      class Module5 {}
+
       @RootModule({
-        imports: [Module0, Module1, Module2.withOptions()],
+        imports: [Module0, Module1, Module2.withOptions(), Module5],
         exports: [Module0, Module2, Module3],
         importsWithPrefix: [
           { prefix: 'one', module: Module3 },
           { prefix: 'two', module: Module4 }
-        ]
+        ],
+        providersPerApp: [Logger]
       })
       class RootModule1 {}
 
@@ -749,7 +755,7 @@ describe('ModuleFactory', () => {
 
       it(`RootModule1`, () => {
         const root1 = testOptionsMap.get(RootModule1);
-        expect(root1.providersPerApp).toEqual([]);
+        expect(root1.providersPerApp).toEqual([Logger]);
         expect(root1.providersPerMod).toEqual([Provider0, Provider1, Provider3, Provider4]);
         expect(root1.providersPerReq).toEqual([
           ...defaultProvidersPerReq,
@@ -759,6 +765,7 @@ describe('ModuleFactory', () => {
           Provider8,
           Provider9
         ]);
+        // console.log(root1);
       });
     });
   });
