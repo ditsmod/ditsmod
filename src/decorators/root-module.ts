@@ -40,5 +40,8 @@ export class ApplicationMetadata {
    */
   providersPerApp: Provider[] = [];
   prefixPerApp: string = '';
+  /**
+   * Imports modules and setting some prefix per each the module.
+   */
   importsWithPrefix: ImportsWithPrefix[] = [];
 }
