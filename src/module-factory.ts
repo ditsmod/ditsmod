@@ -35,8 +35,8 @@ import { getDuplicates } from './utils/get-duplicates';
 @Injectable()
 export class ModuleFactory extends Factory {
   protected moduleName: string;
-  protected routesPrefixPerApp: string;
-  protected routesPrefixPerMod: string;
+  protected prefixPerApp: string;
+  protected prefixPerMod: string;
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
   protected opts: ModuleMetadata;
   protected exportedProvidersPerMod: Provider[] = [];
@@ -58,7 +58,7 @@ export class ModuleFactory extends Factory {
   /**
    * Called only by `@RootModule` before called `ModuleFactory#boostrap()`.
    */
-  getGlobalProviders(rootModule: Type<any>, globalProviders: ProvidersMetadata) {
+  exportGlobalProviders(rootModule: Type<any>, globalProviders: ProvidersMetadata) {
     this.moduleName = this.getModuleName(rootModule);
     const moduleMetadata = this.mergeMetadata(rootModule);
     this.opts = new ModuleMetadata();
@@ -80,13 +80,13 @@ export class ModuleFactory extends Factory {
    */
   bootstrap(
     globalProviders: ProvidersMetadata,
-    routesPrefixPerApp: string,
-    routesPrefixPerMod: string,
+    prefixPerApp: string,
+    prefixPerMod: string,
     typeOrObject: Type<any> | ModuleWithOptions<any>,
     importer?: this
   ) {
-    this.routesPrefixPerApp = routesPrefixPerApp || '';
-    this.routesPrefixPerMod = routesPrefixPerMod || '';
+    this.prefixPerApp = prefixPerApp || '';
+    this.prefixPerMod = prefixPerMod || '';
     const mod = this.getModule(typeOrObject);
     this.moduleName = mod.name;
     const moduleMetadata = this.mergeMetadata(typeOrObject);
@@ -120,9 +120,9 @@ export class ModuleFactory extends Factory {
     this.injectorPerMod.resolveAndInstantiate(mod);
     this.initProvidersPerReq();
     this.quickCheckImports(moduleMetadata);
-    this.checkRoutePath(this.routesPrefixPerApp);
-    this.checkRoutePath(this.routesPrefixPerMod);
-    const prefix = [this.routesPrefixPerApp, this.routesPrefixPerMod].filter(s => s).join('/');
+    this.checkRoutePath(this.prefixPerApp);
+    this.checkRoutePath(this.prefixPerMod);
+    const prefix = [this.prefixPerApp, this.prefixPerMod].filter(s => s).join('/');
     this.opts.controllers.forEach(Ctrl => this.setRoutes(prefix, Ctrl));
     this.loadRoutesConfig(prefix, this.opts.routesPerMod);
     return this.testOptionsMap.set(mod, this.opts);
@@ -202,13 +202,7 @@ export class ModuleFactory extends Factory {
   protected importModules() {
     for (const imp of this.opts.imports) {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      const optionsMap = moduleFactory.bootstrap(
-        this.globalProviders,
-        this.routesPrefixPerApp,
-        this.routesPrefixPerMod,
-        imp,
-        this
-      );
+      const optionsMap = moduleFactory.bootstrap(this.globalProviders, this.prefixPerApp, this.prefixPerMod, imp, this);
       this.testOptionsMap = new Map([...this.testOptionsMap, ...optionsMap]);
     }
   }
