@@ -104,18 +104,7 @@ export class ModuleFactory extends Factory {
       this.exportProvidersToImporter.call(importer, modOrObject, true);
     }
     this.importModules();
-
-    this.opts.providersPerMod = [
-      ...globalProviders.providersPerMod,
-      ...this.exportedProvidersPerMod,
-      ...this.opts.providersPerMod
-    ];
-    this.opts.providersPerReq = [
-      ...globalProviders.providersPerReq,
-      ...this.exportedProvidersPerReq,
-      ...this.opts.providersPerReq
-    ];
-
+    this.mergeProviders(moduleMetadata);
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
     this.injectorPerMod.resolveAndInstantiate(mod);
     this.initProvidersPerReq();
@@ -126,6 +115,32 @@ export class ModuleFactory extends Factory {
     this.opts.controllers.forEach(Ctrl => this.setRoutes(prefix, Ctrl));
     this.loadRoutesConfig(prefix, this.opts.routesPerMod);
     return this.testOptionsMap.set(mod, this.opts);
+  }
+
+  protected mergeProviders(moduleMetadata: ModuleMetadata) {
+    const duplicatesProvidersPerMod = getDuplicates([
+      ...this.globalProviders.providersPerMod,
+      ...this.opts.providersPerMod
+    ]);
+    const globalProvidersPerMod = isRootModule(moduleMetadata) ? [] : this.globalProviders.providersPerMod;
+    this.opts.providersPerMod = [
+      ...globalProvidersPerMod,
+      ...this.exportedProvidersPerMod,
+      ...this.opts.providersPerMod.filter(p => !duplicatesProvidersPerMod.includes(p))
+    ];
+
+    const duplicatesProvidersPerReq = getDuplicates([
+      ...this.globalProviders.providersPerReq,
+      ...this.opts.providersPerReq
+    ]);
+    const globalProvidersPerReq = isRootModule(moduleMetadata)
+      ? defaultProvidersPerReq
+      : this.globalProviders.providersPerReq;
+    this.opts.providersPerReq = [
+      ...globalProvidersPerReq,
+      ...this.exportedProvidersPerReq,
+      ...this.opts.providersPerReq.filter(p => !duplicatesProvidersPerReq.includes(p))
+    ];
   }
 
   protected loadRoutesConfig(prefix: string, configs: RouteConfig[]) {
