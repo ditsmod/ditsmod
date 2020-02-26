@@ -42,11 +42,8 @@ describe('ModuleFactory', () => {
       return super.quickCheckImports(moduleMetadata);
     }
 
-    getRawModuleMetadata<T extends ModuleDecorator>(
-      typeOrObject: Type<any> | ModuleWithOptions<any>,
-      isRoot?: boolean
-    ) {
-      return super.getRawModuleMetadata(typeOrObject, isRoot) as T;
+    getRawModuleMetadata<T extends ModuleDecorator>(modOrObject: Type<any> | ModuleWithOptions<any>, isRoot?: boolean) {
+      return super.getRawModuleMetadata(modOrObject, isRoot) as T;
     }
 
     mergeMetadata(mod: ModuleType) {
@@ -54,11 +51,11 @@ describe('ModuleFactory', () => {
     }
 
     exportProvidersToImporter(
-      typeOrObject: Type<any> | ModuleWithOptions<any>,
+      modOrObject: Type<any> | ModuleWithOptions<any>,
       isStarter: boolean,
       soughtProvider: NormalizedProvider
     ) {
-      return super.exportProvidersToImporter(typeOrObject, isStarter, soughtProvider);
+      return super.exportProvidersToImporter(modOrObject, isStarter, soughtProvider);
     }
 
     loadRoutesConfig(prefix: string, configs: RouteConfig[]) {

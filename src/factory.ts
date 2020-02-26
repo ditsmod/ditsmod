@@ -16,8 +16,8 @@ export abstract class Factory {
     return isModuleWithOptions(mod) ? mod.module : mod;
   }
 
-  protected getModuleName(typeOrObject: Type<any> | ModuleWithOptions<any>) {
-    return isModuleWithOptions(typeOrObject) ? typeOrObject.module.name : typeOrObject.name;
+  protected getModuleName(modOrObject: Type<any> | ModuleWithOptions<any>) {
+    return isModuleWithOptions(modOrObject) ? modOrObject.module.name : modOrObject.name;
   }
 
   protected checkModuleMetadata(modMetadata: ModuleDecorator, modName: string, isRoot?: boolean) {
@@ -29,14 +29,14 @@ export abstract class Factory {
   }
 
   protected getRawModuleMetadata<T extends ModuleDecorator>(
-    typeOrObject: Type<any> | ModuleWithOptions<any>,
+    modOrObject: Type<any> | ModuleWithOptions<any>,
     isRoot?: boolean
   ) {
     let modMetadata: T;
     const typeGuard = isRoot ? isRootModule : (m: ModuleDecorator) => isModule(m) || isRootModule(m);
 
-    if (isModuleWithOptions(typeOrObject)) {
-      const modWitOptions = typeOrObject;
+    if (isModuleWithOptions(modOrObject)) {
+      const modWitOptions = modOrObject;
       modMetadata = reflector.annotations(modWitOptions.module).find(typeGuard) as T;
       const modName = this.getModuleName(modWitOptions.module);
       this.checkModuleMetadata(modMetadata, modName, isRoot);
@@ -45,7 +45,7 @@ export abstract class Factory {
       modMetadata.providersPerMod = mergeArrays(modMetadata.providersPerMod, modWitOptions.providersPerMod);
       modMetadata.providersPerReq = mergeArrays(modMetadata.providersPerReq, modWitOptions.providersPerReq);
     } else {
-      modMetadata = reflector.annotations(typeOrObject).find(typeGuard) as T;
+      modMetadata = reflector.annotations(modOrObject).find(typeGuard) as T;
     }
 
     return modMetadata;

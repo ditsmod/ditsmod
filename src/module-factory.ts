@@ -75,21 +75,21 @@ export class ModuleFactory extends Factory {
   /**
    * Bootstraps a module.
    *
-   * @param typeOrObject Module that will bootstrapped.
+   * @param modOrObject Module that will bootstrapped.
    * @param importer It's module that imported current module.
    */
   bootstrap(
     globalProviders: ProvidersMetadata,
     prefixPerApp: string,
     prefixPerMod: string,
-    typeOrObject: Type<any> | ModuleWithOptions<any>,
+    modOrObject: Type<any> | ModuleWithOptions<any>,
     importer?: this
   ) {
     this.prefixPerApp = prefixPerApp || '';
     this.prefixPerMod = prefixPerMod || '';
-    const mod = this.getModule(typeOrObject);
+    const mod = this.getModule(modOrObject);
     this.moduleName = mod.name;
-    const moduleMetadata = this.mergeMetadata(typeOrObject);
+    const moduleMetadata = this.mergeMetadata(modOrObject);
     this.opts = new ModuleMetadata();
     Object.assign(this.opts, moduleMetadata);
     this.globalProviders = globalProviders;
@@ -101,7 +101,7 @@ export class ModuleFactory extends Factory {
      * so we should call `exportProvidersToImporter()` method in its context.
      */
     if (importer) {
-      this.exportProvidersToImporter.call(importer, typeOrObject, true);
+      this.exportProvidersToImporter.call(importer, modOrObject, true);
     }
     this.importModules();
 
@@ -226,23 +226,24 @@ export class ModuleFactory extends Factory {
   /**
    * Called in the context of the module that imports the current module.
    *
-   * @param typeOrObject Module from where exports providers.
+   * @param modOrObject Module from where exports providers.
    * @param soughtProvider Normalized provider.
    */
   protected exportProvidersToImporter(
-    typeOrObject: Type<any> | ModuleWithOptions<any>,
+    modOrObject: Type<any> | ModuleWithOptions<any>,
     isStarter: boolean,
     soughtProvider?: NormalizedProvider
   ) {
-    const { exports: exp, importsWithPrefix, providersPerMod, providersPerReq } = this.mergeMetadata(typeOrObject);
-    const moduleName = this.getModuleName(typeOrObject);
+    const { exports: exp, importsWithPrefix, providersPerMod, providersPerReq } = this.mergeMetadata(modOrObject);
+    const moduleName = this.getModuleName(modOrObject);
 
     for (const moduleOrProvider of exp) {
       const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType);
       if (moduleMetadata) {
-        const reexportedModule = moduleOrProvider as ModuleType;
+        const reexportedModuleOrObject = moduleOrProvider as ModuleType | ModuleWithOptions<any>;
+        const reexportedModule = this.getModule(reexportedModuleOrObject);
         if (importsWithPrefix.map(imp => this.getModule(imp.module)).includes(reexportedModule)) {
-          this.exportProvidersToImporter(reexportedModule, false, soughtProvider);
+          this.exportProvidersToImporter(reexportedModuleOrObject, false, soughtProvider);
         } else {
           throw new Error(`Reexports a module failed: cannot find ${reexportedModule.name} in "imports" array`);
         }

@@ -27,10 +27,10 @@ describe('AppFactory', () => {
     }
 
     getRawModuleMetadata<T extends ModuleDecorator>(
-      typeOrObject: Type<any> | ModuleWithOptions<any>,
+      modOrObject: Type<any> | ModuleWithOptions<any>,
       isRoot?: boolean
     ): T {
-      return super.getRawModuleMetadata(typeOrObject, isRoot);
+      return super.getRawModuleMetadata(modOrObject, isRoot);
     }
 
     exportProvidersPerApp(mod: Type<any> | ModuleWithOptions<any>) {

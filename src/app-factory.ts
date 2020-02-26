@@ -86,9 +86,9 @@ export class AppFactory extends Factory {
     this.opts.providersPerApp.push(...exportedProvidersPerApp);
   }
 
-  protected exportProvidersPerApp(typeOrObject: Type<any> | ModuleWithOptions<any>) {
-    const mod = this.getModule(typeOrObject);
-    const modMetadata = this.getRawModuleMetadata(typeOrObject) as RootModuleDecorator | ModuleDecorator;
+  protected exportProvidersPerApp(modOrObject: Type<any> | ModuleWithOptions<any>) {
+    const mod = this.getModule(modOrObject);
+    const modMetadata = this.getRawModuleMetadata(modOrObject) as RootModuleDecorator | ModuleDecorator;
     this.checkModuleMetadata(modMetadata, mod.name);
 
     const imports = flatten(modMetadata.imports).map(resolveForwardRef);
