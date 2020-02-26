@@ -160,7 +160,7 @@ describe('AppFactory', () => {
       expect(mock.opts.serverName).toBe('Node.js');
       expect(mock.opts.serverOptions).toEqual({});
       expect(mock.opts.httpModule).toBeDefined();
-      expect(mock.opts.routesPrefixPerApp).toBe('');
+      expect(mock.opts.prefixPerApp).toBe('');
       expect(mock.opts.importsWithPrefix).toEqual([]);
       expect(mock.opts.providersPerApp).toEqual([]);
       expect(mock.opts.listenOptions).toBeDefined();
@@ -183,7 +183,7 @@ describe('AppFactory', () => {
       ];
 
       @RootModule({
-        routesPrefixPerApp: 'api',
+        prefixPerApp: 'api',
         importsWithPrefix,
         controllers: [SomeControllerClass],
         providersPerApp: [ClassWithoutDecorators]
@@ -194,7 +194,7 @@ describe('AppFactory', () => {
       expect(mock.opts.serverName).toEqual('Node.js');
       expect(mock.opts.serverOptions).toEqual({});
       expect(mock.opts.httpModule).toBeDefined();
-      expect(mock.opts.routesPrefixPerApp).toBe('api');
+      expect(mock.opts.prefixPerApp).toBe('api');
       expect(mock.opts.importsWithPrefix).toEqual(importsWithPrefix);
       expect(mock.opts.providersPerApp).toEqual([ClassWithoutDecorators]);
       expect(mock.opts.listenOptions).toBeDefined();

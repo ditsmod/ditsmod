@@ -108,11 +108,11 @@ export class AppFactory extends Factory {
     const rootModulePrefix = this.opts.importsWithPrefix.find(config => config.module === appModule)?.prefix || '';
     const globalProviders = this.getGlobalProviders(appModule);
     const rootModule = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    rootModule.bootstrap(globalProviders, this.opts.routesPrefixPerApp, rootModulePrefix, appModule);
+    rootModule.bootstrap(globalProviders, this.opts.prefixPerApp, rootModulePrefix, appModule);
 
     this.opts.importsWithPrefix.forEach(config => {
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      moduleFactory.bootstrap(globalProviders, this.opts.routesPrefixPerApp, config.prefix, config.module, rootModule);
+      moduleFactory.bootstrap(globalProviders, this.opts.prefixPerApp, config.prefix, config.module, rootModule);
     });
   }
 

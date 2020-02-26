@@ -39,6 +39,6 @@ export class ApplicationMetadata {
    * Providers per the `Application`.
    */
   providersPerApp: Provider[] = [];
-  routesPrefixPerApp: string = '';
+  prefixPerApp: string = '';
   importsWithPrefix: ImportsWithPrefix[] = [];
 }
