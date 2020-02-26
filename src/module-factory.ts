@@ -124,9 +124,9 @@ export class ModuleFactory extends Factory {
     ]);
     const globalProvidersPerMod = isRootModule(moduleMetadata) ? [] : this.globalProviders.providersPerMod;
     this.opts.providersPerMod = [
-      ...globalProvidersPerMod,
+      ...globalProvidersPerMod.filter(p => !duplicatesProvidersPerMod.includes(p)),
       ...this.exportedProvidersPerMod,
-      ...this.opts.providersPerMod.filter(p => !duplicatesProvidersPerMod.includes(p))
+      ...this.opts.providersPerMod
     ];
 
     const duplicatesProvidersPerReq = getDuplicates([
@@ -137,9 +137,9 @@ export class ModuleFactory extends Factory {
       ? defaultProvidersPerReq
       : this.globalProviders.providersPerReq;
     this.opts.providersPerReq = [
-      ...globalProvidersPerReq,
+      ...globalProvidersPerReq.filter(p => !duplicatesProvidersPerReq.includes(p)),
       ...this.exportedProvidersPerReq,
-      ...this.opts.providersPerReq.filter(p => !duplicatesProvidersPerReq.includes(p))
+      ...this.opts.providersPerReq
     ];
   }
 
