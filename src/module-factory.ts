@@ -173,22 +173,20 @@ export class ModuleFactory extends Factory {
      * `ngMetadataName` is used only internally and is hidden from the public API.
      */
     (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
-    const importsWithPrefix = flatten<Type<any> | ModuleWithOptions<any>>(modMetadata.imports).map<ImportsWithPrefix>(
-      imp => {
+    metadata.importsWithPrefix =
+      // prettier, don't do this!
+      flatten<Type<any> | ModuleWithOptions<any>>(modMetadata.imports).map<ImportsWithPrefix>(imp => {
         return {
           prefix: '',
           module: resolveForwardRef(imp)
         };
-      }
-    );
-    metadata.importsWithPrefix = flatten<ImportsWithPrefix>(modMetadata.importsWithPrefix).map<ImportsWithPrefix>(
-      imp => {
-        return {
-          prefix: imp.prefix,
-          module: resolveForwardRef(imp.module)
-        };
-      }
-    );
+      });
+    const importsWithPrefix = flatten<ImportsWithPrefix>(modMetadata.importsWithPrefix).map<ImportsWithPrefix>(imp => {
+      return {
+        prefix: imp.prefix,
+        module: resolveForwardRef(imp.module)
+      };
+    });
     metadata.importsWithPrefix.push(...importsWithPrefix);
     metadata.exports = flatten(modMetadata.exports).map(resolveForwardRef);
     metadata.providersPerApp = flatten(modMetadata.providersPerApp);
