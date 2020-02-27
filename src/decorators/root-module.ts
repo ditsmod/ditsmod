@@ -9,8 +9,9 @@ import { Router } from '../types/router';
 import { BodyParserConfig } from '../types/types';
 import { Logger } from '../types/logger';
 import { HttpModule, ServerOptions } from '../types/server-options';
+import { deepFreeze } from '../utils/deep-freeze';
 
-export const defaultProvidersPerApp: Readonly<Provider[]> = Object.freeze([
+export const defaultProvidersPerApp: Readonly<Provider[]> = deepFreeze([
   Logger,
   BodyParserConfig,
   { provide: Router, useClass: RestifyRouter },

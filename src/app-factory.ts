@@ -111,7 +111,7 @@ export class AppFactory extends Factory {
     const { providersPerMod, providersPerReq } = rootModule.exportGlobalProviders(appModule, globalProviders);
     globalProviders.providersPerMod = providersPerMod;
     globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];
-    globalProviders = Object.freeze(globalProviders);
+    globalProviders = deepFreeze(globalProviders);
     return globalProviders;
   }
 
