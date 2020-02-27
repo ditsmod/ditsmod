@@ -59,7 +59,7 @@ export class ModuleFactory extends Factory {
   /**
    * Called only by `@RootModule` before called `ModuleFactory#boostrap()`.
    */
-  exportGlobalProviders(rootModule: Type<any>, globalProviders: ProvidersMetadata) {
+  importGlobalProviders(rootModule: Type<any>, globalProviders: ProvidersMetadata) {
     this.moduleName = this.getModuleName(rootModule);
     const moduleMetadata = this.mergeMetadata(rootModule);
     this.opts = new ModuleMetadata();

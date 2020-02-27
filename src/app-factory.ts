@@ -140,7 +140,7 @@ export class AppFactory extends Factory {
     let globalProviders = new ProvidersMetadata();
     globalProviders.providersPerApp = this.opts.providersPerApp;
     const rootModule = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    const { providersPerMod, providersPerReq } = rootModule.exportGlobalProviders(appModule, globalProviders);
+    const { providersPerMod, providersPerReq } = rootModule.importGlobalProviders(appModule, globalProviders);
     globalProviders.providersPerMod = providersPerMod;
     globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];
     globalProviders = deepFreeze(globalProviders);
