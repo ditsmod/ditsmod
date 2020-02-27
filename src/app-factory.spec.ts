@@ -121,6 +121,61 @@ describe('AppFactory', () => {
     });
   });
 
+  describe('prepareProvidersPerApp()', () => {
+    @Controller()
+    class Provider1 {}
+
+    const Alias = Provider1;
+    const duplicates = [Provider1, Alias];
+
+    @Module({ providersPerApp: duplicates })
+    class Module0 {}
+
+    @RootModule({
+      imports: [Module0]
+    })
+    class RootModule1 {}
+
+    it(`case 1`, () => {
+      mock.mergeMetadata(RootModule1);
+      const msg =
+        `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+        `Provider1. You should manually add these providers to RootModule1.`;
+      expect(() => mock.prepareProvidersPerApp(RootModule1)).toThrow(msg);
+    });
+
+    @RootModule({ providersPerApp: duplicates })
+    class RootModule2 {}
+
+    it(`case 2`, () => {
+      mock.mergeMetadata(RootModule2);
+      expect(() => mock.prepareProvidersPerApp(RootModule2)).not.toThrow();
+      expect(mock.opts.providersPerApp.length).toBe(2);
+    });
+
+    @RootModule({
+      imports: [Module0],
+      providersPerApp: duplicates
+    })
+    class RootModule3 {}
+
+    it(`case 3`, () => {
+      mock.mergeMetadata(RootModule3);
+      expect(() => mock.prepareProvidersPerApp(RootModule3)).not.toThrow();
+      expect(mock.opts.providersPerApp.length).toBe(4);
+    });
+
+    @RootModule({
+      imports: []
+    })
+    class RootModule4 {}
+
+    it(`case 4`, () => {
+      mock.mergeMetadata(RootModule4);
+      expect(() => mock.prepareProvidersPerApp(RootModule4)).not.toThrow();
+    });
+  });
+
   describe('getProvidersPerApp() and importProvidersPerApp()', () => {
     class Provider1 {}
     class Provider2 {}
@@ -255,61 +310,6 @@ describe('AppFactory', () => {
       mock.opts.httpModule = https;
       const msg = 'serverModule.createSecureServer() not found (see ClassWithDecorators settings)';
       expect(() => mock.checkSecureServerOption(ClassWithDecorators)).toThrowError(msg);
-    });
-  });
-
-  describe('prepareProvidersPerApp()', () => {
-    @Controller()
-    class Provider1 {}
-
-    const Alias = Provider1;
-    const duplicates = [Provider1, Alias];
-
-    @Module({ providersPerApp: duplicates })
-    class Module0 {}
-
-    @RootModule({
-      imports: [Module0]
-    })
-    class RootModule1 {}
-
-    it(`case 1`, () => {
-      mock.mergeMetadata(RootModule1);
-      const msg =
-        `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
-        `Provider1. You should manually add these providers to RootModule1.`;
-      expect(() => mock.prepareProvidersPerApp(RootModule1)).toThrow(msg);
-    });
-
-    @RootModule({ providersPerApp: duplicates })
-    class RootModule2 {}
-
-    it(`case 2`, () => {
-      mock.mergeMetadata(RootModule2);
-      expect(() => mock.prepareProvidersPerApp(RootModule2)).not.toThrow();
-      expect(mock.opts.providersPerApp.length).toBe(2);
-    });
-
-    @RootModule({
-      imports: [Module0],
-      providersPerApp: duplicates
-    })
-    class RootModule3 {}
-
-    it(`case 3`, () => {
-      mock.mergeMetadata(RootModule3);
-      expect(() => mock.prepareProvidersPerApp(RootModule3)).not.toThrow();
-      expect(mock.opts.providersPerApp.length).toBe(4);
-    });
-
-    @RootModule({
-      imports: []
-    })
-    class RootModule4 {}
-
-    it(`case 4`, () => {
-      mock.mergeMetadata(RootModule4);
-      expect(() => mock.prepareProvidersPerApp(RootModule4)).not.toThrow();
     });
   });
 });
