@@ -65,7 +65,7 @@ export class ModuleFactory extends Factory {
     this.opts = new ModuleMetadata();
     Object.assign(this.opts, moduleMetadata);
     this.globalProviders = globalProviders;
-    this.exportProvidersToImporter(rootModule, true);
+    this.importProviders(rootModule);
 
     return {
       providersPerMod: this.exportedProvidersPerMod,
@@ -77,14 +77,12 @@ export class ModuleFactory extends Factory {
    * Bootstraps a module.
    *
    * @param modOrObject Module that will bootstrapped.
-   * @param importer It's module that imported current module.
    */
   bootstrap(
     globalProviders: ProvidersMetadata,
     prefixPerApp: string,
     prefixPerMod: string,
-    modOrObject: Type<any> | ModuleWithOptions<any>,
-    importer?: this
+    modOrObject: Type<any> | ModuleWithOptions<any>
   ) {
     this.prefixPerApp = prefixPerApp || '';
     this.prefixPerMod = prefixPerMod || '';
@@ -94,16 +92,6 @@ export class ModuleFactory extends Factory {
     this.opts = new ModuleMetadata();
     Object.assign(this.opts, moduleMetadata);
     this.globalProviders = globalProviders;
-    /**
-     * If we exported providers from current module,
-     * this only make sense for the module that will import current module.
-     *
-     * Here "importer" it's module that imported current module,
-     * so we should call `exportProvidersToImporter()` method in its context.
-     */
-    if (importer) {
-      this.exportProvidersToImporter.call(importer, modOrObject, true);
-    }
     this.importModules();
     this.mergeProviders(moduleMetadata);
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
@@ -231,25 +219,21 @@ export class ModuleFactory extends Factory {
 
   protected importModules() {
     for (const imp of this.opts.importsWithPrefix) {
+      this.importProviders(imp.module);
       const prefixPerMod = [this.prefixPerMod, imp.prefix].filter(s => s).join('/');
       const mod = imp.module;
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      const optionsMap = moduleFactory.bootstrap(this.globalProviders, this.prefixPerApp, prefixPerMod, mod, this);
+      const optionsMap = moduleFactory.bootstrap(this.globalProviders, this.prefixPerApp, prefixPerMod, mod);
       this.testOptionsMap = new Map([...this.testOptionsMap, ...optionsMap]);
     }
+    this.checkProvidersUnpredictable();
   }
 
   /**
-   * Called in the context of the module that imports the current module.
-   *
    * @param modOrObject Module from where exports providers.
    * @param soughtProvider Normalized provider.
    */
-  protected exportProvidersToImporter(
-    modOrObject: Type<any> | ModuleWithOptions<any>,
-    isStarter: boolean,
-    soughtProvider?: NormalizedProvider
-  ) {
+  protected importProviders(modOrObject: Type<any> | ModuleWithOptions<any>, soughtProvider?: NormalizedProvider) {
     const { exports: exp, importsWithPrefix, providersPerMod, providersPerReq } = this.mergeMetadata(modOrObject);
     const moduleName = this.getModuleName(modOrObject);
 
@@ -259,7 +243,7 @@ export class ModuleFactory extends Factory {
         const reexportedModuleOrObject = moduleOrProvider as ModuleType | ModuleWithOptions<any>;
         const reexportedModule = this.getModule(reexportedModuleOrObject);
         if (importsWithPrefix.map(imp => this.getModule(imp.module)).includes(reexportedModule)) {
-          this.exportProvidersToImporter(reexportedModuleOrObject, false, soughtProvider);
+          this.importProviders(reexportedModuleOrObject, soughtProvider);
         } else {
           throw new Error(`Reexports a module failed: cannot find ${reexportedModule.name} in "imports" array`);
         }
@@ -273,7 +257,7 @@ export class ModuleFactory extends Factory {
         let foundProvider = this.findAndSetProvider(provider, normProvider, providersPerMod, providersPerReq);
         if (!foundProvider) {
           for (const imp of importsWithPrefix) {
-            foundProvider = this.exportProvidersToImporter(imp.module, false, normProvider);
+            foundProvider = this.importProviders(imp.module, normProvider);
             if (foundProvider) {
               break;
             }
@@ -293,10 +277,6 @@ export class ModuleFactory extends Factory {
           return true;
         }
       }
-    }
-
-    if (isStarter) {
-      this.checkProvidersUnpredictable();
     }
   }
 

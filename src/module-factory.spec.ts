@@ -51,12 +51,8 @@ describe('ModuleFactory', () => {
       return super.mergeMetadata(mod);
     }
 
-    exportProvidersToImporter(
-      modOrObject: Type<any> | ModuleWithOptions<any>,
-      isStarter: boolean,
-      soughtProvider: NormalizedProvider
-    ) {
-      return super.exportProvidersToImporter(modOrObject, isStarter, soughtProvider);
+    importProviders(modOrObject: Type<any> | ModuleWithOptions<any>, soughtProvider: NormalizedProvider) {
+      return super.importProviders(modOrObject, soughtProvider);
     }
 
     loadRoutesConfig(prefix: string, configs: RouteConfig[]) {
