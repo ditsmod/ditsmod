@@ -95,7 +95,7 @@ export class AppFactory extends Factory {
   }
 
   protected prepareProvidersPerApp(appModule: ModuleType) {
-    const exportedProvidersPerApp = this.exportProvidersPerApp(appModule);
+    const exportedProvidersPerApp = this.importProvidersPerApp(appModule);
     const declaredTokensPerApp = normalizeProviders(this.opts.providersPerApp).map(np => np.provide);
     const exportedTokensPerApp = normalizeProviders(exportedProvidersPerApp).map(np => np.provide);
     const defaultTokens = normalizeProviders([...defaultProvidersPerApp]).map(np => np.provide);
@@ -107,14 +107,14 @@ export class AppFactory extends Factory {
     this.opts.providersPerApp.push(...exportedProvidersPerApp);
   }
 
-  protected exportProvidersPerApp(modOrObject: Type<any> | ModuleWithOptions<any>) {
+  protected importProvidersPerApp(modOrObject: Type<any> | ModuleWithOptions<any>) {
     const mod = this.getModule(modOrObject);
     const modMetadata = this.getRawModuleMetadata(modOrObject) as RootModuleDecorator | ModuleDecorator;
     this.checkModuleMetadata(modMetadata, mod.name);
 
-    const imports = flatten(modMetadata.imports).map(resolveForwardRef);
+    const imports = flatten(modMetadata.imports).map<Type<any> | ModuleWithOptions<any>>(resolveForwardRef);
     const providersPerApp: Provider[] = [];
-    imports.forEach(imp => providersPerApp.push(...this.exportProvidersPerApp(imp)));
+    imports.forEach(imp => providersPerApp.push(...this.importProvidersPerApp(imp)));
     const currProvidersPerApp = isRootModule(modMetadata) ? [] : flatten(modMetadata.providersPerApp);
 
     return [...providersPerApp, ...currProvidersPerApp];

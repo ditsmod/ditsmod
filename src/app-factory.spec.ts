@@ -30,8 +30,8 @@ describe('AppFactory', () => {
       return super.getRawModuleMetadata(modOrObject, isRoot);
     }
 
-    exportProvidersPerApp(mod: Type<any> | ModuleWithOptions<any>) {
-      return super.exportProvidersPerApp(mod);
+    importProvidersPerApp(mod: Type<any> | ModuleWithOptions<any>) {
+      return super.importProvidersPerApp(mod);
     }
 
     checkSecureServerOption(appModule: ModuleType) {
@@ -176,7 +176,7 @@ describe('AppFactory', () => {
     });
   });
 
-  describe('getProvidersPerApp() and importProvidersPerApp()', () => {
+  describe('importProvidersPerApp()', () => {
     class Provider1 {}
     class Provider2 {}
     class Provider3 {}
@@ -213,7 +213,7 @@ describe('AppFactory', () => {
     class Module5 {}
 
     it('should have 6 providersPerApp imported from Module3', () => {
-      expect(mock.exportProvidersPerApp(Module4)).toEqual([
+      expect(mock.importProvidersPerApp(Module4)).toEqual([
         Provider1,
         Provider2,
         Provider3,
@@ -224,7 +224,7 @@ describe('AppFactory', () => {
     });
 
     it('should have 7 providersPerApp imported from Module1 and Module4', () => {
-      expect(mock.exportProvidersPerApp(Module5)).toEqual([
+      expect(mock.importProvidersPerApp(Module5)).toEqual([
         Provider1,
         Provider1,
         Provider2,
@@ -246,7 +246,7 @@ describe('AppFactory', () => {
 
     it('should have 7 providersPerApp imported from Module4 and Module6', () => {
       const modWithOptions = Module6.withOptions([Provider7]);
-      expect(mock.exportProvidersPerApp(modWithOptions)).toEqual([
+      expect(mock.importProvidersPerApp(modWithOptions)).toEqual([
         Provider1,
         Provider2,
         Provider3,
@@ -261,7 +261,7 @@ describe('AppFactory', () => {
     class Module7 {}
 
     it('should have empty array of providersPerApp', () => {
-      expect(mock.exportProvidersPerApp(Module7)).toEqual([]);
+      expect(mock.importProvidersPerApp(Module7)).toEqual([]);
     });
   });
 
