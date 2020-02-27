@@ -10,7 +10,7 @@ import { isHttp2SecureServerOptions, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
 import { ModuleFactory } from './module-factory';
-import { pickProperties, pickPropertiesAsGetters, pickAllPropertiesAsGetters } from './utils/pick-properties';
+import { pickProperties } from './utils/pick-properties';
 import { Router, HttpMethod } from './types/router';
 import { NodeResToken, NodeReqToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
@@ -72,6 +72,28 @@ export class AppFactory extends Factory {
     return this.bootstrapModuleFactory(appModule);
   }
 
+  /**
+   * Merge AppModule metadata with default ApplicationMetadata.
+   */
+  protected mergeMetadata(appModule: ModuleType): void {
+    const modMetadata = deepFreeze(reflector.annotations(appModule).find(isRootModule));
+    if (!modMetadata) {
+      throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
+    }
+
+    // Setting default metadata.
+    this.opts = new ApplicationMetadata();
+
+    pickProperties(this.opts, modMetadata);
+  }
+
+  protected checkSecureServerOption(appModule: ModuleType) {
+    const serverOptions = this.opts.serverOptions as Http2SecureServerOptions;
+    if (serverOptions?.isHttp2SecureServer && !(this.opts.httpModule as typeof http2).createSecureServer) {
+      throw new TypeError(`serverModule.createSecureServer() not found (see ${appModule.name} settings)`);
+    }
+  }
+
   protected prepareProvidersPerApp(appModule: ModuleType) {
     const exportedProvidersPerApp = this.exportProvidersPerApp(appModule);
     const declaredTokensPerApp = normalizeProviders(this.opts.providersPerApp).map(np => np.provide);
@@ -98,6 +120,16 @@ export class AppFactory extends Factory {
     return [...providersPerApp, ...currProvidersPerApp];
   }
 
+  /**
+   * Init providers per the application.
+   */
+  protected initProvidersPerApp() {
+    this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.opts.providersPerApp);
+    this.log = this.injectorPerApp.get(Logger) as Logger;
+    this.router = this.injectorPerApp.get(Router) as Router;
+    this.preReq = this.injectorPerApp.get(PreRequest) as PreRequest;
+  }
+
   protected bootstrapModuleFactory(appModule: ModuleType) {
     const globalProviders = this.getGlobalProviders(appModule);
     const rootModule = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
@@ -113,38 +145,6 @@ export class AppFactory extends Factory {
     globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];
     globalProviders = deepFreeze(globalProviders);
     return globalProviders;
-  }
-
-  /**
-   * Merge AppModule metadata with default ApplicationMetadata.
-   */
-  protected mergeMetadata(appModule: ModuleType): void {
-    const modMetadata = deepFreeze(reflector.annotations(appModule).find(isRootModule));
-    if (!modMetadata) {
-      throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
-    }
-
-    // Setting default metadata.
-    this.opts = new ApplicationMetadata();
-
-    pickProperties(this.opts, modMetadata);
-  }
-
-  /**
-   * Init providers per the application.
-   */
-  protected initProvidersPerApp() {
-    this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.opts.providersPerApp);
-    this.log = this.injectorPerApp.get(Logger) as Logger;
-    this.router = this.injectorPerApp.get(Router) as Router;
-    this.preReq = this.injectorPerApp.get(PreRequest) as PreRequest;
-  }
-
-  protected checkSecureServerOption(appModule: ModuleType) {
-    const serverOptions = this.opts.serverOptions as Http2SecureServerOptions;
-    if (serverOptions?.isHttp2SecureServer && !(this.opts.httpModule as typeof http2).createSecureServer) {
-      throw new TypeError(`serverModule.createSecureServer() not found (see ${appModule.name} settings)`);
-    }
   }
 
   protected requestListener: RequestListener = (nodeReq, nodeRes) => {
