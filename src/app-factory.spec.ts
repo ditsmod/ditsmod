@@ -212,7 +212,7 @@ describe('AppFactory', () => {
     })
     class Module5 {}
 
-    it('should have 6 providersPerApp imported from Module3', () => {
+    it('case 1', () => {
       expect(mock.importProvidersPerApp(Module4)).toEqual([
         Provider1,
         Provider2,
@@ -223,7 +223,7 @@ describe('AppFactory', () => {
       ]);
     });
 
-    it('should have 7 providersPerApp imported from Module1 and Module4', () => {
+    it('case 2', () => {
       expect(mock.importProvidersPerApp(Module5)).toEqual([
         Provider1,
         Provider1,
@@ -244,7 +244,7 @@ describe('AppFactory', () => {
       }
     }
 
-    it('should have 7 providersPerApp imported from Module4 and Module6', () => {
+    it('case 3', () => {
       const modWithOptions = Module6.withOptions([Provider7]);
       expect(mock.importProvidersPerApp(modWithOptions)).toEqual([
         Provider1,
