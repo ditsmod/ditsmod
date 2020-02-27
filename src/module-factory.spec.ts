@@ -39,8 +39,8 @@ describe('ModuleFactory', () => {
       return super.initProvidersPerReq();
     }
 
-    quickCheckImports(moduleMetadata: ModuleMetadata) {
-      return super.quickCheckImports(moduleMetadata);
+    quickCheckMetadata(moduleMetadata: ModuleMetadata) {
+      return super.quickCheckMetadata(moduleMetadata);
     }
 
     getRawModuleMetadata<T extends ModuleDecorator>(modOrObject: Type<any> | ModuleWithOptions<any>, isRoot?: boolean) {
@@ -131,7 +131,7 @@ describe('ModuleFactory', () => {
     });
   });
 
-  describe('quickCheckImports()', () => {
+  describe('quickCheckMetadata()', () => {
     it('should throw an error, when no export and no controllers', () => {
       class Provider11 {}
       class Provider12 {}
@@ -142,7 +142,7 @@ describe('ModuleFactory', () => {
       class Module1 {}
 
       const moduleMetadata = mock.mergeMetadata(Module1);
-      expect(() => mock.quickCheckImports(moduleMetadata)).toThrow(
+      expect(() => mock.quickCheckMetadata(moduleMetadata)).toThrow(
         `Import MockModule failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`
       );
     });
@@ -162,7 +162,7 @@ describe('ModuleFactory', () => {
       class Module2 {}
 
       const moduleMetadata = mock.mergeMetadata(Module2);
-      expect(() => mock.quickCheckImports(moduleMetadata)).toThrow(
+      expect(() => mock.quickCheckMetadata(moduleMetadata)).toThrow(
         `Import MockModule failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`
       );
     });
@@ -178,7 +178,7 @@ describe('ModuleFactory', () => {
       class Module1 {}
 
       const moduleMetadata = mock.mergeMetadata(Module1);
-      expect(() => mock.quickCheckImports(moduleMetadata)).not.toThrow();
+      expect(() => mock.quickCheckMetadata(moduleMetadata)).not.toThrow();
     });
 
     it('should not throw an error, when export some controller', () => {
@@ -192,7 +192,7 @@ describe('ModuleFactory', () => {
       class Module1 {}
 
       const moduleMetadata = mock.mergeMetadata(Module1);
-      expect(() => mock.quickCheckImports(moduleMetadata)).not.toThrow();
+      expect(() => mock.quickCheckMetadata(moduleMetadata)).not.toThrow();
     });
   });
 
@@ -439,7 +439,7 @@ describe('ModuleFactory', () => {
       })
       class Module6 {}
 
-      @Module({
+      @RootModule({
         imports: [Module6]
       })
       class Module7 {}

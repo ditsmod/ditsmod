@@ -16,7 +16,6 @@ import {
   ModuleWithOptions,
   ProvidersMetadata
 } from './decorators/module';
-import { ControllerDecorator } from './decorators/controller';
 import { RouteDecoratorMetadata } from './decorators/route';
 import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
@@ -28,6 +27,7 @@ import { Logger } from './types/logger';
 import { Factory } from './factory';
 import { getDuplicates } from './utils/get-duplicates';
 import { deepFreeze } from './utils/deep-freeze';
+import { pickProperties } from './utils/pick-properties';
 
 /**
  * - creates `injectorPerMod` and `injectorPerReq`;
@@ -63,9 +63,10 @@ export class ModuleFactory extends Factory {
     this.moduleName = this.getModuleName(rootModule);
     const moduleMetadata = this.mergeMetadata(rootModule);
     this.opts = new ModuleMetadata();
-    Object.assign(this.opts, moduleMetadata);
+    pickProperties(this.opts, moduleMetadata);
     this.globalProviders = globalProviders;
     this.importProviders(rootModule);
+    this.checkProvidersUnpredictable();
 
     return {
       providersPerMod: this.exportedProvidersPerMod,
@@ -84,6 +85,7 @@ export class ModuleFactory extends Factory {
     prefixPerMod: string,
     modOrObject: Type<any> | ModuleWithOptions<any>
   ) {
+    this.globalProviders = globalProviders;
     this.prefixPerApp = prefixPerApp || '';
     this.prefixPerMod = prefixPerMod || '';
     const mod = this.getModule(modOrObject);
@@ -91,13 +93,12 @@ export class ModuleFactory extends Factory {
     const moduleMetadata = this.mergeMetadata(modOrObject);
     this.opts = new ModuleMetadata();
     Object.assign(this.opts, moduleMetadata);
-    this.globalProviders = globalProviders;
+    this.quickCheckMetadata(moduleMetadata);
     this.importModules();
     this.mergeProviders(moduleMetadata);
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
     this.injectorPerMod.resolveAndInstantiate(mod);
     this.initProvidersPerReq();
-    this.quickCheckImports(moduleMetadata);
     this.checkRoutePath(this.prefixPerApp);
     this.checkRoutePath(this.prefixPerMod);
     const prefix = [this.prefixPerApp, this.prefixPerMod].filter(s => s).join('/');
@@ -142,7 +143,7 @@ export class ModuleFactory extends Factory {
     }
   }
 
-  protected quickCheckImports(moduleMetadata: ModuleMetadata) {
+  protected quickCheckMetadata(moduleMetadata: ModuleMetadata) {
     if (
       !isRootModule(moduleMetadata as any) &&
       !moduleMetadata.providersPerApp.length &&
