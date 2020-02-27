@@ -104,7 +104,7 @@ export class AppFactory extends Factory {
     if (duplExpPerApp.length) {
       this.throwErrorProvidersUnpredictable(appModule.name, duplExpPerApp);
     }
-    this.opts.providersPerApp.push(...exportedProvidersPerApp);
+    this.opts.providersPerApp.unshift(...exportedProvidersPerApp);
   }
 
   protected importProvidersPerApp(modOrObject: Type<any> | ModuleWithOptions<any>) {
