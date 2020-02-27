@@ -10,7 +10,7 @@ import { isHttp2SecureServerOptions, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
 import { ModuleFactory } from './module-factory';
-import { pickProperties } from './utils/pick-properties';
+import { pickProperties, pickPropertiesAsGetters, pickAllPropertiesAsGetters } from './utils/pick-properties';
 import { Router, HttpMethod } from './types/router';
 import { NodeResToken, NodeReqToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
@@ -25,6 +25,7 @@ import {
 import { getDuplicates } from './utils/get-duplicates';
 import { flatten, normalizeProviders } from './utils/ng-utils';
 import { Factory } from './factory';
+import { deepFreeze } from './utils/deep-freeze';
 
 export class AppFactory extends Factory {
   protected log: Logger;
@@ -32,9 +33,7 @@ export class AppFactory extends Factory {
   protected injectorPerApp: ReflectiveInjector;
   protected router: Router;
   protected preReq: PreRequest;
-
-  // Setting default metadata.
-  protected opts = new ApplicationMetadata();
+  protected opts: ApplicationMetadata;
 
   bootstrap(appModule: ModuleType) {
     return new Promise<Server>((resolve, reject) => {
@@ -120,14 +119,15 @@ export class AppFactory extends Factory {
    * Merge AppModule metadata with default ApplicationMetadata.
    */
   protected mergeMetadata(appModule: ModuleType): void {
-    const modMetadata = reflector.annotations(appModule).find(isRootModule);
+    const modMetadata = deepFreeze(reflector.annotations(appModule).find(isRootModule));
     if (!modMetadata) {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
 
-    const providersPerApp = flatten(modMetadata.providersPerApp);
+    // Setting default metadata.
+    this.opts = new ApplicationMetadata();
+
     pickProperties(this.opts, modMetadata);
-    this.opts.providersPerApp = providersPerApp;
   }
 
   /**

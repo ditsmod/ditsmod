@@ -10,7 +10,7 @@ import { PreRequest } from './services/pre-request';
 import { Router, ImportsWithPrefix } from './types/router';
 import { Logger } from './types/logger';
 import { Server } from './types/server-options';
-import { Module, ModuleType, ModuleDecorator, ModuleWithOptions } from './decorators/module';
+import { Module, ModuleType, ModuleWithOptions, ModuleMetadata } from './decorators/module';
 import { Controller } from './decorators/controller';
 
 describe('AppFactory', () => {
@@ -26,10 +26,7 @@ describe('AppFactory', () => {
       return super.mergeMetadata(appModule);
     }
 
-    getRawModuleMetadata<T extends ModuleDecorator>(
-      modOrObject: Type<any> | ModuleWithOptions<any>,
-      isRoot?: boolean
-    ): T {
+    getRawModuleMetadata(modOrObject: Type<any> | ModuleWithOptions<any>, isRoot?: boolean) {
       return super.getRawModuleMetadata(modOrObject, isRoot);
     }
 
@@ -60,6 +57,68 @@ describe('AppFactory', () => {
 
   beforeEach(() => {
     mock = new MockAppFactory();
+  });
+
+  describe('mergeMetadata()', () => {
+    it('should set the default metatada', () => {
+      @RootModule()
+      class ClassWithDecorators {}
+
+      mock.mergeMetadata(ClassWithDecorators);
+      expect(mock.opts.httpModule).toBeDefined();
+      expect(mock.opts.serverName).toBe('Node.js');
+      expect(mock.opts.serverOptions).toEqual({});
+      expect(mock.opts.listenOptions).toBeDefined();
+      expect(mock.opts.prefixPerApp).toBe('');
+      expect(mock.opts.providersPerApp).toEqual([]);
+
+      const opts = (mock.opts as unknown) as ModuleMetadata;
+      expect(opts.routesPerMod).toBe(undefined);
+      expect(opts.controllers).toBe(undefined);
+      expect(opts.exports).toBe(undefined);
+      expect(opts.importsWithPrefix).toBe(undefined);
+      expect(opts.providersPerMod).toBe(undefined);
+      expect(opts.providersPerReq).toBe(undefined);
+    });
+
+    it('should merge default metatada with ClassWithDecorators metadata', () => {
+      class SomeModule {}
+      class OtherModule {}
+
+      const importsWithPrefix: ImportsWithPrefix[] = [
+        { prefix: '', module: SomeModule },
+        { prefix: '', module: OtherModule }
+      ];
+
+      @RootModule({
+        prefixPerApp: 'api',
+        importsWithPrefix,
+        controllers: [SomeControllerClass],
+        providersPerApp: [ClassWithoutDecorators]
+      })
+      class ClassWithDecorators {}
+
+      mock.mergeMetadata(ClassWithDecorators);
+      expect(mock.opts.serverName).toEqual('Node.js');
+      expect(mock.opts.serverOptions).toEqual({});
+      expect(mock.opts.httpModule).toBeDefined();
+      expect(mock.opts.prefixPerApp).toBe('api');
+      expect(mock.opts.providersPerApp).toEqual([ClassWithoutDecorators]);
+      expect(mock.opts.listenOptions).toBeDefined();
+
+      const opts = (mock.opts as unknown) as ModuleMetadata;
+      expect(opts.routesPerMod).toBe(undefined);
+      expect(opts.controllers).toBe(undefined);
+      expect(opts.exports).toBe(undefined);
+      expect(opts.importsWithPrefix).toBe(undefined);
+      expect(opts.providersPerMod).toBe(undefined);
+      expect(opts.providersPerReq).toBe(undefined);
+    });
+
+    it('ClassWithoutDecorators should not have metatada', () => {
+      const msg = `Module build failed: module "ClassWithoutDecorators" does not have the "@RootModule()" decorator`;
+      expect(() => mock.mergeMetadata(ClassWithoutDecorators)).toThrowError(msg);
+    });
   });
 
   describe('getProvidersPerApp() and importProvidersPerApp()', () => {
@@ -148,66 +207,6 @@ describe('AppFactory', () => {
 
     it('should have empty array of providersPerApp', () => {
       expect(mock.exportProvidersPerApp(Module7)).toEqual([]);
-    });
-  });
-
-  describe('mergeMetadata()', () => {
-    it('should set default metatada', () => {
-      @RootModule()
-      class ClassWithDecorators {}
-
-      mock.mergeMetadata(ClassWithDecorators);
-      expect(mock.opts.serverName).toBe('Node.js');
-      expect(mock.opts.serverOptions).toEqual({});
-      expect(mock.opts.httpModule).toBeDefined();
-      expect(mock.opts.prefixPerApp).toBe('');
-      expect(mock.opts.providersPerApp).toEqual([]);
-      expect(mock.opts.listenOptions).toBeDefined();
-      // Ignore controllers - it's intended behavior.
-      expect((mock.opts as any).routesPerMod).toBe(undefined);
-      expect((mock.opts as any).controllers).toBe(undefined);
-      expect((mock.opts as any).exports).toBe(undefined);
-      expect((mock.opts as any).imports).toBe(undefined);
-      expect((mock.opts as any).providersPerMod).toBe(undefined);
-      expect((mock.opts as any).providersPerReq).toBe(undefined);
-    });
-
-    it('should merge default metatada with ClassWithDecorators metadata', () => {
-      class SomeModule {}
-      class OtherModule {}
-
-      const importsWithPrefix: ImportsWithPrefix[] = [
-        { prefix: '', module: SomeModule },
-        { prefix: '', module: OtherModule }
-      ];
-
-      @RootModule({
-        prefixPerApp: 'api',
-        importsWithPrefix,
-        controllers: [SomeControllerClass],
-        providersPerApp: [ClassWithoutDecorators]
-      })
-      class ClassWithDecorators {}
-
-      mock.mergeMetadata(ClassWithDecorators);
-      expect(mock.opts.serverName).toEqual('Node.js');
-      expect(mock.opts.serverOptions).toEqual({});
-      expect(mock.opts.httpModule).toBeDefined();
-      expect(mock.opts.prefixPerApp).toBe('api');
-      expect(mock.opts.providersPerApp).toEqual([ClassWithoutDecorators]);
-      expect(mock.opts.listenOptions).toBeDefined();
-      // Ignore controllers - it's intended behavior.
-      expect((mock.opts as any).routesPerMod).toBe(undefined);
-      expect((mock.opts as any).controllers).toBe(undefined);
-      expect((mock.opts as any).exports).toBe(undefined);
-      expect((mock.opts as any).imports).toBe(undefined);
-      expect((mock.opts as any).providersPerMod).toBe(undefined);
-      expect((mock.opts as any).providersPerReq).toBe(undefined);
-    });
-
-    it('ClassWithoutDecorators should not have metatada', () => {
-      const msg = `Module build failed: module "ClassWithoutDecorators" does not have the "@RootModule()" decorator`;
-      expect(() => mock.mergeMetadata(ClassWithoutDecorators)).toThrowError(msg);
     });
   });
 

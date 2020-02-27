@@ -5,7 +5,7 @@ import { Router as RestifyRouter } from '@ts-stack/router';
 
 import { PreRequest } from '../services/pre-request';
 import { ModuleDecorator } from './module';
-import { ImportsWithPrefix, Router } from '../types/router';
+import { Router } from '../types/router';
 import { BodyParserConfig } from '../types/types';
 import { Logger } from '../types/logger';
 import { HttpModule, ServerOptions } from '../types/server-options';
@@ -31,13 +31,13 @@ export interface RootModuleDecorator extends ModuleDecorator, Partial<Applicatio
 export const RootModule = makeDecorator('RootModule', (data: any) => data) as RootModuleDecoratorFactory;
 
 export class ApplicationMetadata {
-  serverName: string = 'Node.js';
   httpModule: HttpModule = http;
+  serverName: string = 'Node.js';
   serverOptions: ServerOptions = {};
   listenOptions: ListenOptions = { host: 'localhost', port: 8080 };
+  prefixPerApp: string = '';
   /**
    * Providers per the `Application`.
    */
   providersPerApp: Provider[] = [];
-  prefixPerApp: string = '';
 }

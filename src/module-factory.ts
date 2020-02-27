@@ -27,6 +27,7 @@ import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
 import { Factory } from './factory';
 import { getDuplicates } from './utils/get-duplicates';
+import { deepFreeze } from './utils/deep-freeze';
 
 /**
  * - creates `injectorPerMod` and `injectorPerReq`;
@@ -353,7 +354,7 @@ export class ModuleFactory extends Factory {
   }
 
   protected setRoutes(prefix: string, Ctrl: TypeProvider, routeData?: any) {
-    const controllerMetadata = reflector.annotations(Ctrl).find(isController) as ControllerDecorator;
+    const controllerMetadata = deepFreeze(reflector.annotations(Ctrl).find(isController));
     if (!controllerMetadata) {
       throw new Error(`Setting routes failed: class "${Ctrl.name}" does not have the "@Controller()" decorator`);
     }

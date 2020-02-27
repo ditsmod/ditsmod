@@ -1,8 +1,10 @@
 import { Type, reflector } from '@ts-stack/di';
 
 import { isModuleWithOptions, isModule, isRootModule } from './utils/type-guards';
-import { ModuleWithOptions, ModuleDecorator } from './decorators/module';
+import { ModuleWithOptions, ModuleDecorator, Module } from './decorators/module';
 import { mergeArrays } from './utils/merge-arrays-options';
+import { RootModule } from './decorators/root-module';
+import { deepFreeze } from './utils/deep-freeze';
 
 export abstract class Factory {
   protected throwErrorProvidersUnpredictable(moduleName: string, duplicates: any[]) {
@@ -34,6 +36,7 @@ export abstract class Factory {
   ) {
     let modMetadata: T;
     const typeGuard = isRoot ? isRootModule : (m: ModuleDecorator) => isModule(m) || isRootModule(m);
+    const Metadata = isRoot ? RootModule : Module;
 
     if (isModuleWithOptions(modOrObject)) {
       const modWitOptions = modOrObject;
@@ -41,13 +44,13 @@ export abstract class Factory {
       const modName = this.getModuleName(modWitOptions.module);
       this.checkModuleMetadata(modMetadata, modName, isRoot);
 
-      modMetadata.providersPerApp = mergeArrays(modMetadata.providersPerApp, modWitOptions.providersPerApp);
-      modMetadata.providersPerMod = mergeArrays(modMetadata.providersPerMod, modWitOptions.providersPerMod);
-      modMetadata.providersPerReq = mergeArrays(modMetadata.providersPerReq, modWitOptions.providersPerReq);
+      const metadata = new Metadata(modMetadata);
+      metadata.providersPerApp = mergeArrays(modMetadata.providersPerApp, modWitOptions.providersPerApp);
+      metadata.providersPerMod = mergeArrays(modMetadata.providersPerMod, modWitOptions.providersPerMod);
+      metadata.providersPerReq = mergeArrays(modMetadata.providersPerReq, modWitOptions.providersPerReq);
+      return deepFreeze(metadata);
     } else {
-      modMetadata = reflector.annotations(modOrObject).find(typeGuard) as T;
+      return deepFreeze<T>(reflector.annotations(modOrObject).find(typeGuard));
     }
-
-    return modMetadata;
   }
 }

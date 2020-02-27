@@ -13,6 +13,7 @@ import { EntitiesToken } from '../../../types/injection-tokens';
 import { StaticEntity } from '../decorators/entity';
 import { ColumnDecoratorMetadata } from '../decorators/column';
 import { isColumnType, isColumn, isEntity } from '../../../utils/type-guards';
+import { deepFreeze } from '../../../utils/deep-freeze';
 
 @Injectable()
 export class EntityInjector implements Injector {
@@ -39,7 +40,7 @@ export class EntityInjector implements Injector {
       const Token = item.key.token as Type<any>;
       const instance = this.injector.get(Token);
       const Entity = instance?.constructor as typeof StaticEntity;
-      const entityMetadata = reflector.annotations(Entity).find(isEntity);
+      const entityMetadata = deepFreeze(reflector.annotations(Entity).find(isEntity));
       if (entityMetadata) {
         const columnMetadata = reflector.propMetadata(Entity) as ColumnDecoratorMetadata;
         // console.log(columnMetadata);

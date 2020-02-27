@@ -480,7 +480,7 @@ describe('ModuleFactory', () => {
 
         @Module({
           imports: [Module1.withOptions()],
-          exports: [Module1, Provider2, Provider3],
+          exports: [Module1.withOptions(), Provider2, Provider3],
           providersPerMod: [Provider2, Provider3]
         })
         class Module2 {}
@@ -509,7 +509,7 @@ describe('ModuleFactory', () => {
 
         it(`exporting duplicates of Provider1 from Module1 and Module2`, () => {
           @RootModule({
-            imports: [Module0, Module1]
+            imports: [Module0, Module1.withOptions()]
           })
           class RootModule1 {}
 
@@ -521,7 +521,7 @@ describe('ModuleFactory', () => {
 
         it(`exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerMod of root module`, () => {
           @RootModule({
-            imports: [Module0, Module1],
+            imports: [Module0, Module1.withOptions()],
             providersPerMod: [Provider1]
           })
           class RootModule1 {}
@@ -696,7 +696,7 @@ describe('ModuleFactory', () => {
 
       @RootModule({
         imports: [Module0, Module1, Module2.withOptions(), Module5],
-        exports: [Module0, Module2, Module3],
+        exports: [Module0, Module2.withOptions(), Module3],
         importsWithPrefix: [
           { prefix: 'one', module: Module3 },
           { prefix: 'two', module: Module4 }
