@@ -91,9 +91,9 @@ export class ModuleFactory extends Factory {
     const mod = this.getModule(modOrObject);
     this.moduleName = mod.name;
     const moduleMetadata = this.mergeMetadata(modOrObject);
+    this.quickCheckMetadata(moduleMetadata);
     this.opts = new ModuleMetadata();
     Object.assign(this.opts, moduleMetadata);
-    this.quickCheckMetadata(moduleMetadata);
     this.importModules();
     this.mergeProviders(moduleMetadata);
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
@@ -148,7 +148,7 @@ export class ModuleFactory extends Factory {
       !isRootModule(moduleMetadata as any) &&
       !moduleMetadata.providersPerApp.length &&
       !moduleMetadata.controllers.length &&
-      !someController(this.opts.routesPerMod) &&
+      !someController(moduleMetadata.routesPerMod) &&
       !moduleMetadata.exports.length
     ) {
       throw new Error(
@@ -157,7 +157,7 @@ export class ModuleFactory extends Factory {
     }
 
     function someController(configs: RouteConfig[]) {
-      for (const config of configs) {
+      for (const config of configs || []) {
         if (config.controller || someController(config.children)) {
           return true;
         }
