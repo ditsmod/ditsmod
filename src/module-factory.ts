@@ -103,7 +103,7 @@ export class ModuleFactory extends Factory {
     this.checkRoutePath(this.prefixPerMod);
     const prefix = [this.prefixPerApp, this.prefixPerMod].filter(s => s).join('/');
     this.opts.controllers.forEach(Ctrl => this.setRoutes(prefix, Ctrl));
-    this.loadRoutesConfig(prefix, this.opts.routesPerMod);
+    this.loadRoutesConfig(prefix, this.opts.routes);
     return this.testOptionsMap.set(mod, this.opts);
   }
 
@@ -148,7 +148,7 @@ export class ModuleFactory extends Factory {
       !isRootModule(moduleMetadata as any) &&
       !moduleMetadata.providersPerApp.length &&
       !moduleMetadata.controllers.length &&
-      !someController(moduleMetadata.routesPerMod) &&
+      !someController(moduleMetadata.routes) &&
       !moduleMetadata.exports.length
     ) {
       throw new Error(
@@ -198,7 +198,7 @@ export class ModuleFactory extends Factory {
     metadata.providersPerMod = flatten(modMetadata.providersPerMod);
     metadata.providersPerReq = flatten(modMetadata.providersPerReq);
     metadata.controllers = mergeArrays(metadata.controllers, modMetadata.controllers);
-    metadata.routesPerMod = mergeArrays(metadata.routesPerMod, modMetadata.routesPerMod);
+    metadata.routes = mergeArrays(metadata.routes, modMetadata.routes);
 
     return metadata;
   }

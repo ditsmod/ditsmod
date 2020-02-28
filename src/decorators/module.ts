@@ -43,9 +43,9 @@ export abstract class StaticModuleMetadata extends ProvidersMetadata {
    */
   controllers: TypeProvider[] = [];
   /**
-   * Route config array per a module.
+   * Route config array for a current module.
    */
-  routesPerMod: RouteConfig[] = [];
+  routes: RouteConfig[] = [];
 }
 
 export interface ModuleDecorator extends Partial<StaticModuleMetadata> {

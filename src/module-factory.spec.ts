@@ -96,7 +96,7 @@ describe('ModuleFactory', () => {
       expect(metadata.controllers).toEqual([]);
       expect(metadata.exports).toEqual([]);
       expect(metadata.importsWithPrefix).toEqual([]);
-      expect(metadata.routesPerMod).toEqual([]);
+      expect(metadata.routes).toEqual([]);
       expect(metadata.providersPerMod).toEqual([]);
       expect(metadata.providersPerReq).toEqual([]);
       expect((metadata as any).ngMetadataName).toBe('Module');
@@ -107,20 +107,20 @@ describe('ModuleFactory', () => {
       class C1 {}
       class PerMod {}
 
-      const routesPerMod = [{ path: '1', controller: C1 }];
+      const routes = [{ path: '1', controller: C1 }];
 
       @Module({
         controllers: [SomeControllerClass],
         providersPerReq: [ClassWithoutDecorators],
         providersPerMod: [PerMod],
-        routesPerMod
+        routes
       })
       class ClassWithDecorators {}
       const metadata = mock.mergeMetadata(ClassWithDecorators);
       expect(metadata.controllers).toEqual([SomeControllerClass]);
       expect(metadata.exports).toEqual([]);
       expect(metadata.importsWithPrefix).toEqual([]);
-      expect(metadata.routesPerMod).toEqual(routesPerMod);
+      expect(metadata.routes).toEqual(routes);
       expect(metadata.providersPerMod).toEqual([PerMod]);
       expect(metadata.providersPerReq).toEqual([ClassWithoutDecorators]);
     });
