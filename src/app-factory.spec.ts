@@ -76,7 +76,7 @@ describe('AppFactory', () => {
       expect(opts.routes).toBe(undefined);
       expect(opts.controllers).toBe(undefined);
       expect(opts.exports).toBe(undefined);
-      expect(opts.importsWithPrefix).toBe(undefined);
+      expect(opts.imports).toBe(undefined);
       expect(opts.providersPerMod).toBe(undefined);
       expect(opts.providersPerReq).toBe(undefined);
     });
@@ -85,14 +85,14 @@ describe('AppFactory', () => {
       class SomeModule {}
       class OtherModule {}
 
-      const importsWithPrefix: ImportsWithPrefix[] = [
+      const imports: ImportsWithPrefix[] = [
         { prefix: '', module: SomeModule },
         { prefix: '', module: OtherModule }
       ];
 
       @RootModule({
         prefixPerApp: 'api',
-        importsWithPrefix,
+        imports,
         controllers: [SomeControllerClass],
         providersPerApp: [ClassWithoutDecorators]
       })
@@ -110,7 +110,7 @@ describe('AppFactory', () => {
       expect(opts.routes).toBe(undefined);
       expect(opts.controllers).toBe(undefined);
       expect(opts.exports).toBe(undefined);
-      expect(opts.importsWithPrefix).toBe(undefined);
+      expect(opts.imports).toBe(undefined);
       expect(opts.providersPerMod).toBe(undefined);
       expect(opts.providersPerReq).toBe(undefined);
     });

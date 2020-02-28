@@ -95,7 +95,7 @@ describe('ModuleFactory', () => {
       const metadata = mock.mergeMetadata(ClassWithDecorators);
       expect(metadata.controllers).toEqual([]);
       expect(metadata.exports).toEqual([]);
-      expect(metadata.importsWithPrefix).toEqual([]);
+      expect(metadata.imports).toEqual([]);
       expect(metadata.routes).toEqual([]);
       expect(metadata.providersPerMod).toEqual([]);
       expect(metadata.providersPerReq).toEqual([]);
@@ -119,7 +119,7 @@ describe('ModuleFactory', () => {
       const metadata = mock.mergeMetadata(ClassWithDecorators);
       expect(metadata.controllers).toEqual([SomeControllerClass]);
       expect(metadata.exports).toEqual([]);
-      expect(metadata.importsWithPrefix).toEqual([]);
+      expect(metadata.imports).toEqual([]);
       expect(metadata.routes).toEqual(routes);
       expect(metadata.providersPerMod).toEqual([PerMod]);
       expect(metadata.providersPerReq).toEqual([ClassWithoutDecorators]);
@@ -691,12 +691,15 @@ describe('ModuleFactory', () => {
       class Module5 {}
 
       @RootModule({
-        imports: [Module0, Module1, Module2.withOptions(), Module5],
-        exports: [Module0, Module2.withOptions(), Module3],
-        importsWithPrefix: [
+        imports: [
+          Module0,
+          Module1,
+          Module2.withOptions(),
+          Module5,
           { prefix: 'one', module: Module3 },
           { prefix: 'two', module: Module4 }
         ],
+        exports: [Module0, Module2.withOptions(), Module3],
         providersPerApp: [Logger]
       })
       class RootModule1 {}

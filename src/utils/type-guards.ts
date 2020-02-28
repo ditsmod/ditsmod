@@ -17,6 +17,7 @@ import { ServerOptions, Http2SecureServerOptions } from '../types/server-options
 import { EntityDecorator } from '../modules/orm/decorators/entity';
 import { ColumnMetadata, ColumnType } from '../modules/orm/decorators/column';
 import { ObjectAny } from '../types/types';
+import { ImportsWithPrefixDecorator } from '../types/router';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
@@ -26,6 +27,13 @@ export function isModuleWithOptions(
   impOrExp: Type<any> | ModuleWithOptions<any> | any[]
 ): impOrExp is ModuleWithOptions<any> {
   return (impOrExp as ModuleWithOptions<any>)?.module !== undefined;
+}
+
+export function isImportsWithPrefix(imp: any): imp is ImportsWithPrefixDecorator {
+  return (
+    (imp as ImportsWithPrefixDecorator)?.prefix !== undefined &&
+    (imp as ImportsWithPrefixDecorator)?.module !== undefined
+  );
 }
 
 export function isRootModule(

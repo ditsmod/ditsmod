@@ -19,9 +19,9 @@ import {
 import { RouteDecoratorMetadata } from './decorators/route';
 import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
-import { isRootModule, isController, isRoute } from './utils/type-guards';
+import { isRootModule, isController, isRoute, isImportsWithPrefix } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
-import { Router, RouteConfig, ImportsWithPrefix } from './types/router';
+import { Router, RouteConfig, ImportsWithPrefix, ImportsWithPrefixDecorator } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
 import { Factory } from './factory';
@@ -178,21 +178,20 @@ export class ModuleFactory extends Factory {
      * `ngMetadataName` is used only internally and is hidden from the public API.
      */
     (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
-    metadata.importsWithPrefix =
-      // prettier, don't do this!
-      flatten<Type<any> | ModuleWithOptions<any>>(modMetadata.imports).map<ImportsWithPrefix>(imp => {
+
+    type FlattenedImports = Type<any> | ModuleWithOptions<any> | ImportsWithPrefixDecorator;
+    metadata.imports = flatten<FlattenedImports>(modMetadata.imports).map<ImportsWithPrefix>(imp => {
+      if (isImportsWithPrefix(imp)) {
         return {
-          prefix: '',
-          module: resolveForwardRef(imp)
+          prefix: imp.prefix,
+          module: resolveForwardRef(imp.module)
         };
-      });
-    const importsWithPrefix = flatten<ImportsWithPrefix>(modMetadata.importsWithPrefix).map<ImportsWithPrefix>(imp => {
+      }
       return {
-        prefix: imp.prefix,
-        module: resolveForwardRef(imp.module)
+        prefix: '',
+        module: resolveForwardRef(imp)
       };
     });
-    metadata.importsWithPrefix.push(...importsWithPrefix);
     metadata.exports = flatten(modMetadata.exports).map(resolveForwardRef);
     metadata.providersPerApp = flatten(modMetadata.providersPerApp);
     metadata.providersPerMod = flatten(modMetadata.providersPerMod);
@@ -219,7 +218,7 @@ export class ModuleFactory extends Factory {
   }
 
   protected importModules() {
-    for (const imp of this.opts.importsWithPrefix) {
+    for (const imp of this.opts.imports) {
       this.importProviders(imp.module);
       const prefixPerMod = [this.prefixPerMod, imp.prefix].filter(s => s).join('/');
       const mod = imp.module;
@@ -235,7 +234,7 @@ export class ModuleFactory extends Factory {
    * @param soughtProvider Normalized provider.
    */
   protected importProviders(modOrObject: Type<any> | ModuleWithOptions<any>, soughtProvider?: NormalizedProvider) {
-    const { exports: exp, importsWithPrefix, providersPerMod, providersPerReq } = this.mergeMetadata(modOrObject);
+    const { exports: exp, imports, providersPerMod, providersPerReq } = this.mergeMetadata(modOrObject);
     const moduleName = this.getModuleName(modOrObject);
 
     for (const moduleOrProvider of exp) {
@@ -243,7 +242,7 @@ export class ModuleFactory extends Factory {
       if (moduleMetadata) {
         const reexportedModuleOrObject = moduleOrProvider as ModuleType | ModuleWithOptions<any>;
         const reexportedModule = this.getModule(reexportedModuleOrObject);
-        if (importsWithPrefix.map(imp => this.getModule(imp.module)).includes(reexportedModule)) {
+        if (imports.map(imp => this.getModule(imp.module)).includes(reexportedModule)) {
           this.importProviders(reexportedModuleOrObject, soughtProvider);
         } else {
           throw new Error(`Reexports a module failed: cannot find ${reexportedModule.name} in "imports" array`);
@@ -257,7 +256,7 @@ export class ModuleFactory extends Factory {
         }
         let foundProvider = this.findAndSetProvider(provider, normProvider, providersPerMod, providersPerReq);
         if (!foundProvider) {
-          for (const imp of importsWithPrefix) {
+          for (const imp of imports) {
             foundProvider = this.importProviders(imp.module, normProvider);
             if (foundProvider) {
               break;
