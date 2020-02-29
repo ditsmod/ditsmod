@@ -1,4 +1,4 @@
-import * as ORM from './modules/orm';
+import * as ORM from './modules/index';
 
 export { ORM };
 export * from './types/injection-tokens';
