@@ -35,6 +35,7 @@ import { pickProperties } from './utils/pick-properties';
  */
 @Injectable()
 export class ModuleFactory extends Factory {
+  protected mod: Type<any>;
   protected moduleName: string;
   protected prefixPerApp: string;
   protected prefixPerMod: string;
@@ -51,6 +52,7 @@ export class ModuleFactory extends Factory {
    * Only for testing purpose.
    */
   protected optsMap = new Map<Type<any>, ModuleMetadata>();
+  protected injectorPerReqMap = new Map<Type<any>, ReflectiveInjector>();
 
   constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector, protected log: Logger) {
     super();
@@ -89,6 +91,7 @@ export class ModuleFactory extends Factory {
     this.prefixPerApp = prefixPerApp || '';
     this.prefixPerMod = prefixPerMod || '';
     const mod = this.getModule(modOrObject);
+    this.mod = mod;
     this.moduleName = mod.name;
     const moduleMetadata = this.mergeMetadata(modOrObject);
     this.quickCheckMetadata(moduleMetadata);
@@ -104,7 +107,7 @@ export class ModuleFactory extends Factory {
     const prefix = [this.prefixPerApp, this.prefixPerMod].filter(s => s).join('/');
     this.opts.controllers.forEach(Ctrl => this.setRoutes(prefix, Ctrl));
     this.loadRoutesConfig(prefix, this.opts.routes);
-    return { optsMap: this.optsMap.set(mod, this.opts) };
+    return { optsMap: this.optsMap.set(mod, this.opts), injectorPerReqMap: this.injectorPerReqMap };
   }
 
   protected mergeProviders(moduleMetadata: ModuleMetadata) {
@@ -207,6 +210,8 @@ export class ModuleFactory extends Factory {
    */
   protected initProvidersPerReq() {
     this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.opts.providersPerReq);
+    const injectorPerReq = this.injectorPerMod.createChildFromResolved(this.resolvedProvidersPerReq);
+    this.injectorPerReqMap.set(this.mod, injectorPerReq);
   }
 
   /**
@@ -352,6 +357,7 @@ export class ModuleFactory extends Factory {
         }
 
         const injectorPerReq = this.injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
+        this.injectorPerReqMap.set(this.mod, injectorPerReq);
         const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
         const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
 
