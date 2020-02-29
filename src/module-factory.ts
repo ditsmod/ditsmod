@@ -50,7 +50,7 @@ export class ModuleFactory extends Factory {
   /**
    * Only for testing purpose.
    */
-  protected testOptionsMap = new Map<Type<any>, ModuleMetadata>();
+  protected optsMap = new Map<Type<any>, ModuleMetadata>();
 
   constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector, protected log: Logger) {
     super();
@@ -104,7 +104,7 @@ export class ModuleFactory extends Factory {
     const prefix = [this.prefixPerApp, this.prefixPerMod].filter(s => s).join('/');
     this.opts.controllers.forEach(Ctrl => this.setRoutes(prefix, Ctrl));
     this.loadRoutesConfig(prefix, this.opts.routes);
-    return this.testOptionsMap.set(mod, this.opts);
+    return { optsMap: this.optsMap.set(mod, this.opts) };
   }
 
   protected mergeProviders(moduleMetadata: ModuleMetadata) {
@@ -223,8 +223,8 @@ export class ModuleFactory extends Factory {
       const prefixPerMod = [this.prefixPerMod, imp.prefix].filter(s => s).join('/');
       const mod = imp.module;
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      const optionsMap = moduleFactory.bootstrap(this.globalProviders, this.prefixPerApp, prefixPerMod, mod);
-      this.testOptionsMap = new Map([...this.testOptionsMap, ...optionsMap]);
+      const { optsMap } = moduleFactory.bootstrap(this.globalProviders, this.prefixPerApp, prefixPerMod, mod);
+      this.optsMap = new Map([...this.optsMap, ...optsMap]);
     }
     this.checkProvidersUnpredictable();
   }
