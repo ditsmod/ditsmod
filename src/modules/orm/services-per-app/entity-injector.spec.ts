@@ -1,13 +1,21 @@
 import 'reflect-metadata';
-import { StaticEntity, Entity } from './decorators/entity';
-import { Column } from './decorators/column';
-import { OrmModule } from './orm.module';
-import { RootModule } from '../../decorators/root-module';
-import { EntitiesToken } from '../../types/injection-tokens';
-import { EntityInjector } from './services-per-app/entity-injector';
+import { ReflectiveInjector } from '@ts-stack/di';
 
-xdescribe('OrmModule', () => {
-  class MockOrmModule extends OrmModule {}
+import { OrmModule } from '../orm.module';
+import { Entity } from '../decorators/entity';
+import { Column } from '../decorators/column';
+import { RootModule } from '../../../decorators/root-module';
+import { AppFactory } from '../../../app-factory';
+import { ModuleType } from '../../../decorators/module';
+import { EntityInjector } from './entity-injector';
+
+fdescribe('EntityInjector', () => {
+  class MockAppFactory extends AppFactory {
+    injectorPerApp: ReflectiveInjector;
+    prepareServerOptions(appModule: ModuleType) {
+      return super.prepareServerOptions(appModule);
+    }
+  }
 
   describe('with some column settings', () => {
     class SomeEntity {
@@ -51,17 +59,21 @@ xdescribe('OrmModule', () => {
       prop12: unknown; // Object
     }
 
-    it(`should set default entity's metadata`, () => {
+    it(`case 1`, () => {
       const entities = [{ provide: SomeEntity, useClass: MysqlEntity }];
-      const modWithOptions = MockOrmModule.withOptions(entities);
+      const modWithOptions = OrmModule.withOptions(entities);
       @RootModule({
         imports: [modWithOptions],
         exports: [modWithOptions]
       })
       class AppModule {}
 
-      expect((SomeEntity as any).entityMetadata).toBeUndefined();
-      expect((MysqlEntity as any).entityMetadata).toEqual(new Entity({ tableName: 'users' }));
+      const appFactory = new MockAppFactory();
+
+      expect(appFactory).toBeDefined();
+      const { optsMap, injectorPerReqMap } = appFactory.prepareServerOptions(AppModule);
+      const injectorPerReq = injectorPerReqMap.get(AppModule);
+      const entityInjector = injectorPerReq.get(EntityInjector);
     });
   });
 });

@@ -1,4 +1,4 @@
-import { makeDecorator, Type, Injector } from '@ts-stack/di';
+import { makeDecorator, Type } from '@ts-stack/di';
 
 export interface EntityDecoratorFactory<T = any> {
   (options?: T): any;
@@ -17,8 +17,13 @@ export class StaticEntity {
   static metadata: DatabaseMetadata;
 }
 
+export interface Translator {
+  select(): string;
+  insert(): string;
+}
+
 export interface DatabaseMetadata {
-  databaseService: Type<DatabaseService>;
+  dbService: Type<DatabaseService>;
   tableName: string;
   primaryColumns: string[];
 }

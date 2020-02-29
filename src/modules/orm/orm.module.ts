@@ -1,4 +1,4 @@
-import { Provider } from '@ts-stack/di';
+import { ClassProvider } from '@ts-stack/di';
 
 import { Module, ModuleWithOptions } from '../../decorators/module';
 import { EntitiesToken } from '../../types/injection-tokens';
@@ -11,7 +11,7 @@ import { EntityInjector } from './services-per-app/entity-injector';
   exports: [EntityManager]
 })
 export class OrmModule {
-  static withOptions(entities: Provider[]): ModuleWithOptions<OrmModule> {
+  static withOptions(entities: ClassProvider[]): ModuleWithOptions<OrmModule> {
     return {
       module: OrmModule,
       providersPerApp: [{ provide: EntitiesToken, useValue: entities, multi: true }]

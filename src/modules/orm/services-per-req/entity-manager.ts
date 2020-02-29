@@ -8,19 +8,19 @@ import { EntityInjector } from '../services-per-app/entity-injector';
 export class EntityManager {
   constructor(protected req: Request, protected injector: Injector, protected entityInjector: EntityInjector) {}
 
-  find(Entity: EntityModel) {
+  find<T extends EntityModel>(Entity: T): Promise<T['prototype'][]> {
     const metadata = this.getMetadata(Entity);
     const sql = `select * from ${metadata.tableName};`;
     return this.query(metadata, sql);
   }
 
-  findAndCount(Entity: EntityModel) {
+  findAndCount<T extends EntityModel>(Entity: T): Promise<T['prototype'][]> {
     const metadata = this.getMetadata(Entity);
     const sql = `select * from ${metadata.tableName};`;
     return this.query(metadata, sql);
   }
 
-  findOne(Entity: EntityModel, params?: any) {
+  findOne<T extends EntityModel>(Entity: T, params?: any): Promise<T['prototype'][]> {
     const metadata = this.getMetadata(Entity);
     const whereStatement = metadata.primaryColumns.map(k => `${k} = ?`).join(' and ');
     const sql = `select * from ${metadata.tableName} where ${whereStatement};`;
@@ -31,14 +31,14 @@ export class EntityManager {
   flush() {}
 
   protected query(metadata: DatabaseMetadata, sql: string, params?: string[]) {
-    const databaseService = this.injector.get(metadata.databaseService);
-    return databaseService.query(sql, params);
+    const dbService = this.injector.get(metadata.dbService);
+    return dbService.query(sql, params);
   }
 
   protected getMetadata(Entity: EntityModel) {
     const instance = this.entityInjector.get(Entity);
     if (!instance) {
-      throw new Error(`An error occurred during reading the Entity's metadata from "${Entity.name}"`);
+      throw new Error(`An error occurred during instantiate "${Entity.name}"`);
     }
     return instance.constructor.metadata as DatabaseMetadata;
   }

@@ -4,9 +4,9 @@ import {
   Type,
   InjectionToken,
   Inject,
-  Provider,
   ReflectiveInjector,
-  reflector
+  reflector,
+  ClassProvider
 } from '@ts-stack/di';
 
 import { EntitiesToken } from '../../../types/injection-tokens';
@@ -14,12 +14,16 @@ import { StaticEntity } from '../decorators/entity';
 import { ColumnDecoratorMetadata } from '../decorators/column';
 import { isColumnType, isColumn, isEntity } from '../../../utils/type-guards';
 import { deepFreeze } from '../../../utils/deep-freeze';
+import { flatten } from '../../../utils/ng-utils';
 
 @Injectable()
 export class EntityInjector implements Injector {
   protected injector: Injector;
 
-  constructor(@Inject(EntitiesToken) protected entities: Provider[][], protected injectorPerApp: ReflectiveInjector) {
+  constructor(
+    @Inject(EntitiesToken) protected entities: ClassProvider[][],
+    protected injectorPerApp: ReflectiveInjector
+  ) {
     this.getProviderWithInjector();
   }
 
@@ -33,7 +37,8 @@ export class EntityInjector implements Injector {
    * Settings an Entity and Column metadata.
    */
   protected getProviderWithInjector() {
-    const resolvedProviders = ReflectiveInjector.resolve(this.entities);
+    const dbEntities = flatten<ClassProvider>(this.entities).map(item => item.useClass);
+    const resolvedProviders = ReflectiveInjector.resolve([...dbEntities, ...this.entities]);
     this.injector = this.injectorPerApp.createChildFromResolved(resolvedProviders);
 
     resolvedProviders.forEach(item => {
@@ -43,13 +48,13 @@ export class EntityInjector implements Injector {
       const entityMetadata = deepFreeze(reflector.annotations(Entity).find(isEntity));
       if (entityMetadata) {
         const columnMetadata = reflector.propMetadata(Entity) as ColumnDecoratorMetadata;
-        // console.log(columnMetadata);
+        // console.log(Entity);
         Entity.entityMetadata = entityMetadata;
         Entity.columnMetadata = columnMetadata;
         Entity.metadata = {
           tableName: entityMetadata.tableName || Entity.name,
           primaryColumns: [],
-          databaseService: {} as any
+          dbService: {} as any
         };
         for (const prop in columnMetadata) {
           const type = columnMetadata[prop].find(isColumnType);

@@ -2,15 +2,11 @@ import 'reflect-metadata';
 import { ReflectiveInjector } from '@ts-stack/di';
 
 import { EntityManager } from './entity-manager';
-import { RouteParam } from '../../../types/router';
 import { Entity, DatabaseMetadata, DatabaseService } from '../decorators/entity';
 import { EntityInjector } from '../services-per-app/entity-injector';
+import { Request } from '../../../request';
 
 describe('EntityManager', () => {
-  interface Req {
-    routeParamsArr: RouteParam[];
-  }
-
   class MockEntityManager extends EntityManager {}
 
   abstract class Model {
@@ -29,12 +25,16 @@ describe('EntityManager', () => {
     }
   }
 
-  MysqlModel.metadata = { tableName: 'mysqlPost', primaryColumns: ['postId'], databaseService: MyDatabaseService };
+  MysqlModel.metadata = {
+    tableName: 'mysqlPost',
+    primaryColumns: ['postId'],
+    dbService: MyDatabaseService
+  };
 
   const injector = ReflectiveInjector.resolveAndCreate([MyDatabaseService, { provide: Model, useClass: MysqlModel }]);
-  const req = { routeParamsArr: [{ key: 'postId', value: '12' }] } as Req;
+  const req = { routeParamsArr: [{ key: 'postId', value: '12' }] } as Request;
   const entityInjector = (injector as unknown) as EntityInjector;
-  const mock = new MockEntityManager(req as any, injector, entityInjector);
+  const mock = new MockEntityManager(req, injector, entityInjector);
 
   describe('find()', () => {
     it('should return sql query', () => {
