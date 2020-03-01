@@ -246,12 +246,7 @@ export class ModuleFactory extends Factory {
       const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType);
       if (moduleMetadata) {
         const reexportedModuleOrObject = moduleOrProvider as ModuleType | ModuleWithOptions<any>;
-        const reexportedModule = this.getModule(reexportedModuleOrObject);
-        if (imports.map(imp => this.getModule(imp.module)).includes(reexportedModule)) {
-          this.importProviders(reexportedModuleOrObject, soughtProvider);
-        } else {
-          throw new Error(`Reexports a module failed: cannot find ${reexportedModule.name} in "imports" array`);
-        }
+        this.importProviders(reexportedModuleOrObject, soughtProvider);
       } else {
         const provider = moduleOrProvider as Provider;
         const normProvider = normalizeProviders([provider])[0];
