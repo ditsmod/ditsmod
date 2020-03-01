@@ -1,17 +1,25 @@
 import 'reflect-metadata';
-import { StaticEntity, Entity } from './decorators/entity';
-import { Column } from './decorators/column';
-import { OrmModule } from './orm.module';
-import { RootModule } from '../../decorators/root-module';
-import { EntitiesToken } from '../../types/injection-tokens';
-import { EntityInjector } from './services-per-app/entity-injector';
+import { ReflectiveInjector } from '@ts-stack/di';
 
-xdescribe('OrmModule', () => {
-  class MockOrmModule extends OrmModule {}
+import { OrmModule } from '../orm.module';
+import { Entity } from '../decorators/entity';
+import { Column } from '../decorators/column';
+import { RootModule } from '../../../decorators/root-module';
+import { AppFactory } from '../../../app-factory';
+import { ModuleType } from '../../../decorators/module';
+
+describe('EntityInjector', () => {
+  class MockAppFactory extends AppFactory {
+    injectorPerApp: ReflectiveInjector;
+    prepareServerOptions(appModule: ModuleType) {
+      return super.prepareServerOptions(appModule);
+    }
+  }
 
   describe('with some column settings', () => {
-    class SomeEntity {
-      fistName: string;
+    abstract class SomeEntity {
+      abstract prop1: boolean;
+      abstract prop2: string;
     }
 
     enum EnumType {
@@ -51,17 +59,19 @@ xdescribe('OrmModule', () => {
       prop12: unknown; // Object
     }
 
-    it(`should set default entity's metadata`, () => {
-      const entities = [{ provide: SomeEntity, useClass: MysqlEntity }];
-      const modWithOptions = MockOrmModule.withOptions(entities);
+    it(`case 1`, () => {
+      const entitiesMap = new Map([[SomeEntity, MysqlEntity]]);
+      const modWithOptions = OrmModule.withOptions(entitiesMap);
       @RootModule({
         imports: [modWithOptions],
         exports: [modWithOptions]
       })
       class AppModule {}
 
-      expect((SomeEntity as any).entityMetadata).toBeUndefined();
-      expect((MysqlEntity as any).entityMetadata).toEqual(new Entity({ tableName: 'users' }));
+      const appFactory = new MockAppFactory();
+
+      expect(appFactory).toBeDefined();
+      appFactory.prepareServerOptions(AppModule);
     });
   });
 });

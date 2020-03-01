@@ -2,11 +2,11 @@ import { Injectable, Injector } from '@ts-stack/di';
 
 import { Request } from '../../../request';
 import { EntityModel, DatabaseMetadata } from '../decorators/entity';
-import { EntityInjector } from '../services-per-app/entity-injector';
+import { MetadataProvider } from '../services-per-app/metadata-provider';
 
 @Injectable()
 export class EntityManager {
-  constructor(protected req: Request, protected injector: Injector, protected entityInjector: EntityInjector) {}
+  constructor(protected req: Request, protected injector: Injector, protected entityInjector: MetadataProvider) {}
 
   find<T extends EntityModel>(Entity: T): Promise<T['prototype'][]> {
     const metadata = this.getMetadata(Entity);
@@ -36,10 +36,10 @@ export class EntityManager {
   }
 
   protected getMetadata(Entity: EntityModel) {
-    const instance = this.entityInjector.get(Entity);
-    if (!instance) {
-      throw new Error(`An error occurred during instantiate "${Entity.name}"`);
+    const Metadata = this.entityInjector.get(Entity);
+    if (!Metadata) {
+      throw new Error(`Cannot found "${Entity.name}" entity`);
     }
-    return instance.constructor.metadata as DatabaseMetadata;
+    return Metadata;
   }
 }
