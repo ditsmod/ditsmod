@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "../dist-examples",
+    "inlineSources": true,
+    "importHelpers": true,
+    "paths": {
+      "@ts-stack/mod": ["../src"]
+    }
+  },
+  "include": ["./**/*"]
+}

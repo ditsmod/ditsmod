@@ -3,6 +3,7 @@ tests
 docs
 src
 dist-tests
+dist-examples
 spec
 tslint.json
 .prettierrc
