@@ -1,29 +1,17 @@
-import { Injectable, Inject, reflector, Type } from '@ts-stack/di';
+import { Injectable, Type, reflector } from '@ts-stack/di';
 
-import { EntitiesToken } from '../../../types/injection-tokens';
-import { ModelMetadata, EntityModel, ModelMetadataMap } from '../decorators/entity';
-import { ColumnDecoratorMetadata } from '../decorators/column';
+import { EntityModel, MetadataModel } from '../decorators/entity';
 import { isEntity } from '../../../utils/type-guards';
+import { ColumnDecoratorMetadata } from '../decorators/column';
 import { deepFreeze } from '../../../utils/deep-freeze';
-import { mergeMaps } from '../../../utils/merge-maps';
 
 @Injectable()
 export class MetadataProvider {
-  protected map: ModelMetadataMap;
-
-  constructor(@Inject(EntitiesToken) protected entitiesMaps: Map<EntityModel, Type<any>>[]) {
-    this.extractMetadata();
-  }
-
-  get(Token: EntityModel) {
-    return this.map.get(Token);
-  }
-
   /**
    * Settings an Entity and Column metadata.
    */
-  protected extractMetadata() {
-    const entitiesMap = mergeMaps(this.entitiesMaps);
+  getMetadataMap(entitiesMap: Map<EntityModel, Type<any>>) {
+    const metadataMap = new Map<EntityModel, MetadataModel>();
 
     entitiesMap.forEach((Entity, Token) => {
       const entityMetadata = reflector.annotations(Entity).find(isEntity);
@@ -32,11 +20,11 @@ export class MetadataProvider {
       }
 
       const columnMetadata = reflector.propMetadata(Entity) as ColumnDecoratorMetadata;
-      const modelMetadata = deepFreeze<ModelMetadata>({ entityMetadata, columnMetadata });
-      this.map = new Map([[Token, modelMetadata]]);
-      console.log(modelMetadata);
+      const modelMetadata = deepFreeze<MetadataModel>({ entityMetadata, columnMetadata });
+      metadataMap.set(Token, modelMetadata);
+      // console.log(modelMetadata);
     });
 
-    return this.map;
+    return metadataMap;
   }
 }

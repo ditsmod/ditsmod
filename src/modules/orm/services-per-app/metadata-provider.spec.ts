@@ -2,11 +2,14 @@ import 'reflect-metadata';
 import { ReflectiveInjector } from '@ts-stack/di';
 
 import { OrmModule } from '../orm.module';
-import { Entity } from '../decorators/entity';
-import { Column } from '../decorators/column';
 import { RootModule } from '../../../decorators/root-module';
 import { AppFactory } from '../../../app-factory';
 import { ModuleType } from '../../../decorators/module';
+import { MetadataProvider } from './metadata-provider';
+import { Logger } from '../../../types/logger';
+import { MysqlEntity, MysqlColumn } from '../mapping/mysql-decorators';
+import { MysqlService } from '../mapping/mysql.service';
+import { MysqlDriver } from '../mapping/mysql.driver';
 
 describe('EntityInjector', () => {
   class MockAppFactory extends AppFactory {
@@ -27,44 +30,57 @@ describe('EntityInjector', () => {
       two
     }
 
-    @Entity({ tableName: 'users' })
-    class MysqlEntity extends SomeEntity {
-      @Column({ isPrimaryColumn: true })
+    @MysqlEntity({ tableName: 'users' })
+    class MysqlSomeEntity extends SomeEntity {
+      @MysqlColumn({ isPrimaryColumn: true })
       id: number; // Number
 
-      @Column({ isPrimaryColumn: true })
+      @MysqlColumn({ isPrimaryColumn: true })
       prop1: boolean; // Boolean
-      @Column()
+      @MysqlColumn()
       prop2: string; // String
-      @Column()
+      @MysqlColumn()
       prop3: string[]; // Array
-      @Column()
+      @MysqlColumn()
       prop4: [string, number]; // Array
-      @Column()
+      @MysqlColumn()
       prop5: []; // Array
-      @Column()
+      @MysqlColumn()
       prop6: EnumType; // Number
-      @Column()
+      @MysqlColumn()
       prop7: any; // Object
-      @Column()
+      @MysqlColumn()
       prop8: void; // undefined
-      @Column()
+      @MysqlColumn()
       prop9: never; // undefined
-      @Column()
+      @MysqlColumn()
       // tslint:disable-next-line: ban-types
       prop10: Object; // Object
-      @Column()
+      @MysqlColumn()
       prop11: object; // Object
-      @Column()
+      @MysqlColumn()
       prop12: unknown; // Object
     }
 
     it(`case 1`, () => {
-      const entitiesMap = new Map([[SomeEntity, MysqlEntity]]);
-      const modWithOptions = OrmModule.withOptions(entitiesMap);
+      /**
+       * Такі мепи будуть зберігатись у репозиторіях (теках), що називатимуться відповідно до баз даних із версіями.
+       * Наприклад, `mysql-v5.7`, `sqlite-v3`, `oracle-v11`.
+       */
+      const mysql57Map = new Map([[SomeEntity, MysqlSomeEntity]]);
+      /**
+       * Перекладачі повинні мати контекст бази даних.
+       */
+      const injector = ReflectiveInjector.resolveAndCreate([Logger, MysqlService, MetadataProvider]);
+      const mysqlDriver = injector.resolveAndInstantiate(MysqlDriver) as MysqlDriver;
+      const map = mysqlDriver.loadMapping(mysql57Map);
+      console.log(map);
+
+      const modWithOptions = OrmModule.withOptions(mysql57Map);
       @RootModule({
         imports: [modWithOptions],
-        exports: [modWithOptions]
+        exports: [modWithOptions],
+        providersPerApp: [Logger]
       })
       class AppModule {}
 

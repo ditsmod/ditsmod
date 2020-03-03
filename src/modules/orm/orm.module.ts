@@ -5,9 +5,10 @@ import { EntitiesToken } from '../../types/injection-tokens';
 import { EntityManager } from './services-per-req/entity-manager';
 import { MetadataProvider } from './services-per-app/metadata-provider';
 import { EntityModel } from './decorators/entity';
+import { Logger } from '../../types/logger';
 
 @Module({
-  providersPerApp: [MetadataProvider],
+  providersPerApp: [MetadataProvider, Logger],
   providersPerReq: [EntityManager],
   exports: [EntityManager]
 })

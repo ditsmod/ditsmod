@@ -11,20 +11,9 @@ export interface EntityDecorator {
 
 export const Entity: EntityDecoratorFactory = makeDecorator('Entity', (data: any) => data);
 
-export class ModelMetadata {
+export class MetadataModel {
   entityMetadata: any;
   columnMetadata: any;
-}
-
-export interface Translator {
-  select(): string;
-  insert(): string;
-}
-
-export interface DatabaseMetadata {
-  dbService: Type<DatabaseService>;
-  tableName: string;
-  primaryColumns: string[];
 }
 
 export interface DatabaseService {
@@ -33,4 +22,3 @@ export interface DatabaseService {
 
 export abstract class Model {}
 export type EntityModel = typeof Model;
-export type ModelMetadataMap = Map<EntityModel, ModelMetadata>;
