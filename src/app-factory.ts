@@ -94,13 +94,20 @@ export class AppFactory extends Factory {
     }
   }
 
+  /**
+   * @todo Make tests for `multi == true` providers.
+   */
   protected prepareProvidersPerApp(appModule: ModuleType) {
     const exportedProvidersPerApp = this.importProvidersPerApp(appModule);
     const declaredTokensPerApp = normalizeProviders(this.opts.providersPerApp).map(np => np.provide);
-    const exportedTokensPerApp = normalizeProviders(exportedProvidersPerApp).map(np => np.provide);
+    const exportedNormalizedPerApp = normalizeProviders(exportedProvidersPerApp);
+    const exportedTokensPerApp = exportedNormalizedPerApp.map(np => np.provide);
+    const multiTokensPerApp = exportedNormalizedPerApp.filter(np => np.multi).map(np => np.provide);
     const defaultTokens = normalizeProviders([...defaultProvidersPerApp]).map(np => np.provide);
     const mergedTokens = [...exportedTokensPerApp, ...defaultTokens];
-    const duplExpPerApp = getDuplicates(mergedTokens).filter(d => !declaredTokensPerApp.includes(d));
+    const duplExpPerApp = getDuplicates(mergedTokens).filter(
+      d => !declaredTokensPerApp.includes(d) && !multiTokensPerApp.includes(d)
+    );
     if (duplExpPerApp.length) {
       this.throwErrorProvidersUnpredictable(appModule.name, duplExpPerApp);
     }

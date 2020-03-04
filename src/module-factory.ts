@@ -302,17 +302,28 @@ export class ModuleFactory extends Factory {
     }
   }
 
+  /**
+   * @todo Make tests for `multi == true` providers.
+   */
   protected checkProvidersUnpredictable() {
     const tokensPerApp = normalizeProviders(this.globalProviders.providersPerApp).map(np => np.provide);
 
     const declaredTokensPerMod = normalizeProviders(this.opts.providersPerMod).map(np => np.provide);
-    const exportedTokensPerMod = normalizeProviders(this.exportedProvidersPerMod).map(np => np.provide);
-    const duplExpPerMod = getDuplicates(exportedTokensPerMod).filter(d => !declaredTokensPerMod.includes(d));
+    const exportedNormalizedPerMod = normalizeProviders(this.exportedProvidersPerMod);
+    const exportedTokensPerMod = exportedNormalizedPerMod.map(np => np.provide);
+    const multiTokensPerMod = exportedNormalizedPerMod.filter(np => np.multi).map(np => np.provide);
+    const duplExpPerMod = getDuplicates(exportedTokensPerMod).filter(
+      d => !declaredTokensPerMod.includes(d) && !multiTokensPerMod.includes(d)
+    );
     const tokensPerMod = [...declaredTokensPerMod, ...exportedTokensPerMod];
 
     const declaredTokensPerReq = normalizeProviders(this.opts.providersPerReq).map(np => np.provide);
-    const exportedTokensPerReq = normalizeProviders(this.exportedProvidersPerReq).map(np => np.provide);
-    const duplExpPerReq = getDuplicates(exportedTokensPerReq).filter(d => !declaredTokensPerReq.includes(d));
+    const exportedNormalizedPerReq = normalizeProviders(this.exportedProvidersPerReq);
+    const exportedTokensPerReq = exportedNormalizedPerReq.map(np => np.provide);
+    const multiTokensPerReq = exportedNormalizedPerReq.filter(np => np.multi).map(np => np.provide);
+    const duplExpPerReq = getDuplicates(exportedTokensPerReq).filter(
+      d => !declaredTokensPerReq.includes(d) && !multiTokensPerReq.includes(d)
+    );
 
     const mixPerApp = tokensPerApp.filter(p => {
       if (exportedTokensPerMod.includes(p) && !declaredTokensPerMod.includes(p)) {
