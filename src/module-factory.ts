@@ -302,9 +302,6 @@ export class ModuleFactory extends Factory {
     }
   }
 
-  /**
-   * @todo Make tests for `multi == true` providers.
-   */
   protected checkProvidersUnpredictable() {
     const tokensPerApp = normalizeProviders(this.globalProviders.providersPerApp).map(np => np.provide);
 

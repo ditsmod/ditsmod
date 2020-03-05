@@ -493,6 +493,55 @@ describe('ModuleFactory', () => {
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
 
+        it(`mix exporting duplicates with "multi == true" per app and per mod`, () => {
+          const ObjProviderPerApp = { provide: Provider1, useClass: Provider1, multi: true };
+          const ObjProviderPerMod = { provide: Provider1, useClass: Provider1, multi: true };
+          @Module({
+            exports: [ObjProviderPerMod],
+            providersPerMod: [ObjProviderPerMod, Provider2],
+            providersPerApp: [ObjProviderPerApp]
+          })
+          class Module00 {}
+
+          @Module({
+            exports: [ObjProviderPerMod],
+            providersPerMod: [ObjProviderPerMod]
+          })
+          class Module01 {}
+
+          @RootModule({
+            imports: [Module00, Module01]
+          })
+          class RootModule1 {}
+
+          const msg =
+            `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+            `Provider1. You should manually add these providers to RootModule1.`;
+          expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
+        });
+
+        it(`exporting duplicates with "multi == true" not to throw`, () => {
+          const ObjProvider = { provide: Provider1, useClass: Provider1, multi: true };
+          @Module({
+            exports: [ObjProvider],
+            providersPerMod: [ObjProvider, Provider2]
+          })
+          class Module00 {}
+
+          @Module({
+            exports: [ObjProvider],
+            providersPerMod: [ObjProvider]
+          })
+          class Module01 {}
+
+          @RootModule({
+            imports: [Module00, Module01]
+          })
+          class RootModule1 {}
+
+          expect(() => mockApp.prepareServerOptions(RootModule1)).not.toThrow();
+        });
+
         it(`exporting duplicates of Provider2, but declared in providersPerMod of root module`, () => {
           @RootModule({
             imports: [Module2],

@@ -94,9 +94,6 @@ export class AppFactory extends Factory {
     }
   }
 
-  /**
-   * @todo Make tests for `multi == true` providers.
-   */
   protected prepareProvidersPerApp(appModule: ModuleType) {
     const exportedProvidersPerApp = this.importProvidersPerApp(appModule);
     const declaredTokensPerApp = normalizeProviders(this.opts.providersPerApp).map(np => np.provide);
