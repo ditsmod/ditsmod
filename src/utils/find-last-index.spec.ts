@@ -3,8 +3,8 @@ import { findLastIndex } from './find-last-index';
 describe('findLastIndex()', () => {
   it('case1', () => {
     const arr1: any[] = [];
-    expect(findLastIndex(arr1, item => true)).toBeUndefined();
-    expect(findLastIndex(arr1, item => false)).toBeUndefined();
+    expect(findLastIndex(arr1, item => true)).toBe(-1);
+    expect(findLastIndex(arr1, item => false)).toBe(-1);
   });
 
   it('case2', () => {
