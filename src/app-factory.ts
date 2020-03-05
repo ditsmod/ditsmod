@@ -26,6 +26,7 @@ import { getDuplicates } from './utils/get-duplicates';
 import { flatten, normalizeProviders } from './utils/ng-utils';
 import { Factory } from './factory';
 import { deepFreeze } from './utils/deep-freeze';
+import { findLastIndex } from './utils/find-last-index';
 
 export class AppFactory extends Factory {
   protected log: Logger;
@@ -112,16 +113,16 @@ export class AppFactory extends Factory {
   }
 
   protected importProvidersPerApp(modOrObject: Type<any> | ModuleWithOptions<any>) {
-    const mod = this.getModule(modOrObject);
+    const modName = this.getModuleName(modOrObject);
     const modMetadata = this.getRawModuleMetadata(modOrObject) as RootModuleDecorator | ModuleDecorator;
-    this.checkModuleMetadata(modMetadata, mod.name);
+    this.checkModuleMetadata(modMetadata, modName);
 
     const imports = flatten(modMetadata.imports).map<Type<any> | ModuleWithOptions<any>>(resolveForwardRef);
     const providersPerApp: Provider[] = [];
     imports.forEach(imp => providersPerApp.push(...this.importProvidersPerApp(imp)));
     const currProvidersPerApp = isRootModule(modMetadata) ? [] : flatten(modMetadata.providersPerApp);
 
-    return [...providersPerApp, ...currProvidersPerApp];
+    return [...providersPerApp, ...this.getUniqProviders(currProvidersPerApp)];
   }
 
   /**

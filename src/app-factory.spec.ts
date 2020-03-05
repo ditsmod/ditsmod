@@ -123,20 +123,28 @@ describe('AppFactory', () => {
 
   describe('prepareProvidersPerApp()', () => {
     @Controller()
+    class Provider0 {}
     class Provider1 {}
+    class Provider2 {}
 
     const Alias = Provider1;
     const duplicates = [Provider1, Alias];
 
     @Module({ providersPerApp: duplicates })
-    class Module0 {}
+    class ModuleWithDuplicates {}
 
-    @RootModule({
-      imports: [Module0]
-    })
-    class RootModule1 {}
+    @Module({ providersPerApp: [Provider1] })
+    class Module1 {}
+
+    @Module({ providersPerApp: [Provider0, Provider1, Provider2] })
+    class Module2 {}
 
     it(`case 1`, () => {
+      @RootModule({
+        imports: [Module1, Module2]
+      })
+      class RootModule1 {}
+
       mock.mergeMetadata(RootModule1);
       const msg =
         `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
@@ -154,7 +162,7 @@ describe('AppFactory', () => {
     });
 
     @RootModule({
-      imports: [Module0],
+      imports: [ModuleWithDuplicates],
       providersPerApp: duplicates
     })
     class RootModule3 {}
@@ -162,7 +170,7 @@ describe('AppFactory', () => {
     it(`case 3`, () => {
       mock.mergeMetadata(RootModule3);
       expect(() => mock.prepareProvidersPerApp(RootModule3)).not.toThrow();
-      expect(mock.opts.providersPerApp.length).toBe(4);
+      expect(mock.opts.providersPerApp.length).toBe(3);
     });
 
     @RootModule({
@@ -173,6 +181,16 @@ describe('AppFactory', () => {
     it(`case 4`, () => {
       mock.mergeMetadata(RootModule4);
       expect(() => mock.prepareProvidersPerApp(RootModule4)).not.toThrow();
+    });
+
+    it(`case 5`, () => {
+      @RootModule({
+        imports: [ModuleWithDuplicates]
+      })
+      class RootModule1 {}
+
+      mock.mergeMetadata(RootModule1);
+      expect(() => mock.prepareProvidersPerApp(RootModule1)).not.toThrow();
     });
   });
 
