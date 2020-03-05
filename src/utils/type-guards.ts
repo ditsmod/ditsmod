@@ -94,7 +94,9 @@ export function isFactoryProvider(provider: Provider): provider is FactoryProvid
   return (provider as FactoryProvider)?.useFactory !== undefined;
 }
 
-export function isProvider(provider: Provider): provider is Provider {
+export function isProvider(
+  provider: Provider
+): provider is ValueProvider | ClassProvider | ExistingProvider | FactoryProvider {
   provider = Array.isArray(provider) ? provider : [provider];
   const arrProviders = normalizeProviders(provider);
 
