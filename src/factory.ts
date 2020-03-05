@@ -1,10 +1,12 @@
-import { Type, reflector } from '@ts-stack/di';
+import { Type, reflector, Provider } from '@ts-stack/di';
 
 import { isModuleWithOptions, isModule, isRootModule } from './utils/type-guards';
 import { ModuleWithOptions, ModuleDecorator, Module } from './decorators/module';
 import { mergeArrays } from './utils/merge-arrays-options';
 import { RootModule } from './decorators/root-module';
 import { deepFreeze } from './utils/deep-freeze';
+import { normalizeProviders } from './utils/ng-utils';
+import { findLastIndex } from './utils/find-last-index';
 
 export abstract class Factory {
   protected throwErrorProvidersUnpredictable(moduleName: string, duplicates: any[]) {
@@ -52,5 +54,17 @@ export abstract class Factory {
     } else {
       return deepFreeze<T>(reflector.annotations(modOrObject).find(typeGuard));
     }
+  }
+
+  /**
+   * Returns last provider if the provider has the duplicate.
+   */
+  protected getUniqProviders(providers: Provider[]) {
+    const tokens = normalizeProviders(providers).map(np => np.provide);
+    return tokens
+      .map((currToken, currIndex) => {
+        return tokens.lastIndexOf(currToken) == currIndex ? providers[currIndex] : false;
+      })
+      .filter(o => o) as Provider[];
   }
 }
