@@ -1,13 +1,6 @@
 import { Type, reflector, Provider } from '@ts-stack/di';
 
-import {
-  isModuleWithOptions,
-  isModule,
-  isRootModule,
-  isProvider,
-  isValueProvider,
-  isClassProvider
-} from './utils/type-guards';
+import { isModuleWithOptions, isModule, isRootModule, isProvider } from './utils/type-guards';
 import { ModuleWithOptions, ModuleDecorator, Module } from './decorators/module';
 import { mergeArrays } from './utils/merge-arrays-options';
 import { RootModule } from './decorators/root-module';
@@ -80,6 +73,8 @@ export abstract class Factory {
   }
 
   protected getUnpredictableDuplicates(duplTokens: any[], providers: Provider[]) {
+    duplTokens = duplTokens || [];
+    providers = providers || [];
     const duplProviders: Provider[] = [];
 
     normalizeProviders(providers)
@@ -95,19 +90,20 @@ export abstract class Factory {
       let prevProvider: Provider;
 
       for (let i = 0; i < normDuplProviders.length; i++) {
-        const normDuplProvider = normDuplProviders[i];
-        if (normDuplProvider.provide === dulpToken) {
-          const duplProvider = duplProviders[i];
-          if (!prevProvider) {
-            prevProvider = duplProvider;
-          }
-          if (isProvider(prevProvider) && isProvider(duplProvider)) {
-            if (prevProvider.provide !== duplProvider.provide || format(prevProvider) != format(duplProvider)) {
-              return true;
-            }
-          } else if (prevProvider !== duplProvider) {
+        if (normDuplProviders[i].provide !== dulpToken) {
+          continue;
+        }
+
+        const currProvider = duplProviders[i];
+        if (!prevProvider) {
+          prevProvider = currProvider;
+        }
+        if (isProvider(prevProvider) && isProvider(currProvider)) {
+          if (prevProvider.provide !== currProvider.provide || format(prevProvider) != format(currProvider)) {
             return true;
           }
+        } else if (prevProvider !== currProvider) {
+          return true;
         }
       }
     });
