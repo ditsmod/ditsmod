@@ -3,22 +3,68 @@ import { Provider } from '@ts-stack/di';
 import { Factory } from './factory';
 
 describe('Factory', () => {
-  describe('getUniqProviders()', () => {
-    class Provider1 {}
-    class Provider2 {}
+  class Provider1 {}
+  class Provider2 {}
+  class Provider3 {}
+  class Provider4 {}
+  class Provider5 {}
+  class Provider6 {}
+  class Provider7 {}
 
-    class MockFactory extends Factory {
-      getUniqProviders(providers: Provider[]) {
-        return super.getUniqProviders(providers);
-      }
+  class MockFactory extends Factory {
+    getUniqProviders(providers: Provider[]) {
+      return super.getUniqProviders(providers);
     }
 
-    let mock: MockFactory;
+    getUnpredictableDuplicates(duplTokens: any[], providers: Provider[]) {
+      return super.getUnpredictableDuplicates(duplTokens, providers);
+    }
+  }
 
-    beforeEach(() => {
-      mock = new MockFactory();
+  let mock: MockFactory;
+
+  beforeEach(() => {
+    mock = new MockFactory();
+  });
+
+  describe('getUnpredictableDuplicates()', () => {
+    it('case 1', () => {
+      let duplTokens: any[] = [Provider1, Provider2];
+      const providers: Provider[] = [Provider1, Provider2, Provider4, Provider3, Provider5, Provider2, Provider1];
+      duplTokens = mock.getUnpredictableDuplicates(duplTokens, providers);
+      expect(duplTokens).toEqual([]);
     });
 
+    it('case 2', () => {
+      let duplTokens: any[] = [Provider3, Provider7];
+      const providers: Provider[] = [
+        Provider4,
+        Provider3,
+        Provider5,
+        { provide: Provider3, useClass: Provider3 },
+        { provide: Provider7, useClass: Provider7 },
+        { provide: Provider7, useClass: Provider6 }
+      ];
+      duplTokens = mock.getUnpredictableDuplicates(duplTokens, providers);
+      expect(duplTokens).toEqual([Provider3, Provider7]);
+    });
+
+    it('case 3', () => {
+      let duplTokens: any[] = [Provider6];
+      const providers: Provider[] = [
+        Provider4,
+        Provider3,
+        Provider5,
+        { provide: Provider6, useClass: Provider6 },
+        { provide: Provider6, useClass: Provider6 },
+        { provide: Provider7, useClass: Provider7 }
+      ];
+      duplTokens = mock.getUnpredictableDuplicates(duplTokens, providers);
+      expect(duplTokens).toEqual([]);
+    });
+  });
+
+  describe('getUniqProviders()', () => {
     it('case 1', () => {
       expect(mock.getUniqProviders([Provider1, Provider1, Provider2])).toEqual([Provider1, Provider2]);
     });

@@ -74,7 +74,7 @@ describe('EntityInjector', () => {
       const injector = ReflectiveInjector.resolveAndCreate([Logger, MysqlService, MetadataProvider]);
       const mysqlDriver = injector.resolveAndInstantiate(MysqlDriver) as MysqlDriver;
       const map = mysqlDriver.loadMapping(mysql57Map);
-      console.log(map);
+      // console.log(map);
 
       const modWithOptions = OrmModule.withOptions(mysql57Map);
       @RootModule({

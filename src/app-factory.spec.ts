@@ -133,7 +133,7 @@ describe('AppFactory', () => {
     @Module({ providersPerApp: duplicates })
     class ModuleWithDuplicates {}
 
-    @Module({ providersPerApp: [Provider1] })
+    @Module({ providersPerApp: [{ provide: Provider1, useClass: Provider1 }] })
     class Module1 {}
 
     @Module({ providersPerApp: [Provider0, Provider1, Provider2] })

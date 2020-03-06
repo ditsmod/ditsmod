@@ -103,9 +103,11 @@ export class AppFactory extends Factory {
     const multiTokensPerApp = exportedNormalizedPerApp.filter(np => np.multi).map(np => np.provide);
     const defaultTokens = normalizeProviders([...defaultProvidersPerApp]).map(np => np.provide);
     const mergedTokens = [...exportedTokensPerApp, ...defaultTokens];
-    const duplExpPerApp = getDuplicates(mergedTokens).filter(
+    let duplExpPerApp = getDuplicates(mergedTokens).filter(
       d => !declaredTokensPerApp.includes(d) && !multiTokensPerApp.includes(d)
     );
+    const mergedProviders = [...defaultProvidersPerApp, ...exportedProvidersPerApp];
+    duplExpPerApp = this.getUnpredictableDuplicates(duplExpPerApp, mergedProviders);
     if (duplExpPerApp.length) {
       this.throwErrorProvidersUnpredictable(appModule.name, duplExpPerApp);
     }

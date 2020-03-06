@@ -1,12 +1,19 @@
 import { Type, reflector, Provider } from '@ts-stack/di';
 
-import { isModuleWithOptions, isModule, isRootModule } from './utils/type-guards';
+import {
+  isModuleWithOptions,
+  isModule,
+  isRootModule,
+  isProvider,
+  isValueProvider,
+  isClassProvider
+} from './utils/type-guards';
 import { ModuleWithOptions, ModuleDecorator, Module } from './decorators/module';
 import { mergeArrays } from './utils/merge-arrays-options';
 import { RootModule } from './decorators/root-module';
 import { deepFreeze } from './utils/deep-freeze';
 import { normalizeProviders } from './utils/ng-utils';
-import { findLastIndex } from './utils/find-last-index';
+import { format } from 'util';
 
 export abstract class Factory {
   protected throwErrorProvidersUnpredictable(moduleName: string, duplicates: any[]) {
@@ -61,10 +68,48 @@ export abstract class Factory {
    */
   protected getUniqProviders(providers: Provider[]) {
     const tokens = normalizeProviders(providers).map(np => np.provide);
-    return tokens
-      .map((currToken, currIndex) => {
-        return tokens.lastIndexOf(currToken) == currIndex ? providers[currIndex] : false;
-      })
-      .filter(o => o) as Provider[];
+    const uniqProviders: Provider[] = [];
+
+    tokens.forEach((currToken, currIndex) => {
+      if (tokens.lastIndexOf(currToken) == currIndex) {
+        uniqProviders.push(providers[currIndex]);
+      }
+    });
+
+    return uniqProviders;
+  }
+
+  protected getUnpredictableDuplicates(duplTokens: any[], providers: Provider[]) {
+    const duplProviders: Provider[] = [];
+
+    normalizeProviders(providers)
+      .map(np => np.provide)
+      .forEach((currToken, currIndex) => {
+        if (duplTokens.includes(currToken)) {
+          duplProviders.push(providers[currIndex]);
+        }
+      });
+
+    const normDuplProviders = normalizeProviders(duplProviders);
+    return duplTokens.filter(dulpToken => {
+      let prevProvider: Provider;
+
+      for (let i = 0; i < normDuplProviders.length; i++) {
+        const normDuplProvider = normDuplProviders[i];
+        if (normDuplProvider.provide === dulpToken) {
+          const duplProvider = duplProviders[i];
+          if (!prevProvider) {
+            prevProvider = duplProvider;
+          }
+          if (isProvider(prevProvider) && isProvider(duplProvider)) {
+            if (prevProvider.provide !== duplProvider.provide || format(prevProvider) != format(duplProvider)) {
+              return true;
+            }
+          } else if (prevProvider !== duplProvider) {
+            return true;
+          }
+        }
+      }
+    });
   }
 }
