@@ -41,6 +41,8 @@ export class ModuleFactory extends Factory {
   protected prefixPerMod: string;
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
   protected opts: ModuleMetadata;
+  protected allExportedProvidersPerMod: Provider[] = [];
+  protected allExportedProvidersPerReq: Provider[] = [];
   protected exportedProvidersPerMod: Provider[] = [];
   protected exportedProvidersPerReq: Provider[] = [];
   protected globalProviders: ProvidersMetadata;
@@ -67,12 +69,12 @@ export class ModuleFactory extends Factory {
     this.opts = new ModuleMetadata();
     pickProperties(this.opts, moduleMetadata);
     this.globalProviders = globalProviders;
-    this.importProviders(rootModule);
+    this.importProviders(true, rootModule);
     this.checkProvidersUnpredictable();
 
     return {
-      providersPerMod: this.exportedProvidersPerMod,
-      providersPerReq: this.exportedProvidersPerReq
+      providersPerMod: this.allExportedProvidersPerMod,
+      providersPerReq: this.allExportedProvidersPerReq
     };
   }
 
@@ -118,7 +120,7 @@ export class ModuleFactory extends Factory {
     const globalProvidersPerMod = isRootModule(moduleMetadata) ? [] : this.globalProviders.providersPerMod;
     this.opts.providersPerMod = [
       ...globalProvidersPerMod.filter(p => !duplicatesProvidersPerMod.includes(p)),
-      ...this.exportedProvidersPerMod,
+      ...this.allExportedProvidersPerMod,
       ...this.opts.providersPerMod
     ];
 
@@ -131,7 +133,7 @@ export class ModuleFactory extends Factory {
       : this.globalProviders.providersPerReq;
     this.opts.providersPerReq = [
       ...globalProvidersPerReq.filter(p => !duplicatesProvidersPerReq.includes(p)),
-      ...this.exportedProvidersPerReq,
+      ...this.allExportedProvidersPerReq,
       ...this.opts.providersPerReq
     ];
   }
@@ -224,7 +226,7 @@ export class ModuleFactory extends Factory {
 
   protected importModules() {
     for (const imp of this.opts.imports) {
-      this.importProviders(imp.module);
+      this.importProviders(true, imp.module);
       const prefixPerMod = [this.prefixPerMod, imp.prefix].filter(s => s).join('/');
       const mod = imp.module;
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
@@ -238,7 +240,11 @@ export class ModuleFactory extends Factory {
    * @param modOrObject Module from where exports providers.
    * @param soughtProvider Normalized provider.
    */
-  protected importProviders(modOrObject: Type<any> | ModuleWithOptions<any>, soughtProvider?: NormalizedProvider) {
+  protected importProviders(
+    isStarter: boolean,
+    modOrObject: Type<any> | ModuleWithOptions<any>,
+    soughtProvider?: NormalizedProvider
+  ) {
     const { exports: exp, imports, providersPerMod, providersPerReq } = this.mergeMetadata(modOrObject);
     const moduleName = this.getModuleName(modOrObject);
 
@@ -246,7 +252,7 @@ export class ModuleFactory extends Factory {
       const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType);
       if (moduleMetadata) {
         const reexportedModuleOrObject = moduleOrProvider as ModuleType | ModuleWithOptions<any>;
-        this.importProviders(reexportedModuleOrObject, soughtProvider);
+        this.importProviders(false, reexportedModuleOrObject, soughtProvider);
       } else {
         const provider = moduleOrProvider as Provider;
         const normProvider = normalizeProviders([provider])[0];
@@ -257,7 +263,7 @@ export class ModuleFactory extends Factory {
         let foundProvider = this.findAndSetProvider(provider, normProvider, providersPerMod, providersPerReq);
         if (!foundProvider) {
           for (const imp of imports) {
-            foundProvider = this.importProviders(imp.module, normProvider);
+            foundProvider = this.importProviders(false, imp.module, normProvider);
             if (foundProvider) {
               break;
             }
@@ -278,6 +284,23 @@ export class ModuleFactory extends Factory {
         }
       }
     }
+
+    if (soughtProvider) {
+      return;
+    }
+
+    if (isStarter) {
+      this.allExportedProvidersPerMod.push(...this.exportedProvidersPerMod);
+      this.allExportedProvidersPerReq.push(...this.exportedProvidersPerReq);
+    } else {
+      /**
+       * Removed duplicates only during exporting providers from the whole module.
+       */
+      this.allExportedProvidersPerMod.push(...this.getUniqProviders(this.exportedProvidersPerMod));
+      this.allExportedProvidersPerReq.push(...this.getUniqProviders(this.exportedProvidersPerReq));
+    }
+    this.exportedProvidersPerMod = [];
+    this.exportedProvidersPerReq = [];
   }
 
   protected findAndSetProvider(
@@ -306,7 +329,7 @@ export class ModuleFactory extends Factory {
     const tokensPerApp = normalizeProviders(this.globalProviders.providersPerApp).map(np => np.provide);
 
     const declaredTokensPerMod = normalizeProviders(this.opts.providersPerMod).map(np => np.provide);
-    const exportedNormalizedPerMod = normalizeProviders(this.exportedProvidersPerMod);
+    const exportedNormalizedPerMod = normalizeProviders(this.allExportedProvidersPerMod);
     const exportedTokensPerMod = exportedNormalizedPerMod.map(np => np.provide);
     const multiTokensPerMod = exportedNormalizedPerMod.filter(np => np.multi).map(np => np.provide);
     const duplExpPerMod = getDuplicates(exportedTokensPerMod).filter(
@@ -315,7 +338,7 @@ export class ModuleFactory extends Factory {
     const tokensPerMod = [...declaredTokensPerMod, ...exportedTokensPerMod];
 
     const declaredTokensPerReq = normalizeProviders(this.opts.providersPerReq).map(np => np.provide);
-    const exportedNormalizedPerReq = normalizeProviders(this.exportedProvidersPerReq);
+    const exportedNormalizedPerReq = normalizeProviders(this.allExportedProvidersPerReq);
     const exportedTokensPerReq = exportedNormalizedPerReq.map(np => np.provide);
     const multiTokensPerReq = exportedNormalizedPerReq.filter(np => np.multi).map(np => np.provide);
     const duplExpPerReq = getDuplicates(exportedTokensPerReq).filter(
