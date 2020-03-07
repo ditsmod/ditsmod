@@ -332,18 +332,20 @@ export class ModuleFactory extends Factory {
     const exportedNormalizedPerMod = normalizeProviders(this.allExportedProvidersPerMod);
     const exportedTokensPerMod = exportedNormalizedPerMod.map(np => np.provide);
     const multiTokensPerMod = exportedNormalizedPerMod.filter(np => np.multi).map(np => np.provide);
-    const duplExpPerMod = getDuplicates(exportedTokensPerMod).filter(
+    let duplExpPerMod = getDuplicates(exportedTokensPerMod).filter(
       d => !declaredTokensPerMod.includes(d) && !multiTokensPerMod.includes(d)
     );
+    duplExpPerMod = this.getUnpredictableDuplicates(duplExpPerMod, this.allExportedProvidersPerMod);
     const tokensPerMod = [...declaredTokensPerMod, ...exportedTokensPerMod];
 
     const declaredTokensPerReq = normalizeProviders(this.opts.providersPerReq).map(np => np.provide);
     const exportedNormalizedPerReq = normalizeProviders(this.allExportedProvidersPerReq);
     const exportedTokensPerReq = exportedNormalizedPerReq.map(np => np.provide);
     const multiTokensPerReq = exportedNormalizedPerReq.filter(np => np.multi).map(np => np.provide);
-    const duplExpPerReq = getDuplicates(exportedTokensPerReq).filter(
+    let duplExpPerReq = getDuplicates(exportedTokensPerReq).filter(
       d => !declaredTokensPerReq.includes(d) && !multiTokensPerReq.includes(d)
     );
+    duplExpPerReq = this.getUnpredictableDuplicates(duplExpPerReq, this.allExportedProvidersPerReq);
 
     const mixPerApp = tokensPerApp.filter(p => {
       if (exportedTokensPerMod.includes(p) && !declaredTokensPerMod.includes(p)) {

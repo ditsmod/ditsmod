@@ -464,13 +464,13 @@ describe('ModuleFactory', () => {
     describe(`unpredictable priority`, () => {
       describe(`per a module`, () => {
         @Module({
-          exports: [Provider1],
+          exports: [{ provide: Provider1, useValue: '' }],
           providersPerMod: [{ provide: Provider1, useClass: Provider1 }, Provider2]
         })
         class Module0 {}
 
         @Module({
-          exports: [Provider1, Provider2]
+          exports: [Provider1, { provide: Provider2, useFactory: () => {} }]
         })
         class Module1 {
           static withOptions() {
@@ -581,20 +581,20 @@ describe('ModuleFactory', () => {
 
       describe(`per a req`, () => {
         @Module({
-          exports: [Provider1],
+          exports: [{ provide: Provider1, useClass: Provider1 }],
           providersPerReq: [{ provide: Provider1, useClass: Provider1 }, Provider2]
         })
         class Module0 {}
 
         @Module({
-          exports: [Provider1, Provider2],
+          exports: [{ provide: Provider1, useExisting: Provider1 }, Provider2],
           providersPerReq: [Provider1, Provider2]
         })
         class Module1 {}
 
         @Module({
           imports: [Module1],
-          exports: [Module1, Provider2, Provider3],
+          exports: [Module1, { provide: Provider2, useClass: Provider2 }, Provider3],
           providersPerReq: [Provider2, Provider3]
         })
         class Module2 {}
