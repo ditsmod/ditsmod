@@ -1,10 +1,9 @@
-import { InjectionToken, Provider } from '@ts-stack/di';
+import { InjectionToken } from '@ts-stack/di';
 
 import { NodeRequest, NodeResponse } from './server-options';
 
 export const NodeReqToken = new InjectionToken<NodeRequest>('NodeRequest');
 export const NodeResToken = new InjectionToken<NodeResponse>('NodeResponse');
-export const EntitiesToken = new InjectionToken<Provider[]>('Entities');
 /**
  * An injection token that allows you to provide one or more initialization functions.
  * These function are injected at application startup and executed during

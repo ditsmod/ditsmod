@@ -14,8 +14,6 @@ import { RootModuleDecorator } from '../decorators/root-module';
 import { ControllerDecorator } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
 import { ServerOptions, Http2SecureServerOptions } from '../types/server-options';
-import { EntityDecorator } from '../modules/orm/decorators/entity';
-import { ColumnMetadata, ColumnType } from '../modules/orm/decorators/column';
 import { ObjectAny } from '../types/types';
 import { ImportsWithPrefixDecorator } from '../types/router';
 
@@ -48,26 +46,6 @@ export function isModule(moduleMetadata: RootModuleDecorator | ModuleDecorator):
 
 export function isController(ctrlMeatada: ControllerDecorator): ctrlMeatada is ControllerDecorator {
   return (ctrlMeatada as any)?.ngMetadataName == 'Controller';
-}
-
-export function isEntity(metadata: ObjectAny): metadata is EntityDecorator {
-  return (metadata as any)?.ngMetadataName == 'Entity';
-}
-
-export function isColumn(metadata: ObjectAny): metadata is ColumnMetadata {
-  return (metadata as any)?.ngMetadataName == 'Column';
-}
-
-export function isColumnType(metadata: ObjectAny): metadata is ColumnType {
-  return (
-    !isRootModule(metadata) &&
-    !isModule(metadata) &&
-    !isController(metadata) &&
-    !isEntity(metadata) &&
-    !isColumn(metadata) &&
-    !isRoute(metadata as any) &&
-    [undefined, Boolean, String, Array, Number, Object].includes(metadata && metadata[0])
-  );
 }
 
 export function isRoute(propMeatada: RouteMetadata): propMeatada is RouteMetadata {

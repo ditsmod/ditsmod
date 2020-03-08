@@ -16,7 +16,6 @@ import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
 import { Router, RouteConfig } from './types/router';
 import { defaultProvidersPerApp, RootModule } from './decorators/root-module';
-import { Column } from './modules/orm/decorators/column';
 import { Logger } from './types/logger';
 import { AppFactory } from './app-factory';
 import { NodeReqToken } from './types/injection-tokens';
@@ -219,14 +218,12 @@ describe('ModuleFactory', () => {
   describe('loadRoutesConfig() and setRoutes()', () => {
     @Controller()
     class C1 {
-      @Column() // <----- It's just to mix `@Route()` with another decorators.
       @Route('GET')
       method() {}
     }
     @Controller()
     class C11 {
       @Route('GET')
-      @Column() // <----- It's just to mix `@Route()` with another decorators.
       method() {}
     }
     @Controller()

@@ -1,6 +1,3 @@
-import * as ORM from './modules/index';
-
-export { ORM };
 export * from './types/injection-tokens';
 export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './utils/http-status-codes';
 export { pickProperties } from './utils/pick-properties';
