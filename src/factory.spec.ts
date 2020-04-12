@@ -43,7 +43,7 @@ describe('Factory', () => {
         Provider5,
         { provide: Provider3, useClass: Provider3 },
         { provide: Provider7, useClass: Provider7 },
-        { provide: Provider7, useClass: Provider6 }
+        { provide: Provider7, useClass: Provider6 },
       ];
       duplTokens = mock.getUnpredictableDuplicates(duplTokens, providers);
       expect(duplTokens).toEqual([Provider3, Provider7]);
@@ -57,7 +57,7 @@ describe('Factory', () => {
         Provider5,
         { provide: Provider6, useClass: Provider6 },
         { provide: Provider6, useClass: Provider6 },
-        { provide: Provider7, useClass: Provider7 }
+        { provide: Provider7, useClass: Provider7 },
       ];
       duplTokens = mock.getUnpredictableDuplicates(duplTokens, providers);
       expect(duplTokens).toEqual([]);

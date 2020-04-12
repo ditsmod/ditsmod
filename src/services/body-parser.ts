@@ -19,10 +19,10 @@ export class BodyParser {
     return new Promise((resolve, reject) => {
       const bodyArr: Uint8Array[] = [];
       this.nodeReq
-        .on('error', err => {
+        .on('error', (err) => {
           reject(err);
         })
-        .on('data', chunk => {
+        .on('data', (chunk) => {
           bodyArr.push(chunk);
         })
         .on('end', () => {

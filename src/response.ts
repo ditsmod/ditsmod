@@ -56,7 +56,7 @@ export class Response {
     let headerString = '';
     let str: string;
 
-    Object.keys(headers).forEach(k => (headerString += k + ': ' + headers[k] + '\n'));
+    Object.keys(headers).forEach((k) => (headerString += k + ': ' + headers[k] + '\n'));
 
     str = format(
       'HTTP/%s %s %s\n%s',

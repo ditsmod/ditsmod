@@ -20,13 +20,12 @@ import {
   ModuleWithOptions,
   ModuleDecorator,
   ProvidersMetadata,
-  defaultProvidersPerReq
+  defaultProvidersPerReq,
 } from './decorators/module';
 import { getDuplicates } from './utils/get-duplicates';
 import { flatten, normalizeProviders } from './utils/ng-utils';
 import { Factory } from './factory';
 import { deepFreeze } from './utils/deep-freeze';
-import { findLastIndex } from './utils/find-last-index';
 
 export class AppFactory extends Factory {
   protected log: Logger;
@@ -97,14 +96,14 @@ export class AppFactory extends Factory {
 
   protected prepareProvidersPerApp(appModule: ModuleType) {
     const exportedProvidersPerApp = this.importProvidersPerApp(appModule);
-    const declaredTokensPerApp = normalizeProviders(this.opts.providersPerApp).map(np => np.provide);
+    const declaredTokensPerApp = normalizeProviders(this.opts.providersPerApp).map((np) => np.provide);
     const exportedNormalizedPerApp = normalizeProviders(exportedProvidersPerApp);
-    const exportedTokensPerApp = exportedNormalizedPerApp.map(np => np.provide);
-    const multiTokensPerApp = exportedNormalizedPerApp.filter(np => np.multi).map(np => np.provide);
-    const defaultTokens = normalizeProviders([...defaultProvidersPerApp]).map(np => np.provide);
+    const exportedTokensPerApp = exportedNormalizedPerApp.map((np) => np.provide);
+    const multiTokensPerApp = exportedNormalizedPerApp.filter((np) => np.multi).map((np) => np.provide);
+    const defaultTokens = normalizeProviders([...defaultProvidersPerApp]).map((np) => np.provide);
     const mergedTokens = [...exportedTokensPerApp, ...defaultTokens];
     let duplExpPerApp = getDuplicates(mergedTokens).filter(
-      d => !declaredTokensPerApp.includes(d) && !multiTokensPerApp.includes(d)
+      (d) => !declaredTokensPerApp.includes(d) && !multiTokensPerApp.includes(d)
     );
     const mergedProviders = [...defaultProvidersPerApp, ...exportedProvidersPerApp];
     duplExpPerApp = this.getUnpredictableDuplicates(duplExpPerApp, mergedProviders);
@@ -121,7 +120,7 @@ export class AppFactory extends Factory {
 
     const imports = flatten(modMetadata.imports).map<Type<any> | ModuleWithOptions<any>>(resolveForwardRef);
     const providersPerApp: Provider[] = [];
-    imports.forEach(imp => providersPerApp.push(...this.importProvidersPerApp(imp)));
+    imports.forEach((imp) => providersPerApp.push(...this.importProvidersPerApp(imp)));
     const currProvidersPerApp = isRootModule(modMetadata) ? [] : flatten(modMetadata.providersPerApp);
 
     return [...providersPerApp, ...this.getUniqProviders(currProvidersPerApp)];
@@ -172,7 +171,7 @@ export class AppFactory extends Factory {
     const { injector, providers, controller, method, parseBody, routeData } = handleRoute();
     const inj1 = injector.resolveAndCreateChild([
       { provide: NodeReqToken, useValue: nodeReq },
-      { provide: NodeResToken, useValue: nodeRes }
+      { provide: NodeResToken, useValue: nodeRes },
     ]);
     const inj2 = inj1.createChildFromResolved(providers);
     const req = inj2.get(Request) as Request;

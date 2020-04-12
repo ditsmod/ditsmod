@@ -1,7 +1,7 @@
 import { ObjectAny } from '../types/types';
 
 export function pickProperties<T extends ObjectAny, S extends Partial<T>>(targetObject: T, ...sourceObjects: S[]) {
-  sourceObjects.forEach(sourceObj => {
+  sourceObjects.forEach((sourceObj) => {
     sourceObj = (sourceObj || {}) as S;
     for (const prop in targetObject) {
       if (Array.isArray(sourceObj[prop])) {
@@ -61,16 +61,16 @@ export function pickPropertiesAsGetters<T extends ObjectAny, K extends Extract<k
     }
   }
 
-  sourceObjects.forEach(sourceObj => {
+  sourceObjects.forEach((sourceObj) => {
     sourceObj = sourceObj || {};
     Object.keys(targetObject)
       .filter(callback)
-      .forEach(prop => {
+      .forEach((prop) => {
         if (sourceObj.hasOwnProperty(prop)) {
           Object.defineProperty(targetObject, prop, {
             get() {
               return sourceObj[prop];
-            }
+            },
           });
         }
       });

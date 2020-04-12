@@ -87,14 +87,14 @@ describe('AppFactory', () => {
 
       const imports: ImportsWithPrefix[] = [
         { prefix: '', module: SomeModule },
-        { prefix: '', module: OtherModule }
+        { prefix: '', module: OtherModule },
       ];
 
       @RootModule({
         prefixPerApp: 'api',
         imports,
         controllers: [SomeControllerClass],
-        providersPerApp: [ClassWithoutDecorators]
+        providersPerApp: [ClassWithoutDecorators],
       })
       class ClassWithDecorators {}
 
@@ -141,7 +141,7 @@ describe('AppFactory', () => {
 
     it(`case 1`, () => {
       @RootModule({
-        imports: [Module1, Module2]
+        imports: [Module1, Module2],
       })
       class RootModule1 {}
 
@@ -163,7 +163,7 @@ describe('AppFactory', () => {
 
     @RootModule({
       imports: [ModuleWithDuplicates],
-      providersPerApp: duplicates
+      providersPerApp: duplicates,
     })
     class RootModule3 {}
 
@@ -174,7 +174,7 @@ describe('AppFactory', () => {
     });
 
     @RootModule({
-      imports: []
+      imports: [],
     })
     class RootModule4 {}
 
@@ -185,7 +185,7 @@ describe('AppFactory', () => {
 
     it(`case 5`, () => {
       @RootModule({
-        imports: [ModuleWithDuplicates]
+        imports: [ModuleWithDuplicates],
       })
       class RootModule1 {}
 
@@ -204,29 +204,29 @@ describe('AppFactory', () => {
     class Provider7 {}
 
     @Module({
-      providersPerApp: [Provider1]
+      providersPerApp: [Provider1],
     })
     class Module1 {}
 
     @Module({
       providersPerApp: [Provider2, Provider3, Provider4],
-      imports: [Module1]
+      imports: [Module1],
     })
     class Module2 {}
 
     @Module({
       providersPerApp: [Provider5, Provider6],
-      imports: [Module2]
+      imports: [Module2],
     })
     class Module3 {}
 
     @Module({
-      imports: [Module3]
+      imports: [Module3],
     })
     class Module4 {}
 
     @Module({
-      imports: [Module1, [Module4]]
+      imports: [Module1, [Module4]],
     })
     class Module5 {}
 
@@ -237,7 +237,7 @@ describe('AppFactory', () => {
         Provider3,
         Provider4,
         Provider5,
-        Provider6
+        Provider6,
       ]);
     });
 
@@ -249,12 +249,12 @@ describe('AppFactory', () => {
         Provider3,
         Provider4,
         Provider5,
-        Provider6
+        Provider6,
       ]);
     });
 
     @Module({
-      imports: [Module4]
+      imports: [Module4],
     })
     class Module6 {
       static withOptions(providers: Provider[]): ModuleWithOptions<Module6> {
@@ -271,7 +271,7 @@ describe('AppFactory', () => {
         Provider4,
         Provider5,
         Provider6,
-        Provider7
+        Provider7,
       ]);
     });
 
@@ -300,7 +300,7 @@ describe('AppFactory', () => {
   describe('checkSecureServerOption()', () => {
     @RootModule({
       controllers: [SomeControllerClass],
-      providersPerApp: [ClassWithoutDecorators]
+      providersPerApp: [ClassWithoutDecorators],
     })
     class ClassWithDecorators {}
 

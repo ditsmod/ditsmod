@@ -38,7 +38,7 @@ export function flatten<T = any>(list: any[], dst?: any[]): T[] {
  * Flatten and normalize an array of arrays DI Providers
  */
 export function normalizeProviders(providers: Provider[], arrayOfProviders: NormalizedProvider[] = []) {
-  providers.forEach(provider => {
+  providers.forEach((provider) => {
     if (provider instanceof Type) {
       arrayOfProviders.push({ provide: provider, useClass: provider });
     } else if (provider && typeof provider == 'object' && (provider as any).provide !== undefined) {

@@ -5,7 +5,7 @@ import {
   Provider,
   Type,
   TypeProvider,
-  ValueProvider
+  ValueProvider,
 } from '@ts-stack/di';
 
 import { normalizeProviders } from './ng-utils';
