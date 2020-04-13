@@ -35,11 +35,9 @@ export class Request {
   /**
    * Called by the `ModuleFactory` after founded a route.
    *
-   * @param err Body parser's an error.
    * @param controller Controller class.
    * @param method Method of the Controller.
    * @param parseBody Need or not to parsing a body request.
-   * @param checkAccept Need or not to checking `accept` header from a request.
    */
   async handleRoute(
     controller: TypeProvider,
@@ -49,9 +47,9 @@ export class Request {
     parseBody: boolean,
     routeData: any
   ) {
-    const routeParams: ObjectAny = {};
     this.routeParamsArr = routeParamsArr;
-    routeParamsArr?.forEach(param => (routeParams[param.key] = param.value));
+    const routeParams: ObjectAny = routeParamsArr ? {} : undefined;
+    routeParamsArr?.forEach((param) => (routeParams[param.key] = param.value));
     this.routeParams = routeParams;
     this.routeData = routeData;
     let ctrl: any;
@@ -75,7 +73,16 @@ export class Request {
       preReq.sendBadRequestError(this.nodeRes, err);
       return;
     }
-    ctrl[method]();
+
+    try {
+      await ctrl[method]();
+    } catch (err) {
+      if (typeof ctrl.errorHandler == 'function') {
+        ctrl.errorHandler(err);
+      } else {
+        throw err;
+      }
+    }
   }
 
   /**
@@ -87,7 +94,7 @@ export class Request {
 
   toString(): string {
     let headers = '';
-    Object.keys(this.nodeReq.headers).forEach(k => (headers += format('%s: %s\n', k, this.nodeReq.headers[k])));
+    Object.keys(this.nodeReq.headers).forEach((k) => (headers += format('%s: %s\n', k, this.nodeReq.headers[k])));
 
     const { method, url, httpVersion } = this.nodeReq;
     return format('%s %s HTTP/%s\n%s', method, url, httpVersion, headers);

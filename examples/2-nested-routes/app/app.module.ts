@@ -7,7 +7,7 @@ import { SecondModule } from './v2/second.module';
   prefixPerApp: 'api',
   imports: [
     { prefix: 'v1', module: FirstModule },
-    { prefix: 'v2', module: SecondModule }
-  ]
+    { prefix: 'v2', module: SecondModule },
+  ],
 })
 export class AppModule {}

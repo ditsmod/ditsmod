@@ -58,7 +58,7 @@ describe('type-guards', () => {
         { provide: '', useValue: '' },
         { provide: '', useClass: class {} },
         { provide: '', useExisting: class {} },
-        { provide: '', useFactory: class {} }
+        { provide: '', useFactory: class {} },
       ];
       expect(isProvider(providers)).toBe(true);
     });

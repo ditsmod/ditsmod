@@ -18,8 +18,8 @@ export const defaultProvidersPerApp: Readonly<Provider[]> = deepFreeze([
   PreRequest,
   {
     provide: ReflectiveInjector,
-    useExisting: Injector
-  }
+    useExisting: Injector,
+  },
 ]);
 
 export interface RootModuleDecoratorFactory {

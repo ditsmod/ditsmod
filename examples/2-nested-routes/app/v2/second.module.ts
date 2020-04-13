@@ -11,10 +11,10 @@ import { HelloWorldController } from './hello-world.controller';
       children: [
         {
           path: 'two',
-          controller: HelloWorldController
-        }
-      ]
-    }
-  ]
+          controller: HelloWorldController,
+        },
+      ],
+    },
+  ],
 })
 export class SecondModule {}

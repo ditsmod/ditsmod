@@ -10,7 +10,7 @@ import { format } from 'util';
 
 export abstract class Factory {
   protected throwErrorProvidersUnpredictable(moduleName: string, duplicates: any[]) {
-    const names = duplicates.map(p => p.name || p).join(', ');
+    const names = duplicates.map((p) => p.name || p).join(', ');
     throw new Error(
       `Exporting providers in ${moduleName} was failed: Unpredictable priority was found for: ${names}. You should manually add these providers to ${moduleName}.`
     );
@@ -60,7 +60,7 @@ export abstract class Factory {
    * Returns last provider if the provider has the duplicate.
    */
   protected getUniqProviders(providers: Provider[]) {
-    const tokens = normalizeProviders(providers).map(np => np.provide);
+    const tokens = normalizeProviders(providers).map((np) => np.provide);
     const uniqProviders: Provider[] = [];
 
     tokens.forEach((currToken, currIndex) => {
@@ -78,7 +78,7 @@ export abstract class Factory {
     const duplProviders: Provider[] = [];
 
     normalizeProviders(providers)
-      .map(np => np.provide)
+      .map((np) => np.provide)
       .forEach((currToken, currIndex) => {
         if (duplTokens.includes(currToken)) {
           duplProviders.push(providers[currIndex]);
@@ -86,7 +86,7 @@ export abstract class Factory {
       });
 
     const normDuplProviders = normalizeProviders(duplProviders);
-    return duplTokens.filter(dulpToken => {
+    return duplTokens.filter((dulpToken) => {
       let prevProvider: Provider;
 
       for (let i = 0; i < normDuplProviders.length; i++) {

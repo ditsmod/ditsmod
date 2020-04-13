@@ -6,7 +6,7 @@ import {
   resolveForwardRef,
   Injectable,
   ResolvedReflectiveProvider,
-  ReflectiveInjector
+  ReflectiveInjector,
 } from '@ts-stack/di';
 
 import {
@@ -14,7 +14,7 @@ import {
   defaultProvidersPerReq,
   ModuleType,
   ModuleWithOptions,
-  ProvidersMetadata
+  ProvidersMetadata,
 } from './decorators/module';
 import { RouteDecoratorMetadata } from './decorators/route';
 import { BodyParserConfig } from './types/types';
@@ -74,7 +74,7 @@ export class ModuleFactory extends Factory {
 
     return {
       providersPerMod: this.allExportedProvidersPerMod,
-      providersPerReq: this.allExportedProvidersPerReq
+      providersPerReq: this.allExportedProvidersPerReq,
     };
   }
 
@@ -106,8 +106,8 @@ export class ModuleFactory extends Factory {
     this.initProvidersPerReq();
     this.checkRoutePath(this.prefixPerApp);
     this.checkRoutePath(this.prefixPerMod);
-    const prefix = [this.prefixPerApp, this.prefixPerMod].filter(s => s).join('/');
-    this.opts.controllers.forEach(Ctrl => this.setRoutes(prefix, Ctrl));
+    const prefix = [this.prefixPerApp, this.prefixPerMod].filter((s) => s).join('/');
+    this.opts.controllers.forEach((Ctrl) => this.setRoutes(prefix, Ctrl));
     this.loadRoutesConfig(prefix, this.opts.routes);
     return { optsMap: this.optsMap.set(mod, this.opts), injectorPerReqMap: this.injectorPerReqMap };
   }
@@ -115,32 +115,32 @@ export class ModuleFactory extends Factory {
   protected mergeProviders(moduleMetadata: ModuleMetadata) {
     const duplicatesProvidersPerMod = getDuplicates([
       ...this.globalProviders.providersPerMod,
-      ...this.opts.providersPerMod
+      ...this.opts.providersPerMod,
     ]);
     const globalProvidersPerMod = isRootModule(moduleMetadata) ? [] : this.globalProviders.providersPerMod;
     this.opts.providersPerMod = [
-      ...globalProvidersPerMod.filter(p => !duplicatesProvidersPerMod.includes(p)),
+      ...globalProvidersPerMod.filter((p) => !duplicatesProvidersPerMod.includes(p)),
       ...this.allExportedProvidersPerMod,
-      ...this.opts.providersPerMod
+      ...this.opts.providersPerMod,
     ];
 
     const duplicatesProvidersPerReq = getDuplicates([
       ...this.globalProviders.providersPerReq,
-      ...this.opts.providersPerReq
+      ...this.opts.providersPerReq,
     ]);
     const globalProvidersPerReq = isRootModule(moduleMetadata)
       ? defaultProvidersPerReq
       : this.globalProviders.providersPerReq;
     this.opts.providersPerReq = [
-      ...globalProvidersPerReq.filter(p => !duplicatesProvidersPerReq.includes(p)),
+      ...globalProvidersPerReq.filter((p) => !duplicatesProvidersPerReq.includes(p)),
       ...this.allExportedProvidersPerReq,
-      ...this.opts.providersPerReq
+      ...this.opts.providersPerReq,
     ];
   }
 
   protected loadRoutesConfig(prefix: string, configs: RouteConfig[]) {
     for (const config of configs) {
-      const childPrefix = [prefix, config.path].filter(s => s).join('/');
+      const childPrefix = [prefix, config.path].filter((s) => s).join('/');
       if (config.controller) {
         this.setRoutes(childPrefix, config.controller, config.routeData);
       }
@@ -185,16 +185,16 @@ export class ModuleFactory extends Factory {
     (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
 
     type FlattenedImports = Type<any> | ModuleWithOptions<any> | ImportsWithPrefixDecorator;
-    metadata.imports = flatten<FlattenedImports>(modMetadata.imports).map<ImportsWithPrefix>(imp => {
+    metadata.imports = flatten<FlattenedImports>(modMetadata.imports).map<ImportsWithPrefix>((imp) => {
       if (isImportsWithPrefix(imp)) {
         return {
           prefix: imp.prefix,
-          module: resolveForwardRef(imp.module)
+          module: resolveForwardRef(imp.module),
         };
       }
       return {
         prefix: '',
-        module: resolveForwardRef(imp)
+        module: resolveForwardRef(imp),
       };
     });
     metadata.exports = flatten(modMetadata.exports).map(resolveForwardRef);
@@ -227,7 +227,7 @@ export class ModuleFactory extends Factory {
   protected importModules() {
     for (const imp of this.opts.imports) {
       this.importProviders(true, imp.module);
-      const prefixPerMod = [this.prefixPerMod, imp.prefix].filter(s => s).join('/');
+      const prefixPerMod = [this.prefixPerMod, imp.prefix].filter((s) => s).join('/');
       const mod = imp.module;
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       const { optsMap } = moduleFactory.bootstrap(this.globalProviders, this.prefixPerApp, prefixPerMod, mod);
@@ -321,42 +321,42 @@ export class ModuleFactory extends Factory {
 
     function hasProvider(providers: Provider[]) {
       const normProviders = normalizeProviders(providers);
-      return normProviders.some(p => p.provide === normProvider.provide);
+      return normProviders.some((p) => p.provide === normProvider.provide);
     }
   }
 
   protected checkProvidersUnpredictable() {
-    const tokensPerApp = normalizeProviders(this.globalProviders.providersPerApp).map(np => np.provide);
+    const tokensPerApp = normalizeProviders(this.globalProviders.providersPerApp).map((np) => np.provide);
 
-    const declaredTokensPerMod = normalizeProviders(this.opts.providersPerMod).map(np => np.provide);
+    const declaredTokensPerMod = normalizeProviders(this.opts.providersPerMod).map((np) => np.provide);
     const exportedNormalizedPerMod = normalizeProviders(this.allExportedProvidersPerMod);
-    const exportedTokensPerMod = exportedNormalizedPerMod.map(np => np.provide);
-    const multiTokensPerMod = exportedNormalizedPerMod.filter(np => np.multi).map(np => np.provide);
+    const exportedTokensPerMod = exportedNormalizedPerMod.map((np) => np.provide);
+    const multiTokensPerMod = exportedNormalizedPerMod.filter((np) => np.multi).map((np) => np.provide);
     let duplExpPerMod = getDuplicates(exportedTokensPerMod).filter(
-      d => !declaredTokensPerMod.includes(d) && !multiTokensPerMod.includes(d)
+      (d) => !declaredTokensPerMod.includes(d) && !multiTokensPerMod.includes(d)
     );
     duplExpPerMod = this.getUnpredictableDuplicates(duplExpPerMod, this.allExportedProvidersPerMod);
     const tokensPerMod = [...declaredTokensPerMod, ...exportedTokensPerMod];
 
-    const declaredTokensPerReq = normalizeProviders(this.opts.providersPerReq).map(np => np.provide);
+    const declaredTokensPerReq = normalizeProviders(this.opts.providersPerReq).map((np) => np.provide);
     const exportedNormalizedPerReq = normalizeProviders(this.allExportedProvidersPerReq);
-    const exportedTokensPerReq = exportedNormalizedPerReq.map(np => np.provide);
-    const multiTokensPerReq = exportedNormalizedPerReq.filter(np => np.multi).map(np => np.provide);
+    const exportedTokensPerReq = exportedNormalizedPerReq.map((np) => np.provide);
+    const multiTokensPerReq = exportedNormalizedPerReq.filter((np) => np.multi).map((np) => np.provide);
     let duplExpPerReq = getDuplicates(exportedTokensPerReq).filter(
-      d => !declaredTokensPerReq.includes(d) && !multiTokensPerReq.includes(d)
+      (d) => !declaredTokensPerReq.includes(d) && !multiTokensPerReq.includes(d)
     );
     duplExpPerReq = this.getUnpredictableDuplicates(duplExpPerReq, this.allExportedProvidersPerReq);
 
-    const mixPerApp = tokensPerApp.filter(p => {
+    const mixPerApp = tokensPerApp.filter((p) => {
       if (exportedTokensPerMod.includes(p) && !declaredTokensPerMod.includes(p)) {
         return true;
       }
       return exportedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
     });
 
-    const defaultTokens = normalizeProviders([...defaultProvidersPerReq]).map(np => np.provide);
+    const defaultTokens = normalizeProviders([...defaultProvidersPerReq]).map((np) => np.provide);
     const mergedTokens = [...defaultTokens, ...tokensPerMod, NodeReqToken, NodeResToken];
-    const mixPerModOrReq = mergedTokens.filter(p => {
+    const mixPerModOrReq = mergedTokens.filter((p) => {
       return exportedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
     });
 
@@ -389,20 +389,20 @@ export class ModuleFactory extends Factory {
         const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
         const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
 
-        const path = [prefix, route.path].filter(s => s).join('/');
+        const path = [prefix, route.path].filter((s) => s).join('/');
         this.router.on(route.httpMethod, `/${path}`, () => ({
           injector: this.injectorPerMod,
           providers: resolvedProvidersPerReq,
           controller: Ctrl,
           method: prop,
           parseBody,
-          routeData
+          routeData,
         }));
 
         this.log.trace({
           httpMethod: route.httpMethod,
           path,
-          handler: `${Ctrl.name} -> ${prop}()`
+          handler: `${Ctrl.name} -> ${prop}()`,
         });
       }
     }

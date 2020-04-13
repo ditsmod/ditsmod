@@ -10,7 +10,7 @@ import {
   ModuleWithOptions,
   ModuleDecorator,
   ProvidersMetadata,
-  defaultProvidersPerReq
+  defaultProvidersPerReq,
 } from './decorators/module';
 import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
@@ -116,7 +116,7 @@ describe('ModuleFactory', () => {
         controllers: [SomeControllerClass],
         providersPerReq: [ClassWithoutDecorators],
         providersPerMod: [PerMod],
-        routes
+        routes,
       })
       class ClassWithDecorators {}
       const metadata = mock.mergeMetadata(ClassWithDecorators);
@@ -140,7 +140,7 @@ describe('ModuleFactory', () => {
       class Provider12 {}
 
       @Module({
-        providersPerMod: [Provider11, Provider12]
+        providersPerMod: [Provider11, Provider12],
       })
       class Module1 {}
 
@@ -155,12 +155,12 @@ describe('ModuleFactory', () => {
       class Provider12 {}
 
       @Module({
-        providersPerMod: [Provider11, Provider12]
+        providersPerMod: [Provider11, Provider12],
       })
       class Module1 {}
 
       @Module({
-        imports: [Module1]
+        imports: [Module1],
       })
       class Module2 {}
 
@@ -176,7 +176,7 @@ describe('ModuleFactory', () => {
 
       @Module({
         exports: [Provider11],
-        providersPerMod: [Provider11, Provider12]
+        providersPerMod: [Provider11, Provider12],
       })
       class Module1 {}
 
@@ -190,7 +190,7 @@ describe('ModuleFactory', () => {
 
       @Module({
         controllers: [Provider11],
-        providersPerMod: [Provider11, Provider12]
+        providersPerMod: [Provider11, Provider12],
       })
       class Module1 {}
 
@@ -273,24 +273,24 @@ describe('ModuleFactory', () => {
             controller: C12,
             children: [
               { path: '121', controller: C121 },
-              { path: '122', controller: C122 }
-            ]
+              { path: '122', controller: C122 },
+            ],
           },
           {
             path: '13',
             controller: C13,
-            children: [{ path: '131', controller: C131 }]
-          }
-        ]
+            children: [{ path: '131', controller: C131 }],
+          },
+        ],
       },
       {
         path: '2',
-        children: [{ path: '21', controller: C21 }]
+        children: [{ path: '21', controller: C21 }],
       },
       {
         path: '3',
-        controller: C3
-      }
+        controller: C3,
+      },
     ];
 
     it('router should includes the routes from routes configs', () => {
@@ -328,14 +328,14 @@ describe('ModuleFactory', () => {
     describe(`exporting providers order`, () => {
       @Module({
         exports: [Provider0],
-        providersPerMod: [Provider0]
+        providersPerMod: [Provider0],
       })
       class Module0 {}
 
       @Module({
         imports: [Module0],
         exports: [Module0, Provider1, Provider2, Provider3],
-        providersPerMod: [Provider1, Provider2, Provider3]
+        providersPerMod: [Provider1, Provider2, Provider3],
       })
       class Module1 {}
 
@@ -343,7 +343,7 @@ describe('ModuleFactory', () => {
         imports: [Module1],
         exports: [Provider1, Provider3, Provider5, Provider8],
         providersPerMod: [Provider4, Provider5, Provider6],
-        providersPerReq: [Provider7, Provider8]
+        providersPerReq: [Provider7, Provider8],
       })
       class Module2 {}
 
@@ -357,14 +357,14 @@ describe('ModuleFactory', () => {
         imports: [Module2],
         exports: [Module2],
         providersPerReq: [Provider9],
-        controllers: [Ctrl]
+        controllers: [Ctrl],
       })
       class Module3 {}
 
       it(`case 1`, () => {
         const injectorPerApp = ReflectiveInjector.resolveAndCreate([
           ...defaultProvidersPerApp,
-          { provide: Logger, useClass: MyLogger }
+          { provide: Logger, useClass: MyLogger },
         ]);
 
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
@@ -390,7 +390,7 @@ describe('ModuleFactory', () => {
           Provider3,
           Provider4,
           Provider5,
-          Provider6
+          Provider6,
         ]);
         expect(mod2.providersPerReq).toEqual([Provider7, Provider8]);
         expect((mod2 as any).ngMetadataName).toBe('Module');
@@ -403,7 +403,7 @@ describe('ModuleFactory', () => {
       });
 
       @RootModule({
-        imports: [Module3]
+        imports: [Module3],
       })
       class Module4 {}
 
@@ -422,7 +422,7 @@ describe('ModuleFactory', () => {
       });
 
       @Module({
-        imports: [Module3]
+        imports: [Module3],
       })
       class Module5 {}
 
@@ -436,12 +436,12 @@ describe('ModuleFactory', () => {
 
       @Module({
         exports: [Provider1, Provider2, Provider3],
-        providersPerMod: [Provider1, Provider3]
+        providersPerMod: [Provider1, Provider3],
       })
       class Module6 {}
 
       @RootModule({
-        imports: [Module6]
+        imports: [Module6],
       })
       class Module7 {}
 
@@ -462,12 +462,12 @@ describe('ModuleFactory', () => {
       describe(`per a module`, () => {
         @Module({
           exports: [{ provide: Provider1, useValue: '' }],
-          providersPerMod: [{ provide: Provider1, useClass: Provider1 }, Provider2]
+          providersPerMod: [{ provide: Provider1, useClass: Provider1 }, Provider2],
         })
         class Module0 {}
 
         @Module({
-          exports: [Provider1, { provide: Provider2, useFactory: () => {} }]
+          exports: [Provider1, { provide: Provider2, useFactory: () => {} }],
         })
         class Module1 {
           static withOptions() {
@@ -478,13 +478,13 @@ describe('ModuleFactory', () => {
         @Module({
           imports: [Module1.withOptions()],
           exports: [Module1.withOptions(), Provider2, Provider3],
-          providersPerMod: [Provider2, Provider3]
+          providersPerMod: [Provider2, Provider3],
         })
         class Module2 {}
 
         it(`exporting duplicates of Provider2`, () => {
           @RootModule({
-            imports: [Module2]
+            imports: [Module2],
           })
           class RootModule1 {}
 
@@ -500,18 +500,18 @@ describe('ModuleFactory', () => {
           @Module({
             exports: [ObjProviderPerMod],
             providersPerMod: [ObjProviderPerMod, Provider2],
-            providersPerApp: [ObjProviderPerApp]
+            providersPerApp: [ObjProviderPerApp],
           })
           class Module00 {}
 
           @Module({
             exports: [ObjProviderPerMod],
-            providersPerMod: [ObjProviderPerMod]
+            providersPerMod: [ObjProviderPerMod],
           })
           class Module01 {}
 
           @RootModule({
-            imports: [Module00, Module01]
+            imports: [Module00, Module01],
           })
           class RootModule1 {}
 
@@ -525,18 +525,18 @@ describe('ModuleFactory', () => {
           const ObjProvider = { provide: Provider1, useClass: Provider1, multi: true };
           @Module({
             exports: [ObjProvider],
-            providersPerMod: [ObjProvider, Provider2]
+            providersPerMod: [ObjProvider, Provider2],
           })
           class Module00 {}
 
           @Module({
             exports: [ObjProvider],
-            providersPerMod: [ObjProvider]
+            providersPerMod: [ObjProvider],
           })
           class Module01 {}
 
           @RootModule({
-            imports: [Module00, Module01]
+            imports: [Module00, Module01],
           })
           class RootModule1 {}
 
@@ -546,7 +546,7 @@ describe('ModuleFactory', () => {
         it(`exporting duplicates of Provider2, but declared in providersPerMod of root module`, () => {
           @RootModule({
             imports: [Module2],
-            providersPerMod: [Provider2]
+            providersPerMod: [Provider2],
           })
           class RootModule1 {}
 
@@ -555,7 +555,7 @@ describe('ModuleFactory', () => {
 
         it(`exporting duplicates of Provider1 from Module1 and Module2`, () => {
           @RootModule({
-            imports: [Module0, Module1.withOptions()]
+            imports: [Module0, Module1.withOptions()],
           })
           class RootModule1 {}
 
@@ -568,7 +568,7 @@ describe('ModuleFactory', () => {
         it(`exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerMod of root module`, () => {
           @RootModule({
             imports: [Module0, Module1.withOptions()],
-            providersPerMod: [Provider1]
+            providersPerMod: [Provider1],
           })
           class RootModule1 {}
 
@@ -579,26 +579,26 @@ describe('ModuleFactory', () => {
       describe(`per a req`, () => {
         @Module({
           exports: [{ provide: Provider1, useClass: Provider1 }],
-          providersPerReq: [{ provide: Provider1, useClass: Provider1 }, Provider2]
+          providersPerReq: [{ provide: Provider1, useClass: Provider1 }, Provider2],
         })
         class Module0 {}
 
         @Module({
           exports: [{ provide: Provider1, useExisting: Provider1 }, Provider2],
-          providersPerReq: [Provider1, Provider2]
+          providersPerReq: [Provider1, Provider2],
         })
         class Module1 {}
 
         @Module({
           imports: [Module1],
           exports: [Module1, { provide: Provider2, useClass: Provider2 }, Provider3],
-          providersPerReq: [Provider2, Provider3]
+          providersPerReq: [Provider2, Provider3],
         })
         class Module2 {}
 
         it(`exporting duplicates of Provider2`, () => {
           @RootModule({
-            imports: [Module2]
+            imports: [Module2],
           })
           class RootModule1 {}
 
@@ -611,7 +611,7 @@ describe('ModuleFactory', () => {
         it(`exporting duplicates of Provider2, but declared in providersPerReq of root module`, () => {
           @RootModule({
             imports: [Module2],
-            providersPerReq: [Provider2]
+            providersPerReq: [Provider2],
           })
           class RootModule1 {}
 
@@ -620,7 +620,7 @@ describe('ModuleFactory', () => {
 
         it(`exporting duplicates of Provider1 from Module1 and Module2`, () => {
           @RootModule({
-            imports: [Module0, Module1]
+            imports: [Module0, Module1],
           })
           class RootModule1 {}
 
@@ -633,7 +633,7 @@ describe('ModuleFactory', () => {
         it(`exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerReq of root module`, () => {
           @RootModule({
             imports: [Module0, Module1],
-            providersPerReq: [Provider1]
+            providersPerReq: [Provider1],
           })
           class RootModule1 {}
 
@@ -649,7 +649,7 @@ describe('ModuleFactory', () => {
               Provider1,
               { provide: Request, useClass: Request },
               { provide: NodeReqToken, useValue: '' },
-              Provider3
+              Provider3,
             ],
             providersPerMod: [Provider0],
             providersPerReq: [
@@ -657,8 +657,8 @@ describe('ModuleFactory', () => {
               Provider2,
               { provide: NodeReqToken, useValue: '' },
               Provider3,
-              Request
-            ]
+              Request,
+            ],
           })
           class Module0 {}
 
@@ -666,7 +666,7 @@ describe('ModuleFactory', () => {
             imports: [Module0],
             providersPerApp: [Provider0],
             providersPerMod: [Provider1],
-            providersPerReq: []
+            providersPerReq: [],
           })
           class RootModule1 {}
 
@@ -679,12 +679,12 @@ describe('ModuleFactory', () => {
         it(`case 2`, () => {
           @Module({
             exports: [Provider0, Provider1],
-            providersPerApp: [Router]
+            providersPerApp: [Router],
           })
           class Module0 {}
 
           @RootModule({
-            imports: [Module0]
+            imports: [Module0],
           })
           class RootModule1 {}
 
@@ -702,7 +702,7 @@ describe('ModuleFactory', () => {
 
       @Module({
         exports: [Provider0],
-        providersPerMod: [Provider0]
+        providersPerMod: [Provider0],
       })
       class Module0 {}
 
@@ -710,12 +710,12 @@ describe('ModuleFactory', () => {
       @Module({
         controllers: [Ctrl],
         exports: [Provider1],
-        providersPerMod: [obj1, Provider2]
+        providersPerMod: [obj1, Provider2],
       })
       class Module1 {}
 
       @Module({
-        exports: [Provider3, Provider4]
+        exports: [Provider3, Provider4],
       })
       class Module2 {
         static withOptions() {
@@ -725,18 +725,18 @@ describe('ModuleFactory', () => {
 
       @Module({
         exports: [Provider5, Provider6, Provider7],
-        providersPerReq: [Provider5, Provider6, Provider7]
+        providersPerReq: [Provider5, Provider6, Provider7],
       })
       class Module3 {}
 
       @Module({
         exports: [Provider8, Provider9],
-        providersPerReq: [Provider8, Provider9]
+        providersPerReq: [Provider8, Provider9],
       })
       class Module4 {}
 
       @Module({
-        providersPerApp: [{ provide: Logger, useClass: MyLogger }]
+        providersPerApp: [{ provide: Logger, useClass: MyLogger }],
       })
       class Module5 {}
 
@@ -747,10 +747,10 @@ describe('ModuleFactory', () => {
           Module2.withOptions(),
           Module5,
           { prefix: 'one', module: Module3 },
-          { prefix: 'two', module: Module4 }
+          { prefix: 'two', module: Module4 },
         ],
         exports: [Module0, Module2.withOptions(), Module3],
-        providersPerApp: [Logger]
+        providersPerApp: [Logger],
       })
       class RootModule1 {}
 
@@ -797,7 +797,7 @@ describe('ModuleFactory', () => {
           Provider6,
           Provider7,
           Provider8,
-          Provider9
+          Provider9,
         ]);
       });
 
@@ -812,7 +812,7 @@ describe('ModuleFactory', () => {
           Provider6,
           Provider7,
           Provider8,
-          Provider9
+          Provider9,
         ]);
         // console.log(testOptionsMap);
       });
