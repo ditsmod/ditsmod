@@ -73,7 +73,16 @@ export class Request {
       preReq.sendBadRequestError(this.nodeRes, err);
       return;
     }
-    ctrl[method]();
+
+    try {
+      await ctrl[method]();
+    } catch (err) {
+      if (typeof ctrl.errorHandler == 'function') {
+        ctrl.errorHandler(err);
+      } else {
+        throw err;
+      }
+    }
   }
 
   /**

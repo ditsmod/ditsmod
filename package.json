@@ -3,7 +3,7 @@
   "name": "@ts-stack/mod",
   "homepage": "https://github.com/ts-stack/mod",
   "description": "REST framework",
-  "version": "1.0.0-beta.8",
+  "version": "1.0.0-beta.9",
   "repository": {
     "type": "git",
     "url": "git://github.com/ts-stack/mod.git"
@@ -14,7 +14,8 @@
     "lib": "src"
   },
   "scripts": {
-    "transpile": "rimraf dist/* && tsc",
+    "build": "rimraf dist/* && tsc",
+    "build:examples": "rimraf dist-examples/* && tsc -p examples",
     "test": "jest"
   },
   "dependencies": {
