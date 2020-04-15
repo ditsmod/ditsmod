@@ -1,3 +1,6 @@
+/**
+ * @todo Check why `return Object.freeze(obj)` break module work in some cases.
+ */
 export function deepFreeze<T extends any>(obj: T): T {
   if (!obj) {
     return;
@@ -13,5 +16,6 @@ export function deepFreeze<T extends any>(obj: T): T {
     }
   }
 
-  return Object.freeze(obj);
+  // return Object.freeze(obj);
+  return obj;
 }

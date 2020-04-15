@@ -16,3 +16,6 @@ export class BodyParserConfig {
 
 export type FormattersFn = (body?: any) => string | Buffer | Uint8Array;
 export type FormattersMap = Map<string, FormattersFn>;
+export interface ErrorHandler {
+  errorHandler(error: any): void;
+}
