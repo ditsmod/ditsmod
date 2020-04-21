@@ -36,7 +36,7 @@ export class AppFactory extends Factory {
   protected opts: ApplicationMetadata;
 
   bootstrap(appModule: ModuleType) {
-    return new Promise<Server>((resolve, reject) => {
+    return new Promise<{ server: Server; log: Logger }>((resolve, reject) => {
       try {
         this.prepareServerOptions(appModule);
         this.createServer();
@@ -47,7 +47,7 @@ export class AppFactory extends Factory {
         }
 
         this.server.listen(this.opts.listenOptions, () => {
-          resolve(this.server);
+          resolve({ server: this.server, log: this.log });
           const host = this.opts.listenOptions.host || 'localhost';
           this.log.info(`${this.opts.serverName} is running at ${host}:${this.opts.listenOptions.port}`);
 
@@ -56,7 +56,7 @@ export class AppFactory extends Factory {
           }
         });
       } catch (err) {
-        reject(err);
+        reject({ err, log: this.log });
       }
     });
   }

@@ -9,7 +9,7 @@ export class BodyParser {
   protected rawBody: string;
   protected body: ObjectAny;
 
-  constructor(@Inject(NodeReqToken) private readonly nodeReq: NodeRequest, private config: BodyParserConfig) {}
+  constructor(@Inject(NodeReqToken) protected readonly nodeReq: NodeRequest, protected config: BodyParserConfig) {}
 
   getRawBody(): Promise<string> {
     if (this.rawBody !== undefined) {

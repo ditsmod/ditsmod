@@ -389,7 +389,14 @@ export class ModuleFactory extends Factory {
         const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
         const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
 
-        const path = [prefix, route.path].filter((s) => s).join('/');
+        let path: string;
+        const prefixLastPart = prefix?.split('/').slice(-1)[0];
+        if (prefixLastPart?.charAt(0) == ':') {
+          const reducedPrefix = prefix?.split('/').slice(0, -1).join('/');
+          path = [reducedPrefix, route.path].filter((s) => s).join('/');
+        } else {
+          path = [prefix, route.path].filter((s) => s).join('/');
+        }
         this.router.on(route.httpMethod, `/${path}`, () => ({
           injector: this.injectorPerMod,
           providers: resolvedProvidersPerReq,
