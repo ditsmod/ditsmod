@@ -43,7 +43,7 @@ export class Response {
   }
 
   sendJson(data?: any, statusCode: Status = Status.OK): void {
-    this.send(JSON.stringify(data), statusCode);
+    this.setContentType('application/json; charset=utf-8').send(JSON.stringify(data), statusCode);
   }
 
   redirect(statusCode: RedirectStatusCodes, path: string) {
