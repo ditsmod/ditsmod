@@ -31,6 +31,10 @@ export class Response {
    * Send data as is, without any transformation.
    */
   send(data?: string | Buffer | Uint8Array, statusCode: Status = Status.OK): void {
+    const contentType = this.nodeRes.getHeader('Content-Type');
+    if (!contentType) {
+      this.setContentType('text/plain; charset=utf-8');
+    }
     this.nodeRes.statusCode = statusCode;
     this.nodeRes.end(data);
   }
@@ -39,7 +43,7 @@ export class Response {
    * To convert `any` type to `string` type, the `util.format()` function is used here.
    */
   sendText(data?: any, statusCode: Status = Status.OK): void {
-    this.setContentType('text/plain; charset=utf-8').send(format(data), statusCode);
+    this.send(format(data), statusCode);
   }
 
   sendJson(data?: any, statusCode: Status = Status.OK): void {
