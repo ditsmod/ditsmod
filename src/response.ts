@@ -39,7 +39,7 @@ export class Response {
    * To convert `any` type to `string` type, the `util.format()` function is used here.
    */
   sendText(data?: any, statusCode: Status = Status.OK): void {
-    this.send(format(data), statusCode);
+    this.setContentType('text/plain; charset=utf-8').send(format(data), statusCode);
   }
 
   sendJson(data?: any, statusCode: Status = Status.OK): void {
