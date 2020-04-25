@@ -8,7 +8,7 @@ import { Status } from './utils/http-status-codes';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 
 @Injectable()
-export class Response {
+export class Response<T = any> {
   constructor(
     @Inject(NodeReqToken) protected readonly nodeReq: NodeRequest,
     @Inject(NodeResToken) public readonly nodeRes: NodeResponse,
@@ -46,7 +46,7 @@ export class Response {
     this.send(format(data), statusCode);
   }
 
-  sendJson(data?: any, statusCode: Status = Status.OK): void {
+  sendJson(data?: T, statusCode: Status = Status.OK): void {
     this.setContentType('application/json; charset=utf-8').send(JSON.stringify(data), statusCode);
   }
 
