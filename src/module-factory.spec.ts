@@ -219,7 +219,10 @@ describe('ModuleFactory', () => {
     @Controller()
     class C1 {
       @Route('GET')
-      method() {}
+      method1() {}
+
+      @Route('GET', 'local')
+      method2() {}
     }
     @Controller()
     class C11 {
@@ -229,7 +232,10 @@ describe('ModuleFactory', () => {
     @Controller()
     class C12 {
       @Route('GET')
-      method() {}
+      method1() {}
+
+      @Route('GET', 'local')
+      method2() {}
     }
     @Controller()
     class C13 {
@@ -302,7 +308,9 @@ describe('ModuleFactory', () => {
       expect(mock.router.find('GET', '').handle).toBeNull();
       expect(mock.router.find('GET', '/api').handle).toBeNull();
       expect(mock.router.find('GET', '/api/1').handle().controller).toBe(C1);
+      expect(mock.router.find('GET', '/api/1/local').handle().controller).toBe(C1);
       expect(mock.router.find('GET', '/api/1/12').handle().controller).toBe(C12);
+      expect(mock.router.find('GET', '/api/1/12/local').handle().controller).toBe(C12);
       expect(mock.router.find('GET', '/api/1/12/121').handle().controller).toBe(C121);
       expect(mock.router.find('POST', '/api/1/12/122').handle().controller).toBe(C122);
       expect(mock.router.find('GET', '/api/1/13').handle().controller).toBe(C13);
