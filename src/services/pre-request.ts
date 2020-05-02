@@ -1,6 +1,6 @@
 import { Injectable } from '@ts-stack/di';
 
-import { NodeResponse } from '../types/server-options';
+import { NodeResponse, NodeRequest } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { Logger } from '../types/logger';
 
@@ -42,6 +42,12 @@ export class PreRequest {
   sendBadRequestError(nodeRes: NodeResponse, err: Error) {
     this.log.error(err);
     nodeRes.statusCode = Status.BAD_REQUEST;
+    nodeRes.end();
+  }
+
+  canNotActivateRoute(nodeReq: NodeRequest, nodeRes: NodeResponse, status?: Status) {
+    this.log.debug(`Can not activate the route with URL: ${nodeReq.url}`);
+    nodeRes.statusCode = status || Status.UNAUTHORIZED;
     nodeRes.end();
   }
 }

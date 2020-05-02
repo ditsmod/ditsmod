@@ -345,7 +345,7 @@ export class ModuleFactory extends Factory {
     }
   }
 
-  protected setRoutes(prefix: string, Ctrl: TypeProvider, routeData?: any) {
+  protected setRoutes(prefix: string, Ctrl: TypeProvider) {
     const controllerMetadata = deepFreeze(reflector.annotations(Ctrl).find(isController));
     if (!controllerMetadata) {
       throw new Error(`Setting routes failed: class "${Ctrl.name}" does not have the "@Controller()" decorator`);
@@ -357,6 +357,7 @@ export class ModuleFactory extends Factory {
       const routes = propMetadata[prop].filter(isRoute);
       for (const route of routes) {
         this.checkRoutePath(route.path);
+        this.unshiftProvidersPerReq(route.guards);
         this.unshiftProvidersPerReq(Ctrl);
         let resolvedProvidersPerReq: ResolvedReflectiveProvider[] = this.resolvedProvidersPerReq;
         if (providersPerReq) {
@@ -382,7 +383,7 @@ export class ModuleFactory extends Factory {
           controller: Ctrl,
           method: prop,
           parseBody,
-          routeData,
+          guards: route.guards,
         }));
 
         this.log.trace({

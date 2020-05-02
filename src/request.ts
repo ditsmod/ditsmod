@@ -8,6 +8,7 @@ import { PreRequest } from './services/pre-request';
 import { RouteParam } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { NodeRequest, NodeResponse } from './types/server-options';
+import { CanActivate } from './decorators/route';
 
 @Injectable()
 export class Request {
@@ -24,7 +25,6 @@ export class Request {
   queryParams?: any;
   rawBody?: any;
   body?: any;
-  routeData?: any;
 
   constructor(
     @Inject(NodeReqToken) public readonly nodeReq: NodeRequest,
@@ -45,15 +45,15 @@ export class Request {
     routeParamsArr: RouteParam[],
     queryString: string,
     parseBody: boolean,
-    routeData: any
+    guards: CanActivate[]
   ) {
     this.routeParamsArr = routeParamsArr;
     const routeParams: ObjectAny = routeParamsArr ? {} : undefined;
     routeParamsArr?.forEach((param) => (routeParams[param.key] = param.value));
     this.routeParams = routeParams;
-    this.routeData = routeData;
     let ctrl: any;
     try {
+      guards = guards.map((guard) => this.injector.get(guard));
       ctrl = this.injector.get(controller);
     } catch (err) {
       const preReq = this.injector.get(PreRequest);
@@ -62,6 +62,20 @@ export class Request {
     }
 
     try {
+      for (const guard of guards) {
+        if (typeof guard.canActivate != 'function') {
+          throw new TypeError(`guard.canActivate must be a function, got: ${typeof guard.canActivate}`);
+        }
+
+        const canActivate = await guard.canActivate();
+        if (canActivate !== true) {
+          const status = typeof canActivate == 'number' ? canActivate : undefined;
+          const preReq = this.injector.get(PreRequest);
+          preReq.canNotActivateRoute(this.nodeReq, this.nodeRes, status);
+          return;
+        }
+      }
+
       this.queryParams = parse(queryString);
       if (parseBody) {
         const bodyParser = this.injector.get(BodyParser) as BodyParser;

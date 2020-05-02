@@ -290,7 +290,7 @@ describe('ModuleFactory', () => {
 
         const mod3 = mock.optsMap.get(Module3);
         expect(mod3.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
-        expect(mod3.providersPerReq).toEqual([Ctrl, Provider8, Provider9]);
+        expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9]);
         expect(mod3.controllers).toEqual([Ctrl]);
         expect((mod3 as any).ngMetadataName).toBe('Module');
       });
