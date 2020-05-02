@@ -21,7 +21,7 @@ import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isRootModule, isController, isRoute, isImportsWithPrefix } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
-import { Router, RouteConfig, ImportsWithPrefix, ImportsWithPrefixDecorator } from './types/router';
+import { Router, ImportsWithPrefix, ImportsWithPrefixDecorator } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
 import { Factory } from './factory';
@@ -108,7 +108,6 @@ export class ModuleFactory extends Factory {
     this.checkRoutePath(this.prefixPerMod);
     const prefix = [this.prefixPerApp, this.prefixPerMod].filter((s) => s).join('/');
     this.opts.controllers.forEach((Ctrl) => this.setRoutes(prefix, Ctrl));
-    this.loadRoutesConfig(prefix, this.opts.routes);
     return { optsMap: this.optsMap.set(mod, this.opts), injectorPerReqMap: this.injectorPerReqMap };
   }
 
@@ -138,35 +137,16 @@ export class ModuleFactory extends Factory {
     ];
   }
 
-  protected loadRoutesConfig(prefix: string, configs: RouteConfig[]) {
-    for (const config of configs) {
-      const childPrefix = [prefix, config.path].filter((s) => s).join('/');
-      if (config.controller) {
-        this.setRoutes(childPrefix, config.controller, config.routeData);
-      }
-      this.loadRoutesConfig(childPrefix, config.children || []);
-    }
-  }
-
   protected quickCheckMetadata(moduleMetadata: ModuleMetadata) {
     if (
       !isRootModule(moduleMetadata as any) &&
       !moduleMetadata.providersPerApp.length &&
       !moduleMetadata.controllers.length &&
-      !someController(moduleMetadata.routes) &&
       !moduleMetadata.exports.length
     ) {
       throw new Error(
         `Import ${this.moduleName} failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`
       );
-    }
-
-    function someController(configs: RouteConfig[]) {
-      for (const config of configs || []) {
-        if (config.controller || someController(config.children)) {
-          return true;
-        }
-      }
     }
   }
 
@@ -202,7 +182,6 @@ export class ModuleFactory extends Factory {
     metadata.providersPerMod = flatten(modMetadata.providersPerMod);
     metadata.providersPerReq = flatten(modMetadata.providersPerReq);
     metadata.controllers = mergeArrays(metadata.controllers, modMetadata.controllers);
-    metadata.routes = mergeArrays(metadata.routes, modMetadata.routes);
 
     return metadata;
   }

@@ -1,6 +1,6 @@
 import { Type, Provider, makeDecorator, TypeProvider } from '@ts-stack/di';
 
-import { RouteConfig, ImportsWithPrefix, ImportsWithPrefixDecorator } from '../types/router';
+import { ImportsWithPrefix, ImportsWithPrefixDecorator } from '../types/router';
 import { BodyParser } from '../services/body-parser';
 import { Request } from '../request';
 import { Response } from '../response';
@@ -42,10 +42,6 @@ export abstract class StaticModuleMetadata extends ProvidersMetadata {
    * The application controllers.
    */
   controllers: TypeProvider[] = [];
-  /**
-   * Route config array for a current module.
-   */
-  routes: RouteConfig[] = [];
 }
 
 export interface ModuleDecorator extends Partial<StaticModuleMetadata> {

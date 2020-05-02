@@ -73,7 +73,6 @@ describe('AppFactory', () => {
       expect(mock.opts.providersPerApp).toEqual([]);
 
       const opts = (mock.opts as unknown) as ModuleMetadata;
-      expect(opts.routes).toBe(undefined);
       expect(opts.controllers).toBe(undefined);
       expect(opts.exports).toBe(undefined);
       expect(opts.imports).toBe(undefined);
@@ -107,7 +106,6 @@ describe('AppFactory', () => {
       expect(mock.opts.listenOptions).toBeDefined();
 
       const opts = (mock.opts as unknown) as ModuleMetadata;
-      expect(opts.routes).toBe(undefined);
       expect(opts.controllers).toBe(undefined);
       expect(opts.exports).toBe(undefined);
       expect(opts.imports).toBe(undefined);

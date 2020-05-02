@@ -86,46 +86,6 @@ export interface RouteParam {
   value: string;
 }
 
-export abstract class RouteConfig {
-  /**
-   * The path to match against. A URL string that uses router matching notation.
-   * Default is "/" (the root path).
-   */
-  path: string;
-  controller?: TypeProvider;
-  /**
-   * A URL to which to redirect when a the path matches.
-   * Absolute if the URL begins with a slash (/), otherwise relative to the path URL.
-   * When not present, router does not redirect.
-   */
-  redirectTo?: string;
-  /**
-   * An array of DI tokens used to look up `CanActivate()` handlers,
-   * in order to determine if the current user is allowed to activate the controller.
-   * By default, any user can activate.
-   */
-  canActivate?: any[];
-  /**
-   * An array of DI tokens used to look up `CanActivateChild()` handlers,
-   * in order to determine if the current user is allowed to activate a child of the controller.
-   * By default, any user can activate a child.
-   */
-  canActivateChild?: any[];
-  /**
-   * Additional developer-defined data provided to the controller via `req: Request`.
-   * By default, no additional data is passed.
-   */
-  routeData?: any;
-  /**
-   * A map of DI tokens used to look up data resolvers. See `Resolve`.
-   */
-  resolve?: ObjectAny;
-  /**
-   * An array of child Route objects that specifies a nested route configuration.
-   */
-  children?: this[];
-}
-
 export interface ImportsWithPrefixDecorator {
   prefix: string;
   module: Type<any> | ModuleWithOptions<any> | any[];

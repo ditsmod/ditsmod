@@ -4,7 +4,7 @@ export { pickProperties } from './utils/pick-properties';
 export { RequestListener, BodyParserConfig, ErrorHandler, ObjectAny } from './types/types';
 export { NodeRequest, NodeResponse, Fn, RedirectStatusCodes } from './types/server-options';
 export { Logger, LoggerMethod } from './types/logger';
-export { HttpMethod, Router, RouteParam, RouterReturns, RouteConfig } from './types/router';
+export { HttpMethod, Router, RouteParam, RouterReturns } from './types/router';
 export { Controller } from './decorators/controller';
 export { Module } from './decorators/module';
 export { RootModule } from './decorators/root-module';

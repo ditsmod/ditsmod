@@ -14,7 +14,7 @@ import {
 } from './decorators/module';
 import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
-import { Router, RouteConfig } from './types/router';
+import { Router } from './types/router';
 import { defaultProvidersPerApp, RootModule } from './decorators/root-module';
 import { Logger } from './types/logger';
 import { AppFactory } from './app-factory';
@@ -57,10 +57,6 @@ describe('ModuleFactory', () => {
     ) {
       return super.importProviders(isStarter, modOrObject, soughtProvider);
     }
-
-    loadRoutesConfig(prefix: string, configs: RouteConfig[]) {
-      return super.loadRoutesConfig(prefix, configs);
-    }
   }
 
   class MockAppFactory extends AppFactory {
@@ -99,7 +95,6 @@ describe('ModuleFactory', () => {
       expect(metadata.controllers).toEqual([]);
       expect(metadata.exports).toEqual([]);
       expect(metadata.imports).toEqual([]);
-      expect(metadata.routes).toEqual([]);
       expect(metadata.providersPerMod).toEqual([]);
       expect(metadata.providersPerReq).toEqual([]);
       expect((metadata as any).ngMetadataName).toBe('Module');
@@ -110,20 +105,16 @@ describe('ModuleFactory', () => {
       class C1 {}
       class PerMod {}
 
-      const routes = [{ path: '1', controller: C1 }];
-
       @Module({
         controllers: [SomeControllerClass],
         providersPerReq: [ClassWithoutDecorators],
         providersPerMod: [PerMod],
-        routes,
       })
       class ClassWithDecorators {}
       const metadata = mock.mergeMetadata(ClassWithDecorators);
       expect(metadata.controllers).toEqual([SomeControllerClass]);
       expect(metadata.exports).toEqual([]);
       expect(metadata.imports).toEqual([]);
-      expect(metadata.routes).toEqual(routes);
       expect(metadata.providersPerMod).toEqual([PerMod]);
       expect(metadata.providersPerReq).toEqual([ClassWithoutDecorators]);
     });
@@ -212,112 +203,6 @@ describe('ModuleFactory', () => {
     it('should not returns any metadata', () => {
       const metadata = mock.getRawModuleMetadata(ClassWithoutDecorators);
       expect(metadata).toBeUndefined();
-    });
-  });
-
-  describe('loadRoutesConfig() and setRoutes()', () => {
-    @Controller()
-    class C1 {
-      @Route('GET')
-      method1() {}
-
-      @Route('GET', 'local')
-      method2() {}
-    }
-    @Controller()
-    class C11 {
-      @Route('GET')
-      method() {}
-    }
-    @Controller()
-    class C12 {
-      @Route('GET')
-      method1() {}
-
-      @Route('GET', 'local')
-      method2() {}
-    }
-    @Controller()
-    class C13 {
-      @Route('GET')
-      method() {}
-    }
-    @Controller()
-    class C121 {
-      @Route('GET')
-      method() {}
-    }
-    @Controller()
-    class C122 {
-      @Route('POST')
-      method() {}
-    }
-    @Controller()
-    class C131 {
-      @Route('GET')
-      method() {}
-    }
-    @Controller()
-    class C21 {
-      @Route('GET')
-      method() {}
-    }
-    @Controller()
-    class C3 {
-      @Route('GET')
-      method() {}
-    }
-
-    const routesPerMod: RouteConfig[] = [
-      {
-        path: '1',
-        controller: C1,
-        children: [
-          { path: '11', controller: C11 },
-          {
-            path: '12',
-            controller: C12,
-            children: [
-              { path: '121', controller: C121 },
-              { path: '122', controller: C122 },
-            ],
-          },
-          {
-            path: '13',
-            controller: C13,
-            children: [{ path: '131', controller: C131 }],
-          },
-        ],
-      },
-      {
-        path: '2',
-        children: [{ path: '21', controller: C21 }],
-      },
-      {
-        path: '3',
-        controller: C3,
-      },
-    ];
-
-    it('router should includes the routes from routes configs', () => {
-      const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
-
-      mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
-      mock.injectorPerMod = injectorPerApp;
-      mock.loadRoutesConfig('api', routesPerMod);
-      expect(mock.router.find('GET', '').handle).toBeNull();
-      expect(mock.router.find('GET', '/api').handle).toBeNull();
-      expect(mock.router.find('GET', '/api/1').handle().controller).toBe(C1);
-      expect(mock.router.find('GET', '/api/1/local').handle().controller).toBe(C1);
-      expect(mock.router.find('GET', '/api/1/12').handle().controller).toBe(C12);
-      expect(mock.router.find('GET', '/api/1/12/local').handle().controller).toBe(C12);
-      expect(mock.router.find('GET', '/api/1/12/121').handle().controller).toBe(C121);
-      expect(mock.router.find('POST', '/api/1/12/122').handle().controller).toBe(C122);
-      expect(mock.router.find('GET', '/api/1/13').handle().controller).toBe(C13);
-      expect(mock.router.find('GET', '/api/1/13/131').handle().controller).toBe(C131);
-      expect(mock.router.find('GET', '/api/2/21').handle().controller).toBe(C21);
-      expect(mock.router.find('GET', '/api/3').handle().controller).toBe(C3);
-      expect(mock.router.find('GET', '/api/4').handle).toBeNull();
     });
   });
 
