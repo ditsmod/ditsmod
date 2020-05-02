@@ -357,6 +357,11 @@ export class ModuleFactory extends Factory {
       const routes = propMetadata[prop].filter(isRoute);
       for (const route of routes) {
         this.checkRoutePath(route.path);
+        for (const guard of route.guards) {
+          if (typeof guard.prototype.canActivate != 'function') {
+            throw new TypeError(`guard.prototype.canActivate must be a function, got: ${typeof guard.canActivate}`);
+          }
+        }
         this.unshiftProvidersPerReq(route.guards);
         this.unshiftProvidersPerReq(Ctrl);
         let resolvedProvidersPerReq: ResolvedReflectiveProvider[] = this.resolvedProvidersPerReq;

@@ -63,10 +63,6 @@ export class Request {
 
     try {
       for (const guard of guards) {
-        if (typeof guard.canActivate != 'function') {
-          throw new TypeError(`guard.canActivate must be a function, got: ${typeof guard.canActivate}`);
-        }
-
         const canActivate = await guard.canActivate();
         if (canActivate !== true) {
           const status = typeof canActivate == 'number' ? canActivate : undefined;
