@@ -46,7 +46,7 @@ export class PreRequest {
   }
 
   canNotActivateRoute(nodeReq: NodeRequest, nodeRes: NodeResponse, status?: Status) {
-    this.log.debug(`Can not activate the route with URL: ${nodeReq.url}`);
+    this.log.debug(`Can not activate the route with URL: ${nodeReq.method} ${nodeReq.url}`);
     nodeRes.statusCode = status || Status.UNAUTHORIZED;
     nodeRes.end();
   }
