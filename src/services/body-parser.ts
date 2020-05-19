@@ -1,4 +1,5 @@
 import { Injectable, Inject } from '@ts-stack/di';
+
 import { ObjectAny } from '../types/types';
 import { BodyParserConfig } from '../types/types';
 import { NodeReqToken } from '../types/injection-tokens';
@@ -6,12 +7,12 @@ import { NodeRequest } from '../types/server-options';
 
 @Injectable()
 export class BodyParser {
-  protected rawBody: string;
+  protected rawBody: Buffer;
   protected body: ObjectAny;
 
   constructor(@Inject(NodeReqToken) protected readonly nodeReq: NodeRequest, protected config: BodyParserConfig) {}
 
-  getRawBody(): Promise<string> {
+  getRawBody(): Promise<Buffer> {
     if (this.rawBody !== undefined) {
       return Promise.resolve(this.rawBody);
     }
@@ -27,7 +28,7 @@ export class BodyParser {
         })
         .on('end', () => {
           try {
-            this.rawBody = Buffer.concat(bodyArr).toString();
+            this.rawBody = Buffer.concat(bodyArr);
             resolve(this.rawBody);
           } catch (e) {
             reject(e);
@@ -39,7 +40,11 @@ export class BodyParser {
   getJsonBody(): Promise<ObjectAny> {
     return new Promise(async (resolve, reject) => {
       try {
-        const rawBody = await this.getRawBody();
+        if (this.nodeReq.headers['content-type'] != 'application/json') {
+          resolve(null);
+          return;
+        }
+        const rawBody = await (await this.getRawBody()).toString();
         const body = JSON.parse(rawBody);
         resolve(body);
       } catch (e) {
