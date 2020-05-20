@@ -1,4 +1,5 @@
 import { Injectable, Inject } from '@ts-stack/di';
+import zlib = require('zlib');
 
 import { ObjectAny } from '../types/types';
 import { BodyParserConfig } from '../types/types';
@@ -12,28 +13,62 @@ export class BodyParser {
 
   constructor(@Inject(NodeReqToken) protected readonly nodeReq: NodeRequest, protected config: BodyParserConfig) {}
 
-  getRawBody(): Promise<Buffer> {
+  getRawBody() {
     if (this.rawBody !== undefined) {
       return Promise.resolve(this.rawBody);
     }
 
-    return new Promise((resolve, reject) => {
-      const bodyArr: Uint8Array[] = [];
-      this.nodeReq
-        .on('error', (err) => {
-          reject(err);
-        })
-        .on('data', (chunk) => {
-          bodyArr.push(chunk);
-        })
-        .on('end', () => {
-          try {
-            this.rawBody = Buffer.concat(bodyArr);
-            resolve(this.rawBody);
-          } catch (e) {
-            reject(e);
+    return new Promise<Buffer>((resolve, reject) => {
+      const nodeReq = this.nodeReq;
+      const headers = nodeReq.headers;
+
+      if (
+        ((!headers['content-length'] || headers['content-length'] == '0') &&
+          headers['transfer-encoding'] != 'chunked') ||
+        headers['content-type'] == 'multipart/form-data' ||
+        headers['content-type'] == 'application/octet-stream'
+      ) {
+        resolve(null);
+        return;
+      }
+
+      nodeReq.once('error', reject);
+
+      let bytesReceived = 0;
+      let gz: zlib.Gunzip;
+      const buffers: Uint8Array[] = [];
+      const done = () => {
+        this.rawBody = Buffer.concat(buffers);
+        resolve(this.rawBody);
+      };
+
+      if (headers['content-encoding'] == 'gzip') {
+        gz = zlib.createGunzip();
+        gz.once('end', done);
+        nodeReq.once('end', gz.end.bind(gz));
+      } else {
+        nodeReq.once('end', done);
+      }
+
+      const maxBodySize = this.config.maxBodySize || 0;
+
+      nodeReq.on('data', (chunk: Uint8Array) => {
+        if (maxBodySize) {
+          bytesReceived += chunk.length;
+
+          if (bytesReceived > maxBodySize) {
+            return reject(new Error('Request body size exceeds ' + maxBodySize));
           }
-        });
+        }
+
+        if (gz) {
+          gz.write(chunk);
+        } else {
+          buffers.push(chunk);
+        }
+      });
+
+      nodeReq.resume();
     });
   }
 
@@ -45,6 +80,10 @@ export class BodyParser {
           return;
         }
         const rawBody = (await this.getRawBody()).toString();
+        if (!rawBody) {
+          resolve(null);
+          return;
+        }
         const body = JSON.parse(rawBody);
         resolve(body);
       } catch (e) {

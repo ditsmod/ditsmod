@@ -12,6 +12,7 @@ export interface ObjectAny {
 
 export class BodyParserConfig {
   acceptMethods: HttpMethod[] = ['POST', 'PUT', 'PATCH'];
+  maxBodySize: number = 1024 * 1024 * 5; // 5 MB
 }
 
 export type FormattersFn = (body?: any) => string | Buffer | Uint8Array;
