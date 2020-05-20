@@ -44,7 +44,7 @@ export class BodyParser {
           resolve(null);
           return;
         }
-        const rawBody = await (await this.getRawBody()).toString();
+        const rawBody = (await this.getRawBody()).toString();
         const body = JSON.parse(rawBody);
         resolve(body);
       } catch (e) {
