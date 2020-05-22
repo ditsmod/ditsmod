@@ -1,7 +1,9 @@
+import { ObjectAny } from 'src/types/types';
+
 /**
  * @todo Check why `return Object.freeze(obj)` break module work in some cases.
  */
-export function deepFreeze<T extends any>(obj: T): T {
+export function deepFreeze<T extends ObjectAny>(obj: T): T {
   if (!obj) {
     return;
   }

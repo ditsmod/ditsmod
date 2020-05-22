@@ -25,6 +25,7 @@ export class Request {
   queryParams?: any;
   rawBody?: any;
   body?: any;
+  formData?: any;
 
   constructor(
     @Inject(NodeReqToken) public readonly nodeReq: NodeRequest,
@@ -77,6 +78,7 @@ export class Request {
         const bodyParser = this.injector.get(BodyParser) as BodyParser;
         this.rawBody = await bodyParser.getRawBody();
         this.body = await bodyParser.getJsonBody();
+        this.formData = await bodyParser.getFiles();
       }
     } catch (err) {
       const preReq = this.injector.get(PreRequest);

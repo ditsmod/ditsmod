@@ -1,5 +1,5 @@
 import { HttpMethod } from './router';
-import { NodeRequest, NodeResponse } from './server-options';
+import { NodeRequest, NodeResponse, Fn } from './server-options';
 
 export type RequestListener = (request: NodeRequest, response: NodeResponse) => void | Promise<void>;
 
@@ -10,9 +10,23 @@ export interface ObjectAny {
   [key: string]: any;
 }
 
+export interface MultipartBodyParserOptions {
+  overrideParams?: boolean;
+  multiples?: boolean;
+  keepExtensions?: boolean;
+  uploadDir?: string;
+  maxFieldsSize?: number;
+  hash?: string;
+  multipartFileHandler?: Fn;
+  multipartHandler?: Fn;
+  mapParams?: boolean;
+  mapFiles?: boolean;
+}
+
 export class BodyParserConfig {
   acceptMethods: HttpMethod[] = ['POST', 'PUT', 'PATCH'];
   maxBodySize: number = 1024 * 1024 * 5; // 5 MB
+  multipartOpts: MultipartBodyParserOptions = {};
 }
 
 export type FormattersFn = (body?: any) => string | Buffer | Uint8Array;
