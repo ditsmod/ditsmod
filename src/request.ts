@@ -76,9 +76,11 @@ export class Request {
       this.queryParams = parse(queryString);
       if (parseBody) {
         const bodyParser = this.injector.get(BodyParser) as BodyParser;
-        this.rawBody = await bodyParser.getRawBody();
-        this.body = await bodyParser.getJsonBody();
         this.formData = await bodyParser.getFiles();
+        if (!this.formData) {
+          this.rawBody = await bodyParser.getRawBody();
+          this.body = await bodyParser.getJsonBody();
+        }
       }
     } catch (err) {
       const preReq = this.injector.get(PreRequest);

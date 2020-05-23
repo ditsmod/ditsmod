@@ -1,8 +1,7 @@
 import { IncomingMessage } from 'http';
 import { Injectable, Inject } from '@ts-stack/di';
-import fs = require('fs');
 import zlib = require('zlib');
-import { IncomingForm, Fields, Files } from 'formidable';
+import { Form } from '@ts-stack/multiparty';
 
 import { ObjectAny } from '../types/types';
 import { BodyParserConfig } from '../types/types';
@@ -101,72 +100,21 @@ export class BodyParser {
   }
 
   getFiles() {
-    return new Promise<{ fields: Fields; files: Files }>((resolve, reject) => {
-      const opts = this.config.multipartOpts;
-      const headers = this.nodeReq.headers;
-      const isEmpty =
-        (!headers['content-length'] || headers['content-length'] == '0') && headers['transfer-encoding'] != 'chunked';
-
-      if (isEmpty || !headers['content-type'].includes('multipart/form-data')) {
-        return resolve(null);
+    return new Promise((resolve, reject) => {
+      if (!this.nodeReq.headers['content-type'].includes('multipart/form-data')) {
+        resolve(null);
+        return;
       }
 
-      this.nodeReq.once('error', reject);
+      const form = new Form();
 
-      // this.rawBody = undefined;
-      const form = new IncomingForm();
-
-      form.onPart = (part) => {
-        if (part.filename && opts.multipartFileHandler) {
-          opts.multipartFileHandler(part, this.nodeReq);
-        } else if (!part.filename && opts.multipartHandler) {
-          opts.multipartHandler(part, this.nodeReq);
-        } else {
-          form.handlePart(part);
-        }
-      };
-
-      return form.parse(this.nodeReq as IncomingMessage, (err: Error, fields: Fields, files: Files) => {
+      form.parse(this.nodeReq as IncomingMessage, (err, fields, files) => {
         if (err) {
           reject(err);
           return;
         }
 
-        if (opts.mapParams === false || !opts.mapFiles) {
-          return resolve({ fields, files });
-        }
-
-        const keys = Object.keys(files);
-        let i = 0;
-
-        if (!keys.length) {
-          resolve({ fields, files });
-          this.log.warn(`Files not exists.`);
-          return;
-        }
-
-        keys.forEach((f) => {
-          fs.readFile(files[f].path, (err, data) => {
-            ++i;
-
-            /*
-             * We want to stop the request here, if there's an
-             * error trying to read the file from disk.
-             * Ideally we'd like to stop the other oustanding
-             * file reads too, but there's no way to cancel in
-             * flight fs reads.  So we just return an error, and
-             * be grudgingly let the other file reads finish.
-             */
-            if (err) {
-              this.log.error(err);
-              return reject(new Error(`${err.message}: Unable to read file ${f}`));
-            }
-
-            // req.params[f] = data;
-
-            if (i == keys.length) resolve({ fields, files });
-          });
-        });
+        resolve({ fields, files });
       });
     });
   }
