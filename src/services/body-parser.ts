@@ -1,7 +1,5 @@
-import { IncomingMessage } from 'http';
 import { Injectable, Inject } from '@ts-stack/di';
 import zlib = require('zlib');
-import { Form } from '@ts-stack/multiparty';
 
 import { ObjectAny } from '../types/types';
 import { BodyParserConfig } from '../types/types';
@@ -96,26 +94,6 @@ export class BodyParser {
       } catch (e) {
         reject(e);
       }
-    });
-  }
-
-  getFiles() {
-    return new Promise((resolve, reject) => {
-      if (!this.nodeReq.headers['content-type'].includes('multipart/form-data')) {
-        resolve(null);
-        return;
-      }
-
-      const form = new Form();
-
-      form.parse(this.nodeReq as IncomingMessage, (err, fields, files) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        resolve({ fields, files });
-      });
     });
   }
 }
