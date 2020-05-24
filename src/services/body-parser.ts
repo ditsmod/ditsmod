@@ -30,8 +30,8 @@ export class BodyParser {
       if (
         ((!headers['content-length'] || headers['content-length'] == '0') &&
           headers['transfer-encoding'] != 'chunked') ||
-        headers['content-type'] == 'multipart/form-data' ||
-        headers['content-type'] == 'application/octet-stream'
+        headers['content-type'].includes('multipart/form-data') ||
+        headers['content-type'].includes('application/octet-stream')
       ) {
         resolve(null);
         return;
@@ -80,7 +80,7 @@ export class BodyParser {
   getJsonBody(): Promise<ObjectAny> {
     return new Promise(async (resolve, reject) => {
       try {
-        if (this.nodeReq.headers['content-type'] != 'application/json') {
+        if (!this.nodeReq.headers['content-type'].includes('application/json')) {
           resolve(null);
           return;
         }
