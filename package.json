@@ -19,8 +19,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@ts-stack/router": "^0.0.0-alpha.1",
-    "reflect-metadata": "^0.1.13"
+    "@ts-stack/router": "^0.0.0-alpha.1"
   },
   "devDependencies": {
     "@ts-stack/di": "^1.0.0",
@@ -39,6 +38,7 @@
     "typescript": "^3.9.3"
   },
   "peerDependencies": {
-    "@ts-stack/di": "^1.0.0"
+    "@ts-stack/di": "^1.0.0",
+    "reflect-metadata": "^0.1.13"
   }
 }
