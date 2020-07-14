@@ -31,6 +31,7 @@
     "mysql": "^2.18.1",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.0",
+    "reflect-metadata": "^0.1.13",
     "ts-jest": "^25.2.1",
     "tslint": "^6.1.2",
     "tslint-config-prettier": "^1.18.0",
