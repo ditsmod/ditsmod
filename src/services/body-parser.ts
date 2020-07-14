@@ -62,7 +62,8 @@ export class BodyParser {
           bytesReceived += chunk.length;
 
           if (bytesReceived > maxBodySize) {
-            return reject(new Error('Request body size exceeds ' + maxBodySize));
+            reject(new Error('Request body size exceeds ' + maxBodySize));
+            return;
           }
         }
 
