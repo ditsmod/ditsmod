@@ -1,4 +1,4 @@
-import { RootModule } from '@ts-stack/mod';
+import { RootModule } from '@ts-stack/ditsmod';
 
 import { FirstModule } from './v1/first.module';
 import { SecondModule } from './v2/second.module';

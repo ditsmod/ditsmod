@@ -1,4 +1,4 @@
-import { RootModule } from '@ts-stack/mod';
+import { RootModule } from '@ts-stack/ditsmod';
 
 import { HelloWorldController } from './hello-world.controller';
 

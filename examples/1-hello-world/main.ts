@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { AppFactory } from '@ts-stack/mod';
+import { AppFactory } from '@ts-stack/ditsmod';
 
 import { AppModule } from './app/app.module';
 

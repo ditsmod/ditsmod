@@ -1,12 +1,12 @@
 {
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
-  "name": "@ts-stack/mod",
-  "homepage": "https://github.com/ts-stack/mod",
+  "name": "@ts-stack/ditsmod",
+  "homepage": "https://github.com/ts-stack/ditsmod",
   "description": "REST framework",
-  "version": "1.0.0-beta.24",
+  "version": "1.0.0-beta.1",
   "repository": {
     "type": "git",
-    "url": "git://github.com/ts-stack/mod.git"
+    "url": "git://github.com/ts-stack/ditsmod.git"
   },
   "main": "dist/index",
   "types": "dist/index",

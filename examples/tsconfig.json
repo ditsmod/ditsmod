@@ -6,7 +6,7 @@
     "inlineSources": true,
     "importHelpers": true,
     "paths": {
-      "@ts-stack/mod": ["../src"]
+      "@ts-stack/ditsmod": ["../src"]
     }
   },
   "include": ["./**/*"]
