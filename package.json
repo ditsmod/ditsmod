@@ -19,7 +19,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@ts-stack/router": "^0.0.0-alpha.1"
+    "@ts-stack/router": "^0.0.0-alpha.1",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@ts-stack/di": "^1.0.0",
@@ -31,7 +32,6 @@
     "mysql": "^2.18.1",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.0",
-    "reflect-metadata": "^0.1.13",
     "ts-jest": "^25.2.1",
     "tslint": "^6.1.2",
     "tslint-config-prettier": "^1.18.0",
@@ -39,7 +39,6 @@
     "typescript": "^3.9.3"
   },
   "peerDependencies": {
-    "@ts-stack/di": "^1.0.0",
-    "reflect-metadata": "^0.1.13"
+    "@ts-stack/di": "^1.0.0"
   }
 }
