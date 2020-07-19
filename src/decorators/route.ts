@@ -1,9 +1,9 @@
-import { makePropDecorator } from '@ts-stack/di';
+import { makePropDecorator, Type } from '@ts-stack/di';
 
 import { ObjectAny } from '../types/types';
 import { HttpMethod } from '../types/router';
 
-export type RouteDecoratorFactory = (method: HttpMethod, path?: string, guards?: any[]) => RouteDecorator;
+export type RouteDecoratorFactory = (method: HttpMethod, path?: string, guards?: Type<CanActivate>[]) => RouteDecorator;
 
 export type RouteDecorator = <T>(
   target: ObjectAny,

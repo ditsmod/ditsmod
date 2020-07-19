@@ -4,7 +4,7 @@ import { reflector, Provider } from '@ts-stack/di';
 import { RootModule, RootModuleDecorator } from '../decorators/root-module';
 import { ModuleDecorator, Module } from '../decorators/module';
 import { Controller, ControllerDecorator } from '../decorators/controller';
-import { Route, RouteDecoratorMetadata } from '../decorators/route';
+import { Route, RouteDecoratorMetadata, CanActivate } from '../decorators/route';
 import { isRootModule, isModule, isController, isRoute, isProvider } from './type-guards';
 
 describe('type-guards', () => {
@@ -38,10 +38,18 @@ describe('type-guards', () => {
     });
   });
 
+  class SomeGuard implements CanActivate {
+    canActivate() {
+      return true;
+    }
+
+    other() {}
+  }
+
   describe('isRoute()', () => {
     @Controller()
     class ClassWithDecorators {
-      @Route('GET')
+      @Route('GET', '', [SomeGuard])
       some() {}
     }
 
