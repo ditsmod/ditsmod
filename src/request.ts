@@ -1,4 +1,4 @@
-import { Injectable, Inject, Injector, TypeProvider } from '@ts-stack/di';
+import { Injectable, Inject, Injector, TypeProvider, Type } from '@ts-stack/di';
 import { format } from 'util';
 import { parse } from 'querystring';
 
@@ -45,15 +45,16 @@ export class Request {
     routeParamsArr: RouteParam[],
     queryString: string,
     parseBody: boolean,
-    guards: CanActivate[]
+    guardClasses: Type<CanActivate>[]
   ) {
     this.routeParamsArr = routeParamsArr;
     const routeParams: ObjectAny = routeParamsArr ? {} : undefined;
     routeParamsArr?.forEach((param) => (routeParams[param.key] = param.value));
     this.routeParams = routeParams;
     let ctrl: any;
+    let guards: CanActivate[] = [];
     try {
-      guards = guards.map((guard) => this.injector.get(guard));
+      guards = guardClasses.map((guard) => this.injector.get(guard));
       ctrl = this.injector.get(controller);
     } catch (err) {
       const preReq = this.injector.get(PreRequest);
