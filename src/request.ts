@@ -80,16 +80,20 @@ export class Request {
         this.body = await bodyParser.getJsonBody();
       }
     } catch (err) {
-      const preReq = this.injector.get(PreRequest);
-      preReq.sendBadRequestError(this.nodeRes, err);
+      if (typeof ctrl.handleError == 'function') {
+        ctrl.handleError(err);
+      } else {
+        const preReq = this.injector.get(PreRequest);
+        preReq.sendBadRequestError(this.nodeRes, err);
+      }
       return;
     }
 
     try {
       await ctrl[method]();
     } catch (err) {
-      if (typeof ctrl.errorHandler == 'function') {
-        ctrl.errorHandler(err);
+      if (typeof ctrl.handleError == 'function') {
+        ctrl.handleError(err);
       } else {
         throw err;
       }
