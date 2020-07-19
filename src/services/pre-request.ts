@@ -16,7 +16,7 @@ export class PreRequest {
   }
 
   /**
-   * Called by the `ModuleFactory` when a route is not found.
+   * Called by the `ModuleFactory` when a route is not found (404).
    */
   sendNotFound(nodeRes: NodeResponse) {
     nodeRes.statusCode = Status.NOT_FOUND;
@@ -24,7 +24,7 @@ export class PreRequest {
   }
 
   /**
-   * Logs an error and sends the user message about an internal server error.
+   * Logs an error and sends the user message about an internal server error (500).
    *
    * @param err An error to logs it (not sends).
    */
@@ -35,7 +35,7 @@ export class PreRequest {
   }
 
   /**
-   * Logs an error and sends the user message about a bad request error.
+   * Logs an error and sends the user message about a bad request error (400).
    *
    * @param err An error to logs it (not sends).
    */
