@@ -81,12 +81,6 @@ export class Request {
         this.rawBody = await bodyParser.getRawBody();
         this.body = await bodyParser.getJsonBody();
       }
-    } catch (err) {
-      errorHandler.handleError(err);
-      return;
-    }
-
-    try {
       await ctrl[method]();
     } catch (err) {
       errorHandler.handleError(err);
