@@ -1,7 +1,7 @@
 export * from './types/injection-tokens';
 export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './utils/http-status-codes';
 export { pickProperties } from './utils/pick-properties';
-export { RequestListener, BodyParserConfig, ErrorHandler, ObjectAny } from './types/types';
+export { RequestListener, BodyParserConfig, ControllerErrorHandler, ObjectAny } from './types/types';
 export { NodeRequest, NodeResponse, Fn, RedirectStatusCodes } from './types/server-options';
 export { Logger, LoggerMethod } from './types/logger';
 export { HttpMethod, Router, RouteParam, RouterReturns } from './types/router';
