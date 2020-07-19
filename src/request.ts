@@ -2,7 +2,7 @@ import { Injectable, Inject, Injector, TypeProvider, Type } from '@ts-stack/di';
 import { format } from 'util';
 import { parse } from 'querystring';
 
-import { ObjectAny } from './types/types';
+import { ObjectAny, ControllerErrorHandler } from './types/types';
 import { BodyParser } from './services/body-parser';
 import { PreRequest } from './services/pre-request';
 import { RouteParam } from './types/router';
@@ -51,9 +51,11 @@ export class Request {
     const routeParams: ObjectAny = routeParamsArr ? {} : undefined;
     routeParamsArr?.forEach((param) => (routeParams[param.key] = param.value));
     this.routeParams = routeParams;
+    let errorHandler: ControllerErrorHandler;
     let ctrl: any;
     let guards: CanActivate[] = [];
     try {
+      errorHandler = this.injector.get(ControllerErrorHandler);
       guards = guardClasses.map((guard) => this.injector.get(guard));
       ctrl = this.injector.get(controller);
     } catch (err) {
@@ -80,23 +82,14 @@ export class Request {
         this.body = await bodyParser.getJsonBody();
       }
     } catch (err) {
-      if (typeof ctrl.handleError == 'function') {
-        ctrl.handleError(err);
-      } else {
-        const preReq = this.injector.get(PreRequest);
-        preReq.sendBadRequestError(this.nodeRes, err);
-      }
+      errorHandler.handleError(err);
       return;
     }
 
     try {
       await ctrl[method]();
     } catch (err) {
-      if (typeof ctrl.handleError == 'function') {
-        ctrl.handleError(err);
-      } else {
-        throw err;
-      }
+      errorHandler.handleError(err);
     }
   }
 
