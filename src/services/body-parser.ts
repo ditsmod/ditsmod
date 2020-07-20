@@ -28,6 +28,7 @@ export class BodyParser {
       const headers = nodeReq.headers;
 
       if (
+        !headers['content-type'] ||
         ((!headers['content-length'] || headers['content-length'] == '0') &&
           headers['transfer-encoding'] != 'chunked') ||
         headers['content-type'].includes('multipart/form-data') ||
@@ -81,7 +82,7 @@ export class BodyParser {
   getJsonBody(): Promise<ObjectAny> {
     return new Promise(async (resolve, reject) => {
       try {
-        if (!this.nodeReq.headers['content-type'].includes('application/json')) {
+        if (!this.nodeReq.headers['content-type']?.includes('application/json')) {
           resolve(null);
           return;
         }

@@ -54,6 +54,7 @@ export class Request {
     let errorHandler: ControllerErrorHandler;
     let ctrl: any;
     let guards: CanActivate[] = [];
+
     try {
       errorHandler = this.injector.get(ControllerErrorHandler);
       guards = guardClasses.map((guard) => this.injector.get(guard));
@@ -81,6 +82,7 @@ export class Request {
         this.rawBody = await bodyParser.getRawBody();
         this.body = await bodyParser.getJsonBody();
       }
+
       await ctrl[method]();
     } catch (err) {
       errorHandler.handleError(err);
