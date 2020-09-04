@@ -1,6 +1,6 @@
 import { ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider, Type } from '@ts-stack/di';
-import { ObjectAny } from './types';
 import { ModuleType, ModuleWithOptions } from '../decorators/module';
+import { GuardMetadata } from '../decorators/guard';
 
 /**
  * `http.METHODS`
@@ -64,7 +64,7 @@ export type RouteHandler = () => {
    * in order to determine if the current user is allowed to activate the controller.
    * By default, any user can activate.
    */
-  guards: any[];
+  guardsMetadata: GuardMetadata[];
 };
 
 export class Router {

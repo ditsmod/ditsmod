@@ -168,14 +168,14 @@ export class AppFactory extends Factory {
      * @param method Method of the class controller.
      * @param parseBody Need or not to parse body.
      */
-    const { injector, providers, controller, method, parseBody, guards } = handleRoute();
+    const { injector, providers, controller, method, parseBody, guardsMetadata } = handleRoute();
     const inj1 = injector.resolveAndCreateChild([
       { provide: NodeReqToken, useValue: nodeReq },
       { provide: NodeResToken, useValue: nodeRes },
     ]);
     const inj2 = inj1.createChildFromResolved(providers);
     const req = inj2.get(Request) as Request;
-    req.handleRoute(controller, method, params, queryString, parseBody, guards);
+    req.handleRoute(controller, method, params, queryString, parseBody, guardsMetadata);
   };
 
   protected createServer() {

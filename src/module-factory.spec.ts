@@ -20,6 +20,7 @@ import { Logger } from './types/logger';
 import { AppFactory } from './app-factory';
 import { NodeReqToken } from './types/injection-tokens';
 import { Request } from './request';
+import { Guard, CanActivate } from './decorators/guard';
 
 describe('ModuleFactory', () => {
   @Injectable()
@@ -240,8 +241,26 @@ describe('ModuleFactory', () => {
       })
       class Module2 {}
 
+      class SomeGuard implements CanActivate {
+        canActivate() {
+          return true;
+        }
+
+        other() {}
+      }
+
+      class OtherGuard implements CanActivate {
+        canActivate() {
+          return true;
+        }
+
+        other() {}
+      }
+
       @Controller()
       class Ctrl {
+        @Guard(OtherGuard, ['three', 4])
+        @Guard(SomeGuard, ['one', 2])
         @Route('GET')
         method() {}
       }
@@ -290,7 +309,7 @@ describe('ModuleFactory', () => {
 
         const mod3 = mock.optsMap.get(Module3);
         expect(mod3.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
-        expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9]);
+        expect(mod3.providersPerReq).toEqual([Ctrl, OtherGuard, SomeGuard, Provider8, Provider9]);
         expect(mod3.controllers).toEqual([Ctrl]);
         expect((mod3 as any).ngMetadataName).toBe('Module');
       });
