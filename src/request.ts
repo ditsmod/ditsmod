@@ -8,7 +8,7 @@ import { PreRequest } from './services/pre-request';
 import { RouteParam } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { NodeRequest, NodeResponse } from './types/server-options';
-import { CanActivate, GuardMetadata } from './decorators/guard';
+import { CanActivate } from './decorators/route';
 
 @Injectable()
 export class Request {
@@ -45,7 +45,7 @@ export class Request {
     routeParamsArr: RouteParam[],
     queryString: string,
     parseBody: boolean,
-    guardsMetadataRaw: GuardMetadata[]
+    guardClasses: Type<CanActivate>[]
   ) {
     this.routeParamsArr = routeParamsArr;
     const routeParams: ObjectAny = routeParamsArr ? {} : undefined;
@@ -53,11 +53,11 @@ export class Request {
     this.routeParams = routeParams;
     let errorHandler: ControllerErrorHandler;
     let ctrl: any;
-    let guardsMetadata: { guard: CanActivate; params?: any[] }[] = [];
+    let guards: CanActivate[] = [];
 
     try {
       errorHandler = this.injector.get(ControllerErrorHandler);
-      guardsMetadata = guardsMetadataRaw.map((meta) => ({ guard: this.injector.get(meta.guard), params: meta.params }));
+      guards = guardClasses.map((guard) => this.injector.get(guard));
       ctrl = this.injector.get(controller);
     } catch (err) {
       const preReq = this.injector.get(PreRequest);
@@ -66,8 +66,8 @@ export class Request {
     }
 
     try {
-      for (const meta of guardsMetadata) {
-        const canActivate = await meta.guard.canActivate(meta.params);
+      for (const guard of guards) {
+        const canActivate = await guard.canActivate();
         if (canActivate !== true) {
           const status = typeof canActivate == 'number' ? canActivate : undefined;
           const preReq = this.injector.get(PreRequest);

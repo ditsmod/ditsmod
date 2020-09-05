@@ -4,9 +4,8 @@ import { reflector, Provider } from '@ts-stack/di';
 import { RootModule, RootModuleDecorator } from '../decorators/root-module';
 import { ModuleDecorator, Module } from '../decorators/module';
 import { Controller, ControllerDecorator } from '../decorators/controller';
-import { Route, RouteDecoratorMetadata } from '../decorators/route';
-import { CanActivate, Guard, GuardDecoratorMetadata } from '../decorators/guard';
-import { isRootModule, isModule, isController, isRoute, isProvider, isGuard } from './type-guards';
+import { Route, RouteDecoratorMetadata, CanActivate } from '../decorators/route';
+import { isRootModule, isModule, isController, isRoute, isProvider } from './type-guards';
 
 describe('type-guards', () => {
   describe('isRootModule()', () => {
@@ -47,22 +46,16 @@ describe('type-guards', () => {
     other() {}
   }
 
-  describe('isRoute() and isGuard', () => {
-    const params = ['one', 2];
+  describe('isRoute()', () => {
     @Controller()
     class ClassWithDecorators {
-      @Guard(SomeGuard, params)
-      @Route('GET', '')
-      someMethod() {}
+      @Route('GET', '', [SomeGuard])
+      some() {}
     }
 
     it('should recognize the route', () => {
-      const propMetadata = reflector.propMetadata(ClassWithDecorators) as RouteDecoratorMetadata &
-        GuardDecoratorMetadata;
-      expect(isGuard(propMetadata.someMethod[0])).toBe(true);
-      expect(isRoute(propMetadata.someMethod[1])).toBe(true);
-      expect(propMetadata.someMethod[0].guard === SomeGuard).toBe(true);
-      expect(propMetadata.someMethod[0].params).toEqual(params);
+      const propMetadata = reflector.propMetadata(ClassWithDecorators) as RouteDecoratorMetadata;
+      expect(isRoute(propMetadata.some[0])).toBe(true);
     });
   });
 

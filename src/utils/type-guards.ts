@@ -14,8 +14,8 @@ import { RootModuleDecorator } from '../decorators/root-module';
 import { ControllerDecorator } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
 import { ServerOptions, Http2SecureServerOptions } from '../types/server-options';
+import { ObjectAny } from '../types/types';
 import { ImportsWithPrefixDecorator } from '../types/router';
-import { GuardMetadata } from 'src/decorators/guard';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
@@ -50,10 +50,6 @@ export function isController(ctrlMeatada: ControllerDecorator): ctrlMeatada is C
 
 export function isRoute(propMeatada: RouteMetadata): propMeatada is RouteMetadata {
   return (propMeatada as any)?.ngMetadataName == 'Route';
-}
-
-export function isGuard(propMeatada: GuardMetadata): propMeatada is GuardMetadata {
-  return (propMeatada as any)?.ngMetadataName == 'Guard';
 }
 
 export function isTypeProvider(provider: Provider): provider is TypeProvider {

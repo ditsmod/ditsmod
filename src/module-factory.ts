@@ -19,7 +19,7 @@ import {
 import { RouteDecoratorMetadata } from './decorators/route';
 import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
-import { isRootModule, isController, isRoute, isImportsWithPrefix, isGuard } from './utils/type-guards';
+import { isRootModule, isController, isRoute, isImportsWithPrefix } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
 import { Router, ImportsWithPrefix, ImportsWithPrefixDecorator } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
@@ -28,7 +28,6 @@ import { Factory } from './factory';
 import { getDuplicates } from './utils/get-duplicates';
 import { deepFreeze } from './utils/deep-freeze';
 import { pickProperties } from './utils/pick-properties';
-import { GuardDecoratorMetadata } from './decorators/guard';
 
 /**
  * - creates `injectorPerMod` and `injectorPerReq`;
@@ -352,20 +351,19 @@ export class ModuleFactory extends Factory {
       throw new Error(`Setting routes failed: class "${Ctrl.name}" does not have the "@Controller()" decorator`);
     }
     const providersPerReq = controllerMetadata.providersPerReq;
-    const propMetadata = reflector.propMetadata(Ctrl) as RouteDecoratorMetadata & GuardDecoratorMetadata;
+    const propMetadata = reflector.propMetadata(Ctrl) as RouteDecoratorMetadata;
 
     for (const prop in propMetadata) {
-      const routesMetadata = propMetadata[prop].filter(isRoute);
-      const guardsMetadata = propMetadata[prop].filter(isGuard);
-      for (const route of routesMetadata) {
+      const routes = propMetadata[prop].filter(isRoute);
+      for (const route of routes) {
         this.checkRoutePath(route.path);
-        for (const meta of guardsMetadata) {
-          const type = typeof meta.guard.prototype.canActivate;
+        for (const Guard of route.guards) {
+          const type = typeof Guard.prototype.canActivate;
           if (type != 'function') {
             throw new TypeError(`Guard.prototype.canActivate must be a function, got: ${type}`);
           }
         }
-        this.unshiftProvidersPerReq(...guardsMetadata.map((meta) => meta.guard));
+        this.unshiftProvidersPerReq(route.guards);
         this.unshiftProvidersPerReq(Ctrl);
         let resolvedProvidersPerReq: ResolvedReflectiveProvider[] = this.resolvedProvidersPerReq;
         if (providersPerReq) {
@@ -391,7 +389,7 @@ export class ModuleFactory extends Factory {
           controller: Ctrl,
           method: prop,
           parseBody,
-          guardsMetadata,
+          guards: route.guards,
         }));
 
         this.log.trace({
