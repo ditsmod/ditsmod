@@ -1,6 +1,6 @@
 import { ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider, Type } from '@ts-stack/di';
-import { ObjectAny } from './types';
 import { ModuleType, ModuleWithOptions } from '../decorators/module';
+import { CanActivate } from 'src/decorators/route';
 
 /**
  * `http.METHODS`
@@ -41,6 +41,11 @@ export type HttpMethod =
   | 'UNLOCK'
   | 'UNSUBSCRIBE';
 
+export interface GuardItems {
+  guard: Type<CanActivate>;
+  params?: any[];
+}
+
 export type RouteHandler = () => {
   /**
    * Injector per module.
@@ -64,7 +69,7 @@ export type RouteHandler = () => {
    * in order to determine if the current user is allowed to activate the controller.
    * By default, any user can activate.
    */
-  guards: any[];
+  guardItems: GuardItems[];
 };
 
 export class Router {

@@ -5,7 +5,7 @@ import { parse } from 'querystring';
 import { ObjectAny, ControllerErrorHandler } from './types/types';
 import { BodyParser } from './services/body-parser';
 import { PreRequest } from './services/pre-request';
-import { RouteParam } from './types/router';
+import { RouteParam, GuardItems } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { NodeRequest, NodeResponse } from './types/server-options';
 import { CanActivate } from './decorators/route';
@@ -45,7 +45,7 @@ export class Request {
     routeParamsArr: RouteParam[],
     queryString: string,
     parseBody: boolean,
-    guardClasses: Type<CanActivate>[]
+    guardItems: GuardItems[]
   ) {
     this.routeParamsArr = routeParamsArr;
     const routeParams: ObjectAny = routeParamsArr ? {} : undefined;
@@ -53,11 +53,16 @@ export class Request {
     this.routeParams = routeParams;
     let errorHandler: ControllerErrorHandler;
     let ctrl: any;
-    let guards: CanActivate[] = [];
+    let preparedGuardItems: { guard: CanActivate; params?: any[] }[] = [];
 
     try {
       errorHandler = this.injector.get(ControllerErrorHandler);
-      guards = guardClasses.map((guard) => this.injector.get(guard));
+      preparedGuardItems = guardItems.map((item) => {
+        return {
+          guard: this.injector.get(item.guard),
+          params: item.params,
+        };
+      });
       ctrl = this.injector.get(controller);
     } catch (err) {
       const preReq = this.injector.get(PreRequest);
@@ -66,8 +71,8 @@ export class Request {
     }
 
     try {
-      for (const guard of guards) {
-        const canActivate = await guard.canActivate();
+      for (const item of preparedGuardItems) {
+        const canActivate = await item.guard.canActivate(item.params);
         if (canActivate !== true) {
           const status = typeof canActivate == 'number' ? canActivate : undefined;
           const preReq = this.injector.get(PreRequest);

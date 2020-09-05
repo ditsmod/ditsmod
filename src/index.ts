@@ -8,7 +8,7 @@ export { HttpMethod, Router, RouteParam, RouterReturns } from './types/router';
 export { Controller } from './decorators/controller';
 export { Module } from './decorators/module';
 export { RootModule } from './decorators/root-module';
-export { Route, CanActivate } from './decorators/route';
+export { Route, CanActivate, DecoratorGuardItem } from './decorators/route';
 export { BodyParser } from './services/body-parser';
 export { Request } from './request';
 export { Response } from './response';

@@ -16,12 +16,12 @@ import {
   ModuleWithOptions,
   ProvidersMetadata,
 } from './decorators/module';
-import { RouteDecoratorMetadata } from './decorators/route';
+import { RouteDecoratorMetadata, CanActivate } from './decorators/route';
 import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isRootModule, isController, isRoute, isImportsWithPrefix } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
-import { Router, ImportsWithPrefix, ImportsWithPrefixDecorator } from './types/router';
+import { Router, ImportsWithPrefix, ImportsWithPrefixDecorator, GuardItems } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
 import { Factory } from './factory';
@@ -357,13 +357,20 @@ export class ModuleFactory extends Factory {
       const routes = propMetadata[prop].filter(isRoute);
       for (const route of routes) {
         this.checkRoutePath(route.path);
-        for (const Guard of route.guards) {
+        const guards = route.guards.map((item) => {
+          if (Array.isArray(item)) {
+            return item[0];
+          } else {
+            return item;
+          }
+        });
+        for (const Guard of guards) {
           const type = typeof Guard.prototype.canActivate;
           if (type != 'function') {
             throw new TypeError(`Guard.prototype.canActivate must be a function, got: ${type}`);
           }
         }
-        this.unshiftProvidersPerReq(route.guards);
+        this.unshiftProvidersPerReq(guards);
         this.unshiftProvidersPerReq(Ctrl);
         let resolvedProvidersPerReq: ResolvedReflectiveProvider[] = this.resolvedProvidersPerReq;
         if (providersPerReq) {
@@ -383,13 +390,22 @@ export class ModuleFactory extends Factory {
         } else {
           path = [prefix, route.path].filter((s) => s).join('/');
         }
+
+        const guardItems = route.guards.map((item) => {
+          if (Array.isArray(item)) {
+            return { guard: item[0], params: item.slice(1) } as GuardItems;
+          } else {
+            return { guard: item } as GuardItems;
+          }
+        });
+
         this.router.on(route.httpMethod, `/${path}`, () => ({
           injector: this.injectorPerMod,
           providers: resolvedProvidersPerReq,
           controller: Ctrl,
           method: prop,
           parseBody,
-          guards: route.guards,
+          guardItems,
         }));
 
         this.log.trace({
