@@ -365,7 +365,7 @@ export class ModuleFactory extends Factory {
           }
         });
         for (const Guard of guards) {
-          const type = typeof Guard.prototype.canActivate;
+          const type = typeof Guard?.prototype.canActivate;
           if (type != 'function') {
             throw new TypeError(`Guard.prototype.canActivate must be a function, got: ${type}`);
           }
