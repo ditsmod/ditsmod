@@ -1,7 +1,6 @@
 .gitignore
 tests
 docs
-src
 dist-tests
 examples
 dist-examples
