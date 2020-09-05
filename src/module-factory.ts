@@ -16,7 +16,7 @@ import {
   ModuleWithOptions,
   ProvidersMetadata,
 } from './decorators/module';
-import { RouteDecoratorMetadata, CanActivate } from './decorators/route';
+import { RouteDecoratorMetadata } from './decorators/route';
 import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isRootModule, isController, isRoute, isImportsWithPrefix } from './utils/type-guards';
@@ -367,7 +367,9 @@ export class ModuleFactory extends Factory {
         for (const Guard of guards) {
           const type = typeof Guard?.prototype.canActivate;
           if (type != 'function') {
-            throw new TypeError(`Guard.prototype.canActivate must be a function, got: ${type}`);
+            throw new TypeError(
+              `${this.moduleName} --> ${Ctrl.name} --> ${prop}(): Guard.prototype.canActivate must be a function, got: ${type}`
+            );
           }
         }
         this.unshiftProvidersPerReq(guards);
