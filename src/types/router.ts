@@ -1,6 +1,6 @@
 import { ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider, Type } from '@ts-stack/di';
 import { ModuleType, ModuleWithOptions } from '../decorators/module';
-import { CanActivate } from 'src/decorators/route';
+import { CanActivate } from '../decorators/route';
 
 /**
  * `http.METHODS`
