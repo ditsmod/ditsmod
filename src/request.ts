@@ -13,15 +13,15 @@ import { CanActivate } from './decorators/route';
 @Injectable()
 export class Request {
   /**
-   * Object with route params.
+   * Object with path params.
    * For example, route `/api/resource/:param1/:param2` have two params.
    */
-  routeParams?: any;
+  pathParams?: any;
   /**
-   * Array with route params.
+   * Array with path params.
    * For example, route `/api/resource/:param1/:param2` have two params.
    */
-  routeParamsArr?: RouteParam[];
+  pathParamsArr?: RouteParam[];
   /**
    * This value is set after checking `guard.canActivate()` and before parse the request body.
    * Here is the result of the `querystring.parse()` function,
@@ -50,15 +50,15 @@ export class Request {
   async handleRoute(
     controller: TypeProvider,
     method: string,
-    routeParamsArr: RouteParam[],
+    pathParamsArr: RouteParam[],
     queryString: string,
     parseBody: boolean,
     guardItems: GuardItems[]
   ) {
-    this.routeParamsArr = routeParamsArr;
-    const routeParams: ObjectAny = routeParamsArr ? {} : undefined;
-    routeParamsArr?.forEach((param) => (routeParams[param.key] = param.value));
-    this.routeParams = routeParams;
+    this.pathParamsArr = pathParamsArr;
+    const pathParams: ObjectAny = pathParamsArr ? {} : undefined;
+    pathParamsArr?.forEach((param) => (pathParams[param.key] = param.value));
+    this.pathParams = pathParams;
     let errorHandler: ControllerErrorHandler;
     let ctrl: any;
     let preparedGuardItems: { guard: CanActivate; params?: any[] }[] = [];
