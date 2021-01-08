@@ -1,5 +1,6 @@
 import { OasHeader } from './oas-header';
 import { OasReference } from './oas-reference';
+import { OasStyle } from './oas-style';
 
 /**
  * A single encoding definition applied to a single schema property.
@@ -33,7 +34,7 @@ export class OasEncoding {
    * The behavior follows the same values as `query` parameters, including default values.
    * This property SHALL be ignored if the request body media type is not `application/x-www-form-urlencoded`.
    */
-  style?: string;
+  style?: OasStyle;
   /**
    * When this is true, property values of type `array` or `object` generate separate parameters
    * for each value of the array, or key-value-pair of the map. For other types of properties

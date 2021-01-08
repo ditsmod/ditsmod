@@ -1,6 +1,7 @@
 import { OasExample } from './mix';
 import { OasReference } from './oas-reference';
 import { OasSchema } from './oas-schema';
+import { OasStyle } from './oas-style';
 
 /**
  * Describes a single operation parameter.
@@ -43,7 +44,7 @@ export class OasParameter {
    * - for `header` - `simple`;
    * - for `cookie` - `form`.
    */
-  style?: string;
+  style?: OasStyle;
   /**
    * When this is `true`, parameter values of type `array` or `object` generate separate parameters
    * for each value of the array or key-value pair of the map. For other types of parameters this
