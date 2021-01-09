@@ -1,3 +1,4 @@
+import { format } from 'util';
 import { Type, reflector, Provider } from '@ts-stack/di';
 
 import { isModuleWithOptions, isModule, isRootModule, isProvider } from './utils/type-guards';
@@ -6,7 +7,6 @@ import { mergeArrays } from './utils/merge-arrays-options';
 import { RootModule } from './decorators/root-module';
 import { deepFreeze } from './utils/deep-freeze';
 import { normalizeProviders } from './utils/ng-utils';
-import { format } from 'util';
 
 export abstract class Factory {
   protected throwErrorProvidersUnpredictable(moduleName: string, duplicates: any[]) {
