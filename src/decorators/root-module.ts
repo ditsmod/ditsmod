@@ -1,7 +1,7 @@
 import * as http from 'http';
 import { ListenOptions } from 'net';
 import { makeDecorator, Provider, ReflectiveInjector, Injector } from '@ts-stack/di';
-import { Router as RestifyRouter } from '@ts-stack/router';
+import { Router as KoaTreeRouter } from '@ts-stack/router';
 
 import { PreRequest } from '../services/pre-request';
 import { ModuleDecorator } from './module';
@@ -14,7 +14,7 @@ import { deepFreeze } from '../utils/deep-freeze';
 export const defaultProvidersPerApp: Readonly<Provider[]> = deepFreeze([
   Logger,
   BodyParserConfig,
-  { provide: Router, useClass: RestifyRouter },
+  { provide: Router, useClass: KoaTreeRouter },
   PreRequest,
   {
     provide: ReflectiveInjector,
