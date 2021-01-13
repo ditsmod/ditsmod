@@ -89,11 +89,12 @@ jest path/to/test-file.js
 - контролер
 - роут
 - сервіс
-- модуль
+- звичайний модуль
 - модуль з провайдером
 - DI (англ. **D**ependency **I**njection), інжектор, токен
 - провайдер сервіса
-- три рівня оголошення провайдерів.
+- три рівня оголошення провайдерів
+- гарди (guards).
 
 ### Кореневий модуль Ditsmod
 
@@ -201,7 +202,7 @@ export class FirstService {
 **Уточнення**: модифікатор доступу в конструкторі може бути будь-яким (`private`, `protected` або `private`),
 але взагалі без модифікатора, `secondService` вже буде простим параметром з видимістю лише в конструкторі.
 
-## Впровадження залежностей (англ. Dependency Injection)
+## Впровадження залежностей
 
 **Примітка** В даній документації [впровадження залежностей][8] буде скорочено називатись DI від англ. "Dependency Injection".
 
@@ -321,7 +322,7 @@ import { SecondService } from './second-service';
 export class FirstModule {}
 ```
 
-Зверніть увагу, що відбувається не лише експорт `SecondService`, одночасно цей сервіс оголошується
+Зверніть увагу, що відбувається не лише експорт `SecondService`, одночасно цей провайдер оголошується
 на рівні `providersPerMod`. При експорті, оголошення рівня провайдера є обов'язковим. Виключення з цього
 правила стосується лише імпортованих провайдерів, оскільки у своїх модулях вони вже оголошені на певних рівнях.
 
@@ -354,7 +355,7 @@ export class AppModule {}
 
 ## Імпорт модуля
 
-Імпортувати окремий провайдер не можна, але можна імпортувати цілий модуль із усіма його провайдерами, які експортуються в ньому:
+Імпортувати окремий провайдер не можна, але можна імпортувати цілий модуль із усіма його провайдерами, що експортуються в ньому:
 
 ```ts
 import { Module } from '@ts-stack/ditsmod';
@@ -372,9 +373,10 @@ export class ThridModule {}
 ```
 
 Якщо у `FirstModule` експортується, наприклад, `SecondService`, то тепер цей сервіс можна використовувати у `ThridModule`
-у будь-якому його сервісі чи контролері. Зверніть увагу, що при імпорті рівень оголошення провайдера залишається таким самим,
-яким він був при експорті. Наприклад, якщо `SecondService` було оголошено на рівні модуля,
-то і при імпорті залишиться цей же рівень.
+у будь-якому його сервісі чи контролері.
+
+Зверніть увагу, що при імпорті рівень оголошення провайдера залишається таким самим, яким він був при експорті.
+Наприклад, якщо `SecondService` було оголошено на рівні модуля, то і при імпорті залишиться цей же рівень.
 
 Як бачите, масив `imports` приймає окрім класів модулів, ще й об'єкт `{ prefix: 'some-prefix', module: SecondModule }`.
 Вказаний там префікс `some-prefix` буде використовуватись для маршрутизації, якщо у `SecondModule` оголошено контролери.
@@ -395,7 +397,157 @@ import { FirstModule } from './first.module';
 export class SecondModule {}
 ```
 
-## Домовленості по іменуванню файлів та класів
+## Оголошення контролера
+
+Оголошувати контролер можна у будь-якому модулі - чи то кореневий, чи звичайний модуль, чи модуль з параметрами:
+
+```ts
+import { Module } from '@ts-stack/ditsmod';
+
+import { FirstController } from './first.controller';
+
+@Module({
+  controllers: [ FirstController ]
+})
+export class FirstModule {}
+```
+
+## Префікси маршрутів
+
+Якщо звичайний модуль імпортувати з префіксом, даний префікс буде додаватись до усіх маршрутів (роутів),
+в межах цього модуля:
+
+```ts
+import { Module } from '@ts-stack/ditsmod';
+
+import { FirstModule } from './first.module';
+
+@Module({
+  imports: [
+    { prefix: 'some-prefix', module: FirstModule }
+  ]
+})
+export class ThridModule {}
+```
+
+Якщо ж в кореневому модулі указати `prefixPerApp`, цей префікс буде додаватись до усіх маршрутів в усьому застосунку:
+
+```ts
+import { RootModule } from '@ts-stack/ditsmod';
+
+import { FirstModule } from './first.module';
+
+@RootModule({
+  prefixPerApp: 'api',
+  imports: [ FirstModule ]
+})
+export class AppModule {}
+```
+
+## Guards
+
+Якщо вам необхідно щоб до певних маршрутів мали доступ, наприклад, лише авторизовані користувачі,
+ви можете у третьому параметрі декоратора `Route` указати `AuthGuard`:
+
+```ts
+import { Controller, Response, Route } from '@ts-stack/ditsmod';
+
+import { AuthGuard } from './auth.guard';
+
+@Controller()
+export class FirstController {
+  constructor(private res: Response) {}
+
+  @Route('GET', 'some-url', [ AuthGuard ])
+  tellHello() {
+    this.res.send('Hello admin!');
+  }
+}
+```
+
+Будь-який guard повинен імплементувати інтерфейс `CanActivate`:
+
+```ts
+interface CanActivate {
+  canActivate(params?: any[]): boolean | number | Promise<boolean | number>;
+}
+```
+
+Наприклад, це можна зробити так:
+
+```ts
+import { Injectable } from '@ts-stack/di';
+import { CanActivate } from '@ts-stack/ditsmod';
+
+import { AuthService } from './auth.service';
+
+@Injectable()
+export class AuthGuard implements CanActivate {
+  constructor(private authService: AuthService) {}
+
+  async canActivate() {
+    return Boolean(await this.authService.updateAndGetSession());
+  }
+}
+```
+
+Звичайно ж, це спрощена версія, в реальних застосунках треба робити додаткові перевірки,
+наприклад наявності XSRF-токена. Але головна суть зрозуміла - кожен гард є сервісом, що має метод `canActivate()`,
+який повертає `boolean | number | Promise<boolean | number>`.
+
+До речі, якщо гард повертає `number`, то Ditsmod інтерпретує це як номер статусу (403, 401 і т.п.),
+який треба повернути у відповіді на HTTP-запит.
+
+### Параметри для guards
+
+Для гардів можна передавати параметри, якщо передавати не сам гард, а масив, де на першому місці йде даний гард,
+а подальші елементи йдуть вже у якості аргументів для нього.
+
+Давайте розглянемо такий приклад:
+
+```ts
+import { Controller, Response, Route } from '@ts-stack/ditsmod';
+
+import { AuthGuard } from './auth.guard';
+import { PermissionsGuard } from './permissions.guard';
+import { Permission } from './permission';
+
+@Controller()
+export class FirstController {
+  constructor(private res: Response) {}
+
+  @Route('GET', 'some-url', [AuthGuard, [PermissionsGuard, Permission.canActivateAdministration]])
+  tellHello() {
+    this.res.send('Hello admin!');
+  }
+}
+```
+
+Як бачите, на місці третього параметра у `Route` спочатку указується `AuthGuard`, щоб перевірити наявність авторизації.
+Потім йде масив, де на першому місці указано `PermissionsGuard`, а далі йдуть аргументи для нього.
+В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
+
+```ts
+import { Injectable } from '@ts-stack/di';
+import { CanActivate, Status } from '@ts-stack/ditsmod';
+
+import { AuthService } from './auth.service';
+import { Permission } from './permission';
+
+@Injectable()
+export class PermissionsGuard implements CanActivate {
+  constructor(private authService: AuthService) {}
+
+  async canActivate(params?: Permission[]) {
+    if (await this.authService.hasPermissions(params)) {
+      return true;
+    } else {
+      return Status.FORBIDDEN;
+    }
+  }
+}
+```
+
 ## Підсумок
 
 В декоратор кореневого модуля можуть передаватись метадані:
@@ -423,34 +575,16 @@ import { RootModule } from '@ts-stack/ditsmod';
 export class AppModule {}
 ```
 
-Властивості `imports` та `exports` приймають класи модулів. Усі сервіси, що імпортуються у кореневий модуль,
-стають доступним лише для цього модуля, а усі сервіси, що він експортує, стають доступними на рівні застосунку.
+## Домовленості по іменуванню файлів та класів
 
-### Модуль Ditsmod
+Тут наводиться рекомендований формат у вигляді пари "назва файлу" - "ім'я класу":
 
-TypeScript клас стає модулем Ditsmod завдяки декоратору `Module`, в який передаються наступні метадані:
+- `hello-world.controller` - `HelloWorldController`;
+- `hello-world.service` - `HelloWorldService`;
+- `hello-world.module` - `HelloWorldModule`;
+- `auth.guard` - `AuthGuard`;
 
-```ts
-import { Module } from '@ts-stack/ditsmod';
-
-@Module({
-  imports: [],
-  exports: [],
-  controllers: [],
-  providersPerApp: [],
-  providersPerMod: [],
-  providersPerReq: [],
-})
-export class FirstModule {}
-```
-
-Властивості `imports` та `exports` також приймають класи модулів, як і у кореневого модуля. І так само - усі сервіси,
-що імпортуються у певний модуль, стають доступним лише для цього модуля. А ось експорт вже відрізняється, бо усі сервіси, що експортує певний модуль,
-стають доступними лише для тих модулів, що будуть його імпортувати.
-
-
-
-###
+Кореневий модуль рекомендується називати `AppModule`.
 
 ## API
 
