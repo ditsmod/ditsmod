@@ -699,7 +699,7 @@ export class ErrorHandlerService implements ControllerErrorHandler {
 
 Тепер, якщо ви оголосите `ErrorHandlerService` на рівні запиту, DI не кидатиме помилки. Щоправда,
 видимість `ErrorHandlerService` буде обмежуватись лише тим модулем, де ви оголосили цей провайдер.
-Як правильно оголосити обробника помилок для контролера, прогляньте [відповідний розділ][102].
+Як правильно оголосити обробника помилок для контролера, прогляньте [репозиторій ditsmod-seed][14].
 
 ### Токени DI
 
@@ -767,36 +767,20 @@ export class SomeModule {}
 **Зауваження** У якості токена для DI рекомендується використовувати саме класи, де це тільки
 можливо. Досить рідко може знадобитись використовувати токени інших типів.
 
-## Обробник помилок для контролера
+## Непередбачувана пріоритетність провайдерів
 
-## Передбачуваність підміни провайдерів
+Уявіть, що у вас є `Module1`, куди ви імпортували `Module2` та `Module3`. Ви зробили
+такий імпорт, бо вам потрібні `Service2` та `Service3`. Ви проглядаєте результат роботи
+цих сервісів, але по якійсь причині `Service3` працює не так як очікується. Ви починаєте
+дебажити, чому так відбувається, і виявляється, що `Service3` експортують обидва модулі:
+`Module2` та `Module3`. Ви очікували, що `Service3` буде мати поведінку таку, як задокументовано
+у `Module3`, але насправді спрацювала та версія `Service3`, що експортується із `Module2`.
 
-## Підсумок
+Щоб цього не сталось, якщо ви імпортуєте два або більше модулі, в яких експортуються провайдери
+з однаковим токеном, Ditsmod кидатиме помилку `Unpredictable priority` (Непередбачувана
+пріоритетність).
 
-В декоратор кореневого модуля можуть передаватись метадані:
-
-```ts
-import * as http from 'http';
-import { RootModule } from '@ts-stack/ditsmod';
-
-/**
- * Any one of these options are optional.
- */
-@RootModule({
-  httpModule: http,
-  serverName: 'Node.js',
-  serverOptions: {},
-  listenOptions: { port: 8080, host: 'localhost' },
-  prefixPerApp: '',
-  imports: [],
-  exports: [],
-  controllers: [],
-  providersPerApp: [],
-  providersPerMod: [],
-  providersPerReq: [],
-})
-export class AppModule {}
-```
+Даної помилки можна уникнути, якщо оголосити провайдер із цим же токеном в поточному модулі.
 
 ## Домовленості по іменуванню файлів та класів
 
@@ -834,7 +818,7 @@ bootstrap(appModule: ModuleType): Promise<{ server: Server; log: Logger }>;
 [11]: https://github.com/ts-stack/di
 [12]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
 [13]: https://developer.mozilla.org/uk/docs/Web/JavaScript/Memory_Management#%D0%B7%D0%B1%D0%B8%D1%80%D0%B0%D0%BD%D0%BD%D1%8F_%D1%81%D0%BC%D1%96%D1%82%D1%82%D1%8F "Garbage collection"
+[14]: https://github.com/ts-stack/ditsmod-seed/blob/901f247/src/app/app.module.ts#L18
 
 [100]: #оголошення-рівня-провайдерів-та-підміна-провайдерів
 [101]: #експорт-провайдерів-у-звичайному-модулі
-[102]: #обробник-помилок-для-контролера
