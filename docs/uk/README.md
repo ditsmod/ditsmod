@@ -153,7 +153,7 @@ export class SomeController {}
 
 Як і належить кожному контролеру, він повинен містити маршрути (Route), а також,
 як мінімум, повинен мати доступ до об'єкта відповіді (Response). В наступному прикладі створено
-два маршрути, що приймають `GET` запити за адресами `/` та `/throw-error`. Зверніть також увагу
+два маршрути, що приймають `GET` запити за адресами `/` та `/throw-error`. Зверніть увагу
 як у конструкторі ми отримуємо інстанс класу `Response`:
 
 ```ts
@@ -165,7 +165,7 @@ export class SomeController {
 
   @Route('GET')
   tellHello() {
-    this.res.send('Hello World!\n');
+    this.res.send('Hello World!');
   }
 
   @Route('GET', 'throw-error')
@@ -852,6 +852,7 @@ export const localToken = new InjectionToken<string>('tokenForLocal');
 
 ```ts
 import { Injectable, Inject } from '@ts-stack/di';
+
 import { localToken } from './tokens';
 
 @Injectable()
@@ -903,6 +904,17 @@ export class SomeModule {}
 - `auth.guard` - `AuthGuard`;
 
 Кореневий модуль рекомендується називати `AppModule`.
+
+При імпорті рекомендується не змішувати імпорт з локальних файлів та імпорт з `node_modules`.
+Вгорі йдуть імпорти з `node_modules`, через один рядок йдуть локальні імпорти:
+
+```ts
+import { Injectable } from '@ts-stack/di';
+import { CanActivate, Status } from '@ts-stack/ditsmod';
+
+import { AuthService } from './auth.service';
+import { Permission } from './permission';
+```
 
 ## API
 
