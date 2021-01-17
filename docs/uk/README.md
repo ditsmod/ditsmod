@@ -26,9 +26,10 @@ Angular v4.4.7. (з мінімальними допрацюваннями) та 
 
 - [Встановлення](#встановлення)
 - [Запуск](#запуск)
-- [Ознайомлення з Ditsmod](#ознайомлення-з-ditsmod)
+- [Вхідний файл для Node.js][123]
 - [Кореневий модуль][102]
 - [Контролер][103]
+- [Оголошення контролера][111]
 - [Сервіс][104]
 - [Впровадження залежностей][105]
   - [Оголошення рівня провайдерів та підміна провайдерів][106]
@@ -36,7 +37,6 @@ Angular v4.4.7. (з мінімальними допрацюваннями) та 
 - [Експорт провайдерів у кореневому модулі][108]
 - [Імпорт модуля][109]
 - [Реекспорт модуля][110]
-- [Оголошення контролера][111]
 - [Префікси маршрутів][112]
 - [Guards][113]
   - [Параметри для guards][114]
@@ -74,7 +74,7 @@ npm start
 curl -isS localhost:8080
 ```
 
-## Ознайомлення з Ditsmod
+## Вхідний файл для Node.js
 
 Після [встановлення Ditsmod seed](#встановлення), перше, що необхідно знати: весь код застосунку
 знаходиться у теці `src`, він компілюється за допомогою TypeScript-утиліти `tsc`, після
@@ -153,7 +153,7 @@ export class SomeController {}
 
 Як і належить кожному контролеру, він повинен містити маршрути (Route), а також,
 як мінімум, повинен мати доступ до об'єкта відповіді (Response). В наступному прикладі створено
-два маршрути, що приймають `GET` запити за адресами `/` та `/throw-error`. Зверніть увагу
+два маршрути, що приймають `GET` запити за адресами `/hello` та `/throw-error`. Зверніть увагу
 як у конструкторі ми отримуємо інстанс класу `Response`:
 
 ```ts
@@ -163,7 +163,7 @@ import { Controller, Response, Route } from '@ts-stack/ditsmod';
 export class SomeController {
   constructor(private res: Response) {}
 
-  @Route('GET')
+  @Route('GET', 'hello')
   tellHello() {
     this.res.send('Hello World!');
   }
@@ -182,10 +182,12 @@ export class SomeController {
 1. Відповіді на HTTP-запити відправляються через `this.res.send()` (хоча `this.res` ще має
 `sendJson()` та `sendText()`).
 1. Об'єкти помилок можна кидати прямо в методі класу звичайним для JavaScript способом, тобто за
-допомогою ключового слова `throw`.
+допомогою ключового слова `throw`. Хоча, на даний момент, якщо відправити запит по цьому
+маршруту, то він зависне, через відсутність обробника помилок. Як створити обробника
+помилок для контролерів - прогляньте [API ControllerErrorHandler][124].
 
 **Уточнення**: модифікатор доступу в конструкторі може бути будь-яким (`private`, `protected`
-або `private`), але взагалі без модифікатора - `res` вже буде простим параметром з видимістю лише
+або `public`), але взагалі без модифікатора - `res` вже буде простим параметром з видимістю лише
 в конструкторі.
 
 Щойно в конструкторі ми отримали інстанс класу `Response`, він представляє собою так званий
@@ -234,7 +236,7 @@ export class SecondService {
 (англ. Dependency Injection).
 
 **Уточнення**: модифікатор доступу в конструкторі може бути будь-яким (`private`, `protected`
-або `private`), але взагалі без модифікатора - `firstService` вже буде простим параметром з
+або `public`), але взагалі без модифікатора - `firstService` вже буде простим параметром з
 видимістю лише в конструкторі.
 
 ## Впровадження залежностей
@@ -242,7 +244,7 @@ export class SecondService {
 **Примітка** В даній документації [впровадження залежностей][8] буде скорочено називатись DI від
 англ. "Dependency Injection".
 
-Щоб надавати в конструкторі класу нам те, що ми запитуємо, DI повинен бути проінструктований
+Щоб надавати в конструкторі класу те, що ви запитуєте, DI повинен бути проінструктований
 звідки це брати. І це може здатись дивним. Чому? - Давайте глянемо на приклад:
 
 ```ts
@@ -260,23 +262,23 @@ export class SecondService {
 }
 ```
 
-Тут DI повинен створити інстанс класу `FirstService` і, на перший погляд, ми чітко прописуємо
-звідки імпортувати цей клас, але цього не достатньо.
+Тут DI повинен створити інстанс класу `FirstService` і, на перший погляд, ви чітко прописуєте
+з якого файлу імпортувати даний клас, але цього не достатньо.
 
-Пізніше ви дізнаєтесь, що не змінюючи коду в даному прикладі, ми можемо підмінити клас
-`FirstService`, наприклад, тестовим класом. Коли ми підмінюємо один клас іншим класом ми, можна
-сказати, надаємо інший **провайдер** для створення інстансу класу `FirstService`. Причому цих
+Пізніше ви дізнаєтесь, що не змінюючи коду в даному прикладі, ви можете підмінити клас
+`FirstService`, наприклад, тестовим класом. Коли ви підмінюєте один клас іншим класом ви, можна
+сказати, надаєте інший **провайдер** для створення інстансу класу `FirstService`. Причому цих
 провайдерів може бути багато, але DI вибирає завжди той із них, що вказаний самим останнім
 (див. [механізм указання провайдерів][100]).
 
-Точно так само, не змінюючи коду прикладу, ми ще можемо
+Точно так само, не змінюючи коду прикладу, ви ще можете
 змінити **рівень**, на якому оголошено провайдер для `FirstService`, щоб його інстанс
 створювався:
 - або один єдиний раз при старті застосунку;
 - або кожен раз, коли його імпортують в черговий модуль;
 - або за кожним HTTP-запитом.
 
-Оскільки, не змінюючи коду даного прикладу, ми можемо отримувати різні результати у властивості
+Оскільки, не змінюючи коду даного прикладу, ви можете отримувати різні результати у властивості
 `firstService`, виходить, що не достатньо просто указати джерело імпорту для певного сервіса.
 Для однозначності, як мінімум, необхідно додатково оголосити **рівень** провайдера
 `FirstService`.
@@ -337,17 +339,31 @@ import { SomeService } from './some.service';
 export class SomeModule {}
 ```
 
-Як бачите, в метаданих модуля оголошувати сервіси вже можна на одному із **трьох рівнів**. Між
-іншим, один і той самий провайдер оголошувати одночасно на трьох рівнях дозволяється в
-технічному плані, але сенсу це не має, оскільки найвищий пріоритет, в даному разі, має масив
-`providersPerReq`, нижчий пріоритет у `providersPerMod` і найнижчий - у `providersPerApp`.
+Як бачите, в метаданих модуля оголошувати провайдери вже можна на **трьох рівнях**.
 
 До речі, зверніть увагу, що тут використано декоратор `Module`, завдяки якому
 TypeScript клас перетворюється на модуль Ditsmod.
 
+### Пріоритетність провайдерів
+
+Один і той самий провайдер можна оголошувати одночасно на трьох рівнях, але провайдери у масиві
+`providersPerReq` матимуть найвищий пріоритет, у `providersPerMod` - середній пріоритет, а у
+`providersPerApp` - найнижчий пріоритет.
+
+Це можна використовувати, наприклад, так:
+1. спочатку у кореневому модулі оголосити певний провайдер конфігурації **на рівні застосунку**
+2. при потребі змінити дану конфігурацію лише для окремого модуля, ви оголошуєте цей же провайдер
+конфігурації, але вже **на рівні модуля**, і робите його підміну.
+
+Окрім цього, якщо ви імпортуєте певний провайдер із зовнішнього модуля, і у вас локально є
+провайдер, із таким же [токеном][119], то локальний провайдер матиме вищій пріоритет, при умові,
+що вони оголошені на однаковому рівні. Аналогічне правило діє і для контролера - провайдер,
+оголошений у контролері, матиме вищій пріоритет, ніж провайдер, із таким же токеном, оголошений
+в модулі. 
+
 ## Експорт провайдерів у звичайному модулі
 
-Експортуючи провайдери з певного модуля, ми тим самим декларуємо, що вони є доступними для
+Експортуючи провайдери з певного модуля, ви тим самим декларуєте, що вони є доступними для
 використання в інших модулях, які імпортуватимуть цей модуль:
 
 ```ts
@@ -363,7 +379,7 @@ export class SomeModule {}
 ```
 
 Зверніть увагу, що відбувається не лише додавання `SomeService` в масив `exports`, одночасно цей
-провайдер оголошується на рівні `providersPerMod`. При експорті, оголошення провайдера на
+провайдер оголошується на рівні `providersPerMod`. При експорті, _оголошення_ провайдера на
 певному рівні є обов'язковим. Виключення з цього правила стосується лише імпортованих
 провайдерів, оскільки у своїх модулях вони вже оголошені на певних рівнях.
 
@@ -376,14 +392,13 @@ export class SomeModule {}
 на цьому рівні.
 
 Також не має сенсу експортувати чи імпортувати класи контролерів, оскільки імпорт стосується лише
-провайдерів та префіксів маршрутів (див. далі [імпорт модуля](#імпорт-модуля)), а експорт
+провайдерів та префіксів маршрутів (див. далі [імпорт модуля][126]), а експорт
 стосується виключно провайдерів.
 
 ## Експорт провайдерів у кореневому модулі
 
 Експорт провайдерів у кореневому модулі означає, що ці провайдери стають доступними для
-будь-якого сервіса чи контролера у всьому застосунку, причому їхні рівні оголошення
-(тобто `providersPerMod`) зберігаються:
+будь-якого сервіса чи контролера у всьому застосунку, причому їхні рівні оголошення зберігаються:
 
 ```ts
 import { RootModule } from '@ts-stack/ditsmod';
@@ -399,8 +414,7 @@ export class AppModule {}
 
 ## Імпорт модуля
 
-Імпортувати окремий провайдер не можна, але можна імпортувати цілий модуль із усіма його
-провайдерами, що експортуються в ньому:
+Імпортувати окремий провайдер не можна, але можна імпортувати цілий модуль із усіма провайдерами, що експортуються в ньому:
 
 ```ts
 import { Module } from '@ts-stack/ditsmod';
@@ -425,7 +439,7 @@ export class ThridModule {}
 залишиться цей же рівень.
 
 Як бачите, масив `imports` приймає окрім класів модулів, ще й об'єкт
-`{ prefix: 'some-prefix', module: SecondModule }`. Вказаний там префікс `some-prefix` буде
+`{ prefix: 'some-prefix', module: SecondModule }`. Вказаний префікс `some-prefix` буде
 використовуватись для маршрутизації, якщо у `SecondModule` оголошено контролери.
 
 ## Реекспорт модуля
@@ -449,7 +463,7 @@ export class SecondModule {}
 
 ## Оголошення контролера
 
-Оголошувати контролер можна у будь-якому модулі:
+Оголошувати контролер можна у будь-якому модулі, у масиві `controllers`:
 
 ```ts
 import { Module } from '@ts-stack/ditsmod';
@@ -498,7 +512,7 @@ export class AppModule {}
 ## Guards
 
 Якщо вам необхідно щоб до певних маршрутів мали доступ, наприклад, лише авторизовані користувачі,
-ви можете у третьому параметрі декоратора `Route` указати `AuthGuard`:
+ви можете у третьому параметрі декоратора `Route` указати `AuthGuard` в масиві:
 
 ```ts
 import { Controller, Response, Route } from '@ts-stack/ditsmod';
@@ -551,15 +565,14 @@ export class AuthGuard implements CanActivate {
 
 ### Параметри для guards
 
-Для гардів можна передавати параметри, якщо передавати не сам гард, а масив, де на першому місці
-йде даний гард, а подальші елементи йдуть вже у якості аргументів для нього.
+Метод `canActivate()` гардів має один параметр. Аргументи для цього параметру можна передавати
+у декораторі `Route` з масивом у масиві, де на першому місці йде певний гард.
 
 Давайте розглянемо такий приклад:
 
 ```ts
 import { Controller, Response, Route } from '@ts-stack/ditsmod';
 
-import { AuthGuard } from './auth.guard';
 import { PermissionsGuard } from './permissions.guard';
 import { Permission } from './permission';
 
@@ -567,17 +580,16 @@ import { Permission } from './permission';
 export class SomeController {
   constructor(private res: Response) {}
 
-  @Route('GET', 'some-url', [AuthGuard, [PermissionsGuard, Permission.canActivateAdministration]])
+  @Route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
   tellHello() {
     this.res.send('Hello admin!');
   }
 }
 ```
 
-Як бачите, на місці третього параметра у `Route` спочатку указується `AuthGuard`, щоб перевірити
-наявність авторизації. Потім йде масив, де на першому місці указано `PermissionsGuard`, а далі
-йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі
-`canActivate()`:
+Як бачите, на місці третього параметра у `Route` передається масив в масиві, де на першому місці
+указано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard`
+отримає ці аргументи у своєму методі `canActivate()`:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -603,9 +615,9 @@ export class PermissionsGuard implements CanActivate {
 ## Автоматичний парсинг тіла HTTP-запиту
 
 На етапі ініціалізації застосунку, Ditsmod проглядає який HTTP-метод указується в декораторі
-`Route` для певного маршрута, щоб визначити чи потрібно парсити тіло запиту. Перелік
-HTTP-методів, для яких потрібно парсити тіло запиту, указано в класі `BodyParserConfig` у
-властивості `acceptMethods`: 
+`Route` для певного маршрута, щоб визначити чи потрібно парсити тіло запиту в майбутньому.
+Перелік HTTP-методів, для яких потрібно парсити тіло запиту, указано в класі
+`BodyParserConfig` у властивості `acceptMethods`: 
 
 ```ts
 export class BodyParserConfig {
@@ -630,17 +642,18 @@ export class SomeModule {}
 ```
 
 Враховуючи те, що `BodyParserConfig` у ядрі Ditsmod оголошено на рівні застосунку, ви можете
-понизити цей рівень до рівня модуля, чи запиту. Якраз це і відбувається в даному прикладі, бо
-тут `BodyParserConfig` оголошується вже на рівні модуля. Це означає, що внесені вами зміни
-будуть діяти в межах `SomeModule`.
+[понизити цей рівень][127] до рівня модуля, чи запиту. Якраз це і відбувається в даному
+прикладі, бо тут `BodyParserConfig` оголошується вже на рівні модуля. Це означає, що внесені
+вами зміни будуть діяти в межах `SomeModule`.
 
-Хоча можете для `BodyParserConfig` залишити й незмінним рівень оголошення, тобто передати
-`BodyParserConfig` в масиві `providersPerApp`. Все одно ваші налаштування матимуть вищий
-пріоритет, оскільки вони передались до DI пізніше.
+Хоча можете для `BodyParserConfig` залишити й незмінним рівень оголошення, тобто
+передати `BodyParserConfig` в масиві `providersPerApp`. Все одно ваш провайдер матиме вищий
+пріоритет, ніж by default провайдер, переданий в ядрі Ditsmod, оскільки він передався до DI
+пізніше.
 
 ## Підміна by default класів Ditsmod
 
-Ditsmod оголошує наступні провайдери:
+У ядрі Ditsmod оголошуються наступні провайдери:
 
 ### на рівні застосунку
 - `Logger`
@@ -662,9 +675,9 @@ Ditsmod оголошує наступні провайдери:
 
 Що означає "використовується як інтерфейс"? - Це означає, що якщо ви хочете підміняти `Logger`
 своїм провайдером, ваш провайдер повинен мати такі ж методи, і таку ж сигнатуру цих методів як
-вони є у `Logger` (див. API Logger).
+вони є у [Logger][125].
 
-Коли ваш провайдер впровадить інтерфейс `Logger`, вам залишиться зробити підміну
+Коли ваш провайдер впровадить інтерфейс `Logger`, вам залишиться зробити його підміну
 за допомогою DI:
 
 ```ts
@@ -885,10 +898,10 @@ export class SomeModule {}
 
 Уявіть, що у вас є `Module1`, куди ви імпортували `Module2` та `Module3`. Ви зробили
 такий імпорт, бо вам потрібні `Service2` та `Service3` із цих модулів. Ви проглядаєте результат
-роботи цих сервісів, але по якійсь причині `Service3` працює не так як очікується. Ви починаєте
+роботи даних сервісів, але по якійсь причині `Service3` працює не так як очікується. Ви починаєте
 дебажити, чому так відбувається, і виявляється, що `Service3` експортують обидва модулі:
 `Module2` та `Module3`. Ви очікували, що `Service3` буде мати поведінку таку, як задокументовано
-у `Module3`, але насправді спрацювала та версія `Service3`, що експортується із `Module2`.
+у `Module3`, але насправді спрацювала та версія, що експортується із `Module2`.
 
 Щоб цього не сталось, якщо ви імпортуєте два або більше модулі, в яких експортуються провайдери
 з однаковим токеном, Ditsmod кидатиме помилку `Unpredictable priority` (Непередбачувана
@@ -921,10 +934,12 @@ import { Permission } from './permission';
 
 ## API
 
-### Клас AppFactory
+### AppFactory
 
 ```ts
-bootstrap(appModule: ModuleType): Promise<{ server: Server; log: Logger }>;
+class AppFactory {
+  bootstrap(appModule: ModuleType): Promise<{ server: Server; log: Logger }>;
+}
 ```
 
 Під час роботи методу `bootstrap()`:
@@ -935,11 +950,252 @@ bootstrap(appModule: ModuleType): Promise<{ server: Server; log: Logger }>;
 3. враховуючи модульність та ієрархію вказану у конфігурації, готуються інжектори з різними
 наборами сервісів;
 
+### ControllerErrorHandler
+
+```ts
+class ControllerErrorHandler {
+  handleError(error: any): void;
+}
+```
+
+Даний клас використовується у якості провайдера, а також як інтерфейс для обробника помилок, що
+стались у контролері. У якості провайдера його оголошено на рівні HTTP-запиту.
+
+Приклад впровадження `ControllerErrorHandler`:
+
+```ts
+import { Injectable } from '@ts-stack/di';
+import { Logger, Status, Request, Response, ControllerErrorHandler } from '@ts-stack/ditsmod';
+
+@Injectable()
+export class ErrorHandler implements ControllerErrorHandler {
+  constructor(private req: Request, private res: Response, private log: Logger) {}
+
+  handleError(err: Error) {
+    const req = this.req;
+    const message = err.message;
+    this.log.error({ err, req });
+    if (!this.res.nodeRes.headersSent) {
+      this.res.sendJson({ error: { message } }, Status.INTERNAL_SERVER_ERROR);
+    }
+  }
+}
+```
+
+Тепер можна [підмінити][116] початковий провайдер даним провайдером.
+
+### BodyParserConfig
+
+```ts
+class BodyParserConfig {
+  acceptMethods: HttpMethod[];
+  maxBodySize: number;
+  multipartOpts: MultipartBodyParserOptions;
+}
+```
+
+Див. також [Автоматичний парсинг тіла HTTP-запиту][115].
+
+### PreRequest
+
+```ts
+class PreRequest {
+  constructor(protected log: Logger) {}
+
+  /**
+   * Called by the `ModuleFactory` before call a router.
+   */
+  decodeUrl(url: string): string;
+
+  /**
+   * Called by the `ModuleFactory` when a route is not found (404).
+   */
+  sendNotFound(nodeRes: NodeResponse): void;
+
+  /**
+   * Logs an error and sends the user message about an internal server error (500).
+   *
+   * @param err An error to logs it (not sends).
+   */
+  sendInternalServerError(nodeRes: NodeResponse, err: Error): void;
+
+  /**
+   * Logs an error and sends the user message about a bad request error (400).
+   *
+   * @param err An error to logs it (not sends).
+   */
+  sendBadRequestError(nodeRes: NodeResponse, err: Error): void;
+
+  canNotActivateRoute(nodeReq: NodeRequest, nodeRes: NodeResponse, status?: Status): void;
+}
+```
+
+Даний клас використовується у якості провайдера, а також як інтерфейс. У якості
+провайдера його оголошено на рівні застосунку.
+
+Його методи працюють перед викликом роутера. Ви можете підмінити даний провайдер, надавши власне
+впровадження інтерфейсу `PreRequest`.
+
+### Logger
+
+```ts
+class Logger {
+  trace: LoggerMethod;
+  debug: LoggerMethod;
+  info: LoggerMethod;
+  warn: LoggerMethod;
+  error: LoggerMethod;
+  fatal: LoggerMethod;
+}
+```
+
+Даний клас використовується у якості провайдера, а також як інтерфейс для логера. У якості
+провайдера його оголошено на рівні застосунку.
+
+Приклад впровадження `Logger`:
+
+```ts
+import { Injectable } from '@ts-stack/di';
+import { Logger } from '@ts-stack/ditsmod';
+
+@Injectable()
+export class LoggerService extends Logger {
+  trace = (...args: any[]): any => {
+    if (!args.length) {
+      return true;
+    }
+    console.log('Log trace --->', ...args);
+  };
+
+  info = (...args: any[]): any => {
+    console.log('Log info --->', ...args);
+  };
+
+  debug = (...args: any[]): any => {
+    console.log('Log debug --->', ...args);
+  };
+
+  warn = (...args: any[]): any => {
+    console.log('Log warn --->', ...args);
+  };
+
+  fatal = (...args: any[]): any => {
+    console.log('Log fatal --->', ...args);
+  };
+}
+```
+
+Тепер можна [підмінити][116] початковий провайдер даним провайдером.
+
+### LoggerMethod
+
+```ts
+interface LoggerMethod {
+  /**
+   * Is the log.<level>() enabled?
+    */
+   (): boolean;
+  /**
+   * Log a simple string message (or number).
+   */
+  (msg: string | number): void;
+  /**
+   * Special case to log an `Error` instance to the record.
+   * This adds an `err` field with exception details
+   * (including the stack) and sets `msg` to the exception
+   * message or you can specify the `msg`.
+   */
+  (error: Error, msg?: string, ...params: any[]): void;
+  /**
+   * The first field can optionally be a `fields` object, which
+   * is merged into the log record.
+   *
+   * To pass in an Error *and* other fields, use the `err`
+   * field name for the Error instance.
+   */
+  (obj: object, msg?: string, ...params: any[]): void;
+  /**
+   * Uses `util.format` for msg formatting.
+   */
+  (format: any, ...params: any[]): void;
+}
+```
+
+### Router
+
+```ts
+class Router {
+  on(method: HttpMethod, path: string, handle: RouteHandler): this;
+
+  all(path: string, handle: RouteHandler): this;
+
+  find(method: HttpMethod, path: string): RouterReturns;
+}
+```
+
+### RouterReturns
+
+```ts
+class RouterReturns {
+  handle: RouteHandler;
+  params: RouteParam[];
+}
+```
+
+### RouteHandler
+
+```ts
+type RouteHandler = () => {
+  /**
+   * Injector per module.
+   */
+  injector: ReflectiveInjector;
+  /**
+   * Resolved providers per request.
+   */
+  providers: ResolvedReflectiveProvider[];
+  controller: TypeProvider;
+  /**
+   * Method of the class controller.
+   */
+  method: string;
+  /**
+   * Need or not to parse body.
+   */
+  parseBody: boolean;
+  /**
+   * An array of DI tokens used to look up `CanActivate()` handlers,
+   * in order to determine if the current user is allowed to activate the controller.
+   * By default, any user can activate.
+   */
+  guardItems: GuardItems[];
+};
+```
+
+### GuardItems
+
+```ts
+interface GuardItems {
+  guard: Type<CanActivate>;
+  params?: any[];
+}
+```
+
+### RouteParam
+
+```ts
+interface RouteParam {
+  key: string;
+  value: string;
+}
+```
+
 
 [1]: https://github.com/ts-stack/di
 [2]: https://github.com/ts-stack/ditsmod-seed
 [3]: https://github.com/ts-stack/ditsmod
 [4]: https://github.com/ts-stack/ditsmod/tree/master/examples
+[5]: https://raw.githubusercontent.com/ts-stack/vs-webframework/master/req-per-sec-frameworks.png
 [6]: https://github.com/nestjsx/nest-router
 [8]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
 [9]: https://github.com/angular/angular
@@ -972,3 +1228,8 @@ bootstrap(appModule: ModuleType): Promise<{ server: Server; log: Logger }>;
 [120]: #injectiontoken
 [121]: #непередбачувана-пріоритетність-провайдерів
 [122]: #домовленості-по-стилю-коду
+[123]: #вхідний-файл-для-node.js
+[124]: #controllererrorhandler
+[125]: #logger
+[126]: #імпорт-модуля
+[127]: #пріоритетність-провайдерів
