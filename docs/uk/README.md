@@ -656,16 +656,16 @@ export class SomeModule {}
 У ядрі Ditsmod оголошуються наступні провайдери:
 
 ### на рівні застосунку
-- `Logger`
-- `BodyParserConfig`
-- `Router`
-- `PreRequest`
+- [Logger][130]
+- [BodyParserConfig][128]
+- [Router][131]
+- [PreRequest][129]
 
 ### на рівні HTTP-запиту
-- `Request`
-- `Response`
-- `BodyParser`
-- `ControllerErrorHandler`
+- [Request][133]
+- [Response][134]
+- [BodyParser][132]
+- [ControllerErrorHandler][124]
 
 Оскільки усі ці початкові (тобто by default) провайдери додаються до DI на початку масиву,
 кожного із них ви можете підмінити своїми провайдерами.
@@ -1190,6 +1190,118 @@ interface RouteParam {
 }
 ```
 
+### BodyParser
+
+```ts
+class BodyParser {
+  getRawBody(): Promise<Buffer>;
+  getJsonBody(): Promise<any>;
+}
+```
+
+Даний клас використовується у якості провайдера, а також як інтерфейс для парсера тіла HTTP-запиту.
+У якості провайдера його оголошено на рівні HTTP-запиту.
+
+### Request
+
+```ts
+class Request {
+  /**
+   * Object with path params.
+   * For example, route `/api/resource/:param1/:param2` have two params.
+   */
+  pathParams?: any;
+  /**
+   * Array with path params.
+   * For example, route `/api/resource/:param1/:param2` have two params.
+   */
+  pathParamsArr?: RouteParam[];
+  /**
+   * This value is set after checking `guard.canActivate()` and before parse the request body.
+   * Here is the result of the `querystring.parse()` function,
+   * so if query params are missing, there will be an empty object.
+   */
+  queryParams?: any;
+  rawBody?: any;
+  /**
+   * This value is set after checking `guard.canActivate()` and seting `queryParams`.
+   */
+  body?: any;
+
+  readonly nodeReq: NodeRequest,
+  readonly nodeRes: NodeResponse,
+  injector: Injector;
+
+  /**
+   * Called by the `ModuleFactory` after founded a route.
+   *
+   * @param controller Controller class.
+   * @param method Method of the Controller.
+   * @param parseBody Need or not to parsing a body request.
+   */
+  async handleRoute(
+    controller: TypeProvider,
+    method: string,
+    pathParamsArr: RouteParam[],
+    queryString: string,
+    parseBody: boolean,
+    guardItems: GuardItems[]
+  ): Promise<void>;
+
+  /**
+   * Check if the request is idempotent.
+   */
+  isIdempotent(): boolean
+
+  toString(): string;
+}
+```
+
+### Response
+
+```ts
+class Response<T = any> {
+  readonly nodeRes: NodeResponse;
+
+  /**
+   * Setting value to the response header `Content-Type`.
+   *
+   * @example
+   *
+   * res.setContentType('application/xml').send({ one: 1, two: 2 });
+   */
+  setContentType(contentType: string): this;
+
+  /**
+   * Send data as is, without any transformation.
+   */
+  send(data?: string | Buffer | Uint8Array, statusCode: Status): void;
+
+  /**
+   * To convert `any` type to `string` type, the `util.format()` function is used here.
+   */
+  sendText(data?: any, statusCode: Status): void;
+
+  sendJson(data?: T, statusCode: Status): void;
+
+  redirect(statusCode: RedirectStatusCodes, path: string): void;
+
+  toString(): string;
+}
+```
+
+### NodeRequest
+
+```ts
+type NodeRequest = http.IncomingMessage | http2.Http2ServerRequest;
+```
+
+### NodeResponse
+
+```ts
+type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
+```
+
 
 [1]: https://github.com/ts-stack/di
 [2]: https://github.com/ts-stack/ditsmod-seed
@@ -1233,3 +1345,10 @@ interface RouteParam {
 [125]: #logger
 [126]: #імпорт-модуля
 [127]: #пріоритетність-провайдерів
+[128]: #bodyparserconfig
+[129]: #prerequest
+[130]: #loger
+[131]: #router
+[132]: #bodyparser
+[133]: #request
+[134]: #response
