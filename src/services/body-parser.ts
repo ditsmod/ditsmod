@@ -79,7 +79,7 @@ export class BodyParser {
     });
   }
 
-  getJsonBody(): Promise<ObjectAny> {
+  getJsonBody(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!this.nodeReq.headers['content-type']?.includes('application/json')) {
