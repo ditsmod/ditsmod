@@ -16,7 +16,7 @@ import {
   ModuleWithOptions,
   ProvidersMetadata,
 } from './decorators/module';
-import { RouteDecoratorMetadata } from './decorators/route';
+import { RouteDecoratorMetadata, RouteMetadata } from './decorators/route';
 import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isRootModule, isController, isRoute, isImportsWithPrefix } from './utils/type-guards';
@@ -28,6 +28,7 @@ import { Factory } from './factory';
 import { getDuplicates } from './utils/get-duplicates';
 import { deepFreeze } from './utils/deep-freeze';
 import { pickProperties } from './utils/pick-properties';
+import { ControllerDecorator } from './decorators/controller';
 
 /**
  * - creates `injectorPerMod` and `injectorPerReq`;
@@ -350,73 +351,105 @@ export class ModuleFactory extends Factory {
     if (!controllerMetadata) {
       throw new Error(`Setting routes failed: class "${Ctrl.name}" does not have the "@Controller()" decorator`);
     }
-    const providersPerReq = controllerMetadata.providersPerReq;
     const propMetadata = reflector.propMetadata(Ctrl) as RouteDecoratorMetadata;
 
     for (const prop in propMetadata) {
       const routes = propMetadata[prop].filter(isRoute);
       for (const route of routes) {
         this.checkRoutePath(route.path);
-        const guards = route.guards.map((item) => {
-          if (Array.isArray(item)) {
-            return item[0];
-          } else {
-            return item;
-          }
-        });
-        for (const Guard of guards) {
-          const type = typeof Guard?.prototype.canActivate;
-          if (type != 'function') {
-            throw new TypeError(
-              `${this.moduleName} --> ${Ctrl.name} --> ${prop}(): Guard.prototype.canActivate must be a function, got: ${type}`
-            );
-          }
-        }
-        this.unshiftProvidersPerReq(guards);
-        this.unshiftProvidersPerReq(Ctrl);
-        let resolvedProvidersPerReq: ResolvedReflectiveProvider[] = this.resolvedProvidersPerReq;
-        if (providersPerReq) {
-          resolvedProvidersPerReq = ReflectiveInjector.resolve([...this.opts.providersPerReq, ...providersPerReq]);
-        }
-
+        const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(route, Ctrl, prop, controllerMetadata);
         const injectorPerReq = this.injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
         this.injectorPerReqMap.set(this.mod, injectorPerReq);
-        const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
-        const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
-
-        let path: string;
-        const prefixLastPart = prefix?.split('/').slice(-1)[0];
-        if (prefixLastPart?.charAt(0) == ':') {
-          const reducedPrefix = prefix?.split('/').slice(0, -1).join('/');
-          path = [reducedPrefix, route.path].filter((s) => s).join('/');
-        } else {
-          path = [prefix, route.path].filter((s) => s).join('/');
-        }
-
-        const guardItems = route.guards.map((item) => {
-          if (Array.isArray(item)) {
-            return { guard: item[0], params: item.slice(1) } as GuardItems;
-          } else {
-            return { guard: item } as GuardItems;
-          }
-        });
-
-        this.router.on(route.httpMethod, `/${path}`, () => ({
-          injector: this.injectorPerMod,
-          providers: resolvedProvidersPerReq,
-          controller: Ctrl,
-          method: prop,
-          parseBody,
-          guardItems,
-        }));
-
-        this.log.trace({
-          httpMethod: route.httpMethod,
-          path,
-          handler: `${Ctrl.name} -> ${prop}()`,
-        });
+        this.setRoute(prefix, route, resolvedProvidersPerReq, Ctrl, prop, injectorPerReq);
       }
     }
+  }
+
+  protected getResolvedProvidersPerReq(
+    route: RouteMetadata,
+    Ctrl: TypeProvider,
+    prop: string,
+    controllerMetadata: ControllerDecorator
+  ) {
+    const guards = route.guards.map((item) => {
+      if (Array.isArray(item)) {
+        return item[0];
+      } else {
+        return item;
+      }
+    });
+
+    for (const Guard of guards) {
+      const type = typeof Guard?.prototype.canActivate;
+      if (type != 'function') {
+        throw new TypeError(
+          `${this.moduleName} --> ${Ctrl.name} --> ${prop}(): Guard.prototype.canActivate must be a function, got: ${type}`
+        );
+      }
+    }
+
+    this.unshiftProvidersPerReq(Ctrl, guards);
+    let resolvedProvidersPerReq: ResolvedReflectiveProvider[] = this.resolvedProvidersPerReq;
+    const { providersPerReq } = controllerMetadata;
+    if (providersPerReq) {
+      resolvedProvidersPerReq = ReflectiveInjector.resolve([...this.opts.providersPerReq, ...providersPerReq]);
+    }
+
+    return resolvedProvidersPerReq;
+  }
+
+  /**
+   * Compiles the path for the controller given the prefix.
+   *
+   * @todo Give this method the ability to override it via DI.
+   */
+  protected getPath(prefix: string, route: RouteMetadata) {
+    const prefixLastPart = prefix?.split('/').slice(-1)[0];
+    if (prefixLastPart?.charAt(0) == ':') {
+      const reducedPrefix = prefix?.split('/').slice(0, -1).join('/');
+      return [reducedPrefix, route.path].filter((s) => s).join('/');
+    } else {
+      return [prefix, route.path].filter((s) => s).join('/');
+    }
+  }
+
+  /**
+   * @todo Give this method the ability to override it via DI.
+   */
+  protected setRoute(
+    prefix: string,
+    route: RouteMetadata,
+    resolvedProvidersPerReq: ResolvedReflectiveProvider[],
+    Ctrl: TypeProvider,
+    prop: string,
+    injectorPerReq: ReflectiveInjector
+  ) {
+    const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
+    const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
+    const path = this.getPath(prefix, route);
+
+    const guardItems = route.guards.map((item) => {
+      if (Array.isArray(item)) {
+        return { guard: item[0], params: item.slice(1) } as GuardItems;
+      } else {
+        return { guard: item } as GuardItems;
+      }
+    });
+
+    this.router.on(route.httpMethod, `/${path}`, () => ({
+      injector: this.injectorPerMod,
+      providers: resolvedProvidersPerReq,
+      controller: Ctrl,
+      method: prop,
+      parseBody,
+      guardItems,
+    }));
+
+    this.log.trace({
+      httpMethod: route.httpMethod,
+      path,
+      handler: `${Ctrl.name} -> ${prop}()`,
+    });
   }
 
   protected checkRoutePath(path: string) {
