@@ -48,6 +48,23 @@ Angular v4.4.7. (з мінімальними допрацюваннями) та 
   - [InjectionToken][120]
 - [Непередбачувана пріоритетність провайдерів][121]
 - [Домовленості по стилю коду][122]
+- [API reference][106]
+  - [AppFactory][135]
+  - [ControllerErrorHandler][124]
+  - [BodyParserConfig][128]
+  - [PreRequest][129]
+  - [Logger][130]
+  - [LoggerMethod][136]
+  - [Router][131]
+  - [RouterReturns][136]
+  - [RouteHandler][137]
+  - [GuardItems][138]
+  - [RouteParam][139]
+  - [BodyParser][132]
+  - [Request][133]
+  - [Response][134]
+  - [NodeRequest][140]
+  - [NodeResponse][141]
 
 ## Встановлення
 
@@ -192,7 +209,7 @@ export class SomeController {
 
 **Підказка**: якщо у конструкторі ви прописуєте клас `Request` чи `Response`, не забувайте
 імпортувати їх із `@ts-stack/ditsmod`! Якщо ви цього не зробите, ваш застосунок перестане
-працювати, хоча IDE може і не підказати, що у вас неімпортовані ці класи. Справа в тому,
+працювати, хоча IDE може і не підказати, що у вас неімпортовані дані класи. Справа в тому,
 що у TypeScript глобально оголошено інтерфейси з точно такими іменами - `Request` та `Response`.
 Через це ваша IDE може лише сказати, що у цих інтерфейсів немає певних властивостей, що повинні
 бути у класів, імпортованих з `@ts-stack/ditsmod`.
@@ -663,7 +680,7 @@ export class SomeModule {}
 пріоритет, ніж by default провайдер, переданий в ядрі Ditsmod, оскільки ваш провайдер передався
 до DI пізніше.
 
-## Підміна by default класів Ditsmod
+## Підміна by default провайдерів Ditsmod
 
 У ядрі Ditsmod оголошуються наступні провайдери:
 
@@ -1345,7 +1362,7 @@ type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
 [113]: #guards
 [114]: #параметри-для-guards
 [115]: #автоматичний-парсинг-тіла-http-запиту
-[116]: #підміна-by-default-класів-ditsmod
+[116]: #підміна-by-default-провайдерів-ditsmod
 [117]: #різниця-між-областю-видимості-провайдерів-та-їх-рівнями-оголошення
 [118]: #інжектори-di
 [119]: #токени-di
@@ -1364,3 +1381,10 @@ type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
 [132]: #bodyparser
 [133]: #request
 [134]: #response
+[135]: #appfactory
+[136]: #routerreturns
+[137]: #routehandler
+[138]: #guarditems
+[139]: #routeparam
+[140]: #noderequest
+[141]: #noderesponse
