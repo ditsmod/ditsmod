@@ -4,7 +4,7 @@ import { SomeModule } from './modules/some/some.module';
 import { AuthModule } from './modules/auth/auth.module';
 
 @RootModule({
-  imports: [AuthModule, SomeModule],
+  imports: [SomeModule],
   exports: [AuthModule],
 })
 export class AppModule {}

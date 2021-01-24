@@ -1,6 +1,6 @@
 # Logger
 
-From first terminal:
+Check from first terminal:
 
 ```bash
 npm run start4

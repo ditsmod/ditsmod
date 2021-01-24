@@ -1,6 +1,6 @@
 # Nested routes
 
-From first terminal:
+Check from first terminal:
 
 ```bash
 npm run start5
