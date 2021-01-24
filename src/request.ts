@@ -1,4 +1,4 @@
-import { Injectable, Inject, Injector, TypeProvider, Type } from '@ts-stack/di';
+import { Injectable, Inject, Injector, TypeProvider } from '@ts-stack/di';
 import { format } from 'util';
 import { parse } from 'querystring';
 
