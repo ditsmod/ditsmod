@@ -1,10 +1,10 @@
 import { RootModule, ControllerErrorHandler } from '@ts-stack/ditsmod';
 
 import { ErrorHandler } from './error-handler';
-import { SomeController } from './some.controller';
+import { SomeModule } from './modules/some/some.module';
 
 @RootModule({
-  controllers: [SomeController],
+  imports: [SomeModule],
   providersPerReq: [ControllerErrorHandler],
   exports: [{ provide: ControllerErrorHandler, useClass: ErrorHandler }],
 })
