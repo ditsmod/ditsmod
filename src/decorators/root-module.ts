@@ -7,11 +7,12 @@ import { PreRequest } from '../services/pre-request';
 import { ModuleDecorator } from './module';
 import { Router } from '../types/router';
 import { BodyParserConfig } from '../types/types';
-import { DefaultLogger, Logger } from '../types/logger';
+import { DefaultLogger, Logger, LoggerConfig } from '../types/logger';
 import { HttpModule, ServerOptions } from '../types/server-options';
 import { deepFreeze } from '../utils/deep-freeze';
 
 export const defaultProvidersPerApp: Readonly<Provider[]> = deepFreeze([
+  LoggerConfig,
   { provide: Logger, useClass: DefaultLogger },
   BodyParserConfig,
   { provide: Router, useClass: KoaTreeRouter },

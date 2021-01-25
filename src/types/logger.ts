@@ -1,3 +1,5 @@
+import { Injectable } from '@ts-stack/di';
+
 export interface LoggerMethod {
   /**
    * Is the log.<level>() enabled?
@@ -44,15 +46,27 @@ export class Logger {
   fatal: LoggerMethod = (...args: any[]): any => {};
 }
 
-function defaultLoggerFn(level: keyof Logger) {
-  return ((...args: any[]) => console.log(`[DefaultLogger:${level}]`, ...args)) as LoggerMethod;
+export class LoggerConfig {
+  level: string = '';
 }
 
+function defaultLoggerFn(fnLevel: keyof Logger, config: LoggerConfig) {
+  return ((...args: any[]) => {
+    if (config.level) {
+      console.log(`[DefaultLogger:${fnLevel}]`, ...args);
+    }
+  }) as LoggerMethod;
+}
+
+@Injectable()
 export class DefaultLogger extends Logger {
-  trace = defaultLoggerFn('trace');
-  debug = defaultLoggerFn('debug');
-  info = defaultLoggerFn('info');
-  warn = defaultLoggerFn('warn');
-  error = defaultLoggerFn('error');
-  fatal = defaultLoggerFn('fatal');
+  constructor(private config: LoggerConfig) {
+    super();
+  }
+  trace = defaultLoggerFn('trace', this.config);
+  debug = defaultLoggerFn('debug', this.config);
+  info = defaultLoggerFn('info', this.config);
+  warn = defaultLoggerFn('warn', this.config);
+  error = defaultLoggerFn('error', this.config);
+  fatal = defaultLoggerFn('fatal', this.config);
 }
