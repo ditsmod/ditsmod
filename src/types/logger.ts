@@ -47,15 +47,22 @@ export class Logger {
 }
 
 export class LoggerConfig {
-  level: string = '';
+  level: string = 'info';
 }
 
 function defaultLoggerFn(fnLevel: keyof Logger, config: LoggerConfig) {
-  return ((...args: any[]) => {
-    if (config.level) {
+  const callback = (...args: any[]) => {
+    const allLevels = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
+    const index = allLevels.indexOf(config.level);
+    const availableLevels = allLevels.slice(index);
+    if (availableLevels.includes(fnLevel)) {
       console.log(`[DefaultLogger:${fnLevel}]`, ...args);
+    } else if (!allLevels.includes(config.level)) {
+      console.log(`[DefaultLogger]`, `unexpected level "${config.level}" (available levels: ${allLevels.join(', ')})`);
     }
-  }) as LoggerMethod;
+  };
+
+  return callback as LoggerMethod;
 }
 
 @Injectable()
