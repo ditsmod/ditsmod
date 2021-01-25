@@ -8,7 +8,7 @@ import { ConfigService } from '../../services-per-app/config.service';
 export class WinstonService extends Logger {
   private log: winston.Logger;
 
-  constructor(config: ConfigService) {
+  constructor(private config: ConfigService) {
     super();
 
     const level = this.translateLevel(config.logLevel);
@@ -32,7 +32,7 @@ export class WinstonService extends Logger {
 
   trace: LoggerMethod = (...args: any[]) => {
     if (!args.length) {
-      return this.log.level == 'trace';
+      return this.config.logLevel == 'trace';
     } else {
       const [param1, ...restParams] = args;
       this.log.debug(param1, ...restParams);
