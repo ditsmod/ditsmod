@@ -2,13 +2,13 @@ import { Injectable } from '@ts-stack/di';
 import { Logger, LoggerMethod } from '@ts-stack/ditsmod';
 import pino = require('pino');
 
-import { PinoConfigService } from './pino-config.service';
+import { ConfigService } from '../../services-per-app/config.service';
 
 const log = pino();
 
 @Injectable()
 export class PinoService extends Logger {
-  constructor(config: PinoConfigService) {
+  constructor(config: ConfigService) {
     super();
     log.level = config.logLevel;
   }

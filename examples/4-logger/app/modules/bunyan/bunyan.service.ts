@@ -2,13 +2,13 @@ import { Injectable } from '@ts-stack/di';
 import { Logger, LoggerMethod } from '@ts-stack/ditsmod';
 import bunyan = require('bunyan');
 
-import { BunyanConfigService } from './bunyan-config.service';
+import { ConfigService } from '../../services-per-app/config.service';
 
 @Injectable()
 export class BunyanService extends Logger {
   private log: bunyan;
 
-  constructor(private config: BunyanConfigService) {
+  constructor(private config: ConfigService) {
     super();
     this.log = bunyan.createLogger({ name: 'bunyan-test', level: config.logLevel });
   }
