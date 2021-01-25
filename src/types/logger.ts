@@ -43,3 +43,16 @@ export class Logger {
   error: LoggerMethod = (...args: any[]): any => {};
   fatal: LoggerMethod = (...args: any[]): any => {};
 }
+
+function defaultLoggerFn(level: keyof Logger) {
+  return ((...args: any[]) => console.log(`[DefaultLogger:${level}]`, ...args)) as LoggerMethod;
+}
+
+export class DefaultLogger extends Logger {
+  trace = defaultLoggerFn('trace');
+  debug = defaultLoggerFn('debug');
+  info = defaultLoggerFn('info');
+  warn = defaultLoggerFn('warn');
+  error = defaultLoggerFn('error');
+  fatal = defaultLoggerFn('fatal');
+}
