@@ -7,9 +7,10 @@ import { PreRequest } from '../services/pre-request';
 import { ModuleDecorator } from './module';
 import { Router } from '../types/router';
 import { BodyParserConfig } from '../types/types';
-import { DefaultLogger, Logger, LoggerConfig } from '../types/logger';
+import { Logger, LoggerConfig } from '../types/logger';
 import { HttpModule, ServerOptions } from '../types/server-options';
 import { deepFreeze } from '../utils/deep-freeze';
+import { DefaultLogger } from '../services/default-logger';
 
 export const defaultProvidersPerApp: Readonly<Provider[]> = deepFreeze([
   LoggerConfig,
