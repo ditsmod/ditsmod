@@ -202,9 +202,9 @@ export class SomeController {
 1. Відповіді на HTTP-запити відправляються через `this.res.send()` (хоча `this.res` ще має
 `sendJson()` та `sendText()`).
 1. Об'єкти помилок можна кидати прямо в методі класу звичайним для JavaScript способом, тобто за
-допомогою ключового слова `throw`. Хоча, на даний момент, якщо відправити запит по цьому
-маршруту, то він зависне, через відсутність обробника помилок. Як створити обробника
-помилок для контролерів - прогляньте [API ControllerErrorHandler][124].
+допомогою ключового слова `throw`. Початково, цю помилку буде обробляти by default обробник
+помилок. Як створити власного обробника помилок для контролерів - прогляньте
+[API ControllerErrorHandler][124].
 
 **Уточнення**: модифікатор доступу в конструкторі може бути будь-яким (`private`, `protected`
 або `public`), але взагалі без модифікатора - `res` вже буде простим параметром з видимістю лише
@@ -1033,16 +1033,15 @@ class ControllerErrorHandler {
 
 ```ts
 import { Injectable } from '@ts-stack/di';
-import { Logger, Status, Request, Response, ControllerErrorHandler } from '@ts-stack/ditsmod';
+import { Logger, Status, Response, ControllerErrorHandler } from '@ts-stack/ditsmod';
 
 @Injectable()
 export class ErrorHandler implements ControllerErrorHandler {
-  constructor(private req: Request, private res: Response, private log: Logger) {}
+  constructor(private res: Response, private log: Logger) {}
 
   handleError(err: Error) {
-    const req = this.req;
     const message = err.message;
-    this.log.error({ err, req });
+    this.log.error({ err });
     if (!this.res.nodeRes.headersSent) {
       this.res.sendJson({ error: { message } }, Status.INTERNAL_SERVER_ERROR);
     }
@@ -1050,7 +1049,7 @@ export class ErrorHandler implements ControllerErrorHandler {
 }
 ```
 
-Тепер можна [підмінити][116] початковий провайдер даним провайдером.
+Повніший приклад можете проглянути в теці [examples][143].
 
 ### BodyParserConfig
 
@@ -1411,3 +1410,4 @@ type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
 [140]: #noderequest
 [141]: #noderesponse
 [142]: #поточний-інжектор
+[143]: ./examples.md#2-controller-error-handler
