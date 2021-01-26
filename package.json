@@ -16,12 +16,12 @@
   "scripts": {
     "build": "rimraf dist/* && tsc",
     "test": "jest",
-    "start1": "ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/1-hello-world/main.ts",
-    "start2": "ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/2-controller-error-handler/main.ts",
-    "start3": "ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/3-route-guards/main.ts",
-    "start4": "ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/4-logger/main.ts",
-    "start5": "ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/5-nested-routes/main.ts",
-    "start6": "ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/6-body-parser/main.ts"
+    "start1": "nodemon -w examples -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/1-hello-world/main.ts",
+    "start2": "nodemon -w examples -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/2-controller-error-handler/main.ts",
+    "start3": "nodemon -w examples -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/3-route-guards/main.ts",
+    "start4": "nodemon -w examples -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/4-logger/main.ts",
+    "start5": "nodemon -w examples -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/5-nested-routes/main.ts",
+    "start6": "nodemon -w examples -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/6-body-parser/main.ts"
   },
   "dependencies": {
     "@ts-stack/router": "^0.0.0-alpha.1",
@@ -38,6 +38,7 @@
     "bunyan": "^1.8.15",
     "jasmine": "^3.5.0",
     "jest": "^25.1.0",
+    "nodemon": "^2.0.7",
     "pino": "^6.11.0",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.0",
