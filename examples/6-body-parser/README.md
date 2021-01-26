@@ -1,4 +1,14 @@
-# Nested routes
+## Preconditions
+
+If you haven't prepared the examples repository yet, you can do so:
+
+```bash
+git clone git@github.com:ts-stack/ditsmod.git
+cd ditsmod
+npm i
+```
+
+## Nested routes
 
 Check from first terminal:
 
