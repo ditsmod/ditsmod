@@ -123,8 +123,39 @@ curl -isS localhost:8080/forbidden
 
 ## 4-logger
 
-У цьому прикладі, `ConfigService` оголошено в масиві `providersPerApp`, саме тому цей провайдер
-буде доступний в будь-якому конструкторі застосунку.
+У цьому прикладі, показано як можна в одному застосунку мати відразу три логера:
+
+- [winston][5];
+- [bunyan][6];
+- [pino][7];
+
+На практиці такий приклад наврядчи може знадобитись, але в ньому демонструється робота
+ієрархічної архітектури DI, правила експорту/імпорту провайдерів, механізм підміни by default
+логера та by default конфігурації для логера.
+
+В кореневому модулі, у масиві `providersPerApp` відбувається підміна by default класів
+`Logger` та `LoggerConfig` класом `WinstonService` та інстансом класа `loggerConfig` відповідно.
+Через це, контролер у `SomeModule` буде використовувати саме `WinstonService`, коли він звертається
+до логера:
+
+```ts
+this.log.trace('winston works!');
+```
+
+Але у `BunyanModule` та `PinoModule` зроблено підміни by default логера, причому зроблено це в
+масиві `providersPerMod`. І саме тому контролери в цих модулях будуть використовувати відповідні
+логери.
+
+Тут варто звернути увагу, що в конструкторах усіх контролерів використовується by default логер у
+якості токена, а DI вже підставляє для різних контролерів різні логери.
+
+```ts
+import { Controller, Logger, Response, Route } from '@ts-stack/ditsmod';
+
+// ...
+constructor(private res: Response, private log: Logger) {}
+// ...
+```
 
 Перевірити роботу прикладу можна так, з першого терміналу:
 
@@ -135,12 +166,15 @@ npm run start4
 З другого терміналу:
 
 ```bash
+curl -isS localhost:8080
 curl -isS localhost:8080/bunyan
 curl -isS localhost:8080/pino
-curl -isS localhost:8080/winston
 ```
 
 [1]: https://github.com/ts-stack/ditsmod/tree/master/examples
 [2]: ./README.md#інжектори-di
 [3]: ./README.md#експорт-провайдерів-із-кореневого-модуля
 [4]: ./README.md#guards
+[5]: https://github.com/winstonjs/winston
+[6]: https://github.com/trentm/node-bunyan
+[7]: https://github.com/pinojs/pino

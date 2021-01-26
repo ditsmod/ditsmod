@@ -54,6 +54,7 @@ Angular v4.4.7. (з мінімальними допрацюваннями) та 
   - [AppFactory][135]
   - [ControllerErrorHandler][124]
   - [BodyParserConfig][128]
+  - [LoggerConfig][144]
   - [PreRequest][129]
   - [Logger][125]
   - [LoggerMethod][136]
@@ -1253,6 +1254,17 @@ class BodyParser {
 Даний клас використовується у якості провайдера, а також як інтерфейс для парсера тіла HTTP-запиту.
 У якості провайдера його оголошено на рівні HTTP-запиту.
 
+### LoggerConfig
+
+```ts
+class LoggerConfig {
+  level: string = 'info';
+}
+```
+
+Даний клас використовується у якості провайдера, а також як інтерфейс для логера.
+У якості провайдера його оголошено на рівні застосунку.
+
 ### Request
 
 ```ts
@@ -1411,3 +1423,4 @@ type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
 [141]: #noderesponse
 [142]: #поточний-інжектор
 [143]: ./examples.md#2-controller-error-handler
+[144]: #loggerconfig

@@ -1,24 +1,26 @@
 import { Injectable } from '@ts-stack/di';
-import { Logger, LoggerMethod } from '@ts-stack/ditsmod';
+import { Logger, LoggerConfig } from '@ts-stack/ditsmod';
 import pino = require('pino');
 
-import { ConfigService } from '../../services-per-app/config.service';
+import { getNamedLogggerMethod } from '../../utils/get-named-logger-method';
+import { getLogMethod } from '../../utils/get-log-method';
 
-const log = pino();
+const logger = pino();
 
 @Injectable()
-export class PinoService extends Logger {
-  constructor(config: ConfigService) {
-    super();
-    log.level = config.logLevel;
+export class PinoService implements Logger {
+  private logger: pino.Logger;
+
+  constructor(config: LoggerConfig) {
+    this.logger = logger;
+    this.logger.level = config.level;
+    this.logger.log = getLogMethod.bind(this);
   }
 
-  trace: LoggerMethod = (...args: any[]) => {
-    if (!args.length) {
-      return log.level == 'trace';
-    } else {
-      const [param1, ...restParams] = args;
-      log.trace(param1, ...restParams);
-    }
-  };
+  fatal = getNamedLogggerMethod.call(this, 'fatal');
+  error = getNamedLogggerMethod.call(this, 'error');
+  warn = getNamedLogggerMethod.call(this, 'warn');
+  info = getNamedLogggerMethod.call(this, 'info');
+  debug = getNamedLogggerMethod.call(this, 'debug');
+  trace = getNamedLogggerMethod.call(this, 'trace');
 }

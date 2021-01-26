@@ -1,24 +1,25 @@
 import { Injectable } from '@ts-stack/di';
-import { Logger, LoggerMethod } from '@ts-stack/ditsmod';
+import { Logger, LoggerConfig } from '@ts-stack/ditsmod';
+import { LogLevel } from 'bunyan';
 import bunyan = require('bunyan');
 
-import { ConfigService } from '../../services-per-app/config.service';
+import { getNamedLogggerMethod } from '../../utils/get-named-logger-method';
+import { getLogMethod } from '../../utils/get-log-method';
 
 @Injectable()
-export class BunyanService extends Logger {
-  private log: bunyan;
+export class BunyanService implements Logger {
+  private logger: bunyan;
 
-  constructor(private config: ConfigService) {
-    super();
-    this.log = bunyan.createLogger({ name: 'bunyan-test', level: config.logLevel });
+  constructor(private config: LoggerConfig) {
+    this.logger = bunyan.createLogger({ name: 'bunyan-test', level: config.level as LogLevel });
+
+    (this.logger as any).log = getLogMethod.bind(this);
   }
 
-  trace: LoggerMethod = (...args: any[]) => {
-    if (!args.length) {
-      return this.config.logLevel == 'trace';
-    } else {
-      const [param1, ...restParams] = args;
-      this.log.trace(param1, ...restParams);
-    }
-  };
+  fatal = getNamedLogggerMethod.call(this, 'fatal');
+  error = getNamedLogggerMethod.call(this, 'error');
+  warn = getNamedLogggerMethod.call(this, 'warn');
+  info = getNamedLogggerMethod.call(this, 'info');
+  debug = getNamedLogggerMethod.call(this, 'debug');
+  trace = getNamedLogggerMethod.call(this, 'trace');
 }
