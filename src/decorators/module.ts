@@ -6,12 +6,13 @@ import { Request } from '../request';
 import { Response } from '../response';
 import { deepFreeze } from '../utils/deep-freeze';
 import { ControllerErrorHandler } from '../types/types';
+import { DefaultControllerErrorHandler } from '../services/default-controller-error-handler';
 
 export const defaultProvidersPerReq: Readonly<Provider[]> = deepFreeze([
   Request,
   Response,
   BodyParser,
-  ControllerErrorHandler,
+  { provide: ControllerErrorHandler, useClass: DefaultControllerErrorHandler },
 ]);
 
 export interface ModuleDecoratorFactory {
