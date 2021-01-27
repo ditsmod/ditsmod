@@ -143,8 +143,8 @@ this.log.trace('winston works!');
 ```
 
 Але у `BunyanModule` та `PinoModule` зроблено підміни by default логера, причому зроблено це в
-масиві `providersPerMod`. І саме тому контролери в цих модулях будуть використовувати відповідні
-логери.
+масиві `providersPerMod`. І саме тому контролери в цих модулях будуть використовувати відповідно
+[bunyan][6] та [pino][7].
 
 Тут варто звернути увагу, що в конструкторах усіх контролерів використовується by default логер у
 якості токена, а DI вже підставляє для різних контролерів різні логери.
@@ -169,6 +169,37 @@ npm run start4
 curl -isS localhost:8080
 curl -isS localhost:8080/bunyan
 curl -isS localhost:8080/pino
+```
+
+## 5-nested-routes
+
+Простий приклад, як можна використовувати префікси на рівні застосунку та на рівні модуля.
+
+Перевірити роботу прикладу можна так, з першого терміналу:
+
+```bash
+npm run start5
+```
+
+З другого терміналу:
+
+```bash
+curl -isS localhost:8080/api/v1
+curl -isS localhost:8080/api/v2
+```
+
+## 6-body-parser
+
+Перевірити роботу прикладу можна так, з першого терміналу:
+
+```bash
+npm run start6
+```
+
+З другого терміналу:
+
+```bash
+curl -isS localhost:8080 -d '{"one":1}' -H 'content-type: application/json'
 ```
 
 [1]: https://github.com/ts-stack/ditsmod/tree/master/examples
