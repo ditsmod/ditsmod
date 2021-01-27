@@ -11,6 +11,7 @@ import { BodyParser } from '@ts-stack/ditsmod';
 @Injectable()
 export class BodyParserService extends BodyParser {
   getRawBody(): Promise<Buffer> {
+    this.log.info('work my body parser');
     return super.getRawBody();
   }
 
