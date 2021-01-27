@@ -175,7 +175,7 @@ export class AppFactory extends Factory {
     ]);
     const inj2 = inj1.createChildFromResolved(providers);
     const req = inj2.get(Request) as Request;
-    req.handleRoute(controller, method, params, queryString, parseBody, guardItems);
+    this.preReq.handleRoute(req, controller, method, params, queryString, parseBody, guardItems);
   };
 
   protected createServer() {

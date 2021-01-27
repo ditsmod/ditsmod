@@ -1095,6 +1095,22 @@ class PreRequest {
   sendBadRequestError(nodeRes: NodeResponse, err: Error): void;
 
   canNotActivateRoute(nodeReq: NodeRequest, nodeRes: NodeResponse, status?: Status): void;
+
+  /**
+   * Called by the `ModuleFactory` after founded a route.
+   *
+   * @param controller Controller class.
+   * @param method Method of the Controller.
+   * @param parseBody Need or not to parsing a body request.
+   */
+  async handleRoute(
+    controller: TypeProvider,
+    method: string,
+    pathParamsArr: RouteParam[],
+    queryString: string,
+    parseBody: boolean,
+    guardItems: GuardItems[]
+  ): Promise<void>;
 }
 ```
 
@@ -1294,22 +1310,6 @@ class Request {
   readonly nodeReq: NodeRequest,
   readonly nodeRes: NodeResponse,
   injector: Injector;
-
-  /**
-   * Called by the `ModuleFactory` after founded a route.
-   *
-   * @param controller Controller class.
-   * @param method Method of the Controller.
-   * @param parseBody Need or not to parsing a body request.
-   */
-  async handleRoute(
-    controller: TypeProvider,
-    method: string,
-    pathParamsArr: RouteParam[],
-    queryString: string,
-    parseBody: boolean,
-    guardItems: GuardItems[]
-  ): Promise<void>;
 
   /**
    * Check if the request is idempotent.
