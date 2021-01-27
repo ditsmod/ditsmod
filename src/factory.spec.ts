@@ -16,8 +16,8 @@ describe('Factory', () => {
       return super.getUniqProviders(providers);
     }
 
-    getUnpredictableDuplicates(duplTokens: any[], providers: Provider[]) {
-      return super.getUnpredictableDuplicates(duplTokens, providers);
+    getProvidersCollision(duplTokens: any[], providers: Provider[]) {
+      return super.getProvidersCollision(duplTokens, providers);
     }
   }
 
@@ -27,11 +27,11 @@ describe('Factory', () => {
     mock = new MockFactory();
   });
 
-  describe('getUnpredictableDuplicates()', () => {
+  describe('getProvidersCollision()', () => {
     it('case 1', () => {
       let duplTokens: any[] = [Provider1, Provider2];
       const providers: Provider[] = [Provider1, Provider2, Provider4, Provider3, Provider5, Provider2, Provider1];
-      duplTokens = mock.getUnpredictableDuplicates(duplTokens, providers);
+      duplTokens = mock.getProvidersCollision(duplTokens, providers);
       expect(duplTokens).toEqual([]);
     });
 
@@ -45,7 +45,7 @@ describe('Factory', () => {
         { provide: Provider7, useClass: Provider7 },
         { provide: Provider7, useClass: Provider6 },
       ];
-      duplTokens = mock.getUnpredictableDuplicates(duplTokens, providers);
+      duplTokens = mock.getProvidersCollision(duplTokens, providers);
       expect(duplTokens).toEqual([Provider3, Provider7]);
     });
 
@@ -59,7 +59,7 @@ describe('Factory', () => {
         { provide: Provider6, useClass: Provider6 },
         { provide: Provider7, useClass: Provider7 },
       ];
-      duplTokens = mock.getUnpredictableDuplicates(duplTokens, providers);
+      duplTokens = mock.getProvidersCollision(duplTokens, providers);
       expect(duplTokens).toEqual([]);
     });
   });

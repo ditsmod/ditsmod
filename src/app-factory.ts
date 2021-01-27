@@ -106,9 +106,9 @@ export class AppFactory extends Factory {
       (d) => !declaredTokensPerApp.includes(d) && !multiTokensPerApp.includes(d)
     );
     const mergedProviders = [...defaultProvidersPerApp, ...exportedProvidersPerApp];
-    duplExpPerApp = this.getUnpredictableDuplicates(duplExpPerApp, mergedProviders);
+    duplExpPerApp = this.getProvidersCollision(duplExpPerApp, mergedProviders);
     if (duplExpPerApp.length) {
-      this.throwErrorProvidersUnpredictable(appModule.name, duplExpPerApp);
+      this.throwProvidersCollision(appModule.name, duplExpPerApp);
     }
     this.opts.providersPerApp.unshift(...exportedProvidersPerApp);
   }

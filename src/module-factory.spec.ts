@@ -351,7 +351,7 @@ describe('ModuleFactory', () => {
       });
     });
 
-    describe(`unpredictable priority`, () => {
+    describe(`collision`, () => {
       describe(`per a module`, () => {
         @Module({
           exports: [{ provide: Provider1, useValue: '' }],
@@ -382,7 +382,7 @@ describe('ModuleFactory', () => {
           class RootModule1 {}
 
           const msg =
-            `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+            `Exporting providers in RootModule1 was failed: Collision was found for: ` +
             `Provider2. You should manually add these providers to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
@@ -409,7 +409,7 @@ describe('ModuleFactory', () => {
           class RootModule1 {}
 
           const msg =
-            `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+            `Exporting providers in RootModule1 was failed: Collision was found for: ` +
             `Provider1. You should manually add these providers to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
@@ -453,7 +453,7 @@ describe('ModuleFactory', () => {
           class RootModule1 {}
 
           const msg =
-            `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+            `Exporting providers in RootModule1 was failed: Collision was found for: ` +
             `Provider1. You should manually add these providers to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
@@ -496,7 +496,7 @@ describe('ModuleFactory', () => {
           class RootModule1 {}
 
           const msg =
-            `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+            `Exporting providers in RootModule1 was failed: Collision was found for: ` +
             `Provider2. You should manually add these providers to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
@@ -518,7 +518,7 @@ describe('ModuleFactory', () => {
           class RootModule1 {}
 
           const msg =
-            `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+            `Exporting providers in RootModule1 was failed: Collision was found for: ` +
             `Provider1. You should manually add these providers to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
@@ -564,7 +564,7 @@ describe('ModuleFactory', () => {
           class RootModule1 {}
 
           const msg =
-            `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+            `Exporting providers in RootModule1 was failed: Collision was found for: ` +
             `Provider0, Request, Provider1, InjectionToken NodeRequest. You should manually add these providers to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
@@ -582,7 +582,7 @@ describe('ModuleFactory', () => {
           class RootModule1 {}
 
           const msg =
-            `Exporting providers in RootModule1 was failed: Unpredictable priority was found for: ` +
+            `Exporting providers in RootModule1 was failed: Collision was found for: ` +
             `Router. You should manually add these providers to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });

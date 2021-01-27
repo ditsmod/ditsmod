@@ -48,7 +48,7 @@ Angular v4.4.7. (з мінімальними допрацюваннями) та 
   - [Поточний інжектор][142]
   - [Токени DI][119]
   - [InjectionToken][120]
-- [Непередбачувана пріоритетність провайдерів][121]
+- [Колізії провайдерів][121]
 - [Домовленості по стилю коду][122]
 - [API reference][106]
   - [AppFactory][135]
@@ -744,10 +744,10 @@ export class SomeModule {}
 але коли ви експортуватимете ці провайдери для інших модулів, тут ви маєте
 схопити приблизно таку помилку:
 
-> Error: Exporting providers in AppModule was failed: Unpredictable priority was found for:
+> Error: Exporting providers in AppModule was failed: Collision was found for:
 > BodyParser. You should manually add this provider to AppModule.
 
-Більш докладно про цю помилку можете прочитати у розділі [непередбачувана пріоритетність][121].
+Більш докладно про цю помилку можете прочитати у розділі [Колізії провайдерів][121].
 
 ## Різниця між областю видимості провайдерів та їх рівнями оголошення
 
@@ -976,7 +976,7 @@ export class SomeModule {}
 
 Зверніть увагу, що `InjectionToken` імпортується з `@ts-stack/di`, а не з `@ts-stack/ditsmod`.
 
-## Непередбачувана пріоритетність провайдерів
+## Колізії провайдерів
 
 Уявіть, що у вас є `Module1`, куди ви імпортували `Module2` та `Module3`. Ви зробили
 такий імпорт, бо вам потрібні відповідно `Service2` та `Service3` із цих модулів. Ви проглядаєте
@@ -988,7 +988,7 @@ export class SomeModule {}
 Щоб цього не сталось, якщо ви імпортуєте два або більше модулі, в яких експортуються провайдери
 з однаковим токеном, Ditsmod кидатиме приблизно таку помилку:
 
-> Error: Exporting providers in Module1 was failed: Unpredictable priority was found for:
+> Error: Exporting providers in Module1 was failed: Collision was found for:
 > Service3. You should manually add this provider to Module1.
 
 Конкретно у цій ситуації:
@@ -996,8 +996,8 @@ export class SomeModule {}
 1. і `Module2` підмінює, а потім експортує провайдер з токеном `Service3`;
 2. і `Module3` підмінює, а потім експортує провайдер з токеном `Service3`.
 
-І оскільки обидва цих модулі імпортуються у `Module1`, якраз тому і виникає "непередбачувана
-пріоритетність", розробник може не знати яка із цих підмін буде працювати в `Module1`.
+І оскільки обидва цих модулі імпортуються у `Module1`, якраз тому і виникає "колізія провайдерів",
+розробник може не знати яка із цих підмін буде працювати в `Module1`.
 
 Даної помилки можна уникнути, якщо продублювати оголошення провайдера на потрібному рівні із цим
 же токеном:
@@ -1437,7 +1437,7 @@ type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
 [118]: #інжектори-di
 [119]: #токени-di
 [120]: #injectiontoken
-[121]: #непередбачувана-пріоритетність-провайдерів
+[121]: #колізії-провайдерів
 [122]: #домовленості-по-стилю-коду
 [123]: #вхідний-файл-для-node.js
 [124]: #controllererrorhandler

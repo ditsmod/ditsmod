@@ -71,7 +71,7 @@ export class ModuleFactory extends Factory {
     pickProperties(this.opts, moduleMetadata);
     this.globalProviders = globalProviders;
     this.importProviders(true, rootModule);
-    this.checkProvidersUnpredictable();
+    this.checkProvidersCollision();
 
     return {
       providersPerMod: this.allExportedProvidersPerMod,
@@ -213,7 +213,7 @@ export class ModuleFactory extends Factory {
       const { optsMap } = moduleFactory.bootstrap(this.globalProviders, this.prefixPerApp, prefixPerMod, mod);
       this.optsMap = new Map([...this.optsMap, ...optsMap]);
     }
-    this.checkProvidersUnpredictable();
+    this.checkProvidersCollision();
   }
 
   /**
@@ -305,7 +305,7 @@ export class ModuleFactory extends Factory {
     }
   }
 
-  protected checkProvidersUnpredictable() {
+  protected checkProvidersCollision() {
     const tokensPerApp = normalizeProviders(this.globalProviders.providersPerApp).map((np) => np.provide);
 
     const declaredTokensPerMod = normalizeProviders(this.opts.providersPerMod).map((np) => np.provide);
@@ -315,7 +315,7 @@ export class ModuleFactory extends Factory {
     let duplExpPerMod = getDuplicates(exportedTokensPerMod).filter(
       (d) => !declaredTokensPerMod.includes(d) && !multiTokensPerMod.includes(d)
     );
-    duplExpPerMod = this.getUnpredictableDuplicates(duplExpPerMod, this.allExportedProvidersPerMod);
+    duplExpPerMod = this.getProvidersCollision(duplExpPerMod, this.allExportedProvidersPerMod);
     const tokensPerMod = [...declaredTokensPerMod, ...exportedTokensPerMod];
 
     const declaredTokensPerReq = normalizeProviders(this.opts.providersPerReq).map((np) => np.provide);
@@ -325,7 +325,7 @@ export class ModuleFactory extends Factory {
     let duplExpPerReq = getDuplicates(exportedTokensPerReq).filter(
       (d) => !declaredTokensPerReq.includes(d) && !multiTokensPerReq.includes(d)
     );
-    duplExpPerReq = this.getUnpredictableDuplicates(duplExpPerReq, this.allExportedProvidersPerReq);
+    duplExpPerReq = this.getProvidersCollision(duplExpPerReq, this.allExportedProvidersPerReq);
 
     const mixPerApp = tokensPerApp.filter((p) => {
       if (exportedTokensPerMod.includes(p) && !declaredTokensPerMod.includes(p)) {
@@ -340,9 +340,9 @@ export class ModuleFactory extends Factory {
       return exportedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
     });
 
-    const unpredictables = [...duplExpPerMod, ...duplExpPerReq, ...mixPerApp, ...mixPerModOrReq];
-    if (unpredictables.length) {
-      this.throwErrorProvidersUnpredictable(this.moduleName, unpredictables);
+    const collisions = [...duplExpPerMod, ...duplExpPerReq, ...mixPerApp, ...mixPerModOrReq];
+    if (collisions.length) {
+      this.throwProvidersCollision(this.moduleName, collisions);
     }
   }
 

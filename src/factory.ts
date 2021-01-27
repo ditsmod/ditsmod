@@ -9,11 +9,11 @@ import { deepFreeze } from './utils/deep-freeze';
 import { normalizeProviders } from './utils/ng-utils';
 
 export abstract class Factory {
-  protected throwErrorProvidersUnpredictable(moduleName: string, duplicates: any[]) {
+  protected throwProvidersCollision(moduleName: string, duplicates: any[]) {
     const names = duplicates.map((p) => p.name || p).join(', ');
     const provider = duplicates.length > 1 ? 'these providers' : 'this provider';
     throw new Error(
-      `Exporting providers in ${moduleName} was failed: Unpredictable priority was found for: ${names}. You should manually add ${provider} to ${moduleName}.`
+      `Exporting providers in ${moduleName} was failed: Collision was found for: ${names}. You should manually add ${provider} to ${moduleName}.`
     );
   }
 
@@ -73,7 +73,7 @@ export abstract class Factory {
     return uniqProviders;
   }
 
-  protected getUnpredictableDuplicates(duplTokens: any[], providers: Provider[]) {
+  protected getProvidersCollision(duplTokens: any[], providers: Provider[]) {
     duplTokens = duplTokens || [];
     providers = providers || [];
     const duplProviders: Provider[] = [];
