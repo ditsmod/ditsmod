@@ -53,12 +53,12 @@ export abstract class StaticModuleMetadata extends ProvidersMetadata {
 
 export interface ModuleDecorator extends Partial<StaticModuleMetadata> {
   /**
-   * List of modules or `ModuleWithProviders` imported by this module.
+   * List of modules or `ModuleWithOptions` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
    */
   imports?: Array<Type<any> | ModuleWithOptions<any> | ImportsWithPrefixDecorator | any[]>;
   /**
-   * List of modules, `ModuleWithProviders` or providers exported by this
+   * List of modules, `ModuleWithOptions` or providers exported by this
    * module.
    */
   exports?: Array<Type<any> | ModuleWithOptions<any> | Provider | any[]>;
