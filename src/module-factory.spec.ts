@@ -388,8 +388,8 @@ describe('ModuleFactory', () => {
         });
 
         it(`mix exporting duplicates with "multi == true" per app and per mod`, () => {
-          const ObjProviderPerApp = { provide: Provider1, useClass: Provider1, multi: true };
-          const ObjProviderPerMod = { provide: Provider1, useClass: Provider1, multi: true };
+          const ObjProviderPerApp = { provide: Provider1, useClass: Provider1, multi: true } as Provider;
+          const ObjProviderPerMod = { provide: Provider1, useClass: Provider1, multi: true } as Provider;
           @Module({
             exports: [ObjProviderPerMod],
             providersPerMod: [ObjProviderPerMod, Provider2],
