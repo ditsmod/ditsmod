@@ -11,8 +11,9 @@ import { normalizeProviders } from './utils/ng-utils';
 export abstract class Factory {
   protected throwErrorProvidersUnpredictable(moduleName: string, duplicates: any[]) {
     const names = duplicates.map((p) => p.name || p).join(', ');
+    const provider = duplicates.length > 1 ? 'these providers' : 'this provider';
     throw new Error(
-      `Exporting providers in ${moduleName} was failed: Unpredictable priority was found for: ${names}. You should manually add these providers to ${moduleName}.`
+      `Exporting providers in ${moduleName} was failed: Unpredictable priority was found for: ${names}. You should manually add ${provider} to ${moduleName}.`
     );
   }
 
