@@ -94,25 +94,35 @@ export class AppFactory extends Factory {
     }
   }
 
+  /**
+   * 1. checks collisions for non-root providers per app;
+   * 2. then merge prepared providers with providers that declared on root module;
+   * 3. then set merged providers to `this.opts.providersPerApp`.
+   */
   protected prepareProvidersPerApp(appModule: ModuleType) {
-    const exportedProvidersPerApp = this.importProvidersPerApp(appModule);
-    const declaredTokensPerApp = normalizeProviders(this.opts.providersPerApp).map((np) => np.provide);
-    const exportedNormalizedPerApp = normalizeProviders(exportedProvidersPerApp);
-    const exportedTokensPerApp = exportedNormalizedPerApp.map((np) => np.provide);
-    const multiTokensPerApp = exportedNormalizedPerApp.filter((np) => np.multi).map((np) => np.provide);
+    // Here we work only with tokens and providers declared at the application level.
+
+    const exportedProviders = this.importProvidersPerApp(appModule);
+    const rootTokens = normalizeProviders(this.opts.providersPerApp).map((np) => np.provide);
+    const exportedNormProviders = normalizeProviders(exportedProviders);
+    const exportedTokens = exportedNormProviders.map((np) => np.provide);
+    const exportedMultiTokens = exportedNormProviders.filter((np) => np.multi).map((np) => np.provide);
     const defaultTokens = normalizeProviders([...defaultProvidersPerApp]).map((np) => np.provide);
-    const mergedTokens = [...exportedTokensPerApp, ...defaultTokens];
-    let duplExpPerApp = getDuplicates(mergedTokens).filter(
-      (d) => !declaredTokensPerApp.includes(d) && !multiTokensPerApp.includes(d)
+    const mergedTokens = [...exportedTokens, ...defaultTokens];
+    let exportedTokensDuplicates = getDuplicates(mergedTokens).filter(
+      (d) => !rootTokens.includes(d) && !exportedMultiTokens.includes(d)
     );
-    const mergedProviders = [...defaultProvidersPerApp, ...exportedProvidersPerApp];
-    duplExpPerApp = this.getProvidersCollision(duplExpPerApp, mergedProviders);
-    if (duplExpPerApp.length) {
-      this.throwProvidersCollision(appModule.name, duplExpPerApp);
+    const mergedProviders = [...defaultProvidersPerApp, ...exportedProviders];
+    exportedTokensDuplicates = this.getProvidersCollision(exportedTokensDuplicates, mergedProviders);
+    if (exportedTokensDuplicates.length) {
+      this.throwProvidersCollision(appModule.name, exportedTokensDuplicates);
     }
-    this.opts.providersPerApp.unshift(...exportedProvidersPerApp);
+    this.opts.providersPerApp.unshift(...exportedProviders);
   }
 
+  /**
+   * Recursively assembles per app providers from non-root modules.
+   */
   protected importProvidersPerApp(modOrObject: Type<any> | ModuleWithOptions<any>) {
     const modName = this.getModuleName(modOrObject);
     const modMetadata = this.getRawModuleMetadata(modOrObject) as RootModuleDecorator | ModuleDecorator;
