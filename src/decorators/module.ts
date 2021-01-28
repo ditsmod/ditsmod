@@ -21,6 +21,10 @@ export interface ModuleDecoratorFactory {
 }
 
 export const Module = makeDecorator('Module', (data: any) => data) as ModuleDecoratorFactory;
+export type ExportableProviders = Provider & {
+  /** Need or not export this provider? */
+  export?: boolean;
+};
 
 /**
  * @todo It should be clarified that providers can go array by array.
@@ -33,11 +37,11 @@ export class ProvidersMetadata {
   /**
    * Providers per a module.
    */
-  providersPerMod: Provider[] = [];
+  providersPerMod: ExportableProviders[] = [];
   /**
    * Providers per a request.
    */
-  providersPerReq: Provider[] = [];
+  providersPerReq: ExportableProviders[] = [];
 }
 
 export interface ModuleWithOptions<T> extends Partial<ProvidersMetadata> {
@@ -61,7 +65,7 @@ export interface ModuleDecorator extends Partial<StaticModuleMetadata> {
    * List of modules, `ModuleWithOptions` or providers exported by this
    * module.
    */
-  exports?: Array<Type<any> | ModuleWithOptions<any> | Provider | any[]>;
+  exports?: Array<Type<any> | ModuleWithOptions<any> | any[]>;
 }
 
 export class ModuleMetadata extends StaticModuleMetadata {
@@ -69,7 +73,7 @@ export class ModuleMetadata extends StaticModuleMetadata {
    * Imports modules and setting some prefix per each the module.
    */
   imports: ImportsWithPrefix[] = [];
-  exports: Array<Type<any> | ModuleWithOptions<any> | Provider> = [];
+  exports: Array<Type<any> | ModuleWithOptions<any>> = [];
 }
 
 export type ModuleType = new (...args: any[]) => any;
