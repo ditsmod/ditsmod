@@ -96,8 +96,8 @@ export class AppFactory extends Factory {
 
   /**
    * 1. checks collisions for non-root providers per app;
-   * 2. then merge prepared providers with providers that declared on root module;
-   * 3. then set merged providers to `this.opts.providersPerApp`.
+   * 2. then merges prepared providers with providers that declared on root module;
+   * 3. then sets merged providers to `this.opts.providersPerApp`.
    */
   protected prepareProvidersPerApp(appModule: ModuleType) {
     // Here we work only with tokens and providers declared at the application level.
