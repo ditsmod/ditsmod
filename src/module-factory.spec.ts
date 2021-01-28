@@ -383,7 +383,7 @@ describe('ModuleFactory', () => {
 
           const msg =
             `Exporting providers in RootModule1 was failed: Collision was found for: ` +
-            `Provider2. You should manually add these providers to RootModule1.`;
+            `Provider2. You should manually add this provider to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
 
@@ -410,7 +410,7 @@ describe('ModuleFactory', () => {
 
           const msg =
             `Exporting providers in RootModule1 was failed: Collision was found for: ` +
-            `Provider1. You should manually add these providers to RootModule1.`;
+            `Provider1. You should manually add this provider to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
 
@@ -454,7 +454,7 @@ describe('ModuleFactory', () => {
 
           const msg =
             `Exporting providers in RootModule1 was failed: Collision was found for: ` +
-            `Provider1. You should manually add these providers to RootModule1.`;
+            `Provider1. You should manually add this provider to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
 
@@ -497,7 +497,7 @@ describe('ModuleFactory', () => {
 
           const msg =
             `Exporting providers in RootModule1 was failed: Collision was found for: ` +
-            `Provider2. You should manually add these providers to RootModule1.`;
+            `Provider2. You should manually add this provider to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
 
@@ -519,7 +519,7 @@ describe('ModuleFactory', () => {
 
           const msg =
             `Exporting providers in RootModule1 was failed: Collision was found for: ` +
-            `Provider1. You should manually add these providers to RootModule1.`;
+            `Provider1. You should manually add this provider to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
 
@@ -583,7 +583,7 @@ describe('ModuleFactory', () => {
 
           const msg =
             `Exporting providers in RootModule1 was failed: Collision was found for: ` +
-            `Router. You should manually add these providers to RootModule1.`;
+            `Router. You should manually add this provider to RootModule1.`;
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
       });
