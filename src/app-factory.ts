@@ -99,7 +99,7 @@ export class AppFactory extends Factory {
    * 2. then merges these prepared providers with providers that declared on root module.
    */
   protected prepareProvidersPerApp(appModule: ModuleType) {
-    // Here we work only with tokens and providers declared at the application level.
+    // Here we work only with providers declared at the application level.
 
     const exportedProviders = this.importProvidersPerApp(appModule);
     const rootTokens = this.opts.providersPerApp.filter(isObjProvider).map((op) => op.provide);
