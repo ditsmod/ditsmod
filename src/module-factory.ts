@@ -63,6 +63,8 @@ export class ModuleFactory extends Factory {
 
   /**
    * Called only by `@RootModule` before called `ModuleFactory#boostrap()`.
+   *
+   * @param globalProviders Contains providersPerApp for now.
    */
   importGlobalProviders(rootModule: Type<any>, globalProviders: ProvidersMetadata) {
     this.moduleName = this.getModuleName(rootModule);
@@ -71,7 +73,7 @@ export class ModuleFactory extends Factory {
     pickProperties(this.opts, moduleMetadata);
     this.globalProviders = globalProviders;
     this.importProviders(true, rootModule);
-    this.checkProvidersCollision();
+    this.checkProvidersCollisions();
 
     return {
       providersPerMod: this.allExportedProvidersPerMod,
@@ -213,7 +215,7 @@ export class ModuleFactory extends Factory {
       const { optsMap } = moduleFactory.bootstrap(this.globalProviders, this.prefixPerApp, prefixPerMod, mod);
       this.optsMap = new Map([...this.optsMap, ...optsMap]);
     }
-    this.checkProvidersCollision();
+    this.checkProvidersCollisions();
   }
 
   /**
@@ -305,7 +307,7 @@ export class ModuleFactory extends Factory {
     }
   }
 
-  protected checkProvidersCollision() {
+  protected checkProvidersCollisions() {
     const tokensPerApp = normalizeProviders(this.globalProviders.providersPerApp).map((np) => np.provide);
 
     const declaredTokensPerMod = normalizeProviders(this.opts.providersPerMod).map((np) => np.provide);
