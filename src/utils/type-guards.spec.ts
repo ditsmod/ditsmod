@@ -5,7 +5,7 @@ import { RootModule, RootModuleDecorator } from '../decorators/root-module';
 import { ModuleDecorator, Module } from '../decorators/module';
 import { Controller, ControllerDecorator } from '../decorators/controller';
 import { Route, RouteDecoratorMetadata, CanActivate } from '../decorators/route';
-import { isRootModule, isModule, isController, isRoute, isProvider } from './type-guards';
+import { isRootModule, isModule, isController, isRoute, isProvider, isObjProvider } from './type-guards';
 
 describe('type-guards', () => {
   describe('isRootModule()', () => {
@@ -83,6 +83,28 @@ describe('type-guards', () => {
       expect(() => isProvider(providers)).toThrow(
         'Invalid provider - only instances of Provider and Type are allowed, got: 5'
       );
+    });
+  });
+
+  describe('isObjProvider()', () => {
+    it('should recognize all types of providers', () => {
+      const providers: Provider[] = [
+        { provide: '', useValue: '' },
+        { provide: '', useClass: class {} },
+        { provide: '', useExisting: class {} },
+        { provide: '', useFactory: class {} },
+      ];
+      expect(isObjProvider(providers)).toBe(true);
+    });
+
+    it('should fail class types of providers', () => {
+      const providers: Provider[] = [class {}];
+      expect(isObjProvider(providers)).toBe(false);
+    });
+
+    it('should fail check number', () => {
+      const providers: Provider[] = [5 as any];
+      expect(isObjProvider(providers)).toBe(false);
     });
   });
 });

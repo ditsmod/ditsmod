@@ -78,7 +78,21 @@ export function isProvider(
   provider = Array.isArray(provider) ? provider : [provider];
   const arrProviders = normalizeProviders(provider);
 
-  return arrProviders.every(ok);
+  return isObjProvider(arrProviders);
+}
+
+/**
+ * Returns true if providers declares in format:
+ * ```ts
+ * { provide: SomeClas, useClass: OtherClass }
+ * ```
+ */
+export function isObjProvider(
+  provider: Provider
+): provider is ValueProvider | ClassProvider | ExistingProvider | FactoryProvider {
+  const providers = Array.isArray(provider) ? provider : [provider];
+
+  return providers.every(ok);
 
   /**
    * TypeProvider there is normalized to other form Provider
