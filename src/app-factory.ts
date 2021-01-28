@@ -112,7 +112,7 @@ export class AppFactory extends Factory {
       (d) => !rootTokens.includes(d) && !exportedMultiTokens.includes(d)
     );
     const mergedProviders = [...defaultProvidersPerApp, ...exportedProviders];
-    exportedTokensDuplicates = this.getProvidersCollision(exportedTokensDuplicates, mergedProviders);
+    exportedTokensDuplicates = this.getTokensCollisions(exportedTokensDuplicates, mergedProviders);
     if (exportedTokensDuplicates.length) {
       this.throwProvidersCollisionError(appModule.name, exportedTokensDuplicates);
     }

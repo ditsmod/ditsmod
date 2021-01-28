@@ -73,7 +73,7 @@ export abstract class Factory {
     return uniqProviders;
   }
 
-  protected getProvidersCollision(duplTokens: any[], providers: Provider[]) {
+  protected getTokensCollisions(duplTokens: any[], providers: Provider[]) {
     duplTokens = duplTokens || [];
     providers = providers || [];
     const duplProviders: Provider[] = [];
@@ -87,6 +87,7 @@ export abstract class Factory {
       });
 
     const normDuplProviders = normalizeProviders(duplProviders);
+
     return duplTokens.filter((dulpToken) => {
       let prevProvider: Provider;
 

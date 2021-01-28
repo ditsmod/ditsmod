@@ -16,8 +16,8 @@ describe('Factory', () => {
       return super.getUniqProviders(providers);
     }
 
-    getProvidersCollision(duplTokens: any[], providers: Provider[]) {
-      return super.getProvidersCollision(duplTokens, providers);
+    getTokensCollisions(duplTokens: any[], providers: Provider[]) {
+      return super.getTokensCollisions(duplTokens, providers);
     }
   }
 
@@ -27,11 +27,11 @@ describe('Factory', () => {
     mock = new MockFactory();
   });
 
-  describe('getProvidersCollision()', () => {
+  describe('getTokensCollisions()', () => {
     it('case 1', () => {
       let duplTokens: any[] = [Provider1, Provider2];
       const providers: Provider[] = [Provider1, Provider2, Provider4, Provider3, Provider5, Provider2, Provider1];
-      duplTokens = mock.getProvidersCollision(duplTokens, providers);
+      duplTokens = mock.getTokensCollisions(duplTokens, providers);
       expect(duplTokens).toEqual([]);
     });
 
@@ -45,7 +45,7 @@ describe('Factory', () => {
         { provide: Provider7, useClass: Provider7 },
         { provide: Provider7, useClass: Provider6 },
       ];
-      duplTokens = mock.getProvidersCollision(duplTokens, providers);
+      duplTokens = mock.getTokensCollisions(duplTokens, providers);
       expect(duplTokens).toEqual([Provider3, Provider7]);
     });
 
@@ -59,7 +59,7 @@ describe('Factory', () => {
         { provide: Provider6, useClass: Provider6 },
         { provide: Provider7, useClass: Provider7 },
       ];
-      duplTokens = mock.getProvidersCollision(duplTokens, providers);
+      duplTokens = mock.getTokensCollisions(duplTokens, providers);
       expect(duplTokens).toEqual([]);
     });
   });

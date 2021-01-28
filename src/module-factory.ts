@@ -315,7 +315,7 @@ export class ModuleFactory extends Factory {
     let duplExpPerMod = getDuplicates(exportedTokensPerMod).filter(
       (d) => !declaredTokensPerMod.includes(d) && !multiTokensPerMod.includes(d)
     );
-    duplExpPerMod = this.getProvidersCollision(duplExpPerMod, this.allExportedProvidersPerMod);
+    duplExpPerMod = this.getTokensCollisions(duplExpPerMod, this.allExportedProvidersPerMod);
     const tokensPerMod = [...declaredTokensPerMod, ...exportedTokensPerMod];
 
     const declaredTokensPerReq = normalizeProviders(this.opts.providersPerReq).map((np) => np.provide);
@@ -325,7 +325,7 @@ export class ModuleFactory extends Factory {
     let duplExpPerReq = getDuplicates(exportedTokensPerReq).filter(
       (d) => !declaredTokensPerReq.includes(d) && !multiTokensPerReq.includes(d)
     );
-    duplExpPerReq = this.getProvidersCollision(duplExpPerReq, this.allExportedProvidersPerReq);
+    duplExpPerReq = this.getTokensCollisions(duplExpPerReq, this.allExportedProvidersPerReq);
 
     const mixPerApp = tokensPerApp.filter((p) => {
       if (exportedTokensPerMod.includes(p) && !declaredTokensPerMod.includes(p)) {
