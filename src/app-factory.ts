@@ -6,7 +6,7 @@ import { ReflectiveInjector, reflector, Provider, Type, resolveForwardRef } from
 
 import { ApplicationMetadata, RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
 import { RequestListener } from './types/types';
-import { isHttp2SecureServerOptions, isRootModule } from './utils/type-guards';
+import { isHttp2SecureServerOptions, isObjProvider, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
 import { ModuleFactory } from './module-factory';
@@ -95,15 +95,14 @@ export class AppFactory extends Factory {
   }
 
   /**
-   * 1. checks collisions for non-root providers per app;
-   * 2. then merges prepared providers with providers that declared on root module;
-   * 3. then sets merged providers to `this.opts.providersPerApp`.
+   * 1. checks collisions for non-root exported providers per app;
+   * 2. then merges these prepared providers with providers that declared on root module.
    */
   protected prepareProvidersPerApp(appModule: ModuleType) {
     // Here we work only with tokens and providers declared at the application level.
 
     const exportedProviders = this.importProvidersPerApp(appModule);
-    const rootTokens = normalizeProviders(this.opts.providersPerApp).map((np) => np.provide);
+    const rootTokens = this.opts.providersPerApp.filter(isObjProvider).map((op) => op.provide);
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.provide);
     const exportedMultiTokens = exportedNormProviders.filter((np) => np.multi).map((np) => np.provide);
