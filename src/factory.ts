@@ -73,22 +73,25 @@ export abstract class Factory {
     return uniqProviders;
   }
 
-  protected getTokensCollisions(duplTokens: any[], providers: Provider[]) {
-    duplTokens = duplTokens || [];
+  /**
+   * Returns array of uniq tokens.
+   */
+  protected getTokensCollisions(uniqDuplTokens: any[], providers: Provider[]) {
+    uniqDuplTokens = uniqDuplTokens || [];
     providers = providers || [];
     const duplProviders: Provider[] = [];
 
     normalizeProviders(providers)
       .map((np) => np.provide)
       .forEach((currToken, currIndex) => {
-        if (duplTokens.includes(currToken)) {
+        if (uniqDuplTokens.includes(currToken)) {
           duplProviders.push(providers[currIndex]);
         }
       });
 
     const normDuplProviders = normalizeProviders(duplProviders);
 
-    return duplTokens.filter((dulpToken) => {
+    return uniqDuplTokens.filter((dulpToken) => {
       let prevProvider: Provider;
 
       for (let i = 0; i < normDuplProviders.length; i++) {
@@ -100,13 +103,20 @@ export abstract class Factory {
         if (!prevProvider) {
           prevProvider = currProvider;
         }
+
+        // If we have a replacement for some provider - this is a collision.
+
         if (isProvider(prevProvider) && isProvider(currProvider)) {
           if (prevProvider.provide !== currProvider.provide || format(prevProvider) != format(currProvider)) {
             return true;
           }
-        } else if (prevProvider !== currProvider) {
-          return true;
+          continue;
         }
+        // TODO Remove it after a while.
+        // else if (prevProvider !== currProvider) {
+        //   return true;
+        // }
+        throw new TypeError(`Unrecognized providers found: ${prevProvider} and ${currProvider}`);
       }
     });
   }

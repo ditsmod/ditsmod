@@ -27,15 +27,15 @@ describe('Factory', () => {
     mock = new MockFactory();
   });
 
-  describe('getTokensCollisions()', () => {
-    it('case 1', () => {
+  fdescribe('getTokensCollisions()', () => {
+    it('should returns empty array because duplicates are indentical', () => {
       let duplTokens: any[] = [Provider1, Provider2];
       const providers: Provider[] = [Provider1, Provider2, Provider4, Provider3, Provider5, Provider2, Provider1];
       duplTokens = mock.getTokensCollisions(duplTokens, providers);
       expect(duplTokens).toEqual([]);
     });
 
-    it('case 2', () => {
+    it('should returns array with some providers because duplicates are non indentical', () => {
       let duplTokens: any[] = [Provider3, Provider7];
       const providers: Provider[] = [
         Provider4,
