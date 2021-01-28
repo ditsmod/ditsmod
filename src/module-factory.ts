@@ -342,7 +342,7 @@ export class ModuleFactory extends Factory {
 
     const collisions = [...duplExpPerMod, ...duplExpPerReq, ...mixPerApp, ...mixPerModOrReq];
     if (collisions.length) {
-      this.throwProvidersCollision(this.moduleName, collisions);
+      this.throwProvidersCollisionError(this.moduleName, collisions);
     }
   }
 

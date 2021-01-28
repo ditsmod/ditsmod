@@ -115,7 +115,7 @@ export class AppFactory extends Factory {
     const mergedProviders = [...defaultProvidersPerApp, ...exportedProviders];
     exportedTokensDuplicates = this.getProvidersCollision(exportedTokensDuplicates, mergedProviders);
     if (exportedTokensDuplicates.length) {
-      this.throwProvidersCollision(appModule.name, exportedTokensDuplicates);
+      this.throwProvidersCollisionError(appModule.name, exportedTokensDuplicates);
     }
     this.opts.providersPerApp.unshift(...exportedProviders);
   }

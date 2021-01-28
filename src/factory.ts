@@ -9,7 +9,7 @@ import { deepFreeze } from './utils/deep-freeze';
 import { normalizeProviders } from './utils/ng-utils';
 
 export abstract class Factory {
-  protected throwProvidersCollision(moduleName: string, duplicates: any[]) {
+  protected throwProvidersCollisionError(moduleName: string, duplicates: any[]) {
     const names = duplicates.map((p) => p.name || p).join(', ');
     const provider = duplicates.length > 1 ? 'these providers' : 'this provider';
     throw new Error(
