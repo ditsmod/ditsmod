@@ -37,16 +37,15 @@ export abstract class Factory {
     modOrObject: Type<any> | ModuleWithOptions<any>,
     isRoot?: boolean
   ) {
-    let modMetadata: T;
     const typeGuard = isRoot ? isRootModule : (m: ModuleDecorator) => isModule(m) || isRootModule(m);
-    const Metadata = isRoot ? RootModule : Module;
 
     if (isModuleWithOptions(modOrObject)) {
       const modWitOptions = modOrObject;
-      modMetadata = reflector.annotations(modWitOptions.module).find(typeGuard) as T;
+      const modMetadata: T = reflector.annotations(modWitOptions.module).find(typeGuard) as T;
       const modName = this.getModuleName(modWitOptions.module);
       this.checkModuleMetadata(modMetadata, modName, isRoot);
 
+      const Metadata = isRoot ? RootModule : Module;
       const metadata = new Metadata(modMetadata);
       metadata.providersPerApp = mergeArrays(modMetadata.providersPerApp, modWitOptions.providersPerApp);
       metadata.providersPerMod = mergeArrays(modMetadata.providersPerMod, modWitOptions.providersPerMod);
