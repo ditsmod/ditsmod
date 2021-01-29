@@ -75,6 +75,8 @@ export abstract class Factory {
 
   /**
    * Returns array of uniq tokens.
+   *
+   * If you have a replacement for some provider - you have a collision.
    */
   protected getTokensCollisions(uniqDuplTokens: any[], providers: Provider[]) {
     uniqDuplTokens = uniqDuplTokens || [];
@@ -103,8 +105,6 @@ export abstract class Factory {
         if (!prevProvider) {
           prevProvider = currProvider;
         }
-
-        // If we have a replacement for some provider - this is a collision.
 
         if (isProvider(prevProvider) && isProvider(currProvider)) {
           if (prevProvider.provide !== currProvider.provide || format(prevProvider) != format(currProvider)) {
