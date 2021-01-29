@@ -120,7 +120,7 @@ export class AppFactory extends Factory {
   }
 
   /**
-   * Recursively assembles per app providers from non-root modules.
+   * Recursively collects per app providers from non-root modules.
    */
   protected importProvidersPerApp(modOrObject: Type<any> | ModuleWithOptions<any>) {
     const modName = this.getModuleName(modOrObject);
