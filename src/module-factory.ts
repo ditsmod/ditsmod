@@ -223,12 +223,12 @@ export class ModuleFactory extends Factory {
 
   /**
    * @param modOrObject Module from where exports providers.
-   * @param soughtProvider Normalized provider.
+   * @param desiredProvider Normalized provider.
    */
   protected importProviders(
     isStarter: boolean,
     modOrObject: Type<any> | ModuleWithOptions<any>,
-    soughtProvider?: NormalizedProvider
+    desiredProvider?: NormalizedProvider
   ) {
     const { exports: exp, imports, providersPerMod, providersPerReq } = this.getNormalizedMetadata(modOrObject);
     const moduleName = this.getModuleName(modOrObject);
@@ -237,12 +237,12 @@ export class ModuleFactory extends Factory {
       const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType);
       if (moduleMetadata) {
         const reexportedModuleOrObject = moduleOrProvider as ModuleType | ModuleWithOptions<any>;
-        this.importProviders(false, reexportedModuleOrObject, soughtProvider);
+        this.importProviders(false, reexportedModuleOrObject, desiredProvider);
       } else {
         const provider = moduleOrProvider as Provider;
         const normProvider = normalizeProviders([provider])[0];
         const providerName = normProvider.provide.name || normProvider.provide;
-        if (soughtProvider && soughtProvider.provide !== normProvider.provide) {
+        if (desiredProvider && desiredProvider.provide !== normProvider.provide) {
           continue;
         }
         let foundProvider = this.findAndSetProvider(provider, normProvider, providersPerMod, providersPerReq);
@@ -264,13 +264,13 @@ export class ModuleFactory extends Factory {
           );
         }
 
-        if (soughtProvider) {
+        if (desiredProvider) {
           return true;
         }
       }
     }
 
-    if (soughtProvider) {
+    if (desiredProvider) {
       return;
     }
 
@@ -294,17 +294,17 @@ export class ModuleFactory extends Factory {
     providersPerMod: Provider[],
     providersPerReq: Provider[]
   ) {
-    if (hasProvider(providersPerMod)) {
+    if (hasProviderIn(providersPerMod)) {
       this.exportedProvidersPerMod.push(provider);
       return true;
-    } else if (hasProvider(providersPerReq)) {
+    } else if (hasProviderIn(providersPerReq)) {
       this.exportedProvidersPerReq.push(provider);
       return true;
     }
 
     return false;
 
-    function hasProvider(providers: Provider[]) {
+    function hasProviderIn(providers: Provider[]) {
       const normProviders = normalizeProviders(providers);
       return normProviders.some((p) => p.provide === normProvider.provide);
     }
