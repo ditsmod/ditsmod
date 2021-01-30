@@ -324,19 +324,19 @@ export class ModuleFactory extends Factory {
 
     function hasProviderIn(providers: Provider[]) {
       const normProviders = normalizeProviders(providers);
-      const { provide: token, isExport } = normProvider;
+      const { provide: token } = normProvider;
       const providerName = token.name || token;
 
-      const hasProvider = normProviders.some((p) => p.provide === token);
+      const foundProvider = normProviders.find((p) => p.provide === token);
 
-      if (hasProvider && isExport) {
+      if (foundProvider?.isExport) {
         const msg =
           `Exporting providers failed: in ${moduleName} found conflict with "${providerName}".` +
           ` This provider must be removed from the "exports" array` +
           ` or the "isExport" property must be removed from it.`;
         throw new Error(msg);
       }
-      return hasProvider;
+      return Boolean(foundProvider);
     }
   }
 
