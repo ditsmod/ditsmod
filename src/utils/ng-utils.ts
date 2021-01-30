@@ -50,7 +50,7 @@ export function normalizeProviders(providers: Provider[], arrayOfProviders: Norm
     }
   });
 
-  return arrayOfProviders;
+  return arrayOfProviders as (NormalizedProvider & { isExport?: boolean })[];
 }
 
 export type NormalizedProvider = ValueProvider | ClassProvider | ExistingProvider | FactoryProvider;
