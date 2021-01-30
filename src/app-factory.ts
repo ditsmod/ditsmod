@@ -6,7 +6,7 @@ import { ReflectiveInjector, reflector, Provider, Type, resolveForwardRef } from
 
 import { ApplicationMetadata, RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
 import { RequestListener } from './types/types';
-import { isHttp2SecureServerOptions, isObjProvider, isRootModule } from './utils/type-guards';
+import { isHttp2SecureServerOptions, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
 import { ModuleFactory } from './module-factory';
@@ -102,7 +102,7 @@ export class AppFactory extends Factory {
     // Here we work only with providers declared at the application level.
 
     const exportedProviders = this.importProvidersPerApp(appModule);
-    const rootTokens = this.opts.providersPerApp.filter(isObjProvider).map((op) => op.provide);
+    const rootTokens = normalizeProviders(this.opts.providersPerApp).map((np) => np.provide);
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.provide);
     const exportedMultiTokens = exportedNormProviders.filter((np) => np.multi).map((np) => np.provide);
