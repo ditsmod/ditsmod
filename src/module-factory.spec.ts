@@ -11,7 +11,7 @@ import {
   ModuleDecorator,
   ProvidersMetadata,
   defaultProvidersPerReq,
-  ExportableProviders,
+  ExportableProvider,
 } from './decorators/module';
 import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
@@ -138,7 +138,7 @@ describe('ModuleFactory', () => {
 
       const moduleMetadata = mock.getNormalizedMetadata(Module1);
       expect(() => mock.quickCheckMetadata(moduleMetadata)).toThrow(
-        `Import MockModule failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`
+        /Importing MockModule failed: this module should have/
       );
     });
 
@@ -158,7 +158,7 @@ describe('ModuleFactory', () => {
 
       const moduleMetadata = mock.getNormalizedMetadata(Module2);
       expect(() => mock.quickCheckMetadata(moduleMetadata)).toThrow(
-        `Import MockModule failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`
+        /Importing MockModule failed: this module should have/
       );
     });
 
@@ -324,7 +324,7 @@ describe('ModuleFactory', () => {
         const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
-        const errMsg = `Import Module5 failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`;
+        const errMsg = /Importing Module5 failed: this module should have/;
         expect(() => mock.bootstrap(new ProvidersMetadata(), 'api', '', Module5)).toThrow(errMsg);
       });
 
@@ -352,20 +352,22 @@ describe('ModuleFactory', () => {
       });
     });
 
-    describe(`collisions`, () => {
+    describe(`Collisions`, () => {
       describe(`per a module`, () => {
         @Module({
-          providersPerMod: [{ provide: Provider1, useClass: Provider1, export: true }, Provider2],
+          providersPerMod: [{ provide: Provider1, useClass: Provider1, isExport: true }, Provider2],
         })
         class Module0 {}
 
         @Module({
-          providersPerMod: [{ provide: Provider2, useFactory: () => {}, export: true }],
           exports: [Provider1],
         })
         class Module1 {
           static withOptions() {
-            return { module: Module1 };
+            return {
+              module: Module1,
+              providersPerMod: [Provider1, { provide: Provider2, useFactory: () => {}, isExport: true }],
+            };
           }
         }
 
@@ -389,17 +391,12 @@ describe('ModuleFactory', () => {
         });
 
         it(`mix exporting duplicates with "multi == true" per app and per mod`, () => {
-          const ObjProviderPerApp: ExportableProviders = {
+          const ObjProviderPerApp: ExportableProvider = { provide: Provider1, useClass: Provider1, multi: true };
+          const ObjProviderPerMod: ExportableProvider = {
             provide: Provider1,
             useClass: Provider1,
             multi: true,
-            export: true,
-          };
-          const ObjProviderPerMod: ExportableProviders = {
-            provide: Provider1,
-            useClass: Provider1,
-            multi: true,
-            export: true,
+            isExport: true,
           };
           @Module({
             providersPerMod: [ObjProviderPerMod, Provider2],
@@ -424,7 +421,12 @@ describe('ModuleFactory', () => {
         });
 
         it(`exporting duplicates with "multi == true" not to throw`, () => {
-          const ObjProvider = { provide: Provider1, useClass: Provider1, multi: true };
+          const ObjProvider: ExportableProvider = {
+            provide: Provider1,
+            useClass: Provider1,
+            multi: true,
+            isExport: true,
+          };
           @Module({
             providersPerMod: [ObjProvider, Provider2],
           })
@@ -453,7 +455,7 @@ describe('ModuleFactory', () => {
           expect(() => mockApp.prepareServerOptions(RootModule1)).not.toThrow();
         });
 
-        it(`exporting duplicates of Provider1 from Module0 and Module1`, () => {
+        it(`exporting duplicates of Provider1 from Module1 and Module2`, () => {
           @RootModule({
             imports: [Module0, Module1.withOptions()],
           })
@@ -465,7 +467,7 @@ describe('ModuleFactory', () => {
           expect(() => mockApp.prepareServerOptions(RootModule1)).toThrow(msg);
         });
 
-        it(`exporting duplicates of Provider1 from Module0 and Module1, but declared in providersPerMod of root module`, () => {
+        it(`exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerMod of root module`, () => {
           @RootModule({
             imports: [Module0, Module1.withOptions()],
             providersPerMod: [Provider1],
@@ -478,20 +480,20 @@ describe('ModuleFactory', () => {
 
       describe(`per a req`, () => {
         @Module({
-          providersPerReq: [{ provide: Provider1, useClass: Provider1, export: true }, Provider2],
+          providersPerReq: [{ provide: Provider1, useClass: Provider1, isExport: true }, Provider2],
         })
         class Module0 {}
 
         @Module({
           exports: [Provider2],
-          providersPerReq: [{ provide: Provider1, useExisting: Provider1, export: true }, Provider2],
+          providersPerReq: [{ provide: Provider1, useExisting: Provider1, isExport: true }, Provider2],
         })
         class Module1 {}
 
         @Module({
           imports: [Module1],
           exports: [Module1, Provider3],
-          providersPerReq: [{ provide: Provider2, useClass: Provider2, export: true }, Provider3],
+          providersPerReq: [{ provide: Provider2, useClass: Provider2, isExport: true }, Provider3],
         })
         class Module2 {}
 
@@ -548,9 +550,9 @@ describe('ModuleFactory', () => {
             providersPerReq: [
               { provide: Provider1, useClass: Provider1 },
               Provider2,
-              { provide: NodeReqToken, useValue: '', export: true },
               Provider3,
-              { provide: Request, useClass: Request, export: true },
+              { provide: Request, useClass: Request, isExport: true },
+              { provide: NodeReqToken, useValue: '', isExport: true },
             ],
           })
           class Module0 {}
