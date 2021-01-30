@@ -110,12 +110,9 @@ export abstract class Factory {
             return true;
           }
           continue;
+        } else if (prevProvider !== currProvider) {
+          return true;
         }
-        // TODO Remove it after a while.
-        // else if (prevProvider !== currProvider) {
-        //   return true;
-        // }
-        throw new TypeError(`Unrecognized providers found: ${prevProvider} and ${currProvider}`);
       }
     });
   }
