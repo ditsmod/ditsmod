@@ -5,7 +5,7 @@ import { RootModule, RootModuleDecorator } from '../decorators/root-module';
 import { ModuleDecorator, Module } from '../decorators/module';
 import { Controller, ControllerDecorator } from '../decorators/controller';
 import { Route, RouteDecoratorMetadata, CanActivate } from '../decorators/route';
-import { isRootModule, isModule, isController, isRoute, isProvider, isObjProvider } from './type-guards';
+import { isRootModule, isModule, isController, isRoute, isProvider, isNormalizedProvider } from './type-guards';
 
 describe('type-guards', () => {
   describe('isRootModule()', () => {
@@ -86,7 +86,7 @@ describe('type-guards', () => {
     });
   });
 
-  describe('isObjProvider()', () => {
+  describe('isNormalizedProvider()', () => {
     it('should recognize all types of providers', () => {
       const providers: Provider[] = [
         { provide: '', useValue: '' },
@@ -94,17 +94,17 @@ describe('type-guards', () => {
         { provide: '', useExisting: class {} },
         { provide: '', useFactory: class {} },
       ];
-      expect(isObjProvider(providers)).toBe(true);
+      expect(isNormalizedProvider(providers)).toBe(true);
     });
 
     it('should fail class types of providers', () => {
       const providers: Provider[] = [class {}];
-      expect(isObjProvider(providers)).toBe(false);
+      expect(isNormalizedProvider(providers)).toBe(false);
     });
 
     it('should fail check number', () => {
       const providers: Provider[] = [5 as any];
-      expect(isObjProvider(providers)).toBe(false);
+      expect(isNormalizedProvider(providers)).toBe(false);
     });
   });
 });

@@ -8,8 +8,8 @@ import {
   ValueProvider,
 } from '@ts-stack/di';
 
-import { normalizeProviders } from './ng-utils';
-import { ModuleDecorator, ModuleWithOptions } from '../decorators/module';
+import { NormalizedProvider, normalizeProviders } from './ng-utils';
+import { ExportableProvider, ModuleDecorator, ModuleWithOptions } from '../decorators/module';
 import { RootModuleDecorator } from '../decorators/root-module';
 import { ControllerDecorator } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
@@ -78,7 +78,7 @@ export function isProvider(
   provider = Array.isArray(provider) ? provider : [provider];
   const arrProviders = normalizeProviders(provider);
 
-  return isObjProvider(arrProviders);
+  return isNormalizedProvider(arrProviders);
 }
 
 /**
@@ -87,9 +87,7 @@ export function isProvider(
  * { provide: SomeClas, useClass: OtherClass }
  * ```
  */
-export function isObjProvider(
-  provider: Provider
-): provider is ValueProvider | ClassProvider | ExistingProvider | FactoryProvider {
+export function isNormalizedProvider(provider: Provider): provider is NormalizedProvider {
   const providers = Array.isArray(provider) ? provider : [provider];
 
   return providers.every(ok);
@@ -100,4 +98,8 @@ export function isObjProvider(
   function ok(prov: Provider) {
     return isValueProvider(prov) || isClassProvider(prov) || isExistingProvider(prov) || isFactoryProvider(prov);
   }
+}
+
+export function isExportableProvider(provider: Provider): provider is ExportableProvider {
+  return isNormalizedProvider(provider) && (provider as ExportableProvider).isExport;
 }
