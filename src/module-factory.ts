@@ -15,11 +15,12 @@ import {
   ModuleType,
   ModuleWithOptions,
   ProvidersMetadata,
+  ExportableProvider,
 } from './decorators/module';
 import { RouteDecoratorMetadata, RouteMetadata } from './decorators/route';
 import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
-import { isRootModule, isController, isRoute, isImportsWithPrefix } from './utils/type-guards';
+import { isRootModule, isController, isRoute, isImportsWithPrefix, isExportableProvider } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
 import { Router, ImportsWithPrefix, ImportsWithPrefixDecorator, GuardItems } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
@@ -145,11 +146,15 @@ export class ModuleFactory extends Factory {
       !isRootModule(moduleMetadata as any) &&
       !moduleMetadata.providersPerApp.length &&
       !moduleMetadata.controllers.length &&
-      !moduleMetadata.exports.length
+      !moduleMetadata.exports.length &&
+      !moduleMetadata.providersPerMod.filter(isExportableProvider).length &&
+      !moduleMetadata.providersPerReq.filter(isExportableProvider).length
     ) {
-      throw new Error(
-        `Import ${this.moduleName} failed: this module should have "providersPerApp" or some controllers or "exports" array with elements.`
-      );
+      const msg =
+        `Importing ${this.moduleName} failed: this module should have "providersPerApp"` +
+        ` or some controllers, or "exports" array with elements,` +
+        ` or elements with "isExport" property in "providersPerMod" or "providersPerReq" arrays.`;
+      throw new Error(msg);
     }
   }
 
@@ -245,7 +250,13 @@ export class ModuleFactory extends Factory {
         if (desiredProvider && desiredProvider.provide !== normProvider.provide) {
           continue;
         }
-        let foundProvider = this.findAndSetProvider(provider, normProvider, providersPerMod, providersPerReq);
+        let foundProvider = this.findAndSetProvider(
+          moduleName,
+          provider,
+          normProvider,
+          providersPerMod,
+          providersPerReq
+        );
         if (!foundProvider) {
           for (const imp of imports) {
             foundProvider = this.importProviders(false, imp.module, normProvider);
@@ -274,23 +285,30 @@ export class ModuleFactory extends Factory {
       return;
     }
 
-    if (isStarter) {
-      this.allExportedProvidersPerMod.push(...this.exportedProvidersPerMod);
-      this.allExportedProvidersPerReq.push(...this.exportedProvidersPerReq);
-    } else {
+    const exportableProvidersPerMod = providersPerMod.filter(isExportableProvider);
+    const exportableProvidersPerReq = providersPerReq.filter(isExportableProvider);
+    let perMod: Provider[] = [...this.exportedProvidersPerMod, ...exportableProvidersPerMod];
+    let perReq: Provider[] = [...this.exportedProvidersPerReq, ...exportableProvidersPerReq];
+
+    if (!isStarter) {
       /**
        * Removed duplicates only during exporting providers from the whole module.
        */
-      this.allExportedProvidersPerMod.push(...this.getUniqProviders(this.exportedProvidersPerMod));
-      this.allExportedProvidersPerReq.push(...this.getUniqProviders(this.exportedProvidersPerReq));
+      perMod = this.getUniqProviders(perMod);
+      perReq = this.getUniqProviders(perReq);
     }
+
+    this.allExportedProvidersPerMod.push(...perMod);
+    this.allExportedProvidersPerReq.push(...perReq);
+
     this.exportedProvidersPerMod = [];
     this.exportedProvidersPerReq = [];
   }
 
   protected findAndSetProvider(
+    moduleName: string,
     provider: Provider,
-    normProvider: NormalizedProvider,
+    normProvider: ExportableProvider,
     providersPerMod: Provider[],
     providersPerReq: Provider[]
   ) {
@@ -306,7 +324,19 @@ export class ModuleFactory extends Factory {
 
     function hasProviderIn(providers: Provider[]) {
       const normProviders = normalizeProviders(providers);
-      return normProviders.some((p) => p.provide === normProvider.provide);
+      const { provide: token, isExport } = normProvider;
+      const providerName = token.name || token;
+
+      const hasProvider = normProviders.some((p) => p.provide === token);
+
+      if (hasProvider && isExport) {
+        const msg =
+          `Exporting providers failed: in ${moduleName} found conflict with "${providerName}".` +
+          ` This provider must be removed from the "exports" array` +
+          ` or the "isExport" property must be removed from it.`;
+        throw new Error(msg);
+      }
+      return hasProvider;
     }
   }
 
