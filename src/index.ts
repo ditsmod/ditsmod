@@ -6,7 +6,7 @@ export { NodeRequest, NodeResponse, Fn, RedirectStatusCodes } from './types/serv
 export { Logger, LoggerMethod, LoggerConfig } from './types/logger';
 export { HttpMethod, Router, RouteParam, RouterReturns } from './types/router';
 export { Controller } from './decorators/controller';
-export { Module } from './decorators/module';
+export { Module, ExportableProvider } from './decorators/module';
 export { RootModule } from './decorators/root-module';
 export { Route, CanActivate, DecoratorGuardItem } from './decorators/route';
 export { BodyParser } from './services/body-parser';

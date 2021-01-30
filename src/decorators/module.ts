@@ -7,6 +7,7 @@ import { Response } from '../response';
 import { deepFreeze } from '../utils/deep-freeze';
 import { ControllerErrorHandler } from '../types/types';
 import { DefaultControllerErrorHandler } from '../services/default-controller-error-handler';
+import { NormalizedProvider } from 'src/utils/ng-utils';
 
 export const defaultProvidersPerReq: Readonly<Provider[]> = deepFreeze([
   Request,
@@ -21,9 +22,12 @@ export interface ModuleDecoratorFactory {
 }
 
 export const Module = makeDecorator('Module', (data: any) => data) as ModuleDecoratorFactory;
-export type ExportableProviders = Provider & {
+/**
+ * Normalized provider with `export` property.
+ */
+export type ExportableProvider = NormalizedProvider & {
   /** Need or not export this provider? */
-  export?: boolean;
+  isExport?: boolean;
 };
 
 /**
@@ -37,11 +41,11 @@ export class ProvidersMetadata {
   /**
    * Providers per a module.
    */
-  providersPerMod: ExportableProviders[] = [];
+  providersPerMod: (Provider | ExportableProvider)[] = [];
   /**
    * Providers per a request.
    */
-  providersPerReq: ExportableProviders[] = [];
+  providersPerReq: (Provider | ExportableProvider)[] = [];
 }
 
 export interface ModuleWithOptions<T> extends Partial<ProvidersMetadata> {
