@@ -145,7 +145,7 @@ describe('AppFactory', () => {
 
       mock.mergeMetadata(RootModule1);
       const msg =
-        `Exporting providers in RootModule1 was failed: Collision was found for: ` +
+        `Exporting providers in RootModule1 was failed: found collision for: ` +
         `Provider1. You should manually add this provider to RootModule1.`;
       expect(() => mock.prepareProvidersPerApp(RootModule1)).toThrow(msg);
     });
