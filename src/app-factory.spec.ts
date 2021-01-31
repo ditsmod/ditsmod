@@ -150,33 +150,30 @@ describe('AppFactory', () => {
       expect(() => mock.prepareProvidersPerApp(RootModule1)).toThrow(msg);
     });
 
-    @RootModule({ providersPerApp: duplicates })
-    class RootModule2 {}
-
     it(`case 2`, () => {
+      @RootModule({ providersPerApp: duplicates })
+      class RootModule2 {}
       mock.mergeMetadata(RootModule2);
       expect(() => mock.prepareProvidersPerApp(RootModule2)).not.toThrow();
       expect(mock.opts.providersPerApp.length).toBe(2);
     });
 
-    @RootModule({
-      imports: [ModuleWithDuplicates],
-      providersPerApp: duplicates,
-    })
-    class RootModule3 {}
-
     it(`case 3`, () => {
+      @RootModule({
+        imports: [ModuleWithDuplicates],
+        providersPerApp: duplicates,
+      })
+      class RootModule3 {}
       mock.mergeMetadata(RootModule3);
       expect(() => mock.prepareProvidersPerApp(RootModule3)).not.toThrow();
       expect(mock.opts.providersPerApp.length).toBe(3);
     });
 
-    @RootModule({
-      imports: [],
-    })
-    class RootModule4 {}
-
     it(`case 4`, () => {
+      @RootModule({
+        imports: [],
+      })
+      class RootModule4 {}
       mock.mergeMetadata(RootModule4);
       expect(() => mock.prepareProvidersPerApp(RootModule4)).not.toThrow();
     });
@@ -220,6 +217,7 @@ describe('AppFactory', () => {
 
     @Module({
       imports: [Module3],
+      providersPerApp: [{ provide: Provider1, useClass: Provider7 }],
     })
     class Module4 {}
 
@@ -236,6 +234,7 @@ describe('AppFactory', () => {
         Provider4,
         Provider5,
         Provider6,
+        { provide: Provider1, useClass: Provider7 },
       ]);
     });
 
@@ -248,6 +247,7 @@ describe('AppFactory', () => {
         Provider4,
         Provider5,
         Provider6,
+        { provide: Provider1, useClass: Provider7 },
       ]);
     });
 
@@ -269,6 +269,7 @@ describe('AppFactory', () => {
         Provider4,
         Provider5,
         Provider6,
+        { provide: Provider1, useClass: Provider7 },
         Provider7,
       ]);
     });
