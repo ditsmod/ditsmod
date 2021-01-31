@@ -11,7 +11,6 @@ import {
   ModuleDecorator,
   ProvidersMetadata,
   defaultProvidersPerReq,
-  ExportableProvider,
 } from './decorators/module';
 import { Controller } from './decorators/controller';
 import { Route } from './decorators/route';
@@ -355,19 +354,17 @@ describe('ModuleFactory', () => {
     describe(`Collisions`, () => {
       describe(`per a module`, () => {
         @Module({
-          providersPerMod: [{ provide: Provider1, useClass: Provider1, isExport: true }, Provider2],
+          exports: [{ provide: Provider1, useValue: '' }],
+          providersPerMod: [{ provide: Provider1, useClass: Provider1 }, Provider2],
         })
         class Module0 {}
 
         @Module({
-          exports: [Provider1],
+          exports: [Provider1, { provide: Provider2, useFactory: () => {} }],
         })
         class Module1 {
           static withOptions() {
-            return {
-              module: Module1,
-              providersPerMod: [Provider1, { provide: Provider2, useFactory: () => {}, isExport: true }],
-            };
+            return { module: Module1, providersPerMod: [Provider1, Provider2] };
           }
         }
 
@@ -391,20 +388,17 @@ describe('ModuleFactory', () => {
         });
 
         it(`mix exporting duplicates with "multi == true" per app and per mod`, () => {
-          const ObjProviderPerApp: ExportableProvider = { provide: Provider1, useClass: Provider1, multi: true };
-          const ObjProviderPerMod: ExportableProvider = {
-            provide: Provider1,
-            useClass: Provider1,
-            multi: true,
-            isExport: true,
-          };
+          const ObjProviderPerApp: Provider = { provide: Provider1, useClass: Provider1, multi: true };
+          const ObjProviderPerMod: Provider = { provide: Provider1, useClass: Provider1, multi: true };
           @Module({
+            exports: [ObjProviderPerMod],
             providersPerMod: [ObjProviderPerMod, Provider2],
             providersPerApp: [ObjProviderPerApp],
           })
           class Module00 {}
 
           @Module({
+            exports: [ObjProviderPerMod],
             providersPerMod: [ObjProviderPerMod],
           })
           class Module01 {}
@@ -421,18 +415,15 @@ describe('ModuleFactory', () => {
         });
 
         it(`exporting duplicates with "multi == true" not to throw`, () => {
-          const ObjProvider: ExportableProvider = {
-            provide: Provider1,
-            useClass: Provider1,
-            multi: true,
-            isExport: true,
-          };
+          const ObjProvider: Provider = { provide: Provider1, useClass: Provider1, multi: true };
           @Module({
+            exports: [ObjProvider],
             providersPerMod: [ObjProvider, Provider2],
           })
           class Module00 {}
 
           @Module({
+            exports: [ObjProvider],
             providersPerMod: [ObjProvider],
           })
           class Module01 {}
@@ -480,20 +471,21 @@ describe('ModuleFactory', () => {
 
       describe(`per a req`, () => {
         @Module({
-          providersPerReq: [{ provide: Provider1, useClass: Provider1, isExport: true }, Provider2],
+          exports: [{ provide: Provider1, useClass: Provider1 }],
+          providersPerReq: [{ provide: Provider1, useClass: Provider1 }, Provider2],
         })
         class Module0 {}
 
         @Module({
-          exports: [Provider2],
-          providersPerReq: [{ provide: Provider1, useExisting: Provider1, isExport: true }, Provider2],
+          exports: [{ provide: Provider1, useExisting: Provider1 }, Provider2],
+          providersPerReq: [Provider1, Provider2],
         })
         class Module1 {}
 
         @Module({
           imports: [Module1],
-          exports: [Module1, Provider3],
-          providersPerReq: [{ provide: Provider2, useClass: Provider2, isExport: true }, Provider3],
+          exports: [Module1, { provide: Provider2, useClass: Provider2 }, Provider3],
+          providersPerReq: [Provider2, Provider3],
         })
         class Module2 {}
 
@@ -545,14 +537,20 @@ describe('ModuleFactory', () => {
       describe(`mix per app, per mod or per req`, () => {
         it(`case 1`, () => {
           @Module({
-            exports: [Provider0, Provider1, Provider3],
+            exports: [
+              Provider0,
+              Provider1,
+              { provide: Request, useClass: Request },
+              { provide: NodeReqToken, useValue: '' },
+              Provider3,
+            ],
             providersPerMod: [Provider0],
             providersPerReq: [
               { provide: Provider1, useClass: Provider1 },
               Provider2,
+              { provide: NodeReqToken, useValue: '' },
               Provider3,
-              { provide: Request, useClass: Request, isExport: true },
-              { provide: NodeReqToken, useValue: '', isExport: true },
+              Request,
             ],
           })
           class Module0 {}

@@ -9,12 +9,11 @@ import {
 } from '@ts-stack/di';
 
 import { NormalizedProvider, normalizeProviders } from './ng-utils';
-import { ExportableProvider, ModuleDecorator, ModuleWithOptions } from '../decorators/module';
+import { ModuleDecorator, ModuleWithOptions } from '../decorators/module';
 import { RootModuleDecorator } from '../decorators/root-module';
 import { ControllerDecorator } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
 import { ServerOptions, Http2SecureServerOptions } from '../types/server-options';
-import { ObjectAny } from '../types/types';
 import { ImportsWithPrefixDecorator } from '../types/router';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
@@ -98,8 +97,4 @@ export function isNormalizedProvider(provider: Provider): provider is Normalized
   function ok(prov: Provider) {
     return isValueProvider(prov) || isClassProvider(prov) || isExistingProvider(prov) || isFactoryProvider(prov);
   }
-}
-
-export function isExportableProvider(provider: Provider): provider is ExportableProvider {
-  return isNormalizedProvider(provider) && (provider as ExportableProvider).isExport;
 }

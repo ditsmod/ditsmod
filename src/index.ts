@@ -6,7 +6,7 @@ export { NodeRequest, NodeResponse, Fn, RedirectStatusCodes } from './types/serv
 export { Logger, LoggerMethod, LoggerConfig } from './types/logger';
 export { HttpMethod, Router, RouteParam, RouterReturns } from './types/router';
 export { Controller } from './decorators/controller';
-export { Module, ExportableProvider } from './decorators/module';
+export { Module } from './decorators/module';
 export { RootModule } from './decorators/root-module';
 export { Route, CanActivate, DecoratorGuardItem } from './decorators/route';
 export { BodyParser } from './services/body-parser';
@@ -14,3 +14,4 @@ export { Request } from './request';
 export { Response } from './response';
 export { AppFactory } from './app-factory';
 export { ModuleFactory } from './module-factory';
+export { NormalizedProvider } from './utils/ng-utils';
