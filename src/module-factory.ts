@@ -111,6 +111,7 @@ export class ModuleFactory extends Factory {
     this.checkRoutePath(this.prefixPerMod);
     const prefix = [this.prefixPerApp, this.prefixPerMod].filter((s) => s).join('/');
     this.opts.controllers.forEach((Ctrl) => this.setRoutes(prefix, Ctrl));
+    this.log.trace({ module: mod.name, options: this.opts });
     return { optsMap: this.optsMap.set(mod, this.opts), injectorPerReqMap: this.injectorPerReqMap };
   }
 
@@ -455,11 +456,19 @@ export class ModuleFactory extends Factory {
       guardItems,
     }));
 
-    this.log.trace({
+    const logObj = {
+      module: this.moduleName,
       httpMethod: route.httpMethod,
       path,
-      handler: `${Ctrl.name} -> ${prop}()`,
-    });
+      guards: guardItems,
+      handler: `${Ctrl.name}.${prop}()`,
+    };
+
+    if (!logObj.guards.length) {
+      delete logObj.guards;
+    }
+
+    this.log.trace(logObj);
   }
 
   protected checkRoutePath(path: string) {
