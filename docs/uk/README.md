@@ -54,9 +54,9 @@ Angular v4.4.7. (з мінімальними допрацюваннями) та 
   - [AppFactory][135]
   - [ControllerErrorHandler][124]
   - [BodyParserConfig][128]
-  - [LoggerConfig][144]
   - [PreRequest][129]
   - [Logger][125]
+  - [LoggerConfig][144]
   - [LoggerMethod][136]
   - [Router][131]
   - [RouterReturns][136]
@@ -1312,6 +1312,10 @@ class BodyParser {
 ```ts
 class LoggerConfig {
   level: string = 'info';
+  /**
+   * Determines the depth of the inspect object to be logged.
+   */
+  depth?: number = 4;
 }
 ```
 

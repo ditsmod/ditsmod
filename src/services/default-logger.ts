@@ -1,4 +1,6 @@
+import { inspect } from 'util';
 import { Injectable } from '@ts-stack/di';
+
 import { Logger, LoggerConfig, LoggerMethod } from '../types/logger';
 
 function defaultLoggerFn(fnLevel: keyof Logger, config: LoggerConfig) {
@@ -6,10 +8,14 @@ function defaultLoggerFn(fnLevel: keyof Logger, config: LoggerConfig) {
     const allLevels = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
     const index = allLevels.indexOf(config.level);
     const availableLevels = allLevels.slice(index);
+    const delimiter = '-'.repeat(80);
     if (availableLevels.includes(fnLevel)) {
-      console.log(`[DefaultLogger:${fnLevel}]`, ...args);
+      args = args.length == 1 ? args[0] : args;
+      console.log(`[DefaultLogger:${fnLevel}]`, inspect(args, false, config.depth, true));
+      console.log(delimiter);
     } else if (!allLevels.includes(config.level)) {
       console.log(`[DefaultLogger]`, `unexpected level "${config.level}" (available levels: ${allLevels.join(', ')})`);
+      console.log(delimiter);
     }
   };
 

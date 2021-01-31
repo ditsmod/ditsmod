@@ -46,4 +46,8 @@ export class Logger {
 
 export class LoggerConfig {
   level: string = 'info';
+  /**
+   * Determines the depth of the inspect object to be logged.
+   */
+  depth?: number = 4;
 }
