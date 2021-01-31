@@ -96,7 +96,7 @@ export class AppFactory extends Factory {
 
   /**
    * 1. checks collisions for non-root exported providers per app;
-   * 2. then merges these prepared providers with providers that declared on root module.
+   * 2. then merges these providers with providers that declared on root module.
    */
   protected prepareProvidersPerApp(appModule: ModuleType) {
     // Here we work only with providers declared at the application level.
