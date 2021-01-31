@@ -20,11 +20,11 @@ From second terminal:
 
 ```bash
 curl -isS localhost:8080
-curl -isS localhost:8080/bunyan
 curl -isS localhost:8080/pino
+curl -isS localhost:8080/winston
 ```
 
-As you can see, there are examples for [winston][3], [bunyan][1] and [pino][2] loggers.
+As you can see, there are examples for [bunyan][1], [pino][2] and [winston][3] loggers.
 They work in one application, but in different modules.
 
 [1]: https://github.com/trentm/node-bunyan

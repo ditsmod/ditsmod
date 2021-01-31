@@ -2,7 +2,7 @@ import { Injectable } from '@ts-stack/di';
 import { Logger, LoggerConfig } from '@ts-stack/ditsmod';
 import winston = require('winston');
 
-import { getNamedLogggerMethod } from '../utils/get-named-logger-method';
+import { getNamedLogggerMethod } from '../../utils/get-named-logger-method';
 
 @Injectable()
 export class WinstonService implements Logger {

@@ -1,12 +1,12 @@
 import { Controller, Response, Route, Logger } from '@ts-stack/ditsmod';
 
 @Controller()
-export class BunyanController {
+export class WinstonController {
   constructor(private res: Response, private log: Logger) {}
 
-  @Route('GET', 'bunyan')
+  @Route('GET', 'winston')
   ok() {
     this.res.send('see console of node process\n');
-    this.log.trace('bunyan works!');
+    this.log.trace(`it's works!`);
   }
 }
