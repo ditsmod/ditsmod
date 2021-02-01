@@ -119,7 +119,7 @@ describe('AppFactory', () => {
   });
 
   describe('prepareProvidersPerApp()', () => {
-    it(`should throw error about duplicates in providersPerApp`, () => {
+    it(`should throw an error about non-identical duplicates in feature modules`, () => {
       class Provider1 {}
 
       @Module({ providersPerApp: [{ provide: Provider1, useClass: Provider1 }] })
@@ -140,6 +140,24 @@ describe('AppFactory', () => {
       expect(() => mock.prepareProvidersPerApp(RootModule1)).toThrow(msg);
     });
 
+    it(`should works with identical duplicates in feature modules`, () => {
+      class Provider1 {}
+
+      @Module({ providersPerApp: [Provider1] })
+      class Module1 {}
+
+      @Module({ providersPerApp: [Provider1] })
+      class Module2 {}
+
+      @RootModule({
+        imports: [Module1, Module2],
+      })
+      class RootModule1 {}
+
+      mock.mergeMetadata(RootModule1);
+      expect(() => mock.prepareProvidersPerApp(RootModule1)).not.toThrow();
+    });
+
     it(`should works with duplicates in providersPerApp of root module`, () => {
       class Provider1 {}
 
@@ -151,7 +169,7 @@ describe('AppFactory', () => {
       expect(mock.opts.providersPerApp.length).toBe(2);
     });
 
-    it(`should works with duplicates in root module`, () => {
+    it(`should works with duplicates in root imports module`, () => {
       class Provider1 {}
       const Alias = Provider1;
       const duplicates = [Provider1, Alias];
