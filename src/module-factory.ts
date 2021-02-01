@@ -68,7 +68,7 @@ export class ModuleFactory extends Factory {
    */
   importGlobalProviders(rootModule: Type<any>, globalProviders: ProvidersMetadata) {
     this.moduleName = this.getModuleName(rootModule);
-    const moduleMetadata = this.getNormalizedMetadata(rootModule);
+    const moduleMetadata = this.normalizeMetadata(rootModule);
     this.opts = new ModuleMetadata();
     pickProperties(this.opts, moduleMetadata);
     this.globalProviders = globalProviders;
@@ -98,7 +98,7 @@ export class ModuleFactory extends Factory {
     const mod = this.getModule(modOrObject);
     this.mod = mod;
     this.moduleName = mod.name;
-    const moduleMetadata = this.getNormalizedMetadata(modOrObject);
+    const moduleMetadata = this.normalizeMetadata(modOrObject);
     this.quickCheckMetadata(moduleMetadata);
     this.opts = new ModuleMetadata();
     Object.assign(this.opts, moduleMetadata);
@@ -158,7 +158,7 @@ export class ModuleFactory extends Factory {
   /**
    * Collects and normalizes module metadata.
    */
-  protected getNormalizedMetadata(mod: Type<any> | ModuleWithOptions<any>) {
+  protected normalizeMetadata(mod: Type<any> | ModuleWithOptions<any>) {
     const modMetadata = this.getRawModuleMetadata(mod);
     const modName = this.getModuleName(mod);
     this.checkModuleMetadata(modMetadata, modName);
@@ -232,7 +232,7 @@ export class ModuleFactory extends Factory {
     modOrObject: Type<any> | ModuleWithOptions<any>,
     desiredProvider?: NormalizedProvider
   ) {
-    const { exports: exp, imports, providersPerMod, providersPerReq } = this.getNormalizedMetadata(modOrObject);
+    const { exports: exp, imports, providersPerMod, providersPerReq } = this.normalizeMetadata(modOrObject);
     const moduleName = this.getModuleName(modOrObject);
 
     for (const moduleOrProvider of exp) {
