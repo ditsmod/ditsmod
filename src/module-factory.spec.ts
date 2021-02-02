@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import { ReflectiveInjector, Injectable, Type, Provider } from '@ts-stack/di';
 
 import { ModuleFactory } from './module-factory';
-import { NormalizedProvider } from './utils/ng-utils';
 import {
   Module,
   ModuleMetadata,
@@ -215,7 +214,7 @@ describe('ModuleFactory', () => {
       expect(() => mock.importGlobalProviders(AppModule, metadata)).toThrow(msg);
     });
 
-    fit(`collision with exported providers, but they are redeclared in root module`, () => {
+    it(`collision with exported provider, but they are redeclared in root module`, () => {
       class Provider1 {}
 
       @Module({
@@ -232,14 +231,14 @@ describe('ModuleFactory', () => {
       class Module2 {}
 
       @RootModule({
-        exports: [Module2, { provide: Provider1, useValue: 'two' }],
+        exports: [Module2, Provider1],
         providersPerMod: [Provider1],
       })
       class AppModule {}
 
       const metadata = new ModuleMetadata();
       expect(() => mock.importGlobalProviders(AppModule, metadata)).not.toThrow();
-      const providers = [{ provide: Provider1, useValue: 'one' }, Provider1, { provide: Provider1, useValue: 'two' }];
+      const providers = [{ provide: Provider1, useValue: 'one' }, Provider1, Provider1];
       expect(mock.allExportedProvidersPerMod).toEqual(providers);
     });
 
@@ -523,7 +522,85 @@ describe('ModuleFactory', () => {
       });
     });
 
-    describe(`Collisions`, () => {
+    describe(`Providers collisions`, () => {
+      it(`for non-root module`, () => {
+        const injectorPerApp = ReflectiveInjector.resolveAndCreate([
+          ...defaultProvidersPerApp,
+          { provide: Logger, useClass: MyLogger },
+        ]);
+
+        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+        mock.injectorPerMod = injectorPerApp;
+
+        @Controller()
+        class SomeController {}
+
+        @Module({
+          providersPerMod: [Provider1],
+          exports: [Provider1],
+        })
+        class Module1 {}
+
+        @Module({
+          providersPerMod: [Provider1],
+          exports: [{ provide: Provider1, useValue: 'one' }],
+        })
+        class Module2 {}
+
+        @Module({
+          imports: [Module1, Module2],
+          controllers: [SomeController],
+        })
+        class Module3 {}
+
+        @RootModule({
+          imports: [Module3],
+        })
+        class AppModule {}
+
+        const msg = /Exporting providers in Module3 was failed: found collision for: Provider1/;
+        expect(() => mock.bootstrap(new ProvidersMetadata(), '', '', AppModule)).toThrow(msg);
+      });
+
+      it(`resolved collision for non-root module`, () => {
+        const injectorPerApp = ReflectiveInjector.resolveAndCreate([
+          ...defaultProvidersPerApp,
+          { provide: Logger, useClass: MyLogger },
+        ]);
+
+        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+        mock.injectorPerMod = injectorPerApp;
+
+        @Controller()
+        class SomeController {}
+
+        @Module({
+          providersPerMod: [Provider1],
+          exports: [Provider1],
+        })
+        class Module1 {}
+
+        @Module({
+          providersPerMod: [Provider1],
+          exports: [{ provide: Provider1, useValue: 'one' }],
+        })
+        class Module2 {}
+
+        @Module({
+          imports: [Module1, Module2],
+          controllers: [SomeController],
+          providersPerMod: [{ provide: Provider1, useValue: 'two' }],
+        })
+        class Module3 {}
+
+        @RootModule({
+          imports: [Module3],
+        })
+        class AppModule {}
+
+        expect(() => mock.bootstrap(new ProvidersMetadata(), '', '', AppModule)).not.toThrow();
+      });
+
       describe(`per a module`, () => {
         @Module({
           exports: [{ provide: Provider1, useValue: '' }],
