@@ -31,11 +31,11 @@ export class ProvidersMetadata {
    */
   providersPerApp: Provider[] = [];
   /**
-   * Providers per a module.
+   * Providers per module.
    */
   providersPerMod: Provider[] = [];
   /**
-   * Providers per a request.
+   * Providers per request.
    */
   providersPerReq: Provider[] = [];
 }
