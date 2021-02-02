@@ -225,12 +225,12 @@ export class ModuleFactory extends Factory {
 
   /**
    * @param modOrObject Module from where exports providers.
-   * @param desiredProvider Normalized provider.
+   * @param reexportedProvider Normalized provider.
    */
   protected importProviders(
     isStarter: boolean,
     modOrObject: Type<any> | ModuleWithOptions<any>,
-    desiredProvider?: NormalizedProvider
+    reexportedProvider?: NormalizedProvider
   ) {
     const { exports: exp, imports, providersPerMod, providersPerReq } = this.normalizeMetadata(modOrObject);
     const moduleName = this.getModuleName(modOrObject);
@@ -239,49 +239,58 @@ export class ModuleFactory extends Factory {
       const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType);
       if (moduleMetadata) {
         const reexportedModuleOrObject = moduleOrProvider as ModuleType | ModuleWithOptions<any>;
-        this.importProviders(false, reexportedModuleOrObject, desiredProvider);
+        this.importProviders(false, reexportedModuleOrObject, reexportedProvider);
       } else {
         const provider = moduleOrProvider as Provider;
         const normProvider = normalizeProviders([provider])[0];
-        const providerName = normProvider.provide.name || normProvider.provide;
-        if (desiredProvider && desiredProvider.provide !== normProvider.provide) {
+        if (reexportedProvider && reexportedProvider.provide !== normProvider.provide) {
           continue;
         }
         let foundProvider = this.findAndSetProvider(provider, normProvider, providersPerMod, providersPerReq);
         if (!foundProvider) {
+          // Attempt to find "normProvider" among the imported modules.
+          // If so, this is reexported provider.
           for (const imp of imports) {
             foundProvider = this.importProviders(false, imp.module, normProvider);
             if (foundProvider) {
               break;
             }
           }
+
+          if (!foundProvider) {
+            const providerName = normProvider.provide.name || normProvider.provide;
+            throw new Error(
+              `Exported ${providerName} from ${moduleName} ` +
+                `should includes in "providersPerMod" or "providersPerReq", ` +
+                `or in some "exports" of imported modules. ` +
+                `Tip: "providersPerApp" no need exports, they are automatically exported.`
+            );
+          }
         }
 
-        if (!foundProvider) {
-          throw new Error(
-            `Exported ${providerName} from ${moduleName} ` +
-              `should includes in "providersPerMod" or "providersPerReq", ` +
-              `or in some "exports" of imported modules. ` +
-              `Tip: "providersPerApp" no need exports, they are automatically exported.`
-          );
-        }
-
-        if (desiredProvider) {
+        if (reexportedProvider) {
           return true;
         }
       }
-    }
+    } // end for() loop
 
-    if (desiredProvider) {
+    if (reexportedProvider) {
+      // In current module we can't find reexportedProvider.
       return;
     }
 
-    let perMod: Provider[] = this.exportedProvidersPerMod;
-    let perReq: Provider[] = this.exportedProvidersPerReq;
+    this.mergeWithAllExportedProviders(isStarter);
+  }
+
+  protected mergeWithAllExportedProviders(isStarter: boolean) {
+    let perMod = this.exportedProvidersPerMod;
+    let perReq = this.exportedProvidersPerReq;
+    this.exportedProvidersPerMod = [];
+    this.exportedProvidersPerReq = [];
 
     if (!isStarter) {
       /**
-       * Removed duplicates only during exporting providers from the whole module.
+       * Removed duplicates only during exporting providers from all child modules.
        */
       perMod = this.getUniqProviders(perMod);
       perReq = this.getUniqProviders(perReq);
@@ -289,9 +298,6 @@ export class ModuleFactory extends Factory {
 
     this.allExportedProvidersPerMod.push(...perMod);
     this.allExportedProvidersPerReq.push(...perReq);
-
-    this.exportedProvidersPerMod = [];
-    this.exportedProvidersPerReq = [];
   }
 
   protected findAndSetProvider(
