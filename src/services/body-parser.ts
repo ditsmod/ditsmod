@@ -19,6 +19,6 @@ export class BodyParser {
   }
 
   getJsonBody(): Promise<any> {
-    return parse(this.nodeReq, this.nodeReq.headers);
+    return parse(this.nodeReq, this.nodeReq.headers, { limit: this.config.maxBodySize });
   }
 }
