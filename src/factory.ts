@@ -1,7 +1,7 @@
 import { format } from 'util';
 import { Type, reflector, Provider } from '@ts-stack/di';
 
-import { isModuleWithOptions, isModule, isRootModule, isProvider } from './utils/type-guards';
+import { isModuleWithOptions, isModule, isRootModule, isNormalizedProvider } from './utils/type-guards';
 import { ModuleWithOptions, ModuleDecorator, Module } from './decorators/module';
 import { mergeArrays } from './utils/merge-arrays-options';
 import { RootModule } from './decorators/root-module';
@@ -105,7 +105,7 @@ export abstract class Factory {
           prevProvider = currProvider;
         }
 
-        if (isProvider(prevProvider) && isProvider(currProvider)) {
+        if (isNormalizedProvider(prevProvider) && isNormalizedProvider(currProvider)) {
           if (prevProvider.provide !== currProvider.provide || format(prevProvider) != format(currProvider)) {
             return true;
           }
