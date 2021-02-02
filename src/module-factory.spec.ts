@@ -49,12 +49,8 @@ describe('ModuleFactory', () => {
       return super.normalizeMetadata(mod);
     }
 
-    importProviders(
-      isStarter: boolean,
-      modOrObject: Type<any> | ModuleWithOptions<any>,
-      soughtProvider: NormalizedProvider
-    ) {
-      return super.importProviders(isStarter, modOrObject, soughtProvider);
+    importProviders(isStarter: boolean, modOrObject: Type<any> | ModuleWithOptions<any>) {
+      return super.importProviders(isStarter, modOrObject);
     }
   }
 
@@ -85,7 +81,7 @@ describe('ModuleFactory', () => {
   });
 
   describe('importGlobalProviders()', () => {
-    it(`Provider1 exported from Module2 but not exported from Module1`, () => {
+    it(`forbidden reexports providers`, () => {
       class Provider1 {}
 
       @Module({
@@ -109,7 +105,7 @@ describe('ModuleFactory', () => {
       expect(() => mock.importGlobalProviders(AppModule, metadata)).toThrow(msg);
     });
 
-    it(`Provider1 exported from Module2 and Module1`, () => {
+    it(`allow reexports module`, () => {
       class Provider1 {}
 
       @Module({
@@ -120,7 +116,7 @@ describe('ModuleFactory', () => {
 
       @Module({
         imports: [Module1],
-        exports: [Provider1],
+        exports: [Module1],
       })
       class Module2 {}
 
@@ -131,22 +127,24 @@ describe('ModuleFactory', () => {
 
       const metadata = new ModuleMetadata();
       expect(() => mock.importGlobalProviders(AppModule, metadata)).not.toThrow();
+      expect(mock.allExportedProvidersPerMod).toEqual([]);
+      expect(mock.allExportedProvidersPerReq).toEqual([Provider1]);
     });
 
-    it(`Provider2 proper reexported from Module2`, () => {
+    it(`merge providers from reexported modules`, () => {
       class Provider1 {}
       class Provider2 {}
 
       @Module({
-        providersPerMod: [Provider1],
         providersPerReq: [Provider2],
-        exports: [Provider1, Provider2],
+        exports: [Provider2],
       })
       class Module1 {}
 
       @Module({
+        providersPerMod: [Provider1],
         imports: [Module1],
-        exports: [Provider1, Provider2],
+        exports: [Provider1, Module1],
       })
       class Module2 {}
 
@@ -161,12 +159,117 @@ describe('ModuleFactory', () => {
       expect(mock.allExportedProvidersPerReq).toEqual([Provider2]);
     });
 
-    it(``, () => {});
+    it(`order exported providers`, () => {
+      class Provider1 {}
+      class Provider2 {}
+      class Provider3 {}
+      class Provider4 {}
+
+      @Module({
+        providersPerMod: [Provider1, Provider2],
+        exports: [Provider1, Provider2],
+      })
+      class Module1 {}
+
+      @Module({
+        imports: [Module1],
+        providersPerMod: [Provider3, Provider4],
+        exports: [Module1, Provider3, Provider4],
+      })
+      class Module2 {}
+
+      @RootModule({
+        exports: [Module2],
+      })
+      class AppModule {}
+
+      const metadata = new ModuleMetadata();
+      expect(() => mock.importGlobalProviders(AppModule, metadata)).not.toThrow();
+      expect(mock.allExportedProvidersPerMod).toEqual([Provider1, Provider2, Provider3, Provider4]);
+      expect(mock.allExportedProvidersPerReq).toEqual([]);
+    });
+
+    it(`collision with exported providers`, () => {
+      class Provider1 {}
+
+      @Module({
+        providersPerMod: [Provider1],
+        exports: [{ provide: Provider1, useValue: 'one' }],
+      })
+      class Module1 {}
+
+      @Module({
+        imports: [Module1],
+        providersPerMod: [Provider1],
+        exports: [Module1, Provider1],
+      })
+      class Module2 {}
+
+      @RootModule({
+        exports: [Module2],
+      })
+      class AppModule {}
+
+      const metadata = new ModuleMetadata();
+      const msg = /Exporting providers in AppModule was failed: found collision for: Provider1/;
+      expect(() => mock.importGlobalProviders(AppModule, metadata)).toThrow(msg);
+    });
+
+    fit(`collision with exported providers, but they are redeclared in root module`, () => {
+      class Provider1 {}
+
+      @Module({
+        providersPerMod: [Provider1],
+        exports: [{ provide: Provider1, useValue: 'one' }],
+      })
+      class Module1 {}
+
+      @Module({
+        imports: [Module1],
+        providersPerMod: [Provider1],
+        exports: [Module1, Provider1],
+      })
+      class Module2 {}
+
+      @RootModule({
+        exports: [Module2, { provide: Provider1, useValue: 'two' }],
+        providersPerMod: [Provider1],
+      })
+      class AppModule {}
+
+      const metadata = new ModuleMetadata();
+      expect(() => mock.importGlobalProviders(AppModule, metadata)).not.toThrow();
+      const providers = [{ provide: Provider1, useValue: 'one' }, Provider1, { provide: Provider1, useValue: 'two' }];
+      expect(mock.allExportedProvidersPerMod).toEqual(providers);
+    });
+
+    it(`identical duplicates but not collision with exported providers`, () => {
+      class Provider1 {}
+
+      @Module({
+        providersPerMod: [Provider1],
+        exports: [{ provide: Provider1, useValue: 'one' }],
+      })
+      class Module1 {}
+
+      @Module({
+        imports: [Module1],
+        providersPerMod: [Provider1],
+        exports: [Module1, { provide: Provider1, useValue: 'one' }],
+      })
+      class Module2 {}
+
+      @RootModule({
+        exports: [Module2],
+      })
+      class AppModule {}
+
+      const metadata = new ModuleMetadata();
+      expect(() => mock.importGlobalProviders(AppModule, metadata)).not.toThrow();
+    });
   });
 
   describe('mergeProviders()', () => {
-    it(``, () => {});
-
     it(``, () => {});
   });
 
@@ -284,7 +387,7 @@ describe('ModuleFactory', () => {
     class Provider6 {}
     class Provider7 {}
     class Provider8 {}
-    const overridden = { provide: Provider8, useValue: 'overridden' };
+    const overriddenProvider8 = { provide: Provider8, useValue: 'overridden' };
     class Provider9 {}
 
     describe(`exporting providers order`, () => {
@@ -303,7 +406,7 @@ describe('ModuleFactory', () => {
 
       @Module({
         imports: [Module1],
-        exports: [Provider1, Provider3, Provider5, Provider8],
+        exports: [Module1, Provider5, Provider8],
         providersPerMod: [Provider4, Provider5, Provider6],
         providersPerReq: [Provider7, Provider8],
       })
@@ -318,7 +421,7 @@ describe('ModuleFactory', () => {
       @Module({
         imports: [Module2],
         exports: [Module2],
-        providersPerReq: [Provider9, overridden],
+        providersPerReq: [Provider9, overriddenProvider8],
         controllers: [Ctrl],
       })
       class Module3 {}
@@ -358,8 +461,8 @@ describe('ModuleFactory', () => {
         expect((mod2 as any).ngMetadataName).toBe('Module');
 
         const mod3 = mock.optsMap.get(Module3);
-        expect(mod3.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
-        expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overridden]);
+        expect(mod3.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3, Provider5]);
+        expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overriddenProvider8]);
         expect(mod3.controllers).toEqual([Ctrl]);
         expect((mod3 as any).ngMetadataName).toBe('Module');
       });
@@ -378,7 +481,7 @@ describe('ModuleFactory', () => {
         expect(mock.prefixPerApp).toBe('some');
         expect(mock.prefixPerMod).toBe('other');
         expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
-        expect(mock.opts.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
+        expect(mock.opts.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3, Provider5]);
         expect(mock.opts.providersPerReq).toEqual([...defaultProvidersPerReq, Provider8]);
         expect((mock.opts as any).ngMetadataName).toBe('RootModule');
       });

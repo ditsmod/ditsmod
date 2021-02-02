@@ -227,56 +227,29 @@ export class ModuleFactory extends Factory {
    * @param modOrObject Module from where exports providers.
    * @param reexportedProvider Normalized provider.
    */
-  protected importProviders(
-    isStarter: boolean,
-    modOrObject: Type<any> | ModuleWithOptions<any>,
-    reexportedProvider?: NormalizedProvider
-  ) {
-    const { exports: exp, imports, providersPerMod, providersPerReq } = this.normalizeMetadata(modOrObject);
+  protected importProviders(isStarter: boolean, modOrObject: Type<any> | ModuleWithOptions<any>) {
+    const { exports: exp, providersPerMod, providersPerReq } = this.normalizeMetadata(modOrObject);
     const moduleName = this.getModuleName(modOrObject);
 
     for (const moduleOrProvider of exp) {
       const moduleMetadata = this.getRawModuleMetadata(moduleOrProvider as ModuleType);
       if (moduleMetadata) {
         const reexportedModuleOrObject = moduleOrProvider as ModuleType | ModuleWithOptions<any>;
-        this.importProviders(false, reexportedModuleOrObject, reexportedProvider);
+        this.importProviders(false, reexportedModuleOrObject);
       } else {
         const provider = moduleOrProvider as Provider;
         const normProvider = normalizeProviders([provider])[0];
-        if (reexportedProvider && reexportedProvider.provide !== normProvider.provide) {
-          continue;
-        }
-        let foundProvider = this.findAndSetProvider(provider, normProvider, providersPerMod, providersPerReq);
+        const foundProvider = this.findAndSetProvider(provider, normProvider, providersPerMod, providersPerReq);
         if (!foundProvider) {
-          // Attempt to find "normProvider" among the imported modules.
-          // If so, this is reexported provider.
-          for (const imp of imports) {
-            foundProvider = this.importProviders(false, imp.module, normProvider);
-            if (foundProvider) {
-              break;
-            }
-          }
-
-          if (!foundProvider) {
-            const providerName = normProvider.provide.name || normProvider.provide;
-            throw new Error(
-              `Exported ${providerName} from ${moduleName} ` +
-                `should includes in "providersPerMod" or "providersPerReq", ` +
-                `or in some "exports" of imported modules. ` +
-                `Tip: "providersPerApp" no need exports, they are automatically exported.`
-            );
-          }
-        }
-
-        if (reexportedProvider) {
-          return true;
+          const providerName = normProvider.provide.name || normProvider.provide;
+          throw new Error(
+            `Exported ${providerName} from ${moduleName} ` +
+              `should includes in "providersPerMod" or "providersPerReq", ` +
+              `or in some "exports" of imported modules. ` +
+              `Tip: "providersPerApp" no need exports, they are automatically exported.`
+          );
         }
       }
-    } // end for() loop
-
-    if (reexportedProvider) {
-      // In current module we can't find reexportedProvider.
-      return;
     }
 
     this.mergeWithAllExportedProviders(isStarter);
