@@ -68,21 +68,7 @@ describe('type-guards', () => {
         { provide: '', useExisting: class {} },
         { provide: '', useFactory: class {} },
       ];
-      expect(isProvider(providers)).toBe(true);
-    });
-
-    it('should to trow error, if we check object {}', () => {
-      const providers: Provider = {} as any;
-      expect(() => isProvider(providers)).toThrow(
-        'Invalid provider - only instances of Provider and Type are allowed, got: {}'
-      );
-    });
-
-    it('should to trow error, if we check number', () => {
-      const providers: Provider = 5 as any;
-      expect(() => isProvider(providers)).toThrow(
-        'Invalid provider - only instances of Provider and Type are allowed, got: 5'
-      );
+      expect(providers.every(isProvider)).toBe(true);
     });
   });
 

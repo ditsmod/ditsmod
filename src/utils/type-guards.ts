@@ -8,7 +8,7 @@ import {
   ValueProvider,
 } from '@ts-stack/di';
 
-import { NormalizedProvider, normalizeProviders } from './ng-utils';
+import { NormalizedProvider } from './ng-utils';
 import { ModuleDecorator, ModuleWithOptions } from '../decorators/module';
 import { RootModuleDecorator } from '../decorators/root-module';
 import { ControllerDecorator } from '../decorators/controller';
@@ -71,13 +71,14 @@ export function isFactoryProvider(provider: Provider): provider is FactoryProvid
   return (provider as FactoryProvider)?.useFactory !== undefined;
 }
 
-export function isProvider(
-  provider: Provider
-): provider is ValueProvider | ClassProvider | ExistingProvider | FactoryProvider {
-  provider = Array.isArray(provider) ? provider : [provider];
-  const arrProviders = normalizeProviders(provider);
-
-  return isNormalizedProvider(arrProviders);
+export function isProvider(provider: Provider): provider is TypeProvider | NormalizedProvider {
+  return (
+    (provider instanceof Type &&
+      !isModule(provider as any) &&
+      !isRootModule(provider as any) &&
+      !isModuleWithOptions(provider as any)) ||
+    isNormalizedProvider(provider)
+  );
 }
 
 /**
