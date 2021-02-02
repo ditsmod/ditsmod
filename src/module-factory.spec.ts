@@ -8,7 +8,6 @@ import {
   ModuleMetadata,
   ModuleType,
   ModuleWithOptions,
-  ModuleDecorator,
   ProvidersMetadata,
   defaultProvidersPerReq,
 } from './decorators/module';
@@ -33,6 +32,10 @@ describe('ModuleFactory', () => {
     injectorPerMod: ReflectiveInjector;
     optsMap = new Map<Type<any>, ModuleMetadata>();
     allProvidersPerApp: Provider[];
+    allExportedProvidersPerMod: Provider[] = [];
+    allExportedProvidersPerReq: Provider[] = [];
+    exportedProvidersPerMod: Provider[] = [];
+    exportedProvidersPerReq: Provider[] = [];
 
     initProvidersPerReq() {
       return super.initProvidersPerReq();
@@ -42,12 +45,8 @@ describe('ModuleFactory', () => {
       return super.quickCheckMetadata(moduleMetadata);
     }
 
-    getRawModuleMetadata<T extends ModuleDecorator>(modOrObject: Type<any> | ModuleWithOptions<any>, isRoot?: boolean) {
-      return super.getRawModuleMetadata(modOrObject, isRoot) as T;
-    }
-
-    getNormalizedMetadata(mod: ModuleType) {
-      return super.getNormalizedMetadata(mod);
+    normalizeMetadata(mod: ModuleType) {
+      return super.normalizeMetadata(mod);
     }
 
     importProviders(
@@ -85,13 +84,97 @@ describe('ModuleFactory', () => {
     mockApp = new MockAppFactory();
   });
 
-  class ClassWithoutDecorators {}
+  describe('importGlobalProviders()', () => {
+    it(`Provider1 exported from Module2 but not exported from Module1`, () => {
+      class Provider1 {}
 
-  describe('getNormalizedMetadata()', () => {
+      @Module({
+        providersPerReq: [Provider1],
+      })
+      class Module1 {}
+
+      @Module({
+        imports: [Module1],
+        exports: [Provider1],
+      })
+      class Module2 {}
+
+      @RootModule({
+        exports: [Module2],
+      })
+      class AppModule {}
+
+      const metadata = new ModuleMetadata();
+      const msg = /Exported Provider1 from Module2 should includes in/;
+      expect(() => mock.importGlobalProviders(AppModule, metadata)).toThrow(msg);
+    });
+
+    it(`Provider1 exported from Module2 and Module1`, () => {
+      class Provider1 {}
+
+      @Module({
+        providersPerReq: [Provider1],
+        exports: [Provider1],
+      })
+      class Module1 {}
+
+      @Module({
+        imports: [Module1],
+        exports: [Provider1],
+      })
+      class Module2 {}
+
+      @RootModule({
+        exports: [Module2],
+      })
+      class AppModule {}
+
+      const metadata = new ModuleMetadata();
+      expect(() => mock.importGlobalProviders(AppModule, metadata)).not.toThrow();
+    });
+
+    it(`Provider2 proper reexported from Module2`, () => {
+      class Provider1 {}
+      class Provider2 {}
+
+      @Module({
+        providersPerMod: [Provider1],
+        providersPerReq: [Provider2],
+        exports: [Provider1, Provider2],
+      })
+      class Module1 {}
+
+      @Module({
+        imports: [Module1],
+        exports: [Provider1, Provider2],
+      })
+      class Module2 {}
+
+      @RootModule({
+        exports: [Module2],
+      })
+      class AppModule {}
+
+      const metadata = new ModuleMetadata();
+      expect(() => mock.importGlobalProviders(AppModule, metadata)).not.toThrow();
+      expect(mock.allExportedProvidersPerMod).toEqual([Provider1]);
+      expect(mock.allExportedProvidersPerReq).toEqual([Provider2]);
+    });
+
+    it(``, () => {});
+  });
+
+  describe('mergeProviders()', () => {
+    it(``, () => {});
+
+    it(``, () => {});
+  });
+
+  describe('normalizeMetadata()', () => {
     it('should set default metatada', () => {
       @Module()
-      class ClassWithDecorators {}
-      const metadata = mock.getNormalizedMetadata(ClassWithDecorators);
+      class AppModule {}
+      const metadata = mock.normalizeMetadata(AppModule);
       expect(metadata.controllers).toEqual([]);
       expect(metadata.exports).toEqual([]);
       expect(metadata.imports).toEqual([]);
@@ -100,53 +183,54 @@ describe('ModuleFactory', () => {
       expect((metadata as any).ngMetadataName).toBe('Module');
     });
 
-    it('should merge default metatada with ClassWithDecorators metadata', () => {
-      class SomeControllerClass {}
-      class C1 {}
-      class PerMod {}
+    it('should merge default metatada with AppModule metadata', () => {
+      class Provider1 {}
+      class Provider2 {}
+      class Controller1 {}
 
       @Module({
-        controllers: [SomeControllerClass],
-        providersPerReq: [ClassWithoutDecorators],
-        providersPerMod: [PerMod],
+        controllers: [Controller1],
+        providersPerReq: [Provider1],
+        providersPerMod: [Provider2],
       })
-      class ClassWithDecorators {}
-      const metadata = mock.getNormalizedMetadata(ClassWithDecorators);
-      expect(metadata.controllers).toEqual([SomeControllerClass]);
+      class AppModule {}
+      const metadata = mock.normalizeMetadata(AppModule);
+      expect(metadata.controllers).toEqual([Controller1]);
       expect(metadata.exports).toEqual([]);
       expect(metadata.imports).toEqual([]);
-      expect(metadata.providersPerMod).toEqual([PerMod]);
-      expect(metadata.providersPerReq).toEqual([ClassWithoutDecorators]);
+      expect(metadata.providersPerMod).toEqual([Provider2]);
+      expect(metadata.providersPerReq).toEqual([Provider1]);
     });
 
-    it('ClassWithoutDecorators should not have metatada', () => {
-      const msg = `Module build failed: module "ClassWithoutDecorators" does not have the "@Module()" decorator`;
-      expect(() => mock.getNormalizedMetadata(ClassWithoutDecorators)).toThrowError(msg);
+    it('Provider1 should not have metatada', () => {
+      class Module1 {}
+      const msg = `Module build failed: module "Module1" does not have the "@Module()" decorator`;
+      expect(() => mock.normalizeMetadata(Module1)).toThrowError(msg);
     });
   });
 
   describe('quickCheckMetadata()', () => {
     it('should throw an error, when no export and no controllers', () => {
-      class Provider11 {}
-      class Provider12 {}
+      class Provider1 {}
+      class Provider2 {}
 
       @Module({
-        providersPerMod: [Provider11, Provider12],
+        providersPerMod: [Provider1, Provider2],
       })
       class Module1 {}
 
-      const moduleMetadata = mock.getNormalizedMetadata(Module1);
+      const moduleMetadata = mock.normalizeMetadata(Module1);
       expect(() => mock.quickCheckMetadata(moduleMetadata)).toThrow(
         /Importing MockModule failed: this module should have/
       );
     });
 
-    it('should throw an error, when no export and no controllers', () => {
-      class Provider11 {}
-      class Provider12 {}
+    it('should throw an error, during imports module without export and without controllers', () => {
+      class Provider1 {}
+      class Provider2 {}
 
       @Module({
-        providersPerMod: [Provider11, Provider12],
+        providersPerMod: [Provider1, Provider2],
       })
       class Module1 {}
 
@@ -155,54 +239,38 @@ describe('ModuleFactory', () => {
       })
       class Module2 {}
 
-      const moduleMetadata = mock.getNormalizedMetadata(Module2);
+      const moduleMetadata = mock.normalizeMetadata(Module2);
       expect(() => mock.quickCheckMetadata(moduleMetadata)).toThrow(
         /Importing MockModule failed: this module should have/
       );
     });
 
     it('should not throw an error, when export some provider', () => {
-      class Provider11 {}
-      class Provider12 {}
+      class Provider1 {}
+      class Provider2 {}
 
       @Module({
-        exports: [Provider11],
-        providersPerMod: [Provider11, Provider12],
+        exports: [Provider1],
+        providersPerMod: [Provider1, Provider2],
       })
       class Module1 {}
 
-      const moduleMetadata = mock.getNormalizedMetadata(Module1);
+      const moduleMetadata = mock.normalizeMetadata(Module1);
       expect(() => mock.quickCheckMetadata(moduleMetadata)).not.toThrow();
     });
 
-    it('should not throw an error, when export some controller', () => {
-      class Provider11 {}
-      class Provider12 {}
+    it('should not throw an error, when declare some controller', () => {
+      class Provider1 {}
+      class Provider2 {}
 
       @Module({
-        controllers: [Provider11],
-        providersPerMod: [Provider11, Provider12],
+        controllers: [Provider1],
+        providersPerMod: [Provider1, Provider2],
       })
       class Module1 {}
 
-      const moduleMetadata = mock.getNormalizedMetadata(Module1);
+      const moduleMetadata = mock.normalizeMetadata(Module1);
       expect(() => mock.quickCheckMetadata(moduleMetadata)).not.toThrow();
-    });
-  });
-
-  describe('getRawModuleMetadata()', () => {
-    class SomeControllerClass {}
-
-    it('should returns ClassWithDecorators metadata', () => {
-      @Module({ controllers: [SomeControllerClass] })
-      class ClassWithDecorators {}
-      const metadata = mock.getRawModuleMetadata(ClassWithDecorators);
-      expect(metadata).toEqual(new Module({ controllers: [SomeControllerClass] }));
-    });
-
-    it('should not returns any metadata', () => {
-      const metadata = mock.getRawModuleMetadata(ClassWithoutDecorators);
-      expect(metadata).toBeUndefined();
     });
   });
 
@@ -216,6 +284,7 @@ describe('ModuleFactory', () => {
     class Provider6 {}
     class Provider7 {}
     class Provider8 {}
+    const overridden = { provide: Provider8, useValue: 'overridden' };
     class Provider9 {}
 
     describe(`exporting providers order`, () => {
@@ -249,7 +318,7 @@ describe('ModuleFactory', () => {
       @Module({
         imports: [Module2],
         exports: [Module2],
-        providersPerReq: [Provider9],
+        providersPerReq: [Provider9, overridden],
         controllers: [Ctrl],
       })
       class Module3 {}
@@ -290,7 +359,7 @@ describe('ModuleFactory', () => {
 
         const mod3 = mock.optsMap.get(Module3);
         expect(mod3.providersPerMod).toEqual([Provider1, Provider3, Provider5]);
-        expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9]);
+        expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overridden]);
         expect(mod3.controllers).toEqual([Ctrl]);
         expect((mod3 as any).ngMetadataName).toBe('Module');
       });

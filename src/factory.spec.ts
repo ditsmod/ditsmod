@@ -1,5 +1,7 @@
-import { Provider } from '@ts-stack/di';
+import { Provider, Type } from '@ts-stack/di';
 
+import { ModuleWithOptions } from './decorators/module';
+import { RootModule } from './decorators/root-module';
 import { Factory } from './factory';
 
 describe('Factory', () => {
@@ -19,6 +21,10 @@ describe('Factory', () => {
     getTokensCollisions(duplTokens: any[], providers: Provider[]) {
       return super.getTokensCollisions(duplTokens, providers);
     }
+
+    getRawModuleMetadata(modOrObject: Type<any> | ModuleWithOptions<any>, isRoot?: boolean) {
+      return super.getRawModuleMetadata(modOrObject, isRoot);
+    }
   }
 
   let mock: MockFactory;
@@ -27,7 +33,21 @@ describe('Factory', () => {
     mock = new MockFactory();
   });
 
-  fdescribe('getTokensCollisions()', () => {
+  describe('getRawModuleMetadata()', () => {
+    it('should returns AppModule metadata', () => {
+      @RootModule({ controllers: [Provider1] })
+      class AppModule {}
+      const metadata = mock.getRawModuleMetadata(AppModule, true);
+      expect(metadata).toEqual(new RootModule({ controllers: [Provider1] }));
+    });
+
+    it('should not returns any metadata', () => {
+      const metadata = mock.getRawModuleMetadata(Provider1, true);
+      expect(metadata).toBeUndefined();
+    });
+  });
+
+  describe('getTokensCollisions()', () => {
     it('should returns empty array because duplicates are indentical', () => {
       let duplTokens: any[] = [Provider1, Provider2];
       const providers: Provider[] = [Provider1, Provider2, Provider4, Provider3, Provider5, Provider2, Provider1];
