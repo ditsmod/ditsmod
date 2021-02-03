@@ -1,11 +1,11 @@
 import { RootModule, BodyParser } from '@ts-stack/ditsmod';
+import { DefaultBodyParser } from '@ts-stack/body-parser';
 
 import { SomeModule } from './modules/some/some.module';
-import { BodyParserService } from './services-per-app/body-parser.service';
 
 @RootModule({
   imports: [SomeModule],
   providersPerReq: [BodyParser],
-  exports: [{ provide: BodyParser, useClass: BodyParserService }],
+  exports: [{ provide: BodyParser, useClass: DefaultBodyParser }],
 })
 export class AppModule {}
