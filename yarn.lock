@@ -538,11 +538,6 @@
   resolved "https://registry.yarnpkg.com/@ts-stack/di/-/di-1.1.0.tgz#80e485aa61ea9b1ffe089f3adb3c34ac6d8f5b07"
   integrity sha512-uJ0X7A+7mIxpPxihBQpLbKMNzee37zMoBj6qeBIyW0330+at+hYSiYN7Eg/0LEq54oYv2AomvFHEOUD5LKCCsw==
 
-"@ts-stack/router@^0.0.0-alpha.1":
-  version "0.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@ts-stack/router/-/router-0.0.0-alpha.2.tgz#fbbb53b30244c30a2795af142bae30da96c632a6"
-  integrity sha512-4nBGJSI4iafiW/+7z1mhj+730Owg1wSE7GZVvSC2q/2ZWnj294gl7n+y3o6JbDzXw6QbDB2Y6UVRCAV0JKoTgQ==
-
 "@types/babel__core@^7.1.7":
   version "7.1.7"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.7.tgz#1dacad8840364a57c98d0dd4855c6dd3752c6b89"
