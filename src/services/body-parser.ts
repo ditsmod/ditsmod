@@ -1,5 +1,4 @@
 import { Injectable, Inject } from '@ts-stack/di';
-import { parse } from 'get-body';
 
 import { BodyParserConfig } from '../types/types';
 import { NodeReqToken } from '../types/injection-tokens';
@@ -14,11 +13,7 @@ export class BodyParser {
     protected log: Logger
   ) {}
 
-  getRawBody(): Promise<Buffer> {
+  getBody(): Promise<any> {
     return;
-  }
-
-  getJsonBody(): Promise<any> {
-    return parse(this.nodeReq, this.nodeReq.headers, { limit: this.config.maxBodySize });
   }
 }

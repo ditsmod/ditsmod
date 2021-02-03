@@ -1299,8 +1299,7 @@ interface RouteParam {
 
 ```ts
 class BodyParser {
-  getRawBody(): Promise<Buffer>;
-  getJsonBody(): Promise<any>;
+  getBody(): Promise<any>;
 }
 ```
 

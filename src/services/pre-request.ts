@@ -108,8 +108,7 @@ export class PreRequest {
       req.queryParams = parse(queryString);
       if (parseBody) {
         const bodyParser = req.injector.get(BodyParser) as BodyParser;
-        req.rawBody = await bodyParser.getRawBody();
-        req.body = await bodyParser.getJsonBody();
+        req.body = await bodyParser.getBody();
       }
 
       await ctrl[method]();
