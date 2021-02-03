@@ -1,11 +1,9 @@
 import * as http from 'http';
 import { ListenOptions } from 'net';
 import { makeDecorator, Provider, ReflectiveInjector, Injector } from '@ts-stack/di';
-import { Router as KoaTreeRouter } from '@ts-stack/router';
 
 import { PreRequest } from '../services/pre-request';
 import { ModuleDecorator } from './module';
-import { Router } from '../types/router';
 import { BodyParserConfig } from '../types/types';
 import { Logger, LoggerConfig } from '../types/logger';
 import { HttpModule, ServerOptions } from '../types/server-options';
@@ -16,7 +14,6 @@ export const defaultProvidersPerApp: Readonly<Provider[]> = deepFreeze([
   LoggerConfig,
   { provide: Logger, useClass: DefaultLogger },
   BodyParserConfig,
-  { provide: Router, useClass: KoaTreeRouter },
   PreRequest,
   {
     provide: ReflectiveInjector,
@@ -35,10 +32,10 @@ export const RootModule = makeDecorator('RootModule', (data: any) => data) as Ro
 
 export class ApplicationMetadata {
   httpModule: HttpModule = http;
-  serverName: string = 'Node.js';
+  serverName = 'Node.js';
   serverOptions: ServerOptions = {};
   listenOptions: ListenOptions = { host: 'localhost', port: 8080 };
-  prefixPerApp: string = '';
+  prefixPerApp = '';
   /**
    * Providers per the `Application`.
    */
