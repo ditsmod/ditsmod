@@ -1,4 +1,5 @@
-import { RootModule, LoggerConfig, Logger } from '@ts-stack/ditsmod';
+import { RootModule, LoggerConfig, Logger, Router } from '@ts-stack/ditsmod';
+import { DefaultRouter } from '@ts-stack/router';
 
 import { PinoModule } from './modules/pino/pino.module';
 import { SomeModule } from './modules/some/some.module';
@@ -13,6 +14,7 @@ loggerConfig.level = 'trace';
   providersPerApp: [
     { provide: Logger, useClass: BunyanService },
     { provide: LoggerConfig, useValue: loggerConfig },
+    { provide: Router, useClass: DefaultRouter }
   ],
 })
 export class AppModule {}
