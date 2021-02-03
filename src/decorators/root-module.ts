@@ -9,11 +9,13 @@ import { Logger, LoggerConfig } from '../types/logger';
 import { HttpModule, ServerOptions } from '../types/server-options';
 import { deepFreeze } from '../utils/deep-freeze';
 import { DefaultLogger } from '../services/default-logger';
+import { Router } from '../types/router';
 
 export const defaultProvidersPerApp: Readonly<Provider[]> = deepFreeze([
   LoggerConfig,
   { provide: Logger, useClass: DefaultLogger },
   BodyParserConfig,
+  Router,
   PreRequest,
   {
     provide: ReflectiveInjector,
