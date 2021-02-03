@@ -1,5 +1,5 @@
-<a name="beta.15"></a>
-# [beta.15](https://github.com/ts-stack/ditsmod/releases/tag/beta.15) (2021-02-03)
+<a name="beta.16"></a>
+# [beta.16](https://github.com/ts-stack/ditsmod/releases/tag/beta.16) (2021-02-03)
 
 ### Changes
 
