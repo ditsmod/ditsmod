@@ -473,7 +473,8 @@ describe('ModuleFactory', () => {
       class Module4 {}
 
       it('case 2', () => {
-        const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
+        const providers: Provider[] = [...defaultProvidersPerApp, {provide: Router, useClass: DefaultRouter }];
+        const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
         mock.bootstrap(new ProvidersMetadata(), 'some', 'other', Module4);
@@ -822,7 +823,8 @@ describe('ModuleFactory', () => {
         it('case 2', () => {
           @Module({
             exports: [Provider0, Provider1],
-            providersPerApp: [Router],
+            providersPerMod: [Provider0, Provider1],
+            providersPerApp: [{provide: Router, useValue: ''}]
           })
           class Module0 {}
 
