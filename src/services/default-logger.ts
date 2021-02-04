@@ -14,7 +14,7 @@ function defaultLoggerFn(fnLevel: keyof Logger, config: LoggerConfig) {
       console.log(`[DefaultLogger:${fnLevel}]`, inspect(args, false, config.depth, true));
       console.log(delimiter);
     } else if (!allLevels.includes(config.level)) {
-      console.log(`[DefaultLogger]`, `unexpected level "${config.level}" (available levels: ${allLevels.join(', ')})`);
+      console.log('[DefaultLogger]', `unexpected level "${config.level}" (available levels: ${allLevels.join(', ')})`);
       console.log(delimiter);
     }
   };

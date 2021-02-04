@@ -10,6 +10,7 @@ export { Module } from './decorators/module';
 export { RootModule } from './decorators/root-module';
 export { Route, CanActivate, DecoratorGuardItem } from './decorators/route';
 export { BodyParser } from './services/body-parser';
+export { DefaultLogger } from './services/default-logger';
 export { Request } from './request';
 export { Response } from './response';
 export { AppFactory } from './app-factory';
