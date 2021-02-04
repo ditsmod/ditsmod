@@ -21,6 +21,8 @@ import { NodeReqToken } from './types/injection-tokens';
 import { Request } from './request';
 
 describe('ModuleFactory', () => {
+  (defaultProvidersPerApp as Provider[]).push({provide: Router, useClass: DefaultRouter});
+
   @Injectable()
   class MockModuleFactory extends ModuleFactory {
     log: Logger;

@@ -1,28 +1,17 @@
 import { Type, Provider, makeDecorator, TypeProvider } from '@ts-stack/di';
 
 import { ImportsWithPrefix, ImportsWithPrefixDecorator } from '../types/router';
-import { BodyParser } from '../services/body-parser';
 import { Request } from '../request';
 import { Response } from '../response';
 import { deepFreeze } from '../utils/deep-freeze';
 import { ControllerErrorHandler } from '../types/types';
 import { DefaultControllerErrorHandler } from '../services/default-controller-error-handler';
-
-const providersPerReq: Provider[] = [
+  
+export const defaultProvidersPerReq: Readonly<Provider[]> = deepFreeze([
   Request,
   Response,
-  { provide: ControllerErrorHandler, useClass: DefaultControllerErrorHandler },
-];
-
-try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const optional = require('@ts-stack/body-parser');
-  providersPerReq.push({ provide: BodyParser, useClass: optional.DefaultBodyParser });
-} catch {
-  providersPerReq.push(BodyParser);
-}
-  
-export const defaultProvidersPerReq: Readonly<Provider[]> = deepFreeze(providersPerReq);
+  { provide: ControllerErrorHandler, useClass: DefaultControllerErrorHandler }
+]);
 
 export interface ModuleDecoratorFactory {
   (data?: ModuleDecorator): any;
