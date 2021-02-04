@@ -526,7 +526,7 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@ts-stack/body-parser@^1.0.0-beta.1":
+"@ts-stack/body-parser@^1.0.0-beta.2":
   version "1.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/@ts-stack/body-parser/-/body-parser-1.0.0-beta.2.tgz#77fc2bfe24da164ee99cc407ad57aa92d67772b9"
   integrity sha512-B79+pwoBrMB1cFBH+z3LIkotj6+mPPshGI5+/KqXMogc9KxX1+K4knV/+rkNGFJkPgE+qvcOzNUCoELzwChTlA==

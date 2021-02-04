@@ -11,17 +11,26 @@ import { deepFreeze } from '../utils/deep-freeze';
 import { DefaultLogger } from '../services/default-logger';
 import { Router } from '../types/router';
 
-export const defaultProvidersPerApp: Readonly<Provider[]> = deepFreeze([
+const providersPerApp: Provider[] = [
   LoggerConfig,
   { provide: Logger, useClass: DefaultLogger },
   BodyParserConfig,
-  Router,
   PreRequest,
   {
     provide: ReflectiveInjector,
     useExisting: Injector,
   },
-]);
+];
+
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const optional = require('@ts-stack/router');
+  providersPerApp.push({ provide: Router, useClass: optional.DefaultRouter });
+} catch {
+  providersPerApp.push(Router);
+}
+
+export const defaultProvidersPerApp: Readonly<Provider[]> = deepFreeze(providersPerApp);
 
 export interface RootModuleDecoratorFactory {
   (data?: RootModuleDecorator): any;

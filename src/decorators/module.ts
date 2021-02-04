@@ -8,12 +8,21 @@ import { deepFreeze } from '../utils/deep-freeze';
 import { ControllerErrorHandler } from '../types/types';
 import { DefaultControllerErrorHandler } from '../services/default-controller-error-handler';
 
-export const defaultProvidersPerReq: Readonly<Provider[]> = deepFreeze([
+const providersPerReq: Provider[] = [
   Request,
   Response,
-  BodyParser,
   { provide: ControllerErrorHandler, useClass: DefaultControllerErrorHandler },
-]);
+];
+
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const optional = require('@ts-stack/body-parser');
+  providersPerReq.push({ provide: BodyParser, useClass: optional.DefaultBodyParser });
+} catch {
+  providersPerReq.push(BodyParser);
+}
+  
+export const defaultProvidersPerReq: Readonly<Provider[]> = deepFreeze(providersPerReq);
 
 export interface ModuleDecoratorFactory {
   (data?: ModuleDecorator): any;
