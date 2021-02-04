@@ -19,15 +19,7 @@ import {
 import { RouteDecoratorMetadata, RouteMetadata } from './decorators/route';
 import { BodyParserConfig } from './types/types';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
-import {
-  isRootModule,
-  isController,
-  isRoute,
-  isImportsWithPrefix,
-  isProvider,
-  isModule,
-  isModuleWithOptions,
-} from './utils/type-guards';
+import { isRootModule, isController, isRoute, isImportsWithPrefix, isProvider } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
 import { Router, ImportsWithPrefix, ImportsWithPrefixDecorator, GuardItems } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
@@ -158,7 +150,7 @@ export class ModuleFactory extends Factory {
     ) {
       const msg =
         `Importing ${this.moduleName} failed: this module should have "providersPerApp"` +
-        ` or some controllers, or "exports" array with elements.`;
+        ' or some controllers, or "exports" array with elements.';
       throw new Error(msg);
     }
   }
@@ -253,9 +245,9 @@ export class ModuleFactory extends Factory {
           const providerName = normProvider.provide.name || normProvider.provide;
           throw new Error(
             `Exported ${providerName} from ${moduleName} ` +
-              `should includes in "providersPerMod" or "providersPerReq", ` +
-              `or in some "exports" of imported modules. ` +
-              `Tip: "providersPerApp" no need exports, they are automatically exported.`
+              'should includes in "providersPerMod" or "providersPerReq", ' +
+              'or in some "exports" of imported modules. ' +
+              'Tip: "providersPerApp" no need exports, they are automatically exported.'
           );
         }
       }
