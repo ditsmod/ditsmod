@@ -1,5 +1,12 @@
+<a name="beta.18"></a>
+# [beta.18](https://github.com/ts-stack/ditsmod/releases/tag/beta.18) (2021-02-05)
+
+### Changes
+
+- Removed from optional dependencies previously added plugins (see [ef193c1](https://github.com/ts-stack/ditsmod/commit/ef193c1)).
+
 <a name="beta.17"></a>
-# [beta.17](https://github.com/ts-stack/ditsmod/releases/tag/beta.17) (2021-02-04)
+## [beta.17](https://github.com/ts-stack/ditsmod/releases/tag/beta.17) (2021-02-04)
 
 ### Features
 
