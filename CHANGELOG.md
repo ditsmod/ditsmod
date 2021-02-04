@@ -1,12 +1,5 @@
-<a name="beta.16"></a>
-# [beta.16](https://github.com/ts-stack/ditsmod/releases/tag/beta.16) (2021-02-03)
-
-### Changes
-
-- Removed body parser and router from core.
-
 <a name="beta.17"></a>
-## [beta.17](https://github.com/ts-stack/ditsmod/releases/tag/beta.17) (2021-02-04)
+# [beta.17](https://github.com/ts-stack/ditsmod/releases/tag/beta.17) (2021-02-04)
 
 ### Features
 
@@ -19,3 +12,11 @@ npm i --no-optional
 # OR
 yarn --ignore-optional
 ```
+
+<a name="beta.16"></a>
+## [beta.16](https://github.com/ts-stack/ditsmod/releases/tag/beta.16) (2021-02-03)
+
+### Changes
+
+- Removed body parser and router from core.
+
