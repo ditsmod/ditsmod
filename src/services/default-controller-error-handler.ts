@@ -9,7 +9,7 @@ export class DefaultControllerErrorHandler implements ControllerErrorHandler {
   constructor(private res: Response, private log: Logger) {}
 
   handleError(err: Error) {
-    const message = err.message;
+    const { message } = err;
     this.log.error({ err });
     if (!this.res.nodeRes.headersSent) {
       this.res.sendJson({ error: { message } }, Status.INTERNAL_SERVER_ERROR);
