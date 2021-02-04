@@ -13,7 +13,7 @@ import { ModuleFactory } from './module-factory';
 import { pickProperties } from './utils/pick-properties';
 import { Router, HttpMethod } from './types/router';
 import { NodeResToken, NodeReqToken } from './types/injection-tokens';
-import { Logger } from './types/logger';
+import { Logger, LoggerConfig } from './types/logger';
 import { Server, Http2SecureServerOptions } from './types/server-options';
 import {
   ModuleType,
@@ -26,6 +26,7 @@ import { getDuplicates } from './utils/get-duplicates';
 import { flatten, normalizeProviders } from './utils/ng-utils';
 import { Factory } from './factory';
 import { deepFreeze } from './utils/deep-freeze';
+import { DefaultLogger } from './services/default-logger';
 
 export class AppFactory extends Factory {
   protected log: Logger;
@@ -38,6 +39,8 @@ export class AppFactory extends Factory {
   bootstrap(appModule: ModuleType) {
     return new Promise<{ server: Server; log: Logger }>((resolve, reject) => {
       try {
+        const config = new LoggerConfig();
+        this.log = new DefaultLogger(config);
         this.prepareServerOptions(appModule);
         this.createServer();
 
