@@ -6,7 +6,7 @@ import { ReflectiveInjector, reflector, Provider, Type, resolveForwardRef } from
 
 import { ApplicationMetadata, RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
 import { RequestListener } from './types/types';
-import { isHttp2SecureServerOptions, isRootModule } from './utils/type-guards';
+import { isHttp2SecureServerOptions, isModule, isProvider, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
 import { ModuleFactory } from './module-factory';
@@ -107,7 +107,7 @@ export class AppFactory extends Factory {
   protected prepareProvidersPerApp(appModule: ModuleType) {
     // Here we work only with providers declared at the application level.
 
-    const exportedProviders = this.importProvidersPerApp(appModule);
+    const exportedProviders = this.collectProvidersPerApp(appModule);
     const rootTokens = normalizeProviders(this.opts.providersPerApp).map((np) => np.provide);
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.provide);
@@ -128,14 +128,16 @@ export class AppFactory extends Factory {
   /**
    * Recursively collects per app providers from non-root modules.
    */
-  protected importProvidersPerApp(modOrObject: Type<any> | ModuleWithOptions<any>) {
+  protected collectProvidersPerApp(modOrObject: Type<any> | ModuleWithOptions<any>) {
     const modName = this.getModuleName(modOrObject);
     const modMetadata = this.getRawModuleMetadata(modOrObject) as RootModuleDecorator | ModuleDecorator;
     this.checkModuleMetadata(modMetadata, modName);
 
-    const imports = flatten(modMetadata.imports).map<Type<any> | ModuleWithOptions<any>>(resolveForwardRef);
+    let modules = [modMetadata.imports, modMetadata.exports?.filter(exp => !isProvider(exp))];
+    modules = modules.filter(el => el);
+    const preparedModules = flatten(modules).map<Type<any> | ModuleWithOptions<any>>(resolveForwardRef);
     const providersPerApp: Provider[] = [];
-    imports.forEach((imp) => providersPerApp.push(...this.importProvidersPerApp(imp)));
+    preparedModules.forEach((mod) => providersPerApp.push(...this.collectProvidersPerApp(mod)));
     const currProvidersPerApp = isRootModule(modMetadata) ? [] : flatten(modMetadata.providersPerApp);
 
     return [...providersPerApp, ...this.getUniqProviders(currProvidersPerApp)];

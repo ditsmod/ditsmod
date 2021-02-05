@@ -29,8 +29,8 @@ describe('AppFactory', () => {
       return super.getRawModuleMetadata(modOrObject, isRoot);
     }
 
-    importProvidersPerApp(mod: Type<any> | ModuleWithOptions<any>) {
-      return super.importProvidersPerApp(mod);
+    collectProvidersPerApp(mod: Type<any> | ModuleWithOptions<any>) {
+      return super.collectProvidersPerApp(mod);
     }
 
     checkSecureServerOption(appModule: ModuleType) {
@@ -215,7 +215,8 @@ describe('AppFactory', () => {
     });
   });
 
-  describe('importProvidersPerApp()', () => {
+  describe('collectProvidersPerApp()', () => {
+    class Provider0 {}
     class Provider1 {}
     class Provider2 {}
     class Provider3 {}
@@ -223,6 +224,11 @@ describe('AppFactory', () => {
     class Provider5 {}
     class Provider6 {}
     class Provider7 {}
+
+    @Module({
+      providersPerApp: [Provider0],
+    })
+    class Module0 {}
 
     @Module({
       providersPerApp: [Provider1],
@@ -241,45 +247,49 @@ describe('AppFactory', () => {
     })
     class Module3 {}
 
-    @Module({
+    @RootModule({
       imports: [Module3],
       providersPerApp: [{ provide: Provider1, useClass: Provider7 }],
+      exports: [Module0]
     })
-    class Module4 {}
+    class AppModule {}
+
+    fit('should collects providers from exports array without imports them', () => {
+      const providers = mock.collectProvidersPerApp(AppModule);
+      expect(providers.includes(Provider0)).toBe(true);
+    });
 
     it('should collects providers in particular order', () => {
-      expect(mock.importProvidersPerApp(Module4)).toEqual([
+      expect(mock.collectProvidersPerApp(AppModule)).toEqual([
         Provider1,
         Provider2,
         Provider3,
         Provider4,
         Provider5,
-        Provider6,
-        { provide: Provider1, useClass: Provider7 },
+        Provider6
       ]);
     });
 
     it('should flattens arrays with modules', () => {
       @Module({
-        imports: [Module1, [Module4]],
+        imports: [Module1, [AppModule]],
       })
       class Module5 {}
 
-      expect(mock.importProvidersPerApp(Module5)).toEqual([
+      expect(mock.collectProvidersPerApp(Module5)).toEqual([
         Provider1,
         Provider1,
         Provider2,
         Provider3,
         Provider4,
         Provider5,
-        Provider6,
-        { provide: Provider1, useClass: Provider7 },
+        Provider6
       ]);
     });
 
     it('should works with moduleWithOptions', () => {
       @Module({
-        imports: [Module4],
+        imports: [AppModule],
       })
       class Module6 {
         static withOptions(providers: Provider[]): ModuleWithOptions<Module6> {
@@ -287,14 +297,13 @@ describe('AppFactory', () => {
         }
       }
       const modWithOptions = Module6.withOptions([Provider7]);
-      expect(mock.importProvidersPerApp(modWithOptions)).toEqual([
+      expect(mock.collectProvidersPerApp(modWithOptions)).toEqual([
         Provider1,
         Provider2,
         Provider3,
         Provider4,
         Provider5,
         Provider6,
-        { provide: Provider1, useClass: Provider7 },
         Provider7,
       ]);
     });
@@ -302,7 +311,7 @@ describe('AppFactory', () => {
     it('should have empty array of providersPerApp', () => {
       @Module()
       class Module7 {}
-      expect(mock.importProvidersPerApp(Module7)).toEqual([]);
+      expect(mock.collectProvidersPerApp(Module7)).toEqual([]);
     });
   });
 
