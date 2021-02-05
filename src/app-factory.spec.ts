@@ -113,13 +113,13 @@ describe('AppFactory', () => {
     });
 
     it('OtherClass should not have metatada', () => {
-      const msg = `Module build failed: module "OtherClass" does not have the "@RootModule()" decorator`;
+      const msg = 'Module build failed: module "OtherClass" does not have the "@RootModule()" decorator';
       expect(() => mock.mergeMetadata(OtherClass)).toThrowError(msg);
     });
   });
 
   describe('prepareProvidersPerApp()', () => {
-    it(`should throw an error about non-identical duplicates in feature modules`, () => {
+    it('should throw an error about non-identical duplicates in feature modules', () => {
       class Provider1 {}
 
       @Module({ providersPerApp: [{ provide: Provider1, useClass: Provider1 }] })
@@ -135,12 +135,12 @@ describe('AppFactory', () => {
 
       mock.mergeMetadata(RootModule1);
       const msg =
-        `Exporting providers in RootModule1 was failed: found collision for: ` +
-        `Provider1. You should manually add this provider to RootModule1.`;
+        'Exporting providers in RootModule1 was failed: found collision for: ' +
+        'Provider1. You should manually add this provider to RootModule1.';
       expect(() => mock.prepareProvidersPerApp(RootModule1)).toThrow(msg);
     });
 
-    it(`should works with identical duplicates in feature modules`, () => {
+    it('should works with identical duplicates in feature modules', () => {
       class Provider1 {}
 
       @Module({ providersPerApp: [Provider1] })
@@ -158,7 +158,7 @@ describe('AppFactory', () => {
       expect(() => mock.prepareProvidersPerApp(RootModule1)).not.toThrow();
     });
 
-    it(`should works with duplicates in providersPerApp of root module`, () => {
+    it('should works with duplicates in providersPerApp of root module', () => {
       class Provider1 {}
 
       @RootModule({ providersPerApp: [Provider1, Provider1] })
@@ -169,7 +169,7 @@ describe('AppFactory', () => {
       expect(mock.opts.providersPerApp.length).toBe(2);
     });
 
-    it(`should works with duplicates in root imports module`, () => {
+    it('should works with duplicates in root imports module', () => {
       class Provider1 {}
       const Alias = Provider1;
       const duplicates = [Provider1, Alias];
@@ -186,7 +186,7 @@ describe('AppFactory', () => {
       expect(() => mock.prepareProvidersPerApp(RootModule1)).not.toThrow();
     });
 
-    it(`should works with duplicates in feature module and root module`, () => {
+    it('should works with duplicates in feature module and root module', () => {
       class Provider1 {}
       const Alias = Provider1;
       const duplicates = [Provider1, Alias];
@@ -205,7 +205,7 @@ describe('AppFactory', () => {
       expect(mock.opts.providersPerApp.length).toBe(3);
     });
 
-    it(`should works with empty "imports" array in root module`, () => {
+    it('should works with empty "imports" array in root module', () => {
       @RootModule({
         imports: [],
       })
