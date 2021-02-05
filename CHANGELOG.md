@@ -1,5 +1,12 @@
+<a name="beta.19"></a>
+# [beta.19](https://github.com/ts-stack/ditsmod/releases/tag/beta.19) (2021-02-05)
+
+### Bug Fixes
+
+- Fixed collecting providers per app (see [2c95366](https://github.com/ts-stack/ditsmod/commit/2c95366)).
+
 <a name="beta.18"></a>
-# [beta.18](https://github.com/ts-stack/ditsmod/releases/tag/beta.18) (2021-02-05)
+## [beta.18](https://github.com/ts-stack/ditsmod/releases/tag/beta.18) (2021-02-05)
 
 ### Changes
 
