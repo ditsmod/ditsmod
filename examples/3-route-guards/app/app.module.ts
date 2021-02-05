@@ -6,7 +6,7 @@ import { AuthModule } from './modules/auth/auth.module';
 
 @RootModule({
   imports: [SomeModule],
+  providersPerApp: [{ provide: Router, useClass: DefaultRouter }],
   exports: [AuthModule],
-  providersPerApp: [{ provide: Router, useClass: DefaultRouter }]
 })
 export class AppModule {}
