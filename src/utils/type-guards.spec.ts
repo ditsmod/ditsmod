@@ -60,15 +60,17 @@ describe('type-guards', () => {
   });
 
   describe('isProvider()', () => {
-    it('should recognize all types of providers', () => {
-      const providers: Provider[] = [
-        class {},
-        { provide: '', useValue: '' },
-        { provide: '', useClass: class {} },
-        { provide: '', useExisting: class {} },
-        { provide: '', useFactory: class {} },
-      ];
-      expect(providers.every(isProvider)).toBe(true);
+    it('should filtered all types of providers', () => {
+      @Module()
+      class Module1 {}
+      @RootModule()
+      class Module2 {}
+
+        expect(isProvider(class {})).toBe(true);
+        expect(isProvider({ provide: '', useValue: '' })).toBe(true);
+        expect(isProvider(Module1)).toBe(false);
+        expect(isProvider(Module2)).toBe(false);
+        expect(isProvider(5 as any)).toBe(false);
     });
   });
 

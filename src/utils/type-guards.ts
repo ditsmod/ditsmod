@@ -3,6 +3,7 @@ import {
   ExistingProvider,
   FactoryProvider,
   Provider,
+  reflector,
   Type,
   TypeProvider,
   ValueProvider,
@@ -70,14 +71,17 @@ export function isExistingProvider(provider: Provider): provider is ExistingProv
 export function isFactoryProvider(provider: Provider): provider is FactoryProvider {
   return (provider as FactoryProvider)?.useFactory !== undefined;
 }
+export function isProvider(maybeProvider: any): maybeProvider is TypeProvider | NormalizedProvider {
+  let module: any;
+  if (isModuleWithOptions(maybeProvider)) {
+    module = maybeProvider.module;
+  } else {
+    module = maybeProvider;
+  }
+  const isSomeModule = reflector.annotations(module).some(m => isRootModule(m) || isModule(m));
 
-export function isProvider(provider: Provider): provider is TypeProvider | NormalizedProvider {
   return (
-    (provider instanceof Type &&
-      !isModule(provider as any) &&
-      !isRootModule(provider as any) &&
-      !isModuleWithOptions(provider as any)) ||
-    isNormalizedProvider(provider)
+    (maybeProvider instanceof Type && !isSomeModule) || isNormalizedProvider(maybeProvider)
   );
 }
 
