@@ -552,7 +552,7 @@ export class AppModule {}
 ## Guards
 
 Якщо вам необхідно щоб до певних маршрутів мали доступ, наприклад, лише авторизовані користувачі,
-ви можете у третьому параметрі декоратора `Route` указати `AuthGuard` в масиві:
+ви можете у третьому параметрі декоратора `Route`, в масиві указати `AuthGuard`:
 
 ```ts
 import { Controller, Response, Route } from '@ts-stack/ditsmod';
