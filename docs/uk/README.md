@@ -1446,7 +1446,7 @@ type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
 [120]: #injectiontoken
 [121]: #колізії-провайдерів
 [122]: #домовленості-по-стилю-коду
-[123]: #вхідний-файл-для-node.js
+[123]: #вхідний-файл-для-nodejs
 [124]: #controllererrorhandler
 [125]: #logger
 [126]: #імпорт-модуля
