@@ -58,11 +58,10 @@ export class Response<T = any> {
   toString() {
     const headers = this.nodeReq.headers;
     let headerString = '';
-    let str: string;
 
     Object.keys(headers).forEach((k) => (headerString += k + ': ' + headers[k] + '\n'));
 
-    str = format(
+    const str = format(
       'HTTP/%s %s %s\n%s',
       this.nodeReq.httpVersion,
       this.nodeRes.statusCode,
