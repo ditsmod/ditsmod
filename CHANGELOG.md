@@ -1,5 +1,12 @@
+<a name="beta.20"></a>
+# [beta.20](https://github.com/ts-stack/ditsmod/releases/tag/beta.20) (2021-02-11)
+
+### Refactoring
+
+- Renamed AppFactory to Application (see [cdc724a7](https://github.com/ts-stack/ditsmod/commit/cdc724a7)).
+
 <a name="beta.19"></a>
-# [beta.19](https://github.com/ts-stack/ditsmod/releases/tag/beta.19) (2021-02-05)
+## [beta.19](https://github.com/ts-stack/ditsmod/releases/tag/beta.19) (2021-02-05)
 
 ### Bug Fixes
 

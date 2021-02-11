@@ -3,7 +3,7 @@
   "name": "@ts-stack/ditsmod",
   "homepage": "https://github.com/ts-stack/ditsmod",
   "description": "REST framework",
-  "version": "1.0.0-beta.19",
+  "version": "1.0.0-beta.20",
   "repository": {
     "type": "git",
     "url": "git://github.com/ts-stack/ditsmod.git"
