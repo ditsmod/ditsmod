@@ -2,9 +2,9 @@ import { Provider, Type } from '@ts-stack/di';
 
 import { ModuleWithOptions } from './decorators/module';
 import { RootModule } from './decorators/root-module';
-import { Factory } from './factory';
+import { Core } from './core';
 
-describe('Factory', () => {
+describe('Core', () => {
   class Provider1 {}
   class Provider2 {}
   class Provider3 {}
@@ -13,7 +13,7 @@ describe('Factory', () => {
   class Provider6 {}
   class Provider7 {}
 
-  class MockFactory extends Factory {
+  class MockFactory extends Core {
     getUniqProviders(providers: Provider[]) {
       return super.getUniqProviders(providers);
     }

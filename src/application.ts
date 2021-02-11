@@ -23,11 +23,11 @@ import {
 } from './decorators/module';
 import { getDuplicates } from './utils/get-duplicates';
 import { flatten, normalizeProviders } from './utils/ng-utils';
-import { Factory } from './factory';
+import { Core } from './core';
 import { deepFreeze } from './utils/deep-freeze';
 import { DefaultLogger } from './services/default-logger';
 
-export class Application extends Factory {
+export class Application extends Core {
   protected log: Logger;
   protected server: Server;
   protected injectorPerApp: ReflectiveInjector;

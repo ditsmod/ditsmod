@@ -24,7 +24,7 @@ import { mergeArrays } from './utils/merge-arrays-options';
 import { Router, ImportsWithPrefix, ImportsWithPrefixDecorator, GuardItems } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { Logger } from './types/logger';
-import { Factory } from './factory';
+import { Core } from './core';
 import { getDuplicates } from './utils/get-duplicates';
 import { deepFreeze } from './utils/deep-freeze';
 import { pickProperties } from './utils/pick-properties';
@@ -35,7 +35,7 @@ import { ControllerDecorator } from './decorators/controller';
  * - settings routes.
  */
 @Injectable()
-export class ModuleFactory extends Factory {
+export class ModuleFactory extends Core {
   protected mod: Type<any>;
   protected moduleName: string;
   protected prefixPerApp: string;
