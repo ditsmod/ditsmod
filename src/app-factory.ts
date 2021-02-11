@@ -1,12 +1,11 @@
 import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
-import { parentPort, isMainThread, workerData } from 'worker_threads';
 import { ReflectiveInjector, reflector, Provider, Type, resolveForwardRef } from '@ts-stack/di';
 
 import { ApplicationMetadata, RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
 import { RequestListener } from './types/types';
-import { isHttp2SecureServerOptions, isModule, isProvider, isRootModule } from './utils/type-guards';
+import { isHttp2SecureServerOptions, isProvider, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
 import { ModuleFactory } from './module-factory';
@@ -43,20 +42,10 @@ export class AppFactory extends Factory {
         this.log = new DefaultLogger(config);
         this.prepareServerOptions(appModule);
         this.createServer();
-
-        if (!isMainThread) {
-          const port = workerData?.port || 9000;
-          this.opts.listenOptions.port = port;
-        }
-
         this.server.listen(this.opts.listenOptions, () => {
           resolve({ server: this.server, log: this.log });
           const host = this.opts.listenOptions.host || 'localhost';
           this.log.info(`${this.opts.serverName} is running at ${host}:${this.opts.listenOptions.port}`);
-
-          if (!isMainThread) {
-            parentPort.postMessage('Runing worker!');
-          }
         });
       } catch (err) {
         reject({ err, log: this.log });
