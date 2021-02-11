@@ -73,15 +73,16 @@ export class PreRequest {
     parseBody: boolean,
     guardItems: GuardItems[]
   ) {
-    req.pathParamsArr = pathParamsArr;
-    const pathParams: ObjectAny = pathParamsArr ? {} : undefined;
-    pathParamsArr?.forEach((param) => (pathParams[param.key] = param.value));
-    req.pathParams = pathParams;
     let errorHandler: ControllerErrorHandler;
     let ctrl: any;
     let preparedGuardItems: { guard: CanActivate; params?: any[] }[] = [];
 
     try {
+      req.pathParamsArr = pathParamsArr;
+      const pathParams: ObjectAny = pathParamsArr ? {} : undefined;
+      pathParamsArr?.forEach((param) => (pathParams[param.key] = param.value));
+      req.pathParams = pathParams;
+
       errorHandler = req.injector.get(ControllerErrorHandler);
       preparedGuardItems = guardItems.map((item) => {
         return {
