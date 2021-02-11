@@ -4,7 +4,7 @@ import * as https from 'https';
 import * as http2 from 'http2';
 import { ReflectiveInjector, Type, Provider } from '@ts-stack/di';
 
-import { AppFactory } from './app-factory';
+import { Application } from './application';
 import { RootModule, ApplicationMetadata } from './decorators/root-module';
 import { PreRequest } from './services/pre-request';
 import { Router, ImportsWithPrefix } from './types/router';
@@ -12,8 +12,8 @@ import { Logger } from './types/logger';
 import { Server } from './types/server-options';
 import { Module, ModuleType, ModuleWithOptions, ModuleMetadata } from './decorators/module';
 
-describe('AppFactory', () => {
-  class MockAppFactory extends AppFactory {
+describe('Application', () => {
+  class MockAppFactory extends Application {
     log: Logger;
     server: Server;
     injectorPerApp: ReflectiveInjector;

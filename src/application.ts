@@ -27,7 +27,7 @@ import { Factory } from './factory';
 import { deepFreeze } from './utils/deep-freeze';
 import { DefaultLogger } from './services/default-logger';
 
-export class AppFactory extends Factory {
+export class Application extends Factory {
   protected log: Logger;
   protected server: Server;
   protected injectorPerApp: ReflectiveInjector;

@@ -51,7 +51,7 @@ Angular v4.4.7. (з мінімальними допрацюваннями) та 
 - [Колізії провайдерів][121]
 - [Домовленості по стилю коду][122]
 - [API reference][106]
-  - [AppFactory][135]
+  - [Application][135]
   - [ControllerErrorHandler][124]
   - [BodyParserConfig][128]
   - [PreRequest][129]
@@ -105,11 +105,11 @@ Node.js.
 
 ```ts
 import 'reflect-metadata';
-import { AppFactory } from '@ts-stack/ditsmod';
+import { Application } from '@ts-stack/ditsmod';
 
 import { AppModule } from './app/app.module';
 
-new AppFactory()
+new Application()
   .bootstrap(AppModule)
   .then(({ server, log }) => {
     server.on('error', (err) => log.error(err));
@@ -141,7 +141,7 @@ jest path/to/test-file.js
 
 у файлі `path/to/test-file.js` повинен бути імпорт `reflect-metadata`.
 
-Проглядаючи далі файл `src/main.ts`, ми бачимо, що створюється інстанс класу `AppFactory`, а у
+Проглядаючи далі файл `src/main.ts`, ми бачимо, що створюється інстанс класу `Application`, а у
 якості аргументу для методу `bootstrap()` передається `AppModule`. Тут `AppModule` є кореневим
 модулем, до якого вже підв'язуються інші модулі застосунку.
 
@@ -1043,10 +1043,10 @@ import { Permission } from './permission';
 
 ## API reference
 
-### AppFactory
+### Application
 
 ```ts
-class AppFactory {
+class Application {
   bootstrap(appModule: ModuleType): Promise<{ server: Server; log: Logger }>;
 }
 ```

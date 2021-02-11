@@ -15,14 +15,14 @@ export class PreRequest {
   constructor(protected log: Logger) {}
 
   /**
-   * Called by the `AppFactory` before call a router.
+   * Called by the `Application` before call a router.
    */
   decodeUrl(url: string) {
     return decodeURI(url);
   }
 
   /**
-   * Called by the `AppFactory` when a route is not found (404).
+   * Called by the `Application` when a route is not found (404).
    */
   sendNotFound(nodeRes: NodeResponse) {
     nodeRes.statusCode = Status.NOT_FOUND;
@@ -58,7 +58,7 @@ export class PreRequest {
   }
 
   /**
-   * Called by the `AppFactory` after founded a route.
+   * Called by the `Application` after founded a route.
    *
    * @param controller Controller class.
    * @param method Method of the Controller.

@@ -16,7 +16,7 @@ import { Route } from './decorators/route';
 import { Router } from './types/router';
 import { defaultProvidersPerApp, RootModule } from './decorators/root-module';
 import { Logger } from './types/logger';
-import { AppFactory } from './app-factory';
+import { Application } from './application';
 import { NodeReqToken } from './types/injection-tokens';
 import { Request } from './request';
 
@@ -56,7 +56,7 @@ describe('ModuleFactory', () => {
     }
   }
 
-  class MockAppFactory extends AppFactory {
+  class MockAppFactory extends Application {
     prepareServerOptions(appModule: ModuleType) {
       return super.prepareServerOptions(appModule);
     }
