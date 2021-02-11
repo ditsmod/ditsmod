@@ -3,7 +3,7 @@
 
 ### Refactoring
 
-- Renamed AppFactory to Application (see [cdc724a7](https://github.com/ts-stack/ditsmod/commit/cdc724a7)).
+- Renamed AppFactory to Application (see [81406fb2](https://github.com/ts-stack/ditsmod/commit/81406fb2)).
 
 <a name="beta.19"></a>
 ## [beta.19](https://github.com/ts-stack/ditsmod/releases/tag/beta.19) (2021-02-05)
