@@ -23,7 +23,7 @@ import { Logger } from './types/logger';
 import { Core } from './core';
 import { getDuplicates } from './utils/get-duplicates';
 import { pickProperties } from './utils/pick-properties';
-import { PreRouter } from './pre-router';
+import { PreRouting } from './pre-routing';
 
 /**
  * - creates `injectorPerMod` and `injectorPerReq`;
@@ -56,7 +56,7 @@ export class ModuleFactory extends Core {
     protected router: Router,
     protected injectorPerApp: ReflectiveInjector,
     protected log: Logger,
-    protected preRouter: PreRouter
+    protected preRouting: PreRouting
   ) {
     super();
   }
@@ -106,7 +106,7 @@ export class ModuleFactory extends Core {
     this.mergeProviders(moduleMetadata);
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
     this.injectorPerMod.resolveAndInstantiate(mod);
-    this.preRouter.prepareRoutes(
+    this.preRouting.prepareRoutes(
       this.moduleName,
       this.injectorPerApp,
       this.injectorPerMod,

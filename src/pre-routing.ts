@@ -8,7 +8,7 @@ import { GuardItems, Router } from './types/router';
 import { BodyParserConfig } from './types/types';
 import { isController, isRoute } from './utils/type-guards';
 
-export class PreRouter {
+export class PreRouting {
   protected moduleName: string;
   protected injectorPerApp: ReflectiveInjector;
   protected injectorPerMod: ReflectiveInjector;

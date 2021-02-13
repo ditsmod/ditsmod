@@ -8,7 +8,7 @@ import { BodyParserConfig } from '../types/types';
 import { Logger, LoggerConfig } from '../types/logger';
 import { HttpModule, ServerOptions } from '../types/server-options';
 import { DefaultLogger } from '../services/default-logger';
-import { PreRouter } from '../pre-router';
+import { PreRouting } from '../pre-routing';
 
 export const defaultProvidersPerApp: Readonly<Provider[]> = [
   LoggerConfig,
@@ -19,7 +19,7 @@ export const defaultProvidersPerApp: Readonly<Provider[]> = [
     provide: ReflectiveInjector,
     useExisting: Injector,
   },
-  PreRouter
+  PreRouting
 ];
 
 export interface RootModuleDecoratorFactory {
