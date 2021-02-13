@@ -56,7 +56,7 @@ export class ModuleFactory extends Core {
     protected router: Router,
     protected injectorPerApp: ReflectiveInjector,
     protected log: Logger,
-    protected plugin: PreRouter
+    protected preRouter: PreRouter
   ) {
     super();
   }
@@ -106,7 +106,7 @@ export class ModuleFactory extends Core {
     this.mergeProviders(moduleMetadata);
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
     this.injectorPerMod.resolveAndInstantiate(mod);
-    this.plugin.prepareRoutes(
+    this.preRouter.prepareRoutes(
       this.moduleName,
       this.injectorPerApp,
       this.injectorPerMod,
