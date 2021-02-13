@@ -39,10 +39,6 @@ describe('ModuleFactory', () => {
     exportedProvidersPerMod: Provider[] = [];
     exportedProvidersPerReq: Provider[] = [];
 
-    initProvidersPerReq() {
-      return super.initProvidersPerReq();
-    }
-
     quickCheckMetadata(moduleMetadata: ModuleMetadata) {
       return super.quickCheckMetadata(moduleMetadata);
     }
@@ -78,7 +74,7 @@ describe('ModuleFactory', () => {
   let mockApp: MockAppFactory;
 
   beforeEach(() => {
-    mock = new MockModuleFactory(null, null, log);
+    mock = new MockModuleFactory(null, null, log, null);
     mockApp = new MockAppFactory();
   });
 

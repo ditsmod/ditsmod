@@ -7,10 +7,10 @@ import { ModuleDecorator } from './module';
 import { BodyParserConfig } from '../types/types';
 import { Logger, LoggerConfig } from '../types/logger';
 import { HttpModule, ServerOptions } from '../types/server-options';
-import { deepFreeze } from '../utils/deep-freeze';
 import { DefaultLogger } from '../services/default-logger';
+import { PreRouter } from '../pre-router';
 
-export const defaultProvidersPerApp: Readonly<Provider[]> = deepFreeze([
+export const defaultProvidersPerApp: Readonly<Provider[]> = [
   LoggerConfig,
   { provide: Logger, useClass: DefaultLogger },
   BodyParserConfig,
@@ -19,7 +19,8 @@ export const defaultProvidersPerApp: Readonly<Provider[]> = deepFreeze([
     provide: ReflectiveInjector,
     useExisting: Injector,
   },
-]);
+  PreRouter
+];
 
 export interface RootModuleDecoratorFactory {
   (data?: RootModuleDecorator): any;
