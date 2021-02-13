@@ -3,8 +3,8 @@ import { Logger, LoggerConfig } from '@ts-stack/ditsmod';
 import { LogLevel } from 'bunyan';
 import bunyan = require('bunyan');
 
-import { getNamedLogggerMethod } from '../utils/get-named-logger-method';
-import { getLogMethod } from '../utils/get-log-method';
+import { getNamedLogggerMethod } from '../../utils/get-named-logger-method';
+import { getLogMethod } from '../../utils/get-log-method';
 
 @Injectable()
 export class BunyanService implements Logger {
