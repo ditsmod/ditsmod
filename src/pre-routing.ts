@@ -25,7 +25,6 @@ export class PreRouting {
     injectorPerMod: ReflectiveInjector,
     opts: ModuleMetadata,
     resolvedProvidersPerReq: ResolvedReflectiveProvider[],
-    log: Logger,
     mod: TypeProvider,
     router: Router,
     injectorPerReqMap: Map<TypeProvider, ReflectiveInjector>,
@@ -37,16 +36,17 @@ export class PreRouting {
     this.injectorPerMod = injectorPerMod;
     this.opts = opts;
     this.resolvedProvidersPerReq = resolvedProvidersPerReq;
-    this.log = log;
     this.mod = mod;
     this.router = router;
     this.injectorPerReqMap = injectorPerReqMap;
-
+    
+    this.initProvidersPerReq(); // Init to use providers in services
+    this.log = this.injectorPerApp.get(Logger);
     this.checkRoutePath(prefixPerApp);
     this.checkRoutePath(prefixPerMod);
     const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
-    this.initProvidersPerReq(); // Init to use providers in services
     this.opts.controllers.forEach((Ctrl) => this.setRoutes(prefix, Ctrl));
+    this.log.trace({ module: mod.name, options: this.opts });
   }
 
   protected setRoutes(prefix: string, Ctrl: TypeProvider) {

@@ -19,7 +19,6 @@ import { isRootModule, isImportsWithPrefix, isProvider } from './utils/type-guar
 import { mergeArrays } from './utils/merge-arrays-options';
 import { Router, ImportsWithPrefix, ImportsWithPrefixDecorator } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
-import { Logger } from './types/logger';
 import { Core } from './core';
 import { getDuplicates } from './utils/get-duplicates';
 import { pickProperties } from './utils/pick-properties';
@@ -55,7 +54,6 @@ export class ModuleFactory extends Core {
   constructor(
     protected router: Router,
     protected injectorPerApp: ReflectiveInjector,
-    protected log: Logger,
     protected preRouting: PreRouting
   ) {
     super();
@@ -112,14 +110,12 @@ export class ModuleFactory extends Core {
       this.injectorPerMod,
       this.opts,
       this.resolvedProvidersPerReq,
-      this.log,
       this.mod,
       this.router,
       this.injectorPerReqMap,
       this.prefixPerApp,
       this.prefixPerMod
     );
-    this.log.trace({ module: mod.name, options: this.opts });
     return { optsMap: this.optsMap.set(mod, this.opts), injectorPerReqMap: this.injectorPerReqMap };
   }
 
