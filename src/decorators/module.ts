@@ -3,15 +3,14 @@ import { Type, Provider, makeDecorator, TypeProvider } from '@ts-stack/di';
 import { ImportsWithPrefix, ImportsWithPrefixDecorator } from '../types/router';
 import { Request } from '../request';
 import { Response } from '../response';
-import { deepFreeze } from '../utils/deep-freeze';
 import { ControllerErrorHandler } from '../types/types';
 import { DefaultControllerErrorHandler } from '../services/default-controller-error-handler';
   
-export const defaultProvidersPerReq: Readonly<Provider[]> = deepFreeze([
+export const defaultProvidersPerReq: Readonly<Provider[]> = [
   Request,
   Response,
   { provide: ControllerErrorHandler, useClass: DefaultControllerErrorHandler }
-]);
+];
 
 export interface ModuleDecoratorFactory {
   (data?: ModuleDecorator): any;

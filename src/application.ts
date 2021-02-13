@@ -24,7 +24,6 @@ import {
 import { getDuplicates } from './utils/get-duplicates';
 import { flatten, normalizeProviders } from './utils/ng-utils';
 import { Core } from './core';
-import { deepFreeze } from './utils/deep-freeze';
 import { DefaultLogger } from './services/default-logger';
 
 export class Application extends Core {
@@ -71,7 +70,7 @@ export class Application extends Core {
    * Merge AppModule metadata with default ApplicationMetadata.
    */
   protected mergeMetadata(appModule: ModuleType): void {
-    const modMetadata = deepFreeze(reflector.annotations(appModule).find(isRootModule));
+    const modMetadata = reflector.annotations(appModule).find(isRootModule);
     if (!modMetadata) {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
@@ -150,13 +149,12 @@ export class Application extends Core {
   }
 
   protected getGlobalProviders(appModule: ModuleType) {
-    let globalProviders = new ProvidersMetadata();
+    const globalProviders = new ProvidersMetadata();
     globalProviders.providersPerApp = this.opts.providersPerApp;
     const rootModule = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
     const { providersPerMod, providersPerReq } = rootModule.importGlobalProviders(appModule, globalProviders);
     globalProviders.providersPerMod = providersPerMod;
     globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];
-    globalProviders = deepFreeze(globalProviders);
     return globalProviders;
   }
 

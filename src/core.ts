@@ -5,7 +5,6 @@ import { isModuleWithOptions, isModule, isRootModule, isNormalizedProvider } fro
 import { ModuleWithOptions, ModuleDecorator, Module } from './decorators/module';
 import { mergeArrays } from './utils/merge-arrays-options';
 import { RootModule } from './decorators/root-module';
-import { deepFreeze } from './utils/deep-freeze';
 import { normalizeProviders } from './utils/ng-utils';
 
 export abstract class Core {
@@ -50,9 +49,9 @@ export abstract class Core {
       metadata.providersPerApp = mergeArrays(modMetadata.providersPerApp, modWitOptions.providersPerApp);
       metadata.providersPerMod = mergeArrays(modMetadata.providersPerMod, modWitOptions.providersPerMod);
       metadata.providersPerReq = mergeArrays(modMetadata.providersPerReq, modWitOptions.providersPerReq);
-      return deepFreeze(metadata);
+      return metadata;
     } else {
-      return deepFreeze<T>(reflector.annotations(modOrObject).find(typeGuard));
+      return reflector.annotations(modOrObject).find(typeGuard);
     }
   }
 
