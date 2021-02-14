@@ -42,20 +42,12 @@ export class ModuleFactory extends Core {
   protected exportedProvidersPerReq: Provider[] = [];
   protected globalProviders: ProvidersMetadata;
   /**
-   * Injector per the module.
-   */
-  protected injectorPerMod: ReflectiveInjector;
-  /**
    * Only for testing purpose.
    */
   protected optsMap = new Map<TypeProvider, ModuleMetadata>();
   protected injectorPerReqMap = new Map<TypeProvider, ReflectiveInjector>();
 
-  constructor(
-    protected router: Router,
-    protected injectorPerApp: ReflectiveInjector,
-    protected preRouting: PreRouting
-  ) {
+  constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector) {
     super();
   }
 
@@ -102,12 +94,11 @@ export class ModuleFactory extends Core {
     Object.assign(this.opts, moduleMetadata);
     this.importModules();
     this.mergeProviders(moduleMetadata);
-    this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
-    this.injectorPerMod.resolveAndInstantiate(mod);
-    this.preRouting.prepareRoutes(
+
+    const preRouting = this.injectorPerApp.resolveAndInstantiate(PreRouting) as PreRouting;
+    preRouting.prepareRoutes(
       this.moduleName,
       this.injectorPerApp,
-      this.injectorPerMod,
       this.opts,
       this.resolvedProvidersPerReq,
       this.mod,
@@ -116,6 +107,7 @@ export class ModuleFactory extends Core {
       this.prefixPerApp,
       this.prefixPerMod
     );
+
     return { optsMap: this.optsMap.set(mod, this.opts), injectorPerReqMap: this.injectorPerReqMap };
   }
 

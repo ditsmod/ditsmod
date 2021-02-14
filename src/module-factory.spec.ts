@@ -68,13 +68,11 @@ describe('ModuleFactory', () => {
     };
   }
 
-  const log = new MyLogger();
-
   let mock: MockModuleFactory;
   let mockApp: MockAppFactory;
 
   beforeEach(() => {
-    mock = new MockModuleFactory(null, null, null);
+    mock = new MockModuleFactory(null, null);
     mockApp = new MockAppFactory();
   });
 
