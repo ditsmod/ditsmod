@@ -1,7 +1,7 @@
-import { RootModule, LoggerConfig, Logger, Router } from '@ts-stack/ditsmod';
+import { RootModule, LoggerConfig, Router } from '@ts-stack/ditsmod';
 import { DefaultRouter } from '@ts-stack/router';
-import { BunyanModule } from './modules/bunyan/bunyan.module';
 
+import { BunyanModule } from './modules/bunyan/bunyan.module';
 import { PinoModule } from './modules/pino/pino.module';
 import { SomeModule } from './modules/some/some.module';
 import { WinstonModule } from './modules/winston/winston.module';
