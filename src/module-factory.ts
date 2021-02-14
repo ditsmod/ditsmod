@@ -1,11 +1,4 @@
-import {
-  Provider,
-  resolveForwardRef,
-  Injectable,
-  ResolvedReflectiveProvider,
-  ReflectiveInjector,
-  TypeProvider,
-} from '@ts-stack/di';
+import { Provider, resolveForwardRef, Injectable, ReflectiveInjector, TypeProvider } from '@ts-stack/di';
 
 import {
   ModuleMetadata,
@@ -34,7 +27,6 @@ export class ModuleFactory extends Core {
   protected moduleName: string;
   protected prefixPerApp: string;
   protected prefixPerMod: string;
-  protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
   protected opts: ModuleMetadata;
   protected allExportedProvidersPerMod: Provider[] = [];
   protected allExportedProvidersPerReq: Provider[] = [];
@@ -45,6 +37,9 @@ export class ModuleFactory extends Core {
    * Only for testing purpose.
    */
   protected optsMap = new Map<TypeProvider, ModuleMetadata>();
+  /**
+   * Only for testing purpose.
+   */
   protected injectorPerReqMap = new Map<TypeProvider, ReflectiveInjector>();
 
   constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector) {
@@ -96,17 +91,8 @@ export class ModuleFactory extends Core {
     this.mergeProviders(moduleMetadata);
 
     const preRouting = this.injectorPerApp.resolveAndInstantiate(PreRouting) as PreRouting;
-    preRouting.prepareRoutes(
-      this.moduleName,
-      this.injectorPerApp,
-      this.opts,
-      this.resolvedProvidersPerReq,
-      this.mod,
-      this.router,
-      this.injectorPerReqMap,
-      this.prefixPerApp,
-      this.prefixPerMod
-    );
+    preRouting.init(mod, this.opts, this.injectorPerReqMap);
+    preRouting.prepareRoutes(this.prefixPerApp, this.prefixPerMod);
 
     return { optsMap: this.optsMap.set(mod, this.opts), injectorPerReqMap: this.injectorPerReqMap };
   }

@@ -1,4 +1,11 @@
-import { Provider, ReflectiveInjector, reflector, ResolvedReflectiveProvider, TypeProvider } from '@ts-stack/di';
+import {
+  Injectable,
+  Provider,
+  ReflectiveInjector,
+  reflector,
+  ResolvedReflectiveProvider,
+  TypeProvider,
+} from '@ts-stack/di';
 
 import { ControllerDecorator } from './decorators/controller';
 import { ModuleMetadata } from './decorators/module';
@@ -8,48 +15,39 @@ import { GuardItems, Router } from './types/router';
 import { BodyParserConfig } from './types/types';
 import { isController, isRoute } from './utils/type-guards';
 
+@Injectable()
 export class PreRouting {
-  protected moduleName: string;
-  protected injectorPerApp: ReflectiveInjector;
   /**
    * Injector per the module.
    */
   protected injectorPerMod: ReflectiveInjector;
   protected opts: ModuleMetadata;
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
-  protected log: Logger;
   protected mod: TypeProvider;
-  protected router: Router;
+  /**
+   * Only for testing purpose.
+   */
   protected injectorPerReqMap: Map<TypeProvider, ReflectiveInjector>;
 
-  prepareRoutes(
-    moduleName: string,
-    injectorPerApp: ReflectiveInjector,
-    opts: ModuleMetadata,
-    resolvedProvidersPerReq: ResolvedReflectiveProvider[],
-    mod: TypeProvider,
-    router: Router,
-    injectorPerReqMap: Map<TypeProvider, ReflectiveInjector>,
-    prefixPerApp: string,
-    prefixPerMod: string
-  ) {
-    this.moduleName = moduleName;
-    this.injectorPerApp = injectorPerApp;
-    this.opts = opts;
-    this.resolvedProvidersPerReq = resolvedProvidersPerReq;
+  constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector, protected log: Logger) {}
+
+  init(mod: TypeProvider, opts: ModuleMetadata, injectorPerReqMap: Map<TypeProvider, ReflectiveInjector>) {
     this.mod = mod;
-    this.router = router;
+    this.opts = opts;
     this.injectorPerReqMap = injectorPerReqMap;
 
-    this.injectorPerMod = injectorPerApp.resolveAndCreateChild(opts.providersPerMod);
+    this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(opts.providersPerMod);
     this.injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolveable
+
     this.initProvidersPerReq(); // Init to use providers in services
-    this.log = this.injectorPerApp.get(Logger);
+  }
+
+  prepareRoutes(prefixPerApp: string, prefixPerMod: string) {
     this.checkRoutePath(prefixPerApp);
     this.checkRoutePath(prefixPerMod);
     const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
     this.opts.controllers.forEach((Ctrl) => this.setRoutes(prefix, Ctrl));
-    this.log.trace({ module: mod.name, options: this.opts });
+    this.log.trace({ module: this.mod.name, options: this.opts });
   }
 
   /**
@@ -121,7 +119,7 @@ export class PreRouting {
     }));
 
     const logObj = {
-      module: this.moduleName,
+      module: this.mod.name,
       httpMethod: route.httpMethod,
       path,
       guards: guardItems,
@@ -153,7 +151,7 @@ export class PreRouting {
       const type = typeof Guard?.prototype.canActivate;
       if (type != 'function') {
         throw new TypeError(
-          `${this.moduleName} --> ${Ctrl.name} --> ${prop}(): Guard.prototype.canActivate must be a function, got: ${type}`
+          `${this.mod.name} --> ${Ctrl.name} --> ${prop}(): Guard.prototype.canActivate must be a function, got: ${type}`
         );
       }
     }
@@ -186,7 +184,7 @@ export class PreRouting {
   protected checkRoutePath(path: string) {
     if (path.charAt(0) == '/') {
       throw new Error(
-        `Invalid configuration of route '${path}' (in '${this.moduleName}'): path cannot start with a slash`
+        `Invalid configuration of route '${path}' (in '${this.mod.name}'): path cannot start with a slash`
       );
     }
   }
