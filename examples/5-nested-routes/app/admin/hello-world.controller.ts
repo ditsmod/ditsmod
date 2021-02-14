@@ -6,6 +6,6 @@ export class HelloWorldController {
 
   @Route('GET')
   tellHello() {
-    this.res.send('Hello World (v1)!\n');
+    this.res.send('Hello World (admin)!\n');
   }
 }

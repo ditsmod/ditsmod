@@ -175,8 +175,8 @@ npm run start5
 З другого терміналу:
 
 ```bash
-curl -isS localhost:8080/api/v1
-curl -isS localhost:8080/api/v2
+curl -isS localhost:8080/api/admin
+curl -isS localhost:8080/api/user
 ```
 
 ## 6-body-parser

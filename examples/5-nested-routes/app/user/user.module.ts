@@ -5,4 +5,4 @@ import { HelloWorldController } from './hello-world.controller';
 @Module({
   controllers: [HelloWorldController],
 })
-export class SecondModule {}
+export class UserModule {}
