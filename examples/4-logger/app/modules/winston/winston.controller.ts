@@ -7,6 +7,6 @@ export class WinstonController {
   @Route('GET', 'winston')
   ok() {
     this.res.send('see console of node process\n');
-    this.log.trace(`it's works!`);
+    this.log.trace("it's works!");
   }
 }
