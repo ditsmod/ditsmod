@@ -16,6 +16,7 @@ import { Core } from './core';
 import { getDuplicates } from './utils/get-duplicates';
 import { pickProperties } from './utils/pick-properties';
 import { PreRouting } from './pre-routing';
+import { Logger } from './types/logger';
 
 /**
  * - creates `injectorPerMod` and `injectorPerReq`;
@@ -38,7 +39,7 @@ export class ModuleFactory extends Core {
    */
   protected optsMap = new Map<TypeProvider, ModuleMetadata>();
 
-  constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector) {
+  constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector, protected log: Logger) {
     super();
   }
 
@@ -86,9 +87,12 @@ export class ModuleFactory extends Core {
     this.importModules();
     this.mergeProviders(moduleMetadata);
 
-    const preRouting = this.injectorPerApp.resolveAndInstantiate(PreRouting) as PreRouting;
-    preRouting.init(mod, this.opts);
+    const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
+    injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolveable
+    const preRouting = injectorPerMod.resolveAndInstantiate(PreRouting) as PreRouting;
+    preRouting.init(mod.name, this.opts.providersPerReq, this.opts.controllers);
     preRouting.prepareRoutes(this.prefixPerApp, this.prefixPerMod);
+    this.log.trace({ module: this.moduleName, options: this.opts });
 
     return { optsMap: this.optsMap.set(mod, this.opts) };
   }

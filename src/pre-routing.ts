@@ -8,7 +8,6 @@ import {
 } from '@ts-stack/di';
 
 import { ControllerDecorator } from './decorators/controller';
-import { ModuleMetadata } from './decorators/module';
 import { RouteDecoratorMetadata, RouteMetadata } from './decorators/route';
 import { Logger } from './types/logger';
 import { GuardItems, Router } from './types/router';
@@ -17,22 +16,17 @@ import { isController, isRoute } from './utils/type-guards';
 
 @Injectable()
 export class PreRouting {
-  /**
-   * Injector per the module.
-   */
-  protected injectorPerMod: ReflectiveInjector;
-  protected opts: ModuleMetadata;
+  protected providersPerReq: Provider[];
+  protected controllers: TypeProvider[];
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
-  protected mod: TypeProvider;
+  protected moduleName: string;
 
-  constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector, protected log: Logger) {}
+  constructor(protected router: Router, protected injectorPerMod: ReflectiveInjector, protected log: Logger) {}
 
-  init(mod: TypeProvider, opts: ModuleMetadata) {
-    this.mod = mod;
-    this.opts = opts;
-
-    this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(opts.providersPerMod);
-    this.injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolveable
+  init(moduleName: string, providersPerReq: Provider[], controllers: TypeProvider[]) {
+    this.moduleName = moduleName;
+    this.providersPerReq = providersPerReq;
+    this.controllers = controllers;
 
     this.initProvidersPerReq(); // Init to use providers in services
   }
@@ -41,22 +35,21 @@ export class PreRouting {
     this.checkRoutePath(prefixPerApp);
     this.checkRoutePath(prefixPerMod);
     const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
-    this.opts.controllers.forEach((Ctrl) => this.setRoutes(prefix, Ctrl));
-    this.log.trace({ module: this.mod.name, options: this.opts });
+    this.controllers.forEach((Ctrl) => this.setRoutes(prefix, Ctrl));
   }
 
   /**
    * Init providers per the request.
    */
   protected initProvidersPerReq() {
-    this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.opts.providersPerReq);
+    this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.providersPerReq);
   }
 
   /**
    * Inserts new `Provider` at the start of `providersPerReq` array.
    */
   protected unshiftProvidersPerReq(...providers: Provider[]) {
-    this.opts.providersPerReq.unshift(...providers);
+    this.providersPerReq.unshift(...providers);
     this.initProvidersPerReq();
   }
 
@@ -111,7 +104,7 @@ export class PreRouting {
     }));
 
     const logObj = {
-      module: this.mod.name,
+      module: this.moduleName,
       httpMethod: route.httpMethod,
       path,
       guards: guardItems,
@@ -143,7 +136,7 @@ export class PreRouting {
       const type = typeof Guard?.prototype.canActivate;
       if (type != 'function') {
         throw new TypeError(
-          `${this.mod.name} --> ${Ctrl.name} --> ${prop}(): Guard.prototype.canActivate must be a function, got: ${type}`
+          `${this.moduleName} --> ${Ctrl.name} --> ${prop}(): Guard.prototype.canActivate must be a function, got: ${type}`
         );
       }
     }
@@ -152,7 +145,7 @@ export class PreRouting {
     let resolvedProvidersPerReq: ResolvedReflectiveProvider[] = this.resolvedProvidersPerReq;
     const { providersPerReq } = controllerMetadata;
     if (providersPerReq) {
-      resolvedProvidersPerReq = ReflectiveInjector.resolve([...this.opts.providersPerReq, ...providersPerReq]);
+      resolvedProvidersPerReq = ReflectiveInjector.resolve([...this.providersPerReq, ...providersPerReq]);
     }
 
     return resolvedProvidersPerReq;
@@ -176,7 +169,7 @@ export class PreRouting {
   protected checkRoutePath(path: string) {
     if (path.charAt(0) == '/') {
       throw new Error(
-        `Invalid configuration of route '${path}' (in '${this.mod.name}'): path cannot start with a slash`
+        `Invalid configuration of route '${path}' (in '${this.moduleName}'): path cannot start with a slash`
       );
     }
   }
