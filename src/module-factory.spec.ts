@@ -72,7 +72,7 @@ describe('ModuleFactory', () => {
   let mockApp: MockAppFactory;
 
   beforeEach(() => {
-    mock = new MockModuleFactory(null, null);
+    mock = new MockModuleFactory(null, null, new MyLogger);
     mockApp = new MockAppFactory();
   });
 
