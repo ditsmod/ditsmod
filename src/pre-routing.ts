@@ -24,17 +24,12 @@ export class PreRouting {
   protected opts: ModuleMetadata;
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
   protected mod: TypeProvider;
-  /**
-   * Only for testing purpose.
-   */
-  protected injectorPerReqMap: Map<TypeProvider, ReflectiveInjector>;
 
   constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector, protected log: Logger) {}
 
-  init(mod: TypeProvider, opts: ModuleMetadata, injectorPerReqMap: Map<TypeProvider, ReflectiveInjector>) {
+  init(mod: TypeProvider, opts: ModuleMetadata) {
     this.mod = mod;
     this.opts = opts;
-    this.injectorPerReqMap = injectorPerReqMap;
 
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(opts.providersPerMod);
     this.injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolveable
@@ -55,8 +50,6 @@ export class PreRouting {
    */
   protected initProvidersPerReq() {
     this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.opts.providersPerReq);
-    const injectorPerReq = this.injectorPerMod.createChildFromResolved(this.resolvedProvidersPerReq);
-    this.injectorPerReqMap.set(this.mod, injectorPerReq);
   }
 
   /**
@@ -80,7 +73,6 @@ export class PreRouting {
         this.checkRoutePath(route.path);
         const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(route, Ctrl, prop, controllerMetadata);
         const injectorPerReq = this.injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
-        this.injectorPerReqMap.set(this.mod, injectorPerReq);
         this.setRoute(prefix, route, resolvedProvidersPerReq, Ctrl, prop, injectorPerReq);
       }
     }

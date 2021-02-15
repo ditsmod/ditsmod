@@ -37,10 +37,6 @@ export class ModuleFactory extends Core {
    * Only for testing purpose.
    */
   protected optsMap = new Map<TypeProvider, ModuleMetadata>();
-  /**
-   * Only for testing purpose.
-   */
-  protected injectorPerReqMap = new Map<TypeProvider, ReflectiveInjector>();
 
   constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector) {
     super();
@@ -91,10 +87,10 @@ export class ModuleFactory extends Core {
     this.mergeProviders(moduleMetadata);
 
     const preRouting = this.injectorPerApp.resolveAndInstantiate(PreRouting) as PreRouting;
-    preRouting.init(mod, this.opts, this.injectorPerReqMap);
+    preRouting.init(mod, this.opts);
     preRouting.prepareRoutes(this.prefixPerApp, this.prefixPerMod);
 
-    return { optsMap: this.optsMap.set(mod, this.opts), injectorPerReqMap: this.injectorPerReqMap };
+    return { optsMap: this.optsMap.set(mod, this.opts) };
   }
 
   protected mergeProviders(moduleMetadata: ModuleMetadata) {
