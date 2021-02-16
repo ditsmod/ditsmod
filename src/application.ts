@@ -39,7 +39,7 @@ export class Application extends Core {
       try {
         const config = new LoggerConfig();
         this.log = new DefaultLogger(config);
-        this.prepareServerOptions(appModule);
+        this.prepareApplicationOptions(appModule);
         this.createServer();
         this.server.listen(this.opts.listenOptions, () => {
           resolve({ server: this.server, log: this.log });
@@ -52,7 +52,7 @@ export class Application extends Core {
     });
   }
 
-  protected prepareServerOptions(appModule: ModuleType) {
+  protected prepareApplicationOptions(appModule: ModuleType) {
     this.mergeMetadata(appModule);
     this.checkSecureServerOption(appModule);
     this.prepareProvidersPerApp(appModule);
