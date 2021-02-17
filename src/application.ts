@@ -40,8 +40,7 @@ export class Application extends Core {
       try {
         const config = new LoggerConfig();
         this.log = new DefaultLogger(config);
-        const extensionsMetadataMap = this.prepareModules(appModule);
-        this.callExtensions(extensionsMetadataMap);
+        this.prepareModules(appModule);
         this.createServer();
         this.server.listen(this.opts.listenOptions, () => {
           resolve({ server: this.server, log: this.log });
@@ -54,33 +53,15 @@ export class Application extends Core {
     });
   }
 
-  /**
-   * @todo Add test for prefixPerApp.
-   */
-  protected callExtensions(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
-    extensionsMetadataMap.forEach((extensionsMetadata, mod) => {
-      this.log.trace(mod, extensionsMetadata);
-      const { prefixPerMod, providersPerMod, providersPerReq, controllers } = extensionsMetadata;
-      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-      injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolveable
-      const preRouting = injectorPerMod.resolveAndInstantiate(PreRouting) as PreRouting;
-      preRouting.init(mod.name, providersPerReq, controllers);
-      preRouting.prepareRoutes(this.opts.prefixPerApp, prefixPerMod);
-    });
-  }
-
   protected prepareModules(appModule: ModuleType) {
     this.mergeMetadata(appModule);
     this.checkSecureServerOption(appModule);
     this.prepareProvidersPerApp(appModule);
     this.opts.providersPerApp.unshift(...defaultProvidersPerApp);
     this.initProvidersPerApp();
-    this.log.trace({
-      serverName: this.opts.serverName,
-      phase: 'launch application',
-      listenOptions: this.opts.listenOptions,
-    });
-    return this.bootstrapModuleFactory(appModule);
+    const extensionsMetadataMap = this.bootstrapModuleFactory(appModule);
+    this.callExtensions(extensionsMetadataMap);
+    return extensionsMetadataMap;
   }
 
   /**
@@ -174,6 +155,31 @@ export class Application extends Core {
     globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];
     return globalProviders;
   }
+  /**
+   * @todo Add test for prefixPerApp.
+   */
+  protected callExtensions(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
+    extensionsMetadataMap.forEach((extensionsMetadata, mod) => {
+      this.log.trace(mod, extensionsMetadata);
+      const { prefixPerMod, providersPerMod, providersPerReq, controllers } = extensionsMetadata;
+      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+      injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolveable
+      const preRouting = injectorPerMod.resolveAndInstantiate(PreRouting) as PreRouting;
+      preRouting.init(mod.name, providersPerReq, controllers);
+      preRouting.prepareRoutes(this.opts.prefixPerApp, prefixPerMod);
+    });
+  }
+
+  protected createServer() {
+    if (isHttp2SecureServerOptions(this.opts.serverOptions)) {
+      const serverModule = this.opts.httpModule as typeof http2;
+      this.server = serverModule.createSecureServer(this.opts.serverOptions, this.requestListener);
+    } else {
+      const serverModule = this.opts.httpModule as typeof http | typeof https;
+      const serverOptions = this.opts.serverOptions as http.ServerOptions | https.ServerOptions;
+      this.server = serverModule.createServer(serverOptions, this.requestListener);
+    }
+  }
 
   protected requestListener: RequestListener = (nodeReq, nodeRes) => {
     nodeRes.setHeader('Server', this.opts.serverName);
@@ -199,15 +205,4 @@ export class Application extends Core {
     const req = inj2.get(Request) as Request;
     this.preReq.handleRoute(req, controller, method, params, queryString, parseBody, guardItems);
   };
-
-  protected createServer() {
-    if (isHttp2SecureServerOptions(this.opts.serverOptions)) {
-      const serverModule = this.opts.httpModule as typeof http2;
-      this.server = serverModule.createSecureServer(this.opts.serverOptions, this.requestListener);
-    } else {
-      const serverModule = this.opts.httpModule as typeof http | typeof https;
-      const serverOptions = this.opts.serverOptions as http.ServerOptions | https.ServerOptions;
-      this.server = serverModule.createServer(serverOptions, this.requestListener);
-    }
-  }
 }

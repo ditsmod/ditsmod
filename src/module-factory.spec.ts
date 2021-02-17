@@ -71,7 +71,7 @@ describe('ModuleFactory', () => {
   let mockApp: MockAppFactory;
 
   beforeEach(() => {
-    mock = new MockModuleFactory(null, null);
+    mock = new MockModuleFactory(null);
     mockApp = new MockAppFactory();
   });
 
