@@ -15,7 +15,6 @@ import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { Core } from './core';
 import { getDuplicates } from './utils/get-duplicates';
 import { pickProperties } from './utils/pick-properties';
-import { Logger } from './types/logger';
 import { ExtensionMetadata } from './types/types';
 
 /**
@@ -35,7 +34,7 @@ export class ModuleFactory extends Core {
   protected globalProviders: ProvidersMetadata;
   protected optsMap = new Map<ModuleType, ExtensionMetadata>();
 
-  constructor(protected injectorPerApp: ReflectiveInjector, protected log: Logger) {
+  constructor(protected injectorPerApp: ReflectiveInjector) {
     super();
   }
 
