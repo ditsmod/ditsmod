@@ -54,15 +54,18 @@ export class Application extends Core {
     });
   }
 
+  /**
+   * @todo Add test for prefixPerApp.
+   */
   protected callExtensions(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
     extensionsMetadataMap.forEach((extensionsMetadata, mod) => {
       this.log.trace(mod, extensionsMetadata);
-      const { prefixPerApp, prefixPerMod, providersPerMod, providersPerReq, controllers } = extensionsMetadata;
+      const { prefixPerMod, providersPerMod, providersPerReq, controllers } = extensionsMetadata;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolveable
       const preRouting = injectorPerMod.resolveAndInstantiate(PreRouting) as PreRouting;
       preRouting.init(mod.name, providersPerReq, controllers);
-      preRouting.prepareRoutes(prefixPerApp, prefixPerMod);
+      preRouting.prepareRoutes(this.opts.prefixPerApp, prefixPerMod);
     });
   }
 
@@ -159,7 +162,7 @@ export class Application extends Core {
     const globalProviders = this.getGlobalProviders(appModule);
     this.log.trace({ globalProviders });
     const rootModule = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    return rootModule.bootstrap(globalProviders, this.opts.prefixPerApp, '', appModule);
+    return rootModule.bootstrap(globalProviders, '', appModule);
   }
 
   protected getGlobalProviders(appModule: ModuleType) {

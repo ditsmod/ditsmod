@@ -429,8 +429,7 @@ describe('ModuleFactory', () => {
 
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
-        mock.bootstrap(new ProvidersMetadata(), 'api', '', Module3);
-        expect(mock.prefixPerApp).toBe('api');
+        mock.bootstrap(new ProvidersMetadata(), '', Module3);
 
         const mod0 = mock.optsMap.get(Module0);
         expect(mod0.providersPerMod).toEqual([Provider0]);
@@ -472,9 +471,8 @@ describe('ModuleFactory', () => {
         const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
-        mock.bootstrap(new ProvidersMetadata(), 'some', 'other', Module4);
+        mock.bootstrap(new ProvidersMetadata(), 'other', Module4);
 
-        expect(mock.prefixPerApp).toBe('some');
         expect(mock.prefixPerMod).toBe('other');
         // expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
         expect(mock.opts.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3, Provider5]);
@@ -492,7 +490,7 @@ describe('ModuleFactory', () => {
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
         const errMsg = /Importing Module5 failed: this module should have/;
-        expect(() => mock.bootstrap(new ProvidersMetadata(), 'api', '', Module5)).toThrow(errMsg);
+        expect(() => mock.bootstrap(new ProvidersMetadata(), '', Module5)).toThrow(errMsg);
       });
 
       @Module({
@@ -515,7 +513,7 @@ describe('ModuleFactory', () => {
           'should includes in "providersPerMod" or "providersPerReq", ' +
           'or in some "exports" of imported modules. ' +
           'Tip: "providersPerApp" no need exports, they are automatically exported.';
-        expect(() => mock.bootstrap(new ProvidersMetadata(), 'api', '', Module7)).toThrow(errMsg);
+        expect(() => mock.bootstrap(new ProvidersMetadata(), '', Module7)).toThrow(errMsg);
       });
     });
 
@@ -556,7 +554,7 @@ describe('ModuleFactory', () => {
         class AppModule {}
 
         const msg = /Exporting providers in Module3 was failed: found collision for: Provider1/;
-        expect(() => mock.bootstrap(new ProvidersMetadata(), '', '', AppModule)).toThrow(msg);
+        expect(() => mock.bootstrap(new ProvidersMetadata(), '', AppModule)).toThrow(msg);
       });
 
       it('resolved collision for non-root module', () => {
@@ -595,7 +593,7 @@ describe('ModuleFactory', () => {
         })
         class AppModule {}
 
-        expect(() => mock.bootstrap(new ProvidersMetadata(), '', '', AppModule)).not.toThrow();
+        expect(() => mock.bootstrap(new ProvidersMetadata(), '', AppModule)).not.toThrow();
       });
 
       describe('per a module', () => {

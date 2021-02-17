@@ -41,4 +41,4 @@ export class ControllerErrorHandler {
 }
 
 export interface ModuleType extends TypeProvider {}
-export type ExtensionMetadata = ModuleMetadata & { prefixPerMod: string, prefixPerApp?: string };
+export type ExtensionMetadata = ModuleMetadata & { prefixPerMod: string };

@@ -26,7 +26,6 @@ import { ExtensionMetadata } from './types/types';
 export class ModuleFactory extends Core {
   protected mod: ModuleType;
   protected moduleName: string;
-  protected prefixPerApp: string;
   protected prefixPerMod: string;
   protected opts: ModuleMetadata;
   protected allExportedProvidersPerMod: Provider[] = [];
@@ -67,12 +66,10 @@ export class ModuleFactory extends Core {
    */
   bootstrap(
     globalProviders: ProvidersMetadata,
-    prefixPerApp: string,
     prefixPerMod: string,
     modOrObject: TypeProvider | ModuleWithOptions<any>
   ) {
     this.globalProviders = globalProviders;
-    this.prefixPerApp = prefixPerApp || '';
     this.prefixPerMod = prefixPerMod || '';
     const mod = this.getModule(modOrObject);
     this.mod = mod;
@@ -88,9 +85,6 @@ export class ModuleFactory extends Core {
 
   protected setExtensionsMetadata() {
     const map = { ...this.opts, prefixPerMod: this.prefixPerMod } as ExtensionMetadata;
-    if ((map as any).ngMetadataName == 'RootModule') {
-      map.prefixPerApp = this.prefixPerApp;
-    }
     return this.optsMap.set(this.mod, map);
   }
 
@@ -179,7 +173,7 @@ export class ModuleFactory extends Core {
       const prefixPerMod = [this.prefixPerMod, imp.prefix].filter((s) => s).join('/');
       const mod = imp.module;
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      const optsMap = moduleFactory.bootstrap(this.globalProviders, this.prefixPerApp, prefixPerMod, mod);
+      const optsMap = moduleFactory.bootstrap(this.globalProviders, prefixPerMod, mod);
       this.optsMap = new Map([...this.optsMap, ...optsMap]);
     }
     this.checkProvidersCollisions();
