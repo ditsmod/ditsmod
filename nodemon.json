@@ -1,5 +1,6 @@
 {
   "events": {
     "start": "clear"
-  }
+  },
+  "ignore": ["*.spec.ts"]
 }

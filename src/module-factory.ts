@@ -10,13 +10,13 @@ import {
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isRootModule, isImportsWithPrefix, isProvider } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
-import { Router, ImportsWithPrefix, ImportsWithPrefixDecorator } from './types/router';
+import { ImportsWithPrefix, ImportsWithPrefixDecorator } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { Core } from './core';
 import { getDuplicates } from './utils/get-duplicates';
 import { pickProperties } from './utils/pick-properties';
-import { PreRouting } from './pre-routing';
 import { Logger } from './types/logger';
+import { ExtensionMetadata } from './types/types';
 
 /**
  * - creates `injectorPerMod` and `injectorPerReq`;
@@ -24,7 +24,7 @@ import { Logger } from './types/logger';
  */
 @Injectable()
 export class ModuleFactory extends Core {
-  protected mod: TypeProvider;
+  protected mod: ModuleType;
   protected moduleName: string;
   protected prefixPerApp: string;
   protected prefixPerMod: string;
@@ -34,12 +34,9 @@ export class ModuleFactory extends Core {
   protected exportedProvidersPerMod: Provider[] = [];
   protected exportedProvidersPerReq: Provider[] = [];
   protected globalProviders: ProvidersMetadata;
-  /**
-   * Only for testing purpose.
-   */
-  protected optsMap = new Map<TypeProvider, ModuleMetadata>();
+  protected optsMap = new Map<ModuleType, ExtensionMetadata>();
 
-  constructor(protected router: Router, protected injectorPerApp: ReflectiveInjector, protected log: Logger) {
+  constructor(protected injectorPerApp: ReflectiveInjector, protected log: Logger) {
     super();
   }
 
@@ -48,7 +45,7 @@ export class ModuleFactory extends Core {
    *
    * @param globalProviders Contains providersPerApp for now.
    */
-  importGlobalProviders(rootModule: TypeProvider, globalProviders: ProvidersMetadata) {
+  importGlobalProviders(rootModule: ModuleType, globalProviders: ProvidersMetadata) {
     this.moduleName = this.getModuleName(rootModule);
     const moduleMetadata = this.normalizeMetadata(rootModule);
     this.opts = new ModuleMetadata();
@@ -86,15 +83,15 @@ export class ModuleFactory extends Core {
     Object.assign(this.opts, moduleMetadata);
     this.importModules();
     this.mergeProviders(moduleMetadata);
+    return this.setExtensionsMetadata();
+  }
 
-    const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
-    injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolveable
-    const preRouting = injectorPerMod.resolveAndInstantiate(PreRouting) as PreRouting;
-    preRouting.init(mod.name, this.opts.providersPerReq, this.opts.controllers);
-    preRouting.prepareRoutes(this.prefixPerApp, this.prefixPerMod);
-    this.log.trace({ module: this.moduleName, options: this.opts });
-
-    return { optsMap: this.optsMap.set(mod, this.opts) };
+  protected setExtensionsMetadata() {
+    const map = { ...this.opts, prefixPerMod: this.prefixPerMod } as ExtensionMetadata;
+    if ((map as any).ngMetadataName == 'RootModule') {
+      map.prefixPerApp = this.prefixPerApp;
+    }
+    return this.optsMap.set(this.mod, map);
   }
 
   protected mergeProviders(moduleMetadata: ModuleMetadata) {
@@ -140,7 +137,7 @@ export class ModuleFactory extends Core {
   /**
    * Collects and normalizes module metadata.
    */
-  protected normalizeMetadata(mod: TypeProvider | ModuleWithOptions<any>) {
+  protected normalizeMetadata(mod: ModuleType | ModuleWithOptions<any>) {
     const modMetadata = this.getRawModuleMetadata(mod);
     const modName = this.getModuleName(mod);
     this.checkModuleMetadata(modMetadata, modName);
@@ -182,7 +179,7 @@ export class ModuleFactory extends Core {
       const prefixPerMod = [this.prefixPerMod, imp.prefix].filter((s) => s).join('/');
       const mod = imp.module;
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      const { optsMap } = moduleFactory.bootstrap(this.globalProviders, this.prefixPerApp, prefixPerMod, mod);
+      const optsMap = moduleFactory.bootstrap(this.globalProviders, this.prefixPerApp, prefixPerMod, mod);
       this.optsMap = new Map([...this.optsMap, ...optsMap]);
     }
     this.checkProvidersCollisions();

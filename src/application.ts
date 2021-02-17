@@ -4,7 +4,7 @@ import * as http2 from 'http2';
 import { ReflectiveInjector, reflector, Provider, Type, resolveForwardRef } from '@ts-stack/di';
 
 import { ApplicationMetadata, RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
-import { RequestListener } from './types/types';
+import { ExtensionMetadata, RequestListener } from './types/types';
 import { isHttp2SecureServerOptions, isProvider, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
 import { Request } from './request';
@@ -25,6 +25,7 @@ import { getDuplicates } from './utils/get-duplicates';
 import { flatten, normalizeProviders } from './utils/ng-utils';
 import { Core } from './core';
 import { DefaultLogger } from './services/default-logger';
+import { PreRouting } from './pre-routing';
 
 export class Application extends Core {
   protected log: Logger;
@@ -39,7 +40,8 @@ export class Application extends Core {
       try {
         const config = new LoggerConfig();
         this.log = new DefaultLogger(config);
-        this.prepareApplicationOptions(appModule);
+        const extensionsMetadataMap = this.prepareModules(appModule);
+        this.callExtensions(extensionsMetadataMap);
         this.createServer();
         this.server.listen(this.opts.listenOptions, () => {
           resolve({ server: this.server, log: this.log });
@@ -52,7 +54,19 @@ export class Application extends Core {
     });
   }
 
-  protected prepareApplicationOptions(appModule: ModuleType) {
+  protected callExtensions(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
+    extensionsMetadataMap.forEach((extensionsMetadata, mod) => {
+      this.log.trace(mod, extensionsMetadata);
+      const { prefixPerApp, prefixPerMod, providersPerMod, providersPerReq, controllers } = extensionsMetadata;
+      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+      injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolveable
+      const preRouting = injectorPerMod.resolveAndInstantiate(PreRouting) as PreRouting;
+      preRouting.init(mod.name, providersPerReq, controllers);
+      preRouting.prepareRoutes(prefixPerApp, prefixPerMod);
+    });
+  }
+
+  protected prepareModules(appModule: ModuleType) {
     this.mergeMetadata(appModule);
     this.checkSecureServerOption(appModule);
     this.prepareProvidersPerApp(appModule);
@@ -121,8 +135,8 @@ export class Application extends Core {
     const modMetadata = this.getRawModuleMetadata(modOrObject) as RootModuleDecorator | ModuleDecorator;
     this.checkModuleMetadata(modMetadata, modName);
 
-    let modules = [modMetadata.imports, modMetadata.exports?.filter(exp => !isProvider(exp))];
-    modules = modules.filter(el => el);
+    let modules = [modMetadata.imports, modMetadata.exports?.filter((exp) => !isProvider(exp))];
+    modules = modules.filter((el) => el);
     const preparedModules = flatten(modules).map<Type<any> | ModuleWithOptions<any>>(resolveForwardRef);
     const providersPerApp: Provider[] = [];
     preparedModules.forEach((mod) => providersPerApp.push(...this.collectProvidersPerApp(mod)));

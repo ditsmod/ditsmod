@@ -29,6 +29,7 @@ export class PreRouting {
     this.controllers = controllers;
 
     this.initProvidersPerReq(); // Init to use providers in services
+    return this;
   }
 
   prepareRoutes(prefixPerApp: string, prefixPerMod: string) {
@@ -167,7 +168,7 @@ export class PreRouting {
   }
 
   protected checkRoutePath(path: string) {
-    if (path.charAt(0) == '/') {
+    if (path?.charAt(0) == '/') {
       throw new Error(
         `Invalid configuration of route '${path}' (in '${this.moduleName}'): path cannot start with a slash`
       );
