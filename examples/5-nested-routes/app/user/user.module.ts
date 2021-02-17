@@ -1,8 +1,8 @@
 import { Module } from '@ts-stack/ditsmod';
 
-import { HelloWorldController } from './hello-world.controller';
+import { HelloController } from './hello.controller';
 
 @Module({
-  controllers: [HelloWorldController],
+  controllers: [HelloController],
 })
 export class UserModule {}

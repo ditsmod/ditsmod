@@ -1,11 +1,11 @@
 import { Controller, Response, Route } from '@ts-stack/ditsmod';
 
 @Controller()
-export class HelloWorldController {
+export class HelloController {
   constructor(private res: Response) {}
 
   @Route('GET')
   tellHello() {
-    this.res.send('Hello World (admin)!\n');
+    this.res.send('Hello, admin!\n');
   }
 }
