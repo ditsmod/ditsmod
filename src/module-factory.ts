@@ -79,12 +79,7 @@ export class ModuleFactory extends Core {
     Object.assign(this.opts, moduleMetadata);
     this.importModules();
     this.mergeProviders(moduleMetadata);
-    return this.setExtensionsMetadata();
-  }
-
-  protected setExtensionsMetadata() {
-    const map = { ...this.opts, prefixPerMod: this.prefixPerMod } as ExtensionMetadata;
-    return this.optsMap.set(this.mod, map);
+    return this.optsMap.set(this.mod, { ...this.opts, prefixPerMod });
   }
 
   protected mergeProviders(moduleMetadata: ModuleMetadata) {

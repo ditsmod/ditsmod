@@ -155,6 +155,7 @@ export class Application extends Core {
     globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];
     return globalProviders;
   }
+
   /**
    * @todo Add test for prefixPerApp.
    */
