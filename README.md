@@ -1,8 +1,38 @@
 ## About the project
 
-Ditsmod is a Node.js web framework, named **DI** + **TS** + **Mod** to emphasize its important components: it has **D**ependency **I**njection, written in **T**ype**S**cript, and designed for good **Mod**ularity. Some of the architecture concepts of this framework are taken from [Angular][9].
+Ditsmod is a Node.js web framework, named **DI** + **TS** + **Mod** to emphasize its important
+components: it has **D**ependency **I**njection, written in **T**ype**S**cript, and designed for
+good **Mod**ularity. Some of the architecture concepts of this framework are taken from
+[Angular][9].
 
-It's beta version of `@ts-stack/ditsmod`. Work in progress.
+For now, `@ts-stack/ditsmod` has only beta version, work in progress, but you can touch this. See
+[examples][4].
+
+## Preconditions
+
+If you haven't prepared the examples repository yet, you can do so:
+
+```bash
+git clone git@github.com:ts-stack/ditsmod.git
+cd ditsmod
+npm i
+```
+
+## Hello world
+
+Check from first terminal:
+
+```bash
+npm run start1
+```
+
+From second terminal:
+
+```bash
+curl -isS localhost:8080
+```
+
+
 
 See also [seed for @ts-stack/ditsmod-seed project](https://github.com/ts-stack/ditsmod-seed).
 
