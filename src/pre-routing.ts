@@ -85,7 +85,7 @@ export class PreRouting {
   ) {
     const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
     const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
-    const path = this.getPath(prefix, route);
+    const path = this.getPath(prefix, route.path);
 
     const guardItems = route.guards.map((item) => {
       if (Array.isArray(item)) {
@@ -155,15 +155,18 @@ export class PreRouting {
   /**
    * Compiles the path for the controller given the prefix.
    *
+   * - If prefix `/api/posts/:postId` and route path `:postId`, this method returns path `/api/posts/:postId`.
+   * - If prefix `/api/posts` and route path `:postId`, this method returns `/api/posts/:postId`
+   *
    * @todo Give this method the ability to override it via DI.
    */
-  protected getPath(prefix: string, route: RouteMetadata) {
+  protected getPath(prefix: string, path: string) {
     const prefixLastPart = prefix?.split('/').slice(-1)[0];
     if (prefixLastPart?.charAt(0) == ':') {
       const reducedPrefix = prefix?.split('/').slice(0, -1).join('/');
-      return [reducedPrefix, route.path].filter((s) => s).join('/');
+      return [reducedPrefix, path].filter((s) => s).join('/');
     } else {
-      return [prefix, route.path].filter((s) => s).join('/');
+      return [prefix, path].filter((s) => s).join('/');
     }
   }
 
