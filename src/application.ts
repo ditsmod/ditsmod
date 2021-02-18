@@ -4,14 +4,11 @@ import * as http2 from 'http2';
 import { ReflectiveInjector, reflector, Provider, Type, resolveForwardRef } from '@ts-stack/di';
 
 import { ApplicationMetadata, RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
-import { ExtensionMetadata, RequestListener } from './types/types';
+import { ExtensionMetadata } from './types/types';
 import { isHttp2SecureServerOptions, isProvider, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
-import { Request } from './request';
 import { ModuleFactory } from './module-factory';
 import { pickProperties } from './utils/pick-properties';
-import { Router, HttpMethod } from './types/router';
-import { NodeResToken, NodeReqToken } from './types/injection-tokens';
 import { Logger, LoggerConfig } from './types/logger';
 import { Server, Http2SecureServerOptions } from './types/server-options';
 import {
@@ -31,7 +28,6 @@ export class Application extends Core {
   protected log: Logger;
   protected server: Server;
   protected injectorPerApp: ReflectiveInjector;
-  protected router: Router;
   protected preReq: PreRequest;
   protected opts: ApplicationMetadata;
 
@@ -135,7 +131,6 @@ export class Application extends Core {
   protected initProvidersPerApp() {
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.opts.providersPerApp);
     this.log = this.injectorPerApp.get(Logger) as Logger;
-    this.router = this.injectorPerApp.get(Router) as Router;
     this.preReq = this.injectorPerApp.get(PreRequest) as PreRequest;
   }
 
@@ -164,7 +159,7 @@ export class Application extends Core {
       this.log.trace(mod, extensionsMetadata);
       const { prefixPerMod, providersPerMod, providersPerReq, controllers } = extensionsMetadata;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-      injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolveable
+      injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolvable
       const preRouting = injectorPerMod.resolveAndInstantiate(PreRouting) as PreRouting;
       preRouting.init(mod.name, providersPerReq, controllers);
       preRouting.prepareRoutes(this.opts.prefixPerApp, prefixPerMod);
@@ -174,36 +169,11 @@ export class Application extends Core {
   protected createServer() {
     if (isHttp2SecureServerOptions(this.opts.serverOptions)) {
       const serverModule = this.opts.httpModule as typeof http2;
-      this.server = serverModule.createSecureServer(this.opts.serverOptions, this.requestListener);
+      this.server = serverModule.createSecureServer(this.opts.serverOptions, this.preReq.requestListener);
     } else {
       const serverModule = this.opts.httpModule as typeof http | typeof https;
       const serverOptions = this.opts.serverOptions as http.ServerOptions | https.ServerOptions;
-      this.server = serverModule.createServer(serverOptions, this.requestListener);
+      this.server = serverModule.createServer(serverOptions, this.preReq.requestListener);
     }
   }
-
-  protected requestListener: RequestListener = (nodeReq, nodeRes) => {
-    nodeRes.setHeader('Server', this.opts.serverName);
-    const { method: httpMethod, url } = nodeReq;
-    const [uri, queryString] = this.preReq.decodeUrl(url).split('?');
-    const { handle: handleRoute, params } = this.router.find(httpMethod as HttpMethod, uri);
-    if (!handleRoute) {
-      this.preReq.sendNotFound(nodeRes);
-      return;
-    }
-    /**
-     * @param injector Injector per module that tied to the route.
-     * @param providers Resolved providers per request.
-     * @param method Method of the class controller.
-     * @param parseBody Need or not to parse body.
-     */
-    const { injector, providers, controller, method, parseBody, guardItems } = handleRoute();
-    const inj1 = injector.resolveAndCreateChild([
-      { provide: NodeReqToken, useValue: nodeReq },
-      { provide: NodeResToken, useValue: nodeRes },
-    ]);
-    const inj2 = inj1.createChildFromResolved(providers);
-    const req = inj2.get(Request) as Request;
-    this.preReq.handleRoute(req, controller, method, params, queryString, parseBody, guardItems);
-  };
 }

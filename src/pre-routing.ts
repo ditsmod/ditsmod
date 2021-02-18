@@ -16,10 +16,10 @@ import { isController, isRoute } from './utils/type-guards';
 
 @Injectable()
 export class PreRouting {
+  protected moduleName: string;
   protected providersPerReq: Provider[];
   protected controllers: TypeProvider[];
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
-  protected moduleName: string;
 
   constructor(protected router: Router, protected injectorPerMod: ReflectiveInjector, protected log: Logger) {}
 
