@@ -10,13 +10,14 @@ import { BodyParser } from '../services/body-parser';
 import { CanActivate } from '../decorators/route';
 import { GuardItems, HttpMethod, RouteParam, Router } from '../types/router';
 import { NodeReqToken, NodeResToken } from '../types/injection-tokens';
+import { AppMetadata } from '../decorators/app-metadata';
 
 @Injectable()
 export class PreRequest {
-  constructor(protected log: Logger, protected router: Router) {}
+  constructor(protected log: Logger, protected router: Router, protected appMetadata: AppMetadata) {}
 
   requestListener: RequestListener = (nodeReq, nodeRes) => {
-    // nodeRes.setHeader('Server', this.opts.serverName);
+    nodeRes.setHeader('Server', this.appMetadata.serverName);
     const { method: httpMethod, url } = nodeReq;
     const [uri, queryString] = this.decodeUrl(url).split('?');
     const { handle: handleRoute, params } = this.router.find(httpMethod as HttpMethod, uri);

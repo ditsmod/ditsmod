@@ -23,3 +23,4 @@ export { Response } from './response';
 export { Application } from './application';
 export { ModuleFactory } from './module-factory';
 export { NormalizedProvider } from './utils/ng-utils';
+export { AppMetadata } from './decorators/app-metadata';

@@ -3,7 +3,7 @@ import * as https from 'https';
 import * as http2 from 'http2';
 import { ReflectiveInjector, reflector, Provider, Type, resolveForwardRef } from '@ts-stack/di';
 
-import { ApplicationMetadata, RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
+import {  RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
 import { ExtensionMetadata } from './types/types';
 import { isHttp2SecureServerOptions, isProvider, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
@@ -23,13 +23,14 @@ import { flatten, normalizeProviders } from './utils/ng-utils';
 import { Core } from './core';
 import { DefaultLogger } from './services/default-logger';
 import { PreRouting } from './pre-routing';
+import { AppMetadata } from './decorators/app-metadata';
 
 export class Application extends Core {
   protected log: Logger;
   protected server: Server;
   protected injectorPerApp: ReflectiveInjector;
   protected preReq: PreRequest;
-  protected opts: ApplicationMetadata;
+  protected opts: AppMetadata;
 
   bootstrap(appModule: ModuleType) {
     return new Promise<{ server: Server; log: Logger }>((resolve, reject) => {
@@ -61,7 +62,7 @@ export class Application extends Core {
   }
 
   /**
-   * Merge AppModule metadata with default ApplicationMetadata.
+   * Merge AppModule metadata with default AppMetadata.
    */
   protected mergeMetadata(appModule: ModuleType): void {
     const modMetadata = reflector.annotations(appModule).find(isRootModule);
@@ -70,7 +71,7 @@ export class Application extends Core {
     }
 
     // Setting default metadata.
-    this.opts = new ApplicationMetadata();
+    this.opts = new AppMetadata();
 
     pickProperties(this.opts, modMetadata);
   }
@@ -129,6 +130,7 @@ export class Application extends Core {
    * Init providers per the application.
    */
   protected initProvidersPerApp() {
+    this.opts.providersPerApp.push({ provide: AppMetadata, useValue: this.opts });
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.opts.providersPerApp);
     this.log = this.injectorPerApp.get(Logger) as Logger;
     this.preReq = this.injectorPerApp.get(PreRequest) as PreRequest;

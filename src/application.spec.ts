@@ -5,12 +5,13 @@ import * as http2 from 'http2';
 import { ReflectiveInjector, Type, Provider } from '@ts-stack/di';
 
 import { Application } from './application';
-import { RootModule, ApplicationMetadata } from './decorators/root-module';
+import { RootModule } from './decorators/root-module';
 import { PreRequest } from './services/pre-request';
 import { Router, ImportsWithPrefix } from './types/router';
 import { Logger } from './types/logger';
 import { Server } from './types/server-options';
 import { Module, ModuleType, ModuleWithOptions, ModuleMetadata } from './decorators/module';
+import { AppMetadata } from './decorators/app-metadata';
 
 describe('Application', () => {
   class MockAppFactory extends Application {
@@ -19,7 +20,7 @@ describe('Application', () => {
     injectorPerApp: ReflectiveInjector;
     router: Router;
     preReq: PreRequest;
-    opts = new ApplicationMetadata();
+    opts = new AppMetadata();
 
     mergeMetadata(appModule: ModuleType): void {
       return super.mergeMetadata(appModule);

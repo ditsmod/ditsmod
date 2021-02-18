@@ -1,6 +1,6 @@
 import { TypeProvider } from '@ts-stack/di';
-import { ModuleMetadata } from '../decorators/module';
 
+import { ModuleMetadata } from '../decorators/module';
 import { HttpMethod } from './router';
 import { NodeRequest, NodeResponse, Fn } from './server-options';
 
