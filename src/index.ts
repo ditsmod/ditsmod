@@ -12,7 +12,7 @@ export {
 export { NodeRequest, NodeResponse, Fn, RedirectStatusCodes } from './types/server-options';
 export { Logger, LoggerMethod, LoggerConfig } from './types/logger';
 export { HttpMethod, Router, RouteParam, RouterReturns } from './types/router';
-export { Controller } from './decorators/controller';
+export { Controller, RouteData } from './decorators/controller';
 export { Module } from './decorators/module';
 export { RootModule } from './decorators/root-module';
 export { Route, CanActivate, DecoratorGuardItem } from './decorators/route';

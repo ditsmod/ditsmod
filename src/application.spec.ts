@@ -255,7 +255,7 @@ describe('Application', () => {
     })
     class AppModule {}
 
-    fit('should collects providers from exports array without imports them', () => {
+    it('should collects providers from exports array without imports them', () => {
       const providers = mock.collectProvidersPerApp(AppModule);
       expect(providers.includes(Provider0)).toBe(true);
     });

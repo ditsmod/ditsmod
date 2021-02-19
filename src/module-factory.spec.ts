@@ -19,6 +19,7 @@ import { Logger } from './types/logger';
 import { Application } from './application';
 import { NodeReqToken } from './types/injection-tokens';
 import { Request } from './request';
+import { ExtensionMetadata } from './types/types';
 
 describe('ModuleFactory', () => {
   (defaultProvidersPerApp as Provider[]).push({provide: Router, useClass: DefaultRouter});
@@ -31,7 +32,7 @@ describe('ModuleFactory', () => {
     moduleName = 'MockModule';
     opts = new ModuleMetadata();
     injectorPerMod: ReflectiveInjector;
-    optsMap = new Map<ModuleType, ModuleMetadata & { prefixPerMod: string }>();
+    optsMap = new Map<ModuleType, ExtensionMetadata>();
     allProvidersPerApp: Provider[];
     allExportedProvidersPerMod: Provider[] = [];
     allExportedProvidersPerReq: Provider[] = [];
@@ -71,7 +72,7 @@ describe('ModuleFactory', () => {
   let mockApp: MockAppFactory;
 
   beforeEach(() => {
-    mock = new MockModuleFactory(null);
+    mock = new MockModuleFactory(null, null);
     mockApp = new MockAppFactory();
   });
 

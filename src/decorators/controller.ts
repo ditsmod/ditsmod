@@ -1,4 +1,5 @@
-import { Provider, makeDecorator } from '@ts-stack/di';
+import { Provider, makeDecorator, TypeProvider, ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-stack/di';
+import { GuardItems, HttpMethod } from '../types/router';
 
 export interface ControllerDecoratorFactory {
   (data?: ControllerDecorator): any;
@@ -13,3 +14,14 @@ export interface ControllerDecorator {
 }
 
 export const Controller = makeDecorator('Controller', (data: any) => data) as ControllerDecoratorFactory;
+
+export interface RouteData {
+  httpMethod: HttpMethod;
+  routePath: string;
+  controller: TypeProvider;
+  injector: ReflectiveInjector;
+  providers: ResolvedReflectiveProvider[];
+  method: string;
+  parseBody: boolean;
+  guardItems: GuardItems[];
+}

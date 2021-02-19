@@ -1,4 +1,12 @@
-import { Provider, resolveForwardRef, Injectable, ReflectiveInjector, TypeProvider } from '@ts-stack/di';
+import {
+  Provider,
+  resolveForwardRef,
+  Injectable,
+  ReflectiveInjector,
+  TypeProvider,
+  reflector,
+  ResolvedReflectiveProvider,
+} from '@ts-stack/di';
 
 import {
   ModuleMetadata,
@@ -8,14 +16,17 @@ import {
   ProvidersMetadata,
 } from './decorators/module';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
-import { isRootModule, isImportsWithPrefix, isProvider } from './utils/type-guards';
+import { isRootModule, isImportsWithPrefix, isProvider, isController, isRoute } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
-import { ImportsWithPrefix, ImportsWithPrefixDecorator } from './types/router';
+import { GuardItems, ImportsWithPrefix, ImportsWithPrefixDecorator } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { Core } from './core';
 import { getDuplicates } from './utils/get-duplicates';
 import { pickProperties } from './utils/pick-properties';
-import { ExtensionMetadata } from './types/types';
+import { BodyParserConfig, ExtensionMetadata } from './types/types';
+import { RouteDecoratorMetadata, RouteMetadata } from './decorators/route';
+import { Logger } from './types/logger';
+import { ControllerDecorator, RouteData } from './decorators/controller';
 
 /**
  * - creates `injectorPerMod` and `injectorPerReq`;
@@ -33,8 +44,10 @@ export class ModuleFactory extends Core {
   protected exportedProvidersPerReq: Provider[] = [];
   protected globalProviders: ProvidersMetadata;
   protected optsMap = new Map<ModuleType, ExtensionMetadata>();
+  protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
+  protected injectorPerMod: ReflectiveInjector;
 
-  constructor(protected injectorPerApp: ReflectiveInjector) {
+  constructor(protected injectorPerApp: ReflectiveInjector, protected log: Logger) {
     super();
   }
 
@@ -79,7 +92,13 @@ export class ModuleFactory extends Core {
     Object.assign(this.opts, moduleMetadata);
     this.importModules();
     this.mergeProviders(moduleMetadata);
-    return this.optsMap.set(this.mod, { ...this.opts, prefixPerMod });
+
+    this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
+    this.injectorPerMod.resolveAndInstantiate(this.mod); // Only check DI resolvable
+    this.initProvidersPerReq(); // Init to use providers in services
+    const routesData = this.getRoutesData();
+
+    return this.optsMap.set(this.mod, { ...this.opts, prefixPerMod, routesData });
   }
 
   protected mergeProviders(moduleMetadata: ModuleMetadata) {
@@ -300,5 +319,95 @@ export class ModuleFactory extends Core {
     if (collisions.length) {
       this.throwProvidersCollisionError(this.moduleName, collisions);
     }
+  }
+
+  /**
+   * Init providers per the request.
+   */
+  protected initProvidersPerReq() {
+    this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.opts.providersPerReq);
+  }
+
+  /**
+   * Inserts new `Provider` at the start of `providersPerReq` array.
+   */
+  protected unshiftProvidersPerReq(...providers: Provider[]) {
+    this.opts.providersPerReq.unshift(...providers);
+    this.initProvidersPerReq();
+  }
+
+  protected getRoutesData() {
+    const routesData: RouteData[] = [];
+    for (const Ctrl of this.opts.controllers) {
+      const controllerMetadata = reflector.annotations(Ctrl).find(isController);
+      if (!controllerMetadata) {
+        throw new Error(`Setting routes failed: class "${Ctrl.name}" does not have the "@Controller()" decorator`);
+      }
+      const propMetadata = reflector.propMetadata(Ctrl) as RouteDecoratorMetadata;
+
+      for (const prop in propMetadata) {
+        const routes = propMetadata[prop].filter(isRoute);
+        for (const route of routes) {
+          const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(route, Ctrl, prop, controllerMetadata);
+          const injectorPerReq = this.injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
+          const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
+          const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
+
+          const guardItems = route.guards.map((item) => {
+            if (Array.isArray(item)) {
+              return { guard: item[0], params: item.slice(1) } as GuardItems;
+            } else {
+              return { guard: item } as GuardItems;
+            }
+          });
+
+          routesData.push({
+            httpMethod: route.httpMethod,
+            routePath: route.path,
+            injector: this.injectorPerMod,
+            providers: resolvedProvidersPerReq,
+            controller: Ctrl,
+            method: prop,
+            parseBody,
+            guardItems,
+          });
+        }
+      }
+    }
+
+    return routesData;
+  }
+
+  protected getResolvedProvidersPerReq(
+    route: RouteMetadata,
+    Ctrl: TypeProvider,
+    prop: string,
+    controllerMetadata: ControllerDecorator
+  ) {
+    const guards = route.guards.map((item) => {
+      if (Array.isArray(item)) {
+        return item[0];
+      } else {
+        return item;
+      }
+    });
+
+    for (const Guard of guards) {
+      const type = typeof Guard?.prototype.canActivate;
+      if (type != 'function') {
+        throw new TypeError(
+          `${this.moduleName} --> ${Ctrl.name} --> ${prop}(): Guard.prototype.canActivate must be a function, got: ${type}`
+        );
+      }
+    }
+
+    this.unshiftProvidersPerReq(Ctrl, guards);
+    let resolvedProvidersPerReq: ResolvedReflectiveProvider[] = this.resolvedProvidersPerReq;
+    const { providersPerReq } = controllerMetadata;
+    if (providersPerReq) {
+      resolvedProvidersPerReq = ReflectiveInjector.resolve([...this.opts.providersPerReq, ...providersPerReq]);
+    }
+
+    return resolvedProvidersPerReq;
   }
 }
