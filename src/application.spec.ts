@@ -251,7 +251,7 @@ describe('Application', () => {
     @RootModule({
       imports: [Module3],
       providersPerApp: [{ provide: Provider1, useClass: Provider7 }],
-      exports: [Module0]
+      exports: [Module0],
     })
     class AppModule {}
 
@@ -267,7 +267,8 @@ describe('Application', () => {
         Provider3,
         Provider4,
         Provider5,
-        Provider6
+        Provider6,
+        Provider0,
       ]);
     });
 
@@ -284,7 +285,8 @@ describe('Application', () => {
         Provider3,
         Provider4,
         Provider5,
-        Provider6
+        Provider6,
+        Provider0,
       ]);
     });
 
@@ -305,6 +307,7 @@ describe('Application', () => {
         Provider4,
         Provider5,
         Provider6,
+        Provider0,
         Provider7,
       ]);
     });
