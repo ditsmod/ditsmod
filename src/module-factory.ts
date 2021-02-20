@@ -97,8 +97,7 @@ export class ModuleFactory extends Core {
     this.importModules();
     this.mergeProviders(moduleMetadata);
 
-    const providers = [...this.guardsPerMod.map(g => g.guard), ...this.opts.providersPerMod];
-    this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providers);
+    this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
     this.injectorPerMod.resolveAndInstantiate(this.mod); // Only check DI resolvable
     this.initProvidersPerReq(); // Init to use providers in services
     const routesData = this.getRoutesData();
@@ -407,7 +406,7 @@ export class ModuleFactory extends Core {
     prop: string,
     controllerMetadata: ControllerDecorator
   ) {
-    const guards = route.guards.map((item) => {
+    const guards = [...this.guardsPerMod.map(n => n.guard), ...route.guards].map((item) => {
       if (Array.isArray(item)) {
         return item[0];
       } else {
