@@ -1,5 +1,5 @@
 import { Provider, makeDecorator, TypeProvider, ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-stack/di';
-import { GuardItems, HttpMethod } from '../types/router';
+import { NormalizedGuard } from '../types/router';
 import { RouteMetadata } from './route';
 
 export interface ControllerDecoratorFactory {
@@ -23,5 +23,5 @@ export interface RouteData {
   providers: ResolvedReflectiveProvider[];
   injector: ReflectiveInjector;
   parseBody: boolean;
-  guardItems: GuardItems[];
+  guardItems: NormalizedGuard[];
 }

@@ -10,7 +10,7 @@ import {
 import { ControllerDecorator } from './decorators/controller';
 import { RouteDecoratorMetadata, RouteMetadata } from './decorators/route';
 import { Logger } from './types/logger';
-import { GuardItems, Router } from './types/router';
+import { NormalizedGuard, Router } from './types/router';
 import { BodyParserConfig } from './types/types';
 import { isController, isRoute } from './utils/type-guards';
 
@@ -89,9 +89,9 @@ export class PreRouting {
 
     const guardItems = route.guards.map((item) => {
       if (Array.isArray(item)) {
-        return { guard: item[0], params: item.slice(1) } as GuardItems;
+        return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
       } else {
-        return { guard: item } as GuardItems;
+        return { guard: item } as NormalizedGuard;
       }
     });
 

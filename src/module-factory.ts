@@ -18,7 +18,7 @@ import {
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isRootModule, isImportWithOptions, isProvider, isController, isRoute } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
-import { GuardItems, ImportWithOptions } from './types/router';
+import { NormalizedGuard, ImportWithOptions } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { Core } from './core';
 import { getDuplicates } from './utils/get-duplicates';
@@ -356,9 +356,9 @@ export class ModuleFactory extends Core {
 
           const guardItems = route.guards.map((item) => {
             if (Array.isArray(item)) {
-              return { guard: item[0], params: item.slice(1) } as GuardItems;
+              return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
             } else {
-              return { guard: item } as GuardItems;
+              return { guard: item } as NormalizedGuard;
             }
           });
 

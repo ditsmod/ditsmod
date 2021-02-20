@@ -41,10 +41,7 @@ export type HttpMethod =
   | 'UNLOCK'
   | 'UNSUBSCRIBE';
 
-/**
- * @todo Rename this to `GuardItem`.
- */
-export interface GuardItems {
+export interface NormalizedGuard {
   guard: Type<CanActivate>;
   params?: any[];
 }
@@ -72,7 +69,7 @@ export type RouteHandler = () => {
    * in order to determine if the current user is allowed to activate the controller.
    * By default, any user can activate.
    */
-  guardItems: GuardItems[];
+  guardItems: NormalizedGuard[];
 };
 
 export class Router {
@@ -102,5 +99,5 @@ export interface RouteParam {
 export interface ImportWithOptions {
   prefix?: string;
   module: ModuleType | ModuleWithOptions<any>;
-  guards?: GuardItems[];
+  guards?: NormalizedGuard[];
 }

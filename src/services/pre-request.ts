@@ -8,7 +8,7 @@ import { Request } from '../request';
 import { ObjectAny, ControllerErrorHandler, RequestListener } from '../types/types';
 import { BodyParser } from '../services/body-parser';
 import { CanActivate } from '../decorators/route';
-import { GuardItems, HttpMethod, RouteParam, Router } from '../types/router';
+import { NormalizedGuard, HttpMethod, RouteParam, Router } from '../types/router';
 import { NodeReqToken, NodeResToken } from '../types/injection-tokens';
 import { AppMetadata } from '../decorators/app-metadata';
 
@@ -70,7 +70,7 @@ export class PreRequest {
     pathParamsArr: RouteParam[],
     queryString: string,
     parseBody: boolean,
-    guardItems: GuardItems[]
+    guardItems: NormalizedGuard[]
   ) {
     let errorHandler: ControllerErrorHandler;
     let ctrl: any;
