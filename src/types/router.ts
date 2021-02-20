@@ -99,15 +99,7 @@ export interface RouteParam {
   value: string;
 }
 
-export interface ImportsWithPrefixDecorator {
-  prefix: string;
-  module: Type<any> | ModuleWithOptions<any> | any[];
-}
-
-/**
- * @todo Rename this to `ImportsWithOptions`.
- */
-export interface ImportsWithPrefix {
+export interface ImportsWithOptions {
   prefix: string;
   module: ModuleType | ModuleWithOptions<any>;
   guards?: GuardItems[];

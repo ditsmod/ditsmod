@@ -16,9 +16,9 @@ import {
   ProvidersMetadata,
 } from './decorators/module';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
-import { isRootModule, isImportsWithPrefix, isProvider, isController, isRoute } from './utils/type-guards';
+import { isRootModule, isImportsWithOptions, isProvider, isController, isRoute } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
-import { GuardItems, ImportsWithPrefix, ImportsWithPrefixDecorator } from './types/router';
+import { GuardItems, ImportsWithOptions } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { Core } from './core';
 import { getDuplicates } from './utils/get-duplicates';
@@ -158,9 +158,9 @@ export class ModuleFactory extends Core {
      */
     (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
 
-    type FlattenedImports = TypeProvider | ModuleWithOptions<any> | ImportsWithPrefixDecorator;
-    metadata.imports = flatten<FlattenedImports>(modMetadata.imports).map<ImportsWithPrefix>((imp) => {
-      if (isImportsWithPrefix(imp)) {
+    type FlattenedImports = TypeProvider | ModuleWithOptions<any> | ImportsWithOptions;
+    metadata.imports = flatten<FlattenedImports>(modMetadata.imports).map<ImportsWithOptions>((imp) => {
+      if (isImportsWithOptions(imp)) {
         return {
           prefix: imp.prefix,
           module: resolveForwardRef(imp.module),

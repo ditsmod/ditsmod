@@ -15,7 +15,7 @@ import { RootModuleDecorator } from '../decorators/root-module';
 import { ControllerDecorator } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
 import { ServerOptions, Http2SecureServerOptions } from '../types/server-options';
-import { ImportsWithPrefixDecorator } from '../types/router';
+import { ImportsWithOptions } from '../types/router';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
@@ -27,10 +27,10 @@ export function isModuleWithOptions(
   return (impOrExp as ModuleWithOptions<any>)?.module !== undefined;
 }
 
-export function isImportsWithPrefix(imp: any): imp is ImportsWithPrefixDecorator {
+export function isImportsWithOptions(imp: any): imp is ImportsWithOptions {
   return (
-    (imp as ImportsWithPrefixDecorator)?.prefix !== undefined &&
-    (imp as ImportsWithPrefixDecorator)?.module !== undefined
+    (imp as ImportsWithOptions)?.prefix !== undefined &&
+    (imp as ImportsWithOptions)?.module !== undefined
   );
 }
 

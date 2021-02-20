@@ -1,6 +1,6 @@
 import { Type, Provider, makeDecorator, TypeProvider } from '@ts-stack/di';
 
-import { ImportsWithPrefix, ImportsWithPrefixDecorator } from '../types/router';
+import { ImportsWithOptions } from '../types/router';
 import { Request } from '../request';
 import { Response } from '../response';
 import { ControllerErrorHandler } from '../types/types';
@@ -53,7 +53,7 @@ export interface ModuleDecorator extends Partial<StaticModuleMetadata> {
    * List of modules or `ModuleWithOptions` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
    */
-  imports?: Array<Type<any> | ModuleWithOptions<any> | ImportsWithPrefixDecorator | any[]>;
+  imports?: Array<Type<any> | ModuleWithOptions<any> | ImportsWithOptions | any[]>;
   /**
    * List of modules, `ModuleWithOptions` or providers exported by this
    * module.
@@ -65,7 +65,7 @@ export class ModuleMetadata extends StaticModuleMetadata {
   /**
    * Imports modules and setting some prefix per each the module.
    */
-  imports: ImportsWithPrefix[] = [];
+  imports: ImportsWithOptions[] = [];
   exports: Array<Type<any> | ModuleWithOptions<any> | Provider> = [];
 }
 
