@@ -99,7 +99,7 @@ export interface RouteParam {
   value: string;
 }
 
-export interface ImportsWithOptions {
+export interface ImportWithOptions {
   prefix: string;
   module: ModuleType | ModuleWithOptions<any>;
   guards?: GuardItems[];

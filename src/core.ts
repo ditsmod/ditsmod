@@ -6,7 +6,7 @@ import {
   isModule,
   isRootModule,
   isNormalizedProvider,
-  isImportsWithOptions,
+  isImportWithOptions,
 } from './utils/type-guards';
 import { ModuleWithOptions, ModuleDecorator, Module } from './decorators/module';
 import { mergeArrays } from './utils/merge-arrays-options';
@@ -27,7 +27,7 @@ export abstract class Core {
   }
 
   protected getModuleName(modOrObject: Type<any> | ModuleWithOptions<any>): string {
-    if (isImportsWithOptions(modOrObject)) {
+    if (isImportWithOptions(modOrObject)) {
       modOrObject = modOrObject.module;
     }
     return isModuleWithOptions(modOrObject) ? modOrObject.module.name : modOrObject.name;
@@ -47,7 +47,7 @@ export abstract class Core {
   ) {
     const typeGuard = isRoot ? isRootModule : (m: ModuleDecorator) => isModule(m) || isRootModule(m);
 
-    if (isImportsWithOptions(modOrObject)) {
+    if (isImportWithOptions(modOrObject)) {
       modOrObject = modOrObject.module;
     }
 

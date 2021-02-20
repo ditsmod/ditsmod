@@ -7,7 +7,7 @@ import { ReflectiveInjector, Type, Provider } from '@ts-stack/di';
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
 import { PreRequest } from './services/pre-request';
-import { Router, ImportsWithOptions } from './types/router';
+import { Router, ImportWithOptions } from './types/router';
 import { Logger } from './types/logger';
 import { Server } from './types/server-options';
 import { Module, ModuleType, ModuleWithOptions, ModuleMetadata } from './decorators/module';
@@ -84,7 +84,7 @@ describe('Application', () => {
       class SomeModule {}
       class OtherModule {}
 
-      const imports: ImportsWithOptions[] = [
+      const imports: ImportWithOptions[] = [
         { prefix: '', module: SomeModule },
         { prefix: '', module: OtherModule },
       ];
