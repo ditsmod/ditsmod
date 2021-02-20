@@ -345,10 +345,10 @@ export class ModuleFactory extends Core {
       }
       const propMetadata = reflector.propMetadata(Ctrl) as RouteDecoratorMetadata;
 
-      for (const prop in propMetadata) {
-        const routes = propMetadata[prop].filter(isRoute);
+      for (const method in propMetadata) {
+        const routes = propMetadata[method].filter(isRoute);
         for (const route of routes) {
-          const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(route, Ctrl, prop, controllerMetadata);
+          const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(route, Ctrl, method, controllerMetadata);
           const injectorPerReq = this.injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
           const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
           const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
@@ -362,12 +362,11 @@ export class ModuleFactory extends Core {
           });
 
           routesData.push({
-            httpMethod: route.httpMethod,
-            routePath: route.path,
-            injector: this.injectorPerMod,
-            providers: resolvedProvidersPerReq,
             controller: Ctrl,
-            method: prop,
+            method,
+            route,
+            providers: resolvedProvidersPerReq,
+            injector: this.injectorPerMod,
             parseBody,
             guardItems,
           });

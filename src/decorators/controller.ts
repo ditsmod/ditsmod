@@ -1,5 +1,6 @@
 import { Provider, makeDecorator, TypeProvider, ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-stack/di';
 import { GuardItems, HttpMethod } from '../types/router';
+import { RouteMetadata } from './route';
 
 export interface ControllerDecoratorFactory {
   (data?: ControllerDecorator): any;
@@ -16,12 +17,11 @@ export interface ControllerDecorator {
 export const Controller = makeDecorator('Controller', (data: any) => data) as ControllerDecoratorFactory;
 
 export interface RouteData {
-  httpMethod: HttpMethod;
-  routePath: string;
   controller: TypeProvider;
-  injector: ReflectiveInjector;
-  providers: ResolvedReflectiveProvider[];
   method: string;
+  route: RouteMetadata;
+  providers: ResolvedReflectiveProvider[];
+  injector: ReflectiveInjector;
   parseBody: boolean;
   guardItems: GuardItems[];
 }

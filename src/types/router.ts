@@ -41,6 +41,9 @@ export type HttpMethod =
   | 'UNLOCK'
   | 'UNSUBSCRIBE';
 
+/**
+ * @todo Rename this to `GuardItem`.
+ */
 export interface GuardItems {
   guard: Type<CanActivate>;
   params?: any[];
@@ -101,7 +104,11 @@ export interface ImportsWithPrefixDecorator {
   module: Type<any> | ModuleWithOptions<any> | any[];
 }
 
+/**
+ * @todo Rename this to `ImportsWithOptions`.
+ */
 export interface ImportsWithPrefix {
   prefix: string;
   module: ModuleType | ModuleWithOptions<any>;
+  guards?: GuardItems[];
 }
