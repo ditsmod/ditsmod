@@ -15,7 +15,7 @@ export { HttpMethod, Router, RouteParam, RouterReturns } from './types/router';
 export { Controller, RouteData } from './decorators/controller';
 export { Module } from './decorators/module';
 export { RootModule } from './decorators/root-module';
-export { Route, CanActivate, DecoratorGuardItem } from './decorators/route';
+export { Route, CanActivate, GuardItem } from './decorators/route';
 export { BodyParser } from './services/body-parser';
 export { DefaultLogger } from './services/default-logger';
 export { Request } from './request';

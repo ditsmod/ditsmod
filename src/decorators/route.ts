@@ -3,11 +3,11 @@ import { makePropDecorator, Type } from '@ts-stack/di';
 import { ObjectAny } from '../types/types';
 import { HttpMethod } from '../types/router';
 
-export type DecoratorGuardItem = Type<CanActivate> | [Type<CanActivate>, ...any[]];
+export type GuardItem = Type<CanActivate> | [Type<CanActivate>, ...any[]];
 export type RouteDecoratorFactory = (
   method: HttpMethod,
   path?: string,
-  guards?: DecoratorGuardItem[]
+  guards?: GuardItem[]
 ) => RouteDecorator;
 
 export type RouteDecorator = <T>(
@@ -23,14 +23,14 @@ export interface RouteDecoratorMetadata {
 export interface RouteMetadata {
   httpMethod: HttpMethod;
   path: string;
-  guards: DecoratorGuardItem[];
+  guards: GuardItem[];
 }
 /**
  * @param guards An array of DI tokens used to look up `CanActivate()` handlers,
  * in order to determine if the current user is allowed to activate the controller.
  * By default, any user can activate.
  */
-function route(httpMethod: HttpMethod, path: string = '', guards: DecoratorGuardItem[] = []): RouteMetadata {
+function route(httpMethod: HttpMethod, path: string = '', guards: GuardItem[] = []): RouteMetadata {
   return { httpMethod, path, guards };
 }
 
