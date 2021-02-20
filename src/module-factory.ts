@@ -192,12 +192,25 @@ export class ModuleFactory extends Core {
       this.importProviders(true, imp.module);
       const prefixPerMod = [this.prefixPerMod, imp.prefix].filter((s) => s).join('/');
       const mod = imp.module;
-      const guardsPerMod = [...this.guardsPerMod, ...this.normalizeGuards(imp.guards)];
+      const normalizedGuards = this.normalizeGuards(imp.guards);
+      this.checkGuardsPerMod(normalizedGuards);
+      const guardsPerMod = [...this.guardsPerMod, ...normalizedGuards];
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       const optsMap = moduleFactory.bootstrap(this.globalProviders, prefixPerMod, mod, guardsPerMod);
       this.optsMap = new Map([...this.optsMap, ...optsMap]);
     }
     this.checkProvidersCollisions();
+  }
+
+  protected checkGuardsPerMod(guards: NormalizedGuard[]) {
+    for (const Guard of guards.map(g => g.guard)) {
+      const type = typeof Guard?.prototype.canActivate;
+      if (type != 'function') {
+        throw new TypeError(
+          `Import ${this.moduleName} with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`
+        );
+      }
+    }
   }
 
   /**
