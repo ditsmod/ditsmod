@@ -24,7 +24,7 @@ import { Core } from './core';
 import { getDuplicates } from './utils/get-duplicates';
 import { pickProperties } from './utils/pick-properties';
 import { BodyParserConfig, ExtensionMetadata } from './types/types';
-import { RouteDecoratorMetadata, RouteMetadata } from './decorators/route';
+import { GuardItem, RouteDecoratorMetadata, RouteMetadata } from './decorators/route';
 import { Logger } from './types/logger';
 import { ControllerDecorator, RouteData } from './decorators/controller';
 import { ImportWithOptions } from './types/import-with-options';
@@ -38,6 +38,7 @@ export class ModuleFactory extends Core {
   protected mod: ModuleType;
   protected moduleName: string;
   protected prefixPerMod: string;
+  protected guardsPerMod: NormalizedGuard[];
   protected opts: ModuleMetadata;
   protected allExportedProvidersPerMod: Provider[] = [];
   protected allExportedProvidersPerReq: Provider[] = [];
@@ -80,13 +81,15 @@ export class ModuleFactory extends Core {
   bootstrap(
     globalProviders: ProvidersMetadata,
     prefixPerMod: string,
-    modOrObject: TypeProvider | ModuleWithOptions<any>
+    modOrObject: TypeProvider | ModuleWithOptions<any>,
+    guardsPerMod?: NormalizedGuard[]
   ) {
     this.globalProviders = globalProviders;
     this.prefixPerMod = prefixPerMod || '';
     const mod = this.getModule(modOrObject);
     this.mod = mod;
     this.moduleName = mod.name;
+    this.guardsPerMod = guardsPerMod || [];
     const moduleMetadata = this.normalizeMetadata(modOrObject);
     this.quickCheckMetadata(moduleMetadata);
     this.opts = new ModuleMetadata();
@@ -165,12 +168,13 @@ export class ModuleFactory extends Core {
         return {
           prefix: imp.prefix,
           module: resolveForwardRef(imp.module),
-          guards: imp.guards
+          guards: imp.guards || [],
         };
       }
       return {
         prefix: '',
         module: resolveForwardRef(imp),
+        guards: [],
       };
     });
     metadata.exports = flatten(modMetadata.exports).map(resolveForwardRef);
@@ -187,8 +191,9 @@ export class ModuleFactory extends Core {
       this.importProviders(true, imp.module);
       const prefixPerMod = [this.prefixPerMod, imp.prefix].filter((s) => s).join('/');
       const mod = imp.module;
+      const guardsPerMod = [...this.guardsPerMod, ...this.normalizeGuards(imp.guards)];
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      const optsMap = moduleFactory.bootstrap(this.globalProviders, prefixPerMod, mod);
+      const optsMap = moduleFactory.bootstrap(this.globalProviders, prefixPerMod, mod, guardsPerMod);
       this.optsMap = new Map([...this.optsMap, ...optsMap]);
     }
     this.checkProvidersCollisions();
@@ -354,14 +359,7 @@ export class ModuleFactory extends Core {
           const injectorPerReq = this.injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
           const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
           const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
-
-          const guardItems = route.guards.map((item) => {
-            if (Array.isArray(item)) {
-              return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
-            } else {
-              return { guard: item } as NormalizedGuard;
-            }
-          });
+          const guards = [...this.guardsPerMod, ...this.normalizeGuards(route.guards)];
 
           routesData.push({
             controller: Ctrl,
@@ -370,13 +368,23 @@ export class ModuleFactory extends Core {
             providers: resolvedProvidersPerReq,
             injector: this.injectorPerMod,
             parseBody,
-            guardItems,
+            guards,
           });
         }
       }
     }
 
     return routesData;
+  }
+
+  protected normalizeGuards(guards: GuardItem[]) {
+    return guards.map((item) => {
+      if (Array.isArray(item)) {
+        return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
+      } else {
+        return { guard: item } as NormalizedGuard;
+      }
+    });
   }
 
   protected getResolvedProvidersPerReq(

@@ -101,7 +101,7 @@ export class PreRouting {
       controller: Ctrl,
       method: prop,
       parseBody,
-      guardItems,
+      guards: guardItems,
     }));
 
     const logObj = {

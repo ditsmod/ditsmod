@@ -68,7 +68,7 @@ export type RouteHandler = () => {
    * in order to determine if the current user is allowed to activate the controller.
    * By default, any user can activate.
    */
-  guardItems: NormalizedGuard[];
+  guards: NormalizedGuard[];
 };
 
 export class Router {

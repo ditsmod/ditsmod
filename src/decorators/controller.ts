@@ -23,5 +23,5 @@ export interface RouteData {
   providers: ResolvedReflectiveProvider[];
   injector: ReflectiveInjector;
   parseBody: boolean;
-  guardItems: NormalizedGuard[];
+  guards: NormalizedGuard[];
 }

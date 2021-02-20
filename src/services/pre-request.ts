@@ -31,7 +31,7 @@ export class PreRequest {
      * @param method Method of the class controller.
      * @param parseBody Need or not to parse body.
      */
-    const { injector, providers, controller, method, parseBody, guardItems } = handleRoute();
+    const { injector, providers, controller, method, parseBody, guards: guardItems } = handleRoute();
     const inj1 = injector.resolveAndCreateChild([
       { provide: NodeReqToken, useValue: nodeReq },
       { provide: NodeResToken, useValue: nodeRes },
