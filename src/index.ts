@@ -24,3 +24,4 @@ export { Application } from './application';
 export { ModuleFactory } from './module-factory';
 export { NormalizedProvider } from './utils/ng-utils';
 export { AppMetadata } from './decorators/app-metadata';
+export { ImportWithOptions } from './types/import-with-options';
