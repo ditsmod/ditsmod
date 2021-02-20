@@ -1,7 +1,7 @@
 import { format } from 'util';
 import { Type, reflector, Provider } from '@ts-stack/di';
 
-import { isModuleWithOptions, isModule, isRootModule, isNormalizedProvider } from './utils/type-guards';
+import { isModuleWithOptions, isModule, isRootModule, isNormalizedProvider, isImportsWithOptions } from './utils/type-guards';
 import { ModuleWithOptions, ModuleDecorator, Module } from './decorators/module';
 import { mergeArrays } from './utils/merge-arrays-options';
 import { RootModule } from './decorators/root-module';
@@ -20,7 +20,10 @@ export abstract class Core {
     return isModuleWithOptions(mod) ? mod.module : mod;
   }
 
-  protected getModuleName(modOrObject: Type<any> | ModuleWithOptions<any>) {
+  protected getModuleName(modOrObject: Type<any> | ModuleWithOptions<any>): string {
+    if (isImportsWithOptions(modOrObject)) {
+      modOrObject = modOrObject.module;
+    }
     return isModuleWithOptions(modOrObject) ? modOrObject.module.name : modOrObject.name;
   }
 
