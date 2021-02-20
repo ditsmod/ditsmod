@@ -1,10 +1,10 @@
 import { Type, Provider, makeDecorator, TypeProvider } from '@ts-stack/di';
 
-import { ImportWithOptions } from '../types/router';
 import { Request } from '../request';
 import { Response } from '../response';
 import { ControllerErrorHandler } from '../types/types';
 import { DefaultControllerErrorHandler } from '../services/default-controller-error-handler';
+import { ImportWithOptions } from '../types/import-with-options';
   
 export const defaultProvidersPerReq: Readonly<Provider[]> = [
   Request,

@@ -1,5 +1,4 @@
 import { ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider, Type } from '@ts-stack/di';
-import { ModuleType, ModuleWithOptions } from '../decorators/module';
 import { CanActivate } from '../decorators/route';
 
 /**
@@ -94,10 +93,4 @@ export class RouterReturns {
 export interface RouteParam {
   key: string;
   value: string;
-}
-
-export interface ImportWithOptions {
-  prefix?: string;
-  module: ModuleType | ModuleWithOptions<any>;
-  guards?: NormalizedGuard[];
 }

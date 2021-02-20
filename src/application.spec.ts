@@ -7,11 +7,12 @@ import { ReflectiveInjector, Type, Provider } from '@ts-stack/di';
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
 import { PreRequest } from './services/pre-request';
-import { Router, ImportWithOptions } from './types/router';
+import { Router } from './types/router';
 import { Logger } from './types/logger';
 import { Server } from './types/server-options';
 import { Module, ModuleType, ModuleWithOptions, ModuleMetadata } from './decorators/module';
 import { AppMetadata } from './decorators/app-metadata';
+import { ImportWithOptions } from './types/import-with-options';
 
 describe('Application', () => {
   class MockAppFactory extends Application {

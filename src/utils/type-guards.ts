@@ -15,7 +15,7 @@ import { RootModuleDecorator } from '../decorators/root-module';
 import { ControllerDecorator } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
 import { ServerOptions, Http2SecureServerOptions } from '../types/server-options';
-import { ImportWithOptions } from '../types/router';
+import { ImportWithOptions } from '../types/import-with-options';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;

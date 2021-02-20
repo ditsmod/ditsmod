@@ -18,7 +18,7 @@ import {
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isRootModule, isImportWithOptions, isProvider, isController, isRoute } from './utils/type-guards';
 import { mergeArrays } from './utils/merge-arrays-options';
-import { NormalizedGuard, ImportWithOptions } from './types/router';
+import { NormalizedGuard } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { Core } from './core';
 import { getDuplicates } from './utils/get-duplicates';
@@ -27,6 +27,7 @@ import { BodyParserConfig, ExtensionMetadata } from './types/types';
 import { RouteDecoratorMetadata, RouteMetadata } from './decorators/route';
 import { Logger } from './types/logger';
 import { ControllerDecorator, RouteData } from './decorators/controller';
+import { ImportWithOptions } from './types/import-with-options';
 
 /**
  * - creates `injectorPerMod` and `injectorPerReq`;
