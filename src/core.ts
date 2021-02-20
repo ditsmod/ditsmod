@@ -1,7 +1,13 @@
 import { format } from 'util';
 import { Type, reflector, Provider } from '@ts-stack/di';
 
-import { isModuleWithOptions, isModule, isRootModule, isNormalizedProvider, isImportsWithOptions } from './utils/type-guards';
+import {
+  isModuleWithOptions,
+  isModule,
+  isRootModule,
+  isNormalizedProvider,
+  isImportsWithOptions,
+} from './utils/type-guards';
 import { ModuleWithOptions, ModuleDecorator, Module } from './decorators/module';
 import { mergeArrays } from './utils/merge-arrays-options';
 import { RootModule } from './decorators/root-module';
@@ -40,6 +46,10 @@ export abstract class Core {
     isRoot?: boolean
   ) {
     const typeGuard = isRoot ? isRootModule : (m: ModuleDecorator) => isModule(m) || isRootModule(m);
+
+    if (isImportsWithOptions(modOrObject)) {
+      modOrObject = modOrObject.module;
+    }
 
     if (isModuleWithOptions(modOrObject)) {
       const modWitOptions = modOrObject;
