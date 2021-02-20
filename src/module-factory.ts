@@ -97,7 +97,8 @@ export class ModuleFactory extends Core {
     this.importModules();
     this.mergeProviders(moduleMetadata);
 
-    this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
+    const providers = [...this.guardsPerMod.map(g => g.guard), ...this.opts.providersPerMod];
+    this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providers);
     this.injectorPerMod.resolveAndInstantiate(this.mod); // Only check DI resolvable
     this.initProvidersPerReq(); // Init to use providers in services
     const routesData = this.getRoutesData();
