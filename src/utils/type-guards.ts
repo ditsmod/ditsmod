@@ -25,14 +25,17 @@ export function isModuleWithOptions(
   impOrExp: Type<any> | ModuleWithOptions<any> | any[]
 ): impOrExp is ModuleWithOptions<any> {
   return (
-    (impOrExp as ImportWithOptions)?.prefix === undefined &&
+    !isImportWithOptions(impOrExp) &&
     (impOrExp as ModuleWithOptions<any>)?.module !== undefined
   );
 }
 
 export function isImportWithOptions(imp: any): imp is ImportWithOptions {
   return (
-    (imp as ImportWithOptions)?.prefix !== undefined &&
+    (
+      (imp as ImportWithOptions)?.prefix !== undefined ||
+      (imp as ImportWithOptions)?.guards !== undefined
+    ) &&
     (imp as ImportWithOptions)?.module !== undefined
   );
 }

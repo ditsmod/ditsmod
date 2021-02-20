@@ -164,6 +164,7 @@ export class ModuleFactory extends Core {
         return {
           prefix: imp.prefix,
           module: resolveForwardRef(imp.module),
+          guards: imp.guards
         };
       }
       return {
