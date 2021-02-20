@@ -18,10 +18,22 @@ export const Controller = makeDecorator('Controller', (data: any) => data) as Co
 
 export interface RouteData {
   controller: TypeProvider;
+  /**
+   * The controller's method.
+   */
   method: string;
   route: RouteMetadata;
+  /**
+   * Resolved providers per request.
+   */
   providers: ResolvedReflectiveProvider[];
+  /**
+   * Injector per a module.
+   */
   injector: ReflectiveInjector;
+  /**
+   * Need or not parse body.
+   */
   parseBody: boolean;
   guards: NormalizedGuard[];
 }
