@@ -24,9 +24,9 @@ import { Core } from './core';
 import { getDuplicates } from './utils/get-duplicates';
 import { pickProperties } from './utils/pick-properties';
 import { BodyParserConfig, ExtensionMetadata } from './types/types';
-import { GuardItem, RouteDecoratorMetadata, RouteMetadata } from './decorators/route';
+import { GuardItem, RouteMetadata } from './decorators/route';
 import { Logger } from './types/logger';
-import { ControllerDecorator, RouteData } from './decorators/controller';
+import { ControllerDecorator, ControllerMetadata, RouteData } from './decorators/controller';
 import { ImportWithOptions } from './types/import-with-options';
 
 /**
@@ -100,7 +100,8 @@ export class ModuleFactory extends Core {
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
     this.injectorPerMod.resolveAndInstantiate(this.mod); // Only check DI resolvable
     this.initProvidersPerReq(); // Init to use providers in services
-    const routesData = this.getRoutesData();
+    const arrCtrlMetadata = this.getControllersMetadata();
+    const routesData = this.getRoutesData(arrCtrlMetadata);
 
     return this.optsMap.set(this.mod, { ...this.opts, prefixPerMod, routesData });
   }
@@ -202,7 +203,7 @@ export class ModuleFactory extends Core {
   }
 
   protected checkGuardsPerMod(guards: NormalizedGuard[]) {
-    for (const Guard of guards.map(g => g.guard)) {
+    for (const Guard of guards.map((n) => n.guard)) {
       const type = typeof Guard?.prototype.canActivate;
       if (type != 'function') {
         throw new TypeError(
@@ -356,27 +357,42 @@ export class ModuleFactory extends Core {
     this.initProvidersPerReq();
   }
 
-  protected getRoutesData() {
-    const routesData: RouteData[] = [];
+  protected getControllersMetadata() {
+    const arrCtrlMetadata: ControllerMetadata[] = [];
     for (const Ctrl of this.opts.controllers) {
       const controllerMetadata = reflector.annotations(Ctrl).find(isController);
       if (!controllerMetadata) {
         throw new Error(`Setting routes failed: class "${Ctrl.name}" does not have the "@Controller()" decorator`);
       }
-      const propMetadata = reflector.propMetadata(Ctrl) as RouteDecoratorMetadata;
+      const ctrlMetadata: ControllerMetadata = { controller: Ctrl, metadata: controllerMetadata, methods: {} };
+      const propMetadata = reflector.propMetadata(Ctrl);
 
-      for (const method in propMetadata) {
-        const routes = propMetadata[method].filter(isRoute);
+      for (const methodName in propMetadata) {
+        const decorators = propMetadata[methodName];
+        ctrlMetadata.methods[methodName] = decorators;
+      }
+      arrCtrlMetadata.push(ctrlMetadata);
+    }
+
+    return arrCtrlMetadata;
+  }
+
+  protected getRoutesData(arrCtrlMetadata: ControllerMetadata<any>[]) {
+    const routesData: RouteData[] = [];
+    for (const { controller, metadata, methods } of arrCtrlMetadata) {
+      for (const methodName in methods) {
+        const decorators = methods[methodName];
+        const routes = decorators.filter(isRoute);
         for (const route of routes) {
-          const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(route, Ctrl, method, controllerMetadata);
+          const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(route, controller, methodName, metadata);
           const injectorPerReq = this.injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
           const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
           const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
           const guards = [...this.guardsPerMod, ...this.normalizeGuards(route.guards)];
 
           routesData.push({
-            controller: Ctrl,
-            method,
+            controller,
+            methodName: methodName,
             route,
             providers: resolvedProvidersPerReq,
             injector: this.injectorPerMod,
@@ -406,7 +422,7 @@ export class ModuleFactory extends Core {
     prop: string,
     controllerMetadata: ControllerDecorator
   ) {
-    const guards = [...this.guardsPerMod.map(n => n.guard), ...route.guards].map((item) => {
+    const guards = [...this.guardsPerMod.map((n) => n.guard), ...route.guards].map((item) => {
       if (Array.isArray(item)) {
         return item[0];
       } else {

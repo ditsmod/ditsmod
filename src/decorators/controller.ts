@@ -21,7 +21,7 @@ export interface RouteData {
   /**
    * The controller's method.
    */
-  method: string;
+  methodName: string;
   route: RouteMetadata;
   /**
    * Resolved providers per request.
@@ -36,4 +36,13 @@ export interface RouteData {
    */
   parseBody: boolean;
   guards: NormalizedGuard[];
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export interface ControllerMetadata<T extends object = any> {
+  controller: TypeProvider;
+  metadata: ControllerDecorator;
+  methods: {
+    [methodName: string]: T[]
+  }
 }
