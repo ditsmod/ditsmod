@@ -359,13 +359,15 @@ export class ModuleFactory extends Core {
 
   protected getControllersMetadata() {
     const arrCtrlMetadata: ControllerMetadata[] = [];
-    for (const Ctrl of this.opts.controllers) {
-      const controllerMetadata = reflector.annotations(Ctrl).find(isController);
-      if (!controllerMetadata) {
-        throw new Error(`Setting routes failed: class "${Ctrl.name}" does not have the "@Controller()" decorator`);
+    for (const controller of this.opts.controllers) {
+      const metadata = reflector.annotations(controller).find(isController);
+      if (!metadata) {
+        throw new Error(
+          `Collecting controller's metadata failed: class "${controller.name}" does not have the "@Controller()" decorator`
+        );
       }
-      const ctrlMetadata: ControllerMetadata = { controller: Ctrl, metadata: controllerMetadata, methods: {} };
-      const propMetadata = reflector.propMetadata(Ctrl);
+      const ctrlMetadata: ControllerMetadata = { controller, metadata, methods: {} };
+      const propMetadata = reflector.propMetadata(controller);
 
       for (const methodName in propMetadata) {
         const decorators = propMetadata[methodName];
@@ -433,8 +435,9 @@ export class ModuleFactory extends Core {
     for (const Guard of guards) {
       const type = typeof Guard?.prototype.canActivate;
       if (type != 'function') {
+        const guardName = Guard.name || 'Guard';
         throw new TypeError(
-          `${this.moduleName} --> ${Ctrl.name} --> ${prop}(): Guard.prototype.canActivate must be a function, got: ${type}`
+          `${this.moduleName} --> ${Ctrl.name} --> ${prop}(): ${guardName}.prototype.canActivate must be a function, got: ${type}`
         );
       }
     }
