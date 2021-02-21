@@ -11,9 +11,9 @@ import {
   ProvidersMetadata,
   defaultProvidersPerReq,
 } from './decorators/module';
-import { Controller } from './decorators/controller';
-import { Route } from './decorators/route';
-import { Router } from './types/router';
+import { Controller, ControllerDecorator, ControllerMetadata } from './decorators/controller';
+import { CanActivate, Route, RouteDecoratorMetadata } from './decorators/route';
+import { NormalizedGuard, Router } from './types/router';
 import { defaultProvidersPerApp, RootModule } from './decorators/root-module';
 import { Logger } from './types/logger';
 import { Application } from './application';
@@ -22,7 +22,7 @@ import { Request } from './request';
 import { ExtensionMetadata } from './types/types';
 
 describe('ModuleFactory', () => {
-  (defaultProvidersPerApp as Provider[]).push({provide: Router, useClass: DefaultRouter});
+  (defaultProvidersPerApp as Provider[]).push({ provide: Router, useClass: DefaultRouter });
 
   @Injectable()
   class MockModuleFactory extends ModuleFactory {
@@ -38,6 +38,7 @@ describe('ModuleFactory', () => {
     allExportedProvidersPerReq: Provider[] = [];
     exportedProvidersPerMod: Provider[] = [];
     exportedProvidersPerReq: Provider[] = [];
+    guardsPerMod: NormalizedGuard[] = [];
 
     quickCheckMetadata(moduleMetadata: ModuleMetadata) {
       return super.quickCheckMetadata(moduleMetadata);
@@ -49,6 +50,14 @@ describe('ModuleFactory', () => {
 
     importProviders(isStarter: boolean, modOrObject: Type<any> | ModuleWithOptions<any>) {
       return super.importProviders(isStarter, modOrObject);
+    }
+
+    getControllersMetadata() {
+      return super.getControllersMetadata();
+    }
+
+    getRoutesData(arrCtrlMetadata: ControllerMetadata<any>[]) {
+      return super.getRoutesData(arrCtrlMetadata);
     }
   }
 
@@ -265,8 +274,138 @@ describe('ModuleFactory', () => {
     });
   });
 
-  describe('mergeProviders()', () => {
-    it('', () => {});
+  describe('getControllersMetadata()', () => {
+    it('without @Controller decorator', () => {
+      mock.opts.controllers = [class Controller1 {}];
+      expect(() => mock.getControllersMetadata()).toThrowError(/Collecting controller's metadata failed: class/);
+    });
+
+    it('controller with multiple @Route on single method', () => {
+      const ctrlMetadata = { providersPerReq: [] } as ControllerDecorator;
+      @Controller(ctrlMetadata)
+      class Controller1 {
+        @Route('GET', 'url1')
+        method1() {}
+
+        @Route('POST', 'url2')
+        @Route('GET', 'url3')
+        method2() {}
+      }
+      mock.opts.controllers = [Controller1];
+      const metadata = mock.getControllersMetadata();
+      const methods: RouteDecoratorMetadata = {
+        method1: [
+          {
+            httpMethod: 'GET',
+            path: 'url1',
+            guards: [],
+          },
+        ],
+        method2: [
+          {
+            httpMethod: 'POST',
+            path: 'url2',
+            guards: [],
+          },
+          {
+            httpMethod: 'GET',
+            path: 'url3',
+            guards: [],
+          },
+        ],
+      };
+      expect(metadata.length).toBe(1);
+      expect(metadata[0].controller === Controller1).toBe(true);
+      expect(metadata[0].metadata).toEqual(ctrlMetadata);
+      expect(metadata[0].methods).toEqual(methods);
+    });
+  });
+
+  describe('getRoutesData()', () => {
+    it('bad guard', () => {
+      const ctrlMetadata = { providersPerReq: [] } as ControllerDecorator;
+      class MyGuard {}
+      @Controller(ctrlMetadata)
+      class Controller1 {
+        @Route('GET', 'url1', [MyGuard as any])
+        method1() {}
+      }
+
+      mock.opts.controllers = [Controller1];
+      const metadata = mock.getControllersMetadata();
+      const injectorPerApp = ReflectiveInjector.resolveAndCreate([
+        ...defaultProvidersPerApp,
+        { provide: Logger, useClass: MyLogger },
+      ]);
+
+      mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+      mock.injectorPerMod = injectorPerApp;
+      expect(() => mock.getRoutesData(metadata)).toThrowError(/prototype.canActivate must be a function, got:/);
+    });
+
+    it('three decorators with two methods', () => {
+      const ctrlMetadata = { providersPerReq: [] } as ControllerDecorator;
+      class MyGuard1 implements CanActivate {
+        canActivate() {
+          return true;
+        }
+      }
+      class MyGuard2 implements CanActivate {
+        canActivate() {
+          return true;
+        }
+      }
+      @Controller(ctrlMetadata)
+      class Controller1 {
+        @Route('GET', 'url1', [MyGuard1, [MyGuard2, 'one', 2]])
+        method1() {}
+
+        @Route('POST', 'url2')
+        @Route('GET', 'url3')
+        method2() {}
+      }
+
+      mock.opts.controllers = [Controller1];
+      const metadata = mock.getControllersMetadata();
+      const injectorPerApp = ReflectiveInjector.resolveAndCreate([
+        ...defaultProvidersPerApp,
+        { provide: Logger, useClass: MyLogger },
+      ]);
+
+      mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+      mock.injectorPerMod = injectorPerApp;
+      const routesMetadata = mock.getRoutesData(metadata);
+      expect(routesMetadata.length).toBe(3);
+      expect(routesMetadata[0].controller).toBe(Controller1);
+      expect(routesMetadata[0].methodName).toBe('method1');
+      expect(routesMetadata[0].route.httpMethod).toBe('GET');
+      expect(routesMetadata[0].route.path).toBe('url1');
+      expect(routesMetadata[0].route.guards.length).toBeGreaterThan(0);
+      expect(routesMetadata[0].providers.length).toBeGreaterThan(0);
+      expect(routesMetadata[0].injector).toBeDefined();
+      expect(routesMetadata[0].parseBody).toBe(false);
+      expect(routesMetadata[0].guards).toEqual([{ guard: MyGuard1 }, { guard: MyGuard2, params: ['one', 2] }]);
+
+      expect(routesMetadata[1].controller).toBe(Controller1);
+      expect(routesMetadata[1].methodName).toBe('method2');
+      expect(routesMetadata[1].route.httpMethod).toBe('POST');
+      expect(routesMetadata[1].route.path).toBe('url2');
+      expect(routesMetadata[1].route.guards).toEqual([]);
+      expect(routesMetadata[1].providers.length).toBeGreaterThan(0);
+      expect(routesMetadata[1].injector).toBeDefined();
+      expect(routesMetadata[1].parseBody).toBe(true);
+      expect(routesMetadata[1].guards).toEqual([]);
+
+      expect(routesMetadata[2].controller).toBe(Controller1);
+      expect(routesMetadata[2].methodName).toBe('method2');
+      expect(routesMetadata[2].route.httpMethod).toBe('GET');
+      expect(routesMetadata[2].route.path).toBe('url3');
+      expect(routesMetadata[2].route.guards).toEqual([]);
+      expect(routesMetadata[2].providers.length).toBeGreaterThan(0);
+      expect(routesMetadata[2].injector).toBeDefined();
+      expect(routesMetadata[2].parseBody).toBe(false);
+      expect(routesMetadata[2].guards).toEqual([]);
+    });
   });
 
   describe('normalizeMetadata()', () => {
@@ -468,7 +607,7 @@ describe('ModuleFactory', () => {
       class Module4 {}
 
       it('case 2', () => {
-        const providers: Provider[] = [...defaultProvidersPerApp, {provide: Router, useClass: DefaultRouter }];
+        const providers: Provider[] = [...defaultProvidersPerApp, { provide: Router, useClass: DefaultRouter }];
         const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
@@ -486,7 +625,7 @@ describe('ModuleFactory', () => {
       })
       class Module5 {}
 
-      it('should throw an error regarding the provider\'s absence', () => {
+      it("should throw an error regarding the provider's absence", () => {
         const injectorPerApp = ReflectiveInjector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
@@ -818,7 +957,7 @@ describe('ModuleFactory', () => {
           @Module({
             exports: [Provider0, Provider1],
             providersPerMod: [Provider0, Provider1],
-            providersPerApp: [{provide: Router, useValue: ''}]
+            providersPerApp: [{ provide: Router, useValue: '' }],
           })
           class Module0 {}
 
