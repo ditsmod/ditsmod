@@ -3,7 +3,7 @@ import { makePropDecorator, Type } from '@ts-stack/di';
 import { ObjectAny } from '../types/types';
 import { HttpMethod } from '../types/router';
 
-export type GuardItem = Type<CanActivate> | [Type<CanActivate>, ...any[]];
+export type GuardItem = Type<CanActivate> | [Type<CanActivate>, any, ...any[]];
 export type RouteDecoratorFactory = (
   method: HttpMethod,
   path?: string,
