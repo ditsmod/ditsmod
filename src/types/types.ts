@@ -1,6 +1,6 @@
 import { TypeProvider } from '@ts-stack/di';
 
-import { RouteData } from '../decorators/controller';
+import { ControllerMetadata, RouteData } from '../decorators/controller';
 import { ModuleMetadata } from '../decorators/module';
 import { HttpMethod } from './router';
 import { NodeRequest, NodeResponse, Fn } from './server-options';
@@ -42,4 +42,16 @@ export class ControllerErrorHandler {
 }
 
 export interface ModuleType extends TypeProvider {}
-export type ExtensionMetadata = ModuleMetadata & { prefixPerMod: string, routesData: RouteData[] };
+
+export class ExtensionMetadata {
+  prefixPerMod: string;
+  moduleMetadata: ModuleMetadata;
+  /**
+   * The controller metadata collected from all controllers of current module.
+   */
+  controllersMetadata: ControllerMetadata[];
+  /**
+   * Prepared data for the routes.
+   */
+  routesData: RouteData[];
+}

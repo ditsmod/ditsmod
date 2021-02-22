@@ -39,10 +39,13 @@ export interface RouteData {
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export interface ControllerMetadata<T extends object = any> {
+export interface ControllerMetadata<ControllerDecorValue extends object = any, MethodDecorValue extends object = any> {
   controller: TypeProvider;
-  metadata: ControllerDecorator;
+  /**
+   * Controller decorators values.
+   */
+  ctrlDecorValues: ControllerDecorValue[];
   methods: {
-    [methodName: string]: T[]
-  }
+    [methodName: string]: MethodDecorValue[];
+  };
 }

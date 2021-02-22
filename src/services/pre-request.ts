@@ -31,14 +31,14 @@ export class PreRequest {
      * @param method Method of the class controller.
      * @param parseBody Need or not to parse body.
      */
-    const { injector, providers, controller, method, parseBody, guards: guardItems } = handleRoute();
-    const inj1 = injector.resolveAndCreateChild([
+    const { injector, providers, controller, method, parseBody, guards } = handleRoute();
+    const injector1 = injector.resolveAndCreateChild([
       { provide: NodeReqToken, useValue: nodeReq },
       { provide: NodeResToken, useValue: nodeRes },
     ]);
-    const inj2 = inj1.createChildFromResolved(providers);
-    const req = inj2.get(Request) as Request;
-    this.handleRoute(req, controller, method, params, queryString, parseBody, guardItems);
+    const injector2 = injector1.createChildFromResolved(providers);
+    const req = injector2.get(Request) as Request;
+    this.handleRoute(req, controller, method, params, queryString, parseBody, guards);
   };
 
   /**

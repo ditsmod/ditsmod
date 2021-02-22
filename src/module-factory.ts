@@ -25,7 +25,6 @@ import { getDuplicates } from './utils/get-duplicates';
 import { pickProperties } from './utils/pick-properties';
 import { BodyParserConfig, ExtensionMetadata } from './types/types';
 import { GuardItem, RouteMetadata } from './decorators/route';
-import { Logger } from './types/logger';
 import { ControllerDecorator, ControllerMetadata, RouteData } from './decorators/controller';
 import { ImportWithOptions } from './types/import-with-options';
 
@@ -39,17 +38,20 @@ export class ModuleFactory extends Core {
   protected moduleName: string;
   protected prefixPerMod: string;
   protected guardsPerMod: NormalizedGuard[];
+  /**
+   * Module metadata.
+   */
   protected opts: ModuleMetadata;
   protected allExportedProvidersPerMod: Provider[] = [];
   protected allExportedProvidersPerReq: Provider[] = [];
   protected exportedProvidersPerMod: Provider[] = [];
   protected exportedProvidersPerReq: Provider[] = [];
   protected globalProviders: ProvidersMetadata;
-  protected optsMap = new Map<ModuleType, ExtensionMetadata>();
+  protected extensionMetadataMap = new Map<ModuleType, ExtensionMetadata>();
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
   protected injectorPerMod: ReflectiveInjector;
 
-  constructor(protected injectorPerApp: ReflectiveInjector, protected log: Logger) {
+  constructor(protected injectorPerApp: ReflectiveInjector) {
     super();
   }
 
@@ -100,10 +102,15 @@ export class ModuleFactory extends Core {
     this.injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
     this.injectorPerMod.resolveAndInstantiate(this.mod); // Only check DI resolvable
     this.initProvidersPerReq(); // Init to use providers in services
-    const arrCtrlMetadata = this.getControllersMetadata();
-    const routesData = this.getRoutesData(arrCtrlMetadata);
+    const controllersMetadata = this.getControllersMetadata();
+    const routesData = this.getRoutesData(controllersMetadata);
 
-    return this.optsMap.set(this.mod, { ...this.opts, prefixPerMod, routesData });
+    return this.extensionMetadataMap.set(this.mod, {
+      prefixPerMod,
+      moduleMetadata: this.opts,
+      controllersMetadata,
+      routesData,
+    });
   }
 
   protected mergeProviders(moduleMetadata: ModuleMetadata) {
@@ -196,8 +203,8 @@ export class ModuleFactory extends Core {
       this.checkGuardsPerMod(normalizedGuards);
       const guardsPerMod = [...this.guardsPerMod, ...normalizedGuards];
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      const optsMap = moduleFactory.bootstrap(this.globalProviders, prefixPerMod, mod, guardsPerMod);
-      this.optsMap = new Map([...this.optsMap, ...optsMap]);
+      const extensionMetadataMap = moduleFactory.bootstrap(this.globalProviders, prefixPerMod, mod, guardsPerMod);
+      this.extensionMetadataMap = new Map([...this.extensionMetadataMap, ...extensionMetadataMap]);
     }
     this.checkProvidersCollisions();
   }
@@ -358,35 +365,41 @@ export class ModuleFactory extends Core {
   }
 
   protected getControllersMetadata() {
-    const arrCtrlMetadata: ControllerMetadata[] = [];
+    const arrControllerMetadata: ControllerMetadata[] = [];
     for (const controller of this.opts.controllers) {
-      const metadata = reflector.annotations(controller).find(isController);
-      if (!metadata) {
+      const ctrlDecorValues = reflector.annotations(controller);
+      if (!ctrlDecorValues.find(isController)) {
         throw new Error(
           `Collecting controller's metadata failed: class "${controller.name}" does not have the "@Controller()" decorator`
         );
       }
-      const ctrlMetadata: ControllerMetadata = { controller, metadata, methods: {} };
+      const controllerMetadata: ControllerMetadata = { controller, ctrlDecorValues, methods: {} };
       const propMetadata = reflector.propMetadata(controller);
 
       for (const methodName in propMetadata) {
-        const decorators = propMetadata[methodName];
-        ctrlMetadata.methods[methodName] = decorators;
+        const methodDecorValues = propMetadata[methodName];
+        controllerMetadata.methods[methodName] = methodDecorValues;
       }
-      arrCtrlMetadata.push(ctrlMetadata);
+      arrControllerMetadata.push(controllerMetadata);
     }
 
-    return arrCtrlMetadata;
+    return arrControllerMetadata;
   }
 
   protected getRoutesData(arrCtrlMetadata: ControllerMetadata<any>[]) {
     const routesData: RouteData[] = [];
-    for (const { controller, metadata, methods } of arrCtrlMetadata) {
+    for (const { controller, ctrlDecorValues, methods } of arrCtrlMetadata) {
       for (const methodName in methods) {
-        const decorators = methods[methodName];
-        const routes = decorators.filter(isRoute);
+        const methodsDecorators = methods[methodName];
+        const routes = methodsDecorators.filter(isRoute);
         for (const route of routes) {
-          const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(route, controller, methodName, metadata);
+          const ctrlDecorValue = ctrlDecorValues.find(isController);
+          const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(
+            route,
+            controller,
+            methodName,
+            ctrlDecorValue
+          );
           const injectorPerReq = this.injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
           const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
           const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
@@ -394,7 +407,7 @@ export class ModuleFactory extends Core {
 
           routesData.push({
             controller,
-            methodName: methodName,
+            methodName,
             route,
             providers: resolvedProvidersPerReq,
             injector: this.injectorPerMod,

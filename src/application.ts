@@ -159,7 +159,8 @@ export class Application extends Core {
   protected callExtensions(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
     extensionsMetadataMap.forEach((extensionsMetadata, mod) => {
       this.log.trace(mod, extensionsMetadata);
-      const { prefixPerMod, providersPerMod, providersPerReq, controllers } = extensionsMetadata;
+      const { providersPerMod, providersPerReq, controllers } = extensionsMetadata.moduleMetadata;
+      const prefixPerMod = extensionsMetadata.prefixPerMod;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolvable
       const preRouting = injectorPerMod.resolveAndInstantiate(PreRouting) as PreRouting;

@@ -32,7 +32,7 @@ describe('ModuleFactory', () => {
     moduleName = 'MockModule';
     opts = new ModuleMetadata();
     injectorPerMod: ReflectiveInjector;
-    optsMap = new Map<ModuleType, ExtensionMetadata>();
+    extensionMetadataMap = new Map<ModuleType, ExtensionMetadata>();
     allProvidersPerApp: Provider[];
     allExportedProvidersPerMod: Provider[] = [];
     allExportedProvidersPerReq: Provider[] = [];
@@ -81,7 +81,7 @@ describe('ModuleFactory', () => {
   let mockApp: MockAppFactory;
 
   beforeEach(() => {
-    mock = new MockModuleFactory(null, null);
+    mock = new MockModuleFactory(null);
     mockApp = new MockAppFactory();
   });
 
@@ -316,7 +316,7 @@ describe('ModuleFactory', () => {
       };
       expect(metadata.length).toBe(1);
       expect(metadata[0].controller === Controller1).toBe(true);
-      expect(metadata[0].metadata).toEqual(ctrlMetadata);
+      expect(metadata[0].ctrlDecorValues).toEqual([ctrlMetadata]);
       expect(metadata[0].methods).toEqual(methods);
     });
   });
@@ -571,18 +571,18 @@ describe('ModuleFactory', () => {
         mock.injectorPerMod = injectorPerApp;
         mock.bootstrap(new ProvidersMetadata(), '', Module3);
 
-        const mod0 = mock.optsMap.get(Module0);
-        expect(mod0.providersPerMod).toEqual([Provider0]);
-        expect(mod0.providersPerReq).toEqual([]);
-        expect((mod0 as any).ngMetadataName).toBe('Module');
+        const mod0 = mock.extensionMetadataMap.get(Module0);
+        expect(mod0.moduleMetadata.providersPerMod).toEqual([Provider0]);
+        expect(mod0.moduleMetadata.providersPerReq).toEqual([]);
+        expect((mod0 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
-        const mod1 = mock.optsMap.get(Module1);
-        expect(mod1.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3]);
-        expect(mod1.providersPerReq).toEqual([]);
-        expect((mod1 as any).ngMetadataName).toBe('Module');
+        const mod1 = mock.extensionMetadataMap.get(Module1);
+        expect(mod1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3]);
+        expect(mod1.moduleMetadata.providersPerReq).toEqual([]);
+        expect((mod1 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
-        const mod2 = mock.optsMap.get(Module2);
-        expect(mod2.providersPerMod).toEqual([
+        const mod2 = mock.extensionMetadataMap.get(Module2);
+        expect(mod2.moduleMetadata.providersPerMod).toEqual([
           Provider0,
           Provider1,
           Provider2,
@@ -591,14 +591,14 @@ describe('ModuleFactory', () => {
           Provider5,
           Provider6,
         ]);
-        expect(mod2.providersPerReq).toEqual([Provider7, Provider8]);
-        expect((mod2 as any).ngMetadataName).toBe('Module');
+        expect(mod2.moduleMetadata.providersPerReq).toEqual([Provider7, Provider8]);
+        expect((mod2 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
-        const mod3 = mock.optsMap.get(Module3);
-        expect(mod3.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3, Provider5]);
+        const mod3 = mock.extensionMetadataMap.get(Module3);
+        expect(mod3.moduleMetadata.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3, Provider5]);
         // expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overriddenProvider8]);
-        expect(mod3.controllers).toEqual([Ctrl]);
-        expect((mod3 as any).ngMetadataName).toBe('Module');
+        expect(mod3.moduleMetadata.controllers).toEqual([Ctrl]);
+        expect((mod3 as any).moduleMetadata.ngMetadataName).toBe('Module');
       });
 
       @RootModule({
@@ -1035,41 +1035,41 @@ describe('ModuleFactory', () => {
       it('Module0', () => {
         const optsMap = mockApp.prepareModules(RootModule1);
         const mod0 = optsMap.get(Module0);
-        expect(mod0.providersPerApp).toEqual([]);
-        expect(mod0.providersPerMod).toEqual([Provider3, Provider4, Provider0]);
-        expect(mod0.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
+        expect(mod0.moduleMetadata.providersPerApp).toEqual([]);
+        expect(mod0.moduleMetadata.providersPerMod).toEqual([Provider3, Provider4, Provider0]);
+        expect(mod0.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
       });
 
       it('Module1', () => {
         const optsMap = mockApp.prepareModules(RootModule1);
         const mod1 = optsMap.get(Module1);
-        expect(mod1.providersPerApp).toEqual([]);
-        expect(mod1.providersPerMod).toEqual([Provider0, Provider3, Provider4, obj1, Provider2]);
-        expect(mod1.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
+        expect(mod1.moduleMetadata.providersPerApp).toEqual([]);
+        expect(mod1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4, obj1, Provider2]);
+        expect(mod1.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
       });
 
       it('Module2', () => {
         const optsMap = mockApp.prepareModules(RootModule1);
         const mod2 = optsMap.get(Module2);
-        expect(mod2.providersPerApp).toEqual([]);
-        expect(mod2.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
-        expect(mod2.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
+        expect(mod2.moduleMetadata.providersPerApp).toEqual([]);
+        expect(mod2.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
+        expect(mod2.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
       });
 
       it('Module3', () => {
         const optsMap = mockApp.prepareModules(RootModule1);
         const mod3 = optsMap.get(Module3);
-        expect(mod3.providersPerApp).toEqual([]);
-        expect(mod3.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
-        expect(mod3.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
+        expect(mod3.moduleMetadata.providersPerApp).toEqual([]);
+        expect(mod3.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
+        expect(mod3.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
       });
 
       it('Module4', () => {
         const optsMap = mockApp.prepareModules(RootModule1);
         const mod4 = optsMap.get(Module4);
-        expect(mod4.providersPerApp).toEqual([]);
-        expect(mod4.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
-        expect(mod4.providersPerReq).toEqual([
+        expect(mod4.moduleMetadata.providersPerApp).toEqual([]);
+        expect(mod4.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
+        expect(mod4.moduleMetadata.providersPerReq).toEqual([
           ...defaultProvidersPerReq,
           Provider5,
           Provider6,
@@ -1082,9 +1082,9 @@ describe('ModuleFactory', () => {
       it('RootModule1', () => {
         const optsMap = mockApp.prepareModules(RootModule1);
         const root1 = optsMap.get(RootModule1);
-        expect(root1.providersPerApp).toEqual([Logger]);
-        expect(root1.providersPerMod).toEqual([Provider0, Provider1, Provider3, Provider4]);
-        expect(root1.providersPerReq).toEqual([
+        expect(root1.moduleMetadata.providersPerApp).toEqual([Logger]);
+        expect(root1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider1, Provider3, Provider4]);
+        expect(root1.moduleMetadata.providersPerReq).toEqual([
           ...defaultProvidersPerReq,
           Provider5,
           Provider6,
