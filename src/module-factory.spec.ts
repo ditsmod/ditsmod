@@ -11,8 +11,8 @@ import {
   ProvidersMetadata,
   defaultProvidersPerReq,
 } from './decorators/module';
-import { Controller, ControllerDecorator, ControllerMetadata } from './decorators/controller';
-import { CanActivate, Route, RouteDecoratorMetadata } from './decorators/route';
+import { Controller, ControllerDecorator, ControllerMetadata, MethodDecoratorObject } from './decorators/controller';
+import { CanActivate, Route, RouteMetadata } from './decorators/route';
 import { NormalizedGuard, Router } from './types/router';
 import { defaultProvidersPerApp, RootModule } from './decorators/root-module';
 import { Logger } from './types/logger';
@@ -293,24 +293,33 @@ describe('ModuleFactory', () => {
       }
       mock.opts.controllers = [Controller1];
       const metadata = mock.getControllersMetadata();
-      const methods: RouteDecoratorMetadata = {
+      const methods: { [methodName: string]: MethodDecoratorObject<RouteMetadata>[] } = {
         method1: [
           {
-            httpMethod: 'GET',
-            path: 'url1',
-            guards: [],
+            id: 1,
+            value: {
+              httpMethod: 'GET',
+              path: 'url1',
+              guards: [],
+            },
           },
         ],
         method2: [
           {
-            httpMethod: 'POST',
-            path: 'url2',
-            guards: [],
+            id: 2,
+            value: {
+              httpMethod: 'POST',
+              path: 'url2',
+              guards: [],
+            },
           },
           {
-            httpMethod: 'GET',
-            path: 'url3',
-            guards: [],
+            id: 3,
+            value: {
+              httpMethod: 'GET',
+              path: 'url3',
+              guards: [],
+            },
           },
         ],
       };
@@ -376,6 +385,7 @@ describe('ModuleFactory', () => {
       mock.injectorPerMod = injectorPerApp;
       const routesMetadata = mock.getRoutesData(metadata);
       expect(routesMetadata.length).toBe(3);
+      expect(routesMetadata[0].id).toBe(1);
       expect(routesMetadata[0].controller).toBe(Controller1);
       expect(routesMetadata[0].methodName).toBe('method1');
       expect(routesMetadata[0].route.httpMethod).toBe('GET');
@@ -386,6 +396,7 @@ describe('ModuleFactory', () => {
       expect(routesMetadata[0].parseBody).toBe(false);
       expect(routesMetadata[0].guards).toEqual([{ guard: MyGuard1 }, { guard: MyGuard2, params: ['one', 2] }]);
 
+      expect(routesMetadata[1].id).toBe(2);
       expect(routesMetadata[1].controller).toBe(Controller1);
       expect(routesMetadata[1].methodName).toBe('method2');
       expect(routesMetadata[1].route.httpMethod).toBe('POST');
@@ -396,6 +407,7 @@ describe('ModuleFactory', () => {
       expect(routesMetadata[1].parseBody).toBe(true);
       expect(routesMetadata[1].guards).toEqual([]);
 
+      expect(routesMetadata[2].id).toBe(3);
       expect(routesMetadata[2].controller).toBe(Controller1);
       expect(routesMetadata[2].methodName).toBe('method2');
       expect(routesMetadata[2].route.httpMethod).toBe('GET');
@@ -1037,7 +1049,12 @@ describe('ModuleFactory', () => {
         const mod0 = optsMap.get(Module0);
         expect(mod0.moduleMetadata.providersPerApp).toEqual([]);
         expect(mod0.moduleMetadata.providersPerMod).toEqual([Provider3, Provider4, Provider0]);
-        expect(mod0.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
+        expect(mod0.moduleMetadata.providersPerReq).toEqual([
+          ...defaultProvidersPerReq,
+          Provider5,
+          Provider6,
+          Provider7,
+        ]);
       });
 
       it('Module1', () => {
@@ -1045,7 +1062,12 @@ describe('ModuleFactory', () => {
         const mod1 = optsMap.get(Module1);
         expect(mod1.moduleMetadata.providersPerApp).toEqual([]);
         expect(mod1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4, obj1, Provider2]);
-        expect(mod1.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
+        expect(mod1.moduleMetadata.providersPerReq).toEqual([
+          ...defaultProvidersPerReq,
+          Provider5,
+          Provider6,
+          Provider7,
+        ]);
       });
 
       it('Module2', () => {
@@ -1053,7 +1075,12 @@ describe('ModuleFactory', () => {
         const mod2 = optsMap.get(Module2);
         expect(mod2.moduleMetadata.providersPerApp).toEqual([]);
         expect(mod2.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
-        expect(mod2.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
+        expect(mod2.moduleMetadata.providersPerReq).toEqual([
+          ...defaultProvidersPerReq,
+          Provider5,
+          Provider6,
+          Provider7,
+        ]);
       });
 
       it('Module3', () => {
@@ -1061,7 +1088,12 @@ describe('ModuleFactory', () => {
         const mod3 = optsMap.get(Module3);
         expect(mod3.moduleMetadata.providersPerApp).toEqual([]);
         expect(mod3.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
-        expect(mod3.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
+        expect(mod3.moduleMetadata.providersPerReq).toEqual([
+          ...defaultProvidersPerReq,
+          Provider5,
+          Provider6,
+          Provider7,
+        ]);
       });
 
       it('Module4', () => {

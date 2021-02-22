@@ -17,6 +17,11 @@ export interface ControllerDecorator {
 export const Controller = makeDecorator('Controller', (data: any) => data) as ControllerDecoratorFactory;
 
 export interface RouteData {
+  /**
+   * This ID is unique per the application. During application initialization, it increments
+   * with each decorator assigned to the controller method.
+   */
+  id: number;
   controller: TypeProvider;
   /**
    * The controller's method name.
@@ -39,6 +44,19 @@ export interface RouteData {
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
+export interface MethodDecoratorObject<MethodDecorValue extends object = any> {
+  /**
+   * This ID is unique per the application. During application initialization, it increments
+   * with each decorator assigned to the controller method.
+   */
+  id: number;
+  /**
+   * Decorator value.
+   */
+  value: MethodDecorValue;
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
 export interface ControllerMetadata<ControllerDecorValue extends object = any, MethodDecorValue extends object = any> {
   controller: TypeProvider;
   /**
@@ -46,6 +64,6 @@ export interface ControllerMetadata<ControllerDecorValue extends object = any, M
    */
   ctrlDecorValues: ControllerDecorValue[];
   methods: {
-    [methodName: string]: MethodDecorValue[];
+    [methodName: string]: MethodDecoratorObject<MethodDecorValue>[];
   };
 }
