@@ -9,9 +9,6 @@ import { Router } from './types/router';
 export class PreRouting {
   constructor(protected router: Router, protected log: Logger) {}
 
-  /**
-   * @todo Give this method the ability to override it via DI.
-   */
   setRoutes(
     moduleName: string,
     prefixPerApp: string,
