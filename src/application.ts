@@ -3,7 +3,7 @@ import * as https from 'https';
 import * as http2 from 'http2';
 import { ReflectiveInjector, reflector, Provider, Type, resolveForwardRef } from '@ts-stack/di';
 
-import {  RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
+import { RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
 import { ExtensionMetadata } from './types/types';
 import { isHttp2SecureServerOptions, isProvider, isRootModule } from './utils/type-guards';
 import { PreRequest } from './services/pre-request';
@@ -159,13 +159,12 @@ export class Application extends Core {
   protected callExtensions(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
     extensionsMetadataMap.forEach((extensionsMetadata, mod) => {
       this.log.trace(mod, extensionsMetadata);
-      const { providersPerMod, providersPerReq, controllers } = extensionsMetadata.moduleMetadata;
+      const { providersPerMod } = extensionsMetadata.moduleMetadata;
       const prefixPerMod = extensionsMetadata.prefixPerMod;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolvable
       const preRouting = injectorPerMod.resolveAndInstantiate(PreRouting) as PreRouting;
-      preRouting.init(mod.name, providersPerReq, controllers);
-      preRouting.prepareRoutes(this.opts.prefixPerApp, prefixPerMod);
+      preRouting.setRoutes(mod.name, this.opts.prefixPerApp, prefixPerMod, extensionsMetadata.routesData);
     });
   }
 

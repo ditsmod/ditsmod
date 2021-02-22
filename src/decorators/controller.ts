@@ -19,7 +19,7 @@ export const Controller = makeDecorator('Controller', (data: any) => data) as Co
 export interface RouteData {
   controller: TypeProvider;
   /**
-   * The controller's method.
+   * The controller's method name.
    */
   methodName: string;
   route: RouteMetadata;

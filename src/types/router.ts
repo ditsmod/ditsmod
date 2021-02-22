@@ -56,9 +56,9 @@ export type RouteHandler = () => {
   providers: ResolvedReflectiveProvider[];
   controller: TypeProvider;
   /**
-   * Method of the class controller.
+   * Method name of the class controller.
    */
-  method: string;
+  methodName: string;
   /**
    * Need or not to parse body.
    */
