@@ -20,6 +20,7 @@ import { Application } from './application';
 import { NodeReqToken } from './types/injection-tokens';
 import { Request } from './request';
 import { ExtensionMetadata } from './types/types';
+import { Counter } from './services/counter';
 
 describe('ModuleFactory', () => {
   (defaultProvidersPerApp as Provider[]).push({ provide: Router, useClass: DefaultRouter });
@@ -79,9 +80,10 @@ describe('ModuleFactory', () => {
 
   let mock: MockModuleFactory;
   let mockApp: MockAppFactory;
-
+  
   beforeEach(() => {
-    mock = new MockModuleFactory(null);
+    const counter = new Counter();
+    mock = new MockModuleFactory(null, counter);
     mockApp = new MockAppFactory();
   });
 

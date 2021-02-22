@@ -1,7 +1,6 @@
 import { Injectable } from '@ts-stack/di';
 
 import { RouteData } from './decorators/controller';
-import { RouteMetadata } from './decorators/route';
 import { Logger } from './types/logger';
 import { Router } from './types/router';
 
@@ -20,12 +19,13 @@ export class PreRouting {
     const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
 
     routesData.forEach((routeData) => {
-      const route: RouteMetadata = routeData.route;
+      const route = routeData.route;
       const path = this.getPath(prefix, route.path);
 
       this.router.on(route.httpMethod, `/${path}`, () => routeData);
 
       const logObj = {
+        id: routeData.id,
         module: moduleName,
         httpMethod: route.httpMethod,
         path,

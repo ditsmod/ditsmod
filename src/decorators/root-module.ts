@@ -8,6 +8,7 @@ import { Logger, LoggerConfig } from '../types/logger';
 import { DefaultLogger } from '../services/default-logger';
 import { PreRouting } from '../pre-routing';
 import { AppMetadata } from './app-metadata';
+import { Counter } from '../services/counter';
 
 export const defaultProvidersPerApp: Readonly<Provider[]> = [
   LoggerConfig,
@@ -18,7 +19,8 @@ export const defaultProvidersPerApp: Readonly<Provider[]> = [
     provide: ReflectiveInjector,
     useExisting: Injector,
   },
-  PreRouting
+  PreRouting,
+  Counter
 ];
 
 export interface RootModuleDecoratorFactory {

@@ -27,6 +27,7 @@ import { BodyParserConfig, ExtensionMetadata } from './types/types';
 import { GuardItem, RouteMetadata } from './decorators/route';
 import { ControllerDecorator, ControllerMetadata, MethodDecoratorObject, RouteData } from './decorators/controller';
 import { ImportWithOptions } from './types/import-with-options';
+import { Counter } from './services/counter';
 
 /**
  * - creates `injectorPerMod` and `injectorPerReq`;
@@ -50,13 +51,8 @@ export class ModuleFactory extends Core {
   protected extensionMetadataMap = new Map<ModuleType, ExtensionMetadata>();
   protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
   protected injectorPerMod: ReflectiveInjector;
-  /**
-   * This ID is unique per the application. During application initialization, it increments
-   * with each decorator assigned to the controller method.
-   */
-  protected ctrlMethodDecorId = 0;
 
-  constructor(protected injectorPerApp: ReflectiveInjector) {
+  constructor(protected injectorPerApp: ReflectiveInjector, protected counter: Counter) {
     super();
   }
 
@@ -89,8 +85,7 @@ export class ModuleFactory extends Core {
     globalProviders: ProvidersMetadata,
     prefixPerMod: string,
     modOrObject: TypeProvider | ModuleWithOptions<any>,
-    guardsPerMod?: NormalizedGuard[],
-    ctrlMethodDecorId?: number
+    guardsPerMod?: NormalizedGuard[]
   ) {
     this.globalProviders = globalProviders;
     this.prefixPerMod = prefixPerMod || '';
@@ -98,7 +93,6 @@ export class ModuleFactory extends Core {
     this.mod = mod;
     this.moduleName = mod.name;
     this.guardsPerMod = guardsPerMod || [];
-    this.ctrlMethodDecorId = ctrlMethodDecorId || 0;
     const moduleMetadata = this.normalizeMetadata(modOrObject);
     this.quickCheckMetadata(moduleMetadata);
     this.opts = new ModuleMetadata();
@@ -210,13 +204,7 @@ export class ModuleFactory extends Core {
       this.checkGuardsPerMod(normalizedGuards);
       const guardsPerMod = [...this.guardsPerMod, ...normalizedGuards];
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      const extensionMetadataMap = moduleFactory.bootstrap(
-        this.globalProviders,
-        prefixPerMod,
-        mod,
-        guardsPerMod,
-        this.ctrlMethodDecorId
-      );
+      const extensionMetadataMap = moduleFactory.bootstrap(this.globalProviders, prefixPerMod, mod, guardsPerMod);
       this.extensionMetadataMap = new Map([...this.extensionMetadataMap, ...extensionMetadataMap]);
     }
     this.checkProvidersCollisions();
@@ -391,8 +379,8 @@ export class ModuleFactory extends Core {
       for (const methodName in propMetadata) {
         const methodDecorValues = propMetadata[methodName];
         controllerMetadata.methods[methodName] = methodDecorValues.map<MethodDecoratorObject>((decoratorValue) => {
-          this.ctrlMethodDecorId++;
-          return { id: this.ctrlMethodDecorId, value: decoratorValue };
+          const id = ++this.counter.ctrlDecorLastId;
+          return { id, value: decoratorValue };
         });
       }
       arrControllerMetadata.push(controllerMetadata);
@@ -405,8 +393,8 @@ export class ModuleFactory extends Core {
     const routesData: RouteData[] = [];
     for (const { controller, ctrlDecorValues, methods } of arrCtrlMetadata) {
       for (const methodName in methods) {
-        const methodWithDecorator = methods[methodName];
-        for (const decoratorData of methodWithDecorator) {
+        const methodWithDecorators = methods[methodName];
+        for (const decoratorData of methodWithDecorators) {
           if (!isRoute(decoratorData.value)) {
             continue;
           }
