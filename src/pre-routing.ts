@@ -46,8 +46,6 @@ export class PreRouting {
    *
    * - If prefix `/api/posts/:postId` and route path `:postId`, this method returns path `/api/posts/:postId`.
    * - If prefix `/api/posts` and route path `:postId`, this method returns `/api/posts/:postId`
-   *
-   * @todo Give this method the ability to override it via DI.
    */
   protected getPath(prefix: string, path: string) {
     const prefixLastPart = prefix?.split('/').slice(-1)[0];
