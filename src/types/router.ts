@@ -1,5 +1,4 @@
 import { Type } from '@ts-stack/di';
-import { RouteData } from '../decorators/controller';
 import { CanActivate } from '../decorators/route';
 import { NodeRequest, NodeResponse } from './server-options';
 
