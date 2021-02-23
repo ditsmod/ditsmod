@@ -14,7 +14,7 @@ import { CanActivate } from '../decorators/route';
 import { NormalizedGuard, RouteParam, Router } from '../types/router';
 
 @Injectable()
-export class PreRouting {
+export class PreRouter {
   constructor(
     protected router: Router,
     protected log: Logger,

@@ -1,9 +1,9 @@
-import { PreRouting } from '../services/pre-routing';
+import { PreRouter } from '../services/pre-router';
 
 describe('PreRouting', () => {
   let mock: MockPreRouting;
 
-  class MockPreRouting extends PreRouting {
+  class MockPreRouting extends PreRouter {
     getPath(prefix: string, path: string) {
       return super.getPath(prefix, path);
     }
