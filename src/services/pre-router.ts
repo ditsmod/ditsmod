@@ -21,12 +21,12 @@ export class PreRouter {
   requestListener: RequestListener = (nodeReq, nodeRes) => {
     const { method: httpMethod, url } = nodeReq;
     const [uri, queryString] = this.decodeUrl(url).split('?');
-    const { handle: handleRoute, params: pathParams } = this.router.find(httpMethod as HttpMethod, uri);
-    if (!handleRoute) {
+    const { handle, params } = this.router.find(httpMethod as HttpMethod, uri);
+    if (!handle) {
       this.sendNotFound(nodeRes);
       return;
     }
-    handleRoute(nodeReq, nodeRes, pathParams, queryString);
+    handle(nodeReq, nodeRes, params, queryString);
   };
 
   setRoutes(moduleName: string, prefixPerApp: string, prefixPerMod: string, preRoutesData: PreRouteData[]) {
@@ -45,7 +45,7 @@ export class PreRouter {
        */
       const { injector, providers, controller, methodName, parseBody, guards } = preRouteData;
 
-      const handleRoute = ((nodeReq: NodeRequest, nodeRes: NodeResponse, params: PathParam[], queryString: any) => {
+      const handle = ((nodeReq: NodeRequest, nodeRes: NodeResponse, params: PathParam[], queryString: any) => {
         nodeRes.setHeader('Server', this.appMetadata.serverName);
         const injector1 = injector.resolveAndCreateChild([
           { provide: NodeReqToken, useValue: nodeReq },
@@ -57,9 +57,9 @@ export class PreRouter {
       }) as RouteHandler;
 
       if (route.httpMethod == 'ALL') {
-        this.router.all(`/${path}`, handleRoute);
+        this.router.all(`/${path}`, handle);
       } else {
-        this.router.on(route.httpMethod, `/${path}`, handleRoute);
+        this.router.on(route.httpMethod, `/${path}`, handle);
       }
 
       const logObj = {
