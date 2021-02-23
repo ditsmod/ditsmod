@@ -298,7 +298,8 @@ describe('ModuleFactory', () => {
       const methods: { [methodName: string]: MethodDecoratorObject<RouteMetadata>[] } = {
         method1: [
           {
-            id: 1,
+            methodId: 1,
+            decoratorId: 1,
             value: {
               httpMethod: 'GET',
               path: 'url1',
@@ -308,7 +309,8 @@ describe('ModuleFactory', () => {
         ],
         method2: [
           {
-            id: 2,
+            methodId: 2,
+            decoratorId: 2,
             value: {
               httpMethod: 'POST',
               path: 'url2',
@@ -316,7 +318,8 @@ describe('ModuleFactory', () => {
             },
           },
           {
-            id: 3,
+            methodId: 2,
+            decoratorId: 3,
             value: {
               httpMethod: 'GET',
               path: 'url3',
@@ -387,7 +390,7 @@ describe('ModuleFactory', () => {
       mock.injectorPerMod = injectorPerApp;
       const routesMetadata = mock.getRoutesData(metadata);
       expect(routesMetadata.length).toBe(3);
-      expect(routesMetadata[0].id).toBe(1);
+      expect(routesMetadata[0].methodId).toBe(1);
       expect(routesMetadata[0].controller).toBe(Controller1);
       expect(routesMetadata[0].methodName).toBe('method1');
       expect(routesMetadata[0].route.httpMethod).toBe('GET');
@@ -398,7 +401,7 @@ describe('ModuleFactory', () => {
       expect(routesMetadata[0].parseBody).toBe(false);
       expect(routesMetadata[0].guards).toEqual([{ guard: MyGuard1 }, { guard: MyGuard2, params: ['one', 2] }]);
 
-      expect(routesMetadata[1].id).toBe(2);
+      expect(routesMetadata[1].methodId).toBe(2);
       expect(routesMetadata[1].controller).toBe(Controller1);
       expect(routesMetadata[1].methodName).toBe('method2');
       expect(routesMetadata[1].route.httpMethod).toBe('POST');
@@ -409,7 +412,7 @@ describe('ModuleFactory', () => {
       expect(routesMetadata[1].parseBody).toBe(true);
       expect(routesMetadata[1].guards).toEqual([]);
 
-      expect(routesMetadata[2].id).toBe(3);
+      expect(routesMetadata[2].methodId).toBe(2);
       expect(routesMetadata[2].controller).toBe(Controller1);
       expect(routesMetadata[2].methodName).toBe('method2');
       expect(routesMetadata[2].route.httpMethod).toBe('GET');

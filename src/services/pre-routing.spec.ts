@@ -1,4 +1,4 @@
-import { PreRouting } from './pre-routing';
+import { PreRouting } from '../services/pre-routing';
 
 describe('PreRouting', () => {
   let mock: MockPreRouting;
@@ -10,7 +10,7 @@ describe('PreRouting', () => {
   }
 
   beforeEach(() => {
-    mock = new MockPreRouting(null, null, null);
+    mock = new MockPreRouting(null, null);
   });
 
   describe('getPath', () => {

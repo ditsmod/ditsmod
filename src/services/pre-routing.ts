@@ -1,8 +1,9 @@
 import { Injectable } from '@ts-stack/di';
 
-import { RouteData } from './decorators/controller';
-import { Logger } from './types/logger';
-import { Router } from './types/router';
+import { PreRouteData, RouteData } from '../decorators/controller';
+import { Logger } from '../types/logger';
+import { Router } from '../types/router';
+import { pickProperties } from '../utils/pick-properties';
 
 @Injectable()
 export class PreRouting {
@@ -12,25 +13,29 @@ export class PreRouting {
     moduleName: string,
     prefixPerApp: string,
     prefixPerMod: string,
-    routesData: RouteData[]
+    preRoutesData: PreRouteData[]
   ) {
     this.checkRoutePath(moduleName, prefixPerApp);
     this.checkRoutePath(moduleName, prefixPerMod);
     const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
 
-    routesData.forEach((routeData) => {
-      const route = routeData.route;
+    preRoutesData.forEach((preRouteData) => {
+      const route = preRouteData.route;
       const path = this.getPath(prefix, route.path);
 
+      /**
+       * `pickProperties()` is used here because no need `methodId` and `decoratorId` in the route.
+       */
+      const routeData = pickProperties(new RouteData(), preRouteData);
       this.router.on(route.httpMethod, `/${path}`, () => routeData);
 
       const logObj = {
-        id: routeData.id,
+        id: preRouteData.methodId,
         module: moduleName,
         httpMethod: route.httpMethod,
         path,
-        guards: routeData.guards,
-        handler: `${routeData.controller.name}.${routeData.methodName}()`,
+        guards: preRouteData.guards,
+        handler: `${preRouteData.controller.name}.${preRouteData.methodName}()`,
       };
 
       if (!logObj.guards.length) {

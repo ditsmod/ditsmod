@@ -16,40 +16,57 @@ export interface ControllerDecorator {
 
 export const Controller = makeDecorator('Controller', (data: any) => data) as ControllerDecoratorFactory;
 
-export interface RouteData {
+/**
+ * All properties of this class are initialized with `null`.
+ */
+export class RouteData {
+  controller: TypeProvider = null;
+  /**
+   * The controller's method name.
+   */
+  methodName: string = null;
+  route: RouteMetadata = null;
+  /**
+   * Resolved providers per request.
+   */
+  providers: ResolvedReflectiveProvider[] = null;
+  /**
+   * Injector per a module.
+   */
+  injector: ReflectiveInjector = null;
+  /**
+   * Need or not parse body.
+   */
+  parseBody: boolean = null;
+  guards: NormalizedGuard[] = null;
+}
+
+/**
+ * All properties of this class are initialized with `null`.
+ */
+export class PreRouteData extends RouteData {
+  /**
+   * During application initialization, this ID increments with each controller method.
+   */
+  methodId: number = null;
   /**
    * This ID is unique per the application. During application initialization, it increments
    * with each decorator assigned to the controller method.
    */
-  id: number;
-  controller: TypeProvider;
-  /**
-   * The controller's method name.
-   */
-  methodName: string;
-  route: RouteMetadata;
-  /**
-   * Resolved providers per request.
-   */
-  providers: ResolvedReflectiveProvider[];
-  /**
-   * Injector per a module.
-   */
-  injector: ReflectiveInjector;
-  /**
-   * Need or not parse body.
-   */
-  parseBody: boolean;
-  guards: NormalizedGuard[];
+  decoratorId: number = null;
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export interface MethodDecoratorObject<MethodDecorValue extends object = any> {
   /**
+   * During application initialization, this ID increments with each controller method.
+   */
+  methodId: number;
+  /**
    * This ID is unique per the application. During application initialization, it increments
    * with each decorator assigned to the controller method.
    */
-  id: number;
+  decoratorId: number;
   /**
    * Decorator value.
    */

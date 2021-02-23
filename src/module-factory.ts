@@ -25,7 +25,7 @@ import { getDuplicates } from './utils/get-duplicates';
 import { pickProperties } from './utils/pick-properties';
 import { BodyParserConfig, ExtensionMetadata } from './types/types';
 import { GuardItem, RouteMetadata } from './decorators/route';
-import { ControllerDecorator, ControllerMetadata, MethodDecoratorObject, RouteData } from './decorators/controller';
+import { ControllerDecorator, ControllerMetadata, MethodDecoratorObject, PreRouteData } from './decorators/controller';
 import { ImportWithOptions } from './types/import-with-options';
 import { Counter } from './services/counter';
 
@@ -110,7 +110,7 @@ export class ModuleFactory extends Core {
       prefixPerMod,
       moduleMetadata: this.opts,
       controllersMetadata,
-      routesData,
+      preRoutesData: routesData,
     });
   }
 
@@ -378,9 +378,10 @@ export class ModuleFactory extends Core {
       const propMetadata = reflector.propMetadata(controller);
       for (const methodName in propMetadata) {
         const methodDecorValues = propMetadata[methodName];
+        const methodId = this.counter.incrementCtrlMethodId();
         controllerMetadata.methods[methodName] = methodDecorValues.map<MethodDecoratorObject>((decoratorValue) => {
-          const id = ++this.counter.ctrlDecorLastId;
-          return { id, value: decoratorValue };
+          const decoratorId = this.counter.incrementCtrlDecoratorId();
+          return { methodId, decoratorId, value: decoratorValue };
         });
       }
       arrControllerMetadata.push(controllerMetadata);
@@ -390,7 +391,7 @@ export class ModuleFactory extends Core {
   }
 
   protected getRoutesData(arrCtrlMetadata: ControllerMetadata<any>[]) {
-    const routesData: RouteData[] = [];
+    const routesData: PreRouteData[] = [];
     for (const { controller, ctrlDecorValues, methods } of arrCtrlMetadata) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
@@ -412,7 +413,8 @@ export class ModuleFactory extends Core {
           const guards = [...this.guardsPerMod, ...this.normalizeGuards(route.guards)];
 
           routesData.push({
-            id: decoratorData.id,
+            methodId: decoratorData.methodId,
+            decoratorId: decoratorData.decoratorId,
             controller,
             methodName,
             route,

@@ -1,6 +1,6 @@
 import { TypeProvider } from '@ts-stack/di';
 
-import { ControllerMetadata, RouteData } from '../decorators/controller';
+import { ControllerMetadata, PreRouteData } from '../decorators/controller';
 import { ModuleMetadata } from '../decorators/module';
 import { HttpMethod } from './router';
 import { NodeRequest, NodeResponse, Fn } from './server-options';
@@ -53,5 +53,5 @@ export class ExtensionMetadata {
   /**
    * Prepared data for the routes.
    */
-  routesData: RouteData[];
+  preRoutesData: PreRouteData[];
 }

@@ -22,7 +22,7 @@ import { getDuplicates } from './utils/get-duplicates';
 import { flatten, normalizeProviders } from './utils/ng-utils';
 import { Core } from './core';
 import { DefaultLogger } from './services/default-logger';
-import { PreRouting } from './pre-routing';
+import { PreRouting } from './services/pre-routing';
 import { AppMetadata } from './decorators/app-metadata';
 
 export class Application extends Core {
@@ -164,7 +164,7 @@ export class Application extends Core {
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolvable
       const preRouting = injectorPerMod.resolveAndInstantiate(PreRouting) as PreRouting;
-      preRouting.setRoutes(mod.name, this.opts.prefixPerApp, prefixPerMod, extensionsMetadata.routesData);
+      preRouting.setRoutes(mod.name, this.opts.prefixPerApp, prefixPerMod, extensionsMetadata.preRoutesData);
     });
   }
 
