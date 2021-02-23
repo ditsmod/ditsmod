@@ -10,7 +10,7 @@ import { Request } from './request';
 import { ObjectAny, ControllerErrorHandler } from '../types/types';
 import { BodyParser } from './body-parser';
 import { CanActivate } from '../decorators/route';
-import { NormalizedGuard, RouteParam, Router, HttpMethod } from '../types/router';
+import { NormalizedGuard, RouteParam, Router, HttpMethod, RouteHandler } from '../types/router';
 import { Status } from '../utils/http-status-codes';
 import { RequestListener } from '../types/types';
 
@@ -45,20 +45,22 @@ export class PreRouter {
        */
       const { injector, providers, controller, methodName, parseBody, guards } = preRouteData;
 
-      this.router.on(
-        route.httpMethod,
-        `/${path}`,
-        (nodeReq: NodeRequest, nodeRes: NodeResponse, params: RouteParam[], queryString: any) => {
-          nodeRes.setHeader('Server', this.appMetadata.serverName);
-          const injector1 = injector.resolveAndCreateChild([
-            { provide: NodeReqToken, useValue: nodeReq },
-            { provide: NodeResToken, useValue: nodeRes },
-          ]);
-          const injector2 = injector1.createChildFromResolved(providers);
-          const req = injector2.get(Request) as Request;
-          this.handleRoute(req, params, queryString, controller, methodName, parseBody, guards);
-        }
-      );
+      const handleRoute = ((nodeReq: NodeRequest, nodeRes: NodeResponse, params: RouteParam[], queryString: any) => {
+        nodeRes.setHeader('Server', this.appMetadata.serverName);
+        const injector1 = injector.resolveAndCreateChild([
+          { provide: NodeReqToken, useValue: nodeReq },
+          { provide: NodeResToken, useValue: nodeRes },
+        ]);
+        const injector2 = injector1.createChildFromResolved(providers);
+        const req = injector2.get(Request) as Request;
+        this.handleRoute(req, params, queryString, controller, methodName, parseBody, guards);
+      }) as RouteHandler;
+
+      if (route.httpMethod == 'All') {
+        this.router.all(`/${path}`, handleRoute);
+      } else {
+        this.router.on(route.httpMethod, `/${path}`, handleRoute);
+      }
 
       const logObj = {
         methodId: preRouteData.methodId,

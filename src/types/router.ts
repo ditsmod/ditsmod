@@ -40,7 +40,8 @@ export type HttpMethod =
   | 'UNBIND'
   | 'UNLINK'
   | 'UNLOCK'
-  | 'UNSUBSCRIBE';
+  | 'UNSUBSCRIBE'
+  | 'All';
 
 export interface NormalizedGuard {
   guard: Type<CanActivate>;
