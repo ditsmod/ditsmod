@@ -2,10 +2,10 @@ import { format } from 'util';
 import * as http from 'http';
 import { Injectable, Inject } from '@ts-stack/di';
 
-import { NodeRequest, NodeResponse, RedirectStatusCodes } from './types/server-options';
+import { NodeRequest, NodeResponse, RedirectStatusCodes } from '../types/server-options';
 import { Request } from './request';
-import { Status } from './utils/http-status-codes';
-import { NodeReqToken, NodeResToken } from './types/injection-tokens';
+import { Status } from '../utils/http-status-codes';
+import { NodeReqToken, NodeResToken } from '../types/injection-tokens';
 
 @Injectable()
 export class Response<T = any> {

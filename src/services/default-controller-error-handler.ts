@@ -1,7 +1,7 @@
 import { Injectable } from '@ts-stack/di';
 import { Logger } from '../types/logger';
 import { Status } from '../utils/http-status-codes';
-import { Response } from '../response';
+import { Response } from '../services/response';
 import { ControllerErrorHandler } from '../types/types';
 
 @Injectable()

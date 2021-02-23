@@ -4,7 +4,7 @@ import { Injectable, TypeProvider } from '@ts-stack/di';
 import { NodeResponse, NodeRequest } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { Logger } from '../types/logger';
-import { Request } from '../request';
+import { Request } from '../services/request';
 import { ObjectAny, ControllerErrorHandler, RequestListener } from '../types/types';
 import { BodyParser } from '../services/body-parser';
 import { CanActivate } from '../decorators/route';

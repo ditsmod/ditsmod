@@ -18,7 +18,7 @@ import { defaultProvidersPerApp, RootModule } from './decorators/root-module';
 import { Logger } from './types/logger';
 import { Application } from './application';
 import { NodeReqToken } from './types/injection-tokens';
-import { Request } from './request';
+import { Request } from './services/request';
 import { ExtensionMetadata } from './types/types';
 import { Counter } from './services/counter';
 

@@ -1,7 +1,7 @@
 import { Type, Provider, makeDecorator, TypeProvider } from '@ts-stack/di';
 
-import { Request } from '../request';
-import { Response } from '../response';
+import { Request } from '../services/request';
+import { Response } from '../services/response';
 import { ControllerErrorHandler } from '../types/types';
 import { DefaultControllerErrorHandler } from '../services/default-controller-error-handler';
 import { ImportWithOptions } from '../types/import-with-options';
