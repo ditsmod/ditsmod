@@ -10,7 +10,7 @@ describe('PreRouting', () => {
   }
 
   beforeEach(() => {
-    mock = new MockPreRouting(null, null);
+    mock = new MockPreRouting(null, null, null, null);
   });
 
   describe('getPath', () => {

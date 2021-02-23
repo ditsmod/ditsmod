@@ -1,5 +1,7 @@
-import { ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider, Type } from '@ts-stack/di';
+import { Type } from '@ts-stack/di';
+import { RouteData } from '../decorators/controller';
 import { CanActivate } from '../decorators/route';
+import { NodeRequest, NodeResponse } from './server-options';
 
 /**
  * `http.METHODS`
@@ -45,31 +47,12 @@ export interface NormalizedGuard {
   params?: any[];
 }
 
-export type RouteHandler = () => {
-  /**
-   * Injector per module.
-   */
-  injector: ReflectiveInjector;
-  /**
-   * Resolved providers per request.
-   */
-  providers: ResolvedReflectiveProvider[];
-  controller: TypeProvider;
-  /**
-   * Method name of the class controller.
-   */
-  methodName: string;
-  /**
-   * Need or not to parse body.
-   */
-  parseBody: boolean;
-  /**
-   * An array of DI tokens used to look up `CanActivate()` handlers,
-   * in order to determine if the current user is allowed to activate the controller.
-   * By default, any user can activate.
-   */
-  guards: NormalizedGuard[];
-};
+export type RouteHandler = (
+  nodeReq: NodeRequest,
+  nodeRes: NodeResponse,
+  params: RouteParam[],
+  queryString: any
+) => void;
 
 export class Router {
   on(method: HttpMethod, path: string, handle: RouteHandler): this {

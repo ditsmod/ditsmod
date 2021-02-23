@@ -38,6 +38,11 @@ export class RouteData {
    * Need or not parse body.
    */
   parseBody: boolean = null;
+  /**
+   * An array of DI tokens used to look up `CanActivate()` handlers,
+   * in order to determine if the current user is allowed to activate the controller.
+   * By default, any user can activate.
+   */
   guards: NormalizedGuard[] = null;
 }
 
