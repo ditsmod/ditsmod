@@ -26,3 +26,4 @@ export { NormalizedProvider } from './utils/ng-utils';
 export { AppMetadata } from './decorators/app-metadata';
 export { ImportWithOptions } from './types/import-with-options';
 export { Counter } from './services/counter';
+export { PreRouter } from './services/pre-router';
