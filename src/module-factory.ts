@@ -391,7 +391,7 @@ export class ModuleFactory extends Core {
   }
 
   protected getRoutesData(arrCtrlMetadata: ControllerMetadata<any>[]) {
-    const routesData: PreRouteData[] = [];
+    const preRoutesData: PreRouteData[] = [];
     for (const { controller, ctrlDecorValues, methods } of arrCtrlMetadata) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
@@ -412,7 +412,7 @@ export class ModuleFactory extends Core {
           const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
           const guards = [...this.guardsPerMod, ...this.normalizeGuards(route.guards)];
 
-          routesData.push({
+          preRoutesData.push({
             methodId: decoratorData.methodId,
             decoratorId: decoratorData.decoratorId,
             controller,
@@ -427,7 +427,7 @@ export class ModuleFactory extends Core {
       }
     }
 
-    return routesData;
+    return preRoutesData;
   }
 
   protected normalizeGuards(guards: GuardItem[]) {
