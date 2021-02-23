@@ -50,7 +50,7 @@ export interface NormalizedGuard {
 export type RouteHandler = (
   nodeReq: NodeRequest,
   nodeRes: NodeResponse,
-  params: RouteParam[],
+  params: PathParam[],
   queryString: any
 ) => void;
 
@@ -70,10 +70,10 @@ export class Router {
 
 export class RouterReturns {
   handle: RouteHandler;
-  params: RouteParam[];
+  params: PathParam[];
 }
 
-export interface RouteParam {
+export interface PathParam {
   key: string;
   value: string;
 }

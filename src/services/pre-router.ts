@@ -10,7 +10,7 @@ import { Request } from './request';
 import { ObjectAny, ControllerErrorHandler } from '../types/types';
 import { BodyParser } from './body-parser';
 import { CanActivate } from '../decorators/route';
-import { NormalizedGuard, RouteParam, Router, HttpMethod, RouteHandler } from '../types/router';
+import { NormalizedGuard, PathParam, Router, HttpMethod, RouteHandler } from '../types/router';
 import { Status } from '../utils/http-status-codes';
 import { RequestListener } from '../types/types';
 
@@ -45,7 +45,7 @@ export class PreRouter {
        */
       const { injector, providers, controller, methodName, parseBody, guards } = preRouteData;
 
-      const handleRoute = ((nodeReq: NodeRequest, nodeRes: NodeResponse, params: RouteParam[], queryString: any) => {
+      const handleRoute = ((nodeReq: NodeRequest, nodeRes: NodeResponse, params: PathParam[], queryString: any) => {
         nodeRes.setHeader('Server', this.appMetadata.serverName);
         const injector1 = injector.resolveAndCreateChild([
           { provide: NodeReqToken, useValue: nodeReq },
@@ -99,17 +99,17 @@ export class PreRouter {
    * Called by the `Application` after founded a route.
    *
    * @param controller Controller class.
-   * @param method Method of the Controller.
+   * @param methodName Method of the Controller.
    * @param parseBody Need or not to parsing a body request.
    */
   protected async handleRoute(
     req: Request,
-    pathParamsArr: RouteParam[],
+    pathParamsArr: PathParam[],
     queryString: string,
     controller: TypeProvider,
-    method: string,
+    methodName: string,
     parseBody: boolean,
-    guardItems: NormalizedGuard[]
+    guards: NormalizedGuard[]
   ) {
     let errorHandler: ControllerErrorHandler;
     let ctrl: any;
@@ -122,7 +122,7 @@ export class PreRouter {
       req.pathParams = pathParams;
 
       errorHandler = req.injector.get(ControllerErrorHandler);
-      preparedGuardItems = guardItems.map((item) => {
+      preparedGuardItems = guards.map((item) => {
         return {
           guard: req.injector.get(item.guard),
           params: item.params,
@@ -150,7 +150,7 @@ export class PreRouter {
         req.body = await bodyParser.getBody();
       }
 
-      await ctrl[method]();
+      await ctrl[methodName]();
     } catch (err) {
       errorHandler.handleError(err);
     }
