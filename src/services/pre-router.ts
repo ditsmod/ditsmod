@@ -6,21 +6,28 @@ import { PreRouteData } from '../decorators/controller';
 import { Logger } from '../types/logger';
 import { NodeRequest, NodeResponse } from '../types/server-options';
 import { AppMetadata } from '../decorators/app-metadata';
-import { PreRequest } from './pre-request';
 import { Request } from './request';
 import { ObjectAny, ControllerErrorHandler } from '../types/types';
 import { BodyParser } from './body-parser';
 import { CanActivate } from '../decorators/route';
-import { NormalizedGuard, RouteParam, Router } from '../types/router';
+import { NormalizedGuard, RouteParam, Router, HttpMethod } from '../types/router';
+import { Status } from '../utils/http-status-codes';
+import { RequestListener } from '../types/types';
 
 @Injectable()
 export class PreRouter {
-  constructor(
-    protected router: Router,
-    protected log: Logger,
-    protected appMetadata: AppMetadata,
-    protected preRequest: PreRequest
-  ) {}
+  constructor(protected router: Router, protected log: Logger, protected appMetadata: AppMetadata) {}
+
+  requestListener: RequestListener = (nodeReq, nodeRes) => {
+    const { method: httpMethod, url } = nodeReq;
+    const [uri, queryString] = this.decodeUrl(url).split('?');
+    const { handle: handleRoute, params: pathParams } = this.router.find(httpMethod as HttpMethod, uri);
+    if (!handleRoute) {
+      this.sendNotFound(nodeRes);
+      return;
+    }
+    handleRoute(nodeReq, nodeRes, pathParams, queryString);
+  };
 
   setRoutes(moduleName: string, prefixPerApp: string, prefixPerMod: string, preRoutesData: PreRouteData[]) {
     this.checkRoutePath(moduleName, prefixPerApp);
@@ -72,6 +79,21 @@ export class PreRouter {
   }
 
   /**
+   * Called by the `Application` before call a router.
+   */
+  protected decodeUrl(url: string) {
+    return decodeURI(url);
+  }
+
+  /**
+   * Called by the `Application` when a route is not found (404).
+   */
+  protected sendNotFound(nodeRes: NodeResponse) {
+    nodeRes.statusCode = Status.NOT_FOUND;
+    nodeRes.end();
+  }
+
+  /**
    * Called by the `Application` after founded a route.
    *
    * @param controller Controller class.
@@ -106,7 +128,7 @@ export class PreRouter {
       });
       ctrl = req.injector.get(controller);
     } catch (err) {
-      this.preRequest.sendInternalServerError(req.nodeRes, err);
+      this.sendInternalServerError(req.nodeRes, err);
       return;
     }
 
@@ -115,7 +137,7 @@ export class PreRouter {
         const canActivate = await item.guard.canActivate(item.params);
         if (canActivate !== true) {
           const status = typeof canActivate == 'number' ? canActivate : undefined;
-          this.preRequest.canNotActivateRoute(req.nodeReq, req.nodeRes, status);
+          this.canNotActivateRoute(req.nodeReq, req.nodeRes, status);
           return;
         }
       }
@@ -130,6 +152,23 @@ export class PreRouter {
     } catch (err) {
       errorHandler.handleError(err);
     }
+  }
+
+  protected canNotActivateRoute(nodeReq: NodeRequest, nodeRes: NodeResponse, status?: Status) {
+    this.log.debug(`Can not activate the route with URL: ${nodeReq.method} ${nodeReq.url}`);
+    nodeRes.statusCode = status || Status.UNAUTHORIZED;
+    nodeRes.end();
+  }
+
+  /**
+   * Logs an error and sends the user message about an internal server error (500).
+   *
+   * @param err An error to logs it (not sends).
+   */
+  protected sendInternalServerError(nodeRes: NodeResponse, err: Error) {
+    this.log.error(err);
+    nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
+    nodeRes.end();
   }
 
   /**

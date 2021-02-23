@@ -1,16 +1,16 @@
 import { PreRouter } from '../services/pre-router';
 
 describe('PreRouting', () => {
-  let mock: MockPreRouting;
+  let mock: MockPreRouter;
 
-  class MockPreRouting extends PreRouter {
+  class MockPreRouter extends PreRouter {
     getPath(prefix: string, path: string) {
       return super.getPath(prefix, path);
     }
   }
 
   beforeEach(() => {
-    mock = new MockPreRouting(null, null, null, null);
+    mock = new MockPreRouter(null, null, null);
   });
 
   describe('getPath', () => {

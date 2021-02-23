@@ -6,7 +6,7 @@ import { ReflectiveInjector, Type, Provider } from '@ts-stack/di';
 
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
-import { PreRequest } from './services/pre-request';
+import { PreRouter } from './services/pre-router';
 import { Router } from './types/router';
 import { Logger } from './types/logger';
 import { Server } from './types/server-options';
@@ -20,7 +20,7 @@ describe('Application', () => {
     server: Server;
     injectorPerApp: ReflectiveInjector;
     router: Router;
-    preReq: PreRequest;
+    preRouter: PreRouter;
     opts = new AppMetadata();
 
     mergeMetadata(appModule: ModuleType): void {

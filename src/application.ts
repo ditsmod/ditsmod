@@ -6,7 +6,7 @@ import { ReflectiveInjector, reflector, Provider, Type, resolveForwardRef } from
 import { RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
 import { ExtensionMetadata } from './types/types';
 import { isHttp2SecureServerOptions, isProvider, isRootModule } from './utils/type-guards';
-import { PreRequest } from './services/pre-request';
+import { PreRouter } from './services/pre-router';
 import { ModuleFactory } from './module-factory';
 import { pickProperties } from './utils/pick-properties';
 import { Logger, LoggerConfig } from './types/logger';
@@ -22,14 +22,13 @@ import { getDuplicates } from './utils/get-duplicates';
 import { flatten, normalizeProviders } from './utils/ng-utils';
 import { Core } from './core';
 import { DefaultLogger } from './services/default-logger';
-import { PreRouter } from './services/pre-router';
 import { AppMetadata } from './decorators/app-metadata';
 
 export class Application extends Core {
   protected log: Logger;
   protected server: Server;
   protected injectorPerApp: ReflectiveInjector;
-  protected preReq: PreRequest;
+  protected preRouter: PreRouter;
   protected opts: AppMetadata;
 
   bootstrap(appModule: ModuleType) {
@@ -133,7 +132,7 @@ export class Application extends Core {
     this.opts.providersPerApp.push({ provide: AppMetadata, useValue: this.opts });
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.opts.providersPerApp);
     this.log = this.injectorPerApp.get(Logger) as Logger;
-    this.preReq = this.injectorPerApp.get(PreRequest) as PreRequest;
+    this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
   }
 
   protected bootstrapModuleFactory(appModule: ModuleType) {
@@ -171,11 +170,11 @@ export class Application extends Core {
   protected createServer() {
     if (isHttp2SecureServerOptions(this.opts.serverOptions)) {
       const serverModule = this.opts.httpModule as typeof http2;
-      this.server = serverModule.createSecureServer(this.opts.serverOptions, this.preReq.requestListener);
+      this.server = serverModule.createSecureServer(this.opts.serverOptions, this.preRouter.requestListener);
     } else {
       const serverModule = this.opts.httpModule as typeof http | typeof https;
       const serverOptions = this.opts.serverOptions as http.ServerOptions | https.ServerOptions;
-      this.server = serverModule.createServer(serverOptions, this.preReq.requestListener);
+      this.server = serverModule.createServer(serverOptions, this.preRouter.requestListener);
     }
   }
 }
