@@ -162,8 +162,7 @@ export class Application extends Core {
       const prefixPerMod = extensionsMetadata.prefixPerMod;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolvable
-      const preRouting = injectorPerMod.resolveAndInstantiate(PreRouter) as PreRouter;
-      preRouting.setRoutes(mod.name, this.opts.prefixPerApp, prefixPerMod, extensionsMetadata.preRoutesData);
+      this.preRouter.setRoutes(mod.name, this.opts.prefixPerApp, prefixPerMod, extensionsMetadata.preRoutesData);
     });
   }
 
