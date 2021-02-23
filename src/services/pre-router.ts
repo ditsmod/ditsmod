@@ -56,7 +56,7 @@ export class PreRouter {
         this.handleRoute(req, params, queryString, controller, methodName, parseBody, guards);
       }) as RouteHandler;
 
-      if (route.httpMethod == 'All') {
+      if (route.httpMethod == 'ALL') {
         this.router.all(`/${path}`, handleRoute);
       } else {
         this.router.on(route.httpMethod, `/${path}`, handleRoute);
