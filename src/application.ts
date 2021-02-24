@@ -58,7 +58,7 @@ export class Application extends Core {
     const extensionsMetadataMap = this.bootstrapModuleFactory(appModule);
     this.checkModulesResolvable(extensionsMetadataMap);
     const extensions = this.getExtensions(extensionsMetadataMap);
-    extensions.forEach(Ext => {
+    extensions.forEach((Ext) => {
       this.log.trace(`start init ${Ext.name} extension`);
       const extension = this.injectorPerApp.get(Ext) as Extension;
       extension.handle(this.opts.prefixPerApp, extensionsMetadataMap);

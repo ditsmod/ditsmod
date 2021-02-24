@@ -145,7 +145,8 @@ export class ModuleFactory extends Core {
       !isRootModule(moduleMetadata as any) &&
       !moduleMetadata.providersPerApp.length &&
       !moduleMetadata.controllers.length &&
-      !moduleMetadata.exports.length
+      !moduleMetadata.exports.length &&
+      !moduleMetadata.extensions.length
     ) {
       const msg =
         `Importing ${this.moduleName} failed: this module should have "providersPerApp"` +
