@@ -57,5 +57,5 @@ export class ExtensionMetadata {
 }
 
 export interface Extension {
-  handle(prefixPerApp: string, extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>): void;
+  handleExtension(prefixPerApp: string, metadata: Map<ModuleType, ExtensionMetadata>): void;
 }

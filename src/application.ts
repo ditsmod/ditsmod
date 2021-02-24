@@ -5,7 +5,7 @@ import { ReflectiveInjector, reflector, Provider, Type, resolveForwardRef } from
 
 import { RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
 import { Extension, ExtensionMetadata } from './types/types';
-import { isHttp2SecureServerOptions, isProvider, isRootModule } from './utils/type-guards';
+import { isExtensionProvider, isHttp2SecureServerOptions, isProvider, isRootModule } from './utils/type-guards';
 import { PreRouter } from './services/pre-router';
 import { ModuleFactory } from './module-factory';
 import { pickProperties } from './utils/pick-properties';
@@ -57,15 +57,7 @@ export class Application extends Core {
     this.initProvidersPerApp();
     const extensionsMetadataMap = this.bootstrapModuleFactory(appModule);
     this.checkModulesResolvable(extensionsMetadataMap);
-    const extensions = this.getExtensions(extensionsMetadataMap);
-    const extensionsInjector = this.injectorPerApp.resolveAndCreateChild(extensions);
-    extensions.forEach((Ext) => {
-      this.log.trace(`start init ${Ext.name} extension`);
-      const extension = extensionsInjector.get(Ext) as Extension;
-      extension.handle(this.opts.prefixPerApp, extensionsMetadataMap);
-      this.log.trace(`finish init ${Ext.name} extension`);
-    });
-    this.log.debug(`all ${extensions.length} extensions are initialized`);
+    this.handleExtensions(extensionsMetadataMap);
     return extensionsMetadataMap;
   }
 
@@ -170,14 +162,15 @@ export class Application extends Core {
     });
   }
 
-  protected getExtensions(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
-    const extensions: Type<Extension>[] = [PreRouter];
-    extensionsMetadataMap.forEach((metadata) => {
-      extensions.push(...metadata.moduleMetadata.extensions);
+  protected handleExtensions(metadataMap: Map<ModuleType, ExtensionMetadata>) {
+    const extensions = this.getUniqProviders(this.opts.providersPerApp).filter(isExtensionProvider);
+    extensions.forEach((Ext) => {
+      this.log.trace(`start init ${Ext.name} extension`);
+      const extension = this.injectorPerApp.get(Ext) as Extension;
+      extension.handleExtension(this.opts.prefixPerApp, metadataMap);
+      this.log.trace(`finish init ${Ext.name} extension`);
     });
-
-    // returns uniq items
-    return [...new Set(extensions)];
+    this.log.debug(`all ${extensions.length} extensions are initialized`);
   }
 
   protected createServer() {

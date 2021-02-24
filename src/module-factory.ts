@@ -145,8 +145,7 @@ export class ModuleFactory extends Core {
       !isRootModule(moduleMetadata as any) &&
       !moduleMetadata.providersPerApp.length &&
       !moduleMetadata.controllers.length &&
-      !moduleMetadata.exports.length &&
-      !moduleMetadata.extensions.length
+      !moduleMetadata.exports.length
     ) {
       const msg =
         `Importing ${this.moduleName} failed: this module should have "providersPerApp"` +
@@ -192,7 +191,6 @@ export class ModuleFactory extends Core {
     metadata.providersPerMod = flatten(modMetadata.providersPerMod);
     metadata.providersPerReq = flatten(modMetadata.providersPerReq);
     metadata.controllers = mergeArrays(metadata.controllers, modMetadata.controllers);
-    metadata.extensions = (modMetadata.extensions || []).slice();
 
     return metadata;
   }
