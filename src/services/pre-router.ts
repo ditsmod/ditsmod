@@ -18,8 +18,8 @@ import { RequestListener } from '../types/types';
 export class PreRouter implements Extension {
   constructor(protected router: Router, protected log: Logger, protected appMetadata: AppMetadata) {}
 
-  handleExtension(prefixPerApp: string, extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
-    extensionsMetadataMap.forEach((metadata, mod) => {
+  handleExtension(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>) {
+    metadataMap.forEach((metadata, mod) => {
       const { prefixPerMod, preRoutesData } = metadata;
       this.setRoutes(mod.name, prefixPerApp, prefixPerMod, preRoutesData);
     });

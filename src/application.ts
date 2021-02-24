@@ -163,14 +163,16 @@ export class Application extends Core {
   }
 
   protected handleExtensions(metadataMap: Map<ModuleType, ExtensionMetadata>) {
-    const extensions = this.getUniqProviders(this.opts.providersPerApp).filter(isExtensionProvider);
-    extensions.forEach((Ext) => {
+    const lastExtensionsProviders = this.getUniqProviders(this.opts.providersPerApp);
+    const tokens = normalizeProviders(lastExtensionsProviders).map(np => np.provide);
+    const extensionsTokens = tokens.filter(isExtensionProvider);
+    extensionsTokens.forEach((Ext) => {
       this.log.trace(`start init ${Ext.name} extension`);
       const extension = this.injectorPerApp.get(Ext) as Extension;
       extension.handleExtension(this.opts.prefixPerApp, metadataMap);
       this.log.trace(`finish init ${Ext.name} extension`);
     });
-    this.log.debug(`all ${extensions.length} extensions are initialized`);
+    this.log.debug(`all ${extensionsTokens.length} extensions are initialized`);
   }
 
   protected createServer() {
