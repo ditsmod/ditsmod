@@ -78,7 +78,7 @@ export abstract class Core {
 
     tokens.forEach((currToken, currIndex) => {
       if (tokens.lastIndexOf(currToken) == currIndex) {
-        uniqProviders.push(providers[currIndex]);
+        uniqProviders.push(flattenedProviders[currIndex]);
       }
     });
 
