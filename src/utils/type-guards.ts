@@ -9,13 +9,14 @@ import {
   ValueProvider,
 } from '@ts-stack/di';
 
-import { NormalizedProvider } from './ng-utils';
+import { NormalizedProvider, normalizeProviders } from './ng-utils';
 import { ModuleDecorator, ModuleWithOptions } from '../decorators/module';
 import { RootModuleDecorator } from '../decorators/root-module';
 import { ControllerDecorator } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
 import { ServerOptions, Http2SecureServerOptions } from '../types/server-options';
 import { ImportWithOptions } from '../types/import-with-options';
+import { Extension } from '../types/types';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
@@ -58,6 +59,11 @@ export function isRoute(propMeatada: RouteMetadata): propMeatada is RouteMetadat
   return (propMeatada as any)?.ngMetadataName == 'Route';
 }
 
+export function isExtensionProvider(provider: Provider): provider is Type<Extension> {
+  const normProvider = normalizeProviders([provider])[0];
+  return (normProvider.provide as Type<Extension>).prototype.handleExtension !== undefined;
+}
+
 export function isTypeProvider(provider: Provider): provider is TypeProvider {
   return provider instanceof Type;
 }
@@ -77,6 +83,7 @@ export function isExistingProvider(provider: Provider): provider is ExistingProv
 export function isFactoryProvider(provider: Provider): provider is FactoryProvider {
   return (provider as FactoryProvider)?.useFactory !== undefined;
 }
+
 export function isProvider(maybeProvider: any): maybeProvider is TypeProvider | NormalizedProvider {
   let module: any;
   if (isModuleWithOptions(maybeProvider)) {

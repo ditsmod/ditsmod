@@ -46,7 +46,7 @@ export function normalizeProviders(providers: Provider[], arrayOfProviders: Norm
     } else if (provider instanceof Array) {
       normalizeProviders(provider, arrayOfProviders);
     } else {
-      throw new Error(format(`Invalid provider - only instances of Provider and Type are allowed, got:`, provider));
+      throw new Error(format('Invalid provider - only instances of Provider and Type are allowed, got:', provider));
     }
   });
 
