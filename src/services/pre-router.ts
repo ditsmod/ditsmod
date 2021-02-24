@@ -7,7 +7,7 @@ import { Logger } from '../types/logger';
 import { NodeRequest, NodeResponse } from '../types/server-options';
 import { AppMetadata } from '../decorators/app-metadata';
 import { Request } from './request';
-import { ObjectAny, ControllerErrorHandler } from '../types/types';
+import { ObjectAny, ControllerErrorHandler, ExtensionMetadata, ModuleType, Extension } from '../types/types';
 import { BodyParser } from './body-parser';
 import { CanActivate } from '../decorators/route';
 import { NormalizedGuard, PathParam, Router, HttpMethod, RouteHandler } from '../types/router';
@@ -15,8 +15,15 @@ import { Status } from '../utils/http-status-codes';
 import { RequestListener } from '../types/types';
 
 @Injectable()
-export class PreRouter {
+export class PreRouter implements Extension {
   constructor(protected router: Router, protected log: Logger, protected appMetadata: AppMetadata) {}
+
+  handle(prefixPerApp: string, extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
+    extensionsMetadataMap.forEach((metadata, mod) => {
+      const { prefixPerMod, preRoutesData } = metadata;
+      this.setRoutes(mod.name, prefixPerApp, prefixPerMod, preRoutesData);
+    });
+  }
 
   requestListener: RequestListener = (nodeReq, nodeRes) => {
     const { method: httpMethod, url } = nodeReq;
@@ -29,7 +36,7 @@ export class PreRouter {
     handle(nodeReq, nodeRes, params, queryString);
   };
 
-  setRoutes(moduleName: string, prefixPerApp: string, prefixPerMod: string, preRoutesData: PreRouteData[]) {
+  protected setRoutes(moduleName: string, prefixPerApp: string, prefixPerMod: string, preRoutesData: PreRouteData[]) {
     this.checkRoutePath(moduleName, prefixPerApp);
     this.checkRoutePath(moduleName, prefixPerMod);
     const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');

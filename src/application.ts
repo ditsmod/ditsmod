@@ -4,7 +4,7 @@ import * as http2 from 'http2';
 import { ReflectiveInjector, reflector, Provider, Type, resolveForwardRef } from '@ts-stack/di';
 
 import { RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
-import { ExtensionMetadata } from './types/types';
+import { Extension, ExtensionMetadata } from './types/types';
 import { isHttp2SecureServerOptions, isProvider, isRootModule } from './utils/type-guards';
 import { PreRouter } from './services/pre-router';
 import { ModuleFactory } from './module-factory';
@@ -56,7 +56,15 @@ export class Application extends Core {
     this.opts.providersPerApp.unshift(...defaultProvidersPerApp);
     this.initProvidersPerApp();
     const extensionsMetadataMap = this.bootstrapModuleFactory(appModule);
-    this.callExtensions(extensionsMetadataMap);
+    this.checkModulesResolvable(extensionsMetadataMap);
+    const extensions = this.getExtensions(extensionsMetadataMap);
+    extensions.forEach(Ext => {
+      this.log.trace(`start init ${Ext.name} extension`);
+      const extension = this.injectorPerApp.get(Ext) as Extension;
+      extension.handle(this.opts.prefixPerApp, extensionsMetadataMap);
+      this.log.trace(`finish init ${Ext.name} extension`);
+    });
+    this.log.debug(`all ${extensions.length} extensions are initialized`);
     return extensionsMetadataMap;
   }
 
@@ -152,18 +160,23 @@ export class Application extends Core {
     return globalProviders;
   }
 
-  /**
-   * @todo Add test for prefixPerApp.
-   */
-  protected callExtensions(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
-    extensionsMetadataMap.forEach((extensionsMetadata, mod) => {
-      this.log.trace(mod, extensionsMetadata);
-      const { providersPerMod } = extensionsMetadata.moduleMetadata;
-      const prefixPerMod = extensionsMetadata.prefixPerMod;
+  protected checkModulesResolvable(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
+    extensionsMetadataMap.forEach((metadata, mod) => {
+      this.log.trace(mod, metadata);
+      const { providersPerMod } = metadata.moduleMetadata;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-      injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolvable
-      this.preRouter.setRoutes(mod.name, this.opts.prefixPerApp, prefixPerMod, extensionsMetadata.preRoutesData);
+      injectorPerMod.resolveAndInstantiate(mod);
     });
+  }
+
+  protected getExtensions(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
+    const extensions: Type<Extension>[] = [PreRouter];
+    extensionsMetadataMap.forEach((metadata) => {
+      extensions.push(...metadata.moduleMetadata.extensions);
+    });
+
+    // returns uniq items
+    return [...new Set(extensions)];
   }
 
   protected createServer() {

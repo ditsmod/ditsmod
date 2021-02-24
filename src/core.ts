@@ -44,7 +44,7 @@ export abstract class Core {
   protected getRawModuleMetadata<T extends ModuleDecorator>(
     modOrObject: Type<any> | ModuleWithOptions<any>,
     isRoot?: boolean
-  ) {
+  ): ModuleDecorator {
     const typeGuard = isRoot ? isRootModule : (m: ModuleDecorator) => isModule(m) || isRootModule(m);
 
     if (isImportWithOptions(modOrObject)) {

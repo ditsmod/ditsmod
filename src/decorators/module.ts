@@ -2,7 +2,7 @@ import { Type, Provider, makeDecorator, TypeProvider } from '@ts-stack/di';
 
 import { Request } from '../services/request';
 import { Response } from '../services/response';
-import { ControllerErrorHandler } from '../types/types';
+import { ControllerErrorHandler, Extension } from '../types/types';
 import { DefaultControllerErrorHandler } from '../services/default-controller-error-handler';
 import { ImportWithOptions } from '../types/import-with-options';
   
@@ -46,6 +46,7 @@ export abstract class StaticModuleMetadata extends ProvidersMetadata {
    * The application controllers.
    */
   controllers: TypeProvider[] = [];
+  extensions?: Type<Extension>[] = [];
 }
 
 export interface ModuleDecorator extends Partial<StaticModuleMetadata> {

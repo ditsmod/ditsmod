@@ -8,6 +8,7 @@ export {
   ObjectAny,
   ModuleType,
   ExtensionMetadata,
+  Extension,
 } from './types/types';
 export { NodeRequest, NodeResponse, Fn, RedirectStatusCodes } from './types/server-options';
 export { Logger, LoggerMethod, LoggerConfig } from './types/logger';

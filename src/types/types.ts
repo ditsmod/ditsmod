@@ -55,3 +55,7 @@ export class ExtensionMetadata {
    */
   preRoutesData: PreRouteData[];
 }
+
+export interface Extension {
+  handle(prefixPerApp: string, extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>): void;
+}
