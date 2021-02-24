@@ -12,7 +12,6 @@ export const defaultProvidersPerApp: Readonly<Provider[]> = [
   LoggerConfig,
   { provide: Logger, useClass: DefaultLogger },
   BodyParserConfig,
-  PreRouter,
   {
     provide: ReflectiveInjector,
     useExisting: Injector,
