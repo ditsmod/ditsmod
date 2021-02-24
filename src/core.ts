@@ -11,7 +11,7 @@ import {
 import { ModuleWithOptions, ModuleDecorator, Module } from './decorators/module';
 import { mergeArrays } from './utils/merge-arrays-options';
 import { RootModule } from './decorators/root-module';
-import { normalizeProviders } from './utils/ng-utils';
+import { flatten, normalizeProviders } from './utils/ng-utils';
 
 export abstract class Core {
   protected throwProvidersCollisionError(moduleName: string, duplicates: any[]) {
@@ -71,9 +71,10 @@ export abstract class Core {
   /**
    * Returns last provider if the provider has the duplicate.
    */
-  protected getUniqProviders(providers: Provider[]) {
-    const tokens = normalizeProviders(providers).map((np) => np.provide);
-    const uniqProviders: Provider[] = [];
+  protected getUniqProviders<T extends Provider = Provider>(providers: T[]) {
+    const flattenedProviders = flatten<T>(providers);
+    const tokens = normalizeProviders(flattenedProviders).map((np) => np.provide);
+    const uniqProviders: T[] = [];
 
     tokens.forEach((currToken, currIndex) => {
       if (tokens.lastIndexOf(currToken) == currIndex) {
