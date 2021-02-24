@@ -113,7 +113,7 @@ export class PreRouter {
   ) {
     let errorHandler: ControllerErrorHandler;
     let ctrl: any;
-    let preparedGuardItems: { guard: CanActivate; params?: any[] }[] = [];
+    let preparedGuards: { guard: CanActivate; params?: any[] }[] = [];
 
     try {
       req.pathParamsArr = pathParamsArr;
@@ -122,7 +122,7 @@ export class PreRouter {
       req.pathParams = pathParams;
 
       errorHandler = req.injector.get(ControllerErrorHandler);
-      preparedGuardItems = guards.map((item) => {
+      preparedGuards = guards.map((item) => {
         return {
           guard: req.injector.get(item.guard),
           params: item.params,
@@ -135,7 +135,7 @@ export class PreRouter {
     }
 
     try {
-      for (const item of preparedGuardItems) {
+      for (const item of preparedGuards) {
         const canActivate = await item.guard.canActivate(item.params);
         if (canActivate !== true) {
           const status = typeof canActivate == 'number' ? canActivate : undefined;

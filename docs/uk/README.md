@@ -1308,6 +1308,71 @@ interface LoggerMethod {
 }
 ```
 
+### PreRouter
+
+Цей клас є посередником між застосунком та роутером, він відповідає за встановлення маршрутів та
+виклик гардів і контролерів. [Одинак][12] даного класу створюється на рівні застосунку.
+
+Якщо ви напишете власну реалізацію його інтерфейсу та зробите підміну даного класу через DI, у
+своєму застосунку ви зможете використовувати будь-який роутер не залежно від його сумісності із
+[API][131] by default роутера, встановленого в Ditsmod.
+
+```ts
+class PreRouter {
+  setRoutes(moduleName: string, prefixPerApp: string, prefixPerMod: string, preRoutesData: PreRouteData[]): void;
+  requestListener: RequestListener;
+}
+```
+
+### RouteData and PreRouteData
+
+```ts
+class RouteData {
+  controller: TypeProvider = null;
+  /**
+   * The controller's method name.
+   */
+  methodName: string = null;
+  route: RouteMetadata = null;
+  /**
+   * Resolved providers per request.
+   */
+  providers: ResolvedReflectiveProvider[] = null;
+  /**
+   * Injector per a module.
+   */
+  injector: ReflectiveInjector = null;
+  /**
+   * Need or not parse body.
+   */
+  parseBody: boolean = null;
+  /**
+   * An array of DI tokens used to look up `CanActivate()` handlers,
+   * in order to determine if the current user is allowed to activate the controller.
+   * By default, any user can activate.
+   */
+  guards: NormalizedGuard[] = null;
+}
+
+class PreRouteData extends RouteData {
+  /**
+   * During application initialization, this ID increments with each controller method.
+   */
+  methodId: number = null;
+  /**
+   * This ID is unique per the application. During application initialization, it increments
+   * with each decorator assigned to the controller method.
+   */
+  decoratorId: number = null;
+}
+```
+
+### RequestListener
+
+```ts
+type RequestListener = (request: NodeRequest, response: NodeResponse) => void | Promise<void>;
+```
+
 ### Router
 
 ```ts
@@ -1547,3 +1612,6 @@ type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
 [143]: ./examples.md#2-controller-error-handler
 [144]: #loggerconfig
 [145]: #загальна-картина-архітектури-застосунку-ditsmod
+[146]: #prerouter
+[147]: #routedata-and-preroutedata
+[148]: #requestlistener
