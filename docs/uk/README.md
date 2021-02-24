@@ -59,6 +59,10 @@ Angular v4.4.7. (з мінімальними допрацюваннями) та 
   - [Logger][125]
   - [LoggerConfig][144]
   - [LoggerMethod][136]
+  - [PreRouter][146]
+  - [Extension][149]
+  - [RouteData та PreRouteData][147]
+  - [RequestListener][148]
   - [Router][131]
   - [RouterReturns][136]
   - [RouteHandler][137]
@@ -1318,9 +1322,17 @@ interface LoggerMethod {
 [API][131] by default роутера, встановленого в Ditsmod.
 
 ```ts
-class PreRouter {
-  setRoutes(moduleName: string, prefixPerApp: string, prefixPerMod: string, preRoutesData: PreRouteData[]): void;
+class PreRouter implements Extension {
+  handle(prefixPerApp: string, extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>): void;
   requestListener: RequestListener;
+}
+```
+
+### Extension
+
+```ts
+interface Extension {
+  handle(prefixPerApp: string, extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>): void;
 }
 ```
 
@@ -1615,3 +1627,4 @@ type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
 [146]: #prerouter
 [147]: #routedata-and-preroutedata
 [148]: #requestlistener
+[149]: #extension
