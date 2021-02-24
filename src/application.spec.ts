@@ -5,7 +5,7 @@ import * as http2 from 'http2';
 import { ReflectiveInjector, Type, Provider } from '@ts-stack/di';
 
 import { Application } from './application';
-import { RootModule } from './decorators/root-module';
+import { defaultProvidersPerApp, RootModule } from './decorators/root-module';
 import { PreRouter } from './services/pre-router';
 import { Router } from './types/router';
 import { Logger } from './types/logger';
@@ -13,6 +13,7 @@ import { Server } from './types/server-options';
 import { Module, ModuleType, ModuleWithOptions, ModuleMetadata } from './decorators/module';
 import { AppMetadata } from './decorators/app-metadata';
 import { ImportWithOptions } from './types/import-with-options';
+import { Extension, ExtensionMetadata } from './types/types';
 
 describe('Application', () => {
   class MockAppFactory extends Application {
@@ -49,6 +50,10 @@ describe('Application', () => {
 
     prepareProvidersPerApp(appModule: ModuleType) {
       return super.prepareProvidersPerApp(appModule);
+    }
+
+    getExtensions(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
+      return super.getExtensions(extensionsMetadataMap);
     }
   }
 
@@ -351,6 +356,25 @@ describe('Application', () => {
       mock.opts.httpModule = https;
       const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
       expect(() => mock.checkSecureServerOption(AppModule)).toThrowError(msg);
+    });
+  });
+
+  describe('getExtensions()', () => {
+    class Extension1 implements Extension {
+      handle() {}
+    }
+
+    @Module({
+      extensions: [Extension1, Extension1],
+    })
+    class Module1 {}
+
+    it('case 1', () => {
+      mock.injectorPerApp = ReflectiveInjector.resolveAndCreate([...defaultProvidersPerApp]);
+      mock.log = mock.injectorPerApp.get(Logger) as Logger;
+      const meta = mock.bootstrapModuleFactory(Module1);
+      const extensions = mock.getExtensions(meta);
+      expect(extensions).toEqual([PreRouter, Extension1]);
     });
   });
 });
