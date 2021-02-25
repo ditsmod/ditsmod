@@ -14,7 +14,7 @@ describe('Core', () => {
   class Provider7 {}
 
   class MockFactory extends Core {
-    getUniqProviders(providers: Provider[]) {
+    getUniqProviders<T extends Provider = Provider>(providers: T[]) {
       return super.getUniqProviders(providers);
     }
 
