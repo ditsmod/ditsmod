@@ -78,8 +78,6 @@ export class PreRouter implements Extension {
       }
 
       const logObj = {
-        methodId: preRouteData.methodId,
-        decoratorId: preRouteData.decoratorId,
         module: moduleName,
         httpMethod: route.httpMethod,
         path,
@@ -91,7 +89,7 @@ export class PreRouter implements Extension {
         delete logObj.guards;
       }
 
-      this.log.trace(logObj);
+      this.log.debug(logObj);
     });
   }
 

@@ -172,7 +172,7 @@ export class Application extends Core {
       extension.handleExtension(this.opts.prefixPerApp, metadataMap);
       this.log.trace(`finish init ${Ext.name} extension`);
     });
-    this.log.debug(`all ${extensionsTokens.length} extensions are initialized`);
+    this.log.debug(`Total extensions initialized: ${extensionsTokens.length}`);
   }
 
   protected createServer() {
