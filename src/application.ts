@@ -164,8 +164,8 @@ export class Application extends Core {
 
   protected handleExtensions(metadataMap: Map<ModuleType, ExtensionMetadata>) {
     const lastExtensionsProviders = this.getUniqProviders(this.opts.providersPerApp);
-    const tokens = normalizeProviders(lastExtensionsProviders).map(np => np.provide);
-    const extensionsTokens = tokens.filter(isExtensionProvider);
+    const extensionsProviders = lastExtensionsProviders.filter(isExtensionProvider);
+    const extensionsTokens = normalizeProviders(extensionsProviders).map(np => np.provide);
     extensionsTokens.forEach((Ext) => {
       this.log.trace(`start init ${Ext.name} extension`);
       const extension = this.injectorPerApp.get(Ext) as Extension;
