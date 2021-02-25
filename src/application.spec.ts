@@ -5,7 +5,7 @@ import * as http2 from 'http2';
 import { ReflectiveInjector, Type, Provider } from '@ts-stack/di';
 
 import { Application } from './application';
-import { defaultProvidersPerApp, RootModule } from './decorators/root-module';
+import { RootModule } from './decorators/root-module';
 import { PreRouter } from './services/pre-router';
 import { Router } from './types/router';
 import { Logger } from './types/logger';
@@ -13,10 +13,9 @@ import { Server } from './types/server-options';
 import { Module, ModuleType, ModuleWithOptions, ModuleMetadata } from './decorators/module';
 import { AppMetadata } from './decorators/app-metadata';
 import { ImportWithOptions } from './types/import-with-options';
-import { Extension, ExtensionMetadata } from './types/types';
 
 describe('Application', () => {
-  class MockAppFactory extends Application {
+  class MockApplication extends Application {
     log: Logger;
     server: Server;
     injectorPerApp: ReflectiveInjector;
@@ -53,12 +52,12 @@ describe('Application', () => {
     }
   }
 
-  let mock: MockAppFactory;
+  let mock: MockApplication;
   class SomeClass {}
   class OtherClass {}
 
   beforeEach(() => {
-    mock = new MockAppFactory();
+    mock = new MockApplication();
   });
 
   describe('mergeMetadata()', () => {
