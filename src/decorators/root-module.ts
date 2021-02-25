@@ -9,7 +9,7 @@ import { Counter } from '../services/counter';
 import { PreRoutes } from '../services/pre-routes';
 import { PreRouter } from '../services/pre-router';
 
-export const defaultProvidersPerApp: Readonly<Provider[]> = [
+export const defaultProvidersPerApp: Provider[] = [
   LoggerConfig,
   { provide: Logger, useClass: DefaultLogger },
   BodyParserConfig,
