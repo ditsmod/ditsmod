@@ -2,7 +2,7 @@ import { TypeProvider } from '@ts-stack/di';
 
 import { ControllerMetadata, PreRouteData } from '../decorators/controller';
 import { ModuleMetadata } from '../decorators/module';
-import { HttpMethod } from './router';
+import { HttpMethod, NormalizedGuard } from './router';
 import { NodeRequest, NodeResponse, Fn } from './server-options';
 
 export type RequestListener = (request: NodeRequest, response: NodeResponse) => void | Promise<void>;
@@ -50,10 +50,7 @@ export class ExtensionMetadata {
    * The controller metadata collected from all controllers of current module.
    */
   controllersMetadata: ControllerMetadata[];
-  /**
-   * Prepared data for the routes.
-   */
-  preRoutesData: PreRouteData[];
+  guardsPerMod: NormalizedGuard[];
 }
 
 export interface Extension {

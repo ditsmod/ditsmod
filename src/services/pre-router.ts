@@ -1,5 +1,5 @@
 import { parse } from 'querystring';
-import { Injectable, TypeProvider } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector, TypeProvider } from '@ts-stack/di';
 
 import { NodeReqToken, NodeResToken } from '../types/injection-tokens';
 import { PreRouteData } from '../decorators/controller';
@@ -13,14 +13,22 @@ import { CanActivate } from '../decorators/route';
 import { NormalizedGuard, PathParam, Router, HttpMethod, RouteHandler } from '../types/router';
 import { Status } from '../utils/http-status-codes';
 import { RequestListener } from '../types/types';
+import { PreRoutes } from './pre-routes';
 
 @Injectable()
 export class PreRouter implements Extension {
-  constructor(protected router: Router, protected log: Logger, protected appMetadata: AppMetadata) {}
+  constructor(
+    protected injectorPerApp: ReflectiveInjector,
+    protected router: Router,
+    protected log: Logger,
+    protected appMetadata: AppMetadata
+  ) {}
 
   handleExtension(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>) {
     metadataMap.forEach((metadata, mod) => {
-      const { prefixPerMod, preRoutesData } = metadata;
+      const preRoutes = this.injectorPerApp.resolveAndInstantiate(PreRoutes) as PreRoutes;
+      const preRoutesData = preRoutes.getPreRoutesData(mod.name, metadata);
+      const { prefixPerMod } = metadata;
       this.setRoutes(mod.name, prefixPerApp, prefixPerMod, preRoutesData);
     });
   }

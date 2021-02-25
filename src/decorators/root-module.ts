@@ -1,12 +1,13 @@
 import { makeDecorator, Provider, ReflectiveInjector, Injector } from '@ts-stack/di';
 
-import { PreRouter } from '../services/pre-router';
 import { ModuleDecorator } from './module';
 import { BodyParserConfig } from '../types/types';
 import { Logger, LoggerConfig } from '../types/logger';
 import { DefaultLogger } from '../services/default-logger';
 import { AppMetadata } from './app-metadata';
 import { Counter } from '../services/counter';
+import { PreRoutes } from '../services/pre-routes';
+import { PreRouter } from '../services/pre-router';
 
 export const defaultProvidersPerApp: Readonly<Provider[]> = [
   LoggerConfig,
@@ -17,7 +18,8 @@ export const defaultProvidersPerApp: Readonly<Provider[]> = [
     useExisting: Injector,
   },
   PreRouter,
-  Counter
+  PreRoutes,
+  Counter,
 ];
 
 export interface RootModuleDecoratorFactory {
