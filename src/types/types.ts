@@ -45,14 +45,14 @@ export interface ModuleType extends TypeProvider {}
 
 export class ExtensionMetadata {
   prefixPerMod: string;
+  guardsPerMod: NormalizedGuard[];
   moduleMetadata: ModuleMetadata;
   /**
    * The controller metadata collected from all controllers of current module.
    */
   controllersMetadata: ControllerMetadata[];
-  guardsPerMod: NormalizedGuard[];
 }
 
-export interface Extension {
-  handleExtension(prefixPerApp: string, metadata: Map<ModuleType, ExtensionMetadata>): void;
+export interface Extension<T = void> {
+  handleExtension(prefixPerApp: string, metadata: Map<ModuleType, ExtensionMetadata>): T;
 }
