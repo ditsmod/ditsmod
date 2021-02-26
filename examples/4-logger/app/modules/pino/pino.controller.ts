@@ -7,6 +7,6 @@ export class PinoController {
   @Route('GET', 'pino')
   ok() {
     this.res.send('see console of node process\n');
-    this.log.trace(`it's works!`);
+    this.log.info("it's works!");
   }
 }

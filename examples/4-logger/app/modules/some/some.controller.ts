@@ -7,6 +7,6 @@ export class SomeController {
   @Route('GET')
   ok() {
     this.res.send('ok');
-    this.log.trace(`it's works!`);
+    this.log.info("it's works!");
   }
 }
