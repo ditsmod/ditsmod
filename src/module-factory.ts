@@ -27,7 +27,6 @@ import { Counter } from './services/counter';
  */
 @Injectable()
 export class ModuleFactory extends Core {
-  protected mod: ModuleType;
   protected moduleName: string;
   protected prefixPerMod: string;
   protected guardsPerMod: NormalizedGuard[];
@@ -80,7 +79,6 @@ export class ModuleFactory extends Core {
     this.globalProviders = globalProviders;
     this.prefixPerMod = prefixPerMod || '';
     const mod = this.getModule(modOrObject);
-    this.mod = mod;
     this.moduleName = mod.name;
     this.guardsPerMod = guardsPerMod || [];
     const moduleMetadata = this.normalizeMetadata(modOrObject);
@@ -91,14 +89,14 @@ export class ModuleFactory extends Core {
     this.mergeProviders(moduleMetadata);
 
     const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.opts.providersPerMod);
-    injectorPerMod.resolveAndInstantiate(this.mod); // Only check DI resolvable
+    injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolvable
     const controllersMetadata = this.getControllersMetadata();
 
-    return this.extensionMetadataMap.set(this.mod, {
+    return this.extensionMetadataMap.set(mod, {
       prefixPerMod,
+      guardsPerMod: this.guardsPerMod,
       moduleMetadata: this.opts,
       controllersMetadata,
-      guardsPerMod: this.guardsPerMod,
     });
   }
 
@@ -188,14 +186,24 @@ export class ModuleFactory extends Core {
       this.importProviders(true, imp.module);
       const prefixPerMod = [this.prefixPerMod, imp.prefix].filter((s) => s).join('/');
       const mod = imp.module;
-      const normalizedGuards = this.normalizeGuards(imp.guards);
-      this.checkGuardsPerMod(normalizedGuards);
-      const guardsPerMod = [...this.guardsPerMod, ...normalizedGuards];
+      const normalizedGuardsPerMod = this.normalizeGuards(imp.guards);
+      this.checkGuardsPerMod(normalizedGuardsPerMod);
+      const guardsPerMod = [...this.guardsPerMod, ...normalizedGuardsPerMod];
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       const extensionMetadataMap = moduleFactory.bootstrap(this.globalProviders, prefixPerMod, mod, guardsPerMod);
       this.extensionMetadataMap = new Map([...this.extensionMetadataMap, ...extensionMetadataMap]);
     }
     this.checkProvidersCollisions();
+  }
+
+  protected normalizeGuards(guards: GuardItem[]) {
+    return guards.map((item) => {
+      if (Array.isArray(item)) {
+        return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
+      } else {
+        return { guard: item } as NormalizedGuard;
+      }
+    });
   }
 
   protected checkGuardsPerMod(guards: NormalizedGuard[]) {
@@ -361,15 +369,5 @@ export class ModuleFactory extends Core {
     }
 
     return arrControllerMetadata;
-  }
-
-  protected normalizeGuards(guards: GuardItem[]) {
-    return guards.map((item) => {
-      if (Array.isArray(item)) {
-        return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
-      } else {
-        return { guard: item } as NormalizedGuard;
-      }
-    });
   }
 }
