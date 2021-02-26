@@ -16,7 +16,7 @@ import { RequestListener } from '../types/types';
 import { PreRoutes } from './pre-routes';
 
 @Injectable()
-export class PreRouter implements Extension<PreRoutes> {
+export class PreRouter implements Extension<PreRouteData[]> {
   constructor(
     protected injectorPerApp: ReflectiveInjector,
     protected router: Router,
@@ -25,16 +25,16 @@ export class PreRouter implements Extension<PreRoutes> {
   ) {}
 
   handleExtension(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>) {
-    let preRoutes: PreRoutes;
+    let preRoutesData: PreRouteData[];
 
     metadataMap.forEach((metadata, mod) => {
-      preRoutes = this.injectorPerApp.resolveAndInstantiate(PreRoutes) as PreRoutes;
-      const preRoutesData = preRoutes.getPreRoutesData(mod.name, metadata);
+      const preRoutes = this.injectorPerApp.resolveAndInstantiate(PreRoutes) as PreRoutes;
+      preRoutesData = preRoutes.getPreRoutesData(mod.name, metadata);
       const { prefixPerMod } = metadata;
       this.setRoutes(mod.name, prefixPerApp, prefixPerMod, preRoutesData);
     });
 
-    return preRoutes;
+    return preRoutesData;
   }
 
   requestListener: RequestListener = (nodeReq, nodeRes) => {
