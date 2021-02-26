@@ -9,7 +9,6 @@ import { RootModule } from './decorators/root-module';
 import { PreRouter } from './services/pre-router';
 import { Router } from './types/router';
 import { Logger } from './types/logger';
-import { Server } from './types/server-options';
 import { Module, ModuleType, ModuleWithOptions, ModuleMetadata } from './decorators/module';
 import { AppMetadata } from './decorators/app-metadata';
 import { ImportWithOptions } from './types/import-with-options';
@@ -17,7 +16,6 @@ import { ImportWithOptions } from './types/import-with-options';
 describe('Application', () => {
   class MockApplication extends Application {
     log: Logger;
-    server: Server;
     injectorPerApp: ReflectiveInjector;
     router: Router;
     preRouter: PreRouter;
@@ -53,8 +51,6 @@ describe('Application', () => {
   }
 
   let mock: MockApplication;
-  class SomeClass {}
-  class OtherClass {}
 
   beforeEach(() => {
     mock = new MockApplication();
@@ -66,7 +62,7 @@ describe('Application', () => {
       class AppModule {}
 
       mock.mergeMetadata(AppModule);
-      expect(mock.opts.httpModule).toBeDefined();
+      expect(mock.opts.httpModule).toBe(http);
       expect(mock.opts.serverName).toBe('Node.js');
       expect(mock.opts.serverOptions).toEqual({});
       expect(mock.opts.listenOptions).toBeDefined();
@@ -82,28 +78,30 @@ describe('Application', () => {
     });
 
     it('should merge default metatada with AppModule metadata', () => {
-      class SomeModule {}
-      class OtherModule {}
+      class Controller1 {}
+      class Provider1 {}
+      class Module1 {}
+      class Module2 {}
 
       const imports: ImportWithOptions[] = [
-        { prefix: '', module: SomeModule },
-        { prefix: '', module: OtherModule },
+        { prefix: '', module: Module1 },
+        { guards: [], module: Module2 },
       ];
 
       @RootModule({
         prefixPerApp: 'api',
         imports,
-        controllers: [SomeClass],
-        providersPerApp: [OtherClass],
+        controllers: [Controller1],
+        providersPerApp: [Provider1],
       })
       class AppModule {}
 
       mock.mergeMetadata(AppModule);
+      expect(mock.opts.httpModule).toBe(http);
       expect(mock.opts.serverName).toEqual('Node.js');
       expect(mock.opts.serverOptions).toEqual({});
-      expect(mock.opts.httpModule).toBeDefined();
       expect(mock.opts.prefixPerApp).toBe('api');
-      expect(mock.opts.providersPerApp).toEqual([OtherClass]);
+      expect(mock.opts.providersPerApp).toEqual([Provider1]);
       expect(mock.opts.listenOptions).toBeDefined();
 
       const opts = (mock.opts as unknown) as ModuleMetadata;
@@ -114,9 +112,46 @@ describe('Application', () => {
       expect(opts.providersPerReq).toBe(undefined);
     });
 
-    it('OtherClass should not have metatada', () => {
-      const msg = 'Module build failed: module "OtherClass" does not have the "@RootModule()" decorator';
-      expect(() => mock.mergeMetadata(OtherClass)).toThrowError(msg);
+    it('should throw error about absence @Module decorator', () => {
+      class Module1 {}
+      const msg = 'Module build failed: module "Module1" does not have the "@RootModule()" decorator';
+      expect(() => mock.mergeMetadata(Module1)).toThrowError(msg);
+    });
+  });
+
+  describe('checkSecureServerOption()', () => {
+    class Provider1 {}
+    class Provider2 {}
+    @RootModule({
+      controllers: [Provider1],
+      providersPerApp: [Provider2],
+    })
+    class AppModule {}
+
+    it('should not to throw with http2 and isHttp2SecureServer == true', () => {
+      mock.opts.serverOptions = { isHttp2SecureServer: true };
+      mock.opts.httpModule = http2;
+      expect(() => mock.checkSecureServerOption(AppModule)).not.toThrow();
+    });
+
+    it('should to throw with http and isHttp2SecureServer == true', () => {
+      mock.opts.serverOptions = { isHttp2SecureServer: true };
+      mock.opts.httpModule = http;
+      const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
+      expect(() => mock.checkSecureServerOption(AppModule)).toThrowError(msg);
+    });
+
+    it('should not to throw with http and isHttp2SecureServer == false', () => {
+      mock.opts.httpModule = http;
+      const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
+      expect(() => mock.checkSecureServerOption(AppModule)).not.toThrowError(msg);
+    });
+
+    it('should to throw with https and isHttp2SecureServer == true', () => {
+      mock.opts.serverOptions = { isHttp2SecureServer: true };
+      mock.opts.httpModule = https;
+      const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
+      expect(() => mock.checkSecureServerOption(AppModule)).toThrowError(msg);
     });
   });
 
@@ -137,7 +172,7 @@ describe('Application', () => {
 
       mock.mergeMetadata(RootModule1);
       const msg =
-        'Exporting providers in RootModule1 was failed: found collision for: ' +
+        'Exporting providers to RootModule1 was failed: found collision for: ' +
         'Provider1. You should manually add this provider to RootModule1.';
       expect(() => mock.prepareProvidersPerApp(RootModule1)).toThrow(msg);
     });
@@ -163,18 +198,18 @@ describe('Application', () => {
     it('should works with duplicates in providersPerApp of root module', () => {
       class Provider1 {}
 
-      @RootModule({ providersPerApp: [Provider1, Provider1] })
+      @RootModule({ providersPerApp: [Provider1, Provider1, { provide: Provider1, useClass: Provider1 }] })
       class RootModule2 {}
 
       mock.mergeMetadata(RootModule2);
       expect(() => mock.prepareProvidersPerApp(RootModule2)).not.toThrow();
-      expect(mock.opts.providersPerApp.length).toBe(2);
+      expect(mock.opts.providersPerApp.length).toBe(3);
     });
 
     it('should works with duplicates in root imports module', () => {
       class Provider1 {}
       const Alias = Provider1;
-      const duplicates = [Provider1, Alias];
+      const duplicates = [Provider1, Alias, { provide: Provider1, useClass: Provider1 }];
 
       @Module({ providersPerApp: duplicates })
       class Module1 {}
@@ -191,7 +226,7 @@ describe('Application', () => {
     it('should works with duplicates in feature module and root module', () => {
       class Provider1 {}
       const Alias = Provider1;
-      const duplicates = [Provider1, Alias];
+      const duplicates = [Provider1, Alias, { provide: Provider1, useClass: Provider1 }];
 
       @Module({ providersPerApp: duplicates })
       class Module1 {}
@@ -204,13 +239,11 @@ describe('Application', () => {
 
       mock.mergeMetadata(RootModule3);
       expect(() => mock.prepareProvidersPerApp(RootModule3)).not.toThrow();
-      expect(mock.opts.providersPerApp.length).toBe(3);
+      expect(mock.opts.providersPerApp.length).toBe(4);
     });
 
     it('should works with empty "imports" array in root module', () => {
-      @RootModule({
-        imports: [],
-      })
+      @RootModule({ imports: [] })
       class RootModule4 {}
       mock.mergeMetadata(RootModule4);
       expect(() => mock.prepareProvidersPerApp(RootModule4)).not.toThrow();
@@ -320,37 +353,5 @@ describe('Application', () => {
     });
   });
 
-  describe('checkSecureServerOption()', () => {
-    @RootModule({
-      controllers: [SomeClass],
-      providersPerApp: [OtherClass],
-    })
-    class AppModule {}
-
-    it('should not to throw with http2 and isHttp2SecureServer == true', () => {
-      mock.opts.serverOptions = { isHttp2SecureServer: true };
-      mock.opts.httpModule = http2;
-      expect(() => mock.checkSecureServerOption(AppModule)).not.toThrow();
-    });
-
-    it('should to throw with http and isHttp2SecureServer == true', () => {
-      mock.opts.serverOptions = { isHttp2SecureServer: true };
-      mock.opts.httpModule = http;
-      const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
-      expect(() => mock.checkSecureServerOption(AppModule)).toThrowError(msg);
-    });
-
-    it('should not to throw with http and isHttp2SecureServer == false', () => {
-      mock.opts.httpModule = http;
-      const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
-      expect(() => mock.checkSecureServerOption(AppModule)).not.toThrowError(msg);
-    });
-
-    it('should to throw with https and isHttp2SecureServer == true', () => {
-      mock.opts.serverOptions = { isHttp2SecureServer: true };
-      mock.opts.httpModule = https;
-      const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
-      expect(() => mock.checkSecureServerOption(AppModule)).toThrowError(msg);
-    });
-  });
+  describe('getGlobalProviders()', () => {});
 });

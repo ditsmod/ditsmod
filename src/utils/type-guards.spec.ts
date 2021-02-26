@@ -15,7 +15,6 @@ import {
   isExtensionProvider,
 } from './type-guards';
 import { Extension } from '../types/types';
-import { NormalizedProvider } from './ng-utils';
 
 describe('type-guards', () => {
   describe('isExtensionProvider()', () => {
@@ -24,14 +23,9 @@ describe('type-guards', () => {
       handleExtension() {}
     }
 
-    const normProvider1: NormalizedProvider = {provide: Extension1, useClass: Extension1};
-    const normProvider2: NormalizedProvider = {provide: Extension2, useClass: Extension2};
-
     it('should recognize the extension provider', () => {
       expect(isExtensionProvider(Extension1)).toBe(false);
       expect(isExtensionProvider(Extension2)).toBe(true);
-      expect(isExtensionProvider(normProvider1)).toBe(false);
-      expect(isExtensionProvider(normProvider2)).toBe(true);
     });
   });
 

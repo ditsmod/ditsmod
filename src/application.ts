@@ -26,7 +26,6 @@ import { AppMetadata } from './decorators/app-metadata';
 
 export class Application extends Core {
   protected log: Logger;
-  protected server: Server;
   protected injectorPerApp: ReflectiveInjector;
   protected preRouter: PreRouter;
   protected opts: AppMetadata;
@@ -37,9 +36,9 @@ export class Application extends Core {
         const config = new LoggerConfig();
         this.log = new DefaultLogger(config);
         this.prepareModules(appModule);
-        this.createServer();
-        this.server.listen(this.opts.listenOptions, () => {
-          resolve({ server: this.server, log: this.log });
+        const server = this.createServer();
+        server.listen(this.opts.listenOptions, () => {
+          resolve({ server, log: this.log });
           const host = this.opts.listenOptions.host || 'localhost';
           this.log.info(`${this.opts.serverName} is running at ${host}:${this.opts.listenOptions.port}`);
         });
@@ -180,11 +179,11 @@ export class Application extends Core {
   protected createServer() {
     if (isHttp2SecureServerOptions(this.opts.serverOptions)) {
       const serverModule = this.opts.httpModule as typeof http2;
-      this.server = serverModule.createSecureServer(this.opts.serverOptions, this.preRouter.requestListener);
+      return serverModule.createSecureServer(this.opts.serverOptions, this.preRouter.requestListener);
     } else {
       const serverModule = this.opts.httpModule as typeof http | typeof https;
       const serverOptions = this.opts.serverOptions as http.ServerOptions | https.ServerOptions;
-      this.server = serverModule.createServer(serverOptions, this.preRouter.requestListener);
+      return serverModule.createServer(serverOptions, this.preRouter.requestListener);
     }
   }
 }

@@ -18,7 +18,7 @@ export abstract class Core {
     const names = duplicates.map((p) => p.name || p).join(', ');
     const provider = duplicates.length > 1 ? 'these providers' : 'this provider';
     throw new Error(
-      `Exporting providers in ${moduleName} was failed: found collision for: ${names}. You should manually add ${provider} to ${moduleName}.`
+      `Exporting providers to ${moduleName} was failed: found collision for: ${names}. You should manually add ${provider} to ${moduleName}.`
     );
   }
 
