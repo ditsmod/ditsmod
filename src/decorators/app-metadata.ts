@@ -1,8 +1,9 @@
 import * as http from 'http';
 import { ListenOptions } from 'net';
-import { Provider } from '@ts-stack/di';
+import { Provider, Type } from '@ts-stack/di';
 
 import { HttpModule, ServerOptions } from '../types/server-options';
+import { Extension } from '../types/types';
 
 export class AppMetadata {
   httpModule: HttpModule = http;
@@ -14,4 +15,5 @@ export class AppMetadata {
    * Providers per the `Application`.
    */
   providersPerApp: Provider[] = [];
+  extensions: Type<Extension>[] = [];
 }

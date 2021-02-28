@@ -3,9 +3,9 @@ import * as https from 'https';
 import * as http2 from 'http2';
 import { ReflectiveInjector, reflector, Provider, Type, resolveForwardRef } from '@ts-stack/di';
 
-import { RootModuleDecorator, defaultProvidersPerApp } from './decorators/root-module';
+import { RootModuleDecorator, defaultProvidersPerApp, defaultExtensions } from './decorators/root-module';
 import { Extension, ExtensionMetadata } from './types/types';
-import { isExtensionProvider, isHttp2SecureServerOptions, isProvider, isRootModule } from './utils/type-guards';
+import { isHttp2SecureServerOptions, isProvider, isRootModule } from './utils/type-guards';
 import { PreRouter } from './services/pre-router';
 import { ModuleFactory } from './module-factory';
 import { pickProperties } from './utils/pick-properties';
@@ -23,6 +23,7 @@ import { flatten, normalizeProviders } from './utils/ng-utils';
 import { Core } from './core';
 import { DefaultLogger } from './services/default-logger';
 import { AppMetadata } from './decorators/app-metadata';
+import { mergeArrays } from './utils/merge-arrays-options';
 
 export class Application extends Core {
   protected log: Logger;
@@ -72,6 +73,7 @@ export class Application extends Core {
     // Setting default metadata.
     this.opts = new AppMetadata();
 
+    modMetadata.extensions = mergeArrays(defaultExtensions, modMetadata.extensions);
     pickProperties(this.opts, modMetadata);
   }
 
@@ -162,18 +164,17 @@ export class Application extends Core {
   }
 
   protected async handleExtensions(metadataMap: Map<ModuleType, ExtensionMetadata>) {
-    const lastProviders = this.getUniqProviders(this.opts.providersPerApp);
-    const extensionsTokens = normalizeProviders(lastProviders)
-      .map((np) => np.provide)
-      .filter(isExtensionProvider);
-
-    for (const Ext of extensionsTokens) {
-      this.log.trace(`start init ${Ext.name} extension`);
+    const allExtensions: Type<Extension>[] = [];
+    for (const [, metadata] of metadataMap) {
+      allExtensions.push(...metadata.moduleMetadata.extensions);
+    }
+    for (const Ext of allExtensions) {
+      this.log.debug(`start init ${Ext.name} extension`);
       const extension = this.injectorPerApp.get(Ext) as Extension;
       await extension.init(this.opts.prefixPerApp, metadataMap);
-      this.log.trace(`finish init ${Ext.name} extension`);
+      this.log.debug(`finish init ${Ext.name} extension`);
     }
-    this.log.debug(`Total extensions initialized: ${extensionsTokens.length}`);
+    this.log.debug(`Total extensions initialized: ${allExtensions.length}`);
   }
 
   protected createServer() {

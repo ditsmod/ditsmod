@@ -1,6 +1,6 @@
 import { TypeProvider } from '@ts-stack/di';
 
-import { ControllerMetadata, PreRouteData } from '../decorators/controller';
+import { ControllerMetadata } from '../decorators/controller';
 import { ModuleMetadata } from '../decorators/module';
 import { HttpMethod, NormalizedGuard } from './router';
 import { NodeRequest, NodeResponse, Fn } from './server-options';
@@ -53,6 +53,6 @@ export class ExtensionMetadata {
   controllersMetadata: ControllerMetadata[];
 }
 
-export interface Extension<T = void> {
+export interface Extension<T = any> {
   init(prefixPerApp: string, metadata: Map<ModuleType, ExtensionMetadata>): T | Promise<T>;
 }

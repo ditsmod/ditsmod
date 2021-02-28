@@ -1,7 +1,7 @@
-import { makeDecorator, Provider, ReflectiveInjector, Injector } from '@ts-stack/di';
+import { makeDecorator, Provider, ReflectiveInjector, Injector, Type } from '@ts-stack/di';
 
 import { ModuleDecorator } from './module';
-import { BodyParserConfig } from '../types/types';
+import { BodyParserConfig, Extension } from '../types/types';
 import { Logger, LoggerConfig } from '../types/logger';
 import { DefaultLogger } from '../services/default-logger';
 import { AppMetadata } from './app-metadata';
@@ -21,6 +21,8 @@ export const defaultProvidersPerApp: Provider[] = [
   PreRoutes,
   Counter,
 ];
+
+export const defaultExtensions: Type<Extension>[] = [PreRouter];
 
 export interface RootModuleDecoratorFactory {
   (data?: RootModuleDecorator): any;

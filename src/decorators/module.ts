@@ -46,6 +46,7 @@ export abstract class StaticModuleMetadata extends ProvidersMetadata {
    * The application controllers.
    */
   controllers: TypeProvider[] = [];
+  extensions: Type<Extension>[] = [];
 }
 
 export interface ModuleDecorator extends Partial<StaticModuleMetadata> {

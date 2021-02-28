@@ -9,7 +9,6 @@ import {
 } from './decorators/module';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
 import { isRootModule, isImportWithOptions, isProvider, isController } from './utils/type-guards';
-import { mergeArrays } from './utils/merge-arrays-options';
 import { NormalizedGuard } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { Core } from './core';
@@ -131,11 +130,12 @@ export class ModuleFactory extends Core {
       !isRootModule(moduleMetadata as any) &&
       !moduleMetadata.providersPerApp.length &&
       !moduleMetadata.controllers.length &&
-      !moduleMetadata.exports.length
+      !moduleMetadata.exports.length &&
+      !moduleMetadata.extensions.length
     ) {
       const msg =
         `Importing ${this.moduleName} failed: this module should have "providersPerApp"` +
-        ' or some controllers, or "exports" array with elements.';
+        ' or some controllers, or exports, or extensions.';
       throw new Error(msg);
     }
   }
@@ -176,7 +176,8 @@ export class ModuleFactory extends Core {
     metadata.providersPerApp = flatten(modMetadata.providersPerApp);
     metadata.providersPerMod = flatten(modMetadata.providersPerMod);
     metadata.providersPerReq = flatten(modMetadata.providersPerReq);
-    metadata.controllers = mergeArrays(metadata.controllers, modMetadata.controllers);
+    metadata.controllers = (modMetadata.controllers || []).slice();
+    metadata.extensions = (modMetadata.extensions || []).slice();
 
     return metadata;
   }
