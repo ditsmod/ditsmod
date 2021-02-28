@@ -31,11 +31,11 @@ export class Application extends Core {
   protected opts: AppMetadata;
 
   bootstrap(appModule: ModuleType) {
-    return new Promise<{ server: Server; log: Logger }>((resolve, reject) => {
+    return new Promise<{ server: Server; log: Logger }>(async (resolve, reject) => {
       try {
         const config = new LoggerConfig();
         this.log = new DefaultLogger(config);
-        this.prepareModules(appModule);
+        await this.prepareModules(appModule);
         const server = this.createServer();
         server.listen(this.opts.listenOptions, () => {
           resolve({ server, log: this.log });
@@ -48,7 +48,7 @@ export class Application extends Core {
     });
   }
 
-  protected prepareModules(appModule: ModuleType) {
+  protected async prepareModules(appModule: ModuleType) {
     this.mergeMetadata(appModule);
     this.checkSecureServerOption(appModule);
     this.prepareProvidersPerApp(appModule);
@@ -56,7 +56,7 @@ export class Application extends Core {
     this.initProvidersPerApp();
     const extensionsMetadataMap = this.bootstrapModuleFactory(appModule);
     this.checkModulesResolvable(extensionsMetadataMap);
-    this.handleExtensions(extensionsMetadataMap);
+    await this.handleExtensions(extensionsMetadataMap);
     return extensionsMetadataMap;
   }
 
@@ -161,18 +161,18 @@ export class Application extends Core {
     });
   }
 
-  protected handleExtensions(metadataMap: Map<ModuleType, ExtensionMetadata>) {
+  protected async handleExtensions(metadataMap: Map<ModuleType, ExtensionMetadata>) {
     const lastProviders = this.getUniqProviders(this.opts.providersPerApp);
     const extensionsTokens = normalizeProviders(lastProviders)
       .map((np) => np.provide)
       .filter(isExtensionProvider);
 
-    extensionsTokens.forEach((Ext) => {
+    for (const Ext of extensionsTokens) {
       this.log.trace(`start init ${Ext.name} extension`);
       const extension = this.injectorPerApp.get(Ext) as Extension;
-      extension.handleExtension(this.opts.prefixPerApp, metadataMap);
+      await extension.init(this.opts.prefixPerApp, metadataMap);
       this.log.trace(`finish init ${Ext.name} extension`);
-    });
+    }
     this.log.debug(`Total extensions initialized: ${extensionsTokens.length}`);
   }
 

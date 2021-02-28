@@ -37,10 +37,6 @@ describe('Application', () => {
       return super.checkSecureServerOption(appModule);
     }
 
-    prepareModules(appModule: ModuleType) {
-      return super.prepareModules(appModule);
-    }
-
     bootstrapModuleFactory(appModule: ModuleType) {
       return super.bootstrapModuleFactory(appModule);
     }

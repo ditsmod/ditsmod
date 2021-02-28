@@ -600,7 +600,7 @@ describe('ModuleFactory', () => {
         })
         class Module2 {}
 
-        it('exporting duplicates of Provider2', () => {
+        it('exporting duplicates of Provider2', async () => {
           @RootModule({
             imports: [Module2],
           })
@@ -609,10 +609,10 @@ describe('ModuleFactory', () => {
           const msg =
             'Exporting providers to RootModule1 was failed: found collision for: ' +
             'Provider2. You should manually add this provider to RootModule1.';
-          expect(() => mockApp.prepareModules(RootModule1)).toThrow(msg);
+          await expect(mockApp.prepareModules(RootModule1)).rejects.toThrow(msg);
         });
 
-        it('mix exporting duplicates with "multi == true" per app and per mod', () => {
+        it('mix exporting duplicates with "multi == true" per app and per mod', async () => {
           const ObjProviderPerApp: Provider = { provide: Provider1, useClass: Provider1, multi: true };
           const ObjProviderPerMod: Provider = { provide: Provider1, useClass: Provider1, multi: true };
           @Module({
@@ -636,10 +636,10 @@ describe('ModuleFactory', () => {
           const msg =
             'Exporting providers to RootModule1 was failed: found collision for: ' +
             'Provider1. You should manually add this provider to RootModule1.';
-          expect(() => mockApp.prepareModules(RootModule1)).toThrow(msg);
+          await expect(mockApp.prepareModules(RootModule1)).rejects.toThrow(msg);
         });
 
-        it('exporting duplicates with "multi == true" not to throw', () => {
+        it('exporting duplicates with "multi == true" not to throw', async () => {
           const ObjProvider: Provider = { provide: Provider1, useClass: Provider1, multi: true };
           @Module({
             exports: [ObjProvider],
@@ -658,20 +658,20 @@ describe('ModuleFactory', () => {
           })
           class RootModule1 {}
 
-          expect(() => mockApp.prepareModules(RootModule1)).not.toThrow();
+          await expect(mockApp.prepareModules(RootModule1)).resolves.not.toThrow();
         });
 
-        it('exporting duplicates of Provider2, but declared in providersPerMod of root module', () => {
+        it('exporting duplicates of Provider2, but declared in providersPerMod of root module', async () => {
           @RootModule({
             imports: [Module2],
             providersPerMod: [Provider2],
           })
           class RootModule1 {}
 
-          expect(() => mockApp.prepareModules(RootModule1)).not.toThrow();
+          await expect(mockApp.prepareModules(RootModule1)).resolves.not.toThrow();
         });
 
-        it('exporting duplicates of Provider1 from Module1 and Module2', () => {
+        it('exporting duplicates of Provider1 from Module1 and Module2', async () => {
           @RootModule({
             imports: [Module0, Module1.withOptions()],
           })
@@ -680,17 +680,17 @@ describe('ModuleFactory', () => {
           const msg =
             'Exporting providers to RootModule1 was failed: found collision for: ' +
             'Provider1. You should manually add this provider to RootModule1.';
-          expect(() => mockApp.prepareModules(RootModule1)).toThrow(msg);
+          await expect(mockApp.prepareModules(RootModule1)).rejects.toThrow(msg);
         });
 
-        it('exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerMod of root module', () => {
+        it('exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerMod of root module', async () => {
           @RootModule({
             imports: [Module0, Module1.withOptions()],
             providersPerMod: [Provider1],
           })
           class RootModule1 {}
 
-          expect(() => mockApp.prepareModules(RootModule1)).not.toThrow();
+          await expect(mockApp.prepareModules(RootModule1)).resolves.not.toThrow();
         });
       });
 
@@ -714,7 +714,7 @@ describe('ModuleFactory', () => {
         })
         class Module2 {}
 
-        it('exporting duplicates of Provider2', () => {
+        it('exporting duplicates of Provider2', async () => {
           @RootModule({
             imports: [Module2],
           })
@@ -723,20 +723,20 @@ describe('ModuleFactory', () => {
           const msg =
             'Exporting providers to RootModule1 was failed: found collision for: ' +
             'Provider2. You should manually add this provider to RootModule1.';
-          expect(() => mockApp.prepareModules(RootModule1)).toThrow(msg);
+          await expect(mockApp.prepareModules(RootModule1)).rejects.toThrow(msg);
         });
 
-        it('exporting duplicates of Provider2, but declared in providersPerReq of root module', () => {
+        it('exporting duplicates of Provider2, but declared in providersPerReq of root module', async () => {
           @RootModule({
             imports: [Module2],
             providersPerReq: [Provider2],
           })
           class RootModule1 {}
 
-          expect(() => mockApp.prepareModules(RootModule1)).not.toThrow();
+          await expect(mockApp.prepareModules(RootModule1)).resolves.not.toThrow();
         });
 
-        it('exporting duplicates of Provider1 from Module1 and Module2', () => {
+        it('exporting duplicates of Provider1 from Module1 and Module2', async () => {
           @RootModule({
             imports: [Module0, Module1],
           })
@@ -745,22 +745,22 @@ describe('ModuleFactory', () => {
           const msg =
             'Exporting providers to RootModule1 was failed: found collision for: ' +
             'Provider1. You should manually add this provider to RootModule1.';
-          expect(() => mockApp.prepareModules(RootModule1)).toThrow(msg);
+          await expect(mockApp.prepareModules(RootModule1)).rejects.toThrow(msg);
         });
 
-        it('exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerReq of root module', () => {
+        it('exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerReq of root module', async () => {
           @RootModule({
             imports: [Module0, Module1],
             providersPerReq: [Provider1],
           })
           class RootModule1 {}
 
-          expect(() => mockApp.prepareModules(RootModule1)).not.toThrow();
+          await expect(mockApp.prepareModules(RootModule1)).resolves.not.toThrow();
         });
       });
 
       describe('mix per app, per mod or per req', () => {
-        it('case 1', () => {
+        it('case 1', async () => {
           @Module({
             exports: [
               Provider0,
@@ -791,10 +791,10 @@ describe('ModuleFactory', () => {
           const msg =
             'Exporting providers to RootModule1 was failed: found collision for: ' +
             'Provider0, Request, Provider1, InjectionToken NodeRequest. You should manually add these providers to RootModule1.';
-          expect(() => mockApp.prepareModules(RootModule1)).toThrow(msg);
+          await expect(mockApp.prepareModules(RootModule1)).rejects.toThrow(msg);
         });
 
-        it('case 2', () => {
+        it('case 2', async () => {
           @Module({
             exports: [Provider0, Provider1],
             providersPerMod: [Provider0, Provider1],
@@ -810,7 +810,7 @@ describe('ModuleFactory', () => {
           const msg =
             'Exporting providers to RootModule1 was failed: found collision for: ' +
             'Router. You should manually add this provider to RootModule1.';
-          expect(() => mockApp.prepareModules(RootModule1)).toThrow(msg);
+          await expect(mockApp.prepareModules(RootModule1)).rejects.toThrow(msg);
         });
       });
     });
@@ -873,8 +873,8 @@ describe('ModuleFactory', () => {
       })
       class RootModule1 {}
 
-      it('Module0', () => {
-        const optsMap = mockApp.prepareModules(RootModule1);
+      it('Module0', async () => {
+        const optsMap = await mockApp.prepareModules(RootModule1);
         const mod0 = optsMap.get(Module0);
         expect(mod0.moduleMetadata.providersPerApp).toEqual([]);
         expect(mod0.moduleMetadata.providersPerMod).toEqual([Provider3, Provider4, Provider0]);
@@ -886,8 +886,8 @@ describe('ModuleFactory', () => {
         ]);
       });
 
-      it('Module1', () => {
-        const optsMap = mockApp.prepareModules(RootModule1);
+      it('Module1', async () => {
+        const optsMap = await mockApp.prepareModules(RootModule1);
         const mod1 = optsMap.get(Module1);
         expect(mod1.moduleMetadata.providersPerApp).toEqual([]);
         expect(mod1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4, obj1, Provider2]);
@@ -899,8 +899,8 @@ describe('ModuleFactory', () => {
         ]);
       });
 
-      it('Module2', () => {
-        const optsMap = mockApp.prepareModules(RootModule1);
+      it('Module2', async () => {
+        const optsMap = await mockApp.prepareModules(RootModule1);
         const mod2 = optsMap.get(Module2);
         expect(mod2.moduleMetadata.providersPerApp).toEqual([]);
         expect(mod2.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
@@ -912,8 +912,8 @@ describe('ModuleFactory', () => {
         ]);
       });
 
-      it('Module3', () => {
-        const optsMap = mockApp.prepareModules(RootModule1);
+      it('Module3', async () => {
+        const optsMap = await mockApp.prepareModules(RootModule1);
         const mod3 = optsMap.get(Module3);
         expect(mod3.moduleMetadata.providersPerApp).toEqual([]);
         expect(mod3.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
@@ -925,8 +925,8 @@ describe('ModuleFactory', () => {
         ]);
       });
 
-      it('Module4', () => {
-        const optsMap = mockApp.prepareModules(RootModule1);
+      it('Module4', async () => {
+        const optsMap = await mockApp.prepareModules(RootModule1);
         const mod4 = optsMap.get(Module4);
         expect(mod4.moduleMetadata.providersPerApp).toEqual([]);
         expect(mod4.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
@@ -940,8 +940,8 @@ describe('ModuleFactory', () => {
         ]);
       });
 
-      it('RootModule1', () => {
-        const optsMap = mockApp.prepareModules(RootModule1);
+      it('RootModule1', async () => {
+        const optsMap = await mockApp.prepareModules(RootModule1);
         const root1 = optsMap.get(RootModule1);
         expect(root1.moduleMetadata.providersPerApp).toEqual([Logger]);
         expect(root1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider1, Provider3, Provider4]);

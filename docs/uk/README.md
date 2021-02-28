@@ -1369,7 +1369,7 @@ interface LoggerMethod {
 
 ```ts
 class PreRouter implements Extension {
-  handleExtension(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>): void;
+  init(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>): void;
   requestListener: RequestListener;
 }
 ```
@@ -1378,7 +1378,7 @@ class PreRouter implements Extension {
 
 ```ts
 interface Extension {
-  handleExtension(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>): void;
+  init(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>): void;
 }
 ```
 
