@@ -54,5 +54,5 @@ export class ExtensionMetadata {
 }
 
 export interface Extension<T = void> {
-  handleExtension(prefixPerApp: string, metadata: Map<ModuleType, ExtensionMetadata>): T;
+  init(prefixPerApp: string, metadata: Map<ModuleType, ExtensionMetadata>): T | Promise<T>;
 }

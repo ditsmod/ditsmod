@@ -24,7 +24,7 @@ export class PreRouter implements Extension<PreRouteData[]> {
     protected appMetadata: AppMetadata
   ) {}
 
-  handleExtension(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>) {
+  init(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>) {
     let preRoutesData: PreRouteData[];
 
     metadataMap.forEach((metadata, mod) => {

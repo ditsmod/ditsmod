@@ -60,7 +60,7 @@ export function isRoute(propMeatada: RouteMetadata): propMeatada is RouteMetadat
 }
 
 export function isExtensionProvider(provider: Provider): provider is Type<Extension> {
-  return (provider as Type<Extension>)?.prototype?.handleExtension !== undefined;
+  return (provider as Type<Extension>)?.prototype?.init !== undefined;
 }
 
 export function isTypeProvider(provider: Provider): provider is TypeProvider {

@@ -20,7 +20,7 @@ describe('type-guards', () => {
   describe('isExtensionProvider()', () => {
     class Extension1 {}
     class Extension2 implements Extension {
-      handleExtension() {}
+      init() {}
     }
 
     it('should recognize the extension provider', () => {
