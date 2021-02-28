@@ -12,7 +12,7 @@ import { Logger } from './types/logger';
 import { Application } from './application';
 import { NodeReqToken } from './types/injection-tokens';
 import { Request } from './services/request';
-import { ExtensionMetadata } from './types/types';
+import { Extension, ExtensionMetadata } from './types/types';
 import { Counter } from './services/counter';
 
 describe('ModuleFactory', () => {
@@ -292,6 +292,58 @@ describe('ModuleFactory', () => {
   });
 
   describe('quickCheckMetadata()', () => {
+    it('extension without init() method', () => {
+      @Module({
+        extensions: [class Ext {} as any],
+      })
+      class Module1 {}
+
+      const moduleMetadata = mock.normalizeMetadata(Module1);
+      expect(() => mock.quickCheckMetadata(moduleMetadata)).toThrow(/must be a class with init/);
+    });
+
+    it('extension in providersPerReq', () => {
+      class Ext implements Extension {
+        init() {}
+      }
+      @Module({
+        providersPerReq: [Ext],
+        extensions: [Ext as any],
+      })
+      class Module1 {}
+
+      const moduleMetadata = mock.normalizeMetadata(Module1);
+      expect(() => mock.quickCheckMetadata(moduleMetadata)).toThrow(/cannot be includes in the "providersPerReq"/);
+    });
+
+    it('extension in providersPerApp', () => {
+      class Ext implements Extension {
+        init() {}
+      }
+      @Module({
+        providersPerApp: [Ext],
+        extensions: [Ext],
+      })
+      class Module1 {}
+
+      const moduleMetadata = mock.normalizeMetadata(Module1);
+      expect(() => mock.quickCheckMetadata(moduleMetadata)).not.toThrow();
+    });
+
+    it('extension in providersPerMod', () => {
+      class Ext implements Extension {
+        init() {}
+      }
+      @Module({
+        providersPerMod: [Ext],
+        extensions: [Ext],
+      })
+      class Module1 {}
+
+      const moduleMetadata = mock.normalizeMetadata(Module1);
+      expect(() => mock.quickCheckMetadata(moduleMetadata)).not.toThrow();
+    });
+
     it('should throw an error, when no export and no controllers', () => {
       class Provider1 {}
       class Provider2 {}

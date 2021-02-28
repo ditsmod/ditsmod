@@ -8,7 +8,7 @@ import {
   ProvidersMetadata,
 } from './decorators/module';
 import { flatten, normalizeProviders, NormalizedProvider } from './utils/ng-utils';
-import { isRootModule, isImportWithOptions, isProvider, isController } from './utils/type-guards';
+import { isRootModule, isImportWithOptions, isProvider, isController, isExtensionProvider } from './utils/type-guards';
 import { NormalizedGuard } from './types/router';
 import { NodeReqToken, NodeResToken } from './types/injection-tokens';
 import { Core } from './core';
@@ -19,6 +19,7 @@ import { GuardItem } from './decorators/route';
 import { ControllerMetadata, MethodDecoratorObject } from './decorators/controller';
 import { ImportWithOptions } from './types/import-with-options';
 import { Counter } from './services/counter';
+import { defaultExtensions } from './decorators/root-module';
 
 /**
  * - creates `injectorPerMod` and `injectorPerReq`;
@@ -138,6 +139,29 @@ export class ModuleFactory extends Core {
         ' or some controllers, or exports, or extensions.';
       throw new Error(msg);
     }
+
+    const { providersPerApp, providersPerMod, providersPerReq } = moduleMetadata;
+    const providers = [...providersPerApp, ...providersPerMod, ...defaultExtensions];
+    const extensionsTokens = normalizeProviders(providers).map((np) => np.provide);
+    const extensionsTokensPerReq = normalizeProviders(providersPerReq).map((np) => np.provide);
+    moduleMetadata.extensions.forEach((Ext, i) => {
+      if (!isExtensionProvider(Ext)) {
+        const msg =
+          `Importing ${this.moduleName} failed: Extensions with array index "${i}" ` +
+          'must be a class with init() method.';
+        throw new TypeError(msg);
+      }
+      if (extensionsTokensPerReq.includes(Ext)) {
+        const msg = `Importing ${this.moduleName} failed: Extensions "${Ext.name}" cannot be includes in the "providersPerReq" array.`;
+        throw new Error(msg);
+      }
+      if (!extensionsTokens.includes(Ext)) {
+        const msg =
+          `Importing ${this.moduleName} failed: Extensions "${Ext.name}" must be includes in ` +
+          '"providersPerApp" or "providersPerMod" array.';
+        throw new Error(msg);
+      }
+    });
   }
 
   /**
