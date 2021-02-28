@@ -9,7 +9,7 @@ import {
   ValueProvider,
 } from '@ts-stack/di';
 
-import { NormalizedProvider, normalizeProviders } from './ng-utils';
+import { NormalizedProvider } from './ng-utils';
 import { ModuleDecorator, ModuleWithOptions } from '../decorators/module';
 import { RootModuleDecorator } from '../decorators/root-module';
 import { ControllerDecorator } from '../decorators/controller';
@@ -60,7 +60,8 @@ export function isRoute(propMeatada: RouteMetadata): propMeatada is RouteMetadat
 }
 
 export function isExtensionProvider(provider: Provider): provider is Type<Extension> {
-  return (provider as Type<Extension>)?.prototype?.init !== undefined;
+  const init = (provider as Type<Extension>)?.prototype?.init;
+  return typeof init == 'function';
 }
 
 export function isTypeProvider(provider: Provider): provider is TypeProvider {
