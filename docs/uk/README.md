@@ -185,6 +185,7 @@ import { Module } from '@ts-stack/ditsmod';
   providersPerMod: [], // Провайдери на рівні модуля
   providersPerReq: [], // Провайдери на рівні запиту
   exports: [], // Експорт модулів та провайдерів із поточного модуля
+  extensions: [] // Розширення
 })
 export class SomeModule {}
 ```
@@ -224,6 +225,7 @@ import { RootModule } from '@ts-stack/ditsmod';
   providersPerMod: [],
   providersPerReq: [],
   exports: [],
+  extensions: []
 })
 export class SomeModule {}
 ```
