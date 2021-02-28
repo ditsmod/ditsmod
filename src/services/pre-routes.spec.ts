@@ -55,7 +55,7 @@ describe('PreRoutes', () => {
       const metadataMap = mock1.bootstrapModuleFactory(AppModule);
       const metadata = metadataMap.get(AppModule);
       expect(() => mock2.getPreRoutesData('SomeModule', metadata)).toThrowError(
-        /prototype.canActivate must be a function, got:/
+        /must have canActivate method/
       );
     });
 

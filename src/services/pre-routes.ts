@@ -110,7 +110,7 @@ export class PreRoutes {
       if (type != 'function') {
         const guardName = Guard.name || 'Guard';
         throw new TypeError(
-          `${moduleName} --> ${Ctrl.name} --> ${methodName}(): ${guardName}.prototype.canActivate must be a function, got: ${type}`
+          `${moduleName} --> ${Ctrl.name} --> ${methodName}(): ${guardName} must have canActivate method, got: ${type}`
         );
       }
     }
