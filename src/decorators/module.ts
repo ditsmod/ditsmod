@@ -54,12 +54,12 @@ export interface ModuleDecorator extends Partial<StaticModuleMetadata> {
    * List of modules or `ModuleWithOptions` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
    */
-  imports?: Array<Type<any> | ModuleWithOptions<any> | ImportWithOptions | any[]>;
+  imports?: Array<ModuleType | ModuleWithOptions<any> | ImportWithOptions | any[]>;
   /**
    * List of modules, `ModuleWithOptions` or providers exported by this
    * module.
    */
-  exports?: Array<Type<any> | ModuleWithOptions<any> | Provider | any[]>;
+  exports?: Array<ModuleType | ModuleWithOptions<any> | Provider | any[]>;
 }
 
 export class ModuleMetadata extends StaticModuleMetadata {
@@ -67,7 +67,7 @@ export class ModuleMetadata extends StaticModuleMetadata {
    * Imports modules and setting some prefix per each the module.
    */
   imports: ImportWithOptions[] = [];
-  exports: Array<Type<any> | ModuleWithOptions<any> | Provider> = [];
+  exports: Array<ModuleType | ModuleWithOptions<any> | Provider> = [];
 }
 
 /**

@@ -12,6 +12,7 @@ import { ModuleWithOptions, ModuleDecorator, Module } from './decorators/module'
 import { mergeArrays } from './utils/merge-arrays-options';
 import { RootModule } from './decorators/root-module';
 import { flatten, normalizeProviders } from './utils/ng-utils';
+import { ModuleType } from './types/types';
 
 export abstract class Core {
   protected throwProvidersCollisionError(moduleName: string, duplicates: any[]) {
@@ -22,7 +23,7 @@ export abstract class Core {
     );
   }
 
-  protected getModule(mod: Type<any> | ModuleWithOptions<any>) {
+  protected getModule(mod: Type<any> | ModuleWithOptions<any>): ModuleType {
     return isModuleWithOptions(mod) ? mod.module : mod;
   }
 
