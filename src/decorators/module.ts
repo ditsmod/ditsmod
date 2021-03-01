@@ -70,4 +70,7 @@ export class ModuleMetadata extends StaticModuleMetadata {
   exports: Array<Type<any> | ModuleWithOptions<any> | Provider> = [];
 }
 
+/**
+ * @todo Replace this duplicate by `../types/types#ModuleType`.
+ */
 export type ModuleType = new (...args: any[]) => any;
