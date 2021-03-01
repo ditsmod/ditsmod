@@ -10,6 +10,7 @@ import { Logger } from '../types/logger';
 import { ExtensionMetadata } from '../types/types';
 import { PreRoutes } from './pre-routes';
 import { AppMetadata } from '../decorators/app-metadata';
+import { AppInitializer } from './app-initializer';
 
 describe('PreRoutes', () => {
   class MockPreRoutes extends PreRoutes {
@@ -18,7 +19,7 @@ describe('PreRoutes', () => {
     }
   }
 
-  class MockApplication extends Application {
+  class MockApplication extends AppInitializer {
     opts = new AppMetadata;
     injectorPerApp: ReflectiveInjector;
     log = new Logger;
@@ -27,14 +28,14 @@ describe('PreRoutes', () => {
     }
   }
 
-  let mock1: MockApplication;
-  let mock2: MockPreRoutes;
+  let mockApp: MockApplication;
+  let mockPreRoutes: MockPreRoutes;
 
   beforeEach(() => {
     const injectorPerApp = ReflectiveInjector.resolveAndCreate([...defaultProvidersPerApp]);
-    mock1 = new MockApplication();
-    mock1.injectorPerApp = injectorPerApp;
-    mock2 = new MockPreRoutes(injectorPerApp);
+    mockApp = new MockApplication();
+    mockApp.injectorPerApp = injectorPerApp;
+    mockPreRoutes = new MockPreRoutes(injectorPerApp);
   });
 
   describe('getPreRoutesData()', () => {
@@ -52,9 +53,9 @@ describe('PreRoutes', () => {
       })
       class AppModule {}
 
-      const metadataMap = mock1.bootstrapModuleFactory(AppModule);
+      const metadataMap = mockApp.bootstrapModuleFactory(AppModule);
       const metadata = metadataMap.get(AppModule);
-      expect(() => mock2.getPreRoutesData('SomeModule', metadata)).toThrowError(
+      expect(() => mockPreRoutes.getPreRoutesData('SomeModule', metadata)).toThrowError(
         /must have canActivate method/
       );
     });
@@ -86,9 +87,9 @@ describe('PreRoutes', () => {
       })
       class AppModule {}
 
-      const metadataMap = mock1.bootstrapModuleFactory(AppModule);
+      const metadataMap = mockApp.bootstrapModuleFactory(AppModule);
       const metadata = metadataMap.get(AppModule);
-      const routesMetadata = mock2.getPreRoutesData('SomeModule', metadata);
+      const routesMetadata = mockPreRoutes.getPreRoutesData('SomeModule', metadata);
       expect(routesMetadata.length).toBe(3);
       expect(routesMetadata[0].methodId).toBe(1);
       expect(routesMetadata[0].controller).toBe(Controller1);
