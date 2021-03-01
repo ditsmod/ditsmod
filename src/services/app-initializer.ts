@@ -30,22 +30,22 @@ export class AppInitializer extends Core {
   }
 
   async reInit() {
-    this.mergeMetadata();
-    this.prepareProvidersPerApp();
+    this.mergeMetadata(this.appModule);
+    this.prepareProvidersPerApp(this.appModule);
     this.initProvidersPerApp();
-    this.extensionsMetadataMap = this.bootstrapModuleFactory();
-    this.checkModulesResolvable();
-    await this.handleExtensions();
+    this.extensionsMetadataMap = this.bootstrapModuleFactory(this.appModule);
+    this.checkModulesResolvable(this.extensionsMetadataMap);
+    await this.handleExtensions(this.extensionsMetadataMap);
   }
 
   /**
    * Merge AppModule metadata with default AppMetadata.
    */
-  protected mergeMetadata(): void {
-    const modMetadata = reflector.annotations(this.appModule).find(isRootModule);
+  protected mergeMetadata(appModule: ModuleType): void {
+    const modMetadata = reflector.annotations(appModule).find(isRootModule);
     if (!modMetadata) {
       throw new Error(
-        `Module build failed: module "${this.appModule.name}" does not have the "@RootModule()" decorator`
+        `Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`
       );
     }
 
@@ -60,10 +60,10 @@ export class AppInitializer extends Core {
    * 1. checks collisions for non-root exported providers per app;
    * 2. then merges these providers with providers that declared on root module.
    */
-  protected prepareProvidersPerApp() {
+  protected prepareProvidersPerApp(appModule: ModuleType) {
     // Here we work only with providers declared at the application level.
 
-    const exportedProviders = this.collectProvidersPerApp(this.appModule);
+    const exportedProviders = this.collectProvidersPerApp(appModule);
     const rootTokens = normalizeProviders(this.opts.providersPerApp).map((np) => np.provide);
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.provide);
@@ -76,7 +76,7 @@ export class AppInitializer extends Core {
     const mergedProviders = [...defaultProvidersPerApp, ...exportedProviders];
     exportedTokensDuplicates = this.getTokensCollisions(exportedTokensDuplicates, mergedProviders);
     if (exportedTokensDuplicates.length) {
-      this.throwProvidersCollisionError(this.appModule.name, exportedTokensDuplicates);
+      this.throwProvidersCollisionError(appModule.name, exportedTokensDuplicates);
     }
     this.opts.providersPerApp.unshift(...exportedProviders);
   }
@@ -113,11 +113,11 @@ export class AppInitializer extends Core {
     this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
   }
 
-  protected bootstrapModuleFactory() {
-    const globalProviders = this.getGlobalProviders(this.appModule);
+  protected bootstrapModuleFactory(appModule: ModuleType) {
+    const globalProviders = this.getGlobalProviders(appModule);
     this.log.trace({ globalProviders });
     const rootModule = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    return rootModule.bootstrap(globalProviders, '', this.appModule);
+    return rootModule.bootstrap(globalProviders, '', appModule);
   }
 
   protected getGlobalProviders(appModule: ModuleType) {
@@ -130,8 +130,8 @@ export class AppInitializer extends Core {
     return globalProviders;
   }
 
-  protected checkModulesResolvable() {
-    this.extensionsMetadataMap.forEach((metadata, mod) => {
+  protected checkModulesResolvable(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
+    extensionsMetadataMap.forEach((metadata, mod) => {
       this.log.trace(mod, metadata);
       const { providersPerMod } = metadata.moduleMetadata;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
@@ -139,15 +139,15 @@ export class AppInitializer extends Core {
     });
   }
 
-  protected async handleExtensions() {
+  protected async handleExtensions(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
     const allExtensions: Type<Extension>[] = [];
-    for (const [, metadata] of this.extensionsMetadataMap) {
+    for (const [, metadata] of extensionsMetadataMap) {
       allExtensions.push(...metadata.moduleMetadata.extensions);
     }
     for (const Ext of allExtensions) {
       this.log.debug(`start init ${Ext.name} extension`);
       const extension = this.injectorPerApp.get(Ext) as Extension;
-      await extension.init(this.opts.prefixPerApp, this.extensionsMetadataMap);
+      await extension.init(this.opts.prefixPerApp, extensionsMetadataMap);
       this.log.debug(`finish init ${Ext.name} extension`);
     }
     this.log.debug(`Total extensions initialized: ${allExtensions.length}`);
