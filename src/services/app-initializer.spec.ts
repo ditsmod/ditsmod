@@ -26,16 +26,8 @@ describe('AppInitializer', () => {
       return super.mergeMetadata(appModule);
     }
 
-    getRawModuleMetadata(modOrObject: Type<any> | ModuleWithOptions<any>, isRoot?: boolean) {
-      return super.getRawModuleMetadata(modOrObject, isRoot);
-    }
-
     collectProvidersPerApp(mod: Type<any> | ModuleWithOptions<any>) {
       return super.collectProvidersPerApp(mod);
-    }
-
-    bootstrapModuleFactory(appModule: ModuleType) {
-      return super.bootstrapModuleFactory(appModule);
     }
 
     prepareProvidersPerApp(appModule: ModuleType) {
