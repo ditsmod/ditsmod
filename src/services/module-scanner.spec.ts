@@ -1,15 +1,13 @@
 import { forwardRef } from '@ts-stack/di';
 import 'reflect-metadata';
 
-import { ModuleMetadata, ModuleWithOptions } from '../decorators/module';
+import { ModuleWithOptions, NormalizedModuleMetadata } from '../decorators/module';
 import { RootModule } from '../decorators/root-module';
 import { CanActivate } from '../decorators/route';
 import { Extension } from '../types/types';
 import { ModuleScanner } from './module-scanner';
 
 describe('ModuleScanner', () => {
-  type NormalizedModuleMetadata = ModuleMetadata & { ngMetadataName: string };
-
   class MockModuleScanner extends ModuleScanner {}
 
   let mock: MockModuleScanner;
@@ -37,6 +35,11 @@ describe('ModuleScanner', () => {
       expect(modMetadata).toEqual(normalizedMetadata);
     });
 
+    it('module without @RootModule decorator', () => {
+      class AppModule {}
+      expect(() => mock.scanRootModule(AppModule)).toThrowError(/does not have the "@RootModule\(\)" decorator/);
+    });
+
     it('RootModule with some metadata', () => {
       class Module1 {}
       class Module2 {}
@@ -47,6 +50,7 @@ describe('ModuleScanner', () => {
       }
       class ProviderPerApp1 {}
       class ProviderPerApp2 {}
+      class ProviderPerApp3 {}
       class ProviderPerReq1 {}
       class ProviderPerReq2 {}
       class Controller1 {}
@@ -60,15 +64,15 @@ describe('ModuleScanner', () => {
       }
 
       @RootModule({
-        providersPerApp: [ProviderPerApp1, { provide: ProviderPerApp2, useClass: ProviderPerApp2 }],
+        providersPerApp: [ProviderPerApp1, ProviderPerApp2, { provide: ProviderPerApp3, useClass: ProviderPerApp3 }],
         providersPerMod: [forwardRef(() => ProviderPerMod1)],
         providersPerReq: [ProviderPerReq1, ProviderPerReq2, forwardRef(() => ProviderPerReq3)],
         controllers: [Controller1],
         extensions: [Extension1],
         imports: [
           Module1,
+          { guards: [Guard1, [Guard1, 'one', 'two']], module: Module2 },
           ModuleWithOptions1.witOptions(),
-          { guards: [Guard1, [Guard1, []]], module: Module2 },
         ],
       })
       class AppModule {}
@@ -78,15 +82,15 @@ describe('ModuleScanner', () => {
 
       const modMetadata = mock.scanRootModule(AppModule);
       const normalizedMetadata: NormalizedModuleMetadata = {
-        providersPerApp: [ProviderPerApp1, ProviderPerApp2, { provide: ProviderPerApp2, useClass: ProviderPerApp2 }],
+        providersPerApp: [ProviderPerApp1, ProviderPerApp2, { provide: ProviderPerApp3, useClass: ProviderPerApp3 }],
         providersPerMod: [ProviderPerMod1],
         providersPerReq: [ProviderPerReq1, ProviderPerReq2, ProviderPerReq3],
         controllers: [Controller1],
         extensions: [Extension1],
         imports: [
           { prefix: '', guards: [], module: Module1 },
-          { prefix: '', guards: [Guard1, [Guard1, []]], module: Module2 },
-          { prefix: '', guards: [], module: ModuleWithOptions1 },
+          { prefix: '', guards: [{ guard: Guard1 }, { guard: Guard1, params: ['one', 'two'] }], module: Module2 },
+          { prefix: '', guards: [], module: { module: ModuleWithOptions1 } },
         ],
         exports: [],
         ngMetadataName: 'RootModule',

@@ -4,7 +4,7 @@ import { Request } from '../services/request';
 import { Response } from '../services/response';
 import { ControllerErrorHandler, Extension } from '../types/types';
 import { DefaultControllerErrorHandler } from '../services/default-controller-error-handler';
-import { ImportWithOptions } from '../types/import-with-options';
+import { ImportWithOptions, ImportWithOptions2 } from '../types/import-with-options';
   
 export const defaultProvidersPerReq: Readonly<Provider[]> = [
   Request,
@@ -67,6 +67,16 @@ export class ModuleMetadata extends StaticModuleMetadata {
    * Imports modules and setting some prefix per each the module.
    */
   imports: ImportWithOptions[] = [];
+  exports: Array<ModuleType | ModuleWithOptions<any> | Provider> = [];
+}
+
+export type NormalizedModuleMetadata = ScanedModuleMetadata & { ngMetadataName: string };
+
+export class ScanedModuleMetadata extends StaticModuleMetadata {
+  /**
+   * Imports modules and setting some prefix per each the module.
+   */
+  imports: ImportWithOptions2[] = [];
   exports: Array<ModuleType | ModuleWithOptions<any> | Provider> = [];
 }
 

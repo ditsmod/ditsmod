@@ -2,9 +2,9 @@ import { reflector, resolveForwardRef, TypeProvider } from '@ts-stack/di';
 
 import { Core } from '../core';
 import { AppMetadata } from '../decorators/app-metadata';
-import { ModuleMetadata, ModuleWithOptions } from '../decorators/module';
+import { ModuleWithOptions, ScanedModuleMetadata } from '../decorators/module';
 import { GuardItem } from '../decorators/route';
-import { ImportWithOptions } from '../types/import-with-options';
+import { ImportWithOptions, ImportWithOptions2 } from '../types/import-with-options';
 import { NormalizedGuard } from '../types/router';
 import { ModuleType } from '../types/types';
 import { flatten } from '../utils/ng-utils';
@@ -34,19 +34,19 @@ export class ModuleScanner extends Core {
     /**
      * Setting initial properties of metadata.
      */
-    const metadata = new ModuleMetadata();
+    const metadata = new ScanedModuleMetadata();
     /**
      * `ngMetadataName` is used only internally and is hidden from the public API.
      */
     (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
 
     type FlattenedImports = TypeProvider | ModuleWithOptions<any> | ImportWithOptions;
-    metadata.imports = flatten<FlattenedImports>(modMetadata.imports).map<ImportWithOptions>((imp) => {
+    metadata.imports = flatten<FlattenedImports>(modMetadata.imports).map<ImportWithOptions2>((imp) => {
       if (isImportWithOptions(imp)) {
         return {
-          prefix: imp.prefix,
+          prefix: imp.prefix || '',
           module: resolveForwardRef(imp.module),
-          guards: this.normalizeGuards(imp.guards) || [],
+          guards: this.normalizeGuards(imp.guards),
         };
       }
       return {
@@ -66,7 +66,7 @@ export class ModuleScanner extends Core {
   }
 
   protected normalizeGuards(guards: GuardItem[]) {
-    return guards.map((item) => {
+    return (guards || []).map((item) => {
       if (Array.isArray(item)) {
         return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
       } else {
