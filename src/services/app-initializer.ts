@@ -25,7 +25,7 @@ export class AppInitializer extends Core {
 
   async init(appModule: ModuleType) {
     this.appModule = appModule;
-    this.reInit();
+    await this.reInit();
     return { opts: this.opts, log: this.log, preRouter: this.preRouter };
   }
 
