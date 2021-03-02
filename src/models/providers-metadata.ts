@@ -1,4 +1,4 @@
-import { ServiceProvider } from '../../types/service-provider';
+import { ServiceProvider } from '../types/service-provider';
 
 export class ProvidersMetadata {
   /**

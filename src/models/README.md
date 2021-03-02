@@ -1,0 +1,1 @@
+- here classes with initialized properties
