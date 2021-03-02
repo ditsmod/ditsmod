@@ -6,3 +6,6 @@ export { ControllerType } from './types/controller-type';
 export { CanActivate } from './types/can-activate';
 export { NormalizedGuard } from './types/normalized-guard';
 export { Extension } from './types/extension';
+export { GuardItem } from './types/guard-item';
+export { ModuleWithDirectives } from './types/module-with-directives';
+export { ModuleWithParams } from './types/module-with-params';
