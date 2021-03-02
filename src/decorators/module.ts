@@ -8,13 +8,13 @@ import { ModuleWithParams } from '../types/module-with-params';
 import { ServiceProvider } from '../types/service-provider';
 
 export interface ModuleDecoratorFactory {
-  (data?: ModuleDecorator): any;
-  new (data?: ModuleDecorator): ModuleDecorator;
+  (data?: ModuleMetadata): any;
+  new (data?: ModuleMetadata): ModuleMetadata;
 }
 
-export const Module = makeDecorator('Module', (data: ModuleDecorator) => data) as ModuleDecoratorFactory;
+export const Module = makeDecorator('Module', (data: ModuleMetadata) => data) as ModuleDecoratorFactory;
 
-export interface ModuleDecorator extends Partial<ProvidersMetadata> {
+export interface ModuleMetadata extends Partial<ProvidersMetadata> {
   /**
    * List of modules or `ModuleWithOptions` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
