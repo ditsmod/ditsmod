@@ -1,8 +1,9 @@
 import 'reflect-metadata';
 import { reflector } from '@ts-stack/di';
 
-import { Module, ModuleMetadata } from '../decorators/module';
+import { Module } from '../decorators/module';
 import { isModule } from './type-guards';
+import { ModuleMetadata } from '../types/module-metadata';
 
 describe('type guards', () => {
   describe('isModule()', () => {

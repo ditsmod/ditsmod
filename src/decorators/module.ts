@@ -1,11 +1,6 @@
-import { makeDecorator, Type } from '@ts-stack/di';
+import { makeDecorator } from '@ts-stack/di';
 
-import { ProvidersMetadata } from '../models/providers-metadata';
-import { ControllerType } from '../types/controller-type';
-import { Extension } from '../types/extension';
-import { ModuleType } from '../types/module-type';
-import { ModuleWithParams } from '../types/module-with-params';
-import { ServiceProvider } from '../types/service-provider';
+import { ModuleMetadata } from '../types/module-metadata';
 
 export interface ModuleDecoratorFactory {
   (data?: ModuleMetadata): any;
@@ -13,24 +8,3 @@ export interface ModuleDecoratorFactory {
 }
 
 export const Module = makeDecorator('Module', (data: ModuleMetadata) => data) as ModuleDecoratorFactory;
-
-export interface ModuleMetadata extends Partial<ProvidersMetadata> {
-  /**
-   * List of modules or `ModuleWithOptions` imported by this module.
-   * Also you can imports modules and set some prefix per each the module.
-   */
-  imports?: Array<ModuleType | ModuleWithParams<any>>;
-  /**
-   * List of modules, `ModuleWithOptions` or providers exported by this
-   * module.
-   */
-  exports?: Array<ModuleType | ModuleWithParams<any> | ServiceProvider>;
-  /**
-   * The application controllers.
-   */
-  controllers?: ControllerType[];
-  /**
-   * The application extensions.
-   */
-  extensions?: Type<Extension>[];
-}

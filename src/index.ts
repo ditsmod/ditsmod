@@ -9,3 +9,4 @@ export { Extension } from './types/extension';
 export { GuardItem } from './types/guard-item';
 export { ModuleWithParams } from './types/module-with-params';
 export { isModule } from './utils/type-guards';
+export { ModuleMetadata } from './types/module-metadata';
