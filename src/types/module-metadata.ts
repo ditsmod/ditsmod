@@ -23,5 +23,5 @@ export interface ModuleMetadata extends Partial<ProvidersMetadata> {
   /**
    * The application extensions.
    */
-  extensions?: ExtensionType;
+  extensions?: ExtensionType[];
 }
