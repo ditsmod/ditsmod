@@ -1,9 +1,10 @@
-import { Type } from '@ts-stack/di';
-
-import { AnyObj } from './any-obj';
 import { ProvidersMetadata } from '../models/providers-metadata';
-import { ModuleWithDirectives } from './module-with-directives';
+import { ModuleType } from './module-type';
+import { GuardItem } from './guard-item';
 
-export interface ModuleWithParams<T extends AnyObj> extends Partial<ProvidersMetadata>, ModuleWithDirectives {
-  module: Type<T>;
+export interface ModuleWithParams<T extends ModuleType> extends Partial<ProvidersMetadata> {
+  module: T;
+  prefix?: string;
+  guards?: GuardItem[];
+  [key: string]: unknown;
 }
