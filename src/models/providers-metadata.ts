@@ -10,7 +10,7 @@ export class ProvidersMetadata {
    */
   providersPerMod: ServiceProvider[] = [];
   /**
-   * Providers per request.
+   * Providers per HTTP request.
    */
   providersPerReq: ServiceProvider[] = [];
 }
