@@ -1,4 +1,4 @@
-import { reflector, resolveForwardRef } from '@ts-stack/di';
+import { resolveForwardRef } from '@ts-stack/di';
 
 import { GuardItem } from '../types/guard-item';
 import { ModuleType } from '../types/module-type';
@@ -7,26 +7,30 @@ import { NormalizedGuard } from '../types/normalized-guard';
 import { checkModuleMetadata } from '../utils/check-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { getModuleMetadata } from '../utils/get-module-metadata';
-import { isModuleWithParams, isRootModule } from '../utils/type-guards';
+import { isModuleWithParams } from '../utils/type-guards';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { NormalizedImport } from '../types/normalized-import';
+import { getModule } from '../utils/get-module';
 
 export class ModuleScanner {
   protected map = new Map<ModuleType, NormalizedModuleMetadata>();
 
-  scanRootModule(appModule: ModuleType) {
-    const modMetadata = reflector.annotations(appModule).find(isRootModule);
-    if (!modMetadata) {
-      throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
-    }
+  scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
+    const metadata = this.normalizeMetadata(modOrObj);
+    this.map.set(getModule(modOrObj), metadata);
 
-    return this.normalizeMetadata(appModule);
+    metadata.imports.forEach(imp => {
+      this.scanModule(imp.module);
+    });
   }
 
   /**
-   * Collects and normalizes module metadata.
+   * Freezes original module metadata and returns normalized module metadata.
    */
-  protected normalizeMetadata(mod: ModuleType | ModuleWithParams<any>) {
+  normalizeMetadata(mod: ModuleType | ModuleWithParams<any>) {
+    if (!Object.isFrozen(mod)) {
+      Object.freeze(mod);
+    }
     const modMetadata = getModuleMetadata(mod);
     const modName = getModuleName(mod);
     checkModuleMetadata(modMetadata, modName);
@@ -38,9 +42,9 @@ export class ModuleScanner {
     /**
      * `ngMetadataName` is used only internally and is hidden from the public API.
      */
-    (metadata as any).ngMetadataName = (modMetadata as any).ngMetadataName;
+    metadata.ngMetadataName = (modMetadata as any).ngMetadataName;
 
-    metadata.imports = modMetadata.imports.map<NormalizedImport<any>>((imp) => {
+    metadata.imports = (modMetadata.imports || []).map<NormalizedImport<any>>((imp) => {
       if (isModuleWithParams(imp)) {
         return Object.assign(imp, {
           prefix: imp.prefix || '',
@@ -61,8 +65,7 @@ export class ModuleScanner {
     metadata.controllers = this.normalizeArray(modMetadata.controllers);
     metadata.extensions = this.normalizeArray(modMetadata.extensions);
 
-    const module = isModuleWithParams(mod) ? mod.module : mod;
-    return this.map.set(module, metadata);
+    return metadata;
   }
 
   protected normalizeArray(arr: any[]) {

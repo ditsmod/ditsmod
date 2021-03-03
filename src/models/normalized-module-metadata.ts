@@ -11,4 +11,5 @@ export class NormalizedModuleMetadata extends ProvidersMetadata {
   controllers: ControllerType[] = [];
   exports: Array<ModuleType | ModuleWithParams<any> | ServiceProvider> = [];
   extensions: ExtensionType[] = [];
+  ngMetadataName: string;
 }

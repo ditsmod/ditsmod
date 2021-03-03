@@ -4,7 +4,7 @@ import { NormalizedGuard } from './normalized-guard';
 
 export interface NormalizedImport<T extends ModuleType<AnyObj> = ModuleType<AnyObj>> {
   prefix: string;
-  module: ModuleType<T>;
+  module: T;
   guards: NormalizedGuard[];
   [key: string]: any;
 }
