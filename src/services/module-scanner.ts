@@ -18,8 +18,8 @@ export class ModuleScanner {
   scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
     const metadata = this.normalizeMetadata(modOrObj);
 
-    [...metadata.imports1, ...metadata.imports2, ...metadata.exports1, ...metadata.exports2].forEach((imp) => {
-      this.scanModule(imp);
+    [...metadata.imports1, ...metadata.imports2, ...metadata.exports1, ...metadata.exports2].forEach((impOrExp) => {
+      this.scanModule(impOrExp);
     });
 
     const group: (keyof NormalizedModuleMetadata)[] = ['imports1', 'imports2', 'exports1', 'exports2', 'exports3'];
@@ -52,6 +52,14 @@ export class ModuleScanner {
      */
     metadata.ngMetadataName = (modMetadata as any).ngMetadataName;
 
+    this.normalizeImports(modMetadata, metadata);
+    this.normalizeExports(modMetadata, metadata);
+    this.removeEmptyProps(modMetadata, metadata);
+
+    return metadata;
+  }
+
+  protected normalizeImports(modMetadata: ModuleMetadata, metadata: NormalizedModuleMetadata) {
     modMetadata.imports?.forEach((imp) => {
       if (isModuleWithParams(imp)) {
         const normImp: ModuleWithParams = Object.assign(imp, {
@@ -64,7 +72,9 @@ export class ModuleScanner {
         metadata.imports1.push(resolveForwardRef(imp));
       }
     });
+  }
 
+  protected normalizeExports(modMetadata: ModuleMetadata, metadata: NormalizedModuleMetadata) {
     modMetadata.exports?.forEach((exp) => {
       if (isModuleWithParams(exp)) {
         metadata.exports2.push(exp);
@@ -74,8 +84,10 @@ export class ModuleScanner {
         metadata.exports1.push(exp);
       }
     });
+  }
 
-    const group2: Exclude<keyof ModuleMetadata, 'imports' | 'exports'>[] = [
+  protected removeEmptyProps(modMetadata: ModuleMetadata, metadata: NormalizedModuleMetadata) {
+    const group: Exclude<keyof ModuleMetadata, 'imports' | 'exports'>[] = [
       'controllers',
       'providersPerApp',
       'providersPerMod',
@@ -83,15 +95,13 @@ export class ModuleScanner {
       'extensions',
     ];
 
-    group2.forEach((prop) => {
+    group.forEach((prop) => {
       if (modMetadata[prop]?.length) {
         metadata[prop] = this.normalizeArray(modMetadata[prop]);
       } else {
         delete metadata[prop];
       }
     });
-
-    return metadata;
   }
 
   protected normalizeArray(arr: any[]) {
