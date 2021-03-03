@@ -2,12 +2,23 @@ import 'reflect-metadata';
 import { Injectable, reflector } from '@ts-stack/di';
 
 import { Module } from '../decorators/module';
-import { isController, isModule, isModuleWithParams, isRootModule, isRoute } from './type-guards';
+import {
+  isController,
+  isExtensionProvider,
+  isModule,
+  isModuleWithParams,
+  isNormalizedProvider,
+  isProvider,
+  isRootModule,
+  isRoute,
+} from './type-guards';
 import { ModuleMetadata } from '../types/module-metadata';
 import { RootModule } from '../decorators/root-module';
-import { Controller } from '../decorators/controller';
+import { Controller, ControllerMetadata } from '../decorators/controller';
 import { Route, RouteDecoratorMetadata } from '../decorators/route';
 import { CanActivate } from '../types/can-activate';
+import { ServiceProvider } from '../types/service-provider';
+import { Extension } from '../types/extension';
 
 describe('type guards', () => {
   describe('isModule()', () => {
@@ -25,7 +36,7 @@ describe('type guards', () => {
     });
   });
 
-  describe('RootModule()', () => {
+  describe('isRootModule()', () => {
     it('class with decorator', () => {
       @RootModule()
       class Module1 {}
@@ -40,7 +51,7 @@ describe('type guards', () => {
     });
   });
 
-  describe('Controller()', () => {
+  describe('isController()', () => {
     it('class with decorator', () => {
       @Controller()
       class Module1 {}
@@ -91,13 +102,62 @@ describe('type guards', () => {
         static withParams() {
           return {
             module: Module1,
-            other: 123
+            other: 123,
           };
         }
       }
 
       const mod = Module1.withParams();
       expect(isModuleWithParams(mod)).toBe(true);
+    });
+  });
+
+  describe('isProvider()', () => {
+    it('should filtered all types of providers', () => {
+      @Module()
+      class Module1 {}
+      @RootModule()
+      class Module2 {}
+
+      expect(isProvider(class {})).toBe(true);
+      expect(isProvider({ provide: '', useValue: '' })).toBe(true);
+      expect(isProvider(Module1)).toBe(false);
+      expect(isProvider(Module2)).toBe(false);
+      expect(isProvider(5 as any)).toBe(false);
+    });
+  });
+
+  describe('isNormalizedProvider()', () => {
+    it('should recognize all types of providers', () => {
+      const providers: ServiceProvider[] = [
+        { provide: '', useValue: '' },
+        { provide: '', useClass: class {} },
+        { provide: '', useExisting: class {} },
+        { provide: '', useFactory: class {} },
+      ];
+      expect(isNormalizedProvider(providers)).toBe(true);
+    });
+
+    it('should fail class types of providers', () => {
+      const providers: ServiceProvider[] = [class {}];
+      expect(isNormalizedProvider(providers)).toBe(false);
+    });
+
+    it('should fail check number', () => {
+      const providers: ServiceProvider[] = [5 as any];
+      expect(isNormalizedProvider(providers)).toBe(false);
+    });
+  });
+
+  describe('isExtensionProvider()', () => {
+    class Extension1 {}
+    class Extension2 implements Extension {
+      init() {}
+    }
+
+    it('should recognize the extension provider', () => {
+      expect(isExtensionProvider(Extension1)).toBe(false);
+      expect(isExtensionProvider(Extension2)).toBe(true);
     });
   });
 });
