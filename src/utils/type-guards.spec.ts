@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { Injectable, reflector } from '@ts-stack/di';
 
 import { Module } from '../decorators/module';
-import { isController, isModule, isRootModule, isRoute } from './type-guards';
+import { isController, isModule, isModuleWithParams, isRootModule, isRoute } from './type-guards';
 import { ModuleMetadata } from '../types/module-metadata';
 import { RootModule } from '../decorators/root-module';
 import { Controller } from '../decorators/controller';
@@ -74,6 +74,30 @@ describe('type guards', () => {
     it('should recognize the route', () => {
       const propMetadata = reflector.propMetadata(ClassWithDecorators) as RouteDecoratorMetadata;
       expect(isRoute(propMetadata.some[0])).toBe(true);
+    });
+  });
+
+  describe('isModuleWithParams', () => {
+    it('module without params', () => {
+      @Module()
+      class Module1 {}
+
+      expect(isModuleWithParams(Module1)).toBe(false);
+    });
+
+    it('module with params', () => {
+      @Module()
+      class Module1 {
+        static withParams() {
+          return {
+            module: Module1,
+            other: 123
+          };
+        }
+      }
+
+      const mod = Module1.withParams();
+      expect(isModuleWithParams(mod)).toBe(true);
     });
   });
 });
