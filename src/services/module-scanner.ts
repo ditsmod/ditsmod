@@ -9,7 +9,6 @@ import { getModuleName } from '../utils/get-module-name';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { isModuleWithParams, isProvider } from '../utils/type-guards';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { NormalizedImport } from '../types/normalized-import';
 import { getModule } from '../utils/get-module';
 import { ModuleMetadata } from '../types/module-metadata';
 
@@ -18,17 +17,25 @@ export class ModuleScanner {
 
   scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
     const metadata = this.normalizeMetadata(modOrObj);
-    this.map.set(getModule(modOrObj), metadata);
 
-    metadata.imports?.forEach((imp) => {
-      this.scanModule(imp.module);
+    [...metadata.imports1, ...metadata.imports2, ...metadata.exports1, ...metadata.exports2].forEach((imp) => {
+      this.scanModule(imp);
     });
+
+    const group: (keyof NormalizedModuleMetadata)[] = ['imports1', 'imports2', 'exports1', 'exports2', 'exports3'];
+    group.forEach((prop) => {
+      if (!metadata[prop]?.length) {
+        delete metadata[prop];
+      }
+    });
+
+    this.map.set(getModule(modOrObj), metadata);
   }
 
   /**
    * Freezes original module metadata and returns normalized module metadata.
    */
-  protected normalizeMetadata(mod: ModuleType | ModuleWithParams<any>) {
+  protected normalizeMetadata(mod: ModuleType | ModuleWithParams) {
     if (!Object.isFrozen(mod)) {
       Object.freeze(mod);
     }
@@ -45,44 +52,30 @@ export class ModuleScanner {
      */
     metadata.ngMetadataName = (modMetadata as any).ngMetadataName;
 
-    metadata.imports = (modMetadata.imports || []).map<NormalizedImport<any>>((imp) => {
+    modMetadata.imports?.forEach((imp) => {
       if (isModuleWithParams(imp)) {
-        return Object.assign(imp, {
+        const normImp: ModuleWithParams = Object.assign(imp, {
           prefix: imp.prefix || '',
           module: resolveForwardRef(imp.module),
           guards: this.normalizeGuards(imp.guards),
         });
+        metadata.imports2.push(normImp);
+      } else {
+        metadata.imports1.push(resolveForwardRef(imp));
       }
-      return {
-        prefix: '',
-        module: resolveForwardRef(imp),
-        guards: [],
-      };
     });
 
     modMetadata.exports?.forEach((exp) => {
       if (isModuleWithParams(exp)) {
-        metadata.modulesWithParamsExports.push(exp);
+        metadata.exports2.push(exp);
       } else if (isProvider(exp)) {
-        metadata.providersExports.push(exp);
+        metadata.exports3.push(exp);
       } else {
-        metadata.modulesExports.push(exp);
+        metadata.exports1.push(exp);
       }
     });
 
-    const group1: (keyof NormalizedModuleMetadata)[] = [
-      'imports',
-      'modulesWithParamsExports',
-      'providersExports',
-      'modulesExports',
-    ];
-    group1.forEach((prop) => {
-      if (!metadata[prop]?.length) {
-        delete metadata[prop];
-      }
-    });
-
-    const group2: Exclude<keyof ModuleMetadata, 'exports'>[] = [
+    const group2: Exclude<keyof ModuleMetadata, 'imports' | 'exports'>[] = [
       'controllers',
       'providersPerApp',
       'providersPerMod',

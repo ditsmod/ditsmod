@@ -73,7 +73,7 @@ describe('ModuleScanner', () => {
 
     mock.scanModule(AppModule);
     const expectedMetadata1: NormalizedModuleMetadata = {
-      imports: [{ prefix: '', module: Module1, guards: []}],
+      imports1: [Module1],
       ngMetadataName: 'RootModule'
     };
     const expectedMetadata2: NormalizedModuleMetadata = {
