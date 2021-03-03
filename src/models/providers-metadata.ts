@@ -4,13 +4,13 @@ export class ProvidersMetadata {
   /**
    * Providers per the application.
    */
-  providersPerApp: ServiceProvider[] = [];
+  providersPerApp?: ServiceProvider[] = [];
   /**
    * Providers per module.
    */
-  providersPerMod: ServiceProvider[] = [];
+  providersPerMod?: ServiceProvider[] = [];
   /**
    * Providers per HTTP request.
    */
-  providersPerReq: ServiceProvider[] = [];
+  providersPerReq?: ServiceProvider[] = [];
 }

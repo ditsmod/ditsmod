@@ -14,7 +14,7 @@ import {
 } from './type-guards';
 import { ModuleMetadata } from '../types/module-metadata';
 import { RootModule } from '../decorators/root-module';
-import { Controller, ControllerMetadata } from '../decorators/controller';
+import { Controller } from '../decorators/controller';
 import { Route, RouteDecoratorMetadata } from '../decorators/route';
 import { CanActivate } from '../types/can-activate';
 import { ServiceProvider } from '../types/service-provider';

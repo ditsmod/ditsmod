@@ -7,9 +7,11 @@ import { ServiceProvider } from '../types/service-provider';
 import { ProvidersMetadata } from './providers-metadata';
 
 export class NormalizedModuleMetadata extends ProvidersMetadata {
-  imports: NormalizedImport[] = [];
-  controllers: ControllerType[] = [];
-  exports: Array<ModuleType | ModuleWithParams<any> | ServiceProvider> = [];
-  extensions: ExtensionType[] = [];
+  imports?: NormalizedImport[] = [];
+  controllers?: ControllerType[] = [];
+  extensions?: ExtensionType[] = [];
   ngMetadataName: string;
+  providersExports?: ServiceProvider[] = [];
+  modulesExports?: ModuleType[] = [];
+  modulesWithParamsExports?: ModuleWithParams<any>[] = [];
 }

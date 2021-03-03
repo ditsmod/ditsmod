@@ -24,13 +24,6 @@ describe('ModuleScanner', () => {
 
     mock.scanModule(AppModule);
     const expectedMetadata: NormalizedModuleMetadata = {
-      imports: [],
-      providersPerApp: [],
-      providersPerMod: [],
-      providersPerReq: [],
-      controllers: [],
-      exports: [],
-      extensions: [],
       ngMetadataName: 'RootModule'
     };
 
@@ -54,13 +47,6 @@ describe('ModuleScanner', () => {
 
     mock.scanModule(AppModule);
     const expectedMetadata: NormalizedModuleMetadata = {
-      imports: [],
-      providersPerApp: [],
-      providersPerMod: [],
-      providersPerReq: [],
-      controllers: [],
-      exports: [],
-      extensions: [],
       ngMetadataName: 'RootModule'
     };
 
@@ -88,22 +74,9 @@ describe('ModuleScanner', () => {
     mock.scanModule(AppModule);
     const expectedMetadata1: NormalizedModuleMetadata = {
       imports: [{ prefix: '', module: Module1, guards: []}],
-      providersPerApp: [],
-      providersPerMod: [],
-      providersPerReq: [],
-      controllers: [],
-      exports: [],
-      extensions: [],
       ngMetadataName: 'RootModule'
     };
     const expectedMetadata2: NormalizedModuleMetadata = {
-      imports: [],
-      providersPerApp: [],
-      providersPerMod: [],
-      providersPerReq: [],
-      controllers: [],
-      exports: [],
-      extensions: [],
       ngMetadataName: 'Module'
     };
 

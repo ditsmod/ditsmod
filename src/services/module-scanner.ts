@@ -7,10 +7,11 @@ import { NormalizedGuard } from '../types/normalized-guard';
 import { checkModuleMetadata } from '../utils/check-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { getModuleMetadata } from '../utils/get-module-metadata';
-import { isModuleWithParams } from '../utils/type-guards';
+import { isModuleWithParams, isProvider } from '../utils/type-guards';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { NormalizedImport } from '../types/normalized-import';
 import { getModule } from '../utils/get-module';
+import { ModuleMetadata } from '../types/module-metadata';
 
 export class ModuleScanner {
   protected map = new Map<ModuleType, NormalizedModuleMetadata>();
@@ -19,7 +20,7 @@ export class ModuleScanner {
     const metadata = this.normalizeMetadata(modOrObj);
     this.map.set(getModule(modOrObj), metadata);
 
-    metadata.imports.forEach(imp => {
+    metadata.imports?.forEach((imp) => {
       this.scanModule(imp.module);
     });
   }
@@ -27,7 +28,7 @@ export class ModuleScanner {
   /**
    * Freezes original module metadata and returns normalized module metadata.
    */
-  normalizeMetadata(mod: ModuleType | ModuleWithParams<any>) {
+  protected normalizeMetadata(mod: ModuleType | ModuleWithParams<any>) {
     if (!Object.isFrozen(mod)) {
       Object.freeze(mod);
     }
@@ -58,12 +59,44 @@ export class ModuleScanner {
         guards: [],
       };
     });
-    metadata.exports = this.normalizeArray(modMetadata.exports);
-    metadata.providersPerApp = this.normalizeArray(modMetadata.providersPerApp);
-    metadata.providersPerMod = this.normalizeArray(modMetadata.providersPerMod);
-    metadata.providersPerReq = this.normalizeArray(modMetadata.providersPerReq);
-    metadata.controllers = this.normalizeArray(modMetadata.controllers);
-    metadata.extensions = this.normalizeArray(modMetadata.extensions);
+
+    modMetadata.exports?.forEach((exp) => {
+      if (isModuleWithParams(exp)) {
+        metadata.modulesWithParamsExports.push(exp);
+      } else if (isProvider(exp)) {
+        metadata.providersExports.push(exp);
+      } else {
+        metadata.modulesExports.push(exp);
+      }
+    });
+
+    const group1: (keyof NormalizedModuleMetadata)[] = [
+      'imports',
+      'modulesWithParamsExports',
+      'providersExports',
+      'modulesExports',
+    ];
+    group1.forEach((prop) => {
+      if (!metadata[prop]?.length) {
+        delete metadata[prop];
+      }
+    });
+
+    const group2: Exclude<keyof ModuleMetadata, 'exports'>[] = [
+      'controllers',
+      'providersPerApp',
+      'providersPerMod',
+      'providersPerReq',
+      'extensions',
+    ];
+
+    group2.forEach((prop) => {
+      if (modMetadata[prop]?.length) {
+        metadata[prop] = this.normalizeArray(modMetadata[prop]);
+      } else {
+        delete metadata[prop];
+      }
+    });
 
     return metadata;
   }
