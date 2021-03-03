@@ -11,7 +11,7 @@ import { mergeArrays } from './merge-arrays-options';
 import { isModule, isModuleWithParams, isRootModule } from './type-guards';
 
 export function getModuleMetadata<T extends ModuleMetadata>(
-  modOrObject: ModuleType | ModuleWithParams<any>,
+  modOrObject: ModuleType | ModuleWithParams,
   isRoot?: boolean
 ): ModuleMetadata {
   const typeGuard = isRoot ? isRootModule : (m: ModuleMetadata) => isModule(m) || isRootModule(m);

@@ -35,8 +35,8 @@ export function isRoute(propMeatada: AnyObj): propMeatada is RouteMetadata {
   return (propMeatada as any)?.ngMetadataName == 'Route';
 }
 
-export function isModuleWithParams(mod: ServiceProvider | ModuleWithParams<any>): mod is ModuleWithParams<any> {
-  return (mod as ModuleWithParams<any>)?.module !== undefined;
+export function isModuleWithParams(mod: ServiceProvider | ModuleWithParams): mod is ModuleWithParams {
+  return (mod as ModuleWithParams)?.module !== undefined;
 }
 
 export function isExtensionProvider(provider: Provider): provider is ExtensionType {
