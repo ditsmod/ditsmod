@@ -1,6 +1,4 @@
 export { ServiceProvider } from './types/service-provider';
-export { ModuleType } from './types/module-type';
-export { ControllerType } from './types/controller-type';
 export { CanActivate } from './types/can-activate';
 export { GuardItem } from './types/guard-item';
 export { ModuleWithParams } from './types/module-with-params';
@@ -10,6 +8,8 @@ export { Controller } from './decorators/controller';
 export { Route } from './decorators/route';
 
 // For extensions developers only
+export { ControllerType } from './types/controller-type';
+export { ModuleType } from './types/module-type';
 export { AnyObj } from './types/any-obj';
 export { NormalizedGuard } from './types/normalized-guard';
 export { ProvidersMetadata } from './models/providers-metadata';
