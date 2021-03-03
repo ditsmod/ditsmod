@@ -1,4 +1,6 @@
-import { Provider, makeDecorator } from '@ts-stack/di';
+import { makeDecorator } from '@ts-stack/di';
+
+import { ServiceProvider } from '../types/service-provider';
 
 export interface ControllerDecoratorFactory {
   (data?: ControllerMetadata): any;
@@ -9,7 +11,7 @@ export interface ControllerMetadata {
   /**
    * Providers per HTTP request.
    */
-  providersPerReq?: Provider[];
+  providersPerReq?: ServiceProvider[];
 }
 
 export const Controller = makeDecorator('Controller', (data: any) => data) as ControllerDecoratorFactory;
