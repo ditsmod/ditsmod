@@ -1,4 +1,4 @@
-import { Injectable } from '@ts-stack/di';
+import { forwardRef, Injectable } from '@ts-stack/di';
 import 'reflect-metadata';
 
 import { Module } from '../decorators/module';
@@ -23,7 +23,7 @@ describe('getModuleMetadata', () => {
     expect(metadata).toEqual({ controllers: [] });
   });
 
-  it('decorator with params', () => {
+  it('module with params', () => {
     @Injectable()
     class Provider1 {}
 
@@ -38,6 +38,30 @@ describe('getModuleMetadata', () => {
     }
 
     const metadata = getModuleMetadata(Module1.withParams([Provider1]));
+    expect(metadata).toEqual({
+      ngMetadataName: 'Module',
+      providersPerApp: [],
+      providersPerMod: [Provider1],
+      providersPerReq: [],
+    });
+  });
+
+  it('module with params in forwardRef() function', () => {
+    @Injectable()
+    class Provider1 {}
+
+    @Module()
+    class Module1 {
+      static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module1> {
+        return {
+          module: Module1,
+          providersPerMod,
+        };
+      }
+    }
+
+    const fn = () => Module1.withParams([Provider1]);
+    const metadata = getModuleMetadata(forwardRef(fn));
     expect(metadata).toEqual({
       ngMetadataName: 'Module',
       providersPerApp: [],

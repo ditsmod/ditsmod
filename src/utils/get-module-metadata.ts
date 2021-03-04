@@ -8,13 +8,17 @@ import { ModuleWithParams } from '../types/module-with-params';
 import { checkModuleMetadata } from './check-module-metadata';
 import { getModuleName } from './get-module-name';
 import { mergeArrays } from './merge-arrays-options';
-import { isModule, isModuleWithParams, isRootModule } from './type-guards';
+import { isForwardRef, isModule, isModuleWithParams, isRootModule } from './type-guards';
 
 export function getModuleMetadata<T extends ModuleMetadata>(
   modOrObj: ModuleType | ModuleWithParams,
   isRoot?: boolean
 ): ModuleMetadata {
   const typeGuard = isRoot ? isRootModule : (m: ModuleMetadata) => isModule(m) || isRootModule(m);
+
+  if (isForwardRef(modOrObj)) {
+    modOrObj = modOrObj();
+  }
 
   if (isModuleWithParams(modOrObj)) {
     const modWitParams = modOrObj;
@@ -23,8 +27,9 @@ export function getModuleMetadata<T extends ModuleMetadata>(
     checkModuleMetadata(modMetadata, modName, isRoot);
 
     if (modMetadata.id) {
-      const msg = `${modName} must not have an "id" in the metadata of the decorator @Module. `
-      + 'Instead, you can specify the "id" in the object that contains the module parameters.';
+      const msg =
+        `${modName} must not have an "id" in the metadata of the decorator @Module. ` +
+        'Instead, you can specify the "id" in the object that contains the module parameters.';
       throw new Error(msg);
     }
     const Metadata = isRoot ? RootModule : Module;
