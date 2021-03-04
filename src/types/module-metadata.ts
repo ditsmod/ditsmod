@@ -19,7 +19,7 @@ export interface ModuleMetadata extends Partial<ProvidersMetadata> {
    * List of modules, `ModuleWithOptions` or providers exported by this
    * module.
    */
-  exports?: Array<ModuleType | ModuleWithParams | ServiceProvider>;
+  exports?: Array<ModuleType | ServiceProvider>;
   /**
    * The application controllers.
    */
