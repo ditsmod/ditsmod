@@ -1,7 +1,9 @@
+import { Injectable } from '@ts-stack/di';
 import 'reflect-metadata';
 
 import { Module } from '../decorators/module';
 import { ModuleWithParams } from '../types/module-with-params';
+import { ServiceProvider } from '../types/service-provider';
 import { getModuleMetadata } from './get-module-metadata';
 
 describe('getModuleMetadata', () => {
@@ -22,18 +24,24 @@ describe('getModuleMetadata', () => {
   });
 
   it('decorator with params', () => {
+    @Injectable()
+    class Provider1 {}
+
     @Module()
     class Module1 {
-      static withParams() {
-        return { module: Module1, providersPerApp: [] } as ModuleWithParams<any>;
+      static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module1> {
+        return {
+          module: Module1,
+          providersPerMod,
+        };
       }
     }
 
-    const metadata = getModuleMetadata(Module1.withParams());
+    const metadata = getModuleMetadata(Module1.withParams([Provider1]));
     expect(metadata).toEqual({
       ngMetadataName: 'Module',
       providersPerApp: [],
-      providersPerMod: [],
+      providersPerMod: [Provider1],
       providersPerReq: [],
     });
   });

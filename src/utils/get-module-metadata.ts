@@ -11,13 +11,13 @@ import { mergeArrays } from './merge-arrays-options';
 import { isModule, isModuleWithParams, isRootModule } from './type-guards';
 
 export function getModuleMetadata<T extends ModuleMetadata>(
-  modOrObject: ModuleType | ModuleWithParams,
+  modOrObj: ModuleType | ModuleWithParams,
   isRoot?: boolean
 ): ModuleMetadata {
   const typeGuard = isRoot ? isRootModule : (m: ModuleMetadata) => isModule(m) || isRootModule(m);
 
-  if (isModuleWithParams(modOrObject)) {
-    const modWitParams = modOrObject;
+  if (isModuleWithParams(modOrObj)) {
+    const modWitParams = modOrObj;
     const modMetadata: T = reflector.annotations(modWitParams.module).find(typeGuard) as T;
     const modName = getModuleName(modWitParams.module);
     checkModuleMetadata(modMetadata, modName, isRoot);
@@ -29,6 +29,6 @@ export function getModuleMetadata<T extends ModuleMetadata>(
     metadata.providersPerReq = mergeArrays(modMetadata.providersPerReq, modWitParams.providersPerReq);
     return metadata;
   } else {
-    return reflector.annotations(modOrObject).find(typeGuard);
+    return reflector.annotations(modOrObj).find(typeGuard);
   }
 }
