@@ -2,6 +2,8 @@ import {
   ClassProvider,
   ExistingProvider,
   FactoryProvider,
+  forwardRef,
+  ForwardRefFn,
   Provider,
   reflector,
   Type,
@@ -18,6 +20,10 @@ import { ModuleWithParams } from '../types/module-with-params';
 import { NormalizedProvider } from '../types/normalized-provider';
 import { RootModuleMetadata } from '../types/root-module-metadata';
 import { ServiceProvider } from '../types/service-provider';
+
+export function isForwardRef(type: any): type is ForwardRefFn {
+  return (typeof type == 'function' && type.hasOwnProperty('__forward_ref__') && type.__forward_ref__ === forwardRef);
+}
 
 export function isModule(moduleMetadata: AnyObj): moduleMetadata is ModuleMetadata {
   return (moduleMetadata as any)?.ngMetadataName == 'Module';

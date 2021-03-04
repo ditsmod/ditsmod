@@ -1,10 +1,11 @@
 import 'reflect-metadata';
-import { Injectable, reflector } from '@ts-stack/di';
+import { forwardRef, Injectable, reflector } from '@ts-stack/di';
 
 import { Module } from '../decorators/module';
 import {
   isController,
   isExtensionProvider,
+  isForwardRef,
   isModule,
   isModuleWithParams,
   isNormalizedProvider,
@@ -148,7 +149,6 @@ describe('type guards', () => {
       expect(isNormalizedProvider(providers)).toBe(false);
     });
   });
-
   describe('isExtensionProvider()', () => {
     class Extension1 {}
     class Extension2 implements Extension {
@@ -158,6 +158,19 @@ describe('type guards', () => {
     it('should recognize the extension provider', () => {
       expect(isExtensionProvider(Extension1)).toBe(false);
       expect(isExtensionProvider(Extension2)).toBe(true);
+    });
+  });
+
+  describe('isForwardRef()', () => {
+    it('true', () => {
+      const fn = forwardRef(() => 'one');
+      expect(isForwardRef(fn)).toBe(true);
+    });
+
+    it('false', () => {
+      function forwardRef(...args: any[]) {}
+      const fn = forwardRef(() => 'one');
+      expect(isForwardRef(fn)).toBe(false);
     });
   });
 });
