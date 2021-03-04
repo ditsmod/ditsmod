@@ -7,6 +7,10 @@ import { ExtensionType } from './extension-type';
 
 export interface ModuleMetadata extends Partial<ProvidersMetadata> {
   /**
+   * The module ID.
+   */
+  id?: string | number;
+  /**
    * List of modules or `ModuleWithOptions` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
    */

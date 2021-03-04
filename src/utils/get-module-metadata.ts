@@ -22,8 +22,14 @@ export function getModuleMetadata<T extends ModuleMetadata>(
     const modName = getModuleName(modWitParams.module);
     checkModuleMetadata(modMetadata, modName, isRoot);
 
+    if (modMetadata.id) {
+      const msg = `${modName} must not have an "id" in the metadata of the decorator @Module. `
+      + 'Instead, you can specify the "id" in the object that contains the module parameters.';
+      throw new Error(msg);
+    }
     const Metadata = isRoot ? RootModule : Module;
     const metadata = new Metadata(modMetadata);
+    metadata.id = modWitParams.id;
     metadata.providersPerApp = mergeArrays(modMetadata.providersPerApp, modWitParams.providersPerApp);
     metadata.providersPerMod = mergeArrays(modMetadata.providersPerMod, modWitParams.providersPerMod);
     metadata.providersPerReq = mergeArrays(modMetadata.providersPerReq, modWitParams.providersPerReq);

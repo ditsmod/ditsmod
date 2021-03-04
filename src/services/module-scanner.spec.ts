@@ -7,10 +7,12 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleType } from '../types/module-type';
 import { ModuleScanner } from './module-scanner';
 import { Module } from '../decorators/module';
+import { ModuleWithParams } from '../types/module-with-params';
+import { ServiceProvider } from '../types/service-provider';
 
 describe('ModuleScanner', () => {
   class MockModuleScanner extends ModuleScanner {
-    map = new Map<ModuleType, NormalizedModuleMetadata>();
+    map = new Map<string | number | ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
   }
 
   let mock: MockModuleScanner;
@@ -56,7 +58,7 @@ describe('ModuleScanner', () => {
   });
 
   it('root module with imported some other modules', () => {
-    @Module()
+    @Module({ id: 1 })
     class Module1 {}
 
     @Injectable()
@@ -69,6 +71,21 @@ describe('ModuleScanner', () => {
     })
     class Module2 {}
 
+    @Module()
+    class Module4 {
+      static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module4> {
+        return {
+          module: Module4,
+          providersPerMod,
+        };
+      }
+    }
+
+    @Injectable()
+    class Provider2 {}
+
+    const module4WithProviders = Module4.withParams([Provider2]);
+
     @RootModule({
       httpModule: http,
       listenOptions: { host: 'localhost', port: 3000 },
@@ -78,30 +95,40 @@ describe('ModuleScanner', () => {
       imports: [Module1, Module2],
       providersPerApp: [],
       controllers: [],
-      exports: [],
+      exports: [module4WithProviders],
     })
     class Module3 {}
 
     mock.scanModule(Module3);
 
-    const expectedMetadata1: NormalizedModuleMetadata = {
+    const module1Expect: NormalizedModuleMetadata = {
+      id: 1,
       ngMetadataName: 'Module',
     };
-    const expectedMetadata2: NormalizedModuleMetadata = {
+
+    const module2Expect: NormalizedModuleMetadata = {
       ngMetadataName: 'Module',
       imports1: [Module1],
       exports1: [Module1],
       exports3: [Provider1],
       providersPerMod: [Provider1],
     };
-    const expectedMetadata3: NormalizedModuleMetadata = {
+
+    const module3Expect: NormalizedModuleMetadata = {
       imports1: [Module1, Module2],
+      exports2: [module4WithProviders],
       ngMetadataName: 'RootModule',
     };
 
-    expect(mock.map.size).toBe(3);
-    expect(mock.map.get(Module1)).toEqual(expectedMetadata1);
-    expect(mock.map.get(Module2)).toEqual(expectedMetadata2);
-    expect(mock.map.get(Module3)).toEqual(expectedMetadata3);
+    const module4Expect: NormalizedModuleMetadata = {
+      providersPerMod: [Provider2],
+      ngMetadataName: 'Module',
+    };
+
+    expect(mock.map.size).toBe(4);
+    expect(mock.map.get(1)).toEqual(module1Expect);
+    expect(mock.map.get(Module2)).toEqual(module2Expect);
+    expect(mock.map.get(Module3)).toEqual(module3Expect);
+    expect(mock.map.get(module4WithProviders)).toEqual(module4Expect);
   });
 });

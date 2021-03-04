@@ -9,11 +9,10 @@ import { getModuleName } from '../utils/get-module-name';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { isModuleWithParams, isProvider } from '../utils/type-guards';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { getModule } from '../utils/get-module';
 import { ModuleMetadata } from '../types/module-metadata';
 
 export class ModuleScanner {
-  protected map = new Map<ModuleType, NormalizedModuleMetadata>();
+  protected map = new Map<string | number | ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
 
   scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
     const metadata = this.normalizeMetadata(modOrObj);
@@ -22,14 +21,16 @@ export class ModuleScanner {
       this.scanModule(impOrExp);
     });
 
-    const group: (keyof NormalizedModuleMetadata)[] = ['imports1', 'imports2', 'exports1', 'exports2', 'exports3'];
+    type ImpOrExp = Exclude<keyof NormalizedModuleMetadata, 'id'>;
+    const group: ImpOrExp[] = ['imports1', 'imports2', 'exports1', 'exports2', 'exports3'];
     group.forEach((prop) => {
       if (!metadata[prop]?.length) {
         delete metadata[prop];
       }
     });
 
-    this.map.set(getModule(modOrObj), metadata);
+    const id = metadata.id || modOrObj;
+    this.map.set(id, metadata);
   }
 
   /**
@@ -52,6 +53,7 @@ export class ModuleScanner {
      */
     metadata.ngMetadataName = (modMetadata as any).ngMetadataName;
 
+    metadata.id = modMetadata.id;
     this.normalizeImports(modMetadata, metadata);
     this.normalizeExports(modMetadata, metadata);
     this.normalizeOtherProperties(modMetadata, metadata);
@@ -87,10 +89,10 @@ export class ModuleScanner {
   }
 
   /**
-   * Normalizes all the properties of a module metadata, except `imports` and `exports`.
+   * Normalizes all the properties of a module metadata, except `id`, `imports` and `exports`.
    */
   protected normalizeOtherProperties(modMetadata: ModuleMetadata, metadata: NormalizedModuleMetadata) {
-    const group: Exclude<keyof ModuleMetadata, 'imports' | 'exports'>[] = [
+    const group: Exclude<keyof ModuleMetadata, 'id' | 'imports' | 'exports'>[] = [
       'controllers',
       'providersPerApp',
       'providersPerMod',
