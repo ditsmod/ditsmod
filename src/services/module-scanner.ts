@@ -54,7 +54,7 @@ export class ModuleScanner {
 
     this.normalizeImports(modMetadata, metadata);
     this.normalizeExports(modMetadata, metadata);
-    this.removeEmptyProps(modMetadata, metadata);
+    this.normalizeOtherProperties(modMetadata, metadata);
 
     return metadata;
   }
@@ -86,7 +86,10 @@ export class ModuleScanner {
     });
   }
 
-  protected removeEmptyProps(modMetadata: ModuleMetadata, metadata: NormalizedModuleMetadata) {
+  /**
+   * Normalizes all the properties of a module metadata, except `imports` and `exports`.
+   */
+  protected normalizeOtherProperties(modMetadata: ModuleMetadata, metadata: NormalizedModuleMetadata) {
     const group: Exclude<keyof ModuleMetadata, 'imports' | 'exports'>[] = [
       'controllers',
       'providersPerApp',
