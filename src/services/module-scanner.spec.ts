@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import * as http from 'http';
-import { Injectable } from '@ts-stack/di';
+import { Injectable, forwardRef } from '@ts-stack/di';
 
 import { RootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
@@ -58,7 +58,8 @@ describe('ModuleScanner', () => {
   });
 
   it('root module with imported some other modules', () => {
-    @Module({ id: 1 })
+    const fn = () => module4WithProviders;
+    @Module({ id: 1, imports: [forwardRef(fn)] })
     class Module1 {}
 
     @Injectable()
@@ -95,7 +96,7 @@ describe('ModuleScanner', () => {
       imports: [Module1, Module2],
       providersPerApp: [],
       controllers: [],
-      exports: [module4WithProviders],
+      exports: [],
     })
     class Module3 {}
 
@@ -103,6 +104,7 @@ describe('ModuleScanner', () => {
 
     const module1Expect: NormalizedModuleMetadata = {
       id: 1,
+      imports2: [{ ...module4WithProviders, guards: [], prefix: '' }],
       ngMetadataName: 'Module',
     };
 
@@ -110,13 +112,12 @@ describe('ModuleScanner', () => {
       ngMetadataName: 'Module',
       imports1: [Module1],
       exports1: [Module1],
-      exports3: [Provider1],
+      exports2: [Provider1],
       providersPerMod: [Provider1],
     };
 
     const module3Expect: NormalizedModuleMetadata = {
       imports1: [Module1, Module2],
-      exports2: [module4WithProviders],
       ngMetadataName: 'RootModule',
     };
 
