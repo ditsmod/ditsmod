@@ -16,6 +16,7 @@ import { RouteMetadata } from '../decorators/route';
 import { AnyObj } from '../types/any-obj';
 import { ExtensionType } from '../types/extension-type';
 import { ModuleMetadata } from '../types/module-metadata';
+import { ModuleType } from '../types/module-type';
 import { ModuleWithParams } from '../types/module-with-params';
 import { NormalizedProvider } from '../types/normalized-provider';
 import { RootModuleMetadata } from '../types/root-module-metadata';
@@ -41,7 +42,7 @@ export function isRoute(propMeatada: AnyObj): propMeatada is RouteMetadata {
   return (propMeatada as any)?.ngMetadataName == 'Route';
 }
 
-export function isModuleWithParams(mod: ServiceProvider | ModuleWithParams | AnyObj): mod is ModuleWithParams {
+export function isModuleWithParams(mod: ServiceProvider | ModuleWithParams | ModuleType): mod is ModuleWithParams {
   return (mod as ModuleWithParams)?.module !== undefined;
 }
 
