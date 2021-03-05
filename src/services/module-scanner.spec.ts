@@ -4,16 +4,13 @@ import { Injectable, forwardRef } from '@ts-stack/di';
 
 import { RootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { ModuleType } from '../types/module-type';
 import { ModuleScanner } from './module-scanner';
 import { Module } from '../decorators/module';
 import { ModuleWithParams } from '../types/module-with-params';
 import { ServiceProvider } from '../types/service-provider';
 
 describe('ModuleScanner', () => {
-  class MockModuleScanner extends ModuleScanner {
-    map = new Map<string | number | ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
-  }
+  class MockModuleScanner extends ModuleScanner {}
 
   let mock: MockModuleScanner;
 
@@ -25,13 +22,13 @@ describe('ModuleScanner', () => {
     @RootModule()
     class AppModule {}
 
-    mock.scanModule(AppModule);
     const expectedMetadata: NormalizedModuleMetadata = {
       ngMetadataName: 'RootModule',
     };
 
-    expect(mock.map.size).toBe(1);
-    expect(mock.map.get(AppModule)).toEqual(expectedMetadata);
+    const map = mock.scanModule(AppModule);
+    expect(map.size).toBe(1);
+    expect(map.get(AppModule)).toEqual(expectedMetadata);
   });
 
   it('root module with some metadata', () => {
@@ -48,13 +45,13 @@ describe('ModuleScanner', () => {
     })
     class AppModule {}
 
-    mock.scanModule(AppModule);
     const expectedMetadata: NormalizedModuleMetadata = {
       ngMetadataName: 'RootModule',
     };
 
-    expect(mock.map.size).toBe(1);
-    expect(mock.map.get(AppModule)).toEqual(expectedMetadata);
+    const map = mock.scanModule(AppModule);
+    expect(map.size).toBe(1);
+    expect(map.get(AppModule)).toEqual(expectedMetadata);
   });
 
   it('root module with imported some other modules', () => {
@@ -124,11 +121,11 @@ describe('ModuleScanner', () => {
       ngMetadataName: 'Module',
     };
 
-    mock.scanModule(Module3);
-    expect(mock.map.size).toBe(4);
-    expect(mock.map.get(1)).toEqual(module1Expect);
-    expect(mock.map.get(Module2)).toEqual(module2Expect);
-    expect(mock.map.get(Module3)).toEqual(module3Expect);
-    expect(mock.map.get(module4WithProviders)).toEqual(module4Expect);
+    const map = mock.scanModule(Module3);
+    expect(map.size).toBe(4);
+    expect(map.get(1)).toEqual(module1Expect);
+    expect(map.get(Module2)).toEqual(module2Expect);
+    expect(map.get(Module3)).toEqual(module3Expect);
+    expect(map.get(module4WithProviders)).toEqual(module4Expect);
   });
 });

@@ -32,7 +32,7 @@ export class ModuleScanner {
     });
 
     const id = metadata.id || modOrObj;
-    this.map.set(id, metadata);
+    return this.map.set(id, metadata);
   }
 
   /**
