@@ -70,7 +70,7 @@ export function isFactoryProvider(provider: Provider): provider is FactoryProvid
   return (provider as FactoryProvider)?.useFactory !== undefined;
 }
 
-export function isProvider(maybeProvider: any): maybeProvider is TypeProvider | NormalizedProvider {
+export function isProvider(maybeProvider: any): maybeProvider is ServiceProvider {
   let module: any;
   if (isModuleWithParams(maybeProvider)) {
     module = maybeProvider.module;

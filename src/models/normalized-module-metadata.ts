@@ -10,11 +10,11 @@ export class NormalizedModuleMetadata extends ProvidersMetadata {
    * The module ID.
    */
   id?: string | number;
-  imports1?: ModuleType[] = [];
-  imports2?: ModuleWithParams[] = [];
+  importsModules?: ModuleType[] = [];
+  importsWithParams?: ModuleWithParams[] = [];
   controllers?: ControllerType[] = [];
   extensions?: ExtensionType[] = [];
   ngMetadataName: string;
-  exports1?: ModuleType[] = [];
-  exports2?: ServiceProvider[] = [];
+  exportsModules?: ModuleType[] = [];
+  exportsProviders?: ServiceProvider[] = [];
 }

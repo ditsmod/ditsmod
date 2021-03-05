@@ -100,24 +100,22 @@ describe('ModuleScanner', () => {
     })
     class Module3 {}
 
-    mock.scanModule(Module3);
-
     const module1Expect: NormalizedModuleMetadata = {
       id: 1,
-      imports2: [{ ...module4WithProviders, guards: [], prefix: '' }],
+      importsWithParams: [{ ...module4WithProviders, guards: [], prefix: '' }],
       ngMetadataName: 'Module',
     };
 
     const module2Expect: NormalizedModuleMetadata = {
       ngMetadataName: 'Module',
-      imports1: [Module1],
-      exports1: [Module1],
-      exports2: [Provider1],
+      importsModules: [Module1],
+      exportsModules: [Module1],
+      exportsProviders: [Provider1],
       providersPerMod: [Provider1],
     };
 
     const module3Expect: NormalizedModuleMetadata = {
-      imports1: [Module1, Module2],
+      importsModules: [Module1, Module2],
       ngMetadataName: 'RootModule',
     };
 
@@ -126,6 +124,7 @@ describe('ModuleScanner', () => {
       ngMetadataName: 'Module',
     };
 
+    mock.scanModule(Module3);
     expect(mock.map.size).toBe(4);
     expect(mock.map.get(1)).toEqual(module1Expect);
     expect(mock.map.get(Module2)).toEqual(module2Expect);

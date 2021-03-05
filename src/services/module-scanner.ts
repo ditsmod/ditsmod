@@ -10,20 +10,28 @@ import { getModuleMetadata } from '../utils/get-module-metadata';
 import { isModuleWithParams, isProvider } from '../utils/type-guards';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleMetadata } from '../types/module-metadata';
+import { mergeArrays } from '../utils/merge-arrays-options';
 
 @Injectable()
 export class ModuleScanner {
   protected map = new Map<string | number | ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
 
   scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
+    if (!Object.isFrozen(modOrObj)) {
+      Object.freeze(modOrObj);
+    }
+
+    const modMetadata = getModuleMetadata(modOrObj);
+    mergeArrays(modMetadata.imports, modMetadata.exports)
+      .map(resolveForwardRef)
+      .filter((item) => !isProvider(item))
+      .forEach((impOrExp: ModuleType | ModuleWithParams) => {
+        this.scanModule(impOrExp);
+      });
     const metadata = this.normalizeMetadata(modOrObj);
 
-    [...metadata.imports1, ...metadata.imports2, ...metadata.exports1].forEach((impOrExp) => {
-      this.scanModule(impOrExp);
-    });
-
     type ImpOrExp = Exclude<keyof NormalizedModuleMetadata, 'id'>;
-    const group: ImpOrExp[] = ['imports1', 'imports2', 'exports1', 'exports2'];
+    const group: ImpOrExp[] = ['importsModules', 'importsWithParams', 'exportsModules', 'exportsProviders'];
 
     group.forEach((prop) => {
       if (!metadata[prop]?.length) {
@@ -39,9 +47,6 @@ export class ModuleScanner {
    * Freezes original module metadata and returns normalized module metadata.
    */
   protected normalizeMetadata(mod: ModuleType | ModuleWithParams) {
-    if (!Object.isFrozen(mod)) {
-      Object.freeze(mod);
-    }
     const modMetadata = getModuleMetadata(mod);
     const modName = getModuleName(mod);
     checkModuleMetadata(modMetadata, modName);
@@ -75,9 +80,9 @@ export class ModuleScanner {
           module: resolveForwardRef(imp.module),
           guards: this.normalizeGuards(imp.guards),
         });
-        metadata.imports2.push(normImp);
+        metadata.importsWithParams.push(normImp);
       } else {
-        metadata.imports1.push(imp);
+        metadata.importsModules.push(imp);
       }
     });
   }
@@ -87,9 +92,9 @@ export class ModuleScanner {
       exp = resolveForwardRef(exp);
 
       if (isProvider(exp)) {
-        metadata.exports2.push(exp);
+        metadata.exportsProviders.push(exp);
       } else {
-        metadata.exports1.push(exp);
+        metadata.exportsModules.push(exp);
       }
     });
   }
