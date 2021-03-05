@@ -9,22 +9,23 @@ import { isModuleWithParams, isProvider } from '../utils/type-guards';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleMetadata } from '../types/module-metadata';
 
+type MapType = Map<string | number | ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
+
 @Injectable()
 export class ModuleManager {
-  protected map = new Map<string | number | ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
-
-  scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
+  scanModule(modOrObj: ModuleType | ModuleWithParams<any>, map: MapType = new Map()) {
     if (!Object.isFrozen(modOrObj)) {
       Object.freeze(modOrObj);
     }
 
     const metadata = this.normalizeMetadata(modOrObj);
     [...metadata.importsModules, ...metadata.importsWithParams, ...metadata.exportsModules].forEach((impOrExp) => {
-      this.scanModule(impOrExp);
+      this.scanModule(impOrExp, map);
     });
 
     type ImpOrExp = Exclude<keyof NormalizedModuleMetadata, 'id'>;
     const group: ImpOrExp[] = ['importsModules', 'importsWithParams', 'exportsModules', 'exportsProviders'];
+
     group.forEach((prop) => {
       if (!metadata[prop]?.length) {
         delete metadata[prop];
@@ -32,7 +33,7 @@ export class ModuleManager {
     });
 
     const id = metadata.id || modOrObj;
-    return this.map.set(id, metadata);
+    return map.set(id, metadata);
   }
 
   /**
