@@ -102,7 +102,7 @@ describe('ModuleScanner', () => {
 
     const module1Expect: NormalizedModuleMetadata = {
       id: 1,
-      importsWithParams: [{ ...module4WithProviders, guards: [], prefix: '' }],
+      importsWithParams: [module4WithProviders],
       ngMetadataName: 'Module',
     };
 
