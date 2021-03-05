@@ -13,6 +13,20 @@ type MapType = Map<string | number | ModuleType | ModuleWithParams, NormalizedMo
 
 @Injectable()
 export class ModuleManager {
+  addImport(modOrObj: ModuleType | ModuleWithParams, target: NormalizedModuleMetadata) {
+    if (isModuleWithParams(modOrObj)) {
+      if (!target.importsWithParams) {
+        target.importsWithParams = [];
+      }
+      target.importsWithParams.push(modOrObj);
+    } else {
+      if (!target.importsModules) {
+        target.importsModules = [];
+      }
+      target.importsModules.push(modOrObj);
+    }
+  }
+
   scanModule(modOrObj: ModuleType | ModuleWithParams<any>, map: MapType = new Map()) {
     if (!Object.isFrozen(modOrObj)) {
       Object.freeze(modOrObj);
