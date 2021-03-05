@@ -71,14 +71,10 @@ export function isFactoryProvider(provider: Provider): provider is FactoryProvid
 }
 
 export function isProvider(maybeProvider: any): maybeProvider is ServiceProvider {
-  let module: any;
   if (isModuleWithParams(maybeProvider)) {
-    module = maybeProvider.module;
-  } else {
-    module = maybeProvider;
+    return false;
   }
-  const isSomeModule = reflector.annotations(module).some((m) => isRootModule(m) || isModule(m));
-
+  const isSomeModule = reflector.annotations(maybeProvider).some((m) => isRootModule(m) || isModule(m));
   return (maybeProvider instanceof Type && !isSomeModule) || isNormalizedProvider(maybeProvider);
 }
 
