@@ -10,7 +10,7 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleMetadata } from '../types/module-metadata';
 
 @Injectable()
-export class ModuleScanner {
+export class ModuleManager {
   protected map = new Map<string | number | ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
 
   scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {

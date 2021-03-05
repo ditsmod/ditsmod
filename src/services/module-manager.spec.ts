@@ -4,18 +4,18 @@ import { Injectable, forwardRef } from '@ts-stack/di';
 
 import { RootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { ModuleScanner } from './module-scanner';
+import { ModuleManager } from './module-manager';
 import { Module } from '../decorators/module';
 import { ModuleWithParams } from '../types/module-with-params';
 import { ServiceProvider } from '../types/service-provider';
 
-describe('ModuleScanner', () => {
-  class MockModuleScanner extends ModuleScanner {}
+describe('ModuleManager', () => {
+  class MockModuleManager extends ModuleManager {}
 
-  let mock: MockModuleScanner;
+  let mock: MockModuleManager;
 
   beforeEach(() => {
-    mock = new MockModuleScanner();
+    mock = new MockModuleManager();
   });
 
   it('empty root module', () => {
