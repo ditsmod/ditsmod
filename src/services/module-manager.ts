@@ -88,17 +88,17 @@ export class ModuleManager {
   }
 
   /**
-   * @param inputModuleOrId Module to be removed or its module ID.
+   * @param inputModuleId Module to be removed or its module ID.
    * If the module have ID, then you must use this ID here.
    *
    * @param targetModuleId Module ID from where the module will be removed.
    */
-  removeImport(inputModuleOrId: MapId, targetModuleId: string | number = 'root'): boolean {
-    const metadata = this.#map.get(inputModuleOrId);
+  removeImport(inputModuleId: MapId, targetModuleId: string | number = 'root'): boolean {
+    const metadata = this.#map.get(inputModuleId);
     if (!metadata) {
       return false;
     }
-    this.#map.delete(inputModuleOrId);
+    this.#map.delete(inputModuleId);
 
     const target = this.#map.get(targetModuleId);
     if (!target) {
