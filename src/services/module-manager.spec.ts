@@ -91,11 +91,6 @@ describe('ModuleManager', () => {
     const module4WithProviders = Module4.withParams([Provider2]);
 
     @RootModule({
-      httpModule: http,
-      listenOptions: { host: 'localhost', port: 3000 },
-      prefixPerApp: 'api',
-      serverName: 'Some-Server',
-      serverOptions: {},
       imports: [Module1, Module2],
       providersPerApp: [],
       controllers: [],
@@ -141,11 +136,6 @@ describe('ModuleManager', () => {
     class Provider1 {}
 
     @RootModule({
-      httpModule: http,
-      listenOptions: { host: 'localhost', port: 3000 },
-      prefixPerApp: 'api',
-      serverName: 'Some-Server',
-      serverOptions: {},
       imports: [],
       providersPerReq: [Provider1],
       controllers: [],
@@ -201,11 +191,6 @@ describe('ModuleManager', () => {
     class Module2 {}
 
     @RootModule({
-      httpModule: http,
-      listenOptions: { host: 'localhost', port: 3000 },
-      prefixPerApp: 'api',
-      serverName: 'Some-Server',
-      serverOptions: {},
       imports: [Module1, Module2],
       providersPerReq: [Provider1],
       controllers: [],
