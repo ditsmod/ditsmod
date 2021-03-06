@@ -26,9 +26,10 @@ describe('ModuleManager', () => {
       ngMetadataName: 'RootModule',
     };
 
-    const map = mock.scanModule(AppModule);
+    mock.scanRootModule(AppModule);
+    const map = mock.getModules();
     expect(map.size).toBe(1);
-    expect(map.get(AppModule)).toEqual(expectedMetadata);
+    expect(map.get('root')).toEqual(expectedMetadata);
   });
 
   it('root module with some metadata', () => {
@@ -49,9 +50,10 @@ describe('ModuleManager', () => {
       ngMetadataName: 'RootModule',
     };
 
-    const map = mock.scanModule(AppModule);
+    mock.scanRootModule(AppModule);
+    const map = mock.getModules();
     expect(map.size).toBe(1);
-    expect(map.get(AppModule)).toEqual(expectedMetadata);
+    expect(map.get('root')).toEqual(expectedMetadata);
   });
 
   it('root module with imported some other modules', () => {
@@ -121,11 +123,12 @@ describe('ModuleManager', () => {
       ngMetadataName: 'Module',
     };
 
-    const map = mock.scanModule(Module3);
+    mock.scanRootModule(Module3);
+    const map = mock.getModules();
     expect(map.size).toBe(4);
     expect(map.get(1)).toEqual(module1Expect);
     expect(map.get(Module2)).toEqual(module2Expect);
-    expect(map.get(Module3)).toEqual(module3Expect);
+    expect(map.get('root')).toEqual(module3Expect);
     expect(map.get(module4WithProviders)).toEqual(module4Expect);
   });
 });

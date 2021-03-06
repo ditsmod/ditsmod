@@ -1,7 +1,6 @@
 import { reflector } from '@ts-stack/di';
 
 import { Module } from '../decorators/module';
-import { RootModule } from '../decorators/root-module';
 import { ModuleMetadata } from '../types/module-metadata';
 import { ModuleType } from '../types/module-type';
 import { ModuleWithParams } from '../types/module-with-params';
@@ -24,7 +23,7 @@ export function getModuleMetadata<T extends ModuleMetadata>(
     const modWitParams = modOrObj;
     const modMetadata: T = reflector.annotations(modWitParams.module).find(typeGuard) as T;
     const modName = getModuleName(modWitParams.module);
-    checkModuleMetadata(modMetadata, modName, isRoot);
+    checkModuleMetadata(modMetadata, modName);
 
     if (modMetadata.id) {
       const msg =
@@ -32,8 +31,7 @@ export function getModuleMetadata<T extends ModuleMetadata>(
         'Instead, you can specify the "id" in the object that contains the module parameters.';
       throw new Error(msg);
     }
-    const Metadata = isRoot ? RootModule : Module;
-    const metadata = new Metadata(modMetadata);
+    const metadata = new Module(modMetadata);
     metadata.id = modWitParams.id;
     metadata.providersPerApp = mergeArrays(modMetadata.providersPerApp, modWitParams.providersPerApp);
     metadata.providersPerMod = mergeArrays(modMetadata.providersPerMod, modWitParams.providersPerMod);

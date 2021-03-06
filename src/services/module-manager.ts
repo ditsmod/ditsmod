@@ -13,28 +13,22 @@ type MapType = Map<string | number | ModuleType | ModuleWithParams, NormalizedMo
 
 @Injectable()
 export class ModuleManager {
-  addImport(modOrObj: ModuleType | ModuleWithParams, target: NormalizedModuleMetadata) {
-    if (isModuleWithParams(modOrObj)) {
-      if (!target.importsWithParams) {
-        target.importsWithParams = [];
-      }
-      target.importsWithParams.push(modOrObj);
-    } else {
-      if (!target.importsModules) {
-        target.importsModules = [];
-      }
-      target.importsModules.push(modOrObj);
-    }
+  #map: MapType = new Map();
+
+  scanRootModule(module: ModuleType | ModuleWithParams<any>) {
+    const metadata = this.scanModule(module);
+    this.#map.delete(module);
+    return this.#map.set('root', metadata);
   }
 
-  scanModule(modOrObj: ModuleType | ModuleWithParams<any>, map: MapType = new Map()) {
+  scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
     if (!Object.isFrozen(modOrObj)) {
       Object.freeze(modOrObj);
     }
 
     const metadata = this.normalizeMetadata(modOrObj);
     [...metadata.importsModules, ...metadata.importsWithParams, ...metadata.exportsModules].forEach((impOrExp) => {
-      this.scanModule(impOrExp, map);
+      this.scanModule(impOrExp);
     });
 
     type ImpOrExp = Exclude<keyof NormalizedModuleMetadata, 'id'>;
@@ -47,7 +41,52 @@ export class ModuleManager {
     });
 
     const id = metadata.id || modOrObj;
-    return map.set(id, metadata);
+    this.#map.set(id, metadata);
+    return metadata;
+  }
+
+  getModules() {
+    return this.#map;
+  }
+
+  /**
+   * @param inputModule Module to be added.
+   * @param targetModuleId Module ID to which the input module will be added.
+   */
+  addImport(inputModule: ModuleType | ModuleWithParams, targetModuleId: string | number = 'root') {
+    const target = this.#map.get(targetModuleId);
+    if (isModuleWithParams(inputModule)) {
+      if (!target.importsWithParams) {
+        target.importsWithParams = [];
+      }
+      target.importsWithParams.push(inputModule);
+    } else {
+      if (!target.importsModules) {
+        target.importsModules = [];
+      }
+      target.importsModules.push(inputModule);
+    }
+  }
+
+  /**
+   * @param inputModule Module to be removed.
+   * @param targetModuleId Module ID from where the module will be removed.
+   */
+  removeImport(inputModule: ModuleType | ModuleWithParams, targetModuleId: string | number = 'root') {
+    const target = this.#map.get(targetModuleId);
+    if (isModuleWithParams(inputModule)) {
+      if (!target.importsWithParams) {
+        return false;
+      }
+      const index = target.importsWithParams.findIndex((imp) => imp === inputModule);
+      target.importsWithParams.splice(index);
+    } else {
+      if (!target.importsModules) {
+        return false;
+      }
+      const index = target.importsModules.findIndex((imp) => imp === inputModule);
+      target.importsModules.splice(index);
+    }
   }
 
   /**
