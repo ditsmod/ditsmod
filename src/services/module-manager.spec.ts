@@ -8,6 +8,8 @@ import { ModuleManager } from './module-manager';
 import { Module } from '../decorators/module';
 import { ModuleWithParams } from '../types/module-with-params';
 import { ServiceProvider } from '../types/service-provider';
+import { LoggerConfig } from '../types/logger';
+import { DefaultLogger } from './default-logger';
 
 describe('ModuleManager', () => {
   class MockModuleManager extends ModuleManager {}
@@ -15,7 +17,9 @@ describe('ModuleManager', () => {
   let mock: MockModuleManager;
 
   beforeEach(() => {
-    mock = new MockModuleManager();
+    const config = new LoggerConfig();
+    const log = new DefaultLogger(config);
+    mock = new MockModuleManager(log);
   });
 
   it('empty root module', () => {

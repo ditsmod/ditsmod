@@ -1,3 +1,4 @@
+import { format } from 'util';
 import { Injectable, resolveForwardRef } from '@ts-stack/di';
 
 import { ModuleType } from '../types/module-type';
@@ -8,6 +9,7 @@ import { getModuleMetadata } from '../utils/get-module-metadata';
 import { isModuleWithParams, isProvider } from '../utils/type-guards';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleMetadata } from '../types/module-metadata';
+import { Logger } from '../types/logger';
 
 type MapId = string | number | ModuleType | ModuleWithParams;
 type MapType = Map<MapId, NormalizedModuleMetadata>;
@@ -15,6 +17,8 @@ type MapType = Map<MapId, NormalizedModuleMetadata>;
 @Injectable()
 export class ModuleManager {
   #map: MapType = new Map();
+
+  constructor(protected log: Logger) {}
 
   scanRootModule(module: ModuleType | ModuleWithParams<any>) {
     const metadata = this.scanModule(module);
@@ -58,6 +62,9 @@ export class ModuleManager {
    */
   addImport(inputModule: ModuleType | ModuleWithParams, targetModuleId: string | number = 'root'): boolean {
     const target = this.#map.get(targetModuleId);
+    const warn =
+      `The module with ID "${format(inputModule)}" has already been imported ` +
+      `into "${format(targetModuleId)}"`;
     if (!target) {
       const modName = getModuleName(inputModule);
       const msg = `Failed adding ${modName} to "imports" array: target module with ID "${targetModuleId}" not found.`;
@@ -69,6 +76,7 @@ export class ModuleManager {
         target.importsWithParams = [];
       }
       if (target.importsWithParams.find((imp) => imp === inputModule)) {
+        this.log.warn(warn);
         return false;
       } else {
         target.importsWithParams.push(inputModule);
@@ -78,6 +86,7 @@ export class ModuleManager {
         target.importsModules = [];
       }
       if (target.importsModules.find((imp) => imp === inputModule)) {
+        this.log.warn(warn);
         return false;
       } else {
         target.importsModules.push(inputModule);
@@ -95,7 +104,9 @@ export class ModuleManager {
    */
   removeImport(inputModuleId: MapId, targetModuleId: string | number = 'root'): boolean {
     const metadata = this.#map.get(inputModuleId);
+    const warn = `Module with ID "${format(inputModuleId)}" not found`;
     if (!metadata) {
+      this.log.warn(warn);
       return false;
     }
     this.#map.delete(inputModuleId);
@@ -108,12 +119,14 @@ export class ModuleManager {
     }
     if (isModuleWithParams(metadata.module)) {
       if (!target.importsWithParams) {
+        this.log.warn(warn);
         return false;
       }
       const index = target.importsWithParams.findIndex((imp) => imp === metadata.module);
       target.importsWithParams.splice(index, 1);
     } else {
       if (!target.importsModules) {
+        this.log.warn(warn);
         return false;
       }
       const index = target.importsModules.findIndex((imp) => imp === metadata.module);
@@ -142,6 +155,7 @@ export class ModuleManager {
 
     if (modMetadata.id) {
       metadata.id = modMetadata.id;
+      this.log.debug(`${modName} has been assigned an ID: "${metadata.id}".`);
     }
 
     modMetadata.imports?.forEach((imp) => {
