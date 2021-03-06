@@ -89,27 +89,35 @@ export class ModuleManager {
 
   /**
    * @param inputModuleOrId Module to be removed or its module ID.
+   * If the module have ID, then you must use this ID here.
+   *
    * @param targetModuleId Module ID from where the module will be removed.
    */
   removeImport(inputModuleOrId: MapId, targetModuleId: string | number = 'root'): boolean {
-    if (!this.#map.get(inputModuleOrId)) {
+    const metadata = this.#map.get(inputModuleOrId);
+    if (!metadata) {
       return false;
     }
     this.#map.delete(inputModuleOrId);
-    const inputModule = inputModuleOrId as ModuleType | ModuleWithParams;
+
     const target = this.#map.get(targetModuleId);
-    if (isModuleWithParams(inputModule)) {
+    if (!target) {
+      const modName = getModuleName(metadata.module);
+      const msg = `Failed removing ${modName} from "imports" array: target module with ID "${targetModuleId}" not found.`;
+      throw new Error(msg);
+    }
+    if (isModuleWithParams(metadata.module)) {
       if (!target.importsWithParams) {
         return false;
       }
-      const index = target.importsWithParams.findIndex((imp) => imp === inputModule);
-      target.importsWithParams.splice(index);
+      const index = target.importsWithParams.findIndex((imp) => imp === metadata.module);
+      target.importsWithParams.splice(index, 1);
     } else {
       if (!target.importsModules) {
         return false;
       }
-      const index = target.importsModules.findIndex((imp) => imp === inputModule);
-      target.importsModules.splice(index);
+      const index = target.importsModules.findIndex((imp) => imp === metadata.module);
+      target.importsModules.splice(index, 1);
     }
     return true;
   }
@@ -126,7 +134,7 @@ export class ModuleManager {
      * Setting initial properties of metadata.
      */
     const metadata = new NormalizedModuleMetadata();
-    metadata.module = isModuleWithParams(mod) ? mod.module : mod;
+    metadata.module = mod;
     /**
      * `ngMetadataName` is used only internally and is hidden from the public API.
      */
