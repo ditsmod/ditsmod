@@ -6,6 +6,7 @@ import { ServiceProvider } from '../types/service-provider';
 import { ProvidersMetadata } from './providers-metadata';
 
 export class NormalizedModuleMetadata extends ProvidersMetadata {
+  module: ModuleType | ModuleWithParams;
   /**
    * The module ID.
    */

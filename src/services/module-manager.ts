@@ -126,6 +126,7 @@ export class ModuleManager {
      * Setting initial properties of metadata.
      */
     const metadata = new NormalizedModuleMetadata();
+    metadata.module = isModuleWithParams(mod) ? mod.module : mod;
     /**
      * `ngMetadataName` is used only internally and is hidden from the public API.
      */

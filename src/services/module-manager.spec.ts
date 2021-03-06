@@ -23,6 +23,7 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     const expectedMetadata: NormalizedModuleMetadata = {
+      module: AppModule,
       ngMetadataName: 'RootModule',
     };
 
@@ -50,6 +51,7 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     const expectedMetadata: NormalizedModuleMetadata = {
+      module: AppModule,
       providersPerReq: [Provider1],
       ngMetadataName: 'RootModule',
     };
@@ -99,12 +101,14 @@ describe('ModuleManager', () => {
     class Module3 {}
 
     const module1Expect: NormalizedModuleMetadata = {
+      module: Module1,
       id: 1,
       importsWithParams: [module4WithProviders],
       ngMetadataName: 'Module',
     };
 
     const module2Expect: NormalizedModuleMetadata = {
+      module: Module2,
       ngMetadataName: 'Module',
       importsModules: [Module1],
       exportsModules: [Module1],
@@ -113,11 +117,13 @@ describe('ModuleManager', () => {
     };
 
     const module3Expect: NormalizedModuleMetadata = {
+      module: Module3,
       importsModules: [Module1, Module2],
       ngMetadataName: 'RootModule',
     };
 
     const module4Expect: NormalizedModuleMetadata = {
+      module: Module4,
       providersPerMod: [Provider2],
       ngMetadataName: 'Module',
     };
@@ -144,6 +150,7 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     const expectedMetadata1: NormalizedModuleMetadata = {
+      module: AppModule,
       providersPerReq: [Provider1],
       ngMetadataName: 'RootModule',
     };
@@ -171,6 +178,7 @@ describe('ModuleManager', () => {
     expect(map.size).toBe(3);
 
     const expectedMetadata2: NormalizedModuleMetadata = {
+      module: AppModule,
       importsModules: [Module1, Module2],
       providersPerReq: [Provider1],
       ngMetadataName: 'RootModule',
@@ -199,12 +207,14 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     const expectedMetadata1: NormalizedModuleMetadata = {
+      module: AppModule,
       importsModules: [Module1, Module2],
       providersPerReq: [Provider1],
       ngMetadataName: 'RootModule',
     };
 
     const expectedMetadata2: NormalizedModuleMetadata = {
+      module: AppModule,
       importsModules: [Module1],
       providersPerReq: [Provider1],
       ngMetadataName: 'RootModule',
