@@ -6,6 +6,7 @@ export { RootModule } from './decorators/root-module';
 export { Module } from './decorators/module';
 export { Controller } from './decorators/controller';
 export { Route } from './decorators/route';
+export { ModuleManager } from './services/module-manager';
 
 // For extensions developers only
 export { ControllerType } from './types/controller-type';

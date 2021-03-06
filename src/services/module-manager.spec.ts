@@ -33,6 +33,9 @@ describe('ModuleManager', () => {
   });
 
   it('root module with some metadata', () => {
+    @Injectable()
+    class Provider1 {}
+
     @RootModule({
       httpModule: http,
       listenOptions: { host: 'localhost', port: 3000 },
@@ -40,13 +43,14 @@ describe('ModuleManager', () => {
       serverName: 'Some-Server',
       serverOptions: {},
       imports: [],
-      providersPerApp: [],
+      providersPerReq: [Provider1],
       controllers: [],
       exports: [],
     })
     class AppModule {}
 
     const expectedMetadata: NormalizedModuleMetadata = {
+      providersPerReq: [Provider1],
       ngMetadataName: 'RootModule',
     };
 
@@ -130,5 +134,57 @@ describe('ModuleManager', () => {
     expect(map.get(Module2)).toEqual(module2Expect);
     expect(map.get('root')).toEqual(module3Expect);
     expect(map.get(module4WithProviders)).toEqual(module4Expect);
+  });
+
+  it('programmatically adding some modules to "imports" array of root module', () => {
+    @Injectable()
+    class Provider1 {}
+
+    @RootModule({
+      httpModule: http,
+      listenOptions: { host: 'localhost', port: 3000 },
+      prefixPerApp: 'api',
+      serverName: 'Some-Server',
+      serverOptions: {},
+      imports: [],
+      providersPerReq: [Provider1],
+      controllers: [],
+      exports: [],
+    })
+    class AppModule {}
+
+    const expectedMetadata1: NormalizedModuleMetadata = {
+      providersPerReq: [Provider1],
+      ngMetadataName: 'RootModule',
+    };
+
+    mock.scanRootModule(AppModule);
+    const map = mock.getModules();
+    const rootMetadata = map.get('root');
+    expect(map.size).toBe(1);
+    expect(map.get('root') === map.get('root')).toBe(true);
+    expect(rootMetadata).toEqual(expectedMetadata1);
+
+    @Module()
+    class Module1 {}
+
+    @Module()
+    class Module2 {}
+
+    mock.addImport(Module1);
+    expect(map.size).toBe(2);
+    expect(() => mock.addImport(Module2, 'fakeId')).toThrowError(/Failed adding Module2 to "imports" array/);
+    expect(map.size).toBe(2);
+    mock.addImport(Module2);
+    expect(map.size).toBe(3);
+
+    const expectedMetadata2: NormalizedModuleMetadata = {
+      importsModules: [Module1, Module2],
+      providersPerReq: [Provider1],
+      ngMetadataName: 'RootModule',
+    };
+    expect(map === mock.getModules()).toBe(true);
+    expect(rootMetadata === map.get('root')).toBe(true);
+    expect(rootMetadata).toEqual(expectedMetadata2);
   });
 });

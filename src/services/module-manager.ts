@@ -53,19 +53,37 @@ export class ModuleManager {
    * @param inputModule Module to be added.
    * @param targetModuleId Module ID to which the input module will be added.
    */
-  addImport(inputModule: ModuleType | ModuleWithParams, targetModuleId: string | number = 'root') {
+  addImport(inputModule: ModuleType | ModuleWithParams, targetModuleId: string | number = 'root'): boolean {
     const target = this.#map.get(targetModuleId);
+    if (!target) {
+      const modName = getModuleName(inputModule);
+      const msg = `Failed adding ${modName} to "imports" array: target module with ID "${targetModuleId}" not found.`;
+      throw new Error(msg);
+    }
+
     if (isModuleWithParams(inputModule)) {
       if (!target.importsWithParams) {
         target.importsWithParams = [];
       }
-      target.importsWithParams.push(inputModule);
+      if (target.importsWithParams.find(imp => imp === inputModule)) {
+        return false;
+      } else {
+        target.importsWithParams.push(inputModule);
+      }
     } else {
       if (!target.importsModules) {
         target.importsModules = [];
       }
-      target.importsModules.push(inputModule);
+      if (target.importsModules.find(imp => imp === inputModule)) {
+        return false;
+      } else {
+        target.importsModules.push(inputModule);
+      }
     }
+    const metadata = this.scanModule(inputModule);
+    const id = metadata.id || inputModule;
+    this.#map.set(id, metadata);
+    return true;
   }
 
   /**
