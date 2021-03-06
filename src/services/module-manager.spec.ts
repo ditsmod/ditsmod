@@ -171,7 +171,9 @@ describe('ModuleManager', () => {
     @Module()
     class Module2 {}
 
-    mock.addImport(Module1);
+    expect(mock.addImport(Module1)).toBe(true);
+    expect(map.size).toBe(2);
+    expect(mock.addImport(Module1)).toBe(false);
     expect(map.size).toBe(2);
     expect(() => mock.addImport(Module2, 'fakeId')).toThrowError(/Failed adding Module2 to "imports" array/);
     expect(map.size).toBe(2);
@@ -186,5 +188,52 @@ describe('ModuleManager', () => {
     expect(map === mock.getModules()).toBe(true);
     expect(rootMetadata === map.get('root')).toBe(true);
     expect(rootMetadata).toEqual(expectedMetadata2);
+  });
+
+  it('programmatically removing some modules from "imports" array of root module', () => {
+    @Injectable()
+    class Provider1 {}
+
+    @Module()
+    class Module1 {}
+
+    @Module()
+    class Module2 {}
+
+    @RootModule({
+      httpModule: http,
+      listenOptions: { host: 'localhost', port: 3000 },
+      prefixPerApp: 'api',
+      serverName: 'Some-Server',
+      serverOptions: {},
+      imports: [Module1, Module2],
+      providersPerReq: [Provider1],
+      controllers: [],
+      exports: [],
+    })
+    class AppModule {}
+
+    const expectedMetadata1: NormalizedModuleMetadata = {
+      importsModules: [Module1, Module2],
+      providersPerReq: [Provider1],
+      ngMetadataName: 'RootModule',
+    };
+
+    const expectedMetadata2: NormalizedModuleMetadata = {
+      importsModules: [Module1],
+      providersPerReq: [Provider1],
+      ngMetadataName: 'RootModule',
+    };
+
+    mock.scanRootModule(AppModule);
+    const map = mock.getModules();
+    expect(map.size).toBe(3);
+    expect(map.get('root')).toEqual(expectedMetadata1);
+    
+    expect(mock.removeImport(Module2)).toBe(true);
+    expect(map.size).toBe(2);
+    expect(mock.removeImport(Module2)).toBe(false);
+    expect(map.size).toBe(2);
+    expect(map.get('root')).toEqual(expectedMetadata2);
   });
 });

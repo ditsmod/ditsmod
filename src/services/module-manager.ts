@@ -9,7 +9,8 @@ import { isModuleWithParams, isProvider } from '../utils/type-guards';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleMetadata } from '../types/module-metadata';
 
-type MapType = Map<string | number | ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
+type MapId = string | number | ModuleType | ModuleWithParams;
+type MapType = Map<MapId, NormalizedModuleMetadata>;
 
 @Injectable()
 export class ModuleManager {
@@ -50,6 +51,8 @@ export class ModuleManager {
   }
 
   /**
+   * If `inputModule` added, returns `true`, otherwise - returns `false`.
+   *
    * @param inputModule Module to be added.
    * @param targetModuleId Module ID to which the input module will be added.
    */
@@ -65,7 +68,7 @@ export class ModuleManager {
       if (!target.importsWithParams) {
         target.importsWithParams = [];
       }
-      if (target.importsWithParams.find(imp => imp === inputModule)) {
+      if (target.importsWithParams.find((imp) => imp === inputModule)) {
         return false;
       } else {
         target.importsWithParams.push(inputModule);
@@ -74,23 +77,26 @@ export class ModuleManager {
       if (!target.importsModules) {
         target.importsModules = [];
       }
-      if (target.importsModules.find(imp => imp === inputModule)) {
+      if (target.importsModules.find((imp) => imp === inputModule)) {
         return false;
       } else {
         target.importsModules.push(inputModule);
       }
     }
-    const metadata = this.scanModule(inputModule);
-    const id = metadata.id || inputModule;
-    this.#map.set(id, metadata);
+    this.scanModule(inputModule);
     return true;
   }
 
   /**
-   * @param inputModule Module to be removed.
+   * @param inputModuleOrId Module to be removed or its module ID.
    * @param targetModuleId Module ID from where the module will be removed.
    */
-  removeImport(inputModule: ModuleType | ModuleWithParams, targetModuleId: string | number = 'root') {
+  removeImport(inputModuleOrId: MapId, targetModuleId: string | number = 'root'): boolean {
+    if (!this.#map.get(inputModuleOrId)) {
+      return false;
+    }
+    this.#map.delete(inputModuleOrId);
+    const inputModule = inputModuleOrId as ModuleType | ModuleWithParams;
     const target = this.#map.get(targetModuleId);
     if (isModuleWithParams(inputModule)) {
       if (!target.importsWithParams) {
@@ -105,6 +111,7 @@ export class ModuleManager {
       const index = target.importsModules.findIndex((imp) => imp === inputModule);
       target.importsModules.splice(index);
     }
+    return true;
   }
 
   /**
