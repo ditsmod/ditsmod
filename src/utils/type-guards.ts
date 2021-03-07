@@ -18,9 +18,9 @@ import { ExtensionType } from '../types/extension-type';
 import { ModuleMetadata } from '../types/module-metadata';
 import { ModuleType } from '../types/module-type';
 import { ModuleWithParams } from '../types/module-with-params';
-import { NormalizedProvider } from '../types/normalized-provider';
 import { RootModuleMetadata } from '../types/root-module-metadata';
 import { ServiceProvider } from '../types/service-provider';
+import { NormalizedProvider } from './ng-utils';
 
 export function isForwardRef(type: any): type is ForwardRefFn {
   return (typeof type == 'function' && type.hasOwnProperty('__forward_ref__') && type.__forward_ref__ === forwardRef);
