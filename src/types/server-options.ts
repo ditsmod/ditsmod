@@ -10,3 +10,4 @@ export type NodeRequest = http.IncomingMessage | Http2ServerRequest;
 export type NodeResponse = http.ServerResponse | Http2ServerResponse;
 export const NodeReqToken = new InjectionToken<NodeRequest>('NodeRequest');
 export const NodeResToken = new InjectionToken<NodeResponse>('NodeResponse');
+export type RequestListener = (request: NodeRequest, response: NodeResponse) => void | Promise<void>;
