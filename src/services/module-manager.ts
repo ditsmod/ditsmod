@@ -11,19 +11,16 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleMetadata } from '../types/module-metadata';
 import { Logger } from '../types/logger';
 
-type MapId = string | number | ModuleType | ModuleWithParams;
-type MapType = Map<MapId, NormalizedModuleMetadata>;
-
 @Injectable()
 export class ModuleManager {
-  #map: MapType = new Map();
+  protected map = new WeakMap<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
+  protected mapId = new Map<string, ModuleType | ModuleWithParams>();
 
   constructor(protected log: Logger) {}
 
   scanRootModule(module: ModuleType | ModuleWithParams<any>) {
-    const metadata = this.scanModule(module);
-    this.#map.delete(module);
-    return this.#map.set('root', metadata);
+    this.scanModule(module);
+    return this.mapId.set('root', module);
   }
 
   scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
@@ -36,22 +33,15 @@ export class ModuleManager {
       this.scanModule(impOrExp);
     });
 
-    type ImpOrExp = Exclude<keyof NormalizedModuleMetadata, 'id'>;
-    const group: ImpOrExp[] = ['importsModules', 'importsWithParams', 'exportsModules', 'exportsProviders'];
-
-    group.forEach((prop) => {
-      if (!metadata[prop]?.length) {
-        delete metadata[prop];
-      }
-    });
-
-    const id = metadata.id || modOrObj;
-    this.#map.set(id, metadata);
+    if (metadata.id) {
+      this.mapId.set(metadata.id, modOrObj);
+    }
+    this.map.set(modOrObj, metadata);
     return metadata;
   }
 
-  getModules() {
-    return this.#map;
+  getMaps() {
+    return { map: this.map, mapId: this.mapId };
   }
 
   /**
@@ -60,11 +50,11 @@ export class ModuleManager {
    * @param inputModule Module to be added.
    * @param targetModuleId Module ID to which the input module will be added.
    */
-  addImport(inputModule: ModuleType | ModuleWithParams, targetModuleId: string | number = 'root'): boolean {
-    const target = this.#map.get(targetModuleId);
+  addImport(inputModule: ModuleType | ModuleWithParams, targetModuleId: string = 'root'): boolean {
+    const mapId = this.mapId.get(targetModuleId);
+    const target = this.map.get(mapId);
     const warn =
-      `The module with ID "${format(inputModule)}" has already been imported ` +
-      `into "${format(targetModuleId)}"`;
+      `The module with ID "${format(inputModule)}" has already been imported ` + `into "${format(targetModuleId)}"`;
     if (!target) {
       const modName = getModuleName(inputModule);
       const msg = `Failed adding ${modName} to "imports" array: target module with ID "${targetModuleId}" not found.`;
@@ -96,25 +86,32 @@ export class ModuleManager {
     return true;
   }
 
+  getMetadata(moduleId: string | ModuleType | ModuleWithParams) {
+    if (typeof moduleId == 'string') {
+      const mapId = this.mapId.get(moduleId);
+      return this.map.get(mapId);
+    } else {
+      return this.map.get(moduleId);
+    }
+  }
+
   /**
    * @param inputModuleId Module to be removed or its module ID.
    * If the module have ID, then you must use this ID here.
    *
    * @param targetModuleId Module ID from where the module will be removed.
    */
-  removeImport(inputModuleId: MapId, targetModuleId: string | number = 'root'): boolean {
-    const metadata = this.#map.get(inputModuleId);
+  removeImport(inputModuleId: string | ModuleType | ModuleWithParams, targetModuleId: string = 'root'): boolean {
+    const metadata = this.getMetadata(inputModuleId);
     const warn = `Module with ID "${format(inputModuleId)}" not found`;
     if (!metadata) {
       this.log.warn(warn);
       return false;
     }
-    this.#map.delete(inputModuleId);
 
-    const target = this.#map.get(targetModuleId);
+    const target = this.getMetadata(targetModuleId);
     if (!target) {
-      const modName = getModuleName(metadata.module);
-      const msg = `Failed removing ${modName} from "imports" array: target module with ID "${targetModuleId}" not found.`;
+      const msg = `Failed removing ${metadata.name} from "imports" array: target module with ID "${targetModuleId}" not found.`;
       throw new Error(msg);
     }
     if (isModuleWithParams(metadata.module)) {
@@ -132,6 +129,11 @@ export class ModuleManager {
       const index = target.importsModules.findIndex((imp) => imp === metadata.module);
       target.importsModules.splice(index, 1);
     }
+
+    if (metadata.id) {
+      this.mapId.delete(metadata.id);
+    }
+    this.map.delete(metadata.module);
     return true;
   }
 
@@ -147,6 +149,7 @@ export class ModuleManager {
      * Setting initial properties of metadata.
      */
     const metadata = new NormalizedModuleMetadata();
+    metadata.name = modName;
     metadata.module = mod;
     /**
      * `ngMetadataName` is used only internally and is hidden from the public API.
@@ -155,7 +158,7 @@ export class ModuleManager {
 
     if (modMetadata.id) {
       metadata.id = modMetadata.id;
-      this.log.debug(`${modName} has been assigned an ID: "${metadata.id}".`);
+      this.log.debug(`${modName} has ID: "${metadata.id}".`);
     }
 
     modMetadata.imports?.forEach((imp) => {

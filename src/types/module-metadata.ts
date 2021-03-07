@@ -9,7 +9,7 @@ export interface ModuleMetadata extends Partial<ProvidersMetadata> {
   /**
    * The module ID.
    */
-  id?: string | number;
+  id?: string;
   /**
    * List of modules or `ModuleWithOptions` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
