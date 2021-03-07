@@ -10,10 +10,12 @@ import { isModuleWithParams, isProvider } from '../utils/type-guards';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleMetadata } from '../types/module-metadata';
 import { Logger } from '../types/logger';
+import { ModulesMap } from '../types/modules-map';
+import { AnyObj } from '../types/any-obj';
 
 @Injectable()
 export class ModuleManager {
-  protected map = new WeakMap<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
+  protected map: ModulesMap = new WeakMap();
   protected mapId = new Map<string, ModuleType | ModuleWithParams>();
 
   constructor(protected log: Logger) {}
@@ -86,12 +88,12 @@ export class ModuleManager {
     return true;
   }
 
-  getMetadata(moduleId: string | ModuleType | ModuleWithParams) {
+  getMetadata<T extends AnyObj = AnyObj>(moduleId: string | ModuleType | ModuleWithParams) {
     if (typeof moduleId == 'string') {
       const mapId = this.mapId.get(moduleId);
-      return this.map.get(mapId);
+      return this.map.get(mapId) as NormalizedModuleMetadata<T>;
     } else {
-      return this.map.get(moduleId);
+      return this.map.get(moduleId) as NormalizedModuleMetadata<T>;
     }
   }
 
