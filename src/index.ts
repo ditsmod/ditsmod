@@ -7,6 +7,7 @@ export { Module } from './decorators/module';
 export { Controller } from './decorators/controller';
 export { Route } from './decorators/route';
 export { ModuleManager } from './services/module-manager';
+export { ControllerErrorHandler } from './types/controller-error-handler';
 
 // For extensions developers only
 export { ControllerType } from './types/controller-type';
