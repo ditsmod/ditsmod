@@ -10,6 +10,7 @@ import { AppInitializer } from './services/app-initializer';
 import { NormalizedRootModuleMetadata } from './models/normalized-root-module-metadata';
 import { ModuleType } from './types/module-type';
 import { isHttp2SecureServerOptions } from './utils/type-guards';
+import { ModuleManager } from './services/module-manager';
 
 export class Application {
   protected opts: NormalizedRootModuleMetadata;
@@ -35,8 +36,9 @@ export class Application {
   }
 
   protected async init(appModule: ModuleType) {
+    const moduleManager = new ModuleManager(this.log);
     const appInitializer = new AppInitializer();
-    const { opts, log, preRouter } = await appInitializer.init(appModule);
+    const { opts, log, preRouter } = await appInitializer.init(appModule, moduleManager);
     this.opts = opts;
     this.log = log;
     this.preRouter = preRouter;
