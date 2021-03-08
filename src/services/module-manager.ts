@@ -20,12 +20,14 @@ export class ModuleManager {
 
   constructor(protected log: Logger) {}
 
-  /**
-   * @todo Check that this module has `@RootModule` decorator.
-   */
-  scanRootModule(module: ModuleType | ModuleWithParams<any>) {
-    this.scanModule(module);
-    return this.mapId.set('root', module);
+  scanRootModule(appModule: ModuleType) {
+    if (!getModuleMetadata(appModule, true)) {
+      throw new Error(
+        `Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`
+      );
+    }
+    this.scanModule(appModule);
+    return this.mapId.set('root', appModule);
   }
 
   scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
