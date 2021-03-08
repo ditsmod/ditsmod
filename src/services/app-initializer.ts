@@ -1,4 +1,4 @@
-import { Injectable, ReflectiveInjector, reflector, Type } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector, Type } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { NormalizedRootModuleMetadata } from '../models/normalized-root-module-metadata';
