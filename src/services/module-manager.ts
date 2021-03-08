@@ -20,6 +20,9 @@ export class ModuleManager {
 
   constructor(protected log: Logger) {}
 
+  /**
+   * @todo Check that this module has `@RootModule` decorator.
+   */
   scanRootModule(module: ModuleType | ModuleWithParams<any>) {
     this.scanModule(module);
     return this.mapId.set('root', module);
@@ -192,8 +195,6 @@ export class ModuleManager {
     group.forEach((prop) => {
       if (modMetadata[prop]?.length) {
         metadata[prop] = this.normalizeArray(modMetadata[prop]);
-      } else {
-        delete metadata[prop];
       }
     });
 
