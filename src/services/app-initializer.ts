@@ -1,4 +1,4 @@
-import { Injectable, ReflectiveInjector, Type } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector, reflector, Type } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { NormalizedRootModuleMetadata } from '../models/normalized-root-module-metadata';
@@ -10,12 +10,16 @@ import { Logger } from '../types/logger';
 import { ModuleType } from '../types/module-type';
 import { ServiceProvider } from '../types/service-provider';
 import { getDuplicates } from '../utils/get-duplicates';
+import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { getTokensCollisions } from '../utils/get-tokens-collisions';
 import { getUniqProviders } from '../utils/get-uniq-providers';
+import { mergeArrays } from '../utils/merge-arrays-options';
 import { normalizeProviders } from '../utils/ng-utils';
+import { pickProperties } from '../utils/pick-properties';
 import { throwProvidersCollisionError } from '../utils/throw-providers-collision-error';
 import { isRootModule } from '../utils/type-guards';
+import { defaultExtensions } from './default-extensions';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { defaultProvidersPerReq } from './default-providers-per-req';
 import { ModuleManager } from './module-manager';
@@ -26,38 +30,54 @@ export class AppInitializer {
   protected log: Logger;
   protected injectorPerApp: ReflectiveInjector;
   protected preRouter: PreRouter;
-  protected opts: NormalizedRootModuleMetadata;
+  protected meta: NormalizedRootModuleMetadata;
   protected extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>;
   #moduleManager: ModuleManager;
 
-  async init(appModule: ModuleType, moduleManager: ModuleManager) {
+  async init(appModule: ModuleType, log: Logger) {
     if (this.#moduleManager) {
       throw new Error('You can init the application only once. Try reInit() instead.');
     }
+    const moduleManager = new ModuleManager(this.log);
     this.#moduleManager = moduleManager;
+    this.log = log;
     moduleManager.scanRootModule(appModule);
     await this.reInit();
-    return { opts: this.opts, log: this.log, preRouter: this.preRouter };
+    return { meta: this.meta, log: this.log, preRouter: this.preRouter };
   }
 
   async reInit() {
     const rootMetadata = this.#moduleManager.getMetadata('root');
-    this.prepareProvidersPerApp(rootMetadata);
+    this.mergeMetadata(rootMetadata);
+    this.prepareProvidersPerApp(rootMetadata, this.#moduleManager);
     this.initProvidersPerApp();
-    this.extensionsMetadataMap = this.bootstrapModuleFactory(rootMetadata);
+    this.extensionsMetadataMap = this.bootstrapModuleFactory();
     this.checkModulesResolvable(this.extensionsMetadataMap);
     await this.handleExtensions(this.extensionsMetadataMap);
+  }
+
+  /**
+   * Merge AppModule metadata with default AppMetadata.
+   */
+  protected mergeMetadata(rootMetadata: NormalizedModuleMetadata): void {
+    const serverMetadata = getModuleMetadata(rootMetadata.module, true);
+
+    // Setting default metadata.
+    this.meta = new NormalizedRootModuleMetadata();
+
+    serverMetadata.extensions = mergeArrays(defaultExtensions, serverMetadata.extensions);
+    pickProperties(this.meta, serverMetadata);
   }
 
   /**
    * 1. checks collisions for non-root exported providers per app;
    * 2. then merges these providers with providers that declared on root module.
    */
-  protected prepareProvidersPerApp(rootMetadata: NormalizedModuleMetadata) {
+  protected prepareProvidersPerApp(rootMetadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
     // Here we work only with providers declared at the application level.
 
-    const exportedProviders = this.collectProvidersPerApp(rootMetadata);
-    const rootTokens = normalizeProviders(this.opts.providersPerApp).map((np) => np.provide);
+    const exportedProviders = this.collectProvidersPerApp(rootMetadata, moduleManager);
+    const rootTokens = normalizeProviders(this.meta.providersPerApp).map((np) => np.provide);
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.provide);
     const exportedMultiTokens = exportedNormProviders.filter((np) => np.multi).map((np) => np.provide);
@@ -72,13 +92,13 @@ export class AppInitializer {
       const moduleName = getModuleName(rootMetadata.module);
       throwProvidersCollisionError(moduleName, exportedTokensDuplicates);
     }
-    this.opts.providersPerApp.unshift(...exportedProviders);
+    this.meta.providersPerApp.unshift(...exportedProviders);
   }
 
   /**
    * Recursively collects per app providers from non-root modules.
    */
-  protected collectProvidersPerApp(metadata: NormalizedModuleMetadata) {
+  protected collectProvidersPerApp(metadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
     const modules = [
       ...metadata.importsModules,
       ...metadata.importsWithParams,
@@ -86,8 +106,8 @@ export class AppInitializer {
     ];
     const providersPerApp: ServiceProvider[] = [];
     modules.forEach((mod) => {
-      const metadata = this.#moduleManager.getMetadata(mod);
-      providersPerApp.push(...this.collectProvidersPerApp(metadata));
+      const metadata = moduleManager.getMetadata(mod);
+      providersPerApp.push(...this.collectProvidersPerApp(metadata, moduleManager));
     });
     const currProvidersPerApp = isRootModule(metadata) ? [] : metadata.providersPerApp;
 
@@ -98,28 +118,29 @@ export class AppInitializer {
    * Init providers per the application.
    */
   protected initProvidersPerApp() {
-    this.opts.providersPerApp.unshift(
+    this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
-      { provide: NormalizedRootModuleMetadata, useValue: this.opts },
+      { provide: NormalizedRootModuleMetadata, useValue: this.meta },
       { provide: AppInitializer, useValue: this }
     );
-    this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.opts.providersPerApp);
+    this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.meta.providersPerApp);
     this.log = this.injectorPerApp.get(Logger) as Logger;
     this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
   }
 
-  protected bootstrapModuleFactory(rootMetadata: NormalizedModuleMetadata) {
-    const globalProviders = this.getGlobalProviders(rootMetadata);
+  protected bootstrapModuleFactory() {
+    const globalProviders = this.getGlobalProviders();
     this.log.trace({ globalProviders });
-    const rootModule = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    return rootModule.bootstrap(globalProviders, '', rootMetadata);
+    const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+    const appModule = this.#moduleManager.getMetadata('root').module;
+    return moduleFactory.bootstrap(globalProviders, '', appModule, this.#moduleManager);
   }
 
-  protected getGlobalProviders(rootMetadata: NormalizedModuleMetadata) {
+  protected getGlobalProviders() {
     const globalProviders = new ProvidersMetadata();
-    globalProviders.providersPerApp = this.opts.providersPerApp;
-    const rootModule = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    const { providersPerMod, providersPerReq } = rootModule.importGlobalProviders(rootMetadata, globalProviders);
+    globalProviders.providersPerApp = this.meta.providersPerApp;
+    const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+    const { providersPerMod, providersPerReq } = moduleFactory.importGlobalProviders(this.#moduleManager, globalProviders);
     globalProviders.providersPerMod = providersPerMod;
     globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];
     return globalProviders;
@@ -142,7 +163,7 @@ export class AppInitializer {
     for (const Ext of allExtensions) {
       this.log.debug(`start init ${Ext.name} extension`);
       const extension = this.injectorPerApp.get(Ext) as Extension;
-      await extension.init(this.opts.prefixPerApp, extensionsMetadataMap);
+      await extension.init(this.meta.prefixPerApp, extensionsMetadataMap);
       this.log.debug(`finish init ${Ext.name} extension`);
     }
     this.log.debug(`Total extensions initialized: ${allExtensions.length}`);

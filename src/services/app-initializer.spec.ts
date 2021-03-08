@@ -1,10 +1,8 @@
 import 'reflect-metadata';
-import * as http from 'http';
-import { Type } from '@ts-stack/di';
 import { DefaultRouter } from '@ts-stack/router';
 
 import { AppInitializer } from './app-initializer';
-import { Logger } from '../types/logger';
+import { Logger, LoggerConfig } from '../types/logger';
 import { Controller } from '../decorators/controller';
 import { Router } from '../types/router';
 import { Request } from './request';
@@ -16,30 +14,33 @@ import { Module } from '../decorators/module';
 import { defaultProvidersPerReq } from './default-providers-per-req';
 import { RootModule } from '../decorators/root-module';
 import { NodeReqToken } from '../types/server-options';
-import { ModuleMetadata } from '../types/module-metadata';
 import { NormalizedRootModuleMetadata } from '../models/normalized-root-module-metadata';
 import { ServiceProvider } from '../types/service-provider';
-
-type MapId = string | number | ModuleType | ModuleWithParams;
-type MapType = Map<MapId, NormalizedModuleMetadata>;
+import { ExtensionMetadata } from '../types/extension-metadata';
+import { DefaultLogger } from './default-logger';
+import { ModuleManager } from './module-manager';
 
 describe('AppInitializer', () => {
   (defaultProvidersPerApp as ServiceProvider[]).push({ provide: Router, useClass: DefaultRouter });
 
   class MockAppInitializer extends AppInitializer {
-    opts = new NormalizedRootModuleMetadata();
-    modulesMap: MapType;
+    meta = new NormalizedRootModuleMetadata();
+    extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>;
 
-    mergeMetadata(appModule: ModuleType): void {
-      return super.mergeMetadata(appModule);
+    async init(appModule: ModuleType, log: Logger) {
+      return super.init(appModule, log);
     }
 
-    collectProvidersPerApp(mod: Type<any> | ModuleWithParams<any>) {
-      return super.collectProvidersPerApp(mod);
+    mergeMetadata(rootMetadata: NormalizedModuleMetadata) {
+      return super.mergeMetadata(rootMetadata);
     }
 
-    prepareProvidersPerApp(appModule: ModuleType) {
-      return super.prepareProvidersPerApp(appModule);
+    collectProvidersPerApp(metadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
+      return super.collectProvidersPerApp(metadata, moduleManager);
+    }
+
+    prepareProvidersPerApp(rootMetadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
+      return super.prepareProvidersPerApp(rootMetadata, moduleManager);
     }
   }
 
@@ -50,72 +51,14 @@ describe('AppInitializer', () => {
   }
 
   let mock: MockAppInitializer;
+  let log: Logger;
+  let moduleManager: ModuleManager;
 
   beforeEach(async () => {
     mock = new MockAppInitializer();
-  });
-
-  describe('mergeMetadata()', () => {
-    it('should set the default metatada', () => {
-      @RootModule()
-      class AppModule {}
-
-      mock.mergeMetadata(AppModule);
-      expect(mock.opts.httpModule).toBe(http);
-      expect(mock.opts.serverName).toBe('Node.js');
-      expect(mock.opts.serverOptions).toEqual({});
-      expect(mock.opts.listenOptions).toBeDefined();
-      expect(mock.opts.prefixPerApp).toBe('');
-      expect(mock.opts.providersPerApp).toEqual([]);
-
-      const opts = (mock.opts as unknown) as ModuleMetadata;
-      expect(opts.controllers).toBe(undefined);
-      expect(opts.exports).toBe(undefined);
-      expect(opts.imports).toBe(undefined);
-      expect(opts.providersPerMod).toBe(undefined);
-      expect(opts.providersPerReq).toBe(undefined);
-    });
-
-    it('should merge default metatada with AppModule metadata', () => {
-      class Controller1 {}
-      class Provider1 {}
-      class Module1 {}
-      class Module2 {}
-
-      const imports: ModuleWithParams[] = [
-        { prefix: '', module: Module1 },
-        { guards: [], module: Module2 },
-      ];
-
-      @RootModule({
-        prefixPerApp: 'api',
-        imports,
-        controllers: [Controller1],
-        providersPerApp: [Provider1],
-      })
-      class AppModule {}
-
-      mock.mergeMetadata(AppModule);
-      expect(mock.opts.httpModule).toBe(http);
-      expect(mock.opts.serverName).toEqual('Node.js');
-      expect(mock.opts.serverOptions).toEqual({});
-      expect(mock.opts.prefixPerApp).toBe('api');
-      expect(mock.opts.providersPerApp).toEqual([Provider1]);
-      expect(mock.opts.listenOptions).toBeDefined();
-
-      const opts = (mock.opts as unknown) as ModuleMetadata;
-      expect(opts.controllers).toBe(undefined);
-      expect(opts.exports).toBe(undefined);
-      expect(opts.imports).toBe(undefined);
-      expect(opts.providersPerMod).toBe(undefined);
-      expect(opts.providersPerReq).toBe(undefined);
-    });
-
-    it('should throw error about absence @Module decorator', () => {
-      class Module1 {}
-      const msg = 'Module build failed: module "Module1" does not have the "@RootModule()" decorator';
-      expect(() => mock.mergeMetadata(Module1)).toThrowError(msg);
-    });
+    const config = new LoggerConfig();
+    log = new DefaultLogger(config);
+    moduleManager = new ModuleManager(log);
   });
 
   describe('prepareProvidersPerApp()', () => {
@@ -131,13 +74,14 @@ describe('AppInitializer', () => {
       @RootModule({
         imports: [Module1, Module2],
       })
-      class RootModule1 {}
+      class AppModule {}
 
-      mock.mergeMetadata(RootModule1);
+      moduleManager.scanModule(AppModule);
+      const meta = moduleManager.getMetadata(AppModule);
       const msg =
-        'Exporting providers to RootModule1 was failed: found collision for: ' +
-        'Provider1. You should manually add this provider to RootModule1.';
-      expect(() => mock.prepareProvidersPerApp(RootModule1)).toThrow(msg);
+        'Exporting providers to AppModule was failed: found collision for: ' +
+        'Provider1. You should manually add this provider to AppModule.';
+      expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).toThrow(msg);
     });
 
     it('should works with identical duplicates in feature modules', () => {
@@ -152,21 +96,24 @@ describe('AppInitializer', () => {
       @RootModule({
         imports: [Module1, Module2],
       })
-      class RootModule1 {}
+      class AppModule {}
 
-      mock.mergeMetadata(RootModule1);
-      expect(() => mock.prepareProvidersPerApp(RootModule1)).not.toThrow();
+      moduleManager.scanModule(AppModule);
+      const meta = moduleManager.getMetadata(AppModule);
+      expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
     });
 
     it('should works with duplicates in providersPerApp of root module', () => {
       class Provider1 {}
 
       @RootModule({ providersPerApp: [Provider1, Provider1, { provide: Provider1, useClass: Provider1 }] })
-      class RootModule2 {}
+      class AppModule {}
 
-      mock.mergeMetadata(RootModule2);
-      expect(() => mock.prepareProvidersPerApp(RootModule2)).not.toThrow();
-      expect(mock.opts.providersPerApp.length).toBe(3);
+      moduleManager.scanModule(AppModule);
+      const meta = moduleManager.getMetadata(AppModule);
+      mock.mergeMetadata(meta);
+      expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
+      expect(mock.meta.providersPerApp.length).toBe(3);
     });
 
     it('should works with duplicates in root imports module', () => {
@@ -180,10 +127,12 @@ describe('AppInitializer', () => {
       @RootModule({
         imports: [Module1],
       })
-      class RootModule1 {}
+      class AppModule {}
 
-      mock.mergeMetadata(RootModule1);
-      expect(() => mock.prepareProvidersPerApp(RootModule1)).not.toThrow();
+      moduleManager.scanModule(AppModule);
+      const meta = moduleManager.getMetadata(AppModule);
+      mock.mergeMetadata(meta);
+      expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
     });
 
     it('should works with duplicates in feature module and root module', () => {
@@ -198,18 +147,22 @@ describe('AppInitializer', () => {
         imports: [Module1],
         providersPerApp: duplicates,
       })
-      class RootModule3 {}
+      class AppModule {}
 
-      mock.mergeMetadata(RootModule3);
-      expect(() => mock.prepareProvidersPerApp(RootModule3)).not.toThrow();
-      expect(mock.opts.providersPerApp.length).toBe(4);
+      moduleManager.scanModule(AppModule);
+      const meta = moduleManager.getMetadata(AppModule);
+      mock.mergeMetadata(meta);
+      expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
+      expect(mock.meta.providersPerApp.length).toBe(4);
     });
 
     it('should works with empty "imports" array in root module', () => {
       @RootModule({ imports: [] })
-      class RootModule4 {}
-      mock.mergeMetadata(RootModule4);
-      expect(() => mock.prepareProvidersPerApp(RootModule4)).not.toThrow();
+      class AppModule {}
+      moduleManager.scanModule(AppModule);
+      const meta = moduleManager.getMetadata(AppModule);
+      mock.mergeMetadata(meta);
+      expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
     });
   });
 
@@ -253,12 +206,16 @@ describe('AppInitializer', () => {
     class AppModule {}
 
     it('should collects providers from exports array without imports them', () => {
-      const providers = mock.collectProvidersPerApp(AppModule);
+      moduleManager.scanModule(AppModule);
+      const meta = moduleManager.getMetadata(AppModule);
+      const providers = mock.collectProvidersPerApp(meta, moduleManager);
       expect(providers.includes(Provider0)).toBe(true);
     });
 
     it('should collects providers in particular order', () => {
-      expect(mock.collectProvidersPerApp(AppModule)).toEqual([
+      moduleManager.scanModule(AppModule);
+      const meta = moduleManager.getMetadata(AppModule);
+      expect(mock.collectProvidersPerApp(meta, moduleManager)).toEqual([
         Provider1,
         Provider2,
         Provider3,
@@ -274,12 +231,14 @@ describe('AppInitializer', () => {
         imports: [AppModule],
       })
       class Module6 {
-        static withOptions(providers: ServiceProvider[]): ModuleWithParams<Module6> {
+        static withParams(providers: ServiceProvider[]): ModuleWithParams<Module6> {
           return { module: Module6, providersPerApp: providers };
         }
       }
-      const modWithOptions = Module6.withOptions([Provider7]);
-      expect(mock.collectProvidersPerApp(modWithOptions)).toEqual([
+      const modWithOptions = Module6.withParams([Provider7]);
+      moduleManager.scanModule(modWithOptions);
+      const meta = moduleManager.getMetadata(modWithOptions);
+      expect(mock.collectProvidersPerApp(meta, moduleManager)).toEqual([
         Provider1,
         Provider2,
         Provider3,
@@ -294,7 +253,10 @@ describe('AppInitializer', () => {
     it('should have empty array of providersPerApp', () => {
       @Module()
       class Module7 {}
-      expect(mock.collectProvidersPerApp(Module7)).toEqual([]);
+
+      moduleManager.scanModule(Module7);
+      const meta = moduleManager.getMetadata(Module7);
+      expect(mock.collectProvidersPerApp(meta, moduleManager)).toEqual([]);
     });
   });
 
@@ -329,10 +291,11 @@ describe('AppInitializer', () => {
 
     @Module({
       exports: [Provider3, Provider4],
+      providersPerMod: [Provider3, Provider4],
     })
     class Module2 {
-      static withOptions() {
-        return { module: Module2, providersPerMod: [Provider3, Provider4] };
+      static withParams() {
+        return { module: Module2 };
       }
     }
 
@@ -354,54 +317,55 @@ describe('AppInitializer', () => {
     class Module5 {}
 
     @RootModule({
+      serverName: 'custom-server',
       imports: [
         Module0,
         Module1,
-        Module2.withOptions(),
+        Module2.withParams(),
         Module5,
         { prefix: 'one', module: Module3 },
         { guards: [], module: Module4 },
       ],
-      exports: [Module0, Module2.withOptions(), Module3],
+      exports: [Module0, Module2, Module3],
       providersPerApp: [Logger],
     })
-    class RootModule1 {}
+    class AppModule {}
 
     it('Module0', async () => {
-      await mock.init(RootModule1);
-      const mod0 = mock.modulesMap.get(Module0);
+      await mock.init(AppModule, log);
+      const mod0 = mock.extensionsMetadataMap.get(Module0);
       expect(mod0.moduleMetadata.providersPerApp).toEqual([]);
       expect(mod0.moduleMetadata.providersPerMod).toEqual([Provider3, Provider4, Provider0]);
       expect(mod0.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
     });
 
     it('Module1', async () => {
-      await mock.init(RootModule1);
-      const mod1 = mock.modulesMap.get(Module1);
+      await mock.init(AppModule, log);
+      const mod1 = mock.extensionsMetadataMap.get(Module1);
       expect(mod1.moduleMetadata.providersPerApp).toEqual([]);
       expect(mod1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4, obj1, Provider2]);
       expect(mod1.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
     });
 
     it('Module2', async () => {
-      await mock.init(RootModule1);
-      const mod2 = mock.modulesMap.get(Module2);
+      await mock.init(AppModule, log);
+      const mod2 = mock.extensionsMetadataMap.get(Module2);
       expect(mod2.moduleMetadata.providersPerApp).toEqual([]);
       expect(mod2.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
       expect(mod2.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
     });
 
     it('Module3', async () => {
-      await mock.init(RootModule1);
-      const mod3 = mock.modulesMap.get(Module3);
+      await mock.init(AppModule, log);
+      const mod3 = mock.extensionsMetadataMap.get(Module3);
       expect(mod3.moduleMetadata.providersPerApp).toEqual([]);
       expect(mod3.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
       expect(mod3.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
     });
 
     it('Module4', async () => {
-      await mock.init(RootModule1);
-      const mod4 = mock.modulesMap.get(Module4);
+      await mock.init(AppModule, log);
+      const mod4 = mock.extensionsMetadataMap.get(Module4);
       expect(mod4.moduleMetadata.providersPerApp).toEqual([]);
       expect(mod4.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
       expect(mod4.moduleMetadata.providersPerReq).toEqual([
@@ -414,9 +378,9 @@ describe('AppInitializer', () => {
       ]);
     });
 
-    it('RootModule1', async () => {
-      await mock.init(RootModule1);
-      const root1 = mock.modulesMap.get(RootModule1);
+    it('AppModule', async () => {
+      await mock.init(AppModule, log);
+      const root1 = mock.extensionsMetadataMap.get(AppModule);
       expect(root1.moduleMetadata.providersPerApp).toEqual([Logger]);
       expect(root1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider1, Provider3, Provider4]);
       expect(root1.moduleMetadata.providersPerReq).toEqual([
@@ -431,8 +395,7 @@ describe('AppInitializer', () => {
     });
   });
 
-
-  describe('Providers collisions', () => {
+  describe('prepareProvidersPerApp()', () => {
     describe('per a module', () => {
       class Provider1 {}
       class Provider2 {}
@@ -445,16 +408,17 @@ describe('AppInitializer', () => {
 
       @Module({
         exports: [Provider1, { provide: Provider2, useFactory: () => {} }],
+        providersPerMod: [Provider1, Provider2],
       })
       class Module1 {
-        static withOptions() {
-          return { module: Module1, providersPerMod: [Provider1, Provider2] };
+        static withParams() {
+          return { module: Module1 };
         }
       }
 
       @Module({
-        imports: [Module1.withOptions()],
-        exports: [Module1.withOptions(), Provider2, Provider3],
+        imports: [Module1.withParams()],
+        exports: [Module1, Provider2, Provider3],
         providersPerMod: [Provider2, Provider3],
       })
       class Module2 {}
@@ -463,12 +427,12 @@ describe('AppInitializer', () => {
         @RootModule({
           imports: [Module2],
         })
-        class RootModule1 {}
+        class AppModule {}
 
         const msg =
-          'Exporting providers to RootModule1 was failed: found collision for: ' +
-          'Provider2. You should manually add this provider to RootModule1.';
-        await expect(mock.init(RootModule1)).rejects.toThrow(msg);
+          'Exporting providers to AppModule was failed: found collision for: ' +
+          'Provider2. You should manually add this provider to AppModule.';
+        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
       });
 
       it('mix exporting duplicates with "multi == true" per app and per mod', async () => {
@@ -490,12 +454,12 @@ describe('AppInitializer', () => {
         @RootModule({
           imports: [Module00, Module01],
         })
-        class RootModule1 {}
+        class AppModule {}
 
         const msg =
-          'Exporting providers to RootModule1 was failed: found collision for: ' +
-          'Provider1. You should manually add this provider to RootModule1.';
-        await expect(mock.init(RootModule1)).rejects.toThrow(msg);
+          'Exporting providers to AppModule was failed: found collision for: ' +
+          'Provider1. You should manually add this provider to AppModule.';
+        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
       });
 
       it('exporting duplicates with "multi == true" not to throw', async () => {
@@ -515,9 +479,9 @@ describe('AppInitializer', () => {
         @RootModule({
           imports: [Module00, Module01],
         })
-        class RootModule1 {}
+        class AppModule {}
 
-        await expect(mock.init(RootModule1)).resolves.not.toThrow();
+        await expect(mock.init(AppModule, log)).resolves.not.toThrow();
       });
 
       it('exporting duplicates of Provider2, but declared in providersPerMod of root module', async () => {
@@ -525,31 +489,31 @@ describe('AppInitializer', () => {
           imports: [Module2],
           providersPerMod: [Provider2],
         })
-        class RootModule1 {}
+        class AppModule {}
 
-        await expect(mock.init(RootModule1)).resolves.not.toThrow();
+        await expect(mock.init(AppModule, log)).resolves.not.toThrow();
       });
 
       it('exporting duplicates of Provider1 from Module1 and Module2', async () => {
         @RootModule({
-          imports: [Module0, Module1.withOptions()],
+          imports: [Module0, Module1.withParams()],
         })
-        class RootModule1 {}
+        class AppModule {}
 
         const msg =
-          'Exporting providers to RootModule1 was failed: found collision for: ' +
-          'Provider1. You should manually add this provider to RootModule1.';
-        await expect(mock.init(RootModule1)).rejects.toThrow(msg);
+          'Exporting providers to AppModule was failed: found collision for: ' +
+          'Provider1. You should manually add this provider to AppModule.';
+        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
       });
 
       it('exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerMod of root module', async () => {
         @RootModule({
-          imports: [Module0, Module1.withOptions()],
+          imports: [Module0, Module1.withParams()],
           providersPerMod: [Provider1],
         })
-        class RootModule1 {}
+        class AppModule {}
 
-        await expect(mock.init(RootModule1)).resolves.not.toThrow();
+        await expect(mock.init(AppModule, log)).resolves.not.toThrow();
       });
     });
 
@@ -581,12 +545,12 @@ describe('AppInitializer', () => {
         @RootModule({
           imports: [Module2],
         })
-        class RootModule1 {}
+        class AppModule {}
 
         const msg =
-          'Exporting providers to RootModule1 was failed: found collision for: ' +
-          'Provider2. You should manually add this provider to RootModule1.';
-        await expect(mock.init(RootModule1)).rejects.toThrow(msg);
+          'Exporting providers to AppModule was failed: found collision for: ' +
+          'Provider2. You should manually add this provider to AppModule.';
+        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
       });
 
       it('exporting duplicates of Provider2, but declared in providersPerReq of root module', async () => {
@@ -594,21 +558,36 @@ describe('AppInitializer', () => {
           imports: [Module2],
           providersPerReq: [Provider2],
         })
-        class RootModule1 {}
+        class AppModule {}
 
-        await expect(mock.init(RootModule1)).resolves.not.toThrow();
+        await expect(mock.init(AppModule, log)).resolves.not.toThrow();
       });
 
       it('exporting duplicates of Provider1 from Module1 and Module2', async () => {
+        class Provider1 {}
+        class Provider2 {}
+
+        @Module({
+          exports: [{ provide: Provider1, useClass: Provider1 }],
+          providersPerReq: [{ provide: Provider1, useClass: Provider1 }, Provider2],
+        })
+        class Module0 {}
+
+        @Module({
+          exports: [{ provide: Provider1, useExisting: Provider1 }, Provider2],
+          providersPerReq: [Provider1, Provider2],
+        })
+        class Module1 {}
+
         @RootModule({
           imports: [Module0, Module1],
         })
-        class RootModule1 {}
+        class AppModule {}
 
         const msg =
-          'Exporting providers to RootModule1 was failed: found collision for: ' +
-          'Provider1. You should manually add this provider to RootModule1.';
-        await expect(mock.init(RootModule1)).rejects.toThrow(msg);
+          'Exporting providers to AppModule was failed: found collision for: ' +
+          'Provider1. You should manually add this provider to AppModule.';
+        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
       });
 
       it('exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerReq of root module', async () => {
@@ -616,9 +595,9 @@ describe('AppInitializer', () => {
           imports: [Module0, Module1],
           providersPerReq: [Provider1],
         })
-        class RootModule1 {}
+        class AppModule {}
 
-        await expect(mock.init(RootModule1)).resolves.not.toThrow();
+        await expect(mock.init(AppModule, log)).resolves.not.toThrow();
       });
     });
 
@@ -654,12 +633,12 @@ describe('AppInitializer', () => {
           providersPerMod: [Provider1],
           providersPerReq: [],
         })
-        class RootModule1 {}
+        class AppModule {}
 
         const msg =
-          'Exporting providers to RootModule1 was failed: found collision for: ' +
-          'Provider0, Request, Provider1, InjectionToken NodeRequest. You should manually add these providers to RootModule1.';
-        await expect(mock.init(RootModule1)).rejects.toThrow(msg);
+          'Exporting providers to AppModule was failed: found collision for: ' +
+          'Provider0, Request, Provider1, InjectionToken NodeRequest. You should manually add these providers to AppModule.';
+        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
       });
 
       it('case 2', async () => {
@@ -673,12 +652,12 @@ describe('AppInitializer', () => {
         @RootModule({
           imports: [Module0],
         })
-        class RootModule1 {}
+        class AppModule {}
 
         const msg =
-          'Exporting providers to RootModule1 was failed: found collision for: ' +
-          'Router. You should manually add this provider to RootModule1.';
-        await expect(mock.init(RootModule1)).rejects.toThrow(msg);
+          'Exporting providers to AppModule was failed: found collision for: ' +
+          'Router. You should manually add this provider to AppModule.';
+        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
       });
     });
   });
