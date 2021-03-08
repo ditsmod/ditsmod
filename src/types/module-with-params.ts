@@ -4,7 +4,7 @@ import { GuardItem } from './guard-item';
 import { AnyObj } from './any-obj';
 
 export interface ModuleWithParams<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
-  id?: string | number;
+  id?: string;
   module: ModuleType<T>;
   prefix?: string;
   guards?: GuardItem[];
