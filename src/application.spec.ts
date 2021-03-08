@@ -12,7 +12,7 @@ import { ModuleType } from './types/module-type';
 
 describe('Application', () => {
   class MockApplication extends Application {
-    opts = new NormalizedRootModuleMetadata();
+    meta = new NormalizedRootModuleMetadata();
     log: Logger;
     preRouter: PreRouter;
 
@@ -37,27 +37,27 @@ describe('Application', () => {
     class AppModule {}
 
     it('should not to throw with http2 and isHttp2SecureServer == true', () => {
-      mock.opts.serverOptions = { isHttp2SecureServer: true };
-      mock.opts.httpModule = http2;
+      mock.meta.serverOptions = { isHttp2SecureServer: true };
+      mock.meta.httpModule = http2;
       expect(() => mock.checkSecureServerOption(AppModule)).not.toThrow();
     });
 
     it('should to throw with http and isHttp2SecureServer == true', () => {
-      mock.opts.serverOptions = { isHttp2SecureServer: true };
-      mock.opts.httpModule = http;
+      mock.meta.serverOptions = { isHttp2SecureServer: true };
+      mock.meta.httpModule = http;
       const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
       expect(() => mock.checkSecureServerOption(AppModule)).toThrowError(msg);
     });
 
     it('should not to throw with http and isHttp2SecureServer == false', () => {
-      mock.opts.httpModule = http;
+      mock.meta.httpModule = http;
       const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
       expect(() => mock.checkSecureServerOption(AppModule)).not.toThrowError(msg);
     });
 
     it('should to throw with https and isHttp2SecureServer == true', () => {
-      mock.opts.serverOptions = { isHttp2SecureServer: true };
-      mock.opts.httpModule = https;
+      mock.meta.serverOptions = { isHttp2SecureServer: true };
+      mock.meta.httpModule = https;
       const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
       expect(() => mock.checkSecureServerOption(AppModule)).toThrowError(msg);
     });
