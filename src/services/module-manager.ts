@@ -26,8 +26,8 @@ export class ModuleManager {
     if (!getModuleMetadata(appModule, true)) {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
-    this.scanModule(appModule);
-    return this.mapId.set('root', appModule);
+    this.mapId.set('root', appModule);
+    return this.scanModule(appModule);
   }
 
   scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
