@@ -19,7 +19,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj> extends Provide
   /**
    * The module ID.
    */
-  id?: string;
+  id?: string = '';
   importsModules?: ModuleType[] = [];
   importsWithParams?: ModuleWithParams[] = [];
   controllers?: ControllerType[] = [];
