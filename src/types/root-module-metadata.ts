@@ -10,5 +10,5 @@ export interface RootModuleMetadata {
   serverOptions?: ServerOptions;
   listenOptions?: ListenOptions;
   prefixPerApp?: string;
-  extensions: ExtensionType[];
+  extensions?: ExtensionType[];
 }
