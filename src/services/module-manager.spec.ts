@@ -97,7 +97,7 @@ describe('ModuleManager', () => {
   });
 
   it('root module with imported some other modules', () => {
-    const fn = () => module4WithProviders;
+    const fn = () => module4WithParams;
     @Module({ id: '1', imports: [forwardRef(fn)] })
     class Module1 {}
 
@@ -124,7 +124,7 @@ describe('ModuleManager', () => {
     @Injectable()
     class Provider2 {}
 
-    const module4WithProviders = Module4.withParams([Provider2]);
+    const module4WithParams = Module4.withParams([Provider2]);
 
     @RootModule({
       imports: [Module1, Module2],
@@ -146,7 +146,7 @@ describe('ModuleManager', () => {
       controllers: [],
       module: Module1,
       id: '1',
-      importsWithParams: [module4WithProviders],
+      importsWithParams: [module4WithParams],
       ngMetadataName: 'Module',
     };
 
@@ -202,12 +202,12 @@ describe('ModuleManager', () => {
       providersPerReq: [],
       extensions: [],
       controllers: [],
-      module: module4WithProviders,
+      module: module4WithParams,
       providersPerMod: [Provider2],
       ngMetadataName: 'Module',
     };
 
-    expect(map.get(module4WithProviders)).toEqual(module4Expect);
+    expect(map.get(module4WithParams)).toEqual(module4Expect);
   });
 
   it('programmatically adding some modules to "imports" array of root module', () => {
