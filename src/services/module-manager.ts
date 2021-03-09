@@ -112,8 +112,7 @@ export class ModuleManager {
       return false;
     }
     target[prop].splice(index, 1);
-    const rootModule = this.getMetadata('root').module;
-    if (!this.includesInSomeModule(inputModuleId, rootModule)) {
+    if (!this.includesInSomeModule(inputModuleId, 'root')) {
       if (meta.id) {
         this.mapId.delete(meta.id);
       }
