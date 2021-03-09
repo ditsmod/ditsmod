@@ -68,22 +68,22 @@ export class ModuleManager {
    * @param targetModuleId Module ID to which the input module will be added.
    */
   addImport(inputModule: ModuleType | ModuleWithParams, targetModuleId: ModuleId = 'root'): boolean {
-    const target = this.getMetadata(targetModuleId);
-    if (!target) {
+    const targetMeta = this.getMetadata(targetModuleId);
+    if (!targetMeta) {
       const modName = getModuleName(inputModule);
       const msg = `Failed adding ${modName} to imports: target module with ID "${targetModuleId}" not found.`;
       throw new Error(msg);
     }
 
     const prop = isModuleWithParams(inputModule) ? 'importsWithParams' : 'importsModules';
-    if (target[prop].some((imp: ModuleType | ModuleWithParams) => imp === inputModule)) {
+    if (targetMeta[prop].some((imp: ModuleType | ModuleWithParams) => imp === inputModule)) {
       const msg = `The module with ID "${format(inputModule)}" has already been imported into "${format(
         targetModuleId
       )}"`;
       this.log.warn(msg);
       return false;
     } else {
-      target[prop].push(inputModule as any);
+      targetMeta[prop].push(inputModule as any);
     }
     this.scanModule(inputModule);
     return true;
@@ -93,30 +93,30 @@ export class ModuleManager {
    * @param targetModuleId Module ID from where the input module will be removed.
    */
   removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean {
-    const meta = this.getMetadata(inputModuleId);
+    const inputMeta = this.getMetadata(inputModuleId);
     const warn = `Module with ID "${format(inputModuleId)}" not found`;
-    if (!meta) {
+    if (!inputMeta) {
       this.log.warn(warn);
       return false;
     }
 
-    const target = this.getMetadata(targetModuleId);
-    if (!target) {
-      const msg = `Failed removing ${meta.name} from "imports" array: target module with ID "${targetModuleId}" not found.`;
+    const targetMeta = this.getMetadata(targetModuleId);
+    if (!targetMeta) {
+      const msg = `Failed removing ${inputMeta.name} from "imports" array: target module with ID "${targetModuleId}" not found.`;
       throw new Error(msg);
     }
-    const prop = isModuleWithParams(meta.module) ? 'importsWithParams' : 'importsModules';
-    const index = target[prop].findIndex((imp: ModuleType | ModuleWithParams) => imp === meta.module);
+    const prop = isModuleWithParams(inputMeta.module) ? 'importsWithParams' : 'importsModules';
+    const index = targetMeta[prop].findIndex((imp: ModuleType | ModuleWithParams) => imp === inputMeta.module);
     if (index == -1) {
       this.log.warn(warn);
       return false;
     }
-    target[prop].splice(index, 1);
+    targetMeta[prop].splice(index, 1);
     if (!this.includesInSomeModule(inputModuleId, 'root')) {
-      if (meta.id) {
-        this.mapId.delete(meta.id);
+      if (inputMeta.id) {
+        this.mapId.delete(inputMeta.id);
       }
-      this.map.delete(meta.module);
+      this.map.delete(inputMeta.module);
     }
     return true;
   }
@@ -129,8 +129,8 @@ export class ModuleManager {
    * @param targetModuleId Module where to search `inputModule`.
    */
   protected includesInSomeModule(inputModuleId: ModuleId, targetModuleId: ModuleId): boolean {
-    const meta = this.getMetadata(targetModuleId);
-    const importsOrExports = [...meta.importsModules, ...meta.importsWithParams, ...meta.exportsModules];
+    const targetMeta = this.getMetadata(targetModuleId);
+    const importsOrExports = [...targetMeta.importsModules, ...targetMeta.importsWithParams, ...targetMeta.exportsModules];
 
     return (
       importsOrExports.some((modOrObj) => {
