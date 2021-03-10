@@ -24,7 +24,9 @@ import { throwProvidersCollisionError } from './utils/throw-providers-collision-
 import { isController, isExtensionProvider, isRootModule } from './utils/type-guards';
 
 /**
- * Creates `injectorPerMod` and `injectorPerReq`.
+ * - creates `injectorPerMod` and `injectorPerReq`;
+ * - checks on provider collisions;
+ * - collects controllers metadata.
  */
 @Injectable()
 export class ModuleFactory {

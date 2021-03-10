@@ -6,6 +6,9 @@ import { HttpModule } from '../types/http-module';
 import { ServiceProvider } from '../types/service-provider';
 import { ExtensionType } from '../types/extension-type';
 
+/**
+ * @todo Rename this to `RootMetadata`.
+ */
 export class NormalizedRootModuleMetadata {
   httpModule: HttpModule = http;
   serverName = 'Node.js';

@@ -35,7 +35,6 @@ export class Application {
   }
 
   protected async init(appModule: ModuleType) {
-    
     const appInitializer = new AppInitializer();
     const { meta, log, preRouter } = await appInitializer.init(appModule, this.log);
     this.meta = meta;
