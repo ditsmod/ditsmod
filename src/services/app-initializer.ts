@@ -1,7 +1,7 @@
 import { Injectable, ReflectiveInjector, Type } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { NormalizedRootModuleMetadata } from '../models/normalized-root-module-metadata';
+import { RootMetadata } from '../models/root-metadata';
 import { ProvidersMetadata } from '../models/providers-metadata';
 import { ModuleFactory } from '../module-factory';
 import { Extension } from '../types/extension';
@@ -30,7 +30,7 @@ export class AppInitializer {
   protected log: Logger;
   protected injectorPerApp: ReflectiveInjector;
   protected preRouter: PreRouter;
-  protected meta: NormalizedRootModuleMetadata;
+  protected meta: RootMetadata;
   protected extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>;
   #moduleManager: ModuleManager;
 
@@ -63,7 +63,7 @@ export class AppInitializer {
     const serverMetadata = getModuleMetadata(appModule, true);
 
     // Setting default metadata.
-    this.meta = new NormalizedRootModuleMetadata();
+    this.meta = new RootMetadata();
 
     serverMetadata.extensions = mergeArrays(defaultExtensions, serverMetadata.extensions);
     pickProperties(this.meta, serverMetadata);
@@ -122,7 +122,7 @@ export class AppInitializer {
   protected initProvidersPerApp() {
     this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
-      { provide: NormalizedRootModuleMetadata, useValue: this.meta },
+      { provide: RootMetadata, useValue: this.meta },
       { provide: AppInitializer, useValue: this }
     );
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.meta.providersPerApp);

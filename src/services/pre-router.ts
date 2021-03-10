@@ -8,7 +8,7 @@ import { PathParam, Router, RouteHandler } from '../types/router';
 import { Status } from '../utils/http-status-codes';
 import { Extension } from '../types/extension';
 import { PreRouteData } from '../types/route-data';
-import { NormalizedRootModuleMetadata } from '../models/normalized-root-module-metadata';
+import { RootMetadata } from '../models/root-metadata';
 import { ModuleType } from '../types/module-type';
 import { ExtensionMetadata } from '../types/extension-metadata';
 import { HttpMethod } from '../types/http-method';
@@ -25,7 +25,7 @@ export class PreRouter implements Extension<PreRouteData[]> {
     protected injectorPerApp: ReflectiveInjector,
     protected router: Router,
     protected log: Logger,
-    protected normRootModuleMetadata: NormalizedRootModuleMetadata
+    protected rootMetadata: RootMetadata
   ) {}
 
   init(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>) {
@@ -69,7 +69,7 @@ export class PreRouter implements Extension<PreRouteData[]> {
       const { injector, providers, controller, methodName, parseBody, guards } = preRouteData;
 
       const handle = ((nodeReq: NodeRequest, nodeRes: NodeResponse, params: PathParam[], queryString: any) => {
-        nodeRes.setHeader('Server', this.normRootModuleMetadata.serverName);
+        nodeRes.setHeader('Server', this.rootMetadata.serverName);
         const injector1 = injector.resolveAndCreateChild([
           { provide: NodeReqToken, useValue: nodeReq },
           { provide: NodeResToken, useValue: nodeRes },

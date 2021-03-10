@@ -14,7 +14,7 @@ import { Module } from '../decorators/module';
 import { defaultProvidersPerReq } from './default-providers-per-req';
 import { RootModule } from '../decorators/root-module';
 import { NodeReqToken } from '../types/server-options';
-import { NormalizedRootModuleMetadata } from '../models/normalized-root-module-metadata';
+import { RootMetadata } from '../models/root-metadata';
 import { ServiceProvider } from '../types/service-provider';
 import { ExtensionMetadata } from '../types/extension-metadata';
 import { DefaultLogger } from './default-logger';
@@ -24,7 +24,7 @@ describe('AppInitializer', () => {
   (defaultProvidersPerApp as ServiceProvider[]).push({ provide: Router, useClass: DefaultRouter });
 
   class MockAppInitializer extends AppInitializer {
-    meta = new NormalizedRootModuleMetadata();
+    meta = new RootMetadata();
     extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>;
 
     async init(appModule: ModuleType, log: Logger) {

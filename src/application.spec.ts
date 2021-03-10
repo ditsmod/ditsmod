@@ -7,12 +7,12 @@ import { Application } from './application';
 import { RootModule } from './decorators/root-module';
 import { PreRouter } from './services/pre-router';
 import { Logger } from './types/logger';
-import { NormalizedRootModuleMetadata } from './models/normalized-root-module-metadata';
+import { RootMetadata } from './models/root-metadata';
 import { ModuleType } from './types/module-type';
 
 describe('Application', () => {
   class MockApplication extends Application {
-    meta = new NormalizedRootModuleMetadata();
+    meta = new RootMetadata();
     log: Logger;
     preRouter: PreRouter;
 

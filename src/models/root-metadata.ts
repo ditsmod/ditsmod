@@ -9,7 +9,7 @@ import { ExtensionType } from '../types/extension-type';
 /**
  * @todo Rename this to `RootMetadata`.
  */
-export class NormalizedRootModuleMetadata {
+export class RootMetadata {
   httpModule: HttpModule = http;
   serverName = 'Node.js';
   serverOptions: ServerOptions = {};

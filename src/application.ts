@@ -7,12 +7,12 @@ import { Logger, LoggerConfig } from './types/logger';
 import { Http2SecureServerOptions, Server } from './types/server-options';
 import { DefaultLogger } from './services/default-logger';
 import { AppInitializer } from './services/app-initializer';
-import { NormalizedRootModuleMetadata } from './models/normalized-root-module-metadata';
+import { RootMetadata } from './models/root-metadata';
 import { ModuleType } from './types/module-type';
 import { isHttp2SecureServerOptions } from './utils/type-guards';
 
 export class Application {
-  protected meta: NormalizedRootModuleMetadata;
+  protected meta: RootMetadata;
   protected log: Logger;
   protected preRouter: PreRouter;
 
