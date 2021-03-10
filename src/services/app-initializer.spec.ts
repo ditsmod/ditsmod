@@ -31,16 +31,16 @@ describe('AppInitializer', () => {
       return super.init(appModule, log);
     }
 
-    mergeMetadata(rootMetadata: NormalizedModuleMetadata) {
-      return super.mergeMetadata(rootMetadata);
+    mergeMetadata(appModule: ModuleType) {
+      return super.mergeMetadata(appModule);
     }
 
     collectProvidersPerApp(metadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
       return super.collectProvidersPerApp(metadata, moduleManager);
     }
 
-    prepareProvidersPerApp(rootMetadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
-      return super.prepareProvidersPerApp(rootMetadata, moduleManager);
+    prepareProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
+      return super.prepareProvidersPerApp(meta, moduleManager);
     }
   }
 
@@ -62,7 +62,7 @@ describe('AppInitializer', () => {
   });
 
   describe('prepareProvidersPerApp()', () => {
-    it('should throw an error about non-identical duplicates in feature modules', () => {
+    it('should throw an error about non-identical duplicates', () => {
       class Provider1 {}
 
       @Module({ providersPerApp: [{ provide: Provider1, useClass: Provider1 }] })
@@ -76,15 +76,14 @@ describe('AppInitializer', () => {
       })
       class AppModule {}
 
-      moduleManager.scanModule(AppModule);
-      const meta = moduleManager.getMetadata(AppModule);
+      const meta = moduleManager.scanModule(AppModule);
       const msg =
         'Exporting providers to AppModule was failed: found collision for: ' +
         'Provider1. You should manually add this provider to AppModule.';
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).toThrow(msg);
     });
 
-    it('should works with identical duplicates in feature modules', () => {
+    it('should works with identical duplicates', () => {
       class Provider1 {}
 
       @Module({ providersPerApp: [Provider1] })
@@ -98,8 +97,7 @@ describe('AppInitializer', () => {
       })
       class AppModule {}
 
-      moduleManager.scanModule(AppModule);
-      const meta = moduleManager.getMetadata(AppModule);
+      const meta = moduleManager.scanModule(AppModule);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
     });
 
@@ -109,49 +107,27 @@ describe('AppInitializer', () => {
       @RootModule({ providersPerApp: [Provider1, Provider1, { provide: Provider1, useClass: Provider1 }] })
       class AppModule {}
 
-      moduleManager.scanModule(AppModule);
-      const meta = moduleManager.getMetadata(AppModule);
-      mock.mergeMetadata(meta);
+      const meta = moduleManager.scanModule(AppModule);
+      mock.mergeMetadata(AppModule);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
       expect(mock.meta.providersPerApp.length).toBe(3);
     });
 
-    it('should works with duplicates in root imports module', () => {
-      class Provider1 {}
-      const Alias = Provider1;
-      const duplicates = [Provider1, Alias, { provide: Provider1, useClass: Provider1 }];
-
-      @Module({ providersPerApp: duplicates })
-      class Module1 {}
-
-      @RootModule({
-        imports: [Module1],
-      })
-      class AppModule {}
-
-      moduleManager.scanModule(AppModule);
-      const meta = moduleManager.getMetadata(AppModule);
-      mock.mergeMetadata(meta);
-      expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
-    });
-
     it('should works with duplicates in feature module and root module', () => {
       class Provider1 {}
-      const Alias = Provider1;
-      const duplicates = [Provider1, Alias, { provide: Provider1, useClass: Provider1 }];
+      class Provider2 {}
 
-      @Module({ providersPerApp: duplicates })
+      @Module({ providersPerApp: [Provider1, Provider2, { provide: Provider1, useClass: Provider1 }] })
       class Module1 {}
 
       @RootModule({
         imports: [Module1],
-        providersPerApp: duplicates,
+        providersPerApp: [Provider1, Provider2],
       })
       class AppModule {}
 
-      moduleManager.scanModule(AppModule);
-      const meta = moduleManager.getMetadata(AppModule);
-      mock.mergeMetadata(meta);
+      const meta = moduleManager.scanModule(AppModule);
+      mock.mergeMetadata(AppModule);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
       expect(mock.meta.providersPerApp.length).toBe(4);
     });
@@ -159,9 +135,8 @@ describe('AppInitializer', () => {
     it('should works with empty "imports" array in root module', () => {
       @RootModule({ imports: [] })
       class AppModule {}
-      moduleManager.scanModule(AppModule);
-      const meta = moduleManager.getMetadata(AppModule);
-      mock.mergeMetadata(meta);
+      const meta = moduleManager.scanModule(AppModule);
+      mock.mergeMetadata(AppModule);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
     });
   });
@@ -206,15 +181,13 @@ describe('AppInitializer', () => {
     class AppModule {}
 
     it('should collects providers from exports array without imports them', () => {
-      moduleManager.scanModule(AppModule);
-      const meta = moduleManager.getMetadata(AppModule);
+      const meta = moduleManager.scanModule(AppModule);
       const providers = mock.collectProvidersPerApp(meta, moduleManager);
       expect(providers.includes(Provider0)).toBe(true);
     });
 
     it('should collects providers in particular order', () => {
-      moduleManager.scanModule(AppModule);
-      const meta = moduleManager.getMetadata(AppModule);
+      const meta = moduleManager.scanModule(AppModule);
       expect(mock.collectProvidersPerApp(meta, moduleManager)).toEqual([
         Provider1,
         Provider2,
@@ -226,7 +199,7 @@ describe('AppInitializer', () => {
       ]);
     });
 
-    it('should works with moduleWithOptions', () => {
+    it('should works with moduleWithParams', () => {
       @Module({
         imports: [AppModule],
       })
@@ -235,10 +208,10 @@ describe('AppInitializer', () => {
           return { module: Module6, providersPerApp: providers };
         }
       }
-      const modWithOptions = Module6.withParams([Provider7]);
-      moduleManager.scanModule(modWithOptions);
-      const meta = moduleManager.getMetadata(modWithOptions);
-      expect(mock.collectProvidersPerApp(meta, moduleManager)).toEqual([
+      const modWithParams = Module6.withParams([Provider7]);
+      const meta = moduleManager.scanModule(modWithParams);
+      const providers = mock.collectProvidersPerApp(meta, moduleManager);
+      expect(providers).toEqual([
         Provider1,
         Provider2,
         Provider3,
@@ -254,9 +227,9 @@ describe('AppInitializer', () => {
       @Module()
       class Module7 {}
 
-      moduleManager.scanModule(Module7);
-      const meta = moduleManager.getMetadata(Module7);
-      expect(mock.collectProvidersPerApp(meta, moduleManager)).toEqual([]);
+      const meta = moduleManager.scanModule(Module7);
+      const providers = mock.collectProvidersPerApp(meta, moduleManager);
+      expect(providers).toEqual([]);
     });
   });
 
@@ -395,35 +368,30 @@ describe('AppInitializer', () => {
     });
   });
 
-  describe('prepareProvidersPerApp()', () => {
+  describe('Providers collisions', () => {
     describe('per a module', () => {
-      class Provider1 {}
-      class Provider2 {}
-      class Provider3 {}
-      @Module({
-        exports: [{ provide: Provider1, useValue: '' }],
-        providersPerMod: [{ provide: Provider1, useClass: Provider1 }, Provider2],
-      })
-      class Module0 {}
-
-      @Module({
-        exports: [Provider1, { provide: Provider2, useFactory: () => {} }],
-        providersPerMod: [Provider1, Provider2],
-      })
-      class Module1 {
-        static withParams() {
-          return { module: Module1 };
-        }
-      }
-
-      @Module({
-        imports: [Module1.withParams()],
-        exports: [Module1, Provider2, Provider3],
-        providersPerMod: [Provider2, Provider3],
-      })
-      class Module2 {}
-
       it('exporting duplicates of Provider2', async () => {
+        class Provider1 {}
+        class Provider2 {}
+        class Provider3 {}
+
+        @Module({
+          exports: [Provider1, { provide: Provider2, useFactory: () => {} }],
+          providersPerMod: [Provider1, Provider2],
+        })
+        class Module1 {
+          static withParams() {
+            return { module: Module1 };
+          }
+        }
+
+        @Module({
+          imports: [Module1.withParams()],
+          exports: [Module1, Provider2, Provider3],
+          providersPerMod: [Provider2, Provider3],
+        })
+        class Module2 {}
+
         @RootModule({
           imports: [Module2],
         })
@@ -436,6 +404,9 @@ describe('AppInitializer', () => {
       });
 
       it('mix exporting duplicates with "multi == true" per app and per mod', async () => {
+        class Provider1 {}
+        class Provider2 {}
+
         const ObjProviderPerApp: ServiceProvider = { provide: Provider1, useClass: Provider1, multi: true };
         const ObjProviderPerMod: ServiceProvider = { provide: Provider1, useClass: Provider1, multi: true };
         @Module({
@@ -463,6 +434,9 @@ describe('AppInitializer', () => {
       });
 
       it('exporting duplicates with "multi == true" not to throw', async () => {
+        class Provider1 {}
+        class Provider2 {}
+
         const ObjProvider: ServiceProvider = { provide: Provider1, useClass: Provider1, multi: true };
         @Module({
           exports: [ObjProvider],
@@ -485,6 +459,26 @@ describe('AppInitializer', () => {
       });
 
       it('exporting duplicates of Provider2, but declared in providersPerMod of root module', async () => {
+        class Provider1 {}
+        class Provider2 {}
+        class Provider3 {}
+
+        @Module({
+          exports: [Provider1, { provide: Provider2, useFactory: () => {} }],
+          providersPerMod: [Provider1, Provider2],
+        })
+        class Module1 {
+          static withParams() {
+            return { module: Module1 };
+          }
+        }
+        @Module({
+          imports: [Module1.withParams()],
+          exports: [Module1, Provider2, Provider3],
+          providersPerMod: [Provider2, Provider3],
+        })
+        class Module2 {}
+
         @RootModule({
           imports: [Module2],
           providersPerMod: [Provider2],
@@ -495,6 +489,25 @@ describe('AppInitializer', () => {
       });
 
       it('exporting duplicates of Provider1 from Module1 and Module2', async () => {
+        class Provider1 {}
+        class Provider2 {}
+
+        @Module({
+          exports: [{ provide: Provider1, useValue: '' }],
+          providersPerMod: [{ provide: Provider1, useClass: Provider1 }, Provider2],
+        })
+        class Module0 {}
+
+        @Module({
+          exports: [Provider1, { provide: Provider2, useFactory: () => {} }],
+          providersPerMod: [Provider1, Provider2],
+        })
+        class Module1 {
+          static withParams() {
+            return { module: Module1 };
+          }
+        }
+
         @RootModule({
           imports: [Module0, Module1.withParams()],
         })
@@ -507,6 +520,25 @@ describe('AppInitializer', () => {
       });
 
       it('exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerMod of root module', async () => {
+        class Provider1 {}
+        class Provider2 {}
+
+        @Module({
+          exports: [{ provide: Provider1, useValue: '' }],
+          providersPerMod: [{ provide: Provider1, useClass: Provider1 }, Provider2],
+        })
+        class Module0 {}
+
+        @Module({
+          exports: [Provider1, { provide: Provider2, useFactory: () => {} }],
+          providersPerMod: [Provider1, Provider2],
+        })
+        class Module1 {
+          static withParams() {
+            return { module: Module1 };
+          }
+        }
+
         @RootModule({
           imports: [Module0, Module1.withParams()],
           providersPerMod: [Provider1],

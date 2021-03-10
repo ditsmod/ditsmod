@@ -36,7 +36,7 @@ export class AppInitializer {
 
   async init(appModule: ModuleType, log: Logger) {
     if (this.#moduleManager) {
-      throw new Error('You can init the application only once. Try reInit() instead.');
+      throw new Error('You can call init() only once. Try reInit() instead.');
     }
     const moduleManager = new ModuleManager(this.log);
     this.#moduleManager = moduleManager;
@@ -47,20 +47,20 @@ export class AppInitializer {
   }
 
   async reInit() {
-    const rootMetadata = this.#moduleManager.getMetadata('root');
-    this.mergeMetadata(rootMetadata);
-    this.prepareProvidersPerApp(rootMetadata, this.#moduleManager);
+    const meta = this.#moduleManager.getMetadata('root');
+    this.mergeMetadata(meta.module as ModuleType);
+    this.prepareProvidersPerApp(meta, this.#moduleManager);
     this.initProvidersPerApp();
-    this.extensionsMetadataMap = this.bootstrapModuleFactory();
+    this.extensionsMetadataMap = this.bootstrapModuleFactory(this.#moduleManager);
     this.checkModulesResolvable(this.extensionsMetadataMap);
     await this.handleExtensions(this.extensionsMetadataMap);
   }
 
   /**
-   * Merge AppModule metadata with default AppMetadata.
+   * Merge AppModule metadata with default metadata for root module.
    */
-  protected mergeMetadata(rootMetadata: NormalizedModuleMetadata): void {
-    const serverMetadata = getModuleMetadata(rootMetadata.module, true);
+  protected mergeMetadata(appModule: ModuleType): void {
+    const serverMetadata = getModuleMetadata(appModule, true);
 
     // Setting default metadata.
     this.meta = new NormalizedRootModuleMetadata();
@@ -72,11 +72,13 @@ export class AppInitializer {
   /**
    * 1. checks collisions for non-root exported providers per app;
    * 2. then merges these providers with providers that declared on root module.
+   * 
+   * @param meta root metadata.
    */
-  protected prepareProvidersPerApp(rootMetadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
+  protected prepareProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
     // Here we work only with providers declared at the application level.
 
-    const exportedProviders = this.collectProvidersPerApp(rootMetadata, moduleManager);
+    const exportedProviders = this.collectProvidersPerApp(meta, moduleManager);
     const rootTokens = normalizeProviders(this.meta.providersPerApp).map((np) => np.provide);
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.provide);
@@ -89,7 +91,7 @@ export class AppInitializer {
     const mergedProviders = [...defaultProvidersPerApp, ...exportedProviders];
     exportedTokensDuplicates = getTokensCollisions(exportedTokensDuplicates, mergedProviders);
     if (exportedTokensDuplicates.length) {
-      const moduleName = getModuleName(rootMetadata.module);
+      const moduleName = getModuleName(meta.module);
       throwProvidersCollisionError(moduleName, exportedTokensDuplicates);
     }
     this.meta.providersPerApp.unshift(...exportedProviders);
@@ -106,8 +108,8 @@ export class AppInitializer {
     ];
     const providersPerApp: ServiceProvider[] = [];
     modules.forEach((mod) => {
-      const metadata = moduleManager.getMetadata(mod);
-      providersPerApp.push(...this.collectProvidersPerApp(metadata, moduleManager));
+      const meta = moduleManager.getMetadata(mod);
+      providersPerApp.push(...this.collectProvidersPerApp(meta, moduleManager));
     });
     const currProvidersPerApp = isRootModule(metadata) ? [] : metadata.providersPerApp;
 
@@ -128,19 +130,19 @@ export class AppInitializer {
     this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
   }
 
-  protected bootstrapModuleFactory() {
-    const globalProviders = this.getGlobalProviders();
+  protected bootstrapModuleFactory(moduleManager: ModuleManager) {
+    const globalProviders = this.getGlobalProviders(moduleManager);
     this.log.trace({ globalProviders });
     const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    const appModule = this.#moduleManager.getMetadata('root').module;
-    return moduleFactory.bootstrap(globalProviders, '', appModule, this.#moduleManager);
+    const appModule = moduleManager.getMetadata('root').module;
+    return moduleFactory.bootstrap(globalProviders, '', appModule, moduleManager);
   }
 
-  protected getGlobalProviders() {
+  protected getGlobalProviders(moduleManager: ModuleManager) {
     const globalProviders = new ProvidersMetadata();
     globalProviders.providersPerApp = this.meta.providersPerApp;
     const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    const { providersPerMod, providersPerReq } = moduleFactory.importGlobalProviders(this.#moduleManager, globalProviders);
+    const { providersPerMod, providersPerReq } = moduleFactory.importGlobalProviders(moduleManager, globalProviders);
     globalProviders.providersPerMod = providersPerMod;
     globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];
     return globalProviders;
