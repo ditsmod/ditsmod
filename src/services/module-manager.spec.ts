@@ -240,10 +240,10 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(AppModule);
     const { map } = mock.getMaps();
-    const rootMetadata = mock.getMetadata('root');
+    const meta = mock.getMetadata('root');
     expect(map.size).toBe(1);
     expect(mock.getMetadata('root') === mock.getMetadata('root')).toBe(true);
-    expect(rootMetadata).toEqual(expectedMetadata1);
+    expect(meta).toEqual(expectedMetadata1);
 
     @Module()
     class Module1 {}
@@ -291,8 +291,8 @@ describe('ModuleManager', () => {
       ngMetadataName: 'RootModule',
     };
     expect(map === mock.getMaps().map).toBe(true);
-    expect(rootMetadata === mock.getMetadata('root')).toBe(true);
-    expect(rootMetadata).toEqual(expectedMetadata2);
+    expect(meta === mock.getMetadata('root')).toBe(true);
+    expect(meta).toEqual(expectedMetadata2);
 
     const expectedMetadata3: NormalizedModuleMetadata = {
       id: '',
@@ -311,7 +311,7 @@ describe('ModuleManager', () => {
     };
     mock.addImport(module3WithProviders);
     expect(map.size).toBe(4);
-    expect(rootMetadata).toEqual(expectedMetadata3);
+    expect(meta).toEqual(expectedMetadata3);
   });
 
   it('programmatically removing some modules from "imports" array of root module', () => {

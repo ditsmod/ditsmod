@@ -48,10 +48,6 @@ export class ModuleManager {
     return meta;
   }
 
-  getMaps() {
-    return { map: this.map, mapId: this.mapId };
-  }
-
   getMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId) {
     if (typeof moduleId == 'string') {
       const mapId = this.mapId.get(moduleId);
