@@ -55,6 +55,7 @@ describe('ModuleManager', () => {
     const { map } = mock.getMaps();
     expect(map.size).toBe(1);
     expect(mock.getMetadata('root')).toEqual(expectedMetadata);
+    expect(Object.isFrozen(AppModule)).toBe(true);
   });
 
   it('root module with some metadata', () => {
@@ -154,6 +155,7 @@ describe('ModuleManager', () => {
     const { map } = mock.getMaps();
     expect(map.size).toBe(4);
     expect(mock.getMetadata('1')).toEqual(module1Expect);
+    expect(Object.isFrozen(module4WithParams)).toBe(true);
 
     const module2Expect: NormalizedModuleMetadata = {
       id: '',
