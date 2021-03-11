@@ -37,8 +37,8 @@ describe('ModuleFactory', () => {
     allExportedProvidersPerReq: ServiceProvider[] = [];
     guardsPerMod: NormalizedGuard[] = [];
 
-    importGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata) {
-      return super.importGlobalProviders(moduleManager, globalProviders);
+    exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata) {
+      return super.exportGlobalProviders(moduleManager, globalProviders);
     }
 
     quickCheckMetadata(meta: NormalizedModuleMetadata) {
@@ -67,7 +67,7 @@ describe('ModuleFactory', () => {
     moduleManager = new ModuleManager(log);
   });
 
-  describe('importGlobalProviders()', () => {
+  describe('exportGlobalProviders()', () => {
     it('forbidden reexports providers', () => {
       class Provider1 {}
 
@@ -90,7 +90,7 @@ describe('ModuleFactory', () => {
       const globalProviders = new ProvidersMetadata();
       moduleManager.scanRootModule(AppModule);
       const msg = /Exported Provider1 from Module2 should includes in/;
-      expect(() => mock.importGlobalProviders(moduleManager, globalProviders)).toThrow(msg);
+      expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).toThrow(msg);
     });
 
     it('allow reexports module', () => {
@@ -115,7 +115,7 @@ describe('ModuleFactory', () => {
 
      const globalProviders = new ProvidersMetadata();
      moduleManager.scanRootModule(AppModule);
-      expect(() => mock.importGlobalProviders(moduleManager, globalProviders)).not.toThrow();
+      expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       expect(mock.allExportedProvidersPerMod).toEqual([]);
       expect(mock.allExportedProvidersPerReq).toEqual([Provider1]);
     });
@@ -144,7 +144,7 @@ describe('ModuleFactory', () => {
 
      const globalProviders = new ProvidersMetadata();
      moduleManager.scanRootModule(AppModule);
-      expect(() => mock.importGlobalProviders(moduleManager, globalProviders)).not.toThrow();
+      expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       expect(mock.allExportedProvidersPerMod).toEqual([Provider1]);
       expect(mock.allExportedProvidersPerReq).toEqual([Provider2]);
     });
@@ -175,7 +175,7 @@ describe('ModuleFactory', () => {
 
      const globalProviders = new ProvidersMetadata();
      moduleManager.scanRootModule(AppModule);
-      expect(() => mock.importGlobalProviders(moduleManager, globalProviders)).not.toThrow();
+      expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       expect(mock.allExportedProvidersPerMod).toEqual([Provider1, Provider2, Provider3, Provider4]);
       expect(mock.allExportedProvidersPerReq).toEqual([]);
     });
@@ -204,7 +204,7 @@ describe('ModuleFactory', () => {
      const globalProviders = new ProvidersMetadata();
      moduleManager.scanRootModule(AppModule);
       const msg = /Exporting providers to AppModule was failed: found collision for: Provider1/;
-      expect(() => mock.importGlobalProviders(moduleManager, globalProviders)).toThrow(msg);
+      expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).toThrow(msg);
     });
 
     it('collision with exported provider, but they are redeclared in root module', () => {
@@ -231,7 +231,7 @@ describe('ModuleFactory', () => {
 
      const globalProviders = new ProvidersMetadata();
      moduleManager.scanRootModule(AppModule);
-      expect(() => mock.importGlobalProviders(moduleManager, globalProviders)).not.toThrow();
+      expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       const providers = [{ provide: Provider1, useValue: 'one' }, Provider1, Provider1];
       expect(mock.allExportedProvidersPerMod).toEqual(providers);
     });
@@ -259,7 +259,7 @@ describe('ModuleFactory', () => {
 
      const globalProviders = new ProvidersMetadata();
      moduleManager.scanRootModule(AppModule);
-      expect(() => mock.importGlobalProviders(moduleManager, globalProviders)).not.toThrow();
+      expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
     });
   });
 

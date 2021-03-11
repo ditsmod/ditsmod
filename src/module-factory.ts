@@ -53,7 +53,7 @@ export class ModuleFactory {
    *
    * @param globalProviders Contains providersPerApp for now.
    */
-  importGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata) {
+  exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata) {
     this.#moduleManager = moduleManager;
     const meta = moduleManager.getMetadata('root');
     this.moduleName = meta.name;
