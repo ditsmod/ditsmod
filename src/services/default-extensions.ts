@@ -1,6 +1,4 @@
-import { Type } from '@ts-stack/di';
-
-import { Extension } from '../types/extension';
+import { ExtensionType } from '../types/extension-type';
 import { PreRouter } from './pre-router';
 
-export const defaultExtensions: Type<Extension>[] = [PreRouter];
+export const defaultExtensions: ExtensionType[] = [PreRouter];
