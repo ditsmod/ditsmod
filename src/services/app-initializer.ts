@@ -14,7 +14,6 @@ import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { getTokensCollisions } from '../utils/get-tokens-collisions';
 import { getUniqProviders } from '../utils/get-uniq-providers';
-import { mergeArrays } from '../utils/merge-arrays-options';
 import { normalizeProviders } from '../utils/ng-utils';
 import { pickProperties } from '../utils/pick-properties';
 import { throwProvidersCollisionError } from '../utils/throw-providers-collision-error';
