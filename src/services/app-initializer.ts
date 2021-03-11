@@ -68,8 +68,8 @@ export class AppInitializer {
     // Setting default metadata.
     this.meta = new RootMetadata();
 
-    serverMetadata.extensions = mergeArrays(defaultExtensions, serverMetadata.extensions);
     pickProperties(this.meta, serverMetadata);
+    this.meta.extensions.unshift(...defaultExtensions);
   }
 
   /**
@@ -162,7 +162,7 @@ export class AppInitializer {
   }
 
   protected async handleExtensions(extensionsMetadataMap: Map<ModuleType | ModuleWithParams, ExtensionMetadata>) {
-    const allExtensions: ExtensionType[] = [];
+    const allExtensions: ExtensionType[] = this.meta.extensions.slice();
     for (const [, metadata] of extensionsMetadataMap) {
       allExtensions.push(...metadata.moduleMetadata.extensions);
     }
