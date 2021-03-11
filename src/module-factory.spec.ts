@@ -89,7 +89,9 @@ describe('ModuleFactory', () => {
 
       const globalProviders = new ProvidersMetadata();
       moduleManager.scanRootModule(AppModule);
-      const msg = /Exported Provider1 from Module2 should includes in/;
+      const msg =
+        'Exported Provider1 from Module2 should includes in "providersPerMod" or "providersPerReq", ' +
+        'or in some "exports" of imported modules. Tip: "providersPerApp" no need exports, they are automatically exported.';
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).toThrow(msg);
     });
 
@@ -113,8 +115,8 @@ describe('ModuleFactory', () => {
       })
       class AppModule {}
 
-     const globalProviders = new ProvidersMetadata();
-     moduleManager.scanRootModule(AppModule);
+      const globalProviders = new ProvidersMetadata();
+      moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       expect(mock.allExportedProvidersPerMod).toEqual([]);
       expect(mock.allExportedProvidersPerReq).toEqual([Provider1]);
@@ -125,15 +127,15 @@ describe('ModuleFactory', () => {
       class Provider2 {}
 
       @Module({
-        providersPerReq: [Provider2],
-        exports: [Provider2],
+        providersPerReq: [Provider1],
+        exports: [Provider1],
       })
       class Module1 {}
 
       @Module({
-        providersPerMod: [Provider1],
+        providersPerMod: [Provider2],
         imports: [Module1],
-        exports: [Provider1, Module1],
+        exports: [Provider2, Module1],
       })
       class Module2 {}
 
@@ -142,11 +144,11 @@ describe('ModuleFactory', () => {
       })
       class AppModule {}
 
-     const globalProviders = new ProvidersMetadata();
-     moduleManager.scanRootModule(AppModule);
+      const globalProviders = new ProvidersMetadata();
+      moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
-      expect(mock.allExportedProvidersPerMod).toEqual([Provider1]);
-      expect(mock.allExportedProvidersPerReq).toEqual([Provider2]);
+      expect(mock.allExportedProvidersPerReq).toEqual([Provider1]);
+      expect(mock.allExportedProvidersPerMod).toEqual([Provider2]);
     });
 
     it('exported providers order', () => {
@@ -173,8 +175,8 @@ describe('ModuleFactory', () => {
       })
       class AppModule {}
 
-     const globalProviders = new ProvidersMetadata();
-     moduleManager.scanRootModule(AppModule);
+      const globalProviders = new ProvidersMetadata();
+      moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       expect(mock.allExportedProvidersPerMod).toEqual([Provider1, Provider2, Provider3, Provider4]);
       expect(mock.allExportedProvidersPerReq).toEqual([]);
@@ -201,8 +203,8 @@ describe('ModuleFactory', () => {
       })
       class AppModule {}
 
-     const globalProviders = new ProvidersMetadata();
-     moduleManager.scanRootModule(AppModule);
+      const globalProviders = new ProvidersMetadata();
+      moduleManager.scanRootModule(AppModule);
       const msg = /Exporting providers to AppModule was failed: found collision for: Provider1/;
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).toThrow(msg);
     });
@@ -229,8 +231,8 @@ describe('ModuleFactory', () => {
       })
       class AppModule {}
 
-     const globalProviders = new ProvidersMetadata();
-     moduleManager.scanRootModule(AppModule);
+      const globalProviders = new ProvidersMetadata();
+      moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       const providers = [{ provide: Provider1, useValue: 'one' }, Provider1, Provider1];
       expect(mock.allExportedProvidersPerMod).toEqual(providers);
@@ -257,8 +259,8 @@ describe('ModuleFactory', () => {
       })
       class AppModule {}
 
-     const globalProviders = new ProvidersMetadata();
-     moduleManager.scanRootModule(AppModule);
+      const globalProviders = new ProvidersMetadata();
+      moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
     });
   });
@@ -331,9 +333,23 @@ describe('ModuleFactory', () => {
 
       moduleManager.scanModule(Module1);
       const meta = moduleManager.getMetadata(Module1);
-      expect(() => mock.quickCheckMetadata(meta)).toThrow(
-        /Importing MockModule failed: this module should have/
-      );
+      expect(() => mock.quickCheckMetadata(meta)).toThrow(/Importing MockModule failed: this module should have/);
+    });
+
+    it('should works with extension only', () => {
+      class Ext implements Extension {
+        init() {}
+      }
+
+      @Module({
+        providersPerMod: [Ext],
+        extensions: [Ext],
+      })
+      class Module1 {}
+
+      moduleManager.scanModule(Module1);
+      const meta = moduleManager.getMetadata(Module1);
+      expect(() => mock.quickCheckMetadata(meta)).not.toThrow();
     });
 
     it('should throw an error, during imports module without export and without controllers', () => {
@@ -352,12 +368,10 @@ describe('ModuleFactory', () => {
 
       moduleManager.scanModule(Module2);
       const meta = moduleManager.getMetadata(Module2);
-      expect(() => mock.quickCheckMetadata(meta)).toThrow(
-        /Importing MockModule failed: this module should have/
-      );
+      expect(() => mock.quickCheckMetadata(meta)).toThrow(/Importing MockModule failed: this module should have/);
     });
 
-    it('should not throw an error, when export some provider', () => {
+    it('should not throw an error, when exports some provider', () => {
       class Provider1 {}
       class Provider2 {}
 

@@ -24,10 +24,10 @@ import { throwProvidersCollisionError } from './utils/throw-providers-collision-
 import { isController, isExtensionProvider, isRootModule } from './utils/type-guards';
 
 /**
- * - exports global providers;
- * - creates `injectorPerMod`;
+ * - imports and exports global providers;
+ * - merges global and local providers;
  * - checks on providers collisions;
- * - collects controllers metadata.
+ * - collects module and controllers metadata.
  */
 @Injectable()
 export class ModuleFactory {
@@ -43,7 +43,7 @@ export class ModuleFactory {
   protected exportedProvidersPerMod: ServiceProvider[] = [];
   protected exportedProvidersPerReq: ServiceProvider[] = [];
   protected globalProviders: ProvidersMetadata;
-  protected extensionMetadataMap = new Map<ModuleType, ExtensionMetadata>();
+  protected extensionMetadataMap = new Map<ModuleType | ModuleWithParams, ExtensionMetadata>();
   #moduleManager: ModuleManager;
 
   constructor(protected injectorPerApp: ReflectiveInjector, protected counter: Counter) {}
@@ -71,16 +71,16 @@ export class ModuleFactory {
   /**
    * Bootstraps a module.
    *
-   * @param modOrObject Module that will bootstrapped.
+   * @param modOrObj Module that will bootstrapped.
    */
   bootstrap(
     globalProviders: ProvidersMetadata,
     prefixPerMod: string,
-    modOrObject: ModuleType | ModuleWithParams,
+    modOrObj: ModuleType | ModuleWithParams,
     moduleManager: ModuleManager,
     guardsPerMod?: NormalizedGuard[]
   ) {
-    const meta = moduleManager.getMetadata(modOrObject, true);
+    const meta = moduleManager.getMetadata(modOrObj, true);
     this.#moduleManager = moduleManager;
     this.globalProviders = globalProviders;
     this.prefixPerMod = prefixPerMod || '';
@@ -96,7 +96,7 @@ export class ModuleFactory {
     injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolvable
     const controllersMetadata = this.getControllersMetadata();
 
-    return this.extensionMetadataMap.set(mod, {
+    return this.extensionMetadataMap.set(modOrObj, {
       prefixPerMod,
       guardsPerMod: this.guardsPerMod,
       moduleMetadata: this.meta,
@@ -171,7 +171,7 @@ export class ModuleFactory {
 
   protected importModules() {
     for (const imp of this.meta.importsModules) {
-      const meta = this.#moduleManager.getMetadata(imp);
+      const meta = this.#moduleManager.getMetadata(imp, true);
       this.importProviders(meta, true);
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       const extensionMetadataMap = moduleFactory.bootstrap(
@@ -184,7 +184,7 @@ export class ModuleFactory {
       this.extensionMetadataMap = new Map([...this.extensionMetadataMap, ...extensionMetadataMap]);
     }
     for (const imp of this.meta.importsWithParams) {
-      const meta = this.#moduleManager.getMetadata(imp);
+      const meta = this.#moduleManager.getMetadata(imp, true);
       this.importProviders(meta, true);
       const prefixPerMod = [this.prefixPerMod, imp.prefix].filter((s) => s).join('/');
       const normalizedGuardsPerMod = this.normalizeGuards(imp.guards);
@@ -233,7 +233,7 @@ export class ModuleFactory {
     const { exportsModules, exportsProviders, providersPerMod, providersPerReq } = metadata;
 
     for (const mod of exportsModules) {
-      const meta = this.#moduleManager.getMetadata(mod);
+      const meta = this.#moduleManager.getMetadata(mod, true);
       // Reexported module
       this.importProviders(meta);
     }
