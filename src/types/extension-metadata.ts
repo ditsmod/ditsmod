@@ -1,11 +1,11 @@
+import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ControllerAndMethodMetadata } from './controller-and-method-metadata';
-import { ModuleMetadata } from './module-metadata';
 import { NormalizedGuard } from './normalized-guard';
 
 export class ExtensionMetadata {
   prefixPerMod: string;
   guardsPerMod: NormalizedGuard[];
-  moduleMetadata: ModuleMetadata;
+  moduleMetadata: NormalizedModuleMetadata;
   /**
    * The controller metadata collected from all controllers of current module.
    */
