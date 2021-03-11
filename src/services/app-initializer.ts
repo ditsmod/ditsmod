@@ -25,6 +25,8 @@ import { defaultProvidersPerReq } from './default-providers-per-req';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
 import { ExtensionType } from '../types/extension-type';
+import { ModuleWithParams } from '../types/module-with-params';
+import { getModule } from '../utils/get-module';
 
 @Injectable()
 export class AppInitializer {
@@ -32,7 +34,7 @@ export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
   protected preRouter: PreRouter;
   protected meta: RootMetadata;
-  protected extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>;
+  protected extensionsMetadataMap: Map<ModuleType | ModuleWithParams, ExtensionMetadata>;
   #moduleManager: ModuleManager;
 
   async init(appModule: ModuleType, log: Logger) {
@@ -149,16 +151,17 @@ export class AppInitializer {
     return globalProviders;
   }
 
-  protected checkModulesResolvable(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
-    extensionsMetadataMap.forEach((metadata, mod) => {
-      this.log.trace(mod, metadata);
+  protected checkModulesResolvable(extensionsMetadataMap: Map<ModuleType | ModuleWithParams, ExtensionMetadata>) {
+    extensionsMetadataMap.forEach((metadata, modOrObj) => {
+      this.log.trace(modOrObj, metadata);
       const { providersPerMod } = metadata.moduleMetadata;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+      const mod = getModule(modOrObj);
       injectorPerMod.resolveAndInstantiate(mod);
     });
   }
 
-  protected async handleExtensions(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
+  protected async handleExtensions(extensionsMetadataMap: Map<ModuleType | ModuleWithParams, ExtensionMetadata>) {
     const allExtensions: ExtensionType[] = [];
     for (const [, metadata] of extensionsMetadataMap) {
       allExtensions.push(...metadata.moduleMetadata.extensions);
