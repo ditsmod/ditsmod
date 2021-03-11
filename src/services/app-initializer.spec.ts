@@ -379,14 +379,10 @@ describe('AppInitializer', () => {
           exports: [Provider1, { provide: Provider2, useFactory: () => {} }],
           providersPerMod: [Provider1, Provider2],
         })
-        class Module1 {
-          static withParams() {
-            return { module: Module1 };
-          }
-        }
+        class Module1 {}
 
         @Module({
-          imports: [Module1.withParams()],
+          imports: [Module1],
           exports: [Module1, Provider2, Provider3],
           providersPerMod: [Provider2, Provider3],
         })
@@ -403,6 +399,33 @@ describe('AppInitializer', () => {
         await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
       });
 
+      it('same export as in previous, but in import both module in root module', async () => {
+        class Provider1 {}
+        class Provider2 {}
+
+        @Module({
+          exports: [{ provide: Provider1, useValue: '' }],
+          providersPerMod: [{ provide: Provider1, useClass: Provider1 }, Provider2],
+        })
+        class Module1 {}
+
+        @Module({
+          exports: [Provider1, { provide: Provider2, useFactory: () => {} }],
+          providersPerMod: [Provider1, Provider2],
+        })
+        class Module2 {}
+
+        @RootModule({
+          imports: [Module1, Module2],
+        })
+        class AppModule {}
+
+        const msg =
+          'Exporting providers to AppModule was failed: found collision for: ' +
+          'Provider1. You should manually add this provider to AppModule.';
+        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
+      });
+
       it('mix exporting duplicates with "multi == true" per app and per mod', async () => {
         class Provider1 {}
         class Provider2 {}
@@ -414,16 +437,16 @@ describe('AppInitializer', () => {
           providersPerMod: [ObjProviderPerMod, Provider2],
           providersPerApp: [ObjProviderPerApp],
         })
-        class Module00 {}
+        class Module1 {}
 
         @Module({
           exports: [ObjProviderPerMod],
           providersPerMod: [ObjProviderPerMod],
         })
-        class Module01 {}
+        class Module2 {}
 
         @RootModule({
-          imports: [Module00, Module01],
+          imports: [Module1, Module2],
         })
         class AppModule {}
 
@@ -437,21 +460,20 @@ describe('AppInitializer', () => {
         class Provider1 {}
         class Provider2 {}
 
-        const ObjProvider: ServiceProvider = { provide: Provider1, useClass: Provider1, multi: true };
         @Module({
-          exports: [ObjProvider],
-          providersPerMod: [ObjProvider, Provider2],
+          exports: [{ provide: Provider1, useClass: Provider1, multi: true }],
+          providersPerMod: [{ provide: Provider1, useClass: Provider1, multi: true }, Provider2],
         })
-        class Module00 {}
+        class Module1 {}
 
         @Module({
-          exports: [ObjProvider],
-          providersPerMod: [ObjProvider],
+          exports: [{ provide: Provider1, useClass: Provider1, multi: true }],
+          providersPerMod: [{ provide: Provider1, useClass: Provider1, multi: true }],
         })
-        class Module01 {}
+        class Module2 {}
 
         @RootModule({
-          imports: [Module00, Module01],
+          imports: [Module1, Module2],
         })
         class AppModule {}
 
@@ -467,13 +489,9 @@ describe('AppInitializer', () => {
           exports: [Provider1, { provide: Provider2, useFactory: () => {} }],
           providersPerMod: [Provider1, Provider2],
         })
-        class Module1 {
-          static withParams() {
-            return { module: Module1 };
-          }
-        }
+        class Module1 {}
         @Module({
-          imports: [Module1.withParams()],
+          imports: [Module1],
           exports: [Module1, Provider2, Provider3],
           providersPerMod: [Provider2, Provider3],
         })
@@ -486,37 +504,6 @@ describe('AppInitializer', () => {
         class AppModule {}
 
         await expect(mock.init(AppModule, log)).resolves.not.toThrow();
-      });
-
-      it('exporting duplicates of Provider1 from Module1 and Module2', async () => {
-        class Provider1 {}
-        class Provider2 {}
-
-        @Module({
-          exports: [{ provide: Provider1, useValue: '' }],
-          providersPerMod: [{ provide: Provider1, useClass: Provider1 }, Provider2],
-        })
-        class Module0 {}
-
-        @Module({
-          exports: [Provider1, { provide: Provider2, useFactory: () => {} }],
-          providersPerMod: [Provider1, Provider2],
-        })
-        class Module1 {
-          static withParams() {
-            return { module: Module1 };
-          }
-        }
-
-        @RootModule({
-          imports: [Module0, Module1.withParams()],
-        })
-        class AppModule {}
-
-        const msg =
-          'Exporting providers to AppModule was failed: found collision for: ' +
-          'Provider1. You should manually add this provider to AppModule.';
-        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
       });
 
       it('exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerMod of root module', async () => {

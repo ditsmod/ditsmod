@@ -1,4 +1,4 @@
-import { Injectable, ReflectiveInjector, Type } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { RootMetadata } from '../models/root-metadata';
@@ -24,6 +24,7 @@ import { defaultProvidersPerApp } from './default-providers-per-app';
 import { defaultProvidersPerReq } from './default-providers-per-req';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
+import { ExtensionType } from '../types/extension-type';
 
 @Injectable()
 export class AppInitializer {
@@ -158,7 +159,7 @@ export class AppInitializer {
   }
 
   protected async handleExtensions(extensionsMetadataMap: Map<ModuleType, ExtensionMetadata>) {
-    const allExtensions: Type<Extension>[] = [];
+    const allExtensions: ExtensionType[] = [];
     for (const [, metadata] of extensionsMetadataMap) {
       allExtensions.push(...metadata.moduleMetadata.extensions);
     }
