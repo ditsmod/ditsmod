@@ -48,13 +48,20 @@ export class ModuleManager {
     return meta;
   }
 
-  getMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId) {
+  getMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
+    let meta: NormalizedModuleMetadata<T>;
     if (typeof moduleId == 'string') {
       const mapId = this.mapId.get(moduleId);
-      return this.map.get(mapId) as NormalizedModuleMetadata<T>;
+      meta = this.map.get(mapId) as NormalizedModuleMetadata<T>;
     } else {
-      return this.map.get(moduleId) as NormalizedModuleMetadata<T>;
+      meta = this.map.get(moduleId) as NormalizedModuleMetadata<T>;
     }
+
+    if (throwErrOnNotFound && !meta) {
+      throw new Error(`Module ${moduleId} not found in ModuleManager.`);
+    }
+
+    return meta;
   }
 
   /**

@@ -13,7 +13,6 @@ import { Counter } from './services/counter';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { ExtensionMetadata } from './types/extension-metadata';
 import { ModuleType } from './types/module-type';
-import { ModuleMetadata } from './types/module-metadata';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ServiceProvider } from './types/service-provider';
 import { NormalizedGuard } from './types/normalized-guard';

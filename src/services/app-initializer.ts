@@ -48,7 +48,7 @@ export class AppInitializer {
   }
 
   async reInit() {
-    const meta = this.#moduleManager.getMetadata('root');
+    const meta = this.#moduleManager.getMetadata('root', true);
     this.mergeMetadata(meta.module as ModuleType);
     this.prepareProvidersPerApp(meta, this.#moduleManager);
     this.initProvidersPerApp();
@@ -109,7 +109,7 @@ export class AppInitializer {
     ];
     const providersPerApp: ServiceProvider[] = [];
     modules.forEach((mod) => {
-      const meta = moduleManager.getMetadata(mod);
+      const meta = moduleManager.getMetadata(mod, true);
       providersPerApp.push(...this.collectProvidersPerApp(meta, moduleManager));
     });
     const currProvidersPerApp = isRootModule(metadata) ? [] : metadata.providersPerApp;

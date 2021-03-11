@@ -24,8 +24,9 @@ import { throwProvidersCollisionError } from './utils/throw-providers-collision-
 import { isController, isExtensionProvider, isRootModule } from './utils/type-guards';
 
 /**
- * - creates `injectorPerMod` and `injectorPerReq`;
- * - checks on provider collisions;
+ * - exports global providers;
+ * - creates `injectorPerMod`;
+ * - checks on providers collisions;
  * - collects controllers metadata.
  */
 @Injectable()
@@ -79,10 +80,7 @@ export class ModuleFactory {
     moduleManager: ModuleManager,
     guardsPerMod?: NormalizedGuard[]
   ) {
-    const meta = moduleManager.getMetadata(modOrObject);
-    if (!meta) {
-      throw new Error(`Module ${modOrObject} not found in ModuleManager.`);
-    }
+    const meta = moduleManager.getMetadata(modOrObject, true);
     this.#moduleManager = moduleManager;
     this.globalProviders = globalProviders;
     this.prefixPerMod = prefixPerMod || '';
