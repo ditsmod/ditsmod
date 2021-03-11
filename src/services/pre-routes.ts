@@ -16,12 +16,12 @@ export class PreRoutes {
 
   constructor(protected injectorPerApp: ReflectiveInjector) {}
 
-  getPreRoutesData(moduleName: string, metadata: ExtensionMetadata) {
+  getPreRoutesData(extensionMetadata: ExtensionMetadata) {
     const {
       controllersMetadata,
       guardsPerMod,
-      moduleMetadata: { providersPerMod, providersPerReq },
-    } = metadata;
+      moduleMetadata: { providersPerMod, providersPerReq, name },
+    } = extensionMetadata;
     const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
 
     this.providersPerReq = providersPerReq;
@@ -37,7 +37,7 @@ export class PreRoutes {
           const route = decoratorData.value;
           const ctrlDecorValue = ctrlDecorValues.find(isController);
           const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(
-            moduleName,
+            name,
             guardsPerMod,
             controller,
             ctrlDecorValue,

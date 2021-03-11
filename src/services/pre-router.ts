@@ -18,6 +18,7 @@ import { CanActivate } from '../types/can-activate';
 import { AnyObj } from '../types/any-obj';
 import { BodyParser } from './body-parser';
 import { PreRoutes } from './pre-routes';
+import { ModuleWithParams } from '../types/module-with-params';
 
 @Injectable()
 export class PreRouter implements Extension<PreRouteData[]> {
@@ -28,14 +29,14 @@ export class PreRouter implements Extension<PreRouteData[]> {
     protected rootMetadata: RootMetadata
   ) {}
 
-  init(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>) {
+  init(prefixPerApp: string, metadataMap: Map<ModuleType | ModuleWithParams, ExtensionMetadata>) {
     let preRoutesData: PreRouteData[];
 
-    metadataMap.forEach((metadata, mod) => {
+    metadataMap.forEach((extensionsMetadata) => {
       const preRoutes = this.injectorPerApp.resolveAndInstantiate(PreRoutes) as PreRoutes;
-      preRoutesData = preRoutes.getPreRoutesData(mod.name, metadata);
-      const { prefixPerMod } = metadata;
-      this.setRoutes(mod.name, prefixPerApp, prefixPerMod, preRoutesData);
+      preRoutesData = preRoutes.getPreRoutesData(extensionsMetadata);
+      const { prefixPerMod, moduleMetadata } = extensionsMetadata;
+      this.setRoutes(moduleMetadata.name, prefixPerApp, prefixPerMod, preRoutesData);
     });
 
     return preRoutesData;
