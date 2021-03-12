@@ -5,15 +5,7 @@
     "moduleResolution": "node",
     "outDir": "dist",
     "rootDir": "src",
-    "baseUrl": "./",
-    "paths": {
-      "@ditsmod/edk": [
-        "../edk/src"
-      ]
-    }
+    "baseUrl": "./"
   },
-  "include": ["src"],
-  "references": [
-    { "path": "../edk" },
-  ]
+  "include": ["src"]
 }
