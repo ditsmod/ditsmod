@@ -1,4 +1,4 @@
-import { Controller, Request, Response, Route } from '@ts-stack/ditsmod';
+import { Controller, Request, Response, Route } from '@ditsmod/core';
 
 @Controller()
 export class CommentsController {

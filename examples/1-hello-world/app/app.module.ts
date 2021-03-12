@@ -1,4 +1,4 @@
-import { RootModule, Router } from '@ts-stack/ditsmod';
+import { RootModule, Router } from '@ditsmod/core';
 import { DefaultRouter } from '@ts-stack/router';
 
 import { HelloWorldController } from './hello-world.controller';

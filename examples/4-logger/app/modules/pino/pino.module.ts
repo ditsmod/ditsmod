@@ -1,4 +1,4 @@
-import { Logger, Module } from '@ts-stack/ditsmod';
+import { Logger, Module } from '@ditsmod/core';
 
 import { PinoController } from './pino.controller';
 import { PinoService } from './pino.service';

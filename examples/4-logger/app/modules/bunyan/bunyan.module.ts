@@ -1,4 +1,4 @@
-import { Logger, Module } from '@ts-stack/ditsmod';
+import { Logger, Module } from '@ditsmod/core';
 
 import { BunyanController } from './bunyan.controller';
 import { BunyanService } from './bunyan.service';

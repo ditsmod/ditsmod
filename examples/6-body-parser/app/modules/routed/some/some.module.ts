@@ -1,4 +1,4 @@
-import { Module, BodyParserConfig } from '@ts-stack/ditsmod';
+import { Module, BodyParserConfig } from '@ditsmod/core';
 
 import { SomeController } from './some.controller';
 import { SomeBodyParserConfig } from './some-body-parser-config.service';

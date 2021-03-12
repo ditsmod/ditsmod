@@ -80,7 +80,7 @@ Angular v4.4.7. (з мінімальними допрацюваннями) та 
 Клонуйте його та встановіть залежності:
 
 ```bash
-git clone git@github.com:ts-stack/ditsmod-seed.git my-app
+git clone git@github.com:ditsmod/core-seed.git my-app
 cd my-app
 npm i
 ```
@@ -110,7 +110,7 @@ Node.js.
 
 ```ts
 import 'reflect-metadata';
-import { Application } from '@ts-stack/ditsmod';
+import { Application } from '@ditsmod/core';
 
 import { AppModule } from './app/app.module';
 
@@ -167,7 +167,7 @@ jest path/to/test-file.js
 TypeScript клас стає модулем Ditsmod завдяки декоратору `Module`:
 
 ```ts
-import { Module } from '@ts-stack/ditsmod';
+import { Module } from '@ditsmod/core';
 
 @Module()
 export class SomeModule {}
@@ -176,7 +176,7 @@ export class SomeModule {}
 Загалом, в декоратор `Module` можна передавати об'єкт із такими властивостями:
 
 ```ts
-import { Module } from '@ts-stack/ditsmod';
+import { Module } from '@ditsmod/core';
 
 @Module({
   imports: [], // Імпорт інших модулів
@@ -197,7 +197,7 @@ export class SomeModule {}
 завдяки декоратору `RootModule`:
 
 ```ts
-import { RootModule } from '@ts-stack/ditsmod';
+import { RootModule } from '@ditsmod/core';
 
 @RootModule()
 export class AppModule {}
@@ -208,7 +208,7 @@ export class AppModule {}
 
 ```ts
 import * as http from 'http';
-import { RootModule } from '@ts-stack/ditsmod';
+import { RootModule } from '@ditsmod/core';
 
 @RootModule({
   // Дані для HTTP-сервера
@@ -238,7 +238,7 @@ export class SomeModule {}
 TypeScript клас стає контролером Ditsmod завдяки декоратору `Controller`:
 
 ```ts
-import { Controller } from '@ts-stack/ditsmod';
+import { Controller } from '@ditsmod/core';
 
 @Controller()
 export class SomeController {}
@@ -249,7 +249,7 @@ export class SomeController {}
 `/hello` та `/throw-error`:
 
 ```ts
-import { Controller, Response, Route } from '@ts-stack/ditsmod';
+import { Controller, Response, Route } from '@ditsmod/core';
 
 @Controller()
 export class SomeController {
@@ -285,17 +285,17 @@ export class SomeController {
 в конструкторі.
 
 **Підказка**: якщо у конструкторі ви прописуєте клас `Request` чи `Response`, не забувайте
-імпортувати їх із `@ts-stack/ditsmod`! Якщо ви цього не зробите, ваш застосунок перестане
+імпортувати їх із `@ditsmod/core`! Якщо ви цього не зробите, ваш застосунок перестане
 працювати, хоча IDE може і не підказати, що у вас неімпортовані дані класи. Справа в тому,
 що у TypeScript глобально оголошено інтерфейси з точно такими іменами - `Request` та `Response`.
 Через це ваша IDE може лише сказати, що у цих інтерфейсів немає певних властивостей, що повинні
-бути у класів, імпортованих з `@ts-stack/ditsmod`.
+бути у класів, імпортованих з `@ditsmod/core`.
 
 Щоб використовувати `pathParams`, `queryParams` чи `body`, у конструкторі контролера необхідно
 запитати інстанс класу `Request`:
 
 ```ts
-import { Controller, Request, Response, Route } from '@ts-stack/ditsmod';
+import { Controller, Request, Response, Route } from '@ditsmod/core';
 
 @Controller()
 export class SomeController {
@@ -329,7 +329,7 @@ import { Injectable } from '@ts-stack/di';
 export class SomeService {}
 ```
 
-Зверніть увагу, що цей декоратор імпортується із `@ts-stack/di`, а не із `@ts-stack/ditsmod`.
+Зверніть увагу, що цей декоратор імпортується із `@ts-stack/di`, а не із `@ditsmod/core`.
 Приклади сервісів в затосунках Ditsmod:
 
 - сервіс надання конфігурації;
@@ -444,7 +444,7 @@ export class SecondService {
 Наприклад, в контролері можна оголосити провайдерів на рівні HTTP-запиту:
 
 ```ts
-import { Controller } from '@ts-stack/ditsmod';
+import { Controller } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
 
@@ -460,7 +460,7 @@ export class SomeController {
 А якщо ми захочемо зробити підміну провайдера, то ми запишемо це так:
 
 ```ts
-import { Controller } from '@ts-stack/ditsmod';
+import { Controller } from '@ditsmod/core';
 
 import { FirstService } from './first.service';
 import { SecondService } from './second.service';
@@ -479,7 +479,7 @@ export class SomeController {
 пріоритет, ніж оголошення через контролер:
 
 ```ts
-import { Module } from '@ts-stack/ditsmod';
+import { Module } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
 
@@ -521,7 +521,7 @@ DI вибире той із них, що додано останнім. Окрі
 використання в інших модулях, які імпортуватимуть цей модуль:
 
 ```ts
-import { Module } from '@ts-stack/ditsmod';
+import { Module } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
 
@@ -556,7 +556,7 @@ export class SomeModule {}
 будь-якого сервіса чи контролера у всьому застосунку, причому їхні рівні оголошення зберігаються:
 
 ```ts
-import { RootModule } from '@ts-stack/ditsmod';
+import { RootModule } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
 
@@ -573,7 +573,7 @@ export class AppModule {}
 із усіма провайдерами, що експортуються в ньому:
 
 ```ts
-import { Module } from '@ts-stack/ditsmod';
+import { Module } from '@ditsmod/core';
 
 import { FirstModule } from './first.module';
 import { SecondModule } from './second.module';
@@ -612,7 +612,7 @@ export class ThridModule {}
 Окрім імпорту певного модуля, цей же модуль можна одночасно й експортувати:
 
 ```ts
-import { Module } from '@ts-stack/ditsmod';
+import { Module } from '@ditsmod/core';
 
 import { FirstModule } from './first.module';
 
@@ -631,7 +631,7 @@ export class SecondModule {}
 Оголошувати контролер можна у будь-якому модулі, у масиві `controllers`:
 
 ```ts
-import { Module } from '@ts-stack/ditsmod';
+import { Module } from '@ditsmod/core';
 
 import { SomeController } from './first.controller';
 
@@ -647,7 +647,7 @@ export class SomeModule {}
 (роутів), в межах цього модуля:
 
 ```ts
-import { Module } from '@ts-stack/ditsmod';
+import { Module } from '@ditsmod/core';
 
 import { FirstModule } from './first.module';
 import { SecondModule } from './second.module';
@@ -668,7 +668,7 @@ export class ThridModule {}
 в усьому застосунку:
 
 ```ts
-import { RootModule } from '@ts-stack/ditsmod';
+import { RootModule } from '@ditsmod/core';
 
 import { SomeModule } from './some.module';
 
@@ -685,7 +685,7 @@ export class AppModule {}
 ви можете у третьому параметрі декоратора `Route`, в масиві указати `AuthGuard`:
 
 ```ts
-import { Controller, Response, Route } from '@ts-stack/ditsmod';
+import { Controller, Response, Route } from '@ditsmod/core';
 
 import { AuthGuard } from './auth.guard';
 
@@ -712,7 +712,7 @@ interface CanActivate {
 
 ```ts
 import { Injectable } from '@ts-stack/di';
-import { CanActivate } from '@ts-stack/ditsmod';
+import { CanActivate } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';
 
@@ -742,7 +742,7 @@ export class AuthGuard implements CanActivate {
 Давайте розглянемо такий приклад:
 
 ```ts
-import { Controller, Response, Route } from '@ts-stack/ditsmod';
+import { Controller, Response, Route } from '@ditsmod/core';
 
 import { PermissionsGuard } from './permissions.guard';
 import { Permission } from './permission';
@@ -764,7 +764,7 @@ export class SomeController {
 
 ```ts
 import { Injectable } from '@ts-stack/di';
-import { CanActivate, Status } from '@ts-stack/ditsmod';
+import { CanActivate, Status } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';
 import { Permission } from './permission';
@@ -802,7 +802,7 @@ export class BodyParserConfig {
 `BodyParserConfig` вашим власним класом:
 
 ```ts
-import { Module, BodyParserConfig } from '@ts-stack/ditsmod';
+import { Module, BodyParserConfig } from '@ditsmod/core';
 
 import { MyBodyParserConfig } from './my-body-parser-config';
 
@@ -855,7 +855,7 @@ export class SomeModule {}
 за допомогою DI:
 
 ```ts
-import { RootModule, Logger } from '@ts-stack/ditsmod';
+import { RootModule, Logger } from '@ditsmod/core';
 
 import { MyLogger } from './my-logger';
 
@@ -943,7 +943,7 @@ HTTP-запитів, що обробляються у заданий промі�
 
 ```ts
 import { Injectable } from '@ts-stack/di';
-import { Logger, Request, Response, ControllerErrorHandler } from '@ts-stack/ditsmod';
+import { Logger, Request, Response, ControllerErrorHandler } from '@ditsmod/core';
 
 @Injectable()
 export class ErrorHandlerService implements ControllerErrorHandler {
@@ -1046,7 +1046,7 @@ export class SomeService {
 із таким же токеном:
 
 ```ts
-import { Module } from '@ts-stack/ditsmod';
+import { Module } from '@ditsmod/core';
 
 @Module({
   providersPerMod: [
@@ -1096,7 +1096,7 @@ export class SomeService {
 При оголошенні рівня провайдера:
 
 ```ts
-import { Module } from '@ts-stack/ditsmod';
+import { Module } from '@ditsmod/core';
 
 import { localToken } from './tokens';
 
@@ -1108,7 +1108,7 @@ import { localToken } from './tokens';
 export class SomeModule {}
 ```
 
-Зверніть увагу, що `InjectionToken` імпортується з `@ts-stack/di`, а не з `@ts-stack/ditsmod`.
+Зверніть увагу, що `InjectionToken` імпортується з `@ts-stack/di`, а не з `@ditsmod/core`.
 
 ## Колізії провайдерів
 
@@ -1165,7 +1165,7 @@ export class Module1 {}
 
 ```ts
 import { Injectable } from '@ts-stack/di';
-import { CanActivate, Status } from '@ts-stack/ditsmod';
+import { CanActivate, Status } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';
 import { Permission } from './permission';
@@ -1205,7 +1205,7 @@ class ControllerErrorHandler {
 
 ```ts
 import { Injectable } from '@ts-stack/di';
-import { Logger, Status, Response, ControllerErrorHandler } from '@ts-stack/ditsmod';
+import { Logger, Status, Response, ControllerErrorHandler } from '@ditsmod/core';
 
 @Injectable()
 export class ErrorHandler implements ControllerErrorHandler {
@@ -1311,7 +1311,7 @@ class Logger {
 
 ```ts
 import { Injectable } from '@ts-stack/di';
-import { Logger, LoggerMethod } from '@ts-stack/ditsmod';
+import { Logger, LoggerMethod } from '@ditsmod/core';
 
 @Injectable()
 export class LoggerService extends Logger {
@@ -1613,8 +1613,8 @@ type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
 ```
 
 [1]: https://github.com/ts-stack/di
-[2]: https://github.com/ts-stack/ditsmod-seed
-[3]: https://github.com/ts-stack/ditsmod
+[2]: https://github.com/ditsmod/core-seed
+[3]: https://github.com/ditsmod/core
 [4]: ./examples.md
 [5]: https://raw.githubusercontent.com/ts-stack/vs-webframework/master/req-per-sec-frameworks.png
 [6]: https://github.com/nestjsx/nest-router
@@ -1624,7 +1624,7 @@ type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
 [11]: https://github.com/ts-stack/di
 [12]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
 [13]: https://developer.mozilla.org/uk/docs/Web/JavaScript/Memory_Management#%D0%B7%D0%B1%D0%B8%D1%80%D0%B0%D0%BD%D0%BD%D1%8F_%D1%81%D0%BC%D1%96%D1%82%D1%82%D1%8F "Garbage collection"
-[14]: https://github.com/ts-stack/ditsmod-seed/blob/901f247/src/app/app.module.ts#L18
+[14]: https://github.com/ditsmod/core-seed/blob/901f247/src/app/app.module.ts#L18
 
 [100]: #оголошення-рівня-провайдерів-та-підміна-провайдерів
 [101]: #експорт-провайдерів-у-звичайному-модулі

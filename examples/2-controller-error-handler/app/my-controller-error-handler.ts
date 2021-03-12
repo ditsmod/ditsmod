@@ -1,5 +1,5 @@
 import { Injectable } from '@ts-stack/di';
-import { Logger, Status, Response, ControllerErrorHandler } from '@ts-stack/ditsmod';
+import { Logger, Status, Response, ControllerErrorHandler } from '@ditsmod/core';
 
 @Injectable()
 export class MyControllerErrorHandler implements ControllerErrorHandler {

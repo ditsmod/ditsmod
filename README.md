@@ -5,7 +5,7 @@ components: it has **D**ependency **I**njection, written in **T**ype**S**cript, 
 good **Mod**ularity. Some of the architecture concepts of this framework are taken from
 [Angular][9].
 
-For now, `@ts-stack/ditsmod` has only beta version, work in progress, but you can touch this. See
+For now, `@ditsmod/core` has only beta version, work in progress, but you can touch this. See
 [examples][4].
 
 ## Preconditions
@@ -13,8 +13,8 @@ For now, `@ts-stack/ditsmod` has only beta version, work in progress, but you ca
 If you haven't prepared the examples repository yet, you can do so:
 
 ```bash
-git clone git@github.com:ts-stack/ditsmod.git
-cd ditsmod
+git clone git@github.com:ditsmod/core.git ditsmod/core
+cd ditsmod/core
 npm i
 ```
 
@@ -34,14 +34,14 @@ curl -isS localhost:8080
 
 
 
-See also [seed for @ts-stack/ditsmod-seed project](https://github.com/ts-stack/ditsmod-seed).
+See also [seed for @ditsmod/core-seed project](https://github.com/ditsmod/core-seed).
 
 [The Ukrainian version of the documentation](./docs/uk/README.md).
 
 [1]: https://github.com/ts-stack/di
-[2]: https://github.com/ts-stack/ditsmod-seed
-[3]: https://github.com/ts-stack/ditsmod
-[4]: https://github.com/ts-stack/ditsmod/tree/master/examples
+[2]: https://github.com/ditsmod/core-seed
+[3]: https://github.com/ditsmod/core
+[4]: https://github.com/ditsmod/core/tree/master/examples
 [5]: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction#Introducing_Express
 [6]: https://github.com/nestjsx/nest-router
 [7]: https://github.com/ts-stack/vs-webframework

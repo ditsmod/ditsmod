@@ -1,5 +1,5 @@
 import { Injectable } from '@ts-stack/di';
-import { Logger, LoggerConfig } from '@ts-stack/ditsmod';
+import { Logger, LoggerConfig } from '@ditsmod/core';
 import { LogLevel } from 'bunyan';
 import bunyan = require('bunyan');
 

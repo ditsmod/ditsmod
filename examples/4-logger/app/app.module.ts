@@ -1,4 +1,4 @@
-import { RootModule, LoggerConfig, Router, Logger } from '@ts-stack/ditsmod';
+import { RootModule, LoggerConfig, Router, Logger } from '@ditsmod/core';
 import { DefaultRouter } from '@ts-stack/router';
 
 import { BunyanModule } from './modules/bunyan/bunyan.module';

@@ -1,4 +1,4 @@
-import { Controller, Response, Route } from '@ts-stack/ditsmod';
+import { Controller, Response, Route } from '@ditsmod/core';
 
 import { AuthGuard } from '../auth/auth.guard';
 import { PermissionsGuard } from '../auth/permissions.guard';

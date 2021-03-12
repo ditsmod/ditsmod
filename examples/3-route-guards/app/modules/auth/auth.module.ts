@@ -1,4 +1,4 @@
-import { Module } from '@ts-stack/ditsmod';
+import { Module } from '@ditsmod/core';
 
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';

@@ -1,4 +1,4 @@
-import { Controller, Response, Route, Logger } from '@ts-stack/ditsmod';
+import { Controller, Response, Route, Logger } from '@ditsmod/core';
 
 @Controller()
 export class WinstonController {

@@ -3,8 +3,8 @@
 If you haven't prepared the examples repository yet, you can do so:
 
 ```bash
-git clone git@github.com:ts-stack/ditsmod.git
-cd ditsmod
+git clone git@github.com:ditsmod/core.git ditsmod/core
+cd ditsmod/core
 npm i
 ```
 

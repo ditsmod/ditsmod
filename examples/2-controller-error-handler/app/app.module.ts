@@ -1,4 +1,4 @@
-import { Router, RootModule, ControllerErrorHandler } from '@ts-stack/ditsmod';
+import { Router, RootModule, ControllerErrorHandler } from '@ditsmod/core';
 import { DefaultRouter } from '@ts-stack/router';
 
 import { MyControllerErrorHandler } from './my-controller-error-handler';

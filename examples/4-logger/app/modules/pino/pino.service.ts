@@ -1,5 +1,5 @@
 import { Injectable } from '@ts-stack/di';
-import { Logger, LoggerConfig } from '@ts-stack/ditsmod';
+import { Logger, LoggerConfig } from '@ditsmod/core';
 import pino = require('pino');
 
 import { getNamedLogggerMethod } from '../../utils/get-named-logger-method';

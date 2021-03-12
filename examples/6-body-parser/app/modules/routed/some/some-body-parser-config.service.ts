@@ -1,5 +1,5 @@
 import { Injectable } from '@ts-stack/di';
-import { BodyParserConfig } from '@ts-stack/ditsmod';
+import { BodyParserConfig } from '@ditsmod/core';
 
 @Injectable()
 export class SomeBodyParserConfig extends BodyParserConfig {

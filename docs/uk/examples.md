@@ -5,8 +5,8 @@
 та встановити npm залежності:
 
 ```bash
-git clone git@github.com:ts-stack/ditsmod.git
-cd ditsmod
+git clone git@github.com:ditsmod/core.git ditsmod/core
+cd ditsmod/core
 npm i
 ```
 
@@ -141,7 +141,7 @@ pino, bunyan та winston.
 якості [токена][104], а DI вже підставляє для різних контролерів різні логери.
 
 ```ts
-import { Controller, Logger, Response, Route } from '@ts-stack/ditsmod';
+import { Controller, Logger, Response, Route } from '@ditsmod/core';
 
 // ...
 constructor(private res: Response, private log: Logger) {}
@@ -197,7 +197,7 @@ curl -isS localhost:8080 -d '{"one":1}' -H 'content-type: application/json'
 [6]: https://github.com/trentm/node-bunyan
 [7]: https://github.com/pinojs/pino
 
-[100]: https://github.com/ts-stack/ditsmod/tree/master/examples
+[100]: https://github.com/ditsmod/core/tree/master/examples
 [101]: ./README.md#інжектори-di
 [102]: ./README.md#експорт-провайдерів-із-кореневого-модуля
 [103]: ./README.md#guards

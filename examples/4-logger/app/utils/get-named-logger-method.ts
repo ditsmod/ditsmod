@@ -1,4 +1,4 @@
-import { Logger } from '@ts-stack/ditsmod';
+import { Logger } from '@ditsmod/core';
 
 export function getNamedLogggerMethod(fnLevel: keyof Logger) {
   return (...args: any[]) => {

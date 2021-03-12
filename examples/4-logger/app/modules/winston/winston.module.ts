@@ -1,4 +1,4 @@
-import { Logger, Module } from '@ts-stack/ditsmod';
+import { Logger, Module } from '@ditsmod/core';
 
 import { WinstonController } from './winston.controller';
 import { WinstonService } from './winston.service';
