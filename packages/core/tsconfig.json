@@ -1,7 +1,6 @@
 {
   "extends": "../tsconfig.settings.json",
   "compilerOptions": {
-    "target": "es2020",
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "dist",

@@ -1,12 +1,19 @@
 {
-  "extends": "../packages/tsconfig.settings.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "../dist-examples",
-    "importHelpers": true,
+    "target": "es2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "sourceMap": true,
+    "baseUrl": "./",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": true, // https://blogs.msdn.microsoft.com/typescript/2016/12/07/announcing-typescript-2-1/
+    "declaration": true,
+    "allowJs": false,
     "paths": {
-      "@ditsmod/core": ["../packages/core/src"],
-      "@ditsmod/edk": ["../packages/edk/src"],
+      "@ditsmod/core": ["../packages/core/src"]
     }
   },
   "include": ["./**/*"]

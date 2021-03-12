@@ -14,14 +14,7 @@
     "lib": "src"
   },
   "scripts": {
-    "build": "rimraf dist/* && tsc",
-    "test": "jest",
-    "start1": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/1-hello-world/main.ts",
-    "start2": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/2-controller-error-handler/main.ts",
-    "start3": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/3-route-guards/main.ts",
-    "start4": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/4-logger/main.ts",
-    "start5": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/5-nested-routes/main.ts",
-    "start6": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/6-body-parser/main.ts"
+    "test": "jest"
   },
   "dependencies": {
     "reflect-metadata": "^0.1.13"
