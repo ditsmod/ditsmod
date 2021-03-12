@@ -1,0 +1,58 @@
+{
+  "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
+  "name": "@ditsmod/core",
+  "homepage": "https://github.com/ditsmod/core",
+  "description": "REST framework",
+  "version": "1.0.0-beta.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ditsmod/core.git"
+  },
+  "main": "dist/index",
+  "types": "dist/index",
+  "directories": {
+    "lib": "src"
+  },
+  "scripts": {
+    "build": "rimraf dist/* && tsc",
+    "test": "jest",
+    "start1": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/1-hello-world/main.ts",
+    "start2": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/2-controller-error-handler/main.ts",
+    "start3": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/3-route-guards/main.ts",
+    "start4": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/4-logger/main.ts",
+    "start5": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/5-nested-routes/main.ts",
+    "start6": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/6-body-parser/main.ts"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@ts-stack/body-parser": "^1.0.0-beta.2",
+    "@ts-stack/di": "^1.0.0",
+    "@ts-stack/router": "^1.0.0-beta.1",
+    "@types/bunyan": "^1.8.6",
+    "@types/eslint": "^7.2.7",
+    "@types/jest": "^26.0.20",
+    "@types/node": "^14.14.32",
+    "@types/pino": "^6.3.6",
+    "@types/winston": "^2.4.4",
+    "@typescript-eslint/eslint-plugin": "^4.16.1",
+    "@typescript-eslint/parser": "^4.16.1",
+    "bunyan": "^1.8.15",
+    "eslint": "^7.21.0",
+    "jasmine": "^3.5.0",
+    "jest": "^26.6.3",
+    "nodemon": "^2.0.7",
+    "pino": "^6.11.0",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.0",
+    "ts-jest": "^26.5.3",
+    "ts-node": "^9.1.1",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.2.3",
+    "winston": "^3.3.3"
+  },
+  "peerDependencies": {
+    "@ts-stack/di": "^1.0.0"
+  }
+}

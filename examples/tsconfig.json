@@ -1,12 +1,12 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "../packages/tsconfig.settings.json",
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "../dist-examples",
-    "inlineSources": true,
     "importHelpers": true,
     "paths": {
-      "@ditsmod/core": ["../src"]
+      "@ditsmod/core": ["../packages/core/src"],
+      "@ditsmod/edk": ["../packages/edk/src"],
     }
   },
   "include": ["./**/*"]

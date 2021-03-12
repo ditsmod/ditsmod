@@ -1,0 +1,23 @@
+{
+  "name": "@ditsmod/edk",
+  "version": "1.0.0-beta.1",
+  "description": "Extension Development Kit",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ditsmod/core.git"
+  },
+  "keywords": [
+    "ditsmod",
+    "extensions"
+  ],
+  "author": "Костя Третяк",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ditsmod/core/issues"
+  },
+  "homepage": "https://github.com/ditsmod/core#readme"
+}

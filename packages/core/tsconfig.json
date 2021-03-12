@@ -1,0 +1,20 @@
+{
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "rootDir": "src",
+    "baseUrl": "./",
+    "paths": {
+      "@ditsmod/edk": [
+        "../edk/src"
+      ]
+    }
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../edk" },
+  ]
+}

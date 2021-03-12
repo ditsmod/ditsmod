@@ -69,7 +69,6 @@ interface StatusCodeInfo {
   };
 }
 
-/*tslint:disable:quotemark max-line-length one-line */
 export const STATUS_CODE_INFO: StatusCodeInfo = {
   100: {
     statusCode: 100,
