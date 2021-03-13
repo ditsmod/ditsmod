@@ -29,15 +29,21 @@ export class AppInitializer {
   protected meta: RootMetadata;
   #moduleManager: ModuleManager;
 
-  async init(moduleManager: ModuleManager) {
+  bootstrapProvidersPerApp(moduleManager: ModuleManager) {
     this.#moduleManager = moduleManager;
     const meta = moduleManager.getMetadata('root', true);
     this.mergeMetadata(meta.module as ModuleType);
     this.prepareProvidersPerApp(meta, moduleManager);
     this.initProvidersPerApp();
+  }
+
+  getMetadataAndLogger() {
+    return { meta: this.meta, log: this.log };
+  }
+
+  async bootstrapModulesAndExtensions() {
     const modInitializer = this.injectorPerApp.get(ModInitializer) as ModInitializer;
     await modInitializer.init();
-    return { meta: this.meta, log: this.log };
   }
 
   requestListener: RequestListener = (nodeReq, nodeRes) => {

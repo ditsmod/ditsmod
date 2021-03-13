@@ -41,16 +41,18 @@ export class Application {
     const moduleManager = new ModuleManager(this.log);
     moduleManager.scanRootModule(appModule);
     this.appInitializer = new AppInitializer();
-    const { meta, log } = await this.appInitializer.init(moduleManager);
+    this.appInitializer.bootstrapProvidersPerApp(moduleManager);
+    const { meta, log } = this.appInitializer.getMetadataAndLogger();
     this.meta = meta;
     this.log = log;
+    await this.appInitializer.bootstrapModulesAndExtensions();
     this.checkSecureServerOption(appModule);
   }
 
   /**
-   * We need to get a logger as soon as possible. So, first we get the default logger.
-   * Then we look for a logger in `providersPerApp` of the root module. And later this
-   * logger can be reset in the process of initializing the application.
+   * We need to set a logger as soon as possible. So, first we set the default logger.
+   * Then we can set it to a logger from `providersPerApp` of the root module. And later it
+   * can be seted to another logger in the process of initializing the application.
    */
   protected createTemporaryLogger(appModule: ModuleType) {
     const config = new LoggerConfig();
