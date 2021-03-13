@@ -58,7 +58,13 @@ export class ModuleManager {
     }
 
     if (throwErrOnNotFound && !meta) {
-      throw new Error(`Module ${moduleId} not found in ModuleManager.`);
+      let moduleName: string;
+      if (typeof moduleId == 'string') {
+        moduleName = moduleId;
+      } else {
+        moduleName = getModuleName(moduleId);
+      }
+      throw new Error(`${moduleName} not found in ModuleManager.`);
     }
 
     return meta;
