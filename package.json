@@ -13,7 +13,6 @@
   "scripts": {
     "build": "yarn clean && tsc -b -f packages",
     "clean": "rimraf packages/**/dist* packages/**/out-tsc* packages/**/*.tsbuildinfo",
-    "test": "jest",
     "start1": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/1-hello-world/main.ts",
     "start2": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/2-controller-error-handler/main.ts",
     "start3": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/3-route-guards/main.ts",
