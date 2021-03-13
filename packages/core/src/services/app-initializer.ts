@@ -26,6 +26,7 @@ import { PreRouter } from './pre-router';
 import { ExtensionType } from '../types/extension-type';
 import { ModuleWithParams } from '../types/module-with-params';
 import { getModule } from '../utils/get-module';
+import { RequestListener } from '../types/server-options';
 
 @Injectable()
 export class AppInitializer {
@@ -45,7 +46,7 @@ export class AppInitializer {
     this.log = log;
     moduleManager.scanRootModule(appModule);
     await this.reInit();
-    return { meta: this.meta, log: this.log, preRouter: this.preRouter };
+    return { meta: this.meta, log: this.log };
   }
 
   async reInit() {
@@ -57,6 +58,10 @@ export class AppInitializer {
     this.checkModulesResolvable(this.extensionsMetadataMap);
     await this.handleExtensions(this.extensionsMetadataMap);
   }
+
+  requestListener: RequestListener = (nodeReq, nodeRes) => {
+    this.preRouter.requestListener(nodeReq, nodeRes);
+  };
 
   /**
    * Merge AppModule metadata with default metadata for root module.
@@ -74,7 +79,7 @@ export class AppInitializer {
   /**
    * 1. checks collisions for non-root exported providers per app;
    * 2. then merges these providers with providers that declared on root module.
-   * 
+   *
    * @param meta root metadata.
    */
   protected prepareProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
@@ -103,11 +108,7 @@ export class AppInitializer {
    * Recursively collects per app providers from non-root modules.
    */
   protected collectProvidersPerApp(metadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
-    const modules = [
-      ...metadata.importsModules,
-      ...metadata.importsWithParams,
-      ...metadata.exportsModules,
-    ];
+    const modules = [...metadata.importsModules, ...metadata.importsWithParams, ...metadata.exportsModules];
     const providersPerApp: ServiceProvider[] = [];
     modules.forEach((mod) => {
       const meta = moduleManager.getMetadata(mod, true);
@@ -125,7 +126,8 @@ export class AppInitializer {
     this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
       { provide: RootMetadata, useValue: this.meta },
-      { provide: AppInitializer, useValue: this }
+      { provide: AppInitializer, useValue: this },
+      { provide: ModuleManager, useValue: this.#moduleManager }
     );
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.meta.providersPerApp);
     this.log = this.injectorPerApp.get(Logger) as Logger;

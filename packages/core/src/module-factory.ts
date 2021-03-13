@@ -227,7 +227,7 @@ export class ModuleFactory {
   /**
    * Recursively imports providers.
    *
-   * @param modOrObject Module from where exports providers.
+   * @param metadata Module metadata from where exports providers.
    */
   protected importProviders(metadata: NormalizedModuleMetadata, isStarter?: boolean) {
     const { exportsModules, exportsProviders, providersPerMod, providersPerReq } = metadata;

@@ -2,7 +2,6 @@ import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
 
-import { PreRouter } from './services/pre-router';
 import { Logger, LoggerConfig } from './types/logger';
 import { Http2SecureServerOptions, Server } from './types/server-options';
 import { DefaultLogger } from './services/default-logger';
@@ -14,7 +13,7 @@ import { isHttp2SecureServerOptions } from './utils/type-guards';
 export class Application {
   protected meta: RootMetadata;
   protected log: Logger;
-  protected preRouter: PreRouter;
+  protected appInitializer: AppInitializer;
 
   bootstrap(appModule: ModuleType) {
     return new Promise<{ server: Server; log: Logger }>(async (resolve, reject) => {
@@ -35,11 +34,10 @@ export class Application {
   }
 
   protected async init(appModule: ModuleType) {
-    const appInitializer = new AppInitializer();
-    const { meta, log, preRouter } = await appInitializer.init(appModule, this.log);
+    this.appInitializer = new AppInitializer();
+    const { meta, log } = await this.appInitializer.init(appModule, this.log);
     this.meta = meta;
     this.log = log;
-    this.preRouter = preRouter;
     this.checkSecureServerOption(appModule);
   }
 
@@ -53,11 +51,11 @@ export class Application {
   protected createServer() {
     if (isHttp2SecureServerOptions(this.meta.serverOptions)) {
       const serverModule = this.meta.httpModule as typeof http2;
-      return serverModule.createSecureServer(this.meta.serverOptions, this.preRouter.requestListener);
+      return serverModule.createSecureServer(this.meta.serverOptions, this.appInitializer.requestListener);
     } else {
       const serverModule = this.meta.httpModule as typeof http | typeof https;
       const serverOptions = this.meta.serverOptions as http.ServerOptions | https.ServerOptions;
-      return serverModule.createServer(serverOptions, this.preRouter.requestListener);
+      return serverModule.createServer(serverOptions, this.appInitializer.requestListener);
     }
   }
 }
