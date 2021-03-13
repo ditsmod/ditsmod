@@ -55,7 +55,7 @@ export class ModuleFactory {
    */
   exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata) {
     this.#moduleManager = moduleManager;
-    const meta = moduleManager.getMetadata('root');
+    const meta = moduleManager.getMetadata('root', true);
     this.moduleName = meta.name;
     this.meta = meta;
     this.globalProviders = globalProviders;

@@ -3,7 +3,6 @@ import { DefaultRouter } from '@ts-stack/router';
 
 import { AppInitializer } from './app-initializer';
 import { Logger, LoggerConfig } from '../types/logger';
-import { Controller } from '../decorators/controller';
 import { Router } from '../types/router';
 import { Request } from './request';
 import { defaultProvidersPerApp } from './default-providers-per-app';
@@ -11,12 +10,10 @@ import { ModuleType } from '../types/module-type';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleWithParams } from '../types/module-with-params';
 import { Module } from '../decorators/module';
-import { defaultProvidersPerReq } from './default-providers-per-req';
 import { RootModule } from '../decorators/root-module';
 import { NodeReqToken } from '../types/server-options';
 import { RootMetadata } from '../models/root-metadata';
 import { ServiceProvider } from '../types/service-provider';
-import { ExtensionMetadata } from '../types/extension-metadata';
 import { DefaultLogger } from './default-logger';
 import { ModuleManager } from './module-manager';
 
@@ -25,7 +22,6 @@ describe('AppInitializer', () => {
 
   class MockAppInitializer extends AppInitializer {
     meta = new RootMetadata();
-    extensionsMetadataMap: Map<ModuleType | ModuleWithParams, ExtensionMetadata>;
 
     async init(appModule: ModuleType, log: Logger) {
       return super.init(appModule, log);
@@ -42,12 +38,6 @@ describe('AppInitializer', () => {
     prepareProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
       return super.prepareProvidersPerApp(meta, moduleManager);
     }
-  }
-
-  class MyLogger extends Logger {
-    debug = (...args: any[]): any => {
-      console.log(`debug:\n ${'*'.repeat(50)}\n`, ...args);
-    };
   }
 
   let mock: MockAppInitializer;
@@ -230,144 +220,6 @@ describe('AppInitializer', () => {
       const meta = moduleManager.scanModule(Module7);
       const providers = mock.collectProvidersPerApp(meta, moduleManager);
       expect(providers).toEqual([]);
-    });
-  });
-
-  describe('export from root module', () => {
-    class Provider0 {}
-    class Provider1 {}
-    class Provider2 {}
-    class Provider3 {}
-    class Provider4 {}
-    class Provider5 {}
-    class Provider6 {}
-    class Provider7 {}
-    class Provider8 {}
-    class Provider9 {}
-
-    @Controller()
-    class Ctrl {}
-
-    @Module({
-      exports: [Provider0],
-      providersPerMod: [Provider0],
-    })
-    class Module0 {}
-
-    const obj1 = { provide: Provider1, useClass: Provider1 };
-    @Module({
-      controllers: [Ctrl],
-      exports: [Provider1],
-      providersPerMod: [obj1, Provider2],
-    })
-    class Module1 {}
-
-    @Module({
-      exports: [Provider3, Provider4],
-      providersPerMod: [Provider3, Provider4],
-    })
-    class Module2 {
-      static withParams() {
-        return { module: Module2 };
-      }
-    }
-
-    @Module({
-      exports: [Provider5, Provider6, Provider7],
-      providersPerReq: [Provider5, Provider6, Provider7],
-    })
-    class Module3 {}
-
-    @Module({
-      exports: [Provider8, Provider9],
-      providersPerReq: [Provider8, Provider9],
-    })
-    class Module4 {}
-
-    @Module({
-      providersPerApp: [{ provide: Logger, useClass: MyLogger }],
-    })
-    class Module5 {}
-
-    const module2WithParams: ModuleWithParams = Module2.withParams();
-    const module3WithParams: ModuleWithParams = { prefix: 'one', module: Module3 };
-    const module4WithParams: ModuleWithParams = { guards: [], module: Module4 };
-    @RootModule({
-      serverName: 'custom-server',
-      imports: [
-        Module0,
-        Module1,
-        module2WithParams,
-        Module5,
-        module3WithParams,
-        module4WithParams,
-      ],
-      exports: [Module0, Module2, Module3],
-      providersPerApp: [Logger],
-    })
-    class AppModule {}
-
-    it('Module0', async () => {
-      await mock.init(AppModule, log);
-      const mod0 = mock.extensionsMetadataMap.get(Module0);
-      expect(mod0.moduleMetadata.providersPerApp).toEqual([]);
-      expect(mod0.moduleMetadata.providersPerMod).toEqual([Provider3, Provider4, Provider0]);
-      expect(mod0.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
-    });
-
-    it('Module1', async () => {
-      await mock.init(AppModule, log);
-      const mod1 = mock.extensionsMetadataMap.get(Module1);
-      expect(mod1.moduleMetadata.providersPerApp).toEqual([]);
-      expect(mod1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4, obj1, Provider2]);
-      expect(mod1.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
-    });
-
-    it('Module2', async () => {
-      await mock.init(AppModule, log);
-      const mod2 = mock.extensionsMetadataMap.get(module2WithParams);
-      expect(mod2.moduleMetadata.providersPerApp).toEqual([]);
-      expect(mod2.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
-      expect(mod2.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
-    });
-
-    it('Module3', async () => {
-      await mock.init(AppModule, log);
-      const mod3 = mock.extensionsMetadataMap.get(module3WithParams);
-      expect(mod3.moduleMetadata.providersPerApp).toEqual([]);
-      expect(mod3.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
-      expect(mod3.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
-    });
-
-    it('Module4', async () => {
-      await mock.init(AppModule, log);
-      const mod4 = mock.extensionsMetadataMap.get(module4WithParams);
-      expect(mod4.moduleMetadata.providersPerApp).toEqual([]);
-      expect(mod4.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
-      expect(mod4.moduleMetadata.providersPerReq).toEqual([
-        ...defaultProvidersPerReq,
-        Provider5,
-        Provider6,
-        Provider7,
-        Provider8,
-        Provider9,
-      ]);
-    });
-
-    it('AppModule', async () => {
-      await mock.init(AppModule, log);
-      const root1 = mock.extensionsMetadataMap.get(AppModule);
-      expect(root1.moduleMetadata.providersPerApp).toEqual([Logger]);
-      expect(root1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider1, Provider3, Provider4]);
-      expect(root1.moduleMetadata.providersPerReq).toEqual([
-        ...defaultProvidersPerReq,
-        Provider5,
-        Provider6,
-        Provider7,
-        Provider8,
-        Provider9,
-      ]);
-      // console.log(testOptionsMap);
     });
   });
 

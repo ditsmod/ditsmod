@@ -5,6 +5,7 @@ import { Logger, LoggerConfig } from '../types/logger';
 import { ServiceProvider } from '../types/service-provider';
 import { Counter } from './counter';
 import { DefaultLogger } from './default-logger';
+import { ModInitializer } from './mod-initializer';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
 import { PreRoutes } from './pre-routes';
@@ -20,5 +21,6 @@ export const defaultProvidersPerApp: ServiceProvider[] = [
   PreRouter,
   PreRoutes,
   Counter,
-  ModuleManager
+  ModuleManager,
+  ModInitializer
 ];

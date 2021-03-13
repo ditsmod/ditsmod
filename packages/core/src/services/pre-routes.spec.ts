@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ReflectiveInjector } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { Logger, LoggerConfig } from '../types/logger';
 import { PreRoutes } from './pre-routes';
@@ -10,9 +10,9 @@ import { RootModule } from '../decorators/root-module';
 import { CanActivate } from '../types/can-activate';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { RootMetadata } from '../models/root-metadata';
-import { AppInitializer } from './app-initializer';
 import { ModuleManager } from './module-manager';
 import { DefaultLogger } from './default-logger';
+import { ModInitializer } from './mod-initializer';
 
 describe('PreRoutes', () => {
   class MockPreRoutes extends PreRoutes {
@@ -21,8 +21,9 @@ describe('PreRoutes', () => {
     }
   }
 
-  class MockAppInitializer extends AppInitializer {
-    meta = new RootMetadata();
+  @Injectable()
+  class MockModInitializer extends ModInitializer {
+    moduleManager: ModuleManager;
     injectorPerApp: ReflectiveInjector;
     log = new Logger();
     bootstrapModuleFactory(moduleManager: ModuleManager) {
@@ -30,19 +31,23 @@ describe('PreRoutes', () => {
     }
   }
 
-  let mockAppInitializer: MockAppInitializer;
+  let mockModInitializer: MockModInitializer;
   let mockPreRoutes: MockPreRoutes;
   let log: Logger;
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
-    const injectorPerApp = ReflectiveInjector.resolveAndCreate([...defaultProvidersPerApp]);
-    mockAppInitializer = new MockAppInitializer();
-    mockAppInitializer.injectorPerApp = injectorPerApp;
-    mockPreRoutes = new MockPreRoutes(injectorPerApp);
     const config = new LoggerConfig();
     log = new DefaultLogger(config);
     moduleManager = new ModuleManager(log);
+    const injectorPerApp = ReflectiveInjector.resolveAndCreate([
+      ...defaultProvidersPerApp,
+      { provide: ModuleManager, useValue: moduleManager },
+      { provide: RootMetadata, useValue: new RootMetadata() },
+      MockModInitializer
+    ]);
+    mockModInitializer = injectorPerApp.get(MockModInitializer);
+    mockPreRoutes = new MockPreRoutes(injectorPerApp);
   });
 
   describe('getPreRoutesData()', () => {
@@ -61,7 +66,7 @@ describe('PreRoutes', () => {
       class AppModule {}
 
       moduleManager.scanRootModule(AppModule);
-      const metadataMap = mockAppInitializer.bootstrapModuleFactory(moduleManager);
+      const metadataMap = mockModInitializer.bootstrapModuleFactory(moduleManager);
       const extensionMeta = metadataMap.get(AppModule);
       expect(() => mockPreRoutes.getPreRoutesData(extensionMeta)).toThrowError(/must have canActivate method/);
     });
@@ -94,7 +99,7 @@ describe('PreRoutes', () => {
       class AppModule {}
 
       moduleManager.scanRootModule(AppModule);
-      const metadataMap = mockAppInitializer.bootstrapModuleFactory(moduleManager);
+      const metadataMap = mockModInitializer.bootstrapModuleFactory(moduleManager);
       const metadata = metadataMap.get(AppModule);
       const routesMetadata = mockPreRoutes.getPreRoutesData(metadata);
       expect(routesMetadata.length).toBe(3);
