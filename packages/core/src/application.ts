@@ -1,14 +1,19 @@
 import * as http from 'http';
-import * as https from 'https';
 import * as http2 from 'http2';
+import * as https from 'https';
+import { ReflectiveInjector } from '@ts-stack/di';
 
-import { Logger, LoggerConfig } from './types/logger';
-import { Http2SecureServerOptions, Server } from './types/server-options';
-import { DefaultLogger } from './services/default-logger';
-import { AppInitializer } from './services/app-initializer';
 import { RootMetadata } from './models/root-metadata';
+import { AppInitializer } from './services/app-initializer';
+import { DefaultLogger } from './services/default-logger';
+import { defaultProvidersPerApp } from './services/default-providers-per-app';
+import { ModuleManager } from './services/module-manager';
+import { Logger, LoggerConfig } from './types/logger';
 import { ModuleType } from './types/module-type';
+import { Http2SecureServerOptions, Server } from './types/server-options';
+import { getModuleMetadata } from './utils/get-module-metadata';
 import { isHttp2SecureServerOptions } from './utils/type-guards';
+
 
 export class Application {
   protected meta: RootMetadata;
@@ -18,8 +23,6 @@ export class Application {
   bootstrap(appModule: ModuleType) {
     return new Promise<{ server: Server; log: Logger }>(async (resolve, reject) => {
       try {
-        const config = new LoggerConfig();
-        this.log = new DefaultLogger(config);
         await this.init(appModule);
         const server = this.createServer();
         server.listen(this.meta.listenOptions, () => {
@@ -34,11 +37,28 @@ export class Application {
   }
 
   protected async init(appModule: ModuleType) {
+    this.createTemporaryLogger(appModule);
+    const moduleManager = new ModuleManager(this.log);
+    moduleManager.scanRootModule(appModule);
     this.appInitializer = new AppInitializer();
-    const { meta, log } = await this.appInitializer.init(appModule, this.log);
+    const { meta, log } = await this.appInitializer.init(moduleManager);
     this.meta = meta;
     this.log = log;
     this.checkSecureServerOption(appModule);
+  }
+
+  /**
+   * We need to get a logger as soon as possible. So, first we get the default logger.
+   * Then we look for a logger in `providersPerApp` of the root module. And later this
+   * logger can be reset in the process of initializing the application.
+   */
+  protected createTemporaryLogger(appModule: ModuleType) {
+    const config = new LoggerConfig();
+    this.log = new DefaultLogger(config);
+    const rawRootMetadata = getModuleMetadata(appModule, true);
+    const providers = [...defaultProvidersPerApp, ...(rawRootMetadata.providersPerApp || [])];
+    const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
+    this.log = injectorPerApp.get(Logger);
   }
 
   protected checkSecureServerOption(appModule: ModuleType) {

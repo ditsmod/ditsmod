@@ -29,25 +29,15 @@ export class AppInitializer {
   protected meta: RootMetadata;
   #moduleManager: ModuleManager;
 
-  async init(appModule: ModuleType, log: Logger) {
-    if (this.#moduleManager) {
-      throw new Error('You can call init() only once. Try reInit() instead.');
-    }
-    const moduleManager = new ModuleManager(this.log);
+  async init(moduleManager: ModuleManager) {
     this.#moduleManager = moduleManager;
-    this.log = log;
-    moduleManager.scanRootModule(appModule);
-    await this.reInit();
-    return { meta: this.meta, log: this.log };
-  }
-
-  async reInit() {
-    const meta = this.#moduleManager.getMetadata('root', true);
+    const meta = moduleManager.getMetadata('root', true);
     this.mergeMetadata(meta.module as ModuleType);
-    this.prepareProvidersPerApp(meta, this.#moduleManager);
+    this.prepareProvidersPerApp(meta, moduleManager);
     this.initProvidersPerApp();
     const modInitializer = this.injectorPerApp.get(ModInitializer) as ModInitializer;
     await modInitializer.init();
+    return { meta: this.meta, log: this.log };
   }
 
   requestListener: RequestListener = (nodeReq, nodeRes) => {

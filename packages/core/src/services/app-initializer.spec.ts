@@ -23,8 +23,8 @@ describe('AppInitializer', () => {
   class MockAppInitializer extends AppInitializer {
     meta = new RootMetadata();
 
-    async init(appModule: ModuleType, log: Logger) {
-      return super.init(appModule, log);
+    async init(moduleManager: ModuleManager) {
+      return super.init(moduleManager);
     }
 
     mergeMetadata(appModule: ModuleType) {
@@ -248,10 +248,11 @@ describe('AppInitializer', () => {
         })
         class AppModule {}
 
+        moduleManager.scanRootModule(AppModule);
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Provider2. You should manually add this provider to AppModule.';
-        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
+        await expect(mock.init(moduleManager)).rejects.toThrow(msg);
       });
 
       it('same export as in previous, but in import both module in root module', async () => {
@@ -275,10 +276,11 @@ describe('AppInitializer', () => {
         })
         class AppModule {}
 
+        moduleManager.scanRootModule(AppModule);
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Provider1. You should manually add this provider to AppModule.';
-        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
+        await expect(mock.init(moduleManager)).rejects.toThrow(msg);
       });
 
       it('mix exporting duplicates with "multi == true" per app and per mod', async () => {
@@ -305,10 +307,11 @@ describe('AppInitializer', () => {
         })
         class AppModule {}
 
+        moduleManager.scanRootModule(AppModule);
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Provider1. You should manually add this provider to AppModule.';
-        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
+        await expect(mock.init(moduleManager)).rejects.toThrow(msg);
       });
 
       it('exporting duplicates with "multi == true" not to throw', async () => {
@@ -332,7 +335,8 @@ describe('AppInitializer', () => {
         })
         class AppModule {}
 
-        await expect(mock.init(AppModule, log)).resolves.not.toThrow();
+        moduleManager.scanRootModule(AppModule);
+        await expect(mock.init(moduleManager)).resolves.not.toThrow();
       });
 
       it('exporting duplicates of Provider2, but declared in providersPerMod of root module', async () => {
@@ -358,7 +362,8 @@ describe('AppInitializer', () => {
         })
         class AppModule {}
 
-        await expect(mock.init(AppModule, log)).resolves.not.toThrow();
+        moduleManager.scanRootModule(AppModule);
+        await expect(mock.init(moduleManager)).resolves.not.toThrow();
       });
 
       it('exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerMod of root module', async () => {
@@ -387,7 +392,8 @@ describe('AppInitializer', () => {
         })
         class AppModule {}
 
-        await expect(mock.init(AppModule, log)).resolves.not.toThrow();
+        moduleManager.scanRootModule(AppModule);
+        await expect(mock.init(moduleManager)).resolves.not.toThrow();
       });
     });
 
@@ -421,10 +427,11 @@ describe('AppInitializer', () => {
         })
         class AppModule {}
 
+        moduleManager.scanRootModule(AppModule);
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Provider2. You should manually add this provider to AppModule.';
-        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
+        await expect(mock.init(moduleManager)).rejects.toThrow(msg);
       });
 
       it('exporting duplicates of Provider2, but declared in providersPerReq of root module', async () => {
@@ -434,7 +441,8 @@ describe('AppInitializer', () => {
         })
         class AppModule {}
 
-        await expect(mock.init(AppModule, log)).resolves.not.toThrow();
+        moduleManager.scanRootModule(AppModule);
+        await expect(mock.init(moduleManager)).resolves.not.toThrow();
       });
 
       it('exporting duplicates of Provider1 from Module1 and Module2', async () => {
@@ -458,10 +466,11 @@ describe('AppInitializer', () => {
         })
         class AppModule {}
 
+        moduleManager.scanRootModule(AppModule);
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Provider1. You should manually add this provider to AppModule.';
-        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
+        await expect(mock.init(moduleManager)).rejects.toThrow(msg);
       });
 
       it('exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerReq of root module', async () => {
@@ -471,7 +480,8 @@ describe('AppInitializer', () => {
         })
         class AppModule {}
 
-        await expect(mock.init(AppModule, log)).resolves.not.toThrow();
+        moduleManager.scanRootModule(AppModule);
+        await expect(mock.init(moduleManager)).resolves.not.toThrow();
       });
     });
 
@@ -509,10 +519,11 @@ describe('AppInitializer', () => {
         })
         class AppModule {}
 
+        moduleManager.scanRootModule(AppModule);
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Provider0, Request, Provider1, InjectionToken NodeRequest. You should manually add these providers to AppModule.';
-        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
+        await expect(mock.init(moduleManager)).rejects.toThrow(msg);
       });
 
       it('case 2', async () => {
@@ -528,10 +539,11 @@ describe('AppInitializer', () => {
         })
         class AppModule {}
 
+        moduleManager.scanRootModule(AppModule);
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Router. You should manually add this provider to AppModule.';
-        await expect(mock.init(AppModule, log)).rejects.toThrow(msg);
+        await expect(mock.init(moduleManager)).rejects.toThrow(msg);
       });
     });
   });
