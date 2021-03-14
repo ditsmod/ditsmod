@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "importHelpers": true
+  },
+  "include": [
+    "./src/**/*.ts"
+  ],
+  "files": [],
+  "references": [
+    { "path": "../core" },
+  ]
+}

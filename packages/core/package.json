@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/ditsmod/core.git"
+    "url": "https://github.com/ditsmod/ditsmod.git"
   },
   "main": "dist/index",
   "types": "dist/index",

@@ -1,0 +1,43 @@
+{
+  "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
+  "name": "@ts-stack/router",
+  "homepage": "https://github.com/ts-stack/ditsmod-plugins",
+  "description": "Router plugin for @ts-stack/ditsmod",
+  "version": "1.0.0-beta.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ditsmod/ditsmod.git"
+  },
+  "main": "dist/index",
+  "typings": "dist/index",
+  "directories": {
+    "lib": "src"
+  },
+  "scripts": {
+    "test": "npm run compile && jest",
+    "compile": "rimraf dist/* && tsc",
+    "bench": "node --expose-gc dist/bench.js"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.20",
+    "@types/node": "^11.13.8",
+    "find-my-way": "^2.0.1",
+    "jest": "^26.6.3",
+    "koa-tree-router": "^0.4.6",
+    "prettier": "^1.17.0",
+    "rimraf": "^2.6.3",
+    "trek-router": "^1.2.0",
+    "ts-jest": "^26.5.0"
+  },
+  "peerDependencies": {
+    "@ts-stack/di": "^1.1.0",
+    "@ditsmod/core": "^1.0.0-beta.1"
+  },
+  "keywords": [
+    "router",
+    "fast",
+    "radix",
+    "tree",
+    "typescript"
+  ]
+}

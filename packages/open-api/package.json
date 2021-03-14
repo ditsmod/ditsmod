@@ -1,0 +1,28 @@
+{
+  "name": "@ditsmod/open-api",
+  "version": "1.0.0-alpha.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ditsmod/ditsmod.git"
+  },
+  "description": "",
+  "main": "dist/index",
+  "typings": "dist/index",
+  "directories": {
+    "lib": "src"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@ts-stack/open-api-spec": "^3.1.0"
+  },
+  "devDependencies": {},
+  "peerDependencies": {
+    "@ts-stack/di": "^1.1.0",
+    "@ditsmod/core": "^1.0.0-beta.1"
+  }
+}

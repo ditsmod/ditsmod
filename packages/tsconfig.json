@@ -1,4 +1,4 @@
 {
   "files": [],
-  "references": [{ "path": "core" }]
+  "references": [{ "path": "body-parser" }, { "path": "core" }, { "path": "open-api" }, { "path": "router" }]
 }

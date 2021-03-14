@@ -1,0 +1,53 @@
+## @ts-stack/router
+
+This is a fork of [koa-tree-router](https://github.com/steambap/koa-tree-router/tree/ad5ecb).
+
+## Install
+
+```bash
+npm i @ts-stack/di @ts-stack/router
+# OR
+yarn add @ts-stack/di @ts-stack/router
+```
+
+Where [@ts-stack/di](https://github.com/KostyaTretyak/@ts-stack/di) is a dependencie.
+
+## Usage
+
+```ts
+import { Router, Tree } from '@ts-stack/router';
+import { ReflectiveInjector } from '@ts-stack/di'; // This is a dependency
+
+const injector = ReflectiveInjector.resolveAndCreate([Tree, Router]);
+const router = injector.get(Router) as Router;
+router.on('GET', '/', () => { /* Here some handler */ });
+const { handle, params } = router.find('GET', '/');
+```
+
+## Benchmarks
+
+```bash
+git clone git@github.com:ts-stack/ditsmod-plugins.git
+cd ditsmod-plugins/src/router
+npm i
+npm run compile
+npm run bench
+```
+
+Results on 22.02.2020:
+
+```text
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Running in random order
+============================================================
+Lib                   | Bench, ops/sec | Memory usage, KB
+============================================================
+@ts-stack/router      | 4,372,262      | 4,420
+------------------------------------------------------------
+koa-tree-router       | 4,257,653      | 4,281
+------------------------------------------------------------
+trek-router           | 3,416,613      | 4,758
+------------------------------------------------------------
+find-my-way           | 2,512,956      | 4,940
+------------------------------------------------------------
+```

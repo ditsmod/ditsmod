@@ -5,7 +5,7 @@
 та встановити npm залежності:
 
 ```bash
-git clone git@github.com:ditsmod/core.git ditsmod/core
+git clone git@github.com:ditsmod/ditsmod.git ditsmod/core
 cd ditsmod/core
 npm i
 ```
