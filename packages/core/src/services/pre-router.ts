@@ -59,15 +59,14 @@ export class PreRouter implements Extension<PreRouteData[]> {
     const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
 
     preRoutesData.forEach((preRouteData) => {
-      const route = preRouteData.route;
-      const path = this.getPath(prefix, route.path);
       /**
        * @param injector Injector per module that tied to the route.
        * @param providers Resolved providers per request.
        * @param method Method of the class controller.
        * @param parseBody Need or not to parse body.
        */
-      const { injector, providers, controller, methodName, parseBody, guards } = preRouteData;
+      const { route, injector, providers, controller, methodName, parseBody, guards } = preRouteData;
+      const path = this.getPath(prefix, route.path);
 
       const handle = ((nodeReq: NodeRequest, nodeRes: NodeResponse, params: PathParam[], queryString: any) => {
         nodeRes.setHeader('Server', this.rootMetadata.serverName);
@@ -87,11 +86,11 @@ export class PreRouter implements Extension<PreRouteData[]> {
       }
 
       const logObj = {
-        module: moduleName,
+        moduleName,
         httpMethod: route.httpMethod,
         path,
-        guards: preRouteData.guards,
-        handler: `${preRouteData.controller.name}.${preRouteData.methodName}()`,
+        guards,
+        handler: `${controller.name}.${methodName}()`,
       };
 
       if (!logObj.guards.length) {
