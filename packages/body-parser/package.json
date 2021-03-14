@@ -20,9 +20,11 @@
   "dependencies": {
     "get-body": "^1.0.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@ts-stack/di": "^1.1.0"
+  },
   "peerDependencies": {
-    "@ts-stack/di": "^1.1.0",
-    "@ditsmod/core": "^1.0.0-beta.1"
+    "@ditsmod/core": "^1.0.0-beta.1",
+    "@ts-stack/di": "^1.1.0"
   }
 }

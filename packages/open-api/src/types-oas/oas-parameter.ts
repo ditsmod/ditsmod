@@ -1,4 +1,4 @@
-import { ObjectAny } from '@ts-stack/ditsmod';
+import { edk } from '@ditsmod/core';
 
 import { OasExample } from './mix';
 import { OasReference } from './oas-reference';
@@ -10,7 +10,7 @@ import { OasStyle } from './oas-style';
  * @todo Упорядкувати посилання в описах типів (в цьому файлі)
  * на неіснуючу властивість _in_.
  */
-export class OasParameter<T extends ObjectAny = any> {
+export class OasParameter<T extends edk.AnyObj = any> {
   /**
    * The name of the parameter. Parameter names are case sensitive.
    * - If a param in `"path"`, the _name_ field MUST correspond to

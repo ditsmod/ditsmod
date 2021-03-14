@@ -3,7 +3,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist",
-    "importHelpers": true
+    "paths": {
+      "@ditsmod/core": [
+        "../core/src"
+      ]
+    }
   },
   "include": [
     "./src/**/*.ts"

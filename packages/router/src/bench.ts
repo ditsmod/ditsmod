@@ -20,7 +20,7 @@ async function runBench() {
 
   const benchmarks: Lib[] = [
     { name: 'koa-tree-router', onRouteMethod: 'on', findRouteMethod: 'find' },
-    { name: '@ts-stack/router', routerClass: 'Router', onRouteMethod: 'on', findRouteMethod: 'find' },
+    { name: '@ditsmod/router', routerClass: 'Router', onRouteMethod: 'on', findRouteMethod: 'find' },
     { name: 'find-my-way', onRouteMethod: 'on', findRouteMethod: 'find' },
     { name: 'trek-router', onRouteMethod: 'add', findRouteMethod: 'find' }
   ];
@@ -39,7 +39,7 @@ async function runBench() {
   for (const lib of shuffle(benchmarks)) {
     let loadFrom: string = lib.name;
 
-    if (lib.name == '@ts-stack/router') {
+    if (lib.name == '@ditsmod/router') {
       loadFrom = path.resolve('./dist');
     }
 
@@ -48,7 +48,7 @@ async function runBench() {
       const Router = lib.routerClass ? fullLib[lib.routerClass] : fullLib;
       let router: any;
 
-      if (lib.name == '@ts-stack/router') {
+      if (lib.name == '@ditsmod/router') {
         const injector = ReflectiveInjector.resolveAndCreate([Tree, DefaultRouter]);
         router = injector.get(DefaultRouter);
       } else {

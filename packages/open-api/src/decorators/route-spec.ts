@@ -1,4 +1,4 @@
-import { ObjectAny, CanActivate } from '@ts-stack/ditsmod';
+import { edk, CanActivate } from '@ditsmod/core';
 import { makePropDecorator, Type } from '@ts-stack/di';
 
 import { OasParameter } from '../types-oas/oas-parameter';
@@ -35,7 +35,7 @@ export class RouteSpecConfig {
 export type RouteSpecDecoratorFactory = (config: RouteSpecConfig) => RouteSpecDecorator;
 
 export type RouteSpecDecorator = <T>(
-  target: ObjectAny,
+  target: edk.AnyObj,
   propertyName: string,
   descriptor: TypedPropertyDescriptor<T>
 ) => RouteSpecDecoratorMetadata;

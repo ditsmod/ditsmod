@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { ReflectiveInjector, Injectable } from '@ts-stack/di';
-import { DefaultRouter } from '@ts-stack/router';
+import { DefaultRouter } from '@ditsmod/router';
 
 import { ModuleFactory } from './module-factory';
 import { Module } from './decorators/module';

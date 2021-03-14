@@ -1,8 +1,8 @@
 {
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
-  "name": "@ts-stack/router",
-  "homepage": "https://github.com/ts-stack/ditsmod-plugins",
-  "description": "Router plugin for @ts-stack/ditsmod",
+  "name": "@ditsmod/router",
+  "homepage": "https://github.com/ditsmod/ditsmod",
+  "description": "Router plugin for Ditsmod applications",
   "version": "1.0.0-beta.1",
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
     "bench": "node --expose-gc dist/bench.js"
   },
   "devDependencies": {
+    "@ts-stack/di": "^1.1.0",
     "@types/jest": "^26.0.20",
     "@types/node": "^11.13.8",
     "find-my-way": "^2.0.1",
@@ -30,8 +31,8 @@
     "ts-jest": "^26.5.0"
   },
   "peerDependencies": {
-    "@ts-stack/di": "^1.1.0",
-    "@ditsmod/core": "^1.0.0-beta.1"
+    "@ditsmod/core": "^1.0.0-beta.1",
+    "@ts-stack/di": "^1.1.0"
   },
   "keywords": [
     "router",

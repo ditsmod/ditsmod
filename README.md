@@ -44,6 +44,6 @@ See also [seed for @ditsmod/core-seed project](https://github.com/ditsmod/core-s
 [4]: https://github.com/ditsmod/core/tree/master/examples
 [5]: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction#Introducing_Express
 [6]: https://github.com/nestjsx/nest-router
-[7]: https://github.com/ts-stack/vs-webframework
+[7]: https://github.com/ditsmod/vs-webframework
 [8]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
 [9]: https://github.com/angular/angular

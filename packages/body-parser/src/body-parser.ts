@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@ts-stack/di';
-import { BodyParserConfig, Logger, NodeReqToken, NodeRequest } from '@ts-stack/ditsmod';
+import { BodyParserConfig, Logger, NodeReqToken, NodeRequest } from '@ditsmod/core';
 import { parse } from 'get-body';
 
 

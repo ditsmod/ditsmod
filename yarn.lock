@@ -1407,14 +1407,7 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
 
-"@ts-stack/body-parser@^1.0.0-beta.2":
-  version "1.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/@ts-stack/body-parser/-/body-parser-1.0.0-beta.2.tgz#77fc2bfe24da164ee99cc407ad57aa92d67772b9"
-  integrity sha512-B79+pwoBrMB1cFBH+z3LIkotj6+mPPshGI5+/KqXMogc9KxX1+K4knV/+rkNGFJkPgE+qvcOzNUCoELzwChTlA==
-  dependencies:
-    get-body "^1.0.3"
-
-"@ts-stack/di@^1.0.0":
+"@ts-stack/di@^1.0.0", "@ts-stack/di@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@ts-stack/di/-/di-1.1.0.tgz#80e485aa61ea9b1ffe089f3adb3c34ac6d8f5b07"
   integrity sha512-uJ0X7A+7mIxpPxihBQpLbKMNzee37zMoBj6qeBIyW0330+at+hYSiYN7Eg/0LEq54oYv2AomvFHEOUD5LKCCsw==

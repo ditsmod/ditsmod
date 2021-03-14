@@ -1,13 +1,13 @@
-## @ts-stack/router
+## @ditsmod/router
 
 This is a fork of [koa-tree-router](https://github.com/steambap/koa-tree-router/tree/ad5ecb).
 
 ## Install
 
 ```bash
-npm i @ts-stack/di @ts-stack/router
+npm i @ts-stack/di @ditsmod/router
 # OR
-yarn add @ts-stack/di @ts-stack/router
+yarn add @ts-stack/di @ditsmod/router
 ```
 
 Where [@ts-stack/di](https://github.com/KostyaTretyak/@ts-stack/di) is a dependencie.
@@ -15,7 +15,7 @@ Where [@ts-stack/di](https://github.com/KostyaTretyak/@ts-stack/di) is a depende
 ## Usage
 
 ```ts
-import { Router, Tree } from '@ts-stack/router';
+import { Router, Tree } from '@ditsmod/router';
 import { ReflectiveInjector } from '@ts-stack/di'; // This is a dependency
 
 const injector = ReflectiveInjector.resolveAndCreate([Tree, Router]);
@@ -42,7 +42,7 @@ Running in random order
 ============================================================
 Lib                   | Bench, ops/sec | Memory usage, KB
 ============================================================
-@ts-stack/router      | 4,372,262      | 4,420
+@ditsmod/router      | 4,372,262      | 4,420
 ------------------------------------------------------------
 koa-tree-router       | 4,257,653      | 4,281
 ------------------------------------------------------------

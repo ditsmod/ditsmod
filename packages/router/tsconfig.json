@@ -2,14 +2,9 @@
   "extends": "../tsconfig.settings.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "outDir": "dist",
-    "importHelpers": true
+    "outDir": "dist"
   },
   "include": [
     "./src/**/*.ts"
-  ],
-  "files": [],
-  "references": [
-    { "path": "../core" },
   ]
 }

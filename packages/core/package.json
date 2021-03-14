@@ -21,9 +21,9 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "@ts-stack/body-parser": "^1.0.0-beta.2",
+    "@ditsmod/body-parser": "^1.0.0-beta.1",
     "@ts-stack/di": "^1.0.0",
-    "@ts-stack/router": "^1.0.0-beta.1",
+    "@ditsmod/router": "^1.0.0-beta.1",
     "@types/bunyan": "^1.8.6",
     "@types/eslint": "^7.2.7",
     "@types/jest": "^26.0.20",

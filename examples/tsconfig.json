@@ -13,7 +13,9 @@
     "declaration": true,
     "allowJs": false,
     "paths": {
-      "@ditsmod/core": ["../packages/core/src"]
+      "@ditsmod/core": ["../packages/core/src"],
+      "@ditsmod/router": ["../packages/router/src"],
+      "@ditsmod/body-parser": ["../packages/body-parser/src"],
     }
   },
   "include": ["./**/*"]

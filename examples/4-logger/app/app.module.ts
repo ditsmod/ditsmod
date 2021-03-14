@@ -1,5 +1,5 @@
 import { RootModule, LoggerConfig, Router, Logger } from '@ditsmod/core';
-import { DefaultRouter } from '@ts-stack/router';
+import { DefaultRouter } from '@ditsmod/router';
 
 import { BunyanModule } from './modules/bunyan/bunyan.module';
 import { PinoModule } from './modules/pino/pino.module';

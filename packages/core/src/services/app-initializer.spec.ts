@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { DefaultRouter } from '@ts-stack/router';
+import { DefaultRouter } from '@ditsmod/router';
 
 import { AppInitializer } from './app-initializer';
 import { Logger, LoggerConfig } from '../types/logger';
