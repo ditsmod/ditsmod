@@ -1,4 +1,4 @@
 {
   "files": [],
-  "references": [{ "path": "core" }, { "path": "edk" }]
+  "references": [{ "path": "core" }]
 }
