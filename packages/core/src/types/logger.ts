@@ -1,3 +1,5 @@
+import { AnyObj } from './any-obj';
+
 export interface LoggerMethod {
   /**
    * Is the log.<level>() enabled?
@@ -28,7 +30,7 @@ export interface LoggerMethod {
    * To pass in an Error *and* other fields, use the `err`
    * field name for the Error instance.
    */
-  (obj: object, msg?: string, ...params: any[]): void;
+  (obj: AnyObj, msg?: string, ...params: any[]): void;
   /**
    * Uses `util.format` for msg formatting.
    */
@@ -45,7 +47,7 @@ export class Logger {
 }
 
 export class LoggerConfig {
-  level: string = 'info';
+  level = 'info';
   /**
    * Determines the depth of the inspect object to be logged.
    */

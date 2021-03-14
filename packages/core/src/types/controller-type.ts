@@ -1,3 +1,3 @@
 import { Type } from '@ts-stack/di';
 
-export interface ControllerType extends Type<any> {}
+export type ControllerType = Type<any>;

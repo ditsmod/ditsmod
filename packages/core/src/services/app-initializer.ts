@@ -45,14 +45,14 @@ export class AppInitializer {
     this.initProvidersPerApp();
   }
 
-  getMetadataAndLogger() {
-    return { meta: this.meta, log: this.log };
-  }
-
   async bootstrapModulesAndExtensions() {
     this.extensionsMetadataMap = this.bootstrapModuleFactory(this.#moduleManager);
     this.checkModulesResolvable(this.extensionsMetadataMap);
     await this.handleExtensions(this.extensionsMetadataMap);
+  }
+
+  getMetadataAndLogger() {
+    return { meta: this.meta, log: this.log };
   }
 
   requestListener: RequestListener = (nodeReq, nodeRes) => {
