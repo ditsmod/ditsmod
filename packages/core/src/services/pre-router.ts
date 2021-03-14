@@ -102,24 +102,16 @@ export class PreRouter implements Extension<PreRouteData[]> {
     });
   }
 
-  /**
-   * Called by the `Application` before call a router.
-   */
   protected decodeUrl(url: string) {
     return decodeURI(url);
   }
 
-  /**
-   * Called by the `Application` when a route is not found (404).
-   */
   protected sendNotFound(nodeRes: NodeResponse) {
     nodeRes.statusCode = Status.NOT_FOUND;
     nodeRes.end();
   }
 
   /**
-   * Called by the `Application` after founded a route.
-   *
    * @param controller Controller class.
    * @param methodName Method of the Controller.
    * @param parseBody Need or not to parsing a body request.
