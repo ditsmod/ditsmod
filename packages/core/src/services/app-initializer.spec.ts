@@ -47,10 +47,10 @@ describe('AppInitializer', () => {
   let moduleManager: ModuleManager;
 
   beforeEach(async () => {
-    mock = new MockAppInitializer();
     const config = new LoggerConfig();
     log = new DefaultLogger(config);
     moduleManager = new ModuleManager(log);
+    mock = new MockAppInitializer(moduleManager);
   });
 
   describe('prepareProvidersPerApp()', () => {
@@ -294,7 +294,7 @@ describe('AppInitializer', () => {
 
     it('Module0', async () => {
       moduleManager.scanRootModule(AppModule);
-      mock.bootstrapProvidersPerApp(moduleManager);
+      mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
       const mod0 = mock.extensionsMetadataMap.get(Module0);
       expect(mod0.moduleMetadata.providersPerApp).toEqual([]);
@@ -304,7 +304,7 @@ describe('AppInitializer', () => {
 
     it('Module1', async () => {
       moduleManager.scanRootModule(AppModule);
-      mock.bootstrapProvidersPerApp(moduleManager);
+      mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
       const mod1 = mock.extensionsMetadataMap.get(Module1);
       expect(mod1.moduleMetadata.providersPerApp).toEqual([]);
@@ -314,7 +314,7 @@ describe('AppInitializer', () => {
 
     it('Module2', async () => {
       moduleManager.scanRootModule(AppModule);
-      mock.bootstrapProvidersPerApp(moduleManager);
+      mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
       const mod2 = mock.extensionsMetadataMap.get(module2WithParams);
       expect(mod2.moduleMetadata.providersPerApp).toEqual([]);
@@ -324,7 +324,7 @@ describe('AppInitializer', () => {
 
     it('Module3', async () => {
       moduleManager.scanRootModule(AppModule);
-      mock.bootstrapProvidersPerApp(moduleManager);
+      mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
       const mod3 = mock.extensionsMetadataMap.get(module3WithParams);
       expect(mod3.moduleMetadata.providersPerApp).toEqual([]);
@@ -334,7 +334,7 @@ describe('AppInitializer', () => {
 
     it('Module4', async () => {
       moduleManager.scanRootModule(AppModule);
-      mock.bootstrapProvidersPerApp(moduleManager);
+      mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
       const mod4 = mock.extensionsMetadataMap.get(module4WithParams);
       expect(mod4.moduleMetadata.providersPerApp).toEqual([]);
@@ -351,7 +351,7 @@ describe('AppInitializer', () => {
 
     it('AppModule', async () => {
       moduleManager.scanRootModule(AppModule);
-      mock.bootstrapProvidersPerApp(moduleManager);
+      mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
       const root1 = mock.extensionsMetadataMap.get(AppModule);
       expect(root1.moduleMetadata.providersPerApp).toEqual([Logger]);
@@ -394,7 +394,7 @@ describe('AppInitializer', () => {
         class AppModule {}
 
         moduleManager.scanRootModule(AppModule);
-        mock.bootstrapProvidersPerApp(moduleManager);
+        mock.bootstrapProvidersPerApp();
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Provider2. You should manually add this provider to AppModule.';
@@ -423,7 +423,7 @@ describe('AppInitializer', () => {
         class AppModule {}
 
         moduleManager.scanRootModule(AppModule);
-        mock.bootstrapProvidersPerApp(moduleManager);
+        mock.bootstrapProvidersPerApp();
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Provider1. You should manually add this provider to AppModule.';
@@ -455,7 +455,7 @@ describe('AppInitializer', () => {
         class AppModule {}
 
         moduleManager.scanRootModule(AppModule);
-        mock.bootstrapProvidersPerApp(moduleManager);
+        mock.bootstrapProvidersPerApp();
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Provider1. You should manually add this provider to AppModule.';
@@ -484,7 +484,7 @@ describe('AppInitializer', () => {
         class AppModule {}
 
         moduleManager.scanRootModule(AppModule);
-        mock.bootstrapProvidersPerApp(moduleManager);
+        mock.bootstrapProvidersPerApp();
         await expect(mock.bootstrapModulesAndExtensions()).resolves.not.toThrow();
       });
 
@@ -512,7 +512,7 @@ describe('AppInitializer', () => {
         class AppModule {}
 
         moduleManager.scanRootModule(AppModule);
-        mock.bootstrapProvidersPerApp(moduleManager);
+        mock.bootstrapProvidersPerApp();
         await expect(mock.bootstrapModulesAndExtensions()).resolves.not.toThrow();
       });
 
@@ -543,7 +543,7 @@ describe('AppInitializer', () => {
         class AppModule {}
 
         moduleManager.scanRootModule(AppModule);
-        mock.bootstrapProvidersPerApp(moduleManager);
+        mock.bootstrapProvidersPerApp();
         await expect(mock.bootstrapModulesAndExtensions()).resolves.not.toThrow();
       });
     });
@@ -579,7 +579,7 @@ describe('AppInitializer', () => {
         class AppModule {}
 
         moduleManager.scanRootModule(AppModule);
-        mock.bootstrapProvidersPerApp(moduleManager);
+        mock.bootstrapProvidersPerApp();
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Provider2. You should manually add this provider to AppModule.';
@@ -594,7 +594,7 @@ describe('AppInitializer', () => {
         class AppModule {}
 
         moduleManager.scanRootModule(AppModule);
-        mock.bootstrapProvidersPerApp(moduleManager);
+        mock.bootstrapProvidersPerApp();
         await expect(mock.bootstrapModulesAndExtensions()).resolves.not.toThrow();
       });
 
@@ -620,7 +620,7 @@ describe('AppInitializer', () => {
         class AppModule {}
 
         moduleManager.scanRootModule(AppModule);
-        mock.bootstrapProvidersPerApp(moduleManager);
+        mock.bootstrapProvidersPerApp();
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Provider1. You should manually add this provider to AppModule.';
@@ -635,7 +635,7 @@ describe('AppInitializer', () => {
         class AppModule {}
 
         moduleManager.scanRootModule(AppModule);
-        mock.bootstrapProvidersPerApp(moduleManager);
+        mock.bootstrapProvidersPerApp();
         await expect(mock.bootstrapModulesAndExtensions()).resolves.not.toThrow();
       });
     });
@@ -675,7 +675,7 @@ describe('AppInitializer', () => {
         class AppModule {}
 
         moduleManager.scanRootModule(AppModule);
-        mock.bootstrapProvidersPerApp(moduleManager);
+        mock.bootstrapProvidersPerApp();
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Provider0, Request, Provider1, InjectionToken NodeRequest. You should manually add these providers to AppModule.';
@@ -699,7 +699,7 @@ describe('AppInitializer', () => {
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Router. You should manually add this provider to AppModule.';
-        expect(() => mock.bootstrapProvidersPerApp(moduleManager)).toThrow(msg);
+        expect(() => mock.bootstrapProvidersPerApp()).toThrow(msg);
       });
     });
   });

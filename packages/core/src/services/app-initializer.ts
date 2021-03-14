@@ -35,18 +35,23 @@ export class AppInitializer {
   protected preRouter: PreRouter;
   protected meta: RootMetadata;
   protected extensionsMetadataMap: Map<ModuleType | ModuleWithParams, ExtensionMetadata>;
-  #moduleManager: ModuleManager;
+  
+  constructor(protected moduleManager: ModuleManager) {}
 
-  bootstrapProvidersPerApp(moduleManager: ModuleManager) {
-    this.#moduleManager = moduleManager;
-    const meta = moduleManager.getMetadata('root', true);
+  async init() {
+    this.bootstrapProvidersPerApp();
+    await this.bootstrapModulesAndExtensions();
+  }
+
+  bootstrapProvidersPerApp() {
+    const meta = this.moduleManager.getMetadata('root', true);
     this.mergeMetadata(meta.module as ModuleType);
-    this.prepareProvidersPerApp(meta, moduleManager);
+    this.prepareProvidersPerApp(meta, this.moduleManager);
     this.initProvidersPerApp();
   }
 
   async bootstrapModulesAndExtensions() {
-    this.extensionsMetadataMap = this.bootstrapModuleFactory(this.#moduleManager);
+    this.extensionsMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
     this.checkModulesResolvable(this.extensionsMetadataMap);
     await this.handleExtensions(this.extensionsMetadataMap);
   }
@@ -123,7 +128,7 @@ export class AppInitializer {
       ...defaultProvidersPerApp,
       { provide: RootMetadata, useValue: this.meta },
       { provide: AppInitializer, useValue: this },
-      { provide: ModuleManager, useValue: this.#moduleManager }
+      { provide: ModuleManager, useValue: this.moduleManager }
     );
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.meta.providersPerApp);
     this.log = this.injectorPerApp.get(Logger) as Logger;

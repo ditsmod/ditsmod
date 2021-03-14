@@ -40,8 +40,8 @@ export class Application {
     this.createTemporaryLogger(appModule);
     const moduleManager = new ModuleManager(this.log);
     moduleManager.scanRootModule(appModule);
-    this.appInitializer = new AppInitializer();
-    this.appInitializer.bootstrapProvidersPerApp(moduleManager);
+    this.appInitializer = new AppInitializer(moduleManager);
+    this.appInitializer.bootstrapProvidersPerApp();
     const { meta, log } = this.appInitializer.getMetadataAndLogger();
     this.meta = meta;
     this.log = log;
