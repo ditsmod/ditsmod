@@ -35,12 +35,24 @@ export class AppInitializer {
   protected preRouter: PreRouter;
   protected meta: RootMetadata;
   protected extensionsMetadataMap: Map<ModuleType | ModuleWithParams, ExtensionMetadata>;
-  
+
   constructor(protected moduleManager: ModuleManager) {}
 
-  async init() {
-    this.bootstrapProvidersPerApp();
-    await this.bootstrapModulesAndExtensions();
+  async reinit() {
+    const log = this.log;
+    log.debug('Start reinit the application.');
+
+    try {
+      await this.init();
+      this.moduleManager.commit();
+      this.log.debug('Finished reinit the application.');
+    } catch (err) {
+      log.error(err);
+      log.debug('Start rollback of changes for config of moduleManager during reinit the application.');
+      this.moduleManager.rollback();
+      await this.init();
+      this.log.debug('Successful rollback of changes for config of moduleManager during reinit the application.');
+    }
   }
 
   bootstrapProvidersPerApp() {
@@ -48,6 +60,7 @@ export class AppInitializer {
     this.mergeMetadata(meta.module as ModuleType);
     this.prepareProvidersPerApp(meta, this.moduleManager);
     this.initProvidersPerApp();
+    this.moduleManager.setLogger(this.log);
   }
 
   async bootstrapModulesAndExtensions() {
@@ -63,6 +76,11 @@ export class AppInitializer {
   requestListener: RequestListener = (nodeReq, nodeRes) => {
     this.preRouter.requestListener(nodeReq, nodeRes);
   };
+
+  protected async init() {
+    this.bootstrapProvidersPerApp();
+    await this.bootstrapModulesAndExtensions();
+  }
 
   /**
    * Merge AppModule metadata with default metadata for root module.
@@ -127,8 +145,8 @@ export class AppInitializer {
     this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
       { provide: RootMetadata, useValue: this.meta },
-      { provide: AppInitializer, useValue: this },
-      { provide: ModuleManager, useValue: this.moduleManager }
+      { provide: ModuleManager, useValue: this.moduleManager },
+      { provide: AppInitializer, useValue: this }
     );
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.meta.providersPerApp);
     this.log = this.injectorPerApp.get(Logger) as Logger;

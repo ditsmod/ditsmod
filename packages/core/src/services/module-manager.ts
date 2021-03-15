@@ -19,32 +19,45 @@ type ModuleId = string | ModuleType | ModuleWithParams;
 export class ModuleManager {
   protected map: ModulesMap = new WeakMap();
   protected mapId = new Map<string, ModuleType | ModuleWithParams>();
+  protected oldMap: ModulesMap = new WeakMap();
+  protected oldMapId = new Map<string, ModuleType | ModuleWithParams>();
 
   constructor(protected log: Logger) {}
 
-  scanRootModule(appModule: ModuleType) {
+  scanRootModule(appModule: ModuleType, scanToOldMap?: boolean) {
     if (!getModuleMetadata(appModule, true)) {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
-    this.mapId.set('root', appModule);
-    return this.scanModule(appModule);
+
+    const meta = this.scanModule(appModule, scanToOldMap);
+    if (scanToOldMap) {
+      this.oldMapId.set('root', appModule);
+    } else {
+      this.mapId.set('root', appModule);
+    }
+
+    return meta;
   }
 
-  scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
+  scanModule(modOrObj: ModuleType | ModuleWithParams<any>, scanToOldMap?: boolean) {
     if (!Object.isFrozen(modOrObj)) {
       Object.freeze(modOrObj);
     }
 
     const meta = this.normalizeMetadata(modOrObj);
     [...meta.importsModules, ...meta.importsWithParams, ...meta.exportsModules].forEach((impOrExp) => {
-      this.scanModule(impOrExp);
+      this.scanModule(impOrExp, scanToOldMap);
     });
 
     if (meta.id) {
       this.mapId.set(meta.id, modOrObj);
       this.log.debug(`${meta.name} has ID: "${meta.id}".`);
     }
-    this.map.set(modOrObj, meta);
+    if (scanToOldMap) {
+      this.oldMap.set(modOrObj, meta);
+    } else {
+      this.map.set(modOrObj, meta);
+    }
     return meta;
   }
 
@@ -91,11 +104,17 @@ export class ModuleManager {
       )}"`;
       this.log.warn(msg);
       return false;
-    } else {
-      targetMeta[prop].push(inputModule as any);
     }
-    this.scanModule(inputModule);
-    return true;
+
+    this.startTransaction();
+    try {
+      targetMeta[prop].push(inputModule as any);
+      const inputMeta = this.scanModule(inputModule);
+      this.log.debug(`Successful added ${inputMeta.name} to ${targetMeta.name}`);
+      return true;
+    } catch {
+      this.rollback();
+    }
   }
 
   /**
@@ -103,9 +122,8 @@ export class ModuleManager {
    */
   removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean {
     const inputMeta = this.getMetadata(inputModuleId);
-    const warn = `Module with ID "${format(inputModuleId)}" not found`;
     if (!inputMeta) {
-      this.log.warn(warn);
+      this.log.warn(`Module with ID "${format(inputModuleId)}" not found`);
       return false;
     }
 
@@ -117,17 +135,50 @@ export class ModuleManager {
     const prop = isModuleWithParams(inputMeta.module) ? 'importsWithParams' : 'importsModules';
     const index = targetMeta[prop].findIndex((imp: ModuleType | ModuleWithParams) => imp === inputMeta.module);
     if (index == -1) {
-      this.log.warn(warn);
+      this.log.warn(`Module with ID "${format(inputModuleId)}" not found`);
       return false;
     }
-    targetMeta[prop].splice(index, 1);
-    if (!this.includesInSomeModule(inputModuleId, 'root')) {
-      if (inputMeta.id) {
-        this.mapId.delete(inputMeta.id);
+
+    this.startTransaction();
+    try {
+      targetMeta[prop].splice(index, 1);
+      if (!this.includesInSomeModule(inputModuleId, 'root')) {
+        if (inputMeta.id) {
+          this.mapId.delete(inputMeta.id);
+        }
+        this.map.delete(inputMeta.module);
       }
-      this.map.delete(inputMeta.module);
+      this.log.debug(`Successful removed ${inputMeta.name} from ${targetMeta.name}`);
+      return true;
+    } catch {
+      this.rollback();
     }
-    return true;
+  }
+
+  setLogger(log: Logger) {
+    this.log = log;
+  }
+
+  commit() {
+    this.oldMapId = new Map();
+    this.oldMap = new WeakMap();
+  }
+
+  rollback() {
+    this.mapId = this.oldMapId;
+    this.map = this.oldMap;
+    this.commit();
+  }
+
+  protected startTransaction() {
+    if (this.oldMapId.has('root')) {
+      // Transaction already started.
+      return;
+    }
+
+    const rootModule = this.mapId.get('root') as ModuleType;
+    // Scan current root module to `oldMap`.
+    this.scanRootModule(rootModule, true);
   }
 
   /**
@@ -139,7 +190,11 @@ export class ModuleManager {
    */
   protected includesInSomeModule(inputModuleId: ModuleId, targetModuleId: ModuleId): boolean {
     const targetMeta = this.getMetadata(targetModuleId);
-    const importsOrExports = [...targetMeta.importsModules, ...targetMeta.importsWithParams, ...targetMeta.exportsModules];
+    const importsOrExports = [
+      ...targetMeta.importsModules,
+      ...targetMeta.importsWithParams,
+      ...targetMeta.exportsModules,
+    ];
 
     return (
       importsOrExports.some((modOrObj) => {
