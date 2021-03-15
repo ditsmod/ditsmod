@@ -3,7 +3,7 @@
   "name": "@ditsmod/router",
   "homepage": "https://github.com/ditsmod/ditsmod",
   "description": "Router plugin for Ditsmod applications",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
