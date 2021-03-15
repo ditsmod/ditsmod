@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist",
+    "rootDir": "src",
     "paths": {
       "@ditsmod/core": [
         "../core/src"
