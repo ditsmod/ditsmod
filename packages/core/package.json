@@ -48,5 +48,6 @@
   },
   "peerDependencies": {
     "@ts-stack/di": "^1.0.0"
-  }
+  },
+  "gitHead": "ee408df6b7617d0fb8bc6eff301e50f3602bb385"
 }
