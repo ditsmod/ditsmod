@@ -1,24 +1,24 @@
-import { parse } from 'querystring';
 import { Injectable, ReflectiveInjector, TypeProvider } from '@ts-stack/di';
+import { parse } from 'querystring';
 
-import { Logger } from '../types/logger';
-import { NodeReqToken, NodeRequest, NodeResponse, NodeResToken, RequestListener } from '../types/server-options';
-import { Request } from './request';
-import { PathParam, Router, RouteHandler } from '../types/router';
-import { Status } from '../utils/http-status-codes';
-import { Extension } from '../types/extension';
-import { PreRouteData } from '../types/route-data';
 import { RootMetadata } from '../models/root-metadata';
-import { ModuleType } from '../types/module-type';
+import { AnyObj } from '../types/any-obj';
+import { CanActivate } from '../types/can-activate';
+import { ControllerErrorHandler } from '../types/controller-error-handler';
+import { Extension } from '../types/extension';
 import { ExtensionMetadata } from '../types/extension-metadata';
 import { HttpMethod } from '../types/http-method';
+import { Logger } from '../types/logger';
+import { ModuleType } from '../types/module-type';
+import { ModuleWithParams } from '../types/module-with-params';
 import { NormalizedGuard } from '../types/normalized-guard';
-import { ControllerErrorHandler } from '../types/controller-error-handler';
-import { CanActivate } from '../types/can-activate';
-import { AnyObj } from '../types/any-obj';
+import { PreRouteData } from '../types/route-data';
+import { PathParam, RouteHandler, Router } from '../types/router';
+import { NodeReqToken, NodeRequest, NodeResponse, NodeResToken, RequestListener } from '../types/server-options';
+import { Status } from '../utils/http-status-codes';
 import { BodyParser } from './body-parser';
 import { PreRoutes } from './pre-routes';
-import { ModuleWithParams } from '../types/module-with-params';
+import { Request } from './request';
 
 @Injectable()
 export class PreRouter implements Extension<PreRouteData[]> {

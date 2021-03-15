@@ -1,7 +1,7 @@
+import { ReflectiveInjector } from '@ts-stack/di';
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
-import { ReflectiveInjector } from '@ts-stack/di';
 
 import { RootMetadata } from './models/root-metadata';
 import { AppInitializer } from './services/app-initializer';
@@ -13,7 +13,6 @@ import { ModuleType } from './types/module-type';
 import { Http2SecureServerOptions, Server } from './types/server-options';
 import { getModuleMetadata } from './utils/get-module-metadata';
 import { isHttp2SecureServerOptions } from './utils/type-guards';
-
 
 export class Application {
   protected meta: RootMetadata;

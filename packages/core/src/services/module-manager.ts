@@ -1,17 +1,17 @@
-import { format } from 'util';
 import { Injectable, resolveForwardRef } from '@ts-stack/di';
+import { format } from 'util';
 
+import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
+import { AnyObj } from '../types/any-obj';
+import { Logger } from '../types/logger';
 import { ModuleType } from '../types/module-type';
 import { ModuleWithParams } from '../types/module-with-params';
-import { checkModuleMetadata } from '../utils/check-module-metadata';
-import { getModuleName } from '../utils/get-module-name';
-import { getModuleMetadata } from '../utils/get-module-metadata';
-import { isModuleWithParams, isProvider } from '../utils/type-guards';
-import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { Logger } from '../types/logger';
 import { ModulesMap } from '../types/modules-map';
-import { AnyObj } from '../types/any-obj';
+import { checkModuleMetadata } from '../utils/check-module-metadata';
+import { getModuleMetadata } from '../utils/get-module-metadata';
+import { getModuleName } from '../utils/get-module-name';
 import { pickProperties } from '../utils/pick-properties';
+import { isModuleWithParams, isProvider } from '../utils/type-guards';
 
 type ModuleId = string | ModuleType | ModuleWithParams;
 

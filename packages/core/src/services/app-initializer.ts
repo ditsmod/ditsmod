@@ -1,11 +1,19 @@
 import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
+import { ProvidersMetadata } from '../models/providers-metadata';
 import { RootMetadata } from '../models/root-metadata';
+import { ModuleFactory } from '../module-factory';
+import { Extension } from '../types/extension';
+import { ExtensionMetadata } from '../types/extension-metadata';
+import { ExtensionType } from '../types/extension-type';
 import { Logger } from '../types/logger';
 import { ModuleType } from '../types/module-type';
+import { ModuleWithParams } from '../types/module-with-params';
+import { RequestListener } from '../types/server-options';
 import { ServiceProvider } from '../types/service-provider';
 import { getDuplicates } from '../utils/get-duplicates';
+import { getModule } from '../utils/get-module';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { getTokensCollisions } from '../utils/get-tokens-collisions';
@@ -16,17 +24,9 @@ import { throwProvidersCollisionError } from '../utils/throw-providers-collision
 import { isRootModule } from '../utils/type-guards';
 import { defaultExtensions } from './default-extensions';
 import { defaultProvidersPerApp } from './default-providers-per-app';
+import { defaultProvidersPerReq } from './default-providers-per-req';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
-import { RequestListener } from '../types/server-options';
-import { ModuleWithParams } from '../types/module-with-params';
-import { ExtensionMetadata } from '../types/extension-metadata';
-import { ProvidersMetadata } from '../models/providers-metadata';
-import { ModuleFactory } from '../module-factory';
-import { defaultProvidersPerReq } from './default-providers-per-req';
-import { getModule } from '../utils/get-module';
-import { ExtensionType } from '../types/extension-type';
-import { Extension } from '../types/extension';
 
 @Injectable()
 export class AppInitializer {
