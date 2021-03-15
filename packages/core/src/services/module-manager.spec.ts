@@ -16,10 +16,8 @@ describe('ModuleManager', () => {
   class MockModuleManager extends ModuleManager {
     map = new Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
     mapId = new Map<string, ModuleType | ModuleWithParams>();
-
-    getMaps() {
-      return { map: this.map, mapId: this.mapId };
-    }
+    oldMap = new Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
+    oldMapId = new Map<string, ModuleType | ModuleWithParams>();
   }
 
   let mock: MockModuleManager;
@@ -52,8 +50,7 @@ describe('ModuleManager', () => {
     };
 
     mock.scanRootModule(AppModule);
-    const { map } = mock.getMaps();
-    expect(map.size).toBe(1);
+    expect(mock.map.size).toBe(1);
     expect(mock.getMetadata('root')).toEqual(expectedMetadata);
     expect(Object.isFrozen(AppModule)).toBe(true);
   });
@@ -92,8 +89,7 @@ describe('ModuleManager', () => {
     };
 
     mock.scanRootModule(AppModule);
-    const { map } = mock.getMaps();
-    expect(map.size).toBe(1);
+    expect(mock.map.size).toBe(1);
     expect(mock.getMetadata('root')).toEqual(expectedMetadata);
   });
 
@@ -152,8 +148,7 @@ describe('ModuleManager', () => {
     };
 
     mock.scanRootModule(Module3);
-    const { map } = mock.getMaps();
-    expect(map.size).toBe(4);
+    expect(mock.map.size).toBe(4);
     expect(mock.getMetadata('1')).toEqual(module1Expect);
     expect(Object.isFrozen(module4WithParams)).toBe(true);
 
@@ -173,7 +168,7 @@ describe('ModuleManager', () => {
       providersPerMod: [Provider1],
     };
 
-    expect(map.get(Module2)).toEqual(module2Expect);
+    expect(mock.map.get(Module2)).toEqual(module2Expect);
 
     const module3Expect: NormalizedModuleMetadata = {
       id: '',
@@ -209,7 +204,7 @@ describe('ModuleManager', () => {
       ngMetadataName: 'Module',
     };
 
-    expect(map.get(module4WithParams)).toEqual(module4Expect);
+    expect(mock.map.get(module4WithParams)).toEqual(module4Expect);
   });
 
   it('programmatically adding some modules to "imports" array of root module', () => {
@@ -241,9 +236,8 @@ describe('ModuleManager', () => {
     };
 
     mock.scanRootModule(AppModule);
-    const { map } = mock.getMaps();
     const meta = mock.getMetadata('root');
-    expect(map.size).toBe(1);
+    expect(mock.map.size).toBe(1);
     expect(mock.getMetadata('root') === mock.getMetadata('root')).toBe(true);
     expect(meta).toEqual(expectedMetadata1);
 
@@ -263,19 +257,58 @@ describe('ModuleManager', () => {
       }
     }
 
+    @Module()
+    class Module4 {}
+
     @Injectable()
     class Provider2 {}
 
     const module3WithProviders = Module3.withParams([Provider2]);
 
     expect(mock.addImport(Module1)).toBe(true);
-    expect(map.size).toBe(2);
+    expect(mock.map.size).toBe(2);
+    expect(mock.oldMapId.size).toBe(1);
+    expect(mock.oldMapId.get('root')).toBe(AppModule);
+    expect(mock.oldMap.size).toBe(1);
+    expect(mock.oldMap.has(AppModule)).toBe(true);
+
     expect(mock.addImport(Module1)).toBe(false);
-    expect(map.size).toBe(2);
+    expect(mock.oldMap.size).toBe(1);
+    expect(mock.oldMap.has(AppModule)).toBe(true);
+    expect(mock.map.size).toBe(2);
+    expect(mock.map.has(Module1)).toBe(true);
+
+    mock.commit();
+    expect(mock.oldMapId.size).toBe(0);
+    expect(mock.oldMap.size).toBe(0);
+    expect(mock.map.size).toBe(2);
+    expect(mock.map.has(AppModule)).toBe(true);
+    expect(mock.map.has(Module1)).toBe(true);
+
     expect(() => mock.addImport(Module2, 'fakeId')).toThrowError(/Failed adding Module2 to imports/);
-    expect(map.size).toBe(2);
+    expect(mock.map.size).toBe(2);
+
     mock.addImport(Module2);
-    expect(map.size).toBe(3);
+    expect(mock.map.size).toBe(3);
+    expect(mock.oldMap.size).toBe(2);
+    expect(mock.oldMap.has(AppModule)).toBe(true);
+    expect(mock.oldMap.has(Module1)).toBe(true);
+    expect(mock.oldMapId.size).toBe(1);
+    expect(mock.oldMapId.get('root')).toBe(AppModule);
+
+    mock.addImport(Module4);
+    expect(mock.map.size).toBe(4);
+    expect(mock.map.has(Module4)).toBe(true);
+    expect(mock.oldMap.size).toBe(2);
+    expect(mock.oldMap.has(AppModule)).toBe(true);
+    expect(mock.oldMap.has(Module1)).toBe(true);
+    expect(mock.oldMapId.size).toBe(1);
+    expect(mock.oldMapId.get('root')).toBe(AppModule);
+
+    mock.commit();
+    expect(mock.map.size).toBe(4);
+    expect(mock.oldMapId.size).toBe(0);
+    expect(mock.oldMap.has(AppModule)).toBe(false);
 
     const expectedMetadata2: NormalizedModuleMetadata = {
       id: '',
@@ -284,7 +317,7 @@ describe('ModuleManager', () => {
       exportsModules: [],
       exportsProviders: [],
       module: AppModule,
-      importsModules: [Module1, Module2],
+      importsModules: [Module1, Module2, Module4],
       providersPerReq: [Provider1],
       providersPerApp: [],
       providersPerMod: [],
@@ -292,7 +325,6 @@ describe('ModuleManager', () => {
       controllers: [],
       ngMetadataName: 'RootModule',
     };
-    expect(map === mock.getMaps().map).toBe(true);
     expect(meta === mock.getMetadata('root')).toBe(true);
     expect(meta).toEqual(expectedMetadata2);
 
@@ -302,7 +334,7 @@ describe('ModuleManager', () => {
       exportsModules: [],
       exportsProviders: [],
       module: AppModule,
-      importsModules: [Module1, Module2],
+      importsModules: [Module1, Module2, Module4],
       importsWithParams: [module3WithProviders],
       providersPerReq: [Provider1],
       providersPerApp: [],
@@ -312,8 +344,15 @@ describe('ModuleManager', () => {
       ngMetadataName: 'RootModule',
     };
     mock.addImport(module3WithProviders);
-    expect(map.size).toBe(4);
+    expect(mock.map.size).toBe(5);
+    expect(mock.oldMap.size).toBe(4);
     expect(meta).toEqual(expectedMetadata3);
+    expect(mock.map.has(module3WithProviders)).toBe(true);
+
+    mock.rollback();
+    expect(mock.map.size).toBe(4);
+    expect(mock.map.has(module3WithProviders)).toBe(false);
+    expect(mock.oldMap.size).toBe(0);
   });
 
   it('programmatically removing some modules from "imports" array of root module', () => {
@@ -383,14 +422,13 @@ describe('ModuleManager', () => {
     };
 
     mock.scanRootModule(AppModule);
-    const { map } = mock.getMaps();
-    expect(map.size).toBe(6);
+    expect(mock.map.size).toBe(6);
     expect(mock.getMetadata('root')).toEqual(expectedMetadata1);
 
     expect(mock.removeImport(Module0, Module1)).toBe(true);
-    expect(map.size).toBe(6);
+    expect(mock.map.size).toBe(6);
     expect(mock.removeImport(Module0, Module2)).toBe(true);
-    expect(map.size).toBe(5);
+    expect(mock.map.size).toBe(5);
 
     const expectedMetadata2: NormalizedModuleMetadata = {
       id: '',
@@ -409,9 +447,9 @@ describe('ModuleManager', () => {
     };
 
     expect(mock.removeImport(Module2)).toBe(true);
-    expect(map.size).toBe(4);
+    expect(mock.map.size).toBe(4);
     expect(mock.removeImport(Module2)).toBe(false);
-    expect(map.size).toBe(4);
+    expect(mock.map.size).toBe(4);
     expect(mock.getMetadata('root')).toEqual(expectedMetadata2);
 
     const expectedMetadata3: NormalizedModuleMetadata = {
@@ -431,7 +469,7 @@ describe('ModuleManager', () => {
     };
 
     expect(mock.removeImport(module3WithProviders)).toBe(true);
-    expect(map.size).toBe(3);
+    expect(mock.map.size).toBe(3);
     expect(mock.getMetadata('root')).toEqual(expectedMetadata3);
 
     const expectedMetadata4: NormalizedModuleMetadata = {
@@ -451,7 +489,9 @@ describe('ModuleManager', () => {
     };
 
     expect(mock.removeImport(moduleId)).toBe(true);
-    expect(map.size).toBe(2);
+    expect(mock.map.size).toBe(2);
     expect(mock.getMetadata('root')).toEqual(expectedMetadata4);
   });
+
+  // it('programmatically removing some modules from "imports" array of root module', () => {});
 });

@@ -17,47 +17,38 @@ type ModuleId = string | ModuleType | ModuleWithParams;
 
 @Injectable()
 export class ModuleManager {
-  protected map: ModulesMap = new WeakMap();
+  protected map: ModulesMap = new Map();
   protected mapId = new Map<string, ModuleType | ModuleWithParams>();
-  protected oldMap: ModulesMap = new WeakMap();
+  protected oldMap: ModulesMap = new Map();
   protected oldMapId = new Map<string, ModuleType | ModuleWithParams>();
 
   constructor(protected log: Logger) {}
 
-  scanRootModule(appModule: ModuleType, scanToOldMap?: boolean) {
+  scanRootModule(appModule: ModuleType) {
     if (!getModuleMetadata(appModule, true)) {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
 
-    const meta = this.scanModule(appModule, scanToOldMap);
-    if (scanToOldMap) {
-      this.oldMapId.set('root', appModule);
-    } else {
-      this.mapId.set('root', appModule);
-    }
-
+    const meta = this.scanModule(appModule);
+    this.mapId.set('root', appModule);
     return meta;
   }
 
-  scanModule(modOrObj: ModuleType | ModuleWithParams<any>, scanToOldMap?: boolean) {
+  scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
     if (!Object.isFrozen(modOrObj)) {
       Object.freeze(modOrObj);
     }
 
     const meta = this.normalizeMetadata(modOrObj);
     [...meta.importsModules, ...meta.importsWithParams, ...meta.exportsModules].forEach((impOrExp) => {
-      this.scanModule(impOrExp, scanToOldMap);
+      this.scanModule(impOrExp);
     });
 
     if (meta.id) {
       this.mapId.set(meta.id, modOrObj);
       this.log.debug(`${meta.name} has ID: "${meta.id}".`);
     }
-    if (scanToOldMap) {
-      this.oldMap.set(modOrObj, meta);
-    } else {
-      this.map.set(modOrObj, meta);
-    }
+    this.map.set(modOrObj, meta);
     return meta;
   }
 
@@ -93,15 +84,15 @@ export class ModuleManager {
     const targetMeta = this.getMetadata(targetModuleId);
     if (!targetMeta) {
       const modName = getModuleName(inputModule);
-      const msg = `Failed adding ${modName} to imports: target module with ID "${targetModuleId}" not found.`;
+      const modIdStr = format(targetModuleId);
+      const msg = `Failed adding ${modName} to imports: target module with ID "${modIdStr}" not found.`;
       throw new Error(msg);
     }
 
     const prop = isModuleWithParams(inputModule) ? 'importsWithParams' : 'importsModules';
     if (targetMeta[prop].some((imp: ModuleType | ModuleWithParams) => imp === inputModule)) {
-      const msg = `The module with ID "${format(inputModule)}" has already been imported into "${format(
-        targetModuleId
-      )}"`;
+      const modIdStr = format(targetModuleId);
+      const msg = `The module with ID "${format(inputModule)}" has already been imported into "${modIdStr}"`;
       this.log.warn(msg);
       return false;
     }
@@ -123,19 +114,22 @@ export class ModuleManager {
   removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean {
     const inputMeta = this.getMetadata(inputModuleId);
     if (!inputMeta) {
-      this.log.warn(`Module with ID "${format(inputModuleId)}" not found`);
+      const modIdStr = format(inputModuleId);
+      this.log.warn(`Module with ID "${modIdStr}" not found`);
       return false;
     }
 
     const targetMeta = this.getMetadata(targetModuleId);
     if (!targetMeta) {
-      const msg = `Failed removing ${inputMeta.name} from "imports" array: target module with ID "${targetModuleId}" not found.`;
+      const modIdStr = format(targetModuleId);
+      const msg = `Failed removing ${inputMeta.name} from "imports" array: target module with ID "${modIdStr}" not found.`;
       throw new Error(msg);
     }
     const prop = isModuleWithParams(inputMeta.module) ? 'importsWithParams' : 'importsModules';
     const index = targetMeta[prop].findIndex((imp: ModuleType | ModuleWithParams) => imp === inputMeta.module);
     if (index == -1) {
-      this.log.warn(`Module with ID "${format(inputModuleId)}" not found`);
+      const modIdStr = format(inputModuleId);
+      this.log.warn(`Module with ID "${modIdStr}" not found`);
       return false;
     }
 
@@ -161,7 +155,7 @@ export class ModuleManager {
 
   commit() {
     this.oldMapId = new Map();
-    this.oldMap = new WeakMap();
+    this.oldMap = new Map();
   }
 
   rollback() {
@@ -176,9 +170,8 @@ export class ModuleManager {
       return;
     }
 
-    const rootModule = this.mapId.get('root') as ModuleType;
-    // Scan current root module to `oldMap`.
-    this.scanRootModule(rootModule, true);
+    this.oldMapId = new Map(this.mapId);
+    this.oldMap = new Map(this.map);
   }
 
   /**
