@@ -12,6 +12,7 @@
   },
   "scripts": {
     "test": "jest",
+    "pub": "lerna publish from-package",
     "build": "yarn clean && tsc -b -f packages",
     "clean": "rimraf packages/**/dist* packages/**/out-tsc* packages/**/*.tsbuildinfo",
     "start1": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/1-hello-world/main.ts",
