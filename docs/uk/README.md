@@ -80,7 +80,7 @@ Angular v4.4.7. (з мінімальними допрацюваннями) та 
 Клонуйте його та встановіть залежності:
 
 ```bash
-git clone git@github.com:ditsmod/core-seed.git my-app
+git clone git@github.com:ditsmod/seed.git my-app
 cd my-app
 npm i
 ```
@@ -1613,7 +1613,7 @@ type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
 ```
 
 [1]: https://github.com/ts-stack/di
-[2]: https://github.com/ditsmod/core-seed
+[2]: https://github.com/ditsmod/seed
 [3]: https://github.com/ditsmod/core
 [4]: ./examples.md
 [5]: https://raw.githubusercontent.com/ts-stack/vs-webframework/master/req-per-sec-frameworks.png
@@ -1624,7 +1624,7 @@ type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
 [11]: https://github.com/ts-stack/di
 [12]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
 [13]: https://developer.mozilla.org/uk/docs/Web/JavaScript/Memory_Management#%D0%B7%D0%B1%D0%B8%D1%80%D0%B0%D0%BD%D0%BD%D1%8F_%D1%81%D0%BC%D1%96%D1%82%D1%82%D1%8F "Garbage collection"
-[14]: https://github.com/ditsmod/core-seed/blob/901f247/src/app/app.module.ts#L18
+[14]: https://github.com/ditsmod/seed/blob/901f247/src/app/app.module.ts#L18
 
 [100]: #оголошення-рівня-провайдерів-та-підміна-провайдерів
 [101]: #експорт-провайдерів-у-звичайному-модулі

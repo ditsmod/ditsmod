@@ -34,12 +34,12 @@ curl -isS localhost:8080
 
 
 
-See also [seed for @ditsmod/core-seed project](https://github.com/ditsmod/core-seed).
+See also [seed for @ditsmod/seed project](https://github.com/ditsmod/seed).
 
 [The Ukrainian version of the documentation](./docs/uk/README.md).
 
 [1]: https://github.com/ts-stack/di
-[2]: https://github.com/ditsmod/core-seed
+[2]: https://github.com/ditsmod/seed
 [3]: https://github.com/ditsmod/core
 [4]: https://github.com/ditsmod/core/tree/master/examples
 [5]: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction#Introducing_Express
