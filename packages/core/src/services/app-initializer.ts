@@ -47,7 +47,7 @@ export class AppInitializer {
       if (autocommit) {
         this.moduleManager.commit();
       } else {
-        this.log.warn('Skipping autocommit.');
+        this.log.warn('Skipping autocommit of changes for config of moduleManager.');
       }
       this.log.debug('Finished reinit the application.');
     } catch (err) {
