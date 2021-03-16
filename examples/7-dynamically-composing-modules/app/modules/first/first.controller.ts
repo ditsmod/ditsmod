@@ -43,9 +43,9 @@ export class FirstController {
   private async reinitApp(moduleName: 'second' | 'third', action: 'importing' | 'removing') {
     const err = await this.appInitializer.reinit();
     if (err) {
-      this.res.send(`${action} ${moduleName} module failed: ${err.message}\n`);
+      this.res.send(`${action} ${moduleName} failed: ${err.message}\n`);
     } else {
-      this.res.send(`${moduleName} module successfully ${action}!\n'`);
+      this.res.send(`${moduleName} successfully ${action}!\n'`);
     }
   }
 }
