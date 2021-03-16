@@ -26,7 +26,7 @@ describe('PreRoutes', () => {
     moduleManager: ModuleManager;
     injectorPerApp: ReflectiveInjector;
     log = new Logger();
-    meta = new RootMetadata;
+    meta = new RootMetadata();
 
     bootstrapModuleFactory(moduleManager: ModuleManager) {
       return super.bootstrapModuleFactory(moduleManager);
@@ -46,7 +46,7 @@ describe('PreRoutes', () => {
       ...defaultProvidersPerApp,
       { provide: ModuleManager, useValue: moduleManager },
       { provide: RootMetadata, useValue: new RootMetadata() },
-      MockAppInitializer
+      MockAppInitializer,
     ]);
     mockAppInitializer = injectorPerApp.get(MockAppInitializer);
     mockAppInitializer.injectorPerApp = injectorPerApp;
@@ -106,7 +106,8 @@ describe('PreRoutes', () => {
       const metadata = metadataMap.get(AppModule);
       const routesMetadata = mockPreRoutes.getPreRoutesData(metadata);
       expect(routesMetadata.length).toBe(3);
-      expect(routesMetadata[0].methodId).toBe(1);
+      expect(routesMetadata[0].otherDecorators).toEqual([]);
+      expect(routesMetadata[0].otherDecorators.map(d => d.ngMetadataName)).toEqual([]);
       expect(routesMetadata[0].controller).toBe(Controller1);
       expect(routesMetadata[0].methodName).toBe('method1');
       expect(routesMetadata[0].route.httpMethod).toBe('GET');
@@ -117,7 +118,8 @@ describe('PreRoutes', () => {
       expect(routesMetadata[0].parseBody).toBe(false);
       expect(routesMetadata[0].guards).toEqual([{ guard: MyGuard1 }, { guard: MyGuard2, params: ['one', 2] }]);
 
-      expect(routesMetadata[1].methodId).toBe(2);
+      expect(routesMetadata[1].otherDecorators).toEqual([{ guards: [], httpMethod: 'GET', path: 'url3' }]);
+      expect(routesMetadata[1].otherDecorators.map(d => d.ngMetadataName)).toEqual(['Route']);
       expect(routesMetadata[1].controller).toBe(Controller1);
       expect(routesMetadata[1].methodName).toBe('method2');
       expect(routesMetadata[1].route.httpMethod).toBe('POST');
@@ -128,7 +130,8 @@ describe('PreRoutes', () => {
       expect(routesMetadata[1].parseBody).toBe(true);
       expect(routesMetadata[1].guards).toEqual([]);
 
-      expect(routesMetadata[2].methodId).toBe(2);
+      expect(routesMetadata[2].otherDecorators).toEqual([{ guards: [], httpMethod: 'POST', path: 'url2' }]);
+      expect(routesMetadata[2].otherDecorators.map(d => d.ngMetadataName)).toEqual(['Route']);
       expect(routesMetadata[2].controller).toBe(Controller1);
       expect(routesMetadata[2].methodName).toBe('method2');
       expect(routesMetadata[2].route.httpMethod).toBe('GET');

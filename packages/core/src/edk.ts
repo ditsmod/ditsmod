@@ -3,7 +3,6 @@ export { PreRouter } from './services/pre-router';
 export { ModuleFactory } from './module-factory';
 export { ProvidersMetadata } from './models/providers-metadata';
 export { ControllerMetadata } from './decorators/controller';
-export { Counter } from './services/counter';
 export * from './utils/type-guards';
 export { deepFreeze } from './utils/deep-freeze';
 export { isModule } from './utils/type-guards';

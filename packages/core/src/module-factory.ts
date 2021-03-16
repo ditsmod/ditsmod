@@ -2,7 +2,6 @@ import { Injectable, ReflectiveInjector, reflector } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ProvidersMetadata } from './models/providers-metadata';
-import { Counter } from './services/counter';
 import { defaultExtensions } from './services/default-extensions';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
@@ -46,7 +45,7 @@ export class ModuleFactory {
   protected extensionMetadataMap = new Map<ModuleType | ModuleWithParams, ExtensionMetadata>();
   #moduleManager: ModuleManager;
 
-  constructor(protected injectorPerApp: ReflectiveInjector, protected counter: Counter) {}
+  constructor(protected injectorPerApp: ReflectiveInjector) {}
 
   /**
    * Called only by `@RootModule` before called `ModuleFactory#boostrap()`.
@@ -364,10 +363,10 @@ export class ModuleFactory {
       const propMetadata = reflector.propMetadata(controller);
       for (const methodName in propMetadata) {
         const methodDecorValues = propMetadata[methodName];
-        const methodId = this.counter.incrementCtrlMethodId();
-        controllerMetadata.methods[methodName] = methodDecorValues.map<MethodMetadata>((decoratorValue) => {
-          const decoratorId = this.counter.incrementCtrlDecoratorId();
-          return { methodId, decoratorId, value: decoratorValue };
+        controllerMetadata.methods[methodName] = methodDecorValues.map<MethodMetadata>((decoratorValue, i) => {
+          const otherDecorators = methodDecorValues.slice();
+          otherDecorators.splice(i, 1);
+          return { otherDecorators, value: decoratorValue };
         });
       }
       arrControllerMetadata.push(controllerMetadata);

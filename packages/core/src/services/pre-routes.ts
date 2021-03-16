@@ -50,8 +50,7 @@ export class PreRoutes {
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
 
           preRoutesData.push({
-            methodId: decoratorData.methodId,
-            decoratorId: decoratorData.decoratorId,
+            otherDecorators: decoratorData.otherDecorators,
             controller,
             methodName,
             route,

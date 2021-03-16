@@ -9,7 +9,6 @@ import { Route, RouteMetadata } from './decorators/route';
 import { Router } from './types/router';
 import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
-import { Counter } from './services/counter';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { ExtensionMetadata } from './types/extension-metadata';
 import { ModuleType } from './types/module-type';
@@ -60,8 +59,7 @@ describe('ModuleFactory', () => {
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
-    const counter = new Counter();
-    mock = new MockModuleFactory(null, counter);
+    mock = new MockModuleFactory(null);
     const config = new LoggerConfig();
     const log = new DefaultLogger(config);
     moduleManager = new ModuleManager(log);
@@ -650,11 +648,20 @@ describe('ModuleFactory', () => {
       }
       mock.meta.controllers = [Controller1];
       const metadata = mock.getControllersMetadata();
+      const routeMeta2: RouteMetadata = {
+        httpMethod: 'POST',
+        path: 'url2',
+        guards: [],
+      };
+      const routeMeta3: RouteMetadata = {
+        httpMethod: 'GET',
+        path: 'url3',
+        guards: [],
+      };
       const methods: { [methodName: string]: MethodMetadata<RouteMetadata>[] } = {
         method1: [
           {
-            methodId: 1,
-            decoratorId: 1,
+            otherDecorators: [],
             value: {
               httpMethod: 'GET',
               path: 'url1',
@@ -664,22 +671,12 @@ describe('ModuleFactory', () => {
         ],
         method2: [
           {
-            methodId: 2,
-            decoratorId: 2,
-            value: {
-              httpMethod: 'POST',
-              path: 'url2',
-              guards: [],
-            },
+            otherDecorators: [routeMeta3],
+            value: routeMeta2,
           },
           {
-            methodId: 2,
-            decoratorId: 3,
-            value: {
-              httpMethod: 'GET',
-              path: 'url3',
-              guards: [],
-            },
+            otherDecorators: [routeMeta2],
+            value: routeMeta3,
           },
         ],
       };
