@@ -13,9 +13,10 @@
     "declaration": true,
     "allowJs": false,
     "paths": {
+      "@ditsmod/body-parser": ["../packages/body-parser/src"],
       "@ditsmod/core": ["../packages/core/src"],
       "@ditsmod/router": ["../packages/router/src"],
-      "@ditsmod/body-parser": ["../packages/body-parser/src"],
+      "@ditsmod/open-api": ["../packages/open-api/src"],
     }
   },
   "include": ["./**/*"]

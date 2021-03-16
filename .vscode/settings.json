@@ -1,0 +1,23 @@
+{
+  "files.exclude": {    
+    "examples": true,
+    "packages/body-parser": true,
+    "packages/router": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/*jest*": true,
+    "**/package.json": true,
+    "**/tsconfig.json": true,
+    // "**/.*": true,
+
+    // "node_modules": true,
+    "**/yarn-error.log": true,
+    "**/*.tsbuildinfo": true,
+    // "packages/description": true,
+    "**/LICENSE": true,
+    "README.md": true,
+    "lerna.json": true,
+    "nodemon.json": true,
+    "yarn.lock": true
+  }
+}
