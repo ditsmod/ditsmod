@@ -16,7 +16,7 @@
   "scripts": {
     "test": "npm run compile && jest",
     "compile": "rimraf dist/* && tsc",
-    "bench": "node -r tsconfig-paths/register --expose-gc dist/bench.js"
+    "bench": "node --expose-gc dist/bench.js"
   },
   "devDependencies": {
     "@ts-stack/di": "^1.1.0",
