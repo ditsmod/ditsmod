@@ -38,13 +38,17 @@ export class AppInitializer {
 
   constructor(protected moduleManager: ModuleManager) {}
 
-  async reinit() {
+  async reinit(autocommit: boolean = true) {
     const log = this.log;
     log.debug('Start reinit the application.');
 
     try {
       await this.init();
-      this.moduleManager.commit();
+      if (autocommit) {
+        this.moduleManager.commit();
+      } else {
+        this.log.warn('Skipping autocommit.');
+      }
       this.log.debug('Finished reinit the application.');
     } catch (err) {
       log.error(err);
