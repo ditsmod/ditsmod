@@ -292,6 +292,7 @@ describe('ModuleManager', () => {
     expect(mock.addImport(Module1)).toBe(false);
     expect(mock.oldMap.size).toBe(1);
     expect(mock.oldMap.has(AppModule)).toBe(true);
+    expect(mock.oldMap.get(AppModule)).toEqual(expectedOldMetadata1);
     expect(mock.map.size).toBe(2);
     expect(mock.map.has(Module1)).toBe(true);
 
@@ -305,6 +306,22 @@ describe('ModuleManager', () => {
     expect(() => mock.addImport(Module2, 'fakeId')).toThrowError(/Failed adding Module2 to imports/);
     expect(mock.map.size).toBe(2);
 
+    const expectedOldMetadata2: NormalizedModuleMetadata = {
+      id: '',
+      name: 'AppModule',
+      providersPerApp: [],
+      providersPerMod: [],
+      extensions: [],
+      controllers: [],
+      exportsModules: [],
+      exportsProviders: [],
+      importsModules: [Module1],
+      importsWithParams: [],
+      module: AppModule,
+      providersPerReq: [Provider1],
+      ngMetadataName: 'RootModule',
+    };
+
     mock.addImport(Module2);
     expect(mock.map.size).toBe(3);
     expect(mock.oldMap.size).toBe(2);
@@ -312,6 +329,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMap.has(Module1)).toBe(true);
     expect(mock.oldMapId.size).toBe(1);
     expect(mock.oldMapId.get('root')).toBe(AppModule);
+    expect(mock.oldMap.get(AppModule)).toEqual(expectedOldMetadata2);
 
     mock.addImport(Module4);
     expect(mock.map.size).toBe(4);
@@ -369,6 +387,7 @@ describe('ModuleManager', () => {
 
     mock.rollback();
     expect(mock.map.size).toBe(4);
+    expect(mock.map.get(AppModule)).toEqual(expectedMetadata2);
     expect(mock.map.has(module3WithProviders)).toBe(false);
     expect(mock.oldMap.size).toBe(0);
   });
