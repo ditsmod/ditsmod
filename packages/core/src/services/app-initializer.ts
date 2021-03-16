@@ -38,7 +38,7 @@ export class AppInitializer {
 
   constructor(protected moduleManager: ModuleManager) {}
 
-  async reinit(autocommit: boolean = true) {
+  async reinit(autocommit: boolean = true): Promise<void | Error> {
     const log = this.log;
     log.debug('Start reinit the application.');
 
@@ -56,6 +56,7 @@ export class AppInitializer {
       this.moduleManager.rollback();
       await this.init();
       this.log.debug('Successful rollback of changes for config of moduleManager during reinit the application.');
+      return err;
     }
   }
 
