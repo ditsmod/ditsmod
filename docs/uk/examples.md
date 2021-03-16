@@ -193,6 +193,34 @@ npm run start6
 curl -isS localhost:8080 -d '{"one":1}' -H 'content-type: application/json'
 ```
 
+## 7-dynamically-composing-modules
+
+Ditsmod має можливість додавати та видаляти власні модулі після старту вебсервера, причому
+немає необхідності перезапускати заново вебсервер, а HTTP-клієнти не помітять перебоїв, під час
+додавання чи видалення цих модулів.
+
+Запуск прикладу:
+
+```bash
+npm run start7
+```
+
+Перевірка роботи:
+
+```bash
+curl -isS localhost:8080
+# Відповідь із 404 статусом із другого модуля
+curl -isS localhost:8080/get-2
+# Додавання другого модуля
+curl -isS localhost:8080/add-2
+# Відповідь із 200 статусом із другого модуля
+curl -isS localhost:8080/get-2
+# Видалення другого модуля
+curl -isS localhost:8080/del-2
+# Відповідь із 404 статусом із другого модуля
+curl -isS localhost:8080/get-2
+```
+
 [5]: https://github.com/winstonjs/winston
 [6]: https://github.com/trentm/node-bunyan
 [7]: https://github.com/pinojs/pino

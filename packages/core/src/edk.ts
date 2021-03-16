@@ -17,3 +17,4 @@ export { Extension } from './types/extension';
 export { ModuleMetadata } from './types/module-metadata';
 export { ExtensionType } from './types/extension-type';
 export { RouteData, PreRouteData } from './types/route-data';
+export { AppInitializer } from './services/app-initializer';
