@@ -208,17 +208,33 @@ npm run start7
 Перевірка роботи:
 
 ```bash
+# OK із першого модуля
 curl -isS localhost:8080
+
 # Відповідь із 404 статусом із другого модуля
 curl -isS localhost:8080/get-2
+
 # Додавання другого модуля
 curl -isS localhost:8080/add-2
+
 # Відповідь із 200 статусом із другого модуля
 curl -isS localhost:8080/get-2
+
+# Під час додавання третього модуля, повинен статися збій
+curl -isS localhost:8080/add-3
+
+# Але інші модулі продовжують працювати
+curl -isS localhost:8080
+curl -isS localhost:8080/get-2
+
 # Видалення другого модуля
 curl -isS localhost:8080/del-2
+
 # Відповідь із 404 статусом із другого модуля
 curl -isS localhost:8080/get-2
+
+# Але все OK із першим модулем
+curl -isS localhost:8080
 ```
 
 [5]: https://github.com/winstonjs/winston

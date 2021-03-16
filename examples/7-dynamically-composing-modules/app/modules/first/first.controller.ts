@@ -19,28 +19,33 @@ export class FirstController {
   @Route('GET', 'add-2')
   async addSecondModule() {
     this.moduleManager.addImport(SecondModule);
-    await this.appInitializer.reinit();
-    this.res.send('Second module successfully added!\n');
+    await this.reinitApp('second', 'importing');
   }
 
   @Route('GET', 'del-2')
   async removeSecondModule() {
     this.moduleManager.removeImport(SecondModule);
-    await this.appInitializer.reinit();
-    this.res.send('Second module successfully removed!\n');
+    await this.reinitApp('second', 'removing');
   }
 
   @Route('GET', 'add-3')
   async addThirdModule() {
     this.moduleManager.addImport(ThirdModule);
-    await this.appInitializer.reinit();
-    this.res.send('Third module successfully added!\n');
+    await this.reinitApp('third', 'importing');
   }
 
   @Route('GET', 'del-3')
   async removeThirdModule() {
     this.moduleManager.removeImport(ThirdModule);
-    await this.appInitializer.reinit();
-    this.res.send('Third module successfully removed!\n');
+    await this.reinitApp('third', 'removing');
+  }
+
+  private async reinitApp(moduleName: 'second' | 'third', action: 'importing' | 'removing') {
+    const err = await this.appInitializer.reinit();
+    if (err) {
+      this.res.send(`${action} ${moduleName} module failed: ${err.message}\n`);
+    } else {
+      this.res.send(`${moduleName} module successfully ${action}!\n'`);
+    }
   }
 }
