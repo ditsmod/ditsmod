@@ -30,7 +30,7 @@ const { handle, params } = router.find('GET', '/');
 git clone git@github.com:ts-stack/ditsmod-plugins.git
 cd ditsmod-plugins/src/router
 npm i
-npm run compile
+npm run build
 npm run bench
 ```
 

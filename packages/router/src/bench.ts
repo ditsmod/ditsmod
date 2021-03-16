@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import * as path from 'path';
-import { ReflectiveInjector } from '@ts-stack/di';
+import { Injector, ReflectiveInjector } from '@ts-stack/di';
 
 import { Fn } from './types';
 import { Tree } from './tree';
@@ -22,7 +22,7 @@ async function runBench() {
     { name: 'koa-tree-router', onRouteMethod: 'on', findRouteMethod: 'find' },
     { name: '@ditsmod/router', routerClass: 'Router', onRouteMethod: 'on', findRouteMethod: 'find' },
     { name: 'find-my-way', onRouteMethod: 'on', findRouteMethod: 'find' },
-    { name: 'trek-router', onRouteMethod: 'add', findRouteMethod: 'find' }
+    { name: 'trek-router', onRouteMethod: 'add', findRouteMethod: 'find' },
   ];
 
   const widthTable = 60;
@@ -49,14 +49,18 @@ async function runBench() {
       let router: any;
 
       if (lib.name == '@ditsmod/router') {
-        const injector = ReflectiveInjector.resolveAndCreate([Tree, DefaultRouter]);
+        const injector = ReflectiveInjector.resolveAndCreate([
+          { provide: ReflectiveInjector, useExisting: Injector },
+          Tree,
+          DefaultRouter,
+        ]);
         router = injector.get(DefaultRouter);
       } else {
         router = new Router();
       }
       const onMethod = router[lib.onRouteMethod].bind(router);
       const findRoute = router[lib.findRouteMethod].bind(router);
-      await new Promise<void>(resolve => {
+      await new Promise<void>((resolve) => {
         setTimeout(callback, isInited ? 1000 : 0);
         function callback() {
           bench(lib.name, onMethod, findRoute);
@@ -105,7 +109,7 @@ export function bench(name: string, onMethod: Fn, findRoute: Fn): void {
     { method: 'GET', url: '/doc/node_faq.html' },
     { method: 'GET', url: '/doc/node1.html' },
     { method: 'GET', url: '/info/:user/public' },
-    { method: 'GET', url: '/info/:user/project/:project' }
+    { method: 'GET', url: '/info/:user/project/:project' },
   ];
 
   routes.forEach(({ method, url }) => {
