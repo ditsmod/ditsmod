@@ -265,12 +265,29 @@ describe('ModuleManager', () => {
 
     const module3WithProviders = Module3.withParams([Provider2]);
 
+    const expectedOldMetadata1: NormalizedModuleMetadata = {
+      id: '',
+      name: 'AppModule',
+      providersPerApp: [],
+      providersPerMod: [],
+      extensions: [],
+      controllers: [],
+      exportsModules: [],
+      exportsProviders: [],
+      importsModules: [],
+      importsWithParams: [],
+      module: AppModule,
+      providersPerReq: [Provider1],
+      ngMetadataName: 'RootModule',
+    };
+
     expect(mock.addImport(Module1)).toBe(true);
     expect(mock.map.size).toBe(2);
     expect(mock.oldMapId.size).toBe(1);
     expect(mock.oldMapId.get('root')).toBe(AppModule);
     expect(mock.oldMap.size).toBe(1);
     expect(mock.oldMap.has(AppModule)).toBe(true);
+    expect(mock.oldMap.get(AppModule)).toEqual(expectedOldMetadata1);
 
     expect(mock.addImport(Module1)).toBe(false);
     expect(mock.oldMap.size).toBe(1);
@@ -524,7 +541,7 @@ describe('ModuleManager', () => {
     mock.rollback();
     expect(mock.mapId.size).toBe(2);
     expect(mock.map.size).toBe(5);
-    expect(mock.getMetadata('root')).toEqual(expectedMetadata4);
+    expect(mock.getMetadata('root')).toEqual(expectedMetadata1);
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);
   });

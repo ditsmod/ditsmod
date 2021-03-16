@@ -170,8 +170,14 @@ export class ModuleManager {
       return;
     }
 
+    this.map.forEach((meta, key) => {
+      const oldMeta = { ...meta };
+      oldMeta.importsModules = oldMeta.importsModules.slice();
+      oldMeta.importsWithParams = oldMeta.importsWithParams.slice();
+      oldMeta.exportsModules = oldMeta.exportsModules.slice();
+      this.oldMap.set(key, oldMeta);
+    });
     this.oldMapId = new Map(this.mapId);
-    this.oldMap = new Map(this.map);
   }
 
   /**

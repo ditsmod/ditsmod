@@ -66,7 +66,6 @@ export class PreRouter implements Extension<PreRouteData[]> {
        * @param parseBody Need or not to parse body.
        */
       const { route, injector, providers, controller, methodName, parseBody, guards } = preRouteData;
-      const path = this.getPath(prefix, route.path);
 
       const handle = ((nodeReq: NodeRequest, nodeRes: NodeResponse, params: PathParam[], queryString: any) => {
         nodeRes.setHeader('Server', this.rootMetadata.serverName);
@@ -78,6 +77,8 @@ export class PreRouter implements Extension<PreRouteData[]> {
         const req = injector2.get(Request) as Request;
         this.handleRoute(req, params, queryString, controller, methodName, parseBody, guards);
       }) as RouteHandler;
+
+      const path = this.getPath(prefix, route.path);
 
       if (route.httpMethod == 'ALL') {
         this.router.all(`/${path}`, handle);
