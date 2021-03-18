@@ -1,6 +1,6 @@
 import { AnyObj } from '../types/any-obj';
 import { ControllerType } from '../types/controller-type';
-import { MethodMetadata } from './method-metadata';
+import { DecoratorMetadata } from './decorator-metadata';
 
 export interface ControllerAndMethodMetadata<CV extends AnyObj = AnyObj, MV extends AnyObj = AnyObj> {
   controller: ControllerType;
@@ -9,6 +9,6 @@ export interface ControllerAndMethodMetadata<CV extends AnyObj = AnyObj, MV exte
    */
   ctrlDecorValues: CV[];
   methods: {
-    [methodName: string]: MethodMetadata<MV>[];
+    [methodName: string]: DecoratorMetadata<MV>[];
   };
 }

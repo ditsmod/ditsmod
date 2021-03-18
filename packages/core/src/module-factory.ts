@@ -8,7 +8,7 @@ import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
 import { ExtensionMetadata } from './types/extension-metadata';
 import { GuardItem } from './types/guard-item';
-import { MethodMetadata } from './types/method-metadata';
+import { DecoratorMetadata } from './types/decorator-metadata';
 import { ModuleType } from './types/module-type';
 import { ModuleWithParams } from './types/module-with-params';
 import { NormalizedGuard } from './types/normalized-guard';
@@ -363,7 +363,7 @@ export class ModuleFactory {
       const propMetadata = reflector.propMetadata(controller);
       for (const methodName in propMetadata) {
         const methodDecorValues = propMetadata[methodName];
-        controllerMetadata.methods[methodName] = methodDecorValues.map<MethodMetadata>((decoratorValue, i) => {
+        controllerMetadata.methods[methodName] = methodDecorValues.map<DecoratorMetadata>((decoratorValue, i) => {
           const otherDecorators = methodDecorValues.slice();
           otherDecorators.splice(i, 1);
           return { otherDecorators, value: decoratorValue };

@@ -19,7 +19,7 @@ import { ModuleManager } from './services/module-manager';
 import { ProvidersMetadata } from './models/providers-metadata';
 import { DefaultLogger } from './services/default-logger';
 import { Extension } from './types/extension';
-import { MethodMetadata } from './types/method-metadata';
+import { DecoratorMetadata } from './types/decorator-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 
 describe('ModuleFactory', () => {
@@ -658,7 +658,7 @@ describe('ModuleFactory', () => {
         path: 'url3',
         guards: [],
       };
-      const methods: { [methodName: string]: MethodMetadata<RouteMetadata>[] } = {
+      const methods: { [methodName: string]: DecoratorMetadata<RouteMetadata>[] } = {
         method1: [
           {
             otherDecorators: [],
