@@ -22,6 +22,7 @@ export { GuardItem } from './types/guard-item';
 export { PathParam, RouterReturns, RouteHandler } from './types/router';
 export { RootMetadata } from './models/root-metadata';
 export { NormalizedProvider } from './utils/ng-utils';
+export { HttpInterceptor, HttpHandler, HTTP_INTERCEPTORS } from './types/http-interceptor';
 /**
  * Extension Development Kit.
  */
