@@ -15,5 +15,6 @@ export { NormalizedGuard } from './types/normalized-guard';
 export { Extension } from './types/extension';
 export { ModuleMetadata } from './types/module-metadata';
 export { ExtensionType } from './types/extension-type';
-export { RouteData, PreRouteData } from './types/route-data';
+export { RouteData } from './types/route-data';
 export { AppInitializer } from './services/app-initializer';
+export { ExtensionsMap } from './types/extensions-map';
