@@ -3,3 +3,4 @@ dist*
 *.tgz
 *.log
 tsconfig.tsbuildinfo
+.vscode/settings.json
