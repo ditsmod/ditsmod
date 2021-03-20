@@ -5,8 +5,9 @@ import { RouteMetadata } from '../decorators/route';
 import { BodyParserConfig } from '../models/body-parser-config';
 import { ExtensionMetadata } from '../types/extension-metadata';
 import { GuardItem } from '../types/guard-item';
+import { HttpInterceptorsChain } from '../types/http-interceptor';
 import { NormalizedGuard } from '../types/normalized-guard';
-import { PreRouteData } from '../types/route-data';
+import { RouteData } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
 
 @Injectable()
@@ -16,7 +17,7 @@ export class PreRoutes {
 
   constructor(protected injectorPerApp: ReflectiveInjector) {}
 
-  getPreRoutesData(extensionMetadata: ExtensionMetadata) {
+  getRoutesData(extensionMetadata: ExtensionMetadata) {
     const {
       controllersMetadata,
       guardsPerMod,
@@ -26,15 +27,15 @@ export class PreRoutes {
 
     this.providersPerReq = providersPerReq;
     this.initProvidersPerReq();
-    const preRoutesData: PreRouteData[] = [];
+    const routesData: RouteData[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
-        for (const decoratorData of methodWithDecorators) {
-          if (!isRoute(decoratorData.value)) {
+        for (const decoratorMetadata of methodWithDecorators) {
+          if (!isRoute(decoratorMetadata.value)) {
             continue;
           }
-          const route = decoratorData.value;
+          const route = decoratorMetadata.value;
           const ctrlDecorValue = ctrlDecorValues.find(isController);
           const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(
             name,
@@ -49,8 +50,12 @@ export class PreRoutes {
           const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
 
-          preRoutesData.push({
-            otherDecorators: decoratorData.otherDecorators,
+          const httpInterceptorsChain = injectorPerReq.get(HttpInterceptorsChain) as HttpInterceptorsChain;
+          const chain = httpInterceptorsChain.getChain();
+
+          routesData.push({
+            chain,
+            decoratorMetadata,
             controller,
             methodName,
             route,
@@ -63,7 +68,7 @@ export class PreRoutes {
       }
     }
 
-    return preRoutesData;
+    return routesData;
   }
 
   /**

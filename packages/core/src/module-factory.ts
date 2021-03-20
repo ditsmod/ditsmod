@@ -21,6 +21,7 @@ import { getUniqProviders } from './utils/get-uniq-providers';
 import { NormalizedProvider, normalizeProviders } from './utils/ng-utils';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
 import { isController, isExtensionProvider, isRootModule } from './utils/type-guards';
+import { deepFreeze } from './utils/deep-freeze';
 
 /**
  * - imports and exports global providers;
@@ -99,7 +100,7 @@ export class ModuleFactory {
       prefixPerMod,
       guardsPerMod: this.guardsPerMod,
       moduleMetadata: this.meta,
-      controllersMetadata,
+      controllersMetadata: deepFreeze(controllersMetadata),
     });
   }
 

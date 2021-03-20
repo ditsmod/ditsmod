@@ -2,6 +2,8 @@ import { ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-stack/di';
 
 import { RouteMetadata } from '../decorators/route';
 import { ControllerType } from './controller-type';
+import { DecoratorMetadata } from './decorator-metadata';
+import { HttpHandler } from './http-interceptor';
 import { NormalizedGuard } from './normalized-guard';
 
 export interface RouteData {
@@ -29,11 +31,9 @@ export interface RouteData {
    * By default, any user can activate.
    */
   guards: NormalizedGuard[];
-}
-
-/**
- * All properties of this class are initialized with `null`.
- */
-export interface PreRouteData extends RouteData {
-  otherDecorators: any[];
+  /**
+   * First HTTP handler in the chain of HTTP interceptors.
+   */
+  chain: HttpHandler;
+  decoratorMetadata: DecoratorMetadata;
 }

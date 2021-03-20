@@ -4,6 +4,7 @@ import { ReflectiveInjector } from '@ts-stack/di';
 import { HttpBackend, HttpHandler, HttpInterceptorsChain, HttpInterceptor, HTTP_INTERCEPTORS } from './http-interceptor';
 import { Request } from '../services/request';
 import { defaultProvidersPerReq } from '../services/default-providers-per-req';
+import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 
 describe('HttpInterceptor', () => {
   const jestFn = jest.fn((interceptorName: string) => interceptorName);
@@ -44,6 +45,7 @@ describe('HttpInterceptor', () => {
     }
 
     const injector = ReflectiveInjector.resolveAndCreate([
+      ...defaultProvidersPerApp,
       ...defaultProvidersPerReq,
       HttpInterceptorsChain,
       { provide: HttpBackend, useClass: MockHttpBackend },
@@ -60,13 +62,14 @@ describe('HttpInterceptor', () => {
 
   it('last interceptor run without calls next.handle()', () => {
     class Interceptor3 implements HttpInterceptor {
-      intercept(req: Request, next: HttpHandler) {
+      intercept(req: Request) {
         jestFn('Interceptor3');
         return Promise.resolve(req);
       }
     }
 
     const injector = ReflectiveInjector.resolveAndCreate([
+      ...defaultProvidersPerApp,
       ...defaultProvidersPerReq,
       { provide: HTTP_INTERCEPTORS, useClass: Interceptor1, multi: true },
       { provide: HTTP_INTERCEPTORS, useClass: Interceptor2, multi: true },

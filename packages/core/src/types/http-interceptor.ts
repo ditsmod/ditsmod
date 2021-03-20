@@ -13,7 +13,7 @@ import { Request } from '../services/request';
 export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INTERCEPTORS');
 
 export interface HttpInterceptor {
-  intercept(req: Request, next: HttpHandler, ...args: any[]): Promise<any>;
+  intercept(req: Request, next?: HttpHandler, ...args: any[]): Promise<any>;
 }
 
 /**

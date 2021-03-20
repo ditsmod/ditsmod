@@ -1,6 +1,7 @@
 import { Injector, ReflectiveInjector } from '@ts-stack/di';
 
 import { BodyParserConfig } from '../models/body-parser-config';
+import { RootMetadata } from '../models/root-metadata';
 import { Logger, LoggerConfig } from '../types/logger';
 import { ServiceProvider } from '../types/service-provider';
 import { DefaultLogger } from './default-logger';
@@ -18,5 +19,6 @@ export const defaultProvidersPerApp: ServiceProvider[] = [
   },
   PreRouter,
   PreRoutes,
+  RootMetadata,
   ModuleManager
 ];
