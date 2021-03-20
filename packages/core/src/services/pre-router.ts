@@ -25,7 +25,7 @@ export class PreRouter implements Extension {
     });
   }
 
-  requestListener: RequestListener = (nodeReq, nodeRes) => {
+  requestListener: RequestListener = async (nodeReq, nodeRes) => {
     const { method: httpMethod, url } = nodeReq;
     const [uri, queryString] = this.decodeUrl(url).split('?');
     const { handle, params } = this.router.find(httpMethod as HttpMethod, uri);
@@ -33,7 +33,7 @@ export class PreRouter implements Extension {
       this.sendNotFound(nodeRes);
       return;
     }
-    handle(nodeReq, nodeRes, params, queryString);
+    await handle(nodeReq, nodeRes, params, queryString);
   };
 
   protected setRoutes(moduleName: string, prefixPerApp: string, prefixPerMod: string, routesData: RouteData[]) {
@@ -49,7 +49,7 @@ export class PreRouter implements Extension {
        */
       const { chain, route, injector, providers, controller, methodName, parseBody, guards } = routeData;
 
-      const handle = ((nodeReq: NodeRequest, nodeRes: NodeResponse, params: PathParam[], queryString: any) => {
+      const handle = (async (nodeReq: NodeRequest, nodeRes: NodeResponse, params: PathParam[], queryString: any) => {
         const injector1 = injector.resolveAndCreateChild([
           { provide: NodeReqToken, useValue: nodeReq },
           { provide: NodeResToken, useValue: nodeRes },
@@ -57,7 +57,7 @@ export class PreRouter implements Extension {
         const injector2 = injector1.createChildFromResolved(providers);
         const req = injector2.get(Request) as Request;
 
-        chain.handle(req, params, queryString, controller, methodName, parseBody, guards);
+        await chain.handle(req, params, queryString, controller, methodName, parseBody, guards);
       }) as RouteHandler;
 
       const path = this.getPath(prefix, route.path);

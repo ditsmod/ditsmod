@@ -20,7 +20,7 @@ export type RouteHandler = (
   nodeRes: NodeResponse,
   params: PathParam[],
   queryString: any
-) => void;
+) => Promise<void>;
 
 export class RouterReturns {
   handle: RouteHandler;
