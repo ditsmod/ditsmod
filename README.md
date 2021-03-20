@@ -1,1 +1,1 @@
-/srv/git/ditsmod/ditsmod/packages/core/README.md
+packages/core/README.md
