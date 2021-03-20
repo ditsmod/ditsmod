@@ -57,7 +57,7 @@ export class PreRouter implements Extension {
         const injector2 = injector1.createChildFromResolved(providers);
         const req = injector2.get(Request) as Request;
 
-        chain.handle(req, params, queryString, routeData, controller, methodName, parseBody, guards);
+        chain.handle(req, params, queryString, controller, methodName, parseBody, guards);
       }) as RouteHandler;
 
       const path = this.getPath(prefix, route.path);
