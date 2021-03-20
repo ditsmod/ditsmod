@@ -81,4 +81,15 @@ describe('HttpInterceptor', () => {
     chain.handle({} as Request);
     expect(jestFn.mock.calls).toEqual([['Interceptor1'], ['Interceptor2'], ['Interceptor3']]);
   });
+
+  it('without HTTP_INTERCEPTORS, chain should be HttpBackend', () => {
+    const injector = ReflectiveInjector.resolveAndCreate([
+      ...defaultProvidersPerApp,
+      ...defaultProvidersPerReq
+    ]);
+    const httpInterceptorsChain = injector.get(HttpInterceptorsChain) as HttpInterceptorsChain;
+    chain = httpInterceptorsChain.getChain();
+    const backend = injector.get(HttpBackend) as HttpBackend;
+    expect(chain).toBe(backend);
+  });
 });
