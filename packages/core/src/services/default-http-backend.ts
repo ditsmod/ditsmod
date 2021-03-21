@@ -5,7 +5,6 @@ import { HttpBackend } from '../types/http-interceptor';
 import { Request } from './request';
 import { AnyObj } from '../types/any-obj';
 import { CanActivate } from '../types/can-activate';
-import { ControllerErrorHandler } from '../types/controller-error-handler';
 import { NormalizedGuard } from '../types/normalized-guard';
 import { BodyParser } from './body-parser';
 import { ControllerType } from '../types/controller-type';
@@ -33,61 +32,36 @@ export class DefaultHttpBackend implements HttpBackend {
     parseBody: boolean,
     guards: NormalizedGuard[]
   ) {
-    let errorHandler: ControllerErrorHandler;
-    let ctrl: any;
-    let preparedGuards: { guard: CanActivate; params?: any[] }[] = [];
+    req.nodeRes.setHeader('Server', this.rootMetadata.serverName);
+    req.pathParamsArr = pathParamsArr;
+    const pathParams: AnyObj = pathParamsArr ? {} : undefined;
+    pathParamsArr?.forEach((param) => (pathParams[param.key] = param.value));
+    req.pathParams = pathParams;
 
-    try {
-      req.nodeRes.setHeader('Server', this.rootMetadata.serverName);
-      req.pathParamsArr = pathParamsArr;
-      const pathParams: AnyObj = pathParamsArr ? {} : undefined;
-      pathParamsArr?.forEach((param) => (pathParams[param.key] = param.value));
-      req.pathParams = pathParams;
+    const preparedGuards: { guard: CanActivate; params?: any[] }[] = guards.map((item) => {
+      return {
+        guard: req.injector.get(item.guard),
+        params: item.params,
+      };
+    });
+    const ctrl = req.injector.get(controller);
 
-      errorHandler = req.injector.get(ControllerErrorHandler);
-      preparedGuards = guards.map((item) => {
-        return {
-          guard: req.injector.get(item.guard),
-          params: item.params,
-        };
-      });
-      ctrl = req.injector.get(controller);
-    } catch (err) {
-      this.sendInternalServerError(req.nodeRes, err);
-      return;
+    for (const item of preparedGuards) {
+      const canActivate = await item.guard.canActivate(item.params);
+      if (canActivate !== true) {
+        const status = typeof canActivate == 'number' ? canActivate : undefined;
+        this.canNotActivateRoute(req.nodeReq, req.nodeRes, status);
+        return;
+      }
     }
 
-    try {
-      for (const item of preparedGuards) {
-        const canActivate = await item.guard.canActivate(item.params);
-        if (canActivate !== true) {
-          const status = typeof canActivate == 'number' ? canActivate : undefined;
-          this.canNotActivateRoute(req.nodeReq, req.nodeRes, status);
-          return;
-        }
-      }
-
-      req.queryParams = parse(queryString);
-      if (parseBody) {
-        const bodyParser = req.injector.get(BodyParser) as BodyParser;
-        req.body = await bodyParser.getBody();
-      }
-
-      await ctrl[methodName]();
-    } catch (err) {
-      errorHandler.handleError(err);
+    req.queryParams = parse(queryString);
+    if (parseBody) {
+      const bodyParser = req.injector.get(BodyParser) as BodyParser;
+      req.body = await bodyParser.getBody();
     }
-  }
 
-  /**
-   * Logs an error and sends the user message about an internal server error (500).
-   *
-   * @param err An error to logs it (not sends).
-   */
-  protected sendInternalServerError(nodeRes: NodeResponse, err: Error) {
-    this.log.error(err);
-    nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
-    nodeRes.end();
+    await ctrl[methodName]();
   }
 
   protected canNotActivateRoute(nodeReq: NodeRequest, nodeRes: NodeResponse, status?: Status) {

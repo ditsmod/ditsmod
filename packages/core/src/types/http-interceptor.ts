@@ -16,6 +16,10 @@ export interface HttpInterceptor {
   intercept(req: Request, next?: HttpHandler, ...args: any[]): Promise<any>;
 }
 
+export abstract class HttpFrontend implements HttpInterceptor {
+  abstract intercept(req: Request, next?: HttpHandler, ...args: any[]): Promise<any>;
+}
+
 /**
  * `HttpHandler` is injectable. When injected, the handler instance dispatches requests to the
  * first interceptor in the chain, which dispatches to the second, etc, eventually reaching the
@@ -30,7 +34,7 @@ export abstract class HttpHandler {
 /**
  * A final `HttpHandler` which will dispatch the request to `DefaultHttpBackend`.
  *
- * Interceptors sit between the `NodeRequest` interface and the `HttpBackend`.
+ * Interceptors sit between the `DefaultHttpFrontend` and the `HttpBackend`.
  *
  * When injected, `HttpBackend` dispatches requests directly to the backend, without going
  * through the interceptor chain.
@@ -51,11 +55,12 @@ export abstract class HttpBackend implements HttpHandler {
 export class HttpInterceptorsChain {
   private chain: HttpHandler | null = null;
 
-  constructor(private backend: HttpBackend, private injector: Injector) {}
+  constructor(private frontend: HttpFrontend, private backend: HttpBackend, private injector: Injector) {}
 
   getChain() {
     if (this.chain === null) {
-      const interceptors = this.injector.get(HTTP_INTERCEPTORS, []);
+      const interceptors = this.injector.get(HTTP_INTERCEPTORS, []).slice();
+      interceptors.unshift(this.frontend);
       this.chain = interceptors.reduceRight(
         (next, interceptor) => new HttpInterceptorHandler(next, interceptor),
         this.backend
@@ -68,7 +73,7 @@ export class HttpInterceptorsChain {
 export class HttpInterceptorHandler implements HttpHandler {
   constructor(private next: HttpHandler, private interceptor: HttpInterceptor) {}
 
-  handle(req: Request, ...args: any[]): Promise<any> {
-    return this.interceptor.intercept(req, this.next, ...args);
+  async handle(req: Request, ...args: any[]): Promise<any> {
+    await this.interceptor.intercept(req, this.next, ...args);
   }
 }
