@@ -241,7 +241,7 @@ curl -isS localhost:8080
 [6]: https://github.com/trentm/node-bunyan
 [7]: https://github.com/pinojs/pino
 
-[100]: https://github.com/ditsmod/core/tree/master/examples
+[100]: https://github.com/ditsmod/core/tree/main/examples
 [101]: ./README.md#інжектори-di
 [102]: ./README.md#експорт-провайдерів-із-кореневого-модуля
 [103]: ./README.md#guards
