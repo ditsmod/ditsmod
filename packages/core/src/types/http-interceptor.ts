@@ -17,8 +17,6 @@ export interface HttpInterceptor {
 }
 
 /**
- * Transforms an `NodeRequest` into a Promise which will likely be a `NodeResponse`.
- *
  * `HttpHandler` is injectable. When injected, the handler instance dispatches requests to the
  * first interceptor in the chain, which dispatches to the second, etc, eventually reaching the
  * `HttpBackend`.
@@ -30,9 +28,9 @@ export abstract class HttpHandler {
 }
 
 /**
- * A final `HttpHandler` which will dispatch the request via browser HTTP APIs to a backend.
+ * A final `HttpHandler` which will dispatch the request to `DefaultHttpBackend`.
  *
- * Interceptors sit between the `HttpClient` interface and the `HttpBackend`.
+ * Interceptors sit between the `NodeRequest` interface and the `HttpBackend`.
  *
  * When injected, `HttpBackend` dispatches requests directly to the backend, without going
  * through the interceptor chain.
@@ -48,7 +46,6 @@ export abstract class HttpBackend implements HttpHandler {
  * The interceptors are loaded lazily from the injector, to allow
  * interceptors to themselves inject classes depending indirectly
  * on `HttpInterceptorsChain` itself.
- * @see `HttpInterceptor`
  */
 @Injectable()
 export class HttpInterceptorsChain {
@@ -68,9 +65,6 @@ export class HttpInterceptorsChain {
   }
 }
 
-/**
- * `HttpHandler` which applies an `HttpInterceptor` to an `NodeRequest`.
- */
 export class HttpInterceptorHandler implements HttpHandler {
   constructor(private next: HttpHandler, private interceptor: HttpInterceptor) {}
 
