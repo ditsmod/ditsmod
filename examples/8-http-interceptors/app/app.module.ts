@@ -6,9 +6,7 @@ import { MyHttpInterceptor } from './my-http-interceptor';
 
 @RootModule({
   controllers: [HelloWorldController],
-  providersPerApp: [
-    { provide: Router, useClass: DefaultRouter },
-    { provide: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true },
-  ],
+  providersPerApp: [{ provide: Router, useClass: DefaultRouter }],
+  providersPerReq: [{ provide: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
 })
 export class AppModule {}
