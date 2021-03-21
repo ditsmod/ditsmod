@@ -31,9 +31,5 @@ export interface RouteData {
    * By default, any user can activate.
    */
   guards: NormalizedGuard[];
-  /**
-   * First HTTP handler in the chain of HTTP interceptors.
-   */
-  chain: HttpHandler;
   decoratorMetadata: DecoratorMetadata;
 }

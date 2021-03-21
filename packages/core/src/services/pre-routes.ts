@@ -5,7 +5,6 @@ import { RouteMetadata } from '../decorators/route';
 import { BodyParserConfig } from '../models/body-parser-config';
 import { ExtensionMetadata } from '../types/extension-metadata';
 import { GuardItem } from '../types/guard-item';
-import { HttpInterceptorsChain } from '../types/http-interceptor';
 import { NormalizedGuard } from '../types/normalized-guard';
 import { RouteData } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
@@ -50,11 +49,7 @@ export class PreRoutes {
           const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
 
-          const httpInterceptorsChain = injectorPerReq.get(HttpInterceptorsChain) as HttpInterceptorsChain;
-          const chain = httpInterceptorsChain.getChain();
-
           routesData.push({
-            chain,
             decoratorMetadata,
             controller,
             methodName,

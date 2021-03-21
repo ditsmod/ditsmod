@@ -49,15 +49,15 @@ export abstract class HttpBackend implements HttpHandler {
  *
  * The interceptors are loaded lazily from the injector, to allow
  * interceptors to themselves inject classes depending indirectly
- * on `HttpInterceptorsChain` itself.
+ * on `HttpInterceptingHandler` itself.
  */
 @Injectable()
-export class HttpInterceptorsChain {
+export class HttpInterceptingHandler implements HttpHandler {
   private chain: HttpHandler | null = null;
 
   constructor(private frontend: HttpFrontend, private backend: HttpBackend, private injector: Injector) {}
 
-  getChain() {
+  handle(req: Request, ...args: any[]): Promise<any> {
     if (this.chain === null) {
       const interceptors = this.injector.get(HTTP_INTERCEPTORS, []).slice();
       interceptors.unshift(this.frontend);
@@ -66,7 +66,7 @@ export class HttpInterceptorsChain {
         this.backend
       );
     }
-    return this.chain;
+    return this.chain.handle(req, ...args);
   }
 }
 

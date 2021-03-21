@@ -2,6 +2,7 @@ import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { Extension } from '../types/extension';
 import { ExtensionsMap } from '../types/extensions-map';
+import { HttpHandler } from '../types/http-interceptor';
 import { HttpMethod } from '../types/http-method';
 import { Logger } from '../types/logger';
 import { RouteData } from '../types/route-data';
@@ -72,11 +73,10 @@ export class PreRouter implements Extension {
 
     routesData.forEach((routeData) => {
       /**
-       * @param chain First HTTP handler in the chain of HTTP interceptors.
        * @param injector Injector per module that tied to the route.
        * @param providers Resolved providers per request.
        */
-      const { chain, route, injector, providers, controller, methodName, parseBody, guards } = routeData;
+      const { route, injector, providers, controller, methodName, parseBody, guards } = routeData;
 
       const handle = (async (nodeReq: NodeRequest, nodeRes: NodeResponse, params: PathParam[], queryString: any) => {
         const injector1 = injector.resolveAndCreateChild([
@@ -86,6 +86,8 @@ export class PreRouter implements Extension {
         const injector2 = injector1.createChildFromResolved(providers);
         const req = injector2.get(Request) as Request;
 
+        // First HTTP handler in the chain of HTTP interceptors.
+        const chain = injector2.get(HttpHandler) as HttpHandler;
         await chain.handle(req, params, queryString, controller, methodName, parseBody, guards);
       }) as RouteHandler;
 
