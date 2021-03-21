@@ -8,4 +8,9 @@ export class HelloWorldController {
   tellHello() {
     this.res.send('Hello World!\n');
   }
+
+  @Route('GET', 'throw-error')
+  throwError() {
+    throw new Error('some error here!');
+  }
 }
