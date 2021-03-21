@@ -16,9 +16,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
       .then(() => {
         // You can to do something after.
       })
-      .catch((err) => {
-        this.log.error(err);
-      });
+      .catch((err) => this.log.error(err));
 
     return promise;
   }
