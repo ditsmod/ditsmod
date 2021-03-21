@@ -49,10 +49,10 @@ export abstract class HttpBackend implements HttpHandler {
  *
  * The interceptors are loaded lazily from the injector, to allow
  * interceptors to themselves inject classes depending indirectly
- * on `HttpInterceptingHandler` itself.
+ * on `DefaultHttpHandler` itself.
  */
 @Injectable()
-export class HttpInterceptingHandler implements HttpHandler {
+export class DefaultHttpHandler implements HttpHandler {
   private chain: HttpHandler | null = null;
 
   constructor(private frontend: HttpFrontend, private backend: HttpBackend, private injector: Injector) {}
