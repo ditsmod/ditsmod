@@ -16,6 +16,11 @@ export interface HttpInterceptor {
   intercept(req: Request, next?: HttpHandler, ...args: any[]): Promise<any>;
 }
 
+/**
+ * A first `HttpHandler` which will dispatch the request to next interceptor in the chain.
+ *
+ * Interceptors sit between the `HttpFrontend` and the `HttpBackend`.
+ */
 export abstract class HttpFrontend implements HttpInterceptor {
   abstract intercept(req: Request, next?: HttpHandler, ...args: any[]): Promise<any>;
 }
@@ -32,12 +37,12 @@ export abstract class HttpHandler {
 }
 
 /**
- * A final `HttpHandler` which will dispatch the request to `DefaultHttpBackend`.
+ * A final `HttpHandler` which will dispatch the request to controller's route method.
  *
- * Interceptors sit between the `DefaultHttpFrontend` and the `HttpBackend`.
+ * Interceptors sit between the `HttpFrontend` and the `HttpBackend`.
  *
- * When injected, `HttpBackend` dispatches requests directly to the backend, without going
- * through the interceptor chain.
+ * When injected in an interceptor, `HttpBackend` can dispatches requests directly to
+ * controller's route method, without going through the next interceptors in the chain.
  */
 export abstract class HttpBackend implements HttpHandler {
   abstract handle(req: Request, ...args: any[]): Promise<any>;
