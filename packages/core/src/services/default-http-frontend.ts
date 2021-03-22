@@ -2,14 +2,14 @@ import { Injectable } from '@ts-stack/di';
 
 import { RootMetadata } from '../models/root-metadata';
 import { ControllerErrorHandler } from '../types/controller-error-handler';
-import { HttpHandler, HttpInterceptor } from '../types/http-interceptor';
+import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
 import { Logger } from '../types/logger';
 import { NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { Request } from './request';
 
 @Injectable()
-export class DefaultHttpFrontend implements HttpInterceptor {
+export class DefaultHttpFrontend implements HttpFrontend {
   constructor(protected log: Logger, protected rootMetadata: RootMetadata) {}
 
   intercept(req: Request, next: HttpHandler, ...args: any[]) {
