@@ -159,6 +159,9 @@ export class ModuleManager {
   }
 
   rollback() {
+    if (!this.oldMapId.size) {
+      throw new Error('It is forbidden for rollback() to an empty state.');
+    }
     this.mapId = this.oldMapId;
     this.map = this.oldMap;
     this.commit();
