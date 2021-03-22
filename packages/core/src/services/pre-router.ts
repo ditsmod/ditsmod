@@ -37,35 +37,6 @@ export class PreRouter implements Extension {
     await handle(nodeReq, nodeRes, params, queryString);
   };
 
-  // setRoute(req: Request, params: PathParam[], queryString: any) {
-  //   /**
-  //    * @param chain First HTTP handler in the chain of HTTP interceptors.
-  //    * @param injector Injector per module that tied to the route.
-  //    * @param providers Resolved providers per request.
-  //    * @param method Method of the class controller.
-  //    * @param parseBody Need or not to parse body.
-  //    */
-  //   const { route, injector, providers, controller, methodName, parseBody, guards } = routeData;
-
-  //   const path = this.getPath(prefix, route.path);
-
-  //   const logObj = {
-  //     moduleName,
-  //     httpMethod: route.httpMethod,
-  //     path,
-  //     guards,
-  //     handler: `${controller.name}.${methodName}()`,
-  //   };
-
-  //   if (!logObj.guards.length) {
-  //     delete logObj.guards;
-  //   }
-
-  //   this.log.debug(logObj);
-
-  //   return Promise.resolve();
-  // }
-
   protected setRoutes(moduleName: string, prefixPerApp: string, prefixPerMod: string, routesData: RouteData[]) {
     this.checkRoutePath(moduleName, prefixPerApp);
     this.checkRoutePath(moduleName, prefixPerMod);
