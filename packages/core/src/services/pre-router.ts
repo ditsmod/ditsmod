@@ -46,6 +46,8 @@ export class PreRouter implements Extension {
       /**
        * @param injector Injector per module that tied to the route.
        * @param providers Resolved providers per request.
+       * @param methodName Method of the class controller.
+       * @param parseBody Need or not to parse body.
        */
       const { route, injector, providers, controller, methodName, parseBody, guards } = routeData;
 
