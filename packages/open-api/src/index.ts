@@ -1,5 +1,1 @@
-import { OasObject } from '@ts-stack/open-api-spec';
-
-const oasObject = new OasObject;
-
-oasObject.paths['one'].$ref = '';
+export { OasRoute } from './decorators/oas-route';
