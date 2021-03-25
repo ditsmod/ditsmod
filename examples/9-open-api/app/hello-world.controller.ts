@@ -5,7 +5,7 @@ import { OasRoute } from '@ditsmod/open-api';
 export class HelloWorldController {
   constructor(private res: Response) {}
 
-  @OasRoute('posts', {
+  @OasRoute('posts', [], {
     get: {
       parameters: [
         { in: 'query', name: 'catId' },
@@ -21,10 +21,14 @@ export class HelloWorldController {
     },
   })
   getPosts() {
-    this.res.sendJson([]);
+    const posts = [
+      { postId: 1, postTitle: 'Some title', postBody: 'Here body' },
+      { postId: 2, postTitle: 'Some other title', postBody: 'Here other body' },
+    ];
+    this.res.sendJson(posts);
   }
 
-  @OasRoute('posts', {
+  @OasRoute('posts', [], {
     get: {
       parameters: [{ in: 'path', name: 'postId', required: true }],
       responses: {
@@ -38,6 +42,7 @@ export class HelloWorldController {
     },
   })
   getPost() {
-    this.res.sendJson({postId: 1, postTitle: 'Some title', postBody: 'Here body'});
+    const post = { postId: 1, postTitle: 'Some title', postBody: 'Here body' };
+    this.res.sendJson(post);
   }
 }

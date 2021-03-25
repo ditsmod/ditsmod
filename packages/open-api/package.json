@@ -22,10 +22,12 @@
     "@ts-stack/open-api-spec": "^3.1.0"
   },
   "devDependencies": {
-    "@ts-stack/di": "^1.1.0"
+    "@ts-stack/di": "^1.1.0",
+    "reflect-metadata": "^0.1.13"
   },
   "peerDependencies": {
     "@ditsmod/core": "^1.0.0-beta.3",
-    "@ts-stack/di": "^1.1.0"
+    "@ts-stack/di": "^1.1.0",
+    "reflect-metadata": "^0.1.13"
   }
 }
