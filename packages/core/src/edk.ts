@@ -18,3 +18,4 @@ export { ExtensionType } from './types/extension-type';
 export { RouteData } from './types/route-data';
 export { AppInitializer } from './services/app-initializer';
 export { ExtensionsMap } from './types/extensions-map';
+export { RouteMetadata } from './decorators/route';
