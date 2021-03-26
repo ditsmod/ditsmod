@@ -1,6 +1,6 @@
 import { edk, CanActivate, GuardItem } from '@ditsmod/core';
 import { makePropDecorator, Type } from '@ts-stack/di';
-import { PathItemObject } from '@ts-stack/open-api-spec';
+import { XPathItemObject } from '@ts-stack/open-api-spec';
 
 export type DecoratorGuardItem = Type<CanActivate> | [Type<CanActivate>, ...any[]];
 
@@ -8,7 +8,7 @@ export function keyOf<T extends Type<any>>(klass: T, property: keyof T['prototyp
   return { klass, property };
 }
 
-export type OasRouteDecoratorFactory = (path: string, guards: GuardItem[], pathItem: PathItemObject) => OasRouteDecorator;
+export type OasRouteDecoratorFactory = (path: string, guards: GuardItem[], pathItem: XPathItemObject) => OasRouteDecorator;
 
 export type OasRouteDecorator = <T>(
   target: edk.AnyObj,
@@ -23,10 +23,10 @@ export interface OasRouteDecoratorMetadata {
 export interface OasRouteMetadata {
   path: string;
   guards: GuardItem[];
-  pathItem: PathItemObject;
+  pathItem: XPathItemObject;
 }
 
-function oasRoute(path: string, guards: GuardItem[], pathItem: PathItemObject): OasRouteMetadata {
+function oasRoute(path: string, guards: GuardItem[], pathItem: XPathItemObject): OasRouteMetadata {
   return { path, guards, pathItem: pathItem };
 }
 
