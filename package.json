@@ -22,7 +22,8 @@
     "start5": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/5-nested-routes/main.ts",
     "start6": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/6-body-parser/main.ts",
     "start7": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/7-dynamically-composing-modules/main.ts",
-    "start8": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/8-http-interceptors/main.ts"
+    "start8": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/8-http-interceptors/main.ts",
+    "start9": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/9-open-api/main.ts"
   },
   "repository": {
     "type": "git",
