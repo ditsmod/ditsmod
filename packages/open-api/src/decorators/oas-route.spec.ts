@@ -21,7 +21,7 @@ describe('Route decorator', () => {
 
     const actualMeta = reflector.propMetadata(Controller1);
     const expectedMeta: OasRouteDecoratorMetadata = {
-      method: [{ path: '', guards: [], pathItemObject: { get: {} } }],
+      method: [{ path: '', guards: [], pathItem: { get: {} } }],
     };
     expect(actualMeta).toEqual(expectedMeta);
   });
@@ -35,7 +35,7 @@ describe('Route decorator', () => {
 
     const actualMeta = reflector.propMetadata(Controller1);
     const expectedMeta: OasRouteDecoratorMetadata = {
-      method: [{ path: '', guards: [], pathItemObject: { get: {}, post: {} } }],
+      method: [{ path: '', guards: [], pathItem: { get: {}, post: {} } }],
     };
     expect(actualMeta).toEqual(expectedMeta);
   });
@@ -58,7 +58,7 @@ describe('Route decorator', () => {
         {
           path: 'posts',
           guards: [Guard],
-          pathItemObject: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
+          pathItem: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
         },
       ],
     };
@@ -83,7 +83,7 @@ describe('Route decorator', () => {
         {
           path: 'posts',
           guards: [Guard, Guard],
-          pathItemObject: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
+          pathItem: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
         },
       ],
     };
@@ -118,7 +118,7 @@ describe('Route decorator', () => {
             [Guard, 'one', 123],
             [Guard, []],
           ],
-          pathItemObject: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
+          pathItem: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
         },
       ],
     };

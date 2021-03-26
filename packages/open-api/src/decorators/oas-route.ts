@@ -8,7 +8,7 @@ export function keyOf<T extends Type<any>>(klass: T, property: keyof T['prototyp
   return { klass, property };
 }
 
-export type OasRouteDecoratorFactory = (path: string, guards: GuardItem[], pathItemObject: PathItemObject) => OasRouteDecorator;
+export type OasRouteDecoratorFactory = (path: string, guards: GuardItem[], pathItem: PathItemObject) => OasRouteDecorator;
 
 export type OasRouteDecorator = <T>(
   target: edk.AnyObj,
@@ -23,11 +23,11 @@ export interface OasRouteDecoratorMetadata {
 export interface OasRouteMetadata {
   path: string;
   guards: GuardItem[];
-  pathItemObject: PathItemObject;
+  pathItem: PathItemObject;
 }
 
-function oasRoute(path: string, guards: GuardItem[], pathItemObject: PathItemObject): OasRouteMetadata {
-  return { path, guards, pathItemObject };
+function oasRoute(path: string, guards: GuardItem[], pathItem: PathItemObject): OasRouteMetadata {
+  return { path, guards, pathItem: pathItem };
 }
 
 export const OasRoute = makePropDecorator('OasRoute', oasRoute) as OasRouteDecoratorFactory;
