@@ -17,10 +17,9 @@ export class PreRouter implements Extension {
   constructor(protected injectorPerApp: ReflectiveInjector, protected router: Router, protected log: Logger) {}
 
   async init(prefixPerApp: string, extensionsMap: ExtensionsMap) {
-    let routesData: RouteData[];
     extensionsMap.forEach((extensionsMetadata) => {
       const preRoutes = this.injectorPerApp.resolveAndInstantiate(PreRoutes) as PreRoutes;
-      routesData = preRoutes.getRoutesData(extensionsMetadata);
+      const routesData = preRoutes.getRoutesData(extensionsMetadata);
       const { prefixPerMod, moduleMetadata } = extensionsMetadata;
       this.setRoutes(moduleMetadata.name, prefixPerApp, prefixPerMod, routesData);
     });
