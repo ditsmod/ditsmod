@@ -16,7 +16,7 @@
       "@ditsmod/body-parser": ["../packages/body-parser/src"],
       "@ditsmod/core": ["../packages/core/src"],
       "@ditsmod/router": ["../packages/router/src"],
-      "@ditsmod/open-api": ["../packages/open-api/src"],
+      "@ditsmod/openapi": ["../packages/openapi/src"],
     }
   },
   "include": ["./**/*"]

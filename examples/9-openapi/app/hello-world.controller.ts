@@ -1,5 +1,5 @@
 import { Controller, Response, Status } from '@ditsmod/core';
-import { OasRoute } from '@ditsmod/open-api';
+import { OasRoute } from '@ditsmod/openapi';
 
 @Controller()
 export class HelloWorldController {

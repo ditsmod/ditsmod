@@ -1,11 +1,11 @@
 import { RootModule, Router } from '@ditsmod/core';
 import { DefaultRouter } from '@ditsmod/router';
-import { OpenApiModule } from '@ditsmod/open-api';
+import { OpenapiModule } from '@ditsmod/openapi';
 
 import { HelloWorldController } from './hello-world.controller';
 
 @RootModule({
-  imports: [OpenApiModule],
+  imports: [OpenapiModule],
   controllers: [HelloWorldController],
   providersPerApp: [{ provide: Router, useClass: DefaultRouter }]
 })

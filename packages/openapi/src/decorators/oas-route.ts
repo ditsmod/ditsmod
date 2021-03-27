@@ -1,6 +1,6 @@
 import { edk, CanActivate, GuardItem } from '@ditsmod/core';
 import { makePropDecorator, Type } from '@ts-stack/di';
-import { XPathItemObject } from '@ts-stack/open-api-spec';
+import { XPathItemObject } from '@ts-stack/openapi-spec';
 
 export type DecoratorGuardItem = Type<CanActivate> | [Type<CanActivate>, ...any[]];
 
@@ -30,4 +30,7 @@ function oasRoute(path: string, guards: GuardItem[], pathItem: XPathItemObject):
   return { path, guards, pathItem: pathItem };
 }
 
+/**
+ * Open API Specification Route.
+ */
 export const OasRoute = makePropDecorator('OasRoute', oasRoute) as OasRouteDecoratorFactory;

@@ -1412,10 +1412,10 @@
   resolved "https://registry.yarnpkg.com/@ts-stack/di/-/di-1.1.0.tgz#80e485aa61ea9b1ffe089f3adb3c34ac6d8f5b07"
   integrity sha512-uJ0X7A+7mIxpPxihBQpLbKMNzee37zMoBj6qeBIyW0330+at+hYSiYN7Eg/0LEq54oYv2AomvFHEOUD5LKCCsw==
 
-"@ts-stack/open-api-spec@^3.1.1":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@ts-stack/open-api-spec/-/open-api-spec-3.1.1.tgz#7036eae27d3c257b342de9d8be46b44ea45fff40"
-  integrity sha512-nXw+B9OCKnBnXpjLxyq00/WcrslvADB0Lyfnx5gczBotYM4S/8OxWf71TPz/HsXc9ehSjLO00w8vrr03WYuxtQ==
+"@ts-stack/openapi-spec@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@ts-stack/openapi-spec/-/openapi-spec-3.1.0.tgz#66ed2d0c58b41ffcc9252c20d55c84b146336cc2"
+  integrity sha512-oxAxPU41/4Gi0jAm5ffhUhWMEBvUXjW0Bhyiu4D9/33fruczQPIqawEjcCGbB/5+RUtEhPw+e3fT/0m3U29MIQ==
 
 "@types/accepts@*":
   version "1.3.5"
