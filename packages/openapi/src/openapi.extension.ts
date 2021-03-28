@@ -3,6 +3,7 @@ import {
   BodyParserConfig,
   edk,
   HttpHandler,
+  HttpMethod,
   Logger,
   NodeReqToken,
   NodeRequest,
@@ -14,8 +15,9 @@ import {
   Router,
   Status,
 } from '@ditsmod/core';
+import { ReferenceObject, XParameterObject } from '@ts-stack/openapi-spec';
 
-import { PreRoutes } from './pre-routes';
+import { PreRoutes } from './services/pre-routes';
 import { OasRouteData } from './types/oas-route-data';
 
 @Injectable()
@@ -43,34 +45,41 @@ export class OpenapiExtension implements edk.Extension {
        * @param methodName Method of the class controller.
        * @param parseBody Need or not to parse body.
        */
-      const { httpMethods, path: routePath, injector, providers, controller, methodName, guards } = routeData;
+      const {
+        httpMethod: lowCaseHttpMethods,
+        path: routePath,
+        parameters,
+        injector,
+        providers,
+        controller,
+        methodName,
+        guards,
+      } = routeData;
+      const httpMethod = lowCaseHttpMethods.toUpperCase() as HttpMethod;
 
-      httpMethods.forEach((httpMethod) => {
-        const injectorPerReq = injector.createChildFromResolved(providers);
-        const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
-        const parseBody = bodyParserConfig.acceptMethods.includes(httpMethod);
+      const injectorPerReq = injector.createChildFromResolved(providers);
+      const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
+      const parseBody = bodyParserConfig.acceptMethods.includes(httpMethod);
 
-        const handle = (async (nodeReq: NodeRequest, nodeRes: NodeResponse, params: PathParam[], queryString: any) => {
-          const injector1 = injector.resolveAndCreateChild([
-            { provide: NodeReqToken, useValue: nodeReq },
-            { provide: NodeResToken, useValue: nodeRes },
-          ]);
-          const injector2 = injector1.createChildFromResolved(providers);
-          const req = injector2.get(Request) as Request;
+      const handle = (async (nodeReq: NodeRequest, nodeRes: NodeResponse, params: PathParam[], queryString: any) => {
+        const injector1 = injector.resolveAndCreateChild([
+          { provide: NodeReqToken, useValue: nodeReq },
+          { provide: NodeResToken, useValue: nodeRes },
+        ]);
+        const injector2 = injector1.createChildFromResolved(providers);
+        const req = injector2.get(Request) as Request;
 
-          // First HTTP handler in the chain of HTTP interceptors.
-          const chain = injector2.get(HttpHandler) as HttpHandler;
-          await chain.handle(req, params, queryString, controller, methodName, parseBody, guards);
-        }) as RouteHandler;
+        // First HTTP handler in the chain of HTTP interceptors.
+        const chain = injector2.get(HttpHandler) as HttpHandler;
+        await chain.handle(req, params, queryString, controller, methodName, parseBody, guards);
+      }) as RouteHandler;
+      const path = this.getPath(prefix, routePath, parameters);
 
-        const path = this.getPath(prefix, routePath);
-
-        if (httpMethod == 'ALL') {
-          this.router.all(`/${path}`, handle);
-        } else {
-          this.router.on(httpMethod, `/${path}`, handle);
-        }
-      });
+      if (httpMethod == 'ALL') {
+        this.router.all(`/${path}`, handle);
+      } else {
+        this.router.on(httpMethod, `/${path}`, handle);
+      }
     });
   }
 
@@ -89,7 +98,16 @@ export class OpenapiExtension implements edk.Extension {
    * - If prefix `/api/posts/:postId` and route path `:postId`, this method returns path `/api/posts/:postId`.
    * - If prefix `/api/posts` and route path `:postId`, this method returns `/api/posts/:postId`
    */
-  protected getPath(prefix: string, path: string) {
+  protected getPath(prefix: string, path: string, parameters: (ReferenceObject | XParameterObject<any>)[]) {
+    const parameterObjects = (parameters || []).filter((p) => !p.$ref) as XParameterObject[];
+    const pathParams = parameterObjects
+      .filter((p) => p.in == 'path')
+      .map((p) => p.name)
+      .join('/:');
+
+    if (pathParams) {
+      path = `${path}/:${pathParams}`;
+    }
     const prefixLastPart = prefix?.split('/').slice(-1)[0];
     if (prefixLastPart?.charAt(0) == ':') {
       const reducedPrefix = prefix?.split('/').slice(0, -1).join('/');

@@ -1,14 +1,16 @@
 import { ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-stack/di';
 import { edk, HttpMethod } from '@ditsmod/core';
+import { ReferenceObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 export interface OasRouteData {
   path: string;
+  parameters: (ReferenceObject | XParameterObject<any>)[];
   controller: edk.ControllerType;
   /**
    * The controller's method name.
    */
   methodName: string;
-  httpMethods: HttpMethod[];
+  httpMethod: HttpMethod;
   /**
    * Resolved providers per request.
    */

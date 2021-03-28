@@ -1,8 +1,8 @@
 import { Injectable, Provider, ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider } from '@ts-stack/di';
 import { edk, GuardItem, HttpMethod } from '@ditsmod/core';
 
-import { isOasRoute } from './utils/type-guards';
-import { OasRouteData } from './types/oas-route-data';
+import { isOasRoute } from '../utils/type-guards';
+import { OasRouteData } from '../types/oas-route-data';
 
 @Injectable()
 export class PreRoutes {
@@ -32,9 +32,7 @@ export class PreRoutes {
           }
           const route = decoratorMetadata.value;
           const ctrlDecorValue = ctrlDecorValues.find(edk.isController);
-          const httpMethods = Object.keys(route.pathItem)
-            .filter((key) => allHttpMethods.includes(key))
-            .map((m) => m.toUpperCase()) as HttpMethod[];
+          const httpMethods = Object.keys(route.pathItem).filter((key) => allHttpMethods.includes(key)) as HttpMethod[];
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
           const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(
             name,
@@ -44,15 +42,18 @@ export class PreRoutes {
             guards
           );
 
-          routesData.push({
-            path: route.path,
-            decoratorMetadata,
-            controller,
-            methodName,
-            httpMethods,
-            providers: resolvedProvidersPerReq,
-            injector: injectorPerMod,
-            guards,
+          httpMethods.forEach((httpMethod) => {
+            routesData.push({
+              path: route.path,
+              parameters: route.pathItem[httpMethod].parameters,
+              decoratorMetadata,
+              controller,
+              methodName,
+              httpMethod,
+              providers: resolvedProvidersPerReq,
+              injector: injectorPerMod,
+              guards,
+            });
           });
         }
       }
