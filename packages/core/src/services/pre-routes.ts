@@ -1,7 +1,6 @@
 import { Injectable, Provider, ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider } from '@ts-stack/di';
 
 import { ControllerMetadata } from '../decorators/controller';
-import { RouteMetadata } from '../decorators/route';
 import { BodyParserConfig } from '../models/body-parser-config';
 import { ExtensionMetadata } from '../types/extension-metadata';
 import { GuardItem } from '../types/guard-item';
@@ -36,18 +35,17 @@ export class PreRoutes {
           }
           const route = decoratorMetadata.value;
           const ctrlDecorValue = ctrlDecorValues.find(isController);
+          const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
           const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(
             name,
-            guardsPerMod,
             controller,
             ctrlDecorValue,
             methodName,
-            route
+            guards
           );
           const injectorPerReq = injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
           const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
           const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
-          const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
 
           routesData.push({
             decoratorMetadata,
@@ -93,19 +91,12 @@ export class PreRoutes {
 
   protected getResolvedProvidersPerReq(
     moduleName: string,
-    guardsPerMod: NormalizedGuard[],
     Ctrl: TypeProvider,
     controllerMetadata: ControllerMetadata,
     methodName: string,
-    route: RouteMetadata
+    normalizedGuards: NormalizedGuard[]
   ) {
-    const guards = [...guardsPerMod.map((n) => n.guard), ...route.guards].map((item) => {
-      if (Array.isArray(item)) {
-        return item[0];
-      } else {
-        return item;
-      }
-    });
+    const guards = normalizedGuards.map((item) => item.guard);
 
     for (const Guard of guards) {
       const type = typeof Guard?.prototype.canActivate;
