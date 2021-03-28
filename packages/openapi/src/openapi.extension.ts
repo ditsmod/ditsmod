@@ -10,8 +10,8 @@ export class OpenapiExtension implements edk.Extension {
   async init(prefixPerApp: string, extensionsMap: edk.ExtensionsMap) {
     extensionsMap.forEach((extensionsMetadata) => {
       const preRoutes = this.injectorPerApp.resolveAndInstantiate(PreRoutes) as PreRoutes;
-      const routesData = preRoutes.getRoutesData(extensionsMetadata);
-      this.log.info(routesData);
+      const oasRoutesData = preRoutes.getRoutesData(extensionsMetadata);
+      this.log.info(oasRoutesData);
     });
 
     this.log.info('OpenApiExtension inited');

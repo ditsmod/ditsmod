@@ -1,7 +1,8 @@
 import { Injectable, Provider, ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider } from '@ts-stack/di';
-import { BodyParserConfig, edk, GuardItem } from '@ditsmod/core';
+import { BodyParserConfig, edk, GuardItem, HttpMethod } from '@ditsmod/core';
 
 import { isOasRoute } from './utils/type-guards';
+import { OasRouteData } from './types/oas-route-data';
 
 @Injectable()
 export class PreRoutes {
@@ -20,7 +21,8 @@ export class PreRoutes {
 
     this.providersPerReq = providersPerReq;
     this.initProvidersPerReq();
-    const routesData: edk.RouteData[] = [];
+    const allHttpMethods = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
+    const routesData: OasRouteData[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
@@ -30,28 +32,33 @@ export class PreRoutes {
           }
           const route = decoratorMetadata.value;
           const ctrlDecorValue = ctrlDecorValues.find(edk.isController);
+          const httpMethods = Object.keys(route.pathItem)
+            .filter((key) => allHttpMethods.includes(key))
+            .map((m) => m.toUpperCase()) as HttpMethod[];
+          const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
           const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(
             name,
-            guardsPerMod,
             controller,
             ctrlDecorValue,
             methodName,
-            route
+            guards
           );
           const injectorPerReq = injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
           const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
-          const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
-          const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
 
-          routesData.push({
-            decoratorMetadata,
-            controller,
-            methodName,
-            route,
-            providers: resolvedProvidersPerReq,
-            injector: injectorPerMod,
-            parseBody,
-            guards,
+          httpMethods.forEach((httpMethod) => {
+            const parseBody = bodyParserConfig.acceptMethods.includes(httpMethod);
+
+            routesData.push({
+              decoratorMetadata,
+              controller,
+              methodName,
+              route,
+              providers: resolvedProvidersPerReq,
+              injector: injectorPerMod,
+              parseBody,
+              guards,
+            });
           });
         }
       }
@@ -87,20 +94,12 @@ export class PreRoutes {
 
   protected getResolvedProvidersPerReq(
     moduleName: string,
-    guardsPerMod: edk.NormalizedGuard[],
     Ctrl: TypeProvider,
     controllerMetadata: edk.ControllerMetadata,
     methodName: string,
-    route: edk.RouteMetadata
+    normalizedGuards: edk.NormalizedGuard[]
   ) {
-    const guards = [...guardsPerMod.map((n) => n.guard), ...route.guards].map((item) => {
-      if (Array.isArray(item)) {
-        return item[0];
-      } else {
-        return item;
-      }
-    });
-
+    const guards = normalizedGuards.map((item) => item.guard);
     for (const Guard of guards) {
       const type = typeof Guard?.prototype.canActivate;
       if (type != 'function') {
