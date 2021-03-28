@@ -19,3 +19,4 @@ export { RouteData } from './types/route-data';
 export { AppInitializer } from './services/app-initializer';
 export { ExtensionsMap } from './types/extensions-map';
 export { RouteMetadata } from './decorators/route';
+export { DecoratorMetadata } from './types/decorator-metadata';
