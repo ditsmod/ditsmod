@@ -1,15 +1,14 @@
 import { ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-stack/di';
-import { edk } from '@ditsmod/core';
-
-import { OasRouteMetadata } from '../decorators/oas-route';
+import { edk, HttpMethod } from '@ditsmod/core';
 
 export interface OasRouteData {
+  path: string;
   controller: edk.ControllerType;
   /**
    * The controller's method name.
    */
   methodName: string;
-  route: OasRouteMetadata;
+  httpMethods: HttpMethod[];
   /**
    * Resolved providers per request.
    */
@@ -18,10 +17,6 @@ export interface OasRouteData {
    * Injector per a module.
    */
   injector: ReflectiveInjector;
-  /**
-   * Need or not parse body.
-   */
-  parseBody: boolean;
   /**
    * An array of DI tokens used to look up `CanActivate()` handlers,
    * in order to determine if the current user is allowed to activate the controller.

@@ -1,5 +1,5 @@
 import { Injectable, Provider, ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider } from '@ts-stack/di';
-import { BodyParserConfig, edk, GuardItem, HttpMethod } from '@ditsmod/core';
+import { edk, GuardItem, HttpMethod } from '@ditsmod/core';
 
 import { isOasRoute } from './utils/type-guards';
 import { OasRouteData } from './types/oas-route-data';
@@ -43,22 +43,16 @@ export class PreRoutes {
             methodName,
             guards
           );
-          const injectorPerReq = injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
-          const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
 
-          httpMethods.forEach((httpMethod) => {
-            const parseBody = bodyParserConfig.acceptMethods.includes(httpMethod);
-
-            routesData.push({
-              decoratorMetadata,
-              controller,
-              methodName,
-              route,
-              providers: resolvedProvidersPerReq,
-              injector: injectorPerMod,
-              parseBody,
-              guards,
-            });
+          routesData.push({
+            path: route.path,
+            decoratorMetadata,
+            controller,
+            methodName,
+            httpMethods,
+            providers: resolvedProvidersPerReq,
+            injector: injectorPerMod,
+            guards,
           });
         }
       }
