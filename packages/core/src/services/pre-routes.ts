@@ -24,7 +24,7 @@ export class PreRoutes {
     const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
 
     this.providersPerReq = providersPerReq;
-    this.initProvidersPerReq();
+    this.resolveProvidersPerReq();
     const routesData: RouteData[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
       for (const methodName in methods) {
@@ -65,9 +65,9 @@ export class PreRoutes {
   }
 
   /**
-   * Init providers per the request.
+   * Resolve providers per the request.
    */
-  protected initProvidersPerReq() {
+  protected resolveProvidersPerReq() {
     this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.providersPerReq);
   }
 
@@ -76,7 +76,7 @@ export class PreRoutes {
    */
   protected unshiftProvidersPerReq(...providers: Provider[]) {
     this.providersPerReq.unshift(...providers);
-    this.initProvidersPerReq();
+    this.resolveProvidersPerReq();
   }
 
   protected normalizeGuards(guards: GuardItem[]) {
