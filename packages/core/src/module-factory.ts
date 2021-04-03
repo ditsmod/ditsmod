@@ -1,4 +1,4 @@
-import { Injectable, ReflectiveInjector, reflector } from '@ts-stack/di';
+import { Injectable, reflector } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ProvidersMetadata } from './models/providers-metadata';
@@ -15,7 +15,6 @@ import { NormalizedGuard } from './types/normalized-guard';
 import { NodeReqToken, NodeResToken } from './types/server-options';
 import { ServiceProvider } from './types/service-provider';
 import { getDuplicates } from './utils/get-duplicates';
-import { getModule } from './utils/get-module';
 import { getTokensCollisions } from './utils/get-tokens-collisions';
 import { getUniqProviders } from './utils/get-uniq-providers';
 import { NormalizedProvider, normalizeProviders } from './utils/ng-utils';
@@ -45,8 +44,6 @@ export class ModuleFactory {
   protected globalProviders: ProvidersMetadata;
   protected extensionMetadataMap = new Map<ModuleType | ModuleWithParams, ExtensionMetadata>();
   #moduleManager: ModuleManager;
-
-  constructor(protected injectorPerApp: ReflectiveInjector) {}
 
   /**
    * Called only by `@RootModule` before called `ModuleFactory#boostrap()`.
@@ -90,10 +87,6 @@ export class ModuleFactory {
     this.meta = meta;
     this.importModules();
     this.mergeProviders(meta);
-
-    const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(this.meta.providersPerMod);
-    const mod = getModule(meta.module);
-    injectorPerMod.resolveAndInstantiate(mod); // Only check DI resolvable
     const controllersMetadata = this.getControllersMetadata();
 
     return this.extensionMetadataMap.set(modOrObj, {
@@ -173,7 +166,7 @@ export class ModuleFactory {
     for (const imp of this.meta.importsModules) {
       const meta = this.#moduleManager.getMetadata(imp, true);
       this.importProviders(meta, true);
-      const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+      const moduleFactory = new ModuleFactory();
       const extensionMetadataMap = moduleFactory.bootstrap(
         this.globalProviders,
         this.prefixPerMod,
@@ -190,7 +183,7 @@ export class ModuleFactory {
       const normalizedGuardsPerMod = this.normalizeGuards(imp.guards);
       this.checkGuardsPerMod(normalizedGuardsPerMod);
       const guardsPerMod = [...this.guardsPerMod, ...normalizedGuardsPerMod];
-      const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+      const moduleFactory = new ModuleFactory();
       const extensionMetadataMap = moduleFactory.bootstrap(
         this.globalProviders,
         prefixPerMod,

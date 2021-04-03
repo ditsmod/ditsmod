@@ -1,29 +1,16 @@
 import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
-import { Extension } from '../types/extension';
-import { ExtensionsMap } from '../types/extensions-map';
 import { HttpHandler } from '../types/http-interceptor';
 import { HttpMethod } from '../types/http-method';
 import { Logger } from '../types/logger';
-import { RouteData } from '../types/route-data';
-import { PathParam, RouteHandler, Router } from '../types/router';
-import { NodeReqToken, NodeRequest, NodeResponse, NodeResToken, RequestListener } from '../types/server-options';
+import { BaseRouteData, PreparedRouteData } from '../types/route-data';
+import { PATH_PARAMS, QUERY_STRING, RouteHandler, Router } from '../types/router';
+import { NodeReqToken, NodeResponse, NodeResToken, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
-import { PreRoutes } from './pre-routes';
-import { Request } from './request';
 
 @Injectable()
-export class PreRouter implements Extension {
+export class PreRouter {
   constructor(protected injectorPerApp: ReflectiveInjector, protected router: Router, protected log: Logger) {}
-
-  async init(prefixPerApp: string, extensionsMap: ExtensionsMap) {
-    extensionsMap.forEach((extensionsMetadata) => {
-      const preRoutes = this.injectorPerApp.resolveAndInstantiate(PreRoutes) as PreRoutes;
-      const routesData = preRoutes.getRoutesData(extensionsMetadata);
-      const { prefixPerMod, moduleMetadata } = extensionsMetadata;
-      this.setRoutes(moduleMetadata.name, prefixPerApp, prefixPerMod, routesData);
-    });
-  }
 
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
     const { method: httpMethod, url } = nodeReq;
@@ -36,39 +23,56 @@ export class PreRouter implements Extension {
     await handle(nodeReq, nodeRes, params, queryString);
   };
 
-  protected setRoutes(moduleName: string, prefixPerApp: string, prefixPerMod: string, routesData: RouteData[]) {
-    this.checkRoutePath(moduleName, prefixPerApp);
-    this.checkRoutePath(moduleName, prefixPerMod);
-    const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
+  prepareAndSetRoutes(baseRoutesData: BaseRouteData[]) {
+    const preparedRouteData: PreparedRouteData[] = [];
 
-    routesData.forEach((routeData) => {
-      /**
-       * @param injector Injector per module that tied to the route.
-       * @param providers Resolved providers per request.
-       * @param methodName Method of the class controller.
-       * @param parseBody Need or not to parse body.
-       */
-      const { route, injector, providers, controller, methodName, parseBody, guards } = routeData;
+    baseRoutesData.forEach((baseRouteData) => {
+      const {
+        httpMethod,
+        path,
+        providersPerMod,
+        providersPerRoute,
+        providersPerReq,
+        moduleName,
+        prefixPerApp,
+        prefixPerMod,
+      } = baseRouteData;
+      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+      const inj1 = injectorPerMod.resolveAndCreateChild(providersPerRoute);
+      const providers = ReflectiveInjector.resolve(providersPerReq);
 
-      const handle = (async (nodeReq: NodeRequest, nodeRes: NodeResponse, params: PathParam[], queryString: any) => {
-        const injector1 = injector.resolveAndCreateChild([
+      const handle = (async (nodeReq, nodeRes, params, queryString) => {
+        const inj2 = inj1.resolveAndCreateChild([
           { provide: NodeReqToken, useValue: nodeReq },
           { provide: NodeResToken, useValue: nodeRes },
+          { provide: PATH_PARAMS, useValue: params },
+          { provide: QUERY_STRING, useValue: queryString },
         ]);
-        const injector2 = injector1.createChildFromResolved(providers);
-        const req = injector2.get(Request) as Request;
+        const inj3 = inj2.createChildFromResolved(providers);
 
         // First HTTP handler in the chain of HTTP interceptors.
-        const chain = injector2.get(HttpHandler) as HttpHandler;
-        await chain.handle(req, params, queryString, controller, methodName, parseBody, guards);
+        const chain = inj3.get(HttpHandler) as HttpHandler;
+        await chain.handle();
       }) as RouteHandler;
 
-      const path = this.getPath(prefix, route.path);
+      preparedRouteData.push({ moduleName, prefixPerApp, prefixPerMod, httpMethod, path, handle });
+    });
 
-      if (route.httpMethod == 'ALL') {
+    this.setRoutes(preparedRouteData);
+  }
+
+  protected setRoutes(preparedRouteData: PreparedRouteData[]) {
+    preparedRouteData.forEach((data) => {
+      const { moduleName, prefixPerApp, prefixPerMod, path: rawPath, httpMethod, handle } = data;
+      this.checkRoutePath(moduleName, prefixPerApp);
+      this.checkRoutePath(moduleName, prefixPerMod);
+      const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
+      const path = this.getPath(prefix, rawPath);
+
+      if (httpMethod == 'ALL') {
         this.router.all(`/${path}`, handle);
       } else {
-        this.router.on(route.httpMethod, `/${path}`, handle);
+        this.router.on(httpMethod, `/${path}`, handle);
       }
     });
   }

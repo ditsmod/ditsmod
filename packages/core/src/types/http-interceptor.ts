@@ -8,12 +8,10 @@
 
 import { Injectable, InjectionToken, Injector } from '@ts-stack/di';
 
-import { Request } from '../services/request';
-
 export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INTERCEPTORS');
 
 export interface HttpInterceptor {
-  intercept(req: Request, next?: HttpHandler, ...args: any[]): Promise<any>;
+  intercept(next?: HttpHandler): Promise<any>;
 }
 
 /**
@@ -22,7 +20,7 @@ export interface HttpInterceptor {
  * Interceptors sit between the `HttpFrontend` and the `HttpBackend`.
  */
 export abstract class HttpFrontend implements HttpInterceptor {
-  abstract intercept(req: Request, next?: HttpHandler, ...args: any[]): Promise<any>;
+  abstract intercept(next?: HttpHandler): Promise<any>;
 }
 
 /**
@@ -33,7 +31,7 @@ export abstract class HttpFrontend implements HttpInterceptor {
  * In an `HttpInterceptor`, the `HttpHandler` parameter is the next interceptor in the chain.
  */
 export abstract class HttpHandler {
-  abstract handle(req: Request, ...args: any[]): Promise<any>;
+  abstract handle(): Promise<any>;
 }
 
 /**
@@ -45,7 +43,7 @@ export abstract class HttpHandler {
  * controller's route method, without going through the next interceptors in the chain.
  */
 export abstract class HttpBackend implements HttpHandler {
-  abstract handle(req: Request, ...args: any[]): Promise<any>;
+  abstract handle(): Promise<any>;
 }
 
 /**
@@ -62,7 +60,7 @@ export class DefaultHttpHandler implements HttpHandler {
 
   constructor(private frontend: HttpFrontend, private backend: HttpBackend, private injector: Injector) {}
 
-  handle(req: Request, ...args: any[]): Promise<any> {
+  handle(): Promise<any> {
     if (this.chain === null) {
       const interceptors = this.injector.get(HTTP_INTERCEPTORS, []).slice();
       interceptors.unshift(this.frontend);
@@ -71,14 +69,14 @@ export class DefaultHttpHandler implements HttpHandler {
         this.backend
       );
     }
-    return this.chain.handle(req, ...args);
+    return this.chain.handle();
   }
 }
 
 export class HttpInterceptorHandler implements HttpHandler {
   constructor(private next: HttpHandler, private interceptor: HttpInterceptor) {}
 
-  async handle(req: Request, ...args: any[]): Promise<any> {
-    await this.interceptor.intercept(req, this.next, ...args);
+  async handle(): Promise<any> {
+    await this.interceptor.intercept(this.next);
   }
 }

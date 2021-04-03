@@ -5,7 +5,6 @@ import * as http2 from 'http2';
 
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
-import { PreRouter } from './services/pre-router';
 import { Logger } from './types/logger';
 import { RootMetadata } from './models/root-metadata';
 import { ModuleType } from './types/module-type';
@@ -14,7 +13,6 @@ describe('Application', () => {
   class MockApplication extends Application {
     meta = new RootMetadata();
     log: Logger;
-    preRouter: PreRouter;
 
     checkSecureServerOption(appModule: ModuleType) {
       return super.checkSecureServerOption(appModule);
