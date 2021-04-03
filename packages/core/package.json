@@ -15,7 +15,8 @@
     "lib": "src"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc -b -f"
   },
   "dependencies": {
     "reflect-metadata": "^0.1.13"
