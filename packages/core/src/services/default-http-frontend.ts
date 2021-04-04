@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@ts-stack/di';
+import { parse } from 'querystring';
 
 import { ControllerErrorHandler } from '../types/controller-error-handler';
 import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
@@ -29,7 +30,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
     }
 
     try {
-      this.req.queryParams = this.queryString;
+      this.req.queryParams = parse(this.queryString);
       this.req.pathParamsArr = this.pathParamsArr;
       const pathParams: AnyObj = this.pathParamsArr?.length ? {} : undefined;
       this.pathParamsArr?.forEach((param) => (pathParams[param.key] = param.value));
