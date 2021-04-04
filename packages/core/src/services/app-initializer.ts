@@ -5,6 +5,7 @@ import { ProvidersMetadata } from '../models/providers-metadata';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleFactory } from '../module-factory';
 import { Extension } from '../types/extension';
+import { ExtensionType } from '../types/extension-type';
 import { ExtensionsMap, EXTENSIONS_MAP } from '../types/extensions-map';
 import { Logger } from '../types/logger';
 import { ModuleType } from '../types/module-type';
@@ -25,6 +26,11 @@ import { defaultProvidersPerApp } from './default-providers-per-app';
 import { defaultProvidersPerReq } from './default-providers-per-req';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
+
+interface MapedExtension {
+  extensionClass: ExtensionType;
+  injectorPerMod: ReflectiveInjector;
+}
 
 @Injectable()
 export class AppInitializer {
@@ -190,20 +196,34 @@ export class AppInitializer {
 
   protected async handleExtensionsAndSetRoutes(extensionsMap: ExtensionsMap) {
     this.applyExtensionsMap(extensionsMap);
-    const allExtensions = this.meta.extensions.slice();
-    for (const [, metadata] of extensionsMap) {
-      allExtensions.push(...metadata.moduleMetadata.extensions);
-    }
-
-    for (const Ext of allExtensions) {
-      this.log.debug(`start init ${Ext.name} extension`);
-      const extension = this.injectorPerApp.get(Ext) as Extension;
+    const mapedExtensions = this.mapExtensionsToInjectors(extensionsMap);
+    for (const mapedExtension of mapedExtensions) {
+      const { extensionClass, injectorPerMod } = mapedExtension;
+      this.log.debug(`start init ${extensionClass.name} extension`);
+      const extension = injectorPerMod.get(extensionClass) as Extension;
       await extension.init();
-      this.log.debug(`finish init ${Ext.name} extension`);
+      this.log.debug(`finish init ${extensionClass.name} extension`);
     }
 
     await this.preRouter.prepareAndSetRoutes();
-    this.log.debug(`Total extensions initialized: ${allExtensions.length}`);
+    this.log.debug(`Total extensions initialized: ${mapedExtensions.length}`);
+  }
+
+  protected mapExtensionsToInjectors(extensionsMap: ExtensionsMap) {
+    const mapedExtensions = this.meta.extensions.map((extensionClass) => {
+      return { extensionClass, injectorPerMod: this.injectorPerApp } as MapedExtension;
+    });
+
+    for (const [, metadata] of extensionsMap) {
+      const { providersPerMod, extensions } = metadata.moduleMetadata;
+      const mapedExtension = extensions.map((extensionClass) => {
+        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+        return { extensionClass, injectorPerMod } as MapedExtension;
+      });
+      mapedExtensions.push(...mapedExtension);
+    }
+
+    return mapedExtensions;
   }
 
   protected applyExtensionsMap(extensionsMap: ExtensionsMap) {
