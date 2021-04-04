@@ -70,8 +70,7 @@ export class PreRoutes implements Extension {
             guards,
             providersPerReq.slice()
           );
-          const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-          const parseBody = this.needBodyParse(injectorPerMod, allProvidersPerReq, route.httpMethod);
+          const parseBody = this.needBodyParse(providersPerMod, allProvidersPerReq, route.httpMethod);
           const routeData: RouteData = {
             decoratorMetadata,
             controller,
@@ -142,10 +141,11 @@ export class PreRoutes implements Extension {
    * Need or not to parse body of HTTP request.
    */
   protected needBodyParse(
-    injectorPerMod: ReflectiveInjector,
+    providersPerMod: ServiceProvider[],
     providersPerReq: ServiceProvider[],
     httpMethod: HttpMethod
   ) {
+    const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
     const injectorPerReq = injectorPerMod.resolveAndCreateChild(providersPerReq);
     const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
     return bodyParserConfig.acceptMethods.includes(httpMethod);
