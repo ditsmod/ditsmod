@@ -1,4 +1,3 @@
-import { InjectionToken } from '@ts-stack/di';
 import { RouteMetadata } from '../decorators/route';
 import { ControllerType } from './controller-type';
 import { DecoratorMetadata } from './decorator-metadata';
@@ -7,7 +6,7 @@ import { NormalizedGuard } from './normalized-guard';
 import { RouteHandler } from './router';
 import { ServiceProvider } from './service-provider';
 
-export class BaseRouteData {
+export class PreRouteMeta {
   moduleName: string;
   /**
    * Providers per a module.

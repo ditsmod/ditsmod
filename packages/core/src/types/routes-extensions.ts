@@ -1,10 +1,10 @@
 import { InjectionToken } from '@ts-stack/di';
 
 import { Extension } from './extension';
-import { BaseRouteData } from './route-data';
+import { PreRouteMeta } from './route-data';
 
-export abstract class RoutesExtension implements Extension<BaseRouteData[]> {
-  async init(): Promise<BaseRouteData[]> {
+export abstract class RoutesExtension implements Extension<PreRouteMeta[]> {
+  async init(): Promise<PreRouteMeta[]> {
     return;
   }
 }
