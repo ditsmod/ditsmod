@@ -15,6 +15,8 @@ import { isController, isRoute } from '../utils/type-guards';
 
 @Injectable()
 export class PreRoutes implements Extension {
+  #baseRoutesData: BaseRouteData[] = [];
+
   constructor(
     protected injectorPerApp: ReflectiveInjector,
     protected rootMetadata: RootMetadata,
@@ -22,19 +24,27 @@ export class PreRoutes implements Extension {
   ) {}
 
   async init() {
+    if (this.#baseRoutesData.length) {
+      return this.#baseRoutesData;
+    }
+
     const { prefixPerApp } = this.rootMetadata;
-    const allBaseRoutesData: BaseRouteData[] = [];
 
     this.extensionsMap.forEach((extensionsMetadata) => {
       const { prefixPerMod, moduleMetadata } = extensionsMetadata;
       const baseRoutesData = this.getRoutesData(moduleMetadata.name, prefixPerApp, prefixPerMod, extensionsMetadata);
-      allBaseRoutesData.push(...baseRoutesData);
+      this.#baseRoutesData.push(...baseRoutesData);
     });
 
-    return allBaseRoutesData;
+    return this.#baseRoutesData;
   }
 
-  getRoutesData(moduleName: string, prefixPerApp: string, prefixPerMod: string, extensionMetadata: ExtensionMetadata) {
+  protected getRoutesData(
+    moduleName: string,
+    prefixPerApp: string,
+    prefixPerMod: string,
+    extensionMetadata: ExtensionMetadata
+  ) {
     const {
       controllersMetadata,
       guardsPerMod,

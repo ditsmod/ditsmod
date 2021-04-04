@@ -5,12 +5,9 @@ import { ProvidersMetadata } from '../models/providers-metadata';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleFactory } from '../module-factory';
 import { Extension } from '../types/extension';
-import { ExtensionType } from '../types/extension-type';
 import { ExtensionsMap, EXTENSIONS_MAP } from '../types/extensions-map';
 import { Logger } from '../types/logger';
 import { ModuleType } from '../types/module-type';
-import { BaseRouteData, BASE_ROUTES_DATA } from '../types/route-data';
-import { ROUTES_EXTENSIONS } from '../types/routes-extensions';
 import { RequestListener } from '../types/server-options';
 import { ServiceProvider } from '../types/service-provider';
 import { getDuplicates } from '../utils/get-duplicates';
@@ -26,7 +23,6 @@ import { isRootModule } from '../utils/type-guards';
 import { defaultExtensions } from './default-extensions';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { defaultProvidersPerReq } from './default-providers-per-req';
-import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
 
@@ -193,27 +189,25 @@ export class AppInitializer {
   }
 
   protected async handleExtensionsAndSetRoutes(extensionsMap: ExtensionsMap) {
-    this.meta.providersPerApp.unshift({ provide: EXTENSIONS_MAP, useValue: extensionsMap });
-    this.createInjectorPerApp();
-    const extensionsManager = this.injectorPerApp.get(ExtensionsManager) as ExtensionsManager;
-    const baseRoutesData: BaseRouteData[] = await extensionsManager.init(ROUTES_EXTENSIONS);
-    const injectorForExtensions = this.injectorPerApp.resolveAndCreateChild([
-      { provide: BASE_ROUTES_DATA, useValue: baseRoutesData },
-    ]);
-
-    const allExtensions: ExtensionType[] = this.meta.extensions.slice();
+    this.applyExtensionsMap(extensionsMap);
+    const allExtensions = this.meta.extensions.slice();
     for (const [, metadata] of extensionsMap) {
       allExtensions.push(...metadata.moduleMetadata.extensions);
     }
 
     for (const Ext of allExtensions) {
       this.log.debug(`start init ${Ext.name} extension`);
-      const extension = injectorForExtensions.get(Ext) as Extension;
+      const extension = this.injectorPerApp.get(Ext) as Extension;
       await extension.init();
       this.log.debug(`finish init ${Ext.name} extension`);
     }
 
-    this.preRouter.prepareAndSetRoutes(baseRoutesData);
+    await this.preRouter.prepareAndSetRoutes();
     this.log.debug(`Total extensions initialized: ${allExtensions.length}`);
+  }
+
+  protected applyExtensionsMap(extensionsMap: ExtensionsMap) {
+    this.meta.providersPerApp.unshift({ provide: EXTENSIONS_MAP, useValue: extensionsMap });
+    this.createInjectorPerApp();
   }
 }

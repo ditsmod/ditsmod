@@ -25,5 +25,4 @@ export { ExtensionsMap } from './types/extensions-map';
 export { RouteMetadata } from './decorators/route';
 export { DecoratorMetadata } from './types/decorator-metadata';
 export { ROUTES_EXTENSIONS } from './types/routes-extensions';
-export { BASE_ROUTES_DATA } from './types/route-data';
 export { EXTENSIONS_MAP } from './types/extensions-map';

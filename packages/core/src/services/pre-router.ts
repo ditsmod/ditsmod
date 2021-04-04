@@ -5,12 +5,19 @@ import { HttpMethod } from '../types/http-method';
 import { Logger } from '../types/logger';
 import { BaseRouteData, PreparedRouteData } from '../types/route-data';
 import { PATH_PARAMS, QUERY_STRING, RouteHandler, Router } from '../types/router';
+import { ROUTES_EXTENSIONS } from '../types/routes-extensions';
 import { NodeReqToken, NodeResponse, NodeResToken, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
+import { ExtensionsManager } from './extensions-manager';
 
 @Injectable()
 export class PreRouter {
-  constructor(protected injectorPerApp: ReflectiveInjector, protected router: Router, protected log: Logger) {}
+  constructor(
+    protected injectorPerApp: ReflectiveInjector,
+    protected router: Router,
+    protected log: Logger,
+    protected extensionsManager: ExtensionsManager
+  ) {}
 
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
     const { method: httpMethod, url } = nodeReq;
@@ -23,7 +30,8 @@ export class PreRouter {
     await handle(nodeReq, nodeRes, params, queryString);
   };
 
-  prepareAndSetRoutes(baseRoutesData: BaseRouteData[]) {
+  async prepareAndSetRoutes() {
+    const baseRoutesData: BaseRouteData[] = await this.extensionsManager.init(ROUTES_EXTENSIONS);
     const preparedRouteData: PreparedRouteData[] = [];
 
     baseRoutesData.forEach((baseRouteData) => {

@@ -67,5 +67,3 @@ export interface PreparedRouteData {
   path: string;
   handle: RouteHandler;
 }
-
-export const BASE_ROUTES_DATA = new InjectionToken<BaseRouteData[]>('BASE_ROUTES_DATA');
