@@ -205,7 +205,8 @@ export class AppInitializer {
       this.log.debug(`finish init ${extensionClass.name} extension`);
     }
 
-    await this.preRouter.prepareAndSetRoutes();
+    const preparedRouteData = await this.preRouter.prepareAndSetRoutes();
+    this.preRouter.setRoutes(preparedRouteData);
     this.log.debug(`Total extensions initialized: ${mapedExtensions.length}`);
   }
 

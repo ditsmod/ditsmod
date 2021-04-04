@@ -66,10 +66,10 @@ export class PreRouter {
       preparedRouteData.push({ moduleName, prefixPerApp, prefixPerMod, httpMethod, path, handle });
     });
 
-    this.setRoutes(preparedRouteData);
+    return preparedRouteData;
   }
 
-  protected setRoutes(preparedRouteData: PreparedRouteData[]) {
+  setRoutes(preparedRouteData: PreparedRouteData[]) {
     preparedRouteData.forEach((data) => {
       const { moduleName, prefixPerApp, prefixPerMod, path: rawPath, httpMethod, handle } = data;
       this.checkRoutePath(moduleName, prefixPerApp);
