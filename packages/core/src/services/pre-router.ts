@@ -30,7 +30,7 @@ export class PreRouter {
     await handle(nodeReq, nodeRes, params, queryString);
   };
 
-  async prepareAndSetRoutes() {
+  async prepareRoutes() {
     const preRoutesMeta: PreRouteMeta[] = await this.extensionsManager.init(ROUTES_EXTENSIONS);
     const preparedRouteData: PreparedRouteData[] = [];
 
