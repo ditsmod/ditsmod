@@ -11,7 +11,7 @@ export { ControllerErrorHandler } from './types/controller-error-handler';
 export { BodyParserConfig } from './models/body-parser-config';
 export { BodyParser } from './services/body-parser';
 export { DefaultLogger } from './services/default-logger';
-export { Router } from './types/router';
+export { Router, PATH_PARAMS, QUERY_STRING } from './types/router';
 export { ServiceProvider } from './types/service-provider';
 export { HttpMethod } from './types/http-method';
 export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './utils/http-status-codes';

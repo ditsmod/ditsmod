@@ -1,42 +1,28 @@
 import { Injectable } from '@ts-stack/di';
-import { parse } from 'querystring';
 
 import { HttpBackend } from '../types/http-interceptor';
 import { Request } from './request';
-import { AnyObj } from '../types/any-obj';
 import { CanActivate } from '../types/can-activate';
-import { NormalizedGuard } from '../types/normalized-guard';
 import { BodyParser } from './body-parser';
-import { ControllerType } from '../types/controller-type';
-import { PathParam } from '../types/router';
 import { NodeRequest, NodeResponse } from '../types/server-options';
 import { Logger } from '../types/logger';
 import { Status } from '../utils/http-status-codes';
 import { RootMetadata } from '../models/root-metadata';
+import { RouteData } from '../types/route-data';
 
 @Injectable()
 export class DefaultHttpBackend implements HttpBackend {
-  constructor(protected log: Logger, protected rootMetadata: RootMetadata) {}
+  constructor(
+    private req: Request,
+    private log: Logger,
+    private rootMetadata: RootMetadata,
+    private routeData: RouteData
+  ) {}
 
-  /**
-   * @param controller Controller class.
-   * @param methodName Method of the Controller.
-   * @param parseBody Need or not to parsing a body request.
-   */
-  async handle(
-    req: Request,
-    pathParamsArr: PathParam[],
-    queryString: string,
-    controller: ControllerType,
-    methodName: string,
-    parseBody: boolean,
-    guards: NormalizedGuard[]
-  ) {
+  async handle() {
+    const req = this.req;
+    const { controller, methodName, parseBody, guards } = this.routeData;
     req.nodeRes.setHeader('Server', this.rootMetadata.serverName);
-    req.pathParamsArr = pathParamsArr;
-    const pathParams: AnyObj = pathParamsArr ? {} : undefined;
-    pathParamsArr?.forEach((param) => (pathParams[param.key] = param.value));
-    req.pathParams = pathParams;
 
     const preparedGuards: { guard: CanActivate; params?: any[] }[] = guards.map((item) => {
       return {
@@ -55,7 +41,6 @@ export class DefaultHttpBackend implements HttpBackend {
       }
     }
 
-    req.queryParams = parse(queryString);
     if (parseBody) {
       const bodyParser = req.injector.get(BodyParser) as BodyParser;
       req.body = await bodyParser.getBody();

@@ -1,5 +1,9 @@
+/**
+ * Extension Development Kit.
+ */
+
 export { ModuleManager } from './services/module-manager';
-export { PreRouter } from './services/pre-router';
+export { PreRoutes} from './services/pre-routes';
 export { ModuleFactory } from './module-factory';
 export { ProvidersMetadata } from './models/providers-metadata';
 export { ControllerMetadata } from './decorators/controller';
@@ -20,3 +24,5 @@ export { AppInitializer } from './services/app-initializer';
 export { ExtensionsMap } from './types/extensions-map';
 export { RouteMetadata } from './decorators/route';
 export { DecoratorMetadata } from './types/decorator-metadata';
+export { ROUTES_EXTENSIONS } from './types/routes-extensions';
+export { EXTENSIONS_MAP } from './types/extensions-map';

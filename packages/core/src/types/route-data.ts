@@ -1,11 +1,33 @@
-import { ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-stack/di';
-
+import { InjectionToken } from '@ts-stack/di';
 import { RouteMetadata } from '../decorators/route';
 import { ControllerType } from './controller-type';
 import { DecoratorMetadata } from './decorator-metadata';
+import { HttpMethod } from './http-method';
 import { NormalizedGuard } from './normalized-guard';
+import { RouteHandler } from './router';
+import { ServiceProvider } from './service-provider';
 
-export interface RouteData {
+export class BaseRouteData {
+  moduleName: string;
+  /**
+   * Providers per a module.
+   */
+  providersPerMod?: ServiceProvider[];
+  /**
+   * Providers per a route.
+   */
+  providersPerRoute?: ServiceProvider[];
+  /**
+   * Providers per a request.
+   */
+  providersPerReq?: ServiceProvider[];
+  prefixPerApp?: string;
+  prefixPerMod?: string;
+  path: string;
+  httpMethod: HttpMethod;
+}
+
+export class RouteData {
   controller: ControllerType;
   /**
    * The controller's method name.
@@ -13,13 +35,13 @@ export interface RouteData {
   methodName: string;
   route: RouteMetadata;
   /**
-   * Resolved providers per request.
+   * Providers per request.
    */
-  providers: ResolvedReflectiveProvider[];
+  providersPerReq: ServiceProvider[];
   /**
-   * Injector per a module.
+   * Providers per a module.
    */
-  injector: ReflectiveInjector;
+  providersPerMod: ServiceProvider[];
   /**
    * Need or not parse body.
    */
@@ -30,5 +52,18 @@ export interface RouteData {
    * By default, any user can activate.
    */
   guards: NormalizedGuard[];
+  /**
+   * Route decorator has value of the decorator and ref to other decorators
+   * on the same controller's method.
+   */
   decoratorMetadata: DecoratorMetadata;
+}
+
+export interface PreparedRouteData {
+  moduleName: string;
+  prefixPerApp: string;
+  prefixPerMod: string;
+  httpMethod: HttpMethod;
+  path: string;
+  handle: RouteHandler;
 }

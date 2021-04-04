@@ -1,30 +1,51 @@
-import { Injectable } from '@ts-stack/di';
+import { Inject, Injectable } from '@ts-stack/di';
+import { parse } from 'querystring';
 
-import { RootMetadata } from '../models/root-metadata';
 import { ControllerErrorHandler } from '../types/controller-error-handler';
 import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
 import { Logger } from '../types/logger';
 import { NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { Request } from './request';
+import { AnyObj } from '../types/any-obj';
+import { PathParam, PATH_PARAMS, QUERY_STRING } from '../types/router';
 
 @Injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
-  constructor(protected log: Logger, protected rootMetadata: RootMetadata) {}
+  constructor(
+    @Inject(PATH_PARAMS) protected pathParamsArr: PathParam[],
+    @Inject(QUERY_STRING) protected queryString: any,
+    private req: Request,
+    private log: Logger,
+  ) {}
 
-  intercept(req: Request, next: HttpHandler, ...args: any[]) {
+  intercept(next: HttpHandler) {
     let errorHandler: ControllerErrorHandler;
 
     try {
-      errorHandler = req.injector.get(ControllerErrorHandler);
+      errorHandler = this.req.injector.get(ControllerErrorHandler);
     } catch (err) {
-      this.sendInternalServerError(req.nodeRes, err);
+      this.sendInternalServerError(this.req.nodeRes, err);
       return;
     }
 
-    return next.handle(req, ...args).catch((err) => {
+    try {
+      this.req.queryParams = parse(this.queryString);
+      this.req.pathParamsArr = this.pathParamsArr;
+      const pathParams: AnyObj = this.pathParamsArr?.length ? {} : undefined;
+      this.pathParamsArr?.forEach((param) => (pathParams[param.key] = param.value));
+      this.req.pathParams = pathParams;
+    } catch (err) {
+      errorHandler.handleError(err);
+    }
+
+    return next.handle().catch((err) => {
       errorHandler.handleError(err);
     });
+  }
+
+  protected decodeUrl(url: string) {
+    return decodeURI(url);
   }
 
   /**

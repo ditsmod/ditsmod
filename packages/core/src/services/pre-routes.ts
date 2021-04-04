@@ -1,31 +1,57 @@
-import { Injectable, Provider, ReflectiveInjector, ResolvedReflectiveProvider, TypeProvider } from '@ts-stack/di';
+import { Inject, Injectable, ReflectiveInjector, TypeProvider } from '@ts-stack/di';
 
 import { ControllerMetadata } from '../decorators/controller';
 import { BodyParserConfig } from '../models/body-parser-config';
+import { RootMetadata } from '../models/root-metadata';
+import { Extension } from '../types/extension';
 import { ExtensionMetadata } from '../types/extension-metadata';
+import { ExtensionsMap, EXTENSIONS_MAP } from '../types/extensions-map';
 import { GuardItem } from '../types/guard-item';
+import { HttpMethod } from '../types/http-method';
 import { NormalizedGuard } from '../types/normalized-guard';
-import { RouteData } from '../types/route-data';
+import { BaseRouteData, RouteData } from '../types/route-data';
+import { ServiceProvider } from '../types/service-provider';
 import { isController, isRoute } from '../utils/type-guards';
 
 @Injectable()
-export class PreRoutes {
-  protected providersPerReq: Provider[];
-  protected resolvedProvidersPerReq: ResolvedReflectiveProvider[];
+export class PreRoutes implements Extension {
+  #baseRoutesData: BaseRouteData[] = [];
 
-  constructor(protected injectorPerApp: ReflectiveInjector) {}
+  constructor(
+    protected injectorPerApp: ReflectiveInjector,
+    protected rootMetadata: RootMetadata,
+    @Inject(EXTENSIONS_MAP) protected extensionsMap: ExtensionsMap
+  ) {}
 
-  getRoutesData(extensionMetadata: ExtensionMetadata) {
+  async init() {
+    if (this.#baseRoutesData.length) {
+      return this.#baseRoutesData;
+    }
+
+    const { prefixPerApp } = this.rootMetadata;
+
+    this.extensionsMap.forEach((extensionsMetadata) => {
+      const { prefixPerMod, moduleMetadata } = extensionsMetadata;
+      const baseRoutesData = this.getRoutesData(moduleMetadata.name, prefixPerApp, prefixPerMod, extensionsMetadata);
+      this.#baseRoutesData.push(...baseRoutesData);
+    });
+
+    return this.#baseRoutesData;
+  }
+
+  protected getRoutesData(
+    moduleName: string,
+    prefixPerApp: string,
+    prefixPerMod: string,
+    extensionMetadata: ExtensionMetadata
+  ) {
     const {
       controllersMetadata,
       guardsPerMod,
       moduleMetadata: { providersPerMod, providersPerReq, name },
     } = extensionMetadata;
-    const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
 
-    this.providersPerReq = providersPerReq;
-    this.initProvidersPerReq();
-    const routesData: RouteData[] = [];
+    const baseRoutesData: BaseRouteData[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
@@ -36,47 +62,43 @@ export class PreRoutes {
           const route = decoratorMetadata.value;
           const ctrlDecorValue = ctrlDecorValues.find(isController);
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
-          const resolvedProvidersPerReq = this.getResolvedProvidersPerReq(
+          const allProvidersPerReq = this.addProvidersPerReq(
             name,
             controller,
             ctrlDecorValue,
             methodName,
-            guards
+            guards,
+            providersPerReq.slice()
           );
-          const injectorPerReq = injectorPerMod.createChildFromResolved(resolvedProvidersPerReq);
-          const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
-          const parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
-
-          routesData.push({
+          const parseBody = this.needBodyParse(providersPerMod, allProvidersPerReq, route.httpMethod);
+          const routeData: RouteData = {
             decoratorMetadata,
             controller,
             methodName,
             route,
-            providers: resolvedProvidersPerReq,
-            injector: injectorPerMod,
+            providersPerMod,
+            providersPerReq: allProvidersPerReq,
             parseBody,
             guards,
+          };
+          const providersPerRoute: ServiceProvider[] = [{ provide: RouteData, useValue: routeData }];
+          const { path, httpMethod } = route;
+
+          baseRoutesData.push({
+            moduleName,
+            providersPerMod,
+            providersPerRoute,
+            providersPerReq: allProvidersPerReq,
+            prefixPerApp,
+            prefixPerMod,
+            path,
+            httpMethod,
           });
         }
       }
     }
 
-    return routesData;
-  }
-
-  /**
-   * Init providers per the request.
-   */
-  protected initProvidersPerReq() {
-    this.resolvedProvidersPerReq = ReflectiveInjector.resolve(this.providersPerReq);
-  }
-
-  /**
-   * Inserts new `Provider` at the start of `providersPerReq` array.
-   */
-  protected unshiftProvidersPerReq(...providers: Provider[]) {
-    this.providersPerReq.unshift(...providers);
-    this.initProvidersPerReq();
+    return baseRoutesData;
   }
 
   protected normalizeGuards(guards: GuardItem[]) {
@@ -89,12 +111,13 @@ export class PreRoutes {
     });
   }
 
-  protected getResolvedProvidersPerReq(
+  protected addProvidersPerReq(
     moduleName: string,
     Ctrl: TypeProvider,
     controllerMetadata: ControllerMetadata,
     methodName: string,
-    normalizedGuards: NormalizedGuard[]
+    normalizedGuards: NormalizedGuard[],
+    providersPerReq: ServiceProvider[]
   ) {
     const guards = normalizedGuards.map((item) => item.guard);
 
@@ -108,13 +131,23 @@ export class PreRoutes {
       }
     }
 
-    this.unshiftProvidersPerReq(Ctrl, guards);
-    let resolvedProvidersPerReq: ResolvedReflectiveProvider[] = this.resolvedProvidersPerReq;
-    const { providersPerReq } = controllerMetadata;
-    if (providersPerReq) {
-      resolvedProvidersPerReq = ReflectiveInjector.resolve([...this.providersPerReq, ...providersPerReq]);
-    }
+    const providersOfController = controllerMetadata.providersPerReq || [];
+    providersPerReq.unshift(Ctrl, ...guards, ...providersOfController);
 
-    return resolvedProvidersPerReq;
+    return providersPerReq;
+  }
+
+  /**
+   * Need or not to parse body of HTTP request.
+   */
+  protected needBodyParse(
+    providersPerMod: ServiceProvider[],
+    providersPerReq: ServiceProvider[],
+    httpMethod: HttpMethod
+  ) {
+    const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+    const injectorPerReq = injectorPerMod.resolveAndCreateChild(providersPerReq);
+    const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
+    return bodyParserConfig.acceptMethods.includes(httpMethod);
   }
 }
