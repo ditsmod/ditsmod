@@ -2,7 +2,6 @@ import { Injectable, reflector } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ProvidersMetadata } from './models/providers-metadata';
-import { defaultExtensions } from './services/default-extensions';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
@@ -19,7 +18,13 @@ import { getTokensCollisions } from './utils/get-tokens-collisions';
 import { getUniqProviders } from './utils/get-uniq-providers';
 import { NormalizedProvider, normalizeProviders } from './utils/ng-utils';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
-import { isController, isExtensionProvider, isRootModule } from './utils/type-guards';
+import {
+  isClassProvider,
+  isController,
+  isExtensionProvider,
+  isInjectionToken,
+  isRootModule,
+} from './utils/type-guards';
 import { deepFreeze } from './utils/deep-freeze';
 
 /**
@@ -139,24 +144,30 @@ export class ModuleFactory {
     }
 
     const { providersPerApp, providersPerMod, providersPerReq } = meta;
-    const providers = [...providersPerApp, ...providersPerMod, ...defaultExtensions];
-    const extensionsTokens = normalizeProviders(providers).map((np) => np.provide);
-    const extensionsTokensPerReq = normalizeProviders(providersPerReq).map((np) => np.provide);
-    meta.extensions.forEach((Ext, i) => {
-      if (!isExtensionProvider(Ext)) {
+    const providers = [...providersPerApp, ...providersPerMod];
+    const normalizedProviders = normalizeProviders(providers);
+    const normalizedProvidersPerReq = normalizeProviders(providersPerReq).map((np) => np.provide);
+    meta.extensions.forEach((token, i) => {
+      const provider = normalizedProviders.find((np) => np.provide === token);
+      if (!provider) {
         const msg =
-          `Importing ${this.moduleName} failed: Extensions with array index "${i}" ` +
-          'must be a class with init() method.';
-        throw new TypeError(msg);
-      }
-      if (extensionsTokensPerReq.includes(Ext)) {
-        const msg = `Importing ${this.moduleName} failed: Extensions "${Ext.name}" cannot be includes in the "providersPerReq" array.`;
+          `Importing ${this.moduleName} failed: "${token}" must be includes in ` +
+          '"providersPerApp" or "providersPerMod" array.';
         throw new Error(msg);
       }
-      if (!extensionsTokens.includes(Ext)) {
+      if (
+        !isInjectionToken(token) ||
+        !isClassProvider(provider) ||
+        !isExtensionProvider(provider.useClass) ||
+        !provider.multi
+      ) {
         const msg =
-          `Importing ${this.moduleName} failed: Extensions "${Ext.name}" must be includes in ` +
-          '"providersPerApp" or "providersPerMod" array.';
+          `Importing ${this.moduleName} failed: Extensions with array index "${i}" ` +
+          'must be a value provider where "useClass: Class" must have init() method and "multi: true".';
+        throw new TypeError(msg);
+      }
+      if (normalizedProvidersPerReq.includes(token)) {
+        const msg = `Importing ${this.moduleName} failed: Extensions "${token}" cannot be includes in the "providersPerReq" array.`;
         throw new Error(msg);
       }
     });

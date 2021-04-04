@@ -1,23 +1,35 @@
 import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
+import { Extension, ROUTES_EXTENSIONS } from '../types/extension';
 import { HttpHandler } from '../types/http-interceptor';
 import { HttpMethod } from '../types/http-method';
 import { Logger } from '../types/logger';
-import { BaseRouteData, PreparedRouteData } from '../types/route-data';
+import { PreRouteMeta, PreparedRouteMeta } from '../types/route-data';
 import { PATH_PARAMS, QUERY_STRING, RouteHandler, Router } from '../types/router';
-import { ROUTES_EXTENSIONS } from '../types/routes-extensions';
 import { NodeReqToken, NodeResponse, NodeResToken, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { ExtensionsManager } from './extensions-manager';
 
 @Injectable()
-export class PreRouter {
+export class PreRouter implements Extension {
+  #inited: boolean;
+
   constructor(
     protected injectorPerApp: ReflectiveInjector,
     protected router: Router,
     protected log: Logger,
     protected extensionsManager: ExtensionsManager
   ) {}
+
+  async init() {
+    if (this.#inited) {
+      return;
+    }
+    const preRoutesMeta: PreRouteMeta[] = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    const preparedRouteMeta = await this.prepareRoutesMeta(preRoutesMeta);
+    this.setRoutes(preparedRouteMeta);
+    this.#inited = true;
+  }
 
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
     const { method: httpMethod, url } = nodeReq;
@@ -30,11 +42,10 @@ export class PreRouter {
     await handle(nodeReq, nodeRes, params, queryString);
   };
 
-  async prepareAndSetRoutes() {
-    const baseRoutesData: BaseRouteData[] = await this.extensionsManager.init(ROUTES_EXTENSIONS);
-    const preparedRouteData: PreparedRouteData[] = [];
+  protected async prepareRoutesMeta(preRoutesMeta: PreRouteMeta[]) {
+    const preparedRouteMeta: PreparedRouteMeta[] = [];
 
-    baseRoutesData.forEach((baseRouteData) => {
+    preRoutesMeta.forEach((preRouteMeta) => {
       const {
         httpMethod,
         path,
@@ -44,7 +55,7 @@ export class PreRouter {
         moduleName,
         prefixPerApp,
         prefixPerMod,
-      } = baseRouteData;
+      } = preRouteMeta;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       const inj1 = injectorPerMod.resolveAndCreateChild(providersPerRoute);
       const providers = ReflectiveInjector.resolve(providersPerReq);
@@ -63,14 +74,14 @@ export class PreRouter {
         await chain.handle();
       }) as RouteHandler;
 
-      preparedRouteData.push({ moduleName, prefixPerApp, prefixPerMod, httpMethod, path, handle });
+      preparedRouteMeta.push({ moduleName, prefixPerApp, prefixPerMod, httpMethod, path, handle });
     });
 
-    this.setRoutes(preparedRouteData);
+    return preparedRouteMeta;
   }
 
-  protected setRoutes(preparedRouteData: PreparedRouteData[]) {
-    preparedRouteData.forEach((data) => {
+  protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {
+    preparedRouteMeta.forEach((data) => {
       const { moduleName, prefixPerApp, prefixPerMod, path: rawPath, httpMethod, handle } = data;
       this.checkRoutePath(moduleName, prefixPerApp);
       this.checkRoutePath(moduleName, prefixPerMod);

@@ -1,10 +1,10 @@
 import * as http from 'http';
 import { ListenOptions } from 'net';
+import { InjectionToken } from '@ts-stack/di';
 
 import { ServerOptions } from '../types/server-options';
 import { HttpModule } from '../types/http-module';
 import { ServiceProvider } from '../types/service-provider';
-import { ExtensionType } from '../types/extension-type';
 
 /**
  * @todo Rename this to `RootMetadata`.
@@ -19,5 +19,5 @@ export class RootMetadata {
    * Providers per the `Application`.
    */
   providersPerApp: ServiceProvider[] = [];
-  extensions: ExtensionType[] = [];
+  extensions: InjectionToken<any>[] = [];
 }

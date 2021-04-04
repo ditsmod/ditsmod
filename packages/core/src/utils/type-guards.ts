@@ -4,6 +4,7 @@ import {
   FactoryProvider,
   forwardRef,
   ForwardRefFn,
+  InjectionToken,
   Provider,
   reflector,
   Type,
@@ -14,7 +15,7 @@ import {
 import { ControllerMetadata } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
 import { AnyObj } from '../types/any-obj';
-import { ExtensionType } from '../types/extension-type';
+import { Extension } from '../types/extension';
 import { ModuleMetadata } from '../types/module-metadata';
 import { ModuleType } from '../types/module-type';
 import { ModuleWithParams } from '../types/module-with-params';
@@ -51,8 +52,12 @@ export function isModuleWithParams(mod: ServiceProvider | ModuleWithParams | Mod
   return (mod as ModuleWithParams)?.module !== undefined;
 }
 
-export function isExtensionProvider(provider: Provider): provider is ExtensionType {
-  const init = (provider as ExtensionType)?.prototype?.init;
+export function isInjectionToken(token: any): token is InjectionToken<any> {
+  return (token instanceof InjectionToken);
+}
+
+export function isExtensionProvider(provider: Provider): provider is Type<Extension> {
+  const init = (provider as Type<Extension>)?.prototype?.init;
   return typeof init == 'function';
 }
 

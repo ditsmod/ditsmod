@@ -1,10 +1,10 @@
 import 'reflect-metadata';
-import { forwardRef, Injectable, reflector } from '@ts-stack/di';
+import { forwardRef, Injectable, InjectionToken, reflector } from '@ts-stack/di';
 
 import { Module } from '../decorators/module';
 import {
   isController,
-  isExtensionProvider,
+  isInjectionToken,
   isForwardRef,
   isModule,
   isModuleWithParams,
@@ -149,15 +149,17 @@ describe('type guards', () => {
       expect(isNormalizedProvider(providers)).toBe(false);
     });
   });
-  describe('isExtensionProvider()', () => {
-    class Extension1 {}
-    class Extension2 implements Extension {
+  describe('isInjectionToken()', () => {
+    const token1 = new InjectionToken('token1');
+    const token2 = {};
+    class token3 implements Extension {
       init() {}
     }
 
-    it('should recognize the extension provider', () => {
-      expect(isExtensionProvider(Extension1)).toBe(false);
-      expect(isExtensionProvider(Extension2)).toBe(true);
+    it('should recognize the InjectionToken', () => {
+      expect(isInjectionToken(token1)).toBe(true);
+      expect(isInjectionToken(token2)).toBe(false);
+      expect(isInjectionToken(token3)).toBe(false);
     });
   });
 
