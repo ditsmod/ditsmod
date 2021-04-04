@@ -76,7 +76,7 @@ export class AppInitializer {
   async bootstrapModulesAndExtensions() {
     this.extensionsMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
     this.checkModulesResolvable(this.extensionsMetadataMap);
-    await this.handleExtensionsAndSetRoutes(this.extensionsMetadataMap);
+    await this.handleExtensions(this.extensionsMetadataMap);
   }
 
   getMetadataAndLogger() {
@@ -194,7 +194,7 @@ export class AppInitializer {
     });
   }
 
-  protected async handleExtensionsAndSetRoutes(extensionsMap: ExtensionsMap) {
+  protected async handleExtensions(extensionsMap: ExtensionsMap) {
     this.applyExtensionsMap(extensionsMap);
     const mapedExtensions = this.mapExtensionsToInjectors(extensionsMap);
     for (const mapedExtension of mapedExtensions) {
