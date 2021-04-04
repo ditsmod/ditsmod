@@ -16,7 +16,7 @@ export { ControllerType } from './types/controller-type';
 export { ModuleType } from './types/module-type';
 export { AnyObj } from './types/any-obj';
 export { NormalizedGuard } from './types/normalized-guard';
-export { Extension, ROUTES_EXTENSIONS } from './types/extension';
+export { Extension, ROUTES_EXTENSIONS, DEFAULT_EXTENSIONS } from './types/extension';
 export { ModuleMetadata } from './types/module-metadata';
 export { RouteData } from './types/route-data';
 export { AppInitializer } from './services/app-initializer';
