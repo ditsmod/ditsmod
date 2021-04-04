@@ -24,7 +24,7 @@ export class ExtensionsManager {
         continue;
       }
       this.log.debug(`${prefix}: init returned some value`);
-      if (typeof data[Symbol.iterator] == 'function') {
+      if (Array.isArray(data)) {
         dataArr.push(...data);
       } else {
         dataArr.push(data);
