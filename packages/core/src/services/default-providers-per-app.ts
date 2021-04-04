@@ -2,8 +2,8 @@ import { Injector, ReflectiveInjector } from '@ts-stack/di';
 
 import { BodyParserConfig } from '../models/body-parser-config';
 import { RootMetadata } from '../models/root-metadata';
+import { ROUTES_EXTENSIONS } from '../types/extension';
 import { Logger, LoggerConfig } from '../types/logger';
-import { ROUTES_EXTENSIONS } from '../types/routes-extensions';
 import { ServiceProvider } from '../types/service-provider';
 import { DefaultLogger } from './default-logger';
 import { ExtensionsManager } from './extensions-manager';

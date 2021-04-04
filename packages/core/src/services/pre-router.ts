@@ -1,12 +1,11 @@
 import { Injectable, ReflectiveInjector } from '@ts-stack/di';
-import { Extension } from '../types/extension';
 
+import { Extension, ROUTES_EXTENSIONS } from '../types/extension';
 import { HttpHandler } from '../types/http-interceptor';
 import { HttpMethod } from '../types/http-method';
 import { Logger } from '../types/logger';
 import { PreRouteMeta, PreparedRouteData } from '../types/route-data';
 import { PATH_PARAMS, QUERY_STRING, RouteHandler, Router } from '../types/router';
-import { ROUTES_EXTENSIONS } from '../types/routes-extensions';
 import { NodeReqToken, NodeResponse, NodeResToken, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { ExtensionsManager } from './extensions-manager';
