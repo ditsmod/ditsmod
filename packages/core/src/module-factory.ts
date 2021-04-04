@@ -2,7 +2,6 @@ import { Injectable, reflector } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ProvidersMetadata } from './models/providers-metadata';
-import { defaultExtensions } from './services/default-extensions';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
@@ -139,9 +138,9 @@ export class ModuleFactory {
     }
 
     const { providersPerApp, providersPerMod, providersPerReq } = meta;
-    const providers = [...providersPerApp, ...providersPerMod, ...defaultExtensions];
-    const extensionsTokens = normalizeProviders(providers).map((np) => np.provide);
-    const extensionsTokensPerReq = normalizeProviders(providersPerReq).map((np) => np.provide);
+    const providers = [...providersPerApp, ...providersPerMod];
+    const providersTokens = normalizeProviders(providers).map((np) => np.provide);
+    const providersTokensPerReq = normalizeProviders(providersPerReq).map((np) => np.provide);
     meta.extensions.forEach((Ext, i) => {
       if (!isExtensionProvider(Ext)) {
         const msg =
@@ -149,11 +148,11 @@ export class ModuleFactory {
           'must be a class with init() method.';
         throw new TypeError(msg);
       }
-      if (extensionsTokensPerReq.includes(Ext)) {
+      if (providersTokensPerReq.includes(Ext)) {
         const msg = `Importing ${this.moduleName} failed: Extensions "${Ext.name}" cannot be includes in the "providersPerReq" array.`;
         throw new Error(msg);
       }
-      if (!extensionsTokens.includes(Ext)) {
+      if (!providersTokens.includes(Ext)) {
         const msg =
           `Importing ${this.moduleName} failed: Extensions "${Ext.name}" must be includes in ` +
           '"providersPerApp" or "providersPerMod" array.';
