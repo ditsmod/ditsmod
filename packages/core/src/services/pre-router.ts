@@ -4,7 +4,7 @@ import { Extension, ROUTES_EXTENSIONS } from '../types/extension';
 import { HttpHandler } from '../types/http-interceptor';
 import { HttpMethod } from '../types/http-method';
 import { Logger } from '../types/logger';
-import { PreRouteMeta, PreparedRouteData } from '../types/route-data';
+import { PreRouteMeta, PreparedRouteMeta } from '../types/route-data';
 import { PATH_PARAMS, QUERY_STRING, RouteHandler, Router } from '../types/router';
 import { NodeReqToken, NodeResponse, NodeResToken, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
@@ -25,8 +25,9 @@ export class PreRouter implements Extension {
     if (this.#inited) {
       return;
     }
-    const preparedRouteData = await this.prepareRoutes();
-    this.setRoutes(preparedRouteData);
+    const preRoutesMeta: PreRouteMeta[] = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    const preparedRouteMeta = await this.prepareRoutesMeta(preRoutesMeta);
+    this.setRoutes(preparedRouteMeta);
     this.#inited = true;
   }
 
@@ -41,9 +42,8 @@ export class PreRouter implements Extension {
     await handle(nodeReq, nodeRes, params, queryString);
   };
 
-  protected async prepareRoutes() {
-    const preRoutesMeta: PreRouteMeta[] = await this.extensionsManager.init(ROUTES_EXTENSIONS);
-    const preparedRouteData: PreparedRouteData[] = [];
+  protected async prepareRoutesMeta(preRoutesMeta: PreRouteMeta[]) {
+    const preparedRouteMeta: PreparedRouteMeta[] = [];
 
     preRoutesMeta.forEach((preRouteMeta) => {
       const {
@@ -74,14 +74,14 @@ export class PreRouter implements Extension {
         await chain.handle();
       }) as RouteHandler;
 
-      preparedRouteData.push({ moduleName, prefixPerApp, prefixPerMod, httpMethod, path, handle });
+      preparedRouteMeta.push({ moduleName, prefixPerApp, prefixPerMod, httpMethod, path, handle });
     });
 
-    return preparedRouteData;
+    return preparedRouteMeta;
   }
 
-  protected setRoutes(preparedRouteData: PreparedRouteData[]) {
-    preparedRouteData.forEach((data) => {
+  protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {
+    preparedRouteMeta.forEach((data) => {
       const { moduleName, prefixPerApp, prefixPerMod, path: rawPath, httpMethod, handle } = data;
       this.checkRoutePath(moduleName, prefixPerApp);
       this.checkRoutePath(moduleName, prefixPerMod);

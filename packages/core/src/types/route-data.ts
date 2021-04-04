@@ -58,7 +58,7 @@ export class RouteData {
   decoratorMetadata: DecoratorMetadata;
 }
 
-export interface PreparedRouteData {
+export interface PreparedRouteMeta {
   moduleName: string;
   prefixPerApp: string;
   prefixPerMod: string;
