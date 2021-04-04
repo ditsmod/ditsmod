@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ReflectiveInjector, Injectable } from '@ts-stack/di';
+import { ReflectiveInjector, Injectable, InjectionToken } from '@ts-stack/di';
 import { DefaultRouter } from '@ditsmod/router';
 
 import { ModuleFactory } from './module-factory';
@@ -272,16 +272,18 @@ describe('ModuleFactory', () => {
 
       moduleManager.scanModule(Module1);
       const meta = moduleManager.getMetadata(Module1);
-      expect(() => mock.quickCheckMetadata(meta)).toThrow(/must be a class with init/);
+      expect(() => mock.quickCheckMetadata(meta)).toThrow(/must be includes in/);
     });
 
     it('extension in providersPerReq', () => {
       class Ext implements Extension {
         init() {}
       }
+      const token = new InjectionToken('token');
       @Module({
-        providersPerReq: [Ext],
-        extensions: [Ext as any],
+        providersPerApp: [{ provide: token, useValue: Ext, multi: true }],
+        providersPerReq: [{ provide: token, useValue: Ext, multi: true }],
+        extensions: [token],
       })
       class Module1 {}
 
@@ -294,9 +296,10 @@ describe('ModuleFactory', () => {
       class Ext implements Extension {
         init() {}
       }
+      const token = new InjectionToken('token');
       @Module({
-        providersPerApp: [Ext],
-        extensions: [Ext],
+        providersPerApp: [{ provide: token, useValue: Ext, multi: true }],
+        extensions: [token],
       })
       class Module1 {}
 
@@ -309,9 +312,10 @@ describe('ModuleFactory', () => {
       class Ext implements Extension {
         init() {}
       }
+      const token = new InjectionToken('token');
       @Module({
-        providersPerMod: [Ext],
-        extensions: [Ext],
+        providersPerMod: [{ provide: token, useValue: Ext, multi: true }],
+        extensions: [token],
       })
       class Module1 {}
 
@@ -338,10 +342,11 @@ describe('ModuleFactory', () => {
       class Ext implements Extension {
         init() {}
       }
+      const token = new InjectionToken('token');
 
       @Module({
-        providersPerMod: [Ext],
-        extensions: [Ext],
+        providersPerMod: [{ provide: token, useValue: Ext, multi: true }],
+        extensions: [token],
       })
       class Module1 {}
 

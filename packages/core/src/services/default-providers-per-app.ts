@@ -2,9 +2,10 @@ import { Injector, ReflectiveInjector } from '@ts-stack/di';
 
 import { BodyParserConfig } from '../models/body-parser-config';
 import { RootMetadata } from '../models/root-metadata';
-import { ROUTES_EXTENSIONS } from '../types/extension';
+import { DEFAULT_EXTENSIONS, ROUTES_EXTENSIONS } from '../types/extension';
 import { Logger, LoggerConfig } from '../types/logger';
 import { ServiceProvider } from '../types/service-provider';
+import { Counter } from './counter';
 import { DefaultLogger } from './default-logger';
 import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
@@ -21,7 +22,9 @@ export const defaultProvidersPerApp: ServiceProvider[] = [
   },
   RootMetadata,
   ExtensionsManager,
-  { provide: ROUTES_EXTENSIONS, useClass: PreRoutes, multi: true },
-  ModuleManager,
   PreRouter,
+  Counter,
+  { provide: DEFAULT_EXTENSIONS, useClass: PreRouter, multi: true },
+  { provide: ROUTES_EXTENSIONS, useClass: PreRoutes, multi: true },
+  ModuleManager
 ];

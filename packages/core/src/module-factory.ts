@@ -18,7 +18,13 @@ import { getTokensCollisions } from './utils/get-tokens-collisions';
 import { getUniqProviders } from './utils/get-uniq-providers';
 import { NormalizedProvider, normalizeProviders } from './utils/ng-utils';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
-import { isController, isExtensionProvider, isRootModule } from './utils/type-guards';
+import {
+  isClassProvider,
+  isController,
+  isExtensionProvider,
+  isInjectionToken,
+  isRootModule,
+} from './utils/type-guards';
 import { deepFreeze } from './utils/deep-freeze';
 
 /**
@@ -139,23 +145,29 @@ export class ModuleFactory {
 
     const { providersPerApp, providersPerMod, providersPerReq } = meta;
     const providers = [...providersPerApp, ...providersPerMod];
-    const providersTokens = normalizeProviders(providers).map((np) => np.provide);
-    const providersTokensPerReq = normalizeProviders(providersPerReq).map((np) => np.provide);
-    meta.extensions.forEach((Ext, i) => {
-      if (!isExtensionProvider(Ext)) {
+    const normalizedProviders = normalizeProviders(providers);
+    const normalizedProvidersPerReq = normalizeProviders(providersPerReq).map((np) => np.provide);
+    meta.extensions.forEach((token, i) => {
+      const provider = normalizedProviders.find((np) => np.provide === token);
+      if (!provider) {
         const msg =
-          `Importing ${this.moduleName} failed: Extensions with array index "${i}" ` +
-          'must be a class with init() method.';
-        throw new TypeError(msg);
-      }
-      if (providersTokensPerReq.includes(Ext)) {
-        const msg = `Importing ${this.moduleName} failed: Extensions "${Ext.name}" cannot be includes in the "providersPerReq" array.`;
+          `Importing ${this.moduleName} failed: "${token}" must be includes in ` +
+          '"providersPerApp" or "providersPerMod" array.';
         throw new Error(msg);
       }
-      if (!providersTokens.includes(Ext)) {
+      if (
+        !isInjectionToken(token) ||
+        !isClassProvider(provider) ||
+        !isExtensionProvider(provider.useClass) ||
+        !provider.multi
+      ) {
         const msg =
-          `Importing ${this.moduleName} failed: Extensions "${Ext.name}" must be includes in ` +
-          '"providersPerApp" or "providersPerMod" array.';
+          `Importing ${this.moduleName} failed: Extensions with array index "${i}" ` +
+          'must be a value provider where "useClass: Class" must have init() method and "multi: true".';
+        throw new TypeError(msg);
+      }
+      if (normalizedProvidersPerReq.includes(token)) {
+        const msg = `Importing ${this.moduleName} failed: Extensions "${token}" cannot be includes in the "providersPerReq" array.`;
         throw new Error(msg);
       }
     });

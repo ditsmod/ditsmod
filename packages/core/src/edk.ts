@@ -18,7 +18,6 @@ export { AnyObj } from './types/any-obj';
 export { NormalizedGuard } from './types/normalized-guard';
 export { Extension, ROUTES_EXTENSIONS } from './types/extension';
 export { ModuleMetadata } from './types/module-metadata';
-export { ExtensionType } from './types/extension-type';
 export { RouteData } from './types/route-data';
 export { AppInitializer } from './services/app-initializer';
 export { ExtensionsMap } from './types/extensions-map';
