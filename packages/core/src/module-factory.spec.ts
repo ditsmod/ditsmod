@@ -281,8 +281,8 @@ describe('ModuleFactory', () => {
       }
       const token = new InjectionToken('token');
       @Module({
-        providersPerApp: [{ provide: token, useValue: Ext, multi: true }],
-        providersPerReq: [{ provide: token, useValue: Ext, multi: true }],
+        providersPerApp: [{ provide: token, useClass: Ext, multi: true }],
+        providersPerReq: [{ provide: token, useClass: Ext, multi: true }],
         extensions: [token],
       })
       class Module1 {}
@@ -298,7 +298,7 @@ describe('ModuleFactory', () => {
       }
       const token = new InjectionToken('token');
       @Module({
-        providersPerApp: [{ provide: token, useValue: Ext, multi: true }],
+        providersPerApp: [{ provide: token, useClass: Ext, multi: true }],
         extensions: [token],
       })
       class Module1 {}
@@ -314,7 +314,7 @@ describe('ModuleFactory', () => {
       }
       const token = new InjectionToken('token');
       @Module({
-        providersPerMod: [{ provide: token, useValue: Ext, multi: true }],
+        providersPerMod: [{ provide: token, useClass: Ext, multi: true }],
         extensions: [token],
       })
       class Module1 {}
@@ -345,7 +345,7 @@ describe('ModuleFactory', () => {
       const token = new InjectionToken('token');
 
       @Module({
-        providersPerMod: [{ provide: token, useValue: Ext, multi: true }],
+        providersPerMod: [{ provide: token, useClass: Ext, multi: true }],
         extensions: [token],
       })
       class Module1 {}
