@@ -3,7 +3,7 @@ import { Injectable, Injector } from '@ts-stack/di';
 import { Extension } from '../types/extension';
 
 @Injectable()
-export class ExtensionsManager implements Extension {
+export class ExtensionsManager {
   constructor(private injector: Injector) {}
 
   async init(extensionsGroupToken: any): Promise<any[]> {
