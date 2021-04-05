@@ -277,7 +277,7 @@ describe('ModuleFactory', () => {
 
     it('extension in providersPerReq', () => {
       class Ext implements Extension {
-        init() {}
+        async init() {}
       }
       const token = new InjectionToken('token');
       @Module({
@@ -294,7 +294,7 @@ describe('ModuleFactory', () => {
 
     it('extension in providersPerApp', () => {
       class Ext implements Extension {
-        init() {}
+        async init() {}
       }
       const token = new InjectionToken('token');
       @Module({
@@ -310,7 +310,7 @@ describe('ModuleFactory', () => {
 
     it('extension in providersPerMod', () => {
       class Ext implements Extension {
-        init() {}
+        async init() {}
       }
       const token = new InjectionToken('token');
       @Module({
@@ -340,7 +340,7 @@ describe('ModuleFactory', () => {
 
     it('should works with extension only', () => {
       class Ext implements Extension {
-        init() {}
+        async init() {}
       }
       const token = new InjectionToken('token');
 
