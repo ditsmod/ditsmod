@@ -9,7 +9,7 @@ export class ExtensionsManager {
   constructor(private injector: Injector, private log: Logger, private counter: Counter) {}
 
   async init<T>(extensionsGroupToken: InjectionToken<Extension<T>[]>, autoMergeArrays = true): Promise<T[]> {
-    const extensions = this.injector.get(extensionsGroupToken, []) as Extension[];
+    const extensions = this.injector.get(extensionsGroupToken, []);
     const dataArr: T[] = [];
 
     for (const extension of extensions) {
