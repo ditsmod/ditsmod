@@ -8,7 +8,7 @@ import { Counter } from './counter';
 export class ExtensionsManager {
   constructor(private injector: Injector, private log: Logger, private counter: Counter) {}
 
-  async init(extensionsGroupToken: any): Promise<any[]> {
+  async init(extensionsGroupToken: any, autoMergeArrays = true): Promise<any[]> {
     const extensions = this.injector.get(extensionsGroupToken, []) as Extension[];
     const dataArr: any[] = [];
 
@@ -24,7 +24,7 @@ export class ExtensionsManager {
         continue;
       }
       this.log.debug(`${prefix}: init returned some value`);
-      if (Array.isArray(data)) {
+      if (autoMergeArrays && Array.isArray(data)) {
         dataArr.push(...data);
       } else {
         dataArr.push(data);
