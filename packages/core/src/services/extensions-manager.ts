@@ -12,6 +12,10 @@ export class ExtensionsManager {
     const extensions = this.injector.get(extensionsGroupToken, []);
     const dataArr: T[] = [];
 
+    if (!extensions.length) {
+      this.log.warn(`${extensionsGroupToken}: no extensions found!`);
+    }
+
     for (const extension of extensions) {
       const id = this.counter.increaseExtensionsInitId();
       const prefix = `${id}: ${extension.constructor.name}`;

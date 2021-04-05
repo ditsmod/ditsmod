@@ -200,7 +200,7 @@ export class AppInitializer {
     for (const mapedExtension of mapedExtensions) {
       const { moduleName, groupToken, injectorPerMod } = mapedExtension;
       this.log.debug(`${moduleName}: start init group with ${groupToken}`);
-      const extensionsManager = injectorPerMod.get(ExtensionsManager) as ExtensionsManager;
+      const extensionsManager = injectorPerMod.resolveAndInstantiate(ExtensionsManager) as ExtensionsManager;
       await extensionsManager.init(groupToken);
       this.log.debug(`${moduleName}: finish init group with ${groupToken}`);
     }
