@@ -171,7 +171,7 @@ export class SomeModule {}
 цього сервісу:
 
 ```ts
-import { Injectable, Inject } from '@ts-stack/di';
+import { Injectable } from '@ts-stack/di';
 import { edk } from '@ditsmod/core';
 
 @Injectable()
@@ -211,4 +211,20 @@ import { InjectionToken } from '@ts-stack/di';
 import { edk } from '@ditsmod/core';
 
 export const MY_EXTENSIONS = new InjectionToken<edk.Extension[]>('MY_EXTENSIONS');
+```
+
+Як бачите, кожна група розширень повинна указувати, що DI повертатиме масив інстансів
+розширень: `Extension[]`. Це треба робити обов'язково, відмінність може бути в інтерфейсі даних,
+що повертаються в результаті виклику їхніх методів `init()`:
+
+```ts
+import { InjectionToken } from '@ts-stack/di';
+import { edk } from '@ditsmod/core';
+
+interface MyInterface {
+  one: string;
+  two: number;
+}
+
+export const MY_EXTENSIONS = new InjectionToken<edk.Extension<MyInterface>[]>('MY_EXTENSIONS');
 ```
