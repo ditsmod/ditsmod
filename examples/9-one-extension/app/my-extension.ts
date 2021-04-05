@@ -5,7 +5,11 @@ import { edk, Logger } from '@ditsmod/core';
 export class MyExtension implements edk.Extension {
   #inited: boolean;
 
-  constructor(private log: Logger, @Inject(edk.EXTENSIONS_MAP) protected extensionsMap: edk.ExtensionsMap) {}
+  constructor(
+    @Inject(edk.EXTENSIONS_MAP) private extensionsMap: edk.ExtensionsMap,
+    private extensionsManager: edk.ExtensionsManager,
+    private log: Logger
+  ) {}
 
   async init() {
     if (this.#inited) {
@@ -13,6 +17,9 @@ export class MyExtension implements edk.Extension {
     }
 
     this.log.info(this.extensionsMap);
+    const preRouteMeta = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS);
+    this.log.info(preRouteMeta);
+
     this.#inited = true;
   }
 }
