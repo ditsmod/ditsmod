@@ -1,5 +1,12 @@
+<a name="beta.6"></a>
+# [beta.6](https://github.com/ts-stack/ditsmod/releases/tag/beta.6) (2021-04-06)
+
+### Features
+
+- Added `ExtensionsManager`.
+
 <a name="beta.5"></a>
-# [beta.5](https://github.com/ts-stack/ditsmod/releases/tag/beta.5) (2021-04-06)
+## [beta.5](https://github.com/ts-stack/ditsmod/releases/tag/beta.5) (2021-04-06)
 
 ### Features
 
