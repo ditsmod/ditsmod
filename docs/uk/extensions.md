@@ -214,8 +214,8 @@ export const MY_EXTENSIONS = new InjectionToken<edk.Extension[]>('MY_EXTENSIONS'
 ```
 
 Як бачите, кожна група розширень повинна указувати, що DI повертатиме масив інстансів
-розширень: `Extension[]`. Це треба робити обов'язково, відмінність може бути в інтерфейсі даних,
-що повертаються в результаті виклику їхніх методів `init()`:
+розширень: `Extension[]`. Це треба робити обов'язково, відмінність може бути хіба що в інтерфейсі
+даних, що повертаються в результаті виклику їхніх методів `init()`:
 
 ```ts
 import { InjectionToken } from '@ts-stack/di';
@@ -228,3 +228,33 @@ interface MyInterface {
 
 export const MY_EXTENSIONS = new InjectionToken<edk.Extension<MyInterface>[]>('MY_EXTENSIONS');
 ```
+
+Тепер змінна `result` матиме тип даних `MyInterface[]`:
+
+```ts
+const result = await this.extensionsManager.init(MY_EXTENSIONS);
+```
+
+## В якому саме масиві потрібно оголошувати групу розширень
+
+Групу розширень можна оголошувати або в масиві `providersPerApp`, або в масиві `providersPerMod`.
+Якщо ви оголосите в обох цих масивах одну й ту саму групу, то працюватимуть лише ті розширення,
+що оголошені в масиві `providersPerMod`:
+
+```ts
+import { Module } from '@ditsmod/core';
+
+import { MY_EXTENSIONS } from './my-extensions';
+import { MyExtension1 } from './my-extension1';
+import { MyExtension2 } from './my-extension2';
+
+@Module({
+  // ...
+  providersPerApp: [{ provide: MY_EXTENSIONS, useClass: MyExtension1, multi: true }],
+  providersPerMod: [{ provide: MY_EXTENSIONS, useClass: MyExtension2, multi: true }],
+  extensions: [MY_EXTENSIONS],
+})
+export class SomeModule {}
+```
+
+В даному випадку буде проініціалізоване лише `MyExtension2`.
