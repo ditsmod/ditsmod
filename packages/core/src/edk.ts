@@ -20,6 +20,7 @@ export { Extension, ROUTES_EXTENSIONS, DEFAULT_EXTENSIONS } from './types/extens
 export { ModuleMetadata } from './types/module-metadata';
 export { RouteData } from './types/route-data';
 export { AppInitializer } from './services/app-initializer';
+export { ExtensionsManager } from './services/extensions-manager';
 export { ExtensionsMap } from './types/extensions-map';
 export { RouteMetadata } from './decorators/route';
 export { DecoratorMetadata } from './types/decorator-metadata';
