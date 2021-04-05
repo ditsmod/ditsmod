@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@ts-stack/di';
+import { Injectable, InjectionToken, Injector } from '@ts-stack/di';
 
 import { Extension } from '../types/extension';
 import { Logger } from '../types/logger';
@@ -8,9 +8,9 @@ import { Counter } from './counter';
 export class ExtensionsManager {
   constructor(private injector: Injector, private log: Logger, private counter: Counter) {}
 
-  async init(extensionsGroupToken: any, autoMergeArrays = true): Promise<any[]> {
+  async init<T>(extensionsGroupToken: InjectionToken<Extension<T>[]>, autoMergeArrays = true): Promise<T[]> {
     const extensions = this.injector.get(extensionsGroupToken, []) as Extension[];
-    const dataArr: any[] = [];
+    const dataArr: T[] = [];
 
     for (const extension of extensions) {
       const id = this.counter.increaseExtensionsInitId();
