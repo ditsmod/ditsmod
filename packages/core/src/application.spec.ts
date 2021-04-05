@@ -85,14 +85,14 @@ describe('Application', () => {
       }
     }
 
-    it('non-root module should inited only Extension2', async () => {
-      @Injectable()
-      class Extension2 implements Extension {
-        async init() {
-          jestFn('Extension2');
-        }
+    @Injectable()
+    class Extension2 implements Extension {
+      async init() {
+        jestFn('Extension2');
       }
+    }
 
+    it('non-root module should inited only Extension2', async () => {
       @RootModule({
         providersPerApp: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
         providersPerMod: [{ provide: MY_EXTENSIONS, useClass: Extension2, multi: true }],
@@ -124,14 +124,7 @@ describe('Application', () => {
       expect(jestFn.mock.calls).toEqual([['Extension2']]);
     });
 
-    it('root module should inited only Extension2', async () => {
-      @Injectable()
-      class Extension2 implements Extension {
-        async init() {
-          jestFn('Extension2');
-        }
-      }
-
+    it('root module should inited only extension from providersPerMod', async () => {
       const loggerConfig = new LoggerConfig();
       const level: keyof Logger = 'info';
       loggerConfig.level = level;
@@ -156,6 +149,32 @@ describe('Application', () => {
       const promise = new MockApplication().init(AppModule);
       await expect(promise).resolves.not.toThrow();
       expect(jestFn.mock.calls).toEqual([['Extension2']]);
+    });
+
+    it('root module should found extension in providersPerApp', async () => {
+      const loggerConfig = new LoggerConfig();
+      const level: keyof Logger = 'info';
+      loggerConfig.level = level;
+      loggerConfig.depth = 3;
+
+      @RootModule({
+        providersPerApp: [
+          { provide: Router, useClass: DefaultRouter },
+          { provide: LoggerConfig, useValue: loggerConfig },
+          { provide: MY_EXTENSIONS, useClass: Extension1, multi: true },
+        ],
+        extensions: [MY_EXTENSIONS],
+      })
+      class AppModule {}
+
+      class MockApplication extends Application {
+        async init(appModule: ModuleType) {
+          return super.init(appModule);
+        }
+      }
+      const promise = new MockApplication().init(AppModule);
+      await expect(promise).resolves.not.toThrow();
+      expect(jestFn.mock.calls).toEqual([['Extension1']]);
     });
   });
 });
