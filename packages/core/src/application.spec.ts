@@ -85,7 +85,7 @@ describe('Application', () => {
       }
     }
 
-    it('should inited only Extension2', async () => {
+    it('non-root module should inited only Extension2', async () => {
       @Injectable()
       class Extension2 implements Extension {
         async init() {
@@ -111,6 +111,40 @@ describe('Application', () => {
           { provide: Router, useClass: DefaultRouter },
           { provide: LoggerConfig, useValue: loggerConfig },
         ],
+      })
+      class AppModule {}
+
+      class MockApplication extends Application {
+        async init(appModule: ModuleType) {
+          return super.init(appModule);
+        }
+      }
+      const promise = new MockApplication().init(AppModule);
+      await expect(promise).resolves.not.toThrow();
+      expect(jestFn.mock.calls).toEqual([['Extension2']]);
+    });
+
+    it('root module should inited only Extension2', async () => {
+      @Injectable()
+      class Extension2 implements Extension {
+        async init() {
+          jestFn('Extension2');
+        }
+      }
+
+      const loggerConfig = new LoggerConfig();
+      const level: keyof Logger = 'info';
+      loggerConfig.level = level;
+      loggerConfig.depth = 3;
+
+      @RootModule({
+        providersPerApp: [
+          { provide: Router, useClass: DefaultRouter },
+          { provide: LoggerConfig, useValue: loggerConfig },
+          { provide: MY_EXTENSIONS, useClass: Extension1, multi: true },
+        ],
+        providersPerMod: [{ provide: MY_EXTENSIONS, useClass: Extension2, multi: true }],
+        extensions: [MY_EXTENSIONS],
       })
       class AppModule {}
 

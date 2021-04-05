@@ -209,9 +209,7 @@ export class AppInitializer {
   }
 
   protected mapExtensionsToInjectors(extensionsMap: ExtensionsMap) {
-    const mapedExtensions = this.meta.extensions.map((groupToken) => {
-      return { moduleName: 'RootModule', groupToken, injectorPerMod: this.injectorPerApp } as MapedExtension;
-    });
+    const mapedExtensions = [];
 
     for (const [, metadata] of extensionsMap) {
       const { providersPerMod, extensions, name } = metadata.moduleMetadata;
