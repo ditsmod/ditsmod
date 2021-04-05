@@ -15,7 +15,7 @@ import { edk } from '@ditsmod/core';
 
 ```ts
 interface Extension<T = any> {
-  init(): T | Promise<T>;
+  init(): Promise<T>;
 }
 ```
 
