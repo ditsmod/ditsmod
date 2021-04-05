@@ -2,16 +2,16 @@ import 'reflect-metadata';
 import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
+import { Injectable, InjectionToken } from '@ts-stack/di';
+import { DefaultRouter } from '@ditsmod/router';
 
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { RootMetadata } from './models/root-metadata';
 import { ModuleType } from './types/module-type';
-import { Injectable, InjectionToken } from '@ts-stack/di';
 import { Extension } from './types/extension';
 import { Router } from './types/router';
-import { DefaultRouter } from '../../router/src/router';
 
 describe('Application', () => {
   class MockApplication extends Application {
