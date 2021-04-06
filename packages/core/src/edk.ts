@@ -24,5 +24,5 @@ export { AppInitializer } from './services/app-initializer';
 export { ExtensionsManager } from './services/extensions-manager';
 export { ExtensionsMap } from './types/extensions-map';
 export { RouteMetadata } from './decorators/route';
-export { DecoratorMetadata } from './types/decorator-metadata';
+export { DecoratorMetadata } from './types/mix';
 export { EXTENSIONS_MAP } from './types/extensions-map';

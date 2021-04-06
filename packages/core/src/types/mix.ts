@@ -14,3 +14,11 @@ export interface CanActivate {
 }
 
 export type ControllerType = Type<any>;
+
+export interface DecoratorMetadata<MV extends AnyObj = AnyObj> {
+  otherDecorators: any[];
+  /**
+   * Decorator value.
+   */
+  value: MV;
+}

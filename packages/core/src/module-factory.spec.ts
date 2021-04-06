@@ -19,7 +19,7 @@ import { ModuleManager } from './services/module-manager';
 import { ProvidersMetadata } from './models/providers-metadata';
 import { DefaultLogger } from './services/default-logger';
 import { Extension } from './types/extension';
-import { DecoratorMetadata } from './types/decorator-metadata';
+import { DecoratorMetadata } from './types/mix';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 
 describe('ModuleFactory', () => {
