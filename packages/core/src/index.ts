@@ -1,7 +1,14 @@
 export { Application } from './application';
 export { RootModule } from './decorators/root-module';
 export { Module } from './decorators/module';
-export { ModuleWithParams } from './types/mix';
+export {
+  ModuleWithParams,
+  ServiceProvider,
+  HttpMethod,
+  RedirectStatusCodes,
+  CanActivate,
+  GuardItem,
+} from './types/mix';
 export { Controller } from './decorators/controller';
 export { Request } from './services/request';
 export { Response } from './services/response';
@@ -12,13 +19,8 @@ export { BodyParserConfig } from './models/body-parser-config';
 export { BodyParser } from './services/body-parser';
 export { DefaultLogger } from './services/default-logger';
 export { Router, PATH_PARAMS, QUERY_STRING } from './types/router';
-export { ServiceProvider } from './types/mix';
-export { HttpMethod } from './types/mix';
 export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './utils/http-status-codes';
 export { NodeReqToken, NodeResToken, NodeResponse, NodeRequest, RequestListener } from './types/server-options';
-export { RedirectStatusCodes } from './types/mix';
-export { CanActivate } from './types/mix';
-export { GuardItem } from './types/mix';
 export { PathParam, RouterReturns, RouteHandler } from './types/router';
 export { RootMetadata } from './models/root-metadata';
 export { NormalizedProvider } from './utils/ng-utils';

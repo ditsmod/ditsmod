@@ -2,10 +2,8 @@ import { Injectable, resolveForwardRef } from '@ts-stack/di';
 import { format } from 'util';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { AnyObj } from '../types/mix';
+import { AnyObj, ModuleType, ModuleWithParams } from '../types/mix';
 import { Logger } from '../types/logger';
-import { ModuleType } from '../types/mix';
-import { ModuleWithParams } from '../types/mix';
 import { ModulesMap } from '../types/modules-map';
 import { checkModuleMetadata } from '../utils/check-module-metadata';
 import { getModuleMetadata } from '../utils/get-module-metadata';

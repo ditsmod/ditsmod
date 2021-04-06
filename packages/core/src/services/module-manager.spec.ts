@@ -6,11 +6,9 @@ import { RootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleManager } from './module-manager';
 import { Module } from '../decorators/module';
-import { ModuleWithParams } from '../types/mix';
-import { ServiceProvider } from '../types/mix';
+import { ModuleWithParams, ServiceProvider, ModuleType } from '../types/mix';
 import { LoggerConfig } from '../types/logger';
 import { DefaultLogger } from './default-logger';
-import { ModuleType } from '../types/mix';
 
 describe('ModuleManager', () => {
   class MockModuleManager extends ModuleManager {

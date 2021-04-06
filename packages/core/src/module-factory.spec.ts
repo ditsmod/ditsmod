@@ -11,15 +11,12 @@ import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { ExtensionMetadata } from './types/extension-metadata';
-import { ModuleType } from './types/mix';
+import { ModuleType, ServiceProvider, NormalizedGuard, DecoratorMetadata } from './types/mix';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
-import { ServiceProvider } from './types/mix';
-import { NormalizedGuard } from './types/mix';
 import { ModuleManager } from './services/module-manager';
 import { ProvidersMetadata } from './models/providers-metadata';
 import { DefaultLogger } from './services/default-logger';
 import { Extension } from './types/extension';
-import { DecoratorMetadata } from './types/mix';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 
 describe('ModuleFactory', () => {

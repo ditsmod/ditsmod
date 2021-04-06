@@ -14,14 +14,11 @@ import {
 
 import { ControllerMetadata } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
-import { AnyObj } from '../types/mix';
+import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { Extension } from '../types/extension';
 import { ModuleMetadata } from '../types/module-metadata';
-import { ModuleType } from '../types/mix';
-import { ModuleWithParams } from '../types/mix';
 import { RootModuleMetadata } from '../types/root-module-metadata';
 import { Http2SecureServerOptions, ServerOptions } from '../types/server-options';
-import { ServiceProvider } from '../types/mix';
 import { NormalizedProvider } from './ng-utils';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
@@ -29,7 +26,7 @@ export function isHttp2SecureServerOptions(serverOptions: ServerOptions): server
 }
 
 export function isForwardRef(type: any): type is ForwardRefFn {
-  return (typeof type == 'function' && type.hasOwnProperty('__forward_ref__') && type.__forward_ref__ === forwardRef);
+  return typeof type == 'function' && type.hasOwnProperty('__forward_ref__') && type.__forward_ref__ === forwardRef;
 }
 
 export function isModule(moduleMetadata: AnyObj): moduleMetadata is ModuleMetadata {
@@ -53,7 +50,7 @@ export function isModuleWithParams(mod: ServiceProvider | ModuleWithParams | Mod
 }
 
 export function isInjectionToken(token: any): token is InjectionToken<any> {
-  return (token instanceof InjectionToken);
+  return token instanceof InjectionToken;
 }
 
 export function isExtensionProvider(provider: Provider): provider is Type<Extension<any>> {

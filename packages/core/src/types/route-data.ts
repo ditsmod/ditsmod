@@ -1,10 +1,6 @@
 import { RouteMetadata } from '../decorators/route';
-import { ControllerType } from './mix';
-import { DecoratorMetadata } from './mix';
-import { HttpMethod } from './mix';
-import { NormalizedGuard } from './mix';
+import { ControllerType, DecoratorMetadata, HttpMethod, NormalizedGuard, ServiceProvider } from './mix';
 import { RouteHandler } from './router';
-import { ServiceProvider } from './mix';
 
 export class PreRouteMeta {
   moduleName: string;
