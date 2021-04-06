@@ -50,6 +50,11 @@ export interface MultipartBodyParserOptions {
   mapFiles?: boolean;
 }
 
+export interface NormalizedGuard {
+  guard: Type<CanActivate>;
+  params?: any[];
+}
+
 /**
  * `http.METHODS`
  */

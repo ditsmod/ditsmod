@@ -15,7 +15,7 @@ export { ExtensionMetadata } from './types/extension-metadata';
 export { ControllerType } from './types/mix';
 export { ModuleType } from './types/mix';
 export { AnyObj } from './types/mix';
-export { NormalizedGuard } from './types/normalized-guard';
+export { NormalizedGuard } from './types/mix';
 export { PreRouteMeta } from './types/route-data';
 export { Extension, ROUTES_EXTENSIONS, DEFAULT_EXTENSIONS } from './types/extension';
 export { ModuleMetadata } from './types/module-metadata';

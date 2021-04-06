@@ -10,7 +10,7 @@ import { GuardItem } from './types/mix';
 import { DecoratorMetadata } from './types/mix';
 import { ModuleType } from './types/mix';
 import { ModuleWithParams } from './types/mix';
-import { NormalizedGuard } from './types/normalized-guard';
+import { NormalizedGuard } from './types/mix';
 import { NodeReqToken, NodeResToken } from './types/server-options';
 import { ServiceProvider } from './types/service-provider';
 import { getDuplicates } from './utils/get-duplicates';

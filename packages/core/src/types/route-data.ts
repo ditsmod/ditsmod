@@ -2,7 +2,7 @@ import { RouteMetadata } from '../decorators/route';
 import { ControllerType } from './mix';
 import { DecoratorMetadata } from './mix';
 import { HttpMethod } from './mix';
-import { NormalizedGuard } from './normalized-guard';
+import { NormalizedGuard } from './mix';
 import { RouteHandler } from './router';
 import { ServiceProvider } from './service-provider';
 

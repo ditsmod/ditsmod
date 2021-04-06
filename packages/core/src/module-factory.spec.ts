@@ -14,7 +14,7 @@ import { ExtensionMetadata } from './types/extension-metadata';
 import { ModuleType } from './types/mix';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ServiceProvider } from './types/service-provider';
-import { NormalizedGuard } from './types/normalized-guard';
+import { NormalizedGuard } from './types/mix';
 import { ModuleManager } from './services/module-manager';
 import { ProvidersMetadata } from './models/providers-metadata';
 import { DefaultLogger } from './services/default-logger';

@@ -1,6 +1,6 @@
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ControllerAndMethodMetadata } from './controller-and-method-metadata';
-import { NormalizedGuard } from './normalized-guard';
+import { NormalizedGuard } from './mix';
 
 export class ExtensionMetadata {
   prefixPerMod: string;
