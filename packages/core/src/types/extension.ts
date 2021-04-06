@@ -1,7 +1,7 @@
 import { InjectionToken } from '@ts-stack/di';
 import { PreRouteMeta } from './route-data';
 
-export interface Extension<T = any> {
+export interface Extension<T> {
   init(): Promise<T>;
 }
 

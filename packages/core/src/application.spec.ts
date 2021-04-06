@@ -79,20 +79,20 @@ describe('Application', () => {
     const MY_EXTENSIONS = new InjectionToken<Extension<MyInterface>[]>('MY_EXTENSIONS');
 
     @Injectable()
-    class Extension1 implements Extension {
+    class Extension1 implements Extension<any> {
       async init() {
         jestFn('Extension1');
       }
     }
 
     @Injectable()
-    class Extension2 implements Extension {
+    class Extension2 implements Extension<any> {
       async init() {
         jestFn('Extension2');
       }
     }
 
-    it('non-root module should inited only Extension2', async () => {
+    it('non-root module should inited only from providersPerMod', async () => {
       @RootModule({
         providersPerApp: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
         providersPerMod: [{ provide: MY_EXTENSIONS, useClass: Extension2, multi: true }],

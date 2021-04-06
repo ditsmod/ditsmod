@@ -56,8 +56,8 @@ export function isInjectionToken(token: any): token is InjectionToken<any> {
   return (token instanceof InjectionToken);
 }
 
-export function isExtensionProvider(provider: Provider): provider is Type<Extension> {
-  const init = (provider as Type<Extension>)?.prototype?.init;
+export function isExtensionProvider(provider: Provider): provider is Type<Extension<any>> {
+  const init = (provider as Type<Extension<any>>)?.prototype?.init;
   return typeof init == 'function';
 }
 

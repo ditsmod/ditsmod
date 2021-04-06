@@ -11,7 +11,7 @@ import { Status } from '../utils/http-status-codes';
 import { ExtensionsManager } from './extensions-manager';
 
 @Injectable()
-export class PreRouter implements Extension {
+export class PreRouter implements Extension<void> {
   #inited: boolean;
 
   constructor(
@@ -25,7 +25,7 @@ export class PreRouter implements Extension {
     if (this.#inited) {
       return;
     }
-    const preRoutesMeta: PreRouteMeta[] = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    const preRoutesMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
     const preparedRouteMeta = await this.prepareRoutesMeta(preRoutesMeta);
     this.setRoutes(preparedRouteMeta);
     this.#inited = true;

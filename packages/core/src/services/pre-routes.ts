@@ -14,7 +14,7 @@ import { ServiceProvider } from '../types/service-provider';
 import { isController, isRoute } from '../utils/type-guards';
 
 @Injectable()
-export class PreRoutes implements Extension {
+export class PreRoutes implements Extension<PreRouteMeta[]> {
   #preRoutesMeta: PreRouteMeta[] = [];
 
   constructor(
