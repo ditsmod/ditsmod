@@ -6,7 +6,7 @@ import { RootMetadata } from '../models/root-metadata';
 import { Extension } from '../types/extension';
 import { ExtensionMetadata } from '../types/extension-metadata';
 import { ExtensionsMap, EXTENSIONS_MAP } from '../types/extensions-map';
-import { GuardItem } from '../types/guard-item';
+import { GuardItem } from '../types/mix';
 import { HttpMethod } from '../types/http-method';
 import { NormalizedGuard } from '../types/normalized-guard';
 import { PreRouteMeta, RouteData } from '../types/route-data';

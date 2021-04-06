@@ -22,3 +22,5 @@ export interface DecoratorMetadata<MV extends AnyObj = AnyObj> {
    */
   value: MV;
 }
+
+export type GuardItem = Type<CanActivate> | [Type<CanActivate>, any, ...any[]];

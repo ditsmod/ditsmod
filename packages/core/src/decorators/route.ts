@@ -1,7 +1,7 @@
 import { makePropDecorator } from '@ts-stack/di';
 
 import { AnyObj } from '../types/mix';
-import { GuardItem } from '../types/guard-item';
+import { GuardItem } from '../types/mix';
 import { HttpMethod } from '../types/http-method';
 
 export type RouteDecoratorFactory = (method: HttpMethod, path?: string, guards?: GuardItem[]) => RouteDecorator;

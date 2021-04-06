@@ -1,6 +1,6 @@
 import { ProvidersMetadata } from '../models/providers-metadata';
 import { ModuleType } from './module-type';
-import { GuardItem } from './guard-item';
+import { GuardItem } from './mix';
 import { AnyObj } from './mix';
 
 export interface ModuleWithParams<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {

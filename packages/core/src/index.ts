@@ -18,7 +18,7 @@ export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './utils/http
 export { NodeReqToken, NodeResToken, NodeResponse, NodeRequest, RequestListener } from './types/server-options';
 export { RedirectStatusCodes } from './types/redirect-status-codes';
 export { CanActivate } from './types/mix';
-export { GuardItem } from './types/guard-item';
+export { GuardItem } from './types/mix';
 export { PathParam, RouterReturns, RouteHandler } from './types/router';
 export { RootMetadata } from './models/root-metadata';
 export { NormalizedProvider } from './utils/ng-utils';

@@ -6,7 +6,7 @@ import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
 import { ExtensionMetadata } from './types/extension-metadata';
-import { GuardItem } from './types/guard-item';
+import { GuardItem } from './types/mix';
 import { DecoratorMetadata } from './types/mix';
 import { ModuleType } from './types/module-type';
 import { ModuleWithParams } from './types/module-with-params';
