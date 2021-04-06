@@ -1379,8 +1379,8 @@ class PreRouter implements Extension {
 ### Extension
 
 ```ts
-interface Extension {
-  init(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>): void;
+interface Extension<T> {
+  init(): Promise<T>;
 }
 ```
 

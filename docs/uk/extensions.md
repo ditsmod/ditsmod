@@ -14,7 +14,7 @@ import { edk } from '@ditsmod/core';
 У Ditsmod **розширенням** називається клас, що впроваджує інтерфейс `Extension`:
 
 ```ts
-interface Extension<T = any> {
+interface Extension<T> {
   init(): Promise<T>;
 }
 ```
