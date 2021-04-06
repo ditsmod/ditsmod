@@ -1,5 +1,5 @@
 import { RouteMetadata } from '../decorators/route';
-import { ControllerType } from './controller-type';
+import { ControllerType } from './mix';
 import { DecoratorMetadata } from './decorator-metadata';
 import { HttpMethod } from './http-method';
 import { NormalizedGuard } from './normalized-guard';

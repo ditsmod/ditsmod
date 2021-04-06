@@ -1,3 +1,5 @@
+import { Type } from '@ts-stack/di';
+
 export type AnyFn = (...args: any[]) => any;
 
 /**
@@ -10,3 +12,5 @@ export type AnyFn = (...args: any[]) => any;
 export interface CanActivate {
   canActivate(params?: any[]): boolean | number | Promise<boolean | number>;
 }
+
+export type ControllerType = Type<any>;

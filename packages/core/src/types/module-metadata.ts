@@ -1,7 +1,7 @@
 import { InjectionToken } from '@ts-stack/di';
 
 import { ProvidersMetadata } from '../models/providers-metadata';
-import { ControllerType } from '../types/controller-type';
+import { ControllerType } from '../types/mix';
 import { ModuleType } from '../types/module-type';
 import { ModuleWithParams } from '../types/module-with-params';
 import { ServiceProvider } from '../types/service-provider';

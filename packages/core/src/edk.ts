@@ -12,7 +12,7 @@ export { deepFreeze } from './utils/deep-freeze';
 export { isModule } from './utils/type-guards';
 export { pickProperties } from './utils/pick-properties';
 export { ExtensionMetadata } from './types/extension-metadata';
-export { ControllerType } from './types/controller-type';
+export { ControllerType } from './types/mix';
 export { ModuleType } from './types/module-type';
 export { AnyObj } from './types/mix';
 export { NormalizedGuard } from './types/normalized-guard';
