@@ -4,7 +4,7 @@ import { Injectable, Inject } from '@ts-stack/di';
 
 import { Request } from './request';
 import { Status } from '../utils/http-status-codes';
-import { RedirectStatusCodes } from '../types/redirect-status-codes';
+import { RedirectStatusCodes } from '../types/mix';
 import { NodeReqToken, NodeRequest, NodeResponse, NodeResToken } from '../types/server-options';
 
 @Injectable()

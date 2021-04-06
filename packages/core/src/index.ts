@@ -16,7 +16,7 @@ export { ServiceProvider } from './types/service-provider';
 export { HttpMethod } from './types/mix';
 export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './utils/http-status-codes';
 export { NodeReqToken, NodeResToken, NodeResponse, NodeRequest, RequestListener } from './types/server-options';
-export { RedirectStatusCodes } from './types/redirect-status-codes';
+export { RedirectStatusCodes } from './types/mix';
 export { CanActivate } from './types/mix';
 export { GuardItem } from './types/mix';
 export { PathParam, RouterReturns, RouteHandler } from './types/router';
