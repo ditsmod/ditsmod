@@ -168,7 +168,7 @@ export class AppInitializer {
   protected bootstrapModuleFactory(moduleManager: ModuleManager) {
     const globalProviders = this.getGlobalProviders(moduleManager);
     this.log.trace({ globalProviders });
-    const moduleFactory = new ModuleFactory();
+    const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
     const appModule = moduleManager.getMetadata('root').module;
     return moduleFactory.bootstrap(globalProviders, '', appModule, moduleManager);
   }
@@ -176,7 +176,7 @@ export class AppInitializer {
   protected getGlobalProviders(moduleManager: ModuleManager) {
     const globalProviders = new ProvidersMetadata();
     globalProviders.providersPerApp = this.meta.providersPerApp;
-    const moduleFactory = new ModuleFactory();
+    const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
     const { providersPerMod, providersPerReq } = moduleFactory.exportGlobalProviders(moduleManager, globalProviders);
     globalProviders.providersPerMod = providersPerMod;
     globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];

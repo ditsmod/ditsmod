@@ -56,7 +56,7 @@ describe('ModuleFactory', () => {
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
-    mock = new MockModuleFactory();
+    mock = new MockModuleFactory(null, null);
     const config = new LoggerConfig();
     const log = new DefaultLogger(config);
     moduleManager = new ModuleManager(log);

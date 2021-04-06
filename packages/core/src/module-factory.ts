@@ -1,4 +1,4 @@
-import { Injectable, reflector } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector, reflector } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ProvidersMetadata } from './models/providers-metadata';
@@ -28,6 +28,7 @@ import {
   isRootModule,
 } from './utils/type-guards';
 import { deepFreeze } from './utils/deep-freeze';
+import { Logger } from './types/logger';
 
 /**
  * - imports and exports global providers;
@@ -51,6 +52,8 @@ export class ModuleFactory {
   protected globalProviders: ProvidersMetadata;
   protected extensionMetadataMap = new Map<ModuleType | ModuleWithParams, ExtensionMetadata>();
   #moduleManager: ModuleManager;
+
+  constructor(private injectorPerApp: ReflectiveInjector, private log: Logger) {}
 
   /**
    * Calls only by `@RootModule` before calls `ModuleFactory#boostrap()`.
@@ -149,6 +152,7 @@ export class ModuleFactory {
     const providers = [...providersPerApp, ...providersPerMod];
     const normalizedProviders = normalizeProviders(providers);
     const normalizedProvidersPerReq = normalizeProviders(providersPerReq).map((np) => np.provide);
+    this.checkExtensionsRegistration(this.moduleName, providers, meta);
     meta.extensions.forEach((token, i) => {
       const provider = normalizedProviders.find((np) => np.provide === token);
       if (!provider) {
@@ -175,11 +179,35 @@ export class ModuleFactory {
     });
   }
 
+  protected checkExtensionsRegistration(
+    moduleName: string,
+    providers: ServiceProvider[],
+    meta: NormalizedModuleMetadata
+  ) {
+    const extensionsProviders = providers
+      .filter(isClassProvider)
+      .filter(
+        (p) =>
+          p.multi &&
+          isExtensionProvider(p.useClass) &&
+          isInjectionToken(p.provide) &&
+          p.provide.toString().toLowerCase().includes('extension')
+      );
+
+    getUniqProviders(extensionsProviders).forEach((p) => {
+      if (!meta.extensions.includes(p.provide)) {
+        let msg = `In ${moduleName} you have token "${p.provide}" `;
+        msg += `with extension-like "${p.useClass.name}" that not registered in "extensions" array`;
+        this.log.warn(msg);
+      }
+    });
+  }
+
   protected importModules() {
     for (const imp of this.meta.importsModules) {
       const meta = this.#moduleManager.getMetadata(imp, true);
       this.importProviders(meta, true);
-      const moduleFactory = new ModuleFactory();
+      const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       const extensionMetadataMap = moduleFactory.bootstrap(
         this.globalProviders,
         this.prefixPerMod,
@@ -196,7 +224,7 @@ export class ModuleFactory {
       const normalizedGuardsPerMod = this.normalizeGuards(imp.guards);
       this.checkGuardsPerMod(normalizedGuardsPerMod);
       const guardsPerMod = [...this.guardsPerMod, ...normalizedGuardsPerMod];
-      const moduleFactory = new ModuleFactory();
+      const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       const extensionMetadataMap = moduleFactory.bootstrap(
         this.globalProviders,
         prefixPerMod,
