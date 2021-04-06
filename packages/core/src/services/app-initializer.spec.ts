@@ -13,7 +13,7 @@ import { Module } from '../decorators/module';
 import { RootModule } from '../decorators/root-module';
 import { NodeReqToken } from '../types/server-options';
 import { RootMetadata } from '../models/root-metadata';
-import { ServiceProvider } from '../types/service-provider';
+import { ServiceProvider } from '../types/mix';
 import { DefaultLogger } from './default-logger';
 import { ModuleManager } from './module-manager';
 import { defaultProvidersPerReq } from './default-providers-per-req';

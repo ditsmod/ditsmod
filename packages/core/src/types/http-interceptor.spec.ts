@@ -5,7 +5,7 @@ import { HttpBackend, HttpHandler, HttpInterceptor, HTTP_INTERCEPTORS, HttpFront
 import { defaultProvidersPerReq } from '../services/default-providers-per-req';
 import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { NodeReqToken, NodeResToken } from './server-options';
-import { ServiceProvider } from './service-provider';
+import { ServiceProvider } from './mix';
 import { RouteData } from './route-data';
 import { PATH_PARAMS, QUERY_STRING } from './router';
 

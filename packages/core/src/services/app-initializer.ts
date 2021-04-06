@@ -8,7 +8,7 @@ import { ExtensionsMap, EXTENSIONS_MAP } from '../types/extensions-map';
 import { Logger } from '../types/logger';
 import { ModuleType } from '../types/mix';
 import { RequestListener } from '../types/server-options';
-import { ServiceProvider } from '../types/service-provider';
+import { ServiceProvider } from '../types/mix';
 import { getDuplicates } from '../utils/get-duplicates';
 import { getModule } from '../utils/get-module';
 import { getModuleMetadata } from '../utils/get-module-metadata';

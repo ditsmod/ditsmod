@@ -4,7 +4,7 @@ import { BodyParserConfig } from '../models/body-parser-config';
 import { RootMetadata } from '../models/root-metadata';
 import { DEFAULT_EXTENSIONS, ROUTES_EXTENSIONS } from '../types/extension';
 import { Logger, LoggerConfig } from '../types/logger';
-import { ServiceProvider } from '../types/service-provider';
+import { ServiceProvider } from '../types/mix';
 import { Counter } from './counter';
 import { DefaultLogger } from './default-logger';
 import { ExtensionsManager } from './extensions-manager';

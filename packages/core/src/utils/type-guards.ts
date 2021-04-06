@@ -21,7 +21,7 @@ import { ModuleType } from '../types/mix';
 import { ModuleWithParams } from '../types/mix';
 import { RootModuleMetadata } from '../types/root-module-metadata';
 import { Http2SecureServerOptions, ServerOptions } from '../types/server-options';
-import { ServiceProvider } from '../types/service-provider';
+import { ServiceProvider } from '../types/mix';
 import { NormalizedProvider } from './ng-utils';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {

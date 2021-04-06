@@ -1,5 +1,5 @@
 import { ControllerErrorHandler } from '../services/controller-error-handler';
-import { ServiceProvider } from '../types/service-provider';
+import { ServiceProvider } from '../types/mix';
 import { DefaultControllerErrorHandler } from './default-controller-error-handler';
 import { Request } from './request';
 import { Response } from './response';

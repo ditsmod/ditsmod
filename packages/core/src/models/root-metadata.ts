@@ -4,7 +4,7 @@ import { InjectionToken } from '@ts-stack/di';
 
 import { ServerOptions } from '../types/server-options';
 import { HttpModule } from '../types/http-module';
-import { ServiceProvider } from '../types/service-provider';
+import { ServiceProvider } from '../types/mix';
 
 /**
  * @todo Rename this to `RootMetadata`.

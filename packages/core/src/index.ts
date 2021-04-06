@@ -12,7 +12,7 @@ export { BodyParserConfig } from './models/body-parser-config';
 export { BodyParser } from './services/body-parser';
 export { DefaultLogger } from './services/default-logger';
 export { Router, PATH_PARAMS, QUERY_STRING } from './types/router';
-export { ServiceProvider } from './types/service-provider';
+export { ServiceProvider } from './types/mix';
 export { HttpMethod } from './types/mix';
 export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './utils/http-status-codes';
 export { NodeReqToken, NodeResToken, NodeResponse, NodeRequest, RequestListener } from './types/server-options';

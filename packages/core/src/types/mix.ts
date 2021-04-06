@@ -1,4 +1,4 @@
-import { Type } from '@ts-stack/di';
+import { ClassProvider, ExistingProvider, FactoryProvider, Type, TypeProvider, ValueProvider } from '@ts-stack/di';
 
 import { ProvidersMetadata } from '../models/providers-metadata';
 
@@ -17,7 +17,7 @@ export type AnyFn = (...args: any[]) => any;
 /**
  * It is just `{ [key: string]: any }` an object interface.
  */
- export interface AnyObj {
+export interface AnyObj {
   [key: string]: any;
 }
 
@@ -58,44 +58,54 @@ export interface NormalizedGuard {
 /**
  * See also https://en.wikipedia.org/wiki/URL_redirection#HTTP_status_codes_3xx
  */
- export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
+export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
+
+/**
+ * Describes how the `Injector` should be configured.
+ *
+ * ### How To Use
+ * See `TypeProvider`, `ValueProvider`, `ClassProvider`, `ExistingProvider`, `FactoryProvider`.
+ *
+ * For more details, see the [Dependency Injection Guide](https://v4.angular.io/guide/dependency-injection).
+ */
+export declare type ServiceProvider = TypeProvider | ValueProvider | ClassProvider | ExistingProvider | FactoryProvider;
 
 /**
  * `http.METHODS`
  */
- export type HttpMethod =
- | 'ACL'
- | 'BIND'
- | 'CHECKOUT'
- | 'CONNECT'
- | 'COPY'
- | 'DELETE'
- | 'GET'
- | 'HEAD'
- | 'LINK'
- | 'LOCK'
- | 'M-SEARCH'
- | 'MERGE'
- | 'MKACTIVITY'
- | 'MKCALENDAR'
- | 'MKCOL'
- | 'MOVE'
- | 'NOTIFY'
- | 'OPTIONS'
- | 'PATCH'
- | 'POST'
- | 'PROPFIND'
- | 'PROPPATCH'
- | 'PURGE'
- | 'PUT'
- | 'REBIND'
- | 'REPORT'
- | 'SEARCH'
- | 'SOURCE'
- | 'SUBSCRIBE'
- | 'TRACE'
- | 'UNBIND'
- | 'UNLINK'
- | 'UNLOCK'
- | 'UNSUBSCRIBE'
- | 'ALL';
+export type HttpMethod =
+  | 'ACL'
+  | 'BIND'
+  | 'CHECKOUT'
+  | 'CONNECT'
+  | 'COPY'
+  | 'DELETE'
+  | 'GET'
+  | 'HEAD'
+  | 'LINK'
+  | 'LOCK'
+  | 'M-SEARCH'
+  | 'MERGE'
+  | 'MKACTIVITY'
+  | 'MKCALENDAR'
+  | 'MKCOL'
+  | 'MOVE'
+  | 'NOTIFY'
+  | 'OPTIONS'
+  | 'PATCH'
+  | 'POST'
+  | 'PROPFIND'
+  | 'PROPPATCH'
+  | 'PURGE'
+  | 'PUT'
+  | 'REBIND'
+  | 'REPORT'
+  | 'SEARCH'
+  | 'SOURCE'
+  | 'SUBSCRIBE'
+  | 'TRACE'
+  | 'UNBIND'
+  | 'UNLINK'
+  | 'UNLOCK'
+  | 'UNSUBSCRIBE'
+  | 'ALL';

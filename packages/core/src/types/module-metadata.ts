@@ -4,7 +4,7 @@ import { ProvidersMetadata } from '../models/providers-metadata';
 import { ControllerType } from '../types/mix';
 import { ModuleType } from '../types/mix';
 import { ModuleWithParams } from '../types/mix';
-import { ServiceProvider } from '../types/service-provider';
+import { ServiceProvider } from '../types/mix';
 
 export interface ModuleMetadata extends Partial<ProvidersMetadata> {
   /**

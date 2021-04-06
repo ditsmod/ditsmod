@@ -10,7 +10,7 @@ import { GuardItem } from '../types/mix';
 import { HttpMethod } from '../types/mix';
 import { NormalizedGuard } from '../types/mix';
 import { PreRouteMeta, RouteData } from '../types/route-data';
-import { ServiceProvider } from '../types/service-provider';
+import { ServiceProvider } from '../types/mix';
 import { isController, isRoute } from '../utils/type-guards';
 
 @Injectable()

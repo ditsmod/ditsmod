@@ -4,7 +4,7 @@ import { DecoratorMetadata } from './mix';
 import { HttpMethod } from './mix';
 import { NormalizedGuard } from './mix';
 import { RouteHandler } from './router';
-import { ServiceProvider } from './service-provider';
+import { ServiceProvider } from './mix';
 
 export class PreRouteMeta {
   moduleName: string;

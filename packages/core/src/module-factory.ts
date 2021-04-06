@@ -12,7 +12,7 @@ import { ModuleType } from './types/mix';
 import { ModuleWithParams } from './types/mix';
 import { NormalizedGuard } from './types/mix';
 import { NodeReqToken, NodeResToken } from './types/server-options';
-import { ServiceProvider } from './types/service-provider';
+import { ServiceProvider } from './types/mix';
 import { getDuplicates } from './utils/get-duplicates';
 import { getTokensCollisions } from './utils/get-tokens-collisions';
 import { getUniqProviders } from './utils/get-uniq-providers';

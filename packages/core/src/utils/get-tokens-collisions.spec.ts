@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { ServiceProvider } from '../types/service-provider';
+import { ServiceProvider } from '../types/mix';
 import { getTokensCollisions } from './get-tokens-collisions';
 
 describe('getTokensCollisions()', () => {

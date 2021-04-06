@@ -3,7 +3,7 @@ import 'reflect-metadata';
 
 import { Module } from '../decorators/module';
 import { ModuleWithParams } from '../types/mix';
-import { ServiceProvider } from '../types/service-provider';
+import { ServiceProvider } from '../types/mix';
 import { getModuleMetadata } from './get-module-metadata';
 
 describe('getModuleMetadata', () => {

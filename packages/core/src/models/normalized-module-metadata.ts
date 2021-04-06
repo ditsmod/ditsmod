@@ -4,7 +4,7 @@ import { AnyObj } from '../types/mix';
 import { ControllerType } from '../types/mix';
 import { ModuleType } from '../types/mix';
 import { ModuleWithParams } from '../types/mix';
-import { ServiceProvider } from '../types/service-provider';
+import { ServiceProvider } from '../types/mix';
 import { ProvidersMetadata } from './providers-metadata';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj> extends ProvidersMetadata {

@@ -1,6 +1,6 @@
 import { format } from 'util';
 
-import { ServiceProvider } from '../types/service-provider';
+import { ServiceProvider } from '../types/mix';
 import { normalizeProviders } from './ng-utils';
 import { isNormalizedProvider } from './type-guards';
 
