@@ -1,6 +1,6 @@
 import { Type } from '@ts-stack/di';
 
-import { CanActivate } from './can-activate';
+import { CanActivate } from './mix';
 
 export interface NormalizedGuard {
   guard: Type<CanActivate>;

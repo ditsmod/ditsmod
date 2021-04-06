@@ -7,7 +7,7 @@ import { ExtensionMetadata } from '../types/extension-metadata';
 import { Controller, ControllerMetadata } from '../decorators/controller';
 import { Route } from '../decorators/route';
 import { RootModule } from '../decorators/root-module';
-import { CanActivate } from '../types/can-activate';
+import { CanActivate } from '../types/mix';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleManager } from './module-manager';

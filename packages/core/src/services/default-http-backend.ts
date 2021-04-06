@@ -2,7 +2,7 @@ import { Injectable } from '@ts-stack/di';
 
 import { HttpBackend } from '../types/http-interceptor';
 import { Request } from './request';
-import { CanActivate } from '../types/can-activate';
+import { CanActivate } from '../types/mix';
 import { BodyParser } from './body-parser';
 import { NodeRequest, NodeResponse } from '../types/server-options';
 import { Logger } from '../types/logger';

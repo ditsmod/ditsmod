@@ -3,7 +3,7 @@ import { reflector } from '@ts-stack/di';
 
 import { Route } from './route';
 import { Controller } from './controller';
-import { CanActivate } from '../types/can-activate';
+import { CanActivate } from '../types/mix';
 
 describe('Route decorator', () => {
   it('controller without methods', () => {

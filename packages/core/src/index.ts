@@ -17,7 +17,7 @@ export { HttpMethod } from './types/http-method';
 export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './utils/http-status-codes';
 export { NodeReqToken, NodeResToken, NodeResponse, NodeRequest, RequestListener } from './types/server-options';
 export { RedirectStatusCodes } from './types/redirect-status-codes';
-export { CanActivate } from './types/can-activate';
+export { CanActivate } from './types/mix';
 export { GuardItem } from './types/guard-item';
 export { PathParam, RouterReturns, RouteHandler } from './types/router';
 export { RootMetadata } from './models/root-metadata';
