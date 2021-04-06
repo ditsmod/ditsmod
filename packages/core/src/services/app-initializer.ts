@@ -204,8 +204,6 @@ export class AppInitializer {
       await extensionsManager.init(groupToken);
       this.log.debug(`${moduleName}: finish init group with ${groupToken}`);
     }
-
-    this.log.debug(`Total extensions initialized: ${mapedExtensions.length}`);
   }
 
   protected mapExtensionsToInjectors(extensionsMap: ExtensionsMap) {
