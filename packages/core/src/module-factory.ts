@@ -51,7 +51,7 @@ export class ModuleFactory {
   #moduleManager: ModuleManager;
 
   /**
-   * Called only by `@RootModule` before called `ModuleFactory#boostrap()`.
+   * Calls only by `@RootModule` before calls `ModuleFactory#boostrap()`.
    *
    * @param globalProviders Contains providersPerApp for now.
    */
@@ -300,7 +300,7 @@ export class ModuleFactory {
   }
 
   /**
-   * This method should called before call `this.mergeProviders()`.
+   * This method should be called before call `this.mergeProviders()`.
    *
    * @param isGlobal Indicates that need find collision for global providers.
    */
