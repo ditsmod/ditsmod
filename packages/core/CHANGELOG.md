@@ -1,5 +1,12 @@
+<a name="beta.9"></a>
+# [beta.9](https://github.com/ts-stack/ditsmod/releases/tag/beta.9) (2021-04-06)
+
+### Bug fix
+
+- Fixed `mapExtensionsToInjectors()` (see [b032737](https://github.com/ditsmod/ditsmod/commit/b032737)).
+
 <a name="beta.8"></a>
-# [beta.8](https://github.com/ts-stack/ditsmod/releases/tag/beta.8) (2021-04-06)
+## [beta.8](https://github.com/ts-stack/ditsmod/releases/tag/beta.8) (2021-04-06)
 
 ### Bug fix
 
