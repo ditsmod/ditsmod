@@ -12,6 +12,7 @@ import { RootMetadata } from './models/root-metadata';
 import { ModuleType } from './types/module-type';
 import { Extension } from './types/extension';
 import { Router } from './types/router';
+import { Module } from './decorators/module';
 
 describe('Application', () => {
   class MockApplication extends Application {
@@ -80,37 +81,81 @@ describe('Application', () => {
 
     @Injectable()
     class Extension1 implements Extension<any> {
+      #inited: boolean;
+
       async init() {
+        if (this.#inited) {
+          return;
+        }
         jestFn('Extension1');
+        this.#inited = true;
       }
     }
 
     @Injectable()
     class Extension2 implements Extension<any> {
+      #inited: boolean;
+
       async init() {
+        if (this.#inited) {
+          return;
+        }
         jestFn('Extension2');
+        this.#inited = true;
       }
     }
 
-    it('non-root module should inited only from providersPerMod', async () => {
-      @RootModule({
-        providersPerApp: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
-        providersPerMod: [{ provide: MY_EXTENSIONS, useClass: Extension2, multi: true }],
-        extensions: [MY_EXTENSIONS],
-      })
-      class Module1 {}
+    @Injectable()
+    class Extension3 implements Extension<any> {
+      #inited: boolean;
 
+      async init() {
+        if (this.#inited) {
+          return;
+        }
+        jestFn('Extension3');
+        this.#inited = true;
+      }
+    }
+
+    @Injectable()
+    class Extension4 implements Extension<any> {
+      #inited: boolean;
+
+      async init() {
+        if (this.#inited) {
+          return;
+        }
+        jestFn('Extension4');
+        this.#inited = true;
+      }
+    }
+
+    it('mix declared extensions in two modules and in providersPerMod and providersPerApp', async () => {
+      const MY_EXTENSIONS2 = new InjectionToken<Extension<void>[]>('MY_EXTENSIONS2');
       const loggerConfig = new LoggerConfig();
       const level: keyof Logger = 'info';
       loggerConfig.level = level;
       loggerConfig.depth = 3;
+
+      @Module({
+        providersPerApp: [
+          { provide: MY_EXTENSIONS, useClass: Extension1, multi: true },
+          { provide: MY_EXTENSIONS2, useClass: Extension3, multi: true },
+        ],
+        providersPerMod: [{ provide: MY_EXTENSIONS, useClass: Extension2, multi: true }],
+        extensions: [MY_EXTENSIONS, MY_EXTENSIONS2],
+      })
+      class Module1 {}
 
       @RootModule({
         imports: [Module1],
         providersPerApp: [
           { provide: Router, useClass: DefaultRouter },
           { provide: LoggerConfig, useValue: loggerConfig },
+          { provide: MY_EXTENSIONS2, useClass: Extension4, multi: true },
         ],
+        extensions: [MY_EXTENSIONS2],
       })
       class AppModule {}
 
@@ -121,10 +166,10 @@ describe('Application', () => {
       }
       const promise = new MockApplication().init(AppModule);
       await expect(promise).resolves.not.toThrow();
-      expect(jestFn.mock.calls).toEqual([['Extension2']]);
+      expect(jestFn.mock.calls).toEqual([['Extension2'], ['Extension3'], ['Extension4']]);
     });
 
-    it('root module should inited only extension from providersPerMod', async () => {
+    it('mix declared extensions in root module and in providersPerMod and providersPerApp', async () => {
       const loggerConfig = new LoggerConfig();
       const level: keyof Logger = 'info';
       loggerConfig.level = level;
@@ -151,7 +196,7 @@ describe('Application', () => {
       expect(jestFn.mock.calls).toEqual([['Extension2']]);
     });
 
-    it('root module should found extension in providersPerApp', async () => {
+    it('declared extensions in root module and only in providersPerApp', async () => {
       const loggerConfig = new LoggerConfig();
       const level: keyof Logger = 'info';
       loggerConfig.level = level;
