@@ -131,6 +131,19 @@ describe('Application', () => {
       }
     }
 
+    @Injectable()
+    class Extension5 implements Extension<any> {
+      #inited: boolean;
+
+      async init() {
+        if (this.#inited) {
+          return;
+        }
+        jestFn('Extension5');
+        this.#inited = true;
+      }
+    }
+
     it('mix declared extensions in two modules and in providersPerMod and providersPerApp', async () => {
       const MY_EXTENSIONS2 = new InjectionToken<Extension<void>[]>('MY_EXTENSIONS2');
       const loggerConfig = new LoggerConfig();
@@ -154,6 +167,7 @@ describe('Application', () => {
           { provide: Router, useClass: DefaultRouter },
           { provide: LoggerConfig, useValue: loggerConfig },
           { provide: MY_EXTENSIONS2, useClass: Extension4, multi: true },
+          { provide: MY_EXTENSIONS2, useClass: Extension5, multi: true },
         ],
         extensions: [MY_EXTENSIONS2],
       })
@@ -166,7 +180,7 @@ describe('Application', () => {
       }
       const promise = new MockApplication().init(AppModule);
       await expect(promise).resolves.not.toThrow();
-      expect(jestFn.mock.calls).toEqual([['Extension2'], ['Extension3'], ['Extension4']]);
+      expect(jestFn.mock.calls).toEqual([['Extension2'], ['Extension3'], ['Extension4'], ['Extension5']]);
     });
 
     it('mix declared extensions in root module and in providersPerMod and providersPerApp', async () => {
