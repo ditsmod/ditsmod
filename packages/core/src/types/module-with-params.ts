@@ -1,5 +1,5 @@
 import { ProvidersMetadata } from '../models/providers-metadata';
-import { ModuleType } from './module-type';
+import { ModuleType } from './mix';
 import { GuardItem } from './mix';
 import { AnyObj } from './mix';
 

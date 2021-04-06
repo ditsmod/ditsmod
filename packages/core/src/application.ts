@@ -9,7 +9,7 @@ import { DefaultLogger } from './services/default-logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { ModuleManager } from './services/module-manager';
 import { Logger, LoggerConfig } from './types/logger';
-import { ModuleType } from './types/module-type';
+import { ModuleType } from './types/mix';
 import { Http2SecureServerOptions, Server } from './types/server-options';
 import { getModuleMetadata } from './utils/get-module-metadata';
 import { isHttp2SecureServerOptions } from './utils/type-guards';

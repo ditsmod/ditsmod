@@ -17,7 +17,7 @@ import { RouteMetadata } from '../decorators/route';
 import { AnyObj } from '../types/mix';
 import { Extension } from '../types/extension';
 import { ModuleMetadata } from '../types/module-metadata';
-import { ModuleType } from '../types/module-type';
+import { ModuleType } from '../types/mix';
 import { ModuleWithParams } from '../types/module-with-params';
 import { RootModuleMetadata } from '../types/root-module-metadata';
 import { Http2SecureServerOptions, ServerOptions } from '../types/server-options';

@@ -6,7 +6,7 @@ import { Logger, LoggerConfig } from '../types/logger';
 import { Router } from '../types/router';
 import { Request } from './request';
 import { defaultProvidersPerApp } from './default-providers-per-app';
-import { ModuleType } from '../types/module-type';
+import { ModuleType } from '../types/mix';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleWithParams } from '../types/module-with-params';
 import { Module } from '../decorators/module';

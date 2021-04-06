@@ -10,7 +10,7 @@ import { ModuleWithParams } from '../types/module-with-params';
 import { ServiceProvider } from '../types/service-provider';
 import { LoggerConfig } from '../types/logger';
 import { DefaultLogger } from './default-logger';
-import { ModuleType } from '../types/module-type';
+import { ModuleType } from '../types/mix';
 
 describe('ModuleManager', () => {
   class MockModuleManager extends ModuleManager {

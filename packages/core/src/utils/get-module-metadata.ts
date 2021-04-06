@@ -2,7 +2,7 @@ import { reflector } from '@ts-stack/di';
 
 import { Module } from '../decorators/module';
 import { ModuleMetadata } from '../types/module-metadata';
-import { ModuleType } from '../types/module-type';
+import { ModuleType } from '../types/mix';
 import { ModuleWithParams } from '../types/module-with-params';
 import { checkModuleMetadata } from './check-module-metadata';
 import { getModuleName } from './get-module-name';

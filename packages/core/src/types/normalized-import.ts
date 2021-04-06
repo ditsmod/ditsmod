@@ -1,5 +1,5 @@
 import { AnyObj } from './mix';
-import { ModuleType } from './module-type';
+import { ModuleType } from './mix';
 import { NormalizedGuard } from './normalized-guard';
 
 export interface NormalizedImport<T extends ModuleType<AnyObj> = ModuleType<AnyObj>> {

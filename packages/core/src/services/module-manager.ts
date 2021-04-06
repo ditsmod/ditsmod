@@ -4,7 +4,7 @@ import { format } from 'util';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { AnyObj } from '../types/mix';
 import { Logger } from '../types/logger';
-import { ModuleType } from '../types/module-type';
+import { ModuleType } from '../types/mix';
 import { ModuleWithParams } from '../types/module-with-params';
 import { ModulesMap } from '../types/modules-map';
 import { checkModuleMetadata } from '../utils/check-module-metadata';

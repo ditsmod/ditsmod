@@ -11,7 +11,7 @@ import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { ExtensionMetadata } from './types/extension-metadata';
-import { ModuleType } from './types/module-type';
+import { ModuleType } from './types/mix';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ServiceProvider } from './types/service-provider';
 import { NormalizedGuard } from './types/normalized-guard';

@@ -1,5 +1,7 @@
 import { Type } from '@ts-stack/di';
 
+export type ModuleType<T extends AnyObj = AnyObj> = Type<T>;
+
 export type AnyFn = (...args: any[]) => any;
 
 /**
@@ -64,4 +66,3 @@ export type GuardItem = Type<CanActivate> | [Type<CanActivate>, any, ...any[]];
  | 'UNLOCK'
  | 'UNSUBSCRIBE'
  | 'ALL';
- 

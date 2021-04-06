@@ -8,7 +8,7 @@ import { ControllerAndMethodMetadata } from './types/controller-and-method-metad
 import { ExtensionMetadata } from './types/extension-metadata';
 import { GuardItem } from './types/mix';
 import { DecoratorMetadata } from './types/mix';
-import { ModuleType } from './types/module-type';
+import { ModuleType } from './types/mix';
 import { ModuleWithParams } from './types/module-with-params';
 import { NormalizedGuard } from './types/normalized-guard';
 import { NodeReqToken, NodeResToken } from './types/server-options';

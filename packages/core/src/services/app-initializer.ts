@@ -6,7 +6,7 @@ import { RootMetadata } from '../models/root-metadata';
 import { ModuleFactory } from '../module-factory';
 import { ExtensionsMap, EXTENSIONS_MAP } from '../types/extensions-map';
 import { Logger } from '../types/logger';
-import { ModuleType } from '../types/module-type';
+import { ModuleType } from '../types/mix';
 import { RequestListener } from '../types/server-options';
 import { ServiceProvider } from '../types/service-provider';
 import { getDuplicates } from '../utils/get-duplicates';

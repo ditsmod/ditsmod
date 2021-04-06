@@ -2,7 +2,7 @@ import { InjectionToken } from '@ts-stack/di';
 
 import { AnyObj } from '../types/mix';
 import { ControllerType } from '../types/mix';
-import { ModuleType } from '../types/module-type';
+import { ModuleType } from '../types/mix';
 import { ModuleWithParams } from '../types/module-with-params';
 import { ServiceProvider } from '../types/service-provider';
 import { ProvidersMetadata } from './providers-metadata';
