@@ -212,6 +212,9 @@ export class AppInitializer {
     const mapedExtensions = [];
 
     for (const [, metadata] of extensionsMap) {
+      if (isRootModule(metadata.moduleMetadata)) {
+        metadata.moduleMetadata.extensions = this.meta.extensions;
+      }
       const { providersPerMod, extensions, name } = metadata.moduleMetadata;
       const mapedExtension = extensions.map((groupToken) => {
         const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
