@@ -6,7 +6,7 @@ import { RootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleManager } from './module-manager';
 import { Module } from '../decorators/module';
-import { ModuleWithParams } from '../types/module-with-params';
+import { ModuleWithParams } from '../types/mix';
 import { ServiceProvider } from '../types/service-provider';
 import { LoggerConfig } from '../types/logger';
 import { DefaultLogger } from './default-logger';
@@ -420,7 +420,7 @@ describe('ModuleManager', () => {
 
     const module3WithProviders = Module3.withParams([Provider2]);
 
-    const moduleId = 'my-module-with-params';
+    const moduleId = 'my-mix';
     @Module()
     class Module4 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module4> {

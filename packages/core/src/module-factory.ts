@@ -9,7 +9,7 @@ import { ExtensionMetadata } from './types/extension-metadata';
 import { GuardItem } from './types/mix';
 import { DecoratorMetadata } from './types/mix';
 import { ModuleType } from './types/mix';
-import { ModuleWithParams } from './types/module-with-params';
+import { ModuleWithParams } from './types/mix';
 import { NormalizedGuard } from './types/normalized-guard';
 import { NodeReqToken, NodeResToken } from './types/server-options';
 import { ServiceProvider } from './types/service-provider';

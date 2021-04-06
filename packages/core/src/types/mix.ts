@@ -1,6 +1,16 @@
 import { Type } from '@ts-stack/di';
 
+import { ProvidersMetadata } from '../models/providers-metadata';
+
 export type ModuleType<T extends AnyObj = AnyObj> = Type<T>;
+
+export interface ModuleWithParams<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
+  id?: string;
+  module: ModuleType<T>;
+  prefix?: string;
+  guards?: GuardItem[];
+  [key: string]: any;
+}
 
 export type AnyFn = (...args: any[]) => any;
 

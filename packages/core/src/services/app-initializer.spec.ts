@@ -8,7 +8,7 @@ import { Request } from './request';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ModuleType } from '../types/mix';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { ModuleWithParams } from '../types/module-with-params';
+import { ModuleWithParams } from '../types/mix';
 import { Module } from '../decorators/module';
 import { RootModule } from '../decorators/root-module';
 import { NodeReqToken } from '../types/server-options';

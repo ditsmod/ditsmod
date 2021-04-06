@@ -1,7 +1,7 @@
 export { Application } from './application';
 export { RootModule } from './decorators/root-module';
 export { Module } from './decorators/module';
-export { ModuleWithParams } from './types/module-with-params';
+export { ModuleWithParams } from './types/mix';
 export { Controller } from './decorators/controller';
 export { Request } from './services/request';
 export { Response } from './services/response';

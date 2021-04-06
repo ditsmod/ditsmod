@@ -2,7 +2,7 @@ import { forwardRef, Injectable } from '@ts-stack/di';
 import 'reflect-metadata';
 
 import { Module } from '../decorators/module';
-import { ModuleWithParams } from '../types/module-with-params';
+import { ModuleWithParams } from '../types/mix';
 import { ServiceProvider } from '../types/service-provider';
 import { getModuleMetadata } from './get-module-metadata';
 
