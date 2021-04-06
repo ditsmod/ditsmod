@@ -1,4 +1,4 @@
-import { AnyObj } from '../types/any-obj';
+import { AnyObj } from '../types/mix';
 import { ControllerType } from '../types/controller-type';
 import { DecoratorMetadata } from './decorator-metadata';
 

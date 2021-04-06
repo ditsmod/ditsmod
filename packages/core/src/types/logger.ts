@@ -1,4 +1,4 @@
-import { AnyObj } from './any-obj';
+import { AnyObj } from './mix';
 
 export interface LoggerMethod {
   /**

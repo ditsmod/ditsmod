@@ -7,7 +7,7 @@ import { Logger } from '../types/logger';
 import { NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { Request } from './request';
-import { AnyObj } from '../types/any-obj';
+import { AnyObj } from '../types/mix';
 import { PathParam, PATH_PARAMS, QUERY_STRING } from '../types/router';
 
 @Injectable()

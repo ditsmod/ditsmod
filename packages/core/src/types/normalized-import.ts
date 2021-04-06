@@ -1,4 +1,4 @@
-import { AnyObj } from './any-obj';
+import { AnyObj } from './mix';
 import { ModuleType } from './module-type';
 import { NormalizedGuard } from './normalized-guard';
 

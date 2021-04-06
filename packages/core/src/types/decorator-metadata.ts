@@ -1,4 +1,4 @@
-import { AnyObj } from './any-obj';
+import { AnyObj } from './mix';
 
 export interface DecoratorMetadata<MV extends AnyObj = AnyObj> {
   otherDecorators: any[];

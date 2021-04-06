@@ -1,6 +1,6 @@
 import { makePropDecorator } from '@ts-stack/di';
 
-import { AnyObj } from '../types/any-obj';
+import { AnyObj } from '../types/mix';
 import { GuardItem } from '../types/guard-item';
 import { HttpMethod } from '../types/http-method';
 

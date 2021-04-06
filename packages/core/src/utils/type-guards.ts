@@ -14,7 +14,7 @@ import {
 
 import { ControllerMetadata } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
-import { AnyObj } from '../types/any-obj';
+import { AnyObj } from '../types/mix';
 import { Extension } from '../types/extension';
 import { ModuleMetadata } from '../types/module-metadata';
 import { ModuleType } from '../types/module-type';

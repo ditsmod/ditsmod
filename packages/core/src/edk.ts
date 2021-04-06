@@ -14,7 +14,7 @@ export { pickProperties } from './utils/pick-properties';
 export { ExtensionMetadata } from './types/extension-metadata';
 export { ControllerType } from './types/controller-type';
 export { ModuleType } from './types/module-type';
-export { AnyObj } from './types/any-obj';
+export { AnyObj } from './types/mix';
 export { NormalizedGuard } from './types/normalized-guard';
 export { PreRouteMeta } from './types/route-data';
 export { Extension, ROUTES_EXTENSIONS, DEFAULT_EXTENSIONS } from './types/extension';

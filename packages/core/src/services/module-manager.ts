@@ -2,7 +2,7 @@ import { Injectable, resolveForwardRef } from '@ts-stack/di';
 import { format } from 'util';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { AnyObj } from '../types/any-obj';
+import { AnyObj } from '../types/mix';
 import { Logger } from '../types/logger';
 import { ModuleType } from '../types/module-type';
 import { ModuleWithParams } from '../types/module-with-params';
