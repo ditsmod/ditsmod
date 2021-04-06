@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@ts-stack/di';
 import { parse } from 'querystring';
 
-import { ControllerErrorHandler } from '../types/controller-error-handler';
+import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
 import { Logger } from '../types/logger';
 import { NodeResponse } from '../types/server-options';

@@ -7,7 +7,7 @@ export { Request } from './services/request';
 export { Response } from './services/response';
 export { Route } from './decorators/route';
 export { Logger, LoggerConfig, LoggerMethod } from './types/logger';
-export { ControllerErrorHandler } from './types/controller-error-handler';
+export { ControllerErrorHandler } from './services/controller-error-handler';
 export { BodyParserConfig } from './models/body-parser-config';
 export { BodyParser } from './services/body-parser';
 export { DefaultLogger } from './services/default-logger';

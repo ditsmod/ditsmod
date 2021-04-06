@@ -1,6 +1,6 @@
 import { Injectable } from '@ts-stack/di';
 
-import { ControllerErrorHandler } from '../types/controller-error-handler';
+import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { Logger } from '../types/logger';
 import { Status } from '../utils/http-status-codes';
 import { Response } from './response';

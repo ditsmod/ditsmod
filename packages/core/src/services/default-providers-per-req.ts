@@ -1,4 +1,4 @@
-import { ControllerErrorHandler } from '../types/controller-error-handler';
+import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { ServiceProvider } from '../types/service-provider';
 import { DefaultControllerErrorHandler } from './default-controller-error-handler';
 import { Request } from './request';
