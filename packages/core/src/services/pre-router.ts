@@ -2,7 +2,7 @@ import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { Extension, ROUTES_EXTENSIONS } from '../types/extension';
 import { HttpHandler } from '../types/http-interceptor';
-import { HttpMethod } from '../types/http-method';
+import { HttpMethod } from '../types/mix';
 import { Logger } from '../types/logger';
 import { PreRouteMeta, PreparedRouteMeta } from '../types/route-data';
 import { PATH_PARAMS, QUERY_STRING, RouteHandler, Router } from '../types/router';

@@ -1,5 +1,5 @@
 import { InjectionToken } from '@ts-stack/di';
-import { HttpMethod } from './http-method';
+import { HttpMethod } from './mix';
 import { NodeRequest, NodeResponse } from './server-options';
 
 export class Router {

@@ -1,4 +1,4 @@
-import { HttpMethod } from '../types/http-method';
+import { HttpMethod } from '../types/mix';
 import { MultipartBodyParserOptions } from '../types/multipart-body-parser-options';
 
 export class BodyParserConfig {
