@@ -249,8 +249,4 @@ export class ModuleManager {
 
     return metadata;
   }
-
-  protected normalizeArray(arr: any[]) {
-    return (arr || []).slice().map(resolveForwardRef);
-  }
 }
