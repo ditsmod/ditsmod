@@ -147,7 +147,6 @@ import { Module, edk } from '@ditsmod/core';
 import { MyExtension } from './my-extension';
 
 @Module({
-  // ...
   providersPerApp: [{ provide: edk.DEFAULT_EXTENSIONS, useClass: MyExtension, multi: true }],
   extensions: [edk.DEFAULT_EXTENSIONS],
 })
@@ -238,23 +237,11 @@ const result = await this.extensionsManager.init(MY_EXTENSIONS);
 ## В якому саме масиві потрібно оголошувати групу розширень
 
 Групу розширень можна оголошувати або в масиві `providersPerApp`, або в масиві `providersPerMod`.
-Якщо ви оголосите в обох цих масивах одну й ту саму групу, то працюватимуть лише ті розширення,
-що оголошені в масиві `providersPerMod`:
+Оголошення в масиві `providersPerApp` є більш передбачуваним, оскільки є один центральний інжектор,
+і усі розширення, що оголошуються у певній групі, будуть створюватись в контексті цього інжектора,
+не залежно від того, в якому модулі це оголошення відбулось.
 
-```ts
-import { Module } from '@ditsmod/core';
-
-import { MY_EXTENSIONS } from './my-extensions';
-import { MyExtension1 } from './my-extension1';
-import { MyExtension2 } from './my-extension2';
-
-@Module({
-  // ...
-  providersPerApp: [{ provide: MY_EXTENSIONS, useClass: MyExtension1, multi: true }],
-  providersPerMod: [{ provide: MY_EXTENSIONS, useClass: MyExtension2, multi: true }],
-  extensions: [MY_EXTENSIONS],
-})
-export class SomeModule {}
-```
-
-В даному випадку буде проініціалізоване лише `MyExtension2`.
+Натомість, якщо групу оголошують в масиві `providersPerMod`, усі інстанси розширень, а також
+інстанси сервісів, від яких залежать дані розширення, будуть створюватись в
+контексті інжектора поточного модуля. І якщо після цих слів ви ще нечітко зрозуміли якими наслідками
+це обернеться - краще оголошувати групу в масиві `providersPerApp` =).
