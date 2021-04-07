@@ -1,4 +1,4 @@
-import { Injectable, ReflectiveInjector, reflector } from '@ts-stack/di';
+import { Injectable, InjectionToken, ReflectiveInjector, reflector } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ProvidersMetadata } from './models/providers-metadata';
@@ -152,7 +152,7 @@ export class ModuleFactory {
     const providers = [...providersPerApp, ...providersPerMod];
     const normalizedProviders = normalizeProviders(providers);
     const normalizedProvidersPerReq = normalizeProviders(providersPerReq).map((np) => np.provide);
-    this.checkExtensionsRegistration(this.moduleName, providers, meta);
+    this.checkExtensionsRegistration(this.moduleName, providers, meta.extensions);
     meta.extensions.forEach((token, i) => {
       const provider = normalizedProviders.find((np) => np.provide === token);
       if (!provider) {
@@ -182,7 +182,7 @@ export class ModuleFactory {
   protected checkExtensionsRegistration(
     moduleName: string,
     providers: ServiceProvider[],
-    meta: NormalizedModuleMetadata
+    extensions: InjectionToken<any>[]
   ) {
     const extensionsProviders = providers
       .filter(isClassProvider)
@@ -195,7 +195,7 @@ export class ModuleFactory {
       );
 
     getUniqProviders(extensionsProviders).forEach((p) => {
-      if (!meta.extensions.includes(p.provide)) {
+      if (!extensions.includes(p.provide)) {
         let msg = `In ${moduleName} you have token "${p.provide}" `;
         msg += `with extension-like "${p.useClass.name}" that not registered in "extensions" array`;
         this.log.warn(msg);

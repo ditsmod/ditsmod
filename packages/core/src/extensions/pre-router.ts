@@ -8,7 +8,7 @@ import { PreRouteMeta, PreparedRouteMeta } from '../types/route-data';
 import { PATH_PARAMS, QUERY_STRING, RouteHandler, Router } from '../types/router';
 import { NodeReqToken, NodeResponse, NodeResToken, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
-import { ExtensionsManager } from './extensions-manager';
+import { ExtensionsManager } from '../services/extensions-manager';
 
 @Injectable()
 export class PreRouter implements Extension<void> {

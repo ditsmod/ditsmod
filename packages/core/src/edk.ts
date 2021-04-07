@@ -3,7 +3,7 @@
  */
 
 export { ModuleManager } from './services/module-manager';
-export { PreRoutes } from './services/pre-routes';
+export { PreRoutes } from './extensions/pre-routes';
 export { ModuleFactory } from './module-factory';
 export { ProvidersMetadata } from './models/providers-metadata';
 export { ControllerMetadata } from './decorators/controller';

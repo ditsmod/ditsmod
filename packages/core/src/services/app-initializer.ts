@@ -23,7 +23,7 @@ import { defaultProvidersPerApp } from './default-providers-per-app';
 import { defaultProvidersPerReq } from './default-providers-per-req';
 import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
-import { PreRouter } from './pre-router';
+import { PreRouter } from '../extensions/pre-router';
 
 interface MapedExtension {
   moduleName: string;

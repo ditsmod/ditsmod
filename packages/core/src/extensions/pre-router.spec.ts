@@ -1,4 +1,4 @@
-import { PreRouter } from '../services/pre-router';
+import { PreRouter } from './pre-router';
 
 describe('PreRouting', () => {
   let mock: MockPreRouter;

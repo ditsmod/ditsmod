@@ -9,8 +9,8 @@ import { Counter } from './counter';
 import { DefaultLogger } from './default-logger';
 import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
-import { PreRouter } from './pre-router';
-import { PreRoutes } from './pre-routes';
+import { PreRouter } from '../extensions/pre-router';
+import { PreRoutes } from '../extensions/pre-routes';
 
 export const defaultProvidersPerApp: ServiceProvider[] = [
   LoggerConfig,
