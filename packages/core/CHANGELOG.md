@@ -1,5 +1,12 @@
+<a name="beta.10"></a>
+# [beta.10](https://github.com/ts-stack/ditsmod/releases/tag/beta.10) (2021-04-07)
+
+### Features
+
+- Freeze module metadata (see [a510a55](https://github.com/ditsmod/ditsmod/commit/a510a55)).
+
 <a name="beta.9"></a>
-# [beta.9](https://github.com/ts-stack/ditsmod/releases/tag/beta.9) (2021-04-06)
+## [beta.9](https://github.com/ts-stack/ditsmod/releases/tag/beta.9) (2021-04-06)
 
 ### Bug fix
 
