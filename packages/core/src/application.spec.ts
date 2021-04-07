@@ -19,6 +19,10 @@ describe('Application', () => {
     meta = new RootMetadata();
     log: Logger;
 
+    async init(appModule: ModuleType) {
+      return super.init(appModule);
+    }
+
     checkSecureServerOption(appModule: ModuleType) {
       return super.checkSecureServerOption(appModule);
     }
@@ -172,12 +176,6 @@ describe('Application', () => {
         extensions: [MY_EXTENSIONS2],
       })
       class AppModule {}
-
-      class MockApplication extends Application {
-        async init(appModule: ModuleType) {
-          return super.init(appModule);
-        }
-      }
       const promise = new MockApplication().init(AppModule);
       await expect(promise).resolves.not.toThrow();
       expect(jestFn.mock.calls).toEqual([['Extension2'], ['Extension3'], ['Extension4'], ['Extension5']]);
@@ -200,11 +198,6 @@ describe('Application', () => {
       })
       class AppModule {}
 
-      class MockApplication extends Application {
-        async init(appModule: ModuleType) {
-          return super.init(appModule);
-        }
-      }
       const promise = new MockApplication().init(AppModule);
       await expect(promise).resolves.not.toThrow();
       expect(jestFn.mock.calls).toEqual([['Extension2']]);
@@ -226,14 +219,49 @@ describe('Application', () => {
       })
       class AppModule {}
 
-      class MockApplication extends Application {
-        async init(appModule: ModuleType) {
-          return super.init(appModule);
-        }
-      }
       const promise = new MockApplication().init(AppModule);
       await expect(promise).resolves.not.toThrow();
       expect(jestFn.mock.calls).toEqual([['Extension1']]);
+    });
+
+    it('should throw an error about include MY_EXTENSIONS to providersPerApp or providersPerMod', async () => {
+      const loggerConfig = new LoggerConfig();
+      const level: keyof Logger = 'info';
+      loggerConfig.level = level;
+      loggerConfig.depth = 3;
+
+      @RootModule({
+        providersPerApp: [
+          { provide: Router, useClass: DefaultRouter },
+          { provide: LoggerConfig, useValue: loggerConfig }
+        ],
+        extensions: [MY_EXTENSIONS],
+      })
+      class AppModule {}
+
+      const promise = new MockApplication().init(AppModule);
+      await expect(promise).rejects.toThrow(/MY_EXTENSIONS" must be includes in "providersPerApp"/);
+    });
+
+    it('should throw an error about include MY_EXTENSIONS to providersPerReq', async () => {
+      const loggerConfig = new LoggerConfig();
+      const level: keyof Logger = 'info';
+      loggerConfig.level = level;
+      loggerConfig.depth = 3;
+
+      @RootModule({
+        providersPerApp: [
+          { provide: Router, useClass: DefaultRouter },
+          { provide: LoggerConfig, useValue: loggerConfig },
+          { provide: MY_EXTENSIONS, useClass: Extension1, multi: true }
+        ],
+        providersPerReq: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
+        extensions: [MY_EXTENSIONS],
+      })
+      class AppModule {}
+
+      const promise = new MockApplication().init(AppModule);
+      await expect(promise).rejects.toThrow(/MY_EXTENSIONS" cannot be includes in the "providersPerReq"/);
     });
   });
 });
