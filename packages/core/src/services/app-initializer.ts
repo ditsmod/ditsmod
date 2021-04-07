@@ -157,7 +157,7 @@ export class AppInitializer {
   }
 
   /**
-   * Create providers per the application.
+   * Create injector per the application.
    */
   protected createInjectorPerApp() {
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.meta.providersPerApp);
