@@ -76,6 +76,7 @@ export class AppInitializer {
     this.extensionsMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
     this.checkModulesResolvable(this.extensionsMetadataMap);
     await this.handleExtensions(this.extensionsMetadataMap);
+    this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
   }
 
   getMetadataAndLogger() {
@@ -162,7 +163,6 @@ export class AppInitializer {
   protected createInjectorPerApp() {
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.meta.providersPerApp);
     this.log = this.injectorPerApp.get(Logger) as Logger;
-    this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
   }
 
   protected bootstrapModuleFactory(moduleManager: ModuleManager) {
