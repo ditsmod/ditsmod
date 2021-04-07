@@ -38,6 +38,8 @@ export class ModuleManager {
     }
 
     const meta = this.normalizeMetadata(modOrObj);
+    Object.freeze(meta);
+
     [...meta.importsModules, ...meta.importsWithParams, ...meta.exportsModules].forEach((impOrExp) => {
       this.scanModule(impOrExp);
     });
@@ -51,6 +53,11 @@ export class ModuleManager {
   }
 
   getMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
+    const meta = this.getRawMetadata<T>(moduleId, throwErrOnNotFound);
+    return { ...meta };
+  }
+
+  protected getRawMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
     let meta: NormalizedModuleMetadata<T>;
     if (typeof moduleId == 'string') {
       const mapId = this.mapId.get(moduleId);
@@ -79,7 +86,7 @@ export class ModuleManager {
    * @param targetModuleId Module ID to which the input module will be added.
    */
   addImport(inputModule: ModuleType | ModuleWithParams, targetModuleId: ModuleId = 'root'): boolean {
-    const targetMeta = this.getMetadata(targetModuleId);
+    const targetMeta = this.getRawMetadata(targetModuleId);
     if (!targetMeta) {
       const modName = getModuleName(inputModule);
       const modIdStr = format(targetModuleId);
@@ -101,8 +108,8 @@ export class ModuleManager {
       const inputMeta = this.scanModule(inputModule);
       this.log.debug(`Successful added ${inputMeta.name} to ${targetMeta.name}`);
       return true;
-    } catch {
-      this.rollback();
+    } catch (err) {
+      this.rollback(err);
     }
   }
 
@@ -110,14 +117,14 @@ export class ModuleManager {
    * @param targetModuleId Module ID from where the input module will be removed.
    */
   removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean {
-    const inputMeta = this.getMetadata(inputModuleId);
+    const inputMeta = this.getRawMetadata(inputModuleId);
     if (!inputMeta) {
       const modIdStr = format(inputModuleId);
       this.log.warn(`Module with ID "${modIdStr}" not found`);
       return false;
     }
 
-    const targetMeta = this.getMetadata(targetModuleId);
+    const targetMeta = this.getRawMetadata(targetModuleId);
     if (!targetMeta) {
       const modIdStr = format(targetModuleId);
       const msg = `Failed removing ${inputMeta.name} from "imports" array: target module with ID "${modIdStr}" not found.`;
@@ -127,7 +134,7 @@ export class ModuleManager {
     const index = targetMeta[prop].findIndex((imp: ModuleType | ModuleWithParams) => imp === inputMeta.module);
     if (index == -1) {
       const modIdStr = format(inputModuleId);
-      this.log.warn(`Module with ID "${modIdStr}" not found`);
+      this.log.error(`Module with ID "${modIdStr}" not found`);
       return false;
     }
 
@@ -142,8 +149,8 @@ export class ModuleManager {
       }
       this.log.debug(`Successful removed ${inputMeta.name} from ${targetMeta.name}`);
       return true;
-    } catch {
-      this.rollback();
+    } catch (err) {
+      this.rollback(err);
     }
   }
 
@@ -156,13 +163,16 @@ export class ModuleManager {
     this.oldMap = new Map();
   }
 
-  rollback() {
+  rollback(err?: Error) {
     if (!this.oldMapId.size) {
       throw new Error('It is forbidden for rollback() to an empty state.');
     }
     this.mapId = this.oldMapId;
     this.map = this.oldMap;
     this.commit();
+    if (err) {
+      throw err;
+    }
   }
 
   protected startTransaction() {
@@ -176,6 +186,7 @@ export class ModuleManager {
       oldMeta.importsModules = oldMeta.importsModules.slice();
       oldMeta.importsWithParams = oldMeta.importsWithParams.slice();
       oldMeta.exportsModules = oldMeta.exportsModules.slice();
+      Object.freeze(oldMeta);
       this.oldMap.set(key, oldMeta);
     });
     this.oldMapId = new Map(this.mapId);
@@ -189,7 +200,7 @@ export class ModuleManager {
    * @param targetModuleId Module where to search `inputModule`.
    */
   protected includesInSomeModule(inputModuleId: ModuleId, targetModuleId: ModuleId): boolean {
-    const targetMeta = this.getMetadata(targetModuleId);
+    const targetMeta = this.getRawMetadata(targetModuleId);
     const importsOrExports = [
       ...targetMeta.importsModules,
       ...targetMeta.importsWithParams,
