@@ -15,7 +15,7 @@ export class PreRoutes implements Extension<PreRouteMeta[]> {
   #preRoutesMeta: PreRouteMeta[] = [];
 
   constructor(
-    protected injectorPerApp: ReflectiveInjector,
+    protected injector: ReflectiveInjector,
     protected rootMetadata: RootMetadata,
     @Inject(EXTENSIONS_MAP) protected extensionsMap: ExtensionsMap
   ) {}
@@ -142,7 +142,7 @@ export class PreRoutes implements Extension<PreRouteMeta[]> {
     providersPerReq: ServiceProvider[],
     httpMethod: HttpMethod
   ) {
-    const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+    const injectorPerMod = this.injector.resolveAndCreateChild(providersPerMod);
     const injectorPerReq = injectorPerMod.resolveAndCreateChild(providersPerReq);
     const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
     return bodyParserConfig.acceptMethods.includes(httpMethod);

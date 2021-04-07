@@ -15,7 +15,7 @@ export class PreRouter implements Extension<void> {
   #inited: boolean;
 
   constructor(
-    protected injectorPerApp: ReflectiveInjector,
+    protected injector: ReflectiveInjector,
     protected router: Router,
     protected log: Logger,
     protected extensionsManager: ExtensionsManager
@@ -56,7 +56,7 @@ export class PreRouter implements Extension<void> {
         prefixPerApp,
         prefixPerMod,
       } = preRouteMeta;
-      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+      const injectorPerMod = this.injector.resolveAndCreateChild(providersPerMod);
       const inj1 = injectorPerMod.resolveAndCreateChild(providersPerRoute);
       const providers = ReflectiveInjector.resolve(providersPerReq);
 

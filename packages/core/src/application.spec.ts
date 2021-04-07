@@ -263,5 +263,33 @@ describe('Application', () => {
       const promise = new MockApplication().init(AppModule);
       await expect(promise).rejects.toThrow(/MY_EXTENSIONS" cannot be includes in the "providersPerReq"/);
     });
+
+    it('extension declared in two different modules and two different arrays', async () => {
+      const loggerConfig = new LoggerConfig();
+      const level: keyof Logger = 'info';
+      loggerConfig.level = level;
+      loggerConfig.depth = 3;
+
+      @Module({
+        providersPerApp: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
+        extensions: [MY_EXTENSIONS],
+      })
+      class Module1 {}
+
+      @RootModule({
+        imports: [Module1],
+        providersPerApp: [
+          { provide: Router, useClass: DefaultRouter },
+          { provide: LoggerConfig, useValue: loggerConfig }
+        ],
+        providersPerMod: [{ provide: MY_EXTENSIONS, useClass: Extension2, multi: true }],
+        extensions: [MY_EXTENSIONS],
+      })
+      class AppModule {}
+
+      const promise = new MockApplication().init(AppModule);
+      await expect(promise).resolves.not.toThrow();
+      expect(jestFn.mock.calls).toEqual([['Extension1'], ['Extension2']]);
+    });
   });
 });
