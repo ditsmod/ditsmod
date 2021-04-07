@@ -134,7 +134,7 @@ export class ModuleManager {
     const index = targetMeta[prop].findIndex((imp: ModuleType | ModuleWithParams) => imp === inputMeta.module);
     if (index == -1) {
       const modIdStr = format(inputModuleId);
-      this.log.error(`Module with ID "${modIdStr}" not found`);
+      this.log.warn(`Module with ID "${modIdStr}" not found`);
       return false;
     }
 
