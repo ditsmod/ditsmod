@@ -1,12 +1,4 @@
-.gitignore
-tests
-docs
-dist-tests
-examples
-dist-examples
 spec
-tslint.json
-.prettierrc
 *.tgz
 *.log
 *.spec.*
