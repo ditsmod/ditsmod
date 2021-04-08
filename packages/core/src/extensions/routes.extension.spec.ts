@@ -14,10 +14,10 @@ import { ModuleManager } from '../services/module-manager';
 import { DefaultLogger } from '../services/default-logger';
 import { AppInitializer } from '../services/app-initializer';
 
-xdescribe('PreRoutes', () => {
-  class MockPreRoutes extends RoutesExtension {
-    getRoutesData(moduleName: string, prefixPerApp: string, prefixPerMod: string, metadataPerMod: MetadataPerMod) {
-      return super.getRoutesData(moduleName, prefixPerApp, prefixPerMod, metadataPerMod);
+xdescribe('RoutesExtension', () => {
+  class MockRoutesExtension extends RoutesExtension {
+    getRawRoutesMeta(moduleName: string, prefixPerApp: string, prefixPerMod: string, metadataPerMod: MetadataPerMod) {
+      return super.getRawRoutesMeta(moduleName, prefixPerApp, prefixPerMod, metadataPerMod);
     }
   }
 
@@ -34,7 +34,7 @@ xdescribe('PreRoutes', () => {
   }
 
   let mockAppInitializer: MockAppInitializer;
-  let mockPreRoutes: MockPreRoutes;
+  let mockPreRoutes: MockRoutesExtension;
   let log: Logger;
   let moduleManager: ModuleManager;
 

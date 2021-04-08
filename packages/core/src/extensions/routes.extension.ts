@@ -29,14 +29,14 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
 
     this.appMetadataMap.forEach((metadataPerMod) => {
       const { prefixPerMod, moduleMetadata } = metadataPerMod;
-      const rawRoutesMeta = this.getRoutesData(moduleMetadata.name, prefixPerApp, prefixPerMod, metadataPerMod);
+      const rawRoutesMeta = this.getRawRoutesMeta(moduleMetadata.name, prefixPerApp, prefixPerMod, metadataPerMod);
       this.#rawRoutesMeta.push(...rawRoutesMeta);
     });
 
     return this.#rawRoutesMeta;
   }
 
-  protected getRoutesData(
+  protected getRawRoutesMeta(
     moduleName: string,
     prefixPerApp: string,
     prefixPerMod: string,
