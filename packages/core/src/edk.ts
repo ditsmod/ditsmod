@@ -19,6 +19,5 @@ export { ModuleMetadata } from './types/module-metadata';
 export { RouteData } from './types/route-data';
 export { AppInitializer } from './services/app-initializer';
 export { ExtensionsManager } from './services/extensions-manager';
-export { ExtensionsMap } from './types/extensions-map';
 export { RouteMetadata } from './decorators/route';
-export { EXTENSIONS_MAP } from './types/extensions-map';
+export { AppMetadataMap, APP_METADATA_MAP } from './types/app-metadata-map';

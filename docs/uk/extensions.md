@@ -23,7 +23,7 @@ interface Extension<T> {
 
 1. збираються метадані з усіх декораторів (з `@RootModule`, `@Module`, `@Controller`,
    `@Route`...);
-2. зібрані метадані передаються в інжектор DI з токеном `EXTENSIONS_MAP`, а отже, будь-яке
+2. зібрані метадані передаються в інжектор DI з токеном `APP_METADATA_MAP`, а отже, будь-яке
    розширення може отримати ці метадані у себе в конструкторі;
 3. автоматично запускаються усі зареєстровані розширення, точніше - викликаються їхні методи
    `init()` без аргументів;
@@ -86,13 +86,13 @@ import { edk } from '@ditsmod/core';
 export class Extension1 implements edk.Extension {
   #data: any;
 
-  constructor(@Inject(edk.EXTENSIONS_MAP) private extensionsMap: edk.ExtensionsMap) {}
+  constructor(@Inject(edk.APP_METADATA_MAP) private appMetadataMap: edk.AppMetadataMap) {}
 
   async init() {
     if (this.#data) {
       return this.#data;
     }
-    // Do something with `this.extensionsMap` here.
+    // Do something with `this.appMetadataMap` here.
     // ...
     this.#data = result;
     return this.#data;

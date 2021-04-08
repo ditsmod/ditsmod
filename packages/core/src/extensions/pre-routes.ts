@@ -5,7 +5,7 @@ import { BodyParserConfig } from '../models/body-parser-config';
 import { RootMetadata } from '../models/root-metadata';
 import { Extension } from '../types/extension';
 import { ExtensionMetadata } from '../types/extension-metadata';
-import { ExtensionsMap, EXTENSIONS_MAP } from '../types/extensions-map';
+import { AppMetadataMap, APP_METADATA_MAP } from '../types/app-metadata-map';
 import { GuardItem, HttpMethod, NormalizedGuard, ServiceProvider } from '../types/mix';
 import { PreRouteMeta, RouteData } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
@@ -17,7 +17,7 @@ export class PreRoutes implements Extension<PreRouteMeta[]> {
   constructor(
     protected injector: ReflectiveInjector,
     protected rootMetadata: RootMetadata,
-    @Inject(EXTENSIONS_MAP) protected extensionsMap: ExtensionsMap
+    @Inject(APP_METADATA_MAP) protected appMetadataMap: AppMetadataMap
   ) {}
 
   async init() {
@@ -27,7 +27,7 @@ export class PreRoutes implements Extension<PreRouteMeta[]> {
 
     const { prefixPerApp } = this.rootMetadata;
 
-    this.extensionsMap.forEach((extensionsMetadata) => {
+    this.appMetadataMap.forEach((extensionsMetadata) => {
       const { prefixPerMod, moduleMetadata } = extensionsMetadata;
       const preRoutesMeta = this.getRoutesData(moduleMetadata.name, prefixPerApp, prefixPerMod, extensionsMetadata);
       this.#preRoutesMeta.push(...preRoutesMeta);

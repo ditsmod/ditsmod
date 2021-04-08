@@ -4,7 +4,7 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ProvidersMetadata } from '../models/providers-metadata';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleFactory } from '../module-factory';
-import { ExtensionsMap, EXTENSIONS_MAP } from '../types/extensions-map';
+import { AppMetadataMap, APP_METADATA_MAP } from '../types/app-metadata-map';
 import { Logger } from '../types/logger';
 import { ModuleType, ServiceProvider } from '../types/mix';
 import { RequestListener } from '../types/server-options';
@@ -37,7 +37,7 @@ export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
   protected preRouter: PreRouter;
   protected meta: RootMetadata;
-  protected extensionsMetadataMap: ExtensionsMap;
+  protected extensionsMetadataMap: AppMetadataMap;
 
   constructor(protected moduleManager: ModuleManager) {}
 
@@ -183,7 +183,7 @@ export class AppInitializer {
     return globalProviders;
   }
 
-  protected checkModulesResolvable(extensionsMetadataMap: ExtensionsMap) {
+  protected checkModulesResolvable(extensionsMetadataMap: AppMetadataMap) {
     extensionsMetadataMap.forEach((metadata, modOrObj) => {
       this.log.trace(modOrObj, metadata);
       const { providersPerMod } = metadata.moduleMetadata;
@@ -193,9 +193,9 @@ export class AppInitializer {
     });
   }
 
-  protected async handleExtensions(extensionsMap: ExtensionsMap) {
-    this.applyExtensionsMap(extensionsMap);
-    const mapedExtensions = this.mapExtensionsToInjectors(extensionsMap);
+  protected async handleExtensions(appMetadataMap: AppMetadataMap) {
+    this.applyAppMetadataMap(appMetadataMap);
+    const mapedExtensions = this.mapExtensionsToInjectors(appMetadataMap);
     for (const mapedExtension of mapedExtensions) {
       const { moduleName, groupToken, injectorPerMod } = mapedExtension;
       this.log.debug(`${moduleName}: start init group with ${groupToken}`);
@@ -205,10 +205,10 @@ export class AppInitializer {
     }
   }
 
-  protected mapExtensionsToInjectors(extensionsMap: ExtensionsMap) {
+  protected mapExtensionsToInjectors(appMetadataMap: AppMetadataMap) {
     const mapedExtensions = [];
 
-    for (const [, metadata] of extensionsMap) {
+    for (const [, metadata] of appMetadataMap) {
       if (isRootModule(metadata.moduleMetadata)) {
         metadata.moduleMetadata.extensions = this.meta.extensions;
       }
@@ -223,8 +223,8 @@ export class AppInitializer {
     return mapedExtensions;
   }
 
-  protected applyExtensionsMap(extensionsMap: ExtensionsMap) {
-    this.meta.providersPerApp.unshift({ provide: EXTENSIONS_MAP, useValue: extensionsMap });
+  protected applyAppMetadataMap(appMetadataMap: AppMetadataMap) {
+    this.meta.providersPerApp.unshift({ provide: APP_METADATA_MAP, useValue: appMetadataMap });
     this.createInjectorPerApp();
   }
 }
