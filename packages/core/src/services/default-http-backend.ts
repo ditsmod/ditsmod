@@ -8,7 +8,7 @@ import { NodeRequest, NodeResponse } from '../types/server-options';
 import { Logger } from '../types/logger';
 import { Status } from '../utils/http-status-codes';
 import { RootMetadata } from '../models/root-metadata';
-import { RouteData } from '../types/route-data';
+import { RouteMeta } from '../types/route-data';
 
 @Injectable()
 export class DefaultHttpBackend implements HttpBackend {
@@ -16,12 +16,12 @@ export class DefaultHttpBackend implements HttpBackend {
     private req: Request,
     private log: Logger,
     private rootMetadata: RootMetadata,
-    private routeData: RouteData
+    private routeMeta: RouteMeta
   ) {}
 
   async handle() {
     const req = this.req;
-    const { controller, methodName, parseBody, guards } = this.routeData;
+    const { controller, methodName, parseBody, guards } = this.routeMeta;
     req.nodeRes.setHeader('Server', this.rootMetadata.serverName);
 
     const preparedGuards: { guard: CanActivate; params?: any[] }[] = guards.map((item) => {

@@ -7,7 +7,7 @@ import { Extension } from '../types/extension';
 import { MetadataPerMod } from '../types/metadata-per-mod';
 import { AppMetadataMap, APP_METADATA_MAP } from '../types/app-metadata-map';
 import { GuardItem, HttpMethod, NormalizedGuard, ServiceProvider } from '../types/mix';
-import { RawRouteMeta, RouteData } from '../types/route-data';
+import { RawRouteMeta, RouteMeta } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
 
 @Injectable()
@@ -68,7 +68,7 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
             providersPerReq.slice()
           );
           const parseBody = this.needBodyParse(providersPerMod, allProvidersPerReq, route.httpMethod);
-          const routeData: RouteData = {
+          const routeMeta: RouteMeta = {
             decoratorMetadata,
             controller,
             methodName,
@@ -78,7 +78,7 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
             parseBody,
             guards,
           };
-          const providersPerRoute: ServiceProvider[] = [{ provide: RouteData, useValue: routeData }];
+          const providersPerRoute: ServiceProvider[] = [{ provide: RouteMeta, useValue: routeMeta }];
           const { path, httpMethod } = route;
 
           rawRoutesMeta.push({

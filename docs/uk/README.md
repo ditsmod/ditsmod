@@ -61,7 +61,6 @@ Angular v4.4.7. (з мінімальними допрацюваннями) та 
   - [LoggerMethod][136]
   - [PreRouter][146]
   - [Extension][149]
-  - [RouteData та PreRouteData][147]
   - [RequestListener][148]
   - [Router][131]
   - [RouterReturns][136]
@@ -1384,41 +1383,6 @@ interface Extension<T> {
 }
 ```
 
-### RouteData and PreRouteData
-
-```ts
-class RouteData {
-  controller: TypeProvider = null;
-  /**
-   * The controller's method name.
-   */
-  methodName: string = null;
-  route: RouteMetadata = null;
-  /**
-   * Resolved providers per request.
-   */
-  providers: ResolvedReflectiveProvider[] = null;
-  /**
-   * Injector per a module.
-   */
-  injector: ReflectiveInjector = null;
-  /**
-   * Need or not parse body.
-   */
-  parseBody: boolean = null;
-  /**
-   * An array of DI tokens used to look up `CanActivate()` handlers,
-   * in order to determine if the current user is allowed to activate the controller.
-   * By default, any user can activate.
-   */
-  guards: NormalizedGuard[] = null;
-}
-
-class PreRouteData extends RouteData {
-  otherDecorators: any[];
-}
-```
-
 ### RequestListener
 
 ```ts
@@ -1665,7 +1629,6 @@ type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
 [144]: #loggerconfig
 [145]: #загальна-картина-архітектури-застосунку-ditsmod
 [146]: #prerouter
-[147]: #routedata-and-preroutedata
 [148]: #requestlistener
 [149]: #extension
 [150]: #модуль-ditsmod

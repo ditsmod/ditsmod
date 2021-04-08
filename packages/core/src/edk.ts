@@ -16,7 +16,7 @@ export { ControllerType, ModuleType, AnyObj, NormalizedGuard, DecoratorMetadata 
 export { RawRouteMeta } from './types/route-data';
 export { Extension, ROUTES_EXTENSIONS, VOID_EXTENSIONS } from './types/extension';
 export { ModuleMetadata } from './types/module-metadata';
-export { RouteData } from './types/route-data';
+export { RouteMeta } from './types/route-data';
 export { AppInitializer } from './services/app-initializer';
 export { ExtensionsManager } from './services/extensions-manager';
 export { RouteMetadata } from './decorators/route';

@@ -6,7 +6,7 @@ import { defaultProvidersPerReq } from '../services/default-providers-per-req';
 import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { NodeReqToken, NodeResToken } from './server-options';
 import { ServiceProvider } from './mix';
-import { RouteData } from './route-data';
+import { RouteMeta } from './route-data';
 import { PATH_PARAMS, QUERY_STRING } from './router';
 
 describe('HttpInterceptor', () => {
@@ -45,7 +45,7 @@ describe('HttpInterceptor', () => {
     ...defaultProvidersPerReq,
     { provide: NodeReqToken, useValue: {} },
     { provide: NodeResToken, useValue: {} },
-    { provide: RouteData, useValue: {} },
+    { provide: RouteMeta, useValue: {} },
     { provide: PATH_PARAMS, useValue: [] },
     { provide: QUERY_STRING, useValue: {} },
   ];

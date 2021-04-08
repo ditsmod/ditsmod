@@ -22,7 +22,7 @@ export class RawRouteMeta {
   httpMethod: HttpMethod;
 }
 
-export class RouteData {
+export class RouteMeta {
   controller: ControllerType;
   /**
    * The controller's method name.
