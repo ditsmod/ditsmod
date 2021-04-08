@@ -23,6 +23,7 @@ export class ExtensionsManager {
       this.log.debug(`${prefix}: start init`);
       const data = await extension.init();
       this.log.debug(`${prefix}: finish init`);
+      this.counter.addInitedExtensions(extension);
       if (data === undefined) {
         this.log.debug(`${prefix}: init returned empty value`);
         continue;

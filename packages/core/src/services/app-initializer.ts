@@ -24,6 +24,7 @@ import { defaultProvidersPerReq } from './default-providers-per-req';
 import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from '../extensions/pre-router';
+import { Counter } from './counter';
 
 interface MapedExtension {
   moduleName: string;
@@ -203,6 +204,16 @@ export class AppInitializer {
       await extensionsManager.init(groupToken);
       this.log.debug(`${moduleName}: finish init group with ${groupToken}`);
     }
+
+    this.logExtensionsStatistic();
+  }
+
+  protected logExtensionsStatistic() {
+    const counter = this.injectorPerApp.get(Counter) as Counter;
+    const extensions = counter.getInitedExtensions();
+    const names = Array.from(extensions).map(e => e.constructor.name).join(', ');
+    this.log.debug(`Total inited ${extensions.size} extensions: ${names}`);
+    counter.resetInitedExtensionsSet();
   }
 
   protected mapExtensionsToInjectors(appMetadataMap: AppMetadataMap) {
