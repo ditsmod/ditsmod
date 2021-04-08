@@ -139,7 +139,7 @@ export class ModuleManager {
   }
 
   /**
-   * Here "raw" means that it returns "raw" metadata.
+   * Here "raw" means that it returns "raw" normalized metadata (without `this.copyMeta()`).
    */
   protected scanRawModule(modOrObj: ModuleType | ModuleWithParams<any>) {
     const meta = this.normalizeMetadata(modOrObj);
@@ -167,6 +167,9 @@ export class ModuleManager {
     return meta;
   }
 
+  /**
+   * Returns normalized metadata, but without `this.copyMeta()`.
+   */
   protected getRawMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
     let meta: NormalizedModuleMetadata<T>;
     if (typeof moduleId == 'string') {
