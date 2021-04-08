@@ -14,7 +14,7 @@ import {
   NormalizedGuard,
   ServiceProvider,
 } from './types/mix';
-import { NodeReqToken, NodeResToken } from './types/server-options';
+import { NODE_REQ, NODE_RES } from './types/server-options';
 import { getDuplicates } from './utils/get-duplicates';
 import { getTokensCollisions } from './utils/get-tokens-collisions';
 import { getUniqProviders } from './utils/get-uniq-providers';
@@ -374,7 +374,7 @@ export class ModuleFactory {
     });
 
     const defaultTokens = normalizeProviders([...defaultProvidersPerReq]).map((np) => np.provide);
-    const mergedTokens = [...defaultTokens, ...tokensPerMod, NodeReqToken, NodeResToken];
+    const mergedTokens = [...defaultTokens, ...tokensPerMod, NODE_REQ, NODE_RES];
     const mixPerModOrReq = mergedTokens.filter((p) => {
       return exportedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
     });

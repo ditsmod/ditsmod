@@ -10,7 +10,7 @@ import { ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { Module } from '../decorators/module';
 import { RootModule } from '../decorators/root-module';
-import { NodeReqToken } from '../types/server-options';
+import { NODE_REQ } from '../types/server-options';
 import { RootMetadata } from '../models/root-metadata';
 import { DefaultLogger } from './default-logger';
 import { ModuleManager } from './module-manager';
@@ -650,14 +650,14 @@ describe('AppInitializer', () => {
             Provider0,
             Provider1,
             { provide: Request, useClass: Request },
-            { provide: NodeReqToken, useValue: '' },
+            { provide: NODE_REQ, useValue: '' },
             Provider3,
           ],
           providersPerMod: [Provider0],
           providersPerReq: [
             { provide: Provider1, useClass: Provider1 },
             Provider2,
-            { provide: NodeReqToken, useValue: '' },
+            { provide: NODE_REQ, useValue: '' },
             Provider3,
             Request,
           ],
@@ -676,7 +676,7 @@ describe('AppInitializer', () => {
         mock.bootstrapProvidersPerApp();
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
-          'Provider0, Request, Provider1, InjectionToken NodeRequest. You should manually add these providers to AppModule.';
+          'Provider0, Request, Provider1, InjectionToken NODE_REQ. You should manually add these providers to AppModule.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
 

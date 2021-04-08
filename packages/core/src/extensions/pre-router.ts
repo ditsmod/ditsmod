@@ -6,7 +6,7 @@ import { HttpMethod } from '../types/mix';
 import { Logger } from '../types/logger';
 import { RawRouteMeta, PreparedRouteMeta } from '../types/route-data';
 import { PATH_PARAMS, QUERY_STRING, RouteHandler, Router } from '../types/router';
-import { NodeReqToken, NodeResponse, NodeResToken, RequestListener } from '../types/server-options';
+import { NODE_REQ, NodeResponse, NODE_RES, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { ExtensionsManager } from '../services/extensions-manager';
 
@@ -62,8 +62,8 @@ export class PreRouter implements Extension<void> {
 
       const handle = (async (nodeReq, nodeRes, params, queryString) => {
         const inj2 = inj1.resolveAndCreateChild([
-          { provide: NodeReqToken, useValue: nodeReq },
-          { provide: NodeResToken, useValue: nodeRes },
+          { provide: NODE_REQ, useValue: nodeReq },
+          { provide: NODE_RES, useValue: nodeRes },
           { provide: PATH_PARAMS, useValue: params },
           { provide: QUERY_STRING, useValue: queryString },
         ]);

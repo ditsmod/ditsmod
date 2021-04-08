@@ -2,7 +2,7 @@ import { Injectable, Inject, Injector } from '@ts-stack/di';
 import { format } from 'util';
 import { PathParam } from '../types/router';
 
-import { NodeReqToken, NodeRequest, NodeResponse, NodeResToken } from '../types/server-options';
+import { NODE_REQ, NodeRequest, NodeResponse, NODE_RES } from '../types/server-options';
 
 @Injectable()
 export class Request {
@@ -28,8 +28,8 @@ export class Request {
   body?: any;
 
   constructor(
-    @Inject(NodeReqToken) public readonly nodeReq: NodeRequest,
-    @Inject(NodeResToken) public readonly nodeRes: NodeResponse,
+    @Inject(NODE_REQ) public readonly nodeReq: NodeRequest,
+    @Inject(NODE_RES) public readonly nodeRes: NodeResponse,
     public injector: Injector
   ) {}
 

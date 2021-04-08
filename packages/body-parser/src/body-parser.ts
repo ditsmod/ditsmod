@@ -1,12 +1,12 @@
 import { Injectable, Inject } from '@ts-stack/di';
-import { BodyParserConfig, Logger, NodeReqToken, NodeRequest } from '@ditsmod/core';
+import { BodyParserConfig, Logger, NODE_REQ, NodeRequest } from '@ditsmod/core';
 import { parse } from 'get-body';
 
 
 @Injectable()
 export class DefaultBodyParser {
   constructor(
-    @Inject(NodeReqToken) protected readonly nodeReq: NodeRequest,
+    @Inject(NODE_REQ) protected readonly nodeReq: NodeRequest,
     protected config: BodyParserConfig,
     protected log: Logger
   ) {}

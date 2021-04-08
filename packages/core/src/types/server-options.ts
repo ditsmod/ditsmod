@@ -8,7 +8,7 @@ export type Http2SecureServerOptions = http2.SecureServerOptions & { isHttp2Secu
 export type ServerOptions = http.ServerOptions | https.ServerOptions | http2.ServerOptions | Http2SecureServerOptions;
 export type NodeRequest = http.IncomingMessage | Http2ServerRequest;
 export type NodeResponse = http.ServerResponse | Http2ServerResponse;
-export const NodeReqToken = new InjectionToken<NodeRequest>('NodeRequest');
-export const NodeResToken = new InjectionToken<NodeResponse>('NodeResponse');
+export const NODE_REQ = new InjectionToken<NodeRequest>('NODE_REQ');
+export const NODE_RES = new InjectionToken<NodeResponse>('NODE_RES');
 export type RequestListener = (request: NodeRequest, response: NodeResponse) => void | Promise<void>;
 export type Server = http.Server | https.Server | Http2Server | Http2SecureServer;

@@ -4,7 +4,7 @@ import { ReflectiveInjector } from '@ts-stack/di';
 import { HttpBackend, HttpHandler, HttpInterceptor, HTTP_INTERCEPTORS, HttpFrontend } from './http-interceptor';
 import { defaultProvidersPerReq } from '../services/default-providers-per-req';
 import { defaultProvidersPerApp } from '../services/default-providers-per-app';
-import { NodeReqToken, NodeResToken } from './server-options';
+import { NODE_REQ, NODE_RES } from './server-options';
 import { ServiceProvider } from './mix';
 import { RouteMeta } from './route-data';
 import { PATH_PARAMS, QUERY_STRING } from './router';
@@ -43,8 +43,8 @@ describe('HttpInterceptor', () => {
   const defaultProviders: ServiceProvider[] = [
     ...defaultProvidersPerApp,
     ...defaultProvidersPerReq,
-    { provide: NodeReqToken, useValue: {} },
-    { provide: NodeResToken, useValue: {} },
+    { provide: NODE_REQ, useValue: {} },
+    { provide: NODE_RES, useValue: {} },
     { provide: RouteMeta, useValue: {} },
     { provide: PATH_PARAMS, useValue: [] },
     { provide: QUERY_STRING, useValue: {} },
