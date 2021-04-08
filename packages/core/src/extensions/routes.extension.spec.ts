@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { Logger, LoggerConfig } from '../types/logger';
-import { PreRoutes } from './pre-routes';
+import { RoutesExtension } from './routes.extension';
 import { AppMetadata } from '../types/app-metadata';
 import { Controller, ControllerMetadata } from '../decorators/controller';
 import { Route } from '../decorators/route';
@@ -15,7 +15,7 @@ import { DefaultLogger } from '../services/default-logger';
 import { AppInitializer } from '../services/app-initializer';
 
 xdescribe('PreRoutes', () => {
-  class MockPreRoutes extends PreRoutes {
+  class MockPreRoutes extends RoutesExtension {
     getRoutesData(moduleName: string, prefixPerApp: string, prefixPerMod: string, appMetadata: AppMetadata) {
       return super.getRoutesData(moduleName, prefixPerApp, prefixPerMod, appMetadata);
     }

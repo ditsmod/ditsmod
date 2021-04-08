@@ -11,7 +11,7 @@ import { PreRouteMeta, RouteData } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
 
 @Injectable()
-export class PreRoutes implements Extension<PreRouteMeta[]> {
+export class RoutesExtension implements Extension<PreRouteMeta[]> {
   #preRoutesMeta: PreRouteMeta[] = [];
 
   constructor(
