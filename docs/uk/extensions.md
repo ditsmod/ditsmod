@@ -209,11 +209,11 @@ await this.extensionsManager.init(edk.VOID_EXTENSIONS, false);
 import { InjectionToken } from '@ts-stack/di';
 import { edk } from '@ditsmod/core';
 
-export const MY_EXTENSIONS = new InjectionToken<edk.Extension[]>('MY_EXTENSIONS');
+export const MY_EXTENSIONS = new InjectionToken<edk.Extension<void>[]>('MY_EXTENSIONS');
 ```
 
 Як бачите, кожна група розширень повинна указувати, що DI повертатиме масив інстансів
-розширень: `Extension[]`. Це треба робити обов'язково, відмінність може бути хіба що в інтерфейсі
+розширень: `Extension<void>[]`. Це треба робити обов'язково, відмінність може бути хіба що в інтерфейсі
 даних, що повертаються в результаті виклику їхніх методів `init()`:
 
 ```ts
@@ -237,7 +237,7 @@ const result = await this.extensionsManager.init(MY_EXTENSIONS);
 ## В якому саме масиві потрібно оголошувати групу розширень
 
 Групу розширень можна оголошувати або в масиві `providersPerApp`, або в масиві `providersPerMod`.
-Оголошення в масиві `providersPerApp` є більш передбачуваним, оскільки є один центральний DI
+Оголошення в масиві `providersPerApp` є більш прогнозованим, оскільки є один центральний DI
 інжектор, і усі розширення, що оголошуються у певній групі, будуть створюватись в контексті цього
 інжектора, не залежно від того, в якому модулі це оголошення відбулось.
 
