@@ -27,9 +27,9 @@ export class RoutesExtension implements Extension<PreRouteMeta[]> {
 
     const { prefixPerApp } = this.rootMetadata;
 
-    this.appMetadataMap.forEach((extensionsMetadata) => {
-      const { prefixPerMod, moduleMetadata } = extensionsMetadata;
-      const preRoutesMeta = this.getRoutesData(moduleMetadata.name, prefixPerApp, prefixPerMod, extensionsMetadata);
+    this.appMetadataMap.forEach((metadataPerMod) => {
+      const { prefixPerMod, moduleMetadata } = metadataPerMod;
+      const preRoutesMeta = this.getRoutesData(moduleMetadata.name, prefixPerApp, prefixPerMod, metadataPerMod);
       this.#preRoutesMeta.push(...preRoutesMeta);
     });
 
