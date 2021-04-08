@@ -27,56 +27,19 @@ export class ModuleManager {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
 
-    const meta = this.scanModule(appModule);
+    const meta = this.scanRawModule(appModule);
     this.mapId.set('root', appModule);
-    return meta;
+    return this.copyMeta(meta);
   }
 
   scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
-    if (!Object.isFrozen(modOrObj)) {
-      Object.freeze(modOrObj);
-    }
-
-    const meta = this.normalizeMetadata(modOrObj);
-    Object.freeze(meta);
-
-    [...meta.importsModules, ...meta.importsWithParams, ...meta.exportsModules].forEach((impOrExp) => {
-      this.scanModule(impOrExp);
-    });
-
-    if (meta.id) {
-      this.mapId.set(meta.id, modOrObj);
-      this.log.debug(`${meta.name} has ID: "${meta.id}".`);
-    }
-    this.map.set(modOrObj, meta);
-    return meta;
+    const meta = this.scanRawModule(modOrObj);
+    return this.copyMeta(meta);
   }
 
   getMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
     const meta = this.getRawMetadata<T>(moduleId, throwErrOnNotFound);
-    return { ...meta };
-  }
-
-  protected getRawMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
-    let meta: NormalizedModuleMetadata<T>;
-    if (typeof moduleId == 'string') {
-      const mapId = this.mapId.get(moduleId);
-      meta = this.map.get(mapId) as NormalizedModuleMetadata<T>;
-    } else {
-      meta = this.map.get(moduleId) as NormalizedModuleMetadata<T>;
-    }
-
-    if (throwErrOnNotFound && !meta) {
-      let moduleName: string;
-      if (typeof moduleId == 'string') {
-        moduleName = moduleId;
-      } else {
-        moduleName = getModuleName(moduleId);
-      }
-      throw new Error(`${moduleName} not found in ModuleManager.`);
-    }
-
-    return meta;
+    return this.copyMeta(meta);
   }
 
   /**
@@ -105,7 +68,7 @@ export class ModuleManager {
     this.startTransaction();
     try {
       targetMeta[prop].push(inputModule as any);
-      const inputMeta = this.scanModule(inputModule);
+      const inputMeta = this.scanRawModule(inputModule);
       this.log.debug(`Successful added ${inputMeta.name} to ${targetMeta.name}`);
       return true;
     } catch (err) {
@@ -175,6 +138,57 @@ export class ModuleManager {
     }
   }
 
+  /**
+   * Here "raw" means that it returns "raw" metadata.
+   */
+  protected scanRawModule(modOrObj: ModuleType | ModuleWithParams<any>) {
+    const meta = this.normalizeMetadata(modOrObj);
+
+    [...meta.importsModules, ...meta.importsWithParams, ...meta.exportsModules].forEach((impOrExp) => {
+      this.scanRawModule(impOrExp);
+    });
+
+    if (meta.id) {
+      this.mapId.set(meta.id, modOrObj);
+      this.log.debug(`${meta.name} has ID: "${meta.id}".`);
+    }
+    this.map.set(modOrObj, meta);
+    return meta;
+  }
+
+  protected copyMeta<T extends AnyObj = AnyObj>(meta: NormalizedModuleMetadata<T>) {
+    meta = { ...meta };
+    meta.importsModules = meta.importsModules.slice();
+    meta.importsWithParams = meta.importsWithParams.slice();
+    meta.controllers = meta.controllers.slice();
+    meta.extensions = meta.extensions.slice();
+    meta.exportsModules = meta.exportsModules.slice();
+    meta.exportsProviders = meta.exportsProviders.slice();
+    return meta;
+  }
+
+  protected getRawMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
+    let meta: NormalizedModuleMetadata<T>;
+    if (typeof moduleId == 'string') {
+      const mapId = this.mapId.get(moduleId);
+      meta = this.map.get(mapId) as NormalizedModuleMetadata<T>;
+    } else {
+      meta = this.map.get(moduleId) as NormalizedModuleMetadata<T>;
+    }
+
+    if (throwErrOnNotFound && !meta) {
+      let moduleName: string;
+      if (typeof moduleId == 'string') {
+        moduleName = moduleId;
+      } else {
+        moduleName = getModuleName(moduleId);
+      }
+      throw new Error(`${moduleName} not found in ModuleManager.`);
+    }
+
+    return meta;
+  }
+
   protected startTransaction() {
     if (this.oldMapId.has('root')) {
       // Transaction already started.
@@ -186,7 +200,6 @@ export class ModuleManager {
       oldMeta.importsModules = oldMeta.importsModules.slice();
       oldMeta.importsWithParams = oldMeta.importsWithParams.slice();
       oldMeta.exportsModules = oldMeta.exportsModules.slice();
-      Object.freeze(oldMeta);
       this.oldMap.set(key, oldMeta);
     });
     this.oldMapId = new Map(this.mapId);
@@ -218,7 +231,7 @@ export class ModuleManager {
   }
 
   /**
-   * Freezes original module metadata and returns normalized module metadata.
+   * Returns normalized module metadata.
    */
   protected normalizeMetadata(mod: ModuleType | ModuleWithParams) {
     const modMetadata = getModuleMetadata(mod);
