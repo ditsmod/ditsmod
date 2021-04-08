@@ -17,8 +17,8 @@ export class MyExtension implements edk.Extension {
     }
 
     this.log.info(this.appMetadataMap);
-    const preRouteMeta = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS);
-    this.log.info(preRouteMeta);
+    const rawRouteMeta = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS);
+    this.log.info(rawRouteMeta);
 
     this.#inited = true;
   }

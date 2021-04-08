@@ -4,7 +4,7 @@ import { Extension, ROUTES_EXTENSIONS } from '../types/extension';
 import { HttpHandler } from '../types/http-interceptor';
 import { HttpMethod } from '../types/mix';
 import { Logger } from '../types/logger';
-import { PreRouteMeta, PreparedRouteMeta } from '../types/route-data';
+import { RawRouteMeta, PreparedRouteMeta } from '../types/route-data';
 import { PATH_PARAMS, QUERY_STRING, RouteHandler, Router } from '../types/router';
 import { NodeReqToken, NodeResponse, NodeResToken, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
@@ -25,8 +25,8 @@ export class PreRouter implements Extension<void> {
     if (this.#inited) {
       return;
     }
-    const preRoutesMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
-    const preparedRouteMeta = await this.prepareRoutesMeta(preRoutesMeta);
+    const rawRoutesMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    const preparedRouteMeta = await this.prepareRoutesMeta(rawRoutesMeta);
     this.setRoutes(preparedRouteMeta);
     this.#inited = true;
   }
@@ -42,10 +42,10 @@ export class PreRouter implements Extension<void> {
     await handle(nodeReq, nodeRes, params, queryString);
   };
 
-  protected async prepareRoutesMeta(preRoutesMeta: PreRouteMeta[]) {
+  protected async prepareRoutesMeta(rawRoutesMeta: RawRouteMeta[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
-    preRoutesMeta.forEach((preRouteMeta) => {
+    rawRoutesMeta.forEach((rawRouteMeta) => {
       const {
         httpMethod,
         path,
@@ -55,7 +55,7 @@ export class PreRouter implements Extension<void> {
         moduleName,
         prefixPerApp,
         prefixPerMod,
-      } = preRouteMeta;
+      } = rawRouteMeta;
       const injectorPerMod = this.injector.resolveAndCreateChild(providersPerMod);
       const inj1 = injectorPerMod.resolveAndCreateChild(providersPerRoute);
       const providers = ReflectiveInjector.resolve(providersPerReq);

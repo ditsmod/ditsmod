@@ -7,12 +7,12 @@ import { Extension } from '../types/extension';
 import { MetadataPerMod } from '../types/metadata-per-mod';
 import { AppMetadataMap, APP_METADATA_MAP } from '../types/app-metadata-map';
 import { GuardItem, HttpMethod, NormalizedGuard, ServiceProvider } from '../types/mix';
-import { PreRouteMeta, RouteData } from '../types/route-data';
+import { RawRouteMeta, RouteData } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
 
 @Injectable()
-export class RoutesExtension implements Extension<PreRouteMeta[]> {
-  #preRoutesMeta: PreRouteMeta[] = [];
+export class RoutesExtension implements Extension<RawRouteMeta[]> {
+  #rawRoutesMeta: RawRouteMeta[] = [];
 
   constructor(
     protected injector: ReflectiveInjector,
@@ -21,19 +21,19 @@ export class RoutesExtension implements Extension<PreRouteMeta[]> {
   ) {}
 
   async init() {
-    if (this.#preRoutesMeta.length) {
-      return this.#preRoutesMeta;
+    if (this.#rawRoutesMeta.length) {
+      return this.#rawRoutesMeta;
     }
 
     const { prefixPerApp } = this.rootMetadata;
 
     this.appMetadataMap.forEach((metadataPerMod) => {
       const { prefixPerMod, moduleMetadata } = metadataPerMod;
-      const preRoutesMeta = this.getRoutesData(moduleMetadata.name, prefixPerApp, prefixPerMod, metadataPerMod);
-      this.#preRoutesMeta.push(...preRoutesMeta);
+      const rawRoutesMeta = this.getRoutesData(moduleMetadata.name, prefixPerApp, prefixPerMod, metadataPerMod);
+      this.#rawRoutesMeta.push(...rawRoutesMeta);
     });
 
-    return this.#preRoutesMeta;
+    return this.#rawRoutesMeta;
   }
 
   protected getRoutesData(
@@ -48,7 +48,7 @@ export class RoutesExtension implements Extension<PreRouteMeta[]> {
       moduleMetadata: { providersPerMod, providersPerReq, name },
     } = metadataPerMod;
 
-    const preRoutesMeta: PreRouteMeta[] = [];
+    const rawRoutesMeta: RawRouteMeta[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
@@ -81,7 +81,7 @@ export class RoutesExtension implements Extension<PreRouteMeta[]> {
           const providersPerRoute: ServiceProvider[] = [{ provide: RouteData, useValue: routeData }];
           const { path, httpMethod } = route;
 
-          preRoutesMeta.push({
+          rawRoutesMeta.push({
             moduleName,
             providersPerMod,
             providersPerRoute,
@@ -95,7 +95,7 @@ export class RoutesExtension implements Extension<PreRouteMeta[]> {
       }
     }
 
-    return preRoutesMeta;
+    return rawRoutesMeta;
   }
 
   protected normalizeGuards(guards: GuardItem[]) {

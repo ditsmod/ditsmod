@@ -1,5 +1,5 @@
 import { InjectionToken } from '@ts-stack/di';
-import { PreRouteMeta } from './route-data';
+import { RawRouteMeta } from './route-data';
 
 export interface Extension<T> {
   init(): Promise<T>;
@@ -10,6 +10,6 @@ export interface Extension<T> {
  */
 export const VOID_EXTENSIONS = new InjectionToken<Extension<void>[]>('VOID_EXTENSIONS');
 /**
- * Group extensions that returns `PreRouteMeta[]` for a router.
+ * Group extensions that returns `RawRouteMeta[]` for a router.
  */
-export const ROUTES_EXTENSIONS = new InjectionToken<Extension<PreRouteMeta>[]>('ROUTES_EXTENSIONS');
+export const ROUTES_EXTENSIONS = new InjectionToken<Extension<RawRouteMeta>[]>('ROUTES_EXTENSIONS');

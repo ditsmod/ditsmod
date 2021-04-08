@@ -13,7 +13,7 @@ export { isModule } from './utils/type-guards';
 export { pickProperties } from './utils/pick-properties';
 export { MetadataPerMod } from './types/metadata-per-mod';
 export { ControllerType, ModuleType, AnyObj, NormalizedGuard, DecoratorMetadata } from './types/mix';
-export { PreRouteMeta } from './types/route-data';
+export { RawRouteMeta } from './types/route-data';
 export { Extension, ROUTES_EXTENSIONS, VOID_EXTENSIONS } from './types/extension';
 export { ModuleMetadata } from './types/module-metadata';
 export { RouteData } from './types/route-data';

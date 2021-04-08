@@ -2,7 +2,7 @@ import { RouteMetadata } from '../decorators/route';
 import { ControllerType, DecoratorMetadata, HttpMethod, NormalizedGuard, ServiceProvider } from './mix';
 import { RouteHandler } from './router';
 
-export class PreRouteMeta {
+export class RawRouteMeta {
   moduleName: string;
   /**
    * Providers per a module.
