@@ -1371,7 +1371,7 @@ interface LoggerMethod {
 
 ```ts
 class PreRouter implements Extension {
-  init(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>): void;
+  init(prefixPerApp: string, metadataMap: Map<ModuleType, AppMetadata>): void;
   requestListener: RequestListener;
 }
 ```

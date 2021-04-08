@@ -10,7 +10,7 @@ import { Router } from './types/router';
 import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
-import { ExtensionMetadata } from './types/extension-metadata';
+import { AppMetadata } from './types/app-metadata';
 import { ModuleType, ServiceProvider, NormalizedGuard, DecoratorMetadata } from './types/mix';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ModuleManager } from './services/module-manager';
@@ -28,7 +28,7 @@ describe('ModuleFactory', () => {
     moduleName = 'MockModule';
     meta = new NormalizedModuleMetadata();
     injectorPerMod: ReflectiveInjector;
-    extensionMetadataMap = new Map<ModuleType, ExtensionMetadata>();
+    appMetadataMap = new Map<ModuleType, AppMetadata>();
     allExportedProvidersPerMod: ServiceProvider[] = [];
     allExportedProvidersPerReq: ServiceProvider[] = [];
     guardsPerMod: NormalizedGuard[] = [];
@@ -462,17 +462,17 @@ describe('ModuleFactory', () => {
         moduleManager.scanModule(Module3);
         mock.bootstrap(new ProvidersMetadata(), '', Module3, moduleManager);
 
-        const mod0 = mock.extensionMetadataMap.get(Module0);
+        const mod0 = mock.appMetadataMap.get(Module0);
         expect(mod0.moduleMetadata.providersPerMod).toEqual([Provider0]);
         expect(mod0.moduleMetadata.providersPerReq).toEqual([]);
         expect((mod0 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
-        const mod1 = mock.extensionMetadataMap.get(Module1);
+        const mod1 = mock.appMetadataMap.get(Module1);
         expect(mod1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3]);
         expect(mod1.moduleMetadata.providersPerReq).toEqual([]);
         expect((mod1 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
-        const mod2 = mock.extensionMetadataMap.get(Module2);
+        const mod2 = mock.appMetadataMap.get(Module2);
         expect(mod2.moduleMetadata.providersPerMod).toEqual([
           Provider0,
           Provider1,
@@ -485,7 +485,7 @@ describe('ModuleFactory', () => {
         expect(mod2.moduleMetadata.providersPerReq).toEqual([Provider7, Provider8]);
         expect((mod2 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
-        const mod3 = mock.extensionMetadataMap.get(Module3);
+        const mod3 = mock.appMetadataMap.get(Module3);
         expect(mod3.moduleMetadata.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3, Provider5]);
         // expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overriddenProvider8]);
         expect(mod3.moduleMetadata.controllers).toEqual([Ctrl]);

@@ -5,7 +5,7 @@ import { ProvidersMetadata } from './models/providers-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
-import { ExtensionMetadata } from './types/extension-metadata';
+import { AppMetadata } from './types/app-metadata';
 import {
   GuardItem,
   DecoratorMetadata,
@@ -50,7 +50,7 @@ export class ModuleFactory {
   protected exportedProvidersPerMod: ServiceProvider[] = [];
   protected exportedProvidersPerReq: ServiceProvider[] = [];
   protected globalProviders: ProvidersMetadata;
-  protected extensionMetadataMap = new Map<ModuleType | ModuleWithParams, ExtensionMetadata>();
+  protected appMetadataMap = new Map<ModuleType | ModuleWithParams, AppMetadata>();
   #moduleManager: ModuleManager;
 
   constructor(private injectorPerApp: ReflectiveInjector, private log: Logger) {}
@@ -99,7 +99,7 @@ export class ModuleFactory {
     this.mergeProviders(meta);
     const controllersMetadata = this.getControllersMetadata();
 
-    return this.extensionMetadataMap.set(modOrObj, {
+    return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
       guardsPerMod: this.guardsPerMod,
       moduleMetadata: this.meta,
@@ -208,14 +208,14 @@ export class ModuleFactory {
       const meta = this.#moduleManager.getMetadata(imp, true);
       this.importProviders(meta, true);
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      const extensionMetadataMap = moduleFactory.bootstrap(
+      const appMetadataMap = moduleFactory.bootstrap(
         this.globalProviders,
         this.prefixPerMod,
         imp,
         this.#moduleManager,
         this.guardsPerMod
       );
-      this.extensionMetadataMap = new Map([...this.extensionMetadataMap, ...extensionMetadataMap]);
+      this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
     }
     for (const imp of this.meta.importsWithParams) {
       const meta = this.#moduleManager.getMetadata(imp, true);
@@ -225,14 +225,14 @@ export class ModuleFactory {
       this.checkGuardsPerMod(normalizedGuardsPerMod);
       const guardsPerMod = [...this.guardsPerMod, ...normalizedGuardsPerMod];
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-      const extensionMetadataMap = moduleFactory.bootstrap(
+      const appMetadataMap = moduleFactory.bootstrap(
         this.globalProviders,
         prefixPerMod,
         imp,
         this.#moduleManager,
         guardsPerMod
       );
-      this.extensionMetadataMap = new Map([...this.extensionMetadataMap, ...extensionMetadataMap]);
+      this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
     }
     this.checkProvidersCollisions();
   }

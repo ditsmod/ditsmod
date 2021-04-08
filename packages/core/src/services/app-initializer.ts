@@ -37,7 +37,7 @@ export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
   protected preRouter: PreRouter;
   protected meta: RootMetadata;
-  protected extensionsMetadataMap: AppMetadataMap;
+  protected appMetadataMap: AppMetadataMap;
 
   constructor(protected moduleManager: ModuleManager) {}
 
@@ -73,9 +73,9 @@ export class AppInitializer {
   }
 
   async bootstrapModulesAndExtensions() {
-    this.extensionsMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
-    this.checkModulesResolvable(this.extensionsMetadataMap);
-    await this.handleExtensions(this.extensionsMetadataMap);
+    this.appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
+    this.checkModulesResolvable(this.appMetadataMap);
+    await this.handleExtensions(this.appMetadataMap);
     this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
   }
 
@@ -183,8 +183,8 @@ export class AppInitializer {
     return globalProviders;
   }
 
-  protected checkModulesResolvable(extensionsMetadataMap: AppMetadataMap) {
-    extensionsMetadataMap.forEach((metadata, modOrObj) => {
+  protected checkModulesResolvable(appMetadataMap: AppMetadataMap) {
+    appMetadataMap.forEach((metadata, modOrObj) => {
       this.log.trace(modOrObj, metadata);
       const { providersPerMod } = metadata.moduleMetadata;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
