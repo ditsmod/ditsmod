@@ -3,7 +3,7 @@ import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { Logger, LoggerConfig } from '../types/logger';
 import { RoutesExtension } from './routes.extension';
-import { AppMetadata } from '../types/app-metadata';
+import { MetadataPerMod } from '../types/metadata-per-mod';
 import { Controller, ControllerMetadata } from '../decorators/controller';
 import { Route } from '../decorators/route';
 import { RootModule } from '../decorators/root-module';
@@ -16,8 +16,8 @@ import { AppInitializer } from '../services/app-initializer';
 
 xdescribe('PreRoutes', () => {
   class MockPreRoutes extends RoutesExtension {
-    getRoutesData(moduleName: string, prefixPerApp: string, prefixPerMod: string, appMetadata: AppMetadata) {
-      return super.getRoutesData(moduleName, prefixPerApp, prefixPerMod, appMetadata);
+    getRoutesData(moduleName: string, prefixPerApp: string, prefixPerMod: string, metadataPerMod: MetadataPerMod) {
+      return super.getRoutesData(moduleName, prefixPerApp, prefixPerMod, metadataPerMod);
     }
   }
 

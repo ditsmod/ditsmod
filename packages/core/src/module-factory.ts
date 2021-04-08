@@ -5,7 +5,7 @@ import { ProvidersMetadata } from './models/providers-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
-import { AppMetadata } from './types/app-metadata';
+import { MetadataPerMod } from './types/metadata-per-mod';
 import {
   GuardItem,
   DecoratorMetadata,
@@ -50,7 +50,7 @@ export class ModuleFactory {
   protected exportedProvidersPerMod: ServiceProvider[] = [];
   protected exportedProvidersPerReq: ServiceProvider[] = [];
   protected globalProviders: ProvidersMetadata;
-  protected appMetadataMap = new Map<ModuleType | ModuleWithParams, AppMetadata>();
+  protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod>();
   #moduleManager: ModuleManager;
 
   constructor(private injectorPerApp: ReflectiveInjector, private log: Logger) {}

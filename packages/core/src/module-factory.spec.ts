@@ -10,7 +10,7 @@ import { Router } from './types/router';
 import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
-import { AppMetadata } from './types/app-metadata';
+import { MetadataPerMod } from './types/metadata-per-mod';
 import { ModuleType, ServiceProvider, NormalizedGuard, DecoratorMetadata } from './types/mix';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ModuleManager } from './services/module-manager';
@@ -28,7 +28,7 @@ describe('ModuleFactory', () => {
     moduleName = 'MockModule';
     meta = new NormalizedModuleMetadata();
     injectorPerMod: ReflectiveInjector;
-    appMetadataMap = new Map<ModuleType, AppMetadata>();
+    appMetadataMap = new Map<ModuleType, MetadataPerMod>();
     allExportedProvidersPerMod: ServiceProvider[] = [];
     allExportedProvidersPerReq: ServiceProvider[] = [];
     guardsPerMod: NormalizedGuard[] = [];

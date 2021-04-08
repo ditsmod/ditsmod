@@ -15,14 +15,14 @@ import { RootMetadata } from '../models/root-metadata';
 import { DefaultLogger } from './default-logger';
 import { ModuleManager } from './module-manager';
 import { defaultProvidersPerReq } from './default-providers-per-req';
-import { AppMetadata } from '../types/app-metadata';
+import { MetadataPerMod } from '../types/metadata-per-mod';
 import { Controller } from '../decorators/controller';
 
 describe('AppInitializer', () => {
   (defaultProvidersPerApp as ServiceProvider[]).push({ provide: Router, useClass: DefaultRouter });
 
   class MockAppInitializer extends AppInitializer {
-    appMetadataMap: Map<ModuleType | ModuleWithParams, AppMetadata>;
+    appMetadataMap: Map<ModuleType | ModuleWithParams, MetadataPerMod>;
     meta = new RootMetadata();
 
     mergeMetadata(appModule: ModuleType) {

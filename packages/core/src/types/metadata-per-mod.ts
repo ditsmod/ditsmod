@@ -2,7 +2,7 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ControllerAndMethodMetadata } from './controller-and-method-metadata';
 import { NormalizedGuard } from './mix';
 
-export class AppMetadata {
+export class MetadataPerMod {
   prefixPerMod: string;
   guardsPerMod: NormalizedGuard[];
   moduleMetadata: NormalizedModuleMetadata;

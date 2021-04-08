@@ -4,7 +4,7 @@ import { ControllerMetadata } from '../decorators/controller';
 import { BodyParserConfig } from '../models/body-parser-config';
 import { RootMetadata } from '../models/root-metadata';
 import { Extension } from '../types/extension';
-import { AppMetadata } from '../types/app-metadata';
+import { MetadataPerMod } from '../types/metadata-per-mod';
 import { AppMetadataMap, APP_METADATA_MAP } from '../types/app-metadata-map';
 import { GuardItem, HttpMethod, NormalizedGuard, ServiceProvider } from '../types/mix';
 import { PreRouteMeta, RouteData } from '../types/route-data';
@@ -40,13 +40,13 @@ export class RoutesExtension implements Extension<PreRouteMeta[]> {
     moduleName: string,
     prefixPerApp: string,
     prefixPerMod: string,
-    appMetadata: AppMetadata
+    metadataPerMod: MetadataPerMod
   ) {
     const {
       controllersMetadata,
       guardsPerMod,
       moduleMetadata: { providersPerMod, providersPerReq, name },
-    } = appMetadata;
+    } = metadataPerMod;
 
     const preRoutesMeta: PreRouteMeta[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {

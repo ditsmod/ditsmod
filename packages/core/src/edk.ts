@@ -11,7 +11,7 @@ export * from './utils/type-guards';
 export { deepFreeze } from './utils/deep-freeze';
 export { isModule } from './utils/type-guards';
 export { pickProperties } from './utils/pick-properties';
-export { AppMetadata } from './types/app-metadata';
+export { MetadataPerMod } from './types/metadata-per-mod';
 export { ControllerType, ModuleType, AnyObj, NormalizedGuard, DecoratorMetadata } from './types/mix';
 export { PreRouteMeta } from './types/route-data';
 export { Extension, ROUTES_EXTENSIONS, VOID_EXTENSIONS } from './types/extension';
