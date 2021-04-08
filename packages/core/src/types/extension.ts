@@ -8,7 +8,7 @@ export interface Extension<T> {
 /**
  * Group extensions that returns void.
  */
-export const DEFAULT_EXTENSIONS = new InjectionToken<Extension<void>[]>('DEFAULT_EXTENSIONS');
+export const VOID_EXTENSIONS = new InjectionToken<Extension<void>[]>('VOID_EXTENSIONS');
 /**
  * Group extensions that returns `PreRouteMeta[]` for a router.
  */

@@ -136,7 +136,7 @@ export class Extension2 implements edk.Extension {
 
 - `ROUTES_EXTENSIONS` - тут реєструються усі розширення, що генерують дані з інтерфейсом
   `PreRouteMeta[]` для маршрутизатора;
-- `DEFAULT_EXTENSIONS` - тут реєструються усі розширення, що не повертають жодних даних (наприклад,
+- `VOID_EXTENSIONS` - тут реєструються усі розширення, що не повертають жодних даних (наприклад,
   тут зареєстровано розширення, що встановлює маршрути).
 
 Реєстрація розширень в будь-якій групі відбувається за допомогою мульти-провайдерів:
@@ -147,13 +147,13 @@ import { Module, edk } from '@ditsmod/core';
 import { MyExtension } from './my-extension';
 
 @Module({
-  providersPerApp: [{ provide: edk.DEFAULT_EXTENSIONS, useClass: MyExtension, multi: true }],
-  extensions: [edk.DEFAULT_EXTENSIONS],
+  providersPerApp: [{ provide: edk.VOID_EXTENSIONS, useClass: MyExtension, multi: true }],
+  extensions: [edk.VOID_EXTENSIONS],
 })
 export class SomeModule {}
 ```
 
-Тут використовується токен групи `DEFAULT_EXTENSIONS`, і указується він у масиві `extensions`,
+Тут використовується токен групи `VOID_EXTENSIONS`, і указується він у масиві `extensions`,
 а також у мульти-провайдері, переданому в масив `providersPerApp` (хоча можна передавати і у
 `providersPerMod`).
 
@@ -164,7 +164,7 @@ export class SomeModule {}
 від конкретного розширенння. В такому разі, вам не потрібно знати імена усіх розширень, що входять
 у групу розширень, достатньо знати лише інтерфейс даних, які повертаються з `init()`.
 
-Припустимо `Extension1` (тут не показано) зареєстровано у групі `DEFAULT_EXTENSIONS`, а
+Припустимо `Extension1` (тут не показано) зареєстровано у групі `VOID_EXTENSIONS`, а
 `Extension2` повинно дочекатись завершення ініціалізації цієї групи розширень. Щоб зробити це, у
 конструкторі треба указувати залежність від `ExtensionsManager`, а у `init()` викликати `init()`
 цього сервісу:
@@ -184,7 +184,7 @@ export class Extension2 implements edk.Extension {
       return;
     }
 
-    await this.extensionsManager.init(edk.DEFAULT_EXTENSIONS);
+    await this.extensionsManager.init(edk.VOID_EXTENSIONS);
     // Do something here.
     this.#inited = true;
   }
@@ -197,7 +197,7 @@ export class Extension2 implements edk.Extension {
 якщо другим аргументом у `init()` передати `false`:
 
 ```ts
-await this.extensionsManager.init(edk.DEFAULT_EXTENSIONS, false);
+await this.extensionsManager.init(edk.VOID_EXTENSIONS, false);
 ```
 
 #### Створення токена для нової групи
