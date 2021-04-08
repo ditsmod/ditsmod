@@ -45,7 +45,7 @@ export class FirstController {
     if (err) {
       this.res.send(`${action} ${moduleName} failed: ${err.message}\n`);
     } else {
-      this.res.send(`${moduleName} successfully ${action}!\n'`);
+      this.res.send(`${moduleName} successfully ${action}!\n`);
     }
   }
 }
