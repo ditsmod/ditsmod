@@ -16,10 +16,10 @@ export class DefaultHttpFrontend implements HttpFrontend {
     @Inject(PATH_PARAMS) protected pathParamsArr: PathParam[],
     @Inject(QUERY_STRING) protected queryString: any,
     private req: Request,
-    private log: Logger,
+    private log: Logger
   ) {}
 
-  intercept(next: HttpHandler) {
+  async intercept(next: HttpHandler) {
     let errorHandler: ControllerErrorHandler;
 
     try {
@@ -30,16 +30,20 @@ export class DefaultHttpFrontend implements HttpFrontend {
     }
 
     try {
-      this.req.queryParams = parse(this.queryString);
-      this.req.pathParamsArr = this.pathParamsArr;
-      const pathParams: AnyObj = this.pathParamsArr?.length ? {} : undefined;
-      this.pathParamsArr?.forEach((param) => (pathParams[param.key] = param.value));
-      this.req.pathParams = pathParams;
+      if (this.queryString) {
+        this.req.queryParams = parse(this.queryString);
+      }
+      if (this.pathParamsArr) {
+        this.req.pathParamsArr = this.pathParamsArr;
+        const pathParams: AnyObj = this.pathParamsArr?.length ? {} : undefined;
+        this.pathParamsArr?.forEach((param) => (pathParams[param.key] = param.value));
+        this.req.pathParams = pathParams;
+      }
     } catch (err) {
       errorHandler.handleError(err);
     }
 
-    return next.handle().catch((err) => {
+    await next.handle().catch((err) => {
       errorHandler.handleError(err);
     });
   }
