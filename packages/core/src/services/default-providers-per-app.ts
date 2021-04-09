@@ -24,7 +24,7 @@ export const defaultProvidersPerApp: ServiceProvider[] = [
   ExtensionsManager,
   PreRouter,
   Counter,
-  { provide: VOID_EXTENSIONS, useClass: PreRouter, multi: true },
+  { provide: VOID_EXTENSIONS, useExisting: PreRouter, multi: true },
   { provide: ROUTES_EXTENSIONS, useClass: RoutesExtension, multi: true },
   ModuleManager
 ];
