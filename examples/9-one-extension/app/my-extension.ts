@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@ts-stack/di';
 import { edk, Logger } from '@ditsmod/core';
 
 @Injectable()
-export class MyExtension implements edk.Extension {
+export class MyExtension implements edk.Extension<void> {
   #inited: boolean;
 
   constructor(

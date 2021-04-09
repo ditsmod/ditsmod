@@ -23,10 +23,10 @@ interface Extension<T> {
 
 1. збираються метадані з усіх декораторів (з `@RootModule`, `@Module`, `@Controller`,
    `@Route`...);
-2. зібрані метадані передаються в інжектор DI з токеном `APP_METADATA_MAP`, а отже, будь-яке
-   розширення може отримати ці метадані у себе в конструкторі;
-3. автоматично запускаються усі зареєстровані розширення, точніше - викликаються їхні методи
-   `init()` без аргументів;
+2. зібрані метадані передаються в інжектор DI з токеном `APP_METADATA_MAP`, а отже - будь-який
+   сервіс, контролер чи розширення може отримати ці метадані у себе в конструкторі;
+3. автоматично запускаються усі зареєстровані розширення, точніше - викликаються їхні
+   методи `init()` без аргументів;
 4. стартує вебсервер, і застосунок починає працювати у звичному режимі, обробляючи HTTP-запити.
 
 Тут варто врахувати, що порядок запуску розширень можна вважати "випадковим", тому кожне розширення
@@ -54,6 +54,44 @@ async init() {
   this.inited = true;
 }
 ```
+
+### Яку корисну роботу може робити розширення
+
+Сама головна відмінність розширення від звичайного сервісу в тому, що розширення може готувати дані
+перед стартом вебсервера. Окрім цього, розширення можуть динамічно додавати провайдери на рівні
+конкретного роута чи запиту.
+
+Наприклад, вбудоване Ditsmod-розширення перед стартом вебсервера аналізує кожен маршрут і якщо
+бачить, що його метод `POST`, `PUT` чи `PATCH`, то воно помічає цей маршрут як такий, що
+потребує парсингу тіла запиту. І, взагалі то, цю єдину "мітку" розширення може передати через
+динамічне додавання провайдера на рівні маршруту:
+
+```ts
+const providersPerRoute: ServiceProvider[] = [{ provide: parseBody, useValue: true }];
+```
+
+Але це не варто робити, бо в такому разі дорожчим буде передача даних через DI, ніж робота
+з таким аналізом за кожним запитом.
+
+Вбудоване розширення робить значно більше роботи, тому передача даних через DI вже виправдана:
+
+```ts
+const routeMeta: edk.RouteMeta = {
+  decoratorMetadata,
+  controller,
+  methodName,
+  route,
+  parseBody,
+  guards,
+};
+const providersPerRoute: ServiceProvider[] = [{ provide: edk.RouteMeta, useValue: routeMeta }];
+```
+
+Як бачите, окрім згадатої мітки `parseBody`, розширення передає й інші метадані в об'єкт з типом
+даних `RouteMeta` і вже в такому вигляді передає це в DI.
+
+Більше інформації про масив `providersPerRoute` можете прочитати в розділі
+[Динамічне додавання провайдерів](#динамічне-додавання-провайдерів).
 
 ## Два кроки для створення розширення
 
@@ -233,6 +271,44 @@ export const MY_EXTENSIONS = new InjectionToken<edk.Extension<MyInterface>[]>('M
 ```ts
 const result = await this.extensionsManager.init(MY_EXTENSIONS);
 ```
+
+## Динамічне додавання провайдерів
+
+Кожне розширення може вказати залежність від групи розширень `ROUTES_EXTENSIONS`, щоб
+динамічно додавати провайдери на рівні роуту - у масив `providersPerRoute`,
+чи запиту - у масив `providersPerReq`:
+
+```ts
+import { Injectable } from '@ts-stack/di';
+import { edk } from '@ditsmod/core';
+
+@Injectable()
+export class MyExtension implements edk.Extension {
+  #inited: boolean;
+
+  constructor(private extensionsManager: edk.ExtensionsManager) {}
+
+  async init() {
+    if (this.#inited) {
+      return;
+    }
+
+    const rawRoutesMeta = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS);
+
+    rawRouteMeta.forEach(data => {
+      const { providersPerRoute, providersPerReq } = data;
+      // ... Make new providers and their values here
+      providersPerRoute.push({ provide: MyProviderPerRoute, useValue: myValue1 });
+      providersPerReq.push({ provide: MyProviderPerReq, useValue: myValue2 });
+    });
+
+    this.#inited = true;
+  }
+}
+```
+
+Після роботи даного розширення, будь-який контролер чи сервіс (включаючи інтерсептори) може
+запитувати у себе в конструкторі `MyProviderPerRoute` чи `MyProviderPerReq`.
 
 ## В якому саме масиві потрібно оголошувати групу розширень
 
