@@ -45,7 +45,7 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
     const {
       controllersMetadata,
       guardsPerMod,
-      moduleMetadata: { providersPerReq, name },
+      moduleMetadata: { providersPerMod, providersPerReq, name },
     } = metadataPerMod;
 
     const rawRoutesMeta: RawRouteMeta[] = [];
@@ -81,6 +81,7 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
 
           rawRoutesMeta.push({
             moduleName,
+            providersPerMod,
             providersPerRoute,
             providersPerReq: allProvidersPerReq,
             prefixPerApp,

@@ -9,6 +9,10 @@ import { RouteHandler } from './router';
 export class RawRouteMeta {
   moduleName: string;
   /**
+   * Providers per a module.
+   */
+  providersPerMod?: ServiceProvider[];
+  /**
    * Providers per a route.
    */
   providersPerRoute?: ServiceProvider[];

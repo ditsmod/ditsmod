@@ -211,7 +211,9 @@ export class AppInitializer {
   protected logExtensionsStatistic() {
     const counter = this.injectorPerApp.get(Counter) as Counter;
     const extensions = counter.getInitedExtensions();
-    const names = Array.from(extensions).map(e => e.constructor.name).join(', ');
+    const names = Array.from(extensions)
+      .map((e) => e.constructor.name)
+      .join(', ');
     this.log.debug(`Total inited ${extensions.size} extensions: ${names}`);
     counter.resetInitedExtensionsSet();
   }
@@ -226,7 +228,7 @@ export class AppInitializer {
       const { providersPerMod, extensions, name } = metadata.moduleMetadata;
       const mapedExtension = extensions.map((groupToken) => {
         const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-        return { moduleName: name,  groupToken, injectorPerMod } as MapedExtension;
+        return { moduleName: name, groupToken, injectorPerMod } as MapedExtension;
       });
       mapedExtensions.push(...mapedExtension);
     }
