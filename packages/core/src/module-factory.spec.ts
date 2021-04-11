@@ -276,27 +276,27 @@ describe('ModuleFactory', () => {
       class Ext implements Extension<any> {
         async init() {}
       }
-      const token = new InjectionToken('token');
+      const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
       @Module({
-        providersPerApp: [{ provide: token, useClass: Ext, multi: true }],
-        providersPerReq: [{ provide: token, useClass: Ext, multi: true }],
-        extensions: [token],
+        providersPerApp: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
+        providersPerReq: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
+        extensions: [GROUP1_EXTENSIONS],
       })
       class Module1 {}
 
       moduleManager.scanModule(Module1);
       const meta = moduleManager.getMetadata(Module1);
-      expect(() => mock.quickCheckMetadata(meta)).toThrow(/cannot be includes in the "providersPerReq"/);
+      expect(() => mock.quickCheckMetadata(meta)).toThrow(/can be includes in the "providersPerApp"/);
     });
 
     it('extension in providersPerApp', () => {
       class Ext implements Extension<any> {
         async init() {}
       }
-      const token = new InjectionToken('token');
+      const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
       @Module({
-        providersPerApp: [{ provide: token, useClass: Ext, multi: true }],
-        extensions: [token],
+        providersPerApp: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
+        extensions: [GROUP1_EXTENSIONS],
       })
       class Module1 {}
 
@@ -309,16 +309,17 @@ describe('ModuleFactory', () => {
       class Ext implements Extension<any> {
         async init() {}
       }
-      const token = new InjectionToken('token');
+      const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
       @Module({
-        providersPerMod: [{ provide: token, useClass: Ext, multi: true }],
-        extensions: [token],
+        providersPerApp: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
+        providersPerMod: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
+        extensions: [GROUP1_EXTENSIONS],
       })
       class Module1 {}
 
       moduleManager.scanModule(Module1);
       const meta = moduleManager.getMetadata(Module1);
-      expect(() => mock.quickCheckMetadata(meta)).not.toThrow();
+      expect(() => mock.quickCheckMetadata(meta)).toThrow(/can be includes in the "providersPerApp"/);
     });
 
     it('should throw an error, when no export and no controllers', () => {
@@ -339,11 +340,11 @@ describe('ModuleFactory', () => {
       class Ext implements Extension<any> {
         async init() {}
       }
-      const token = new InjectionToken('token');
+      const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
 
       @Module({
-        providersPerMod: [{ provide: token, useClass: Ext, multi: true }],
-        extensions: [token],
+        providersPerApp: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
+        extensions: [GROUP1_EXTENSIONS],
       })
       class Module1 {}
 

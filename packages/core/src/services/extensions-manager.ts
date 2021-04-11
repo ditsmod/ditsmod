@@ -6,10 +6,10 @@ import { Counter } from './counter';
 
 @Injectable()
 export class ExtensionsManager {
-  constructor(private injector: Injector, private log: Logger, private counter: Counter) {}
+  constructor(private injectorPerApp: Injector, private log: Logger, private counter: Counter) {}
 
   async init<T>(extensionsGroupToken: InjectionToken<Extension<T>[]>, autoMergeArrays = true): Promise<T[]> {
-    const extensions = this.injector.get(extensionsGroupToken, []);
+    const extensions = this.injectorPerApp.get(extensionsGroupToken, []);
     const dataArr: T[] = [];
 
     if (!extensions.length) {

@@ -148,61 +148,6 @@ describe('Application', () => {
       }
     }
 
-    it('mix declared extensions in two modules and in providersPerMod and providersPerApp', async () => {
-      const MY_EXTENSIONS2 = new InjectionToken<Extension<void>[]>('MY_EXTENSIONS2');
-      const loggerConfig = new LoggerConfig();
-      const level: keyof Logger = 'info';
-      loggerConfig.level = level;
-      loggerConfig.depth = 3;
-
-      @Module({
-        providersPerApp: [
-          { provide: MY_EXTENSIONS, useClass: Extension1, multi: true },
-          { provide: MY_EXTENSIONS2, useClass: Extension3, multi: true },
-        ],
-        providersPerMod: [{ provide: MY_EXTENSIONS, useClass: Extension2, multi: true }],
-        extensions: [MY_EXTENSIONS, MY_EXTENSIONS2],
-      })
-      class Module1 {}
-
-      @RootModule({
-        imports: [Module1],
-        providersPerApp: [
-          { provide: Router, useClass: DefaultRouter },
-          { provide: LoggerConfig, useValue: loggerConfig },
-          { provide: MY_EXTENSIONS2, useClass: Extension4, multi: true },
-          { provide: MY_EXTENSIONS2, useClass: Extension5, multi: true },
-        ],
-        extensions: [MY_EXTENSIONS2],
-      })
-      class AppModule {}
-      const promise = new MockApplication().init(AppModule);
-      await expect(promise).resolves.not.toThrow();
-      expect(jestFn.mock.calls).toEqual([['Extension2'], ['Extension3'], ['Extension4'], ['Extension5']]);
-    });
-
-    it('mix declared extensions in root module and in providersPerMod and providersPerApp', async () => {
-      const loggerConfig = new LoggerConfig();
-      const level: keyof Logger = 'info';
-      loggerConfig.level = level;
-      loggerConfig.depth = 3;
-
-      @RootModule({
-        providersPerApp: [
-          { provide: Router, useClass: DefaultRouter },
-          { provide: LoggerConfig, useValue: loggerConfig },
-          { provide: MY_EXTENSIONS, useClass: Extension1, multi: true },
-        ],
-        providersPerMod: [{ provide: MY_EXTENSIONS, useClass: Extension2, multi: true }],
-        extensions: [MY_EXTENSIONS],
-      })
-      class AppModule {}
-
-      const promise = new MockApplication().init(AppModule);
-      await expect(promise).resolves.not.toThrow();
-      expect(jestFn.mock.calls).toEqual([['Extension2']]);
-    });
-
     it('declared extensions in root module and only in providersPerApp', async () => {
       const loggerConfig = new LoggerConfig();
       const level: keyof Logger = 'info';
@@ -224,7 +169,7 @@ describe('Application', () => {
       expect(jestFn.mock.calls).toEqual([['Extension1']]);
     });
 
-    it('should throw an error about include MY_EXTENSIONS to providersPerApp or providersPerMod', async () => {
+    it('should throw an error about include MY_EXTENSIONS to providersPerApp', async () => {
       const loggerConfig = new LoggerConfig();
       const level: keyof Logger = 'info';
       loggerConfig.level = level;
@@ -261,35 +206,28 @@ describe('Application', () => {
       class AppModule {}
 
       const promise = new MockApplication().init(AppModule);
-      await expect(promise).rejects.toThrow(/MY_EXTENSIONS" cannot be includes in the "providersPerReq"/);
+      await expect(promise).rejects.toThrow(/MY_EXTENSIONS" can be includes in the "providersPerApp"/);
     });
 
-    it('extension declared in two different modules and two different arrays', async () => {
+    it('should throw an error about include MY_EXTENSIONS to providersPerReq', async () => {
       const loggerConfig = new LoggerConfig();
       const level: keyof Logger = 'info';
       loggerConfig.level = level;
       loggerConfig.depth = 3;
 
-      @Module({
-        providersPerApp: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
-        extensions: [MY_EXTENSIONS],
-      })
-      class Module1 {}
-
       @RootModule({
-        imports: [Module1],
         providersPerApp: [
           { provide: Router, useClass: DefaultRouter },
-          { provide: LoggerConfig, useValue: loggerConfig }
+          { provide: LoggerConfig, useValue: loggerConfig },
+          { provide: MY_EXTENSIONS, useClass: Extension1, multi: true }
         ],
-        providersPerMod: [{ provide: MY_EXTENSIONS, useClass: Extension2, multi: true }],
+        providersPerMod: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
         extensions: [MY_EXTENSIONS],
       })
       class AppModule {}
 
       const promise = new MockApplication().init(AppModule);
-      await expect(promise).resolves.not.toThrow();
-      expect(jestFn.mock.calls).toEqual([['Extension1'], ['Extension2']]);
+      await expect(promise).rejects.toThrow(/MY_EXTENSIONS" can be includes in the "providersPerApp"/);
     });
   });
 });

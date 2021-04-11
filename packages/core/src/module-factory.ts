@@ -149,31 +149,28 @@ export class ModuleFactory {
     }
 
     const { providersPerApp, providersPerMod, providersPerReq } = meta;
-    const providers = [...providersPerApp, ...providersPerMod];
-    const normalizedProviders = normalizeProviders(providers);
-    const normalizedProvidersPerReq = normalizeProviders(providersPerReq).map((np) => np.provide);
-    this.checkExtensionsRegistration(this.moduleName, providers, meta.extensions);
+    const normalizedProvidersPerApp = normalizeProviders(providersPerApp);
+    this.checkExtensionsRegistration(this.moduleName, providersPerApp, meta.extensions);
     meta.extensions.forEach((token, i) => {
-      const provider = normalizedProviders.find((np) => np.provide === token);
+      const provider = normalizedProvidersPerApp.find((np) => np.provide === token);
       if (!provider) {
-        const msg =
-          `Importing ${this.moduleName} failed: "${token}" must be includes in ` +
-          '"providersPerApp" or "providersPerMod" array.';
+        const msg = `Importing ${this.moduleName} failed: "${token}" must be includes in "providersPerApp" array.`;
         throw new Error(msg);
       }
       if (
+        !provider.multi ||
         !isInjectionToken(token) ||
         !isClassProvider(provider) ||
-        !isExtensionProvider(provider.useClass) ||
-        !provider.multi
+        !isExtensionProvider(provider.useClass)
       ) {
         const msg =
           `Importing ${this.moduleName} failed: Extensions with array index "${i}" ` +
           'must be a value provider where "useClass: Class" must have init() method and "multi: true".';
         throw new TypeError(msg);
       }
-      if (normalizedProvidersPerReq.includes(token)) {
-        const msg = `Importing ${this.moduleName} failed: Extensions "${token}" cannot be includes in the "providersPerReq" array.`;
+      const normProviders = normalizeProviders([...providersPerMod, ...providersPerReq]).map((np) => np.provide);
+      if (normProviders.includes(token)) {
+        const msg = `Importing ${this.moduleName} failed: "${token}" can be includes in the "providersPerApp" array only.`;
         throw new Error(msg);
       }
     });
@@ -181,10 +178,10 @@ export class ModuleFactory {
 
   protected checkExtensionsRegistration(
     moduleName: string,
-    providers: ServiceProvider[],
+    providersPerApp: ServiceProvider[],
     extensions: InjectionToken<any>[]
   ) {
-    const extensionsProviders = providers
+    const extensionsProviders = providersPerApp
       .filter(isClassProvider)
       .filter(
         (p) =>

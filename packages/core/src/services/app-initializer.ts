@@ -196,13 +196,17 @@ export class AppInitializer {
 
   protected async handleExtensions(appMetadataMap: AppMetadataMap) {
     this.applyAppMetadataMap(appMetadataMap);
-    const mapedExtensions = this.mapExtensionsToInjectors(appMetadataMap);
-    for (const mapedExtension of mapedExtensions) {
-      const { moduleName, groupToken, injectorPerMod } = mapedExtension;
-      this.log.debug(`${moduleName}: start init group with ${groupToken}`);
-      const extensionsManager = injectorPerMod.resolveAndInstantiate(ExtensionsManager) as ExtensionsManager;
-      await extensionsManager.init(groupToken);
-      this.log.debug(`${moduleName}: finish init group with ${groupToken}`);
+    for (const [, metadata] of appMetadataMap) {
+      if (isRootModule(metadata.moduleMetadata)) {
+        metadata.moduleMetadata.extensions = this.meta.extensions;
+      }
+      const { extensions, name: moduleName } = metadata.moduleMetadata;
+      for (const groupToken of extensions) {
+        this.log.debug(`${moduleName}: start init group with ${groupToken}`);
+        const extensionsManager = this.injectorPerApp.resolveAndInstantiate(ExtensionsManager) as ExtensionsManager;
+        await extensionsManager.init(groupToken);
+        this.log.debug(`${moduleName}: finish init group with ${groupToken}`);
+      }
     }
 
     this.logExtensionsStatistic();
@@ -216,24 +220,6 @@ export class AppInitializer {
       .join(', ');
     this.log.debug(`Total inited ${extensions.size} extensions: ${names}`);
     counter.resetInitedExtensionsSet();
-  }
-
-  protected mapExtensionsToInjectors(appMetadataMap: AppMetadataMap) {
-    const mapedExtensions = [];
-
-    for (const [, metadata] of appMetadataMap) {
-      if (isRootModule(metadata.moduleMetadata)) {
-        metadata.moduleMetadata.extensions = this.meta.extensions;
-      }
-      const { providersPerMod, extensions, name } = metadata.moduleMetadata;
-      const mapedExtension = extensions.map((groupToken) => {
-        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-        return { moduleName: name, groupToken, injectorPerMod } as MapedExtension;
-      });
-      mapedExtensions.push(...mapedExtension);
-    }
-
-    return mapedExtensions;
   }
 
   protected applyAppMetadataMap(appMetadataMap: AppMetadataMap) {
