@@ -1,4 +1,4 @@
-import { Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ProvidersMetadata } from '../models/providers-metadata';
@@ -25,12 +25,6 @@ import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from '../extensions/pre-router';
 import { Counter } from './counter';
-
-interface MapedExtension {
-  moduleName: string;
-  groupToken: InjectionToken<any>;
-  injectorPerMod: ReflectiveInjector;
-}
 
 @Injectable()
 export class AppInitializer {
