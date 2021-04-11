@@ -197,7 +197,7 @@ export class AppInitializer {
       const { extensions, name: moduleName } = metadata.moduleMetadata;
       for (const groupToken of extensions) {
         this.log.debug(`${moduleName}: start init group with ${groupToken}`);
-        const extensionsManager = this.injectorPerApp.resolveAndInstantiate(ExtensionsManager) as ExtensionsManager;
+        const extensionsManager = this.injectorPerApp.get(ExtensionsManager) as ExtensionsManager;
         await extensionsManager.init(groupToken);
         this.log.debug(`${moduleName}: finish init group with ${groupToken}`);
       }
