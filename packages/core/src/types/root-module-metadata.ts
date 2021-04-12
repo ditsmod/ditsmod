@@ -3,6 +3,7 @@ import { InjectionToken } from '@ts-stack/di';
 
 import { ServerOptions } from '../types/server-options';
 import { HttpModule } from '../types/http-module';
+import { Extension } from './extension';
 
 export interface RootModuleMetadata {
   httpModule?: HttpModule;
@@ -10,5 +11,5 @@ export interface RootModuleMetadata {
   serverOptions?: ServerOptions;
   listenOptions?: ListenOptions;
   prefixPerApp?: string;
-  extensions?: InjectionToken<any>[];
+  extensions?: InjectionToken<Extension<any>[]>[];
 }

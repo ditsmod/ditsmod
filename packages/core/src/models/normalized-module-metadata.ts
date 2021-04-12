@@ -1,5 +1,6 @@
 import { InjectionToken } from '@ts-stack/di';
 
+import { Extension } from '../types/extension';
 import { AnyObj, ControllerType, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { ProvidersMetadata } from './providers-metadata';
 
@@ -20,7 +21,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj> extends Provide
   importsModules?: ModuleType[] = [];
   importsWithParams?: ModuleWithParams[] = [];
   controllers?: ControllerType[] = [];
-  extensions?: InjectionToken<any>[] = [];
+  extensions?: InjectionToken<Extension<any>[]>[] = [];
   ngMetadataName: string;
   exportsModules?: ModuleType[] = [];
   exportsProviders?: ServiceProvider[] = [];
