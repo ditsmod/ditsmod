@@ -29,6 +29,7 @@ import {
 } from './utils/type-guards';
 import { deepFreeze } from './utils/deep-freeze';
 import { Logger } from './types/logger';
+import { Extension } from './types/extension';
 
 /**
  * - imports and exports global providers;
@@ -179,7 +180,7 @@ export class ModuleFactory {
   protected checkExtensionsRegistration(
     moduleName: string,
     providersPerApp: ServiceProvider[],
-    extensions: InjectionToken<any>[]
+    extensions: InjectionToken<Extension<any>[]>[]
   ) {
     const extensionsProviders = providersPerApp
       .filter(isClassProvider)

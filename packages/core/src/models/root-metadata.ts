@@ -5,6 +5,7 @@ import { InjectionToken } from '@ts-stack/di';
 import { ServerOptions } from '../types/server-options';
 import { HttpModule } from '../types/http-module';
 import { ServiceProvider } from '../types/mix';
+import { Extension } from '../types/extension';
 
 /**
  * @todo Rename this to `RootMetadata`.
@@ -19,5 +20,5 @@ export class RootMetadata {
    * Providers per the `Application`.
    */
   providersPerApp: ServiceProvider[] = [];
-  extensions: InjectionToken<any>[] = [];
+  extensions: InjectionToken<Extension<any>[]>[] = [];
 }
