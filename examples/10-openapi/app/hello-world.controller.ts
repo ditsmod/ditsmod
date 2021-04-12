@@ -1,9 +1,15 @@
-import { Controller, Response, Status } from '@ditsmod/core';
+import { Controller, Response, Route, Status } from '@ditsmod/core';
 import { OasRoute } from '@ditsmod/openapi';
 
 @Controller()
 export class HelloWorldController {
   constructor(private res: Response) {}
+
+  @Route('GET')
+  hello() {
+    // Here work route decorator from `@ditsmod/core`.
+    this.res.send('ok');
+  }
 
   @OasRoute('posts', [], {
     get: {
@@ -28,7 +34,7 @@ export class HelloWorldController {
     this.res.sendJson(posts);
   }
 
-  @OasRoute('posts', [], {
+  @OasRoute('post', [], {
     get: {
       parameters: [{ in: 'path', name: 'postId', required: true }],
       responses: {
