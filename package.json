@@ -23,6 +23,7 @@
     "start6": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/6-body-parser/main.ts",
     "start7": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/7-dynamically-composing-modules/main.ts",
     "start8": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/8-http-interceptors/main.ts",
+    "start9": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/9-one-extension/main.ts",
     "start10": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/10-openapi/main.ts"
   },
   "repository": {
