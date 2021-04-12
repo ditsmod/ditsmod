@@ -31,12 +31,13 @@ export class RawRouteMeta {
  * a route.
  */
 export class RouteMeta {
+  httpMethod: HttpMethod;
+  path: string;
   controller: ControllerType;
   /**
    * The controller's method name.
    */
   methodName: string;
-  route: RouteMetadata;
   /**
    * Need or not parse body.
    */
