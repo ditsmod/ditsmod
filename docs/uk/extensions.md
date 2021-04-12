@@ -79,12 +79,13 @@ const providersPerRoute: ServiceProvider[] = [{ provide: parseBody, useValue: tr
 
 ```ts
 const routeMeta: edk.RouteMeta = {
+  httpMethod,
+  path,
   decoratorMetadata,
   controller,
   methodName,
-  route,
   parseBody,
-  guards,
+  guards
 };
 const providersPerRoute: ServiceProvider[] = [{ provide: edk.RouteMeta, useValue: routeMeta }];
 ```

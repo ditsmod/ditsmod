@@ -69,10 +69,11 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
           );
           const parseBody = this.needBodyParse(providersPerMod, allProvidersPerReq, route.httpMethod);
           const routeMeta: RouteMeta = {
+            httpMethod: route.httpMethod,
+            path: route.path,
             decoratorMetadata,
             controller,
             methodName,
-            route,
             parseBody,
             guards,
           };
