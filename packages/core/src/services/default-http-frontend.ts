@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@ts-stack/di';
 import { parse } from 'querystring';
 
-import { ControllerErrorHandler } from '../types/controller-error-handler';
+import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
 import { Logger } from '../types/logger';
 import { NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { Request } from './request';
-import { AnyObj } from '../types/any-obj';
+import { AnyObj } from '../types/mix';
 import { PathParam, PATH_PARAMS, QUERY_STRING } from '../types/router';
 
 @Injectable()
@@ -16,10 +16,10 @@ export class DefaultHttpFrontend implements HttpFrontend {
     @Inject(PATH_PARAMS) protected pathParamsArr: PathParam[],
     @Inject(QUERY_STRING) protected queryString: any,
     private req: Request,
-    private log: Logger,
+    private log: Logger
   ) {}
 
-  intercept(next: HttpHandler) {
+  async intercept(next: HttpHandler) {
     let errorHandler: ControllerErrorHandler;
 
     try {
@@ -30,16 +30,20 @@ export class DefaultHttpFrontend implements HttpFrontend {
     }
 
     try {
-      this.req.queryParams = parse(this.queryString);
-      this.req.pathParamsArr = this.pathParamsArr;
-      const pathParams: AnyObj = this.pathParamsArr?.length ? {} : undefined;
-      this.pathParamsArr?.forEach((param) => (pathParams[param.key] = param.value));
-      this.req.pathParams = pathParams;
+      if (this.queryString) {
+        this.req.queryParams = parse(this.queryString);
+      }
+      if (this.pathParamsArr) {
+        this.req.pathParamsArr = this.pathParamsArr;
+        const pathParams: AnyObj = this.pathParamsArr?.length ? {} : undefined;
+        this.pathParamsArr?.forEach((param) => (pathParams[param.key] = param.value));
+        this.req.pathParams = pathParams;
+      }
     } catch (err) {
       errorHandler.handleError(err);
     }
 
-    return next.handle().catch((err) => {
+    await next.handle().catch((err) => {
       errorHandler.handleError(err);
     });
   }

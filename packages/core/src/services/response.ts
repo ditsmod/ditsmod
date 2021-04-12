@@ -4,14 +4,14 @@ import { Injectable, Inject } from '@ts-stack/di';
 
 import { Request } from './request';
 import { Status } from '../utils/http-status-codes';
-import { RedirectStatusCodes } from '../types/redirect-status-codes';
-import { NodeReqToken, NodeRequest, NodeResponse, NodeResToken } from '../types/server-options';
+import { RedirectStatusCodes } from '../types/mix';
+import { NODE_REQ, NodeRequest, NodeResponse, NODE_RES } from '../types/server-options';
 
 @Injectable()
 export class Response<T = any> {
   constructor(
-    @Inject(NodeReqToken) protected readonly nodeReq: NodeRequest,
-    @Inject(NodeResToken) public readonly nodeRes: NodeResponse,
+    @Inject(NODE_REQ) protected readonly nodeReq: NodeRequest,
+    @Inject(NODE_RES) public readonly nodeRes: NodeResponse,
     protected req: Request
   ) {}
 

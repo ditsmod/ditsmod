@@ -1,6 +1,4 @@
-import { AnyObj } from '../types/any-obj';
-import { ControllerType } from '../types/controller-type';
-import { DecoratorMetadata } from './decorator-metadata';
+import { AnyObj, ControllerType, DecoratorMetadata } from './mix';
 
 export interface ControllerAndMethodMetadata<CV extends AnyObj = AnyObj, MV extends AnyObj = AnyObj> {
   controller: ControllerType;

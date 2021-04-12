@@ -6,18 +6,22 @@ import { RootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleManager } from './module-manager';
 import { Module } from '../decorators/module';
-import { ModuleWithParams } from '../types/module-with-params';
-import { ServiceProvider } from '../types/service-provider';
+import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj } from '../types/mix';
 import { LoggerConfig } from '../types/logger';
 import { DefaultLogger } from './default-logger';
-import { ModuleType } from '../types/module-type';
 
 describe('ModuleManager', () => {
+  type ModuleId = string | ModuleType | ModuleWithParams;
+
   class MockModuleManager extends ModuleManager {
     map = new Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
     mapId = new Map<string, ModuleType | ModuleWithParams>();
     oldMap = new Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
     oldMapId = new Map<string, ModuleType | ModuleWithParams>();
+
+    getRawMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
+      return super.getRawMetadata<T>(moduleId, throwErrOnNotFound);
+    }
   }
 
   let mock: MockModuleManager;
@@ -52,7 +56,6 @@ describe('ModuleManager', () => {
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(1);
     expect(mock.getMetadata('root')).toEqual(expectedMetadata);
-    expect(Object.isFrozen(AppModule)).toBe(true);
   });
 
   it('root module with some metadata', () => {
@@ -150,7 +153,6 @@ describe('ModuleManager', () => {
     mock.scanRootModule(Module3);
     expect(mock.map.size).toBe(4);
     expect(mock.getMetadata('1')).toEqual(module1Expect);
-    expect(Object.isFrozen(module4WithParams)).toBe(true);
 
     const module2Expect: NormalizedModuleMetadata = {
       id: '',
@@ -236,10 +238,10 @@ describe('ModuleManager', () => {
     };
 
     mock.scanRootModule(AppModule);
-    const meta = mock.getMetadata('root');
     expect(mock.map.size).toBe(1);
-    expect(mock.getMetadata('root') === mock.getMetadata('root')).toBe(true);
-    expect(meta).toEqual(expectedMetadata1);
+    expect(mock.getMetadata('root') === mock.getMetadata('root')).toBe(false);
+    expect(mock.getRawMetadata('root') === mock.getRawMetadata('root')).toBe(true);
+    expect(mock.getMetadata('root')).toEqual(expectedMetadata1);
 
     @Module()
     class Module1 {}
@@ -360,8 +362,8 @@ describe('ModuleManager', () => {
       controllers: [],
       ngMetadataName: 'RootModule',
     };
-    expect(meta === mock.getMetadata('root')).toBe(true);
-    expect(meta).toEqual(expectedMetadata2);
+    expect(mock.getMetadata('root') === mock.getMetadata('root')).toBe(false);
+    expect(mock.getMetadata('root')).toEqual(expectedMetadata2);
 
     const expectedMetadata3: NormalizedModuleMetadata = {
       id: '',
@@ -382,7 +384,7 @@ describe('ModuleManager', () => {
     mock.addImport(module3WithProviders);
     expect(mock.map.size).toBe(5);
     expect(mock.oldMap.size).toBe(4);
-    expect(meta).toEqual(expectedMetadata3);
+    expect(mock.getMetadata('root')).toEqual(expectedMetadata3);
     expect(mock.map.has(module3WithProviders)).toBe(true);
 
     mock.rollback();
@@ -420,7 +422,7 @@ describe('ModuleManager', () => {
 
     const module3WithProviders = Module3.withParams([Provider2]);
 
-    const moduleId = 'my-module-with-params';
+    const moduleId = 'my-mix';
     @Module()
     class Module4 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module4> {

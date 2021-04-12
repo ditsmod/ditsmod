@@ -1,14 +1,13 @@
-import { Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ProvidersMetadata } from '../models/providers-metadata';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleFactory } from '../module-factory';
-import { ExtensionsMap, EXTENSIONS_MAP } from '../types/extensions-map';
+import { AppMetadataMap, APP_METADATA_MAP } from '../types/app-metadata-map';
 import { Logger } from '../types/logger';
-import { ModuleType } from '../types/module-type';
+import { ModuleType, ServiceProvider } from '../types/mix';
 import { RequestListener } from '../types/server-options';
-import { ServiceProvider } from '../types/service-provider';
 import { getDuplicates } from '../utils/get-duplicates';
 import { getModule } from '../utils/get-module';
 import { getModuleMetadata } from '../utils/get-module-metadata';
@@ -24,13 +23,8 @@ import { defaultProvidersPerApp } from './default-providers-per-app';
 import { defaultProvidersPerReq } from './default-providers-per-req';
 import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
-import { PreRouter } from './pre-router';
-
-interface MapedExtension {
-  moduleName: string;
-  groupToken: InjectionToken<any>;
-  injectorPerMod: ReflectiveInjector;
-}
+import { PreRouter } from '../extensions/pre-router';
+import { Counter } from './counter';
 
 @Injectable()
 export class AppInitializer {
@@ -38,7 +32,7 @@ export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
   protected preRouter: PreRouter;
   protected meta: RootMetadata;
-  protected extensionsMetadataMap: ExtensionsMap;
+  protected appMetadataMap: AppMetadataMap;
 
   constructor(protected moduleManager: ModuleManager) {}
 
@@ -74,9 +68,10 @@ export class AppInitializer {
   }
 
   async bootstrapModulesAndExtensions() {
-    this.extensionsMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
-    this.checkModulesResolvable(this.extensionsMetadataMap);
-    await this.handleExtensions(this.extensionsMetadataMap);
+    this.appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
+    this.checkModulesResolvable(this.appMetadataMap);
+    await this.handleExtensions(this.appMetadataMap);
+    this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
   }
 
   getMetadataAndLogger() {
@@ -158,18 +153,17 @@ export class AppInitializer {
   }
 
   /**
-   * Create providers per the application.
+   * Create injector per the application.
    */
   protected createInjectorPerApp() {
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.meta.providersPerApp);
     this.log = this.injectorPerApp.get(Logger) as Logger;
-    this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
   }
 
   protected bootstrapModuleFactory(moduleManager: ModuleManager) {
     const globalProviders = this.getGlobalProviders(moduleManager);
     this.log.trace({ globalProviders });
-    const moduleFactory = new ModuleFactory();
+    const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
     const appModule = moduleManager.getMetadata('root').module;
     return moduleFactory.bootstrap(globalProviders, '', appModule, moduleManager);
   }
@@ -177,15 +171,15 @@ export class AppInitializer {
   protected getGlobalProviders(moduleManager: ModuleManager) {
     const globalProviders = new ProvidersMetadata();
     globalProviders.providersPerApp = this.meta.providersPerApp;
-    const moduleFactory = new ModuleFactory();
+    const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
     const { providersPerMod, providersPerReq } = moduleFactory.exportGlobalProviders(moduleManager, globalProviders);
     globalProviders.providersPerMod = providersPerMod;
     globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];
     return globalProviders;
   }
 
-  protected checkModulesResolvable(extensionsMetadataMap: ExtensionsMap) {
-    extensionsMetadataMap.forEach((metadata, modOrObj) => {
+  protected checkModulesResolvable(appMetadataMap: AppMetadataMap) {
+    appMetadataMap.forEach((metadata, modOrObj) => {
       this.log.trace(modOrObj, metadata);
       const { providersPerMod } = metadata.moduleMetadata;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
@@ -194,39 +188,36 @@ export class AppInitializer {
     });
   }
 
-  protected async handleExtensions(extensionsMap: ExtensionsMap) {
-    this.applyExtensionsMap(extensionsMap);
-    const mapedExtensions = this.mapExtensionsToInjectors(extensionsMap);
-    for (const mapedExtension of mapedExtensions) {
-      const { moduleName, groupToken, injectorPerMod } = mapedExtension;
-      this.log.debug(`${moduleName}: start init group with ${groupToken}`);
-      const extensionsManager = injectorPerMod.get(ExtensionsManager) as ExtensionsManager;
-      await extensionsManager.init(groupToken);
-      this.log.debug(`${moduleName}: finish init group with ${groupToken}`);
+  protected async handleExtensions(appMetadataMap: AppMetadataMap) {
+    this.applyAppMetadataMap(appMetadataMap);
+    for (const [, metadata] of appMetadataMap) {
+      if (isRootModule(metadata.moduleMetadata)) {
+        metadata.moduleMetadata.extensions = this.meta.extensions;
+      }
+      const { extensions, name: moduleName } = metadata.moduleMetadata;
+      for (const groupToken of extensions) {
+        this.log.debug(`${moduleName}: start init group with ${groupToken}`);
+        const extensionsManager = this.injectorPerApp.get(ExtensionsManager) as ExtensionsManager;
+        await extensionsManager.init(groupToken);
+        this.log.debug(`${moduleName}: finish init group with ${groupToken}`);
+      }
     }
 
-    this.log.debug(`Total extensions initialized: ${mapedExtensions.length}`);
+    this.logExtensionsStatistic();
   }
 
-  protected mapExtensionsToInjectors(extensionsMap: ExtensionsMap) {
-    const mapedExtensions = this.meta.extensions.map((groupToken) => {
-      return { moduleName: 'RootModule', groupToken, injectorPerMod: this.injectorPerApp } as MapedExtension;
-    });
-
-    for (const [, metadata] of extensionsMap) {
-      const { providersPerMod, extensions, name } = metadata.moduleMetadata;
-      const mapedExtension = extensions.map((groupToken) => {
-        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-        return { moduleName: name,  groupToken, injectorPerMod } as MapedExtension;
-      });
-      mapedExtensions.push(...mapedExtension);
-    }
-
-    return mapedExtensions;
+  protected logExtensionsStatistic() {
+    const counter = this.injectorPerApp.get(Counter) as Counter;
+    const extensions = counter.getInitedExtensions();
+    const names = Array.from(extensions)
+      .map((e) => e.constructor.name)
+      .join(', ');
+    this.log.debug(`Total inited ${extensions.size} extensions: ${names}`);
+    counter.resetInitedExtensionsSet();
   }
 
-  protected applyExtensionsMap(extensionsMap: ExtensionsMap) {
-    this.meta.providersPerApp.unshift({ provide: EXTENSIONS_MAP, useValue: extensionsMap });
+  protected applyAppMetadataMap(appMetadataMap: AppMetadataMap) {
+    this.meta.providersPerApp.unshift({ provide: APP_METADATA_MAP, useValue: appMetadataMap });
     this.createInjectorPerApp();
   }
 }

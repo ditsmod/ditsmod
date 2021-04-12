@@ -8,8 +8,8 @@ import { MyExtension } from './my-extension';
   controllers: [HelloWorldController],
   providersPerApp: [
     { provide: Router, useClass: DefaultRouter },
-    { provide: edk.DEFAULT_EXTENSIONS, useClass: MyExtension, multi: true },
+    { provide: edk.VOID_EXTENSIONS, useClass: MyExtension, multi: true },
   ],
-  extensions: [edk.DEFAULT_EXTENSIONS],
+  extensions: [edk.VOID_EXTENSIONS],
 })
 export class AppModule {}

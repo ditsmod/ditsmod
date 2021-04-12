@@ -1,5 +1,4 @@
-import { ModuleType } from '../types/module-type';
-import { ModuleWithParams } from '../types/module-with-params';
+import { ModuleType, ModuleWithParams } from '../types/mix';
 import { isModuleWithParams } from './type-guards';
 
 export function getModule(modOrObj: ModuleType | ModuleWithParams) {

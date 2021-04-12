@@ -4,54 +4,51 @@ import { ControllerMetadata } from '../decorators/controller';
 import { BodyParserConfig } from '../models/body-parser-config';
 import { RootMetadata } from '../models/root-metadata';
 import { Extension } from '../types/extension';
-import { ExtensionMetadata } from '../types/extension-metadata';
-import { ExtensionsMap, EXTENSIONS_MAP } from '../types/extensions-map';
-import { GuardItem } from '../types/guard-item';
-import { HttpMethod } from '../types/http-method';
-import { NormalizedGuard } from '../types/normalized-guard';
-import { PreRouteMeta, RouteData } from '../types/route-data';
-import { ServiceProvider } from '../types/service-provider';
+import { MetadataPerMod } from '../types/metadata-per-mod';
+import { AppMetadataMap, APP_METADATA_MAP } from '../types/app-metadata-map';
+import { GuardItem, HttpMethod, NormalizedGuard, ServiceProvider } from '../types/mix';
+import { RawRouteMeta, RouteMeta } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
 
 @Injectable()
-export class PreRoutes implements Extension {
-  #preRoutesMeta: PreRouteMeta[] = [];
+export class RoutesExtension implements Extension<RawRouteMeta[]> {
+  #rawRoutesMeta: RawRouteMeta[] = [];
 
   constructor(
     protected injectorPerApp: ReflectiveInjector,
     protected rootMetadata: RootMetadata,
-    @Inject(EXTENSIONS_MAP) protected extensionsMap: ExtensionsMap
+    @Inject(APP_METADATA_MAP) protected appMetadataMap: AppMetadataMap
   ) {}
 
   async init() {
-    if (this.#preRoutesMeta.length) {
-      return this.#preRoutesMeta;
+    if (this.#rawRoutesMeta.length) {
+      return this.#rawRoutesMeta;
     }
 
     const { prefixPerApp } = this.rootMetadata;
 
-    this.extensionsMap.forEach((extensionsMetadata) => {
-      const { prefixPerMod, moduleMetadata } = extensionsMetadata;
-      const preRoutesMeta = this.getRoutesData(moduleMetadata.name, prefixPerApp, prefixPerMod, extensionsMetadata);
-      this.#preRoutesMeta.push(...preRoutesMeta);
+    this.appMetadataMap.forEach((metadataPerMod) => {
+      const { prefixPerMod, moduleMetadata } = metadataPerMod;
+      const rawRoutesMeta = this.getRawRoutesMeta(moduleMetadata.name, prefixPerApp, prefixPerMod, metadataPerMod);
+      this.#rawRoutesMeta.push(...rawRoutesMeta);
     });
 
-    return this.#preRoutesMeta;
+    return this.#rawRoutesMeta;
   }
 
-  protected getRoutesData(
+  protected getRawRoutesMeta(
     moduleName: string,
     prefixPerApp: string,
     prefixPerMod: string,
-    extensionMetadata: ExtensionMetadata
+    metadataPerMod: MetadataPerMod
   ) {
     const {
       controllersMetadata,
       guardsPerMod,
       moduleMetadata: { providersPerMod, providersPerReq, name },
-    } = extensionMetadata;
+    } = metadataPerMod;
 
-    const preRoutesMeta: PreRouteMeta[] = [];
+    const rawRoutesMeta: RawRouteMeta[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
@@ -71,20 +68,18 @@ export class PreRoutes implements Extension {
             providersPerReq.slice()
           );
           const parseBody = this.needBodyParse(providersPerMod, allProvidersPerReq, route.httpMethod);
-          const routeData: RouteData = {
+          const routeMeta: RouteMeta = {
             decoratorMetadata,
             controller,
             methodName,
             route,
-            providersPerMod,
-            providersPerReq: allProvidersPerReq,
             parseBody,
             guards,
           };
-          const providersPerRoute: ServiceProvider[] = [{ provide: RouteData, useValue: routeData }];
+          const providersPerRoute: ServiceProvider[] = [{ provide: RouteMeta, useValue: routeMeta }];
           const { path, httpMethod } = route;
 
-          preRoutesMeta.push({
+          rawRoutesMeta.push({
             moduleName,
             providersPerMod,
             providersPerRoute,
@@ -98,7 +93,7 @@ export class PreRoutes implements Extension {
       }
     }
 
-    return preRoutesMeta;
+    return rawRoutesMeta;
   }
 
   protected normalizeGuards(guards: GuardItem[]) {

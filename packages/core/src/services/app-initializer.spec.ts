@@ -6,25 +6,23 @@ import { Logger, LoggerConfig } from '../types/logger';
 import { Router } from '../types/router';
 import { Request } from './request';
 import { defaultProvidersPerApp } from './default-providers-per-app';
-import { ModuleType } from '../types/module-type';
+import { ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { ModuleWithParams } from '../types/module-with-params';
 import { Module } from '../decorators/module';
 import { RootModule } from '../decorators/root-module';
-import { NodeReqToken } from '../types/server-options';
+import { NODE_REQ } from '../types/server-options';
 import { RootMetadata } from '../models/root-metadata';
-import { ServiceProvider } from '../types/service-provider';
 import { DefaultLogger } from './default-logger';
 import { ModuleManager } from './module-manager';
 import { defaultProvidersPerReq } from './default-providers-per-req';
-import { ExtensionMetadata } from '../types/extension-metadata';
+import { MetadataPerMod } from '../types/metadata-per-mod';
 import { Controller } from '../decorators/controller';
 
 describe('AppInitializer', () => {
   (defaultProvidersPerApp as ServiceProvider[]).push({ provide: Router, useClass: DefaultRouter });
 
   class MockAppInitializer extends AppInitializer {
-    extensionsMetadataMap: Map<ModuleType | ModuleWithParams, ExtensionMetadata>;
+    appMetadataMap: Map<ModuleType | ModuleWithParams, MetadataPerMod>;
     meta = new RootMetadata();
 
     mergeMetadata(appModule: ModuleType) {
@@ -296,7 +294,7 @@ describe('AppInitializer', () => {
       moduleManager.scanRootModule(AppModule);
       mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
-      const mod0 = mock.extensionsMetadataMap.get(Module0);
+      const mod0 = mock.appMetadataMap.get(Module0);
       expect(mod0.moduleMetadata.providersPerApp).toEqual([]);
       expect(mod0.moduleMetadata.providersPerMod).toEqual([Provider3, Provider4, Provider0]);
       expect(mod0.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
@@ -306,7 +304,7 @@ describe('AppInitializer', () => {
       moduleManager.scanRootModule(AppModule);
       mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
-      const mod1 = mock.extensionsMetadataMap.get(Module1);
+      const mod1 = mock.appMetadataMap.get(Module1);
       expect(mod1.moduleMetadata.providersPerApp).toEqual([]);
       expect(mod1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4, obj1, Provider2]);
       expect(mod1.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
@@ -316,7 +314,7 @@ describe('AppInitializer', () => {
       moduleManager.scanRootModule(AppModule);
       mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
-      const mod2 = mock.extensionsMetadataMap.get(module2WithParams);
+      const mod2 = mock.appMetadataMap.get(module2WithParams);
       expect(mod2.moduleMetadata.providersPerApp).toEqual([]);
       expect(mod2.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
       expect(mod2.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
@@ -326,7 +324,7 @@ describe('AppInitializer', () => {
       moduleManager.scanRootModule(AppModule);
       mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
-      const mod3 = mock.extensionsMetadataMap.get(module3WithParams);
+      const mod3 = mock.appMetadataMap.get(module3WithParams);
       expect(mod3.moduleMetadata.providersPerApp).toEqual([]);
       expect(mod3.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
       expect(mod3.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
@@ -336,7 +334,7 @@ describe('AppInitializer', () => {
       moduleManager.scanRootModule(AppModule);
       mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
-      const mod4 = mock.extensionsMetadataMap.get(module4WithParams);
+      const mod4 = mock.appMetadataMap.get(module4WithParams);
       expect(mod4.moduleMetadata.providersPerApp).toEqual([]);
       expect(mod4.moduleMetadata.providersPerMod).toEqual([Provider0, Provider3, Provider4]);
       expect(mod4.moduleMetadata.providersPerReq).toEqual([
@@ -353,7 +351,7 @@ describe('AppInitializer', () => {
       moduleManager.scanRootModule(AppModule);
       mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
-      const root1 = mock.extensionsMetadataMap.get(AppModule);
+      const root1 = mock.appMetadataMap.get(AppModule);
       expect(root1.moduleMetadata.providersPerApp).toEqual([Logger]);
       expect(root1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider1, Provider3, Provider4]);
       expect(root1.moduleMetadata.providersPerReq).toEqual([
@@ -652,14 +650,14 @@ describe('AppInitializer', () => {
             Provider0,
             Provider1,
             { provide: Request, useClass: Request },
-            { provide: NodeReqToken, useValue: '' },
+            { provide: NODE_REQ, useValue: '' },
             Provider3,
           ],
           providersPerMod: [Provider0],
           providersPerReq: [
             { provide: Provider1, useClass: Provider1 },
             Provider2,
-            { provide: NodeReqToken, useValue: '' },
+            { provide: NODE_REQ, useValue: '' },
             Provider3,
             Request,
           ],
@@ -678,7 +676,7 @@ describe('AppInitializer', () => {
         mock.bootstrapProvidersPerApp();
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
-          'Provider0, Request, Provider1, InjectionToken NodeRequest. You should manually add these providers to AppModule.';
+          'Provider0, Request, Provider1, InjectionToken NODE_REQ. You should manually add these providers to AppModule.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
 

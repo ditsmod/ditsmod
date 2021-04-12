@@ -1,10 +1,6 @@
 import { InjectionToken } from '@ts-stack/di';
 
-import { AnyObj } from '../types/any-obj';
-import { ControllerType } from '../types/controller-type';
-import { ModuleType } from '../types/module-type';
-import { ModuleWithParams } from '../types/module-with-params';
-import { ServiceProvider } from '../types/service-provider';
+import { AnyObj, ControllerType, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { ProvidersMetadata } from './providers-metadata';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj> extends ProvidersMetadata {

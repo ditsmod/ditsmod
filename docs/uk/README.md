@@ -52,27 +52,6 @@ Angular v4.4.7. (з мінімальними допрацюваннями) та 
 - [Колізії провайдерів][121]
 - [Домовленості по стилю коду][122]
 - [API reference][106]
-  - [Application][135]
-  - [ControllerErrorHandler][124]
-  - [BodyParserConfig][128]
-  - [PreRequest][129]
-  - [Logger][125]
-  - [LoggerConfig][144]
-  - [LoggerMethod][136]
-  - [PreRouter][146]
-  - [Extension][149]
-  - [RouteData та PreRouteData][147]
-  - [RequestListener][148]
-  - [Router][131]
-  - [RouterReturns][136]
-  - [RouteHandler][137]
-  - [GuardItems][138]
-  - [RouteParam][139]
-  - [BodyParser][132]
-  - [Request][133]
-  - [Response][134]
-  - [NodeRequest][140]
-  - [NodeResponse][141]
 
 ## Встановлення
 
@@ -91,10 +70,19 @@ npm i
 npm start
 ```
 
+Такий запуск можна використовувати для розробки застосунку, оскільки після кожного збереження
+вашого коду, ви зможете зразу бачити ці зміни в роботі застосунку.
+
 Перевірити роботу сервера можна за допомогою `curl`:
 
 ```bash
 curl -isS localhost:8080
+```
+
+Компіляція застосунку відбувається за допомогою команди:
+
+```bash
+npm run build
 ```
 
 Окрім цього, можете проглянути більше прикладів у теці [examples][4].
@@ -125,8 +113,9 @@ new Application()
   });
 ```
 
-Після компіляції, він перетворюється на `dist/main.js` та стає вхідною точкою для запуску
-застосунку, і саме тому ви будете його вказувати у якості аргументу для Node.js:
+Після компіляції, він перетворюється на `dist/main.js` та стає
+вхідною точкою для запуску застосунку, і саме тому ви будете його вказувати у якості аргументу для
+Node.js:
 
 ```bash
 node dist/main.js
@@ -152,9 +141,8 @@ jest path/to/test-file.js
 
 ## Модуль Ditsmod
 
-Коротко кажучи, модуль
-об'єднує у собі набір класів, що мають вузьку спеціалізацію. Добре оформлений
-модуль не повинен бути "універсальним комбайном".
+Коротко кажучи, модуль об'єднує у собі набір класів, що мають вузьку спеціалізацію. Добре
+оформлений модуль не повинен бути "універсальним комбайном".
 
 Наприклад, модуль системи безпеки має вузьку спеціалізацію - безпека доступу та безпека управління
 застосунком. Тут не повинні оголошуватись класи, наприклад, що перекладають
@@ -277,8 +265,7 @@ export class SomeController {
 `sendJson()` та `sendText()`).
 1. Об'єкти помилок можна кидати прямо в методі класу звичайним для JavaScript способом, тобто за
 допомогою ключового слова `throw`. Початково, цю помилку буде обробляти by default обробник
-помилок. Як створити власного обробника помилок для контролерів - прогляньте
-[API ControllerErrorHandler][124].
+помилок.
 
 **Уточнення**: модифікатор доступу в конструкторі може бути будь-яким (`private`, `protected`
 або `public`), але взагалі без модифікатора - `res` вже буде простим параметром з видимістю лише
@@ -410,8 +397,8 @@ export class SecondService {
 
 Тут DI повинен надати інстанс класу `FirstService` і, на перший погляд, ви чітко прописуєте
 з якого файлу імпортувати даний клас, але цього не достатньо, бо DI запам'ятовує `FirstService`
-лише у якості ключа для пошуку. І потім ви можете сказати: "DI, коли бачиш цей ключ, роби інстанс
-такого-то класу, і підставляй його сюди".
+лише у якості ключа для пошуку. Це зроблено для того, щоб потім ви могли сказати: "DI, коли бачиш
+цей ключ, роби інстанс такого-то класу, і підставляй його сюди".
 
 [Пізніше][100] ви дізнаєтесь, що не змінюючи коду в даному прикладі, ви можете підмінити клас
 `FirstService`, наприклад, тестовим класом. Коли ви підмінюєте один клас іншим класом ви, можна
@@ -493,9 +480,6 @@ export class SomeModule {}
 
 Як бачите, в метаданих модуля оголошувати провайдери вже можна на **трьох рівнях**.
 
-До речі, зверніть увагу, що тут використано декоратор `Module`, завдяки якому
-TypeScript клас перетворюється на модуль Ditsmod.
-
 ### Пріоритетність провайдерів
 
 Один і той самий провайдер, на одному й тому самому рівні можна додавати багато разів, але
@@ -505,7 +489,7 @@ DI вибире той із них, що додано останнім. Окрі
 
 Це можна використовувати, наприклад, так:
 
-1. спочатку у кореневому модулі оголосити певний провайдер конфігурації **на рівні застосунку**
+1. спочатку у кореневому модулі оголосіть певний провайдер конфігурації **на рівні застосунку**
 2. при потребі змінити дану конфігурацію лише для окремого модуля, ви оголошуєте цей же провайдер
 конфігурації, але вже **на рівні модуля**, і робите його підміну.
 
@@ -534,8 +518,7 @@ export class SomeModule {}
 
 Зверніть увагу, що відбувається не лише додавання `SomeService` в масив `exports`, одночасно цей
 провайдер оголошується на рівні `providersPerMod`. При експорті, _оголошення_ провайдера на
-певному рівні є обов'язковим. Виключення з цього правила стосується лише імпортованих
-провайдерів, оскільки у своїх модулях вони вже оголошені на певних рівнях.
+певному рівні є обов'язковим.
 
 Експортувати провайдери можна лише ті, що оголошені:
 
@@ -553,7 +536,7 @@ export class SomeModule {}
 ## Експорт провайдерів із кореневого модуля
 
 Експорт провайдерів із кореневого модуля означає, що ці провайдери стають доступними для
-будь-якого сервіса чи контролера у всьому застосунку, причому їхні рівні оголошення зберігаються:
+будь-якого сервіса чи контролера у всьому застосунку, причому їхній рівень оголошення зберігається:
 
 ```ts
 import { RootModule } from '@ditsmod/core';
@@ -731,7 +714,7 @@ export class AuthGuard implements CanActivate {
 - `true` чи `Promise<true>`, значить Ditsmod буде обробляти відповідний маршрут із цим гардом;
 - `false` чи `Promise<false>`, значить відповідь на запит міститиме 401 статус і обробки маршруту
 з боку контролера не буде;
-- `number` чи `Promise<number>` Ditsmod інтерпретує як номер статусу (403, 401 і т.п.),
+- `number` чи `Promise<number>` Ditsmod інтерпретує це як номер статусу (403, 401 і т.п.),
 який треба повернути у відповіді на HTTP-запит.
 
 ### Параметри для guards
@@ -828,18 +811,22 @@ export class SomeModule {}
 
 ### на рівні застосунку
 
-- [Logger][130]
-- [LoggerConfig][144]
-- [BodyParserConfig][128]
-- [Router][131]
-- [PreRequest][129]
+- Logger
+- LoggerConfig
+- BodyParserConfig
+- Router
+- PreRequest
+- ExtensionsManager
+- PreRouter
+- Counter
+- ModuleManager
 
 ### на рівні HTTP-запиту
 
-- [Request][133]
-- [Response][134]
-- [BodyParser][132]
-- [ControllerErrorHandler][124]
+- Request
+- Response
+- BodyParser
+- ControllerErrorHandler
 
 Оскільки усі by default провайдери додаються до DI першими,
 кожного із них ви можете підмінити своїми провайдерами.
@@ -849,7 +836,7 @@ export class SomeModule {}
 
 Що означає "використовується як інтерфейс"? - Це означає, що якщо ви хочете підміняти `Logger`
 своїм провайдером, ваш провайдер повинен мати такі ж методи, і таку ж сигнатуру цих методів як
-вона є у [Logger][125].
+вона є у `Logger`.
 
 Коли ваш провайдер впровадить інтерфейс `Logger`, вам залишиться зробити його підміну
 за допомогою DI:
@@ -1173,436 +1160,7 @@ import { Permission } from './permission';
 
 ## API reference
 
-### Application
-
-```ts
-class Application {
-  bootstrap(appModule: ModuleType): Promise<{ server: Server; log: Logger }>;
-}
-```
-
-Під час роботи методу `bootstrap()`:
-
-1. відбувається читання конфігурації із метаданих, закріплених за різними декораторами затосунку
-(`RootModule()`, `Module()`, `Controller()`, `Route()` і т.д.);
-2. відбувається валідація та злиття даної конфігурації із початковими (default) значеннями
-застосунку;
-3. враховуючи модульність та ієрархію вказану у конфігурації, готуються інжектори з різними
-наборами сервісів;
-
-### ControllerErrorHandler
-
-```ts
-class ControllerErrorHandler {
-  handleError(error: any): void;
-}
-```
-
-Даний клас використовується у якості провайдера, а також як інтерфейс для обробника помилок, що
-стались у контролері. У якості провайдера його оголошено на рівні HTTP-запиту.
-
-Приклад впровадження `ControllerErrorHandler`:
-
-```ts
-import { Injectable } from '@ts-stack/di';
-import { Logger, Status, Response, ControllerErrorHandler } from '@ditsmod/core';
-
-@Injectable()
-export class ErrorHandler implements ControllerErrorHandler {
-  constructor(private res: Response, private log: Logger) {}
-
-  handleError(err: Error) {
-    const message = err.message;
-    this.log.error({ err });
-    if (!this.res.nodeRes.headersSent) {
-      this.res.sendJson({ error: { message } }, Status.INTERNAL_SERVER_ERROR);
-    }
-  }
-}
-```
-
-Повніший приклад можете проглянути в теці [examples][143].
-
-### BodyParserConfig
-
-```ts
-class BodyParserConfig {
-  acceptMethods: HttpMethod[];
-  maxBodySize: number;
-  multipartOpts: MultipartBodyParserOptions;
-}
-```
-
-Див. також [Автоматичний парсинг тіла HTTP-запиту][115].
-
-### PreRequest
-
-```ts
-class PreRequest {
-  constructor(protected log: Logger) {}
-
-  /**
-   * Called by the `ModuleFactory` before call a router.
-   */
-  decodeUrl(url: string): string;
-
-  /**
-   * Called by the `ModuleFactory` when a route is not found (404).
-   */
-  sendNotFound(nodeRes: NodeResponse): void;
-
-  /**
-   * Logs an error and sends the user message about an internal server error (500).
-   *
-   * @param err An error to logs it (not sends).
-   */
-  sendInternalServerError(nodeRes: NodeResponse, err: Error): void;
-
-  /**
-   * Logs an error and sends the user message about a bad request error (400).
-   *
-   * @param err An error to logs it (not sends).
-   */
-  sendBadRequestError(nodeRes: NodeResponse, err: Error): void;
-
-  canNotActivateRoute(nodeReq: NodeRequest, nodeRes: NodeResponse, status?: Status): void;
-
-  /**
-   * Called by the `ModuleFactory` after founded a route.
-   *
-   * @param controller Controller class.
-   * @param method Method of the Controller.
-   * @param parseBody Need or not to parsing a body request.
-   */
-  async handleRoute(
-    controller: TypeProvider,
-    method: string,
-    pathParamsArr: RouteParam[],
-    queryString: string,
-    parseBody: boolean,
-    guardItems: GuardItems[]
-  ): Promise<void>;
-}
-```
-
-Даний клас використовується у якості провайдера, а також як інтерфейс. У якості
-провайдера його оголошено на рівні застосунку.
-
-Його методи працюють перед викликом роутера. Ви можете підмінити даний провайдер, надавши власне
-впровадження інтерфейсу `PreRequest`.
-
-### Logger
-
-```ts
-class Logger {
-  trace: LoggerMethod;
-  debug: LoggerMethod;
-  info: LoggerMethod;
-  warn: LoggerMethod;
-  error: LoggerMethod;
-  fatal: LoggerMethod;
-}
-```
-
-Даний клас використовується у якості провайдера, а також як інтерфейс для логера. У якості
-провайдера його оголошено на рівні застосунку.
-
-Приклад розширення класу `Logger` та впровадження одного із методів:
-
-```ts
-import { Injectable } from '@ts-stack/di';
-import { Logger, LoggerMethod } from '@ditsmod/core';
-
-@Injectable()
-export class LoggerService extends Logger {
-  trace: LoggerMethod = (...args: any[]) => {
-    if (!args.length) {
-      return true;
-    }
-    console.log('Log trace ', ...args);
-  };
-}
-```
-
-Тепер можна [підмінити][116] початковий провайдер даним провайдером.
-
-### LoggerMethod
-
-```ts
-interface LoggerMethod {
-  /**
-   * Is the log.<level>() enabled?
-    */
-   (): boolean;
-  /**
-   * Log a simple string message (or number).
-   */
-  (msg: string | number): void;
-  /**
-   * Special case to log an `Error` instance to the record.
-   * This adds an `err` field with exception details
-   * (including the stack) and sets `msg` to the exception
-   * message or you can specify the `msg`.
-   */
-  (error: Error, msg?: string, ...params: any[]): void;
-  /**
-   * The first field can optionally be a `fields` object, which
-   * is merged into the log record.
-   *
-   * To pass in an Error *and* other fields, use the `err`
-   * field name for the Error instance.
-   */
-  (obj: object, msg?: string, ...params: any[]): void;
-  /**
-   * Uses `util.format` for msg formatting.
-   */
-  (format: any, ...params: any[]): void;
-}
-```
-
-### PreRouter
-
-Цей клас є посередником між застосунком та роутером, він відповідає за встановлення маршрутів та
-виклик гардів і контролерів. [Одинак][12] даного класу створюється на рівні застосунку.
-
-Якщо ви напишете власну реалізацію його інтерфейсу та зробите підміну даного класу через DI, у
-своєму застосунку ви зможете використовувати будь-який роутер не залежно від його сумісності із
-[API][131] by default роутера, встановленого в Ditsmod.
-
-```ts
-class PreRouter implements Extension {
-  init(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>): void;
-  requestListener: RequestListener;
-}
-```
-
-### Extension
-
-```ts
-interface Extension {
-  init(prefixPerApp: string, metadataMap: Map<ModuleType, ExtensionMetadata>): void;
-}
-```
-
-### RouteData and PreRouteData
-
-```ts
-class RouteData {
-  controller: TypeProvider = null;
-  /**
-   * The controller's method name.
-   */
-  methodName: string = null;
-  route: RouteMetadata = null;
-  /**
-   * Resolved providers per request.
-   */
-  providers: ResolvedReflectiveProvider[] = null;
-  /**
-   * Injector per a module.
-   */
-  injector: ReflectiveInjector = null;
-  /**
-   * Need or not parse body.
-   */
-  parseBody: boolean = null;
-  /**
-   * An array of DI tokens used to look up `CanActivate()` handlers,
-   * in order to determine if the current user is allowed to activate the controller.
-   * By default, any user can activate.
-   */
-  guards: NormalizedGuard[] = null;
-}
-
-class PreRouteData extends RouteData {
-  otherDecorators: any[];
-}
-```
-
-### RequestListener
-
-```ts
-type RequestListener = (request: NodeRequest, response: NodeResponse) => void | Promise<void>;
-```
-
-### Router
-
-```ts
-class Router {
-  on(method: HttpMethod, path: string, handle: RouteHandler): this;
-
-  all(path: string, handle: RouteHandler): this;
-
-  find(method: HttpMethod, path: string): RouterReturns;
-}
-```
-
-### RouterReturns
-
-```ts
-class RouterReturns {
-  handle: RouteHandler;
-  params: RouteParam[];
-}
-```
-
-### RouteHandler
-
-```ts
-type RouteHandler = () => {
-  /**
-   * Injector per module.
-   */
-  injector: ReflectiveInjector;
-  /**
-   * Resolved providers per request.
-   */
-  providers: ResolvedReflectiveProvider[];
-  controller: TypeProvider;
-  /**
-   * Method of the class controller.
-   */
-  method: string;
-  /**
-   * Need or not to parse body.
-   */
-  parseBody: boolean;
-  /**
-   * An array of DI tokens used to look up `CanActivate()` handlers,
-   * in order to determine if the current user is allowed to activate the controller.
-   * By default, any user can activate.
-   */
-  guardItems: GuardItems[];
-};
-```
-
-### GuardItems
-
-```ts
-interface GuardItems {
-  guard: Type<CanActivate>;
-  params?: any[];
-}
-```
-
-### RouteParam
-
-```ts
-interface RouteParam {
-  key: string;
-  value: string;
-}
-```
-
-### BodyParser
-
-```ts
-class BodyParser {
-  getBody(): Promise<any>;
-}
-```
-
-Даний клас використовується у якості провайдера, а також як інтерфейс для парсера тіла HTTP-запиту.
-У якості провайдера його оголошено на рівні HTTP-запиту.
-
-### LoggerConfig
-
-```ts
-class LoggerConfig {
-  level: string = 'info';
-  /**
-   * Determines the depth of the inspect object to be logged.
-   */
-  depth?: number = 4;
-}
-```
-
-Даний клас використовується у якості провайдера, а також як інтерфейс для логера.
-У якості провайдера його оголошено на рівні застосунку.
-
-### Request
-
-```ts
-class Request {
-  /**
-   * Object with path params.
-   * For example, route `/api/resource/:param1/:param2` have two params.
-   */
-  pathParams?: any;
-  /**
-   * Array with path params.
-   * For example, route `/api/resource/:param1/:param2` have two params.
-   */
-  pathParamsArr?: RouteParam[];
-  /**
-   * This value is set after checking `guard.canActivate()` and before parse the request body.
-   * Here is the result of the `querystring.parse()` function,
-   * so if query params are missing, there will be an empty object.
-   */
-  queryParams?: any;
-  rawBody?: any;
-  /**
-   * This value is set after checking `guard.canActivate()` and seting `queryParams`.
-   */
-  body?: any;
-
-  readonly nodeReq: NodeRequest,
-  readonly nodeRes: NodeResponse,
-  injector: Injector;
-
-  /**
-   * Check if the request is idempotent.
-   */
-  isIdempotent(): boolean
-
-  toString(): string;
-}
-```
-
-### Response
-
-```ts
-class Response<T = any> {
-  readonly nodeRes: NodeResponse;
-
-  /**
-   * Setting value to the response header `Content-Type`.
-   *
-   * @example
-   *
-   * res.setContentType('application/xml').send({ one: 1, two: 2 });
-   */
-  setContentType(contentType: string): this;
-
-  /**
-   * Send data as is, without any transformation.
-   */
-  send(data?: string | Buffer | Uint8Array, statusCode: Status): void;
-
-  /**
-   * To convert `any` type to `string` type, the `util.format()` function is used here.
-   */
-  sendText(data?: any, statusCode: Status): void;
-
-  sendJson(data?: T, statusCode: Status): void;
-
-  redirect(statusCode: RedirectStatusCodes, path: string): void;
-
-  toString(): string;
-}
-```
-
-### NodeRequest
-
-```ts
-type NodeRequest = http.IncomingMessage | http2.Http2ServerRequest;
-```
-
-### NodeResponse
-
-```ts
-type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
-```
+Даний розділ з'явиться пізніше.
 
 [1]: https://github.com/ts-stack/di
 [2]: https://github.com/ditsmod/seed
@@ -1642,30 +1200,9 @@ type NodeResponse = http.ServerResponse | http2.Http2ServerResponse;
 [121]: #колізії-провайдерів
 [122]: #домовленості-по-стилю-коду
 [123]: #вхідний-файл-для-nodejs
-[124]: #controllererrorhandler
-[125]: #logger
 [126]: #імпорт-модуля
 [127]: #пріоритетність-провайдерів
-[128]: #bodyparserconfig
-[129]: #prerequest
-[130]: #loger
-[131]: #router
-[132]: #bodyparser
-[133]: #request
-[134]: #response
-[135]: #appfactory
-[136]: #routerreturns
-[137]: #routehandler
-[138]: #guarditems
-[139]: #routeparam
-[140]: #noderequest
-[141]: #noderesponse
 [142]: #поточний-інжектор
 [143]: ./examples.md#2-controller-error-handler
-[144]: #loggerconfig
 [145]: #загальна-картина-архітектури-застосунку-ditsmod
-[146]: #prerouter
-[147]: #routedata-and-preroutedata
-[148]: #requestlistener
-[149]: #extension
 [150]: #модуль-ditsmod

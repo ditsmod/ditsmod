@@ -1,42 +1,138 @@
-# Розширення функціональності `@ditsmod/core`
+## Що являє собою розширення Ditsmod
 
-Для розширення функціональності `@ditsmod/core` ви можете скористатись відповідним API,
-пройшовши три кроки.
+Ditsmod має спеціальне API (покищо експериментальне) для розширення функціональності
+`@ditsmod/core`. Щоб скористатись ним, необхідно імпортувати константу `edk`
+(скорочення від "Extensions Development Kit"):
 
-## Крок перший
+```ts
+import { edk } from '@ditsmod/core';
+```
+
+Ця константа використовується як namespace для утримання у ній типів та даних, призначених для
+розширень.
+
+У Ditsmod **розширенням** називається клас, що впроваджує інтерфейс `Extension`:
+
+```ts
+interface Extension<T> {
+  init(): Promise<T>;
+}
+```
+
+Коли розширення зареєстровано і відбувся запуск застосунку, йде наступний процес:
+
+1. збираються метадані з усіх декораторів (з `@RootModule`, `@Module`, `@Controller`,
+   `@Route`...);
+2. зібрані метадані передаються в інжектор DI з токеном `APP_METADATA_MAP`, а отже - будь-який
+   сервіс, контролер чи розширення може отримати ці метадані у себе в конструкторі;
+3. автоматично запускаються усі зареєстровані розширення, точніше - викликаються їхні
+   методи `init()` без аргументів;
+4. стартує вебсервер, і застосунок починає працювати у звичному режимі, обробляючи HTTP-запити.
+
+Тут варто врахувати, що порядок запуску розширень можна вважати "випадковим", тому кожне розширення
+повинно прописувати залежність від іншого розширення (якщо таке є) у своїх конструкторах, а також у
+методах `init()`. В такому разі, не залежно від порядку запуску, усі розширення працюватимуть
+коректно:
+
+```ts
+async init() {
+  await this.otherExtention.init();
+  // Робота поточного розширення відбувається після завершення ініціалізації іншого розширення.
+}
+```
+
+Це означає, що метод `init()` певного розширення може викликатись стільки разів, скільки разів
+він прописаний у тілі інших розширень, які залежать від роботи даного розширення. Цю особливість
+необхідно обов'язково враховувати, щоб не відбувалась зайва ініціалізація:
+
+```ts
+async init() {
+  if (this.inited) {
+    return;
+  }
+  // Щось хороше робите.
+  this.inited = true;
+}
+```
+
+### Яку корисну роботу може робити розширення
+
+Сама головна відмінність розширення від звичайного сервісу в тому, що розширення може виконувати
+свою роботу перед стартом вебсервера, і при цьому воно може динамічно додавати провайдери на рівні
+конкретного модуля, роута чи запиту. Тут варто відзначити, що можливість додавання провайдерів на
+рівні роута є унікальною, оскільки у статичному варіанті (через декоратори), на даний момент, такої
+можливості немає.
+
+Наприклад, вбудоване Ditsmod-розширення перед стартом вебсервера аналізує кожен маршрут і якщо
+бачить, що його метод `POST`, `PUT` чи `PATCH`, то воно помічає цей маршрут як такий, що
+потребує парсингу тіла запиту. І, взагалі то, цю єдину мітку розширення може передати через
+динамічне додавання провайдера на рівні маршруту:
+
+```ts
+const providersPerRoute: ServiceProvider[] = [{ provide: parseBody, useValue: true }];
+```
+
+Але це не варто робити, бо в такому разі дорожчим буде передача даних через DI, ніж робота
+з таким аналізом за кожним запитом.
+
+Вбудоване розширення робить значно більше роботи, тому передача даних через DI вже виправдана:
+
+```ts
+const routeMeta: edk.RouteMeta = {
+  decoratorMetadata,
+  controller,
+  methodName,
+  route,
+  parseBody,
+  guards,
+};
+const providersPerRoute: ServiceProvider[] = [{ provide: edk.RouteMeta, useValue: routeMeta }];
+```
+
+Як бачите, окрім згадатої мітки `parseBody`, розширення передає й інші метадані в об'єкт з типом
+даних `RouteMeta` і вже в такому вигляді передає це в DI.
+
+Більше інформації про масив `providersPerRoute` можете прочитати в розділі
+[Динамічне додавання провайдерів](#динамічне-додавання-провайдерів).
+
+## Два кроки для створення розширення
+
+Готовий простий приклад ви можете проглянути у теці [9-one-extension](../../examples/9-one-extension).
+
+### Крок перший
 
 Створіть провайдера, що впроваджує інтерфейс `Extension`:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
+import { edk } from '@ditsmod/core';
 
 @Injectable()
-export class MyExtension implements Extension {
+export class MyExtension implements edk.Extension {
   async init() {
     // ... Do something here
   }
 }
 ```
 
-Метод `init()` не може мати параметрів, оскільки, як мінімум, один раз він буде автоматично
-викликатись без аргументів. Для роботи розширення, усі необхідні дані ви
-можете отримати або через конструктор, або від іншого розширення через виклик `init()`:
+Для роботи розширення, усі необхідні дані ви можете отримати або через конструктор, або від іншого
+розширення через виклик `init()`:
 
 ```ts
 import { Injectable, Inject } from '@ts-stack/di';
 import { edk } from '@ditsmod/core';
 
 @Injectable()
-export class Extension1 implements Extension {
+export class Extension1 implements edk.Extension {
   #data: any;
 
-  constructor(@Inject(edk.EXTENSIONS_MAP) private extensionsMap: edk.ExtensionsMap) {}
+  constructor(@Inject(edk.APP_METADATA_MAP) private appMetadataMap: edk.AppMetadataMap) {}
 
   async init() {
     if (this.#data) {
       return this.#data;
     }
-    // Do something with `this.extensionsMap` here.
+    // Do something with `this.appMetadataMap` here.
     // ...
     this.#data = result;
     return this.#data;
@@ -44,7 +140,7 @@ export class Extension1 implements Extension {
 }
 
 @Injectable()
-export class Extension2 implements Extension {
+export class Extension2 implements edk.Extension {
   #inited: boolean;
 
   constructor(private extension1: Extension1) {}
@@ -55,40 +151,33 @@ export class Extension2 implements Extension {
     }
 
     const data = await this.extension1.init();
-    this.#inited = true;
     // Do something here.
+    this.#inited = true;
   }
 }
 ```
 
-Як бачите, `Extension1` отримує дані для своєї роботи через конструктор. За допомогою токену
-`EXTENSIONS_MAP`, ви можете отримати метадані зібрані з вашого застосунку, ці дані призначені
-якраз для обробки їх через розширення.
+Як бачите, `Extension1` отримує дані для своєї роботи безпосередньо через конструктор. Після того,
+як воно виконало свою роботу, результат зберігається локально і видається при повторних викликах.
 
-Після того, як `Extension1` виконало свою роботу, воно локально зберігає результат,
-і при повторних викликах, віддає його. В `Extension2` теж враховано можливість
-повторного виклику `init()`, тому під час другого виклику, цей метод не буде робити повторну
-ініціалізацію.
+В `Extension2` теж враховано можливість повторного виклику `init()`, тому під час другого виклику,
+цей метод не буде робити повторну ініціалізацію. Окрім цього, `Extension2` залежить від даних,
+взятих з `Extension1`, тому в його конструкторі указано `Extension1`, а в тілі `init()` асинхронно
+викликається `this.extension1.init()`.
 
-Окрім цього, `Extension2` залежить від даних, взятих з `Extension1`, тому в його конструкторі
-указано `Extension1`, а в тілі `init()` асинхронно викликається `this.extension1.init()`.
-
-Хоча `Extension2` залежить від `Extension1`, але Ditsmod автоматично викликає `init()` кожного із
-розширень у "непередбаченому" порядку, і при цьому обидва розширення будуть працювати коректно
-не залежно від послідовності викликів.
-
-## Крок другий
+### Крок другий
 
 Зареєструйте розширення в існуючій групі розширень, або створіть нову групу, навіть якщо у ній
 буде єдине розширення.
 
-### Реєстрація розширення в існуючій групі розширень
+#### Реєстрація розширення в існуючій групі розширень
 
 На даний момент, із коробки, Ditsmod має дві групи розширень:
+
 - `ROUTES_EXTENSIONS` - тут реєструються усі розширення, що генерують дані з інтерфейсом
-`PreRouteMeta[]` для маршрутизатора;
-- `DEFAULT_EXTENSIONS` - тут реєструються усі розширення, що не повертають жодних даних (наприклад,
-тут зареєстровано розширення, що встановлює маршрути).
+  `RawRouteMeta[]` для маршрутизатора;
+- `VOID_EXTENSIONS` - тут реєструються усі розширення, що не повертають жодних даних (наприклад,
+  тут зареєстровано розширення, що встановлює маршрути).
 
 Реєстрація розширень в будь-якій групі відбувається за допомогою мульти-провайдерів:
 
@@ -98,47 +187,138 @@ import { Module, edk } from '@ditsmod/core';
 import { MyExtension } from './my-extension';
 
 @Module({
-  // ...
-  providersPerApp: [{ provide: edk.DEFAULT_EXTENSIONS, useClass: MyExtension, multi: true }],
-  extensions: [edk.DEFAULT_EXTENSIONS],
+  providersPerApp: [{ provide: edk.VOID_EXTENSIONS, useClass: MyExtension, multi: true }],
+  extensions: [edk.VOID_EXTENSIONS],
 })
 export class SomeModule {}
 ```
 
- Ця група
-створена щоб розширення указували залежність від  Але ви можете
-створювати довільну кількість таких груп.
+Тут використовується токен групи `VOID_EXTENSIONS`, і указується він у масиві `extensions`,
+а також у мульти-провайдері, переданому в масив `providersPerApp`.
 
-Для спрощення, у попередньому прикладі вказано залежність `Extension2` від
+#### Використання ExtensionsManager
+
+Для спрощення, [Крок перший](#крок-перший) містить приклад, де вказано залежність `Extension2` від
 `Extension1`, але рекомендується указувати залежність саме від групи розширень, а не безпосередньо
 від конкретного розширенння. В такому разі, вам не потрібно знати імена усіх розширень, що входять
 у групу розширень, достатньо знати лише інтерфейс даних, які повертаються з `init()`.
 
+Припустимо `Extension1` (тут не показано) зареєстровано у групі `VOID_EXTENSIONS`, а
+`Extension2` повинно дочекатись завершення ініціалізації цієї групи розширень. Щоб зробити це, у
+конструкторі треба указувати залежність від `ExtensionsManager`, а у `init()` викликати `init()`
+цього сервісу:
+
 ```ts
-import { Module } from '@ditsmod/core';
+import { Injectable } from '@ts-stack/di';
+import { edk } from '@ditsmod/core';
 
-import { MyExtension } from './my-extension';
+@Injectable()
+export class Extension2 implements edk.Extension {
+  #inited: boolean;
 
-@Module({
-  // ...
-  providersPerApp: [{ provide: ROUTES_EXTENSIONS, useClass: MyExtension, multi: true }],
-  extensions: [ROUTES_EXTENSIONS],
-})
-export class SomeModule {}
+  constructor(private extensionsManager: edk.ExtensionsManager) {}
+
+  async init() {
+    if (this.#inited) {
+      return;
+    }
+
+    await this.extensionsManager.init(edk.VOID_EXTENSIONS);
+    // Do something here.
+    this.#inited = true;
+  }
+}
 ```
 
-1. Якщо є декілька розширень, їх можна розбивати по групам за допомогою мульти-провайдерів.
-   Наприклад, якщо група розширень відповідає за встановлення маршрутів, їхня реєстрація повинна
-   відбуватись за допомогою спеціального токену `ROUTES_EXTENSIONS`:
+`ExtensionsManager` буде послідовно викликати ініціалізацію усіх розширення з указаної групи,
+а результат їхньої роботи повертатиме у вигляді масиву. Якщо розширення повертатимуть масиви,
+вони будуть автоматично змерджені у єдиний результуючий масив. Цю поведінку можна змінити,
+якщо другим аргументом у `init()` передати `false`:
 
-На даний момент, із коробки Ditsmod має єдину групу розширень - `ROUTES_EXTENSIONS`. Ця група
-створена щоб розширення указували залежність від  Але ви можете
-створювати довільну кількість таких груп.
+```ts
+await this.extensionsManager.init(edk.VOID_EXTENSIONS, false);
+```
 
-Групи розширень можна використовувати щоб встановлювати послідовність отримання даних.
-Наприклад, якщо перша група розширень потребує даних від другої групи розширень, то спочатку
-збираються дані з першої групи, а потім вже із другої.
+#### Створення токена для нової групи
 
-Якщо розширення встановлює дані для маршрутів, але не встановлює самих маршрутів, у конструкторі
-воно повинно вказати залежність від сервіс-менеджера "по роутам". Кожен елемент роутів повинен
-містити дані для встановлення самих роутів, а також дані, що потрібні для обробки цих маршрутів.
+Кожен токен для групи розширень повинен бути інстансом класу `InjectionToken`. Наприклад, щоб
+створити токен для групи `MY_EXTENSIONS`, необхідно зробити наступне:
+
+```ts
+import { InjectionToken } from '@ts-stack/di';
+import { edk } from '@ditsmod/core';
+
+export const MY_EXTENSIONS = new InjectionToken<edk.Extension<void>[]>('MY_EXTENSIONS');
+```
+
+Як бачите, кожна група розширень повинна указувати, що DI повертатиме масив інстансів
+розширень: `Extension<void>[]`. Це треба робити обов'язково, відмінність може бути хіба що в інтерфейсі
+даних, що повертаються в результаті виклику їхніх методів `init()`:
+
+```ts
+import { InjectionToken } from '@ts-stack/di';
+import { edk } from '@ditsmod/core';
+
+interface MyInterface {
+  one: string;
+  two: number;
+}
+
+export const MY_EXTENSIONS = new InjectionToken<edk.Extension<MyInterface>[]>('MY_EXTENSIONS');
+```
+
+Тепер змінна `result` матиме тип даних `MyInterface[]`:
+
+```ts
+const result = await this.extensionsManager.init(MY_EXTENSIONS);
+```
+
+## Динамічне додавання провайдерів
+
+Кожне розширення може вказати залежність від групи розширень `ROUTES_EXTENSIONS`, щоб
+динамічно додавати провайдери на рівні:
+
+- модуля - у масив `providersPerMod`,
+- роуту - у масив `providersPerRoute`,
+- чи запиту - у масив `providersPerReq`.
+
+Наприклад так:
+
+```ts
+import { Injectable } from '@ts-stack/di';
+import { edk } from '@ditsmod/core';
+
+@Injectable()
+export class MyExtension implements edk.Extension {
+  #inited: boolean;
+
+  constructor(private extensionsManager: edk.ExtensionsManager) {}
+
+  async init() {
+    if (this.#inited) {
+      return;
+    }
+
+    const rawRoutesMeta = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS);
+
+    rawRouteMeta.forEach(data => {
+      // ... Створіть тут нові провайдері і їхні значення, а потім:
+      const { providersPerMod, providersPerRoute, providersPerReq } = data;
+      providersPerMod.push({ provide: MyProviderPerMod, useValue: myValue1 });
+      providersPerRoute.push({ provide: MyProviderPerRoute, useValue: myValue1 });
+      providersPerReq.push({ provide: MyProviderPerReq, useValue: myValue2 });
+    });
+
+    this.#inited = true;
+  }
+}
+```
+
+Після роботи даного розширення, будь-який контролер чи сервіс (включаючи інтерсептори) може
+запитувати у себе в конструкторі `MyProviderPerMod`, `MyProviderPerRoute` чи `MyProviderPerReq`.
+
+Звичайно ж, таке динамічне додавання провайдерів можливе лише перед стартом вебсервера.
+
+## В якому саме масиві потрібно оголошувати групу розширень
+
+На даний момент, групу розширень можна оголошувати тільки в масиві `providersPerApp`.

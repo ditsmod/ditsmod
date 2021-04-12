@@ -1,18 +1,20 @@
-import { Injectable, reflector } from '@ts-stack/di';
+import { Injectable, InjectionToken, ReflectiveInjector, reflector } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ProvidersMetadata } from './models/providers-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
-import { ExtensionMetadata } from './types/extension-metadata';
-import { GuardItem } from './types/guard-item';
-import { DecoratorMetadata } from './types/decorator-metadata';
-import { ModuleType } from './types/module-type';
-import { ModuleWithParams } from './types/module-with-params';
-import { NormalizedGuard } from './types/normalized-guard';
-import { NodeReqToken, NodeResToken } from './types/server-options';
-import { ServiceProvider } from './types/service-provider';
+import { MetadataPerMod } from './types/metadata-per-mod';
+import {
+  GuardItem,
+  DecoratorMetadata,
+  ModuleType,
+  ModuleWithParams,
+  NormalizedGuard,
+  ServiceProvider,
+} from './types/mix';
+import { NODE_REQ, NODE_RES } from './types/server-options';
 import { getDuplicates } from './utils/get-duplicates';
 import { getTokensCollisions } from './utils/get-tokens-collisions';
 import { getUniqProviders } from './utils/get-uniq-providers';
@@ -26,6 +28,7 @@ import {
   isRootModule,
 } from './utils/type-guards';
 import { deepFreeze } from './utils/deep-freeze';
+import { Logger } from './types/logger';
 
 /**
  * - imports and exports global providers;
@@ -47,11 +50,13 @@ export class ModuleFactory {
   protected exportedProvidersPerMod: ServiceProvider[] = [];
   protected exportedProvidersPerReq: ServiceProvider[] = [];
   protected globalProviders: ProvidersMetadata;
-  protected extensionMetadataMap = new Map<ModuleType | ModuleWithParams, ExtensionMetadata>();
+  protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod>();
   #moduleManager: ModuleManager;
 
+  constructor(private injectorPerApp: ReflectiveInjector, private log: Logger) {}
+
   /**
-   * Called only by `@RootModule` before called `ModuleFactory#boostrap()`.
+   * Calls only by `@RootModule` before calls `ModuleFactory#boostrap()`.
    *
    * @param globalProviders Contains providersPerApp for now.
    */
@@ -94,7 +99,7 @@ export class ModuleFactory {
     this.mergeProviders(meta);
     const controllersMetadata = this.getControllersMetadata();
 
-    return this.extensionMetadataMap.set(modOrObj, {
+    return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
       guardsPerMod: this.guardsPerMod,
       moduleMetadata: this.meta,
@@ -144,31 +149,53 @@ export class ModuleFactory {
     }
 
     const { providersPerApp, providersPerMod, providersPerReq } = meta;
-    const providers = [...providersPerApp, ...providersPerMod];
-    const normalizedProviders = normalizeProviders(providers);
-    const normalizedProvidersPerReq = normalizeProviders(providersPerReq).map((np) => np.provide);
+    const normalizedProvidersPerApp = normalizeProviders(providersPerApp);
+    this.checkExtensionsRegistration(this.moduleName, providersPerApp, meta.extensions);
     meta.extensions.forEach((token, i) => {
-      const provider = normalizedProviders.find((np) => np.provide === token);
+      const provider = normalizedProvidersPerApp.find((np) => np.provide === token);
       if (!provider) {
-        const msg =
-          `Importing ${this.moduleName} failed: "${token}" must be includes in ` +
-          '"providersPerApp" or "providersPerMod" array.';
+        const msg = `Importing ${this.moduleName} failed: "${token}" must be includes in "providersPerApp" array.`;
         throw new Error(msg);
       }
       if (
+        !provider.multi ||
         !isInjectionToken(token) ||
         !isClassProvider(provider) ||
-        !isExtensionProvider(provider.useClass) ||
-        !provider.multi
+        !isExtensionProvider(provider.useClass)
       ) {
         const msg =
           `Importing ${this.moduleName} failed: Extensions with array index "${i}" ` +
           'must be a value provider where "useClass: Class" must have init() method and "multi: true".';
         throw new TypeError(msg);
       }
-      if (normalizedProvidersPerReq.includes(token)) {
-        const msg = `Importing ${this.moduleName} failed: Extensions "${token}" cannot be includes in the "providersPerReq" array.`;
+      const normProviders = normalizeProviders([...providersPerMod, ...providersPerReq]).map((np) => np.provide);
+      if (normProviders.includes(token)) {
+        const msg = `Importing ${this.moduleName} failed: "${token}" can be includes in the "providersPerApp" array only.`;
         throw new Error(msg);
+      }
+    });
+  }
+
+  protected checkExtensionsRegistration(
+    moduleName: string,
+    providersPerApp: ServiceProvider[],
+    extensions: InjectionToken<any>[]
+  ) {
+    const extensionsProviders = providersPerApp
+      .filter(isClassProvider)
+      .filter(
+        (p) =>
+          p.multi &&
+          isExtensionProvider(p.useClass) &&
+          isInjectionToken(p.provide) &&
+          p.provide.toString().toLowerCase().includes('extension')
+      );
+
+    getUniqProviders(extensionsProviders).forEach((p) => {
+      if (!extensions.includes(p.provide)) {
+        let msg = `In ${moduleName} you have token "${p.provide}" `;
+        msg += `with extension-like "${p.useClass.name}" that not registered in "extensions" array`;
+        this.log.warn(msg);
       }
     });
   }
@@ -177,15 +204,15 @@ export class ModuleFactory {
     for (const imp of this.meta.importsModules) {
       const meta = this.#moduleManager.getMetadata(imp, true);
       this.importProviders(meta, true);
-      const moduleFactory = new ModuleFactory();
-      const extensionMetadataMap = moduleFactory.bootstrap(
+      const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+      const appMetadataMap = moduleFactory.bootstrap(
         this.globalProviders,
         this.prefixPerMod,
         imp,
         this.#moduleManager,
         this.guardsPerMod
       );
-      this.extensionMetadataMap = new Map([...this.extensionMetadataMap, ...extensionMetadataMap]);
+      this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
     }
     for (const imp of this.meta.importsWithParams) {
       const meta = this.#moduleManager.getMetadata(imp, true);
@@ -194,15 +221,15 @@ export class ModuleFactory {
       const normalizedGuardsPerMod = this.normalizeGuards(imp.guards);
       this.checkGuardsPerMod(normalizedGuardsPerMod);
       const guardsPerMod = [...this.guardsPerMod, ...normalizedGuardsPerMod];
-      const moduleFactory = new ModuleFactory();
-      const extensionMetadataMap = moduleFactory.bootstrap(
+      const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+      const appMetadataMap = moduleFactory.bootstrap(
         this.globalProviders,
         prefixPerMod,
         imp,
         this.#moduleManager,
         guardsPerMod
       );
-      this.extensionMetadataMap = new Map([...this.extensionMetadataMap, ...extensionMetadataMap]);
+      this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
     }
     this.checkProvidersCollisions();
   }
@@ -300,7 +327,7 @@ export class ModuleFactory {
   }
 
   /**
-   * This method should called before call `this.mergeProviders()`.
+   * This method should be called before call `this.mergeProviders()`.
    *
    * @param isGlobal Indicates that need find collision for global providers.
    */
@@ -344,7 +371,7 @@ export class ModuleFactory {
     });
 
     const defaultTokens = normalizeProviders([...defaultProvidersPerReq]).map((np) => np.provide);
-    const mergedTokens = [...defaultTokens, ...tokensPerMod, NodeReqToken, NodeResToken];
+    const mergedTokens = [...defaultTokens, ...tokensPerMod, NODE_REQ, NODE_RES];
     const mixPerModOrReq = mergedTokens.filter((p) => {
       return exportedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
     });

@@ -10,16 +10,13 @@ import { Router } from './types/router';
 import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
-import { ExtensionMetadata } from './types/extension-metadata';
-import { ModuleType } from './types/module-type';
+import { MetadataPerMod } from './types/metadata-per-mod';
+import { ModuleType, ServiceProvider, NormalizedGuard, DecoratorMetadata } from './types/mix';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
-import { ServiceProvider } from './types/service-provider';
-import { NormalizedGuard } from './types/normalized-guard';
 import { ModuleManager } from './services/module-manager';
 import { ProvidersMetadata } from './models/providers-metadata';
 import { DefaultLogger } from './services/default-logger';
 import { Extension } from './types/extension';
-import { DecoratorMetadata } from './types/decorator-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 
 describe('ModuleFactory', () => {
@@ -31,7 +28,7 @@ describe('ModuleFactory', () => {
     moduleName = 'MockModule';
     meta = new NormalizedModuleMetadata();
     injectorPerMod: ReflectiveInjector;
-    extensionMetadataMap = new Map<ModuleType, ExtensionMetadata>();
+    appMetadataMap = new Map<ModuleType, MetadataPerMod>();
     allExportedProvidersPerMod: ServiceProvider[] = [];
     allExportedProvidersPerReq: ServiceProvider[] = [];
     guardsPerMod: NormalizedGuard[] = [];
@@ -59,7 +56,7 @@ describe('ModuleFactory', () => {
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
-    mock = new MockModuleFactory();
+    mock = new MockModuleFactory(null, null);
     const config = new LoggerConfig();
     const log = new DefaultLogger(config);
     moduleManager = new ModuleManager(log);
@@ -276,30 +273,30 @@ describe('ModuleFactory', () => {
     });
 
     it('extension in providersPerReq', () => {
-      class Ext implements Extension {
-        init() {}
+      class Ext implements Extension<any> {
+        async init() {}
       }
-      const token = new InjectionToken('token');
+      const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
       @Module({
-        providersPerApp: [{ provide: token, useClass: Ext, multi: true }],
-        providersPerReq: [{ provide: token, useClass: Ext, multi: true }],
-        extensions: [token],
+        providersPerApp: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
+        providersPerReq: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
+        extensions: [GROUP1_EXTENSIONS],
       })
       class Module1 {}
 
       moduleManager.scanModule(Module1);
       const meta = moduleManager.getMetadata(Module1);
-      expect(() => mock.quickCheckMetadata(meta)).toThrow(/cannot be includes in the "providersPerReq"/);
+      expect(() => mock.quickCheckMetadata(meta)).toThrow(/can be includes in the "providersPerApp"/);
     });
 
     it('extension in providersPerApp', () => {
-      class Ext implements Extension {
-        init() {}
+      class Ext implements Extension<any> {
+        async init() {}
       }
-      const token = new InjectionToken('token');
+      const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
       @Module({
-        providersPerApp: [{ provide: token, useClass: Ext, multi: true }],
-        extensions: [token],
+        providersPerApp: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
+        extensions: [GROUP1_EXTENSIONS],
       })
       class Module1 {}
 
@@ -309,19 +306,20 @@ describe('ModuleFactory', () => {
     });
 
     it('extension in providersPerMod', () => {
-      class Ext implements Extension {
-        init() {}
+      class Ext implements Extension<any> {
+        async init() {}
       }
-      const token = new InjectionToken('token');
+      const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
       @Module({
-        providersPerMod: [{ provide: token, useClass: Ext, multi: true }],
-        extensions: [token],
+        providersPerApp: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
+        providersPerMod: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
+        extensions: [GROUP1_EXTENSIONS],
       })
       class Module1 {}
 
       moduleManager.scanModule(Module1);
       const meta = moduleManager.getMetadata(Module1);
-      expect(() => mock.quickCheckMetadata(meta)).not.toThrow();
+      expect(() => mock.quickCheckMetadata(meta)).toThrow(/can be includes in the "providersPerApp"/);
     });
 
     it('should throw an error, when no export and no controllers', () => {
@@ -339,14 +337,14 @@ describe('ModuleFactory', () => {
     });
 
     it('should works with extension only', () => {
-      class Ext implements Extension {
-        init() {}
+      class Ext implements Extension<any> {
+        async init() {}
       }
-      const token = new InjectionToken('token');
+      const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
 
       @Module({
-        providersPerMod: [{ provide: token, useClass: Ext, multi: true }],
-        extensions: [token],
+        providersPerApp: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
+        extensions: [GROUP1_EXTENSIONS],
       })
       class Module1 {}
 
@@ -465,17 +463,17 @@ describe('ModuleFactory', () => {
         moduleManager.scanModule(Module3);
         mock.bootstrap(new ProvidersMetadata(), '', Module3, moduleManager);
 
-        const mod0 = mock.extensionMetadataMap.get(Module0);
+        const mod0 = mock.appMetadataMap.get(Module0);
         expect(mod0.moduleMetadata.providersPerMod).toEqual([Provider0]);
         expect(mod0.moduleMetadata.providersPerReq).toEqual([]);
         expect((mod0 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
-        const mod1 = mock.extensionMetadataMap.get(Module1);
+        const mod1 = mock.appMetadataMap.get(Module1);
         expect(mod1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3]);
         expect(mod1.moduleMetadata.providersPerReq).toEqual([]);
         expect((mod1 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
-        const mod2 = mock.extensionMetadataMap.get(Module2);
+        const mod2 = mock.appMetadataMap.get(Module2);
         expect(mod2.moduleMetadata.providersPerMod).toEqual([
           Provider0,
           Provider1,
@@ -488,7 +486,7 @@ describe('ModuleFactory', () => {
         expect(mod2.moduleMetadata.providersPerReq).toEqual([Provider7, Provider8]);
         expect((mod2 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
-        const mod3 = mock.extensionMetadataMap.get(Module3);
+        const mod3 = mock.appMetadataMap.get(Module3);
         expect(mod3.moduleMetadata.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3, Provider5]);
         // expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overriddenProvider8]);
         expect(mod3.moduleMetadata.controllers).toEqual([Ctrl]);

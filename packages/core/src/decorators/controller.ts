@@ -1,6 +1,6 @@
 import { makeDecorator } from '@ts-stack/di';
 
-import { ServiceProvider } from '../types/service-provider';
+import { ServiceProvider } from '../types/mix';
 
 export interface ControllerDecoratorFactory {
   (data?: ControllerMetadata): any;

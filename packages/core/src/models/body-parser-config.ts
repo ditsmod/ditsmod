@@ -1,5 +1,4 @@
-import { HttpMethod } from '../types/http-method';
-import { MultipartBodyParserOptions } from '../types/multipart-body-parser-options';
+import { HttpMethod, MultipartBodyParserOptions } from '../types/mix';
 
 export class BodyParserConfig {
   acceptMethods: HttpMethod[] = ['POST', 'PUT', 'PATCH'];

@@ -2,10 +2,8 @@ import { Injectable, resolveForwardRef } from '@ts-stack/di';
 import { format } from 'util';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { AnyObj } from '../types/any-obj';
+import { AnyObj, ModuleType, ModuleWithParams } from '../types/mix';
 import { Logger } from '../types/logger';
-import { ModuleType } from '../types/module-type';
-import { ModuleWithParams } from '../types/module-with-params';
 import { ModulesMap } from '../types/modules-map';
 import { checkModuleMetadata } from '../utils/check-module-metadata';
 import { getModuleMetadata } from '../utils/get-module-metadata';
@@ -29,49 +27,19 @@ export class ModuleManager {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
 
-    const meta = this.scanModule(appModule);
+    const meta = this.scanRawModule(appModule);
     this.mapId.set('root', appModule);
-    return meta;
+    return this.copyMeta(meta);
   }
 
   scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
-    if (!Object.isFrozen(modOrObj)) {
-      Object.freeze(modOrObj);
-    }
-
-    const meta = this.normalizeMetadata(modOrObj);
-    [...meta.importsModules, ...meta.importsWithParams, ...meta.exportsModules].forEach((impOrExp) => {
-      this.scanModule(impOrExp);
-    });
-
-    if (meta.id) {
-      this.mapId.set(meta.id, modOrObj);
-      this.log.debug(`${meta.name} has ID: "${meta.id}".`);
-    }
-    this.map.set(modOrObj, meta);
-    return meta;
+    const meta = this.scanRawModule(modOrObj);
+    return this.copyMeta(meta);
   }
 
   getMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
-    let meta: NormalizedModuleMetadata<T>;
-    if (typeof moduleId == 'string') {
-      const mapId = this.mapId.get(moduleId);
-      meta = this.map.get(mapId) as NormalizedModuleMetadata<T>;
-    } else {
-      meta = this.map.get(moduleId) as NormalizedModuleMetadata<T>;
-    }
-
-    if (throwErrOnNotFound && !meta) {
-      let moduleName: string;
-      if (typeof moduleId == 'string') {
-        moduleName = moduleId;
-      } else {
-        moduleName = getModuleName(moduleId);
-      }
-      throw new Error(`${moduleName} not found in ModuleManager.`);
-    }
-
-    return meta;
+    const meta = this.getRawMetadata<T>(moduleId, throwErrOnNotFound);
+    return this.copyMeta(meta);
   }
 
   /**
@@ -81,7 +49,7 @@ export class ModuleManager {
    * @param targetModuleId Module ID to which the input module will be added.
    */
   addImport(inputModule: ModuleType | ModuleWithParams, targetModuleId: ModuleId = 'root'): boolean {
-    const targetMeta = this.getMetadata(targetModuleId);
+    const targetMeta = this.getRawMetadata(targetModuleId);
     if (!targetMeta) {
       const modName = getModuleName(inputModule);
       const modIdStr = format(targetModuleId);
@@ -100,11 +68,11 @@ export class ModuleManager {
     this.startTransaction();
     try {
       targetMeta[prop].push(inputModule as any);
-      const inputMeta = this.scanModule(inputModule);
+      const inputMeta = this.scanRawModule(inputModule);
       this.log.debug(`Successful added ${inputMeta.name} to ${targetMeta.name}`);
       return true;
-    } catch {
-      this.rollback();
+    } catch (err) {
+      this.rollback(err);
     }
   }
 
@@ -112,14 +80,14 @@ export class ModuleManager {
    * @param targetModuleId Module ID from where the input module will be removed.
    */
   removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean {
-    const inputMeta = this.getMetadata(inputModuleId);
+    const inputMeta = this.getRawMetadata(inputModuleId);
     if (!inputMeta) {
       const modIdStr = format(inputModuleId);
       this.log.warn(`Module with ID "${modIdStr}" not found`);
       return false;
     }
 
-    const targetMeta = this.getMetadata(targetModuleId);
+    const targetMeta = this.getRawMetadata(targetModuleId);
     if (!targetMeta) {
       const modIdStr = format(targetModuleId);
       const msg = `Failed removing ${inputMeta.name} from "imports" array: target module with ID "${modIdStr}" not found.`;
@@ -144,8 +112,8 @@ export class ModuleManager {
       }
       this.log.debug(`Successful removed ${inputMeta.name} from ${targetMeta.name}`);
       return true;
-    } catch {
-      this.rollback();
+    } catch (err) {
+      this.rollback(err);
     }
   }
 
@@ -158,13 +126,70 @@ export class ModuleManager {
     this.oldMap = new Map();
   }
 
-  rollback() {
+  rollback(err?: Error) {
     if (!this.oldMapId.size) {
       throw new Error('It is forbidden for rollback() to an empty state.');
     }
     this.mapId = this.oldMapId;
     this.map = this.oldMap;
     this.commit();
+    if (err) {
+      throw err;
+    }
+  }
+
+  /**
+   * Here "raw" means that it returns "raw" normalized metadata (without `this.copyMeta()`).
+   */
+  protected scanRawModule(modOrObj: ModuleType | ModuleWithParams<any>) {
+    const meta = this.normalizeMetadata(modOrObj);
+
+    [...meta.importsModules, ...meta.importsWithParams, ...meta.exportsModules].forEach((impOrExp) => {
+      this.scanRawModule(impOrExp);
+    });
+
+    if (meta.id) {
+      this.mapId.set(meta.id, modOrObj);
+      this.log.debug(`${meta.name} has ID: "${meta.id}".`);
+    }
+    this.map.set(modOrObj, meta);
+    return meta;
+  }
+
+  protected copyMeta<T extends AnyObj = AnyObj>(meta: NormalizedModuleMetadata<T>) {
+    meta = { ...meta };
+    meta.importsModules = meta.importsModules.slice();
+    meta.importsWithParams = meta.importsWithParams.slice();
+    meta.controllers = meta.controllers.slice();
+    meta.extensions = meta.extensions.slice();
+    meta.exportsModules = meta.exportsModules.slice();
+    meta.exportsProviders = meta.exportsProviders.slice();
+    return meta;
+  }
+
+  /**
+   * Returns normalized metadata, but without `this.copyMeta()`.
+   */
+  protected getRawMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
+    let meta: NormalizedModuleMetadata<T>;
+    if (typeof moduleId == 'string') {
+      const mapId = this.mapId.get(moduleId);
+      meta = this.map.get(mapId) as NormalizedModuleMetadata<T>;
+    } else {
+      meta = this.map.get(moduleId) as NormalizedModuleMetadata<T>;
+    }
+
+    if (throwErrOnNotFound && !meta) {
+      let moduleName: string;
+      if (typeof moduleId == 'string') {
+        moduleName = moduleId;
+      } else {
+        moduleName = getModuleName(moduleId);
+      }
+      throw new Error(`${moduleName} not found in ModuleManager.`);
+    }
+
+    return meta;
   }
 
   protected startTransaction() {
@@ -191,7 +216,7 @@ export class ModuleManager {
    * @param targetModuleId Module where to search `inputModule`.
    */
   protected includesInSomeModule(inputModuleId: ModuleId, targetModuleId: ModuleId): boolean {
-    const targetMeta = this.getMetadata(targetModuleId);
+    const targetMeta = this.getRawMetadata(targetModuleId);
     const importsOrExports = [
       ...targetMeta.importsModules,
       ...targetMeta.importsWithParams,
@@ -209,7 +234,7 @@ export class ModuleManager {
   }
 
   /**
-   * Freezes original module metadata and returns normalized module metadata.
+   * Returns normalized module metadata.
    */
   protected normalizeMetadata(mod: ModuleType | ModuleWithParams) {
     const modMetadata = getModuleMetadata(mod);
@@ -248,9 +273,5 @@ export class ModuleManager {
     pickProperties(metadata, modMetadata);
 
     return metadata;
-  }
-
-  protected normalizeArray(arr: any[]) {
-    return (arr || []).slice().map(resolveForwardRef);
   }
 }

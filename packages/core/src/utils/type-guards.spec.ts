@@ -17,8 +17,7 @@ import { ModuleMetadata } from '../types/module-metadata';
 import { RootModule } from '../decorators/root-module';
 import { Controller } from '../decorators/controller';
 import { Route, RouteDecoratorMetadata } from '../decorators/route';
-import { CanActivate } from '../types/can-activate';
-import { ServiceProvider } from '../types/service-provider';
+import { CanActivate, ServiceProvider } from '../types/mix';
 import { Extension } from '../types/extension';
 
 describe('type guards', () => {
@@ -152,8 +151,8 @@ describe('type guards', () => {
   describe('isInjectionToken()', () => {
     const token1 = new InjectionToken('token1');
     const token2 = {};
-    class token3 implements Extension {
-      init() {}
+    class token3 implements Extension<any> {
+      async init() {}
     }
 
     it('should recognize the InjectionToken', () => {

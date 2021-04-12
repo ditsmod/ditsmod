@@ -2,22 +2,22 @@ import 'reflect-metadata';
 import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { Logger, LoggerConfig } from '../types/logger';
-import { PreRoutes } from './pre-routes';
-import { ExtensionMetadata } from '../types/extension-metadata';
+import { RoutesExtension } from './routes.extension';
+import { MetadataPerMod } from '../types/metadata-per-mod';
 import { Controller, ControllerMetadata } from '../decorators/controller';
 import { Route } from '../decorators/route';
 import { RootModule } from '../decorators/root-module';
-import { CanActivate } from '../types/can-activate';
-import { defaultProvidersPerApp } from './default-providers-per-app';
+import { CanActivate } from '../types/mix';
+import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { RootMetadata } from '../models/root-metadata';
-import { ModuleManager } from './module-manager';
-import { DefaultLogger } from './default-logger';
-import { AppInitializer } from './app-initializer';
+import { ModuleManager } from '../services/module-manager';
+import { DefaultLogger } from '../services/default-logger';
+import { AppInitializer } from '../services/app-initializer';
 
-xdescribe('PreRoutes', () => {
-  class MockPreRoutes extends PreRoutes {
-    getRoutesData(moduleName: string, prefixPerApp: string, prefixPerMod: string, extensionMetadata: ExtensionMetadata) {
-      return super.getRoutesData(moduleName, prefixPerApp, prefixPerMod, extensionMetadata);
+xdescribe('RoutesExtension', () => {
+  class MockRoutesExtension extends RoutesExtension {
+    getRawRoutesMeta(moduleName: string, prefixPerApp: string, prefixPerMod: string, metadataPerMod: MetadataPerMod) {
+      return super.getRawRoutesMeta(moduleName, prefixPerApp, prefixPerMod, metadataPerMod);
     }
   }
 
@@ -34,7 +34,7 @@ xdescribe('PreRoutes', () => {
   }
 
   let mockAppInitializer: MockAppInitializer;
-  let mockPreRoutes: MockPreRoutes;
+  let mockPreRoutes: MockRoutesExtension;
   let log: Logger;
   let moduleManager: ModuleManager;
 
