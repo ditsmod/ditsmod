@@ -66,10 +66,12 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
               guards,
               providersPerReq.slice()
             );
+            const { path } = oasRoute;
             const parseBody = this.needBodyParse(providersPerMod, allProvidersPerReq, httpMethod);
             const routeMeta: OasRouteMeta = {
               httpMethod,
-              path: oasRoute.path,
+              path,
+              pathItem: oasRoute.pathItem,
               decoratorMetadata,
               controller,
               methodName,
@@ -77,7 +79,6 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
               guards,
             };
             const providersPerRoute: ServiceProvider[] = [{ provide: edk.RouteMeta, useValue: routeMeta }];
-            const { path } = oasRoute;
 
             rawRoutesMeta.push({
               moduleName,
