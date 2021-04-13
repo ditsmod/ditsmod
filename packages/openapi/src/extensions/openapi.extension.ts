@@ -51,11 +51,10 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
           if (!isOasRoute(oasRoute)) {
             continue;
           }
-          const providersPerRou = moduleMetadata.providersPerRou.slice();
-          const providersPerReq = moduleMetadata.providersPerReq.slice();
-          const httpMethods = this.getHttpMethods(oasRoute.pathItem);
 
-          httpMethods.forEach((httpMethod) => {
+          this.getHttpMethods(oasRoute.pathItem).forEach((httpMethod) => {
+            const providersPerRou = moduleMetadata.providersPerRou.slice();
+            const providersPerReq = moduleMetadata.providersPerReq.slice();
             const ctrlDecorValue = ctrlDecorValues.find(edk.isController);
             const guards = [...guardsPerMod, ...this.normalizeGuards(oasRoute.guards)];
             const allProvidersPerReq = this.addProvidersPerReq(
