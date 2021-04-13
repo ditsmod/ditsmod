@@ -41,7 +41,6 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
     const { controllersMetadata, guardsPerMod, moduleMetadata } = metadataPerMod;
 
     const providersPerMod = moduleMetadata.providersPerMod.slice();
-    const providersPerReq = moduleMetadata.providersPerReq.slice();
 
     const rawRoutesMeta: edk.RawRouteMeta[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
@@ -53,6 +52,7 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
             continue;
           }
           const providersPerRou = moduleMetadata.providersPerRou.slice();
+          const providersPerReq = moduleMetadata.providersPerReq.slice();
           const httpMethods = this.getHttpMethods(oasRoute.pathItem);
 
           httpMethods.forEach((httpMethod) => {

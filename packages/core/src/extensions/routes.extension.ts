@@ -45,7 +45,6 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
     const { controllersMetadata, guardsPerMod, moduleMetadata } = metadataPerMod;
 
     const providersPerMod = moduleMetadata.providersPerMod.slice();
-    const providersPerReq = moduleMetadata.providersPerReq.slice();
 
     const rawRoutesMeta: RawRouteMeta[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
@@ -56,6 +55,7 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
             continue;
           }
           const providersPerRou = moduleMetadata.providersPerRou.slice();
+          const providersPerReq = moduleMetadata.providersPerReq.slice();
           const route = decoratorMetadata.value;
           const ctrlDecorValue = ctrlDecorValues.find(isController);
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
