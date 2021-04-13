@@ -13,11 +13,12 @@ npm i
 Check from first terminal:
 
 ```bash
-npm run start9
+npm run start10
 ```
 
 From second terminal:
 
 ```bash
 curl -isS localhost:8080
+curl -isS localhost:8080/posts
 ```

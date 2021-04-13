@@ -85,7 +85,7 @@ describe('ModuleFactory', () => {
       const globalProviders = new ProvidersMetadata();
       moduleManager.scanRootModule(AppModule);
       const msg =
-        'Exported Provider1 from Module2 should includes in "providersPerMod" or "providersPerReq", ' +
+        'Exported Provider1 from Module2 should includes in "providersPerMod" or "providersPerRou", or "providersPerReq", ' +
         'or in some "exports" of imported modules. Tip: "providersPerApp" no need exports, they are automatically exported.';
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).toThrow(msg);
     });
@@ -542,7 +542,7 @@ describe('ModuleFactory', () => {
         moduleManager.scanModule(Module7);
         const errMsg =
           'Exported Provider2 from Module6 ' +
-          'should includes in "providersPerMod" or "providersPerReq", ' +
+          'should includes in "providersPerMod" or "providersPerRou", or "providersPerReq", ' +
           'or in some "exports" of imported modules. ' +
           'Tip: "providersPerApp" no need exports, they are automatically exported.';
         expect(() => mock.bootstrap(new ProvidersMetadata(), '', Module7, moduleManager)).toThrow(errMsg);

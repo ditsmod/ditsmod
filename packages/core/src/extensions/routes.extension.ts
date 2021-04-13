@@ -42,11 +42,10 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
     prefixPerMod: string,
     metadataPerMod: MetadataPerMod
   ) {
-    const {
-      controllersMetadata,
-      guardsPerMod,
-      moduleMetadata: { providersPerMod, providersPerReq, name },
-    } = metadataPerMod;
+    const { controllersMetadata, guardsPerMod, moduleMetadata } = metadataPerMod;
+
+    const providersPerMod = moduleMetadata.providersPerMod.slice();
+    const providersPerReq = moduleMetadata.providersPerReq.slice();
 
     const rawRoutesMeta: RawRouteMeta[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
@@ -56,18 +55,19 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
           if (!isRoute(decoratorMetadata.value)) {
             continue;
           }
+          const providersPerRou = moduleMetadata.providersPerRou.slice();
           const route = decoratorMetadata.value;
           const ctrlDecorValue = ctrlDecorValues.find(isController);
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
           const allProvidersPerReq = this.addProvidersPerReq(
-            name,
+            moduleName,
             controller,
             ctrlDecorValue,
             methodName,
             guards,
-            providersPerReq.slice()
+            providersPerReq
           );
-          const parseBody = this.needBodyParse(providersPerMod, allProvidersPerReq, route.httpMethod);
+          const parseBody = this.needBodyParse(providersPerMod, providersPerRou, allProvidersPerReq, route.httpMethod);
           const routeMeta: RouteMeta = {
             httpMethod: route.httpMethod,
             path: route.path,
@@ -77,13 +77,14 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
             parseBody,
             guards,
           };
-          const providersPerRoute: ServiceProvider[] = [{ provide: RouteMeta, useValue: routeMeta }];
+
+          providersPerRou.push({ provide: RouteMeta, useValue: routeMeta });
           const { path, httpMethod } = route;
 
           rawRoutesMeta.push({
             moduleName,
             providersPerMod,
-            providersPerRoute,
+            providersPerRou,
             providersPerReq: allProvidersPerReq,
             prefixPerApp,
             prefixPerMod,
@@ -138,11 +139,13 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
    */
   protected needBodyParse(
     providersPerMod: ServiceProvider[],
+    providersPerRou: ServiceProvider[],
     providersPerReq: ServiceProvider[],
     httpMethod: HttpMethod
   ) {
     const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-    const injectorPerReq = injectorPerMod.resolveAndCreateChild(providersPerReq);
+    const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
+    const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
     const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
     return bodyParserConfig.acceptMethods.includes(httpMethod);
   }

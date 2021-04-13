@@ -41,6 +41,7 @@ describe('getModuleMetadata', () => {
       ngMetadataName: 'Module',
       providersPerApp: [],
       providersPerMod: [Provider1],
+      providersPerRou: [],
       providersPerReq: [],
     });
   });
@@ -65,6 +66,7 @@ describe('getModuleMetadata', () => {
       ngMetadataName: 'Module',
       providersPerApp: [],
       providersPerMod: [Provider1],
+      providersPerRou: [],
       providersPerReq: [],
     });
   });

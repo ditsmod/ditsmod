@@ -172,8 +172,9 @@ export class AppInitializer {
     const globalProviders = new ProvidersMetadata();
     globalProviders.providersPerApp = this.meta.providersPerApp;
     const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    const { providersPerMod, providersPerReq } = moduleFactory.exportGlobalProviders(moduleManager, globalProviders);
+    const { providersPerMod, providersPerRou, providersPerReq } = moduleFactory.exportGlobalProviders(moduleManager, globalProviders);
     globalProviders.providersPerMod = providersPerMod;
+    globalProviders.providersPerRou = [...providersPerRou];
     globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];
     return globalProviders;
   }

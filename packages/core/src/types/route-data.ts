@@ -15,7 +15,7 @@ export class RawRouteMeta {
   /**
    * Providers per a route.
    */
-  providersPerRoute?: ServiceProvider[];
+  providersPerRou?: ServiceProvider[];
   /**
    * Providers per a request.
    */

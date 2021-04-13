@@ -34,6 +34,7 @@ export function getModuleMetadata<T extends ModuleMetadata>(
     metadata.id = modWitParams.id;
     metadata.providersPerApp = mergeArrays(modMetadata.providersPerApp, modWitParams.providersPerApp);
     metadata.providersPerMod = mergeArrays(modMetadata.providersPerMod, modWitParams.providersPerMod);
+    metadata.providersPerRou = mergeArrays(modMetadata.providersPerRou, modWitParams.providersPerRou);
     metadata.providersPerReq = mergeArrays(modMetadata.providersPerReq, modWitParams.providersPerReq);
     return metadata;
   } else {

@@ -676,7 +676,7 @@ describe('AppInitializer', () => {
         mock.bootstrapProvidersPerApp();
         const msg =
           'Exporting providers to AppModule was failed: found collision for: ' +
-          'Provider0, Request, Provider1, InjectionToken NODE_REQ. You should manually add these providers to AppModule.';
+          'Provider0, Provider1, Request, InjectionToken NODE_REQ. You should manually add these providers to AppModule.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
 

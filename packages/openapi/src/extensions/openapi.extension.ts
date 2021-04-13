@@ -38,11 +38,10 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
     prefixPerMod: string,
     metadataPerMod: edk.MetadataPerMod
   ) {
-    const {
-      controllersMetadata,
-      guardsPerMod,
-      moduleMetadata: { providersPerMod, providersPerReq, name },
-    } = metadataPerMod;
+    const { controllersMetadata, guardsPerMod, moduleMetadata } = metadataPerMod;
+
+    const providersPerMod = moduleMetadata.providersPerMod.slice();
+    const providersPerReq = moduleMetadata.providersPerReq.slice();
 
     const rawRoutesMeta: edk.RawRouteMeta[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
@@ -53,13 +52,14 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
           if (!isOasRoute(oasRoute)) {
             continue;
           }
+          const providersPerRou = moduleMetadata.providersPerRou.slice();
           const httpMethods = this.getHttpMethods(oasRoute.pathItem);
 
           httpMethods.forEach((httpMethod) => {
             const ctrlDecorValue = ctrlDecorValues.find(edk.isController);
             const guards = [...guardsPerMod, ...this.normalizeGuards(oasRoute.guards)];
             const allProvidersPerReq = this.addProvidersPerReq(
-              name,
+              moduleName,
               controller,
               ctrlDecorValue,
               methodName,
@@ -67,7 +67,7 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
               providersPerReq.slice()
             );
             const { path } = oasRoute;
-            const parseBody = this.needBodyParse(providersPerMod, allProvidersPerReq, httpMethod);
+            const parseBody = this.needBodyParse(providersPerMod, providersPerRou, allProvidersPerReq, httpMethod);
             const routeMeta: OasRouteMeta = {
               httpMethod,
               path,
@@ -78,12 +78,13 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
               parseBody,
               guards,
             };
-            const providersPerRoute: ServiceProvider[] = [{ provide: edk.RouteMeta, useValue: routeMeta }];
+
+            providersPerRou.push({ provide: edk.RouteMeta, useValue: routeMeta });
 
             rawRoutesMeta.push({
               moduleName,
               providersPerMod,
-              providersPerRoute,
+              providersPerRou,
               providersPerReq: allProvidersPerReq,
               prefixPerApp,
               prefixPerMod,
@@ -146,11 +147,13 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
    */
   protected needBodyParse(
     providersPerMod: ServiceProvider[],
+    providersPerRou: ServiceProvider[],
     providersPerReq: ServiceProvider[],
     httpMethod: HttpMethod
   ) {
     const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-    const injectorPerReq = injectorPerMod.resolveAndCreateChild(providersPerReq);
+    const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
+    const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
     const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
     return bodyParserConfig.acceptMethods.includes(httpMethod);
   }
