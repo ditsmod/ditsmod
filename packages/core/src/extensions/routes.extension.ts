@@ -66,6 +66,7 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
             guards,
             providersPerReq
           );
+          providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
           const parseBody = this.needBodyParse(providersPerMod, providersPerRou, allProvidersPerReq, route.httpMethod);
           const routeMeta: RouteMeta = {
             httpMethod: route.httpMethod,
@@ -76,11 +77,8 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
             parseBody,
             guards,
           };
-
-          providersPerRou.push({ provide: RouteMeta, useValue: routeMeta }, ...(ctrlDecorator.providersPerRou || []));
-
+          providersPerRou.push({ provide: RouteMeta, useValue: routeMeta });
           const { path, httpMethod } = route;
-
           rawRoutesMeta.push({
             moduleName,
             providersPerMod,
