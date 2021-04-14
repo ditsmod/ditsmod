@@ -1,4 +1,4 @@
-import { Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ProvidersMetadata } from '../models/providers-metadata';
@@ -25,6 +25,7 @@ import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from '../extensions/pre-router';
 import { Counter } from './counter';
+import { Extension } from '../types/extension';
 
 @Injectable()
 export class AppInitializer {
@@ -191,12 +192,18 @@ export class AppInitializer {
 
   protected async handleExtensions(appMetadataMap: AppMetadataMap) {
     this.applyAppMetadataMap(appMetadataMap);
+    const initedExtensionsGroups = new WeakSet<InjectionToken<Extension<any>[]>>();
     for (const [, metadata] of appMetadataMap) {
       if (isRootModule(metadata.moduleMetadata)) {
         metadata.moduleMetadata.extensions = this.meta.extensions;
       }
       const { extensions, name: moduleName } = metadata.moduleMetadata;
       for (const groupToken of extensions) {
+        if (initedExtensionsGroups.has(groupToken)) {
+          continue;
+        } else {
+          initedExtensionsGroups.add(groupToken);
+        }
         this.log.debug(`${moduleName}: start init group with ${groupToken}`);
         const extensionsManager = this.injectorPerApp.get(ExtensionsManager) as ExtensionsManager;
         await extensionsManager.init(groupToken);
