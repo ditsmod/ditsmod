@@ -12,6 +12,10 @@ export interface ControllerMetadata {
    * Providers per HTTP request.
    */
   providersPerReq?: ServiceProvider[];
+  /**
+   * Providers per route.
+   */
+  providersPerRou?: ServiceProvider[];
 }
 
 export const Controller = makeDecorator('Controller', (data: any) => data) as ControllerDecoratorFactory;

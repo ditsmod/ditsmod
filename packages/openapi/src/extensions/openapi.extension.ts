@@ -55,12 +55,12 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
           this.getHttpMethods(oasRoute.pathItem).forEach((httpMethod) => {
             const providersPerRou = moduleMetadata.providersPerRou.slice();
             const providersPerReq = moduleMetadata.providersPerReq.slice();
-            const ctrlDecorValue = ctrlDecorValues.find(edk.isController);
+            const ctrlDecorator = ctrlDecorValues.find(edk.isController);
             const guards = [...guardsPerMod, ...this.normalizeGuards(oasRoute.guards)];
             const allProvidersPerReq = this.addProvidersPerReq(
               moduleName,
               controller,
-              ctrlDecorValue,
+              ctrlDecorator.providersPerReq,
               methodName,
               guards,
               providersPerReq.slice()
@@ -78,7 +78,10 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
               guards,
             };
 
-            providersPerRou.push({ provide: edk.RouteMeta, useValue: routeMeta });
+            providersPerRou.push(
+              { provide: edk.RouteMeta, useValue: routeMeta },
+              ...(ctrlDecorator.providersPerRou || [])
+            );
 
             rawRoutesMeta.push({
               moduleName,
@@ -118,10 +121,10 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
   protected addProvidersPerReq(
     moduleName: string,
     Ctrl: TypeProvider,
-    controllerMetadata: edk.ControllerMetadata,
+    providersPerReq: ServiceProvider[],
     methodName: string,
     normalizedGuards: edk.NormalizedGuard[],
-    providersPerReq: ServiceProvider[]
+    allProvidersPerReq: ServiceProvider[]
   ) {
     const guards = normalizedGuards.map((item) => item.guard);
 
@@ -135,10 +138,10 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
       }
     }
 
-    const providersOfController = controllerMetadata.providersPerReq || [];
-    providersPerReq.unshift(Ctrl, ...guards, ...providersOfController);
+    const providersOfController = providersPerReq || [];
+    allProvidersPerReq.unshift(Ctrl, ...guards, ...providersOfController);
 
-    return providersPerReq;
+    return allProvidersPerReq;
   }
 
   /**

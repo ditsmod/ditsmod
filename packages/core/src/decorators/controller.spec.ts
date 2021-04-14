@@ -35,11 +35,11 @@ describe('Controller decorator', () => {
   });
 
   it('decorator with all allowed properties', () => {
-    @Controller({ providersPerReq: [] })
+    @Controller({ providersPerRou: [], providersPerReq: [] })
     class Controller1 {}
 
     const metadata = reflector.annotations(Controller1);
     expect(metadata.length).toBe(1);
-    expect(metadata[0]).toEqual({ providersPerReq: [] });
+    expect(metadata[0]).toEqual({ providersPerRou: [], providersPerReq: [] });
   });
 });

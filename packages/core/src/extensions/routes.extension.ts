@@ -1,6 +1,5 @@
 import { Inject, Injectable, ReflectiveInjector, TypeProvider } from '@ts-stack/di';
 
-import { ControllerMetadata } from '../decorators/controller';
 import { BodyParserConfig } from '../models/body-parser-config';
 import { RootMetadata } from '../models/root-metadata';
 import { Extension } from '../types/extension';
@@ -57,12 +56,12 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
           const providersPerRou = moduleMetadata.providersPerRou.slice();
           const providersPerReq = moduleMetadata.providersPerReq.slice();
           const route = decoratorMetadata.value;
-          const ctrlDecorValue = ctrlDecorValues.find(isController);
+          const ctrlDecorator = ctrlDecorValues.find(isController);
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
           const allProvidersPerReq = this.addProvidersPerReq(
             moduleName,
             controller,
-            ctrlDecorValue,
+            ctrlDecorator.providersPerReq,
             methodName,
             guards,
             providersPerReq
@@ -78,7 +77,8 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
             guards,
           };
 
-          providersPerRou.push({ provide: RouteMeta, useValue: routeMeta });
+          providersPerRou.push({ provide: RouteMeta, useValue: routeMeta }, ...(ctrlDecorator.providersPerRou || []));
+
           const { path, httpMethod } = route;
 
           rawRoutesMeta.push({
@@ -111,10 +111,10 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
   protected addProvidersPerReq(
     moduleName: string,
     Ctrl: TypeProvider,
-    controllerMetadata: ControllerMetadata,
+    providersPerReq: ServiceProvider[],
     methodName: string,
     normalizedGuards: NormalizedGuard[],
-    providersPerReq: ServiceProvider[]
+    allProvidersPerReq: ServiceProvider[]
   ) {
     const guards = normalizedGuards.map((item) => item.guard);
 
@@ -128,10 +128,10 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
       }
     }
 
-    const providersOfController = controllerMetadata.providersPerReq || [];
-    providersPerReq.unshift(Ctrl, ...guards, ...providersOfController);
+    const providersOfController = providersPerReq || [];
+    allProvidersPerReq.unshift(Ctrl, ...guards, ...providersOfController);
 
-    return providersPerReq;
+    return allProvidersPerReq;
   }
 
   /**
