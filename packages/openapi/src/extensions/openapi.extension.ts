@@ -1,10 +1,11 @@
 import { Injectable, Inject, ReflectiveInjector, TypeProvider } from '@ts-stack/di';
 import { BodyParserConfig, edk, HttpMethod, RootMetadata, ServiceProvider, GuardItem } from '@ditsmod/core';
-import { XPathItemObject } from '@ts-stack/openapi-spec';
+import { OperationObject, ParameterObject, ReferenceObject, XPathItemObject } from '@ts-stack/openapi-spec';
 
-import { isOasRoute } from '../utils/type-guards';
+import { isOasRoute, isReferenceObject } from '../utils/type-guards';
 import { OasRouteMeta } from '../types/oas-route-meta';
 import { OAS_HTTP_METHODS } from '../models/oas-http-methods';
+import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-last-params';
 
 @Injectable()
 export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
@@ -65,13 +66,17 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
               guards,
               providersPerReq.slice()
             );
-            const { path } = oasRoute;
+            const { params, paramsRefs } = this.mergeParams(oasRoute.pathItem, httpMethod);
+            const paramsInPath = params.filter(p => p.in == 'path').map(p => p.name).join('/:');
+            const path = paramsInPath ? `${oasRoute.path}/:${paramsInPath}` : oasRoute.path;
             providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
             const parseBody = this.needBodyParse(providersPerMod, providersPerRou, allProvidersPerReq, httpMethod);
             const routeMeta: OasRouteMeta = {
               httpMethod,
               path,
               pathItem: oasRoute.pathItem,
+              params,
+              paramsRefs,
               decoratorMetadata,
               controller,
               methodName,
@@ -95,6 +100,25 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
     }
 
     return rawRoutesMeta;
+  }
+
+  protected mergeParams(pathItem: XPathItemObject, httpMethod: HttpMethod) {
+    const operationObject: OperationObject = pathItem[httpMethod.toLowerCase()];
+    const parameterObjects: ParameterObject[] = [];
+    const referenceObjects: ReferenceObject[] = [];
+    const parameters: (ParameterObject | ReferenceObject)[] = [];
+    parameters.push(...(pathItem.parameters || []), ...(operationObject.parameters || []));
+    parameters.forEach((p) => {
+      if (isReferenceObject(p)) {
+        referenceObjects.push(p);
+      } else {
+        parameterObjects.push(p);
+      }
+    });
+    return {
+      params: getLastParameterObjects(parameterObjects),
+      paramsRefs: getLastReferenceObjects(referenceObjects),
+    };
   }
 
   protected getHttpMethods(pathItem: XPathItemObject) {
