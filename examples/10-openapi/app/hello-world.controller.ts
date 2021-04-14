@@ -1,17 +1,18 @@
 import { Controller, Response, Route, Status } from '@ditsmod/core';
-import { OasRoute, OasRouteMeta } from '@ditsmod/openapi';
+import { OasRoute } from '@ditsmod/openapi';
 
 @Controller()
 export class HelloWorldController {
-  constructor(private res: Response, private oasRouteMeta: OasRouteMeta) {}
+  constructor(private res: Response) {}
 
+  // Here works route decorator from `@ditsmod/core`.
   @Route('GET')
   hello() {
-    // Here work route decorator from `@ditsmod/core`.
     this.res.send('ok');
   }
 
-  @OasRoute('post', [], {
+  // Here works new route decorator from `@ditsmod/openapi`.
+  @OasRoute('posts', [], {
     get: {
       parameters: [{ in: 'path', name: 'postId', required: true }],
       responses: {
@@ -25,15 +26,13 @@ export class HelloWorldController {
     },
   })
   getPost() {
-    console.log(this.oasRouteMeta);
-    const post = { postId: 1, postTitle: 'Some title', postBody: 'Here body' };
-    this.res.sendJson(post);
+    this.res.send('returns single post');
   }
 
   @OasRoute('posts', [], {
+    parameters: [{ in: 'query', name: 'catId' }],
     get: {
       parameters: [
-        { in: 'query', name: 'catId' },
         { in: 'query', name: 'rubricId' },
         { in: 'query', name: 'contextId' },
       ],
@@ -46,10 +45,6 @@ export class HelloWorldController {
     },
   })
   getPosts() {
-    const posts = [
-      { postId: 1, postTitle: 'Some title', postBody: 'Here body' },
-      { postId: 2, postTitle: 'Some other title', postBody: 'Here other body' },
-    ];
-    this.res.sendJson(posts);
+    this.res.send('returns posts list');
   }
 }
