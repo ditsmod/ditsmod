@@ -1,36 +1,22 @@
-import { Controller, Response, Route, Status } from '@ditsmod/core';
+import { Controller, Request, Response, Route, Status } from '@ditsmod/core';
 import { OasRoute } from '@ditsmod/openapi';
 
 @Controller()
 export class HelloWorldController {
-  constructor(private res: Response) {}
+  constructor(private req: Request, private res: Response) {}
 
   // Here works route decorator from `@ditsmod/core`.
   @Route('GET')
   hello() {
-    this.res.send('ok');
+    this.res.send('ok\n');
   }
 
   // Here works new route decorator from `@ditsmod/openapi`.
   @OasRoute('posts/{postId}', [], {
-    get: {
-      parameters: [{ in: 'path', name: 'postId', required: true }],
-      responses: {
-        [Status.OK]: {
-          description: 'Post to read',
-          content: {
-            'application/json': { schema: { $ref: '' } },
-          },
-        },
-      },
-    },
-  })
-  getPost() {
-    this.res.send('returns single post');
-  }
-
-  @OasRoute('posts', [], {
-    parameters: [{ in: 'query', name: 'catId' }],
+    parameters: [
+      { in: 'path', name: 'postId', required: true },
+      { in: 'query', name: 'catId' },
+    ],
     get: {
       parameters: [
         { in: 'query', name: 'rubricId' },
@@ -45,6 +31,28 @@ export class HelloWorldController {
     },
   })
   getPosts() {
-    this.res.send('returns posts list');
+    const pathParams = this.req.pathParamsArr.map((p) => `{${p.key}: ${p.value}}`).join(', ');
+    this.res.send(`Request have pathParams: "${pathParams}", and Response returns single post\n`);
+  }
+
+  @OasRoute('posts/{postId}/comments/{commentId}', [], {
+    get: {
+      parameters: [
+        { in: 'path', name: 'postId', required: true },
+        { in: 'path', name: 'commentId', required: true },
+      ],
+      responses: {
+        [Status.OK]: {
+          description: 'Post to read',
+          content: {
+            'application/json': { schema: { $ref: '' } },
+          },
+        },
+      },
+    },
+  })
+  getPost() {
+    const pathParams = this.req.pathParamsArr.map((p) => `{${p.key}: ${p.value}}`).join(', ');
+    this.res.send(`Request have pathParams: "${pathParams}", and Response returns single comment\n`);
   }
 }
