@@ -12,7 +12,7 @@ export class HelloWorldController {
   }
 
   // Here works new route decorator from `@ditsmod/openapi`.
-  @OasRoute('posts', [], {
+  @OasRoute('posts/{postId}', [], {
     get: {
       parameters: [{ in: 'path', name: 'postId', required: true }],
       responses: {

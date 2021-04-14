@@ -67,8 +67,7 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
               providersPerReq.slice()
             );
             const { params, paramsRefs } = this.mergeParams(oasRoute.pathItem, httpMethod);
-            const paramsInPath = params.filter(p => p.in == 'path').map(p => p.name).join('/:');
-            const path = paramsInPath ? `${oasRoute.path}/:${paramsInPath}` : oasRoute.path;
+            const path = this.transformPath(oasRoute.path, params);
             providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
             const parseBody = this.needBodyParse(providersPerMod, providersPerRou, allProvidersPerReq, httpMethod);
             const routeMeta: OasRouteMeta = {
@@ -100,6 +99,16 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
     }
 
     return rawRoutesMeta;
+  }
+
+  protected transformPath(path: string, params: ParameterObject[]) {
+    const paramsInPath = params.filter(p => p.in == 'path').map(p => p.name);
+
+    paramsInPath.forEach(name => {
+      path = path.replace(`{${name}}`, `:${name}`);
+    });
+
+    return path;
   }
 
   protected mergeParams(pathItem: XPathItemObject, httpMethod: HttpMethod) {

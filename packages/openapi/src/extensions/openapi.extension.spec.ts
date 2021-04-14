@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { HttpMethod, Status } from '@ditsmod/core';
-import { XPathItemObject } from '@ts-stack/openapi-spec';
+import { ParameterObject, XPathItemObject } from '@ts-stack/openapi-spec';
 
 import { OpenapiExtension } from './openapi.extension';
 
@@ -8,6 +8,10 @@ describe('OpenapiExtension', () => {
   class MockOpenapiExtension extends OpenapiExtension {
     mergeParams(pathItem: XPathItemObject, httpMethod: HttpMethod) {
       return super.mergeParams(pathItem, httpMethod);
+    }
+
+    transformPath(path: string, params: ParameterObject[]) {
+      return super.transformPath(path, params);
     }
   }
 
@@ -39,5 +43,17 @@ describe('OpenapiExtension', () => {
       { in: 'query', name: 'contextId' },
     ]);
     expect(paramsRefs).toEqual([]);
+  });
+
+  it('transformPath()', () => {
+    const params: ParameterObject[] = [
+      { in: 'path', name: 'postId' },
+      { in: 'query', name: 'rubricId' },
+      { in: 'query', name: 'rubricId' },
+      { in: 'path', name: 'commentId' },
+      { in: 'query', name: 'contextId' },
+    ];
+    const path = mock.transformPath('posts/{postId}/comments/{commentId}', params);
+    expect(path).toEqual('posts/:postId/comments/:commentId');
   });
 });
