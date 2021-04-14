@@ -73,6 +73,7 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
             const routeMeta: OasRouteMeta = {
               httpMethod,
               path,
+              oasPath: oasRoute.path,
               pathItem: oasRoute.pathItem,
               params,
               paramsRefs,

@@ -8,6 +8,10 @@ import { ParameterObject, ReferenceObject, XPathItemObject } from '@ts-stack/ope
 export class OasRouteMeta extends edk.RouteMeta {
   pathItem: XPathItemObject;
   /**
+   * Path in format of OpenAPI Specefication, (e.g. `posts/{postId}/comments/{commentId}`).
+   */
+  oasPath: string;
+  /**
    * Merged parameters with `ParameterObject[]` from `PathItemObject` and `OperationObject`.
    */
   params: ParameterObject[];
