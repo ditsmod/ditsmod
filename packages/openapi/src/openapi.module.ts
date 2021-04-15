@@ -3,7 +3,7 @@ import { Module, edk, ModuleWithParams, ServiceProvider } from '@ditsmod/core';
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension';
 import { OpenapiExtension } from './extensions/openapi.extension';
 import { OAS_COMPILER_EXTENSIONS, OAS_HTTP_METHODS, OAS_OBJECT } from './di-tokens';
-import { DEFAULT_OAS_OBJECT } from './constants';
+import { DEFAULT_OAS_HTTP_METHODS, DEFAULT_OAS_OBJECT } from './constants';
 import { OasRouteMeta } from './types/oas-route-meta';
 
 @Module({
@@ -11,7 +11,7 @@ import { OasRouteMeta } from './types/oas-route-meta';
     { provide: edk.ROUTES_EXTENSIONS, useClass: OpenapiExtension, multi: true },
     { provide: OAS_COMPILER_EXTENSIONS, useClass: OpenapiCompilerExtension, multi: true },
     { provide: OAS_OBJECT, useValue: DEFAULT_OAS_OBJECT },
-    { provide: OAS_HTTP_METHODS, useValue: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS', 'HEAD', 'PATCH', 'TRACE'] },
+    { provide: OAS_HTTP_METHODS, useValue: DEFAULT_OAS_HTTP_METHODS },
   ],
   providersPerRou: [OasRouteMeta],
   exports: [{ provide: OasRouteMeta, useExisting: edk.RouteMeta }],
