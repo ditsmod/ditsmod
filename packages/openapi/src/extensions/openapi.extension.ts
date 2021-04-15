@@ -102,35 +102,6 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
     return rawRoutesMeta;
   }
 
-  protected transformPath(path: string, params: ParameterObject[]) {
-    const paramsInPath = params.filter(p => p.in == 'path').map(p => p.name);
-
-    paramsInPath.forEach(name => {
-      path = path.replace(`{${name}}`, `:${name}`);
-    });
-
-    return path;
-  }
-
-  protected mergeParams(pathItem: XPathItemObject, httpMethod: HttpMethod) {
-    const operationObject: OperationObject = pathItem[httpMethod.toLowerCase()];
-    const parameterObjects: ParameterObject[] = [];
-    const referenceObjects: ReferenceObject[] = [];
-    const parameters: (ParameterObject | ReferenceObject)[] = [];
-    parameters.push(...(pathItem.parameters || []), ...(operationObject.parameters || []));
-    parameters.forEach((p) => {
-      if (isReferenceObject(p)) {
-        referenceObjects.push(p);
-      } else {
-        parameterObjects.push(p);
-      }
-    });
-    return {
-      params: getLastParameterObjects(parameterObjects),
-      paramsRefs: getLastReferenceObjects(referenceObjects),
-    };
-  }
-
   protected getHttpMethods(pathItem: XPathItemObject) {
     const httpMethods: HttpMethod[] = this.injectorPerApp.get(OAS_HTTP_METHODS);
     return Object.keys(pathItem)
@@ -172,6 +143,35 @@ export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
     allProvidersPerReq.unshift(Ctrl, ...guards, ...providersOfController);
 
     return allProvidersPerReq;
+  }
+
+  protected mergeParams(pathItem: XPathItemObject, httpMethod: HttpMethod) {
+    const operationObject: OperationObject = pathItem[httpMethod.toLowerCase()];
+    const parameterObjects: ParameterObject[] = [];
+    const referenceObjects: ReferenceObject[] = [];
+    const parameters: (ParameterObject | ReferenceObject)[] = [];
+    parameters.push(...(pathItem.parameters || []), ...(operationObject.parameters || []));
+    parameters.forEach((p) => {
+      if (isReferenceObject(p)) {
+        referenceObjects.push(p);
+      } else {
+        parameterObjects.push(p);
+      }
+    });
+    return {
+      params: getLastParameterObjects(parameterObjects),
+      paramsRefs: getLastReferenceObjects(referenceObjects),
+    };
+  }
+
+  protected transformPath(path: string, params: ParameterObject[]) {
+    const paramsInPath = params.filter(p => p.in == 'path').map(p => p.name);
+
+    paramsInPath.forEach(name => {
+      path = path.replace(`{${name}}`, `:${name}`);
+    });
+
+    return path;
   }
 
   /**
