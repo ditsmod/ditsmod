@@ -13,6 +13,16 @@ export class HelloWorldController {
     this.res.sendJson(this.oasObject);
   }
 
+  @Route('GET', 'one/:param1')
+  test1() {
+    this.res.sendJson({ pathParams: this.req.pathParams });
+  }
+
+  @Route('GET', 'one/:param1/two/:param2')
+  test2() {
+    this.res.sendJson({ pathParams: this.req.pathParams });
+  }
+
   // Here works new route decorator from `@ditsmod/openapi`.
   @OasRoute('posts/{postId}', [], {
     parameters: [

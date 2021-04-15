@@ -1,6 +1,6 @@
 import { edk } from '@ditsmod/core';
 import { Injectable, Injector, ReflectiveInjector } from '@ts-stack/di';
-import { XOasObject, XOperationObject, XPathsObject } from '@ts-stack/openapi-spec';
+import { XOasObject, XOperationObject, XParameterObject, XPathsObject } from '@ts-stack/openapi-spec';
 
 import { OAS_OBJECT } from '../di-tokens';
 import { OasRouteMeta } from '../types/oas-route-meta';
@@ -25,15 +25,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
       if (oasRouteMeta.pathItem) {
         paths[`/${oasRouteMeta.oasPath}`] = oasRouteMeta.pathItem;
       } else {
-        const httpMethod = oasRouteMeta.httpMethod.toLowerCase();
-        let path = oasRouteMeta.path;
-        path = `/${path}`;
-        const operationObject: XOperationObject = { parameters: [], responses: {} };
-        if (paths[path]) {
-          paths[path][httpMethod] = operationObject;
-        } else {
-          paths[path] = { [httpMethod]: operationObject };
-        }
+        this.applyNonOasRoute(paths, oasRouteMeta);
       }
     });
 
@@ -41,5 +33,21 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
     this.#oasObject.paths = paths;
 
     return this.#oasObject;
+  }
+
+  protected applyNonOasRoute(paths: XPathsObject, routeMeta: edk.RouteMeta) {
+    const httpMethod = routeMeta.httpMethod.toLowerCase();
+    const parameters: XParameterObject[] = [];
+    let path = routeMeta.path;
+    path = `/${path}`.replace(/:([^\/]+)/g, (_, name) => {
+      parameters.push({ in: 'path', name, required: true });
+      return `{${name}}`;
+    });
+    const operationObject: XOperationObject = { parameters, responses: {} };
+    if (paths[path]) {
+      paths[path][httpMethod] = operationObject;
+    } else {
+      paths[path] = { [httpMethod]: operationObject };
+    }
   }
 }
