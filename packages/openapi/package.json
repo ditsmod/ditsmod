@@ -19,7 +19,7 @@
   "license": "MIT",
   "gitHead": "ee408df6b7617d0fb8bc6eff301e50f3602bb385",
   "dependencies": {
-    "@ts-stack/openapi-spec": "^3.1.1"
+    "@ts-stack/openapi-spec": "^3.1.2"
   },
   "devDependencies": {
     "@ts-stack/di": "^1.1.0",
