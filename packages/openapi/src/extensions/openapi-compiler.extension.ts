@@ -1,9 +1,11 @@
+import { writeFileSync } from 'fs';
 import { edk } from '@ditsmod/core';
 import { Injectable, Injector, ReflectiveInjector } from '@ts-stack/di';
 import { XOasObject, XOperationObject, XParameterObject, XPathsObject } from '@ts-stack/openapi-spec';
 
 import { OAS_OBJECT } from '../di-tokens';
 import { OasRouteMeta } from '../types/oas-route-meta';
+import { DEFAULT_OAS_OBJECT } from '../constants';
 
 @Injectable()
 export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
@@ -29,8 +31,10 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
       }
     });
 
-    this.#oasObject = this.injectorPerApp.get(OAS_OBJECT);
+    this.#oasObject = Object.assign({}, DEFAULT_OAS_OBJECT, this.injectorPerApp.get(OAS_OBJECT));
     this.#oasObject.paths = paths;
+
+    writeFileSync('./packages/openapi/src/openapi.json', JSON.stringify(this.#oasObject, null, '  '));
 
     return this.#oasObject;
   }
