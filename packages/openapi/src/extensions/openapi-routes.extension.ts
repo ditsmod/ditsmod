@@ -8,7 +8,7 @@ import { OAS_HTTP_METHODS } from '../di-tokens';
 import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-last-params';
 
 @Injectable()
-export class OpenapiExtension implements edk.Extension<edk.RawRouteMeta[]> {
+export class OpenapiRoutesExtension implements edk.Extension<edk.RawRouteMeta[]> {
   #rawRoutesMeta: edk.RawRouteMeta[] = [];
 
   constructor(
