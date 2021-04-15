@@ -1,14 +1,16 @@
 import { Controller, Request, Response, Route, Status } from '@ditsmod/core';
-import { OasRoute } from '@ditsmod/openapi';
+import { OasRoute, OAS_OBJECT } from '@ditsmod/openapi';
+import { Inject } from '@ts-stack/di';
+import { XOasObject } from '@ts-stack/openapi-spec';
 
 @Controller()
 export class HelloWorldController {
-  constructor(private req: Request, private res: Response) {}
+  constructor(private req: Request, private res: Response, @Inject(OAS_OBJECT) private oasObject: XOasObject) {}
 
   // Here works route decorator from `@ditsmod/core`.
   @Route('GET')
   hello() {
-    this.res.send('ok\n');
+    this.res.sendJson(this.oasObject);
   }
 
   // Here works new route decorator from `@ditsmod/openapi`.
