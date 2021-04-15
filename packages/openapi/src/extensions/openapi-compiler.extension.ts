@@ -1,6 +1,6 @@
 import { edk } from '@ditsmod/core';
 import { Injectable, Injector, ReflectiveInjector } from '@ts-stack/di';
-import { XOasObject, XPathsObject } from '@ts-stack/openapi-spec';
+import { XOasObject, XOperationObject, XPathsObject } from '@ts-stack/openapi-spec';
 
 import { OAS_OBJECT } from '../di-tokens';
 import { OasRouteMeta } from '../types/oas-route-meta';
@@ -23,14 +23,16 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
       const injectorPerRou = ReflectiveInjector.resolveAndCreate(rawMeta.providersPerRou);
       const oasRouteMeta = injectorPerRou.get(OasRouteMeta) as OasRouteMeta;
       if (oasRouteMeta.pathItem) {
-        paths[oasRouteMeta.oasPath] = oasRouteMeta.pathItem;
+        paths[`/${oasRouteMeta.oasPath}`] = oasRouteMeta.pathItem;
       } else {
         const httpMethod = oasRouteMeta.httpMethod.toLowerCase();
-        const path = oasRouteMeta.path || '/';
+        let path = oasRouteMeta.path;
+        path = `/${path}`;
+        const operationObject: XOperationObject = { parameters: [], responses: {} };
         if (paths[path]) {
-          paths[path][httpMethod] = {};
+          paths[path][httpMethod] = operationObject;
         } else {
-          paths[path] = { [httpMethod]: {} };
+          paths[path] = { [httpMethod]: operationObject };
         }
       }
     });
