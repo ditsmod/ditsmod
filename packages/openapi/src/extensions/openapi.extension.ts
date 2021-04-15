@@ -4,7 +4,7 @@ import { OperationObject, ParameterObject, ReferenceObject, XPathItemObject } fr
 
 import { isOasRoute, isReferenceObject } from '../utils/type-guards';
 import { OasRouteMeta } from '../types/oas-route-meta';
-import { OAS_HTTP_METHODS } from '../models/oas-http-methods';
+import { OAS_HTTP_METHODS } from '../di-tokens';
 import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-last-params';
 
 @Injectable()

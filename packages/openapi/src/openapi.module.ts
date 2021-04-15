@@ -2,7 +2,7 @@ import { Module, edk, ModuleWithParams, ServiceProvider } from '@ditsmod/core';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension';
 import { OpenapiExtension } from './extensions/openapi.extension';
-import { OAS_COMPILER_EXTENSIONS, OAS_HTTP_METHODS } from './models/oas-http-methods';
+import { OAS_COMPILER_EXTENSIONS, OAS_HTTP_METHODS } from './di-tokens';
 import { OasRouteMeta } from './types/oas-route-meta';
 
 @Module({
