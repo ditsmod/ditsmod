@@ -2,9 +2,9 @@ import 'reflect-metadata';
 import { HttpMethod, Status } from '@ditsmod/core';
 import { ParameterObject, XPathItemObject } from '@ts-stack/openapi-spec';
 
-import { OpenapiRoutesExtension } from './openapi.extension';
+import { OpenapiRoutesExtension } from './openapi-routes.extension';
 
-describe('OpenapiExtension', () => {
+describe('OpenapiRoutesExtension', () => {
   class MockOpenapiExtension extends OpenapiRoutesExtension {
     mergeParams(pathItem: XPathItemObject, httpMethod: HttpMethod) {
       return super.mergeParams(pathItem, httpMethod);
