@@ -1,12 +1,12 @@
-import webpack, { CleanPlugin } from 'webpack';
+import { CleanPlugin, Configuration } from 'webpack';
 import { resolve } from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 
-const compiler = webpack({
+export const config: Configuration = {
   mode: 'development',
   entry: {
-    app: resolve(__dirname, './index.js'),
+    app: resolve(__dirname, './index.ts'),
   },
   module: {
     rules: [
@@ -40,32 +40,4 @@ const compiler = webpack({
     filename: '[name].bundle.js',
     path: resolve(__dirname, '../../dist-swagger-ui'),
   },
-});
-
-compiler.run((err, stats) => {
-  if (err) {
-    console.error(err.stack || err);
-    if ((err as any).details) {
-      console.error((err as any).details);
-    }
-    return;
-  }
-
-  const info = stats.toJson();
-
-  if (stats.hasErrors()) {
-    console.error(info.errors);
-  }
-
-  if (stats.hasWarnings()) {
-    console.warn(info.warnings);
-  }
-
-  console.log(
-    stats.toString({
-      chunks: false, // Makes the build much quieter
-      colors: true, // Shows colors in the console
-    })
-  );
-  // Log result...
-});
+};

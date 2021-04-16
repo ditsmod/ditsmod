@@ -12,7 +12,7 @@
     "lib": "src"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -b -f"
   },
   "keywords": [],
   "author": "",

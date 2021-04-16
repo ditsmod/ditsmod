@@ -1,6 +1,6 @@
 import SwaggerUI from 'swagger-ui';
 import 'swagger-ui/dist/swagger-ui.css';
-import * as spec from './openapi.yaml';
+import * as spec from '../../dist/swagger-ui/openapi.yaml';
 
 const ui = SwaggerUI({
   spec,
