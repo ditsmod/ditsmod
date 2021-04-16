@@ -18,6 +18,13 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
       return this.#oasObject;
     }
 
+    await this.compileOasObject();
+    writeFileSync('./packages/openapi/src/openapi.json', JSON.stringify(this.#oasObject, null, '  '));
+
+    return this.#oasObject;
+  }
+
+  protected async compileOasObject() {
     const paths: XPathsObject = {};
 
     const rawRouteMeta = await this.extensionManager.init(edk.ROUTES_EXTENSIONS);
@@ -33,8 +40,6 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
 
     this.#oasObject = Object.assign({}, DEFAULT_OAS_OBJECT, this.injectorPerApp.get(OAS_OBJECT));
     this.#oasObject.paths = paths;
-
-    writeFileSync('./packages/openapi/src/openapi.json', JSON.stringify(this.#oasObject, null, '  '));
 
     return this.#oasObject;
   }
