@@ -1,6 +1,7 @@
 import { writeFileSync } from 'fs';
+import { resolve } from 'path';
 import { edk } from '@ditsmod/core';
-import { Injectable, Injector, ReflectiveInjector } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 import { XOasObject, XOperationObject, XParameterObject, XPathsObject } from '@ts-stack/openapi-spec';
 import { stringify } from 'yaml';
 
@@ -12,7 +13,7 @@ import { DEFAULT_OAS_OBJECT } from '../constants';
 export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
   #oasObject: XOasObject;
 
-  constructor(private extensionManager: edk.ExtensionsManager, private injectorPerApp: Injector) {}
+  constructor(private extensionManager: edk.ExtensionsManager, private injectorPerApp: ReflectiveInjector) {}
 
   async init() {
     if (this.#oasObject) {
@@ -20,7 +21,8 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
     }
 
     await this.compileOasObject();
-    writeFileSync('/srv/git/ditsmod/ditsmod/packages/openapi/dist/swagger-ui/openapi.yaml', stringify(this.#oasObject));
+    writeFileSync(resolve(__dirname, '../../dist/swagger-ui/openapi.json'), JSON.stringify(this.#oasObject));
+    writeFileSync(resolve(__dirname, '../../dist/swagger-ui/openapi.yaml'), stringify(this.#oasObject));
 
     return this.#oasObject;
   }
@@ -30,7 +32,8 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
 
     const rawRouteMeta = await this.extensionManager.init(edk.ROUTES_EXTENSIONS);
     rawRouteMeta.forEach((rawMeta) => {
-      const injectorPerRou = ReflectiveInjector.resolveAndCreate(rawMeta.providersPerRou);
+      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(rawMeta.providersPerMod);
+      const injectorPerRou = injectorPerMod.resolveAndCreateChild(rawMeta.providersPerRou);
       const oasRouteMeta = injectorPerRou.get(OasRouteMeta) as OasRouteMeta;
       if (oasRouteMeta.pathItem) {
         paths[`/${oasRouteMeta.oasPath}`] = oasRouteMeta.pathItem;
