@@ -1,5 +1,12 @@
+<a name="beta.11"></a>
+# [beta.11](https://github.com/ts-stack/ditsmod/releases/tag/beta.11) (2021-04-16)
+
+### Features
+
+- Export more type for `edk` (Extension Development Kit).
+
 <a name="beta.10"></a>
-# [beta.10](https://github.com/ts-stack/ditsmod/releases/tag/beta.10) (2021-04-07)
+## [beta.10](https://github.com/ts-stack/ditsmod/releases/tag/beta.10) (2021-04-07)
 
 ### Features
 
