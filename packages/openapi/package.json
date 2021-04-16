@@ -19,10 +19,20 @@
   "license": "MIT",
   "gitHead": "ee408df6b7617d0fb8bc6eff301e50f3602bb385",
   "dependencies": {
-    "@ts-stack/openapi-spec": "^3.1.2"
+    "@ts-stack/openapi-spec": "^3.1.2",
+    "css-loader": "^5.2.1",
+    "json-loader": "^0.5.7",
+    "style-loader": "^2.0.0",
+    "swagger-ui": "^3.47.1",
+    "webpack": "^5.33.2",
+    "yaml": "^1.10.2",
+    "yaml-loader": "^0.6.0"
   },
   "devDependencies": {
     "@ts-stack/di": "^1.1.0",
+    "@types/copy-webpack-plugin": "^6.4.1",
+    "copy-webpack-plugin": "^8.1.1",
+    "html-webpack-plugin": "^5.3.1",
     "reflect-metadata": "^0.1.13"
   },
   "peerDependencies": {
