@@ -3,12 +3,10 @@ import { resolve } from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 
-const outputPath = resolve(__dirname, '../../dist-webpack');
-
 const compiler = webpack({
   mode: 'development',
   entry: {
-    app: './index.ts',
+    app: resolve(__dirname, './index.js'),
   },
   module: {
     rules: [
@@ -29,18 +27,18 @@ const compiler = webpack({
         {
           // Copy the Swagger OAuth2 redirect file to the project root;
           // that file handles the OAuth2 redirect after authenticating the end-user.
-          from: '../../../../node_modules/swagger-ui/dist/oauth2-redirect.html',
+          from: 'node_modules/swagger-ui/dist/oauth2-redirect.html',
           to: './',
         },
       ],
     }),
     new HtmlWebpackPlugin({
-      template: 'index.html',
+      template: resolve(__dirname, '../../index.html'),
     }),
   ],
   output: {
     filename: '[name].bundle.js',
-    path: outputPath,
+    path: resolve(__dirname, '../../dist-swagger-ui'),
   },
 });
 

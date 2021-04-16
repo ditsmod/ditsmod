@@ -20,7 +20,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
     }
 
     await this.compileOasObject();
-    writeFileSync('/srv/git/ditsmod/ditsmod/packages/openapi/dist-webpack/openapi.yaml', stringify(this.#oasObject));
+    writeFileSync('/srv/git/ditsmod/ditsmod/packages/openapi/dist/swagger-ui/openapi.yaml', stringify(this.#oasObject));
 
     return this.#oasObject;
   }
