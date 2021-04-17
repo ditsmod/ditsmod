@@ -1,9 +1,9 @@
 import SwaggerUI from 'swagger-ui';
 import 'swagger-ui/dist/swagger-ui.css';
-import { urlConfig } from './swagger.config';
+import { url } from './swagger.config';
 
 const ui = SwaggerUI({
-  url: urlConfig.url,
+  url: url,
   dom_id: '#swagger',
 });
 

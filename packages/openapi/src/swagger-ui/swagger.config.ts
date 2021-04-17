@@ -1,1 +1,1 @@
-export const urlConfig = { url: 'http://localhost:8080/openapi.yaml' };
+export const url = 'http://localhost:8080/openapi.yaml';

@@ -1,10 +1,9 @@
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
+import { readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
 import { Controller, Logger, Request, Response, Route } from '@ditsmod/core';
 import webpack from 'webpack';
 
 import { config } from './swagger-ui/webpack.config';
-import { urlConfig } from './swagger-ui/swagger.config';
 
 @Controller()
 export class OpenapiController {
@@ -12,8 +11,9 @@ export class OpenapiController {
 
   @Route('GET', 'openapi')
   async getIndex() {
-    if (this.req.queryParams?.refresh) {
-      await this.refreshOasDocs();
+    const apply = this.req.queryParams?.apply;
+    if (apply && apply != 'false' && apply != '0') {
+      await this.applyOasConfig();
     }
     const indexHtml = readFileSync(`${this.swaggerUi}/index.html`, 'utf8');
     this.res.setContentType('text/html; charset=utf-8').send(indexHtml);
@@ -37,8 +37,11 @@ export class OpenapiController {
     this.res.setContentType('text/javascript; charset=utf-8').send(appBundle);
   }
 
-  protected refreshOasDocs() {
-    urlConfig.url = 'http://localhost:8080/openapi.yaml';
+  protected applyOasConfig(url?: string) {
+    url = url || 'http://localhost:8080/openapi.yaml';
+    const fileContent = `export const url = '${url}';`;
+    const filePath = join(__dirname, './swagger-ui/swagger.config.ts');
+    writeFileSync(filePath, fileContent, { encoding: 'utf8' });
     const compiler = webpack(config);
     return new Promise<void>((resolve, reject) => {
       compiler.run((err, stats) => {
@@ -69,10 +72,10 @@ export class OpenapiController {
   }
 
   protected get swaggerUi() {
-    return resolve(__dirname, '../dist-swagger-ui');
+    return join(__dirname, '../dist-swagger-ui');
   }
 
   protected get dist() {
-    return resolve(__dirname, '../dist');
+    return join(__dirname, '../dist');
   }
 }
