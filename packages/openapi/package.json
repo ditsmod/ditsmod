@@ -33,7 +33,8 @@
   "devDependencies": {
     "@ts-stack/di": "^1.1.0",
     "@types/copy-webpack-plugin": "^6.4.1",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "typescript": "^4.2.3"
   },
   "peerDependencies": {
     "@ditsmod/core": "^1.0.0-beta.3",
