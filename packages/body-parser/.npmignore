@@ -13,3 +13,4 @@ tslint.json
 yarn.lock
 .js
 jest.config.js
+*.tsbuildinfo

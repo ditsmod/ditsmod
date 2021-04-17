@@ -7,3 +7,4 @@ jest.config.js
 .*
 nodemon.json
 CHANGELOG.md
+*.tsbuildinfo
