@@ -1,9 +1,9 @@
 import SwaggerUI from 'swagger-ui';
 import 'swagger-ui/dist/swagger-ui.css';
-import * as spec from '../../dist/swagger-ui/openapi.yaml';
+import { urlConfig } from './swagger.config';
 
 const ui = SwaggerUI({
-  spec,
+  url: urlConfig.url,
   dom_id: '#swagger',
 });
 

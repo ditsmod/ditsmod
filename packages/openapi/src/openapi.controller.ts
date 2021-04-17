@@ -4,6 +4,7 @@ import { Controller, Logger, Request, Response, Route } from '@ditsmod/core';
 import webpack from 'webpack';
 
 import { config } from './swagger-ui/webpack.config';
+import { urlConfig } from './swagger-ui/swagger.config';
 
 @Controller()
 export class OpenapiController {
@@ -37,6 +38,7 @@ export class OpenapiController {
   }
 
   protected refreshOasDocs() {
+    urlConfig.url = 'http://localhost:8080/openapi.yaml';
     const compiler = webpack(config);
     return new Promise<void>((resolve, reject) => {
       compiler.run((err, stats) => {

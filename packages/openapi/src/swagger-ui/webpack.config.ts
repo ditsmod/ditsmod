@@ -1,13 +1,18 @@
 import { CleanPlugin, Configuration } from 'webpack';
-import { resolve } from 'path';
+import { join, resolve } from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 export const config: Configuration = {
   mode: 'development',
+  context: resolve(__dirname),
   entry: {
-    app: resolve(__dirname, './index.ts'),
+    app: './index.ts',
   },
+  resolve: {
+    extensions: [ '.ts', '.js' ],
+  },
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {
@@ -27,17 +32,17 @@ export const config: Configuration = {
         {
           // Copy the Swagger OAuth2 redirect file to the project root;
           // that file handles the OAuth2 redirect after authenticating the end-user.
-          from: 'node_modules/swagger-ui/dist/oauth2-redirect.html',
+          from: '../../../../node_modules/swagger-ui/dist/oauth2-redirect.html',
           to: './',
         },
       ],
     }),
     new HtmlWebpackPlugin({
-      template: resolve(__dirname, '../../index.html'),
+      template: join(__dirname, '../../index.html'),
     }),
   ],
   output: {
     filename: '[name].bundle.js',
-    path: resolve(__dirname, '../../dist-swagger-ui'),
+    path: join(__dirname, '../../dist-swagger-ui'),
   },
 };
