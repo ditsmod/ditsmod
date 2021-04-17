@@ -7,7 +7,7 @@ export const config: Configuration = {
   mode: 'development',
   context: resolve(__dirname),
   entry: {
-    app: './index.ts',
+    openapi: './index.ts',
   },
   resolve: {
     extensions: ['.ts', '.js'],
