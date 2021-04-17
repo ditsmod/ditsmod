@@ -1,4 +1,4 @@
-import { writeFileSync } from 'fs';
+import { writeFileSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
 import { edk } from '@ditsmod/core';
 import { Injectable, ReflectiveInjector } from '@ts-stack/di';
@@ -21,8 +21,10 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
     }
 
     await this.compileOasObject();
-    writeFileSync(resolve(__dirname, '../../dist/swagger-ui/openapi.json'), JSON.stringify(this.#oasObject));
-    writeFileSync(resolve(__dirname, '../../dist/swagger-ui/openapi.yaml'), stringify(this.#oasObject));
+    const dir = resolve(__dirname, '../../dist/swagger-ui');
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(`${dir}/openapi.json`, JSON.stringify(this.#oasObject));
+    writeFileSync(`${dir}/openapi.yaml`, stringify(this.#oasObject));
 
     return this.#oasObject;
   }
