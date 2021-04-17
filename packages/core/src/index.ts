@@ -3,6 +3,7 @@ export { RootModule } from './decorators/root-module';
 export { Module } from './decorators/module';
 export {
   ModuleWithParams,
+  ModuleType,
   ServiceProvider,
   HttpMethod,
   RedirectStatusCodes,
