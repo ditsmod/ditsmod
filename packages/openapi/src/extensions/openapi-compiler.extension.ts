@@ -38,6 +38,9 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
       if (oasRouteMeta.pathItem) {
         paths[`/${oasRouteMeta.oasPath}`] = oasRouteMeta.pathItem;
       } else {
+        if (!oasRouteMeta.httpMethod) {
+          throw new Error('OpenapiCompilerExtension: OasRouteMeta not found.');
+        }
         this.applyNonOasRoute(paths, oasRouteMeta);
       }
     });
