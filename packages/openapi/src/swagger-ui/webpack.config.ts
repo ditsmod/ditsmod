@@ -10,7 +10,7 @@ export const config: Configuration = {
     app: './index.ts',
   },
   resolve: {
-    extensions: [ '.ts', '.js' ],
+    extensions: ['.ts', '.js'],
   },
   devtool: 'inline-source-map',
   module: {

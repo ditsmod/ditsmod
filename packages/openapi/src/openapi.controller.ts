@@ -39,7 +39,7 @@ export class OpenapiController {
 
   protected applyOasConfig(url?: string) {
     url = url || 'http://localhost:8080/openapi.yaml';
-    const fileContent = `export const url = '${url}';`;
+    const fileContent = `export const url = '${url}';\n`;
     const filePath = join(__dirname, './swagger-ui/swagger.config.ts');
     writeFileSync(filePath, fileContent, { encoding: 'utf8' });
     const compiler = webpack(config);
