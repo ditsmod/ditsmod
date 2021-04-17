@@ -144,7 +144,14 @@ export class ModuleManager {
   protected scanRawModule(modOrObj: ModuleType | ModuleWithParams<any>) {
     const meta = this.normalizeMetadata(modOrObj);
 
-    [...meta.importsModules, ...meta.importsWithParams, ...meta.exportsModules].forEach((impOrExp) => {
+    const importsOrExports = [
+      ...meta.importsModules,
+      ...meta.importsWithParams,
+      ...meta.exportsModules,
+      ...meta.exportsWithParams,
+    ];
+
+    importsOrExports.forEach((impOrExp) => {
       this.scanRawModule(impOrExp);
     });
 
@@ -163,6 +170,7 @@ export class ModuleManager {
     meta.controllers = meta.controllers.slice();
     meta.extensions = meta.extensions.slice();
     meta.exportsModules = meta.exportsModules.slice();
+    meta.exportsWithParams = meta.exportsWithParams.slice();
     meta.exportsProviders = meta.exportsProviders.slice();
     return meta;
   }
@@ -203,6 +211,7 @@ export class ModuleManager {
       oldMeta.importsModules = oldMeta.importsModules.slice();
       oldMeta.importsWithParams = oldMeta.importsWithParams.slice();
       oldMeta.exportsModules = oldMeta.exportsModules.slice();
+      oldMeta.exportsWithParams = oldMeta.exportsWithParams.slice();
       this.oldMap.set(key, oldMeta);
     });
     this.oldMapId = new Map(this.mapId);
@@ -221,6 +230,7 @@ export class ModuleManager {
       ...targetMeta.importsModules,
       ...targetMeta.importsWithParams,
       ...targetMeta.exportsModules,
+      ...targetMeta.exportsWithParams,
     ];
 
     return (
@@ -263,7 +273,9 @@ export class ModuleManager {
 
     modMetadata.exports?.forEach((exp) => {
       exp = resolveForwardRef(exp);
-      if (isProvider(exp)) {
+      if (isModuleWithParams(exp)) {
+        metadata.exportsWithParams.push(exp);
+      } else if (isProvider(exp)) {
         metadata.exportsProviders.push(exp);
       } else {
         metadata.exportsModules.push(exp);

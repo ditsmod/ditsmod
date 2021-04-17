@@ -133,7 +133,12 @@ export class AppInitializer {
    * Recursively collects per app providers from non-root modules.
    */
   protected collectProvidersPerApp(metadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
-    const modules = [...metadata.importsModules, ...metadata.importsWithParams, ...metadata.exportsModules];
+    const modules = [
+      ...metadata.importsModules,
+      ...metadata.importsWithParams,
+      ...metadata.exportsModules,
+      ...metadata.exportsWithParams,
+    ];
     const providersPerApp: ServiceProvider[] = [];
     modules.forEach((mod) => {
       const meta = moduleManager.getMetadata(mod, true);
@@ -173,7 +178,10 @@ export class AppInitializer {
     const globalProviders = new ProvidersMetadata();
     globalProviders.providersPerApp = this.meta.providersPerApp;
     const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    const { providersPerMod, providersPerRou, providersPerReq } = moduleFactory.exportGlobalProviders(moduleManager, globalProviders);
+    const { providersPerMod, providersPerRou, providersPerReq } = moduleFactory.exportGlobalProviders(
+      moduleManager,
+      globalProviders
+    );
     globalProviders.providersPerMod = providersPerMod;
     globalProviders.providersPerRou = [...providersPerRou];
     globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];

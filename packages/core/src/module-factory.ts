@@ -155,6 +155,7 @@ export class ModuleFactory {
       !meta.controllers.length &&
       !meta.exportsProviders.length &&
       !meta.exportsModules.length &&
+      !meta.exportsWithParams.length &&
       !meta.extensions.length
     ) {
       const msg =
@@ -278,9 +279,16 @@ export class ModuleFactory {
    * @param metadata Module metadata from where exports providers.
    */
   protected importProviders(metadata: NormalizedModuleMetadata, isStarter?: boolean) {
-    const { exportsModules, exportsProviders, providersPerMod, providersPerRou, providersPerReq } = metadata;
+    const {
+      exportsModules,
+      exportsWithParams,
+      exportsProviders,
+      providersPerMod,
+      providersPerRou,
+      providersPerReq,
+    } = metadata;
 
-    for (const mod of exportsModules) {
+    for (const mod of [...exportsModules, ...exportsWithParams]) {
       const meta = this.#moduleManager.getMetadata(mod, true);
       // Reexported module
       this.importProviders(meta);

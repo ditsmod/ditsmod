@@ -10,15 +10,15 @@ export interface ModuleMetadata extends Partial<ProvidersMetadata> {
    */
   id?: string;
   /**
-   * List of modules or `ModuleWithOptions` imported by this module.
+   * List of modules or `ModuleWithParams` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
    */
   imports?: Array<ModuleType | ModuleWithParams>;
   /**
-   * List of modules, `ModuleWithOptions` or providers exported by this
+   * List of modules, `ModuleWithParams` or providers exported by this
    * module.
    */
-  exports?: Array<ModuleType | ServiceProvider>;
+  exports?: Array<ModuleType | ModuleWithParams | ServiceProvider>;
   /**
    * The application controllers.
    */

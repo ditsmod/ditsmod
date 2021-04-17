@@ -24,5 +24,6 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj> extends Provide
   extensions?: InjectionToken<Extension<any>[]>[] = [];
   ngMetadataName: string;
   exportsModules?: ModuleType[] = [];
+  exportsWithParams?: ModuleWithParams[] = [];
   exportsProviders?: ServiceProvider[] = [];
 }
