@@ -3,7 +3,7 @@ import { join, resolve } from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 
-export const config: Configuration = {
+export const webpackConfig: Configuration = {
   mode: 'development',
   context: resolve(__dirname),
   entry: {

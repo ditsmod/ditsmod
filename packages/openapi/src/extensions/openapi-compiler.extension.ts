@@ -1,10 +1,12 @@
-import { writeFileSync, mkdirSync } from 'fs';
-import { resolve } from 'path';
-import { edk } from '@ditsmod/core';
+import { writeFileSync, mkdirSync, readFileSync } from 'fs';
+import { resolve, join } from 'path';
+import { edk, Logger, RootMetadata } from '@ditsmod/core';
 import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 import { XOasObject, XOperationObject, XParameterObject, XPathsObject } from '@ts-stack/openapi-spec';
 import { stringify } from 'yaml';
+import webpack from 'webpack';
 
+import { webpackConfig } from '../swagger-ui/webpack.config';
 import { OAS_OBJECT } from '../di-tokens';
 import { OasRouteMeta } from '../types/oas-route-meta';
 import { DEFAULT_OAS_OBJECT } from '../constants';
@@ -13,7 +15,12 @@ import { DEFAULT_OAS_OBJECT } from '../constants';
 export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
   #oasObject: XOasObject;
 
-  constructor(private extensionManager: edk.ExtensionsManager, private injectorPerApp: ReflectiveInjector) {}
+  constructor(
+    private extensionManager: edk.ExtensionsManager,
+    private injectorPerApp: ReflectiveInjector,
+    private log: Logger,
+    private rootMeta: RootMetadata
+  ) {}
 
   async init() {
     if (this.#oasObject) {
@@ -25,8 +32,60 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
     mkdirSync(dir, { recursive: true });
     writeFileSync(`${dir}/openapi.json`, JSON.stringify(this.#oasObject));
     writeFileSync(`${dir}/openapi.yaml`, stringify(this.#oasObject));
+    await this.applyServeUrl();
 
     return this.#oasObject;
+  }
+
+  protected applyServeUrl(url?: string) {
+    const { port } = this.rootMeta.listenOptions;
+    url = url || `http://localhost:${port}/openapi.yaml`;
+    const futureFileContent = `export const url = '${url}';`;
+    const filePath = join(__dirname, '../swagger-ui/swagger.config.ts');
+    const currentFileContent = readFileSync(filePath, 'utf8');
+    if (currentFileContent == futureFileContent) {
+      this.log.debug(`Skipping override ${filePath}`);
+      return;
+    }
+    const logMsg = `override ${filePath} from "${currentFileContent}" to "${futureFileContent}"`;
+    this.log.debug(`Start ${logMsg}`);
+    writeFileSync(filePath, futureFileContent, 'utf8');
+    const compiler = webpack(webpackConfig);
+    const promise = new Promise<void>((resolve, reject) => {
+      compiler.run((err, stats) => {
+        if (err) {
+          reject(err);
+        }
+
+        const info = stats.toJson();
+
+        if (stats.hasErrors()) {
+          reject(info.errors[0]);
+        }
+
+        if (stats.hasWarnings()) {
+          this.log.warn(info.warnings);
+        }
+
+        this.log.trace(
+          stats.toString({
+            chunks: false, // Makes the build much quieter
+            colors: false, // Shows colors in the console
+          })
+        );
+        // Log result...
+        resolve();
+
+        this.log.debug(`Finish ${logMsg}`);
+      });
+    }).catch(err => {
+      // Rollback because webpack faild
+      this.log.error(`Rollback during ${logMsg}`);
+      writeFileSync(filePath, currentFileContent, 'utf8');
+      throw err;
+    });
+
+    return promise;
   }
 
   protected async compileOasObject() {

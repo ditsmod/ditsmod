@@ -1,14 +1,12 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import { join } from 'path';
-import { Controller, Logger, Request, Response, Status } from '@ditsmod/core';
-import webpack from 'webpack';
+import { Controller, Response, Status } from '@ditsmod/core';
 
-import { config } from './swagger-ui/webpack.config';
 import { OasRoute } from './decorators/oas-route';
 
 @Controller()
 export class OpenapiController {
-  constructor(private req: Request, private res: Response, private log: Logger) {}
+  constructor(private res: Response) {}
 
   @OasRoute('openapi', [], {
     get: {
@@ -23,10 +21,6 @@ export class OpenapiController {
     },
   })
   async getIndex() {
-    const apply = this.req.queryParams?.apply;
-    if (apply && apply != 'false' && apply != '0') {
-      await this.applyOasConfig();
-    }
     const indexHtml = readFileSync(`${this.swaggerUi}/index.html`, 'utf8');
     this.res.setContentType('text/html; charset=utf-8').send(indexHtml);
   }
@@ -80,40 +74,6 @@ export class OpenapiController {
   getJavaScript() {
     const appBundle = readFileSync(`${this.swaggerUi}/openapi.bundle.js`, 'utf8');
     this.res.setContentType('text/javascript; charset=utf-8').send(appBundle);
-  }
-
-  protected applyOasConfig(url?: string) {
-    url = url || 'http://localhost:8080/openapi.yaml';
-    const fileContent = `export const url = '${url}';\n`;
-    const filePath = join(__dirname, './swagger-ui/swagger.config.ts');
-    writeFileSync(filePath, fileContent, { encoding: 'utf8' });
-    const compiler = webpack(config);
-    return new Promise<void>((resolve, reject) => {
-      compiler.run((err, stats) => {
-        if (err) {
-          reject(err);
-        }
-
-        const info = stats.toJson();
-
-        if (stats.hasErrors()) {
-          reject(info.errors[0]);
-        }
-
-        if (stats.hasWarnings()) {
-          this.log.warn(info.warnings);
-        }
-
-        this.log.debug(
-          stats.toString({
-            chunks: false, // Makes the build much quieter
-            colors: false, // Shows colors in the console
-          })
-        );
-        // Log result...
-        resolve();
-      });
-    });
   }
 
   protected get swaggerUi() {
