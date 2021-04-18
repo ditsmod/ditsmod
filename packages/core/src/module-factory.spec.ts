@@ -465,12 +465,12 @@ describe('ModuleFactory', () => {
 
         const mod0 = mock.appMetadataMap.get(Module0);
         expect(mod0.moduleMetadata.providersPerMod).toEqual([Provider0]);
-        expect(mod0.moduleMetadata.providersPerReq).toEqual([]);
+        expect(mod0.moduleMetadata.providersPerReq).toEqual(defaultProvidersPerReq);
         expect((mod0 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
         const mod1 = mock.appMetadataMap.get(Module1);
         expect(mod1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3]);
-        expect(mod1.moduleMetadata.providersPerReq).toEqual([]);
+        expect(mod1.moduleMetadata.providersPerReq).toEqual(defaultProvidersPerReq);
         expect((mod1 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
         const mod2 = mock.appMetadataMap.get(Module2);
@@ -483,7 +483,7 @@ describe('ModuleFactory', () => {
           Provider5,
           Provider6,
         ]);
-        expect(mod2.moduleMetadata.providersPerReq).toEqual([Provider7, Provider8]);
+        expect(mod2.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider7, Provider8]);
         expect((mod2 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
         const mod3 = mock.appMetadataMap.get(Module3);

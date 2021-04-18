@@ -100,7 +100,7 @@ export class ModuleFactory {
     this.quickCheckMetadata(meta);
     this.meta = meta;
     this.importModules();
-    this.mergeProviders(meta);
+    this.mergeProviders();
     const controllersMetadata = this.getControllersMetadata();
 
     return this.appMetadataMap.set(modOrObj, {
@@ -111,41 +111,25 @@ export class ModuleFactory {
     });
   }
 
-  protected mergeProviders(moduleMetadata: NormalizedModuleMetadata) {
-    const duplicatesProvidersPerMod = getDuplicates([
+  protected mergeProviders() {
+    this.meta.providersPerMod = getUniqProviders([
       ...this.globalProviders.providersPerMod,
-      ...this.meta.providersPerMod,
-    ]);
-    const globalProvidersPerMod = isRootModule(moduleMetadata) ? [] : this.globalProviders.providersPerMod;
-    this.meta.providersPerMod = [
-      ...globalProvidersPerMod.filter((p) => !duplicatesProvidersPerMod.includes(p)),
       ...this.allExportedProvidersPerMod,
       ...this.meta.providersPerMod,
-    ];
-
-    const duplicatesProvidersPerRou = getDuplicates([
-      ...this.globalProviders.providersPerRou,
-      ...this.meta.providersPerRou,
     ]);
-    const globalProvidersPerRou = isRootModule(moduleMetadata) ? [] : this.globalProviders.providersPerRou;
-    this.meta.providersPerRou = [
-      ...globalProvidersPerRou.filter((p) => !duplicatesProvidersPerRou.includes(p)),
+
+    this.meta.providersPerRou = getUniqProviders([
+      ...this.globalProviders.providersPerRou,
       ...this.allExportedProvidersPerRou,
       ...this.meta.providersPerRou,
-    ];
-
-    const duplicatesProvidersPerReq = getDuplicates([
-      ...this.globalProviders.providersPerReq,
-      ...this.meta.providersPerReq,
     ]);
-    const globalProvidersPerReq = isRootModule(moduleMetadata)
-      ? defaultProvidersPerReq
-      : this.globalProviders.providersPerReq;
-    this.meta.providersPerReq = [
-      ...globalProvidersPerReq.filter((p) => !duplicatesProvidersPerReq.includes(p)),
+
+    this.meta.providersPerReq = getUniqProviders([
+      ...defaultProvidersPerReq,
+      ...this.globalProviders.providersPerReq,
       ...this.allExportedProvidersPerReq,
       ...this.meta.providersPerReq,
-    ];
+    ]);
   }
 
   protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
