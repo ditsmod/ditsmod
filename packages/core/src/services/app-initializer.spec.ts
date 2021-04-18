@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { ClassProvider, InjectionToken } from '@ts-stack/di';
 import { DefaultRouter } from '@ditsmod/router';
 
 import { AppInitializer } from './app-initializer';
@@ -17,6 +18,7 @@ import { ModuleManager } from './module-manager';
 import { defaultProvidersPerReq } from './default-providers-per-req';
 import { MetadataPerMod } from '../types/metadata-per-mod';
 import { Controller } from '../decorators/controller';
+import { Extension } from '../types/extension';
 
 describe('AppInitializer', () => {
   (defaultProvidersPerApp as ServiceProvider[]).push({ provide: Router, useClass: DefaultRouter });
@@ -29,8 +31,8 @@ describe('AppInitializer', () => {
       return super.mergeMetadata(appModule);
     }
 
-    collectProvidersPerApp(metadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
-      return super.collectProvidersPerApp(metadata, moduleManager);
+    collectProvidersPerAppAndExtensions(metadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
+      return super.collectProvidersPerAppAndExtensions(metadata, moduleManager);
     }
 
     prepareProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
@@ -131,7 +133,7 @@ describe('AppInitializer', () => {
     });
   });
 
-  describe('collectProvidersPerApp()', () => {
+  describe('collectProvidersPerAppAndExtensions()', () => {
     class Provider0 {}
     class Provider1 {}
     class Provider2 {}
@@ -140,14 +142,20 @@ describe('AppInitializer', () => {
     class Provider5 {}
     class Provider6 {}
     class Provider7 {}
+    class Extension1 implements Extension<any> {
+      async init() {}
+    }
+    const MY_EXTENSIONS = new InjectionToken<Extension<void>[]>('MY_EXTENSIONS');
 
     @Module({
       providersPerApp: [Provider0],
     })
     class Module0 {}
 
+    const extensionProvider: ClassProvider = { provide: MY_EXTENSIONS, useClass: Extension1, multi: true };
     @Module({
-      providersPerApp: [Provider1],
+      providersPerApp: [Provider1, extensionProvider],
+      extensions: [MY_EXTENSIONS],
     })
     class Module1 {}
 
@@ -172,21 +180,15 @@ describe('AppInitializer', () => {
 
     it('should collects providers from exports array without imports them', () => {
       const meta = moduleManager.scanModule(AppModule);
-      const providers = mock.collectProvidersPerApp(meta, moduleManager);
-      expect(providers.includes(Provider0)).toBe(true);
+      const { providersPerApp, extensions } = mock.collectProvidersPerAppAndExtensions(meta, moduleManager);
+      expect(providersPerApp.includes(Provider0)).toBe(true);
+      expect(extensions.includes(MY_EXTENSIONS)).toBe(true);
     });
 
     it('should collects providers in particular order', () => {
       const meta = moduleManager.scanModule(AppModule);
-      expect(mock.collectProvidersPerApp(meta, moduleManager)).toEqual([
-        Provider1,
-        Provider2,
-        Provider3,
-        Provider4,
-        Provider5,
-        Provider6,
-        Provider0,
-      ]);
+      const { providersPerApp } = mock.collectProvidersPerAppAndExtensions(meta, moduleManager);
+      expect(providersPerApp).toEqual([Provider1, extensionProvider, Provider2, Provider3, Provider4, Provider5, Provider6, Provider0]);
     });
 
     it('should works with moduleWithParams', () => {
@@ -200,9 +202,10 @@ describe('AppInitializer', () => {
       }
       const modWithParams = Module6.withParams([Provider7]);
       const meta = moduleManager.scanModule(modWithParams);
-      const providers = mock.collectProvidersPerApp(meta, moduleManager);
-      expect(providers).toEqual([
+      const { providersPerApp } = mock.collectProvidersPerAppAndExtensions(meta, moduleManager);
+      expect(providersPerApp).toEqual([
         Provider1,
+        extensionProvider,
         Provider2,
         Provider3,
         Provider4,
@@ -218,8 +221,8 @@ describe('AppInitializer', () => {
       class Module7 {}
 
       const meta = moduleManager.scanModule(Module7);
-      const providers = mock.collectProvidersPerApp(meta, moduleManager);
-      expect(providers).toEqual([]);
+      const { providersPerApp } = mock.collectProvidersPerAppAndExtensions(meta, moduleManager);
+      expect(providersPerApp).toEqual([]);
     });
   });
 

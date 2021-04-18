@@ -110,7 +110,10 @@ export class AppInitializer {
   protected prepareProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
     // Here we work only with providers declared at the application level.
 
-    const exportedProviders = this.collectProvidersPerApp(meta, moduleManager);
+    const { providersPerApp: exportedProviders, extensions } = this.collectProvidersPerAppAndExtensions(
+      meta,
+      moduleManager
+    );
     const rootTokens = normalizeProviders(this.meta.providersPerApp).map((np) => np.provide);
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.provide);
@@ -127,12 +130,13 @@ export class AppInitializer {
       throwProvidersCollisionError(moduleName, exportedTokensDuplicates);
     }
     this.meta.providersPerApp.unshift(...exportedProviders);
+    this.meta.extensions.unshift(...extensions);
   }
 
   /**
-   * Recursively collects per app providers from non-root modules.
+   * Recursively collects per app providers and extensions from non-root modules.
    */
-  protected collectProvidersPerApp(metadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
+  protected collectProvidersPerAppAndExtensions(metadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
     const modules = [
       ...metadata.importsModules,
       ...metadata.importsWithParams,
@@ -140,13 +144,20 @@ export class AppInitializer {
       ...metadata.exportsWithParams,
     ];
     const providersPerApp: ServiceProvider[] = [];
-    modules.forEach((mod) => {
+    const extensions: InjectionToken<Extension<any>[]>[] = [];
+    // Removes duplicate (because of reexports modules)
+    new Set(modules).forEach((mod) => {
       const meta = moduleManager.getMetadata(mod, true);
-      providersPerApp.push(...this.collectProvidersPerApp(meta, moduleManager));
+      const obj = this.collectProvidersPerAppAndExtensions(meta, moduleManager);
+      providersPerApp.push(...obj.providersPerApp);
+      extensions.push(...obj.extensions);
     });
     const currProvidersPerApp = isRootModule(metadata) ? [] : metadata.providersPerApp;
 
-    return [...providersPerApp, ...getUniqProviders(currProvidersPerApp)];
+    return {
+      providersPerApp: [...providersPerApp, ...getUniqProviders(currProvidersPerApp)],
+      extensions: [...extensions, ...metadata.extensions],
+    };
   }
 
   protected addDefaultProvidersPerApp() {
