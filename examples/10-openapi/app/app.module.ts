@@ -11,6 +11,7 @@ const openapiModuleWithParams = OpenapiModule.withParams(providersPerApp);
 
 @RootModule({
   imports: [openapiModuleWithParams],
+  exports: [openapiModuleWithParams],
   controllers: [HelloWorldController],
   providersPerApp: [{ provide: Router, useClass: DefaultRouter }]
 })

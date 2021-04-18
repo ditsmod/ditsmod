@@ -8,13 +8,16 @@ cd ditsmod
 npm i
 ```
 
-## Hello world
+## OpenAPI documentation
 
 Check from first terminal:
 
 ```bash
 npm run start10
 ```
+
+Open your browser with `curl -isS localhost:8080/openapi` and there
+should be OpenAPI documentation.
 
 From second terminal:
 

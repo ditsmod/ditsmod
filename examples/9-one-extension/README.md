@@ -8,7 +8,7 @@ cd ditsmod
 npm i
 ```
 
-## Hello world
+## One extension
 
 Check from first terminal:
 
