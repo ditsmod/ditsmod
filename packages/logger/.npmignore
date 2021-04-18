@@ -1,0 +1,15 @@
+/tmp
+/node_modules
+*.log
+/examples
+/test
+/*.tgz
+/tools
+/test
+/dist-*
+/spec
+/src
+/.*
+/tsconfig.json
+/tslint.json
+/yarn.lock

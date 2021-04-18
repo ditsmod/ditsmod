@@ -5,9 +5,9 @@
     "rootDir": "src",
     "baseUrl": "./",
     "paths": {
-      "@ditsmod/router": ["../router/src"]
+      "@ditsmod/core": ["../core/src"]
     }
   },
   "include": ["src"],
-  "references": [{ "path": "../router" }]
+  "references": [{ "path": "../core" }]
 }

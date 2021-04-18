@@ -3,6 +3,6 @@ module.exports = {
   testEnvironment: 'node',
   modulePathIgnorePatterns: ['<rootDir>/dist/'],
   moduleNameMapper: {
-    '@ditsmod/router': '<rootDir>/../router/src'
+    '@ditsmod/core': '<rootDir>/../core/src'
   }
 };
