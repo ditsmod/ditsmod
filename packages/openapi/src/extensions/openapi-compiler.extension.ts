@@ -41,7 +41,11 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
     const { port } = this.rootMeta.listenOptions;
     url = url || `http://localhost:${port}/openapi.yaml`;
     const futureFileContent = `export const url = '${url}';`;
-    const filePath = join(__dirname, '../swagger-ui/swagger.config.ts');
+    let ext = 'js';
+    if(__dirname.split('/').slice(-2)[0] == 'src') {
+      ext = 'ts';
+    }
+    const filePath = join(__dirname, `../swagger-ui/swagger.config.${ext}`);
     const currentFileContent = readFileSync(filePath, 'utf8');
     if (currentFileContent == futureFileContent) {
       this.log.debug(`Skipping override ${filePath}`);

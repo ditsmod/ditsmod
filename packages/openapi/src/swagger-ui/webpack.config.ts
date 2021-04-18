@@ -7,7 +7,7 @@ export const webpackConfig: Configuration = {
   mode: 'development',
   context: resolve(__dirname),
   entry: {
-    openapi: './index.ts',
+    openapi: require.resolve('./index'),
   },
   resolve: {
     extensions: ['.ts', '.js'],
@@ -26,13 +26,13 @@ export const webpackConfig: Configuration = {
     ],
   },
   plugins: [
-    new CleanPlugin({ keep: 'openapi.yaml' }),
+    new CleanPlugin(),
     new CopyWebpackPlugin({
       patterns: [
         {
           // Copy the Swagger OAuth2 redirect file to the project root;
           // that file handles the OAuth2 redirect after authenticating the end-user.
-          from: '../../../../node_modules/swagger-ui/dist/oauth2-redirect.html',
+          from: require.resolve('swagger-ui/dist/oauth2-redirect.html'),
           to: './',
         },
       ],
