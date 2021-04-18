@@ -1,5 +1,12 @@
+<a name="core-beta.12"></a>
+# [core-beta.12](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.12) (2021-04-18)
+
+### Features
+
+- Allow `ModuleWithParams` for exports [447359](https://github.com/ditsmod/ditsmod/commit/447359).
+
 <a name="beta.11"></a>
-# [beta.11](https://github.com/ts-stack/ditsmod/releases/tag/beta.11) (2021-04-16)
+## [beta.11](https://github.com/ts-stack/ditsmod/releases/tag/beta.11) (2021-04-16)
 
 ### Features
 
