@@ -10,7 +10,7 @@ npm i
 
 ## OpenAPI documentation
 
-Check from first terminal:
+Run from first terminal:
 
 ```bash
 npm run start10
@@ -19,10 +19,12 @@ npm run start10
 Open your browser with http://localhost:8080/openapi and there
 should be OpenAPI documentation.
 
-From second terminal:
+Check from second terminal:
 
 ```bash
 curl -isS localhost:8080
+curl -isS localhost:8080/one/123
+curl -isS localhost:8080/one/123/two/456
 curl -isS localhost:8080/posts/123
 curl -isS localhost:8080/posts/123/comments/456
 ```

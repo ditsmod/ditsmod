@@ -15,7 +15,7 @@ const providersPerApp: ServiceProvider[] = [{ provide: OAS_OBJECT, useValue: oas
 const openapiModuleWithParams = OpenapiModule.withParams(providersPerApp);
 
 @RootModule({
-  // Here works the application and serve OpenAPI documentation.
+  // Here works the application and serves OpenAPI documentation.
   listenOptions: { host: 'localhost', port: 8080 },
   imports: [openapiModuleWithParams],
   exports: [openapiModuleWithParams],
