@@ -16,7 +16,7 @@ Check from first terminal:
 npm run start10
 ```
 
-Open your browser with `http://localhost:8080/openapi` and there
+Open your browser with http://localhost:8080/openapi and there
 should be OpenAPI documentation.
 
 From second terminal:
