@@ -11,7 +11,6 @@ import { ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../typ
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { Module } from '../decorators/module';
 import { RootModule } from '../decorators/root-module';
-import { NODE_REQ } from '../types/server-options';
 import { RootMetadata } from '../models/root-metadata';
 import { DefaultLogger } from './default-logger';
 import { ModuleManager } from './module-manager';
@@ -19,6 +18,7 @@ import { defaultProvidersPerReq } from './default-providers-per-req';
 import { MetadataPerMod } from '../types/metadata-per-mod';
 import { Controller } from '../decorators/controller';
 import { ModConfig } from '../models/mod-config';
+import { NODE_REQ } from '../constans';
 
 describe('AppInitializer', () => {
   (defaultProvidersPerApp as ServiceProvider[]).push({ provide: Router, useClass: DefaultRouter });

@@ -22,12 +22,12 @@ export { BodyParser } from './services/body-parser';
 export { DefaultLogger } from './services/default-logger';
 export { Router } from './types/router';
 export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './utils/http-status-codes';
-export { NODE_REQ, NODE_RES, NodeResponse, NodeRequest, RequestListener } from './types/server-options';
+export { NodeResponse, NodeRequest, RequestListener } from './types/server-options';
 export { PathParam, RouterReturns, RouteHandler } from './types/router';
 export { RootMetadata } from './models/root-metadata';
 export { NormalizedProvider } from './utils/ng-utils';
 export { HttpInterceptor, HttpHandler } from './types/http-interceptor';
-export { HTTP_INTERCEPTORS, PATH_PARAMS, QUERY_STRING } from './constans';
+export { NODE_REQ, NODE_RES, HTTP_INTERCEPTORS, PATH_PARAMS, QUERY_STRING } from './constans';
 /**
  * Extension Development Kit.
  */

@@ -15,7 +15,6 @@ import {
   ServiceProvider,
   Extension
 } from './types/mix';
-import { NODE_REQ, NODE_RES } from './types/server-options';
 import { getDuplicates } from './utils/get-duplicates';
 import { getTokensCollisions } from './utils/get-tokens-collisions';
 import { getUniqProviders } from './utils/get-uniq-providers';
@@ -30,7 +29,7 @@ import {
 } from './utils/type-guards';
 import { deepFreeze } from './utils/deep-freeze';
 import { Logger } from './types/logger';
-import { defaultProvidersPerMod } from './constans';
+import { defaultProvidersPerMod, NODE_REQ, NODE_RES } from './constans';
 import { ModConfig } from './models/mod-config';
 
 /**

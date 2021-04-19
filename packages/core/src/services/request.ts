@@ -1,8 +1,9 @@
 import { Injectable, Inject, Injector } from '@ts-stack/di';
 import { format } from 'util';
+import { NODE_REQ, NODE_RES } from '../constans';
 import { PathParam } from '../types/router';
 
-import { NODE_REQ, NodeRequest, NodeResponse, NODE_RES } from '../types/server-options';
+import { NodeRequest, NodeResponse } from '../types/server-options';
 
 @Injectable()
 export class Request {

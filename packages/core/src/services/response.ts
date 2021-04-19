@@ -5,7 +5,8 @@ import { Injectable, Inject } from '@ts-stack/di';
 import { Request } from './request';
 import { Status } from '../utils/http-status-codes';
 import { RedirectStatusCodes } from '../types/mix';
-import { NODE_REQ, NodeRequest, NodeResponse, NODE_RES } from '../types/server-options';
+import { NodeRequest, NodeResponse } from '../types/server-options';
+import { NODE_REQ, NODE_RES } from '../constans';
 
 @Injectable()
 export class Response<T = any> {
