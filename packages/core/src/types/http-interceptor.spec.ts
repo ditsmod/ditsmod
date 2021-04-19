@@ -1,13 +1,14 @@
 import 'reflect-metadata';
 import { ReflectiveInjector } from '@ts-stack/di';
 
-import { HttpBackend, HttpHandler, HttpInterceptor, HTTP_INTERCEPTORS, HttpFrontend } from './http-interceptor';
+import { HttpBackend, HttpHandler, HttpInterceptor, HttpFrontend } from './http-interceptor';
 import { defaultProvidersPerReq } from '../services/default-providers-per-req';
 import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { NODE_REQ, NODE_RES } from './server-options';
 import { ServiceProvider } from './mix';
 import { RouteMeta } from './route-data';
 import { PATH_PARAMS, QUERY_STRING } from './router';
+import { HTTP_INTERCEPTORS } from '../constans';
 
 describe('HttpInterceptor', () => {
   const jestFn = jest.fn((interceptorName: string) => interceptorName);

@@ -8,7 +8,8 @@
 
 import { Injectable, Injector } from '@ts-stack/di';
 
-import { HttpFrontend, HttpBackend, HttpHandler, HTTP_INTERCEPTORS, HttpInterceptor } from '../types/http-interceptor';
+import { HTTP_INTERCEPTORS } from '../constans';
+import { HttpFrontend, HttpBackend, HttpHandler, HttpInterceptor } from '../types/http-interceptor';
 
 /**
  * An injectable `HttpHandler` that applies multiple interceptors

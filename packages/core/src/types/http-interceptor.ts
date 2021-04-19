@@ -6,10 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { InjectionToken } from '@ts-stack/di';
-
-export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INTERCEPTORS');
-
 export interface HttpInterceptor {
   intercept(next?: HttpHandler): Promise<any>;
 }

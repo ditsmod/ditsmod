@@ -26,7 +26,8 @@ export { NODE_REQ, NODE_RES, NodeResponse, NodeRequest, RequestListener } from '
 export { PathParam, RouterReturns, RouteHandler } from './types/router';
 export { RootMetadata } from './models/root-metadata';
 export { NormalizedProvider } from './utils/ng-utils';
-export { HttpInterceptor, HttpHandler, HTTP_INTERCEPTORS } from './types/http-interceptor';
+export { HttpInterceptor, HttpHandler } from './types/http-interceptor';
+export { HTTP_INTERCEPTORS } from './constans';
 /**
  * Extension Development Kit.
  */
