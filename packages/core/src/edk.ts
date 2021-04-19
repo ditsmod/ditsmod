@@ -6,6 +6,7 @@ export { ModuleManager } from './services/module-manager';
 export { RoutesExtension } from './extensions/routes.extension';
 export { ModuleFactory } from './module-factory';
 export { ProvidersMetadata } from './models/providers-metadata';
+export { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 export { ControllerMetadata } from './decorators/controller';
 export * from './utils/type-guards';
 export { deepFreeze } from './utils/deep-freeze';
