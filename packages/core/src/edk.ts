@@ -21,4 +21,5 @@ export { RouteMeta } from './types/route-data';
 export { AppInitializer } from './services/app-initializer';
 export { ExtensionsManager } from './services/extensions-manager';
 export { RouteMetadata } from './decorators/route';
-export { AppMetadataMap, APP_METADATA_MAP } from './types/app-metadata-map';
+export { AppMetadataMap } from './types/mix';
+export { APP_METADATA_MAP } from './constans';

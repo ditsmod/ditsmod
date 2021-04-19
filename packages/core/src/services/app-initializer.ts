@@ -4,9 +4,8 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ProvidersMetadata } from '../models/providers-metadata';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleFactory } from '../module-factory';
-import { AppMetadataMap, APP_METADATA_MAP } from '../types/app-metadata-map';
 import { Logger } from '../types/logger';
-import { ModuleType, ServiceProvider } from '../types/mix';
+import { AppMetadataMap, ModuleType, ServiceProvider } from '../types/mix';
 import { RequestListener } from '../types/server-options';
 import { getDuplicates } from '../utils/get-duplicates';
 import { getModule } from '../utils/get-module';
@@ -26,6 +25,7 @@ import { ModuleManager } from './module-manager';
 import { PreRouter } from '../extensions/pre-router';
 import { Counter } from './counter';
 import { Extension } from '../types/extension';
+import { APP_METADATA_MAP } from '../constans';
 
 @Injectable()
 export class AppInitializer {

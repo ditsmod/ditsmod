@@ -1,11 +1,11 @@
 import { Inject, Injectable, ReflectiveInjector, TypeProvider } from '@ts-stack/di';
+import { APP_METADATA_MAP } from '../constans';
 
 import { BodyParserConfig } from '../models/body-parser-config';
 import { RootMetadata } from '../models/root-metadata';
 import { Extension } from '../types/extension';
 import { MetadataPerMod } from '../types/metadata-per-mod';
-import { AppMetadataMap, APP_METADATA_MAP } from '../types/app-metadata-map';
-import { GuardItem, HttpMethod, NormalizedGuard, ServiceProvider } from '../types/mix';
+import { AppMetadataMap, GuardItem, HttpMethod, NormalizedGuard, ServiceProvider } from '../types/mix';
 import { RawRouteMeta, RouteMeta } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
 
