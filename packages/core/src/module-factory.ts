@@ -30,7 +30,7 @@ import {
 } from './utils/type-guards';
 import { deepFreeze } from './utils/deep-freeze';
 import { Logger } from './types/logger';
-import { defaultProvidersPerMod } from './services/default-providers-per-mod';
+import { defaultProvidersPerMod } from './constans';
 import { ModConfig } from './models/mod-config';
 
 /**
