@@ -24,7 +24,7 @@
   "devDependencies": {
     "@ditsmod/body-parser": "^1.0.0-beta.1",
     "@ditsmod/router": "^1.0.0-beta.1",
-    "@ts-stack/di": "^1.0.0",
+    "@ts-stack/di": "^1.1.0",
     "@types/bunyan": "^1.8.6",
     "@types/eslint": "^7.2.7",
     "@types/jest": "^26.0.20",
@@ -47,7 +47,7 @@
     "winston": "^3.3.3"
   },
   "peerDependencies": {
-    "@ts-stack/di": "^1.0.0"
+    "@ts-stack/di": "^1.1.0"
   },
   "gitHead": "ee408df6b7617d0fb8bc6eff301e50f3602bb385"
 }
