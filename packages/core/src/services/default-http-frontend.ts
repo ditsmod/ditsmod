@@ -21,15 +21,6 @@ export class DefaultHttpFrontend implements HttpFrontend {
   ) {}
 
   async intercept(next: HttpHandler) {
-    let errorHandler: ControllerErrorHandler;
-
-    try {
-      errorHandler = this.req.injector.get(ControllerErrorHandler);
-    } catch (err) {
-      this.sendInternalServerError(this.req.nodeRes, err);
-      return;
-    }
-
     try {
       if (this.queryString) {
         this.req.queryParams = parse(this.queryString);
@@ -41,12 +32,21 @@ export class DefaultHttpFrontend implements HttpFrontend {
         this.req.pathParams = pathParams;
       }
     } catch (err) {
-      errorHandler.handleError(err);
+      this.lazyLoadErrorHandler(err);
     }
 
     await next.handle().catch((err) => {
-      errorHandler.handleError(err);
+      this.lazyLoadErrorHandler(err);
     });
+  }
+
+  protected lazyLoadErrorHandler(err: any) {
+    try {
+      const errorHandler = this.req.injector.get(ControllerErrorHandler);
+      errorHandler.handleError(err);
+    } catch (err) {
+      this.sendInternalServerError(this.req.nodeRes, err);
+    }
   }
 
   protected decodeUrl(url: string) {
