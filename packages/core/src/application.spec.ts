@@ -9,10 +9,8 @@ import { Application } from './application';
 import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { RootMetadata } from './models/root-metadata';
-import { ModuleType } from './types/mix';
-import { Extension } from './types/extension';
+import { ModuleType, Extension } from './types/mix';
 import { Router } from './types/router';
-import { Module } from './decorators/module';
 
 describe('Application', () => {
   class MockApplication extends Application {

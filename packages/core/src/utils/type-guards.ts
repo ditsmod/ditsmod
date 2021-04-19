@@ -14,8 +14,7 @@ import {
 
 import { ControllerMetadata } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
-import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
-import { Extension } from '../types/extension';
+import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../types/mix';
 import { ModuleMetadata } from '../types/module-metadata';
 import { RootModuleMetadata } from '../types/root-module-metadata';
 import { Http2SecureServerOptions, ServerOptions } from '../types/server-options';

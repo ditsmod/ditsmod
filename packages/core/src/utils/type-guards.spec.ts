@@ -17,8 +17,7 @@ import { ModuleMetadata } from '../types/module-metadata';
 import { RootModule } from '../decorators/root-module';
 import { Controller } from '../decorators/controller';
 import { Route, RouteDecoratorMetadata } from '../decorators/route';
-import { CanActivate, ServiceProvider } from '../types/mix';
-import { Extension } from '../types/extension';
+import { CanActivate, ServiceProvider, Extension } from '../types/mix';
 
 describe('type guards', () => {
   describe('isModule()', () => {

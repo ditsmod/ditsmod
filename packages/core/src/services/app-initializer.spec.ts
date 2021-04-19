@@ -7,7 +7,7 @@ import { Logger, LoggerConfig } from '../types/logger';
 import { Router } from '../types/router';
 import { Request } from './request';
 import { defaultProvidersPerApp } from './default-providers-per-app';
-import { ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
+import { ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../types/mix';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { Module } from '../decorators/module';
 import { RootModule } from '../decorators/root-module';
@@ -18,7 +18,6 @@ import { ModuleManager } from './module-manager';
 import { defaultProvidersPerReq } from './default-providers-per-req';
 import { MetadataPerMod } from '../types/metadata-per-mod';
 import { Controller } from '../decorators/controller';
-import { Extension } from '../types/extension';
 import { ModConfig } from '../models/mod-config';
 
 describe('AppInitializer', () => {

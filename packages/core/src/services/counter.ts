@@ -1,6 +1,6 @@
 import { Injectable } from '@ts-stack/di';
 
-import { Extension } from '../types/extension';
+import { Extension } from '../types/mix';
 
 /**
  * Used to collect various statistics.

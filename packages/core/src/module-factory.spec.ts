@@ -11,12 +11,11 @@ import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { MetadataPerMod } from './types/metadata-per-mod';
-import { ModuleType, ServiceProvider, NormalizedGuard, DecoratorMetadata } from './types/mix';
+import { ModuleType, ServiceProvider, NormalizedGuard, DecoratorMetadata, Extension } from './types/mix';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ModuleManager } from './services/module-manager';
 import { ProvidersMetadata } from './models/providers-metadata';
 import { DefaultLogger } from './services/default-logger';
-import { Extension } from './types/extension';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModConfig } from './models/mod-config';
 

@@ -1,6 +1,6 @@
 import { Injectable, InjectionToken, Injector } from '@ts-stack/di';
 
-import { Extension } from '../types/extension';
+import { Extension } from '../types/mix';
 import { Logger } from '../types/logger';
 import { Counter } from './counter';
 

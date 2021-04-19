@@ -1,8 +1,7 @@
 import { InjectionToken } from '@ts-stack/di';
 
 import { ProvidersMetadata } from '../models/providers-metadata';
-import { ControllerType, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
-import { Extension } from './extension';
+import { ControllerType, ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../types/mix';
 
 export interface ModuleMetadata extends Partial<ProvidersMetadata> {
   /**

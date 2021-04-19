@@ -13,6 +13,7 @@ import {
   ModuleWithParams,
   NormalizedGuard,
   ServiceProvider,
+  Extension
 } from './types/mix';
 import { NODE_REQ, NODE_RES } from './types/server-options';
 import { getDuplicates } from './utils/get-duplicates';
@@ -29,7 +30,6 @@ import {
 } from './utils/type-guards';
 import { deepFreeze } from './utils/deep-freeze';
 import { Logger } from './types/logger';
-import { Extension } from './types/extension';
 import { defaultProvidersPerMod } from './services/default-providers-per-mod';
 import { ModConfig } from './models/mod-config';
 
