@@ -17,6 +17,7 @@ export { Route } from './decorators/route';
 export { Logger, LoggerConfig, LoggerMethod } from './types/logger';
 export { ControllerErrorHandler } from './services/controller-error-handler';
 export { BodyParserConfig } from './models/body-parser-config';
+export { ModConfig } from './models/mod-config';
 export { BodyParser } from './services/body-parser';
 export { DefaultLogger } from './services/default-logger';
 export { Router, PATH_PARAMS, QUERY_STRING } from './types/router';

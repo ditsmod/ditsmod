@@ -30,6 +30,8 @@ import {
 import { deepFreeze } from './utils/deep-freeze';
 import { Logger } from './types/logger';
 import { Extension } from './types/extension';
+import { defaultProvidersPerMod } from './services/default-providers-per-mod';
+import { ModConfig } from './models/mod-config';
 
 /**
  * - imports and exports global providers;
@@ -113,6 +115,8 @@ export class ModuleFactory {
 
   protected mergeProviders() {
     this.meta.providersPerMod = getUniqProviders([
+      ...defaultProvidersPerMod,
+      { provide: ModConfig, useValue: { prefixPerMod: this.prefixPerMod } },
       ...this.globalProviders.providersPerMod,
       ...this.allExportedProvidersPerMod,
       ...this.meta.providersPerMod,
@@ -370,7 +374,8 @@ export class ModuleFactory {
       duplExpTokensPerMod = duplExpTokensPerMod.filter((d) => !declaredTokensPerMod.includes(d));
     }
     duplExpTokensPerMod = getTokensCollisions(duplExpTokensPerMod, this.allExportedProvidersPerMod);
-    const tokensPerMod = [...declaredTokensPerMod, ...exportedTokensPerMod];
+    const defaultTokensPerMod = normalizeProviders([...defaultProvidersPerMod]).map((np) => np.provide);
+    const tokensPerMod = [...defaultTokensPerMod, ...declaredTokensPerMod, ...exportedTokensPerMod];
 
     const declaredTokensPerRou = normalizeProviders(this.meta.providersPerRou).map((np) => np.provide);
     const exportedNormalizedPerRou = normalizeProviders(this.allExportedProvidersPerRou);
@@ -418,8 +423,8 @@ export class ModuleFactory {
       return exportedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
     });
 
-    const defaultTokens = normalizeProviders([...defaultProvidersPerReq]).map((np) => np.provide);
-    const mergedTokens = [...defaultTokens, ...tokensPerRou, NODE_REQ, NODE_RES];
+    const defaultTokensPerReq = normalizeProviders([...defaultProvidersPerReq]).map((np) => np.provide);
+    const mergedTokens = [...defaultTokensPerReq, ...tokensPerRou, NODE_REQ, NODE_RES];
     const mixPerRou = mergedTokens.filter((p) => {
       return exportedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
     });

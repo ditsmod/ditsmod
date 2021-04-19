@@ -18,6 +18,7 @@ import { ProvidersMetadata } from './models/providers-metadata';
 import { DefaultLogger } from './services/default-logger';
 import { Extension } from './types/extension';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
+import { ModConfig } from './models/mod-config';
 
 describe('ModuleFactory', () => {
   (defaultProvidersPerApp as ServiceProvider[]).push({ provide: Router, useClass: DefaultRouter });
@@ -464,17 +465,27 @@ describe('ModuleFactory', () => {
         mock.bootstrap(new ProvidersMetadata(), '', Module3, moduleManager);
 
         const mod0 = mock.appMetadataMap.get(Module0);
-        expect(mod0.moduleMetadata.providersPerMod).toEqual([Provider0]);
+        const providerPerMod0: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
+        expect(mod0.moduleMetadata.providersPerMod).toEqual([providerPerMod0, Provider0]);
         expect(mod0.moduleMetadata.providersPerReq).toEqual(defaultProvidersPerReq);
         expect((mod0 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
         const mod1 = mock.appMetadataMap.get(Module1);
-        expect(mod1.moduleMetadata.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3]);
+        const providerPerMod1: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
+        expect(mod1.moduleMetadata.providersPerMod).toEqual([
+          providerPerMod1,
+          Provider0,
+          Provider1,
+          Provider2,
+          Provider3,
+        ]);
         expect(mod1.moduleMetadata.providersPerReq).toEqual(defaultProvidersPerReq);
         expect((mod1 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
         const mod2 = mock.appMetadataMap.get(Module2);
+        const providerPerMod2: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
         expect(mod2.moduleMetadata.providersPerMod).toEqual([
+          providerPerMod2,
           Provider0,
           Provider1,
           Provider2,
@@ -487,7 +498,15 @@ describe('ModuleFactory', () => {
         expect((mod2 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
         const mod3 = mock.appMetadataMap.get(Module3);
-        expect(mod3.moduleMetadata.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3, Provider5]);
+        const providerPerMod3: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
+        expect(mod3.moduleMetadata.providersPerMod).toEqual([
+          providerPerMod3,
+          Provider0,
+          Provider1,
+          Provider2,
+          Provider3,
+          Provider5,
+        ]);
         // expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overriddenProvider8]);
         expect(mod3.moduleMetadata.controllers).toEqual([Ctrl]);
         expect((mod3 as any).moduleMetadata.ngMetadataName).toBe('Module');
@@ -507,7 +526,15 @@ describe('ModuleFactory', () => {
 
         expect(mock.prefixPerMod).toBe('other');
         // expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
-        expect(mock.meta.providersPerMod).toEqual([Provider0, Provider1, Provider2, Provider3, Provider5]);
+        const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: 'other' } };
+        expect(mock.meta.providersPerMod).toEqual([
+          providerPerMod,
+          Provider0,
+          Provider1,
+          Provider2,
+          Provider3,
+          Provider5,
+        ]);
         expect(mock.meta.providersPerReq).toEqual([...defaultProvidersPerReq, Provider8]);
         expect((mock.meta as any).ngMetadataName).toBe('RootModule');
       });
