@@ -17,7 +17,6 @@ import { normalizeProviders } from '../utils/ng-utils';
 import { pickProperties } from '../utils/pick-properties';
 import { throwProvidersCollisionError } from '../utils/throw-providers-collision-error';
 import { isRootModule } from '../utils/type-guards';
-import { defaultExtensions } from './default-extensions';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { defaultProvidersPerReq } from './default-providers-per-req';
 import { ExtensionsManager } from './extensions-manager';
@@ -25,7 +24,7 @@ import { ModuleManager } from './module-manager';
 import { PreRouter } from '../extensions/pre-router';
 import { Counter } from './counter';
 import { Extension } from '../types/extension';
-import { APP_METADATA_MAP } from '../constans';
+import { APP_METADATA_MAP, defaultExtensions } from '../constans';
 
 @Injectable()
 export class AppInitializer {
