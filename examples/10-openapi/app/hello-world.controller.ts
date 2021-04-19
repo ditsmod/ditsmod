@@ -34,15 +34,15 @@ export class HelloWorldController {
       ],
       responses: {
         [Status.OK]: {
-          description: 'List of posts',
-          content: { ['application/json']: { schema: { $ref: '' } } },
+          description: 'Single post',
+          content: { ['application/json']: {} },
         },
       },
     },
   })
-  getPosts() {
-    const pathParams = this.req.pathParamsArr.map((p) => `{${p.key}: ${p.value}}`).join(', ');
-    this.res.send(`Request have pathParams: "${pathParams}", and Response returns single post\n`);
+  getPost() {
+    const { postId } = this.req.pathParams;
+    this.res.sendJson({ postId, body: `some body for postId ${postId}` });
   }
 
   @OasRoute('posts/{postId}/comments/{commentId}', [], {
@@ -53,16 +53,16 @@ export class HelloWorldController {
       ],
       responses: {
         [Status.OK]: {
-          description: 'Post to read',
+          description: 'Single comment',
           content: {
-            'application/json': { schema: { $ref: '' } },
+            'application/json': {},
           },
         },
       },
     },
   })
-  getPost() {
-    const pathParams = this.req.pathParamsArr.map((p) => `{${p.key}: ${p.value}}`).join(', ');
-    this.res.send(`Request have pathParams: "${pathParams}", and Response returns single comment\n`);
+  getComment() {
+    const { postId, commentId } = this.req.pathParams;
+    this.res.sendJson({ postId, body: `some body for postId ${postId} and commentId ${commentId}` });
   }
 }

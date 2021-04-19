@@ -1,1 +1,1 @@
-packages/core/CHANGELOG.md
+See [CHANGELOG for core](./packages/core/CHANGELOG.md)
