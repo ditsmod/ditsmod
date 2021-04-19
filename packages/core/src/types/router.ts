@@ -1,4 +1,3 @@
-import { InjectionToken } from '@ts-stack/di';
 import { HttpMethod } from './mix';
 import { NodeRequest, NodeResponse } from './server-options';
 
@@ -22,9 +21,6 @@ export type RouteHandler = (
   params: PathParam[],
   queryString: any
 ) => Promise<void>;
-
-export const PATH_PARAMS = new InjectionToken<PathParam[]>('PATH_PARAMS');
-export const QUERY_STRING = new InjectionToken('QUERY_STRING');
 
 export class RouterReturns {
   handle: RouteHandler;

@@ -7,8 +7,7 @@ import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { NODE_REQ, NODE_RES } from './server-options';
 import { ServiceProvider } from './mix';
 import { RouteMeta } from './route-data';
-import { PATH_PARAMS, QUERY_STRING } from './router';
-import { HTTP_INTERCEPTORS } from '../constans';
+import { HTTP_INTERCEPTORS, PATH_PARAMS, QUERY_STRING } from '../constans';
 
 describe('HttpInterceptor', () => {
   const jestFn = jest.fn((interceptorName: string) => interceptorName);

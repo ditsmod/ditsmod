@@ -8,7 +8,8 @@ import { NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { Request } from './request';
 import { AnyObj } from '../types/mix';
-import { PathParam, PATH_PARAMS, QUERY_STRING } from '../types/router';
+import { PathParam } from '../types/router';
+import { PATH_PARAMS, QUERY_STRING } from '../constans';
 
 @Injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
