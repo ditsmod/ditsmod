@@ -5,7 +5,8 @@ If you haven't prepared the examples repository yet, you can do so:
 ```bash
 git clone git@github.com:ditsmod/ditsmod.git
 cd ditsmod
-npm i
+yarn
+yarn boot
 ```
 
 ## One extension
@@ -13,7 +14,7 @@ npm i
 Check from first terminal:
 
 ```bash
-npm run start9
+yarn start9
 ```
 
 From second terminal:

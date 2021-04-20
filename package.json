@@ -12,6 +12,7 @@
   },
   "scripts": {
     "test": "jest",
+    "boot": "lerna bootstrap",
     "pub": "lerna publish from-package",
     "build": "yarn clean && tsc -b -f packages",
     "clean": "rimraf packages/**/dist packages/**/out-tsc* packages/**/*.tsbuildinfo",

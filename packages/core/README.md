@@ -15,7 +15,7 @@ If you haven't prepared the examples repository yet, you can do so:
 ```bash
 git clone git@github.com:ditsmod/ditsmod.git
 cd ditsmod
-npm i
+yarn
 ```
 
 ## Hello world
@@ -23,7 +23,7 @@ npm i
 Check from first terminal:
 
 ```bash
-npm run start1
+yarn start1
 ```
 
 From second terminal:

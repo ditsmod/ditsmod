@@ -5,7 +5,7 @@ This is a fork of [koa-tree-router](https://github.com/steambap/koa-tree-router/
 ## Install
 
 ```bash
-npm i @ts-stack/di @ditsmod/router
+yarn add @ts-stack/di @ditsmod/router
 # OR
 yarn add @ts-stack/di @ditsmod/router
 ```
@@ -29,9 +29,10 @@ const { handle, params } = router.find('GET', '/');
 ```bash
 git clone git@github.com:ts-stack/ditsmod-plugins.git
 cd ditsmod-plugins/src/router
-npm i
-npm run build
-npm run bench
+yarn
+yarn boot
+yarn build
+yarn bench
 ```
 
 Results on 22.02.2020:

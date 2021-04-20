@@ -5,7 +5,8 @@ If you haven't prepared the examples repository yet, you can do so:
 ```bash
 git clone git@github.com:ditsmod/ditsmod.git
 cd ditsmod
-npm i
+yarn
+yarn boot
 ```
 
 ## OpenAPI documentation
@@ -13,7 +14,7 @@ npm i
 Run from first terminal:
 
 ```bash
-npm run start10
+yarn start10
 ```
 
 Open your browser with http://localhost:8080/openapi and there

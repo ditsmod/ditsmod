@@ -61,13 +61,13 @@ Angular v4.4.7. (з мінімальними допрацюваннями) та 
 ```bash
 git clone git@github.com:ditsmod/seed.git my-app
 cd my-app
-npm i
+yarn
 ```
 
 ## Запуск
 
 ```bash
-npm start
+yarn start
 ```
 
 Такий запуск можна використовувати для розробки застосунку, оскільки після кожного збереження
@@ -82,7 +82,7 @@ curl -isS localhost:8080
 Компіляція застосунку відбувається за допомогою команди:
 
 ```bash
-npm run build
+yarn build
 ```
 
 Окрім цього, можете проглянути більше прикладів у теці [examples][4].

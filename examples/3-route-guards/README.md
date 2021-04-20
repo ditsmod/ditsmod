@@ -5,7 +5,8 @@ If you haven't prepared the examples repository yet, you can do so:
 ```bash
 git clone git@github.com:ditsmod/ditsmod.git
 cd ditsmod
-npm i
+yarn
+yarn boot
 ```
 
 ## Route guards
@@ -19,7 +20,7 @@ this is because `AuthModule` is exported from `RootModule`;
 Check from first terminal:
 
 ```bash
-npm run start3
+yarn start3
 ```
 
 From second terminal:

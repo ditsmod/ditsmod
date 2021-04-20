@@ -5,7 +5,8 @@ If you haven't prepared the examples repository yet, you can do so:
 ```bash
 git clone git@github.com:ditsmod/ditsmod.git
 cd ditsmod
-npm i
+yarn
+yarn boot
 ```
 
 ## Dynamically composing modules
@@ -13,7 +14,7 @@ npm i
 Run from first terminal:
 
 ```bash
-npm run start7
+yarn start7
 ```
 
 Check from second terminal:
