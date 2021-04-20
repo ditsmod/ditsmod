@@ -3,13 +3,13 @@ import { format } from 'util';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { AnyObj, ModuleType, ModuleWithParams } from '../types/mix';
-import { Logger } from '../types/logger';
 import { ModulesMap } from '../types/modules-map';
 import { checkModuleMetadata } from '../utils/check-module-metadata';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { pickProperties } from '../utils/pick-properties';
 import { isModuleWithParams, isProvider } from '../utils/type-guards';
+import { Log } from './log';
 
 type ModuleId = string | ModuleType | ModuleWithParams;
 
@@ -20,7 +20,7 @@ export class ModuleManager {
   protected oldMap: ModulesMap = new Map();
   protected oldMapId = new Map<string, ModuleType | ModuleWithParams>();
 
-  constructor(protected log: Logger) {}
+  constructor(protected log: Log) {}
 
   scanRootModule(appModule: ModuleType) {
     if (!getModuleMetadata(appModule, true)) {
@@ -60,8 +60,7 @@ export class ModuleManager {
     const prop = isModuleWithParams(inputModule) ? 'importsWithParams' : 'importsModules';
     if (targetMeta[prop].some((imp: ModuleType | ModuleWithParams) => imp === inputModule)) {
       const modIdStr = format(targetModuleId);
-      const msg = `The module with ID "${format(inputModule)}" has already been imported into "${modIdStr}"`;
-      this.log.warn(msg);
+      this.log.moduleAlreadyImported('warn', [inputModule, modIdStr]);
       return false;
     }
 
@@ -69,7 +68,7 @@ export class ModuleManager {
     try {
       targetMeta[prop].push(inputModule as any);
       const inputMeta = this.scanRawModule(inputModule);
-      this.log.debug(`Successful added ${inputMeta.name} to ${targetMeta.name}`);
+      this.log.successfulAddedModuleToImport('debug', [inputMeta.name, targetMeta.name]);
       return true;
     } catch (err) {
       this.rollback(err);
@@ -83,7 +82,7 @@ export class ModuleManager {
     const inputMeta = this.getRawMetadata(inputModuleId);
     if (!inputMeta) {
       const modIdStr = format(inputModuleId);
-      this.log.warn(`Module with ID "${modIdStr}" not found`);
+      this.log.moduleNotFound('warn', [modIdStr]);
       return false;
     }
 
@@ -97,7 +96,7 @@ export class ModuleManager {
     const index = targetMeta[prop].findIndex((imp: ModuleType | ModuleWithParams) => imp === inputMeta.module);
     if (index == -1) {
       const modIdStr = format(inputModuleId);
-      this.log.warn(`Module with ID "${modIdStr}" not found`);
+      this.log.moduleNotFound('warn', [modIdStr]);
       return false;
     }
 
@@ -110,15 +109,11 @@ export class ModuleManager {
         }
         this.map.delete(inputMeta.module);
       }
-      this.log.debug(`Successful removed ${inputMeta.name} from ${targetMeta.name}`);
+      this.log.moduleSuccessfulRemoved('debug', [inputMeta.name, targetMeta.name]);
       return true;
     } catch (err) {
       this.rollback(err);
     }
-  }
-
-  setLogger(log: Logger) {
-    this.log = log;
   }
 
   commit() {
@@ -157,7 +152,7 @@ export class ModuleManager {
 
     if (meta.id) {
       this.mapId.set(meta.id, modOrObj);
-      this.log.debug(`${meta.name} has ID: "${meta.id}".`);
+      this.log.moduleHasId('debug', [meta.name, meta.id]);
     }
     this.map.set(modOrObj, meta);
     return meta;

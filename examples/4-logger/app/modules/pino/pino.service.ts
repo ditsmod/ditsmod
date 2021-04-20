@@ -11,7 +11,7 @@ const logger = pino();
 export class PinoService implements Logger {
   private logger: pino.Logger;
 
-  constructor(config: LoggerConfig) {
+  constructor(private config: LoggerConfig) {
     this.logger = logger;
     this.logger.level = config.level;
     this.logger.log = getLogMethod.bind(this);
@@ -23,4 +23,8 @@ export class PinoService implements Logger {
   info = getNamedLogggerMethod.call(this, 'info');
   debug = getNamedLogggerMethod.call(this, 'debug');
   trace = getNamedLogggerMethod.call(this, 'trace');
+  log(level: keyof Logger, args: any[]): void {
+    const fn = getNamedLogggerMethod.call(this, level, this.config);
+    fn(args);
+  }
 }

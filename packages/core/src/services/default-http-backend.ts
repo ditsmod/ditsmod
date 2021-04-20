@@ -5,16 +5,16 @@ import { Request } from './request';
 import { CanActivate } from '../types/mix';
 import { BodyParser } from './body-parser';
 import { NodeRequest, NodeResponse } from '../types/server-options';
-import { Logger } from '../types/logger';
 import { Status } from '../utils/http-status-codes';
 import { RootMetadata } from '../models/root-metadata';
 import { RouteMeta } from '../types/route-data';
+import { Log } from './log';
 
 @Injectable()
 export class DefaultHttpBackend implements HttpBackend {
   constructor(
     private req: Request,
-    private log: Logger,
+    private log: Log,
     private rootMetadata: RootMetadata,
     private routeMeta: RouteMeta
   ) {}
@@ -50,7 +50,7 @@ export class DefaultHttpBackend implements HttpBackend {
   }
 
   protected canNotActivateRoute(nodeReq: NodeRequest, nodeRes: NodeResponse, status?: Status) {
-    this.log.debug(`Can not activate the route with URL: ${nodeReq.method} ${nodeReq.url}`);
+    this.log.youCannotActivateRoute('debug', [nodeReq.method, nodeReq.url]);
     nodeRes.statusCode = status || Status.UNAUTHORIZED;
     nodeRes.end();
   }

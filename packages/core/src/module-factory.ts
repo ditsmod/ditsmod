@@ -28,9 +28,9 @@ import {
   isRootModule,
 } from './utils/type-guards';
 import { deepFreeze } from './utils/deep-freeze';
-import { Logger } from './types/logger';
 import { defaultProvidersPerMod, NODE_REQ, NODE_RES } from './constans';
 import { ModConfig } from './models/mod-config';
+import { Log } from './services/log';
 
 /**
  * - imports and exports global providers;
@@ -57,7 +57,7 @@ export class ModuleFactory {
   protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod>();
   #moduleManager: ModuleManager;
 
-  constructor(private injectorPerApp: ReflectiveInjector, private log: Logger) {}
+  constructor(private injectorPerApp: ReflectiveInjector, private log: Log) {}
 
   /**
    * Calls only by `@RootModule` before calls `ModuleFactory#boostrap()`.
@@ -198,9 +198,7 @@ export class ModuleFactory {
 
     getUniqProviders(extensionsProviders).forEach((p) => {
       if (!extensions.includes(p.provide)) {
-        let msg = `In ${moduleName} you have token "${p.provide}" `;
-        msg += `with extension-like "${p.useClass.name}" that not registered in "extensions" array`;
-        this.log.warn(msg);
+        this.log.youForgotRegisterExtension('warn', [moduleName, p.provide, p.useClass.name]);
       }
     });
   }

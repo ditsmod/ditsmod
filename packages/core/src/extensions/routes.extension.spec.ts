@@ -1,9 +1,7 @@
 import 'reflect-metadata';
 import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
-import { Logger, LoggerConfig } from '../types/logger';
-import { RoutesExtension } from './routes.extension';
-import { MetadataPerMod } from '../types/metadata-per-mod';
+import { LoggerConfig } from '../types/logger';
 import { Controller, ControllerMetadata } from '../decorators/controller';
 import { Route } from '../decorators/route';
 import { RootModule } from '../decorators/root-module';
@@ -13,19 +11,13 @@ import { RootMetadata } from '../models/root-metadata';
 import { ModuleManager } from '../services/module-manager';
 import { DefaultLogger } from '../services/default-logger';
 import { AppInitializer } from '../services/app-initializer';
+import { Log } from '../services/log';
 
 xdescribe('RoutesExtension', () => {
-  class MockRoutesExtension extends RoutesExtension {
-    getRawRoutesMeta(moduleName: string, prefixPerApp: string, prefixPerMod: string, metadataPerMod: MetadataPerMod) {
-      return super.getRawRoutesMeta(moduleName, prefixPerApp, prefixPerMod, metadataPerMod);
-    }
-  }
-
   @Injectable()
   class MockAppInitializer extends AppInitializer {
     moduleManager: ModuleManager;
     injectorPerApp: ReflectiveInjector;
-    log = new Logger();
     meta = new RootMetadata();
 
     bootstrapModuleFactory(moduleManager: ModuleManager) {
@@ -34,13 +26,12 @@ xdescribe('RoutesExtension', () => {
   }
 
   let mockAppInitializer: MockAppInitializer;
-  let mockPreRoutes: MockRoutesExtension;
-  let log: Logger;
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
     const config = new LoggerConfig();
-    log = new DefaultLogger(config);
+    const logger = new DefaultLogger(config);
+    const log = new Log(logger);
     moduleManager = new ModuleManager(log);
     const injectorPerApp = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,

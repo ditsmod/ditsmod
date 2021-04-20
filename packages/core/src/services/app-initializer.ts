@@ -4,7 +4,6 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ProvidersMetadata } from '../models/providers-metadata';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleFactory } from '../module-factory';
-import { Logger } from '../types/logger';
 import { AppMetadataMap, ModuleType, ServiceProvider, Extension } from '../types/mix';
 import { RequestListener } from '../types/server-options';
 import { getDuplicates } from '../utils/get-duplicates';
@@ -24,57 +23,62 @@ import { ModuleManager } from './module-manager';
 import { PreRouter } from '../extensions/pre-router';
 import { Counter } from './counter';
 import { APP_METADATA_MAP, defaultExtensions } from '../constans';
+import { Log } from './log';
 
 @Injectable()
 export class AppInitializer {
-  protected log: Logger;
   protected injectorPerApp: ReflectiveInjector;
   protected preRouter: PreRouter;
   protected meta: RootMetadata;
   protected appMetadataMap: AppMetadataMap;
 
-  constructor(protected moduleManager: ModuleManager) {}
-
-  async reinit(autocommit: boolean = true): Promise<void | Error> {
-    const log = this.log;
-    log.debug('Start reinit the application.');
-
-    try {
-      await this.init();
-      if (autocommit) {
-        this.moduleManager.commit();
-      } else {
-        this.log.warn('Skipping autocommit of changes for config of moduleManager.');
-      }
-      this.log.debug('Finished reinit the application.');
-    } catch (err) {
-      log.error(err);
-      log.debug('Start rollback of changes for config of moduleManager during reinit the application.');
-      this.moduleManager.rollback();
-      await this.init();
-      this.log.debug('Successful rollback of changes for config of moduleManager during reinit the application.');
-      return err;
-    }
-  }
+  constructor(protected moduleManager: ModuleManager, protected log: Log) {}
 
   bootstrapProvidersPerApp() {
     const meta = this.moduleManager.getMetadata('root', true);
     this.mergeMetadata(meta.module as ModuleType);
     this.prepareProvidersPerApp(meta, this.moduleManager);
     this.addDefaultProvidersPerApp();
-    this.createInjectorPerApp();
-    this.moduleManager.setLogger(this.log);
+    this.createInjectorAndSetLog();
+  }
+
+  getMetadataAndLog() {
+    return { meta: this.meta, log: this.log };
   }
 
   async bootstrapModulesAndExtensions() {
+    const meta = this.moduleManager.getMetadata('root', true);
+    this.mergeMetadata(meta.module as ModuleType);
+    this.prepareProvidersPerApp(meta, this.moduleManager);
+    this.addDefaultProvidersPerApp();
+    this.createInjectorAndSetLog();
     this.appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
     this.checkModulesResolvable(this.appMetadataMap);
     await this.handleExtensions(this.appMetadataMap);
     this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
+    return this.meta;
   }
 
-  getMetadataAndLogger() {
-    return { meta: this.meta, log: this.log };
+  async reinit(autocommit: boolean = true): Promise<void | Error> {
+    const oldLogger = this.log.logger;
+    this.log.startReinitApp('debug');
+    try {
+      await this.init();
+      if (autocommit) {
+        this.moduleManager.commit();
+      } else {
+        this.log.skippingAutocommitModulesConfig('warn');
+      }
+      this.log.finishReinitApp('debug');
+    } catch (err) {
+      this.log.setLogger(oldLogger);
+      this.log.printReinitError('error', [err]);
+      this.log.startRollbackModuleConfigChanges('debug');
+      this.moduleManager.rollback();
+      await this.init();
+      this.log.successfulRollbackModuleConfigChanges('debug');
+      return err;
+    }
   }
 
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
@@ -161,6 +165,7 @@ export class AppInitializer {
   protected addDefaultProvidersPerApp() {
     this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
+      { provide: Log, useValue: this.log },
       { provide: RootMetadata, useValue: this.meta },
       { provide: ModuleManager, useValue: this.moduleManager },
       { provide: AppInitializer, useValue: this }
@@ -168,16 +173,16 @@ export class AppInitializer {
   }
 
   /**
-   * Create injector per the application.
+   * Create injector per the application and sets log.
    */
-  protected createInjectorPerApp() {
+  protected createInjectorAndSetLog() {
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.meta.providersPerApp);
-    this.log = this.injectorPerApp.get(Logger) as Logger;
+    this.log = this.injectorPerApp.get(Log) as Log;
   }
 
   protected bootstrapModuleFactory(moduleManager: ModuleManager) {
     const globalProviders = this.getGlobalProviders(moduleManager);
-    this.log.trace({ globalProviders });
+    this.log.printGlobalProviders('trace', [globalProviders]);
     const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
     const appModule = moduleManager.getMetadata('root').module;
     return moduleFactory.bootstrap(globalProviders, '', appModule, moduleManager);
@@ -199,7 +204,7 @@ export class AppInitializer {
 
   protected checkModulesResolvable(appMetadataMap: AppMetadataMap) {
     appMetadataMap.forEach((metadata, modOrObj) => {
-      this.log.trace(modOrObj, metadata);
+      this.log.printModuleMetadata('trace', [modOrObj, metadata]);
       const { providersPerMod } = metadata.moduleMetadata;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       const mod = getModule(modOrObj);
@@ -221,10 +226,10 @@ export class AppInitializer {
         } else {
           initedExtensionsGroups.add(groupToken);
         }
-        this.log.debug(`${moduleName}: start init group with ${groupToken}`);
+        this.log.startExtensionsGroupInit('debug', [moduleName, groupToken]);
         const extensionsManager = this.injectorPerApp.get(ExtensionsManager) as ExtensionsManager;
         await extensionsManager.init(groupToken);
-        this.log.debug(`${moduleName}: finish init group with ${groupToken}`);
+        this.log.finishExtensionsGroupInit('debug', [moduleName, groupToken]);
       }
     }
 
@@ -237,12 +242,12 @@ export class AppInitializer {
     const names = Array.from(extensions)
       .map((e) => e.constructor.name)
       .join(', ');
-    this.log.debug(`Total inited ${extensions.size} extensions: ${names}`);
+    this.log.totalInitedExtensions('debug', [extensions.size, names]);
     counter.resetInitedExtensionsSet();
   }
 
   protected applyAppMetadataMap(appMetadataMap: AppMetadataMap) {
     this.meta.providersPerApp.unshift({ provide: APP_METADATA_MAP, useValue: appMetadataMap });
-    this.createInjectorPerApp();
+    this.createInjectorAndSetLog();
   }
 }

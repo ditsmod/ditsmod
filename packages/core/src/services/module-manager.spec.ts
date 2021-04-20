@@ -9,6 +9,7 @@ import { Module } from '../decorators/module';
 import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj } from '../types/mix';
 import { LoggerConfig } from '../types/logger';
 import { DefaultLogger } from './default-logger';
+import { Log } from './log';
 
 describe('ModuleManager', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;
@@ -29,7 +30,8 @@ describe('ModuleManager', () => {
   beforeEach(() => {
     const config = new LoggerConfig();
     config.level = 'error';
-    const log = new DefaultLogger(config);
+    const logger = new DefaultLogger(config);
+    const log = new Log(logger);
     mock = new MockModuleManager(log);
   });
 

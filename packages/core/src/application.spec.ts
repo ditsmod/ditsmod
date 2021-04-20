@@ -7,7 +7,6 @@ import { DefaultRouter } from '@ditsmod/router';
 
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
-import { Logger, LoggerConfig } from './types/logger';
 import { RootMetadata } from './models/root-metadata';
 import { ModuleType, Extension } from './types/mix';
 import { Router } from './types/router';
@@ -15,7 +14,6 @@ import { Router } from './types/router';
 describe('Application', () => {
   class MockApplication extends Application {
     meta = new RootMetadata();
-    log: Logger;
 
     async init(appModule: ModuleType) {
       return super.init(appModule);
@@ -94,68 +92,10 @@ describe('Application', () => {
       }
     }
 
-    @Injectable()
-    class Extension2 implements Extension<any> {
-      #inited: boolean;
-
-      async init() {
-        if (this.#inited) {
-          return;
-        }
-        jestFn('Extension2');
-        this.#inited = true;
-      }
-    }
-
-    @Injectable()
-    class Extension3 implements Extension<any> {
-      #inited: boolean;
-
-      async init() {
-        if (this.#inited) {
-          return;
-        }
-        jestFn('Extension3');
-        this.#inited = true;
-      }
-    }
-
-    @Injectable()
-    class Extension4 implements Extension<any> {
-      #inited: boolean;
-
-      async init() {
-        if (this.#inited) {
-          return;
-        }
-        jestFn('Extension4');
-        this.#inited = true;
-      }
-    }
-
-    @Injectable()
-    class Extension5 implements Extension<any> {
-      #inited: boolean;
-
-      async init() {
-        if (this.#inited) {
-          return;
-        }
-        jestFn('Extension5');
-        this.#inited = true;
-      }
-    }
-
     it('declared extensions in root module and only in providersPerApp', async () => {
-      const loggerConfig = new LoggerConfig();
-      const level: keyof Logger = 'info';
-      loggerConfig.level = level;
-      loggerConfig.depth = 3;
-
       @RootModule({
         providersPerApp: [
           { provide: Router, useClass: DefaultRouter },
-          { provide: LoggerConfig, useValue: loggerConfig },
           { provide: MY_EXTENSIONS, useClass: Extension1, multi: true },
         ],
         extensions: [MY_EXTENSIONS],
@@ -168,15 +108,9 @@ describe('Application', () => {
     });
 
     it('should throw an error about include MY_EXTENSIONS to providersPerApp', async () => {
-      const loggerConfig = new LoggerConfig();
-      const level: keyof Logger = 'info';
-      loggerConfig.level = level;
-      loggerConfig.depth = 3;
-
       @RootModule({
         providersPerApp: [
-          { provide: Router, useClass: DefaultRouter },
-          { provide: LoggerConfig, useValue: loggerConfig }
+          { provide: Router, useClass: DefaultRouter }
         ],
         extensions: [MY_EXTENSIONS],
       })
@@ -187,15 +121,9 @@ describe('Application', () => {
     });
 
     it('should throw an error about include MY_EXTENSIONS to providersPerReq', async () => {
-      const loggerConfig = new LoggerConfig();
-      const level: keyof Logger = 'info';
-      loggerConfig.level = level;
-      loggerConfig.depth = 3;
-
       @RootModule({
         providersPerApp: [
           { provide: Router, useClass: DefaultRouter },
-          { provide: LoggerConfig, useValue: loggerConfig },
           { provide: MY_EXTENSIONS, useClass: Extension1, multi: true }
         ],
         providersPerReq: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
@@ -208,15 +136,9 @@ describe('Application', () => {
     });
 
     it('should throw an error about include MY_EXTENSIONS to providersPerReq', async () => {
-      const loggerConfig = new LoggerConfig();
-      const level: keyof Logger = 'info';
-      loggerConfig.level = level;
-      loggerConfig.depth = 3;
-
       @RootModule({
         providersPerApp: [
           { provide: Router, useClass: DefaultRouter },
-          { provide: LoggerConfig, useValue: loggerConfig },
           { provide: MY_EXTENSIONS, useClass: Extension1, multi: true }
         ],
         providersPerMod: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],

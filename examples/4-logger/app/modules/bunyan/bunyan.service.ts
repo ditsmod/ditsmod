@@ -22,4 +22,8 @@ export class BunyanService implements Logger {
   info = getNamedLogggerMethod.call(this, 'info');
   debug = getNamedLogggerMethod.call(this, 'debug');
   trace = getNamedLogggerMethod.call(this, 'trace');
+  log(level: keyof Logger, args: any[]): void {
+    const fn = getNamedLogggerMethod.call(this, level, this.config);
+    fn(args);
+  }
 }

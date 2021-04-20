@@ -18,6 +18,7 @@ import { ProvidersMetadata } from './models/providers-metadata';
 import { DefaultLogger } from './services/default-logger';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModConfig } from './models/mod-config';
+import { Log } from './services/log';
 
 describe('ModuleFactory', () => {
   (defaultProvidersPerApp as ServiceProvider[]).push({ provide: Router, useClass: DefaultRouter });
@@ -59,7 +60,7 @@ describe('ModuleFactory', () => {
     mock = new MockModuleFactory(null, null);
     const config = new LoggerConfig();
     const log = new DefaultLogger(config);
-    moduleManager = new ModuleManager(log);
+    moduleManager = new ModuleManager(new Log(log));
   });
 
   describe('exportGlobalProviders()', () => {

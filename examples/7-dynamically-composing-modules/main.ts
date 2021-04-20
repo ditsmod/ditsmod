@@ -5,9 +5,9 @@ import { AppModule } from './app/app.module';
 
 new Application()
   .bootstrap(AppModule)
-  .then(({ server, log }) => {
-    server.on('error', (err) => log.error(err));
+  .then(({ server, logger }) => {
+    server.on('error', (err) => logger.error(err));
   })
-  .catch(({ err, log }) => {
-    log.fatal(err);
+  .catch(({ err, logger }) => {
+    logger.fatal(err);
   });

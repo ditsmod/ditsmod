@@ -37,4 +37,8 @@ export class DefaultLogger extends Logger {
   warn = defaultLoggerFn('warn', this.config);
   error = defaultLoggerFn('error', this.config);
   fatal = defaultLoggerFn('fatal', this.config);
+  log(level: keyof Logger, args: any[]): void {
+    const fn = defaultLoggerFn(level, this.config);
+    fn(args);
+  }
 }

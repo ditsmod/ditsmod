@@ -10,7 +10,7 @@ export class BodyParser {
   constructor(
     @Inject(NODE_REQ) protected readonly nodeReq: NodeRequest,
     protected config: BodyParserConfig,
-    protected log: Logger
+    protected logger: Logger
   ) {}
 
   getBody(): Promise<any> {

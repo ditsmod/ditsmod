@@ -3,7 +3,6 @@ import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpHandler } from '../types/http-interceptor';
 import { HttpMethod, Extension } from '../types/mix';
-import { Logger } from '../types/logger';
 import { RawRouteMeta, PreparedRouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { NodeResponse, RequestListener } from '../types/server-options';
@@ -17,7 +16,6 @@ export class PreRouter implements Extension<void> {
   constructor(
     protected injectorPerApp: ReflectiveInjector,
     protected router: Router,
-    protected log: Logger,
     protected extensionsManager: ExtensionsManager
   ) {}
 

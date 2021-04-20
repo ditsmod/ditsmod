@@ -3,13 +3,13 @@ import { parse } from 'querystring';
 
 import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
-import { Logger } from '../types/logger';
 import { NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { Request } from './request';
 import { AnyObj } from '../types/mix';
 import { PathParam } from '../types/router';
 import { PATH_PARAMS, QUERY_STRING } from '../constans';
+import { Log } from './log';
 
 @Injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
@@ -17,7 +17,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
     @Inject(PATH_PARAMS) protected pathParamsArr: PathParam[],
     @Inject(QUERY_STRING) protected queryString: any,
     private req: Request,
-    private log: Logger
+    private log: Log
   ) {}
 
   async intercept(next: HttpHandler) {
@@ -59,7 +59,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
    * @param err An error to logs it (not sends).
    */
   protected sendInternalServerError(nodeRes: NodeResponse, err: Error) {
-    this.log.error(err);
+    this.log.internalServerError('error', [err]);
     nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
     nodeRes.end();
   }

@@ -44,6 +44,7 @@ export class Logger {
   warn: LoggerMethod = (...args: any[]): any => {};
   error: LoggerMethod = (...args: any[]): any => {};
   fatal: LoggerMethod = (...args: any[]): any => {};
+  log(level: keyof Logger, ...args: any[]): void {}
 }
 
 export class LoggerConfig {

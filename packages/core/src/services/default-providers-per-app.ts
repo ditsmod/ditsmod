@@ -11,6 +11,7 @@ import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from '../extensions/pre-router';
 import { RoutesExtension } from '../extensions/routes.extension';
+import { Log } from './log';
 
 export const defaultProvidersPerApp: ServiceProvider[] = [
   LoggerConfig,
@@ -26,5 +27,6 @@ export const defaultProvidersPerApp: ServiceProvider[] = [
   Counter,
   { provide: VOID_EXTENSIONS, useExisting: PreRouter, multi: true },
   { provide: ROUTES_EXTENSIONS, useClass: RoutesExtension, multi: true },
-  ModuleManager
+  ModuleManager,
+  Log
 ];

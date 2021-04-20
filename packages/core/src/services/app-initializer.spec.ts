@@ -19,6 +19,7 @@ import { MetadataPerMod } from '../types/metadata-per-mod';
 import { Controller } from '../decorators/controller';
 import { ModConfig } from '../models/mod-config';
 import { NODE_REQ } from '../constans';
+import { Log } from './log';
 
 describe('AppInitializer', () => {
   (defaultProvidersPerApp as ServiceProvider[]).push({ provide: Router, useClass: DefaultRouter });
@@ -43,14 +44,14 @@ describe('AppInitializer', () => {
   class MyLogger extends Logger {}
 
   let mock: MockAppInitializer;
-  let log: Logger;
   let moduleManager: ModuleManager;
 
   beforeEach(async () => {
     const config = new LoggerConfig();
-    log = new DefaultLogger(config);
+    const logger = new DefaultLogger(config);
+    const log = new Log(logger);
     moduleManager = new ModuleManager(log);
-    mock = new MockAppInitializer(moduleManager);
+    mock = new MockAppInitializer(moduleManager, log);
   });
 
   describe('prepareProvidersPerApp()', () => {

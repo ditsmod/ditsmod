@@ -8,7 +8,7 @@ export class MyExtension implements edk.Extension<void> {
   constructor(
     @Inject(edk.APP_METADATA_MAP) private appMetadataMap: edk.AppMetadataMap,
     private extensionsManager: edk.ExtensionsManager,
-    private log: Logger
+    private logger: Logger
   ) {}
 
   async init() {
@@ -16,9 +16,9 @@ export class MyExtension implements edk.Extension<void> {
       return;
     }
 
-    this.log.info(this.appMetadataMap);
+    this.logger.info(this.appMetadataMap);
     const rawRouteMeta = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS);
-    this.log.info(rawRouteMeta);
+    this.logger.info(rawRouteMeta);
 
     this.#inited = true;
   }
