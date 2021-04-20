@@ -1,5 +1,12 @@
+<a name="core-beta.14"></a>
+# [core-beta.14](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.14) (2021-04-20)
+
+### Features
+
+- added `Log` class as proxy for logger [8dd134](https://github.com/ditsmod/ditsmod/commit/8dd134).
+
 <a name="core-beta.13"></a>
-# [core-beta.13](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.13) (2021-04-19)
+## [core-beta.13](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.13) (2021-04-19)
 
 ### Features
 
