@@ -28,6 +28,7 @@ export class HelloWorldController {
       { in: 'query', name: 'catId' },
     ],
     get: {
+      tags: ['tag1'],
       parameters: [
         { in: 'query', name: 'rubricId' },
         { in: 'query', name: 'contextId' },
@@ -47,6 +48,7 @@ export class HelloWorldController {
 
   @OasRoute('posts/{postId}/comments/{commentId}', [], {
     get: {
+      tags: ['tag1'],
       parameters: [
         { in: 'path', name: 'postId', required: true },
         { in: 'path', name: 'commentId', required: true },

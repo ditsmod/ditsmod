@@ -10,6 +10,7 @@ export class OpenapiController {
 
   @OasRoute('openapi', [], {
     get: {
+      tags: ['OasDocs'],
       description: 'OpenAPI documentation',
       parameters: [],
       responses: {
@@ -28,6 +29,7 @@ export class OpenapiController {
 
   @OasRoute('openapi.yaml', [], {
     get: {
+      tags: ['OasDocs'],
       description: 'Config file in YAML format for the OpenAPI documentation',
       parameters: [],
       responses: {
@@ -45,6 +47,7 @@ export class OpenapiController {
 
   @OasRoute('openapi.json', [], {
     get: {
+      tags: ['OasDocs'],
       description: 'Config file in JSON format for the OpenAPI documentation',
       parameters: [],
       responses: {
@@ -62,6 +65,7 @@ export class OpenapiController {
 
   @OasRoute('openapi.bundle.js', [], {
     get: {
+      tags: ['OasDocs'],
       description: 'SwaggerUI JavaScript bundle',
       parameters: [],
       responses: {

@@ -68,7 +68,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
       parameters.push({ in: 'path', name, required: true });
       return `{${name}}`;
     });
-    const operationObject: XOperationObject = { parameters, responses: {} };
+    const operationObject: XOperationObject = { tags: ['NonOasRoutes'], parameters, responses: {} };
     if (routeMeta.parseBody) {
       operationObject.requestBody = {
         description: 'It is default content field for non-OasRoute',
