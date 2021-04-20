@@ -96,7 +96,7 @@ describe('ExtensionsManager cyclic dependencies', () => {
   });
 
   it('MY_EXTENSIONS2 has cyclic dependencies', async () => {
-    const msg = 'Detected cyclic dependencies: Extension3 -> Extension4 -> Extension3. It is started from Extension2';
+    const msg = 'Detected cyclic dependencies: Extension3 -> Extension4 -> Extension3. It is started from Extension2.';
     await expect(mock.init(MY_EXTENSIONS2)).rejects.toThrowError(msg);
   });
 
