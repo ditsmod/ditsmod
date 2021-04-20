@@ -21,12 +21,12 @@
   "dependencies": {
     "@ts-stack/openapi-spec": "^3.1.2",
     "copy-webpack-plugin": "^8.1.1",
-    "css-loader": "^5.2.1",
+    "css-loader": "^5.2.4",
     "html-webpack-plugin": "^5.3.1",
     "json-loader": "^0.5.7",
     "style-loader": "^2.0.0",
     "swagger-ui": "^3.47.1",
-    "webpack": "^5.33.2",
+    "webpack": "^5.34.0",
     "yaml": "^1.10.2",
     "yaml-loader": "^0.6.0"
   },
