@@ -215,6 +215,7 @@ export class AppInitializer {
   protected async handleExtensions(appMetadataMap: AppMetadataMap) {
     this.applyAppMetadataMap(appMetadataMap);
     const initedExtensionsGroups = new WeakSet<InjectionToken<Extension<any>[]>>();
+    const extensionsManager = this.injectorPerApp.get(ExtensionsManager) as ExtensionsManager;
     for (const [, metadata] of appMetadataMap) {
       if (isRootModule(metadata.moduleMetadata)) {
         metadata.moduleMetadata.extensions = this.meta.extensions;
@@ -227,12 +228,11 @@ export class AppInitializer {
           initedExtensionsGroups.add(groupToken);
         }
         this.log.startExtensionsGroupInit('debug', [moduleName, groupToken]);
-        const extensionsManager = this.injectorPerApp.get(ExtensionsManager) as ExtensionsManager;
         await extensionsManager.init(groupToken);
         this.log.finishExtensionsGroupInit('debug', [moduleName, groupToken]);
       }
     }
-
+    extensionsManager.clearUnfinishedInitExtensions();
     this.logExtensionsStatistic();
   }
 

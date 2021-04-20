@@ -6,6 +6,8 @@ import { Log } from './log';
 
 @Injectable()
 export class ExtensionsManager {
+  protected unfinishedInitExtensions = new Set<Extension<any>>();
+
   constructor(private injectorPerApp: Injector, private log: Log, private counter: Counter) {}
 
   async init<T>(extensionsGroupToken: InjectionToken<Extension<T>[]>, autoMergeArrays = true): Promise<T[]> {
@@ -17,17 +19,24 @@ export class ExtensionsManager {
     }
 
     for (const extension of extensions) {
-      const id = this.counter.increaseExtensionsInitId();
+      if (this.unfinishedInitExtensions.has(extension)) {
+        this.throwCyclicDeps(extension);
+      }
 
-      this.log.startInitExtension('debug', [id, extension.constructor.name]);
+      const extensionName = extension.constructor.name;
+      const id = this.counter.increaseExtensionsInitId();
+      const args = [id, extensionName];
+      this.unfinishedInitExtensions.add(extension);
+      this.log.startInitExtension('debug');
       const data = await extension.init();
-      this.log.finishInitExtension('debug', [id, extension.constructor.name]);
+      this.log.finishInitExtension('debug', args);
+      this.unfinishedInitExtensions.delete(extension);
       this.counter.addInitedExtensions(extension);
       if (data === undefined) {
-        this.log.extensionInitReturnsVoid('debug', [id, extension.constructor.name]);
+        this.log.extensionInitReturnsVoid('debug', args);
         continue;
       }
-      this.log.extensionInitReturnsValue('debug', [id, extension.constructor.name]);
+      this.log.extensionInitReturnsValue('debug', args);
       if (autoMergeArrays && Array.isArray(data)) {
         dataArr.push(...data);
       } else {
@@ -35,5 +44,24 @@ export class ExtensionsManager {
       }
     }
     return dataArr;
+  }
+
+  clearUnfinishedInitExtensions() {
+    this.unfinishedInitExtensions.clear();
+  }
+
+  protected throwCyclicDeps(extension: Extension<any>) {
+    const extensions = Array.from(this.unfinishedInitExtensions);
+    const index = extensions.findIndex((ext) => ext === extension);
+    const prefixChain = extensions.slice(0, index);
+    const cyclicChain = extensions.slice(index);
+    const prefixNames = prefixChain.map((ext) => ext.constructor.name).join(' -> ');
+    let cyclicNames = cyclicChain.map((ext) => ext.constructor.name).join(' -> ');
+    cyclicNames += ` -> ${extension.constructor.name}`;
+    let msg = `Detected cyclic dependencies: ${cyclicNames}.`;
+    if (prefixNames) {
+      msg += ` It is started from ${prefixNames}.`;
+    }
+    throw new Error(msg);
   }
 }
