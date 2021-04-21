@@ -14,3 +14,4 @@ yarn.lock
 .js
 jest.config.js
 *.tsbuildinfo
+dist-swagger-ui
