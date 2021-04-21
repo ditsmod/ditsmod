@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFile } from 'fs/promises';
 import { Controller, Response, Status } from '@ditsmod/core';
 
 import { OasRoute } from './decorators/oas-route';
@@ -23,7 +23,7 @@ export class OpenapiController {
   })
   async getIndex() {
     await this.swaggerConfigManager.applyConfig();
-    const indexHtml = readFileSync(`${this.swaggerConfigManager.webpackDist}/index.html`, 'utf8');
+    const indexHtml = await readFile(`${this.swaggerConfigManager.webpackDist}/index.html`, 'utf8');
     this.res.setContentType('text/html; charset=utf-8').send(indexHtml);
   }
 
@@ -40,8 +40,8 @@ export class OpenapiController {
       },
     },
   })
-  getYaml() {
-    const openapiYaml = readFileSync(`${this.swaggerConfigManager.swaggerDist}/openapi.yaml`, 'utf8');
+  async getYaml() {
+    const openapiYaml = await readFile(`${this.swaggerConfigManager.swaggerDist}/openapi.yaml`, 'utf8');
     this.res.setContentType('text/yaml; charset=utf-8').send(openapiYaml);
   }
 
@@ -58,8 +58,8 @@ export class OpenapiController {
       },
     },
   })
-  getJson() {
-    const openapiJson = readFileSync(`${this.swaggerConfigManager.swaggerDist}/openapi.json`, 'utf8');
+  async getJson() {
+    const openapiJson = await readFile(`${this.swaggerConfigManager.swaggerDist}/openapi.json`, 'utf8');
     this.res.setContentType('application/json; charset=utf-8').send(openapiJson);
   }
 
@@ -76,8 +76,8 @@ export class OpenapiController {
       },
     },
   })
-  getJavaScript() {
-    const appBundle = readFileSync(`${this.swaggerConfigManager.webpackDist}/openapi.bundle.js`, 'utf8');
+  async getJavaScript() {
+    const appBundle = await readFile(`${this.swaggerConfigManager.webpackDist}/openapi.bundle.js`, 'utf8');
     this.res.setContentType('text/javascript; charset=utf-8').send(appBundle);
   }
 }

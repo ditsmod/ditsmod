@@ -1,7 +1,8 @@
 import { Logger, ModConfig, RootMetadata } from '@ditsmod/core';
 import { Injectable } from '@ts-stack/di';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync } from 'fs';
+import { readFile, writeFile } from 'fs/promises';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { join } from 'path';
 import webpack, { CleanPlugin, Configuration } from 'webpack';
@@ -26,7 +27,7 @@ export class SwaggerConfigManager {
     const url = `http://localhost:${port}/${path}`;
     const futureFileContent = `export const url = '${url}';`;
     const filePath = require.resolve(`${this.swaggerUiSrc}/swagger.config`);
-    const currentFileContent = readFileSync(filePath, 'utf8');
+    const currentFileContent = await readFile(filePath, 'utf8');
     const dirExists = existsSync(this.webpackDist);
     if (dirExists && currentFileContent == futureFileContent) {
       this.log.debug(`Skipping override ${filePath}`);
@@ -34,7 +35,7 @@ export class SwaggerConfigManager {
     }
     const logMsg = `override ${filePath} from "${currentFileContent}" to "${futureFileContent}"`;
     this.log.debug(`Start ${logMsg}`);
-    writeFileSync(filePath, futureFileContent, 'utf8');
+    await writeFile(filePath, futureFileContent, 'utf8');
     const compiler = webpack(this.getWebpackConfig());
 
     const promise = new Promise<void>((resolve, reject) => {
@@ -65,10 +66,10 @@ export class SwaggerConfigManager {
 
         this.log.debug(`Finish ${logMsg}`);
       });
-    }).catch((err) => {
+    }).catch(async (err) => {
       // Rollback because webpack failed
       this.log.error(`Rollback during ${logMsg}`);
-      writeFileSync(filePath, currentFileContent, 'utf8');
+      await writeFile(filePath, currentFileContent, 'utf8');
       throw err;
     });
 
