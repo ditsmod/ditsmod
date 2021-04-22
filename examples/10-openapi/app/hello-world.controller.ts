@@ -1,6 +1,8 @@
 import { Controller, Request, Response, Route, Status } from '@ditsmod/core';
 import { OasRoute } from '@ditsmod/openapi';
 
+import { BasicGuard } from './basic.guard';
+
 @Controller()
 export class HelloWorldController {
   constructor(private req: Request, private res: Response) {}
@@ -22,13 +24,14 @@ export class HelloWorldController {
   }
 
   // Here works new route decorator from `@ditsmod/openapi`.
-  @OasRoute('posts/{postId}', [], {
+  @OasRoute('posts/{postId}', [BasicGuard], {
     parameters: [
       { in: 'path', name: 'postId', required: true },
       { in: 'query', name: 'catId' },
     ],
     get: {
-      tags: ['tag1'],
+      security: [{ basicAuth: [] }],
+      tags: ['withBasicAuth'],
       parameters: [
         { in: 'query', name: 'rubricId' },
         { in: 'query', name: 'contextId' },
@@ -38,6 +41,9 @@ export class HelloWorldController {
           description: 'Single post',
           content: { ['application/json']: {} },
         },
+        [Status.UNAUTHORIZED]: {
+          $ref: '#/components/responses/UnauthorizedError',
+        },
       },
     },
   })
@@ -46,9 +52,10 @@ export class HelloWorldController {
     this.res.sendJson({ postId, body: `some body for postId ${postId}` });
   }
 
-  @OasRoute('posts/{postId}/comments/{commentId}', [], {
+  @OasRoute('posts/{postId}/comments/{commentId}', [BasicGuard], {
     get: {
-      tags: ['tag1'],
+      security: [{ basicAuth: [] }],
+      tags: ['withBasicAuth'],
       parameters: [
         { in: 'path', name: 'postId', required: true },
         { in: 'path', name: 'commentId', required: true },
@@ -59,6 +66,9 @@ export class HelloWorldController {
           content: {
             'application/json': {},
           },
+        },
+        [Status.UNAUTHORIZED]: {
+          $ref: '#/components/responses/UnauthorizedError',
         },
       },
     },

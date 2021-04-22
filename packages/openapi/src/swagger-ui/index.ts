@@ -8,8 +8,8 @@ const ui = SwaggerUI({
   dom_id: '#swagger',
 });
 
-ui.initOAuth({
-  appName: 'Swagger UI Webpack Demo',
-  // See https://demo.identityserver.io/ for configuration details.
-  clientId: 'implicit'
-});
+// ui.initOAuth({
+//   appName: 'Swagger UI Webpack Demo',
+//   // See https://demo.identityserver.io/ for configuration details.
+//   clientId: 'implicit'
+// });

@@ -7,24 +7,42 @@ export const oasObject: XOasObject = {
   info: { title: 'Testing @ditsmod/openapi', version: '1.0.0' },
   tags: [
     {
-      name: 'tag1',
-      description: 'Some description for tag1',
-    },
-    {
-      name: 'OasDocs',
-      description: 'Routes used to service OpenAPI documentation',
-    },
-    {
       name: 'NonOasRoutes',
       description:
         'Routes that use a decorator `@Route()`. If you want to change this description, ' +
         '[use tags](https://swagger.io/docs/specification/grouping-operations-with-tags/) ' +
         'for `@OasRoute()` imported from @ditsmod/openapi.',
     },
+    {
+      name: 'withBasicAuth',
+      description: 'Here you need login and password.',
+    },
+    {
+      name: 'OasDocs',
+      description: 'Routes used to service OpenAPI documentation',
+    },
   ],
   components: {
-    headers: {},
-    schemas: {},
-    examples: {},
+    securitySchemes: {
+      basicAuth: {
+        type: 'http',
+        scheme: 'basic',
+        description:
+          'Enter useName: `demo`, password: `p@55w0rd`. For more info see ' +
+          '[Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication)',
+      },
+    },
+    responses: {
+      UnauthorizedError: {
+        description: 'Authentication information is missing or invalid',
+        headers: {
+          WWW_Authenticate: {
+            schema: { type: 'string' },
+            description:
+              'Taken from [swagger.io](https://swagger.io/docs/specification/authentication/basic-authentication/)',
+          },
+        },
+      },
+    },
   },
 };
