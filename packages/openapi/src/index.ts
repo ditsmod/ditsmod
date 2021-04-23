@@ -1,4 +1,5 @@
 export { OasRoute, OasRouteMetadata } from './decorators/oas-route';
+export { OasGuard, OasGuardMetadata } from './decorators/oas-guard';
 export { OpenapiModule } from './openapi.module';
 export { OasRouteMeta } from './types/oas-route-meta';
 export * from './di-tokens';

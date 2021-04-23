@@ -1,7 +1,21 @@
 import { CanActivate, Request, Response, Status } from '@ditsmod/core';
-import { Injectable } from '@ts-stack/di';
+import { OasGuard } from '@ditsmod/openapi';
 
-@Injectable()
+@OasGuard({
+  tags: ['withBasicAuth'],
+  securitySchemeObject: {
+    type: 'http',
+    scheme: 'basic',
+    description:
+      'Enter username: `demo`, password: `p@55w0rd`. For more info see ' +
+      '[Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication)',
+  },
+  responses: {
+    [Status.UNAUTHORIZED]: {
+      $ref: '#/components/responses/UnauthorizedError',
+    },
+  },
+})
 export class BasicGuard implements CanActivate {
   constructor(private req: Request, private res: Response) {}
 
@@ -10,7 +24,7 @@ export class BasicGuard implements CanActivate {
     if (!authorization) {
       return this.unauth();
     }
-    const [,base64] = authorization.split(' ');
+    const [, base64] = authorization.split(' ');
     if (base64 != 'ZGVtbzpwQDU1dzByZA==') {
       return this.unauth();
     }

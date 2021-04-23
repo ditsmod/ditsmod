@@ -9,13 +9,13 @@ export const oasObject: XOasObject = {
     {
       name: 'NonOasRoutes',
       description:
-        'Routes that use a decorator `@Route()`. If you want to change this description, ' +
+        'Routes that used `@Route()` decorator. If you want to change this description, ' +
         '[use tags](https://swagger.io/docs/specification/grouping-operations-with-tags/) ' +
         'for `@OasRoute()` imported from @ditsmod/openapi.',
     },
     {
       name: 'withBasicAuth',
-      description: 'Here you need login and password.',
+      description: 'Here you need username and password.',
     },
     {
       name: 'OasDocs',
@@ -23,15 +23,6 @@ export const oasObject: XOasObject = {
     },
   ],
   components: {
-    securitySchemes: {
-      basicAuth: {
-        type: 'http',
-        scheme: 'basic',
-        description:
-          'Enter useName: `demo`, password: `p@55w0rd`. For more info see ' +
-          '[Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication)',
-      },
-    },
     responses: {
       UnauthorizedError: {
         description: 'Authentication information is missing or invalid',

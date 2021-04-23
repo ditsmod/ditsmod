@@ -1,4 +1,4 @@
-import { HttpMethod } from '@ditsmod/core';
+import { HttpMethod, edk } from '@ditsmod/core';
 import { openapi, XOasObject } from '@ts-stack/openapi-spec';
 
 export const DEFAULT_OAS_OBJECT: XOasObject = {
@@ -18,7 +18,12 @@ export const DEFAULT_OAS_OBJECT: XOasObject = {
         'for `@OasRoute()` imported from @ditsmod/openapi.',
     },
   ],
+  components: {
+    securitySchemes: {}
+  }
 };
+
+edk.deepFreeze(DEFAULT_OAS_OBJECT);
 
 export const DEFAULT_OAS_HTTP_METHODS = [
   'GET',

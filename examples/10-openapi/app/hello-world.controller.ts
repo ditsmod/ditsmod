@@ -30,8 +30,6 @@ export class HelloWorldController {
       { in: 'query', name: 'catId' },
     ],
     get: {
-      security: [{ basicAuth: [] }],
-      tags: ['withBasicAuth'],
       parameters: [
         { in: 'query', name: 'rubricId' },
         { in: 'query', name: 'contextId' },
@@ -41,9 +39,6 @@ export class HelloWorldController {
           description: 'Single post',
           content: { ['application/json']: {} },
         },
-        [Status.UNAUTHORIZED]: {
-          $ref: '#/components/responses/UnauthorizedError',
-        },
       },
     },
   })
@@ -52,10 +47,8 @@ export class HelloWorldController {
     this.res.sendJson({ postId, body: `some body for postId ${postId}` });
   }
 
-  @OasRoute('posts/{postId}/comments/{commentId}', [BasicGuard], {
+  @OasRoute('posts/{postId}/comments/{commentId}', [BasicGuard, BasicGuard], {
     get: {
-      security: [{ basicAuth: [] }],
-      tags: ['withBasicAuth'],
       parameters: [
         { in: 'path', name: 'postId', required: true },
         { in: 'path', name: 'commentId', required: true },
@@ -66,9 +59,6 @@ export class HelloWorldController {
           content: {
             'application/json': {},
           },
-        },
-        [Status.UNAUTHORIZED]: {
-          $ref: '#/components/responses/UnauthorizedError',
         },
       },
     },
