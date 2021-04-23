@@ -47,7 +47,7 @@ export class HelloWorldController {
     this.res.sendJson({ postId, body: `some body for postId ${postId}` });
   }
 
-  @OasRoute('posts/{postId}/comments/{commentId}', [BasicGuard, BasicGuard], {
+  @OasRoute('posts/{postId}/comments/{commentId}', [BasicGuard], {
     get: {
       parameters: [
         { in: 'path', name: 'postId', required: true },
