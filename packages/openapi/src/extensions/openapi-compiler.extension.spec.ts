@@ -79,7 +79,7 @@ describe('OpenapiCompilerExtension', () => {
       expect(pathItem).toEqual(expectPathItemObject);
     });
 
-    it('path with basic guard', () => {
+    it('path with basic guard and two scopes', () => {
       mock.initOasObject();
       const pathItem: PathItemObject = { get: {} };
       const tags: string[] = ['tag1'];
