@@ -85,7 +85,11 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
         let securityName = oasGuardMetadataArr.length > 1 ? `${guardName}_${index}` : guardName;
         securityName = securityName.charAt(0).toLowerCase() + securityName.slice(1);
         this.oasObject.components.securitySchemes[securityName] = oasGuardMetadata.securitySchemeObject;
-        security.push({ [securityName]: [] });
+        let scopes = (normalizedGuard.params || []);
+        if (!scopes.some(scope => typeof scope == 'string')) {
+          scopes = [];
+        }
+        security.push({ [securityName]: scopes });
         tags.push(...(oasGuardMetadata.tags || []));
         Object.assign(responses, oasGuardMetadata.responses);
       });

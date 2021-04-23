@@ -79,6 +79,42 @@ describe('OpenapiCompilerExtension', () => {
       expect(pathItem).toEqual(expectPathItemObject);
     });
 
+    it('path with basic guard', () => {
+      mock.initOasObject();
+      const pathItem: PathItemObject = { get: {} };
+      const tags: string[] = ['tag1'];
+      const securitySchemeObject: SecuritySchemeObject = {
+        type: 'http',
+        scheme: 'basic',
+      };
+      const responses: XResponsesObject = {
+        [Status.UNAUTHORIZED]: {
+          $ref: '#/components/responses/UnauthorizedError',
+        },
+      };
+
+      @OasGuard({
+        tags,
+        securitySchemeObject,
+        responses,
+      })
+      class Guard1 implements CanActivate {
+        canActivate() {
+          return true;
+        }
+      }
+
+      const guards: edk.NormalizedGuard[] = [{ guard: Guard1, params: ['scope1', 'scope2'] }];
+      mock.setSecurityInfo('GET', pathItem, guards);
+      expect(mock.oasObject).not.toEqual(DEFAULT_OAS_OBJECT);
+      const expectedcomponents: ComponentsObject = { securitySchemes: { guard1: securitySchemeObject } };
+      const expectPathItemObject: PathItemObject = {
+        get: { responses, security: [{ guard1: ['scope1', 'scope2'] }], tags },
+      };
+      expect(mock.oasObject.components).toEqual(expectedcomponents);
+      expect(pathItem).toEqual(expectPathItemObject);
+    });
+
     it('path with two basic guards', () => {
       mock.initOasObject();
       const pathItem: PathItemObject = { get: {} };
