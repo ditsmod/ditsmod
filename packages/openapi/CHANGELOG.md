@@ -1,5 +1,12 @@
+<a name="openapi-beta.x"></a>
+# [openapi-beta.x](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.x) (2021-xx-xx)
+
+### Bug fix
+
+- init `securitySchemes` only if is needed [4057bbb](https://github.com/ditsmod/ditsmod/commit/4057bbb).
+
 <a name="openapi-beta.3"></a>
-# [openapi-beta.3](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.3) (2021-04-24)
+## [openapi-beta.3](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.3) (2021-04-24)
 
 ### Features
 
