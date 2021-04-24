@@ -1,11 +1,14 @@
 import { Logger, ModConfig, RootMetadata } from '@ditsmod/core';
-import { Injectable } from '@ts-stack/di';
+import { Injectable, Injector } from '@ts-stack/di';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { existsSync } from 'fs';
 import { readFile, writeFile } from 'fs/promises';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { join } from 'path';
 import webpack, { CleanPlugin, Configuration } from 'webpack';
+
+import { SwaggegrOAuthOptions } from '../swagger-ui/swagger-o-auth-options';
+import { SwaggerOptions } from '../swagger-ui/interfaces';
 
 @Injectable()
 export class SwaggerConfigManager {
@@ -15,7 +18,12 @@ export class SwaggerConfigManager {
   private inited: boolean;
   private openapiRoot = join(__dirname, '../..');
 
-  constructor(private log: Logger, private rootMeta: RootMetadata, private modConfig: ModConfig) {}
+  constructor(
+    private log: Logger,
+    private rootMeta: RootMetadata,
+    private modConfig: ModConfig,
+    private injectorPerMod: Injector
+  ) {}
 
   async applyConfig() {
     if (this.inited) {
@@ -24,8 +32,16 @@ export class SwaggerConfigManager {
     const { prefixPerMod } = this.modConfig;
     const { port } = this.rootMeta.listenOptions;
     const path = [this.rootMeta.prefixPerApp, prefixPerMod, 'openapi.yaml'].filter((p) => p).join('/');
-    const url = `http://localhost:${port}/${path}`;
-    const futureFileContent = `export const url = '${url}';`;
+    const oauthOptions = this.injectorPerMod.get(SwaggegrOAuthOptions, null);
+    const swaggerOptions: SwaggerOptions = {
+      initUi: { url: `http://localhost:${port}/${path}`, dom_id: '#swagger' },
+      oauthOptions: oauthOptions || {
+        appName: 'Swagger UI Webpack Demo',
+        // See https://demo.identityserver.io/ for configuration details.
+        clientId: 'implicit',
+      },
+    };
+    const futureFileContent = `export const swaggerOptions = ${JSON.stringify(swaggerOptions)};`;
     const filePath = require.resolve(`${this.swaggerUiSrc}/swagger.config`);
     const currentFileContent = await readFile(filePath, 'utf8');
     const dirExists = existsSync(this.webpackDist);
@@ -36,6 +52,10 @@ export class SwaggerConfigManager {
     const logMsg = `override ${filePath} from "${currentFileContent}" to "${futureFileContent}"`;
     this.log.debug(`Start ${logMsg}`);
     await writeFile(filePath, futureFileContent, 'utf8');
+    await this.webpackCompile(logMsg, filePath, currentFileContent);
+  }
+
+  protected webpackCompile(logMsg: string, filePath: string, currentFileContent: string) {
     const compiler = webpack(this.getWebpackConfig());
 
     const promise = new Promise<void>((resolve, reject) => {

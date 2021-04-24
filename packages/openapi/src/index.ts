@@ -5,3 +5,4 @@ export { OasRouteMeta } from './types/oas-route-meta';
 export * from './di-tokens';
 export * from './constants';
 export * from './utils/type-guards';
+export * from './swagger-ui/swagger-o-auth-options';
