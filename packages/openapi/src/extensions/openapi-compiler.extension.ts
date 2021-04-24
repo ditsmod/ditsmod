@@ -69,7 +69,6 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
   protected initOasObject() {
     this.oasObject = Object.assign({}, DEFAULT_OAS_OBJECT, this.injectorPerApp.get(OAS_OBJECT));
     this.oasObject.components = { ...(this.oasObject.components || {}) };
-    this.oasObject.components.securitySchemes = { ...(this.oasObject.components.securitySchemes || {}) };
   }
 
   protected setSecurityInfo(httpMethod: HttpMethod, pathItem: XPathItemObject, guards: edk.NormalizedGuard[]) {
@@ -84,9 +83,10 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
       oasGuardMetadataArr.forEach((oasGuardMetadata, index) => {
         let securityName = oasGuardMetadataArr.length > 1 ? `${guardName}_${index}` : guardName;
         securityName = securityName.charAt(0).toLowerCase() + securityName.slice(1);
+        this.oasObject.components.securitySchemes = { ...(this.oasObject.components.securitySchemes || {}) };
         this.oasObject.components.securitySchemes[securityName] = oasGuardMetadata.securitySchemeObject;
-        let scopes = (normalizedGuard.params || []);
-        if (!scopes.some(scope => typeof scope == 'string')) {
+        let scopes = normalizedGuard.params || [];
+        if (!scopes.some((scope) => typeof scope == 'string')) {
           scopes = [];
         }
         security.push({ [securityName]: scopes });
