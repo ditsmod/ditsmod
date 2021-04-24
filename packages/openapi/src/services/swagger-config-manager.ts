@@ -12,7 +12,7 @@ import { SwaggerOptions } from '../swagger-ui/interfaces';
 
 @Injectable()
 export class SwaggerConfigManager {
-  readonly webpackDist = join(__dirname, '../../dist-swagger-ui');
+  readonly webpackDist = join(__dirname, '../../dist-webpack');
   readonly swaggerDist = join(__dirname, '../../dist/swagger-ui');
   private swaggerUiSrc = join(__dirname, '../swagger-ui');
   private inited: boolean;

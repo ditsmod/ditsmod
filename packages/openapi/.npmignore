@@ -1,9 +1,7 @@
 .gitignore
 tests
 docs
-dist-tests
 examples
-dist-examples
 spec
 tslint.json
 .prettierrc
@@ -14,4 +12,4 @@ yarn.lock
 .js
 jest.config.js
 *.tsbuildinfo
-dist-swagger-ui
+dist-*
