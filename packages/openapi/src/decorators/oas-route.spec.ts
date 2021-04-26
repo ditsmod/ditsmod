@@ -4,7 +4,7 @@ import { Controller, CanActivate } from '@ditsmod/core';
 
 import { OasRoute, OasRouteDecoratorMetadata } from './oas-route';
 
-describe('Route decorator', () => {
+describe('@Route', () => {
   it('controller without methods', () => {
     @Controller()
     class Controller1 {}
