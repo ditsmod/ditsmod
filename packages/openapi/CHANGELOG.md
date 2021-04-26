@@ -1,5 +1,5 @@
-<a name="openapi-beta.x"></a>
-# [openapi-beta.x](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.x) (2021-xx-xx)
+<a name="openapi-beta.4"></a>
+# [openapi-beta.4](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.4) (2021-04-26)
 
 ### BREAKING CHANGES
 
