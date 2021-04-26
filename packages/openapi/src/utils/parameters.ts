@@ -2,9 +2,11 @@ import { XParameterObject } from '@ts-stack/openapi-spec';
 import { edk } from '@ditsmod/core';
 import { Type, reflector } from '@ts-stack/di';
 
-type RequiredParamIn = 'query' | 'header' | 'path' | 'cookie';
-type OptionalParamIn = 'query' | 'header' | 'cookie';
-type KeyOf<T extends Type<edk.AnyObj>> = keyof T['prototype'];
+import { SchemaDecoratorMetadata } from '../decorators/schema';
+
+type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';
+type OptionalParamsIn = 'query' | 'header' | 'cookie';
+type KeyOf<T extends Type<edk.AnyObj>> = Extract<keyof T['prototype'], string>;
 type KeysOf<T extends Type<edk.AnyObj>> = [KeyOf<T>, ...KeyOf<T>[]];
 /**
  * Helper for OpenAPI `ParameterObject`s.
@@ -12,39 +14,66 @@ type KeysOf<T extends Type<edk.AnyObj>> = [KeyOf<T>, ...KeyOf<T>[]];
 export class Parameters {
   protected parameters: XParameterObject[] = [];
 
-  required<T extends Type<edk.AnyObj>>(paramIn: RequiredParamIn, model: T, ...params: KeysOf<T>): this;
-  required(paramIn: RequiredParamIn, ...params: [string, ...string[]]): this;
-  required<T extends Type<edk.AnyObj>>(paramIn: RequiredParamIn, modelOrString: T | string, ...params: (KeyOf<T> | string)[]) {
-    if (typeof modelOrString == 'string') {
-      params.unshift(modelOrString);
-    } else {
-      const meta = reflector.propMetadata(modelOrString);
-    }
-
-    const arr = params.map<XParameterObject>((param) => {
-      return { in: paramIn, name: param as string, required: true };
-    });
-    this.parameters.push(...arr);
-    return this;
+  required<T extends Type<edk.AnyObj>>(paramsIn: RequiredParamsIn, model: T, ...params: KeysOf<T>): this;
+  required(paramsIn: RequiredParamsIn, ...params: [string, ...string[]]): this;
+  required<T extends Type<edk.AnyObj>>(
+    paramsIn: RequiredParamsIn,
+    modelOrString: T | string,
+    ...params: (KeyOf<T> | string)[]
+  ) {
+    return this.setParams(true, paramsIn, modelOrString, ...params);
   }
 
-  optional<T extends Type<edk.AnyObj>>(paramIn: OptionalParamIn, model: T, ...params: KeysOf<T>): this;
-  optional(paramIn: OptionalParamIn, ...params: [string, ...string[]]): this;
-  optional<T extends Type<edk.AnyObj>>(paramIn: OptionalParamIn, modelOrString: T | string, ...params: (KeyOf<T> | string)[]) {
-    if (typeof modelOrString == 'string') {
-      params.unshift(modelOrString);
-    } else {
-      const meta = reflector.propMetadata(modelOrString);
-    }
-
-    const arr = params.map<XParameterObject>((param) => {
-      return { in: paramIn, name: param as string };
-    });
-    this.parameters.push(...arr);
-    return this;
+  optional<T extends Type<edk.AnyObj>>(paramsIn: OptionalParamsIn, model: T, ...params: KeysOf<T>): this;
+  optional(paramsIn: OptionalParamsIn, ...params: [string, ...string[]]): this;
+  optional<T extends Type<edk.AnyObj>>(
+    paramsIn: OptionalParamsIn,
+    modelOrString: T | string,
+    ...params: (KeyOf<T> | string)[]
+  ) {
+    return this.setParams(false, paramsIn, modelOrString, ...params);
   }
 
   getParams() {
     return [...this.parameters];
+  }
+
+  protected setParams<T extends Type<edk.AnyObj>>(
+    isRequired: boolean,
+    paramsIn: RequiredParamsIn,
+    modelOrString: T | string,
+    ...params: (KeyOf<T> | string)[]
+  ) {
+    let paramsObjects: XParameterObject[];
+    if (typeof modelOrString == 'string') {
+      params.unshift(modelOrString);
+      paramsObjects = this.transformParams(params, paramsIn, isRequired);
+    } else {
+      paramsObjects = this.transformParams(params, paramsIn, isRequired);
+      paramsObjects = this.setMetadata(modelOrString, paramsObjects);
+    }
+
+    this.parameters.push(...paramsObjects);
+    return this;
+  }
+
+  protected transformParams(params: string[], paramsIn: RequiredParamsIn, isRequired?: boolean) {
+    return params.map<XParameterObject>((param) => {
+      return { in: paramsIn, name: param as string, required: isRequired };
+    });
+  }
+
+  /**
+   * Sets metadata from a model to parameters.
+   */
+  protected setMetadata(model: Type<any>, paramsObjects: XParameterObject[]): XParameterObject[] {
+    const meta = reflector.propMetadata(model) as SchemaDecoratorMetadata;
+    return paramsObjects.map((paramObject) => {
+      const schemaDecoratorValue = meta[paramObject.name];
+      if (schemaDecoratorValue) {
+        paramObject.schema = Object.assign({}, paramObject.schema, ...schemaDecoratorValue.slice(1));
+      }
+      return paramObject;
+    });
   }
 }

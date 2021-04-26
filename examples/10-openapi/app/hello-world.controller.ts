@@ -1,7 +1,8 @@
 import { Controller, Request, Response, Route, Status } from '@ditsmod/core';
-import { OasRoute } from '@ditsmod/openapi';
+import { OasRoute, Parameters } from '@ditsmod/openapi';
 
 import { BasicGuard } from './basic.guard';
+import { Post } from './models';
 
 @Controller()
 export class HelloWorldController {
@@ -25,15 +26,15 @@ export class HelloWorldController {
 
   // Here works new route decorator from `@ditsmod/openapi`.
   @OasRoute('posts/{postId}', [BasicGuard], {
-    parameters: [
-      { in: 'path', name: 'postId', required: true },
-      { in: 'query', name: 'catId' },
-    ],
+    parameters: new Parameters()
+      .required('path', Post, 'postId')
+      .optional('cookie', Post, 'postTitle')
+      .getParams(),
     get: {
-      parameters: [
-        { in: 'query', name: 'rubricId' },
-        { in: 'query', name: 'contextId' },
-      ],
+      parameters: new Parameters()
+        .required('query', 'rubricId')
+        .optional('query', 'contextId')
+        .getParams(),
       responses: {
         [Status.OK]: {
           description: 'Single post',
