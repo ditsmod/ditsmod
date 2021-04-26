@@ -104,7 +104,7 @@ let str = JSON.stringify(rec, Logger.safeCycles());
   log(levelName: LevelNames, args: any[]): void {
     const level = Logger.resolveLevel(levelName);
     const fn = this.mkLogEmitter(level);
-    fn(args);
+    fn.call(this, args);
   }
   /**
    * These are the default fields for log records (minus the attributes
