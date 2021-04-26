@@ -101,6 +101,11 @@ let str = JSON.stringify(rec, Logger.safeCycles());
   warn = this.mkLogEmitter(Level.warn);
   error = this.mkLogEmitter(Level.error);
   fatal = this.mkLogEmitter(Level.fatal);
+  log(levelName: LevelNames, args: any[]): void {
+    const level = Logger.resolveLevel(levelName);
+    const fn = this.mkLogEmitter(level);
+    fn(args);
+  }
   /**
    * These are the default fields for log records (minus the attributes
    * removed in this constructor). To allow storing raw log records
