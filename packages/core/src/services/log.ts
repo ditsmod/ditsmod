@@ -12,11 +12,7 @@ export class Log {
   }
 
   setLogger(logger: Logger) {
-    if (logger instanceof Logger) {
-      this._logger = logger;
-    } else {
-      throw new TypeError('Setting logger failed: any logger must be instance of Logger imported from @ditsmod/core.');
-    }
+    this._logger = logger;
   }
 
   get logger() {
