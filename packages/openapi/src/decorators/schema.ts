@@ -1,9 +1,10 @@
-import { makePropTypeDecorator } from '@ts-stack/di';
+import { edk } from '@ditsmod/core';
+import { makePropTypeDecorator, Type } from '@ts-stack/di';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 
 export type SchemaDecoratorFactory = (options?: XSchemaObject) => PropertyDecorator;
 
-export type SchemaDecoratorValue = [unknown, XSchemaObject, ...XSchemaObject[]];
+export type SchemaDecoratorValue = [Type<edk.AnyObj>, XSchemaObject, ...XSchemaObject[]];
 export interface SchemaDecoratorMetadata {
   [key: string]: SchemaDecoratorValue;
 }
