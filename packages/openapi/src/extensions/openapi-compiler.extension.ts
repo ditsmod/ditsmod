@@ -130,10 +130,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
     const httpMethod = routeMeta.httpMethod.toLowerCase();
     let path = [prefixPerApp, prefixPerMod, routeMeta.path].filter((p) => p).join('/');
     const parameters: XParameterObject[] = [];
-    path = `/${path}`.replace(/:([^\/]+)/g, (_, name) => {
-      parameters.push({ in: 'path', name, required: true });
-      return `{${name}}`;
-    });
+    path = `/${path}`;
     const operationObject: XOperationObject = { tags: ['NonOasRoutes'], parameters, responses: {} };
     this.setSecurityInfo(operationObject, guards);
     if (routeMeta.parseBody) {
