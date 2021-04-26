@@ -71,7 +71,7 @@ export class Parameters {
     return paramsObjects.map((paramObject) => {
       const schemaDecoratorValue = meta[paramObject.name];
       if (schemaDecoratorValue) {
-        paramObject.schema = Object.assign({}, paramObject.schema, ...schemaDecoratorValue.slice(1));
+        paramObject.schema = Object.assign({}, ...schemaDecoratorValue.slice(1), paramObject.schema);
       }
       return paramObject;
     });
