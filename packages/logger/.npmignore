@@ -8,7 +8,6 @@
 /test
 /dist-*
 /spec
-/src
 /.*
 /tsconfig.json
 /tslint.json
