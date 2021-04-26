@@ -22,7 +22,7 @@ export class Request {
    * Here is the result of the `querystring.parse()` function,
    * so if query params are missing, there will be an empty object.
    */
-  queryParams?: any;
+  queryParams?: any = {};
   /**
    * This value is set after checking `guard.canActivate()` and seting `queryParams`.
    */
