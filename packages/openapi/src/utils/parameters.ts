@@ -1,8 +1,8 @@
-import { XParameterObject } from '@ts-stack/openapi-spec';
+import { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
 import { edk } from '@ditsmod/core';
 import { Type, reflector } from '@ts-stack/di';
 
-import { SchemaDecoratorMetadata } from '../decorators/schema';
+import { SchemaDecoratorMetadata, SchemaDecoratorValue } from '../decorators/schema';
 
 type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';
 type OptionalParamsIn = 'query' | 'header' | 'cookie';
@@ -72,8 +72,22 @@ export class Parameters {
       const schemaDecoratorValue = meta[paramObject.name];
       if (schemaDecoratorValue) {
         paramObject.schema = Object.assign({}, ...schemaDecoratorValue.slice(1), paramObject.schema);
+        this.setSchemaType(paramObject.schema, schemaDecoratorValue);
       }
       return paramObject;
     });
+  }
+
+  protected setSchemaType(schema: XSchemaObject, schemaDecoratorValue: SchemaDecoratorValue) {
+    if (schema.type === undefined) {
+      const type = schemaDecoratorValue[0];
+      if ([Boolean, Number, String, Array, Object].includes(type as any)) {
+        schema.type = (type.name?.toLowerCase() || 'null') as SchemaObjectType;
+      } else if (type instanceof Type) {
+        schema.type = 'object';
+      } else {
+        schema.type = 'null';
+      }
+    }
   }
 }
