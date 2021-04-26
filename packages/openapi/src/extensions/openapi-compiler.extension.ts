@@ -58,7 +58,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
         if (!oasRouteMeta.httpMethod) {
           throw new Error('OpenapiCompilerExtension: OasRouteMeta not found.');
         }
-        this.applyNonOasRoute(prefixPerApp, prefixPerMod, paths, oasRouteMeta);
+        this.applyNonOasRoute(prefixPerApp, prefixPerMod, paths, oasRouteMeta, guards);
       }
     });
 
@@ -124,7 +124,8 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
     prefixPerApp: string,
     prefixPerMod: string,
     paths: XPathsObject,
-    routeMeta: edk.RouteMeta
+    routeMeta: edk.RouteMeta,
+    guards: edk.NormalizedGuard[]
   ) {
     const httpMethod = routeMeta.httpMethod.toLowerCase();
     let path = [prefixPerApp, prefixPerMod, routeMeta.path].filter((p) => p).join('/');
@@ -134,6 +135,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
       return `{${name}}`;
     });
     const operationObject: XOperationObject = { tags: ['NonOasRoutes'], parameters, responses: {} };
+    this.setSecurityInfo(operationObject, guards);
     if (routeMeta.parseBody) {
       operationObject.requestBody = {
         description: 'It is default content field for non-OasRoute',
