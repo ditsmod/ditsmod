@@ -47,11 +47,6 @@ export class AppInitializer {
   }
 
   async bootstrapModulesAndExtensions() {
-    const meta = this.moduleManager.getMetadata('root', true);
-    this.mergeMetadata(meta.module as ModuleType);
-    this.prepareProvidersPerApp(meta, this.moduleManager);
-    this.addDefaultProvidersPerApp();
-    this.createInjectorAndSetLog();
     this.appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
     this.checkModulesResolvable(this.appMetadataMap);
     await this.handleExtensions(this.appMetadataMap);
@@ -165,7 +160,6 @@ export class AppInitializer {
   protected addDefaultProvidersPerApp() {
     this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
-      { provide: Log, useValue: this.log },
       { provide: RootMetadata, useValue: this.meta },
       { provide: ModuleManager, useValue: this.moduleManager },
       { provide: AppInitializer, useValue: this }

@@ -12,7 +12,11 @@ export class Log {
   }
 
   setLogger(logger: Logger) {
-    this._logger = logger;
+    if (logger) {
+      this._logger = logger;
+    } else {
+      throw new TypeError('Can not set empty value to logger.');
+    }
   }
 
   get logger() {
