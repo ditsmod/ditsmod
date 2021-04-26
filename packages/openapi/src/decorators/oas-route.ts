@@ -1,8 +1,13 @@
-import { edk, GuardItem } from '@ditsmod/core';
+import { edk, GuardItem, HttpMethod } from '@ditsmod/core';
 import { makePropDecorator } from '@ts-stack/di';
-import { XPathItemObject } from '@ts-stack/openapi-spec';
+import { XOperationObject } from '@ts-stack/openapi-spec';
 
-export type OasRouteDecoratorFactory = (path: string, guards: GuardItem[], pathItem: XPathItemObject) => OasRouteDecorator;
+export type OasRouteDecoratorFactory = (
+  httpMethod: HttpMethod,
+  path: string,
+  guards: GuardItem[],
+  operationObject: XOperationObject
+) => OasRouteDecorator;
 
 export type OasRouteDecorator = <T>(
   target: edk.AnyObj,
@@ -15,13 +20,22 @@ export interface OasRouteDecoratorMetadata {
 }
 
 export interface OasRouteMetadata {
+  httpMethod: HttpMethod;
   path: string;
   guards: GuardItem[];
-  pathItem: XPathItemObject;
+  /**
+   * OAS `OperationObject`.
+   */
+  operationObject: XOperationObject;
 }
 
-function oasRoute(path: string, guards: GuardItem[], pathItem: XPathItemObject): OasRouteMetadata {
-  return { path, guards, pathItem: pathItem };
+function oasRoute(
+  httpMethod: HttpMethod,
+  path: string,
+  guards: GuardItem[],
+  operationObject: XOperationObject
+): OasRouteMetadata {
+  return { httpMethod, path, guards, operationObject };
 }
 
 /**

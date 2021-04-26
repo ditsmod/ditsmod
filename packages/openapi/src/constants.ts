@@ -24,14 +24,3 @@ export const DEFAULT_OAS_OBJECT: XOasObject = {
 };
 
 edk.deepFreeze(DEFAULT_OAS_OBJECT);
-
-export const DEFAULT_OAS_HTTP_METHODS = [
-  'GET',
-  'PUT',
-  'POST',
-  'DELETE',
-  'OPTIONS',
-  'HEAD',
-  'PATCH',
-  'TRACE',
-] as HttpMethod[];

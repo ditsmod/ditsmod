@@ -1,12 +1,12 @@
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
-import { edk, HttpMethod } from '@ditsmod/core';
+import { edk } from '@ditsmod/core';
 import { Injectable, ReflectiveInjector, reflector } from '@ts-stack/di';
 import {
+  PathItemObject,
   XOasObject,
   XOperationObject,
   XParameterObject,
-  XPathItemObject,
   XPathsObject,
   XResponsesObject,
   XSecurityRequirementObject,
@@ -47,12 +47,13 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(rawMeta.providersPerMod);
       const injectorPerRou = injectorPerMod.resolveAndCreateChild(rawMeta.providersPerRou);
       const oasRouteMeta = injectorPerRou.get(OasRouteMeta) as OasRouteMeta;
-      const { httpMethod, oasPath, pathItem, guards } = oasRouteMeta;
-      if (pathItem) {
-        const clonedPathItem = { ...pathItem };
-        const path = [prefixPerApp, prefixPerMod, oasPath].filter((p) => p).join('/');
-        paths[`/${path}`] = clonedPathItem;
-        this.setSecurityInfo(httpMethod, clonedPathItem, guards);
+      const { httpMethod, path, guards, operationObject } = oasRouteMeta;
+      if (operationObject) {
+        const clonedOperationObject = { ...operationObject };
+        this.setSecurityInfo(clonedOperationObject, guards);
+        const pathItemObject: PathItemObject = { [httpMethod.toLowerCase()]: clonedOperationObject };
+        const fullPath = [prefixPerApp, prefixPerMod, path].filter((p) => p).join('/');
+        paths[`/${fullPath}`] = pathItemObject;
       } else {
         if (!oasRouteMeta.httpMethod) {
           throw new Error('OpenapiCompilerExtension: OasRouteMeta not found.');
@@ -71,7 +72,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
     this.oasObject.components = { ...(this.oasObject.components || {}) };
   }
 
-  protected setSecurityInfo(httpMethod: HttpMethod, pathItem: XPathItemObject, guards: edk.NormalizedGuard[]) {
+  protected setSecurityInfo(operationObject: XOperationObject, guards: edk.NormalizedGuard[]) {
     const security: XSecurityRequirementObject[] = [];
     const tags: string[] = [];
     const responses: XResponsesObject = {};
@@ -94,19 +95,15 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
         Object.assign(responses, oasGuardMetadata.responses);
       });
     });
-    this.mergeOperationObjects(httpMethod, pathItem, security, tags, responses);
+    this.mergeOperationObjects(operationObject, security, tags, responses);
   }
 
   protected mergeOperationObjects(
-    httpMethod: HttpMethod,
-    pathItem: XPathItemObject,
+    operationObject: XOperationObject,
     newSecurities: XSecurityRequirementObject[],
     newTags: string[],
     responses: XResponsesObject
   ) {
-    const method = httpMethod.toLowerCase();
-    const operationObject = { ...pathItem[method] } as XOperationObject;
-    pathItem[method] = operationObject;
     operationObject.tags = [...(operationObject.tags || [])];
     newTags.forEach((newTag) => {
       if (!operationObject.tags.includes(newTag)) {

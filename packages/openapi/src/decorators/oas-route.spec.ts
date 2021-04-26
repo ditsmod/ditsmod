@@ -15,13 +15,13 @@ describe('@Route', () => {
   it('one method, one operation', () => {
     @Controller()
     class Controller1 {
-      @OasRoute('', [], { get: {} })
+      @OasRoute('GET', '', [], {})
       method() {}
     }
 
     const actualMeta = reflector.propMetadata(Controller1);
     const expectedMeta: OasRouteDecoratorMetadata = {
-      method: [{ path: '', guards: [], pathItem: { get: {} } }],
+      method: [{ httpMethod: 'GET', path: '', guards: [], operationObject: {} }],
     };
     expect(actualMeta).toEqual(expectedMeta);
   });
@@ -29,13 +29,13 @@ describe('@Route', () => {
   it('one method, two operation', () => {
     @Controller()
     class Controller1 {
-      @OasRoute('', [], { get: {}, post: {} })
+      @OasRoute('GET', '', [], { get: {}, post: {} })
       method() {}
     }
 
     const actualMeta = reflector.propMetadata(Controller1);
     const expectedMeta: OasRouteDecoratorMetadata = {
-      method: [{ path: '', guards: [], pathItem: { get: {}, post: {} } }],
+      method: [{ httpMethod: 'GET', path: '', guards: [], operationObject: { get: {}, post: {} } }],
     };
     expect(actualMeta).toEqual(expectedMeta);
   });
@@ -48,7 +48,7 @@ describe('@Route', () => {
     }
     @Controller()
     class Controller1 {
-      @OasRoute('posts', [Guard], { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } })
+      @OasRoute('GET', 'posts', [Guard], { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } })
       method() {}
     }
 
@@ -56,9 +56,10 @@ describe('@Route', () => {
     const expectedMeta: OasRouteDecoratorMetadata = {
       method: [
         {
+          httpMethod: 'GET',
           path: 'posts',
           guards: [Guard],
-          pathItem: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
+          operationObject: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
         },
       ],
     };
@@ -73,7 +74,9 @@ describe('@Route', () => {
     }
     @Controller()
     class Controller1 {
-      @OasRoute('posts', [Guard, Guard], { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } })
+      @OasRoute('GET', 'posts', [Guard, Guard], {
+        get: { parameters: [{ in: 'path', name: 'postId', required: true }] },
+      })
       method() {}
     }
 
@@ -81,9 +84,10 @@ describe('@Route', () => {
     const expectedMeta: OasRouteDecoratorMetadata = {
       method: [
         {
+          httpMethod: 'GET',
           path: 'posts',
           guards: [Guard, Guard],
-          pathItem: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
+          operationObject: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
         },
       ],
     };
@@ -99,6 +103,7 @@ describe('@Route', () => {
     @Controller()
     class Controller1 {
       @OasRoute(
+        'GET',
         'posts',
         [
           [Guard, 'one', 123],
@@ -113,12 +118,13 @@ describe('@Route', () => {
     const expectedMeta: OasRouteDecoratorMetadata = {
       method: [
         {
+          httpMethod: 'GET',
           path: 'posts',
           guards: [
             [Guard, 'one', 123],
             [Guard, []],
           ],
-          pathItem: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
+          operationObject: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
         },
       ],
     };

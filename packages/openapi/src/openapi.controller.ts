@@ -8,16 +8,14 @@ import { SwaggerConfigManager } from './services/swagger-config-manager';
 export class OpenapiController {
   constructor(private res: Response, private swaggerConfigManager: SwaggerConfigManager) {}
 
-  @OasRoute('openapi', [], {
-    get: {
-      tags: ['OasDocs'],
-      description: 'OpenAPI documentation',
-      parameters: [],
-      responses: {
-        [Status.OK]: {
-          description: 'Index file for the OpenAPI Specification',
-          content: { ['text/html; charset=utf-8']: {} },
-        },
+  @OasRoute('GET', 'openapi', [], {
+    tags: ['OasDocs'],
+    description: 'OpenAPI documentation',
+    parameters: [],
+    responses: {
+      [Status.OK]: {
+        description: 'Index file for the OpenAPI Specification',
+        content: { ['text/html; charset=utf-8']: {} },
       },
     },
   })
@@ -27,16 +25,14 @@ export class OpenapiController {
     this.res.setContentType('text/html; charset=utf-8').send(indexHtml);
   }
 
-  @OasRoute('openapi.yaml', [], {
-    get: {
-      tags: ['OasDocs'],
-      description: 'Config file in YAML format for the OpenAPI documentation',
-      parameters: [],
-      responses: {
-        [Status.OK]: {
-          description: 'YAML-file for the OpenAPI documentation',
-          content: { ['text/yaml; charset=utf-8']: {} },
-        },
+  @OasRoute('GET', 'openapi.yaml', [], {
+    tags: ['OasDocs'],
+    description: 'Config file in YAML format for the OpenAPI documentation',
+    parameters: [],
+    responses: {
+      [Status.OK]: {
+        description: 'YAML-file for the OpenAPI documentation',
+        content: { ['text/yaml; charset=utf-8']: {} },
       },
     },
   })
@@ -45,16 +41,14 @@ export class OpenapiController {
     this.res.setContentType('text/yaml; charset=utf-8').send(openapiYaml);
   }
 
-  @OasRoute('openapi.json', [], {
-    get: {
-      tags: ['OasDocs'],
-      description: 'Config file in JSON format for the OpenAPI documentation',
-      parameters: [],
-      responses: {
-        [Status.OK]: {
-          description: 'JSON-file for the OpenAPI documentation',
-          content: { ['application/json; charset=utf-8']: {} },
-        },
+  @OasRoute('GET', 'openapi.json', [], {
+    tags: ['OasDocs'],
+    description: 'Config file in JSON format for the OpenAPI documentation',
+    parameters: [],
+    responses: {
+      [Status.OK]: {
+        description: 'JSON-file for the OpenAPI documentation',
+        content: { ['application/json; charset=utf-8']: {} },
       },
     },
   })
@@ -63,16 +57,14 @@ export class OpenapiController {
     this.res.setContentType('application/json; charset=utf-8').send(openapiJson);
   }
 
-  @OasRoute('openapi.bundle.js', [], {
-    get: {
-      tags: ['OasDocs'],
-      description: 'SwaggerUI JavaScript bundle',
-      parameters: [],
-      responses: {
-        [Status.OK]: {
-          description: 'JavaScript-file with SwaggerUI logic',
-          content: { ['text/javascript; charset=utf-8']: {} },
-        },
+  @OasRoute('GET', 'openapi.bundle.js', [], {
+    tags: ['OasDocs'],
+    description: 'SwaggerUI JavaScript bundle',
+    parameters: [],
+    responses: {
+      [Status.OK]: {
+        description: 'JavaScript-file with SwaggerUI logic',
+        content: { ['text/javascript; charset=utf-8']: {} },
       },
     },
   })
