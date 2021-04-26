@@ -17,7 +17,11 @@ export class HelloWorldController {
   // Here works new route decorator from `@ditsmod/openapi`.
   @OasRoute('GET', 'posts/:postId', [BasicGuard], {
     description: 'Here some description',
-    parameters: new Parameters().required('path', Post, 'postId').optional('query', 'someOptionalParam').getParams(),
+    parameters: new Parameters()
+      // 
+      .required('path', Post, 'postId')
+      .optional('query', 'someOptionalParam')
+      .getParams(),
     responses: {
       [Status.OK]: {
         description: 'Single post',
