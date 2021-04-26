@@ -18,7 +18,6 @@ export class HelloWorldController {
   @OasRoute('GET', 'posts/:postId', [BasicGuard], {
     description: 'Here some description',
     parameters: new Parameters()
-      // 
       .required('path', Post, 'postId')
       .optional('query', 'someOptionalParam')
       .getParams(),
