@@ -10,7 +10,7 @@ import { isController, isRoute } from '../utils/type-guards';
 
 @Injectable()
 export class RoutesExtension implements Extension<RawRouteMeta[]> {
-  #rawRoutesMeta: RawRouteMeta[] = [];
+  protected rawRoutesMeta: RawRouteMeta[] = [];
 
   constructor(
     protected injectorPerApp: ReflectiveInjector,
@@ -19,8 +19,8 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
   ) {}
 
   async init() {
-    if (this.#rawRoutesMeta.length) {
-      return this.#rawRoutesMeta;
+    if (this.rawRoutesMeta.length) {
+      return this.rawRoutesMeta;
     }
 
     const { prefixPerApp } = this.rootMetadata;
@@ -28,10 +28,10 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
     this.appMetadataMap.forEach((metadataPerMod) => {
       const { prefixPerMod, moduleMetadata } = metadataPerMod;
       const rawRoutesMeta = this.getRawRoutesMeta(moduleMetadata.name, prefixPerApp, prefixPerMod, metadataPerMod);
-      this.#rawRoutesMeta.push(...rawRoutesMeta);
+      this.rawRoutesMeta.push(...rawRoutesMeta);
     });
 
-    return this.#rawRoutesMeta;
+    return this.rawRoutesMeta;
   }
 
   protected getRawRoutesMeta(
