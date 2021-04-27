@@ -43,22 +43,20 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
     const paths: XPathsObject = {};
     this.initOasObject();
     rawRouteMeta.forEach((rawMeta) => {
-      const { prefixPerApp, prefixPerMod } = rawMeta;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(rawMeta.providersPerMod);
       const injectorPerRou = injectorPerMod.resolveAndCreateChild(rawMeta.providersPerRou);
       const oasRouteMeta = injectorPerRou.get(OasRouteMeta) as OasRouteMeta;
-      const { httpMethod, oasPath, guards, operationObject } = oasRouteMeta;
+      const { httpMethod, oasPath, path, guards, operationObject } = oasRouteMeta;
       if (operationObject) {
         const clonedOperationObject = { ...operationObject };
         this.setSecurityInfo(clonedOperationObject, guards);
         const pathItemObject: PathItemObject = { [httpMethod.toLowerCase()]: clonedOperationObject };
-        const fullPath = [prefixPerApp, prefixPerMod, oasPath].filter((p) => p).join('/');
-        paths[`/${fullPath}`] = pathItemObject;
+        paths[`/${oasPath}`] = pathItemObject;
       } else {
         if (!oasRouteMeta.httpMethod) {
           throw new Error('OpenapiCompilerExtension: OasRouteMeta not found.');
         }
-        this.applyNonOasRoute(prefixPerApp, prefixPerMod, paths, oasRouteMeta, guards);
+        this.applyNonOasRoute(path, paths, oasRouteMeta, guards);
       }
     });
 
@@ -121,14 +119,12 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
   }
 
   protected applyNonOasRoute(
-    prefixPerApp: string,
-    prefixPerMod: string,
+    path: string,
     paths: XPathsObject,
     routeMeta: edk.RouteMeta,
     guards: edk.NormalizedGuard[]
   ) {
     const httpMethod = routeMeta.httpMethod.toLowerCase();
-    let path = [prefixPerApp, prefixPerMod, routeMeta.path].filter((p) => p).join('/');
     const parameters: XParameterObject[] = [];
     path = `/${path}`.replace(/:([^\/]+)/g, (_, name) => {
       parameters.push({ in: 'path', name, required: true });

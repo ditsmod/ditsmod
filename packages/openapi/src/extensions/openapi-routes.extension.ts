@@ -38,7 +38,9 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
             guards,
             providersPerReq.slice()
           );
-          const { httpMethod, path: oasPath, operationObject } = oasRoute;
+          const { httpMethod, path: controllerPath, operationObject } = oasRoute;
+          const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
+          const oasPath = this.getPath(prefix, controllerPath);
           const path = this.transformPath(oasPath, operationObject.parameters);
           providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
           const parseBody = this.needBodyParse(providersPerMod, providersPerRou, allProvidersPerReq, httpMethod);
@@ -59,8 +61,6 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
             providersPerMod,
             providersPerRou,
             providersPerReq: allProvidersPerReq,
-            prefixPerApp,
-            prefixPerMod,
             path,
             httpMethod,
           });
@@ -71,6 +71,25 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
     return rawRoutesMeta;
   }
 
+  /**
+   * Compiles the path for the controller given the prefix.
+   *
+   * - If prefix `/api/posts/:postId` and route path `:postId`, this method returns path `/api/posts/:postId`.
+   * - If prefix `/api/posts` and route path `:postId`, this method returns `/api/posts/:postId`
+   */
+  protected getPath(prefix: string, path: string) {
+    const prefixLastPart = prefix?.split('/').slice(-1)[0];
+    if (prefixLastPart?.charAt(0) == ':') {
+      const reducedPrefix = prefix?.split('/').slice(0, -1).join('/');
+      return [reducedPrefix, path].filter((s) => s).join('/');
+    } else {
+      return [prefix, path].filter((s) => s).join('/');
+    }
+  }
+
+  /**
+   * Transform from `path/{param}` to `path/:param`.
+   */
   protected transformPath(path: string, params: (XParameterObject | ReferenceObject)[]) {
     const paramsInPath = params
       .filter((p) => !isReferenceObject(p))
