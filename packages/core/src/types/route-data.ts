@@ -1,4 +1,3 @@
-import { RouteMetadata } from '../decorators/route';
 import { ControllerType, DecoratorMetadata, HttpMethod, NormalizedGuard, ServiceProvider } from './mix';
 import { RouteHandler } from './router';
 
@@ -11,15 +10,15 @@ export class RawRouteMeta {
   /**
    * Providers per a module.
    */
-  providersPerMod?: ServiceProvider[];
+  providersPerMod: ServiceProvider[];
   /**
    * Providers per a route.
    */
-  providersPerRou?: ServiceProvider[];
+  providersPerRou: ServiceProvider[];
   /**
    * Providers per a request.
    */
-  providersPerReq?: ServiceProvider[];
+  providersPerReq: ServiceProvider[];
   prefixPerApp?: string;
   prefixPerMod?: string;
   path: string;
