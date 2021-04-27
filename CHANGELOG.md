@@ -1,1 +1,3 @@
-See [CHANGELOG for core](./packages/core/CHANGELOG.md)
+See:
+- [CHANGELOG for core](./packages/core/CHANGELOG.md)
+- [CHANGELOG for openapi](./packages/openapi/CHANGELOG.md)

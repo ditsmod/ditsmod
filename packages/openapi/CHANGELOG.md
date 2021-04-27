@@ -1,5 +1,12 @@
+<a name="openapi-beta.5"></a>
+# [openapi-beta.5](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.5) (2021-04-27)
+
+### Features
+
+- added ability to `setSecurityInfo()` for non-OasRoute [073a53c](https://github.com/ditsmod/ditsmod/commit/073a53c).
+
 <a name="openapi-beta.4"></a>
-# [openapi-beta.4](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.4) (2021-04-26)
+## [openapi-beta.4](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.4) (2021-04-26)
 
 ### BREAKING CHANGES
 
