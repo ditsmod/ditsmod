@@ -1,14 +1,9 @@
-<a name="core-beta.15"></a>
-# [core-beta.15](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.15) (2021-04-26)
-
-### Bug fix
-
-- removed check for instansof Log [e1b135](https://github.com/ditsmod/ditsmod/commit/e1b135).
-- added default object for `request.queryParams` [f7b8b0](https://github.com/ditsmod/ditsmod/commit/f7b8b0).
+<a name="core-beta.16"></a>
+# [core-beta.16](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.16) (2021-04-27)
 
 ### Features
 
-- added cyclic deps detecting [35f513](https://github.com/ditsmod/ditsmod/commit/35f513).
+- delegated getPath() from `PreRouter` to `RoutesExtension` [7cbbae](https://github.com/ditsmod/ditsmod/commit/7cbbae).
 
 <a name="core-beta.14"></a>
 ## [core-beta.14](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.14) (2021-04-20)
