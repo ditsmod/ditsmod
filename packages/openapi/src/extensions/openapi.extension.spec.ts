@@ -5,14 +5,62 @@ import { OpenapiRoutesExtension } from './openapi-routes.extension';
 
 describe('OpenapiRoutesExtension', () => {
   class MockOpenapiRoutesExtension extends OpenapiRoutesExtension {
-    transformToOasPath(moduleName: string, path: string, params: (XParameterObject | ReferenceObject)[]) {
+    transformToOasPath(moduleName: string, path: string, params: XParameterObject[]) {
       return super.transformToOasPath(moduleName, path, params);
+    }
+
+    mergeParams(
+      path: string,
+      prefixParams: (XParameterObject<any> | ReferenceObject)[],
+      params: (XParameterObject<any> | ReferenceObject)[]
+    ) {
+      return super.mergeParams(path, prefixParams, params);
     }
   }
 
   let mock: MockOpenapiRoutesExtension;
   beforeEach(() => {
     mock = new MockOpenapiRoutesExtension(null, null, null);
+  });
+
+  describe('mergeParams()', () => {
+    it('merge prefixParams with non-path params', () => {
+      const prefixParams: (XParameterObject<any> | ReferenceObject)[] = [
+        { in: 'query', name: 'catId' },
+        { in: 'query', name: 'rubricId' },
+      ];
+      const parameters: (XParameterObject<any> | ReferenceObject)[] = [
+        { in: 'query', name: 'rubricId' },
+        { in: 'query', name: 'contextId' },
+      ];
+      const { paramsNonPath, paramsInPath, paramsRefs } = mock.mergeParams('', prefixParams, parameters);
+      expect(paramsNonPath).toEqual([
+        { in: 'query', name: 'catId' },
+        { in: 'query', name: 'rubricId' },
+        { in: 'query', name: 'contextId' },
+      ]);
+      expect(paramsInPath).toEqual([]);
+      expect(paramsRefs).toEqual([]);
+    });
+
+    it('set prefixParams with path params', () => {
+      const prefixParams: (XParameterObject<any> | ReferenceObject)[] = [{ in: 'path', name: 'postId' }];
+      const parameters: (XParameterObject<any> | ReferenceObject)[] = [
+        { in: 'query', name: 'rubricId' },
+        { in: 'query', name: 'contextId' },
+      ];
+      const { paramsNonPath, paramsInPath, paramsRefs } = mock.mergeParams(
+        'posts/:postId/comments',
+        prefixParams,
+        parameters
+      );
+      expect(paramsNonPath).toEqual([
+        { in: 'query', name: 'rubricId' },
+        { in: 'query', name: 'contextId' },
+      ]);
+      expect(paramsInPath).toEqual([{ in: 'path', name: 'postId' }]);
+      expect(paramsRefs).toEqual([]);
+    });
   });
 
   it('transformPath()', () => {

@@ -1,9 +1,11 @@
 import { Injectable } from '@ts-stack/di';
 import { edk } from '@ditsmod/core';
-import { ReferenceObject, XParameterObject } from '@ts-stack/openapi-spec';
+import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { isOasRoute, isReferenceObject } from '../utils/type-guards';
 import { OasRouteMeta } from '../types/oas-route-meta';
+import { OasModuleWithParams } from '../types/oas-modul-with-params';
+import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-last-params';
 
 @Injectable()
 export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.Extension<edk.RawRouteMeta[]> {
@@ -16,6 +18,11 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
     const { controllersMetadata, guardsPerMod, moduleMetadata } = metadataPerMod;
 
     const providersPerMod = moduleMetadata.providersPerMod.slice();
+    let prefixParams: (XParameterObject<any> | ReferenceObject)[];
+    if (edk.isModuleWithParams(moduleMetadata.module)) {
+      const moduleWithParams = moduleMetadata.module as OasModuleWithParams;
+      prefixParams = moduleWithParams.prefixParams;
+    }
 
     const rawRoutesMeta: edk.RawRouteMeta[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
@@ -41,14 +48,19 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
           const { httpMethod, path: controllerPath, operationObject } = oasRoute;
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const path = this.getPath(prefix, controllerPath);
-          const oasPath = this.transformToOasPath(moduleMetadata.name, path, operationObject.parameters);
+          const clonedOperationObject = { ...operationObject } as XOperationObject;
+          const { parameters } = clonedOperationObject;
+          const { paramsRefs, paramsInPath, paramsNonPath } = this.mergeParams(path, prefixParams, parameters);
+          clonedOperationObject.parameters = [...paramsRefs, ...paramsInPath, ...paramsNonPath];
+          // For now, here ReferenceObjects, if this is intended for a path, is ignored.
+          const oasPath = this.transformToOasPath(moduleMetadata.name, path, paramsInPath);
           providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
           const parseBody = this.needBodyParse(providersPerMod, providersPerRou, allProvidersPerReq, httpMethod);
           const routeMeta: OasRouteMeta = {
             httpMethod,
             oasPath,
             path,
-            operationObject,
+            operationObject: clonedOperationObject,
             decoratorMetadata,
             controller,
             methodName,
@@ -71,16 +83,42 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
     return rawRoutesMeta;
   }
 
+  protected mergeParams(
+    path: string,
+    prefixParams: (XParameterObject<any> | ReferenceObject)[],
+    params: (XParameterObject<any> | ReferenceObject)[]
+  ) {
+    params = [...(prefixParams || []), ...(params || [])];
+    const referenceObjects: ReferenceObject[] = [];
+    const paramsInPath: XParameterObject[] = [];
+    const paramsNonPath: XParameterObject[] = [];
+    params.forEach((p) => {
+      if (isReferenceObject(p)) {
+        referenceObjects.push(p);
+      } else {
+        if (p.in == 'path') {
+          if (path.includes(`:${p.name}`)) {
+            paramsInPath.push(p);
+          }
+        } else {
+          paramsNonPath.push(p);
+        }
+      }
+    });
+    return {
+      paramsRefs: getLastReferenceObjects(referenceObjects),
+      paramsInPath: getLastParameterObjects(paramsInPath),
+      paramsNonPath: getLastParameterObjects(paramsNonPath),
+    };
+  }
+
   /**
    * Transform from `path/:param` to `path/{param}`.
    */
-  protected transformToOasPath(moduleName: string, path: string, params: (XParameterObject | ReferenceObject)[]) {
-    const paramsInPath = (params || [])
-      .filter((p) => !isReferenceObject(p))
-      .filter((p: XParameterObject) => p.in == 'path')
-      .map((p: XParameterObject) => p.name);
+  protected transformToOasPath(moduleName: string, path: string, paramsInPath: XParameterObject[]) {
+    const paramsNames = (paramsInPath || []).map((p: XParameterObject) => p.name);
 
-    paramsInPath.forEach((name) => {
+    paramsNames.forEach((name) => {
       if (path.includes(`{${name}}`)) {
         let msg = `Compiling OAS routes failed: ${moduleName} have a route with param: "{${name}}"`;
         msg += `, you must convert this to ":${name}"`;
