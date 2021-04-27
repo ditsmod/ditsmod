@@ -3,6 +3,7 @@ export { OasGuard, OasGuardMetadata } from './decorators/oas-guard';
 export * from './decorators/schema';
 export { OpenapiModule } from './openapi.module';
 export { OasRouteMeta } from './types/oas-route-meta';
+export { OasModuleWithParams } from './types/oas-modul-with-params';
 export * from './di-tokens';
 export * from './constants';
 export * from './utils/type-guards';
