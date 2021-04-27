@@ -47,12 +47,12 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(rawMeta.providersPerMod);
       const injectorPerRou = injectorPerMod.resolveAndCreateChild(rawMeta.providersPerRou);
       const oasRouteMeta = injectorPerRou.get(OasRouteMeta) as OasRouteMeta;
-      const { httpMethod, path, guards, operationObject } = oasRouteMeta;
+      const { httpMethod, oasPath, guards, operationObject } = oasRouteMeta;
       if (operationObject) {
         const clonedOperationObject = { ...operationObject };
         this.setSecurityInfo(clonedOperationObject, guards);
         const pathItemObject: PathItemObject = { [httpMethod.toLowerCase()]: clonedOperationObject };
-        const fullPath = [prefixPerApp, prefixPerMod, path].filter((p) => p).join('/');
+        const fullPath = [prefixPerApp, prefixPerMod, oasPath].filter((p) => p).join('/');
         paths[`/${fullPath}`] = pathItemObject;
       } else {
         if (!oasRouteMeta.httpMethod) {
@@ -130,7 +130,10 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
     const httpMethod = routeMeta.httpMethod.toLowerCase();
     let path = [prefixPerApp, prefixPerMod, routeMeta.path].filter((p) => p).join('/');
     const parameters: XParameterObject[] = [];
-    path = `/${path}`;
+    path = `/${path}`.replace(/:([^\/]+)/g, (_, name) => {
+      parameters.push({ in: 'path', name, required: true });
+      return `{${name}}`;
+    });
     const operationObject: XOperationObject = { tags: ['NonOasRoutes'], parameters, responses: {} };
     this.setSecurityInfo(operationObject, guards);
     if (routeMeta.parseBody) {

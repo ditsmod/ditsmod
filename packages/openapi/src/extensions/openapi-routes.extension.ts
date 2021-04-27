@@ -1,7 +1,8 @@
 import { Injectable } from '@ts-stack/di';
 import { edk } from '@ditsmod/core';
+import { ReferenceObject, XParameterObject } from '@ts-stack/openapi-spec';
 
-import { isOasRoute } from '../utils/type-guards';
+import { isOasRoute, isReferenceObject } from '../utils/type-guards';
 import { OasRouteMeta } from '../types/oas-route-meta';
 
 @Injectable()
@@ -37,11 +38,13 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
             guards,
             providersPerReq.slice()
           );
-          const { httpMethod, path, operationObject } = oasRoute;
+          const { httpMethod, path: oasPath, operationObject } = oasRoute;
+          const path = this.transformPath(oasPath, operationObject.parameters);
           providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
           const parseBody = this.needBodyParse(providersPerMod, providersPerRou, allProvidersPerReq, httpMethod);
           const routeMeta: OasRouteMeta = {
             httpMethod,
+            oasPath,
             path,
             operationObject,
             decoratorMetadata,
@@ -66,5 +69,18 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
     }
 
     return rawRoutesMeta;
+  }
+
+  protected transformPath(path: string, params: (XParameterObject | ReferenceObject)[]) {
+    const paramsInPath = params
+      .filter((p) => !isReferenceObject(p))
+      .filter((p: XParameterObject) => p.in == 'path')
+      .map((p: XParameterObject) => p.name);
+
+    paramsInPath.forEach((name) => {
+      path = path.replace(`{${name}}`, `:${name}`);
+    });
+
+    return path;
   }
 }
