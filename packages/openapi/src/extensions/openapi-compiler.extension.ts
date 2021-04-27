@@ -51,7 +51,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
         const clonedOperationObject = { ...operationObject };
         this.setSecurityInfo(clonedOperationObject, guards);
         const pathItemObject: PathItemObject = { [httpMethod.toLowerCase()]: clonedOperationObject };
-        paths[`/${oasPath}`] = pathItemObject;
+        paths[`/${oasPath}`] = { ...(paths[`/${oasPath}`] || {}), ...pathItemObject };
       } else {
         if (!oasRouteMeta.httpMethod) {
           throw new Error('OpenapiCompilerExtension: OasRouteMeta not found.');

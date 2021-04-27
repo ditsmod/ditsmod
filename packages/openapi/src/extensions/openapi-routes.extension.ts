@@ -91,7 +91,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
    * Transform from `path/:param` to `path/{param}`.
    */
   protected transformToOasPath(moduleName: string, path: string, params: (XParameterObject | ReferenceObject)[]) {
-    const paramsInPath = params
+    const paramsInPath = (params || [])
       .filter((p) => !isReferenceObject(p))
       .filter((p: XParameterObject) => p.in == 'path')
       .map((p: XParameterObject) => p.name);
