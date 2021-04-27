@@ -19,8 +19,6 @@ export class RawRouteMeta {
    * Providers per a request.
    */
   providersPerReq: ServiceProvider[];
-  prefixPerApp?: string;
-  prefixPerMod?: string;
   path: string;
   httpMethod: HttpMethod;
 }
@@ -59,8 +57,6 @@ export class RouteMeta {
  */
 export interface PreparedRouteMeta {
   moduleName: string;
-  prefixPerApp: string;
-  prefixPerMod: string;
   httpMethod: HttpMethod;
   path: string;
   handle: RouteHandler;

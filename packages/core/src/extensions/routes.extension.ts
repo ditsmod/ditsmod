@@ -67,9 +67,12 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
           );
           providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
           const parseBody = this.needBodyParse(providersPerMod, providersPerRou, allProvidersPerReq, route.httpMethod);
+          const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
+          const { path: controllerPath, httpMethod } = route;
+          const path = this.getPath(prefix, controllerPath);
           const routeMeta: RouteMeta = {
             httpMethod: route.httpMethod,
-            path: route.path,
+            path,
             decoratorMetadata,
             controller,
             methodName,
@@ -77,22 +80,35 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
             guards,
           };
           providersPerRou.push({ provide: RouteMeta, useValue: routeMeta });
-          const { path, httpMethod } = route;
           rawRoutesMeta.push({
             moduleName,
+            httpMethod,
+            path,
             providersPerMod,
             providersPerRou,
             providersPerReq: allProvidersPerReq,
-            prefixPerApp,
-            prefixPerMod,
-            path,
-            httpMethod,
           });
         }
       }
     }
 
     return rawRoutesMeta;
+  }
+
+  /**
+   * Compiles the path for the controller given the prefix.
+   *
+   * - If prefix `/api/posts/:postId` and route path `:postId`, this method returns path `/api/posts/:postId`.
+   * - If prefix `/api/posts` and route path `:postId`, this method returns `/api/posts/:postId`
+   */
+  protected getPath(prefix: string, path: string) {
+    const prefixLastPart = prefix?.split('/').slice(-1)[0];
+    if (prefixLastPart?.charAt(0) == ':') {
+      const reducedPrefix = prefix?.split('/').slice(0, -1).join('/');
+      return [reducedPrefix, path].filter((s) => s).join('/');
+    } else {
+      return [prefix, path].filter((s) => s).join('/');
+    }
   }
 
   protected normalizeGuards(guards: GuardItem[]) {

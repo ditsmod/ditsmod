@@ -44,6 +44,15 @@ xdescribe('RoutesExtension', () => {
     // mockPreRoutes = new MockPreRoutes(injectorPerApp);
   });
 
+  // describe('getPath', () => {
+  //   it('case 1', () => {
+  //     const path1 = mock.getPath('/api/posts/:postId', ':postId');
+  //     const path2 = mock.getPath('/api/posts', ':postId');
+  //     expect(path1).toBe('/api/posts/:postId');
+  //     expect(path2).toBe('/api/posts/:postId');
+  //   });
+  // });
+
   describe('getRoutesData()', () => {
     it('bad guard', () => {
       const ctrlMetadata = { providersPerReq: [] } as ControllerMetadata;

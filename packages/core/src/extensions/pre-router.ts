@@ -51,8 +51,6 @@ export class PreRouter implements Extension<void> {
         providersPerRou,
         providersPerReq,
         moduleName,
-        prefixPerApp,
-        prefixPerMod,
       } = rawRouteMeta;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       const inj1 = injectorPerMod.resolveAndCreateChild(providersPerRou);
@@ -72,7 +70,7 @@ export class PreRouter implements Extension<void> {
         await chain.handle();
       }) as RouteHandler;
 
-      preparedRouteMeta.push({ moduleName, prefixPerApp, prefixPerMod, httpMethod, path, handle });
+      preparedRouteMeta.push({ moduleName, httpMethod, path, handle });
     });
 
     return preparedRouteMeta;
@@ -80,11 +78,11 @@ export class PreRouter implements Extension<void> {
 
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {
     preparedRouteMeta.forEach((data) => {
-      const { moduleName, prefixPerApp, prefixPerMod, path: rawPath, httpMethod, handle } = data;
-      this.checkRoutePath(moduleName, prefixPerApp);
-      this.checkRoutePath(moduleName, prefixPerMod);
-      const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
-      const path = this.getPath(prefix, rawPath);
+      const { moduleName, path, httpMethod, handle } = data;
+
+      if (path?.charAt(0) == '/') {
+        throw new Error(`Invalid configuration of route '${path}' (in '${moduleName}'): path cannot start with a slash`);
+      }
 
       if (httpMethod == 'ALL') {
         this.router.all(`/${path}`, handle);
@@ -101,27 +99,5 @@ export class PreRouter implements Extension<void> {
   protected sendNotFound(nodeRes: NodeResponse) {
     nodeRes.statusCode = Status.NOT_FOUND;
     nodeRes.end();
-  }
-
-  /**
-   * Compiles the path for the controller given the prefix.
-   *
-   * - If prefix `/api/posts/:postId` and route path `:postId`, this method returns path `/api/posts/:postId`.
-   * - If prefix `/api/posts` and route path `:postId`, this method returns `/api/posts/:postId`
-   */
-  protected getPath(prefix: string, path: string) {
-    const prefixLastPart = prefix?.split('/').slice(-1)[0];
-    if (prefixLastPart?.charAt(0) == ':') {
-      const reducedPrefix = prefix?.split('/').slice(0, -1).join('/');
-      return [reducedPrefix, path].filter((s) => s).join('/');
-    } else {
-      return [prefix, path].filter((s) => s).join('/');
-    }
-  }
-
-  protected checkRoutePath(moduleName: string, path: string) {
-    if (path?.charAt(0) == '/') {
-      throw new Error(`Invalid configuration of route '${path}' (in '${moduleName}'): path cannot start with a slash`);
-    }
   }
 }
