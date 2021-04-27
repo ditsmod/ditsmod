@@ -1,18 +1,18 @@
 import 'reflect-metadata';
-import { ParameterObject } from '@ts-stack/openapi-spec';
+import { ParameterObject, ReferenceObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { OpenapiRoutesExtension } from './openapi-routes.extension';
 
 describe('OpenapiRoutesExtension', () => {
-  class MockOpenapiExtension extends OpenapiRoutesExtension {
-    transformPath(path: string, params: ParameterObject[]) {
-      return super.transformPath(path, params);
+  class MockOpenapiRoutesExtension extends OpenapiRoutesExtension {
+    transformToOasPath(moduleName: string, path: string, params: (XParameterObject | ReferenceObject)[]) {
+      return super.transformToOasPath(moduleName, path, params);
     }
   }
 
-  let mock: MockOpenapiExtension;
+  let mock: MockOpenapiRoutesExtension;
   beforeEach(() => {
-    mock = new MockOpenapiExtension(null, null, null);
+    mock = new MockOpenapiRoutesExtension(null, null, null);
   });
 
   it('transformPath()', () => {
@@ -23,7 +23,7 @@ describe('OpenapiRoutesExtension', () => {
       { in: 'path', name: 'commentId' },
       { in: 'query', name: 'contextId' },
     ];
-    const path = mock.transformPath('posts/{postId}/comments/{commentId}', params);
-    expect(path).toBe('posts/:postId/comments/:commentId');
+    const path = mock.transformToOasPath('FakeModuleName', 'posts/:postId/comments/:commentId', params);
+    expect(path).toBe('posts/{postId}/comments/{commentId}');
   });
 });

@@ -15,7 +15,7 @@ export class HelloWorldController {
   }
 
   // Here works new route decorator from `@ditsmod/openapi`.
-  @OasRoute('GET', 'posts/{postId}', [BasicGuard], {
+  @OasRoute('GET', 'posts/:postId', [BasicGuard], {
     description: 'Here some description',
     parameters: new Parameters()
       .required('path', Post, 'postId')

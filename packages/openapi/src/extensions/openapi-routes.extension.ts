@@ -40,8 +40,8 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
           );
           const { httpMethod, path: controllerPath, operationObject } = oasRoute;
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
-          const oasPath = this.getPath(prefix, controllerPath);
-          const path = this.transformPath(oasPath, operationObject.parameters);
+          const path = this.getPath(prefix, controllerPath);
+          const oasPath = this.transformToOasPath(moduleMetadata.name, path, operationObject.parameters);
           providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
           const parseBody = this.needBodyParse(providersPerMod, providersPerRou, allProvidersPerReq, httpMethod);
           const routeMeta: OasRouteMeta = {
@@ -88,16 +88,21 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
   }
 
   /**
-   * Transform from `path/{param}` to `path/:param`.
+   * Transform from `path/:param` to `path/{param}`.
    */
-  protected transformPath(path: string, params: (XParameterObject | ReferenceObject)[]) {
+  protected transformToOasPath(moduleName: string, path: string, params: (XParameterObject | ReferenceObject)[]) {
     const paramsInPath = params
       .filter((p) => !isReferenceObject(p))
       .filter((p: XParameterObject) => p.in == 'path')
       .map((p: XParameterObject) => p.name);
 
     paramsInPath.forEach((name) => {
-      path = path.replace(`{${name}}`, `:${name}`);
+      if (path.includes(`{${name}}`)) {
+        let msg = `Compiling OAS routes failed: ${moduleName} have a route with param: "{${name}}"`;
+        msg += `, you must convert this to ":${name}"`;
+        throw new Error(msg);
+      }
+      path = path.replace(`:${name}`, `{${name}}`);
     });
 
     return path;
