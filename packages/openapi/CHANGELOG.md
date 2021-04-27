@@ -1,5 +1,12 @@
+<a name="openapi-beta.7"></a>
+# [openapi-beta.7](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.7) (2021-04-27)
+
+### BREAKING CHANGES
+
+- make oas routes like core routes (with parameters like `path/:param`, not like `path/{param}`) [11e6d5](https://github.com/ditsmod/ditsmod/commit/11e6d5).
+
 <a name="openapi-beta.6"></a>
-# [openapi-beta.6](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.6) (2021-04-27)
+## [openapi-beta.6](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.6) (2021-04-27)
 
 ### Bug fix
 
