@@ -1,5 +1,12 @@
+<a name="openapi-beta.6"></a>
+# [openapi-beta.6](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.6) (2021-04-27)
+
+### Bug fix
+
+- fixed prefixes for OasRoute's [45ce09c](https://github.com/ditsmod/ditsmod/commit/45ce09c).
+
 <a name="openapi-beta.5"></a>
-# [openapi-beta.5](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.5) (2021-04-27)
+## [openapi-beta.5](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.5) (2021-04-27)
 
 ### Features
 
