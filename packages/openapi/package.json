@@ -12,6 +12,7 @@
     "lib": "src"
   },
   "scripts": {
+    "test": "jest",
     "build": "tsc -b -f"
   },
   "keywords": [],
