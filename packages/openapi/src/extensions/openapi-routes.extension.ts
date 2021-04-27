@@ -72,22 +72,6 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
   }
 
   /**
-   * Compiles the path for the controller given the prefix.
-   *
-   * - If prefix `/api/posts/:postId` and route path `:postId`, this method returns path `/api/posts/:postId`.
-   * - If prefix `/api/posts` and route path `:postId`, this method returns `/api/posts/:postId`
-   */
-  protected getPath(prefix: string, path: string) {
-    const prefixLastPart = prefix?.split('/').slice(-1)[0];
-    if (prefixLastPart?.charAt(0) == ':') {
-      const reducedPrefix = prefix?.split('/').slice(0, -1).join('/');
-      return [reducedPrefix, path].filter((s) => s).join('/');
-    } else {
-      return [prefix, path].filter((s) => s).join('/');
-    }
-  }
-
-  /**
    * Transform from `path/:param` to `path/{param}`.
    */
   protected transformToOasPath(moduleName: string, path: string, params: (XParameterObject | ReferenceObject)[]) {
