@@ -6,9 +6,16 @@ import { isOasRoute, isReferenceObject } from '../utils/type-guards';
 import { OasRouteMeta } from '../types/oas-route-meta';
 import { OasModuleWithParams } from '../types/oas-modul-with-params';
 import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-last-params';
+import { OAS_PATCH_METADATA_EXTENSIONS } from '../di-tokens';
 
 @Injectable()
 export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.Extension<edk.RawRouteMeta[]> {
+  async init() {
+    const extensionsManager = this.injectorPerApp.get(edk.ExtensionsManager) as edk.ExtensionsManager;
+    await extensionsManager.init(OAS_PATCH_METADATA_EXTENSIONS);
+    return super.init();
+  }
+
   protected getRawRoutesMeta(
     moduleName: string,
     prefixPerApp: string,

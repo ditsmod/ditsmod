@@ -1,4 +1,4 @@
-import { HttpMethod, edk } from '@ditsmod/core';
+import { edk } from '@ditsmod/core';
 import { openapi, XOasObject } from '@ts-stack/openapi-spec';
 
 export const DEFAULT_OAS_OBJECT: XOasObject = {
