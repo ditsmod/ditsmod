@@ -79,11 +79,20 @@ export type VideoMediaSubtype =
   | '3gpp2';
 
 export type mediaTypeName =
+  | '*/*'
+  | 'application/*'
   | `application/${ApplicationMediaSubtype}`
+  | 'audio/*'
   | `audio/${AudioMediaSubtype}`
+  | 'image/*'
   | `image/${ImageMediaSubtype}`
+  | 'message/*'
   | `message/${MessageMediaSubtype}`
+  | 'model/*'
   | `model/${ModelMediaSubtype}`
+  | 'multipart/*'
   | `multipart/${MultipartMediaSubtype}`
+  | 'text/*'
   | `text/${TextMediaSubtype}`
+  | 'video/*'
   | `video/${VideoMediaSubtype}`;
