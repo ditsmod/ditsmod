@@ -1,10 +1,18 @@
-<a name="openapi-beta.8"></a>
-# [openapi-beta.8](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.8) (2021-04-27)
+<a name="openapi-beta.9"></a>
+# [openapi-beta.9](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.9) (2021-04-28)
 
 ### Features
 
-- added OasModuleWithParams interface [26a46f5](https://github.com/ditsmod/ditsmod/commit/26a46f5).
-- introduced prefixParams [8bcf514](https://github.com/ditsmod/ditsmod/commit/8bcf514).
+- added `OpenapiPatchMetadataExtension`. [2374c1d](https://github.com/ditsmod/ditsmod/commit/2374c1d).
+This extension allows you to distribute prefixParams for imported modules.
+
+<a name="openapi-beta.8"></a>
+## [openapi-beta.8](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.8) (2021-04-27)
+
+### Features
+
+- added `OasModuleWithParams` interface [26a46f5](https://github.com/ditsmod/ditsmod/commit/26a46f5).
+- introduced `prefixParams` [8bcf514](https://github.com/ditsmod/ditsmod/commit/8bcf514).
 
 <a name="openapi-beta.7"></a>
 ## [openapi-beta.7](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.7) (2021-04-27)
