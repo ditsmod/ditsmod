@@ -55,8 +55,28 @@ export type ImageMediaSubtype =
 export type MessageMediaSubtype = 'http' | 'imdn+xml' | 'partial' | 'rfc822';
 export type ModelMediaSubtype = 'example' | 'iges' | 'mesh' | 'vrml' | 'x3d+binary' | 'x3d+vrml' | 'x3d+xml';
 export type MultipartMediaSubtype = 'mixed' | 'alternative' | 'related' | 'form-data' | 'signed' | 'encrypted';
-export type TextMediaSubtype = 'cmd' | 'css' | 'csv' | 'html' | 'javascript' | 'plain' | 'php' | 'xml' | 'markdown' | 'cache-manifest';
-export type VideoMediaSubtype = 'mpeg' | 'mp4' | 'ogg' | 'quicktime' | 'webm' | 'x-ms-wmv' | 'x-flv' | 'x-msvideo' | '3gpp' | '3gpp2';
+export type TextMediaSubtype =
+  | 'cmd'
+  | 'css'
+  | 'csv'
+  | 'html'
+  | 'javascript'
+  | 'plain'
+  | 'php'
+  | 'xml'
+  | 'markdown'
+  | 'cache-manifest';
+export type VideoMediaSubtype =
+  | 'mpeg'
+  | 'mp4'
+  | 'ogg'
+  | 'quicktime'
+  | 'webm'
+  | 'x-ms-wmv'
+  | 'x-flv'
+  | 'x-msvideo'
+  | '3gpp'
+  | '3gpp2';
 
 export type mediaTypeName =
   | `application/${ApplicationMediaSubtype}`
@@ -66,5 +86,4 @@ export type mediaTypeName =
   | `model/${ModelMediaSubtype}`
   | `multipart/${MultipartMediaSubtype}`
   | `text/${TextMediaSubtype}`
-  | `video/${VideoMediaSubtype}`
-  ;
+  | `video/${VideoMediaSubtype}`;
