@@ -10,7 +10,10 @@ import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-l
 export class OpenapiPatchMetadataExtension implements edk.Extension<void> {
   protected inited: boolean;
 
-  constructor(@Inject(edk.APP_METADATA_MAP) protected appMetadataMap: edk.AppMetadataMap) {}
+  constructor(
+    protected moduleManager: edk.ModuleManager,
+    @Inject(edk.APP_METADATA_MAP) protected appMetadataMap: edk.AppMetadataMap
+  ) {}
 
   async init() {
     if (this.inited) {
@@ -32,6 +35,8 @@ export class OpenapiPatchMetadataExtension implements edk.Extension<void> {
         let imp: OasModuleWithParams;
         for (imp of moduleMetadata.importsWithParams) {
           imp.prefixParams = this.getUniqParams([...prefixParams, ...(imp.prefixParams || [])]);
+          const meta = this.moduleManager.getMetadata(imp);
+          this.setPrefixParams(meta);
         }
       }
     }
