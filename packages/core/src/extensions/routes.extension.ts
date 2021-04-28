@@ -1,6 +1,6 @@
 import { Inject, Injectable, ReflectiveInjector, TypeProvider } from '@ts-stack/di';
-import { APP_METADATA_MAP } from '../constans';
 
+import { APP_METADATA_MAP } from '../constans';
 import { BodyParserConfig } from '../models/body-parser-config';
 import { RootMetadata } from '../models/root-metadata';
 import { MetadataPerMod } from '../types/metadata-per-mod';

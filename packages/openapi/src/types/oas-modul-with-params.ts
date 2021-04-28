@@ -3,8 +3,9 @@ import { XParameterObject, ReferenceObject } from '@ts-stack/openapi-spec';
 
 export interface OasModuleWithParams extends ModuleWithParams {
   /**
-   * Here you can pass an OAS params applicable for prefix that contains parameters,
-   * for example:
+   * OAS Parameters to be used for this module, as well as for all its child modules.
+   * 
+   * Example useage:
    * 
    * ```ts
 import { OasModuleWithParams } from '@ditsmod/openapi';
