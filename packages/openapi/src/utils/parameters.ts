@@ -3,6 +3,7 @@ import { edk } from '@ditsmod/core';
 import { Type, reflector } from '@ts-stack/di';
 
 import { ColumnDecoratorMetadata, ColumnDecoratorValue } from '../decorators/column';
+import { isColumn } from './type-guards';
 
 type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';
 type OptionalParamsIn = 'query' | 'header' | 'cookie';
@@ -69,21 +70,22 @@ export class Parameters {
   protected setMetadata(model: Type<any>, paramsObjects: XParameterObject[]): XParameterObject[] {
     const meta = reflector.propMetadata(model) as ColumnDecoratorMetadata;
     return paramsObjects.map((paramObject) => {
-      const columnDecoratorValue = meta[paramObject.name];
-      if (columnDecoratorValue) {
-        paramObject.schema = Object.assign({}, ...columnDecoratorValue.slice(1), paramObject.schema);
-        this.setColumnType(paramObject.schema, columnDecoratorValue);
+      const propertyDecorator = meta[paramObject.name];
+      if (propertyDecorator) {
+        const propertyType = propertyDecorator[0];
+        const columnDecoratorValue = propertyDecorator.filter(isColumn);
+        paramObject.schema = Object.assign({}, ...columnDecoratorValue, paramObject.schema);
+        this.setColumnType(paramObject.schema, propertyType);
       }
       return paramObject;
     });
   }
 
-  protected setColumnType(schema: XSchemaObject, columnDecoratorValue: ColumnDecoratorValue) {
+  protected setColumnType(schema: XSchemaObject, propertyType: Type<edk.AnyObj>) {
     if (schema.type === undefined) {
-      const type = columnDecoratorValue[0];
-      if ([Boolean, Number, String, Array, Object].includes(type as any)) {
-        schema.type = (type.name?.toLowerCase() || 'null') as SchemaObjectType;
-      } else if (type instanceof Type) {
+      if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {
+        schema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;
+      } else if (propertyType instanceof Type) {
         schema.type = 'object';
       } else {
         schema.type = 'null';
