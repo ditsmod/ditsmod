@@ -12,8 +12,8 @@ export function isReferenceObject(obj: edk.AnyObj): obj is ReferenceObject {
   return obj.hasOwnProperty('$ref');
 }
 
-export function isOasGuard(classMeatada: edk.AnyObj): classMeatada is OasGuardMetadata {
-  return (classMeatada as any)?.ngMetadataName == 'OasGuard';
+export function isOasGuard(classMeta: edk.AnyObj): classMeta is OasGuardMetadata {
+  return (classMeta as any)?.ngMetadataName == 'OasGuard';
 }
 
 export function isColumn(propertyMeta: edk.AnyObj): propertyMeta is XSchemaObject {

@@ -2,7 +2,7 @@ import { edk } from '@ditsmod/core';
 import { makePropTypeDecorator, Type } from '@ts-stack/di';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 
-export type ColumnDecoratorFactory = (options?: XSchemaObject) => PropertyDecorator;
+export type ColumnDecoratorFactory = (schema?: XSchemaObject) => PropertyDecorator;
 
 export type ColumnDecoratorValue = [Type<edk.AnyObj>, XSchemaObject, ...XSchemaObject[]];
 export interface ColumnDecoratorMetadata {
@@ -10,9 +10,9 @@ export interface ColumnDecoratorMetadata {
 }
 
 /**
- * Decorator for model properties schema.
+ * Decorator for model properties.
  * 
- * For example:
+ * Usage:
  * 
  * ```ts
 class Post {
