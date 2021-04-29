@@ -1,12 +1,12 @@
 import { Column } from '@ditsmod/openapi';
 
 export class Post {
-  @Column({ type: 'number', minimum: 3, maximum: 100000 })
+  @Column({ minimum: 1, maximum: 100000 })
   postId: number;
 
-  @Column({type: 'string'})
+  @Column({ minLength: 20, maxLength: 300 })
   postTitle: string;
 
-  @Column({type: 'string'})
+  @Column({ minLength: 1, maxLength: 10 })
   postLead: string;
 }
