@@ -1,7 +1,7 @@
 import { edk } from '@ditsmod/core';
 import { ReferenceObject } from '@ts-stack/openapi-spec';
-import { OasGuardMetadata } from '../decorators/oas-guard';
 
+import { OasGuardMetadata } from '../decorators/oas-guard';
 import { OasRouteMetadata } from '../decorators/oas-route';
 
 export function isOasRoute(propMeatada: edk.AnyObj): propMeatada is OasRouteMetadata {
