@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import { reflector } from '@ts-stack/di';
 
-import { Schema, SchemaDecoratorMetadata } from './schema';
+import { Column, ColumnDecoratorMetadata } from './column';
 
-describe('@Schema', () => {
+describe('@Column', () => {
   it('model without properties', () => {
     class Model1 {}
 
@@ -12,18 +12,18 @@ describe('@Schema', () => {
 
   it('properly structure of model metadata with empty value', () => {
     class Model1 {
-      @Schema()
+      @Column()
       prop1: string;
-      @Schema()
+      @Column()
       prop2: string;
-      @Schema()
-      @Schema()
+      @Column()
+      @Column()
       prop3: string;
     }
 
     const actualMeta = reflector.propMetadata(Model1);
     // console.log(actualMeta);
-    const expectedMeta: SchemaDecoratorMetadata = {
+    const expectedMeta: ColumnDecoratorMetadata = {
       prop1: [String, {}],
       prop2: [String, {}],
       prop3: [String, {}, {}],
@@ -33,7 +33,7 @@ describe('@Schema', () => {
 
   it('properly structure of model metadata with some value', () => {
     class Model1 {
-      @Schema({
+      @Column({
         type: 'string',
         minimum: 1,
       })
@@ -41,7 +41,7 @@ describe('@Schema', () => {
     }
 
     const actualMeta = reflector.propMetadata(Model1);
-    const expectedMeta: SchemaDecoratorMetadata = {
+    const expectedMeta: ColumnDecoratorMetadata = {
       prop1: [
         String,
         {

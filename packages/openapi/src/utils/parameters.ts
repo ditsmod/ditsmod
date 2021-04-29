@@ -2,7 +2,7 @@ import { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/ope
 import { edk } from '@ditsmod/core';
 import { Type, reflector } from '@ts-stack/di';
 
-import { SchemaDecoratorMetadata, SchemaDecoratorValue } from '../decorators/schema';
+import { ColumnDecoratorMetadata, ColumnDecoratorValue } from '../decorators/column';
 
 type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';
 type OptionalParamsIn = 'query' | 'header' | 'cookie';
@@ -67,20 +67,20 @@ export class Parameters {
    * Sets metadata from a model to parameters.
    */
   protected setMetadata(model: Type<any>, paramsObjects: XParameterObject[]): XParameterObject[] {
-    const meta = reflector.propMetadata(model) as SchemaDecoratorMetadata;
+    const meta = reflector.propMetadata(model) as ColumnDecoratorMetadata;
     return paramsObjects.map((paramObject) => {
-      const schemaDecoratorValue = meta[paramObject.name];
-      if (schemaDecoratorValue) {
-        paramObject.schema = Object.assign({}, ...schemaDecoratorValue.slice(1), paramObject.schema);
-        this.setSchemaType(paramObject.schema, schemaDecoratorValue);
+      const columnDecoratorValue = meta[paramObject.name];
+      if (columnDecoratorValue) {
+        paramObject.schema = Object.assign({}, ...columnDecoratorValue.slice(1), paramObject.schema);
+        this.setColumnType(paramObject.schema, columnDecoratorValue);
       }
       return paramObject;
     });
   }
 
-  protected setSchemaType(schema: XSchemaObject, schemaDecoratorValue: SchemaDecoratorValue) {
+  protected setColumnType(schema: XSchemaObject, columnDecoratorValue: ColumnDecoratorValue) {
     if (schema.type === undefined) {
-      const type = schemaDecoratorValue[0];
+      const type = columnDecoratorValue[0];
       if ([Boolean, Number, String, Array, Object].includes(type as any)) {
         schema.type = (type.name?.toLowerCase() || 'null') as SchemaObjectType;
       } else if (type instanceof Type) {

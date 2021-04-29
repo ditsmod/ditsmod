@@ -1,12 +1,12 @@
-import { Schema } from '@ditsmod/openapi';
+import { Column } from '@ditsmod/openapi';
 
 export class Post {
-  @Schema({ type: 'number', minimum: 3, maximum: 100000 })
+  @Column({ type: 'number', minimum: 3, maximum: 100000 })
   postId: number;
 
-  @Schema({type: 'string'})
+  @Column({type: 'string'})
   postTitle: string;
 
-  @Schema({type: 'string'})
+  @Column({type: 'string'})
   postLead: string;
 }

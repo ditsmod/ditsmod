@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { SchemaObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { Parameters } from './parameters';
-import { Schema } from '../decorators/schema';
+import { Column } from '../decorators/column';
 
 describe('Parameters', () => {
   describe('without data model', () => {
@@ -57,32 +57,32 @@ describe('Parameters', () => {
   });
 
   describe('with data model and metadata of the model', () => {
-    const schemaProp1: SchemaObject = { type: 'number', minimum: 0, maximum: 100 };
-    const schemaProp2: SchemaObject = { type: 'string', minLength: 1, maxLength: 5 };
+    const column1: SchemaObject = { type: 'number', minimum: 0, maximum: 100 };
+    const column2: SchemaObject = { type: 'string', minLength: 1, maxLength: 5 };
     class Model1 {
-      @Schema(schemaProp1)
+      @Column(column1)
       prop1: number;
-      @Schema(schemaProp2)
+      @Column(column2)
       prop2?: string;
     }
 
     it('required path with prop1', () => {
       const params = new Parameters().required('path', Model1, 'prop1').getParams();
-      const expectParams: XParameterObject[] = [{ in: 'path', name: 'prop1', required: true, schema: schemaProp1 }];
+      const expectParams: XParameterObject[] = [{ in: 'path', name: 'prop1', required: true, schema: column1 }];
       expect(params).toEqual(expectParams);
     });
 
     it('optional cookie with prop2', () => {
       const params = new Parameters().optional('cookie', Model1, 'prop2').getParams();
-      const expectParams: XParameterObject[] = [{ in: 'cookie', name: 'prop2', required: false, schema: schemaProp2 }];
+      const expectParams: XParameterObject[] = [{ in: 'cookie', name: 'prop2', required: false, schema: column2 }];
       expect(params).toEqual(expectParams);
     });
 
     it('required and optional params', () => {
       const params = new Parameters().required('path', Model1, 'prop1').optional('cookie', Model1, 'prop2').getParams();
       const expectParams: XParameterObject[] = [
-        { in: 'path', name: 'prop1', required: true, schema: schemaProp1 },
-        { in: 'cookie', name: 'prop2', required: false, schema: schemaProp2 },
+        { in: 'path', name: 'prop1', required: true, schema: column1 },
+        { in: 'cookie', name: 'prop2', required: false, schema: column2 },
       ];
       expect(params).toEqual(expectParams);
     });

@@ -1,7 +1,7 @@
 export * from './constants';
 export { OasGuard, OasGuardMetadata } from './decorators/oas-guard';
 export { OasRoute, OasRouteMetadata } from './decorators/oas-route';
-export * from './decorators/schema';
+export * from './decorators/column';
 export * from './di-tokens';
 export { OpenapiModule } from './openapi.module';
 export * from './swagger-ui/swagger-o-auth-options';
