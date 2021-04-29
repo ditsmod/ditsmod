@@ -2,7 +2,7 @@ import { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/ope
 import { edk } from '@ditsmod/core';
 import { Type, reflector } from '@ts-stack/di';
 
-import { ColumnDecoratorMetadata, ColumnDecoratorValue } from '../decorators/column';
+import { ColumnDecoratorMetadata } from '../decorators/column';
 import { isColumn } from './type-guards';
 
 type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';
@@ -73,8 +73,8 @@ export class Parameters {
       const propertyDecorator = meta[paramObject.name];
       if (propertyDecorator) {
         const propertyType = propertyDecorator[0];
-        const columnDecoratorValue = propertyDecorator.filter(isColumn);
-        paramObject.schema = Object.assign({}, ...columnDecoratorValue, paramObject.schema);
+        const schema = propertyDecorator.filter(isColumn);
+        paramObject.schema = Object.assign({}, ...schema, paramObject.schema);
         this.setColumnType(paramObject.schema, propertyType);
       }
       return paramObject;
