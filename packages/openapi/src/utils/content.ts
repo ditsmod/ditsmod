@@ -43,7 +43,10 @@ export class Content {
     return this;
   }
 
-  get() {
+  get<T extends mediaTypeName = mediaTypeName>(contentOptions?: ContentOptions<T>) {
+    if (contentOptions) {
+      this.set(contentOptions);
+    }
     return { ...this.content };
   }
 
@@ -58,4 +61,8 @@ export class Content {
       }
     }
   }
+}
+
+export function getContent<T extends mediaTypeName = mediaTypeName>(contentOptions?: ContentOptions<T>) {
+  return new Content().get(contentOptions);
 }

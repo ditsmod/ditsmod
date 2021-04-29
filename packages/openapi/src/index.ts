@@ -8,7 +8,7 @@ export * from './swagger-ui/swagger-o-auth-options';
 export * from './types/media-types';
 export { OasModuleWithParams } from './types/oas-modul-with-params';
 export { OasRouteMeta } from './types/oas-route-meta';
-export { Content } from './utils/content';
-export { Parameters } from './utils/parameters';
+export * from './utils/content';
+export * from './utils/parameters';
 export * from './utils/type-guards';
 

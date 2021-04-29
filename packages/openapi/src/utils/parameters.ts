@@ -17,25 +17,25 @@ export class Parameters {
 
   required<T extends Type<edk.AnyObj>>(paramsIn: RequiredParamsIn, model: T, ...params: KeysOf<T>): this;
   required(paramsIn: RequiredParamsIn, ...params: [string, ...string[]]): this;
-  required<T extends Type<edk.AnyObj>>(
-    paramsIn: RequiredParamsIn,
-    modelOrString: T | string,
-    ...params: (KeyOf<T> | string)[]
-  ) {
+  required<T extends Type<edk.AnyObj>>(paramsIn: RequiredParamsIn, modelOrString: T | string, ...params: (KeyOf<T> | string)[]) {
     return this.setParams(true, paramsIn, modelOrString, ...params);
   }
 
   optional<T extends Type<edk.AnyObj>>(paramsIn: OptionalParamsIn, model: T, ...params: KeysOf<T>): this;
   optional(paramsIn: OptionalParamsIn, ...params: [string, ...string[]]): this;
-  optional<T extends Type<edk.AnyObj>>(
-    paramsIn: OptionalParamsIn,
-    modelOrString: T | string,
-    ...params: (KeyOf<T> | string)[]
+  optional<T extends Type<edk.AnyObj>>(paramsIn: OptionalParamsIn, modelOrString: T | string, ...params: (KeyOf<T> | string)[]
   ) {
     return this.setParams(false, paramsIn, modelOrString, ...params);
   }
 
-  getParams() {
+  getParams(): XParameterObject[];
+  getParams<T extends Type<edk.AnyObj>>(paramsIn: 'path', isRequired: true, model: T, ...params: KeysOf<T>): XParameterObject[];
+  getParams<T extends Type<edk.AnyObj>>(paramsIn: OptionalParamsIn, isRequired: boolean, model: T, ...params: KeysOf<T>): XParameterObject[];
+  getParams(paramsIn: OptionalParamsIn, isRequired: boolean, ...params: [string, ...string[]]): XParameterObject[];
+  getParams<T extends Type<edk.AnyObj>>(paramsIn?: RequiredParamsIn, isRequired?: boolean, modelOrString?: T | string, ...params: (KeyOf<T> | string)[]): XParameterObject[] {
+    if (isRequired !== undefined) {
+      this.setParams(isRequired, paramsIn, modelOrString, ...params);
+    }
     return [...this.parameters];
   }
 
@@ -92,4 +92,12 @@ export class Parameters {
       }
     }
   }
+}
+
+export function getParams<T extends Type<edk.AnyObj>>(paramsIn: 'path', isRequired: true, model: T, ...params: KeysOf<T>): XParameterObject[];
+export function getParams<T extends Type<edk.AnyObj>>(paramsIn: OptionalParamsIn, isRequired: boolean, model: T, ...params: KeysOf<T>): XParameterObject[];
+export function getParams(paramsIn: OptionalParamsIn, isRequired: boolean, ...params: [string, ...string[]]): XParameterObject[];
+export function getParams<T extends Type<edk.AnyObj>>(paramsIn?: any, isRequired?: boolean, modelOrString?: any, ...params: (KeyOf<T> | string)[]
+) {
+  return new Parameters().getParams(paramsIn, isRequired, modelOrString, ...params);
 }

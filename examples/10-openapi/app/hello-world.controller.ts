@@ -1,5 +1,5 @@
 import { Controller, Request, Response, Status } from '@ditsmod/core';
-import { Content, OasRoute, Parameters } from '@ditsmod/openapi';
+import { getParams, getContent, OasRoute } from '@ditsmod/openapi';
 
 import { BasicGuard } from './basic.guard';
 import { Post } from './models';
@@ -11,8 +11,7 @@ export class HelloWorldController {
   @OasRoute('GET', 'posts1/:postId', [BasicGuard], {
     description: 'This route without helpers',
     parameters: [
-      { in: 'path', name: 'postId', required: true },
-      { in: 'query', name: 'someOptionalParam' },
+      { in: 'path', name: 'postId', required: true }
     ],
     responses: {
       [Status.OK]: {
@@ -28,16 +27,11 @@ export class HelloWorldController {
 
   @OasRoute('GET', 'posts2/:postId', [BasicGuard], {
     description: 'This route same as the previous one, but uses `Parameters` and `Content` helpers from @ditsmod/openapi',
-    parameters: new Parameters()
-      .required('path', Post, 'postId')
-      .optional('query', 'someOptionalParam')
-      .getParams(),
+    parameters: getParams('cookie', true, Post, 'postId'),
     responses: {
       [Status.OK]: {
         description: 'Single post',
-        content: new Content()
-          .set({ mediaType: 'application/json', model: Post })
-          .get(),
+        content: getContent({ mediaType: 'application/json', model: Post }),
       },
     },
   })
