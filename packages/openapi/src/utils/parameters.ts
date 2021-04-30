@@ -10,10 +10,16 @@ type OptionalParamsIn = 'query' | 'header' | 'cookie';
 type KeyOf<T extends Type<edk.AnyObj>> = Extract<keyof T['prototype'], string>;
 type KeysOf<T extends Type<edk.AnyObj>> = [KeyOf<T>, ...KeyOf<T>[]];
 /**
+ * Applies to importing `ModuleWithParams`. OAS parameter's property, indicates the parameter
+ * should be recursively added to imported modules.
+ */
+export const RECURSIVE_PARAM = 'x-recursive';
+/**
  * Helper for OpenAPI `ParameterObject`s.
  */
 export class Parameters {
   protected parameters: XParameterObject[] = [];
+  protected countOfLastPushedParams: number;
 
   required<T extends Type<edk.AnyObj>>(paramsIn: RequiredParamsIn, model: T, ...params: KeysOf<T>): this;
   required(paramsIn: RequiredParamsIn, ...params: [string, ...string[]]): this;
@@ -39,6 +45,29 @@ export class Parameters {
     return [...this.parameters];
   }
 
+  /**
+   * Applies to importing `ModuleWithParams`. Indicates the parameters that were added in the
+   * previous step as recursive.
+   *
+   * For example, if you first called `optional()` or `required()` with 10 parameters
+   * and then called `asRecursive()`, these 10 parameters will be marked recursively.
+   * 
+   * @param depth Positive number of recursiveness: `1`, `2`, `3`... - number depth of recursion.
+   * Default `depth == 100` (like "unlimeted").
+   */
+  asRecursive(depth: number = 100) {
+    const params = this.getLastAddedParams();
+    params.forEach(param => param[RECURSIVE_PARAM] = depth);
+    return this;
+  }
+
+  protected getLastAddedParams() {
+    if (!this.countOfLastPushedParams) {
+      throw new Error('You can not add recursiveness to non-exists parameter');
+    }
+    return this.parameters.slice(-this.countOfLastPushedParams);
+  }
+
   protected setParams<T extends Type<edk.AnyObj>>(
     isRequired: boolean,
     paramsIn: RequiredParamsIn,
@@ -55,6 +84,7 @@ export class Parameters {
     }
 
     this.parameters.push(...paramsObjects);
+    this.countOfLastPushedParams = paramsObjects.length;
     return this;
   }
 
