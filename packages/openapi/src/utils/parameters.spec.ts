@@ -88,13 +88,13 @@ describe('Parameters', () => {
     });
   });
 
-  describe('bindTo() and asRecursive()', () => {
+  describe('bindTo() and recursive()', () => {
     it('case 1', () => {
       const params = new Parameters()
         .required('path', 'postId')
-        .asRecursive()
+        .recursive()
         .optional('query', 'page')
-        .asRecursive()
+        .recursive()
         .bindTo('lastParamInPath')
         .bindTo('httpMethod', 'GET')
         .getParams();

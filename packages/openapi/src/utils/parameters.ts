@@ -60,12 +60,12 @@ export class Parameters {
    * previous step as recursive.
    *
    * For example, if you first called `optional()` or `required()` with 2 parameters
-   * and then called `asRecursive()`, these 2 parameters will be marked recursively.
+   * and then called `recursive()`, these 2 parameters will be marked recursively.
    * 
    * @param depth Positive number of recursiveness: `1`, `2`, `3`... - number depth of recursion.
    * Default `depth == 100` (like "unlimeted").
    */
-  asRecursive(depth: number = 100) {
+  recursive(depth: number = 100) {
     const params = this.getLastAddedParams();
     params.forEach(param => param[RECURSIVE_PARAM] = depth);
     return this;
