@@ -3,6 +3,7 @@ import { edk } from '@ditsmod/core';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { isOasRoute, isReferenceObject } from '../utils/type-guards';
+import { BOUND_TO_PATH_PARAM } from '../utils/parameters';
 import { OasRouteMeta } from '../types/oas-route-meta';
 import { OasModuleWithParams } from '../types/oas-modul-with-params';
 import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-last-params';
@@ -108,7 +109,17 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
             paramsInPath.push(p);
           }
         } else {
-          paramsNonPath.push(p);
+          const ifExists = p[BOUND_TO_PATH_PARAM];
+          if (ifExists !== undefined) {
+            const prefixLastPart = path?.split('/').slice(-1)[0];
+            if (prefixLastPart?.charAt(0) == ':' && ifExists) {
+              paramsNonPath.push(p);
+            } else if (prefixLastPart?.charAt(0) != ':' && !ifExists) {
+              paramsNonPath.push(p);
+            }
+          } else  {
+            paramsNonPath.push(p);
+          }
         }
       }
     });

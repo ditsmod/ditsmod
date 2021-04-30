@@ -15,6 +15,11 @@ type KeysOf<T extends Type<edk.AnyObj>> = [KeyOf<T>, ...KeyOf<T>[]];
  */
 export const RECURSIVE_PARAM = 'x-recursive';
 /**
+ * Applies to importing `ModuleWithParams`. OAS parameter's property, indicates the parameter
+ * should or not be bound to presence last param in a route path.
+ */
+export const BOUND_TO_PATH_PARAM = 'x-bound-to-path-param';
+/**
  * Helper for OpenAPI `ParameterObject`s.
  */
 export class Parameters {
@@ -58,6 +63,23 @@ export class Parameters {
   asRecursive(depth: number = 100) {
     const params = this.getLastAddedParams();
     params.forEach(param => param[RECURSIVE_PARAM] = depth);
+    return this;
+  }
+
+  /**
+   * Applies to importing `ModuleWithParams`. Indicates the parameters that were added in the
+   * previous step as bound to existence param in a route path.
+   * 
+   * For example, if you first called `optional()` or `required()` with 10 parameters
+   * and then called `bindToLastParamInPath(1)`, these 10 parameters will be marked as bound
+   * to `posts/:postId`. In case `:postId` exists - parameters works.
+   * 
+   * If you calls `bindToLastParamInPath()` without argument, and if in path param not exists,
+   * parameters works too.
+   */
+  bindToLastParamInPath(ifExists: number = 0) {
+    const params = this.getLastAddedParams();
+    params.forEach(param => param[BOUND_TO_PATH_PARAM] = ifExists);
     return this;
   }
 
