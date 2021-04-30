@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { ParameterObject, ReferenceObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { OpenapiRoutesExtension } from './openapi-routes.extension';
+import { HttpMethod } from '@ditsmod/core';
 
 describe('OpenapiRoutesExtension', () => {
   class MockOpenapiRoutesExtension extends OpenapiRoutesExtension {
@@ -10,11 +11,12 @@ describe('OpenapiRoutesExtension', () => {
     }
 
     mergeParams(
+      httpMethod: HttpMethod,
       path: string,
       prefixParams: (XParameterObject<any> | ReferenceObject)[],
       params: (XParameterObject<any> | ReferenceObject)[]
     ) {
-      return super.mergeParams(path, prefixParams, params);
+      return super.mergeParams(httpMethod, path, prefixParams, params);
     }
   }
 
@@ -33,7 +35,7 @@ describe('OpenapiRoutesExtension', () => {
         { in: 'query', name: 'rubricId' },
         { in: 'query', name: 'contextId' },
       ];
-      const { paramsNonPath, paramsInPath, paramsRefs } = mock.mergeParams('', prefixParams, parameters);
+      const { paramsNonPath, paramsInPath, paramsRefs } = mock.mergeParams('GET', '', prefixParams, parameters);
       expect(paramsNonPath).toEqual([
         { in: 'query', name: 'catId' },
         { in: 'query', name: 'rubricId' },
@@ -50,6 +52,7 @@ describe('OpenapiRoutesExtension', () => {
         { in: 'query', name: 'contextId' },
       ];
       const { paramsNonPath, paramsInPath, paramsRefs } = mock.mergeParams(
+        'GET',
         'posts/:postId/comments',
         prefixParams,
         parameters
