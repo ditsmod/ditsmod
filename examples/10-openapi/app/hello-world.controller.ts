@@ -27,7 +27,7 @@ export class HelloWorldController {
 
   @OasRoute('GET', 'posts2/:postId', [BasicGuard], {
     description: 'This route same as the previous one, but uses `Parameters` and `Content` helpers from @ditsmod/openapi',
-    parameters: getParams('cookie', true, Post, 'postId'),
+    parameters: getParams('path', true, Post, 'postId'),
     responses: {
       [Status.OK]: {
         description: 'Single post',
