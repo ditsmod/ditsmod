@@ -1,5 +1,17 @@
+<a name="openapi-beta.10"></a>
+# [openapi-beta.10](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.10) (2021-04-30)
+
+### BREAKING CHANGES
+
+- renamed `@Schema` to `@Column` [0adca0a](https://github.com/ditsmod/ditsmod/commit/0adca0a).
+
+### Features
+
+- added [basic media types](https://github.com/ditsmod/ditsmod/blob/5317c97/packages/openapi/src/types/media-types.ts).
+- added [`Parameters`](https://github.com/ditsmod/ditsmod/blob/openapi-beta.10/packages/openapi/src/utils/parameters.ts) and [`Content`](https://github.com/ditsmod/ditsmod/blob/openapi-beta.10/packages/openapi/src/utils/content.ts) helpers, and shorthands for them - `getParams()` and `getContents()`.
+
 <a name="openapi-beta.9"></a>
-# [openapi-beta.9](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.9) (2021-04-28)
+## [openapi-beta.9](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.9) (2021-04-28)
 
 ### Features
 
