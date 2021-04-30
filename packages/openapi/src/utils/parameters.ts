@@ -1,5 +1,5 @@
 import { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
-import { edk } from '@ditsmod/core';
+import { edk, HttpMethod } from '@ditsmod/core';
 import { Type, reflector } from '@ts-stack/di';
 
 import { ColumnDecoratorMetadata } from '../decorators/column';
@@ -19,6 +19,11 @@ export const RECURSIVE_PARAM = 'x-recursive';
  * should or not be bound to presence last param in a route path.
  */
 export const BOUND_TO_PATH_PARAM = 'x-bound-to-path-param';
+/**
+ * Applies to importing `ModuleWithParams`. OAS parameter's property, indicates the parameter
+ * should or not be bound to HTTP method in a route path.
+ */
+export const BOUND_TO_HTTP_METHOD = 'x-bound-to-http-method';
 /**
  * Helper for OpenAPI `ParameterObject`s.
  */
@@ -54,8 +59,8 @@ export class Parameters {
    * Applies to importing `ModuleWithParams`. Indicates the parameters that were added in the
    * previous step as recursive.
    *
-   * For example, if you first called `optional()` or `required()` with 10 parameters
-   * and then called `asRecursive()`, these 10 parameters will be marked recursively.
+   * For example, if you first called `optional()` or `required()` with 2 parameters
+   * and then called `asRecursive()`, these 2 parameters will be marked recursively.
    * 
    * @param depth Positive number of recursiveness: `1`, `2`, `3`... - number depth of recursion.
    * Default `depth == 100` (like "unlimeted").
@@ -70,16 +75,27 @@ export class Parameters {
    * Applies to importing `ModuleWithParams`. Indicates the parameters that were added in the
    * previous step as bound to existence param in a route path.
    * 
-   * For example, if you first called `optional()` or `required()` with 10 parameters
-   * and then called `bindToLastParamInPath(1)`, these 10 parameters will be marked as bound
+   * For example, if you first called `optional()` or `required()` with 2 parameters
+   * and then called `bindTo('lastParamInPath', 1)`, these 2 parameters will be marked as bound
    * to `posts/:postId`. In case `:postId` exists - parameters works.
    * 
-   * If you calls `bindToLastParamInPath()` without argument, and if in path param not exists,
-   * parameters works too.
+   * If you calls `bindTo('lastParamInPath')` (without last argument), and if in path param not
+   * exists, parameters works too.
    */
-  bindToLastParamInPath(ifExists: number = 0) {
+  bindTo(to: 'lastParamInPath', ifExists?: boolean): this;
+  /**
+   * Applies to importing `ModuleWithParams`. Indicates the parameters that were added in the
+   * previous step as bound to HTTP method in a route.
+   * 
+   * For example, if you first called `optional()` or `required()` with 2 parameters
+   * and then called `bindTo('httpMethod', 'GET')`, these 2 parameters will be marked as bound
+   * to `GET` method. So, these parameters works only if you have request with `GET` method.
+   */
+  bindTo(to: 'httpMethod', httpMethod: HttpMethod): this;
+  bindTo(to: 'lastParamInPath' | 'httpMethod', options: any = false) {
     const params = this.getLastAddedParams();
-    params.forEach(param => param[BOUND_TO_PATH_PARAM] = ifExists);
+    const key = to == 'httpMethod' ? BOUND_TO_HTTP_METHOD : BOUND_TO_PATH_PARAM;
+    params.forEach(param => param[key] = options);
     return this;
   }
 

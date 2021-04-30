@@ -1,9 +1,9 @@
 import { Injectable } from '@ts-stack/di';
-import { edk } from '@ditsmod/core';
+import { edk, HttpMethod } from '@ditsmod/core';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { isOasRoute, isReferenceObject } from '../utils/type-guards';
-import { BOUND_TO_PATH_PARAM } from '../utils/parameters';
+import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '../utils/parameters';
 import { OasRouteMeta } from '../types/oas-route-meta';
 import { OasModuleWithParams } from '../types/oas-modul-with-params';
 import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-last-params';
@@ -58,7 +58,12 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
           const path = this.getPath(prefix, controllerPath);
           const clonedOperationObject = { ...operationObject } as XOperationObject;
           const { parameters } = clonedOperationObject;
-          const { paramsRefs, paramsInPath, paramsNonPath } = this.mergeParams(path, prefixParams, parameters);
+          const { paramsRefs, paramsInPath, paramsNonPath } = this.mergeParams(
+            httpMethod,
+            path,
+            prefixParams,
+            parameters
+          );
           clonedOperationObject.parameters = [...paramsRefs, ...paramsInPath, ...paramsNonPath];
           // For now, here ReferenceObjects is ignored, if it is intended for a path.
           const oasPath = this.transformToOasPath(moduleMetadata.name, path, paramsInPath);
@@ -92,6 +97,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
   }
 
   protected mergeParams(
+    httpMethod: HttpMethod,
     path: string,
     prefixParams: (XParameterObject<any> | ReferenceObject)[],
     params: (XParameterObject<any> | ReferenceObject)[]
@@ -109,17 +115,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
             paramsInPath.push(p);
           }
         } else {
-          const ifExists = p[BOUND_TO_PATH_PARAM];
-          if (ifExists !== undefined) {
-            const prefixLastPart = path?.split('/').slice(-1)[0];
-            if (prefixLastPart?.charAt(0) == ':' && ifExists) {
-              paramsNonPath.push(p);
-            } else if (prefixLastPart?.charAt(0) != ':' && !ifExists) {
-              paramsNonPath.push(p);
-            }
-          } else  {
-            paramsNonPath.push(p);
-          }
+          this.bindParams(httpMethod, path, paramsNonPath, p);
         }
       }
     });
@@ -128,6 +124,33 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
       paramsInPath: getLastParameterObjects(paramsInPath),
       paramsNonPath: getLastParameterObjects(paramsNonPath),
     };
+  }
+
+  protected bindParams(httpMethod: HttpMethod, path: string, paramsNonPath: XParameterObject[], p: XParameterObject) {
+    const boundToLastParam: boolean = p[BOUND_TO_PATH_PARAM];
+    const boundToMethod = p[BOUND_TO_HTTP_METHOD];
+    if (boundToLastParam !== undefined && boundToMethod) {
+      if (httpMethod == boundToMethod && this.boundToPathOk(path, boundToLastParam)) {
+        paramsNonPath.push(p);
+      }
+    } else if (boundToLastParam !== undefined) {
+      if (this.boundToPathOk(path, boundToLastParam)) {
+        paramsNonPath.push(p);
+      }
+    } else if (boundToMethod) {
+      if (httpMethod == boundToMethod) {
+        paramsNonPath.push(p);
+      }
+    } else {
+      paramsNonPath.push(p);
+    }
+  }
+
+  protected boundToPathOk(path: string, boundToLastParam: boolean) {
+    const prefixLastPart = path?.split('/').slice(-1)[0];
+    return (
+      (prefixLastPart?.charAt(0) == ':' && boundToLastParam) || (prefixLastPart?.charAt(0) != ':' && !boundToLastParam)
+    );
   }
 
   /**

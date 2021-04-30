@@ -3,6 +3,7 @@ import { ParameterObject, ReferenceObject, XParameterObject } from '@ts-stack/op
 
 import { OpenapiRoutesExtension } from './openapi-routes.extension';
 import { HttpMethod } from '@ditsmod/core';
+import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '../utils/parameters';
 
 describe('OpenapiRoutesExtension', () => {
   class MockOpenapiRoutesExtension extends OpenapiRoutesExtension {
@@ -17,6 +18,10 @@ describe('OpenapiRoutesExtension', () => {
       params: (XParameterObject<any> | ReferenceObject)[]
     ) {
       return super.mergeParams(httpMethod, path, prefixParams, params);
+    }
+
+    bindParams(httpMethod: HttpMethod, path: string, paramsNonPath: XParameterObject[], p: XParameterObject) {
+      return super.bindParams(httpMethod, path, paramsNonPath, p);
     }
   }
 
@@ -76,5 +81,99 @@ describe('OpenapiRoutesExtension', () => {
     ];
     const path = mock.transformToOasPath('FakeModuleName', 'posts/:postId/comments/:commentId', params);
     expect(path).toBe('posts/{postId}/comments/{commentId}');
+  });
+
+  describe('bindParams()', () => {
+    it('without any bound params', () => {
+      const paramsNonPath: XParameterObject[] = [];
+      const parameter: XParameterObject = { in: 'query', name: 'page' };
+      mock.bindParams('GET', 'posts/:postId', paramsNonPath, parameter);
+      expect(paramsNonPath).toEqual([parameter]);
+    });
+
+    it('should add param that bound to last param in path, if it exists', () => {
+      const paramsNonPath: XParameterObject[] = [];
+      const parameter: XParameterObject = { in: 'query', name: 'page', [BOUND_TO_PATH_PARAM]: 1 };
+      mock.bindParams('GET', 'posts/:postId', paramsNonPath, parameter);
+      expect(paramsNonPath).toEqual([parameter]);
+    });
+
+    it('should not add param that bound to last param in path, if it exists', () => {
+      const paramsNonPath: XParameterObject[] = [];
+      const parameter: XParameterObject = { in: 'query', name: 'page', [BOUND_TO_PATH_PARAM]: 1 };
+      mock.bindParams('GET', 'posts', paramsNonPath, parameter);
+      expect(paramsNonPath).toEqual([]);
+    });
+
+    it('should not add param that bound to last param in path, if it not exists', () => {
+      const paramsNonPath: XParameterObject[] = [];
+      const parameter: XParameterObject = { in: 'query', name: 'page', [BOUND_TO_PATH_PARAM]: 0 };
+      mock.bindParams('GET', 'posts/:postId', paramsNonPath, parameter);
+      expect(paramsNonPath).toEqual([]);
+    });
+
+    it('should add param that bound to last param in path, if it not exists', () => {
+      const paramsNonPath: XParameterObject[] = [];
+      const parameter: XParameterObject = { in: 'query', name: 'page', [BOUND_TO_PATH_PARAM]: 0 };
+      mock.bindParams('GET', 'posts', paramsNonPath, parameter);
+      expect(paramsNonPath).toEqual([parameter]);
+    });
+
+    it('should add param that bound to GET method, without last param in path', () => {
+      const paramsNonPath: XParameterObject[] = [];
+      const parameter: XParameterObject = { in: 'query', name: 'page', [BOUND_TO_HTTP_METHOD]: 'GET' };
+      mock.bindParams('GET', 'posts', paramsNonPath, parameter);
+      expect(paramsNonPath).toEqual([parameter]);
+    });
+
+    it('should add param that bound to GET method, if url have last param in path', () => {
+      const paramsNonPath: XParameterObject[] = [];
+      const parameter: XParameterObject = { in: 'query', name: 'page', [BOUND_TO_HTTP_METHOD]: 'GET' };
+      mock.bindParams('GET', 'posts/:postId', paramsNonPath, parameter);
+      expect(paramsNonPath).toEqual([parameter]);
+    });
+
+    it('case 8', () => {
+      const paramsNonPath: XParameterObject[] = [];
+      const parameter: XParameterObject = { in: 'query', name: 'page', [BOUND_TO_HTTP_METHOD]: 'POST' };
+      mock.bindParams('GET', 'posts/:postId', paramsNonPath, parameter);
+      expect(paramsNonPath).toEqual([]);
+    });
+
+    it('case 9', () => {
+      const paramsNonPath: XParameterObject[] = [];
+      const parameter: XParameterObject = {
+        in: 'query',
+        name: 'page',
+        [BOUND_TO_PATH_PARAM]: 0,
+        [BOUND_TO_HTTP_METHOD]: 'GET',
+      };
+      mock.bindParams('GET', 'posts', paramsNonPath, parameter);
+      expect(paramsNonPath).toEqual([parameter]);
+    });
+
+    it('case 10', () => {
+      const paramsNonPath: XParameterObject[] = [];
+      const parameter: XParameterObject = {
+        in: 'query',
+        name: 'page',
+        [BOUND_TO_PATH_PARAM]: 0,
+        [BOUND_TO_HTTP_METHOD]: 'GET',
+      };
+      mock.bindParams('GET', 'posts/:postId', paramsNonPath, parameter);
+      expect(paramsNonPath).toEqual([]);
+    });
+
+    it('case 11', () => {
+      const paramsNonPath: XParameterObject[] = [];
+      const parameter: XParameterObject = {
+        in: 'query',
+        name: 'page',
+        [BOUND_TO_PATH_PARAM]: 0,
+        [BOUND_TO_HTTP_METHOD]: 'POST',
+      };
+      mock.bindParams('GET', 'posts', paramsNonPath, parameter);
+      expect(paramsNonPath).toEqual([]);
+    });
   });
 });

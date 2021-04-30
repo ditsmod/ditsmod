@@ -87,4 +87,29 @@ describe('Parameters', () => {
       expect(params).toEqual(expectParams);
     });
   });
+
+  describe('bindTo() and asRecursive()', () => {
+    it('case 1', () => {
+      const params = new Parameters()
+        .required('path', 'postId')
+        .asRecursive()
+        .optional('query', 'page')
+        .asRecursive()
+        .bindTo('lastParamInPath')
+        .bindTo('httpMethod', 'GET')
+        .getParams();
+
+      expect(params).toEqual([
+        { in: 'path', name: 'postId', required: true, 'x-recursive': 100 },
+        {
+          in: 'query',
+          name: 'page',
+          required: false,
+          'x-recursive': 100,
+          'x-bound-to-path-param': false,
+          'x-bound-to-http-method': 'GET',
+        },
+      ]);
+    });
+  });
 });
