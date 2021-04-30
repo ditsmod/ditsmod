@@ -5,6 +5,7 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { AnyObj, ModuleType, ModuleWithParams } from '../types/mix';
 import { ModulesMap } from '../types/modules-map';
 import { checkModuleMetadata } from '../utils/check-module-metadata';
+import { deepFreeze } from '../utils/deep-freeze';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { pickProperties } from '../utils/pick-properties';
@@ -158,6 +159,9 @@ export class ModuleManager {
     return meta;
   }
 
+  /**
+   * @todo Refactor this method to use `deepFreeze()`.
+   */
   protected copyMeta<T extends AnyObj = AnyObj>(meta: NormalizedModuleMetadata<T>) {
     meta = { ...meta };
     meta.importsModules = meta.importsModules.slice();
@@ -167,6 +171,7 @@ export class ModuleManager {
     meta.exportsModules = meta.exportsModules.slice();
     meta.exportsWithParams = meta.exportsWithParams.slice();
     meta.exportsProviders = meta.exportsProviders.slice();
+    // return deepFreeze(meta);
     return meta;
   }
 
