@@ -1,5 +1,16 @@
+<a name="openapi-beta.11"></a>
+# [openapi-beta.11](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.11) (2021-05-01)
+
+### BREAKING CHANGES
+
+- moved `prefixParams` to `OasOptions` [2dbff8d](https://github.com/ditsmod/ditsmod/commit/2dbff8d).
+
+### Features
+
+- added `parameters.recursive()` and `parameters.bindTo()` [891768](https://github.com/ditsmod/ditsmod/blob/openapi-beta.11/packages/openapi/src/utils/parameters.ts#L68-L110).
+
 <a name="openapi-beta.10"></a>
-# [openapi-beta.10](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.10) (2021-04-30)
+## [openapi-beta.10](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.10) (2021-04-30)
 
 ### BREAKING CHANGES
 
