@@ -26,6 +26,9 @@ export class AppModule {}
   oasOptions?: OasOptions;
 }
 
+/**
+ * Applies to importing `OasModuleWithParams`.
+ */
 export interface OasOptions {
   paratemers?: (XParameterObject | ReferenceObject)[];
   tags?: string[];
