@@ -6,7 +6,7 @@ export * from './di-tokens';
 export { OpenapiModule } from './openapi.module';
 export * from './swagger-ui/swagger-o-auth-options';
 export * from './types/media-types';
-export { OasModuleWithParams } from './types/oas-modul-with-params';
+export { OasModuleWithParams, OasOptions } from './types/oas-modul-with-params';
 export { OasRouteMeta } from './types/oas-route-meta';
 export * from './utils/content';
 export { Parameters, getParams } from './utils/parameters';

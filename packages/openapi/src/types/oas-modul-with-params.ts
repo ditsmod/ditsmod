@@ -23,5 +23,10 @@ import { OasModuleWithParams } from '@ditsmod/openapi';
 export class AppModule {}
    * ```
    */
-  prefixParams?: (XParameterObject | ReferenceObject)[];
+  oasOptions?: OasOptions;
+}
+
+export interface OasOptions {
+  paratemers?: (XParameterObject | ReferenceObject)[];
+  tags?: string[];
 }

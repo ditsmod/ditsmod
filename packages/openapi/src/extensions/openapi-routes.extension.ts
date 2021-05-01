@@ -29,7 +29,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
     let prefixParams: (XParameterObject<any> | ReferenceObject)[];
     if (edk.isModuleWithParams(moduleMetadata.module)) {
       const moduleWithParams = moduleMetadata.module as OasModuleWithParams;
-      prefixParams = moduleWithParams.prefixParams;
+      prefixParams = moduleWithParams.oasOptions?.paratemers;
     }
 
     const rawRoutesMeta: edk.RawRouteMeta[] = [];

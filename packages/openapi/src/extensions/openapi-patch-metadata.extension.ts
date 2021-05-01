@@ -23,33 +23,39 @@ export class OpenapiPatchMetadataExtension implements edk.Extension<void> {
 
     this.appMetadataMap.forEach((metadataPerMod) => {
       const { moduleMetadata } = metadataPerMod;
-      this.setPrefixParams(moduleMetadata);
+      this.setOasOptions(moduleMetadata);
     });
 
     this.inited = true;
   }
 
-  protected setPrefixParams(moduleMetadata: edk.NormalizedModuleMetadata) {
+  protected setOasOptions(moduleMetadata: edk.NormalizedModuleMetadata) {
     if (edk.isModuleWithParams(moduleMetadata.module)) {
-      const { prefixParams } = moduleMetadata.module as OasModuleWithParams;
-      if (prefixParams?.length) {
+      const { oasOptions } = moduleMetadata.module as OasModuleWithParams;
+      if (oasOptions?.paratemers?.length) {
+        const parentParams = oasOptions.paratemers;
         let imp: OasModuleWithParams;
         for (imp of moduleMetadata.importsWithParams) {
-          imp.prefixParams = this.getUniqParams(prefixParams, imp.prefixParams);
+          imp.oasOptions = { ...(imp.oasOptions || {}) };
+          const childParams = imp.oasOptions.paratemers;
+          imp.oasOptions.paratemers = this.mergeParams(parentParams, childParams);
           const meta = this.moduleManager.getMetadata(imp);
-          this.setPrefixParams(meta);
+          this.setOasOptions(meta);
         }
       }
     }
   }
 
-  protected getUniqParams(
+  /**
+   * Merges parameters, taking into account recursive labels.
+   */
+  protected mergeParams(
     parent: (XParameterObject<any> | ReferenceObject)[],
     children: (XParameterObject<any> | ReferenceObject)[]
   ) {
     const parentReferenceObjects: ReferenceObject[] = [];
     const parentParametersObjets: XParameterObject[] = [];
-    for (let param of (parent || [])) {
+    for (let param of parent || []) {
       if (isReferenceObject(param)) {
         parentReferenceObjects.push(param);
       } else {
@@ -63,7 +69,7 @@ export class OpenapiPatchMetadataExtension implements edk.Extension<void> {
 
     const childReferenceObjects: ReferenceObject[] = [];
     const childParametersObjets: XParameterObject[] = [];
-    for (const param of (children || [])) {
+    for (const param of children || []) {
       if (isReferenceObject(param)) {
         childReferenceObjects.push(param);
       } else {
