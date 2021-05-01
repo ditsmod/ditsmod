@@ -8,25 +8,8 @@ import { Post } from './models';
 export class HelloWorldController {
   constructor(private req: Request, private res: Response) {}
 
-  @OasRoute('GET', 'posts1/:postId', [BasicGuard], {
-    description: 'This route without helpers',
-    parameters: [
-      { in: 'path', name: 'postId', required: true }
-    ],
-    responses: {
-      [Status.OK]: {
-        description: 'Single post',
-        content: { ['application/json']: {} },
-      },
-    },
-  })
-  getPost1() {
-    const { postId } = this.req.pathParams;
-    this.res.sendJson({ postId, body: `some body for postId ${postId}` });
-  }
-
-  @OasRoute('GET', 'posts2/:postId', [BasicGuard], {
-    description: 'This route same as the previous one, but uses `Parameters` and `Content` helpers from @ditsmod/openapi',
+  @OasRoute('GET', 'posts/:postId', [BasicGuard], {
+    description: 'This route uses `getParams()` and `getContent()` helpers from @ditsmod/openapi',
     parameters: getParams('path', true, Post, 'postId'),
     responses: {
       [Status.OK]: {
@@ -35,7 +18,7 @@ export class HelloWorldController {
       },
     },
   })
-  getPost2() {
+  getPost() {
     const { postId } = this.req.pathParams;
     this.res.sendJson({ postId, body: `some body for postId ${postId}` });
   }
