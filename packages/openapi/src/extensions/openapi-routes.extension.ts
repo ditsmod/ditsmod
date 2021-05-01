@@ -27,9 +27,11 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
 
     const providersPerMod = moduleMetadata.providersPerMod.slice();
     let prefixParams: (XParameterObject<any> | ReferenceObject)[];
+    let prefixTags: string[];
     if (edk.isModuleWithParams(moduleMetadata.module)) {
       const moduleWithParams = moduleMetadata.module as OasModuleWithParams;
       prefixParams = moduleWithParams.oasOptions?.paratemers;
+      prefixTags = moduleWithParams.oasOptions?.tags;
     }
 
     const rawRoutesMeta: edk.RawRouteMeta[] = [];
@@ -65,6 +67,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
             parameters
           );
           clonedOperationObject.parameters = [...paramsRefs, ...paramsInPath, ...paramsNonPath];
+          clonedOperationObject.tags = [...(clonedOperationObject.tags || []), ...(prefixTags || [])];
           // For now, here ReferenceObjects is ignored, if it is intended for a path.
           const oasPath = this.transformToOasPath(moduleMetadata.name, path, paramsInPath);
           providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
