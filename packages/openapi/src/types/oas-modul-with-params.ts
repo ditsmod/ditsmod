@@ -3,7 +3,7 @@ import { XParameterObject, ReferenceObject } from '@ts-stack/openapi-spec';
 
 export interface OasModuleWithParams extends ModuleWithParams {
   /**
-   * OAS Parameters to be used for this module, as well as for all its child modules.
+   * OasOptions to be used for this module, as well as for its child modules.
    * 
    * Example useage:
    * 
@@ -14,7 +14,7 @@ import { OasModuleWithParams } from '@ditsmod/openapi';
   imports: [
     {
       prefix: 'posts/:postId',
-      prefixParams: [{ in: 'path', name: 'postId', required: true }],
+      oasOptions: { parameters: [{ in: 'path', name: 'postId', required: true }] },
       module: PostsModule,
     } as OasModuleWithParams
   ],

@@ -126,23 +126,28 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
     };
   }
 
-  protected bindParams(httpMethod: HttpMethod, path: string, paramsNonPath: XParameterObject[], p: XParameterObject) {
-    const boundToLastParam: boolean = p[BOUND_TO_PATH_PARAM];
-    const boundToMethod = p[BOUND_TO_HTTP_METHOD];
+  protected bindParams(
+    httpMethod: HttpMethod,
+    path: string,
+    paramsNonPath: XParameterObject[],
+    param: XParameterObject
+  ) {
+    const boundToLastParam: boolean = param[BOUND_TO_PATH_PARAM];
+    const boundToMethod = param[BOUND_TO_HTTP_METHOD];
     if (boundToLastParam !== undefined && boundToMethod) {
       if (httpMethod == boundToMethod && this.boundToPathOk(path, boundToLastParam)) {
-        paramsNonPath.push(p);
+        paramsNonPath.push(param);
       }
     } else if (boundToLastParam !== undefined) {
       if (this.boundToPathOk(path, boundToLastParam)) {
-        paramsNonPath.push(p);
+        paramsNonPath.push(param);
       }
     } else if (boundToMethod) {
       if (httpMethod == boundToMethod) {
-        paramsNonPath.push(p);
+        paramsNonPath.push(param);
       }
     } else {
-      paramsNonPath.push(p);
+      paramsNonPath.push(param);
     }
   }
 
