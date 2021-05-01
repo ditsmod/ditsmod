@@ -8,6 +8,11 @@ import { Post } from './models';
 export class HelloWorldController {
   constructor(private req: Request, private res: Response) {}
 
+  @OasRoute('GET', '', [], {})
+  hello() {
+    this.res.send('Hello, World!');
+  }
+
   @OasRoute('GET', 'posts/:postId', [BasicGuard], {
     description: 'This route uses `getParams()` and `getContent()` helpers from @ditsmod/openapi',
     parameters: getParams('path', true, Post, 'postId'),
