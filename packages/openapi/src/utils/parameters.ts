@@ -31,23 +31,33 @@ export class Parameters {
   protected parameters: XParameterObject[] = [];
   protected countOfLastPushedParams: number;
 
+  // prettier-ignore
   required<T extends Type<edk.AnyObj>>(paramsIn: RequiredParamsIn, model: T, ...params: KeysOf<T>): this;
+  // prettier-ignore
   required(paramsIn: RequiredParamsIn, ...params: [string, ...string[]]): this;
+  // prettier-ignore
   required<T extends Type<edk.AnyObj>>(paramsIn: RequiredParamsIn, modelOrString: T | string, ...params: (KeyOf<T> | string)[]) {
     return this.setParams(true, paramsIn, modelOrString, ...params);
   }
 
+  // prettier-ignore
   optional<T extends Type<edk.AnyObj>>(paramsIn: OptionalParamsIn, model: T, ...params: KeysOf<T>): this;
+  // prettier-ignore
   optional(paramsIn: OptionalParamsIn, ...params: [string, ...string[]]): this;
+  // prettier-ignore
   optional<T extends Type<edk.AnyObj>>(paramsIn: OptionalParamsIn, modelOrString: T | string, ...params: (KeyOf<T> | string)[]
   ) {
     return this.setParams(false, paramsIn, modelOrString, ...params);
   }
 
   getParams(): XParameterObject[];
+  // prettier-ignore
   getParams<T extends Type<edk.AnyObj>>(paramsIn: 'path', isRequired: true, model: T, ...params: KeysOf<T>): XParameterObject[];
+  // prettier-ignore
   getParams<T extends Type<edk.AnyObj>>(paramsIn: OptionalParamsIn, isRequired: boolean, model: T, ...params: KeysOf<T>): XParameterObject[];
+  // prettier-ignore
   getParams(paramsIn: OptionalParamsIn, isRequired: boolean, ...params: [string, ...string[]]): XParameterObject[];
+  // prettier-ignore
   getParams<T extends Type<edk.AnyObj>>(paramsIn?: RequiredParamsIn, isRequired?: boolean, modelOrString?: T | string, ...params: (KeyOf<T> | string)[]): XParameterObject[] {
     if (isRequired !== undefined) {
       this.setParams(isRequired, paramsIn, modelOrString, ...params);
@@ -60,25 +70,25 @@ export class Parameters {
    * previous step as recursive.
    *
    * For example, if you first called `optional()` or `required()` with 2 parameters
-   * and then called `recursive()`, these 2 parameters will be marked recursively.
-   * 
+   * and then called `recursive()`, these 2 parameters will be marked recursive.
+   *
    * @param depth Positive number of recursiveness: `1`, `2`, `3`... - number depth of recursion.
    * Default `depth == 100` (like "unlimeted").
    */
   recursive(depth: number = 100) {
     const params = this.getLastAddedParams();
-    params.forEach(param => param[RECURSIVE_PARAM] = depth);
+    params.forEach((param) => (param[RECURSIVE_PARAM] = depth));
     return this;
   }
 
   /**
    * Applies to importing `ModuleWithParams`. Indicates the parameters that were added in the
    * previous step as bound to existence param in a route path.
-   * 
+   *
    * For example, if you first called `optional()` or `required()` with 2 parameters
-   * and then called `bindTo('lastParamInPath', 1)`, these 2 parameters will be marked as bound
+   * and then called `bindTo('lastParamInPath', true)`, these 2 parameters will be marked as bound
    * to `posts/:postId`. In case `:postId` exists - parameters works.
-   * 
+   *
    * If you calls `bindTo('lastParamInPath')` (without last argument), and if in path param not
    * exists, parameters works too.
    */
@@ -86,7 +96,7 @@ export class Parameters {
   /**
    * Applies to importing `ModuleWithParams`. Indicates the parameters that were added in the
    * previous step as bound to HTTP method in a route.
-   * 
+   *
    * For example, if you first called `optional()` or `required()` with 2 parameters
    * and then called `bindTo('httpMethod', 'GET')`, these 2 parameters will be marked as bound
    * to `GET` method. So, these parameters works only if you have request with `GET` method.
@@ -95,7 +105,7 @@ export class Parameters {
   bindTo(to: 'lastParamInPath' | 'httpMethod', options: any = false) {
     const params = this.getLastAddedParams();
     const key = to == 'httpMethod' ? BOUND_TO_HTTP_METHOD : BOUND_TO_PATH_PARAM;
-    params.forEach(param => param[key] = options);
+    params.forEach((param) => (param[key] = options));
     return this;
   }
 
@@ -162,9 +172,13 @@ export class Parameters {
   }
 }
 
+// prettier-ignore
 export function getParams<T extends Type<edk.AnyObj>>(paramsIn: 'path', isRequired: true, model: T, ...params: KeysOf<T>): XParameterObject[];
+// prettier-ignore
 export function getParams<T extends Type<edk.AnyObj>>(paramsIn: OptionalParamsIn, isRequired: boolean, model: T, ...params: KeysOf<T>): XParameterObject[];
+// prettier-ignore
 export function getParams(paramsIn: OptionalParamsIn, isRequired: boolean, ...params: [string, ...string[]]): XParameterObject[];
+// prettier-ignore
 export function getParams<T extends Type<edk.AnyObj>>(paramsIn?: any, isRequired?: boolean, modelOrString?: any, ...params: (KeyOf<T> | string)[]
 ) {
   return new Parameters().getParams(paramsIn, isRequired, modelOrString, ...params);
