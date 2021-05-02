@@ -13,9 +13,9 @@ import {
 } from '@ts-stack/openapi-spec';
 import { stringify } from 'yaml';
 
-import { OAS_OBJECT } from '../di-tokens';
+import { OAS_OBJECT } from '../modules/openapi/di-tokens';
 import { OasRouteMeta } from '../types/oas-route-meta';
-import { DEFAULT_OAS_OBJECT } from '../constants';
+import { DEFAULT_OAS_OBJECT } from '../modules/openapi/constants';
 import { isOasGuard } from '../utils/type-guards';
 
 @Injectable()
