@@ -67,7 +67,7 @@ async init() {
 динамічне додавання провайдера на рівні маршруту:
 
 ```ts
-const providersPerRoute: ServiceProvider[] = [{ provide: parseBody, useValue: true }];
+const providersPerRou: ServiceProvider[] = [{ provide: parseBody, useValue: true }];
 ```
 
 Але це не варто робити, бо в такому разі дорожчим буде передача даних через DI, ніж робота
@@ -85,13 +85,13 @@ const routeMeta: edk.RouteMeta = {
   parseBody,
   guards
 };
-const providersPerRoute: ServiceProvider[] = [{ provide: edk.RouteMeta, useValue: routeMeta }];
+const providersPerRou: ServiceProvider[] = [{ provide: edk.RouteMeta, useValue: routeMeta }];
 ```
 
 Як бачите, окрім згаданої мітки `parseBody`, розширення передає й інші метадані в об'єкт з типом
 даних `RouteMeta` і вже в такому вигляді передає це в DI.
 
-Більше інформації про масив `providersPerRoute` можете прочитати в розділі
+Більше інформації про масив `providersPerRou` можете прочитати в розділі
 [Динамічне додавання провайдерів](#динамічне-додавання-провайдерів).
 
 ## Два кроки для створення розширення
@@ -282,7 +282,7 @@ const result = await this.extensionsManager.init(MY_EXTENSIONS);
 динамічно додавати провайдери на рівні:
 
 - модуля - у масив `providersPerMod`,
-- роуту - у масив `providersPerRoute`,
+- роуту - у масив `providersPerRou`,
 - чи запиту - у масив `providersPerReq`.
 
 Наприклад так:
@@ -306,9 +306,9 @@ export class MyExtension implements edk.Extension {
 
     rawRouteMeta.forEach(data => {
       // ... Створіть тут нові провайдері і їхні значення, а потім:
-      const { providersPerMod, providersPerRoute, providersPerReq } = data;
+      const { providersPerMod, providersPerRou, providersPerReq } = data;
       providersPerMod.push({ provide: MyProviderPerMod, useValue: myValue1 });
-      providersPerRoute.push({ provide: MyProviderPerRoute, useValue: myValue1 });
+      providersPerRou.push({ provide: MyProviderPerRoute, useValue: myValue1 });
       providersPerReq.push({ provide: MyProviderPerReq, useValue: myValue2 });
     });
 
