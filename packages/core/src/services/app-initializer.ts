@@ -218,12 +218,16 @@ export class AppInitializer {
       for (const groupToken of extensions) {
         if (initedExtensionsGroups.has(groupToken)) {
           continue;
-        } else {
-          initedExtensionsGroups.add(groupToken);
         }
+        const beforeToken = `BEFORE ${groupToken}`;
+        this.log.startExtensionsGroupInit('debug', [moduleName, beforeToken]);
+        await extensionsManager.init(beforeToken);
+        this.log.finishExtensionsGroupInit('debug', [moduleName, beforeToken]);
+
         this.log.startExtensionsGroupInit('debug', [moduleName, groupToken]);
         await extensionsManager.init(groupToken);
         this.log.finishExtensionsGroupInit('debug', [moduleName, groupToken]);
+        initedExtensionsGroups.add(groupToken);
       }
     }
     extensionsManager.clearUnfinishedInitExtensions();

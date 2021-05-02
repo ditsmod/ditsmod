@@ -10,11 +10,11 @@ export class ExtensionsManager {
 
   constructor(private injectorPerApp: Injector, private log: Log, private counter: Counter) {}
 
-  async init<T>(extensionsGroupToken: InjectionToken<Extension<T>[]>, autoMergeArrays = true): Promise<T[]> {
+  async init<T>(extensionsGroupToken: string | InjectionToken<Extension<T>[]>, autoMergeArrays = true): Promise<T[]> {
     const extensions = this.injectorPerApp.get(extensionsGroupToken, []);
     const dataArr: T[] = [];
 
-    if (!extensions.length) {
+    if (typeof extensionsGroupToken != 'string' && !extensions.length) {
       this.log.noExtensionsFound('warn', [extensionsGroupToken]);
     }
 
