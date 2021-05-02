@@ -13,7 +13,7 @@ import {
   ModuleWithParams,
   NormalizedGuard,
   ServiceProvider,
-  Extension
+  Extension,
 } from './types/mix';
 import { getDuplicates } from './utils/get-duplicates';
 import { getTokensCollisions } from './utils/get-tokens-collisions';
@@ -25,10 +25,11 @@ import {
   isController,
   isExtensionProvider,
   isInjectionToken,
+  isNormalizedProvider,
   isRootModule,
 } from './utils/type-guards';
 import { deepFreeze } from './utils/deep-freeze';
-import { defaultProvidersPerMod, NODE_REQ, NODE_RES } from './constans';
+import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES } from './constans';
 import { ModConfig } from './models/mod-config';
 import { Log } from './services/log';
 
@@ -179,6 +180,16 @@ export class ModuleFactory {
         throw new Error(msg);
       }
     });
+
+    this.checkHttpInterceptors(meta);
+  }
+
+  protected checkHttpInterceptors(meta: NormalizedModuleMetadata) {
+    const normProviders = [...meta.providersPerApp, ...meta.providersPerMod, ...meta.providersPerRou].filter(isNormalizedProvider);
+    if (normProviders.find(np => np.provide === HTTP_INTERCEPTORS)) {
+      const msg = `Importing ${this.moduleName} failed: "HTTP_INTERCEPTORS" providers can be includes in the "providersPerReq" array only.`;
+      throw new Error(msg);
+    }
   }
 
   protected checkExtensionsRegistration(
