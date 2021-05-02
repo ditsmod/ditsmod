@@ -97,7 +97,7 @@ const providersPerRou: ServiceProvider[] = [{ provide: edk.RouteMeta, useValue: 
 
 ## Два кроки для створення розширення
 
-Готовий простий приклад ви можете проглянути у теці [9-one-extension](../../examples/9-one-extension).
+Готовий простий приклад ви можете проглянути у теці [9-one-extension](../../examples/09-one-extension).
 
 ### Крок перший
 
