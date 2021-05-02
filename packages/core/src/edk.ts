@@ -15,7 +15,7 @@ export { pickProperties } from './utils/pick-properties';
 export { MetadataPerMod } from './types/metadata-per-mod';
 export { ControllerType, AnyObj, NormalizedGuard, DecoratorMetadata, Extension } from './types/mix';
 export { RawRouteMeta } from './types/route-data';
-export { ROUTES_EXTENSIONS, VOID_EXTENSIONS, APP_METADATA_MAP } from './constans';
+export { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS, APP_METADATA_MAP } from './constans';
 export { ModuleMetadata } from './types/module-metadata';
 export { RouteMeta } from './types/route-data';
 export { AppInitializer } from './services/app-initializer';

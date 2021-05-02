@@ -174,12 +174,11 @@ export class Extension2 implements edk.Extension {
 
 На даний момент, із коробки, Ditsmod має дві групи розширень:
 
-- `ROUTES_EXTENSIONS` - тут реєструються усі розширення, що генерують дані з інтерфейсом
+- `ROUTES_EXTENSIONS` - тут реєструються розширення, що генерують дані з інтерфейсом
   `RawRouteMeta[]` для маршрутизатора; тут варто відзначити, що кожен елемент масиву
-  `RawRouteMeta[]` повинен містити масив `providersPerRou`, де повинні бути провайдери для
-  `RouteMeta`;
-- `VOID_EXTENSIONS` - тут реєструються усі розширення, що не повертають жодних даних (наприклад,
-  тут зареєстровано розширення, що встановлює маршрути).
+  `RawRouteMeta[]` повинен містити масив `providersPerRou`, де повинні бути провайдери з
+  токеном `RouteMeta`;
+- `PRE_ROUTER_EXTENSIONS` - тут реєструються розширення, що встановлюють маршрути для роутера.
 
 Реєстрація розширень в будь-якій групі відбувається за допомогою мульти-провайдерів:
 
@@ -189,13 +188,13 @@ import { Module, edk } from '@ditsmod/core';
 import { MyExtension } from './my-extension';
 
 @Module({
-  providersPerApp: [{ provide: edk.VOID_EXTENSIONS, useClass: MyExtension, multi: true }],
-  extensions: [edk.VOID_EXTENSIONS],
+  providersPerApp: [{ provide: edk.PRE_ROUTER_EXTENSIONS, useClass: MyExtension, multi: true }],
+  extensions: [edk.PRE_ROUTER_EXTENSIONS],
 })
 export class SomeModule {}
 ```
 
-Тут використовується токен групи `VOID_EXTENSIONS`, і указується він у масиві `extensions`,
+Тут використовується токен групи `PRE_ROUTER_EXTENSIONS`, і указується він у масиві `extensions`,
 а також у мульти-провайдері, переданому в масив `providersPerApp`.
 
 #### Використання ExtensionsManager
@@ -207,7 +206,7 @@ export class SomeModule {}
 `ExtensionsManager` також корисний тим, що кидає помилки про циклічні залежності між розширеннями,
 і показує весь ланцюжок розширень, що призвів до зациклення.
 
-Припустимо `Extension1` (тут не показано) зареєстровано у групі `VOID_EXTENSIONS`, а
+Припустимо `Extension1` (тут не показано) зареєстровано у групі `PRE_ROUTER_EXTENSIONS`, а
 `Extension2` повинно дочекатись завершення ініціалізації цієї групи розширень. Щоб зробити це, у
 конструкторі треба указувати залежність від `ExtensionsManager`, а у `init()` викликати `init()`
 цього сервісу:
@@ -227,7 +226,7 @@ export class Extension2 implements edk.Extension {
       return;
     }
 
-    await this.extensionsManager.init(edk.VOID_EXTENSIONS);
+    await this.extensionsManager.init(edk.PRE_ROUTER_EXTENSIONS);
     // Do something here.
     this.#inited = true;
   }
@@ -240,7 +239,7 @@ export class Extension2 implements edk.Extension {
 якщо другим аргументом у `init()` передати `false`:
 
 ```ts
-await this.extensionsManager.init(edk.VOID_EXTENSIONS, false);
+await this.extensionsManager.init(edk.PRE_ROUTER_EXTENSIONS, false);
 ```
 
 #### Створення токена для нової групи
