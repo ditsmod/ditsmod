@@ -1,8 +1,7 @@
 ## Що являє собою розширення Ditsmod
 
-Ditsmod має спеціальний API (покищо експериментальний) для розширення функціональності
-`@ditsmod/core`. Щоб скористатись ним, необхідно імпортувати константу `edk`
-(скорочення від "Extensions Development Kit"):
+Ditsmod має спеціальний API для розширення функціональності `@ditsmod/core`. Щоб скористатись
+ним, необхідно імпортувати константу `edk` (скорочення від "Extensions Development Kit"):
 
 ```ts
 import { edk } from '@ditsmod/core';
@@ -24,9 +23,9 @@ interface Extension<T> {
 
 1. збираються метадані з усіх декораторів (`@RootModule`, `@Module`, `@Controller`,
    `@Route`...);
-2. зібрані метадані передаються в інжектор DI з токеном `APP_METADATA_MAP`, а отже - будь-який
+2. зібрані метадані передаються в інжектор DI з токеном `APP_METADATA_MAP`, і отже - будь-який
    сервіс, контролер чи розширення може отримати ці метадані у себе в конструкторі;
-3. автоматично запускаються усі зареєстровані розширення, точніше - викликаються їхні
+3. послідовно запускаються усі зареєстровані розширення, точніше - викликаються їхні
    методи `init()` без аргументів;
 4. стартує вебсервер, і застосунок починає працювати у звичному режимі, обробляючи HTTP-запити.
 
@@ -62,38 +61,9 @@ async init() {
 свою роботу перед стартом вебсервера, і при цьому воно може динамічно додавати провайдери на рівні
 конкретного модуля, роута чи запиту.
 
-Наприклад, вбудоване Ditsmod-розширення перед стартом вебсервера аналізує кожен маршрут і якщо
-бачить, що його метод `POST`, `PUT` чи `PATCH`, то воно помічає цей маршрут як такий, що
-потребує парсингу тіла запиту. І, взагалі то, цю єдину мітку розширення може передати через
-динамічне додавання провайдера на рівні маршруту:
-
-```ts
-const providersPerRou: ServiceProvider[] = [{ provide: parseBody, useValue: true }];
-```
-
-Але це не варто робити, бо в такому разі дорожчим буде передача даних через DI, ніж робота
-з таким аналізом за кожним запитом.
-
-Вбудоване розширення робить значно більше роботи, тому передача даних через DI вже виправдана:
-
-```ts
-const routeMeta: edk.RouteMeta = {
-  httpMethod,
-  path,
-  decoratorMetadata,
-  controller,
-  methodName,
-  parseBody,
-  guards
-};
-const providersPerRou: ServiceProvider[] = [{ provide: edk.RouteMeta, useValue: routeMeta }];
-```
-
-Як бачите, окрім згаданої мітки `parseBody`, розширення передає й інші метадані в об'єкт з типом
-даних `RouteMeta` і вже в такому вигляді передає це в DI.
-
-Більше інформації про масив `providersPerRou` можете прочитати в розділі
-[Динамічне додавання провайдерів](#динамічне-додавання-провайдерів).
+Наприклад, модуль `@ditsmod/openapi` дозволяє створювати OpenAPI-документацію за допомогою власного
+декоратора `@OasRoute`. Без роботи розширень, метадані, передані у цей новий декоратор, були б
+незрозумілими для `@ditsmod/core`.
 
 ## Два кроки для створення розширення
 
@@ -175,9 +145,7 @@ export class Extension2 implements edk.Extension {
 На даний момент, із коробки, Ditsmod має дві групи розширень:
 
 - `ROUTES_EXTENSIONS` - тут реєструються розширення, що генерують дані з інтерфейсом
-  `RawRouteMeta[]` для маршрутизатора; тут варто відзначити, що кожен елемент масиву
-  `RawRouteMeta[]` повинен містити масив `providersPerRou`, де повинні бути провайдери з
-  токеном `RouteMeta`;
+  `RawRouteMeta[]` для маршрутизатора;
 - `PRE_ROUTER_EXTENSIONS` - тут реєструються розширення, що встановлюють маршрути для роутера.
 
 Реєстрація розширень в будь-якій групі відбувається за допомогою мульти-провайдерів:
@@ -188,14 +156,33 @@ import { Module, edk } from '@ditsmod/core';
 import { MyExtension } from './my-extension';
 
 @Module({
-  providersPerApp: [{ provide: edk.PRE_ROUTER_EXTENSIONS, useClass: MyExtension, multi: true }],
-  extensions: [edk.PRE_ROUTER_EXTENSIONS],
+  providersPerApp: [{ provide: edk.ROUTES_EXTENSIONS, useClass: MyExtension, multi: true }],
+  extensions: [edk.ROUTES_EXTENSIONS],
 })
 export class SomeModule {}
 ```
 
-Тут використовується токен групи `PRE_ROUTER_EXTENSIONS`, і указується він у масиві `extensions`,
+Тут використовується токен групи `ROUTES_EXTENSIONS`, і указується він у масиві `extensions`,
 а також у мульти-провайдері, переданому в масив `providersPerApp`.
+
+Окрім цього, є ще така можливість:
+
+```ts
+import { Module, edk } from '@ditsmod/core';
+
+import { MyExtension } from './my-extension';
+
+@Module({
+  providersPerApp: [{ provide: `BEFORE ${edk.ROUTES_EXTENSIONS}`, useClass: MyExtension, multi: true }],
+  extensions: [],
+})
+export class SomeModule {}
+```
+
+В даному прикладі, для реєстрації розширення використовується текстовий токен у форматі
+`BEFORE ${GROUP_NAME}`. Це спеціальний формат токену. В такому разі, розширення `MyExtension`
+буде запускатись перед запуском групи розширень `ROUTES_EXTENSIONS`. Зверніть увагу, що масив
+`extensions: []` пустий, бо немає необхідності реєструвати розширення з префіксом `BEFORE`.
 
 #### Використання ExtensionsManager
 
