@@ -7,7 +7,7 @@ import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '../utils/parameters';
 import { OasRouteMeta } from '../types/oas-route-meta';
 import { OasModuleWithParams } from '../types/oas-modul-with-params';
 import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-last-params';
-import { OAS_PATCH_METADATA_EXTENSIONS } from '../modules/openapi/di-tokens';
+import { OAS_PATCH_METADATA_EXTENSIONS } from '../di-tokens';
 
 @Injectable()
 export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.Extension<edk.RawRouteMeta[]> {

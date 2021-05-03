@@ -1,13 +1,13 @@
 import { Module, edk, ModuleWithParams, ServiceProvider } from '@ditsmod/core';
 
-import { OpenapiCompilerExtension } from '../../extensions/openapi-compiler.extension';
-import { OpenapiRoutesExtension } from '../../extensions/openapi-routes.extension';
+import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension';
+import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension';
 import { OAS_COMPILER_EXTENSIONS, OAS_OBJECT, OAS_PATCH_METADATA_EXTENSIONS } from './di-tokens';
 import { DEFAULT_OAS_OBJECT } from './constants';
-import { OasRouteMeta } from '../../types/oas-route-meta';
+import { OasRouteMeta } from './types/oas-route-meta';
 import { OpenapiController } from './openapi.controller';
-import { SwaggerConfigManager } from '../../services/swagger-config-manager';
-import { OpenapiPatchMetadataExtension } from '../../extensions/openapi-patch-metadata.extension';
+import { SwaggerConfigManager } from './services/swagger-config-manager';
+import { OpenapiPatchMetadataExtension } from './extensions/openapi-patch-metadata.extension';
 
 @Module({
   controllers: [OpenapiController],

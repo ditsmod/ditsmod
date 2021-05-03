@@ -11,9 +11,9 @@ import {
 import { ReflectiveInjector } from '@ts-stack/di';
 
 import { OpenapiCompilerExtension } from './openapi-compiler.extension';
-import { DEFAULT_OAS_OBJECT } from '../modules/openapi/constants';
+import { DEFAULT_OAS_OBJECT } from '../constants';
 import { OasGuard } from '../decorators/oas-guard';
-import { OAS_OBJECT } from '../modules/openapi/di-tokens';
+import { OAS_OBJECT } from '../di-tokens';
 
 describe('OpenapiCompilerExtension', () => {
   class MockOpenapiCompilerExtension extends OpenapiCompilerExtension {
