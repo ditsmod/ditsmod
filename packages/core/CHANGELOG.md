@@ -1,5 +1,16 @@
+<a name="core-beta.17"></a>
+# [core-beta.17](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.17) (2021-05-03)
+
+### BREAKING CHANGES
+
+- renamed `VOID_EXTENSIONS` to `PRE_ROUTER_EXTENSIONS` [31736f5](https://github.com/ditsmod/ditsmod/commit/31736f5).
+
+### Features
+
+- introduce `BEFORE` extensions hook [1b3100](https://github.com/ditsmod/ditsmod/commit/1b3100).
+
 <a name="core-beta.16"></a>
-# [core-beta.16](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.16) (2021-04-27)
+## [core-beta.16](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.16) (2021-04-27)
 
 ### Features
 
