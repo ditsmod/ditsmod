@@ -1,6 +1,6 @@
 import { RootModule, Router, ServiceProvider } from '@ditsmod/core';
 import { DefaultRouter } from '@ditsmod/router';
-import { OAS_OBJECT, OpenapiModule, SwaggegrOAuthOptions, ValidationModule } from '@ditsmod/openapi';
+import { OAS_OBJECT, OpenapiModule, SwaggegrOAuthOptions } from '@ditsmod/openapi';
 
 import { HelloWorldController } from './hello-world.controller';
 import { oasObject } from './oas-object';
@@ -20,7 +20,7 @@ const openapiModuleWithParams = OpenapiModule.withParams(providersPerApp);
   // Here works the application and serves OpenAPI documentation.
   listenOptions: { host: 'localhost', port: 8080 },
   imports: [openapiModuleWithParams],
-  exports: [openapiModuleWithParams, ValidationModule],
+  exports: [openapiModuleWithParams],
   controllers: [HelloWorldController],
   providersPerApp: [{ provide: Router, useClass: DefaultRouter }],
 })
