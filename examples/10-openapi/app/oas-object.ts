@@ -18,6 +18,10 @@ export const oasObject: XOasObject = {
       description: 'Here you need username and password.',
     },
     {
+      name: 'withParameter',
+      description: 'Parameter in path.',
+    },
+    {
       name: 'OasDocs',
       description: 'Routes used to service OpenAPI documentation',
     },
