@@ -23,7 +23,7 @@ interface Extension<T> {
 
 1. збираються метадані з усіх декораторів (`@RootModule`, `@Module`, `@Controller`,
    `@Route`...);
-2. зібрані метадані передаються в інжектор DI з токеном `APP_METADATA_MAP`, і отже - будь-який
+2. зібрані метадані передаються в DI з токеном `APP_METADATA_MAP`, і отже - будь-який
    сервіс, контролер чи розширення може отримати ці метадані у себе в конструкторі;
 3. послідовно запускаються усі зареєстровані розширення, точніше - викликаються їхні
    методи `init()` без аргументів;
@@ -71,7 +71,7 @@ async init() {
 
 ### Крок перший
 
-Створіть провайдера, що впроваджує інтерфейс `Extension`:
+Створіть провайдер, що впроваджує інтерфейс `Extension`:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -79,9 +79,15 @@ import { edk } from '@ditsmod/core';
 
 @Injectable()
 export class MyExtension implements edk.Extension {
-  async init() {
-    // ... Do something here
+  private inited: boolean;
+
+  if (this.inited) {
+    return;
   }
+  // ...
+  // Щось хороше робите.
+  // ...
+  this.inited = true;
 }
 ```
 
@@ -94,35 +100,35 @@ import { edk } from '@ditsmod/core';
 
 @Injectable()
 export class Extension1 implements edk.Extension {
-  #data: any;
+  private data: any;
 
   constructor(@Inject(edk.APP_METADATA_MAP) private appMetadataMap: edk.AppMetadataMap) {}
 
   async init() {
-    if (this.#data) {
-      return this.#data;
+    if (this.data) {
+      return this.data;
     }
     // Do something with `this.appMetadataMap` here.
     // ...
-    this.#data = result;
-    return this.#data;
+    this.data = result;
+    return this.data;
   }
 }
 
 @Injectable()
 export class Extension2 implements edk.Extension {
-  #inited: boolean;
+  private inited: boolean;
 
   constructor(private extension1: Extension1) {}
 
   async init() {
-    if (this.#inited) {
+    if (this.inited) {
       return;
     }
 
     const data = await this.extension1.init();
     // Do something here.
-    this.#inited = true;
+    this.inited = true;
   }
 }
 ```
@@ -139,6 +145,70 @@ export class Extension2 implements edk.Extension {
 
 Зареєструйте розширення в існуючій групі розширень, або створіть нову групу, навіть якщо у ній
 буде єдине розширення.
+
+#### Що являє собою група розширень
+
+Групи створюються в DI за допомогою так званих "мульти-провайдерів". Цей вид провайдерів
+відрізняється від звичайних DI-провайдерів наявністю властивості `multi: true`. Окрім цього, в DI
+можна передавати декілька провайдерів з однаковим токеном, і DI поверне таку саму кількість
+інстансів в одному масиві:
+
+```ts
+[
+  { provide: MY_EXTENSIONS, useClass: MyExtension1, multi: true },
+  { provide: MY_EXTENSIONS, useClass: MyExtension2, multi: true },
+  { provide: MY_EXTENSIONS, useClass: MyExtension3, multi: true }
+]
+```
+
+Групи розширень дозволяють:
+
+- запускати нові розширення, навіть якщо про них нічого не знає ядро Ditsmod;
+- упорядковувати послідовність роботи різних розширень.
+
+Наприклад, існує група `ROUTES_EXTENSIONS`, куди входять два розширення, кожне із яких готує дані
+для встановлення маршрутів для роутера. Але одне із розширень працює із декоратором `@Route()`, що
+імпортується із `@ditsmod/core`, інше - працює з декоратором `@OasRoute()`, що імпортується з
+`@ditsmod/openapi`. Ці розширення зібрані в одну групу, оскільки їхні методи `init()` повертають
+дані з однаковим базовим інтерфейсом.
+
+Ядро Ditsmod нічого не знає про розширення, імпортоване з `@ditsmod/openapi`, але воно знає, що
+потрібно дочекатись завершення ініціалізації усіх розширень із групи `ROUTES_EXTENSIONS`, і
+тільки потім встановлювати маршрути для роутера.
+
+#### Створення нової групи
+
+Кожен токен для групи розширень повинен бути інстансом класу `InjectionToken`. Наприклад, щоб
+створити токен для групи `MY_EXTENSIONS`, необхідно зробити наступне:
+
+```ts
+import { InjectionToken } from '@ts-stack/di';
+import { edk } from '@ditsmod/core';
+
+export const MY_EXTENSIONS = new InjectionToken<edk.Extension<void>[]>('MY_EXTENSIONS');
+```
+
+Як бачите, кожна група розширень повинна указувати, що DI повертатиме масив інстансів
+розширень: `Extension<void>[]`. Це треба робити обов'язково, відмінність може бути хіба що в інтерфейсі
+даних, що повертаються в результаті виклику їхніх методів `init()`:
+
+```ts
+import { InjectionToken } from '@ts-stack/di';
+import { edk } from '@ditsmod/core';
+
+interface MyInterface {
+  one: string;
+  two: number;
+}
+
+export const MY_EXTENSIONS = new InjectionToken<edk.Extension<MyInterface>[]>('MY_EXTENSIONS');
+```
+
+Тепер змінна `result` матиме тип даних `MyInterface[]`:
+
+```ts
+const result = await this.extensionsManager.init(MY_EXTENSIONS);
+```
 
 #### Реєстрація розширення в існуючій групі розширень
 
@@ -204,18 +274,18 @@ import { edk } from '@ditsmod/core';
 
 @Injectable()
 export class Extension2 implements edk.Extension {
-  #inited: boolean;
+  inited: boolean;
 
   constructor(private extensionsManager: edk.ExtensionsManager) {}
 
   async init() {
-    if (this.#inited) {
+    if (this.inited) {
       return;
     }
 
     await this.extensionsManager.init(edk.PRE_ROUTER_EXTENSIONS);
     // Do something here.
-    this.#inited = true;
+    this.inited = true;
   }
 }
 ```
@@ -227,40 +297,6 @@ export class Extension2 implements edk.Extension {
 
 ```ts
 await this.extensionsManager.init(edk.PRE_ROUTER_EXTENSIONS, false);
-```
-
-#### Створення токена для нової групи
-
-Кожен токен для групи розширень повинен бути інстансом класу `InjectionToken`. Наприклад, щоб
-створити токен для групи `MY_EXTENSIONS`, необхідно зробити наступне:
-
-```ts
-import { InjectionToken } from '@ts-stack/di';
-import { edk } from '@ditsmod/core';
-
-export const MY_EXTENSIONS = new InjectionToken<edk.Extension<void>[]>('MY_EXTENSIONS');
-```
-
-Як бачите, кожна група розширень повинна указувати, що DI повертатиме масив інстансів
-розширень: `Extension<void>[]`. Це треба робити обов'язково, відмінність може бути хіба що в інтерфейсі
-даних, що повертаються в результаті виклику їхніх методів `init()`:
-
-```ts
-import { InjectionToken } from '@ts-stack/di';
-import { edk } from '@ditsmod/core';
-
-interface MyInterface {
-  one: string;
-  two: number;
-}
-
-export const MY_EXTENSIONS = new InjectionToken<edk.Extension<MyInterface>[]>('MY_EXTENSIONS');
-```
-
-Тепер змінна `result` матиме тип даних `MyInterface[]`:
-
-```ts
-const result = await this.extensionsManager.init(MY_EXTENSIONS);
 ```
 
 ## Динамічне додавання провайдерів
@@ -280,12 +316,12 @@ import { edk } from '@ditsmod/core';
 
 @Injectable()
 export class MyExtension implements edk.Extension {
-  #inited: boolean;
+  inited: boolean;
 
   constructor(private extensionsManager: edk.ExtensionsManager) {}
 
   async init() {
-    if (this.#inited) {
+    if (this.inited) {
       return;
     }
 
@@ -299,7 +335,7 @@ export class MyExtension implements edk.Extension {
       providersPerReq.push({ provide: MyProviderPerReq, useValue: myValue2 });
     });
 
-    this.#inited = true;
+    this.inited = true;
   }
 }
 ```
