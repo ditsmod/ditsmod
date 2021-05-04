@@ -1158,6 +1158,8 @@ import { AuthService } from './auth.service';
 import { Permission } from './permission';
 ```
 
+Розширення повинні мати закінчення `_EXTENSIONS`, наприклад `MY_EXTENSIONS`.
+
 ## API reference
 
 Даний розділ з'явиться пізніше.

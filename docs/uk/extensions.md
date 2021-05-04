@@ -157,8 +157,8 @@ export class Extension2 implements edk.Extension {
 [
   { provide: MY_EXTENSIONS, useClass: MyExtension1, multi: true },
   { provide: MY_EXTENSIONS, useClass: MyExtension2, multi: true },
-  { provide: MY_EXTENSIONS, useClass: MyExtension3, multi: true }
-]
+  { provide: MY_EXTENSIONS, useClass: MyExtension3, multi: true },
+];
 ```
 
 Групи розширень дозволяють:
@@ -176,10 +176,15 @@ export class Extension2 implements edk.Extension {
 потрібно дочекатись завершення ініціалізації усіх розширень із групи `ROUTES_EXTENSIONS`, і
 тільки потім встановлювати маршрути для роутера.
 
-#### Створення нової групи
+#### Створення токена для нової групи
 
-Кожен токен для групи розширень повинен бути інстансом класу `InjectionToken`. Наприклад, щоб
-створити токен для групи `MY_EXTENSIONS`, необхідно зробити наступне:
+На даний момент існує два типи токенів для груп розширень:
+
+1. токен, що є інстансом класу `InjectionToken`;
+2. текстовий токен, що створюється на базі вже існуючого токена із пункту 1, по шаблону
+   `BEFORE ${<InjectionToken>}`.
+
+Наприклад, щоб створити перший тип токенів для групи `MY_EXTENSIONS`, необхідно зробити наступне:
 
 ```ts
 import { InjectionToken } from '@ts-stack/di';
@@ -210,49 +215,40 @@ export const MY_EXTENSIONS = new InjectionToken<edk.Extension<MyInterface>[]>('M
 const result = await this.extensionsManager.init(MY_EXTENSIONS);
 ```
 
-#### Реєстрація розширення в існуючій групі розширень
+#### Реєстрація розширення
 
-На даний момент, із коробки, Ditsmod має дві групи розширень:
-
-- `ROUTES_EXTENSIONS` - тут реєструються розширення, що генерують дані з інтерфейсом
-  `RawRouteMeta[]` для маршрутизатора;
-- `PRE_ROUTER_EXTENSIONS` - тут реєструються розширення, що встановлюють маршрути для роутера.
-
-Реєстрація розширень в будь-якій групі відбувається за допомогою мульти-провайдерів:
+Мульти-провайдери груп розширень передаються в масив `providersPerApp`, а їхні токени передаються
+в масив `extensions`:
 
 ```ts
-import { Module, edk } from '@ditsmod/core';
+import { Module } from '@ditsmod/core';
 
-import { MyExtension } from './my-extension';
+import { MY_EXTENSIONS, MyExtension } from './my-extension';
 
 @Module({
-  providersPerApp: [{ provide: edk.ROUTES_EXTENSIONS, useClass: MyExtension, multi: true }],
-  extensions: [edk.ROUTES_EXTENSIONS],
+  providersPerApp: [{ provide: MY_EXTENSIONS, useClass: MyExtension, multi: true }],
+  extensions: [MY_EXTENSIONS],
 })
 export class SomeModule {}
 ```
 
-Тут використовується токен групи `ROUTES_EXTENSIONS`, і указується він у масиві `extensions`,
-а також у мульти-провайдері, переданому в масив `providersPerApp`.
-
-Окрім цього, є ще така можливість:
+Реєстрація розширення в групі із текстовим типом токену відрізняється лише тим, що цей токен
+не потрібно передавати в масив `extensions`:
 
 ```ts
-import { Module, edk } from '@ditsmod/core';
+import { Module } from '@ditsmod/core';
 
-import { MyExtension } from './my-extension';
+import { MY_EXTENSIONS, MyExtension } from './my-extension';
 
 @Module({
-  providersPerApp: [{ provide: `BEFORE ${edk.ROUTES_EXTENSIONS}`, useClass: MyExtension, multi: true }],
+  providersPerApp: [{ provide: `BEFORE ${MY_EXTENSIONS}`, useClass: MyExtension, multi: true }],
   extensions: [],
 })
 export class SomeModule {}
 ```
 
-В даному прикладі, для реєстрації розширення використовується текстовий токен у форматі
-`BEFORE ${GROUP_NAME}`. Це спеціальний формат токену. В такому разі, розширення `MyExtension`
-буде запускатись перед запуском групи розширень `ROUTES_EXTENSIONS`. Зверніть увагу, що масив
-`extensions: []` пустий, бо немає необхідності реєструвати розширення з префіксом `BEFORE`.
+Текстовий токен групи розширень - це спеціальний тип токену. В даному прикладі, розширення
+`MyExtension` буде запускатись перед запуском групи розширень `MY_EXTENSIONS`.
 
 #### Використання ExtensionsManager
 
@@ -327,7 +323,7 @@ export class MyExtension implements edk.Extension {
 
     const rawRoutesMeta = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS);
 
-    rawRouteMeta.forEach(data => {
+    rawRouteMeta.forEach((data) => {
       // ... Створіть тут нові провайдері і їхні значення, а потім:
       const { providersPerMod, providersPerRou, providersPerReq } = data;
       providersPerMod.push({ provide: MyProviderPerMod, useValue: myValue1 });
