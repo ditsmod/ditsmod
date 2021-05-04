@@ -109,6 +109,12 @@ export class Parameters {
     return this;
   }
 
+  describe(...descriptions: [string, ...string[]]) {
+    const params = this.getLastAddedParams();
+    params.forEach((param, i) => (param.description = descriptions[i]));
+    return this;
+  }
+
   protected getLastAddedParams() {
     if (!this.countOfLastPushedParams) {
       throw new Error('You can not add recursiveness to non-exists parameter');
