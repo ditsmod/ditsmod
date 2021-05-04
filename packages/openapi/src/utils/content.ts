@@ -26,19 +26,24 @@ export class Content {
    */
   set<T extends mediaTypeName = mediaTypeName>(contentOptions: ContentOptions<T>) {
     const { mediaType, mediaTypeParams, model } = contentOptions;
-    const schema = { type: 'object', properties: {} } as SchemaObject;
-    const meta = reflector.propMetadata(model) as ColumnDecoratorMetadata;
-    Object.keys(meta).forEach((property) => {
-      const columnSchema = meta[property].find(isColumn);
-      if (columnSchema.type === undefined) {
-        const propertyType = meta[property][0];
-        this.setColumnType(columnSchema, propertyType);
-        if (columnSchema.type == 'array' && !columnSchema.items) {
-          columnSchema.items = {};
+    let schema: SchemaObject;
+    if (mediaType.includes('text/')) {
+      schema = { type: 'string' } as SchemaObject;
+    } else {
+      schema = { type: 'object', properties: {} } as SchemaObject;
+      const meta = reflector.propMetadata(model) as ColumnDecoratorMetadata;
+      Object.keys(meta).forEach((property) => {
+        const columnSchema = meta[property].find(isColumn);
+        if (columnSchema.type === undefined) {
+          const propertyType = meta[property][0];
+          this.setColumnType(columnSchema, propertyType);
+          if (columnSchema.type == 'array' && !columnSchema.items) {
+            columnSchema.items = {};
+          }
         }
-      }
-      schema.properties[property] = columnSchema;
-    });
+        schema.properties[property] = columnSchema;
+      });
+    }
 
     const params = mediaTypeParams ? `;${mediaTypeParams}` : '';
     this.content[`${mediaType}${params}`] = { schema, encoding: contentOptions.encoding } as XMediaTypeObject;
