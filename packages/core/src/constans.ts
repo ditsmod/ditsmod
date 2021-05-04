@@ -9,7 +9,7 @@ import { NodeRequest, NodeResponse } from './types/server-options';
 
 export const APP_METADATA_MAP = new InjectionToken<AppMetadataMap>('APP_METADATA_MAP');
 /**
- * Group extensions that returns void.
+ * Group extensions that setting routes for router.
  */
 export const PRE_ROUTER_EXTENSIONS = new InjectionToken<Extension<void>[]>('PRE_ROUTER_EXTENSIONS');
 /**
