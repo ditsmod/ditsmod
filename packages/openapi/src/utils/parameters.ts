@@ -160,6 +160,9 @@ export class Parameters {
         const schema = propertyDecorator.filter(isColumn);
         paramObject.schema = Object.assign({}, ...schema, paramObject.schema);
         this.setColumnType(paramObject.schema, propertyType);
+        if (paramObject.schema.type == 'array' && !paramObject.schema.items) {
+          paramObject.schema.items = {};
+        }
       }
       return paramObject;
     });

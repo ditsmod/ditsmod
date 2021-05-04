@@ -33,6 +33,9 @@ export class Content {
       if (columnSchema.type === undefined) {
         const propertyType = meta[property][0];
         this.setColumnType(columnSchema, propertyType);
+        if (columnSchema.type == 'array' && !columnSchema.items) {
+          columnSchema.items = {};
+        }
       }
       schema.properties[property] = columnSchema;
     });
