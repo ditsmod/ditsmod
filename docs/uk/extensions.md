@@ -81,13 +81,16 @@ import { edk } from '@ditsmod/core';
 export class MyExtension implements edk.Extension<void> {
   private inited: boolean;
 
-  if (this.inited) {
-    return;
+  async init() {
+    if (this.data) {
+      return this.data;
+    }
+    // ...
+    // Щось хороше робите
+    // ...
+    this.data = result;
+    return this.data;
   }
-  // ...
-  // Щось хороше робите.
-  // ...
-  this.inited = true;
 }
 ```
 
@@ -108,7 +111,7 @@ export class Extension1 implements edk.Extension<any> {
     if (this.data) {
       return this.data;
     }
-    // Do something with `this.appMetadataMap` here.
+    // Щось хороше робите із `this.appMetadataMap`.
     // ...
     this.data = result;
     return this.data;
