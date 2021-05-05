@@ -23,7 +23,7 @@ interface Extension<T> {
 
 1. збираються метадані з усіх декораторів (`@RootModule`, `@Module`, `@Controller`,
    `@Route`...);
-2. зібрані метадані передаються в DI з токеном `APP_METADATA_MAP`, і отже - будь-який
+2. зібрані метадані передаються в DI з токеном `APP_METADATA_MAP`, отже - будь-який
    сервіс, контролер чи розширення може отримати ці метадані у себе в конструкторі;
 3. послідовно запускаються усі зареєстровані розширення, точніше - викликаються їхні
    методи `init()` без аргументів;
@@ -78,7 +78,7 @@ import { Injectable } from '@ts-stack/di';
 import { edk } from '@ditsmod/core';
 
 @Injectable()
-export class MyExtension implements edk.Extension {
+export class MyExtension implements edk.Extension<void> {
   private inited: boolean;
 
   if (this.inited) {
@@ -99,7 +99,7 @@ import { Injectable, Inject } from '@ts-stack/di';
 import { edk } from '@ditsmod/core';
 
 @Injectable()
-export class Extension1 implements edk.Extension {
+export class Extension1 implements edk.Extension<any> {
   private data: any;
 
   constructor(@Inject(edk.APP_METADATA_MAP) private appMetadataMap: edk.AppMetadataMap) {}
@@ -116,7 +116,7 @@ export class Extension1 implements edk.Extension {
 }
 
 @Injectable()
-export class Extension2 implements edk.Extension {
+export class Extension2 implements edk.Extension<void> {
   private inited: boolean;
 
   constructor(private extension1: Extension1) {}
@@ -217,13 +217,13 @@ const result = await this.extensionsManager.init(MY_EXTENSIONS);
 
 #### Реєстрація розширення
 
-Мульти-провайдери груп розширень передаються в масив `providersPerApp`, а їхні токени передаються
-в масив `extensions`:
+Мульти-провайдери груп розширень можуть передаватись тільки в масив `providersPerApp`, і ні в який
+інший масив, а їхні токени передаються в масив `extensions`:
 
 ```ts
 import { Module } from '@ditsmod/core';
 
-import { MY_EXTENSIONS, MyExtension } from './my-extension';
+import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
 @Module({
   providersPerApp: [{ provide: MY_EXTENSIONS, useClass: MyExtension, multi: true }],
@@ -238,17 +238,18 @@ export class SomeModule {}
 ```ts
 import { Module } from '@ditsmod/core';
 
-import { MY_EXTENSIONS, MyExtension } from './my-extension';
+import { MY_EXTENSIONS } from './my.extension';
+import { SomeExtension } from './some.extension';
 
 @Module({
-  providersPerApp: [{ provide: `BEFORE ${MY_EXTENSIONS}`, useClass: MyExtension, multi: true }],
+  providersPerApp: [{ provide: `BEFORE ${MY_EXTENSIONS}`, useClass: SomeExtension, multi: true }],
   extensions: [],
 })
 export class SomeModule {}
 ```
 
 Текстовий токен групи розширень - це спеціальний тип токену. В даному прикладі, розширення
-`MyExtension` буде запускатись перед запуском групи розширень `MY_EXTENSIONS`.
+`SomeExtension` буде запускатись перед запуском групи розширень `MY_EXTENSIONS`.
 
 #### Використання ExtensionsManager
 
@@ -256,10 +257,11 @@ export class SomeModule {}
 `Extension1`, але рекомендується указувати залежність саме від групи розширень, а не безпосередньо
 від конкретного розширенння. В такому разі, вам не потрібно знати імена усіх розширень, що входять
 у групу розширень, достатньо знати лише інтерфейс даних, які повертаються з `init()`.
+
 `ExtensionsManager` також корисний тим, що кидає помилки про циклічні залежності між розширеннями,
 і показує весь ланцюжок розширень, що призвів до зациклення.
 
-Припустимо `Extension1` (тут не показано) зареєстровано у групі `PRE_ROUTER_EXTENSIONS`, а
+Припустимо `Extension1` (тут не показано) зареєстровано у групі `MY_EXTENSIONS`, а
 `Extension2` повинно дочекатись завершення ініціалізації цієї групи розширень. Щоб зробити це, у
 конструкторі треба указувати залежність від `ExtensionsManager`, а у `init()` викликати `init()`
 цього сервісу:
@@ -269,8 +271,8 @@ import { Injectable } from '@ts-stack/di';
 import { edk } from '@ditsmod/core';
 
 @Injectable()
-export class Extension2 implements edk.Extension {
-  inited: boolean;
+export class Extension2 implements edk.Extension<void> {
+  private inited: boolean;
 
   constructor(private extensionsManager: edk.ExtensionsManager) {}
 
@@ -279,7 +281,7 @@ export class Extension2 implements edk.Extension {
       return;
     }
 
-    await this.extensionsManager.init(edk.PRE_ROUTER_EXTENSIONS);
+    await this.extensionsManager.init(MY_EXTENSIONS);
     // Do something here.
     this.inited = true;
   }
@@ -292,7 +294,7 @@ export class Extension2 implements edk.Extension {
 якщо другим аргументом у `init()` передати `false`:
 
 ```ts
-await this.extensionsManager.init(edk.PRE_ROUTER_EXTENSIONS, false);
+await this.extensionsManager.init(MY_EXTENSIONS, false);
 ```
 
 ## Динамічне додавання провайдерів
@@ -311,8 +313,8 @@ import { Injectable } from '@ts-stack/di';
 import { edk } from '@ditsmod/core';
 
 @Injectable()
-export class MyExtension implements edk.Extension {
-  inited: boolean;
+export class MyExtension implements edk.Extension<void> {
+  private inited: boolean;
 
   constructor(private extensionsManager: edk.ExtensionsManager) {}
 
@@ -340,7 +342,3 @@ export class MyExtension implements edk.Extension {
 запитувати у себе в конструкторі `MyProviderPerMod`, `MyProviderPerRoute` чи `MyProviderPerReq`.
 
 Звичайно ж, таке динамічне додавання провайдерів можливе лише перед стартом вебсервера.
-
-## В якому саме масиві потрібно оголошувати групу розширень
-
-На даний момент, групу розширень можна оголошувати тільки в масиві `providersPerApp`.
