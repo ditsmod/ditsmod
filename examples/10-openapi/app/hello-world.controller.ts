@@ -2,7 +2,7 @@ import { Controller, Logger, Request, Response, Route, Status } from '@ditsmod/c
 import { getParams, getContent, OasRoute } from '@ditsmod/openapi';
 
 import { BasicGuard } from './basic.guard';
-import { Post } from './models';
+import { Model2 } from './model2';
 
 @Controller()
 export class HelloWorldController {
@@ -18,19 +18,19 @@ export class HelloWorldController {
     this.res.send('Hello, user!');
   }
 
-  @OasRoute('GET', 'posts/:postId', [], {
+  @OasRoute('GET', 'resource/:resourceId', [], {
     tags: ['withParameter'],
     description: 'This route uses `getParams()` and `getContent()` helpers from @ditsmod/openapi',
-    parameters: getParams('path', true, Post, 'postId'),
+    parameters: getParams('path', true, Model2, 'resourceId'),
     responses: {
       [Status.OK]: {
-        description: 'Single post',
-        content: getContent({ mediaType: 'application/json', model: Post }),
+        description: 'Single item',
+        content: getContent({ mediaType: 'application/json', model: Model2 }),
       },
     },
   })
-  getPost() {
-    const { postId } = this.req.pathParams;
-    this.res.sendJson({ postId, body: `some body for postId ${postId}` });
+  getResourceId() {
+    const { resourceId } = this.req.pathParams;
+    this.res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
   }
 }

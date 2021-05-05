@@ -24,5 +24,5 @@ Check from second terminal:
 
 ```bash
 curl -isS localhost:8080
-curl -isS localhost:8080/posts/123
+curl -isS localhost:8080/resource/123
 ```
