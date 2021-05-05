@@ -11,7 +11,7 @@ yarn boot
 
 ## Dynamically composing modules
 
-Run from first terminal:
+Start from first terminal:
 
 ```bash
 yarn start7

@@ -11,7 +11,7 @@ yarn boot
 
 ## Override core log messages
 
-Check from first terminal:
+Start from first terminal:
 
 ```bash
 yarn start11

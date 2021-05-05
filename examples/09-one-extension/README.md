@@ -11,7 +11,7 @@ yarn boot
 
 ## One extension
 
-Check from first terminal:
+Start from first terminal:
 
 ```bash
 yarn start9

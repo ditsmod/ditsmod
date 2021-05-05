@@ -11,7 +11,7 @@ yarn boot
 
 ## OpenAPI documentation
 
-Run from first terminal:
+Start from first terminal:
 
 ```bash
 yarn start10

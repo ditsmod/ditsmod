@@ -11,7 +11,7 @@ yarn boot
 
 ## Nested routes
 
-Check from first terminal:
+Start from first terminal:
 
 ```bash
 yarn start6

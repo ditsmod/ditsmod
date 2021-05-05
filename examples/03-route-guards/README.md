@@ -17,7 +17,7 @@ Note the following:
 - `SomeController` can use services from `AuthModule` without direct import `AuthModule`;
 this is because `AuthModule` is exported from `RootModule`;
 
-Check from first terminal:
+Start from first terminal:
 
 ```bash
 yarn start3
