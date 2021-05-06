@@ -6,7 +6,7 @@ import { ColumnDecoratorItem, ColumnDecoratorMetadata } from '../decorators/colu
 import { mediaTypeName } from '../types/media-types';
 import { isColumn } from './type-guards';
 
-interface ContentOptions<T extends mediaTypeName = mediaTypeName> {
+export interface ContentOptions<T extends mediaTypeName = mediaTypeName> {
   mediaType: T;
   mediaTypeParams?: string;
   model?: Type<edk.AnyObj>;
