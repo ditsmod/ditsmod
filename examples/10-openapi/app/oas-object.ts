@@ -14,12 +14,12 @@ export const oasObject: XOasObject = {
         'for `@OasRoute()` imported from @ditsmod/openapi.',
     },
     {
-      name: 'withBasicAuth',
-      description: 'Here you need username and password.',
-    },
-    {
       name: 'withParameter',
       description: 'Parameter in path.',
+    },
+    {
+      name: 'withBasicAuth',
+      description: 'Here you need username and password.',
     },
     {
       name: 'OasDocs',
