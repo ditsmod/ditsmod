@@ -2,7 +2,7 @@ import { Controller, Logger, Request, Response, Route, Status } from '@ditsmod/c
 import { getParams, getContent, OasRoute } from '@ditsmod/openapi';
 
 import { BasicGuard } from './basic.guard';
-import { Model2 } from './model2';
+import { Model3 } from './models';
 
 @Controller()
 export class HelloWorldController {
@@ -21,11 +21,11 @@ export class HelloWorldController {
   @OasRoute('GET', 'resource/:resourceId', [], {
     tags: ['withParameter'],
     description: 'This route uses `getParams()` and `getContent()` helpers from @ditsmod/openapi',
-    parameters: getParams('path', true, Model2, 'resourceId'),
+    parameters: getParams('path', true, Model3, 'resourceId'),
     responses: {
       [Status.OK]: {
         description: 'Single item',
-        content: getContent({ mediaType: 'application/json', model: Model2 }),
+        content: getContent({ mediaType: 'application/json', model: Model3 }),
       },
     },
   })
