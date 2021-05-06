@@ -20,7 +20,7 @@ interface ContentOptions<T extends mediaTypeName = mediaTypeName> {
 
 export class Content {
   protected content: { [mediaTypeName: string]: XMediaTypeObject } = {};
-  protected startScan = new WeakSet();
+  protected scanInProgress = new WeakSet();
 
   /**
    * Sets media type.
@@ -31,7 +31,7 @@ export class Content {
     if (mediaType.includes('text/')) {
       schema = { type: 'string' } as SchemaObject;
     } else {
-      schema = this.setObjectSchema(model);
+      schema = this.getSchema(model);
     }
 
     const params = mediaTypeParams ? `;${mediaTypeParams}` : '';
@@ -47,41 +47,40 @@ export class Content {
     return { ...this.content };
   }
 
-  protected setObjectSchema(model: Type<edk.AnyObj>) {
+  protected getSchema(model: Type<edk.AnyObj>) {
     const schema = { type: 'object', properties: {} } as SchemaObject;
     const modelMeta = reflector.propMetadata(model) as ColumnDecoratorMetadata;
 
     for (const property in modelMeta) {
-      let columnSchema = modelMeta[property].find(isColumn);
-      if (!columnSchema || columnSchema.type !== undefined) {
+      const propertySchema = modelMeta[property].find(isColumn);
+      if (!propertySchema || propertySchema.type !== undefined) {
         continue;
       }
       const propertyType = modelMeta[property][0];
-
-      if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {
-        columnSchema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;
-      } else if (propertyType instanceof Type) {
-        if (this.startScan.has(model)) {
-          columnSchema = {
-            type: 'object',
-            description: `[Circular references to ${model.name}]`,
-            properties: {},
-          } as SchemaObject;
-        } else {
-          this.startScan.add(model);
-          Object.assign(columnSchema, this.setObjectSchema(propertyType));
-        }
-      } else {
-        columnSchema.type = 'null';
-      }
-
-      if (columnSchema.type == 'array' && !columnSchema.items) {
-        columnSchema.items = {};
-      }
-      schema.properties[property] = columnSchema;
+      schema.properties[property] = this.patchPropertySchema(model, propertyType, propertySchema);
     }
 
-    this.startScan.delete(model);
+    this.scanInProgress.delete(model);
+    return schema;
+  }
+
+  protected patchPropertySchema(model: Type<edk.AnyObj>, propertyType: Type<edk.AnyObj>, schema: SchemaObject) {
+    if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {
+      schema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;
+      if (schema.type == 'array' && !schema.items) {
+        schema.items = {};
+      }
+    } else if (propertyType instanceof Type) {
+      if (this.scanInProgress.has(model)) {
+        const description = `[Circular references to ${model.name}]`;
+        schema = { type: 'object', description, properties: {} } as SchemaObject;
+      } else {
+        this.scanInProgress.add(model);
+        Object.assign(schema, this.getSchema(propertyType));
+      }
+    } else {
+      schema.type = 'null';
+    }
     return schema;
   }
 }
