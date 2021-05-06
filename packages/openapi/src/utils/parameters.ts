@@ -157,8 +157,8 @@ export class Parameters {
       const propertyDecorator = meta[paramObject.name];
       if (propertyDecorator) {
         const propertyType = propertyDecorator[0];
-        const schema = propertyDecorator.filter(isColumn);
-        paramObject.schema = Object.assign({}, ...schema, paramObject.schema);
+        const schemas = propertyDecorator.filter(isColumn).map(val => val.schema);
+        paramObject.schema = Object.assign({}, ...schemas, paramObject.schema);
         this.setColumnType(paramObject.schema, propertyType);
         if (paramObject.schema.type == 'array' && !paramObject.schema.items) {
           paramObject.schema.items = {};
