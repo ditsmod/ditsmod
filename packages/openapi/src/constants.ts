@@ -17,10 +17,7 @@ export const DEFAULT_OAS_OBJECT: XOasObject = {
         '[use tags](https://swagger.io/docs/specification/grouping-operations-with-tags/) ' +
         'for `@OasRoute()` imported from @ditsmod/openapi.',
     },
-  ],
-  components: {
-    securitySchemes: {}
-  }
+  ]
 };
 
 edk.deepFreeze(DEFAULT_OAS_OBJECT);
