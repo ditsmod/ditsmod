@@ -1,5 +1,15 @@
+<a name="openapi-beta.12"></a>
+# [openapi-beta.12](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.12) (2021-05-06)
+
+### Features
+
+- allow primitive types for model's arrays [132aa92f](https://github.com/ditsmod/ditsmod/commit/132aa92f).
+- added support nested model [61bbf1cb](https://github.com/ditsmod/ditsmod/commit/61bbf1cb).
+- added `parameters.describe()` helper [4f6f7f](https://github.com/ditsmod/ditsmod/commit/4f6f7f).
+- improvement Content helper.
+
 <a name="openapi-beta.11"></a>
-# [openapi-beta.11](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.11) (2021-05-01)
+## [openapi-beta.11](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.11) (2021-05-01)
 
 ### BREAKING CHANGES
 
