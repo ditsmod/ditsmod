@@ -2,7 +2,7 @@ import { edk } from '@ditsmod/core';
 import { reflector, Type } from '@ts-stack/di';
 import { SchemaObject, SchemaObjectType, XEncodingObject, XMediaTypeObject } from '@ts-stack/openapi-spec';
 
-import { ColumnDecoratorMetadata } from '../decorators/column';
+import { ColumnDecoratorItem, ColumnDecoratorMetadata } from '../decorators/column';
 import { mediaTypeName } from '../types/media-types';
 import { isColumn } from './type-guards';
 
@@ -52,23 +52,29 @@ export class Content {
     const modelMeta = reflector.propMetadata(model) as ColumnDecoratorMetadata;
 
     for (const property in modelMeta) {
-      const propertySchema = modelMeta[property].find(isColumn);
-      if (!propertySchema || propertySchema.type !== undefined) {
+      const decoratorItem = modelMeta[property].find(isColumn);
+      if (!decoratorItem || (decoratorItem.schema?.type !== undefined && decoratorItem.schema?.type != 'array')) {
         continue;
       }
       const propertyType = modelMeta[property][0];
-      schema.properties[property] = this.patchPropertySchema(model, propertyType, propertySchema);
+      schema.properties[property] = this.patchPropertySchema(model, propertyType, decoratorItem);
     }
 
     this.scanInProgress.delete(model);
     return schema;
   }
 
-  protected patchPropertySchema(model: Type<edk.AnyObj>, propertyType: Type<edk.AnyObj>, schema: SchemaObject) {
+  protected patchPropertySchema(
+    model: Type<edk.AnyObj>,
+    propertyType: Type<edk.AnyObj>,
+    decoratorItem: ColumnDecoratorItem
+  ) {
+    let schema = decoratorItem.schema || {};
+    const { arrayModel } = decoratorItem;
     if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {
       schema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;
       if (schema.type == 'array' && !schema.items) {
-        schema.items = {};
+        schema.items = this.getSchema(arrayModel);
       }
     } else if (propertyType instanceof Type) {
       if (this.scanInProgress.has(model)) {

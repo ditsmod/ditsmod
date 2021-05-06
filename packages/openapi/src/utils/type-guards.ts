@@ -1,5 +1,6 @@
 import { edk } from '@ditsmod/core';
-import { ReferenceObject, XSchemaObject } from '@ts-stack/openapi-spec';
+import { ReferenceObject } from '@ts-stack/openapi-spec';
+import { ColumnDecoratorItem } from '../decorators/column';
 
 import { OasGuardMetadata } from '../decorators/oas-guard';
 import { OasRouteMetadata } from '../decorators/oas-route';
@@ -16,6 +17,6 @@ export function isOasGuard(classMeta: edk.AnyObj): classMeta is OasGuardMetadata
   return (classMeta as any)?.ngMetadataName == 'OasGuard';
 }
 
-export function isColumn(propertyMeta: edk.AnyObj): propertyMeta is XSchemaObject {
+export function isColumn(propertyMeta: edk.AnyObj): propertyMeta is ColumnDecoratorItem {
   return (propertyMeta as any)?.ngMetadataName == 'Column';
 }

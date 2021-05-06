@@ -24,9 +24,9 @@ describe('@Column', () => {
     const actualMeta = reflector.propMetadata(Model1);
     // console.log(actualMeta);
     const expectedMeta: ColumnDecoratorMetadata = {
-      prop1: [String, {}],
-      prop2: [String, {}],
-      prop3: [String, {}, {}],
+      prop1: [String, { schema: undefined, arrayModel: undefined }],
+      prop2: [String, { schema: undefined, arrayModel: undefined }],
+      prop3: [String, { schema: undefined, arrayModel: undefined }, { schema: undefined, arrayModel: undefined }],
     };
     expect(actualMeta).toEqual(expectedMeta);
   });
@@ -45,8 +45,11 @@ describe('@Column', () => {
       prop1: [
         String,
         {
-          type: 'string',
-          minimum: 1,
+          schema: {
+            type: 'string',
+            minimum: 1,
+          },
+          arrayModel: undefined,
         },
       ],
     };
