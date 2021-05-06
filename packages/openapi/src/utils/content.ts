@@ -48,7 +48,7 @@ export class Content {
   }
 
   protected getSchema(model: Type<edk.AnyObj>) {
-    const schema = { type: 'object', properties: {} } as SchemaObject;
+    const schema = this.getTypedSchema(model);
     const modelMeta = reflector.propMetadata(model) as ColumnDecoratorMetadata;
 
     for (const property in modelMeta) {
@@ -64,6 +64,23 @@ export class Content {
     return schema;
   }
 
+  protected getTypedSchema(model: Type<edk.AnyObj>) {
+    const schema = {} as SchemaObject;
+    if ([Boolean, Number, String, Array, Object].includes(model as any)) {
+      schema.type = (model.name?.toLowerCase() || 'null') as SchemaObjectType;
+      if (schema.type == 'array' && !schema.items) {
+        schema.items = {};
+      }
+    } else if (model instanceof Type) {
+      schema.type = 'object';
+      schema.properties = {};
+    }
+    return schema;
+  }
+
+  /**
+   * @todo Refactor this.
+   */
   protected patchPropertySchema(
     model: Type<edk.AnyObj>,
     propertyType: Type<edk.AnyObj>,
@@ -73,9 +90,6 @@ export class Content {
     const { arrayModel } = decoratorItem;
     if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {
       schema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;
-      if (schema.type == 'array' && !schema.items) {
-        schema.items = this.getSchema(arrayModel);
-      }
     } else if (propertyType instanceof Type) {
       if (this.scanInProgress.has(model)) {
         const description = `[Circular references to ${model.name}]`;
@@ -86,6 +100,15 @@ export class Content {
       }
     } else {
       schema.type = 'null';
+    }
+    if (schema.type == 'array' && !schema.items) {
+      if (this.scanInProgress.has(model)) {
+        const description = `[Circular references to ${model.name}]`;
+        schema = { type: 'array', description, items: {} } as SchemaObject;
+      } else {
+        this.scanInProgress.add(model);
+        schema.items = this.getSchema(arrayModel);
+      }
     }
     return schema;
   }

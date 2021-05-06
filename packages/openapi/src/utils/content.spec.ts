@@ -33,7 +33,7 @@ describe('Content', () => {
     expect(content).toEqual(expectContent);
   });
 
-  it('array', () => {
+  it('array of Model1', () => {
     class Model1 {
       @Column()
       property1: string;
@@ -61,13 +61,72 @@ describe('Content', () => {
                 type: 'object',
                 properties: {
                   property1: { type: 'string' },
-                  property2: { type: 'number' }
-                }
-              }
-            }
-          }
+                  property2: { type: 'number' },
+                },
+              },
+            },
+          },
         },
-        encoding: undefined
+        encoding: undefined,
+      } as MediaTypeObject,
+    };
+    expect(content).toEqual(expectContent);
+  });
+  it('array of Model1 with cyclic reference', () => {
+    class Model1 {
+      @Column()
+      property1: string;
+      @Column({ type: 'array' }, Model1)
+      property2: Model1[];
+    }
+
+    const content = new Content().get({ mediaType: 'application/json', model: Model1 });
+    const expectContent = {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            property1: { type: 'string' },
+            property2: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  property1: { type: 'string' },
+                  property2: { type: 'array', description: '[Circular references to Model1]', items: {} },
+                },
+              },
+            },
+          },
+        },
+        encoding: undefined,
+      } as MediaTypeObject,
+    };
+    expect(content).toEqual(expectContent);
+  });
+
+  it('array of Number', () => {
+    class Model1 {
+      @Column()
+      property1: string;
+      @Column({ type: 'array' }, Number)
+      property2: number[];
+    }
+
+    const content = new Content().get({ mediaType: 'application/json', model: Model1 });
+    const expectContent = {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            property1: { type: 'string' },
+            property2: {
+              type: 'array',
+              items: { type: 'number' },
+            },
+          },
+        },
+        encoding: undefined,
       } as MediaTypeObject,
     };
     expect(content).toEqual(expectContent);
