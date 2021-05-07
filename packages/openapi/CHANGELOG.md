@@ -1,5 +1,16 @@
+<a name="openapi-beta.13"></a>
+# [openapi-beta.13](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.13) (2021-05-07)
+
+### BREAKING CHANGES
+
+- drop `OasModuleWithParams` [4cefc8](https://github.com/ditsmod/ditsmod/commit/4cefc8).
+
+### Features
+
+- make `OasRoute` optional [76e01c](https://github.com/ditsmod/ditsmod/commit/76e01c).
+
 <a name="openapi-beta.12"></a>
-# [openapi-beta.12](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.12) (2021-05-06)
+## [openapi-beta.12](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.12) (2021-05-06)
 
 ### Features
 
