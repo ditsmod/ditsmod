@@ -1,5 +1,16 @@
+<a name="core-beta.19"></a>
+# [core-beta.19](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.19) (2021-05-07)
+
+### BREAKING CHANGES
+
+- introduce additionalInfo for ModuleMetadata [f19750c](https://github.com/ditsmod/ditsmod/commit/f19750c).
+
+### Features
+
+- added `instantiateProvidersPerReq()` during init an app [0a0be76](https://github.com/ditsmod/ditsmod/commit/0a0be76).
+
 <a name="core-beta.18"></a>
-# [core-beta.18](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.18) (2021-05-07)
+## [core-beta.18](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.18) (2021-05-07)
 
 ### BREAKING CHANGES
 
