@@ -7,15 +7,13 @@ import { Request } from './request';
 import { AnyObj } from '../types/mix';
 import { PathParam } from '../types/router';
 import { PATH_PARAMS, QUERY_STRING } from '../constans';
-import { Log } from './log';
 
 @Injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
   constructor(
     @Inject(PATH_PARAMS) protected pathParamsArr: PathParam[],
     @Inject(QUERY_STRING) protected queryString: any,
-    private req: Request,
-    private log: Log
+    private req: Request
   ) {}
 
   async intercept(next: HttpHandler) {
