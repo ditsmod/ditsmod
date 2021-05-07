@@ -1,5 +1,16 @@
+<a name="core-beta.18"></a>
+# [core-beta.18](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.18) (2021-05-07)
+
+### BREAKING CHANGES
+
+- set `pathParams` and `pathParamsArr` default values [f72b08c](https://github.com/ditsmod/ditsmod/commit/f72b08c).
+
+### Bug fix
+
+- moved request error handler to `PreRouter` [1b3100](https://github.com/ditsmod/ditsmod/commit/1b3100).
+
 <a name="core-beta.17"></a>
-# [core-beta.17](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.17) (2021-05-03)
+## [core-beta.17](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.17) (2021-05-03)
 
 ### BREAKING CHANGES
 
