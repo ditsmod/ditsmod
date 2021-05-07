@@ -159,7 +159,7 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
     const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
     const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
-    const bodyParserConfig = injectorPerReq.get(BodyParserConfig) as BodyParserConfig;
+    const bodyParserConfig = injectorPerReq.resolveAndInstantiate(BodyParserConfig) as BodyParserConfig;
     return bodyParserConfig.acceptMethods.includes(httpMethod);
   }
 }
