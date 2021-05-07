@@ -3,8 +3,6 @@ import { parse } from 'querystring';
 
 import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
-import { NodeResponse } from '../types/server-options';
-import { Status } from '../utils/http-status-codes';
 import { Request } from './request';
 import { AnyObj } from '../types/mix';
 import { PathParam } from '../types/router';
@@ -41,26 +39,11 @@ export class DefaultHttpFrontend implements HttpFrontend {
   }
 
   protected lazyLoadErrorHandler(err: any) {
-    try {
-      const errorHandler = this.req.injector.get(ControllerErrorHandler);
-      errorHandler.handleError(err);
-    } catch (err) {
-      this.sendInternalServerError(this.req.nodeRes, err);
-    }
+    const errorHandler = this.req.injector.get(ControllerErrorHandler);
+    errorHandler.handleError(err);
   }
 
   protected decodeUrl(url: string) {
     return decodeURI(url);
-  }
-
-  /**
-   * Logs an error and sends the user message about an internal server error (500).
-   *
-   * @param err An error to logs it (not sends).
-   */
-  protected sendInternalServerError(nodeRes: NodeResponse, err: Error) {
-    this.log.internalServerError('error', [err]);
-    nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
-    nodeRes.end();
   }
 }

@@ -8,6 +8,7 @@ import { RouteHandler, Router } from '../types/router';
 import { NodeResponse, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { ExtensionsManager } from '../services/extensions-manager';
+import { Log } from '../services/log';
 
 @Injectable()
 export class PreRouter implements Extension<void> {
@@ -16,7 +17,8 @@ export class PreRouter implements Extension<void> {
   constructor(
     protected injectorPerApp: ReflectiveInjector,
     protected router: Router,
-    protected extensionsManager: ExtensionsManager
+    protected extensionsManager: ExtensionsManager,
+    protected log: Log
   ) {}
 
   async init() {
@@ -37,21 +39,16 @@ export class PreRouter implements Extension<void> {
       this.sendNotFound(nodeRes);
       return;
     }
-    await handle(nodeReq, nodeRes, params, queryString);
+    await handle(nodeReq, nodeRes, params, queryString).catch((err) => {
+      this.sendInternalServerError(nodeRes, err);
+    });
   };
 
   protected async prepareRoutesMeta(rawRoutesMeta: RawRouteMeta[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
     rawRoutesMeta.forEach((rawRouteMeta) => {
-      const {
-        httpMethod,
-        path,
-        providersPerMod,
-        providersPerRou,
-        providersPerReq,
-        moduleName,
-      } = rawRouteMeta;
+      const { httpMethod, path, providersPerMod, providersPerRou, providersPerReq, moduleName } = rawRouteMeta;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       const inj1 = injectorPerMod.resolveAndCreateChild(providersPerRou);
       const providers = ReflectiveInjector.resolve(providersPerReq);
@@ -81,7 +78,9 @@ export class PreRouter implements Extension<void> {
       const { moduleName, path, httpMethod, handle } = data;
 
       if (path?.charAt(0) == '/') {
-        throw new Error(`Invalid configuration of route '${path}' (in '${moduleName}'): path cannot start with a slash`);
+        let msg = `Invalid configuration of route '${path}'`;
+        msg += ` (in '${moduleName}'): path cannot start with a slash`;
+        throw new Error(msg);
       }
 
       if (httpMethod == 'ALL') {
@@ -94,6 +93,17 @@ export class PreRouter implements Extension<void> {
 
   protected decodeUrl(url: string) {
     return decodeURI(url);
+  }
+
+  /**
+   * Logs an error and sends the user message about an internal server error (500).
+   *
+   * @param err An error to logs it (not sends).
+   */
+  protected sendInternalServerError(nodeRes: NodeResponse, err: Error) {
+    this.log.internalServerError('error', [err]);
+    nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
+    nodeRes.end();
   }
 
   protected sendNotFound(nodeRes: NodeResponse) {
