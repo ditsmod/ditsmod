@@ -4,9 +4,9 @@ import { XOperationObject } from '@ts-stack/openapi-spec';
 
 export type OasRouteDecoratorFactory = (
   httpMethod: HttpMethod,
-  path: string,
-  guards: GuardItem[],
-  operationObject: XOperationObject
+  path?: string,
+  guards?: GuardItem[],
+  operationObject?: XOperationObject
 ) => OasRouteDecorator;
 
 export type OasRouteDecorator = <T>(
@@ -21,12 +21,12 @@ export interface OasRouteDecoratorMetadata {
 
 export interface OasRouteMetadata {
   httpMethod: HttpMethod;
-  path: string;
-  guards: GuardItem[];
+  path?: string;
+  guards?: GuardItem[];
   /**
    * OAS `OperationObject`.
    */
-  operationObject: XOperationObject;
+  operationObject?: XOperationObject;
 }
 
 function oasRoute(

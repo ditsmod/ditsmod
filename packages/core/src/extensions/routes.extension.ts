@@ -112,7 +112,7 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
   }
 
   protected normalizeGuards(guards: GuardItem[]) {
-    return guards.map((item) => {
+    return (guards || []).map((item) => {
       if (Array.isArray(item)) {
         return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
       } else {

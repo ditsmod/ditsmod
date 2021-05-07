@@ -58,7 +58,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
           const { httpMethod, path: controllerPath, operationObject } = oasRoute;
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const path = this.getPath(prefix, controllerPath);
-          const clonedOperationObject = { ...operationObject } as XOperationObject;
+          const clonedOperationObject = { ...(operationObject || {}) } as XOperationObject;
           const { parameters } = clonedOperationObject;
           const { paramsRefs, paramsInPath, paramsNonPath } = this.mergeParams(
             httpMethod,

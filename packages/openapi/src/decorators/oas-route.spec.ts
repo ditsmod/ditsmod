@@ -15,13 +15,13 @@ describe('@Route', () => {
   it('one method, one operation', () => {
     @Controller()
     class Controller1 {
-      @OasRoute('GET', '', [], {})
+      @OasRoute('GET')
       method() {}
     }
 
     const actualMeta = reflector.propMetadata(Controller1);
     const expectedMeta: OasRouteDecoratorMetadata = {
-      method: [{ httpMethod: 'GET', path: '', guards: [], operationObject: {} }],
+      method: [{ httpMethod: 'GET', path: undefined, guards: undefined, operationObject: undefined }],
     };
     expect(actualMeta).toEqual(expectedMeta);
   });
