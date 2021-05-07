@@ -38,6 +38,7 @@ describe('getModuleMetadata', () => {
 
     const metadata = getModuleMetadata(Module1.withParams([Provider1]));
     expect(metadata).toEqual({
+      extensionsMeta: {},
       ngMetadataName: 'Module',
       providersPerApp: [],
       providersPerMod: [Provider1],
@@ -63,6 +64,7 @@ describe('getModuleMetadata', () => {
     const fn = () => Module1.withParams([Provider1]);
     const metadata = getModuleMetadata(forwardRef(fn));
     expect(metadata).toEqual({
+      extensionsMeta: {},
       ngMetadataName: 'Module',
       providersPerApp: [],
       providersPerMod: [Provider1],

@@ -13,7 +13,13 @@ export interface ModuleWithParams<T extends AnyObj = AnyObj> extends Partial<Pro
   id?: string;
   module: ModuleType<T>;
   prefix?: string;
-  guards?: GuardItem[];
+  guards?: GuardItem[]
+  /**
+   * This property allows you to pass any information to extensions.
+   *
+   * You must follow this rule: data for one extension - one key in `additionalMeta` object.
+   */;
+  extensionsMeta?: T;
 }
 
 export type AnyFn = (...args: any[]) => any;

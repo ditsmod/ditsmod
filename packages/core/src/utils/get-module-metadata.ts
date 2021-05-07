@@ -36,6 +36,7 @@ export function getModuleMetadata<T extends ModuleMetadata>(
     metadata.providersPerMod = mergeArrays(modMetadata.providersPerMod, modWitParams.providersPerMod);
     metadata.providersPerRou = mergeArrays(modMetadata.providersPerRou, modWitParams.providersPerRou);
     metadata.providersPerReq = mergeArrays(modMetadata.providersPerReq, modWitParams.providersPerReq);
+    metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
     return metadata;
   } else {
     return reflector.annotations(modOrObj).find(typeGuard);
