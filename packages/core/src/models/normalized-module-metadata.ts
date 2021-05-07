@@ -3,7 +3,7 @@ import { InjectionToken } from '@ts-stack/di';
 import { AnyObj, ControllerType, ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../types/mix';
 import { ProvidersMetadata } from './providers-metadata';
 
-export class NormalizedModuleMetadata<T extends AnyObj = AnyObj> extends ProvidersMetadata {
+export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
   /**
    * The module setted here must be identical to the module
    * passed to "imports" or "exports" array of `@Module` metadata.
@@ -25,4 +25,8 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj> extends Provide
   exportsModules?: ModuleType[] = [];
   exportsWithParams?: ModuleWithParams[] = [];
   exportsProviders?: ServiceProvider[] = [];
+  /**
+   * This property allows you pass any information to extend the metadata of the module.
+   */
+  additionalMeta? = {} as A;
 }

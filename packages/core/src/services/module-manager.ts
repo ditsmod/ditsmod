@@ -5,7 +5,6 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { AnyObj, ModuleType, ModuleWithParams } from '../types/mix';
 import { ModulesMap } from '../types/modules-map';
 import { checkModuleMetadata } from '../utils/check-module-metadata';
-import { deepFreeze } from '../utils/deep-freeze';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { pickProperties } from '../utils/pick-properties';
@@ -38,8 +37,8 @@ export class ModuleManager {
     return this.copyMeta(meta);
   }
 
-  getMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
-    const meta = this.getRawMetadata<T>(moduleId, throwErrOnNotFound);
+  getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
+    const meta = this.getRawMetadata<T, A>(moduleId, throwErrOnNotFound);
     return this.copyMeta(meta);
   }
 
@@ -162,7 +161,7 @@ export class ModuleManager {
   /**
    * @todo Refactor this method to use `deepFreeze()`.
    */
-  protected copyMeta<T extends AnyObj = AnyObj>(meta: NormalizedModuleMetadata<T>) {
+  protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(meta: NormalizedModuleMetadata<T, A>) {
     meta = { ...meta };
     meta.importsModules = meta.importsModules.slice();
     meta.importsWithParams = meta.importsWithParams.slice();
@@ -178,13 +177,13 @@ export class ModuleManager {
   /**
    * Returns normalized metadata, but without `this.copyMeta()`.
    */
-  protected getRawMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
-    let meta: NormalizedModuleMetadata<T>;
+  protected getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
+    let meta: NormalizedModuleMetadata<T, A>;
     if (typeof moduleId == 'string') {
       const mapId = this.mapId.get(moduleId);
-      meta = this.map.get(mapId) as NormalizedModuleMetadata<T>;
+      meta = this.map.get(mapId) as NormalizedModuleMetadata<T, A>;
     } else {
-      meta = this.map.get(moduleId) as NormalizedModuleMetadata<T>;
+      meta = this.map.get(moduleId) as NormalizedModuleMetadata<T, A>;
     }
 
     if (throwErrOnNotFound && !meta) {
@@ -283,6 +282,7 @@ export class ModuleManager {
     });
 
     pickProperties(metadata, modMetadata);
+    metadata.additionalMeta = { ...(metadata.additionalMeta || {}) };
 
     return metadata;
   }

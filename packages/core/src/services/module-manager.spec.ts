@@ -20,8 +20,8 @@ describe('ModuleManager', () => {
     oldMap = new Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
     oldMapId = new Map<string, ModuleType | ModuleWithParams>();
 
-    getRawMetadata<T extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
-      return super.getRawMetadata<T>(moduleId, throwErrOnNotFound);
+    getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
+      return super.getRawMetadata<T, A>(moduleId, throwErrOnNotFound);
     }
   }
 
@@ -53,6 +53,7 @@ describe('ModuleManager', () => {
       providersPerReq: [],
       extensions: [],
       controllers: [],
+      additionalMeta: {},
       module: AppModule,
       ngMetadataName: 'RootModule',
     };
@@ -75,6 +76,7 @@ describe('ModuleManager', () => {
       imports: [],
       providersPerRou: [],
       providersPerReq: [Provider1],
+      additionalMeta: {},
       controllers: [],
       exports: [],
     })
@@ -91,6 +93,7 @@ describe('ModuleManager', () => {
       providersPerApp: [],
       providersPerMod: [],
       extensions: [],
+      additionalMeta: {},
       controllers: [],
       module: AppModule,
       providersPerRou: [],
@@ -136,6 +139,7 @@ describe('ModuleManager', () => {
     @RootModule({
       imports: [Module1, Module2],
       providersPerApp: [],
+      additionalMeta: {},
       controllers: [],
       exports: [],
     })
@@ -152,6 +156,7 @@ describe('ModuleManager', () => {
       providersPerRou: [],
       providersPerReq: [],
       extensions: [],
+      additionalMeta: {},
       controllers: [],
       module: Module1,
       id: '1',
@@ -173,6 +178,7 @@ describe('ModuleManager', () => {
       providersPerRou: [],
       providersPerReq: [],
       extensions: [],
+      additionalMeta: {},
       controllers: [],
       importsWithParams: [],
       exportsModules: [Module1],
@@ -194,6 +200,7 @@ describe('ModuleManager', () => {
       providersPerRou: [],
       providersPerReq: [],
       extensions: [],
+      additionalMeta: {},
       controllers: [],
       importsWithParams: [],
       module: Module3,
@@ -215,6 +222,7 @@ describe('ModuleManager', () => {
       providersPerRou: [],
       providersPerReq: [],
       extensions: [],
+      additionalMeta: {},
       controllers: [],
       module: module4WithParams,
       providersPerMod: [Provider2],
@@ -231,6 +239,7 @@ describe('ModuleManager', () => {
     @RootModule({
       imports: [],
       providersPerReq: [Provider1],
+      additionalMeta: {},
       controllers: [],
       exports: [],
     })
@@ -243,6 +252,7 @@ describe('ModuleManager', () => {
       providersPerMod: [],
       providersPerRou: [],
       extensions: [],
+      additionalMeta: {},
       controllers: [],
       exportsModules: [],
       exportsWithParams: [],
@@ -291,6 +301,7 @@ describe('ModuleManager', () => {
       providersPerMod: [],
       providersPerRou: [],
       extensions: [],
+      additionalMeta: {},
       controllers: [],
       exportsModules: [],
       exportsWithParams: [],
@@ -334,6 +345,7 @@ describe('ModuleManager', () => {
       providersPerMod: [],
       providersPerRou: [],
       extensions: [],
+      additionalMeta: {},
       controllers: [],
       exportsModules: [],
       exportsWithParams: [],
@@ -382,6 +394,7 @@ describe('ModuleManager', () => {
       providersPerRou: [],
       providersPerReq: [Provider1],
       extensions: [],
+      additionalMeta: {},
       controllers: [],
       ngMetadataName: 'RootModule',
     };
@@ -402,6 +415,7 @@ describe('ModuleManager', () => {
       providersPerRou: [],
       providersPerReq: [Provider1],
       extensions: [],
+      additionalMeta: {},
       controllers: [],
       ngMetadataName: 'RootModule',
     };
@@ -464,6 +478,7 @@ describe('ModuleManager', () => {
     @RootModule({
       imports: [Module1, Module2, module3WithProviders, module4WithProviders],
       providersPerReq: [Provider1],
+      additionalMeta: {},
       controllers: [],
       exports: [],
     })
@@ -483,6 +498,7 @@ describe('ModuleManager', () => {
       providersPerRou: [],
       providersPerReq: [Provider1],
       extensions: [],
+      additionalMeta: {},
       controllers: [],
       ngMetadataName: 'RootModule',
     };
@@ -529,6 +545,7 @@ describe('ModuleManager', () => {
       providersPerRou: [],
       providersPerReq: [Provider1],
       extensions: [],
+      additionalMeta: {},
       controllers: [],
       ngMetadataName: 'RootModule',
     };
@@ -558,6 +575,7 @@ describe('ModuleManager', () => {
       providersPerRou: [],
       providersPerReq: [Provider1],
       extensions: [],
+      additionalMeta: {},
       controllers: [],
       ngMetadataName: 'RootModule',
     };
@@ -582,6 +600,7 @@ describe('ModuleManager', () => {
       providersPerRou: [],
       providersPerReq: [Provider1],
       extensions: [],
+      additionalMeta: {},
       controllers: [],
       ngMetadataName: 'RootModule',
     };

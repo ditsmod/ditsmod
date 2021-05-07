@@ -1,9 +1,9 @@
 import { InjectionToken } from '@ts-stack/di';
 
 import { ProvidersMetadata } from '../models/providers-metadata';
-import { ControllerType, ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../types/mix';
+import { ControllerType, ModuleType, ModuleWithParams, ServiceProvider, Extension, AnyObj } from '../types/mix';
 
-export interface ModuleMetadata extends Partial<ProvidersMetadata> {
+export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
   /**
    * The module ID.
    */
@@ -26,4 +26,8 @@ export interface ModuleMetadata extends Partial<ProvidersMetadata> {
    * The application extensions.
    */
   extensions?: InjectionToken<Extension<any>[]>[];
+  /**
+   * This property allows you pass any information to extend the metadata of the module.
+   */
+  additionalMeta?: T;
 }

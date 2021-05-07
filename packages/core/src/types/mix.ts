@@ -14,7 +14,6 @@ export interface ModuleWithParams<T extends AnyObj = AnyObj> extends Partial<Pro
   module: ModuleType<T>;
   prefix?: string;
   guards?: GuardItem[];
-  [key: string]: any;
 }
 
 export type AnyFn = (...args: any[]) => any;
