@@ -11,11 +11,6 @@ type KeyOf<T extends Type<edk.AnyObj>> = Extract<keyof T['prototype'], string>;
 type KeysOf<T extends Type<edk.AnyObj>> = [KeyOf<T>, ...KeyOf<T>[]];
 /**
  * Applies to importing `OasModuleWithParams`. OAS parameter's property, indicates the parameter
- * should be recursively added to imported modules.
- */
-export const RECURSIVE_PARAM = 'x-recursive';
-/**
- * Applies to importing `OasModuleWithParams`. OAS parameter's property, indicates the parameter
  * should or not be bound to presence last param in a route path.
  */
 export const BOUND_TO_PATH_PARAM = 'x-bound-to-path-param';
@@ -67,22 +62,6 @@ export class Parameters {
 
   /**
    * Applies to importing `OasModuleWithParams`. Indicates the parameters that were added in the
-   * previous step as recursive.
-   *
-   * For example, if you first called `optional()` or `required()` with 2 parameters
-   * and then called `recursive()`, these 2 parameters will be marked recursive.
-   *
-   * @param depth Positive number of recursiveness: `1`, `2`, `3`... - number depth of recursion.
-   * Default `depth == 100` (like "unlimeted").
-   */
-  recursive(depth: number = 100) {
-    const params = this.getLastAddedParams();
-    params.forEach((param) => (param[RECURSIVE_PARAM] = depth));
-    return this;
-  }
-
-  /**
-   * Applies to importing `OasModuleWithParams`. Indicates the parameters that were added in the
    * previous step as bound to existence param in a route path.
    *
    * For example, if you first called `optional()` or `required()` with 2 parameters
@@ -117,7 +96,7 @@ export class Parameters {
 
   protected getLastAddedParams() {
     if (!this.countOfLastPushedParams) {
-      throw new Error('You can not add recursiveness to non-exists parameter');
+      throw new Error('You can not set this action to non-exists parameter');
     }
     return this.parameters.slice(-this.countOfLastPushedParams);
   }

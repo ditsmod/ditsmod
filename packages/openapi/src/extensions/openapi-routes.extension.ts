@@ -5,18 +5,11 @@ import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/o
 import { isOasRoute, isReferenceObject } from '../utils/type-guards';
 import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '../utils/parameters';
 import { OasRouteMeta } from '../types/oas-route-meta';
-import { OasModuleWithParams } from '../types/oas-modul-with-params';
 import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-last-params';
-import { OAS_PATCH_METADATA_EXTENSIONS } from '../di-tokens';
+import { OasOptions } from '../types/oas-options';
 
 @Injectable()
 export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.Extension<edk.RawRouteMeta[]> {
-  async init() {
-    const extensionsManager = this.injectorPerApp.get(edk.ExtensionsManager) as edk.ExtensionsManager;
-    await extensionsManager.init(OAS_PATCH_METADATA_EXTENSIONS);
-    return super.init();
-  }
-
   protected getRawRoutesMeta(
     moduleName: string,
     prefixPerApp: string,
@@ -26,13 +19,9 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
     const { controllersMetadata, guardsPerMod, moduleMetadata } = metadataPerMod;
 
     const providersPerMod = moduleMetadata.providersPerMod.slice();
-    let prefixParams: (XParameterObject<any> | ReferenceObject)[];
-    let prefixTags: string[];
-    if (edk.isModuleWithParams(moduleMetadata.module)) {
-      const moduleWithParams = moduleMetadata.module as OasModuleWithParams;
-      prefixParams = moduleWithParams.oasOptions?.paratemers;
-      prefixTags = moduleWithParams.oasOptions?.tags;
-    }
+    const oasOptions = moduleMetadata.additionalMeta as OasOptions;
+    const prefixParams = oasOptions.paratemers;
+    const prefixTags = oasOptions.tags;
 
     const rawRoutesMeta: edk.RawRouteMeta[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {

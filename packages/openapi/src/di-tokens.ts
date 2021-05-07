@@ -10,9 +10,3 @@ export const OAS_COMPILER_EXTENSIONS = new InjectionToken<edk.Extension<XOasObje
  * OpenAPI Specification DI token used to pass value with `OasObject`.
  */
 export const OAS_OBJECT = new InjectionToken<XOasObject>('OAS_OBJECT');
-/**
- * OpenAPI Specification extensions group that returns `void`.
- * 
- * This extensions group should patch metadata to works OAS features.
- */
-export const OAS_PATCH_METADATA_EXTENSIONS = new InjectionToken<edk.Extension<void>[]>('OAS_PATCH_METADATA_EXTENSIONS');
