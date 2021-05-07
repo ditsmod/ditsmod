@@ -26,7 +26,9 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   exportsWithParams?: ModuleWithParams[] = [];
   exportsProviders?: ServiceProvider[] = [];
   /**
-   * This property allows you pass any information to extend the metadata of the module.
+   * This property allows you to pass any information to extensions.
+   * 
+   * You must follow this rule: data for one extension - one key in `additionalMeta` object.
    */
-  additionalMeta? = {} as A;
+  extensionsMeta? = {} as A;
 }

@@ -282,7 +282,7 @@ export class ModuleManager {
     });
 
     pickProperties(metadata, modMetadata);
-    metadata.additionalMeta = { ...(metadata.additionalMeta || {}) };
+    metadata.extensionsMeta = { ...(metadata.extensionsMeta || {}) };
 
     return metadata;
   }
