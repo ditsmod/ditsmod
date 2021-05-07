@@ -19,9 +19,9 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
     const { controllersMetadata, guardsPerMod, moduleMetadata } = metadataPerMod;
 
     const providersPerMod = moduleMetadata.providersPerMod.slice();
-    const oasOptions = moduleMetadata.additionalMeta as OasOptions;
-    const prefixParams = oasOptions.paratemers;
-    const prefixTags = oasOptions.tags;
+    const oasOptions = moduleMetadata.additionalMeta.oasOptions as OasOptions;
+    const prefixParams = oasOptions?.paratemers;
+    const prefixTags = oasOptions?.tags;
 
     const rawRoutesMeta: edk.RawRouteMeta[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
