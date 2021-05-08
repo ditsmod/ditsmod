@@ -13,6 +13,7 @@ import { SwaggerConfigManager } from './services/swagger-config-manager';
   providersPerApp: [
     { provide: edk.ROUTES_EXTENSIONS, useClass: OpenapiRoutesExtension, multi: true },
     { provide: OAS_COMPILER_EXTENSIONS, useClass: OpenapiCompilerExtension, multi: true },
+    { provide: `BEFORE ${edk.PRE_ROUTER_EXTENSIONS}`, useClass: OpenapiCompilerExtension, multi: true },
     { provide: OAS_OBJECT, useValue: DEFAULT_OAS_OBJECT },
   ],
   providersPerMod: [SwaggerConfigManager],
