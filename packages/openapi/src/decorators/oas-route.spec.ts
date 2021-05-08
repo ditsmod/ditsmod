@@ -1,10 +1,13 @@
 import 'reflect-metadata';
+import { inspect } from 'util';
 import { reflector } from '@ts-stack/di';
 import { Controller, CanActivate } from '@ditsmod/core';
 
 import { OasRoute, OasRouteDecoratorMetadata } from './oas-route';
 
-describe('@Route', () => {
+// console.log(inspect(actualMeta, false, 5));
+
+describe('@OasRoute', () => {
   it('controller without methods', () => {
     @Controller()
     class Controller1 {}
@@ -12,7 +15,7 @@ describe('@Route', () => {
     expect(reflector.propMetadata(Controller1)).toEqual({});
   });
 
-  it('one method, one operation', () => {
+  it('one method, without operation object', () => {
     @Controller()
     class Controller1 {
       @OasRoute('GET')
@@ -21,26 +24,12 @@ describe('@Route', () => {
 
     const actualMeta = reflector.propMetadata(Controller1);
     const expectedMeta: OasRouteDecoratorMetadata = {
-      method: [{ httpMethod: 'GET', path: undefined, guards: undefined, operationObject: undefined }],
+      method: [{ httpMethod: 'GET', path: undefined }],
     };
     expect(actualMeta).toEqual(expectedMeta);
   });
 
-  it('one method, two operation', () => {
-    @Controller()
-    class Controller1 {
-      @OasRoute('GET', '', [], { get: {}, post: {} })
-      method() {}
-    }
-
-    const actualMeta = reflector.propMetadata(Controller1);
-    const expectedMeta: OasRouteDecoratorMetadata = {
-      method: [{ httpMethod: 'GET', path: '', guards: [], operationObject: { get: {}, post: {} } }],
-    };
-    expect(actualMeta).toEqual(expectedMeta);
-  });
-
-  it('one guard without params', () => {
+  it('one method, with operation object', () => {
     class Guard implements CanActivate {
       canActivate() {
         return true;
@@ -48,7 +37,7 @@ describe('@Route', () => {
     }
     @Controller()
     class Controller1 {
-      @OasRoute('GET', 'posts', [Guard], { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } })
+      @OasRoute('GET', 'posts', [Guard], { operationId: 'someId' })
       method() {}
     }
 
@@ -59,24 +48,17 @@ describe('@Route', () => {
           httpMethod: 'GET',
           path: 'posts',
           guards: [Guard],
-          operationObject: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
+          operationObject: { operationId: 'someId' },
         },
       ],
     };
     expect(actualMeta).toEqual(expectedMeta);
   });
 
-  it('two guards without params', () => {
-    class Guard implements CanActivate {
-      canActivate() {
-        return true;
-      }
-    }
+  it('route with operationObject as third argument', () => {
     @Controller()
     class Controller1 {
-      @OasRoute('GET', 'posts', [Guard, Guard], {
-        get: { parameters: [{ in: 'path', name: 'postId', required: true }] },
-      })
+      @OasRoute('GET', 'path', { operationId: 'someId' })
       method() {}
     }
 
@@ -85,49 +67,12 @@ describe('@Route', () => {
       method: [
         {
           httpMethod: 'GET',
-          path: 'posts',
-          guards: [Guard, Guard],
-          operationObject: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
+          path: 'path',
+          operationObject: { operationId: 'someId' },
         },
       ],
     };
-    expect(actualMeta).toEqual(expectedMeta);
-  });
 
-  it('two guard with params', () => {
-    class Guard implements CanActivate {
-      canActivate() {
-        return true;
-      }
-    }
-    @Controller()
-    class Controller1 {
-      @OasRoute(
-        'GET',
-        'posts',
-        [
-          [Guard, 'one', 123],
-          [Guard, []],
-        ],
-        { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } }
-      )
-      method() {}
-    }
-
-    const actualMeta = reflector.propMetadata(Controller1);
-    const expectedMeta: OasRouteDecoratorMetadata = {
-      method: [
-        {
-          httpMethod: 'GET',
-          path: 'posts',
-          guards: [
-            [Guard, 'one', 123],
-            [Guard, []],
-          ],
-          operationObject: { get: { parameters: [{ in: 'path', name: 'postId', required: true }] } },
-        },
-      ],
-    };
     expect(actualMeta).toEqual(expectedMeta);
   });
 });

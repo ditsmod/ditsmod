@@ -1,6 +1,6 @@
 export * from './constants';
 export { OasGuard, OasGuardMetadata } from './decorators/oas-guard';
-export { OasRoute, OasRouteMetadata } from './decorators/oas-route';
+export { OasRoute, OasRouteMetadata1, OasRouteMetadata2 } from './decorators/oas-route';
 export { Column } from './decorators/column';
 export * from './di-tokens';
 export { OpenapiModule } from './openapi.module';

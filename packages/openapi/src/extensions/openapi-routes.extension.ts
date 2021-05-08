@@ -2,7 +2,7 @@ import { Injectable } from '@ts-stack/di';
 import { edk, HttpMethod } from '@ditsmod/core';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
-import { isOasRoute, isReferenceObject } from '../utils/type-guards';
+import { isOasRoute, isOasRoute1, isReferenceObject } from '../utils/type-guards';
 import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '../utils/parameters';
 import { OasRouteMeta } from '../types/oas-route-meta';
 import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-last-params';
@@ -35,7 +35,10 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
           const providersPerRou = moduleMetadata.providersPerRou.slice();
           const providersPerReq = moduleMetadata.providersPerReq.slice();
           const ctrlDecorator = ctrlDecorValues.find(edk.isController);
-          const guards = [...guardsPerMod, ...this.normalizeGuards(oasRoute.guards)];
+          const guards: edk.NormalizedGuard[] = [...guardsPerMod];
+          if (isOasRoute1(oasRoute)) {
+            guards.push(...this.normalizeGuards(oasRoute.guards));
+          }
           const allProvidersPerReq = this.addProvidersPerReq(
             moduleName,
             controller,
