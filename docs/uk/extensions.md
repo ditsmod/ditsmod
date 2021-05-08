@@ -241,18 +241,27 @@ export class SomeModule {}
 ```ts
 import { Module } from '@ditsmod/core';
 
-import { MY_EXTENSIONS } from './my.extension';
-import { SomeExtension } from './some.extension';
+import { MY_EXTENSIONS, MyExtension } from './my.extension';
+import { OTHER_EXTENSIONS } from './other.extension';
 
 @Module({
-  providersPerApp: [{ provide: `BEFORE ${MY_EXTENSIONS}`, useClass: SomeExtension, multi: true }],
-  extensions: [],
+  providersPerApp: [
+    { provide: MY_EXTENSIONS, useClass: MyExtension, multi: true },
+    { provide: `BEFORE ${OTHER_EXTENSIONS}`, useClass: MyExtension, multi: true },
+  ],
+  extensions: [MY_EXTENSIONS],
 })
 export class SomeModule {}
 ```
 
 Текстовий токен групи розширень - це спеціальний тип токену. В даному прикладі, розширення
-`SomeExtension` буде запускатись перед запуском групи розширень `MY_EXTENSIONS`.
+`MyExtension` буде запускатись перед запуском групи розширень `OTHER_EXTENSIONS`.
+
+Зверність увагу, що розширення `MyExtension` зареєстровано в двох групах одночасно. Якщо б це було
+не так, і дане розширення зареєструвалось б тільки в групі `BEFORE ${OTHER_EXTENSIONS}`, то усі
+інші розширення, які захотіли б ініціалізації після `MyExtension`, але перед групою
+`OTHER_EXTENSIONS`, повинні були б вказувати в залежностях конкретно розширення `MyExtension`,
+замість групи розширень `MY_EXTENSIONS`. А це вже гірша практика.
 
 #### Використання ExtensionsManager
 
