@@ -38,7 +38,7 @@ export class RouteMeta {
   /**
    * Need or not parse body.
    */
-  parseBody: boolean;
+  parseBody?: boolean;
   /**
    * An array of DI tokens used to look up `CanActivate()` handlers,
    * in order to determine if the current user is allowed to activate the controller.

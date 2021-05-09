@@ -66,7 +66,6 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
             providersPerReq
           );
           providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
-          const parseBody = this.needBodyParse(providersPerMod, providersPerRou, allProvidersPerReq, route.httpMethod);
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const { path: controllerPath, httpMethod } = route;
           const path = this.getPath(prefix, controllerPath);
@@ -76,7 +75,6 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
             decoratorMetadata,
             controller,
             methodName,
-            parseBody,
             guards,
           };
           providersPerRou.push({ provide: RouteMeta, useValue: routeMeta });
@@ -145,21 +143,5 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
     allProvidersPerReq.unshift(Ctrl, ...guards, ...providersOfController);
 
     return allProvidersPerReq;
-  }
-
-  /**
-   * Need or not to parse body of HTTP request.
-   */
-  protected needBodyParse(
-    providersPerMod: ServiceProvider[],
-    providersPerRou: ServiceProvider[],
-    providersPerReq: ServiceProvider[],
-    httpMethod: HttpMethod
-  ) {
-    const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-    const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
-    const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
-    const bodyParserConfig = injectorPerReq.resolveAndInstantiate(BodyParserConfig) as BodyParserConfig;
-    return bodyParserConfig.acceptMethods.includes(httpMethod);
   }
 }
