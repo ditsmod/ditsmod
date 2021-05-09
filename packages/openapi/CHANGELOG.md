@@ -1,5 +1,12 @@
+<a name="openapi-beta.14"></a>
+# [openapi-beta.14](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.14) (2021-05-09)
+
+### Features
+
+- introduced OAS operation object as third argument for OasRoute [a21f176](https://github.com/ditsmod/ditsmod/commit/a21f176).
+
 <a name="openapi-beta.13"></a>
-# [openapi-beta.13](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.13) (2021-05-07)
+## [openapi-beta.13](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.13) (2021-05-07)
 
 ### BREAKING CHANGES
 
