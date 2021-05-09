@@ -241,27 +241,18 @@ export class SomeModule {}
 ```ts
 import { Module } from '@ditsmod/core';
 
-import { MY_EXTENSIONS, MyExtension } from './my.extension';
+import { MyExtension } from './my.extension';
 import { OTHER_EXTENSIONS } from './other.extension';
 
 @Module({
-  providersPerApp: [
-    { provide: MY_EXTENSIONS, useClass: MyExtension, multi: true },
-    { provide: `BEFORE ${OTHER_EXTENSIONS}`, useClass: MyExtension, multi: true },
-  ],
-  extensions: [MY_EXTENSIONS],
+  providersPerApp: [{ provide: `BEFORE ${OTHER_EXTENSIONS}`, useClass: MyExtension, multi: true }],
+  extensions: [],
 })
 export class SomeModule {}
 ```
 
 Текстовий токен групи розширень - це спеціальний тип токену. В даному прикладі, розширення
 `MyExtension` буде запускатись перед запуском групи розширень `OTHER_EXTENSIONS`.
-
-Зверність увагу, що розширення `MyExtension` зареєстровано в двох групах одночасно. Якщо б це було
-не так, і дане розширення зареєструвалось б тільки в групі `BEFORE ${OTHER_EXTENSIONS}`, то усі
-інші розширення, які захотіли б ініціалізації після `MyExtension`, але перед групою
-`OTHER_EXTENSIONS`, повинні були б вказувати в залежностях конкретно розширення `MyExtension`,
-замість групи розширень `MY_EXTENSIONS`. А це вже гірша практика.
 
 #### Використання ExtensionsManager
 
@@ -337,9 +328,9 @@ export class MyExtension implements edk.Extension<void> {
 
     const rawRoutesMeta = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS);
 
-    rawRouteMeta.forEach((data) => {
+    rawRoutesMeta.forEach((meta) => {
       // ... Створіть тут нові провайдері і їхні значення, а потім:
-      const { providersPerMod, providersPerRou, providersPerReq } = data;
+      const { providersPerMod, providersPerRou, providersPerReq } = meta;
       providersPerMod.push({ provide: MyProviderPerMod, useValue: myValue1 });
       providersPerRou.push({ provide: MyProviderPerRoute, useValue: myValue1 });
       providersPerReq.push({ provide: MyProviderPerReq, useValue: myValue2 });
