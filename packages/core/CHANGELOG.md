@@ -1,5 +1,16 @@
+<a name="core-beta.20"></a>
+# [core-beta.20](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.20) (2021-05-09)
+
+### BREAKING CHANGES
+
+- renamed `additionalMeta` to `extensionsMeta` [cf1999](https://github.com/ditsmod/ditsmod/commit/cf1999).
+
+### Features
+
+- allow `ModuleWithParams` to have `extensionsMeta` [3bf166](https://github.com/ditsmod/ditsmod/commit/3bf166).
+
 <a name="core-beta.19"></a>
-# [core-beta.19](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.19) (2021-05-07)
+## [core-beta.19](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.19) (2021-05-07)
 
 ### BREAKING CHANGES
 
