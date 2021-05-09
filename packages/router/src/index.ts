@@ -1,3 +1,4 @@
 export { DefaultRouter } from './router';
 export { Tree } from './tree';
-export { RouteParam, HttpMethod } from './types';
+export { RouteParam } from './types';
+export { RouterModule } from './router.module';
