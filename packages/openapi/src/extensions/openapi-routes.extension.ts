@@ -63,7 +63,6 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
           // For now, here ReferenceObjects is ignored, if it is intended for a path.
           const oasPath = this.transformToOasPath(moduleMetadata.name, path, paramsInPath);
           providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
-          const parseBody = this.needBodyParse(providersPerMod, providersPerRou, allProvidersPerReq, httpMethod);
           const routeMeta: OasRouteMeta = {
             httpMethod,
             oasPath,
@@ -72,7 +71,6 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
             decoratorMetadata,
             controller,
             methodName,
-            parseBody,
             guards,
           };
           providersPerRou.push({ provide: edk.RouteMeta, useValue: routeMeta });
