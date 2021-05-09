@@ -1,5 +1,5 @@
-import { RootModule, LoggerConfig, Router, Logger } from '@ditsmod/core';
-import { DefaultRouter } from '@ditsmod/router';
+import { RootModule, LoggerConfig, Logger } from '@ditsmod/core';
+import { RouterModule } from '@ditsmod/router';
 
 import { BunyanModule } from './modules/bunyan/bunyan.module';
 import { PinoModule } from './modules/pino/pino.module';
@@ -12,10 +12,9 @@ loggerConfig.level = level;
 loggerConfig.depth = 3;
 
 @RootModule({
-  imports: [BunyanModule, PinoModule, WinstonModule, SomeModule],
+  imports: [RouterModule, BunyanModule, PinoModule, WinstonModule, SomeModule],
   providersPerApp: [
-    { provide: LoggerConfig, useValue: loggerConfig },
-    { provide: Router, useClass: DefaultRouter },
-  ],
+    { provide: LoggerConfig, useValue: loggerConfig }
+  ]
 })
 export class AppModule {}

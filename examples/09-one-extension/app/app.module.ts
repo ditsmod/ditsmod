@@ -1,13 +1,13 @@
-import { RootModule, Router, edk } from '@ditsmod/core';
-import { DefaultRouter } from '@ditsmod/router';
+import { RootModule, edk } from '@ditsmod/core';
+import { RouterModule } from '@ditsmod/router';
 
 import { HelloWorldController } from './hello-world.controller';
 import { MyExtension } from './my-extension';
 
 @RootModule({
+  imports: [RouterModule],
   controllers: [HelloWorldController],
   providersPerApp: [
-    { provide: Router, useClass: DefaultRouter },
     { provide: edk.PRE_ROUTER_EXTENSIONS, useClass: MyExtension, multi: true },
   ],
   extensions: [edk.PRE_ROUTER_EXTENSIONS],

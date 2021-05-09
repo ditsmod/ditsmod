@@ -1,10 +1,9 @@
-import { RootModule, Router } from '@ditsmod/core';
-import { DefaultRouter } from '@ditsmod/router';
+import { RootModule } from '@ditsmod/core';
+import { RouterModule } from '@ditsmod/router';
 
 import { FirstModule } from './modules/first/first.module';
 
 @RootModule({
-  imports: [FirstModule],
-  providersPerApp: [{ provide: Router, useClass: DefaultRouter }],
+  imports: [RouterModule, FirstModule]
 })
 export class AppModule {}

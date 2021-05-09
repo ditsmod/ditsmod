@@ -1,5 +1,5 @@
-import { RootModule, Router, Log, Logger } from '@ditsmod/core';
-import { DefaultRouter } from '@ditsmod/router';
+import { RootModule, Log, Logger } from '@ditsmod/core';
+import { RouterModule } from '@ditsmod/router';
 
 import { HelloWorldController } from './hello-world.controller';
 
@@ -13,9 +13,9 @@ class MyLog extends Log {
 }
 
 @RootModule({
+  imports: [RouterModule],
   controllers: [HelloWorldController],
   providersPerApp: [
-    { provide: Router, useClass: DefaultRouter },
     { provide: Log, useClass: MyLog }, // Here set your new MyLog
   ],
 })

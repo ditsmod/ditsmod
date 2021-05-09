@@ -1,11 +1,10 @@
-import { RootModule, Router } from '@ditsmod/core';
-import { DefaultRouter } from '@ditsmod/router';
+import { RootModule } from '@ditsmod/core';
+import { RouterModule } from '@ditsmod/router';
 
 import { PostsModule } from './posts/posts.module';
 
 @RootModule({
   prefixPerApp: 'api',
-  imports: [{ prefix: 'posts/:postId', module: PostsModule }],
-  providersPerApp: [{ provide: Router, useClass: DefaultRouter }],
+  imports: [RouterModule, { prefix: 'posts/:postId', module: PostsModule }],
 })
 export class AppModule {}
