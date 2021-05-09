@@ -51,6 +51,9 @@
     "url": "https://github.com/ditsmod/core/issues"
   },
   "homepage": "https://github.com/ditsmod/core#readme",
+  "resolutions": {
+    "node-fetch": "^2.6.1"
+  },
   "devDependencies": {
     "lerna": "^4.0.0",
     "prettier": "^2.2.1",
