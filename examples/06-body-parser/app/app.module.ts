@@ -1,10 +1,11 @@
 import { RootModule } from '@ditsmod/core';
+import { RouterModule } from '@ditsmod/router';
+import { BodyParserModule } from '@ditsmod/body-parser';
 
 import { SomeModule } from './modules/routed/some/some.module';
-import { DefaultsModule } from './modules/services/defaults/defaults.module';
 
 @RootModule({
   imports: [SomeModule],
-  exports: [DefaultsModule]
+  exports: [BodyParserModule, RouterModule]
 })
 export class AppModule {}
