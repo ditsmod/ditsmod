@@ -12,6 +12,10 @@ export class DefaultBodyParser {
   ) {}
 
   getBody(): Promise<any> {
+    const supportedTypes = ['application/json', 'application/x-www-form-urlencoded', 'text/plain', 'text/html'];
+    if (!supportedTypes.some(type => this.nodeReq.headers['content-type'].includes(type))) {
+      return;
+    }
     return parse(this.nodeReq, this.nodeReq.headers, { limit: this.config.maxBodySize });
   }
 }
