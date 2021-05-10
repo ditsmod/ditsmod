@@ -1,5 +1,12 @@
+<a name="core-beta.21"></a>
+# [core-beta.21](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.21) (2021-05-10)
+
+### BREAKING CHANGES
+
+- removed `parseBody` feature from core [3a77bb](https://github.com/ditsmod/ditsmod/commit/3a77bb).
+
 <a name="core-beta.20"></a>
-# [core-beta.20](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.20) (2021-05-09)
+## [core-beta.20](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.20) (2021-05-09)
 
 ### BREAKING CHANGES
 
