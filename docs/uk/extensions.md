@@ -235,8 +235,44 @@ import { MY_EXTENSIONS, MyExtension } from './my.extension';
 export class SomeModule {}
 ```
 
-Реєстрація розширення в групі із текстовим типом токену відрізняється лише тим, що цей токен
-не потрібно передавати в масив `extensions`:
+Коли ви передаєте `MY_EXTENSIONS` в масив `extensions`, тим самим ви даєте знати ядру Ditsmod, що
+існує така група, і її треба "ставити в чергу" для ініціалізації. А коли ви передаєте провайдери в
+масив `providersPerApp`, тим самим ви інструктуєте DI які саме інстанси розширень будуть в цій
+групі.
+
+Якщо одне й те саме розширення ви додасте багато разів, то DI створить багато інстансів цього
+розширення. Наприклад:
+
+```ts
+import { Module } from '@ditsmod/core';
+
+import { MY_EXTENSIONS, MyExtension } from './my.extension';
+
+@Module({
+  providersPerApp: [
+    { provide: MY_EXTENSIONS, useClass: MyExtension, multi: true },
+    { provide: MY_EXTENSIONS, useClass: MyExtension, multi: true },
+    { provide: MY_EXTENSIONS, useClass: MyExtension, multi: true },
+  ],
+  extensions: [MY_EXTENSIONS],
+})
+export class SomeModule {}
+```
+
+В даному разі буде створено три окремі інстанси `MyExtension`, причому не важливо які саме токени
+використовуються у властивості `provide`. Щоправда, це станеться тільки якщо ви використовуєте
+`useClass` для DI-провайдера.
+
+Це важливий момент для розуміння специфіки роботи DI із мульти-провайдерами, оскільки, можливо, ви
+захочете додати своє розширення ще й у групу, що має текстовий токен у форматі
+`BEFORE ${<InjectionToken>}`. Такий токен призначається для вже існуючих груп, коли вам
+потрібно щоб ваше розширення було проініціалізоване перед ініціалізацією іншого розширення.
+
+Реєстрація розширення в групі із текстовим типом токену відрізняється у трьох моментах:
+
+1. текстовий токен `BEFORE ${<InjectionToken>}` не потрібно передавати в масив `extensions`;
+2. у мульти-провайдері використовуйте властивість `useExisting`;
+3. `MyExtension` потрібно додатково передавати безпосередньо у масив `providersPerApp`:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -245,14 +281,20 @@ import { MyExtension } from './my.extension';
 import { OTHER_EXTENSIONS } from './other.extension';
 
 @Module({
-  providersPerApp: [{ provide: `BEFORE ${OTHER_EXTENSIONS}`, useClass: MyExtension, multi: true }],
-  extensions: [],
+  providersPerApp: [
+    MyExtension, // <-- Це потрібно робити тільки якщо ви використовуєте `BEFORE ${<InjectionToken>}`
+    { provide: MY_EXTENSIONS, useExisting: MyExtension, multi: true },
+    { provide: `BEFORE ${OTHER_EXTENSIONS}`, useExisting: MyExtension, multi: true }
+  ],
+  extensions: [MY_EXTENSIONS], // <-- Сюди не передається токен у форматі `BEFORE ${<InjectionToken>}`
 })
 export class SomeModule {}
 ```
 
-Текстовий токен групи розширень - це спеціальний тип токену. В даному прикладі, розширення
-`MyExtension` буде запускатись перед запуском групи розширень `OTHER_EXTENSIONS`.
+В даному прикладі, розширення `MyExtension` буде запускатись перед запуском групи розширень
+`OTHER_EXTENSIONS`. Використовуючи властивість `useExisting`, ви інструктуєте DI, що потрібно
+створити єдиний інстанс `MyExtension`, не зважаючи на те, що це розширення передалось у дві різні
+групи.
 
 #### Використання ExtensionsManager
 
