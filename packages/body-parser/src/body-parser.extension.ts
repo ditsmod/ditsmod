@@ -1,5 +1,7 @@
 import { BodyParserConfig, edk } from '@ditsmod/core';
-import { Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
+
+export const BODY_PARSER_EXTENSIONS = new InjectionToken<edk.Extension<void>[]>('BODY_PARSER_EXTENSIONS');
 
 @Injectable()
 export class BodyParserExtension implements edk.Extension<void> {
