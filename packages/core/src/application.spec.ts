@@ -3,7 +3,6 @@ import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
 import { Injectable, InjectionToken } from '@ts-stack/di';
-import { DefaultRouter } from '@ditsmod/router';
 
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
@@ -95,7 +94,7 @@ describe('Application', () => {
     it('declared extensions in root module and only in providersPerApp', async () => {
       @RootModule({
         providersPerApp: [
-          { provide: Router, useClass: DefaultRouter },
+          { provide: Router, useValue: 'fake value for router' },
           { provide: MY_EXTENSIONS, useClass: Extension1, multi: true },
         ],
         extensions: [MY_EXTENSIONS],
@@ -108,12 +107,7 @@ describe('Application', () => {
     });
 
     it('should throw an error about include MY_EXTENSIONS to providersPerApp', async () => {
-      @RootModule({
-        providersPerApp: [
-          { provide: Router, useClass: DefaultRouter }
-        ],
-        extensions: [MY_EXTENSIONS],
-      })
+      @RootModule({ extensions: [MY_EXTENSIONS] })
       class AppModule {}
 
       const promise = new MockApplication().init(AppModule);
@@ -122,10 +116,7 @@ describe('Application', () => {
 
     it('should throw an error about include MY_EXTENSIONS to providersPerReq', async () => {
       @RootModule({
-        providersPerApp: [
-          { provide: Router, useClass: DefaultRouter },
-          { provide: MY_EXTENSIONS, useClass: Extension1, multi: true }
-        ],
+        providersPerApp: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
         providersPerReq: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
         extensions: [MY_EXTENSIONS],
       })
@@ -135,12 +126,9 @@ describe('Application', () => {
       await expect(promise).rejects.toThrow(/MY_EXTENSIONS" can be includes in the "providersPerApp"/);
     });
 
-    it('should throw an error about include MY_EXTENSIONS to providersPerReq', async () => {
+    it('should throw an error about include MY_EXTENSIONS to providersPerMod', async () => {
       @RootModule({
-        providersPerApp: [
-          { provide: Router, useClass: DefaultRouter },
-          { provide: MY_EXTENSIONS, useClass: Extension1, multi: true }
-        ],
+        providersPerApp: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
         providersPerMod: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
         extensions: [MY_EXTENSIONS],
       })

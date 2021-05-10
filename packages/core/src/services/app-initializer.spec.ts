@@ -1,12 +1,10 @@
 import 'reflect-metadata';
 import { ClassProvider, InjectionToken } from '@ts-stack/di';
-import { DefaultRouter } from '@ditsmod/router';
 
 import { AppInitializer } from './app-initializer';
 import { Logger, LoggerConfig } from '../types/logger';
 import { Router } from '../types/router';
 import { Request } from './request';
-import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../types/mix';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { Module } from '../decorators/module';
@@ -22,8 +20,6 @@ import { NODE_REQ } from '../constans';
 import { Log } from './log';
 
 describe('AppInitializer', () => {
-  (defaultProvidersPerApp as ServiceProvider[]).push({ provide: Router, useClass: DefaultRouter });
-
   class MockAppInitializer extends AppInitializer {
     appMetadataMap: Map<ModuleType | ModuleWithParams, MetadataPerMod>;
     meta = new RootMetadata();
@@ -299,7 +295,7 @@ describe('AppInitializer', () => {
       serverName: 'custom-server',
       imports: [Module0, Module1, module2WithParams, Module5, module3WithParams, module4WithParams],
       exports: [Module0, Module2, Module3],
-      providersPerApp: [Logger],
+      providersPerApp: [Logger, { provide: Router, useValue: 'fake' }],
     })
     class AppModule {}
 
@@ -377,7 +373,7 @@ describe('AppInitializer', () => {
       mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
       const root1 = mock.appMetadataMap.get(AppModule);
-      expect(root1.moduleMetadata.providersPerApp).toEqual([Logger]);
+      expect(root1.moduleMetadata.providersPerApp).toEqual([Logger, { provide: Router, useValue: 'fake' }]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
       expect(root1.moduleMetadata.providersPerMod).toEqual([
         providerPerMod,
@@ -510,6 +506,7 @@ describe('AppInitializer', () => {
 
         @RootModule({
           imports: [Module1, Module2],
+          providersPerApp: [{ provide: Router, useValue: 'fake' }]
         })
         class AppModule {}
 
@@ -538,6 +535,7 @@ describe('AppInitializer', () => {
         @RootModule({
           imports: [Module2],
           providersPerMod: [Provider2],
+          providersPerApp: [{ provide: Router, useValue: 'fake' }]
         })
         class AppModule {}
 
@@ -569,6 +567,7 @@ describe('AppInitializer', () => {
         @RootModule({
           imports: [Module0, Module1.withParams()],
           providersPerMod: [Provider1],
+          providersPerApp: [{ provide: Router, useValue: 'fake' }]
         })
         class AppModule {}
 
@@ -620,6 +619,7 @@ describe('AppInitializer', () => {
         @RootModule({
           imports: [Module2],
           providersPerReq: [Provider2],
+          providersPerApp: [{ provide: Router, useValue: 'fake' }]
         })
         class AppModule {}
 
@@ -661,6 +661,7 @@ describe('AppInitializer', () => {
         @RootModule({
           imports: [Module0, Module1],
           providersPerReq: [Provider1],
+          providersPerApp: [{ provide: Router, useValue: 'fake' }]
         })
         class AppModule {}
 
@@ -710,26 +711,6 @@ describe('AppInitializer', () => {
           'Exporting providers to AppModule was failed: found collision for: ' +
           'Provider0, Provider1, Request, InjectionToken NODE_REQ. You should manually add these providers to AppModule.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
-      });
-
-      it('case 2', async () => {
-        @Module({
-          exports: [Provider0, Provider1],
-          providersPerMod: [Provider0, Provider1],
-          providersPerApp: [{ provide: Router, useValue: '' }],
-        })
-        class Module0 {}
-
-        @RootModule({
-          imports: [Module0],
-        })
-        class AppModule {}
-
-        moduleManager.scanRootModule(AppModule);
-        const msg =
-          'Exporting providers to AppModule was failed: found collision for: ' +
-          'Router. You should manually add this provider to AppModule.';
-        expect(() => mock.bootstrapProvidersPerApp()).toThrow(msg);
       });
     });
   });

@@ -1,12 +1,10 @@
 import 'reflect-metadata';
 import { ReflectiveInjector, Injectable, InjectionToken } from '@ts-stack/di';
-import { DefaultRouter } from '@ditsmod/router';
 
 import { ModuleFactory } from './module-factory';
 import { Module } from './decorators/module';
 import { Controller, ControllerMetadata } from './decorators/controller';
 import { Route, RouteMetadata } from './decorators/route';
-import { Router } from './types/router';
 import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
@@ -19,10 +17,9 @@ import { DefaultLogger } from './services/default-logger';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModConfig } from './models/mod-config';
 import { Log } from './services/log';
+import { Router } from './types/router';
 
 describe('ModuleFactory', () => {
-  (defaultProvidersPerApp as ServiceProvider[]).push({ provide: Router, useClass: DefaultRouter });
-
   @Injectable()
   class MockModuleFactory extends ModuleFactory {
     prefixPerMod: string;
@@ -517,7 +514,7 @@ describe('ModuleFactory', () => {
           imports: [Module3],
         })
         class Module4 {}
-        const providers: ServiceProvider[] = [...defaultProvidersPerApp, { provide: Router, useClass: DefaultRouter }];
+        const providers: ServiceProvider[] = [...defaultProvidersPerApp, { provide: Router, useValue: 'fake' }];
         const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
