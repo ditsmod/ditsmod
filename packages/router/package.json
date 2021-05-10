@@ -2,8 +2,8 @@
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "name": "@ditsmod/router",
   "homepage": "https://github.com/ditsmod/ditsmod",
-  "description": "Router plugin for Ditsmod applications",
-  "version": "1.0.0-beta.3",
+  "description": "Router module for Ditsmod applications",
+  "version": "1.0.0-beta.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -14,8 +14,8 @@
     "lib": "src"
   },
   "scripts": {
-    "test": "npm run compile && jest",
-    "compile": "rimraf dist/* && tsc",
+    "test": "jest",
+    "build": "rimraf dist/* && tsc -b -f",
     "bench": "node --expose-gc dist/bench.js"
   },
   "devDependencies": {
