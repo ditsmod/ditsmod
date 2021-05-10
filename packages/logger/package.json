@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/logger",
-  "version": "0.0.0-alpha.4",
+  "version": "0.0.0-alpha.5",
   "description": "a JSON logging library for node.js services writen on TypeScript",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "main": "dist/index",
