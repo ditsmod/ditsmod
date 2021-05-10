@@ -3,9 +3,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "paths": {
+      "@ditsmod/core": ["../core/src"]
+    }
   },
-  "include": [
-    "./src/**/*.ts"
-  ]
+  "include": ["./src/**/*.ts"],
+  "references": [{ "path": "../core" }]
 }
