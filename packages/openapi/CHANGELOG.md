@@ -1,5 +1,13 @@
+<a name="openapi-beta.15"></a>
+# [openapi-beta.15](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.15) (2021-05-10)
+
+### BREAKING CHANGES
+
+- removed `parseBody` feature from openapi [fc2af1f](https://github.com/ditsmod/ditsmod/commit/fc2af1f).
+This version required `@ditsmod/core` version >= 1.0.0-beta.21.
+
 <a name="openapi-beta.14"></a>
-# [openapi-beta.14](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.14) (2021-05-09)
+## [openapi-beta.14](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.14) (2021-05-09)
 
 ### Features
 
