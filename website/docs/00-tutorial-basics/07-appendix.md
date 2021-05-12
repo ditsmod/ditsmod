@@ -117,6 +117,6 @@ this.log.youForgotRegisterExtension('warn', [moduleName, p.provide, p.useClass.n
 результат буде точно такий же, як наче ви не змінювали кореневий модуль. Таке відбувається
 через те, що оригінальні метадані модулів не змінюються.
 
-Приклад динамічного додвавання та видалення модулів див. у [7-dynamically-composing-modules](../../examples/7-dynamically-composing-modules)
+Приклад динамічного додвавання та видалення модулів див. у [7-dynamically-composing-modules](../examples/dynamically-composing-modules)
 
 [127]: ./dependency-injection#пріоритетність-провайдерів

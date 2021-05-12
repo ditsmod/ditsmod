@@ -15,7 +15,7 @@ module.exports = {
   projectName: 'ditsmod.github.io', // Usually your repo name.
   themeConfig: {
     googleAnalytics: {
-      trackingID: 'G-RHZHN4QK72',
+      trackingID: 'G-JB9Z2HZH02',
       // Optional fields.
       // anonymizeIP: true, // Should IPs be anonymized?
     },
@@ -33,9 +33,9 @@ module.exports = {
           label: 'Документація',
         },
         // {to: '/blog', label: 'Blog', position: 'left'},
-        {
-          type: 'docsVersionDropdown',
-        },
+        // {
+        //   type: 'docsVersionDropdown',
+        // },
         {
           href: 'https://github.com/ditsmod/ditsmod',
           label: 'GitHub',
