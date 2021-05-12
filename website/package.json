@@ -18,6 +18,9 @@
     "netlify:prepare": "yarn fetchSupporters && yarn build:js",
     "netlify:crowdin": "yarn write-translations && yarn crowdin:upload && yarn crowdin:download"
   },
+  "resolutions": {
+    "trim": "^0.0.3"
+  },
   "dependencies": {
     "@docusaurus/core": "2.0.0-alpha.75",
     "@docusaurus/preset-classic": "2.0.0-alpha.75",
