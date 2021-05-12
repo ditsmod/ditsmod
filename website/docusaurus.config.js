@@ -5,15 +5,20 @@ const i18n = require('./i18n');
 module.exports = {
   i18n,
   title: 'Ditsmod docs',
-  tagline: 'Dinosaurs are cool',
+  // tagline: 'Ditsmod are cool',
   url: 'https://ditsmod.github.io',
-  baseUrl: '/ditsmod/',
+  baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'ditsmod', // Usually your GitHub org/user name.
-  projectName: 'ditsmod', // Usually your repo name.
+  projectName: 'ditsmod.github.io', // Usually your repo name.
   themeConfig: {
+    googleAnalytics: {
+      trackingID: 'G-RHZHN4QK72',
+      // Optional fields.
+      // anonymizeIP: true, // Should IPs be anonymized?
+    },
     navbar: {
       title: 'Ditsmod docs',
       logo: {
@@ -27,14 +32,36 @@ module.exports = {
           position: 'left',
           label: 'Tutorial',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
+        // {to: '/blog', label: 'Blog', position: 'left'},
+        {
+          type: 'docsVersionDropdown',
+        },
         {
           href: 'https://github.com/ditsmod/ditsmod',
           label: 'GitHub',
           position: 'right',
         },
+        {
+          type: 'localeDropdown',
+          position: 'right',
+        },
       ],
     },
+    // algolia: {
+    //   apiKey: 'YOUR_API_KEY',
+    //   indexName: 'YOUR_INDEX_NAME',
+
+    //   // Optional: see doc section below
+    //   contextualSearch: true,
+
+    //   // Optional: see doc section below
+    //   // appId: 'YOUR_APP_ID',
+
+    //   // Optional: Algolia search parameters
+    //   searchParameters: {},
+
+    //   //... other Algolia params
+    // },
     footer: {
       style: 'dark',
       links: [
@@ -63,10 +90,10 @@ module.exports = {
         {
           title: 'More',
           items: [
-            {
-              label: 'Blog',
-              to: '/blog',
-            },
+            // {
+            //   label: 'Blog',
+            //   to: '/blog',
+            // },
             {
               label: 'GitHub',
               href: 'https://github.com/ditsmod/ditsmod',
@@ -74,7 +101,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Ditsmod, Inc. Built with Ditsmod.`,
+      copyright: `Built with Docusaurus.`,
     },
   },
   presets: [
@@ -86,11 +113,11 @@ module.exports = {
           editUrl:
             'https://github.com/ditsmod/ditsmod/edit/main/website/',
         },
-        blog: {
-          showReadingTime: true,
-          editUrl:
-            'https://github.com/ditsmod/ditsmod/edit/main/website/blog/',
-        },
+        // blog: {
+        //   showReadingTime: true,
+        //   editUrl:
+        //     'https://github.com/ditsmod/ditsmod/edit/main/website/blog/',
+        // },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },

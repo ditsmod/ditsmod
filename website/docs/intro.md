@@ -2,34 +2,125 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Що таке Ditsmod
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Ditsmod є Node.js веб-фреймворком, його назва складається із **DI** + **TS** + **Mod**, щоб
+підкреслити важливі складові: він має **D**ependency **I**njection, написаний на
+**T**ype**S**cript, та спроектований для хорошої **Mod**ularity (тобто модульності).
 
-## Getting Started
+Головні особливості Ditsmod:
 
-Get started by **creating a new site**.
+- Зручний механізм [указання та вирішення залежностей][8] між різними класами застосунку: ви в
+конструкторі указуєте інстанси яких класів вам потрібні, а DI бере на себе непросту задачу "як їх
+отримати".
+- Можливість легко підмінювати by default класи в ядрі Ditsmod своїми власними класами.
+Наприклад, швидше за все, ви захочете підмінити клас логера на ваш власний клас, оскільки
+by default логер записує усе лише в консоль.
+- Можливість легко підмінювати класи вашого застосунку тестовими класами (mocks, stubs), не
+змінюючи при цьому код вашого застосунку. Це дуже суттєво спрощує тестування.
+- Ditsmod спроектований, щоб забезпечувати хорошу модульність всього застосунку, а отже і хорошу
+масштабованість. Його DI підтримує ієрархію, а це означає, що ви можете оголошувати
+[одинаків][12]: або на рівні усього застосунку, або на рівні конкретного модуля, або на рівні
+конкретного маршруту, або на рівні HTTP-запиту.
 
-Or **try Docusaurus immediately** with **[new.docusaurus.io](https://new.docusaurus.io)**.
+Ті, хто знайомий з [Angular][9], помітить, що деякі концепції архітектури цього фреймворка дуже
+схожі на Angular концепції. Це справді так, більше того - сам [DI][11] фактично витягнутий з
+Angular v4.4.7. (з мінімальними допрацюваннями) та інтегрований в Ditsmod.
 
-## Generate a new site
+## Встановлення
 
-Generate a new Docusaurus site using the **classic template**:
+Мінімальний базовий набір для роботи застосунку має репозиторій [ditsmod-seed][2].
+Клонуйте його та встановіть залежності:
 
-```shell
-npx @docusaurus/init@latest init my-website classic
+```bash
+git clone git@github.com:ditsmod/seed.git my-app
+cd my-app
+yarn
 ```
 
-## Start your site
+## Запуск
 
-Run the development server:
-
-```shell
-cd my-website
-
-npx docusaurus start
+```bash
+yarn start
 ```
 
-Your site starts at `http://localhost:3000`.
+Такий запуск можна використовувати для розробки застосунку, оскільки після кожного збереження
+вашого коду, ви зможете зразу бачити ці зміни.
 
-Open `docs/intro.md` and edit some lines: the site **reloads automatically** and display your changes.
+Перевірити роботу сервера можна за допомогою `curl`:
+
+```bash
+curl -isS localhost:8080
+```
+
+Компіляція застосунку відбувається за допомогою команди:
+
+```bash
+yarn build
+```
+
+Окрім цього, можете проглянути більше прикладів у теці [examples][4].
+
+## Вхідний файл для Node.js
+
+Після [встановлення Ditsmod seed](#встановлення), перше, що необхідно знати: весь код застосунку
+знаходиться у теці `src`, він компілюється за допомогою TypeScript-утиліти `tsc`, після
+компіляції попадає у теку `dist`, і далі вже у вигляді JavaScript-коду його можна виконувати у
+Node.js.
+
+Давайте розглянемо файл `src/main.ts`:
+
+```ts
+import 'reflect-metadata';
+import { Application } from '@ditsmod/core';
+
+import { AppModule } from './app/app.module';
+
+new Application()
+  .bootstrap(AppModule)
+  .then(({ server, logger }) => {
+    server.on('error', (err) => logger.error(err));
+  })
+  .catch(({ err, logger }) => {
+    logger.fatal(err);
+    throw err;
+  });
+```
+
+Після компіляції, він перетворюється на `dist/main.js` та стає
+вхідною точкою для запуску застосунку, і саме тому ви будете його вказувати у якості аргументу для
+Node.js:
+
+```bash
+node dist/main.js
+```
+
+Слід звернути увагу на `import 'reflect-metadata'` у першому рядку файла. Цей модуль необхідний
+для роботи Ditsmod, але його достатньо указувати єдиний раз у вхідному файлі для Node.js.
+
+Бажано запам'ятати дане правило на майбутнє, і застосовувати його також для написання тестів,
+оскільки в такому разі вхідним файлом вже буде файл тесту, а не `dist/main.js`. Наприклад, якщо
+ви будете використовувати [jest][10] у якості фреймворку для тестів, а файл
+`path/to/test-file.js` міститиме скомпільований тест, то щоб запустити його ось так:
+
+```bash
+jest path/to/test-file.js
+```
+
+у даному файлі повинен бути імпорт `reflect-metadata`.
+
+Проглядаючи далі файл `src/main.ts`, ми бачимо, що створюється інстанс класу `Application`, а у
+якості аргументу для методу `bootstrap()` передається `AppModule`. Тут `AppModule` є кореневим
+модулем, до якого вже підв'язуються інші модулі застосунку.
+
+
+[2]: https://github.com/ditsmod/seed
+[4]: ./examples/examples
+[5]: https://raw.githubusercontent.com/ts-stack/vs-webframework/main/req-per-sec-frameworks.png
+[6]: https://github.com/nestjsx/nest-router
+[8]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
+[9]: https://github.com/angular/angular
+[10]: https://jestjs.io/en/
+[11]: https://github.com/ts-stack/di
+[12]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
+[14]: https://github.com/ditsmod/seed/blob/901f247/src/app/app.module.ts#L18

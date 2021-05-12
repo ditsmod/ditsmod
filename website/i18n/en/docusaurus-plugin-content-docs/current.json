@@ -1,0 +1,18 @@
+{
+  "version.label": {
+    "message": "(en) Next",
+    "description": "The label for version current"
+  },
+  "sidebar.tutorialSidebar.category.Базова документація": {
+    "message": "(en) Базова документація",
+    "description": "The label for category Базова документація in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Ditsmod-розширення": {
+    "message": "(en) Ditsmod-розширення",
+    "description": "The label for category Ditsmod-розширення in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Приклади застосунків": {
+    "message": "(en) Приклади застосунків",
+    "description": "The label for category Приклади застосунків in sidebar tutorialSidebar"
+  }
+}

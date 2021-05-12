@@ -1,3 +1,7 @@
+---
+sidebar_position: 13
+---
+
 # Приклади застосунків
 
 Тека [examples][100] містить приклади застосування Ditsmod для типових випадків.
@@ -242,7 +246,7 @@ curl -isS localhost:8080
 [7]: https://github.com/pinojs/pino
 
 [100]: https://github.com/ditsmod/core/tree/main/examples
-[101]: ./README.md#інжектори-di
-[102]: ./README.md#експорт-провайдерів-із-кореневого-модуля
-[103]: ./README.md#guards
-[104]: ./README.md#токени-di
+[101]: ../tutorial-basics/dependency-injection#інжектори-di
+[102]: ../tutorial-basics/exports-and-imports#експорт-провайдерів-із-кореневого-модуля
+[103]: ../tutorial-basics/guards
+[104]: ../tutorial-basics/dependency-injection#токени-di

@@ -1,0 +1,14 @@
+{
+  "title": {
+    "message": "(en) Ditsmod docs",
+    "description": "The title in the navbar"
+  },
+  "item.label.Tutorial": {
+    "message": "(en) Tutorial",
+    "description": "Navbar item with label Tutorial"
+  },
+  "item.label.GitHub": {
+    "message": "(en) GitHub",
+    "description": "Navbar item with label GitHub"
+  }
+}

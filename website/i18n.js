@@ -13,17 +13,17 @@ const locales = [
 ];
 
 const localeConfigs = {
-  en: {
-    label: 'English',
-  },
   uk: {
     label: 'Українська',
+  },
+  en: {
+    label: 'English',
   },
 };
 
 // Docusaurus 2 i18n config
 module.exports = {
-  defaultLocale: 'en',
+  defaultLocale: 'uk',
   locales,
   localeConfigs,
 };
