@@ -37,7 +37,7 @@ curl -isS localhost:8080
 
 See also [seed for @ditsmod/seed project](https://github.com/ditsmod/seed).
 
-[The Ukrainian version of the documentation](https://ditsmod.github.io/ditsmod/).
+[The Ukrainian version of the documentation](https://ditsmod.github.io/).
 
 [1]: https://github.com/ts-stack/di
 [2]: https://github.com/ditsmod/seed
