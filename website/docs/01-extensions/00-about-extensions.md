@@ -2,7 +2,7 @@
 sidebar_position: 0
 ---
 
-# Ознайомлення
+# Ditsmod-розширення
 
 Ditsmod має спеціальний API для розширення функціональності `@ditsmod/core`. Щоб скористатись
 ним, необхідно імпортувати константу `edk` (скорочення від "Extensions Development Kit"):

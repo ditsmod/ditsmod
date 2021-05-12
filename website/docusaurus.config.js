@@ -4,8 +4,8 @@ const i18n = require('./i18n');
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
   i18n,
-  title: 'Ditsmod docs',
-  // tagline: 'Ditsmod are cool',
+  title: 'Ditsmod',
+  tagline: 'Масштабовний та швидкий веб-фреймворк для Node.js, написаний на TypeScript',
   url: 'https://ditsmod.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -20,7 +20,7 @@ module.exports = {
       // anonymizeIP: true, // Should IPs be anonymized?
     },
     navbar: {
-      title: 'Ditsmod docs',
+      title: 'Головна',
       logo: {
         alt: 'Ditsmod Logo',
         src: 'img/logo.svg',
@@ -30,7 +30,7 @@ module.exports = {
           type: 'doc',
           docId: 'intro',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Документація',
         },
         // {to: '/blog', label: 'Blog', position: 'left'},
         {

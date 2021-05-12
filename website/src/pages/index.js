@@ -17,7 +17,7 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             to="/docs/intro">
-            Ditsmod Tutorial - 5min ⏱️
+            Швидкий старт - 5хв ⏱️
           </Link>
         </div>
       </div>
