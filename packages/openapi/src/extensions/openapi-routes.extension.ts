@@ -39,14 +39,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
           if (isOasRoute1(oasRoute)) {
             guards.push(...this.normalizeGuards(oasRoute.guards));
           }
-          const allProvidersPerReq = this.addProvidersPerReq(
-            moduleName,
-            controller,
-            ctrlDecorator.providersPerReq,
-            methodName,
-            guards,
-            providersPerReq.slice()
-          );
+          providersPerReq.push(...(ctrlDecorator.providersPerReq || []), controller);
           const { httpMethod, path: controllerPath, operationObject } = oasRoute;
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const path = this.getPath(prefix, controllerPath);
@@ -78,7 +71,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
             moduleName,
             providersPerMod,
             providersPerRou,
-            providersPerReq: allProvidersPerReq,
+            providersPerReq,
             path,
             httpMethod,
           });

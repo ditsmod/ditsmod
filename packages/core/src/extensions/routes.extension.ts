@@ -1,10 +1,9 @@
 import { Inject, Injectable, ReflectiveInjector, TypeProvider } from '@ts-stack/di';
 
 import { APP_METADATA_MAP } from '../constans';
-import { BodyParserConfig } from '../models/body-parser-config';
 import { RootMetadata } from '../models/root-metadata';
 import { MetadataPerMod } from '../types/metadata-per-mod';
-import { AppMetadataMap, GuardItem, HttpMethod, NormalizedGuard, ServiceProvider, Extension } from '../types/mix';
+import { AppMetadataMap, GuardItem, NormalizedGuard, ServiceProvider, Extension } from '../types/mix';
 import { RawRouteMeta, RouteMeta } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
 
@@ -57,14 +56,7 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
           const route = decoratorMetadata.value;
           const ctrlDecorator = ctrlDecorValues.find(isController);
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
-          const allProvidersPerReq = this.addProvidersPerReq(
-            moduleName,
-            controller,
-            ctrlDecorator.providersPerReq,
-            methodName,
-            guards,
-            providersPerReq
-          );
+          providersPerReq.push(...(ctrlDecorator.providersPerReq || []), controller);
           providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const { path: controllerPath, httpMethod } = route;
@@ -84,7 +76,7 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
             path,
             providersPerMod,
             providersPerRou,
-            providersPerReq: allProvidersPerReq,
+            providersPerReq,
           });
         }
       }
@@ -117,31 +109,5 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
         return { guard: item } as NormalizedGuard;
       }
     });
-  }
-
-  protected addProvidersPerReq(
-    moduleName: string,
-    Ctrl: TypeProvider,
-    providersPerReq: ServiceProvider[],
-    methodName: string,
-    normalizedGuards: NormalizedGuard[],
-    allProvidersPerReq: ServiceProvider[]
-  ) {
-    const guards = normalizedGuards.map((item) => item.guard);
-
-    for (const Guard of guards) {
-      const type = typeof Guard?.prototype.canActivate;
-      if (type != 'function') {
-        const guardName = Guard.name || 'Guard';
-        throw new TypeError(
-          `${moduleName} --> ${Ctrl.name} --> ${methodName}(): ${guardName} must have canActivate method, got: ${type}`
-        );
-      }
-    }
-
-    const providersOfController = providersPerReq || [];
-    allProvidersPerReq.unshift(Ctrl, ...guards, ...providersOfController);
-
-    return allProvidersPerReq;
   }
 }
