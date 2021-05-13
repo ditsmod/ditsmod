@@ -5,7 +5,7 @@ const i18n = require('./i18n');
 module.exports = {
   i18n,
   title: 'Ditsmod',
-  tagline: 'Масштабовний та швидкий веб-фреймворк для Node.js, написаний на TypeScript',
+  tagline: 'Розширюваний та швидкий веб-фреймворк для Node.js, написаний на TypeScript',
   url: 'https://ditsmod.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -14,7 +14,7 @@ module.exports = {
   organizationName: 'ditsmod', // Usually your GitHub org/user name.
   projectName: 'ditsmod.github.io', // Usually your repo name.
   themeConfig: {
-    googleAnalytics: {
+    gtag: {
       trackingID: 'G-JB9Z2HZH02',
       // Optional fields.
       // anonymizeIP: true, // Should IPs be anonymized?
@@ -32,15 +32,16 @@ module.exports = {
           position: 'left',
           label: 'Документація',
         },
+        {
+          href: 'https://github.com/ditsmod/ditsmod',
+          position: 'right',
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository',
+        },
         // {to: '/blog', label: 'Blog', position: 'left'},
         // {
         //   type: 'docsVersionDropdown',
         // },
-        {
-          href: 'https://github.com/ditsmod/ditsmod',
-          label: 'GitHub',
-          position: 'right',
-        },
         {
           type: 'localeDropdown',
           position: 'right',

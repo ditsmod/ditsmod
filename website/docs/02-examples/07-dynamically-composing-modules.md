@@ -1,4 +1,4 @@
-# 7-dynamically-composing-modules
+# 07-composing-modules
 
 Щоб спробувати даний приклад, необхідно спочатку [підготувати передумови](./prerequisite).
 

@@ -5,7 +5,7 @@ import styles from './HomepageFeatures.module.css';
 const FeatureList = [
   {
     title: 'Dependency Injection',
-    Svg: require('../../static/img/undraw_docusaurus_mountain.svg').default,
+    Svg: require('../../static/img/di.svg').default,
     description: (
       <>
         Ditsmod має ієрархічний Dependency Injection, що дуже суттєво срощує розширення та тестування
@@ -15,7 +15,7 @@ const FeatureList = [
   },
   {
     title: 'TypeScript',
-    Svg: require('../../static/img/undraw_docusaurus_tree.svg').default,
+    Svg: require('../../static/img/ts.svg').default,
     description: (
       <>
         Ditsmod написаний на TypeScript, який дозволяє помітно зменшити кількість
@@ -26,7 +26,7 @@ const FeatureList = [
   },
   {
     title: 'Modularity',
-    Svg: require('../../static/img/undraw_docusaurus_react.svg').default,
+    Svg: require('../../static/img/mod.svg').default,
     description: (
       <>
         Масштабованість застосунків реалізується завдяки модульній архітектурі Ditsmod.
