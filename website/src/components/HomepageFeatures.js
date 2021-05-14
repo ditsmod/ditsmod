@@ -18,7 +18,7 @@ const FeatureList = [
     Svg: require('../../static/img/ts.svg').default,
     description: (
       <>
-        Ditsmod написаний на TypeScript, який дозволяє помітно зменшити кількість
+        Ditsmod написаний на TypeScript, що дозволяє помітно зменшити кількість
         помилок в коді, а також дозволяє на порядок покращити користувацький досвід
         написання коду у вашій IDE.
       </>

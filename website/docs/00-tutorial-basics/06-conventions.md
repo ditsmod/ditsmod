@@ -6,10 +6,19 @@ sidebar_position: 6
 
 Тут наводиться рекомендований формат у вигляді пари "назва файлу" - "ім'я класу":
 
-- `hello-world.controller` - `HelloWorldController`;
-- `hello-world.service` - `HelloWorldService`;
-- `hello-world.module` - `HelloWorldModule`;
-- `auth.guard` - `AuthGuard`;
+- `hello-world.module.ts` - `HelloWorldModule`;
+- `hello-world.controller.ts` - `HelloWorldController`;
+- `hello-world.service.ts` - `HelloWorldService`;
+- `auth.guard.ts` - `AuthGuard`.
+
+Тобто,
+
+1. назви будь-яких файлів повинні містити тільки маленькі букви;
+2. якщо у назві файлу є декілька слів, варто розділяти їх через дефіз;
+3. ролі класів повинні йти перед розширенням і перед ними повинна ставитись крапка
+(`*.module.ts`, `*.controller.ts`, `*.service.ts`, `*.guard.ts`);
+4. назви класів повинні починатись з великої літери, і містити точно такі ж слова, що є у назві
+їхніх файлів, але у стилі [CamelCase][1].
 
 Кореневий модуль рекомендується називати `AppModule`.
 
@@ -24,4 +33,6 @@ import { AuthService } from './auth.service';
 import { Permission } from './permission';
 ```
 
-Розширення повинні мати закінчення `_EXTENSIONS`, наприклад `MY_EXTENSIONS`.
+Токени груп розширень повинні мати закінчення `_EXTENSIONS`, наприклад `MY_EXTENSIONS`.
+
+[1]: https://uk.wikipedia.org/wiki/%D0%92%D0%B5%D1%80%D0%B1%D0%BB%D1%8E%D0%B6%D0%B8%D0%B9_%D1%80%D0%B5%D0%B3%D1%96%D1%81%D1%82%D1%80

@@ -1,3 +1,5 @@
+Тут зібрана різна некатегорізована інформація (треба знайти де в документації їй місце).
+
 # Додаткова інфа
 
 ## Автопарсинг тіла запиту
@@ -48,8 +50,12 @@ export class SomeModule {}
 Для цього достатньо розширити клас `Log` та підмінити його через DI:
 
 ```ts
+import { Injectable, RootModule, Log } from '@ditsmod/core';
+import { RouterModule } from '@ditsmod/router';
+
 import { HelloWorldController } from './hello-world.controller';
 
+@Injectable()
 class MyLog extends Log {
   /**
    * `serverName` is running at `host`:`port`.
@@ -60,9 +66,9 @@ class MyLog extends Log {
 }
 
 @RootModule({
+  imports: [RouterModule],
   controllers: [HelloWorldController],
   providersPerApp: [
-    { provide: Router, useClass: DefaultRouter },
     { provide: Log, useClass: MyLog }, // Here set your new MyLog
   ],
 })
@@ -105,7 +111,8 @@ this.log.youForgotRegisterExtension('warn', [moduleName, p.provide, p.useClass.n
 - об'єднання глобальних та локальних провайдерів
 - перевірка провайдерів на колізії
 - збору метаданих модуля та усіх його контролерів
-# ModuleManager
+
+## ModuleManager
 
 Цей сервіс призначено для:
 
