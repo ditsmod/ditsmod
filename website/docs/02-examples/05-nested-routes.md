@@ -13,6 +13,8 @@ yarn start5
 З другого терміналу:
 
 ```bash
-curl -isS localhost:8080/api/admin
-curl -isS localhost:8080/api/user
+curl -isS localhost:8080/api/posts
+curl -isS localhost:8080/api/posts/123
+curl -isS localhost:8080/api/posts/123/comments
+curl -isS localhost:8080/api/posts/123/comments/456
 ```

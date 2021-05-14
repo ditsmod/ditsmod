@@ -9,7 +9,7 @@
 - [pino][7];
 - [winston][5];
 
-На практиці такий приклад наврядчи може знадобитись, але в ньому демонструється робота
+На практиці такий приклад наврядчи може знадобитись, але він демонструє роботу
 ієрархічної архітектури DI, правила експорту/імпорту провайдерів, механізм підміни by default
 логера та by default конфігурації для логера.
 
@@ -40,6 +40,7 @@ yarn start4
 curl -isS localhost:8080
 curl -isS localhost:8080/pino
 curl -isS localhost:8080/winston
+curl -isS localhost:8080/bunyan
 ```
 
 [5]: https://github.com/winstonjs/winston
