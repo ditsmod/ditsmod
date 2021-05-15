@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// The top-30 locales on Crowdin are enabled
-// but we enable only a subset of those
 const locales = [
   'en',
   'uk',

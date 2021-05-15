@@ -13,10 +13,8 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "fetchSupporters": "node fetchSupporters.js",
-    "netlify:ci:production": "yarn netlify:prepare && yarn netlify:crowdin && yarn build",
     "netlify:ci:deployPreview": "yarn netlify:prepare && yarn build -l en",
-    "netlify:prepare": "yarn fetchSupporters && yarn build:js",
-    "netlify:crowdin": "yarn write-translations && yarn crowdin:upload && yarn crowdin:download"
+    "netlify:prepare": "yarn fetchSupporters && yarn build:js"
   },
   "resolutions": {
     "trim": "^0.0.3"
@@ -43,8 +41,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@crowdin/cli": "^3.6.0"
   }
 }
