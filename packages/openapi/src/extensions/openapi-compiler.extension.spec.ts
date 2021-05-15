@@ -32,7 +32,7 @@ describe('OpenapiCompilerExtension', () => {
 
   beforeEach(() => {
     const injector = ReflectiveInjector.resolveAndCreate([{ provide: OAS_OBJECT, useValue: DEFAULT_OAS_OBJECT }]);
-    mock = new MockOpenapiCompilerExtension(null, injector);
+    mock = new MockOpenapiCompilerExtension(null as any, injector);
   });
 
   describe('setSecurityInfo()', () => {

@@ -55,7 +55,7 @@ export class Parameters {
   // prettier-ignore
   getParams<T extends Type<edk.AnyObj>>(paramsIn?: RequiredParamsIn, isRequired?: boolean, modelOrString?: T | string, ...params: (KeyOf<T> | string)[]): XParameterObject[] {
     if (isRequired !== undefined) {
-      this.setParams(isRequired, paramsIn, modelOrString, ...params);
+      this.setParams(isRequired, paramsIn!, modelOrString!, ...params);
     }
     return [...this.parameters];
   }
@@ -137,7 +137,7 @@ export class Parameters {
       if (propertyDecorator) {
         const propertyType = propertyDecorator[0];
         const schemas = propertyDecorator.filter(isColumn).map(val => val.schema);
-        paramObject.schema = Object.assign({}, ...schemas, paramObject.schema);
+        paramObject.schema = Object.assign({}, ...schemas, paramObject.schema) as XSchemaObject<any>;
         this.setColumnType(paramObject.schema, propertyType);
         if (paramObject.schema.type == 'array' && !paramObject.schema.items) {
           paramObject.schema.items = {};
@@ -169,5 +169,5 @@ export function getParams(paramsIn: OptionalParamsIn, isRequired: boolean, ...pa
 // prettier-ignore
 export function getParams<T extends Type<edk.AnyObj>>(paramsIn?: any, isRequired?: boolean, modelOrString?: any, ...params: (KeyOf<T> | string)[]
 ) {
-  return new Parameters().getParams(paramsIn, isRequired, modelOrString, ...params);
+  return new Parameters().getParams(paramsIn, isRequired!, modelOrString, ...params);
 }

@@ -33,7 +33,6 @@ export function getTokensCollisions(uniqDuplTokens: any[], providers: ServicePro
       }
 
       const currProvider = duplProviders[i];
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       if (!prevProvider!) {
         prevProvider = currProvider;
       }

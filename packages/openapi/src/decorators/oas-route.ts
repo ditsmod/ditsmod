@@ -32,7 +32,7 @@ export interface OasRouteMetadata2 {
 }
 
 function oasRouteCallback(
-  httpMethod?: HttpMethod,
+  httpMethod: HttpMethod,
   path?: string,
   guardsOrOperationObj?: XOperationObject | GuardItem[],
   operationObject?: XOperationObject

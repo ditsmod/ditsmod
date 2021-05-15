@@ -8,6 +8,7 @@
   "rules": {
     "semi": ["error", "always"],
     "quotes": ["error", "single", {"avoidEscape": true}],
+    "@typescript-eslint/no-non-null-assertion": false,
     "@typescript-eslint/no-empty-function": 0,
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,

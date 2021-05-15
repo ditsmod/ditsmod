@@ -30,5 +30,5 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
    * 
    * You must follow this rule: data for one extension - one key in `additionalMeta` object.
    */
-  extensionsMeta? = {} as A;
+  extensionsMeta = {} as A;
 }

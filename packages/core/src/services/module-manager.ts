@@ -39,7 +39,6 @@ export class ModuleManager {
 
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
     const meta = this.getRawMetadata<T, A>(moduleId, throwErrOnNotFound);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return this.copyMeta(meta!);
   }
 

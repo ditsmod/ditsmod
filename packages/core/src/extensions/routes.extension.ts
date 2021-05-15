@@ -92,7 +92,7 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
    * - If prefix `/api/posts/:postId` and route path `:postId`, this method returns path `/api/posts/:postId`.
    * - If prefix `/api/posts` and route path `:postId`, this method returns `/api/posts/:postId`
    */
-  protected getPath(prefix: string, path: string) {
+  protected getPath(prefix?: string, path?: string) {
     const prefixLastPart = prefix?.split('/').slice(-1)[0];
     if (prefixLastPart?.charAt(0) == ':') {
       const reducedPrefix = prefix?.split('/').slice(0, -1).join('/');
@@ -102,7 +102,7 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
     }
   }
 
-  protected normalizeGuards(guards: GuardItem[]) {
+  protected normalizeGuards(guards?: GuardItem[]) {
     return (guards || []).map((item) => {
       if (Array.isArray(item)) {
         return { guard: item[0], params: item.slice(1) } as NormalizedGuard;

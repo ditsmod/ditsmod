@@ -27,11 +27,13 @@ export class Content {
    */
   set<T extends mediaTypeName = mediaTypeName>(contentOptions: ContentOptions<T>) {
     const { mediaType, mediaTypeParams, model } = contentOptions;
-    let schema: SchemaObject;
+    let schema: SchemaObject = {};
     if (mediaType.includes('text/')) {
       schema = { type: 'string' } as SchemaObject;
     } else {
-      schema = this.getSchema(model);
+      if (model) {
+        schema = this.getSchema(model);
+      }
     }
 
     const params = mediaTypeParams ? `;${mediaTypeParams}` : '';
@@ -57,6 +59,9 @@ export class Content {
         continue;
       }
       const propertyType = modelMeta[property][0];
+      if (!schema.properties) {
+        schema.properties = {};
+      }
       schema.properties[property] = this.patchPropertySchema(model, propertyType, decoratorItem);
     }
 
@@ -107,7 +112,11 @@ export class Content {
         schema = { type: 'array', description, items: {} } as SchemaObject;
       } else {
         this.scanInProgress.add(model);
-        schema.items = this.getSchema(arrayModel);
+        if (arrayModel) {
+          schema.items = this.getSchema(arrayModel);
+        } else {
+          schema.items = [];
+        }
       }
     }
     return schema;

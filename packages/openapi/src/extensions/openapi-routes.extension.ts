@@ -34,7 +34,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
           }
           const providersPerRou = moduleMetadata.providersPerRou.slice();
           const providersPerReq = moduleMetadata.providersPerReq.slice();
-          const ctrlDecorator = ctrlDecorValues.find(edk.isController);
+          const ctrlDecorator = ctrlDecorValues.find(edk.isController) as edk.ControllerMetadata;
           const guards: edk.NormalizedGuard[] = [...guardsPerMod];
           if (isOasRoute1(oasRoute)) {
             guards.push(...this.normalizeGuards(oasRoute.guards));
@@ -85,8 +85,8 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
   protected mergeParams(
     httpMethod: HttpMethod,
     path: string,
-    prefixParams: (XParameterObject<any> | ReferenceObject)[],
-    params: (XParameterObject<any> | ReferenceObject)[]
+    prefixParams?: (XParameterObject<any> | ReferenceObject)[],
+    params?: (XParameterObject<any> | ReferenceObject)[]
   ) {
     params = [...(prefixParams || []), ...(params || [])];
     const referenceObjects: ReferenceObject[] = [];

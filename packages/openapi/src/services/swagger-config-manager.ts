@@ -59,15 +59,17 @@ export class SwaggerConfigManager {
     const compiler = webpack(this.getWebpackConfig());
 
     const promise = new Promise<void>((resolve, reject) => {
-      compiler.run((err, stats) => {
+      compiler.run((err, statsOrUndefined) => {
         if (err) {
           reject(err);
         }
 
+        const stats = statsOrUndefined as webpack.Stats;
+
         const info = stats.toJson();
 
         if (stats.hasErrors()) {
-          reject(info.errors[0]);
+          reject(info.errors && info.errors[0]);
         }
 
         if (stats.hasWarnings()) {

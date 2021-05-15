@@ -82,8 +82,8 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
       oasGuardMetadataArr.forEach((oasGuardMetadata, index) => {
         let securityName = oasGuardMetadataArr.length > 1 ? `${guardName}_${index}` : guardName;
         securityName = securityName.charAt(0).toLowerCase() + securityName.slice(1);
-        this.oasObject.components.securitySchemes = { ...(this.oasObject.components.securitySchemes || {}) };
-        this.oasObject.components.securitySchemes[securityName] = oasGuardMetadata.securitySchemeObject;
+        this.oasObject.components!.securitySchemes = { ...(this.oasObject.components!.securitySchemes || {}) };
+        this.oasObject.components!.securitySchemes[securityName] = oasGuardMetadata.securitySchemeObject;
         let scopes = normalizedGuard.params || [];
         if (!scopes.some((scope) => typeof scope == 'string')) {
           scopes = [];
@@ -104,15 +104,15 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
   ) {
     operationObject.tags = [...(operationObject.tags || [])];
     newTags.forEach((newTag) => {
-      if (!operationObject.tags.includes(newTag)) {
-        operationObject.tags.push(newTag);
+      if (!operationObject.tags?.includes(newTag)) {
+        operationObject.tags?.push(newTag);
       }
     });
     operationObject.security = [...(operationObject.security || [])];
     newSecurities.forEach((newSecurities) => {
       const newSecurityName = Object.keys(newSecurities)[0];
-      if (!operationObject.security.find((securities) => Object.keys(securities)[0] == newSecurityName)) {
-        operationObject.security.push(newSecurities);
+      if (!operationObject.security?.find((securities) => Object.keys(securities)[0] == newSecurityName)) {
+        operationObject.security?.push(newSecurities);
       }
     });
     operationObject.responses = { ...(operationObject.responses || {}), ...responses };
