@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@ts-stack/di';
 import { BodyParserConfig, Logger, NODE_REQ, NodeRequest } from '@ditsmod/core';
-import { parse } from 'get-body';
+import { parse, Headers} from 'get-body';
 
 
 @Injectable()
@@ -11,10 +11,10 @@ export class DefaultBodyParser {
     protected logger: Logger
   ) {}
 
-  getBody(): Promise<any> {
-    if (!this.config.acceptHeaders.some(type => this.nodeReq.headers['content-type'].includes(type))) {
+  async getBody(): Promise<any> {
+    if (!this.config.acceptHeaders.some(type => this.nodeReq.headers['content-type']?.includes(type))) {
       return;
     }
-    return parse(this.nodeReq, this.nodeReq.headers, { limit: this.config.maxBodySize });
+    return parse(this.nodeReq, this.nodeReq.headers as Headers, { limit: this.config.maxBodySize });
   }
 }
