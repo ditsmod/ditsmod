@@ -4,10 +4,6 @@ import { AnyObj } from '../types/mix';
  * @todo Check why `return Object.freeze(obj)` break module work in some cases.
  */
 export function deepFreeze<T extends AnyObj | AnyObj[]>(obj: T): T {
-  if (!obj) {
-    return;
-  }
-
   if (Array.isArray(obj)) {
     for (const item of obj) {
       deepFreeze(item);

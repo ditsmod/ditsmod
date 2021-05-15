@@ -248,7 +248,7 @@ export class ModuleFactory {
     this.checkProvidersCollisions();
   }
 
-  protected normalizeGuards(guards: GuardItem[]) {
+  protected normalizeGuards(guards?: GuardItem[]) {
     return (guards || []).map((item) => {
       if (Array.isArray(item)) {
         return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
@@ -313,7 +313,7 @@ export class ModuleFactory {
     this.mergeWithAllImportedProviders(isStarter);
   }
 
-  protected mergeWithAllImportedProviders(isStarter: boolean) {
+  protected mergeWithAllImportedProviders(isStarter: boolean = false) {
     let perMod = this.importedProvidersPerMod;
     let perRou = this.importedProvidersPerRou;
     let perReq = this.importedProvidersPerReq;

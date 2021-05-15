@@ -29,9 +29,9 @@ targetObject = JSON.parse(JSON.stringify(targetObject));
  */
 export function pickAllPropertiesAsGetters<T extends AnyObj>(targetObject: T, ...sourceObjects: AnyObj[]) {
   if (sourceObjects.length) {
-    return pickPropertiesAsGetters(targetObject, null, ...sourceObjects);
+    return pickPropertiesAsGetters(targetObject, {}, ...sourceObjects);
   }
-  return pickPropertiesAsGetters(targetObject, null, targetObject);
+  return pickPropertiesAsGetters(targetObject, {}, targetObject);
 }
 
 /**
@@ -63,7 +63,7 @@ export function pickPropertiesAsGetters<T extends AnyObj, K extends Extract<keyo
 
   sourceObjects.forEach((sourceObj) => {
     sourceObj = sourceObj || {};
-    Object.keys(targetObject)
+    (Object.keys(targetObject) as K[])
       .filter(callback)
       .forEach((prop) => {
         if (sourceObj.hasOwnProperty(prop)) {

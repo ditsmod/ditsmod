@@ -1,9 +1,10 @@
-import { Inject, Injectable, ReflectiveInjector, TypeProvider } from '@ts-stack/di';
+import { Inject, Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { APP_METADATA_MAP } from '../constans';
+import { ControllerMetadata } from '../decorators/controller';
 import { RootMetadata } from '../models/root-metadata';
 import { MetadataPerMod } from '../types/metadata-per-mod';
-import { AppMetadataMap, GuardItem, NormalizedGuard, ServiceProvider, Extension } from '../types/mix';
+import { AppMetadataMap, GuardItem, NormalizedGuard, Extension } from '../types/mix';
 import { RawRouteMeta, RouteMeta } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
 
@@ -54,7 +55,7 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
           const providersPerRou = moduleMetadata.providersPerRou.slice();
           const providersPerReq = moduleMetadata.providersPerReq.slice();
           const route = decoratorMetadata.value;
-          const ctrlDecorator = ctrlDecorValues.find(isController);
+          const ctrlDecorator = ctrlDecorValues.find(isController) as ControllerMetadata;
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
           providersPerReq.push(...(ctrlDecorator.providersPerReq || []), controller);
           providersPerRou.push(...(ctrlDecorator.providersPerRou || []));

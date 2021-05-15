@@ -24,7 +24,7 @@ export function getTokensCollisions(uniqDuplTokens: any[], providers: ServicePro
 
   const normDuplProviders = normalizeProviders(duplProviders);
 
-  return uniqDuplTokens.filter((dulpToken) => {
+  return uniqDuplTokens.filter((dulpToken): boolean | void => {
     let prevProvider: ServiceProvider;
 
     for (let i = 0; i < normDuplProviders.length; i++) {
@@ -33,7 +33,8 @@ export function getTokensCollisions(uniqDuplTokens: any[], providers: ServicePro
       }
 
       const currProvider = duplProviders[i];
-      if (!prevProvider) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      if (!prevProvider!) {
         prevProvider = currProvider;
       }
 

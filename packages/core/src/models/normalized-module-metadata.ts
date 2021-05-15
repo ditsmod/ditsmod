@@ -17,14 +17,14 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
    * The module ID.
    */
   id?: string = '';
-  importsModules?: ModuleType[] = [];
-  importsWithParams?: ModuleWithParams[] = [];
-  controllers?: ControllerType[] = [];
-  extensions?: InjectionToken<Extension<any>[]>[] = [];
+  importsModules: ModuleType[] = [];
+  importsWithParams: ModuleWithParams[] = [];
+  controllers: ControllerType[] = [];
+  extensions: InjectionToken<Extension<any>[]>[] = [];
   ngMetadataName: string;
-  exportsModules?: ModuleType[] = [];
-  exportsWithParams?: ModuleWithParams[] = [];
-  exportsProviders?: ServiceProvider[] = [];
+  exportsModules: ModuleType[] = [];
+  exportsWithParams: ModuleWithParams[] = [];
+  exportsProviders: ServiceProvider[] = [];
   /**
    * This property allows you to pass any information to extensions.
    * 

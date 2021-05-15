@@ -10,7 +10,7 @@ import { flatten } from './ng-utils';
 
 describe('flatten', () => {
   it('should convert undefined to empty array', () => {
-    expect(flatten(undefined)).toEqual([]);
+    expect(flatten(undefined as any)).toEqual([]);
   });
 
   it('should clone an array', () => {

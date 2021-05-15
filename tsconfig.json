@@ -5,10 +5,12 @@
     "sourceMap": true,
     "composite": true,
 
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitReturns": true,
     "skipLibCheck": true,
     "target": "es2020",
     "module": "commonjs",
-    "strict": false,
     "strictPropertyInitialization": false,
     "noImplicitAny": true,
     "emitDecoratorMetadata": true,

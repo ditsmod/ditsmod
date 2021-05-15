@@ -39,7 +39,8 @@ export class ModuleManager {
 
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
     const meta = this.getRawMetadata<T, A>(moduleId, throwErrOnNotFound);
-    return this.copyMeta(meta);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this.copyMeta(meta!);
   }
 
   /**
@@ -48,7 +49,7 @@ export class ModuleManager {
    * @param inputModule Module to be added.
    * @param targetModuleId Module ID to which the input module will be added.
    */
-  addImport(inputModule: ModuleType | ModuleWithParams, targetModuleId: ModuleId = 'root'): boolean {
+  addImport(inputModule: ModuleType | ModuleWithParams, targetModuleId: ModuleId = 'root'): boolean | void {
     const targetMeta = this.getRawMetadata(targetModuleId);
     if (!targetMeta) {
       const modName = getModuleName(inputModule);
@@ -78,7 +79,7 @@ export class ModuleManager {
   /**
    * @param targetModuleId Module ID from where the input module will be removed.
    */
-  removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean {
+  removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean | void {
     const inputMeta = this.getRawMetadata(inputModuleId);
     if (!inputMeta) {
       const modIdStr = format(inputModuleId);
@@ -162,7 +163,7 @@ export class ModuleManager {
    * @todo Refactor this method to use `deepFreeze()`.
    */
   protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(meta: NormalizedModuleMetadata<T, A>) {
-    meta = { ...meta };
+    meta = { ...(meta || {}) };
     meta.importsModules = meta.importsModules.slice();
     meta.importsWithParams = meta.importsWithParams.slice();
     meta.controllers = meta.controllers.slice();
@@ -177,11 +178,16 @@ export class ModuleManager {
   /**
    * Returns normalized metadata, but without `this.copyMeta()`.
    */
-  protected getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
-    let meta: NormalizedModuleMetadata<T, A>;
+  protected getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+    moduleId: ModuleId,
+    throwErrOnNotFound?: boolean
+  ) {
+    let meta: NormalizedModuleMetadata<T, A> | undefined;
     if (typeof moduleId == 'string') {
       const mapId = this.mapId.get(moduleId);
-      meta = this.map.get(mapId) as NormalizedModuleMetadata<T, A>;
+      if (mapId) {
+        meta = this.map.get(mapId) as NormalizedModuleMetadata<T, A>;
+      }
     } else {
       meta = this.map.get(moduleId) as NormalizedModuleMetadata<T, A>;
     }
@@ -225,12 +231,16 @@ export class ModuleManager {
    */
   protected includesInSomeModule(inputModuleId: ModuleId, targetModuleId: ModuleId): boolean {
     const targetMeta = this.getRawMetadata(targetModuleId);
-    const importsOrExports = [
-      ...targetMeta.importsModules,
-      ...targetMeta.importsWithParams,
-      ...targetMeta.exportsModules,
-      ...targetMeta.exportsWithParams,
-    ];
+    const importsOrExports: (ModuleType<AnyObj> | ModuleWithParams<AnyObj>)[] = [];
+
+    if (targetMeta) {
+      importsOrExports.push(
+        ...targetMeta.importsModules,
+        ...targetMeta.importsWithParams,
+        ...targetMeta.exportsModules,
+        ...targetMeta.exportsWithParams
+      );
+    }
 
     return (
       importsOrExports.some((modOrObj) => {

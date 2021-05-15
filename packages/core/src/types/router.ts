@@ -11,7 +11,7 @@ export class Router {
   }
 
   find(method: HttpMethod, path: string): RouterReturns {
-    return { handle: null, params: null };
+    return { handle: null as any, params: null as any };
   }
 }
 

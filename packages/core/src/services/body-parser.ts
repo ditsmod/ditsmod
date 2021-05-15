@@ -13,7 +13,7 @@ export class BodyParser {
     protected logger: Logger
   ) {}
 
-  getBody(): Promise<any> {
+  async getBody(): Promise<any> {
     return;
   }
 }

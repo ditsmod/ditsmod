@@ -37,7 +37,7 @@ export class Response<T = any> {
       this.setContentType('text/plain; charset=utf-8');
     }
     this.nodeRes.statusCode = statusCode;
-    this.nodeRes.end(data);
+    this.nodeRes.end(data || '');
   }
 
   /**

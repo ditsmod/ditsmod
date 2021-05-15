@@ -23,8 +23,8 @@ export class DefaultHttpFrontend implements HttpFrontend {
       }
       if (this.pathParamsArr) {
         this.req.pathParamsArr = this.pathParamsArr;
-        const pathParams: AnyObj = this.pathParamsArr?.length ? {} : undefined;
-        this.pathParamsArr?.forEach((param) => (pathParams[param.key] = param.value));
+        const pathParams: AnyObj = {};
+        this.pathParamsArr.forEach((param) => (pathParams[param.key] = param.value));
         this.req.pathParams = pathParams;
       }
     } catch (err) {

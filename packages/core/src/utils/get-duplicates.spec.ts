@@ -16,6 +16,6 @@ describe('getDuplicates()', () => {
   });
 
   it('should return empty array', () => {
-    expect(getDuplicates(undefined)).toEqual([]);
+    expect(getDuplicates(undefined as any)).toEqual([]);
   });
 });

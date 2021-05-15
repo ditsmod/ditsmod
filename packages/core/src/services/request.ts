@@ -39,7 +39,7 @@ export class Request {
    * Check if the request is idempotent.
    */
   isIdempotent() {
-    return ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'].includes(this.nodeReq.method);
+    return ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'].includes(this.nodeReq.method || '');
   }
 
   toString(): string {
