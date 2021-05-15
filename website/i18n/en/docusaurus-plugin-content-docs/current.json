@@ -1,18 +1,18 @@
 {
   "version.label": {
-    "message": "(en) Next",
+    "message": "Next",
     "description": "The label for version current"
   },
   "sidebar.tutorialSidebar.category.Базова документація": {
-    "message": "(en) Базова документація",
+    "message": "Basic docs",
     "description": "The label for category Базова документація in sidebar tutorialSidebar"
   },
   "sidebar.tutorialSidebar.category.Розширення": {
-    "message": "(en) Розширення",
+    "message": "Extensions",
     "description": "The label for category Розширення in sidebar tutorialSidebar"
   },
   "sidebar.tutorialSidebar.category.Приклади застосунків": {
-    "message": "(en) Приклади застосунків",
+    "message": "Application examples",
     "description": "The label for category Приклади застосунків in sidebar tutorialSidebar"
   }
 }

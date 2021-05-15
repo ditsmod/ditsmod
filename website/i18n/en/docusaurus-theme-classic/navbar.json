@@ -1,10 +1,10 @@
 {
   "title": {
-    "message": "(en) Головна",
+    "message": "Home",
     "description": "The title in the navbar"
   },
   "item.label.Документація": {
-    "message": "(en) Документація",
+    "message": "Documentation",
     "description": "Navbar item with label Документація"
   }
 }

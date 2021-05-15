@@ -1,5 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
+import Translate from '@docusaurus/Translate';
+
 import styles from './HomepageFeatures.module.css';
 
 const FeatureList = [
@@ -8,8 +10,9 @@ const FeatureList = [
     Svg: require('../../static/img/di.svg').default,
     description: (
       <>
-        Ditsmod має ієрархічний Dependency Injection, що дуже суттєво срощує розширення та тестування
-        застосунків.
+        <Translate>
+          Ditsmod має ієрархічний Dependency Injection, що дуже суттєво спрощує розширення та тестування застосунків.
+        </Translate>
       </>
     ),
   },
@@ -18,24 +21,21 @@ const FeatureList = [
     Svg: require('../../static/img/ts.svg').default,
     description: (
       <>
-        Ditsmod написаний на TypeScript, що дозволяє помітно зменшити кількість
-        помилок в коді, а також дозволяє на порядок покращити користувацький досвід
-        написання коду у вашій IDE.
+        <Translate>
+          Ditsmod написаний на TypeScript, що дозволяє помітно зменшити кількість помилок в коді, а також дозволяє на
+          порядок покращити користувацький досвід написання коду у вашій IDE.
+        </Translate>
       </>
     ),
   },
   {
     title: 'Modularity',
     Svg: require('../../static/img/mod.svg').default,
-    description: (
-      <>
-        Масштабованість застосунків реалізується завдяки модульній архітектурі Ditsmod.
-      </>
-    ),
+    description: <><Translate>Масштабованість застосунків реалізується завдяки модульній архітектурі Ditsmod.</Translate></>,
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Feature({ Svg, title, description }) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">

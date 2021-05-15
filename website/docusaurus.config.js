@@ -5,7 +5,6 @@ const i18n = require('./i18n');
 module.exports = {
   i18n,
   title: 'Ditsmod',
-  tagline: 'Розширюваний та швидкий веб-фреймворк для Node.js, написаний на TypeScript',
   url: 'https://ditsmod.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',

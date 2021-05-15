@@ -1,158 +1,173 @@
 {
   "theme.NotFound.title": {
-    "message": "(en) Page Not Found",
+    "message": "Page Not Found",
     "description": "The title of the 404 page"
   },
   "theme.NotFound.p1": {
-    "message": "(en) We could not find what you were looking for.",
+    "message": "We could not find what you were looking for.",
     "description": "The first paragraph of the 404 page"
   },
   "theme.NotFound.p2": {
-    "message": "(en) Please contact the owner of the site that linked you to the original URL and let them know their link is broken.",
+    "message": "Please contact the owner of the site that linked you to the original URL and let them know their link is broken.",
     "description": "The 2nd paragraph of the 404 page"
   },
   "theme.AnnouncementBar.closeButtonAriaLabel": {
-    "message": "(en) Close",
+    "message": "Close",
     "description": "The ARIA label for close button of announcement bar"
   },
   "theme.blog.paginator.navAriaLabel": {
-    "message": "(en) Blog list page navigation",
+    "message": "Blog list page navigation",
     "description": "The ARIA label for the blog pagination"
   },
   "theme.blog.paginator.newerEntries": {
-    "message": "(en) Newer Entries",
+    "message": "Newer Entries",
     "description": "The label used to navigate to the newer blog posts page (previous page)"
   },
   "theme.blog.paginator.olderEntries": {
-    "message": "(en) Older Entries",
+    "message": "Older Entries",
     "description": "The label used to navigate to the older blog posts page (next page)"
   },
   "theme.blog.post.readingTime.plurals": {
-    "message": "(en) One min read|{readingTime} min read",
+    "message": "One min read|{readingTime} min read",
     "description": "Pluralized label for \"{readingTime} min read\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
   },
   "theme.tags.tagsListLabel": {
-    "message": "(en) Tags:",
+    "message": "Tags:",
     "description": "The label alongside a tag list"
   },
   "theme.blog.post.readMore": {
-    "message": "(en) Read More",
+    "message": "Read More",
     "description": "The label used in blog post item excerpts to link to full blog posts"
   },
   "theme.blog.post.paginator.navAriaLabel": {
-    "message": "(en) Blog post page navigation",
+    "message": "Blog post page navigation",
     "description": "The ARIA label for the blog posts pagination"
   },
   "theme.blog.post.paginator.newerPost": {
-    "message": "(en) Newer Post",
+    "message": "Newer Post",
     "description": "The blog post button label to navigate to the newer/previous post"
   },
   "theme.blog.post.paginator.olderPost": {
-    "message": "(en) Older Post",
+    "message": "Older Post",
     "description": "The blog post button label to navigate to the older/next post"
   },
   "theme.tags.tagsPageTitle": {
-    "message": "(en) Tags",
+    "message": "Tags",
     "description": "The title of the tag list page"
   },
   "theme.blog.post.plurals": {
-    "message": "(en) One post|{count} posts",
+    "message": "One post|{count} posts",
     "description": "Pluralized label for \"{count} posts\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
   },
   "theme.blog.tagTitle": {
-    "message": "(en) {nPosts} tagged with \"{tagName}\"",
+    "message": "{nPosts} tagged with \"{tagName}\"",
     "description": "The title of the page for a blog tag"
   },
   "theme.tags.tagsPageLink": {
-    "message": "(en) View All Tags",
+    "message": "View All Tags",
     "description": "The label of the link targeting the tag list page"
   },
   "theme.CodeBlock.copyButtonAriaLabel": {
-    "message": "(en) Copy code to clipboard",
+    "message": "Copy code to clipboard",
     "description": "The ARIA label for copy code blocks button"
   },
   "theme.CodeBlock.copied": {
-    "message": "(en) Copied",
+    "message": "Copied",
     "description": "The copied button label on code blocks"
   },
   "theme.CodeBlock.copy": {
-    "message": "(en) Copy",
+    "message": "Copy",
     "description": "The copy button label on code blocks"
   },
   "theme.docs.sidebar.expandButtonTitle": {
-    "message": "(en) Expand sidebar",
+    "message": "Expand sidebar",
     "description": "The ARIA label and title attribute for expand button of doc sidebar"
   },
   "theme.docs.sidebar.expandButtonAriaLabel": {
-    "message": "(en) Expand sidebar",
+    "message": "Expand sidebar",
     "description": "The ARIA label and title attribute for expand button of doc sidebar"
   },
   "theme.docs.paginator.navAriaLabel": {
-    "message": "(en) Docs pages navigation",
+    "message": "Docs pages navigation",
     "description": "The ARIA label for the docs pagination"
   },
   "theme.docs.paginator.previous": {
-    "message": "(en) Previous",
+    "message": "Previous",
     "description": "The label used to navigate to the previous doc"
   },
   "theme.docs.paginator.next": {
-    "message": "(en) Next",
+    "message": "Next",
     "description": "The label used to navigate to the next doc"
   },
   "theme.docs.sidebar.collapseButtonTitle": {
-    "message": "(en) Collapse sidebar",
+    "message": "Collapse sidebar",
     "description": "The title attribute for collapse button of doc sidebar"
   },
   "theme.docs.sidebar.collapseButtonAriaLabel": {
-    "message": "(en) Collapse sidebar",
+    "message": "Collapse sidebar",
     "description": "The title attribute for collapse button of doc sidebar"
   },
   "theme.docs.sidebar.responsiveCloseButtonLabel": {
-    "message": "(en) Close menu",
+    "message": "Close menu",
     "description": "The ARIA label for close button of mobile doc sidebar"
   },
   "theme.docs.sidebar.responsiveOpenButtonLabel": {
-    "message": "(en) Open menu",
+    "message": "Open menu",
     "description": "The ARIA label for open button of mobile doc sidebar"
   },
   "theme.docs.versions.unreleasedVersionLabel": {
-    "message": "(en) This is unreleased documentation for {siteTitle} {versionLabel} version.",
+    "message": "This is unreleased documentation for {siteTitle} {versionLabel} version.",
     "description": "The label used to tell the user that he's browsing an unreleased doc version"
   },
   "theme.docs.versions.unmaintainedVersionLabel": {
-    "message": "(en) This is documentation for {siteTitle} {versionLabel}, which is no longer actively maintained.",
+    "message": "This is documentation for {siteTitle} {versionLabel}, which is no longer actively maintained.",
     "description": "The label used to tell the user that he's browsing an unmaintained doc version"
   },
   "theme.docs.versions.latestVersionSuggestionLabel": {
-    "message": "(en) For up-to-date documentation, see the {latestVersionLink} ({versionLabel}).",
+    "message": "For up-to-date documentation, see the {latestVersionLink} ({versionLabel}).",
     "description": "The label userd to tell the user that he's browsing an unmaintained doc version"
   },
   "theme.docs.versions.latestVersionLinkLabel": {
-    "message": "(en) latest version",
+    "message": "latest version",
     "description": "The label used for the latest version suggestion link label"
   },
   "theme.common.editThisPage": {
-    "message": "(en) Edit this page",
+    "message": "Edit this page",
     "description": "The link label to edit the current page"
   },
   "theme.common.headingLinkTitle": {
-    "message": "(en) Direct link to heading",
+    "message": "Direct link to heading",
     "description": "Title for link to heading"
   },
   "theme.lastUpdated.atDate": {
-    "message": "(en)  on {date}",
+    "message": " on {date}",
     "description": "The words used to describe on which date a page has been last updated"
   },
   "theme.lastUpdated.byUser": {
-    "message": "(en)  by {user}",
+    "message": " by {user}",
     "description": "The words used to describe by who the page has been last updated"
   },
   "theme.lastUpdated.lastUpdatedAtBy": {
-    "message": "(en) Last updated{atDate}{byUser}",
+    "message": "Last updated{atDate}{byUser}",
     "description": "The sentence used to display when a page has been last updated, and by who"
   },
   "theme.common.skipToMainContent": {
-    "message": "(en) Skip to main content",
+    "message": "Skip to main content",
     "description": "The skip to content label used for accessibility, allowing to rapidly navigate to main content with keyboard tab/enter navigation"
+  },
+  "Швидкий старт - 5хв ⏱️": {
+    "message": "GET STARTED - 5min ⏱️"
+  },
+  "Ditsmod має ієрархічний Dependency Injection, що дуже суттєво спрощує розширення та тестування застосунків.": {
+    "message": "Ditsmod has a hierarchical Dependency Injection, which greatly simplifies extensibility and application testing."
+  },
+  "Ditsmod написаний на TypeScript, що дозволяє помітно зменшити кількість помилок в коді, а також дозволяє на порядок покращити користувацький досвід написання коду у вашій IDE.": {
+    "message": "Ditsmod is written in TypeScript, which significantly reduces the number of errors in the code, as well as greatly improves the user experience of writing code in your IDE."
+  },
+  "Масштабованість застосунків реалізується завдяки модульній архітектурі Ditsmod.": {
+    "message": "The scalability of applications is realized thanks to the modular architecture of Ditsmod."
+  },
+  "Розширюваний та швидкий веб-фреймворк для Node.js, написаний на TypeScript": {
+    "message": "Extensible and fast web framework for Node.js, written in TypeScript"
   }
 }

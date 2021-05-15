@@ -2,37 +2,36 @@
 sidebar_position: 1
 ---
 
-# Що таке Ditsmod
+# Introduction
 
-## Ознайомлення з Ditsmod
+## About the project
 
-Ditsmod є Node.js веб-фреймворком, його назва складається із **DI** + **TS** + **Mod**, щоб
-підкреслити важливі складові: він має **D**ependency **I**njection, написаний на
-**T**ype**S**cript, та спроектований для хорошої **Mod**ularity (тобто модульності).
+Ditsmod is a Node.js web framework, named **DI** + **TS** + **Mod** to emphasize its important
+components: it has **D**ependency **I**njection, written in **T**ype**S**cript, and designed for
+good **Mod**ularity.
 
-Головні особливості Ditsmod:
+The main features of Ditsmod:
 
-- Зручний механізм [указання та вирішення залежностей][8] між різними класами застосунку: ви в
-конструкторі указуєте інстанси яких класів вам потрібні, а DI бере на себе непросту задачу "як їх
-отримати".
-- Можливість легко підмінювати by default класи в ядрі Ditsmod своїми власними класами.
-Наприклад, швидше за все, ви захочете підмінити клас логера на ваш власний клас, оскільки
-by default логер записує усе лише в консоль.
-- Можливість легко підмінювати класи вашого застосунку тестовими класами (mocks, stubs), не
-змінюючи при цьому код вашого застосунку. Це дуже суттєво спрощує тестування.
-- Ditsmod спроектований, щоб забезпечувати хорошу модульність всього застосунку, а отже і хорошу
-масштабованість. Його DI підтримує ієрархію, а це означає, що ви можете оголошувати
-[одинаків][12]: або на рівні усього застосунку, або на рівні конкретного модуля, або на рівні
-конкретного маршруту, або на рівні HTTP-запиту.
+- Convenient mechanism for [specifying and resolve][8] between different application classes: you
+in constructor specify instances of what classes you need, and DI undertakes a difficult task
+"as their get".
+- Ability to easily substitute by default classes in the Ditsmod core with their own classes.
+For example, most likely, you will want to replace the logger class with your own class, because by
+default the logger writes everything only to the console.
+- Ability to easily substitute the classes of your application with test classes (mocks, stubs),
+without changing the code of your application. This greatly simplifies testing.
+- Ditsmod is designed to provide good modularity of the entire application, and therefore good
+scalability. Its DI supports hierarchy, which means you can declare [singletons][12]: or at the
+level of the entire application, or at the level of a specific module, or at the level of
+a specific route, or at the level of an HTTP request.
 
-Ті, хто знайомий з [Angular][9], помітить, що деякі концепції архітектури цього фреймворка дуже
-схожі на Angular концепції. Це справді так, більше того - сам [DI][11] фактично витягнутий з
-Angular v4.4.7. (з мінімальними допрацюваннями) та інтегрований в Ditsmod.
+Some of the architecture concepts of this framework are taken from [Angular][9] and [DI][11]
+actually extracted from Angular v4.4.7. (with minimal modifications) and integrated into Ditsmod.
 
-## Встановлення
+## Install the Ditsmod seed
 
-Мінімальний базовий набір для роботи застосунку має репозиторій [ditsmod-seed][2].
-Клонуйте його та встановіть залежності:
+The [ditsmod-seed][2] repository has the minimum basic set for application operation. Clone it and
+set the dependencies:
 
 ```bash
 git clone git@github.com:ditsmod/seed.git my-app
@@ -40,37 +39,36 @@ cd my-app
 yarn
 ```
 
-## Запуск
+## Run the application
 
 ```bash
 yarn start
 ```
 
-Такий запуск можна використовувати для розробки застосунку, оскільки після кожного збереження
-вашого коду, ви зможете зразу бачити ці зміни.
+You can use this to develop an application, because after each save of your code, you will be able
+to see these changes immediately.
 
-Перевірити роботу сервера можна за допомогою `curl`:
+You can check the server with `curl`:
 
 ```bash
 curl -isS localhost:8080
 ```
 
-Компіляція застосунку відбувається за допомогою команди:
+The application is compiled using the command:
 
 ```bash
 yarn build
 ```
 
-Окрім цього, можете проглянути більше прикладів у теці [examples][4].
+In addition, you can view more examples in the [examples][4] folder.
 
-## Вхідний файл для Node.js
+## Entry file for Node.js
 
-Після [встановлення Ditsmod seed](#встановлення), перше, що необхідно знати: весь код застосунку
-знаходиться у теці `src`, він компілюється за допомогою TypeScript-утиліти `tsc`, після
-компіляції попадає у теку `dist`, і далі вже у вигляді JavaScript-коду його можна виконувати у
-Node.js.
+After [installing Ditsmod seed][1], the first thing you need to know: all the application code is
+in the `src` folder, it is compiled using the TypeScript utility `tsc`, after compilation it goes
+to the `dist` folder, and then as JavaScript code it can be executed in Node.js.
 
-Давайте розглянемо файл `src/main.ts`:
+Let's look at the `src/main.ts` file:
 
 ```ts
 import 'reflect-metadata';
@@ -89,40 +87,40 @@ new Application()
   });
 ```
 
-Після компіляції, він перетворюється на `dist/main.js` та стає
-вхідною точкою для запуску застосунку, і саме тому ви будете його вказувати у якості аргументу для
-Node.js:
+Once compiled, it becomes `dist/main.js` and becomes the entry point for running the application,
+which is why you will specify it as an argument for Node.js:
 
 ```bash
 node dist/main.js
 ```
 
-Слід звернути увагу на `import 'reflect-metadata'` у першому рядку файла. Цей модуль необхідний
-для роботи Ditsmod, але його достатньо указувати єдиний раз у вхідному файлі для Node.js.
+Note the `import 'reflect-metadata'` in the first line of the file. This module is required for
+Ditsmod to work, but it is sufficient to specify it only once in the entry file for Node.js.
 
-Бажано запам'ятати дане правило на майбутнє, і застосовувати його також для написання тестів,
-оскільки в такому разі вхідним файлом вже буде файл тесту, а не `dist/main.js`. Наприклад, якщо
-ви будете використовувати [jest][10] у якості фреймворку для тестів, а файл
-`path/to/test-file.js` міститиме скомпільований тест, то щоб запустити його ось так:
+It is desirable to remember this rule for the future, and to apply it also for writing of tests as
+in that case the entry file will be the test file, instead of `dist/main.js`. For example, if you
+use [jest][10] as a test runner, and the `test-file.js` file contains a compiled test, to run it
+like this:
 
 ```bash
-jest path/to/test-file.js
+jest test-file.js
 ```
 
-у даному файлі повинен бути імпорт `reflect-metadata`.
+this file must contain a `reflect-metadata` import.
 
-Проглядаючи далі файл `src/main.ts`, ми бачимо, що створюється інстанс класу `Application`, а у
-якості аргументу для методу `bootstrap()` передається `AppModule`. Тут `AppModule` є кореневим
-модулем, до якого вже підв'язуються інші модулі застосунку.
+Looking further at the file `src/main.ts`, you can see that an instance of the class `Application`
+is created, and as an argument for the method `bootstrap()` is passed `AppModule`. Here
+`AppModule` is the root module to which other application modules are then connected.
 
 
+[1]: #install-the-ditsmod-seed
 [2]: https://github.com/ditsmod/seed
 [4]: https://github.com/ditsmod/ditsmod/tree/main/examples
 [5]: https://raw.githubusercontent.com/ts-stack/vs-webframework/main/req-per-sec-frameworks.png
 [6]: https://github.com/nestjsx/nest-router
-[8]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
+[8]: https://en.wikipedia.org/wiki/Dependency_injection
 [9]: https://github.com/angular/angular
 [10]: https://jestjs.io/en/
 [11]: https://github.com/ts-stack/di
-[12]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
+[12]: https://en.wikipedia.org/wiki/Singleton_pattern
 [14]: https://github.com/ditsmod/seed/blob/901f247/src/app/app.module.ts#L18
