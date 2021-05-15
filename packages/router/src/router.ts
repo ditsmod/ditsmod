@@ -17,13 +17,13 @@ export class DefaultRouter {
     if (!this.trees[method]) {
       this.trees[method] = this.injector.resolveAndInstantiate(Tree) as Tree;
     }
-    this.trees[method].addRoute(path, handle);
+    this.trees[method]!.addRoute(path, handle);
     return this;
   }
 
   all(path: string, handle: Fn) {
-    http.METHODS.forEach((method: HttpMethod) => {
-      this.on(method, path, handle);
+    http.METHODS.forEach((method) => {
+      this.on(method as HttpMethod, path, handle);
     });
     return this;
   }

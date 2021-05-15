@@ -8,7 +8,7 @@ export class Tree {
   children: this[];
   protected path: string;
   protected wildChild: boolean;
-  protected handle: Fn;
+  protected handle: Fn | null;
   protected indices: string;
   protected priority: number;
 

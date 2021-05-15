@@ -62,7 +62,7 @@ export class TreeConfig {
   type?: number = RouteType.static;
   indices?: string = '';
   children?: any[] = [];
-  handle?: Fn = null;
+  handle?: Fn | null = null;
   priority?: number = 0;
 }
 
