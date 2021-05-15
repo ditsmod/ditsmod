@@ -753,7 +753,7 @@ const log = new Logger({
     }
 
     // Stringify the object (creates a warning str on error).
-    let str: string;
+    let str: string = '';
     if (noemit || this.haveNonRawStreams) {
       str = fastAndSafeJsonStringify(rec) + '\n';
     }
