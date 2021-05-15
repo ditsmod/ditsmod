@@ -7,9 +7,9 @@
     "message": "(en) Базова документація",
     "description": "The label for category Базова документація in sidebar tutorialSidebar"
   },
-  "sidebar.tutorialSidebar.category.Ditsmod-розширення": {
-    "message": "(en) Ditsmod-розширення",
-    "description": "The label for category Ditsmod-розширення in sidebar tutorialSidebar"
+  "sidebar.tutorialSidebar.category.Розширення": {
+    "message": "(en) Розширення",
+    "description": "The label for category Розширення in sidebar tutorialSidebar"
   },
   "sidebar.tutorialSidebar.category.Приклади застосунків": {
     "message": "(en) Приклади застосунків",
