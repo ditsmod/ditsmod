@@ -2,31 +2,31 @@
 sidebar_position: 5
 ---
 
-# Колізії провайдерів
+# Collision of providers
 
-Уявіть, що у вас є `Module1`, куди ви імпортували `Module2` та `Module3`. Ви зробили
-такий імпорт, бо вам потрібні відповідно `Service2` та `Service3` із цих модулів. Ви проглядаєте
-результат роботи даних сервісів, але по якійсь причині `Service3` працює не так як очікується. Ви
-починаєте дебажити і виявляється, що `Service3` експортують обидва модулі: `Module2` та `Module3`.
-Ви очікували, що `Service3` експортуватиметься лише із `Module3`,
-але насправді спрацювала та версія, що експортується із `Module2`.
+Imagine you have `Module1` where you imported `Module2` and `Module3`. You did this import because
+you need `Service2` and `Service3` from these modules, respectively. You are viewing how these
+services work, but for some reason `Service3` does not work as expected. You start debug and it
+turns out that `Service3` exports both modules:` Module2` and `Module3`. You expected that
+`Service3` would only be exported from `Module3`, but the version exported from `Module2` actually
+worked.
 
-Щоб цього не сталось, якщо ви імпортуєте два або більше модулі, в яких експортуються провайдери
-з однаковим токеном, Ditsmod кидатиме приблизно таку помилку:
+To prevent this from happening, if you import two or more modules that export providers with the
+same token, Ditsmod will throw the following error:
 
 > Error: Exporting providers in Module1 was failed: Collision was found for:
 > Service3. You should manually add this provider to Module1.
 
-Конкретно у цій ситуації:
+Specifically in this situation:
 
-1. і `Module2` підмінює, а потім експортує провайдер з токеном `Service3`;
-2. і `Module3` підмінює, а потім експортує провайдер з токеном `Service3`.
+1. `Module2` substitute and then exports the provider with the token `Service3`;
+2. and `Module3` substitute and then exports the provider with the token `Service3`.
 
-І оскільки обидва цих модулі імпортуються у `Module1`, якраз тому і виникає "колізія провайдерів",
-розробник може не знати яка із цих підмін буде працювати в `Module1`.
+And since both of these modules are imported into `Module1`, this causes a "provider collisions",
+because the developer may not know which of these substitutions will work in `Module1`.
 
-Даної помилки можна уникнути, якщо продублювати оголошення провайдера на потрібному рівні із цим
-же токеном:
+This error can be avoided by duplicating the provider's declaration at the desired level with the
+same token:
 
 ```ts
 import { Module2 } from './module2';
@@ -39,4 +39,4 @@ import { Module3, ServiceFromModule3 } from './module3';
 export class Module1 {}
 ```
 
-Таким чином ви явно вирішуєте колізію із `Service3`.
+This way you explicitly resolve the conflict with `Service3`.
