@@ -162,7 +162,7 @@ export class ModuleManager {
    * @todo Refactor this method to use `deepFreeze()`.
    */
   protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(meta: NormalizedModuleMetadata<T, A>) {
-    meta = { ...(meta || {}) };
+    meta = { ...(meta || {} as NormalizedModuleMetadata<T, A>) };
     meta.importsModules = meta.importsModules.slice();
     meta.importsWithParams = meta.importsWithParams.slice();
     meta.controllers = meta.controllers.slice();
