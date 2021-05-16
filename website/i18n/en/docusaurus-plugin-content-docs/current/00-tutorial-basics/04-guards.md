@@ -2,12 +2,12 @@
 sidebar_position: 4
 ---
 
-# Guards (охоронці)
+# Guards
 
-## Гарди без параметрів
+## Guards without parameters
 
-Якщо вам необхідно щоб до певних маршрутів мали доступ, наприклад, лише авторизовані користувачі,
-ви можете у третьому параметрі декоратора `Route`, в масиві указати `AuthGuard`:
+If you want certain routes to be accessed, for example, only by authorized users, you can specify
+`AuthGuard` in the third parameter of the `Route` decorator in the array:
 
 ```ts
 import { Controller, Response, Route } from '@ditsmod/core';
@@ -25,7 +25,7 @@ export class SomeController {
 }
 ```
 
-Будь-який guard повинен впроваджувати інтерфейс `CanActivate`:
+Any guard must implement the `CanActivate` interface:
 
 ```ts
 interface CanActivate {
@@ -33,7 +33,7 @@ interface CanActivate {
 }
 ```
 
-Наприклад, це можна зробити так:
+For example, this can be done as follows:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -51,20 +51,20 @@ export class AuthGuard implements CanActivate {
 }
 ```
 
-Якщо `canActivate()` повертає:
+If `canActivate()` returns:
 
-- `true` чи `Promise<true>`, значить Ditsmod буде обробляти відповідний маршрут із цим гардом;
-- `false` чи `Promise<false>`, значить відповідь на запит міститиме 401 статус і обробки маршруту
-з боку контролера не буде;
-- `number` чи `Promise<number>` Ditsmod інтерпретує це як номер статусу (403, 401 і т.п.),
-який треба повернути у відповіді на HTTP-запит.
+- `true` or `Promise<true>`, so Ditsmod will handle the appropriate route with this guard;
+- `false` or `Promise<false>`, so the response to the request will contain 401 status and there
+will be no processing of the route by the controller;
+- `number` or `Promise<number>` Ditsmod interprets this as a status number (403, 401, etc.) to be
+returned in response to a request.
 
-## Гарди з параметрами
+## Guards with parameters
 
-У методі `canActivate()` гард має один параметр. Аргументи для цього параметру можна передавати
-у декораторі `Route` у масиві, де на першому місці йде певний гард.
+In the `canActivate()` method, guard has one parameter. Arguments for this parameter can be
+passed in the decorator `Route` in an array where in the first place there is a certain guard.
 
-Давайте розглянемо такий приклад:
+Let's look at the following example:
 
 ```ts
 import { Controller, Response, Route } from '@ditsmod/core';
@@ -83,9 +83,9 @@ export class SomeController {
 }
 ```
 
-Як бачите, на місці третього параметра у `Route` передається масив в масиві, де на першому місці
-указано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard`
-отримає ці аргументи у своєму методі `canActivate()`:
+As you can see, the third parameter in `Route` is an array in the array, where `PermissionsGuard`
+is specified in the first place, and then there are the arguments for it. In this case,
+`PermissionsGuard` will get these arguments in its `canActivate()` method:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
