@@ -4,33 +4,33 @@ sidebar_position: 2
 
 # Dependency Injection
 
-## Загальне ознайомлення
+## Introduction
 
-На етапі ініціалізації застосунку, DI збирає метадані модулів, контролерів
-та сервісів, після чого аналізує **залежність** кожного із класів від інших класів та готує
-відповідні набори щоб **вирішити цю залежність**.
+During application initialization, DI collects metadata from modules, controllers, and services,
+then analyzes the **dependency** of each class on the other classes and prepares the appropriate
+kits to **resolve this dependency**.
 
-Наприклад, якщо модуль безпеки, потребує модуль баз даних та модуль логів, DI готує набір
-класів, зібраних із цих двох модулів.
+For example, if a security module requires a database module and a log module, DI prepares a set of
+classes assembled from these two modules.
 
-Отже виходить, що якщо певний клас залежить від іншого класу, він його не імпортує напряму з
-конкретного файла, а бере через посередника - через систему DI. Така схема роботи дозволяє
-підміняти класи через DI.
+So it turns out that if a certain class depends on another class, it does not import it directly
+from a specific file, but takes it through an intermediary - through the DI system. This scheme
+allows you to substitute classes through DI.
 
-На практиці це означає, наприклад, що ви можете підміняти by default логер своїм власним логером.
-Причому, зверніть увагу, що ви не просто можете використовувати інший логер, а ви можете робити
-саме **підміну** вже прописаного в коді логера. Ви можете сказати: "DI, використовуй мій логер у
-будь-якому місці застосунку і навіть у ядрі Ditsmod".
+In practice, this means, for example, that you can substitute the default logger with your own
+logger. And, pay attention that you not only can use other logger, and you can do **substitution**
+of the logger already registered in the code. You can say, "DI, use my logger anywhere in the
+application and even in the Ditsmod core".
 
-Це ж саме стосується будь-яких класів, від яких залежать інші класи - їх усіх можна
-підміняти через DI. Тобто окрім логера, ви можете підміняти: роутер, парсер тіла запиту, обробник
-помилок, різні by default конфігурації і навіть класи запитів та відповідей.
+The same applies to any class on which other classes depend - they can all be substitute via DI.
+That is, in addition to the logger, you can substitute: router, request body parser, error handler,
+various by default configurations and even `Request` and `Response` classes.
 
-Для розробника це відкриває широкі можливості як для зміни так і для розширення
-застосунку Ditsmod.
+For the developer, this opens up ample opportunities to both modify and extends the Ditsmod
+applications.
 
-І щоб надавати в конструкторі класу те, що ви запитуєте, [DI][8] повинен бути проінструктований
-звідки це брати. Але це може здатись дивним. Чому? - Давайте глянемо на приклад:
+And to provide in the class constructor what you ask for, [DI][8] must be instructed where to get
+it. But it may seem strange. Why? - Let's look at an example:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -47,43 +47,42 @@ export class SecondService {
 }
 ```
 
-Тут DI повинен надати інстанс класу `FirstService` і, на перший погляд, ви чітко прописуєте
-з якого файлу імпортувати даний клас, але цього не достатньо, бо DI запам'ятовує `FirstService`
-лише у якості ключа для пошуку. Це зроблено для того, щоб потім ви могли сказати: "DI, коли бачиш
-цей ключ, роби інстанс такого-то класу, і підставляй його сюди".
+Here, DI should provide an instance of the `FirstService` class, and at first glance, you clearly
+specify which file to import this class from, but that's not enough, because DI remembers
+`FirstService` only as a search key. This is done so that you can then say, "DI, when you see this
+key, make an instance of a certain class, and substitute it here".
 
-[Пізніше][100] ви дізнаєтесь, що не змінюючи коду в даному прикладі, ви можете підмінити клас
-`FirstService`, наприклад, тестовим класом. Коли ви підмінюєте один клас іншим класом ви, можна
-сказати, надаєте інший **провайдер** для створення інстансу класу.
+[Later][100] you will learn that without changing the code in this example, you can substitute the
+`FirstService` class, for example, with a test class. When you substitute one class with another
+class, it's like providing another **provider** to create a class instance.
 
-Точно так само, не змінюючи коду прикладу, ви ще можете
-змінити **рівень**, на якому оголошено провайдер для `FirstService`, щоб його інстанс
-створювався:
+Similarly, without changing the example code, you can still change the **level** at which the
+provider is declared for `FirstService` so that its instance is created:
 
-- або один єдиний раз при старті застосунку;
-- або кожен раз, коли його імпортують в черговий модуль;
-- або кожен раз, коли створюється конкретний маршрут;
-- або за кожним HTTP-запитом.
+- or only once at the start of the application;
+- or each time it is imported into the some module;
+- or each time a specific route is created;
+- or for each HTTP request.
 
-Оскільки, не змінюючи коду даного прикладу, ви можете отримувати різні результати у властивості
-`firstService`, виходить, що не достатньо просто указати джерело імпорту для певного сервіса.
-Для однозначності, як мінімум, необхідно додатково оголосити **рівень** провайдера
-`FirstService`.
+Because, without changing the code of this example, you can get different results in the
+`firstService` property, it turns out that it is not enough to simply specify the import source for
+a particular service. For clarity, at least, it is necessary to additionally declare **level** of
+the provider `FirstService`.
 
-:::tip Різниця між провайдером та сервісом
-Щоб не плутати поняття **провайдер** із поняттям **сервіс**, можна згадати за провайдерів інтернету.
-Таких провайдерів може бути багато, але конкретно вам - сервіс надає один-два провайдери.
-Аналогічно в Ditsmod - сервіс ви отримуєте в конкретному контролері, а провайдерів для цього
-сервісу може бути багато.
+:::tip The difference between a provider and a service
+In order not to confuse the concept of **provider** with the concept of **service**, we can mention
+Internet providers. There may be many such providers, but specifically for you - the service is
+provided by one or two providers. Similarly in Ditsmod - you receive service in the concrete
+controller, and providers for this service can be many.
 :::
 
-## Оголошення рівня провайдерів
+## Declare the providers
 
-Оголошення рівня провайдерів означає, що на цьому рівні інстанси зазначених класів провайдерів
-будуть [одинаками][12]. Таке оголошення робиться або у метаданих модуля, або у
-метаданих контролера.
+Declaring the provider level means that at this level the instances of the specified provider
+classes will be [Singleton][12]. You can to do such declaration either in the module metadata or
+in the controller metadata.
 
-Наприклад, в контролері можна оголосити провайдерів на рівні HTTP-запиту:
+For example, in the controller you can declare providers at the HTTP-request level:
 
 ```ts
 import { Controller } from '@ditsmod/core';
@@ -96,11 +95,10 @@ export class SomeController {
 }
 ```
 
-Як бачимо, в метаданих декоратора `Controller` є об'єкт із властивістю
-`providersPerReq`, куди передається масив провайдерів, яких потребує даний контролер у
-конструкторі.
+As you can see, the decorator's metadata `Controller` has an object with the `providersPerReq`
+property, where the array of providers that this controller needs in the constructor is passing.
 
-А якщо ми захочемо зробити підміну провайдера, то ми запишемо це так:
+And if we want to substitute some provider, we will write it like this:
 
 ```ts
 import { Controller } from '@ditsmod/core';
@@ -114,12 +112,13 @@ export class SomeController {
 }
 ```
 
-Тобто замість передачі класу `FirstService` у масив `providersPerReq`, ми передаємо об'єкт
-`{ provide: FirstService, useClass: SecondService }`. Таким чином ми інструктуємо DI щоб для
-конструктора замість інстансу класу `FirstService`, передавати інстанс класу `SecondService`.
+That is, instead of passing the `FirstService` class to the `providersPerReq` array, we pass the
+object `{ provide: FirstService, useClass: SecondService}`. Thus we instruct DI that for
+constructor instead of an instance of class `FirstService`, to pass an instance of class
+`SecondService`.
 
-В модулі також можна оголошувати провайдери на рівні HTTP-запиту, але вони матимуть нижчій
-пріоритет, ніж оголошення через контролер:
+You can also declare providers at the HTTP request level in the module, but they will have a lower
+priority than declaration via the controller:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -135,64 +134,42 @@ import { SomeService } from './some.service';
 export class SomeModule {}
 ```
 
-Як бачите, в метаданих модуля оголошувати провайдери вже можна на **чотирьох рівнях**.
+As you can see, in the metadata of the module you can declare providers on **four levels**.
 
-## Пріоритетність провайдерів
+## Priority of providers
 
-Один і той самий провайдер, на одному й тому самому рівні можна додавати багато разів, але
-DI вибире той із них, що додано останнім (виключення з цього правила є, але це стосується
-лише мульти-провайдерів, про які буде згадано пізніше). Окрім цього, один і той самий провайдер
-можна оголошувати одночасно на чотирьох рівнях, але провайдери в масиві `providersPerReq` матимуть
-найвищий пріоритет, в масиві `providersPerRou` - нижчій, в масиві `providersPerMod` - ще нижчій,
-а у `providersPerApp` - найнижчий пріоритет.
+The same provider can be added many times at the same level, but DI will choose the most recent one
+(there are exceptions to this rule, but this only applies to multi-providers, which will be
+mentioned later). In addition, the same provider can be declared simultaneously on four levels, but
+providers in the `providersPerReq` array will have the highest priority, in the `providersPerRou`
+array - lower, in the `providersPerMod` array - even lower, and in` providersPerApp` lowest
+priority.
 
-Це можна використовувати, наприклад, так:
+This can be used, for example, as follows:
 
-1. спочатку у кореневому модулі оголосіть певний провайдер конфігурації **на рівні застосунку**
-2. при потребі змінити дану конфігурацію лише для окремого модуля, ви оголошуєте цей же провайдер
-конфігурації, але вже **на рівні модуля**, і робите його підміну.
+1. first declare a specific configuration provider **at the application level** in the root module;
+2. if you need to change this configuration only for a single module, you need to use the same
+configuration provider, but **at the module level**, and make its substitute.
 
-Також, якщо ви імпортуєте певний провайдер із зовнішнього модуля, і у вас у поточному модулі
-є такий же провайдер, то локальний провайдер матиме вищій пріоритет, при умові,
-що вони оголошені на однаковому рівні. Аналогічне правило діє і для контролера - провайдер,
-оголошений у контролері, матиме вищій пріоритет, ніж провайдер, із таким же токеном, оголошений
-в модулі.
+Also, if you are importing a specific provider from an external module, and you have the same
+provider in the current module, the local provider will have a higher priority if they are declared
+at the same level. A similar rule applies to the controller - the provider declared in the
+controller will have a higher priority than the provider with the same token declared in the
+module.
 
-## Підміна by default провайдерів Ditsmod
+## Substitution providers
 
-У ядрі Ditsmod оголошуються наступні провайдери:
+Since all default providers are added to the DI first, you can substitute each of them with your
+own providers.
 
-### на рівні застосунку
+Probably the first thing you want to substitute is the logger provider, because default `Logger`
+writes everything only to the console, and is used as a token for DI, as well as an interface.
 
-- Logger
-- LoggerConfig
-- BodyParserConfig
-- Router
-- PreRequest
-- ExtensionsManager
-- PreRouter
-- Counter
-- ModuleManager
+What does "used as an interface" mean? - This means that if you want to substitute `Logger` with
+your provider, your provider must have the same methods and the same signature of these methods as
+it is in `Logger`.
 
-### на рівні HTTP-запиту
-
-- Request
-- Response
-- BodyParser
-- ControllerErrorHandler
-
-Оскільки усі by default провайдери додаються до DI першими,
-кожного із них ви можете підмінити своїми провайдерами.
-
-Мабуть перше, що ви захочете підмінити - це провайдер логера, оскільки початково `Logger` записує
-усе лише в консоль, і використовується як токен для DI, а також як інтерфейс.
-
-Що означає "використовується як інтерфейс"? - Це означає, що якщо ви хочете підміняти `Logger`
-своїм провайдером, ваш провайдер повинен мати такі ж методи, і таку ж сигнатуру цих методів як
-вона є у `Logger`.
-
-Коли ваш провайдер впровадить інтерфейс `Logger`, вам залишиться зробити його підміну
-за допомогою DI:
+When your provider implements the `Logger` interface, you will have to substitute it with DI:
 
 ```ts
 import { RootModule, Logger } from '@ditsmod/core';
@@ -205,100 +182,88 @@ import { MyLogger } from './my-logger';
 export class SomeModule {}
 ```
 
-Щоб підмінити будь-який by default провайдер Ditsmod вашим власним провайдером,
-алгоритм ваших дій такий же, як це було показано у попередньому прикладі:
+To substitute any Ditsmod default provider with your own provider, the algorithm of your actions
+is the same as shown in the previous example:
 
-1. вивчаєте [API провайдерів][106], які ви хочете підмінити;
-2. впроваджуєте такий самий API у своїх провайдерів;
-3. робите підміну by default провайдера вашим провайдером.
+1. learn the [API providers][106] that you want to substitute;
+2. implement the same API in your providers;
+3. make a substitution default provider by your provider.
 
-### Експорт підмінених by default провайдерів
+## The scopes and the declaration levels
 
-Хоча сама підміна by default провайдерів для конкретного модуля є простою і зромілою процедурою,
-але коли ви експортуватимете ці провайдери для інших модулів, тут ви маєте
-схопити приблизно таку помилку:
+Do not confuse the four levels of provider declaration with their scopes. When you passing
+a provider to one of the arrays: `providersPerApp`,` providersPerMod`, `providersPerRou` or
+`providersPerReq` - you declare at what level the [singleton][12] of this provider will be created.
+But this is not the same as the scopes of providers.
 
-> Error: Exporting providers in AppModule was failed: Collision was found for:
-> BodyParser. You should manually add this provider to AppModule.
+For example, if in `SomeModule` you declare `ConfigService` at the level of `providersPerMod`, it
+means that singleton of this service will be created at the level of this module and will become
+available only within this module. That is, any other module will not be able to see
+`ConfigService` for a while.
 
-Більш докладно про цю помилку можете прочитати у розділі [Колізії провайдерів][121].
+However, to increase the scope of `ConfigService` you must export it from `SomeModule`, then all
+modules that import `SomeModule` will also have their own singleton` ConfigService` at the module
+level.
 
-## Різниця між областю видимості провайдерів та їх рівнями оголошення
+As you can see, the scope of providers is expanded by [exporting these providers][107] followed by
+importing the modules where they are declared. Although, if the providers are declared in the root
+module, and you need them in another module, you do not need to import the root module. It is
+enough to export the required providers in the root module, after which their scope will increase
+for the entire application.
 
-Не варто плутати чотири рівня оголошення провайдерів із областю їх видимості.
-Коли ви передаєте провайдер у один із масивів: `providersPerApp`, `providersPerMod`,
-`providersPerRou` чи `providersPerReq` - тим самим ви декларуєте на якому рівні буде створюватись
-[одинак][12] даного провайдера. Але це не теж саме, що область видимості провайдерів.
+But if the scope is not extended, it will be limited only by the hierarchy of DI injectors.
 
-Наприклад, якщо у `SomeModule` ви оголосили `ConfigService` на рівні `providersPerMod`, це
-означає, що одинак даного сервісу буде створений на рівні даного модуля і стане доступним лише в
-межах цього модуля. Тобто будь-який інший модуль покищо не зможе побачити `ConfigService`.
+## DI injectors
 
-Разом із тим, щоб збільшити область видимості `ConfigService` ви повинні експортувати його із
-`SomeModule`, після чого усі модулі, що імпортують `SomeModule`, теж матимуть свій окремий
-одинак `ConfigService` на рівні модуля.
+Injectors are part of DI, and although they weren't mentioned in the documentation before, you're
+already a little familiar with their work - the injectors give you what you ask for in class
+constructors.
 
-Як бачите, область видимості провайдерів розширюється за допомогою [експорту цих провайдерів][107]
-з подальшим імпортом модулів, де вони оголошені. Хоча, якщо провайдери оголошені у кореневому
-модулі, і вони потрібні вам в іншому модулі, імпортувати кореневий модуль не потрібно. Достатньо
-в кореневому модулі зробити експорт потрібних провайдерів, після чого їх область видимості
-збільшиться на увесь застосунок.
+Injectors are instances of classes that have arrays of providers and methods for finding those
+providers. When you pass providers to `providersPerApp`,` providersPerMod`, `providersPerRou` and
+`providersPerReq` arrays you are actually passing this data to four different injectors connected
+by a hierarchical connection. This connection is held by the child injector because it has a
+reference to the parent injector. At the same time, the parent injector knows nothing about its
+child injectors.
 
-Але якщо область видимості не розширювати, вона буде обмежуватись лише ієрархією інжекторів DI.
+_Note:_ the number mentioned - four injectors - is not the total number of injectors in the
+application, it is the number of injectors in the hierarchy. That is, a single controller works
+with these four injectors, but since there can be many controllers, there may be more injectors.
 
-## Інжектори DI
+Thus, these four injectors have the following hierarchy:
 
-Інжектори є складовою частиною DI, і хоча раніше вони майже не згадувались в документації,
-ви з їхньою роботою вже трохи знайомі - саме інжектори видають вам те, що ви запитуєте у
-конструкторах класів.
+1. The highest in the hierarchy is the application-level injector, it only sees the providers that
+you pass to the `providersPerApp` array anywhere in the application. It is the only one for the
+entire application, from which branch off injectors at the module level.
+2. The module-level injector sees all providers in the `providersPerMod` array for a particular
+module, as well as in the `providersPerApp` array anywhere in the application. The total number of
+such injectors is equal to the number of modules in the application. From this injector branch off
+child injectors at the route level.
+3. The route-level injector sees all providers in the `providersPerRou` and `providersPerMod`
+arrays of a particular module, as well as in `providersPerApp` anywhere in the application. The
+total number of these injectors is equal to the number of defined routes in entire application.
+From this injector branch off child injectors at the HTTP-request level.
+4. The request-level injector sees all providers in the `providersPerReq`, `providersPerRou`
+and `providersPerMod` arrays of a particular module, as well as in `providersPerApp` anywhere in
+the application. The total number of these injectors is equal to the number of simultaneous HTTP
+requests processed in a given period of time.
 
-Інжектори - це інстанси класів, що мають масиви провайдерів та методи для
-пошуку цих провайдерів. Коли ви передаєте провайдери в масиви `providersPerApp`, `providersPerMod`,
-`providersPerRou` та `providersPerReq` ви фактично передаєте ці дані в чотири різні інжектори,
-пов'язані між собою ієрархічним зв'язком. Цей зв'язок утримує дочірній інжектор, оскільки має
-посилання на батьківський інжектор. У той же час, батьківський інжектор нічого не знає про свої
-дочірні інжектори.
+To create singletons of services, each injector uses only those providers that are declared at its
+level. For example, the injector, at the request level, creates singletons only from the list of
+providers declared in the `providersPerReq` array. And although it also sees providers of parent
+injectors, it can only use ready-made parent instances of providers, not create them. Thus, the
+constructor controller can have singletons from any level.
 
-_Уточнення_: згадані чотири інжектори - це не загальна кількість інжекторів в застосунку, це
-кількість інжекторів в ієрархії. Тобто, окремо взятий контролер працює саме із цими чотирма
-інжекторами, але оскільки контролерів може бути багато, то і інжекторів відповідно може бути
-більше.
+Each injector first looks at what is being asked at its level. If it doesn't find this, it can ask
+about this the parent injector upstairs if one exists. And the parent injector, in turn, can rise
+even higher until it finds the right one, otherwise the DI throws an error.
 
-Отже, згадані чотири інжектори мають таку ієрархію:
+To understand what this means in practice, let's look at a specific example.
 
-1. Самий вищий в ієрархії - інжектор на рівні застосунку, він бачить лише ті провайдери,
-що ви передаєте у масив `providersPerApp` будь-де в застосунку. Він є єдиним на весь застосунок,
-від нього відгалуджуються дочірні інжектори на рівні модуля.
-2. Інжектор на рівні модуля бачить усі провайдери в масиві `providersPerMod` для
-конкретного модуля, а також в масиві `providersPerApp` будь-де в застосунку. Загальна кількість
-таких інжекторів дорівнює кількості модулів у застосунку. Від цього інжектора відгалуджуються
-дочірні інжектори на рівні роуту (маршруту).
-3. Інжектор на рівні роуту бачить усі провайдери в масиві `providersPerRou` та `providersPerMod`
-конкретного модуля, а також у `providersPerApp` будь-де в застосунку. Загальна кількість цих
-інжекторів дорівнює кількості визначених роутів в контролерах усього застосунку. Від цього
-інжектора відгалуджуються дочірні інжектори на рівні HTTP-запиту.
-4. Інжектор на рівні HTTP-запиту бачить усі провайдери в масиві `providersPerReq`,
-`providersPerRou` та `providersPerMod` конкретного модуля, а також у `providersPerApp` будь-де
-в застосунку. Загальна кількість цих інжекторів дорівнює кількості одночасних HTTP-запитів, що
-обробляються у заданий проміжок часу.
-
-Кожен інжектор для створення [одинаків][12] сервісів використовує лише ті провайдери, що оголошені
-на його рівні. Наприклад, інжектор, на рівні запиту, створює одинаків лише з переліку провайдерів,
-оголошених в масиві `providersPerReq`. І хоча він також бачить провайдерів батьківських
-інжекторів, але він може використовувати лише вже готові батьківські інстанси провайдерів, а не
-створювати їх. Таким чином, в конструкторі контролера можуть бути одинаки з будь-якого рівня.
-
-Кожен інжектор спочатку проглядає те, що у нього запитують, на своєму рівні. Якщо він це не
-знаходить, він може звернутись до батьківського інжектора, що знаходиться на рівень вище, якщо
-такий існує. А батьківський інжектор, у свою чергу, може піднятись ще вище, аж поки не знайде
-потрібне, в противному разі DI кидає помилку.
-
-Щоб зрозуміти, що це означає на практиці, давайте розглянемо конкретний приклад.
-
-Припустимо ви створили `ErrorHandlerService` і думаєте: "Де б його оголосити? - Раз цей сервіс
-може знадобитись у будь-якій точці застосунку, значить треба оголосити його саме на рівні
-застосунку, тобто в масиві `providersPerApp`". Але при цьому, в даному сервісі ви хочете бачити
-інстанси класу `Request` та `Response`:
+Suppose you create `ErrorHandlerService` and think: "Where to declare it? - Since this service may
+be needed at any point in the application, then I need to declare it at the application level -
+in the array `providersPerApp`". But at the same time, in this service you want to see instances of
+class `Request` and` Response`:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -313,36 +278,36 @@ export class ErrorHandlerService implements ControllerErrorHandler {
   ) {}
 
   handleError(err: Error) {
-    // Тут код для обробки помилки
+    // Here is the error handling code
   }
 }
 ```
 
-Ви запускаєте застосунок, і коли справа доходить до роботи цього сервісу, DI кидає помилку,
-про те, що він не може знайти провайдера для `Request` та `Response`. Але чому? Може їх треба
-самостійно оголосити на рівні HTTP-запиту, тобто додати їх у масив `providersPerReq`? Ви так і
-робите, але DI все-одно кидає помилку...
+You run the application, and when it comes to the operation of this service, DI throws the error
+that it can not find a provider for `Request` and` Response`. But why? Maybe you need to declare
+them yourself at the request-level, ie add them to the array `providersPerReq`? You do, but DI
+still throws an error...
 
-Причина криїться у невірно оголошеному рівні для `ErrorHandlerService`. Оскільки ви оголосили цей
-сервіс на рівні застосунку, ним буде опікуватись інжектор на рівні застосунку. А це означає, що усі
-сервіси, що ви запитуєте в конструкторі, цей інжектор буде шукати тільки в масиві, що ви передали у
-`providersPerApp`.
+The reason is in the incorrectly declared level for `ErrorHandlerService`. Because you have
+declared this service at the application level, it will be taken care of by the injector at the
+application level. This means that all the services you ask in the constructor, this injector will
+look only in the array that you passed to `providersPerApp`.
 
-Разом з тим, `Request` та `Response` в Ditsmod оголошені на рівні запиту, тобто ці сервіси
-перебувають у дочірніх інжекторах, по відношенню до інжектора на рівні застосунку. А батьківський
-інжектор нічого не знає про дочірні інжектори.
+However, `Request` and` Response` in Ditsmod are declared at the request level, ie these services
+are in the child injectors, in relation to the injector at the application level. And the parent
+injector knows nothing about the child injectors.
 
-Вирішити цю проблему можна двома способами:
+There are two ways to solve this problem:
 
-1. або ви видалите `Request` та `Response` з конструктора даного сервіса;
-2. або ви оголосите `ErrorHandlerService` на рівні запиту. Щоправда, в такому разі видимість
-`ErrorHandlerService` буде обмежуватись лише тим модулем, де ви оголосили цей провайдер. Як
-правильно оголосити обробника помилок для контролера, прогляньте [репозиторій ditsmod/seed][14].
+1. or you remove `Request` and `Response` from the constructor of this service;
+2. or you declare `ErrorHandlerService` at the request level. However, in this case, the visibility
+of `ErrorHandlerService` will be limited only to the module where you declared this provider. To
+correctly declare an error handler for the controller, see the [ditsmod seed repository][14].
 
-### Поточний інжектор
+### Current injector
 
-Швидше за все, безпосередньо сам інжектор вам навряд чи знадобиться, але ви його можете отримати
-у конструкторі як і будь-який інший інстанс провайдера:
+Most likely, you may rarely need the injector itself, but you can get it from the constructor like
+any other instance of the provider:
 
 ```ts
 import { Injectable, Injector } from '@ts-stack/di';
@@ -358,20 +323,19 @@ export class SecondService {
 }
 ```
 
-Майте на увазі, що ви таким чином отримуєте інжектор, що створив інстанс цього провайдера.
+Keep in mind that this way you get the injector that created the instance of this provider.
 
-## Токени DI
+## DI tokens
 
-Інжектори, в якості ключів для пошуку провайдерів, використовують так звані токени. Тип токена може
-бути або класом, або об'єктом, або рядком (тобто `string`), або JavaScript-символом
-(тобто `symbol`). У якості токена не можуть бути інтерфейси чи типи, що оголошені з
-ключовим словом `type`, оскільки після їх компіляції із TypeScript у JavaScript, від них нічого
-не залишиться у JavaScript-файлах.
+Injectors use so-called _tokens_ as keys to search for providers. The token type can be either
+a class, or an object, or a string, or a JavaScript symbol. Interfaces or types declared with the
+`type` keyword cannot be used as tokens, because once they are compiled from TypeScript into
+JavaScript, there will be nothing left of them in JavaScript files.
 
-Також, у якості токена не можна використовувати масиви, оскільки покищо у TypeScript не існує
-механізму отримання типу цього масиву.
+Also, you cannot use arrays as a token, because TypeScript does not yet have a mechanism to pass
+the type of this array to the compiled JavaScript code.
 
-Разом із тим, у конструкторі, в якості токена, найпростіше указати клас певного сервісу:
+However, in constructor as a token it is easiest to specify a class of a certain service:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -388,13 +352,12 @@ export class FirstService {
 }
 ```
 
-DI проглядатиме конструктор, знайде `SecondService`, після чого у відповідних інжекторах шукатиме
-провайдера по цьому класу. Тут варто звернути увагу, що DI у якості токена використає саме клас,
-а не назву класу.
+DI will look through the constructor, will find `SecondService` then in the corresponding injectors
+will look for the provider on this class. It should be noted that DI uses the class as a token, not
+the class name.
 
-Для токенів інших типів, в конструкторі необхідно використовувати
-декоратор `Inject` перед модифікаторами доступу. Накриклад, у якості токена ви можете
-використовувати рядок `tokenForLocal`:
+For tokens of other types, in constructor it is necessary to use the `Inject` decorator before
+access modifiers. For example, you can use the string `tokenForLocal` as a token:
 
 ```ts
 import { Injectable, Inject } from '@ts-stack/di';
@@ -409,8 +372,8 @@ export class SomeService {
 }
 ```
 
-В такому разі, щоб DI зміг знайти відповідний провайдер, вам необхідно оголошувати цей провайдер
-із таким же токеном:
+In this case, in order for DI to be able to find a suitable provider, you need to declare this
+provider with the same token:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -423,21 +386,20 @@ import { Module } from '@ditsmod/core';
 export class SomeModule {}
 ```
 
-Зверніть увагу, що при оголошенні провайдера, використовується властивість `useValue`. В такому
-разі DI не буде намагатись створити інстанс класу, а видасть без змін те значення, що ви
-передали.
+Note that the `useValue` property is used when declaring a provider. In this case, DI will not try
+to create a class instance, but will return the value you passed without change.
 
-:::tip Для DI краще використовувати класи
-У якості токена для DI рекомендується використовувати саме класи, де тільки це
-можливо. Досить рідко може знадобитись використовувати токени інших типів.
+:::tip For DI it is better to use classes
+As a token for DI, it is recommended to use classes wherever possible. It is quite rare to need to
+use other types of tokens.
 :::
 
 
 ### InjectionToken
 
-Окрім можливості використання токенів, що мають різні типи даних, DI має спеціальний клас,
-рекомендований для створення токенів - `InjectionToken`. Оскільки він має параметр для типу
-(дженерік), ви зможете прочитати тип даних, що буде повертати DI, при запиті конкретного токена:
+In addition to the ability to use tokens that have different types of data, DI has a special class
+recommended for creating tokens - `InjectionToken`. Because it has a parameter for the type
+(generic), you can read the data type that DI will return when requesting a specific token:
 
 ```ts
 import { InjectionToken } from '@ts-stack/di';
@@ -445,8 +407,7 @@ import { InjectionToken } from '@ts-stack/di';
 export const localToken = new InjectionToken<string>('tokenForLocal');
 ```
 
-Користуватись ним можна точно так само, як і усіма іншими токенами, що не є класами.
-В конструкторі:
+It can be used in the same way as all other non-class tokens:
 
 ```ts
 import { Injectable, Inject } from '@ts-stack/di';
@@ -463,7 +424,7 @@ export class SomeService {
 }
 ```
 
-При оголошенні рівня провайдера:
+When declaring the provider level:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -478,14 +439,14 @@ import { localToken } from './tokens';
 export class SomeModule {}
 ```
 
-Зверніть увагу, що `InjectionToken` імпортується з `@ts-stack/di`, а не з `@ditsmod/core`.
+Note that `InjectionToken` is imported from `@ts-stack/di`, not from `@ditsmod/core`.
 
 
-[12]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
+[12]: https://en.wikipedia.org/wiki/Singleton_pattern
 [14]: https://github.com/ditsmod/seed/blob/901f247/src/app/app.module.ts#L18
-[8]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
+[8]: https://en.wikipedia.org/wiki/Dependency_injection
 
 [107]: ./exports-and-imports
 [106]: ./api
 [121]: ./providers-collisions
-[100]: #оголошення-рівня-провайдерів-та-підміна-провайдерів
+[100]: #substitution-providers
