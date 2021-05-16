@@ -118,11 +118,8 @@ jest test-file.js
 
 [2]: https://github.com/ditsmod/seed
 [4]: https://github.com/ditsmod/ditsmod/tree/main/examples
-[5]: https://raw.githubusercontent.com/ts-stack/vs-webframework/main/req-per-sec-frameworks.png
-[6]: https://github.com/nestjsx/nest-router
 [8]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
 [9]: https://github.com/angular/angular
 [10]: https://jestjs.io/en/
 [11]: https://github.com/ts-stack/di
 [12]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
-[14]: https://github.com/ditsmod/seed/blob/901f247/src/app/app.module.ts#L18

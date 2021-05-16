@@ -116,11 +116,8 @@ is created, and as an argument for the method `bootstrap()` is passed `AppModule
 [1]: #install-the-ditsmod-seed
 [2]: https://github.com/ditsmod/seed
 [4]: https://github.com/ditsmod/ditsmod/tree/main/examples
-[5]: https://raw.githubusercontent.com/ts-stack/vs-webframework/main/req-per-sec-frameworks.png
-[6]: https://github.com/nestjsx/nest-router
 [8]: https://en.wikipedia.org/wiki/Dependency_injection
 [9]: https://github.com/angular/angular
 [10]: https://jestjs.io/en/
 [11]: https://github.com/ts-stack/di
 [12]: https://en.wikipedia.org/wiki/Singleton_pattern
-[14]: https://github.com/ditsmod/seed/blob/901f247/src/app/app.module.ts#L18
