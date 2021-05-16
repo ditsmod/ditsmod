@@ -2,12 +2,12 @@
 sidebar_position: 1
 ---
 
-# Контролери та сервіси
+# Controllers and services
 
-## Що являє собою контролер
+## What is a controller
 
-Контролери призначаються для прийому HTTP-запитів та відправки HTTP-відповідей.
-TypeScript клас стає контролером Ditsmod завдяки декоратору `Controller`:
+The controllers are intended to receive HTTP requests and send HTTP responses. The TypeScript class
+becomes a Ditsmod controller with `Controller` decorator:
 
 ```ts
 import { Controller } from '@ditsmod/core';
@@ -16,9 +16,9 @@ import { Controller } from '@ditsmod/core';
 export class SomeController {}
 ```
 
-Запити прив'язуються до методів контролерів через систему маршрутизації, з використанням декоратора
-`Route`. В наступному прикладі створено два маршрути, що приймають `GET` запити за адресами
-`/hello` та `/throw-error`:
+The requests are tied to the methods of controllers through the routing system, using the decorator
+`Route`. The following example creates two routes that accept `GET` requests to `/hello` and
+`/throw-error`:
 
 ```ts
 import { Controller, Response, Route } from '@ditsmod/core';
@@ -39,36 +39,34 @@ export class SomeController {
 }
 ```
 
-Що ми тут бачимо:
+What we see here:
 
-1. В конструкторі класу за допомогою модифікатора доступу `private` оголошується властивість
-класу `res` із типом даних `Response`. Таким чином ми просимо Ditsmod щоб він створив інстанс
-класу `Response` і передав його у змінну `res`.
-1. Маршрути створюються за допомогою декоратора `Route`, що ставиться перед методом класу.
-1. Відповіді на HTTP-запити відправляються через `this.res.send()` (хоча `this.res` ще має
-`sendJson()` та `sendText()`).
-1. Об'єкти помилок можна кидати прямо в методі класу звичайним для JavaScript способом, тобто за
-допомогою ключового слова `throw`.
+1. In the constructor of the class using the access modifier `private` the property of class `res`
+with data type `Response` is declared. So we ask Ditsmod to create an instance of the `Response`
+class and pass it to the `res` variable.
+2. Routes are created using the `Route` decorator, which is placed before the class method.
+3. Responses to HTTP requests are sent via `this.res.send()`.
+4. Error objects can be thrown directly in the class method in the usual way for JavaScript - with
+the keyword `throw`.
 
-:::tip Використовуйте модифікатор доступу
-Модифікатор доступу в конструкторі може бути будь-яким (private, protected
-або public), але взагалі без модифікатора - `res` вже буде простим параметром з видимістю лише
-в конструкторі.
+:::tip Use an access modifier
+The access modifier in the constructor can be any (private, protected or public), but without the
+modifier - `res` will be a simple parameter with visibility only in the constructor.
 :::
 
-:::caution Не забувайте імпортувати Request та Response
-Якщо у конструкторі ви прописуєте клас `Request` чи `Response`, не забувайте
-імпортувати їх із @ditsmod/core! Якщо ви цього не зробите, ваш застосунок перестане
-працювати, хоча IDE може і не підказати, що у вас неімпортовані дані класи.
+:::caution Don't forget to import Request and Response
+If you specify the `Request` or `Response` class in the constructor, don't forget to import them
+from _@ditsmod/core_! If you don't, your application will stop working, although the IDE may not tell
+you that you don't have these classes imported.
 
-Справа в тому, що у TypeScript глобально оголошено інтерфейси з точно такими іменами - `Request`
-та `Response`. Через це ваша IDE може лише сказати, що у цих інтерфейсів немає певних
-властивостей, що повинні бути у класів, імпортованих з @ditsmod/core.
+The fact is that in TypeScript globally announced interfaces with exactly the same names - `Request`
+and `Response`. Because of this, your IDE can only say that these interfaces do not have certain
+properties that classes imported from _@ditsmod/core_ should have.
 :::
 
-### Оголошення контролера
+### Declare the controller
 
-Оголошувати контролер можна у будь-якому модулі, у масиві `controllers`:
+You can declare a controller in any module, in the `controllers` array:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -81,8 +79,8 @@ import { SomeController } from './first.controller';
 export class SomeModule {}
 ```
 
-Щоб використовувати `pathParams`, `queryParams` чи `body`, у конструкторі контролера необхідно
-запитати інстанс класу `Request`:
+To use `pathParams`, `queryParams` or `body`, you should ask the `Request` in the controller
+constructor:
 
 ```ts
 import { Controller, Request, Response, Route } from '@ditsmod/core';
@@ -105,12 +103,12 @@ export class SomeController {
 }
 ```
 
-Щойно в конструкторі ми отримали інстанси класів `Request` та `Response`, вони представляють собою
-так звані сервіси.
+In constructor we received instances of classes `Request` and `Response`,
+they represent services.
 
-## Сервіси
+## Sevices
 
-TypeScript клас стає сервісом Ditsmod завдяки декоратору `Injectable`:
+The TypeScript class becomes a Ditsmod service with `Injectable` decorator:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -119,17 +117,17 @@ import { Injectable } from '@ts-stack/di';
 export class SomeService {}
 ```
 
-Зверніть увагу, що цей декоратор імпортується із `@ts-stack/di`, а не із `@ditsmod/core`.
-Приклади сервісів в затосунках Ditsmod:
+Note that this decorator is imported from `@ts-stack/di`, not from `@ditsmod/core`.
+Examples of Ditsmod services:
 
-- сервіс надання конфігурації;
-- сервіс роботи з базами даних, з поштою і т.п.;
-- сервіс парсингу тіла HTTP-запиту;
-- сервіс перевірки прав доступу;
-- і т.д.
+- configuration service;
+- service for working with databases, mail, etc .;
+- service for parsing the body of the HTTP-request;
+- service for checking access rights;
+- etc.
 
-Часто одні сервіси залежать від інших сервісів, і щоб отримати інстанс певного сервіса,
-необхідно указувати їхні класи в конструкторі:
+Often some services depend on other services, and to get an instance of a particular service, you
+need specify their classes in the constructor:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -146,10 +144,9 @@ export class SecondService {
 }
 ```
 
-Як бачите, правила отримання інстансу класу в сервісі такі ж самі, як і в контролері. Тобто, ми
-в конструкторі за допомогою модифікатора доступу `private` оголошуємо властивість класу
-`firstService` із типом даних `FirstService`. Інстанси в конструкторі створює
-[DI][8].
+As you can see, the rules for obtaining a class instance in the service are the same as in the
+controller. That is, we in the constructor with the access modifier `private` declare property of
+class `firstService` with data type `FirstService`. Instances in constructor are created by [DI][8].
 
 
-[8]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
+[8]: https://en.wikipedia.org/wiki/Dependency_injection
