@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Експорт та імпорт
 
-## Експорт провайдерів зі звичайного модуля
+## Експорт провайдерів із некореневого модуля
 
 Експортуючи провайдери з певного модуля, ви тим самим декларуєте, що вони є доступними для
 використання в інших модулях, які імпортуватимуть цей модуль:
@@ -27,8 +27,8 @@ export class SomeModule {}
 
 Експортувати провайдери можна лише ті, що оголошені:
 
-1. або на рівні модуля (тобто в масиві `providersPerMod`)
-2. або на рівні роута (тобто в масиві `providersPerRou`).
+1. або на рівні модуля (тобто в масиві `providersPerMod`);
+2. або на рівні роута (тобто в масиві `providersPerRou`);
 3. або на рівні HTTP-запиту (тобто в масиві `providersPerReq`).
 
 Експортувати провайдери, що оголошені на рівні застосунку (тобто в масиві `providersPerApp`)
@@ -83,11 +83,12 @@ import { Module } from '@ditsmod/core';
 
 import { FirstModule } from './first.module';
 import { SecondModule } from './second.module';
+import { AuthGuard } from './auth.guard';
 
 @Module({
   imports: [
     FirstModule,
-    { prefix: 'some-prefix', module: SecondModule }
+    { prefix: 'some-prefix', guards: [AuthGuard], module: SecondModule }
   ]
 })
 export class ThridModule {}
@@ -100,11 +101,26 @@ export class ThridModule {}
 був при експорті. Наприклад, якщо `SomeService` було оголошено на рівні модуля, то і при імпорті
 залишиться цей же рівень.
 
-Як бачите, масив `imports` приймає окрім класів модулів, ще й об'єкт
-`{ prefix: 'some-prefix', module: SecondModule }`. Вказаний префікс `some-prefix` буде
-використовуватись для маршрутизації, якщо у `SecondModule` оголошено контролери.
+Як бачите, масив `imports` приймає окрім класів модулів, ще й об'єкт, він має наступний інтерфейс:
 
-Разом із тим, у поточному модулі покищо не забороняється повторно оголошувати рівень провайдера,
+```ts
+interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> {
+  id?: string;
+  module: ModuleType<M>;
+  prefix?: string;
+  guards?: GuardItem[];
+  providersPerApp?: ServiceProvider[];
+  providersPerMod?: ServiceProvider[];
+  providersPerRou?: ServiceProvider[];
+  providersPerReq?: ServiceProvider[];
+  extensionsMeta?: E;
+}
+```
+
+Такий об'єкт дозволяє передавати окрім самого модуля, ще й певні аргументи для перерахованих
+параметрів.
+
+Також ви повинні мати на увазі, що у поточному модулі не забороняється повторно оголошувати рівень провайдера,
 що написаний і вже оголошений у зовнішньому модулі. Але це рекомендується робити, тільки якщо ви
 вирішуєте [колізію експортованих провайдерів][121]. Якщо вам потрібен провайдер
 із зовнішнього модуля, імпортуйте цей зовнішній модуль повністю.
