@@ -9,9 +9,9 @@ export interface Extension<T> {
   init(): Promise<T>;
 }
 
-export interface ModuleWithParams<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
+export interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
   id?: string;
-  module: ModuleType<T>;
+  module: ModuleType<M>;
   prefix?: string;
   guards?: GuardItem[]
   /**
@@ -19,7 +19,7 @@ export interface ModuleWithParams<T extends AnyObj = AnyObj> extends Partial<Pro
    *
    * You must follow this rule: data for one extension - one key in `additionalMeta` object.
    */;
-  extensionsMeta?: T;
+  extensionsMeta?: E;
 }
 
 export type AnyFn = (...args: any[]) => any;
