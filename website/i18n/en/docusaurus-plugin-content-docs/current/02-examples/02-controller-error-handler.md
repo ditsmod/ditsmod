@@ -43,4 +43,4 @@ curl -isS localhost:8080
 curl -isS localhost:8080/throw-error
 ```
 
-[101]: ../tutorial-basics/dependency-injection#інжектори-di
+[101]: ../core/dependency-injection#інжектори-di

@@ -2,31 +2,30 @@
 sidebar_position: 0
 ---
 
-# Ознайомлення
+# Ditsmod Extensions
 
-## Що робить розширення Ditsmod
+## The purpose of the Ditsmod extension
 
-Сама головна відмінність розширення від звичайного сервісу в тому, що розширення може виконувати
-свою роботу перед стартом вебсервера, і при цьому воно може динамічно додавати провайдери на рівні
-конкретного модуля, роута чи запиту.
+The main difference between an extension and a regular service is that the extension can do its job
+before the web server starts, and it can dynamically add providers at the module level, route level
+or request level.
 
-Наприклад, модуль `@ditsmod/openapi` дозволяє створювати OpenAPI-документацію за допомогою власного
-декоратора `@OasRoute`. Без роботи розширень, метадані, передані у цей новий декоратор, були б
-незрозумілими для `@ditsmod/core`.
+For example, the `@ditsmod/openapi` module allows you to create OpenAPI documentation using the new
+`@OasRoute` decorator. Without extensions, the metadata passed to this decorator would be
+incomprehensible to `@ditsmod/core`.
 
-## Що таке - розширення Ditsmod
+## What is a Ditsmod extension
 
-Ditsmod має спеціальний API для розширення функціональності `@ditsmod/core`. Щоб скористатись
-ним, необхідно імпортувати константу `edk` (скорочення від "Extensions Development Kit"):
+Ditsmod has a special API to extend the functionality of `@ditsmod/core`. To use it, you need to
+import the constant `edk` (short for "Extensions Development Kit"):
 
 ```ts
 import { edk } from '@ditsmod/core';
 ```
 
-Ця константа використовується як namespace для утримання у ній типів та даних, призначених для
-розширень.
+This constant is used as a namespace to hold the types and data intended for extensions.
 
-У Ditsmod **розширенням** називається клас, що впроваджує інтерфейс `Extension`:
+In Ditsmod **extension** is a class that implements the `Extension` interface:
 
 ```ts
 interface Extension<T> {
@@ -34,39 +33,38 @@ interface Extension<T> {
 }
 ```
 
-Кожне розширення потрібно реєструвати, про це буде згадано пізніше, а зараз припустимо, що
-така реєстрація відбулася, застосунок запущено, після чого йде наступний процес:
+Each extension needs to be registered, this will be mentioned later, and now let's assume that such
+registration has taken place, the application is running, and then goes the following process:
 
-1. збираються метадані з усіх декораторів (`@RootModule`, `@Module`, `@Controller`,
-   `@Route`...);
-2. зібрані метадані передаються в DI з токеном `APP_METADATA_MAP`, отже - будь-який
-   сервіс, контролер чи розширення може отримати ці метадані у себе в конструкторі;
-3. послідовно запускаються усі зареєстровані розширення, точніше - викликаються їхні
-   методи `init()` без аргументів;
-4. стартує вебсервер, і застосунок починає працювати у звичному режимі, обробляючи HTTP-запити.
+1. metadata is collected from all decorators (`@RootModule`,` @Module`, `@Controller`,
+`@Route`...);
+2. the collected metadata is passed to DI with the token `APP_METADATA_MAP`, therefore - any
+service, controller or extension can receive this metadata in the constructor;
+3. one after another all registered extensions are started, more precisely - their methods `init()`
+without arguments are called;
+4. The web server starts, and the application starts working normally, processing HTTP requests.
 
-Тут варто врахувати, що порядок запуску розширень можна вважати "випадковим", тому кожне розширення
-повинно прописувати залежність від іншого розширення (якщо таке є) у своїх конструкторах, а також у
-методах `init()`. В такому разі, не залежно від порядку запуску, усі розширення працюватимуть
-коректно:
+It should be noted that the order of running extensions can be considered "random", so each
+extension must declare dependence on another extension (if any) in its constructors, as well as in
+the methods `init()`. In this case, regardless of the startup order, all extensions will work correctly:
 
 ```ts
 async init() {
   await this.otherExtention.init();
-  // Робота поточного розширення відбувається після завершення ініціалізації іншого розширення.
+  // The current extension works after the initialization of another extension is completed.
 }
 ```
 
-Це означає, що метод `init()` певного розширення може викликатись стільки разів, скільки разів
-він прописаний у тілі інших розширень, які залежать від роботи даного розширення. Цю особливість
-необхідно обов'язково враховувати, щоб не відбувалась зайва ініціалізація:
+This means that the `init()` method of a particular extension can be called as many times as it is
+written in the body of other extensions that depend on the job of that extension. This specificity
+must be taken into account:
 
 ```ts
 async init() {
   if (this.inited) {
     return;
   }
-  // Щось хороше робите.
+  // Do something good.
   this.inited = true;
 }
 ```

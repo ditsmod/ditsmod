@@ -43,5 +43,5 @@ curl -isS localhost:8080/unauth
 curl -isS localhost:8080/forbidden
 ```
 
-[102]: ../tutorial-basics/exports-and-imports#експорт-провайдерів-із-кореневого-модуля
-[103]: ../tutorial-basics/guards
+[102]: ../core/exports-and-imports#експорт-провайдерів-із-кореневого-модуля
+[103]: ../core/guards

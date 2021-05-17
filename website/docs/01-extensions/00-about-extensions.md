@@ -17,7 +17,7 @@ sidebar_position: 0
 ## Що таке - розширення Ditsmod
 
 Ditsmod має спеціальний API для розширення функціональності `@ditsmod/core`. Щоб скористатись
-ним, необхідно імпортувати константу `edk` (скорочення від "Extensions Development Kit"):
+ним, потрібно імпортувати константу `edk` (скорочення від "Extensions Development Kit"):
 
 ```ts
 import { edk } from '@ditsmod/core';

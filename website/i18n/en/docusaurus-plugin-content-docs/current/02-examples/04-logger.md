@@ -47,4 +47,4 @@ curl -isS localhost:8080/bunyan
 [6]: https://github.com/trentm/node-bunyan
 [7]: https://github.com/pinojs/pino
 
-[104]: ../tutorial-basics/dependency-injection#токени-di
+[104]: ../core/dependency-injection#токени-di
