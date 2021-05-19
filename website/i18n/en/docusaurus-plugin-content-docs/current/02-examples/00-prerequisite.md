@@ -1,9 +1,8 @@
 
-# Передумови
+# Prerequisite
 
-Тека [examples][100] містить приклади застосування Ditsmod для типових випадків.
-Їх зручніше проглядати, якщо клонувати репозиторій Ditsmod
-та встановити npm залежності:
+The [examples][1] folder contains examples of using Ditsmod for typical cases. They are easier to
+view if you clone the Ditsmod repository and set the npm dependencies:
 
 ```bash
 git clone git@github.com:ditsmod/ditsmod.git
@@ -11,9 +10,8 @@ cd ditsmod
 yarn
 ```
 
-Після чого можете запустити один із застосунків, експерементувати з ними,
-і зразу бачити результат.
+Then you can run one of the applications, experiment with them, and immediately see the result.
 
-Кожен приклад має README.md, де коротко описано основні його особливості.
+Each example has README.md, which briefly describes its main features.
 
-[100]: https://github.com/ditsmod/core/tree/main/examples
+[1]: https://github.com/ditsmod/core/tree/main/examples

@@ -1,15 +1,17 @@
 # 06-body-parser
 
-Щоб спробувати даний приклад, необхідно спочатку [підготувати передумови](./prerequisite).
+To try this example, you should first [prepare the prerequisite][1].
 
-Перевірити роботу прикладу можна так, з першого терміналу:
+You can run the application from the first terminal:
 
 ```bash
 yarn start6
 ```
 
-З другого терміналу:
+From the second terminal check the work:
 
 ```bash
 curl -isS localhost:8080 -d '{"one":1}' -H 'content-type: application/json'
 ```
+
+[1]: ./prerequisite

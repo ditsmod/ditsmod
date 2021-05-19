@@ -1,45 +1,47 @@
 # 07-composing-modules
 
-Щоб спробувати даний приклад, необхідно спочатку [підготувати передумови](./prerequisite).
+To try this example, you should first [prepare the prerequisite][1].
 
-Ditsmod має можливість додавати та видаляти власні модулі після старту вебсервера, причому
-немає необхідності перезапускати заново вебсервер, а HTTP-клієнти не помітять перебоїв, під час
-додавання чи видалення цих модулів.
+Ditsmod has the ability to add and remove modules after starting the web server, without the need
+to restart the web server, and HTTP clients will not notice interruptions when adding or removing
+these modules.
 
-Запуск прикладу:
+You can run the application from the first terminal:
 
 ```bash
 yarn start7
 ```
 
-Перевірка роботи:
+From the second terminal check the work:
 
 ```bash
-# OK із першого модуля
 curl -isS localhost:8080
 
-# Відповідь із 404 статусом із другого модуля
+# 404 from second module
 curl -isS localhost:8080/get-2
 
-# Додавання другого модуля
+# Adding second module
 curl -isS localhost:8080/add-2
 
-# Відповідь із 200 статусом із другого модуля
+# 200 from second module
 curl -isS localhost:8080/get-2
 
-# Під час додавання третього модуля, повинен статися збій
+# During adding third module, should failed
 curl -isS localhost:8080/add-3
 
-# Але інші модулі продовжують працювати
+# But other modules continue works
 curl -isS localhost:8080
 curl -isS localhost:8080/get-2
 
-# Видалення другого модуля
+# Removing second module
 curl -isS localhost:8080/del-2
 
-# Відповідь із 404 статусом із другого модуля
+# 404 from second module
 curl -isS localhost:8080/get-2
 
-# Але все OK із першим модулем
+# But OK first module
 curl -isS localhost:8080
 ```
+
+
+[1]: ./prerequisite

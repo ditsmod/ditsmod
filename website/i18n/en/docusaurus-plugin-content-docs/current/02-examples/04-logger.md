@@ -1,24 +1,24 @@
 # 04-logger
 
-Щоб спробувати даний приклад, необхідно спочатку [підготувати передумови](./prerequisite).
+To try this example, you should first [prepare the prerequisite][1].
 
-У цьому прикладі, показано як можна в одному застосунку мати відразу чотири логера:
+In this example, it is shown how it is possible to have four loggers in one application:
 
 - `DefaultLogger`;
 - [bunyan][6];
 - [pino][7];
 - [winston][5];
 
-На практиці такий приклад наврядчи може знадобитись, але він демонструє роботу
-ієрархічної архітектури DI, правила експорту/імпорту провайдерів, механізм підміни by default
-логера та by default конфігурації для логера.
+In practice, such an example is unlikely to be needed, but it demonstrates the operation of
+a hierarchical DI architecture, export/import providers, a default logger substitution mechanism,
+and a default logger configuration.
 
-У `PinoModule`, `BunyanModule` та `WinstonModule` зроблено підміни by default логера, причому зроблено це в
-масиві `providersPerMod`. І саме тому контролери в цих модулях будуть використовувати відповідно
-pino, bunyan та winston.
+In `PinoModule`,` BunyanModule` and `WinstonModule` the substitution default of the logger is made,
+and it is done in `providersPerMod` array. That is why the controllers in these modules will use
+pino, bunyan and winston respectively.
 
-Тут варто звернути увагу, що в конструкторах будь-яких класів використовується by default логер у
-якості [токена][104], а DI вже підставляє для різних контролерів різні логери.
+It should be noted that constructors of any class use the default logger as a [token][104], and DI
+substitutes different loggers for different controllers.
 
 ```ts
 import { Controller, Logger, Response, Route } from '@ditsmod/core';
@@ -28,13 +28,13 @@ constructor(private res: Response, private log: Logger) {}
 // ...
 ```
 
-Перевірити роботу прикладу можна так, з першого терміналу:
+You can run the application from the first terminal:
 
 ```bash
 yarn start4
 ```
 
-З другого терміналу:
+From the second terminal check the work:
 
 ```bash
 curl -isS localhost:8080
@@ -43,8 +43,9 @@ curl -isS localhost:8080/winston
 curl -isS localhost:8080/bunyan
 ```
 
+[1]: ./prerequisite
 [5]: https://github.com/winstonjs/winston
 [6]: https://github.com/trentm/node-bunyan
 [7]: https://github.com/pinojs/pino
 
-[104]: ../core/dependency-injection#токени-di
+[104]: ../core/dependency-injection#di-tokens

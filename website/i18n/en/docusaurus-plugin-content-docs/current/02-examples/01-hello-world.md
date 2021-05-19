@@ -4,19 +4,21 @@ sidebar_position: 1
 
 # 01-hello-world
 
-Щоб спробувати даний приклад, необхідно спочатку [підготувати передумови](./prerequisite).
+To try this example, you should first [prepare the prerequisite][1].
 
-`01-hello-world` - це самий простий приклад з мінімальними налаштуваннями. В кореневий модуль імпортовано
-тільки `RouterModule` для маршрутизації, та один контролер з одним маршрутом.
+`01-hello-world` is the simplest example with minimal settings. Only the `RouterModule` for routing
+and one controller with one route are imported into the root module.
 
-Запустіть застосунок з першого терміналу:
+Launch the application from the first terminal:
 
 ```bash
 yarn start1
 ```
 
-З другого терміналу перевірте роботу:
+From the second terminal check the work:
 
 ```bash
 curl -isS localhost:8080
 ```
+
+[1]: ./prerequisite

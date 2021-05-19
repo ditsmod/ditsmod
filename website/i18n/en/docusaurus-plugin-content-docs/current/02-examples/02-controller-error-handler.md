@@ -1,11 +1,11 @@
 # 02-controller-error-handler
 
-Щоб спробувати даний приклад, необхідно спочатку [підготувати передумови](./prerequisite).
+To try this example, you should first [prepare the prerequisite][1].
 
-Ditsmod в ядрі оголошує клас `ControllerErrorHandler` на рівні HTTP-запиту та використовує DI щоб
-отримати інстанс цього класу для обробки помилок, що виникають під час роботи контролерів.
-Початково, цей клас підміняється класом `DefaultControllerErrorHandler`, що робить мінімальну
-обробку помилок:
+In Ditsmod core declares the `ControllerErrorHandler` class at the HTTP request level and uses DI
+to get an instance of this class to handle errors that occur during the operation of controllers.
+Initially, this class is replaced by the `DefaultControllerErrorHandler` class, which makes minimal
+error handling:
 
 ```ts
 @Injectable()
@@ -22,25 +22,26 @@ export class DefaultControllerErrorHandler implements ControllerErrorHandler {
 }
 ```
 
-У прикладі `02-controller-error-handler` показано варіант підміни цього класу за допомогою класу
-`MyControllerErrorHandler`. Зверніть увагу, що `ControllerErrorHandler` спочатку оголошується в
-кореневому модулі в масиві `providersPerReq`, а потім експортується з підміною його на
+The example `02-controller-error-handler` shows a variant of substituting this class using the
+`MyControllerErrorHandler` class. Note that `ControllerErrorHandler` is first declared in the root
+module in the `providersPerReq` array, and then exported with its replacement by
 `MyControllerErrorHandler`.
 
-Коли ви експортуєте певний провайдер з кореневого модуля, тим самим ви збільшуєте область
-його видимості для DI на весь застосунок.
+When you export a specific provider from the root module, you increase its scope for DI for the
+entire application.
 
-Запустіть застосунок з першого терміналу:
+Launch the application from the first terminal:
 
 ```bash
 yarn start2
 ```
 
-З другого терміналу перевірте роботу:
+From the second terminal check the work:
 
 ```bash
 curl -isS localhost:8080
 curl -isS localhost:8080/throw-error
 ```
 
+[1]: ./prerequisite
 [101]: ../core/dependency-injection#інжектори-di
