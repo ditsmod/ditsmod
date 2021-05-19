@@ -10,8 +10,8 @@ During application initialization, DI collects metadata from modules, controller
 then analyzes the **dependency** of each class on the other classes and prepares the appropriate
 kits to **resolve this dependency**.
 
-For example, if a security module requires a database module and a log module, DI prepares a set of
-classes assembled from these two modules.
+For example, if a security module requires a database module and a logger module, DI prepares
+a set of classes assembled from these two modules.
 
 So it turns out that if a certain class depends on another class, it does not import it directly
 from a specific file, but takes it through an intermediary - through the DI system. This scheme
@@ -24,7 +24,7 @@ application and even in the Ditsmod core".
 
 The same applies to any class on which other classes depend - they can all be substitute via DI.
 That is, in addition to the logger, you can substitute: router, request body parser, error handler,
-various by default configurations and even `Request` and `Response` classes.
+various default configurations and even `Request` and `Response` classes.
 
 For the developer, this opens up ample opportunities to both modify and extends the Ditsmod
 applications.
@@ -59,7 +59,7 @@ class, it's like providing another **provider** to create a class instance.
 Similarly, without changing the example code, you can still change the **level** at which the
 provider is declared for `FirstService` so that its instance is created:
 
-- or only once at the start of the application;
+- only once at the start of the application;
 - or each time it is imported into the some module;
 - or each time a specific route is created;
 - or for each HTTP request.
@@ -70,16 +70,16 @@ a particular service. For clarity, at least, it is necessary to additionally dec
 the provider `FirstService`.
 
 :::tip The difference between a provider and a service
-In order not to confuse the concept of **provider** with the concept of **service**, we can mention
+In order not to confuse the concept of **provider** with the concept of **service**, you can mention
 Internet providers. There may be many such providers, but specifically for you - the service is
 provided by one or two providers. Similarly in Ditsmod - you receive service in the concrete
 controller, and providers for this service can be many.
 :::
 
-## Declare the providers
+## Declare the provider level
 
-Declaring the provider level means that at this level the instances of the specified provider
-classes will be [Singleton][12]. You can to do such declaration either in the module metadata or
+Declaring the provider level means that at this level the instance of the specified provider
+class will be [Singleton][12]. You can to do such declaration either in the module metadata or
 in the controller metadata.
 
 For example, in the controller you can declare providers at the HTTP-request level:
@@ -193,16 +193,16 @@ is the same as shown in the previous example:
 
 Do not confuse the four levels of provider declaration with their scopes. When you passing
 a provider to one of the arrays: `providersPerApp`,` providersPerMod`, `providersPerRou` or
-`providersPerReq` - you declare at what level the [singleton][12] of this provider will be created.
+`providersPerReq` - you declare at which level the [singleton][12] of this provider will be created.
 But this is not the same as the scopes of providers.
 
-For example, if in `SomeModule` you declare `ConfigService` at the level of `providersPerMod`, it
-means that singleton of this service will be created at the level of this module and will become
+For example, if in `SomeModule` you declare `ConfigService` at the `providersPerMod` level, it
+means that the singleton of this service will be created at this module level and will be
 available only within this module. That is, any other module will not be able to see
 `ConfigService` for a while.
 
 However, to increase the scope of `ConfigService` you must export it from `SomeModule`, then all
-modules that import `SomeModule` will also have their own singleton` ConfigService` at the module
+modules that import `SomeModule` will also have their own singleton `ConfigService` at the module
 level.
 
 As you can see, the scope of providers is expanded by [exporting these providers][107] followed by
@@ -220,11 +220,11 @@ already a little familiar with their work - the injectors give you what you ask 
 constructors.
 
 Injectors are instances of classes that have arrays of providers and methods for finding those
-providers. When you pass providers to `providersPerApp`,` providersPerMod`, `providersPerRou` and
-`providersPerReq` arrays you are actually passing this data to four different injectors connected
-by a hierarchical connection. This connection is held by the child injector because it has a
-reference to the parent injector. At the same time, the parent injector knows nothing about its
-child injectors.
+providers. When you pass providers to `providersPerApp`, `providersPerMod`, `providersPerRou` and
+`providersPerReq` arrays you are actually passing this data to four different injectors which
+connected by a hierarchical connection. This connection is held by the child injector because it
+has a reference to the parent injector. At the same time, the parent injector knows nothing about
+its child injectors.
 
 _Note:_ the number mentioned - four injectors - is not the total number of injectors in the
 application, it is the number of injectors in the hierarchy. That is, a single controller works
@@ -249,9 +249,9 @@ the application. The total number of these injectors is equal to the number of s
 requests processed in a given period of time.
 
 To create singletons of services, each injector uses only those providers that are declared at its
-level. For example, the injector, at the request level, creates singletons only from the list of
+level. For example, the injector at the request level creates singletons only from the list of
 providers declared in the `providersPerReq` array. And although it also sees providers of parent
-injectors, it can only use ready-made parent instances of providers, not create them. Thus, the
+injectors, it can only use ready-made parent instances of providers, not creates them. Thus, the
 constructor controller can have singletons from any level.
 
 Each injector first looks at what is being asked at its level. If it doesn't find this, it can ask
@@ -284,8 +284,8 @@ export class ErrorHandlerService implements ControllerErrorHandler {
 ```
 
 You run the application, and when it comes to the operation of this service, DI throws the error
-that it can not find a provider for `Request` and` Response`. But why? Maybe you need to declare
-them yourself at the request-level, ie add them to the array `providersPerReq`? You do, but DI
+that it can not find a provider for `Request` and `Response`. But why? Maybe you need to declare
+them yourself at the request-level, ie add them to the `providersPerReq` array? You do, but DI
 still throws an error...
 
 The reason is in the incorrectly declared level for `ErrorHandlerService`. Because you have
@@ -293,13 +293,13 @@ declared this service at the application level, it will be taken care of by the 
 application level. This means that all the services you ask in the constructor, this injector will
 look only in the array that you passed to `providersPerApp`.
 
-However, `Request` and` Response` in Ditsmod are declared at the request level, ie these services
+However, `Request` and `Response` in Ditsmod are declared at the request level, ie these services
 are in the child injectors, in relation to the injector at the application level. And the parent
 injector knows nothing about the child injectors.
 
-There are two ways to solve this problem:
+There are two ways to solve this issue:
 
-1. or you remove `Request` and `Response` from the constructor of this service;
+1. you remove `Request` and `Response` from the constructor of this service;
 2. or you declare `ErrorHandlerService` at the request level. However, in this case, the visibility
 of `ErrorHandlerService` will be limited only to the module where you declared this provider. To
 correctly declare an error handler for the controller, see the [ditsmod seed repository][14].

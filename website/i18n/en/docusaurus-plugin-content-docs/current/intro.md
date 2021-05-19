@@ -12,26 +12,25 @@ good **Mod**ularity.
 
 The main features of Ditsmod:
 
-- Convenient mechanism for [specifying and resolve][8] between different application classes: you
-in constructor specify instances of what classes you need, and DI undertakes a difficult task
-"as their get".
-- Ability to easily substitute by default classes in the Ditsmod core with their own classes.
-For example, most likely, you will want to replace the logger class with your own class, because by
-default the logger writes everything only to the console.
+- Convenient mechanism for [specifying and resolving][8] between different application classes: you
+in constructor specify instances of which classes you need, and DI undertakes a difficult task
+"how to get it".
+- Ability to easily substitute default classes in the Ditsmod core with your own classes.
+For example, most likely, you will want to substitute the logger class with your own class, because
+default logger writes everything only to the console.
 - Ability to easily substitute the classes of your application with test classes (mocks, stubs),
 without changing the code of your application. This greatly simplifies testing.
 - Ditsmod is designed to provide good modularity of the entire application, and therefore good
-scalability. Its DI supports hierarchy, which means you can declare [singletons][12]: or at the
-level of the entire application, or at the level of a specific module, or at the level of
-a specific route, or at the level of an HTTP request.
+scalability. Its DI supports hierarchy, which means you can declare [singletons][12]: at the
+the application level, or at the module level, or at the route level, or at the HTTP request level.
 
-Some of the architecture concepts of this framework are taken from [Angular][9] and [DI][11]
+Some of the architecture concepts of this framework are taken from [Angular][9], and [DI][11]
 actually extracted from Angular v4.4.7. (with minimal modifications) and integrated into Ditsmod.
 
 ## Install the Ditsmod seed
 
 The [ditsmod-seed][2] repository has the minimum basic set for application operation. Clone it and
-set the dependencies:
+install the dependencies:
 
 ```bash
 git clone git@github.com:ditsmod/seed.git my-app
@@ -54,7 +53,7 @@ You can check the server with `curl`:
 curl -isS localhost:8080
 ```
 
-The application is compiled using the command:
+The application compiles using the command:
 
 ```bash
 yarn build
@@ -110,7 +109,7 @@ this file must contain a `reflect-metadata` import.
 
 Looking further at the file `src/main.ts`, you can see that an instance of the class `Application`
 is created, and as an argument for the method `bootstrap()` is passed `AppModule`. Here
-`AppModule` is the root module to which other application modules are then connected.
+`AppModule` is the root module to which other application modules then imports.
 
 
 [1]: #install-the-ditsmod-seed

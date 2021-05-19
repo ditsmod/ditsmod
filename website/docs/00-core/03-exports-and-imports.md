@@ -46,32 +46,17 @@ export class SomeModule {}
 import { RootModule } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
+import { OtherModule } from './other.module';
 
 @RootModule({
   providersPerMod: [SomeService],
-  exports: [SomeService],
+  exports: [SomeService, OtherModule],
 })
 export class AppModule {}
 ```
 
-## Реекспорт модуля
-
-Окрім імпорту певного модуля, цей же модуль можна одночасно й експортувати:
-
-```ts
-import { Module } from '@ditsmod/core';
-
-import { FirstModule } from './first.module';
-
-@Module({
-  imports: [FirstModule],
-  exports: [FirstModule],
-})
-export class SecondModule {}
-```
-
-Який у цьому сенс? - Тепер, якщо ви зробите імпорт `SecondModule` у якийсь інший модуль, ви
-фактично матимете імпортованим ще й `FirstModule`.
+Як бачите, окрім експорту окремих провайдерів, що оголошені в кореневому модулі, можна також
+експортувати цілі модулі.
 
 ## Імпорт модуля
 
@@ -128,6 +113,25 @@ interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
 І якщо ви хочете використовувати провайдер, що не експортується із зовнішнього модуля, то це
 також не рекомендується робити, оскільки ви будете опиратись на непублічний API, що може змінитись
 у будь-який момент без попередження.
+
+## Реекспорт модуля
+
+Окрім імпорту певного модуля, цей же модуль можна одночасно й експортувати:
+
+```ts
+import { Module } from '@ditsmod/core';
+
+import { FirstModule } from './first.module';
+
+@Module({
+  imports: [FirstModule],
+  exports: [FirstModule],
+})
+export class SecondModule {}
+```
+
+Який у цьому сенс? - Тепер, якщо ви зробите імпорт `SecondModule` у якийсь інший модуль, ви
+фактично матимете імпортованим ще й `FirstModule`.
 
 
 [121]: ./providers-collisions

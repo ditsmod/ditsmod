@@ -10,7 +10,7 @@ Generally speaking, the module should have a set of classes with a narrow specia
 A well-designed module does not have to be a "universal combine".
 
 For example, a security module has a narrow specialization - access security and application
-management security. Classes should not be declared here, for example, translating messages into
+management security. Here should not be declared classes which translating messages into
 different languages, sending mail, writing logs, etc.
 
 When a particular module is tied to a specific URL, it's also good practice, and it can also be
@@ -82,7 +82,7 @@ import { RootModule } from '@ditsmod/core';
   exports: [],
   extensions: []
 })
-export class SomeModule {}
+export class AppModule {}
 ```
 
 ## Routes prefixes

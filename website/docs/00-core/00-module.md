@@ -82,7 +82,7 @@ import { RootModule } from '@ditsmod/core';
   exports: [],
   extensions: []
 })
-export class SomeModule {}
+export class AppModule {}
 ```
 
 ## Префікси маршрутів

@@ -64,21 +64,6 @@ export class SomeController {
 властивостей, що повинні бути у класів, імпортованих з _@ditsmod/core_.
 :::
 
-### Оголошення контролера
-
-Оголошувати контролер можна у будь-якому модулі, у масиві `controllers`:
-
-```ts
-import { Module } from '@ditsmod/core';
-
-import { SomeController } from './first.controller';
-
-@Module({
-  controllers: [SomeController]
-})
-export class SomeModule {}
-```
-
 Щоб використовувати `pathParams`, `queryParams` чи `body`, у конструкторі контролера необхідно
 запитати інстанс класу `Request`:
 
@@ -105,6 +90,21 @@ export class SomeController {
 
 Щойно в конструкторі ми отримали інстанси класів `Request` та `Response`, вони представляють собою
 так звані сервіси.
+
+### Оголошення контролера
+
+Оголошувати контролер можна у будь-якому модулі, у масиві `controllers`:
+
+```ts
+import { Module } from '@ditsmod/core';
+
+import { SomeController } from './first.controller';
+
+@Module({
+  controllers: [SomeController]
+})
+export class SomeModule {}
+```
 
 ## Сервіси
 

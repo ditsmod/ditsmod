@@ -17,7 +17,7 @@ same token, Ditsmod will throw the following error:
 > Error: Exporting providers in Module1 was failed: Collision was found for:
 > Service3. You should manually add this provider to Module1.
 
-Specifically in this situation:
+Specifically in this case:
 
 1. `Module2` substitute and then exports the provider with the token `Service3`;
 2. and `Module3` substitute and then exports the provider with the token `Service3`.

@@ -41,12 +41,12 @@ export class SomeController {
 
 What we see here:
 
-1. In the constructor of the class using the access modifier `private` the property of class `res`
+1. In the constructor of the class using the access modifier `private`, the property of class `res`
 with data type `Response` is declared. So we ask Ditsmod to create an instance of the `Response`
 class and pass it to the `res` variable.
 2. Routes are created using the `Route` decorator, which is placed before the class method.
 3. Responses to HTTP requests are sent via `this.res.send()`.
-4. Error objects can be thrown directly in the class method in the usual way for JavaScript - with
+4. Error objects can be thrown directly in the class method in the common way for JavaScript - with
 the keyword `throw`.
 
 :::tip Use an access modifier
@@ -63,21 +63,6 @@ The fact is that in TypeScript globally announced interfaces with exactly the sa
 and `Response`. Because of this, your IDE can only say that these interfaces do not have certain
 properties that classes imported from _@ditsmod/core_ should have.
 :::
-
-### Declare the controller
-
-You can declare a controller in any module, in the `controllers` array:
-
-```ts
-import { Module } from '@ditsmod/core';
-
-import { SomeController } from './first.controller';
-
-@Module({
-  controllers: [SomeController]
-})
-export class SomeModule {}
-```
 
 To use `pathParams`, `queryParams` or `body`, you should ask the `Request` in the controller
 constructor:
@@ -106,6 +91,21 @@ export class SomeController {
 In constructor we received instances of classes `Request` and `Response`,
 they represent services.
 
+### Declare the controller
+
+You can declare a controller in any module, in the `controllers` array:
+
+```ts
+import { Module } from '@ditsmod/core';
+
+import { SomeController } from './first.controller';
+
+@Module({
+  controllers: [SomeController]
+})
+export class SomeModule {}
+```
+
 ## Sevices
 
 The TypeScript class becomes a Ditsmod service with `Injectable` decorator:
@@ -121,7 +121,7 @@ Note that this decorator is imported from `@ts-stack/di`, not from `@ditsmod/cor
 Examples of Ditsmod services:
 
 - configuration service;
-- service for working with databases, mail, etc .;
+- service for working with databases, email, etc .;
 - service for parsing the body of the HTTP-request;
 - service for checking access rights;
 - etc.

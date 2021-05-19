@@ -27,7 +27,7 @@ required.
 
 Providers can only export those that are declared:
 
-1. or at the module level (ie in the array `providersPerMod`);
+1. at the module level (ie in the array `providersPerMod`);
 2. or at the route level (ie in the array `providersPerRou`);
 3. or at the request level (ie in the array `providersPerReq`).
 
@@ -46,37 +46,22 @@ or controller in the application, with their declaration level preserved:
 import { RootModule } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
+import { OtherModule } from './other.module';
 
 @RootModule({
   providersPerMod: [SomeService],
-  exports: [SomeService],
+  exports: [SomeService, OtherModule],
 })
 export class AppModule {}
 ```
 
-## Re-export of the module
-
-In addition to importing a specific module, the same module can be exported at the same time:
-
-```ts
-import { Module } from '@ditsmod/core';
-
-import { FirstModule } from './first.module';
-
-@Module({
-  imports: [FirstModule],
-  exports: [FirstModule],
-})
-export class SecondModule {}
-```
-
-What's the point of this? - Now, if you import `SecondModule` into some other module, you will
-actually have `FirstModule` also imported.
+As you can see, in addition to exporting individual providers declared in the root module, you can
+also export entire modules.
 
 ## Import of the module
 
 You cannot import a single provider into the Ditsmod module, but you can import an entire module
-with all the providers exported to it:
+with all the providers exported from it:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -129,6 +114,25 @@ a provider from an external module, import this external module completely.
 And if you want to use a provider that is not exported from an external module, it is also not
 recommended to do so, because you will rely on a non-public API, which can change at any time
 without notice.
+
+## Re-export of the module
+
+In addition to importing a specific module, the same module can be exported at the same time:
+
+```ts
+import { Module } from '@ditsmod/core';
+
+import { FirstModule } from './first.module';
+
+@Module({
+  imports: [FirstModule],
+  exports: [FirstModule],
+})
+export class SecondModule {}
+```
+
+What's the point of this? - Now, if you import `SecondModule` into some other module, you will
+actually have `FirstModule` also imported.
 
 
 [121]: ./providers-collisions
