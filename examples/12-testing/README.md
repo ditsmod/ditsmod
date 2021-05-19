@@ -1,4 +1,4 @@
-## Preconditions
+## Prerequisites
 
 If you haven't prepared the examples repository yet, you can do so:
 
