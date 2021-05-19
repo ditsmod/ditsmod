@@ -27,7 +27,7 @@
     "start9": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/09-one-extension/main.ts",
     "start10": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/10-openapi/main.ts",
     "start11": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/11-override-core-log-messages/main.ts",
-    "start12": "echo 'Not implemented yet.'",
+    "start12": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/12-testing/main.ts",
     "start13": "echo 'Not implemented yet.'",
     "start14": "echo 'Not implemented yet.'",
     "start15": "echo 'Not implemented yet.'",

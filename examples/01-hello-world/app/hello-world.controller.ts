@@ -8,9 +8,4 @@ export class HelloWorldController {
   tellHello() {
     this.res.send('Hello World!\n');
   }
-
-  @Route('GET', 'wait')
-  wait() {
-    // this.res.send('Hello World!\n');
-  }
 }
