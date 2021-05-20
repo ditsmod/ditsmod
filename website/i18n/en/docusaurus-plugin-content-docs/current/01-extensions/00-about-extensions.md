@@ -14,6 +14,11 @@ For example, the `@ditsmod/openapi` module allows you to create OpenAPI document
 `@OasRoute` decorator. Without extensions, the metadata passed to this decorator would be
 incomprehensible to `@ditsmod/core`.
 
+Another example. `@ditsmod/body-parser` module has an extension that dynamically adds an HTTP
+interceptor for parsing the request body to each route that has the appropriate method (POST,
+PATCH, PUT). It does this once before the start of the web server, so there is no need to test
+the need for such parsing for each request.
+
 ## What is Ditsmod extension
 
 Ditsmod has a special API to extend the functionality of `@ditsmod/core`. To use it, you need to
