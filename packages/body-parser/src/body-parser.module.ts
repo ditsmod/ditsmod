@@ -1,6 +1,5 @@
-import { BodyParser, edk, Module } from '@ditsmod/core';
+import { edk, HTTP_INTERCEPTORS, Module } from '@ditsmod/core';
 
-import { DefaultBodyParser } from './body-parser';
 import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.extension';
 
 @Module({
@@ -9,8 +8,6 @@ import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.exten
     { provide: BODY_PARSER_EXTENSIONS, useExisting: BodyParserExtension, multi: true },
     { provide: `BEFORE ${edk.PRE_ROUTER_EXTENSIONS}`, useExisting: BodyParserExtension, multi: true },
   ],
-  providersPerReq: [{ provide: BodyParser, useClass: DefaultBodyParser }],
-  exports: [{ provide: BodyParser, useClass: DefaultBodyParser }],
-  extensions: [],
+  extensions: [BODY_PARSER_EXTENSIONS],
 })
 export class BodyParserModule {}

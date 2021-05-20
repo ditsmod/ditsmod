@@ -1,5 +1,7 @@
-import { BodyParserConfig, edk } from '@ditsmod/core';
+import { BodyParserConfig, edk, HTTP_INTERCEPTORS } from '@ditsmod/core';
 import { Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
+
+import { BodyParserInterceptor } from './body-parser.interceptor';
 
 export const BODY_PARSER_EXTENSIONS = new InjectionToken<edk.Extension<void>[]>('BODY_PARSER_EXTENSIONS');
 
@@ -15,15 +17,16 @@ export class BodyParserExtension implements edk.Extension<void> {
     }
 
     const rawRouteMeta = await this.extensionManager.init(edk.ROUTES_EXTENSIONS);
-    rawRouteMeta.forEach(meta => {
+    rawRouteMeta.forEach((meta) => {
       const { providersPerMod, providersPerRou, providersPerReq } = meta;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
       const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
       const routeMeta = injectorPerRou.get(edk.RouteMeta) as edk.RouteMeta;
-      const route = routeMeta.decoratorMetadata.value as edk.RouteMeta;
       const bodyParserConfig = injectorPerReq.resolveAndInstantiate(BodyParserConfig) as BodyParserConfig;
-      routeMeta.parseBody = bodyParserConfig.acceptMethods.includes(route.httpMethod);
+      if (bodyParserConfig.acceptMethods.includes(routeMeta.httpMethod)) {
+        providersPerReq.push({ provide: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
+      }
     });
 
     this.inited = true;
