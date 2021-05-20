@@ -3,7 +3,6 @@ import { Injectable } from '@ts-stack/di';
 import { HttpBackend } from '../types/http-interceptor';
 import { Request } from './request';
 import { CanActivate } from '../types/mix';
-import { BodyParser } from './body-parser';
 import { NodeRequest, NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { RootMetadata } from '../models/root-metadata';
@@ -21,7 +20,7 @@ export class DefaultHttpBackend implements HttpBackend {
 
   async handle() {
     const req = this.req;
-    const { controller, methodName, parseBody, guards } = this.routeMeta;
+    const { controller, methodName, guards } = this.routeMeta;
     req.nodeRes.setHeader('Server', this.rootMetadata.serverName);
 
     const preparedGuards: { guard: CanActivate; params?: any[] }[] = guards.map((item) => {
@@ -39,11 +38,6 @@ export class DefaultHttpBackend implements HttpBackend {
         this.canNotActivateRoute(req.nodeReq, req.nodeRes, status);
         return;
       }
-    }
-
-    if (parseBody) {
-      const bodyParser = req.injector.get(BodyParser) as BodyParser;
-      req.body = await bodyParser.getBody();
     }
 
     await ctrl[methodName]();
