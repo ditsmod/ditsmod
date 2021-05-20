@@ -132,7 +132,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
     });
     const operationObject: XOperationObject = { tags: ['NonOasRoutes'], parameters, responses: {} };
     this.setSecurityInfo(operationObject, guards);
-    if (routeMeta.parseBody) {
+    if (['POST', 'PATCH', 'PUT'].includes(httpMethod)) {
       operationObject.requestBody = {
         description: 'It is default content field for non-OasRoute',
         content: { ['application/json']: {} },
