@@ -38,7 +38,7 @@
     "typescript": "^4.2.3"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^1.0.0-beta.21",
+    "@ditsmod/core": "^1.0.0-beta.22",
     "@ts-stack/di": "^1.1.0"
   }
 }

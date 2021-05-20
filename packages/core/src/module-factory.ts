@@ -161,15 +161,8 @@ export class ModuleFactory {
         const msg = `Importing ${this.moduleName} failed: "${token}" must be includes in "providersPerApp" array.`;
         throw new Error(msg);
       }
-      if (
-        !provider.multi ||
-        !isInjectionToken(token) ||
-        !isClassProvider(provider) ||
-        !isExtensionProvider(provider.useClass)
-      ) {
-        const msg =
-          `Importing ${this.moduleName} failed: Extensions with array index "${i}" ` +
-          'must be a value provider where "useClass: Class" must have init() method and "multi: true".';
+      if (!provider.multi || !isInjectionToken(token)) {
+        const msg = `Importing ${this.moduleName} failed: Extensions with array index "${i}" must have "multi: true".`;
         throw new TypeError(msg);
       }
       const normProviders = normalizeProviders([...providersPerMod, ...providersPerRou, ...providersPerReq]).map(
@@ -185,8 +178,10 @@ export class ModuleFactory {
   }
 
   protected checkHttpInterceptors(meta: NormalizedModuleMetadata) {
-    const normProviders = [...meta.providersPerApp, ...meta.providersPerMod, ...meta.providersPerRou].filter(isNormalizedProvider);
-    if (normProviders.find(np => np.provide === HTTP_INTERCEPTORS)) {
+    const normProviders = [...meta.providersPerApp, ...meta.providersPerMod, ...meta.providersPerRou].filter(
+      isNormalizedProvider
+    );
+    if (normProviders.find((np) => np.provide === HTTP_INTERCEPTORS)) {
       const msg = `Importing ${this.moduleName} failed: "HTTP_INTERCEPTORS" providers can be includes in the "providersPerReq" array only.`;
       throw new Error(msg);
     }
