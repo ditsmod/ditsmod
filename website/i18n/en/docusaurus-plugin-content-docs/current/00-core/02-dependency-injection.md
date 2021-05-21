@@ -185,7 +185,7 @@ export class SomeModule {}
 To substitute any Ditsmod default provider with your own provider, the algorithm of your actions
 is the same as shown in the previous example:
 
-1. learn the [API providers][106] that you want to substitute;
+1. learn the providers API that you want to substitute;
 2. implement the same API in your providers;
 3. make a substitution default provider by your provider.
 
@@ -447,6 +447,5 @@ Note that `InjectionToken` is imported from `@ts-stack/di`, not from `@ditsmod/c
 [8]: https://en.wikipedia.org/wiki/Dependency_injection
 
 [107]: ./exports-and-imports
-[106]: ./api
 [121]: ./providers-collisions
 [100]: #substitution-providers

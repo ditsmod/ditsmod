@@ -44,4 +44,3 @@ curl -isS localhost:8080/throw-error
 ```
 
 [1]: ./prerequisite
-[101]: ../core/dependency-injection#інжектори-di

@@ -42,5 +42,3 @@ yarn start2
 curl -isS localhost:8080
 curl -isS localhost:8080/throw-error
 ```
-
-[101]: ../core/dependency-injection#інжектори-di
