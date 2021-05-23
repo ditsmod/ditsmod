@@ -15,7 +15,7 @@
 - set strict mode for tsconfig [861c4a3](https://github.com/ditsmod/ditsmod/commit/861c4a3).
 
 <a name="core-beta.21"></a>
-# [core-beta.21](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.21) (2021-05-10)
+## [core-beta.21](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.21) (2021-05-10)
 
 ### BREAKING CHANGES
 
