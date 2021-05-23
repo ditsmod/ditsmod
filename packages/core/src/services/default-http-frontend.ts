@@ -28,15 +28,15 @@ export class DefaultHttpFrontend implements HttpFrontend {
         this.req.pathParams = pathParams;
       }
     } catch (err) {
-      this.lazyLoadErrorHandler(err);
+      this.loadErrorHandler(err);
     }
 
     await next.handle().catch((err) => {
-      this.lazyLoadErrorHandler(err);
+      this.loadErrorHandler(err);
     });
   }
 
-  protected lazyLoadErrorHandler(err: any) {
+  protected loadErrorHandler(err: any) {
     const errorHandler = this.req.injector.get(ControllerErrorHandler);
     errorHandler.handleError(err);
   }
