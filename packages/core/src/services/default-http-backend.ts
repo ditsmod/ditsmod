@@ -29,7 +29,6 @@ export class DefaultHttpBackend implements HttpBackend {
         params: item.params,
       };
     });
-    const ctrl = req.injector.get(controller);
 
     for (const item of preparedGuards) {
       const canActivate = await item.guard.canActivate(item.params);
@@ -40,7 +39,8 @@ export class DefaultHttpBackend implements HttpBackend {
       }
     }
 
-    await ctrl[methodName]();
+    const ctrl = req.injector.get(controller);
+    return await ctrl[methodName]();
   }
 
   protected canNotActivateRoute(nodeReq: NodeRequest, nodeRes: NodeResponse, status?: Status) {
