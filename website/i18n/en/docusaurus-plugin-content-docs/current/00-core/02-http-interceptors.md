@@ -10,19 +10,28 @@ Typically, interceptors are used to automate standard processing, such as:
 
 - parsing the body of the request, cookies, headers;
 - validation of the request;
-- verification of access rights;
 - collecting and logging various application metrics.
 
 Interceptors can be centrally connected or disconnected at the application, module, route, or
 controller level without changing the method code of the controllers to which they are bound.
 
-When the router transmits an HTTP request to the router handler, where there are interceptors, the
-first interceptor in the chain is automatically started first. And the second and subsequent
-interceptors may not start, it depends on whether the previous interceptor will start them in the
-chain.
+When HTTP request processing begins, Ditsmod first retrieves [HttpFrontend][2] via DI, puts it
+first in the interceptor chain, and calls it automatically. By default, this interceptor is
+responsible for calling guards, installing `req.pathParams` and `req.queryParams`, and for handling
+errors that occur during the operation of interceptors and the controller.
 
-If all interceptors for a certain route have worked out, only then the corresponding method of the
-controller is started.
+The second and subsequent interceptors may not be called, depending on whether the previous one in
+the chain interceptor will run them.
+
+If all interceptors have worked, Ditsmod calls [HttpBackend][3], which is also extracted via DI. By
+default, `HttpBackend` runs directly the controller method that is responsible for processing the
+current request.
+
+Therefore, the order of processing the request is as follows:
+
+```text
+HttpFrontend -> [other interceptors] -> HttpBackend -> [controller]
+```
 
 ## Creating an interceptor
 
@@ -47,11 +56,16 @@ can be received in constructor through DI, as well as in any service.
 
 Note that each call to the next interceptor returns `Promise<any>`, and it eventually leads to a
 controller method tied to the corresponding route. This means that in the interceptor you can
-listen for the result of promice resolve, which returns the method of the controller. However, at
-the moment (v1.0.0), Ditsmod ignores everything that returns the controller or interceptors, so
-this promise resolve can be useful for other purposes - to collect metrics, logging, etc.
+listen for the result of promice resolve, which returns the method of the controller.
 
-## Declare interceptor level
+However, at the moment (v1.0.0), `HttpFrontend` and `HttpBackend` ignores everything that returns
+the controller or interceptors, so this promise resolve can be useful for other purposes - to
+collect metrics, logging, etc.
+
+On the other hand, through DI you can easily substitute `HttpFrontend` and `HttpBackend` with your
+own interceptors to take into account the value returned by the controller method.
+
+## Declare interceptor
 
 Any interceptor is declared at the request level by multi-providers with the token
 `HTTP_INTERCEPTORS`:
@@ -70,3 +84,5 @@ export class SomeModule {}
 
 
 [1]: ../api/http-interceptor
+[2]: ../api/http-frontend
+[3]: ../api/http-backend
