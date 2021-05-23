@@ -36,7 +36,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
       this.loadErrorHandler(err);
     }
 
-    await next.handle().catch((err) => {
+    return await next.handle().catch((err) => {
       this.loadErrorHandler(err);
     });
   }
