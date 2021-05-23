@@ -1,10 +1,9 @@
-<a name="openapi-beta.15"></a>
-# [openapi-beta.15](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.15) (2021-05-10)
+<a name="openapi-1.0.0"></a>
+# [openapi-1.0.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-1.0.0) (2021-05-23)
 
-### BREAKING CHANGES
+### Improvements
 
-- removed `parseBody` feature from openapi [fc2af1f](https://github.com/ditsmod/ditsmod/commit/fc2af1f).
-This version required `@ditsmod/core` version >= 1.0.0-beta.21.
+- set strict mode for tsconfig [ea07346](https://github.com/ditsmod/ditsmod/commit/ea07346).
 
 <a name="openapi-beta.14"></a>
 ## [openapi-beta.14](https://github.com/ts-stack/ditsmod/releases/tag/openapi-beta.14) (2021-05-09)
