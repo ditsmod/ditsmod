@@ -7,7 +7,7 @@ sidebar_position: 5
 Imagine you have `Module1` where you imported `Module2` and `Module3`. You did this import because
 you need `Service2` and `Service3` from these modules, respectively. You are viewing how these
 services work, but for some reason `Service3` does not work as expected. You start debug and it
-turns out that `Service3` exports both modules:` Module2` and `Module3`. You expected that
+turns out that `Service3` exports both modules: `Module2` and `Module3`. You expected that
 `Service3` would only be exported from `Module3`, but the version exported from `Module2` actually
 worked.
 
