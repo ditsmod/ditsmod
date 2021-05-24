@@ -39,7 +39,8 @@ import { Module } from '@ditsmod/core';
   providersPerRou: [], // Провайдери на рівні роуту
   providersPerReq: [], // Провайдери на рівні запиту
   exports: [], // Експорт модулів та провайдерів із поточного модуля
-  extensions: [] // Розширення
+  extensions: [], // Розширення
+  extensionsMeta: {} // Дані для роботи розширень
 })
 export class SomeModule {}
 ```

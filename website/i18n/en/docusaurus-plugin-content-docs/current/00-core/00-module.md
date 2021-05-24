@@ -39,7 +39,8 @@ import { Module } from '@ditsmod/core';
   providersPerRou: [], // Route-level providers
   providersPerReq: [], // Request-level providers
   exports: [], // Export modules and providers from the current module
-  extensions: []
+  extensions: [],
+  extensionsMeta: {} // Data for extensions
 })
 export class SomeModule {}
 ```
