@@ -28,7 +28,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   /**
    * This property allows you to pass any information to extensions.
    * 
-   * You must follow this rule: data for one extension - one key in `additionalMeta` object.
+   * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
    */
   extensionsMeta = {} as A;
 }
