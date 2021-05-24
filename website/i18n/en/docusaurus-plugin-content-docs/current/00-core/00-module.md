@@ -81,7 +81,8 @@ import { RootModule } from '@ditsmod/core';
   providersPerRou: [],
   providersPerReq: [],
   exports: [],
-  extensions: []
+  extensions: [],
+  extensionsMeta: {}
 })
 export class AppModule {}
 ```
