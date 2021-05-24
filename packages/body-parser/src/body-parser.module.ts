@@ -1,4 +1,4 @@
-import { edk, HTTP_INTERCEPTORS, Module } from '@ditsmod/core';
+import { edk, Module } from '@ditsmod/core';
 
 import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.extension';
 

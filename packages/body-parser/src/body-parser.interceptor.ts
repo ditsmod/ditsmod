@@ -8,10 +8,10 @@ export class BodyParserInterceptor implements HttpInterceptor {
 
   async intercept(next: HttpHandler) {
     if (!this.config.acceptHeaders.some((type) => this.req.nodeReq.headers['content-type']?.includes(type))) {
-      return;
+      return next.handle();
     }
     this.req.body = await parse(this.req.nodeReq, this.req.nodeReq.headers as Headers, { limit: this.config.maxBodySize });
 
-    next.handle();
+    return next.handle();
   }
 }
