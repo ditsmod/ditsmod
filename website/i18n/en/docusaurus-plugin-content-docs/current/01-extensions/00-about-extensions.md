@@ -47,7 +47,7 @@ registration has taken place, the application is running, and then goes the foll
 service, controller or extension can receive this metadata in the constructor;
 3. one after another all registered extensions are started, more precisely - their methods `init()`
 without arguments are called;
-4. The web server starts, and the application starts working normally, processing HTTP requests.
+4. the web server starts, and the application starts working normally, processing HTTP requests.
 
 It should be noted that the order of running extensions can be considered as "random", so each
 extension must declare dependence on another extension (if any) in its constructors, as well as in

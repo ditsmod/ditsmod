@@ -16,7 +16,7 @@ import { edk } from '@ditsmod/core';
 
 @Injectable()
 export class MyExtension implements edk.Extension<void> {
-  private inited: boolean;
+  private data: boolean;
 
   async init() {
     if (this.data) {
