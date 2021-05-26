@@ -58,7 +58,7 @@ module.exports = {
       // appId: 'YOUR_APP_ID',
 
       // Optional: Algolia search parameters
-      searchParameters: {},
+      searchParameters: { facetFilters: ["type:content", "language:LANGUAGE"] },
 
       //... other Algolia params
     },
