@@ -23,7 +23,7 @@ of the logger already registered in the code. You can say, "DI, use my logger an
 application and even in the Ditsmod core".
 
 The same applies to any class on which other classes depend - they can all be substitute via DI.
-That is, in addition to the logger, you can substitute: router, request body parser, error handler,
+That is, in addition to the logger, you can substitute: router, error handler,
 various default configurations and even `Request` and `Response` classes.
 
 For the developer, this opens up ample opportunities to both modify and extends the Ditsmod
@@ -95,7 +95,7 @@ export class SomeController {
 }
 ```
 
-As you can see, the decorator's metadata `Controller` has an object with the `providersPerReq`
+As you can see, the `Controller`'s metadata has an object with the `providersPerReq`
 property, where the array of providers that this controller needs in the constructor is passing.
 
 And if we want to substitute some provider, we will write it like this:
@@ -250,8 +250,8 @@ requests processed in a given period of time.
 
 To create singletons of services, each injector uses only those providers that are declared at its
 level. For example, the injector at the request level creates singletons only from the list of
-providers declared in the `providersPerReq` array. And although it also sees providers of parent
-injectors, it can only use ready-made parent instances of providers, not creates them. Thus, the
+providers declared in the `providersPerReq` array. And although it also sees providers from parent
+injectors, it can only use ready-made parent's instances of providers, not creates them. Thus, the
 constructor controller can have singletons from any level.
 
 Each injector first looks at what is being asked at its level. If it doesn't find this, it can ask
@@ -262,8 +262,8 @@ To understand what this means in practice, let's look at a specific example.
 
 Suppose you create `ErrorHandlerService` and think: "Where to declare it? - Since this service may
 be needed at any point in the application, then I need to declare it at the application level -
-in the array `providersPerApp`". But at the same time, in this service you want to see instances of
-class `Request` and` Response`:
+in `providersPerApp` array". But at the same time, in this service you want to see instances of
+classes `Request` and `Response`:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -424,7 +424,9 @@ export class SomeService {
 }
 ```
 
-When declaring the provider level:
+Note that `InjectionToken` is imported from `@ts-stack/di`, not from `@ditsmod/core`.
+
+Declaring the provider level:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -438,8 +440,6 @@ import { localToken } from './tokens';
 })
 export class SomeModule {}
 ```
-
-Note that `InjectionToken` is imported from `@ts-stack/di`, not from `@ditsmod/core`.
 
 
 [12]: https://en.wikipedia.org/wiki/Singleton_pattern

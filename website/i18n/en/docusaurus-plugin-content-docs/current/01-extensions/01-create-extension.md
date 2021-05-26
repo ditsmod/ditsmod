@@ -242,17 +242,18 @@ returned with `init()`.
 `ExtensionsManager` is also useful in that it throws errors about cyclic dependencies between
 extensions, and shows the whole chain of extensions that led to loops.
 
-Suppose `Extension1` (not shown here) is registered in the `MY_EXTENSIONS` group, and `Extension2`
-must wait for the initialization of this group of extensions to complete. To do this, you must
-specify the dependence on `ExtensionsManager` in the constructor, and in `init()` call `init()`
-of this service:
+Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to
+complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor,
+and in `init()` call `init()` of this service:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
 import { edk } from '@ditsmod/core';
 
+import { OTHER_EXTENSIONS } from './other.extensions';
+
 @Injectable()
-export class Extension2 implements edk.Extension<void> {
+export class MyExtension implements edk.Extension<void> {
   private inited: boolean;
 
   constructor(private extensionsManager: edk.ExtensionsManager) {}
@@ -262,7 +263,7 @@ export class Extension2 implements edk.Extension<void> {
       return;
     }
 
-    await this.extensionsManager.init(MY_EXTENSIONS);
+    await this.extensionsManager.init(OTHER_EXTENSIONS);
     // Do something here.
     this.inited = true;
   }
@@ -275,7 +276,7 @@ automatically merge into a single resulting array. This behavior can be changed 
 argument in `init()` pass `false`:
 
 ```ts
-await this.extensionsManager.init(MY_EXTENSIONS, false);
+await this.extensionsManager.init(OTHER_EXTENSIONS, false);
 ```
 
 ## Dynamic addition of providers

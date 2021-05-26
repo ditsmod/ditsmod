@@ -79,7 +79,7 @@ import { AuthGuard } from './auth.guard';
 export class ThridModule {}
 ```
 
-If `FirstModule` exports, for example, `SomeService`, then this service can now be used in
+For example, if `FirstModule` exports `SomeService`, then this service can now be used in
 `ThridModule` in any of its services or controllers.
 
 Note that when importing, the provider's declaration level remains the same as it was when

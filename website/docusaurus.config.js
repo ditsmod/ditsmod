@@ -47,21 +47,21 @@ module.exports = {
         },
       ],
     },
-    // algolia: {
-    //   apiKey: 'YOUR_API_KEY',
-    //   indexName: 'YOUR_INDEX_NAME',
+    algolia: {
+      apiKey: '86bdb4ef75a986e9aa998503dfc64d23',
+      indexName: 'ditsmod',
 
-    //   // Optional: see doc section below
-    //   contextualSearch: true,
+      // Optional: see doc section below
+      contextualSearch: true,
 
-    //   // Optional: see doc section below
-    //   // appId: 'YOUR_APP_ID',
+      // Optional: see doc section below
+      // appId: 'YOUR_APP_ID',
 
-    //   // Optional: Algolia search parameters
-    //   searchParameters: {},
+      // Optional: Algolia search parameters
+      searchParameters: {},
 
-    //   //... other Algolia params
-    // },
+      //... other Algolia params
+    },
     footer: {
       style: 'dark',
       links: [

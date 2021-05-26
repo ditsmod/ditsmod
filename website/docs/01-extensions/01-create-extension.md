@@ -243,17 +243,18 @@ export class SomeModule {}
 `ExtensionsManager` також корисний тим, що кидає помилки про циклічні залежності між розширеннями,
 і показує весь ланцюжок розширень, що призвів до зациклення.
 
-Припустимо `Extension1` (тут не показано) зареєстровано у групі `MY_EXTENSIONS`, а
-`Extension2` повинно дочекатись завершення ініціалізації цієї групи розширень. Щоб зробити це, у
-конструкторі треба указувати залежність від `ExtensionsManager`, а у `init()` викликати `init()`
-цього сервісу:
+Припустимо `MyExtension` повинно дочекатись завершення ініціалізації групи `OTHER_EXTENSIONS`. Щоб
+зробити це, у конструкторі треба указувати залежність від `ExtensionsManager`, а у `init()`
+викликати `init()` цього сервісу:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
 import { edk } from '@ditsmod/core';
 
+import { OTHER_EXTENSIONS } from './other.extensions';
+
 @Injectable()
-export class Extension2 implements edk.Extension<void> {
+export class MyExtension implements edk.Extension<void> {
   private inited: boolean;
 
   constructor(private extensionsManager: edk.ExtensionsManager) {}
@@ -263,7 +264,7 @@ export class Extension2 implements edk.Extension<void> {
       return;
     }
 
-    await this.extensionsManager.init(MY_EXTENSIONS);
+    await this.extensionsManager.init(OTHER_EXTENSIONS);
     // Do something here.
     this.inited = true;
   }
@@ -276,7 +277,7 @@ export class Extension2 implements edk.Extension<void> {
 якщо другим аргументом у `init()` передати `false`:
 
 ```ts
-await this.extensionsManager.init(MY_EXTENSIONS, false);
+await this.extensionsManager.init(OTHER_EXTENSIONS, false);
 ```
 
 ## Динамічне додавання провайдерів

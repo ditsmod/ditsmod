@@ -12,8 +12,8 @@ Typically, interceptors are used to automate standard processing, such as:
 - validation of the request;
 - collecting and logging various application metrics.
 
-Interceptors can be centrally connected or disconnected at the application, module, route, or
-controller level without changing the method code of the controllers to which they are bound.
+Interceptors can be centrally connected or disconnected without changing the method code of the
+controllers to which they are attached.
 
 When HTTP request processing begins, Ditsmod first retrieves [HttpFrontend][2] via DI, puts it
 first in the interceptor chain, and calls it automatically. By default, this interceptor is
@@ -51,7 +51,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
 ```
 
 As you can see, the `intercept()` method gets a single argument - this is the instance of the
-handler that calls the next interceptor. If the interceptor needs certain data for the work, they
+handler that calls the next interceptor. If the interceptor needs certain data for the work, it
 can be received in constructor through DI, as well as in any service.
 
 Note that each call to the next interceptor returns `Promise<any>`, and it eventually leads to a

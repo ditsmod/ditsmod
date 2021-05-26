@@ -41,7 +41,7 @@ export class SomeController {
 
 What we see here:
 
-1. In the constructor of the class using the access modifier `private`, the property of class `res`
+1. In the constructor of the class using `private` access modifier, the property of class `res`
 with data type `Response` is declared. So we ask Ditsmod to create an instance of the `Response`
 class and pass it to the `res` variable.
 2. Routes are created using the `Route` decorator, which is placed before the class method.
@@ -59,7 +59,7 @@ If you specify the `Request` or `Response` class in the constructor, don't forge
 from _@ditsmod/core_! If you don't, your application will stop working, although the IDE may not tell
 you that you don't have these classes imported.
 
-The fact is that in TypeScript globally announced interfaces with exactly the same names - `Request`
+The fact is that in TypeScript globally declared interfaces with exactly the same names - `Request`
 and `Response`. Because of this, your IDE can only say that these interfaces do not have certain
 properties that classes imported from _@ditsmod/core_ should have.
 :::
@@ -145,7 +145,7 @@ export class SecondService {
 ```
 
 As you can see, the rules for obtaining a class instance in the service are the same as in the
-controller. That is, we in the constructor with the access modifier `private` declare property of
+controller. That is, we in the constructor with `private` access modifier declare property of
 class `firstService` with data type `FirstService`. Instances in constructor are created by [DI][8].
 
 
