@@ -167,7 +167,7 @@
   "Масштабованість застосунків реалізується завдяки модульній архітектурі Ditsmod.": {
     "message": "The scalability of applications is realized thanks to the modular architecture of Ditsmod."
   },
-  "Розширюваний та швидкий веб-фреймворк для Node.js, написаний на TypeScript": {
-    "message": "Extensible and fast web framework for Node.js, written in TypeScript"
+  "Node.js веб-фреймворк для розширюваних та швидких застосунків": {
+    "message": "Node.js web framework for extensible and fast applications"
   }
 }
