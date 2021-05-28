@@ -52,13 +52,13 @@ module.exports = {
       indexName: 'ditsmod',
 
       // Optional: see doc section below
-      contextualSearch: true,
+      // contextualSearch: true,
 
       // Optional: see doc section below
       // appId: 'YOUR_APP_ID',
 
       // Optional: Algolia search parameters
-      searchParameters: { facetFilters: ["type:content", "language:LANGUAGE"] },
+      // searchParameters: { facetFilters: ["type:content", "language:LANGUAGE"] },
 
       //... other Algolia params
     },
