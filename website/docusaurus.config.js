@@ -52,7 +52,7 @@ module.exports = {
       indexName: 'ditsmod',
 
       // Optional: see doc section below
-      // contextualSearch: true,
+      contextualSearch: true,
 
       // Optional: see doc section below
       // appId: 'YOUR_APP_ID',
