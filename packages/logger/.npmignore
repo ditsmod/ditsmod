@@ -9,6 +9,6 @@
 /dist-*
 /spec
 /.*
-/tsconfig.json
 /tslint.json
 /yarn.lock
+tsconfig.json
