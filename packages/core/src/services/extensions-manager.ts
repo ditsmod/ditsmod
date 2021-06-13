@@ -27,7 +27,7 @@ export class ExtensionsManager {
       const id = this.counter.increaseExtensionsInitId();
       const args = [id, extensionName];
       this.unfinishedInitExtensions.add(extension);
-      this.log.startInitExtension('debug');
+      this.log.startInitExtension('debug', args);
       const data = await extension.init();
       this.log.finishInitExtension('debug', args);
       this.unfinishedInitExtensions.delete(extension);
