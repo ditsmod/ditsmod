@@ -210,4 +210,18 @@ export class Log {
    extensionInitReturnsValue(level: keyof Logger, args: any[] = []) {
     this._logger.log(level, `${args[0]}: ${args[1]}: init returned some value.`);
   }
+
+  /**
+   * The application has no routes.
+   */
+   noRoutes(level: keyof Logger, args: any[] = []) {
+    this._logger.log(level, `The application has no routes.`);
+  }
+
+  /**
+   * The application has no routes.
+   */
+   showRoutes(level: keyof Logger, args: any[] = []) {
+    this._logger.log(level, args[0]);
+  }
 }

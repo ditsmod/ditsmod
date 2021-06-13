@@ -92,6 +92,11 @@ export class PreRouter implements Extension<void> {
   }
 
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {
+    if (!preparedRouteMeta.length) {
+      this.log.noRoutes('warn');
+      return;
+    }
+
     preparedRouteMeta.forEach((data) => {
       const { moduleName, path, httpMethod, handle } = data;
 
@@ -100,6 +105,8 @@ export class PreRouter implements Extension<void> {
         msg += ` (in '${moduleName}'): path cannot start with a slash`;
         throw new Error(msg);
       }
+
+      this.log.showRoutes('debug', [{ moduleName, httpMethod, path }]);
 
       if (httpMethod == 'ALL') {
         this.router.all(`/${path}`, handle);
