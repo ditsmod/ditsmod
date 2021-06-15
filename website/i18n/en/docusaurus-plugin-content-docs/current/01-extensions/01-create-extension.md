@@ -239,8 +239,9 @@ group of extensions, and not directly on a specific extension. In this case, you
 know the names of all the extensions in the extension group, just know the interface of the data
 returned with `init()`.
 
-`ExtensionsManager` is also useful in that it throws errors about cyclic dependencies between
-extensions, and shows the whole chain of extensions that led to loops.
+`ExtensionsManager` is used to run groups of extensions, it is also useful in that it throws errors
+about cyclic dependencies between extensions, and shows the whole chain of extensions that led to
+loops.
 
 Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to
 complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor,
