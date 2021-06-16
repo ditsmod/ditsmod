@@ -33,11 +33,11 @@ export class DefaultHttpFrontend implements HttpFrontend {
       this.setParams();
       this.req.nodeRes.setHeader('Server', this.rootMetadata.serverName);
     } catch (err) {
-      this.loadErrorHandler(err);
+      await this.loadErrorHandler(err);
     }
 
-    return await next.handle().catch((err) => {
-      this.loadErrorHandler(err);
+    return next.handle().catch((err) => {
+      return this.loadErrorHandler(err);
     });
   }
 
@@ -80,8 +80,8 @@ export class DefaultHttpFrontend implements HttpFrontend {
     }
   }
 
-  protected loadErrorHandler(err: any) {
+  protected async loadErrorHandler(err: any) {
     const errorHandler = this.req.injector.get(ControllerErrorHandler);
-    errorHandler.handleError(err);
+    await errorHandler.handleError(err);
   }
 }
