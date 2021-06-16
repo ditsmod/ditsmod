@@ -1,14 +1,14 @@
 {
-  "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "name": "@ditsmod/core",
-  "homepage": "https://github.com/ditsmod/ditsmod",
-  "description": "REST framework",
   "version": "1.0.0",
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
+  "homepage": "https://github.com/ditsmod/ditsmod",
+  "description": "REST framework",
+  "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
+  "license": "MIT",
   "main": "dist/index",
   "types": "dist/index",
   "directories": {
