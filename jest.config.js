@@ -7,5 +7,6 @@ module.exports = {
     '@ditsmod/core': '<rootDir>/packages/core/src',
     '@ditsmod/openapi': '<rootDir>/packages/openapi/src',
     '@ditsmod/router': '<rootDir>/packages/router/src',
+    '@ditsmod/session-cookie': '<rootDir>/packages/session-cookie/src',
   },
 };

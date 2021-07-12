@@ -1469,6 +1469,13 @@
   dependencies:
     assert-plus "^1.0.0"
 
+"@ts-stack/cookies@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@ts-stack/cookies/-/cookies-1.0.2.tgz#287dd257c78e86ef5914456260aa635dc28a1e11"
+  integrity sha512-qKE5z7v020heLi+HJWpbPqhu2A2ddwimCD0U/KbvVsTvrs7QCihM7RB4zcWwY9VabLSKd+jY/LGBcfxatoITEQ==
+  dependencies:
+    keygrip "~1.1.0"
+
 "@ts-stack/di@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@ts-stack/di/-/di-1.1.0.tgz#80e485aa61ea9b1ffe089f3adb3c34ac6d8f5b07"
@@ -6172,6 +6179,13 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
+keygrip@~1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/keygrip/-/keygrip-1.1.0.tgz#871b1681d5e159c62a445b0c74b615e0917e7226"
+  integrity sha512-iYSchDJ+liQ8iwbSI2QqsQOvqv58eJCEanyJPJi+Khyu8smkcKSFUCbPwzFcL7YVtZ6eONjqRX/38caJ7QjRAQ==
+  dependencies:
+    tsscmp "1.0.6"
+
 keyv@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/keyv/-/keyv-3.1.0.tgz#ecc228486f69991e49e9476485a5be1e8fc5c4d9"
@@ -9674,6 +9688,11 @@ tslint@^6.1.3:
     semver "^5.3.0"
     tslib "^1.13.0"
     tsutils "^2.29.0"
+
+tsscmp@1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/tsscmp/-/tsscmp-1.0.6.tgz#85b99583ac3589ec4bfef825b5000aa911d605eb"
+  integrity sha512-LxhtAkPDTkVCMQjt2h6eBVY28KCjikZqZfMcC15YBeNjkgUpdCfBu5HoiOTDu86v6smE8yOjyEktJ8hlbANHQA==
 
 tsutils@^2.29.0:
   version "2.29.0"

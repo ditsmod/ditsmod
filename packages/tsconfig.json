@@ -5,6 +5,7 @@
     { "path": "core" },
     { "path": "openapi" },
     { "path": "router" },
+    { "path": "session-cookie" },
     { "path": "logger" }
   ]
 }
