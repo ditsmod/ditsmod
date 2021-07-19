@@ -66,11 +66,11 @@ export class SessionCookie {
     const id = this.cookies.get(this.opts.cookieName!);
     if (id !== undefined) {
       this._id = id || '';
-      this.setExpires();
-
       if (this.maxAge < this.activeDuration) {
         this.dirty = true;
         this.setExpires(this.activeDuration);
+      } else {
+        this.setExpires();
       }
       this.loaded = true;
     }
