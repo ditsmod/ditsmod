@@ -1,9 +1,3 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
-
 import { Cookies, NodeRequest, NodeResponse } from '@ts-stack/cookies';
 import { Inject, Injectable } from '@ts-stack/di';
 import { NODE_REQ, NODE_RES } from '@ditsmod/core';
@@ -12,32 +6,26 @@ import { SessionCookieOptions } from './types';
 
 @Injectable()
 export class SessionCookie {
-  protected _id: string;
-  protected loaded: boolean;
-  protected dirty: boolean;
+  protected _id: string = '';
+  protected loaded: boolean = false;
+  protected dirty: boolean = false;
   protected cookies: Cookies;
-  protected createdAt: number;
   protected expires: Date;
   protected activeDuration: number;
-  protected duration: number;
+  protected maxAge: number;
 
-  constructor(@Inject(NODE_REQ) req: NodeRequest, @Inject(NODE_RES) res: NodeResponse, protected opts: SessionCookieOptions) {
+  constructor(
+    @Inject(NODE_REQ) req: NodeRequest,
+    @Inject(NODE_RES) res: NodeResponse,
+    protected opts: SessionCookieOptions
+  ) {
     this.opts = { ...opts };
 
     this.cookies = new Cookies(req, res);
-    this.id = '';
-    this.loaded = false;
-    this.dirty = false;
-    this.createdAt = 0;
-    this.opts.cookieName = opts.cookieName || 'session_state';
-    this.duration = opts.duration || 24 * 60 * 60 * 1000; // 24 hours
-    this.activeDuration = opts.activeDuration || 5 * 60 * 1000; // 5min
-
-    if (opts.maxAge) {
-      this.expires = new Date(new Date().getTime() + opts.maxAge);
-    } else {
-      this.setExpires();
-    }
+    this.opts.cookieName = opts.cookieName || 'session_id';
+    this.maxAge = opts.maxAge === undefined ? 1000 * 60 * 60 * 24 : opts.maxAge; // By default - 24 hours
+    this.activeDuration = opts.activeDuration === undefined ? 1000 * 60 * 5 : opts.activeDuration; // By default - 5min
+    this.setExpires();
 
     const writeHead = res.writeHead as Function;
     res.writeHead = (...args: any[]) => {
@@ -57,14 +45,8 @@ export class SessionCookie {
     this._id = value;
   }
 
-  protected setExpires() {
-    if (this.opts.maxAge) {
-      return;
-    }
-
-    const time = this.createdAt || new Date().getTime();
-    // We add an extra second because the conversion to a date truncates the milliseconds
-    this.expires = new Date(time + this.duration + 1000);
+  protected setExpires(activeDuration: number = 0) {
+    this.expires = new Date(new Date().getTime() + this.maxAge + activeDuration);
   }
 
   protected updateSessionCookie() {
@@ -80,51 +62,34 @@ export class SessionCookie {
     return this.dirty || this._id !== '';
   }
 
-  protected loadFromCookie(forceReset?: boolean) {
+  protected loadFromCookie() {
     const id = this.cookies.get(this.opts.cookieName!);
-    if (id) {
+    if (id !== undefined) {
       this._id = id || '';
       this.setExpires();
 
-      const expiresAt = this.createdAt + this.duration;
-      const now = Date.now();
-      // Should we reset this session?
-      if (expiresAt < now) {
-        this.reset();
-        // If expiration is soon, push back a few minutes to not interrupt user
-      } else if (expiresAt - now < this.activeDuration) {
-        this.createdAt += this.activeDuration;
+      if (this.maxAge < this.activeDuration) {
         this.dirty = true;
-        this.setExpires();
+        this.setExpires(this.activeDuration);
       }
-    } else {
-      if (forceReset) {
-        this.reset();
-      } else {
-        return false; // Didn't actually load the cookie
-      }
+      this.loaded = true;
     }
-
-    this.loaded = true;
-    return true;
   }
 
   reset() {
     this._id = '';
-    this.createdAt = new Date().getTime();
-    this.duration = this.opts.duration || 0;
+    this.maxAge = this.opts.maxAge || 0;
     this.setExpires();
     this.dirty = true;
     this.loaded = true;
   }
 
-  setDuration(newDuration: number) {
+  setMaxAge(newMaxAge: number) {
     if (!this.loaded) {
-      this.loadFromCookie(true);
+      this.loadFromCookie();
     }
     this.dirty = true;
-    this.duration = newDuration;
-    this.createdAt = new Date().getTime();
+    this.maxAge = newMaxAge;
     this.setExpires();
   }
 }

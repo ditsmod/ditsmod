@@ -65,11 +65,31 @@ describe('@ditsmod/session-cookie', () => {
     expect(/httponly/.test(cookie)).toBe(true);
   });
 
-  it('sets only one cookie', async () => {
-    session.id = 'foobar';
+  it('set maxAge before setting session.id', async () => {
+    const maxAge = 1000 * 60 * 60 * 3;
+    session.setMaxAge(maxAge);
     session.id = 'foobar';
     res.writeHead(200);
     const calls = setHeaderMock.mock.calls;
     expect(calls.length).toBe(1);
+    const cookie = calls[0][0][0];
+    expect(/foobar/.test(cookie)).toBe(true);
+    expect(/expires/.test(cookie)).toBe(true);
+    expect(/path/.test(cookie)).toBe(true);
+    expect(/httponly/.test(cookie)).toBe(true);
+  });
+
+  it('set maxAge after setting session.id', async () => {
+    session.id = 'foobar';
+    const maxAge = 1000 * 60 * 60 * 3;
+    session.setMaxAge(maxAge);
+    res.writeHead(200);
+    const calls = setHeaderMock.mock.calls;
+    expect(calls.length).toBe(1);
+    const cookie = calls[0][0][0];
+    expect(/foobar/.test(cookie)).toBe(true);
+    expect(/expires/.test(cookie)).toBe(true);
+    expect(/path/.test(cookie)).toBe(true);
+    expect(/httponly/.test(cookie)).toBe(true);
   });
 });
