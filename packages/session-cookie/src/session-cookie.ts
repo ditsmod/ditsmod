@@ -1,6 +1,6 @@
 import { Cookies, NodeRequest, NodeResponse } from '@ts-stack/cookies';
 import { Inject, Injectable } from '@ts-stack/di';
-import { Logger, NODE_REQ, NODE_RES } from '@ditsmod/core';
+import { NODE_REQ, NODE_RES } from '@ditsmod/core';
 
 import { SessionCookieOptions } from './types';
 
@@ -13,16 +13,9 @@ export class SessionCookie {
   constructor(
     @Inject(NODE_REQ) req: NodeRequest,
     @Inject(NODE_RES) res: NodeResponse,
-    protected opts: SessionCookieOptions,
-    logger: Logger
+    protected opts: SessionCookieOptions
   ) {
     this.opts = { ...opts };
-
-    if (opts.expires && opts.maxAge) {
-      logger.warn(
-        'You cannot set opts.expires and opts.maxAge at the same time. For now, opts.maxAge will be ignored.'
-      );
-    }
 
     this.cookies = new Cookies(req, res);
     this.opts.cookieName = opts.cookieName || 'session_id';
