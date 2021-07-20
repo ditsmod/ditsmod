@@ -1,29 +1,32 @@
 import { Cookies, NodeRequest, NodeResponse } from '@ts-stack/cookies';
 import { Inject, Injectable } from '@ts-stack/di';
-import { NODE_REQ, NODE_RES } from '@ditsmod/core';
+import { Logger, NODE_REQ, NODE_RES } from '@ditsmod/core';
 
 import { SessionCookieOptions } from './types';
 
 @Injectable()
 export class SessionCookie {
-  protected _id: string = '';
-  protected loaded: boolean = false;
-  protected dirty: boolean = false;
+  protected _id: string | null = '';
   protected cookies: Cookies;
-  protected expires: Date;
   protected maxAge: number;
 
   constructor(
     @Inject(NODE_REQ) req: NodeRequest,
     @Inject(NODE_RES) res: NodeResponse,
-    protected opts: SessionCookieOptions
+    protected opts: SessionCookieOptions,
+    logger: Logger
   ) {
     this.opts = { ...opts };
+
+    if (opts.expires && opts.maxAge) {
+      logger.warn(
+        'You cannot set opts.expires and opts.maxAge at the same time. For now, opts.maxAge will be ignored.'
+      );
+    }
 
     this.cookies = new Cookies(req, res);
     this.opts.cookieName = opts.cookieName || 'session_id';
     this.maxAge = opts.maxAge === undefined ? 1000 * 60 * 60 * 24 : opts.maxAge; // By default - 24 hours
-    this.setExpires();
 
     const writeHead = res.writeHead as Function;
     res.writeHead = (...args: any[]) => {
@@ -33,8 +36,8 @@ export class SessionCookie {
   }
 
   get id() {
-    if (!this.loaded) {
-      this.loadFromCookie();
+    if (!this._id) {
+      this._id = this.cookies.get(this.opts.cookieName!) || '';
     }
     return this._id;
   }
@@ -43,46 +46,20 @@ export class SessionCookie {
     this._id = value;
   }
 
-  protected setExpires(activeDuration: number = 0) {
-    this.expires = new Date(new Date().getTime() + this.maxAge + activeDuration);
-  }
-
   protected updateSessionCookie() {
-    if (!this.isDirty()) {
-      return;
-    }
-
-    this.opts.expires = this.expires;
-    this.cookies.set(this.opts.cookieName!, this._id, this.opts);
-  }
-
-  protected isDirty() {
-    return this.dirty || this._id !== '';
-  }
-
-  protected loadFromCookie() {
-    const id = this.cookies.get(this.opts.cookieName!);
-    if (id !== undefined) {
-      this._id = id;
-      this.setExpires();
-      this.loaded = true;
+    if (this.id || this.id === null) {
+      this.opts.expires = this.opts.expires || new Date(new Date().getTime() + this.maxAge);
+      this.cookies.set(this.opts.cookieName!, this.id, this.opts);
     }
   }
 
-  reset() {
-    this._id = '';
-    this.maxAge = this.opts.maxAge || 0;
-    this.setExpires();
-    this.dirty = true;
-    this.loaded = true;
-  }
-
+  /**
+   * If `newMaxAge` < 1, id will be reset.
+   */
   setMaxAge(newMaxAge: number) {
-    if (!this.loaded) {
-      this.loadFromCookie();
+    if (newMaxAge < 1) {
+      this._id = null;
     }
-    this.dirty = true;
     this.maxAge = newMaxAge;
-    this.setExpires();
   }
 }
