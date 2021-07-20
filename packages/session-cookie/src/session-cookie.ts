@@ -11,7 +11,6 @@ export class SessionCookie {
   protected dirty: boolean = false;
   protected cookies: Cookies;
   protected expires: Date;
-  protected activeDuration: number;
   protected maxAge: number;
 
   constructor(
@@ -24,7 +23,6 @@ export class SessionCookie {
     this.cookies = new Cookies(req, res);
     this.opts.cookieName = opts.cookieName || 'session_id';
     this.maxAge = opts.maxAge === undefined ? 1000 * 60 * 60 * 24 : opts.maxAge; // By default - 24 hours
-    this.activeDuration = opts.activeDuration === undefined ? 1000 * 60 * 5 : opts.activeDuration; // By default - 5min
     this.setExpires();
 
     const writeHead = res.writeHead as Function;
@@ -65,13 +63,8 @@ export class SessionCookie {
   protected loadFromCookie() {
     const id = this.cookies.get(this.opts.cookieName!);
     if (id !== undefined) {
-      this._id = id || '';
-      if (this.maxAge < this.activeDuration) {
-        this.dirty = true;
-        this.setExpires(this.activeDuration);
-      } else {
-        this.setExpires();
-      }
+      this._id = id;
+      this.setExpires();
       this.loaded = true;
     }
   }
