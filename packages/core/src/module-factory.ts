@@ -48,9 +48,6 @@ export class ModuleFactory {
    * Module metadata.
    */
   protected meta: NormalizedModuleMetadata;
-  protected allImportedProvidersPerMod: ServiceProvider[] = [];
-  protected allImportedProvidersPerRou: ServiceProvider[] = [];
-  protected allImportedProvidersPerReq: ServiceProvider[] = [];
   protected importedProvidersPerMod: ServiceProvider[] = [];
   protected importedProvidersPerRou: ServiceProvider[] = [];
   protected importedProvidersPerReq: ServiceProvider[] = [];
@@ -75,9 +72,9 @@ export class ModuleFactory {
     this.checkProvidersCollisions(true);
 
     return {
-      providersPerMod: this.allImportedProvidersPerMod,
-      providersPerRou: this.allImportedProvidersPerRou,
-      providersPerReq: this.allImportedProvidersPerReq,
+      providersPerMod: this.importedProvidersPerMod,
+      providersPerRou: this.importedProvidersPerRou,
+      providersPerReq: this.importedProvidersPerReq,
     };
   }
 
@@ -118,20 +115,20 @@ export class ModuleFactory {
       ...defaultProvidersPerMod,
       { provide: ModConfig, useValue: { prefixPerMod: this.prefixPerMod } },
       ...this.globalProviders.providersPerMod,
-      ...this.allImportedProvidersPerMod,
+      ...this.importedProvidersPerMod,
       ...this.meta.providersPerMod,
     ]);
 
     this.meta.providersPerRou = getUniqProviders([
       ...this.globalProviders.providersPerRou,
-      ...this.allImportedProvidersPerRou,
+      ...this.importedProvidersPerRou,
       ...this.meta.providersPerRou,
     ]);
 
     this.meta.providersPerReq = getUniqProviders([
       ...defaultProvidersPerReq,
       ...this.globalProviders.providersPerReq,
-      ...this.allImportedProvidersPerReq,
+      ...this.importedProvidersPerReq,
       ...this.meta.providersPerReq,
     ]);
   }
@@ -304,30 +301,6 @@ export class ModuleFactory {
         );
       }
     }
-
-    this.mergeWithAllImportedProviders(isStarter);
-  }
-
-  protected mergeWithAllImportedProviders(isStarter: boolean = false) {
-    let perMod = this.importedProvidersPerMod;
-    let perRou = this.importedProvidersPerRou;
-    let perReq = this.importedProvidersPerReq;
-    this.importedProvidersPerMod = [];
-    this.importedProvidersPerRou = [];
-    this.importedProvidersPerReq = [];
-
-    if (!isStarter) {
-      /**
-       * Removes duplicates of providers inside each child modules.
-       */
-      perMod = getUniqProviders(perMod);
-      perRou = getUniqProviders(perRou);
-      perReq = getUniqProviders(perReq);
-    }
-
-    this.allImportedProvidersPerMod.push(...perMod);
-    this.allImportedProvidersPerRou.push(...perRou);
-    this.allImportedProvidersPerReq.push(...perReq);
   }
 
   protected findAndSetProvider(
@@ -365,7 +338,7 @@ export class ModuleFactory {
     const tokensPerApp = normalizeProviders(this.globalProviders.providersPerApp).map((np) => np.provide);
 
     const declaredTokensPerMod = normalizeProviders(this.meta.providersPerMod).map((np) => np.provide);
-    const importedNormProvidersPerMod = normalizeProviders(this.allImportedProvidersPerMod);
+    const importedNormProvidersPerMod = normalizeProviders(this.importedProvidersPerMod);
     const importedTokensPerMod = importedNormProvidersPerMod.map((np) => np.provide);
     const multiTokensPerMod = importedNormProvidersPerMod.filter((np) => np.multi).map((np) => np.provide);
     let duplExpTokensPerMod = getDuplicates(importedTokensPerMod).filter((d) => !multiTokensPerMod.includes(d));
@@ -376,12 +349,12 @@ export class ModuleFactory {
     } else {
       duplExpTokensPerMod = duplExpTokensPerMod.filter((d) => !declaredTokensPerMod.includes(d));
     }
-    duplExpTokensPerMod = getTokensCollisions(duplExpTokensPerMod, this.allImportedProvidersPerMod);
+    duplExpTokensPerMod = getTokensCollisions(duplExpTokensPerMod, this.importedProvidersPerMod);
     const defaultTokensPerMod = normalizeProviders([...defaultProvidersPerMod]).map((np) => np.provide);
     const tokensPerMod = [...defaultTokensPerMod, ...declaredTokensPerMod, ...importedTokensPerMod];
 
     const declaredTokensPerRou = normalizeProviders(this.meta.providersPerRou).map((np) => np.provide);
-    const importedNormalizedPerRou = normalizeProviders(this.allImportedProvidersPerRou);
+    const importedNormalizedPerRou = normalizeProviders(this.importedProvidersPerRou);
     const importedTokensPerRou = importedNormalizedPerRou.map((np) => np.provide);
     const multiTokensPerRou = importedNormalizedPerRou.filter((np) => np.multi).map((np) => np.provide);
     let duplExpPerRou = getDuplicates(importedTokensPerRou).filter((d) => !multiTokensPerRou.includes(d));
@@ -392,11 +365,11 @@ export class ModuleFactory {
     } else {
       duplExpPerRou = duplExpPerRou.filter((d) => !declaredTokensPerRou.includes(d));
     }
-    duplExpPerRou = getTokensCollisions(duplExpPerRou, this.allImportedProvidersPerRou);
+    duplExpPerRou = getTokensCollisions(duplExpPerRou, this.importedProvidersPerRou);
     const tokensPerRou = [...declaredTokensPerRou, ...importedTokensPerRou];
 
     const declaredTokensPerReq = normalizeProviders(this.meta.providersPerReq).map((np) => np.provide);
-    const importedNormalizedPerReq = normalizeProviders(this.allImportedProvidersPerReq);
+    const importedNormalizedPerReq = normalizeProviders(this.importedProvidersPerReq);
     const importedTokensPerReq = importedNormalizedPerReq.map((np) => np.provide);
     const multiTokensPerReq = importedNormalizedPerReq.filter((np) => np.multi).map((np) => np.provide);
     let duplExpPerReq = getDuplicates(importedTokensPerReq).filter((d) => !multiTokensPerReq.includes(d));
@@ -407,7 +380,7 @@ export class ModuleFactory {
     } else {
       duplExpPerReq = duplExpPerReq.filter((d) => !declaredTokensPerReq.includes(d));
     }
-    duplExpPerReq = getTokensCollisions(duplExpPerReq, this.allImportedProvidersPerReq);
+    duplExpPerReq = getTokensCollisions(duplExpPerReq, this.importedProvidersPerReq);
 
     const mixPerApp = tokensPerApp.filter((p) => {
       if (importedTokensPerMod.includes(p) && !declaredTokensPerMod.includes(p)) {

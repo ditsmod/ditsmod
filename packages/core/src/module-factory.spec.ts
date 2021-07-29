@@ -27,8 +27,8 @@ describe('ModuleFactory', () => {
     meta = new NormalizedModuleMetadata();
     injectorPerMod: ReflectiveInjector;
     appMetadataMap = new Map<ModuleType, MetadataPerMod>();
-    allImportedProvidersPerMod: ServiceProvider[] = [];
-    allImportedProvidersPerReq: ServiceProvider[] = [];
+    importedProvidersPerMod: ServiceProvider[] = [];
+    importedProvidersPerReq: ServiceProvider[] = [];
     guardsPerMod: NormalizedGuard[] = [];
 
     exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata) {
@@ -111,8 +111,8 @@ describe('ModuleFactory', () => {
       const globalProviders = new ProvidersMetadata();
       moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
-      expect(mock.allImportedProvidersPerMod).toEqual([]);
-      expect(mock.allImportedProvidersPerReq).toEqual([Provider1]);
+      expect(mock.importedProvidersPerMod).toEqual([]);
+      expect(mock.importedProvidersPerReq).toEqual([Provider1]);
     });
 
     it('merge providers from reexported modules', () => {
@@ -140,8 +140,8 @@ describe('ModuleFactory', () => {
       const globalProviders = new ProvidersMetadata();
       moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
-      expect(mock.allImportedProvidersPerReq).toEqual([Provider1]);
-      expect(mock.allImportedProvidersPerMod).toEqual([Provider2]);
+      expect(mock.importedProvidersPerReq).toEqual([Provider1]);
+      expect(mock.importedProvidersPerMod).toEqual([Provider2]);
     });
 
     it('exported providers order', () => {
@@ -171,8 +171,8 @@ describe('ModuleFactory', () => {
       const globalProviders = new ProvidersMetadata();
       moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
-      expect(mock.allImportedProvidersPerMod).toEqual([Provider1, Provider2, Provider3, Provider4]);
-      expect(mock.allImportedProvidersPerReq).toEqual([]);
+      expect(mock.importedProvidersPerMod).toEqual([Provider1, Provider2, Provider3, Provider4]);
+      expect(mock.importedProvidersPerReq).toEqual([]);
     });
 
     it('collision with exported providers', () => {
@@ -228,7 +228,7 @@ describe('ModuleFactory', () => {
       moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       const providers = [{ provide: Provider1, useValue: 'one' }, Provider1, Provider1];
-      expect(mock.allImportedProvidersPerMod).toEqual(providers);
+      expect(mock.importedProvidersPerMod).toEqual(providers);
     });
 
     it('identical duplicates but not collision with exported providers', () => {
