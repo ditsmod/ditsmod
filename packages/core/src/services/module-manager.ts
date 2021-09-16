@@ -71,7 +71,7 @@ export class ModuleManager {
       this.log.successfulAddedModuleToImport('debug', [inputMeta.name, targetMeta.name]);
       return true;
     } catch (err) {
-      this.rollback(err);
+      this.rollback(err as Error);
     }
   }
 
@@ -112,7 +112,7 @@ export class ModuleManager {
       this.log.moduleSuccessfulRemoved('debug', [inputMeta.name, targetMeta.name]);
       return true;
     } catch (err) {
-      this.rollback(err);
+      this.rollback(err as Error);
     }
   }
 

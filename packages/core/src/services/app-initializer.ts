@@ -72,7 +72,7 @@ export class AppInitializer {
       this.moduleManager.rollback();
       await this.init();
       this.log.successfulRollbackModuleConfigChanges('debug');
-      return err;
+      return err as Error;
     }
   }
 
