@@ -28,6 +28,7 @@ describe('ModuleFactory', () => {
     injectorPerMod: ReflectiveInjector;
     appMetadataMap = new Map<ModuleType, MetadataPerMod>();
     importedProvidersPerMod: ServiceProvider[] = [];
+    importedProvidersPerRou: ServiceProvider[] = [];
     importedProvidersPerReq: ServiceProvider[] = [];
     guardsPerMod: NormalizedGuard[] = [];
 
@@ -255,6 +256,42 @@ describe('ModuleFactory', () => {
       const globalProviders = new ProvidersMetadata();
       moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
+    });
+
+    xit('import dependencies of global imported providers', () => {
+      class Provider1 {}
+
+      @Injectable()
+      class Provider2 {
+        constructor(provider1: Provider1) {}
+      }
+
+      class Provider3 {}
+
+      @Module({
+        providersPerReq: [Provider1],
+        exports: [Provider1],
+      })
+      class Module1 {}
+
+      @Module({
+        imports: [Module1],
+        providersPerReq: [Provider2],
+        exports: [Provider2],
+      })
+      class Module2 {}
+
+      @RootModule({
+        exports: [Module2, Provider3],
+        providersPerReq: [Provider3]
+      })
+      class AppModule {}
+
+      const globalProviders = new ProvidersMetadata();
+      moduleManager.scanRootModule(AppModule);
+      expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
+      expect(mock.importedProvidersPerMod).toEqual([]);
+      expect(mock.importedProvidersPerReq).toEqual([Provider2, Provider3, Provider1]);
     });
   });
 
@@ -534,6 +571,56 @@ describe('ModuleFactory', () => {
         ]);
         expect(mock.meta.providersPerReq).toEqual([...defaultProvidersPerReq, Provider8]);
         expect((mock.meta as any).ngMetadataName).toBe('RootModule');
+      });
+
+      xit('importDependenciesOfImportedProviders() case 1', () => {
+        class Provider1 {}
+
+        @Injectable()
+        class Provider2 {
+          constructor(provider1: Provider1) {}
+        }
+
+        class Provider3 {}
+
+        @Module({
+          providersPerReq: [Provider1],
+          exports: [Provider1],
+        })
+        class Module1 {}
+
+        @Module({
+          imports: [Module1],
+          providersPerReq: [Provider2],
+          exports: [Provider2],
+        })
+        class Module2 {}
+
+        @Module({
+          imports: [Module2],
+          providersPerReq: [Provider3],
+          controllers: [Ctrl],
+        })
+        class Module3 {}
+
+        const injectorPerApp = ReflectiveInjector.resolveAndCreate([
+          ...defaultProvidersPerApp,
+          { provide: Logger, useClass: MyLogger },
+        ]);
+
+        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+        mock.injectorPerMod = injectorPerApp;
+        moduleManager.scanModule(Module3);
+        mock.bootstrap(new ProvidersMetadata(), '', Module3, moduleManager);
+
+        const mod3 = mock.appMetadataMap.get(Module3);
+        expect(mod3?.moduleMetadata.providersPerReq).toEqual([
+          ...defaultProvidersPerReq,
+          Provider2,
+          Provider1,
+          Provider3,
+        ]);
+        expect((mod3 as any).moduleMetadata.ngMetadataName).toBe('Module');
       });
 
       it("should throw an error regarding the provider's absence", () => {
