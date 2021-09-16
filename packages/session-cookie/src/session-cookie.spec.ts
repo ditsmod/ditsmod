@@ -11,6 +11,9 @@ describe('@ditsmod/session-cookie', () => {
   let req: NodeRequest;
   let res: NodeResponse;
   let session: SessionCookie;
+  const config = new SessionCookieOptions();
+  config.cookieName = 'session';
+  config.maxAge = 1000 * 3600 * 24 * 30; // 30 днів;
 
   beforeEach(() => {
     req = { headers: { cookie: '' } } as NodeRequest;
@@ -24,7 +27,7 @@ describe('@ditsmod/session-cookie', () => {
     const injector = ReflectiveInjector.resolveAndCreate([
       { provide: NODE_REQ, useValue: req },
       { provide: NODE_RES, useValue: res },
-      SessionCookieOptions,
+      { provide: SessionCookieOptions, useValue: config },
       SessionCookie,
     ]);
     session = injector.get(SessionCookie);
@@ -40,6 +43,10 @@ describe('@ditsmod/session-cookie', () => {
 
   it('session.id is string by default', async () => {
     expect(session.id).toBe('');
+  });
+
+  it('session config setted properly', async () => {
+    expect((session as any).opts).toEqual({ cookieName: config.cookieName, maxAge: config.maxAge })
   });
 
   it('session stores and retrieves values properly', async () => {
