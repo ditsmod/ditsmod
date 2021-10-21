@@ -91,7 +91,7 @@ export class Content {
     propertyType: Type<edk.AnyObj>,
     decoratorItem: ColumnDecoratorItem
   ) {
-    let schema = decoratorItem.schema || {};
+    let schema = { ...decoratorItem.schema } || {};
     const { arrayModel } = decoratorItem;
     if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {
       schema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;
