@@ -1,5 +1,12 @@
+<a name="openapi-1.0.1"></a>
+# [openapi-1.0.1](https://github.com/ts-stack/ditsmod/releases/tag/openapi-1.0.1) (2021-10-21)
+
+### Bug fix
+
+- Removed immutable for decorator's schema [b4be46dce](https://github.com/ditsmod/ditsmod/commit/b4be46dce).
+
 <a name="openapi-1.0.0"></a>
-# [openapi-1.0.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-1.0.0) (2021-05-23)
+## [openapi-1.0.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-1.0.0) (2021-05-23)
 
 ### Improvements
 
