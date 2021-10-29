@@ -138,6 +138,9 @@ export class Parameters {
         const propertyType = propertyDecorator[0];
         const schemas = propertyDecorator.filter(isColumn).map(val => val.schema);
         paramObject.schema = Object.assign({}, ...schemas, paramObject.schema) as XSchemaObject<any>;
+        if (paramObject.schema.description) {
+          paramObject.description = paramObject.description || paramObject.schema.description;
+        }
         this.setColumnType(paramObject.schema, propertyType);
         if (paramObject.schema.type == 'array' && !paramObject.schema.items) {
           paramObject.schema.items = {};
