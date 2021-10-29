@@ -1,5 +1,12 @@
+<a name="openapi-1.1.0"></a>
+# [openapi-1.1.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-1.1.0) (2021-10-29)
+
+### Features
+
+- Added ability for copying parameter's description from model schema's description [d465d779](https://github.com/ditsmod/ditsmod/commit/d465d779).
+
 <a name="openapi-1.0.1"></a>
-# [openapi-1.0.1](https://github.com/ts-stack/ditsmod/releases/tag/openapi-1.0.1) (2021-10-21)
+## [openapi-1.0.1](https://github.com/ts-stack/ditsmod/releases/tag/openapi-1.0.1) (2021-10-21)
 
 ### Bug fix
 
