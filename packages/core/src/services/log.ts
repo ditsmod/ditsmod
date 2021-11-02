@@ -3,6 +3,9 @@ import { format } from 'util';
 
 import { Logger } from '../types/logger';
 
+/**
+ * Mediator between core logger and custom user's logger.
+ */
 @Injectable()
 export class Log {
   protected _logger: Logger;
