@@ -29,7 +29,9 @@ describe('Log', () => {
   it('case 2', () => {
     class One {}
     log.moduleAlreadyImported('trace', One, 'two');
-    expect(log.buffer).toEqual([['trace', '[class One], two']]);
+    expect(log.buffer.length).toBe(1);
+    expect(log.buffer[0].level).toEqual('trace');
+    expect(log.buffer[0].msg).toEqual('[class One], two');
     log.flush();
     expect(log.buffer).toEqual([]);
   });
