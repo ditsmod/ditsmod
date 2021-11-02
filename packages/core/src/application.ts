@@ -28,9 +28,10 @@ export class Application {
         server.listen(this.meta.listenOptions, () => {
           resolve({ server, logger: this.log.logger });
           const host = this.meta.listenOptions.host || 'localhost';
-          this.log.serverListen('info', [this.meta.serverName, host, this.meta.listenOptions.port]);
+          this.log.serverListen('info', this.meta.serverName, host, this.meta.listenOptions.port);
         });
       } catch (err) {
+        this.log.flush();
         reject({ err, logger: this.log.logger });
       }
     });
@@ -45,6 +46,8 @@ export class Application {
     const { meta, log } = this.appInitializer.getMetadataAndLog();
     this.meta = meta;
     this.log = log;
+    log.flush();
+    log.bufferLogs = false;
     await this.appInitializer.bootstrapModulesAndExtensions();
     this.checkSecureServerOption(appModule);
   }
@@ -61,7 +64,9 @@ export class Application {
     const rawRootMetadata = getModuleMetadata(appModule, true);
     const providers = [...defaultProvidersPerApp, ...(rawRootMetadata.providersPerApp || [])];
     const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
-    this.log = injectorPerApp.get(Log) as Log;
+    const log = injectorPerApp.get(Log) as Log;
+    log.setBuffer(this.log.buffer);
+    this.log = log;
   }
 
   protected checkSecureServerOption(appModule: ModuleType) {

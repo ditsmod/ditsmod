@@ -15,12 +15,12 @@ describe('ModuleManager', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;
 
   class MockModuleManager extends ModuleManager {
-    map = new Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
-    mapId = new Map<string, ModuleType | ModuleWithParams>();
-    oldMap = new Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
-    oldMapId = new Map<string, ModuleType | ModuleWithParams>();
+    override map = new Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
+    override mapId = new Map<string, ModuleType | ModuleWithParams>();
+    override oldMap = new Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
+    override oldMapId = new Map<string, ModuleType | ModuleWithParams>();
 
-    getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
+    override getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
       return super.getRawMetadata<T, A>(moduleId, throwErrOnNotFound);
     }
   }

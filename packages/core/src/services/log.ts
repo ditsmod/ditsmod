@@ -3,18 +3,68 @@ import { format } from 'util';
 
 import { Logger } from '../types/logger';
 
+export interface MsgLog {
+  date: Date;
+  level: keyof Logger;
+  msg: string;
+}
+
 /**
  * Mediator between core logger and custom user's logger.
+ *
+ * If you want to rewrite messages written by the core logger, you need:
+ * 1. override the methods of this class in your own class;
+ * 2. via DI, at the application level, replace the Log class with your class.
  */
 @Injectable()
 export class Log {
+  /**
+   * If `bufferLogs === true` then all messages will be buffered.
+   *
+   * If you need logging all buffered messages, call `log.flush()`.
+   */
+  bufferLogs = true;
+  protected _buffer: MsgLog[] = [];
   protected _logger: Logger;
 
   constructor(logger: Logger) {
-    this.setLogger(logger);
+    this.logger = logger;
   }
 
-  setLogger(logger: Logger) {
+  get buffer() {
+    return this._buffer;
+  }
+
+  get logger() {
+    return this._logger;
+  }
+
+  protected setLog(level: keyof Logger, msg: any) {
+    if (this.bufferLogs) {
+      this._buffer.push({ date: new Date(), level, msg });
+    } else {
+      this._logger.log(level, msg);
+    }
+  }
+
+  setBuffer(buffer: MsgLog[]) {
+    if (!Array.isArray(buffer)) {
+      throw new TypeError(`Log's buffer must be an array, got ${typeof buffer}`);
+    }
+    this._buffer = buffer;
+  }
+
+  flush() {
+    this._buffer.forEach((log) => {
+      const dateTime = log.date.toLocaleString();
+      const msg = `${dateTime}: ${log.msg}`;
+      this._logger.log.apply(this._logger, [log.level, msg]);
+    });
+
+    this._buffer = [];
+  }
+
+  set logger(logger: Logger) {
     if (logger) {
       this._logger = logger;
     } else {
@@ -22,209 +72,202 @@ export class Log {
     }
   }
 
-  get logger() {
-    return this._logger;
-  }
-
   /**
    * The module with ID `inputModule` has already been imported into `modIdStr`.
    */
-  moduleAlreadyImported(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `The module with ID "${format(args[0])}" has already been imported into "${args[1]}".`);
+  moduleAlreadyImported(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `The module with ID "${format(args[0])}" has already been imported into "${args[1]}".`);
   }
 
   /**
    * `serverName` is running at `host`:`port`.
    */
-  serverListen(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `${args[0]} is running at ${args[1]}:${args[2]}`);
+  serverListen(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `${args[0]} is running at ${args[1]}:${args[2]}`);
   }
 
   /**
    * In `moduleName` you have token `diToken` with extension-like `className`
    * that not registered in "extensions" array.
    */
-  youForgotRegisterExtension(level: keyof Logger, args: any[] = []) {
+  youForgotRegisterExtension(level: keyof Logger, ...args: any[]) {
     let msg = `In ${args[0]} you have token "${args[1]}" `;
     msg += `with extension-like "${args[2]}" that not registered in "extensions" array`;
-    this._logger.log(level, msg);
+    this.setLog(level, msg);
   }
 
   /**
    * Start reinit the application.
    */
-  startReinitApp(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, 'Start reinit the application.');
+  startReinitApp(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, 'Start reinit the application.');
   }
 
   /**
    * Skipping autocommit of changes for config of moduleManager.
    */
-  skippingAutocommitModulesConfig(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, 'Skipping autocommit of changes for config of moduleManager.');
+  skippingAutocommitModulesConfig(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, 'Skipping autocommit of changes for config of moduleManager.');
   }
 
   /**
    * Finished reinit the application.
    */
-  finishReinitApp(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, 'Finished reinit the application.');
+  finishReinitApp(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, 'Finished reinit the application.');
   }
 
   /**
    * [log any error]
    */
-  printReinitError(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, args[0]);
+  printReinitError(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, args[0]);
   }
 
   /**
    * Start rollback of changes for config of moduleManager during reinit the application.
    */
-  startRollbackModuleConfigChanges(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, 'Start rollback of changes for config of moduleManager during reinit the application.');
+  startRollbackModuleConfigChanges(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, 'Start rollback of changes for config of moduleManager during reinit the application.');
   }
 
   /**
    * Successful rollback of changes for config of moduleManager during reinit the application.
    */
-  successfulRollbackModuleConfigChanges(level: keyof Logger, args: any[] = []) {
-    this._logger.log(
-      level,
-      'Successful rollback of changes for config of moduleManager during reinit the application.'
-    );
+  successfulRollbackModuleConfigChanges(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, 'Successful rollback of changes for config of moduleManager during reinit the application.');
   }
 
   /**
    * Successful added `inputModuleName` to `targetModuleName`.
    */
-  successfulAddedModuleToImport(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `Successful added "${args[0]}" to "${args[1]}".`);
+  successfulAddedModuleToImport(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `Successful added "${args[0]}" to "${args[1]}".`);
   }
 
   /**
    * Module with ID `moduleIdOrName` not found.
    */
-  moduleNotFound(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `Module with ID "${args[0]}" not found.`);
+  moduleNotFound(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `Module with ID "${args[0]}" not found.`);
   }
 
   /**
    * `inputModuleName` successful removed from `hostModuleName`.
    */
-  moduleSuccessfulRemoved(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `${args[0]} successful removed from ${args[1]}.`);
+  moduleSuccessfulRemoved(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `${args[0]} successful removed from ${args[1]}.`);
   }
 
   /**
    * `moduleName` has ID: `id`.
    */
-  moduleHasId(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `${args[0]} has ID: "${args[1]}".`);
+  moduleHasId(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `${args[0]} has ID: "${args[1]}".`);
   }
 
   /**
    * [print global providers]
    */
-  printGlobalProviders(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, { globalProviders: args[0] });
+  printGlobalProviders(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, { globalProviders: args[0] });
   }
 
   /**
    * [print module metadata]
    */
-  printModuleMetadata(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, { modOrObj: args[0], metadata: args[1] });
+  printModuleMetadata(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, { modOrObj: args[0], metadata: args[1] });
   }
 
   /**
    * `moduleName` start init group with `groupToken`.
    */
-  startExtensionsGroupInit(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `${args[0]}: start init group with ${args[1]}`);
+  startExtensionsGroupInit(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `${args[0]}: start init group with ${args[1]}`);
   }
 
   /**
    * `moduleName` finish init group with `groupToken`.
    */
-   finishExtensionsGroupInit(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `${args[0]}: finish init group with ${args[1]}`);
+  finishExtensionsGroupInit(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `${args[0]}: finish init group with ${args[1]}`);
   }
 
   /**
    * Total inited `number` extensions: `listOfNames`.
    */
-   totalInitedExtensions(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `Total inited ${args[0]} extensions: ${args[1]}`);
+  totalInitedExtensions(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `Total inited ${args[0]} extensions: ${args[1]}`);
   }
 
   /**
    * [print controller error]
    */
-   controllerHasError(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, { err: args[0] });
+  controllerHasError(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, { err: args[0] });
   }
 
   /**
    * [internal error]
    */
-   internalServerError(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, { err: args[0] });
+  internalServerError(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, { err: args[0] });
   }
 
   /**
    * Can not activate the route with URL: `httpMethod` `URL`.
    */
-   youCannotActivateRoute(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `Can not activate the route with URL: ${args[0]} ${args[1]}`);
+  youCannotActivateRoute(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `Can not activate the route with URL: ${args[0]} ${args[1]}`);
   }
 
   /**
    * `extensionsGroupToken`: no extensions found!
    */
-   noExtensionsFound(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `${args[0]}: no extensions found!`);
+  noExtensionsFound(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `${args[0]}: no extensions found!`);
   }
 
   /**
    * `id`: `className`: start init.
    */
-   startInitExtension(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `${args[0]}: ${args[1]}: start init.`);
+  startInitExtension(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `${args[0]}: ${args[1]}: start init.`);
   }
 
   /**
    * `id`: `className`: finish init.
    */
-   finishInitExtension(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `${args[0]}: ${args[1]}: finish init.`);
+  finishInitExtension(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `${args[0]}: ${args[1]}: finish init.`);
   }
 
   /**
    * `id`: `className`: init returned empty value.
    */
-   extensionInitReturnsVoid(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `${args[0]}: ${args[1]}: init returned empty value.`);
+  extensionInitReturnsVoid(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `${args[0]}: ${args[1]}: init returned empty value.`);
   }
 
   /**
    * `id`: `className`: init returned some value.
    */
-   extensionInitReturnsValue(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `${args[0]}: ${args[1]}: init returned some value.`);
+  extensionInitReturnsValue(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `${args[0]}: ${args[1]}: init returned some value.`);
   }
 
   /**
    * The application has no routes.
    */
-   noRoutes(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `The application has no routes.`);
+  noRoutes(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, `The application has no routes.`);
   }
 
   /**
    * The application has no routes.
    */
-   showRoutes(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, args[0]);
+  showRoutes(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, args[0]);
   }
 }
