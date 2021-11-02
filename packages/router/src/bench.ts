@@ -68,7 +68,7 @@ async function runBench() {
           resolve();
         }
       });
-    } catch (e) {
+    } catch (e: any) {
       console.log(`Could not bench '${lib.name}'.`);
       console.log(e.stack);
     }
