@@ -84,7 +84,7 @@ called `this.extension1.init()`.
 ## Extension registration
 
 Register the extension in an existing extension group, or create a new group, even if it has
-a single extension.
+a single extension. You will need to create a new DI token for the new group.
 
 ### What is a group of extensions
 
