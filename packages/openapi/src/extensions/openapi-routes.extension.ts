@@ -10,7 +10,7 @@ import { OasOptions } from '../types/oas-options';
 
 @Injectable()
 export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.Extension<edk.RawRouteMeta[]> {
-  protected getRawRoutesMeta(
+  protected override getRawRoutesMeta(
     moduleName: string,
     prefixPerApp: string,
     prefixPerMod: string,

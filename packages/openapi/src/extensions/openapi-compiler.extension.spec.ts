@@ -17,13 +17,13 @@ import { OAS_OBJECT } from '../di-tokens';
 
 describe('OpenapiCompilerExtension', () => {
   class MockOpenapiCompilerExtension extends OpenapiCompilerExtension {
-    oasObject: XOasObject;
+    override oasObject: XOasObject;
 
-    setSecurityInfo(operationObject: XOperationObject, guards: edk.NormalizedGuard[]) {
+    override setSecurityInfo(operationObject: XOperationObject, guards: edk.NormalizedGuard[]) {
       return super.setSecurityInfo(operationObject, guards);
     }
 
-    initOasObject() {
+    override initOasObject() {
       return super.initOasObject();
     }
   }

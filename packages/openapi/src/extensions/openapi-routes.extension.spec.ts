@@ -7,11 +7,11 @@ import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '../utils/parameters';
 
 describe('OpenapiRoutesExtension', () => {
   class MockOpenapiRoutesExtension extends OpenapiRoutesExtension {
-    transformToOasPath(moduleName: string, path: string, params: XParameterObject[]) {
+    override transformToOasPath(moduleName: string, path: string, params: XParameterObject[]) {
       return super.transformToOasPath(moduleName, path, params);
     }
 
-    mergeParams(
+    override mergeParams(
       httpMethod: HttpMethod,
       path: string,
       prefixParams: (XParameterObject<any> | ReferenceObject)[],
@@ -20,7 +20,7 @@ describe('OpenapiRoutesExtension', () => {
       return super.mergeParams(httpMethod, path, prefixParams, params);
     }
 
-    bindParams(httpMethod: HttpMethod, path: string, paramsNonPath: XParameterObject[], p: XParameterObject) {
+    override bindParams(httpMethod: HttpMethod, path: string, paramsNonPath: XParameterObject[], p: XParameterObject) {
       return super.bindParams(httpMethod, path, paramsNonPath, p);
     }
   }
