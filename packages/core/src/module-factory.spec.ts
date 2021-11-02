@@ -22,31 +22,31 @@ import { Router } from './types/router';
 describe('ModuleFactory', () => {
   @Injectable()
   class MockModuleFactory extends ModuleFactory {
-    prefixPerMod: string;
-    moduleName = 'MockModule';
-    meta = new NormalizedModuleMetadata();
     injectorPerMod: ReflectiveInjector;
-    appMetadataMap = new Map<ModuleType, MetadataPerMod>();
-    importedProvidersPerMod: ServiceProvider[] = [];
-    importedProvidersPerRou: ServiceProvider[] = [];
-    importedProvidersPerReq: ServiceProvider[] = [];
-    guardsPerMod: NormalizedGuard[] = [];
+    override prefixPerMod: string;
+    override moduleName = 'MockModule';
+    override meta = new NormalizedModuleMetadata();
+    override appMetadataMap = new Map<ModuleType, MetadataPerMod>();
+    override importedProvidersPerMod: ServiceProvider[] = [];
+    override importedProvidersPerRou: ServiceProvider[] = [];
+    override importedProvidersPerReq: ServiceProvider[] = [];
+    override guardsPerMod: NormalizedGuard[] = [];
 
-    exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata) {
+    override exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata) {
       return super.exportGlobalProviders(moduleManager, globalProviders);
     }
 
-    quickCheckMetadata(meta: NormalizedModuleMetadata) {
+    override quickCheckMetadata(meta: NormalizedModuleMetadata) {
       return super.quickCheckMetadata(meta);
     }
 
-    getControllersMetadata() {
+    override getControllersMetadata() {
       return super.getControllersMetadata();
     }
   }
 
   class MyLogger extends Logger {
-    debug = (...args: any[]): any => {
+    override debug = (...args: any[]): any => {
       console.log(`debug:\n ${'*'.repeat(50)}\n`, ...args);
     };
   }

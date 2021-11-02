@@ -7,7 +7,7 @@ import { ExtensionsManager } from './extensions-manager';
 
 describe('ExtensionsManager cyclic dependencies', () => {
   class MockExtensionsManager extends ExtensionsManager {
-    unfinishedInitExtensions = new Set<Extension<any>>();
+    override unfinishedInitExtensions = new Set<Extension<any>>();
   }
 
   let mock: MockExtensionsManager;

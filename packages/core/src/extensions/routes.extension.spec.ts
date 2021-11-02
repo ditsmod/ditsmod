@@ -16,11 +16,11 @@ import { Log } from '../services/log';
 xdescribe('RoutesExtension', () => {
   @Injectable()
   class MockAppInitializer extends AppInitializer {
-    moduleManager: ModuleManager;
-    injectorPerApp: ReflectiveInjector;
-    meta = new RootMetadata();
+    override moduleManager: ModuleManager;
+    override injectorPerApp: ReflectiveInjector;
+    override meta = new RootMetadata();
 
-    bootstrapModuleFactory(moduleManager: ModuleManager) {
+    override bootstrapModuleFactory(moduleManager: ModuleManager) {
       return super.bootstrapModuleFactory(moduleManager);
     }
   }

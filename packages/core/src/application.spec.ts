@@ -12,13 +12,13 @@ import { Router } from './types/router';
 
 describe('Application', () => {
   class MockApplication extends Application {
-    meta = new RootMetadata();
+    override meta = new RootMetadata();
 
-    async init(appModule: ModuleType) {
+    override async init(appModule: ModuleType) {
       return super.init(appModule);
     }
 
-    checkSecureServerOption(appModule: ModuleType) {
+    override checkSecureServerOption(appModule: ModuleType) {
       return super.checkSecureServerOption(appModule);
     }
   }

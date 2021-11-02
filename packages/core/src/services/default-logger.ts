@@ -31,13 +31,13 @@ export class DefaultLogger extends Logger {
   constructor(private config: LoggerConfig) {
     super();
   }
-  trace = defaultLoggerFn('trace', this.config);
-  debug = defaultLoggerFn('debug', this.config);
-  info = defaultLoggerFn('info', this.config);
-  warn = defaultLoggerFn('warn', this.config);
-  error = defaultLoggerFn('error', this.config);
-  fatal = defaultLoggerFn('fatal', this.config);
-  log(level: keyof Logger, args: any[]): void {
+  override trace = defaultLoggerFn('trace', this.config);
+  override debug = defaultLoggerFn('debug', this.config);
+  override info = defaultLoggerFn('info', this.config);
+  override warn = defaultLoggerFn('warn', this.config);
+  override error = defaultLoggerFn('error', this.config);
+  override fatal = defaultLoggerFn('fatal', this.config);
+  override log(level: keyof Logger, args: any[]): void {
     const fn = defaultLoggerFn(level, this.config);
     fn(args);
   }

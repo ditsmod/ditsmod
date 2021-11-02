@@ -21,18 +21,18 @@ import { Log } from './log';
 
 describe('AppInitializer', () => {
   class MockAppInitializer extends AppInitializer {
-    appMetadataMap: Map<ModuleType | ModuleWithParams, MetadataPerMod>;
-    meta = new RootMetadata();
+    override appMetadataMap: Map<ModuleType | ModuleWithParams, MetadataPerMod>;
+    override meta = new RootMetadata();
 
-    mergeMetadata(appModule: ModuleType) {
+    override mergeMetadata(appModule: ModuleType) {
       return super.mergeMetadata(appModule);
     }
 
-    collectProvidersPerAppAndExtensions(metadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
+    override collectProvidersPerAppAndExtensions(metadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
       return super.collectProvidersPerAppAndExtensions(metadata, moduleManager);
     }
 
-    prepareProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
+    override prepareProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
       return super.prepareProvidersPerApp(meta, moduleManager);
     }
   }
