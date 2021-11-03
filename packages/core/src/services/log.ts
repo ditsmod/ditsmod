@@ -1,13 +1,8 @@
-import { Injectable } from '@ts-stack/di';
+import { Inject, Injectable } from '@ts-stack/di';
 import { format } from 'util';
 
-import { Logger } from '../types/logger';
-
-export interface MsgLog {
-  date: Date;
-  level: keyof Logger;
-  msg: string;
-}
+import { LOG_BUFFER } from '../constans';
+import { Logger, MsgLog } from '../types/logger';
 
 /**
  * Mediator between core logger and custom user's logger.
@@ -24,19 +19,7 @@ export class Log {
    * If you need logging all buffered messages, call `log.flush()`.
    */
   bufferLogs: boolean;
-  protected _buffer: MsgLog[] = [];
   protected _logger: Logger;
-
-  get buffer() {
-    return this._buffer;
-  }
-
-  set buffer(buffer: MsgLog[]) {
-    if (!Array.isArray(buffer)) {
-      throw new TypeError(`Log's buffer must be an array, got ${typeof buffer}`);
-    }
-    this._buffer = buffer;
-  }
 
   get logger() {
     return this._logger;
@@ -50,29 +33,29 @@ export class Log {
     }
   }
 
-  constructor(logger: Logger) {
+  constructor(logger: Logger, @Inject(LOG_BUFFER) public readonly buffer: MsgLog[]) {
     this.logger = logger;
   }
 
   protected setLog(level: keyof Logger, msg: any) {
     if (this.bufferLogs) {
-      this._buffer.push({ date: new Date(), level, msg });
+      this.buffer.push({ date: new Date(), level, msg });
     } else {
-      this._logger.log(level, msg);
+      this.logger.log(level, msg);
     }
   }
 
   flush() {
     if (typeof global.it !== 'function') {
       // This is not a test mode.
-      this._buffer.forEach((log) => {
+      this.buffer.forEach((log) => {
         const dateTime = log.date.toLocaleString();
         const msg = `${dateTime}: ${log.msg}`;
         this._logger.log.apply(this._logger, [log.level, msg]);
       });
     }
 
-    this._buffer = [];
+    this.buffer.splice(0);
   }
 
   /**

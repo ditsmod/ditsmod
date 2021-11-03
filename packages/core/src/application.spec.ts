@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
-import { Injectable, InjectionToken } from '@ts-stack/di';
+import { Inject, Injectable, InjectionToken } from '@ts-stack/di';
 
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
@@ -10,7 +10,8 @@ import { RootMetadata } from './models/root-metadata';
 import { ModuleType, Extension } from './types/mix';
 import { Router } from './types/router';
 import { Log } from './services/log';
-import { Logger } from './types/logger';
+import { Logger, MsgLog } from './types/logger';
+import { LOG_BUFFER } from './constans';
 
 describe('Application', () => {
   class MockApplication extends Application {
@@ -84,8 +85,8 @@ describe('Application', () => {
     it('log should be instance of LogMock and log.buffer should be empty', async () => {
       @Injectable()
       class LogMock extends Log {
-        constructor(logger: Logger) {
-          super(logger);
+        constructor(logger: Logger, @Inject(LOG_BUFFER) public override buffer: MsgLog[]) {
+          super(logger, buffer);
           constructor();
         }
 

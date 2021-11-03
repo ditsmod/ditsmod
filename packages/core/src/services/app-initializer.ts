@@ -175,7 +175,6 @@ export class AppInitializer {
   protected createInjectorAndSetLog() {
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.meta.providersPerApp);
     const log = this.injectorPerApp.get(Log) as Log;
-    log.buffer = this.log.buffer;
     log.bufferLogs = true;
     this.log = log;
   }

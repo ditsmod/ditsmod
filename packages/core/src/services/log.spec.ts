@@ -16,7 +16,7 @@ describe('Log', () => {
   beforeEach(() => {
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config) as Logger;
-    log = new LogMock(logger);
+    log = new LogMock(logger, []);
   });
 
   it('case 1', () => {

@@ -45,7 +45,7 @@ describe('AppInitializer', () => {
   beforeEach(async () => {
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config);
-    const log = new Log(logger);
+    const log = new Log(logger, []);
     moduleManager = new ModuleManager(log);
     mock = new MockAppInitializer(moduleManager, log);
   });
