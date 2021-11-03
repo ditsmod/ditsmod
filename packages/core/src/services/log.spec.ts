@@ -1,6 +1,6 @@
 import { format } from 'util';
 
-import { Logger, LoggerConfig } from '../types/logger';
+import { Logger, LoggerConfig, MsgLog } from '../types/logger';
 import { DefaultLogger } from './default-logger';
 import { Log } from './log';
 
@@ -19,18 +19,35 @@ describe('Log', () => {
     log = new LogMock(logger, []);
   });
 
-  it('case 1', () => {
+  it('new LogMock should to have buffer whith empty an array', () => {
     expect(log.bufferLogs).toBeUndefined();
     expect(log.buffer).toEqual([]);
   });
 
-  it('case 2', () => {
+  it(`after setting message to some LogMock's methods, buffer should have this message`, () => {
     class One {}
     log.bufferLogs = true;
     log.moduleAlreadyImported('trace', One, 'two');
     expect(log.buffer.length).toBe(1);
     expect(log.buffer[0].level).toEqual('trace');
     expect(log.buffer[0].msg).toEqual('[class One], two');
+    log.flush();
+    expect(log.buffer).toEqual([]);
+  });
+
+  it(`after sets to LogMock's constructor some message, buffer should have this message`, () => {
+    const config = new LoggerConfig();
+    const logger = new DefaultLogger(config) as Logger;
+    const msgLog = { date: new Date(), level: 'debug', msg: 'three' } as MsgLog;
+    log = new LogMock(logger, [msgLog]);
+    class One {}
+    log.bufferLogs = true;
+    expect(log.buffer).toEqual([msgLog]);
+    log.moduleAlreadyImported('trace', One, 'two');
+    expect(log.buffer[0]).toEqual(msgLog);
+    expect(log.buffer.length).toBe(2);
+    expect(log.buffer[1].level).toEqual('trace');
+    expect(log.buffer[1].msg).toEqual('[class One], two');
     log.flush();
     expect(log.buffer).toEqual([]);
   });
