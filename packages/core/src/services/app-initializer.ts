@@ -22,7 +22,7 @@ import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from '../extensions/pre-router';
 import { Counter } from './counter';
-import { APP_METADATA_MAP, defaultExtensions } from '../constans';
+import { APP_METADATA_MAP, defaultExtensions, LOG_BUFFER } from '../constans';
 import { Log } from './log';
 
 @Injectable()
@@ -165,12 +165,13 @@ export class AppInitializer {
       ...defaultProvidersPerApp,
       { provide: RootMetadata, useValue: this.meta },
       { provide: ModuleManager, useValue: this.moduleManager },
-      { provide: AppInitializer, useValue: this }
+      { provide: AppInitializer, useValue: this },
+      { provide: LOG_BUFFER, useValue: this.log.buffer }
     );
   }
 
   /**
-   * Create injector per the application and sets log.
+   * Creates injector per the application and sets log.
    */
   protected createInjectorAndSetLog() {
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.meta.providersPerApp);
