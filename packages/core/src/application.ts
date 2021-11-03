@@ -31,6 +31,7 @@ export class Application {
           this.log.serverListen('info', this.meta.serverName, host, this.meta.listenOptions.port);
         });
       } catch (err) {
+        this.log.bufferLogs = false;
         this.log.flush();
         reject({ err, logger: this.log.logger });
       }
