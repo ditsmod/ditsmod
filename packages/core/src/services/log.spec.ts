@@ -6,8 +6,6 @@ import { Log } from './log';
 
 describe('Log', () => {
   class LogMock extends Log {
-    override bufferLogs = true;
-
     override moduleAlreadyImported(level: keyof Logger, ...args: any[]) {
       this.setLog(level, `${format(args[0])}, ${args[1]}`);
     }
@@ -22,12 +20,13 @@ describe('Log', () => {
   });
 
   it('case 1', () => {
-    expect(log.bufferLogs).toBe(true);
+    expect(log.bufferLogs).toBeUndefined();
     expect(log.buffer).toEqual([]);
   });
 
   it('case 2', () => {
     class One {}
+    log.bufferLogs = true;
     log.moduleAlreadyImported('trace', One, 'two');
     expect(log.buffer.length).toBe(1);
     expect(log.buffer[0].level).toEqual('trace');

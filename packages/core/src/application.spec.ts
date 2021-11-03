@@ -9,10 +9,17 @@ import { RootModule } from './decorators/root-module';
 import { RootMetadata } from './models/root-metadata';
 import { ModuleType, Extension } from './types/mix';
 import { Router } from './types/router';
+import { Log } from './services/log';
+import { Logger } from './types/logger';
 
 describe('Application', () => {
   class MockApplication extends Application {
     override meta = new RootMetadata();
+    override log: Log;
+
+    override async createTemporaryLogger(appModule: ModuleType) {
+      return super.createTemporaryLogger(appModule);
+    }
 
     override async init(appModule: ModuleType) {
       return super.init(appModule);
@@ -27,6 +34,83 @@ describe('Application', () => {
 
   beforeEach(() => {
     mock = new MockApplication();
+  });
+
+  describe('createTemporaryLogger()', () => {
+    it('log should be undefined', () => {
+      expect(mock.log).toBeUndefined();
+    });
+
+    it('log should be instance of Log', () => {
+      @RootModule()
+      class AppModule {}
+      mock.createTemporaryLogger(AppModule);
+      expect(mock.log).toBeInstanceOf(Log);
+    });
+
+    it('log should be instance of LogMock', () => {
+      class LogMock extends Log {}
+
+      @RootModule({
+        providersPerApp: [{ provide: Log, useClass: LogMock }],
+      })
+      class AppModule {}
+      mock.createTemporaryLogger(AppModule);
+      expect(mock.log).toBeInstanceOf(LogMock);
+    });
+  });
+
+  describe('init()', () => {
+    const constructor = jest.fn();
+    const flush = jest.fn();
+
+    beforeEach(() => {
+      flush.mockRestore();
+    });
+
+    it('log should be instance of Log and log.buffer should be empty', async () => {
+      @RootModule({
+        providersPerApp: [{ provide: Router, useValue: 'fake value for router' }]
+      })
+      class AppModule {}
+
+      const promise = mock.init(AppModule);
+      await expect(promise).resolves.not.toThrow();
+      expect(mock.log).toBeInstanceOf(Log);
+      expect(mock.log.bufferLogs).toBe(false);
+      expect(mock.log.buffer).toHaveLength(0);
+    });
+
+    it('log should be instance of LogMock and log.buffer should be empty', async () => {
+      @Injectable()
+      class LogMock extends Log {
+        constructor(logger: Logger) {
+          super(logger);
+          constructor();
+        }
+
+        override flush() {
+          super.flush();
+          flush();
+        }
+      }
+
+      @RootModule({
+        providersPerApp: [
+          { provide: Router, useValue: 'fake value for router' },
+          { provide: Log, useClass: LogMock }
+        ]
+      })
+      class AppModule {}
+      expect(flush.mock.calls.length).toBe(0);
+      const promise = mock.init(AppModule);
+      await expect(promise).resolves.not.toThrow();
+      expect(mock.log).toBeInstanceOf(LogMock);
+      expect(constructor.mock.calls.length).toBe(3);
+      expect(flush.mock.calls.length).toBe(1);
+      expect(mock.log.bufferLogs).toBe(false);
+      expect(mock.log.buffer).toHaveLength(0);
+    });
   });
 
   describe('checkSecureServerOption()', () => {
@@ -101,7 +185,7 @@ describe('Application', () => {
       })
       class AppModule {}
 
-      const promise = new MockApplication().init(AppModule);
+      const promise = mock.init(AppModule);
       await expect(promise).resolves.not.toThrow();
       expect(jestFn.mock.calls).toEqual([['Extension1']]);
     });
@@ -110,7 +194,7 @@ describe('Application', () => {
       @RootModule({ extensions: [MY_EXTENSIONS] })
       class AppModule {}
 
-      const promise = new MockApplication().init(AppModule);
+      const promise = mock.init(AppModule);
       await expect(promise).rejects.toThrow(/MY_EXTENSIONS" must be includes in "providersPerApp"/);
     });
 
@@ -122,7 +206,7 @@ describe('Application', () => {
       })
       class AppModule {}
 
-      const promise = new MockApplication().init(AppModule);
+      const promise = mock.init(AppModule);
       await expect(promise).rejects.toThrow(/MY_EXTENSIONS" can be includes in the "providersPerApp"/);
     });
 
@@ -134,7 +218,7 @@ describe('Application', () => {
       })
       class AppModule {}
 
-      const promise = new MockApplication().init(AppModule);
+      const promise = mock.init(AppModule);
       await expect(promise).rejects.toThrow(/MY_EXTENSIONS" can be includes in the "providersPerApp"/);
     });
   });

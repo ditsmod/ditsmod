@@ -46,10 +46,12 @@ export class Application {
     const { meta, log } = this.appInitializer.getMetadataAndLog();
     this.meta = meta;
     this.log = log;
-    log.flush();
-    log.bufferLogs = false;
     await this.appInitializer.bootstrapModulesAndExtensions();
+    const { log: lastLog } = this.appInitializer.getMetadataAndLog();
+    this.log = lastLog;
     this.checkSecureServerOption(appModule);
+    lastLog.bufferLogs = false;
+    lastLog.flush();
   }
 
   /**
@@ -61,11 +63,13 @@ export class Application {
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config) as Logger;
     this.log = new Log(logger);
+    this.log.bufferLogs = true;
     const rawRootMetadata = getModuleMetadata(appModule, true);
     const providers = [...defaultProvidersPerApp, ...(rawRootMetadata.providersPerApp || [])];
     const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
     const log = injectorPerApp.get(Log) as Log;
-    log.setBuffer(this.log.buffer);
+    log.buffer = this.log.buffer;
+    log.bufferLogs = true;
     this.log = log;
   }
 

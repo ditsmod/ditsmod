@@ -23,20 +23,35 @@ export class Log {
    *
    * If you need logging all buffered messages, call `log.flush()`.
    */
-  bufferLogs = true;
+  bufferLogs: boolean;
   protected _buffer: MsgLog[] = [];
   protected _logger: Logger;
-
-  constructor(logger: Logger) {
-    this.logger = logger;
-  }
 
   get buffer() {
     return this._buffer;
   }
 
+  set buffer(buffer: MsgLog[]) {
+    if (!Array.isArray(buffer)) {
+      throw new TypeError(`Log's buffer must be an array, got ${typeof buffer}`);
+    }
+    this._buffer = buffer;
+  }
+
   get logger() {
     return this._logger;
+  }
+
+  set logger(logger: Logger) {
+    if (logger) {
+      this._logger = logger;
+    } else {
+      throw new TypeError('Can not set empty value to logger.');
+    }
+  }
+
+  constructor(logger: Logger) {
+    this.logger = logger;
   }
 
   protected setLog(level: keyof Logger, msg: any) {
@@ -47,29 +62,17 @@ export class Log {
     }
   }
 
-  setBuffer(buffer: MsgLog[]) {
-    if (!Array.isArray(buffer)) {
-      throw new TypeError(`Log's buffer must be an array, got ${typeof buffer}`);
-    }
-    this._buffer = buffer;
-  }
-
   flush() {
-    this._buffer.forEach((log) => {
-      const dateTime = log.date.toLocaleString();
-      const msg = `${dateTime}: ${log.msg}`;
-      this._logger.log.apply(this._logger, [log.level, msg]);
-    });
+    if (typeof global.it !== 'function') {
+      // This is not a test mode.
+      this._buffer.forEach((log) => {
+        const dateTime = log.date.toLocaleString();
+        const msg = `${dateTime}: ${log.msg}`;
+        this._logger.log.apply(this._logger, [log.level, msg]);
+      });
+    }
 
     this._buffer = [];
-  }
-
-  set logger(logger: Logger) {
-    if (logger) {
-      this._logger = logger;
-    } else {
-      throw new TypeError('Can not set empty value to logger.');
-    }
   }
 
   /**
