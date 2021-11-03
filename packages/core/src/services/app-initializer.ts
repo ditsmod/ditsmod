@@ -73,6 +73,9 @@ export class AppInitializer {
       await this.init();
       this.log.successfulRollbackModuleConfigChanges('debug');
       return err as Error;
+    } finally {
+      this.log.bufferLogs = false;
+      this.log.flush();
     }
   }
 
