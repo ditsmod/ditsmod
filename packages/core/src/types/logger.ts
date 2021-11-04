@@ -54,9 +54,3 @@ export class LoggerConfig {
    */
   depth?: number = 0;
 }
-
-export interface MsgLog {
-  date: Date;
-  level: keyof Logger;
-  msg: string;
-}

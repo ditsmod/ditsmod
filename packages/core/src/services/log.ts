@@ -2,7 +2,16 @@ import { Inject, Injectable } from '@ts-stack/di';
 import { format } from 'util';
 
 import { LOG_BUFFER } from '../constans';
-import { Logger, MsgLog } from '../types/logger';
+import { Logger } from '../types/logger';
+
+/**
+ * Default type for Log buffer.
+ */
+export interface LogItem {
+  date: Date;
+  level: keyof Logger;
+  msg: string;
+}
 
 /**
  * Mediator between core logger and custom user's logger.
@@ -33,7 +42,7 @@ export class Log {
     }
   }
 
-  constructor(logger: Logger, @Inject(LOG_BUFFER) public readonly buffer: MsgLog[]) {
+  constructor(logger: Logger, @Inject(LOG_BUFFER) public readonly buffer: LogItem[]) {
     this.logger = logger;
   }
 

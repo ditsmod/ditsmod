@@ -9,8 +9,8 @@ import { RootModule } from './decorators/root-module';
 import { RootMetadata } from './models/root-metadata';
 import { ModuleType, Extension } from './types/mix';
 import { Router } from './types/router';
-import { Log } from './services/log';
-import { Logger, MsgLog } from './types/logger';
+import { Log, LogItem } from './services/log';
+import { Logger } from './types/logger';
 import { LOG_BUFFER } from './constans';
 
 describe('Application', () => {
@@ -85,7 +85,7 @@ describe('Application', () => {
     it('log should be instance of LogMock and log.buffer should be empty', async () => {
       @Injectable()
       class LogMock extends Log {
-        constructor(logger: Logger, @Inject(LOG_BUFFER) public override buffer: MsgLog[]) {
+        constructor(logger: Logger, @Inject(LOG_BUFFER) public override buffer: LogItem[]) {
           super(logger, buffer);
           constructor();
         }

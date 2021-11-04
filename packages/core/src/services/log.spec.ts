@@ -1,8 +1,8 @@
 import { format } from 'util';
 
-import { Logger, LoggerConfig, MsgLog } from '../types/logger';
+import { Logger, LoggerConfig } from '../types/logger';
 import { DefaultLogger } from './default-logger';
-import { Log } from './log';
+import { Log, LogItem } from './log';
 
 describe('Log', () => {
   class LogMock extends Log {
@@ -38,13 +38,13 @@ describe('Log', () => {
   it(`after sets to LogMock's constructor some message, buffer should have this message`, () => {
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config) as Logger;
-    const msgLog = { date: new Date(), level: 'debug', msg: 'three' } as MsgLog;
-    log = new LogMock(logger, [msgLog]);
+    const logItem = { date: new Date(), level: 'debug', msg: 'three' } as LogItem;
+    log = new LogMock(logger, [logItem]);
     class One {}
     log.bufferLogs = true;
-    expect(log.buffer).toEqual([msgLog]);
+    expect(log.buffer).toEqual([logItem]);
     log.moduleAlreadyImported('trace', One, 'two');
-    expect(log.buffer[0]).toEqual(msgLog);
+    expect(log.buffer[0]).toEqual(logItem);
     expect(log.buffer.length).toBe(2);
     expect(log.buffer[1].level).toEqual('trace');
     expect(log.buffer[1].msg).toEqual('[class One], two');
