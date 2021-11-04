@@ -10,11 +10,10 @@ import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { Log } from './services/log';
 import { ModuleManager } from './services/module-manager';
 import { Logger, LoggerConfig } from './types/logger';
-import { ModuleType, ServiceProvider } from './types/mix';
+import { ModuleType } from './types/mix';
 import { Http2SecureServerOptions, Server } from './types/server-options';
 import { getModuleMetadata } from './utils/get-module-metadata';
 import { isHttp2SecureServerOptions } from './utils/type-guards';
-import { LOG_BUFFER } from './constans';
 
 export class Application {
   protected meta: RootMetadata;
@@ -67,11 +66,7 @@ export class Application {
     this.log = new Log(logger, []);
     this.log.bufferLogs = true;
     const rawRootMetadata = getModuleMetadata(appModule, true);
-    const providers = [
-      ...defaultProvidersPerApp,
-      ...(rawRootMetadata.providersPerApp || []),
-      { provide: LOG_BUFFER, useValue: this.log.buffer },
-    ] as ServiceProvider[];
+    const providers = [...defaultProvidersPerApp, ...(rawRootMetadata.providersPerApp || [])];
     const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
     const log = injectorPerApp.get(Log) as Log;
     log.bufferLogs = true;
