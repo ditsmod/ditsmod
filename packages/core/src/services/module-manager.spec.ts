@@ -31,7 +31,7 @@ describe('ModuleManager', () => {
     const config = new LoggerConfig();
     config.level = 'error';
     const logger = new DefaultLogger(config);
-    const log = new Log(logger);
+    const log = new Log(logger, []);
     mock = new MockModuleManager(log);
   });
 

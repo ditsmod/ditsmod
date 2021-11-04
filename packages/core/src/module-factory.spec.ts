@@ -58,7 +58,7 @@ describe('ModuleFactory', () => {
     mock = new MockModuleFactory(null as any, null as any);
     const config = new LoggerConfig();
     const log = new DefaultLogger(config);
-    moduleManager = new ModuleManager(new Log(log));
+    moduleManager = new ModuleManager(new Log(log, []));
   });
 
   describe('exportGlobalProviders()', () => {

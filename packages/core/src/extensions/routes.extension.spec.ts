@@ -31,7 +31,7 @@ xdescribe('RoutesExtension', () => {
   beforeEach(() => {
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config);
-    const log = new Log(logger);
+    const log = new Log(logger, []);
     moduleManager = new ModuleManager(log);
     const injectorPerApp = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,
