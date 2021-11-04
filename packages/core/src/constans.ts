@@ -1,6 +1,7 @@
 import { InjectionToken } from '@ts-stack/di';
 
 import { ModConfig } from './models/mod-config';
+import { LogItem } from './services/log';
 import { HttpInterceptor } from './types/http-interceptor';
 import { AppMetadataMap, Extension, ServiceProvider } from './types/mix';
 import { RawRouteMeta } from './types/route-data';
@@ -23,4 +24,4 @@ export const QUERY_STRING = new InjectionToken('QUERY_STRING');
 export const defaultProvidersPerMod: ServiceProvider[] = [ModConfig];
 export const NODE_REQ = new InjectionToken<NodeRequest>('NODE_REQ');
 export const NODE_RES = new InjectionToken<NodeResponse>('NODE_RES');
-export const LOG_BUFFER = new InjectionToken<NodeResponse>('LOG_BUFFER');
+export const LOG_BUFFER = new InjectionToken<LogItem[]>('LOG_BUFFER');
