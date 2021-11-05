@@ -78,8 +78,7 @@ describe('Application', () => {
       const promise = mock.init(AppModule);
       await expect(promise).resolves.not.toThrow();
       expect(mock.log).toBeInstanceOf(Log);
-      expect(mock.log.bufferLogs).toBe(false);
-      expect(mock.log.buffer).toHaveLength(0);
+      expect(mock.log.bufferLogs).toBe(true);
     });
 
     it('log should be instance of LogMock and log.buffer should be empty', async () => {
@@ -108,9 +107,8 @@ describe('Application', () => {
       await expect(promise).resolves.not.toThrow();
       expect(mock.log).toBeInstanceOf(LogMock);
       expect(constructor.mock.calls.length).toBe(3);
-      expect(flush.mock.calls.length).toBe(1);
-      expect(mock.log.bufferLogs).toBe(false);
-      expect(mock.log.buffer).toHaveLength(0);
+      expect(flush.mock.calls.length).toBe(0);
+      expect(mock.log.bufferLogs).toBe(true);
     });
   });
 

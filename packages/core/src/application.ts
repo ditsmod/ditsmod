@@ -31,9 +31,10 @@ export class Application {
           this.log.serverListen('info', this.meta.serverName, host, this.meta.listenOptions.port);
         });
       } catch (err) {
+        reject({ err, logger: this.log.logger });
+      } finally {
         this.log.bufferLogs = false;
         this.log.flush();
-        reject({ err, logger: this.log.logger });
       }
     });
   }
@@ -51,8 +52,6 @@ export class Application {
     const { log: lastLog } = this.appInitializer.getMetadataAndLog();
     this.log = lastLog;
     this.checkSecureServerOption(appModule);
-    lastLog.bufferLogs = false;
-    lastLog.flush();
   }
 
   /**
