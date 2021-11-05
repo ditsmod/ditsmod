@@ -10,13 +10,14 @@ import { RootMetadata } from './models/root-metadata';
 import { ModuleType, Extension } from './types/mix';
 import { Router } from './types/router';
 import { Log } from './services/log';
-import { Logger } from './types/logger';
 import { LogManager } from '.';
+import { AppInitializer } from './services/app-initializer';
 
 describe('Application', () => {
-  class MockApplication extends Application {
+  class ApplicationMock extends Application {
     override meta = new RootMetadata();
     override log: Log;
+    override appInitializer: AppInitializer;
 
     override createLoggerAndGetLogManager(appModule: ModuleType) {
       return super.createLoggerAndGetLogManager(appModule);
@@ -31,84 +32,32 @@ describe('Application', () => {
     }
   }
 
-  let mock: MockApplication;
+  let mock: ApplicationMock;
 
   beforeEach(() => {
-    mock = new MockApplication();
+    mock = new ApplicationMock();
   });
 
-  describe('createTemporaryLogger()', () => {
-    it('log should be undefined', () => {
+  describe('createLoggerAndGetLogManager()', () => {
+    class LogMock extends Log {}
+
+    @RootModule({
+      providersPerApp: [{ provide: Log, useClass: LogMock }],
+    })
+    class AppModule {}
+
+    it('before start, Application.log should be undefined', () => {
       expect(mock.log).toBeUndefined();
     });
 
-    it('log should be instance of Log', () => {
-      @RootModule()
-      class AppModule {}
-      mock.createLoggerAndGetLogManager(AppModule);
-      expect(mock.log).toBeInstanceOf(Log);
-    });
-
-    it('log should be instance of LogMock', () => {
-      class LogMock extends Log {}
-
-      @RootModule({
-        providersPerApp: [{ provide: Log, useClass: LogMock }],
-      })
-      class AppModule {}
+    it('should set log to instance of LogMock', () => {
       mock.createLoggerAndGetLogManager(AppModule);
       expect(mock.log).toBeInstanceOf(LogMock);
     });
-  });
 
-  describe('init()', () => {
-    const constructor = jest.fn();
-    const flush = jest.fn();
-
-    beforeEach(() => {
-      flush.mockRestore();
-    });
-
-    it('log should be instance of Log and log.buffer should be empty', async () => {
-      @RootModule({
-        providersPerApp: [{ provide: Router, useValue: 'fake value for router' }]
-      })
-      class AppModule {}
-
-      const promise = mock.init(AppModule);
-      await expect(promise).resolves.not.toThrow();
-      expect(mock.log).toBeInstanceOf(Log);
-      expect(mock.log.bufferLogs).toBe(true);
-    });
-
-    it('log should be instance of LogMock and log.buffer should be empty', async () => {
-      @Injectable()
-      class LogMock extends Log {
-        constructor(logger: Logger, public override logManager: LogManager) {
-          super(logger, logManager);
-          constructor();
-        }
-
-        override flush() {
-          super.flush();
-          flush();
-        }
-      }
-
-      @RootModule({
-        providersPerApp: [
-          { provide: Router, useValue: 'fake value for router' },
-          { provide: Log, useClass: LogMock }
-        ]
-      })
-      class AppModule {}
-      expect(flush.mock.calls.length).toBe(0);
-      const promise = mock.init(AppModule);
-      await expect(promise).resolves.not.toThrow();
-      expect(mock.log).toBeInstanceOf(LogMock);
-      expect(constructor.mock.calls.length).toBe(3);
-      expect(flush.mock.calls.length).toBe(0);
-      expect(mock.log.bufferLogs).toBe(true);
+    it('should return instance of LogManager', () => {
+      const logManager = mock.createLoggerAndGetLogManager(AppModule);
+      expect(logManager).toBeInstanceOf(LogManager);
     });
   });
 
@@ -148,7 +97,7 @@ describe('Application', () => {
     });
   });
 
-  describe('Init extensions', () => {
+  describe('init extensions', () => {
     const jestFn = jest.fn((extensionName: string) => extensionName);
 
     beforeEach(() => {
