@@ -9,7 +9,6 @@ import { WinstonModule } from './modules/winston/winston.module';
 const loggerConfig = new LoggerConfig();
 const level: keyof Logger = 'debug';
 loggerConfig.level = level;
-loggerConfig.depth = 3;
 
 @RootModule({
   imports: [RouterModule, BunyanModule, PinoModule, WinstonModule, SomeModule],
