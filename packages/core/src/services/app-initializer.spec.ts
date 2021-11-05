@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ClassProvider, InjectionToken } from '@ts-stack/di';
+import { ClassProvider, Injectable, InjectionToken } from '@ts-stack/di';
 
 import { AppInitializer } from './app-initializer';
 import { Logger, LoggerConfig } from '../types/logger';
@@ -20,9 +20,18 @@ import { NODE_REQ } from '../constans';
 import { Log } from './log';
 
 describe('AppInitializer', () => {
+  @Injectable()
   class MockAppInitializer extends AppInitializer {
     override appMetadataMap: Map<ModuleType | ModuleWithParams, MetadataPerMod>;
     override meta = new RootMetadata();
+
+    constructor(public override moduleManager: ModuleManager, public override log: Log) {
+      super(moduleManager, log);
+    }
+
+    override async init() {
+      await super.init();
+    }
 
     override mergeMetadata(appModule: ModuleType) {
       return super.mergeMetadata(appModule);
@@ -48,6 +57,63 @@ describe('AppInitializer', () => {
     const log = new Log(logger, []);
     moduleManager = new ModuleManager(log);
     mock = new MockAppInitializer(moduleManager, log);
+  });
+
+  describe('AppInitializer.log changes', () => {
+    const controllerHasError = jest.fn();
+    class LogMock1 extends Log {
+      override controllerHasError(level: keyof Logger, ...args: any[]) {
+        controllerHasError();
+        this.setLog(level, `${args}`);
+      }
+    }
+    class LogMock2 extends Log {}
+
+    @Module({ providersPerApp: [{ provide: Log, useClass: LogMock2 }] })
+    class Module1 {}
+
+    @RootModule({
+      imports: [Module1],
+      providersPerApp: [
+        { provide: Router, useValue: 'fake' },
+        { provide: Log, useClass: LogMock1 },
+      ],
+    })
+    class AppModule {}
+
+    beforeEach(() => {
+      controllerHasError.mockRestore();
+    });
+
+    it('logs should collects between two init()', async () => {
+      const { buffer } = mock.log;
+      expect(buffer).toHaveLength(0);
+      expect(mock.log).toBeInstanceOf(Log);
+      moduleManager.scanRootModule(AppModule);
+
+      // First init
+      await mock.init();
+      expect(mock.log).toBeInstanceOf(LogMock1);
+      mock.log.controllerHasError('debug', 'one', 'two');
+      const msgIndex1 = buffer.length - 1;
+      expect(buffer[msgIndex1].level).toBe('debug');
+      expect(buffer[msgIndex1].msg).toBe('one,two');
+      expect(controllerHasError.mock.calls.length).toBe(1);
+
+      // Second init
+      await mock.init();
+      expect(mock.log).toBeInstanceOf(LogMock1);
+      mock.log.controllerHasError('info', 'three', 'four');
+      // Logs from first init() still here
+      expect(buffer[msgIndex1].level).toBe('debug');
+      expect(buffer[msgIndex1].msg).toBe('one,two');
+      const msgIndex2 = buffer.length - 1;
+      expect(buffer[msgIndex2].level).toBe('info');
+      expect(buffer[msgIndex2].msg).toBe('three,four');
+      expect(controllerHasError.mock.calls.length).toBe(2);
+      mock.log.flush();
+      expect(buffer.length).toBe(0);
+    });
   });
 
   describe('prepareProvidersPerApp()', () => {
@@ -307,7 +373,12 @@ describe('AppInitializer', () => {
       expect(mod0?.moduleMetadata.providersPerApp).toEqual([]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
       expect(mod0?.moduleMetadata.providersPerMod).toEqual([providerPerMod, Provider3, Provider4, Provider0]);
-      expect(mod0?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
+      expect(mod0?.moduleMetadata.providersPerReq).toEqual([
+        ...defaultProvidersPerReq,
+        Provider5,
+        Provider6,
+        Provider7,
+      ]);
     });
 
     it('Module1', async () => {
@@ -325,7 +396,12 @@ describe('AppInitializer', () => {
         obj1,
         Provider2,
       ]);
-      expect(mod1?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
+      expect(mod1?.moduleMetadata.providersPerReq).toEqual([
+        ...defaultProvidersPerReq,
+        Provider5,
+        Provider6,
+        Provider7,
+      ]);
     });
 
     it('Module2', async () => {
@@ -336,7 +412,12 @@ describe('AppInitializer', () => {
       expect(mod2?.moduleMetadata.providersPerApp).toEqual([]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
       expect(mod2?.moduleMetadata.providersPerMod).toEqual([providerPerMod, Provider0, Provider3, Provider4]);
-      expect(mod2?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
+      expect(mod2?.moduleMetadata.providersPerReq).toEqual([
+        ...defaultProvidersPerReq,
+        Provider5,
+        Provider6,
+        Provider7,
+      ]);
     });
 
     it('Module3', async () => {
@@ -347,7 +428,12 @@ describe('AppInitializer', () => {
       expect(mod3?.moduleMetadata.providersPerApp).toEqual([]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: 'one' } };
       expect(mod3?.moduleMetadata.providersPerMod).toEqual([providerPerMod, Provider0, Provider3, Provider4]);
-      expect(mod3?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider5, Provider6, Provider7]);
+      expect(mod3?.moduleMetadata.providersPerReq).toEqual([
+        ...defaultProvidersPerReq,
+        Provider5,
+        Provider6,
+        Provider7,
+      ]);
     });
 
     it('Module4', async () => {
@@ -506,7 +592,7 @@ describe('AppInitializer', () => {
 
         @RootModule({
           imports: [Module1, Module2],
-          providersPerApp: [{ provide: Router, useValue: 'fake' }]
+          providersPerApp: [{ provide: Router, useValue: 'fake' }],
         })
         class AppModule {}
 
@@ -535,7 +621,7 @@ describe('AppInitializer', () => {
         @RootModule({
           imports: [Module2],
           providersPerMod: [Provider2],
-          providersPerApp: [{ provide: Router, useValue: 'fake' }]
+          providersPerApp: [{ provide: Router, useValue: 'fake' }],
         })
         class AppModule {}
 
@@ -567,7 +653,7 @@ describe('AppInitializer', () => {
         @RootModule({
           imports: [Module0, Module1.withParams()],
           providersPerMod: [Provider1],
-          providersPerApp: [{ provide: Router, useValue: 'fake' }]
+          providersPerApp: [{ provide: Router, useValue: 'fake' }],
         })
         class AppModule {}
 
@@ -619,7 +705,7 @@ describe('AppInitializer', () => {
         @RootModule({
           imports: [Module2],
           providersPerReq: [Provider2],
-          providersPerApp: [{ provide: Router, useValue: 'fake' }]
+          providersPerApp: [{ provide: Router, useValue: 'fake' }],
         })
         class AppModule {}
 
@@ -661,7 +747,7 @@ describe('AppInitializer', () => {
         @RootModule({
           imports: [Module0, Module1],
           providersPerReq: [Provider1],
-          providersPerApp: [{ provide: Router, useValue: 'fake' }]
+          providersPerApp: [{ provide: Router, useValue: 'fake' }],
         })
         class AppModule {}
 
