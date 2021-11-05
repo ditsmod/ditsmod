@@ -7,7 +7,7 @@ import { SomeModule } from './modules/some/some.module';
 import { WinstonModule } from './modules/winston/winston.module';
 
 const loggerConfig = new LoggerConfig();
-const level: keyof Logger = 'debug';
+const level: keyof Logger = 'trace';
 loggerConfig.level = level;
 
 @RootModule({
