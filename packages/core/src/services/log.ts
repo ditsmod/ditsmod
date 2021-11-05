@@ -33,7 +33,7 @@ export class Log {
   get bufferLogs() {
     return this.logManager.bufferLogs;
   }
-  get buffer(): LogItem[] {
+  get buffer() {
     return this.logManager.buffer;
   }
   protected _logger: Logger;
