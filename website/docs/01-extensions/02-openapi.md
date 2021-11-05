@@ -5,13 +5,12 @@ sidebar_position: 2
 # OpenAPI
 
 Щоб створити маршрут за специфікацією `OpenAPI`, можна використовувати декоратор `OasRoute`,
-що імпортується з модуля `@ditsmod/openapi`.
+що імпортується з `@ditsmod/openapi`.
 
 ## Parameters
 
-Для передачі параметрів, найпростіше скористатись функцією `getParams()`.
-
-В наступному прикладі описується необов'язковий параметр `page` у частині `query`:
+Для передачі параметрів, найпростіше скористатись функцією `getParams()`. В наступному прикладі
+описується необов'язковий параметр `page`, що міститься у `query`:
 
 ```ts
 import { Controller } from '@ditsmod/core';
@@ -68,7 +67,6 @@ export class SomeController {
  */
 export const VALIDATION_ARGS = 'x-validation-args';
 
-// In packages/server/src/app/models/params.ts
 export class Params {
   // ...
   @Column({
@@ -81,7 +79,7 @@ export class Params {
 ```
 
 Якщо назва параметра змінюється у моделі параметрів, TypeScript видає помилку в межах `OasRoute`.
-Щоправда таку помилку важко зрозуміти, але першим ділом перевірте наявність указаного вами
+Щоправда таку помилку важко зрозуміти, але першим ділом перевірте наявність указаного
 параметра у моделі параметрів.
 
 Функція `getParams()` не призначена щоб її використовували одночасно для обов'язкових та
@@ -100,7 +98,7 @@ export class SomeController {
   // ...
   @OasRoute('GET', '', [], {
     parameters: new Parameters()
-      .required('query', Params, 'otherParam').describe('Якийсь інший опис, не такий як у моделі Params')
+      .required('query', Params, 'otherParam').describe('Якийсь інший опис')
       .optional('query', Params, 'page')
       .getParams()
   })
