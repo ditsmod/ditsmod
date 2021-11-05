@@ -22,7 +22,7 @@ import { LogManager } from './log-manager';
 
 describe('AppInitializer', () => {
   @Injectable()
-  class MockAppInitializer extends AppInitializer {
+  class AppInitializerMock extends AppInitializer {
     override appMetadataMap: Map<ModuleType | ModuleWithParams, MetadataPerMod>;
     override meta = new RootMetadata();
 
@@ -47,9 +47,7 @@ describe('AppInitializer', () => {
     }
   }
 
-  class MyLogger extends Logger {}
-
-  let mock: MockAppInitializer;
+  let mock: AppInitializerMock;
   let moduleManager: ModuleManager;
 
   beforeEach(async () => {
@@ -58,14 +56,14 @@ describe('AppInitializer', () => {
     const logManager = new LogManager();
     const log = new Log(logger, logManager);
     moduleManager = new ModuleManager(log);
-    mock = new MockAppInitializer(moduleManager, log);
+    mock = new AppInitializerMock(moduleManager, log);
   });
 
-  fdescribe('AppInitializer.log changes', () => {
-    const controllerHasError = jest.fn();
+  describe('init()', () => {
+    const testMethodSpy = jest.fn();
     class LogMock1 extends Log {
-      override controllerHasError(level: keyof Logger, ...args: any[]) {
-        controllerHasError();
+      testMethod(level: keyof Logger, ...args: any[]) {
+        testMethodSpy();
         this.setLog(level, `${args}`);
       }
     }
@@ -85,35 +83,36 @@ describe('AppInitializer', () => {
     class AppModule {}
 
     beforeEach(() => {
-      controllerHasError.mockRestore();
+      testMethodSpy.mockRestore();
     });
 
     it('logs should collects between two init()', async () => {
       expect(mock.log.buffer).toHaveLength(0);
       expect(mock.log).toBeInstanceOf(Log);
+      expect(mock.log).not.toBeInstanceOf(LogMock1);
       moduleManager.scanRootModule(AppModule);
 
       // First init
       await mock.init();
       const { buffer } = mock.log;
       expect(mock.log).toBeInstanceOf(LogMock1);
-      mock.log.controllerHasError('debug', 'one', 'two');
+      (mock.log as LogMock1).testMethod('debug', 'one', 'two');
       const msgIndex1 = buffer.length - 1;
       expect(buffer[msgIndex1].level).toBe('debug');
       expect(buffer[msgIndex1].msg).toBe('one,two');
-      expect(controllerHasError.mock.calls.length).toBe(1);
+      expect(testMethodSpy.mock.calls.length).toBe(1);
 
       // Second init
       await mock.init();
       expect(mock.log).toBeInstanceOf(LogMock1);
-      mock.log.controllerHasError('info', 'three', 'four');
+      (mock.log as LogMock1).testMethod('info', 'three', 'four');
       // Logs from first init() still here
       expect(buffer[msgIndex1].level).toBe('debug');
       expect(buffer[msgIndex1].msg).toBe('one,two');
       const msgIndex2 = buffer.length - 1;
       expect(buffer[msgIndex2].level).toBe('info');
       expect(buffer[msgIndex2].msg).toBe('three,four');
-      expect(controllerHasError.mock.calls.length).toBe(2);
+      expect(testMethodSpy.mock.calls.length).toBe(2);
       mock.log.flush();
       expect(buffer.length).toBe(0);
     });
@@ -353,7 +352,7 @@ describe('AppInitializer', () => {
     class Module4 {}
 
     @Module({
-      providersPerApp: [{ provide: Logger, useClass: MyLogger }],
+      providersPerApp: [{ provide: Logger, useValue: 'fake value' }],
     })
     class Module5 {}
 
@@ -466,7 +465,7 @@ describe('AppInitializer', () => {
       mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
       const root1 = mock.appMetadataMap.get(AppModule);
-      expect(root1?.moduleMetadata.providersPerApp.slice(0, 1)).toEqual([Logger, { provide: Router, useValue: 'fake' }]);
+      // expect(root1?.moduleMetadata.providersPerApp.slice(0, 1)).toEqual([Logger, { provide: Router, useValue: 'fake' }]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
       expect(root1?.moduleMetadata.providersPerMod).toEqual([
         providerPerMod,
