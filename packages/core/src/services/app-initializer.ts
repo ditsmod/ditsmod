@@ -83,6 +83,9 @@ export class AppInitializer {
     await this.preRouter.requestListener(nodeReq, nodeRes);
   };
 
+  /**
+   * After call this method, you need call `this.log.flush()`.
+   */
   protected async init() {
     this.bootstrapProvidersPerApp();
     await this.bootstrapModulesAndExtensions();
@@ -110,10 +113,8 @@ export class AppInitializer {
   protected prepareProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
     // Here we work only with providers declared at the application level.
 
-    const { providersPerApp: exportedProviders, extensions } = this.collectProvidersPerAppAndExtensions(
-      meta,
-      moduleManager
-    );
+    const providersAndExtensions = this.collectProvidersPerAppAndExtensions(meta, moduleManager);
+    const { providersPerApp: exportedProviders, extensions } = providersAndExtensions;
     const rootTokens = normalizeProviders(this.meta.providersPerApp).map((np) => np.provide);
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.provide);
