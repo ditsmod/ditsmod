@@ -4,6 +4,7 @@ import { Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
 import { Extension } from '../types/mix';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ExtensionsManager } from './extensions-manager';
+import { LogManager } from './log-manager';
 
 describe('ExtensionsManager cyclic dependencies', () => {
   class MockExtensionsManager extends ExtensionsManager {
@@ -80,6 +81,7 @@ describe('ExtensionsManager cyclic dependencies', () => {
   }
 
   beforeEach(() => {
+    const logManager = new LogManager();
     const injector = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,
       MockExtensionsManager,
@@ -87,6 +89,7 @@ describe('ExtensionsManager cyclic dependencies', () => {
       { provide: MY_EXTENSIONS2, useClass: Extension2, multi: true },
       { provide: MY_EXTENSIONS3, useClass: Extension3, multi: true },
       { provide: MY_EXTENSIONS4, useClass: Extension4, multi: true },
+      { provide: LogManager, useValue: logManager },
     ]);
     mock = injector.get(MockExtensionsManager) as MockExtensionsManager;
   });

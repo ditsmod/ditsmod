@@ -12,6 +12,7 @@ import { ModuleManager } from '../services/module-manager';
 import { DefaultLogger } from '../services/default-logger';
 import { AppInitializer } from '../services/app-initializer';
 import { Log } from '../services/log';
+import { LogManager } from '../services/log-manager';
 
 xdescribe('RoutesExtension', () => {
   @Injectable()
@@ -31,12 +32,14 @@ xdescribe('RoutesExtension', () => {
   beforeEach(() => {
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config);
-    const log = new Log(logger, []);
+    const logManager = new LogManager();
+    const log = new Log(logger, logManager);
     moduleManager = new ModuleManager(log);
     const injectorPerApp = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,
       { provide: ModuleManager, useValue: moduleManager },
       { provide: RootMetadata, useValue: new RootMetadata() },
+      { provide: LogManager, useValue: new LogManager() },
       MockAppInitializer,
     ]);
     mockAppInitializer = injectorPerApp.get(MockAppInitializer);

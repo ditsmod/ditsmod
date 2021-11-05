@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@ts-stack/di';
+import { Injectable } from '@ts-stack/di';
 import { format } from 'util';
 
-import { LOG_BUFFER } from '../constans';
 import { Logger } from '../types/logger';
+import { LogManager } from './log-manager';
 
 /**
  * Default type for Log buffer.
@@ -27,7 +27,15 @@ export class Log {
    *
    * If you need logging all buffered messages, call `log.flush()`.
    */
-  bufferLogs: boolean;
+  set bufferLogs(val: boolean) {
+    this.logManager.bufferLogs = val;
+  }
+  get bufferLogs() {
+    return this.logManager.bufferLogs;
+  }
+  get buffer(): LogItem[] {
+    return this.logManager.buffer;
+  }
   protected _logger: Logger;
 
   get logger() {
@@ -42,13 +50,13 @@ export class Log {
     }
   }
 
-  constructor(logger: Logger, @Inject(LOG_BUFFER) public readonly buffer: LogItem[]) {
+  constructor(logger: Logger, protected logManager: LogManager) {
     this.logger = logger;
   }
 
   protected setLog(level: keyof Logger, msg: any) {
-    if (this.bufferLogs) {
-      this.buffer.push({ date: new Date(), level, msg });
+    if (this.logManager.bufferLogs) {
+      this.logManager.buffer.push({ date: new Date(), level, msg });
     } else {
       this.logger.log(level, msg);
     }
@@ -57,14 +65,14 @@ export class Log {
   flush() {
     if (typeof global.it !== 'function') {
       // This is not a test mode.
-      this.buffer.forEach((log) => {
+      this.logManager.buffer.forEach((log) => {
         const dateTime = log.date.toLocaleString();
         const msg = `${dateTime}: ${log.msg}`;
         this._logger.log.apply(this._logger, [log.level, msg]);
       });
     }
 
-    this.buffer.splice(0);
+    this.logManager.buffer.splice(0);
   }
 
   /**

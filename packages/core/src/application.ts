@@ -2,6 +2,7 @@ import { ReflectiveInjector } from '@ts-stack/di';
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
+import { LogManager } from './services/log-manager';
 
 import { RootMetadata } from './models/root-metadata';
 import { AppInitializer } from './services/app-initializer';
@@ -40,11 +41,11 @@ export class Application {
   }
 
   protected async init(appModule: ModuleType) {
-    this.createTemporaryLogger(appModule);
+    const logManager = this.createLoggerAndGetLogManager(appModule);
     const moduleManager = new ModuleManager(this.log);
     moduleManager.scanRootModule(appModule);
     this.appInitializer = new AppInitializer(moduleManager, this.log);
-    this.appInitializer.bootstrapProvidersPerApp();
+    this.appInitializer.bootstrapProvidersPerApp(logManager);
     const { meta, log } = this.appInitializer.getMetadataAndLog();
     this.meta = meta;
     this.log = log;
@@ -59,17 +60,21 @@ export class Application {
    * Then we can set it to a logger from `providersPerApp` of the root module. And later it
    * can be seted to another logger in the process of initializing the application.
    */
-  protected createTemporaryLogger(appModule: ModuleType) {
+  protected createLoggerAndGetLogManager(appModule: ModuleType) {
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config) as Logger;
-    this.log = new Log(logger, []);
-    this.log.bufferLogs = true;
+    const logManager = new LogManager();
+    this.log = new Log(logger, logManager);
     const rawRootMetadata = getModuleMetadata(appModule, true);
-    const providers = [...defaultProvidersPerApp, ...(rawRootMetadata.providersPerApp || [])];
+    const providers = [
+      { provide: LogManager, useValue: logManager },
+      ...defaultProvidersPerApp,
+      ...(rawRootMetadata.providersPerApp || [])
+    ];
     const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
     const log = injectorPerApp.get(Log) as Log;
-    log.bufferLogs = true;
     this.log = log;
+    return logManager;
   }
 
   protected checkSecureServerOption(appModule: ModuleType) {

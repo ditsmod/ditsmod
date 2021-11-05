@@ -7,6 +7,7 @@ import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { ServiceProvider } from './mix';
 import { RouteMeta } from './route-data';
 import { HTTP_INTERCEPTORS, PATH_PARAMS, QUERY_STRING, NODE_REQ, NODE_RES } from '../constans';
+import { LogManager } from '../services/log-manager';
 
 describe('HttpInterceptor', () => {
   const jestFn = jest.fn((interceptorName: string) => interceptorName);
@@ -39,6 +40,7 @@ describe('HttpInterceptor', () => {
     }
   }
 
+  const logManager = new LogManager();
   const defaultProviders: ServiceProvider[] = [
     ...defaultProvidersPerApp,
     ...defaultProvidersPerReq,
@@ -47,6 +49,7 @@ describe('HttpInterceptor', () => {
     { provide: RouteMeta, useValue: {} },
     { provide: PATH_PARAMS, useValue: [] },
     { provide: QUERY_STRING, useValue: {} },
+    { provide: LogManager, useValue: logManager },
   ];
 
   beforeEach(() => {

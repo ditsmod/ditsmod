@@ -2,27 +2,27 @@ import 'reflect-metadata';
 import * as http from 'http';
 import * as https from 'https';
 import * as http2 from 'http2';
-import { Inject, Injectable, InjectionToken } from '@ts-stack/di';
+import { Injectable, InjectionToken } from '@ts-stack/di';
 
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
 import { RootMetadata } from './models/root-metadata';
 import { ModuleType, Extension } from './types/mix';
 import { Router } from './types/router';
-import { Log, LogItem } from './services/log';
+import { Log } from './services/log';
 import { Logger } from './types/logger';
-import { LOG_BUFFER } from './constans';
+import { LogManager } from '.';
 
 describe('Application', () => {
   class MockApplication extends Application {
     override meta = new RootMetadata();
     override log: Log;
 
-    override async createTemporaryLogger(appModule: ModuleType) {
-      return super.createTemporaryLogger(appModule);
+    override createLoggerAndGetLogManager(appModule: ModuleType) {
+      return super.createLoggerAndGetLogManager(appModule);
     }
 
-    override async init(appModule: ModuleType) {
+    override init(appModule: ModuleType) {
       return super.init(appModule);
     }
 
@@ -45,7 +45,7 @@ describe('Application', () => {
     it('log should be instance of Log', () => {
       @RootModule()
       class AppModule {}
-      mock.createTemporaryLogger(AppModule);
+      mock.createLoggerAndGetLogManager(AppModule);
       expect(mock.log).toBeInstanceOf(Log);
     });
 
@@ -56,7 +56,7 @@ describe('Application', () => {
         providersPerApp: [{ provide: Log, useClass: LogMock }],
       })
       class AppModule {}
-      mock.createTemporaryLogger(AppModule);
+      mock.createLoggerAndGetLogManager(AppModule);
       expect(mock.log).toBeInstanceOf(LogMock);
     });
   });
@@ -84,8 +84,8 @@ describe('Application', () => {
     it('log should be instance of LogMock and log.buffer should be empty', async () => {
       @Injectable()
       class LogMock extends Log {
-        constructor(logger: Logger, @Inject(LOG_BUFFER) public override buffer: LogItem[]) {
-          super(logger, buffer);
+        constructor(logger: Logger, public override logManager: LogManager) {
+          super(logger, logManager);
           constructor();
         }
 

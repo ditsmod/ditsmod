@@ -22,8 +22,9 @@ import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from '../extensions/pre-router';
 import { Counter } from './counter';
-import { APP_METADATA_MAP, defaultExtensions, LOG_BUFFER } from '../constans';
+import { APP_METADATA_MAP, defaultExtensions } from '../constans';
 import { Log } from './log';
+import { LogManager } from './log-manager';
 
 @Injectable()
 export class AppInitializer {
@@ -31,10 +32,14 @@ export class AppInitializer {
   protected preRouter: PreRouter;
   protected meta: RootMetadata;
   protected appMetadataMap: AppMetadataMap;
+  protected logManager: LogManager;
 
   constructor(protected moduleManager: ModuleManager, protected log: Log) {}
 
-  bootstrapProvidersPerApp() {
+  bootstrapProvidersPerApp(logManager?: LogManager) {
+    if (logManager) {
+      this.logManager = logManager;
+    }
     const meta = this.moduleManager.getMetadata('root', true);
     this.mergeMetadata(meta.module as ModuleType);
     this.prepareProvidersPerApp(meta, this.moduleManager);
@@ -166,8 +171,8 @@ export class AppInitializer {
       ...defaultProvidersPerApp,
       { provide: RootMetadata, useValue: this.meta },
       { provide: ModuleManager, useValue: this.moduleManager },
+      { provide: LogManager, useValue: this.logManager },
       { provide: AppInitializer, useValue: this },
-      { provide: LOG_BUFFER, useValue: this.log.buffer }
     );
   }
 

@@ -10,6 +10,7 @@ import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj } from '../types/
 import { LoggerConfig } from '../types/logger';
 import { DefaultLogger } from './default-logger';
 import { Log } from './log';
+import { LogManager } from './log-manager';
 
 describe('ModuleManager', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;
@@ -31,7 +32,8 @@ describe('ModuleManager', () => {
     const config = new LoggerConfig();
     config.level = 'error';
     const logger = new DefaultLogger(config);
-    const log = new Log(logger, []);
+    const logManager = new LogManager();
+    const log = new Log(logger, logManager);
     mock = new MockModuleManager(log);
   });
 

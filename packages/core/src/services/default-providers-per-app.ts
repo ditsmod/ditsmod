@@ -2,7 +2,7 @@ import { Injector, ReflectiveInjector } from '@ts-stack/di';
 
 import { BodyParserConfig } from '../models/body-parser-config';
 import { RootMetadata } from '../models/root-metadata';
-import { LOG_BUFFER, PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from '../constans';
+import { PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from '../constans';
 import { Logger, LoggerConfig } from '../types/logger';
 import { ServiceProvider } from '../types/mix';
 import { Counter } from './counter';
@@ -27,7 +27,6 @@ export const defaultProvidersPerApp: ServiceProvider[] = [
   Counter,
   { provide: PRE_ROUTER_EXTENSIONS, useExisting: PreRouter, multi: true },
   { provide: ROUTES_EXTENSIONS, useClass: RoutesExtension, multi: true },
-  { provide: LOG_BUFFER, useValue: [] },
   ModuleManager,
-  Log
+  Log,
 ];
