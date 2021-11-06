@@ -30,7 +30,6 @@ describe('ModuleManager', () => {
 
   beforeEach(() => {
     const config = new LoggerConfig();
-    config.level = 'error';
     const logger = new DefaultLogger(config);
     const logManager = new LogManager();
     const log = new Log(logger, logManager);
