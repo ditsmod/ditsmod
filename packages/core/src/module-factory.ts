@@ -5,7 +5,7 @@ import { ProvidersMetadata } from './models/providers-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
-import { MetadataPerMod } from './types/metadata-per-mod';
+import { MetadataPerMod, SiblingsMetadata } from './types/metadata-per-mod';
 import {
   GuardItem,
   DecoratorMetadata,
@@ -48,10 +48,18 @@ export class ModuleFactory {
    * Module metadata.
    */
   protected meta: NormalizedModuleMetadata;
+
+  // Used only to check providers collisions
   protected importedProvidersPerMod: ServiceProvider[] = [];
   protected importedProvidersPerRou: ServiceProvider[] = [];
   protected importedProvidersPerReq: ServiceProvider[] = [];
-  protected globalProviders: ProvidersMetadata;
+
+  // Used for siblings injectors
+  protected siblingsPerMod = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+  protected siblingsPerRou = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+  protected siblingsPerReq = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+
+  protected globalProviders: ProvidersMetadata & SiblingsMetadata;
   protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod>();
   #moduleManager: ModuleManager;
 
@@ -62,7 +70,7 @@ export class ModuleFactory {
    *
    * @param globalProviders Contains providersPerApp for now.
    */
-  exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata) {
+  exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata & SiblingsMetadata) {
     this.#moduleManager = moduleManager;
     const meta = moduleManager.getMetadata('root', true);
     this.moduleName = meta.name;
@@ -75,6 +83,9 @@ export class ModuleFactory {
       providersPerMod: this.importedProvidersPerMod,
       providersPerRou: this.importedProvidersPerRou,
       providersPerReq: this.importedProvidersPerReq,
+      siblingsPerMod: this.siblingsPerMod,
+      siblingsPerRou: this.siblingsPerRou,
+      siblingsPerReq: this.siblingsPerReq,
     };
   }
 
@@ -84,7 +95,7 @@ export class ModuleFactory {
    * @param modOrObj Module that will bootstrapped.
    */
   bootstrap(
-    globalProviders: ProvidersMetadata,
+    globalProviders: ProvidersMetadata & SiblingsMetadata,
     prefixPerMod: string,
     modOrObj: ModuleType | ModuleWithParams,
     moduleManager: ModuleManager,
@@ -107,6 +118,9 @@ export class ModuleFactory {
       guardsPerMod: this.guardsPerMod,
       moduleMetadata: this.meta,
       controllersMetadata: deepFreeze(controllersMetadata),
+      siblingsPerMod: new Map([...this.globalProviders.siblingsPerMod, ...this.siblingsPerMod]),
+      siblingsPerRou: new Map([...this.globalProviders.siblingsPerRou, ...this.siblingsPerRou]),
+      siblingsPerReq: new Map([...this.globalProviders.siblingsPerReq, ...this.siblingsPerReq]),
     });
   }
 
@@ -114,21 +128,15 @@ export class ModuleFactory {
     this.meta.providersPerMod = getUniqProviders([
       ...defaultProvidersPerMod,
       { provide: ModConfig, useValue: { prefixPerMod: this.prefixPerMod } },
-      ...this.globalProviders.providersPerMod,
-      ...this.importedProvidersPerMod,
       ...this.meta.providersPerMod,
     ]);
 
     this.meta.providersPerRou = getUniqProviders([
-      ...this.globalProviders.providersPerRou,
-      ...this.importedProvidersPerRou,
       ...this.meta.providersPerRou,
     ]);
 
     this.meta.providersPerReq = getUniqProviders([
       ...defaultProvidersPerReq,
-      ...this.globalProviders.providersPerReq,
-      ...this.importedProvidersPerReq,
       ...this.meta.providersPerReq,
     ]);
   }
@@ -268,6 +276,7 @@ export class ModuleFactory {
    */
   protected importProviders(metadata: NormalizedModuleMetadata) {
     const {
+      module,
       exportsModules,
       exportsWithParams,
       exportsProviders,
@@ -285,6 +294,7 @@ export class ModuleFactory {
     for (const provider of exportsProviders) {
       const normProvider = normalizeProviders([provider])[0];
       const foundProvider = this.findAndSetProvider(
+        module,
         provider,
         normProvider,
         providersPerMod,
@@ -304,6 +314,7 @@ export class ModuleFactory {
   }
 
   protected findAndSetProvider(
+    module: ModuleType | ModuleWithParams,
     provider: ServiceProvider,
     normProvider: NormalizedProvider,
     providersPerMod: ServiceProvider[],
@@ -312,12 +323,15 @@ export class ModuleFactory {
   ) {
     if (hasProviderIn(providersPerMod)) {
       this.importedProvidersPerMod.push(provider);
+      this.siblingsPerMod.set(provider, module);
       return true;
     } else if (hasProviderIn(providersPerRou)) {
       this.importedProvidersPerRou.push(provider);
+      this.siblingsPerRou.set(provider, module);
       return true;
     } else if (hasProviderIn(providersPerReq)) {
       this.importedProvidersPerReq.push(provider);
+      this.siblingsPerReq.set(provider, module);
       return true;
     }
 

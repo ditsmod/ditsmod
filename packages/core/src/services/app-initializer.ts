@@ -25,6 +25,7 @@ import { Counter } from './counter';
 import { APP_METADATA_MAP, defaultExtensions } from '../constans';
 import { Log } from './log';
 import { LogManager } from './log-manager';
+import { SiblingsMetadata } from '../types/metadata-per-mod';
 
 @Injectable()
 export class AppInitializer {
@@ -172,7 +173,7 @@ export class AppInitializer {
       { provide: RootMetadata, useValue: this.meta },
       { provide: ModuleManager, useValue: this.moduleManager },
       { provide: LogManager, useValue: this.logManager },
-      { provide: AppInitializer, useValue: this },
+      { provide: AppInitializer, useValue: this }
     );
   }
 
@@ -195,16 +196,27 @@ export class AppInitializer {
   }
 
   protected getGlobalProviders(moduleManager: ModuleManager) {
-    const globalProviders = new ProvidersMetadata();
+    const providers = new ProvidersMetadata();
+    const siblings = new SiblingsMetadata();
+    const globalProviders: ProvidersMetadata & SiblingsMetadata = { ...providers, ...siblings };
     globalProviders.providersPerApp = this.meta.providersPerApp;
     const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
-    const { providersPerMod, providersPerRou, providersPerReq } = moduleFactory.exportGlobalProviders(
-      moduleManager,
-      globalProviders
-    );
+    const {
+      // Don't autoformat this
+      providersPerMod,
+      providersPerRou,
+      providersPerReq,
+      siblingsPerMod,
+      siblingsPerRou,
+      siblingsPerReq,
+    } = moduleFactory.exportGlobalProviders(moduleManager, globalProviders);
+
     globalProviders.providersPerMod = providersPerMod;
     globalProviders.providersPerRou = [...providersPerRou];
     globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];
+    globalProviders.siblingsPerMod = siblingsPerMod;
+    globalProviders.siblingsPerRou = siblingsPerRou;
+    globalProviders.siblingsPerReq = siblingsPerReq;
     return globalProviders;
   }
 
