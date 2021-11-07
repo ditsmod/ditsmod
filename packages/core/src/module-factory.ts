@@ -68,7 +68,7 @@ export class ModuleFactory {
     this.moduleName = meta.name;
     this.meta = meta;
     this.globalProviders = globalProviders;
-    this.importProviders(meta, true);
+    this.importProviders(meta);
     this.checkProvidersCollisions(true);
 
     return {
@@ -209,7 +209,7 @@ export class ModuleFactory {
   protected importModules() {
     for (const imp of this.meta.importsModules) {
       const meta = this.#moduleManager.getMetadata(imp, true);
-      this.importProviders(meta, true);
+      this.importProviders(meta);
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
       const appMetadataMap = moduleFactory.bootstrap(
         this.globalProviders,
@@ -222,7 +222,7 @@ export class ModuleFactory {
     }
     for (const imp of this.meta.importsWithParams) {
       const meta = this.#moduleManager.getMetadata(imp, true);
-      this.importProviders(meta, true);
+      this.importProviders(meta);
       const prefixPerMod = [this.prefixPerMod, imp.prefix].filter((s) => s).join('/');
       const normalizedGuardsPerMod = this.normalizeGuards(imp.guards);
       this.checkGuardsPerMod(normalizedGuardsPerMod);
@@ -266,7 +266,7 @@ export class ModuleFactory {
    *
    * @param metadata Module metadata from where imports providers.
    */
-  protected importProviders(metadata: NormalizedModuleMetadata, isStarter?: boolean) {
+  protected importProviders(metadata: NormalizedModuleMetadata) {
     const {
       exportsModules,
       exportsWithParams,
