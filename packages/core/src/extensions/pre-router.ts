@@ -49,7 +49,6 @@ export class PreRouter implements Extension<void> {
 
     rawRoutesMeta.forEach((rawRouteMeta) => {
       const {
-        // Don't autoformat this
         httpMethod,
         path,
         providersPerMod,

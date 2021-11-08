@@ -18,7 +18,7 @@ import {
 import { getDuplicates } from './utils/get-duplicates';
 import { getTokensCollisions } from './utils/get-tokens-collisions';
 import { getUniqProviders } from './utils/get-uniq-providers';
-import { NormalizedProvider, normalizeProviders } from './utils/ng-utils';
+import { normalizeProviders } from './utils/ng-utils';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
 import {
   isClassProvider,
@@ -272,14 +272,7 @@ export class ModuleFactory {
    * @param metadata Module metadata from where imports providers.
    */
   protected importProviders(metadata: NormalizedModuleMetadata) {
-    const {
-      module,
-      exportsModules,
-      exportsWithParams,
-      exportsProvidersPerMod,
-      exportsProvidersPerRou,
-      exportsProvidersPerReq,
-    } = metadata;
+    const { module, exportsModules, exportsWithParams } = metadata;
 
     for (const mod of [...exportsModules, ...exportsWithParams]) {
       const meta = this.#moduleManager.getMetadata(mod, true);
@@ -287,25 +280,19 @@ export class ModuleFactory {
       this.importProviders(meta);
     }
 
-    if (exportsProvidersPerMod.length) {
-      const siblingObjPerMod = new SiblingObj();
-      siblingObjPerMod.tokens = normalizeProviders(exportsProvidersPerMod).map((p) => p.provide);
-      this.siblingsPerMod.set(module, siblingObjPerMod);
-      this.importedProvidersPerMod.push(...exportsProvidersPerMod);
-    }
+    const self = this;
+    addProviders('Mod');
+    addProviders('Rou');
+    addProviders('Req');
 
-    if (exportsProvidersPerRou.length) {
-      const siblingObjPerRou = new SiblingObj();
-      siblingObjPerRou.tokens = normalizeProviders(exportsProvidersPerRou).map((p) => p.provide);
-      this.siblingsPerRou.set(module, siblingObjPerRou);
-      this.importedProvidersPerRou.push(...exportsProvidersPerRou);
-    }
-
-    if (exportsProvidersPerReq.length) {
-      const siblingObjPerReq = new SiblingObj();
-      siblingObjPerReq.tokens = normalizeProviders(exportsProvidersPerReq).map((p) => p.provide);
-      this.siblingsPerReq.set(module, siblingObjPerReq);
-      this.importedProvidersPerReq.push(...exportsProvidersPerReq);
+    function addProviders(scope: 'Mod' | 'Rou' | 'Req') {
+      const exp = metadata[`exportsProvidersPer${scope}`];
+      if (exp.length) {
+        const siblingObj = new SiblingObj();
+        siblingObj.tokens = normalizeProviders(exp).map((p) => p.provide);
+        self[`siblingsPer${scope}`].set(module, siblingObj);
+        self[`importedProvidersPer${scope}`].push(...exp);
+      }
     }
   }
 
