@@ -1486,6 +1486,11 @@
   resolved "https://registry.yarnpkg.com/@ts-stack/di/-/di-1.2.0-beta.1.tgz#5715e31eeb6245e1a563e06bfdb9cdc534ddd9f1"
   integrity sha512-TRTdfg7GuJJbxwm2E6PatcUJsC15fkIXqoSBLlsEEZv+2N+A07p/3v0WN0i778z50oQKysTcCKVUd0jvFaPHPQ==
 
+"@ts-stack/di@^1.2.0-beta.2":
+  version "1.2.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@ts-stack/di/-/di-1.2.0-beta.2.tgz#62b0e0575a59454409ad30d76b5256811ee678b7"
+  integrity sha512-OG5Oadej2RlXdSPeS4tWMfusKWTIBDA6S0nv//prLLoC3BxKxQdskbxx2CLK9AHW1VGP+KM+iapNbgu/M1p61g==
+
 "@ts-stack/openapi-spec@^3.1.2":
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/@ts-stack/openapi-spec/-/openapi-spec-3.1.4.tgz#758ac44ca44fcab0d0963c0ead7c5397262c5e2b"

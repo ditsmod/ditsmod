@@ -66,6 +66,17 @@ describe('ModuleManager', () => {
     expect(mock.getMetadata('root')).toEqual(expectedMetadata);
   });
 
+  it('non properly exports from root module', () => {
+    class Provider1 {}
+
+    @RootModule({
+      exports: [Provider1]
+    })
+    class AppModule {}
+
+    expect(() => mock.scanRootModule(AppModule)).toThrowError(/Importing Provider1 from AppModule should includes in/);
+  });
+
   it('root module with some metadata', () => {
     @Injectable()
     class Provider1 {}

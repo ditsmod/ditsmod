@@ -320,7 +320,13 @@ export class ModuleManager {
       return true;
     }
 
-    return false;
+    const providerName = token.name || token;
+    throw new Error(
+      `Importing ${providerName} from ${metadata.name} ` +
+        'should includes in "providersPerMod" or "providersPerRou", or "providersPerReq", ' +
+        'or in some "exports" of imported modules. ' +
+        'Tip: "providersPerApp" no need exports, they are automatically exported.'
+    );
 
     function hasProviderIn(providers: ServiceProvider[] | undefined) {
       if (!providers) {
