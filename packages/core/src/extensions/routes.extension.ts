@@ -75,6 +75,7 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
           };
           providersPerRou.push({ provide: RouteMeta, useValue: routeMeta });
           rawRoutesMeta.push({
+            module: moduleMetadata.module,
             moduleName,
             httpMethod,
             path,

@@ -2,13 +2,15 @@ import { Injectable, ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-
 
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpHandler } from '../types/http-interceptor';
-import { HttpMethod, Extension } from '../types/mix';
+import { HttpMethod, Extension, ModuleType, ModuleWithParams } from '../types/mix';
 import { RawRouteMeta, PreparedRouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { NodeResponse, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { ExtensionsManager } from '../services/extensions-manager';
 import { Log } from '../services/log';
+import { ModuleManager } from '../services/module-manager';
+import { SiblingObj } from '../types/metadata-per-mod';
 
 @Injectable()
 export class PreRouter implements Extension<void> {
@@ -18,7 +20,8 @@ export class PreRouter implements Extension<void> {
     protected injectorPerApp: ReflectiveInjector,
     protected router: Router,
     protected extensionsManager: ExtensionsManager,
-    protected log: Log
+    protected log: Log,
+    protected moduleManager: ModuleManager
   ) {}
 
   async init() {
@@ -49,6 +52,7 @@ export class PreRouter implements Extension<void> {
 
     rawRoutesMeta.forEach((rawRouteMeta) => {
       const {
+        module,
         httpMethod,
         path,
         providersPerMod,
@@ -60,10 +64,9 @@ export class PreRouter implements Extension<void> {
         siblingsPerReq,
       } = rawRouteMeta;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-      siblingsPerMod.forEach((siblingObj) => {
-        siblingObj.internal = injectorPerMod;
-      });
+      this.handleModuleSiblings(injectorPerMod, module, 'Mod', siblingsPerMod);
       const inj1 = injectorPerMod.resolveAndCreateChild(providersPerRou);
+      this.handleModuleSiblings(inj1, module, 'Rou', siblingsPerRou);
       const providers = ReflectiveInjector.resolve(providersPerReq);
       this.instantiateProvidersPerReq(inj1, providers);
 
@@ -85,6 +88,26 @@ export class PreRouter implements Extension<void> {
     });
 
     return preparedRouteMeta;
+  }
+
+  protected handleModuleSiblings(
+    injector: ReflectiveInjector,
+    module: ModuleType | ModuleWithParams,
+    scope: 'Mod' | 'Rou' | 'Req',
+    siblings: Map<ModuleType | ModuleWithParams, SiblingObj>
+  ) {
+    const meta = this.moduleManager.getMetadata(module);
+    meta[`siblingsPer${scope}`].resolveInjector(injector);
+
+    siblings.forEach((sbl) => {
+      sbl.injectorPromise
+        .then((externalInjector) => {
+          injector.addSibling(externalInjector, sbl.tokens);
+        })
+        .catch((err) => {
+          this.log.errorDuringAddingSiblings('error', err);
+        });
+    });
   }
 
   /**

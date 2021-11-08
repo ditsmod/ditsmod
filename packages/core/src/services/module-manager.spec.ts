@@ -54,9 +54,9 @@ describe('ModuleManager', () => {
       providersPerMod: [],
       providersPerRou: [],
       providersPerReq: [],
-      siblingsPerMod: { tokens: [] },
-      siblingsPerRou: { tokens: [] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [] } as any,
+      siblingsPerRou: { tokens: [] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       extensions: [],
       controllers: [],
       extensionsMeta: {},
@@ -66,7 +66,7 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(1);
-    expect(mock.getMetadata('root')).toEqual(expectedMetadata);
+    expect(mock.getMetadata('root')).toMatchObject(expectedMetadata);
   });
 
   it('non properly exports from root module', () => {
@@ -107,9 +107,9 @@ describe('ModuleManager', () => {
       exportsProvidersPerMod: [],
       exportsProvidersPerRou: [],
       exportsProvidersPerReq: [],
-      siblingsPerMod: { tokens: [] },
-      siblingsPerRou: { tokens: [] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [] } as any,
+      siblingsPerRou: { tokens: [] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       importsModules: [],
       importsWithParams: [],
       providersPerApp: [],
@@ -125,7 +125,7 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(1);
-    expect(mock.getMetadata('root')).toEqual(expectedMetadata);
+    expect(mock.getMetadata('root')).toMatchObject(expectedMetadata);
   });
 
   it('root module with imported some other modules', () => {
@@ -178,9 +178,9 @@ describe('ModuleManager', () => {
       exportsProvidersPerMod: [],
       exportsProvidersPerRou: [],
       exportsProvidersPerReq: [],
-      siblingsPerMod: { tokens: [] },
-      siblingsPerRou: { tokens: [] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [] } as any,
+      siblingsPerRou: { tokens: [] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       importsModules: [],
       providersPerApp: [],
       providersPerMod: [],
@@ -197,7 +197,7 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(Module3);
     expect(mock.map.size).toBe(4);
-    expect(mock.getMetadata('1')).toEqual(module1Expect);
+    expect(mock.getMetadata('1')).toMatchObject(module1Expect);
 
     const module2Expect: NormalizedModuleMetadata = {
       id: '',
@@ -209,9 +209,9 @@ describe('ModuleManager', () => {
       providersPerMod: [Provider0],
       providersPerRou: [Provider1],
       providersPerReq: [],
-      siblingsPerMod: { tokens: [Provider0] },
-      siblingsPerRou: { tokens: [Provider1] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [Provider0] } as any,
+      siblingsPerRou: { tokens: [Provider1] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       extensions: [],
       extensionsMeta: {},
       controllers: [],
@@ -223,7 +223,7 @@ describe('ModuleManager', () => {
       exportsProvidersPerReq: []
     };
 
-    expect(mock.map.get(Module2)).toEqual(module2Expect);
+    expect(mock.map.get(Module2)).toMatchObject(module2Expect);
 
     const module3Expect: NormalizedModuleMetadata = {
       id: '',
@@ -233,9 +233,9 @@ describe('ModuleManager', () => {
       exportsProvidersPerMod: [],
       exportsProvidersPerRou: [],
       exportsProvidersPerReq: [],
-      siblingsPerMod: { tokens: [] },
-      siblingsPerRou: { tokens: [] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [] } as any,
+      siblingsPerRou: { tokens: [] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       providersPerApp: [],
       providersPerMod: [],
       providersPerRou: [],
@@ -249,7 +249,7 @@ describe('ModuleManager', () => {
       ngMetadataName: 'RootModule',
     };
 
-    expect(mock.getMetadata('root')).toEqual(module3Expect);
+    expect(mock.getMetadata('root')).toMatchObject(module3Expect);
 
     const module4Expect: NormalizedModuleMetadata = {
       id: '',
@@ -259,9 +259,9 @@ describe('ModuleManager', () => {
       exportsProvidersPerMod: [],
       exportsProvidersPerRou: [],
       exportsProvidersPerReq: [],
-      siblingsPerMod: { tokens: [] },
-      siblingsPerRou: { tokens: [] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [] } as any,
+      siblingsPerRou: { tokens: [] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       importsModules: [],
       importsWithParams: [],
       providersPerApp: [],
@@ -275,7 +275,7 @@ describe('ModuleManager', () => {
       ngMetadataName: 'Module',
     };
 
-    expect(mock.map.get(module4WithParams)).toEqual(module4Expect);
+    expect(mock.map.get(module4WithParams)).toMatchObject(module4Expect);
   });
 
   it('programmatically adding some modules to "imports" array of root module', () => {
@@ -305,9 +305,9 @@ describe('ModuleManager', () => {
       exportsProvidersPerMod: [],
       exportsProvidersPerRou: [],
       exportsProvidersPerReq: [],
-      siblingsPerMod: { tokens: [] },
-      siblingsPerRou: { tokens: [] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [] } as any,
+      siblingsPerRou: { tokens: [] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       importsModules: [],
       importsWithParams: [],
       module: AppModule,
@@ -319,7 +319,7 @@ describe('ModuleManager', () => {
     expect(mock.map.size).toBe(1);
     expect(mock.getMetadata('root') === mock.getMetadata('root')).toBe(false);
     expect(mock.getRawMetadata('root') === mock.getRawMetadata('root')).toBe(true);
-    expect(mock.getMetadata('root')).toEqual(expectedMetadata1);
+    expect(mock.getMetadata('root')).toMatchObject(expectedMetadata1);
 
     @Module()
     class Module1 {}
@@ -359,9 +359,9 @@ describe('ModuleManager', () => {
       exportsProvidersPerMod: [],
       exportsProvidersPerRou: [],
       exportsProvidersPerReq: [],
-      siblingsPerMod: { tokens: [] },
-      siblingsPerRou: { tokens: [] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [] } as any,
+      siblingsPerRou: { tokens: [] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       importsModules: [],
       importsWithParams: [],
       module: AppModule,
@@ -375,12 +375,12 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.get('root')).toBe(AppModule);
     expect(mock.oldMap.size).toBe(1);
     expect(mock.oldMap.has(AppModule)).toBe(true);
-    expect(mock.oldMap.get(AppModule)).toEqual(expectedOldMetadata1);
+    expect(mock.oldMap.get(AppModule)).toMatchObject(expectedOldMetadata1);
 
     expect(mock.addImport(Module1)).toBe(false);
     expect(mock.oldMap.size).toBe(1);
     expect(mock.oldMap.has(AppModule)).toBe(true);
-    expect(mock.oldMap.get(AppModule)).toEqual(expectedOldMetadata1);
+    expect(mock.oldMap.get(AppModule)).toMatchObject(expectedOldMetadata1);
     expect(mock.map.size).toBe(2);
     expect(mock.map.has(Module1)).toBe(true);
 
@@ -408,9 +408,9 @@ describe('ModuleManager', () => {
       exportsProvidersPerMod: [],
       exportsProvidersPerRou: [],
       exportsProvidersPerReq: [],
-      siblingsPerMod: { tokens: [] },
-      siblingsPerRou: { tokens: [] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [] } as any,
+      siblingsPerRou: { tokens: [] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       importsModules: [Module1],
       importsWithParams: [],
       module: AppModule,
@@ -425,7 +425,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMap.has(Module1)).toBe(true);
     expect(mock.oldMapId.size).toBe(1);
     expect(mock.oldMapId.get('root')).toBe(AppModule);
-    expect(mock.oldMap.get(AppModule)).toEqual(expectedOldMetadata2);
+    expect(mock.oldMap.get(AppModule)).toMatchObject(expectedOldMetadata2);
 
     mock.addImport(Module4);
     expect(mock.map.size).toBe(4);
@@ -450,9 +450,9 @@ describe('ModuleManager', () => {
       exportsProvidersPerMod: [],
       exportsProvidersPerRou: [],
       exportsProvidersPerReq: [],
-      siblingsPerMod: { tokens: [] },
-      siblingsPerRou: { tokens: [] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [] } as any,
+      siblingsPerRou: { tokens: [] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       module: AppModule,
       importsModules: [Module1, Module2, Module4],
       providersPerApp: [],
@@ -465,7 +465,7 @@ describe('ModuleManager', () => {
       ngMetadataName: 'RootModule',
     };
     expect(mock.getMetadata('root') === mock.getMetadata('root')).toBe(false);
-    expect(mock.getMetadata('root')).toEqual(expectedMetadata2);
+    expect(mock.getMetadata('root')).toMatchObject(expectedMetadata2);
 
     const expectedMetadata3: NormalizedModuleMetadata = {
       id: '',
@@ -482,9 +482,9 @@ describe('ModuleManager', () => {
       providersPerMod: [],
       providersPerRou: [],
       providersPerReq: [Provider1],
-      siblingsPerMod: { tokens: [] },
-      siblingsPerRou: { tokens: [] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [] } as any,
+      siblingsPerRou: { tokens: [] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       extensions: [],
       extensionsMeta: {},
       controllers: [],
@@ -494,12 +494,12 @@ describe('ModuleManager', () => {
     mock.addImport(module3WithProviders);
     expect(mock.map.size).toBe(5);
     expect(mock.oldMap.size).toBe(4);
-    expect(mock.getMetadata('root')).toEqual(expectedMetadata3);
+    expect(mock.getMetadata('root')).toMatchObject(expectedMetadata3);
     expect(mock.map.has(module3WithProviders)).toBe(true);
 
     mock.rollback();
     expect(mock.map.size).toBe(4);
-    expect(mock.map.get(AppModule)).toEqual(expectedMetadata2);
+    expect(mock.map.get(AppModule)).toMatchObject(expectedMetadata2);
     expect(mock.map.has(module3WithProviders)).toBe(false);
     expect(mock.oldMap.size).toBe(0);
   });
@@ -563,9 +563,9 @@ describe('ModuleManager', () => {
       exportsProvidersPerMod: [],
       exportsProvidersPerRou: [],
       exportsProvidersPerReq: [],
-      siblingsPerMod: { tokens: [] },
-      siblingsPerRou: { tokens: [] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [] } as any,
+      siblingsPerRou: { tokens: [] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       module: AppModule,
       importsModules: [Module1, Module2],
       importsWithParams: [module3WithProviders, module4WithProviders],
@@ -581,7 +581,7 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(6);
-    expect(mock.getMetadata('root')).toEqual(expectedMetadata1);
+    expect(mock.getMetadata('root')).toMatchObject(expectedMetadata1);
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);
 
@@ -615,9 +615,9 @@ describe('ModuleManager', () => {
       exportsProvidersPerMod: [],
       exportsProvidersPerRou: [],
       exportsProvidersPerReq: [],
-      siblingsPerMod: { tokens: [] },
-      siblingsPerRou: { tokens: [] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [] } as any,
+      siblingsPerRou: { tokens: [] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       module: AppModule,
       importsModules: [Module1],
       importsWithParams: [module3WithProviders, module4WithProviders],
@@ -638,7 +638,7 @@ describe('ModuleManager', () => {
 
     expect(mock.removeImport(Module2)).toBe(false);
     expect(mock.map.size).toBe(4);
-    expect(mock.getMetadata('root')).toEqual(expectedMetadata2);
+    expect(mock.getMetadata('root')).toMatchObject(expectedMetadata2);
     expect(mock.oldMapId.size).toBe(2);
     expect(mock.oldMap.size).toBe(5);
 
@@ -650,9 +650,9 @@ describe('ModuleManager', () => {
       exportsProvidersPerMod: [],
       exportsProvidersPerRou: [],
       exportsProvidersPerReq: [],
-      siblingsPerMod: { tokens: [] },
-      siblingsPerRou: { tokens: [] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [] } as any,
+      siblingsPerRou: { tokens: [] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       module: AppModule,
       importsModules: [Module1],
       importsWithParams: [module4WithProviders],
@@ -668,7 +668,7 @@ describe('ModuleManager', () => {
 
     expect(mock.removeImport(module3WithProviders)).toBe(true);
     expect(mock.map.size).toBe(3);
-    expect(mock.getMetadata('root')).toEqual(expectedMetadata3);
+    expect(mock.getMetadata('root')).toMatchObject(expectedMetadata3);
     expect(mock.oldMapId.size).toBe(2);
     expect(mock.oldMap.size).toBe(5);
 
@@ -680,9 +680,9 @@ describe('ModuleManager', () => {
       exportsProvidersPerMod: [],
       exportsProvidersPerRou: [],
       exportsProvidersPerReq: [],
-      siblingsPerMod: { tokens: [] },
-      siblingsPerRou: { tokens: [] },
-      siblingsPerReq: { tokens: [] },
+      siblingsPerMod: { tokens: [] } as any,
+      siblingsPerRou: { tokens: [] } as any,
+      siblingsPerReq: { tokens: [] } as any,
       module: AppModule,
       importsModules: [Module1],
       importsWithParams: [],
@@ -698,14 +698,14 @@ describe('ModuleManager', () => {
 
     expect(mock.removeImport(moduleId)).toBe(true);
     expect(mock.map.size).toBe(2);
-    expect(mock.getMetadata('root')).toEqual(expectedMetadata4);
+    expect(mock.getMetadata('root')).toMatchObject(expectedMetadata4);
     expect(mock.oldMapId.size).toBe(2);
     expect(mock.oldMap.size).toBe(5);
 
     mock.rollback();
     expect(mock.mapId.size).toBe(2);
     expect(mock.map.size).toBe(5);
-    expect(mock.getMetadata('root')).toEqual(expectedMetadata1);
+    expect(mock.getMetadata('root')).toMatchObject(expectedMetadata1);
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);
   });

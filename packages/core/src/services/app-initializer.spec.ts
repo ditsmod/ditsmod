@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ClassProvider, Injectable, InjectionToken } from '@ts-stack/di';
+import { ClassProvider, Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
 
 import { AppInitializer } from './app-initializer';
 import { Logger, LoggerConfig } from '../types/logger';
@@ -383,13 +383,13 @@ describe('AppInitializer', () => {
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
       expect(mod0?.moduleMetadata.providersPerMod).toEqual([providerPerMod, Provider0]);
       expect(mod0?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq]);
-      expect(mod0?.siblingsPerMod).toEqual(new Map<M,S>([
-        [Module0, { tokens: [Provider0] }],
-        [Module2, { tokens: [Provider3, Provider4] }],
-      ]));
-      expect(mod0?.siblingsPerReq).toEqual(new Map<M,S>([
-        [Module3, { tokens: [Provider5, Provider6, Provider7] }],
-      ]));
+
+      expect(mod0?.siblingsPerMod).toBeDefined();
+      expect(mod0?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
+      expect(mod0?.siblingsPerMod.get(Module2)).toMatchObject({ tokens: [Provider3, Provider4] });
+      
+      expect(mod0?.siblingsPerReq).toBeDefined();
+      expect(mod0?.siblingsPerReq.get(Module3)).toMatchObject({ tokens: [Provider5, Provider6, Provider7] });
     });
 
     it('Module1', async () => {
@@ -404,13 +404,13 @@ describe('AppInitializer', () => {
         obj1,
         Provider2,
       ]);
-      expect(mod1?.siblingsPerMod).toEqual(new Map<M,S>([
-        [Module0, { tokens: [Provider0] }],
-        [Module2, { tokens: [Provider3, Provider4] }],
-      ]));
-      expect(mod1?.siblingsPerReq).toEqual(new Map<M,S>([
-        [Module3, { tokens: [Provider5, Provider6, Provider7] }],
-      ]));
+
+      expect(mod1?.siblingsPerMod).toBeDefined();
+      expect(mod1?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
+      expect(mod1?.siblingsPerMod.get(Module2)).toMatchObject({ tokens: [Provider3, Provider4] });
+      
+      expect(mod1?.siblingsPerReq).toBeDefined();
+      expect(mod1?.siblingsPerReq.get(Module3)).toMatchObject({ tokens: [Provider5, Provider6, Provider7] });
       expect(mod1?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq]);
     });
 
@@ -423,13 +423,13 @@ describe('AppInitializer', () => {
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
       expect(mod2?.moduleMetadata.providersPerMod).toEqual([providerPerMod, Provider3, Provider4]);
       expect(mod2?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq]);
-      expect(mod2?.siblingsPerMod).toEqual(new Map<M,S>([
-        [Module0, { tokens: [Provider0] }],
-        [Module2, { tokens: [Provider3, Provider4] }],
-      ]));
-      expect(mod2?.siblingsPerReq).toEqual(new Map<M,S>([
-        [Module3, { tokens: [Provider5, Provider6, Provider7] }],
-      ]));
+
+      expect(mod2?.siblingsPerMod).toBeDefined();
+      expect(mod2?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
+      expect(mod2?.siblingsPerMod.get(Module2)).toMatchObject({ tokens: [Provider3, Provider4] });
+      
+      expect(mod2?.siblingsPerReq).toBeDefined();
+      expect(mod2?.siblingsPerReq.get(Module3)).toMatchObject({ tokens: [Provider5, Provider6, Provider7] });
     });
 
     it('Module3', async () => {
@@ -446,13 +446,13 @@ describe('AppInitializer', () => {
         Provider6,
         Provider7,
       ]);
-      expect(mod3?.siblingsPerMod).toEqual(new Map<M,S>([
-        [Module0, { tokens: [Provider0] }],
-        [Module2, { tokens: [Provider3, Provider4] }],
-      ]));
-      expect(mod3?.siblingsPerReq).toEqual(new Map<M,S>([
-        [Module3, { tokens: [Provider5, Provider6, Provider7] }],
-      ]));
+
+      expect(mod3?.siblingsPerMod).toBeDefined();
+      expect(mod3?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
+      expect(mod3?.siblingsPerMod.get(Module2)).toMatchObject({ tokens: [Provider3, Provider4] });
+      
+      expect(mod3?.siblingsPerReq).toBeDefined();
+      expect(mod3?.siblingsPerReq.get(Module3)).toMatchObject({ tokens: [Provider5, Provider6, Provider7] });
     });
 
     it('Module4', async () => {
@@ -468,13 +468,13 @@ describe('AppInitializer', () => {
         Provider8,
         Provider9,
       ]);
-      expect(mod4?.siblingsPerMod).toEqual(new Map<M,S>([
-        [Module0, { tokens: [Provider0] }],
-        [Module2, { tokens: [Provider3, Provider4] }],
-      ]));
-      expect(mod4?.siblingsPerReq).toEqual(new Map<M,S>([
-        [Module3, { tokens: [Provider5, Provider6, Provider7] }],
-      ]));
+
+      expect(mod4?.siblingsPerMod).toBeDefined();
+      expect(mod4?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
+      expect(mod4?.siblingsPerMod.get(Module2)).toMatchObject({ tokens: [Provider3, Provider4] });
+      
+      expect(mod4?.siblingsPerReq).toBeDefined();
+      expect(mod4?.siblingsPerReq.get(Module3)).toMatchObject({ tokens: [Provider5, Provider6, Provider7] });
     });
 
     it('AppModule', async () => {
@@ -486,17 +486,17 @@ describe('AppInitializer', () => {
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
       expect(root1?.moduleMetadata.providersPerMod).toEqual([providerPerMod]);
       expect(root1?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq]);
-      expect(root1?.siblingsPerMod).toEqual(new Map<M,S>([
-        [Module0, { tokens: [Provider0] }],
-        [module2WithParams, {tokens: [Provider3, Provider4]}],
-        [Module1, { tokens: [Provider1] }],
-        [Module2, { tokens: [Provider3, Provider4] }],
-      ]));
-      expect(root1?.siblingsPerReq).toEqual(new Map<M,S>([
-        [Module3, { tokens: [Provider5, Provider6, Provider7] }],
-        [module3WithParams, { tokens: [Provider5, Provider6, Provider7] }],
-        [module4WithParams, { tokens: [Provider8, Provider9] }],
-      ]));
+
+      expect(root1?.siblingsPerMod).toBeDefined();
+      expect(root1?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
+      expect(root1?.siblingsPerMod.get(module2WithParams)).toMatchObject({ tokens: [Provider3, Provider4] });
+      expect(root1?.siblingsPerMod.get(Module1)).toMatchObject({ tokens: [Provider1] });
+      expect(root1?.siblingsPerMod.get(Module2)).toMatchObject({ tokens: [Provider3, Provider4] });
+      
+      expect(root1?.siblingsPerReq).toBeDefined();
+      expect(root1?.siblingsPerReq.get(Module3)).toMatchObject({ tokens: [Provider5, Provider6, Provider7] });
+      expect(root1?.siblingsPerReq.get(module3WithParams)).toMatchObject({ tokens: [Provider5, Provider6, Provider7] });
+      expect(root1?.siblingsPerReq.get(module4WithParams)).toMatchObject({ tokens: [Provider8, Provider9] });
     });
   });
 

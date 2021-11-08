@@ -268,9 +268,17 @@ export class Log {
   }
 
   /**
-   * The application has no routes.
+   * [show routes].
    */
   showRoutes(level: keyof Logger, ...args: any[]) {
     this.setLog(level, args[0]);
+  }
+
+  /**
+   * [errorDuringAddingSiblings].
+   */
+  errorDuringAddingSiblings(level: keyof Logger, ...args: any[]) {
+    const err = args[0] as Error;
+    this.setLog(level, err.message);
   }
 }

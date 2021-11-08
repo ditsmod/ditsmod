@@ -9,8 +9,14 @@ import { ModuleType, ModuleWithParams, NormalizedGuard } from './mix';
  */
 export class SiblingObj {
   tokens: any[] = [];
-  external?: ReflectiveInjector;
-  internal?: ReflectiveInjector;
+  resolveInjector: (value: ReflectiveInjector) => void;
+  injectorPromise: Promise<ReflectiveInjector>;
+
+  constructor() {
+    this.injectorPromise = new Promise<ReflectiveInjector>(resolve => {
+      this.resolveInjector = resolve;
+    });
+  }
 }
 export class SiblingsMetadata {
   siblingsPerMod = new Map<ModuleType | ModuleWithParams, SiblingObj>();

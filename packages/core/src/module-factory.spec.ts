@@ -326,13 +326,11 @@ describe('ModuleFactory', () => {
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       expect(mock.importedProvidersPerMod).toEqual([]);
       expect(mock.importedProvidersPerReq).toEqual([Provider1, Provider2, Provider3]);
-      expect(mock.siblingsPerReq).toEqual(
-        new Map<M, S>([
-          [Module1, { tokens: [Provider1] }],
-          [Module2, { tokens: [Provider2] }],
-          [AppModule, { tokens: [Provider3] }],
-        ])
-      );
+
+      expect(mock?.siblingsPerReq).toBeDefined();
+      expect(mock?.siblingsPerReq.get(Module1)).toMatchObject({ tokens: [Provider1] });
+      expect(mock?.siblingsPerReq.get(Module2)).toMatchObject({ tokens: [Provider2] });
+      expect(mock?.siblingsPerReq.get(AppModule)).toMatchObject({ tokens: [Provider3] });
     });
   });
 
@@ -552,32 +550,30 @@ describe('ModuleFactory', () => {
         const mod1 = mock.appMetadataMap.get(Module1);
         const providerPerMod1: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
         expect(mod1?.moduleMetadata.providersPerMod).toEqual([providerPerMod1, Provider1, Provider2, Provider3]);
-        expect(mod1?.siblingsPerMod).toEqual(new Map<M, S>([[Module0, { tokens: [Provider0] }],]));
+
+        expect(mod1?.siblingsPerMod).toBeDefined();
+        expect(mod1?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
         expect(mod1?.moduleMetadata.providersPerReq).toEqual(defaultProvidersPerReq);
         expect((mod1 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
         const mod2 = mock.appMetadataMap.get(Module2);
         const providerPerMod2: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
         expect(mod2?.moduleMetadata.providersPerMod).toEqual([providerPerMod2, Provider4, Provider5, Provider6]);
-        expect(mod2?.siblingsPerMod).toEqual(
-          new Map<M, S>([
-            [Module0, { tokens: [Provider0] }],
-            [Module1, { tokens: [Provider1, Provider2, Provider3] }],
-          ])
-        );
+
+        expect(mod2?.siblingsPerMod).toBeDefined();
+        expect(mod2?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
+        expect(mod2?.siblingsPerMod.get(Module1)).toMatchObject({ tokens: [Provider1, Provider2, Provider3] });
         expect(mod2?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider7, Provider8]);
         expect((mod2 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
         const mod3 = mock.appMetadataMap.get(Module3);
         const providerPerMod3: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
         expect(mod3?.moduleMetadata.providersPerMod).toEqual([providerPerMod3]);
-        expect(mod3?.siblingsPerMod).toEqual(
-          new Map<M, S>([
-            [Module0, { tokens: [Provider0] }],
-            [Module1, { tokens: [Provider1, Provider2, Provider3] }],
-            [Module2, { tokens: [Provider5] }],
-          ])
-        );
+
+        expect(mod3?.siblingsPerMod).toBeDefined();
+        expect(mod3?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
+        expect(mod3?.siblingsPerMod.get(Module1)).toMatchObject({ tokens: [Provider1, Provider2, Provider3] });
+        expect(mod3?.siblingsPerMod.get(Module2)).toMatchObject({ tokens: [Provider5] });
         // expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overriddenProvider8]);
         expect(mod3?.moduleMetadata.controllers).toEqual([Ctrl]);
         expect((mod3 as any).moduleMetadata.ngMetadataName).toBe('Module');
@@ -607,15 +603,16 @@ describe('ModuleFactory', () => {
         // expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
         const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: 'other' } };
         expect(mock.meta.providersPerMod).toEqual([providerPerMod]);
-        expect(mock.siblingsPerMod).toEqual(
-          new Map<M, S>([
-            [Module0, { tokens: [Provider0] }],
-            [Module1, { tokens: [Provider1, Provider2, Provider3] }],
-            [Module2, { tokens: [Provider5] }],
-          ])
-        );
+
+        expect(mock?.siblingsPerMod).toBeDefined();
+        expect(mock?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
+        expect(mock?.siblingsPerMod.get(Module1)).toMatchObject({ tokens: [Provider1, Provider2, Provider3] });
+        expect(mock?.siblingsPerMod.get(Module2)).toMatchObject({ tokens: [Provider5] });
+
         expect(mock.meta.providersPerReq).toEqual([...defaultProvidersPerReq]);
-        expect(mock.siblingsPerReq).toEqual(new Map<M, S>([[Module2, { tokens: [Provider8] }]]));
+
+        expect(mock?.siblingsPerReq).toBeDefined();
+        expect(mock?.siblingsPerReq.get(Module2)).toMatchObject({ tokens: [Provider8] });
         expect((mock.meta as any).ngMetadataName).toBe('RootModule');
       });
 
@@ -665,7 +662,9 @@ describe('ModuleFactory', () => {
 
         const mod3 = mock.appMetadataMap.get(Module3);
         expect(mod3?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider3]);
-        expect(mock.siblingsPerReq).toEqual(new Map<M, S>([[Module2, { tokens: [Provider2] }]]));
+
+        expect(mock?.siblingsPerReq).toBeDefined();
+        expect(mock?.siblingsPerReq.get(Module2)).toMatchObject({ tokens: [Provider2] });
         expect((mod3 as any).moduleMetadata.ngMetadataName).toBe('Module');
       });
 

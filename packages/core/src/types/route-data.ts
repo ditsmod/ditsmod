@@ -1,5 +1,13 @@
 import { SiblingsMetadata } from './metadata-per-mod';
-import { ControllerType, DecoratorMetadata, HttpMethod, NormalizedGuard, ServiceProvider } from './mix';
+import {
+  ControllerType,
+  DecoratorMetadata,
+  HttpMethod,
+  ModuleType,
+  ModuleWithParams,
+  NormalizedGuard,
+  ServiceProvider,
+} from './mix';
 import { RouteHandler } from './router';
 
 /**
@@ -7,6 +15,7 @@ import { RouteHandler } from './router';
  * that need set routes.
  */
 export class RawRouteMeta extends SiblingsMetadata {
+  module: ModuleType | ModuleWithParams;
   moduleName: string;
   /**
    * Providers per a module.
