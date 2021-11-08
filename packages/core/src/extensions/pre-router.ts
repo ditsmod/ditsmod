@@ -61,6 +61,9 @@ export class PreRouter implements Extension<void> {
         siblingsPerReq,
       } = rawRouteMeta;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+      siblingsPerMod.forEach((siblingObj) => {
+        siblingObj.internal = injectorPerMod;
+      });
       const inj1 = injectorPerMod.resolveAndCreateChild(providersPerRou);
       const providers = ReflectiveInjector.resolve(providersPerReq);
       this.instantiateProvidersPerReq(inj1, providers);

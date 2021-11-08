@@ -5,7 +5,7 @@ import { ProvidersMetadata } from './models/providers-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
-import { MetadataPerMod, SiblingsMetadata } from './types/metadata-per-mod';
+import { MetadataPerMod, SiblingObj, SiblingsMetadata } from './types/metadata-per-mod';
 import {
   GuardItem,
   DecoratorMetadata,
@@ -55,9 +55,9 @@ export class ModuleFactory {
   protected importedProvidersPerReq: ServiceProvider[] = [];
 
   // Used for siblings injectors
-  protected siblingsPerMod = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
-  protected siblingsPerRou = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
-  protected siblingsPerReq = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
+  protected siblingsPerMod = new Map<ModuleType | ModuleWithParams, SiblingObj>();
+  protected siblingsPerRou = new Map<ModuleType | ModuleWithParams, SiblingObj>();
+  protected siblingsPerReq = new Map<ModuleType | ModuleWithParams, SiblingObj>();
 
   protected globalProviders: ProvidersMetadata & SiblingsMetadata;
   protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod>();
@@ -141,7 +141,9 @@ export class ModuleFactory {
       !isRootModule(meta as any) &&
       !meta.providersPerApp.length &&
       !meta.controllers.length &&
-      !meta.exportsProviders.length &&
+      !meta.exportsProvidersPerMod.length &&
+      !meta.exportsProvidersPerRou.length &&
+      !meta.exportsProvidersPerReq.length &&
       !meta.exportsModules.length &&
       !meta.exportsWithParams.length &&
       !meta.extensions.length
@@ -274,10 +276,9 @@ export class ModuleFactory {
       module,
       exportsModules,
       exportsWithParams,
-      exportsProviders,
-      providersPerMod,
-      providersPerRou,
-      providersPerReq,
+      exportsProvidersPerMod,
+      exportsProvidersPerRou,
+      exportsProvidersPerReq,
     } = metadata;
 
     for (const mod of [...exportsModules, ...exportsWithParams]) {
@@ -286,70 +287,25 @@ export class ModuleFactory {
       this.importProviders(meta);
     }
 
-    for (const provider of exportsProviders) {
-      const normProvider = normalizeProviders([provider])[0];
-      const foundProvider = this.findAndSetProvider(
-        module,
-        provider,
-        normProvider,
-        providersPerMod,
-        providersPerRou,
-        providersPerReq
-      );
-      if (!foundProvider) {
-        const providerName = normProvider.provide.name || normProvider.provide;
-        throw new Error(
-          `Importing ${providerName} from ${metadata.name} ` +
-            'should includes in "providersPerMod" or "providersPerRou", or "providersPerReq", ' +
-            'or in some "exports" of imported modules. ' +
-            'Tip: "providersPerApp" no need exports, they are automatically exported.'
-        );
-      }
-    }
-  }
-
-  protected findAndSetProvider(
-    module: ModuleType | ModuleWithParams,
-    provider: ServiceProvider,
-    normProvider: NormalizedProvider,
-    providersPerMod: ServiceProvider[],
-    providersPerRou: ServiceProvider[],
-    providersPerReq: ServiceProvider[]
-  ) {
-    const self = this;
-
-    if (hasProviderIn(providersPerMod)) {
-      this.importedProvidersPerMod.push(provider);
-      setSibling('siblingsPerMod', module, provider);
-      return true;
-    } else if (hasProviderIn(providersPerRou)) {
-      this.importedProvidersPerRou.push(provider);
-      setSibling('siblingsPerRou', module, provider);
-      return true;
-    } else if (hasProviderIn(providersPerReq)) {
-      this.importedProvidersPerReq.push(provider);
-      setSibling('siblingsPerReq', module, provider);
-      return true;
+    if (exportsProvidersPerMod.length) {
+      const siblingObjPerMod = new SiblingObj();
+      siblingObjPerMod.tokens = normalizeProviders(exportsProvidersPerMod).map((p) => p.provide);
+      this.siblingsPerMod.set(module, siblingObjPerMod);
+      this.importedProvidersPerMod.push(...exportsProvidersPerMod);
     }
 
-    return false;
-
-    function hasProviderIn(providers: ServiceProvider[]) {
-      const normProviders = normalizeProviders(providers);
-      return normProviders.some((p) => p.provide === normProvider.provide);
+    if (exportsProvidersPerRou.length) {
+      const siblingObjPerRou = new SiblingObj();
+      siblingObjPerRou.tokens = normalizeProviders(exportsProvidersPerRou).map((p) => p.provide);
+      this.siblingsPerRou.set(module, siblingObjPerRou);
+      this.importedProvidersPerRou.push(...exportsProvidersPerRou);
     }
 
-    function setSibling(
-      method: 'siblingsPerMod' | 'siblingsPerRou' | 'siblingsPerReq',
-      module: ModuleType | ModuleWithParams,
-      provider: ServiceProvider
-    ) {
-      const providers = self[method].get(module);
-      if (providers) {
-        providers.push(provider);
-      } else {
-        self[method].set(module, [provider]);
-      }
+    if (exportsProvidersPerReq.length) {
+      const siblingObjPerReq = new SiblingObj();
+      siblingObjPerReq.tokens = normalizeProviders(exportsProvidersPerReq).map((p) => p.provide);
+      this.siblingsPerReq.set(module, siblingObjPerReq);
+      this.importedProvidersPerReq.push(...exportsProvidersPerReq);
     }
   }
 
@@ -367,7 +323,11 @@ export class ModuleFactory {
     const multiTokensPerMod = importedNormProvidersPerMod.filter((np) => np.multi).map((np) => np.provide);
     let duplExpTokensPerMod = getDuplicates(importedTokensPerMod).filter((d) => !multiTokensPerMod.includes(d));
     if (isGlobal) {
-      const rootImports = this.meta.exportsProviders;
+      const rootImports = [
+        ...this.meta.exportsProvidersPerMod,
+        ...this.meta.exportsProvidersPerRou,
+        ...this.meta.exportsProvidersPerReq,
+      ];
       const rootTokens = normalizeProviders(rootImports).map((np) => np.provide);
       duplExpTokensPerMod = duplExpTokensPerMod.filter((d) => !rootTokens.includes(d));
     } else {
@@ -383,7 +343,11 @@ export class ModuleFactory {
     const multiTokensPerRou = importedNormalizedPerRou.filter((np) => np.multi).map((np) => np.provide);
     let duplExpPerRou = getDuplicates(importedTokensPerRou).filter((d) => !multiTokensPerRou.includes(d));
     if (isGlobal) {
-      const rootImports = this.meta.exportsProviders;
+      const rootImports = [
+        ...this.meta.exportsProvidersPerMod,
+        ...this.meta.exportsProvidersPerRou,
+        ...this.meta.exportsProvidersPerReq,
+      ];
       const rootTokens = normalizeProviders(rootImports).map((np) => np.provide);
       duplExpPerRou = duplExpPerRou.filter((d) => !rootTokens.includes(d));
     } else {
@@ -398,7 +362,11 @@ export class ModuleFactory {
     const multiTokensPerReq = importedNormalizedPerReq.filter((np) => np.multi).map((np) => np.provide);
     let duplExpPerReq = getDuplicates(importedTokensPerReq).filter((d) => !multiTokensPerReq.includes(d));
     if (isGlobal) {
-      const rootImports = this.meta.exportsProviders;
+      const rootImports = [
+        ...this.meta.exportsProvidersPerMod,
+        ...this.meta.exportsProvidersPerRou,
+        ...this.meta.exportsProvidersPerReq,
+      ];
       const rootTokens = normalizeProviders(rootImports).map((np) => np.provide);
       duplExpPerReq = duplExpPerReq.filter((d) => !rootTokens.includes(d));
     } else {

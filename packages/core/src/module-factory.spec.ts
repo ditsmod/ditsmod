@@ -8,8 +8,15 @@ import { Route, RouteMetadata } from './decorators/route';
 import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
-import { MetadataPerMod, SiblingsMetadata } from './types/metadata-per-mod';
-import { ModuleType, ServiceProvider, NormalizedGuard, DecoratorMetadata, Extension, ModuleWithParams } from './types/mix';
+import { MetadataPerMod, SiblingObj, SiblingsMetadata } from './types/metadata-per-mod';
+import {
+  ModuleType,
+  ServiceProvider,
+  NormalizedGuard,
+  DecoratorMetadata,
+  Extension,
+  ModuleWithParams,
+} from './types/mix';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ModuleManager } from './services/module-manager';
 import { ProvidersMetadata } from './models/providers-metadata';
@@ -22,7 +29,7 @@ import { LogManager } from './services/log-manager';
 
 describe('ModuleFactory', () => {
   type M = ModuleType | ModuleWithParams;
-  type S = ServiceProvider[];
+  type S = SiblingObj;
 
   @Injectable()
   class MockModuleFactory extends ModuleFactory {
@@ -34,12 +41,15 @@ describe('ModuleFactory', () => {
     override importedProvidersPerMod: ServiceProvider[] = [];
     override importedProvidersPerRou: ServiceProvider[] = [];
     override importedProvidersPerReq: ServiceProvider[] = [];
-    override siblingsPerMod = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
-    override siblingsPerRou = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
-    override siblingsPerReq = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
+    override siblingsPerMod = new Map<ModuleType | ModuleWithParams, SiblingObj>();
+    override siblingsPerRou = new Map<ModuleType | ModuleWithParams, SiblingObj>();
+    override siblingsPerReq = new Map<ModuleType | ModuleWithParams, SiblingObj>();
     override guardsPerMod: NormalizedGuard[] = [];
 
-    override exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata & SiblingsMetadata) {
+    override exportGlobalProviders(
+      moduleManager: ModuleManager,
+      globalProviders: ProvidersMetadata & SiblingsMetadata
+    ) {
       return super.exportGlobalProviders(moduleManager, globalProviders);
     }
 
@@ -86,18 +96,10 @@ describe('ModuleFactory', () => {
 
       @RootModule({
         exports: [Module2],
-        providersPerApp: [{ provide: LogManager, useValue: new LogManager() },]
+        providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
       class AppModule {}
-
-      const providers = new ProvidersMetadata();
-      const siblings = new SiblingsMetadata();
-      const globalProviders: ProvidersMetadata & SiblingsMetadata = { ...providers, ...siblings };
-      moduleManager.scanRootModule(AppModule);
-      const msg =
-        'Importing Provider1 from Module2 should includes in "providersPerMod" or "providersPerRou", or "providersPerReq", ' +
-        'or in some "exports" of imported modules. Tip: "providersPerApp" no need exports, they are automatically exported.';
-      expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).toThrow(msg);
+      expect(() => moduleManager.scanRootModule(AppModule)).toThrow(/Importing Provider1 from Module2 should includes/);
     });
 
     it('allow reexports module', () => {
@@ -117,7 +119,7 @@ describe('ModuleFactory', () => {
 
       @RootModule({
         exports: [Module2],
-        providersPerApp: [{ provide: LogManager, useValue: new LogManager() },]
+        providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
       class AppModule {}
 
@@ -149,7 +151,7 @@ describe('ModuleFactory', () => {
 
       @RootModule({
         exports: [Module2],
-        providersPerApp: [{ provide: LogManager, useValue: new LogManager() },]
+        providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
       class AppModule {}
 
@@ -183,7 +185,7 @@ describe('ModuleFactory', () => {
 
       @RootModule({
         exports: [Module2],
-        providersPerApp: [{ provide: LogManager, useValue: new LogManager() },]
+        providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
       class AppModule {}
 
@@ -214,7 +216,7 @@ describe('ModuleFactory', () => {
 
       @RootModule({
         exports: [Module2],
-        providersPerApp: [{ provide: LogManager, useValue: new LogManager() },]
+        providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
       class AppModule {}
 
@@ -245,7 +247,7 @@ describe('ModuleFactory', () => {
       @RootModule({
         exports: [Module2, Provider1],
         providersPerMod: [Provider1],
-        providersPerApp: [{ provide: LogManager, useValue: new LogManager() },]
+        providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
       class AppModule {}
 
@@ -276,7 +278,7 @@ describe('ModuleFactory', () => {
 
       @RootModule({
         exports: [Module2],
-        providersPerApp: [{ provide: LogManager, useValue: new LogManager() },]
+        providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
       class AppModule {}
 
@@ -313,7 +315,7 @@ describe('ModuleFactory', () => {
       @RootModule({
         exports: [Module2, Provider3],
         providersPerReq: [Provider3],
-        providersPerApp: [{ provide: LogManager, useValue: new LogManager() },]
+        providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
       class AppModule {}
 
@@ -324,11 +326,13 @@ describe('ModuleFactory', () => {
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       expect(mock.importedProvidersPerMod).toEqual([]);
       expect(mock.importedProvidersPerReq).toEqual([Provider1, Provider2, Provider3]);
-      expect(mock.siblingsPerReq).toEqual(new Map<M,S>([
-        [Module1, [Provider1]],
-        [Module2, [Provider2]],
-        [AppModule, [Provider3]]
-      ]));
+      expect(mock.siblingsPerReq).toEqual(
+        new Map<M, S>([
+          [Module1, { tokens: [Provider1] }],
+          [Module2, { tokens: [Provider2] }],
+          [AppModule, { tokens: [Provider3] }],
+        ])
+      );
     });
   });
 
@@ -528,7 +532,7 @@ describe('ModuleFactory', () => {
         const injectorPerApp = ReflectiveInjector.resolveAndCreate([
           ...defaultProvidersPerApp,
           { provide: Logger, useClass: MyLogger },
-          { provide: LogManager, useValue: new LogManager() }
+          { provide: LogManager, useValue: new LogManager() },
         ]);
 
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
@@ -547,39 +551,33 @@ describe('ModuleFactory', () => {
 
         const mod1 = mock.appMetadataMap.get(Module1);
         const providerPerMod1: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
-        expect(mod1?.moduleMetadata.providersPerMod).toEqual([
-          providerPerMod1,
-          Provider1,
-          Provider2,
-          Provider3,
-        ]);
-        expect(mod1?.siblingsPerMod).toEqual(new Map<M,S>([[Module0, [Provider0]]]));
+        expect(mod1?.moduleMetadata.providersPerMod).toEqual([providerPerMod1, Provider1, Provider2, Provider3]);
+        expect(mod1?.siblingsPerMod).toEqual(new Map<M, S>([[Module0, { tokens: [Provider0] }],]));
         expect(mod1?.moduleMetadata.providersPerReq).toEqual(defaultProvidersPerReq);
         expect((mod1 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
         const mod2 = mock.appMetadataMap.get(Module2);
         const providerPerMod2: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
-        expect(mod2?.moduleMetadata.providersPerMod).toEqual([
-          providerPerMod2,
-          Provider4,
-          Provider5,
-          Provider6,
-        ]);
-        expect(mod2?.siblingsPerMod).toEqual(new Map<M,S>([
-          [Module0, [Provider0]],
-          [Module1, [Provider1, Provider2, Provider3]],
-        ]));
+        expect(mod2?.moduleMetadata.providersPerMod).toEqual([providerPerMod2, Provider4, Provider5, Provider6]);
+        expect(mod2?.siblingsPerMod).toEqual(
+          new Map<M, S>([
+            [Module0, { tokens: [Provider0] }],
+            [Module1, { tokens: [Provider1, Provider2, Provider3] }],
+          ])
+        );
         expect(mod2?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider7, Provider8]);
         expect((mod2 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
         const mod3 = mock.appMetadataMap.get(Module3);
         const providerPerMod3: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
         expect(mod3?.moduleMetadata.providersPerMod).toEqual([providerPerMod3]);
-        expect(mod3?.siblingsPerMod).toEqual(new Map<M,S>([
-          [Module0, [Provider0]],
-          [Module1, [Provider1, Provider2, Provider3]],
-          [Module2, [Provider5]],
-        ]));
+        expect(mod3?.siblingsPerMod).toEqual(
+          new Map<M, S>([
+            [Module0, { tokens: [Provider0] }],
+            [Module1, { tokens: [Provider1, Provider2, Provider3] }],
+            [Module2, { tokens: [Provider5] }],
+          ])
+        );
         // expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overriddenProvider8]);
         expect(mod3?.moduleMetadata.controllers).toEqual([Ctrl]);
         expect((mod3 as any).moduleMetadata.ngMetadataName).toBe('Module');
@@ -588,13 +586,13 @@ describe('ModuleFactory', () => {
       it('case 2', () => {
         @RootModule({
           imports: [Module3],
-          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }]
+          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
         })
         class Module4 {}
         const providers: ServiceProvider[] = [
           ...defaultProvidersPerApp,
           { provide: Router, useValue: 'fake' },
-          { provide: LogManager, useValue: new LogManager() }
+          { provide: LogManager, useValue: new LogManager() },
         ];
         const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
@@ -609,15 +607,15 @@ describe('ModuleFactory', () => {
         // expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
         const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: 'other' } };
         expect(mock.meta.providersPerMod).toEqual([providerPerMod]);
-        expect(mock.siblingsPerMod).toEqual(new Map<M,S>([
-          [Module0, [Provider0]],
-          [Module1, [Provider1, Provider2, Provider3]],
-          [Module2, [Provider5]],
-        ]));
+        expect(mock.siblingsPerMod).toEqual(
+          new Map<M, S>([
+            [Module0, { tokens: [Provider0] }],
+            [Module1, { tokens: [Provider1, Provider2, Provider3] }],
+            [Module2, { tokens: [Provider5] }],
+          ])
+        );
         expect(mock.meta.providersPerReq).toEqual([...defaultProvidersPerReq]);
-        expect(mock.siblingsPerReq).toEqual(new Map<M,S>([
-          [Module2, [Provider8]],
-        ]));
+        expect(mock.siblingsPerReq).toEqual(new Map<M, S>([[Module2, { tokens: [Provider8] }]]));
         expect((mock.meta as any).ngMetadataName).toBe('RootModule');
       });
 
@@ -666,13 +664,8 @@ describe('ModuleFactory', () => {
         mock.bootstrap(globalProviders, '', Module3, moduleManager);
 
         const mod3 = mock.appMetadataMap.get(Module3);
-        expect(mod3?.moduleMetadata.providersPerReq).toEqual([
-          ...defaultProvidersPerReq,
-          Provider3,
-        ]);
-        expect(mock.siblingsPerReq).toEqual(new Map<M,S>([
-          [Module2, [Provider2]],
-        ]));
+        expect(mod3?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider3]);
+        expect(mock.siblingsPerReq).toEqual(new Map<M, S>([[Module2, { tokens: [Provider2] }]]));
         expect((mod3 as any).moduleMetadata.ngMetadataName).toBe('Module');
       });
 
@@ -705,7 +698,7 @@ describe('ModuleFactory', () => {
 
         @RootModule({
           imports: [Module6],
-          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }]
+          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
         })
         class Module7 {}
         const providers = [
@@ -715,16 +708,7 @@ describe('ModuleFactory', () => {
         const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
-        moduleManager.scanModule(Module7);
-        const errMsg =
-          'Importing Provider2 from Module6 ' +
-          'should includes in "providersPerMod" or "providersPerRou", or "providersPerReq", ' +
-          'or in some "exports" of imported modules. ' +
-          'Tip: "providersPerApp" no need exports, they are automatically exported.';
-        const providers0 = new ProvidersMetadata();
-        const siblings = new SiblingsMetadata();
-        const globalProviders: ProvidersMetadata & SiblingsMetadata = { ...providers0, ...siblings };
-        expect(() => mock.bootstrap(globalProviders, '', Module7, moduleManager)).toThrow(errMsg);
+        expect(() => moduleManager.scanModule(Module7)).toThrow(/Importing Provider2 from Module6 should/);
       });
     });
 
@@ -733,7 +717,7 @@ describe('ModuleFactory', () => {
         const injectorPerApp = ReflectiveInjector.resolveAndCreate([
           ...defaultProvidersPerApp,
           { provide: Logger, useClass: MyLogger },
-          { provide: LogManager, useValue: new LogManager() }
+          { provide: LogManager, useValue: new LogManager() },
         ]);
 
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
@@ -762,7 +746,7 @@ describe('ModuleFactory', () => {
 
         @RootModule({
           imports: [Module3],
-          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }]
+          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
         })
         class AppModule {}
 
@@ -778,7 +762,7 @@ describe('ModuleFactory', () => {
         const injectorPerApp = ReflectiveInjector.resolveAndCreate([
           ...defaultProvidersPerApp,
           { provide: Logger, useClass: MyLogger },
-          { provide: LogManager, useValue: new LogManager() }
+          { provide: LogManager, useValue: new LogManager() },
         ]);
 
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
@@ -808,7 +792,7 @@ describe('ModuleFactory', () => {
 
         @RootModule({
           imports: [Module3],
-          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }]
+          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
         })
         class AppModule {}
 
