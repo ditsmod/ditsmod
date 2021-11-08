@@ -55,9 +55,9 @@ export class ModuleFactory {
   protected importedProvidersPerReq: ServiceProvider[] = [];
 
   // Used for siblings injectors
-  protected siblingsPerMod = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
-  protected siblingsPerRou = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
-  protected siblingsPerReq = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+  protected siblingsPerMod = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
+  protected siblingsPerRou = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
+  protected siblingsPerReq = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
 
   protected globalProviders: ProvidersMetadata & SiblingsMetadata;
   protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod>();
@@ -131,14 +131,9 @@ export class ModuleFactory {
       ...this.meta.providersPerMod,
     ]);
 
-    this.meta.providersPerRou = getUniqProviders([
-      ...this.meta.providersPerRou,
-    ]);
+    this.meta.providersPerRou = getUniqProviders([...this.meta.providersPerRou]);
 
-    this.meta.providersPerReq = getUniqProviders([
-      ...defaultProvidersPerReq,
-      ...this.meta.providersPerReq,
-    ]);
+    this.meta.providersPerReq = getUniqProviders([...defaultProvidersPerReq, ...this.meta.providersPerReq]);
   }
 
   protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
@@ -321,17 +316,19 @@ export class ModuleFactory {
     providersPerRou: ServiceProvider[],
     providersPerReq: ServiceProvider[]
   ) {
+    const self = this;
+
     if (hasProviderIn(providersPerMod)) {
       this.importedProvidersPerMod.push(provider);
-      this.siblingsPerMod.set(provider, module);
+      setSibling('siblingsPerMod', module, provider);
       return true;
     } else if (hasProviderIn(providersPerRou)) {
       this.importedProvidersPerRou.push(provider);
-      this.siblingsPerRou.set(provider, module);
+      setSibling('siblingsPerRou', module, provider);
       return true;
     } else if (hasProviderIn(providersPerReq)) {
       this.importedProvidersPerReq.push(provider);
-      this.siblingsPerReq.set(provider, module);
+      setSibling('siblingsPerReq', module, provider);
       return true;
     }
 
@@ -340,6 +337,20 @@ export class ModuleFactory {
     function hasProviderIn(providers: ServiceProvider[]) {
       const normProviders = normalizeProviders(providers);
       return normProviders.some((p) => p.provide === normProvider.provide);
+    }
+
+    function setSibling(
+      method: 'siblingsPerMod' | 'siblingsPerRou' | 'siblingsPerReq',
+      module: ModuleType | ModuleWithParams,
+      provider: ServiceProvider
+    ) {
+      const providers = self[method].get(module);
+      if (providers) {
+        providers.push(provider);
+        self[method].set(module, providers);
+      } else {
+        self[method].set(module, [provider]);
+      }
     }
   }
 

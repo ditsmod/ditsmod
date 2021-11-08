@@ -21,6 +21,9 @@ import { Router } from './types/router';
 import { LogManager } from './services/log-manager';
 
 describe('ModuleFactory', () => {
+  type M = ModuleType | ModuleWithParams;
+  type S = ServiceProvider[];
+
   @Injectable()
   class MockModuleFactory extends ModuleFactory {
     injectorPerMod: ReflectiveInjector;
@@ -31,9 +34,9 @@ describe('ModuleFactory', () => {
     override importedProvidersPerMod: ServiceProvider[] = [];
     override importedProvidersPerRou: ServiceProvider[] = [];
     override importedProvidersPerReq: ServiceProvider[] = [];
-    override siblingsPerMod = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
-    override siblingsPerRou = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
-    override siblingsPerReq = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+    override siblingsPerMod = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
+    override siblingsPerRou = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
+    override siblingsPerReq = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
     override guardsPerMod: NormalizedGuard[] = [];
 
     override exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata & SiblingsMetadata) {
@@ -321,7 +324,11 @@ describe('ModuleFactory', () => {
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       expect(mock.importedProvidersPerMod).toEqual([]);
       expect(mock.importedProvidersPerReq).toEqual([Provider1, Provider2, Provider3]);
-      expect(mock.siblingsPerReq).toEqual(new Map([[Provider1, Module1], [Provider2, Module2], [Provider3, AppModule]]));
+      expect(mock.siblingsPerReq).toEqual(new Map<M,S>([
+        [Module1, [Provider1]],
+        [Module2, [Provider2]],
+        [AppModule, [Provider3]]
+      ]));
     });
   });
 
@@ -546,7 +553,7 @@ describe('ModuleFactory', () => {
           Provider2,
           Provider3,
         ]);
-        expect(mod1?.siblingsPerMod).toEqual(new Map([[Provider0, Module0]]));
+        expect(mod1?.siblingsPerMod).toEqual(new Map<M,S>([[Module0, [Provider0]]]));
         expect(mod1?.moduleMetadata.providersPerReq).toEqual(defaultProvidersPerReq);
         expect((mod1 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
@@ -558,11 +565,9 @@ describe('ModuleFactory', () => {
           Provider5,
           Provider6,
         ]);
-        expect(mod2?.siblingsPerMod).toEqual(new Map([
-          [Provider0, Module0],
-          [Provider1, Module1],
-          [Provider2, Module1],
-          [Provider3, Module1],
+        expect(mod2?.siblingsPerMod).toEqual(new Map<M,S>([
+          [Module0, [Provider0]],
+          [Module1, [Provider1, Provider2, Provider3]],
         ]));
         expect(mod2?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider7, Provider8]);
         expect((mod2 as any).moduleMetadata.ngMetadataName).toBe('Module');
@@ -570,12 +575,10 @@ describe('ModuleFactory', () => {
         const mod3 = mock.appMetadataMap.get(Module3);
         const providerPerMod3: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
         expect(mod3?.moduleMetadata.providersPerMod).toEqual([providerPerMod3]);
-        expect(mod3?.siblingsPerMod).toEqual(new Map([
-          [Provider0, Module0],
-          [Provider1, Module1],
-          [Provider2, Module1],
-          [Provider3, Module1],
-          [Provider5, Module2],
+        expect(mod3?.siblingsPerMod).toEqual(new Map<M,S>([
+          [Module0, [Provider0]],
+          [Module1, [Provider1, Provider2, Provider3]],
+          [Module2, [Provider5]],
         ]));
         // expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overriddenProvider8]);
         expect(mod3?.moduleMetadata.controllers).toEqual([Ctrl]);
@@ -606,16 +609,14 @@ describe('ModuleFactory', () => {
         // expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
         const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: 'other' } };
         expect(mock.meta.providersPerMod).toEqual([providerPerMod]);
-        expect(mock.siblingsPerMod).toEqual(new Map([
-          [Provider0, Module0],
-          [Provider1, Module1],
-          [Provider2, Module1],
-          [Provider3, Module1],
-          [Provider5, Module2],
+        expect(mock.siblingsPerMod).toEqual(new Map<M,S>([
+          [Module0, [Provider0]],
+          [Module1, [Provider1, Provider2, Provider3]],
+          [Module2, [Provider5]],
         ]));
         expect(mock.meta.providersPerReq).toEqual([...defaultProvidersPerReq]);
-        expect(mock.siblingsPerReq).toEqual(new Map([
-          [Provider8, Module2],
+        expect(mock.siblingsPerReq).toEqual(new Map<M,S>([
+          [Module2, [Provider8]],
         ]));
         expect((mock.meta as any).ngMetadataName).toBe('RootModule');
       });
@@ -669,8 +670,8 @@ describe('ModuleFactory', () => {
           ...defaultProvidersPerReq,
           Provider3,
         ]);
-        expect(mock.siblingsPerReq).toEqual(new Map([
-          [Provider2, Module2],
+        expect(mock.siblingsPerReq).toEqual(new Map<M,S>([
+          [Module2, [Provider2]],
         ]));
         expect((mod3 as any).moduleMetadata.ngMetadataName).toBe('Module');
       });

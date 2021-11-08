@@ -3,9 +3,9 @@ import { ControllerAndMethodMetadata } from './controller-and-method-metadata';
 import { ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix';
 
 export class SiblingsMetadata {
-  siblingsPerMod = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
-  siblingsPerRou = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
-  siblingsPerReq = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+  siblingsPerMod = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
+  siblingsPerRou = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
+  siblingsPerReq = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
 }
 
 export class MetadataPerMod extends SiblingsMetadata{
