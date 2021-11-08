@@ -347,7 +347,6 @@ export class ModuleFactory {
       const providers = self[method].get(module);
       if (providers) {
         providers.push(provider);
-        self[method].set(module, providers);
       } else {
         self[method].set(module, [provider]);
       }
