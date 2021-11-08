@@ -2,13 +2,14 @@ import { Injectable, resolveForwardRef } from '@ts-stack/di';
 import { format } from 'util';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
+import { SiblingObj } from '../types/metadata-per-mod';
 import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { ModuleMetadata } from '../types/module-metadata';
 import { ModulesMap } from '../types/modules-map';
 import { checkModuleMetadata } from '../utils/check-module-metadata';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
-import { NormalizedProvider, normalizeProviders } from '../utils/ng-utils';
+import { normalizeProviders } from '../utils/ng-utils';
 import { pickProperties } from '../utils/pick-properties';
 import { isModuleWithParams, isProvider } from '../utils/type-guards';
 import { Log } from './log';
@@ -289,6 +290,9 @@ export class ModuleManager {
         metadata.exportsWithParams.push(exp);
       } else if (isProvider(exp)) {
         this.findAndSetProvider(exp, modMetadata, metadata);
+        addSiblings('Mod');
+        addSiblings('Rou');
+        addSiblings('Req');
       } else {
         metadata.exportsModules.push(exp);
       }
@@ -298,6 +302,18 @@ export class ModuleManager {
     metadata.extensionsMeta = { ...(metadata.extensionsMeta || {}) };
 
     return metadata;
+
+    /**
+     * This function should called after call `findAndSetProvider()`.
+     */
+    function addSiblings(scope: 'Mod' | 'Rou' | 'Req') {
+      const exp = metadata[`exportsProvidersPer${scope}`];
+      if (exp.length) {
+        const siblingObj = new SiblingObj();
+        siblingObj.tokens = normalizeProviders(exp).map((p) => p.provide);
+        metadata[`siblingsPer${scope}`] = siblingObj;
+      }
+    }
   }
 
   protected findAndSetProvider(
