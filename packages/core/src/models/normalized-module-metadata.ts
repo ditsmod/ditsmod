@@ -24,7 +24,9 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   ngMetadataName: string;
   exportsModules: ModuleType[] = [];
   exportsWithParams: ModuleWithParams[] = [];
-  exportsProviders: ServiceProvider[] = [];
+  exportsProvidersPerMod: ServiceProvider[] = [];
+  exportsProvidersPerRou: ServiceProvider[] = [];
+  exportsProvidersPerReq: ServiceProvider[] = [];
   /**
    * This property allows you to pass any information to extensions.
    * 

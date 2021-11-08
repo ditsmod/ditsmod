@@ -2,11 +2,13 @@ import { Injectable, resolveForwardRef } from '@ts-stack/di';
 import { format } from 'util';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { AnyObj, ModuleType, ModuleWithParams } from '../types/mix';
+import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
+import { ModuleMetadata } from '../types/module-metadata';
 import { ModulesMap } from '../types/modules-map';
 import { checkModuleMetadata } from '../utils/check-module-metadata';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
+import { NormalizedProvider, normalizeProviders } from '../utils/ng-utils';
 import { pickProperties } from '../utils/pick-properties';
 import { isModuleWithParams, isProvider } from '../utils/type-guards';
 import { Log } from './log';
@@ -162,14 +164,16 @@ export class ModuleManager {
    * @todo Refactor this method to use `deepFreeze()`.
    */
   protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(meta: NormalizedModuleMetadata<T, A>) {
-    meta = { ...(meta || {} as NormalizedModuleMetadata<T, A>) };
+    meta = { ...(meta || ({} as NormalizedModuleMetadata<T, A>)) };
     meta.importsModules = meta.importsModules.slice();
     meta.importsWithParams = meta.importsWithParams.slice();
     meta.controllers = meta.controllers.slice();
     meta.extensions = meta.extensions.slice();
     meta.exportsModules = meta.exportsModules.slice();
     meta.exportsWithParams = meta.exportsWithParams.slice();
-    meta.exportsProviders = meta.exportsProviders.slice();
+    meta.exportsProvidersPerMod = meta.exportsProvidersPerMod.slice();
+    meta.exportsProvidersPerRou = meta.exportsProvidersPerRou.slice();
+    meta.exportsProvidersPerReq = meta.exportsProvidersPerReq.slice();
     // return deepFreeze(meta);
     return meta;
   }
@@ -284,7 +288,7 @@ export class ModuleManager {
       if (isModuleWithParams(exp)) {
         metadata.exportsWithParams.push(exp);
       } else if (isProvider(exp)) {
-        metadata.exportsProviders.push(exp);
+        this.findAndSetProvider(exp, modMetadata, metadata);
       } else {
         metadata.exportsModules.push(exp);
       }
@@ -294,5 +298,36 @@ export class ModuleManager {
     metadata.extensionsMeta = { ...(metadata.extensionsMeta || {}) };
 
     return metadata;
+  }
+
+  protected findAndSetProvider(
+    provider: ServiceProvider,
+    modMetadata: ModuleMetadata,
+    metadata: NormalizedModuleMetadata
+  ) {
+    const token = normalizeProviders([provider])[0].provide;
+    const { providersPerMod, providersPerRou, providersPerReq } = modMetadata;
+    const { exportsProvidersPerMod, exportsProvidersPerRou, exportsProvidersPerReq } = metadata;
+
+    if (hasProviderIn(providersPerMod)) {
+      exportsProvidersPerMod.push(provider);
+      return true;
+    } else if (hasProviderIn(providersPerRou)) {
+      exportsProvidersPerRou.push(provider);
+      return true;
+    } else if (hasProviderIn(providersPerReq)) {
+      exportsProvidersPerReq.push(provider);
+      return true;
+    }
+
+    return false;
+
+    function hasProviderIn(providers: ServiceProvider[] | undefined) {
+      if (!providers) {
+        return;
+      }
+      const normProviders = normalizeProviders(providers);
+      return normProviders.some((p) => p.provide === token);
+    }
   }
 }
