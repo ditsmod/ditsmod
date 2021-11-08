@@ -54,11 +54,14 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
           }
           const providersPerRou = moduleMetadata.providersPerRou.slice();
           const providersPerReq = moduleMetadata.providersPerReq.slice();
+          const siblingsPerMod = new Map(metadataPerMod.siblingsPerMod);
+          const siblingsPerRou = new Map(metadataPerMod.siblingsPerRou);
+          const siblingsPerReq = new Map(metadataPerMod.siblingsPerReq);
           const route = decoratorMetadata.value;
           const ctrlDecorator = ctrlDecorValues.find(isController) as ControllerMetadata;
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
-          providersPerReq.push(...(ctrlDecorator.providersPerReq || []), controller);
           providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
+          providersPerReq.push(...(ctrlDecorator.providersPerReq || []), controller);
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const { path: controllerPath, httpMethod } = route;
           const path = this.getPath(prefix, controllerPath);
@@ -78,6 +81,9 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
             providersPerMod,
             providersPerRou,
             providersPerReq,
+            siblingsPerMod,
+            siblingsPerRou,
+            siblingsPerReq,
           });
         }
       }

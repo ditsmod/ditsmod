@@ -48,7 +48,18 @@ export class PreRouter implements Extension<void> {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
     rawRoutesMeta.forEach((rawRouteMeta) => {
-      const { httpMethod, path, providersPerMod, providersPerRou, providersPerReq, moduleName } = rawRouteMeta;
+      const {
+        // Don't autoformat this
+        httpMethod,
+        path,
+        providersPerMod,
+        providersPerRou,
+        providersPerReq,
+        moduleName,
+        siblingsPerMod,
+        siblingsPerRou,
+        siblingsPerReq,
+      } = rawRouteMeta;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       const inj1 = injectorPerMod.resolveAndCreateChild(providersPerRou);
       const providers = ReflectiveInjector.resolve(providersPerReq);
