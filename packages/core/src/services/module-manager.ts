@@ -297,7 +297,6 @@ export class ModuleManager {
 
     addSiblings('Mod');
     addSiblings('Rou');
-    addSiblings('Req');
 
     pickProperties(metadata, modMetadata);
     metadata.extensionsMeta = { ...(metadata.extensionsMeta || {}) };
@@ -307,7 +306,7 @@ export class ModuleManager {
     /**
      * This function should called after call `findAndSetProvider()`.
      */
-    function addSiblings(scope: 'Mod' | 'Rou' | 'Req') {
+    function addSiblings(scope: 'Mod' | 'Rou') {
       const exp = metadata[`exportsProvidersPer${scope}`];
       if (exp.length) {
         const siblingObj = new SiblingObj();
