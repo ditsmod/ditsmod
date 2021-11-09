@@ -1,5 +1,5 @@
 import { InjectionToken } from '@ts-stack/di';
-import { SiblingObj } from '../types/metadata-per-mod';
+import { SiblingObj } from '../models/sibling-obj';
 
 import { AnyObj, ControllerType, ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../types/mix';
 import { ProvidersMetadata } from './providers-metadata';

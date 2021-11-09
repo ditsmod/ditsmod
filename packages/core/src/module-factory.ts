@@ -5,7 +5,8 @@ import { ProvidersMetadata } from './models/providers-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
-import { MetadataPerMod, SiblingObj, SiblingsMetadata } from './types/metadata-per-mod';
+import { MetadataPerMod, SiblingsMetadata } from './types/metadata-per-mod';
+import { SiblingObj } from './models/sibling-obj';
 import {
   GuardItem,
   DecoratorMetadata,

@@ -10,7 +10,7 @@ import { Status } from '../utils/http-status-codes';
 import { ExtensionsManager } from '../services/extensions-manager';
 import { Log } from '../services/log';
 import { ModuleManager } from '../services/module-manager';
-import { SiblingObj } from '../types/metadata-per-mod';
+import { SiblingObj } from '../models/sibling-obj';
 
 @Injectable()
 export class PreRouter implements Extension<void> {

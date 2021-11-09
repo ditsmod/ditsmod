@@ -8,7 +8,8 @@ import { Route, RouteMetadata } from './decorators/route';
 import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
-import { MetadataPerMod, SiblingObj, SiblingsMetadata } from './types/metadata-per-mod';
+import { MetadataPerMod, SiblingsMetadata } from './types/metadata-per-mod';
+import { SiblingObj} from './models/sibling-obj';
 import {
   ModuleType,
   ServiceProvider,
