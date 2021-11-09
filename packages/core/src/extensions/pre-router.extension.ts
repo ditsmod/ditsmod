@@ -73,6 +73,12 @@ export class PreRouterExtension implements Extension<void> {
           ]);
           const inj3 = inj2.createChildFromResolved(providers);
 
+          siblingsPerReq.forEach((sbl, module) => {
+            const meta = this.moduleManager.getMetadata(module);
+            const externalInjector = inj3.resolveAndCreateChild(meta.providersPerReq);
+            inj3.addSibling(externalInjector, sbl.tokens);
+          });
+
           // First HTTP handler in the chain of HTTP interceptors.
           const chain = inj3.get(HttpHandler) as HttpHandler;
           await chain.handle();
