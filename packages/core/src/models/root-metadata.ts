@@ -6,9 +6,6 @@ import { ServerOptions } from '../types/server-options';
 import { HttpModule } from '../types/http-module';
 import { ServiceProvider, Extension } from '../types/mix';
 
-/**
- * @todo Rename this to `RootMetadata`.
- */
 export class RootMetadata {
   httpModule: HttpModule = http;
   serverName = 'Node.js';
