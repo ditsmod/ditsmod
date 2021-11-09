@@ -290,13 +290,14 @@ export class ModuleManager {
         metadata.exportsWithParams.push(exp);
       } else if (isProvider(exp)) {
         this.findAndSetProvider(exp, modMetadata, metadata);
-        addSiblings('Mod');
-        addSiblings('Rou');
-        addSiblings('Req');
       } else {
         metadata.exportsModules.push(exp);
       }
     });
+
+    addSiblings('Mod');
+    addSiblings('Rou');
+    addSiblings('Req');
 
     pickProperties(metadata, modMetadata);
     metadata.extensionsMeta = { ...(metadata.extensionsMeta || {}) };
