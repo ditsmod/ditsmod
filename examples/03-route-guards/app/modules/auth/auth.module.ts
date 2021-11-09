@@ -6,6 +6,6 @@ import { PermissionsGuard } from './permissions.guard';
 
 @Module({
   providersPerReq: [AuthGuard, PermissionsGuard, AuthService],
-  exports: [AuthGuard, PermissionsGuard, AuthService],
+  exports: [AuthGuard, PermissionsGuard],
 })
 export class AuthModule {}
