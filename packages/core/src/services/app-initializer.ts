@@ -20,7 +20,7 @@ import { defaultProvidersPerApp } from './default-providers-per-app';
 import { defaultProvidersPerReq } from './default-providers-per-req';
 import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
-import { PreRouter } from '../extensions/pre-router';
+import { PreRouterExtension } from '../extensions/pre-router.extension';
 import { Counter } from './counter';
 import { APP_METADATA_MAP, defaultExtensions } from '../constans';
 import { Log } from './log';
@@ -30,7 +30,7 @@ import { SiblingsMetadata } from '../types/metadata-per-mod';
 @Injectable()
 export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
-  protected preRouter: PreRouter;
+  protected preRouter: PreRouterExtension;
   protected meta: RootMetadata;
   protected appMetadataMap: AppMetadataMap;
   protected logManager: LogManager;
@@ -56,7 +56,7 @@ export class AppInitializer {
     this.appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
     this.checkModulesResolvable(this.appMetadataMap);
     await this.handleExtensions(this.appMetadataMap);
-    this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
+    this.preRouter = this.injectorPerApp.get(PreRouterExtension) as PreRouterExtension;
     return this.meta;
   }
 

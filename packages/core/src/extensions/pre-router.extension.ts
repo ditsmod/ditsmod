@@ -13,7 +13,7 @@ import { ModuleManager } from '../services/module-manager';
 import { SiblingObj } from '../models/sibling-obj';
 
 @Injectable()
-export class PreRouter implements Extension<void> {
+export class PreRouterExtension implements Extension<void> {
   #inited: boolean;
 
   constructor(

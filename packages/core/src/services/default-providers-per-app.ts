@@ -9,7 +9,7 @@ import { Counter } from './counter';
 import { DefaultLogger } from './default-logger';
 import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
-import { PreRouter } from '../extensions/pre-router';
+import { PreRouterExtension } from '../extensions/pre-router.extension';
 import { RoutesExtension } from '../extensions/routes.extension';
 import { Log } from './log';
 
@@ -23,9 +23,9 @@ export const defaultProvidersPerApp: ServiceProvider[] = [
   },
   RootMetadata,
   ExtensionsManager,
-  PreRouter,
+  PreRouterExtension,
   Counter,
-  { provide: PRE_ROUTER_EXTENSIONS, useExisting: PreRouter, multi: true },
+  { provide: PRE_ROUTER_EXTENSIONS, useExisting: PreRouterExtension, multi: true },
   { provide: ROUTES_EXTENSIONS, useClass: RoutesExtension, multi: true },
   ModuleManager,
   Log,
