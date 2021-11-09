@@ -91,7 +91,7 @@ export class PreRouterExtension implements Extension<void> {
   protected setSiblingsOnModule(
     injector: ReflectiveInjector,
     module: ModuleType | ModuleWithParams,
-    scope: 'Mod' | 'Rou' | 'Req',
+    scope: 'Mod' | 'Rou',
     siblings: Map<ModuleType | ModuleWithParams, SiblingObj>
   ) {
     const meta = this.moduleManager.getMetadata(module);

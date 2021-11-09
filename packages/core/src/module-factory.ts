@@ -289,7 +289,13 @@ export class ModuleFactory {
     function addProviders(scope: 'Mod' | 'Rou' | 'Req') {
       const exp = metadata[`exportsProvidersPer${scope}`];
       if (exp.length) {
-        const siblingObj = metadata[`siblingsPer${scope}`];
+        let siblingObj: SiblingObj;
+        if (scope == 'Req') {
+          siblingObj = new SiblingObj();
+          siblingObj.tokens = normalizeProviders(exp).map((p) => p.provide);
+        } else  {
+          siblingObj = metadata[`siblingsPer${scope}`];
+        }
         self[`siblingsPer${scope}`].set(module, siblingObj);
         self[`importedProvidersPer${scope}`].push(...exp);
       }
