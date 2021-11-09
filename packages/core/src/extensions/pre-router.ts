@@ -64,9 +64,9 @@ export class PreRouter implements Extension<void> {
         siblingsPerReq,
       } = rawRouteMeta;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-      this.handleSiblingsOnModule(injectorPerMod, module, 'Mod', siblingsPerMod);
+      this.setSiblingsOnModule(injectorPerMod, module, 'Mod', siblingsPerMod);
       const inj1 = injectorPerMod.resolveAndCreateChild(providersPerRou);
-      this.handleSiblingsOnModule(inj1, module, 'Rou', siblingsPerRou);
+      this.setSiblingsOnModule(inj1, module, 'Rou', siblingsPerRou);
       const providers = ReflectiveInjector.resolve(providersPerReq);
       this.instantiateProvidersPerReq(inj1, providers);
 
@@ -90,7 +90,7 @@ export class PreRouter implements Extension<void> {
     return preparedRouteMeta;
   }
 
-  protected handleSiblingsOnModule(
+  protected setSiblingsOnModule(
     injector: ReflectiveInjector,
     module: ModuleType | ModuleWithParams,
     scope: 'Mod' | 'Rou' | 'Req',
