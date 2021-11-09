@@ -10,12 +10,16 @@ import { ModuleType, ModuleWithParams, NormalizedGuard } from './mix';
 export class SiblingObj {
   tokens: any[] = [];
   resolveInjector: (value: ReflectiveInjector) => void;
-  injectorPromise: Promise<ReflectiveInjector>;
+  private promise: Promise<ReflectiveInjector>;
 
   constructor() {
-    this.injectorPromise = new Promise<ReflectiveInjector>(resolve => {
+    this.promise = new Promise<ReflectiveInjector>(resolve => {
       this.resolveInjector = resolve;
     });
+  }
+
+  getInjector() {
+    return this.promise;
   }
 }
 export class SiblingsMetadata {
