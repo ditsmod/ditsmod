@@ -3,7 +3,7 @@ import { Injectable, ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpHandler } from '../types/http-interceptor';
 import { HttpMethod, Extension, ModuleType, ModuleWithParams } from '../types/mix';
-import { RawRouteMeta, PreparedRouteMeta } from '../types/route-data';
+import { RouteMetaPerMod, PreparedRouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { NodeResponse, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
@@ -47,49 +47,47 @@ export class PreRouter implements Extension<void> {
     });
   };
 
-  protected async prepareRoutesMeta(rawRoutesMeta: RawRouteMeta[]) {
+  protected async prepareRoutesMeta(routesMetaPerMod: RouteMetaPerMod[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
-    rawRoutesMeta.forEach((rawRouteMeta) => {
-      const {
-        module,
-        httpMethod,
-        path,
-        providersPerMod,
-        providersPerRou,
-        providersPerReq,
-        moduleName,
-        siblingsPerMod,
-        siblingsPerRou,
-        siblingsPerReq,
-      } = rawRouteMeta;
+    routesMetaPerMod.forEach((routeMetaPerMod) => {
+      const { module, providersPerMod, providersPerRou, moduleName, rawRoutesMeta } = routeMetaPerMod;
+      const { siblingsPerMod, siblingsPerRou, siblingsPerReq } = routeMetaPerMod;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       this.setSiblingsOnModule(injectorPerMod, module, 'Mod', siblingsPerMod);
-      const inj1 = injectorPerMod.resolveAndCreateChild(providersPerRou);
-      this.setSiblingsOnModule(inj1, module, 'Rou', siblingsPerRou);
-      const providers = ReflectiveInjector.resolve(providersPerReq);
-      this.instantiateProvidersPerReq(inj1, providers);
+      const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
+      this.setSiblingsOnModule(injectorPerRou, module, 'Rou', siblingsPerRou);
 
-      const handle = (async (nodeReq, nodeRes, params, queryString) => {
-        const inj2 = inj1.resolveAndCreateChild([
-          { provide: NODE_REQ, useValue: nodeReq },
-          { provide: NODE_RES, useValue: nodeRes },
-          { provide: PATH_PARAMS, useValue: params },
-          { provide: QUERY_STRING, useValue: queryString },
-        ]);
-        const inj3 = inj2.createChildFromResolved(providers);
+      rawRoutesMeta.forEach((rawRouteMeta) => {
+        const { httpMethod, path, providersPerRou, providersPerReq } = rawRouteMeta;
+        const inj1 = injectorPerRou.resolveAndCreateChild(providersPerRou);
+        const providers = ReflectiveInjector.resolve(providersPerReq);
+        this.instantiateProvidersPerReq(inj1, providers);
 
-        // First HTTP handler in the chain of HTTP interceptors.
-        const chain = inj3.get(HttpHandler) as HttpHandler;
-        await chain.handle();
-      }) as RouteHandler;
+        const handle = (async (nodeReq, nodeRes, params, queryString) => {
+          const inj2 = inj1.resolveAndCreateChild([
+            { provide: NODE_REQ, useValue: nodeReq },
+            { provide: NODE_RES, useValue: nodeRes },
+            { provide: PATH_PARAMS, useValue: params },
+            { provide: QUERY_STRING, useValue: queryString },
+          ]);
+          const inj3 = inj2.createChildFromResolved(providers);
 
-      preparedRouteMeta.push({ moduleName, httpMethod, path, handle });
+          // First HTTP handler in the chain of HTTP interceptors.
+          const chain = inj3.get(HttpHandler) as HttpHandler;
+          await chain.handle();
+        }) as RouteHandler;
+
+        preparedRouteMeta.push({ moduleName, httpMethod, path, handle });
+      });
     });
 
     return preparedRouteMeta;
   }
 
+  /**
+   * Sets injector siblings on a module.
+   */
   protected setSiblingsOnModule(
     injector: ReflectiveInjector,
     module: ModuleType | ModuleWithParams,
@@ -100,7 +98,8 @@ export class PreRouter implements Extension<void> {
     meta[`siblingsPer${scope}`].resolveInjector(injector);
 
     siblings.forEach((sbl) => {
-      sbl.getInjector()
+      sbl
+        .getInjector()
         .then((externalInjector) => {
           injector.addSibling(externalInjector, sbl.tokens);
         })

@@ -3,7 +3,7 @@ import { InjectionToken } from '@ts-stack/di';
 import { ModConfig } from './models/mod-config';
 import { HttpInterceptor } from './types/http-interceptor';
 import { AppMetadataMap, Extension, ServiceProvider } from './types/mix';
-import { RawRouteMeta } from './types/route-data';
+import { RouteMetaPerMod } from './types/route-data';
 import { PathParam } from './types/router';
 import { NodeRequest, NodeResponse } from './types/server-options';
 
@@ -15,7 +15,7 @@ export const PRE_ROUTER_EXTENSIONS = new InjectionToken<Extension<void>[]>('PRE_
 /**
  * Group extensions that returns `RawRouteMeta[]` for a router.
  */
-export const ROUTES_EXTENSIONS = new InjectionToken<Extension<RawRouteMeta>[]>('ROUTES_EXTENSIONS');
+export const ROUTES_EXTENSIONS = new InjectionToken<Extension<RouteMetaPerMod>[]>('ROUTES_EXTENSIONS');
 export const defaultExtensions: InjectionToken<any>[] = [ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS];
 export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INTERCEPTORS');
 export const PATH_PARAMS = new InjectionToken<PathParam[]>('PATH_PARAMS');

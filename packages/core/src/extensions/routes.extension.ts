@@ -5,12 +5,12 @@ import { ControllerMetadata } from '../decorators/controller';
 import { RootMetadata } from '../models/root-metadata';
 import { MetadataPerMod } from '../types/metadata-per-mod';
 import { AppMetadataMap, GuardItem, NormalizedGuard, Extension } from '../types/mix';
-import { RawRouteMeta, RouteMeta } from '../types/route-data';
+import { RawRouteMeta, RouteMetaPerMod, RouteMeta } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
 
 @Injectable()
-export class RoutesExtension implements Extension<RawRouteMeta[]> {
-  protected rawRoutesMeta: RawRouteMeta[] = [];
+export class RoutesExtension implements Extension<RouteMetaPerMod[]> {
+  protected routesMetaPerMod: RouteMetaPerMod[] = [];
 
   constructor(
     protected injectorPerApp: ReflectiveInjector,
@@ -19,32 +19,34 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
   ) {}
 
   async init() {
-    if (this.rawRoutesMeta.length) {
-      return this.rawRoutesMeta;
+    if (this.routesMetaPerMod.length) {
+      return this.routesMetaPerMod;
     }
 
     const { prefixPerApp } = this.rootMetadata;
 
     this.appMetadataMap.forEach((metadataPerMod) => {
-      const { prefixPerMod, moduleMetadata } = metadataPerMod;
-      const rawRoutesMeta = this.getRawRoutesMeta(moduleMetadata.name, prefixPerApp, prefixPerMod, metadataPerMod);
-      this.rawRoutesMeta.push(...rawRoutesMeta);
+      const routeMetaPerMod = new RouteMetaPerMod();
+      const { moduleMetadata } = metadataPerMod;
+      const rawRouteMeta = this.getMetaPerRou(prefixPerApp, metadataPerMod);
+      routeMetaPerMod.module = moduleMetadata.module;
+      routeMetaPerMod.moduleName = moduleMetadata.name;
+      routeMetaPerMod.providersPerMod = moduleMetadata.providersPerMod.slice();
+      routeMetaPerMod.providersPerRou = moduleMetadata.providersPerRou.slice();
+      routeMetaPerMod.siblingsPerMod = new Map(metadataPerMod.siblingsPerMod);
+      routeMetaPerMod.siblingsPerRou = new Map(metadataPerMod.siblingsPerRou);
+      routeMetaPerMod.siblingsPerReq = new Map(metadataPerMod.siblingsPerReq);
+      routeMetaPerMod.rawRoutesMeta = rawRouteMeta;
+      this.routesMetaPerMod.push(routeMetaPerMod);
     });
 
-    return this.rawRoutesMeta;
+    return this.routesMetaPerMod;
   }
 
-  protected getRawRoutesMeta(
-    moduleName: string,
-    prefixPerApp: string,
-    prefixPerMod: string,
-    metadataPerMod: MetadataPerMod
-  ) {
-    const { controllersMetadata, guardsPerMod, moduleMetadata } = metadataPerMod;
+  protected getMetaPerRou(prefixPerApp: string, metadataPerMod: MetadataPerMod) {
+    const { controllersMetadata, prefixPerMod, guardsPerMod, moduleMetadata } = metadataPerMod;
 
-    const providersPerMod = moduleMetadata.providersPerMod.slice();
-
-    const rawRoutesMeta: RawRouteMeta[] = [];
+    const rawRouteMeta: RawRouteMeta[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
@@ -52,11 +54,8 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
           if (!isRoute(decoratorMetadata.value)) {
             continue;
           }
-          const providersPerRou = moduleMetadata.providersPerRou.slice();
+          const providersPerRou = [];
           const providersPerReq = moduleMetadata.providersPerReq.slice();
-          const siblingsPerMod = new Map(metadataPerMod.siblingsPerMod);
-          const siblingsPerRou = new Map(metadataPerMod.siblingsPerRou);
-          const siblingsPerReq = new Map(metadataPerMod.siblingsPerReq);
           const route = decoratorMetadata.value;
           const ctrlDecorator = ctrlDecorValues.find(isController) as ControllerMetadata;
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
@@ -74,23 +73,17 @@ export class RoutesExtension implements Extension<RawRouteMeta[]> {
             guards,
           };
           providersPerRou.push({ provide: RouteMeta, useValue: routeMeta });
-          rawRoutesMeta.push({
-            module: moduleMetadata.module,
-            moduleName,
+          rawRouteMeta.push({
             httpMethod,
             path,
-            providersPerMod,
             providersPerRou,
             providersPerReq,
-            siblingsPerMod,
-            siblingsPerRou,
-            siblingsPerReq,
           });
         }
       }
     }
 
-    return rawRoutesMeta;
+    return rawRouteMeta;
   }
 
   /**

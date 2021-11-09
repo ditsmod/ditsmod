@@ -10,12 +10,7 @@ import { OasOptions } from '../types/oas-options';
 
 @Injectable()
 export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.Extension<edk.RawRouteMeta[]> {
-  protected override getRawRoutesMeta(
-    moduleName: string,
-    prefixPerApp: string,
-    prefixPerMod: string,
-    metadataPerMod: edk.MetadataPerMod
-  ) {
+  protected override getMetaPerRou(prefixPerApp: string, metadataPerMod: edk.MetadataPerMod) {
     const { controllersMetadata, guardsPerMod, moduleMetadata } = metadataPerMod;
 
     const providersPerMod = moduleMetadata.providersPerMod.slice();
