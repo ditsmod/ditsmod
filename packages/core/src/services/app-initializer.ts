@@ -25,7 +25,7 @@ import { Counter } from './counter';
 import { APP_METADATA_MAP, defaultExtensions } from '../constans';
 import { Log } from './log';
 import { LogManager } from './log-manager';
-import { SiblingsMetadata } from '../types/metadata-per-mod';
+import { SiblingsMap } from '../types/metadata-per-mod';
 
 @Injectable()
 export class AppInitializer {
@@ -197,8 +197,8 @@ export class AppInitializer {
 
   protected getGlobalProviders(moduleManager: ModuleManager) {
     const providers = new ProvidersMetadata();
-    const siblings = new SiblingsMetadata();
-    const globalProviders: ProvidersMetadata & SiblingsMetadata = { ...providers, ...siblings };
+    const siblings = new SiblingsMap();
+    const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers, ...siblings };
     globalProviders.providersPerApp = this.meta.providersPerApp;
     const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
     const {

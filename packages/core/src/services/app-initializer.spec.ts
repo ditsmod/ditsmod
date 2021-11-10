@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ClassProvider, Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
+import { ClassProvider, Injectable, InjectionToken } from '@ts-stack/di';
 
 import { AppInitializer } from './app-initializer';
 import { Logger, LoggerConfig } from '../types/logger';
@@ -81,7 +81,7 @@ describe('AppInitializer', () => {
       providersPerApp: [
         { provide: Router, useValue: 'fake' },
         { provide: Log, useClass: LogMock1 },
-        { provide: LogManager, useValue: new LogManager() }
+        { provide: LogManager, useValue: new LogManager() },
       ],
     })
     class AppModule {}
@@ -385,12 +385,15 @@ describe('AppInitializer', () => {
       expect(mod0?.moduleMetadata.providersPerMod).toEqual([providerPerMod, Provider0]);
       expect(mod0?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq]);
 
-      expect(mod0?.siblingsPerMod).toBeDefined();
-      expect(mod0?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
-      expect(mod0?.siblingsPerMod.get(Module2)).toMatchObject({ tokens: [Provider3, Provider4] });
-      
-      expect(mod0?.siblingsPerReq).toBeDefined();
-      expect(mod0?.siblingsPerReq.get(Module3)).toMatchObject({ tokens: [Provider5, Provider6, Provider7] });
+      const tokensPerMod = Array.from(mod0?.siblingsPerMod!).map((obj) => obj.tokens);
+      expect(tokensPerMod).toEqual([[Provider0], [Provider3, Provider4]]);
+
+      expect(mod0?.siblingsPerReq).toEqual([
+        [
+          [Provider5, Provider6, Provider7],
+          [Provider5, Provider6, Provider7],
+        ],
+      ]);
     });
 
     it('Module1', async () => {
@@ -400,19 +403,17 @@ describe('AppInitializer', () => {
       const mod1 = mock.appMetadataMap.get(Module1);
       expect(mod1?.moduleMetadata.providersPerApp).toEqual([]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
-      expect(mod1?.moduleMetadata.providersPerMod).toEqual([
-        providerPerMod,
-        obj1,
-        Provider2,
-      ]);
+      expect(mod1?.moduleMetadata.providersPerMod).toEqual([providerPerMod, obj1, Provider2]);
 
-      expect(mod1?.siblingsPerMod).toBeDefined();
-      expect(mod1?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
-      expect(mod1?.siblingsPerMod.get(Module2)).toMatchObject({ tokens: [Provider3, Provider4] });
-      
-      expect(mod1?.siblingsPerReq).toBeDefined();
-      expect(mod1?.siblingsPerReq.get(Module3)).toMatchObject({ tokens: [Provider5, Provider6, Provider7] });
-      expect(mod1?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq]);
+      const tokensPerMod = Array.from(mod1?.siblingsPerMod!).map((obj) => obj.tokens);
+      expect(tokensPerMod).toEqual([[Provider0], [Provider3, Provider4]]);
+
+      expect(mod1?.siblingsPerReq).toEqual([
+        [
+          [Provider5, Provider6, Provider7],
+          [Provider5, Provider6, Provider7],
+        ],
+      ]);
     });
 
     it('Module2', async () => {
@@ -425,12 +426,15 @@ describe('AppInitializer', () => {
       expect(mod2?.moduleMetadata.providersPerMod).toEqual([providerPerMod, Provider3, Provider4]);
       expect(mod2?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq]);
 
-      expect(mod2?.siblingsPerMod).toBeDefined();
-      expect(mod2?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
-      expect(mod2?.siblingsPerMod.get(Module2)).toMatchObject({ tokens: [Provider3, Provider4] });
-      
-      expect(mod2?.siblingsPerReq).toBeDefined();
-      expect(mod2?.siblingsPerReq.get(Module3)).toMatchObject({ tokens: [Provider5, Provider6, Provider7] });
+      const tokensPerMod = Array.from(mod2?.siblingsPerMod!).map((obj) => obj.tokens);
+      expect(tokensPerMod).toEqual([[Provider0], [Provider3, Provider4]]);
+
+      expect(mod2?.siblingsPerReq).toEqual([
+        [
+          [Provider5, Provider6, Provider7],
+          [Provider5, Provider6, Provider7],
+        ],
+      ]);
     });
 
     it('Module3', async () => {
@@ -448,12 +452,15 @@ describe('AppInitializer', () => {
         Provider7,
       ]);
 
-      expect(mod3?.siblingsPerMod).toBeDefined();
-      expect(mod3?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
-      expect(mod3?.siblingsPerMod.get(Module2)).toMatchObject({ tokens: [Provider3, Provider4] });
-      
-      expect(mod3?.siblingsPerReq).toBeDefined();
-      expect(mod3?.siblingsPerReq.get(Module3)).toMatchObject({ tokens: [Provider5, Provider6, Provider7] });
+      const tokensPerMod = Array.from(mod3?.siblingsPerMod!).map((obj) => obj.tokens);
+      expect(tokensPerMod).toEqual([[Provider0], [Provider3, Provider4]]);
+
+      expect(mod3?.siblingsPerReq).toEqual([
+        [
+          [Provider5, Provider6, Provider7],
+          [Provider5, Provider6, Provider7],
+        ],
+      ]);
     });
 
     it('Module4', async () => {
@@ -464,18 +471,17 @@ describe('AppInitializer', () => {
       expect(mod4?.moduleMetadata.providersPerApp).toEqual([]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
       expect(mod4?.moduleMetadata.providersPerMod).toEqual([providerPerMod]);
-      expect(mod4?.moduleMetadata.providersPerReq).toEqual([
-        ...defaultProvidersPerReq,
-        Provider8,
-        Provider9,
-      ]);
+      expect(mod4?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider8, Provider9]);
 
-      expect(mod4?.siblingsPerMod).toBeDefined();
-      expect(mod4?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
-      expect(mod4?.siblingsPerMod.get(Module2)).toMatchObject({ tokens: [Provider3, Provider4] });
-      
-      expect(mod4?.siblingsPerReq).toBeDefined();
-      expect(mod4?.siblingsPerReq.get(Module3)).toMatchObject({ tokens: [Provider5, Provider6, Provider7] });
+      const tokensPerMod = Array.from(mod4?.siblingsPerMod!).map((obj) => obj.tokens);
+      expect(tokensPerMod).toEqual([[Provider0], [Provider3, Provider4]]);
+
+      expect(mod4?.siblingsPerReq).toEqual([
+        [
+          [Provider5, Provider6, Provider7], // Providers
+          [Provider5, Provider6, Provider7], // Tokens
+        ],
+      ]);
     });
 
     it('AppModule', async () => {
@@ -488,16 +494,23 @@ describe('AppInitializer', () => {
       expect(root1?.moduleMetadata.providersPerMod).toEqual([providerPerMod]);
       expect(root1?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq]);
 
-      expect(root1?.siblingsPerMod).toBeDefined();
-      expect(root1?.siblingsPerMod.get(Module0)).toMatchObject({ tokens: [Provider0] });
-      expect(root1?.siblingsPerMod.get(module2WithParams)).toMatchObject({ tokens: [Provider3, Provider4] });
-      expect(root1?.siblingsPerMod.get(Module1)).toMatchObject({ tokens: [Provider1] });
-      expect(root1?.siblingsPerMod.get(Module2)).toMatchObject({ tokens: [Provider3, Provider4] });
-      
-      expect(root1?.siblingsPerReq).toBeDefined();
-      expect(root1?.siblingsPerReq.get(Module3)).toMatchObject({ tokens: [Provider5, Provider6, Provider7] });
-      expect(root1?.siblingsPerReq.get(module3WithParams)).toMatchObject({ tokens: [Provider5, Provider6, Provider7] });
-      expect(root1?.siblingsPerReq.get(module4WithParams)).toMatchObject({ tokens: [Provider8, Provider9] });
+      const tokensPerMod = Array.from(root1?.siblingsPerMod!).map((obj) => obj.tokens);
+      expect(tokensPerMod).toEqual([
+        [Provider0],
+        [Provider3, Provider4],
+        [Provider1],
+      ]);
+
+      expect(root1?.siblingsPerReq).toEqual([
+        [
+          [Provider5, Provider6, Provider7],
+          [Provider5, Provider6, Provider7],
+        ],
+        [
+          [Provider8, Provider9],
+          [Provider8, Provider9],
+        ],
+      ]);
     });
   });
 
@@ -523,7 +536,7 @@ describe('AppInitializer', () => {
 
         @RootModule({
           imports: [Module2],
-          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }]
+          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
         })
         class AppModule {}
 
@@ -553,7 +566,7 @@ describe('AppInitializer', () => {
 
         @RootModule({
           imports: [Module1, Module2],
-          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }]
+          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
         })
         class AppModule {}
 
@@ -586,7 +599,7 @@ describe('AppInitializer', () => {
 
         @RootModule({
           imports: [Module1, Module2],
-          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }]
+          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
         })
         class AppModule {}
 
@@ -618,7 +631,7 @@ describe('AppInitializer', () => {
           imports: [Module1, Module2],
           providersPerApp: [
             { provide: Router, useValue: 'fake' },
-            { provide: LogManager, useValue: new LogManager() }
+            { provide: LogManager, useValue: new LogManager() },
           ],
         })
         class AppModule {}
@@ -650,7 +663,7 @@ describe('AppInitializer', () => {
           providersPerMod: [Provider2],
           providersPerApp: [
             { provide: Router, useValue: 'fake' },
-            { provide: LogManager, useValue: new LogManager() }
+            { provide: LogManager, useValue: new LogManager() },
           ],
         })
         class AppModule {}
@@ -685,7 +698,7 @@ describe('AppInitializer', () => {
           providersPerMod: [Provider1],
           providersPerApp: [
             { provide: Router, useValue: 'fake' },
-            { provide: LogManager, useValue: new LogManager() }
+            { provide: LogManager, useValue: new LogManager() },
           ],
         })
         class AppModule {}
@@ -723,7 +736,7 @@ describe('AppInitializer', () => {
       it('exporting duplicates of Provider2', async () => {
         @RootModule({
           imports: [Module2],
-          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }]
+          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
         })
         class AppModule {}
 
@@ -741,7 +754,7 @@ describe('AppInitializer', () => {
           providersPerReq: [Provider2],
           providersPerApp: [
             { provide: Router, useValue: 'fake' },
-            { provide: LogManager, useValue: new LogManager() }
+            { provide: LogManager, useValue: new LogManager() },
           ],
         })
         class AppModule {}
@@ -769,7 +782,7 @@ describe('AppInitializer', () => {
 
         @RootModule({
           imports: [Module0, Module1],
-          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }]
+          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
         })
         class AppModule {}
 
@@ -787,7 +800,7 @@ describe('AppInitializer', () => {
           providersPerReq: [Provider1],
           providersPerApp: [
             { provide: Router, useValue: 'fake' },
-            { provide: LogManager, useValue: new LogManager() }
+            { provide: LogManager, useValue: new LogManager() },
           ],
         })
         class AppModule {}

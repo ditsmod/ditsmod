@@ -73,10 +73,9 @@ export class PreRouterExtension implements Extension<void> {
           ]);
           const inj3 = inj2.createChildFromResolved(providers);
 
-          siblingsPerReq.forEach((sbl, module) => {
-            const meta = this.moduleManager.getMetadata(module);
-            const externalInjector = inj3.resolveAndCreateChild(meta.providersPerReq);
-            inj3.addSibling(externalInjector, sbl.tokens);
+          siblingsPerReq.forEach(([providers, tokens]) => {
+            const externalInjector = inj3.resolveAndCreateChild(providers);
+            inj3.addSibling(externalInjector, tokens);
           });
 
           // First HTTP handler in the chain of HTTP interceptors.
@@ -98,14 +97,13 @@ export class PreRouterExtension implements Extension<void> {
     injector: ReflectiveInjector,
     module: ModuleType | ModuleWithParams,
     scope: 'Mod' | 'Rou',
-    siblings: Map<ModuleType | ModuleWithParams, SiblingObj>
+    siblings: Set<SiblingObj>
   ) {
     const meta = this.moduleManager.getMetadata(module);
-    meta[`siblingsPer${scope}`].resolveInjector(injector);
+    meta[`injectorPer${scope}`].resolveInjector(injector);
 
     siblings.forEach((sbl) => {
-      sbl
-        .getInjector()
+      sbl.injectorPromise
         .then((externalInjector) => {
           injector.addSibling(externalInjector, sbl.tokens);
         })
