@@ -2,7 +2,6 @@ import { Injectable, resolveForwardRef } from '@ts-stack/di';
 import { format } from 'util';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { SiblingObj } from '../models/sibling-obj';
 import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { ModuleMetadata } from '../types/module-metadata';
 import { ModulesMap } from '../types/modules-map';
@@ -295,25 +294,10 @@ export class ModuleManager {
       }
     });
 
-    addSiblings('Mod');
-    addSiblings('Rou');
-
     pickProperties(metadata, modMetadata);
     metadata.extensionsMeta = { ...(metadata.extensionsMeta || {}) };
 
     return metadata;
-
-    /**
-     * This function should called after call `findAndSetProvider()`.
-     */
-    function addSiblings(scope: 'Mod' | 'Rou') {
-      const exp = metadata[`exportsProvidersPer${scope}`];
-      if (exp.length) {
-        const siblingObj = new SiblingObj();
-        siblingObj.tokens = normalizeProviders(exp).map((p) => p.provide);
-        metadata[`siblingsPer${scope}`] = siblingObj;
-      }
-    }
   }
 
   protected findAndSetProvider(

@@ -1,10 +1,6 @@
 import { ReflectiveInjector } from '@ts-stack/di';
 
-/**
- * Injector sibling object.
- */
- export class SiblingObj {
-  tokens: any[] = [];
+ export class InjectorPromise {
   resolveInjector: (value: ReflectiveInjector) => void;
   private promise: Promise<ReflectiveInjector>;
 
@@ -17,4 +13,12 @@ import { ReflectiveInjector } from '@ts-stack/di';
   getInjector() {
     return this.promise;
   }
+}
+
+/**
+ * Injector sibling object.
+ */
+ export class SiblingObj {
+  tokens: any[] = [];
+  injectorPromise: Promise<ReflectiveInjector>;
 }

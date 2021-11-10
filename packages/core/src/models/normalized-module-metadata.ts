@@ -1,6 +1,6 @@
 import { InjectionToken } from '@ts-stack/di';
-import { SiblingObj } from '../models/sibling-obj';
 
+import { InjectorPromise } from '../models/sibling-obj';
 import { AnyObj, ControllerType, ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../types/mix';
 import { ProvidersMetadata } from './providers-metadata';
 
@@ -28,8 +28,8 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   exportsProvidersPerMod: ServiceProvider[] = [];
   exportsProvidersPerRou: ServiceProvider[] = [];
   exportsProvidersPerReq: ServiceProvider[] = [];
-  siblingsPerMod = new SiblingObj();
-  siblingsPerRou = new SiblingObj();
+  injectorPerMod = new InjectorPromise();
+  injectorPerRou = new InjectorPromise();
   /**
    * This property allows you to pass any information to extensions.
    * 
