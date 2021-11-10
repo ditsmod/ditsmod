@@ -447,7 +447,6 @@ export class ModuleFactory {
     const siblingsPerReq: [ServiceProvider[], any[]][] = [];
 
     moduleServicesMap.forEach((providers, moduleOrObj) => {
-      // console.log((moduleOrObj as any).name, normalizeProviders(providers).map(p => p.provide.name))
       const meta = this.#moduleManager.getMetadata(moduleOrObj);
       const tokens = normalizeProviders(providers).map((p) => p.provide);
       siblingsPerReq.push([meta.providersPerReq, tokens]);

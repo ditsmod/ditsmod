@@ -1,8 +1,8 @@
-import { Injectable, ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpHandler } from '../types/http-interceptor';
-import { HttpMethod, Extension, ModuleType, ModuleWithParams } from '../types/mix';
+import { HttpMethod, Extension, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { RouteMetaPerMod, PreparedRouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { NodeResponse, RequestListener } from '../types/server-options';
@@ -55,35 +55,36 @@ export class PreRouterExtension implements Extension<void> {
       const { siblingsPerMod, siblingsPerRou, siblingsPerReq } = routeMetaPerMod;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       this.setSiblingsOnModule(injectorPerMod, module, 'Mod', siblingsPerMod);
-      const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
-      this.setSiblingsOnModule(injectorPerRou, module, 'Rou', siblingsPerRou);
+      const injectorPerRou1 = injectorPerMod.resolveAndCreateChild(providersPerRou);
+      this.setSiblingsOnModule(injectorPerRou1, module, 'Rou', siblingsPerRou);
 
       rawRoutesMeta.forEach((rawRouteMeta) => {
         const { httpMethod, path, providersPerRou, providersPerReq } = rawRouteMeta;
-        const inj1 = injectorPerRou.resolveAndCreateChild(providersPerRou);
-        const providers = ReflectiveInjector.resolve(providersPerReq);
-        this.instantiateProvidersPerReq(inj1, providers);
+        const injectorPerRou2 = injectorPerRou1.resolveAndCreateChild(providersPerRou);
 
-        const siblings = siblingsPerReq.map<[ResolvedReflectiveProvider[], any[]]>(([providers, tokens]) => {
-          return [ReflectiveInjector.resolve(providers), tokens];
+        // Checks in "sandbox" mode that `providersPerReq` instantiatable.
+        this.instantiateProvidersPerReq(injectorPerRou2, providersPerReq);
+
+        const injectorPerReq = injectorPerRou2.resolveAndCreateChild(providersPerReq);
+        const injectors: ReflectiveInjector[] = [injectorPerReq];
+        siblingsPerReq.forEach(([providers, tokens]) => {
+          const externalInjector = injectorPerReq.resolveAndCreateChild(providers);
+          injectors.push(externalInjector);
+          injectorPerReq.addSibling(externalInjector, tokens);
         });
 
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
-          const inj2 = inj1.resolveAndCreateChild([
+          const parent = injectorPerRou2.resolveAndCreateChild([
             { provide: NODE_REQ, useValue: nodeReq },
             { provide: NODE_RES, useValue: nodeRes },
             { provide: PATH_PARAMS, useValue: params },
             { provide: QUERY_STRING, useValue: queryString },
           ]);
-          const inj3 = inj2.createChildFromResolved(providers);
-
-          siblings.forEach(([providers, tokens]) => {
-            const externalInjector = inj3.createChildFromResolved(providers);
-            inj3.addSibling(externalInjector, tokens);
-          });
+          injectors.forEach(i => i.clearCache());
+          injectorPerReq.parent = parent;
 
           // First HTTP handler in the chain of HTTP interceptors.
-          const chain = inj3.get(HttpHandler) as HttpHandler;
+          const chain = injectorPerReq.get(HttpHandler) as HttpHandler;
           await chain.handle();
         }) as RouteHandler;
 
@@ -122,16 +123,16 @@ export class PreRouterExtension implements Extension<void> {
    *
    * This allows avoids "Error: No provider for SomeDepends" when processing an HTTP request.
    */
-  protected instantiateProvidersPerReq(injectorPerRou: ReflectiveInjector, providers: ResolvedReflectiveProvider[]) {
-    const inj2 = injectorPerRou.resolveAndCreateChild([
+  protected instantiateProvidersPerReq(injectorPerRou: ReflectiveInjector, providers: ServiceProvider[]) {
+    const child = injectorPerRou.resolveAndCreateChild([
+      ...providers,
       { provide: NODE_REQ, useValue: {} },
       { provide: NODE_RES, useValue: {} },
       { provide: PATH_PARAMS, useValue: {} },
       { provide: QUERY_STRING, useValue: {} },
     ]);
-    const inj3 = inj2.createChildFromResolved(providers);
 
-    providers.forEach((p) => inj3.instantiateResolved(p));
+    providers.forEach((p) => child.resolveAndInstantiate(p));
   }
 
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {
