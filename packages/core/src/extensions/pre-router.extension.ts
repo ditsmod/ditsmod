@@ -64,6 +64,10 @@ export class PreRouterExtension implements Extension<void> {
         const providers = ReflectiveInjector.resolve(providersPerReq);
         this.instantiateProvidersPerReq(inj1, providers);
 
+        const siblings = siblingsPerReq.map<[ResolvedReflectiveProvider[], any[]]>(([providers, tokens]) => {
+          return [ReflectiveInjector.resolve(providers), tokens];
+        });
+
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
           const inj2 = inj1.resolveAndCreateChild([
             { provide: NODE_REQ, useValue: nodeReq },
@@ -73,8 +77,8 @@ export class PreRouterExtension implements Extension<void> {
           ]);
           const inj3 = inj2.createChildFromResolved(providers);
 
-          siblingsPerReq.forEach(([providers, tokens]) => {
-            const externalInjector = inj3.resolveAndCreateChild(providers);
+          siblings.forEach(([providers, tokens]) => {
+            const externalInjector = inj3.createChildFromResolved(providers);
             inj3.addSibling(externalInjector, tokens);
           });
 
