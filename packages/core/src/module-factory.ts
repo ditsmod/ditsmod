@@ -125,52 +125,6 @@ export class ModuleFactory {
     });
   }
 
-  protected getSiblinsSet(scope: 'Mod' | 'Rou') {
-    const serviceModuleMap = new Map([...this.globalProviders[`siblingsPer${scope}`], ...this[`siblingsPer${scope}`]]);
-    const moduleServicesMap = this.getModuleServicesMap(serviceModuleMap);
-
-    const siblingsObjects = new Set<SiblingObj>();
-
-    moduleServicesMap.forEach((providers, module) => {
-      const meta = this.#moduleManager.getMetadata(module, true);
-      const siblingObj = new SiblingObj();
-      siblingObj.tokens = normalizeProviders(providers).map((p) => p.provide);
-      siblingObj.injectorPromise = meta[`injectorPer${scope}`].getInjector();
-      siblingsObjects.add(siblingObj);
-    });
-
-    return siblingsObjects;
-  }
-
-  protected getSiblingsPerReq() {
-    const serviceModuleMap = new Map([...this.globalProviders.siblingsPerReq, ...this.siblingsPerReq]);
-    const moduleServicesMap = this.getModuleServicesMap(serviceModuleMap);
-
-    const siblingsPerReq: [ServiceProvider[], any[]][] = [];
-
-    moduleServicesMap.forEach((providers, moduleOrObj) => {
-      // console.log((moduleOrObj as any).name, normalizeProviders(providers).map(p => p.provide.name))
-      const meta = this.#moduleManager.getMetadata(moduleOrObj);
-      const tokens = normalizeProviders(providers).map((p) => p.provide);
-      siblingsPerReq.push([meta.providersPerReq, tokens]);
-    });
-
-    return siblingsPerReq;
-  }
-
-  protected getModuleServicesMap(mapServiceModule: Map<ServiceProvider, ModuleType | ModuleWithParams>) {
-    const mapModuleServices = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
-    mapServiceModule.forEach((moduleOrObj, provider) => {
-      const providers = mapModuleServices.get(moduleOrObj);
-      if (providers) {
-        providers.push(provider);
-      } else {
-        mapModuleServices.set(moduleOrObj, [provider]);
-      }
-    });
-    return mapModuleServices;
-  }
-
   protected mergeProviders() {
     this.meta.providersPerMod = getUniqProviders([
       ...defaultProvidersPerMod,
@@ -467,5 +421,51 @@ export class ModuleFactory {
     }
 
     return arrControllerMetadata;
+  }
+
+  protected getSiblinsSet(scope: 'Mod' | 'Rou') {
+    const serviceModuleMap = new Map([...this.globalProviders[`siblingsPer${scope}`], ...this[`siblingsPer${scope}`]]);
+    const moduleServicesMap = this.getModuleServicesMap(serviceModuleMap);
+
+    const siblingsObjects = new Set<SiblingObj>();
+
+    moduleServicesMap.forEach((providers, module) => {
+      const meta = this.#moduleManager.getMetadata(module, true);
+      const siblingObj = new SiblingObj();
+      siblingObj.tokens = normalizeProviders(providers).map((p) => p.provide);
+      siblingObj.injectorPromise = meta[`injectorPer${scope}`].getInjector();
+      siblingsObjects.add(siblingObj);
+    });
+
+    return siblingsObjects;
+  }
+
+  protected getSiblingsPerReq() {
+    const serviceModuleMap = new Map([...this.globalProviders.siblingsPerReq, ...this.siblingsPerReq]);
+    const moduleServicesMap = this.getModuleServicesMap(serviceModuleMap);
+
+    const siblingsPerReq: [ServiceProvider[], any[]][] = [];
+
+    moduleServicesMap.forEach((providers, moduleOrObj) => {
+      // console.log((moduleOrObj as any).name, normalizeProviders(providers).map(p => p.provide.name))
+      const meta = this.#moduleManager.getMetadata(moduleOrObj);
+      const tokens = normalizeProviders(providers).map((p) => p.provide);
+      siblingsPerReq.push([meta.providersPerReq, tokens]);
+    });
+
+    return siblingsPerReq;
+  }
+
+  protected getModuleServicesMap(mapServiceModule: Map<ServiceProvider, ModuleType | ModuleWithParams>) {
+    const mapModuleServices = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
+    mapServiceModule.forEach((moduleOrObj, provider) => {
+      const providers = mapModuleServices.get(moduleOrObj);
+      if (providers) {
+        providers.push(provider);
+      } else {
+        mapModuleServices.set(moduleOrObj, [provider]);
+      }
+    });
+    return mapModuleServices;
   }
 }
