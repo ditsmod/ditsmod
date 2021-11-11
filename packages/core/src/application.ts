@@ -15,6 +15,7 @@ import { ModuleType } from './types/mix';
 import { Http2SecureServerOptions, Server } from './types/server-options';
 import { getModuleMetadata } from './utils/get-module-metadata';
 import { isHttp2SecureServerOptions } from './utils/type-guards';
+import { clearNgError } from './utils/clear-ng-error';
 
 export class Application {
   protected meta: RootMetadata;
@@ -32,27 +33,13 @@ export class Application {
           this.log.serverListen('info', this.meta.serverName, host, this.meta.listenOptions.port);
         });
       } catch (err) {
-        this.clearNgError(err);
+        clearNgError(err);
         reject({ err, logger: this.log.logger });
       } finally {
         this.log.bufferLogs = false;
         this.log.flush();
       }
     });
-  }
-
-  /**
-   * This method clears @ts-stack/di specific errors.
-   */
-  protected clearNgError(err: any) {
-    if (err.hasOwnProperty('ngOriginalError')) {
-      // This is @ts-stack/di specific error
-      delete err.addKey;
-      delete err.keys;
-      delete err.injectors;
-      delete err.constructResolvingMessage;
-      delete err.ngOriginalError;
-    }
   }
 
   protected async init(appModule: ModuleType) {
