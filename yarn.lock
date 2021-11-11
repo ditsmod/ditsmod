@@ -1486,10 +1486,10 @@
   resolved "https://registry.yarnpkg.com/@ts-stack/di/-/di-1.2.0-beta.1.tgz#5715e31eeb6245e1a563e06bfdb9cdc534ddd9f1"
   integrity sha512-TRTdfg7GuJJbxwm2E6PatcUJsC15fkIXqoSBLlsEEZv+2N+A07p/3v0WN0i778z50oQKysTcCKVUd0jvFaPHPQ==
 
-"@ts-stack/di@^1.2.0-beta.6":
-  version "1.2.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@ts-stack/di/-/di-1.2.0-beta.6.tgz#9ba98201bea313370759916bbb5ee57f2eb7758d"
-  integrity sha512-3JyYaoIEqZ/x/fnS2gjzW/j9a5TXUOd/40sCj+I4b8qYvCypEKE3vcx8l//B2ibkU+2cedeuloiy6n3FNgHvSQ==
+"@ts-stack/di@^1.2.0-beta.7":
+  version "1.2.0-beta.7"
+  resolved "https://registry.yarnpkg.com/@ts-stack/di/-/di-1.2.0-beta.7.tgz#0fb3c50c23488fd47e5165f0c64d3018308b335c"
+  integrity sha512-kqW4A1UHD5Bdhwcv/7o0sY/XayXL7fTFj0azovRdybiE9hoboEoxSjSWrUmy0Jae2dJXk75ukP3ClSLvDaJZoA==
 
 "@ts-stack/openapi-spec@^3.1.2":
   version "3.1.4"
