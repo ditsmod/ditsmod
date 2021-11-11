@@ -1,6 +1,7 @@
 import { Injectable, resolveForwardRef } from '@ts-stack/di';
 import { format } from 'util';
 
+import { defaultProvidersPerMod } from '../constans';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { ModuleMetadata } from '../types/module-metadata';
@@ -11,6 +12,7 @@ import { getModuleName } from '../utils/get-module-name';
 import { normalizeProviders } from '../utils/ng-utils';
 import { pickProperties } from '../utils/pick-properties';
 import { isModuleWithParams, isProvider } from '../utils/type-guards';
+import { defaultProvidersPerReq } from './default-providers-per-req';
 import { Log } from './log';
 
 type ModuleId = string | ModuleType | ModuleWithParams;
@@ -30,6 +32,10 @@ export class ModuleManager {
     }
 
     const meta = this.scanRawModule(appModule);
+    meta.providersPerMod.unshift(...defaultProvidersPerMod);
+    meta.providersPerReq.unshift(...defaultProvidersPerReq);
+    meta.exportsProvidersPerMod.unshift(...defaultProvidersPerMod);
+    meta.exportsProvidersPerReq.unshift(...defaultProvidersPerReq);
     this.mapId.set('root', appModule);
     return this.copyMeta(meta);
   }

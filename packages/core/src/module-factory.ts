@@ -127,14 +127,12 @@ export class ModuleFactory {
 
   protected mergeProviders() {
     this.meta.providersPerMod = getUniqProviders([
-      ...defaultProvidersPerMod,
       { provide: ModConfig, useValue: { prefixPerMod: this.prefixPerMod } },
       ...this.meta.providersPerMod,
     ]);
 
     this.meta.providersPerRou = getUniqProviders([...this.meta.providersPerRou]);
-
-    this.meta.providersPerReq = getUniqProviders([...defaultProvidersPerReq, ...this.meta.providersPerReq]);
+    this.meta.providersPerReq = getUniqProviders([...this.meta.providersPerReq]);
   }
 
   protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
@@ -441,6 +439,7 @@ export class ModuleFactory {
   }
 
   protected getSiblingsPerReq() {
+    // console.log(this.moduleName, this.globalProviders)
     const serviceModuleMap = new Map([...this.globalProviders.siblingsPerReq, ...this.siblingsPerReq]);
     const moduleServicesMap = this.getModuleServicesMap(serviceModuleMap);
 

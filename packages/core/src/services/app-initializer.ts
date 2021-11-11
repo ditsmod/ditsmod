@@ -17,7 +17,6 @@ import { pickProperties } from '../utils/pick-properties';
 import { throwProvidersCollisionError } from '../utils/throw-providers-collision-error';
 import { isRootModule } from '../utils/type-guards';
 import { defaultProvidersPerApp } from './default-providers-per-app';
-import { defaultProvidersPerReq } from './default-providers-per-req';
 import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
 import { PreRouterExtension } from '../extensions/pre-router.extension';
@@ -211,9 +210,9 @@ export class AppInitializer {
       siblingsPerReq,
     } = moduleFactory.exportGlobalProviders(moduleManager, globalProviders);
 
-    globalProviders.providersPerMod = providersPerMod;
-    globalProviders.providersPerRou = [...providersPerRou];
-    globalProviders.providersPerReq = [...defaultProvidersPerReq, ...providersPerReq];
+    globalProviders.providersPerMod = providersPerMod.slice();
+    globalProviders.providersPerRou = providersPerRou.slice();
+    globalProviders.providersPerReq = providersPerReq.slice();
     globalProviders.siblingsPerMod = siblingsPerMod;
     globalProviders.siblingsPerRou = siblingsPerRou;
     globalProviders.siblingsPerReq = siblingsPerReq;

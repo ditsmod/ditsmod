@@ -62,9 +62,6 @@ export class PreRouterExtension implements Extension<void> {
         const { httpMethod, path, providersPerRou, providersPerReq } = rawRouteMeta;
         const injectorPerRou2 = injectorPerRou1.resolveAndCreateChild(providersPerRou);
 
-        // Checks in "sandbox" mode that `providersPerReq` instantiatable.
-        this.instantiateProvidersPerReq(injectorPerRou2, providersPerReq);
-
         const injectorPerReq = injectorPerRou2.resolveAndCreateChild(providersPerReq);
         const injectors: ReflectiveInjector[] = [injectorPerReq];
         siblingsPerReq.forEach(([providers, tokens]) => {
@@ -122,6 +119,8 @@ export class PreRouterExtension implements Extension<void> {
    * Checks in "sandbox" mode that `providersPerReq` instantiatable.
    *
    * This allows avoids "Error: No provider for SomeDepends" when processing an HTTP request.
+   * 
+   * @todo Refactor this. For now it's not works.
    */
   protected instantiateProvidersPerReq(injectorPerRou: ReflectiveInjector, providers: ServiceProvider[]) {
     const child = injectorPerRou.resolveAndCreateChild([
