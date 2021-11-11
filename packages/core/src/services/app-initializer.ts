@@ -31,7 +31,6 @@ export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
   protected preRouter: PreRouterExtension;
   protected meta: RootMetadata;
-  protected appMetadataMap: AppMetadataMap;
   protected logManager: LogManager;
 
   constructor(protected moduleManager: ModuleManager, protected log: Log) {}
@@ -45,9 +44,9 @@ export class AppInitializer {
     this.prepareProvidersPerApp(meta, this.moduleManager);
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLog();
-    this.appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
-    this.checkModulesResolvable(this.appMetadataMap);
-    await this.handleExtensions(this.appMetadataMap);
+    const appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
+    this.checkModulesResolvable(appMetadataMap);
+    await this.handleExtensions(appMetadataMap);
     this.preRouter = this.injectorPerApp.get(PreRouterExtension) as PreRouterExtension;
     return this.meta;
   }
