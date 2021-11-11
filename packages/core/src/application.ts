@@ -41,7 +41,10 @@ export class Application {
   }
 
   protected async init(appModule: ModuleType) {
-    const logManager = this.createLoggerAndGetLogManager(appModule);
+    const config = new LoggerConfig();
+    const logger = new DefaultLogger(config) as Logger;
+    const logManager = new LogManager();
+    this.log = new Log(logger, logManager);
     const moduleManager = new ModuleManager(this.log);
     moduleManager.scanRootModule(appModule);
     this.appInitializer = new AppInitializer(moduleManager, this.log);
@@ -53,28 +56,6 @@ export class Application {
     const { log: lastLog } = this.appInitializer.getMetadataAndLog();
     this.log = lastLog;
     this.checkSecureServerOption(appModule);
-  }
-
-  /**
-   * We need to set a logger as soon as possible. So, first we set the default logger.
-   * Then we can set it to a logger from `providersPerApp` of the root module. And later it
-   * can be seted to another logger in the process of initializing the application.
-   */
-  protected createLoggerAndGetLogManager(appModule: ModuleType) {
-    const config = new LoggerConfig();
-    const logger = new DefaultLogger(config) as Logger;
-    const logManager = new LogManager();
-    this.log = new Log(logger, logManager);
-    const rawRootMetadata = getModuleMetadata(appModule, true);
-    const providers = [
-      { provide: LogManager, useValue: logManager },
-      ...defaultProvidersPerApp,
-      ...(rawRootMetadata.providersPerApp || [])
-    ];
-    const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
-    const log = injectorPerApp.get(Log) as Log;
-    this.log = log;
-    return logManager;
   }
 
   protected checkSecureServerOption(appModule: ModuleType) {

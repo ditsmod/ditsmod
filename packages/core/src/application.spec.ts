@@ -19,10 +19,6 @@ describe('Application', () => {
     override log: Log;
     override appInitializer: AppInitializer;
 
-    override createLoggerAndGetLogManager(appModule: ModuleType) {
-      return super.createLoggerAndGetLogManager(appModule);
-    }
-
     override init(appModule: ModuleType) {
       return super.init(appModule);
     }
@@ -36,29 +32,6 @@ describe('Application', () => {
 
   beforeEach(() => {
     mock = new ApplicationMock();
-  });
-
-  describe('createLoggerAndGetLogManager()', () => {
-    class LogMock extends Log {}
-
-    @RootModule({
-      providersPerApp: [{ provide: Log, useClass: LogMock }],
-    })
-    class AppModule {}
-
-    it('before start, Application.log should be undefined', () => {
-      expect(mock.log).toBeUndefined();
-    });
-
-    it('should set log to instance of LogMock', () => {
-      mock.createLoggerAndGetLogManager(AppModule);
-      expect(mock.log).toBeInstanceOf(LogMock);
-    });
-
-    it('should return instance of LogManager', () => {
-      const logManager = mock.createLoggerAndGetLogManager(AppModule);
-      expect(logManager).toBeInstanceOf(LogManager);
-    });
   });
 
   describe('checkSecureServerOption()', () => {
