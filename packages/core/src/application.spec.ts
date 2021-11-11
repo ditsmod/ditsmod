@@ -10,14 +10,12 @@ import { RootMetadata } from './models/root-metadata';
 import { ModuleType, Extension } from './types/mix';
 import { Router } from './types/router';
 import { Log } from './services/log';
-import { LogManager } from '.';
 import { AppInitializer } from './services/app-initializer';
 
 describe('Application', () => {
   class ApplicationMock extends Application {
     override meta = new RootMetadata();
     override log: Log;
-    override appInitializer: AppInitializer;
 
     override init(appModule: ModuleType) {
       return super.init(appModule);
@@ -26,12 +24,35 @@ describe('Application', () => {
     override checkSecureServerOption(appModule: ModuleType) {
       return super.checkSecureServerOption(appModule);
     }
+
+    override getDefaultLog(){
+      return super.getDefaultLog();
+    }
+
+    override getAppInitializer(appModule: ModuleType, log: Log) {
+      return super.getAppInitializer(appModule, log);
+    }
   }
 
   let mock: ApplicationMock;
 
   beforeEach(() => {
     mock = new ApplicationMock();
+  });
+
+  describe('getDefaultLog()', () => {
+    it('should return instance of default Log', () => {
+      expect(mock.getDefaultLog()).toBeInstanceOf(Log);
+    });
+  });
+
+  describe('getAppInitializer()', () => {
+    @RootModule()
+    class AppModule {}
+
+    it('should return instance of AppInitializer', () => {
+      expect(mock.getAppInitializer(AppModule, {} as Log)).toBeInstanceOf(AppInitializer);
+    });
   });
 
   describe('checkSecureServerOption()', () => {

@@ -54,6 +54,10 @@ export class Log {
     this.logger = logger;
   }
 
+  getLogManager() {
+    return this.logManager;
+  }
+
   protected setLog(level: keyof Logger, msg: any) {
     if (this.logManager.bufferLogs) {
       this.logManager.buffer.push({ date: new Date(), level, msg });

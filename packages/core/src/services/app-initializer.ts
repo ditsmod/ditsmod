@@ -36,22 +36,15 @@ export class AppInitializer {
 
   constructor(protected moduleManager: ModuleManager, protected log: Log) {}
 
-  bootstrapProvidersPerApp(logManager?: LogManager) {
-    if (logManager) {
-      this.logManager = logManager;
-    }
+  /**
+   * After call this method, you need call `this.log.flush()`.
+   */
+  async initAndGetMetadata() {
     const meta = this.moduleManager.getMetadata('root', true);
     this.mergeMetadata(meta.module as ModuleType);
     this.prepareProvidersPerApp(meta, this.moduleManager);
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLog();
-  }
-
-  getMetadataAndLog() {
-    return { meta: this.meta, log: this.log };
-  }
-
-  async bootstrapModulesAndExtensions() {
     this.appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
     this.checkModulesResolvable(this.appMetadataMap);
     await this.handleExtensions(this.appMetadataMap);
@@ -63,7 +56,7 @@ export class AppInitializer {
     const oldLogger = this.log.logger;
     this.log.startReinitApp('debug');
     try {
-      await this.init();
+      await this.initAndGetMetadata();
       if (autocommit) {
         this.moduleManager.commit();
       } else {
@@ -75,7 +68,7 @@ export class AppInitializer {
       this.log.printReinitError('error', err);
       this.log.startRollbackModuleConfigChanges('debug');
       this.moduleManager.rollback();
-      await this.init();
+      await this.initAndGetMetadata();
       this.log.successfulRollbackModuleConfigChanges('debug');
       return err as Error;
     } finally {
@@ -87,14 +80,6 @@ export class AppInitializer {
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
     await this.preRouter.requestListener(nodeReq, nodeRes);
   };
-
-  /**
-   * After call this method, you need call `this.log.flush()`.
-   */
-  protected async init() {
-    this.bootstrapProvidersPerApp();
-    await this.bootstrapModulesAndExtensions();
-  }
 
   /**
    * Merge AppModule metadata with default metadata for root module.
@@ -167,6 +152,7 @@ export class AppInitializer {
   }
 
   protected addDefaultProvidersPerApp() {
+    this.logManager = this.log.getLogManager();
     this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
       { provide: RootMetadata, useValue: this.meta },
