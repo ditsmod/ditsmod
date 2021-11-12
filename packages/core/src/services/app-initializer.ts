@@ -36,7 +36,7 @@ export class AppInitializer {
   constructor(protected moduleManager: ModuleManager, protected log: Log) {}
 
   /**
-   * After call this method, you need call `this.log.flush()`.
+   * Note: after call this method, you need call `this.log.flush()`.
    */
   async initAndGetMetadata() {
     const meta = this.moduleManager.getMetadata('root', true);
