@@ -285,4 +285,11 @@ export class Log {
     const err = args[0] as Error;
     this.setLog(level, err.message);
   }
+
+  /**
+   * [print resolve siblings error]
+   */
+  resolveSiblingsError(level: keyof Logger, ...args: any[]) {
+    this.setLog(level, { err: args[0] });
+  }
 }

@@ -30,6 +30,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   exportsProvidersPerReq: ServiceProvider[] = [];
   injectorPerMod = new InjectorPromise();
   injectorPerRou = new InjectorPromise();
+  injectorPerReq = new InjectorPromise();
   /**
    * This property allows you to pass any information to extensions.
    * 

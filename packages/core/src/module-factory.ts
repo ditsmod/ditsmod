@@ -121,7 +121,7 @@ export class ModuleFactory {
       controllersMetadata: deepFreeze(controllersMetadata),
       siblingsPerMod: this.getSiblinsSet('Mod'),
       siblingsPerRou: this.getSiblinsSet('Rou'),
-      siblingsPerReq: this.getSiblingsPerReq(),
+      siblingsPerReq: this.getSiblinsSet('Req'),
     });
   }
 
@@ -421,7 +421,7 @@ export class ModuleFactory {
     return arrControllerMetadata;
   }
 
-  protected getSiblinsSet(scope: 'Mod' | 'Rou') {
+  protected getSiblinsSet(scope: 'Mod' | 'Rou' | 'Req') {
     const serviceModuleMap = new Map([...this.globalProviders[`siblingsPer${scope}`], ...this[`siblingsPer${scope}`]]);
     const moduleServicesMap = this.getModuleServicesMap(serviceModuleMap);
 
@@ -436,22 +436,6 @@ export class ModuleFactory {
     });
 
     return siblingsObjects;
-  }
-
-  protected getSiblingsPerReq() {
-    // console.log(this.moduleName, this.globalProviders)
-    const serviceModuleMap = new Map([...this.globalProviders.siblingsPerReq, ...this.siblingsPerReq]);
-    const moduleServicesMap = this.getModuleServicesMap(serviceModuleMap);
-
-    const siblingsPerReq: [ServiceProvider[], any[]][] = [];
-
-    moduleServicesMap.forEach((providers, moduleOrObj) => {
-      const meta = this.#moduleManager.getMetadata(moduleOrObj);
-      const tokens = normalizeProviders(providers).map((p) => p.provide);
-      siblingsPerReq.push([meta.providersPerReq, tokens]);
-    });
-
-    return siblingsPerReq;
   }
 
   protected getModuleServicesMap(mapServiceModule: Map<ServiceProvider, ModuleType | ModuleWithParams>) {

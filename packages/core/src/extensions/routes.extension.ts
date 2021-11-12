@@ -4,7 +4,7 @@ import { APP_METADATA_MAP } from '../constans';
 import { ControllerMetadata } from '../decorators/controller';
 import { RootMetadata } from '../models/root-metadata';
 import { MetadataPerMod } from '../types/metadata-per-mod';
-import { AppMetadataMap, GuardItem, NormalizedGuard, Extension } from '../types/mix';
+import { AppMetadataMap, GuardItem, NormalizedGuard, Extension, ServiceProvider } from '../types/mix';
 import { RawRouteMeta, RouteMetaPerMod, RouteMeta } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
 
@@ -28,15 +28,15 @@ export class RoutesExtension implements Extension<RouteMetaPerMod[]> {
     this.appMetadataMap.forEach((metadataPerMod) => {
       const routeMetaPerMod = new RouteMetaPerMod();
       const { moduleMetadata } = metadataPerMod;
-      const rawRouteMeta = this.getMetaPerRou(prefixPerApp, metadataPerMod);
       routeMetaPerMod.module = moduleMetadata.module;
       routeMetaPerMod.moduleName = moduleMetadata.name;
       routeMetaPerMod.providersPerMod = moduleMetadata.providersPerMod.slice();
       routeMetaPerMod.providersPerRou = moduleMetadata.providersPerRou.slice();
+      routeMetaPerMod.providersPerReq = moduleMetadata.providersPerReq.slice();
       routeMetaPerMod.siblingsPerMod = new Set(metadataPerMod.siblingsPerMod);
       routeMetaPerMod.siblingsPerRou = new Set(metadataPerMod.siblingsPerRou);
-      routeMetaPerMod.siblingsPerReq = metadataPerMod.siblingsPerReq.slice();
-      routeMetaPerMod.rawRoutesMeta = rawRouteMeta;
+      routeMetaPerMod.siblingsPerReq = new Set(metadataPerMod.siblingsPerReq);
+      routeMetaPerMod.rawRoutesMeta = this.getMetaPerRou(prefixPerApp, metadataPerMod);
       this.routesMetaPerMod.push(routeMetaPerMod);
     });
 
@@ -44,7 +44,7 @@ export class RoutesExtension implements Extension<RouteMetaPerMod[]> {
   }
 
   protected getMetaPerRou(prefixPerApp: string, metadataPerMod: MetadataPerMod) {
-    const { controllersMetadata, prefixPerMod, guardsPerMod, moduleMetadata } = metadataPerMod;
+    const { controllersMetadata, prefixPerMod, guardsPerMod } = metadataPerMod;
 
     const rawRouteMeta: RawRouteMeta[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
@@ -54,8 +54,8 @@ export class RoutesExtension implements Extension<RouteMetaPerMod[]> {
           if (!isRoute(decoratorMetadata.value)) {
             continue;
           }
-          const providersPerRou = [];
-          const providersPerReq = moduleMetadata.providersPerReq.slice();
+          const providersPerRou: ServiceProvider[] = [];
+          const providersPerReq: ServiceProvider[] = [];
           const route = decoratorMetadata.value;
           const ctrlDecorator = ctrlDecorValues.find(isController) as ControllerMetadata;
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];

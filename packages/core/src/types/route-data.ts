@@ -1,3 +1,5 @@
+import { ReflectiveInjector } from '@ts-stack/di';
+
 import { SiblingsMetadata } from './metadata-per-mod';
 import {
   ControllerType,
@@ -25,6 +27,10 @@ export class RouteMetaPerMod extends SiblingsMetadata {
    * Providers per a route.
    */
   providersPerRou: ServiceProvider[];
+  /**
+   * Providers per a request.
+   */
+  providersPerReq: ServiceProvider[];
   rawRoutesMeta: RawRouteMeta[];
 }
 
@@ -73,5 +79,6 @@ export interface PreparedRouteMeta {
   moduleName: string;
   httpMethod: HttpMethod;
   path: string;
+  resolvedInjectors: Promise<ReflectiveInjector[]>;
   handle: RouteHandler;
 }

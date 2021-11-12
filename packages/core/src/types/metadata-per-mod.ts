@@ -9,7 +9,7 @@ import { ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from '
 export class SiblingsMetadata {
   siblingsPerMod = new Set<SiblingObj>();
   siblingsPerRou = new Set<SiblingObj>();
-  siblingsPerReq: [ServiceProvider[], any[]][] = [];
+  siblingsPerReq = new Set<SiblingObj>();
 }
 export class SiblingsMap {
   siblingsPerMod = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
