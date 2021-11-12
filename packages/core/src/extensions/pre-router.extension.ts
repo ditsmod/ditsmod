@@ -71,14 +71,13 @@ export class PreRouterExtension implements Extension<void> {
         });
 
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
-          const parent = injectorPerRou2.resolveAndCreateChild([
+          injectors.forEach(i => i.clearCache());
+          injectorPerReq.parent = injectorPerRou2.resolveAndCreateChild([
             { provide: NODE_REQ, useValue: nodeReq },
             { provide: NODE_RES, useValue: nodeRes },
             { provide: PATH_PARAMS, useValue: params },
             { provide: QUERY_STRING, useValue: queryString },
           ]);
-          injectors.forEach(i => i.clearCache());
-          injectorPerReq.parent = parent;
 
           // First HTTP handler in the chain of HTTP interceptors.
           const chain = injectorPerReq.get(HttpHandler) as HttpHandler;
