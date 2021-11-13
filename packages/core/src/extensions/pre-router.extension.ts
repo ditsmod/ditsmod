@@ -3,7 +3,7 @@ import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpHandler } from '../types/http-interceptor';
 import { HttpMethod, Extension, ServiceProvider } from '../types/mix';
-import { RouteMetaPerMod, PreparedRouteMeta } from '../types/route-data';
+import { RouteMetaPerMod, PreparedRouteMeta, RawRouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { NodeResponse, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
@@ -11,6 +11,7 @@ import { ExtensionsManager } from '../services/extensions-manager';
 import { Log } from '../services/log';
 import { ModuleManager } from '../services/module-manager';
 import { normalizeProviders } from '../utils/ng-utils';
+import { getUniqProviders } from '../utils/get-uniq-providers';
 
 @Injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -51,82 +52,76 @@ export class PreRouterExtension implements Extension<void> {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
     for (const routeMetaPerMod of routesMetaPerMod) {
-      const perMod = this.setSiblingsOnModule(routeMetaPerMod, this.injectorPerApp, 'Mod');
-      const perRou = this.setSiblingsOnModule(routeMetaPerMod, perMod.injector, 'Rou');
-      const perReq = this.setSiblingsOnModule(routeMetaPerMod, perRou.injector, 'Req');
-      const resolvedInjectors = Promise.all([
-        ...perMod.injectorsPromises,
-        ...perRou.injectorsPromises,
-        ...perReq.injectorsPromises,
-      ]);
-      const { moduleName, rawRoutesMeta, providersPerReq: modulesProvidersPerReq } = routeMetaPerMod;
+      const { moduleName, rawRoutesMeta, providersPerMod } = routeMetaPerMod;
 
       rawRoutesMeta.forEach((rawRouteMeta) => {
-        const { httpMethod, path, providersPerRou, providersPerReq } = rawRouteMeta;
-        const injectorPerRou = perRou.injector.resolveAndCreateChild(providersPerRou);
-        const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
-        const tokens = normalizeProviders(modulesProvidersPerReq).map((p) => p.provide);
-        injectorPerReq.addSibling(perReq.injector, tokens);
+        const { httpMethod, path } = rawRouteMeta;
+        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+        const injectorPerRou = this.getInjector('Rou', injectorPerMod, routeMetaPerMod, rawRouteMeta);
+        const injectorPerReq = this.getInjector('Req', injectorPerRou, routeMetaPerMod, rawRouteMeta);
+        // const injectors: ReflectiveInjector[] = [
+        //   injectorPerReq,
+        //   ...this.addSiblings('Mod', this.injectorPerApp, injectorPerMod, routeMetaPerMod),
+        //   ...this.addSiblings('Rou', injectorPerMod, injectorPerRou, routeMetaPerMod),
+        //   ...this.addSiblings('Req', injectorPerRou, injectorPerReq, routeMetaPerMod),
+        // ];
 
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
+          injectorPerReq.clearCache();
           injectorPerReq.parent = injectorPerRou.resolveAndCreateChild([
             { provide: NODE_REQ, useValue: nodeReq },
             { provide: NODE_RES, useValue: nodeRes },
             { provide: PATH_PARAMS, useValue: params },
             { provide: QUERY_STRING, useValue: queryString },
           ]);
-          injectorPerReq.clearCache();
-          perReq.injectors.forEach((i) => i.clearCache());
 
           // First HTTP handler in the chain of HTTP interceptors.
           const chain = injectorPerReq.get(HttpHandler) as HttpHandler;
           await chain.handle();
         }) as RouteHandler;
 
-        preparedRouteMeta.push({ moduleName, httpMethod, path, resolvedInjectors, handle });
+        preparedRouteMeta.push({ moduleName, httpMethod, path, handle });
       });
     }
 
     return preparedRouteMeta;
   }
 
-  /**
-   * Sets injector siblings on a module.
-   *
-   * @param parent Parent injector.
-   * @param routeMetaPerMod Metadata for current module.
-   * @param scope Scope of the providers
-   * @returns An array of the injectors promises.
-   */
-  protected setSiblingsOnModule(
-    routeMetaPerMod: RouteMetaPerMod,
-    parent: ReflectiveInjector,
-    scope: 'Mod' | 'Rou' | 'Req'
+  protected addSiblings(
+    scope: 'Mod' | 'Rou' | 'Req',
+    siblingParentInjector: ReflectiveInjector,
+    currentInjector: ReflectiveInjector,
+    routeMetaPerMod: RouteMetaPerMod
   ) {
-    const providers = routeMetaPerMod[`providersPer${scope}`];
-    const injector = parent.resolveAndCreateChild(providers);
-    const meta = this.moduleManager.getMetadata(routeMetaPerMod.module);
-    meta[`injectorPer${scope}`].resolveInjector(injector);
-
-    const siblings = routeMetaPerMod[`siblingsPer${scope}`];
-    const currentInjectorPromise = meta[`injectorPer${scope}`].getInjector();
-    const injectors = [injector];
-    const injectorsPromises = [currentInjectorPromise];
-
-    siblings.forEach((sbl) => {
-      injectorsPromises.push(sbl.injectorPromise);
-
-      sbl.injectorPromise
-        .then((externalInjector) => {
-          injectors.push(externalInjector);
-          injector.addSibling(externalInjector, sbl.tokens);
-        })
-        .catch((err) => {
-          this.log.errorDuringAddingSiblings('error', err);
-        });
+    const injectors: ReflectiveInjector[] = [];
+    routeMetaPerMod[`siblingsPer${scope}`].forEach(({ providers, tokens }) => {
+      console.log(scope, tokens);
+      const externalInjector = siblingParentInjector.resolveAndCreateChild(providers);
+      injectors.push(externalInjector);
+      currentInjector.addSibling(externalInjector, tokens);
     });
 
-    return { injector, injectorsPromises, injectors };
+    return injectors;
+  }
+
+  protected getInjector(
+    scope: 'Rou' | 'Req',
+    parentInjector: ReflectiveInjector,
+    routeMetaPerMod: RouteMetaPerMod,
+    rawRouteMeta: RawRouteMeta
+  ) {
+    const siblings: ServiceProvider[] = [];
+    routeMetaPerMod[`siblingsPer${scope}`].forEach(({ providers, tokens }) => {
+      siblings.push(...providers);
+    });
+
+    const uniqProvidersPerRou = getUniqProviders([
+      ...siblings,
+      ...routeMetaPerMod[`providersPer${scope}`],
+      ...rawRouteMeta[`providersPer${scope}`],
+    ]);
+
+    return parentInjector.resolveAndCreateChild(uniqProvidersPerRou);
   }
 
   /**
@@ -155,7 +150,7 @@ export class PreRouterExtension implements Extension<void> {
     }
 
     preparedRouteMeta.forEach((data) => {
-      const { moduleName, path, httpMethod, handle, resolvedInjectors } = data;
+      const { moduleName, path, httpMethod, handle } = data;
 
       if (path?.charAt(0) == '/') {
         let msg = `Invalid configuration of route '${path}'`;
@@ -165,15 +160,11 @@ export class PreRouterExtension implements Extension<void> {
 
       this.log.showRoutes('debug', { moduleName, httpMethod, path });
 
-      resolvedInjectors.then(() => {
-        if (httpMethod == 'ALL') {
-          this.router.all(`/${path}`, handle);
-        } else {
-          this.router.on(httpMethod, `/${path}`, handle);
-        }
-      }).catch((err) => {
-        this.log.resolveSiblingsError('error', err);
-      });
+      if (httpMethod == 'ALL') {
+        this.router.all(`/${path}`, handle);
+      } else {
+        this.router.on(httpMethod, `/${path}`, handle);
+      }
     });
   }
 

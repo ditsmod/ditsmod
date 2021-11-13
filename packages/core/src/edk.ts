@@ -7,7 +7,7 @@ export { RoutesExtension } from './extensions/routes.extension';
 export { ModuleFactory } from './module-factory';
 export { ProvidersMetadata } from './models/providers-metadata';
 export { NormalizedModuleMetadata } from './models/normalized-module-metadata';
-export { InjectorPromise, SiblingObj } from './models/sibling-obj';
+export { SiblingMap } from './models/sibling-map';
 export { ControllerMetadata } from './decorators/controller';
 export * from './utils/type-guards';
 export { deepFreeze } from './utils/deep-freeze';

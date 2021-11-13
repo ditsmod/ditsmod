@@ -1,5 +1,3 @@
-import { ReflectiveInjector } from '@ts-stack/di';
-
 import { SiblingsMetadata } from './metadata-per-mod';
 import {
   ControllerType,
@@ -79,6 +77,5 @@ export interface PreparedRouteMeta {
   moduleName: string;
   httpMethod: HttpMethod;
   path: string;
-  resolvedInjectors: Promise<ReflectiveInjector[]>;
   handle: RouteHandler;
 }

@@ -1,5 +1,5 @@
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { SiblingObj } from '../models/sibling-obj';
+import { SiblingMap } from '../models/sibling-map';
 import { ControllerAndMethodMetadata } from './controller-and-method-metadata';
 import { ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix';
 
@@ -7,9 +7,18 @@ import { ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from '
  * @todo Move this to models.
  */
 export class SiblingsMetadata {
-  siblingsPerMod = new Set<SiblingObj>();
-  siblingsPerRou = new Set<SiblingObj>();
-  siblingsPerReq = new Set<SiblingObj>();
+  /**
+   * This property is designed to be mutable. Mutable allows extensions to dynamically add providers.
+   */
+  siblingsPerMod: SiblingMap[];
+  /**
+   * This property is designed to be mutable. Mutable allows extensions to dynamically add providers.
+   */
+  siblingsPerRou: SiblingMap[];
+  /**
+   * This property is designed to be mutable. Mutable allows extensions to dynamically add providers.
+   */
+  siblingsPerReq: SiblingMap[];
 }
 export class SiblingsMap {
   siblingsPerMod = new Map<ServiceProvider, ModuleType | ModuleWithParams>();

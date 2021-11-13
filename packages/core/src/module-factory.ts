@@ -6,7 +6,7 @@ import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
 import { MetadataPerMod, SiblingsMap } from './types/metadata-per-mod';
-import { SiblingObj } from './models/sibling-obj';
+import { SiblingMap } from './models/sibling-map';
 import {
   GuardItem,
   DecoratorMetadata,
@@ -119,9 +119,9 @@ export class ModuleFactory {
       guardsPerMod: this.guardsPerMod,
       moduleMetadata: this.meta,
       controllersMetadata: deepFreeze(controllersMetadata),
-      siblingsPerMod: this.getSiblinsSet('Mod'),
-      siblingsPerRou: this.getSiblinsSet('Rou'),
-      siblingsPerReq: this.getSiblinsSet('Req'),
+      siblingsPerMod: this.getSiblins('Mod'),
+      siblingsPerRou: this.getSiblins('Rou'),
+      siblingsPerReq: this.getSiblins('Req'),
     });
   }
 
@@ -421,21 +421,21 @@ export class ModuleFactory {
     return arrControllerMetadata;
   }
 
-  protected getSiblinsSet(scope: 'Mod' | 'Rou' | 'Req') {
+  protected getSiblins(scope: 'Mod' | 'Rou' | 'Req') {
     const serviceModuleMap = new Map([...this.globalProviders[`siblingsPer${scope}`], ...this[`siblingsPer${scope}`]]);
     const moduleServicesMap = this.getModuleServicesMap(serviceModuleMap);
 
-    const siblingsObjects = new Set<SiblingObj>();
+    const siblingsMaps: SiblingMap[] = [];
 
     moduleServicesMap.forEach((providers, module) => {
       const meta = this.#moduleManager.getMetadata(module, true);
-      const siblingObj = new SiblingObj();
-      siblingObj.tokens = normalizeProviders(providers).map((p) => p.provide);
-      siblingObj.injectorPromise = meta[`injectorPer${scope}`].getInjector();
-      siblingsObjects.add(siblingObj);
+      const siblingMap = new SiblingMap();
+      siblingMap.tokens = new Set(normalizeProviders(providers).map((p) => p.provide));
+      siblingMap.providers = meta[`providersPer${scope}`].slice();
+      siblingsMaps.push(siblingMap);
     });
 
-    return siblingsObjects;
+    return siblingsMaps;
   }
 
   protected getModuleServicesMap(mapServiceModule: Map<ServiceProvider, ModuleType | ModuleWithParams>) {
