@@ -14,6 +14,12 @@ import { normalizeProviders } from '../utils/ng-utils';
 import { getUniqProviders } from '../utils/get-uniq-providers';
 import { MetadataPerMod2 } from '../types/metadata-per-mod';
 
+interface CurrentInjectors {
+  injectorPerMod: ReflectiveInjector;
+  injectorPerRou: ReflectiveInjector;
+  injectorPerReq: ReflectiveInjector;
+}
+
 @Injectable()
 export class PreRouterExtension implements Extension<void> {
   #inited: boolean;
@@ -57,11 +63,11 @@ export class PreRouterExtension implements Extension<void> {
       this.resolveProvidersOnModule(module, metadataPerMod2);
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
 
-      metaForExtensionsPerRouArr.forEach((metaForExtensionsPerRou) => {
-        const { httpMethod, path, providersPerRou, providersPerReq } = metaForExtensionsPerRou;
+      metaForExtensionsPerRouArr.forEach(({ httpMethod, path, providersPerRou, providersPerReq }) => {
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
         const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
-        const injectors = this.setSiblings(metadataPerMod2, injectorPerRou);
+        const currentInjectors: CurrentInjectors = { injectorPerMod, injectorPerRou, injectorPerReq };
+        const injectors = this.setSiblings(metadataPerMod2, currentInjectors);
 
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
           injectors.forEach((i) => i.clearCache());
@@ -84,10 +90,7 @@ export class PreRouterExtension implements Extension<void> {
     return preparedRouteMeta;
   }
 
-  protected resolveProvidersOnModule(
-    module: ModuleType | ModuleWithParams,
-    metadataPerMod2: MetadataPerMod2,
-  ) {
+  protected resolveProvidersOnModule(module: ModuleType | ModuleWithParams, metadataPerMod2: MetadataPerMod2) {
     const meta = this.moduleManager.getMetadata(module);
     const { providersPerMod, providersPerRou, providersPerReq } = metadataPerMod2;
     Object.freeze(providersPerMod);
@@ -96,21 +99,19 @@ export class PreRouterExtension implements Extension<void> {
     meta.dynamicProviders.resolve({ providersPerMod, providersPerRou, providersPerReq });
   }
 
-  protected setSiblings(
-    metadataPerMod2: MetadataPerMod2,
-    currentInjector: ReflectiveInjector
-  ) {
+  protected setSiblings(metadataPerMod2: MetadataPerMod2, currentInjectors: CurrentInjectors) {
     const siblingsPromises: Promise<any>[] = [];
     const injectors: ReflectiveInjector[] = [];
+    const { injectorPerMod, injectorPerRou, injectorPerReq } = currentInjectors;
+    const { promise, perMod, perRou, perReq } = metadataPerMod2.siblingsTokens;
 
-    metadataPerMod2.siblingsTokens.forEach((sibling) => {
-      siblingsPromises.push(sibling.promise);
-      sibling.promise.then((providers) => {
-      const meta = this.moduleManager.getMetadata(sibling.module);
-      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(meta.providersPerMod);
-        const siblingInjector = injectorPerMod.resolveAndCreateChild(providers);
-        currentInjector.addSibling(siblingInjector, sibling.tokens);
-        injectors.push(siblingInjector);
+    promise.then((resolvedSiblings) => {
+      const { providersPerMod, providersPerRou, providersPerReq } = resolvedSiblings;
+      perMod.forEach((sibling) => {
+        const meta = this.moduleManager.getMetadata(sibling.module);
+        const siblingInjectorPerMod = this.injectorPerApp.resolveAndCreateChild(meta.providersPerMod);
+        injectorPerMod.addSibling(siblingInjectorPerMod, sibling.tokens);
+        injectors.push(siblingInjectorPerMod);
       });
     });
 
