@@ -3,7 +3,7 @@ import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpHandler } from '../types/http-interceptor';
 import { HttpMethod, Extension, ServiceProvider, ModuleWithParams, ModuleType } from '../types/mix';
-import { RouteMetaPerMod, PreparedRouteMeta, RawRouteMeta } from '../types/route-data';
+import { MetadataPerMod2, PreparedRouteMeta, RawRouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { NodeResponse, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
@@ -48,10 +48,10 @@ export class PreRouterExtension implements Extension<void> {
     });
   };
 
-  protected async prepareRoutesMeta(routesMetaPerMod: RouteMetaPerMod[]) {
+  protected async prepareRoutesMeta(metadataPerMod2Arr: MetadataPerMod2[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
-    for (const routeMetaPerMod of routesMetaPerMod) {
+    for (const routeMetaPerMod of metadataPerMod2Arr) {
       const { module, moduleName, rawRoutesMeta, providersPerMod } = routeMetaPerMod;
       this.resolveProvidersOnModule(module, routeMetaPerMod);
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
@@ -88,10 +88,10 @@ export class PreRouterExtension implements Extension<void> {
 
   protected resolveProvidersOnModule(
     module: ModuleType | ModuleWithParams,
-    routeMetaPerMod: RouteMetaPerMod,
+    metadataPerMod2: MetadataPerMod2,
   ) {
     const meta = this.moduleManager.getMetadata(module);
-    const { providersPerMod, providersPerRou, providersPerReq } = routeMetaPerMod;
+    const { providersPerMod, providersPerRou, providersPerReq } = metadataPerMod2;
     Object.freeze(providersPerMod);
     Object.freeze(providersPerRou);
     Object.freeze(providersPerReq);
@@ -99,13 +99,13 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   protected setSiblings(
-    routeMetaPerMod: RouteMetaPerMod,
+    metadataPerMod2: MetadataPerMod2,
     currentInjector: ReflectiveInjector
   ) {
     const siblingsPromises: Promise<any>[] = [];
     const injectors: ReflectiveInjector[] = [];
 
-    routeMetaPerMod.siblingsTokens.forEach((sibling) => {
+    metadataPerMod2.siblingsTokens.forEach((sibling) => {
       siblingsPromises.push(sibling.promise);
       sibling.promise.then((providers) => {
       const meta = this.moduleManager.getMetadata(sibling.module);

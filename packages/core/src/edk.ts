@@ -15,7 +15,7 @@ export { isModule } from './utils/type-guards';
 export { pickProperties } from './utils/pick-properties';
 export { MetadataPerMod1, SiblingsTokens } from './types/metadata-per-mod1';
 export { ControllerType, AnyObj, NormalizedGuard, DecoratorMetadata, Extension } from './types/mix';
-export { RawRouteMeta, RouteMetaPerMod } from './types/route-data';
+export { RawRouteMeta, MetadataPerMod2 } from './types/route-data';
 export { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS, APP_METADATA_MAP } from './constans';
 export { ModuleMetadata } from './types/module-metadata';
 export { RouteMeta } from './types/route-data';

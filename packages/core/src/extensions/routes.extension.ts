@@ -5,12 +5,12 @@ import { ControllerMetadata } from '../decorators/controller';
 import { RootMetadata } from '../models/root-metadata';
 import { MetadataPerMod1 } from '../types/metadata-per-mod1';
 import { AppMetadataMap, GuardItem, NormalizedGuard, Extension, ServiceProvider } from '../types/mix';
-import { RawRouteMeta, RouteMetaPerMod, RouteMeta } from '../types/route-data';
+import { RawRouteMeta, MetadataPerMod2, RouteMeta } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
 
 @Injectable()
-export class RoutesExtension implements Extension<RouteMetaPerMod[]> {
-  protected routesMetaPerMod: RouteMetaPerMod[] = [];
+export class RoutesExtension implements Extension<MetadataPerMod2[]> {
+  protected metadataPerMod2Arr: MetadataPerMod2[] = [];
 
   constructor(
     protected injectorPerApp: ReflectiveInjector,
@@ -19,26 +19,26 @@ export class RoutesExtension implements Extension<RouteMetaPerMod[]> {
   ) {}
 
   async init() {
-    if (this.routesMetaPerMod.length) {
-      return this.routesMetaPerMod;
+    if (this.metadataPerMod2Arr.length) {
+      return this.metadataPerMod2Arr;
     }
 
     const { prefixPerApp } = this.rootMetadata;
 
     this.appMetadataMap.forEach((metadataPerMod) => {
-      const routeMetaPerMod = new RouteMetaPerMod();
+      const metadataPerMod2 = new MetadataPerMod2();
       const { meta } = metadataPerMod;
-      routeMetaPerMod.module = meta.module;
-      routeMetaPerMod.moduleName = meta.name;
-      routeMetaPerMod.providersPerMod = meta.providersPerMod.slice();
-      routeMetaPerMod.providersPerRou = meta.providersPerRou.slice();
-      routeMetaPerMod.providersPerReq = meta.providersPerReq.slice();
-      routeMetaPerMod.siblingsTokens = metadataPerMod.siblingsTokens;
-      routeMetaPerMod.rawRoutesMeta = this.getMetaPerRou(prefixPerApp, metadataPerMod);
-      this.routesMetaPerMod.push(routeMetaPerMod);
+      metadataPerMod2.module = meta.module;
+      metadataPerMod2.moduleName = meta.name;
+      metadataPerMod2.providersPerMod = meta.providersPerMod.slice();
+      metadataPerMod2.providersPerRou = meta.providersPerRou.slice();
+      metadataPerMod2.providersPerReq = meta.providersPerReq.slice();
+      metadataPerMod2.siblingsTokens = metadataPerMod.siblingsTokens;
+      metadataPerMod2.rawRoutesMeta = this.getMetaPerRou(prefixPerApp, metadataPerMod);
+      this.metadataPerMod2Arr.push(metadataPerMod2);
     });
 
-    return this.routesMetaPerMod;
+    return this.metadataPerMod2Arr;
   }
 
   protected getMetaPerRou(prefixPerApp: string, metadataPerMod: MetadataPerMod1) {
