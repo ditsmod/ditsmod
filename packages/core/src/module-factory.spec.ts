@@ -8,7 +8,7 @@ import { Route, RouteMetadata } from './decorators/route';
 import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
-import { MetadataPerMod1, SiblingsMap } from './types/metadata-per-mod1';
+import { MetadataPerMod1, SiblingsMap } from './types/metadata-per-mod';
 import { SiblingMap } from './models/sibling-map';
 import {
   ModuleType,

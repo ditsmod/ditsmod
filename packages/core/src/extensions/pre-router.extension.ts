@@ -3,7 +3,7 @@ import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpHandler } from '../types/http-interceptor';
 import { HttpMethod, Extension, ServiceProvider, ModuleWithParams, ModuleType } from '../types/mix';
-import { MetadataPerMod2, PreparedRouteMeta, RawRouteMeta } from '../types/route-data';
+import { PreparedRouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { NodeResponse, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
@@ -12,6 +12,7 @@ import { Log } from '../services/log';
 import { ModuleManager } from '../services/module-manager';
 import { normalizeProviders } from '../utils/ng-utils';
 import { getUniqProviders } from '../utils/get-uniq-providers';
+import { MetadataPerMod2 } from '../types/metadata-per-mod';
 
 @Injectable()
 export class PreRouterExtension implements Extension<void> {

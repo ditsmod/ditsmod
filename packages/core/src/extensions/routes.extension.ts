@@ -3,9 +3,9 @@ import { Inject, Injectable, ReflectiveInjector } from '@ts-stack/di';
 import { APP_METADATA_MAP } from '../constans';
 import { ControllerMetadata } from '../decorators/controller';
 import { RootMetadata } from '../models/root-metadata';
-import { MetadataPerMod1 } from '../types/metadata-per-mod1';
+import { MetadataPerMod1, RawRouteMeta, MetadataPerMod2 } from '../types/metadata-per-mod';
 import { AppMetadataMap, GuardItem, NormalizedGuard, Extension, ServiceProvider } from '../types/mix';
-import { RawRouteMeta, MetadataPerMod2, RouteMeta } from '../types/route-data';
+import { RouteMeta } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
 
 @Injectable()

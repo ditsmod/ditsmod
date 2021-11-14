@@ -1,6 +1,6 @@
 import { ClassProvider, ExistingProvider, FactoryProvider, Type, TypeProvider, ValueProvider } from '@ts-stack/di';
 
-import { MetadataPerMod1 } from './metadata-per-mod1';
+import { MetadataPerMod1 } from './metadata-per-mod';
 import { ProvidersMetadata } from '../models/providers-metadata';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Type<T>;
