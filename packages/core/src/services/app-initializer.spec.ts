@@ -13,7 +13,7 @@ import { RootMetadata } from '../models/root-metadata';
 import { DefaultLogger } from './default-logger';
 import { ModuleManager } from './module-manager';
 import { defaultProvidersPerReq } from './default-providers-per-req';
-import { MetadataPerMod } from '../types/metadata-per-mod';
+import { MetadataPerMod1 } from '../types/metadata-per-mod1';
 import { SiblingMap } from '../models/sibling-map';
 import { Controller } from '../decorators/controller';
 import { ModConfig } from '../models/mod-config';

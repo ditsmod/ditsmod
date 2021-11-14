@@ -1,6 +1,6 @@
 import { ClassProvider, ExistingProvider, FactoryProvider, Type, TypeProvider, ValueProvider } from '@ts-stack/di';
 
-import { MetadataPerMod } from './metadata-per-mod';
+import { MetadataPerMod1 } from './metadata-per-mod1';
 import { ProvidersMetadata } from '../models/providers-metadata';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Type<T>;
@@ -45,7 +45,7 @@ export interface DecoratorMetadata<MV extends AnyObj = AnyObj> {
   value: MV;
 }
 
-export type AppMetadataMap = Map<ModuleType | ModuleWithParams, MetadataPerMod>;
+export type AppMetadataMap = Map<ModuleType | ModuleWithParams, MetadataPerMod1>;
 
 export type GuardItem = Type<CanActivate> | [Type<CanActivate>, any, ...any[]];
 

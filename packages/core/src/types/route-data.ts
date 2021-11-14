@@ -1,4 +1,4 @@
-import { SiblingsTokens } from './metadata-per-mod';
+import { SiblingsTokens } from './metadata-per-mod1';
 import {
   ControllerType,
   DecoratorMetadata,

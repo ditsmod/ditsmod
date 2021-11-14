@@ -24,7 +24,7 @@ import { Counter } from './counter';
 import { APP_METADATA_MAP, defaultExtensions } from '../constans';
 import { Log } from './log';
 import { LogManager } from './log-manager';
-import { SiblingsMap } from '../types/metadata-per-mod';
+import { SiblingsMap } from '../types/metadata-per-mod1';
 
 @Injectable()
 export class AppInitializer {

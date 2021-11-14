@@ -5,7 +5,7 @@ import { ProvidersMetadata } from './models/providers-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
-import { MetadataPerMod, SiblingsMap } from './types/metadata-per-mod';
+import { MetadataPerMod1, SiblingsMap } from './types/metadata-per-mod1';
 import { SiblingMap } from './models/sibling-map';
 import {
   GuardItem,
@@ -61,7 +61,7 @@ export class ModuleFactory {
   protected siblingsPerReq = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
 
   protected globalProviders: ProvidersMetadata & SiblingsMap;
-  protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod>();
+  protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod1>();
   #moduleManager: ModuleManager;
 
   constructor(private injectorPerApp: ReflectiveInjector, private log: Log) {}

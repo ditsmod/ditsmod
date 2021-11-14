@@ -13,7 +13,7 @@ export * from './utils/type-guards';
 export { deepFreeze } from './utils/deep-freeze';
 export { isModule } from './utils/type-guards';
 export { pickProperties } from './utils/pick-properties';
-export { MetadataPerMod, SiblingsTokens } from './types/metadata-per-mod';
+export { MetadataPerMod1, SiblingsTokens } from './types/metadata-per-mod1';
 export { ControllerType, AnyObj, NormalizedGuard, DecoratorMetadata, Extension } from './types/mix';
 export { RawRouteMeta, RouteMetaPerMod } from './types/route-data';
 export { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS, APP_METADATA_MAP } from './constans';

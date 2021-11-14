@@ -19,8 +19,10 @@ export class SiblingsMap {
   siblingsPerReq = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
 }
 
-
-export class MetadataPerMod {
+/**
+ * Metadata collected using `ModuleFactory`.
+ */
+export class MetadataPerMod1 {
   prefixPerMod: string;
   guardsPerMod: NormalizedGuard[];
   meta: NormalizedModuleMetadata;

@@ -3,7 +3,7 @@ import { Inject, Injectable, ReflectiveInjector } from '@ts-stack/di';
 import { APP_METADATA_MAP } from '../constans';
 import { ControllerMetadata } from '../decorators/controller';
 import { RootMetadata } from '../models/root-metadata';
-import { MetadataPerMod } from '../types/metadata-per-mod';
+import { MetadataPerMod1 } from '../types/metadata-per-mod1';
 import { AppMetadataMap, GuardItem, NormalizedGuard, Extension, ServiceProvider } from '../types/mix';
 import { RawRouteMeta, RouteMetaPerMod, RouteMeta } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
@@ -41,7 +41,7 @@ export class RoutesExtension implements Extension<RouteMetaPerMod[]> {
     return this.routesMetaPerMod;
   }
 
-  protected getMetaPerRou(prefixPerApp: string, metadataPerMod: MetadataPerMod) {
+  protected getMetaPerRou(prefixPerApp: string, metadataPerMod: MetadataPerMod1) {
     const { controllersMetadata, prefixPerMod, guardsPerMod } = metadataPerMod;
 
     const rawRouteMeta: RawRouteMeta[] = [];
