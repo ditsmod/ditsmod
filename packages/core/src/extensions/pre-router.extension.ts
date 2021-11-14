@@ -52,19 +52,16 @@ export class PreRouterExtension implements Extension<void> {
   protected async prepareRoutesMeta(metadataPerMod2Arr: MetadataPerMod2[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
-    for (const routeMetaPerMod of metadataPerMod2Arr) {
-      const { module, moduleName, metaPerRouForExtensions: rawRoutesMeta, providersPerMod } = routeMetaPerMod;
-      this.resolveProvidersOnModule(module, routeMetaPerMod);
+    for (const metadataPerMod2 of metadataPerMod2Arr) {
+      const { module, moduleName, metaPerRouForExtensionsArr, providersPerMod } = metadataPerMod2;
+      this.resolveProvidersOnModule(module, metadataPerMod2);
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-      const perMod = this.setSiblings('Mod', routeMetaPerMod, this.injectorPerApp, injectorPerMod);
 
-      rawRoutesMeta.forEach((rawRouteMeta) => {
-        const { httpMethod, path, providersPerRou, providersPerReq } = rawRouteMeta;
+      metaPerRouForExtensionsArr.forEach((metaPerRouForExtensions) => {
+        const { httpMethod, path, providersPerRou, providersPerReq } = metaPerRouForExtensions;
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
         const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
-        const perRou = this.setSiblings('Rou', routeMetaPerMod, injectorPerMod, injectorPerRou);
-        const perReq = this.setSiblings('Req', routeMetaPerMod, injectorPerRou, injectorPerReq);
-        const injectors = [...perMod.injectors, ...perRou.injectors, ...perReq.injectors];
+        const injectors = this.setSiblings(metadataPerMod2, injectorPerRou);
 
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
           injectors.forEach((i) => i.clearCache());
@@ -117,7 +114,7 @@ export class PreRouterExtension implements Extension<void> {
       });
     });
 
-    return { injectors, siblingsPromises };
+    return injectors;
   }
 
   /**

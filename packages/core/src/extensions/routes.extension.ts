@@ -34,7 +34,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2[]> {
       metadataPerMod2.providersPerRou = meta.providersPerRou.slice();
       metadataPerMod2.providersPerReq = meta.providersPerReq.slice();
       metadataPerMod2.siblingsTokens = metadataPerMod.siblingsTokens;
-      metadataPerMod2.metaPerRouForExtensions = this.getMetaPerRou(prefixPerApp, metadataPerMod);
+      metadataPerMod2.metaPerRouForExtensionsArr = this.getMetaPerRou(prefixPerApp, metadataPerMod);
       this.metadataPerMod2Arr.push(metadataPerMod2);
     });
 
