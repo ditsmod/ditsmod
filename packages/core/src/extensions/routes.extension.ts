@@ -3,7 +3,7 @@ import { Inject, Injectable, ReflectiveInjector } from '@ts-stack/di';
 import { APP_METADATA_MAP } from '../constans';
 import { ControllerMetadata } from '../decorators/controller';
 import { RootMetadata } from '../models/root-metadata';
-import { MetadataPerMod1, RawRouteMeta, MetadataPerMod2 } from '../types/metadata-per-mod';
+import { MetadataPerMod1, MetaPerRouForExtensions, MetadataPerMod2 } from '../types/metadata-per-mod';
 import { AppMetadataMap, GuardItem, NormalizedGuard, Extension, ServiceProvider } from '../types/mix';
 import { RouteMeta } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
@@ -34,7 +34,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2[]> {
       metadataPerMod2.providersPerRou = meta.providersPerRou.slice();
       metadataPerMod2.providersPerReq = meta.providersPerReq.slice();
       metadataPerMod2.siblingsTokens = metadataPerMod.siblingsTokens;
-      metadataPerMod2.rawRoutesMeta = this.getMetaPerRou(prefixPerApp, metadataPerMod);
+      metadataPerMod2.metaPerRouForExtensions = this.getMetaPerRou(prefixPerApp, metadataPerMod);
       this.metadataPerMod2Arr.push(metadataPerMod2);
     });
 
@@ -44,7 +44,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2[]> {
   protected getMetaPerRou(prefixPerApp: string, metadataPerMod: MetadataPerMod1) {
     const { controllersMetadata, prefixPerMod, guardsPerMod } = metadataPerMod;
 
-    const rawRouteMeta: RawRouteMeta[] = [];
+    const rawRouteMeta: MetaPerRouForExtensions[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];

@@ -52,11 +52,11 @@ export class MetadataPerMod1 {
    * Providers per a request.
    */
   providersPerReq: ServiceProvider[];
-  rawRoutesMeta: RawRouteMeta[];
+  metaPerRouForExtensions: MetaPerRouForExtensions[];
   siblingsTokens: SiblingsTokens;
 }
 
-export class RawRouteMeta {
+export class MetaPerRouForExtensions {
   /**
    * Providers per a route.
    */

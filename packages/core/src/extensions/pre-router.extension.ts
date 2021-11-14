@@ -53,7 +53,7 @@ export class PreRouterExtension implements Extension<void> {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
     for (const routeMetaPerMod of metadataPerMod2Arr) {
-      const { module, moduleName, rawRoutesMeta, providersPerMod } = routeMetaPerMod;
+      const { module, moduleName, metaPerRouForExtensions: rawRoutesMeta, providersPerMod } = routeMetaPerMod;
       this.resolveProvidersOnModule(module, routeMetaPerMod);
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       const perMod = this.setSiblings('Mod', routeMetaPerMod, this.injectorPerApp, injectorPerMod);
