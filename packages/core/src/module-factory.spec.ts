@@ -9,7 +9,7 @@ import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { MetadataPerMod1, SiblingsMap } from './types/metadata-per-mod';
-import { SiblingMap } from './models/sibling-map';
+import { SiblingTokens } from './models/sibling-tokens';
 import {
   ModuleType,
   ServiceProvider,
@@ -30,7 +30,7 @@ import { LogManager } from './services/log-manager';
 
 describe('ModuleFactory', () => {
   type M = ModuleType | ModuleWithParams;
-  type S = SiblingMap;
+  type S = SiblingTokens;
 
   @Injectable()
   class MockModuleFactory extends ModuleFactory {

@@ -91,11 +91,11 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   protected resolveProvidersOnModule(module: ModuleType | ModuleWithParams, metadataPerMod2: MetadataPerMod2) {
-    const meta = this.moduleManager.getMetadata(module);
     const { providersPerMod, providersPerRou, providersPerReq } = metadataPerMod2;
     Object.freeze(providersPerMod);
     Object.freeze(providersPerRou);
     Object.freeze(providersPerReq);
+    const meta = this.moduleManager.getMetadata(module);
     meta.dynamicProviders.resolve({ providersPerMod, providersPerRou, providersPerReq });
   }
 
@@ -103,15 +103,21 @@ export class PreRouterExtension implements Extension<void> {
     const siblingsPromises: Promise<any>[] = [];
     const injectors: ReflectiveInjector[] = [];
     const { injectorPerMod, injectorPerRou, injectorPerReq } = currentInjectors;
-    const { promise, perMod, perRou, perReq } = metadataPerMod2.siblingsTokens;
 
-    promise.then((resolvedSiblings) => {
-      const { providersPerMod, providersPerRou, providersPerReq } = resolvedSiblings;
-      perMod.forEach((sibling) => {
-        const meta = this.moduleManager.getMetadata(sibling.module);
-        const siblingInjectorPerMod = this.injectorPerApp.resolveAndCreateChild(meta.providersPerMod);
-        injectorPerMod.addSibling(siblingInjectorPerMod, sibling.tokens);
-        injectors.push(siblingInjectorPerMod);
+    metadataPerMod2.siblingTokensArr.forEach((siblingTokens) => {
+      const { module, tokensPerMod, tokensPerRou, tokensPerReq } = siblingTokens;
+      const meta = this.moduleManager.getMetadata(module);
+      meta.dynamicProviders.getPromise().then(siblingProviders => {
+        const { providersPerMod, providersPerRou, providersPerReq } = siblingProviders;
+
+        const siblingInjectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+        injectorPerMod.addSibling(siblingInjectorPerMod, tokensPerMod);
+
+        const siblingInjectorPerRou = siblingInjectorPerMod.resolveAndCreateChild(providersPerRou);
+        injectorPerRou.addSibling(siblingInjectorPerRou, tokensPerRou);
+
+        const siblingInjectorPerReq = siblingInjectorPerRou.resolveAndCreateChild(providersPerReq);
+        injectorPerReq.addSibling(siblingInjectorPerReq, tokensPerReq);
       });
     });
 

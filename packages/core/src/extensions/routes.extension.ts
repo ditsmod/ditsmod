@@ -25,16 +25,16 @@ export class RoutesExtension implements Extension<MetadataPerMod2[]> {
 
     const { prefixPerApp } = this.rootMetadata;
 
-    this.appMetadataMap.forEach((metadataPerMod) => {
+    this.appMetadataMap.forEach((metadataPerMod1) => {
       const metadataPerMod2 = new MetadataPerMod2();
-      const { meta } = metadataPerMod;
+      const { meta } = metadataPerMod1;
       metadataPerMod2.module = meta.module;
       metadataPerMod2.moduleName = meta.name;
       metadataPerMod2.providersPerMod = meta.providersPerMod.slice();
       metadataPerMod2.providersPerRou = meta.providersPerRou.slice();
       metadataPerMod2.providersPerReq = meta.providersPerReq.slice();
-      metadataPerMod2.siblingsTokens = metadataPerMod.siblingsTokens;
-      metadataPerMod2.metaForExtensionsPerRouArr = this.getMetaPerRou(prefixPerApp, metadataPerMod);
+      metadataPerMod2.siblingTokensArr = metadataPerMod1.siblingTokensArr;
+      metadataPerMod2.metaForExtensionsPerRouArr = this.getMetaPerRou(prefixPerApp, metadataPerMod1);
       this.metadataPerMod2Arr.push(metadataPerMod2);
     });
 

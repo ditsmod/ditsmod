@@ -1,17 +1,17 @@
 import { ServiceProvider } from '../types/mix';
 
-export interface ResolvedSiblings {
+export interface SiblingProviders {
   providersPerMod: ServiceProvider[],
   providersPerRou: ServiceProvider[],
   providersPerReq: ServiceProvider[],
 }
 
 export class DynamicProviders {
-  resolve: (providers: ResolvedSiblings) => void;
-  #promise: Promise<ResolvedSiblings>;
+  resolve: (providers: SiblingProviders) => void;
+  #promise: Promise<SiblingProviders>;
 
   constructor() {
-    this.#promise = new Promise<ResolvedSiblings>((resolve) => {
+    this.#promise = new Promise<SiblingProviders>((resolve) => {
       this.resolve = resolve;
     });
   }

@@ -6,7 +6,7 @@ import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
 import { MetadataPerMod1, SiblingsMap } from './types/metadata-per-mod';
-import { SiblingMap } from './models/sibling-map';
+import { SiblingTokens } from './models/sibling-tokens';
 import {
   GuardItem,
   DecoratorMetadata,
@@ -119,12 +119,7 @@ export class ModuleFactory {
       guardsPerMod: this.guardsPerMod,
       meta: this.meta,
       controllersMetadata: deepFreeze(controllersMetadata),
-      siblingsTokens: {
-        promise: meta.dynamicProviders.getPromise(),
-        perMod: this.getSiblins('Mod'),
-        perRou: this.getSiblins('Rou'),
-        perReq: this.getSiblins('Req'),
-      },
+      siblingTokensArr: this.getSiblins(),
     });
   }
 
@@ -424,32 +419,44 @@ export class ModuleFactory {
     return arrControllerMetadata;
   }
 
-  protected getSiblins(scope: 'Mod' | 'Rou' | 'Req') {
-    const serviceModuleMap = new Map([...this.globalProviders[`siblingsPer${scope}`], ...this[`siblingsPer${scope}`]]);
-    const moduleServicesMap = this.getModuleServicesMap(serviceModuleMap);
+  protected getSiblins() {
+    const perMod = this.getModuleServicesMap('Mod');
+    const perRou = this.getModuleServicesMap('Rou');
+    const perReq = this.getModuleServicesMap('Req');
+    const allModules = new Set<ModuleType | ModuleWithParams>();
+    new Map([...perMod, ...perRou, ...perReq]).forEach((_, module) => allModules.add(module));
 
-    const siblingsMaps: SiblingMap[] = [];
+    const SiblingTokensArr: SiblingTokens[] = [];
 
-    moduleServicesMap.forEach((providers, module) => {
-      const siblingMap = new SiblingMap();
-      siblingMap.module = module;
-      siblingMap.tokens = new Set(normalizeProviders(providers).map((p) => p.provide));
-      siblingsMaps.push(siblingMap);
+    allModules.forEach((module) => {
+      const siblingTokens = new SiblingTokens();
+      siblingTokens.module = module;
+      siblingTokens.tokensPerMod = this.getSiblingsTokens(module, perMod);
+      siblingTokens.tokensPerRou = this.getSiblingsTokens(module, perRou);
+      siblingTokens.tokensPerReq = this.getSiblingsTokens(module, perReq);
+      SiblingTokensArr.push(siblingTokens);
     });
 
-    return siblingsMaps;
+    return SiblingTokensArr;
   }
 
-  protected getModuleServicesMap(mapServiceModule: Map<ServiceProvider, ModuleType | ModuleWithParams>) {
-    const mapModuleServices = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
-    mapServiceModule.forEach((moduleOrObj, provider) => {
-      const providers = mapModuleServices.get(moduleOrObj);
+  protected getSiblingsTokens(module: ModuleType| ModuleWithParams, map: Map<ModuleType | ModuleWithParams, ServiceProvider[]>) {
+    const providers = map.get(module) || [];
+    return new Set(normalizeProviders(providers).map((p) => p.provide));
+  }
+
+  protected getModuleServicesMap(scope: 'Mod' | 'Rou' | 'Req') {
+    const serviceModuleMap = new Map([...this.globalProviders[`siblingsPer${scope}`], ...this[`siblingsPer${scope}`]]);
+    const moduleServicesMap = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
+
+    serviceModuleMap.forEach((moduleOrObj, provider) => {
+      const providers = moduleServicesMap.get(moduleOrObj);
       if (providers) {
         providers.push(provider);
       } else {
-        mapModuleServices.set(moduleOrObj, [provider]);
+        moduleServicesMap.set(moduleOrObj, [provider]);
       }
     });
-    return mapModuleServices;
+    return moduleServicesMap;
   }
 }
