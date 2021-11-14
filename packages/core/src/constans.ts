@@ -2,7 +2,7 @@ import { InjectionToken } from '@ts-stack/di';
 
 import { ModConfig } from './models/mod-config';
 import { HttpInterceptor } from './types/http-interceptor';
-import { MetadataPerMod2 } from './types/metadata-per-mod1';
+import { MetadataPerMod2 } from './types/metadata-per-mod';
 import { AppMetadataMap, Extension, ServiceProvider } from './types/mix';
 import { PathParam } from './types/router';
 import { NodeRequest, NodeResponse } from './types/server-options';
