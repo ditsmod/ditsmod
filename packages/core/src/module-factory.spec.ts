@@ -8,8 +8,8 @@ import { Route, RouteMetadata } from './decorators/route';
 import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
-import { MetadataPerMod, SiblingsMap, SiblingsMetadata } from './types/metadata-per-mod';
-import { SiblingObj } from './models/sibling-obj';
+import { MetadataPerMod, SiblingsMap } from './types/metadata-per-mod';
+import { SiblingMap } from './models/sibling-map';
 import {
   ModuleType,
   ServiceProvider,
@@ -30,7 +30,7 @@ import { LogManager } from './services/log-manager';
 
 describe('ModuleFactory', () => {
   type M = ModuleType | ModuleWithParams;
-  type S = SiblingObj;
+  type S = SiblingMap;
 
   @Injectable()
   class MockModuleFactory extends ModuleFactory {
@@ -62,10 +62,6 @@ describe('ModuleFactory', () => {
     override getModuleServicesMap(mapServiceModule: Map<ServiceProvider, ModuleType | ModuleWithParams>) {
       return super.getModuleServicesMap(mapServiceModule);
     }
-
-    override getSiblingsPerReq() {
-      return super.getSiblingsPerReq();
-    }
   }
 
   class MyLogger extends Logger {
@@ -78,7 +74,13 @@ describe('ModuleFactory', () => {
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
-    mock = new MockModuleFactory(null as any, null as any);
+    const injectorPerApp = ReflectiveInjector.resolveAndCreate([
+      ...defaultProvidersPerApp,
+      { provide: Logger, useClass: MyLogger },
+      { provide: LogManager, useValue: new LogManager() },
+      MockModuleFactory,
+    ]);
+    mock = injectorPerApp.get(MockModuleFactory);
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config);
     const logManager = new LogManager();
@@ -550,6 +552,27 @@ describe('ModuleFactory', () => {
         controllers: [Ctrl],
       })
       class Module3 {}
+
+      fit('case 0', () => {
+        @Module({ controllers: [Ctrl] })
+        class Module1 {}
+
+        @RootModule({
+          imports: [Module1]
+        })
+        class AppModule {}
+
+        const meta = moduleManager.scanRootModule(AppModule);
+        expect(meta.providersPerReq).toEqual(meta.exportsProvidersPerReq);
+        expect(meta.providersPerReq).toEqual(defaultProvidersPerReq);
+
+        const providers = new ProvidersMetadata();
+        const siblings = new SiblingsMap();
+        const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers, ...siblings };
+        mock.bootstrap(globalProviders, '', AppModule, moduleManager);
+        expect(mock.appMetadataMap.get(AppModule)?.moduleMetadata.exportsProvidersPerReq).toEqual(defaultProvidersPerReq);
+        // console.log(mock.appMetadataMap.get(Module1)?.siblingsPerReq)
+      });
 
       it('case 1', () => {
         const injectorPerApp = ReflectiveInjector.resolveAndCreate([
