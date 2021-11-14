@@ -1,6 +1,7 @@
 import { InjectionToken } from '@ts-stack/di';
 
 import { AnyObj, ControllerType, ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../types/mix';
+import { DynamicProviders } from './dynamic-provider';
 import { ProvidersMetadata } from './providers-metadata';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
@@ -29,8 +30,9 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   exportsProvidersPerReq: ServiceProvider[] = [];
   /**
    * This property allows you to pass any information to extensions.
-   * 
+   *
    * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
    */
   extensionsMeta = {} as A;
+  dynamicProviders = new DynamicProviders();
 }

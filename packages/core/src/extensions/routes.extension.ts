@@ -33,9 +33,7 @@ export class RoutesExtension implements Extension<RouteMetaPerMod[]> {
       routeMetaPerMod.providersPerMod = moduleMetadata.providersPerMod.slice();
       routeMetaPerMod.providersPerRou = moduleMetadata.providersPerRou.slice();
       routeMetaPerMod.providersPerReq = moduleMetadata.providersPerReq.slice();
-      routeMetaPerMod.siblingsPerMod = metadataPerMod.siblingsPerMod;
-      routeMetaPerMod.siblingsPerRou = metadataPerMod.siblingsPerRou;
-      routeMetaPerMod.siblingsPerReq = metadataPerMod.siblingsPerReq;
+      routeMetaPerMod.siblingsTokens = metadataPerMod.siblingsTokens;
       routeMetaPerMod.rawRoutesMeta = this.getMetaPerRou(prefixPerApp, metadataPerMod);
       this.routesMetaPerMod.push(routeMetaPerMod);
     });

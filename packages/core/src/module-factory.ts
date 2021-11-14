@@ -119,9 +119,12 @@ export class ModuleFactory {
       guardsPerMod: this.guardsPerMod,
       moduleMetadata: this.meta,
       controllersMetadata: deepFreeze(controllersMetadata),
-      siblingsPerMod: this.getSiblins('Mod'),
-      siblingsPerRou: this.getSiblins('Rou'),
-      siblingsPerReq: this.getSiblins('Req'),
+      siblingsTokens: {
+        promise: meta.dynamicProviders.getPromise(),
+        perMod: this.getSiblins('Mod'),
+        perRou: this.getSiblins('Rou'),
+        perReq: this.getSiblins('Req'),
+      },
     });
   }
 
@@ -428,10 +431,9 @@ export class ModuleFactory {
     const siblingsMaps: SiblingMap[] = [];
 
     moduleServicesMap.forEach((providers, module) => {
-      const meta = this.#moduleManager.getMetadata(module, true);
       const siblingMap = new SiblingMap();
+      siblingMap.module = module;
       siblingMap.tokens = new Set(normalizeProviders(providers).map((p) => p.provide));
-      siblingMap.providers = meta[`providersPer${scope}`].slice();
       siblingsMaps.push(siblingMap);
     });
 
