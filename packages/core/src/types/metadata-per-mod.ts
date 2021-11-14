@@ -23,7 +23,7 @@ export class SiblingsMap {
 export class MetadataPerMod {
   prefixPerMod: string;
   guardsPerMod: NormalizedGuard[];
-  moduleMetadata: NormalizedModuleMetadata;
+  meta: NormalizedModuleMetadata;
   /**
    * The controller metadata collected from all controllers of current module.
    */

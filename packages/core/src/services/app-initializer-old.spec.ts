@@ -39,8 +39,8 @@ describe('AppInitializer', () => {
       return super.mergeMetadata(appModule);
     }
 
-    override collectProvidersPerAppAndExtensions(metadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
-      return super.collectProvidersPerAppAndExtensions(metadata, moduleManager);
+    override collectProvidersPerAppAndExtensions(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
+      return super.collectProvidersPerAppAndExtensions(meta, moduleManager);
     }
 
     override prepareProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
@@ -401,10 +401,10 @@ describe('AppInitializer', () => {
       mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
       const mod0 = mock.appMetadataMap.get(Module0);
-      expect(mod0?.moduleMetadata.providersPerApp).toEqual([]);
+      expect(mod0?.meta.providersPerApp).toEqual([]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
-      expect(mod0?.moduleMetadata.providersPerMod).toEqual([providerPerMod, Provider0]);
-      expect(mod0?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq]);
+      expect(mod0?.meta.providersPerMod).toEqual([providerPerMod, Provider0]);
+      expect(mod0?.meta.providersPerReq).toEqual([...defaultProvidersPerReq]);
 
       const tokensPerMod = Array.from(mod0?.siblingsPerMod!).map((obj) => obj.tokens);
       expect(tokensPerMod).toEqual([[Provider0], [Provider3, Provider4]]);
@@ -422,9 +422,9 @@ describe('AppInitializer', () => {
       mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
       const mod1 = mock.appMetadataMap.get(Module1);
-      expect(mod1?.moduleMetadata.providersPerApp).toEqual([]);
+      expect(mod1?.meta.providersPerApp).toEqual([]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
-      expect(mod1?.moduleMetadata.providersPerMod).toEqual([providerPerMod, obj1, Provider2]);
+      expect(mod1?.meta.providersPerMod).toEqual([providerPerMod, obj1, Provider2]);
 
       const tokensPerMod = Array.from(mod1?.siblingsPerMod!).map((obj) => obj.tokens);
       expect(tokensPerMod).toEqual([[Provider0], [Provider3, Provider4]]);
@@ -442,10 +442,10 @@ describe('AppInitializer', () => {
       mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
       const mod2 = mock.appMetadataMap.get(module2WithParams);
-      expect(mod2?.moduleMetadata.providersPerApp).toEqual([]);
+      expect(mod2?.meta.providersPerApp).toEqual([]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
-      expect(mod2?.moduleMetadata.providersPerMod).toEqual([providerPerMod, Provider3, Provider4]);
-      expect(mod2?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq]);
+      expect(mod2?.meta.providersPerMod).toEqual([providerPerMod, Provider3, Provider4]);
+      expect(mod2?.meta.providersPerReq).toEqual([...defaultProvidersPerReq]);
 
       const tokensPerMod = Array.from(mod2?.siblingsPerMod!).map((obj) => obj.tokens);
       expect(tokensPerMod).toEqual([[Provider0], [Provider3, Provider4]]);
@@ -463,10 +463,10 @@ describe('AppInitializer', () => {
       mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
       const mod3 = mock.appMetadataMap.get(module3WithParams);
-      expect(mod3?.moduleMetadata.providersPerApp).toEqual([]);
+      expect(mod3?.meta.providersPerApp).toEqual([]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: 'one' } };
-      expect(mod3?.moduleMetadata.providersPerMod).toEqual([providerPerMod]);
-      expect(mod3?.moduleMetadata.providersPerReq).toEqual([
+      expect(mod3?.meta.providersPerMod).toEqual([providerPerMod]);
+      expect(mod3?.meta.providersPerReq).toEqual([
         ...defaultProvidersPerReq,
         Provider5,
         Provider6,
@@ -489,10 +489,10 @@ describe('AppInitializer', () => {
       mock.bootstrapProvidersPerApp();
       await mock.bootstrapModulesAndExtensions();
       const mod4 = mock.appMetadataMap.get(module4WithParams);
-      expect(mod4?.moduleMetadata.providersPerApp).toEqual([]);
+      expect(mod4?.meta.providersPerApp).toEqual([]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
-      expect(mod4?.moduleMetadata.providersPerMod).toEqual([providerPerMod]);
-      expect(mod4?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider8, Provider9]);
+      expect(mod4?.meta.providersPerMod).toEqual([providerPerMod]);
+      expect(mod4?.meta.providersPerReq).toEqual([...defaultProvidersPerReq, Provider8, Provider9]);
 
       const tokensPerMod = Array.from(mod4?.siblingsPerMod!).map((obj) => obj.tokens);
       expect(tokensPerMod).toEqual([[Provider0], [Provider3, Provider4]]);
@@ -512,8 +512,8 @@ describe('AppInitializer', () => {
       const root1 = mock.appMetadataMap.get(AppModule);
       // expect(root1?.moduleMetadata.providersPerApp.slice(0, 1)).toEqual([Logger, { provide: Router, useValue: 'fake' }]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
-      expect(root1?.moduleMetadata.providersPerMod).toEqual([providerPerMod]);
-      expect(root1?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq]);
+      expect(root1?.meta.providersPerMod).toEqual([providerPerMod]);
+      expect(root1?.meta.providersPerReq).toEqual([...defaultProvidersPerReq]);
 
       const tokensPerMod = Array.from(root1?.siblingsPerMod!).map((obj) => obj.tokens);
       expect(tokensPerMod).toEqual([

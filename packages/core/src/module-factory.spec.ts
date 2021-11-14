@@ -570,7 +570,7 @@ describe('ModuleFactory', () => {
         const siblings = new SiblingsMap();
         const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers, ...siblings };
         mock.bootstrap(globalProviders, '', AppModule, moduleManager);
-        expect(mock.appMetadataMap.get(AppModule)?.moduleMetadata.exportsProvidersPerReq).toEqual(defaultProvidersPerReq);
+        expect(mock.appMetadataMap.get(AppModule)?.meta.exportsProvidersPerReq).toEqual(defaultProvidersPerReq);
         // console.log(mock.appMetadataMap.get(Module1)?.siblingsPerReq)
       });
 
@@ -591,24 +591,24 @@ describe('ModuleFactory', () => {
 
         const mod0 = mock.appMetadataMap.get(Module0);
         const providerPerMod0: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
-        expect(mod0?.moduleMetadata.providersPerMod).toEqual([providerPerMod0, Provider0]);
-        expect(mod0?.moduleMetadata.providersPerReq).toEqual(defaultProvidersPerReq);
+        expect(mod0?.meta.providersPerMod).toEqual([providerPerMod0, Provider0]);
+        expect(mod0?.meta.providersPerReq).toEqual(defaultProvidersPerReq);
         expect((mod0 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
         const mod1 = mock.appMetadataMap.get(Module1);
         const providerPerMod1: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
-        expect(mod1?.moduleMetadata.providersPerMod).toEqual([providerPerMod1, Provider1, Provider2, Provider3]);
+        expect(mod1?.meta.providersPerMod).toEqual([providerPerMod1, Provider1, Provider2, Provider3]);
 
 
         const tokensPerMod = Array.from(mod1?.siblingsPerMod!).map(obj => obj.tokens);
         expect(tokensPerMod).toEqual([ [Provider0] ]);
 
-        expect(mod1?.moduleMetadata.providersPerReq).toEqual(defaultProvidersPerReq);
+        expect(mod1?.meta.providersPerReq).toEqual(defaultProvidersPerReq);
         expect((mod1 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
         const mod2 = mock.appMetadataMap.get(Module2);
         const providerPerMod2: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
-        expect(mod2?.moduleMetadata.providersPerMod).toEqual([providerPerMod2, Provider4, Provider5, Provider6]);
+        expect(mod2?.meta.providersPerMod).toEqual([providerPerMod2, Provider4, Provider5, Provider6]);
 
         const tokensPerMod2 = Array.from(mod2?.siblingsPerMod!).map(obj => obj.tokens);
         expect(tokensPerMod2).toEqual([
@@ -622,12 +622,12 @@ describe('ModuleFactory', () => {
           [Provider1, Provider2, Provider3]
         ]);
 
-        expect(mod2?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider7, Provider8]);
+        expect(mod2?.meta.providersPerReq).toEqual([...defaultProvidersPerReq, Provider7, Provider8]);
         expect((mod2 as any).moduleMetadata.ngMetadataName).toBe('Module');
 
         const mod3 = mock.appMetadataMap.get(Module3);
         const providerPerMod3: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
-        expect(mod3?.moduleMetadata.providersPerMod).toEqual([providerPerMod3]);
+        expect(mod3?.meta.providersPerMod).toEqual([providerPerMod3]);
 
         const tokensPerMod4 = Array.from(mod2?.siblingsPerMod!).map(obj => obj.tokens);
         expect(tokensPerMod4).toEqual([
@@ -636,7 +636,7 @@ describe('ModuleFactory', () => {
         ]);
 
         // expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overriddenProvider8]);
-        expect(mod3?.moduleMetadata.controllers).toEqual([Ctrl]);
+        expect(mod3?.meta.controllers).toEqual([Ctrl]);
         expect((mod3 as any).moduleMetadata.ngMetadataName).toBe('Module');
       });
 
@@ -723,7 +723,7 @@ describe('ModuleFactory', () => {
         mock.bootstrap(globalProviders, '', Module3, moduleManager);
 
         const mod3 = mock.appMetadataMap.get(Module3);
-        expect(mod3?.moduleMetadata.providersPerReq).toEqual([...defaultProvidersPerReq, Provider3]);
+        expect(mod3?.meta.providersPerReq).toEqual([...defaultProvidersPerReq, Provider3]);
 
         expect(mock?.siblingsPerReq).toBeDefined();
         expect(mock?.siblingsPerReq.get(Provider2)).toBe(Module2);

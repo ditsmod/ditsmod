@@ -126,27 +126,27 @@ export class AppInitializer {
   /**
    * Recursively collects per app providers and extensions from non-root modules.
    */
-  protected collectProvidersPerAppAndExtensions(metadata: NormalizedModuleMetadata, moduleManager: ModuleManager) {
+  protected collectProvidersPerAppAndExtensions(meta1: NormalizedModuleMetadata, moduleManager: ModuleManager) {
     const modules = [
-      ...metadata.importsModules,
-      ...metadata.importsWithParams,
-      ...metadata.exportsModules,
-      ...metadata.exportsWithParams,
+      ...meta1.importsModules,
+      ...meta1.importsWithParams,
+      ...meta1.exportsModules,
+      ...meta1.exportsWithParams,
     ];
     const providersPerApp: ServiceProvider[] = [];
     const extensions: InjectionToken<Extension<any>[]>[] = [];
     // Removes duplicate (because of reexports modules)
     new Set(modules).forEach((mod) => {
-      const meta = moduleManager.getMetadata(mod, true);
-      const obj = this.collectProvidersPerAppAndExtensions(meta, moduleManager);
+      const meta2 = moduleManager.getMetadata(mod, true);
+      const obj = this.collectProvidersPerAppAndExtensions(meta2, moduleManager);
       providersPerApp.push(...obj.providersPerApp);
       extensions.push(...obj.extensions);
     });
-    const currProvidersPerApp = isRootModule(metadata) ? [] : metadata.providersPerApp;
+    const currProvidersPerApp = isRootModule(meta1) ? [] : meta1.providersPerApp;
 
     return {
       providersPerApp: [...providersPerApp, ...getUniqProviders(currProvidersPerApp)],
-      extensions: [...extensions, ...metadata.extensions],
+      extensions: [...extensions, ...meta1.extensions],
     };
   }
 
@@ -207,7 +207,7 @@ export class AppInitializer {
   protected checkModulesResolvable(appMetadataMap: AppMetadataMap) {
     appMetadataMap.forEach((metadata, modOrObj) => {
       this.log.printModuleMetadata('trace', modOrObj, metadata);
-      const { providersPerMod } = metadata.moduleMetadata;
+      const { providersPerMod } = metadata.meta;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       const mod = getModule(modOrObj);
       injectorPerMod.resolveAndInstantiate(mod);
@@ -219,10 +219,10 @@ export class AppInitializer {
     const initedExtensionsGroups = new WeakSet<InjectionToken<Extension<any>[]>>();
     const extensionsManager = this.injectorPerApp.get(ExtensionsManager) as ExtensionsManager;
     for (const [, metadata] of appMetadataMap) {
-      if (isRootModule(metadata.moduleMetadata)) {
-        metadata.moduleMetadata.extensions = this.meta.extensions;
+      if (isRootModule(metadata.meta)) {
+        metadata.meta.extensions = this.meta.extensions;
       }
-      const { extensions, name: moduleName } = metadata.moduleMetadata;
+      const { extensions, name: moduleName } = metadata.meta;
       for (const groupToken of extensions) {
         if (initedExtensionsGroups.has(groupToken)) {
           continue;

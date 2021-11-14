@@ -117,7 +117,7 @@ export class ModuleFactory {
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
       guardsPerMod: this.guardsPerMod,
-      moduleMetadata: this.meta,
+      meta: this.meta,
       controllersMetadata: deepFreeze(controllersMetadata),
       siblingsTokens: {
         promise: meta.dynamicProviders.getPromise(),
@@ -271,15 +271,15 @@ export class ModuleFactory {
   /**
    * Recursively imports providers.
    *
-   * @param metadata Module metadata from where imports providers.
+   * @param meta1 Module metadata from where imports providers.
    */
-  protected importProviders(metadata: NormalizedModuleMetadata) {
-    const { module, exportsModules, exportsWithParams } = metadata;
+  protected importProviders(meta1: NormalizedModuleMetadata) {
+    const { module, exportsModules, exportsWithParams } = meta1;
 
     for (const mod of [...exportsModules, ...exportsWithParams]) {
-      const meta = this.#moduleManager.getMetadata(mod, true);
+      const meta2 = this.#moduleManager.getMetadata(mod, true);
       // Reexported module
-      this.importProviders(meta);
+      this.importProviders(meta2);
     }
 
     const self = this;
@@ -288,7 +288,7 @@ export class ModuleFactory {
     addProviders('Req');
 
     function addProviders(scope: 'Mod' | 'Rou' | 'Req') {
-      const exp = metadata[`exportsProvidersPer${scope}`];
+      const exp = meta1[`exportsProvidersPer${scope}`];
       if (exp.length) {
         exp.forEach((provider) => {
           self[`siblingsPer${scope}`].set(provider, module);

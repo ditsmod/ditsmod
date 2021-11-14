@@ -11,10 +11,10 @@ import { OasOptions } from '../types/oas-options';
 @Injectable()
 export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.Extension<edk.RawRouteMeta[]> {
   protected override getMetaPerRou(prefixPerApp: string, metadataPerMod: edk.MetadataPerMod) {
-    const { controllersMetadata, guardsPerMod, moduleMetadata } = metadataPerMod;
+    const { controllersMetadata, guardsPerMod, meta } = metadataPerMod;
 
-    const providersPerMod = moduleMetadata.providersPerMod.slice();
-    const oasOptions = moduleMetadata.extensionsMeta.oasOptions as OasOptions;
+    const providersPerMod = meta.providersPerMod.slice();
+    const oasOptions = meta.extensionsMeta.oasOptions as OasOptions;
     const prefixParams = oasOptions?.paratemers;
     const prefixTags = oasOptions?.tags;
 
@@ -27,8 +27,8 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
           if (!isOasRoute(oasRoute)) {
             continue;
           }
-          const providersPerRou = moduleMetadata.providersPerRou.slice();
-          const providersPerReq = moduleMetadata.providersPerReq.slice();
+          const providersPerRou = meta.providersPerRou.slice();
+          const providersPerReq = meta.providersPerReq.slice();
           const ctrlDecorator = ctrlDecorValues.find(edk.isController) as edk.ControllerMetadata;
           const guards: edk.NormalizedGuard[] = [...guardsPerMod];
           if (isOasRoute1(oasRoute)) {
@@ -49,7 +49,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
           clonedOperationObject.parameters = [...paramsRefs, ...paramsInPath, ...paramsNonPath];
           clonedOperationObject.tags = [...(clonedOperationObject.tags || []), ...(prefixTags || [])];
           // For now, here ReferenceObjects is ignored, if it is intended for a path.
-          const oasPath = this.transformToOasPath(moduleMetadata.name, path, paramsInPath);
+          const oasPath = this.transformToOasPath(meta.name, path, paramsInPath);
           providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
           const routeMeta: OasRouteMeta = {
             httpMethod,

@@ -27,12 +27,12 @@ export class RoutesExtension implements Extension<RouteMetaPerMod[]> {
 
     this.appMetadataMap.forEach((metadataPerMod) => {
       const routeMetaPerMod = new RouteMetaPerMod();
-      const { moduleMetadata } = metadataPerMod;
-      routeMetaPerMod.module = moduleMetadata.module;
-      routeMetaPerMod.moduleName = moduleMetadata.name;
-      routeMetaPerMod.providersPerMod = moduleMetadata.providersPerMod.slice();
-      routeMetaPerMod.providersPerRou = moduleMetadata.providersPerRou.slice();
-      routeMetaPerMod.providersPerReq = moduleMetadata.providersPerReq.slice();
+      const { meta } = metadataPerMod;
+      routeMetaPerMod.module = meta.module;
+      routeMetaPerMod.moduleName = meta.name;
+      routeMetaPerMod.providersPerMod = meta.providersPerMod.slice();
+      routeMetaPerMod.providersPerRou = meta.providersPerRou.slice();
+      routeMetaPerMod.providersPerReq = meta.providersPerReq.slice();
       routeMetaPerMod.siblingsTokens = metadataPerMod.siblingsTokens;
       routeMetaPerMod.rawRoutesMeta = this.getMetaPerRou(prefixPerApp, metadataPerMod);
       this.routesMetaPerMod.push(routeMetaPerMod);

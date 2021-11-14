@@ -309,11 +309,11 @@ export class ModuleManager {
   protected findAndSetProvider(
     provider: ServiceProvider,
     modMetadata: ModuleMetadata,
-    metadata: NormalizedModuleMetadata
+    meta: NormalizedModuleMetadata
   ) {
     const token = normalizeProviders([provider])[0].provide;
     const { providersPerMod, providersPerRou, providersPerReq } = modMetadata;
-    const { exportsProvidersPerMod, exportsProvidersPerRou, exportsProvidersPerReq } = metadata;
+    const { name, exportsProvidersPerMod, exportsProvidersPerRou, exportsProvidersPerReq } = meta;
 
     if (hasProviderIn(providersPerMod)) {
       exportsProvidersPerMod.push(provider);
@@ -328,7 +328,7 @@ export class ModuleManager {
 
     const providerName = token.name || token;
     throw new Error(
-      `Importing ${providerName} from ${metadata.name} ` +
+      `Importing ${providerName} from ${name} ` +
         'should includes in "providersPerMod" or "providersPerRou", or "providersPerReq", ' +
         'or in some "exports" of imported modules. ' +
         'Tip: "providersPerApp" no need exports, they are automatically exported.'
