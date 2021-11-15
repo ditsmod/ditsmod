@@ -34,5 +34,4 @@ export interface PreparedRouteMeta {
   httpMethod: HttpMethod;
   path: string;
   handle: RouteHandler;
-  siblingsPromises: Promise<any>[];
 }
