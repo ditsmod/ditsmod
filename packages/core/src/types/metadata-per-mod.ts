@@ -1,4 +1,3 @@
-import { SiblingProviders } from '../models/dynamic-provider';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { SiblingTokens } from '../models/sibling-tokens';
 import { ControllerAndMethodMetadata } from './controller-and-method-metadata';

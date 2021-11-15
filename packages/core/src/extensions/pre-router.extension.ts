@@ -2,7 +2,7 @@ import { Injectable, ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-
 
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpHandler } from '../types/http-interceptor';
-import { HttpMethod, Extension, ServiceProvider, ModuleWithParams, ModuleType } from '../types/mix';
+import { HttpMethod, Extension, ServiceProvider } from '../types/mix';
 import { PreparedRouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { NodeResponse, RequestListener } from '../types/server-options';
@@ -11,8 +11,8 @@ import { ExtensionsManager } from '../services/extensions-manager';
 import { Log } from '../services/log';
 import { ModuleManager } from '../services/module-manager';
 import { MetadataPerMod2 } from '../types/metadata-per-mod';
-import { SiblingProviders } from '../models/dynamic-provider';
 import { SiblingTokens } from '../models/sibling-tokens';
+import { ProvidersMetadata } from '../models/providers-metadata';
 
 @Injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -31,7 +31,7 @@ export class PreRouterExtension implements Extension<void> {
       return;
     }
     const rawRoutesMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
-    const preparedRouteMeta = await this.prepareRoutesMeta(rawRoutesMeta);
+    const preparedRouteMeta = this.prepareRoutesMeta(rawRoutesMeta);
     this.setRoutes(preparedRouteMeta);
     this.#inited = true;
   }
@@ -49,33 +49,30 @@ export class PreRouterExtension implements Extension<void> {
     });
   };
 
-  protected async prepareRoutesMeta(metadataPerMod2Arr: MetadataPerMod2[]) {
+  protected prepareRoutesMeta(metadataPerMod2Arr: MetadataPerMod2[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
-
-    for (const metadataPerMod2 of metadataPerMod2Arr) {
-      this.resolveProvidersOnModule(metadataPerMod2.module, metadataPerMod2);
-    }
 
     for (const metadataPerMod2 of metadataPerMod2Arr) {
       const { moduleName, metaForExtensionsPerRouArr, providersPerMod } = metadataPerMod2;
 
       for (const { httpMethod, path, providersPerRou, providersPerReq } of metaForExtensionsPerRouArr) {
-        const siblings = await this.getSiblings(metadataPerMod2);
+        const siblings = this.getSiblings(metadataPerMod2);
         const resolvedPerMod: ResolvedReflectiveProvider[] = [];
         const resolvedPerRou: ResolvedReflectiveProvider[] = [];
         const resolvedPerReq: ResolvedReflectiveProvider[] = [];
 
         siblings.forEach((sibling) => {
+          const { providers } = sibling;
           resolvedPerMod.push(...ReflectiveInjector.resolve([
-            ...sibling.siblingProviders.providersPerMod,
+            ...providers.providersPerMod!,
             ...providersPerMod
           ]));
           resolvedPerRou.push(...ReflectiveInjector.resolve([
-            ...sibling.siblingProviders.providersPerRou,
+            ...providers.providersPerRou!,
             ...providersPerRou
           ]));
           resolvedPerReq.push(...ReflectiveInjector.resolve([
-            ...sibling.siblingProviders.providersPerReq,
+            ...providers.providersPerReq!,
             ...providersPerReq
           ]));
         });
@@ -103,21 +100,13 @@ export class PreRouterExtension implements Extension<void> {
     return preparedRouteMeta;
   }
 
-  protected resolveProvidersOnModule(module: ModuleType | ModuleWithParams, metadataPerMod2: MetadataPerMod2) {
-    const { providersPerMod, providersPerRou, providersPerReq } = metadataPerMod2;
-    Object.freeze(providersPerMod);
-    Object.freeze(providersPerRou);
-    Object.freeze(providersPerReq);
-    const meta = this.moduleManager.getMetadata(module);
-    meta.dynamicProviders.resolve({ providersPerMod, providersPerRou, providersPerReq });
-  }
-
-  protected async getSiblings(metadataPerMod2: MetadataPerMod2) {
-    const siblings: { siblingTokens: SiblingTokens; siblingProviders: SiblingProviders }[] = [];
+  protected getSiblings(metadataPerMod2: MetadataPerMod2) {
+    const siblings: { siblingTokens: SiblingTokens; providers: Partial<ProvidersMetadata> }[] = [];
     for (const siblingTokens of metadataPerMod2.siblingTokensArr) {
       const meta = this.moduleManager.getMetadata(siblingTokens.module);
-      const siblingProviders = await meta.dynamicProviders.getPromise();
-      siblings.push({ siblingTokens, siblingProviders });
+      const { providersPerMod, providersPerRou, providersPerReq } = meta;
+      const providers = { providersPerMod, providersPerRou, providersPerReq };
+      siblings.push({ siblingTokens, providers });
     }
     return siblings;
   }
