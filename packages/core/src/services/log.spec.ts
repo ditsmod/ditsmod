@@ -28,7 +28,7 @@ describe('Log', () => {
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config) as Logger;
     const logManager = new LogManager();
-    log = new LogMock(logger, logManager);
+    log = new LogMock(logManager, logger);
   });
 
   it('default state', () => {

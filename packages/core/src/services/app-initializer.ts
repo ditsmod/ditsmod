@@ -36,7 +36,7 @@ export class AppInitializer {
   constructor(protected moduleManager: ModuleManager, protected log: Log) {}
 
   /**
-   * Note: after call this method, you need call `this.log.flush()`.
+   * _Note:_ after call this method, you need call `this.log.flush()`.
    */
   async initAndGetMetadata() {
     const meta = this.moduleManager.getMetadata('root', true);
@@ -49,6 +49,11 @@ export class AppInitializer {
     await this.handleExtensions(appMetadataMap);
     this.preRouter = this.injectorPerApp.get(PreRouterExtension) as PreRouterExtension;
     return this.meta;
+  }
+
+  flushLogs() {
+    this.log.bufferLogs = false;
+    this.log.flush();
   }
 
   async reinit(autocommit: boolean = true): Promise<void | Error> {

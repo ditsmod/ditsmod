@@ -25,10 +25,6 @@ describe('Application', () => {
       return super.checkSecureServerOption(appModule);
     }
 
-    override getDefaultLog(){
-      return super.getDefaultLog();
-    }
-
     override getAppInitializer(appModule: ModuleType, log: Log) {
       return super.getAppInitializer(appModule, log);
     }
@@ -38,12 +34,6 @@ describe('Application', () => {
 
   beforeEach(() => {
     mock = new ApplicationMock();
-  });
-
-  describe('getDefaultLog()', () => {
-    it('should return instance of default Log', () => {
-      expect(mock.getDefaultLog()).toBeInstanceOf(Log);
-    });
   });
 
   describe('getAppInitializer()', () => {

@@ -1,7 +1,8 @@
-import { Injectable } from '@ts-stack/di';
+import { Injectable, Optional } from '@ts-stack/di';
 import { format } from 'util';
 
-import { Logger } from '../types/logger';
+import { Logger, LoggerConfig } from '../types/logger';
+import { DefaultLogger } from './default-logger';
 import { LogManager } from './log-manager';
 
 /**
@@ -50,7 +51,10 @@ export class Log {
     }
   }
 
-  constructor(logger: Logger, protected logManager: LogManager) {
+  constructor(protected logManager: LogManager, @Optional() logger?: Logger) {
+    if (!logger) {
+      logger = new DefaultLogger(new LoggerConfig());
+    }
     this.logger = logger;
   }
 

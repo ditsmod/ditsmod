@@ -5,10 +5,9 @@ import { LogManager } from './services/log-manager';
 
 import { RootMetadata } from './models/root-metadata';
 import { AppInitializer } from './services/app-initializer';
-import { DefaultLogger } from './services/default-logger';
 import { Log } from './services/log';
 import { ModuleManager } from './services/module-manager';
-import { Logger, LoggerConfig } from './types/logger';
+import { Logger } from './types/logger';
 import { ModuleType } from './types/mix';
 import { Http2SecureServerOptions, Server } from './types/server-options';
 import { isHttp2SecureServerOptions } from './utils/type-guards';
@@ -28,19 +27,19 @@ export class Application {
           this.log.serverListen('info', this.meta.serverName, host, this.meta.listenOptions.port);
         });
       } catch (err) {
-        reject({ err, logger: this.log.logger });
-      } finally {
         this.log.bufferLogs = false;
         this.log.flush();
+        reject({ err, logger: this.log.logger });
       }
     });
   }
 
   protected async init(appModule: ModuleType) {
-    this.log = this.getDefaultLog();
+    this.log = new Log(new LogManager());
     const appInitializer = this.getAppInitializer(appModule, this.log);
     this.meta = await appInitializer.initAndGetMetadata();
     this.checkSecureServerOption(appModule);
+    appInitializer.flushLogs();
     return appInitializer;
   }
 
@@ -48,13 +47,6 @@ export class Application {
     const moduleManager = new ModuleManager(log);
     moduleManager.scanRootModule(appModule);
     return new AppInitializer(moduleManager, log);
-  }
-
-  protected getDefaultLog() {
-    const config = new LoggerConfig();
-    const logger = new DefaultLogger(config) as Logger;
-    const logManager = new LogManager();
-    return new Log(logger, logManager);
   }
 
   protected checkSecureServerOption(appModule: ModuleType) {
