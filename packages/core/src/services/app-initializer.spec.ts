@@ -1,26 +1,18 @@
 import 'reflect-metadata';
-import { ClassProvider, Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
+import { Injectable } from '@ts-stack/di';
 
 import { AppInitializer } from './app-initializer';
 import { Logger, LoggerConfig } from '../types/logger';
 import { Router } from '../types/router';
-import { Request } from './request';
-import { ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../types/mix';
+import { ModuleType, ModuleWithParams } from '../types/mix';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { Module } from '../decorators/module';
 import { RootModule } from '../decorators/root-module';
 import { RootMetadata } from '../models/root-metadata';
 import { DefaultLogger } from './default-logger';
 import { ModuleManager } from './module-manager';
-import { defaultProvidersPerReq } from './default-providers-per-req';
-import { MetadataPerMod1 } from '../types/metadata-per-mod';
 import { SiblingTokens } from '../models/sibling-tokens';
-import { Controller } from '../decorators/controller';
-import { ModConfig } from '../models/mod-config';
-import { NODE_REQ } from '../constans';
 import { Log } from './log';
 import { LogManager } from './log-manager';
-import { Route } from '../decorators/route';
 
 describe('AppInitializer', () => {
   type M = ModuleType | ModuleWithParams;
@@ -50,39 +42,43 @@ describe('AppInitializer', () => {
   let mock: AppInitializerMock;
   let moduleManager: ModuleManager;
 
-  beforeEach(async () => {
-    const injectorPerApp = ReflectiveInjector.resolveAndCreate([
-      AppInitializerMock,
-      LoggerConfig,
-      Log,
-      ModuleManager,
-      { provide: Logger, useClass: DefaultLogger },
-      // { provide: LogManager, useValue: new LogManager() }
-      LogManager
-    ]);
-    mock = injectorPerApp.get(AppInitializerMock);
-    moduleManager = injectorPerApp.get(ModuleManager);
-  });
-
   describe('init()', () => {
+    it('case 1', async () => {
+      const loggerSpy = jest.fn();
 
-    fit('logs should collects between two init()', async () => {
-      @Controller()
-      class Ctrl {
-        @Route('GET')
-        method() {}
+      class LogMock extends Log {
+        override flush() {
+          loggerSpy((this._logger as any).config.level);
+          super.flush();
+        }
       }
 
-      @Module({ controllers: [Ctrl] })
-      class Module1 {}
+      // Simulation of a call from the Application
+      const config1 = new LoggerConfig();
+      config1.level = 'info';
+      const logger = new DefaultLogger(config1) as Logger;
+      const logManager = new LogManager();
+      const log = new LogMock(logger, logManager);
+      moduleManager = new ModuleManager(log);
+      mock = new AppInitializerMock(moduleManager, log);
 
+      // Simulation of a call from the AppModule
+      const config2 = new LoggerConfig();
+      config2.level = 'trace';
       @RootModule({
-        imports: [Module1]
+        providersPerApp: [
+          Router,
+          { provide: LoggerConfig, useValue: config2 },
+          { provide: Log, useClass: LogMock },
+        ],
       })
       class AppModule {}
-      moduleManager.scanRootModule(AppModule);
 
+      moduleManager.scanRootModule(AppModule);
       await mock.initAndGetMetadata();
+      // Here log used from Application
+      log.flush();
+      expect(loggerSpy.mock.calls[0]).toEqual(['trace']);
     });
   });
 });
