@@ -58,7 +58,7 @@ describe('AppInitializer', () => {
       config1.level = 'info';
       const logger = new DefaultLogger(config1) as Logger;
       const logManager = new LogManager();
-      const log = new LogMock(logger, logManager);
+      const log = new LogMock(logManager, logger);
       moduleManager = new ModuleManager(log);
       mock = new AppInitializerMock(moduleManager, log);
 
@@ -78,7 +78,7 @@ describe('AppInitializer', () => {
       await mock.initAndGetMetadata();
       // Here log used from Application
       log.flush();
-      expect(loggerSpy.mock.calls[0]).toEqual(['trace']);
+      expect(loggerSpy.mock.calls[0]).toEqual(['info']);
     });
   });
 });
