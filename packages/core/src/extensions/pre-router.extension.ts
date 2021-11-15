@@ -1,4 +1,4 @@
-import { Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-stack/di';
 
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpHandler } from '../types/http-interceptor';
@@ -13,12 +13,6 @@ import { ModuleManager } from '../services/module-manager';
 import { MetadataPerMod2 } from '../types/metadata-per-mod';
 import { SiblingProviders } from '../models/dynamic-provider';
 import { SiblingTokens } from '../models/sibling-tokens';
-import { getUniqProviders } from '../utils/get-uniq-providers';
-
-interface Sibling {
-  siblingTokens: SiblingTokens;
-  siblingProviders: SiblingProviders;
-}
 
 @Injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -67,31 +61,26 @@ export class PreRouterExtension implements Extension<void> {
 
       for (const { httpMethod, path, providersPerRou, providersPerReq } of metaForExtensionsPerRouArr) {
         const siblings = await this.getSiblings(metadataPerMod2);
-        let uniqPerMod: ServiceProvider[] = [];
-        let uniqPerRou: ServiceProvider[] = [];
-        let uniqPerReq: ServiceProvider[] = [];
+        const resolvedPerMod: ResolvedReflectiveProvider[] = [];
+        const resolvedPerRou: ResolvedReflectiveProvider[] = [];
+        const resolvedPerReq: ResolvedReflectiveProvider[] = [];
 
         siblings.forEach((sibling) => {
-          uniqPerMod = getUniqProviders([
+          resolvedPerMod.push(...ReflectiveInjector.resolve([
             ...sibling.siblingProviders.providersPerMod,
             ...providersPerMod
-          ]);
-
-          uniqPerRou = getUniqProviders([
+          ]));
+          resolvedPerRou.push(...ReflectiveInjector.resolve([
             ...sibling.siblingProviders.providersPerRou,
             ...providersPerRou
-          ])
-          providersPerRou.unshift(...uniqPerRou);
-
-          uniqPerReq = getUniqProviders([
+          ]));
+          resolvedPerReq.push(...ReflectiveInjector.resolve([
             ...sibling.siblingProviders.providersPerReq,
             ...providersPerReq
-          ])
-          providersPerReq.unshift(...uniqPerReq);
+          ]));
         });
-        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(uniqPerMod);
-        const injectorPerRou = injectorPerMod.resolveAndCreateChild(uniqPerRou);
-        const resolvedPerReq = ReflectiveInjector.resolve(uniqPerReq);
+        const injectorPerMod = this.injectorPerApp.createChildFromResolved(resolvedPerMod);
+        const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou);
 
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
           const context = ReflectiveInjector.resolve([
@@ -100,10 +89,10 @@ export class PreRouterExtension implements Extension<void> {
             { provide: PATH_PARAMS, useValue: params },
             { provide: QUERY_STRING, useValue: queryString },
           ]);
-          const injectorPerReq = injectorPerRou.createChildFromResolved([...resolvedPerReq, ...context]);
+          const inj = injectorPerRou.createChildFromResolved([...resolvedPerReq, ...context]);
 
           // First HTTP handler in the chain of HTTP interceptors.
-          const chain = injectorPerReq.get(HttpHandler) as HttpHandler;
+          const chain = inj.get(HttpHandler) as HttpHandler;
           await chain.handle();
         }) as RouteHandler;
 
