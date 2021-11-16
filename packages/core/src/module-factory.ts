@@ -30,10 +30,12 @@ import {
   isRootModule,
 } from './utils/type-guards';
 import { deepFreeze } from './utils/deep-freeze';
-import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES } from './constans';
+import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
 import { ModConfig } from './models/mod-config';
 import { Log } from './services/log';
 import { ReflectiveInjector_ } from '@ts-stack/di/src/di/reflective_injector';
+import { RouteMeta } from './edk';
+import { RootMetadata } from '.';
 
 /**
  * - imports and exports global providers;
@@ -426,6 +428,13 @@ export class ModuleFactory {
       const depsPerMod = this.getDeps(providersPerMod);
       const depsPerRou = this.getDeps(providersPerRou);
       const depsPerReq = this.getDeps(providersPerReq);
+      if ([...depsPerMod, ...depsPerRou, ...depsPerReq].length) {
+        console.log('='.repeat(80));
+        console.log(module);
+      }
+      this.searchDeps(module, depsPerMod, ['Mod']);
+      this.searchDeps(module, depsPerRou, ['Mod', 'Rou']);
+      this.searchDeps(module, depsPerReq, ['Mod', 'Rou', 'Req']);
     });
   }
 
@@ -437,15 +446,15 @@ export class ModuleFactory {
       resolvedFactories.forEach((rf) =>
         rf.dependencies.forEach((dep) => {
           const { token } = dep.key;
-          if (token !== Injector) {
-            allTokens.add(token);
-            if (token instanceof Type) {
-              restProviders.add(token);
-            }
+          allTokens.add(token);
+          if (token instanceof Type) {
+            restProviders.add(token);
           }
         })
       )
     );
+
+    allTokens = this.excludeDefaultTokens(allTokens);
 
     if (allDeps && restProviders.size) {
       return this.getDeps(restProviders, true, allTokens);
@@ -454,8 +463,26 @@ export class ModuleFactory {
     }
   }
 
+  protected excludeDefaultTokens(tokens: Set<any>) {
+    const someDefaultTokensPerReq = normalizeProviders([...defaultProvidersPerReq]).map((np) => np.provide);
+    const defaultTokens = [
+      ...someDefaultTokensPerReq,
+      NODE_REQ,
+      NODE_RES,
+      PATH_PARAMS,
+      QUERY_STRING,
+      Injector,
+      Log,
+      RouteMeta,
+      RootMetadata,
+    ];
+    const arr = Array.from(tokens).filter((t) => !defaultTokens.includes(t));
+    return new Set(arr);
+  }
+
   /**
-   * @param scopes Search in this scopes
+   * @param scopes Search in this scopes. The scope order is important. This is the order in
+   * which the search will be conducted.
    */
   protected searchDeps(module: ModuleType | ModuleWithParams, deps: Set<any>, scopes: ('Mod' | 'Rou' | 'Req')[]) {
     const meta = this.#moduleManager.getMetadata(module);
@@ -475,6 +502,9 @@ export class ModuleFactory {
         }
       }
       if (!found) {
+        console.log('not found', token);
+      } else {
+        console.log('done!', token);
       }
     });
   }
