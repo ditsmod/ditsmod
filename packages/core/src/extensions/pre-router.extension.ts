@@ -1,4 +1,4 @@
-import { Injectable, ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector, ResolvedReflectiveProvider, reflector, Type } from '@ts-stack/di';
 
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpHandler } from '../types/http-interceptor';
@@ -11,8 +11,6 @@ import { ExtensionsManager } from '../services/extensions-manager';
 import { Log } from '../services/log';
 import { ModuleManager } from '../services/module-manager';
 import { MetadataPerMod2 } from '../types/metadata-per-mod';
-import { SiblingTokens } from '../models/sibling-tokens';
-import { ProvidersMetadata } from '../models/providers-metadata';
 
 @Injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -56,26 +54,9 @@ export class PreRouterExtension implements Extension<void> {
       const { moduleName, metaForExtensionsPerRouArr, providersPerMod } = metadataPerMod2;
 
       for (const { httpMethod, path, providersPerRou, providersPerReq } of metaForExtensionsPerRouArr) {
-        const siblings = this.getSiblings(metadataPerMod2);
-        const resolvedPerMod: ResolvedReflectiveProvider[] = [];
-        const resolvedPerRou: ResolvedReflectiveProvider[] = [];
-        const resolvedPerReq: ResolvedReflectiveProvider[] = [];
-
-        siblings.forEach((sibling) => {
-          const { providers } = sibling;
-          resolvedPerMod.push(...ReflectiveInjector.resolve([
-            ...providers.providersPerMod!,
-            ...providersPerMod
-          ]));
-          resolvedPerRou.push(...ReflectiveInjector.resolve([
-            ...providers.providersPerRou!,
-            ...providersPerRou
-          ]));
-          resolvedPerReq.push(...ReflectiveInjector.resolve([
-            ...providers.providersPerReq!,
-            ...providersPerReq
-          ]));
-        });
+        const resolvedPerMod = ReflectiveInjector.resolve(providersPerMod);
+        const resolvedPerRou = ReflectiveInjector.resolve(providersPerRou);
+        const resolvedPerReq = ReflectiveInjector.resolve(providersPerReq);
         const injectorPerMod = this.injectorPerApp.createChildFromResolved(resolvedPerMod);
         const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou);
 
@@ -98,17 +79,6 @@ export class PreRouterExtension implements Extension<void> {
     }
 
     return preparedRouteMeta;
-  }
-
-  protected getSiblings(metadataPerMod2: MetadataPerMod2) {
-    const siblings: { siblingTokens: SiblingTokens; providers: Partial<ProvidersMetadata> }[] = [];
-    for (const siblingTokens of metadataPerMod2.siblingTokensArr) {
-      const meta = this.moduleManager.getMetadata(siblingTokens.module);
-      const { providersPerMod, providersPerRou, providersPerReq } = meta;
-      const providers = { providersPerMod, providersPerRou, providersPerReq };
-      siblings.push({ siblingTokens, providers });
-    }
-    return siblings;
   }
 
   /**

@@ -6,7 +6,7 @@ import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
 import { MetadataPerMod1, SiblingsMap } from './types/metadata-per-mod';
-import { SiblingTokens } from './models/sibling-tokens';
+import { ExportedProviders } from './models/exported-providers';
 import {
   GuardItem,
   DecoratorMetadata,
@@ -426,23 +426,18 @@ export class ModuleFactory {
     const allModules = new Set<ModuleType | ModuleWithParams>();
     new Map([...perMod, ...perRou, ...perReq]).forEach((_, module) => allModules.add(module));
 
-    const SiblingTokensArr: SiblingTokens[] = [];
+    const siblingTokensArr: ExportedProviders[] = [];
 
     allModules.forEach((module) => {
-      const siblingTokens = new SiblingTokens();
+      const siblingTokens = new ExportedProviders();
       siblingTokens.module = module;
-      siblingTokens.tokensPerMod = this.getSiblingsTokens(module, perMod);
-      siblingTokens.tokensPerRou = this.getSiblingsTokens(module, perRou);
-      siblingTokens.tokensPerReq = this.getSiblingsTokens(module, perReq);
-      SiblingTokensArr.push(siblingTokens);
+      siblingTokens.providersPerMod = new Set(perMod.get(module) || []);
+      siblingTokens.providersPerRou = new Set(perRou.get(module) || []);
+      siblingTokens.providersPerReq = new Set(perReq.get(module) || []);
+      siblingTokensArr.push(siblingTokens);
     });
 
-    return SiblingTokensArr;
-  }
-
-  protected getSiblingsTokens(module: ModuleType| ModuleWithParams, map: Map<ModuleType | ModuleWithParams, ServiceProvider[]>) {
-    const providers = map.get(module) || [];
-    return new Set(normalizeProviders(providers).map((p) => p.provide));
+    return siblingTokensArr;
   }
 
   protected getModuleServicesMap(scope: 'Mod' | 'Rou' | 'Req') {

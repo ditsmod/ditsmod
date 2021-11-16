@@ -7,7 +7,7 @@ export { RoutesExtension } from './extensions/routes.extension';
 export { ModuleFactory } from './module-factory';
 export { ProvidersMetadata } from './models/providers-metadata';
 export { NormalizedModuleMetadata } from './models/normalized-module-metadata';
-export { SiblingTokens } from './models/sibling-tokens';
+export { ExportedProviders } from './models/exported-providers';
 export { ControllerMetadata } from './decorators/controller';
 export * from './utils/type-guards';
 export { deepFreeze } from './utils/deep-freeze';

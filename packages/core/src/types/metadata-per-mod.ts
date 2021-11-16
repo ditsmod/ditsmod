@@ -1,5 +1,5 @@
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { SiblingTokens } from '../models/sibling-tokens';
+import { ExportedProviders } from '../models/exported-providers';
 import { ControllerAndMethodMetadata } from './controller-and-method-metadata';
 import { HttpMethod, ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix';
 
@@ -20,7 +20,7 @@ export class MetadataPerMod1 {
    * The controller metadata collected from all controllers of current module.
    */
   controllersMetadata: ControllerAndMethodMetadata[];
-  siblingTokensArr: SiblingTokens[];
+  siblingTokensArr: ExportedProviders[];
 }
 
 /**
@@ -43,7 +43,7 @@ export class MetadataPerMod1 {
    */
   providersPerReq: ServiceProvider[];
   metaForExtensionsPerRouArr: MetaForExtensionsPerRou[];
-  siblingTokensArr: SiblingTokens[];
+  siblingTokensArr: ExportedProviders[];
 }
 
 export class MetaForExtensionsPerRou {
