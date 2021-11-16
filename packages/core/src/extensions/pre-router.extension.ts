@@ -1,8 +1,8 @@
-import { Injectable, ReflectiveInjector, ResolvedReflectiveProvider, reflector, Type } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpHandler } from '../types/http-interceptor';
-import { HttpMethod, Extension, ServiceProvider } from '../types/mix';
+import { HttpMethod, Extension } from '../types/mix';
 import { PreparedRouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { NodeResponse, RequestListener } from '../types/server-options';
@@ -79,25 +79,6 @@ export class PreRouterExtension implements Extension<void> {
     }
 
     return preparedRouteMeta;
-  }
-
-  /**
-   * Checks in "sandbox" mode that `providersPerReq` instantiatable.
-   *
-   * This allows avoids "Error: No provider for SomeDepends" when processing an HTTP request.
-   *
-   * @todo Refactor this. For now it's not works.
-   */
-  protected instantiateProvidersPerReq(injectorPerRou: ReflectiveInjector, providers: ServiceProvider[]) {
-    const child = injectorPerRou.resolveAndCreateChild([
-      ...providers,
-      { provide: NODE_REQ, useValue: {} },
-      { provide: NODE_RES, useValue: {} },
-      { provide: PATH_PARAMS, useValue: {} },
-      { provide: QUERY_STRING, useValue: {} },
-    ]);
-
-    providers.forEach((p) => child.resolveAndInstantiate(p));
   }
 
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {
