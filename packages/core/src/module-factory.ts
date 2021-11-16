@@ -1,4 +1,4 @@
-import { Injectable, InjectionToken, ReflectiveInjector, reflector } from '@ts-stack/di';
+import { Injectable, InjectionToken, Injector, ReflectiveInjector, reflector, Type } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ProvidersMetadata } from './models/providers-metadata';
@@ -33,6 +33,7 @@ import { deepFreeze } from './utils/deep-freeze';
 import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES } from './constans';
 import { ModConfig } from './models/mod-config';
 import { Log } from './services/log';
+import { ReflectiveInjector_ } from '@ts-stack/di/src/di/reflective_injector';
 
 /**
  * - imports and exports global providers;
@@ -113,13 +114,14 @@ export class ModuleFactory {
     this.importModules();
     this.mergeProviders();
     const controllersMetadata = this.getControllersMetadata();
+    this.resolveProviders();
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
       guardsPerMod: this.guardsPerMod,
       meta: this.meta,
       controllersMetadata: deepFreeze(controllersMetadata),
-      siblingTokensArr: this.getSiblins(),
+      siblingTokensArr: this.getExportedProviders(),
     });
   }
 
@@ -419,7 +421,65 @@ export class ModuleFactory {
     return arrControllerMetadata;
   }
 
-  protected getSiblins() {
+  protected resolveProviders() {
+    this.getExportedProviders().forEach(({ module, providersPerMod, providersPerRou, providersPerReq }) => {
+      const depsPerMod = this.getDeps(providersPerMod);
+      const depsPerRou = this.getDeps(providersPerRou);
+      const depsPerReq = this.getDeps(providersPerReq);
+    });
+  }
+
+  protected getDeps(providers: Set<ServiceProvider>, allDeps?: boolean, allTokens: Set<any> = new Set()): Set<any> {
+    const resolved = ReflectiveInjector.resolve(Array.from(providers));
+    const restProviders = new Set<any>();
+
+    resolved.forEach(({ resolvedFactories }) =>
+      resolvedFactories.forEach((rf) =>
+        rf.dependencies.forEach((dep) => {
+          const { token } = dep.key;
+          if (token !== Injector) {
+            allTokens.add(token);
+            if (token instanceof Type) {
+              restProviders.add(token);
+            }
+          }
+        })
+      )
+    );
+
+    if (allDeps && restProviders.size) {
+      return this.getDeps(restProviders, true, allTokens);
+    } else {
+      return allTokens;
+    }
+  }
+
+  /**
+   * @param scopes Search in this scopes
+   */
+  protected searchDeps(module: ModuleType | ModuleWithParams, deps: Set<any>, scopes: ('Mod' | 'Rou' | 'Req')[]) {
+    const meta = this.#moduleManager.getMetadata(module);
+    const importedProviders = new Set<ServiceProvider>();
+    deps.forEach((token) => {
+      let found: boolean = false;
+      scopesLoop: for (const scope of scopes) {
+        const providers = getUniqProviders(meta[`providersPer${scope}`]);
+        const tokens = normalizeProviders(providers).map((p) => p.provide);
+        const len = tokens.length;
+        for (let i = 0; i < len; i++) {
+          if (tokens[i] === token) {
+            importedProviders.add(providers[i]);
+            found = true;
+            break scopesLoop;
+          }
+        }
+      }
+      if (!found) {
+      }
+    });
+  }
+
+  protected getExportedProviders() {
     const perMod = this.getModuleServicesMap('Mod');
     const perRou = this.getModuleServicesMap('Rou');
     const perReq = this.getModuleServicesMap('Req');
@@ -429,12 +489,12 @@ export class ModuleFactory {
     const siblingTokensArr: ExportedProviders[] = [];
 
     allModules.forEach((module) => {
-      const siblingTokens = new ExportedProviders();
-      siblingTokens.module = module;
-      siblingTokens.providersPerMod = new Set(perMod.get(module) || []);
-      siblingTokens.providersPerRou = new Set(perRou.get(module) || []);
-      siblingTokens.providersPerReq = new Set(perReq.get(module) || []);
-      siblingTokensArr.push(siblingTokens);
+      const exportedProviders = new ExportedProviders();
+      exportedProviders.module = module;
+      exportedProviders.providersPerMod = new Set(perMod.get(module) || []);
+      exportedProviders.providersPerRou = new Set(perRou.get(module) || []);
+      exportedProviders.providersPerReq = new Set(perReq.get(module) || []);
+      siblingTokensArr.push(exportedProviders);
     });
 
     return siblingTokensArr;
