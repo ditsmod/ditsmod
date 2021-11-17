@@ -25,6 +25,7 @@ import { APP_METADATA_MAP, defaultExtensions } from '../constans';
 import { Log } from './log';
 import { LogManager } from './log-manager';
 import { ImportsMap } from '../types/metadata-per-mod';
+import { ImportsResolver } from '../imports-resolver';
 
 @Injectable()
 export class AppInitializer {
@@ -45,7 +46,8 @@ export class AppInitializer {
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLog();
     const appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
-    this.checkModulesResolvable(appMetadataMap);
+    const importsResolver = new ImportsResolver(this.moduleManager, appMetadataMap);
+    importsResolver.resolveImports();
     await this.handleExtensions(appMetadataMap);
     this.preRouter = this.injectorPerApp.get(PreRouterExtension) as PreRouterExtension;
     return this.meta;
@@ -207,16 +209,6 @@ export class AppInitializer {
     globalProviders.importedPerRou = importedPerRou;
     globalProviders.importedPerReq = importedPerReq;
     return globalProviders;
-  }
-
-  protected checkModulesResolvable(appMetadataMap: AppMetadataMap) {
-    appMetadataMap.forEach((metadata, modOrObj) => {
-      this.log.printModuleMetadata('trace', modOrObj, metadata);
-      const { providersPerMod } = metadata.meta;
-      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-      const mod = getModule(modOrObj);
-      injectorPerMod.resolveAndInstantiate(mod);
-    });
   }
 
   protected async handleExtensions(appMetadataMap: AppMetadataMap) {
