@@ -4,13 +4,12 @@ import { Injectable } from '@ts-stack/di';
 import { AppInitializer } from './app-initializer';
 import { Logger, LoggerConfig } from '../types/logger';
 import { Router } from '../types/router';
-import { ModuleType, ModuleWithParams } from '../types/mix';
+import { ModuleType, ModuleWithParams, ImportedProviders } from '../types/mix';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { RootModule } from '../decorators/root-module';
 import { RootMetadata } from '../models/root-metadata';
 import { DefaultLogger } from './default-logger';
 import { ModuleManager } from './module-manager';
-import { ImportedProviders } from '../models/imported-providers';
 import { Log } from './log';
 import { LogManager } from './log-manager';
 

@@ -1,7 +1,6 @@
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { ImportedProviders } from '../models/imported-providers';
 import { ControllerAndMethodMetadata } from './controller-and-method-metadata';
-import { HttpMethod, ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix';
+import { HttpMethod, ImportedProviders, ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix';
 
 export class ImportsMap {
   importedPerMod = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
@@ -20,7 +19,7 @@ export class MetadataPerMod1 {
    * The controller metadata collected from all controllers of current module.
    */
   controllersMetadata: ControllerAndMethodMetadata[];
-  importedProvidersArr: ImportedProviders[];
+  importedProviders: Map<ModuleType | ModuleWithParams, ImportedProviders>;
 }
 
 /**
@@ -43,7 +42,7 @@ export class MetadataPerMod1 {
    */
   providersPerReq: ServiceProvider[];
   metaForExtensionsPerRouArr: MetaForExtensionsPerRou[];
-  importedProvidersArr: ImportedProviders[];
+  importedProviders: Map<ModuleType | ModuleWithParams, ImportedProviders>;
 }
 
 export class MetaForExtensionsPerRou {

@@ -82,6 +82,12 @@ export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
  */
 export type ServiceProvider = TypeProvider | ValueProvider | ClassProvider | ExistingProvider | FactoryProvider;
 
+export class ImportedProviders {
+  providersPerMod: Set<ServiceProvider>;
+  providersPerRou: Set<ServiceProvider>;
+  providersPerReq: Set<ServiceProvider>;
+}
+
 /**
  * `http.METHODS`
  */

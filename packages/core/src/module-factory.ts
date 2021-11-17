@@ -6,7 +6,6 @@ import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
 import { MetadataPerMod1, ImportsMap } from './types/metadata-per-mod';
-import { ImportedProviders } from './models/imported-providers';
 import {
   GuardItem,
   DecoratorMetadata,
@@ -15,6 +14,7 @@ import {
   NormalizedGuard,
   ServiceProvider,
   Extension,
+  ImportedProviders,
 } from './types/mix';
 import { getDuplicates } from './utils/get-duplicates';
 import { getTokensCollisions } from './utils/get-tokens-collisions';
@@ -121,7 +121,7 @@ export class ModuleFactory {
       guardsPerMod: this.guardsPerMod,
       meta: this.meta,
       controllersMetadata: deepFreeze(controllersMetadata),
-      importedProvidersArr: this.getImportedProviders(),
+      importedProviders: this.getImportedProviders(),
     });
   }
 
@@ -422,7 +422,7 @@ export class ModuleFactory {
   }
 
   protected resolveImportedProviders() {
-    this.getImportedProviders().forEach(({ module, providersPerMod, providersPerRou, providersPerReq }) => {
+    this.getImportedProviders().forEach(({ providersPerMod, providersPerRou, providersPerReq }, module) => {
       const depsPerMod = this.getDeps(providersPerMod);
       const depsPerRou = this.getDeps(providersPerRou);
       const depsPerReq = this.getDeps(providersPerReq);
@@ -516,18 +516,17 @@ export class ModuleFactory {
     const allModules = new Set<ModuleType | ModuleWithParams>();
     new Map([...perMod, ...perRou, ...perReq]).forEach((_, module) => allModules.add(module));
 
-    const importedProvidersArr: ImportedProviders[] = [];
+    const importedProvidersMap = new Map<ModuleType | ModuleWithParams, ImportedProviders>();
 
     allModules.forEach((module) => {
       const importedProviders = new ImportedProviders();
-      importedProviders.module = module;
       importedProviders.providersPerMod = new Set(perMod.get(module) || []);
       importedProviders.providersPerRou = new Set(perRou.get(module) || []);
       importedProviders.providersPerReq = new Set(perReq.get(module) || []);
-      importedProvidersArr.push(importedProviders);
+      importedProvidersMap.set(module, importedProviders);
     });
 
-    return importedProvidersArr;
+    return importedProvidersMap;
   }
 
   protected getModuleServicesMap(scope: 'Mod' | 'Rou' | 'Req') {

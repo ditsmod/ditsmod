@@ -9,7 +9,6 @@ import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { MetadataPerMod1, ImportsMap } from './types/metadata-per-mod';
-import { ImportedProviders } from './models/imported-providers';
 import {
   ModuleType,
   ServiceProvider,
@@ -17,6 +16,7 @@ import {
   DecoratorMetadata,
   Extension,
   ModuleWithParams,
+  ImportedProviders,
 } from './types/mix';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ModuleManager } from './services/module-manager';
