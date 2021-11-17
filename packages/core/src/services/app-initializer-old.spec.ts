@@ -14,7 +14,7 @@ import { DefaultLogger } from './default-logger';
 import { ModuleManager } from './module-manager';
 import { defaultProvidersPerReq } from './default-providers-per-req';
 import { MetadataPerMod1 } from '../types/metadata-per-mod';
-import { ExportedProviders } from '../models/exported-providers';
+import { ImportedProviders } from '../models/imported-providers';
 import { Controller } from '../decorators/controller';
 import { ModConfig } from '../models/mod-config';
 import { NODE_REQ } from '../constans';
@@ -24,7 +24,7 @@ import { Route } from '../decorators/route';
 
 describe('AppInitializer', () => {
   type M = ModuleType | ModuleWithParams;
-  type S = ExportedProviders;
+  type S = ImportedProviders;
 
   @Injectable()
   class AppInitializerMock extends AppInitializer {

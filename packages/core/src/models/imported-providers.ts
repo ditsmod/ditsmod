@@ -1,6 +1,6 @@
 import { ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 
-export class ExportedProviders {
+export class ImportedProviders {
   module: ModuleType | ModuleWithParams;
   providersPerMod: Set<ServiceProvider>;
   providersPerRou: Set<ServiceProvider>;

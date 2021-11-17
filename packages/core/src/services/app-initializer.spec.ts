@@ -10,13 +10,13 @@ import { RootModule } from '../decorators/root-module';
 import { RootMetadata } from '../models/root-metadata';
 import { DefaultLogger } from './default-logger';
 import { ModuleManager } from './module-manager';
-import { ExportedProviders } from '../models/exported-providers';
+import { ImportedProviders } from '../models/imported-providers';
 import { Log } from './log';
 import { LogManager } from './log-manager';
 
 describe('AppInitializer', () => {
   type M = ModuleType | ModuleWithParams;
-  type S = ExportedProviders;
+  type S = ImportedProviders;
 
   @Injectable()
   class AppInitializerMock extends AppInitializer {

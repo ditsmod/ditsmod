@@ -6,7 +6,7 @@ import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
 import { MetadataPerMod1, SiblingsMap } from './types/metadata-per-mod';
-import { ExportedProviders } from './models/exported-providers';
+import { ImportedProviders } from './models/imported-providers';
 import {
   GuardItem,
   DecoratorMetadata,
@@ -33,7 +33,6 @@ import { deepFreeze } from './utils/deep-freeze';
 import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
 import { ModConfig } from './models/mod-config';
 import { Log } from './services/log';
-import { ReflectiveInjector_ } from '@ts-stack/di/src/di/reflective_injector';
 import { RouteMeta } from './edk';
 import { RootMetadata } from '.';
 
@@ -123,7 +122,7 @@ export class ModuleFactory {
       guardsPerMod: this.guardsPerMod,
       meta: this.meta,
       controllersMetadata: deepFreeze(controllersMetadata),
-      siblingTokensArr: this.getExportedProviders(),
+      siblingTokensArr: this.getImportedProviders(),
     });
   }
 
@@ -424,7 +423,7 @@ export class ModuleFactory {
   }
 
   protected resolveProviders() {
-    this.getExportedProviders().forEach(({ module, providersPerMod, providersPerRou, providersPerReq }) => {
+    this.getImportedProviders().forEach(({ module, providersPerMod, providersPerRou, providersPerReq }) => {
       const depsPerMod = this.getDeps(providersPerMod);
       const depsPerRou = this.getDeps(providersPerRou);
       const depsPerReq = this.getDeps(providersPerReq);
@@ -433,8 +432,8 @@ export class ModuleFactory {
         console.log(module);
       }
       this.searchDeps(module, depsPerMod, ['Mod']);
-      this.searchDeps(module, depsPerRou, ['Mod', 'Rou']);
-      this.searchDeps(module, depsPerReq, ['Mod', 'Rou', 'Req']);
+      this.searchDeps(module, depsPerRou, ['Rou', 'Mod']);
+      this.searchDeps(module, depsPerReq, ['Req', 'Rou', 'Mod']);
     });
   }
 
@@ -481,6 +480,8 @@ export class ModuleFactory {
   }
 
   /**
+   * @param module Module from where imports providers.
+   * @param deps Dependencies of imported providers.
    * @param scopes Search in this scopes. The scope order is important. This is the order in
    * which the search will be conducted.
    */
@@ -503,31 +504,32 @@ export class ModuleFactory {
       }
       if (!found) {
         console.log('not found', token);
+        // console.log(this.siblingsPerReq)
       } else {
         console.log('done!', token);
       }
     });
   }
 
-  protected getExportedProviders() {
+  protected getImportedProviders() {
     const perMod = this.getModuleServicesMap('Mod');
     const perRou = this.getModuleServicesMap('Rou');
     const perReq = this.getModuleServicesMap('Req');
     const allModules = new Set<ModuleType | ModuleWithParams>();
     new Map([...perMod, ...perRou, ...perReq]).forEach((_, module) => allModules.add(module));
 
-    const siblingTokensArr: ExportedProviders[] = [];
+    const importedProvidersArr: ImportedProviders[] = [];
 
     allModules.forEach((module) => {
-      const exportedProviders = new ExportedProviders();
-      exportedProviders.module = module;
-      exportedProviders.providersPerMod = new Set(perMod.get(module) || []);
-      exportedProviders.providersPerRou = new Set(perRou.get(module) || []);
-      exportedProviders.providersPerReq = new Set(perReq.get(module) || []);
-      siblingTokensArr.push(exportedProviders);
+      const importedProviders = new ImportedProviders();
+      importedProviders.module = module;
+      importedProviders.providersPerMod = new Set(perMod.get(module) || []);
+      importedProviders.providersPerRou = new Set(perRou.get(module) || []);
+      importedProviders.providersPerReq = new Set(perReq.get(module) || []);
+      importedProvidersArr.push(importedProviders);
     });
 
-    return siblingTokensArr;
+    return importedProvidersArr;
   }
 
   protected getModuleServicesMap(scope: 'Mod' | 'Rou' | 'Req') {
