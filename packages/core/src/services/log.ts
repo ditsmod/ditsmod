@@ -281,19 +281,4 @@ export class Log {
   showRoutes(level: keyof Logger, ...args: any[]) {
     this.setLog(level, args[0]);
   }
-
-  /**
-   * [errorDuringAddingSiblings].
-   */
-  errorDuringAddingSiblings(level: keyof Logger, ...args: any[]) {
-    const err = args[0] as Error;
-    this.setLog(level, err.message);
-  }
-
-  /**
-   * [print resolve siblings error]
-   */
-  resolveSiblingsError(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, { err: args[0] });
-  }
 }

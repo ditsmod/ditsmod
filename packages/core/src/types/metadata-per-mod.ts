@@ -3,10 +3,10 @@ import { ImportedProviders } from '../models/imported-providers';
 import { ControllerAndMethodMetadata } from './controller-and-method-metadata';
 import { HttpMethod, ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix';
 
-export class SiblingsMap {
-  siblingsPerMod = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
-  siblingsPerRou = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
-  siblingsPerReq = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+export class ImportsMap {
+  importedPerMod = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+  importedPerRou = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+  importedPerReq = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
 }
 
 /**
@@ -20,7 +20,7 @@ export class MetadataPerMod1 {
    * The controller metadata collected from all controllers of current module.
    */
   controllersMetadata: ControllerAndMethodMetadata[];
-  siblingTokensArr: ImportedProviders[];
+  importedProvidersArr: ImportedProviders[];
 }
 
 /**
@@ -43,7 +43,7 @@ export class MetadataPerMod1 {
    */
   providersPerReq: ServiceProvider[];
   metaForExtensionsPerRouArr: MetaForExtensionsPerRou[];
-  siblingTokensArr: ImportedProviders[];
+  importedProvidersArr: ImportedProviders[];
 }
 
 export class MetaForExtensionsPerRou {

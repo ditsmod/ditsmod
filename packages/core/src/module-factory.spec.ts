@@ -8,7 +8,7 @@ import { Route, RouteMetadata } from './decorators/route';
 import { RootModule } from './decorators/root-module';
 import { Logger, LoggerConfig } from './types/logger';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
-import { MetadataPerMod1, SiblingsMap } from './types/metadata-per-mod';
+import { MetadataPerMod1, ImportsMap } from './types/metadata-per-mod';
 import { ImportedProviders } from './models/imported-providers';
 import {
   ModuleType,
@@ -42,12 +42,12 @@ describe('ModuleFactory', () => {
     override importedProvidersPerMod: ServiceProvider[] = [];
     override importedProvidersPerRou: ServiceProvider[] = [];
     override importedProvidersPerReq: ServiceProvider[] = [];
-    override siblingsPerMod = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
-    override siblingsPerRou = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
-    override siblingsPerReq = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+    override importedPerMod = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+    override importedPerRou = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+    override importedPerReq = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
     override guardsPerMod: NormalizedGuard[] = [];
 
-    override exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata & SiblingsMap) {
+    override exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata & ImportsMap) {
       return super.exportGlobalProviders(moduleManager, globalProviders);
     }
 
@@ -152,8 +152,8 @@ describe('ModuleFactory', () => {
       class AppModule {}
 
       const providers = new ProvidersMetadata();
-      const siblings = new SiblingsMap();
-      const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers, ...siblings };
+      const importedProviders = new ImportsMap();
+      const globalProviders: ProvidersMetadata & ImportsMap = { ...providers, ...importedProviders };
       moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       expect(mock.importedProvidersPerMod).toEqual([]);
@@ -184,8 +184,8 @@ describe('ModuleFactory', () => {
       class AppModule {}
 
       const providers = new ProvidersMetadata();
-      const siblings = new SiblingsMap();
-      const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers, ...siblings };
+      const importedProviders = new ImportsMap();
+      const globalProviders: ProvidersMetadata & ImportsMap = { ...providers, ...importedProviders };
       moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       expect(mock.importedProvidersPerReq).toEqual([Provider1]);
@@ -218,8 +218,8 @@ describe('ModuleFactory', () => {
       class AppModule {}
 
       const providers = new ProvidersMetadata();
-      const siblings = new SiblingsMap();
-      const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers, ...siblings };
+      const importedProviders = new ImportsMap();
+      const globalProviders: ProvidersMetadata & ImportsMap = { ...providers, ...importedProviders };
       moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       expect(mock.importedProvidersPerMod).toEqual([Provider1, Provider2, Provider3, Provider4]);
@@ -249,8 +249,8 @@ describe('ModuleFactory', () => {
       class AppModule {}
 
       const providers = new ProvidersMetadata();
-      const siblings = new SiblingsMap();
-      const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers, ...siblings };
+      const importedProviders = new ImportsMap();
+      const globalProviders: ProvidersMetadata & ImportsMap = { ...providers, ...importedProviders };
       moduleManager.scanRootModule(AppModule);
       const msg = /Exporting providers to AppModule was failed: found collision for: Provider1/;
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).toThrow(msg);
@@ -280,8 +280,8 @@ describe('ModuleFactory', () => {
       class AppModule {}
 
       const providers0 = new ProvidersMetadata();
-      const siblings = new SiblingsMap();
-      const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers0, ...siblings };
+      const importedProviders = new ImportsMap();
+      const globalProviders: ProvidersMetadata & ImportsMap = { ...providers0, ...importedProviders };
       moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       const providers = [{ provide: Provider1, useValue: 'one' }, Provider1, Provider1];
@@ -311,8 +311,8 @@ describe('ModuleFactory', () => {
       class AppModule {}
 
       const providers = new ProvidersMetadata();
-      const siblings = new SiblingsMap();
-      const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers, ...siblings };
+      const importedProviders = new ImportsMap();
+      const globalProviders: ProvidersMetadata & ImportsMap = { ...providers, ...importedProviders };
       moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
     });
@@ -348,16 +348,16 @@ describe('ModuleFactory', () => {
       class AppModule {}
 
       const providers = new ProvidersMetadata();
-      const siblings = new SiblingsMap();
-      const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers, ...siblings };
+      const importedProviders = new ImportsMap();
+      const globalProviders: ProvidersMetadata & ImportsMap = { ...providers, ...importedProviders };
       moduleManager.scanRootModule(AppModule);
       expect(() => mock.exportGlobalProviders(moduleManager, globalProviders)).not.toThrow();
       expect(mock.importedProvidersPerMod).toEqual([]);
       expect(mock.importedProvidersPerReq).toEqual([Provider1, Provider2, Provider3]);
 
-      expect(mock?.siblingsPerReq.get(Provider1)).toBe(Module1);
-      expect(mock?.siblingsPerReq.get(Provider2)).toBe(Module2);
-      expect(mock?.siblingsPerReq.get(Provider3)).toBe(AppModule);
+      expect(mock?.importedPerReq.get(Provider1)).toBe(Module1);
+      expect(mock?.importedPerReq.get(Provider2)).toBe(Module2);
+      expect(mock?.importedPerReq.get(Provider3)).toBe(AppModule);
     });
   });
 
@@ -567,11 +567,10 @@ describe('ModuleFactory', () => {
         expect(meta.providersPerReq).toEqual(defaultProvidersPerReq);
 
         const providers = new ProvidersMetadata();
-        const siblings = new SiblingsMap();
-        const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers, ...siblings };
+        const importedProviders = new ImportsMap();
+        const globalProviders: ProvidersMetadata & ImportsMap = { ...providers, ...importedProviders };
         mock.bootstrap(globalProviders, '', AppModule, moduleManager);
         expect(mock.appMetadataMap.get(AppModule)?.meta.exportsProvidersPerReq).toEqual(defaultProvidersPerReq);
-        // console.log(mock.appMetadataMap.get(Module1)?.siblingsPerReq)
       });
 
       it('case 1', () => {
@@ -585,8 +584,8 @@ describe('ModuleFactory', () => {
         mock.injectorPerMod = injectorPerApp;
         moduleManager.scanModule(Module3);
         const providers = new ProvidersMetadata();
-        const siblings = new SiblingsMap();
-        const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers, ...siblings };
+        const importedProviders = new ImportsMap();
+        const globalProviders: ProvidersMetadata & ImportsMap = { ...providers, ...importedProviders };
         mock.bootstrap(globalProviders, '', Module3, moduleManager);
 
         const mod0 = mock.appMetadataMap.get(Module0);
@@ -656,8 +655,8 @@ describe('ModuleFactory', () => {
         mock.injectorPerMod = injectorPerApp;
         moduleManager.scanModule(Module4);
         const providers0 = new ProvidersMetadata();
-      const siblings = new SiblingsMap();
-      const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers0, ...siblings };
+      const importedProviders = new ImportsMap();
+      const globalProviders: ProvidersMetadata & ImportsMap = { ...providers0, ...siblings };
         mock.bootstrap(globalProviders, 'other', Module4, moduleManager);
 
         expect(mock.prefixPerMod).toBe('other');
@@ -665,16 +664,16 @@ describe('ModuleFactory', () => {
         const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: 'other' } };
         expect(mock.meta.providersPerMod).toEqual([providerPerMod]);
 
-        expect(mock?.siblingsPerMod).toBeDefined();
-        expect(mock?.siblingsPerMod.get(Provider0)).toBe(Module0);
-        expect(mock?.siblingsPerMod.get(Provider1)).toBe(Module1);
-        expect(mock?.siblingsPerMod.get(Provider2)).toBe(Module1);
-        expect(mock?.siblingsPerMod.get(Provider3)).toBe(Module1);
-        expect(mock?.siblingsPerMod.get(Provider5)).toBe(Module2);
+        expect(mock?.importedPerMod).toBeDefined();
+        expect(mock?.importedPerMod.get(Provider0)).toBe(Module0);
+        expect(mock?.importedPerMod.get(Provider1)).toBe(Module1);
+        expect(mock?.importedPerMod.get(Provider2)).toBe(Module1);
+        expect(mock?.importedPerMod.get(Provider3)).toBe(Module1);
+        expect(mock?.importedPerMod.get(Provider5)).toBe(Module2);
 
         expect(mock.meta.providersPerReq).toEqual([...defaultProvidersPerReq]);
 
-        expect(mock?.siblingsPerReq.get(Provider8)).toBe(Module2);
+        expect(mock?.importedPerReq.get(Provider8)).toBe(Module2);
         expect((mock.meta as any).ngMetadataName).toBe('RootModule');
       });
 
@@ -718,15 +717,15 @@ describe('ModuleFactory', () => {
         mock.injectorPerMod = injectorPerApp;
         moduleManager.scanModule(Module3);
         const providers0 = new ProvidersMetadata();
-      const siblings = new SiblingsMap();
-      const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers0, ...siblings };
+      const importedProviders = new ImportsMap();
+      const globalProviders: ProvidersMetadata & ImportsMap = { ...providers0, ...siblings };
         mock.bootstrap(globalProviders, '', Module3, moduleManager);
 
         const mod3 = mock.appMetadataMap.get(Module3);
         expect(mod3?.meta.providersPerReq).toEqual([...defaultProvidersPerReq, Provider3]);
 
-        expect(mock?.siblingsPerReq).toBeDefined();
-        expect(mock?.siblingsPerReq.get(Provider2)).toBe(Module2);
+        expect(mock?.importedPerReq).toBeDefined();
+        expect(mock?.importedPerReq.get(Provider2)).toBe(Module2);
         expect((mod3 as any).moduleMetadata.ngMetadataName).toBe('Module');
       });
 
@@ -745,8 +744,8 @@ describe('ModuleFactory', () => {
         moduleManager.scanModule(Module5);
         const errMsg = /Importing Module5 failed: this module should have/;
         const providers0 = new ProvidersMetadata();
-        const siblings = new SiblingsMap();
-        const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers0, ...siblings };
+        const importedProviders = new ImportsMap();
+        const globalProviders: ProvidersMetadata & ImportsMap = { ...providers0, ...siblings };
         expect(() => mock.bootstrap(globalProviders, '', Module5, moduleManager)).toThrow(errMsg);
       });
 
@@ -814,8 +813,8 @@ describe('ModuleFactory', () => {
         moduleManager.scanModule(AppModule);
         const msg = /Exporting providers to Module3 was failed: found collision for: Provider1/;
         const providers0 = new ProvidersMetadata();
-        const siblings = new SiblingsMap();
-        const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers0, ...siblings };
+        const importedProviders = new ImportsMap();
+        const globalProviders: ProvidersMetadata & ImportsMap = { ...providers0, ...siblings };
         expect(() => mock.bootstrap(globalProviders, '', AppModule, moduleManager)).toThrow(msg);
       });
 
@@ -859,8 +858,8 @@ describe('ModuleFactory', () => {
 
         moduleManager.scanRootModule(AppModule);
         const providers0 = new ProvidersMetadata();
-        const siblings = new SiblingsMap();
-        const globalProviders: ProvidersMetadata & SiblingsMap = { ...providers0, ...siblings };
+        const importedProviders = new ImportsMap();
+        const globalProviders: ProvidersMetadata & ImportsMap = { ...providers0, ...siblings };
         expect(() => mock.bootstrap(globalProviders, '', AppModule, moduleManager)).not.toThrow();
       });
     });

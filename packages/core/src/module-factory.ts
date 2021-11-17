@@ -5,7 +5,7 @@ import { ProvidersMetadata } from './models/providers-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
-import { MetadataPerMod1, SiblingsMap } from './types/metadata-per-mod';
+import { MetadataPerMod1, ImportsMap } from './types/metadata-per-mod';
 import { ImportedProviders } from './models/imported-providers';
 import {
   GuardItem,
@@ -57,12 +57,11 @@ export class ModuleFactory {
   protected importedProvidersPerRou: ServiceProvider[] = [];
   protected importedProvidersPerReq: ServiceProvider[] = [];
 
-  // Used for siblings injectors
-  protected siblingsPerMod = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
-  protected siblingsPerRou = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
-  protected siblingsPerReq = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+  protected importedPerMod = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+  protected importedPerRou = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+  protected importedPerReq = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
 
-  protected globalProviders: ProvidersMetadata & SiblingsMap;
+  protected globalProviders: ProvidersMetadata & ImportsMap;
   protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod1>();
   #moduleManager: ModuleManager;
 
@@ -73,7 +72,7 @@ export class ModuleFactory {
    *
    * @param globalProviders Contains providersPerApp for now.
    */
-  exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata & SiblingsMap) {
+  exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata & ImportsMap) {
     this.#moduleManager = moduleManager;
     const meta = moduleManager.getMetadata('root', true);
     this.moduleName = meta.name;
@@ -86,9 +85,9 @@ export class ModuleFactory {
       providersPerMod: this.importedProvidersPerMod,
       providersPerRou: this.importedProvidersPerRou,
       providersPerReq: this.importedProvidersPerReq,
-      siblingsPerMod: this.siblingsPerMod,
-      siblingsPerRou: this.siblingsPerRou,
-      siblingsPerReq: this.siblingsPerReq,
+      importedPerMod: this.importedPerMod,
+      importedPerRou: this.importedPerRou,
+      importedPerReq: this.importedPerReq,
     };
   }
 
@@ -98,7 +97,7 @@ export class ModuleFactory {
    * @param modOrObj Module that will bootstrapped.
    */
   bootstrap(
-    globalProviders: ProvidersMetadata & SiblingsMap,
+    globalProviders: ProvidersMetadata & ImportsMap,
     prefixPerMod: string,
     modOrObj: ModuleType | ModuleWithParams,
     moduleManager: ModuleManager,
@@ -122,7 +121,7 @@ export class ModuleFactory {
       guardsPerMod: this.guardsPerMod,
       meta: this.meta,
       controllersMetadata: deepFreeze(controllersMetadata),
-      siblingTokensArr: this.getImportedProviders(),
+      importedProvidersArr: this.getImportedProviders(),
     });
   }
 
@@ -289,7 +288,7 @@ export class ModuleFactory {
       const exp = meta1[`exportsProvidersPer${scope}`];
       if (exp.length) {
         exp.forEach((provider) => {
-          self[`siblingsPer${scope}`].set(provider, module);
+          self[`importedPer${scope}`].set(provider, module);
         });
         self[`importedProvidersPer${scope}`].push(...exp);
       }
@@ -504,7 +503,6 @@ export class ModuleFactory {
       }
       if (!found) {
         console.log('not found', token);
-        // console.log(this.siblingsPerReq)
       } else {
         console.log('done!', token);
       }
@@ -533,7 +531,7 @@ export class ModuleFactory {
   }
 
   protected getModuleServicesMap(scope: 'Mod' | 'Rou' | 'Req') {
-    const serviceModuleMap = new Map([...this.globalProviders[`siblingsPer${scope}`], ...this[`siblingsPer${scope}`]]);
+    const serviceModuleMap = new Map([...this.globalProviders[`importedPer${scope}`], ...this[`importedPer${scope}`]]);
     const moduleServicesMap = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
 
     serviceModuleMap.forEach((moduleOrObj, provider) => {
