@@ -1,4 +1,4 @@
-import { Injectable, InjectionToken, Injector, ReflectiveInjector, reflector, Type } from '@ts-stack/di';
+import { Injectable, InjectionToken, ReflectiveInjector, reflector } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ProvidersMetadata } from './models/providers-metadata';
@@ -30,11 +30,9 @@ import {
   isRootModule,
 } from './utils/type-guards';
 import { deepFreeze } from './utils/deep-freeze';
-import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
+import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES } from './constans';
 import { ModConfig } from './models/mod-config';
 import { Log } from './services/log';
-import { RouteMeta } from './edk';
-import { RootMetadata } from '.';
 
 /**
  * - imports and exports global providers;
@@ -130,8 +128,8 @@ export class ModuleFactory {
       ...this.meta.providersPerMod,
     ]);
 
-    this.meta.providersPerRou = getUniqProviders([...this.meta.providersPerRou]);
-    this.meta.providersPerReq = getUniqProviders([...this.meta.providersPerReq]);
+    this.meta.providersPerRou = getUniqProviders(this.meta.providersPerRou);
+    this.meta.providersPerReq = getUniqProviders(this.meta.providersPerReq);
   }
 
   protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
