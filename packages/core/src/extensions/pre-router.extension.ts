@@ -54,11 +54,9 @@ export class PreRouterExtension implements Extension<void> {
       const { moduleName, metaForExtensionsPerRouArr, providersPerMod } = metadataPerMod2;
 
       for (const { httpMethod, path, providersPerRou, providersPerReq } of metaForExtensionsPerRouArr) {
-        const resolvedPerMod = ReflectiveInjector.resolve(providersPerMod);
-        const resolvedPerRou = ReflectiveInjector.resolve(providersPerRou);
+        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+        const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
         const resolvedPerReq = ReflectiveInjector.resolve(providersPerReq);
-        const injectorPerMod = this.injectorPerApp.createChildFromResolved(resolvedPerMod);
-        const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou);
 
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
           const context = ReflectiveInjector.resolve([
