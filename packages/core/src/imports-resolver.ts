@@ -12,6 +12,10 @@ import { ModuleManager } from './services/module-manager';
 
 @Injectable()
 export class ImportsResolver {
+  protected providersPerMod: Set<ServiceProvider>;
+  protected providersPerRou: Set<ServiceProvider>;
+  protected providersPerReq: Set<ServiceProvider>;
+
   constructor(
     private moduleManager: ModuleManager,
     @Inject(APP_METADATA_MAP) protected appMetadataMap: AppMetadataMap
@@ -19,22 +23,56 @@ export class ImportsResolver {
 
   resolveImports() {
     this.appMetadataMap.forEach(({ importedProvidersMap, meta }) => {
+      console.log('='.repeat(80));
+      console.log('current:', meta.name);
       this.resolveImportedProviders(importedProvidersMap);
     });
   }
 
   protected resolveImportedProviders(map: Map<ModuleType | ModuleWithParams, ImportedProviders>) {
     map.forEach(({ providersPerMod, providersPerRou, providersPerReq }, module) => {
+      this.providersPerMod = providersPerMod;
+      this.providersPerRou = providersPerRou;
+      this.providersPerReq = providersPerReq;
       const depsPerMod = this.getDeps(providersPerMod);
       const depsPerRou = this.getDeps(providersPerRou);
       const depsPerReq = this.getDeps(providersPerReq);
       if ([...depsPerMod, ...depsPerRou, ...depsPerReq].length) {
-        console.log('='.repeat(80));
-        console.log(module);
+        console.log('imports:', module);
       }
       this.searchDeps(module, depsPerMod, ['Mod']);
       this.searchDeps(module, depsPerRou, ['Rou', 'Mod']);
       this.searchDeps(module, depsPerReq, ['Req', 'Rou', 'Mod']);
+    });
+  }
+
+  /**
+   * @param module Module from where imports providers.
+   * @param deps Dependencies of imported providers.
+   * @param scopes Search in this scopes. The scope order is important. This is the order in
+   * which the search will be conducted.
+   */
+  protected searchDeps(module: ModuleType | ModuleWithParams, deps: Set<any>, scopes: ('Mod' | 'Rou' | 'Req')[]) {
+    const meta = this.moduleManager.getMetadata(module);
+    deps.forEach((token) => {
+      let found: boolean = false;
+      scopesLoop: for (const scope of scopes) {
+        const providers = getUniqProviders(meta[`providersPer${scope}`]);
+        const tokens = normalizeProviders(providers).map((p) => p.provide);
+        const len = tokens.length;
+        for (let i = 0; i < len; i++) {
+          if (tokens[i] === token) {
+            this[`providersPer${scope}`].add(providers[i]);
+            found = true;
+            break scopesLoop;
+          }
+        }
+      }
+      if (!found) {
+        console.log('not found:', token);
+      } else {
+        console.log('done:', token);
+      }
     });
   }
 
@@ -78,36 +116,5 @@ export class ImportsResolver {
     ];
     const arr = Array.from(tokens).filter((t) => !defaultTokens.includes(t));
     return new Set(arr);
-  }
-
-  /**
-   * @param module Module from where imports providers.
-   * @param deps Dependencies of imported providers.
-   * @param scopes Search in this scopes. The scope order is important. This is the order in
-   * which the search will be conducted.
-   */
-  protected searchDeps(module: ModuleType | ModuleWithParams, deps: Set<any>, scopes: ('Mod' | 'Rou' | 'Req')[]) {
-    const meta = this.moduleManager.getMetadata(module);
-    const importedProviders = new Set<ServiceProvider>();
-    deps.forEach((token) => {
-      let found: boolean = false;
-      scopesLoop: for (const scope of scopes) {
-        const providers = getUniqProviders(meta[`providersPer${scope}`]);
-        const tokens = normalizeProviders(providers).map((p) => p.provide);
-        const len = tokens.length;
-        for (let i = 0; i < len; i++) {
-          if (tokens[i] === token) {
-            importedProviders.add(providers[i]);
-            found = true;
-            break scopesLoop;
-          }
-        }
-      }
-      if (!found) {
-        console.log('not found', token);
-      } else {
-        console.log('done!', token);
-      }
-    });
   }
 }
