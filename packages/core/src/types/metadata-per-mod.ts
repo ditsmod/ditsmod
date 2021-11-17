@@ -19,7 +19,7 @@ export class MetadataPerMod1 {
    * The controller metadata collected from all controllers of current module.
    */
   controllersMetadata: ControllerAndMethodMetadata[];
-  importedProviders: Map<ModuleType | ModuleWithParams, ImportedProviders>;
+  importedProvidersMap: Map<ModuleType | ModuleWithParams, ImportedProviders>;
 }
 
 /**
@@ -42,7 +42,7 @@ export class MetadataPerMod1 {
    */
   providersPerReq: ServiceProvider[];
   metaForExtensionsPerRouArr: MetaForExtensionsPerRou[];
-  importedProviders: Map<ModuleType | ModuleWithParams, ImportedProviders>;
+  importedProvidersMap: Map<ModuleType | ModuleWithParams, ImportedProviders>;
 }
 
 export class MetaForExtensionsPerRou {

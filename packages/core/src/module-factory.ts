@@ -118,7 +118,7 @@ export class ModuleFactory {
       guardsPerMod: this.guardsPerMod,
       meta: this.meta,
       controllersMetadata: deepFreeze(controllersMetadata),
-      importedProviders: this.getImportedProviders(),
+      importedProvidersMap: this.getImportedProviders(),
     });
   }
 

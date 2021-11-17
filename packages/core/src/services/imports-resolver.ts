@@ -1,8 +1,8 @@
-import { Injectable, Injector, ReflectiveInjector, Type } from '@ts-stack/di';
+import { Inject, Injectable, Injector, ReflectiveInjector, Type } from '@ts-stack/di';
 
-import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from '../constans';
+import { APP_METADATA_MAP, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from '../constans';
 import { RootMetadata } from '../models/root-metadata';
-import { ImportedProviders, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
+import { AppMetadataMap, ImportedProviders, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { RouteMeta } from '../types/route-data';
 import { getUniqProviders } from '../utils/get-uniq-providers';
 import { normalizeProviders } from '../utils/ng-utils';
@@ -12,7 +12,16 @@ import { ModuleManager } from './module-manager';
 
 @Injectable()
 export class ImportsResolver {
-  constructor(private moduleManager: ModuleManager) {}
+  constructor(
+    private moduleManager: ModuleManager,
+    @Inject(APP_METADATA_MAP) protected appMetadataMap: AppMetadataMap
+  ) {}
+
+  resolveImports() {
+    this.appMetadataMap.forEach((metadataPerMod1, module) => {
+      metadataPerMod1.importedProvidersMap
+    });
+  }
 
   protected resolveImportedProviders(map: Map<ModuleType | ModuleWithParams, ImportedProviders>) {
     map.forEach(({ providersPerMod, providersPerRou, providersPerReq }, module) => {
