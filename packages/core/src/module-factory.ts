@@ -115,7 +115,7 @@ export class ModuleFactory {
     this.importModules();
     this.mergeProviders();
     const controllersMetadata = this.getControllersMetadata();
-    this.resolveProviders();
+    this.resolveImportedProviders();
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
@@ -422,7 +422,7 @@ export class ModuleFactory {
     return arrControllerMetadata;
   }
 
-  protected resolveProviders() {
+  protected resolveImportedProviders() {
     this.getImportedProviders().forEach(({ module, providersPerMod, providersPerRou, providersPerReq }) => {
       const depsPerMod = this.getDeps(providersPerMod);
       const depsPerRou = this.getDeps(providersPerRou);
