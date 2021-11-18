@@ -2,6 +2,9 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ControllerAndMethodMetadata } from './controller-and-method-metadata';
 import { HttpMethod, ImportedProviders, ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix';
 
+/**
+ * @todo Rename this.
+ */
 export class ImportObj {
   module: ModuleType | ModuleWithParams;
   providers: ServiceProvider[] = [];
@@ -32,6 +35,9 @@ export class MetadataPerMod1 {
    * Map between a module and its ImportedProviders.
    */
   importedProvidersMap: Map<ModuleType | ModuleWithParams, ImportedProviders>;
+  /**
+   * Map between a token and its ImportObj per scope.
+   */
   importedTokensMap: { perMod: Map<any, ImportObj>; perRou: Map<any, ImportObj>; perReq: Map<any, ImportObj> };
 }
 

@@ -5,11 +5,13 @@ import { AppMetadataMap, ImportedProviders, ModuleType, ModuleWithParams, Servic
 import { getUniqProviders } from './utils/get-uniq-providers';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
-import { getToken, getTokens } from './utils/get-tokens';
+import { getTokens } from './utils/get-tokens';
 import { MetadataPerMod1 } from './types/metadata-per-mod';
 import { RouteMeta } from './types/route-data';
 import { RootMetadata } from './models/root-metadata';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
+
+type Scope = 'Mod' | 'Rou' | 'Req';
 
 @Injectable()
 export class ImportsResolver {
@@ -30,24 +32,20 @@ export class ImportsResolver {
    */
   protected resolveImportedProviders(metadataPerMod1: MetadataPerMod1) {
     const { importedProvidersMap, meta } = metadataPerMod1;
+    const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
 
     importedProvidersMap.forEach((importedProviders1, module) => {
-      const { providersPerMod, providersPerRou, providersPerReq } = importedProviders1;
-      for (const provider of providersPerMod) {
-        const importedProviders2 = this.searchInProviders(module, provider, ['Mod']);
-        this.mergeImportedProviders(importedProviders1, importedProviders2);
+      for (let i = 0; i < scopes.length; i++) {
+        for (const provider of importedProviders1[`providersPer${scopes[i]}`]) {
+          const importedProviders2 = this.searchInProviders(module, provider, scopes.slice(i));
+          this.mergeImportedProviders(importedProviders1, importedProviders2);
+        }
       }
-      for (const provider of providersPerRou) {
-        const importedProviders2 = this.searchInProviders(module, provider, ['Rou', 'Mod']);
-        this.mergeImportedProviders(importedProviders1, importedProviders2);
-      }
-      for (const provider of providersPerReq) {
-        const importedProviders2 = this.searchInProviders(module, provider, ['Req', 'Rou', 'Mod']);
-        this.mergeImportedProviders(importedProviders1, importedProviders2);
-      }
-      meta.providersPerMod = [...Array.from(importedProviders1.providersPerMod), ...meta.providersPerMod];
-      meta.providersPerRou = [...Array.from(importedProviders1.providersPerRou), ...meta.providersPerRou];
-      meta.providersPerReq = [...Array.from(importedProviders1.providersPerReq), ...meta.providersPerReq];
+      // Merge imported providers with existing providers
+      scopes.forEach((scope) => {
+        const localProviders = meta[`providersPer${scope}`];
+        meta[`providersPer${scope}`] = [...importedProviders1[`providersPer${scope}`], ...localProviders];
+      });
     });
 
     meta.providersPerReq.unshift(...defaultProvidersPerReq);
@@ -55,72 +53,78 @@ export class ImportsResolver {
 
   /**
    * @param module Module from where imports providers.
-   * @param providers Imported providers.
-   * @param scopes Search in this scopes. The scope order is important. This is the order in
-   * which the search will be conducted.
+   * @param provider Imported provider.
+   * @param scopes Search in this scopes. The scope order is important.
    */
   protected searchInProviders(
     module: ModuleType | ModuleWithParams,
     provider: ServiceProvider,
-    scopes: ('Mod' | 'Rou' | 'Req')[],
+    scopes: Scope[],
     path: any[] = []
   ) {
     const meta = this.moduleManager.getMetadata(module);
     const importedProviders1 = new ImportedProviders();
 
-    for (const token of this.getDependencies(provider)) {
+    for (const token1 of this.getDependencies(provider)) {
       let found: boolean = false;
+
       for (const scope of scopes) {
         const providers = getUniqProviders(meta[`providersPer${scope}`]);
-        const tokens = getTokens(providers);
-        const len = tokens.length;
-        for (let i = 0; i < len; i++) {
-          if (tokens[i] === token) {
+
+        getTokens(providers).forEach((token2, i) => {
+          if (token2 === token1) {
             importedProviders1[`providersPer${scope}`].add(providers[i]);
             found = true;
             // The loop does not breaks because there may be multi providers.
           }
+        });
+
+        if (found) {
+          break;
         }
       }
 
       if (!found) {
-        const importedProviders2 = this.searchInImports(module, scopes, token, [...path, token]);
+        const importedProviders2 = this.searchInImports(module, scopes, token1, [...path, token1]);
         found = !!importedProviders2;
         if (found) {
           this.mergeImportedProviders(importedProviders1, importedProviders2!);
         }
       }
       if (!found) {
-        const strPath = getTokens([getToken(provider), ...path, token])
-          .map((t) => t.name || t)
-          .join(' -> ');
-        
-        const partMsg = [getToken(provider), ...path, token].length > 1 ? `(${strPath})` : '';
-        throw new Error(`No provider for ${token.name}!${partMsg}`);
+        this.throwError(provider, path, token1);
       }
     }
 
     return importedProviders1;
   }
 
-  protected searchInImports(
-    module: ModuleType | ModuleWithParams,
-    scopes: ('Mod' | 'Rou' | 'Req')[],
-    token: any,
-    path: any[] = []
-  ) {
+  protected throwError(provider: ServiceProvider, path: any[], token: any) {
+    path = [provider, ...path, token];
+    const strPath = getTokens(path)
+      .map((t) => t.name || t)
+      .join(' -> ');
+
+    const partMsg = path.length > 1 ? `(${strPath})` : '';
+    throw new Error(`No provider for ${token.name}!${partMsg}`);
+  }
+
+  protected searchInImports(module: ModuleType | ModuleWithParams, scopes: Scope[], token: any, path: any[] = []) {
     const importedProviders1 = new ImportedProviders();
     let found: boolean = false;
+
     for (const scope of scopes) {
       const importObj = this.appMetadataMap.get(module)?.importedTokensMap[`per${scope}`].get(token);
       if (importObj) {
         found = true;
-        const providers = [...Array.from(importedProviders1[`providersPer${scope}`]), ...importObj.providers];
-        importedProviders1[`providersPer${scope}`] = new Set(providers);
+        importedProviders1[`providersPer${scope}`] = new Set(importObj.providers);
+
+        // Loop for multi providers.
         for (const provider of importObj.providers) {
           const importedProviders2 = this.searchInProviders(importObj.module, provider, scopes, path);
           this.mergeImportedProviders(importedProviders1, importedProviders2);
         }
+        break;
       }
     }
 
@@ -128,7 +132,7 @@ export class ImportsResolver {
   }
 
   protected mergeImportedProviders(importedProviders1: ImportedProviders, importedProviders2: ImportedProviders) {
-    const scopes: ('Mod' | 'Rou' | 'Req')[] = ['Mod', 'Rou', 'Req'];
+    const scopes: Scope[] = ['Mod', 'Rou', 'Req'];
     scopes.forEach((scope) => {
       importedProviders1[`providersPer${scope}`] = new Set([
         ...importedProviders1[`providersPer${scope}`],
@@ -148,7 +152,7 @@ export class ImportsResolver {
       });
     });
 
-    return this.excludeDefaultTokens(Array.from(deps));
+    return this.excludeDefaultTokens([...deps]);
   }
 
   protected excludeDefaultTokens(tokens: any[]) {
