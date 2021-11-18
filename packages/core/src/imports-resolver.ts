@@ -15,7 +15,7 @@ export class ImportsResolver {
     @Inject(APP_METADATA_MAP) protected appMetadataMap: AppMetadataMap
   ) {}
 
-  resolveImports() {
+  resolve() {
     this.appMetadataMap.forEach((metadataPerMod1) => {
       this.resolveImportedProviders(metadataPerMod1);
     });
