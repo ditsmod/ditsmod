@@ -154,20 +154,4 @@ export class ImportsResolver {
 
     return Array.from(deps);
   }
-
-  protected excludeDefaultTokens(tokens: any[]) {
-    const someDefaultTokensPerReq = getTokens(defaultProvidersPerReq);
-    const defaultTokens = [
-      ...someDefaultTokensPerReq,
-      NODE_REQ,
-      NODE_RES,
-      PATH_PARAMS,
-      QUERY_STRING,
-      Injector,
-      Log,
-      RouteMeta,
-      RootMetadata,
-    ];
-    return tokens.filter((t) => !defaultTokens.includes(t));
-  }
 }
