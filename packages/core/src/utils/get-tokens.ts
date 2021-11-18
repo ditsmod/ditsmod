@@ -6,8 +6,8 @@ export function getToken(provider: ServiceProvider): any {
 }
 
 export function getTokens(provider: ServiceProvider): any[];
-export function getTokens(providers: ServiceProvider[]): any[];
-export function getTokens(providerOrProviders: ServiceProvider | ServiceProvider[]): any[] {
-  providerOrProviders = Array.isArray(providerOrProviders) ? providerOrProviders : [providerOrProviders];
-  return normalizeProviders(providerOrProviders).map((p) => p.provide);
+export function getTokens(providers: ServiceProvider[] | ReadonlyArray<ServiceProvider>): any[];
+export function getTokens(providerOrProviders: ServiceProvider | ServiceProvider[] | ReadonlyArray<ServiceProvider>): any[] {
+  const arr = Array.isArray(providerOrProviders) ? providerOrProviders : [providerOrProviders] as ServiceProvider[];
+  return normalizeProviders(arr).map((p) => p.provide);
 }
