@@ -1,12 +1,13 @@
-import { Controller, Route } from '@ditsmod/core';
+import { Controller, Response, Route } from '@ditsmod/core';
+
 import { ThreeService } from './three/three.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly threeService: ThreeService) {}
+  constructor(private readonly threeService: ThreeService, private res: Response) {}
 
   @Route('GET')
-  getHello(): string {
-    return this.threeService.getHello();
+  getHello() {
+    this.res.send(this.threeService.getHello());
   }
 }
