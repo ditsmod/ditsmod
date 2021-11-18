@@ -19,6 +19,10 @@ export class ImportsMap {
 export class MetadataPerMod1 {
   prefixPerMod: string;
   guardsPerMod: NormalizedGuard[];
+  /**
+   * Snapshot of NormalizedModuleMetadata. If you modify any array in this object,
+   * the original array will remain unchanged.
+   */
   meta: NormalizedModuleMetadata;
   /**
    * The controller metadata collected from all controllers of current module.
