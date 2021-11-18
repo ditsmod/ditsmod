@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { forwardRef, Injectable, InjectionToken, reflector } from '@ts-stack/di';
+import { forwardRef, Injectable, InjectionToken, reflector, ValueProvider } from '@ts-stack/di';
 
 import { Module } from '../decorators/module';
 import {
@@ -12,6 +12,8 @@ import {
   isProvider,
   isRootModule,
   isRoute,
+  isMultiProvider,
+  MultiProvider,
 } from './type-guards';
 import { ModuleMetadata } from '../types/module-metadata';
 import { RootModule } from '../decorators/root-module';
@@ -171,6 +173,48 @@ describe('type guards', () => {
       function forwardRef(...args: any[]) {}
       const fn = forwardRef(() => 'one');
       expect(isForwardRef(fn)).toBe(false);
+    });
+  });
+
+  describe('isMultiProvider()', () => {
+    it('true ValueProvider', () => {
+      const provider: MultiProvider = { provide: 'token', useValue: 'fake', multi: true };
+      expect(isMultiProvider(provider)).toBe(true);
+    });
+
+    it('true ClassProvider', () => {
+      const provider: MultiProvider = { provide: 'token', useClass: class {}, multi: true };
+      expect(isMultiProvider(provider)).toBe(true);
+    });
+
+    it('true ExistingProvider', () => {
+      const provider: MultiProvider = { provide: 'token', useExisting: class {}, multi: true };
+      expect(isMultiProvider(provider)).toBe(true);
+    });
+
+    it('true FactoryProvider', () => {
+      const provider: MultiProvider = { provide: 'token', useFactory: () => '', multi: true };
+      expect(isMultiProvider(provider)).toBe(true);
+    });
+
+    it('false ValueProvider', () => {
+      const provider: ServiceProvider = { provide: 'token', useValue: 'fake' };
+      expect(isMultiProvider(provider)).toBe(false);
+    });
+
+    it('false ClassProvider', () => {
+      const provider: ServiceProvider = { provide: 'token', useClass: class {} };
+      expect(isMultiProvider(provider)).toBe(false);
+    });
+
+    it('false ExistingProvider', () => {
+      const provider: ServiceProvider = { provide: 'token', useExisting: class {} };
+      expect(isMultiProvider(provider)).toBe(false);
+    });
+
+    it('false FactoryProvider', () => {
+      const provider: ServiceProvider = { provide: 'token', useFactory: () => '' };
+      expect(isMultiProvider(provider)).toBe(false);
     });
   });
 });

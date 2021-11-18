@@ -77,6 +77,19 @@ export function isFactoryProvider(provider: Provider): provider is FactoryProvid
   return (provider as FactoryProvider)?.useFactory !== undefined;
 }
 
+export type MultiProvider = Exclude<ServiceProvider, TypeProvider> & { multi: boolean };
+
+export function isMultiProvider(provider: Provider): provider is MultiProvider {
+  return (
+    (provider as ValueProvider)?.provide !== undefined &&
+    (provider as ValueProvider)?.multi !== undefined &&
+    ((provider as ValueProvider)?.useValue !== undefined ||
+      (provider as ClassProvider)?.useClass !== undefined ||
+      (provider as ExistingProvider)?.useExisting !== undefined ||
+      (provider as FactoryProvider)?.useFactory !== undefined)
+  );
+}
+
 export function isProvider(maybeProvider: any): maybeProvider is ServiceProvider {
   if (isModuleWithParams(maybeProvider)) {
     return false;
