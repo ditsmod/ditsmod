@@ -5,7 +5,7 @@ import { ProvidersMetadata } from './models/providers-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
-import { MetadataPerMod1, ImportsMap } from './types/metadata-per-mod';
+import { MetadataPerMod1, ImportsMap, ImportObj } from './types/metadata-per-mod';
 import {
   GuardItem,
   DecoratorMetadata,
@@ -26,6 +26,7 @@ import {
   isController,
   isExtensionProvider,
   isInjectionToken,
+  isMultiProvider,
   isNormalizedProvider,
   isRootModule,
 } from './utils/type-guards';
@@ -33,6 +34,7 @@ import { deepFreeze } from './utils/deep-freeze';
 import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES } from './constans';
 import { ModConfig } from './models/mod-config';
 import { Log } from './services/log';
+import { getToken } from './utils/get-tokens';
 
 /**
  * - imports and exports global providers;
@@ -55,9 +57,9 @@ export class ModuleFactory {
   protected importedProvidersPerRou: ServiceProvider[] = [];
   protected importedProvidersPerReq: ServiceProvider[] = [];
 
-  protected importedPerMod = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
-  protected importedPerRou = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
-  protected importedPerReq = new Map<ServiceProvider, ModuleType | ModuleWithParams>();
+  protected importedPerMod = new Map<any, ImportObj>();
+  protected importedPerRou = new Map<any, ImportObj>();
+  protected importedPerReq = new Map<any, ImportObj>();
 
   protected globalProviders: ProvidersMetadata & ImportsMap;
   protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod1>();
@@ -119,6 +121,11 @@ export class ModuleFactory {
       meta: this.meta,
       controllersMetadata: deepFreeze(controllersMetadata),
       importedProvidersMap: this.getImportedProviders(),
+      importedTokensMap: {
+        perMod: this.importedPerMod,
+        perRou: this.importedPerRou,
+        perReq: this.importedPerReq,
+      },
     });
   }
 
@@ -285,7 +292,17 @@ export class ModuleFactory {
       const exp = meta1[`exportsProvidersPer${scope}`];
       if (exp.length) {
         exp.forEach((provider) => {
-          self[`importedPer${scope}`].set(provider, module);
+          const token = getToken(provider);
+          const obj = new ImportObj();
+          obj.module = module;
+          if (isMultiProvider(provider)) {
+            const importObj = self[`importedPer${scope}`].get(token);
+            if (importObj) {
+              obj.providers = importObj.providers;
+            }
+          }
+          obj.providers.push(provider);
+          self[`importedPer${scope}`].set(token, obj);
         });
         self[`importedProvidersPer${scope}`].push(...exp);
       }
@@ -442,12 +459,12 @@ export class ModuleFactory {
     const serviceModuleMap = new Map([...this.globalProviders[`importedPer${scope}`], ...this[`importedPer${scope}`]]);
     const moduleServicesMap = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
 
-    serviceModuleMap.forEach((moduleOrObj, provider) => {
-      const providers = moduleServicesMap.get(moduleOrObj);
+    serviceModuleMap.forEach((importObj) => {
+      const providers = moduleServicesMap.get(importObj.module);
       if (providers) {
-        providers.push(provider);
+        providers.push(...importObj.providers);
       } else {
-        moduleServicesMap.set(moduleOrObj, [provider]);
+        moduleServicesMap.set(importObj.module, importObj.providers);
       }
     });
     return moduleServicesMap;
