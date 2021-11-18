@@ -27,12 +27,8 @@ export class ImportsResolver {
    */
   protected resolveImportedProviders(metadataPerMod1: MetadataPerMod1) {
     const { importedProvidersMap, meta } = metadataPerMod1;
-    console.log('='.repeat(80));
-    console.log('current:', meta.name);
 
     importedProvidersMap.forEach((importedProviders1, module) => {
-      console.log('imports:', (module as ModuleType).name);
-
       const { providersPerMod, providersPerRou, providersPerReq } = importedProviders1;
       for (const provider of providersPerMod) {
         const importedProviders2 = this.searchInProviders(module, provider, ['Mod']);
@@ -50,6 +46,7 @@ export class ImportsResolver {
       meta.providersPerRou = [...Array.from(importedProviders1.providersPerRou), ...meta.providersPerRou];
       meta.providersPerReq = [...Array.from(importedProviders1.providersPerReq), ...meta.providersPerReq];
     });
+
     meta.providersPerReq.unshift(...defaultProvidersPerReq);
   }
 
@@ -68,7 +65,7 @@ export class ImportsResolver {
     const meta = this.moduleManager.getMetadata(module);
     const importedProviders1 = new ImportedProviders();
 
-    dependenciesLoop: for (const token of this.getDependencies(provider)) {
+    for (const token of this.getDependencies(provider)) {
       let found: boolean = false;
       for (const scope of scopes) {
         const providers = getUniqProviders(meta[`providersPer${scope}`]);
@@ -94,10 +91,9 @@ export class ImportsResolver {
         const strPath = getTokens([getToken(provider), ...path, token])
           .map((t) => t.name || t)
           .join(' -> ');
-        console.log(`not found ${token.name}!`, [getToken(provider), ...path, token].length > 1 ? `(${strPath})` : '');
-        break dependenciesLoop;
-      } else {
-        console.log('done:', token.name);
+        
+        const partMsg = [getToken(provider), ...path, token].length > 1 ? `(${strPath})` : '';
+        throw new Error(`No provider for ${token.name}!${partMsg}`);
       }
     }
 
