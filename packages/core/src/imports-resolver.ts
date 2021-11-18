@@ -1,12 +1,9 @@
-import { Inject, Injectable, Injector, ReflectiveInjector } from '@ts-stack/di';
+import { Inject, Injectable, ReflectiveInjector } from '@ts-stack/di';
 
-import { APP_METADATA_MAP, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
-import { RootMetadata } from './models/root-metadata';
+import { APP_METADATA_MAP } from './constans';
 import { AppMetadataMap, ImportedProviders, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
-import { RouteMeta } from './types/route-data';
 import { getUniqProviders } from './utils/get-uniq-providers';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
-import { Log } from './services/log';
 import { ModuleManager } from './services/module-manager';
 import { getToken, getTokens } from './utils/get-tokens';
 import { MetadataPerMod1 } from './types/metadata-per-mod';
