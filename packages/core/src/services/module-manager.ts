@@ -39,8 +39,8 @@ export class ModuleManager {
     return this.copyMeta(meta);
   }
 
-  getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrOnNotFound?: boolean) {
-    const meta = this.getRawMetadata<T, A>(moduleId, throwErrOnNotFound);
+  getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
+    const meta = this.getRawMetadata<T, A>(moduleId, throwErrIfNotFound);
     return this.copyMeta(meta!);
   }
 
@@ -174,6 +174,10 @@ export class ModuleManager {
     meta.exportsProvidersPerMod = meta.exportsProvidersPerMod.slice();
     meta.exportsProvidersPerRou = meta.exportsProvidersPerRou.slice();
     meta.exportsProvidersPerReq = meta.exportsProvidersPerReq.slice();
+    meta.providersPerApp = meta.providersPerApp.slice();
+    meta.providersPerMod = meta.providersPerMod.slice();
+    meta.providersPerRou = meta.providersPerRou.slice();
+    meta.providersPerReq = meta.providersPerReq.slice();
     // return deepFreeze(meta);
     return meta;
   }
@@ -183,7 +187,7 @@ export class ModuleManager {
    */
   protected getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
-    throwErrOnNotFound?: boolean
+    throwErrIfNotFound?: boolean
   ) {
     let meta: NormalizedModuleMetadata<T, A> | undefined;
     if (typeof moduleId == 'string') {
@@ -195,7 +199,7 @@ export class ModuleManager {
       meta = this.map.get(moduleId) as NormalizedModuleMetadata<T, A>;
     }
 
-    if (throwErrOnNotFound && !meta) {
+    if (throwErrIfNotFound && !meta) {
       let moduleName: string;
       if (typeof moduleId == 'string') {
         moduleName = moduleId;
