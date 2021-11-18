@@ -1,12 +1,15 @@
-import { Inject, Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { Inject, Injectable, Injector, ReflectiveInjector } from '@ts-stack/di';
 
-import { APP_METADATA_MAP } from './constans';
+import { APP_METADATA_MAP, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
 import { AppMetadataMap, ImportedProviders, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
 import { getUniqProviders } from './utils/get-uniq-providers';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { getToken, getTokens } from './utils/get-tokens';
 import { MetadataPerMod1 } from './types/metadata-per-mod';
+import { RouteMeta } from './types/route-data';
+import { RootMetadata } from './models/root-metadata';
+import { defaultProvidersPerApp } from './services/default-providers-per-app';
 
 @Injectable()
 export class ImportsResolver {
@@ -145,19 +148,18 @@ export class ImportsResolver {
       });
     });
 
-    return Array.from(deps);
+    return this.excludeDefaultTokens(Array.from(deps));
   }
 
   protected excludeDefaultTokens(tokens: any[]) {
-    const someDefaultTokensPerReq = getTokens(defaultProvidersPerReq);
+    const someDefaultTokens = getTokens([...defaultProvidersPerApp, ...defaultProvidersPerReq]);
     const defaultTokens = [
-      ...someDefaultTokensPerReq,
+      ...someDefaultTokens,
       NODE_REQ,
       NODE_RES,
       PATH_PARAMS,
       QUERY_STRING,
       Injector,
-      Log,
       RouteMeta,
       RootMetadata,
     ];
