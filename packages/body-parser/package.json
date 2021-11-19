@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/body-parser",
-  "version": "1.1.0",
+  "version": "2.0.0-next.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -21,11 +21,11 @@
     "get-body": "^1.0.3"
   },
   "devDependencies": {
-    "@ts-stack/di": "^1.2.0-beta.1",
+    "@ts-stack/di": "^1.2.0-rc.3",
     "typescript": "^4.4.4"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.0.0",
-    "@ts-stack/di": "^1.2.0-beta.1"
+    "@ts-stack/di": "^1.2.0-rc.3"
   }
 }
