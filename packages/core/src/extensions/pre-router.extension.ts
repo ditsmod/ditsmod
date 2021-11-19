@@ -96,7 +96,7 @@ export class PreRouterExtension implements Extension<void> {
         throw new Error(msg);
       }
 
-      this.log.showRoutes('debug', { moduleName, httpMethod, path });
+      this.log.showRoutes('debug', { className: this.constructor.name }, { moduleName, httpMethod, path });
 
       if (httpMethod == 'ALL') {
         this.router.all(`/${path}`, handle);
@@ -116,7 +116,7 @@ export class PreRouterExtension implements Extension<void> {
    * @param err An error to logs it (not sends).
    */
   protected sendInternalServerError(nodeRes: NodeResponse, err: Error) {
-    this.log.internalServerError('error', err);
+    this.log.internalServerError('error', { className: this.constructor.name }, err);
     nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
     nodeRes.end();
   }

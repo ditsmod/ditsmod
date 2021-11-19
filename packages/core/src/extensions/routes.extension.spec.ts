@@ -33,7 +33,7 @@ xdescribe('RoutesExtension', () => {
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config);
     const logManager = new LogManager();
-    const log = new Log(logger, logManager);
+    const log = new Log(logManager, logger);
     moduleManager = new ModuleManager(log);
     const injectorPerApp = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,

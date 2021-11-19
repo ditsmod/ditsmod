@@ -11,9 +11,9 @@ import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
 import { PreRouterExtension } from '../extensions/pre-router.extension';
 import { RoutesExtension } from '../extensions/routes.extension';
-import { Log } from './log';
+import { Log, LogConfig } from './log';
 
-export const defaultProvidersPerApp: ServiceProvider[] = [
+export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
   LoggerConfig,
   { provide: Logger, useClass: DefaultLogger },
   BodyParserConfig,
@@ -29,4 +29,5 @@ export const defaultProvidersPerApp: ServiceProvider[] = [
   { provide: ROUTES_EXTENSIONS, useClass: RoutesExtension, multi: true },
   ModuleManager,
   Log,
+  LogConfig,
 ];

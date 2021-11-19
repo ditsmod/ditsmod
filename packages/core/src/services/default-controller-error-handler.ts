@@ -11,7 +11,7 @@ export class DefaultControllerErrorHandler implements ControllerErrorHandler {
 
   handleError(err: Error) {
     const { message } = err;
-    this.log.controllerHasError('error', err);
+    this.log.controllerHasError('error', { className: this.constructor.name }, err);
     if (!this.res.nodeRes.headersSent) {
       this.res.sendJson({ error: { message } }, Status.INTERNAL_SERVER_ERROR);
     }

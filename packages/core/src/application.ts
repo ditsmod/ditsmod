@@ -5,7 +5,7 @@ import { LogManager } from './services/log-manager';
 
 import { RootMetadata } from './models/root-metadata';
 import { AppInitializer } from './services/app-initializer';
-import { Log } from './services/log';
+import { FilterConfig, Log } from './services/log';
 import { ModuleManager } from './services/module-manager';
 import { Logger } from './types/logger';
 import { ModuleType } from './types/mix';
@@ -24,7 +24,8 @@ export class Application {
         server.listen(this.meta.listenOptions, () => {
           resolve({ server, logger: this.log.logger });
           const host = this.meta.listenOptions.host || 'localhost';
-          this.log.serverListen('info', this.meta.serverName, host, this.meta.listenOptions.port);
+          const filterConfig: FilterConfig = { className: this.constructor.name };
+          this.log.serverListen('info', filterConfig, this.meta.serverName, host, this.meta.listenOptions.port);
         });
       } catch (err) {
         this.log.bufferLogs = false;

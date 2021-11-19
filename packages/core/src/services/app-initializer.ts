@@ -46,7 +46,7 @@ export class AppInitializer {
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLog();
     const appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
-    const importsResolver = new ImportsResolver(this.moduleManager, appMetadataMap);
+    const importsResolver = new ImportsResolver(this.moduleManager, appMetadataMap, this.log);
     importsResolver.resolve();
     await this.handleExtensions(appMetadataMap);
     this.preRouter = this.injectorPerApp.get(PreRouterExtension) as PreRouterExtension;
@@ -71,7 +71,7 @@ export class AppInitializer {
       this.log.finishReinitApp('debug');
     } catch (err) {
       this.log.logger = oldLogger;
-      this.log.printReinitError('error', err);
+      this.log.printReinitError('error', { className: this.constructor.name }, err);
       this.log.startRollbackModuleConfigChanges('debug');
       this.moduleManager.rollback();
       await this.initAndGetMetadata();
@@ -180,7 +180,7 @@ export class AppInitializer {
 
   protected bootstrapModuleFactory(moduleManager: ModuleManager) {
     const globalProviders = this.getGlobalProviders(moduleManager);
-    this.log.printGlobalProviders('trace', globalProviders);
+    this.log.printGlobalProviders('trace', { className: this.constructor.name }, globalProviders);
     const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
     const appModule = moduleManager.getMetadata('root').module;
     return moduleFactory.bootstrap(globalProviders, '', appModule, moduleManager);
@@ -225,13 +225,13 @@ export class AppInitializer {
           continue;
         }
         const beforeToken = `BEFORE ${groupToken}`;
-        this.log.startExtensionsGroupInit('debug', moduleName, beforeToken);
+        this.log.startExtensionsGroupInit('debug', { className: this.constructor.name }, moduleName, beforeToken);
         await extensionsManager.init(beforeToken);
-        this.log.finishExtensionsGroupInit('debug', moduleName, beforeToken);
+        this.log.finishExtensionsGroupInit('debug', { className: this.constructor.name }, moduleName, beforeToken);
 
-        this.log.startExtensionsGroupInit('debug', moduleName, groupToken);
+        this.log.startExtensionsGroupInit('debug', { className: this.constructor.name }, moduleName, groupToken);
         await extensionsManager.init(groupToken);
-        this.log.finishExtensionsGroupInit('debug', moduleName, groupToken);
+        this.log.finishExtensionsGroupInit('debug', { className: this.constructor.name }, moduleName, groupToken);
         initedExtensionsGroups.add(groupToken);
       }
     }
@@ -245,7 +245,7 @@ export class AppInitializer {
     const names = Array.from(extensions)
       .map((e) => e.constructor.name)
       .join(', ');
-    this.log.totalInitedExtensions('debug', extensions.size, names);
+    this.log.totalInitedExtensions('debug', { className: this.constructor.name }, extensions.size, names);
     counter.resetInitedExtensionsSet();
   }
 

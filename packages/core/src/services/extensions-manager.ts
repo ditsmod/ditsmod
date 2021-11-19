@@ -15,7 +15,7 @@ export class ExtensionsManager {
     const dataArr: T[] = [];
 
     if (typeof extensionsGroupToken != 'string' && !extensions.length) {
-      this.log.noExtensionsFound('warn', extensionsGroupToken);
+      this.log.noExtensionsFound('warn', { className: this.constructor.name }, extensionsGroupToken);
     }
 
     for (const extension of extensions) {
@@ -27,16 +27,16 @@ export class ExtensionsManager {
       const id = this.counter.increaseExtensionsInitId();
       const args = [id, extensionName];
       this.unfinishedInitExtensions.add(extension);
-      this.log.startInitExtension('debug', ...args);
+      this.log.startInitExtension('debug', { className: this.constructor.name }, ...args);
       const data = await extension.init();
-      this.log.finishInitExtension('debug', ...args);
+      this.log.finishInitExtension('debug', { className: this.constructor.name }, ...args);
       this.unfinishedInitExtensions.delete(extension);
       this.counter.addInitedExtensions(extension);
       if (data === undefined) {
-        this.log.extensionInitReturnsVoid('debug', ...args);
+        this.log.extensionInitReturnsVoid('debug', { className: this.constructor.name }, ...args);
         continue;
       }
-      this.log.extensionInitReturnsValue('debug', ...args);
+      this.log.extensionInitReturnsValue('debug', { className: this.constructor.name }, ...args);
       if (autoMergeArrays && Array.isArray(data)) {
         dataArr.push(...data);
       } else {

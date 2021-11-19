@@ -2,14 +2,25 @@ import { Injectable, Optional } from '@ts-stack/di';
 import { format } from 'util';
 
 import { Logger, LoggerConfig } from '../types/logger';
+import { AnyObj } from '../types/mix';
 import { DefaultLogger } from './default-logger';
 import { LogManager } from './log-manager';
+
+export class FilterConfig {
+  moduleName?: string;
+  className?: string;
+  tags?: string[];
+}
+export class LogConfig {
+  filterConfig: FilterConfig = {};
+}
 
 /**
  * Default type for Log buffer.
  */
 export interface LogItem {
   date: Date;
+  filterConfig: FilterConfig;
   level: keyof Logger;
   msg: string;
 }
@@ -51,234 +62,267 @@ export class Log {
     }
   }
 
-  constructor(protected logManager: LogManager, @Optional() logger?: Logger) {
+  protected logConfig: LogConfig;
+
+  constructor(protected logManager: LogManager, @Optional() logger?: Logger, @Optional() logConfig?: LogConfig) {
     if (!logger) {
       logger = new DefaultLogger(new LoggerConfig());
     }
-    this.logger = logger;
+    this._logger = logger;
+    if (!logConfig) {
+      logConfig = new LogConfig();
+    }
+    this.logConfig = logConfig;
   }
 
   getLogManager() {
     return this.logManager;
   }
 
-  protected setLog(level: keyof Logger, msg: any) {
+  protected setLog(level: keyof Logger, filterConfig: AnyObj, msg: any) {
     if (this.logManager.bufferLogs) {
-      this.logManager.buffer.push({ date: new Date(), level, msg });
+      this.logManager.buffer.push({ filterConfig, date: new Date(), level, msg });
     } else {
       this.logger.log(level, msg);
     }
   }
 
   flush() {
+    const { buffer } = this.logManager;
     if (typeof global.it !== 'function') {
       // This is not a test mode.
-      this.logManager.buffer.forEach((log) => {
-        const dateTime = log.date.toLocaleString();
-        const msg = `${dateTime}: ${log.msg}`;
+      const { filterConfig } = this.logConfig;
+      let filteredBuffer = buffer;
+      if (filterConfig && Object.keys(filterConfig).length) {
+        filteredBuffer = this.filterLogs(buffer, filterConfig);
+      }
+      filteredBuffer.forEach((log) => {
+        // const dateTime = log.date.toLocaleString();
+        const partMsg = log.filterConfig.tags ? `, (tags: ${log.filterConfig.tags})` : '';
+        const msg = `${log.msg}${partMsg}`;
         this._logger.log.apply(this._logger, [log.level, msg]);
       });
     }
 
-    this.logManager.buffer.splice(0);
+    buffer.splice(0);
+  }
+
+  protected filterLogs(buffer: LogItem[], outputConfig: FilterConfig) {
+    return buffer.filter((item) => {
+      const inputConfig = item.filterConfig;
+      const hasTags = inputConfig.tags?.some((tag) => outputConfig.tags?.includes(tag));
+      const hasModuleName = outputConfig.moduleName && inputConfig.moduleName == outputConfig.moduleName;
+      const hasClassName = outputConfig.className && inputConfig.className == outputConfig.className;
+      return hasModuleName || hasClassName || hasTags;
+    });
   }
 
   /**
    * The module with ID `inputModule` has already been imported into `modIdStr`.
    */
-  moduleAlreadyImported(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `The module with ID "${format(args[0])}" has already been imported into "${args[1]}".`);
+  moduleAlreadyImported(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    const msg = `The module with ID "${format(args[0])}" has already been imported into "${args[1]}".`;
+    this.setLog(level, filterConfig, msg);
   }
 
   /**
    * `serverName` is running at `host`:`port`.
    */
-  serverListen(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `${args[0]} is running at ${args[1]}:${args[2]}`);
+  serverListen(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `${args[0]} is running at ${args[1]}:${args[2]}`);
   }
 
   /**
    * In `moduleName` you have token `diToken` with extension-like `className`
    * that not registered in "extensions" array.
    */
-  youForgotRegisterExtension(level: keyof Logger, ...args: any[]) {
+  youForgotRegisterExtension(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
     let msg = `In ${args[0]} you have token "${args[1]}" `;
     msg += `with extension-like "${args[2]}" that not registered in "extensions" array`;
-    this.setLog(level, msg);
+    this.setLog(level, filterConfig, msg);
   }
 
   /**
    * Start reinit the application.
    */
-  startReinitApp(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, 'Start reinit the application.');
+  startReinitApp(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, 'Start reinit the application.');
   }
 
   /**
    * Skipping autocommit of changes for config of moduleManager.
    */
-  skippingAutocommitModulesConfig(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, 'Skipping autocommit of changes for config of moduleManager.');
+  skippingAutocommitModulesConfig(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, 'Skipping autocommit of changes for config of moduleManager.');
   }
 
   /**
    * Finished reinit the application.
    */
-  finishReinitApp(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, 'Finished reinit the application.');
+  finishReinitApp(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, 'Finished reinit the application.');
   }
 
   /**
    * [log any error]
    */
-  printReinitError(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, args[0]);
+  printReinitError(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, args[0]);
   }
 
   /**
    * Start rollback of changes for config of moduleManager during reinit the application.
    */
-  startRollbackModuleConfigChanges(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, 'Start rollback of changes for config of moduleManager during reinit the application.');
+  startRollbackModuleConfigChanges(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    const msg = 'Start rollback of changes for config of moduleManager during reinit the application.';
+    this.setLog(level, filterConfig, msg);
   }
 
   /**
    * Successful rollback of changes for config of moduleManager during reinit the application.
    */
-  successfulRollbackModuleConfigChanges(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, 'Successful rollback of changes for config of moduleManager during reinit the application.');
+  successfulRollbackModuleConfigChanges(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    const msg = 'Successful rollback of changes for config of moduleManager during reinit the application.';
+    this.setLog(level, filterConfig, msg);
   }
 
   /**
    * Successful added `inputModuleName` to `targetModuleName`.
    */
-  successfulAddedModuleToImport(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `Successful added "${args[0]}" to "${args[1]}".`);
+  successfulAddedModuleToImport(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `Successful added "${args[0]}" to "${args[1]}".`);
   }
 
   /**
    * Module with ID `moduleIdOrName` not found.
    */
-  moduleNotFound(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `Module with ID "${args[0]}" not found.`);
+  moduleNotFound(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `Module with ID "${args[0]}" not found.`);
   }
 
   /**
    * `inputModuleName` successful removed from `hostModuleName`.
    */
-  moduleSuccessfulRemoved(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `${args[0]} successful removed from ${args[1]}.`);
+  moduleSuccessfulRemoved(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `${args[0]} successful removed from ${args[1]}.`);
   }
 
   /**
    * `moduleName` has ID: `id`.
    */
-  moduleHasId(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `${args[0]} has ID: "${args[1]}".`);
+  moduleHasId(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `${args[0]} has ID: "${args[1]}".`);
   }
 
   /**
    * [print global providers]
    */
-  printGlobalProviders(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, { globalProviders: args[0] });
+  printGlobalProviders(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, { globalProviders: args[0] });
   }
 
   /**
    * [print module metadata]
    */
-  printModuleMetadata(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, { modOrObj: args[0], metadata: args[1] });
+  printModuleMetadata(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, { modOrObj: args[0], metadata: args[1] });
   }
 
   /**
    * `moduleName` start init group with `groupToken`.
    */
-  startExtensionsGroupInit(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `${args[0]}: start init group with ${args[1]}`);
+  startExtensionsGroupInit(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `${args[0]}: start init group with ${args[1]}`);
   }
 
   /**
    * `moduleName` finish init group with `groupToken`.
    */
-  finishExtensionsGroupInit(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `${args[0]}: finish init group with ${args[1]}`);
+  finishExtensionsGroupInit(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `${args[0]}: finish init group with ${args[1]}`);
   }
 
   /**
    * Total inited `number` extensions: `listOfNames`.
    */
-  totalInitedExtensions(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `Total inited ${args[0]} extensions: ${args[1]}`);
+  totalInitedExtensions(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `Total inited ${args[0]} extensions: ${args[1]}`);
   }
 
   /**
    * [print controller error]
    */
-  controllerHasError(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, { err: args[0] });
+  controllerHasError(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, { err: args[0] });
   }
 
   /**
    * [internal error]
    */
-  internalServerError(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, { err: args[0] });
+  internalServerError(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, { err: args[0] });
   }
 
   /**
    * Can not activate the route with URL: `httpMethod` `URL`.
    */
-  youCannotActivateRoute(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `Can not activate the route with URL: ${args[0]} ${args[1]}`);
+  youCannotActivateRoute(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `Can not activate the route with URL: ${args[0]} ${args[1]}`);
   }
 
   /**
    * `extensionsGroupToken`: no extensions found!
    */
-  noExtensionsFound(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `${args[0]}: no extensions found!`);
+  noExtensionsFound(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `${args[0]}: no extensions found!`);
   }
 
   /**
    * `id`: `className`: start init.
    */
-  startInitExtension(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `${args[0]}: ${args[1]}: start init.`);
+  startInitExtension(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `${args[0]}: ${args[1]}: start init.`);
   }
 
   /**
    * `id`: `className`: finish init.
    */
-  finishInitExtension(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `${args[0]}: ${args[1]}: finish init.`);
+  finishInitExtension(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `${args[0]}: ${args[1]}: finish init.`);
   }
 
   /**
    * `id`: `className`: init returned empty value.
    */
-  extensionInitReturnsVoid(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `${args[0]}: ${args[1]}: init returned empty value.`);
+  extensionInitReturnsVoid(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `${args[0]}: ${args[1]}: init returned empty value.`);
   }
 
   /**
    * `id`: `className`: init returned some value.
    */
-  extensionInitReturnsValue(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `${args[0]}: ${args[1]}: init returned some value.`);
+  extensionInitReturnsValue(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `${args[0]}: ${args[1]}: init returned some value.`);
   }
 
   /**
    * The application has no routes.
    */
-  noRoutes(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, `The application has no routes.`);
+  noRoutes(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `The application has no routes.`);
   }
 
   /**
    * [show routes].
    */
-  showRoutes(level: keyof Logger, ...args: any[]) {
-    this.setLog(level, args[0]);
+  showRoutes(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, args[0]);
+  }
+
+  /**
+   * Starting resolving imports
+   */
+  startingResolvingImports(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `Starting resolving imports`);
   }
 }

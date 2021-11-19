@@ -10,8 +10,8 @@ describe('Log', () => {
   const loggerSpy = jest.fn();
 
   class LogMock extends Log {
-    testMethod(level: keyof Logger, ...args: any[]) {
-      this.setLog(level, `${args[0]}, ${args[1]}`);
+    testMethod(level: keyof Logger, tags: string[] = [], ...args: any[]) {
+      this.setLog(level, tags, `${args[0]}, ${args[1]}`);
     }
   }
 
@@ -37,7 +37,7 @@ describe('Log', () => {
   });
 
   it(`passing message to the buffer`, () => {
-    log.testMethod('trace', 'one', 'two');
+    log.testMethod('trace', [], 'one', 'two');
     expect(log.buffer.length).toBe(1);
     expect(log.buffer[0].level).toEqual('trace');
     expect(log.buffer[0].msg).toEqual('one, two');
@@ -53,22 +53,22 @@ describe('Log', () => {
     ]);
     const log = injector.get(Log) as LogMock;
 
-    log.testMethod('trace', 'one', 'two');
+    log.testMethod('trace', [], 'one', 'two');
     expect(log.buffer.length).toBe(1);
     expect(loggerSpy.mock.calls.length).toBe(0);
     expect(log.buffer[0].level).toEqual('trace');
     expect(log.buffer[0].msg).toEqual('one, two');
 
-    log.testMethod('trace', 'one', 'two');
+    log.testMethod('trace', [], 'one', 'two');
     expect(log.buffer.length).toBe(2);
     expect(loggerSpy.mock.calls.length).toBe(0);
 
     log.bufferLogs = false;
-    log.testMethod('trace', 'one', 'two');
+    log.testMethod('trace', [], 'one', 'two');
     expect(log.buffer.length).toBe(2);
     expect(loggerSpy.mock.calls.length).toBe(1);
 
-    log.testMethod('trace', 'one', 'two');
+    log.testMethod('trace', [], 'one', 'two');
     expect(log.buffer.length).toBe(2);
     expect(loggerSpy.mock.calls.length).toBe(2);
 

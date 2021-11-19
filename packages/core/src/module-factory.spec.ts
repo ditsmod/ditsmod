@@ -84,7 +84,7 @@ describe('ModuleFactory', () => {
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config);
     const logManager = new LogManager();
-    moduleManager = new ModuleManager(new Log(logger, logManager));
+    moduleManager = new ModuleManager(new Log(logManager, logger));
   });
 
   describe('getModuleServicesMap()', () => {

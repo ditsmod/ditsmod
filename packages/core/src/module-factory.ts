@@ -209,7 +209,7 @@ export class ModuleFactory {
 
     getUniqProviders(extensionsProviders).forEach((p) => {
       if (!extensions.includes(p.provide)) {
-        this.log.youForgotRegisterExtension('warn', moduleName, p.provide, p.useClass.name);
+        this.log.youForgotRegisterExtension('warn', { className: this.constructor.name }, moduleName, p.provide, p.useClass.name);
       }
     });
   }

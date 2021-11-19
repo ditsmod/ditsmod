@@ -32,7 +32,7 @@ describe('ModuleManager', () => {
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config);
     const logManager = new LogManager();
-    const log = new Log(logger, logManager);
+    const log = new Log(logManager, logger);
     mock = new MockModuleManager(log);
   });
 

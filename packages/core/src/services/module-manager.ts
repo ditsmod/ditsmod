@@ -62,7 +62,7 @@ export class ModuleManager {
     const prop = isModuleWithParams(inputModule) ? 'importsWithParams' : 'importsModules';
     if (targetMeta[prop].some((imp: ModuleType | ModuleWithParams) => imp === inputModule)) {
       const modIdStr = format(targetModuleId);
-      this.log.moduleAlreadyImported('warn', inputModule, modIdStr);
+      this.log.moduleAlreadyImported('warn', { className: this.constructor.name }, inputModule, modIdStr);
       return false;
     }
 
@@ -70,7 +70,7 @@ export class ModuleManager {
     try {
       targetMeta[prop].push(inputModule as any);
       const inputMeta = this.scanRawModule(inputModule);
-      this.log.successfulAddedModuleToImport('debug', inputMeta.name, targetMeta.name);
+      this.log.successfulAddedModuleToImport('debug', { className: this.constructor.name }, targetMeta.name);
       return true;
     } catch (err) {
       this.rollback(err as Error);
@@ -84,7 +84,7 @@ export class ModuleManager {
     const inputMeta = this.getRawMetadata(inputModuleId);
     if (!inputMeta) {
       const modIdStr = format(inputModuleId);
-      this.log.moduleNotFound('warn', modIdStr);
+      this.log.moduleNotFound('warn', { className: this.constructor.name }, modIdStr);
       return false;
     }
 
@@ -98,7 +98,7 @@ export class ModuleManager {
     const index = targetMeta[prop].findIndex((imp: ModuleType | ModuleWithParams) => imp === inputMeta.module);
     if (index == -1) {
       const modIdStr = format(inputModuleId);
-      this.log.moduleNotFound('warn', modIdStr);
+      this.log.moduleNotFound('warn', { className: this.constructor.name }, modIdStr);
       return false;
     }
 
@@ -111,7 +111,7 @@ export class ModuleManager {
         }
         this.map.delete(inputMeta.module);
       }
-      this.log.moduleSuccessfulRemoved('debug', inputMeta.name, targetMeta.name);
+      this.log.moduleSuccessfulRemoved('debug', { className: this.constructor.name }, inputMeta.name, targetMeta.name);
       return true;
     } catch (err) {
       this.rollback(err as Error);
@@ -154,7 +154,7 @@ export class ModuleManager {
 
     if (meta.id) {
       this.mapId.set(meta.id, modOrObj);
-      this.log.moduleHasId('debug', meta.name, meta.id);
+      this.log.moduleHasId('debug', { className: this.constructor.name }, meta.name, meta.id);
     }
     this.map.set(modOrObj, meta);
     return meta;
