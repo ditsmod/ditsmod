@@ -7,7 +7,6 @@ import { ModuleFactory } from '../module-factory';
 import { AppMetadataMap, ModuleType, ServiceProvider, Extension } from '../types/mix';
 import { RequestListener } from '../types/server-options';
 import { getDuplicates } from '../utils/get-duplicates';
-import { getModule } from '../utils/get-module';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { getTokensCollisions } from '../utils/get-tokens-collisions';
