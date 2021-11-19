@@ -4,3 +4,4 @@ dist*
 *.log
 tsconfig.tsbuildinfo
 .vscode/settings.json
+.yarn
