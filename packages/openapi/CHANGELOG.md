@@ -1,5 +1,12 @@
+<a name="openapi-2.0.0-next.0"></a>
+# [openapi-2.0.0-next.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.0.0-next.0) (2021-11-20)
+
+### BREAKING CHANGES
+
+- Migration to Ditsmod v2 [223c863d](https://github.com/ditsmod/ditsmod/commit/223c863d).
+
 <a name="openapi-1.1.0"></a>
-# [openapi-1.1.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-1.1.0) (2021-10-29)
+## [openapi-1.1.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-1.1.0) (2021-10-29)
 
 ### Features
 
