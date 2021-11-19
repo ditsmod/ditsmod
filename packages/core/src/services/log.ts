@@ -93,12 +93,10 @@ export class Log {
       // This is not a test mode.
       const { filterConfig } = this.logConfig;
       let filteredBuffer = buffer;
-      if (filterConfig && Object.keys(filterConfig).length) {
-        filteredBuffer = this.filterLogs(buffer, filterConfig);
-      }
+      filteredBuffer = this.filterLogs(buffer, filterConfig);
       filteredBuffer.forEach((log) => {
         // const dateTime = log.date.toLocaleString();
-        const partMsg = log.filterConfig.tags ? `, (tags: ${log.filterConfig.tags})` : '';
+        const partMsg = log.filterConfig.tags ? ` (Tags: ${log.filterConfig.tags.join(', ')})` : '';
         const msg = `${log.msg}${partMsg}`;
         this._logger.log.apply(this._logger, [log.level, msg]);
       });
@@ -107,13 +105,22 @@ export class Log {
     buffer.splice(0);
   }
 
-  protected filterLogs(buffer: LogItem[], outputConfig: FilterConfig) {
+  protected filterLogs(buffer: LogItem[], outputConfig: FilterConfig = {}) {
     return buffer.filter((item) => {
       const inputConfig = item.filterConfig;
-      const hasTags = inputConfig.tags?.some((tag) => outputConfig.tags?.includes(tag));
-      const hasModuleName = outputConfig.moduleName && inputConfig.moduleName == outputConfig.moduleName;
-      const hasClassName = outputConfig.className && inputConfig.className == outputConfig.className;
-      return hasModuleName || hasClassName || hasTags;
+      let hasTags: boolean | undefined = true;
+      let hasModuleName: boolean = true;
+      let hasClassName: boolean = true;
+      if (outputConfig.tags) {
+        hasTags = inputConfig.tags?.some((tag) => outputConfig.tags?.includes(tag));
+      }
+      if (outputConfig.moduleName) {
+        hasModuleName = inputConfig.moduleName == outputConfig.moduleName;
+      }
+      if (outputConfig.className) {
+        hasClassName = inputConfig.className == outputConfig.className;
+      }
+      return hasModuleName && hasClassName && hasTags;
     });
   }
 
@@ -317,12 +324,5 @@ export class Log {
    */
   showRoutes(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
     this.setLog(level, filterConfig, args[0]);
-  }
-
-  /**
-   * Starting resolving imports
-   */
-  startingResolvingImports(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
-    this.setLog(level, filterConfig, `Starting resolving imports`);
   }
 }
