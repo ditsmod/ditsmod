@@ -1,5 +1,12 @@
+<a name="session-2.0.0-next.0"></a>
+# [session-2.0.0-next.0](https://github.com/ts-stack/ditsmod/releases/tag/session-2.0.0-next.0) (2021-11-20)
+
+### BREAKING CHANGES
+
+- Migration to Ditsmod v2.
+
 <a name="session-1.0.0-beta.0"></a>
-# [session-1.0.0-beta.0](https://github.com/ts-stack/ditsmod/releases/tag/session-1.0.0-beta.0) (2021-05-23)
+## [session-1.0.0-beta.0](https://github.com/ts-stack/ditsmod/releases/tag/session-1.0.0-beta.0) (2021-05-23)
 
 ### BREAKING CHANGES
 
