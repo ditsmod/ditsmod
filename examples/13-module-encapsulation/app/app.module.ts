@@ -3,6 +3,7 @@ import { RouterModule } from '@ditsmod/router';
 
 import { ImportsResolver } from '../../../packages/core/src/imports-resolver';
 import { AppController } from './app.controller';
+import { OneModule } from './one/one.module';
 import { ThreeModule } from './three/three.module';
 
 const loggerConfig = new LoggerConfig();
@@ -12,7 +13,7 @@ const logConfig = new LogConfig();
 logConfig.filterConfig = { className: ImportsResolver.name };
 
 @RootModule({
-  imports: [RouterModule, ThreeModule],
+  imports: [RouterModule, ThreeModule, OneModule],
   controllers: [AppController],
   providersPerApp: [
     { provide: LoggerConfig, useValue: loggerConfig },
