@@ -6,7 +6,7 @@ import { TwoService } from '../two/two.service';
 export class ThreeService {
   constructor(private twoService: TwoService) {}
 
-  getHello(): string {
-    return this.twoService.getHello();
+  getCounter() {
+    return this.twoService.getCounter();
   }
 }

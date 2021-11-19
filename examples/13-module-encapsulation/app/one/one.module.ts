@@ -1,9 +1,11 @@
 import { Module } from '@ditsmod/core';
 
+import { OnePerRouService } from './one-per-rou.service';
 import { OneService } from './one.service';
 
 @Module({
-  providersPerReq: [OneService],
-  exports: [OneService],
+  providersPerRou: [],
+  providersPerReq: [OneService, OnePerRouService],
+  exports: [OneService, OnePerRouService],
 })
 export class OneModule {}
