@@ -16,17 +16,19 @@ export class BodyParserExtension implements edk.Extension<void> {
       return;
     }
 
-    const rawRouteMeta = await this.extensionManager.init(edk.ROUTES_EXTENSIONS);
-    rawRouteMeta.forEach((meta) => {
-      const { providersPerMod, providersPerRou, providersPerReq } = meta;
-      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-      const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
-      const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
-      const routeMeta = injectorPerRou.get(edk.RouteMeta) as edk.RouteMeta;
-      const bodyParserConfig = injectorPerReq.resolveAndInstantiate(BodyParserConfig) as BodyParserConfig;
-      if (bodyParserConfig.acceptMethods.includes(routeMeta.httpMethod)) {
-        providersPerReq.push({ provide: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
-      }
+    const metadataPerMod2Arr = await this.extensionManager.init(edk.ROUTES_EXTENSIONS);
+    metadataPerMod2Arr.forEach((metadataPerMod2) => {
+      const { metaForExtensionsPerRouArr, providersPerMod } = metadataPerMod2;
+      metaForExtensionsPerRouArr.forEach(({ providersPerRou, providersPerReq }) => {
+        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+        const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
+        const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
+        const routeMeta = injectorPerRou.get(edk.RouteMeta) as edk.RouteMeta;
+        const bodyParserConfig = injectorPerReq.resolveAndInstantiate(BodyParserConfig) as BodyParserConfig;
+        if (bodyParserConfig.acceptMethods.includes(routeMeta.httpMethod)) {
+          providersPerReq.push({ provide: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
+        }
+      });
     });
 
     this.inited = true;
