@@ -39,25 +39,29 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
   }
 
   protected async compileOasObject() {
-    const rawRouteMeta = await this.extensionManager.init(edk.ROUTES_EXTENSIONS);
+    const metadataPerMod2Arr = await this.extensionManager.init(edk.ROUTES_EXTENSIONS);
     const paths: XPathsObject = {};
     this.initOasObject();
-    rawRouteMeta.forEach((rawMeta) => {
-      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(rawMeta.providersPerMod);
-      const injectorPerRou = injectorPerMod.resolveAndCreateChild(rawMeta.providersPerRou);
-      const oasRouteMeta = injectorPerRou.get(OasRouteMeta) as OasRouteMeta;
-      const { httpMethod, oasPath, path, guards, operationObject } = oasRouteMeta;
-      if (operationObject) {
-        const clonedOperationObject = { ...operationObject };
-        this.setSecurityInfo(clonedOperationObject, guards);
-        const pathItemObject: PathItemObject = { [httpMethod.toLowerCase()]: clonedOperationObject };
-        paths[`/${oasPath}`] = { ...(paths[`/${oasPath}`] || {}), ...pathItemObject };
-      } else {
-        if (!oasRouteMeta.httpMethod) {
-          throw new Error('OpenapiCompilerExtension: OasRouteMeta not found.');
+    metadataPerMod2Arr.forEach((metadataPerMod2) => {
+      const { metaForExtensionsPerRouArr, providersPerMod } = metadataPerMod2;
+      metaForExtensionsPerRouArr.forEach(({ providersPerRou }) => {
+        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+        const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
+        const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
+        const oasRouteMeta = injectorPerRou.get(OasRouteMeta) as OasRouteMeta;
+        const { httpMethod, oasPath, path, guards, operationObject } = oasRouteMeta;
+        if (operationObject) {
+          const clonedOperationObject = { ...operationObject };
+          this.setSecurityInfo(clonedOperationObject, guards);
+          const pathItemObject: PathItemObject = { [httpMethod.toLowerCase()]: clonedOperationObject };
+          paths[`/${oasPath}`] = { ...(paths[`/${oasPath}`] || {}), ...pathItemObject };
+        } else {
+          if (!oasRouteMeta.httpMethod) {
+            throw new Error('OpenapiCompilerExtension: OasRouteMeta not found.');
+          }
+          this.applyNonOasRoute(path, paths, oasRouteMeta, guards);
         }
-        this.applyNonOasRoute(path, paths, oasRouteMeta, guards);
-      }
+      });
     });
 
     this.oasObject.paths = paths;

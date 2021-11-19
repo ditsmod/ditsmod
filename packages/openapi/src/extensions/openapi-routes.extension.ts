@@ -1,5 +1,5 @@
 import { Injectable } from '@ts-stack/di';
-import { edk, HttpMethod } from '@ditsmod/core';
+import { edk, HttpMethod, ServiceProvider } from '@ditsmod/core';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { isOasRoute, isOasRoute1, isReferenceObject } from '../utils/type-guards';
@@ -9,16 +9,15 @@ import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-l
 import { OasOptions } from '../types/oas-options';
 
 @Injectable()
-export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.Extension<edk.RawRouteMeta[]> {
-  protected override getMetaPerRou(prefixPerApp: string, metadataPerMod: edk.MetadataPerMod) {
-    const { controllersMetadata, guardsPerMod, meta } = metadataPerMod;
+export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.Extension<edk.MetadataPerMod2[]> {
+  protected override getMetaPerRou(prefixPerApp: string, metadataPerMod1: edk.MetadataPerMod1) {
+    const { controllersMetadata, prefixPerMod, guardsPerMod, meta } = metadataPerMod1;
 
-    const providersPerMod = meta.providersPerMod.slice();
     const oasOptions = meta.extensionsMeta.oasOptions as OasOptions;
     const prefixParams = oasOptions?.paratemers;
     const prefixTags = oasOptions?.tags;
 
-    const rawRoutesMeta: edk.RawRouteMeta[] = [];
+    const metaForExtensionsPerRouArr: edk.MetaForExtensionsPerRou[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
@@ -27,8 +26,8 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
           if (!isOasRoute(oasRoute)) {
             continue;
           }
-          const providersPerRou = meta.providersPerRou.slice();
-          const providersPerReq = meta.providersPerReq.slice();
+          const providersPerRou: ServiceProvider[] = [];
+          const providersPerReq: ServiceProvider[] = [];
           const ctrlDecorator = ctrlDecorValues.find(edk.isController) as edk.ControllerMetadata;
           const guards: edk.NormalizedGuard[] = [...guardsPerMod];
           if (isOasRoute1(oasRoute)) {
@@ -62,9 +61,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
             guards,
           };
           providersPerRou.push({ provide: edk.RouteMeta, useValue: routeMeta });
-          rawRoutesMeta.push({
-            moduleName,
-            providersPerMod,
+          metaForExtensionsPerRouArr.push({
             providersPerRou,
             providersPerReq,
             path,
@@ -74,7 +71,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
       }
     }
 
-    return rawRoutesMeta;
+    return metaForExtensionsPerRouArr;
   }
 
   protected mergeParams(
