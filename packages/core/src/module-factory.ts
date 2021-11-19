@@ -209,7 +209,13 @@ export class ModuleFactory {
 
     getUniqProviders(extensionsProviders).forEach((p) => {
       if (!extensions.includes(p.provide)) {
-        this.log.youForgotRegisterExtension('warn', { className: this.constructor.name }, moduleName, p.provide, p.useClass.name);
+        this.log.youForgotRegisterExtension(
+          'warn',
+          { className: this.constructor.name },
+          moduleName,
+          p.provide,
+          p.useClass.name
+        );
       }
     });
   }
@@ -283,29 +289,32 @@ export class ModuleFactory {
       this.importProviders(meta2);
     }
 
-    const self = this;
-    addProviders('Mod');
-    addProviders('Rou');
-    addProviders('Req');
+    this.addProviders('Mod', module, meta1);
+    this.addProviders('Rou', module, meta1);
+    this.addProviders('Req', module, meta1);
+  }
 
-    function addProviders(scope: 'Mod' | 'Rou' | 'Req') {
-      const exp = meta1[`exportsProvidersPer${scope}`];
-      if (exp.length) {
-        exp.forEach((provider) => {
-          const token = getToken(provider);
-          const obj = new ImportObj();
-          obj.module = module;
-          if (isMultiProvider(provider)) {
-            const importObj = self[`importedPer${scope}`].get(token);
-            if (importObj) {
-              obj.providers = importObj.providers.slice();
-            }
+  protected addProviders(
+    scope: 'Mod' | 'Rou' | 'Req',
+    module: ModuleType | ModuleWithParams,
+    meta: NormalizedModuleMetadata
+  ) {
+    const exp = meta[`exportsProvidersPer${scope}`];
+    if (exp.length) {
+      exp.forEach((provider) => {
+        const token = getToken(provider);
+        const obj = new ImportObj();
+        obj.module = module;
+        if (isMultiProvider(provider)) {
+          const importObj = this[`importedPer${scope}`].get(token);
+          if (importObj) {
+            obj.providers = importObj.providers.slice();
           }
-          obj.providers.push(provider);
-          self[`importedPer${scope}`].set(token, obj);
-        });
-        self[`importedProvidersPer${scope}`].push(...exp);
-      }
+        }
+        obj.providers.push(provider);
+        this[`importedPer${scope}`].set(token, obj);
+      });
+      this[`importedProvidersPer${scope}`].push(...exp);
     }
   }
 
