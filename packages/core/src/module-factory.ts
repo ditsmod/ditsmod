@@ -298,7 +298,7 @@ export class ModuleFactory {
           if (isMultiProvider(provider)) {
             const importObj = self[`importedPer${scope}`].get(token);
             if (importObj) {
-              obj.providers = importObj.providers;
+              obj.providers = importObj.providers.slice();
             }
           }
           obj.providers.push(provider);
@@ -462,7 +462,7 @@ export class ModuleFactory {
     serviceModuleMap.forEach((importObj) => {
       const providers = moduleServicesMap.get(importObj.module);
       if (providers) {
-        providers.push(...importObj.providers);
+        moduleServicesMap.set(importObj.module, [...providers, ...importObj.providers]);
       } else {
         moduleServicesMap.set(importObj.module, importObj.providers);
       }
