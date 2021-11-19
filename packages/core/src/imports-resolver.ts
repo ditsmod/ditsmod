@@ -10,7 +10,6 @@ import { MetadataPerMod1 } from './types/metadata-per-mod';
 import { RouteMeta } from './types/route-data';
 import { RootMetadata } from './models/root-metadata';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
-import { FilterConfig, Log } from './services/log';
 
 type Scope = 'Mod' | 'Rou' | 'Req';
 
@@ -18,13 +17,10 @@ type Scope = 'Mod' | 'Rou' | 'Req';
 export class ImportsResolver {
   constructor(
     private moduleManager: ModuleManager,
-    @Inject(APP_METADATA_MAP) protected appMetadataMap: AppMetadataMap,
-    private log: Log
+    @Inject(APP_METADATA_MAP) protected appMetadataMap: AppMetadataMap
   ) {}
 
   resolve() {
-    const filterConfig: FilterConfig = { className: this.constructor.name };
-    this.log.startingResolvingImports('debug', filterConfig);
     this.appMetadataMap.forEach((metadataPerMod1) => {
       this.resolveImportedProviders(metadataPerMod1);
     });

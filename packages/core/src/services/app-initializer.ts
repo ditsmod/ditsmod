@@ -46,7 +46,7 @@ export class AppInitializer {
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLog();
     const appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
-    const importsResolver = new ImportsResolver(this.moduleManager, appMetadataMap, this.log);
+    const importsResolver = new ImportsResolver(this.moduleManager, appMetadataMap);
     importsResolver.resolve();
     await this.handleExtensions(appMetadataMap);
     this.preRouter = this.injectorPerApp.get(PreRouterExtension) as PreRouterExtension;
