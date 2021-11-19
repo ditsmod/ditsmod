@@ -35,7 +35,7 @@
     "@ts-stack/di": "^1.2.0-rc.3",
     "@types/copy-webpack-plugin": "^6.4.1",
     "reflect-metadata": "^0.1.13",
-    "typescript": "^4.4.4"
+    "typescript": "^4.5.2"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.0.0-next.0",
