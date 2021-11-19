@@ -1,5 +1,12 @@
+<a name="core-2.0.0-next.0"></a>
+# [core-2.0.0-next.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.0.0-next.0) (2021-11-20)
+
+### BREAKING CHANGES
+
+- Migration to Ditsmod v2.
+
 <a name="core-1.0.0"></a>
-# [core-1.0.0](https://github.com/ts-stack/ditsmod/releases/tag/core-1.0.0) (2021-05-23)
+## [core-1.0.0](https://github.com/ts-stack/ditsmod/releases/tag/core-1.0.0) (2021-05-23)
 
 ### BREAKING CHANGES
 
