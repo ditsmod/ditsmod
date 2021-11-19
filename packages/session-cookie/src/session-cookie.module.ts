@@ -4,8 +4,8 @@ import { SessionCookie } from './session-cookie';
 import { SessionCookieOptions } from './types';
 
 @Module({
-  providersPerReq: [SessionCookie],
   providersPerMod: [SessionCookieOptions],
+  providersPerReq: [SessionCookie],
   exports: [SessionCookie, SessionCookieOptions],
 })
 export class SessionCookieModule {
