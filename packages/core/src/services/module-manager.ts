@@ -4,7 +4,6 @@ import { format } from 'util';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { ModuleMetadata } from '../types/module-metadata';
-import { ModulesMap } from '../types/modules-map';
 import { checkModuleMetadata } from '../utils/check-module-metadata';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
@@ -13,6 +12,8 @@ import { pickProperties } from '../utils/pick-properties';
 import { isModuleWithParams, isProvider } from '../utils/type-guards';
 import { Log } from './log';
 
+export type ModulesMap = Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
+export type ModulesMapId = Map<string, ModuleType | ModuleWithParams>;
 type ModuleId = string | ModuleType | ModuleWithParams;
 
 @Injectable()
