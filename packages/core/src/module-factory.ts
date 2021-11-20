@@ -18,7 +18,6 @@ import {
 } from './types/mix';
 import { getDuplicates } from './utils/get-duplicates';
 import { getTokensCollisions } from './utils/get-tokens-collisions';
-import { getUniqProviders } from './utils/get-uniq-providers';
 import { normalizeProviders } from './utils/ng-utils';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
 import {
@@ -112,7 +111,8 @@ export class ModuleFactory {
     this.quickCheckMetadata(meta);
     this.meta = meta;
     this.importModules();
-    this.mergeProviders();
+    const modConfig: ModConfig = { prefixPerMod: this.prefixPerMod };
+    this.meta.providersPerMod.unshift({ provide: ModConfig, useValue: modConfig });
     const controllersMetadata = this.getControllersMetadata();
 
     return this.appMetadataMap.set(modOrObj, {
@@ -127,16 +127,6 @@ export class ModuleFactory {
         perReq: this.importedPerReq,
       },
     });
-  }
-
-  protected mergeProviders() {
-    this.meta.providersPerMod = getUniqProviders([
-      { provide: ModConfig, useValue: { prefixPerMod: this.prefixPerMod } },
-      ...this.meta.providersPerMod,
-    ]);
-
-    this.meta.providersPerRou = getUniqProviders(this.meta.providersPerRou);
-    this.meta.providersPerReq = getUniqProviders(this.meta.providersPerReq);
   }
 
   protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
@@ -207,7 +197,7 @@ export class ModuleFactory {
           p.provide.toString().toLowerCase().includes('extension')
       );
 
-    getUniqProviders(extensionsProviders).forEach((p) => {
+    extensionsProviders.forEach((p) => {
       if (!extensions.includes(p.provide)) {
         this.log.youForgotRegisterExtension(
           'warn',
