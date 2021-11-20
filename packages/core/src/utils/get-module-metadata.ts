@@ -8,7 +8,7 @@ import { getModuleName } from './get-module-name';
 import { mergeArrays } from './merge-arrays-options';
 import { isForwardRef, isModule, isModuleWithParams, isRootModule } from './type-guards';
 
-export function getModuleMetadata<T extends ModuleMetadata>(
+export function getModuleMetadata(
   modOrObj: ModuleType | ModuleWithParams,
   isRoot?: boolean
 ): ModuleMetadata {
@@ -20,7 +20,7 @@ export function getModuleMetadata<T extends ModuleMetadata>(
 
   if (isModuleWithParams(modOrObj)) {
     const modWitParams = modOrObj;
-    const modMetadata: T = reflector.annotations(modWitParams.module).find(typeGuard) as T;
+    const modMetadata: ModuleMetadata = reflector.annotations(modWitParams.module).find(typeGuard);
     const modName = getModuleName(modWitParams.module);
     checkModuleMetadata(modMetadata, modName);
 

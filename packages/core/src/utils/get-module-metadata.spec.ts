@@ -14,6 +14,14 @@ describe('getModuleMetadata', () => {
     expect(metadata).toEqual({});
   });
 
+  it('@Module() decorator with id', () => {
+    @Module({ id: 'someId' })
+    class Module1 {}
+
+    const metadata = getModuleMetadata(Module1);
+    expect(metadata).toEqual({ id: 'someId' });
+  });
+
   it('decorator with some data', () => {
     @Module({ controllers: [] })
     class Module1 {}
@@ -71,5 +79,23 @@ describe('getModuleMetadata', () => {
       providersPerRou: [],
       providersPerReq: [],
     });
+  });
+
+  it('module with params has id', () => {
+    @Injectable()
+    class Provider1 {}
+
+    @Module({ id: 'someId' })
+    class Module1 {
+      static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module1> {
+        return {
+          module: Module1,
+          providersPerMod,
+        };
+      }
+    }
+
+    const obj = Module1.withParams([Provider1]);
+    expect(() => getModuleMetadata(obj)).toThrow(/Module1 must not have an "id" in the metadata/);
   });
 });
