@@ -36,14 +36,17 @@ export class AppInitializer {
   constructor(protected moduleManager: ModuleManager, protected log: Log) {}
 
   /**
-   * _Note:_ after call this method, you need call `this.log.flush()`.
+   * _Note:_ after call this method, you need call `this.flush()`.
    */
-  async initAndGetMetadata() {
+  bootstrapProvidersPerApp() {
     const meta = this.moduleManager.getMetadata('root', true);
     this.mergeMetadata(meta.module as ModuleType);
     this.prepareProvidersPerApp(meta, this.moduleManager);
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLog();
+  }
+
+  async bootstrapModulesAndExtensions() {
     const appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
     const importsResolver = new ImportsResolver(this.moduleManager, appMetadataMap);
     importsResolver.resolve();
@@ -58,10 +61,20 @@ export class AppInitializer {
   }
 
   async reinit(autocommit: boolean = true): Promise<void | Error> {
-    const oldLogger = this.log.logger;
+    const previousLogger = this.log.logger;
     this.log.startReinitApp('debug');
+    // Before init new logger, works previous logger.
     try {
-      await this.initAndGetMetadata();
+      this.bootstrapProvidersPerApp();
+    } catch (err) {
+      this.log.logger = previousLogger;
+      this.log.bufferLogs = false;
+      this.log.flush();
+      return this.handleReinitError(err);
+    }
+    // After init new logger, works new logger.
+    try {
+      await this.bootstrapModulesAndExtensions();
       if (autocommit) {
         this.moduleManager.commit();
       } else {
@@ -69,13 +82,7 @@ export class AppInitializer {
       }
       this.log.finishReinitApp('debug');
     } catch (err) {
-      this.log.logger = oldLogger;
-      this.log.printReinitError('error', { className: this.constructor.name }, err);
-      this.log.startRollbackModuleConfigChanges('debug');
-      this.moduleManager.rollback();
-      await this.initAndGetMetadata();
-      this.log.successfulRollbackModuleConfigChanges('debug');
-      return err as Error;
+      return this.handleReinitError(err);
     } finally {
       this.log.bufferLogs = false;
       this.log.flush();
@@ -85,6 +92,16 @@ export class AppInitializer {
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
     await this.preRouter.requestListener(nodeReq, nodeRes);
   };
+
+  protected async handleReinitError(err: unknown) {
+    this.log.printReinitError('error', { className: this.constructor.name }, err);
+    this.log.startRollbackModuleConfigChanges('debug');
+    this.moduleManager.rollback();
+    this.bootstrapProvidersPerApp();
+    await this.bootstrapModulesAndExtensions();
+    this.log.successfulRollbackModuleConfigChanges('debug');
+    return err as Error;
+  }
 
   /**
    * Merge AppModule metadata with default metadata for root module.

@@ -13,7 +13,6 @@ import { RootMetadata } from '../models/root-metadata';
 import { DefaultLogger } from './default-logger';
 import { ModuleManager } from './module-manager';
 import { defaultProvidersPerReq } from './default-providers-per-req';
-import { MetadataPerMod1 } from '../types/metadata-per-mod';
 import { Controller } from '../decorators/controller';
 import { ModConfig } from '../models/mod-config';
 import { NODE_REQ } from '../constans';
@@ -27,7 +26,6 @@ describe('AppInitializer', () => {
 
   @Injectable()
   class AppInitializerMock extends AppInitializer {
-    override appMetadataMap: Map<ModuleType | ModuleWithParams, MetadataPerMod1>;
     override meta = new RootMetadata();
 
     constructor(public override moduleManager: ModuleManager, public override log: Log) {
@@ -107,7 +105,7 @@ describe('AppInitializer', () => {
       moduleManager.scanRootModule(AppModule);
 
       // First init
-      await mock.initAndGetMetadata();
+      await mock.bootstrapProvidersPerApp();
     });
 
     it('logs should collects between two init()', async () => {
@@ -117,7 +115,7 @@ describe('AppInitializer', () => {
       moduleManager.scanRootModule(AppModule);
 
       // First init
-      await mock.initAndGetMetadata();
+      await mock.bootstrapProvidersPerApp();
       const { buffer } = mock.log;
       expect(mock.log).toBeInstanceOf(LogMock1);
       (mock.log as LogMock1).testMethod('debug', 'one', 'two');
@@ -127,7 +125,7 @@ describe('AppInitializer', () => {
       expect(testMethodSpy.mock.calls.length).toBe(1);
 
       // Second init
-      await mock.initAndGetMetadata();
+      await mock.bootstrapProvidersPerApp();
       expect(mock.log).toBeInstanceOf(LogMock1);
       (mock.log as LogMock1).testMethod('info', 'three', 'four');
       // Logs from first init() still here

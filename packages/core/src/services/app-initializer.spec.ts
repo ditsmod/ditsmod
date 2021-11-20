@@ -74,7 +74,7 @@ describe('AppInitializer', () => {
       class AppModule {}
 
       moduleManager.scanRootModule(AppModule);
-      await mock.initAndGetMetadata();
+      await mock.bootstrapProvidersPerApp();
       // Here log used from Application
       log.flush();
       expect(loggerSpy.mock.calls[0]).toEqual(['info']);

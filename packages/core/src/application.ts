@@ -38,7 +38,15 @@ export class Application {
   protected async init(appModule: ModuleType) {
     this.log = new Log(new LogManager());
     const appInitializer = this.getAppInitializer(appModule, this.log);
-    this.meta = await appInitializer.initAndGetMetadata();
+    // Before init custom user logger, works default logger.
+    appInitializer.bootstrapProvidersPerApp();
+    // After init custom user logger, works this logger.
+    try {
+      this.meta = await appInitializer.bootstrapModulesAndExtensions();
+    } catch (err) {
+      appInitializer.flushLogs();
+      throw err;
+    }
     this.checkSecureServerOption(appModule);
     appInitializer.flushLogs();
     return appInitializer;
