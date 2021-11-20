@@ -55,6 +55,31 @@ describe('ModuleManager', () => {
     expect(mock.getMetadata('root')).toEqual(expectedMeta);
   });
 
+  it('cyclic imports modules', () => {
+    @Injectable()
+    class Provider1 {}
+
+    @Module({ providersPerApp: [Provider1], imports: [forwardRef(() => Module3)] })
+    class Module1 {}
+
+    @Module({ imports: [Module1] })
+    class Module2 {}
+
+    @Module({ imports: [Module2] })
+    class Module3 {}
+
+    @Module({ imports: [Module3] })
+    class Module4 {}
+
+    @RootModule({
+      imports: [Module4],
+    })
+    class AppModule {}
+
+    const msg = 'Detected cyclic imports: Module3 -> Module2 -> Module1 -> Module3. It is started from Module4.';
+    expect(() => mock.scanRootModule(AppModule)).toThrowError(msg);
+  });
+
   it('non properly exports from root module', () => {
     class Provider1 {}
 
@@ -396,7 +421,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);
     expect(mock.map.get(Module1)).toMatchObject<PartialMeta>({ importsModules: [Module0] });
-    
+
     expect(mock.removeImport(Module0, Module1)).toBe(true);
     expect(mock.map.get(Module1)).toMatchObject<PartialMeta>({ importsModules: [] });
     expect(mock.map.size).toBe(6);
@@ -407,7 +432,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(2);
     expect(mock.oldMapId.has(moduleId)).toBe(true);
     expect(mock.oldMapId.get('root')).toBe(AppModule);
-    
+
     expect(mock.map.get(Module2)).toMatchObject<PartialMeta>({ importsModules: [Module0] });
     expect(mock.removeImport(Module0, Module2)).toBe(true);
     expect(mock.map.get(Module2)).toMatchObject<PartialMeta>({ importsModules: [] });
@@ -458,14 +483,18 @@ describe('ModuleManager', () => {
     expectedMeta3.providersPerReq = [Provider1];
     expectedMeta3.ngMetadataName = 'RootModule';
 
-    expect(mock.getMetadata('root')).toMatchObject<PartialMeta>({ importsWithParams: [module3WithProviders, module4WithProviders] });
+    expect(mock.getMetadata('root')).toMatchObject<PartialMeta>({
+      importsWithParams: [module3WithProviders, module4WithProviders],
+    });
     expect(mock.removeImport(module3WithProviders)).toBe(true);
     expect(mock.getMetadata('root')).toMatchObject<PartialMeta>({ importsWithParams: [module4WithProviders] });
     expect(mock.map.size).toBe(3);
     expect(mock.getMetadata('root')).toEqual(expectedMeta3);
     expect(mock.oldMapId.size).toBe(2);
     expect(mock.oldMap.size).toBe(5);
-    expect(mock.oldMap.get(AppModule)).toMatchObject<PartialMeta>({ importsWithParams: [module3WithProviders, module4WithProviders] });
+    expect(mock.oldMap.get(AppModule)).toMatchObject<PartialMeta>({
+      importsWithParams: [module3WithProviders, module4WithProviders],
+    });
 
     const expectedMeta4 = new NormalizedModuleMetadata();
     expectedMeta4.id = '';

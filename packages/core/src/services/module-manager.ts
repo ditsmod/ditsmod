@@ -25,6 +25,7 @@ export class ModuleManager {
   protected mapId = new Map<string, AnyModule>();
   protected oldMap: ModulesMap = new Map();
   protected oldMapId = new Map<string, AnyModule>();
+  protected unfinishedScanModules = new Set<AnyModule>();
 
   constructor(protected log: Log) {}
 
@@ -162,7 +163,12 @@ export class ModuleManager {
     ];
 
     importsOrExports.forEach((impOrExp) => {
+      if (this.unfinishedScanModules.has(impOrExp)) {
+        this.throwCyclicImports(impOrExp);
+      }
+      this.unfinishedScanModules.add(impOrExp);
       this.scanRawModule(impOrExp);
+      this.unfinishedScanModules.delete(impOrExp);
     });
 
     if (meta.id) {
@@ -171,6 +177,21 @@ export class ModuleManager {
     }
     this.map.set(modOrObj, meta);
     return meta;
+  }
+
+  protected throwCyclicImports(modOrObj: AnyModule) {
+    const modules = [...this.unfinishedScanModules];
+    const index = modules.findIndex((m) => m === modOrObj);
+    const prefixChain = modules.slice(0, index);
+    const cyclicChain = modules.slice(index);
+    const prefixNames = prefixChain.map((mod) => getModuleName(mod)).join(' -> ');
+    let cyclicNames = cyclicChain.map((mod) => getModuleName(mod)).join(' -> ');
+    cyclicNames += ` -> ${getModuleName(modOrObj)}`;
+    let msg = `Detected cyclic imports: ${cyclicNames}.`;
+    if (prefixNames) {
+      msg += ` It is started from ${prefixNames}.`;
+    }
+    throw new Error(msg);
   }
 
   /**
