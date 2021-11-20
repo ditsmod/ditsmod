@@ -13,14 +13,18 @@ import { Log } from './log';
 
 export type ModulesMap = Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
 export type ModulesMapId = Map<string, ModuleType | ModuleWithParams>;
+/**
+ * Don't use this for public API (worse readable).
+ */
+type AnyModule = ModuleType | ModuleWithParams;
 type ModuleId = string | ModuleType | ModuleWithParams;
 
 @Injectable()
 export class ModuleManager {
   protected map: ModulesMap = new Map();
-  protected mapId = new Map<string, ModuleType | ModuleWithParams>();
+  protected mapId = new Map<string, AnyModule>();
   protected oldMap: ModulesMap = new Map();
-  protected oldMapId = new Map<string, ModuleType | ModuleWithParams>();
+  protected oldMapId = new Map<string, AnyModule>();
 
   constructor(protected log: Log) {}
 
@@ -40,7 +44,7 @@ export class ModuleManager {
   /**
    * Returns a snapshot of NormalizedModuleMetadata for a module.
    */
-  scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
+  scanModule(modOrObj: ModuleType | ModuleWithParams) {
     const meta = this.scanRawModule(modOrObj);
     return this.copyMeta(meta);
   }
@@ -69,7 +73,7 @@ export class ModuleManager {
     }
 
     const prop = isModuleWithParams(inputModule) ? 'importsWithParams' : 'importsModules';
-    if (targetMeta[prop].some((imp: ModuleType | ModuleWithParams) => imp === inputModule)) {
+    if (targetMeta[prop].some((imp: AnyModule) => imp === inputModule)) {
       const modIdStr = format(targetModuleId);
       this.log.moduleAlreadyImported('warn', { className: this.constructor.name }, inputModule, modIdStr);
       return false;
@@ -77,8 +81,8 @@ export class ModuleManager {
 
     this.startTransaction();
     try {
-      targetMeta[prop].push(inputModule as any);
-      const inputMeta = this.scanRawModule(inputModule);
+      (targetMeta[prop] as AnyModule[]).push(inputModule);
+      this.scanRawModule(inputModule);
       this.log.successfulAddedModuleToImport('debug', { className: this.constructor.name }, targetMeta.name);
       return true;
     } catch (err) {
@@ -104,7 +108,7 @@ export class ModuleManager {
       throw new Error(msg);
     }
     const prop = isModuleWithParams(inputMeta.module) ? 'importsWithParams' : 'importsModules';
-    const index = targetMeta[prop].findIndex((imp: ModuleType | ModuleWithParams) => imp === inputMeta.module);
+    const index = targetMeta[prop].findIndex((imp: AnyModule) => imp === inputMeta.module);
     if (index == -1) {
       const modIdStr = format(inputModuleId);
       this.log.moduleNotFound('warn', { className: this.constructor.name }, modIdStr);
@@ -147,7 +151,7 @@ export class ModuleManager {
   /**
    * Here "raw" means that it returns "raw" normalized metadata (without `this.copyMeta()`).
    */
-  protected scanRawModule(modOrObj: ModuleType | ModuleWithParams<any>) {
+  protected scanRawModule(modOrObj: AnyModule) {
     const meta = this.normalizeMetadata(modOrObj);
 
     const importsOrExports = [
@@ -224,7 +228,7 @@ export class ModuleManager {
   protected startTransaction() {
     if (this.oldMapId.has('root')) {
       // Transaction already started.
-      return;
+      return false;
     }
 
     this.map.forEach((meta, key) => {
@@ -236,6 +240,8 @@ export class ModuleManager {
       this.oldMap.set(key, oldMeta);
     });
     this.oldMapId = new Map(this.mapId);
+
+    return true;
   }
 
   /**
@@ -271,7 +277,7 @@ export class ModuleManager {
   /**
    * Returns normalized module metadata.
    */
-  protected normalizeMetadata(mod: ModuleType | ModuleWithParams) {
+  protected normalizeMetadata(mod: AnyModule) {
     const rawMeta = getModuleMetadata(mod);
     const modName = getModuleName(mod);
     if (!rawMeta) {
@@ -315,11 +321,7 @@ export class ModuleManager {
     return meta;
   }
 
-  protected findAndSetProvider(
-    provider: ServiceProvider,
-    modMetadata: ModuleMetadata,
-    meta: NormalizedModuleMetadata
-  ) {
+  protected findAndSetProvider(provider: ServiceProvider, modMetadata: ModuleMetadata, meta: NormalizedModuleMetadata) {
     const token = normalizeProviders([provider])[0].provide;
     const { providersPerMod, providersPerRou, providersPerReq } = modMetadata;
     const { name, exportsProvidersPerMod, exportsProvidersPerRou, exportsProvidersPerReq } = meta;
