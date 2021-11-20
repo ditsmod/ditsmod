@@ -39,6 +39,9 @@ export class ModuleManager {
     return this.copyMeta(meta);
   }
 
+  /**
+   * Returns a snapshot of NormalizedModuleMetadata for given module or module ID.
+   */
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
     const meta = this.getRawMetadata<T, A>(moduleId, throwErrIfNotFound);
     return this.copyMeta(meta!);
