@@ -24,6 +24,9 @@ export class ModuleManager {
 
   constructor(protected log: Log) {}
 
+  /**
+   * Returns a snapshot of NormalizedModuleMetadata for the root module.
+   */
   scanRootModule(appModule: ModuleType) {
     if (!getModuleMetadata(appModule, true)) {
       throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
@@ -34,6 +37,9 @@ export class ModuleManager {
     return this.copyMeta(meta);
   }
 
+  /**
+   * Returns a snapshot of NormalizedModuleMetadata for a module.
+   */
   scanModule(modOrObj: ModuleType | ModuleWithParams<any>) {
     const meta = this.scanRawModule(modOrObj);
     return this.copyMeta(meta);
@@ -266,47 +272,47 @@ export class ModuleManager {
    * Returns normalized module metadata.
    */
   protected normalizeMetadata(mod: ModuleType | ModuleWithParams) {
-    const modMetadata = getModuleMetadata(mod);
+    const rawMeta = getModuleMetadata(mod);
     const modName = getModuleName(mod);
-    if (!modMetadata) {
+    if (!rawMeta) {
       throw new Error(`Module build failed: module "${modName}" does not have the "@Module()" decorator`);
     }
 
     /**
      * Setting initial properties of metadata.
      */
-    const metadata = new NormalizedModuleMetadata();
-    metadata.name = modName;
-    metadata.module = mod;
+    const meta = new NormalizedModuleMetadata();
+    meta.name = modName;
+    meta.module = mod;
     /**
      * `ngMetadataName` is used only internally and is hidden from the public API.
      */
-    metadata.ngMetadataName = (modMetadata as any).ngMetadataName;
+    meta.ngMetadataName = (rawMeta as any).ngMetadataName;
 
-    modMetadata.imports?.forEach((imp) => {
+    rawMeta.imports?.forEach((imp) => {
       imp = resolveForwardRef(imp);
       if (isModuleWithParams(imp)) {
-        metadata.importsWithParams.push(imp);
+        meta.importsWithParams.push(imp);
       } else {
-        metadata.importsModules.push(imp);
+        meta.importsModules.push(imp);
       }
     });
 
-    modMetadata.exports?.forEach((exp) => {
+    rawMeta.exports?.forEach((exp) => {
       exp = resolveForwardRef(exp);
       if (isModuleWithParams(exp)) {
-        metadata.exportsWithParams.push(exp);
+        meta.exportsWithParams.push(exp);
       } else if (isProvider(exp)) {
-        this.findAndSetProvider(exp, modMetadata, metadata);
+        this.findAndSetProvider(exp, rawMeta, meta);
       } else {
-        metadata.exportsModules.push(exp);
+        meta.exportsModules.push(exp);
       }
     });
 
-    pickProperties(metadata, modMetadata);
-    metadata.extensionsMeta = { ...(metadata.extensionsMeta || {}) };
+    pickProperties(meta, rawMeta);
+    meta.extensionsMeta = { ...(meta.extensionsMeta || {}) };
 
-    return metadata;
+    return meta;
   }
 
   protected findAndSetProvider(
