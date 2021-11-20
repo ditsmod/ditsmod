@@ -35,9 +35,8 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
-    const { method: httpMethod, url } = nodeReq;
-    const [uri, queryString] = this.decodeUrl(url || '').split('?');
-    const { handle, params } = this.router.find(httpMethod as HttpMethod, uri);
+    const [uri, queryString] = this.decodeUrl(nodeReq.url || '').split('?', 2);
+    const { handle, params } = this.router.find(nodeReq.method as HttpMethod, uri);
     if (!handle) {
       this.sendNotFound(nodeRes);
       return;
