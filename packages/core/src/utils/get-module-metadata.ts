@@ -3,15 +3,14 @@ import { reflector } from '@ts-stack/di';
 import { Module } from '../decorators/module';
 import { ModuleMetadata } from '../types/module-metadata';
 import { ModuleType, ModuleWithParams } from '../types/mix';
-import { checkModuleMetadata } from './check-module-metadata';
 import { getModuleName } from './get-module-name';
-import { mergeArrays } from './merge-arrays-options';
+import { mergeArrays } from './merge-arrays';
 import { isForwardRef, isModule, isModuleWithParams, isRootModule } from './type-guards';
 
 export function getModuleMetadata(
   modOrObj: ModuleType | ModuleWithParams,
   isRoot?: boolean
-): ModuleMetadata {
+): ModuleMetadata | undefined {
   const typeGuard = isRoot ? isRootModule : (m: ModuleMetadata) => isModule(m) || isRootModule(m);
 
   if (isForwardRef(modOrObj)) {
@@ -20,9 +19,11 @@ export function getModuleMetadata(
 
   if (isModuleWithParams(modOrObj)) {
     const modWitParams = modOrObj;
-    const modMetadata: ModuleMetadata = reflector.annotations(modWitParams.module).find(typeGuard);
+    const modMetadata = reflector.annotations(modWitParams.module).find(typeGuard) as ModuleMetadata | undefined;
     const modName = getModuleName(modWitParams.module);
-    checkModuleMetadata(modMetadata, modName);
+    if (!modMetadata) {
+      return modMetadata;
+    }
 
     if (modMetadata.id) {
       const msg =

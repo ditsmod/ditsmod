@@ -6,6 +6,13 @@ import { ModuleWithParams, ServiceProvider } from '../types/mix';
 import { getModuleMetadata } from './get-module-metadata';
 
 describe('getModuleMetadata', () => {
+  it('module without decorator', () => {
+    class Module1 {}
+
+    const metadata = getModuleMetadata(Module1);
+    expect(metadata).toBeUndefined();
+  });
+
   it('empty decorator', () => {
     @Module()
     class Module1 {}

@@ -1,4 +1,4 @@
-import { mergeArrays } from './merge-arrays-options';
+import { mergeArrays } from './merge-arrays';
 
 describe('mergeArrays()', () => {
   it('should merge with undefined', () => {
