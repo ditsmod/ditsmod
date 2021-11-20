@@ -91,6 +91,10 @@ export class AppInitializer {
    */
   protected mergeMetadata(appModule: ModuleType): void {
     const serverMetadata = getModuleMetadata(appModule, true);
+    if (!serverMetadata) {
+      const modName = getModuleName(appModule);
+      throw new Error(`Module build failed: module "${modName}" does not have the "@RootModule()" decorator`);
+    }
 
     // Setting default metadata.
     this.meta = new RootMetadata();

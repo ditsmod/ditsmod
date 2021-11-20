@@ -4,7 +4,6 @@ import { format } from 'util';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { ModuleMetadata } from '../types/module-metadata';
-import { checkModuleMetadata } from '../utils/check-module-metadata';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { normalizeProviders } from '../utils/ng-utils';
@@ -269,7 +268,9 @@ export class ModuleManager {
   protected normalizeMetadata(mod: ModuleType | ModuleWithParams) {
     const modMetadata = getModuleMetadata(mod);
     const modName = getModuleName(mod);
-    checkModuleMetadata(modMetadata, modName);
+    if (!modMetadata) {
+      throw new Error(`Module build failed: module "${modName}" does not have the "@Module()" decorator`);
+    }
 
     /**
      * Setting initial properties of metadata.
