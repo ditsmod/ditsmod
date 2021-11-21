@@ -1,6 +1,6 @@
 import { Inject, Injectable, Injector, ReflectiveInjector } from '@ts-stack/di';
 
-import { APP_METADATA_MAP, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
+import { APP_METADATA_MAP, defaultExtensions, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
 import { AppMetadataMap, ImportedProviders, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
 import { getUniqProviders } from './utils/get-uniq-providers';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
@@ -45,6 +45,7 @@ export class ImportsResolver {
     });
 
     meta.providersPerReq.unshift(...defaultProvidersPerReq);
+    meta.extensions.unshift(...defaultExtensions);
   }
 
   /**
