@@ -10,11 +10,15 @@ import { MetadataPerMod1 } from './types/metadata-per-mod';
 import { RouteMeta } from './types/route-data';
 import { RootMetadata } from './models/root-metadata';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
+import { getModuleName } from './utils/get-module-name';
+import { getProviderName } from './utils/get-provider-name';
 
 type Scope = 'Mod' | 'Rou' | 'Req';
 
 @Injectable()
 export class ImportsResolver {
+  protected unfinishedSearchDependecies: [ModuleType | ModuleWithParams, ServiceProvider][] = [];
+
   constructor(
     private moduleManager: ModuleManager,
     @Inject(APP_METADATA_MAP) protected appMetadataMap: AppMetadataMap
@@ -106,19 +110,25 @@ export class ImportsResolver {
     throw new Error(`No provider for ${token.name}!${partMsg}`);
   }
 
-  protected searchInImports(module: ModuleType | ModuleWithParams, scopes: Scope[], token: any, path: any[] = []) {
+  /**
+   * @param module1 Module from where imports providers.
+   */
+  protected searchInImports(module1: ModuleType | ModuleWithParams, scopes: Scope[], token: any, path: any[] = []) {
     const importedProviders1 = new ImportedProviders();
     let found: boolean = false;
 
     for (const scope of scopes) {
-      const importObj = this.appMetadataMap.get(module)?.importedTokensMap[`per${scope}`].get(token);
+      const importObj = this.appMetadataMap.get(module1)?.importedTokensMap[`per${scope}`].get(token);
       if (importObj) {
         found = true;
-        importedProviders1[`providersPer${scope}`] = new Set(importObj.providers);
+        const { module: module2, providers } = importObj;
+        importedProviders1[`providersPer${scope}`] = new Set(providers);
 
         // Loop for multi providers.
-        for (const provider of importObj.providers) {
-          const importedProviders2 = this.searchInProviders(importObj.module, provider, scopes, path);
+        for (const provider of providers) {
+          this.fixDependecy(module2, provider);
+          const importedProviders2 = this.searchInProviders(module2, provider, scopes, path);
+          this.unfixDependecy(module2, provider);
           this.mergeImportedProviders(importedProviders1, importedProviders2);
         }
         break;
@@ -150,6 +160,34 @@ export class ImportsResolver {
     });
 
     return this.excludeDefaultTokens([...deps]);
+  }
+
+  protected fixDependecy(module: ModuleType | ModuleWithParams, provider: ServiceProvider) {
+    const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
+    if (index != -1) {
+      this.throwCyclicDependencies(index);
+    }
+    this.unfinishedSearchDependecies.push([module, provider]);
+  }
+
+  protected unfixDependecy(module: ModuleType | ModuleWithParams, provider: ServiceProvider) {
+    const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
+    this.unfinishedSearchDependecies.splice(index, 1);
+  }
+
+  protected throwCyclicDependencies(index: number) {
+    const items = this.unfinishedSearchDependecies;
+    const prefixChain = items.slice(0, index);
+    const cyclicChain = items.slice(index);
+    const prefixNames = prefixChain.map(([m, p]) => `[${getProviderName(p)} in ${getModuleName(m)}]`).join(' -> ');
+    const [module, provider] = items[index];
+    let cyclicNames = cyclicChain.map(([m, p]) => `[${getProviderName(p)} in ${getModuleName(m)}]`).join(' -> ');
+    cyclicNames += ` -> [${getProviderName(provider)} in ${getModuleName(module)}]`;
+    let msg = `Detected cyclic dependencies: ${cyclicNames}.`;
+    if (prefixNames) {
+      msg += ` It is started from ${prefixNames}.`;
+    }
+    throw new Error(msg);
   }
 
   protected excludeDefaultTokens(tokens: any[]) {
