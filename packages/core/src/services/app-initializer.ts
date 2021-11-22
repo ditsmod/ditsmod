@@ -25,6 +25,7 @@ import { Log } from './log';
 import { LogManager } from './log-manager';
 import { ImportsMap } from '../types/metadata-per-mod';
 import { ImportsResolver } from '../imports-resolver';
+import { getTokens } from '../utils/get-tokens';
 
 @Injectable()
 export class AppInitializer {
@@ -130,11 +131,11 @@ export class AppInitializer {
 
     const providersAndExtensions = this.collectProvidersPerAppAndExtensions(meta, moduleManager);
     const { providersPerApp: exportedProviders, extensions } = providersAndExtensions;
-    const rootTokens = normalizeProviders(this.meta.providersPerApp).map((np) => np.provide);
+    const rootTokens = getTokens(this.meta.providersPerApp);
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.provide);
     const exportedMultiTokens = exportedNormProviders.filter((np) => np.multi).map((np) => np.provide);
-    const defaultTokens = normalizeProviders([...defaultProvidersPerApp]).map((np) => np.provide);
+    const defaultTokens = getTokens(defaultProvidersPerApp);
     const mergedTokens = [...exportedTokens, ...defaultTokens];
     let exportedTokensDuplicates = getDuplicates(mergedTokens).filter(
       (d) => !rootTokens.includes(d) && !exportedMultiTokens.includes(d)
