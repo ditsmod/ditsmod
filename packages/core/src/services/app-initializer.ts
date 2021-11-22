@@ -20,7 +20,7 @@ import { ExtensionsManager } from './extensions-manager';
 import { ModuleManager } from './module-manager';
 import { PreRouterExtension } from '../extensions/pre-router.extension';
 import { Counter } from './counter';
-import { APP_METADATA_MAP } from '../constans';
+import { APP_METADATA_MAP, defaultExtensions } from '../constans';
 import { Log } from './log';
 import { LogManager } from './log-manager';
 import { ImportsMap } from '../types/metadata-per-mod';
@@ -118,6 +118,7 @@ export class AppInitializer {
     this.meta = new RootMetadata();
 
     pickProperties(this.meta, serverMetadata);
+    this.meta.extensions.unshift(...defaultExtensions);
   }
 
   /**
