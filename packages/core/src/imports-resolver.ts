@@ -1,6 +1,6 @@
-import { Inject, Injectable, Injector, ReflectiveInjector } from '@ts-stack/di';
+import { Injector, ReflectiveInjector } from '@ts-stack/di';
 
-import { APP_METADATA_MAP, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
+import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
 import { AppMetadataMap, ImportedProviders, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
 import { getUniqProviders } from './utils/get-uniq-providers';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
@@ -15,13 +15,13 @@ import { getProviderName } from './utils/get-provider-name';
 
 type Scope = 'Mod' | 'Rou' | 'Req';
 
-@Injectable()
 export class ImportsResolver {
   protected unfinishedSearchDependecies: [ModuleType | ModuleWithParams, ServiceProvider][] = [];
 
   constructor(
     private moduleManager: ModuleManager,
-    @Inject(APP_METADATA_MAP) protected appMetadataMap: AppMetadataMap
+    protected appMetadataMap: AppMetadataMap,
+    protected providersPerApp: ServiceProvider[]
   ) {}
 
   resolve() {
@@ -82,6 +82,10 @@ export class ImportsResolver {
         if (found) {
           break;
         }
+      }
+
+      if (!found) {
+        found = getTokens(this.providersPerApp).includes(token1);
       }
 
       if (!found) {

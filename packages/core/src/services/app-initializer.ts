@@ -49,7 +49,7 @@ export class AppInitializer {
 
   async bootstrapModulesAndExtensions() {
     const appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
-    const importsResolver = new ImportsResolver(this.moduleManager, appMetadataMap);
+    const importsResolver = new ImportsResolver(this.moduleManager, appMetadataMap, this.meta.providersPerApp);
     importsResolver.resolve();
     await this.handleExtensions(appMetadataMap);
     this.preRouter = this.injectorPerApp.get(PreRouterExtension) as PreRouterExtension;
