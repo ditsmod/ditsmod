@@ -342,9 +342,9 @@ export class ModuleManager {
     return meta;
   }
 
-  protected findAndSetProvider(provider: ServiceProvider, modMetadata: ModuleMetadata, meta: NormalizedModuleMetadata) {
+  protected findAndSetProvider(provider: ServiceProvider, rawMeta: ModuleMetadata, meta: NormalizedModuleMetadata) {
     const token = normalizeProviders([provider])[0].provide;
-    const { providersPerMod, providersPerRou, providersPerReq } = modMetadata;
+    const { providersPerMod, providersPerRou, providersPerReq } = rawMeta;
     const { name, exportsProvidersPerMod, exportsProvidersPerRou, exportsProvidersPerReq } = meta;
 
     if (hasProviderIn(providersPerMod)) {
@@ -359,12 +359,16 @@ export class ModuleManager {
     }
 
     const providerName = token.name || token;
-    throw new Error(
-      `Importing ${providerName} from ${name} ` +
-        'should includes in "providersPerMod" or "providersPerRou", or "providersPerReq", ' +
-        'or in some "exports" of imported modules. ' +
-        'Tip: "providersPerApp" no need exports, they are automatically exported.'
-    );
+    let msg = '';
+    if (hasProviderIn(rawMeta.providersPerApp)) {
+      msg = `Imported ${providerName} includes in "providersPerApp" and "exports" of ${name}. ` +
+      'This is an error, because "providersPerApp" is always exported automatically.';
+    } else {
+      msg = `Imported ${providerName} from ${name} ` +
+      'should includes in "providersPerMod" or "providersPerRou", or "providersPerReq", ' +
+      'or in some "exports" of imported modules.';
+    }
+    throw new Error(msg);
 
     function hasProviderIn(providers: ServiceProvider[] | undefined) {
       if (!providers) {

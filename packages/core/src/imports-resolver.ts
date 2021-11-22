@@ -107,7 +107,7 @@ export class ImportsResolver {
       .join(' -> ');
 
     const partMsg = path.length > 1 ? `(${strPath})` : '';
-    throw new Error(`No provider for ${token.name}!${partMsg}`);
+    throw new Error(`No provider for ${token.name || token}!${partMsg}`);
   }
 
   /**
