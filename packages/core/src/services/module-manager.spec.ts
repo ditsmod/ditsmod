@@ -88,7 +88,7 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    expect(() => mock.scanRootModule(AppModule)).toThrowError(/Importing Provider1 from AppModule should includes in/);
+    expect(() => mock.scanRootModule(AppModule)).toThrowError(/Imported Provider1 from AppModule should includes in/);
   });
 
   it('root module with some metadata', () => {
