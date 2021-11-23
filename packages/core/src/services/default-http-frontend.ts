@@ -34,6 +34,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
       this.req.nodeRes.setHeader('Server', this.rootMetadata.serverName);
     } catch (err) {
       await this.loadErrorHandler(err);
+      return;
     }
 
     return next.handle().catch((err) => {
