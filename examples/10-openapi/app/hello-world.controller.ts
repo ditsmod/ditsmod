@@ -5,7 +5,7 @@ import { BasicGuard } from './basic.guard';
 import { Model2 } from './models';
 import { getMetaContent } from './overriden-helper';
 
-@Controller()
+@Controller({ providersPerReq: [BasicGuard] })
 export class HelloWorldController {
   constructor(private req: Request, private res: Response, private logger: Logger) {}
 
