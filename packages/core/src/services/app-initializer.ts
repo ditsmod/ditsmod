@@ -236,11 +236,11 @@ export class AppInitializer {
     this.applyAppMetadataMap(appMetadataMap);
     const initedExtensionsGroups = new WeakSet<InjectionToken<Extension<any>[]>>();
     const extensionsManager = this.injectorPerApp.get(ExtensionsManager) as ExtensionsManager;
-    for (const [, metadata] of appMetadataMap) {
-      if (isRootModule(metadata.meta)) {
-        metadata.meta.extensions = this.meta.extensions;
+    for (const [, metadataPerMod1] of appMetadataMap) {
+      if (isRootModule(metadataPerMod1.meta)) {
+        metadataPerMod1.meta.extensions = this.meta.extensions;
       }
-      const { extensions, name: moduleName } = metadata.meta;
+      const { extensions, name: moduleName } = metadataPerMod1.meta;
       for (const groupToken of extensions) {
         if (initedExtensionsGroups.has(groupToken)) {
           continue;
