@@ -1,4 +1,4 @@
-import { Injectable } from '@ts-stack/di';
+import { Injectable, Optional } from '@ts-stack/di';
 
 import { Logger, LoggerConfig, LoggerMethod } from '../types/logger';
 
@@ -20,7 +20,7 @@ function defaultLoggerFn(fnLevel: keyof Logger, config: LoggerConfig) {
 
 @Injectable()
 export class DefaultLogger extends Logger {
-  constructor(private config: LoggerConfig) {
+  constructor(@Optional() private config: LoggerConfig = new LoggerConfig()) {
     super();
   }
   override trace = defaultLoggerFn('trace', this.config);

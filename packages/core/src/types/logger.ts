@@ -48,5 +48,5 @@ export class Logger {
 }
 
 export class LoggerConfig {
-  level = 'info';
+  constructor(public level = 'info') {}
 }

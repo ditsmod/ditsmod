@@ -1,7 +1,7 @@
 import { Injectable, Optional } from '@ts-stack/di';
 import { format } from 'util';
 
-import { Logger, LoggerConfig } from '../types/logger';
+import { Logger } from '../types/logger';
 import { AnyObj } from '../types/mix';
 import { DefaultLogger } from './default-logger';
 import { LogManager } from './log-manager';
@@ -48,7 +48,6 @@ export class Log {
   get buffer() {
     return this.logManager.buffer;
   }
-  protected _logger: Logger;
 
   get logger() {
     return this._logger;
@@ -62,18 +61,11 @@ export class Log {
     }
   }
 
-  protected logConfig: LogConfig;
-
-  constructor(protected logManager: LogManager, @Optional() logger?: Logger, @Optional() logConfig?: LogConfig) {
-    if (!logger) {
-      logger = new DefaultLogger(new LoggerConfig());
-    }
-    this._logger = logger;
-    if (!logConfig) {
-      logConfig = new LogConfig();
-    }
-    this.logConfig = logConfig;
-  }
+  constructor(
+    protected logManager: LogManager,
+    @Optional() protected _logger: Logger = new DefaultLogger(),
+    @Optional() protected logConfig: LogConfig = new LogConfig()
+  ) {}
 
   getLogManager() {
     return this.logManager;
