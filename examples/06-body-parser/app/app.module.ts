@@ -5,7 +5,6 @@ import { BodyParserModule } from '@ditsmod/body-parser';
 import { SomeModule } from './modules/routed/some/some.module';
 
 @RootModule({
-  imports: [RouterModule, SomeModule],
-  exports: [BodyParserModule]
+  imports: [RouterModule, SomeModule, BodyParserModule]
 })
 export class AppModule {}
