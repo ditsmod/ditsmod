@@ -367,19 +367,6 @@ export class ModuleManager {
     return meta;
   }
 
-  protected findAndSetExtensions(
-    token: any,
-    rawMeta: ModuleMetadata,
-    meta: NormalizedModuleMetadata,
-    extensionsTokens: any[]
-  ) {
-    const index = extensionsTokens.findIndex(token);
-    if (index != -1) {
-      meta.exportsExtensions.push(rawMeta.extensions![index]);
-      return;
-    }
-  }
-
   protected findAndSetProvider(token: any, rawMeta: ModuleMetadata, meta: NormalizedModuleMetadata) {
     const scopes: ('Req' | 'Rou' | 'Mod')[] = ['Req', 'Rou', 'Mod'];
     let found = false;
