@@ -525,11 +525,14 @@ describe('ModuleManager', () => {
     }
 
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
-    const extensions = [{ provide: GROUP_EXTENSIONS, useClass: Extension1, multi: true }] as ExtensionsProvider[];
+    const extensions: ExtensionsProvider[] = [
+      Extension1,
+      { provide: GROUP_EXTENSIONS, useExisting: Extension1, multi: true },
+    ];
 
     @Module({
       extensions,
-      exports: [GROUP_EXTENSIONS],
+      exports: [Extension1, GROUP_EXTENSIONS],
     })
     class Module1 {}
 
@@ -565,11 +568,14 @@ describe('ModuleManager', () => {
     }
 
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
-    const extensions = [{ provide: GROUP_EXTENSIONS, useClass: Extension1, multi: true }] as ExtensionsProvider[];
+    const extensions: ExtensionsProvider[] = [
+      Extension1,
+      { provide: GROUP_EXTENSIONS, useExisting: Extension1, multi: true },
+    ];
 
     @Module({
       extensions,
-      exports: [GROUP_EXTENSIONS],
+      exports: [Extension1, GROUP_EXTENSIONS],
     })
     class Module1 {}
 
