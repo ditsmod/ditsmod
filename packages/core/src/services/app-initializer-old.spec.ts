@@ -36,8 +36,8 @@ describe('AppInitializer', () => {
       return super.mergeRootMetadata(meta);
     }
 
-    override collectProvidersPerAppAndExtensions(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
-      return super.collectProvidersPerAppAndExtensions(meta, moduleManager);
+    override collectProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
+      return super.collectProvidersPerApp(meta, moduleManager);
     }
 
     override prepareProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
@@ -267,14 +267,14 @@ describe('AppInitializer', () => {
 
     it('should collects providers from exports array without imports them', () => {
       const meta = moduleManager.scanModule(AppModule);
-      const { providersPerApp, extensions } = mock.collectProvidersPerAppAndExtensions(meta, moduleManager);
+      const { providersPerApp, extensions } = mock.collectProvidersPerApp(meta, moduleManager);
       expect(providersPerApp.includes(Provider0)).toBe(true);
       expect(extensions.includes(MY_EXTENSIONS)).toBe(true);
     });
 
     it('should collects providers in particular order', () => {
       const meta = moduleManager.scanModule(AppModule);
-      const { providersPerApp } = mock.collectProvidersPerAppAndExtensions(meta, moduleManager);
+      const { providersPerApp } = mock.collectProvidersPerApp(meta, moduleManager);
       expect(providersPerApp).toEqual([
         Provider1,
         extensionProvider,
@@ -298,7 +298,7 @@ describe('AppInitializer', () => {
       }
       const modWithParams = Module6.withParams([Provider7]);
       const meta = moduleManager.scanModule(modWithParams);
-      const { providersPerApp } = mock.collectProvidersPerAppAndExtensions(meta, moduleManager);
+      const { providersPerApp } = mock.collectProvidersPerApp(meta, moduleManager);
       expect(providersPerApp).toEqual([
         Provider1,
         extensionProvider,
@@ -317,7 +317,7 @@ describe('AppInitializer', () => {
       class Module7 {}
 
       const meta = moduleManager.scanModule(Module7);
-      const { providersPerApp } = mock.collectProvidersPerAppAndExtensions(meta, moduleManager);
+      const { providersPerApp } = mock.collectProvidersPerApp(meta, moduleManager);
       expect(providersPerApp).toEqual([]);
     });
   });

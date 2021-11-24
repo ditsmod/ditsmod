@@ -1,4 +1,4 @@
-import { Injectable, resolveForwardRef } from '@ts-stack/di';
+import { Injectable, resolveForwardRef, Type } from '@ts-stack/di';
 import { format } from 'util';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
@@ -6,6 +6,7 @@ import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider } from '../types/
 import { ModuleMetadata } from '../types/module-metadata';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
+import { getToken, getTokens } from '../utils/get-tokens';
 import { normalizeProviders } from '../utils/ng-utils';
 import { pickProperties } from '../utils/pick-properties';
 import { isModuleWithParams, isProvider } from '../utils/type-guards';
@@ -53,9 +54,21 @@ export class ModuleManager {
   /**
    * Returns a snapshot of NormalizedModuleMetadata for given module or module ID.
    */
+  getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+    moduleId: ModuleId,
+    throwErrIfNotFound?: false
+  ): NormalizedModuleMetadata<T, A> | undefined;
+  getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+    moduleId: ModuleId,
+    throwErrIfNotFound: true
+  ): NormalizedModuleMetadata<T, A>;
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
     const meta = this.getRawMetadata<T, A>(moduleId, throwErrIfNotFound);
-    return this.copyMeta(meta!);
+    if (meta) {
+      return this.copyMeta(meta);
+    } else {
+      return;
+    }
   }
 
   /**
@@ -325,14 +338,26 @@ export class ModuleManager {
       }
     });
 
+    const extensionsTokens = getTokens(rawMeta.extensions || []);
+
     rawMeta.exports?.forEach((exp) => {
       exp = resolveForwardRef(exp);
       if (isModuleWithParams(exp)) {
         meta.exportsWithParams.push(exp);
+      } else if (extensionsTokens.indexOf(exp) != -1) {
+        // @todo Check that the extension is correct.
+        const index = extensionsTokens.indexOf(exp);
+        meta.exportsExtensions.push(rawMeta.extensions![index]);
       } else if (isProvider(exp)) {
         this.findAndSetProvider(exp, rawMeta, meta);
-      } else {
+      } else if (exp instanceof Type) {
         meta.exportsModules.push(exp);
+      } else {
+        const tokenName = exp.name || exp;
+        const msg =
+          `Exporting from ${modName} failed: ${tokenName} must be included in ` +
+          `providersPerReq or in providersPerRou, or in providersPerMod, or must be an extension token.`;
+        throw new TypeError(msg);
       }
     });
 
@@ -342,40 +367,53 @@ export class ModuleManager {
     return meta;
   }
 
-  protected findAndSetProvider(provider: ServiceProvider, rawMeta: ModuleMetadata, meta: NormalizedModuleMetadata) {
-    const token = normalizeProviders([provider])[0].provide;
-    const { providersPerMod, providersPerRou, providersPerReq } = rawMeta;
-    const { name, exportsProvidersPerMod, exportsProvidersPerRou, exportsProvidersPerReq } = meta;
-
-    if (hasProviderIn(providersPerMod)) {
-      exportsProvidersPerMod.push(provider);
-      return true;
-    } else if (hasProviderIn(providersPerRou)) {
-      exportsProvidersPerRou.push(provider);
-      return true;
-    } else if (hasProviderIn(providersPerReq)) {
-      exportsProvidersPerReq.push(provider);
-      return true;
+  protected findAndSetExtensions(
+    token: any,
+    rawMeta: ModuleMetadata,
+    meta: NormalizedModuleMetadata,
+    extensionsTokens: any[]
+  ) {
+    const index = extensionsTokens.findIndex(token);
+    if (index != -1) {
+      meta.exportsExtensions.push(rawMeta.extensions![index]);
+      return;
     }
+  }
 
-    const providerName = token.name || token;
-    let msg = '';
-    if (hasProviderIn(rawMeta.providersPerApp)) {
-      msg = `Imported ${providerName} includes in "providersPerApp" and "exports" of ${name}. ` +
-      'This is an error, because "providersPerApp" is always exported automatically.';
-    } else {
-      msg = `Imported ${providerName} from ${name} ` +
-      'should includes in "providersPerMod" or "providersPerRou", or "providersPerReq", ' +
-      'or in some "exports" of imported modules.';
+  protected findAndSetProvider(token: any, rawMeta: ModuleMetadata, meta: NormalizedModuleMetadata) {
+    const scopes: ('Req' | 'Rou' | 'Mod')[] = ['Req', 'Rou', 'Mod'];
+    let found = false;
+    scopes.forEach((scope) => {
+      const provider = hasProviderIn(rawMeta[`providersPer${scope}`]);
+      if (provider) {
+        found = true;
+        meta[`exportsProvidersPer${scope}`].push(provider);
+      }
+    });
+
+    if (!found) {
+      const providerName = token.name || token;
+      let msg = '';
+      if (hasProviderIn(rawMeta.providersPerApp)) {
+        msg =
+          `Imported ${providerName} includes in "providersPerApp" and "exports" of ${meta.name}. ` +
+          'This is an error, because "providersPerApp" is always exported automatically.';
+      } else {
+        msg =
+          `Imported ${providerName} from ${meta.name} ` +
+          'should includes in "providersPerMod" or "providersPerRou", or "providersPerReq", ' +
+          'or in some "exports" of imported modules.';
+      }
+      throw new Error(msg);
     }
-    throw new Error(msg);
 
     function hasProviderIn(providers: ServiceProvider[] | undefined) {
       if (!providers) {
         return;
       }
       const normProviders = normalizeProviders(providers);
-      return normProviders.some((p) => p.provide === token);
+      const index = normProviders.findIndex((p) => p.provide === token);
+      return providers[index];
     }
   }
 }

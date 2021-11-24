@@ -1,9 +1,8 @@
 import { ListenOptions } from 'net';
-import { InjectionToken } from '@ts-stack/di';
 
 import { ServerOptions } from '../types/server-options';
 import { HttpModule } from '../types/http-module';
-import { Extension } from './mix';
+import { ExtensionsProvider } from './mix';
 
 export interface RootModuleMetadata {
   httpModule?: HttpModule;
@@ -11,5 +10,5 @@ export interface RootModuleMetadata {
   serverOptions?: ServerOptions;
   listenOptions?: ListenOptions;
   prefixPerApp?: string;
-  extensions?: InjectionToken<Extension<any>[]>[];
+  extensions?: ExtensionsProvider[];
 }

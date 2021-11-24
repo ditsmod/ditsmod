@@ -14,6 +14,7 @@ export class ImportsMap {
   importedPerMod = new Map<any, ImportObj>();
   importedPerRou = new Map<any, ImportObj>();
   importedPerReq = new Map<any, ImportObj>();
+  importedExtensions = new Map<any, ImportObj>();
 }
 
 /**
@@ -38,7 +39,12 @@ export class MetadataPerMod1 {
   /**
    * Map between a token and its ImportObj per scope.
    */
-  importedTokensMap: { perMod: Map<any, ImportObj>; perRou: Map<any, ImportObj>; perReq: Map<any, ImportObj> };
+  importedTokensMap: {
+    perMod: Map<any, ImportObj>;
+    perRou: Map<any, ImportObj>;
+    perReq: Map<any, ImportObj>;
+    extensions: Map<any, ImportObj>;
+  };
 }
 
 /**

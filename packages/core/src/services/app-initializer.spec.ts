@@ -32,8 +32,8 @@ describe('AppInitializer', () => {
       return super.mergeRootMetadata(meta);
     }
 
-    override collectProvidersPerAppAndExtensions(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
-      return super.collectProvidersPerAppAndExtensions(meta, moduleManager);
+    override collectProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
+      return super.collectProvidersPerApp(meta, moduleManager);
     }
 
     override prepareProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {

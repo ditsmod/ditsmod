@@ -8,10 +8,10 @@ import { Log } from './log';
 export class ExtensionsManager {
   protected unfinishedInitExtensions = new Set<Extension<any>>();
 
-  constructor(private injectorPerApp: Injector, private log: Log, private counter: Counter) {}
+  constructor(private injectorPerMod: Injector, private log: Log, private counter: Counter) {}
 
   async init<T>(extensionsGroupToken: string | InjectionToken<Extension<T>[]>, autoMergeArrays = true): Promise<T[]> {
-    const extensions = this.injectorPerApp.get(extensionsGroupToken, []);
+    const extensions = this.injectorPerMod.get(extensionsGroupToken, []);
     const dataArr: T[] = [];
 
     if (typeof extensionsGroupToken != 'string' && !extensions.length) {

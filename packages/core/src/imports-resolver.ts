@@ -5,13 +5,14 @@ import { AppMetadataMap, ImportedProviders, ModuleType, ModuleWithParams, Servic
 import { getUniqProviders } from './utils/get-uniq-providers';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
-import { getTokens } from './utils/get-tokens';
+import { getToken, getTokens } from './utils/get-tokens';
 import { MetadataPerMod1 } from './types/metadata-per-mod';
 import { RouteMeta } from './types/route-data';
 import { RootMetadata } from './models/root-metadata';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { getModuleName } from './utils/get-module-name';
 import { getProviderName } from './utils/get-provider-name';
+import { defaultExtensions } from './services/default-extensions';
 
 type Scope = 'Mod' | 'Rou' | 'Req';
 
@@ -31,7 +32,7 @@ export class ImportsResolver {
   }
 
   protected resolveImportedProviders(metadataPerMod1: MetadataPerMod1) {
-    const { importedProvidersMap, meta } = metadataPerMod1;
+    const { importedProvidersMap, importedTokensMap, meta } = metadataPerMod1;
     const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
 
     importedProvidersMap.forEach((importedProviders1, module) => {
@@ -43,12 +44,22 @@ export class ImportsResolver {
       }
       // Merge imported providers with existing providers
       scopes.forEach((scope) => {
-        const localProviders = meta[`providersPer${scope}`];
-        meta[`providersPer${scope}`] = [...importedProviders1[`providersPer${scope}`], ...localProviders];
+        meta[`providersPer${scope}`].unshift(...importedProviders1[`providersPer${scope}`]);
+      });
+    });
+
+    const excludeTokens = getTokens([...importedTokensMap.extensions.keys()]);
+    importedTokensMap.extensions.forEach(({ providers, module }) => {
+      providers.forEach((provider) => {
+        if (!excludeTokens.includes(getToken(provider))) {
+          const importedProviders = this.searchInProviders(module, provider, ['Mod'], [], excludeTokens);
+          meta.providersPerMod.unshift(...importedProviders.providersPerMod);
+        }
       });
     });
 
     meta.providersPerReq.unshift(...defaultProvidersPerReq);
+    meta.extensions.unshift(...defaultExtensions);
   }
 
   /**
@@ -60,13 +71,17 @@ export class ImportsResolver {
     module: ModuleType | ModuleWithParams,
     provider: ServiceProvider,
     scopes: Scope[],
-    path: any[] = []
+    path: any[] = [],
+    excludeTokens: any[] = []
   ) {
-    const meta = this.moduleManager.getMetadata(module);
+    const meta = this.moduleManager.getMetadata(module, true);
     const importedProviders1 = new ImportedProviders();
 
     for (const token1 of this.getDependencies(provider)) {
       let found: boolean = false;
+      if (excludeTokens.includes(token1)) {
+        continue;
+      }
 
       for (const scope of scopes) {
         const providers = getUniqProviders(meta[`providersPer${scope}`]);

@@ -1,7 +1,5 @@
-import { InjectionToken } from '@ts-stack/di';
-
 import { ProvidersMetadata } from '../models/providers-metadata';
-import { ControllerType, ModuleType, ModuleWithParams, ServiceProvider, Extension, AnyObj } from '../types/mix';
+import { ControllerType, ModuleType, ModuleWithParams, AnyObj, ExtensionsProvider } from '../types/mix';
 
 export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
   /**
@@ -14,10 +12,10 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    */
   imports?: Array<ModuleType | ModuleWithParams>;
   /**
-   * List of modules, `ModuleWithParams` or providers exported by this
+   * List of modules, `ModuleWithParams` or tokens of providers exported by this
    * module.
    */
-  exports?: Array<ModuleType | ModuleWithParams | ServiceProvider>;
+  exports?: any[];
   /**
    * The application controllers.
    */
@@ -25,10 +23,10 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
   /**
    * The application extensions.
    */
-  extensions?: InjectionToken<Extension<any>[]>[];
+  extensions?: ExtensionsProvider[];
   /**
    * This property allows you to pass any information to extensions.
-   * 
+   *
    * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
    */
   extensionsMeta?: T;

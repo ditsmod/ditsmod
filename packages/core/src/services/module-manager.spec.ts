@@ -1,12 +1,12 @@
 import 'reflect-metadata';
 import * as http from 'http';
-import { Injectable, forwardRef } from '@ts-stack/di';
+import { Injectable, forwardRef, InjectionToken } from '@ts-stack/di';
 
 import { RootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleManager } from './module-manager';
 import { Module } from '../decorators/module';
-import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj } from '../types/mix';
+import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj, Extension, ExtensionsProvider } from '../types/mix';
 import { LoggerConfig } from '../types/logger';
 import { DefaultLogger } from './default-logger';
 import { Log } from './log';
@@ -516,5 +516,87 @@ describe('ModuleManager', () => {
     expect(mock.getMetadata('root')).toEqual(expectedMeta1);
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);
+  });
+
+  it('root module with imported some extension', () => {
+    @Injectable()
+    class Extension1 implements Extension<void> {
+      async init() {}
+    }
+
+    const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
+    const extensions = [{ provide: GROUP_EXTENSIONS, useClass: Extension1, multi: true }] as ExtensionsProvider[];
+
+    @Module({
+      extensions,
+      exports: [GROUP_EXTENSIONS],
+    })
+    class Module1 {}
+
+    @RootModule({
+      imports: [Module1],
+    })
+    class Module3 {}
+
+    const expectedMeta3 = new NormalizedModuleMetadata();
+    expectedMeta3.id = '';
+    expectedMeta3.name = 'Module3';
+    expectedMeta3.module = Module3;
+    expectedMeta3.importsModules = [Module1];
+    expectedMeta3.ngMetadataName = 'RootModule';
+
+    const expectedMeta1 = new NormalizedModuleMetadata();
+    expectedMeta1.id = '';
+    expectedMeta1.name = 'Module1';
+    expectedMeta1.module = Module1;
+    expectedMeta1.extensions = extensions;
+    expectedMeta1.exportsExtensions = extensions;
+    expectedMeta1.ngMetadataName = 'Module';
+
+    mock.scanRootModule(Module3);
+    expect(mock.getMetadata('root')).toEqual(expectedMeta3);
+    expect(mock.getMetadata(Module1)).toEqual(expectedMeta1);
+  });
+
+  it('root module with exported globaly some extension', () => {
+    @Injectable()
+    class Extension1 implements Extension<void> {
+      async init() {}
+    }
+
+    const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
+    const extensions = [{ provide: GROUP_EXTENSIONS, useClass: Extension1, multi: true }] as ExtensionsProvider[];
+
+    @Module({
+      extensions,
+      exports: [GROUP_EXTENSIONS],
+    })
+    class Module1 {}
+
+    @RootModule({
+      imports: [Module1],
+      exports: [Module1],
+    })
+    class Module3 {}
+
+    const expectedMeta3 = new NormalizedModuleMetadata();
+    expectedMeta3.id = '';
+    expectedMeta3.name = 'Module3';
+    expectedMeta3.module = Module3;
+    expectedMeta3.importsModules = [Module1];
+    expectedMeta3.exportsModules = [Module1];
+    expectedMeta3.ngMetadataName = 'RootModule';
+
+    const expectedMeta1 = new NormalizedModuleMetadata();
+    expectedMeta1.id = '';
+    expectedMeta1.name = 'Module1';
+    expectedMeta1.module = Module1;
+    expectedMeta1.extensions = extensions;
+    expectedMeta1.exportsExtensions = extensions;
+    expectedMeta1.ngMetadataName = 'Module';
+
+    mock.scanRootModule(Module3);
+    expect(mock.getMetadata('root')).toEqual(expectedMeta3);
+    expect(mock.getMetadata(Module1)).toEqual(expectedMeta1);
   });
 });

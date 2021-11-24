@@ -1,43 +1,38 @@
-import { Inject, Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
-import { APP_METADATA_MAP } from '../constans';
 import { ControllerMetadata } from '../decorators/controller';
 import { RootMetadata } from '../models/root-metadata';
 import { MetadataPerMod1, MetaForExtensionsPerRou, MetadataPerMod2 } from '../types/metadata-per-mod';
-import { AppMetadataMap, GuardItem, NormalizedGuard, Extension, ServiceProvider } from '../types/mix';
+import { GuardItem, NormalizedGuard, Extension, ServiceProvider } from '../types/mix';
 import { RouteMeta } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
 
 @Injectable()
-export class RoutesExtension implements Extension<MetadataPerMod2[]> {
-  protected metadataPerMod2Arr: MetadataPerMod2[] = [];
+export class RoutesExtension implements Extension<MetadataPerMod2> {
+  protected metadataPerMod2: MetadataPerMod2;
 
   constructor(
-    protected injectorPerApp: ReflectiveInjector,
+    protected injectorPerMod: ReflectiveInjector,
     protected rootMetadata: RootMetadata,
-    @Inject(APP_METADATA_MAP) protected appMetadataMap: AppMetadataMap
+    protected metadataPerMod1: MetadataPerMod1
   ) {}
 
   async init() {
-    if (this.metadataPerMod2Arr.length) {
-      return this.metadataPerMod2Arr;
+    if (this.metadataPerMod2) {
+      return this.metadataPerMod2;
     }
 
     const { prefixPerApp } = this.rootMetadata;
+    const { meta } = this.metadataPerMod1;
+    this.metadataPerMod2 = new MetadataPerMod2();
+    this.metadataPerMod2.module = meta.module;
+    this.metadataPerMod2.moduleName = meta.name;
+    this.metadataPerMod2.providersPerMod = meta.providersPerMod.slice();
+    this.metadataPerMod2.providersPerRou = meta.providersPerRou.slice();
+    this.metadataPerMod2.providersPerReq = meta.providersPerReq.slice();
+    this.metadataPerMod2.metaForExtensionsPerRouArr = this.getMetaPerRou(prefixPerApp, this.metadataPerMod1);
 
-    this.appMetadataMap.forEach((metadataPerMod1) => {
-      const metadataPerMod2 = new MetadataPerMod2();
-      const { meta } = metadataPerMod1;
-      metadataPerMod2.module = meta.module;
-      metadataPerMod2.moduleName = meta.name;
-      metadataPerMod2.providersPerMod = meta.providersPerMod.slice();
-      metadataPerMod2.providersPerRou = meta.providersPerRou.slice();
-      metadataPerMod2.providersPerReq = meta.providersPerReq.slice();
-      metadataPerMod2.metaForExtensionsPerRouArr = this.getMetaPerRou(prefixPerApp, metadataPerMod1);
-      this.metadataPerMod2Arr.push(metadataPerMod2);
-    });
-
-    return this.metadataPerMod2Arr;
+    return this.metadataPerMod2;
   }
 
   protected getMetaPerRou(prefixPerApp: string, metadataPerMod1: MetadataPerMod1) {

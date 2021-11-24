@@ -9,16 +9,21 @@ export interface Extension<T> {
   init(): Promise<T>;
 }
 
-export interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
+export type ExtensionsProvider =
+  | TypeProvider
+  | ((ClassProvider | ExistingProvider | FactoryProvider | ValueProvider) & { multi: true });
+
+export interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
+  extends Partial<ProvidersMetadata> {
   id?: string;
   module: ModuleType<M>;
   prefix?: string;
-  guards?: GuardItem[]
+  guards?: GuardItem[];
   /**
    * This property allows you to pass any information to extensions.
    *
    * You must follow this rule: data for one extension - one key in `additionalMeta` object.
-   */;
+   */
   extensionsMeta?: E;
 }
 
@@ -44,9 +49,7 @@ export interface DecoratorMetadata<MV extends AnyObj = AnyObj> {
    */
   value: MV;
 }
-
 export type AppMetadataMap = Map<ModuleType | ModuleWithParams, MetadataPerMod1>;
-
 export type GuardItem = Type<CanActivate> | [Type<CanActivate>, any, ...any[]];
 
 export interface MultipartBodyParserOptions {

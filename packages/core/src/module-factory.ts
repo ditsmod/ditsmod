@@ -15,6 +15,7 @@ import {
   ServiceProvider,
   Extension,
   ImportedProviders,
+  ExtensionsProvider,
 } from './types/mix';
 import { getDuplicates } from './utils/get-duplicates';
 import { getTokensCollisions } from './utils/get-tokens-collisions';
@@ -33,7 +34,7 @@ import { deepFreeze } from './utils/deep-freeze';
 import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES } from './constans';
 import { ModConfig } from './models/mod-config';
 import { Log } from './services/log';
-import { getToken } from './utils/get-tokens';
+import { getToken, getTokens } from './utils/get-tokens';
 
 /**
  * - imports and exports global providers;
@@ -59,6 +60,7 @@ export class ModuleFactory {
   protected importedPerMod = new Map<any, ImportObj>();
   protected importedPerRou = new Map<any, ImportObj>();
   protected importedPerReq = new Map<any, ImportObj>();
+  protected importedExtensions = new Map<any, ImportObj>();
 
   protected globalProviders: ProvidersMetadata & ImportsMap;
   protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod1>();
@@ -87,6 +89,7 @@ export class ModuleFactory {
       importedPerMod: this.importedPerMod,
       importedPerRou: this.importedPerRou,
       importedPerReq: this.importedPerReq,
+      importedExtensions: this.importedExtensions,
     };
   }
 
@@ -122,9 +125,10 @@ export class ModuleFactory {
       controllersMetadata: deepFreeze(controllersMetadata),
       importedProvidersMap: this.getImportedProviders(),
       importedTokensMap: {
-        perMod: this.importedPerMod,
-        perRou: this.importedPerRou,
-        perReq: this.importedPerReq,
+        perMod: new Map([...this.globalProviders.importedPerMod, ...this.importedPerMod]),
+        perRou: new Map([...this.globalProviders.importedPerRou, ...this.importedPerRou]),
+        perReq: new Map([...this.globalProviders.importedPerReq, ...this.importedPerReq]),
+        extensions: new Map([...this.globalProviders.importedExtensions, ...this.importedExtensions]),
       },
     });
   }
@@ -147,28 +151,6 @@ export class ModuleFactory {
       throw new Error(msg);
     }
 
-    const { providersPerApp, providersPerMod, providersPerRou, providersPerReq } = meta;
-    const normalizedProvidersPerApp = normalizeProviders(providersPerApp);
-    this.checkExtensionsRegistration(this.moduleName, providersPerApp, meta.extensions);
-    meta.extensions.forEach((token, i) => {
-      const provider = normalizedProvidersPerApp.find((np) => np.provide === token);
-      if (!provider) {
-        const msg = `Importing ${this.moduleName} failed: "${token}" must be includes in "providersPerApp" array.`;
-        throw new Error(msg);
-      }
-      if (!provider.multi || !isInjectionToken(token)) {
-        const msg = `Importing ${this.moduleName} failed: Extensions with array index "${i}" must have "multi: true".`;
-        throw new TypeError(msg);
-      }
-      const normProviders = normalizeProviders([...providersPerMod, ...providersPerRou, ...providersPerReq]).map(
-        (np) => np.provide
-      );
-      if (normProviders.includes(token)) {
-        const msg = `Importing ${this.moduleName} failed: "${token}" can be includes in the "providersPerApp" array only.`;
-        throw new Error(msg);
-      }
-    });
-
     this.checkHttpInterceptors(meta);
   }
 
@@ -180,34 +162,6 @@ export class ModuleFactory {
       const msg = `Importing ${this.moduleName} failed: "HTTP_INTERCEPTORS" providers can be includes in the "providersPerReq" array only.`;
       throw new Error(msg);
     }
-  }
-
-  protected checkExtensionsRegistration(
-    moduleName: string,
-    providersPerApp: ServiceProvider[],
-    extensions: InjectionToken<Extension<any>[]>[]
-  ) {
-    const extensionsProviders = providersPerApp
-      .filter(isClassProvider)
-      .filter(
-        (p) =>
-          p.multi &&
-          isExtensionProvider(p.useClass) &&
-          isInjectionToken(p.provide) &&
-          p.provide.toString().toLowerCase().includes('extension')
-      );
-
-    extensionsProviders.forEach((p) => {
-      if (!extensions.includes(p.provide)) {
-        this.log.youForgotRegisterExtension(
-          'warn',
-          { className: this.constructor.name },
-          moduleName,
-          p.provide,
-          p.useClass.name
-        );
-      }
-    });
   }
 
   protected importModules() {
@@ -282,6 +236,17 @@ export class ModuleFactory {
     this.addProviders('Mod', module, meta1);
     this.addProviders('Rou', module, meta1);
     this.addProviders('Req', module, meta1);
+    meta1.exportsExtensions.forEach((provider) => {
+      const token = getToken(provider);
+      const obj = new ImportObj();
+      obj.module = module;
+      const importObj = this.importedExtensions.get(token);
+      if (importObj && importObj.module === module) {
+        obj.providers = importObj.providers.slice();
+      }
+      obj.providers.push(provider);
+      this.importedExtensions.set(token, obj);
+    });
   }
 
   protected addProviders(
@@ -295,11 +260,9 @@ export class ModuleFactory {
         const token = getToken(provider);
         const obj = new ImportObj();
         obj.module = module;
-        if (isMultiProvider(provider)) {
-          const importObj = this[`importedPer${scope}`].get(token);
-          if (importObj) {
-            obj.providers = importObj.providers.slice();
-          }
+        const importObj = this[`importedPer${scope}`].get(token);
+        if (importObj && importObj.module === module) {
+          obj.providers = importObj.providers.slice();
         }
         obj.providers.push(provider);
         this[`importedPer${scope}`].set(token, obj);

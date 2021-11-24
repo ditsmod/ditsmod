@@ -2,14 +2,11 @@ import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpHandler } from '../types/http-interceptor';
-import { HttpMethod, Extension } from '../types/mix';
+import { Extension } from '../types/mix';
 import { PreparedRouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
-import { NodeResponse, RequestListener } from '../types/server-options';
-import { Status } from '../utils/http-status-codes';
 import { ExtensionsManager } from '../services/extensions-manager';
 import { Log } from '../services/log';
-import { ModuleManager } from '../services/module-manager';
 import { MetadataPerMod2 } from '../types/metadata-per-mod';
 
 @Injectable()
@@ -17,34 +14,22 @@ export class PreRouterExtension implements Extension<void> {
   #inited: boolean;
 
   constructor(
-    protected injectorPerApp: ReflectiveInjector,
+    protected injectorPerMod: ReflectiveInjector,
     protected router: Router,
     protected extensionsManager: ExtensionsManager,
-    protected log: Log,
-    protected moduleManager: ModuleManager
+    protected log: Log
   ) {}
 
   async init() {
     if (this.#inited) {
       return;
     }
-    const rawRoutesMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
-    const preparedRouteMeta = this.prepareRoutesMeta(rawRoutesMeta);
-    this.setRoutes(preparedRouteMeta);
+
+    const metadataPerMod2Arr = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    const preparedRouteMeta = this.prepareRoutesMeta(metadataPerMod2Arr);
+    this.setRoutes(preparedRouteMeta, metadataPerMod2Arr[0].moduleName);
     this.#inited = true;
   }
-
-  requestListener: RequestListener = async (nodeReq, nodeRes) => {
-    const [uri, queryString] = this.decodeUrl(nodeReq.url || '').split('?', 2);
-    const { handle, params } = this.router.find(nodeReq.method as HttpMethod, uri);
-    if (!handle) {
-      this.sendNotFound(nodeRes);
-      return;
-    }
-    await handle(nodeReq, nodeRes, params, queryString).catch((err) => {
-      this.sendInternalServerError(nodeRes, err);
-    });
-  };
 
   protected prepareRoutesMeta(metadataPerMod2Arr: MetadataPerMod2[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
@@ -53,7 +38,7 @@ export class PreRouterExtension implements Extension<void> {
       const { moduleName, metaForExtensionsPerRouArr, providersPerMod } = metadataPerMod2;
 
       metaForExtensionsPerRouArr.forEach(({ httpMethod, path, providersPerRou, providersPerReq }) => {
-        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+        const injectorPerMod = this.injectorPerMod.resolveAndCreateChild(providersPerMod);
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
@@ -80,9 +65,9 @@ export class PreRouterExtension implements Extension<void> {
     return preparedRouteMeta;
   }
 
-  protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {
+  protected setRoutes(preparedRouteMeta: PreparedRouteMeta[], moduleName: string) {
     if (!preparedRouteMeta.length) {
-      this.log.noRoutes('warn');
+      this.log.noRoutes('info', { className: this.constructor.name }, moduleName);
       return;
     }
 
@@ -103,25 +88,5 @@ export class PreRouterExtension implements Extension<void> {
         this.router.on(httpMethod, `/${path}`, handle);
       }
     });
-  }
-
-  protected decodeUrl(url: string) {
-    return decodeURI(url);
-  }
-
-  /**
-   * Logs an error and sends the user message about an internal server error (500).
-   *
-   * @param err An error to logs it (not sends).
-   */
-  protected sendInternalServerError(nodeRes: NodeResponse, err: Error) {
-    this.log.internalServerError('error', { className: this.constructor.name }, err);
-    nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
-    nodeRes.end();
-  }
-
-  protected sendNotFound(nodeRes: NodeResponse) {
-    nodeRes.statusCode = Status.NOT_FOUND;
-    nodeRes.end();
   }
 }

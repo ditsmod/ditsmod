@@ -43,8 +43,6 @@ export function normalizeProviders(providers: Provider[], arrayOfProviders: Norm
       arrayOfProviders.push({ provide: provider, useClass: provider });
     } else if (provider && typeof provider == 'object' && (provider as any).provide !== undefined) {
       arrayOfProviders.push(provider as NormalizedProvider);
-    } else if (provider instanceof Array) {
-      normalizeProviders(provider, arrayOfProviders);
     } else {
       throw new Error(format('Invalid provider - only instances of Provider and Type are allowed, got:', provider));
     }
