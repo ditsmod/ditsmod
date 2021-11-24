@@ -51,10 +51,8 @@ export class ImportsResolver {
     const excludeTokens = getTokens([...importedTokensMap.extensions.keys()]);
     importedTokensMap.extensions.forEach(({ providers, module }) => {
       providers.forEach((provider) => {
-        if (!excludeTokens.includes(getToken(provider))) {
-          const importedProviders = this.searchInProviders(module, provider, ['Mod'], [], excludeTokens);
-          meta.providersPerMod.unshift(...importedProviders.providersPerMod);
-        }
+        const importedProviders = this.searchInProviders(module, provider, ['Mod'], [], excludeTokens);
+        meta.providersPerMod.unshift(...importedProviders.providersPerMod);
       });
     });
 
