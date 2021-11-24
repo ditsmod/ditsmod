@@ -4,10 +4,9 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ProvidersMetadata } from '../models/providers-metadata';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleFactory } from '../module-factory';
-import { AppMetadataMap, ModuleType, ServiceProvider, Extension } from '../types/mix';
+import { AppMetadataMap, ServiceProvider, Extension } from '../types/mix';
 import { RequestListener } from '../types/server-options';
 import { getDuplicates } from '../utils/get-duplicates';
-import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { getTokensCollisions } from '../utils/get-tokens-collisions';
 import { getUniqProviders } from '../utils/get-uniq-providers';
@@ -41,83 +40,20 @@ export class AppInitializer {
    */
   bootstrapProvidersPerApp() {
     const meta = this.moduleManager.getMetadata('root', true);
-    this.mergeMetadata(meta.module as ModuleType);
+    this.mergeRootMetadata(meta);
     this.prepareProvidersPerApp(meta, this.moduleManager);
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLog();
   }
 
-  async bootstrapModulesAndExtensions() {
-    const appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
-    const importsResolver = new ImportsResolver(this.moduleManager, appMetadataMap, this.meta.providersPerApp);
-    importsResolver.resolve();
-    await this.handleExtensions(appMetadataMap);
-    this.preRouter = this.injectorPerApp.get(PreRouterExtension) as PreRouterExtension;
-    return this.meta;
-  }
-
-  flushLogs() {
-    this.log.bufferLogs = false;
-    this.log.flush();
-  }
-
-  async reinit(autocommit: boolean = true): Promise<void | Error> {
-    const previousLogger = this.log.logger;
-    this.log.startReinitApp('debug');
-    // Before init new logger, works previous logger.
-    try {
-      this.bootstrapProvidersPerApp();
-    } catch (err) {
-      this.log.logger = previousLogger;
-      this.log.bufferLogs = false;
-      this.log.flush();
-      return this.handleReinitError(err);
-    }
-    // After init new logger, works new logger.
-    try {
-      await this.bootstrapModulesAndExtensions();
-      if (autocommit) {
-        this.moduleManager.commit();
-      } else {
-        this.log.skippingAutocommitModulesConfig('warn');
-      }
-      this.log.finishReinitApp('debug');
-    } catch (err) {
-      return this.handleReinitError(err);
-    } finally {
-      this.log.bufferLogs = false;
-      this.log.flush();
-    }
-  }
-
-  requestListener: RequestListener = async (nodeReq, nodeRes) => {
-    await this.preRouter.requestListener(nodeReq, nodeRes);
-  };
-
-  protected async handleReinitError(err: unknown) {
-    this.log.printReinitError('error', { className: this.constructor.name }, err);
-    this.log.startRollbackModuleConfigChanges('debug');
-    this.moduleManager.rollback();
-    this.bootstrapProvidersPerApp();
-    await this.bootstrapModulesAndExtensions();
-    this.log.successfulRollbackModuleConfigChanges('debug');
-    return err as Error;
-  }
-
   /**
    * Merge AppModule metadata with default metadata for root module.
+   *
+   * @param meta Metadata for the root module.
    */
-  protected mergeMetadata(appModule: ModuleType): void {
-    const serverMetadata = getModuleMetadata(appModule, true);
-    if (!serverMetadata) {
-      const modName = getModuleName(appModule);
-      throw new Error(`Module build failed: module "${modName}" does not have the "@RootModule()" decorator`);
-    }
-
-    // Setting default metadata.
+  protected mergeRootMetadata(meta: NormalizedModuleMetadata): void {
     this.meta = new RootMetadata();
-
-    pickProperties(this.meta, serverMetadata);
+    pickProperties(this.meta, meta);
     this.meta.extensions.unshift(...defaultExtensions);
   }
 
@@ -176,6 +112,63 @@ export class AppInitializer {
       providersPerApp: [...providersPerApp, ...getUniqProviders(currProvidersPerApp)],
       extensions: [...extensions, ...meta1.extensions],
     };
+  }
+
+  async bootstrapModulesAndExtensions() {
+    const appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
+    const importsResolver = new ImportsResolver(this.moduleManager, appMetadataMap, this.meta.providersPerApp);
+    importsResolver.resolve();
+    await this.handleExtensions(appMetadataMap);
+    this.preRouter = this.injectorPerApp.get(PreRouterExtension) as PreRouterExtension;
+    return this.meta;
+  }
+
+  flushLogs() {
+    this.log.bufferLogs = false;
+    this.log.flush();
+  }
+
+  async reinit(autocommit: boolean = true): Promise<void | Error> {
+    const previousLogger = this.log.logger;
+    this.log.startReinitApp('debug');
+    // Before init new logger, works previous logger.
+    try {
+      this.bootstrapProvidersPerApp();
+    } catch (err) {
+      this.log.logger = previousLogger;
+      this.log.bufferLogs = false;
+      this.log.flush();
+      return this.handleReinitError(err);
+    }
+    // After init new logger, works new logger.
+    try {
+      await this.bootstrapModulesAndExtensions();
+      if (autocommit) {
+        this.moduleManager.commit();
+      } else {
+        this.log.skippingAutocommitModulesConfig('warn');
+      }
+      this.log.finishReinitApp('debug');
+    } catch (err) {
+      return this.handleReinitError(err);
+    } finally {
+      this.log.bufferLogs = false;
+      this.log.flush();
+    }
+  }
+
+  requestListener: RequestListener = async (nodeReq, nodeRes) => {
+    await this.preRouter.requestListener(nodeReq, nodeRes);
+  };
+
+  protected async handleReinitError(err: unknown) {
+    this.log.printReinitError('error', { className: this.constructor.name }, err);
+    this.log.startRollbackModuleConfigChanges('debug');
+    this.moduleManager.rollback();
+    this.bootstrapProvidersPerApp();
+    await this.bootstrapModulesAndExtensions();
+    this.log.successfulRollbackModuleConfigChanges('debug');
+    return err as Error;
   }
 
   protected addDefaultProvidersPerApp() {

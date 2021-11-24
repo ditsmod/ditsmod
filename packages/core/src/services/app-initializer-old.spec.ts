@@ -32,8 +32,8 @@ describe('AppInitializer', () => {
       super(moduleManager, log);
     }
 
-    override mergeMetadata(appModule: ModuleType) {
-      return super.mergeMetadata(appModule);
+    override mergeRootMetadata(meta: NormalizedModuleMetadata) {
+      return super.mergeRootMetadata(meta);
     }
 
     override collectProvidersPerAppAndExtensions(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
@@ -187,7 +187,7 @@ describe('AppInitializer', () => {
       class AppModule {}
 
       const meta = moduleManager.scanModule(AppModule);
-      mock.mergeMetadata(AppModule);
+      mock.mergeRootMetadata(AppModule);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
       expect(mock.meta.providersPerApp.length).toBe(3);
     });
@@ -206,7 +206,7 @@ describe('AppInitializer', () => {
       class AppModule {}
 
       const meta = moduleManager.scanModule(AppModule);
-      mock.mergeMetadata(AppModule);
+      mock.mergeRootMetadata(AppModule);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
       expect(mock.meta.providersPerApp.length).toBe(4);
     });
@@ -215,7 +215,7 @@ describe('AppInitializer', () => {
       @RootModule({ imports: [] })
       class AppModule {}
       const meta = moduleManager.scanModule(AppModule);
-      mock.mergeMetadata(AppModule);
+      mock.mergeRootMetadata(AppModule);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
     });
   });
