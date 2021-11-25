@@ -24,6 +24,7 @@ import { ImportsMap, MetadataPerMod1 } from '../types/metadata-per-mod';
 import { ImportsResolver } from '../imports-resolver';
 import { getTokens } from '../utils/get-tokens';
 import { PreRouter } from './pre-router';
+import { getModuleMetadata } from '../utils/get-module-metadata';
 
 @Injectable()
 export class AppInitializer {
@@ -53,6 +54,8 @@ export class AppInitializer {
   protected mergeRootMetadata(meta: NormalizedModuleMetadata): void {
     this.meta = new RootMetadata();
     pickProperties(this.meta, meta);
+    const serverMetadata = getModuleMetadata(meta.module, true)! as RootMetadata;
+    this.meta.prefixPerApp = serverMetadata.prefixPerApp;
   }
 
   /**
@@ -227,9 +230,7 @@ export class AppInitializer {
 
       const { extensions, providersPerMod, name: moduleName } = metadataPerMod1.meta;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-      const parent = injectorPerMod.resolveAndCreateChild([
-        { provide: MetadataPerMod1, useValue: metadataPerMod1 },
-      ]);
+      const parent = injectorPerMod.resolveAndCreateChild([{ provide: MetadataPerMod1, useValue: metadataPerMod1 }]);
       const injectorForExtensions = parent.resolveAndCreateChild(extensions);
       const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
       const extensionTokens = getTokens(extensions).filter((token) => token instanceof InjectionToken);
