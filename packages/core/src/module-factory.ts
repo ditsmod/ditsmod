@@ -1,4 +1,4 @@
-import { Injectable, InjectionToken, ReflectiveInjector, reflector } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector, reflector } from '@ts-stack/di';
 
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ProvidersMetadata } from './models/providers-metadata';
@@ -13,28 +13,18 @@ import {
   ModuleWithParams,
   NormalizedGuard,
   ServiceProvider,
-  Extension,
   ImportedProviders,
-  ExtensionsProvider,
 } from './types/mix';
 import { getDuplicates } from './utils/get-duplicates';
 import { getTokensCollisions } from './utils/get-tokens-collisions';
 import { normalizeProviders } from './utils/ng-utils';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
-import {
-  isClassProvider,
-  isController,
-  isExtensionProvider,
-  isInjectionToken,
-  isMultiProvider,
-  isNormalizedProvider,
-  isRootModule,
-} from './utils/type-guards';
+import { isController, isNormalizedProvider, isRootModule } from './utils/type-guards';
 import { deepFreeze } from './utils/deep-freeze';
 import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES } from './constans';
 import { ModConfig } from './models/mod-config';
 import { Log } from './services/log';
-import { getToken, getTokens } from './utils/get-tokens';
+import { getToken } from './utils/get-tokens';
 
 /**
  * - imports and exports global providers;
@@ -159,7 +149,7 @@ export class ModuleFactory {
       isNormalizedProvider
     );
     if (normProviders.find((np) => np.provide === HTTP_INTERCEPTORS)) {
-      const msg = `Importing ${this.moduleName} failed: "HTTP_INTERCEPTORS" providers can be includes in the "providersPerReq" array only.`;
+      const msg = `Importing ${this.moduleName} failed: "HTTP_INTERCEPTORS" can be includes in the "providersPerReq" array only.`;
       throw new Error(msg);
     }
   }

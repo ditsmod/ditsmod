@@ -385,7 +385,7 @@ export class ModuleManager {
 
     if (extensionClass! && typeof extensionClass.prototype.init != 'function') {
       const tokenName = token.name || token;
-      const msg = `Exporting from "${modName}" failed: all extensions from "${tokenName}" group must have init() method.`;
+      const msg = `Exporting "${tokenName}" from "${modName}" failed: all extensions must have init() method.`;
       throw new TypeError(msg)
     }
   }

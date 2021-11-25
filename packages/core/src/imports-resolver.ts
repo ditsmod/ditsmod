@@ -5,7 +5,7 @@ import { AppMetadataMap, ImportedProviders, ModuleType, ModuleWithParams, Servic
 import { getUniqProviders } from './utils/get-uniq-providers';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
-import { getToken, getTokens } from './utils/get-tokens';
+import { getTokens } from './utils/get-tokens';
 import { MetadataPerMod1 } from './types/metadata-per-mod';
 import { RouteMeta } from './types/route-data';
 import { RootMetadata } from './models/root-metadata';
