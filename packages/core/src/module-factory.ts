@@ -13,7 +13,6 @@ import {
   ModuleWithParams,
   NormalizedGuard,
   ServiceProvider,
-  ImportedProviders,
   ExtensionsProvider,
 } from './types/mix';
 import { getDuplicates } from './utils/get-duplicates';
@@ -24,7 +23,6 @@ import { isController, isNormalizedProvider, isRootModule } from './utils/type-g
 import { deepFreeze } from './utils/deep-freeze';
 import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES } from './constans';
 import { ModConfig } from './models/mod-config';
-import { LogMediator } from './services/log-mediator';
 import { getToken } from './utils/get-tokens';
 
 /**

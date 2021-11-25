@@ -1,7 +1,7 @@
 import { Injector, ReflectiveInjector } from '@ts-stack/di';
 
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
-import { AppMetadataMap, ImportedProviders, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
+import { AppMetadataMap, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
 import { getUniqProviders } from './utils/get-uniq-providers';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
@@ -14,11 +14,16 @@ import { getModuleName } from './utils/get-module-name';
 import { getProviderName } from './utils/get-provider-name';
 import { defaultExtensions } from './services/default-extensions';
 import { ExtensionsManager } from './services/extensions-manager';
+import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 
 type Scope = 'Mod' | 'Rou' | 'Req';
+type AnyModule = ModuleType | ModuleWithParams;
 
 export class ImportsResolver {
-  protected unfinishedSearchDependecies: [ModuleType | ModuleWithParams, ServiceProvider][] = [];
+  protected unfinishedSearchDependecies: [AnyModule, ServiceProvider][] = [];
+  protected tokensPerApp: any[];
+  protected meta: NormalizedModuleMetadata;
+  protected extensionsTokens: any[] = [];
 
   constructor(
     private moduleManager: ModuleManager,
@@ -27,6 +32,7 @@ export class ImportsResolver {
   ) {}
 
   resolve() {
+    this.tokensPerApp = getTokens(this.providersPerApp);
     this.appMetadataMap.forEach((metadataPerMod1) => {
       this.resolveImportedProviders(metadataPerMod1);
     });
@@ -34,28 +40,23 @@ export class ImportsResolver {
 
   protected resolveImportedProviders(metadataPerMod1: MetadataPerMod1) {
     const { importedTokensMap, meta } = metadataPerMod1;
+    this.meta = meta;
+    this.extensionsTokens = getTokens([ExtensionsManager, ...importedTokensMap.extensions.keys()]);
     const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
 
-    for (let i = 0; i < scopes.length; i++) {
-      const scope = scopes[i];
-      for (const [,importObj] of importedTokensMap[`per${scope}`]) {
-        importObj.providers.forEach(provider => {
-          const importedProviders = this.searchInProviders(importObj.module, provider, scopes.slice(i));
-          meta.providersPerMod.unshift(...importedProviders.providersPerMod);
-          meta.providersPerRou.unshift(...importedProviders.providersPerRou);
-          meta.providersPerReq.unshift(...importedProviders.providersPerReq);
+    scopes.forEach((scope, i) => {
+      importedTokensMap[`per${scope}`].forEach((importObj) => {
+        meta[`providersPer${scope}`].unshift(...importObj.providers);
+        importObj.providers.forEach((provider) => {
+          this.grabDependecies(importObj.module, provider, scopes.slice(i));
         });
-        meta[`providersPer${scope}`].push(...importObj.providers);
-      }
-    }
-
-    const excludedTokens = getTokens([ExtensionsManager, ...importedTokensMap.extensions.keys()]);
+      });
+    });
 
     importedTokensMap.extensions.forEach(({ providers, module }) => {
       providers.forEach((provider) => {
         meta.extensions.push(provider);
-        const importedProviders = this.searchInProviders(module, provider, ['Mod'], [], excludedTokens);
-        meta.providersPerMod.unshift(...importedProviders.providersPerMod);
+        this.grabDependecies(module, provider, ['Mod']);
       });
     });
 
@@ -68,19 +69,12 @@ export class ImportsResolver {
    * @param provider Imported provider.
    * @param scopes Search in this scopes. The scope order is important.
    */
-  protected searchInProviders(
-    module: ModuleType | ModuleWithParams,
-    provider: ServiceProvider,
-    scopes: Scope[],
-    path: any[] = [],
-    excludedTokens: any[] = []
-  ) {
+  protected grabDependecies(module: AnyModule, provider: ServiceProvider, scopes: Scope[], path: any[] = []) {
     const meta = this.moduleManager.getMetadata(module, true);
-    const importedProviders1 = new ImportedProviders();
 
     for (const token1 of this.getDependencies(provider)) {
       let found: boolean = false;
-      if (excludedTokens.includes(token1)) {
+      if (this.extensionsTokens.includes(token1)) {
         continue;
       }
 
@@ -89,7 +83,7 @@ export class ImportsResolver {
 
         getTokens(providers).forEach((token2, i) => {
           if (token2 === token1) {
-            importedProviders1[`providersPer${scope}`].add(providers[i]);
+            this.meta[`providersPer${scope}`].unshift(providers[i]);
             found = true;
             // The loop does not breaks because there may be multi providers.
           }
@@ -101,22 +95,44 @@ export class ImportsResolver {
       }
 
       if (!found) {
-        found = getTokens(this.providersPerApp).includes(token1);
-      }
-
-      if (!found) {
-        const importedProviders2 = this.searchInImports(module, scopes, token1, [...path, token1]);
-        found = !!importedProviders2;
-        if (found) {
-          this.mergeImportedProviders(importedProviders1, importedProviders2!);
+        if (!this.tokensPerApp.includes(token1)) {
+          this.grabImportedDependecies(module, scopes, provider, token1, [...path, token1]);
         }
       }
-      if (!found) {
-        this.throwError(provider, path, token1);
+    }
+  }
+
+  /**
+   * @param module1 Module from where imports providers.
+   */
+  protected grabImportedDependecies(
+    module1: AnyModule,
+    scopes: Scope[],
+    provider: ServiceProvider,
+    token: any,
+    path: any[] = []
+  ) {
+    let found = false;
+    for (const scope of scopes) {
+      const importObj = this.appMetadataMap.get(module1)?.importedTokensMap[`per${scope}`].get(token);
+      if (importObj) {
+        found = true;
+        const { module: module2, providers } = importObj;
+        this.meta[`providersPer${scope}`].unshift(...providers);
+
+        // Loop for multi providers.
+        for (const provider of providers) {
+          this.fixDependecy(module2, provider);
+          this.grabDependecies(module2, provider, scopes, path);
+          this.unfixDependecy(module2, provider);
+        }
+        break;
       }
     }
 
-    return importedProviders1;
+    if (!found) {
+      this.throwError(provider, path, token);
+    }
   }
 
   protected throwError(provider: ServiceProvider, path: any[], token: any) {
@@ -127,44 +143,6 @@ export class ImportsResolver {
 
     const partMsg = path.length > 1 ? `(${strPath})` : '';
     throw new Error(`No provider for ${token.name || token}! ${partMsg}`);
-  }
-
-  /**
-   * @param module1 Module from where imports providers.
-   */
-  protected searchInImports(module1: ModuleType | ModuleWithParams, scopes: Scope[], token: any, path: any[] = []) {
-    const importedProviders1 = new ImportedProviders();
-    let found: boolean = false;
-
-    for (const scope of scopes) {
-      const importObj = this.appMetadataMap.get(module1)?.importedTokensMap[`per${scope}`].get(token);
-      if (importObj) {
-        found = true;
-        const { module: module2, providers } = importObj;
-        importedProviders1[`providersPer${scope}`] = new Set(providers);
-
-        // Loop for multi providers.
-        for (const provider of providers) {
-          this.fixDependecy(module2, provider);
-          const importedProviders2 = this.searchInProviders(module2, provider, scopes, path);
-          this.unfixDependecy(module2, provider);
-          this.mergeImportedProviders(importedProviders1, importedProviders2);
-        }
-        break;
-      }
-    }
-
-    return found ? importedProviders1 : undefined;
-  }
-
-  protected mergeImportedProviders(importedProviders1: ImportedProviders, importedProviders2: ImportedProviders) {
-    const scopes: Scope[] = ['Mod', 'Rou', 'Req'];
-    scopes.forEach((scope) => {
-      importedProviders1[`providersPer${scope}`] = new Set([
-        ...importedProviders1[`providersPer${scope}`],
-        ...importedProviders2[`providersPer${scope}`],
-      ]);
-    });
   }
 
   protected getDependencies(provider: ServiceProvider) {
@@ -178,10 +156,21 @@ export class ImportsResolver {
       });
     });
 
-    return this.excludeDefaultTokens([...deps]);
+    const defaultTokens = [
+      ...getTokens([...defaultProvidersPerApp, ...defaultProvidersPerReq]),
+      NODE_REQ,
+      NODE_RES,
+      PATH_PARAMS,
+      QUERY_STRING,
+      Injector,
+      RouteMeta,
+      RootMetadata,
+    ];
+
+    return [...deps].filter((t) => !defaultTokens.includes(t));
   }
 
-  protected fixDependecy(module: ModuleType | ModuleWithParams, provider: ServiceProvider) {
+  protected fixDependecy(module: AnyModule, provider: ServiceProvider) {
     const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
     if (index != -1) {
       this.throwCyclicDependencies(index);
@@ -189,7 +178,7 @@ export class ImportsResolver {
     this.unfinishedSearchDependecies.push([module, provider]);
   }
 
-  protected unfixDependecy(module: ModuleType | ModuleWithParams, provider: ServiceProvider) {
+  protected unfixDependecy(module: AnyModule, provider: ServiceProvider) {
     const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
     this.unfinishedSearchDependecies.splice(index, 1);
   }
@@ -207,20 +196,5 @@ export class ImportsResolver {
       msg += ` It is started from ${prefixNames}.`;
     }
     throw new Error(msg);
-  }
-
-  protected excludeDefaultTokens(tokens: any[]) {
-    const someDefaultTokens = getTokens([...defaultProvidersPerApp, ...defaultProvidersPerReq]);
-    const defaultTokens = [
-      ...someDefaultTokens,
-      NODE_REQ,
-      NODE_RES,
-      PATH_PARAMS,
-      QUERY_STRING,
-      Injector,
-      RouteMeta,
-      RootMetadata,
-    ];
-    return tokens.filter((t) => !defaultTokens.includes(t));
   }
 }

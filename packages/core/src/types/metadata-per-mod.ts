@@ -1,6 +1,6 @@
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ControllerAndMethodMetadata } from './controller-and-method-metadata';
-import { ExtensionsProvider, HttpMethod, ImportedProviders, ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix';
+import { ExtensionsProvider, HttpMethod, ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix';
 
 /**
  * @todo Rename this.
