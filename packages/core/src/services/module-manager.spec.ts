@@ -88,7 +88,7 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    expect(() => mock.scanRootModule(AppModule)).toThrowError(/Imported Provider1 from AppModule should includes in/);
+    expect(() => mock.scanRootModule(AppModule)).toThrowError(/if "Provider1" is a provider, it must be included in/);
   });
 
   it('root module with some metadata', () => {
@@ -122,13 +122,80 @@ describe('ModuleManager', () => {
     expect(mock.getMetadata('root')).toEqual(expectedMeta);
   });
 
+  it('root module without @RootModule decorator', () => {
+    @Module()
+    class Module1 {}
+
+    expect(() => mock.scanRootModule(Module1)).toThrow(`"Module1" does not have the "@RootModule()" decorator`);
+  });
+
   it('root module imported module without @Module decorator', () => {
     class Module1 {}
 
     @RootModule({ imports: [Module1] })
-    class Module3 {}
+    class Module2 {}
 
-    expect(() => mock.scanRootModule(Module3)).toThrow(/"Module1" does not have the "@Module\(\)" decorator/);
+    expect(() => mock.scanRootModule(Module2)).toThrow(`"Module1" does not have the "@Module()" decorator`);
+  });
+
+  it('module reexported another module without @Module decorator', () => {
+    class Module1 {}
+
+    @Module({ imports: [Module1], exports: [Module1] })
+    class Module2 {}
+
+    expect(() => mock.scanModule(Module2)).toThrow(/if "Module1" is a provider, it must be included in/);
+  });
+
+  it('module exported provider from providersPerApp', () => {
+    @Injectable()
+    class Provider1 {}
+
+    @Module({ providersPerApp: [Provider1], exports: [Provider1] })
+    class Module2 {}
+
+    expect(() => mock.scanModule(Module2)).toThrow(/includes in "providersPerApp" and "exports" of/);
+  });
+
+  it('module exported token', () => {
+    @Module({ exports: ['someToken'] })
+    class Module2 {}
+
+    expect(() => mock.scanModule(Module2)).toThrow(
+      `If "someToken" is a token of extension, this extension must be included`
+    );
+  });
+
+  it('module exported normalized provider', () => {
+    @Injectable()
+    class Provider1 {}
+
+    @Module({ providersPerReq: [Provider1], exports: [{ provide: Provider1, useClass: Provider1 }] })
+    class Module2 {}
+
+    expect(() => mock.scanModule(Module2)).toThrow(`failed: in "exports" array must be includes tokens only`);
+  });
+
+  it('module exported invalid extension', () => {
+    @Injectable()
+    class Extension1 {}
+
+    @Module({ extensions: [{ provide: 'fake token', useClass: Extension1, multi: true }], exports: ['fake token'] })
+    class Module2 {}
+
+    expect(() => mock.scanModule(Module2)).toThrow(`must have init() method`);
+  });
+
+  it('module exported valid extension', () => {
+    @Injectable()
+    class Extension1 implements Extension<any> {
+      async init() {}
+    }
+
+    @Module({ extensions: [{ provide: 'fake token', useClass: Extension1, multi: true }], exports: ['fake token'] })
+    class Module2 {}
+
+    expect(() => mock.scanModule(Module2)).not.toThrow();
   });
 
   it('root module with imported some other modules', () => {

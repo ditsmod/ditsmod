@@ -2,14 +2,21 @@ import { Injectable, resolveForwardRef, Type } from '@ts-stack/di';
 import { format } from 'util';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
+import { AnyObj, Extension, ExtensionsProvider, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { ModuleMetadata } from '../types/module-metadata';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { getToken, getTokens } from '../utils/get-tokens';
 import { normalizeProviders } from '../utils/ng-utils';
 import { pickProperties } from '../utils/pick-properties';
-import { isModuleWithParams, isProvider } from '../utils/type-guards';
+import {
+  isClassProvider,
+  isExistingProvider,
+  isModuleWithParams,
+  isNormalizedProvider,
+  isProvider,
+  isValueProvider,
+} from '../utils/type-guards';
 import { Log } from './log';
 
 export type ModulesMap = Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
@@ -35,7 +42,7 @@ export class ModuleManager {
    */
   scanRootModule(appModule: ModuleType) {
     if (!getModuleMetadata(appModule, true)) {
-      throw new Error(`Module build failed: module "${appModule.name}" does not have the "@RootModule()" decorator`);
+      throw new Error(`Module scaning failed: "${appModule.name}" does not have the "@RootModule()" decorator`);
     }
 
     const meta = this.scanRawModule(appModule);
@@ -342,22 +349,20 @@ export class ModuleManager {
 
     rawMeta.exports?.forEach((exp) => {
       exp = resolveForwardRef(exp);
+      this.throwIfNormalizedProvider(modName, exp);
       if (isModuleWithParams(exp)) {
         meta.exportsWithParams.push(exp);
       } else if (extensionsTokens.indexOf(exp) != -1) {
-        // @todo Check that the extension is correct.
         const index = extensionsTokens.indexOf(exp);
-        meta.exportsExtensions.push(rawMeta.extensions![index]);
+        const extensionProvider = rawMeta.extensions![index];
+        this.checkExtension(modName, extensionProvider, exp);
+        meta.exportsExtensions.push(extensionProvider);
       } else if (isProvider(exp)) {
         this.findAndSetProvider(exp, rawMeta, meta);
-      } else if (exp instanceof Type) {
+      } else if (getModuleMetadata(exp)) {
         meta.exportsModules.push(exp);
       } else {
-        const tokenName = exp.name || exp;
-        const msg =
-          `Exporting from ${modName} failed: ${tokenName} must be included in ` +
-          `providersPerReq or in providersPerRou, or in providersPerMod, or must be an extension token.`;
-        throw new TypeError(msg);
+        this.throwUnidentifiedToken(modName, exp);
       }
     });
 
@@ -365,6 +370,41 @@ export class ModuleManager {
     meta.extensionsMeta = { ...(meta.extensionsMeta || {}) };
 
     return meta;
+  }
+
+  protected checkExtension(modName: string, extensionsProvider: ExtensionsProvider, token: any) {
+    const np = normalizeProviders([extensionsProvider])[0];
+    let extensionClass: Type<Extension<any>>;
+    if (isClassProvider(np)) {
+      extensionClass = np.useClass;
+    } else if (isExistingProvider(np) && np.useExisting instanceof Type) {
+      extensionClass = np.useExisting;
+    } else if (isValueProvider(np) && np.useValue.constructor instanceof Type) {
+      extensionClass = np.useValue.constructor;
+    }
+
+    if (extensionClass! && typeof extensionClass.prototype.init != 'function') {
+      const tokenName = token.name || token;
+      const msg = `Exporting from "${modName}" failed: all extensions from "${tokenName}" group must have init() method.`;
+      throw new TypeError(msg)
+    }
+  }
+
+  protected throwUnidentifiedToken(modName: string, token: any) {
+    const tokenName = token.name || token;
+    const msg =
+      `Exporting from "${modName}" failed: if "${tokenName}" is a token of a provider, this provider ` +
+      `must be included in providersPerReq or in providersPerRou, or in providersPerMod. ` +
+      `If "${tokenName}" is a token of extension, this extension must be included in "extensions" array.`;
+    throw new TypeError(msg);
+  }
+
+  protected throwIfNormalizedProvider(modName: string, exp: any) {
+    if (isNormalizedProvider(exp)) {
+      const providerName = exp.provide.name || exp.provide;
+      const msg = `Exporting "${providerName}" from "${modName}" failed: in "exports" array must be includes tokens only.`;
+      throw new TypeError(msg);
+    }
   }
 
   protected findAndSetProvider(token: any, rawMeta: ModuleMetadata, meta: NormalizedModuleMetadata) {
@@ -383,13 +423,12 @@ export class ModuleManager {
       let msg = '';
       if (hasProviderIn(rawMeta.providersPerApp)) {
         msg =
-          `Imported ${providerName} includes in "providersPerApp" and "exports" of ${meta.name}. ` +
+          `Exported "${providerName}" includes in "providersPerApp" and "exports" of ${meta.name}. ` +
           'This is an error, because "providersPerApp" is always exported automatically.';
       } else {
         msg =
-          `Imported ${providerName} from ${meta.name} ` +
-          'should includes in "providersPerMod" or "providersPerRou", or "providersPerReq", ' +
-          'or in some "exports" of imported modules.';
+          `Exporting from ${meta.name} failed: if "${providerName}" is a provider, it must be included ` +
+          'in "providersPerMod" or "providersPerRou", or "providersPerReq".';
       }
       throw new Error(msg);
     }
