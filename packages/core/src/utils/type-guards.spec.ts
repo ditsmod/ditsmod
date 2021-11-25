@@ -136,17 +136,17 @@ describe('type guards', () => {
         { provide: '', useExisting: class {} },
         { provide: '', useFactory: class {} },
       ];
-      expect(isNormalizedProvider(providers)).toBe(true);
+      expect(providers.every(isNormalizedProvider)).toBe(true);
     });
 
     it('should fail class types of providers', () => {
       const providers: ServiceProvider[] = [class {}];
-      expect(isNormalizedProvider(providers)).toBe(false);
+      expect(providers.every(isNormalizedProvider)).toBe(false);
     });
 
     it('should fail check number', () => {
       const providers: ServiceProvider[] = [5 as any];
-      expect(isNormalizedProvider(providers)).toBe(false);
+      expect(providers.every(isNormalizedProvider)).toBe(false);
     });
   });
   describe('isInjectionToken()', () => {

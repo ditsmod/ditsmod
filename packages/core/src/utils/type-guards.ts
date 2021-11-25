@@ -104,10 +104,9 @@ export function isProvider(maybeProvider: any): maybeProvider is ServiceProvider
  * { provide: SomeClas, useClass: OtherClass }
  * ```
  */
-export function isNormalizedProvider(provider: Provider): provider is NormalizedProvider {
-  const providers = Array.isArray(provider) ? provider : [provider];
+export function isNormalizedProvider(provider: ServiceProvider): provider is NormalizedProvider {
 
-  return providers.every(ok);
+  return ok(provider);
 
   /**
    * TypeProvider there is normalized to other form Provider
