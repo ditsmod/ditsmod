@@ -33,21 +33,21 @@ export class ImportsResolver {
   }
 
   protected resolveImportedProviders(metadataPerMod1: MetadataPerMod1) {
-    const { importedProvidersMap, importedTokensMap, meta } = metadataPerMod1;
+    const { importedTokensMap, meta } = metadataPerMod1;
     const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
 
-    importedProvidersMap.forEach((importedProviders1, module) => {
-      for (let i = 0; i < scopes.length; i++) {
-        for (const provider of importedProviders1[`providersPer${scopes[i]}`]) {
-          const importedProviders2 = this.searchInProviders(module, provider, scopes.slice(i));
-          this.mergeImportedProviders(importedProviders1, importedProviders2);
-        }
+    for (let i = 0; i < scopes.length; i++) {
+      const scope = scopes[i];
+      for (const [,importObj] of importedTokensMap[`per${scope}`]) {
+        importObj.providers.forEach(provider => {
+          const importedProviders = this.searchInProviders(importObj.module, provider, scopes.slice(i));
+          meta.providersPerMod.unshift(...importedProviders.providersPerMod);
+          meta.providersPerRou.unshift(...importedProviders.providersPerRou);
+          meta.providersPerReq.unshift(...importedProviders.providersPerReq);
+        });
+        meta[`providersPer${scope}`].push(...importObj.providers);
       }
-      // Merge imported providers with existing providers
-      scopes.forEach((scope) => {
-        meta[`providersPer${scope}`].unshift(...importedProviders1[`providersPer${scope}`]);
-      });
-    });
+    }
 
     const excludedTokens = getTokens([ExtensionsManager, ...importedTokensMap.extensions.keys()]);
 

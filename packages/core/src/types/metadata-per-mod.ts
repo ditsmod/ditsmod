@@ -33,10 +33,6 @@ export class MetadataPerMod1 {
    */
   controllersMetadata: ControllerAndMethodMetadata[];
   /**
-   * Map between a module and its ImportedProviders.
-   */
-  importedProvidersMap: Map<ModuleType | ModuleWithParams, ImportedProviders>;
-  /**
    * Map between a token and its ImportObj per scope.
    */
   importedTokensMap: {

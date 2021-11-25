@@ -114,7 +114,6 @@ export class ModuleFactory {
       guardsPerMod: this.guardsPerMod,
       meta: this.meta,
       controllersMetadata: deepFreeze(controllersMetadata),
-      importedProvidersMap: this.getImportedProviders(),
       importedTokensMap: {
         perMod: new Map([...this.globalProviders.importedPerMod, ...this.importedPerMod]),
         perRou: new Map([...this.globalProviders.importedPerRou, ...this.importedPerRou]),
@@ -386,40 +385,5 @@ export class ModuleFactory {
     }
 
     return arrControllerMetadata;
-  }
-
-  protected getImportedProviders() {
-    const perMod = this.getModuleServicesMap('Mod');
-    const perRou = this.getModuleServicesMap('Rou');
-    const perReq = this.getModuleServicesMap('Req');
-    const allModules = new Set<ModuleType | ModuleWithParams>();
-    new Map([...perMod, ...perRou, ...perReq]).forEach((_, module) => allModules.add(module));
-
-    const importedProvidersMap = new Map<ModuleType | ModuleWithParams, ImportedProviders>();
-
-    allModules.forEach((module) => {
-      const importedProviders = new ImportedProviders();
-      importedProviders.providersPerMod = new Set(perMod.get(module) || []);
-      importedProviders.providersPerRou = new Set(perRou.get(module) || []);
-      importedProviders.providersPerReq = new Set(perReq.get(module) || []);
-      importedProvidersMap.set(module, importedProviders);
-    });
-
-    return importedProvidersMap;
-  }
-
-  protected getModuleServicesMap(scope: 'Mod' | 'Rou' | 'Req') {
-    const serviceModuleMap = new Map([...this.globalProviders[`importedPer${scope}`], ...this[`importedPer${scope}`]]);
-    const moduleServicesMap = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
-
-    serviceModuleMap.forEach((importObj) => {
-      const providers = moduleServicesMap.get(importObj.module);
-      if (providers) {
-        moduleServicesMap.set(importObj.module, [...providers, ...importObj.providers]);
-      } else {
-        moduleServicesMap.set(importObj.module, importObj.providers);
-      }
-    });
-    return moduleServicesMap;
   }
 }
