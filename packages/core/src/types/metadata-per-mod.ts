@@ -1,20 +1,20 @@
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ControllerAndMethodMetadata } from './controller-and-method-metadata';
-import { HttpMethod, ImportedProviders, ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix';
+import { ExtensionsProvider, HttpMethod, ImportedProviders, ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix';
 
 /**
  * @todo Rename this.
  */
-export class ImportObj {
+export class ImportObj<T extends ServiceProvider = ServiceProvider> {
   module: ModuleType | ModuleWithParams;
-  providers: ServiceProvider[] = [];
+  providers: T[] = [];
 }
 
 export class ImportsMap {
   importedPerMod = new Map<any, ImportObj>();
   importedPerRou = new Map<any, ImportObj>();
   importedPerReq = new Map<any, ImportObj>();
-  importedExtensions = new Map<any, ImportObj>();
+  importedExtensions = new Map<any, ImportObj<ExtensionsProvider>>();
 }
 
 /**
@@ -43,7 +43,7 @@ export class MetadataPerMod1 {
     perMod: Map<any, ImportObj>;
     perRou: Map<any, ImportObj>;
     perReq: Map<any, ImportObj>;
-    extensions: Map<any, ImportObj>;
+    extensions: Map<any, ImportObj<ExtensionsProvider>>;
   };
 }
 

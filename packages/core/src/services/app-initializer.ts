@@ -224,14 +224,13 @@ export class AppInitializer {
     this.createInjectorAndSetLog();
     for (const [, metadataPerMod1] of appMetadataMap) {
       const initedExtensionsGroups = new Set<InjectionToken<Extension<any>[]>>();
-      // if (isRootModule(metadataPerMod1.meta)) {
-      //   metadataPerMod1.meta.extensions = this.meta.extensions;
-      // }
-
       const { extensions, providersPerMod, name: moduleName } = metadataPerMod1.meta;
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-      const parent = injectorPerMod.resolveAndCreateChild([{ provide: MetadataPerMod1, useValue: metadataPerMod1 }]);
-      const injectorForExtensions = parent.resolveAndCreateChild(extensions);
+      const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
+        ExtensionsManager,
+        { provide: MetadataPerMod1, useValue: metadataPerMod1 },
+        ...extensions,
+      ]);
       const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
       const extensionTokens = getTokens(extensions).filter((token) => token instanceof InjectionToken);
       for (const groupToken of extensionTokens) {

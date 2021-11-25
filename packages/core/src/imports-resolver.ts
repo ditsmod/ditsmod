@@ -13,6 +13,7 @@ import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { getModuleName } from './utils/get-module-name';
 import { getProviderName } from './utils/get-provider-name';
 import { defaultExtensions } from './services/default-extensions';
+import { ExtensionsManager } from './services/extensions-manager';
 
 type Scope = 'Mod' | 'Rou' | 'Req';
 
@@ -48,10 +49,12 @@ export class ImportsResolver {
       });
     });
 
-    const excludeTokens = getTokens([...importedTokensMap.extensions.keys()]);
+    const excludedTokens = getTokens([ExtensionsManager, ...importedTokensMap.extensions.keys()]);
+
     importedTokensMap.extensions.forEach(({ providers, module }) => {
       providers.forEach((provider) => {
-        const importedProviders = this.searchInProviders(module, provider, ['Mod'], [], excludeTokens);
+        meta.extensions.push(provider);
+        const importedProviders = this.searchInProviders(module, provider, ['Mod'], [], excludedTokens);
         meta.providersPerMod.unshift(...importedProviders.providersPerMod);
       });
     });
@@ -70,14 +73,14 @@ export class ImportsResolver {
     provider: ServiceProvider,
     scopes: Scope[],
     path: any[] = [],
-    excludeTokens: any[] = []
+    excludedTokens: any[] = []
   ) {
     const meta = this.moduleManager.getMetadata(module, true);
     const importedProviders1 = new ImportedProviders();
 
     for (const token1 of this.getDependencies(provider)) {
       let found: boolean = false;
-      if (excludeTokens.includes(token1)) {
+      if (excludedTokens.includes(token1)) {
         continue;
       }
 

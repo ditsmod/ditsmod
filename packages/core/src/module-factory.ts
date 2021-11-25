@@ -14,6 +14,7 @@ import {
   NormalizedGuard,
   ServiceProvider,
   ImportedProviders,
+  ExtensionsProvider,
 } from './types/mix';
 import { getDuplicates } from './utils/get-duplicates';
 import { getTokensCollisions } from './utils/get-tokens-collisions';
@@ -50,7 +51,7 @@ export class ModuleFactory {
   protected importedPerMod = new Map<any, ImportObj>();
   protected importedPerRou = new Map<any, ImportObj>();
   protected importedPerReq = new Map<any, ImportObj>();
-  protected importedExtensions = new Map<any, ImportObj>();
+  protected importedExtensions = new Map<any, ImportObj<ExtensionsProvider>>();
 
   protected globalProviders: ProvidersMetadata & ImportsMap;
   protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod1>();
@@ -228,7 +229,7 @@ export class ModuleFactory {
     this.addProviders('Req', module, meta1);
     meta1.exportsExtensions.forEach((provider) => {
       const token = getToken(provider);
-      const obj = new ImportObj();
+      const obj = new ImportObj<ExtensionsProvider>();
       obj.module = module;
       const importObj = this.importedExtensions.get(token);
       if (importObj && importObj.module === module) {
