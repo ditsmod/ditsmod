@@ -12,4 +12,9 @@ export class AppController {
     const msg = `per req counter: ${this.threeService.getCounter()}, per rou counter: ${this.onePerRouService.getCounter()}`;
     this.res.send(msg);
   }
+
+  @Route('POST')
+  showRequestBody() {
+    this.res.sendJson({ body: this.threeService.getBody() });
+  }
 }

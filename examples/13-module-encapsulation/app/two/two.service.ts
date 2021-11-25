@@ -9,4 +9,8 @@ export class TwoService {
   getCounter() {
     return this.oneService.getCounter();
   }
+
+  getBody() {
+    return this.oneService.getBody();
+  }
 }
