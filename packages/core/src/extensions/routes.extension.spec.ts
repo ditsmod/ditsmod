@@ -11,7 +11,7 @@ import { RootMetadata } from '../models/root-metadata';
 import { ModuleManager } from '../services/module-manager';
 import { DefaultLogger } from '../services/default-logger';
 import { AppInitializer } from '../services/app-initializer';
-import { Log } from '../services/log';
+import { LogMediator } from '../services/log-mediator';
 import { LogManager } from '../services/log-manager';
 
 xdescribe('RoutesExtension', () => {
@@ -33,7 +33,7 @@ xdescribe('RoutesExtension', () => {
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config);
     const logManager = new LogManager();
-    const log = new Log(logManager, logger);
+    const log = new LogMediator(logManager, logger);
     moduleManager = new ModuleManager(log);
     const injectorPerApp = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,

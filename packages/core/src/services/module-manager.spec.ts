@@ -9,7 +9,7 @@ import { Module } from '../decorators/module';
 import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj, Extension, ExtensionsProvider } from '../types/mix';
 import { LoggerConfig } from '../types/logger';
 import { DefaultLogger } from './default-logger';
-import { Log } from './log';
+import { LogMediator } from './log-mediator';
 import { LogManager } from './log-manager';
 
 describe('ModuleManager', () => {
@@ -36,8 +36,8 @@ describe('ModuleManager', () => {
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config);
     const logManager = new LogManager();
-    const log = new Log(logManager, logger);
-    mock = new MockModuleManager(log);
+    const logMediator = new LogMediator(logManager, logger);
+    mock = new MockModuleManager(logMediator);
   });
 
   it('empty root module', () => {

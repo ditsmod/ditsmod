@@ -1,6 +1,6 @@
 import { Injectable } from '@ts-stack/di';
 
-import { LogItem } from './log';
+import { LogItem } from './log-mediator';
 
 /**
  * Holds the log buffer, and indicates whether to send logs to the buffer.

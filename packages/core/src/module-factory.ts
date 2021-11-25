@@ -24,7 +24,7 @@ import { isController, isNormalizedProvider, isRootModule } from './utils/type-g
 import { deepFreeze } from './utils/deep-freeze';
 import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES } from './constans';
 import { ModConfig } from './models/mod-config';
-import { Log } from './services/log';
+import { LogMediator } from './services/log-mediator';
 import { getToken } from './utils/get-tokens';
 
 /**
@@ -57,7 +57,7 @@ export class ModuleFactory {
   protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod1>();
   #moduleManager: ModuleManager;
 
-  constructor(private injectorPerApp: ReflectiveInjector, private log: Log) {}
+  constructor(private injectorPerApp: ReflectiveInjector) {}
 
   /**
    * Calls only by `@RootModule` before calls `ModuleFactory#boostrap()`.

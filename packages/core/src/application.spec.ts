@@ -9,13 +9,13 @@ import { RootModule } from './decorators/root-module';
 import { RootMetadata } from './models/root-metadata';
 import { ModuleType, Extension } from './types/mix';
 import { Router } from './types/router';
-import { Log } from './services/log';
+import { LogMediator } from './services/log-mediator';
 import { AppInitializer } from './services/app-initializer';
 
 describe('Application', () => {
   class ApplicationMock extends Application {
     override meta = new RootMetadata();
-    override log: Log;
+    override logMediator: LogMediator;
 
     override init(appModule: ModuleType) {
       return super.init(appModule);
@@ -25,8 +25,8 @@ describe('Application', () => {
       return super.checkSecureServerOption(appModule);
     }
 
-    override getAppInitializer(appModule: ModuleType, log: Log) {
-      return super.getAppInitializer(appModule, log);
+    override getAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
+      return super.getAppInitializer(appModule, logMediator);
     }
   }
 
@@ -41,7 +41,7 @@ describe('Application', () => {
     class AppModule {}
 
     it('should return instance of AppInitializer', () => {
-      expect(mock.getAppInitializer(AppModule, {} as Log)).toBeInstanceOf(AppInitializer);
+      expect(mock.getAppInitializer(AppModule, {} as LogMediator)).toBeInstanceOf(AppInitializer);
     });
   });
 

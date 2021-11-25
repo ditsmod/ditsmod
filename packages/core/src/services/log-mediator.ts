@@ -35,7 +35,7 @@ export interface LogItem {
  * 2. via DI, at the application level, replace the Log class with your class.
  */
 @Injectable()
-export class Log {
+export class LogMediator {
   /**
    * If `bufferLogs === true` then all messages will be buffered.
    *

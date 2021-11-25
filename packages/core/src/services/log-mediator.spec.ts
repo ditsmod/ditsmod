@@ -3,13 +3,13 @@ import { ReflectiveInjector } from '@ts-stack/di';
 
 import { Logger, LoggerConfig } from '../types/logger';
 import { DefaultLogger } from './default-logger';
-import { Log } from './log';
+import { LogMediator } from './log-mediator';
 import { LogManager } from './log-manager';
 
 describe('Log', () => {
   const loggerSpy = jest.fn();
 
-  class LogMock extends Log {
+  class LogMediatorMock extends LogMediator {
     testMethod(level: keyof Logger, tags: string[] = [], ...args: any[]) {
       this.setLog(level, tags, `${args[0]}, ${args[1]}`);
     }
@@ -21,37 +21,37 @@ describe('Log', () => {
     }
   }
 
-  let log: LogMock;
+  let logMediator: LogMediatorMock;
 
   beforeEach(() => {
     loggerSpy.mockRestore();
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config) as Logger;
     const logManager = new LogManager();
-    log = new LogMock(logManager, logger);
+    logMediator = new LogMediatorMock(logManager, logger);
   });
 
   it('default state', () => {
-    expect(log.bufferLogs).toBe(true);
-    expect(log.buffer).toEqual([]);
+    expect(logMediator.bufferLogs).toBe(true);
+    expect(logMediator.buffer).toEqual([]);
   });
 
   it(`passing message to the buffer`, () => {
-    log.testMethod('trace', [], 'one', 'two');
-    expect(log.buffer.length).toBe(1);
-    expect(log.buffer[0].level).toEqual('trace');
-    expect(log.buffer[0].msg).toEqual('one, two');
-    log.flush();
-    expect(log.buffer).toEqual([]);
+    logMediator.testMethod('trace', [], 'one', 'two');
+    expect(logMediator.buffer.length).toBe(1);
+    expect(logMediator.buffer[0].level).toEqual('trace');
+    expect(logMediator.buffer[0].msg).toEqual('one, two');
+    logMediator.flush();
+    expect(logMediator.buffer).toEqual([]);
   });
 
   it(`passing message with switch between buffer and logger`, () => {
     const injector = ReflectiveInjector.resolveAndCreate([
-      { provide: Log, useClass: LogMock },
+      { provide: LogMediator, useClass: LogMediatorMock },
       { provide: Logger, useClass: LoggerMock },
       LogManager,
     ]);
-    const log = injector.get(Log) as LogMock;
+    const log = injector.get(LogMediator) as LogMediatorMock;
 
     log.testMethod('trace', [], 'one', 'two');
     expect(log.buffer.length).toBe(1);

@@ -16,7 +16,7 @@ import { defaultProvidersPerReq } from './default-providers-per-req';
 import { Controller } from '../decorators/controller';
 import { ModConfig } from '../models/mod-config';
 import { NODE_REQ } from '../constans';
-import { Log } from './log';
+import { LogMediator } from './log-mediator';
 import { LogManager } from './log-manager';
 import { Route } from '../decorators/route';
 
@@ -28,8 +28,8 @@ describe('AppInitializer', () => {
   class AppInitializerMock extends AppInitializer {
     override meta = new RootMetadata();
 
-    constructor(public override moduleManager: ModuleManager, public override log: Log) {
-      super(moduleManager, log);
+    constructor(public override moduleManager: ModuleManager, public override logMediator: LogMediator) {
+      super(moduleManager, logMediator);
     }
 
     override mergeRootMetadata(meta: NormalizedModuleMetadata) {
@@ -52,7 +52,7 @@ describe('AppInitializer', () => {
     const injectorPerApp = ReflectiveInjector.resolveAndCreate([
       AppInitializerMock,
       LoggerConfig,
-      Log,
+      LogMediator,
       ModuleManager,
       { provide: Logger, useClass: DefaultLogger },
       { provide: LogManager, useValue: new LogManager() }
@@ -63,22 +63,22 @@ describe('AppInitializer', () => {
 
   describe('init()', () => {
     const testMethodSpy = jest.fn();
-    class LogMock1 extends Log {
+    class LogMock1 extends LogMediator {
       testMethod(level: keyof Logger, ...args: any[]) {
         testMethodSpy();
         this.setLog(level, `${args}`);
       }
     }
-    class LogMock2 extends Log {}
+    class LogMock2 extends LogMediator {}
 
-    @Module({ providersPerApp: [{ provide: Log, useClass: LogMock2 }] })
+    @Module({ providersPerApp: [{ provide: LogMediator, useClass: LogMock2 }] })
     class Module1 {}
 
     @RootModule({
       imports: [Module1],
       providersPerApp: [
         { provide: Router, useValue: 'fake' },
-        { provide: Log, useClass: LogMock1 },
+        { provide: LogMediator, useClass: LogMock1 },
         { provide: LogManager, useValue: new LogManager() },
       ],
     })
@@ -109,16 +109,16 @@ describe('AppInitializer', () => {
     });
 
     it('logs should collects between two init()', async () => {
-      expect(mock.log.buffer).toHaveLength(0);
-      expect(mock.log).toBeInstanceOf(Log);
-      expect(mock.log).not.toBeInstanceOf(LogMock1);
+      expect(mock.logMediator.buffer).toHaveLength(0);
+      expect(mock.logMediator).toBeInstanceOf(LogMediator);
+      expect(mock.logMediator).not.toBeInstanceOf(LogMock1);
       moduleManager.scanRootModule(AppModule);
 
       // First init
       await mock.bootstrapProvidersPerApp();
-      const { buffer } = mock.log;
-      expect(mock.log).toBeInstanceOf(LogMock1);
-      (mock.log as LogMock1).testMethod('debug', 'one', 'two');
+      const { buffer } = mock.logMediator;
+      expect(mock.logMediator).toBeInstanceOf(LogMock1);
+      (mock.logMediator as LogMock1).testMethod('debug', 'one', 'two');
       const msgIndex1 = buffer.length - 1;
       expect(buffer[msgIndex1].level).toBe('debug');
       expect(buffer[msgIndex1].msg).toBe('one,two');
@@ -126,8 +126,8 @@ describe('AppInitializer', () => {
 
       // Second init
       await mock.bootstrapProvidersPerApp();
-      expect(mock.log).toBeInstanceOf(LogMock1);
-      (mock.log as LogMock1).testMethod('info', 'three', 'four');
+      expect(mock.logMediator).toBeInstanceOf(LogMock1);
+      (mock.logMediator as LogMock1).testMethod('info', 'three', 'four');
       // Logs from first init() still here
       expect(buffer[msgIndex1].level).toBe('debug');
       expect(buffer[msgIndex1].msg).toBe('one,two');
@@ -135,7 +135,7 @@ describe('AppInitializer', () => {
       expect(buffer[msgIndex2].level).toBe('info');
       expect(buffer[msgIndex2].msg).toBe('three,four');
       expect(testMethodSpy.mock.calls.length).toBe(2);
-      mock.log.flush();
+      mock.logMediator.flush();
       expect(buffer.length).toBe(0);
     });
   });

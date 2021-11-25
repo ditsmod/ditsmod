@@ -2,20 +2,20 @@ import { Injectable, InjectionToken, Injector } from '@ts-stack/di';
 
 import { Extension } from '../types/mix';
 import { Counter } from './counter';
-import { Log } from './log';
+import { LogMediator } from './log-mediator';
 
 @Injectable()
 export class ExtensionsManager {
   protected unfinishedInitExtensions = new Set<Extension<any>>();
 
-  constructor(private injectorPerMod: Injector, private log: Log, private counter: Counter) {}
+  constructor(private injectorPerMod: Injector, private logMediator: LogMediator, private counter: Counter) {}
 
   async init<T>(extensionsGroupToken: string | InjectionToken<Extension<T>[]>, autoMergeArrays = true): Promise<T[]> {
     const extensions = this.injectorPerMod.get(extensionsGroupToken, []);
     const dataArr: T[] = [];
 
     if (typeof extensionsGroupToken != 'string' && !extensions.length) {
-      this.log.noExtensionsFound('warn', { className: this.constructor.name }, extensionsGroupToken);
+      this.logMediator.noExtensionsFound('warn', { className: this.constructor.name }, extensionsGroupToken);
     }
 
     for (const extension of extensions) {
@@ -27,16 +27,16 @@ export class ExtensionsManager {
       const id = this.counter.increaseExtensionsInitId();
       const args = [id, extensionName];
       this.unfinishedInitExtensions.add(extension);
-      this.log.startInitExtension('debug', { className: this.constructor.name }, ...args);
+      this.logMediator.startInitExtension('debug', { className: this.constructor.name }, ...args);
       const data = await extension.init();
-      this.log.finishInitExtension('debug', { className: this.constructor.name }, ...args);
+      this.logMediator.finishInitExtension('debug', { className: this.constructor.name }, ...args);
       this.unfinishedInitExtensions.delete(extension);
       this.counter.addInitedExtensions(extension);
       if (data === undefined) {
-        this.log.extensionInitReturnsVoid('debug', { className: this.constructor.name }, ...args);
+        this.logMediator.extensionInitReturnsVoid('debug', { className: this.constructor.name }, ...args);
         continue;
       }
-      this.log.extensionInitReturnsValue('debug', { className: this.constructor.name }, ...args);
+      this.logMediator.extensionInitReturnsValue('debug', { className: this.constructor.name }, ...args);
       if (autoMergeArrays && Array.isArray(data)) {
         dataArr.push(...data);
       } else {

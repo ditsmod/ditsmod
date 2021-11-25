@@ -9,7 +9,7 @@ import { PathParam } from '../types/router';
 import { PATH_PARAMS, QUERY_STRING } from '../constans';
 import { NodeRequest, NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
-import { Log } from './log';
+import { LogMediator } from './log-mediator';
 import { RouteMeta } from '../types/route-data';
 import { RootMetadata } from '../models/root-metadata';
 
@@ -18,7 +18,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
   constructor(
     @Inject(PATH_PARAMS) protected pathParamsArr: PathParam[],
     @Inject(QUERY_STRING) protected queryString: any,
-    private log: Log,
+    private logMediator: LogMediator,
     private routeMeta: RouteMeta,
     private rootMetadata: RootMetadata,
     private req: Request
@@ -64,7 +64,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
   }
 
   protected canNotActivateRoute(nodeReq: NodeRequest, nodeRes: NodeResponse, status?: Status) {
-    this.log.youCannotActivateRoute('debug', { className: this.constructor.name }, nodeReq.method, nodeReq.url);
+    this.logMediator.youCannotActivateRoute('debug', { className: this.constructor.name }, nodeReq.method, nodeReq.url);
     nodeRes.statusCode = status || Status.UNAUTHORIZED;
     nodeRes.end();
   }

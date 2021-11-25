@@ -6,7 +6,7 @@ import { Extension } from '../types/mix';
 import { PreparedRouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { ExtensionsManager } from '../services/extensions-manager';
-import { Log } from '../services/log';
+import { LogMediator } from '../services/log-mediator';
 import { MetadataPerMod2 } from '../types/metadata-per-mod';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class PreRouterExtension implements Extension<void> {
     protected injectorPerMod: ReflectiveInjector,
     protected router: Router,
     protected extensionsManager: ExtensionsManager,
-    protected log: Log
+    protected logMediator: LogMediator
   ) {}
 
   async init() {
@@ -67,7 +67,7 @@ export class PreRouterExtension implements Extension<void> {
 
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[], moduleName: string) {
     if (!preparedRouteMeta.length) {
-      this.log.noRoutes('info', { className: this.constructor.name }, moduleName);
+      this.logMediator.noRoutes('info', { className: this.constructor.name }, moduleName);
       return;
     }
 
@@ -80,7 +80,7 @@ export class PreRouterExtension implements Extension<void> {
         throw new Error(msg);
       }
 
-      this.log.showRoutes('debug', { className: this.constructor.name }, { moduleName, httpMethod, path });
+      this.logMediator.showRoutes('debug', { className: this.constructor.name }, { moduleName, httpMethod, path });
 
       if (httpMethod == 'ALL') {
         this.router.all(`/${path}`, handle);

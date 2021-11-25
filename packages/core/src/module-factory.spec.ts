@@ -24,7 +24,7 @@ import { ProvidersMetadata } from './models/providers-metadata';
 import { DefaultLogger } from './services/default-logger';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModConfig } from './models/mod-config';
-import { Log } from './services/log';
+import { LogMediator } from './services/log-mediator';
 import { Router } from './types/router';
 import { LogManager } from './services/log-manager';
 
@@ -84,7 +84,7 @@ describe('ModuleFactory', () => {
     const config = new LoggerConfig();
     const logger = new DefaultLogger(config);
     const logManager = new LogManager();
-    moduleManager = new ModuleManager(new Log(logManager, logger));
+    moduleManager = new ModuleManager(new LogMediator(logManager, logger));
   });
 
   describe('getModuleServicesMap()', () => {

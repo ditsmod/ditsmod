@@ -5,7 +5,7 @@ import { LogManager } from './services/log-manager';
 
 import { RootMetadata } from './models/root-metadata';
 import { AppInitializer } from './services/app-initializer';
-import { FilterConfig, Log } from './services/log';
+import { FilterConfig, LogMediator } from './services/log-mediator';
 import { ModuleManager } from './services/module-manager';
 import { Logger } from './types/logger';
 import { ModuleType } from './types/mix';
@@ -14,7 +14,7 @@ import { isHttp2SecureServerOptions } from './utils/type-guards';
 
 export class Application {
   protected meta: RootMetadata;
-  protected log: Log;
+  protected logMediator: LogMediator;
 
   bootstrap(appModule: ModuleType) {
     return new Promise<{ server: Server; logger: Logger }>(async (resolve, reject) => {
@@ -22,22 +22,22 @@ export class Application {
         const appInitializer = await this.init(appModule);
         const server = this.createServer(appInitializer);
         server.listen(this.meta.listenOptions, () => {
-          resolve({ server, logger: this.log.logger });
+          resolve({ server, logger: this.logMediator.logger });
           const host = this.meta.listenOptions.host || 'localhost';
           const filterConfig: FilterConfig = { className: this.constructor.name };
-          this.log.serverListen('info', filterConfig, this.meta.serverName, host, this.meta.listenOptions.port);
+          this.logMediator.serverListen('info', filterConfig, this.meta.serverName, host, this.meta.listenOptions.port);
         });
       } catch (err) {
-        this.log.bufferLogs = false;
-        this.log.flush();
-        reject({ err, logger: this.log.logger });
+        this.logMediator.bufferLogs = false;
+        this.logMediator.flush();
+        reject({ err, logger: this.logMediator.logger });
       }
     });
   }
 
   protected async init(appModule: ModuleType) {
-    this.log = new Log(new LogManager());
-    const appInitializer = this.getAppInitializer(appModule, this.log);
+    this.logMediator = new LogMediator(new LogManager());
+    const appInitializer = this.getAppInitializer(appModule, this.logMediator);
     // Before init custom user logger, works default logger.
     appInitializer.bootstrapProvidersPerApp();
     // After init custom user logger, works this logger.
@@ -52,10 +52,10 @@ export class Application {
     return appInitializer;
   }
 
-  protected getAppInitializer(appModule: ModuleType, log: Log) {
-    const moduleManager = new ModuleManager(log);
+  protected getAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
+    const moduleManager = new ModuleManager(logMediator);
     moduleManager.scanRootModule(appModule);
-    return new AppInitializer(moduleManager, log);
+    return new AppInitializer(moduleManager, logMediator);
   }
 
   protected checkSecureServerOption(appModule: ModuleType) {
