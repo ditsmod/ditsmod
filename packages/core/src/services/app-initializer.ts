@@ -1,30 +1,31 @@
 import { Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
 
+import { ImportsResolver } from '../imports-resolver';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ProvidersMetadata } from '../models/providers-metadata';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleFactory } from '../module-factory';
-import { AppMetadataMap, ServiceProvider, Extension, ModuleWithParams, ModuleType } from '../types/mix';
+import { ImportsMap, MetadataPerMod1 } from '../types/metadata-per-mod';
+import { AppMetadataMap, Extension, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { RequestListener } from '../types/server-options';
 import { getDuplicates } from '../utils/get-duplicates';
+import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
+import { getTokens } from '../utils/get-tokens';
 import { getTokensCollisions } from '../utils/get-tokens-collisions';
 import { getUniqProviders } from '../utils/get-uniq-providers';
 import { normalizeProviders } from '../utils/ng-utils';
 import { pickProperties } from '../utils/pick-properties';
 import { throwProvidersCollisionError } from '../utils/throw-providers-collision-error';
 import { isRootModule } from '../utils/type-guards';
+import { Counter } from './counter';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ExtensionsManager } from './extensions-manager';
-import { ModuleManager } from './module-manager';
-import { Counter } from './counter';
-import { LogMediator } from './log-mediator';
 import { LogManager } from './log-manager';
-import { ImportsMap, MetadataPerMod1 } from '../types/metadata-per-mod';
-import { ImportsResolver } from '../imports-resolver';
-import { getTokens } from '../utils/get-tokens';
+import { LogMediator } from './log-mediator';
+import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
-import { getModuleMetadata } from '../utils/get-module-metadata';
+
 
 @Injectable()
 export class AppInitializer {

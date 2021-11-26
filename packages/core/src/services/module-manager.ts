@@ -1,4 +1,4 @@
-import { forwardRef, Injectable, resolveForwardRef, Type } from '@ts-stack/di';
+import { Injectable, resolveForwardRef, Type } from '@ts-stack/di';
 import { format } from 'util';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
@@ -6,7 +6,7 @@ import { AnyObj, Extension, ExtensionsProvider, ModuleType, ModuleWithParams, Se
 import { ModuleMetadata } from '../types/module-metadata';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
-import { getToken, getTokens } from '../utils/get-tokens';
+import { getTokens } from '../utils/get-tokens';
 import { normalizeProviders } from '../utils/ng-utils';
 import { pickProperties } from '../utils/pick-properties';
 import {
@@ -15,9 +15,10 @@ import {
   isModuleWithParams,
   isNormalizedProvider,
   isProvider,
-  isValueProvider,
+  isValueProvider
 } from '../utils/type-guards';
 import { LogMediator } from './log-mediator';
+
 
 export type ModulesMap = Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
 export type ModulesMapId = Map<string, ModuleType | ModuleWithParams>;
@@ -178,8 +179,6 @@ export class ModuleManager {
    * Here "raw" means that it returns "raw" normalized metadata (without `this.copyMeta()`).
    */
   protected scanRawModule(modOrObj: AnyModule) {
-    // modOrObj = resolveForwardRef(modOrObj);
-    // console.log(modOrObj)
     const meta = this.normalizeMetadata(modOrObj);
 
     const importsOrExports = [
@@ -206,9 +205,6 @@ export class ModuleManager {
     return meta;
   }
 
-  /**
-   * @todo Refactor this method to use `deepFreeze()`.
-   */
   protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(meta: NormalizedModuleMetadata<T, A>) {
     meta = { ...(meta || ({} as NormalizedModuleMetadata<T, A>)) };
     meta.importsModules = meta.importsModules.slice();
@@ -224,7 +220,6 @@ export class ModuleManager {
     meta.providersPerMod = meta.providersPerMod.slice();
     meta.providersPerRou = meta.providersPerRou.slice();
     meta.providersPerReq = meta.providersPerReq.slice();
-    // return deepFreeze(meta);
     return meta;
   }
 
