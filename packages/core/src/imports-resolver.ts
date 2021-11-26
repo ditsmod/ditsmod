@@ -54,8 +54,8 @@ export class ImportsResolver {
     });
 
     importedTokensMap.extensions.forEach(({ providers, module }) => {
+      meta.extensions.unshift(...providers);
       providers.forEach((provider) => {
-        meta.extensions.push(provider);
         this.grabDependecies(module, provider, ['Mod']);
       });
     });
