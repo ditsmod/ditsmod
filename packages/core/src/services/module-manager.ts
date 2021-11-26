@@ -330,7 +330,7 @@ export class ModuleManager {
 
     rawMeta.imports?.forEach((imp, i) => {
       imp = resolveForwardRef(imp);
-      this.checkUndefinedInImport(modName, imp, i);
+      this.throwIfUndefined(modName, 'Im', imp, i);
       if (isModuleWithParams(imp)) {
         meta.importsWithParams.push(imp);
       } else {
@@ -340,8 +340,9 @@ export class ModuleManager {
 
     const extensionsTokens = getTokens(rawMeta.extensions || []);
 
-    rawMeta.exports?.forEach((exp) => {
+    rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
+      this.throwIfUndefined(modName, 'Ex', exp, i);
       this.throwIfNormalizedProvider(modName, exp);
       if (isModuleWithParams(exp)) {
         meta.exportsWithParams.push(exp);
@@ -365,10 +366,11 @@ export class ModuleManager {
     return meta;
   }
 
-  protected checkUndefinedInImport(modName: string, imp: AnyModule, i: number) {
+  protected throwIfUndefined(modName: string, imOrEx: 'Im' | 'Ex', imp: AnyModule, i: number) {
     if (imp === undefined) {
+      const lowerImOrEx = imOrEx.toLowerCase();
       const msg =
-        `Importing into "${modName}" failed: element at imports[${i}] has "undefined" type. ` +
+        `${imOrEx}porting into "${modName}" failed: element at ${lowerImOrEx}ports[${i}] has "undefined" type. ` +
         `This can be caused by circular dependency. Try to replace this element with this expression: ` +
         `"forwardRef(() => YourModule)". Tip: "forwardRef" has @ts-stack/di module.`;
       throw new Error(msg);
