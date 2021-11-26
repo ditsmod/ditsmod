@@ -55,7 +55,7 @@ describe('ModuleManager', () => {
     expect(mock.getMetadata('root')).toEqual(expectedMeta);
   });
 
-  it('cyclic imports modules', () => {
+  it('circular imports modules', () => {
     @Injectable()
     class Provider1 {}
 
@@ -76,8 +76,7 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    const msg = 'Detected cyclic imports: Module3 -> Module2 -> Module1 -> Module3. It is started from Module4.';
-    expect(() => mock.scanRootModule(AppModule)).toThrowError(msg);
+    expect(() => mock.scanRootModule(AppModule)).not.toThrow();
   });
 
   it('non properly exports from root module', () => {

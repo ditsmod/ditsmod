@@ -53,6 +53,7 @@ export class ModuleFactory {
 
   protected globalProviders: ProvidersMetadata & ImportsMap;
   protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod1>();
+  protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
   #moduleManager: ModuleManager;
 
   constructor(private injectorPerApp: ReflectiveInjector) {}
@@ -92,7 +93,8 @@ export class ModuleFactory {
     prefixPerMod: string,
     modOrObj: ModuleType | ModuleWithParams,
     moduleManager: ModuleManager,
-    guardsPerMod?: NormalizedGuard[]
+    unfinishedImports: Set<ModuleType | ModuleWithParams>,
+    guardsPerMod?: NormalizedGuard[],
   ) {
     const meta = moduleManager.getMetadata(modOrObj, true);
     this.#moduleManager = moduleManager;
@@ -100,6 +102,7 @@ export class ModuleFactory {
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = meta.name;
     this.guardsPerMod = guardsPerMod || [];
+    this.unfinishedScanModules = unfinishedImports;
     this.quickCheckMetadata(meta);
     this.meta = meta;
     this.importModules();
@@ -157,13 +160,21 @@ export class ModuleFactory {
       const meta = this.#moduleManager.getMetadata(imp, true);
       this.importProviders(meta);
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+
+      if (this.unfinishedScanModules.has(imp)) {
+        continue;
+      }
+      this.unfinishedScanModules.add(imp);
       const appMetadataMap = moduleFactory.bootstrap(
         this.globalProviders,
         this.prefixPerMod,
         imp,
         this.#moduleManager,
+        this.unfinishedScanModules,
         this.guardsPerMod
       );
+      this.unfinishedScanModules.delete(imp);
+
       this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
     }
     for (const imp of this.meta.importsWithParams) {
@@ -174,13 +185,21 @@ export class ModuleFactory {
       this.checkGuardsPerMod(normalizedGuardsPerMod);
       const guardsPerMod = [...this.guardsPerMod, ...normalizedGuardsPerMod];
       const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+
+      if (this.unfinishedScanModules.has(imp)) {
+        continue;
+      }
+      this.unfinishedScanModules.add(imp);
       const appMetadataMap = moduleFactory.bootstrap(
         this.globalProviders,
         prefixPerMod,
         imp,
         this.#moduleManager,
+        this.unfinishedScanModules,
         guardsPerMod
       );
+      this.unfinishedScanModules.delete(imp);
+
       this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
     }
     this.checkProvidersCollisions();

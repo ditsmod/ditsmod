@@ -4,7 +4,7 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ProvidersMetadata } from '../models/providers-metadata';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleFactory } from '../module-factory';
-import { AppMetadataMap, ServiceProvider, Extension } from '../types/mix';
+import { AppMetadataMap, ServiceProvider, Extension, ModuleWithParams, ModuleType } from '../types/mix';
 import { RequestListener } from '../types/server-options';
 import { getDuplicates } from '../utils/get-duplicates';
 import { getModuleName } from '../utils/get-module-name';
@@ -32,6 +32,7 @@ export class AppInitializer {
   protected preRouter: PreRouter;
   protected meta: RootMetadata;
   protected logManager: LogManager;
+  protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
 
   constructor(protected moduleManager: ModuleManager, protected logMediator: LogMediator) {}
 
@@ -67,6 +68,7 @@ export class AppInitializer {
   protected prepareProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
     // Here we work only with providers declared at the application level.
 
+    this.unfinishedScanModules.clear();
     const exportedProviders = this.collectProvidersPerApp(meta, moduleManager);
     const rootTokens = getTokens(this.meta.providersPerApp);
     const exportedNormProviders = normalizeProviders(exportedProviders);
@@ -98,10 +100,15 @@ export class AppInitializer {
     ];
     const providersPerApp: ServiceProvider[] = [];
     // Removes duplicate (because of reexports modules)
-    new Set(modules).forEach((mod) => {
+    for (const mod of new Set(modules)) {
+      if (this.unfinishedScanModules.has(mod)) {
+        continue;
+      }
       const meta2 = moduleManager.getMetadata(mod, true);
+      this.unfinishedScanModules.add(mod);
       providersPerApp.push(...this.collectProvidersPerApp(meta2, moduleManager));
-    });
+      this.unfinishedScanModules.delete(mod);
+    }
     const currProvidersPerApp = isRootModule(meta1) ? [] : meta1.providersPerApp;
 
     return [...providersPerApp, ...getUniqProviders(currProvidersPerApp)];
@@ -190,7 +197,7 @@ export class AppInitializer {
     this.logMediator.printGlobalProviders('trace', { className: this.constructor.name }, globalProviders);
     const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
     const appModule = moduleManager.getMetadata('root', true).module;
-    return moduleFactory.bootstrap(globalProviders, '', appModule, moduleManager);
+    return moduleFactory.bootstrap(globalProviders, '', appModule, moduleManager, new Set);
   }
 
   protected getGlobalProviders(moduleManager: ModuleManager) {

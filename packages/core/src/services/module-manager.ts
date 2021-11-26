@@ -1,4 +1,4 @@
-import { Injectable, resolveForwardRef, Type } from '@ts-stack/di';
+import { forwardRef, Injectable, resolveForwardRef, Type } from '@ts-stack/di';
 import { format } from 'util';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
@@ -145,7 +145,12 @@ export class ModuleManager {
         }
         this.map.delete(inputMeta.module);
       }
-      this.logMediator.moduleSuccessfulRemoved('debug', { className: this.constructor.name }, inputMeta.name, targetMeta.name);
+      this.logMediator.moduleSuccessfulRemoved(
+        'debug',
+        { className: this.constructor.name },
+        inputMeta.name,
+        targetMeta.name
+      );
       return true;
     } catch (err) {
       this.rollback(err as Error);
@@ -173,6 +178,8 @@ export class ModuleManager {
    * Here "raw" means that it returns "raw" normalized metadata (without `this.copyMeta()`).
    */
   protected scanRawModule(modOrObj: AnyModule) {
+    // modOrObj = resolveForwardRef(modOrObj);
+    // console.log(modOrObj)
     const meta = this.normalizeMetadata(modOrObj);
 
     const importsOrExports = [
@@ -182,14 +189,14 @@ export class ModuleManager {
       ...meta.exportsWithParams,
     ];
 
-    importsOrExports.forEach((impOrExp) => {
+    for (const impOrExp of importsOrExports) {
       if (this.unfinishedScanModules.has(impOrExp)) {
-        this.throwCyclicImports(impOrExp);
+        continue;
       }
       this.unfinishedScanModules.add(impOrExp);
       this.scanRawModule(impOrExp);
       this.unfinishedScanModules.delete(impOrExp);
-    });
+    }
 
     if (meta.id) {
       this.mapId.set(meta.id, modOrObj);
@@ -197,21 +204,6 @@ export class ModuleManager {
     }
     this.map.set(modOrObj, meta);
     return meta;
-  }
-
-  protected throwCyclicImports(modOrObj: AnyModule) {
-    const modules = [...this.unfinishedScanModules];
-    const index = modules.findIndex((m) => m === modOrObj);
-    const prefixChain = modules.slice(0, index);
-    const cyclicChain = modules.slice(index);
-    const prefixNames = prefixChain.map((mod) => getModuleName(mod)).join(' -> ');
-    let cyclicNames = cyclicChain.map((mod) => getModuleName(mod)).join(' -> ');
-    cyclicNames += ` -> ${getModuleName(modOrObj)}`;
-    let msg = `Detected cyclic imports: ${cyclicNames}.`;
-    if (prefixNames) {
-      msg += ` It is started from ${prefixNames}.`;
-    }
-    throw new Error(msg);
   }
 
   /**
@@ -336,8 +328,9 @@ export class ModuleManager {
      */
     meta.ngMetadataName = (rawMeta as any).ngMetadataName;
 
-    rawMeta.imports?.forEach((imp) => {
+    rawMeta.imports?.forEach((imp, i) => {
       imp = resolveForwardRef(imp);
+      this.checkUndefinedInImport(modName, imp, i);
       if (isModuleWithParams(imp)) {
         meta.importsWithParams.push(imp);
       } else {
@@ -372,6 +365,16 @@ export class ModuleManager {
     return meta;
   }
 
+  protected checkUndefinedInImport(modName: string, imp: AnyModule, i: number) {
+    if (imp === undefined) {
+      const msg =
+        `Importing into "${modName}" failed: element at imports[${i}] has "undefined" type. ` +
+        `This can be caused by circular dependency. Try to replace this element with this expression: ` +
+        `"forwardRef(() => YourModule)". Tip: "forwardRef" has @ts-stack/di module.`;
+      throw new Error(msg);
+    }
+  }
+
   protected checkExtension(modName: string, extensionsProvider: ExtensionsProvider, token: any) {
     const np = normalizeProviders([extensionsProvider])[0];
     let extensionClass: Type<Extension<any>>;
@@ -386,7 +389,7 @@ export class ModuleManager {
     if (extensionClass! && typeof extensionClass.prototype.init != 'function') {
       const tokenName = token.name || token;
       const msg = `Exporting "${tokenName}" from "${modName}" failed: all extensions must have init() method.`;
-      throw new TypeError(msg)
+      throw new TypeError(msg);
     }
   }
 
