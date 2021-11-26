@@ -1,16 +1,17 @@
 import 'reflect-metadata';
-import * as http from 'http';
-import * as https from 'https';
-import * as http2 from 'http2';
 import { Injectable, InjectionToken } from '@ts-stack/di';
+import * as http from 'http';
+import * as http2 from 'http2';
+import * as https from 'https';
 
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
 import { RootMetadata } from './models/root-metadata';
-import { ModuleType, Extension } from './types/mix';
-import { Router } from './types/router';
-import { LogMediator } from './services/log-mediator';
 import { AppInitializer } from './services/app-initializer';
+import { LogMediator } from './services/log-mediator';
+import { Extension, ModuleType } from './types/mix';
+import { Router } from './types/router';
+
 
 describe('Application', () => {
   class ApplicationMock extends Application {
@@ -107,13 +108,14 @@ describe('Application', () => {
       }
     }
 
-    it('declared extensions in root module and only in providersPerApp', async () => {
+    it('properly declared extensions in a root module', async () => {
       @RootModule({
         providersPerApp: [
           { provide: Router, useValue: 'fake value for router' },
-          { provide: MY_EXTENSIONS, useClass: Extension1, multi: true },
         ],
-        extensions: [MY_EXTENSIONS],
+        extensions: [
+          { provide: MY_EXTENSIONS, useClass: Extension1, multi: true },
+        ]
       })
       class AppModule {}
 
@@ -122,36 +124,23 @@ describe('Application', () => {
       expect(jestFn.mock.calls).toEqual([['Extension1']]);
     });
 
-    it('should throw an error about include MY_EXTENSIONS to providersPerApp', async () => {
-      @RootModule({ extensions: [MY_EXTENSIONS] })
+    it('exports token of an extension without this extension', async () => {
+      @RootModule({ exports: [MY_EXTENSIONS] })
       class AppModule {}
 
       const promise = mock.init(AppModule);
-      await expect(promise).rejects.toThrow(/MY_EXTENSIONS" must be includes in "providersPerApp"/);
+      await expect(promise).rejects.toThrow(`is a token of extension, this extension must be included in`);
     });
 
-    it('should throw an error about include MY_EXTENSIONS to providersPerReq', async () => {
+    it('should throw error about no extension', async () => {
       @RootModule({
-        providersPerApp: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
         providersPerReq: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
-        extensions: [MY_EXTENSIONS],
+        exports: [MY_EXTENSIONS],
       })
       class AppModule {}
 
       const promise = mock.init(AppModule);
-      await expect(promise).rejects.toThrow(/MY_EXTENSIONS" can be includes in the "providersPerApp"/);
-    });
-
-    it('should throw an error about include MY_EXTENSIONS to providersPerMod', async () => {
-      @RootModule({
-        providersPerApp: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
-        providersPerMod: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
-        extensions: [MY_EXTENSIONS],
-      })
-      class AppModule {}
-
-      const promise = mock.init(AppModule);
-      await expect(promise).rejects.toThrow(/MY_EXTENSIONS" can be includes in the "providersPerApp"/);
+      await expect(promise).rejects.toThrow(`is a token of extension, this extension must be included in`);
     });
   });
 });
