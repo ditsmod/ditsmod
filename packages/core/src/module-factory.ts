@@ -93,7 +93,7 @@ export class ModuleFactory {
     prefixPerMod: string,
     modOrObj: ModuleType | ModuleWithParams,
     moduleManager: ModuleManager,
-    unfinishedImports: Set<ModuleType | ModuleWithParams>,
+    unfinishedScanModules: Set<ModuleType | ModuleWithParams>,
     guardsPerMod?: NormalizedGuard[],
   ) {
     const meta = moduleManager.getMetadata(modOrObj, true);
@@ -102,7 +102,7 @@ export class ModuleFactory {
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = meta.name;
     this.guardsPerMod = guardsPerMod || [];
-    this.unfinishedScanModules = unfinishedImports;
+    this.unfinishedScanModules = unfinishedScanModules;
     this.quickCheckMetadata(meta);
     this.meta = meta;
     this.importModules();
