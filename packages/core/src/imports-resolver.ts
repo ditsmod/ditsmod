@@ -173,7 +173,7 @@ export class ImportsResolver {
   protected fixDependecy(module: AnyModule, provider: ServiceProvider) {
     const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
     if (index != -1) {
-      this.throwCyclicDependencies(index);
+      this.throwCircularDependencies(index);
     }
     this.unfinishedSearchDependecies.push([module, provider]);
   }
@@ -183,7 +183,7 @@ export class ImportsResolver {
     this.unfinishedSearchDependecies.splice(index, 1);
   }
 
-  protected throwCyclicDependencies(index: number) {
+  protected throwCircularDependencies(index: number) {
     const items = this.unfinishedSearchDependecies;
     const prefixChain = items.slice(0, index);
     const cyclicChain = items.slice(index);
@@ -191,7 +191,7 @@ export class ImportsResolver {
     const [module, provider] = items[index];
     let cyclicNames = cyclicChain.map(([m, p]) => `[${getProviderName(p)} in ${getModuleName(m)}]`).join(' -> ');
     cyclicNames += ` -> [${getProviderName(provider)} in ${getModuleName(module)}]`;
-    let msg = `Detected cyclic dependencies: ${cyclicNames}.`;
+    let msg = `Detected circular dependencies: ${cyclicNames}.`;
     if (prefixNames) {
       msg += ` It is started from ${prefixNames}.`;
     }
