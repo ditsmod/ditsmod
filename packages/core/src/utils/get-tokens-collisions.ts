@@ -1,9 +1,6 @@
-import { format } from 'util';
-
 import { ServiceProvider } from '../types/mix';
 import { getTokens } from './get-tokens';
-import { normalizeProviders } from './ng-utils';
-import { isNormalizedProvider } from './type-guards';
+import { isClassProvider, isExistingProvider, isFactoryProvider, isValueProvider } from './type-guards';
 
 /**
  * Returns array of uniq tokens.
@@ -14,36 +11,40 @@ export function getTokensCollisions(uniqDuplTokens: any[], providers: ServicePro
   uniqDuplTokens = uniqDuplTokens || [];
   providers = providers || [];
   const duplProviders: ServiceProvider[] = [];
+  const duplTokens: any[] = [];
+  const collisions = new Set<any>();
 
   getTokens(providers).forEach((token, i) => {
     if (uniqDuplTokens.includes(token)) {
-      duplProviders.push(providers[i]);
-    }
-  });
-
-  const normDuplProviders = normalizeProviders(duplProviders);
-
-  return uniqDuplTokens.filter((dulpToken): boolean | void => {
-    let prevProvider: ServiceProvider;
-
-    for (let i = 0; i < normDuplProviders.length; i++) {
-      if (normDuplProviders[i].provide !== dulpToken) {
-        continue;
-      }
-
-      const currProvider = duplProviders[i];
-      if (!prevProvider!) {
-        prevProvider = currProvider;
-      }
-
-      if (isNormalizedProvider(prevProvider) && isNormalizedProvider(currProvider)) {
-        if (prevProvider.provide !== currProvider.provide || format(prevProvider) != format(currProvider)) {
-          return true;
+      const currProvider = providers[i];
+      const index = duplTokens.indexOf(token);
+      if (index == -1) {
+        duplTokens.push(token);
+        duplProviders.push(currProvider);
+      } else {
+        const lastProvider = duplProviders[index];
+        if (isClassProvider(lastProvider) && isClassProvider(currProvider)) {
+          if (lastProvider.useClass !== currProvider.useClass) {
+            collisions.add(token);
+          }
+        } else if (isValueProvider(lastProvider) && isValueProvider(currProvider)) {
+          if (lastProvider.useValue !== currProvider.useValue) {
+            collisions.add(token);
+          }
+        } else if (isExistingProvider(lastProvider) && isExistingProvider(currProvider)) {
+          if (lastProvider.useExisting !== currProvider.useExisting) {
+            collisions.add(token);
+          }
+        } else if (isFactoryProvider(lastProvider) && isFactoryProvider(currProvider)) {
+          if (lastProvider.useFactory !== currProvider.useFactory) {
+            collisions.add(token);
+          }
+        } else if (lastProvider !== currProvider) {
+          collisions.add(token);
         }
-        continue;
-      } else if (prevProvider !== currProvider) {
-        return true;
       }
     }
   });
+
+  return [...collisions];
 }
