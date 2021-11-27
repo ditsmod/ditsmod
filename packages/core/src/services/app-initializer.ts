@@ -12,7 +12,7 @@ import { getDuplicates } from '../utils/get-duplicates';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { getTokens } from '../utils/get-tokens';
-import { getTokensCollisions } from '../utils/get-tokens-collisions';
+import { getCollisions } from '../utils/get-collisions';
 import { normalizeProviders } from '../utils/ng-utils';
 import { pickProperties } from '../utils/pick-properties';
 import { throwProvidersCollisionError } from '../utils/throw-providers-collision-error';
@@ -79,7 +79,7 @@ export class AppInitializer {
       (d) => !rootTokens.includes(d) && !exportedMultiTokens.includes(d)
     );
     const mergedProviders = [...defaultProvidersPerApp, ...exportedProviders];
-    const collisions = getTokensCollisions(exportedTokensDuplicates, mergedProviders);
+    const collisions = getCollisions(exportedTokensDuplicates, mergedProviders);
     if (collisions.length) {
       const currentModuleName = getModuleName(meta.module);
       const moduleNames = this.findModulesForCollisions(collisions);

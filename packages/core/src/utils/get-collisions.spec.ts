@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import { ServiceProvider } from '../types/mix';
-import { getTokensCollisions } from './get-tokens-collisions';
+import { getCollisions } from './get-collisions';
 
 describe('getTokensCollisions()', () => {
   it('duplicates are identical', () => {
@@ -12,7 +12,7 @@ describe('getTokensCollisions()', () => {
     class Provider5 {}
     let duplTokens: any[] = [Provider1, Provider2];
     const providers: ServiceProvider[] = [Provider1, Provider2, Provider4, Provider3, Provider5, Provider2, Provider1];
-    duplTokens = getTokensCollisions(duplTokens, providers);
+    duplTokens = getCollisions(duplTokens, providers);
     expect(duplTokens).toEqual([]);
   });
 
@@ -32,7 +32,7 @@ describe('getTokensCollisions()', () => {
       { provide: Provider7, useClass: Provider7 },
       { provide: Provider7, useClass: Provider6 },
     ];
-    duplTokens = getTokensCollisions(duplTokens, providers);
+    duplTokens = getCollisions(duplTokens, providers);
     expect(duplTokens).toEqual([Provider3, Provider7]);
   });
 
@@ -51,7 +51,7 @@ describe('getTokensCollisions()', () => {
       { provide: Provider6, useClass: Provider7 },
       { provide: Provider7, useClass: Provider7 },
     ];
-    duplTokens = getTokensCollisions(duplTokens, providers);
+    duplTokens = getCollisions(duplTokens, providers);
     expect(duplTokens).toEqual([]);
   });
 
@@ -73,7 +73,7 @@ describe('getTokensCollisions()', () => {
       { provide: Provider6, useFactory: factory },
       { provide: Provider7, useClass: Provider7 },
     ];
-    duplTokens = getTokensCollisions(duplTokens, providers);
+    duplTokens = getCollisions(duplTokens, providers);
     expect(duplTokens).toEqual([]);
   });
 });

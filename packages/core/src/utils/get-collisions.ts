@@ -7,7 +7,7 @@ import { isClassProvider, isExistingProvider, isFactoryProvider, isValueProvider
  *
  * If you have a replacement for some provider - you have a collision.
  */
-export function getTokensCollisions(uniqDuplTokens: any[], providers: ServiceProvider[]) {
+export function getCollisions(uniqDuplTokens: any[], providers: ServiceProvider[]) {
   uniqDuplTokens = uniqDuplTokens || [];
   providers = providers || [];
   const duplProviders: ServiceProvider[] = [];

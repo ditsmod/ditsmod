@@ -16,7 +16,7 @@ import {
   ExtensionsProvider,
 } from './types/mix';
 import { getDuplicates } from './utils/get-duplicates';
-import { getTokensCollisions } from './utils/get-tokens-collisions';
+import { getCollisions } from './utils/get-collisions';
 import { normalizeProviders } from './utils/ng-utils';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
 import { isController, isNormalizedProvider, isRootModule } from './utils/type-guards';
@@ -300,7 +300,7 @@ export class ModuleFactory {
     } else {
       duplExpTokensPerMod = duplExpTokensPerMod.filter((d) => !declaredTokensPerMod.includes(d));
     }
-    duplExpTokensPerMod = getTokensCollisions(duplExpTokensPerMod, this.importedProvidersPerMod);
+    duplExpTokensPerMod = getCollisions(duplExpTokensPerMod, this.importedProvidersPerMod);
     const defaultTokensPerMod = normalizeProviders([...defaultProvidersPerMod]).map((np) => np.provide);
     const tokensPerMod = [...defaultTokensPerMod, ...declaredTokensPerMod, ...importedTokensPerMod];
 
@@ -320,7 +320,7 @@ export class ModuleFactory {
     } else {
       duplExpPerRou = duplExpPerRou.filter((d) => !declaredTokensPerRou.includes(d));
     }
-    duplExpPerRou = getTokensCollisions(duplExpPerRou, this.importedProvidersPerRou);
+    duplExpPerRou = getCollisions(duplExpPerRou, this.importedProvidersPerRou);
     const tokensPerRou = [...declaredTokensPerRou, ...importedTokensPerRou];
 
     const declaredTokensPerReq = normalizeProviders(this.meta.providersPerReq).map((np) => np.provide);
@@ -339,7 +339,7 @@ export class ModuleFactory {
     } else {
       duplExpPerReq = duplExpPerReq.filter((d) => !declaredTokensPerReq.includes(d));
     }
-    duplExpPerReq = getTokensCollisions(duplExpPerReq, this.importedProvidersPerReq);
+    duplExpPerReq = getCollisions(duplExpPerReq, this.importedProvidersPerReq);
 
     const mixPerApp = tokensPerApp.filter((p) => {
       if (importedTokensPerMod.includes(p) && !declaredTokensPerMod.includes(p)) {
