@@ -13,7 +13,6 @@ import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { getTokens } from '../utils/get-tokens';
 import { getTokensCollisions } from '../utils/get-tokens-collisions';
-import { getUniqProviders } from '../utils/get-uniq-providers';
 import { normalizeProviders } from '../utils/ng-utils';
 import { pickProperties } from '../utils/pick-properties';
 import { throwProvidersCollisionError } from '../utils/throw-providers-collision-error';
@@ -71,11 +70,11 @@ export class AppInitializer {
 
     this.unfinishedScanModules.clear();
     const exportedProviders = this.collectProvidersPerApp(meta, moduleManager);
-    const rootTokens = getTokens(this.meta.providersPerApp);
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.provide);
     const exportedMultiTokens = exportedNormProviders.filter((np) => np.multi).map((np) => np.provide);
     const defaultTokens = getTokens(defaultProvidersPerApp);
+    const rootTokens = getTokens(this.meta.providersPerApp);
     const mergedTokens = [...exportedTokens, ...defaultTokens];
     let exportedTokensDuplicates = getDuplicates(mergedTokens).filter(
       (d) => !rootTokens.includes(d) && !exportedMultiTokens.includes(d)
@@ -112,7 +111,7 @@ export class AppInitializer {
     }
     const currProvidersPerApp = isRootModule(meta1) ? [] : meta1.providersPerApp;
 
-    return [...providersPerApp, ...getUniqProviders(currProvidersPerApp)];
+    return [...providersPerApp, ...currProvidersPerApp];
   }
 
   async bootstrapModulesAndExtensions() {
@@ -196,7 +195,7 @@ export class AppInitializer {
   protected bootstrapModuleFactory(moduleManager: ModuleManager) {
     const globalProviders = this.getGlobalProviders(moduleManager);
     this.logMediator.printGlobalProviders('trace', { className: this.constructor.name }, globalProviders);
-    const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+    const moduleFactory = new ModuleFactory();
     const appModule = moduleManager.getMetadata('root', true).module;
     return moduleFactory.bootstrap(globalProviders, '', appModule, moduleManager, new Set);
   }
@@ -206,7 +205,7 @@ export class AppInitializer {
     const importedProviders = new ImportsMap();
     const globalProviders: ProvidersMetadata & ImportsMap = { ...providers, ...importedProviders };
     globalProviders.providersPerApp = this.meta.providersPerApp;
-    const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+    const moduleFactory = new ModuleFactory();
     const {
       // Don't autoformat this
       providersPerMod,
