@@ -56,8 +56,6 @@ export class ModuleFactory {
   protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
   #moduleManager: ModuleManager;
 
-  constructor(private injectorPerApp: ReflectiveInjector) {}
-
   /**
    * Calls only by `@RootModule` before calls `ModuleFactory#boostrap()`.
    *
@@ -159,7 +157,7 @@ export class ModuleFactory {
     for (const imp of this.meta.importsModules) {
       const meta = this.#moduleManager.getMetadata(imp, true);
       this.importProviders(meta);
-      const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+      const moduleFactory = new ModuleFactory();
 
       if (this.unfinishedScanModules.has(imp)) {
         continue;
@@ -184,7 +182,7 @@ export class ModuleFactory {
       const normalizedGuardsPerMod = this.normalizeGuards(imp.guards);
       this.checkGuardsPerMod(normalizedGuardsPerMod);
       const guardsPerMod = [...this.guardsPerMod, ...normalizedGuardsPerMod];
-      const moduleFactory = this.injectorPerApp.resolveAndInstantiate(ModuleFactory) as ModuleFactory;
+      const moduleFactory = new ModuleFactory();
 
       if (this.unfinishedScanModules.has(imp)) {
         continue;

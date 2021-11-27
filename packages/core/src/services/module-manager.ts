@@ -15,10 +15,9 @@ import {
   isModuleWithParams,
   isNormalizedProvider,
   isProvider,
-  isValueProvider
+  isValueProvider,
 } from '../utils/type-guards';
 import { LogMediator } from './log-mediator';
-
 
 export type ModulesMap = Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
 export type ModulesMapId = Map<string, ModuleType | ModuleWithParams>;
@@ -334,6 +333,11 @@ export class ModuleManager {
     });
 
     const extensionsTokens = getTokens(rawMeta.extensions || []);
+    const providersTokens = getTokens([
+      ...(rawMeta.providersPerMod || []),
+      ...(rawMeta.providersPerRou || []),
+      ...(rawMeta.providersPerReq || []),
+    ]);
 
     rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
@@ -346,7 +350,7 @@ export class ModuleManager {
         const extensionProvider = rawMeta.extensions![index];
         this.checkExtension(modName, extensionProvider, exp);
         meta.exportsExtensions.push(extensionProvider);
-      } else if (isProvider(exp)) {
+      } else if (isProvider(exp) || providersTokens.indexOf(exp) != -1) {
         this.findAndSetProvider(exp, rawMeta, meta);
       } else if (getModuleMetadata(exp)) {
         meta.exportsModules.push(exp);

@@ -1,6 +1,7 @@
 import { format } from 'util';
 
 import { ServiceProvider } from '../types/mix';
+import { getTokens } from './get-tokens';
 import { normalizeProviders } from './ng-utils';
 import { isNormalizedProvider } from './type-guards';
 
@@ -14,13 +15,11 @@ export function getTokensCollisions(uniqDuplTokens: any[], providers: ServicePro
   providers = providers || [];
   const duplProviders: ServiceProvider[] = [];
 
-  normalizeProviders(providers)
-    .map((np) => np.provide)
-    .forEach((currToken, currIndex) => {
-      if (uniqDuplTokens.includes(currToken)) {
-        duplProviders.push(providers[currIndex]);
-      }
-    });
+  getTokens(providers).forEach((token, i) => {
+    if (uniqDuplTokens.includes(token)) {
+      duplProviders.push(providers[i]);
+    }
+  });
 
   const normDuplProviders = normalizeProviders(duplProviders);
 
