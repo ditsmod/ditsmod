@@ -345,12 +345,12 @@ export class ModuleManager {
       this.throwIfNormalizedProvider(modName, exp);
       if (isModuleWithParams(exp)) {
         meta.exportsWithParams.push(exp);
-      } else if (extensionsTokens.indexOf(exp) != -1) {
+      } else if (extensionsTokens.includes(exp)) {
         const index = extensionsTokens.indexOf(exp);
         const extensionProvider = rawMeta.extensions![index];
         this.checkExtension(modName, extensionProvider, exp);
         meta.exportsExtensions.push(extensionProvider);
-      } else if (isProvider(exp) || providersTokens.indexOf(exp) != -1) {
+      } else if (isProvider(exp) || providersTokens.includes(exp)) {
         this.findAndSetProvider(exp, rawMeta, meta);
       } else if (getModuleMetadata(exp)) {
         meta.exportsModules.push(exp);
