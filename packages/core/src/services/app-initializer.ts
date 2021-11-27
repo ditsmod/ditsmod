@@ -93,8 +93,8 @@ export class AppInitializer {
 
     this.moduleManager.getAllModulesMap().forEach((meta) => {
       const tokens = getTokens(meta.providersPerApp);
-      const moduleHasCollisions = tokens.some((t) => collisions.includes(t));
-      if (moduleHasCollisions) {
+      const moduleCausesCollisions = tokens.some((t) => collisions.includes(t));
+      if (moduleCausesCollisions) {
         moduleNames.push(meta.name);
       }
     });
