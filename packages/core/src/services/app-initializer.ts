@@ -25,7 +25,6 @@ import { LogMediator } from './log-mediator';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
 
-
 @Injectable()
 export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
@@ -80,12 +79,27 @@ export class AppInitializer {
       (d) => !rootTokens.includes(d) && !exportedMultiTokens.includes(d)
     );
     const mergedProviders = [...defaultProvidersPerApp, ...exportedProviders];
-    exportedTokensDuplicates = getTokensCollisions(exportedTokensDuplicates, mergedProviders);
-    if (exportedTokensDuplicates.length) {
-      const moduleName = getModuleName(meta.module);
-      throwProvidersCollisionError(moduleName, exportedTokensDuplicates);
+    const collisions = getTokensCollisions(exportedTokensDuplicates, mergedProviders);
+    if (collisions.length) {
+      const currentModuleName = getModuleName(meta.module);
+      const moduleNames = this.findModulesForCollisions(collisions);
+      throwProvidersCollisionError(currentModuleName, collisions, moduleNames);
     }
     this.meta.providersPerApp.unshift(...exportedProviders);
+  }
+
+  protected findModulesForCollisions(collisions: any[]) {
+    const moduleNames: string[] = [];
+
+    this.moduleManager.getAllModulesMap().forEach((meta) => {
+      const tokens = getTokens(meta.providersPerApp);
+      const moduleHasCollisions = tokens.some((t) => collisions.includes(t));
+      if (moduleHasCollisions) {
+        moduleNames.push(meta.name);
+      }
+    });
+
+    return moduleNames;
   }
 
   /**
@@ -197,7 +211,7 @@ export class AppInitializer {
     this.logMediator.printGlobalProviders('trace', { className: this.constructor.name }, globalProviders);
     const moduleFactory = new ModuleFactory();
     const appModule = moduleManager.getMetadata('root', true).module;
-    return moduleFactory.bootstrap(globalProviders, '', appModule, moduleManager, new Set);
+    return moduleFactory.bootstrap(globalProviders, '', appModule, moduleManager, new Set());
   }
 
   protected getGlobalProviders(moduleManager: ModuleManager) {
@@ -245,13 +259,33 @@ export class AppInitializer {
           continue;
         }
         const beforeToken = `BEFORE ${groupToken}`;
-        this.logMediator.startExtensionsGroupInit('debug', { className: this.constructor.name }, moduleName, beforeToken);
+        this.logMediator.startExtensionsGroupInit(
+          'debug',
+          { className: this.constructor.name },
+          moduleName,
+          beforeToken
+        );
         await extensionsManager.init(beforeToken);
-        this.logMediator.finishExtensionsGroupInit('debug', { className: this.constructor.name }, moduleName, beforeToken);
+        this.logMediator.finishExtensionsGroupInit(
+          'debug',
+          { className: this.constructor.name },
+          moduleName,
+          beforeToken
+        );
 
-        this.logMediator.startExtensionsGroupInit('debug', { className: this.constructor.name }, moduleName, groupToken);
+        this.logMediator.startExtensionsGroupInit(
+          'debug',
+          { className: this.constructor.name },
+          moduleName,
+          groupToken
+        );
         await extensionsManager.init(groupToken);
-        this.logMediator.finishExtensionsGroupInit('debug', { className: this.constructor.name }, moduleName, groupToken);
+        this.logMediator.finishExtensionsGroupInit(
+          'debug',
+          { className: this.constructor.name },
+          moduleName,
+          groupToken
+        );
         initedExtensionsGroups.add(groupToken);
       }
       extensionsManager.clearUnfinishedInitExtensions();

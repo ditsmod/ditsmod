@@ -175,6 +175,13 @@ export class ModuleManager {
   }
 
   /**
+   * Returns shapshot of current map for all modules.
+   */
+  getAllModulesMap() {
+    return new Map(this.map);
+  }
+
+  /**
    * Here "raw" means that it returns "raw" normalized metadata (without `this.copyMeta()`).
    */
   protected scanRawModule(modOrObj: AnyModule) {

@@ -138,6 +138,12 @@ describe('AppInitializer', () => {
   });
 
   describe('prepareProvidersPerApp()', () => {
+    beforeEach(() => {
+      const logMediator = new LogMediator(new LogManager());
+      moduleManager = new ModuleManager(logMediator);
+      mock = new AppInitializerMock(moduleManager, logMediator);
+    });
+
     it('should throw an error about non-identical duplicates', () => {
       class Provider1 {}
 
@@ -153,7 +159,7 @@ describe('AppInitializer', () => {
       class AppModule {}
 
       const meta = moduleManager.scanModule(AppModule);
-      const msg = 'Exporting providers to AppModule was failed: found collision for: Provider1.';
+      const msg = 'AppModule was failed: inside Module1, Module2 found collision with Provider1.';
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).toThrow(msg);
     });
 
@@ -446,21 +452,21 @@ describe('AppInitializer', () => {
     });
 
     describe('per a module', () => {
-      it('exporting duplicates of Provider2', async () => {
+      it('import Module2 and reexport Module1 with collision - Provider2', async () => {
         class Provider1 {}
         class Provider2 {}
         class Provider3 {}
 
         @Module({
-          exports: [Provider1, Provider2],
           providersPerMod: [Provider1, { provide: Provider2, useFactory: () => {} }],
+          exports: [Provider1, Provider2],
         })
         class Module1 {}
 
         @Module({
           imports: [Module1],
-          exports: [Module1, Provider2, Provider3],
           providersPerMod: [Provider2, Provider3],
+          exports: [Module1, Provider2, Provider3],
         })
         class Module2 {}
 
@@ -473,12 +479,12 @@ describe('AppInitializer', () => {
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
         const msg =
-          'Exporting providers to AppModule was failed: found collision for: ' +
+          'Exporting providers to AppModule was failed: found collision with ' +
           'Provider2. You should manually add this provider to AppModule.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
 
-      it('same export as in previous, but in import both module in root module', async () => {
+      it('import Module2 and Module1 with collision - Provider1', async () => {
         class Provider1 {}
         class Provider2 {}
 
@@ -503,7 +509,7 @@ describe('AppInitializer', () => {
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
         const msg =
-          'Exporting providers to AppModule was failed: found collision for: ' +
+          'Exporting providers to AppModule was failed: found collision with ' +
           'Provider1. You should manually add this provider to AppModule.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
@@ -536,7 +542,7 @@ describe('AppInitializer', () => {
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
         const msg =
-          'Exporting providers to AppModule was failed: found collision for: ' +
+          'Exporting providers to AppModule was failed: found collision with ' +
           'Provider1. You should manually add this provider to AppModule.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
@@ -673,7 +679,7 @@ describe('AppInitializer', () => {
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
         const msg =
-          'Exporting providers to AppModule was failed: found collision for: ' +
+          'Exporting providers to AppModule was failed: found collision with ' +
           'Provider2. You should manually add this provider to AppModule.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
@@ -719,7 +725,7 @@ describe('AppInitializer', () => {
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
         const msg =
-          'Exporting providers to AppModule was failed: found collision for: ' +
+          'Exporting providers to AppModule was failed: found collision with ' +
           'Provider1. You should manually add this provider to AppModule.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
@@ -772,7 +778,7 @@ describe('AppInitializer', () => {
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
         const msg =
-          'Exporting providers to AppModule was failed: found collision for: ' +
+          'Exporting providers to AppModule was failed: found collision with ' +
           'Provider0, Provider1, Request, InjectionToken NODE_REQ. You should manually add these providers to AppModule.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
