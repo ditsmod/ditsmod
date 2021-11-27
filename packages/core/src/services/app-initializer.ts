@@ -82,24 +82,24 @@ export class AppInitializer {
     const collisions = getCollisions(exportedTokensDuplicates, mergedProviders);
     if (collisions.length) {
       const currentModuleName = getModuleName(meta.module);
-      const moduleNames = this.findModulesForCollisions(collisions);
-      throwProvidersCollisionError(currentModuleName, collisions, moduleNames);
+      const modulesNames = this.findModulesCausesCollisions(collisions);
+      throwProvidersCollisionError(currentModuleName, collisions, modulesNames);
     }
     this.meta.providersPerApp.unshift(...exportedProviders);
   }
 
-  protected findModulesForCollisions(collisions: any[]) {
-    const moduleNames: string[] = [];
+  protected findModulesCausesCollisions(collisions: any[]) {
+    const modulesNames: string[] = [];
 
     this.moduleManager.getAllModulesMap().forEach((meta) => {
       const tokens = getTokens(meta.providersPerApp);
       const moduleCausesCollisions = tokens.some((t) => collisions.includes(t));
       if (moduleCausesCollisions) {
-        moduleNames.push(meta.name);
+        modulesNames.push(meta.name);
       }
     });
 
-    return moduleNames;
+    return modulesNames;
   }
 
   /**
