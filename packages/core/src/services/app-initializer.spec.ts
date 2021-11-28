@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ClassProvider, Injectable, InjectionToken } from '@ts-stack/di';
+import { Injectable } from '@ts-stack/di';
 
 import { Module } from '../decorators/module';
 import { RootModule } from '../decorators/root-module';
@@ -11,13 +11,12 @@ import { AppInitializer } from './app-initializer';
 import { LogManager } from './log-manager';
 import { FilterConfig, LogMediator } from './log-mediator';
 import { ModuleManager } from './module-manager';
-import { Extension, ModuleWithParams, ServiceProvider } from '../types/mix';
+import { ModuleWithParams, ServiceProvider } from '../types/mix';
 import { Controller } from '../decorators/controller';
 import { ModConfig } from '../models/mod-config';
-import { defaultProvidersPerReq } from './default-providers-per-req';
 import { ImportObj, MetadataPerMod1 } from '../types/metadata-per-mod';
 import { NODE_REQ } from '../constans';
-import { Request } from '..';
+import { Request } from '../services/request';
 
 describe('AppInitializer', () => {
   @Injectable()
@@ -47,6 +46,10 @@ describe('AppInitializer', () => {
 
     override bootstrapModuleFactory(moduleManager: ModuleManager) {
       return super.bootstrapModuleFactory(moduleManager);
+    }
+
+    override getResolvedProvidersPerApp() {
+      return super.getResolvedProvidersPerApp();
     }
   }
 
@@ -165,8 +168,9 @@ describe('AppInitializer', () => {
 
     it('should works with duplicates in feature module and root module', () => {
       class Provider1 {}
+      class Provider2 {}
 
-      @Module({ providersPerApp: [{ provide: Provider1, useClass: Provider1 }] })
+      @Module({ providersPerApp: [{ provide: Provider1, useClass: Provider2 }] })
       class Module1 {}
 
       @Module({ providersPerApp: [Provider1] })
@@ -181,6 +185,7 @@ describe('AppInitializer', () => {
       const meta = moduleManager.scanRootModule(AppModule);
       mock.mergeRootMetadata(meta);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
+      expect(mock.getResolvedProvidersPerApp()).toEqual([{ provide: Provider1, useClass: Provider2 }]);
       expect(mock.meta.providersPerApp.length).toBe(3);
       expect(mock.meta.resolvedCollisionsPerApp.length).toBe(1);
     });
