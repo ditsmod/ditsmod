@@ -22,7 +22,7 @@ describe('ImportsResolver', () => {
   let mock: ImportsResolverMock;
 
   beforeEach(() => {
-    mock = new ImportsResolverMock(null as any, null as any);
+    mock = new ImportsResolverMock(null as any, null as any, null as any);
   });
 
   describe('resolveImportedProviders', () => {
@@ -56,7 +56,7 @@ describe('ImportsResolver', () => {
         mock.fixDependecy(Module1, Provider1);
         mock.fixDependecy(Module2, Provider2);
         mock.fixDependecy(Module3, Provider3);
-        const msg = `Detected cyclic dependencies: [Provider2 in Module2] -> [Provider3 in Module3] -> [Provider2 in Module2]. It is started from [Provider1 in Module1].`;
+        const msg = `Detected circular dependencies: [Provider2 in Module2] -> [Provider3 in Module3] -> [Provider2 in Module2]. It is started from [Provider1 in Module1].`;
         expect(() => mock.fixDependecy(Module2, Provider2)).toThrow(msg);
       });
     });

@@ -134,7 +134,7 @@ describe('Application', () => {
 
     it('should throw error about no extension', async () => {
       @RootModule({
-        providersPerReq: [{ provide: MY_EXTENSIONS, useClass: Extension1, multi: true }],
+        providersPerApp: [{ provide: Router, useValue: 'fake'}],
         exports: [MY_EXTENSIONS],
       })
       class AppModule {}
