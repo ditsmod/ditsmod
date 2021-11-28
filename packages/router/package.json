@@ -15,7 +15,7 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "tsc -b -f",
+    "build": "rm -rf dist/* && tsc -b -f",
     "bench": "node --expose-gc dist/bench.js"
   },
   "devDependencies": {

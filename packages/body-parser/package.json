@@ -12,7 +12,7 @@
     "lib": "src"
   },
   "scripts": {
-    "build": "tsc -b -f"
+    "build": "rm -rf dist/* && tsc -b -f"
   },
   "keywords": [],
   "author": "",
