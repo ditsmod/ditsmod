@@ -2,7 +2,7 @@ import { Injector, ReflectiveInjector } from '@ts-stack/di';
 
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
 import { AppMetadataMap, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
-import { getUniqProviders } from './utils/get-uniq-providers';
+import { getLastProviders } from './utils/get-last-providers';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { getTokens } from './utils/get-tokens';
@@ -79,7 +79,7 @@ export class ImportsResolver {
       }
 
       for (const scope of scopes) {
-        const providers = getUniqProviders(meta[`providersPer${scope}`]);
+        const providers = getLastProviders(meta[`providersPer${scope}`]);
 
         getTokens(providers).forEach((token2, i) => {
           if (token2 === token1) {

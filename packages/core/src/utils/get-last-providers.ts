@@ -4,10 +4,9 @@ import { isMultiProvider } from './type-guards';
 
 /**
  * Returns last provider if the provider has the duplicate.
- * For the multi providers, removes duplicates only with identical `provide`
- * and `useValue`, `useClass`, `useExisting` or `useFactory`.
+ * Multi providers returns untouched.
  */
-export function getUniqProviders<T extends ServiceProvider = ServiceProvider>(providers: T[]) {
+export function getLastProviders<T extends ServiceProvider = ServiceProvider>(providers: T[]) {
   const tokens = getTokens(providers);
   const uniqProviders: T[] = [];
 

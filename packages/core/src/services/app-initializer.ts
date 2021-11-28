@@ -22,7 +22,7 @@ import { LogManager } from './log-manager';
 import { FilterConfig, LogMediator } from './log-mediator';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
-import { getUniqProviders } from '../utils/get-uniq-providers';
+import { getLastProviders } from '../utils/get-last-providers';
 
 export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
@@ -93,7 +93,7 @@ export class AppInitializer {
         errorMsg += `${moduleName} is not imported into the application.`;
         throw new Error(errorMsg);
       }
-      const provider = getUniqProviders(meta.providersPerApp).find((p) => getToken(p) === token);
+      const provider = getLastProviders(meta.providersPerApp).find((p) => getToken(p) === token);
       if (!provider) {
         errorMsg += `providersPerApp does not includes ${tokenName} in this module.`;
         throw new Error(errorMsg);
