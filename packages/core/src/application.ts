@@ -5,7 +5,7 @@ import * as https from 'https';
 import { RootMetadata } from './models/root-metadata';
 import { AppInitializer } from './services/app-initializer';
 import { LogManager } from './services/log-manager';
-import { FilterConfig, LogMediator } from './services/log-mediator';
+import { LogMediator } from './services/log-mediator';
 import { ModuleManager } from './services/module-manager';
 import { Logger } from './types/logger';
 import { ModuleType } from './types/mix';

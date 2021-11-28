@@ -41,7 +41,7 @@ export class AppInitializer {
    */
   bootstrapProvidersPerApp() {
     const meta = this.moduleManager.getMetadata('root', true);
-    this.mergeRootMetadata(meta);
+    this.mergeRootMetadata(meta.module);
     this.prepareProvidersPerApp(meta, this.moduleManager);
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLog();
@@ -52,11 +52,10 @@ export class AppInitializer {
    *
    * @param meta Metadata for the root module.
    */
-  protected mergeRootMetadata(meta: NormalizedModuleMetadata): void {
+  protected mergeRootMetadata(module: ModuleType | ModuleWithParams): void {
+    const serverMetadata = getModuleMetadata(module, true)! as RootMetadata;
     this.meta = new RootMetadata();
-    pickProperties(this.meta, meta);
-    const serverMetadata = getModuleMetadata(meta.module, true)! as RootMetadata;
-    this.meta.prefixPerApp = serverMetadata.prefixPerApp;
+    pickProperties(this.meta, serverMetadata);
   }
 
   /**

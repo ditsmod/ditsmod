@@ -11,7 +11,7 @@ import { AppInitializer } from './app-initializer';
 import { LogManager } from './log-manager';
 import { FilterConfig, LogMediator } from './log-mediator';
 import { ModuleManager } from './module-manager';
-import { ModuleWithParams, ServiceProvider } from '../types/mix';
+import { ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { Controller } from '../decorators/controller';
 import { ModConfig } from '../models/mod-config';
 import { ImportObj, MetadataPerMod1 } from '../types/metadata-per-mod';
@@ -32,8 +32,8 @@ describe('AppInitializer', () => {
       await this.bootstrapModulesAndExtensions();
     }
 
-    override mergeRootMetadata(meta: NormalizedModuleMetadata) {
-      return super.mergeRootMetadata(meta);
+    override mergeRootMetadata(module: ModuleType | ModuleWithParams) {
+      return super.mergeRootMetadata(module);
     }
 
     override collectProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
@@ -183,7 +183,7 @@ describe('AppInitializer', () => {
       class AppModule {}
 
       const meta = moduleManager.scanRootModule(AppModule);
-      mock.mergeRootMetadata(meta);
+      mock.mergeRootMetadata(meta.module);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
       expect(mock.getResolvedProvidersPerApp()).toEqual([{ provide: Provider1, useClass: Provider2 }]);
       expect(mock.meta.providersPerApp.length).toBe(3);
@@ -209,7 +209,7 @@ describe('AppInitializer', () => {
       class AppModule {}
 
       const meta = moduleManager.scanRootModule(AppModule);
-      mock.mergeRootMetadata(meta);
+      mock.mergeRootMetadata(meta.module);
       const msg = `AppModule failed: Provider1 mapped with Module0, but Module0 is not imported`;
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).toThrow(msg);
     });
@@ -237,7 +237,7 @@ describe('AppInitializer', () => {
       class AppModule {}
 
       const meta = moduleManager.scanRootModule(AppModule);
-      mock.mergeRootMetadata(meta);
+      mock.mergeRootMetadata(meta.module);
       const msg = `AppModule failed: Provider1 mapped with Module0, but providersPerApp does not includes Provider1`;
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).toThrow(msg);
     });
@@ -267,7 +267,7 @@ describe('AppInitializer', () => {
       class AppModule {}
 
       const meta = moduleManager.scanRootModule(AppModule);
-      mock.mergeRootMetadata(meta);
+      mock.mergeRootMetadata(meta.module);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
       expect(mock.meta.providersPerApp.length).toBe(3);
     });
@@ -276,7 +276,7 @@ describe('AppInitializer', () => {
       @RootModule({ imports: [] })
       class AppModule {}
       const meta = moduleManager.scanRootModule(AppModule);
-      mock.mergeRootMetadata(meta);
+      mock.mergeRootMetadata(meta.module);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
     });
   });
