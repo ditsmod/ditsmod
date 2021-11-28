@@ -5,7 +5,7 @@ export function throwProvidersCollisionError(moduleName: string, duplicates: any
   let example = '';
   if (modulesNames.length) {
     fromModules = `from ${modulesNames.join(', ')} `;
-    example = ` For example: resolvedCollisionsPerApp: [ [${namesArr[0]}, ${modulesNames[0]}] ]`;
+    example = ` For example: resolvedCollisionsPerApp: [ [${namesArr[0]}, ${modulesNames[0]}] ].`;
   }
   const provider = duplicates.length > 1 ? 'these providers' : 'this provider';
   const msg =

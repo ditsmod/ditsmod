@@ -41,7 +41,7 @@ export class ImportsResolver {
   protected resolveImportedProviders(metadataPerMod1: MetadataPerMod1) {
     const { importedTokensMap, meta } = metadataPerMod1;
     this.meta = meta;
-    this.extensionsTokens = getTokens([ExtensionsManager, ...importedTokensMap.extensions.keys()]);
+    this.extensionsTokens = getTokens([ExtensionsManager, MetadataPerMod1, ...importedTokensMap.extensions.keys()]);
     const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
 
     scopes.forEach((scope, i) => {
