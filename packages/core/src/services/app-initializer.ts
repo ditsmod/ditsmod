@@ -44,7 +44,7 @@ export class AppInitializer {
     this.meta = this.moduleManager.getMetadata('root', true);
     this.prepareProvidersPerApp();
     this.addDefaultProvidersPerApp();
-    this.createInjectorAndSetLog();
+    this.createInjectorAndSetLogMediator();
   }
 
   /**
@@ -220,7 +220,7 @@ export class AppInitializer {
   /**
    * Creates injector per the application and sets log.
    */
-  protected createInjectorAndSetLog() {
+  protected createInjectorAndSetLogMediator() {
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.meta.providersPerApp);
     const log = this.injectorPerApp.get(LogMediator) as LogMediator;
     log.bufferLogs = true;
@@ -263,7 +263,7 @@ export class AppInitializer {
   }
 
   protected async handleExtensions(appMetadataMap: AppMetadataMap) {
-    this.createInjectorAndSetLog();
+    this.createInjectorAndSetLogMediator();
     for (const [, metadataPerMod1] of appMetadataMap) {
       const initedExtensionsGroups = new Set<InjectionToken<Extension<any>[]>>();
       const { extensions, providersPerMod, name: moduleName } = metadataPerMod1.meta;
