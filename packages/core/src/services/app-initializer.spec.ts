@@ -60,6 +60,34 @@ describe('AppInitializer', () => {
   let mock: AppInitializerMock;
   let moduleManager: ModuleManager;
 
+  describe('mergeRootMetadata()', () => {
+    beforeEach(() => {
+      const logMediator = new LogMediator(new LogManager());
+      moduleManager = new ModuleManager(logMediator);
+      mock = new AppInitializerMock(moduleManager, logMediator);
+    });
+
+    it('should works with duplicates in feature module and root module', () => {
+      class Provider1 {}
+
+      @RootModule({
+        serverName: 'customServerName',
+        serverOptions: { isHttp2SecureServer: false },
+        listenOptions: { host: 'customHost', port: 3000 },
+        prefixPerApp: 'customPrefix',
+        providersPerApp: [Provider1],
+      })
+      class AppModule {}
+
+      mock.mergeRootMetadata(AppModule);
+      const {serverName, serverOptions, listenOptions, prefixPerApp } = mock.meta;
+      expect(serverName).toBe('customServerName');
+      expect(prefixPerApp).toBe('customPrefix');
+      expect(serverOptions).toEqual({ isHttp2SecureServer: false });
+      expect(listenOptions).toEqual({ host: 'customHost', port: 3000 });
+    });
+  });
+
   describe('collectProvidersPerApp()', () => {
     class Provider0 {}
     class Provider1 {}
