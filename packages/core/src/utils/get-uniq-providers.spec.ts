@@ -47,8 +47,7 @@ describe('getUniqProviders()', () => {
       const mp1: ValueProvider = { provide: Provider1, useValue: 'one', multi: true };
       const mp2: ValueProvider = { provide: Provider1, useValue: 'one', multi: true };
       const providers = [mp1, mp2];
-      const expectedProviders = [mp1];
-      expect(getUniqProviders(providers)).toEqual(expectedProviders);
+      expect(getUniqProviders(providers)).toEqual(providers);
     });
 
     it('same provide, but non same value', () => {
@@ -78,8 +77,7 @@ describe('getUniqProviders()', () => {
       const mp3: ValueProvider = { provide: Provider1, useValue: 'two', multi: true };
       const mp4: ValueProvider = { provide: Provider2, useValue: 'two', multi: true };
       const providers = [mp1, mp2, mp3, mp4];
-      const expectedProviders = [mp1, mp3, mp4];
-      expect(getUniqProviders(providers)).toEqual(expectedProviders);
+      expect(getUniqProviders(providers)).toEqual(providers);
     });
   });
 });

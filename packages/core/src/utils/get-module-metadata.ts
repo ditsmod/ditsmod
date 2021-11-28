@@ -6,6 +6,7 @@ import { ModuleType, ModuleWithParams } from '../types/mix';
 import { getModuleName } from './get-module-name';
 import { mergeArrays } from './merge-arrays';
 import { isForwardRef, isModule, isModuleWithParams, isRootModule } from './type-guards';
+import { getUniqProviders } from './get-uniq-providers';
 
 export function getModuleMetadata(
   modOrObj: ModuleType | ModuleWithParams,
@@ -33,10 +34,10 @@ export function getModuleMetadata(
     }
     const metadata = new Module(modMetadata);
     metadata.id = modWitParams.id;
-    metadata.providersPerApp = mergeArrays(modMetadata.providersPerApp, modWitParams.providersPerApp);
-    metadata.providersPerMod = mergeArrays(modMetadata.providersPerMod, modWitParams.providersPerMod);
-    metadata.providersPerRou = mergeArrays(modMetadata.providersPerRou, modWitParams.providersPerRou);
-    metadata.providersPerReq = mergeArrays(modMetadata.providersPerReq, modWitParams.providersPerReq);
+    metadata.providersPerApp = getUniqProviders(mergeArrays(modMetadata.providersPerApp, modWitParams.providersPerApp));
+    metadata.providersPerMod = getUniqProviders(mergeArrays(modMetadata.providersPerMod, modWitParams.providersPerMod));
+    metadata.providersPerRou = getUniqProviders(mergeArrays(modMetadata.providersPerRou, modWitParams.providersPerRou));
+    metadata.providersPerReq = getUniqProviders(mergeArrays(modMetadata.providersPerReq, modWitParams.providersPerReq));
     metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
     return metadata;
   } else {
