@@ -23,10 +23,10 @@ export class Application {
       try {
         const appInitializer = await this.init(appModule);
         const server = this.createServer(appInitializer);
-        server.listen(this.rootMeta.listenOptions, () => {
+        const { listenOptions } = this.rootMeta;
+        server.listen(listenOptions, () => {
           resolve({ server, logger: this.logMediator.logger });
-          const host = this.rootMeta.listenOptions.host || 'localhost';
-          appInitializer.serverListen(host, this.rootMeta.serverName, this.rootMeta.listenOptions.port!);
+          appInitializer.serverListen(listenOptions.host!, this.rootMeta.serverName, listenOptions.port!);
         });
       } catch (err) {
         this.logMediator.bufferLogs = false;
@@ -63,6 +63,9 @@ export class Application {
     const serverMetadata = getModuleMetadata(module, true) as RootMetadata;
     this.rootMeta = new RootMetadata();
     pickProperties(this.rootMeta, serverMetadata);
+    const { listenOptions } = this.rootMeta;
+    listenOptions.host = listenOptions.host || 'localhost';
+    listenOptions.port = listenOptions.port || 8080;
   }
 
   protected getAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
