@@ -21,7 +21,7 @@ import { Counter } from './counter';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ExtensionsManager } from './extensions-manager';
 import { LogManager } from './log-manager';
-import { LogMediator } from './log-mediator';
+import { FilterConfig, LogMediator } from './log-mediator';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
 import { getUniqProviders } from '../utils/get-uniq-providers';
@@ -168,6 +168,12 @@ export class AppInitializer {
   flushLogs() {
     this.logMediator.bufferLogs = false;
     this.logMediator.flush();
+  }
+
+  serverListen() {
+    const host = this.meta.listenOptions.host || 'localhost';
+    const filterConfig: FilterConfig = { className: this.constructor.name };
+    this.logMediator.serverListen('info', filterConfig, this.meta.serverName, host, this.meta.listenOptions.port);
   }
 
   async reinit(autocommit: boolean = true): Promise<void | Error> {

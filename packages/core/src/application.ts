@@ -24,9 +24,7 @@ export class Application {
         const server = this.createServer(appInitializer);
         server.listen(this.meta.listenOptions, () => {
           resolve({ server, logger: this.logMediator.logger });
-          const host = this.meta.listenOptions.host || 'localhost';
-          const filterConfig: FilterConfig = { className: this.constructor.name };
-          this.logMediator.serverListen('info', filterConfig, this.meta.serverName, host, this.meta.listenOptions.port);
+          appInitializer.serverListen();
         });
       } catch (err) {
         this.logMediator.bufferLogs = false;
