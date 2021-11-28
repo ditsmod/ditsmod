@@ -1,29 +1,26 @@
-import { Injectable, ReflectiveInjector, reflector } from '@ts-stack/di';
+import { Injectable, reflector } from '@ts-stack/di';
 
+import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES } from './constans';
+import { ModConfig } from './models/mod-config';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ProvidersMetadata } from './models/providers-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
-import { MetadataPerMod1, ImportsMap, ImportObj } from './types/metadata-per-mod';
+import { ImportObj, ImportsMap, MetadataPerMod1 } from './types/metadata-per-mod';
 import {
-  GuardItem,
-  DecoratorMetadata,
-  ModuleType,
+  DecoratorMetadata, ExtensionsProvider, GuardItem, ModuleType,
   ModuleWithParams,
   NormalizedGuard,
-  ServiceProvider,
-  ExtensionsProvider,
+  ServiceProvider
 } from './types/mix';
-import { getDuplicates } from './utils/get-duplicates';
+import { deepFreeze } from './utils/deep-freeze';
 import { getCollisions } from './utils/get-collisions';
+import { getDuplicates } from './utils/get-duplicates';
+import { getToken } from './utils/get-tokens';
 import { normalizeProviders } from './utils/ng-utils';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
 import { isController, isNormalizedProvider, isRootModule } from './utils/type-guards';
-import { deepFreeze } from './utils/deep-freeze';
-import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES } from './constans';
-import { ModConfig } from './models/mod-config';
-import { getToken } from './utils/get-tokens';
 
 /**
  * - imports and exports global providers;
@@ -92,7 +89,7 @@ export class ModuleFactory {
     modOrObj: ModuleType | ModuleWithParams,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModuleType | ModuleWithParams>,
-    guardsPerMod?: NormalizedGuard[],
+    guardsPerMod?: NormalizedGuard[]
   ) {
     const meta = moduleManager.getMetadata(modOrObj, true);
     this.#moduleManager = moduleManager;
