@@ -9,7 +9,7 @@ import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-l
 import { OasOptions } from '../types/oas-options';
 
 @Injectable()
-export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.Extension<edk.MetadataPerMod2[]> {
+export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.Extension<edk.MetadataPerMod2> {
   protected override getMetaPerRou(prefixPerApp: string, metadataPerMod1: edk.MetadataPerMod1) {
     const { controllersMetadata, prefixPerMod, guardsPerMod, meta } = metadataPerMod1;
 
