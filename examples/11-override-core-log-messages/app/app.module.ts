@@ -1,14 +1,14 @@
-import { RootModule, Log, Logger } from '@ditsmod/core';
+import { RootModule, LogMediator, Logger, FilterConfig } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
 import { HelloWorldController } from './hello-world.controller';
 
-class MyLog extends Log {
+class MyLogMediator extends LogMediator {
   /**
    * `serverName` is running at `host`:`port`.
    */
-  serverListen(level: keyof Logger, args: any[] = []) {
-    this._logger.log(level, `Here serverName: "${args[0]}", here host: "${args[1]}", and here port: "${args[2]}"`);
+  override serverListen(level: keyof Logger, filterConfig: FilterConfig = {}, ...args: any[]) {
+    this.setLog(level, filterConfig, `Here serverName: "${args[0]}", here host: "${args[1]}", and here port: "${args[2]}"`);
   }
 }
 
@@ -16,7 +16,7 @@ class MyLog extends Log {
   imports: [RouterModule],
   controllers: [HelloWorldController],
   providersPerApp: [
-    { provide: Log, useClass: MyLog }, // Here set your new MyLog
+    { provide: LogMediator, useClass: MyLogMediator }, // Here set your new MyLogMediator
   ],
 })
 export class AppModule {}

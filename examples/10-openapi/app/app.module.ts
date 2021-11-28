@@ -20,7 +20,7 @@ const openapiModuleWithParams = OpenapiModule.withParams(providersPerApp);
   // Here works the application and serves OpenAPI documentation.
   listenOptions: { host: 'localhost', port: 8080 },
   imports: [RouterModule, openapiModuleWithParams],
-  exports: [openapiModuleWithParams],
-  controllers: [HelloWorldController]
+  controllers: [HelloWorldController],
+  resolvedCollisionsPerApp: [[OAS_OBJECT, openapiModuleWithParams]],
 })
 export class AppModule {}

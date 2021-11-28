@@ -7,9 +7,9 @@ import { MyExtension } from './my-extension';
 @RootModule({
   imports: [RouterModule],
   controllers: [HelloWorldController],
-  providersPerApp: [
+  extensions: [
     { provide: edk.PRE_ROUTER_EXTENSIONS, useClass: MyExtension, multi: true },
   ],
-  extensions: [edk.PRE_ROUTER_EXTENSIONS],
+  exports: [edk.PRE_ROUTER_EXTENSIONS],
 })
 export class AppModule {}
