@@ -103,13 +103,13 @@ describe('AppInitializer', () => {
     });
 
     it('should collects providers from exports array without imports them', () => {
-      const meta = moduleManager.scanModule(AppModule);
+      const meta = moduleManager.scanRootModule(AppModule);
       const providersPerApp = mock.collectProvidersPerApp(meta, moduleManager);
       expect(providersPerApp.includes(Provider0)).toBe(true);
     });
 
     it('should collects providers in particular order', () => {
-      const meta = moduleManager.scanModule(AppModule);
+      const meta = moduleManager.scanRootModule(AppModule);
       const providersPerApp = mock.collectProvidersPerApp(meta, moduleManager);
       expect(providersPerApp).toEqual([Provider1, Provider2, Provider3, Provider4, Provider5, Provider6, Provider0]);
     });
@@ -158,8 +158,8 @@ describe('AppInitializer', () => {
       })
       class AppModule {}
 
-      const meta = moduleManager.scanModule(AppModule);
-      const msg = 'AppModule was failed: inside Module1, Module2 found collision with Provider1.';
+      const meta = moduleManager.scanRootModule(AppModule);
+      const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider1.';
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).toThrow(msg);
     });
 
@@ -174,14 +174,67 @@ describe('AppInitializer', () => {
 
       @RootModule({
         imports: [Module1, Module2],
-        providersPerApp: [Provider1],
+        resolvedCollisionsPerApp: [[Provider1, Module1]],
       })
       class AppModule {}
 
-      const meta = moduleManager.scanModule(AppModule);
+      const meta = moduleManager.scanRootModule(AppModule);
       mock.mergeRootMetadata(meta);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
       expect(mock.meta.providersPerApp.length).toBe(3);
+      expect(mock.meta.resolvedCollisionsPerApp.length).toBe(1);
+    });
+
+    it('should throw an error because resolvedCollisionsPerApp not properly setted module', () => {
+      class Provider1 {}
+
+      @Module()
+      class Module0 {}
+
+      @Module({ providersPerApp: [{ provide: Provider1, useClass: Provider1 }] })
+      class Module1 {}
+
+      @Module({ providersPerApp: [Provider1] })
+      class Module2 {}
+
+      @RootModule({
+        imports: [Module1, Module2],
+        resolvedCollisionsPerApp: [[Provider1, Module0]],
+      })
+      class AppModule {}
+
+      const meta = moduleManager.scanRootModule(AppModule);
+      mock.mergeRootMetadata(meta);
+      const msg = `AppModule failed: Provider1 mapped with Module0, but Module0 is not imported`;
+      expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).toThrow(msg);
+    });
+
+    it('should throw an error because resolvedCollisionsPerApp not properly setted provider', () => {
+      class Provider1 {}
+      class Provider2 {}
+
+      @Module({
+        providersPerMod: [Provider2],
+        exports: [Provider2],
+      })
+      class Module0 {}
+
+      @Module({ providersPerApp: [{ provide: Provider1, useClass: Provider1 }] })
+      class Module1 {}
+
+      @Module({ providersPerApp: [Provider1] })
+      class Module2 {}
+
+      @RootModule({
+        imports: [Module0, Module1, Module2],
+        resolvedCollisionsPerApp: [[Provider1, Module0]],
+      })
+      class AppModule {}
+
+      const meta = moduleManager.scanRootModule(AppModule);
+      mock.mergeRootMetadata(meta);
+      const msg = `AppModule failed: Provider1 mapped with Module0, but providersPerApp does not includes Provider1`;
+      expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).toThrow(msg);
     });
 
     it('should works with identical duplicates', () => {
@@ -198,7 +251,7 @@ describe('AppInitializer', () => {
       })
       class AppModule {}
 
-      const meta = moduleManager.scanModule(AppModule);
+      const meta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
     });
 
@@ -208,7 +261,7 @@ describe('AppInitializer', () => {
       @RootModule({ providersPerApp: [Provider1, Provider1, { provide: Provider1, useClass: Provider1 }] })
       class AppModule {}
 
-      const meta = moduleManager.scanModule(AppModule);
+      const meta = moduleManager.scanRootModule(AppModule);
       mock.mergeRootMetadata(meta);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
       expect(mock.meta.providersPerApp.length).toBe(3);
@@ -217,7 +270,7 @@ describe('AppInitializer', () => {
     it('should works with empty "imports" array in root module', () => {
       @RootModule({ imports: [] })
       class AppModule {}
-      const meta = moduleManager.scanModule(AppModule);
+      const meta = moduleManager.scanRootModule(AppModule);
       mock.mergeRootMetadata(meta);
       expect(() => mock.prepareProvidersPerApp(meta, moduleManager)).not.toThrow();
     });
@@ -478,9 +531,7 @@ describe('AppInitializer', () => {
 
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
-        const msg =
-          'Exporting providers to AppModule was failed: found collision with ' +
-          'Provider2. You should manually add this provider to AppModule.';
+        const msg = 'AppModule failed: exports from several modules causes collision with Provider2.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
 
@@ -508,9 +559,7 @@ describe('AppInitializer', () => {
 
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
-        const msg =
-          'Exporting providers to AppModule was failed: found collision with ' +
-          'Provider1. You should manually add this provider to AppModule.';
+        const msg = 'AppModule failed: exports from several modules causes collision with Provider1.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
 
@@ -541,9 +590,7 @@ describe('AppInitializer', () => {
 
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
-        const msg =
-          'Exporting providers to AppModule was failed: found collision with ' +
-          'Provider1. You should manually add this provider to AppModule.';
+        const msg = 'AppModule failed: exports from several modules causes collision with Provider1.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
 
@@ -678,9 +725,7 @@ describe('AppInitializer', () => {
 
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
-        const msg =
-          'Exporting providers to AppModule was failed: found collision with ' +
-          'Provider2. You should manually add this provider to AppModule.';
+        const msg = 'AppModule failed: exports from several modules causes collision with Provider2.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
 
@@ -724,9 +769,7 @@ describe('AppInitializer', () => {
 
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
-        const msg =
-          'Exporting providers to AppModule was failed: found collision with ' +
-          'Provider1. You should manually add this provider to AppModule.';
+        const msg = 'AppModule failed: exports from several modules causes collision with Provider1.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
 
@@ -778,8 +821,7 @@ describe('AppInitializer', () => {
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
         const msg =
-          'Exporting providers to AppModule was failed: found collision with ' +
-          'Provider0, Provider1, Request, InjectionToken NODE_REQ. You should manually add these providers to AppModule.';
+          'AppModule failed: exports from several modules causes collision with Provider0, Provider1, Request, InjectionToken NODE_REQ.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
     });

@@ -24,6 +24,10 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   exportsProvidersPerMod: ServiceProvider[] = [];
   exportsProvidersPerRou: ServiceProvider[] = [];
   exportsProvidersPerReq: ServiceProvider[] = [];
+  resolvedCollisionsPerApp: [any, ModuleType | ModuleWithParams][] = [];
+  resolvedCollisionsPerMod: [any, ModuleType | ModuleWithParams][] = [];
+  resolvedCollisionsPerRou: [any, ModuleType | ModuleWithParams][] = [];
+  resolvedCollisionsPerReq: [any, ModuleType | ModuleWithParams][] = [];
   extensions: ExtensionsProvider[] = [];
   /**
    * Here must be tokens only (not objects with `provide` property).

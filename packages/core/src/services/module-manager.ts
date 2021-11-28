@@ -226,6 +226,10 @@ export class ModuleManager {
     meta.providersPerMod = meta.providersPerMod.slice();
     meta.providersPerRou = meta.providersPerRou.slice();
     meta.providersPerReq = meta.providersPerReq.slice();
+    meta.resolvedCollisionsPerApp = meta.resolvedCollisionsPerApp.slice();
+    meta.resolvedCollisionsPerMod = meta.resolvedCollisionsPerMod.slice();
+    meta.resolvedCollisionsPerRou = meta.resolvedCollisionsPerRou.slice();
+    meta.resolvedCollisionsPerReq = meta.resolvedCollisionsPerReq.slice();
     return meta;
   }
 
@@ -346,10 +350,17 @@ export class ModuleManager {
       ...(rawMeta.providersPerReq || []),
     ]);
 
+    [
+      ...(rawMeta.resolvedCollisionsPerApp || []),
+      ...(rawMeta.resolvedCollisionsPerMod || []),
+      ...(rawMeta.resolvedCollisionsPerRou || []),
+      ...(rawMeta.resolvedCollisionsPerReq || []),
+    ].forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
+
     rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
       this.throwIfUndefined(modName, 'Ex', exp, i);
-      this.throwIfNormalizedProvider(modName, exp);
+      this.throwExportsIfNormalizedProvider(modName, exp);
       if (isModuleWithParams(exp)) {
         meta.exportsWithParams.push(exp);
       } else if (extensionsTokens.includes(exp)) {
@@ -410,10 +421,20 @@ export class ModuleManager {
     throw new TypeError(msg);
   }
 
-  protected throwIfNormalizedProvider(modName: string, exp: any) {
-    if (isNormalizedProvider(exp)) {
-      const providerName = exp.provide.name || exp.provide;
-      const msg = `Exporting "${providerName}" from "${modName}" failed: in "exports" array must be includes tokens only.`;
+  protected throwIfNormalizedProvider(moduleName: string, provider: any) {
+    if (isNormalizedProvider(provider)) {
+      const providerName = provider.provide.name || provider.provide;
+      const msg =
+        `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
+        `"resolvedCollisionPer*" array must be includes tokens only.`;
+      throw new TypeError(msg);
+    }
+  }
+
+  protected throwExportsIfNormalizedProvider(moduleName: string, provider: any) {
+    if (isNormalizedProvider(provider)) {
+      const providerName = provider.provide.name || provider.provide;
+      const msg = `Exporting "${providerName}" from "${moduleName}" failed: in "exports" array must be includes tokens only.`;
       throw new TypeError(msg);
     }
   }

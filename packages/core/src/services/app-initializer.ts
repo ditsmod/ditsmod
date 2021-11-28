@@ -11,7 +11,7 @@ import { RequestListener } from '../types/server-options';
 import { getDuplicates } from '../utils/get-duplicates';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
-import { getTokens } from '../utils/get-tokens';
+import { getToken, getTokens } from '../utils/get-tokens';
 import { getCollisions } from '../utils/get-collisions';
 import { normalizeProviders } from '../utils/ng-utils';
 import { pickProperties } from '../utils/pick-properties';
@@ -72,11 +72,12 @@ export class AppInitializer {
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.provide);
     const exportedMultiTokens = exportedNormProviders.filter((np) => np.multi).map((np) => np.provide);
+    const resolvedTokens = this.meta.resolvedCollisionsPerApp.map(([token]) => token);
     const defaultTokens = getTokens(defaultProvidersPerApp);
     const rootTokens = getTokens(this.meta.providersPerApp);
     const mergedTokens = [...exportedTokens, ...defaultTokens];
     let exportedTokensDuplicates = getDuplicates(mergedTokens).filter(
-      (d) => !rootTokens.includes(d) && !exportedMultiTokens.includes(d)
+      (d) => !resolvedTokens.includes(d) && !rootTokens.includes(d) && !exportedMultiTokens.includes(d)
     );
     const mergedProviders = [...defaultProvidersPerApp, ...exportedProviders];
     const collisions = getCollisions(exportedTokensDuplicates, mergedProviders);
@@ -85,7 +86,33 @@ export class AppInitializer {
       const modulesNames = this.findModulesCausesCollisions(collisions);
       throwProvidersCollisionError(currentModuleName, collisions, modulesNames);
     }
+    exportedProviders.push(...this.getResolvedProvidersPerApp());
     this.meta.providersPerApp.unshift(...exportedProviders);
+  }
+
+  protected getResolvedProvidersPerApp() {
+    const rootMeta = this.moduleManager.getMetadata('root', true);
+    const resolvedProviders: ServiceProvider[] = [];
+    this.meta.resolvedCollisionsPerApp.forEach(([token, module]) => {
+      const moduleName = getModuleName(module);
+      const tokenName = token.name || token;
+      const meta = this.moduleManager.getMetadata(module);
+      let errorMsg =
+        `Resolving collisions for providersPerApp in ${rootMeta.name} failed: ` +
+        `${tokenName} mapped with ${moduleName}, but `;
+      if (!meta) {
+        errorMsg += `${moduleName} is not imported into the application.`;
+        throw new Error(errorMsg);
+      }
+      const provider = meta.providersPerApp.find((p) => getToken(p) === token);
+      if (!provider) {
+        errorMsg += `providersPerApp does not includes ${tokenName} in this module.`;
+        throw new Error(errorMsg);
+      }
+      resolvedProviders.push(provider);
+    });
+
+    return resolvedProviders;
   }
 
   protected findModulesCausesCollisions(collisions: any[]) {

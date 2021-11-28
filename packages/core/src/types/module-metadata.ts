@@ -30,4 +30,8 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
    */
   extensionsMeta?: T;
+  resolvedCollisionsPerApp?: [any, ModuleType | ModuleWithParams][];
+  resolvedCollisionsPerMod?: [any, ModuleType | ModuleWithParams][];
+  resolvedCollisionsPerRou?: [any, ModuleType | ModuleWithParams][];
+  resolvedCollisionsPerReq?: [any, ModuleType | ModuleWithParams][];
 }

@@ -3,7 +3,7 @@ import { ListenOptions } from 'net';
 
 import { ServerOptions } from '../types/server-options';
 import { HttpModule } from '../types/http-module';
-import { ServiceProvider, ExtensionsProvider } from '../types/mix';
+import { ServiceProvider, ExtensionsProvider, ModuleType, ModuleWithParams } from '../types/mix';
 
 export class RootMetadata {
   httpModule: HttpModule = http;
@@ -15,5 +15,6 @@ export class RootMetadata {
    * Providers per the `Application`.
    */
   providersPerApp: ServiceProvider[] = [];
+  resolvedCollisionsPerApp: [any, ModuleType | ModuleWithParams][] = [];
   extensions: ExtensionsProvider[] = [];
 }
