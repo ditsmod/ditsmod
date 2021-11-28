@@ -1,4 +1,4 @@
-import { Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
+import { InjectionToken, ReflectiveInjector } from '@ts-stack/di';
 
 import { ImportsResolver } from '../imports-resolver';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
@@ -9,12 +9,10 @@ import { ImportsMap, MetadataPerMod1 } from '../types/metadata-per-mod';
 import { AppMetadataMap, Extension, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { RequestListener } from '../types/server-options';
 import { getDuplicates } from '../utils/get-duplicates';
-import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { getToken, getTokens } from '../utils/get-tokens';
 import { getCollisions } from '../utils/get-collisions';
 import { normalizeProviders } from '../utils/ng-utils';
-import { pickProperties } from '../utils/pick-properties';
 import { throwProvidersCollisionError } from '../utils/throw-providers-collision-error';
 import { isRootModule } from '../utils/type-guards';
 import { Counter } from './counter';
@@ -26,36 +24,27 @@ import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
 import { getUniqProviders } from '../utils/get-uniq-providers';
 
-@Injectable()
 export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
   protected preRouter: PreRouter;
-  protected meta: RootMetadata;
+  protected meta: NormalizedModuleMetadata;
   protected logManager: LogManager;
   protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
 
-  constructor(protected moduleManager: ModuleManager, protected logMediator: LogMediator) {}
+  constructor(
+    protected rootMeta: RootMetadata,
+    protected moduleManager: ModuleManager,
+    protected logMediator: LogMediator
+  ) {}
 
   /**
    * _Note:_ after call this method, you need call `this.flush()`.
    */
   bootstrapProvidersPerApp() {
-    const meta = this.moduleManager.getMetadata('root', true);
-    this.mergeRootMetadata(meta.module);
-    this.prepareProvidersPerApp(meta, this.moduleManager);
+    this.meta = this.moduleManager.getMetadata('root', true);
+    this.prepareProvidersPerApp();
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLog();
-  }
-
-  /**
-   * Merge AppModule metadata with default metadata for root module.
-   *
-   * @param meta Metadata for the root module.
-   */
-  protected mergeRootMetadata(module: ModuleType | ModuleWithParams): void {
-    const serverMetadata = getModuleMetadata(module, true)! as RootMetadata;
-    this.meta = new RootMetadata();
-    pickProperties(this.meta, serverMetadata);
   }
 
   /**
@@ -64,11 +53,11 @@ export class AppInitializer {
    *
    * @param meta root metadata.
    */
-  protected prepareProvidersPerApp(meta: NormalizedModuleMetadata, moduleManager: ModuleManager) {
+  protected prepareProvidersPerApp() {
     // Here we work only with providers declared at the application level.
 
     this.unfinishedScanModules.clear();
-    const exportedProviders = this.collectProvidersPerApp(meta, moduleManager);
+    const exportedProviders = this.collectProvidersPerApp(this.meta);
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.provide);
     const exportedMultiTokens = exportedNormProviders.filter((np) => np.multi).map((np) => np.provide);
@@ -82,7 +71,7 @@ export class AppInitializer {
     const mergedProviders = [...defaultProvidersPerApp, ...exportedProviders];
     const collisions = getCollisions(exportedTokensDuplicates, mergedProviders);
     if (collisions.length) {
-      const currentModuleName = getModuleName(meta.module);
+      const currentModuleName = getModuleName(this.meta.module);
       const modulesNames = this.findModulesCausesCollisions(collisions);
       throwProvidersCollisionError(currentModuleName, collisions, modulesNames);
     }
@@ -132,7 +121,7 @@ export class AppInitializer {
   /**
    * Recursively collects per app providers from non-root modules.
    */
-  protected collectProvidersPerApp(meta1: NormalizedModuleMetadata, moduleManager: ModuleManager) {
+  protected collectProvidersPerApp(meta1: NormalizedModuleMetadata) {
     const modules = [
       ...meta1.importsModules,
       ...meta1.importsWithParams,
@@ -145,9 +134,9 @@ export class AppInitializer {
       if (this.unfinishedScanModules.has(mod)) {
         continue;
       }
-      const meta2 = moduleManager.getMetadata(mod, true);
+      const meta2 = this.moduleManager.getMetadata(mod, true);
       this.unfinishedScanModules.add(mod);
-      providersPerApp.push(...this.collectProvidersPerApp(meta2, moduleManager));
+      providersPerApp.push(...this.collectProvidersPerApp(meta2));
       this.unfinishedScanModules.delete(mod);
     }
     const currProvidersPerApp = isRootModule(meta1) ? [] : meta1.providersPerApp;
@@ -161,7 +150,7 @@ export class AppInitializer {
     importsResolver.resolve();
     await this.handleExtensions(appMetadataMap);
     this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
-    return this.meta;
+    return appMetadataMap;
   }
 
   flushLogs() {
@@ -169,10 +158,9 @@ export class AppInitializer {
     this.logMediator.flush();
   }
 
-  serverListen() {
-    const host = this.meta.listenOptions.host || 'localhost';
+  serverListen(host: string, serverName: string, port: number) {
     const filterConfig: FilterConfig = { className: this.constructor.name };
-    this.logMediator.serverListen('info', filterConfig, this.meta.serverName, host, this.meta.listenOptions.port);
+    this.logMediator.serverListen('info', filterConfig, serverName, host, port);
   }
 
   async reinit(autocommit: boolean = true): Promise<void | Error> {
@@ -222,7 +210,7 @@ export class AppInitializer {
     this.logManager = this.logMediator.getLogManager();
     this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
-      { provide: RootMetadata, useValue: this.meta },
+      { provide: RootMetadata, useValue: this.rootMeta },
       { provide: ModuleManager, useValue: this.moduleManager },
       { provide: LogManager, useValue: this.logManager },
       { provide: AppInitializer, useValue: this }

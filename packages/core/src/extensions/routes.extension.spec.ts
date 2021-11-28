@@ -13,13 +13,14 @@ import { DefaultLogger } from '../services/default-logger';
 import { AppInitializer } from '../services/app-initializer';
 import { LogMediator } from '../services/log-mediator';
 import { LogManager } from '../services/log-manager';
+import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 
 xdescribe('RoutesExtension', () => {
   @Injectable()
   class MockAppInitializer extends AppInitializer {
     override moduleManager: ModuleManager;
     override injectorPerApp: ReflectiveInjector;
-    override meta = new RootMetadata();
+    override meta = new NormalizedModuleMetadata();
 
     override bootstrapModuleFactory(moduleManager: ModuleManager) {
       return super.bootstrapModuleFactory(moduleManager);
