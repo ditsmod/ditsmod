@@ -44,8 +44,8 @@ describe('AppInitializer', () => {
       return super.bootstrapModuleFactory(moduleManager);
     }
 
-    override getResolvedProvidersPerApp() {
-      return super.getResolvedProvidersPerApp();
+    override getResolvedCollisionsPerApp() {
+      return super.getResolvedCollisionsPerApp();
     }
   }
 
@@ -182,7 +182,7 @@ describe('AppInitializer', () => {
 
       mock.meta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp()).not.toThrow();
-      expect(mock.getResolvedProvidersPerApp()).toEqual([{ provide: Provider1, useClass: Provider2 }]);
+      expect(mock.getResolvedCollisionsPerApp()).toEqual([{ provide: Provider1, useClass: Provider2 }]);
       expect(mock.meta.providersPerApp.length).toBe(3);
       expect(mock.meta.resolvedCollisionsPerApp.length).toBe(1);
     });

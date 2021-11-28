@@ -75,11 +75,11 @@ export class AppInitializer {
       const modulesNames = this.findModulesCausesCollisions(collisions);
       throwProvidersCollisionError(currentModuleName, collisions, modulesNames);
     }
-    exportedProviders.push(...this.getResolvedProvidersPerApp());
+    exportedProviders.push(...this.getResolvedCollisionsPerApp());
     this.meta.providersPerApp.unshift(...exportedProviders);
   }
 
-  protected getResolvedProvidersPerApp() {
+  protected getResolvedCollisionsPerApp() {
     const rootMeta = this.moduleManager.getMetadata('root', true);
     const resolvedProviders: ServiceProvider[] = [];
     this.meta.resolvedCollisionsPerApp.forEach(([token, module]) => {
