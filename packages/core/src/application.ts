@@ -23,10 +23,10 @@ export class Application {
       try {
         const appInitializer = await this.init(appModule);
         const server = this.createServer(appInitializer);
-        const { listenOptions } = this.rootMeta;
+        const { listenOptions, serverName } = this.rootMeta;
         server.listen(listenOptions, () => {
           resolve({ server, logger: this.logMediator.logger });
-          appInitializer.serverListen(listenOptions.host!, this.rootMeta.serverName, listenOptions.port!);
+          appInitializer.serverListen(listenOptions.host!, serverName, listenOptions.port!);
         });
       } catch (err) {
         this.logMediator.bufferLogs = false;
