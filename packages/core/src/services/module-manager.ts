@@ -177,7 +177,7 @@ export class ModuleManager {
   /**
    * Returns shapshot of current map for all modules.
    */
-  getAllModulesMap() {
+  getModulesMap() {
     return new Map(this.map);
   }
 

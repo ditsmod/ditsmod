@@ -118,7 +118,7 @@ export class AppInitializer {
   protected findModulesCausesCollisions(collisions: any[]) {
     const modulesNames: string[] = [];
 
-    this.moduleManager.getAllModulesMap().forEach((meta) => {
+    this.moduleManager.getModulesMap().forEach((meta) => {
       const tokens = getTokens(meta.providersPerApp);
       const moduleCausesCollisions = tokens.some((t) => collisions.includes(t));
       if (moduleCausesCollisions) {
