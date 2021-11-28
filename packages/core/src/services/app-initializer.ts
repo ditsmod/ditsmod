@@ -24,6 +24,7 @@ import { LogManager } from './log-manager';
 import { LogMediator } from './log-mediator';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
+import { getUniqProviders } from '../utils/get-uniq-providers';
 
 @Injectable()
 export class AppInitializer {
@@ -104,7 +105,7 @@ export class AppInitializer {
         errorMsg += `${moduleName} is not imported into the application.`;
         throw new Error(errorMsg);
       }
-      const provider = meta.providersPerApp.find((p) => getToken(p) === token);
+      const provider = getUniqProviders(meta.providersPerApp).find((p) => getToken(p) === token);
       if (!provider) {
         errorMsg += `providersPerApp does not includes ${tokenName} in this module.`;
         throw new Error(errorMsg);
