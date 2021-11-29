@@ -1,6 +1,6 @@
 import { Injectable, InjectionToken, Injector } from '@ts-stack/di';
 
-import { AnyFn, Extension } from '../types/mix';
+import { Extension } from '../types/mix';
 import { Counter } from './counter';
 import { LogMediator } from './log-mediator';
 
@@ -12,7 +12,6 @@ export class ExtensionsManagerPerApp {
   }
 
   setData<T>(extensionsGroupToken: string | InjectionToken<Extension<T>[]>, data: T[]) {
-    console.log('setData:', (data[0] as any)?.metaForExtensionsPerRouArr)
     let arr = this.map.get(extensionsGroupToken);
     if (arr) {
       arr.push(...data);

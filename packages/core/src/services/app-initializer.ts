@@ -280,8 +280,6 @@ export class AppInitializer {
     const len = metadataPerMod1Arr.length;
     for (let i = 0; i < len; i++) {
       const metadataPerMod1 = metadataPerMod1Arr[i];
-      console.log('='.repeat(80))
-      console.log(metadataPerMod1.meta.name)
       const initedExtensionsGroups = new Set<InjectionToken<Extension<any>[]>>();
       const { extensions, providersPerMod, name: moduleName } = metadataPerMod1.meta;
       const { extensionsPerApp, extensionsPerMod } = this.splitExtensions(extensions);
@@ -308,7 +306,6 @@ export class AppInitializer {
           beforeToken
         );
         const resultBefore = await extensionsManagerPerMod.init(beforeToken);
-        console.log(beforeToken)
         extensionsManagerPerApp.setData(beforeToken, resultBefore);
         this.logMediator.finishExtensionsGroupInit(
           'debug',
@@ -324,7 +321,6 @@ export class AppInitializer {
           groupToken
         );
         const result = await extensionsManagerPerMod.init(groupToken);
-        console.log(groupToken)
         extensionsManagerPerApp.setData(groupToken, result);
         this.logMediator.finishExtensionsGroupInit(
           'debug',

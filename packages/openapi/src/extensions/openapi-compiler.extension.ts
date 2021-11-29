@@ -50,7 +50,6 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
       metaForExtensionsPerRouArr.forEach(({ providersPerRou }) => {
         const injectorPerMod = this.injector.resolveAndCreateChild(providersPerMod);
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
-        console.log('compile:', metadataPerMod2.providersPerRou)
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
         const oasRouteMeta = injectorPerRou.get(OasRouteMeta) as OasRouteMeta;
         const { httpMethod, oasPath, path, guards, operationObject } = oasRouteMeta;
