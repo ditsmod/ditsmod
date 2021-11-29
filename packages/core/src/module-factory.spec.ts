@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { Controller, ControllerMetadata } from './decorators/controller';
 import { Module } from './decorators/module';
@@ -16,11 +16,7 @@ import { LogMediator } from './services/log-mediator';
 import { ModuleManager } from './services/module-manager';
 import { Logger, LoggerConfig } from './types/logger';
 import { ImportObj, ImportsMap, MetadataPerMod1 } from './types/metadata-per-mod';
-import {
-  DecoratorMetadata,
-  Extension,
-  ExtensionsProvider, ModuleType, NormalizedGuard, ServiceProvider
-} from './types/mix';
+import { DecoratorMetadata, ExtensionsProvider, ModuleType, NormalizedGuard, ServiceProvider } from './types/mix';
 import { Router } from './types/router';
 
 describe('ModuleFactory', () => {
@@ -42,10 +38,6 @@ describe('ModuleFactory', () => {
 
     override exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata & ImportsMap) {
       return super.exportGlobalProviders(moduleManager, globalProviders);
-    }
-
-    override quickCheckMetadata(meta: NormalizedModuleMetadata) {
-      return super.quickCheckMetadata(meta);
     }
 
     override getControllersMetadata() {
@@ -343,88 +335,6 @@ describe('ModuleFactory', () => {
     });
   });
 
-  describe('quickCheckMetadata()', () => {
-    it('should throw an error, when no export and no controllers', () => {
-      class Provider1 {}
-      class Provider2 {}
-
-      @Module({
-        providersPerMod: [Provider1, Provider2],
-      })
-      class Module1 {}
-
-      moduleManager.scanModule(Module1);
-      const meta = moduleManager.getMetadata(Module1, true);
-      expect(() => mock.quickCheckMetadata(meta)).toThrow(/Importing MockModule failed: this module should have/);
-    });
-
-    it('should works with extension only', () => {
-      class Ext implements Extension<any> {
-        async init() {}
-      }
-      const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
-
-      @Module({
-        extensions: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
-        exports: [GROUP1_EXTENSIONS],
-      })
-      class Module1 {}
-
-      moduleManager.scanModule(Module1);
-      const meta = moduleManager.getMetadata(Module1, true);
-      expect(() => mock.quickCheckMetadata(meta)).not.toThrow();
-    });
-
-    it('should throw an error, during imports module without export and without controllers', () => {
-      class Provider1 {}
-      class Provider2 {}
-
-      @Module({
-        providersPerMod: [Provider1, Provider2],
-      })
-      class Module1 {}
-
-      @Module({
-        imports: [Module1],
-      })
-      class Module2 {}
-
-      moduleManager.scanModule(Module2);
-      const meta = moduleManager.getMetadata(Module2, true);
-      expect(() => mock.quickCheckMetadata(meta)).toThrow(/Importing MockModule failed: this module should have/);
-    });
-
-    it('should not throw an error, when exports some provider', () => {
-      class Provider1 {}
-      class Provider2 {}
-
-      @Module({
-        exports: [Provider1],
-        providersPerMod: [Provider1, Provider2],
-      })
-      class Module1 {}
-
-      moduleManager.scanModule(Module1);
-      const meta = moduleManager.getMetadata(Module1, true);
-      expect(() => mock.quickCheckMetadata(meta)).not.toThrow();
-    });
-
-    it('should not throw an error, when declare some controller', () => {
-      class Provider1 {}
-      class Provider2 {}
-
-      @Module({
-        controllers: [Provider1],
-        providersPerMod: [Provider1, Provider2],
-      })
-      class Module1 {}
-
-      moduleManager.scanModule(Module1);
-      const meta = moduleManager.getMetadata(Module1, true);
-      expect(() => mock.quickCheckMetadata(meta)).not.toThrow();
-    });
-  });
-
   describe('bootstrap()', () => {
     class Provider0 {}
     class Provider1 {}
@@ -490,7 +400,7 @@ describe('ModuleFactory', () => {
         const providers = new ProvidersMetadata();
         const importedProviders = new ImportsMap();
         const globalProviders: ProvidersMetadata & ImportsMap = { ...providers, ...importedProviders };
-        mock.bootstrap(globalProviders, '', AppModule, moduleManager, new Set);
+        mock.bootstrap(globalProviders, '', AppModule, moduleManager, new Set());
         expect(mock.appMetadataMap.get(AppModule)?.meta.exportsProvidersPerReq).toEqual([]);
       });
 
@@ -507,7 +417,7 @@ describe('ModuleFactory', () => {
         const providers = new ProvidersMetadata();
         const importedProviders = new ImportsMap();
         const globalProviders: ProvidersMetadata & ImportsMap = { ...providers, ...importedProviders };
-        mock.bootstrap(globalProviders, '', Module3, moduleManager, new Set);
+        mock.bootstrap(globalProviders, '', Module3, moduleManager, new Set());
 
         const mod0 = mock.appMetadataMap.get(Module0);
         const providerPerMod0: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
@@ -562,7 +472,7 @@ describe('ModuleFactory', () => {
         const providers0 = new ProvidersMetadata();
         const importsMap = new ImportsMap();
         const globalProviders: ProvidersMetadata & ImportsMap = { ...providers0, ...importsMap };
-        mock.bootstrap(globalProviders, 'other', Module4, moduleManager, new Set);
+        mock.bootstrap(globalProviders, 'other', Module4, moduleManager, new Set());
 
         expect(mock.prefixPerMod).toBe('other');
         // expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
@@ -582,13 +492,13 @@ describe('ModuleFactory', () => {
         expect(mock?.importedPerMod.get(Provider2)).toEqual(importObj);
         importObj.providers = [Provider3];
         expect(mock?.importedPerMod.get(Provider3)).toEqual(importObj);
-        
+
         importObj.module = Module2;
         importObj.providers = [Provider5];
         expect(mock?.importedPerMod.get(Provider5)).toEqual(importObj);
-        
+
         expect(mock.meta.providersPerReq).toEqual([]);
-        
+
         importObj.module = Module2;
         importObj.providers = [Provider8];
         expect(mock?.importedPerReq.get(Provider8)).toEqual(importObj);
@@ -637,7 +547,7 @@ describe('ModuleFactory', () => {
         const providers0 = new ProvidersMetadata();
         const importsMap = new ImportsMap();
         const globalProviders: ProvidersMetadata & ImportsMap = { ...providers0, ...importsMap };
-        mock.bootstrap(globalProviders, '', Module3, moduleManager, new Set);
+        mock.bootstrap(globalProviders, '', Module3, moduleManager, new Set());
 
         const mod3 = mock.appMetadataMap.get(Module3);
         expect(mod3?.meta.providersPerReq).toEqual([Provider3]);
@@ -648,26 +558,6 @@ describe('ModuleFactory', () => {
         importObj.providers = [Provider2];
         expect(mock?.importedPerReq.get(Provider2)).toEqual(importObj);
         expect(mod3?.meta.ngMetadataName).toBe('Module');
-      });
-
-      it("should throw an error regarding the provider's absence", () => {
-        @Module({
-          imports: [Module3],
-        })
-        class Module5 {}
-        const providers = [
-          ...defaultProvidersPerApp,
-          { provide: LogManager, useValue: new LogManager() },
-        ] as ServiceProvider[];
-        const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
-        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
-        mock.injectorPerMod = injectorPerApp;
-        moduleManager.scanModule(Module5);
-        const errMsg = /Importing Module5 failed: this module should have/;
-        const providers0 = new ProvidersMetadata();
-        const importsMap = new ImportsMap();
-        const globalProviders: ProvidersMetadata & ImportsMap = { ...providers0, ...importsMap };
-        expect(() => mock.bootstrap(globalProviders, '', Module5, moduleManager, new Set)).toThrow(errMsg);
       });
 
       it('should throw an error about not proper provider exports', () => {
@@ -737,7 +627,7 @@ describe('ModuleFactory', () => {
         const providers0 = new ProvidersMetadata();
         const importsMap = new ImportsMap();
         const globalProviders: ProvidersMetadata & ImportsMap = { ...providers0, ...importsMap };
-        expect(() => mock.bootstrap(globalProviders, '', AppModule, moduleManager, new Set)).toThrow(msg);
+        expect(() => mock.bootstrap(globalProviders, '', AppModule, moduleManager, new Set())).toThrow(msg);
       });
 
       it('resolved collision for non-root module', () => {
@@ -782,7 +672,7 @@ describe('ModuleFactory', () => {
         const providers0 = new ProvidersMetadata();
         const importsMap = new ImportsMap();
         const globalProviders: ProvidersMetadata & ImportsMap = { ...providers0, ...importsMap };
-        expect(() => mock.bootstrap(globalProviders, '', AppModule, moduleManager, new Set)).not.toThrow();
+        expect(() => mock.bootstrap(globalProviders, '', AppModule, moduleManager, new Set())).not.toThrow();
       });
     });
   });

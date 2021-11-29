@@ -128,7 +128,10 @@ describe('AppInitializer', () => {
     });
 
     it('should have empty array of providersPerApp', () => {
-      @Module()
+      @Controller()
+      class Controller1 {}
+
+      @Module({ controllers: [Controller1] })
       class Module7 {}
 
       const meta = moduleManager.scanModule(Module7);

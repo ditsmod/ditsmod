@@ -11,6 +11,7 @@ import { LoggerConfig } from '../types/logger';
 import { DefaultLogger } from './default-logger';
 import { LogMediator } from './log-mediator';
 import { LogManager } from './log-manager';
+import { Controller } from '../decorators/controller';
 
 describe('ModuleManager', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;
@@ -28,6 +29,10 @@ describe('ModuleManager', () => {
     ) {
       return super.getRawMetadata<T, A>(moduleId, throwErrOnNotFound);
     }
+
+    override quickCheckMetadata(meta: NormalizedModuleMetadata) {
+      return super.quickCheckMetadata(meta);
+    }
   }
 
   let mock: MockModuleManager;
@@ -38,6 +43,79 @@ describe('ModuleManager', () => {
     const logManager = new LogManager();
     const logMediator = new LogMediator(logManager, logger);
     mock = new MockModuleManager(logMediator);
+  });
+
+  describe('quickCheckMetadata()', () => {
+    it('should throw an error, when no export and no controllers', () => {
+      class Provider1 {}
+      class Provider2 {}
+
+      @Module({
+        providersPerMod: [Provider1, Provider2],
+      })
+      class Module1 {}
+
+      expect(() => mock.scanModule(Module1)).toThrow(/Validation Module1 failed: this module should have/);
+    });
+
+    it('should works with extension only', () => {
+      class Ext implements Extension<any> {
+        async init() {}
+      }
+      const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
+
+      @Module({
+        extensions: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
+        exports: [GROUP1_EXTENSIONS],
+      })
+      class Module1 {}
+
+      expect(() => mock.scanModule(Module1)).not.toThrow();
+    });
+
+    it('should throw an error, during imports module without export and without controllers', () => {
+      class Provider1 {}
+      class Provider2 {}
+      @Controller()
+      class Controller1 {}
+
+      @Module({
+        providersPerMod: [Provider1, Provider2],
+        controllers: [Controller1]
+      })
+      class Module1 {}
+
+      @Module({ imports: [Module1] })
+      class Module2 {}
+
+      expect(() => mock.scanModule(Module2)).toThrow(`Validation Module2 failed: this module should have`);
+    });
+
+    it('should not throw an error, when exports some provider', () => {
+      class Provider1 {}
+      class Provider2 {}
+
+      @Module({
+        exports: [Provider1],
+        providersPerMod: [Provider1, Provider2],
+      })
+      class Module1 {}
+
+      expect(() => mock.scanModule(Module1)).not.toThrow();
+    });
+
+    it('should not throw an error, when declare some controller', () => {
+      class Provider1 {}
+      class Provider2 {}
+
+      @Module({
+        controllers: [Provider1],
+        providersPerMod: [Provider1, Provider2],
+      })
+      class Module1 {}
+
+      expect(() => mock.scanModule(Module1)).not.toThrow();
+    });
   });
 
   it('empty root module', () => {
@@ -56,23 +134,26 @@ describe('ModuleManager', () => {
   });
 
   it('circular imports modules', () => {
+    @Controller()
+    class Controller1 {}
+
     @Injectable()
     class Provider1 {}
 
     @Module({ providersPerApp: [Provider1], imports: [forwardRef(() => Module3)] })
     class Module1 {}
 
-    @Module({ imports: [Module1] })
+    @Module({ imports: [Module1], controllers: [Controller1] })
     class Module2 {}
 
-    @Module({ imports: [Module2] })
+    @Module({ imports: [Module2], controllers: [Controller1] })
     class Module3 {}
 
-    @Module({ imports: [Module3] })
+    @Module({ imports: [Module3], controllers: [Controller1] })
     class Module4 {}
 
     @RootModule({
-      imports: [Module4],
+      imports: [Module4]
     })
     class AppModule {}
 
@@ -198,8 +279,11 @@ describe('ModuleManager', () => {
   });
 
   it('root module with imported some other modules', () => {
+    @Controller()
+    class Controller1 {}
+
     const fn = () => module4WithParams;
-    @Module({ id: '1', imports: [forwardRef(fn)] })
+    @Module({ id: '1', imports: [forwardRef(fn)], controllers: [Controller1] })
     class Module1 {}
 
     @Injectable()
@@ -216,7 +300,7 @@ describe('ModuleManager', () => {
     })
     class Module2 {}
 
-    @Module()
+    @Module({ controllers: [Controller1] })
     class Module4 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module4> {
         return {
@@ -244,6 +328,7 @@ describe('ModuleManager', () => {
     expectedMeta1.id = '1';
     expectedMeta1.name = 'Module1';
     expectedMeta1.module = Module1;
+    expectedMeta1.controllers = [Controller1];
     expectedMeta1.importsWithParams = [module4WithParams];
     expectedMeta1.ngMetadataName = 'Module';
 
@@ -277,6 +362,7 @@ describe('ModuleManager', () => {
     const expectedMeta4 = new NormalizedModuleMetadata();
     expectedMeta4.id = '';
     expectedMeta4.name = 'Module4';
+    expectedMeta4.controllers = [Controller1];
     expectedMeta4.module = module4WithParams;
     expectedMeta4.providersPerMod = [Provider2];
     expectedMeta4.ngMetadataName = 'Module';
@@ -288,6 +374,9 @@ describe('ModuleManager', () => {
     @Injectable()
     class Provider1 {}
 
+    @Controller()
+    class Controller1 {}
+
     @RootModule({
       imports: [],
       providersPerReq: [Provider1],
@@ -297,13 +386,13 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    @Module()
+    @Module({ controllers: [Controller1] })
     class Module1 {}
 
-    @Module()
+    @Module({ controllers: [Controller1] })
     class Module2 {}
 
-    @Module()
+    @Module({ controllers: [Controller1] })
     class Module3 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module3> {
         return {
@@ -313,7 +402,7 @@ describe('ModuleManager', () => {
       }
     }
 
-    @Module()
+    @Module({ controllers: [Controller1] })
     class Module4 {}
 
     @Injectable()
@@ -425,16 +514,19 @@ describe('ModuleManager', () => {
     @Injectable()
     class Provider1 {}
 
-    @Module()
+    @Controller()
+    class Controller1 {}
+
+    @Module({ controllers: [Controller1] })
     class Module0 {}
 
-    @Module({ imports: [Module0] })
+    @Module({ controllers: [Controller1], imports: [Module0] })
     class Module1 {}
 
-    @Module({ imports: [Module0] })
+    @Module({ controllers: [Controller1], imports: [Module0] })
     class Module2 {}
 
-    @Module()
+    @Module({ controllers: [Controller1] })
     class Module3 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module3> {
         return {
@@ -450,7 +542,7 @@ describe('ModuleManager', () => {
     const module3WithProviders = Module3.withParams([Provider2]);
 
     const moduleId = 'my-mix';
-    @Module()
+    @Module({ controllers: [Controller1] })
     class Module4 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module4> {
         return {

@@ -1,6 +1,6 @@
 import { Injectable, reflector } from '@ts-stack/di';
 
-import { defaultProvidersPerMod, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES } from './constans';
+import { defaultProvidersPerMod, NODE_REQ, NODE_RES } from './constans';
 import { ModConfig } from './models/mod-config';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ProvidersMetadata } from './models/providers-metadata';
@@ -20,7 +20,7 @@ import { getDuplicates } from './utils/get-duplicates';
 import { getToken } from './utils/get-tokens';
 import { normalizeProviders } from './utils/ng-utils';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
-import { isController, isNormalizedProvider, isRootModule } from './utils/type-guards';
+import { isController } from './utils/type-guards';
 
 /**
  * - imports and exports global providers;
@@ -51,15 +51,10 @@ export class ModuleFactory {
   protected globalProviders: ProvidersMetadata & ImportsMap;
   protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod1>();
   protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
-  #moduleManager: ModuleManager;
+  protected moduleManager: ModuleManager;
 
-  /**
-   * Calls only by `@RootModule` before calls `ModuleFactory#boostrap()`.
-   *
-   * @param globalProviders Contains providersPerApp for now.
-   */
   exportGlobalProviders(moduleManager: ModuleManager, globalProviders: ProvidersMetadata & ImportsMap) {
-    this.#moduleManager = moduleManager;
+    this.moduleManager = moduleManager;
     const meta = moduleManager.getMetadata('root', true);
     this.moduleName = meta.name;
     this.meta = meta;
@@ -92,13 +87,12 @@ export class ModuleFactory {
     guardsPerMod?: NormalizedGuard[]
   ) {
     const meta = moduleManager.getMetadata(modOrObj, true);
-    this.#moduleManager = moduleManager;
+    this.moduleManager = moduleManager;
     this.globalProviders = globalProviders;
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = meta.name;
     this.guardsPerMod = guardsPerMod || [];
     this.unfinishedScanModules = unfinishedScanModules;
-    this.quickCheckMetadata(meta);
     this.meta = meta;
     this.importModules();
     const modConfig: ModConfig = { prefixPerMod: this.prefixPerMod };
@@ -119,40 +113,9 @@ export class ModuleFactory {
     });
   }
 
-  protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
-    if (
-      !isRootModule(meta as any) &&
-      !meta.providersPerApp.length &&
-      !meta.controllers.length &&
-      !meta.exportsProvidersPerMod.length &&
-      !meta.exportsProvidersPerRou.length &&
-      !meta.exportsProvidersPerReq.length &&
-      !meta.exportsModules.length &&
-      !meta.exportsWithParams.length &&
-      !meta.extensions.length
-    ) {
-      const msg =
-        `Importing ${this.moduleName} failed: this module should have "providersPerApp"` +
-        ' or some controllers, or exports, or extensions.';
-      throw new Error(msg);
-    }
-
-    this.checkHttpInterceptors(meta);
-  }
-
-  protected checkHttpInterceptors(meta: NormalizedModuleMetadata) {
-    const normProviders = [...meta.providersPerApp, ...meta.providersPerMod, ...meta.providersPerRou].filter(
-      isNormalizedProvider
-    );
-    if (normProviders.find((np) => np.provide === HTTP_INTERCEPTORS)) {
-      const msg = `Importing ${this.moduleName} failed: "HTTP_INTERCEPTORS" can be includes in the "providersPerReq" array only.`;
-      throw new Error(msg);
-    }
-  }
-
   protected importModules() {
     for (const imp of this.meta.importsModules) {
-      const meta = this.#moduleManager.getMetadata(imp, true);
+      const meta = this.moduleManager.getMetadata(imp, true);
       this.importProviders(meta);
       const moduleFactory = new ModuleFactory();
 
@@ -164,7 +127,7 @@ export class ModuleFactory {
         this.globalProviders,
         this.prefixPerMod,
         imp,
-        this.#moduleManager,
+        this.moduleManager,
         this.unfinishedScanModules,
         this.guardsPerMod
       );
@@ -173,7 +136,7 @@ export class ModuleFactory {
       this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
     }
     for (const imp of this.meta.importsWithParams) {
-      const meta = this.#moduleManager.getMetadata(imp, true);
+      const meta = this.moduleManager.getMetadata(imp, true);
       this.importProviders(meta);
       const prefixPerMod = [this.prefixPerMod, imp.prefix].filter((s) => s).join('/');
       const normalizedGuardsPerMod = this.normalizeGuards(imp.guards);
@@ -189,7 +152,7 @@ export class ModuleFactory {
         this.globalProviders,
         prefixPerMod,
         imp,
-        this.#moduleManager,
+        this.moduleManager,
         this.unfinishedScanModules,
         guardsPerMod
       );
@@ -230,7 +193,7 @@ export class ModuleFactory {
     const { module, exportsModules, exportsWithParams } = meta1;
 
     for (const mod of [...exportsModules, ...exportsWithParams]) {
-      const meta2 = this.#moduleManager.getMetadata(mod, true);
+      const meta2 = this.moduleManager.getMetadata(mod, true);
       // Reexported module
       this.importProviders(meta2);
     }

@@ -254,10 +254,10 @@ export class AppInitializer {
     globalProviders.providersPerMod = providersPerMod.slice();
     globalProviders.providersPerRou = providersPerRou.slice();
     globalProviders.providersPerReq = providersPerReq.slice();
-    globalProviders.importedPerMod = importedPerMod;
-    globalProviders.importedPerRou = importedPerRou;
-    globalProviders.importedPerReq = importedPerReq;
-    globalProviders.importedExtensions = importedExtensions;
+    globalProviders.importedPerMod = new Map(importedPerMod);
+    globalProviders.importedPerRou = new Map(importedPerRou);
+    globalProviders.importedPerReq = new Map(importedPerReq);
+    globalProviders.importedExtensions = new Map(importedExtensions);
     return globalProviders;
   }
 

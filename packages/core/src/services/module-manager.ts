@@ -1,5 +1,6 @@
 import { Injectable, resolveForwardRef, Type } from '@ts-stack/di';
 import { format } from 'util';
+import { HTTP_INTERCEPTORS } from '../constans';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { AnyObj, Extension, ExtensionsProvider, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
@@ -15,6 +16,7 @@ import {
   isModuleWithParams,
   isNormalizedProvider,
   isProvider,
+  isRootModule,
   isValueProvider,
 } from '../utils/type-guards';
 import { LogMediator } from './log-mediator';
@@ -379,8 +381,46 @@ export class ModuleManager {
 
     pickProperties(meta, rawMeta);
     meta.extensionsMeta = { ...(meta.extensionsMeta || {}) };
+    this.quickCheckMetadata(meta);
 
     return meta;
+  }
+
+  protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
+    if (
+      !isRootModule(meta as any) &&
+      !meta.providersPerApp.length &&
+      !meta.controllers.length &&
+      !meta.exportsProvidersPerMod.length &&
+      !meta.exportsProvidersPerRou.length &&
+      !meta.exportsProvidersPerReq.length &&
+      !meta.exportsModules.length &&
+      !meta.exportsWithParams.length &&
+      !meta.extensions.length
+    ) {
+      const moduleNames = [...this.unfinishedScanModules].map((mod) => getModuleName(mod)).join(' -> ') || meta.name;
+      const msg =
+        `Validation ${moduleNames} failed: this module should have "providersPerApp"` +
+        ' or some controllers, or exports, or extensions.';
+      throw new Error(msg);
+    }
+
+    this.checkHttpInterceptors(meta);
+  }
+
+  protected checkHttpInterceptors(meta: NormalizedModuleMetadata) {
+    const normProviders = [
+      // Don't autoformat this
+      ...meta.providersPerApp,
+      ...meta.providersPerMod,
+      ...meta.providersPerRou,
+    ].filter(isNormalizedProvider);
+    const moduleNames = [...this.unfinishedScanModules].map((mod) => getModuleName(mod)).join(' -> ') || meta.name;
+
+    if (normProviders.find((np) => np.provide === HTTP_INTERCEPTORS)) {
+      const msg = `Validation ${moduleNames} failed: "HTTP_INTERCEPTORS" can be includes in the "providersPerReq" array only.`;
+      throw new Error(msg);
+    }
   }
 
   protected throwIfUndefined(modName: string, imOrEx: 'Im' | 'Ex', imp: AnyModule, i: number) {
