@@ -71,6 +71,8 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
       }
     }
 
+    console.log('prepared:', metaForExtensionsPerRouArr)
+
     return metaForExtensionsPerRouArr;
   }
 
