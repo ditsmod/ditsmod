@@ -306,7 +306,9 @@ export class AppInitializer {
           beforeToken
         );
         const resultBefore = await extensionsManagerPerMod.init(beforeToken);
-        extensionsManagerPerApp.setData(beforeToken, resultBefore);
+        if (extensionsPerApp.length) {
+          extensionsManagerPerApp.setData(beforeToken, resultBefore);
+        }
         this.logMediator.finishExtensionsGroupInit(
           'debug',
           { className: this.constructor.name },
@@ -321,7 +323,9 @@ export class AppInitializer {
           groupToken
         );
         const result = await extensionsManagerPerMod.init(groupToken);
-        extensionsManagerPerApp.setData(groupToken, result);
+        if (extensionsPerApp.length) {
+          extensionsManagerPerApp.setData(groupToken, result);
+        }
         this.logMediator.finishExtensionsGroupInit(
           'debug',
           { className: this.constructor.name },
