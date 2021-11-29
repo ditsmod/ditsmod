@@ -6,8 +6,8 @@ import { Model2 } from './models';
 import { getMetaContent } from './overriden-helper';
 
 @Controller({ providersPerReq: [BasicGuard] })
-export class HelloWorldController {
-  constructor(private req: Request, private res: Response, private logger: Logger) {}
+export class FirstController {
+  constructor(private req: Request, private res: Response) {}
 
   @Route('GET', '', [])
   hello() {

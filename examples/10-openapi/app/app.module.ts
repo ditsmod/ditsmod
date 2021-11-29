@@ -2,7 +2,7 @@ import { RootModule, ServiceProvider } from '@ditsmod/core';
 import { OAS_OBJECT, OpenapiModule, SwaggegrOAuthOptions } from '@ditsmod/openapi';
 import { RouterModule } from '@ditsmod/router';
 
-import { HelloWorldController } from './hello-world.controller';
+import { FirstModule } from './modules/routed/first.module';
 import { oasObject } from './oas-object';
 
 const swaggerOAuthOptions: SwaggegrOAuthOptions = {
@@ -19,7 +19,6 @@ const openapiModuleWithParams = OpenapiModule.withParams(providersPerApp);
 @RootModule({
   // Here works the application and serves OpenAPI documentation.
   listenOptions: { host: 'localhost', port: 8080 },
-  imports: [RouterModule, openapiModuleWithParams],
-  controllers: [HelloWorldController]
+  imports: [RouterModule, openapiModuleWithParams, FirstModule],
 })
 export class AppModule {}
