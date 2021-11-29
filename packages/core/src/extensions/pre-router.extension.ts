@@ -5,9 +5,10 @@ import { HttpHandler } from '../types/http-interceptor';
 import { Extension } from '../types/mix';
 import { PreparedRouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
-import { ExtensionsManager } from '../services/extensions-manager';
+import { ExtensionsManagerPerMod } from '../services/extensions-manager';
 import { LogMediator } from '../services/log-mediator';
 import { MetadataPerMod2 } from '../types/metadata-per-mod';
+import { ExtensionsContext } from '../services/extensions-context';
 
 @Injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -16,8 +17,9 @@ export class PreRouterExtension implements Extension<void> {
   constructor(
     protected injectorPerMod: ReflectiveInjector,
     protected router: Router,
-    protected extensionsManager: ExtensionsManager,
-    protected logMediator: LogMediator
+    protected extensionsManager: ExtensionsManagerPerMod,
+    protected logMediator: LogMediator,
+    private extensionsContext: ExtensionsContext
   ) {}
 
   async init() {
@@ -27,7 +29,7 @@ export class PreRouterExtension implements Extension<void> {
 
     const metadataPerMod2Arr = await this.extensionsManager.init(ROUTES_EXTENSIONS);
     const preparedRouteMeta = this.prepareRoutesMeta(metadataPerMod2Arr);
-    this.setRoutes(preparedRouteMeta, metadataPerMod2Arr[0].moduleName);
+    this.setRoutes(preparedRouteMeta);
     this.#inited = true;
   }
 
@@ -65,9 +67,10 @@ export class PreRouterExtension implements Extension<void> {
     return preparedRouteMeta;
   }
 
-  protected setRoutes(preparedRouteMeta: PreparedRouteMeta[], moduleName: string) {
-    if (!preparedRouteMeta.length) {
-      this.logMediator.noRoutes('info', { className: this.constructor.name }, moduleName);
+  protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {
+    this.extensionsContext.appHasRoutes = this.extensionsContext.appHasRoutes || !!preparedRouteMeta.length;
+    if (this.extensionsContext.isLastModule && !this.extensionsContext.appHasRoutes) {
+      this.logMediator.noRoutes('warn', { className: this.constructor.name });
       return;
     }
 

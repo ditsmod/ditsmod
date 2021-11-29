@@ -3,11 +3,11 @@ import { Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
 
 import { Extension } from '../types/mix';
 import { defaultProvidersPerApp } from './default-providers-per-app';
-import { ExtensionsManager } from './extensions-manager';
+import { ExtensionsManagerPerMod } from './extensions-manager';
 import { LogManager } from './log-manager';
 
 describe('ExtensionsManager cyclic dependencies', () => {
-  class MockExtensionsManager extends ExtensionsManager {
+  class MockExtensionsManager extends ExtensionsManagerPerMod {
     override unfinishedInitExtensions = new Set<Extension<any>>();
   }
 

@@ -1,17 +1,36 @@
 import { Injectable, InjectionToken, Injector } from '@ts-stack/di';
 
-import { Extension } from '../types/mix';
+import { AnyFn, Extension } from '../types/mix';
 import { Counter } from './counter';
 import { LogMediator } from './log-mediator';
 
+export class ExtensionsManagerPerApp {
+  protected map = new Map<string | InjectionToken<Extension<any>[]>, any[]>();
+
+  async init<T>(extensionsGroupToken: string | InjectionToken<Extension<T>[]>): Promise<T[]> {
+    return this.map.get(extensionsGroupToken)!;
+  }
+
+  setData<T>(extensionsGroupToken: string | InjectionToken<Extension<T>[]>, data: T[]) {
+    console.log('setData:', (data[0] as any)?.metaForExtensionsPerRouArr)
+    let arr = this.map.get(extensionsGroupToken);
+    if (arr) {
+      arr.push(...data);
+      this.map.set(extensionsGroupToken, arr);
+    } else {
+      this.map.set(extensionsGroupToken, data);
+    }
+  }
+}
+
 @Injectable()
-export class ExtensionsManager {
+export class ExtensionsManagerPerMod {
   protected unfinishedInitExtensions = new Set<Extension<any>>();
 
-  constructor(private injectorPerMod: Injector, private logMediator: LogMediator, private counter: Counter) {}
+  constructor(private injector: Injector, private logMediator: LogMediator, private counter: Counter) {}
 
   async init<T>(extensionsGroupToken: string | InjectionToken<Extension<T>[]>, autoMergeArrays = true): Promise<T[]> {
-    const extensions = this.injectorPerMod.get(extensionsGroupToken, []);
+    const extensions = this.injector.get(extensionsGroupToken, []);
     const dataArr: T[] = [];
 
     if (typeof extensionsGroupToken != 'string' && !extensions.length) {

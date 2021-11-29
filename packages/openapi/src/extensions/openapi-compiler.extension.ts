@@ -23,7 +23,10 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
   protected oasObject: XOasObject;
   private swaggerUiDist = join(__dirname, '../../dist/swagger-ui');
 
-  constructor(private extensionManager: edk.ExtensionsManager, private injectorPerApp: ReflectiveInjector) {}
+  constructor(
+    private injector: ReflectiveInjector,
+    private extensionsManagerPerApp: edk.ExtensionsManagerPerApp
+  ) {}
 
   async init() {
     if (this.oasObject) {
@@ -39,14 +42,15 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
   }
 
   protected async compileOasObject() {
-    const metadataPerMod2Arr = await this.extensionManager.init(edk.ROUTES_EXTENSIONS);
+    const metadataPerMod2Arr = await this.extensionsManagerPerApp.init(edk.ROUTES_EXTENSIONS);
     const paths: XPathsObject = {};
     this.initOasObject();
     metadataPerMod2Arr.forEach((metadataPerMod2) => {
       const { metaForExtensionsPerRouArr, providersPerMod } = metadataPerMod2;
       metaForExtensionsPerRouArr.forEach(({ providersPerRou }) => {
-        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+        const injectorPerMod = this.injector.resolveAndCreateChild(providersPerMod);
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
+        console.log('compile:', metadataPerMod2.providersPerRou)
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
         const oasRouteMeta = injectorPerRou.get(OasRouteMeta) as OasRouteMeta;
         const { httpMethod, oasPath, path, guards, operationObject } = oasRouteMeta;
@@ -70,7 +74,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
   }
 
   protected initOasObject() {
-    this.oasObject = Object.assign({}, DEFAULT_OAS_OBJECT, this.injectorPerApp.get(OAS_OBJECT));
+    this.oasObject = Object.assign({}, DEFAULT_OAS_OBJECT, this.injector.get(OAS_OBJECT));
     this.oasObject.components = { ...(this.oasObject.components || {}) };
   }
 

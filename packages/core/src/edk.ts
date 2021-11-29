@@ -2,21 +2,24 @@
  * Extension Development Kit.
  */
 
-export { ModuleManager } from './services/module-manager';
-export { RoutesExtension } from './extensions/routes.extension';
-export { ModuleFactory } from './module-factory';
-export { ProvidersMetadata } from './models/providers-metadata';
-export { NormalizedModuleMetadata } from './models/normalized-module-metadata';
+export { PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from './constans';
 export { ControllerMetadata } from './decorators/controller';
-export * from './utils/type-guards';
-export { deepFreeze } from './utils/deep-freeze';
-export { isModule } from './utils/type-guards';
-export { pickProperties } from './utils/pick-properties';
-export { MetadataPerMod1, MetaForExtensionsPerRou, MetadataPerMod2 } from './types/metadata-per-mod';
-export { ControllerType, AnyObj, NormalizedGuard, DecoratorMetadata, Extension } from './types/mix';
-export { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS } from './constans';
+export { RouteMetadata } from './decorators/route';
+export { RoutesExtension } from './extensions/routes.extension';
+export { NormalizedModuleMetadata } from './models/normalized-module-metadata';
+export { ProvidersMetadata } from './models/providers-metadata';
+export { ModuleFactory } from './module-factory';
+export { AppInitializer } from './services/app-initializer';
+export { ExtensionsManagerPerApp, ExtensionsManagerPerMod } from './services/extensions-manager';
+export { ModuleManager } from './services/module-manager';
+export { ExtensionsContext } from './services/extensions-context';
+export { MetadataPerMod1, MetadataPerMod2, MetaForExtensionsPerRou } from './types/metadata-per-mod';
+export { AnyObj, ControllerType, DecoratorMetadata, Extension, NormalizedGuard } from './types/mix';
 export { ModuleMetadata } from './types/module-metadata';
 export { RouteMeta } from './types/route-data';
-export { AppInitializer } from './services/app-initializer';
-export { ExtensionsManager } from './services/extensions-manager';
-export { RouteMetadata } from './decorators/route';
+export { deepFreeze } from './utils/deep-freeze';
+export { getDependencies } from './utils/get-dependecies';
+export { pickProperties } from './utils/pick-properties';
+export * from './utils/type-guards';
+export { isModule } from './utils/type-guards';
+

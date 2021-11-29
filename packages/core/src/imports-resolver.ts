@@ -12,9 +12,9 @@ import { RootMetadata } from './models/root-metadata';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { getModuleName } from './utils/get-module-name';
 import { getProviderName } from './utils/get-provider-name';
-import { defaultExtensions } from './services/default-extensions';
-import { ExtensionsManager } from './services/extensions-manager';
+import { defaultExtensions, defaultExtensionsServices } from './services/default-extensions';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
+import { getDependencies } from './utils/get-dependecies';
 
 type Scope = 'Mod' | 'Rou' | 'Req';
 type AnyModule = ModuleType | ModuleWithParams;
@@ -41,7 +41,7 @@ export class ImportsResolver {
   protected resolveImportedProviders(metadataPerMod1: MetadataPerMod1) {
     const { importedTokensMap, meta } = metadataPerMod1;
     this.meta = meta;
-    this.extensionsTokens = getTokens([ExtensionsManager, MetadataPerMod1, ...importedTokensMap.extensions.keys()]);
+    this.extensionsTokens = getTokens([...defaultExtensionsServices, ...importedTokensMap.extensions.keys()]);
     const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
 
     scopes.forEach((scope, i) => {
@@ -146,15 +146,7 @@ export class ImportsResolver {
   }
 
   protected getDependencies(provider: ServiceProvider) {
-    const deps = new Set<any>();
-
-    ReflectiveInjector.resolve([provider]).forEach(({ resolvedFactories }) => {
-      resolvedFactories.forEach((rf) => {
-        rf.dependencies.forEach((dep) => {
-          deps.add(dep.key.token);
-        });
-      });
-    });
+    const deps = getDependencies(provider);
 
     const defaultTokens = [
       ...getTokens([...defaultProvidersPerApp, ...defaultProvidersPerReq]),

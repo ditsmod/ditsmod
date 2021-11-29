@@ -310,7 +310,7 @@ export class LogMediator {
    * The application has no routes.
    */
   noRoutes(level: KeyOfLogger, filterConfig: FilterConfig = {}, ...args: any[]) {
-    this.setLog(level, filterConfig, `The ${args[0]} has no routes.`);
+    this.setLog(level, filterConfig, `The application has no routes.`);
   }
 
   /**
