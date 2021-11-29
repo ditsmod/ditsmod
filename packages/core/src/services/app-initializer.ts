@@ -274,6 +274,7 @@ export class AppInitializer {
     this.createInjectorAndSetLogMediator();
     const allExtensionsPerApp: ExtensionsProvider[] = [];
     const extensionsContext = new ExtensionsContext();
+    const filterConfig = { className: this.constructor.name };
     const injector = this.injectorPerApp.resolveAndCreateChild([ExtensionsManagerPerApp]);
     const extensionsManagerPerApp = injector.get(ExtensionsManagerPerApp) as ExtensionsManagerPerApp;
     const metadataPerMod1Arr = [...appMetadataMap].map(([, metadataPerMod1]) => metadataPerMod1);
@@ -299,39 +300,19 @@ export class AppInitializer {
           continue;
         }
         const beforeToken = `BEFORE ${groupToken}`;
-        this.logMediator.startExtensionsGroupInit(
-          'debug',
-          { className: this.constructor.name },
-          moduleName,
-          beforeToken
-        );
+        this.logMediator.startExtensionsGroupInit('debug', filterConfig, moduleName, beforeToken);
         const resultBefore = await extensionsManagerPerMod.init(beforeToken);
         if (extensionsPerApp.length) {
           extensionsManagerPerApp.setData(beforeToken, resultBefore);
         }
-        this.logMediator.finishExtensionsGroupInit(
-          'debug',
-          { className: this.constructor.name },
-          moduleName,
-          beforeToken
-        );
+        this.logMediator.finishExtensionsGroupInit('debug', filterConfig, moduleName, beforeToken);
 
-        this.logMediator.startExtensionsGroupInit(
-          'debug',
-          { className: this.constructor.name },
-          moduleName,
-          groupToken
-        );
+        this.logMediator.startExtensionsGroupInit('debug', filterConfig, moduleName, groupToken);
         const result = await extensionsManagerPerMod.init(groupToken);
         if (extensionsPerApp.length) {
           extensionsManagerPerApp.setData(groupToken, result);
         }
-        this.logMediator.finishExtensionsGroupInit(
-          'debug',
-          { className: this.constructor.name },
-          moduleName,
-          groupToken
-        );
+        this.logMediator.finishExtensionsGroupInit('debug', filterConfig, moduleName, groupToken);
         initedExtensionsGroups.add(groupToken);
       }
       extensionsManagerPerMod.clearUnfinishedInitExtensions();

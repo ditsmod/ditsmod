@@ -31,9 +31,10 @@ export class ExtensionsManagerPerMod {
   async init<T>(extensionsGroupToken: string | InjectionToken<Extension<T>[]>, autoMergeArrays = true): Promise<T[]> {
     const extensions = this.injector.get(extensionsGroupToken, []);
     const dataArr: T[] = [];
+    const filterConfig = { className: this.constructor.name };
 
     if (typeof extensionsGroupToken != 'string' && !extensions.length) {
-      this.logMediator.noExtensionsFound('warn', { className: this.constructor.name }, extensionsGroupToken);
+      this.logMediator.noExtensionsFound('warn', filterConfig, extensionsGroupToken);
     }
 
     for (const extension of extensions) {
@@ -45,16 +46,16 @@ export class ExtensionsManagerPerMod {
       const id = this.counter.increaseExtensionsInitId();
       const args = [id, extensionName];
       this.unfinishedInitExtensions.add(extension);
-      this.logMediator.startInitExtension('debug', { className: this.constructor.name }, ...args);
+      this.logMediator.startInitExtension('debug', filterConfig, ...args);
       const data = await extension.init();
-      this.logMediator.finishInitExtension('debug', { className: this.constructor.name }, ...args);
+      this.logMediator.finishInitExtension('debug', filterConfig, ...args);
       this.unfinishedInitExtensions.delete(extension);
       this.counter.addInitedExtensions(extension);
       if (data === undefined) {
-        this.logMediator.extensionInitReturnsVoid('debug', { className: this.constructor.name }, ...args);
+        this.logMediator.extensionInitReturnsVoid('debug', filterConfig, ...args);
         continue;
       }
-      this.logMediator.extensionInitReturnsValue('debug', { className: this.constructor.name }, ...args);
+      this.logMediator.extensionInitReturnsValue('debug', filterConfig, ...args);
       if (autoMergeArrays && Array.isArray(data)) {
         dataArr.push(...data);
       } else {
