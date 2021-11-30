@@ -1,8 +1,10 @@
 import { Injectable, InjectionToken, Injector } from '@ts-stack/di';
 
-import { Extension } from '../types/mix';
+import { Extension, ModuleType, ModuleWithParams } from '../types/mix';
 import { Counter } from './counter';
 import { LogMediator } from './log-mediator';
+
+export type ExtensionsGroupToken<T> = InjectionToken<Extension<T>[]> | `BEFORE ${string}`;
 
 @Injectable()
 export class ExtensionsManager {
@@ -10,13 +12,13 @@ export class ExtensionsManager {
 
   constructor(private injector: Injector, private logMediator: LogMediator, private counter: Counter) {}
 
-  async init<T>(extensionsGroupToken: string | InjectionToken<Extension<T>[]>, autoMergeArrays = true): Promise<T[]> {
-    const extensions = this.injector.get(extensionsGroupToken, []);
+  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays = true): Promise<T[]> {
+    const extensions = this.injector.get(groupToken, []) as Extension<T>[];
     const dataArr: T[] = [];
     const filterConfig = { className: this.constructor.name };
 
-    if (typeof extensionsGroupToken != 'string' && !extensions.length) {
-      this.logMediator.noExtensionsFound('warn', filterConfig, extensionsGroupToken);
+    if (typeof groupToken != 'string' && !extensions.length) {
+      this.logMediator.noExtensionsFound('warn', filterConfig, groupToken);
     }
 
     for (const extension of extensions) {

@@ -279,19 +279,19 @@ export class AppInitializer {
         { provide: MetadataPerMod1, useValue: metadataPerMod1 },
         ...extensions,
       ]);
-      const extensionsManagerPerMod = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
+      const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
       const extensionTokens = getTokens(extensions).filter((token) => token instanceof InjectionToken);
       for (const groupToken of extensionTokens) {
-        const beforeToken = `BEFORE ${groupToken}`;
+        const beforeToken = `BEFORE ${groupToken}` as const;
         this.logMediator.startExtensionsGroupInit('debug', filterConfig, moduleName, beforeToken);
-        await extensionsManagerPerMod.init(beforeToken);
+        await extensionsManager.init(beforeToken);
         this.logMediator.finishExtensionsGroupInit('debug', filterConfig, moduleName, beforeToken);
 
         this.logMediator.startExtensionsGroupInit('debug', filterConfig, moduleName, groupToken);
-        await extensionsManagerPerMod.init(groupToken);
+        await extensionsManager.init(groupToken);
         this.logMediator.finishExtensionsGroupInit('debug', filterConfig, moduleName, groupToken);
       }
-      extensionsManagerPerMod.clearUnfinishedInitExtensions();
+      extensionsManager.clearUnfinishedInitExtensions();
       this.logExtensionsStatistic();
     }
   }

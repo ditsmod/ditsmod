@@ -19,11 +19,11 @@ import { DEFAULT_OAS_OBJECT } from '../constants';
 import { isOasGuard } from '../utils/type-guards';
 
 @Injectable()
-export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
+export class OpenapiCompilerExtension implements edk.Extension<XOasObject | false> {
   protected oasObject: XOasObject;
   private swaggerUiDist = join(__dirname, '../../dist/swagger-ui');
 
-  constructor(private injector: ReflectiveInjector, private extensionsManagerPerApp: edk.ExtensionsManager) {}
+  constructor(private injector: ReflectiveInjector, private extensionsManager: edk.ExtensionsManager) {}
 
   async init() {
     if (this.oasObject) {
@@ -39,7 +39,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
   }
 
   protected async compileOasObject() {
-    const aMetadataPerMod2 = await this.extensionsManagerPerApp.init(edk.ROUTES_EXTENSIONS);
+    const aMetadataPerMod2 = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS);
     const paths: XPathsObject = {};
     this.initOasObject();
     aMetadataPerMod2.forEach((metadataPerMod2) => {
