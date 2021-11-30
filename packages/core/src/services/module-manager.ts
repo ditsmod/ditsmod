@@ -7,7 +7,7 @@ import { AnyObj, Extension, ExtensionsProvider, ModuleType, ModuleWithParams, Se
 import { ModuleMetadata } from '../types/module-metadata';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
-import { getTokens } from '../utils/get-tokens';
+import { getToken, getTokens } from '../utils/get-tokens';
 import { normalizeProviders } from '../utils/ng-utils';
 import { pickProperties } from '../utils/pick-properties';
 import {
@@ -366,10 +366,9 @@ export class ModuleManager {
       if (isModuleWithParams(exp)) {
         meta.exportsWithParams.push(exp);
       } else if (extensionsTokens.includes(exp)) {
-        const index = extensionsTokens.indexOf(exp);
-        const extensionProvider = rawMeta.extensions![index];
-        this.checkExtension(modName, extensionProvider, exp);
-        meta.exportsExtensions.push(extensionProvider);
+        const extensionProviders = rawMeta.extensions!.filter((extension) => getToken(extension) === exp);
+        extensionProviders.forEach(provider => this.checkExtension(modName, provider, exp));
+        meta.exportsExtensions.push(...extensionProviders);
       } else if (isProvider(exp) || providersTokens.includes(exp)) {
         this.findAndSetProvider(exp, rawMeta, meta);
       } else if (getModuleMetadata(exp)) {
