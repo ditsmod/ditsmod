@@ -62,7 +62,7 @@ export class MetadataPerMod2 {
    * Providers per a request.
    */
   providersPerReq: ServiceProvider[];
-  metaForExtensionsPerRouArr: MetaForExtensionsPerRou[];
+  aMetaForExtensionsPerRou: MetaForExtensionsPerRou[];
 }
 
 export class MetaForExtensionsPerRou {

@@ -17,7 +17,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
     const prefixParams = oasOptions?.paratemers;
     const prefixTags = oasOptions?.tags;
 
-    const metaForExtensionsPerRouArr: edk.MetaForExtensionsPerRou[] = [];
+    const aMetaForExtensionsPerRou: edk.MetaForExtensionsPerRou[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
@@ -61,7 +61,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
             guards,
           };
           providersPerRou.push({ provide: edk.RouteMeta, useValue: routeMeta });
-          metaForExtensionsPerRouArr.push({
+          aMetaForExtensionsPerRou.push({
             providersPerRou,
             providersPerReq,
             path,
@@ -71,7 +71,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
       }
     }
 
-    return metaForExtensionsPerRouArr;
+    return aMetaForExtensionsPerRou;
   }
 
   protected mergeParams(

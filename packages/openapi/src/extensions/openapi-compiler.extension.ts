@@ -42,12 +42,12 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
   }
 
   protected async compileOasObject() {
-    const metadataPerMod2Arr = await this.extensionsManagerPerApp.init(edk.ROUTES_EXTENSIONS);
+    const aMetadataPerMod2 = await this.extensionsManagerPerApp.init(edk.ROUTES_EXTENSIONS);
     const paths: XPathsObject = {};
     this.initOasObject();
-    metadataPerMod2Arr.forEach((metadataPerMod2) => {
-      const { metaForExtensionsPerRouArr, providersPerMod } = metadataPerMod2;
-      metaForExtensionsPerRouArr.forEach(({ providersPerRou }) => {
+    aMetadataPerMod2.forEach((metadataPerMod2) => {
+      const { aMetaForExtensionsPerRou, providersPerMod } = metadataPerMod2;
+      aMetaForExtensionsPerRou.forEach(({ providersPerRou }) => {
         const injectorPerMod = this.injector.resolveAndCreateChild(providersPerMod);
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
@@ -83,11 +83,11 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
     const responses: XResponsesObject = {};
     guards.forEach((normalizedGuard) => {
       const decoratorsValues = reflector.annotations(normalizedGuard.guard);
-      const oasGuardMetadataArr = decoratorsValues.filter(isOasGuard);
+      const aOasGuardMetadata = decoratorsValues.filter(isOasGuard);
       const guardName = normalizedGuard.guard.name;
 
-      oasGuardMetadataArr.forEach((oasGuardMetadata, index) => {
-        let securityName = oasGuardMetadataArr.length > 1 ? `${guardName}_${index}` : guardName;
+      aOasGuardMetadata.forEach((oasGuardMetadata, index) => {
+        let securityName = aOasGuardMetadata.length > 1 ? `${guardName}_${index}` : guardName;
         securityName = securityName.charAt(0).toLowerCase() + securityName.slice(1);
         this.oasObject.components!.securitySchemes = { ...(this.oasObject.components!.securitySchemes || {}) };
         this.oasObject.components!.securitySchemes[securityName] = oasGuardMetadata.securitySchemeObject;

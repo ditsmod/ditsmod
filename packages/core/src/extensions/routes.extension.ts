@@ -30,7 +30,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
     this.metadataPerMod2.providersPerMod = meta.providersPerMod.slice();
     this.metadataPerMod2.providersPerRou = meta.providersPerRou.slice();
     this.metadataPerMod2.providersPerReq = meta.providersPerReq.slice();
-    this.metadataPerMod2.metaForExtensionsPerRouArr = this.getMetaPerRou(prefixPerApp, this.metadataPerMod1);
+    this.metadataPerMod2.aMetaForExtensionsPerRou = this.getMetaPerRou(prefixPerApp, this.metadataPerMod1);
 
     return this.metadataPerMod2;
   }
@@ -38,7 +38,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
   protected getMetaPerRou(prefixPerApp: string, metadataPerMod1: MetadataPerMod1) {
     const { controllersMetadata, prefixPerMod, guardsPerMod } = metadataPerMod1;
 
-    const metaForExtensionsPerRouArr: MetaForExtensionsPerRou[] = [];
+    const aMetaForExtensionsPerRou: MetaForExtensionsPerRou[] = [];
     for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
@@ -65,7 +65,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
             guards,
           };
           providersPerRou.push({ provide: RouteMeta, useValue: routeMeta });
-          metaForExtensionsPerRouArr.push({
+          aMetaForExtensionsPerRou.push({
             httpMethod,
             path,
             providersPerRou,
@@ -75,7 +75,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
       }
     }
 
-    return metaForExtensionsPerRouArr;
+    return aMetaForExtensionsPerRou;
   }
 
   /**

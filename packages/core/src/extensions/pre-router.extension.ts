@@ -27,19 +27,19 @@ export class PreRouterExtension implements Extension<void> {
       return;
     }
 
-    const metadataPerMod2Arr = await this.extensionsManager.init(ROUTES_EXTENSIONS);
-    const preparedRouteMeta = this.prepareRoutesMeta(metadataPerMod2Arr);
+    const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    const preparedRouteMeta = this.prepareRoutesMeta(aMetadataPerMod2);
     this.setRoutes(preparedRouteMeta);
     this.#inited = true;
   }
 
-  protected prepareRoutesMeta(metadataPerMod2Arr: MetadataPerMod2[]) {
+  protected prepareRoutesMeta(aMetadataPerMod2: MetadataPerMod2[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
-    metadataPerMod2Arr.forEach((metadataPerMod2) => {
-      const { moduleName, metaForExtensionsPerRouArr, providersPerMod } = metadataPerMod2;
+    aMetadataPerMod2.forEach((metadataPerMod2) => {
+      const { moduleName, aMetaForExtensionsPerRou, providersPerMod } = metadataPerMod2;
 
-      metaForExtensionsPerRouArr.forEach(({ httpMethod, path, providersPerRou, providersPerReq }) => {
+      aMetaForExtensionsPerRou.forEach(({ httpMethod, path, providersPerRou, providersPerReq }) => {
         const injectorPerMod = this.injectorPerMod.resolveAndCreateChild(providersPerMod);
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);

@@ -16,7 +16,7 @@ import { RootMetadata } from '../models/root-metadata';
 @Injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
   constructor(
-    @Inject(PATH_PARAMS) protected pathParamsArr: PathParam[],
+    @Inject(PATH_PARAMS) protected aPathParams: PathParam[],
     @Inject(QUERY_STRING) protected queryString: any,
     private logMediator: LogMediator,
     private routeMeta: RouteMeta,
@@ -73,10 +73,10 @@ export class DefaultHttpFrontend implements HttpFrontend {
     if (this.queryString) {
       this.req.queryParams = parse(this.queryString);
     }
-    if (this.pathParamsArr) {
-      this.req.pathParamsArr = this.pathParamsArr;
+    if (this.aPathParams) {
+      this.req.aPathParams = this.aPathParams;
       const pathParams: AnyObj = {};
-      this.pathParamsArr.forEach((param) => (pathParams[param.key] = param.value));
+      this.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
       this.req.pathParams = pathParams;
     }
   }
