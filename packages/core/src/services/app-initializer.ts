@@ -156,7 +156,8 @@ export class AppInitializer {
     const appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
     const importsResolver = new ImportsResolver(this.moduleManager, appMetadataMap, this.meta.providersPerApp);
     importsResolver.resolve();
-    await this.handleExtensions(appMetadataMap);
+    const aMetadataPerMod1 = [...appMetadataMap].map(([, metadataPerMod1]) => metadataPerMod1);
+    await this.handleExtensions(aMetadataPerMod1);
     this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
     return appMetadataMap;
   }
@@ -270,22 +271,20 @@ export class AppInitializer {
     return globalProviders;
   }
 
-  protected async handleExtensions(appMetadataMap: AppMetadataMap) {
+  protected async handleExtensions(aMetadataPerMod1: MetadataPerMod1[]) {
     this.createInjectorAndSetLogMediator();
     const allExtensionsPerApp: ExtensionsProvider[] = [];
     const extensionsContext = new ExtensionsContext();
     const filterConfig = { className: this.constructor.name };
-    const injector = this.injectorPerApp.resolveAndCreateChild([ExtensionsManagerPerApp]);
-    const extensionsManagerPerApp = injector.get(ExtensionsManagerPerApp) as ExtensionsManagerPerApp;
-    const metadataPerMod1Arr = [...appMetadataMap].map(([, metadataPerMod1]) => metadataPerMod1);
-    const len = metadataPerMod1Arr.length;
+    const parentInjector = this.injectorPerApp.resolveAndCreateChild([ExtensionsManagerPerApp]);
+    const extensionsManagerPerApp = parentInjector.get(ExtensionsManagerPerApp) as ExtensionsManagerPerApp;
+    const len = aMetadataPerMod1.length;
     for (let i = 0; i < len; i++) {
-      const metadataPerMod1 = metadataPerMod1Arr[i];
-      const initedExtensionsGroups = new Set<InjectionToken<Extension<any>[]>>();
+      const metadataPerMod1 = aMetadataPerMod1[i];
       const { extensions, providersPerMod, name: moduleName } = metadataPerMod1.meta;
       const { extensionsPerApp, extensionsPerMod } = this.splitExtensions(extensions);
       allExtensionsPerApp.push(...extensionsPerApp);
-      const injectorPerMod = injector.resolveAndCreateChild(providersPerMod);
+      const injectorPerMod = parentInjector.resolveAndCreateChild(providersPerMod);
       extensionsContext.isLastModule = len - 1 == i;
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
         ExtensionsManagerPerMod,
@@ -296,35 +295,34 @@ export class AppInitializer {
       const extensionsManagerPerMod = injectorForExtensions.get(ExtensionsManagerPerMod) as ExtensionsManagerPerMod;
       const extensionTokens = getTokens(extensionsPerMod).filter((token) => token instanceof InjectionToken);
       for (const groupToken of extensionTokens) {
-        if (initedExtensionsGroups.has(groupToken)) {
-          continue;
-        }
         const beforeToken = `BEFORE ${groupToken}`;
         this.logMediator.startExtensionsGroupInit('debug', filterConfig, moduleName, beforeToken);
         const resultBefore = await extensionsManagerPerMod.init(beforeToken);
-        if (extensionsPerApp.length) {
-          extensionsManagerPerApp.setData(beforeToken, resultBefore);
-        }
+        extensionsManagerPerApp.setData(beforeToken, resultBefore, extensionsPerApp);
         this.logMediator.finishExtensionsGroupInit('debug', filterConfig, moduleName, beforeToken);
 
         this.logMediator.startExtensionsGroupInit('debug', filterConfig, moduleName, groupToken);
         const result = await extensionsManagerPerMod.init(groupToken);
-        if (extensionsPerApp.length) {
-          extensionsManagerPerApp.setData(groupToken, result);
-        }
+        extensionsManagerPerApp.setData(groupToken, result, extensionsPerApp);
         this.logMediator.finishExtensionsGroupInit('debug', filterConfig, moduleName, groupToken);
-        initedExtensionsGroups.add(groupToken);
       }
       extensionsManagerPerMod.clearUnfinishedInitExtensions();
       this.logExtensionsStatistic();
     }
 
-    const inj = this.injectorPerApp.resolveAndCreateChild([
+    this.handleExtensionsPerApp(extensionsManagerPerApp, allExtensionsPerApp);
+  }
+
+  protected async handleExtensionsPerApp(
+    extensionsManagerPerApp: ExtensionsManagerPerApp,
+    allExtensionsPerApp: ExtensionsProvider[]
+  ) {
+    const injector = this.injectorPerApp.resolveAndCreateChild([
       ExtensionsManagerPerMod,
       { provide: ExtensionsManagerPerApp, useValue: extensionsManagerPerApp },
       ...allExtensionsPerApp,
     ]);
-    const extensionsManagerPerMod = inj.get(ExtensionsManagerPerMod) as ExtensionsManagerPerMod;
+    const extensionsManagerPerMod = injector.get(ExtensionsManagerPerMod) as ExtensionsManagerPerMod;
     const extensionTokens = getTokens(allExtensionsPerApp).filter((token) => token instanceof InjectionToken);
     for (const groupToken of extensionTokens) {
       const beforeToken = `BEFORE ${groupToken}`;
