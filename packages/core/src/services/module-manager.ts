@@ -367,7 +367,7 @@ export class ModuleManager {
         meta.exportsWithParams.push(exp);
       } else if (extensionsTokens.includes(exp)) {
         const extensionProviders = rawMeta.extensions!.filter((extension) => getToken(extension) === exp);
-        extensionProviders.forEach(provider => this.checkExtension(modName, provider, exp));
+        extensionProviders.forEach((provider) => this.checkExtension(modName, provider, exp));
         meta.exportsExtensions.push(...extensionProviders);
       } else if (isProvider(exp) || providersTokens.includes(exp)) {
         this.findAndSetProvider(exp, rawMeta, meta);
