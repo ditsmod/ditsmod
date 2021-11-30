@@ -73,24 +73,24 @@ export class ExtensionsManager {
     extension: Type<Extension<T>>,
     aCurrentData: T[]
   ) {
-    const { isLastModule, mExtensionsData } = this.extensionsContext;
-    let mGroupsData = mExtensionsData.get(extension);
+    const { isLastModule, mExtensionsData: mAllExtensionsData } = this.extensionsContext;
+    let mExtensionData = mAllExtensionsData.get(extension);
+    const aGroupData = mExtensionData?.get(groupToken);
     if (isLastModule) {
-      if (!mGroupsData) {
-        return aCurrentData;
-      }
-      const aPrevData = mGroupsData.get(groupToken);
-      if (aPrevData) {
-        return [...aPrevData, ...aCurrentData]
+      if (aGroupData) {
+        return [...aGroupData, ...aCurrentData]
       } else {
         return aCurrentData;
       }
     } else {
-      if (!mGroupsData) {
-        mExtensionsData.set(extension, new Map([[groupToken, aCurrentData]]))
+      if (!mExtensionData) {
+        mAllExtensionsData.set(extension, new Map([[groupToken, aCurrentData]]))
       } else {
-        const aPrevData = mGroupsData.get(groupToken);
-        aPrevData?.push(...aCurrentData);
+        if (aGroupData) {
+          aGroupData.push(...aCurrentData);
+        } else {
+          mExtensionData.set(groupToken, aCurrentData);
+        }
       }
       return false;
     }
