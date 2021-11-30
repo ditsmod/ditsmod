@@ -26,7 +26,7 @@ describe('ImportsResolver', () => {
   });
 
   describe('resolveImportedProviders', () => {
-    describe('fixDependecy(), unfixDependecy() and throwCyclicDependencies()', () => {
+    describe('fixDependecy(), unfixDependecy() and throwCircularDependencies()', () => {
       class Module1 {}
       class Provider1 {}
       class Module2 {}

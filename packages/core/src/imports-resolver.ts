@@ -179,12 +179,12 @@ export class ImportsResolver {
   protected throwCircularDependencies(index: number) {
     const items = this.unfinishedSearchDependecies;
     const prefixChain = items.slice(0, index);
-    const cyclicChain = items.slice(index);
+    const circularChain = items.slice(index);
     const prefixNames = prefixChain.map(([m, p]) => `[${getProviderName(p)} in ${getModuleName(m)}]`).join(' -> ');
     const [module, provider] = items[index];
-    let cyclicNames = cyclicChain.map(([m, p]) => `[${getProviderName(p)} in ${getModuleName(m)}]`).join(' -> ');
-    cyclicNames += ` -> [${getProviderName(provider)} in ${getModuleName(module)}]`;
-    let msg = `Detected circular dependencies: ${cyclicNames}.`;
+    let circularNames = circularChain.map(([m, p]) => `[${getProviderName(p)} in ${getModuleName(m)}]`).join(' -> ');
+    circularNames += ` -> [${getProviderName(provider)} in ${getModuleName(module)}]`;
+    let msg = `Detected circular dependencies: ${circularNames}.`;
     if (prefixNames) {
       msg += ` It is started from ${prefixNames}.`;
     }

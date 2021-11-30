@@ -8,7 +8,7 @@ export class ExtensionsManagerPerApp {
   protected map = new Map<string | InjectionToken<Extension<any>[]>, any[]>();
 
   async init<T>(extensionsGroupToken: string | InjectionToken<Extension<T>[]>): Promise<T[]> {
-    return this.map.get(extensionsGroupToken)!;
+    return this.map.get(extensionsGroupToken) || [];
   }
 
   setData<T>(extensionsGroupToken: string | InjectionToken<Extension<T>[]>, data: T[]) {
@@ -39,7 +39,7 @@ export class ExtensionsManagerPerMod {
 
     for (const extension of extensions) {
       if (this.unfinishedInitExtensions.has(extension)) {
-        this.throwCyclicDeps(extension);
+        this.throwCircularDeps(extension);
       }
 
       const extensionName = extension.constructor.name;
@@ -69,15 +69,15 @@ export class ExtensionsManagerPerMod {
     this.unfinishedInitExtensions.clear();
   }
 
-  protected throwCyclicDeps(extension: Extension<any>) {
+  protected throwCircularDeps(extension: Extension<any>) {
     const extensions = Array.from(this.unfinishedInitExtensions);
     const index = extensions.findIndex((ext) => ext === extension);
     const prefixChain = extensions.slice(0, index);
-    const cyclicChain = extensions.slice(index);
+    const circularChain = extensions.slice(index);
     const prefixNames = prefixChain.map((ext) => ext.constructor.name).join(' -> ');
-    let cyclicNames = cyclicChain.map((ext) => ext.constructor.name).join(' -> ');
-    cyclicNames += ` -> ${extension.constructor.name}`;
-    let msg = `Detected cyclic dependencies: ${cyclicNames}.`;
+    let circularNames = circularChain.map((ext) => ext.constructor.name).join(' -> ');
+    circularNames += ` -> ${extension.constructor.name}`;
+    let msg = `Detected circular dependencies: ${circularNames}.`;
     if (prefixNames) {
       msg += ` It is started from ${prefixNames}.`;
     }

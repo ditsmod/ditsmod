@@ -6,7 +6,7 @@ import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ExtensionsManagerPerMod } from './extensions-manager';
 import { LogManager } from './log-manager';
 
-describe('ExtensionsManager cyclic dependencies', () => {
+describe('ExtensionsManager circular dependencies', () => {
   class MockExtensionsManager extends ExtensionsManagerPerMod {
     override unfinishedInitExtensions = new Set<Extension<any>>();
   }
@@ -98,18 +98,18 @@ describe('ExtensionsManager cyclic dependencies', () => {
     await expect(mock.init(MY_EXTENSIONS1)).resolves.not.toThrow();
   });
 
-  it('MY_EXTENSIONS2 has cyclic dependencies', async () => {
-    const msg = 'Detected cyclic dependencies: Extension3 -> Extension4 -> Extension3. It is started from Extension2.';
+  it('MY_EXTENSIONS2 has circular dependencies', async () => {
+    const msg = 'Detected circular dependencies: Extension3 -> Extension4 -> Extension3. It is started from Extension2.';
     await expect(mock.init(MY_EXTENSIONS2)).rejects.toThrowError(msg);
   });
 
-  it('MY_EXTENSIONS3 has cyclic dependencies', async () => {
-    const msg = 'Detected cyclic dependencies: Extension3 -> Extension4 -> Extension3.';
+  it('MY_EXTENSIONS3 has circular dependencies', async () => {
+    const msg = 'Detected circular dependencies: Extension3 -> Extension4 -> Extension3.';
     await expect(mock.init(MY_EXTENSIONS3)).rejects.toThrowError(msg);
   });
 
-  it('MY_EXTENSIONS4 has cyclic dependencies', async () => {
-    const msg = 'Detected cyclic dependencies: Extension4 -> Extension3 -> Extension4.';
+  it('MY_EXTENSIONS4 has circular dependencies', async () => {
+    const msg = 'Detected circular dependencies: Extension4 -> Extension3 -> Extension4.';
     await expect(mock.init(MY_EXTENSIONS4)).rejects.toThrowError(msg);
   });
 });
