@@ -19,11 +19,11 @@ export class ExtensionsManager {
   ) {}
 
   // prettier-ignore
-  async init<T>(groupToken: ExtensionsGroupToken<T>, extension: Type<Extension<any>>, autoMergeArrays?: boolean): Promise<T[] | false>;
+  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays: boolean, extension: Type<Extension<any>>): Promise<T[] | false>;
   // prettier-ignore
-  async init<T>(groupToken: ExtensionsGroupToken<T>, extension?: Type<Extension<any>>, autoMergeArrays?: boolean): Promise<T[]>;
+  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays?: boolean, extension?: Type<Extension<any>>): Promise<T[]>;
   // prettier-ignore
-  async init<T>(groupToken: ExtensionsGroupToken<T>, extension?: Type<Extension<any>>, autoMergeArrays = true): Promise<T[] | false> {
+  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays = true, extension?: Type<Extension<any>>): Promise<T[] | false> {
     const extensions = this.injector.get(groupToken, []) as Extension<T>[];
     const aCurrentData: T[] = [];
     const filterConfig = { className: this.constructor.name };

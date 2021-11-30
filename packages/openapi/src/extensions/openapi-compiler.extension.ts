@@ -30,7 +30,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
       return this.oasObject;
     }
 
-    const aMetadataPerMod2 = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS, OpenapiCompilerExtension);
+    const aMetadataPerMod2 = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS, true, OpenapiCompilerExtension);
     if (!aMetadataPerMod2) {
       return false;
     }
