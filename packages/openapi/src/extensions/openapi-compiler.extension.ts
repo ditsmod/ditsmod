@@ -30,7 +30,11 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
       return this.oasObject;
     }
 
-    await this.compileOasObject();
+    const aMetadataPerMod2 = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS, OpenapiCompilerExtension);
+    if (!aMetadataPerMod2) {
+      return false;
+    }
+    await this.compileOasObject(aMetadataPerMod2);
     await mkdir(this.swaggerUiDist, { recursive: true });
     await writeFile(`${this.swaggerUiDist}/openapi.json`, JSON.stringify(this.oasObject));
     await writeFile(`${this.swaggerUiDist}/openapi.yaml`, stringify(this.oasObject));
@@ -38,8 +42,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
     return this.oasObject;
   }
 
-  protected async compileOasObject() {
-    const aMetadataPerMod2 = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS);
+  protected async compileOasObject(aMetadataPerMod2: edk.MetadataPerMod2[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
     aMetadataPerMod2.forEach((metadataPerMod2) => {
