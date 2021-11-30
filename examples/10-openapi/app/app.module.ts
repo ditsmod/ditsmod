@@ -1,25 +1,13 @@
-import { RootModule, ServiceProvider } from '@ditsmod/core';
-import { OAS_OBJECT, OpenapiModule, SwaggegrOAuthOptions } from '@ditsmod/openapi';
+import { RootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
-import { FirstModule } from './modules/routed/first.module';
-import { oasObject } from './oas-object';
+import { FirstModule } from './modules/routed/first/first.module';
+import { SecondModule } from './modules/routed/second/second.module';
 
-const swaggerOAuthOptions: SwaggegrOAuthOptions = {
-  appName: 'Swagger UI Webpack Demo',
-  // See https://demo.identityserver.io/ for configuration details.
-  clientId: 'implicit',
-};
-const providersPerApp: ServiceProvider[] = [
-  { provide: OAS_OBJECT, useValue: oasObject },
-  { provide: SwaggegrOAuthOptions, useValue: swaggerOAuthOptions },
-];
-const openapiModuleWithParams = OpenapiModule.withParams(providersPerApp);
 
 @RootModule({
   // Here works the application and serves OpenAPI documentation.
   listenOptions: { host: 'localhost', port: 8080 },
-  imports: [RouterModule, openapiModuleWithParams, FirstModule],
-  exports: [openapiModuleWithParams]
+  imports: [RouterModule, FirstModule, SecondModule] 
 })
 export class AppModule {}
