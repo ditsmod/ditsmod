@@ -10,9 +10,7 @@ import { SwaggerConfigManager } from './services/swagger-config-manager';
 
 @Module({
   controllers: [OpenapiController],
-  providersPerApp: [
-    { provide: OAS_OBJECT, useValue: DEFAULT_OAS_OBJECT },
-  ],
+  providersPerApp: [{ provide: OAS_OBJECT, useValue: DEFAULT_OAS_OBJECT }],
   providersPerMod: [SwaggerConfigManager],
   providersPerRou: [{ provide: OasRouteMeta, useExisting: edk.RouteMeta }],
   extensions: [
@@ -21,7 +19,13 @@ import { SwaggerConfigManager } from './services/swagger-config-manager';
     { provide: OAS_COMPILER_EXTENSIONS, useExisting: OpenapiCompilerExtension, multi: true },
     { provide: `BEFORE ${edk.PRE_ROUTER_EXTENSIONS}`, useExisting: OpenapiCompilerExtension, multi: true },
   ],
-  exports: [OasRouteMeta, OpenapiCompilerExtension, edk.ROUTES_EXTENSIONS, OAS_COMPILER_EXTENSIONS],
+  exports: [
+    OasRouteMeta,
+    OpenapiCompilerExtension,
+    edk.ROUTES_EXTENSIONS,
+    OAS_COMPILER_EXTENSIONS,
+    `BEFORE ${edk.PRE_ROUTER_EXTENSIONS}`,
+  ],
 })
 export class OpenapiModule {
   static withParams(providersPerApp: ServiceProvider[]): ModuleWithParams {
