@@ -7,7 +7,7 @@
   },
   "description": "",
   "main": "dist/index",
-  "typings": "dist/index",
+  "typings": "src/index",
   "directories": {
     "lib": "src"
   },

@@ -9,7 +9,7 @@
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
   "main": "dist/index",
-  "typings": "dist/index",
+  "typings": "src/index",
   "directories": {
     "lib": "src"
   },
