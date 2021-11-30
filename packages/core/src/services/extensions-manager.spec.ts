@@ -5,6 +5,7 @@ import { Extension } from '../types/mix';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ExtensionsManager } from './extensions-manager';
 import { LogManager } from './log-manager';
+import { ExtensionsContext } from './extensions-context';
 
 describe('ExtensionsManager circular dependencies', () => {
   class MockExtensionsManager extends ExtensionsManager {
@@ -85,6 +86,7 @@ describe('ExtensionsManager circular dependencies', () => {
     const injector = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,
       MockExtensionsManager,
+      ExtensionsContext,
       { provide: MY_EXTENSIONS1, useClass: Extension1, multi: true },
       { provide: MY_EXTENSIONS2, useClass: Extension2, multi: true },
       { provide: MY_EXTENSIONS3, useClass: Extension3, multi: true },
