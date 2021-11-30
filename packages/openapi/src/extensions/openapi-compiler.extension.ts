@@ -23,10 +23,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject> {
   protected oasObject: XOasObject;
   private swaggerUiDist = join(__dirname, '../../dist/swagger-ui');
 
-  constructor(
-    private injector: ReflectiveInjector,
-    private extensionsManagerPerApp: edk.ExtensionsManagerPerApp
-  ) {}
+  constructor(private injector: ReflectiveInjector, private extensionsManagerPerApp: edk.ExtensionsManager) {}
 
   async init() {
     if (this.oasObject) {

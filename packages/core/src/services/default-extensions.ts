@@ -4,7 +4,7 @@ import { RoutesExtension } from '../extensions/routes.extension';
 import { MetadataPerMod1 } from '../types/metadata-per-mod';
 import { ExtensionsProvider } from '../types/mix';
 import { ExtensionsContext } from './extensions-context';
-import { ExtensionsManagerPerMod, ExtensionsManagerPerApp } from './extensions-manager';
+import { ExtensionsManager } from './extensions-manager';
 
 export const defaultExtensions: Readonly<ExtensionsProvider[]> = [
   { provide: PRE_ROUTER_EXTENSIONS, useClass: PreRouterExtension, multi: true },
@@ -12,8 +12,7 @@ export const defaultExtensions: Readonly<ExtensionsProvider[]> = [
 ];
 
 export const defaultExtensionsServices: Readonly<ExtensionsProvider[]> = [
-  ExtensionsManagerPerApp,
-  ExtensionsManagerPerMod,
+  ExtensionsManager,
   ExtensionsContext,
   MetadataPerMod1,
 ];

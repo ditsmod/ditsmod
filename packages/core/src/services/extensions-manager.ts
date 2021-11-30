@@ -1,32 +1,11 @@
 import { Injectable, InjectionToken, Injector } from '@ts-stack/di';
 
-import { Extension, ExtensionsProvider } from '../types/mix';
+import { Extension } from '../types/mix';
 import { Counter } from './counter';
 import { LogMediator } from './log-mediator';
 
-export class ExtensionsManagerPerApp {
-  protected map = new Map<string | InjectionToken<Extension<any>[]>, any[]>();
-
-  async init<T>(extensionsGroupToken: string | InjectionToken<Extension<T>[]>): Promise<T[]> {
-    return this.map.get(extensionsGroupToken) || [];
-  }
-
-  setData<T>(extensionsGroupToken: string | InjectionToken<Extension<T>[]>, data: T[], extensionsPerApp: ExtensionsProvider[]) {
-    if (!extensionsPerApp.length) {
-      return;
-    }
-    let arr = this.map.get(extensionsGroupToken);
-    if (arr) {
-      arr.push(...data);
-      this.map.set(extensionsGroupToken, arr);
-    } else {
-      this.map.set(extensionsGroupToken, data);
-    }
-  }
-}
-
 @Injectable()
-export class ExtensionsManagerPerMod {
+export class ExtensionsManager {
   protected unfinishedInitExtensions = new Set<Extension<any>>();
 
   constructor(private injector: Injector, private logMediator: LogMediator, private counter: Counter) {}

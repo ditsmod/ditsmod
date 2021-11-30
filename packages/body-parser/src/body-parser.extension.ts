@@ -9,7 +9,7 @@ export const BODY_PARSER_EXTENSIONS = new InjectionToken<edk.Extension<void>[]>(
 export class BodyParserExtension implements edk.Extension<void> {
   private inited: boolean;
 
-  constructor(protected extensionManager: edk.ExtensionsManagerPerMod, protected injectorPerApp: ReflectiveInjector) {}
+  constructor(protected extensionManager: edk.ExtensionsManager, protected injectorPerApp: ReflectiveInjector) {}
 
   async init() {
     if (this.inited) {

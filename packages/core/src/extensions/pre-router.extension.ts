@@ -5,7 +5,7 @@ import { HttpHandler } from '../types/http-interceptor';
 import { Extension } from '../types/mix';
 import { PreparedRouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
-import { ExtensionsManagerPerMod } from '../services/extensions-manager';
+import { ExtensionsManager } from '../services/extensions-manager';
 import { LogMediator } from '../services/log-mediator';
 import { MetadataPerMod2 } from '../types/metadata-per-mod';
 import { ExtensionsContext } from '../services/extensions-context';
@@ -17,7 +17,7 @@ export class PreRouterExtension implements Extension<void> {
   constructor(
     protected injectorPerMod: ReflectiveInjector,
     protected router: Router,
-    protected extensionsManager: ExtensionsManagerPerMod,
+    protected extensionsManager: ExtensionsManager,
     protected logMediator: LogMediator,
     private extensionsContext: ExtensionsContext
   ) {}

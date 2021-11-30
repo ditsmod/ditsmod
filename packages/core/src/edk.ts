@@ -10,7 +10,7 @@ export { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 export { ProvidersMetadata } from './models/providers-metadata';
 export { ModuleFactory } from './module-factory';
 export { AppInitializer } from './services/app-initializer';
-export { ExtensionsManagerPerApp, ExtensionsManagerPerMod } from './services/extensions-manager';
+export { ExtensionsManager } from './services/extensions-manager';
 export { ModuleManager } from './services/module-manager';
 export { ExtensionsContext } from './services/extensions-context';
 export { MetadataPerMod1, MetadataPerMod2, MetaForExtensionsPerRou } from './types/metadata-per-mod';
