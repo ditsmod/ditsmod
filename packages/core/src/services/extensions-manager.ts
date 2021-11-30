@@ -1,20 +1,31 @@
-import { Injectable, InjectionToken, Injector } from '@ts-stack/di';
+import { Injectable, InjectionToken, Injector, Type } from '@ts-stack/di';
 
-import { Extension, ModuleType, ModuleWithParams } from '../types/mix';
+import { Extension } from '../types/mix';
 import { Counter } from './counter';
+import { ExtensionsContext } from './extensions-context';
 import { LogMediator } from './log-mediator';
 
-export type ExtensionsGroupToken<T> = InjectionToken<Extension<T>[]> | `BEFORE ${string}`;
+export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]> | `BEFORE ${string}`;
 
 @Injectable()
 export class ExtensionsManager {
   protected unfinishedInitExtensions = new Set<Extension<any>>();
 
-  constructor(private injector: Injector, private logMediator: LogMediator, private counter: Counter) {}
+  constructor(
+    private injector: Injector,
+    private logMediator: LogMediator,
+    private counter: Counter,
+    private extensionsContext: ExtensionsContext
+  ) {}
 
-  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays = true): Promise<T[]> {
+  // prettier-ignore
+  async init<T>(groupToken: ExtensionsGroupToken<T>, extension: Type<Extension<any>>, autoMergeArrays?: boolean): Promise<T[] | false>;
+  // prettier-ignore
+  async init<T>(groupToken: ExtensionsGroupToken<T>, extension?: Type<Extension<any>>, autoMergeArrays?: boolean): Promise<T[]>;
+  // prettier-ignore
+  async init<T>(groupToken: ExtensionsGroupToken<T>, extension?: Type<Extension<any>>, autoMergeArrays = true): Promise<T[] | false> {
     const extensions = this.injector.get(groupToken, []) as Extension<T>[];
-    const dataArr: T[] = [];
+    const aCurrentData: T[] = [];
     const filterConfig = { className: this.constructor.name };
 
     if (typeof groupToken != 'string' && !extensions.length) {
@@ -41,16 +52,48 @@ export class ExtensionsManager {
       }
       this.logMediator.extensionInitReturnsValue('debug', filterConfig, ...args);
       if (autoMergeArrays && Array.isArray(data)) {
-        dataArr.push(...data);
+        aCurrentData.push(...data);
       } else {
-        dataArr.push(data);
+        aCurrentData.push(data);
       }
     }
-    return dataArr;
+    if (extension) {
+      return this.getDataFromAllModules(groupToken, extension, aCurrentData);
+    } else {
+      return aCurrentData;
+    }
   }
 
   clearUnfinishedInitExtensions() {
     this.unfinishedInitExtensions.clear();
+  }
+
+  protected getDataFromAllModules<T>(
+    groupToken: ExtensionsGroupToken<T>,
+    extension: Type<Extension<T>>,
+    aCurrentData: T[]
+  ) {
+    const { isLastModule, mExtensionsData } = this.extensionsContext;
+    let mGroupsData = mExtensionsData.get(extension);
+    if (isLastModule) {
+      if (!mGroupsData) {
+        return aCurrentData;
+      }
+      const aPrevData = mGroupsData.get(groupToken);
+      if (aPrevData) {
+        return [...aPrevData, ...aCurrentData]
+      } else {
+        return aCurrentData;
+      }
+    } else {
+      if (!mGroupsData) {
+        mExtensionsData.set(extension, new Map([[groupToken, aCurrentData]]))
+      } else {
+        const aPrevData = mGroupsData.get(groupToken);
+        aPrevData?.push(...aCurrentData);
+      }
+      return false;
+    }
   }
 
   protected throwCircularDeps(extension: Extension<any>) {
