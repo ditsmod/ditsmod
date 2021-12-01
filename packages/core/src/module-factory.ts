@@ -139,9 +139,7 @@ export class ModuleFactory {
       const meta = this.moduleManager.getMetadata(imp, true);
       this.importProviders(meta);
       const prefixPerMod = [this.prefixPerMod, imp.prefix].filter((s) => s).join('/');
-      const normalizedGuardsPerMod = this.normalizeGuards(imp.guards);
-      this.checkGuardsPerMod(normalizedGuardsPerMod);
-      const guardsPerMod = [...this.guardsPerMod, ...normalizedGuardsPerMod];
+      const guardsPerMod = [...this.guardsPerMod, ...meta.normalizedGuardsPerMod];
       const moduleFactory = new ModuleFactory();
 
       if (this.unfinishedScanModules.has(imp)) {
@@ -161,27 +159,6 @@ export class ModuleFactory {
       this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
     }
     this.checkProvidersCollisions();
-  }
-
-  protected normalizeGuards(guards?: GuardItem[]) {
-    return (guards || []).map((item) => {
-      if (Array.isArray(item)) {
-        return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
-      } else {
-        return { guard: item } as NormalizedGuard;
-      }
-    });
-  }
-
-  protected checkGuardsPerMod(guards: NormalizedGuard[]) {
-    for (const Guard of guards.map((n) => n.guard)) {
-      const type = typeof Guard?.prototype.canActivate;
-      if (type != 'function') {
-        throw new TypeError(
-          `Import ${this.moduleName} with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`
-        );
-      }
-    }
   }
 
   /**

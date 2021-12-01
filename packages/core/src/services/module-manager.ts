@@ -3,7 +3,16 @@ import { format } from 'util';
 import { HTTP_INTERCEPTORS } from '../constans';
 
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { AnyObj, Extension, ExtensionsProvider, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
+import {
+  AnyObj,
+  Extension,
+  ExtensionsProvider,
+  GuardItem,
+  ModuleType,
+  ModuleWithParams,
+  NormalizedGuard,
+  ServiceProvider,
+} from '../types/mix';
 import { ModuleMetadata } from '../types/module-metadata';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
@@ -340,6 +349,8 @@ export class ModuleManager {
       this.throwIfUndefined(modName, 'Im', imp, i);
       if (isModuleWithParams(imp)) {
         meta.importsWithParams.push(imp);
+        meta.normalizedGuardsPerMod = this.normalizeGuards(imp.guards);
+        this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
       } else {
         meta.importsModules.push(imp);
       }
@@ -383,6 +394,27 @@ export class ModuleManager {
     this.quickCheckMetadata(meta);
 
     return meta;
+  }
+
+  protected normalizeGuards(guards?: GuardItem[]) {
+    return (guards || []).map((item) => {
+      if (Array.isArray(item)) {
+        return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
+      } else {
+        return { guard: item } as NormalizedGuard;
+      }
+    });
+  }
+
+  protected checkGuardsPerMod(guards: NormalizedGuard[], moduleName: string) {
+    for (const Guard of guards.map((n) => n.guard)) {
+      const type = typeof Guard?.prototype.canActivate;
+      if (type != 'function') {
+        throw new TypeError(
+          `Import ${moduleName} with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`
+        );
+      }
+    }
   }
 
   protected quickCheckMetadata(meta: NormalizedModuleMetadata) {

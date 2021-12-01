@@ -1,4 +1,12 @@
-import { AnyObj, ControllerType, ModuleType, ModuleWithParams, ServiceProvider, ExtensionsProvider } from '../types/mix';
+import {
+  AnyObj,
+  ControllerType,
+  ModuleType,
+  ModuleWithParams,
+  ServiceProvider,
+  ExtensionsProvider,
+  NormalizedGuard,
+} from '../types/mix';
 import { ProvidersMetadata } from './providers-metadata';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
@@ -24,6 +32,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   exportsProvidersPerMod: ServiceProvider[] = [];
   exportsProvidersPerRou: ServiceProvider[] = [];
   exportsProvidersPerReq: ServiceProvider[] = [];
+  normalizedGuardsPerMod: NormalizedGuard[] = [];
   resolvedCollisionsPerApp: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerMod: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerRou: [any, ModuleType | ModuleWithParams][] = [];
