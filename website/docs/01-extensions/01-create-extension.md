@@ -42,13 +42,13 @@ import { edk } from '@ditsmod/core';
 export class Extension1 implements edk.Extension<any> {
   private data: any;
 
-  constructor(@Inject(edk.APP_METADATA_MAP) private appMetadataMap: edk.AppMetadataMap) {}
+  constructor(private metadataPerMod1: edk.MetadataPerMod1) {}
 
   async init() {
     if (this.data) {
       return this.data;
     }
-    // Щось хороше робите із `this.appMetadataMap`.
+    // Щось хороше робите із this.metadataPerMod1.
     // ...
     this.data = result;
     return this.data;

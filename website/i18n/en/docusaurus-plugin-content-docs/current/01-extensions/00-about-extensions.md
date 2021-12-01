@@ -41,12 +41,14 @@ interface Extension<T> {
 Each extension needs to be registered, this will be mentioned later, and now let's assume that such
 registration has taken place, the application is running, and then goes the following process:
 
-1. collecting metadata from all decorators (`@RootModule`,` @Module`, `@Controller`,
-`@Route`...);
-2. the collected metadata then passing to DI with the token `APP_METADATA_MAP`, therefore - any
-service, controller or extension can receive this metadata in the constructor;
-3. one after another all registered extensions are started, more precisely - their methods `init()`
-without arguments are called;
+1. collecting metadata from all decorators (`@RootModule`, `@Module`, `@Controller`, `@Route`
+   ...and even from unknown decorators, but provided that they are created using the
+   `@ts-stack/di` library);
+2. this metadata then passing to DI with token `MetadataPerMod1`, therefore - any
+   extension can receive this metadata in the constructor;
+3. per module work of extensions begins, that is, for each Ditsmod module the extensions registered
+   in this module or imported in this module are selected, and the data collected in this module is
+   also transmitted to them; then the `init()` method of each extension is called;
 4. the web server starts, and the application starts working normally, processing HTTP requests.
 
 It should be noted that the order of running extensions can be considered as "random", so each
