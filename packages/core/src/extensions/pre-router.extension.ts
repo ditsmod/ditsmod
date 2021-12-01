@@ -9,13 +9,14 @@ import { ExtensionsManager } from '../services/extensions-manager';
 import { LogMediator } from '../services/log-mediator';
 import { MetadataPerMod2 } from '../types/metadata-per-mod';
 import { ExtensionsContext } from '../services/extensions-context';
+import { InjectorPerApp } from '../models/injector-per-app';
 
 @Injectable()
 export class PreRouterExtension implements Extension<void> {
   #inited: boolean;
 
   constructor(
-    protected injectorPerMod: ReflectiveInjector,
+    protected injectorPerApp: InjectorPerApp,
     protected router: Router,
     protected extensionsManager: ExtensionsManager,
     protected logMediator: LogMediator,
@@ -40,7 +41,7 @@ export class PreRouterExtension implements Extension<void> {
       const { moduleName, aMetaForExtensionsPerRou, providersPerMod } = metadataPerMod2;
 
       aMetaForExtensionsPerRou.forEach(({ httpMethod, path, providersPerRou, providersPerReq }) => {
-        const injectorPerMod = this.injectorPerMod.resolveAndCreateChild(providersPerMod);
+        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];

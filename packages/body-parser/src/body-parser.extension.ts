@@ -1,5 +1,5 @@
 import { BodyParserConfig, edk, HTTP_INTERCEPTORS } from '@ditsmod/core';
-import { Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
+import { Injectable, InjectionToken } from '@ts-stack/di';
 
 import { BodyParserInterceptor } from './body-parser.interceptor';
 
@@ -9,7 +9,7 @@ export const BODY_PARSER_EXTENSIONS = new InjectionToken<edk.Extension<void>[]>(
 export class BodyParserExtension implements edk.Extension<void> {
   private inited: boolean;
 
-  constructor(protected extensionManager: edk.ExtensionsManager, protected injectorPerApp: ReflectiveInjector) {}
+  constructor(protected extensionManager: edk.ExtensionsManager, protected injectorPerApp: edk.InjectorPerApp) {}
 
   async init() {
     if (this.inited) {

@@ -8,6 +8,7 @@ export { RouteMetadata } from './decorators/route';
 export { RoutesExtension } from './extensions/routes.extension';
 export { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 export { ProvidersMetadata } from './models/providers-metadata';
+export { InjectorPerApp } from './models/injector-per-app';
 export { ModuleFactory } from './module-factory';
 export { AppInitializer } from './services/app-initializer';
 export { ExtensionsManager, ExtensionsGroupToken } from './services/extensions-manager';

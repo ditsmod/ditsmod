@@ -1,4 +1,4 @@
-import { Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { Injectable } from '@ts-stack/di';
 
 import { ControllerMetadata } from '../decorators/controller';
 import { RootMetadata } from '../models/root-metadata';
@@ -11,11 +11,7 @@ import { isController, isRoute } from '../utils/type-guards';
 export class RoutesExtension implements Extension<MetadataPerMod2> {
   protected metadataPerMod2: MetadataPerMod2;
 
-  constructor(
-    protected injectorPerMod: ReflectiveInjector,
-    protected rootMetadata: RootMetadata,
-    protected metadataPerMod1: MetadataPerMod1
-  ) {}
+  constructor(protected rootMetadata: RootMetadata, protected metadataPerMod1: MetadataPerMod1) {}
 
   async init() {
     if (this.metadataPerMod2) {

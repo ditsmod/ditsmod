@@ -1,7 +1,7 @@
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { edk } from '@ditsmod/core';
-import { Injectable, ReflectiveInjector, reflector } from '@ts-stack/di';
+import { Injectable, reflector } from '@ts-stack/di';
 import {
   PathItemObject,
   XOasObject,
@@ -23,7 +23,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
   protected oasObject: XOasObject;
   private swaggerUiDist = join(__dirname, '../../dist/swagger-ui');
 
-  constructor(private injector: ReflectiveInjector, private extensionsManager: edk.ExtensionsManager) {}
+  constructor(private injectorPerApp: edk.InjectorPerApp, private extensionsManager: edk.ExtensionsManager) {}
 
   async init() {
     if (this.oasObject) {
@@ -34,6 +34,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
     if (!aMetadataPerMod2) {
       return false;
     }
+    console.log('>'.repeat(20), 'works!')
     await this.compileOasObject(aMetadataPerMod2);
     await mkdir(this.swaggerUiDist, { recursive: true });
     await writeFile(`${this.swaggerUiDist}/openapi.json`, JSON.stringify(this.oasObject));
@@ -48,7 +49,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       const { aMetaForExtensionsPerRou, providersPerMod } = metadataPerMod2;
       aMetaForExtensionsPerRou.forEach(({ providersPerRou }) => {
-        const injectorPerMod = this.injector.resolveAndCreateChild(providersPerMod);
+        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
         const oasRouteMeta = injectorPerRou.get(OasRouteMeta) as OasRouteMeta;
@@ -73,7 +74,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
   }
 
   protected initOasObject() {
-    this.oasObject = Object.assign({}, DEFAULT_OAS_OBJECT, this.injector.get(OAS_OBJECT));
+    this.oasObject = Object.assign({}, DEFAULT_OAS_OBJECT, this.injectorPerApp.get(OAS_OBJECT));
     this.oasObject.components = { ...(this.oasObject.components || {}) };
   }
 

@@ -24,6 +24,7 @@ import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
 import { getLastProviders } from '../utils/get-last-providers';
 import { ExtensionsContext } from './extensions-context';
+import { InjectorPerApp } from '../models/injector-per-app';
 
 export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
@@ -277,6 +278,7 @@ export class AppInitializer {
         ExtensionsManager,
         { provide: ExtensionsContext, useValue: extensionsContext },
         { provide: MetadataPerMod1, useValue: metadataPerMod1 },
+        { provide: InjectorPerApp, useValue: this.injectorPerApp },
         ...extensions,
       ]);
       const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
