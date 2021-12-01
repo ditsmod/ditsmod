@@ -20,7 +20,7 @@ import { getDuplicates } from './utils/get-duplicates';
 import { getToken } from './utils/get-tokens';
 import { normalizeProviders } from './utils/ng-utils';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
-import { isController } from './utils/type-guards';
+import { isController, isModuleWithParams } from './utils/type-guards';
 
 /**
  * - imports and exports global providers;
@@ -114,32 +114,17 @@ export class ModuleFactory {
   }
 
   protected importModules() {
-    for (const imp of this.meta.importsModules) {
+    for (const imp of [...this.meta.importsModules, ...this.meta.importsWithParams]) {
       const meta = this.moduleManager.getMetadata(imp, true);
       this.importProviders(meta);
-      const moduleFactory = new ModuleFactory();
 
-      if (this.unfinishedScanModules.has(imp)) {
-        continue;
+      let prefixPerMod = '';
+      let guardsPerMod: NormalizedGuard[] = [];
+      if (isModuleWithParams(imp)) {
+        prefixPerMod = [this.prefixPerMod, imp.prefix].filter((s) => s).join('/');
+        guardsPerMod = [...this.guardsPerMod, ...meta.normalizedGuardsPerMod];
       }
-      this.unfinishedScanModules.add(imp);
-      const appMetadataMap = moduleFactory.bootstrap(
-        this.globalProviders,
-        this.prefixPerMod,
-        imp,
-        this.moduleManager,
-        this.unfinishedScanModules,
-        this.guardsPerMod
-      );
-      this.unfinishedScanModules.delete(imp);
 
-      this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
-    }
-    for (const imp of this.meta.importsWithParams) {
-      const meta = this.moduleManager.getMetadata(imp, true);
-      this.importProviders(meta);
-      const prefixPerMod = [this.prefixPerMod, imp.prefix].filter((s) => s).join('/');
-      const guardsPerMod = [...this.guardsPerMod, ...meta.normalizedGuardsPerMod];
       const moduleFactory = new ModuleFactory();
 
       if (this.unfinishedScanModules.has(imp)) {
