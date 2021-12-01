@@ -34,7 +34,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
     if (!aMetadataPerMod2) {
       return false;
     }
-    console.log('>'.repeat(20), 'works!')
+
     await this.compileOasObject(aMetadataPerMod2);
     await mkdir(this.swaggerUiDist, { recursive: true });
     await writeFile(`${this.swaggerUiDist}/openapi.json`, JSON.stringify(this.oasObject));

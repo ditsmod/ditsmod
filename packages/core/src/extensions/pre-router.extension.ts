@@ -14,6 +14,7 @@ import { InjectorPerApp } from '../models/injector-per-app';
 @Injectable()
 export class PreRouterExtension implements Extension<void> {
   #inited: boolean;
+  #isLastExtensionCall: boolean;
 
   constructor(
     protected injectorPerApp: InjectorPerApp,
@@ -23,11 +24,12 @@ export class PreRouterExtension implements Extension<void> {
     private extensionsContext: ExtensionsContext
   ) {}
 
-  async init() {
+  async init(isLastExtensionCall: boolean) {
     if (this.#inited) {
       return;
     }
 
+    this.#isLastExtensionCall = isLastExtensionCall;
     const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS);
     const preparedRouteMeta = this.prepareRoutesMeta(aMetadataPerMod2);
     this.setRoutes(preparedRouteMeta);
@@ -70,7 +72,7 @@ export class PreRouterExtension implements Extension<void> {
 
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {
     this.extensionsContext.appHasRoutes = this.extensionsContext.appHasRoutes || !!preparedRouteMeta.length;
-    if (this.extensionsContext.isLastModule && !this.extensionsContext.appHasRoutes) {
+    if (this.#isLastExtensionCall && !this.extensionsContext.appHasRoutes) {
       this.logMediator.noRoutes('warn', { className: this.constructor.name });
       return;
     }

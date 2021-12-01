@@ -20,3 +20,4 @@ export const QUERY_STRING = new InjectionToken('QUERY_STRING');
 export const defaultProvidersPerMod: ServiceProvider[] = [ModConfig];
 export const NODE_REQ = new InjectionToken<NodeRequest>('NODE_REQ');
 export const NODE_RES = new InjectionToken<NodeResponse>('NODE_RES');
+export const EXTENSIONS_COUNTERS = new InjectionToken<Map<ServiceProvider, number>>('EXTENSIONS_COUNTERS');

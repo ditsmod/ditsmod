@@ -6,6 +6,7 @@ import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ExtensionsManager } from './extensions-manager';
 import { LogManager } from './log-manager';
 import { ExtensionsContext } from './extensions-context';
+import { EXTENSIONS_COUNTERS } from '../constans';
 
 describe('ExtensionsManager circular dependencies', () => {
   class MockExtensionsManager extends ExtensionsManager {
@@ -92,6 +93,7 @@ describe('ExtensionsManager circular dependencies', () => {
       { provide: MY_EXTENSIONS3, useClass: Extension3, multi: true },
       { provide: MY_EXTENSIONS4, useClass: Extension4, multi: true },
       { provide: LogManager, useValue: logManager },
+      { provide: EXTENSIONS_COUNTERS, useValue: new Map() },
     ]);
     mock = injector.get(MockExtensionsManager) as MockExtensionsManager;
   });

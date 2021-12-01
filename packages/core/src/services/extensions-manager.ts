@@ -1,11 +1,10 @@
-import { Injectable, InjectionToken, Injector, Type } from '@ts-stack/di';
+import { Inject, Injectable, Injector, Type } from '@ts-stack/di';
+import { EXTENSIONS_COUNTERS } from '../constans';
 
-import { Extension } from '../types/mix';
+import { Extension, ExtensionsGroupToken } from '../types/mix';
 import { Counter } from './counter';
 import { ExtensionsContext } from './extensions-context';
 import { LogMediator } from './log-mediator';
-
-export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]> | `BEFORE ${string}`;
 
 @Injectable()
 export class ExtensionsManager {
@@ -15,7 +14,8 @@ export class ExtensionsManager {
     private injector: Injector,
     private logMediator: LogMediator,
     private counter: Counter,
-    private extensionsContext: ExtensionsContext
+    private extensionsContext: ExtensionsContext,
+    @Inject(EXTENSIONS_COUNTERS) private mExtensionsCounters: Map<Type<Extension<any>>, number>
   ) {}
 
   // prettier-ignore
@@ -42,7 +42,8 @@ export class ExtensionsManager {
       const args = [id, extensionName];
       this.unfinishedInitExtensions.add(extension);
       this.logMediator.startInitExtension('debug', filterConfig, ...args);
-      const data = await extension.init();
+      const isLastExtensionCall = this.mExtensionsCounters.get(extension.constructor as Type<Extension<T>>) === 0;
+      const data = await extension.init(isLastExtensionCall);
       this.logMediator.finishInitExtension('debug', filterConfig, ...args);
       this.unfinishedInitExtensions.delete(extension);
       this.counter.addInitedExtensions(extension);
@@ -64,27 +65,25 @@ export class ExtensionsManager {
     }
   }
 
-  clearUnfinishedInitExtensions() {
-    this.unfinishedInitExtensions.clear();
-  }
-
   protected getDataFromAllModules<T>(
     groupToken: ExtensionsGroupToken<T>,
     extension: Type<Extension<T>>,
     aCurrentData: T[]
   ) {
-    const { isLastModule, mExtensionsData: mAllExtensionsData } = this.extensionsContext;
+    const { mExtensionsData: mAllExtensionsData } = this.extensionsContext;
     let mExtensionData = mAllExtensionsData.get(extension);
     const aGroupData = mExtensionData?.get(groupToken);
-    if (isLastModule) {
+    const isLastExtensionCall = this.mExtensionsCounters.get(extension) === 0;
+
+    if (isLastExtensionCall) {
       if (aGroupData) {
-        return [...aGroupData, ...aCurrentData]
+        return [...aGroupData, ...aCurrentData];
       } else {
         return aCurrentData;
       }
     } else {
       if (!mExtensionData) {
-        mAllExtensionsData.set(extension, new Map([[groupToken, aCurrentData]]))
+        mAllExtensionsData.set(extension, new Map([[groupToken, aCurrentData]]));
       } else {
         if (aGroupData) {
           aGroupData.push(...aCurrentData);

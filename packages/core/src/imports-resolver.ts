@@ -1,18 +1,18 @@
-import { Injector, ReflectiveInjector } from '@ts-stack/di';
+import { Injector } from '@ts-stack/di';
 
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
 import { AppMetadataMap, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
 import { getLastProviders } from './utils/get-last-providers';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
-import { getTokens } from './utils/get-tokens';
+import { getProvidersTargets, getTokens } from './utils/get-tokens';
 import { MetadataPerMod1 } from './types/metadata-per-mod';
 import { RouteMeta } from './types/route-data';
 import { RootMetadata } from './models/root-metadata';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { getModuleName } from './utils/get-module-name';
 import { getProviderName } from './utils/get-provider-name';
-import { defaultExtensions, defaultExtensionsServices } from './services/default-extensions';
+import { defaultExtensions, defaultExtensionsTokens } from './services/default-extensions';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { getDependencies } from './utils/get-dependecies';
 
@@ -24,6 +24,7 @@ export class ImportsResolver {
   protected tokensPerApp: any[];
   protected meta: NormalizedModuleMetadata;
   protected extensionsTokens: any[] = [];
+  protected mExtensionsCounters = new Map<ServiceProvider, number>();
 
   constructor(
     private moduleManager: ModuleManager,
@@ -36,12 +37,14 @@ export class ImportsResolver {
     this.appMetadataMap.forEach((metadataPerMod1) => {
       this.resolveImportedProviders(metadataPerMod1);
     });
+
+    return this.mExtensionsCounters;
   }
 
   protected resolveImportedProviders(metadataPerMod1: MetadataPerMod1) {
     const { importedTokensMap, meta } = metadataPerMod1;
     this.meta = meta;
-    this.extensionsTokens = getTokens([...defaultExtensionsServices, ...importedTokensMap.extensions.keys()]);
+    this.extensionsTokens = getTokens([...defaultExtensionsTokens, ...importedTokensMap.extensions.keys()]);
     const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
 
     scopes.forEach((scope, i) => {
@@ -54,7 +57,7 @@ export class ImportsResolver {
     });
 
     importedTokensMap.extensions.forEach(({ providers, module }) => {
-      const newProviders = providers.filter(p => !meta.extensions.includes(p))
+      const newProviders = providers.filter((p) => !meta.extensions.includes(p));
       meta.extensions.unshift(...newProviders);
       providers.forEach((provider) => {
         this.grabDependecies(module, provider, ['Mod']);
@@ -63,6 +66,16 @@ export class ImportsResolver {
 
     meta.providersPerReq.unshift(...defaultProvidersPerReq);
     meta.extensions.unshift(...defaultExtensions);
+    this.increaseExtensionsCounters();
+  }
+
+  protected increaseExtensionsCounters() {
+    const uniqTargets = new Set<ServiceProvider>(getProvidersTargets(this.meta.extensions));
+
+    uniqTargets.forEach((target) => {
+      const counter = this.mExtensionsCounters.get(target) || 0;
+      this.mExtensionsCounters.set(target, counter + 1);
+    });
   }
 
   /**

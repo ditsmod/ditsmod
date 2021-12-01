@@ -10,7 +10,7 @@ import { ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { RequestListener } from '../types/server-options';
 import { getDuplicates } from '../utils/get-duplicates';
 import { getModuleName } from '../utils/get-module-name';
-import { getToken, getTokens } from '../utils/get-tokens';
+import { getProvidersTargets, getToken, getTokens } from '../utils/get-tokens';
 import { getCollisions } from '../utils/get-collisions';
 import { normalizeProviders } from '../utils/ng-utils';
 import { throwProvidersCollisionError } from '../utils/throw-providers-collision-error';
@@ -25,6 +25,7 @@ import { PreRouter } from './pre-router';
 import { getLastProviders } from '../utils/get-last-providers';
 import { ExtensionsContext } from './extensions-context';
 import { InjectorPerApp } from '../models/injector-per-app';
+import { EXTENSIONS_COUNTERS } from '../constans';
 
 export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
@@ -148,9 +149,9 @@ export class AppInitializer {
   async bootstrapModulesAndExtensions() {
     const appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
     const importsResolver = new ImportsResolver(this.moduleManager, appMetadataMap, this.meta.providersPerApp);
-    importsResolver.resolve();
+    const mExtensionsCounters = importsResolver.resolve();
     const aMetadataPerMod1 = [...appMetadataMap].map(([, metadataPerMod1]) => metadataPerMod1);
-    await this.handleExtensions(aMetadataPerMod1);
+    await this.handleExtensions(aMetadataPerMod1, mExtensionsCounters);
     this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
     return appMetadataMap;
   }
@@ -264,7 +265,10 @@ export class AppInitializer {
     return globalProviders;
   }
 
-  protected async handleExtensions(aMetadataPerMod1: MetadataPerMod1[]) {
+  protected async handleExtensions(
+    aMetadataPerMod1: MetadataPerMod1[],
+    mExtensionsCounters: Map<ServiceProvider, number>
+  ) {
     this.createInjectorAndSetLogMediator();
     const extensionsContext = new ExtensionsContext();
     const filterConfig = { className: this.constructor.name };
@@ -272,13 +276,14 @@ export class AppInitializer {
     for (let i = 0; i < len; i++) {
       const metadataPerMod1 = aMetadataPerMod1[i];
       const { extensions, providersPerMod, name: moduleName } = metadataPerMod1.meta;
+      this.decreaseExtensionsCounters(mExtensionsCounters, extensions);
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-      extensionsContext.isLastModule = len - 1 == i;
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
         ExtensionsManager,
         { provide: ExtensionsContext, useValue: extensionsContext },
         { provide: MetadataPerMod1, useValue: metadataPerMod1 },
         { provide: InjectorPerApp, useValue: this.injectorPerApp },
+        { provide: EXTENSIONS_COUNTERS, useValue: mExtensionsCounters },
         ...extensions,
       ]);
       const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
@@ -293,9 +298,17 @@ export class AppInitializer {
         await extensionsManager.init(groupToken);
         this.logMediator.finishExtensionsGroupInit('debug', filterConfig, moduleName, groupToken);
       }
-      extensionsManager.clearUnfinishedInitExtensions();
       this.logExtensionsStatistic();
     }
+  }
+
+  protected decreaseExtensionsCounters(mExtensionsCounters: Map<ServiceProvider, number>, extensions: ServiceProvider[]) {
+    const uniqTargets = new Set<ServiceProvider>(getProvidersTargets(extensions));
+
+    uniqTargets.forEach((target) => {
+      const counter = mExtensionsCounters.get(target)!;
+      mExtensionsCounters.set(target, counter - 1);
+    });
   }
 
   protected logExtensionsStatistic() {

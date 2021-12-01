@@ -1,12 +1,22 @@
-import { ClassProvider, ExistingProvider, FactoryProvider, Type, TypeProvider, ValueProvider } from '@ts-stack/di';
+import {
+  ClassProvider,
+  ExistingProvider,
+  FactoryProvider,
+  InjectionToken,
+  Type,
+  TypeProvider,
+  ValueProvider,
+} from '@ts-stack/di';
 
 import { MetadataPerMod1 } from './metadata-per-mod';
 import { ProvidersMetadata } from '../models/providers-metadata';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Type<T>;
 
+export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]> | `BEFORE ${string}`;
+
 export interface Extension<T> {
-  init(): Promise<T>;
+  init(isLastExtensionCall: boolean): Promise<T>;
 }
 
 export type ExtensionsProvider =

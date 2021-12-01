@@ -1,4 +1,4 @@
-import { PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from '../constans';
+import { EXTENSIONS_COUNTERS, PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from '../constans';
 import { PreRouterExtension } from '../extensions/pre-router.extension';
 import { RoutesExtension } from '../extensions/routes.extension';
 import { InjectorPerApp } from '../models/injector-per-app';
@@ -12,9 +12,10 @@ export const defaultExtensions: Readonly<ExtensionsProvider[]> = [
   { provide: ROUTES_EXTENSIONS, useClass: RoutesExtension, multi: true },
 ];
 
-export const defaultExtensionsServices: Readonly<ServiceProvider[]> = [
+export const defaultExtensionsTokens: Readonly<any[]> = [
   ExtensionsManager,
   ExtensionsContext,
   MetadataPerMod1,
-  InjectorPerApp as any,
+  InjectorPerApp,
+  EXTENSIONS_COUNTERS,
 ];
