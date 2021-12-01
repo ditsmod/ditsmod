@@ -9,15 +9,18 @@ import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
 import { ImportObj, ImportsMap, MetadataPerMod1 } from './types/metadata-per-mod';
 import {
-  DecoratorMetadata, ExtensionsProvider, GuardItem, ModuleType,
+  DecoratorMetadata,
+  ExtensionsProvider,
+  GuardItem,
+  ModuleType,
   ModuleWithParams,
   NormalizedGuard,
-  ServiceProvider
+  ServiceProvider,
 } from './types/mix';
 import { deepFreeze } from './utils/deep-freeze';
 import { getCollisions } from './utils/get-collisions';
 import { getDuplicates } from './utils/get-duplicates';
-import { getToken } from './utils/get-tokens';
+import { getToken, getTokens } from './utils/get-tokens';
 import { normalizeProviders } from './utils/ng-utils';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
 import { isController, isModuleWithParams } from './utils/type-guards';
@@ -60,7 +63,7 @@ export class ModuleFactory {
     this.meta = meta;
     this.globalProviders = globalProviders;
     this.importProviders(meta);
-    this.checkProvidersCollisions(true);
+    this.checkProvidersCollisions();
 
     return {
       providersPerMod: this.importedProvidersPerMod,
@@ -200,100 +203,52 @@ export class ModuleFactory {
 
   /**
    * This method should be called before call `this.mergeProviders()`.
-   *
-   * @param isGlobal Indicates that need find collision for global providers.
    */
-  protected checkProvidersCollisions(isGlobal?: boolean) {
-    const tokensPerApp = normalizeProviders(this.globalProviders.providersPerApp).map((np) => np.provide);
-
-    const declaredTokensPerMod = normalizeProviders(this.meta.providersPerMod).map((np) => np.provide);
-    const importedNormProvidersPerMod = normalizeProviders(this.importedProvidersPerMod);
-    const importedTokensPerMod = importedNormProvidersPerMod.map((np) => np.provide);
-    const multiTokensPerMod = importedNormProvidersPerMod.filter((np) => np.multi).map((np) => np.provide);
-    let duplExpTokensPerMod = getDuplicates(importedTokensPerMod).filter((d) => !multiTokensPerMod.includes(d));
-    if (isGlobal) {
-      const rootImports = [
-        ...this.meta.exportsProvidersPerMod,
-        ...this.meta.exportsProvidersPerRou,
-        ...this.meta.exportsProvidersPerReq,
-      ];
-      const rootTokens = normalizeProviders(rootImports).map((np) => np.provide);
-      duplExpTokensPerMod = duplExpTokensPerMod.filter((d) => !rootTokens.includes(d));
-    } else {
-      duplExpTokensPerMod = duplExpTokensPerMod.filter((d) => !declaredTokensPerMod.includes(d));
-    }
-    duplExpTokensPerMod = getCollisions(duplExpTokensPerMod, this.importedProvidersPerMod);
-    const defaultTokensPerMod = normalizeProviders([...defaultProvidersPerMod]).map((np) => np.provide);
-    const tokensPerMod = [...defaultTokensPerMod, ...declaredTokensPerMod, ...importedTokensPerMod];
-
-    const declaredTokensPerRou = normalizeProviders(this.meta.providersPerRou).map((np) => np.provide);
-    const importedNormalizedPerRou = normalizeProviders(this.importedProvidersPerRou);
-    const importedTokensPerRou = importedNormalizedPerRou.map((np) => np.provide);
-    const multiTokensPerRou = importedNormalizedPerRou.filter((np) => np.multi).map((np) => np.provide);
-    let duplExpPerRou = getDuplicates(importedTokensPerRou).filter((d) => !multiTokensPerRou.includes(d));
-    if (isGlobal) {
-      const rootImports = [
-        ...this.meta.exportsProvidersPerMod,
-        ...this.meta.exportsProvidersPerRou,
-        ...this.meta.exportsProvidersPerReq,
-      ];
-      const rootTokens = normalizeProviders(rootImports).map((np) => np.provide);
-      duplExpPerRou = duplExpPerRou.filter((d) => !rootTokens.includes(d));
-    } else {
-      duplExpPerRou = duplExpPerRou.filter((d) => !declaredTokensPerRou.includes(d));
-    }
-    duplExpPerRou = getCollisions(duplExpPerRou, this.importedProvidersPerRou);
-    const tokensPerRou = [...declaredTokensPerRou, ...importedTokensPerRou];
-
-    const declaredTokensPerReq = normalizeProviders(this.meta.providersPerReq).map((np) => np.provide);
-    const importedNormalizedPerReq = normalizeProviders(this.importedProvidersPerReq);
-    const importedTokensPerReq = importedNormalizedPerReq.map((np) => np.provide);
-    const multiTokensPerReq = importedNormalizedPerReq.filter((np) => np.multi).map((np) => np.provide);
-    let duplExpPerReq = getDuplicates(importedTokensPerReq).filter((d) => !multiTokensPerReq.includes(d));
-    if (isGlobal) {
-      const rootImports = [
-        ...this.meta.exportsProvidersPerMod,
-        ...this.meta.exportsProvidersPerRou,
-        ...this.meta.exportsProvidersPerReq,
-      ];
-      const rootTokens = normalizeProviders(rootImports).map((np) => np.provide);
-      duplExpPerReq = duplExpPerReq.filter((d) => !rootTokens.includes(d));
-    } else {
-      duplExpPerReq = duplExpPerReq.filter((d) => !declaredTokensPerReq.includes(d));
-    }
-    duplExpPerReq = getCollisions(duplExpPerReq, this.importedProvidersPerReq);
-
-    const mixPerApp = tokensPerApp.filter((p) => {
-      if (importedTokensPerMod.includes(p) && !declaredTokensPerMod.includes(p)) {
-        return true;
+  protected checkProvidersCollisions() {
+    const scopes: ('Req' | 'Rou' | 'Mod')[] = ['Req', 'Rou', 'Mod'];
+    scopes.forEach((scope) => {
+      const declaredTokens = getTokens(this.meta[`providersPer${scope}`]);
+      const importedTokens = getTokens(this[`importedProvidersPer${scope}`]);
+      const duplImpTokens = getDuplicates(importedTokens).filter((d) => !declaredTokens.includes(d));
+      const collisions = getCollisions(duplImpTokens, this[`importedProvidersPer${scope}`]);
+      if (collisions.length) {
+        throwProvidersCollisionError(this.moduleName, collisions);
       }
-      if (importedTokensPerRou.includes(p) && !declaredTokensPerRou.includes(p)) {
-        return true;
-      }
-      return importedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
     });
 
+    const mixPerApp = getTokens(this.globalProviders.providersPerApp).filter((p) => {
+      for (const scope of scopes) {
+        const declaredTokens = getTokens(this.meta[`providersPer${scope}`]);
+        const importedTokens = getTokens(this[`importedProvidersPer${scope}`]);
+        const collision = importedTokens.includes(p) && !declaredTokens.includes(p);
+        if (collision) {
+          return true;
+        }
+      }
+      return false;
+    });
+
+    const defaultTokensPerMod = getTokens(defaultProvidersPerMod);
+    const tokensPerMod = [
+      ...defaultTokensPerMod,
+      ...getTokens(this.meta.providersPerMod),
+      ...getTokens(this.importedProvidersPerRou),
+    ];
     const mixPerMod = tokensPerMod.filter((p) => {
-      if (importedTokensPerRou.includes(p) && !declaredTokensPerRou.includes(p)) {
+      if (getTokens(this.importedProvidersPerRou).includes(p) && !getTokens(this.meta.providersPerRou).includes(p)) {
         return true;
       }
-      return importedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
+      return getTokens(this.importedProvidersPerReq).includes(p) && !getTokens(this.meta.providersPerReq).includes(p);
     });
 
-    const defaultTokensPerReq = normalizeProviders([...defaultProvidersPerReq]).map((np) => np.provide);
+    const defaultTokensPerReq = getTokens([...defaultProvidersPerReq]);
+    const tokensPerRou = [...getTokens(this.meta.providersPerRou), ...getTokens(this.importedProvidersPerRou)];
     const mergedTokens = [...defaultTokensPerReq, ...tokensPerRou, NODE_REQ, NODE_RES];
     const mixPerRou = mergedTokens.filter((p) => {
-      return importedTokensPerReq.includes(p) && !declaredTokensPerReq.includes(p);
+      return getTokens(this.importedProvidersPerReq).includes(p) && !getTokens(this.meta.providersPerReq).includes(p);
     });
 
-    const collisions = [
-      ...duplExpTokensPerMod,
-      ...duplExpPerRou,
-      ...duplExpPerReq,
-      ...mixPerApp,
-      ...mixPerMod,
-      ...mixPerRou,
-    ];
+    const collisions = [...mixPerApp, ...mixPerMod, ...mixPerRou];
     if (collisions.length) {
       throwProvidersCollisionError(this.moduleName, collisions);
     }
