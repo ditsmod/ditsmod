@@ -32,10 +32,10 @@ import { getModuleName } from './utils/get-module-name';
  */
 @Injectable()
 export class ModuleFactory {
+  protected providersPerApp: ServiceProvider[];
   protected moduleName: string;
   protected prefixPerMod: string;
   protected guardsPerMod: NormalizedGuard[];
-  protected providersPerApp: ServiceProvider[];
   /**
    * Module metadata.
    */
@@ -163,36 +163,33 @@ export class ModuleFactory {
     this.addProviders('Req', module, meta1);
     meta1.exportsExtensions.forEach((provider) => {
       const token = getToken(provider);
-      const obj = new ImportObj<ExtensionsProvider>();
-      obj.module = module;
+      const newImportObj = new ImportObj<ExtensionsProvider>();
+      newImportObj.module = module;
       const importObj = this.importsExtensions.get(token);
       if (importObj && importObj.module === module) {
-        obj.providers = importObj.providers.slice();
+        newImportObj.providers = importObj.providers.slice();
       }
-      obj.providers.push(provider);
-      this.importsExtensions.set(token, obj);
+      newImportObj.providers.push(provider);
+      this.importsExtensions.set(token, newImportObj);
     });
   }
 
   protected addProviders(scope: Scope, module: ModuleType | ModuleWithParams, meta: NormalizedModuleMetadata) {
-    const exp = meta[`exportsProvidersPer${scope}`];
-    if (exp.length) {
-      exp.forEach((provider) => {
-        const token = getToken(provider);
-        const obj = new ImportObj();
-        obj.module = module;
-        const importObj = this[`importsPer${scope}`].get(token);
-        if (importObj) {
-          if (importObj.module === module) {
-            obj.providers = importObj.providers.slice();
-          } else {
-            this.checkCollisionsPerScope(module, scope, token, provider, importObj);
-          }
+    meta[`exportsProvidersPer${scope}`].forEach((provider) => {
+      const token = getToken(provider);
+      const newImportObj = new ImportObj();
+      newImportObj.module = module;
+      const importObj = this[`importsPer${scope}`].get(token);
+      if (importObj) {
+        if (importObj.module === module) {
+          newImportObj.providers = importObj.providers.slice();
+        } else {
+          this.checkCollisionsPerScope(module, scope, token, provider, importObj);
         }
-        obj.providers.push(provider);
-        this[`importsPer${scope}`].set(token, obj);
-      });
-    }
+      }
+      newImportObj.providers.push(provider);
+      this[`importsPer${scope}`].set(token, newImportObj);
+    });
   }
 
   protected checkCollisionsPerScope(
