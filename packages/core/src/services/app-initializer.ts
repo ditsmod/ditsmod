@@ -68,12 +68,12 @@ export class AppInitializer {
     const rootTokens = getTokens(this.meta.providersPerApp);
     const mergedTokens = [...exportedTokens, ...defaultTokens];
     let exportedTokensDuplicates = getDuplicates(mergedTokens).filter(
-      (d) => !resolvedTokens.includes(d) && !rootTokens.includes(d) && !exportedMultiTokens.includes(d)
+      (d) => ![...resolvedTokens, ...rootTokens, ...exportedMultiTokens].includes(d)
     );
     const mergedProviders = [...defaultProvidersPerApp, ...exportedProviders];
     const collisions = getCollisions(exportedTokensDuplicates, mergedProviders);
     if (collisions.length) {
-      const modulesNames = this.findModulesCausesCollisions(collisions);
+      const modulesNames = this.findModulesCausedCollisions(collisions);
       throwProvidersCollisionError(this.meta.name, collisions, modulesNames);
     }
     exportedProviders.push(...this.getResolvedCollisionsPerApp());
@@ -105,7 +105,7 @@ export class AppInitializer {
     return resolvedProviders;
   }
 
-  protected findModulesCausesCollisions(collisions: any[]) {
+  protected findModulesCausedCollisions(collisions: any[]) {
     const modulesNames: string[] = [];
 
     this.moduleManager.getModulesMap().forEach((meta) => {
@@ -231,11 +231,18 @@ export class AppInitializer {
 
   protected bootstrapModuleFactory(moduleManager: ModuleManager) {
     const moduleFactory1 = new ModuleFactory();
-    const globalProviders =  moduleFactory1.exportGlobalProviders(moduleManager, this.meta.providersPerApp);
+    const globalProviders = moduleFactory1.exportGlobalProviders(moduleManager, this.meta.providersPerApp);
     this.logMediator.printGlobalProviders('trace', { className: this.constructor.name }, globalProviders);
     const moduleFactory2 = new ModuleFactory();
     const appModule = moduleManager.getMetadata('root', true).module;
-    return moduleFactory2.bootstrap(this.meta.providersPerApp, globalProviders, '', appModule, moduleManager, new Set());
+    return moduleFactory2.bootstrap(
+      this.meta.providersPerApp,
+      globalProviders,
+      '',
+      appModule,
+      moduleManager,
+      new Set()
+    );
   }
 
   protected async handleExtensions(

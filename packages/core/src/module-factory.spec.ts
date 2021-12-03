@@ -466,76 +466,76 @@ describe('ModuleFactory', () => {
       describe('per a module', () => {
         it('in global providers', () => {
           class Provider1 {}
-    
+
           @Module({
             providersPerMod: [{ provide: Provider1, useValue: 'one' }],
             exports: [Provider1],
           })
           class Module1 {}
-    
+
           @Module({
             imports: [Module1],
             providersPerMod: [Provider1],
             exports: [Module1, Provider1],
           })
           class Module2 {}
-    
+
           @RootModule({ exports: [Module2] })
           class AppModule {}
-    
+
           moduleManager.scanRootModule(AppModule);
           const msg = `AppModule failed: exports from Module1, Module2 causes collision with Provider1.`;
           expect(() => mock.exportGlobalProviders(moduleManager, [])).toThrow(msg);
         });
-    
+
         it('in AppModule with exported provider, but it has resolvedCollisionsPerMod array', () => {
           class Provider1 {}
-    
+
           @Module({
             providersPerMod: [{ provide: Provider1, useValue: 'one' }],
             exports: [Provider1],
           })
           class Module1 {}
-    
+
           @Module({
             imports: [Module1],
             providersPerMod: [Provider1],
             exports: [Module1, Provider1],
           })
           class Module2 {}
-    
+
           @RootModule({
             resolvedCollisionsPerMod: [[Provider1, Module1]],
             exports: [Module2],
           })
           class AppModule {}
-    
+
           moduleManager.scanRootModule(AppModule);
           expect(() => mock.exportGlobalProviders(moduleManager, [])).not.toThrow();
           expect(getImportedProviders(mock.importsPerMod)).toEqual([Provider1]);
         });
-    
+
         it('identical duplicates but not collision with exported providers', () => {
           class Provider1 {}
-    
+
           @Module({
             providersPerMod: [{ provide: Provider1, useValue: 'one' }],
             exports: [Provider1],
           })
           class Module1 {}
-    
+
           @Module({
             imports: [Module1],
             providersPerMod: [{ provide: Provider1, useValue: 'one' }],
             exports: [Module1, Provider1],
           })
           class Module2 {}
-    
+
           @RootModule({
             exports: [Module2],
           })
           class AppModule {}
-    
+
           moduleManager.scanRootModule(AppModule);
           expect(() => mock.exportGlobalProviders(moduleManager, [])).not.toThrow();
         });
@@ -559,7 +559,7 @@ describe('ModuleFactory', () => {
           class Module2 {}
 
           @RootModule({
-            imports: [Module2]
+            imports: [Module2],
           })
           class AppModule {}
 
@@ -746,19 +746,19 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
           class Provider3 {}
-  
+
           @Module({
             exports: [Provider1],
             providersPerReq: [{ provide: Provider1, useClass: Provider1 }, Provider2],
           })
           class Module0 {}
-  
+
           @Module({
             exports: [Provider1, Provider2],
             providersPerReq: [{ provide: Provider1, useExisting: Provider1 }, Provider2],
           })
           class Module1 {}
-  
+
           @Module({
             imports: [Module1],
             exports: [Module1, Provider2, Provider3],
@@ -781,13 +781,13 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
           class Provider3 {}
-  
+
           @Module({
             exports: [Provider1, Provider2],
             providersPerReq: [{ provide: Provider1, useExisting: Provider1 }, Provider2],
           })
           class Module1 {}
-  
+
           @Module({
             imports: [Module1],
             exports: [Module1, Provider2, Provider3],
@@ -797,7 +797,7 @@ describe('ModuleFactory', () => {
 
           @RootModule({
             imports: [Module2],
-            resolvedCollisionsPerReq: [[Provider2, Module2]]
+            resolvedCollisionsPerReq: [[Provider2, Module2]],
           })
           class AppModule {}
 
@@ -835,13 +835,13 @@ describe('ModuleFactory', () => {
         it('exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerReq of root module', () => {
           class Provider1 {}
           class Provider2 {}
-  
+
           @Module({
             exports: [Provider1],
             providersPerReq: [{ provide: Provider1, useClass: Provider1 }, Provider2],
           })
           class Module0 {}
-  
+
           @Module({
             exports: [Provider1, Provider2],
             providersPerReq: [{ provide: Provider1, useExisting: Provider1 }, Provider2],
@@ -883,6 +883,25 @@ describe('ModuleFactory', () => {
           );
         });
 
+        it('resolved case 1', () => {
+          @Module({
+            exports: [Provider0],
+            providersPerMod: [Provider0],
+          })
+          class Module0 {}
+
+          @RootModule({
+            imports: [Module0],
+            providersPerApp: [Provider0],
+            resolvedCollisionsPerMod: [[Provider0, Module0]],
+          })
+          class AppModule {}
+
+          moduleManager.scanRootModule(AppModule);
+          const callback = () => mock.bootstrap([Provider0], new ImportsMap(), '', AppModule, moduleManager, new Set());
+          expect(callback).not.toThrow();
+        });
+
         it('case 2', () => {
           @Module({
             exports: [Provider1],
@@ -902,6 +921,24 @@ describe('ModuleFactory', () => {
           expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
+        it('resolved case 2', () => {
+          @Module({
+            exports: [Provider1],
+            providersPerReq: [{ provide: Provider1, useClass: Provider1 }],
+          })
+          class Module0 {}
+
+          @RootModule({
+            imports: [Module0],
+            providersPerMod: [Provider1],
+            resolvedCollisionsPerReq: [[Provider1, Module0]],
+          })
+          class AppModule {}
+
+          moduleManager.scanRootModule(AppModule);
+          expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).not.toThrow();
+        });
+
         it('case 3', () => {
           @Module({
             exports: [Request],
@@ -919,6 +956,23 @@ describe('ModuleFactory', () => {
           expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
+        it('resolved case 3', () => {
+          @Module({
+            exports: [Request],
+            providersPerReq: [{ provide: Request, useClass: Request }],
+          })
+          class Module0 {}
+
+          @RootModule({
+            imports: [Module0],
+            resolvedCollisionsPerReq: [[Request, Module0]],
+          })
+          class AppModule {}
+
+          moduleManager.scanRootModule(AppModule);
+          expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).not.toThrow();
+        });
+
         it('case 4', () => {
           @Module({
             exports: [NODE_REQ],
@@ -934,6 +988,23 @@ describe('ModuleFactory', () => {
           moduleManager.scanRootModule(AppModule);
           const msg = 'AppModule failed: exports from Module0 causes collision with InjectionToken NODE_REQ.';
           expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).toThrow(msg);
+        });
+
+        it('resolved case 4', () => {
+          @Module({
+            exports: [NODE_REQ],
+            providersPerReq: [{ provide: NODE_REQ, useValue: '' }],
+          })
+          class Module0 {}
+
+          @RootModule({
+            imports: [Module0],
+            resolvedCollisionsPerReq: [[NODE_REQ, Module0]],
+          })
+          class AppModule {}
+
+          moduleManager.scanRootModule(AppModule);
+          expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).not.toThrow();
         });
       });
     });

@@ -235,7 +235,8 @@ export class ModuleFactory {
       for (const scope of scopes) {
         const declaredTokens = getTokens(this.meta[`providersPer${scope}`]);
         const importedTokens = getImportedTokens(this[`importsPer${scope}`]);
-        const collision = importedTokens.includes(token) && !declaredTokens.includes(token);
+        const resolvedTokens = this.meta[`resolvedCollisionsPer${scope}`].map(([token]) => token);
+        const collision = importedTokens.includes(token) && ![...declaredTokens, ...resolvedTokens].includes(token);
         if (collision) {
           const importObj = this[`importsPer${scope}`].get(token)!;
           const modulesName = getModuleName(importObj.module);
