@@ -200,7 +200,8 @@ export class ModuleFactory {
     importObj: ImportObj
   ) {
     const declaredTokens = getTokens(this.meta[`providersPer${scope}`]);
-    const duplImpTokens = declaredTokens.includes(token) ? [] : [token];
+    const resolvedTokens = this.meta[`resolvedCollisionsPer${scope}`].map(([token]) => token);
+    const duplImpTokens = [...declaredTokens, ...resolvedTokens].includes(token) ? [] : [token];
     const collisions = getCollisions(duplImpTokens, [...importObj.providers, provider]);
     if (collisions.length) {
       const modulesNames = [importObj.module, module].map(getModuleName);
