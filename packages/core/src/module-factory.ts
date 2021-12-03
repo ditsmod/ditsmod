@@ -215,13 +215,13 @@ export class ModuleFactory {
    * This method should be called before call `this.mergeProviders()`.
    */
   protected checkCollisionsWithScopesMix() {
-    const mixPerApp = this.getCollisionsWithScopesMix(this.providersPerApp, ['Mod', 'Rou', 'Req']);
+    this.getCollisionsWithScopesMix(this.providersPerApp, ['Mod', 'Rou', 'Req']);
     const providersPerMod = [
       ...defaultProvidersPerMod,
       ...this.meta.providersPerMod,
       ...getImportedProviders(this.importsPerMod),
     ];
-    const mixPerMod = this.getCollisionsWithScopesMix(providersPerMod, ['Rou', 'Req']);
+    this.getCollisionsWithScopesMix(providersPerMod, ['Rou', 'Req']);
     const mergedProvidersAndTokens = [
       ...this.meta.providersPerRou,
       ...getImportedProviders(this.importsPerRou),
@@ -229,25 +229,21 @@ export class ModuleFactory {
       NODE_REQ,
       NODE_RES,
     ];
-    const mixPerRou = this.getCollisionsWithScopesMix(mergedProvidersAndTokens, ['Req']);
-
-    const collisions = [...mixPerApp, ...mixPerMod, ...mixPerRou];
-    if (collisions.length) {
-      throwProvidersCollisionError(this.moduleName, collisions);
-    }
+    this.getCollisionsWithScopesMix(mergedProvidersAndTokens, ['Req']);
   }
 
   protected getCollisionsWithScopesMix(providers: any[], scopes: Scope[]) {
-    return getTokens(providers).filter((p) => {
+    return getTokens(providers).forEach((token) => {
       for (const scope of scopes) {
         const declaredTokens = getTokens(this.meta[`providersPer${scope}`]);
         const importedTokens = getImportedTokens(this[`importsPer${scope}`]);
-        const collision = importedTokens.includes(p) && !declaredTokens.includes(p);
+        const collision = importedTokens.includes(token) && !declaredTokens.includes(token);
         if (collision) {
-          return true;
+          const importObj = this[`importsPer${scope}`].get(token)!;
+          const modulesName = getModuleName(importObj.module);
+          throwProvidersCollisionError(this.moduleName, [token], [modulesName], scope);
         }
       }
-      return false;
     });
   }
 

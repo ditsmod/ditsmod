@@ -23,7 +23,11 @@ describe('AppInitializer', () => {
   class AppInitializerMock extends AppInitializer {
     override meta = new NormalizedModuleMetadata();
 
-    constructor(public override rootMeta: RootMetadata, public override moduleManager: ModuleManager, public override logMediator: LogMediator) {
+    constructor(
+      public override rootMeta: RootMetadata,
+      public override moduleManager: ModuleManager,
+      public override logMediator: LogMediator
+    ) {
       super(rootMeta, moduleManager, logMediator);
     }
 
@@ -766,26 +770,35 @@ describe('AppInitializer', () => {
     describe('mix per app, per mod or per req', () => {
       class Provider0 {}
       class Provider1 {}
-      class Provider2 {}
-      class Provider3 {}
 
       it('case 1', async () => {
         @Module({
-          exports: [Provider0, Provider1, Request, NODE_REQ, Provider3],
+          exports: [Provider0],
           providersPerMod: [Provider0],
-          providersPerReq: [
-            { provide: Provider1, useClass: Provider1 },
-            Provider2,
-            { provide: NODE_REQ, useValue: '' },
-            Provider3,
-            { provide: Request, useClass: Request },
-          ],
         })
         class Module0 {}
 
         @RootModule({
           imports: [Module0],
-          providersPerApp: [Provider0, { provide: LogManager, useValue: new LogManager() }],
+          providersPerApp: [Provider0],
+        })
+        class AppModule {}
+
+        moduleManager.scanRootModule(AppModule);
+        mock.bootstrapProvidersPerApp();
+        const msg = 'AppModule failed: exports from Module0 causes collision with Provider0.';
+        await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
+      });
+
+      it('case 2', async () => {
+        @Module({
+          exports: [Provider1],
+          providersPerReq: [{ provide: Provider1, useClass: Provider1 }],
+        })
+        class Module0 {}
+
+        @RootModule({
+          imports: [Module0],
           providersPerMod: [Provider1],
           providersPerReq: [],
         })
@@ -793,8 +806,46 @@ describe('AppInitializer', () => {
 
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
+        const msg = 'AppModule failed: exports from Module0 causes collision with Provider1.';
+        await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
+      });
+
+      it('case 3', async () => {
+        @Module({
+          exports: [Request],
+          providersPerReq: [{ provide: Request, useClass: Request }],
+        })
+        class Module0 {}
+
+        @RootModule({
+          imports: [Module0],
+        })
+        class AppModule {}
+
+        moduleManager.scanRootModule(AppModule);
+        mock.bootstrapProvidersPerApp();
+        const msg = 'AppModule failed: exports from Module0 causes collision with Request.';
+        await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
+      });
+
+      it('case 4', async () => {
+        @Module({
+          exports: [NODE_REQ],
+          providersPerReq: [
+            { provide: NODE_REQ, useValue: '' },
+          ],
+        })
+        class Module0 {}
+
+        @RootModule({
+          imports: [Module0],
+        })
+        class AppModule {}
+
+        moduleManager.scanRootModule(AppModule);
+        mock.bootstrapProvidersPerApp();
         const msg =
-          'AppModule failed: exports from several modules causes collision with Provider0, Provider1, Request, InjectionToken NODE_REQ.';
+          'AppModule failed: exports from Module0 causes collision with InjectionToken NODE_REQ.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
     });
