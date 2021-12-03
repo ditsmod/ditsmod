@@ -8,7 +8,7 @@ export function getToken(provider: ServiceProvider): any {
 
 export function getTokens(providers: ServiceProvider[] | ReadonlyArray<ServiceProvider>): any[] {
   const tokens: any[] = [];
-  providers.forEach((item) => {
+  (providers || []).forEach((item) => {
     if (isProvider(item)) {
       tokens.push(getToken(item));
     } else {

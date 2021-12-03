@@ -535,7 +535,7 @@ describe('AppInitializer', () => {
 
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
-        const msg = 'AppModule failed: exports from several modules causes collision with Provider2.';
+        const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider2.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
 
@@ -563,38 +563,7 @@ describe('AppInitializer', () => {
 
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
-        const msg = 'AppModule failed: exports from several modules causes collision with Provider1.';
-        await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
-      });
-
-      it('mix exporting duplicates with "multi == true" per app and per mod', async () => {
-        class Provider1 {}
-        class Provider2 {}
-
-        const ObjProviderPerApp: ServiceProvider = { provide: Provider1, useClass: Provider1, multi: true };
-        const ObjProviderPerMod: ServiceProvider = { provide: Provider1, useClass: Provider1, multi: true };
-        @Module({
-          exports: [Provider1],
-          providersPerMod: [ObjProviderPerMod, Provider2],
-          providersPerApp: [ObjProviderPerApp],
-        })
-        class Module1 {}
-
-        @Module({
-          exports: [Provider1],
-          providersPerMod: [ObjProviderPerMod],
-        })
-        class Module2 {}
-
-        @RootModule({
-          imports: [Module1, Module2],
-          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
-        })
-        class AppModule {}
-
-        moduleManager.scanRootModule(AppModule);
-        mock.bootstrapProvidersPerApp();
-        const msg = 'AppModule failed: exports from several modules causes collision with Provider1.';
+        const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider1.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
 
@@ -729,7 +698,7 @@ describe('AppInitializer', () => {
 
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
-        const msg = 'AppModule failed: exports from several modules causes collision with Provider2.';
+        const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider2.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
 
@@ -773,7 +742,7 @@ describe('AppInitializer', () => {
 
         moduleManager.scanRootModule(AppModule);
         mock.bootstrapProvidersPerApp();
-        const msg = 'AppModule failed: exports from several modules causes collision with Provider1.';
+        const msg = 'AppModule failed: exports from Module0, Module1 causes collision with Provider1.';
         await expect(mock.bootstrapModulesAndExtensions()).rejects.toThrow(msg);
       });
 

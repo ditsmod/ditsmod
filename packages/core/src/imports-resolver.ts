@@ -1,7 +1,7 @@
 import { Injector } from '@ts-stack/di';
 
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
-import { AppMetadataMap, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
+import { AppMetadataMap, ModuleType, ModuleWithParams, Scope, ServiceProvider } from './types/mix';
 import { getLastProviders } from './utils/get-last-providers';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
@@ -16,7 +16,6 @@ import { defaultExtensions, defaultExtensionsTokens } from './services/default-e
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { getDependencies } from './utils/get-dependecies';
 
-type Scope = 'Mod' | 'Rou' | 'Req';
 type AnyModule = ModuleType | ModuleWithParams;
 
 export class ImportsResolver {

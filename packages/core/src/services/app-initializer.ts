@@ -2,10 +2,9 @@ import { InjectionToken, ReflectiveInjector } from '@ts-stack/di';
 
 import { ImportsResolver } from '../imports-resolver';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { ProvidersMetadata } from '../models/providers-metadata';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleFactory } from '../module-factory';
-import { ImportsMap, MetadataPerMod1 } from '../types/metadata-per-mod';
+import { MetadataPerMod1 } from '../types/metadata-per-mod';
 import { ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { RequestListener } from '../types/server-options';
 import { getDuplicates } from '../utils/get-duplicates';
@@ -231,38 +230,12 @@ export class AppInitializer {
   }
 
   protected bootstrapModuleFactory(moduleManager: ModuleManager) {
-    const globalProviders = this.getGlobalProviders(moduleManager);
+    const moduleFactory1 = new ModuleFactory();
+    const globalProviders =  moduleFactory1.exportGlobalProviders(moduleManager, this.meta.providersPerApp);
     this.logMediator.printGlobalProviders('trace', { className: this.constructor.name }, globalProviders);
-    const moduleFactory = new ModuleFactory();
+    const moduleFactory2 = new ModuleFactory();
     const appModule = moduleManager.getMetadata('root', true).module;
-    return moduleFactory.bootstrap(globalProviders, '', appModule, moduleManager, new Set());
-  }
-
-  protected getGlobalProviders(moduleManager: ModuleManager) {
-    const providers = new ProvidersMetadata();
-    const importedProviders = new ImportsMap();
-    const globalProviders: ProvidersMetadata & ImportsMap = { ...providers, ...importedProviders };
-    globalProviders.providersPerApp = this.meta.providersPerApp;
-    const moduleFactory = new ModuleFactory();
-    const {
-      // Don't autoformat this
-      providersPerMod,
-      providersPerRou,
-      providersPerReq,
-      importedPerMod,
-      importedPerRou,
-      importedPerReq,
-      importedExtensions,
-    } = moduleFactory.exportGlobalProviders(moduleManager, globalProviders);
-
-    globalProviders.providersPerMod = providersPerMod.slice();
-    globalProviders.providersPerRou = providersPerRou.slice();
-    globalProviders.providersPerReq = providersPerReq.slice();
-    globalProviders.importedPerMod = new Map(importedPerMod);
-    globalProviders.importedPerRou = new Map(importedPerRou);
-    globalProviders.importedPerReq = new Map(importedPerReq);
-    globalProviders.importedExtensions = new Map(importedExtensions);
-    return globalProviders;
+    return moduleFactory2.bootstrap(this.meta.providersPerApp, globalProviders, '', appModule, moduleManager, new Set());
   }
 
   protected async handleExtensions(
@@ -302,7 +275,10 @@ export class AppInitializer {
     }
   }
 
-  protected decreaseExtensionsCounters(mExtensionsCounters: Map<ServiceProvider, number>, extensions: ServiceProvider[]) {
+  protected decreaseExtensionsCounters(
+    mExtensionsCounters: Map<ServiceProvider, number>,
+    extensions: ServiceProvider[]
+  ) {
     const uniqTargets = new Set<ServiceProvider>(getProvidersTargets(extensions));
 
     uniqTargets.forEach((target) => {

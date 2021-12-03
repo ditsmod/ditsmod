@@ -11,10 +11,10 @@ export class ImportObj<T extends ServiceProvider = ServiceProvider> {
 }
 
 export class ImportsMap {
-  importedPerMod = new Map<any, ImportObj>();
-  importedPerRou = new Map<any, ImportObj>();
-  importedPerReq = new Map<any, ImportObj>();
-  importedExtensions = new Map<any, ImportObj<ExtensionsProvider>>();
+  importsPerMod = new Map<any, ImportObj>();
+  importsPerRou = new Map<any, ImportObj>();
+  importsPerReq = new Map<any, ImportObj>();
+  importsExtensions = new Map<any, ImportObj<ExtensionsProvider>>();
 }
 
 /**

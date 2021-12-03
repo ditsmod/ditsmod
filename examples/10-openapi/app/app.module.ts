@@ -8,6 +8,6 @@ import { SecondModule } from './modules/routed/second/second.module';
 @RootModule({
   // Here works the application and serves OpenAPI documentation.
   listenOptions: { host: 'localhost', port: 8080 },
-  imports: [RouterModule, FirstModule, SecondModule] 
+  imports: [RouterModule, FirstModule, SecondModule]
 })
 export class AppModule {}

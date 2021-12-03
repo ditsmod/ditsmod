@@ -11,6 +11,7 @@ import {
   ModuleType,
   ModuleWithParams,
   NormalizedGuard,
+  Scope,
   ServiceProvider,
 } from '../types/mix';
 import { ModuleMetadata } from '../types/module-metadata';
@@ -511,7 +512,7 @@ export class ModuleManager {
   }
 
   protected findAndSetProvider(token: any, rawMeta: ModuleMetadata, meta: NormalizedModuleMetadata) {
-    const scopes: ('Req' | 'Rou' | 'Mod')[] = ['Req', 'Rou', 'Mod'];
+    const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
     let found = false;
     scopes.forEach((scope) => {
       const provider = hasProviderIn(rawMeta[`providersPer${scope}`]);
