@@ -4,7 +4,7 @@
   "description": "a JSON logging library for node.js services writen on TypeScript",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "main": "dist/index",
-  "typings": "src/index",
+  "typings": "dist/index",
   "scripts": {
     "build": "rimraf dist/* && tsc -b -f",
     "build-examples": "rimraf dist-examples/* && tsc --project examples",

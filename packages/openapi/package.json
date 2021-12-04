@@ -7,7 +7,7 @@
   },
   "description": "This is module for Ditsmod framework to support OpenAPI",
   "main": "dist/index",
-  "typings": "src/index",
+  "typings": "dist/index",
   "directories": {
     "lib": "src"
   },
