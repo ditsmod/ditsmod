@@ -10,7 +10,7 @@ export class ImportObj<T extends ServiceProvider = ServiceProvider> {
   providers: T[] = [];
 }
 
-export class ImportsMap {
+export class GlobalProviders {
   importsPerMod = new Map<any, ImportObj>();
   importsPerRou = new Map<any, ImportObj>();
   importsPerReq = new Map<any, ImportObj>();

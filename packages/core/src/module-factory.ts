@@ -6,7 +6,7 @@ import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
-import { ImportObj, ImportsMap, MetadataPerMod1 } from './types/metadata-per-mod';
+import { ImportObj, GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod';
 import {
   DecoratorMetadata,
   ExtensionsProvider,
@@ -47,7 +47,7 @@ export class ModuleFactory {
   protected importsPerReq = new Map<any, ImportObj>();
   protected importsExtensions = new Map<any, ImportObj<ExtensionsProvider>>();
 
-  protected globalProviders: ImportsMap;
+  protected globalProviders: GlobalProviders;
   protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod1>();
   protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
   protected moduleManager: ModuleManager;
@@ -76,7 +76,7 @@ export class ModuleFactory {
    */
   bootstrap(
     providersPerApp: ServiceProvider[],
-    globalProviders: ImportsMap,
+    globalProviders: GlobalProviders,
     prefixPerMod: string,
     modOrObj: ModuleType | ModuleWithParams,
     moduleManager: ModuleManager,
