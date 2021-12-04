@@ -13,7 +13,7 @@ import { getProvidersTargets, getToken, getTokens } from '../utils/get-tokens';
 import { getCollisions } from '../utils/get-collisions';
 import { normalizeProviders } from '../utils/ng-utils';
 import { throwProvidersCollisionError } from '../utils/throw-providers-collision-error';
-import { isRootModule } from '../utils/type-guards';
+import { isMultiProvider, isRootModule } from '../utils/type-guards';
 import { Counter } from './counter';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ExtensionsManager } from './extensions-manager';
@@ -77,7 +77,7 @@ export class AppInitializer {
       throwProvidersCollisionError(this.meta.name, collisions, modulesNames);
     }
     exportedProviders.push(...this.getResolvedCollisionsPerApp());
-    this.meta.providersPerApp.unshift(...exportedProviders);
+    this.meta.providersPerApp.unshift(...getLastProviders(exportedProviders));
   }
 
   protected getResolvedCollisionsPerApp() {
@@ -97,6 +97,12 @@ export class AppInitializer {
       const provider = getLastProviders(meta.providersPerApp).find((p) => getToken(p) === token);
       if (!provider) {
         errorMsg += `providersPerApp does not includes ${tokenName} in this module.`;
+        throw new Error(errorMsg);
+      }
+      if (isMultiProvider(provider)) {
+        errorMsg +=
+          `${tokenName} is a token of the multi providers, and in this case ` +
+          `it should not be included in resolvedCollisionsPerApp.`;
         throw new Error(errorMsg);
       }
       resolvedProviders.push(provider);

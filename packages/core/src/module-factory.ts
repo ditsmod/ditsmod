@@ -186,10 +186,10 @@ export class ModuleFactory {
           this.checkCollisionsPerScope(module1, scope, token1, provider, importObj);
           const hasResolvedCollision = this.meta[`resolvedCollisionsPer${scope}`].some(([token2]) => token2 === token1);
           if (hasResolvedCollision) {
-            const { provider2, module2 } = this.getResolvedCollisionsPerScope(scope, token1);
+            const { providers, module2 } = this.getResolvedCollisionsPerScope(scope, token1);
             const newImportObj = new ImportObj();
             newImportObj.module = module2;
-            newImportObj.providers.push(provider2);
+            newImportObj.providers.push(...providers);
             this[`importsPer${scope}`].set(token1, newImportObj);
           }
         }
@@ -231,13 +231,13 @@ export class ModuleFactory {
       errorMsg += `${moduleName} is not imported into the application.`;
       throw new Error(errorMsg);
     }
-    const provider2 = getLastProviders(meta2[`providersPer${scope}`]).find((p) => getToken(p) === token2);
-    if (!provider2) {
+    const providers = getLastProviders(meta2[`providersPer${scope}`]).filter((p) => getToken(p) === token2);
+    if (!providers) {
       errorMsg += `providersPer${scope} does not includes ${tokenName} in this module.`;
       throw new Error(errorMsg);
     }
 
-    return { provider2, module2 };
+    return { module2, providers };
   }
 
   /**

@@ -188,7 +188,7 @@ describe('AppInitializer', () => {
       mock.meta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp()).not.toThrow();
       expect(mock.getResolvedCollisionsPerApp()).toEqual([{ provide: Provider1, useClass: Provider2 }]);
-      expect(mock.meta.providersPerApp.length).toBe(3);
+      expect(mock.meta.providersPerApp).toEqual([{ provide: Provider1, useClass: Provider2 }]);
       expect(mock.meta.resolvedCollisionsPerApp.length).toBe(1);
     });
 
@@ -213,6 +213,69 @@ describe('AppInitializer', () => {
       mock.meta = moduleManager.scanRootModule(AppModule);
       const msg = `AppModule failed: Provider1 mapped with Module0, but Module0 is not imported`;
       expect(() => mock.prepareProvidersPerApp()).toThrow(msg);
+    });
+
+    it('multi providers should not causes collisions', () => {
+      class Provider1 {}
+      class Provider2 {}
+
+      @Module({
+        providersPerMod: [Provider2],
+        exports: [Provider2],
+      })
+      class Module0 {}
+
+      @Module({
+        providersPerApp: [{ provide: Provider1, useValue: 'value1 of module1', multi: true }],
+      })
+      class Module1 {}
+
+      @Module({
+        providersPerApp: [{ provide: Provider1, useValue: 'value1 of module2', multi: true }],
+      })
+      class Module2 {}
+
+      @RootModule({
+        imports: [Module0, Module1, Module2],
+      })
+      class AppModule {}
+
+      mock.meta = moduleManager.scanRootModule(AppModule);
+      expect(() => mock.prepareProvidersPerApp()).not.toThrow();
+      expect(mock.meta.providersPerApp).toEqual([
+        { provide: Provider1, useValue: 'value1 of module1', multi: true },
+        { provide: Provider1, useValue: 'value1 of module2', multi: true },
+      ]);
+    });
+
+    it('multi providers should not resolves collisions', () => {
+      class Provider1 {}
+      class Provider2 {}
+
+      @Module({
+        providersPerMod: [Provider2],
+        exports: [Provider2],
+      })
+      class Module0 {}
+
+      @Module({
+        providersPerApp: [{ provide: Provider1, useValue: 'value1 of module1', multi: true }],
+      })
+      class Module1 {}
+
+      @Module({
+        providersPerApp: [{ provide: Provider1, useValue: 'value1 of module2', multi: true }],
+      })
+      class Module2 {}
+
+      @RootModule({
+        imports: [Module0, Module1, Module2],
+        resolvedCollisionsPerApp: [[Provider1, Module1]],
+      })
+      class AppModule {}
+
+      mock.meta = moduleManager.scanRootModule(AppModule);
+      expect(() => mock.prepareProvidersPerApp()).toThrow(`Provider1 is a token of the multi providers`);
     });
 
     it('should throw an error because resolvedCollisionsPerApp not properly setted provider', () => {
