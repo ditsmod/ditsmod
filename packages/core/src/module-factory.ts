@@ -23,6 +23,7 @@ import { throwProvidersCollisionError } from './utils/throw-providers-collision-
 import { isController, isModuleWithParams } from './utils/type-guards';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports';
 import { getModuleName } from './utils/get-module-name';
+import { getLastProviders } from './utils/get-last-providers';
 
 /**
  * - exports and imports global providers;
@@ -174,21 +175,30 @@ export class ModuleFactory {
     });
   }
 
-  protected addProviders(scope: Scope, module: ModuleType | ModuleWithParams, meta: NormalizedModuleMetadata) {
+  protected addProviders(scope: Scope, module1: ModuleType | ModuleWithParams, meta: NormalizedModuleMetadata) {
     meta[`exportsProvidersPer${scope}`].forEach((provider) => {
-      const token = getToken(provider);
-      const newImportObj = new ImportObj();
-      newImportObj.module = module;
-      const importObj = this[`importsPer${scope}`].get(token);
+      const token1 = getToken(provider);
+      const importObj = this[`importsPer${scope}`].get(token1);
       if (importObj) {
-        if (importObj.module === module) {
-          newImportObj.providers = importObj.providers.slice();
+        if (importObj.module === module1) {
+          importObj.providers.push(provider);
         } else {
-          this.checkCollisionsPerScope(module, scope, token, provider, importObj);
+          this.checkCollisionsPerScope(module1, scope, token1, provider, importObj);
+          const hasResolvedCollision = this.meta[`resolvedCollisionsPer${scope}`].some(([token2]) => token2 === token1);
+          if (hasResolvedCollision) {
+            const { provider2, module2 } = this.getResolvedCollisionsPerScope(scope, token1);
+            const newImportObj = new ImportObj();
+            newImportObj.module = module2;
+            newImportObj.providers.push(provider2);
+            this[`importsPer${scope}`].set(token1, newImportObj);
+          }
         }
+      } else {
+        const newImportObj = new ImportObj();
+        newImportObj.module = module1;
+        newImportObj.providers.push(provider);
+        this[`importsPer${scope}`].set(token1, newImportObj);
       }
-      newImportObj.providers.push(provider);
-      this[`importsPer${scope}`].set(token, newImportObj);
     });
   }
 
@@ -207,6 +217,27 @@ export class ModuleFactory {
       const modulesNames = [importObj.module, module].map(getModuleName);
       throwProvidersCollisionError(this.moduleName, [token], modulesNames, scope);
     }
+  }
+
+  protected getResolvedCollisionsPerScope(scope: Scope, token1: any) {
+    const [token2, module2] = this.meta[`resolvedCollisionsPer${scope}`].find(([token2]) => token1 === token2)!;
+    const moduleName = getModuleName(module2);
+    const tokenName = token2.name || token2;
+    const meta2 = this.moduleManager.getMetadata(module2);
+    let errorMsg =
+      `Resolving collisions for providersPer${scope} in ${this.moduleName} failed: ` +
+      `${tokenName} mapped with ${moduleName}, but `;
+    if (!meta2) {
+      errorMsg += `${moduleName} is not imported into the application.`;
+      throw new Error(errorMsg);
+    }
+    const provider2 = getLastProviders(meta2[`providersPer${scope}`]).find((p) => getToken(p) === token2);
+    if (!provider2) {
+      errorMsg += `providersPer${scope} does not includes ${tokenName} in this module.`;
+      throw new Error(errorMsg);
+    }
+
+    return { provider2, module2 };
   }
 
   /**

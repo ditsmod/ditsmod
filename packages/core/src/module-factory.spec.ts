@@ -512,7 +512,7 @@ describe('ModuleFactory', () => {
 
           moduleManager.scanRootModule(AppModule);
           expect(() => mock.exportGlobalProviders(moduleManager, [])).not.toThrow();
-          expect(getImportedProviders(mock.importsPerMod)).toEqual([Provider1]);
+          expect(getImportedProviders(mock.importsPerMod)).toEqual([{ provide: Provider1, useValue: 'one' }]);
         });
 
         it('identical duplicates but not collision with exported providers', () => {
@@ -625,16 +625,18 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
           class Provider3 {}
+          const useFactoryProvider2 = { provide: Provider2, useFactory: () => {} };
 
           @Module({
+            providersPerMod: [Provider1, useFactoryProvider2],
             exports: [Provider1, Provider2],
-            providersPerMod: [Provider1, { provide: Provider2, useFactory: () => {} }],
           })
           class Module1 {}
+
           @Module({
             imports: [Module1],
-            exports: [Module1, Provider2, Provider3],
             providersPerMod: [Provider2, Provider3],
+            exports: [Module1, Provider2, Provider3],
           })
           class Module2 {}
 
@@ -646,6 +648,7 @@ describe('ModuleFactory', () => {
 
           moduleManager.scanRootModule(AppModule);
           expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).not.toThrow();
+          expect(getImportedProviders(mock.importsPerMod)).toEqual([Provider1, useFactoryProvider2, Provider3]);
         });
 
         it('exporting duplicates in Module2 (with params), but declared in resolvedCollisionsPerMod of root module', () => {
@@ -654,13 +657,13 @@ describe('ModuleFactory', () => {
 
           @Module({
             exports: [Provider1],
-            providersPerMod: [{ provide: Provider1, useClass: Provider1 }, Provider2],
+            providersPerMod: [Provider1, Provider2],
           })
           class Module0 {}
 
           @Module({
             exports: [Provider1, Provider2],
-            providersPerMod: [Provider1, Provider2],
+            providersPerMod: [{ provide: Provider1, useClass: Provider1 }, Provider2],
           })
           class Module1 {
             static withParams() {
@@ -668,14 +671,17 @@ describe('ModuleFactory', () => {
             }
           }
 
+          const moduleWithParams = Module1.withParams();
+
           @RootModule({
-            imports: [Module0, Module1.withParams()],
-            resolvedCollisionsPerMod: [[Provider1, Module1]],
+            imports: [Module0, moduleWithParams],
+            resolvedCollisionsPerMod: [[Provider1, Module0]],
           })
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
           expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).not.toThrow();
+          expect(getImportedProviders(mock.importsPerMod)).toEqual([Provider1, Provider2]);
         });
 
         it('resolved collision for non-root module', () => {
@@ -697,15 +703,22 @@ describe('ModuleFactory', () => {
           @Module({
             imports: [Module1, Module2],
             controllers: [SomeController],
-            resolvedCollisionsPerMod: [[Provider1, Module2]],
+            resolvedCollisionsPerMod: [[Provider1, Module1]],
+            exports: [Module1, Module2],
           })
           class Module3 {}
 
-          @RootModule({ imports: [Module3] })
+          @RootModule({
+            imports: [Module3],
+            resolvedCollisionsPerMod: [[Provider1, Module2]],
+          })
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
           expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).not.toThrow();
+          const mod3 = mock.appMetadataMap.get(Module3)!;
+          expect(getImportedProviders(mod3.importedTokensMap.perMod)).toEqual([Provider1]);
+          expect(getImportedProviders(mock.importsPerMod)).toEqual([{ provide: Provider1, useValue: 'one' }]);
         });
 
         it('for non-root module', () => {
@@ -746,12 +759,6 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
           class Provider3 {}
-
-          @Module({
-            exports: [Provider1],
-            providersPerReq: [{ provide: Provider1, useClass: Provider1 }, Provider2],
-          })
-          class Module0 {}
 
           @Module({
             exports: [Provider1, Provider2],
@@ -803,6 +810,12 @@ describe('ModuleFactory', () => {
 
           moduleManager.scanRootModule(AppModule);
           expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).not.toThrow();
+          const expectedProviders = [
+            { provide: Provider1, useExisting: Provider1 },
+            { provide: Provider2, useClass: Provider2 },
+            Provider3,
+          ];
+          expect(getImportedProviders(mock.importsPerReq)).toEqual(expectedProviders);
         });
 
         it('exporting duplicates of Provider1 from Module1 and Module2', () => {
@@ -837,25 +850,33 @@ describe('ModuleFactory', () => {
           class Provider2 {}
 
           @Module({
-            exports: [Provider1],
-            providersPerReq: [{ provide: Provider1, useClass: Provider1 }, Provider2],
-          })
-          class Module0 {}
-
-          @Module({
             exports: [Provider1, Provider2],
-            providersPerReq: [{ provide: Provider1, useExisting: Provider1 }, Provider2],
+            providersPerReq: [{ provide: Provider1, useClass: Provider2 }, Provider2],
           })
           class Module1 {}
 
+          @Module({
+            exports: [Provider1, Provider2],
+            providersPerReq: [
+              { provide: Provider1, useExisting: Provider1 },
+              { provide: Provider2, useExisting: Provider1 },
+            ],
+          })
+          class Module2 {}
+
           @RootModule({
-            imports: [Module0, Module1],
-            resolvedCollisionsPerReq: [[Provider1, Module1]],
+            imports: [Module1, Module2],
+            resolvedCollisionsPerReq: [
+              [Provider1, Module2],
+              [Provider2, Module1],
+            ],
           })
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
           expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).not.toThrow();
+          const expectedProviders = [{ provide: Provider1, useExisting: Provider1 }, Provider2];
+          expect(getImportedProviders(mock.importsPerReq)).toEqual(expectedProviders);
         });
       });
 
@@ -886,7 +907,7 @@ describe('ModuleFactory', () => {
         it('resolved case 1', () => {
           @Module({
             exports: [Provider0],
-            providersPerMod: [Provider0],
+            providersPerMod: [{ provide: Provider0, useValue: 'fake' }],
           })
           class Module0 {}
 
@@ -900,6 +921,7 @@ describe('ModuleFactory', () => {
           moduleManager.scanRootModule(AppModule);
           const callback = () => mock.bootstrap([Provider0], new ImportsMap(), '', AppModule, moduleManager, new Set());
           expect(callback).not.toThrow();
+          expect(getImportedProviders(mock.importsPerMod)).toEqual([{ provide: Provider0, useValue: 'fake' }]);
         });
 
         it('case 2', () => {
@@ -926,17 +948,38 @@ describe('ModuleFactory', () => {
             exports: [Provider1],
             providersPerReq: [{ provide: Provider1, useClass: Provider1 }],
           })
-          class Module0 {}
+          class Module1 {}
 
           @RootModule({
-            imports: [Module0],
+            imports: [Module1],
             providersPerMod: [Provider1],
-            resolvedCollisionsPerReq: [[Provider1, Module0]],
+            resolvedCollisionsPerReq: [[Provider1, Module1]],
           })
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
           expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).not.toThrow();
+          expect(getImportedProviders(mock.importsPerReq)).toEqual([{ provide: Provider1, useClass: Provider1 }]);
+        });
+
+        it('point to current module to increase scope and to resolve case 2', () => {
+          @Module({
+            exports: [Provider1],
+            providersPerReq: [{ provide: Provider1, useClass: Provider1 }],
+          })
+          class Module1 {}
+
+          @RootModule({
+            imports: [Module1],
+            providersPerMod: [Provider1],
+            resolvedCollisionsPerReq: [[Provider1, AppModule]],
+          })
+          class AppModule {}
+
+          moduleManager.scanRootModule(AppModule);
+          expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).not.toThrow();
+          expect(getImportedProviders(mock.importsPerMod)).toEqual([Provider1]);
+          expect(getImportedProviders(mock.importsPerReq)).toEqual([]);
         });
 
         it('case 3', () => {
