@@ -962,6 +962,35 @@ describe('ModuleFactory', () => {
           expect(getImportedProviders(mock.importsPerReq)).toEqual([{ provide: Provider1, useClass: Provider1 }]);
         });
 
+        it('double resolve', () => {
+          @Module({
+            exports: [Provider1],
+            providersPerReq: [Provider1],
+          })
+          class Module1 {}
+
+          @Module({
+            exports: [Provider1],
+            providersPerMod: [{ provide: Provider1, useClass: Provider2 }],
+          })
+          class Module2 {}
+
+          @RootModule({
+            imports: [Module1, Module2],
+            providersPerApp: [Provider1],
+            resolvedCollisionsPerMod: [[Provider1, AppModule]],
+            resolvedCollisionsPerReq: [[Provider1, Module1]],
+          })
+          class AppModule {}
+
+          moduleManager.scanRootModule(AppModule);
+          expect(() => {
+            mock.bootstrap([Provider1], new ImportsMap(), '', AppModule, moduleManager, new Set());
+          }).not.toThrow();
+          expect(getImportedProviders(mock.importsPerMod)).toEqual([]);
+          expect(getImportedProviders(mock.importsPerReq)).toEqual([Provider1]);
+        });
+
         it('point to current module to increase scope and to resolve case 2', () => {
           @Module({
             exports: [Provider1],
@@ -978,8 +1007,26 @@ describe('ModuleFactory', () => {
 
           moduleManager.scanRootModule(AppModule);
           expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).not.toThrow();
-          expect(getImportedProviders(mock.importsPerMod)).toEqual([Provider1]);
           expect(getImportedProviders(mock.importsPerReq)).toEqual([]);
+        });
+
+        it('wrong point to current module', () => {
+          @Module({
+            exports: [Provider2],
+            providersPerReq: [{ provide: Provider2, useClass: Provider1 }],
+          })
+          class Module1 {}
+
+          @RootModule({
+            imports: [Module1],
+            providersPerMod: [Provider1],
+            resolvedCollisionsPerReq: [[Provider1, AppModule]],
+          })
+          class AppModule {}
+
+          moduleManager.scanRootModule(AppModule);
+          const msg = `AppModule failed: Provider1 mapped with AppModule, but providersPerReq does not imports Provider1`;
+          expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
         it('case 3', () => {
@@ -999,7 +1046,25 @@ describe('ModuleFactory', () => {
           expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
-        it('resolved case 3', () => {
+        it('resolve case 3', () => {
+          @Module({
+            exports: [Request],
+            providersPerReq: [{ provide: Request, useClass: Request }],
+          })
+          class Module0 {}
+
+          @RootModule({
+            imports: [Module0],
+            resolvedCollisionsPerReq: [[Request, AppModule]],
+          })
+          class AppModule {}
+
+          moduleManager.scanRootModule(AppModule);
+          expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).not.toThrow();
+          expect(getImportedProviders(mock.importsPerReq)).toEqual([]);
+        });
+
+        it('resolve 2 case 3', () => {
           @Module({
             exports: [Request],
             providersPerReq: [{ provide: Request, useClass: Request }],
@@ -1014,6 +1079,7 @@ describe('ModuleFactory', () => {
 
           moduleManager.scanRootModule(AppModule);
           expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).not.toThrow();
+          expect(getImportedProviders(mock.importsPerReq)).toEqual([{ provide: Request, useClass: Request }]);
         });
 
         it('case 4', () => {
@@ -1031,6 +1097,24 @@ describe('ModuleFactory', () => {
           moduleManager.scanRootModule(AppModule);
           const msg = 'AppModule failed: exports from Module0 causes collision with InjectionToken NODE_REQ.';
           expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).toThrow(msg);
+        });
+
+        it('resolve case 4', () => {
+          @Module({
+            exports: [NODE_REQ],
+            providersPerReq: [{ provide: NODE_REQ, useValue: '' }],
+          })
+          class Module0 {}
+
+          @RootModule({
+            imports: [Module0],
+            resolvedCollisionsPerReq: [[NODE_REQ, AppModule]],
+          })
+          class AppModule {}
+
+          moduleManager.scanRootModule(AppModule);
+          expect(() => mock.bootstrap([], new ImportsMap(), '', AppModule, moduleManager, new Set())).not.toThrow();
+          expect(getImportedProviders(mock.importsPerReq)).toEqual([]);
         });
 
         it('resolved case 4', () => {

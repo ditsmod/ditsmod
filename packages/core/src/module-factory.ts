@@ -59,7 +59,7 @@ export class ModuleFactory {
     this.meta = meta;
     this.providersPerApp = providersPerApp;
     this.importProviders(meta);
-    this.checkCollisionsWithScopesMix();
+    this.checkAllCollisionsWithScopesMix();
 
     return {
       importsPerMod: this.importsPerMod,
@@ -142,7 +142,7 @@ export class ModuleFactory {
 
       this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
     }
-    this.checkCollisionsWithScopesMix();
+    this.checkAllCollisionsWithScopesMix();
   }
 
   /**
@@ -243,14 +243,14 @@ export class ModuleFactory {
   /**
    * This method should be called before call `this.mergeProviders()`.
    */
-  protected checkCollisionsWithScopesMix() {
-    this.getCollisionsWithScopesMix(this.providersPerApp, ['Mod', 'Rou', 'Req']);
+  protected checkAllCollisionsWithScopesMix() {
+    this.checkCollisionsWithScopesMix(this.providersPerApp, ['Mod', 'Rou', 'Req']);
     const providersPerMod = [
       ...defaultProvidersPerMod,
       ...this.meta.providersPerMod,
       ...getImportedProviders(this.importsPerMod),
     ];
-    this.getCollisionsWithScopesMix(providersPerMod, ['Rou', 'Req']);
+    this.checkCollisionsWithScopesMix(providersPerMod, ['Rou', 'Req']);
     const mergedProvidersAndTokens = [
       ...this.meta.providersPerRou,
       ...getImportedProviders(this.importsPerRou),
@@ -258,23 +258,43 @@ export class ModuleFactory {
       NODE_REQ,
       NODE_RES,
     ];
-    this.getCollisionsWithScopesMix(mergedProvidersAndTokens, ['Req']);
+    this.checkCollisionsWithScopesMix(mergedProvidersAndTokens, ['Req']);
   }
 
-  protected getCollisionsWithScopesMix(providers: any[], scopes: Scope[]) {
-    return getTokens(providers).forEach((token) => {
+  protected checkCollisionsWithScopesMix(providers: any[], scopes: Scope[]) {
+    getTokens(providers).forEach((token1) => {
       for (const scope of scopes) {
         const declaredTokens = getTokens(this.meta[`providersPer${scope}`]);
         const importedTokens = getImportedTokens(this[`importsPer${scope}`]);
-        const resolvedTokens = this.meta[`resolvedCollisionsPer${scope}`].map(([token]) => token);
-        const collision = importedTokens.includes(token) && ![...declaredTokens, ...resolvedTokens].includes(token);
+        const resolvedTokens = this.meta[`resolvedCollisionsPer${scope}`].map(([t]) => t);
+        const collision = importedTokens.includes(token1) && ![...declaredTokens, ...resolvedTokens].includes(token1);
         if (collision) {
-          const importObj = this[`importsPer${scope}`].get(token)!;
+          const importObj = this[`importsPer${scope}`].get(token1)!;
           const modulesName = getModuleName(importObj.module);
-          throwProvidersCollisionError(this.moduleName, [token], [modulesName], scope);
+          throwProvidersCollisionError(this.moduleName, [token1], [modulesName], scope);
         }
+        this.resolveCollisionsWithScopesMix(token1, scope, resolvedTokens);
       }
     });
+  }
+
+  protected resolveCollisionsWithScopesMix(token1: any, scope: Scope, resolvedTokens: any[]) {
+    if (resolvedTokens.includes(token1)) {
+      const [, module2] = this.meta[`resolvedCollisionsPer${scope}`].find(([token2]) => token1 === token2)!;
+      if (this.meta.module === module2) {
+        if (!this[`importsPer${scope}`].delete(token1)) {
+          const tokenName = token1.name || token1;
+          let errorMsg =
+            `Resolving collisions for providersPer${scope} in ${this.moduleName} failed: ` +
+            `${tokenName} mapped with ${this.moduleName}, but ` +
+            `providersPer${scope} does not imports ${tokenName} in this module.`;
+          throw new Error(errorMsg);
+        }
+      } else {
+        // Only check that the correct data is specified.
+        this.getResolvedCollisionsPerScope(scope, token1);
+      }
+    }
   }
 
   protected getControllersMetadata() {
