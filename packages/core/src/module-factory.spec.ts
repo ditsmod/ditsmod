@@ -16,7 +16,7 @@ import { Logger } from './types/logger';
 import { ImportObj, ImportsMap, MetadataPerMod1 } from './types/metadata-per-mod';
 import { DecoratorMetadata, ExtensionsProvider, ModuleType, NormalizedGuard, ServiceProvider } from './types/mix';
 import { Router } from './types/router';
-import { getImportedObjects, getImportedProviders, getImportedTokens } from './utils/get-imports';
+import { getImportedProviders, getImportedTokens } from './utils/get-imports';
 import { NODE_REQ } from './constans';
 import { Request } from './services/request';
 

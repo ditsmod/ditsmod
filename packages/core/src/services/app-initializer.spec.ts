@@ -68,14 +68,10 @@ describe('AppInitializer', () => {
     class Provider6 {}
     class Provider7 {}
 
-    @Module({
-      providersPerApp: [Provider0],
-    })
+    @Module({ providersPerApp: [Provider0] })
     class Module0 {}
 
-    @Module({
-      providersPerApp: [Provider1],
-    })
+    @Module({ providersPerApp: [Provider1] })
     class Module1 {}
 
     @Module({
