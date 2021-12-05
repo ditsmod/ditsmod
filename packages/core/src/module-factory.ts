@@ -167,7 +167,7 @@ export class ModuleFactory {
       const newImportObj = new ImportObj<ExtensionsProvider>();
       newImportObj.module = module;
       const importObj = this.importsExtensions.get(token);
-      if (importObj && importObj.module === module) {
+      if (importObj) {
         newImportObj.providers = importObj.providers.slice();
       }
       newImportObj.providers.push(provider);
