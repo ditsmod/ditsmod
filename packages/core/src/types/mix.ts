@@ -14,6 +14,7 @@ import { ProvidersMetadata } from '../models/providers-metadata';
 export type ModuleType<T extends AnyObj = AnyObj> = Type<T>;
 
 export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]> | `BEFORE ${string}`;
+export type ExtensionType<T = any> = Type<Extension<T>>;
 
 export interface Extension<T> {
   init(isLastExtensionCall: boolean): Promise<T>;
