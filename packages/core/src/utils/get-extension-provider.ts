@@ -8,6 +8,19 @@ export class ExtensionObj {
   providers: ExtensionsProvider[];
 }
 
+export type ExtensionItem1 = [
+  beforeToken: InjectionToken<Extension<any>[]>,
+  groupToken: InjectionToken<Extension<any>[]>,
+  extension: ExtensionType,
+  exported?: boolean
+];
+
+export type ExtensionItem2 = [
+  groupToken: InjectionToken<Extension<any>[]>,
+  extension: ExtensionType,
+  exported?: boolean
+];
+
 export function getExtensionProvider(
   beforeToken: InjectionToken<Extension<any>[]>,
   groupToken: InjectionToken<Extension<any>[]>,

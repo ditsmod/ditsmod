@@ -15,8 +15,8 @@ import { SwaggerConfigManager } from './services/swagger-config-manager';
   providersPerRou: [{ provide: OasRouteMeta, useExisting: edk.RouteMeta }],
   exports: [OasRouteMeta],
   extensions: [
-    edk.getExtensionProvider(edk.ROUTES_EXTENSIONS, OpenapiRoutesExtension, true),
-    edk.getExtensionProvider(edk.PRE_ROUTER_EXTENSIONS, OAS_COMPILER_EXTENSIONS, OpenapiCompilerExtension, true),
+    [edk.ROUTES_EXTENSIONS, OpenapiRoutesExtension, true],
+    [edk.PRE_ROUTER_EXTENSIONS, OAS_COMPILER_EXTENSIONS, OpenapiCompilerExtension, true],
   ],
 })
 export class OpenapiModule {

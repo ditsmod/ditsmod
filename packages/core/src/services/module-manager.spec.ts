@@ -12,7 +12,6 @@ import { DefaultLogger } from './default-logger';
 import { LogMediator } from './log-mediator';
 import { LogManager } from './log-manager';
 import { Controller } from '../decorators/controller';
-import { getExtensionProvider } from '../edk';
 
 describe('ModuleManager', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;
@@ -66,7 +65,7 @@ describe('ModuleManager', () => {
       const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
 
       @Module({
-        extensions: [getExtensionProvider(GROUP1_EXTENSIONS, Ext, true)],
+        extensions: [[GROUP1_EXTENSIONS, Ext, true]],
       })
       class Module1 {}
 
@@ -252,7 +251,7 @@ describe('ModuleManager', () => {
     class Extension1 {}
     const TEST_EXTENSIONS = new InjectionToken<Extension<any>>('TEST_EXTENSIONS');
 
-    @Module({ extensions: [getExtensionProvider(TEST_EXTENSIONS, Extension1 as any, true)] })
+    @Module({ extensions: [[TEST_EXTENSIONS, Extension1 as any, true]] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).toThrow(`must have init() method`);
@@ -265,7 +264,7 @@ describe('ModuleManager', () => {
     }
     const TEST_EXTENSIONS = new InjectionToken<Extension<any>>('TEST_EXTENSIONS');
 
-    @Module({ extensions: [getExtensionProvider(TEST_EXTENSIONS, Extension1 as any, true)] })
+    @Module({ extensions: [[TEST_EXTENSIONS, Extension1 as any, true]] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).not.toThrow();
@@ -681,7 +680,7 @@ describe('ModuleManager', () => {
     ];
 
     @Module({
-      extensions: [getExtensionProvider(GROUP_EXTENSIONS, Extension1, true)],
+      extensions: [[GROUP_EXTENSIONS, Extension1, true]],
     })
     class Module1 {}
 
@@ -722,7 +721,7 @@ describe('ModuleManager', () => {
     ];
 
     @Module({
-      extensions: [getExtensionProvider(GROUP_EXTENSIONS, Extension1, true)],
+      extensions: [[GROUP_EXTENSIONS, Extension1, true]],
     })
     class Module1 {}
 

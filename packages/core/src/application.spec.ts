@@ -141,7 +141,7 @@ describe('Application', () => {
           { provide: Router, useValue: 'fake value for router' },
         ],
         extensions: [
-          getExtensionProvider(MY_EXTENSIONS, Extension1)
+          [MY_EXTENSIONS, Extension1]
         ]
       })
       class AppModule {}
