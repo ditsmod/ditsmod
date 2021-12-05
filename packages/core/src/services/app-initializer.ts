@@ -259,9 +259,9 @@ export class AppInitializer {
     const len = aMetadataPerMod1.length;
     for (let i = 0; i < len; i++) {
       const metadataPerMod1 = aMetadataPerMod1[i];
-      const { extensions, providersPerMod, name: moduleName } = metadataPerMod1.meta;
+      const { extensionsProviders, providersPerMod, name: moduleName } = metadataPerMod1.meta;
       this.logMediator.startExtensionsModuleInit(this, moduleName);
-      this.decreaseExtensionsCounters(mExtensionsCounters, extensions);
+      this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
         ExtensionsManager,
@@ -269,10 +269,10 @@ export class AppInitializer {
         { provide: MetadataPerMod1, useValue: metadataPerMod1 },
         { provide: InjectorPerApp, useValue: this.injectorPerApp },
         { provide: EXTENSIONS_COUNTERS, useValue: mExtensionsCounters },
-        ...extensions,
+        ...extensionsProviders,
       ]);
       const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
-      const extensionTokens = getTokens(extensions).filter((token) => token instanceof InjectionToken);
+      const extensionTokens = getTokens(extensionsProviders).filter((token) => token instanceof InjectionToken);
       for (const groupToken of extensionTokens) {
         const beforeToken = `BEFORE ${groupToken}` as const;
         this.logMediator.startExtensionsGroupInit(this, moduleName, beforeToken);

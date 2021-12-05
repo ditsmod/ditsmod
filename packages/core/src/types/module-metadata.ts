@@ -1,5 +1,6 @@
 import { ProvidersMetadata } from '../models/providers-metadata';
-import { ControllerType, ModuleType, ModuleWithParams, AnyObj, ExtensionsProvider } from '../types/mix';
+import { ControllerType, ModuleType, ModuleWithParams, AnyObj } from '../types/mix';
+import { ExtensionObj } from '../utils/get-extension-provider';
 
 export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
   /**
@@ -23,7 +24,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
   /**
    * The application extensions.
    */
-  extensions?: ExtensionsProvider[];
+  extensions?: ExtensionObj[];
   /**
    * This property allows you to pass any information to extensions.
    *

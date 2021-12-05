@@ -223,7 +223,7 @@ export class ModuleManager {
     meta.importsModules = meta.importsModules.slice();
     meta.importsWithParams = meta.importsWithParams.slice();
     meta.controllers = meta.controllers.slice();
-    meta.extensions = meta.extensions.slice();
+    meta.extensionsProviders = meta.extensionsProviders.slice();
     meta.exportsModules = meta.exportsModules.slice();
     meta.exportsWithParams = meta.exportsWithParams.slice();
     meta.exportsProvidersPerMod = meta.exportsProvidersPerMod.slice();
@@ -352,7 +352,6 @@ export class ModuleManager {
       }
     });
 
-    const extensionsTokens = getTokens(rawMeta.extensions || []);
     const providersTokens = getTokens([
       ...(rawMeta.providersPerMod || []),
       ...(rawMeta.providersPerRou || []),
@@ -372,10 +371,6 @@ export class ModuleManager {
       this.throwExportsIfNormalizedProvider(modName, exp);
       if (isModuleWithParams(exp)) {
         meta.exportsWithParams.push(exp);
-      } else if (extensionsTokens.includes(exp)) {
-        const extensionProviders = rawMeta.extensions!.filter((extension) => getToken(extension) === exp);
-        extensionProviders.forEach((provider) => this.checkExtension(modName, provider, exp));
-        meta.exportsExtensions.push(...extensionProviders);
       } else if (isProvider(exp) || providersTokens.includes(exp)) {
         this.findAndSetProvider(exp, rawMeta, meta);
       } else if (getModuleMetadata(exp)) {
@@ -383,6 +378,16 @@ export class ModuleManager {
       } else {
         this.throwUnidentifiedToken(modName, exp);
       }
+    });
+
+    rawMeta.extensions?.forEach(extensionObj => {
+      extensionObj.providers.forEach(p => this.checkExtension(modName, p));
+      meta.extensionsProviders.push(...extensionObj.providers);
+      extensionObj.exports.forEach(token => {
+        this.throwExportsIfNormalizedProvider(modName, token);
+        const exportedExtensions = extensionObj.providers.filter(provider => getToken(provider) === token);
+        meta.exportedExtensions.push(...exportedExtensions);
+      });
     });
 
     pickProperties(meta, rawMeta);
@@ -423,7 +428,7 @@ export class ModuleManager {
       !meta.exportsProvidersPerReq.length &&
       !meta.exportsModules.length &&
       !meta.exportsWithParams.length &&
-      !meta.extensions.length
+      !meta.extensionsProviders.length
     ) {
       const moduleNames = [...this.unfinishedScanModules].map((mod) => getModuleName(mod)).join(' -> ') || meta.name;
       const msg =
@@ -450,7 +455,7 @@ export class ModuleManager {
     }
   }
 
-  protected throwIfUndefined(modName: string, imOrEx: 'Im' | 'Ex', imp: AnyModule, i: number) {
+  protected throwIfUndefined(modName: string, imOrEx: 'Im' | 'Ex', imp: AnyModule | ServiceProvider, i: number) {
     if (imp === undefined) {
       const lowerImOrEx = imOrEx.toLowerCase();
       const msg =
@@ -461,7 +466,7 @@ export class ModuleManager {
     }
   }
 
-  protected checkExtension(modName: string, extensionsProvider: ExtensionsProvider, token: any) {
+  protected checkExtension(modName: string, extensionsProvider: ExtensionsProvider) {
     const np = normalizeProviders([extensionsProvider])[0];
     let extensionClass: Type<Extension<any>>;
     if (isClassProvider(np)) {
@@ -473,6 +478,7 @@ export class ModuleManager {
     }
 
     if (!extensionClass! || typeof extensionClass.prototype?.init != 'function') {
+      const token = getToken(extensionsProvider);
       const tokenName = token.name || token;
       const msg = `Exporting "${tokenName}" from "${modName}" failed: all extensions must have init() method.`;
       throw new TypeError(msg);

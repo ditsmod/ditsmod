@@ -162,7 +162,7 @@ export class ModuleFactory {
     this.addProviders('Mod', module, meta1);
     this.addProviders('Rou', module, meta1);
     this.addProviders('Req', module, meta1);
-    meta1.exportsExtensions.forEach((provider) => {
+    meta1.exportedExtensions.forEach((provider) => {
       const token = getToken(provider);
       const newImportObj = new ImportObj<ExtensionsProvider>();
       newImportObj.module = module;

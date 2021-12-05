@@ -12,6 +12,7 @@ import { DefaultLogger } from './default-logger';
 import { LogMediator } from './log-mediator';
 import { LogManager } from './log-manager';
 import { Controller } from '../decorators/controller';
+import { getExtensionProvider } from '../edk';
 
 describe('ModuleManager', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;
@@ -65,8 +66,7 @@ describe('ModuleManager', () => {
       const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
 
       @Module({
-        extensions: [{ provide: GROUP1_EXTENSIONS, useClass: Ext, multi: true }],
-        exports: [GROUP1_EXTENSIONS],
+        extensions: [getExtensionProvider(GROUP1_EXTENSIONS, Ext, true)],
       })
       class Module1 {}
 
@@ -81,7 +81,7 @@ describe('ModuleManager', () => {
 
       @Module({
         providersPerMod: [Provider1, Provider2],
-        controllers: [Controller1]
+        controllers: [Controller1],
       })
       class Module1 {}
 
@@ -153,7 +153,7 @@ describe('ModuleManager', () => {
     class Module4 {}
 
     @RootModule({
-      imports: [Module4]
+      imports: [Module4],
     })
     class AppModule {}
 
@@ -237,15 +237,6 @@ describe('ModuleManager', () => {
     expect(() => mock.scanModule(Module2)).toThrow(/includes in "providersPerApp" and "exports" of/);
   });
 
-  it('module exported token', () => {
-    @Module({ exports: ['someToken'] })
-    class Module2 {}
-
-    expect(() => mock.scanModule(Module2)).toThrow(
-      `If "someToken" is a token of extension, this extension must be included`
-    );
-  });
-
   it('module exported normalized provider', () => {
     @Injectable()
     class Provider1 {}
@@ -259,8 +250,9 @@ describe('ModuleManager', () => {
   it('module exported invalid extension', () => {
     @Injectable()
     class Extension1 {}
+    const TEST_EXTENSIONS = new InjectionToken<Extension<any>>('TEST_EXTENSIONS');
 
-    @Module({ extensions: [{ provide: 'fake token', useClass: Extension1, multi: true }], exports: ['fake token'] })
+    @Module({ extensions: [getExtensionProvider(TEST_EXTENSIONS, Extension1 as any, true)] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).toThrow(`must have init() method`);
@@ -271,8 +263,9 @@ describe('ModuleManager', () => {
     class Extension1 implements Extension<any> {
       async init() {}
     }
+    const TEST_EXTENSIONS = new InjectionToken<Extension<any>>('TEST_EXTENSIONS');
 
-    @Module({ extensions: [{ provide: 'fake token', useClass: Extension1, multi: true }], exports: ['fake token'] })
+    @Module({ extensions: [getExtensionProvider(TEST_EXTENSIONS, Extension1 as any, true)] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).not.toThrow();
@@ -683,14 +676,12 @@ describe('ModuleManager', () => {
     }
 
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
-    const extensions: ExtensionsProvider[] = [
-      Extension1,
-      { provide: GROUP_EXTENSIONS, useExisting: Extension1, multi: true },
+    const extensionsProviders: ExtensionsProvider[] = [
+      { provide: GROUP_EXTENSIONS, useClass: Extension1, multi: true },
     ];
 
     @Module({
-      extensions,
-      exports: [Extension1, GROUP_EXTENSIONS],
+      extensions: [getExtensionProvider(GROUP_EXTENSIONS, Extension1, true)],
     })
     class Module1 {}
 
@@ -710,8 +701,8 @@ describe('ModuleManager', () => {
     expectedMeta1.id = '';
     expectedMeta1.name = 'Module1';
     expectedMeta1.module = Module1;
-    expectedMeta1.extensions = extensions;
-    expectedMeta1.exportsExtensions = extensions;
+    expectedMeta1.extensionsProviders = extensionsProviders;
+    expectedMeta1.exportedExtensions = extensionsProviders;
     expectedMeta1.ngMetadataName = 'Module';
 
     mock.scanRootModule(Module3);
@@ -726,14 +717,12 @@ describe('ModuleManager', () => {
     }
 
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
-    const extensions: ExtensionsProvider[] = [
-      Extension1,
-      { provide: GROUP_EXTENSIONS, useExisting: Extension1, multi: true },
+    const extensionsProviders: ExtensionsProvider[] = [
+      { provide: GROUP_EXTENSIONS, useClass: Extension1, multi: true },
     ];
 
     @Module({
-      extensions,
-      exports: [Extension1, GROUP_EXTENSIONS],
+      extensions: [getExtensionProvider(GROUP_EXTENSIONS, Extension1, true)],
     })
     class Module1 {}
 
@@ -755,8 +744,8 @@ describe('ModuleManager', () => {
     expectedMeta1.id = '';
     expectedMeta1.name = 'Module1';
     expectedMeta1.module = Module1;
-    expectedMeta1.extensions = extensions;
-    expectedMeta1.exportsExtensions = extensions;
+    expectedMeta1.extensionsProviders = extensionsProviders;
+    expectedMeta1.exportedExtensions = extensionsProviders;
     expectedMeta1.ngMetadataName = 'Module';
 
     mock.scanRootModule(Module3);

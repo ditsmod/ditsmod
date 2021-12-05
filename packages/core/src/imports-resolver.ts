@@ -56,20 +56,20 @@ export class ImportsResolver {
     });
 
     importedTokensMap.extensions.forEach(({ providers, module }) => {
-      const newProviders = providers.filter((p) => !meta.extensions.includes(p));
-      meta.extensions.unshift(...newProviders);
+      const newProviders = providers.filter((p) => !meta.extensionsProviders.includes(p));
+      meta.extensionsProviders.unshift(...newProviders);
       providers.forEach((provider) => {
         this.grabDependecies(module, provider, ['Mod']);
       });
     });
 
     meta.providersPerReq.unshift(...defaultProvidersPerReq);
-    meta.extensions.unshift(...defaultExtensions);
+    meta.extensionsProviders.unshift(...defaultExtensions);
     this.increaseExtensionsCounters();
   }
 
   protected increaseExtensionsCounters() {
-    const uniqTargets = new Set<ServiceProvider>(getProvidersTargets(this.meta.extensions));
+    const uniqTargets = new Set<ServiceProvider>(getProvidersTargets(this.meta.extensionsProviders));
 
     uniqTargets.forEach((target) => {
       const counter = this.mExtensionsCounters.get(target) || 0;

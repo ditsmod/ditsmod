@@ -37,11 +37,8 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   resolvedCollisionsPerMod: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerRou: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerReq: [any, ModuleType | ModuleWithParams][] = [];
-  extensions: ExtensionsProvider[] = [];
-  /**
-   * Here must be tokens only (not objects with `provide` property).
-   */
-  exportsExtensions: ExtensionsProvider[] = [];
+  extensionsProviders: ExtensionsProvider[] = [];
+  exportedExtensions: ExtensionsProvider[] = [];
   /**
    * This property allows you to pass any information to extensions.
    *
