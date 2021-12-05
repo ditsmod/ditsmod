@@ -125,29 +125,29 @@ export class LogMediator {
   }
 
   /**
-   * The module with ID `inputModule` has already been imported into `moduleId`.
+   * `"${moduleName}" has already been imported into "${moduleId}".`
    */
-  moduleAlreadyImported(self: object, inputModule: ModuleType | ModuleWithParams, moduleId: string) {
+  moduleAlreadyImported(self: object, inputModule: ModuleType | ModuleWithParams, targetModuleId: string) {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.classesNames = [className];
-    const moduleName = getModuleName(inputModule);
-    const msg = `${className}: the module with ID "${moduleName}" has already been imported into "${moduleId}".`;
+    const inputModuleId = getModuleName(inputModule);
+    const msg = `${className}: "${inputModuleId}" has already been imported into "${targetModuleId}".`;
     this.setLog('warn', filterConfig, msg);
   }
 
   /**
-   * `serverName` is running at `host`:`port`.
+   * `${serverName} is running at ${host}:${port}.`
    */
   serverListen(self: object, serverName: string, host: string, port: number) {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.classesNames = [className];
-    this.setLog('info', filterConfig, `${className}: ${serverName} is running at ${host}:${port}`);
+    this.setLog('info', filterConfig, `${className}: ${serverName} is running at ${host}:${port}.`);
   }
 
   /**
-   * Start reinit the application.
+   * `start reinit the application.`
    */
   startReinitApp(self: object) {
     const className = self.constructor.name;
@@ -157,7 +157,7 @@ export class LogMediator {
   }
 
   /**
-   * Skipping autocommit of changes for config of moduleManager.
+   * `skipping autocommit of changes for config of moduleManager.`
    */
   skippingAutocommitModulesConfig(self: object) {
     const className = self.constructor.name;
@@ -167,7 +167,7 @@ export class LogMediator {
   }
 
   /**
-   * Finished reinit the application.
+   * `finished reinit the application.`
    */
   finishReinitApp(self: object) {
     const className = self.constructor.name;
@@ -187,7 +187,7 @@ export class LogMediator {
   }
 
   /**
-   * Start rollback of changes for config of moduleManager during reinit the application.
+   * `start rollback of changes for config of moduleManager during reinit the application.`
    */
   startRollbackModuleConfigChanges(self: object) {
     const className = self.constructor.name;
@@ -198,7 +198,7 @@ export class LogMediator {
   }
 
   /**
-   * Successful rollback of changes for config of moduleManager during reinit the application.
+   * `successful rollback of changes for config of moduleManager during reinit the application.`
    */
   successfulRollbackModuleConfigChanges(self: object) {
     const className = self.constructor.name;
@@ -209,7 +209,7 @@ export class LogMediator {
   }
 
   /**
-   * Successful added `inputModuleName` to `targetModuleName`.
+   * `successful added "${inputModuleName}" to "${targetMetaName}".`
    */
   successfulAddedModuleToImport(self: object, inputModule: ModuleType | ModuleWithParams, targetMetaName: string) {
     const className = self.constructor.name;
@@ -220,7 +220,7 @@ export class LogMediator {
   }
 
   /**
-   * Module with ID `moduleIdOrName` not found.
+   * `module with ID "${moduleId}" not found.`
    */
   moduleNotFound(self: object, moduleId: string) {
     const className = self.constructor.name;
@@ -230,7 +230,7 @@ export class LogMediator {
   }
 
   /**
-   * `inputModuleName` successful removed from `hostModuleName`.
+   * `${inputMetaName} successful removed from ${targetMetaName}.`
    */
   moduleSuccessfulRemoved(self: object, inputMetaName: string, targetMetaName: string) {
     const className = self.constructor.name;
@@ -240,7 +240,7 @@ export class LogMediator {
   }
 
   /**
-   * `moduleName` has ID: `id`.
+   * `${moduleName} has ID: "${moduleId}".`
    */
   moduleHasId(self: object, moduleName: string, moduleId: string) {
     const className = self.constructor.name;
@@ -273,7 +273,7 @@ export class LogMediator {
   }
 
   /**
-   * [moduleName] start init group with [groupToken].
+   * ================== ModuleName ======================.
    */
   startExtensionsModuleInit(self: object, moduleName: string) {
     const className = self.constructor.name;
@@ -284,7 +284,7 @@ export class LogMediator {
   }
 
   /**
-   * [moduleName] start init group with [groupToken].
+   * `start init ${tokenName}.`
    */
   startExtensionsGroupInit(self: object, moduleName: string, groupToken: any) {
     const className = self.constructor.name;
@@ -292,11 +292,11 @@ export class LogMediator {
     filterConfig.modulesNames = [moduleName];
     filterConfig.classesNames = [className];
     const tokenName = getProviderName(groupToken);
-    this.setLog('trace', filterConfig, `${className}: start init ${tokenName}`);
+    this.setLog('trace', filterConfig, `${className}: start init ${tokenName}.`);
   }
 
   /**
-   * [moduleName] finish init group with [groupToken].
+   * `finish init ${tokenName}.`
    */
   finishExtensionsGroupInit(self: object, moduleName: string, groupToken: any) {
     const className = self.constructor.name;
@@ -304,11 +304,11 @@ export class LogMediator {
     filterConfig.modulesNames = [moduleName];
     filterConfig.classesNames = [className];
     const tokenName = getProviderName(groupToken);
-    this.setLog('trace', filterConfig, `${className}: finish init ${tokenName}`);
+    this.setLog('trace', filterConfig, `${className}: finish init ${tokenName}.`);
   }
 
   /**
-   * `extensionsGroupToken`: no extensions found.
+   * `for ${tokenName} no extensions found.`
    */
   noExtensionsFound(self: object, groupToken: any) {
     const className = self.constructor.name;
@@ -319,7 +319,7 @@ export class LogMediator {
   }
 
   /**
-   * `id`: `className`: start init.
+   * `${path}: start init.`
    */
   startInitExtension(self: object, unfinishedInitExtensions: Set<Extension<any>>) {
     const className = self.constructor.name;
@@ -330,7 +330,7 @@ export class LogMediator {
   }
 
   /**
-   * `id`: `className`: finish init.
+   * `${path}: finish init${withSomeValue}.`
    */
   finishInitExtension(self: object, unfinishedInitExtensions: Set<Extension<any>>, data: any) {
     const className = self.constructor.name;
@@ -342,14 +342,14 @@ export class LogMediator {
   }
 
   /**
-   * Total inited `number` extensions: `listOfNames`.
+   * `total inited ${extensionsNum} extensions: ${extensionsNames}.`
    */
   totalInitedExtensions(self: object, moduleName: string, extensionsNum: number, extensionsNames: string) {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.modulesNames = [moduleName];
     filterConfig.classesNames = [className];
-    const msg = `${className}: total inited ${extensionsNum} extensions: ${extensionsNames}`;
+    const msg = `${className}: total inited ${extensionsNum} extensions: ${extensionsNames}.`;
     this.setLog('debug', filterConfig, msg);
   }
 
@@ -374,17 +374,17 @@ export class LogMediator {
   }
 
   /**
-   * Can not activate the route with URL: `httpMethod` `URL`.
+   * `can not activate the route with URL: ${httpMethod} ${url}.`
    */
   youCannotActivateRoute(self: object, httpMethod: string, url: string) {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.classesNames = [className];
-    this.setLog('debug', filterConfig, `${className}: can not activate the route with URL: ${httpMethod} ${url}`);
+    this.setLog('debug', filterConfig, `${className}: can not activate the route with URL: ${httpMethod} ${url}.`);
   }
 
   /**
-   * The application has no routes.
+   * `the application has no routes.`
    */
   noRoutes(self: object) {
     const className = self.constructor.name;
@@ -394,13 +394,13 @@ export class LogMediator {
   }
 
   /**
-   * [show routes].
+   * `setted route ${httpMethod} "/${path}"`.
    */
   printRoute(self: object, moduleName: string, httpMethod: string, path: string) {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.classesNames = [className];
     filterConfig.modulesNames = [moduleName];
-    this.setLog('debug', filterConfig, `${className}: setted route ${httpMethod} "/${path}"`);
+    this.setLog('debug', filterConfig, `${className}: setted route ${httpMethod} "/${path}".`);
   }
 }
