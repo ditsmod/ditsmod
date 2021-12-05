@@ -7,7 +7,7 @@ import { ServiceProvider } from '../types/mix';
 import { Counter } from './counter';
 import { DefaultLogger } from './default-logger';
 import { ModuleManager } from './module-manager';
-import { LogMediator, LogConfig } from './log-mediator';
+import { LogMediator, LogMediatorConfig } from './log-mediator';
 import { PreRouter } from './pre-router';
 
 export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
@@ -23,5 +23,5 @@ export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
   Counter,
   ModuleManager,
   LogMediator,
-  LogConfig,
+  LogMediatorConfig,
 ];

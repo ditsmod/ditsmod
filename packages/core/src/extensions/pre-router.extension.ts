@@ -73,7 +73,7 @@ export class PreRouterExtension implements Extension<void> {
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {
     this.extensionsContext.appHasRoutes = this.extensionsContext.appHasRoutes || !!preparedRouteMeta.length;
     if (this.#isLastExtensionCall && !this.extensionsContext.appHasRoutes) {
-      this.logMediator.noRoutes('warn', { className: this.constructor.name });
+      this.logMediator.noRoutes(this);
       return;
     }
 
@@ -86,7 +86,7 @@ export class PreRouterExtension implements Extension<void> {
         throw new Error(msg);
       }
 
-      this.logMediator.showRoutes('debug', { className: this.constructor.name }, { moduleName, httpMethod, path });
+      this.logMediator.printRoute(this, moduleName, httpMethod, path);
 
       if (httpMethod == 'ALL') {
         this.router.all(`/${path}`, handle);

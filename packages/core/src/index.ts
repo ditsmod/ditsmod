@@ -29,7 +29,7 @@ export { NormalizedProvider } from './utils/ng-utils';
 export { HttpInterceptor, HttpHandler } from './types/http-interceptor';
 export { NODE_REQ, NODE_RES, HTTP_INTERCEPTORS, PATH_PARAMS, QUERY_STRING } from './constans';
 export { LogManager } from './services/log-manager';
-export { LogMediator, LogConfig, FilterConfig } from './services/log-mediator';
+export { LogMediator, LogMediatorConfig, FilterConfig } from './services/log-mediator';
 /**
  * Extension Development Kit.
  */

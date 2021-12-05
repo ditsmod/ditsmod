@@ -108,7 +108,7 @@ export class ModuleManager {
     const prop = isModuleWithParams(inputModule) ? 'importsWithParams' : 'importsModules';
     if (targetMeta[prop].some((imp: AnyModule) => imp === inputModule)) {
       const modIdStr = format(targetModuleId);
-      this.logMediator.moduleAlreadyImported('warn', { className: this.constructor.name }, inputModule, modIdStr);
+      this.logMediator.moduleAlreadyImported(this, inputModule, modIdStr);
       return false;
     }
 
@@ -116,7 +116,7 @@ export class ModuleManager {
     try {
       (targetMeta[prop] as AnyModule[]).push(inputModule);
       this.scanRawModule(inputModule);
-      this.logMediator.successfulAddedModuleToImport('debug', { className: this.constructor.name }, targetMeta.name);
+      this.logMediator.successfulAddedModuleToImport(this, inputModule, targetMeta.name);
       return true;
     } catch (err) {
       this.rollback(err as Error);
@@ -130,7 +130,7 @@ export class ModuleManager {
     const inputMeta = this.getRawMetadata(inputModuleId);
     if (!inputMeta) {
       const modIdStr = format(inputModuleId);
-      this.logMediator.moduleNotFound('warn', { className: this.constructor.name }, modIdStr);
+      this.logMediator.moduleNotFound(this, modIdStr);
       return false;
     }
 
@@ -144,7 +144,7 @@ export class ModuleManager {
     const index = targetMeta[prop].findIndex((imp: AnyModule) => imp === inputMeta.module);
     if (index == -1) {
       const modIdStr = format(inputModuleId);
-      this.logMediator.moduleNotFound('warn', { className: this.constructor.name }, modIdStr);
+      this.logMediator.moduleNotFound(this, modIdStr);
       return false;
     }
 
@@ -157,12 +157,7 @@ export class ModuleManager {
         }
         this.map.delete(inputMeta.module);
       }
-      this.logMediator.moduleSuccessfulRemoved(
-        'debug',
-        { className: this.constructor.name },
-        inputMeta.name,
-        targetMeta.name
-      );
+      this.logMediator.moduleSuccessfulRemoved(this, inputMeta.name, targetMeta.name);
       return true;
     } catch (err) {
       this.rollback(err as Error);
@@ -217,7 +212,7 @@ export class ModuleManager {
 
     if (meta.id) {
       this.mapId.set(meta.id, modOrObj);
-      this.logMediator.moduleHasId('debug', { className: this.constructor.name }, meta.name, meta.id);
+      this.logMediator.moduleHasId(this, meta.name, meta.id);
     }
     this.map.set(modOrObj, meta);
     return meta;

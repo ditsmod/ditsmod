@@ -35,7 +35,7 @@ export class PreRouter {
    * @param err An error to logs it (not sends).
    */
   protected sendInternalServerError(nodeRes: NodeResponse, err: Error) {
-    this.logMediator.internalServerError('error', { className: this.constructor.name }, err);
+    this.logMediator.internalServerError(this, err);
     nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
     nodeRes.end();
   }

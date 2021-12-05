@@ -64,7 +64,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
   }
 
   protected canNotActivateRoute(nodeReq: NodeRequest, nodeRes: NodeResponse, status?: Status) {
-    this.logMediator.youCannotActivateRoute('debug', { className: this.constructor.name }, nodeReq.method, nodeReq.url);
+    this.logMediator.youCannotActivateRoute(this, nodeReq.method!, nodeReq.url!);
     nodeRes.statusCode = status || Status.UNAUTHORIZED;
     nodeRes.end();
   }

@@ -18,7 +18,7 @@ import { Counter } from './counter';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ExtensionsManager } from './extensions-manager';
 import { LogManager } from './log-manager';
-import { FilterConfig, LogMediator } from './log-mediator';
+import { LogMediator } from './log-mediator';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
 import { getLastProviders } from '../utils/get-last-providers';
@@ -167,13 +167,12 @@ export class AppInitializer {
   }
 
   serverListen(host: string, serverName: string, port: number) {
-    const filterConfig: FilterConfig = { className: this.constructor.name };
-    this.logMediator.serverListen('info', filterConfig, serverName, host, port);
+    this.logMediator.serverListen(this, serverName, host, port);
   }
 
   async reinit(autocommit: boolean = true): Promise<void | Error> {
     const previousLogger = this.logMediator.logger;
-    this.logMediator.startReinitApp('debug');
+    this.logMediator.startReinitApp(this);
     // Before init new logger, works previous logger.
     try {
       this.bootstrapProvidersPerApp();
@@ -189,9 +188,9 @@ export class AppInitializer {
       if (autocommit) {
         this.moduleManager.commit();
       } else {
-        this.logMediator.skippingAutocommitModulesConfig('warn');
+        this.logMediator.skippingAutocommitModulesConfig(this);
       }
-      this.logMediator.finishReinitApp('debug');
+      this.logMediator.finishReinitApp(this);
     } catch (err) {
       return this.handleReinitError(err);
     } finally {
@@ -205,12 +204,12 @@ export class AppInitializer {
   };
 
   protected async handleReinitError(err: unknown) {
-    this.logMediator.printReinitError('error', { className: this.constructor.name }, err);
-    this.logMediator.startRollbackModuleConfigChanges('debug');
+    this.logMediator.printReinitError(this, err);
+    this.logMediator.startRollbackModuleConfigChanges(this);
     this.moduleManager.rollback();
     this.bootstrapProvidersPerApp();
     await this.bootstrapModulesAndExtensions();
-    this.logMediator.successfulRollbackModuleConfigChanges('debug');
+    this.logMediator.successfulRollbackModuleConfigChanges(this);
     return err as Error;
   }
 
@@ -238,7 +237,7 @@ export class AppInitializer {
   protected bootstrapModuleFactory(moduleManager: ModuleManager) {
     const moduleFactory1 = new ModuleFactory();
     const globalProviders = moduleFactory1.exportGlobalProviders(moduleManager, this.meta.providersPerApp);
-    this.logMediator.printGlobalProviders('trace', { className: this.constructor.name }, globalProviders);
+    this.logMediator.printGlobalProviders(this, globalProviders);
     const moduleFactory2 = new ModuleFactory();
     const appModule = moduleManager.getMetadata('root', true).module;
     return moduleFactory2.bootstrap(
@@ -257,11 +256,11 @@ export class AppInitializer {
   ) {
     this.createInjectorAndSetLogMediator();
     const extensionsContext = new ExtensionsContext();
-    const filterConfig = { className: this.constructor.name };
     const len = aMetadataPerMod1.length;
     for (let i = 0; i < len; i++) {
       const metadataPerMod1 = aMetadataPerMod1[i];
       const { extensions, providersPerMod, name: moduleName } = metadataPerMod1.meta;
+      this.logMediator.startExtensionsModuleInit(this, moduleName);
       this.decreaseExtensionsCounters(mExtensionsCounters, extensions);
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
@@ -276,15 +275,15 @@ export class AppInitializer {
       const extensionTokens = getTokens(extensions).filter((token) => token instanceof InjectionToken);
       for (const groupToken of extensionTokens) {
         const beforeToken = `BEFORE ${groupToken}` as const;
-        this.logMediator.startExtensionsGroupInit('debug', filterConfig, moduleName, beforeToken);
+        this.logMediator.startExtensionsGroupInit(this, moduleName, beforeToken);
         await extensionsManager.init(beforeToken);
-        this.logMediator.finishExtensionsGroupInit('debug', filterConfig, moduleName, beforeToken);
+        this.logMediator.finishExtensionsGroupInit(this, moduleName, beforeToken);
 
-        this.logMediator.startExtensionsGroupInit('debug', filterConfig, moduleName, groupToken);
+        this.logMediator.startExtensionsGroupInit(this, moduleName, groupToken);
         await extensionsManager.init(groupToken);
-        this.logMediator.finishExtensionsGroupInit('debug', filterConfig, moduleName, groupToken);
+        this.logMediator.finishExtensionsGroupInit(this, moduleName, groupToken);
       }
-      this.logExtensionsStatistic();
+      this.logExtensionsStatistic(moduleName);
     }
   }
 
@@ -300,13 +299,13 @@ export class AppInitializer {
     });
   }
 
-  protected logExtensionsStatistic() {
+  protected logExtensionsStatistic(moduleName: string) {
     const counter = this.injectorPerApp.get(Counter) as Counter;
     const extensions = counter.getInitedExtensions();
     const names = Array.from(extensions)
       .map((e) => e.constructor.name)
       .join(', ');
-    this.logMediator.totalInitedExtensions('debug', { className: this.constructor.name }, extensions.size, names);
+    this.logMediator.totalInitedExtensions(this, moduleName, extensions.size, names);
     counter.resetInitedExtensionsSet();
   }
 }
