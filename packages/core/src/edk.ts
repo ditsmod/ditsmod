@@ -13,7 +13,7 @@ export { ModuleFactory } from './module-factory';
 export { AppInitializer } from './services/app-initializer';
 export { ExtensionsManager } from './services/extensions-manager';
 export { ModuleManager } from './services/module-manager';
-export { getExtensionProviders } from './utils/get-extension-provider';
+export { getExtensionProvider, ExtensionObj } from './utils/get-extension-provider';
 export { ExtensionsContext } from './services/extensions-context';
 export { MetadataPerMod1, MetadataPerMod2, MetaForExtensionsPerRou } from './types/metadata-per-mod';
 export {
