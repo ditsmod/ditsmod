@@ -1,7 +1,7 @@
 import { Injectable } from '@ts-stack/di';
 
 @Injectable()
-export class OnePerRouService {
+export class FirstPerRouService {
   private counter = 0;
 
   getCounter() {

@@ -1,10 +1,10 @@
 import { Injectable } from '@ts-stack/di';
 
-import { OneService } from '../one/one.service';
+import { FirstService } from '../first/first.service';
 
 @Injectable()
-export class TwoService {
-  constructor(private oneService: OneService) {}
+export class SecondService {
+  constructor(private oneService: FirstService) {}
 
   getCounter() {
     return this.oneService.getCounter();
