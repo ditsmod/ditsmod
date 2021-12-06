@@ -1,6 +1,6 @@
 import { InjectionToken } from '@ts-stack/di';
 
-import { Extension, ExtensionsProvider } from '../types/mix';
+import { Extension, ExtensionProvider } from '../types/mix';
 import { ExtensionItem1, ExtensionItem2, ExtensionObj, getExtensionProvider } from './get-extension-provider';
 
 describe('getExtensionProviders', () => {
@@ -11,7 +11,7 @@ describe('getExtensionProviders', () => {
   }
 
   describe('without BEFORE group', () => {
-    const providers: ExtensionsProvider[] = [{ provide: MY_EXTENSION, useClass: Extension1, multi: true }];
+    const providers: ExtensionProvider[] = [{ provide: MY_EXTENSION, useClass: Extension1, multi: true }];
 
     it('extension without exports (two arguments)', () => {
       const args: ExtensionItem2 = [MY_EXTENSION, Extension1];
@@ -39,7 +39,7 @@ describe('getExtensionProviders', () => {
   });
 
   describe('with BEFORE group', () => {
-    const providers: ExtensionsProvider[] = [
+    const providers: ExtensionProvider[] = [
       Extension1,
       { provide: MY_EXTENSION, useExisting: Extension1, multi: true },
       { provide: `BEFORE ${OTHER_EXTENSION}`, useExisting: Extension1, multi: true },

@@ -20,7 +20,7 @@ export interface Extension<T> {
   init(isLastExtensionCall: boolean): Promise<T>;
 }
 
-export type ExtensionsProvider =
+export type ExtensionProvider =
   | TypeProvider
   | ((ClassProvider | ExistingProvider | FactoryProvider | ValueProvider) & { multi: true });
 

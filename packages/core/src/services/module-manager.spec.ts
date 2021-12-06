@@ -6,12 +6,13 @@ import { RootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleManager } from './module-manager';
 import { Module } from '../decorators/module';
-import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj, Extension, ExtensionsProvider } from '../types/mix';
+import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj, Extension, ExtensionProvider } from '../types/mix';
 import { LoggerConfig } from '../types/logger';
 import { DefaultLogger } from './default-logger';
 import { LogMediator } from './log-mediator';
 import { LogManager } from './log-manager';
 import { Controller } from '../decorators/controller';
+import { isMultiProvider } from '../edk';
 
 describe('ModuleManager', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;
@@ -336,8 +337,8 @@ describe('ModuleManager', () => {
     expectedMeta2.providersPerMod = [Provider0];
     expectedMeta2.providersPerRou = [Provider1];
     expectedMeta2.exportsModules = [Module1];
-    expectedMeta2.exportsProvidersPerMod = [Provider0];
-    expectedMeta2.exportsProvidersPerRou = [Provider1];
+    expectedMeta2.exportedProvidersPerMod = [Provider0];
+    expectedMeta2.exportedProvidersPerRou = [Provider1];
     expectedMeta2.ngMetadataName = 'Module';
 
     expect(mock.map.get(Module2)).toEqual(expectedMeta2);
@@ -675,7 +676,7 @@ describe('ModuleManager', () => {
     }
 
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
-    const extensionsProviders: ExtensionsProvider[] = [
+    const extensionsProviders: ExtensionProvider[] = [
       { provide: GROUP_EXTENSIONS, useClass: Extension1, multi: true },
     ];
 
@@ -716,7 +717,7 @@ describe('ModuleManager', () => {
     }
 
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
-    const extensionsProviders: ExtensionsProvider[] = [
+    const extensionsProviders: ExtensionProvider[] = [
       { provide: GROUP_EXTENSIONS, useClass: Extension1, multi: true },
     ];
 
@@ -747,6 +748,51 @@ describe('ModuleManager', () => {
     expectedMeta1.exportedExtensions = extensionsProviders;
     expectedMeta1.ngMetadataName = 'Module';
 
+    mock.scanRootModule(Module3);
+    expect(mock.getMetadata('root')).toEqual(expectedMeta3);
+    expect(mock.getMetadata(Module1)).toEqual(expectedMeta1);
+  });
+
+  it('split multi providers and common providers', () => {
+    class Provider1 {}
+    class Provider2 {}
+    class Provider3 {}
+
+    const providersPerReq: ServiceProvider[] = [
+      { provide: Provider2, useValue: 'val4', multi: true },
+      { provide: Provider1, useValue: 'val1', multi: true },
+      { provide: Provider1, useValue: 'val2', multi: true },
+      { provide: Provider1, useValue: 'val3', multi: true },
+      Provider3,
+    ];
+
+    @Module({
+      providersPerReq,
+      exports: [Provider2, Provider1, Provider3]
+    })
+    class Module1 {}
+
+    @RootModule({
+      imports: [Module1],
+    })
+    class Module3 {}
+
+    const expectedMeta3 = new NormalizedModuleMetadata();
+    expectedMeta3.id = '';
+    expectedMeta3.name = 'Module3';
+    expectedMeta3.module = Module3;
+    expectedMeta3.importsModules = [Module1];
+    expectedMeta3.ngMetadataName = 'RootModule';
+
+    const expectedMeta1 = new NormalizedModuleMetadata();
+    expectedMeta1.id = '';
+    expectedMeta1.name = 'Module1';
+    expectedMeta1.module = Module1;
+    expectedMeta1.providersPerReq = providersPerReq;
+    expectedMeta1.exportedProvidersPerReq = [Provider3];
+    expectedMeta1.exportedMultiProvidersPerReq = providersPerReq.filter(isMultiProvider);
+    expectedMeta1.ngMetadataName = 'Module';
+    
     mock.scanRootModule(Module3);
     expect(mock.getMetadata('root')).toEqual(expectedMeta3);
     expect(mock.getMetadata(Module1)).toEqual(expectedMeta1);

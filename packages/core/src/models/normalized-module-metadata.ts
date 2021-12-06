@@ -4,9 +4,10 @@ import {
   ModuleType,
   ModuleWithParams,
   ServiceProvider,
-  ExtensionsProvider,
+  ExtensionProvider,
   NormalizedGuard,
 } from '../types/mix';
+import { MultiProvider } from '../utils/type-guards';
 import { ProvidersMetadata } from './providers-metadata';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
@@ -29,16 +30,19 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   ngMetadataName: string;
   exportsModules: ModuleType[] = [];
   exportsWithParams: ModuleWithParams[] = [];
-  exportsProvidersPerMod: ServiceProvider[] = [];
-  exportsProvidersPerRou: ServiceProvider[] = [];
-  exportsProvidersPerReq: ServiceProvider[] = [];
+  exportedProvidersPerMod: ServiceProvider[] = [];
+  exportedProvidersPerRou: ServiceProvider[] = [];
+  exportedProvidersPerReq: ServiceProvider[] = [];
+  exportedMultiProvidersPerMod: MultiProvider[] = [];
+  exportedMultiProvidersPerRou: MultiProvider[] = [];
+  exportedMultiProvidersPerReq: MultiProvider[] = [];
   normalizedGuardsPerMod: NormalizedGuard[] = [];
   resolvedCollisionsPerApp: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerMod: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerRou: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerReq: [any, ModuleType | ModuleWithParams][] = [];
-  extensionsProviders: ExtensionsProvider[] = [];
-  exportedExtensions: ExtensionsProvider[] = [];
+  extensionsProviders: ExtensionProvider[] = [];
+  exportedExtensions: ExtensionProvider[] = [];
   /**
    * This property allows you to pass any information to extensions.
    *

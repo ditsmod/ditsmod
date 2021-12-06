@@ -1,6 +1,6 @@
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ControllerAndMethodMetadata } from './controller-and-method-metadata';
-import { ExtensionsProvider, HttpMethod, ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix';
+import { ExtensionProvider, HttpMethod, ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix';
 
 /**
  * @todo Rename this.
@@ -11,10 +11,13 @@ export class ImportObj<T extends ServiceProvider = ServiceProvider> {
 }
 
 export class GlobalProviders {
-  importsPerMod = new Map<any, ImportObj>();
-  importsPerRou = new Map<any, ImportObj>();
-  importsPerReq = new Map<any, ImportObj>();
-  importsExtensions = new Map<any, ImportObj<ExtensionsProvider>>();
+  importedProvidersPerMod = new Map<any, ImportObj>();
+  importedProvidersPerRou = new Map<any, ImportObj>();
+  importedProvidersPerReq = new Map<any, ImportObj>();
+  importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
+  importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
+  importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, ServiceProvider[]>();
+  importedExtensions = new Map<ModuleType | ModuleWithParams, ExtensionProvider[]>();
 }
 
 /**
@@ -39,7 +42,10 @@ export class MetadataPerMod1 {
     perMod: Map<any, ImportObj>;
     perRou: Map<any, ImportObj>;
     perReq: Map<any, ImportObj>;
-    extensions: Map<any, ImportObj<ExtensionsProvider>>;
+    multiPerMod: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
+    multiPerRou: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
+    multiPerReq: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
+    extensions: Map<ModuleType | ModuleWithParams, ExtensionProvider[]>;
   };
 }
 

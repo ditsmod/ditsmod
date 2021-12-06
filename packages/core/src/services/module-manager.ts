@@ -6,7 +6,7 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import {
   AnyObj,
   Extension,
-  ExtensionsProvider,
+  ExtensionProvider,
   GuardItem,
   ModuleType,
   ModuleWithParams,
@@ -25,10 +25,12 @@ import {
   isClassProvider,
   isExistingProvider,
   isModuleWithParams,
+  isMultiProvider,
   isNormalizedProvider,
   isProvider,
   isRootModule,
   isValueProvider,
+  MultiProvider,
 } from '../utils/type-guards';
 import { LogMediator } from './log-mediator';
 
@@ -227,9 +229,12 @@ export class ModuleManager {
     meta.extensionsProviders = meta.extensionsProviders.slice();
     meta.exportsModules = meta.exportsModules.slice();
     meta.exportsWithParams = meta.exportsWithParams.slice();
-    meta.exportsProvidersPerMod = meta.exportsProvidersPerMod.slice();
-    meta.exportsProvidersPerRou = meta.exportsProvidersPerRou.slice();
-    meta.exportsProvidersPerReq = meta.exportsProvidersPerReq.slice();
+    meta.exportedProvidersPerMod = meta.exportedProvidersPerMod.slice();
+    meta.exportedProvidersPerRou = meta.exportedProvidersPerRou.slice();
+    meta.exportedProvidersPerReq = meta.exportedProvidersPerReq.slice();
+    meta.exportedMultiProvidersPerMod = meta.exportedMultiProvidersPerMod.slice();
+    meta.exportedMultiProvidersPerRou = meta.exportedMultiProvidersPerRou.slice();
+    meta.exportedMultiProvidersPerReq = meta.exportedMultiProvidersPerReq.slice();
     meta.providersPerApp = meta.providersPerApp.slice();
     meta.providersPerMod = meta.providersPerMod.slice();
     meta.providersPerRou = meta.providersPerRou.slice();
@@ -373,7 +378,7 @@ export class ModuleManager {
       if (isModuleWithParams(exp)) {
         meta.exportsWithParams.push(exp);
       } else if (isProvider(exp) || providersTokens.includes(exp)) {
-        this.findAndSetProvider(exp, rawMeta, meta);
+        this.findAndSetProviders(exp, rawMeta, meta);
       } else if (getModuleMetadata(exp)) {
         meta.exportsModules.push(exp);
       } else {
@@ -381,13 +386,13 @@ export class ModuleManager {
       }
     });
 
-    rawMeta.extensions?.forEach(extensionTuple => {
-      const extensionObj = getExtensionProvider(...(extensionTuple as ExtensionItem1))
-      extensionObj.providers.forEach(p => this.checkExtension(modName, p));
+    rawMeta.extensions?.forEach((extensionTuple) => {
+      const extensionObj = getExtensionProvider(...(extensionTuple as ExtensionItem1));
+      extensionObj.providers.forEach((p) => this.checkExtension(modName, p));
       meta.extensionsProviders.push(...extensionObj.providers);
-      extensionObj.exports.forEach(token => {
+      extensionObj.exports.forEach((token) => {
         this.throwExportsIfNormalizedProvider(modName, token);
-        const exportedExtensions = extensionObj.providers.filter(provider => getToken(provider) === token);
+        const exportedExtensions = extensionObj.providers.filter((provider) => getToken(provider) === token);
         meta.exportedExtensions.push(...exportedExtensions);
       });
     });
@@ -425,9 +430,12 @@ export class ModuleManager {
       !isRootModule(meta as any) &&
       !meta.providersPerApp.length &&
       !meta.controllers.length &&
-      !meta.exportsProvidersPerMod.length &&
-      !meta.exportsProvidersPerRou.length &&
-      !meta.exportsProvidersPerReq.length &&
+      !meta.exportedProvidersPerMod.length &&
+      !meta.exportedProvidersPerRou.length &&
+      !meta.exportedProvidersPerReq.length &&
+      !meta.exportedMultiProvidersPerMod.length &&
+      !meta.exportedMultiProvidersPerRou.length &&
+      !meta.exportedMultiProvidersPerReq.length &&
       !meta.exportsModules.length &&
       !meta.exportsWithParams.length &&
       !meta.extensionsProviders.length
@@ -468,7 +476,7 @@ export class ModuleManager {
     }
   }
 
-  protected checkExtension(modName: string, extensionsProvider: ExtensionsProvider) {
+  protected checkExtension(modName: string, extensionsProvider: ExtensionProvider) {
     const np = normalizeProviders([extensionsProvider])[0];
     let extensionClass: Type<Extension<any>>;
     if (isClassProvider(np)) {
@@ -514,21 +522,25 @@ export class ModuleManager {
     }
   }
 
-  protected findAndSetProvider(token: any, rawMeta: ModuleMetadata, meta: NormalizedModuleMetadata) {
+  protected findAndSetProviders(token: any, rawMeta: ModuleMetadata, meta: NormalizedModuleMetadata) {
     const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
     let found = false;
     scopes.forEach((scope) => {
-      const provider = hasProviderIn(rawMeta[`providersPer${scope}`]);
-      if (provider) {
+      const providers = (rawMeta[`providersPer${scope}`] || []).filter((p) => getToken(p) === token);
+      if (providers.length) {
         found = true;
-        meta[`exportsProvidersPer${scope}`].push(provider);
+        if (providers.some(isMultiProvider)) {
+          meta[`exportedMultiProvidersPer${scope}`].push(...(providers as MultiProvider[]));
+        } else {
+          meta[`exportedProvidersPer${scope}`].push(...providers);
+        }
       }
     });
 
     if (!found) {
       const providerName = token.name || token;
       let msg = '';
-      if (hasProviderIn(rawMeta.providersPerApp)) {
+      if ((rawMeta.providersPerApp || []).some((p) => getToken(p) === token)) {
         msg =
           `Exported "${providerName}" includes in "providersPerApp" and "exports" of ${meta.name}. ` +
           'This is an error, because "providersPerApp" is always exported automatically.';
@@ -538,15 +550,6 @@ export class ModuleManager {
           'in "providersPerMod" or "providersPerRou", or "providersPerReq".';
       }
       throw new Error(msg);
-    }
-
-    function hasProviderIn(providers: ServiceProvider[] | undefined) {
-      if (!providers) {
-        return;
-      }
-      const normProviders = normalizeProviders(providers);
-      const index = normProviders.findIndex((p) => p.provide === token);
-      return providers[index];
     }
   }
 }

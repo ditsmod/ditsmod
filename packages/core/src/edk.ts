@@ -23,7 +23,7 @@ export {
   Extension,
   NormalizedGuard,
   ExtensionsGroupToken,
-  ExtensionsProvider,
+  ExtensionProvider,
   ExtensionType,
 } from './types/mix';
 export { ModuleMetadata } from './types/module-metadata';

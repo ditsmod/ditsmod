@@ -258,9 +258,9 @@ export class LogMediator {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.classesNames = [className];
-    const globalProvidersPerMod = this.getProvidersNames(globalProviders.importsPerMod);
-    const globalProvidersPerRou = this.getProvidersNames(globalProviders.importsPerRou);
-    const globalProvidersPerReq = this.getProvidersNames(globalProviders.importsPerReq);
+    const globalProvidersPerMod = this.getProvidersNames(globalProviders.importedProvidersPerMod);
+    const globalProvidersPerRou = this.getProvidersNames(globalProviders.importedProvidersPerRou);
+    const globalProvidersPerReq = this.getProvidersNames(globalProviders.importedProvidersPerReq);
     const prefix = `${className}: global providers per a`;
     this.setLog('debug', filterConfig, `${className}: global providers are collected.`);
     this.setLog('trace', filterConfig, `${prefix} module: [${globalProvidersPerMod}]`);

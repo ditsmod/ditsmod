@@ -43,7 +43,11 @@ export class ImportsResolver {
   protected resolveImportedProviders(metadataPerMod1: MetadataPerMod1) {
     const { importedTokensMap, meta } = metadataPerMod1;
     this.meta = meta;
-    this.extensionsTokens = getTokens([...defaultExtensionsTokens, ...importedTokensMap.extensions.keys()]);
+    const currentExtensionsTokens: any[] = [];
+    importedTokensMap.extensions.forEach((providers) => {
+      currentExtensionsTokens.push(...getTokens(providers));
+    });
+    this.extensionsTokens = getTokens([...defaultExtensionsTokens, ...currentExtensionsTokens]);
     const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
 
     scopes.forEach((scope, i) => {
@@ -53,9 +57,15 @@ export class ImportsResolver {
           this.grabDependecies(importObj.module, provider, scopes.slice(i));
         });
       });
+      importedTokensMap[`multiPer${scope}`].forEach((multiProviders, module) => {
+        meta[`providersPer${scope}`].unshift(...multiProviders);
+        multiProviders.forEach((provider) => {
+          this.grabDependecies(module, provider, scopes.slice(i));
+        });
+      });
     });
 
-    importedTokensMap.extensions.forEach(({ providers, module }) => {
+    importedTokensMap.extensions.forEach((providers, module) => {
       const newProviders = providers.filter((p) => !meta.extensionsProviders.includes(p));
       meta.extensionsProviders.unshift(...newProviders);
       providers.forEach((provider) => {

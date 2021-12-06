@@ -9,7 +9,7 @@ import { ControllerAndMethodMetadata } from './types/controller-and-method-metad
 import { ImportObj, GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod';
 import {
   DecoratorMetadata,
-  ExtensionsProvider,
+  ExtensionProvider,
   ModuleType,
   ModuleWithParams,
   NormalizedGuard,
@@ -24,6 +24,8 @@ import { isController, isModuleWithParams } from './utils/type-guards';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports';
 import { getModuleName } from './utils/get-module-name';
 import { getLastProviders } from './utils/get-last-providers';
+
+type AnyModule = ModuleType | ModuleWithParams;
 
 /**
  * - exports and imports global providers;
@@ -42,14 +44,20 @@ export class ModuleFactory {
    */
   protected meta: NormalizedModuleMetadata;
 
-  protected importsPerMod = new Map<any, ImportObj>();
-  protected importsPerRou = new Map<any, ImportObj>();
-  protected importsPerReq = new Map<any, ImportObj>();
-  protected importsExtensions = new Map<any, ImportObj<ExtensionsProvider>>();
+  protected importedProvidersPerMod = new Map<any, ImportObj>();
+  protected importedProvidersPerRou = new Map<any, ImportObj>();
+  protected importedProvidersPerReq = new Map<any, ImportObj>();
+  protected importedMultiProvidersPerMod = new Map<AnyModule, ServiceProvider[]>();
+  protected importedMultiProvidersPerRou = new Map<AnyModule, ServiceProvider[]>();
+  protected importedMultiProvidersPerReq = new Map<AnyModule, ServiceProvider[]>();
+  protected importedExtensions = new Map<AnyModule, ExtensionProvider[]>();
 
-  protected globalProviders: GlobalProviders;
-  protected appMetadataMap = new Map<ModuleType | ModuleWithParams, MetadataPerMod1>();
-  protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
+  /**
+   * GlobalProviders.
+   */
+  protected glProviders: GlobalProviders;
+  protected appMetadataMap = new Map<AnyModule, MetadataPerMod1>();
+  protected unfinishedScanModules = new Set<AnyModule>();
   protected moduleManager: ModuleManager;
 
   exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: ServiceProvider[]) {
@@ -62,10 +70,13 @@ export class ModuleFactory {
     this.checkAllCollisionsWithScopesMix();
 
     return {
-      importsPerMod: this.importsPerMod,
-      importsPerRou: this.importsPerRou,
-      importsPerReq: this.importsPerReq,
-      importsExtensions: this.importsExtensions,
+      importedProvidersPerMod: this.importedProvidersPerMod,
+      importedProvidersPerRou: this.importedProvidersPerRou,
+      importedProvidersPerReq: this.importedProvidersPerReq,
+      importedMultiProvidersPerMod: this.importedMultiProvidersPerMod,
+      importedMultiProvidersPerRou: this.importedMultiProvidersPerRou,
+      importedMultiProvidersPerReq: this.importedMultiProvidersPerReq,
+      importedExtensions: this.importedExtensions,
     };
   }
 
@@ -78,15 +89,15 @@ export class ModuleFactory {
     providersPerApp: ServiceProvider[],
     globalProviders: GlobalProviders,
     prefixPerMod: string,
-    modOrObj: ModuleType | ModuleWithParams,
+    modOrObj: AnyModule,
     moduleManager: ModuleManager,
-    unfinishedScanModules: Set<ModuleType | ModuleWithParams>,
+    unfinishedScanModules: Set<AnyModule>,
     guardsPerMod?: NormalizedGuard[]
   ) {
     const meta = moduleManager.getMetadata(modOrObj, true);
     this.moduleManager = moduleManager;
     this.providersPerApp = providersPerApp;
-    this.globalProviders = globalProviders;
+    this.glProviders = globalProviders;
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = meta.name;
     this.guardsPerMod = guardsPerMod || [];
@@ -103,10 +114,13 @@ export class ModuleFactory {
       meta: this.meta,
       controllersMetadata: deepFreeze(controllersMetadata),
       importedTokensMap: {
-        perMod: new Map([...this.globalProviders.importsPerMod, ...this.importsPerMod]),
-        perRou: new Map([...this.globalProviders.importsPerRou, ...this.importsPerRou]),
-        perReq: new Map([...this.globalProviders.importsPerReq, ...this.importsPerReq]),
-        extensions: new Map([...this.globalProviders.importsExtensions, ...this.importsExtensions]),
+        perMod: new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]),
+        perRou: new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]),
+        perReq: new Map([...this.glProviders.importedProvidersPerReq, ...this.importedProvidersPerReq]),
+        multiPerMod: new Map([...this.glProviders.importedMultiProvidersPerMod, ...this.importedMultiProvidersPerMod]),
+        multiPerRou: new Map([...this.glProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]),
+        multiPerReq: new Map([...this.glProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]),
+        extensions: new Map([...this.glProviders.importedExtensions, ...this.importedExtensions]),
       },
     });
   }
@@ -131,7 +145,7 @@ export class ModuleFactory {
       this.unfinishedScanModules.add(imp);
       const appMetadataMap = moduleFactory.bootstrap(
         this.providersPerApp,
-        this.globalProviders,
+        this.glProviders,
         prefixPerMod,
         imp,
         this.moduleManager,
@@ -162,48 +176,57 @@ export class ModuleFactory {
     this.addProviders('Mod', module, meta1);
     this.addProviders('Rou', module, meta1);
     this.addProviders('Req', module, meta1);
-    meta1.exportedExtensions.forEach((provider) => {
-      const token = getToken(provider);
-      const newImportObj = new ImportObj<ExtensionsProvider>();
-      newImportObj.module = module;
-      const importObj = this.importsExtensions.get(token);
-      if (importObj) {
-        newImportObj.providers = importObj.providers.slice();
-      }
-      newImportObj.providers.push(provider);
-      this.importsExtensions.set(token, newImportObj);
+    this.importedMultiProvidersPerMod.set(module, meta1.exportedMultiProvidersPerMod);
+    this.importedMultiProvidersPerRou.set(module, meta1.exportedMultiProvidersPerRou);
+    this.importedMultiProvidersPerReq.set(module, meta1.exportedMultiProvidersPerReq);
+    this.importedExtensions.set(meta1.module, meta1.exportedExtensions);
+    this.throwIfTryResolvingMultiprovidersCollisions(module);
+  }
+
+  protected throwIfTryResolvingMultiprovidersCollisions(module: AnyModule) {
+    const scopes: Scope[] = ['Mod', 'Rou', 'Req'];
+    scopes.forEach((scope) => {
+      const tokens: any[] = [];
+      this[`importedMultiProvidersPer${scope}`].forEach((providers) => tokens.push(...getTokens(providers)));
+      this.meta[`resolvedCollisionsPer${scope}`].some(([token]) => {
+        if (tokens.includes(token)) {
+          const moduleName = getModuleName(module);
+          const tokenName = token.name || token;
+          let errorMsg =
+            `Resolving collisions for providersPer${scope} in ${this.moduleName} failed: ` +
+            `${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers, ` +
+            `and in this case it should not be included in resolvedCollisionsPer${scope}.`;
+          throw new Error(errorMsg);
+        }
+      });
     });
   }
 
-  protected addProviders(scope: Scope, module1: ModuleType | ModuleWithParams, meta: NormalizedModuleMetadata) {
-    meta[`exportsProvidersPer${scope}`].forEach((provider) => {
+  protected addProviders(scope: Scope, module1: AnyModule, meta: NormalizedModuleMetadata) {
+    meta[`exportedProvidersPer${scope}`].forEach((provider) => {
       const token1 = getToken(provider);
-      const importObj = this[`importsPer${scope}`].get(token1);
+      const importObj = this[`importedProvidersPer${scope}`].get(token1);
       if (importObj) {
-        if (importObj.module === module1) {
-          importObj.providers.push(provider);
-        } else {
-          this.checkCollisionsPerScope(module1, scope, token1, provider, importObj);
-          const hasResolvedCollision = this.meta[`resolvedCollisionsPer${scope}`].some(([token2]) => token2 === token1);
-          if (hasResolvedCollision) {
-            const { providers, module2 } = this.getResolvedCollisionsPerScope(scope, token1);
-            const newImportObj = new ImportObj();
-            newImportObj.module = module2;
-            newImportObj.providers.push(...providers);
-            this[`importsPer${scope}`].set(token1, newImportObj);
-          }
+        this.checkCollisionsPerScope(module1, scope, token1, provider, importObj);
+        const hasResolvedCollision = this.meta[`resolvedCollisionsPer${scope}`].some(([token2]) => token2 === token1);
+        if (hasResolvedCollision) {
+          const { providers, module2 } = this.getResolvedCollisionsPerScope(scope, token1);
+          const newImportObj = new ImportObj();
+          newImportObj.module = module2;
+          newImportObj.providers.push(...providers);
+          this[`importedProvidersPer${scope}`].set(token1, newImportObj);
         }
       } else {
         const newImportObj = new ImportObj();
         newImportObj.module = module1;
         newImportObj.providers.push(provider);
-        this[`importsPer${scope}`].set(token1, newImportObj);
+        this[`importedProvidersPer${scope}`].set(token1, newImportObj);
       }
     });
   }
 
   protected checkCollisionsPerScope(
-    module: ModuleType | ModuleWithParams,
+    module: AnyModule,
     scope: Scope,
     token: any,
     provider: ServiceProvider,
@@ -248,12 +271,12 @@ export class ModuleFactory {
     const providersPerMod = [
       ...defaultProvidersPerMod,
       ...this.meta.providersPerMod,
-      ...getImportedProviders(this.importsPerMod),
+      ...getImportedProviders(this.importedProvidersPerMod),
     ];
     this.checkCollisionsWithScopesMix(providersPerMod, ['Rou', 'Req']);
     const mergedProvidersAndTokens = [
       ...this.meta.providersPerRou,
-      ...getImportedProviders(this.importsPerRou),
+      ...getImportedProviders(this.importedProvidersPerRou),
       ...defaultProvidersPerReq,
       NODE_REQ,
       NODE_RES,
@@ -265,11 +288,11 @@ export class ModuleFactory {
     getTokens(providers).forEach((token1) => {
       for (const scope of scopes) {
         const declaredTokens = getTokens(this.meta[`providersPer${scope}`]);
-        const importedTokens = getImportedTokens(this[`importsPer${scope}`]);
+        const importedTokens = getImportedTokens(this[`importedProvidersPer${scope}`]);
         const resolvedTokens = this.meta[`resolvedCollisionsPer${scope}`].map(([t]) => t);
         const collision = importedTokens.includes(token1) && ![...declaredTokens, ...resolvedTokens].includes(token1);
         if (collision) {
-          const importObj = this[`importsPer${scope}`].get(token1)!;
+          const importObj = this[`importedProvidersPer${scope}`].get(token1)!;
           const modulesName = getModuleName(importObj.module);
           throwProvidersCollisionError(this.moduleName, [token1], [modulesName], scope);
         }
@@ -282,7 +305,7 @@ export class ModuleFactory {
     if (resolvedTokens.includes(token1)) {
       const [, module2] = this.meta[`resolvedCollisionsPer${scope}`].find(([token2]) => token1 === token2)!;
       if (this.meta.module === module2) {
-        if (!this[`importsPer${scope}`].delete(token1)) {
+        if (!this[`importedProvidersPer${scope}`].delete(token1)) {
           const tokenName = token1.name || token1;
           let errorMsg =
             `Resolving collisions for providersPer${scope} in ${this.moduleName} failed: ` +

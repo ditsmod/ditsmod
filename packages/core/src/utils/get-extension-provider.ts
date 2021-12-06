@@ -1,11 +1,11 @@
 import { InjectionToken } from '@ts-stack/di';
 
-import { Extension, ExtensionsProvider, ExtensionType } from '../types/mix';
+import { Extension, ExtensionProvider, ExtensionType } from '../types/mix';
 import { isExtensionProvider } from './type-guards';
 
 export class ExtensionObj {
   exports: any[];
-  providers: ExtensionsProvider[];
+  providers: ExtensionProvider[];
 }
 
 export type ExtensionItem1 = [

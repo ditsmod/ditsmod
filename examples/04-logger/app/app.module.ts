@@ -10,7 +10,7 @@ const loggerConfig = new LoggerConfig();
 const level: keyof Logger = 'debug';
 loggerConfig.level = level;
 const logMediatorConfig = new LogMediatorConfig();
-// logMediatorConfig.filterConfig.classNames = ['ExtensionsManager', 'PreRouterExtension']; // uncomment this
+// logMediatorConfig.filterConfig.classesNames = ['ExtensionsManager', 'PreRouterExtension']; // uncomment this
 
 @RootModule({
   imports: [RouterModule, BunyanModule, PinoModule, WinstonModule, SomeModule],
