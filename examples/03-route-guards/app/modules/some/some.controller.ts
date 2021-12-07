@@ -1,4 +1,4 @@
-import { Controller, Response, Route } from '@ditsmod/core';
+import { Controller, Res, Route } from '@ditsmod/core';
 
 import { AuthGuard } from '../auth/auth.guard';
 import { PermissionsGuard } from '../auth/permissions.guard';
@@ -6,7 +6,7 @@ import { Permission } from '../auth/types';
 
 @Controller()
 export class SomeController {
-  constructor(private res: Response) {}
+  constructor(private res: Res) {}
 
   @Route('GET')
   ok() {

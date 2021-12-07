@@ -1,8 +1,8 @@
-import { Controller, Logger, Response, Route } from '@ditsmod/core';
+import { Controller, Logger, Res, Route } from '@ditsmod/core';
 
 @Controller()
 export class SomeController {
-  constructor(private res: Response, private logger: Logger) {}
+  constructor(private res: Res, private logger: Logger) {}
 
   @Route('GET')
   ok() {

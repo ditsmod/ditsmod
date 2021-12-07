@@ -2,18 +2,18 @@ import { format } from 'util';
 import * as http from 'http';
 import { Injectable, Inject } from '@ts-stack/di';
 
-import { Request } from './request';
+import { Req } from './request';
 import { Status } from '../utils/http-status-codes';
 import { RedirectStatusCodes } from '../types/mix';
 import { NodeRequest, NodeResponse } from '../types/server-options';
 import { NODE_REQ, NODE_RES } from '../constans';
 
 @Injectable()
-export class Response<T = any> {
+export class Res<T = any> {
   constructor(
     @Inject(NODE_REQ) protected readonly nodeReq: NodeRequest,
     @Inject(NODE_RES) public readonly nodeRes: NodeResponse,
-    protected req: Request
+    protected req: Req
   ) {}
 
   /**

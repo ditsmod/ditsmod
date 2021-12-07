@@ -25,7 +25,7 @@ import {
 import { Router } from './types/router';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports';
 import { NODE_REQ } from './constans';
-import { Request } from './services/request';
+import { Req } from './services/request';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -1165,8 +1165,8 @@ describe('ModuleFactory', () => {
 
         it('case 3', () => {
           @Module({
-            exports: [Request],
-            providersPerReq: [{ provide: Request, useClass: Request }],
+            exports: [Req],
+            providersPerReq: [{ provide: Req, useClass: Req }],
           })
           class Module0 {}
 
@@ -1176,20 +1176,20 @@ describe('ModuleFactory', () => {
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
-          const msg = 'AppModule failed: exports from Module0 causes collision with Request.';
+          const msg = 'AppModule failed: exports from Module0 causes collision with Req.';
           expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
         it('resolve case 3', () => {
           @Module({
-            exports: [Request],
-            providersPerReq: [{ provide: Request, useClass: Request }],
+            exports: [Req],
+            providersPerReq: [{ provide: Req, useClass: Req }],
           })
           class Module0 {}
 
           @RootModule({
             imports: [Module0],
-            resolvedCollisionsPerReq: [[Request, AppModule]],
+            resolvedCollisionsPerReq: [[Req, AppModule]],
           })
           class AppModule {}
 
@@ -1202,14 +1202,14 @@ describe('ModuleFactory', () => {
 
         it('resolve 2 case 3', () => {
           @Module({
-            exports: [Request],
-            providersPerReq: [{ provide: Request, useClass: Request }],
+            exports: [Req],
+            providersPerReq: [{ provide: Req, useClass: Req }],
           })
           class Module1 {}
 
           @RootModule({
             imports: [Module1],
-            resolvedCollisionsPerReq: [[Request, Module1]],
+            resolvedCollisionsPerReq: [[Req, Module1]],
           })
           class AppModule {}
 
@@ -1218,7 +1218,7 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
           expect([...mock.importedProvidersPerReq]).toEqual<[any, ImportObj][]>([
-            [Request, { module: Module1, providers: [{ provide: Request, useClass: Request }] }],
+            [Req, { module: Module1, providers: [{ provide: Req, useClass: Req }] }],
           ]);
         });
 

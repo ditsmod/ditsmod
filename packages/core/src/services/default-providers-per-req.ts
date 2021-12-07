@@ -1,8 +1,8 @@
 import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { ServiceProvider } from '../types/mix';
 import { DefaultControllerErrorHandler } from './default-controller-error-handler';
-import { Request } from './request';
-import { Response } from './response';
+import { Req } from './request';
+import { Res } from './response';
 import { HttpBackend, HttpFrontend, HttpHandler } from '../types/http-interceptor';
 import { DefaultHttpBackend } from './default-http-backend';
 import { DefaultHttpFrontend } from './default-http-frontend';
@@ -13,6 +13,6 @@ export const defaultProvidersPerReq: Readonly<ServiceProvider[]> = [
   { provide: HttpFrontend, useClass: DefaultHttpFrontend },
   { provide: HttpBackend, useClass: DefaultHttpBackend },
   { provide: HttpHandler, useClass: DefaultHttpHandler },
-  Request,
-  Response,
+  Req,
+  Res,
 ];

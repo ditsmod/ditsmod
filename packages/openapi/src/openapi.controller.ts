@@ -1,12 +1,12 @@
 import { readFile } from 'fs/promises';
-import { Controller, Response, Status } from '@ditsmod/core';
+import { Controller, Res, Status } from '@ditsmod/core';
 
 import { OasRoute } from './decorators/oas-route';
 import { SwaggerConfigManager } from './services/swagger-config-manager';
 
 @Controller()
 export class OpenapiController {
-  constructor(private res: Response, private swaggerConfigManager: SwaggerConfigManager) {}
+  constructor(private res: Res, private swaggerConfigManager: SwaggerConfigManager) {}
 
   @OasRoute('GET', 'openapi', [], {
     tags: ['OasDocs'],

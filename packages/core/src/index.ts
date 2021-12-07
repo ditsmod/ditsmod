@@ -11,8 +11,8 @@ export {
   GuardItem,
 } from './types/mix';
 export { Controller } from './decorators/controller';
-export { Request } from './services/request';
-export { Response } from './services/response';
+export { Req } from './services/request';
+export { Res } from './services/response';
 export { PreRouter } from './services/pre-router';
 export { Route } from './decorators/route';
 export { Logger, LoggerConfig, LoggerMethod } from './types/logger';

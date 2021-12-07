@@ -1,9 +1,9 @@
 import { Injectable } from '@ts-stack/di';
-import { HttpHandler, HttpInterceptor, Logger, Request } from '@ditsmod/core';
+import { HttpHandler, HttpInterceptor, Logger, Req } from '@ditsmod/core';
 
 @Injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
-  constructor(private req: Request, private logger: Logger) {}
+  constructor(private req: Req, private logger: Logger) {}
 
   intercept(next: HttpHandler) {
     // Handling request to `HelloWorldController`

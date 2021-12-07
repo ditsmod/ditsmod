@@ -1,4 +1,4 @@
-import { Controller, Request, Response, Route, Status } from '@ditsmod/core';
+import { Controller, Req, Res, Route, Status } from '@ditsmod/core';
 import { getParams, getContent, OasRoute } from '@ditsmod/openapi';
 
 import { BasicGuard } from './basic.guard';
@@ -7,7 +7,7 @@ import { getMetaContent } from './overriden-helper';
 
 @Controller({ providersPerReq: [BasicGuard] })
 export class FirstController {
-  constructor(private req: Request, private res: Response) {}
+  constructor(private req: Req, private res: Res) {}
 
   @Route('GET', '', [])
   hello() {

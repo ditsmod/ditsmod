@@ -3,7 +3,7 @@ import { parse } from 'querystring';
 
 import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
-import { Request } from './request';
+import { Req } from './request';
 import { AnyObj, CanActivate } from '../types/mix';
 import { PathParam } from '../types/router';
 import { PATH_PARAMS, QUERY_STRING } from '../constans';
@@ -21,7 +21,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
     private logMediator: LogMediator,
     private routeMeta: RouteMeta,
     private rootMetadata: RootMetadata,
-    private req: Request
+    private req: Req
   ) {}
 
   async intercept(next: HttpHandler) {

@@ -3,7 +3,7 @@ import { ReflectiveInjector } from '@ts-stack/di';
 
 import { HelloWorldController } from './hello-world.controller';
 import { MyService } from './my.service';
-import { Response } from '../../../packages/core/src';
+import { Res } from '../../../packages/core/src';
 import { OtherService } from './other.service';
 
 describe('HelloWorldController', () => {
@@ -14,7 +14,7 @@ describe('HelloWorldController', () => {
       MyService,
       OtherService,
       HelloWorldController,
-      { provide: Response, useValue: { send: () => {} } },
+      { provide: Res, useValue: { send: () => {} } },
     ]);
 
     helloWorldController = injector.get(HelloWorldController);

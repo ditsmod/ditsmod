@@ -1,8 +1,8 @@
-import { Controller, Response, Route } from '@ditsmod/core';
+import { Controller, Res, Route } from '@ditsmod/core';
 
 @Controller()
 export class SecondController {
-  constructor(private res: Response) {}
+  constructor(private res: Res) {}
 
   @Route('GET', 'get-2')
   async tellHello() {

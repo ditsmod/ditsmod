@@ -1,8 +1,8 @@
-import { Controller, Request, Response, Route } from '@ditsmod/core';
+import { Controller, Req, Res, Route } from '@ditsmod/core';
 
 @Controller()
 export class CommentsController {
-  constructor(private req: Request, private res: Response) {}
+  constructor(private req: Req, private res: Res) {}
 
   /**
    * As you seen, you can apply multi `@Route` statement to a single method.

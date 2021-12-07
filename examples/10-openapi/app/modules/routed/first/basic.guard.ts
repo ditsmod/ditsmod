@@ -1,4 +1,4 @@
-import { CanActivate, Request, Response, Status } from '@ditsmod/core';
+import { CanActivate, Req, Res, Status } from '@ditsmod/core';
 import { OasGuard } from '@ditsmod/openapi';
 
 @OasGuard({
@@ -17,7 +17,7 @@ import { OasGuard } from '@ditsmod/openapi';
   },
 })
 export class BasicGuard implements CanActivate {
-  constructor(private req: Request, private res: Response) {}
+  constructor(private req: Req, private res: Res) {}
 
   canActivate() {
     const { authorization } = this.req.nodeReq.headers;

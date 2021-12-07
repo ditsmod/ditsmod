@@ -3,11 +3,11 @@ import { Injectable } from '@ts-stack/di';
 import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { Status } from '../utils/http-status-codes';
 import { LogMediator } from './log-mediator';
-import { Response } from './response';
+import { Res } from './response';
 
 @Injectable()
 export class DefaultControllerErrorHandler implements ControllerErrorHandler {
-  constructor(private res: Response, private logMediator: LogMediator) {}
+  constructor(private res: Res, private logMediator: LogMediator) {}
 
   handleError(err: Error) {
     const { message } = err;

@@ -7,7 +7,7 @@ import { PathParam } from '../types/router';
 import { NodeRequest, NodeResponse } from '../types/server-options';
 
 @Injectable()
-export class Request {
+export class Req {
   /**
    * Object with path params.
    * For example, route `/api/resource/:param1/:param2` have two params.

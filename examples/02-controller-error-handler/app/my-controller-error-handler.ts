@@ -1,9 +1,9 @@
 import { Injectable } from '@ts-stack/di';
-import { Logger, Status, Response, ControllerErrorHandler } from '@ditsmod/core';
+import { Logger, Status, Res, ControllerErrorHandler } from '@ditsmod/core';
 
 @Injectable()
 export class MyControllerErrorHandler implements ControllerErrorHandler {
-  constructor(private res: Response, private logger: Logger) {}
+  constructor(private res: Res, private logger: Logger) {}
 
   handleError(err: Error) {
     const message = err.message;
