@@ -1,7 +1,8 @@
 import { Injectable } from '@ts-stack/di';
 
 import { RootMetadata } from '../models/root-metadata';
-import { MetadataPerMod1, MetaForExtensionsPerRou, MetadataPerMod2 } from '../types/metadata-per-mod';
+import { ControllersMetadata2 } from '../types/controller-metadata';
+import { MetadataPerMod1, MetadataPerMod2 } from '../types/metadata-per-mod';
 import { GuardItem, NormalizedGuard, Extension, ServiceProvider } from '../types/mix';
 import { RouteMeta } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
@@ -25,16 +26,16 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
     this.metadataPerMod2.providersPerMod = meta.providersPerMod.slice();
     this.metadataPerMod2.providersPerRou = meta.providersPerRou.slice();
     this.metadataPerMod2.providersPerReq = meta.providersPerReq.slice();
-    this.metadataPerMod2.aMetaForExtensionsPerRou = this.getMetaPerRou(prefixPerApp, this.metadataPerMod1);
+    this.metadataPerMod2.controllersMetadata2 = this.getControllersMetadata2(prefixPerApp, this.metadataPerMod1);
 
     return this.metadataPerMod2;
   }
 
-  protected getMetaPerRou(prefixPerApp: string, metadataPerMod1: MetadataPerMod1) {
-    const { controllersMetadata, prefixPerMod, guardsPerMod } = metadataPerMod1;
+  protected getControllersMetadata2(prefixPerApp: string, metadataPerMod1: MetadataPerMod1) {
+    const { controllersMetadata1, prefixPerMod, guardsPerMod } = metadataPerMod1;
 
-    const aMetaForExtensionsPerRou: MetaForExtensionsPerRou[] = [];
-    for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
+    const controllersMetadata2: ControllersMetadata2[] = [];
+    for (const { controller, ctrlDecorValues, methods } of controllersMetadata1) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
         for (const decoratorMetadata of methodWithDecorators) {
@@ -60,7 +61,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
             guards,
           };
           providersPerRou.push({ provide: RouteMeta, useValue: routeMeta });
-          aMetaForExtensionsPerRou.push({
+          controllersMetadata2.push({
             httpMethod,
             path,
             providersPerRou,
@@ -70,7 +71,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
       }
     }
 
-    return aMetaForExtensionsPerRou;
+    return controllersMetadata2;
   }
 
   /**

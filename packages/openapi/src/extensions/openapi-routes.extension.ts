@@ -10,15 +10,15 @@ import { OasOptions } from '../types/oas-options';
 
 @Injectable()
 export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.Extension<edk.MetadataPerMod2> {
-  protected override getMetaPerRou(prefixPerApp: string, metadataPerMod1: edk.MetadataPerMod1) {
-    const { controllersMetadata, prefixPerMod, guardsPerMod, meta } = metadataPerMod1;
+  protected override getControllersMetadata2(prefixPerApp: string, metadataPerMod1: edk.MetadataPerMod1) {
+    const { controllersMetadata1, prefixPerMod, guardsPerMod, meta } = metadataPerMod1;
 
     const oasOptions = meta.extensionsMeta.oasOptions as OasOptions;
     const prefixParams = oasOptions?.paratemers;
     const prefixTags = oasOptions?.tags;
 
-    const aMetaForExtensionsPerRou: edk.MetaForExtensionsPerRou[] = [];
-    for (const { controller, ctrlDecorValues, methods } of controllersMetadata) {
+    const controllersMetadata2: edk.ControllersMetadata2[] = [];
+    for (const { controller, ctrlDecorValues, methods } of controllersMetadata1) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
         for (const decoratorMetadata of methodWithDecorators) {
@@ -61,7 +61,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
             guards,
           };
           providersPerRou.push({ provide: edk.RouteMeta, useValue: routeMeta });
-          aMetaForExtensionsPerRou.push({
+          controllersMetadata2.push({
             providersPerRou,
             providersPerReq,
             path,
@@ -71,7 +71,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
       }
     }
 
-    return aMetaForExtensionsPerRou;
+    return controllersMetadata2;
   }
 
   protected mergeParams(

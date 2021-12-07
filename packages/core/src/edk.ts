@@ -15,7 +15,8 @@ export { ExtensionsManager } from './services/extensions-manager';
 export { ModuleManager } from './services/module-manager';
 export { ExtensionItem1, ExtensionItem2 } from './utils/get-extension-provider';
 export { ExtensionsContext } from './services/extensions-context';
-export { MetadataPerMod1, MetadataPerMod2, MetaForExtensionsPerRou } from './types/metadata-per-mod';
+export { MetadataPerMod1, MetadataPerMod2 } from './types/metadata-per-mod';
+export { ControllersMetadata1, ControllersMetadata2 } from './types/controller-metadata';
 export {
   AnyObj,
   ControllerType,

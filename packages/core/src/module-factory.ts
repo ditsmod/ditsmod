@@ -5,7 +5,7 @@ import { ModConfig } from './models/mod-config';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
-import { ControllerAndMethodMetadata } from './types/controller-and-method-metadata';
+import { ControllersMetadata1 } from './types/controller-metadata';
 import { ImportObj, GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod';
 import {
   DecoratorMetadata,
@@ -112,7 +112,7 @@ export class ModuleFactory {
       prefixPerMod,
       guardsPerMod: this.guardsPerMod,
       meta: this.meta,
-      controllersMetadata: deepFreeze(controllersMetadata),
+      controllersMetadata1: deepFreeze(controllersMetadata),
       importedTokensMap: {
         perMod: new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]),
         perRou: new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]),
@@ -321,7 +321,7 @@ export class ModuleFactory {
   }
 
   protected getControllersMetadata() {
-    const arrControllerMetadata: ControllerAndMethodMetadata[] = [];
+    const arrControllerMetadata: ControllersMetadata1[] = [];
     for (const controller of this.meta.controllers) {
       const ctrlDecorValues = reflector.annotations(controller);
       if (!ctrlDecorValues.find(isController)) {
@@ -329,7 +329,7 @@ export class ModuleFactory {
           `Collecting controller's metadata failed: class "${controller.name}" does not have the "@Controller()" decorator`
         );
       }
-      const controllerMetadata: ControllerAndMethodMetadata = { controller, ctrlDecorValues, methods: {} };
+      const controllerMetadata: ControllersMetadata1 = { controller, ctrlDecorValues, methods: {} };
       const propMetadata = reflector.propMetadata(controller);
       for (const methodName in propMetadata) {
         const methodDecorValues = propMetadata[methodName];
