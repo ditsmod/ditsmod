@@ -326,7 +326,7 @@ export class ModuleFactory {
       const ctrlDecorValues = reflector.annotations(controller);
       if (!ctrlDecorValues.find(isController)) {
         throw new Error(
-          `Collecting controller's metadata failed: class "${controller.name}" does not have the "@Controller()" decorator`
+          `Collecting controller's metadata failed: class "${controller.name}" does not have the "@Controller()" decorator.`
         );
       }
       const controllerMetadata: ControllersMetadata1 = { controller, ctrlDecorValues, methods: {} };
