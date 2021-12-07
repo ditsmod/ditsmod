@@ -16,7 +16,7 @@ export class MyExtension implements edk.Extension<void> {
     }
 
     const aMetadataPerMod2 = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS);
-    this.logger.info(aMetadataPerMod2);
+    this.logger.info(aMetadataPerMod2[0]);
 
     this.#inited = true;
   }
