@@ -28,12 +28,12 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
           }
           const providersPerRou: ServiceProvider[] = [];
           const providersPerReq: ServiceProvider[] = [];
-          const ctrlDecorator = ctrlDecorValues.find(edk.isController) as edk.ControllerMetadata;
+          const ctrlDecorator = ctrlDecorValues.find(edk.isController);
           const guards: edk.NormalizedGuard[] = [...guardsPerMod];
           if (isOasRoute1(oasRoute)) {
             guards.push(...this.normalizeGuards(oasRoute.guards));
           }
-          providersPerReq.push(...(ctrlDecorator.providersPerReq || []), controller);
+          providersPerReq.push(...(ctrlDecorator?.providersPerReq || []), controller);
           const { httpMethod, path: controllerPath, operationObject } = oasRoute;
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const path = this.getPath(prefix, controllerPath);
@@ -49,7 +49,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
           clonedOperationObject.tags = [...(clonedOperationObject.tags || []), ...(prefixTags || [])];
           // For now, here ReferenceObjects is ignored, if it is intended for a path.
           const oasPath = this.transformToOasPath(meta.name, path, paramsInPath);
-          providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
+          providersPerRou.push(...(ctrlDecorator?.providersPerRou || []));
           const routeMeta: OasRouteMeta = {
             httpMethod,
             oasPath,
