@@ -11,14 +11,14 @@ import { OasOptions } from '../types/oas-options';
 @Injectable()
 export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.Extension<edk.MetadataPerMod2> {
   protected override getControllersMetadata2(prefixPerApp: string, metadataPerMod1: edk.MetadataPerMod1) {
-    const { controllersMetadata1, prefixPerMod, guardsPerMod, meta } = metadataPerMod1;
+    const { aControllersMetadata1, prefixPerMod, guardsPerMod, meta } = metadataPerMod1;
 
     const oasOptions = meta.extensionsMeta.oasOptions as OasOptions;
     const prefixParams = oasOptions?.paratemers;
     const prefixTags = oasOptions?.tags;
 
     const controllersMetadata2: edk.ControllersMetadata2[] = [];
-    for (const { controller, ctrlDecorValues, methods } of controllersMetadata1) {
+    for (const { controller, ctrlDecorValues, methods } of aControllersMetadata1) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
         for (const decoratorMetadata of methodWithDecorators) {

@@ -26,16 +26,16 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
     this.metadataPerMod2.providersPerMod = meta.providersPerMod.slice();
     this.metadataPerMod2.providersPerRou = meta.providersPerRou.slice();
     this.metadataPerMod2.providersPerReq = meta.providersPerReq.slice();
-    this.metadataPerMod2.controllersMetadata2 = this.getControllersMetadata2(prefixPerApp, this.metadataPerMod1);
+    this.metadataPerMod2.aControllersMetadata2 = this.getControllersMetadata2(prefixPerApp, this.metadataPerMod1);
 
     return this.metadataPerMod2;
   }
 
   protected getControllersMetadata2(prefixPerApp: string, metadataPerMod1: MetadataPerMod1) {
-    const { controllersMetadata1, prefixPerMod, guardsPerMod } = metadataPerMod1;
+    const { aControllersMetadata1, prefixPerMod, guardsPerMod } = metadataPerMod1;
 
     const controllersMetadata2: ControllersMetadata2[] = [];
-    for (const { controller, ctrlDecorValues, methods } of controllersMetadata1) {
+    for (const { controller, ctrlDecorValues, methods } of aControllersMetadata1) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
         for (const decoratorMetadata of methodWithDecorators) {

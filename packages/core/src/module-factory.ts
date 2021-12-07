@@ -106,13 +106,13 @@ export class ModuleFactory {
     this.importModules();
     const modConfig: ModConfig = { prefixPerMod: this.prefixPerMod };
     this.meta.providersPerMod.unshift({ provide: ModConfig, useValue: modConfig });
-    const controllersMetadata = this.getControllersMetadata();
+    const aControllersMetadata1 = this.getControllersMetadata();
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
       guardsPerMod: this.guardsPerMod,
       meta: this.meta,
-      controllersMetadata1: deepFreeze(controllersMetadata),
+      aControllersMetadata1: deepFreeze(aControllersMetadata1),
       importedTokensMap: {
         perMod: new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]),
         perRou: new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]),

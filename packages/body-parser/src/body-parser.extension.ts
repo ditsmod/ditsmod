@@ -18,8 +18,8 @@ export class BodyParserExtension implements edk.Extension<void> {
 
     const aMetadataPerMod2 = await this.extensionManager.init(edk.ROUTES_EXTENSIONS);
     aMetadataPerMod2.forEach((metadataPerMod2) => {
-      const { controllersMetadata2, providersPerMod } = metadataPerMod2;
-      controllersMetadata2.forEach(({ providersPerRou, providersPerReq }) => {
+      const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
+      aControllersMetadata2.forEach(({ providersPerRou, providersPerReq }) => {
         const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
         const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);

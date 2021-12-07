@@ -47,8 +47,8 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
     const paths: XPathsObject = {};
     this.initOasObject();
     aMetadataPerMod2.forEach((metadataPerMod2) => {
-      const { controllersMetadata2, providersPerMod } = metadataPerMod2;
-      controllersMetadata2.forEach(({ providersPerRou }) => {
+      const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
+      aControllersMetadata2.forEach(({ providersPerRou }) => {
         const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
