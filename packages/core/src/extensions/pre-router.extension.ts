@@ -1,9 +1,9 @@
-import { Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-stack/di';
 
-import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
-import { HttpHandler } from '../types/http-interceptor';
-import { Extension } from '../types/mix';
-import { PreparedRouteMeta } from '../types/route-data';
+import { HTTP_INTERCEPTORS, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
+import { HttpBackend, HttpFrontend, HttpHandler } from '../types/http-interceptor';
+import { Extension, HttpMethod } from '../types/mix';
+import { PreparedRouteMeta, RouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { ExtensionsManager } from '../services/extensions-manager';
 import { LogMediator } from '../services/log-mediator';
@@ -48,6 +48,7 @@ export class PreRouterExtension implements Extension<void> {
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
         const resolvedPerReq = ReflectiveInjector.resolve(mergedPerReq);
+        this.resolveAndInstantiate(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq);
 
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
           const context = ReflectiveInjector.resolve([
@@ -68,6 +69,38 @@ export class PreRouterExtension implements Extension<void> {
     });
 
     return preparedRouteMeta;
+  }
+
+  /**
+   * Used as "sandbox" to test resolvable of controllers and HTTP interceptors.
+   */
+  protected resolveAndInstantiate(
+    moduleName: string,
+    httpMethod: HttpMethod,
+    path: string,
+    injectorPerRou: ReflectiveInjector,
+    resolvedPerReq: ResolvedReflectiveProvider[]
+  ) {
+    const fakeObj = { info: 'this is test of a route before set it' };
+    const context = ReflectiveInjector.resolve([
+      { provide: NODE_REQ, useValue: fakeObj },
+      { provide: NODE_RES, useValue: fakeObj },
+      { provide: PATH_PARAMS, useValue: fakeObj },
+      { provide: QUERY_STRING, useValue: fakeObj },
+    ]);
+    const inj = injectorPerRou.createChildFromResolved([...resolvedPerReq, ...context]);
+    const routeMeta = inj.get(RouteMeta) as RouteMeta;
+    if (!routeMeta?.controller) {
+      const msg =
+        `Setting routes in ${moduleName} failed: can't instantiate RouteMeta with ` +
+        `${httpMethod} "/${path}" in sandbox mode.`;
+      throw new Error(msg);
+    }
+    inj.get(HttpHandler);
+    inj.get(HttpFrontend);
+    inj.get(HttpBackend);
+    inj.get(routeMeta.controller);
+    inj.get(HTTP_INTERCEPTORS, []);
   }
 
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {

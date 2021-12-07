@@ -1,6 +1,5 @@
 import { Injectable } from '@ts-stack/di';
 
-import { ControllerMetadata } from '../decorators/controller';
 import { RootMetadata } from '../models/root-metadata';
 import { MetadataPerMod1, MetaForExtensionsPerRou, MetadataPerMod2 } from '../types/metadata-per-mod';
 import { GuardItem, NormalizedGuard, Extension, ServiceProvider } from '../types/mix';
@@ -45,10 +44,10 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           const providersPerRou: ServiceProvider[] = [];
           const providersPerReq: ServiceProvider[] = [];
           const route = decoratorMetadata.value;
-          const ctrlDecorator = ctrlDecorValues.find(isController) as ControllerMetadata;
+          const ctrlDecorator = ctrlDecorValues.find(isController);
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
-          providersPerRou.push(...(ctrlDecorator.providersPerRou || []));
-          providersPerReq.push(...(ctrlDecorator.providersPerReq || []), controller);
+          providersPerRou.push(...(ctrlDecorator?.providersPerRou || []));
+          providersPerReq.push(...(ctrlDecorator?.providersPerReq || []), controller);
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const { path: controllerPath, httpMethod } = route;
           const path = this.getPath(prefix, controllerPath);
