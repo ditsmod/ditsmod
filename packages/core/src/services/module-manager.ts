@@ -364,12 +364,15 @@ export class ModuleManager {
       ...(rawMeta.providersPerReq || []),
     ]);
 
-    [
-      ...(rawMeta.resolvedCollisionsPerApp || []),
+    const resolvedCollisionsPerScope = [
       ...(rawMeta.resolvedCollisionsPerMod || []),
       ...(rawMeta.resolvedCollisionsPerRou || []),
       ...(rawMeta.resolvedCollisionsPerReq || []),
-    ].forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
+    ];
+    if (isRootModule(rawMeta)) {
+      resolvedCollisionsPerScope.push(...(rawMeta.resolvedCollisionsPerApp || []));
+    }
+    resolvedCollisionsPerScope.forEach(([token]) => this.throwIfNormalizedProvider(modName, token))
 
     rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
