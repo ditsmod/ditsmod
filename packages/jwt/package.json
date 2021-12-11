@@ -1,0 +1,33 @@
+{
+  "name": "@ditsmod/jwt",
+  "version": "2.0.0-next.5",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ditsmod/ditsmod.git"
+  },
+  "description": "",
+  "main": "dist/index",
+  "typings": "dist/index",
+  "directories": {
+    "lib": "src"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "rm -rf dist/* && tsc -b -f"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1"
+  },
+  "devDependencies": {
+    "@ts-stack/di": "^1.2.0",
+    "prettier": "^2.2.1",
+    "typescript": "^4.4.4"
+  },
+  "peerDependencies": {
+    "@ditsmod/core": "^2.0.0-next.5",
+    "@ts-stack/di": "^1.2.0"
+  }
+}
