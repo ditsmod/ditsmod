@@ -1,3 +1,4 @@
+/// <reference path="../src/types/jsonwebtoken.d.ts" />
 export {
   SignPayload,
   VerifyPayload,
