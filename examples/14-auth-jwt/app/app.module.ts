@@ -1,12 +1,11 @@
 import { RootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
-import { JwtModule } from '@ditsmod/jwt';
 
-import { AuthController } from './auth.controller';
+import { HelloWorldController } from './hello-world.controller';
+import { AuthModule } from './modules/services/auth/auth.module';
 
 @RootModule({
-  imports: [RouterModule],
-  controllers: [AuthController],
-  exports: [JwtModule.withParams({ secret: 'hard-to-guess-secret' })],
+  imports: [RouterModule, AuthModule],
+  controllers: [HelloWorldController],
 })
 export class AppModule {}
