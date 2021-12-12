@@ -25,9 +25,17 @@ export class Req {
    */
   queryParams?: any = {};
   /**
+   * For this parameter, request is not automatically parsed. To get it,
+   * you can use `@ditsmod/body-parser`.
+   *
    * This value is set after checking `guard.canActivate()` and seting `queryParams`.
    */
   body?: any;
+  /**
+   * Payload of JSON Web Token. For this parameter, request is not automatically parsed.
+   * To get JWT payload, you can use the `@ditsmod/jwt` module.
+   */
+  jwtPayload: any;
 
   constructor(
     @Inject(NODE_REQ) public readonly nodeReq: NodeRequest,
