@@ -37,7 +37,7 @@ export class JwtService {
    *
    * @param options - Options with secret for the signature.
    */
-  async signWtihSecret(payload: SignPayload, options = {} as SignWithSecretOptions) {
+  async signWithSecret(payload: SignPayload, options = {} as SignWithSecretOptions) {
     const secret = options.secret || this.options.secret!;
     delete (options as Partial<SignWithSecretOptions>).secret;
     const mergedOptions = { ...this.options.signOptions, ...options };
@@ -58,7 +58,7 @@ export class JwtService {
    *
    * @param options - Options with private key for the signature.
    */
-  async signWtihPrivateKey(payload: SignPayload, options = {} as SignWithPrivateKeyOptions) {
+  async signWithPrivateKey(payload: SignPayload, options = {} as SignWithPrivateKeyOptions) {
     const privateKey = options.privateKey || this.options.privateKey!;
     delete (options as Partial<SignWithPrivateKeyOptions>).privateKey;
     const mergedOptions = { ...this.options.signOptions, ...options };
