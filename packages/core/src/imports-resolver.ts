@@ -119,7 +119,7 @@ export class ImportsResolver {
 
       if (!found) {
         if (!this.tokensPerApp.includes(token1)) {
-          this.grabImportedDependecies(module, scopes, provider, token1, [...path, token1]);
+          this.grabImportedDependecies(module, scopes, provider, token1, path);
         }
       }
     }
@@ -140,6 +140,7 @@ export class ImportsResolver {
       const importObj = this.appMetadataMap.get(module1)?.importedTokensMap[`per${scope}`].get(token);
       if (importObj) {
         found = true;
+        path.push(token);
         const { module: module2, providers } = importObj;
         this.meta[`providersPer${scope}`].unshift(...providers);
 
