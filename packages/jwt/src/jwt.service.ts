@@ -83,9 +83,7 @@ export class JwtService {
    *
    * @param token Is the JsonWebToken string.
    * @param secretOrPublicKey Is a string or buffer containing either the secret for HMAC
-   * algorithms, or the PEM encoded public key for RSA and ECDSA. If `jwt.verify` is called
-   * asynchronous, `secretOrPublicKey` can be a function that should fetch the secret or public
-   * key.
+   * algorithms, or the PEM encoded public key for RSA and ECDSA.
    *
    * As mentioned in [this comment][1], there are other libraries that expect base64 encoded secrets
    * (random bytes encoded using base64), if that is your case you can pass
@@ -112,9 +110,7 @@ export class JwtService {
    *
    * @param token Is the JsonWebToken string.
    * @param secretOrPublicKey Is a string or buffer containing either the secret for HMAC
-   * algorithms, or the PEM encoded public key for RSA and ECDSA. If `jwt.verify` is called
-   * asynchronous, `secretOrPublicKey` can be a function that should fetch the secret or public
-   * key.
+   * algorithms, or the PEM encoded public key for RSA and ECDSA.
    *
    * As mentioned in [this comment][1], there are other libraries that expect base64 encoded secrets
    * (random bytes encoded using base64), if that is your case you can pass
@@ -143,7 +139,8 @@ export class JwtService {
    * (Synchronous) Returns the decoded payload without verifying if the signature is valid.
    *
    * __Warning__: This will not verify whether the signature is valid. You should not use this
-   * for untrusted messages. You most likely want to use jwt.verify instead.
+   * for untrusted messages. You most likely want to use `verifyWithSecret` or
+   * `verifyWithPublicKey` instead.
    *
    * __Warning__: When the token comes from an untrusted source (e.g. user input or external
    * request), the returned decoded payload should be treated like any other user input; please
