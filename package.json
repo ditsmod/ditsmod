@@ -29,7 +29,7 @@
     "start11": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/11-override-core-log-messages/main.ts",
     "start12": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/12-testing/main.ts",
     "start13": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/13-module-encapsulation/main.ts",
-    "start14": "echo 'Not implemented yet.'",
+    "start14": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/14-auth-jwt/main.ts",
     "start15": "echo 'Not implemented yet.'",
     "start16": "echo 'Not implemented yet.'",
     "start17": "echo 'Not implemented yet.'",
