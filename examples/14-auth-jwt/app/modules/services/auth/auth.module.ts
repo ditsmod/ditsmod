@@ -1,7 +1,7 @@
 import { Module } from '@ditsmod/core';
 import { JwtModule } from '@ditsmod/jwt';
-import { AuthController } from './auth.controller';
 
+import { AuthController } from './auth.controller';
 import { BearerGuard } from './bearer.guard';
 
 @Module({
