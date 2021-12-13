@@ -115,16 +115,21 @@ export class PreRouterExtension implements Extension<void> {
 
       if (path?.charAt(0) == '/') {
         let msg = `Invalid configuration of route '${path}'`;
-        msg += ` (in '${moduleName}'): path cannot start with a slash`;
+        msg += ` (in ${moduleName}): path cannot start with a slash`;
         throw new Error(msg);
       }
 
       this.logMediator.printRoute(this, moduleName, httpMethod, path);
 
-      if (httpMethod == 'ALL') {
-        this.router.all(`/${path}`, handle);
-      } else {
-        this.router.on(httpMethod, `/${path}`, handle);
+      try {
+        if (httpMethod == 'ALL') {
+          this.router.all(`/${path}`, handle);
+        } else {
+          this.router.on(httpMethod, `/${path}`, handle);
+        }
+      } catch (err: any) {
+        const msg = `Setting route '/${path}' in ${moduleName} failed: ${err.message}`;
+        throw new Error(msg);
       }
     });
   }
