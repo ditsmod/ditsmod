@@ -67,7 +67,7 @@ describe('JwtService', () => {
 
     it('should not stringify the payload', async () => {
       const payload: SignPayload = 'string';
-      await expect(jwtService.signWithSecret(payload, { secret })).resolves.not.toThrow(`dfsdfsd`);
+      await expect(jwtService.signWithSecret(payload, { secret })).resolves.not.toThrow();
       const token = await jwtService.signWithSecret(payload, { secret });
       expect(jwt.decode(token)).toBe('string');
     });
@@ -76,7 +76,7 @@ describe('JwtService', () => {
       it('should not apply claims to the original payload object (mutatePayload defaults to false)', async () => {
         const payload: SignPayload = { foo: 'bar' };
         const options: SignOptions = { notBefore: 60, expiresIn: 600 };
-        await expect(jwtService.signWithSecret(payload, { secret, ...options })).resolves.not.toThrow(`dfsdfsd`);
+        await expect(jwtService.signWithSecret(payload, { secret, ...options })).resolves.not.toThrow();
         expect(payload).not.toHaveProperty('nbf');
         expect(payload).not.toHaveProperty('exp');
       });
@@ -86,7 +86,7 @@ describe('JwtService', () => {
       it('should apply claims directly to the original payload object', async () => {
         const payload: SignPayload = { foo: 'bar' };
         const options: SignOptions = { notBefore: 60, expiresIn: 600, mutatePayload: true };
-        await expect(jwtService.signWithSecret(payload, { secret, ...options })).resolves.not.toThrow(`dfsdfsd`);
+        await expect(jwtService.signWithSecret(payload, { secret, ...options })).resolves.not.toThrow();
         expect(payload).toHaveProperty('nbf');
         expect(payload).toHaveProperty('exp');
       });
