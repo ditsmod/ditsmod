@@ -200,4 +200,11 @@ describe('Tree', () => {
 
     expect(() => tree.search('/test')).toThrow();
   });
+
+  it("conflict", () => {
+    const tree = new Tree();
+    tree.addRoute("/src3/*filepath", noop);
+
+    expect(() => tree.addRoute("/src3/*filepath/x", noop)).toThrow();
+  })
 });

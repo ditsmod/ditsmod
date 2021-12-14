@@ -33,6 +33,17 @@ export class Tree {
     }
   }
 
+  protected countParams(path: string) {
+    let n = 0;
+    for (const char of path) {
+      if (char == ":" || char == "*") {
+        n++;
+      }
+    }
+
+    return n;
+  }
+
   protected mergeTree(tree: this, fullPath: string, path: string, numParams: number, handle: Fn) {
     // Find the longest common prefix
     // This also implies that the common prefix contains no ':' or '*'
@@ -95,13 +106,121 @@ export class Tree {
     }
   }
 
-  protected checkWildcardMatches(
-    tree: this,
-    numParams: number,
-    path: string,
-    fullPath: string,
-    handle: Fn
-  ) {
+  protected insertChild(numParams: number, path: string, fullPath: string, handle: Fn) {
+    let tree = this;
+    let offset = 0; // Already handled chars of the path
+
+    // Find prefix until first wildcard
+    for (let i = 0, max = path.length; numParams > 0; i++) {
+      const c = path[i];
+      if (c != ':' && c != '*') {
+        continue;
+      }
+
+      // Find wildcard end (either '/' or path end)
+      let end = i + 1;
+      while (end < max && path[end] != '/') {
+        if (path[end] == ':' || path[end] == '*') {
+          const msg = `only one wildcard per path segment is allowed, has: '${path.slice(i)}' in path '${fullPath}'`;
+          throw new Error(msg);
+        } else {
+          end++;
+        }
+      }
+
+      // Check if this Tree existing children which would be unreachable
+      // if we insert the wildcard here
+      if (tree.children.length > 0) {
+        throw new Error(
+          `wildcard route '${path.slice(i, end)}' conflicts with existing children in path '${fullPath}'`
+        );
+      }
+
+      // check if the wildcard has a name
+      if (end - i < 2) {
+        throw new Error(`wildcards must be named with a non-empty name in path '${fullPath}'`);
+      }
+
+      if (c == ':') {
+        // Split path at the beginning of the wildcard
+        if (i > 0) {
+          tree.path = path.slice(offset, i);
+          offset = i;
+        }
+
+        const treeConfig1: TreeConfig = { path: '', wildChild: false, type: RouteType.param };
+        const child = this.newTree(treeConfig1);
+        tree.children = [child];
+        tree.wildChild = true;
+        tree = child;
+        tree.priority++;
+        numParams--;
+        if (end < max) {
+          tree.path = path.slice(offset, end);
+          offset = end;
+
+          const treeConfig2: TreeConfig = {
+            path: '',
+            wildChild: false,
+            type: RouteType.static,
+            indices: '',
+            children: [],
+            handle: null,
+            priority: 1,
+          };
+          const staticChild = this.newTree(treeConfig2);
+          tree.children = [staticChild];
+          tree = staticChild;
+        }
+      } else {
+        if (end != max || numParams > 1) {
+          throw new Error(`catch-all routes are only allowed at the end of the path in path '${fullPath}'`);
+        }
+
+        if (tree.path.length > 0 && tree.path[tree.path.length - 1] == '/') {
+          throw new Error(`catch-all conflicts with existing handle for the path segment root in path '${fullPath}'`);
+        }
+
+        i--;
+        if (path[i] != '/') {
+          throw new Error(`no / before catch-all in path '${fullPath}'`);
+        }
+
+        tree.path = path.slice(offset, i);
+
+        const treeConfig1: TreeConfig = { path: '', wildChild: true, type: RouteType.catchAll };
+
+        // first node: catchAll node with empty path
+        const catchAllChild = this.newTree(treeConfig1);
+        tree.children = [catchAllChild];
+        tree.indices = path[i];
+        tree = catchAllChild;
+        tree.priority++;
+
+        const treeConfig2: TreeConfig = {
+          path: path.slice(i),
+          wildChild: false,
+          type: RouteType.catchAll,
+          indices: '',
+          children: [],
+          handle,
+          priority: 1,
+        };
+
+        // second node: node holding the variable
+        const child = this.newTree(treeConfig2);
+        tree.children = [child];
+
+        return;
+      }
+    }
+
+    // insert remaining path part and handle to the leaf
+    tree.path = path.slice(offset);
+    tree.handle = handle;
+  }
+
+  protected checkWildcardMatches(tree: this, numParams: number, path: string, fullPath: string, handle: Fn) {
     tree.priority++;
     numParams--;
 
@@ -109,6 +228,8 @@ export class Tree {
     if (
       path.length >= tree.path.length &&
       tree.path == path.slice(0, tree.path.length) &&
+      // Adding a child to a catchAll is not possible
+      tree.type !== RouteType.catchAll &&
       (tree.path.length >= path.length || path[tree.path.length] == '/')
     ) {
       this.mergeTree(tree, fullPath, path, numParams, handle);
@@ -118,10 +239,8 @@ export class Tree {
   }
 
   protected throwWildcardConflict(tree: this, path: string, fullPath: string) {
-    let pathSeg = '';
-    if (tree.type == RouteType.catchAll) {
-      pathSeg = path;
-    } else {
+    let pathSeg = path;
+    if (tree.type != RouteType.catchAll) {
       pathSeg = path.split('/')[0];
     }
     const prefix = fullPath.slice(0, fullPath.indexOf(pathSeg)) + tree.path;
@@ -226,18 +345,6 @@ export class Tree {
     return new (this.constructor as typeof Tree)(treeConfig) as this;
   }
 
-  protected countParams(path: string) {
-    let n = 0;
-    for (const char of path) {
-      if (char != ':' && char != '*') {
-        continue;
-      }
-      n++;
-    }
-
-    return n;
-  }
-
   protected addPriority(pos: number) {
     const children = this.children;
     children[pos].priority++;
@@ -262,129 +369,5 @@ export class Tree {
     }
 
     return newPos;
-  }
-
-  protected insertChild(numParams: number, path: string, fullPath: string, handle: Fn) {
-    let tree: this = this;
-    let offset = 0; // Already handled chars of the path
-
-    // Find prefix until first wildcard
-    for (let i = 0, max = path.length; numParams > 0; i++) {
-      const c = path[i];
-      if (c != ':' && c != '*') {
-        continue;
-      }
-
-      // Find wildcard end (either '/' or path end)
-      let end = i + 1;
-      while (end < max && path[end] != '/') {
-        if (path[end] == ':' || path[end] == '*') {
-          throw new Error(
-            `only one wildcard per path segment is allowed, has: '${path.slice(
-              i
-            )}' in path '${fullPath}'`
-          );
-        } else {
-          end++;
-        }
-      }
-
-      // Check if this Tree existing children which would be unreachable
-      // if we insert the wildcard here
-      if (tree.children.length > 0) {
-        throw new Error(
-          `wildcard route '${path.slice(
-            i,
-            end
-          )}' conflicts with existing children in path '${fullPath}'`
-        );
-      }
-
-      // check if the wildcard has a name
-      if (end - i < 2) {
-        throw new Error(`wildcards must be named with a non-empty name in path '${fullPath}'`);
-      }
-
-      if (c == ':') {
-        // Split path at the beginning of the wildcard
-        if (i > 0) {
-          tree.path = path.slice(offset, i);
-          offset = i;
-        }
-
-        const treeConfig1: TreeConfig = { path: '', wildChild: false, type: RouteType.param };
-        const child = this.newTree(treeConfig1);
-        tree.children = [child];
-        tree.wildChild = true;
-        tree = child;
-        tree.priority++;
-        numParams--;
-        if (end < max) {
-          tree.path = path.slice(offset, end);
-          offset = end;
-
-          const treeConfig2: TreeConfig = {
-            path: '',
-            wildChild: false,
-            type: RouteType.static,
-            indices: '',
-            children: [],
-            handle: null,
-            priority: 1,
-          };
-          const staticChild = this.newTree(treeConfig2);
-          tree.children = [staticChild];
-          tree = staticChild;
-        }
-      } else {
-        if (end != max || numParams > 1) {
-          throw new Error(
-            `catch-all routes are only allowed at the end of the path in path '${fullPath}'`
-          );
-        }
-
-        if (tree.path.length > 0 && tree.path[tree.path.length - 1] == '/') {
-          throw new Error(
-            `catch-all conflicts with existing handle for the path segment root in path '${fullPath}'`
-          );
-        }
-
-        i--;
-        if (path[i] != '/') {
-          throw new Error(`no / before catch-all in path '${fullPath}'`);
-        }
-
-        tree.path = path.slice(offset, i);
-
-        const treeConfig1: TreeConfig = { path: '', wildChild: true, type: RouteType.catchAll };
-
-        // first node: catchAll node with empty path
-        const catchAllChild = this.newTree(treeConfig1);
-        tree.children = [catchAllChild];
-        tree.indices = path[i];
-        tree = catchAllChild;
-        tree.priority++;
-
-        const treeConfig2: TreeConfig = {
-          path: path.slice(i),
-          wildChild: false,
-          type: RouteType.catchAll,
-          indices: '',
-          children: [],
-          handle,
-          priority: 1,
-        };
-
-        // second node: node holding the variable
-        const child = this.newTree(treeConfig2);
-        tree.children = [child];
-
-        return;
-      }
-    }
-
-    // insert remaining path part and handle to the leaf
-    tree.path = path.slice(offset);
-    tree.handle = handle;
   }
 }
