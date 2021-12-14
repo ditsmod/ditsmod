@@ -15,7 +15,7 @@ describe('JwtService', () => {
 
     it('should work with empty options', async () => {
       const payload: SignPayload = { abc: 1 };
-      await expect(jwtService.signWithSecret(payload, { secret })).resolves.not.toThrow(`fsdfds`);
+      await expect(jwtService.signWithSecret(payload, { secret })).resolves.not.toThrow();
     });
 
     it('should return the same result as singing synchronously', async () => {
