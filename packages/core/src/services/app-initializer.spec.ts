@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Injectable } from '@ts-stack/di';
+import { Injectable, InjectionToken } from '@ts-stack/di';
 
 import { Module } from '../decorators/module';
 import { RootModule } from '../decorators/root-module';
@@ -10,7 +10,7 @@ import { AppInitializer } from './app-initializer';
 import { LogManager } from './log-manager';
 import { FilterConfig, LogMediator } from './log-mediator';
 import { ModuleManager } from './module-manager';
-import { ModuleWithParams, ServiceProvider } from '../types/mix';
+import { Extension, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { Controller } from '../decorators/controller';
 import { ModConfig } from '../models/mod-config';
 import { ImportObj, MetadataPerMod1 } from '../types/metadata-per-mod';
@@ -621,6 +621,49 @@ describe('AppInitializer', () => {
       expect(testMethodSpy.mock.calls.length).toBe(2);
       mock.logMediator.flush();
       expect(buffer.length).toBe(0);
+    });
+  });
+
+  describe('init extensions', () => {
+    const jestFn = jest.fn((extensionName: string) => extensionName);
+
+    beforeEach(() => {
+      jestFn.mockRestore();
+      const logMediator = new LogMediator(new LogManager());
+      moduleManager = new ModuleManager(logMediator);
+      const rootMeta = new RootMetadata();
+      mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
+    });
+
+    interface MyInterface {
+      one: string;
+      two: number;
+    }
+    const MY_EXTENSIONS = new InjectionToken<Extension<MyInterface>[]>('MY_EXTENSIONS');
+
+    @Injectable()
+    class Extension1 implements Extension<any> {
+      #inited: boolean;
+
+      async init() {
+        if (this.#inited) {
+          return;
+        }
+        jestFn('Extension1');
+        this.#inited = true;
+      }
+    }
+
+    it('properly declared extensions in a root module', async () => {
+      @RootModule({
+        providersPerApp: [{ provide: Router, useValue: 'fake value for router' }],
+        extensions: [[MY_EXTENSIONS, Extension1]],
+      })
+      class AppModule {}
+
+      expect(() => moduleManager.scanRootModule(AppModule)).not.toThrow();
+      await expect(mock.init()).resolves.not.toThrow();
+      expect(jestFn.mock.calls).toEqual([['Extension1']]);
     });
   });
 });

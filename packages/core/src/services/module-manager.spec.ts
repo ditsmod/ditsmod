@@ -753,6 +753,30 @@ describe('ModuleManager', () => {
     expect(mock.getMetadata(Module1)).toEqual(expectedMeta1);
   });
 
+  describe('init extensions', () => {
+    interface MyInterface {
+      one: string;
+      two: number;
+    }
+    const MY_EXTENSIONS = new InjectionToken<Extension<MyInterface>[]>('MY_EXTENSIONS');
+
+    it('exports token of an extension without this extension', async () => {
+      @RootModule({ exports: [MY_EXTENSIONS] })
+      class AppModule {}
+
+      const msg = `is a token of extension, this extension must be included in`;
+      expect(() => mock.scanRootModule(AppModule)).toThrow(msg);
+    });
+
+    it('should throw error about no extension', async () => {
+      @RootModule({ exports: [MY_EXTENSIONS] })
+      class AppModule {}
+
+      const msg = `is a token of extension, this extension must be included in`;
+      expect(() => mock.scanRootModule(AppModule)).toThrow(msg);
+    });
+  });
+
   it('split multi providers and common providers', () => {
     class Provider1 {}
     class Provider2 {}
