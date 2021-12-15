@@ -1,1 +1,0 @@
-Тепер документація доступна на [ditsmod.github.io](https://ditsmod.github.io/)
