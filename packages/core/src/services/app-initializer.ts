@@ -166,8 +166,9 @@ export class AppInitializer {
     this.logMediator.flush();
   }
 
-  serverListen(host: string, serverName: string, port: number) {
-    this.logMediator.serverListen(this, serverName, host, port);
+  serverListen() {
+    const { listenOptions, serverName } = this.rootMeta;
+    this.logMediator.serverListen(this, serverName, listenOptions.host!, listenOptions.port!);
   }
 
   async reinit(autocommit: boolean = true): Promise<void | Error> {

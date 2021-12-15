@@ -11,7 +11,6 @@ import { AppInitializer } from './services/app-initializer';
 import { LogMediator } from './services/log-mediator';
 import { Extension, ModuleType, ModuleWithParams } from './types/mix';
 import { Router } from './types/router';
-import { getExtensionProvider } from './utils/get-extension-provider';
 
 
 describe('Application', () => {

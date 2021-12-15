@@ -7,9 +7,8 @@ import { AppInitializer } from './services/app-initializer';
 import { LogManager } from './services/log-manager';
 import { LogMediator } from './services/log-mediator';
 import { ModuleManager } from './services/module-manager';
-import { Logger } from './types/logger';
 import { ModuleType, ModuleWithParams } from './types/mix';
-import { Http2SecureServerOptions, Server } from './types/server-options';
+import { Http2SecureServerOptions, RequestListener, Server } from './types/server-options';
 import { getModuleMetadata } from './utils/get-module-metadata';
 import { pickProperties } from './utils/pick-properties';
 import { isHttp2SecureServerOptions } from './utils/type-guards';
@@ -19,19 +18,19 @@ export class Application {
   protected logMediator: LogMediator;
 
   bootstrap(appModule: ModuleType) {
-    return new Promise<{ server: Server; logger: Logger }>(async (resolve, reject) => {
+    return new Promise<{ server: Server }>(async (resolve, reject) => {
       try {
         const appInitializer = await this.init(appModule);
-        const server = this.createServer(appInitializer);
-        const { listenOptions, serverName } = this.rootMeta;
-        server.listen(listenOptions, () => {
-          resolve({ server, logger: this.logMediator.logger });
-          appInitializer.serverListen(listenOptions.host!, serverName, listenOptions.port!);
+        const server = this.createServer(appInitializer.requestListener);
+        server.listen(this.rootMeta.listenOptions, () => {
+          resolve({ server });
+          appInitializer.serverListen();
         });
       } catch (err) {
         this.logMediator.bufferLogs = false;
         this.logMediator.flush();
-        reject({ err, logger: this.logMediator.logger });
+        this.logMediator.logger.fatal(err);
+        reject(err);
       }
     });
   }
@@ -81,14 +80,14 @@ export class Application {
     }
   }
 
-  protected createServer(appInitializer: AppInitializer) {
+  protected createServer(requestListener: RequestListener) {
     if (isHttp2SecureServerOptions(this.rootMeta.serverOptions)) {
       const serverModule = this.rootMeta.httpModule as typeof http2;
-      return serverModule.createSecureServer(this.rootMeta.serverOptions, appInitializer.requestListener);
+      return serverModule.createSecureServer(this.rootMeta.serverOptions, requestListener);
     } else {
       const serverModule = this.rootMeta.httpModule as typeof http | typeof https;
       const serverOptions = this.rootMeta.serverOptions as http.ServerOptions | https.ServerOptions;
-      return serverModule.createServer(serverOptions, appInitializer.requestListener);
+      return serverModule.createServer(serverOptions, requestListener);
     }
   }
 }
