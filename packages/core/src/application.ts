@@ -29,7 +29,6 @@ export class Application {
       } catch (err) {
         this.logMediator.bufferLogs = false;
         this.logMediator.flush();
-        this.logMediator.logger.fatal(err);
         reject(err);
       }
     });

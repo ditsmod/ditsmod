@@ -98,6 +98,7 @@ export class PreRouterExtension implements Extension<void> {
     }
     inj.get(HttpHandler);
     inj.get(HttpFrontend);
+    routeMeta.guards.forEach((item) => inj.get(item.guard));
     inj.get(HttpBackend);
     inj.get(routeMeta.controller);
     inj.get(HTTP_INTERCEPTORS, []);
