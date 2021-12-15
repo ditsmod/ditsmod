@@ -11,7 +11,7 @@ yarn start6
 From the second terminal check the work:
 
 ```bash
-curl -isS localhost:8080 -d '{"one":1}' -H 'content-type: application/json'
+curl -isS localhost:3000 -d '{"one":1}' -H 'content-type: application/json'
 ```
 
 [1]: ./prerequisite

@@ -23,8 +23,8 @@ export class Application {
         const appInitializer = await this.init(appModule);
         const server = this.createServer(appInitializer.requestListener);
         server.listen(this.rootMeta.listenOptions, () => {
-          resolve({ server });
           appInitializer.serverListen();
+          resolve({ server });
         });
       } catch (err) {
         this.logMediator.bufferLogs = false;
@@ -63,7 +63,7 @@ export class Application {
     pickProperties(this.rootMeta, serverMetadata);
     const { listenOptions } = this.rootMeta;
     listenOptions.host = listenOptions.host || 'localhost';
-    listenOptions.port = listenOptions.port || 8080;
+    listenOptions.port = listenOptions.port || 3000;
   }
 
   protected getAppInitializer(appModule: ModuleType, logMediator: LogMediator) {

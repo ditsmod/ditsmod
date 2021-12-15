@@ -8,6 +8,6 @@ export class RootMetadata {
   httpModule: HttpModule = http;
   serverName = 'Node.js';
   serverOptions: ServerOptions = {};
-  listenOptions: ListenOptions = { host: 'localhost', port: 8080 };
+  listenOptions: ListenOptions = { host: 'localhost', port: 3000 };
   prefixPerApp = '';
 }

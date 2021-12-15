@@ -17,12 +17,12 @@ Start from first terminal:
 yarn start10
 ```
 
-Open your browser with http://localhost:8080/openapi and there
+Open your browser with http://localhost:3000/openapi and there
 should be OpenAPI documentation.
 
 Check from second terminal:
 
 ```bash
-curl -isS localhost:8080
-curl -isS localhost:8080/resource/123
+curl -isS localhost:3000
+curl -isS localhost:3000/resource/123
 ```

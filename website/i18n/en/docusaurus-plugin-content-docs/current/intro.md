@@ -50,7 +50,7 @@ to see these changes immediately.
 You can check the server with `curl`:
 
 ```bash
-curl -isS localhost:8080
+curl -isS localhost:3000
 ```
 
 The application compiles using the command:

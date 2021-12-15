@@ -68,7 +68,7 @@ import { RootModule } from '@ditsmod/core';
 @RootModule({
   // Data for the HTTP server
   httpModule: http,
-  listenOptions: { host: 'localhost', port: 8080 },
+  listenOptions: { host: 'localhost', port: 3000 },
   serverName: 'Node.js',
   serverOptions: {},
 

@@ -20,8 +20,8 @@ yarn start5
 From second terminal:
 
 ```bash
-curl -isS localhost:8080/api/posts
-curl -isS localhost:8080/api/posts/123
-curl -isS localhost:8080/api/posts/123/comments
-curl -isS localhost:8080/api/posts/123/comments/456
+curl -isS localhost:3000/api/posts
+curl -isS localhost:3000/api/posts/123
+curl -isS localhost:3000/api/posts/123/comments
+curl -isS localhost:3000/api/posts/123/comments/456
 ```

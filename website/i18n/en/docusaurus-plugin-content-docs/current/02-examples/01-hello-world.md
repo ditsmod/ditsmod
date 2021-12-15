@@ -18,7 +18,7 @@ yarn start1
 From the second terminal check the work:
 
 ```bash
-curl -isS localhost:8080
+curl -isS localhost:3000
 ```
 
 [1]: ./prerequisite

@@ -29,7 +29,7 @@ yarn start1
 From second terminal:
 
 ```bash
-curl -isS localhost:8080
+curl -isS localhost:3000
 ```
 
 

@@ -39,6 +39,6 @@ yarn start2
 З другого терміналу перевірте роботу:
 
 ```bash
-curl -isS localhost:8080
-curl -isS localhost:8080/throw-error
+curl -isS localhost:3000
+curl -isS localhost:3000/throw-error
 ```

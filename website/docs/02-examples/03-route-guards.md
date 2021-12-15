@@ -39,9 +39,9 @@ yarn start3
 З другого терміналу перевірити роботу:
 
 ```bash
-curl -isS localhost:8080
-curl -isS localhost:8080/unauth
-curl -isS localhost:8080/forbidden
+curl -isS localhost:3000
+curl -isS localhost:3000/unauth
+curl -isS localhost:3000/forbidden
 ```
 
 [102]: ../core/exports-and-imports#експорт-провайдерів-із-кореневого-модуля

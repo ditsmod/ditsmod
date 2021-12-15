@@ -16,30 +16,30 @@ yarn start7
 
 ```bash
 # OK із першого модуля
-curl -isS localhost:8080
+curl -isS localhost:3000
 
 # Відповідь із 404 статусом із другого модуля
-curl -isS localhost:8080/get-2
+curl -isS localhost:3000/get-2
 
 # Додавання другого модуля
-curl -isS localhost:8080/add-2
+curl -isS localhost:3000/add-2
 
 # Відповідь із 200 статусом із другого модуля
-curl -isS localhost:8080/get-2
+curl -isS localhost:3000/get-2
 
 # Під час додавання третього модуля, повинен статися збій
-curl -isS localhost:8080/add-3
+curl -isS localhost:3000/add-3
 
 # Але інші модулі продовжують працювати
-curl -isS localhost:8080
-curl -isS localhost:8080/get-2
+curl -isS localhost:3000
+curl -isS localhost:3000/get-2
 
 # Видалення другого модуля
-curl -isS localhost:8080/del-2
+curl -isS localhost:3000/del-2
 
 # Відповідь із 404 статусом із другого модуля
-curl -isS localhost:8080/get-2
+curl -isS localhost:3000/get-2
 
 # Але все OK із першим модулем
-curl -isS localhost:8080
+curl -isS localhost:3000
 ```

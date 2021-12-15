@@ -20,10 +20,10 @@ yarn start4
 From second terminal:
 
 ```bash
-curl -isS localhost:8080
-curl -isS localhost:8080/winston
-curl -isS localhost:8080/bunyan
-curl -isS localhost:8080/pino
+curl -isS localhost:3000
+curl -isS localhost:3000/winston
+curl -isS localhost:3000/bunyan
+curl -isS localhost:3000/pino
 ```
 
 As you can see, there are examples for [bunyan][1], [pino][2] and [winston][3] loggers.

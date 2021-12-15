@@ -1,1 +1,1 @@
-export const swaggerOptions = {"initUi":{"url":"http://localhost:8080/openapi.yaml","dom_id":"#swagger"},"oauthOptions":{"appName":"Swagger UI Webpack Demo","clientId":"implicit"}};
+export const swaggerOptions = {"initUi":{"url":"http://localhost:3000/openapi.yaml","dom_id":"#swagger"},"oauthOptions":{"appName":"Swagger UI Webpack Demo","clientId":"implicit"}};

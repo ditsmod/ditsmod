@@ -18,7 +18,7 @@ yarn start1
 З другого терміналу перевірте роботу:
 
 ```bash
-curl -isS localhost:8080
+curl -isS localhost:3000
 ```
 
 [1]: ./prerequisite

@@ -37,10 +37,10 @@ yarn start4
 From the second terminal check the work:
 
 ```bash
-curl -isS localhost:8080
-curl -isS localhost:8080/pino
-curl -isS localhost:8080/winston
-curl -isS localhost:8080/bunyan
+curl -isS localhost:3000
+curl -isS localhost:3000/pino
+curl -isS localhost:3000/winston
+curl -isS localhost:3000/bunyan
 ```
 
 [1]: ./prerequisite
