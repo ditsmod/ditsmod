@@ -51,7 +51,7 @@ export class AppInitializer {
 
   /**
    * 1. checks collisions for non-root exported providers per app;
-   * 2. then merges these providers with providers that declared on root module.
+   * 2. then merges these providers with providers that declared on the root module.
    *
    * @param meta root metadata.
    */
@@ -78,6 +78,46 @@ export class AppInitializer {
     }
     exportedProviders.push(...this.getResolvedCollisionsPerApp());
     this.meta.providersPerApp.unshift(...getLastProviders(exportedProviders));
+  }
+
+  /**
+   * Recursively collects per app providers from non-root modules.
+   */
+  protected collectProvidersPerApp(meta1: NormalizedModuleMetadata) {
+    const modules = [
+      ...meta1.importsModules,
+      ...meta1.importsWithParams,
+      ...meta1.exportsModules,
+      ...meta1.exportsWithParams,
+    ];
+    const providersPerApp: ServiceProvider[] = [];
+    // Removes duplicate (because of reexports modules)
+    for (const mod of new Set(modules)) {
+      if (this.unfinishedScanModules.has(mod)) {
+        continue;
+      }
+      const meta2 = this.moduleManager.getMetadata(mod, true);
+      this.unfinishedScanModules.add(mod);
+      providersPerApp.push(...this.collectProvidersPerApp(meta2));
+      this.unfinishedScanModules.delete(mod);
+    }
+    const currProvidersPerApp = isRootModule(meta1) ? [] : meta1.providersPerApp;
+
+    return [...providersPerApp, ...currProvidersPerApp];
+  }
+
+  protected findModulesCausedCollisions(collisions: any[]) {
+    const modulesNames: string[] = [];
+
+    this.moduleManager.getModulesMap().forEach((meta) => {
+      const tokens = getTokens(meta.providersPerApp);
+      const moduleCausesCollisions = tokens.some((t) => collisions.includes(t));
+      if (moduleCausesCollisions) {
+        modulesNames.push(meta.name);
+      }
+    });
+
+    return modulesNames;
   }
 
   protected getResolvedCollisionsPerApp() {
@@ -109,46 +149,6 @@ export class AppInitializer {
     });
 
     return resolvedProviders;
-  }
-
-  protected findModulesCausedCollisions(collisions: any[]) {
-    const modulesNames: string[] = [];
-
-    this.moduleManager.getModulesMap().forEach((meta) => {
-      const tokens = getTokens(meta.providersPerApp);
-      const moduleCausesCollisions = tokens.some((t) => collisions.includes(t));
-      if (moduleCausesCollisions) {
-        modulesNames.push(meta.name);
-      }
-    });
-
-    return modulesNames;
-  }
-
-  /**
-   * Recursively collects per app providers from non-root modules.
-   */
-  protected collectProvidersPerApp(meta1: NormalizedModuleMetadata) {
-    const modules = [
-      ...meta1.importsModules,
-      ...meta1.importsWithParams,
-      ...meta1.exportsModules,
-      ...meta1.exportsWithParams,
-    ];
-    const providersPerApp: ServiceProvider[] = [];
-    // Removes duplicate (because of reexports modules)
-    for (const mod of new Set(modules)) {
-      if (this.unfinishedScanModules.has(mod)) {
-        continue;
-      }
-      const meta2 = this.moduleManager.getMetadata(mod, true);
-      this.unfinishedScanModules.add(mod);
-      providersPerApp.push(...this.collectProvidersPerApp(meta2));
-      this.unfinishedScanModules.delete(mod);
-    }
-    const currProvidersPerApp = isRootModule(meta1) ? [] : meta1.providersPerApp;
-
-    return [...providersPerApp, ...currProvidersPerApp];
   }
 
   async bootstrapModulesAndExtensions() {
