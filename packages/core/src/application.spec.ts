@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import { Injectable, InjectionToken } from '@ts-stack/di';
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
@@ -9,8 +8,7 @@ import { RootModule } from './decorators/root-module';
 import { RootMetadata } from './models/root-metadata';
 import { AppInitializer } from './services/app-initializer';
 import { LogMediator } from './services/log-mediator';
-import { Extension, ModuleType, ModuleWithParams } from './types/mix';
-import { Router } from './types/router';
+import { ModuleType, ModuleWithParams } from './types/mix';
 
 
 describe('Application', () => {
@@ -42,7 +40,7 @@ describe('Application', () => {
   });
 
   describe('mergeRootMetadata()', () => {
-    it('should works with duplicates in feature module and root module', () => {
+    it('should merge custom options for the root module', () => {
       class Provider1 {}
 
       @RootModule({
@@ -105,68 +103,6 @@ describe('Application', () => {
       mock.rootMeta.httpModule = https;
       const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
       expect(() => mock.checkSecureServerOption(AppModule)).toThrowError(msg);
-    });
-  });
-
-  describe('init extensions', () => {
-    const jestFn = jest.fn((extensionName: string) => extensionName);
-
-    beforeEach(() => {
-      jestFn.mockRestore();
-    });
-
-    interface MyInterface {
-      one: string;
-      two: number;
-    }
-    const MY_EXTENSIONS = new InjectionToken<Extension<MyInterface>[]>('MY_EXTENSIONS');
-
-    @Injectable()
-    class Extension1 implements Extension<any> {
-      #inited: boolean;
-
-      async init() {
-        if (this.#inited) {
-          return;
-        }
-        jestFn('Extension1');
-        this.#inited = true;
-      }
-    }
-
-    it('properly declared extensions in a root module', async () => {
-      @RootModule({
-        providersPerApp: [
-          { provide: Router, useValue: 'fake value for router' },
-        ],
-        extensions: [
-          [MY_EXTENSIONS, Extension1]
-        ]
-      })
-      class AppModule {}
-
-      const promise = mock.init(AppModule);
-      await expect(promise).resolves.not.toThrow();
-      expect(jestFn.mock.calls).toEqual([['Extension1']]);
-    });
-
-    it('exports token of an extension without this extension', async () => {
-      @RootModule({ exports: [MY_EXTENSIONS] })
-      class AppModule {}
-
-      const promise = mock.init(AppModule);
-      await expect(promise).rejects.toThrow(`is a token of extension, this extension must be included in`);
-    });
-
-    it('should throw error about no extension', async () => {
-      @RootModule({
-        providersPerApp: [{ provide: Router, useValue: 'fake'}],
-        exports: [MY_EXTENSIONS],
-      })
-      class AppModule {}
-
-      const promise = mock.init(AppModule);
-      await expect(promise).rejects.toThrow(`is a token of extension, this extension must be included in`);
     });
   });
 });

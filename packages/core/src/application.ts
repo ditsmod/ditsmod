@@ -40,14 +40,14 @@ export class Application {
     const appInitializer = this.getAppInitializer(appModule, this.logMediator);
     // Before init custom user logger, works default logger.
     appInitializer.bootstrapProvidersPerApp();
-    // After init custom user logger, works this logger.
+    // After init custom user logger, works this custom logger.
     try {
       await appInitializer.bootstrapModulesAndExtensions();
+      this.checkSecureServerOption(appModule);
     } catch (err) {
       appInitializer.flushLogs();
       throw err;
     }
-    this.checkSecureServerOption(appModule);
     appInitializer.flushLogs();
     return appInitializer;
   }
