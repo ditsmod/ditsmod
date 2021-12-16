@@ -51,7 +51,8 @@ export class AppInitializer {
 
   /**
    * 1. checks collisions for non-root exported providers per app;
-   * 2. then merges these providers with providers that declared on the root module.
+   * 2. merges these providers with providers that declared on the root module;
+   * 3. merges resolved providers per app.
    *
    * @param meta root metadata.
    */
@@ -161,16 +162,6 @@ export class AppInitializer {
     return appMetadataMap;
   }
 
-  flushLogs() {
-    this.logMediator.bufferLogs = false;
-    this.logMediator.flush();
-  }
-
-  serverListen() {
-    const { listenOptions, serverName } = this.rootMeta;
-    this.logMediator.serverListen(this, serverName, listenOptions.host!, listenOptions.port!);
-  }
-
   async reinit(autocommit: boolean = true): Promise<void | Error> {
     const previousLogger = this.logMediator.logger;
     this.logMediator.startReinitApp(this);
@@ -199,10 +190,6 @@ export class AppInitializer {
       this.logMediator.flush();
     }
   }
-
-  requestListener: RequestListener = async (nodeReq, nodeRes) => {
-    await this.preRouter.requestListener(nodeReq, nodeRes);
-  };
 
   protected async handleReinitError(err: unknown) {
     this.logMediator.printReinitError(this, err);
@@ -308,5 +295,19 @@ export class AppInitializer {
       .join(', ');
     this.logMediator.totalInitedExtensions(this, moduleName, extensions.size, names);
     counter.resetInitedExtensionsSet();
+  }
+
+  requestListener: RequestListener = async (nodeReq, nodeRes) => {
+    await this.preRouter.requestListener(nodeReq, nodeRes);
+  };
+
+  flushLogs() {
+    this.logMediator.bufferLogs = false;
+    this.logMediator.flush();
+  }
+
+  serverListen() {
+    const { listenOptions, serverName } = this.rootMeta;
+    this.logMediator.serverListen(this, serverName, listenOptions.host!, listenOptions.port!);
   }
 }
