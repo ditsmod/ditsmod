@@ -1,5 +1,5 @@
 import { edk } from '@ditsmod/core';
-import { SwaggegrOAuthOptions } from './swagger-o-auth-options';
+import { SwaggerOAuthOptions } from './swagger-o-auth-options';
 
 export interface SwaggerOptions {
   /**
@@ -9,7 +9,7 @@ export interface SwaggerOptions {
   /**
    * This options for `ui.initOAuth({...})`
    */
-  oauthOptions?: SwaggegrOAuthOptions;
+  oauthOptions?: SwaggerOAuthOptions;
 }
 
 export interface SwaggerUIOptionsBase {

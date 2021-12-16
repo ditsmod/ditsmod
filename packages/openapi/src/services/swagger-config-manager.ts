@@ -7,7 +7,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { join } from 'path';
 import webpack, { CleanPlugin, Configuration } from 'webpack';
 
-import { SwaggegrOAuthOptions } from '../swagger-ui/swagger-o-auth-options';
+import { SwaggerOAuthOptions } from '../swagger-ui/swagger-o-auth-options';
 import { SwaggerOptions } from '../swagger-ui/interfaces';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class SwaggerConfigManager {
     const { prefixPerMod } = this.modConfig;
     const { port } = this.rootMeta.listenOptions;
     const path = [this.rootMeta.prefixPerApp, prefixPerMod, 'openapi.yaml'].filter((p) => p).join('/');
-    const oauthOptions = this.injectorPerMod.get(SwaggegrOAuthOptions, null);
+    const oauthOptions = this.injectorPerMod.get(SwaggerOAuthOptions, null);
     const swaggerOptions: SwaggerOptions = {
       initUi: { url: `http://localhost:${port}/${path}`, dom_id: '#swagger' },
       oauthOptions: oauthOptions || {

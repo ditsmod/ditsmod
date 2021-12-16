@@ -1,6 +1,6 @@
 import { edk } from '@ditsmod/core';
 
-export class SwaggegrOAuthOptions {
+export class SwaggerOAuthOptions {
   /**
    * Default clientId.
    */

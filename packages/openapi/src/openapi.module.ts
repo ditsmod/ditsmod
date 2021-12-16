@@ -1,3 +1,4 @@
+import { XOasObject } from '@ts-stack/openapi-spec';
 import { Module, edk, ModuleWithParams, ServiceProvider } from '@ditsmod/core';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension';
@@ -7,6 +8,7 @@ import { DEFAULT_OAS_OBJECT } from './constants';
 import { OasRouteMeta } from './types/oas-route-meta';
 import { OpenapiController } from './openapi.controller';
 import { SwaggerConfigManager } from './services/swagger-config-manager';
+import { SwaggerOAuthOptions } from './swagger-ui/swagger-o-auth-options';
 
 @Module({
   controllers: [OpenapiController],
@@ -20,7 +22,15 @@ import { SwaggerConfigManager } from './services/swagger-config-manager';
   ],
 })
 export class OpenapiModule {
-  static withParams(providersPerApp: ServiceProvider[]): ModuleWithParams {
-    return { module: OpenapiModule, providersPerApp };
+  static withParams(oasObject: XOasObject<any>, swaggerOAuthOptions?: SwaggerOAuthOptions): ModuleWithParams {
+    const providersPerApp: ServiceProvider[] = [{ provide: OAS_OBJECT, useValue: oasObject }];
+    if (swaggerOAuthOptions) {
+      providersPerApp.push({ provide: SwaggerOAuthOptions, useValue: swaggerOAuthOptions });
+    }
+
+    return {
+      module: OpenapiModule,
+      providersPerApp,
+    };
   }
 }
