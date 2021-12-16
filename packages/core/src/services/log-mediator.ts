@@ -143,7 +143,7 @@ export class LogMediator {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.classesNames = [className];
-    this.setLog('info', filterConfig, `${className}: ${serverName} is running at ${host}:${port}.`);
+    this.setLog('info', filterConfig, `${className}: ${serverName} is running at http://${host}:${port}.`);
   }
 
   /**
