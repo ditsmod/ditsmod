@@ -242,7 +242,6 @@ export class AppInitializer {
     aMetadataPerMod1: MetadataPerMod1[],
     mExtensionsCounters: Map<ServiceProvider, number>
   ) {
-    this.createInjectorAndSetLogMediator();
     const extensionsContext = new ExtensionsContext();
     const len = aMetadataPerMod1.length;
     for (let i = 0; i < len; i++) {

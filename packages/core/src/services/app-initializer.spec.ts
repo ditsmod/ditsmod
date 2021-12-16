@@ -10,13 +10,15 @@ import { AppInitializer } from './app-initializer';
 import { LogManager } from './log-manager';
 import { FilterConfig, LogMediator } from './log-mediator';
 import { ModuleManager } from './module-manager';
-import { Extension, ModuleWithParams, ServiceProvider } from '../types/mix';
+import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { Controller } from '../decorators/controller';
 import { ModConfig } from '../models/mod-config';
 import { ImportObj, MetadataPerMod1 } from '../types/metadata-per-mod';
 import { RootMetadata } from '../models/root-metadata';
 
 describe('AppInitializer', () => {
+  type AnyModule = ModuleType | ModuleWithParams;
+
   @Injectable()
   class AppInitializerMock extends AppInitializer {
     override meta = new NormalizedModuleMetadata();
@@ -58,86 +60,6 @@ describe('AppInitializer', () => {
   let mock: AppInitializerMock;
   let moduleManager: ModuleManager;
 
-  describe('collectProvidersPerApp()', () => {
-    class Provider0 {}
-    class Provider1 {}
-    class Provider2 {}
-    class Provider3 {}
-    class Provider4 {}
-    class Provider5 {}
-    class Provider6 {}
-    class Provider7 {}
-
-    @Module({ providersPerApp: [Provider0] })
-    class Module0 {}
-
-    @Module({ providersPerApp: [Provider1] })
-    class Module1 {}
-
-    @Module({
-      providersPerApp: [Provider2, Provider3, Provider4],
-      imports: [Module1],
-    })
-    class Module2 {}
-
-    @Module({
-      providersPerApp: [Provider5, Provider6],
-      imports: [Module2],
-    })
-    class Module3 {}
-
-    @RootModule({
-      imports: [Module3],
-      providersPerApp: [{ provide: Provider1, useClass: Provider7 }],
-      exports: [Module0],
-    })
-    class AppModule {}
-
-    beforeEach(() => {
-      const logMediator = new LogMediator(new LogManager());
-      moduleManager = new ModuleManager(logMediator);
-      const rootMeta = new RootMetadata();
-      mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
-    });
-
-    it('should collects providers from exports array without imports them', () => {
-      mock.meta = moduleManager.scanRootModule(AppModule);
-      const providersPerApp = mock.collectProvidersPerApp(mock.meta);
-      expect(providersPerApp.includes(Provider0)).toBe(true);
-    });
-
-    it('should collects providers in particular order', () => {
-      mock.meta = moduleManager.scanRootModule(AppModule);
-      const providersPerApp = mock.collectProvidersPerApp(mock.meta);
-      expect(providersPerApp).toEqual([Provider1, Provider2, Provider3, Provider4, Provider5, Provider6, Provider0]);
-    });
-
-    it('should works with moduleWithParams', () => {
-      @Module()
-      class Module6 {
-        static withParams(providers: ServiceProvider[]): ModuleWithParams<Module6> {
-          return { module: Module6, providersPerApp: providers };
-        }
-      }
-      const modWithParams = Module6.withParams([Provider7]);
-      const meta = moduleManager.scanModule(modWithParams);
-      const providersPerApp = mock.collectProvidersPerApp(meta);
-      expect(providersPerApp).toEqual([Provider7]);
-    });
-
-    it('should have empty array of providersPerApp', () => {
-      @Controller()
-      class Controller1 {}
-
-      @Module({ controllers: [Controller1] })
-      class Module7 {}
-
-      const meta = moduleManager.scanModule(Module7);
-      const providersPerApp = mock.collectProvidersPerApp(meta);
-      expect(providersPerApp).toEqual([]);
-    });
-  });
-
   describe('prepareProvidersPerApp()', () => {
     beforeEach(() => {
       const logMediator = new LogMediator(new LogManager());
@@ -146,7 +68,7 @@ describe('AppInitializer', () => {
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
     });
 
-    it('should throw an error about non-identical duplicates', () => {
+    it('should throw an error about collision', () => {
       class Provider1 {}
 
       @Module({ providersPerApp: [{ provide: Provider1, useClass: Provider1 }] })
@@ -165,7 +87,7 @@ describe('AppInitializer', () => {
       expect(() => mock.prepareProvidersPerApp()).toThrow(msg);
     });
 
-    it('should works with resolvedCollisionsPerApp in root module', () => {
+    it('should works with collision and resolvedCollisionsPerApp', () => {
       class Provider1 {}
       class Provider2 {}
 
@@ -188,7 +110,7 @@ describe('AppInitializer', () => {
       expect(mock.meta.resolvedCollisionsPerApp.length).toBe(1);
     });
 
-    it('should throw an error because resolvedCollisionsPerApp not properly setted module', () => {
+    it('should throw an error because resolvedCollisionsPerApp not properly setted', () => {
       class Provider1 {}
 
       @Module()
@@ -338,7 +260,87 @@ describe('AppInitializer', () => {
     });
   });
 
-  describe('export from root module', () => {
+  describe('collectProvidersPerApp()', () => {
+    class Provider0 {}
+    class Provider1 {}
+    class Provider2 {}
+    class Provider3 {}
+    class Provider4 {}
+    class Provider5 {}
+    class Provider6 {}
+    class Provider7 {}
+
+    @Module({ providersPerApp: [Provider0] })
+    class Module0 {}
+
+    @Module({ providersPerApp: [Provider1] })
+    class Module1 {}
+
+    @Module({
+      providersPerApp: [Provider2, Provider3, Provider4],
+      imports: [Module1],
+    })
+    class Module2 {}
+
+    @Module({
+      providersPerApp: [Provider5, Provider6],
+      imports: [Module2],
+    })
+    class Module3 {}
+
+    @RootModule({
+      imports: [Module3],
+      providersPerApp: [{ provide: Provider1, useClass: Provider7 }],
+      exports: [Module0],
+    })
+    class AppModule {}
+
+    beforeEach(() => {
+      const logMediator = new LogMediator(new LogManager());
+      moduleManager = new ModuleManager(logMediator);
+      const rootMeta = new RootMetadata();
+      mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
+    });
+
+    it('should collects providers from exports array without imports them', () => {
+      mock.meta = moduleManager.scanRootModule(AppModule);
+      const providersPerApp = mock.collectProvidersPerApp(mock.meta);
+      expect(providersPerApp.includes(Provider0)).toBe(true);
+    });
+
+    it('should collects providers in particular order', () => {
+      mock.meta = moduleManager.scanRootModule(AppModule);
+      const providersPerApp = mock.collectProvidersPerApp(mock.meta);
+      expect(providersPerApp).toEqual([Provider1, Provider2, Provider3, Provider4, Provider5, Provider6, Provider0]);
+    });
+
+    it('should works with moduleWithParams', () => {
+      @Module()
+      class Module6 {
+        static withParams(providers: ServiceProvider[]): ModuleWithParams<Module6> {
+          return { module: Module6, providersPerApp: providers };
+        }
+      }
+      const modWithParams = Module6.withParams([Provider7]);
+      const meta = moduleManager.scanModule(modWithParams);
+      const providersPerApp = mock.collectProvidersPerApp(meta);
+      expect(providersPerApp).toEqual([Provider7]);
+    });
+
+    it('should works without providersPerApp', () => {
+      @Controller()
+      class Controller1 {}
+
+      @Module({ controllers: [Controller1] })
+      class Module7 {}
+
+      const meta = moduleManager.scanModule(Module7);
+      const providersPerApp = mock.collectProvidersPerApp(meta);
+      expect(providersPerApp).toEqual([]);
+    });
+  });
+
+  describe('exports/imports', () => {
     class Provider0 {}
     class Provider1 {}
     class Provider2 {}
@@ -362,14 +364,14 @@ describe('AppInitializer', () => {
     const obj1 = { provide: Provider1, useClass: Provider1 };
     @Module({
       controllers: [Ctrl],
-      exports: [Provider1],
       providersPerMod: [obj1, Provider2],
+      exports: [Provider1],
     })
     class Module1 {}
 
     @Module({
-      exports: [Provider3, Provider4],
       providersPerMod: [Provider3, Provider4],
+      exports: [Provider3, Provider4],
     })
     class Module2 {
       static withParams() {
@@ -378,14 +380,14 @@ describe('AppInitializer', () => {
     }
 
     @Module({
-      exports: [Provider5, Provider6, Provider7],
       providersPerReq: [Provider5, Provider6, Provider7],
+      exports: [Provider5, Provider6, Provider7],
     })
     class Module3 {}
 
     @Module({
-      exports: [Provider8, Provider9],
       providersPerReq: [Provider8, Provider9],
+      exports: [Provider8, Provider9],
     })
     class Module4 {}
 
@@ -409,11 +411,15 @@ describe('AppInitializer', () => {
     })
     class AppModule {}
 
-    beforeEach(() => {
+    let appMetadataMap: Map<AnyModule, MetadataPerMod1>;
+
+    beforeAll(() => {
       const logMediator = new LogMediator(new LogManager());
       moduleManager = new ModuleManager(logMediator);
       const rootMeta = new RootMetadata();
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
+      moduleManager.scanRootModule(AppModule);
+      appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
     });
 
     function checkGlobalProviders(mod: MetadataPerMod1 | undefined) {
@@ -449,8 +455,6 @@ describe('AppInitializer', () => {
     }
 
     it('Module0', async () => {
-      moduleManager.scanRootModule(AppModule);
-      const appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
       const mod0 = appMetadataMap.get(Module0);
       expect(mod0?.meta.providersPerApp).toEqual([]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
@@ -460,8 +464,6 @@ describe('AppInitializer', () => {
     });
 
     it('Module1', async () => {
-      moduleManager.scanRootModule(AppModule);
-      const appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
       const mod1 = appMetadataMap.get(Module1);
       expect(mod1?.meta.providersPerApp).toEqual([]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
@@ -470,8 +472,6 @@ describe('AppInitializer', () => {
     });
 
     it('Module2', async () => {
-      moduleManager.scanRootModule(AppModule);
-      const appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
       const mod2 = appMetadataMap.get(module2WithParams);
       expect(mod2?.meta.providersPerApp).toEqual([]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: '' } };
@@ -481,8 +481,6 @@ describe('AppInitializer', () => {
     });
 
     it('Module3', async () => {
-      moduleManager.scanRootModule(AppModule);
-      const appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
       const mod3 = appMetadataMap.get(module3WithParams);
       expect(mod3?.meta.providersPerApp).toEqual([]);
       const providerPerMod: ServiceProvider = { provide: ModConfig, useValue: { prefixPerMod: 'one' } };
@@ -624,7 +622,7 @@ describe('AppInitializer', () => {
     });
   });
 
-  describe('init extensions', () => {
+  describe('extensions init', () => {
     const jestFn = jest.fn((extensionName: string) => extensionName);
 
     beforeEach(() => {
