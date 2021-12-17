@@ -65,7 +65,7 @@ export class ExtensionsManager {
     aCurrentData: T[]
   ) {
     const { mExtensionsData: mAllExtensionsData } = this.extensionsContext;
-    let mExtensionData = mAllExtensionsData.get(extension);
+    const mExtensionData = mAllExtensionsData.get(extension);
     const aGroupData = mExtensionData?.get(groupToken);
     const isLastExtensionCall = this.mExtensionsCounters.get(extension) === 0;
 
