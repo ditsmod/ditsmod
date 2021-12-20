@@ -17,7 +17,6 @@ import { OAS_OBJECT } from '../di-tokens';
 import { OasRouteMeta } from '../types/oas-route-meta';
 import { DEFAULT_OAS_OBJECT } from '../constants';
 import { isOasGuard } from '../utils/type-guards';
-import { isModuleWithParams } from '@ditsmod/core/src/edk';
 import { OpenapiModule } from '../openapi.module';
 
 @Injectable()
@@ -52,7 +51,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
       const { aControllersMetadata2, providersPerMod, module: modOrObj } = metadataPerMod2;
 
       // Hide internal APIs for OpenAPI
-      if (isModuleWithParams(modOrObj) && modOrObj.module === OpenapiModule) {
+      if (edk.isModuleWithParams(modOrObj) && modOrObj.module === OpenapiModule) {
         continue;
       } else if (modOrObj === OpenapiModule) {
         continue;
