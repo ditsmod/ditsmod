@@ -7,10 +7,6 @@ export const DEFAULT_OAS_OBJECT: XOasObject = {
   info: { title: 'Testing @ditsmod/openapi with default value', version: '0.0.0' },
   tags: [
     {
-      name: 'OasDocs',
-      description: 'Routes used to service OpenAPI documentation',
-    },
-    {
       name: 'NonOasRoutes',
       description:
         'Routes that use a decorator `@Route()`. If you want to change this description, ' +

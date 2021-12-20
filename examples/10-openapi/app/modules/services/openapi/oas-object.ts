@@ -21,10 +21,6 @@ export const oasObject: XOasObject = {
       name: 'withBasicAuth',
       description: 'Here you need username and password.',
     },
-    {
-      name: 'OasDocs',
-      description: 'Routes used to service OpenAPI documentation',
-    },
   ],
   components: {
     responses: {

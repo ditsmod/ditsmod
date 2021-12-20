@@ -17,6 +17,8 @@ import { OAS_OBJECT } from '../di-tokens';
 import { OasRouteMeta } from '../types/oas-route-meta';
 import { DEFAULT_OAS_OBJECT } from '../constants';
 import { isOasGuard } from '../utils/type-guards';
+import { isModuleWithParams } from '@ditsmod/core/src/edk';
+import { OpenapiModule } from '../openapi.module';
 
 @Injectable()
 export class OpenapiCompilerExtension implements edk.Extension<XOasObject | false> {
@@ -46,8 +48,16 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
   protected async compileOasObject(aMetadataPerMod2: edk.MetadataPerMod2[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
-    aMetadataPerMod2.forEach((metadataPerMod2) => {
-      const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
+    for (const metadataPerMod2 of aMetadataPerMod2) {
+      const { aControllersMetadata2, providersPerMod, module: modOrObj } = metadataPerMod2;
+
+      // Hide internal APIs for OpenAPI
+      if (isModuleWithParams(modOrObj) && modOrObj.module === OpenapiModule) {
+        continue;
+      } else if (modOrObj === OpenapiModule) {
+        continue;
+      }
+
       aControllersMetadata2.forEach(({ providersPerRou }) => {
         const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
@@ -66,7 +76,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
           this.applyNonOasRoute(path, paths, oasRouteMeta, guards);
         }
       });
-    });
+    }
 
     this.oasObject.paths = paths;
 
