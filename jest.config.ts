@@ -9,4 +9,5 @@ module.exports = {
     '@ditsmod/router': '<rootDir>/packages/router/src',
     '@ditsmod/session-cookie': '<rootDir>/packages/session-cookie/src',
   },
+  projects: [ '<rootDir>/packages/*/jest.config.ts'],
 };
