@@ -1287,7 +1287,8 @@ describe('ModuleFactory', () => {
   describe('getControllersMetadata()', () => {
     it('without @Controller decorator', () => {
       mock.meta.controllers = [class Controller1 {}];
-      expect(() => mock.getControllersMetadata()).toThrowError(/Collecting controller's metadata failed: class/);
+      const msg = `Collecting controller's metadata in MockModule failed: class "Controller1"`;
+      expect(() => mock.getControllersMetadata()).toThrowError(msg);
     });
 
     it('controller with multiple @Route on single method', () => {
