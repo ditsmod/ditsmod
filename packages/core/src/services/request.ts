@@ -12,12 +12,12 @@ export class Req {
    * Object with path params.
    * For example, route `/api/resource/:param1/:param2` have two params.
    */
-  pathParams?: any = {};
+  pathParams?: any;
   /**
    * Array with path params.
    * For example, route `/api/resource/:param1/:param2` have two params.
    */
-  aPathParams?: PathParam[] = [];
+  aPathParams?: PathParam[];
   /**
    * This value is set after checking `guard.canActivate()` and before parse the request body.
    * Here is the result of the `querystring.parse()` function,
@@ -35,7 +35,7 @@ export class Req {
    * Payload of JSON Web Token. For this parameter, request is not automatically parsed.
    * To get JWT payload, you can use the `@ditsmod/jwt` module.
    */
-  jwtPayload: any;
+  jwtPayload?: any;
 
   constructor(
     @Inject(NODE_REQ) public readonly nodeReq: NodeRequest,
