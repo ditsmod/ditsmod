@@ -72,7 +72,7 @@ describe('Content', () => {
     };
     expect(content).toEqual(expectContent);
   });
-  it('array of Model1 with cyclic reference', () => {
+  it('array of Model1 with circular references', () => {
     class Model1 {
       @Column()
       property1: string;
@@ -132,7 +132,7 @@ describe('Content', () => {
     expect(content).toEqual(expectContent);
   });
 
-  it('cyclic reference', () => {
+  it('circular references', () => {
     class Model1 {
       @Column()
       property1: string;

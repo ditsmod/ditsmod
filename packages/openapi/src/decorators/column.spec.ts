@@ -10,7 +10,7 @@ describe('@Column', () => {
     expect(reflector.propMetadata(Model1)).toEqual({});
   });
 
-  it('properly structure of model metadata with empty value', () => {
+  it('empty value', () => {
     class Model1 {
       @Column()
       prop1: string;
@@ -24,14 +24,14 @@ describe('@Column', () => {
     const actualMeta = reflector.propMetadata(Model1);
     // console.log(actualMeta);
     const expectedMeta: ColumnDecoratorMetadata = {
-      prop1: [String, { schema: undefined, arrayModel: undefined }],
-      prop2: [String, { schema: undefined, arrayModel: undefined }],
-      prop3: [String, { schema: undefined, arrayModel: undefined }, { schema: undefined, arrayModel: undefined }],
+      prop1: [String, { schema: undefined, arrayModels: undefined }],
+      prop2: [String, { schema: undefined, arrayModels: undefined }],
+      prop3: [String, { schema: undefined, arrayModels: undefined }, { schema: undefined, arrayModels: undefined }],
     };
     expect(actualMeta).toEqual(expectedMeta);
   });
 
-  it('properly structure of model metadata with some value', () => {
+  it('object', () => {
     class Model1 {
       @Column({
         type: 'string',
@@ -49,7 +49,45 @@ describe('@Column', () => {
             type: 'string',
             minimum: 1,
           },
-          arrayModel: undefined,
+          arrayModels: undefined,
+        },
+      ],
+    };
+    expect(actualMeta).toEqual(expectedMeta);
+  });
+
+  it('array with one item', () => {
+    class Model1 {
+      @Column({}, Boolean)
+      prop1: Boolean[];
+    }
+
+    const actualMeta = reflector.propMetadata(Model1);
+    const expectedMeta: ColumnDecoratorMetadata = {
+      prop1: [
+        Array,
+        {
+          schema: {},
+          arrayModels: Boolean,
+        },
+      ],
+    };
+    expect(actualMeta).toEqual(expectedMeta);
+  });
+
+  it('array with multi items', () => {
+    class Model1 {
+      @Column({}, Boolean, String)
+      prop1: [Boolean, String];
+    }
+
+    const actualMeta = reflector.propMetadata(Model1);
+    const expectedMeta: ColumnDecoratorMetadata = {
+      prop1: [
+        Array,
+        {
+          schema: {},
+          arrayModels: [Boolean, String],
         },
       ],
     };

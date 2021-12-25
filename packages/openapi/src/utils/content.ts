@@ -92,7 +92,7 @@ export class Content {
     decoratorItem: ColumnDecoratorItem
   ) {
     let schema = { ...decoratorItem.schema } || {};
-    const { arrayModel } = decoratorItem;
+    const { arrayModels: arrayModel } = decoratorItem;
     if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {
       schema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;
     } else if (propertyType instanceof Type) {
@@ -113,7 +113,11 @@ export class Content {
       } else {
         this.scanInProgress.add(model);
         if (arrayModel) {
-          schema.items = this.getSchema(arrayModel);
+          if (Array.isArray(arrayModel)) {
+            schema.items = arrayModel.map((modelItem) => this.getSchema(modelItem));
+          } else {
+            schema.items = this.getSchema(arrayModel);
+          }
         } else {
           schema.items = [];
         }
