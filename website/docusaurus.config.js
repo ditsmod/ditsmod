@@ -1,4 +1,3 @@
-
 const i18n = require('./i18n');
 
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
@@ -110,8 +109,10 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl:
-            'https://github.com/ditsmod/ditsmod/edit/main/website/',
+          editUrl: ({ version, versionDocsDirPath, docPath, locale }) =>
+            locale == 'en'
+              ? `https://github.com/ditsmod/ditsmod/edit/main/website/i18n/en/docusaurus-plugin-content-docs/${version}/${docPath}`
+              : `https://github.com/ditsmod/ditsmod/edit/main/website/${versionDocsDirPath}/${docPath}`,
         },
         // blog: {
         //   showReadingTime: true,
