@@ -12,11 +12,6 @@ module.exports = {
   organizationName: 'ditsmod', // Usually your GitHub org/user name.
   projectName: 'ditsmod.github.io', // Usually your repo name.
   themeConfig: {
-    gtag: {
-      trackingID: 'G-JB9Z2HZH02',
-      // Optional fields.
-      // anonymizeIP: true, // Should IPs be anonymized?
-    },
     navbar: {
       title: 'Головна',
       logo: {
@@ -107,6 +102,11 @@ module.exports = {
     [
       '@docusaurus/preset-classic',
       {
+        gtag: {
+          trackingID: 'G-JB9Z2HZH02',
+          // Optional fields.
+          // anonymizeIP: true, // Should IPs be anonymized?
+        },
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: ({ version, versionDocsDirPath, docPath, locale }) =>
