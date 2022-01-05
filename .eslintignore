@@ -9,3 +9,5 @@ coverage/*
 # custom definition files
 /src/types/
 /website
+packages/logger
+packages/openapi/src/swagger-ui/swagger.config.ts
