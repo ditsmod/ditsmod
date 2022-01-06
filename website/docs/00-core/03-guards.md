@@ -4,19 +4,18 @@ sidebar_position: 3
 
 # Guards (охоронці)
 
-## Гарди без параметрів
+## Ґарди
 
-Якщо вам необхідно щоб до певних маршрутів мали доступ, наприклад, лише авторизовані користувачі,
-ви можете у третьому параметрі декоратора `Route` в масиві указати `AuthGuard`:
+Якщо ви хочете обмежити доступ до певних маршрутів, ви можете у третьому параметрі декоратора `Route` в масиві передати `AuthGuard`:
 
 ```ts
-import { Controller, Response, Route } from '@ditsmod/core';
+import { Controller, Res, Route } from '@ditsmod/core';
 
 import { AuthGuard } from './auth.guard';
 
 @Controller()
 export class SomeController {
-  constructor(private res: Response) {}
+  constructor(private res: Res) {}
 
   @Route('GET', 'some-url', [AuthGuard])
   tellHello() {
@@ -25,7 +24,9 @@ export class SomeController {
 }
 ```
 
-Будь-який guard повинен впроваджувати інтерфейс `CanActivate`:
+Готовий приклад застосунку із ґардом ви можете проглянути у теці [examples][1], або у [RealWorld example][2].
+
+Будь-який ґард повинен бути класом, що впроваджує інтерфейс `CanActivate`:
 
 ```ts
 interface CanActivate {
@@ -51,30 +52,32 @@ export class AuthGuard implements CanActivate {
 }
 ```
 
+Файли ґардів рекомендується називати із закінченням `*.guard.ts`, а імена їхніх класів - із закінченням `*Guard`.
+
 Якщо `canActivate()` повертає:
 
-- `true` чи `Promise<true>`, значить Ditsmod буде обробляти відповідний маршрут із цим гардом;
+- `true` чи `Promise<true>`, значить Ditsmod буде обробляти відповідний маршрут із цим ґардом;
 - `false` чи `Promise<false>`, значить відповідь на запит міститиме 401 статус і обробки маршруту
 з боку контролера не буде;
 - `number` чи `Promise<number>` Ditsmod інтерпретує це як номер статусу (403, 401 і т.п.),
 який треба повернути у відповіді на HTTP-запит.
 
-## Гарди з параметрами
+## Ґарди з параметрами
 
-У методі `canActivate()` гард має один параметр. Аргументи для цього параметру можна передавати
-у декораторі `Route` у масиві, де на першому місці йде певний гард.
+У методі `canActivate()` ґард має один параметр. Аргументи для цього параметру можна передавати
+у декораторі `Route` у масиві, де на першому місці йде певний ґард.
 
 Давайте розглянемо такий приклад:
 
 ```ts
-import { Controller, Response, Route } from '@ditsmod/core';
+import { Controller, Res, Route } from '@ditsmod/core';
 
 import { PermissionsGuard } from './permissions.guard';
 import { Permission } from './permission';
 
 @Controller()
 export class SomeController {
-  constructor(private res: Response) {}
+  constructor(private res: Res) {}
 
   @Route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
   tellHello() {
@@ -83,7 +86,7 @@ export class SomeController {
 }
 ```
 
-Як бачите, на місці третього параметра у `Route` передається масив в масиві, де на першому місці
+Як бачите, на місці третього параметра у `Route` передається масив в масивів, де на першому місці
 указано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard`
 отримає ці аргументи у своєму методі `canActivate()`:
 
@@ -107,3 +110,43 @@ export class PermissionsGuard implements CanActivate {
   }
 }
 ```
+
+## Оголошення ґардів
+
+Оскільки ґарди є підмножиною провайдерів, оголошуються вони у масиві провайдерів, але лише на рівні запиту. Це можна зробити або в контролері, або у модулі:
+
+```ts
+import { Module } from '@ditsmod/core';
+
+import { AuthGuard } from 'auth.guard';
+
+@Module({
+  providersPerReq: [AuthGuard],
+})
+export class SomeModule {}
+```
+
+## Встановлення ґардів на імпортований модуль
+
+Можна також централізовано підключати ґарди на рівні модуля:
+
+```ts
+import { Module } from '@ditsmod/core';
+
+import { OtherModule } from '../other/other.module';
+import { AuthModule } from '../auth/auth.module';
+import { AuthGuard } from '../auth/auth.guard';
+
+@Module({
+  imports: [
+    AuthModule,
+    { module: OtherModule, guards: [AuthGuard] }
+  ]
+})
+export class SomeModule {}
+```
+
+В такому разі `AuthGuard` буде автоматично додаватись до кожного маршруту в `OtherModule`.
+
+[1]: https://github.com/ditsmod/ditsmod/tree/main/examples/03-route-guards
+[2]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts

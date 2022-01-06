@@ -1,22 +1,21 @@
 ---
-sidebar_position: 4
+sidebar_position: 3
 ---
 
 # Guards
 
-## Guards without parameters
+## Guards
 
-If you want certain routes to be accessed, for example, only by authorized users, you can specify
-`AuthGuard` in the third parameter of the `Route` decorator in the array:
+If you want to restrict access to certain routes, you can pass `AuthGuard` in the third parameter of the `Route` decorator in the array:
 
 ```ts
-import { Controller, Response, Route } from '@ditsmod/core';
+import { Controller, Res, Route } from '@ditsmod/core';
 
 import { AuthGuard } from './auth.guard';
 
 @Controller()
 export class SomeController {
-  constructor(private res: Response) {}
+  constructor(private res: Res) {}
 
   @Route('GET', 'some-url', [AuthGuard])
   tellHello() {
@@ -25,7 +24,9 @@ export class SomeController {
 }
 ```
 
-Any guard must implement the `CanActivate` interface:
+You can view a ready-made example with guard in the [examples][1] folder or in the [RealWorld example][2].
+
+Any guard must be a class that implements the `CanActivate` interface:
 
 ```ts
 interface CanActivate {
@@ -51,6 +52,8 @@ export class AuthGuard implements CanActivate {
 }
 ```
 
+It is recommended that guard files end with `*.guard.ts` and that their class names end with `*Guard`.
+
 If `canActivate()` returns:
 
 - `true` or `Promise<true>`, so Ditsmod will handle the appropriate route with this guard;
@@ -67,14 +70,14 @@ passed in the decorator `Route` in an array where in the first place there is a 
 Let's look at the following example:
 
 ```ts
-import { Controller, Response, Route } from '@ditsmod/core';
+import { Controller, Res, Route } from '@ditsmod/core';
 
 import { PermissionsGuard } from './permissions.guard';
 import { Permission } from './permission';
 
 @Controller()
 export class SomeController {
-  constructor(private res: Response) {}
+  constructor(private res: Res) {}
 
   @Route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
   tellHello() {
@@ -107,3 +110,43 @@ export class PermissionsGuard implements CanActivate {
   }
 }
 ```
+
+## Guard declaration
+
+Because guards are a subset of providers, they are declared in an array of providers, but only at the request level. This can be done either in the controller or in the module:
+
+```ts
+import { Module } from '@ditsmod/core';
+
+import { AuthGuard } from 'auth.guard';
+
+@Module({
+  providersPerReq: [AuthGuard],
+})
+export class SomeModule {}
+```
+
+## Setting guards for the imported module
+
+You can also centrally connect the guards at the module level:
+
+```ts
+import { Module } from '@ditsmod/core';
+
+import { OtherModule } from '../other/other.module';
+import { AuthModule } from '../auth/auth.module';
+import { AuthGuard } from '../auth/auth.guard';
+
+@Module({
+  imports: [
+    AuthModule,
+    { module: OtherModule, guards: [AuthGuard] }
+  ]
+})
+export class SomeModule {}
+```
+
+In this case, `AuthGuard` will be automatically added to each route in `OtherModule`.
+
+[1]: https://github.com/ditsmod/ditsmod/tree/main/examples/03-route-guards
+[2]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
