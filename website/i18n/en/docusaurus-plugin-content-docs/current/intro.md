@@ -1,4 +1,5 @@
 ---
+slug: /
 sidebar_position: 1
 ---
 
@@ -12,20 +13,14 @@ good **Mod**ularity.
 
 The main features of Ditsmod:
 
-- Convenient mechanism for [specifying and resolving][8] between different application classes: you
-in constructor specify instances of which classes you need, and DI undertakes a difficult task
-"how to get it".
-- Ability to easily substitute default classes in the Ditsmod core with your own classes.
-For example, most likely, you will want to substitute the logger class with your own class, because
-default logger writes everything only to the console.
-- Ability to easily substitute the classes of your application with test classes (mocks, stubs),
-without changing the code of your application. This greatly simplifies testing.
-- Ditsmod is designed to provide good modularity of the entire application, and therefore good
-scalability. Its DI supports hierarchy, which means you can declare [singletons][12]: at the
-the application level, or at the module level, or at the route level, or at the HTTP request level.
+- Modular architecture on decorators, which allows you to declaratively describe the structure of the application.
+- Convenient mechanism for [specifying and resolving][8] between different application classes: you in constructor specify instances of which classes you need, and DI undertakes a difficult task "how to get it".
+- Ability to write your own extensions (sometimes called plugins) that can be asynchronously initialized and that can depend on each other.
+- Ability to dynamically add and remove modules after starting the web server, without the need to restart.
+- Has OpenAPI support.
+- To date, Ditsmod is one of the fastest among Node.js web frameworks.
 
-Some of the architecture concepts of this framework are taken from [Angular][9], and [DI][11]
-actually extracted from Angular v4.4.7. (with minimal modifications) and integrated into Ditsmod.
+Some concepts of Ditsmod architecture are taken from [Angular][9] concepts. Module [DI][11] is actually extracted from Angular v4.4.7. (with minimal modifications) and integrated into Ditsmod.
 
 ## Install the Ditsmod seed
 
@@ -33,7 +28,7 @@ The [ditsmod-seed][2] repository has the minimum basic set for application opera
 install the dependencies:
 
 ```bash
-git clone git@github.com:ditsmod/seed.git my-app
+git clone https://github.com/ditsmod/seed.git my-app
 cd my-app
 yarn
 ```
@@ -44,8 +39,7 @@ yarn
 yarn start
 ```
 
-You can use this to develop an application, because after each save of your code, you will be able
-to see these changes immediately.
+You can use this command to develop an application, because every time you save your code, you immediately see these changes.
 
 You can check the server with `curl`:
 
@@ -53,13 +47,16 @@ You can check the server with `curl`:
 curl -isS localhost:3000
 ```
 
-The application compiles using the command:
+Or just open the browser on [http://localhost:3000/](http://localhost:3000/).
+
+The application is compiled and the server is started in product mode using the command:
 
 ```bash
 yarn build
+yarn start-prod
 ```
 
-In addition, you can view more examples in the [examples][4] folder.
+In addition, you can view more examples in the [examples][4] folder, as well as in the repository [RealWorld][13].
 
 ## Entry file for Node.js
 
@@ -75,15 +72,9 @@ import { Application } from '@ditsmod/core';
 
 import { AppModule } from './app/app.module';
 
-new Application()
-  .bootstrap(AppModule)
-  .then(({ server, logger }) => {
-    server.on('error', (err) => logger.error(err));
-  })
-  .catch(({ err, logger }) => {
-    logger.fatal(err);
-    throw err;
-  });
+new Application().bootstrap(AppModule).catch((err) => {
+  console.log(err);
+});
 ```
 
 Once compiled, it becomes `dist/main.js` and becomes the entry point for running the application,
@@ -94,12 +85,9 @@ node dist/main.js
 ```
 
 Note the `import 'reflect-metadata'` in the first line of the file. This module is required for
-Ditsmod to work, but it is sufficient to specify it only once in the entry file for Node.js.
+Ditsmod decorators to work, but it is sufficient to specify it only once in the entry file for Node.js.
 
-It is desirable to remember this rule for the future, and to apply it also for writing of tests as
-in that case the entry file will be the test file, instead of `dist/main.js`. For example, if you
-use [jest][10] as a test runner, and the `test-file.js` file contains a compiled test, to run it
-like this:
+This import should also be done for tests, because when testing the input file will be a entry file, not `dist/main.js`. For example, if you use [jest][10] as a test framework and the `test-file.js` file contains a compiled test, to run it like this:
 
 ```bash
 jest test-file.js
@@ -120,3 +108,4 @@ is created, and as an argument for the method `bootstrap()` is passed `AppModule
 [10]: https://jestjs.io/en/
 [11]: https://github.com/ts-stack/di
 [12]: https://en.wikipedia.org/wiki/Singleton_pattern
+[13]: https://github.com/ditsmod/realworld
