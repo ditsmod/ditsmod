@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 5
 ---
 
 # Export and import
@@ -56,7 +56,7 @@ export class AppModule {}
 ```
 
 As you can see, in addition to exporting individual providers declared in the root module, you can
-also export entire modules.
+also export entire modules, and it is not necessary to import them.
 
 ## Import of the module
 
@@ -86,7 +86,7 @@ Note that when importing, the provider's declaration level remains the same as i
 exporting. For example, if `SomeService` was declared at the module level, then the same level
 will remain when importing.
 
-As you can see, the array `imports` accepts besides classes of modules, also the object, it have the
+The array `imports` accepts besides classes of modules, also the object with
 following interface:
 
 ```ts
@@ -106,10 +106,7 @@ interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
 Such object allows to transfer besides the module, also certain arguments for the listed
 parameters.
 
-You also have to keep in mind, that in the current module it is not forbidden to re-declare the
-level of the provider, which is written and already declared in the external module. But it is
-recommended to do this only if you solve [the collision of exported providers][121]. If you need
-a provider from an external module, import this external module completely.
+You should also keep in mind that the current module does not prohibit re-declaring the provider level already announced in the external module, but this is not recommended. If you need a provider from an external module, import this module completely.
 
 And if you want to use a provider that is not exported from an external module, it is also not
 recommended to do so, because you will rely on a non-public API, which can change at any time
