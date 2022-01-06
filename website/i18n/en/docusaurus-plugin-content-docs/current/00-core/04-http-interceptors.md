@@ -1,3 +1,7 @@
+---
+sidebar_position: 4
+---
+
 # HTTP Interceptors
 
 Interceptors are very close in functionality to controllers, but they do not create routes, they
@@ -54,16 +58,16 @@ As you can see, the `intercept()` method gets a single argument - this is the in
 handler that calls the next interceptor. If the interceptor needs certain data for the work, it
 can be received in constructor through DI, as well as in any service.
 
-Note that each call to the next interceptor returns `Promise<any>`, and it eventually leads to a
+Note that each call to the interceptor returns `Promise<any>`, and it eventually leads to a
 controller method tied to the corresponding route. This means that in the interceptor you can
 listen for the result of promice resolve, which returns the method of the controller.
 
-However, at the moment (v1.0.0), `HttpFrontend` and `HttpBackend` ignores everything that returns
+However, at the moment (Ditsmod v2.0.0), `HttpFrontend` and `HttpBackend` by default ignores everything that returns
 the controller or interceptors, so this promise resolve can be useful for other purposes - to
 collect metrics, logging, etc.
 
 On the other hand, through DI you can easily substitute `HttpFrontend` and `HttpBackend` with your
-own interceptors to take into account the value returned by the controller method.
+own interceptors to take into account the value returned by the controller method. By default, this is not done because sometimes the controller needs to be resumed works after sending an HTTP response.
 
 ## Declare interceptor
 
