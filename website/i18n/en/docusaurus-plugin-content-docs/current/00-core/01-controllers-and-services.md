@@ -16,16 +16,30 @@ import { Controller } from '@ditsmod/core';
 export class SomeController {}
 ```
 
+It is recommended that files of controllers end with `*.controller.ts` and that their class names end with `*Controller`.
+
+In general, you can transfer an object with the following properties to the `Controller` decorator:
+
+```ts
+import { Controller } from '@ditsmod/core';
+
+@Controller({
+  providersPerRou: [], // Route-level providers
+  providersPerReq: [] // Request-level providers
+})
+export class SomeController {}
+```
+
 The requests are tied to the methods of controllers through the routing system, using the decorator
 `Route`. The following example creates two routes that accept `GET` requests to `/hello` and
 `/throw-error`:
 
 ```ts
-import { Controller, Response, Route } from '@ditsmod/core';
+import { Controller, Res, Route } from '@ditsmod/core';
 
 @Controller()
 export class SomeController {
-  constructor(private res: Response) {}
+  constructor(private res: Res) {}
 
   @Route('GET', 'hello')
   tellHello() {
@@ -42,7 +56,7 @@ export class SomeController {
 What we see here:
 
 1. In the constructor of the class using `private` access modifier, the property of class `res`
-with data type `Response` is declared. So we ask Ditsmod to create an instance of the `Response`
+with data type `Res` is declared. So we ask Ditsmod to create an instance of the `Res`
 class and pass it to the `res` variable.
 2. Routes are created using the `Route` decorator, which is placed before the class method.
 3. Responses to HTTP requests are sent via `this.res.send()`.
@@ -54,25 +68,15 @@ The access modifier in the constructor can be any (private, protected or public)
 modifier - `res` will be a simple parameter with visibility only in the constructor.
 :::
 
-:::caution Don't forget to import Request and Response
-If you specify the `Request` or `Response` class in the constructor, don't forget to import them
-from _@ditsmod/core_! If you don't, your application will stop working, although the IDE may not tell
-you that you don't have these classes imported.
-
-The fact is that in TypeScript globally declared interfaces with exactly the same names - `Request`
-and `Response`. Because of this, your IDE can only say that these interfaces do not have certain
-properties that classes imported from _@ditsmod/core_ should have.
-:::
-
-To use `pathParams`, `queryParams` or `body`, you should ask the `Request` in the controller
+To use `pathParams`, `queryParams` or `body`, you should ask the `Req` in the controller
 constructor:
 
 ```ts
-import { Controller, Request, Response, Route } from '@ditsmod/core';
+import { Controller, Req, Res, Route } from '@ditsmod/core';
 
 @Controller()
 export class SomeController {
-  constructor(private req: Request, private res: Response) {}
+  constructor(private req: Req, private res: Res) {}
 
   @Route('GET', 'hello/:userName')
   tellHello() {
@@ -88,12 +92,13 @@ export class SomeController {
 }
 ```
 
-In constructor we received instances of classes `Request` and `Response`,
-they represent services.
+As you can see, to send responses with objects, you need to use the `this.res.sendJson()` method instead of `this.res.send()` (because it only sends text).
 
-### Declare the controller
+This example does not show, but remember that the native Node.js request object is in `this.req.nodeReq`.
 
-You can declare a controller in any module, in the `controllers` array:
+### Binding of the controller to the module
+
+The controller is bound to the module through an array of `controllers`:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -106,7 +111,56 @@ import { SomeController } from './first.controller';
 export class SomeModule {}
 ```
 
+## Routes prefixes
+
+If a non-root module is imported with a prefix, this prefix will be added to all routes within this
+module:
+
+```ts
+import { Module } from '@ditsmod/core';
+
+import { FirstModule } from './first.module';
+import { SecondModule } from './second.module';
+
+@Module({
+  imports: [
+    { prefix: 'some-prefix', module: FirstModule }
+    { prefix: 'other-prefix/:pathParam', module: SecondModule }
+  ]
+})
+export class ThridModule {}
+```
+
+Here, the entry `:pathParam` means not just text, but a parameter - a variable part in the URL
+before the query parameters.
+
+If you specify `prefixPerApp` in the root module, this prefix will be added to all routes in the
+whole application:
+
+```ts
+import { RootModule } from '@ditsmod/core';
+
+import { SomeModule } from './some.module';
+
+@RootModule({
+  prefixPerApp: 'api',
+  imports: [SomeModule]
+})
+export class AppModule {}
+```
+
+Controllers are required to be able to handle certain URL routes.
+
 ## Sevices
+
+What services can do:
+
+- provide configuration;
+- validate the request;
+- parsing the body of the HTTP request;
+- check access permissions;
+- works with databases, with mail:
+- etc.
 
 The TypeScript class becomes a Ditsmod service with `Injectable` decorator:
 
@@ -116,6 +170,8 @@ import { Injectable } from '@ts-stack/di';
 @Injectable()
 export class SomeService {}
 ```
+
+It is recommended that service files end with `*.service.ts` and that their class names end with `*Service`.
 
 Note that this decorator is imported from `@ts-stack/di`, not from `@ditsmod/core`.
 Examples of Ditsmod services:
@@ -127,7 +183,7 @@ Examples of Ditsmod services:
 - etc.
 
 Often some services depend on other services, and to get an instance of a particular service, you
-need specify their classes in the constructor:
+need specify its class in the constructor:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -146,7 +202,4 @@ export class SecondService {
 
 As you can see, the rules for obtaining a class instance in the service are the same as in the
 controller. That is, we in the constructor with `private` access modifier declare property of
-class `firstService` with data type `FirstService`. Instances in constructor are created by [DI][8].
-
-
-[8]: https://en.wikipedia.org/wiki/Dependency_injection
+class `firstService` with data type `FirstService`.
