@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 6
 ---
 
 # Collision of providers
@@ -14,8 +14,7 @@ worked.
 To prevent this from happening, if you import two or more modules that export providers with the
 same token, Ditsmod will throw the following error:
 
-> Error: Exporting providers in Module1 was failed: Collision was found for:
-> Service3. You should manually add this provider to Module1.
+> Error: Importing providers to Module1 failed: exports from Module2 and Module3 causes collision with Service3. You should add this provider to resolvedCollisionsPer* in Module1. For example: resolvedCollisionsPerReq: [ [Service3, Module3] ].
 
 Specifically in this case:
 
@@ -25,18 +24,15 @@ Specifically in this case:
 And since both of these modules are imported into `Module1`, this causes a "provider collisions",
 because the developer may not know which of these substitutions will work in `Module1`.
 
-This error can be avoided by duplicating the provider's declaration at the desired level with the
-same token:
+Given the level at which providers are declared, the collision is resolved by adding to `resolvedCollisionsPer*` an array of two elements, with the provider's token in the first place and the module from which the provider needs to be taken in the second place:
 
 ```ts
 import { Module2 } from './module2';
-import { Module3, ServiceFromModule3 } from './module3';
+import { Module3, Service3 } from './module3';
 
 @Module({
-  imports: [Module2, Module3]
-  providersPerReq: [{ provide: Service3, useClass: ServiceFromModule3 }]
+  imports: [Module2, Module3],
+  resolvedCollisionsPerReq: [ [Service3, Module3] ]
 })
 export class Module1 {}
 ```
-
-This way you explicitly resolve the conflict with `Service3`.

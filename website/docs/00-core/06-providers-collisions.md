@@ -14,8 +14,7 @@ sidebar_position: 6
 Щоб цього не сталось, якщо ви імпортуєте два або більше модулі, в яких експортуються провайдери
 з однаковим токеном, Ditsmod кидатиме приблизно таку помилку:
 
-> Error: Exporting providers in Module1 was failed: Collision was found for:
-> Service3. You should manually add this provider to Module1.
+> Error: Importing providers to Module1 failed: exports from Module2 and Module3 causes collision with Service3. You should add this provider to resolvedCollisionsPer* in Module1. For example: resolvedCollisionsPerReq: [ [Service3, Module3] ].
 
 Конкретно у цій ситуації:
 
@@ -25,18 +24,15 @@ sidebar_position: 6
 І оскільки обидва цих модулі імпортуються у `Module1`, якраз тому і виникає "колізія провайдерів",
 розробник може не знати яка із цих підмін буде працювати в `Module1`.
 
-Даної помилки можна уникнути, якщо продублювати оголошення провайдера на потрібному рівні із цим
-же токеном:
+Враховуючи рівень, на якому оголошено провайдери, колізія вирішується шляхом додавання до `resolvedCollisionsPer*` масиву з двох елементів, де на першому місці йде токен провайдера, а на другому - модуль, з якого потрібно брати відповідний провайдер:
 
 ```ts
 import { Module2 } from './module2';
-import { Module3, ServiceFromModule3 } from './module3';
+import { Module3, Service3 } from './module3';
 
 @Module({
-  imports: [Module2, Module3]
-  providersPerReq: [{ provide: Service3, useClass: ServiceFromModule3 }]
+  imports: [Module2, Module3],
+  resolvedCollisionsPerReq: [ [Service3, Module3] ]
 })
 export class Module1 {}
 ```
-
-Таким чином ви явно вирішуєте колізію із `Service3`.
