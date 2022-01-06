@@ -4,7 +4,7 @@ sidebar_position: 0
 
 # Modules
 
-## Non-root Ditsmod module
+## Ditsmod module
 
 Generally speaking, the module should have a set of classes with a narrow specialization.
 A well-designed module does not have to be a "universal combine".
@@ -26,6 +26,17 @@ import { Module } from '@ditsmod/core';
 export class SomeModule {}
 ```
 
+It is recommended that module files end in `*.module.ts` and that their class names end in `*Module`.
+
+Ditsmod uses several decorators. But why decorators? Because they allow to scan classes. Thanks to decorators, you can programmatically recognize:
+- what conventional role is assigned to a certain class (role of module, controller, service, etc.);
+- whether the class has a constructor and what parameters it has;
+- whether the class has methods and what parameters they have;
+- whether there are other properties of the class;
+- other metadata is transferred to the decorator.
+
+Decorators allow you to declaratively describe the structure of the application, and therefore you can easily view the connections of some modules with others.
+
 In general, an object with the following properties can be passed to the `Module` decorator:
 
 ```ts
@@ -33,14 +44,18 @@ import { Module } from '@ditsmod/core';
 
 @Module({
   imports: [], // Import modules
-  controllers: [],
+  controllers: [], // Binding controllers to the module
   providersPerApp: [], // Application-level providers
   providersPerMod: [], // Module-level providers
   providersPerRou: [], // Route-level providers
   providersPerReq: [], // Request-level providers
   exports: [], // Export modules and providers from the current module
   extensions: [],
-  extensionsMeta: {} // Data for extensions
+  extensionsMeta: {}, // Data for extensions
+  resolvedCollisionsPerMod: [], // Collision resolution of imported classes at the module level
+  resolvedCollisionsPerRou: [], //                                    ...at the route level
+  resolvedCollisionsPerReq: [], //                                    ...at the request level
+  id: '', // Can be used to dynamically add or remove modules
 })
 export class SomeModule {}
 ```
@@ -58,7 +73,7 @@ import { RootModule } from '@ditsmod/core';
 export class AppModule {}
 ```
 
-It can contain information for both the HTTP server and the module itself. In general, an object
+It can contain metadata for both the HTTP server and the module itself. In general, an object
 with the following properties can be passed to the `RootModule` decorator:
 
 ```ts
@@ -66,13 +81,13 @@ import * as http from 'http';
 import { RootModule } from '@ditsmod/core';
 
 @RootModule({
-  // Data for the HTTP server
+  // Metadata for the HTTP server
   httpModule: http,
   listenOptions: { host: 'localhost', port: 3000 },
   serverName: 'Node.js',
   serverOptions: {},
 
-  // Data for the module, plus - a prefix that will be added to all routes
+  // Metadata for the module, plus - a prefix that will be added to all routes
   prefixPerApp: 'api',
   imports: [],
   controllers: [],
@@ -82,48 +97,11 @@ import { RootModule } from '@ditsmod/core';
   providersPerReq: [],
   exports: [],
   extensions: [],
-  extensionsMeta: {}
+  extensionsMeta: {},
+  resolvedCollisionsPerApp: [],
+  resolvedCollisionsPerMod: [],
+  resolvedCollisionsPerRou: [],
+  resolvedCollisionsPerReq: [],
 })
 export class AppModule {}
 ```
-
-## Routes prefixes
-
-If a non-root module is imported with a prefix, this prefix will be added to all routes within this
-module:
-
-```ts
-import { Module } from '@ditsmod/core';
-
-import { FirstModule } from './first.module';
-import { SecondModule } from './second.module';
-
-@Module({
-  imports: [
-    { prefix: 'some-prefix', module: FirstModule }
-    { prefix: 'other-prefix/:pathParam', module: SecondModule }
-  ]
-})
-export class ThridModule {}
-```
-
-Here, the entry `:pathParam` means not just text, but a parameter - a variable part in the URL
-before the query parameters.
-
-If you specify `prefixPerApp` in the root module, this prefix will be added to all routes in the
-whole application:
-
-```ts
-import { RootModule } from '@ditsmod/core';
-
-import { SomeModule } from './some.module';
-
-@RootModule({
-  prefixPerApp: 'api',
-  imports: [SomeModule]
-})
-export class AppModule {}
-```
-
-Controllers are required to be able to handle certain URL routes.
-

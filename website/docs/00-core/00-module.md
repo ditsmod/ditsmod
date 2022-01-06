@@ -4,7 +4,7 @@ sidebar_position: 0
 
 # Модулі
 
-## Некореневий модуль Ditsmod
+## Модуль Ditsmod
 
 Якщо говорити дуже узагальнено, модуль повинен об'єднувати у собі набір класів, що мають вузьку
 спеціалізацію. Добре оформлений модуль не повинен бути "універсальним комбайном".
@@ -13,7 +13,7 @@ sidebar_position: 0
 застосунком. Тут не повинні оголошуватись класи, наприклад, що перекладають
 повідомлення різними мовами, що відправляють пошту, що пишуть логи і т.п.
 
-Коли конкретний модуль прив'язаний до певного URL - це теж хороша практика, і це теж можна вважати
+Коли конкретний модуль прив'язують до певного URL - це теж хороша практика, і це теж можна вважати
 "вузькою спеціалізацією". Наприклад, один модуль може обробляти усі HTTP-запити за адресою
 `/api/users`, інший модуль - за адресою `/api/posts`.
 
@@ -26,6 +26,17 @@ import { Module } from '@ditsmod/core';
 export class SomeModule {}
 ```
 
+Файли модулів рекомендується називати із закінченням `*.module.ts`, а назви їхніх класів - із закінченням `*Module`.
+
+У Ditsmod використовується декілька декораторів. Але чому саме декоратори? Тому що вони дозволяють сканувати класи. Завдяки декораторам, можна програмно розпізнавати:
+- яку умовну роль закріплено за певним класом (роль модуля, контролера, сервіса і т.п.);
+- чи має клас конструктор та які параметри він має;
+- чи є у класа методи і які параметри вони мають;
+- чи є інші властивості класу;
+- інші метадані передані у декоратор.
+
+Декоратори дозволяють декларативно описувати структуру застосунку, а тому можна легко проглядати зв'язки одних модулей з іншими.
+
 Загалом, в декоратор `Module` можна передавати об'єкт із такими властивостями:
 
 ```ts
@@ -33,14 +44,18 @@ import { Module } from '@ditsmod/core';
 
 @Module({
   imports: [], // Імпорт модулів
-  controllers: [],
+  controllers: [], // Прив'язка контролерів до модуля
   providersPerApp: [], // Провайдери на рівні застосунку
-  providersPerMod: [], // Провайдери на рівні модуля
-  providersPerRou: [], // Провайдери на рівні роуту
-  providersPerReq: [], // Провайдери на рівні запиту
+  providersPerMod: [], //         ...на рівні модуля
+  providersPerRou: [], //         ...на рівні роуту
+  providersPerReq: [], //         ...на рівні запиту
   exports: [], // Експорт модулів та провайдерів із поточного модуля
   extensions: [], // Розширення
-  extensionsMeta: {} // Дані для роботи розширень
+  extensionsMeta: {}, // Дані для роботи розширень
+  resolvedCollisionsPerMod: [], // Вирішення колізій імпортованих класів на рівні модуля
+  resolvedCollisionsPerRou: [], //                                    ...на рівні роута
+  resolvedCollisionsPerReq: [], //                                    ...на рівні запиту
+  id: '', // Може використовуватись для динамічного додавання чи видалення модулів
 })
 export class SomeModule {}
 ```
@@ -58,7 +73,7 @@ import { RootModule } from '@ditsmod/core';
 export class AppModule {}
 ```
 
-Він може містити інформацію як для HTTP-сервера так і для самого модуля.
+Він може містити метадані як для HTTP-сервера так і для самого модуля.
 Загалом, в декоратор `RootModule` можна передавати об'єкт із такими властивостями:
 
 ```ts
@@ -66,13 +81,13 @@ import * as http from 'http';
 import { RootModule } from '@ditsmod/core';
 
 @RootModule({
-  // Дані для HTTP-сервера
+  // Метадані для HTTP-сервера
   httpModule: http,
   listenOptions: { host: 'localhost', port: 3000 },
   serverName: 'Node.js',
   serverOptions: {},
 
-  // Дані для модуля, плюс - префікс, що додаватиметься до усіх маршрутів
+  // Метадані для модуля, плюс - префікс, що додаватиметься до усіх маршрутів
   prefixPerApp: 'api',
   imports: [],
   controllers: [],
@@ -82,48 +97,11 @@ import { RootModule } from '@ditsmod/core';
   providersPerReq: [],
   exports: [],
   extensions: [],
-  extensionsMeta: {}
+  extensionsMeta: {},
+  resolvedCollisionsPerApp: [],
+  resolvedCollisionsPerMod: [],
+  resolvedCollisionsPerRou: [],
+  resolvedCollisionsPerReq: [],
 })
 export class AppModule {}
 ```
-
-## Префікси маршрутів
-
-Якщо некореневий модуль імпортувати з префіксом, даний префікс буде додаватись до усіх маршрутів
-(роутів), в межах цього модуля:
-
-```ts
-import { Module } from '@ditsmod/core';
-
-import { FirstModule } from './first.module';
-import { SecondModule } from './second.module';
-
-@Module({
-  imports: [
-    { prefix: 'some-prefix', module: FirstModule }
-    { prefix: 'other-prefix/:pathParam', module: SecondModule }
-  ]
-})
-export class ThridModule {}
-```
-
-Тут під записом `:pathParam` мається на увазі не просто текст, а саме параметр - змінна частина
-в URL перед query параметрами.
-
-Якщо ж в кореневому модулі указати `prefixPerApp`, цей префікс буде додаватись до усіх маршрутів
-в усьому застосунку:
-
-```ts
-import { RootModule } from '@ditsmod/core';
-
-import { SomeModule } from './some.module';
-
-@RootModule({
-  prefixPerApp: 'api',
-  imports: [SomeModule]
-})
-export class AppModule {}
-```
-
-Для повноцінної роботи, щоб можна було обробляти певні URL маршрути, потрібні контролери.
-
