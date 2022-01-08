@@ -143,7 +143,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
   ) {
     const httpMethod = routeMeta.httpMethod.toLowerCase();
     const parameters: XParameterObject[] = [];
-    path = `/${path}`.replace(/:([^\/]+)/g, (_, name) => {
+    path = `/${path}`.replace(/:([^/]+)/g, (_, name) => {
       parameters.push({ in: 'path', name, required: true });
       return `{${name}}`;
     });

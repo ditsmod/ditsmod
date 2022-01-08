@@ -97,7 +97,7 @@ describe('ModuleFactory', () => {
       })
       class AppModule {}
 
-      const msg = `Module2 failed: if "Provider1" is a provider,`;
+      const msg = 'Module2 failed: if "Provider1" is a provider,';
       expect(() => moduleManager.scanRootModule(AppModule)).toThrow(msg);
     });
 
@@ -469,7 +469,7 @@ describe('ModuleFactory', () => {
         const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
-        const msg = `Module6 failed: if "Provider2" is a provider`;
+        const msg = 'Module6 failed: if "Provider2" is a provider';
         expect(() => moduleManager.scanModule(Module7)).toThrow(msg);
       });
     });
@@ -496,7 +496,7 @@ describe('ModuleFactory', () => {
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
-          const msg = `AppModule failed: exports from Module1, Module2 causes collision with Provider1.`;
+          const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider1.';
           expect(() => mock.exportGlobalProviders(moduleManager, [])).toThrow(msg);
         });
 
@@ -687,7 +687,7 @@ describe('ModuleFactory', () => {
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
-          const msg = `but Provider1 is a token of the multi providers,`;
+          const msg = 'but Provider1 is a token of the multi providers,';
           expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
@@ -867,7 +867,7 @@ describe('ModuleFactory', () => {
           class AppModule {}
 
           moduleManager.scanModule(AppModule);
-          const msg = `Module3 failed: exports from Module1, Module2 causes collision with Provider1.`;
+          const msg = 'Module3 failed: exports from Module1, Module2 causes collision with Provider1.';
           expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
       });
@@ -1159,7 +1159,7 @@ describe('ModuleFactory', () => {
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
-          const msg = `AppModule failed: Provider1 mapped with AppModule, but providersPerReq does not imports Provider1`;
+          const msg = 'AppModule failed: Provider1 mapped with AppModule, but providersPerReq does not imports Provider1';
           expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
@@ -1287,7 +1287,7 @@ describe('ModuleFactory', () => {
   describe('getControllersMetadata()', () => {
     it('without @Controller decorator', () => {
       mock.meta.controllers = [class Controller1 {}];
-      const msg = `Collecting controller's metadata in MockModule failed: class "Controller1"`;
+      const msg = 'Collecting controller\'s metadata in MockModule failed: class "Controller1"';
       expect(() => mock.getControllersMetadata()).toThrowError(msg);
     });
 

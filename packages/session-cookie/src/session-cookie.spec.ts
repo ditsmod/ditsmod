@@ -46,7 +46,7 @@ describe('@ditsmod/session-cookie', () => {
   });
 
   it('session config setted properly', async () => {
-    expect((session as any).opts).toEqual({ cookieName: config.cookieName, maxAge: config.maxAge })
+    expect((session as any).opts).toEqual({ cookieName: config.cookieName, maxAge: config.maxAge });
   });
 
   it('session stores and retrieves values properly', async () => {

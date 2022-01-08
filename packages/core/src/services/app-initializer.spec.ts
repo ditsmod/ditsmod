@@ -129,7 +129,7 @@ describe('AppInitializer', () => {
       class AppModule {}
 
       mock.meta = moduleManager.scanRootModule(AppModule);
-      const msg = `AppModule failed: Provider1 mapped with Module0, but Module0 is not imported`;
+      const msg = 'AppModule failed: Provider1 mapped with Module0, but Module0 is not imported';
       expect(() => mock.prepareProvidersPerApp()).toThrow(msg);
     });
 
@@ -193,7 +193,7 @@ describe('AppInitializer', () => {
       class AppModule {}
 
       mock.meta = moduleManager.scanRootModule(AppModule);
-      expect(() => mock.prepareProvidersPerApp()).toThrow(`Provider1 is a token of the multi providers`);
+      expect(() => mock.prepareProvidersPerApp()).toThrow('Provider1 is a token of the multi providers');
     });
 
     it('should throw an error because resolvedCollisionsPerApp not properly setted provider', () => {
@@ -219,7 +219,7 @@ describe('AppInitializer', () => {
       class AppModule {}
 
       mock.meta = moduleManager.scanRootModule(AppModule);
-      const msg = `AppModule failed: Provider1 mapped with Module0, but providersPerApp does not includes Provider1`;
+      const msg = 'AppModule failed: Provider1 mapped with Module0, but providersPerApp does not includes Provider1';
       expect(() => mock.prepareProvidersPerApp()).toThrow(msg);
     });
 
@@ -429,7 +429,7 @@ describe('AppInitializer', () => {
       expect(tokensPerReq).toEqual([Provider5, Provider6, Provider7]);
 
       // Global providers per a module
-      const perMod = mod?.importedTokensMap.perMod!;
+      const perMod = mod?.importedTokensMap?.perMod!;
       const expectedPerMod = new ImportObj();
 
       expectedPerMod.module = Module0;

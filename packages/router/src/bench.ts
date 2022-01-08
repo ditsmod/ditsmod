@@ -44,6 +44,7 @@ async function runBench() {
     }
 
     try {
+      /* eslint-disable  @typescript-eslint/no-var-requires */
       const fullLib = require(loadFrom);
       const Router = lib.routerClass ? fullLib[lib.routerClass] : fullLib;
       let router: any;

@@ -68,7 +68,7 @@ export class AppInitializer {
     const defaultTokens = getTokens(defaultProvidersPerApp);
     const rootTokens = getTokens(this.meta.providersPerApp);
     const mergedTokens = [...exportedTokens, ...defaultTokens];
-    let exportedTokensDuplicates = getDuplicates(mergedTokens).filter(
+    const exportedTokensDuplicates = getDuplicates(mergedTokens).filter(
       (d) => ![...resolvedTokens, ...rootTokens, ...exportedMultiTokens].includes(d)
     );
     const mergedProviders = [...defaultProvidersPerApp, ...exportedProviders];
@@ -143,7 +143,7 @@ export class AppInitializer {
       if (isMultiProvider(provider)) {
         errorMsg +=
           `${tokenName} is a token of the multi providers, and in this case ` +
-          `it should not be included in resolvedCollisionsPerApp.`;
+          'it should not be included in resolvedCollisionsPerApp.';
         throw new Error(errorMsg);
       }
       resolvedProviders.push(provider);

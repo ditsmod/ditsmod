@@ -110,7 +110,7 @@ export class LogMediator {
       const inputConfig = item.filterConfig;
       let hasTags: boolean | undefined = true;
       let hasModuleName: boolean | undefined = true;
-      let hasClassName: boolean | undefined = true;
+      const hasClassName: boolean | undefined = true;
       if (outputConfig.modulesNames) {
         hasModuleName = inputConfig.modulesNames?.some((tag) => outputConfig.modulesNames?.includes(tag));
       }

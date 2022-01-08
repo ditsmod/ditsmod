@@ -372,7 +372,7 @@ export class ModuleManager {
     if (isRootModule(rawMeta)) {
       resolvedCollisionsPerScope.push(...(rawMeta.resolvedCollisionsPerApp || []));
     }
-    resolvedCollisionsPerScope.forEach(([token]) => this.throwIfNormalizedProvider(modName, token))
+    resolvedCollisionsPerScope.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
 
     rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
@@ -473,8 +473,8 @@ export class ModuleManager {
       const lowerImOrEx = imOrEx.toLowerCase();
       const msg =
         `${imOrEx}porting into "${modName}" failed: element at ${lowerImOrEx}ports[${i}] has "undefined" type. ` +
-        `This can be caused by circular dependency. Try to replace this element with this expression: ` +
-        `"forwardRef(() => YourModule)". Tip: "forwardRef" has @ts-stack/di module.`;
+        'This can be caused by circular dependency. Try to replace this element with this expression: ' +
+        '"forwardRef(() => YourModule)". Tip: "forwardRef" has @ts-stack/di module.';
       throw new Error(msg);
     }
   }
@@ -502,7 +502,7 @@ export class ModuleManager {
     const tokenName = token.name || token;
     const msg =
       `Exporting from "${modName}" failed: if "${tokenName}" is a token of a provider, this provider ` +
-      `must be included in providersPerReq or in providersPerRou, or in providersPerMod. ` +
+      'must be included in providersPerReq or in providersPerRou, or in providersPerMod. ' +
       `If "${tokenName}" is a token of extension, this extension must be included in "extensions" array.`;
     throw new TypeError(msg);
   }
@@ -512,7 +512,7 @@ export class ModuleManager {
       const providerName = provider.provide.name || provider.provide;
       const msg =
         `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
-        `"resolvedCollisionPer*" array must be includes tokens only.`;
+        '"resolvedCollisionPer*" array must be includes tokens only.';
       throw new TypeError(msg);
     }
   }

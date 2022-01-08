@@ -88,7 +88,7 @@ describe('ModuleManager', () => {
       @Module({ imports: [Module1] })
       class Module2 {}
 
-      expect(() => mock.scanModule(Module2)).toThrow(`Validation Module2 failed: this module should have`);
+      expect(() => mock.scanModule(Module2)).toThrow('Validation Module2 failed: this module should have');
     });
 
     it('should not throw an error, when exports some provider', () => {
@@ -206,7 +206,7 @@ describe('ModuleManager', () => {
     @Module()
     class Module1 {}
 
-    expect(() => mock.scanRootModule(Module1)).toThrow(`"Module1" does not have the "@RootModule()" decorator`);
+    expect(() => mock.scanRootModule(Module1)).toThrow('"Module1" does not have the "@RootModule()" decorator');
   });
 
   it('root module imported module without @Module decorator', () => {
@@ -215,7 +215,7 @@ describe('ModuleManager', () => {
     @RootModule({ imports: [Module1] })
     class Module2 {}
 
-    expect(() => mock.scanRootModule(Module2)).toThrow(`"Module1" does not have the "@Module()" decorator`);
+    expect(() => mock.scanRootModule(Module2)).toThrow('"Module1" does not have the "@Module()" decorator');
   });
 
   it('module reexported another module without @Module decorator', () => {
@@ -244,7 +244,7 @@ describe('ModuleManager', () => {
     @Module({ providersPerReq: [Provider1], exports: [{ provide: Provider1, useClass: Provider1 }] })
     class Module2 {}
 
-    expect(() => mock.scanModule(Module2)).toThrow(`failed: in "exports" array must be includes tokens only`);
+    expect(() => mock.scanModule(Module2)).toThrow('failed: in "exports" array must be includes tokens only');
   });
 
   it('module exported invalid extension', () => {
@@ -255,7 +255,7 @@ describe('ModuleManager', () => {
     @Module({ extensions: [[TEST_EXTENSIONS, Extension1 as any, true]] })
     class Module2 {}
 
-    expect(() => mock.scanModule(Module2)).toThrow(`must have init() method`);
+    expect(() => mock.scanModule(Module2)).toThrow('must have init() method');
   });
 
   it('module exported valid extension', () => {
@@ -764,7 +764,7 @@ describe('ModuleManager', () => {
       @RootModule({ exports: [MY_EXTENSIONS] })
       class AppModule {}
 
-      const msg = `is a token of extension, this extension must be included in`;
+      const msg = 'is a token of extension, this extension must be included in';
       expect(() => mock.scanRootModule(AppModule)).toThrow(msg);
     });
 
@@ -772,7 +772,7 @@ describe('ModuleManager', () => {
       @RootModule({ exports: [MY_EXTENSIONS] })
       class AppModule {}
 
-      const msg = `is a token of extension, this extension must be included in`;
+      const msg = 'is a token of extension, this extension must be included in';
       expect(() => mock.scanRootModule(AppModule)).toThrow(msg);
     });
   });

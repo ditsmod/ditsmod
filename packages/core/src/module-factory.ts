@@ -192,7 +192,7 @@ export class ModuleFactory {
         if (tokens.includes(token)) {
           const moduleName = getModuleName(module);
           const tokenName = token.name || token;
-          let errorMsg =
+          const errorMsg =
             `Resolving collisions for providersPer${scope} in ${this.moduleName} failed: ` +
             `${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers, ` +
             `and in this case it should not be included in resolvedCollisionsPer${scope}.`;
@@ -307,7 +307,7 @@ export class ModuleFactory {
       if (this.meta.module === module2) {
         if (!this[`importedProvidersPer${scope}`].delete(token1)) {
           const tokenName = token1.name || token1;
-          let errorMsg =
+          const errorMsg =
             `Resolving collisions for providersPer${scope} in ${this.moduleName} failed: ` +
             `${tokenName} mapped with ${this.moduleName}, but ` +
             `providersPer${scope} does not imports ${tokenName} in this module.`;

@@ -36,7 +36,7 @@ export class Tree {
   protected countParams(path: string) {
     let n = 0;
     for (const char of path) {
-      if (char == ":" || char == "*") {
+      if (char == ':' || char == '*') {
         n++;
       }
     }
@@ -107,6 +107,7 @@ export class Tree {
   }
 
   protected insertChild(numParams: number, path: string, fullPath: string, handle: Fn) {
+      /* eslint-disable  @typescript-eslint/no-this-alias */
     let tree = this;
     let offset = 0; // Already handled chars of the path
 
@@ -274,6 +275,7 @@ export class Tree {
     const params: RouteParam[] = [];
     let tree: this = this;
 
+      /* eslint-disable no-constant-condition */
     walk: while (true) {
       if (path.length > tree.path.length) {
         if (path.slice(0, tree.path.length) == tree.path) {
@@ -299,6 +301,7 @@ export class Tree {
           switch (tree.type) {
             case RouteType.param:
               // Find param end
+              /* eslint-disable no-case-declarations */
               let end = 0;
               while (end < path.length && path.charCodeAt(end) != 47) {
                 end++;

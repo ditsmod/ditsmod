@@ -9,7 +9,7 @@ export class HelloWorldController {
 
   @Route('GET')
   async getToken() {
-    this.res.send(`Hello, World!`);
+    this.res.send('Hello, World!');
   }
 
   @Route('GET', 'profile', [BearerGuard])

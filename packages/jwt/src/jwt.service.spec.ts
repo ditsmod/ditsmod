@@ -38,7 +38,7 @@ describe('JwtService', () => {
       const payload: SignPayload = { foo: 'bar' };
       const options: SignOptions = { algorithm: 'RS256' };
       //this throw an error because the secret is not a cert and RS256 requires a cert.
-      const msg = `error:0909006C:PEM routines:get_name:no start line`;
+      const msg = 'error:0909006C:PEM routines:get_name:no start line';
       await expect(jwtService.signWithSecret(payload, { secret, ...options })).rejects.toThrow(msg);
     });
 
@@ -46,7 +46,7 @@ describe('JwtService', () => {
       const payload: SignPayload = { foo: 'bar' };
       const options: SignOptions = { algorithm: 'PS256' };
       // this throw an error because the secret is not a cert and PS256 requires a cert.
-      const msg = `error:0909006C:PEM routines:get_name:no start line`;
+      const msg = 'error:0909006C:PEM routines:get_name:no start line';
       await expect(jwtService.signWithSecret(payload, { secret, ...options })).rejects.toThrow(msg);
     });
 
@@ -54,14 +54,14 @@ describe('JwtService', () => {
       const payload: SignPayload = { foo: 'bar' };
       const options: SignOptions = { notBefore: {} as any };
       //this throw an error because the secret is not a cert and RS256 requires a cert.
-      const msg = `"notBefore" should be a number of seconds or string representing a timespan`;
+      const msg = '"notBefore" should be a number of seconds or string representing a timespan';
       await expect(jwtService.signWithSecret(payload, { secret, ...options })).rejects.toThrow(msg);
     });
 
     it('should return error on wrong arguments (2)', async () => {
       const payload: SignPayload = 'string';
       const options: SignOptions = { noTimestamp: true };
-      const msg = `invalid noTimestamp option for string payload`;
+      const msg = 'invalid noTimestamp option for string payload';
       await expect(jwtService.signWithSecret(payload, { secret, ...options })).rejects.toThrow(msg);
     });
 
@@ -99,7 +99,7 @@ describe('JwtService', () => {
             const payload: SignPayload = 'string';
             const options: SignOptions = { algorithm: 'PS256' };
             // This is needed since jws will not answer for falsy secrets
-            await expect(jwtService.signWithSecret(payload, { secret: secret as any, ...options })).rejects.toThrow(`secretOrPrivateKey must have a value`);
+            await expect(jwtService.signWithSecret(payload, { secret: secret as any, ...options })).rejects.toThrow('secretOrPrivateKey must have a value');
           }
         );
       });

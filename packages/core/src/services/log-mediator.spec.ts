@@ -36,7 +36,7 @@ describe('Log', () => {
     expect(logMediator.buffer).toEqual([]);
   });
 
-  it(`passing message to the buffer`, () => {
+  it('passing message to the buffer', () => {
     logMediator.testMethod('trace', [], 'one', 'two');
     expect(logMediator.buffer.length).toBe(1);
     expect(logMediator.buffer[0].level).toEqual('trace');
@@ -45,7 +45,7 @@ describe('Log', () => {
     expect(logMediator.buffer).toEqual([]);
   });
 
-  it(`passing message with switch between buffer and logger`, () => {
+  it('passing message with switch between buffer and logger', () => {
     const injector = ReflectiveInjector.resolveAndCreate([
       { provide: LogMediator, useClass: LogMediatorMock },
       { provide: Logger, useClass: LoggerMock },
