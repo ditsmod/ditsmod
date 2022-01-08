@@ -6,9 +6,9 @@ sidebar_position: 1
 
 You can see a simple example in the folder [09-one-extension][1].
 
-## Creating an extension provider
+## Creating an extension class
 
-Create a provider that implements the `Extension` interface:
+Create a class that implements the `Extension` interface:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -32,7 +32,7 @@ export class MyExtension implements edk.Extension<void> {
 ```
 
 For the extension to work, you can get all the necessary data either through the constructor or
-from another extension by calling `init()`:
+from another extension by calling its `init()` method:
 
 ```ts
 import { Injectable, Inject } from '@ts-stack/di';
@@ -86,25 +86,12 @@ called `this.extension1.init()`.
 Register the extension in an existing extension group, or create a new group, even if it has
 a single extension. You will need to create a new DI token for the new group.
 
-### What is a group of extensions
-
-Groups are created in DI with the help of so-called "multi-providers". This type of providers
-differs from common DI providers by the presence of the `multi: true` property. In addition, you
-can send multiple providers with the same token to DI, and DI will return the same number of
-instances:
-
-```ts
-[
-  { provide: MY_EXTENSIONS, useClass: MyExtension1, multi: true },
-  { provide: MY_EXTENSIONS, useClass: MyExtension2, multi: true },
-  { provide: MY_EXTENSIONS, useClass: MyExtension3, multi: true },
-];
-```
+### What do you need extension groups for
 
 Extension groups allow you to:
 
-- launch new extensions, even if the Ditsmod core knows nothing about them;
-- organize the sequence of different extensions.
+- Arrange the sequence of extensions that perform different types of work.
+- Add new extensions to a specific group without having to change the code of other extensions.
 
 For example, there is a group `ROUTES_EXTENSIONS`, which includes two extensions, each of which
 prepares data to set routes for the router. But one extension works with the `@Route()` decorator
@@ -116,16 +103,11 @@ The Ditsmod core knows nothing about the extension imported from `@ditsmod/opena
 that it needs to wait for all extensions from the `ROUTES_EXTENSIONS` group to complete
 initialization, and only then set routes for the router.
 
-### Create a token for a new group
+### Creating a new group token
 
-There are currently two types of tokens for extension groups:
+The extension group token must be an instance of the `InjectionToken` class.
 
-1. token, which is an instance of the class `InjectionToken`;
-2. a text token created on the basis of an existing token of the first type, according to the
-template `BEFORE ${<InjectionToken>}`.
-
-For example, to create the first type of tokens for the group `MY_EXTENSIONS`, you need to do the
-following:
+For example, to create a token for the group `MY_EXTENSIONS`, you need to do the following:
 
 ```ts
 import { InjectionToken } from '@ts-stack/di';
@@ -135,7 +117,7 @@ export const MY_EXTENSIONS = new InjectionToken<edk.Extension<void>[]>('MY_EXTEN
 ```
 
 As you can see, each extension group must specify that DI will return an array of extension
-instances: `Extension<void>[]`. This must be done, the only difference may be in the interface of
+instances: `Extension<void>[]`. This must be done, the only difference may be in the type of
 the data returned as a result of calling their methods `init()`:
 
 ```ts
@@ -158,8 +140,42 @@ const result = await this.extensionsManager.init(MY_EXTENSIONS);
 
 ### Extension registration
 
-Extension multi-providers group can only be passed to the `providersPerApp` array, and no other
-array, and their tokens are passed to the `extensions` array:
+Two types of arrays can be transferred to the extensions module metadata array:
+
+```ts
+type ExtensionItem1 = [
+  beforeToken: InjectionToken<Extension<any>[]>,
+  groupToken: InjectionToken<Extension<any>[]>,
+  extension: ExtensionType,
+  exported?: boolean
+];
+
+type ExtensionItem2 = [
+  groupToken: InjectionToken<Extension<any>[]>,
+  extension: ExtensionType,
+  exported?: boolean
+];
+```
+
+The first type of array is used when you need to run your extension group before another extension group:
+
+```ts
+import { Module } from '@ditsmod/core';
+import { edk } from '@ditsmod/core';
+
+import { MY_EXTENSIONS, MyExtension } from './my.extension';
+
+@Module({
+  extensions: [
+    [edk.ROUTES_EXTENSIONS, MY_EXTENSIONS, MyExtension, true]
+  ],
+})
+export class SomeModule {}
+```
+
+That is, in the array in the first place is a group of extensions `ROUTES_EXTENSIONS`, before which you need to run the group `MY_EXTENSIONS`. In second place is the token of the extension group `MY_EXTENSIONS`, to which your extension belongs. In the third place - the extension class, and in the fourth - `true` - is an indicator of whether to export this extension from the current module.
+
+If your extension doesn't care before which group of extensions it will work, you can use the second type of array:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -167,73 +183,18 @@ import { Module } from '@ditsmod/core';
 import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
 @Module({
-  providersPerApp: [{ provide: MY_EXTENSIONS, useClass: MyExtension, multi: true }],
-  extensions: [MY_EXTENSIONS],
-})
-export class SomeModule {}
-```
-
-When you pass `MY_EXTENSIONS` to the `extensions` array, you are letting Ditsmod core know that
-such a group exists and needs to be queued for initialization. And when you pass providers to the
-`providersPerApp` array, you are instructing DI which extension instances will be in this group.
-
-If you add the same extension many times, DI will create many instances of that extension. Example:
-
-```ts
-import { Module } from '@ditsmod/core';
-
-import { MY_EXTENSIONS, MyExtension } from './my.extension';
-
-@Module({
-  providersPerApp: [
-    { provide: MY_EXTENSIONS, useClass: MyExtension, multi: true },
-    { provide: MY_EXTENSIONS, useClass: MyExtension, multi: true },
-    { provide: MY_EXTENSIONS, useClass: MyExtension, multi: true },
+  extensions: [
+    [MY_EXTENSIONS, MyExtension, true]
   ],
-  extensions: [MY_EXTENSIONS],
 })
 export class SomeModule {}
 ```
 
-In this case, three separate instances of `MyExtension` will be created, no matter which tokens are
-used in the `provide` property. However, this will only happen if you use `useClass` for the DI
-provider.
-
-This is an important point to understand the specifics of DI working with multi-providers, as you
-may want to add your extension to a group that has a text token in the format
-`BEFORE ${<InjectionToken>}`. This token template is intended for existing groups when you need
-your extension to be initialized before another extension is initialized.
-
-Registering an extension in a group with a text token type differs in three ways:
-
-1. text token `BEFORE ${<InjectionToken>}` does not need to be passed to the `extensions` array;
-2. in the multi-provider use the `useExisting` property;
-3. `MyExtension` must be additionally passed directly to the array `providersPerApp`:
-
-```ts
-import { Module } from '@ditsmod/core';
-
-import { MyExtension } from './my.extension';
-import { OTHER_EXTENSIONS } from './other.extension';
-
-@Module({
-  providersPerApp: [
-    MyExtension, // <-- This should only be done if you are using `BEFORE ${<InjectionToken>}`
-    { provide: MY_EXTENSIONS, useExisting: MyExtension, multi: true },
-    { provide: `BEFORE ${OTHER_EXTENSIONS}`, useExisting: MyExtension, multi: true },
-  ],
-  extensions: [MY_EXTENSIONS], // <-- The token `BEFORE ${<InjectionToken>}` is not passed here
-})
-export class SomeModule {}
-```
-
-In this example, the `MyExtension` will run before the `OTHER_EXTENSIONS` group is run. Using the
-`useExisting` property, you instruct DI to create a single instance of `MyExtension`, even though
-this extension has been passed to two different groups.
+That is, everything is the same as in the first type of array, but without a group of extensions in the first place, before which your extension should start.
 
 ## Using ExtensionsManager
 
-For simplicity, [Creating an extension provider][2] contains an example where the dependence of
+For simplicity, [Creating an extension class][2] contains an example where the dependence of
 `Extension2` on `Extension1` is specified, but it is recommended to specify the dependence on the
 group of extensions, and not directly on a specific extension. In this case, you do not need to
 know the names of all the extensions in the extension group, just know the interface of the data
@@ -279,6 +240,46 @@ argument in `init()` pass `false`:
 ```ts
 await this.extensionsManager.init(OTHER_EXTENSIONS, false);
 ```
+
+It is important to remember that running `init()` a particular extension processes data only in the context of the current module. For example, if `MyExtension` is imported into three different modules, Ditsmod will sequentially process these three modules with three different `MyExtension` instances. This means that one extension instance will only be able to collect data from one module.
+
+In case you need to accumulate the results of a certain extension from all modules, you need to do the following:
+
+```ts
+import { Injectable } from '@ts-stack/di';
+import { edk } from '@ditsmod/core';
+
+import { OTHER_EXTENSIONS } from './other.extensions';
+
+@Injectable()
+export class MyExtension implements edk.Extension<void | false> {
+  private inited: boolean;
+
+  constructor(private extensionsManager: edk.ExtensionsManager) {}
+
+  async init() {
+    if (this.inited) {
+      return;
+    }
+
+    const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExtension);
+    if (!result) {
+      return false;
+    }
+
+    // Do something here.
+    this.inited = true;
+  }
+}
+```
+
+That is, when you need `MyExtension` to receive data from the entire application, the third parameter here is to pass the class of the current extension:
+
+```ts
+const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExtension);
+```
+
+This expression will return `false` until the last time the group `OTHER_EXTENSIONS` is called. For example, if the group `OTHER_EXTENSIONS` works in three different modules, then this expression in the first two modules will return `false`, and in the third - the value that this group of extensions should return.
 
 ## Dynamic addition of providers
 
@@ -327,4 +328,4 @@ constructors the `MyProviderPerMod`, `MyProviderPerRoute` or `MyProviderPerReq`.
 Of course, such a dynamic addition of providers is possible only before the start of the web server.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
-[2]: #creating-an-extension-provider
+[2]: #creating-an-extension-class

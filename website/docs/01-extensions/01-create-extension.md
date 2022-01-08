@@ -6,9 +6,9 @@ sidebar_position: 1
 
 Готовий простий приклад ви можете проглянути у теці [09-one-extension][1].
 
-## Створення провайдера розширення
+## Створення класу розширення
 
-Створіть провайдер, що впроваджує інтерфейс `Extension`:
+Створіть клас, що впроваджує інтерфейс `Extension`:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -32,7 +32,7 @@ export class MyExtension implements edk.Extension<void> {
 ```
 
 Для роботи розширення, усі необхідні дані ви можете отримати або через конструктор, або від іншого
-розширення через виклик `init()`:
+розширення через виклик його методу `init()`:
 
 ```ts
 import { Injectable, Inject } from '@ts-stack/di';
@@ -86,25 +86,12 @@ export class Extension2 implements edk.Extension<void> {
 Зареєструйте розширення в існуючій групі розширень, або створіть нову групу, навіть якщо у ній
 буде єдине розширення. Для нової групи вам потрібно буде створити новий DI токен.
 
-### Що являє собою група розширень
-
-Групи створюються в DI за допомогою так званих "мульти-провайдерів". Цей вид провайдерів
-відрізняється від звичайних DI-провайдерів наявністю властивості `multi: true`. Окрім цього, в DI
-можна передавати декілька провайдерів з однаковим токеном, і DI поверне таку саму кількість
-інстансів в одному масиві:
-
-```ts
-[
-  { provide: MY_EXTENSIONS, useClass: MyExtension1, multi: true },
-  { provide: MY_EXTENSIONS, useClass: MyExtension2, multi: true },
-  { provide: MY_EXTENSIONS, useClass: MyExtension3, multi: true },
-];
-```
+### Для чого потрібні групи розширень
 
 Групи розширень дозволяють:
 
-- запускати нові розширення, навіть якщо про них нічого не знає ядро Ditsmod;
-- упорядковувати послідовність роботи різних розширень.
+- Упорядковувати послідовність роботи розширень, що виконують різні види робіт.
+- Додавати нові розширення у певну групу, без необхідності змінювати код інших розширень.
 
 Наприклад, існує група `ROUTES_EXTENSIONS`, куди входять два розширення, кожне із яких готує дані
 для встановлення маршрутів для роутера. Але одне із розширень працює із декоратором `@Route()`, що
@@ -114,17 +101,13 @@ export class Extension2 implements edk.Extension<void> {
 
 Ядро Ditsmod нічого не знає про розширення, імпортоване з `@ditsmod/openapi`, але воно знає, що
 потрібно дочекатись завершення ініціалізації усіх розширень із групи `ROUTES_EXTENSIONS`, і
-тільки потім встановлювати маршрути для роутера.
+тільки тоді встановлювати маршрути для роутера.
 
-### Створення токена для нової групи
+### Створення токена нової групи
 
-На даний момент існує два типи токенів для груп розширень:
+Токен групи розширень повинен бути інстансом класу `InjectionToken`.
 
-1. токен, що є інстансом класу `InjectionToken`;
-2. текстовий токен, що створюється на базі вже існуючого токена із пункту 1, по шаблону
-   `BEFORE ${<InjectionToken>}`.
-
-Наприклад, щоб створити перший тип токенів для групи `MY_EXTENSIONS`, необхідно зробити наступне:
+Наприклад, щоб створити токен для групи `MY_EXTENSIONS`, необхідно зробити наступне:
 
 ```ts
 import { InjectionToken } from '@ts-stack/di';
@@ -134,7 +117,7 @@ export const MY_EXTENSIONS = new InjectionToken<edk.Extension<void>[]>('MY_EXTEN
 ```
 
 Як бачите, кожна група розширень повинна указувати, що DI повертатиме масив інстансів
-розширень: `Extension<void>[]`. Це треба робити обов'язково, відмінність може бути хіба що в інтерфейсі
+розширень: `Extension<void>[]`. Це треба робити обов'язково, відмінність може бути хіба що в типі
 даних, що повертаються в результаті виклику їхніх методів `init()`:
 
 ```ts
@@ -157,8 +140,42 @@ const result = await this.extensionsManager.init(MY_EXTENSIONS);
 
 ### Реєстрація розширення
 
-Мульти-провайдери груп розширень можуть передаватись тільки в масив `providersPerApp`, і ні в який
-інший масив, а їхні токени передаються в масив `extensions`:
+В масив метаданих модуля `extensions` можуть передаватись масиви двох типів:
+
+```ts
+type ExtensionItem1 = [
+  beforeToken: InjectionToken<Extension<any>[]>,
+  groupToken: InjectionToken<Extension<any>[]>,
+  extension: ExtensionType,
+  exported?: boolean
+];
+
+type ExtensionItem2 = [
+  groupToken: InjectionToken<Extension<any>[]>,
+  extension: ExtensionType,
+  exported?: boolean
+];
+```
+
+Перший тип масиву використовується, коли вашу групу розширень потрібно запускати перед іншою групою розширень:
+
+```ts
+import { Module } from '@ditsmod/core';
+import { edk } from '@ditsmod/core';
+
+import { MY_EXTENSIONS, MyExtension } from './my.extension';
+
+@Module({
+  extensions: [
+    [edk.ROUTES_EXTENSIONS, MY_EXTENSIONS, MyExtension, true]
+  ],
+})
+export class SomeModule {}
+```
+
+Тобто в масиві на першому місці йде група розширень `ROUTES_EXTENSIONS`, перед якою потрібно запускати групу `MY_EXTENSIONS`. На другому місці йде токен групи розширень `MY_EXTENSIONS`, до якої належить ваше розширення. На третьому місці - клас розширення, а на четвертому - `true` - це індикатор того, чи потрібно експортувати дане розширення з поточного модуля.
+
+Якщо ж для вашого розширення не важливо перед якою групою розширень воно працюватиме, можна використати другий тип масиву:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -166,76 +183,18 @@ import { Module } from '@ditsmod/core';
 import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
 @Module({
-  providersPerApp: [{ provide: MY_EXTENSIONS, useClass: MyExtension, multi: true }],
-  extensions: [MY_EXTENSIONS],
-})
-export class SomeModule {}
-```
-
-Коли ви передаєте `MY_EXTENSIONS` в масив `extensions`, тим самим ви даєте знати ядру Ditsmod, що
-існує така група, і її треба "ставити в чергу" для ініціалізації. А коли ви передаєте провайдери в
-масив `providersPerApp`, тим самим ви інструктуєте DI які саме інстанси розширень будуть в цій
-групі.
-
-Якщо одне й те саме розширення ви додасте багато разів, то DI створить багато інстансів цього
-розширення. Наприклад:
-
-```ts
-import { Module } from '@ditsmod/core';
-
-import { MY_EXTENSIONS, MyExtension } from './my.extension';
-
-@Module({
-  providersPerApp: [
-    { provide: MY_EXTENSIONS, useClass: MyExtension, multi: true },
-    { provide: MY_EXTENSIONS, useClass: MyExtension, multi: true },
-    { provide: MY_EXTENSIONS, useClass: MyExtension, multi: true },
+  extensions: [
+    [MY_EXTENSIONS, MyExtension, true]
   ],
-  extensions: [MY_EXTENSIONS],
 })
 export class SomeModule {}
 ```
 
-В даному разі буде створено три окремі інстанси `MyExtension`, причому не важливо які саме токени
-використовуються у властивості `provide`. Щоправда, це станеться тільки якщо ви використовуєте
-`useClass` для DI-провайдера.
-
-Це важливий момент для розуміння специфіки роботи DI із мульти-провайдерами, оскільки, можливо, ви
-захочете додати своє розширення ще й у групу, що має текстовий токен у форматі
-`BEFORE ${<InjectionToken>}`. Такий токен призначається для вже існуючих груп, коли вам
-потрібно щоб ваше розширення було проініціалізоване перед ініціалізацією іншого розширення.
-
-Реєстрація розширення в групі із текстовим типом токену відрізняється у трьох моментах:
-
-1. текстовий токен `BEFORE ${<InjectionToken>}` не потрібно передавати в масив `extensions`;
-2. у мульти-провайдері використовуйте властивість `useExisting`;
-3. `MyExtension` потрібно додатково передавати безпосередньо у масив `providersPerApp`:
-
-```ts
-import { Module } from '@ditsmod/core';
-
-import { MyExtension } from './my.extension';
-import { OTHER_EXTENSIONS } from './other.extension';
-
-@Module({
-  providersPerApp: [
-    MyExtension, // <-- Це потрібно робити тільки якщо ви використовуєте `BEFORE ${<InjectionToken>}`
-    { provide: MY_EXTENSIONS, useExisting: MyExtension, multi: true },
-    { provide: `BEFORE ${OTHER_EXTENSIONS}`, useExisting: MyExtension, multi: true }
-  ],
-  extensions: [MY_EXTENSIONS], // <-- Сюди не передається токен у форматі `BEFORE ${<InjectionToken>}`
-})
-export class SomeModule {}
-```
-
-В даному прикладі, розширення `MyExtension` буде запускатись перед запуском групи розширень
-`OTHER_EXTENSIONS`. Використовуючи властивість `useExisting`, ви інструктуєте DI, що потрібно
-створити єдиний інстанс `MyExtension`, не зважаючи на те, що це розширення передалось у дві різні
-групи.
+Тобто усе те саме, що і у масиві першого типу, але без групи розширень на першому місці, перед якою повинно стартувати ваше розширення.
 
 ## Використання ExtensionsManager
 
-Для спрощення, [Створення провайдера розширення](#створення-провайдера-розширення) містить приклад,
+Для спрощення, [Створення класу розширення][2] містить приклад,
 де вказано залежність `Extension2` від `Extension1`, але рекомендується указувати залежність саме
 від групи розширень, а не безпосередньо від конкретного розширенння. В такому разі, вам не потрібно
 знати імена усіх розширень, що входять у групу розширень, достатньо знати лише інтерфейс даних, які
@@ -273,7 +232,7 @@ export class MyExtension implements edk.Extension<void> {
 }
 ```
 
-`ExtensionsManager` буде послідовно викликати ініціалізацію усіх розширення з указаної групи,
+`ExtensionsManager` буде послідовно викликати ініціалізацію усіх розширень з указаної групи,
 а результат їхньої роботи повертатиме у вигляді масиву. Якщо розширення повертатимуть масиви,
 вони будуть автоматично змерджені у єдиний результуючий масив. Цю поведінку можна змінити,
 якщо другим аргументом у `init()` передати `false`:
@@ -281,6 +240,46 @@ export class MyExtension implements edk.Extension<void> {
 ```ts
 await this.extensionsManager.init(OTHER_EXTENSIONS, false);
 ```
+
+Важливо пам'ятати, що запуск `init()` певного розширення обробляє дані лише в контексті поточного модуля. Наприклад, якщо `MyExtension` імпортовано у три різні модулі, то Ditsmod буде послідовно обробляти ці три модулі із трьома різними інстансами `MyExtension`. Це означає, що один інстанс розширення зможе збирати дані лише з одного модуля.
+
+У випадку, коли вам потрібно накопичувати результати роботи певного розширення з усіх модулів, необхідно робити наступне:
+
+```ts
+import { Injectable } from '@ts-stack/di';
+import { edk } from '@ditsmod/core';
+
+import { OTHER_EXTENSIONS } from './other.extensions';
+
+@Injectable()
+export class MyExtension implements edk.Extension<void | false> {
+  private inited: boolean;
+
+  constructor(private extensionsManager: edk.ExtensionsManager) {}
+
+  async init() {
+    if (this.inited) {
+      return;
+    }
+
+    const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExtension);
+    if (!result) {
+      return false;
+    }
+
+    // Do something here.
+    this.inited = true;
+  }
+}
+```
+
+Тобто коли вам потрібно щоб `MyExtension` отримало дані з усього застосунку, третім параметром тут потрібно передавати клас поточного розширення:
+
+```ts
+const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExtension);
+```
+
+Даний вираз буде повертати `false` до того часу, поки не буде викликано останній раз групу `OTHER_EXTENSIONS`. Наприклад, якщо група `OTHER_EXTENSIONS` працює у трьох різних модулях, то цей вираз у перших двох модулях повертатиме `false`, а у третьому - те значення, яке повинно повертати ця група розширень.
 
 ## Динамічне додавання провайдерів
 
@@ -328,5 +327,5 @@ export class MyExtension implements edk.Extension<void> {
 
 Звичайно ж, таке динамічне додавання провайдерів можливе лише перед стартом вебсервера.
 
-
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
+[2]: #створення-класу-розширення
