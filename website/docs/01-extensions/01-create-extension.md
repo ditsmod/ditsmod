@@ -12,10 +12,10 @@ sidebar_position: 1
 
 ```ts
 import { Injectable } from '@ts-stack/di';
-import { edk } from '@ditsmod/core';
+import { Extension } from '@ditsmod/core';
 
 @Injectable()
-export class MyExtension implements edk.Extension<void> {
+export class MyExtension implements Extension<void> {
   private data: boolean;
 
   async init() {
@@ -35,13 +35,13 @@ export class MyExtension implements edk.Extension<void> {
 
 ```ts
 import { Injectable, Inject } from '@ts-stack/di';
-import { edk } from '@ditsmod/core';
+import { Extension, MetadataPerMod1 } from '@ditsmod/core';
 
 @Injectable()
-export class Extension1 implements edk.Extension<any> {
+export class Extension1 implements Extension<any> {
   private data: any;
 
-  constructor(private metadataPerMod1: edk.MetadataPerMod1) {}
+  constructor(private metadataPerMod1: MetadataPerMod1) {}
 
   async init() {
     if (this.data) {
@@ -55,7 +55,7 @@ export class Extension1 implements edk.Extension<any> {
 }
 
 @Injectable()
-export class Extension2 implements edk.Extension<void> {
+export class Extension2 implements Extension<void> {
   private inited: boolean;
 
   constructor(private extension1: Extension1) {}
@@ -99,23 +99,23 @@ export class Extension2 implements edk.Extension<void> {
 
 ```ts
 import { InjectionToken } from '@ts-stack/di';
-import { edk } from '@ditsmod/core';
+import { Extension } from '@ditsmod/core';
 
-export const MY_EXTENSIONS = new InjectionToken<edk.Extension<void>[]>('MY_EXTENSIONS');
+export const MY_EXTENSIONS = new InjectionToken<Extension<void>[]>('MY_EXTENSIONS');
 ```
 
 Як бачите, кожна група розширень повинна указувати, що DI повертатиме масив інстансів розширень: `Extension<void>[]`. Це треба робити обов'язково, відмінність може бути хіба що в типі даних, що повертаються в результаті виклику їхніх методів `init()`:
 
 ```ts
 import { InjectionToken } from '@ts-stack/di';
-import { edk } from '@ditsmod/core';
+import { Extension } from '@ditsmod/core';
 
 interface MyInterface {
   one: string;
   two: number;
 }
 
-export const MY_EXTENSIONS = new InjectionToken<edk.Extension<MyInterface>[]>('MY_EXTENSIONS');
+export const MY_EXTENSIONS = new InjectionToken<Extension<MyInterface>[]>('MY_EXTENSIONS');
 ```
 
 Тепер змінна `result` матиме тип даних `MyInterface[]`:
@@ -146,14 +146,13 @@ type ExtensionItem2 = [
 Перший тип масиву використовується, коли вашу групу розширень потрібно запускати перед іншою групою розширень:
 
 ```ts
-import { Module } from '@ditsmod/core';
-import { edk } from '@ditsmod/core';
+import { Module, ROUTES_EXTENSIONS } from '@ditsmod/core';
 
 import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
 @Module({
   extensions: [
-    [edk.ROUTES_EXTENSIONS, MY_EXTENSIONS, MyExtension, true]
+    [ROUTES_EXTENSIONS, MY_EXTENSIONS, MyExtension, true]
   ],
 })
 export class SomeModule {}
@@ -188,15 +187,15 @@ export class SomeModule {}
 
 ```ts
 import { Injectable } from '@ts-stack/di';
-import { edk } from '@ditsmod/core';
+import { Extension, ExtensionsManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions';
 
 @Injectable()
-export class MyExtension implements edk.Extension<void> {
+export class MyExtension implements Extension<void> {
   private inited: boolean;
 
-  constructor(private extensionsManager: edk.ExtensionsManager) {}
+  constructor(private extensionsManager: ExtensionsManager) {}
 
   async init() {
     if (this.inited) {
@@ -222,15 +221,15 @@ await this.extensionsManager.init(OTHER_EXTENSIONS, false);
 
 ```ts
 import { Injectable } from '@ts-stack/di';
-import { edk } from '@ditsmod/core';
+import { Extension, ExtensionsManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions';
 
 @Injectable()
-export class MyExtension implements edk.Extension<void | false> {
+export class MyExtension implements Extension<void | false> {
   private inited: boolean;
 
-  constructor(private extensionsManager: edk.ExtensionsManager) {}
+  constructor(private extensionsManager: ExtensionsManager) {}
 
   async init() {
     if (this.inited) {
@@ -268,20 +267,20 @@ const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExten
 
 ```ts
 import { Injectable } from '@ts-stack/di';
-import { edk } from '@ditsmod/core';
+import { Extension, ExtensionsManager, ROUTES_EXTENSIONS } from '@ditsmod/core';
 
 @Injectable()
-export class MyExtension implements edk.Extension<void> {
+export class MyExtension implements Extension<void> {
   private inited: boolean;
 
-  constructor(private extensionsManager: edk.ExtensionsManager) {}
+  constructor(private extensionsManager: ExtensionsManager) {}
 
   async init() {
     if (this.inited) {
       return;
     }
 
-    const rawRoutesMeta = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS);
+    const rawRoutesMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
 
     rawRoutesMeta.forEach((meta) => {
       // ... Створіть тут нові провайдері і їхні значення, а потім:

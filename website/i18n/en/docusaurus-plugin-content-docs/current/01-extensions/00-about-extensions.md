@@ -14,14 +14,6 @@ Another example. For example, the `@ditsmod/openapi` module allows you to create
 
 ## What is Ditsmod extension
 
-Ditsmod has a special API to extend the functionality of `@ditsmod/core`. To use it, you need to import the constant `edk` (short for "Extensions Development Kit"):
-
-```ts
-import { edk } from '@ditsmod/core';
-```
-
-This constant is used as a namespace to hold the types and data intended for extensions.
-
 In Ditsmod, **extension** is a class that implements the `Extension` interface:
 
 ```ts
