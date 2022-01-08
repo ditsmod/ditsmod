@@ -1,4 +1,4 @@
-import { edk } from '@ditsmod/core';
+import { AnyObj } from '@ditsmod/core';
 
 export class SwaggerOAuthOptions {
   /**
@@ -32,7 +32,7 @@ export class SwaggerOAuthOptions {
   /**
    * Additional query parameters added to authorizationUrl and tokenUrl.
    */
-  additionalQueryStringParams?: edk.AnyObj;
+  additionalQueryStringParams?: AnyObj;
   /**
    * Only activated for the `accessCode` flow.  During the `authorization_code` request to the
    * `tokenUrl`, pass the [Client Password](https://tools.ietf.org/html/rfc6749#section-2.3.1)

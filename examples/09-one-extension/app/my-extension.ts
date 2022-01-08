@@ -1,12 +1,12 @@
 import { Injectable } from '@ts-stack/di';
-import { edk, Logger } from '@ditsmod/core';
+import { Extension, ExtensionsManager, Logger, ROUTES_EXTENSIONS } from '@ditsmod/core';
 
 @Injectable()
-export class MyExtension implements edk.Extension<void> {
+export class MyExtension implements Extension<void> {
   #inited: boolean;
 
   constructor(
-    private extensionsManager: edk.ExtensionsManager,
+    private extensionsManager: ExtensionsManager,
     private logger: Logger
   ) {}
 
@@ -15,7 +15,7 @@ export class MyExtension implements edk.Extension<void> {
       return;
     }
 
-    const aMetadataPerMod2 = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS);
+    const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS);
     this.logger.info(aMetadataPerMod2[0]);
 
     this.#inited = true;

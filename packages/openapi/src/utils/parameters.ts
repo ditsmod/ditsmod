@@ -1,5 +1,5 @@
 import { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
-import { edk, HttpMethod } from '@ditsmod/core';
+import { AnyObj, HttpMethod } from '@ditsmod/core';
 import { Type, reflector } from '@ts-stack/di';
 
 import { ColumnDecoratorMetadata } from '../decorators/column';
@@ -7,8 +7,8 @@ import { isColumn } from './type-guards';
 
 type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';
 type OptionalParamsIn = 'query' | 'header' | 'cookie';
-type KeyOf<T extends Type<edk.AnyObj>> = Extract<keyof T['prototype'], string>;
-type KeysOf<T extends Type<edk.AnyObj>> = [KeyOf<T>, ...KeyOf<T>[]];
+type KeyOf<T extends Type<AnyObj>> = Extract<keyof T['prototype'], string>;
+type KeysOf<T extends Type<AnyObj>> = [KeyOf<T>, ...KeyOf<T>[]];
 /**
  * Applies to importing `OasModuleWithParams`. OAS parameter's property, indicates the parameter
  * should or not be bound to presence last param in a route path.
@@ -27,33 +27,33 @@ export class Parameters {
   protected countOfLastPushedParams: number;
 
   // prettier-ignore
-  required<T extends Type<edk.AnyObj>>(paramsIn: RequiredParamsIn, model: T, ...params: KeysOf<T>): this;
+  required<T extends Type<AnyObj>>(paramsIn: RequiredParamsIn, model: T, ...params: KeysOf<T>): this;
   // prettier-ignore
   required(paramsIn: RequiredParamsIn, ...params: [string, ...string[]]): this;
   // prettier-ignore
-  required<T extends Type<edk.AnyObj>>(paramsIn: RequiredParamsIn, modelOrString: T | string, ...params: (KeyOf<T> | string)[]) {
+  required<T extends Type<AnyObj>>(paramsIn: RequiredParamsIn, modelOrString: T | string, ...params: (KeyOf<T> | string)[]) {
     return this.setParams(true, paramsIn, modelOrString, ...params);
   }
 
   // prettier-ignore
-  optional<T extends Type<edk.AnyObj>>(paramsIn: OptionalParamsIn, model: T, ...params: KeysOf<T>): this;
+  optional<T extends Type<AnyObj>>(paramsIn: OptionalParamsIn, model: T, ...params: KeysOf<T>): this;
   // prettier-ignore
   optional(paramsIn: OptionalParamsIn, ...params: [string, ...string[]]): this;
   // prettier-ignore
-  optional<T extends Type<edk.AnyObj>>(paramsIn: OptionalParamsIn, modelOrString: T | string, ...params: (KeyOf<T> | string)[]
+  optional<T extends Type<AnyObj>>(paramsIn: OptionalParamsIn, modelOrString: T | string, ...params: (KeyOf<T> | string)[]
   ) {
     return this.setParams(false, paramsIn, modelOrString, ...params);
   }
 
   getParams(): XParameterObject[];
   // prettier-ignore
-  getParams<T extends Type<edk.AnyObj>>(paramsIn: 'path', isRequired: true, model: T, ...params: KeysOf<T>): XParameterObject[];
+  getParams<T extends Type<AnyObj>>(paramsIn: 'path', isRequired: true, model: T, ...params: KeysOf<T>): XParameterObject[];
   // prettier-ignore
-  getParams<T extends Type<edk.AnyObj>>(paramsIn: OptionalParamsIn, isRequired: boolean, model: T, ...params: KeysOf<T>): XParameterObject[];
+  getParams<T extends Type<AnyObj>>(paramsIn: OptionalParamsIn, isRequired: boolean, model: T, ...params: KeysOf<T>): XParameterObject[];
   // prettier-ignore
   getParams(paramsIn: OptionalParamsIn, isRequired: boolean, ...params: [string, ...string[]]): XParameterObject[];
   // prettier-ignore
-  getParams<T extends Type<edk.AnyObj>>(paramsIn?: RequiredParamsIn, isRequired?: boolean, modelOrString?: T | string, ...params: (KeyOf<T> | string)[]): XParameterObject[] {
+  getParams<T extends Type<AnyObj>>(paramsIn?: RequiredParamsIn, isRequired?: boolean, modelOrString?: T | string, ...params: (KeyOf<T> | string)[]): XParameterObject[] {
     if (isRequired !== undefined) {
       this.setParams(isRequired, paramsIn!, modelOrString!, ...params);
     }
@@ -101,7 +101,7 @@ export class Parameters {
     return this.parameters.slice(-this.countOfLastPushedParams);
   }
 
-  protected setParams<T extends Type<edk.AnyObj>>(
+  protected setParams<T extends Type<AnyObj>>(
     isRequired: boolean,
     paramsIn: RequiredParamsIn,
     modelOrString: T | string,
@@ -150,7 +150,7 @@ export class Parameters {
     });
   }
 
-  protected setColumnType(schema: XSchemaObject, propertyType: Type<edk.AnyObj>) {
+  protected setColumnType(schema: XSchemaObject, propertyType: Type<AnyObj>) {
     if (schema.type === undefined) {
       if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {
         schema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;
@@ -164,13 +164,13 @@ export class Parameters {
 }
 
 // prettier-ignore
-export function getParams<T extends Type<edk.AnyObj>>(paramsIn: 'path', isRequired: true, model: T, ...params: KeysOf<T>): XParameterObject[];
+export function getParams<T extends Type<AnyObj>>(paramsIn: 'path', isRequired: true, model: T, ...params: KeysOf<T>): XParameterObject[];
 // prettier-ignore
-export function getParams<T extends Type<edk.AnyObj>>(paramsIn: OptionalParamsIn, isRequired: boolean, model: T, ...params: KeysOf<T>): XParameterObject[];
+export function getParams<T extends Type<AnyObj>>(paramsIn: OptionalParamsIn, isRequired: boolean, model: T, ...params: KeysOf<T>): XParameterObject[];
 // prettier-ignore
 export function getParams(paramsIn: OptionalParamsIn, isRequired: boolean, ...params: [string, ...string[]]): XParameterObject[];
 // prettier-ignore
-export function getParams<T extends Type<edk.AnyObj>>(paramsIn?: any, isRequired?: boolean, modelOrString?: any, ...params: (KeyOf<T> | string)[]
+export function getParams<T extends Type<AnyObj>>(paramsIn?: any, isRequired?: boolean, modelOrString?: any, ...params: (KeyOf<T> | string)[]
 ) {
   return new Parameters().getParams(paramsIn, isRequired!, modelOrString, ...params);
 }

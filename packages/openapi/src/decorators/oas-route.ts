@@ -1,9 +1,9 @@
-import { edk, GuardItem, HttpMethod } from '@ditsmod/core';
+import { AnyObj, GuardItem, HttpMethod } from '@ditsmod/core';
 import { makePropDecorator } from '@ts-stack/di';
 import { XOperationObject } from '@ts-stack/openapi-spec';
 
 export type OasRouteDecorator = <T>(
-  target: edk.AnyObj,
+  target: AnyObj,
   propertyName: string,
   descriptor: TypedPropertyDescriptor<T>
 ) => OasRouteDecoratorMetadata;

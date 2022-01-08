@@ -1,4 +1,4 @@
-import { edk } from '@ditsmod/core';
+import { AnyObj } from '@ditsmod/core';
 import { SwaggerOAuthOptions } from './swagger-o-auth-options';
 
 export interface SwaggerOptions {
@@ -32,7 +32,7 @@ export interface SwaggerUIOptionsBase {
    * not be parsed. This is useful for testing manually-generated definitions without hosting
    * them.
    */
-  spec?: edk.AnyObj;
+  spec?: AnyObj;
   /**
    * The URL pointing to API definition (normally `swagger.json` or `swagger.yaml`).
    * Will be ignored if `urls` or `spec` is used.

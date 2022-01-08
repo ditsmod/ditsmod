@@ -1,6 +1,15 @@
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
-import { edk } from '@ditsmod/core';
+import {
+  Extension,
+  ExtensionsManager,
+  InjectorPerApp,
+  isModuleWithParams,
+  MetadataPerMod2,
+  NormalizedGuard,
+  RouteMeta,
+  ROUTES_EXTENSIONS,
+} from '@ditsmod/core';
 import { Injectable, reflector } from '@ts-stack/di';
 import {
   PathItemObject,
@@ -20,18 +29,18 @@ import { isOasGuard } from '../utils/type-guards';
 import { OpenapiModule } from '../openapi.module';
 
 @Injectable()
-export class OpenapiCompilerExtension implements edk.Extension<XOasObject | false> {
+export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   protected oasObject: XOasObject;
   private swaggerUiDist = join(__dirname, '../../dist/swagger-ui');
 
-  constructor(private injectorPerApp: edk.InjectorPerApp, private extensionsManager: edk.ExtensionsManager) {}
+  constructor(private injectorPerApp: InjectorPerApp, private extensionsManager: ExtensionsManager) {}
 
   async init() {
     if (this.oasObject) {
       return this.oasObject;
     }
 
-    const aMetadataPerMod2 = await this.extensionsManager.init(edk.ROUTES_EXTENSIONS, true, OpenapiCompilerExtension);
+    const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS, true, OpenapiCompilerExtension);
     if (!aMetadataPerMod2) {
       return false;
     }
@@ -44,14 +53,14 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
     return this.oasObject;
   }
 
-  protected async compileOasObject(aMetadataPerMod2: edk.MetadataPerMod2[]) {
+  protected async compileOasObject(aMetadataPerMod2: MetadataPerMod2[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
     for (const metadataPerMod2 of aMetadataPerMod2) {
       const { aControllersMetadata2, providersPerMod, module: modOrObj } = metadataPerMod2;
 
       // Hide internal APIs for OpenAPI
-      if (edk.isModuleWithParams(modOrObj) && modOrObj.module === OpenapiModule) {
+      if (isModuleWithParams(modOrObj) && modOrObj.module === OpenapiModule) {
         continue;
       } else if (modOrObj === OpenapiModule) {
         continue;
@@ -87,7 +96,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
     this.oasObject.components = { ...(this.oasObject.components || {}) };
   }
 
-  protected setSecurityInfo(operationObject: XOperationObject, guards: edk.NormalizedGuard[]) {
+  protected setSecurityInfo(operationObject: XOperationObject, guards: NormalizedGuard[]) {
     const security: XSecurityRequirementObject[] = [];
     const tags: string[] = [];
     const responses: XResponsesObject = {};
@@ -135,12 +144,7 @@ export class OpenapiCompilerExtension implements edk.Extension<XOasObject | fals
     operationObject.responses = { ...(operationObject.responses || {}), ...responses };
   }
 
-  protected applyNonOasRoute(
-    path: string,
-    paths: XPathsObject,
-    routeMeta: edk.RouteMeta,
-    guards: edk.NormalizedGuard[]
-  ) {
+  protected applyNonOasRoute(path: string, paths: XPathsObject, routeMeta: RouteMeta, guards: NormalizedGuard[]) {
     const httpMethod = routeMeta.httpMethod.toLowerCase();
     const parameters: XParameterObject[] = [];
     path = `/${path}`.replace(/:([^/]+)/g, (_, name) => {

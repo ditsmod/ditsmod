@@ -1,4 +1,4 @@
-import { edk } from '@ditsmod/core';
+import { AnyObj } from '@ditsmod/core';
 import { reflector, Type } from '@ts-stack/di';
 import { SchemaObject, SchemaObjectType, XEncodingObject, XMediaTypeObject } from '@ts-stack/openapi-spec';
 
@@ -9,7 +9,7 @@ import { isColumn } from './type-guards';
 export interface ContentOptions<T extends mediaTypeName = mediaTypeName> {
   mediaType: T;
   mediaTypeParams?: string;
-  model?: Type<edk.AnyObj>;
+  model?: Type<AnyObj>;
   /**
    * A map between a property name and its encoding information. The key, being the property name,
    * MUST exist in the schema as a property. The encoding object SHALL only apply to `requestBody`
@@ -49,7 +49,7 @@ export class Content {
     return { ...this.content };
   }
 
-  protected getSchema(model: Type<edk.AnyObj>) {
+  protected getSchema(model: Type<AnyObj>) {
     const schema = this.getTypedSchema(model);
     const modelMeta = reflector.propMetadata(model) as ColumnDecoratorMetadata;
 
@@ -69,7 +69,7 @@ export class Content {
     return schema;
   }
 
-  protected getTypedSchema(model: Type<edk.AnyObj>) {
+  protected getTypedSchema(model: Type<AnyObj>) {
     const schema = {} as SchemaObject;
     if ([Boolean, Number, String, Array, Object].includes(model as any)) {
       schema.type = (model.name?.toLowerCase() || 'null') as SchemaObjectType;
@@ -87,8 +87,8 @@ export class Content {
    * @todo Refactor this.
    */
   protected patchPropertySchema(
-    model: Type<edk.AnyObj>,
-    propertyType: Type<edk.AnyObj>,
+    model: Type<AnyObj>,
+    propertyType: Type<AnyObj>,
     decoratorItem: ColumnDecoratorItem
   ) {
     let schema = { ...decoratorItem.schema } || {};

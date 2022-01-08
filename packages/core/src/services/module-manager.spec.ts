@@ -12,7 +12,7 @@ import { DefaultLogger } from './default-logger';
 import { LogMediator } from './log-mediator';
 import { LogManager } from './log-manager';
 import { Controller } from '../decorators/controller';
-import { isMultiProvider } from '../edk';
+import { isMultiProvider } from '../utils/type-guards';
 
 describe('ModuleManager', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;

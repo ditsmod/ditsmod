@@ -1,4 +1,4 @@
-import { edk } from '@ditsmod/core';
+import { deepFreeze } from '@ditsmod/core';
 import { openapi, XOasObject } from '@ts-stack/openapi-spec';
 
 export const DEFAULT_OAS_OBJECT: XOasObject = {
@@ -17,4 +17,4 @@ export const DEFAULT_OAS_OBJECT: XOasObject = {
   components: {}
 };
 
-edk.deepFreeze(DEFAULT_OAS_OBJECT);
+deepFreeze(DEFAULT_OAS_OBJECT);

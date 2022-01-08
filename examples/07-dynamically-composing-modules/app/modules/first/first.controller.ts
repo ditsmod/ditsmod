@@ -1,4 +1,4 @@
-import { Controller, Res, Route, edk } from '@ditsmod/core';
+import { AppInitializer, Controller, ModuleManager, Res, Route } from '@ditsmod/core';
 
 import { SecondModule } from '../second/second.module';
 import { ThirdModule } from '../third/third.module';
@@ -7,8 +7,8 @@ import { ThirdModule } from '../third/third.module';
 export class FirstController {
   constructor(
     private res: Res,
-    private moduleManager: edk.ModuleManager,
-    private appInitializer: edk.AppInitializer
+    private moduleManager: ModuleManager,
+    private appInitializer: AppInitializer
   ) {}
 
   @Route('GET')

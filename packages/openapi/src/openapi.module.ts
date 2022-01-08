@@ -1,5 +1,12 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
-import { Module, edk, ModuleWithParams, ServiceProvider } from '@ditsmod/core';
+import {
+  Module,
+  ModuleWithParams,
+  PRE_ROUTER_EXTENSIONS,
+  RouteMeta,
+  ROUTES_EXTENSIONS,
+  ServiceProvider,
+} from '@ditsmod/core';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension';
 import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension';
@@ -14,11 +21,11 @@ import { SwaggerOAuthOptions } from './swagger-ui/swagger-o-auth-options';
   controllers: [OpenapiController],
   providersPerApp: [{ provide: OAS_OBJECT, useValue: DEFAULT_OAS_OBJECT }],
   providersPerMod: [SwaggerConfigManager],
-  providersPerRou: [{ provide: OasRouteMeta, useExisting: edk.RouteMeta }],
+  providersPerRou: [{ provide: OasRouteMeta, useExisting: RouteMeta }],
   exports: [OasRouteMeta],
   extensions: [
-    [edk.ROUTES_EXTENSIONS, OpenapiRoutesExtension, true],
-    [edk.PRE_ROUTER_EXTENSIONS, OAS_COMPILER_EXTENSIONS, OpenapiCompilerExtension, true],
+    [ROUTES_EXTENSIONS, OpenapiRoutesExtension, true],
+    [PRE_ROUTER_EXTENSIONS, OAS_COMPILER_EXTENSIONS, OpenapiCompilerExtension, true],
   ],
 })
 export class OpenapiModule {

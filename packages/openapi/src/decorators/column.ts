@@ -1,18 +1,18 @@
-import { edk } from '@ditsmod/core';
+import { AnyObj } from '@ditsmod/core';
 import { makePropTypeDecorator, Type } from '@ts-stack/di';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 
-export type ColumnDecoratorFactory = (schema?: XSchemaObject, ...arrayModels: Type<edk.AnyObj>[]) => PropertyDecorator;
+export type ColumnDecoratorFactory = (schema?: XSchemaObject, ...arrayModels: Type<AnyObj>[]) => PropertyDecorator;
 export interface ColumnDecoratorItem {
   schema?: XSchemaObject;
-  arrayModels?: Type<edk.AnyObj> | Type<edk.AnyObj>[];
+  arrayModels?: Type<AnyObj> | Type<AnyObj>[];
 }
-export type ColumnDecoratorValue = [Type<edk.AnyObj>, ColumnDecoratorItem, ...ColumnDecoratorItem[]];
+export type ColumnDecoratorValue = [Type<AnyObj>, ColumnDecoratorItem, ...ColumnDecoratorItem[]];
 export interface ColumnDecoratorMetadata {
   [key: string]: ColumnDecoratorValue;
 }
 
-function transformColumnMeta(schema?: XSchemaObject, ...arrayModels: Type<edk.AnyObj>[]) {
+function transformColumnMeta(schema?: XSchemaObject, ...arrayModels: Type<AnyObj>[]) {
   if (arrayModels.length < 2) {
     return { schema, arrayModels: arrayModels[0] } as ColumnDecoratorItem;
   } else {

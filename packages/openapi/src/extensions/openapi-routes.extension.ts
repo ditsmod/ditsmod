@@ -1,5 +1,16 @@
 import { Injectable } from '@ts-stack/di';
-import { edk, HttpMethod, ServiceProvider } from '@ditsmod/core';
+import {
+  ControllersMetadata2,
+  Extension,
+  HttpMethod,
+  isController,
+  MetadataPerMod1,
+  MetadataPerMod2,
+  NormalizedGuard,
+  RouteMeta,
+  RoutesExtension,
+  ServiceProvider,
+} from '@ditsmod/core';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { isOasRoute, isOasRoute1, isReferenceObject } from '../utils/type-guards';
@@ -9,15 +20,15 @@ import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-l
 import { OasOptions } from '../types/oas-options';
 
 @Injectable()
-export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.Extension<edk.MetadataPerMod2> {
-  protected override getControllersMetadata2(prefixPerApp: string, metadataPerMod1: edk.MetadataPerMod1) {
+export class OpenapiRoutesExtension extends RoutesExtension implements Extension<MetadataPerMod2> {
+  protected override getControllersMetadata2(prefixPerApp: string, metadataPerMod1: MetadataPerMod1) {
     const { aControllersMetadata1, prefixPerMod, guardsPerMod, meta } = metadataPerMod1;
 
     const oasOptions = meta.extensionsMeta.oasOptions as OasOptions;
     const prefixParams = oasOptions?.paratemers;
     const prefixTags = oasOptions?.tags;
 
-    const controllersMetadata2: edk.ControllersMetadata2[] = [];
+    const controllersMetadata2: ControllersMetadata2[] = [];
     for (const { controller, ctrlDecorValues, methods } of aControllersMetadata1) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
@@ -28,8 +39,8 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
           }
           const providersPerRou: ServiceProvider[] = [];
           const providersPerReq: ServiceProvider[] = [];
-          const ctrlDecorator = ctrlDecorValues.find(edk.isController);
-          const guards: edk.NormalizedGuard[] = [...guardsPerMod];
+          const ctrlDecorator = ctrlDecorValues.find(isController);
+          const guards: NormalizedGuard[] = [...guardsPerMod];
           if (isOasRoute1(oasRoute)) {
             guards.push(...this.normalizeGuards(oasRoute.guards));
           }
@@ -60,7 +71,7 @@ export class OpenapiRoutesExtension extends edk.RoutesExtension implements edk.E
             methodName,
             guards,
           };
-          providersPerRou.push({ provide: edk.RouteMeta, useValue: routeMeta });
+          providersPerRou.push({ provide: RouteMeta, useValue: routeMeta });
           controllersMetadata2.push({
             providersPerRou,
             providersPerReq,
