@@ -6,16 +6,11 @@ sidebar_position: 0
 
 ## Ditsmod module
 
-Generally speaking, the module should have a set of classes with a narrow specialization.
-A well-designed module does not have to be a "universal combine".
+Generally speaking, the module should have a set of classes with a narrow specialization. A well-designed module does not have to be a "universal combine".
 
-For example, a security module has a narrow specialization - access security and application
-management security. Here should not be declared classes which translating messages into
-different languages, sending mail, writing logs, etc.
+For example, a security module has a narrow specialization - access security and application management security. Here should not be declared classes which translating messages into different languages, sending mail, writing logs, etc.
 
-When a particular module is tied to a specific URL, it's also good practice, and it can also be
-considered as a "narrow specialization". For example, one module can process all HTTP requests to
-`/api/users`, another module can process `/api/posts`.
+When a particular module is tied to a specific URL, it's also good practice, and it can also be considered as a "narrow specialization". For example, one module can process all HTTP requests to `/api/users`, another module can process `/api/posts`.
 
 The TypeScript class becomes a Ditsmod module with `Module` decorator:
 
@@ -62,9 +57,7 @@ export class SomeModule {}
 
 ## Ditsmod root module
 
-Other modules are imported into the root module, it is the only one for the whole application, and
-its class is recommended to be called `AppModule`. The TypeScript class becomes the root module of
-Ditsmod with `RootModule` decorator:
+Other modules are imported into the root module, it is the only one for the whole application, and its class is recommended to be called `AppModule`. The TypeScript class becomes the root module of Ditsmod with `RootModule` decorator:
 
 ```ts
 import { RootModule } from '@ditsmod/core';
@@ -73,8 +66,7 @@ import { RootModule } from '@ditsmod/core';
 export class AppModule {}
 ```
 
-It can contain metadata for both the HTTP server and the module itself. In general, an object
-with the following properties can be passed to the `RootModule` decorator:
+It can contain metadata for both the HTTP server and the module itself. In general, an object with the following properties can be passed to the `RootModule` decorator:
 
 ```ts
 import * as http from 'http';

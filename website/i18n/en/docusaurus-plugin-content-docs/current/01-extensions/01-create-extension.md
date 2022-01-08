@@ -31,8 +31,7 @@ export class MyExtension implements edk.Extension<void> {
 }
 ```
 
-For the extension to work, you can get all the necessary data either through the constructor or
-from another extension by calling its `init()` method:
+For the extension to work, you can get all the necessary data either through the constructor or from another extension by calling its `init()` method:
 
 ```ts
 import { Injectable, Inject } from '@ts-stack/di';
@@ -73,18 +72,13 @@ export class Extension2 implements edk.Extension<void> {
 }
 ```
 
-As you can see, `Extension1` receives data for its work directly through the constructor. Once it
-has done its job, the result is stored locally and issued on repeated calls.
+As you can see, `Extension1` receives data for its work directly through the constructor. Once it has done its job, the result is stored locally and issued on repeated calls.
 
-`Extension2` also takes into account the possibility of re-calling `init()`, so during the second
-call, this method will not re-initialize. In addition, `Extension2` depends on the data taken from
-`Extension1`, so its constructor specifies `Extension1`, and in the body `init()` asynchronously
-called `this.extension1.init()`.
+`Extension2` also takes into account the possibility of re-calling `init()`, so during the second call, this method will not re-initialize. In addition, `Extension2` depends on the data taken from `Extension1`, so its constructor specifies `Extension1`, and in the body `init()` asynchronously called `this.extension1.init()`.
 
 ## Extension registration
 
-Register the extension in an existing extension group, or create a new group, even if it has
-a single extension. You will need to create a new DI token for the new group.
+Register the extension in an existing extension group, or create a new group, even if it has a single extension. You will need to create a new DI token for the new group.
 
 ### What do you need extension groups for
 
@@ -93,15 +87,9 @@ Extension groups allow you to:
 - Arrange the sequence of extensions that perform different types of work.
 - Add new extensions to a specific group without having to change the code of other extensions.
 
-For example, there is a group `ROUTES_EXTENSIONS`, which includes two extensions, each of which
-prepares data to set routes for the router. But one extension works with the `@Route()` decorator
-imported from `@ditsmod/core`, the other works with the `@OasRoute()` decorator imported from
-`@ditsmod/openapi`. These extensions are grouped together because their `init()` methods return
-data with the same base interface.
+For example, there is a group `ROUTES_EXTENSIONS`, which includes two extensions, each of which prepares data to set routes for the router. But one extension works with the `@Route()` decorator imported from `@ditsmod/core`, the other works with the `@OasRoute()` decorator imported from `@ditsmod/openapi`. These extensions are grouped together because their `init()` methods return data with the same base interface.
 
-The Ditsmod core knows nothing about the extension imported from `@ditsmod/openapi`, but it knows
-that it needs to wait for all extensions from the `ROUTES_EXTENSIONS` group to complete
-initialization, and only then set routes for the router.
+The Ditsmod core knows nothing about the extension imported from `@ditsmod/openapi`, but it knows that it needs to wait for all extensions from the `ROUTES_EXTENSIONS` group to complete initialization, and only then set routes for the router.
 
 ### Creating a new group token
 
@@ -116,9 +104,7 @@ import { edk } from '@ditsmod/core';
 export const MY_EXTENSIONS = new InjectionToken<edk.Extension<void>[]>('MY_EXTENSIONS');
 ```
 
-As you can see, each extension group must specify that DI will return an array of extension
-instances: `Extension<void>[]`. This must be done, the only difference may be in the type of
-the data returned as a result of calling their methods `init()`:
+As you can see, each extension group must specify that DI will return an array of extension instances: `Extension<void>[]`. This must be done, the only difference may be in the type of the data returned as a result of calling their methods `init()`:
 
 ```ts
 import { InjectionToken } from '@ts-stack/di';
@@ -194,19 +180,11 @@ That is, everything is the same as in the first type of array, but without a gro
 
 ## Using ExtensionsManager
 
-For simplicity, [Creating an extension class][2] contains an example where the dependence of
-`Extension2` on `Extension1` is specified, but it is recommended to specify the dependence on the
-group of extensions, and not directly on a specific extension. In this case, you do not need to
-know the names of all the extensions in the extension group, just know the interface of the data
-returned with `init()`.
+For simplicity, [Creating an extension class][2] contains an example where the dependence of `Extension2` on `Extension1` is specified, but it is recommended to specify the dependence on the group of extensions, and not directly on a specific extension. In this case, you do not need to know the names of all the extensions in the extension group, just know the interface of the data returned with `init()`.
 
-`ExtensionsManager` is used to run groups of extensions, it is also useful in that it throws errors
-about cyclic dependencies between extensions, and shows the whole chain of extensions that led to
-loops.
+`ExtensionsManager` is used to run groups of extensions, it is also useful in that it throws errors about cyclic dependencies between extensions, and shows the whole chain of extensions that led to loops.
 
-Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to
-complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor,
-and in `init()` call `init()` of this service:
+Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor, and in `init()` call `init()` of this service:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -232,10 +210,7 @@ export class MyExtension implements edk.Extension<void> {
 }
 ```
 
-`ExtensionsManager` will sequentially cause the initialization of all extensions from the specified
-group, and the result of their work will return as an array. If extensions return arrays, they will
-automatically merge into a single resulting array. This behavior can be changed if the second
-argument in `init()` pass `false`:
+`ExtensionsManager` will sequentially cause the initialization of all extensions from the specified group, and the result of their work will return as an array. If extensions return arrays, they will automatically merge into a single resulting array. This behavior can be changed if the second argument in `init()` pass `false`:
 
 ```ts
 await this.extensionsManager.init(OTHER_EXTENSIONS, false);
@@ -283,8 +258,7 @@ This expression will return `false` until the last time the group `OTHER_EXTENSI
 
 ## Dynamic addition of providers
 
-Each extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynamically add
-providers at the level of:
+Each extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynamically add providers at the level of:
 
 - module,
 - route,
@@ -322,8 +296,7 @@ export class MyExtension implements edk.Extension<void> {
 }
 ```
 
-After this extension works, any controller or service (including interceptors) can ask in their
-constructors the `MyProviderPerMod`, `MyProviderPerRoute` or `MyProviderPerReq`.
+After this extension works, any controller or service (including interceptors) can ask in their constructors the `MyProviderPerMod`, `MyProviderPerRoute` or `MyProviderPerReq`.
 
 Of course, such a dynamic addition of providers is possible only before the start of the web server.
 

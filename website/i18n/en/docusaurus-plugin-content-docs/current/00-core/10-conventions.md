@@ -1,5 +1,5 @@
 ---
-sidebar_position: 6
+sidebar_position: 10
 ---
 
 # Ditsmod coding style guide
@@ -15,15 +15,12 @@ That is,
 
 1. the names of any files must contain only lowercase letters;
 2. if there are several words in the file name, you should separate them with a hyphen;
-3. class roles must precede the extension and must be preceded by a dot
-(`*.module.ts`, `*.controller.ts`, `*.service.ts`, `*.guard.ts`);
-4. class names must start with a capital letter, and contain exactly the same words as in the name
-of their files, but in the style of [CamelCase][1].
+3. class roles must precede the extension and must be preceded by a dot (`*.module.ts`, `*.controller.ts`, `*.service.ts`, `*.guard.ts`);
+4. class names must start with a capital letter, and contain exactly the same words as in the name of their files, but in the style of [CamelCase][1].
 
 It is recommended to call the root module - `AppModule`.
 
-When importing, it is recommended not to mix import from local files and import from
-`node_modules`. At the top are imports from `node_modules`, and then retreating one line are local imports:
+When importing, it is recommended not to mix import from local files and import from `node_modules`. At the top are imports from `node_modules`, and then retreating one line are local imports:
 
 ```ts
 import { Injectable } from '@ts-stack/di';

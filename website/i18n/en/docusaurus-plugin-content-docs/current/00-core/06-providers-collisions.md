@@ -4,15 +4,9 @@ sidebar_position: 6
 
 # Collision of providers
 
-Imagine you have `Module1` where you imported `Module2` and `Module3`. You did this import because
-you need `Service2` and `Service3` from these modules, respectively. You are viewing how these
-services work, but for some reason `Service3` does not work as expected. You start debug and it
-turns out that `Service3` exports both modules: `Module2` and `Module3`. You expected that
-`Service3` would only be exported from `Module3`, but the version exported from `Module2` actually
-worked.
+Imagine you have `Module1` where you imported `Module2` and `Module3`. You did this import because you need `Service2` and `Service3` from these modules, respectively. You are viewing how these services work, but for some reason `Service3` does not work as expected. You start debug and it turns out that `Service3` exports both modules: `Module2` and `Module3`. You expected that `Service3` would only be exported from `Module3`, but the version exported from `Module2` actually worked.
 
-To prevent this from happening, if you import two or more modules that export providers with the
-same token, Ditsmod will throw the following error:
+To prevent this from happening, if you import two or more modules that export providers with the same token, Ditsmod will throw the following error:
 
 > Error: Importing providers to Module1 failed: exports from Module2 and Module3 causes collision with Service3. You should add this provider to resolvedCollisionsPer* in Module1. For example: resolvedCollisionsPerReq: [ [Service3, Module3] ].
 
@@ -21,8 +15,7 @@ Specifically in this case:
 1. `Module2` substitute and then exports the provider with the token `Service3`;
 2. and `Module3` substitute and then exports the provider with the token `Service3`.
 
-And since both of these modules are imported into `Module1`, this causes a "provider collisions",
-because the developer may not know which of these substitutions will work in `Module1`.
+And since both of these modules are imported into `Module1`, this causes a "provider collisions", because the developer may not know which of these substitutions will work in `Module1`.
 
 Given the level at which providers are declared, the collision is resolved by adding to `resolvedCollisionsPer*` an array of two elements, with the provider's token in the first place and the module from which the provider needs to be taken in the second place:
 

@@ -9,16 +9,11 @@ In this example, it is shown how it is possible to have four loggers in one appl
 - [pino][7];
 - [winston][5];
 
-In practice, such an example is unlikely to be needed, but it demonstrates the operation of
-a hierarchical DI architecture, export/import providers, a default logger substitution mechanism,
-and a default logger configuration.
+In practice, such an example is unlikely to be needed, but it demonstrates the operation of a hierarchical DI architecture, export/import providers, a default logger substitution mechanism, and a default logger configuration.
 
-In `PinoModule`,` BunyanModule` and `WinstonModule` the substitution default of the logger is made,
-and it is done in `providersPerMod` array. That is why the controllers in these modules will use
-pino, bunyan and winston respectively.
+In `PinoModule`,` BunyanModule` and `WinstonModule` the substitution default of the logger is made, and it is done in `providersPerMod` array. That is why the controllers in these modules will use pino, bunyan and winston respectively.
 
-It should be noted that constructors of any class use the default logger as a [token][104], and DI
-substitutes different loggers for different controllers.
+It should be noted that constructors of any class use the default logger as a [token][104], and DI substitutes different loggers for different controllers.
 
 ```ts
 import { Controller, Logger, Res, Route } from '@ditsmod/core';

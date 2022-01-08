@@ -2,9 +2,7 @@
 
 To try this example, you should first [prepare the prerequisite][1].
 
-Ditsmod has the ability to add and remove modules after starting the web server, without the need
-to restart the web server, and HTTP clients will not notice interruptions when adding or removing
-these modules.
+Ditsmod has the ability to add and remove modules after starting the web server, without the need to restart the web server, and HTTP clients will not notice interruptions when adding or removing these modules.
 
 You can run the application from the first terminal:
 

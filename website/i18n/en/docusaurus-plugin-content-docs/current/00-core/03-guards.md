@@ -57,15 +57,12 @@ It is recommended that guard files end with `*.guard.ts` and that their class na
 If `canActivate()` returns:
 
 - `true` or `Promise<true>`, so Ditsmod will handle the appropriate route with this guard;
-- `false` or `Promise<false>`, so the response to the request will contain 401 status and there
-will be no processing of the route by the controller;
-- `number` or `Promise<number>` Ditsmod interprets this as a status number (403, 401, etc.) to be
-returned in response to a request.
+- `false` or `Promise<false>`, so the response to the request will contain 401 status and there will be no processing of the route by the controller;
+- `number` or `Promise<number>` Ditsmod interprets this as a status number (403, 401, etc.) to be returned in response to a request.
 
 ## Guards with parameters
 
-In the `canActivate()` method, guard has one parameter. Arguments for this parameter can be
-passed in the decorator `Route` in an array where in the first place there is a certain guard.
+In the `canActivate()` method, guard has one parameter. Arguments for this parameter can be passed in the decorator `Route` in an array where in the first place there is a certain guard.
 
 Let's look at the following example:
 
@@ -86,9 +83,7 @@ export class SomeController {
 }
 ```
 
-As you can see, the third parameter in `Route` is an array in the array, where `PermissionsGuard`
-is specified in the first place, and then there are the arguments for it. In this case,
-`PermissionsGuard` will get these arguments in its `canActivate()` method:
+As you can see, the third parameter in `Route` is an array in the array, where `PermissionsGuard` is specified in the first place, and then there are the arguments for it. In this case, `PermissionsGuard` will get these arguments in its `canActivate()` method:
 
 ```ts
 import { Injectable } from '@ts-stack/di';

@@ -6,8 +6,7 @@ sidebar_position: 1
 
 ## What is a controller
 
-The controllers are intended to receive HTTP requests and send HTTP responses. The TypeScript class
-becomes a Ditsmod controller with `Controller` decorator:
+The controllers are intended to receive HTTP requests and send HTTP responses. The TypeScript class becomes a Ditsmod controller with `Controller` decorator:
 
 ```ts
 import { Controller } from '@ditsmod/core';
@@ -30,9 +29,7 @@ import { Controller } from '@ditsmod/core';
 export class SomeController {}
 ```
 
-The requests are tied to the methods of controllers through the routing system, using the decorator
-`Route`. The following example creates two routes that accept `GET` requests to `/hello` and
-`/throw-error`:
+The requests are tied to the methods of controllers through the routing system, using the decorator `Route`. The following example creates two routes that accept `GET` requests to `/hello` and `/throw-error`:
 
 ```ts
 import { Controller, Res, Route } from '@ditsmod/core';
@@ -55,21 +52,16 @@ export class SomeController {
 
 What we see here:
 
-1. In the constructor of the class using `private` access modifier, the property of class `res`
-with data type `Res` is declared. So we ask Ditsmod to create an instance of the `Res`
-class and pass it to the `res` variable.
+1. In the constructor of the class using `private` access modifier, the property of class `res` with data type `Res` is declared. So we ask Ditsmod to create an instance of the `Res` class and pass it to the `res` variable.
 2. Routes are created using the `Route` decorator, which is placed before the class method.
 3. Responses to HTTP requests are sent via `this.res.send()`.
-4. Error objects can be thrown directly in the class method in the common way for JavaScript - with
-the keyword `throw`.
+4. Error objects can be thrown directly in the class method in the common way for JavaScript - with the keyword `throw`.
 
 :::tip Use an access modifier
-The access modifier in the constructor can be any (private, protected or public), but without the
-modifier - `res` will be a simple parameter with visibility only in the constructor.
+The access modifier in the constructor can be any (private, protected or public), but without the modifier - `res` will be a simple parameter with visibility only in the constructor.
 :::
 
-To use `pathParams`, `queryParams` or `body`, you should ask the `Req` in the controller
-constructor:
+To use `pathParams`, `queryParams` or `body`, you should ask the `Req` in the controller constructor:
 
 ```ts
 import { Controller, Req, Res, Route } from '@ditsmod/core';
@@ -113,8 +105,7 @@ export class SomeModule {}
 
 ## Routes prefixes
 
-If a non-root module is imported with a prefix, this prefix will be added to all routes within this
-module:
+If a non-root module is imported with a prefix, this prefix will be added to all routes within this module:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -131,11 +122,9 @@ import { SecondModule } from './second.module';
 export class ThridModule {}
 ```
 
-Here, the entry `:pathParam` means not just text, but a parameter - a variable part in the URL
-before the query parameters.
+Here, the entry `:pathParam` means not just text, but a parameter - a variable part in the URL before the query parameters.
 
-If you specify `prefixPerApp` in the root module, this prefix will be added to all routes in the
-whole application:
+If you specify `prefixPerApp` in the root module, this prefix will be added to all routes in the whole application:
 
 ```ts
 import { RootModule } from '@ditsmod/core';
@@ -182,8 +171,7 @@ Examples of Ditsmod services:
 - service for checking access rights;
 - etc.
 
-Often some services depend on other services, and to get an instance of a particular service, you
-need specify its class in the constructor:
+Often some services depend on other services, and to get an instance of a particular service, you need specify its class in the constructor:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -200,6 +188,4 @@ export class SecondService {
 }
 ```
 
-As you can see, the rules for obtaining a class instance in the service are the same as in the
-controller. That is, we in the constructor with `private` access modifier declare property of
-class `firstService` with data type `FirstService`.
+As you can see, the rules for obtaining a class instance in the service are the same as in the controller. That is, we in the constructor with `private` access modifier declare property of class `firstService` with data type `FirstService`.

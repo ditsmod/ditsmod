@@ -7,9 +7,7 @@ sidebar_position: 1
 
 ## About the project
 
-Ditsmod is a Node.js web framework, named **DI** + **TS** + **Mod** to emphasize its important
-components: it has **D**ependency **I**njection, written in **T**ype**S**cript, and designed for
-good **Mod**ularity.
+Ditsmod is a Node.js web framework, named **DI** + **TS** + **Mod** to emphasize its important components: it has **D**ependency **I**njection, written in **T**ype**S**cript, and designed for good **Mod**ularity.
 
 The main features of Ditsmod:
 
@@ -24,8 +22,7 @@ Some concepts of Ditsmod architecture are taken from [Angular][9] concepts. Modu
 
 ## Install the Ditsmod seed
 
-The [ditsmod-seed][2] repository has the minimum basic set for application operation. Clone it and
-install the dependencies:
+The [ditsmod-seed][2] repository has the minimum basic set for application operation. Clone it and install the dependencies:
 
 ```bash
 git clone https://github.com/ditsmod/seed.git my-app
@@ -60,9 +57,7 @@ In addition, you can view more examples in the [examples][4] folder, as well as 
 
 ## Entry file for Node.js
 
-After [installing Ditsmod seed][1], the first thing you need to know: all the application code is
-in the `src` folder, it is compiled using the TypeScript utility `tsc`, after compilation it goes
-to the `dist` folder, and then as JavaScript code it can be executed in Node.js.
+After [installing Ditsmod seed][1], the first thing you need to know: all the application code is in the `src` folder, it is compiled using the TypeScript utility `tsc`, after compilation it goes to the `dist` folder, and then as JavaScript code it can be executed in Node.js.
 
 Let's look at the `src/main.ts` file:
 
@@ -77,15 +72,13 @@ new Application().bootstrap(AppModule).catch((err) => {
 });
 ```
 
-Once compiled, it becomes `dist/main.js` and becomes the entry point for running the application,
-which is why you will specify it as an argument for Node.js:
+Once compiled, it becomes `dist/main.js` and becomes the entry point for running the application, which is why you will specify it as an argument for Node.js:
 
 ```bash
 node dist/main.js
 ```
 
-Note the `import 'reflect-metadata'` in the first line of the file. This module is required for
-Ditsmod decorators to work, but it is sufficient to specify it only once in the entry file for Node.js.
+Note the `import 'reflect-metadata'` in the first line of the file. This module is required for Ditsmod decorators to work, but it is sufficient to specify it only once in the entry file for Node.js.
 
 This import should also be done for tests, because when testing the input file will be a entry file, not `dist/main.js`. For example, if you use [jest][10] as a test framework and the `test-file.js` file contains a compiled test, to run it like this:
 
@@ -95,9 +88,7 @@ jest test-file.js
 
 this file must contain a `reflect-metadata` import.
 
-Looking further at the file `src/main.ts`, you can see that an instance of the class `Application`
-is created, and as an argument for the method `bootstrap()` is passed `AppModule`. Here
-`AppModule` is the root module to which other application modules then imports.
+Looking further at the file `src/main.ts`, you can see that an instance of the class `Application` is created, and as an argument for the method `bootstrap()` is passed `AppModule`. Here `AppModule` is the root module to which other application modules then imports.
 
 
 [1]: #install-the-ditsmod-seed

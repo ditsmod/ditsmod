@@ -6,8 +6,7 @@ sidebar_position: 1
 
 To try this example, you should first [prepare the prerequisite][1].
 
-`01-hello-world` is the simplest example with minimal settings. Only the `RouterModule` for routing
-and one controller with one route are imported into the root module.
+`01-hello-world` is the simplest example with minimal settings. Only the `RouterModule` for routing and one controller with one route are imported into the root module.
 
 Launch the application from the first terminal:
 

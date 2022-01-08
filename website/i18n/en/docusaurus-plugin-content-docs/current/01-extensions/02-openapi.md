@@ -4,13 +4,11 @@ sidebar_position: 2
 
 # OpenAPI
 
-To create a route according to the `OpenAPI` specification, you can use the `OasRoute` decorator,
-imported from `@ditsmod/openapi`.
+To create a route according to the `OpenAPI` specification, you can use the `OasRoute` decorator, imported from `@ditsmod/openapi`.
 
 ## Parameters
 
-The easiest way to pass parameters is to use the `getParams()` function. The following example
-describes the optional `page` parameter in `query`:
+The easiest way to pass parameters is to use the `getParams()` function. The following example describes the optional `page` parameter in `query`:
 
 ```ts
 import { Controller } from '@ditsmod/core';
@@ -57,8 +55,7 @@ export class SomeController {
 
 It is enough to have single model for the whole project.
 
-If you need to pass parameters to `OasRoute` via data models for automatic validation,
-this is done using the `VALIDATION_ARGS` constant:
+If you need to pass parameters to `OasRoute` via data models for automatic validation, this is done using the `VALIDATION_ARGS` constant:
 
 ```ts
 /**
@@ -77,14 +74,9 @@ export class Params {
 }
 ```
 
-If the parameter name changes in the parameter model, TypeScript shows an error within
-`OasRoute`. It is true that this error is difficult to understand, but first check
-the presence of the specified parameter in the parameter model.
+If the parameter name changes in the parameter model, TypeScript shows an error within `OasRoute`. It is true that this error is difficult to understand, but first check the presence of the specified parameter in the parameter model.
 
-The `getParams()` function is not intended to be simultaneously used for both - mandatory and
-optional parameters. It is also not possible to transmit a parameter description that differs
-from the parameter description in the parameter model. For such purposes, you can use the class
-`Parameters`:
+The `getParams()` function is not intended to be simultaneously used for both - mandatory and optional parameters. It is also not possible to transmit a parameter description that differs from the parameter description in the parameter model. For such purposes, you can use the class `Parameters`:
 
 ```ts
 import { Controller } from '@ditsmod/core';
@@ -109,8 +101,7 @@ export class SomeController {
 
 ## requestBody and responses content
 
-To describe the content of the `requestBody` or the `responses` for the `OpenAPI` specification,
-you can use the `getContent()` function:
+To describe the content of the `requestBody` or the `responses` for the `OpenAPI` specification, you can use the `getContent()` function:
 
 ```ts
 import { Controller, Status } from '@ditsmod/core';
@@ -140,8 +131,7 @@ export class SomeController {
 }
 ```
 
-The `getContent()` function takes an short version of the data when you want to describe
-a single `mediaType`. If you need to describe more `mediaType`, you can use the `Content` class:
+The `getContent()` function takes an short version of the data when you want to describe a single `mediaType`. If you need to describe more `mediaType`, you can use the `Content` class:
 
 ```ts
 import { Controller, Status } from '@ditsmod/core';
