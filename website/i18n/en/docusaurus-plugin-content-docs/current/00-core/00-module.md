@@ -26,7 +26,7 @@ import { Module } from '@ditsmod/core';
 export class SomeModule {}
 ```
 
-It is recommended that module files end in `*.module.ts` and that their class names end in `*Module`.
+It is recommended that module files end with `*.module.ts` and that their class names end with `*Module`.
 
 Ditsmod uses several decorators. But why decorators? Because they allow to scan classes. Thanks to decorators, you can programmatically recognize:
 - what conventional role is assigned to a certain class (role of module, controller, service, etc.);

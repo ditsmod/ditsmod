@@ -21,10 +21,10 @@ It should be noted that constructors of any class use the default logger as a [t
 substitutes different loggers for different controllers.
 
 ```ts
-import { Controller, Logger, Response, Route } from '@ditsmod/core';
+import { Controller, Logger, Res, Route } from '@ditsmod/core';
 
 // ...
-constructor(private res: Response, private log: Logger) {}
+constructor(private res: Res, private log: Logger) {}
 // ...
 ```
 

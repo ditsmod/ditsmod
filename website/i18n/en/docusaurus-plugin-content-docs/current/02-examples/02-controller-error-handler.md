@@ -10,7 +10,7 @@ error handling:
 ```ts
 @Injectable()
 export class DefaultControllerErrorHandler implements ControllerErrorHandler {
-  constructor(private res: Response, private log: Log) {}
+  constructor(private res: Res, private log: Log) {}
 
   handleError(err: Error) {
     const { message } = err;

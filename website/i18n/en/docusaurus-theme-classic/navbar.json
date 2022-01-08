@@ -3,8 +3,8 @@
     "message": "Home",
     "description": "The title in the navbar"
   },
-  "item.label.Документація": {
-    "message": "Documentation",
+  "item.label.Документація Ditsmod": {
+    "message": "Documentation of Ditsmod",
     "description": "Navbar item with label Документація"
   }
 }

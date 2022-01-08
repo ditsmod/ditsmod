@@ -21,10 +21,10 @@ pino, bunyan та winston.
 якості [токена][104], а DI вже підставляє для різних контролерів різні логери.
 
 ```ts
-import { Controller, Logger, Response, Route } from '@ditsmod/core';
+import { Controller, Logger, Res, Route } from '@ditsmod/core';
 
 // ...
-constructor(private res: Response, private log: Logger) {}
+constructor(private res: Res, private log: Logger) {}
 // ...
 ```
 

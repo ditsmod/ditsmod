@@ -13,7 +13,7 @@ module.exports = {
   projectName: 'ditsmod.github.io', // Usually your repo name.
   themeConfig: {
     navbar: {
-      title: 'Головна',
+      // title: 'Головна',
       logo: {
         alt: 'Ditsmod Logo',
         src: 'img/logo.svg',
@@ -23,7 +23,7 @@ module.exports = {
           type: 'doc',
           docId: 'intro',
           position: 'left',
-          label: 'Документація',
+          label: 'Документація Ditsmod',
         },
         {
           href: 'https://github.com/ditsmod/ditsmod',
@@ -59,15 +59,6 @@ module.exports = {
     footer: {
       style: 'dark',
       links: [
-        {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Tutorial',
-              to: '/docs/intro',
-            },
-          ],
-        },
         {
           title: 'Community',
           items: [
@@ -108,6 +99,7 @@ module.exports = {
           // anonymizeIP: true, // Should IPs be anonymized?
         },
         docs: {
+          routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: ({ version, versionDocsDirPath, docPath, locale }) =>
             locale == 'en'
