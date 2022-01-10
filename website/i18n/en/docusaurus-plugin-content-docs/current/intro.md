@@ -15,7 +15,7 @@ The main features of Ditsmod:
 - Convenient mechanism for [specifying and resolving][8] between different application classes: you in constructor specify instances of which classes you need, and DI undertakes a difficult task "how to get it".
 - Ability to write your own extensions (sometimes called plugins) that can be asynchronously initialized and that can depend on each other.
 - Ability to dynamically add and remove modules after starting the web server, without the need to restart.
-- Has OpenAPI support.
+- Has OpenAPI support, and has the ability to validate queries based on OpenAPI metadata.
 - To date, Ditsmod is one of the fastest among Node.js web frameworks.
 
 Some concepts of Ditsmod architecture are taken from [Angular][9] concepts. Module [DI][11] is actually extracted from Angular v4.4.7. (with minimal modifications) and integrated into Ditsmod.
