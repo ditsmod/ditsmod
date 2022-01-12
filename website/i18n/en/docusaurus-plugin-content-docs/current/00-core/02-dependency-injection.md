@@ -11,7 +11,7 @@ Since Ditsmod uses `@ts-stack/di` as a library for Dependency Injection, it is n
 If simplify the scheme of DI, can identify 4 main stages:
 
 1. Scanning metadata collected from decorators of modules, controllers and services.
-2. Formation of injectors taking into account the import/export declarations of each module.
+2. Based on scanned metadata, formation of injectors taking into account the import/export declarations of each module.
 3. Request an instance of a specific provider.
 4. Creating an instance of this provider using previously formed injectors.
 
