@@ -29,7 +29,10 @@ import { SwaggerOAuthOptions } from './swagger-ui/swagger-o-auth-options';
   ],
 })
 export class OpenapiModule {
-  static withParams(oasObject: XOasObject<any>, swaggerOAuthOptions?: SwaggerOAuthOptions): ModuleWithParams {
+  static withParams(
+    oasObject: XOasObject<any>,
+    swaggerOAuthOptions?: SwaggerOAuthOptions
+  ): ModuleWithParams<OpenapiModule> {
     const providersPerApp: ServiceProvider[] = [{ provide: OAS_OBJECT, useValue: oasObject }];
     if (swaggerOAuthOptions) {
       providersPerApp.push({ provide: SwaggerOAuthOptions, useValue: swaggerOAuthOptions });
