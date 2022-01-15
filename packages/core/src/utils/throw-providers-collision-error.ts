@@ -18,6 +18,6 @@ export function throwProvidersCollisionError(
   const provider = duplicates.length > 1 ? 'these providers' : 'this provider';
   const msg =
     `Importing providers to ${moduleName} failed: exports ${fromModules}causes collision with ${namesStr}. ` +
-    `You should add ${provider} to ${resolvedCollisionsPer} in ${moduleName}.${example}`;
+    `If ${moduleName} is intrernal module, you should add ${provider} to ${resolvedCollisionsPer} in ${moduleName}.${example}`;
   throw new Error(msg);
 }
