@@ -6,16 +6,21 @@ sidebar_position: 6
 
 Imagine you have `Module1` where you imported `Module2` and `Module3`. You did this import because you need `Service2` and `Service3` from these modules, respectively. You are viewing how these services work, but for some reason `Service3` does not work as expected. You start debug and it turns out that `Service3` exports both modules: `Module2` and `Module3`. You expected that `Service3` would only be exported from `Module3`, but the version exported from `Module2` actually worked.
 
-To prevent this from happening, if you import two or more modules that export providers with the same token, Ditsmod will throw the following error:
+To prevent this from happening, if you import two or more modules that export non-identical providers with the same token, Ditsmod will throw the following error:
 
-> Error: Importing providers to Module1 failed: exports from Module2 and Module3 causes collision with Service3. You should add this provider to resolvedCollisionsPer* in Module1. For example: resolvedCollisionsPerReq: [ [Service3, Module3] ].
+> Error: Importing providers to Module1 failed: exports from Module2 and Module3 causes collision with Service3. If Module1 is intrernal module, you should add this provider to resolvedCollisionsPer* in Module1. For example: resolvedCollisionsPerReq: [ [Service3, Module3] ].
 
 Specifically in this case:
 
 1. `Module2` substitute and then exports the provider with the token `Service3`;
-2. and `Module3` substitute and then exports the provider with the token `Service3`.
+2. and `Module3` substitute and then exports the provider with the token `Service3`;
+3. providers with token `Service3` are not identical in `Module2` and `Module3`, ie from module `Module2` can be exported, for example, object `{ provide: Service3, useValue: {} }`, and from `Module3``Service3` can be exported as a class.
 
 And since both of these modules are imported into `Module1`, this causes a "provider collisions", because the developer may not know which of these substitutions will work in `Module1`.
+
+## Collision resolution in internal modules
+
+If `Module3` is declared in your application, this module is considered internal to your application.
 
 Given the level at which providers are declared, the collision is resolved by adding to `resolvedCollisionsPer*` an array of two elements, with the provider's token in the first place and the module from which the provider needs to be taken in the second place:
 
@@ -29,3 +34,9 @@ import { Module3, Service3 } from './module3';
 })
 export class Module1 {}
 ```
+
+## Collision resolution in external modules
+
+If you have installed `Module3` using package managers (npm, yarn, etc.), this module is considered external to your application. It does not make sense to locally change the external module to resolve the collision.
+
+This situation can only occur if `Module2` and `Module3` are exported from the root module, so you need to remove one of these modules from there. And, of course, after that you will have to import another module where it is needed.
