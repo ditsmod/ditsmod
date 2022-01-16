@@ -244,7 +244,7 @@ describe('ModuleManager', () => {
     expect(() => mock.scanModule(Module2)).not.toThrow();
   });
 
-  it('properly reexport module with params', () => {
+  it('properly reexport module with params, case 1', () => {
     @Controller()
     class Controller1 {}
 
@@ -269,7 +269,7 @@ describe('ModuleManager', () => {
     expect(() => mock.scanModule(Module2)).not.toThrow();
   });
 
-  it('not properly reexport module with params', () => {
+  it('not properly reexport module with params, case 2', () => {
     @Controller()
     class Controller1 {}
 
@@ -291,7 +291,7 @@ describe('ModuleManager', () => {
     })
     class Module2 {}
 
-    expect(() => mock.scanModule(Module2)).toThrow(/Reexport from Module2 failed: Module1 includes in exports/);
+    expect(() => mock.scanModule(Module2)).not.toThrow();
   });
 
   it('exports module without imports it', () => {

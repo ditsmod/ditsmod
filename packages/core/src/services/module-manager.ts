@@ -16,6 +16,7 @@ import {
 } from '../types/mix';
 import { ModuleMetadata } from '../types/module-metadata';
 import { ExtensionItem1, getExtensionProvider } from '../utils/get-extension-provider';
+import { getModule } from '../utils/get-module';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
 import { getToken, getTokens } from '../utils/get-tokens';
@@ -410,21 +411,14 @@ export class ModuleManager {
   }
 
   protected checkReexportModules(meta: NormalizedModuleMetadata) {
-    meta.exportsModules.forEach((mod) => {
-      if (!meta.importsModules.includes(mod)) {
+    const imports = [...meta.importsModules, ...meta.importsWithParams].map(getModule);
+    const exports = [...meta.exportsModules, ...meta.exportsWithParams].map(getModule);
+
+    exports.forEach((mod) => {
+      if (!imports.includes(mod)) {
         const msg =
           `Reexport from ${meta.name} failed: ${mod.name} includes in exports, but not includes in imports. ` +
           `In ${meta.name} you need include ${mod.name} to imports or remove it from exports.`;
-        throw new Error(msg);
-      }
-    });
-
-    meta.exportsWithParams.forEach((expWithParams) => {
-      if (!meta.importsWithParams.some(impWithParams => impWithParams.module === expWithParams.module)) {
-        const moduleName = expWithParams.module.name;
-        const msg =
-          `Reexport from ${meta.name} failed: ${moduleName} includes in exports, but not includes in imports. ` +
-          `In ${meta.name} you need include ${moduleName} to imports or remove it from exports.`;
         throw new Error(msg);
       }
     });
