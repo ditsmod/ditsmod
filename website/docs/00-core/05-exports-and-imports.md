@@ -43,13 +43,14 @@ import { SomeService } from './some.service';
 import { OtherModule } from './other.module';
 
 @RootModule({
+  imports: [OtherModule],
   providersPerMod: [SomeService],
   exports: [SomeService, OtherModule],
 })
 export class AppModule {}
 ```
 
-Як бачите, окрім експорту окремих провайдерів, що оголошені в кореневому модулі, можна також експортувати цілі модулі, причому не обов'язково їх імпортувати.
+Як бачите, окрім експорту окремих провайдерів, що оголошені в кореневому модулі, можна також експортувати цілі модулі.
 
 ## Імпорт модуля
 

@@ -43,13 +43,14 @@ import { SomeService } from './some.service';
 import { OtherModule } from './other.module';
 
 @RootModule({
+  imports: [OtherModule],
   providersPerMod: [SomeService],
   exports: [SomeService, OtherModule],
 })
 export class AppModule {}
 ```
 
-As you can see, in addition to exporting individual providers declared in the root module, you can also export entire modules, and it is not necessary to import them.
+As you can see, in addition to exporting individual providers declared in the root module, you can also export entire modules.
 
 ## Import of the module
 
