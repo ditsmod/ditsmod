@@ -410,11 +410,18 @@ export class ModuleManager {
   }
 
   protected checkReexportModules(meta: NormalizedModuleMetadata) {
-    const imports = [...meta.importsModules, ...meta.importsWithParams];
+    meta.exportsModules.forEach((mod) => {
+      if (!meta.importsModules.includes(mod)) {
+        const msg =
+          `Reexport from ${meta.name} failed: ${mod.name} includes in exports, but not includes in imports. ` +
+          `In ${meta.name} you need include ${mod.name} to imports or remove it from exports.`;
+        throw new Error(msg);
+      }
+    });
 
-    [...meta.exportsModules, ...meta.exportsWithParams].forEach((modOrObj) => {
-      if (!imports.includes(modOrObj)) {
-        const moduleName = getModuleName(modOrObj);
+    meta.exportsWithParams.forEach((expWithParams) => {
+      if (!meta.importsWithParams.some(impWithParams => impWithParams.module === expWithParams.module)) {
+        const moduleName = expWithParams.module.name;
         const msg =
           `Reexport from ${meta.name} failed: ${moduleName} includes in exports, but not includes in imports. ` +
           `In ${meta.name} you need include ${moduleName} to imports or remove it from exports.`;

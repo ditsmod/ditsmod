@@ -227,7 +227,7 @@ describe('ModuleManager', () => {
     expect(() => mock.scanModule(Module2)).toThrow(/if "Module1" is a provider, it must be included in/);
   });
 
-  it('properly reexport', () => {
+  it('properly reexport module', () => {
     @Controller()
     class Controller1 {}
 
@@ -242,6 +242,56 @@ describe('ModuleManager', () => {
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).not.toThrow();
+  });
+
+  it('properly reexport module with params', () => {
+    @Controller()
+    class Controller1 {}
+
+    @Module({ controllers: [Controller1] })
+    class Module1 {
+      static withParams(): ModuleWithParams<Module1> {
+        return {
+          module: this,
+        };
+      }
+    }
+
+    const moduleWithParams = Module1.withParams();
+
+    @Module({
+      imports: [moduleWithParams],
+      controllers: [Controller1],
+      exports: [moduleWithParams],
+    })
+    class Module2 {}
+
+    expect(() => mock.scanModule(Module2)).not.toThrow();
+  });
+
+  it('not properly reexport module with params', () => {
+    @Controller()
+    class Controller1 {}
+
+    @Module({ controllers: [Controller1] })
+    class Module1 {
+      static withParams(): ModuleWithParams<Module1> {
+        return {
+          module: this,
+        };
+      }
+    }
+
+    const moduleWithParams = Module1.withParams();
+
+    @Module({
+      imports: [moduleWithParams],
+      controllers: [Controller1],
+      exports: [Module1],
+    })
+    class Module2 {}
+
+    expect(() => mock.scanModule(Module2)).toThrow(/Reexport from Module2 failed: Module1 includes in exports/);
   });
 
   it('exports module without imports it', () => {
