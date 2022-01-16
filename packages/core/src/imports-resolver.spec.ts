@@ -2,15 +2,16 @@ import 'reflect-metadata';
 import { Injectable } from '@ts-stack/di';
 
 import { ImportsResolver } from './imports-resolver';
-import { MetadataPerMod1 } from './types/metadata-per-mod';
+import { ImportedTokensMap, MetadataPerMod1 } from './types/metadata-per-mod';
 import { ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
+import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 
 describe('ImportsResolver', () => {
   @Injectable()
   class ImportsResolverMock extends ImportsResolver {
     override unfinishedSearchDependecies: [ModuleType | ModuleWithParams, ServiceProvider][];
-    override resolveImportedProviders(metadataPerMod1: MetadataPerMod1) {
-      return super.resolveImportedProviders(metadataPerMod1);
+    override resolveImportedProviders(importedTokensMap: ImportedTokensMap, meta: NormalizedModuleMetadata) {
+      return super.resolveImportedProviders(importedTokensMap, meta);
     }
     override fixDependecy(module: ModuleType | ModuleWithParams, provider: ServiceProvider) {
       return super.fixDependecy(module, provider);
@@ -22,7 +23,7 @@ describe('ImportsResolver', () => {
   let mock: ImportsResolverMock;
 
   beforeEach(() => {
-    mock = new ImportsResolverMock(null as any, null as any, null as any);
+    mock = new ImportsResolverMock(null as any, null as any, null as any, null as any);
   });
 
   describe('resolveImportedProviders', () => {

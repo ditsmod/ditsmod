@@ -5,8 +5,8 @@ import { AppMetadataMap, ModuleType, ModuleWithParams, Scope, ServiceProvider } 
 import { getLastProviders } from './utils/get-last-providers';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
-import { getProvidersTargets, getTokens } from './utils/get-tokens';
-import { MetadataPerMod1 } from './types/metadata-per-mod';
+import { getProvidersTargets, getToken, getTokens } from './utils/get-tokens';
+import { ImportedTokensMap } from './types/metadata-per-mod';
 import { RouteMeta } from './types/route-data';
 import { RootMetadata } from './models/root-metadata';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
@@ -15,6 +15,7 @@ import { getProviderName } from './utils/get-provider-name';
 import { defaultExtensions, defaultExtensionsTokens } from './services/default-extensions';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { getDependencies } from './utils/get-dependecies';
+import { LogMediator } from './services/log-mediator';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -28,26 +29,25 @@ export class ImportsResolver {
   constructor(
     private moduleManager: ModuleManager,
     protected appMetadataMap: AppMetadataMap,
-    protected providersPerApp: ServiceProvider[]
+    protected providersPerApp: ServiceProvider[],
+    protected logMediator: LogMediator
   ) {}
 
   resolve() {
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.appMetadataMap.forEach((metadataPerMod1) => {
-      this.resolveImportedProviders(metadataPerMod1);
+      const { importedTokensMap, meta } = metadataPerMod1;
+      this.meta = meta;
+      this.resolveImportedProviders(importedTokensMap, meta);
+      this.resolveProvidersForExtensions(importedTokensMap, meta);
+      meta.extensionsProviders.unshift(...defaultExtensions);
+      meta.providersPerReq.unshift(...defaultProvidersPerReq);
     });
 
     return this.mExtensionsCounters;
   }
 
-  protected resolveImportedProviders(metadataPerMod1: MetadataPerMod1) {
-    const { importedTokensMap, meta } = metadataPerMod1;
-    this.meta = meta;
-    const currentExtensionsTokens: any[] = [];
-    importedTokensMap.extensions.forEach((providers) => {
-      currentExtensionsTokens.push(...getTokens(providers));
-    });
-    this.extensionsTokens = getTokens([...defaultExtensionsTokens, ...currentExtensionsTokens]);
+  protected resolveImportedProviders(importedTokensMap: ImportedTokensMap, meta: NormalizedModuleMetadata) {
     const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
 
     scopes.forEach((scope, i) => {
@@ -57,6 +57,7 @@ export class ImportsResolver {
           this.grabDependecies(importObj.module, provider, scopes.slice(i));
         });
       });
+      importedTokensMap.extensions;
       importedTokensMap[`multiPer${scope}`].forEach((multiProviders, module) => {
         meta[`providersPer${scope}`].unshift(...multiProviders);
         multiProviders.forEach((provider) => {
@@ -64,6 +65,14 @@ export class ImportsResolver {
         });
       });
     });
+  }
+
+  protected resolveProvidersForExtensions(importedTokensMap: ImportedTokensMap, meta: NormalizedModuleMetadata) {
+    const currentExtensionsTokens: any[] = [];
+    importedTokensMap.extensions.forEach((providers) => {
+      currentExtensionsTokens.push(...getTokens(providers));
+    });
+    this.extensionsTokens = getTokens([...defaultExtensionsTokens, ...currentExtensionsTokens]);
 
     importedTokensMap.extensions.forEach((providers, module) => {
       const newProviders = providers.filter((p) => !meta.extensionsProviders.includes(p));
@@ -72,9 +81,6 @@ export class ImportsResolver {
         this.grabDependecies(module, provider, ['Mod']);
       });
     });
-
-    meta.providersPerReq.unshift(...defaultProvidersPerReq);
-    meta.extensionsProviders.unshift(...defaultExtensions);
     this.increaseExtensionsCounters();
   }
 
@@ -127,6 +133,8 @@ export class ImportsResolver {
 
   /**
    * @param module1 Module from where imports providers.
+   * @param provider Imported provider.
+   * @param token A token for dependecy of imported provider.
    */
   protected grabImportedDependecies(
     module1: AnyModule,

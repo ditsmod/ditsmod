@@ -38,15 +38,17 @@ export class MetadataPerMod1 {
   /**
    * Map between a token and its ImportObj per scope.
    */
-  importedTokensMap: {
-    perMod: Map<any, ImportObj>;
-    perRou: Map<any, ImportObj>;
-    perReq: Map<any, ImportObj>;
-    multiPerMod: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
-    multiPerRou: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
-    multiPerReq: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
-    extensions: Map<ModuleType | ModuleWithParams, ExtensionProvider[]>;
-  };
+  importedTokensMap: ImportedTokensMap;
+}
+
+export interface ImportedTokensMap {
+  perMod: Map<any, ImportObj>;
+  perRou: Map<any, ImportObj>;
+  perReq: Map<any, ImportObj>;
+  multiPerMod: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
+  multiPerRou: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
+  multiPerReq: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
+  extensions: Map<ModuleType | ModuleWithParams, ExtensionProvider[]>;
 }
 
 /**

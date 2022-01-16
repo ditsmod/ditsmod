@@ -227,6 +227,36 @@ describe('ModuleManager', () => {
     expect(() => mock.scanModule(Module2)).toThrow(/if "Module1" is a provider, it must be included in/);
   });
 
+  it('properly reexport', () => {
+    @Controller()
+    class Controller1 {}
+
+    @Module({ controllers: [Controller1] })
+    class Module1 {}
+
+    @Module({
+      imports: [Module1],
+      controllers: [Controller1],
+      exports: [Module1],
+    })
+    class Module2 {}
+
+    expect(() => mock.scanModule(Module2)).not.toThrow();
+  });
+
+  it('exports module without imports it', () => {
+    @Controller()
+    class Controller1 {}
+
+    @Module({ controllers: [Controller1] })
+    class Module1 {}
+
+    @Module({ controllers: [Controller1], exports: [Module1] })
+    class Module2 {}
+
+    expect(() => mock.scanModule(Module2)).toThrow(/Reexport from Module2 failed: Module1 includes in exports/);
+  });
+
   it('module exported provider from providersPerApp', () => {
     @Injectable()
     class Provider1 {}
@@ -676,9 +706,7 @@ describe('ModuleManager', () => {
     }
 
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
-    const extensionsProviders: ExtensionProvider[] = [
-      { provide: GROUP_EXTENSIONS, useClass: Extension1, multi: true },
-    ];
+    const extensionsProviders: ExtensionProvider[] = [{ provide: GROUP_EXTENSIONS, useClass: Extension1, multi: true }];
 
     @Module({
       extensions: [[GROUP_EXTENSIONS, Extension1, true]],
@@ -717,9 +745,7 @@ describe('ModuleManager', () => {
     }
 
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
-    const extensionsProviders: ExtensionProvider[] = [
-      { provide: GROUP_EXTENSIONS, useClass: Extension1, multi: true },
-    ];
+    const extensionsProviders: ExtensionProvider[] = [{ provide: GROUP_EXTENSIONS, useClass: Extension1, multi: true }];
 
     @Module({
       extensions: [[GROUP_EXTENSIONS, Extension1, true]],
@@ -792,7 +818,7 @@ describe('ModuleManager', () => {
 
     @Module({
       providersPerReq,
-      exports: [Provider2, Provider1, Provider3]
+      exports: [Provider2, Provider1, Provider3],
     })
     class Module1 {}
 
@@ -816,7 +842,7 @@ describe('ModuleManager', () => {
     expectedMeta1.exportedProvidersPerReq = [Provider3];
     expectedMeta1.exportedMultiProvidersPerReq = providersPerReq.filter(isMultiProvider);
     expectedMeta1.ngMetadataName = 'Module';
-    
+
     mock.scanRootModule(Module3);
     expect(mock.getMetadata('root')).toEqual(expectedMeta3);
     expect(mock.getMetadata(Module1)).toEqual(expectedMeta1);

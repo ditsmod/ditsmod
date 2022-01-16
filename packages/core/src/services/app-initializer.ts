@@ -154,7 +154,12 @@ export class AppInitializer {
 
   async bootstrapModulesAndExtensions() {
     const appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
-    const importsResolver = new ImportsResolver(this.moduleManager, appMetadataMap, this.meta.providersPerApp);
+    const importsResolver = new ImportsResolver(
+      this.moduleManager,
+      appMetadataMap,
+      this.meta.providersPerApp,
+      this.logMediator
+    );
     const mExtensionsCounters = importsResolver.resolve();
     const aMetadataPerMod1 = [...appMetadataMap].map(([, metadataPerMod1]) => metadataPerMod1);
     await this.handleExtensions(aMetadataPerMod1, mExtensionsCounters);

@@ -289,7 +289,7 @@ describe('AppInitializer', () => {
     class Module3 {}
 
     @RootModule({
-      imports: [Module3],
+      imports: [Module3, Module0],
       providersPerApp: [{ provide: Provider1, useClass: Provider7 }],
       exports: [Module0],
     })

@@ -389,6 +389,8 @@ export class ModuleManager {
       }
     });
 
+    this.checkReexportModules(meta);
+
     rawMeta.extensions?.forEach((extensionTuple) => {
       const extensionObj = getExtensionProvider(...(extensionTuple as ExtensionItem1));
       extensionObj.providers.forEach((p) => this.checkExtension(modName, p));
@@ -405,6 +407,20 @@ export class ModuleManager {
     this.quickCheckMetadata(meta);
 
     return meta;
+  }
+
+  protected checkReexportModules(meta: NormalizedModuleMetadata) {
+    const imports = [...meta.importsModules, ...meta.importsWithParams];
+
+    [...meta.exportsModules, ...meta.exportsWithParams].forEach((modOrObj) => {
+      if (!imports.includes(modOrObj)) {
+        const moduleName = getModuleName(modOrObj);
+        const msg =
+          `Reexport from ${meta.name} failed: ${moduleName} includes in exports, but not includes in imports. ` +
+          `In ${meta.name} you need include ${moduleName} to imports or remove it from exports.`;
+        throw new Error(msg);
+      }
+    });
   }
 
   protected normalizeGuards(guards?: GuardItem[]) {

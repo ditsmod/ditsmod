@@ -92,6 +92,7 @@ describe('ModuleFactory', () => {
       class Module2 {}
 
       @RootModule({
+        imports: [Module2],
         exports: [Module2],
         providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
@@ -117,6 +118,7 @@ describe('ModuleFactory', () => {
       class Module2 {}
 
       @RootModule({
+        imports: [Module2],
         exports: [Module2],
         providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
@@ -146,6 +148,7 @@ describe('ModuleFactory', () => {
       class Module2 {}
 
       @RootModule({
+        imports: [Module2],
         exports: [Module2],
         providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
@@ -177,6 +180,7 @@ describe('ModuleFactory', () => {
       class Module2 {}
 
       @RootModule({
+        imports: [Module2],
         exports: [Module2],
         providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
@@ -214,6 +218,7 @@ describe('ModuleFactory', () => {
       class Module2 {}
 
       @RootModule({
+        imports: [Module2],
         providersPerReq: [Provider3],
         exports: [Module2, Provider3],
       })
@@ -492,7 +497,10 @@ describe('ModuleFactory', () => {
           })
           class Module2 {}
 
-          @RootModule({ exports: [Module2] })
+          @RootModule({
+            imports: [Module2],
+            exports: [Module2]
+          })
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
@@ -517,6 +525,7 @@ describe('ModuleFactory', () => {
           class Module2 {}
 
           @RootModule({
+            imports: [Module2],
             resolvedCollisionsPerMod: [[Provider1, Module1]],
             exports: [Module2],
           })
@@ -546,6 +555,7 @@ describe('ModuleFactory', () => {
           class Module2 {}
 
           @RootModule({
+            imports: [Module2],
             exports: [Module2],
           })
           class AppModule {}
