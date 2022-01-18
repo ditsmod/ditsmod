@@ -42,7 +42,8 @@ module.exports = {
       ],
     },
     algolia: {
-      apiKey: '86bdb4ef75a986e9aa998503dfc64d23',
+      apiId: 'KXSV6YPHSY',
+      apiKey: '4d1c9badb24964d992fb4d1b6badc88e',
       indexName: 'ditsmod',
 
       // Optional: see doc section below
