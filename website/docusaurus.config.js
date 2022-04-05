@@ -42,7 +42,7 @@ module.exports = {
       ],
     },
     algolia: {
-      apiId: 'KXSV6YPHSY',
+      appId: 'KXSV6YPHSY',
       apiKey: '4d1c9badb24964d992fb4d1b6badc88e',
       indexName: 'ditsmod',
 
