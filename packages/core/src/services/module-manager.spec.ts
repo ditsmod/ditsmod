@@ -178,7 +178,7 @@ describe('ModuleManager', () => {
     @RootModule({
       httpModule: http,
       listenOptions: { host: 'localhost', port: 3000 },
-      prefixPerApp: 'api',
+      path: 'api',
       serverName: 'Some-Server',
       serverOptions: {},
       imports: [],

@@ -18,7 +18,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
       return this.metadataPerMod2;
     }
 
-    const { prefixPerApp } = this.rootMetadata;
+    const { path: prefixPerApp } = this.rootMetadata;
     const { meta } = this.metadataPerMod1;
     this.metadataPerMod2 = new MetadataPerMod2();
     this.metadataPerMod2.module = meta.module;

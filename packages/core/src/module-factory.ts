@@ -133,7 +133,7 @@ export class ModuleFactory {
       let prefixPerMod = '';
       let guardsPerMod: NormalizedGuard[] = [];
       if (isModuleWithParams(imp)) {
-        prefixPerMod = [this.prefixPerMod, imp.prefix].filter((s) => s).join('/');
+        prefixPerMod = [this.prefixPerMod, imp.path].filter((s) => s).join('/');
         guardsPerMod = [...this.guardsPerMod, ...meta.normalizedGuardsPerMod];
       }
 

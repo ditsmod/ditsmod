@@ -31,7 +31,7 @@ export class SwaggerConfigManager {
     }
     const { prefixPerMod } = this.modConfig;
     const { port } = this.rootMeta.listenOptions;
-    const path = [this.rootMeta.prefixPerApp, prefixPerMod, 'openapi.yaml'].filter((p) => p).join('/');
+    const path = [this.rootMeta.path, prefixPerMod, 'openapi.yaml'].filter((p) => p).join('/');
     const oauthOptions = this.injectorPerMod.get(SwaggerOAuthOptions, null);
     const swaggerOptions: SwaggerOptions = {
       initUi: { url: `http://localhost:${port}/${path}`, dom_id: '#swagger' },

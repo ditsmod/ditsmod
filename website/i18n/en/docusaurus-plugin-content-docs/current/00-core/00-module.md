@@ -79,8 +79,8 @@ import { RootModule } from '@ditsmod/core';
   serverName: 'Node.js',
   serverOptions: {},
 
-  // Metadata for the module, plus - a prefix that will be added to all routes
-  prefixPerApp: 'api',
+  // Metadata for the module, plus - path - a prefix that will be added to all routes
+  path: 'api',
   imports: [],
   controllers: [],
   providersPerApp: [],

@@ -397,7 +397,7 @@ describe('AppInitializer', () => {
     class Module5 {}
 
     const module2WithParams: ModuleWithParams = Module2.withParams();
-    const module3WithParams: ModuleWithParams = { prefix: 'one', module: Module3 };
+    const module3WithParams: ModuleWithParams = { path: 'one', module: Module3 };
     const module4WithParams: ModuleWithParams = { guards: [], module: Module4 };
     @RootModule({
       serverName: 'custom-server',

@@ -124,7 +124,7 @@ export class ThridModule {}
 
 Тут під записом `:pathParam` мається на увазі не просто текст, а саме параметр - змінна частина в URL перед query параметрами.
 
-Якщо ж в кореневому модулі указати `prefixPerApp`, цей префікс буде додаватись до усіх маршрутів в усьому застосунку:
+Якщо ж в кореневому модулі указати `path`, він буде використовуватись як префікс, і буде додаватись до усіх маршрутів в усьому застосунку:
 
 ```ts
 import { RootModule } from '@ditsmod/core';
@@ -132,7 +132,7 @@ import { RootModule } from '@ditsmod/core';
 import { SomeModule } from './some.module';
 
 @RootModule({
-  prefixPerApp: 'api',
+  path: 'api',
   imports: [SomeModule]
 })
 export class AppModule {}

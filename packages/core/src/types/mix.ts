@@ -28,7 +28,7 @@ export interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = 
   extends Partial<ProvidersMetadata> {
   id?: string;
   module: ModuleType<M>;
-  prefix?: string;
+  path?: string;
   guards?: GuardItem[];
   /**
    * This property allows you to pass any information to extensions.

@@ -39,7 +39,7 @@ describe('RootModule decorator', () => {
     @RootModule({
       httpModule: http,
       listenOptions: { host: 'localhost', port: 3000 },
-      prefixPerApp: 'api',
+      path: 'api',
       serverName: 'Some-Server',
       serverOptions: {},
       imports: [],
@@ -57,7 +57,7 @@ describe('RootModule decorator', () => {
     expect(metadata[0]).toEqual({
       httpModule: http,
       listenOptions: { host: 'localhost', port: 3000 },
-      prefixPerApp: 'api',
+      path: 'api',
       serverName: 'Some-Server',
       serverOptions: {},
       imports: [],

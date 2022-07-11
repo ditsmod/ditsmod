@@ -124,7 +124,7 @@ export class ThridModule {}
 
 Here, the entry `:pathParam` means not just text, but a parameter - a variable part in the URL before the query parameters.
 
-If you specify `prefixPerApp` in the root module, this prefix will be added to all routes in the whole application:
+If you specify `path` in the root module, it will be used as a prefix and will be added to all routes throughout the application:
 
 ```ts
 import { RootModule } from '@ditsmod/core';
@@ -132,7 +132,7 @@ import { RootModule } from '@ditsmod/core';
 import { SomeModule } from './some.module';
 
 @RootModule({
-  prefixPerApp: 'api',
+  path: 'api',
   imports: [SomeModule]
 })
 export class AppModule {}

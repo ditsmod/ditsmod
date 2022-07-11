@@ -47,13 +47,13 @@ describe('Application', () => {
         serverName: 'customServerName',
         serverOptions: { isHttp2SecureServer: false },
         listenOptions: { host: 'customHost', port: 3000 },
-        prefixPerApp: 'customPrefix',
+        path: 'customPrefix',
         providersPerApp: [Provider1],
       })
       class AppModule {}
 
       mock.mergeRootMetadata(AppModule);
-      const {serverName, serverOptions, listenOptions, prefixPerApp } = mock.rootMeta;
+      const {serverName, serverOptions, listenOptions, path: prefixPerApp } = mock.rootMeta;
       expect(serverName).toBe('customServerName');
       expect(prefixPerApp).toBe('customPrefix');
       expect(serverOptions).toEqual({ isHttp2SecureServer: false });
