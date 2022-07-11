@@ -1,2 +1,0 @@
-- here types that declared with `type` keyword
-- or interfaces (no class)
