@@ -46,15 +46,15 @@ describe('getExtensionProviders', () => {
     ];
 
     it('extension without exports (three arguments)', () => {
-      const args: ExtensionItem1 = [OTHER_EXTENSION, MY_EXTENSION, Extension1];
-      expect(getExtensionProvider(OTHER_EXTENSION, MY_EXTENSION, Extension1)).toEqual<ExtensionObj>({
+      const args: ExtensionItem1 = [MY_EXTENSION, OTHER_EXTENSION, Extension1];
+      expect(getExtensionProvider(MY_EXTENSION, OTHER_EXTENSION, Extension1)).toEqual<ExtensionObj>({
         exports: [],
         providers,
       });
     });
 
     it('extension without exports (foure arguments)', () => {
-      const args: ExtensionItem1 = [OTHER_EXTENSION, MY_EXTENSION, Extension1, false];
+      const args: ExtensionItem1 = [MY_EXTENSION, OTHER_EXTENSION, Extension1, false];
       expect(getExtensionProvider(...args)).toEqual<ExtensionObj>({
         exports: [],
         providers,
@@ -62,7 +62,7 @@ describe('getExtensionProviders', () => {
     });
 
     it('extension with exports', () => {
-      const args: ExtensionItem1 = [OTHER_EXTENSION, MY_EXTENSION, Extension1, true];
+      const args: ExtensionItem1 = [MY_EXTENSION, OTHER_EXTENSION, Extension1, true];
       expect(getExtensionProvider(...args)).toEqual<ExtensionObj>({
         exports: [Extension1, MY_EXTENSION, `BEFORE ${OTHER_EXTENSION}`],
         providers,

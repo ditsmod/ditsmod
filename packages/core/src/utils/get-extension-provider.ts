@@ -9,8 +9,8 @@ export class ExtensionObj {
 }
 
 export type ExtensionItem1 = [
-  beforeToken: InjectionToken<Extension<any>[]>,
   groupToken: InjectionToken<Extension<any>[]>,
+  nextToken: InjectionToken<Extension<any>[]>,
   extension: ExtensionType,
   exported?: boolean
 ];
@@ -22,8 +22,8 @@ export type ExtensionItem2 = [
 ];
 
 export function getExtensionProvider(
-  beforeToken: InjectionToken<Extension<any>[]>,
   groupToken: InjectionToken<Extension<any>[]>,
+  nextToken: InjectionToken<Extension<any>[]>,
   extension: ExtensionType,
   exported?: boolean
 ): ExtensionObj;
@@ -40,14 +40,14 @@ export function getExtensionProvider(
   extensionOrExported?: ExtensionType | boolean,
   mayExported?: boolean
 ): ExtensionObj {
-  let beforeToken: InjectionToken<Extension<any>[]> | undefined;
+  let nextToken: InjectionToken<Extension<any>[]> | undefined;
   let groupToken: InjectionToken<Extension<any>[]>;
   let extension: ExtensionType;
   let exported: boolean | undefined;
 
   if (typeof mayExported == 'boolean') {
-    beforeToken = someToken;
-    groupToken = extensionOrGroupToken as InjectionToken<Extension<any>[]>;
+    groupToken = someToken;
+    nextToken = extensionOrGroupToken as InjectionToken<Extension<any>[]>;
     extension = extensionOrExported as ExtensionType;
     exported = mayExported;
   } else if (typeof extensionOrExported == 'boolean') {
@@ -55,22 +55,22 @@ export function getExtensionProvider(
     extension = extensionOrGroupToken as ExtensionType;
     exported = extensionOrExported;
   } else if (isExtensionProvider(extensionOrExported!)) {
-    beforeToken = someToken;
-    groupToken = extensionOrGroupToken as InjectionToken<Extension<any>[]>;
+    groupToken = someToken;
+    nextToken = extensionOrGroupToken as InjectionToken<Extension<any>[]>;
     extension = extensionOrExported;
   } else {
     groupToken = someToken;
     extension = extensionOrGroupToken as ExtensionType;
   }
 
-  if (beforeToken) {
-    const exports = exported ? [extension, groupToken, `BEFORE ${beforeToken}`] : [];
+  if (nextToken) {
+    const exports = exported ? [extension, groupToken, `BEFORE ${nextToken}`] : [];
     return {
       exports,
       providers: [
         extension,
         { provide: groupToken, useExisting: extension, multi: true },
-        { provide: `BEFORE ${beforeToken}`, useExisting: extension, multi: true },
+        { provide: `BEFORE ${nextToken}`, useExisting: extension, multi: true },
       ],
     };
   } else {

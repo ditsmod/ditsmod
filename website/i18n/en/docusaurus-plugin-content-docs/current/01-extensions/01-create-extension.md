@@ -130,8 +130,8 @@ Two types of arrays can be transferred to the extensions module metadata array:
 
 ```ts
 type ExtensionItem1 = [
-  beforeToken: InjectionToken<Extension<any>[]>,
   groupToken: InjectionToken<Extension<any>[]>,
+  nextToken: InjectionToken<Extension<any>[]>,
   extension: ExtensionType,
   exported?: boolean
 ];
@@ -153,13 +153,13 @@ import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
 @Module({
   extensions: [
-    [ROUTES_EXTENSIONS, MY_EXTENSIONS, MyExtension, true]
+    [MY_EXTENSIONS, ROUTES_EXTENSIONS, MyExtension, true]
   ],
 })
 export class SomeModule {}
 ```
 
-That is, in the array in the first place is a group of extensions `ROUTES_EXTENSIONS`, before which you need to run the group `MY_EXTENSIONS`. In second place is the token of the extension group `MY_EXTENSIONS`, to which your extension belongs. In the third place - the extension class, and in the fourth - `true` - is an indicator of whether to export this extension from the current module.
+That is, in the array in the first place is the token of the extension group `MY_EXTENSIONS`, to which your extension belongs. In the second place is a group of extensions `ROUTES_EXTENSIONS`, before which you need to run the group `MY_EXTENSIONS`. In the third place - the extension class, and in the fourth - `true` - is an indicator of whether to export this extension from the current module.
 
 If your extension doesn't care before which group of extensions it will work, you can use the second type of array:
 

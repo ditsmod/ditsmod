@@ -25,7 +25,7 @@ import { SwaggerOAuthOptions } from './swagger-ui/swagger-o-auth-options';
   exports: [OasRouteMeta],
   extensions: [
     [ROUTES_EXTENSIONS, OpenapiRoutesExtension, true],
-    [PRE_ROUTER_EXTENSIONS, OAS_COMPILER_EXTENSIONS, OpenapiCompilerExtension, true],
+    [OAS_COMPILER_EXTENSIONS, PRE_ROUTER_EXTENSIONS, OpenapiCompilerExtension, true],
   ],
 })
 export class OpenapiModule {

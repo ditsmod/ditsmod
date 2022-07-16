@@ -130,8 +130,8 @@ const result = await this.extensionsManager.init(MY_EXTENSIONS);
 
 ```ts
 type ExtensionItem1 = [
-  beforeToken: InjectionToken<Extension<any>[]>,
   groupToken: InjectionToken<Extension<any>[]>,
+  nextToken: InjectionToken<Extension<any>[]>,
   extension: ExtensionType,
   exported?: boolean
 ];
@@ -152,13 +152,13 @@ import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
 @Module({
   extensions: [
-    [ROUTES_EXTENSIONS, MY_EXTENSIONS, MyExtension, true]
+    [MY_EXTENSIONS, ROUTES_EXTENSIONS, MyExtension, true]
   ],
 })
 export class SomeModule {}
 ```
 
-Тобто в масиві на першому місці йде група розширень `ROUTES_EXTENSIONS`, перед якою потрібно запускати групу `MY_EXTENSIONS`. На другому місці йде токен групи розширень `MY_EXTENSIONS`, до якої належить ваше розширення. На третьому місці - клас розширення, а на четвертому - `true` - це індикатор того, чи потрібно експортувати дане розширення з поточного модуля.
+Тобто в масиві на першому місці йде токен групи розширень `MY_EXTENSIONS`, до якої належить ваше розширення. На другому місці йде група розширень `ROUTES_EXTENSIONS`, перед якою потрібно запускати групу `MY_EXTENSIONS`. На третьому місці - клас розширення, а на четвертому - `true` - це індикатор того, чи потрібно експортувати дане розширення з поточного модуля.
 
 Якщо ж для вашого розширення не важливо перед якою групою розширень воно працюватиме, можна використати другий тип масиву:
 
