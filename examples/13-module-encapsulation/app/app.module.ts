@@ -7,7 +7,12 @@ import { SecondModule } from './second/second.module';
 import { ThirdModule } from './third/third.module';
 
 @RootModule({
-  imports: [RouterModule, ThirdModule, FirstModule, SecondModule],
+  imports: [
+    RouterModule,
+    { path: '', module: FirstModule },
+    { path: '', module: SecondModule },
+    { path: '', module: ThirdModule },
+  ],
   controllers: [AppController],
 })
 export class AppModule {}

@@ -89,7 +89,7 @@ export class LogMediator {
 
   flush() {
     const { buffer } = this.logManager;
-    if (typeof global.it !== 'function') {
+    if (typeof global.it != 'function') {
       // This is not a test mode.
       const { filterConfig } = this.logConfig;
       let filteredBuffer = buffer;

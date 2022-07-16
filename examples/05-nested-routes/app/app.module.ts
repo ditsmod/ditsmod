@@ -5,6 +5,9 @@ import { PostsModule } from './posts/posts.module';
 
 @RootModule({
   path: 'api',
-  imports: [RouterModule, { path: 'posts/:postId', module: PostsModule }],
+  imports: [
+    RouterModule,
+    { path: 'posts/:postId', module: PostsModule }
+  ],
 })
 export class AppModule {}

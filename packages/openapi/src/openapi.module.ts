@@ -40,6 +40,7 @@ export class OpenapiModule {
 
     return {
       module: OpenapiModule,
+      path: '',
       providersPerApp,
     };
   }

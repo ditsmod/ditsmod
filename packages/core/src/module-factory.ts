@@ -8,6 +8,7 @@ import { ModuleManager } from './services/module-manager';
 import { ControllersMetadata1 } from './types/controller-metadata';
 import { ImportObj, GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod';
 import {
+  AnyObj,
   DecoratorMetadata,
   ExtensionProvider,
   ModuleType,
@@ -20,7 +21,7 @@ import { deepFreeze } from './utils/deep-freeze';
 import { getCollisions } from './utils/get-collisions';
 import { getToken, getTokens } from './utils/get-tokens';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
-import { isController, isModuleWithParams } from './utils/type-guards';
+import { isController, isModuleWithParams, isRootModule } from './utils/type-guards';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports';
 import { getModuleName } from './utils/get-module-name';
 import { getLastProviders } from './utils/get-last-providers';
@@ -106,7 +107,11 @@ export class ModuleFactory {
     this.importModules();
     const modConfig: ModConfig = { prefixPerMod: this.prefixPerMod };
     this.meta.providersPerMod.unshift({ provide: ModConfig, useValue: modConfig });
-    const aControllersMetadata1 = this.getControllersMetadata();
+
+    let aControllersMetadata1: ControllersMetadata1<AnyObj, AnyObj>[] = [];
+    if (isRootModule(meta) || (isModuleWithParams(meta.module) && meta.module.path !== undefined)) {
+      aControllersMetadata1 = this.getControllersMetadata();
+    }
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
@@ -263,9 +268,6 @@ export class ModuleFactory {
     return { module2, providers };
   }
 
-  /**
-   * This method should be called before call `this.mergeProviders()`.
-   */
   protected checkAllCollisionsWithScopesMix() {
     this.checkCollisionsWithScopesMix(this.providersPerApp, ['Mod', 'Rou', 'Req']);
     const providersPerMod = [

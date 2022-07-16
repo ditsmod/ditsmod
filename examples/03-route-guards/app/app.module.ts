@@ -5,7 +5,7 @@ import { SomeModule } from './modules/some/some.module';
 import { AuthModule } from './modules/auth/auth.module';
 
 @RootModule({
-  imports: [RouterModule, SomeModule, AuthModule],
+  imports: [RouterModule, AuthModule, { path: '', module: SomeModule }],
   exports: [AuthModule],
 })
 export class AppModule {}

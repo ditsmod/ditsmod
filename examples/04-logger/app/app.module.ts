@@ -13,7 +13,13 @@ const logMediatorConfig = new LogMediatorConfig();
 // logMediatorConfig.filterConfig.classesNames = ['ExtensionsManager', 'PreRouterExtension']; // uncomment this
 
 @RootModule({
-  imports: [RouterModule, BunyanModule, PinoModule, WinstonModule, SomeModule],
+  imports: [
+    RouterModule,
+    { path: '', module: SomeModule },
+    { path: '', module: WinstonModule },
+    { path: '', module: PinoModule },
+    { path: '', module: BunyanModule },
+  ],
   providersPerApp: [
     { provide: LoggerConfig, useValue: loggerConfig },
     { provide: LogMediatorConfig, useValue: logMediatorConfig },
