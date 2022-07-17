@@ -100,7 +100,7 @@ export class SwaggerConfigManager {
 
   protected getWebpackConfig() {
     const webpackConfig: Configuration = {
-      mode: 'development',
+      mode: 'production',
       entry: {
         openapi: require.resolve(`${this.swaggerUiSrc}/index`),
       },
