@@ -8,7 +8,7 @@ sidebar_position: 6
 
 Щоб цього не сталось, якщо ви імпортуєте два або більше модулі, в яких експортуються неідентичні провайдери з однаковим токеном, Ditsmod кидатиме приблизно таку помилку:
 
-> Error: Importing providers to Module1 failed: exports from Module2 and Module3 causes collision with Service3. If Module1 is intrernal module, you should add this provider to resolvedCollisionsPer* in Module1. For example: resolvedCollisionsPerReq: [ [Service3, Module3] ].
+> Error: Importing providers to Module1 failed: exports from Module2 and Module3 causes collision with Service3. If Module1 declared in your application (it is not imported from node_modules), you should add Service3 to resolvedCollisionsPer* in Module1. For example: resolvedCollisionsPerReq: [ [Service3, Module3] ].
 
 Конкретно у цій ситуації:
 
@@ -18,11 +18,9 @@ sidebar_position: 6
 
 І оскільки обидва ці модулі імпортуються у `Module1`, якраз тому і виникає "колізія провайдерів", розробник може не знати яка із цих підмін буде працювати в `Module1`.
 
-## Вирішення колізії у внутрішньому модулі
+## Вирішення колізії
 
-Якщо `Module1` оголошено у вашому застосунку, цей модуль вважається внутрішнім відносно вашого застосунку.
-
-Враховуючи рівень, на якому оголошено провайдери, колізія вирішується шляхом додавання до `resolvedCollisionsPer*` масиву з двох елементів, де на першому місці йде токен провайдера, а на другому - модуль, з якого потрібно брати відповідний провайдер:
+Якщо `Module1` оголошено у вашому застосунку (тобто не імпортовано із `node_modules`), колізія вирішується шляхом додавання до `resolvedCollisionsPer*` масиву з двох елементів, де на першому місці йде токен провайдера, а на другому - модуль, з якого потрібно брати відповідний провайдер:
 
 ```ts
 import { Module2 } from './module2';
@@ -35,8 +33,6 @@ import { Module3, Service3 } from './module3';
 export class Module1 {}
 ```
 
-## Вирішення колізії у зовнішньому модулі
-
-Якщо `Module1` ви встановили за допомогою менеджерів пакетів (npm, yarn і т.д.), цей модуль вважається зовнішнім відносно вашого застосунку. Немає сенсу локально змінювати зовнішній модуль щоб вирішити колізію.
+Якщо `Module1` ви встановили за допомогою менеджера пакетів (npm, yarn і т.д.), немає сенсу локально змінювати цей модуль щоб вирішити колізію.
 
 Така ситуація може виникнути лише якщо `Module2` та `Module3` експортуються із кореневого модуля, тому вам потрібно видалити один із цих модулів звідти. Ну і, звичайно ж, після цього вам прийдеться імпортувати інший модуль, де він необхідний.

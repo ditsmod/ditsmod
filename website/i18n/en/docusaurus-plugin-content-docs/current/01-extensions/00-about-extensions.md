@@ -6,7 +6,7 @@ sidebar_position: 0
 
 ## The purpose of Ditsmod extension
 
-The main difference between an extension and a regular service is that the extension can do its job before the web server starts, and it can dynamically add providers at the module level, route level or request level.
+The main difference between an extension and a regular service is that the extension can do its job before the web server starts, and it can dynamically add providers at the module level, route level or request level. To modify or extend the behavior of the application, an extension typically uses metadata attached to certain decorators.
 
 For example, `@ditsmod/body-parser` module has an extension that dynamically adds an HTTP interceptor for parsing the request body to each route that has the appropriate method (POST, PATCH, PUT). It does this once before the start of the web server, so there is no need to test the need for such parsing for each request.
 

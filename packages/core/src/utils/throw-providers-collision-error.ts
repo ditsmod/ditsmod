@@ -15,9 +15,8 @@ export function throwProvidersCollisionError(
     example = ` For example: resolvedCollisionsPer${scope || 'App'}: [ [${namesArr[0]}, ${modulesNames[0]}] ].`;
   }
   const resolvedCollisionsPer = scope ? `resolvedCollisionsPer${scope}` : 'resolvedCollisionsPer*';
-  const provider = duplicates.length > 1 ? 'these providers' : 'this provider';
   const msg =
     `Importing providers to ${moduleName} failed: exports ${fromModules}causes collision with ${namesStr}. ` +
-    `If ${moduleName} is intrernal module, you should add ${provider} to ${resolvedCollisionsPer} in ${moduleName}.${example}`;
+    `If ${moduleName} declared in your application (it is not imported from node_modules), you should add ${namesStr} to ${resolvedCollisionsPer} in ${moduleName}.${example}`;
   throw new Error(msg);
 }
