@@ -6,11 +6,12 @@ sidebar_position: 0
 
 ## Ditsmod module
 
-Generally speaking, the module should have a set of classes with a narrow specialization. A well-designed module does not have to be a "universal combine".
+Since Ditsmod is designed for good modularity, one of the main architectural elements of a Ditsmod application is its modules. But what exactly is good about modular architecture? - It allows you to isolate in one module **several code files** that may have different roles, but **common specialization**. A module can be compared to an orchestra, in which there are different instruments, but they all create music together. On the other hand, the need to isolate different modules arises due to the fact that they may have different specializations and because of this - may interfere with each other. Continuing the analogy with people, if you put police and musicians, or brokers and translators in the same office, they will most likely interfere with each other. That is why **narrow specialization** is important for the module.
 
-For example, a security module has a narrow specialization - access security and application management security. Here should not be declared classes which translating messages into different languages, sending mail, writing logs, etc.
+However, modules can also have different types, most often they are:
 
-When a particular module is tied to a specific URL, it's also good practice, and it can also be considered as a "narrow specialization". For example, one module can process all HTTP requests to `/api/users`, another module can process `/api/posts`.
+- **service** - this type includes modules that provide certain services: a database module, a security module, a module for recording logs, a module for translating messages into different languages, etc.; such modules are rarely pinned to specific URLs.
+- **routed** - modules that serve a certain part of the URL should be assigned to this type: for example, one module can process all HTTP requests at the address `/api/users`, another module - at the address `/api/posts` .
 
 The TypeScript class becomes a Ditsmod module with `Module` decorator:
 
