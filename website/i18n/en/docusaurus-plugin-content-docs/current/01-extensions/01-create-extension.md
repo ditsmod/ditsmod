@@ -84,12 +84,12 @@ Register the extension in an existing extension group, or create a new group, ev
 
 Extension groups allow you to:
 
-- Arrange the sequence of extensions that perform different types of work.
-- Add new extensions to a specific group without having to change the code of other extensions.
+- Organize the sequence of work of extensions that perform different types of work. For example, one group of extensions can add routes, the second - HTTP interceptors, the third - set metrics, etc.
+- Add new extensions to a certain group of extensions, without having to change the code of those extensions that are already in the given group of extensions.
 
-For example, there is a group `ROUTES_EXTENSIONS`, which includes two extensions, each of which prepares data to set routes for the router. But one extension works with the `@Route()` decorator imported from `@ditsmod/core`, the other works with the `@OasRoute()` decorator imported from `@ditsmod/openapi`. These extensions are grouped together because their `init()` methods return data with the same base interface.
+For example, there is a group `ROUTES_EXTENSIONS`, which can include two extensions, each of which will prepare the data to set routes for the router. But one of the extensions will work with the `@Route()` decorator imported from `@ditsmod/core`, the other will work with `@OasRoute()` decorator imported from `@ditsmod/openapi`. In this case, these extensions will be collected in one group because their `init()` methods return data with the same base interface.
 
-The Ditsmod core knows nothing about the extension imported from `@ditsmod/openapi`, but it knows that it needs to wait for all extensions from the `ROUTES_EXTENSIONS` group to complete initialization, and only then set routes for the router.
+The Ditsmod core knows nothing about the extension imported from `@ditsmod/openapi`, but it knows that it needs to wait for all extensions from the `ROUTES_EXTENSIONS` group to complete initialization, and only then set routes for the router. If the need arises later, it will be possible to add other extensions to this group, which also return data with the basic interface for this group.
 
 ### Creating a new group token
 
@@ -248,7 +248,7 @@ export class MyExtension implements Extension<void | false> {
 }
 ```
 
-That is, when you need `MyExtension` to receive data from the entire application, the third parameter here is to pass the class of the current extension:
+That is, when you need `MyExtension` to receive data from the `OTHER_EXTENSIONS` group from the entire application, you need to pass `MyExtension` as the third parameter here:
 
 ```ts
 const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExtension);

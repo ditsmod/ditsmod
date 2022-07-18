@@ -4,7 +4,7 @@
 Тека [examples][100] містить приклади застосування Ditsmod для типових випадків. Їх зручніше проглядати, якщо клонувати репозиторій Ditsmod та встановити npm залежності:
 
 ```bash
-git clone git@github.com:ditsmod/ditsmod.git
+git clone https://github.com/ditsmod/ditsmod.git
 cd ditsmod
 yarn
 ```

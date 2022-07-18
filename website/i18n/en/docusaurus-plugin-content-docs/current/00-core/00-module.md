@@ -13,6 +13,11 @@ However, modules can also have different types, most often they are:
 - **service** - this type includes modules that provide certain services: a database module, a security module, a module for recording logs, a module for translating messages into different languages, etc.; such modules are rarely pinned to specific URLs.
 - **routed** - modules that serve a certain part of the URL should be assigned to this type: for example, one module can process all HTTP requests at the address `/api/users`, another module - at the address `/api/posts` .
 
+Modules can contain:
+- controllers that accepts HTTP requests and sends HTTP responses;
+- services where the business logic of the application is described;
+- other classes, interfaces, helpers, data types intended for the operation of the current module.
+
 The TypeScript class becomes a Ditsmod module with `Module` decorator:
 
 ```ts
@@ -31,7 +36,11 @@ Ditsmod uses several decorators. But why decorators? Because they allow to scan 
 - whether there are other properties of the class;
 - other metadata is transferred to the decorator.
 
-Decorators allow you to declaratively describe the structure of the application, and therefore you can easily view the connections of some modules with others.
+:::tip Conventions class roles
+The class roles mentioned here - module, controller, service - are conventions (or declarative), since they have meaning only in the context of Ditsmod applications, and TypeScript itself does not have such concepts as "class role".
+:::
+
+Decorators allow you to declaratively describe the structure of the application, and therefore you can easily see what belongs to the module, as well as the connections of some modules with others.
 
 In general, an object with the following properties can be passed to the `Module` decorator:
 

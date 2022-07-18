@@ -36,7 +36,7 @@ yarn
 yarn start
 ```
 
-You can use this command to develop an application, because every time you save your code, you immediately see these changes.
+This command cannot be used for production mode, but it is suitable for application development, because every time you save your code, you immediately see these changes.
 
 You can check the server with `curl`:
 
@@ -72,7 +72,7 @@ new Application().bootstrap(AppModule).catch((err) => {
 });
 ```
 
-Once compiled, it becomes `dist/main.js` and becomes the entry point for running the application, which is why you will specify it as an argument for Node.js:
+Once compiled, it becomes `dist/main.js` and becomes the entry point for running the application in production mode, which is why you will specify it as an argument for Node.js:
 
 ```bash
 node dist/main.js

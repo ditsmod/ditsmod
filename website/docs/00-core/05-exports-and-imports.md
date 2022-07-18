@@ -66,7 +66,7 @@ import { AuthGuard } from './auth.guard';
 @Module({
   imports: [
     FirstModule,
-    { prefix: 'some-prefix', guards: [AuthGuard], module: SecondModule }
+    { path: 'some-prefix', guards: [AuthGuard], module: SecondModule }
   ]
 })
 export class ThridModule {}
@@ -82,7 +82,7 @@ export class ThridModule {}
 interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> {
   id?: string;
   module: ModuleType<M>;
-  prefix?: string;
+  path?: string;
   guards?: GuardItem[];
   providersPerApp?: ServiceProvider[];
   providersPerMod?: ServiceProvider[];

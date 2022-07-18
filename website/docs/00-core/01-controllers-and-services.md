@@ -17,6 +17,7 @@ export class SomeController {}
 
 Файли контролерів рекомендується називати із закінченням `*.controller.ts`, а імена їхніх класів - із закінченням `*Controller`.
 
+<!--
 Загалом, в декоратор `Controller` можна передавати об'єкт із такими властивостями:
 
 ```ts
@@ -28,8 +29,9 @@ import { Controller } from '@ditsmod/core';
 })
 export class SomeController {}
 ```
+-->
 
-Запити прив'язуються до методів контролерів через систему маршрутизації, з використанням декоратора `Route`. В наступному прикладі створено два маршрути, що приймають `GET` запити за адресами `/hello` та `/throw-error`:
+HTTP-запити прив'язуються до методів контролерів через систему маршрутизації, з використанням декоратора `Route`. В наступному прикладі створено два маршрути, що приймають `GET` запити за адресами `/hello` та `/throw-error`:
 
 ```ts
 import { Controller, Res, Route } from '@ditsmod/core';
@@ -52,9 +54,9 @@ export class SomeController {
 
 Що ми тут бачимо:
 
-1. В конструкторі класу за допомогою модифікатора доступу `private` оголошується властивість класу `res` із типом даних `Res`. Таким чином ми просимо Ditsmod щоб він створив інстанс класу `Res` і передав його у змінну `res`.
-2. Маршрути створюються за допомогою декоратора `Route`, що ставиться перед методом класу.
-3. Відповіді на HTTP-запити відправляються через `this.res.send()`.
+1. В конструкторі класу за допомогою модифікатора доступу `private` оголошується властивість класу `res` із типом даних `Res`. Таким чином ми просимо Ditsmod щоб він створив інстанс класу `Res` і передав його у змінну `res`. До речі, `res` - це скорочення від слова _response_.
+2. Маршрути створюються за допомогою декоратора `Route`, що ставиться перед методом класу, причому не важливо як саме називається цей метод.
+3. Текстові відповіді на HTTP-запити відправляються через `this.res.send()`.
 4. Об'єкти помилок можна кидати прямо в методі класу звичайним для JavaScript способом, тобто за допомогою ключового слова `throw`.
 
 :::tip Використовуйте модифікатор доступу
@@ -71,18 +73,20 @@ export class SomeController {
   constructor(private req: Req, private res: Res) {}
 
   @Route('GET', 'hello/:userName')
-  tellHello() {
+  getHello() {
     const { pathParams } = this.req;
     this.res.send(`Hello, ${pathParams.userName}`);
   }
 
   @Route('POST', 'some-url')
-  tellHello() {
+  postSomeUrl() {
     const { body, queryParams } = this.req;
     this.res.sendJson(body, queryParams);
   }
 }
 ```
+
+До речі, `req` - це скорочення від слова _request_.
 
 Як бачите, щоб відправляти відповіді з об'єктами, необхідно використовувати метод `this.res.sendJson()` замість `this.res.send()` (бо він відправляє тільки текст).
 
@@ -95,7 +99,7 @@ export class SomeController {
 ```ts
 import { Module } from '@ditsmod/core';
 
-import { SomeController } from './first.controller';
+import { SomeController } from './some.controller';
 
 @Module({
   controllers: [SomeController]
@@ -115,8 +119,8 @@ import { SecondModule } from './second.module';
 
 @Module({
   imports: [
-    { prefix: 'some-prefix', module: FirstModule }
-    { prefix: 'other-prefix/:pathParam', module: SecondModule }
+    { path: 'some-prefix', module: FirstModule }
+    { path: 'other-prefix/:pathParam', module: SecondModule }
   ]
 })
 export class ThridModule {}
@@ -138,7 +142,11 @@ import { SomeModule } from './some.module';
 export class AppModule {}
 ```
 
+Більше інформації про імпорт модулів можете проглянути у розділі [Експорт та імпорт модулів][1].
+
 ## Сервіси
+
+Хоча з технічної точки зору, для обробки HTTP-запиту можна обійтись одним лише контролером, але об'ємний код із бізнес логікою краще виносити в окремі класи, щоб при потребі, в майбутньому можна було повторно використовувати цей код. Ці окремі класи з бізнес логікою називаються _сервісами_.
 
 Що можуть робити сервіси:
 
@@ -158,7 +166,7 @@ import { Injectable } from '@ts-stack/di';
 export class SomeService {}
 ```
 
-Файли сервісів рекомендується називати із закінченням `*.service.ts`, а імена їхніх класів - із закінченням `*Service`.
+Файли сервісів рекомендується називати із закінченням `*.service.ts`, а їхні класи - із закінченням `*Service`.
 
 Зверніть увагу, що цей декоратор імпортується із `@ts-stack/di`, а не із `@ditsmod/core`.
 
@@ -180,3 +188,5 @@ export class SecondService {
 ```
 
 Як бачите, правила отримання інстансу класу в сервісі такі ж самі, як і в контролері. Тобто, ми в конструкторі за допомогою модифікатора доступу `private` оголошуємо властивість класу `firstService` із типом даних `FirstService`.
+
+[1]: /core/exports-and-imports#імпорт-модуля

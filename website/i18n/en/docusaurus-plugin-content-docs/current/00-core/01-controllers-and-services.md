@@ -17,6 +17,7 @@ export class SomeController {}
 
 It is recommended that files of controllers end with `*.controller.ts` and that their class names end with `*Controller`.
 
+<!--
 In general, you can transfer an object with the following properties to the `Controller` decorator:
 
 ```ts
@@ -28,8 +29,9 @@ import { Controller } from '@ditsmod/core';
 })
 export class SomeController {}
 ```
+-->
 
-The requests are tied to the methods of controllers through the routing system, using the decorator `Route`. The following example creates two routes that accept `GET` requests to `/hello` and `/throw-error`:
+The HTTP requests are tied to the methods of controllers through the routing system, using the decorator `Route`. The following example creates two routes that accept `GET` requests to `/hello` and `/throw-error`:
 
 ```ts
 import { Controller, Res, Route } from '@ditsmod/core';
@@ -52,9 +54,9 @@ export class SomeController {
 
 What we see here:
 
-1. In the constructor of the class using `private` access modifier, the property of class `res` with data type `Res` is declared. So we ask Ditsmod to create an instance of the `Res` class and pass it to the `res` variable.
-2. Routes are created using the `Route` decorator, which is placed before the class method.
-3. Responses to HTTP requests are sent via `this.res.send()`.
+1. In the constructor of the class using `private` access modifier, the property of class `res` with data type `Res` is declared. So we ask Ditsmod to create an instance of the `Res` class and pass it to the `res` variable. By the way, `res` is short for the word _response_.
+2. Routes are created using the `Route` decorator, which is placed before the class method, and it does not matter what the name of this method is.
+3. Text responses to HTTP requests are sent via `this.res.send()`.
 4. Error objects can be thrown directly in the class method in the common way for JavaScript - with the keyword `throw`.
 
 :::tip Use an access modifier
@@ -71,18 +73,20 @@ export class SomeController {
   constructor(private req: Req, private res: Res) {}
 
   @Route('GET', 'hello/:userName')
-  tellHello() {
+  getHello() {
     const { pathParams } = this.req;
     this.res.send(`Hello, ${pathParams.userName}`);
   }
 
   @Route('POST', 'some-url')
-  tellHello() {
+  postSomeUrl() {
     const { body, queryParams } = this.req;
     this.res.sendJson(body, queryParams);
   }
 }
 ```
+
+By the way, `req` is short for _request_.
 
 As you can see, to send responses with objects, you need to use the `this.res.sendJson()` method instead of `this.res.send()` (because it only sends text).
 
@@ -95,7 +99,7 @@ The controller is bound to the module through an array of `controllers`:
 ```ts
 import { Module } from '@ditsmod/core';
 
-import { SomeController } from './first.controller';
+import { SomeController } from './some.controller';
 
 @Module({
   controllers: [SomeController]
@@ -115,8 +119,8 @@ import { SecondModule } from './second.module';
 
 @Module({
   imports: [
-    { prefix: 'some-prefix', module: FirstModule }
-    { prefix: 'other-prefix/:pathParam', module: SecondModule }
+    { path: 'some-prefix', module: FirstModule }
+    { path: 'other-prefix/:pathParam', module: SecondModule }
   ]
 })
 export class ThridModule {}
@@ -140,7 +144,11 @@ export class AppModule {}
 
 Controllers are required to be able to handle certain URL routes.
 
+You can see more information about importing modules in the section [Exporting and importing modules][1].
+
 ## Sevices
+
+Although from a technical point of view, it is possible to get by with only one controller for processing an HTTP request, but it is better to separate the voluminous code with business logic into separate classes so that, if necessary, this code can be reused in the future. These separate classes with business logic are called _services_.
 
 What services can do:
 
@@ -189,3 +197,5 @@ export class SecondService {
 ```
 
 As you can see, the rules for obtaining a class instance in the service are the same as in the controller. That is, we in the constructor with `private` access modifier declare property of class `firstService` with data type `FirstService`.
+
+[1]: /core/exports-and-imports#import-of-the-module
