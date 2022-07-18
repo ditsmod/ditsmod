@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/core",
-  "version": "2.0.0-beta.6",
+  "version": "2.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"

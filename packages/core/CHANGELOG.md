@@ -1,5 +1,5 @@
-<a name="core-2.0.0-next.0"></a>
-# [core-2.0.0-next.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.0.0-next.0) (2021-11-20)
+<a name="core-2.0.0"></a>
+# [core-2.0.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.0.0) (2022-07-18)
 
 ### BREAKING CHANGES
 

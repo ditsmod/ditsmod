@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/router",
-  "version": "2.0.0-beta.2",
+  "version": "2.0.0",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "homepage": "https://github.com/ditsmod/ditsmod",
   "description": "Router module for Ditsmod applications",
@@ -32,7 +32,7 @@
     "typescript": "^4.4.4"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.0.0-beta.1",
+    "@ditsmod/core": "^2.0.0",
     "@ts-stack/di": "^1.2.0"
   },
   "keywords": [
