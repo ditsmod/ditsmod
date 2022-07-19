@@ -6,7 +6,7 @@ import { Content, mediaTypeName, ContentOptions, Column } from '@ditsmod/openapi
  * For example, `SomeModel` transform to `{ data: SomeModel[], meta: any, error: any }`.
  */
 export class MetaContent extends Content {
-  set<T extends mediaTypeName = mediaTypeName>(contentOptions: ContentOptions<T>) {
+  override set<T extends mediaTypeName = mediaTypeName>(contentOptions: ContentOptions<T>) {
     contentOptions = { ...contentOptions };
     class ApiResponse {
       @Column({ type: 'array' }, contentOptions.model)
