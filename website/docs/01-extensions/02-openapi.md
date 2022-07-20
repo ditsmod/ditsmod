@@ -17,7 +17,7 @@ import { OasRoute, getParams } from '@ditsmod/openapi';
 @Controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', '', [], {
+  @OasRoute('GET', '', {
     parameters: getParams('query', false, 'page')
   })
   async getSome() {
@@ -44,7 +44,7 @@ class Params {
 @Controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', '', [], {
+  @OasRoute('GET', '', {
     parameters: getParams('query', false, Params, 'page', 'otherParam')
   })
   async getSome() {
@@ -87,7 +87,7 @@ import { Params } from '@models/params';
 @Controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', '', [], {
+  @OasRoute('GET', '', {
     parameters: new Parameters()
       .required('query', Params, 'otherParam').describe('Якийсь інший опис')
       .optional('query', Params, 'page')
@@ -117,7 +117,7 @@ class SomeModel {
 @Controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', '', [], {
+  @OasRoute('GET', '', {
     responses: {
       [Status.OK]: {
         description: 'Опис контенту із даним статусом',
@@ -142,7 +142,7 @@ import { SomeModel } from '@models/some';
 @Controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', '', [], {
+  @OasRoute('GET', '', {
     responses: {
       [Status.OK]: {
         description: 'Опис контенту із даним статусом',

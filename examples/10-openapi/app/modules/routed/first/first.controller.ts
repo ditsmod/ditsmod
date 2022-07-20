@@ -9,7 +9,7 @@ import { getMetaContent } from './overriden-helper';
 export class FirstController {
   constructor(private req: Req, private res: Res) {}
 
-  @Route('GET', '', [])
+  @Route('GET')
   hello() {
     this.res.send('Hello, World!');
   }
@@ -19,7 +19,7 @@ export class FirstController {
     this.res.send('Hello, user!');
   }
 
-  @OasRoute('GET', 'resource/:resourceId', [], {
+  @OasRoute('GET', 'resource/:resourceId', {
     tags: ['withParameter'],
     description: 'This route uses `getParams()` and `getContent()` helpers from @ditsmod/openapi',
     parameters: getParams('path', true, Model2, 'resourceId'),
@@ -35,7 +35,7 @@ export class FirstController {
     this.res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
   }
 
-  @OasRoute('GET', 'resource2/:resourceId', [], {
+  @OasRoute('GET', 'resource2/:resourceId', {
     tags: ['withParameter'],
     description: 'This route like previous, but uses template `{ data: Model1[], meta: any, error: any }`',
     parameters: getParams('path', true, Model2, 'resourceId'),
