@@ -1,6 +1,6 @@
-import * as http from 'http';
-import * as http2 from 'http2';
-import * as https from 'https';
+import type * as http from 'http';
+import type * as http2 from 'http2';
+import type * as https from 'https';
 
 import { RootMetadata } from './models/root-metadata';
 import { AppInitializer } from './services/app-initializer';
