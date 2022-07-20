@@ -29,8 +29,8 @@ export class BodyParserExtension implements Extension<void> {
       const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
       aControllersMetadata2.forEach(({ providersPerRou, providersPerReq }) => {
         const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
-        const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
-        const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
+        const injectorPerRou = injectorPerMod.resolveAndCreateChild([...metadataPerMod2.providersPerRou, ...providersPerRou]);
+        const injectorPerReq = injectorPerRou.resolveAndCreateChild([...metadataPerMod2.providersPerReq, ...providersPerReq]);
         const routeMeta = injectorPerRou.get(RouteMeta) as RouteMeta;
         const bodyParserConfig = injectorPerReq.resolveAndInstantiate(BodyParserConfig) as BodyParserConfig;
         if (bodyParserConfig.acceptMethods.includes(routeMeta.httpMethod)) {
