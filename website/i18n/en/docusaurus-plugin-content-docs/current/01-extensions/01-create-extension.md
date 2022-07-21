@@ -264,31 +264,46 @@ Each extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dyna
 - route,
 - request.
 
-For example:
+You can see how it is done in [BodyParserExtension][3]:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
-import { Extension, ExtensionsManager, ROUTES_EXTENSIONS } from '@ditsmod/core';
-
 @Injectable()
-export class MyExtension implements Extension<void> {
+export class BodyParserExtension implements Extension<void> {
   private inited: boolean;
 
-  constructor(private extensionsManager: ExtensionsManager) {}
+  constructor(protected extensionManager: ExtensionsManager, protected injectorPerApp: InjectorPerApp) {}
 
   async init() {
     if (this.inited) {
       return;
     }
 
-    const rawRoutesMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    // Getting the metadata collected using the ROUTES_EXTENSIONS group
+    const aMetadataPerMod2 = await this.extensionManager.init(ROUTES_EXTENSIONS);
 
-    rawRoutesMeta.forEach((meta) => {
-      // ... Create new providers and their values here, then:
-      const { providersPerMod, providersPerRou, providersPerReq } = meta;
-      providersPerMod.push({ provide: MyProviderPerMod, useValue: myValue1 });
-      providersPerRou.push({ provide: MyProviderPerRoute, useValue: myValue1 });
-      providersPerReq.push({ provide: MyProviderPerReq, useValue: myValue2 });
+    aMetadataPerMod2.forEach((metadataPerMod2) => {
+      // First, extracting the metadata of a module
+      const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
+
+      // Then, extracting the metadata of a controller
+      aControllersMetadata2.forEach(({ providersPerRou, providersPerReq }) => {
+        // Merging the providers from a module and a controller
+        const mergedProvidersPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
+        const mergedProvidersPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
+
+        // Creating a hierarchy of injectors.
+        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+        const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
+        const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
+
+        // Extracting the metadata for a route,
+        // and based on it, we either add an interceptor to injectorPerReq, or not.
+        const routeMeta = injectorPerRou.get(RouteMeta) as RouteMeta;
+        const bodyParserConfig = injectorPerReq.resolveAndInstantiate(BodyParserConfig) as BodyParserConfig;
+        if (bodyParserConfig.acceptMethods.includes(routeMeta.httpMethod)) {
+          providersPerReq.push({ provide: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
+        }
+      });
     });
 
     this.inited = true;
@@ -296,9 +311,8 @@ export class MyExtension implements Extension<void> {
 }
 ```
 
-After this extension works, any controller or service (including interceptors) can ask in their constructors the `MyProviderPerMod`, `MyProviderPerRoute` or `MyProviderPerReq`.
-
 Of course, such a dynamic addition of providers is possible only before the start of the web server.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
 [2]: #creating-an-extension-class
+[3]: https://github.com/ditsmod/ditsmod/blob/0c4660a77/packages/body-parser/src/body-parser.extension.ts#L27-L40
