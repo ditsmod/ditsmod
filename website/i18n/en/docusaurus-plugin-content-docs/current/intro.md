@@ -36,7 +36,7 @@ yarn
 yarn start
 ```
 
-This command cannot be used for production mode, but it is suitable for application development, because every time you save your code, you immediately see these changes.
+This command cannot be used for production mode, but it is suitable for application development, because every time you save your code, the web server will automatically reboot to apply the latest changes.
 
 You can check the server with `curl`:
 
