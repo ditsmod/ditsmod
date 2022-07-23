@@ -60,13 +60,10 @@ You cannot import a single provider into the Ditsmod module, but you can import 
 import { Module } from '@ditsmod/core';
 
 import { FirstModule } from './first.module';
-import { SecondModule } from './second.module';
-import { AuthGuard } from './auth.guard';
 
 @Module({
   imports: [
-    FirstModule,
-    { path: 'some-prefix', guards: [AuthGuard], module: SecondModule }
+    FirstModule
   ]
 })
 export class ThridModule {}
@@ -76,7 +73,7 @@ For example, if `FirstModule` exports `SomeService`, then this service can now b
 
 Note that when importing, the provider's declaration level remains the same as it was when exporting. For example, if `SomeService` was declared at the module level, then the same level will remain when importing.
 
-The array `imports` accepts besides classes of modules, also the object with following interface:
+However, if `FirstModule` has controllers, they will be ignored in this import form. For Ditsmod to take into account the controllers from the imported module, you need to use an object with the following interface:
 
 ```ts
 interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> {
@@ -92,7 +89,26 @@ interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
 }
 ```
 
-Such object allows to transfer besides the module, also certain arguments for the listed parameters.
+Such an interface allows you to transfer, in addition to the module itself, certain arguments for the listed parameters:
+
+```ts
+import { Module } from '@ditsmod/core';
+
+import { FirstModule } from './first.module';
+import { AuthGuard } from './auth.guard';
+
+@Module({
+  imports: [
+    { path: '', guards: [AuthGuard], module: FirstModule }
+  ]
+})
+export class ThridModule {}
+```
+
+Although here `path` is an empty string, for Ditsmod the presence of `path` means:
+
+1. that the controllers from the imported module must also be taken into account;
+2. to use `path` as a prefix for all controllers imported from `FirstModule`.
 
 You should also keep in mind that the current module does not prohibit re-declaring the provider level already announced in the external module, but this is not recommended. If you need a provider from an external module, import this module completely.
 

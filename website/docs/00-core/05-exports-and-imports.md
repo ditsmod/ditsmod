@@ -60,13 +60,10 @@ export class AppModule {}
 import { Module } from '@ditsmod/core';
 
 import { FirstModule } from './first.module';
-import { SecondModule } from './second.module';
-import { AuthGuard } from './auth.guard';
 
 @Module({
   imports: [
-    FirstModule,
-    { path: 'some-prefix', guards: [AuthGuard], module: SecondModule }
+    FirstModule
   ]
 })
 export class ThridModule {}
@@ -76,7 +73,7 @@ export class ThridModule {}
 
 Зверніть увагу, що при імпорті рівень оголошення провайдера залишається таким самим, яким він був при експорті. Наприклад, якщо `SomeService` було оголошено на рівні модуля, то і при імпорті залишиться цей же рівень.
 
-Масив `imports` приймає окрім класів модулів, ще й об'єкт, з наступним інтерфейсом:
+Разом із тим, якщо `FirstModule` має контролери, у такій формі імпорту вони будуть ігноруватись. Щоб Ditsmod брав до уваги контролери з імпортованого модуля, потрібно використовувати об'єкт, що має наступний інтерфейс:
 
 ```ts
 interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> {
@@ -92,7 +89,26 @@ interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
 }
 ```
 
-Такий об'єкт дозволяє передавати окрім самого модуля, ще й певні аргументи для перерахованих параметрів.
+Такий інтерфейс дозволяє передавати окрім самого модуля, ще й певні аргументи для перерахованих параметрів:
+
+```ts
+import { Module } from '@ditsmod/core';
+
+import { FirstModule } from './first.module';
+import { AuthGuard } from './auth.guard';
+
+@Module({
+  imports: [
+    { path: '', guards: [AuthGuard], module: FirstModule }
+  ]
+})
+export class ThridModule {}
+```
+
+Хоча тут `path` має порожній рядок, але для Ditsmod наявність `path` означає:
+
+1. що потрібно брати до уваги також і контролери з імпортованого модуля;
+2. використовувати `path` у якості префіксу для усіх контролерів, що імпортуються з `FirstModule`.
 
 Також ви повинні мати на увазі, що у поточному модулі не забороняється повторно оголошувати рівень провайдера, що вже оголошений у зовнішньому модулі, але це не рекомендується робити. Якщо вам потрібен провайдер із зовнішнього модуля, імпортуйте даний модуль повністю.
 
