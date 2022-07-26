@@ -1,7 +1,7 @@
 {
-  "name": "@ditsmod/logger",
+  "name": "@ditsmod/tslog",
   "version": "2.0.0-alpha.1",
-  "description": "Module for Ditsmod Applications",
+  "description": "tslog implementation for Ditsmod Applications",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "main": "dist/index",
   "typings": "dist/index",
@@ -16,6 +16,7 @@
   "keywords": [
     "ditsmod",
     "logging",
+    "tslog",
     "log"
   ],
   "license": "MIT",
