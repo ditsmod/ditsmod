@@ -1,50 +1,28 @@
 {
   "name": "@ditsmod/logger",
-  "version": "0.0.0-alpha.5",
-  "description": "a JSON logging library for node.js services writen on TypeScript",
+  "version": "2.0.0-alpha.1",
+  "description": "Module for Ditsmod Applications",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "main": "dist/index",
   "typings": "dist/index",
   "scripts": {
-    "build": "rimraf dist/* && tsc -b -f",
-    "build-examples": "rimraf dist-examples/* && tsc --project examples",
+    "build": "rm -rf dist/* && tsc -b -f",
     "test": "jest"
-  },
-  "bin": {
-    "bunyan": "./bin/bunyan"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
   "keywords": [
-    "log",
+    "ditsmod",
     "logging",
-    "log4j",
-    "json",
-    "bunyan"
+    "log"
   ],
   "license": "MIT",
   "dependencies": {
-    "assert-plus": "^1.0.0"
-  },
-  "// mv": "required for RotatingFileStream",
-  "optionalDependencies": {
-    "mv": "~2"
+    "tslog": "^3.3.3"
   },
   "devDependencies": {
-    "@ts-stack/chain-error": "^1.2.0",
-    "@types/assert-plus": "^1.0.4",
-    "@types/jest": "^26.0.20",
-    "@types/mv": "^2.1.0",
-    "@types/node": "^14.14.31",
-    "jest": "^26.6.3",
-    "prettier": "^2.2.1",
-    "rimraf": "^3.0.2",
-    "ts-jest": "^26.5.2",
-    "tslint": "^6.1.3",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-plugin-prettier": "^2.3.0",
-    "typescript": "^4.4.4"
+    "@ts-stack/chain-error": "^1.2.0"
   }
 }
