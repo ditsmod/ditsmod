@@ -107,48 +107,11 @@ import { SomeController } from './some.controller';
 export class SomeModule {}
 ```
 
-## Routes prefixes
-
-If a non-root module is imported with a prefix, this prefix will be added to all routes within this module:
-
-```ts
-import { Module } from '@ditsmod/core';
-
-import { FirstModule } from './first.module';
-import { SecondModule } from './second.module';
-
-@Module({
-  imports: [
-    { path: 'some-prefix', module: FirstModule }
-    { path: 'other-prefix/:pathParam', module: SecondModule }
-  ]
-})
-export class ThridModule {}
-```
-
-Here, the entry `:pathParam` means not just text, but a parameter - a variable part in the URL before the query parameters.
-
-If you specify `path` in the root module, it will be used as a prefix and will be added to all routes throughout the application:
-
-```ts
-import { RootModule } from '@ditsmod/core';
-
-import { SomeModule } from './some.module';
-
-@RootModule({
-  path: 'api',
-  imports: [SomeModule]
-})
-export class AppModule {}
-```
-
-Controllers are required to be able to handle certain URL routes.
-
-You can see more information about importing modules in the section [Exporting and importing modules][1].
+How to add a certain prefix centrally in the module, you can see in the section [Exporting and importing modules][1].
 
 ## Sevices
 
-Although from a technical point of view, it is possible to get by with only one controller for processing an HTTP request, but it is better to separate the voluminous code with business logic into separate classes so that, if necessary, this code can be reused in the future. These separate classes with business logic are called _services_.
+Although from a technical point of view, it is possible to get by with just one controller to handle a HTTP request, but it is better to separate the voluminous code with business logic into separate classes so that this code can be reused if necessary. These separate classes with business logic are called _services_.
 
 What services can do:
 
