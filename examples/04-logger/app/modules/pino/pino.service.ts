@@ -2,7 +2,7 @@ import { Injectable } from '@ts-stack/di';
 import { Logger, LoggerConfig } from '@ditsmod/core';
 import pino = require('pino');
 
-import { getNamedLogggerMethod } from '../../utils/get-named-logger-method';
+import { SettingsService } from '../../utils/settings.service';
 import { getLogMethod } from '../../utils/get-log-method';
 
 const logger = pino();
@@ -11,20 +11,20 @@ const logger = pino();
 export class PinoService implements Logger {
   private logger: pino.Logger;
 
-  constructor(private config: LoggerConfig) {
+  constructor(private settingsService: SettingsService, config: LoggerConfig) {
     this.logger = logger;
     this.logger.level = config.level;
     this.logger.log = getLogMethod.bind(this);
   }
 
-  fatal = getNamedLogggerMethod.call(this, 'fatal');
-  error = getNamedLogggerMethod.call(this, 'error');
-  warn = getNamedLogggerMethod.call(this, 'warn');
-  info = getNamedLogggerMethod.call(this, 'info');
-  debug = getNamedLogggerMethod.call(this, 'debug');
-  trace = getNamedLogggerMethod.call(this, 'trace');
+  fatal = this.settingsService.getFn(this, 'fatal');
+  error = this.settingsService.getFn(this, 'error');
+  warn = this.settingsService.getFn(this, 'warn');
+  info = this.settingsService.getFn(this, 'info');
+  debug = this.settingsService.getFn(this, 'debug');
+  trace = this.settingsService.getFn(this, 'trace');
   log(level: keyof Logger, args: any[]): void {
-    const fn = getNamedLogggerMethod.call(this, level, this.config);
+    const fn = this.settingsService.getFn(this.logger, level);
     fn(args);
   }
 }
