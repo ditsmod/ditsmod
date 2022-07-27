@@ -6,7 +6,6 @@
     { "path": "openapi" },
     { "path": "router" },
     { "path": "session-cookie" },
-    { "path": "logger" },
     { "path": "jwt" }
   ]
 }
