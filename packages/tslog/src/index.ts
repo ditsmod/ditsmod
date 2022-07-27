@@ -1,2 +1,2 @@
-export { TslogModule } from './logger.module';
+export { TslogModule } from './tslog.module';
 export { TslogService } from './tslog.service';

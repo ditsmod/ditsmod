@@ -1,5 +1,6 @@
 import { RootModule, LoggerConfig, Logger, LogMediatorConfig } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
+import { TslogModule } from '@ditsmod/tslog';
 
 import { BunyanModule } from './modules/bunyan/bunyan.module';
 import { PinoModule } from './modules/pino/pino.module';
@@ -15,6 +16,7 @@ const logMediatorConfig = new LogMediatorConfig();
 @RootModule({
   imports: [
     RouterModule,
+    TslogModule,
     { path: '', module: SomeModule },
     { path: '', module: WinstonModule },
     { path: '', module: PinoModule },
@@ -23,6 +25,7 @@ const logMediatorConfig = new LogMediatorConfig();
   providersPerApp: [
     { provide: LoggerConfig, useValue: loggerConfig },
     { provide: LogMediatorConfig, useValue: logMediatorConfig }
-  ]
+  ],
+  resolvedCollisionsPerApp: [ [Logger, TslogModule] ]
 })
 export class AppModule {}
