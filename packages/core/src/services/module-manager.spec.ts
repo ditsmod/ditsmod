@@ -8,7 +8,7 @@ import { ModuleManager } from './module-manager';
 import { Module } from '../decorators/module';
 import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj, Extension, ExtensionProvider } from '../types/mix';
 import { LoggerConfig } from '../types/logger';
-import { DefaultLogger } from './default-logger';
+import { ConsoleLogger } from './console-logger';
 import { LogMediator } from './log-mediator';
 import { LogManager } from './log-manager';
 import { Controller } from '../decorators/controller';
@@ -40,7 +40,7 @@ describe('ModuleManager', () => {
 
   beforeEach(() => {
     const config = new LoggerConfig();
-    const logger = new DefaultLogger(config);
+    const logger = new ConsoleLogger(config);
     const logManager = new LogManager();
     const logMediator = new LogMediator(logManager, logger);
     mock = new MockModuleManager(logMediator);

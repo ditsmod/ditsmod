@@ -1,5 +1,12 @@
+<a name="core-2.1.0"></a>
+# [core-2.1.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.1.0) (2022-07-27)
+
+### BREAKING CHANGES
+
+- Renamed `DefaultLogger` to `ConsoleLogger`.
+
 <a name="core-2.0.0"></a>
-# [core-2.0.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.0.0) (2022-07-18)
+## [core-2.0.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.0.0) (2022-07-18)
 
 ### BREAKING CHANGES
 

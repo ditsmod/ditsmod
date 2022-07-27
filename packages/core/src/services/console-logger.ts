@@ -19,7 +19,7 @@ function defaultLoggerFn(fnLevel: keyof Logger, config: LoggerConfig) {
 }
 
 @Injectable()
-export class DefaultLogger extends Logger {
+export class ConsoleLogger extends Logger {
   constructor(@Optional() private config: LoggerConfig = new LoggerConfig()) {
     super();
   }

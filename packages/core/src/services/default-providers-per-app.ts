@@ -5,14 +5,14 @@ import { RootMetadata } from '../models/root-metadata';
 import { Logger, LoggerConfig } from '../types/logger';
 import { ServiceProvider } from '../types/mix';
 import { Counter } from './counter';
-import { DefaultLogger } from './default-logger';
+import { ConsoleLogger } from './console-logger';
 import { ModuleManager } from './module-manager';
 import { LogMediator, LogMediatorConfig } from './log-mediator';
 import { PreRouter } from './pre-router';
 
 export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
   LoggerConfig,
-  { provide: Logger, useClass: DefaultLogger },
+  { provide: Logger, useClass: ConsoleLogger },
   BodyParserConfig,
   {
     provide: ReflectiveInjector,

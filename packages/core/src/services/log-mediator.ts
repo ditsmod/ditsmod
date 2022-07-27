@@ -6,7 +6,7 @@ import { AnyObj, Extension, ModuleType, ModuleWithParams, ServiceProvider } from
 import { getImportedTokens } from '../utils/get-imports';
 import { getModuleName } from '../utils/get-module-name';
 import { getProviderName } from '../utils/get-provider-name';
-import { DefaultLogger } from './default-logger';
+import { ConsoleLogger } from './console-logger';
 import { LogManager } from './log-manager';
 
 type KeyOfLogger = keyof Logger;
@@ -71,7 +71,7 @@ export class LogMediator {
 
   constructor(
     protected logManager: LogManager,
-    @Optional() protected _logger: Logger = new DefaultLogger(),
+    @Optional() protected _logger: Logger = new ConsoleLogger(),
     @Optional() protected logConfig: LogMediatorConfig = new LogMediatorConfig()
   ) {}
 

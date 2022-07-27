@@ -9,7 +9,7 @@ import { CanActivate } from '../types/mix';
 import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleManager } from '../services/module-manager';
-import { DefaultLogger } from '../services/default-logger';
+import { ConsoleLogger } from '../services/console-logger';
 import { AppInitializer } from '../services/app-initializer';
 import { LogMediator } from '../services/log-mediator';
 import { LogManager } from '../services/log-manager';
@@ -32,7 +32,7 @@ xdescribe('RoutesExtension', () => {
 
   beforeEach(() => {
     const config = new LoggerConfig();
-    const logger = new DefaultLogger(config);
+    const logger = new ConsoleLogger(config);
     const logManager = new LogManager();
     const log = new LogMediator(logManager, logger);
     moduleManager = new ModuleManager(log);

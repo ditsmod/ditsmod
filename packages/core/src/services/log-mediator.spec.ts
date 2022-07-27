@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { ReflectiveInjector } from '@ts-stack/di';
 
 import { Logger, LoggerConfig } from '../types/logger';
-import { DefaultLogger } from './default-logger';
+import { ConsoleLogger } from './console-logger';
 import { LogMediator } from './log-mediator';
 import { LogManager } from './log-manager';
 
@@ -26,7 +26,7 @@ describe('Log', () => {
   beforeEach(() => {
     loggerSpy.mockRestore();
     const config = new LoggerConfig();
-    const logger = new DefaultLogger(config) as Logger;
+    const logger = new ConsoleLogger(config) as Logger;
     const logManager = new LogManager();
     logMediator = new LogMediatorMock(logManager, logger);
   });
