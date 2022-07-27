@@ -2,29 +2,27 @@ import { Injectable } from '@ts-stack/di';
 import { Logger, LoggerConfig } from '@ditsmod/core';
 import pino = require('pino');
 
-import { SettingsService } from '../../utils/settings.service';
-import { getLogMethod } from '../../utils/get-log-method';
-
-const logger = pino();
-
 @Injectable()
-export class PinoService implements Logger {
-  private logger: pino.Logger;
+export class PinoService extends Logger {
+  constructor(private config: LoggerConfig) {
+    super();
+    const logger = pino();
+    logger.level = config.level;
 
-  constructor(private settingsService: SettingsService, config: LoggerConfig) {
-    this.logger = logger;
-    this.logger.level = config.level;
-    this.logger.log = getLogMethod.bind(this);
-  }
+    const levels: (keyof Logger)[] = ['fatal', 'error', 'warn', 'info', 'debug', 'trace'];
+    levels.forEach(level => {
+      this[level] = (...args: any[]) => {
+        if (!args.length) {
+          return this.config.level == level;
+        } else {
+          this.log(level, ...args);
+        }
+      };
+    });
 
-  fatal = this.settingsService.getFn(this, 'fatal');
-  error = this.settingsService.getFn(this, 'error');
-  warn = this.settingsService.getFn(this, 'warn');
-  info = this.settingsService.getFn(this, 'info');
-  debug = this.settingsService.getFn(this, 'debug');
-  trace = this.settingsService.getFn(this, 'trace');
-  log(level: keyof Logger, args: any[]): void {
-    const fn = this.settingsService.getFn(this.logger, level);
-    fn(args);
+    this.log = (level: (keyof Logger), ...args: any[]) => {
+      const [arg1, ...rest] = args;
+      logger[level](arg1, ...rest);
+    };
   }
 }

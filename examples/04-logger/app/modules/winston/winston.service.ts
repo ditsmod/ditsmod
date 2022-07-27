@@ -2,13 +2,10 @@ import { Injectable } from '@ts-stack/di';
 import { Logger, LoggerConfig } from '@ditsmod/core';
 import winston = require('winston');
 
-import { SettingsService } from '../../utils/settings.service';
-
 @Injectable()
-export class WinstonService implements Logger {
-  private logger: winston.Logger;
-
-  constructor(private settingsService: SettingsService, config: LoggerConfig) {
+export class WinstonService extends Logger {
+  constructor(private config: LoggerConfig) {
+    super();
     const transports = [
       new winston.transports.Console({
         format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
@@ -35,21 +32,26 @@ export class WinstonService implements Logger {
 
     winston.addColors(customLevels.colors);
 
-    this.logger = winston.createLogger({
+    const logger: Logger = winston.createLogger({
       levels: customLevels.levels,
       level: config.level,
       transports,
-    });
-  }
+    }) as any;
 
-  fatal = this.settingsService.getFn(this, 'fatal');
-  error = this.settingsService.getFn(this, 'error');
-  warn = this.settingsService.getFn(this, 'warn');
-  info = this.settingsService.getFn(this, 'info');
-  debug = this.settingsService.getFn(this, 'debug');
-  trace = this.settingsService.getFn(this, 'trace');
-  log(level: keyof Logger, args: any[]): void {
-    const fn = this.settingsService.getFn(this.logger, level);
-    fn(args);
+    const levels: (keyof Logger)[] = ['fatal', 'error', 'warn', 'info', 'debug', 'trace'];
+    levels.forEach(level => {
+      this[level] = (...args: any[]) => {
+        if (!args.length) {
+          return this.config.level == level;
+        } else {
+          this.log(level, ...args);
+        }
+      };
+    });
+
+    this.log = (level: (keyof Logger), ...args: any[]) => {
+      const [arg1, ...rest] = args;
+      logger[level](arg1, ...rest);
+    };
   }
 }

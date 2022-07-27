@@ -5,7 +5,6 @@ import { BunyanModule } from './modules/bunyan/bunyan.module';
 import { PinoModule } from './modules/pino/pino.module';
 import { SomeModule } from './modules/some/some.module';
 import { WinstonModule } from './modules/winston/winston.module';
-import { SettingsService } from './utils/settings.service';
 
 const loggerConfig = new LoggerConfig();
 const level: keyof Logger = 'debug';
@@ -24,8 +23,6 @@ const logMediatorConfig = new LogMediatorConfig();
   providersPerApp: [
     { provide: LoggerConfig, useValue: loggerConfig },
     { provide: LogMediatorConfig, useValue: logMediatorConfig }
-  ],
-  providersPerMod: [SettingsService],
-  exports: [SettingsService]
+  ]
 })
 export class AppModule {}
