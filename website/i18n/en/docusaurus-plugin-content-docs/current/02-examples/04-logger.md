@@ -4,7 +4,7 @@ To try this example, you should first [prepare the prerequisite][1].
 
 In this example, it is shown how it is possible to have four loggers in one application:
 
-- `DefaultLogger`;
+- `ConsoleLogger`;
 - [bunyan][6];
 - [pino][7];
 - [winston][5];
