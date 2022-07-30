@@ -6,9 +6,9 @@ import { XOperationObject } from '@ts-stack/openapi-spec';
  * a route.
  */
 export class OasRouteMeta extends RouteMeta {
-  operationObject: XOperationObject;
+  operationObject?: XOperationObject;
   /**
    * Path in format of OpenAPI Specefication, (e.g. `posts/{postId}/comments/{commentId}`).
    */
-  oasPath: string;
+  oasPath?: string;
 }
