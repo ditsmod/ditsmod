@@ -46,11 +46,5 @@ export class WinstonModule {
     });
 
     addColors(customLevels.colors);
-
-    // Logger must have `log` method.
-    (logger as unknown as Logger).log = (level: string, ...args: any[]) => {
-      const [arg1, ...rest] = args;
-      (logger as any)[level](arg1, ...rest);
-    };
   }
 }
