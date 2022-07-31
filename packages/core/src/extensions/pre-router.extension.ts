@@ -10,6 +10,7 @@ import { LogMediator } from '../services/log-mediator';
 import { MetadataPerMod2 } from '../types/metadata-per-mod';
 import { ExtensionsContext } from '../services/extensions-context';
 import { InjectorPerApp } from '../models/injector-per-app';
+import { getModule } from '../utils/get-module';
 
 @Injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -41,9 +42,11 @@ export class PreRouterExtension implements Extension<void> {
 
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       const { moduleName, aControllersMetadata2, providersPerMod } = metadataPerMod2;
+      const mod = getModule(metadataPerMod2.module);
 
       aControllersMetadata2.forEach(({ httpMethod, path, providersPerRou, providersPerReq }) => {
-        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild([mod, ...providersPerMod]);
+        injectorPerMod.get(mod); // Call module constructor.
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];

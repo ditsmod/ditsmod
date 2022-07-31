@@ -1,6 +1,10 @@
 <a name="core-2.1.0"></a>
 # [core-2.1.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.1.0) (2022-07-31)
 
+### Features
+
+- Added call for a module constructor.
+
 ### BREAKING CHANGES
 
 - Renamed `DefaultLogger` to `ConsoleLogger`.
