@@ -1464,13 +1464,6 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
 
-"@ts-stack/chain-error@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@ts-stack/chain-error/-/chain-error-1.2.0.tgz#2b007bdbb00e63425abcc76ef66e9bf59be66254"
-  integrity sha512-ZLxCqhw5KhypXlGpisz7XiRUkb4/4ZhHMdNTpR0FulIO9RPMQ2hgZRu9bHKF6WWGiHcO2vpYbhTmq+S4dAW5bw==
-  dependencies:
-    assert-plus "^1.0.0"
-
 "@ts-stack/cookies@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@ts-stack/cookies/-/cookies-1.0.2.tgz#287dd257c78e86ef5914456260aa635dc28a1e11"
