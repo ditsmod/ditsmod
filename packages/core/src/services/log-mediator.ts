@@ -38,7 +38,7 @@ export interface LogItem {
  *
  * If you want to rewrite messages written by the core logger, you need:
  * 1. override the methods of this class in your own class;
- * 2. via DI, at the application level, replace the Log class with your class.
+ * 2. via DI, at the application level, substitute the `LogMediator` class with your class.
  */
 @Injectable()
 export class LogMediator {
@@ -183,7 +183,7 @@ export class LogMediator {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.classesNames = [className];
-    this.setLog('error', filterConfig, { err, info: className });
+    this.setLog('error', filterConfig, err);
   }
 
   /**
@@ -360,7 +360,7 @@ export class LogMediator {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.classesNames = [className];
-    this.setLog('error', filterConfig, { err, info: { className } });
+    this.setLog('error', filterConfig, err);
   }
 
   /**
@@ -370,7 +370,7 @@ export class LogMediator {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.classesNames = [className];
-    this.setLog('error', filterConfig, { err, info: { className } });
+    this.setLog('error', filterConfig, err);
   }
 
   /**
