@@ -1,10 +1,56 @@
-import { Logger, Module } from '@ditsmod/core';
+import { Logger, LoggerConfig, Module } from '@ditsmod/core';
+import { createLogger, addColors, format, transports } from 'winston';
 
 import { WinstonController } from './winston.controller';
-import { WinstonService } from './winston.service';
+
+const logger = createLogger();
 
 @Module({
   controllers: [WinstonController],
-  providersPerMod: [{ provide: Logger, useClass: WinstonService }],
+  providersPerMod: [
+    { provide: Logger, useValue: logger },
+  ],
 })
-export class WinstonModule {}
+export class WinstonModule {
+  constructor(config: LoggerConfig) {
+    this.init(config);
+  }
+
+  protected init(config: LoggerConfig) {
+    const transport = new transports.Console({
+      format: format.combine(format.colorize(), format.simple()),
+    });
+
+    const customLevels = {
+      levels: {
+        fatal: 1,
+        error: 2,
+        warn: 3,
+        info: 4,
+        debug: 5,
+        trace: 6,
+      },
+      colors: {
+        fatal: 'red',
+        error: 'yellow',
+        debug: 'green',
+        info: 'blue',
+        trace: 'grey',
+      },
+    };
+
+    logger.configure({
+      levels: customLevels.levels,
+      level: config.level,
+      transports: [transport],
+    });
+
+    addColors(customLevels.colors);
+
+    // Logger must have `log` method.
+    (logger as unknown as Logger).log = (level: string, ...args: any[]) => {
+      const [arg1, ...rest] = args;
+      (logger as any)[level](arg1, ...rest);
+    };
+  }
+}

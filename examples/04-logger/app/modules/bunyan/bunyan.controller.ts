@@ -1,8 +1,9 @@
-import { Controller, Res, Route, Logger } from '@ditsmod/core';
+import { Controller, Res, Route } from '@ditsmod/core';
+import BunyanLogger from 'bunyan';
 
 @Controller()
 export class BunyanController {
-  constructor(private res: Res, private logger: Logger) {}
+  constructor(private res: Res, private logger: BunyanLogger) {}
 
   @Route('GET', 'bunyan')
   ok() {
