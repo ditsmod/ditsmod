@@ -1,9 +1,10 @@
 import { Injectable, Optional } from '@ts-stack/di';
+import { AnyFn } from '../types/mix';
 
-import { Logger, LoggerConfig, LoggerMethod } from '../types/logger';
+import { Logger, LoggerConfig } from '../types/logger';
 
 function consoleLoggerFn(fnLevel: keyof Logger, config: LoggerConfig) {
-  const callback = (...args: any[]) => {
+  const callback: AnyFn = (...args: any[]) => {
     const allLevels = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
     const index = allLevels.indexOf(config.level);
     const availableLevels = allLevels.slice(index);
@@ -15,7 +16,7 @@ function consoleLoggerFn(fnLevel: keyof Logger, config: LoggerConfig) {
     }
   };
 
-  return callback as LoggerMethod;
+  return callback;
 }
 
 @Injectable()

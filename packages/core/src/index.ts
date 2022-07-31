@@ -15,7 +15,7 @@ export { Req } from './services/request';
 export { Res } from './services/response';
 export { PreRouter } from './services/pre-router';
 export { Route } from './decorators/route';
-export { Logger, LoggerConfig, LoggerMethod } from './types/logger';
+export { Logger, LoggerConfig } from './types/logger';
 export { ControllerErrorHandler } from './services/controller-error-handler';
 export { BodyParserConfig } from './models/body-parser-config';
 export { ModConfig } from './models/mod-config';
