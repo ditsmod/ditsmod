@@ -8,7 +8,7 @@ sidebar_position: 0
 
 Since Ditsmod is designed for good modularity, one of the main elements of its architecture is modules. But what exactly is good about modular architecture? - It allows you to isolate in one module **several code files** that may have different roles, but **common specialization**. A module can be compared to an orchestra, in which there are different instruments, but they all create music together. On the other hand, the need to isolate different modules arises due to the fact that they may have different specializations and because of this - may interfere with each other. Continuing the analogy with people, if you put police and musicians, or brokers and translators in the same office, they will most likely interfere with each other. That is why **narrow specialization** is important for the module.
 
-However, modules can also have different types, most often they are:
+However, modules can also have different types. Two types are most often used:
 
 - **service** - this type includes modules that provide certain services: a database module, a security module, a module for recording logs, a module for translating messages into different languages, etc.; such modules are rarely pinned to specific URLs.
 - **routed** - modules that serve a certain part of the URL should be assigned to this type: for example, one module can process all HTTP requests at the address `/api/users`, another module - at the address `/api/posts` .
