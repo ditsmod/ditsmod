@@ -20,16 +20,9 @@
   },
   "devDependencies": {
     "@ts-stack/di": "^1.2.0",
-    "@types/jest": "^26.0.20",
-    "@types/node": "^14.14.34",
     "find-my-way": "^4.0.0",
-    "jest": "^26.6.3",
     "koa-tree-router": "^0.7.0",
-    "prettier": "^2.2.1",
-    "rimraf": "^3.0.2",
-    "trek-router": "^1.2.0",
-    "ts-jest": "^26.5.0",
-    "typescript": "^4.4.4"
+    "trek-router": "^1.2.0"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.0.0",

@@ -19,15 +19,7 @@
     "build": "rm -rf dist/* && tsc -b -f"
   },
   "devDependencies": {
-    "@ts-stack/di": "^1.2.0",
-    "@types/jest": "^26.0.20",
-    "@types/node": "^14.14.32",
-    "jest": "^26.6.3",
-    "nodemon": "^2.0.7",
-    "prettier": "^2.0.5",
-    "ts-jest": "^26.5.3",
-    "tsconfig-paths": "^3.9.0",
-    "typescript": "^4.4.4"
+    "@ts-stack/di": "^1.2.0"
   },
   "peerDependencies": {
     "@ts-stack/di": "^1.2.0",
