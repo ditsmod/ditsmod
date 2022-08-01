@@ -25,6 +25,8 @@ import { getLastProviders } from '../utils/get-last-providers';
 import { ExtensionsContext } from './extensions-context';
 import { InjectorPerApp } from '../models/injector-per-app';
 import { EXTENSIONS_COUNTERS } from '../constans';
+import { Logger, LoggerConfig } from '../types/logger';
+import { getModule } from '../utils/get-module';
 
 export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
@@ -251,10 +253,16 @@ export class AppInitializer {
     const len = aMetadataPerMod1.length;
     for (let i = 0; i < len; i++) {
       const metadataPerMod1 = aMetadataPerMod1[i];
-      const { extensionsProviders, providersPerMod, name: moduleName } = metadataPerMod1.meta;
+      const { extensionsProviders, providersPerMod, name: moduleName, module } = metadataPerMod1.meta;
+      const mod = getModule(module);
+      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild([mod, ...providersPerMod]);
+      injectorPerMod.get(mod); // Call module constructor.
+      const logger = injectorPerMod.get(Logger) as Logger;
+      const loggerConfig = injectorPerMod.get(LoggerConfig) as LoggerConfig;
+      this.logMediator.logger = logger;
+      logger.setLevel(loggerConfig.level);
       this.logMediator.startExtensionsModuleInit(this, moduleName);
       this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
-      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
         ExtensionsManager,
         { provide: ExtensionsContext, useValue: extensionsContext },

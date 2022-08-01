@@ -1,6 +1,6 @@
 import { Injectable, Optional } from '@ts-stack/di';
 
-import { Logger } from '../types/logger';
+import { Logger, LoggerConfig, LogLevels } from '../types/logger';
 import { GlobalProviders, ImportObj } from '../types/metadata-per-mod';
 import { AnyObj, Extension, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { getImportedTokens } from '../utils/get-imports';
@@ -8,8 +8,6 @@ import { getModuleName } from '../utils/get-module-name';
 import { getProviderName } from '../utils/get-provider-name';
 import { ConsoleLogger } from './console-logger';
 import { LogManager } from './log-manager';
-
-type KeyOfLogger = keyof Logger;
 
 export class FilterConfig {
   modulesNames?: string[];
@@ -29,8 +27,10 @@ export class LogMediatorConfig {
 export interface LogItem {
   date: Date;
   filterConfig: FilterConfig;
-  level: KeyOfLogger;
+  level: LogLevels;
   msg: string;
+  logger: Logger;
+  loggerConfig?: LoggerConfig;
 }
 
 /**
@@ -79,9 +79,16 @@ export class LogMediator {
     return this.logManager;
   }
 
-  protected setLog(level: KeyOfLogger, filterConfig: AnyObj, msg: any) {
+  protected setLog(level: LogLevels, filterConfig: AnyObj, msg: any) {
     if (this.logManager.bufferLogs) {
-      this.logManager.buffer.push({ filterConfig, date: new Date(), level, msg });
+      this.logManager.buffer.push({
+        logger: this._logger,
+        loggerConfig: this._logger.config ? {...this._logger.config} : undefined,
+        filterConfig,
+        date: new Date(),
+        level,
+        msg,
+      });
     } else {
       this.logger.log(level, msg);
     }
@@ -94,11 +101,25 @@ export class LogMediator {
       const { filterConfig } = this.logConfig;
       let filteredBuffer = buffer;
       filteredBuffer = this.filterLogs(buffer, filterConfig);
-      filteredBuffer.forEach((log) => {
+      filteredBuffer.forEach((logItem) => {
         // const dateTime = log.date.toLocaleString();
-        const partMsg = log.filterConfig.tags ? ` (Tags: ${log.filterConfig.tags.join(', ')})` : '';
-        const msg = `${log.msg}${partMsg}`;
-        this._logger.log.apply(this._logger, [log.level, msg]);
+        const partMsg = logItem.filterConfig.tags ? ` (Tags: ${logItem.filterConfig.tags.join(', ')})` : '';
+        const msg = `${logItem.msg}${partMsg}`;
+        if (logItem.loggerConfig?.level) {
+          logItem.logger.setLevel(logItem.loggerConfig.level);
+        }
+
+        if (!logItem.logger.log) {
+          const loggerName = logItem.logger.constructor.name;
+          const msg0 = `error: you need to implement "log" method in "${loggerName}";`;
+          if (logItem.logger.error) {
+            logItem.logger.error.call(logItem.logger, msg0, msg);
+          } else {
+            console.error(msg0, msg);
+          }
+        } else {
+          logItem.logger.log.call(logItem.logger, logItem.level, msg);
+        }
       });
     }
 
