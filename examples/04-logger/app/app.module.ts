@@ -1,4 +1,4 @@
-import { RootModule, LoggerConfig, Logger, LogMediatorConfig } from '@ditsmod/core';
+import { RootModule, LoggerConfig, Logger } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
 import { BunyanModule } from './modules/bunyan/bunyan.module';
@@ -9,8 +9,6 @@ import { WinstonModule } from './modules/winston/winston.module';
 const loggerConfig = new LoggerConfig();
 const level: keyof Logger = 'debug';
 loggerConfig.level = level;
-const logMediatorConfig = new LogMediatorConfig();
-// logMediatorConfig.filterConfig.classesNames = ['ExtensionsManager', 'PreRouterExtension']; // uncomment this
 
 @RootModule({
   imports: [
@@ -21,8 +19,7 @@ const logMediatorConfig = new LogMediatorConfig();
     { path: '', module: BunyanModule },
   ],
   providersPerApp: [
-    { provide: LoggerConfig, useValue: loggerConfig },
-    { provide: LogMediatorConfig, useValue: logMediatorConfig }
+    { provide: LoggerConfig, useValue: loggerConfig }
   ]
 })
 export class AppModule {}
