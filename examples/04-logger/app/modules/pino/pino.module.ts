@@ -7,12 +7,16 @@ const pinoLogger = pino();
 
 @Module({
   controllers: [PinoController],
-  providersPerMod: [
-    { provide: Logger, useValue: pinoLogger },
-  ],
+  providersPerMod: [{ provide: Logger, useValue: pinoLogger }],
 })
 export class PinoModule {
-  constructor(config: LoggerConfig){
+  constructor(config: LoggerConfig) {
     pinoLogger.level = config.level;
+
+    // Logger must have `log` method.
+    (pinoLogger as unknown as Logger).log = (level: string, ...args: any[]) => {
+      const [arg1, ...rest] = args;
+      pinoLogger[level](arg1, ...rest);
+    };
   }
 }
