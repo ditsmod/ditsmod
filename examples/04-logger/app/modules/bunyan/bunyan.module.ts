@@ -1,4 +1,4 @@
-import { Logger, LoggerConfig, Module } from '@ditsmod/core';
+import { Logger, LoggerConfig, LogLevels, Module } from '@ditsmod/core';
 import BunyanLogger, { createLogger, LogLevel, LogLevelString } from 'bunyan';
 
 import { BunyanController } from './bunyan.controller';
@@ -20,6 +20,11 @@ export class BunyanModule {
     (logger as unknown as Logger).log = (level: LogLevelString, ...args: any[]) => {
       const [arg1, ...rest] = args;
       logger[level](arg1, ...rest);
+    };
+
+
+    (logger as any).setLevel = (value: LogLevels) => {
+      logger.level(value);
     };
   }
 }
