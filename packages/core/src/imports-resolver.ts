@@ -5,7 +5,7 @@ import { AppMetadataMap, ModuleType, ModuleWithParams, Scope, ServiceProvider } 
 import { getLastProviders } from './utils/get-last-providers';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
-import { getProvidersTargets, getToken, getTokens } from './utils/get-tokens';
+import { getProvidersTargets, getTokens } from './utils/get-tokens';
 import { ImportedTokensMap } from './types/metadata-per-mod';
 import { RouteMeta } from './types/route-data';
 import { RootMetadata } from './models/root-metadata';
