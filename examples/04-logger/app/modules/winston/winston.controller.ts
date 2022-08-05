@@ -1,6 +1,6 @@
 import { Controller, Res, Route, Logger } from '@ditsmod/core';
-import { Logger as WinstonLogger } from 'winston';
 import { Inject } from '@ts-stack/di';
+import { Logger as WinstonLogger } from 'winston';
 
 @Controller()
 export class WinstonController {
