@@ -1,5 +1,12 @@
+<a name="core-2.2.1"></a>
+# [core-2.2.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.1) (2022-08-06)
+
+### Bug fix
+
+- Fixed `appInitializer.handleExtensions()` and `logMediator.setLog()`.
+
 <a name="core-2.2.0"></a>
-# [core-2.2.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.0) (2022-08-03)
+## [core-2.2.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.0) (2022-08-05)
 
 ### Features
 

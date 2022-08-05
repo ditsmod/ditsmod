@@ -1,12 +1,12 @@
 {
   "name": "@ditsmod/core",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
   "homepage": "https://github.com/ditsmod/ditsmod",
-  "description": "REST framework",
+  "description": "NodeJS web framework writen in TypeScript",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "license": "MIT",
   "main": "dist/index",
