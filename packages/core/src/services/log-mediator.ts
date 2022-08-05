@@ -1,6 +1,6 @@
 import { Injectable, Optional } from '@ts-stack/di';
 
-import { Logger, LoggerConfig, LogLevels } from '../types/logger';
+import { Logger, LogLevels } from '../types/logger';
 import { GlobalProviders, ImportObj } from '../types/metadata-per-mod';
 import { AnyObj, Extension, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { getImportedTokens } from '../utils/get-imports';
@@ -28,7 +28,7 @@ export interface LogItem {
   date: Date;
   filterConfig: FilterConfig;
   currentLevel: LogLevels;
-  level: LogLevels;
+  messageLevel: LogLevels;
   msg: string;
   logger: Logger;
 }
@@ -88,7 +88,7 @@ export class LogMediator {
         currentLevel: this.level,
         filterConfig,
         date: new Date(),
-        level,
+        messageLevel: level,
         msg,
       });
     } else {
@@ -121,7 +121,7 @@ export class LogMediator {
             console.error(msg0, msg);
           }
         } else {
-          logItem.logger.log.call(logItem.logger, logItem.level, msg);
+          logItem.logger.log.call(logItem.logger, logItem.messageLevel, msg);
         }
       });
     }

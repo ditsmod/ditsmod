@@ -602,7 +602,7 @@ describe('AppInitializer', () => {
       expect(mock.logMediator).toBeInstanceOf(LogMediatorMock1);
       (mock.logMediator as LogMediatorMock1).testMethod('debug', {}, 'one', 'two');
       const msgIndex1 = buffer.length - 1;
-      expect(buffer[msgIndex1].level).toBe('debug');
+      expect(buffer[msgIndex1].messageLevel).toBe('debug');
       expect(buffer[msgIndex1].msg).toBe('one,two');
       expect(testMethodSpy.mock.calls.length).toBe(1);
 
@@ -611,10 +611,10 @@ describe('AppInitializer', () => {
       expect(mock.logMediator).toBeInstanceOf(LogMediatorMock1);
       (mock.logMediator as LogMediatorMock1).testMethod('info', {}, 'three', 'four');
       // Logs from first init() still here
-      expect(buffer[msgIndex1].level).toBe('debug');
+      expect(buffer[msgIndex1].messageLevel).toBe('debug');
       expect(buffer[msgIndex1].msg).toBe('one,two');
       const msgIndex2 = buffer.length - 1;
-      expect(buffer[msgIndex2].level).toBe('info');
+      expect(buffer[msgIndex2].messageLevel).toBe('info');
       expect(buffer[msgIndex2].msg).toBe('three,four');
       expect(testMethodSpy.mock.calls.length).toBe(2);
       mock.logMediator.flush();

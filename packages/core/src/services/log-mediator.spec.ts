@@ -39,7 +39,7 @@ describe('Log', () => {
   it('passing message to the buffer', () => {
     logMediator.testMethod('trace', [], 'one', 'two');
     expect(logMediator.buffer.length).toBe(1);
-    expect(logMediator.buffer[0].level).toEqual('trace');
+    expect(logMediator.buffer[0].messageLevel).toEqual('trace');
     expect(logMediator.buffer[0].msg).toEqual('one, two');
     logMediator.flush();
     expect(logMediator.buffer).toEqual([]);
@@ -56,7 +56,7 @@ describe('Log', () => {
     log.testMethod('trace', [], 'one', 'two');
     expect(log.buffer.length).toBe(1);
     expect(loggerSpy.mock.calls.length).toBe(0);
-    expect(log.buffer[0].level).toEqual('trace');
+    expect(log.buffer[0].messageLevel).toEqual('trace');
     expect(log.buffer[0].msg).toEqual('one, two');
 
     log.testMethod('trace', [], 'one', 'two');
