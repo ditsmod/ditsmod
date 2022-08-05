@@ -19,7 +19,8 @@ export class PinoModule {
       logger[level](arg1, ...rest);
     };
 
-    (logger as any).setLevel = (value: LogLevels) => {
+    // Logger must have `setLevel` method.
+    (logger as unknown as Logger).setLevel = (value: LogLevels) => {
       logger.level = value;
     };
   }
