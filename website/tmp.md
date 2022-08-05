@@ -50,7 +50,7 @@ export class SomeModule {}
 Для цього достатньо розширити клас `Log` та підмінити його через DI:
 
 ```ts
-import { Injectable, RootModule, Log } from '@ditsmod/core';
+import { Injectable, RootModule, Log, LogLevels } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
 import { HelloWorldController } from './hello-world.controller';
@@ -60,7 +60,7 @@ class MyLog extends Log {
   /**
    * `serverName` is running at `host`:`port`.
    */
-  serverListen(level: keyof Logger, args: any[] = []) {
+  serverListen(level: LogLevels, args: any[] = []) {
     this._logger.log(level, `Here serverName: "${args[0]}", here host: "${args[1]}", and here port: "${args[2]}"`);
   }
 }

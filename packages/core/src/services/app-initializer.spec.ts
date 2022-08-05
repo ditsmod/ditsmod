@@ -4,7 +4,7 @@ import { Injectable, InjectionToken } from '@ts-stack/di';
 import { Module } from '../decorators/module';
 import { RootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { Logger, LoggerConfig, LogLevels } from '../types/logger';
+import { Logger, LoggerConfig, LogLevel } from '../types/logger';
 import { Router } from '../types/router';
 import { AppInitializer } from './app-initializer';
 import { LogManager } from './log-manager';
@@ -562,7 +562,7 @@ describe('AppInitializer', () => {
   describe('init()', () => {
     const testMethodSpy = jest.fn();
     class LogMediatorMock1 extends LogMediator {
-      testMethod(level: LogLevels, filterConfig: FilterConfig = {}, ...args: any[]) {
+      testMethod(level: LogLevel, filterConfig: FilterConfig = {}, ...args: any[]) {
         testMethodSpy();
         this.setLog(level, filterConfig, `${args}`);
       }

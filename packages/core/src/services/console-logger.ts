@@ -1,7 +1,7 @@
 import { Injectable } from '@ts-stack/di';
 
 import { AnyFn } from '../types/mix';
-import { Logger, LogLevels } from '../types/logger';
+import { Logger, LogLevel } from '../types/logger';
 
 @Injectable()
 export class ConsoleLogger extends Logger {
@@ -12,9 +12,9 @@ export class ConsoleLogger extends Logger {
   override error = this.consoleLoggerFn('error');
   override fatal = this.consoleLoggerFn('fatal');
 
-  protected consoleLoggerFn(level: LogLevels) {
+  protected consoleLoggerFn(level: LogLevel) {
     const callback: AnyFn = (...args: any[]) => {
-      const allLevels: LogLevels[] = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
+      const allLevels: LogLevel[] = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
       const index = allLevels.indexOf(this.config!.level);
       const availableLevels = allLevels.slice(index);
       if (availableLevels.includes(level)) {

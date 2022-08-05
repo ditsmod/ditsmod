@@ -1,4 +1,4 @@
-import { Logger, LoggerConfig, LogLevels, Module } from '@ditsmod/core';
+import { Logger, LoggerConfig, LogLevel, Module } from '@ditsmod/core';
 import pino from 'pino';
 
 import { PinoController } from './pino.controller';
@@ -20,7 +20,7 @@ export class PinoModule {
     };
 
     // Logger must have `setLevel` method.
-    (logger as unknown as Logger).setLevel = (value: LogLevels) => {
+    (logger as unknown as Logger).setLevel = (value: LogLevel) => {
       logger.level = value;
     };
   }

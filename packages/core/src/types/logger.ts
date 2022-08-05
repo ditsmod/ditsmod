@@ -1,11 +1,11 @@
 import { Injectable, Optional } from '@ts-stack/di';
 
 export class LoggerConfig {
-  constructor(public level: LogLevels = 'info') {}
+  constructor(public level: LogLevel = 'info') {}
 }
 
 const msg = 'You need to implement "%s" method in "%s"';
-export type LogLevels = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
+export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
 /**
  * @todo reaplace setLevel() by setConfig() method.
@@ -33,10 +33,10 @@ export class Logger {
   fatal(...args: any[]): any {
     console.warn(msg, 'fatal', this.constructor.name);
   }
-  log(level: LogLevels, ...args: any[]) {
+  log(level: LogLevel, ...args: any[]) {
     this[level](...args);
   }
-  setLevel(value: LogLevels) {
+  setLevel(value: LogLevel) {
     if (this.config?.level) {
       this.config.level = value;
     }

@@ -1,4 +1,4 @@
-import { Logger, LoggerConfig, Module, LogLevels } from '@ditsmod/core';
+import { Logger, LoggerConfig, Module, LogLevel } from '@ditsmod/core';
 import { createLogger, addColors, format, transports } from 'winston';
 
 import { WinstonController } from './winston.controller';
@@ -48,7 +48,7 @@ export class WinstonModule {
     });
 
     // Logger must have `setLevel` method.
-    (logger as unknown as Logger).setLevel = (value: LogLevels) => {
+    (logger as unknown as Logger).setLevel = (value: LogLevel) => {
       logger.level = value;
     };
 

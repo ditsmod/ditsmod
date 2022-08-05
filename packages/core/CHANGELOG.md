@@ -1,5 +1,12 @@
+<a name="core-2.2.2"></a>
+# [core-2.2.2](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.2) (2022-08-06)
+
+### BREAKING CHANGES
+
+- Renamed `LogLevels` to `LogLevel`.
+
 <a name="core-2.2.1"></a>
-# [core-2.2.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.1) (2022-08-06)
+## [core-2.2.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.1) (2022-08-06)
 
 ### Bug fix
 

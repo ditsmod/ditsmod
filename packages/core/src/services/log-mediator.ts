@@ -1,6 +1,6 @@
 import { Injectable, Optional } from '@ts-stack/di';
 
-import { Logger, LogLevels } from '../types/logger';
+import { Logger, LogLevel } from '../types/logger';
 import { GlobalProviders, ImportObj } from '../types/metadata-per-mod';
 import { AnyObj, Extension, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { getImportedTokens } from '../utils/get-imports';
@@ -27,8 +27,8 @@ export class LogMediatorConfig {
 export interface LogItem {
   date: Date;
   filterConfig: FilterConfig;
-  currentLevel: LogLevels;
-  messageLevel: LogLevels;
+  currentLevel: LogLevel;
+  messageLevel: LogLevel;
   msg: string;
   logger: Logger;
 }
@@ -69,7 +69,7 @@ export class LogMediator {
     }
   }
 
-  level: LogLevels = 'info';
+  level: LogLevel = 'info';
 
   constructor(
     protected logManager: LogManager,
@@ -81,7 +81,7 @@ export class LogMediator {
     return this.logManager;
   }
 
-  protected setLog(level: LogLevels, filterConfig: AnyObj, msg: any) {
+  protected setLog(level: LogLevel, filterConfig: AnyObj, msg: any) {
     if (this.logManager.bufferLogs) {
       this.logManager.buffer.push({
         logger: this._logger,
