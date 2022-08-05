@@ -55,8 +55,6 @@ export class AppInitializer {
    * 1. checks collisions for non-root exported providers per app;
    * 2. merges these providers with providers that declared on the root module;
    * 3. merges resolved providers per app.
-   *
-   * @param meta root metadata.
    */
   protected prepareProvidersPerApp() {
     // Here we work only with providers declared at the application level.
@@ -257,10 +255,9 @@ export class AppInitializer {
       const mod = getModule(module);
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild([mod, ...providersPerMod]);
       injectorPerMod.get(mod); // Call module constructor.
-      const logger = injectorPerMod.get(Logger) as Logger;
       const loggerConfig = injectorPerMod.get(LoggerConfig) as LoggerConfig;
-      this.logMediator.logger = logger;
-      logger.setLevel(loggerConfig.level);
+      this.logMediator.level = loggerConfig.level;
+      this.logMediator.logger = injectorPerMod.get(Logger) as Logger;
       this.logMediator.startExtensionsModuleInit(this, moduleName);
       this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([

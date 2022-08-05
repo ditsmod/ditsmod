@@ -27,10 +27,10 @@ export class LogMediatorConfig {
 export interface LogItem {
   date: Date;
   filterConfig: FilterConfig;
+  currentLevel: LogLevels;
   level: LogLevels;
   msg: string;
   logger: Logger;
-  loggerConfig?: LoggerConfig;
 }
 
 /**
@@ -69,6 +69,8 @@ export class LogMediator {
     }
   }
 
+  level: LogLevels = 'info';
+
   constructor(
     protected logManager: LogManager,
     @Optional() protected _logger: Logger = new ConsoleLogger(),
@@ -83,7 +85,7 @@ export class LogMediator {
     if (this.logManager.bufferLogs) {
       this.logManager.buffer.push({
         logger: this._logger,
-        loggerConfig: this._logger.config ? {...this._logger.config} : undefined,
+        currentLevel: this.level,
         filterConfig,
         date: new Date(),
         level,
@@ -94,6 +96,9 @@ export class LogMediator {
     }
   }
 
+  /**
+   * @todo Refactor this method.
+   */
   flush() {
     const { buffer } = this.logManager;
     if (typeof global.it != 'function') {
@@ -105,9 +110,7 @@ export class LogMediator {
         // const dateTime = log.date.toLocaleString();
         const partMsg = logItem.filterConfig.tags ? ` (Tags: ${logItem.filterConfig.tags.join(', ')})` : '';
         const msg = `${logItem.msg}${partMsg}`;
-        if (logItem.loggerConfig?.level) {
-          logItem.logger.setLevel(logItem.loggerConfig.level);
-        }
+        logItem.logger.setLevel(logItem.currentLevel);
 
         if (!logItem.logger.log) {
           const loggerName = logItem.logger.constructor.name;
