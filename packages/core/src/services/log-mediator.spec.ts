@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { ReflectiveInjector } from '@ts-stack/di';
 
-import { Logger, LoggerConfig } from '../types/logger';
+import { Logger, LoggerConfig, LogLevels } from '../types/logger';
 import { ConsoleLogger } from './console-logger';
 import { LogMediator } from './log-mediator';
 import { LogManager } from './log-manager';
@@ -10,7 +10,7 @@ describe('Log', () => {
   const loggerSpy = jest.fn();
 
   class LogMediatorMock extends LogMediator {
-    testMethod(level: keyof Logger, tags: string[] = [], ...args: any[]) {
+    testMethod(level: LogLevels, tags: string[] = [], ...args: any[]) {
       this.setLog(level, tags, `${args[0]}, ${args[1]}`);
     }
   }

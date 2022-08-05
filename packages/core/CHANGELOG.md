@@ -1,5 +1,12 @@
+<a name="core-2.2.0"></a>
+# [core-2.2.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.0) (2022-08-03)
+
+### Features
+
+- Log levels for a module.
+
 <a name="core-2.1.0"></a>
-# [core-2.1.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.1.0) (2022-07-31)
+## [core-2.1.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.1.0) (2022-07-31)
 
 ### Features
 
