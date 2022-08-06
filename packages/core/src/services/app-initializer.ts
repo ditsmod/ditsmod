@@ -268,13 +268,23 @@ export class AppInitializer {
         { provide: EXTENSIONS_COUNTERS, useValue: mExtensionsCounters },
         ...extensionsProviders,
       ]);
+      const extensionTokens: InjectionToken<any>[] = [];
+      const beforeTokens: string[] = [];
+      for(const token of getTokens(extensionsProviders)) {
+        if (token instanceof InjectionToken) {
+          extensionTokens.push(token);
+        } else {
+          beforeTokens.push(token);
+        }
+      }
       const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
-      const extensionTokens = getTokens(extensionsProviders).filter((token) => token instanceof InjectionToken);
       for (const groupToken of extensionTokens) {
         const beforeToken = `BEFORE ${groupToken}` as const;
-        this.logMediator.startExtensionsGroupInit(this, moduleName, beforeToken);
-        await extensionsManager.init(beforeToken);
-        this.logMediator.finishExtensionsGroupInit(this, moduleName, beforeToken);
+        if (beforeTokens.includes(beforeToken)) {
+          this.logMediator.startExtensionsGroupInit(this, moduleName, beforeToken);
+          await extensionsManager.init(beforeToken);
+          this.logMediator.finishExtensionsGroupInit(this, moduleName, beforeToken);
+        }
 
         this.logMediator.startExtensionsGroupInit(this, moduleName, groupToken);
         await extensionsManager.init(groupToken);
