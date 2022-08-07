@@ -1,8 +1,9 @@
 import { Injectable, Optional } from '@ts-stack/di';
+import { isInjectionToken } from '../utils/type-guards';
 
 import { Logger, LogLevel } from '../types/logger';
 import { GlobalProviders, ImportObj } from '../types/metadata-per-mod';
-import { AnyObj, Extension, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
+import { AnyObj, Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { getImportedTokens } from '../utils/get-imports';
 import { getModuleName } from '../utils/get-module-name';
 import { getProviderName } from '../utils/get-provider-name';
@@ -308,27 +309,37 @@ export class LogMediator {
   }
 
   /**
-   * `start init ${tokenName}.`
+   * `${tokenName} start init.`
    */
-  startExtensionsGroupInit(self: object, moduleName: string, groupToken: any) {
+  startExtensionsGroupInit(self: object, moduleName: string, unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.modulesNames = [moduleName];
     filterConfig.classesNames = [className];
-    const tokenName = getProviderName(groupToken);
-    this.setLog('trace', filterConfig, `${className}: start init ${tokenName}.`);
+    const path = this.getExtentionPath(unfinishedInit);
+    this.setLog('trace', filterConfig, `${className}: ${path}: start init.`);
+  }
+
+  protected getExtentionPath(unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
+    return [...unfinishedInit].map((tokenOrExtension) => {
+      if (isInjectionToken(tokenOrExtension) || typeof tokenOrExtension == 'string') {
+        return getProviderName(tokenOrExtension);
+      } else {
+        return tokenOrExtension.constructor.name;
+      }
+    }).join(' -> ');
   }
 
   /**
    * `finish init ${tokenName}.`
    */
-  finishExtensionsGroupInit(self: object, moduleName: string, groupToken: any) {
+  finishExtensionsGroupInit(self: object, moduleName: string, unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.modulesNames = [moduleName];
     filterConfig.classesNames = [className];
-    const tokenName = getProviderName(groupToken);
-    this.setLog('trace', filterConfig, `${className}: finish init ${tokenName}.`);
+    const path = this.getExtentionPath(unfinishedInit);
+    this.setLog('trace', filterConfig, `${className}: ${path}: finish init.`);
   }
 
   /**
@@ -345,22 +356,22 @@ export class LogMediator {
   /**
    * `${path}: start init.`
    */
-  startInitExtension(self: object, unfinishedInitExtensions: Set<Extension<any>>) {
+  startInitExtension(self: object, unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.classesNames = [className];
-    const path = [...unfinishedInitExtensions].map((extension) => extension.constructor.name).join(' -> ');
+    const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', filterConfig, `${className}: ${path}: start init.`);
   }
 
   /**
    * `${path}: finish init${withSomeValue}.`
    */
-  finishInitExtension(self: object, unfinishedInitExtensions: Set<Extension<any>>, data: any) {
+  finishInitExtension(self: object, unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>, data: any) {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.classesNames = [className];
-    const path = [...unfinishedInitExtensions].map((extension) => extension.constructor.name).join(' -> ');
+    const path = this.getExtentionPath(unfinishedInit);
     const withSomeValue = data === undefined ? ', no value returned' : ', returned some value';
     this.setLog('trace', filterConfig, `${className}: ${path}: finish init${withSomeValue}.`);
   }

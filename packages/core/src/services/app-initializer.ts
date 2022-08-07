@@ -5,7 +5,7 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleFactory } from '../module-factory';
 import { MetadataPerMod1 } from '../types/metadata-per-mod';
-import { ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
+import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { RequestListener } from '../types/server-options';
 import { getDuplicates } from '../utils/get-duplicates';
 import { getModuleName } from '../utils/get-module-name';
@@ -268,7 +268,7 @@ export class AppInitializer {
         { provide: EXTENSIONS_COUNTERS, useValue: mExtensionsCounters },
         ...extensionsProviders,
       ]);
-      const extensionTokens: InjectionToken<any>[] = [];
+      const extensionTokens: InjectionToken<Extension<any>[]>[] = [];
       const beforeTokens: string[] = [];
       for(const token of getTokens(extensionsProviders)) {
         if (token instanceof InjectionToken) {
@@ -279,16 +279,7 @@ export class AppInitializer {
       }
       const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
       for (const groupToken of extensionTokens) {
-        const beforeToken = `BEFORE ${groupToken}` as const;
-        if (beforeTokens.includes(beforeToken)) {
-          this.logMediator.startExtensionsGroupInit(this, moduleName, beforeToken);
-          await extensionsManager.init(beforeToken);
-          this.logMediator.finishExtensionsGroupInit(this, moduleName, beforeToken);
-        }
-
-        this.logMediator.startExtensionsGroupInit(this, moduleName, groupToken);
-        await extensionsManager.init(groupToken);
-        this.logMediator.finishExtensionsGroupInit(this, moduleName, groupToken);
+        await extensionsManager.startChainInit({ groupToken }, moduleName, beforeTokens);
       }
       this.logExtensionsStatistic(moduleName);
     }

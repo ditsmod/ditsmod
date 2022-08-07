@@ -10,7 +10,7 @@ import { EXTENSIONS_COUNTERS } from '../constans';
 
 describe('ExtensionsManager circular dependencies', () => {
   class MockExtensionsManager extends ExtensionsManager {
-    override unfinishedInitExtensions = new Set<Extension<any>>();
+    override unfinishedInit = new Set<Extension<any>>();
   }
 
   let mock: MockExtensionsManager;
