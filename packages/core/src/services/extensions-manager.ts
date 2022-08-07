@@ -1,4 +1,4 @@
-import { Inject, Injectable, InjectionToken, Injector, Type } from '@ts-stack/di';
+import { Inject, Injectable, Injector, Type } from '@ts-stack/di';
 import { getProviderName } from '../utils/get-provider-name';
 import { isInjectionToken } from '../utils/type-guards';
 import { EXTENSIONS_COUNTERS } from '../constans';
@@ -8,29 +8,9 @@ import { Counter } from './counter';
 import { ExtensionsContext } from './extensions-context';
 import { LogMediator } from './log-mediator';
 
-class InitedGroupCacheKey {
-  constructor(
-    public groupToken: ExtensionsGroupToken<any>,
-    public autoMergeArrays?: boolean,
-    public extension?: Type<Extension<any>>
-  ) {}
-}
-
-class InitedGroupCache extends InitedGroupCacheKey {
-  constructor(
-    groupToken: ExtensionsGroupToken<any>,
-    autoMergeArrays?: boolean,
-    extension?: Type<Extension<any>>,
-    public value: any[] = []
-  ) {
-    super(groupToken, autoMergeArrays, extension);
-  }
-}
-
 @Injectable()
 export class ExtensionsManager {
   protected unfinishedInit = new Set<Extension<any> | ExtensionsGroupToken<any>>();
-  protected initedGroupCache: InitedGroupCache[] = [];
   protected moduleName: string = '';
   protected beforeTokens: string[] = [];
 
@@ -42,13 +22,14 @@ export class ExtensionsManager {
     @Inject(EXTENSIONS_COUNTERS) private mExtensionsCounters: Map<Type<Extension<any>>, number>
   ) {}
 
-  async startChainInit(initedGroupCacheKey: InitedGroupCacheKey, moduleName?: string, beforeTokens?: string[]) {
-    const { groupToken, autoMergeArrays, extension } = initedGroupCacheKey;
+  initService(moduleName?: string, beforeTokens?: string[]) {
     this.moduleName = moduleName || this.moduleName;
     this.beforeTokens = beforeTokens || this.beforeTokens;
+  }
+
+  async startChainInit(groupToken: ExtensionsGroupToken<any>, autoMergeArrays?: boolean, extension?: Type<Extension<any>>) {
     const beforeToken = `BEFORE ${groupToken}` as const;
-    let cache = this.getCache({ groupToken: beforeToken, autoMergeArrays, extension });
-    if (!cache && this.beforeTokens.includes(beforeToken)) {
+    if (this.beforeTokens.includes(beforeToken)) {
       this.unfinishedInit.add(beforeToken);
       this.logMediator.startExtensionsGroupInit(this, this.moduleName, this.unfinishedInit);
       await this.init(beforeToken);
@@ -56,15 +37,12 @@ export class ExtensionsManager {
       this.unfinishedInit.delete(beforeToken);
     }
 
-    cache = this.getCache({ groupToken, autoMergeArrays, extension });
-    if (cache) {
-      return;
-    }
     this.unfinishedInit.add(groupToken);
     this.logMediator.startExtensionsGroupInit(this, this.moduleName, this.unfinishedInit);
-    await this.init(groupToken);
+    const result = await this.init(groupToken, autoMergeArrays, extension);
     this.logMediator.finishExtensionsGroupInit(this, this.moduleName, this.unfinishedInit);
     this.unfinishedInit.delete(groupToken);
+    return result;
   }
 
   // prettier-ignore
@@ -75,16 +53,13 @@ export class ExtensionsManager {
   async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays = true, extension?: Type<Extension<any>>): Promise<T[] | false> {
     const lastItem = [...this.unfinishedInit].pop();
     if (lastItem && !isInjectionToken(lastItem) && typeof lastItem != 'string') {
+      // lastItem is an extension
       if (this.unfinishedInit.has(groupToken)) {
         this.throwCircularDeps(groupToken);
       }
       if (typeof groupToken != 'string') {
-        await this.startChainInit({ groupToken, autoMergeArrays, extension });
+        return this.startChainInit(groupToken, autoMergeArrays, extension);
       }
-    }
-    const cache = this.getCache({ groupToken, autoMergeArrays, extension });
-    if (cache) {
-      return cache.value;
     }
     const extensions = this.injector.get(groupToken, []) as Extension<T>[];
     const aCurrentData: T[] = [];
@@ -127,17 +102,7 @@ export class ExtensionsManager {
       value = aCurrentData;
     }
 
-    const newCache = new InitedGroupCache(groupToken, autoMergeArrays, extension, value);
-    this.initedGroupCache.push(newCache);
-
     return value;
-  }
-
-  protected getCache(initedGroupCacheKey: InitedGroupCacheKey) {
-    const { groupToken, autoMergeArrays, extension } = initedGroupCacheKey;
-    return this.initedGroupCache.find((item) => {
-      return item.groupToken == groupToken && item.autoMergeArrays == autoMergeArrays && item.extension === extension;
-    });
   }
 
   protected getDataFromAllModules<T>(

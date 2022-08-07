@@ -279,7 +279,8 @@ export class AppInitializer {
       }
       const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
       for (const groupToken of extensionTokens) {
-        await extensionsManager.startChainInit({ groupToken }, moduleName, beforeTokens);
+        extensionsManager.initService(moduleName, beforeTokens);
+        await extensionsManager.startChainInit(groupToken);
       }
       this.logExtensionsStatistic(moduleName);
     }
