@@ -8,11 +8,21 @@ import { Counter } from './counter';
 import { ExtensionsContext } from './extensions-context';
 import { LogMediator } from './log-mediator';
 
+class Cache {
+  constructor(
+    public groupToken: ExtensionsGroupToken<any>,
+    public value: any[] | false,
+    public autoMergeArrays?: boolean,
+    public extension?: Type<Extension<any>>,
+  ) {}
+}
+
 @Injectable()
 export class ExtensionsManager {
   protected unfinishedInit = new Set<Extension<any> | ExtensionsGroupToken<any>>();
   protected moduleName: string = '';
   protected beforeTokens: string[] = [];
+  protected cache: Cache[] = [];
 
   constructor(
     private injector: Injector,
@@ -27,7 +37,11 @@ export class ExtensionsManager {
     this.beforeTokens = beforeTokens || this.beforeTokens;
   }
 
-  async startChainInit(groupToken: ExtensionsGroupToken<any>, autoMergeArrays?: boolean, extension?: Type<Extension<any>>) {
+  async startChainInit(
+    groupToken: ExtensionsGroupToken<any>,
+    autoMergeArrays?: boolean,
+    extension?: Type<Extension<any>>
+  ): Promise<any[] | false> {
     const beforeToken = `BEFORE ${groupToken}` as const;
     if (this.beforeTokens.includes(beforeToken)) {
       this.unfinishedInit.add(beforeToken);
@@ -37,12 +51,18 @@ export class ExtensionsManager {
       this.unfinishedInit.delete(beforeToken);
     }
 
+    const cache = this.getCache(groupToken, autoMergeArrays, extension);
+    if (cache) {
+      return cache.value;
+    }
     this.unfinishedInit.add(groupToken);
     this.logMediator.startExtensionsGroupInit(this, this.moduleName, this.unfinishedInit);
-    const result = await this.init(groupToken, autoMergeArrays, extension);
+    const value = await this.init(groupToken, autoMergeArrays, extension);
     this.logMediator.finishExtensionsGroupInit(this, this.moduleName, this.unfinishedInit);
     this.unfinishedInit.delete(groupToken);
-    return result;
+    const newCache = new Cache(groupToken, value, autoMergeArrays, extension);
+    this.cache.push(newCache);
+    return value;
   }
 
   // prettier-ignore
@@ -90,19 +110,17 @@ export class ExtensionsManager {
       }
     }
 
-    let value: any[] = [];
     if (extension) {
-      const valueOrFalse = this.getDataFromAllModules(groupToken, extension, aCurrentData);
-      if (valueOrFalse === false) {
-        return false;
-      } else {
-        value = valueOrFalse;
-      }
+      return this.getDataFromAllModules(groupToken, extension, aCurrentData);
     } else {
-      value = aCurrentData;
+      return aCurrentData;
     }
+  }
 
-    return value;
+  protected getCache(groupToken: ExtensionsGroupToken, autoMergeArrays = true, extension?: Type<Extension<any>>) {
+    return this.cache.find(c => {
+      return c.groupToken == groupToken && c.autoMergeArrays == autoMergeArrays && c.extension === extension;
+    });
   }
 
   protected getDataFromAllModules<T>(
