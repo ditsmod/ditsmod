@@ -39,7 +39,10 @@ export class ExtensionsManager {
   ) {}
 
   /**
-   * Inited pair of `BEFORE ${someGroupToken}` and `someGroupToken`.
+   * Initializes pair of group extensions with `BEFORE ${someGroupToken}` and `someGroupToken`. After that,
+   * it returns the value from a group extensions with `someGroupToken`.
+   * 
+   * This method is called internally by Ditsmod, it should not be called directly from extensions.
    */
   async initPairOfGroups(
     groupToken: ExtensionsGroupToken<any>,
