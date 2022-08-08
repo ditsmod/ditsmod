@@ -1,15 +1,14 @@
-import { AppInitializer, Controller, ModuleManager, Res, Route } from '@ditsmod/core';
+import { AppInitializer, Controller, ModuleManager, ModuleWithParams, Res, Route } from '@ditsmod/core';
 
 import { SecondModule } from '../second/second.module';
 import { ThirdModule } from '../third/third.module';
 
+const secondModuleWithParams: ModuleWithParams = { path: '', module: SecondModule };
+const thirdModuleWithParams: ModuleWithParams = { path: '', module: ThirdModule };
+
 @Controller()
 export class FirstController {
-  constructor(
-    private res: Res,
-    private moduleManager: ModuleManager,
-    private appInitializer: AppInitializer
-  ) {}
+  constructor(private res: Res, private moduleManager: ModuleManager, private appInitializer: AppInitializer) {}
 
   @Route('GET')
   tellHello() {
@@ -18,25 +17,25 @@ export class FirstController {
 
   @Route('GET', 'add-2')
   async addSecondModule() {
-    this.moduleManager.addImport(SecondModule);
+    this.moduleManager.addImport(secondModuleWithParams);
     await this.reinitApp('second', 'importing');
   }
 
   @Route('GET', 'del-2')
   async removeSecondModule() {
-    this.moduleManager.removeImport(SecondModule);
+    this.moduleManager.removeImport(secondModuleWithParams);
     await this.reinitApp('second', 'removing');
   }
 
   @Route('GET', 'add-3')
   async addThirdModule() {
-    this.moduleManager.addImport(ThirdModule);
+    this.moduleManager.addImport(thirdModuleWithParams);
     await this.reinitApp('third', 'importing');
   }
 
   @Route('GET', 'del-3')
   async removeThirdModule() {
-    this.moduleManager.removeImport(ThirdModule);
+    this.moduleManager.removeImport(thirdModuleWithParams);
     await this.reinitApp('third', 'removing');
   }
 
