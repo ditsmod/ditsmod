@@ -19,9 +19,15 @@ class Cache {
 
 @Injectable()
 export class ExtensionsManager {
+  /**
+   * Settings by AppInitializer.
+   */
+  moduleName: string = '';
+  /**
+   * Settings by AppInitializer.
+   */
+  beforeTokens: string[] = [];
   protected unfinishedInit = new Set<Extension<any> | ExtensionsGroupToken<any>>();
-  protected moduleName: string = '';
-  protected beforeTokens: string[] = [];
   protected cache: Cache[] = [];
 
   constructor(
@@ -32,12 +38,10 @@ export class ExtensionsManager {
     @Inject(EXTENSIONS_COUNTERS) private mExtensionsCounters: Map<Type<Extension<any>>, number>
   ) {}
 
-  initService(moduleName?: string, beforeTokens?: string[]) {
-    this.moduleName = moduleName || this.moduleName;
-    this.beforeTokens = beforeTokens || this.beforeTokens;
-  }
-
-  async startChainInit(
+  /**
+   * Inited pair of `BEFORE ${someGroupToken}` and `someGroupToken`.
+   */
+  async initPairOfGroups(
     groupToken: ExtensionsGroupToken<any>,
     autoMergeArrays?: boolean,
     extension?: Type<Extension<any>>
@@ -78,7 +82,7 @@ export class ExtensionsManager {
         this.throwCircularDeps(groupToken);
       }
       if (typeof groupToken != 'string') {
-        return this.startChainInit(groupToken, autoMergeArrays, extension);
+        return this.initPairOfGroups(groupToken, autoMergeArrays, extension);
       }
     }
     const extensions = this.injector.get(groupToken, []) as Extension<T>[];
