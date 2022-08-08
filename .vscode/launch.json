@@ -7,6 +7,12 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Run start4",
+      "command": "yarn start4",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
       "name": "Attach by Process ID",
       "processId": "${command:PickProcess}",
       "request": "attach",
