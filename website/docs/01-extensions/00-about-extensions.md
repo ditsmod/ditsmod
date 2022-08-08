@@ -18,7 +18,7 @@ sidebar_position: 0
 
 ```ts
 interface Extension<T> {
-  init(): Promise<T>;
+  init(isLastExtensionCall: boolean): Promise<T>;
 }
 ```
 

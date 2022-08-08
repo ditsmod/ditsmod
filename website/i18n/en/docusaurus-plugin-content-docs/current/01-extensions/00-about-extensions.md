@@ -18,7 +18,7 @@ In Ditsmod, **extension** is a class that implements the `Extension` interface:
 
 ```ts
 interface Extension<T> {
-  init(): Promise<T>;
+  init(isLastExtensionCall: boolean): Promise<T>;
 }
 ```
 
