@@ -1,5 +1,12 @@
+<a name="core-2.2.3"></a>
+# [core-2.2.3](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.3) (2022-08-08)
+
+### Bug fix
+
+- Fixed `extensionsManager.init()`.
+
 <a name="core-2.2.2"></a>
-# [core-2.2.2](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.2) (2022-08-06)
+## [core-2.2.2](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.2) (2022-08-06)
 
 ### BREAKING CHANGES
 
