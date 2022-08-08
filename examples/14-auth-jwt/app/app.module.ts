@@ -5,7 +5,7 @@ import { HelloWorldController } from './hello-world.controller';
 import { AuthModule } from './modules/services/auth/auth.module';
 
 @RootModule({
-  imports: [RouterModule, AuthModule],
+  imports: [RouterModule, { path: '', module: AuthModule }],
   controllers: [HelloWorldController],
 })
 export class AppModule {}
