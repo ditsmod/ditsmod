@@ -50,15 +50,18 @@ export class ExtensionsManager {
     extension?: Type<Extension<any>>
   ): Promise<any[] | false> {
     const beforeToken = `BEFORE ${groupToken}` as const;
-    if (this.beforeTokens.includes(beforeToken)) {
+    let cache = this.getCache(beforeToken);
+    if (!cache && this.beforeTokens.includes(beforeToken)) {
       this.unfinishedInit.add(beforeToken);
       this.logMediator.startExtensionsGroupInit(this, this.moduleName, this.unfinishedInit);
-      await this.init(beforeToken);
+      const value = await this.init(beforeToken);
       this.logMediator.finishExtensionsGroupInit(this, this.moduleName, this.unfinishedInit);
       this.unfinishedInit.delete(beforeToken);
+      const newCache = new Cache(beforeToken, value, autoMergeArrays, extension);
+      this.cache.push(newCache);
     }
 
-    const cache = this.getCache(groupToken, autoMergeArrays, extension);
+    cache = this.getCache(groupToken, autoMergeArrays, extension);
     if (cache) {
       return cache.value;
     }
