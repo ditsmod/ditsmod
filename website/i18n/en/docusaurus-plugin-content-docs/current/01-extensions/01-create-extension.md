@@ -115,29 +115,11 @@ import { Extension } from '@ditsmod/core';
 export const MY_EXTENSIONS = new InjectionToken<Extension<void>[]>('MY_EXTENSIONS');
 ```
 
-As you can see, each extension group must specify that DI will return an array of extension instances: `Extension<void>[]`. This must be done, the only difference may be in the type of the data returned as a result of calling their methods `init()`:
-
-```ts
-import { InjectionToken } from '@ts-stack/di';
-import { Extension } from '@ditsmod/core';
-
-interface MyInterface {
-  one: string;
-  two: number;
-}
-
-export const MY_EXTENSIONS = new InjectionToken<Extension<MyInterface>[]>('MY_EXTENSIONS');
-```
-
-The variable `result` will now have the data type `MyInterface[]`:
-
-```ts
-const result = await this.extensionsManager.init(MY_EXTENSIONS);
-```
+As you can see, each extension group must specify that DI will return an array of extension instances: `Extension<void>[]`. This must be done, the only difference may be in the generic `Extension<T>[]`.
 
 ### Extension registration
 
-Two types of arrays can be transferred to the extensions module metadata array:
+Two types of arrays can be passed to the `extensions` array, which is in the module's metadata:
 
 ```ts
 type ExtensionItem1 = [
@@ -187,13 +169,13 @@ import { MY_EXTENSIONS, MyExtension } from './my.extension';
 export class SomeModule {}
 ```
 
-That is, everything is the same as in the first type of array, but without a group of extensions in the first place, before which your extension should start.
+That is, everything is the same as in the first type of array, but without a group of extensions, before which your extension should start.
 
 ## Using ExtensionsManager
 
 For simplicity, [Creating an extension class][2] contains an example where the dependence of `Extension2` on `Extension1` is specified, but it is recommended to specify the dependence on the group of extensions, and not directly on a specific extension. In this case, you do not need to know the names of all the extensions in the extension group, just know the interface of the data returned with `init()`.
 
-`ExtensionsManager` is used to run groups of extensions, it is also useful in that it throws errors about cyclic dependencies between extensions, and shows the whole chain of extensions that led to loops.
+`ExtensionsManager` is used to run groups of extensions, it is also useful in that it throws errors about cyclic dependencies between extensions, and shows the whole chain of extensions that led to loops. Additionally, `ExtensionsManager` allows you to collect extensions initialization results from the entire application, not just from a single module.
 
 Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor, and in `init()` call `init()` of this service:
 
@@ -259,7 +241,7 @@ export class MyExtension implements Extension<void | false> {
 }
 ```
 
-That is, when you need `MyExtension` to receive data from the `OTHER_EXTENSIONS` group from the entire application, you need to pass `MyExtension` as the third parameter here:
+That is, when you need `MyExtension` to receive data from the `OTHER_EXTENSIONS` group from the entire application, you need to pass `MyExtension` as the third argument here:
 
 ```ts
 const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExtension);
