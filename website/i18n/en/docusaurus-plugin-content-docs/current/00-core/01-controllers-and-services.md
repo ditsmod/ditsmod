@@ -111,7 +111,7 @@ How to add a certain prefix centrally in the module, you can see in the section 
 
 ## Sevices
 
-Although from a technical point of view, it is possible to get by with just one controller to handle a HTTP request, but it is better to separate the voluminous code with business logic into separate classes so that this code can be reused if necessary. These separate classes with business logic are called _services_.
+Although from a technical point of view, it is possible to get by with just one controller to handle a HTTP request, but it is better to separate the voluminous code with business logic into separate classes so that this code can be reused if necessary, and easier to test. These separate classes with business logic are called _services_.
 
 What services can do:
 
