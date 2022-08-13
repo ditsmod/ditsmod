@@ -63,6 +63,6 @@ export class Req {
     Object.keys(this.nodeReq.headers).forEach((k) => (headers += `${k}: ${this.nodeReq.headers[k]}\n`));
 
     const { method, url, httpVersion } = this.nodeReq;
-    return `${this.requestId}: ${method} ${url} HTTP/${httpVersion}\n${headers}`;
+    return `requestId: ${this.requestId}\n${method} ${url} HTTP/${httpVersion}\n${headers}`;
   }
 }
