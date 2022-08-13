@@ -1,5 +1,5 @@
 import { Injectable, Inject, Injector } from '@ts-stack/di';
-import { format } from 'util';
+import { randomUUID } from 'crypto';
 
 import { NODE_REQ, NODE_RES } from '../constans';
 import { PathParam } from '../types/router';
@@ -8,6 +8,7 @@ import { NodeRequest, NodeResponse } from '../types/server-options';
 
 @Injectable()
 export class Req {
+  #requestId: string;
   /**
    * Object with path params.
    * For example, route `/api/resource/:param1/:param2` have two params.
@@ -43,6 +44,13 @@ export class Req {
     public injector: Injector
   ) {}
 
+  get requestId() {
+    if (!this.#requestId) {
+      this.#requestId = randomUUID();
+    }
+    return this.#requestId;
+  }
+
   /**
    * Check if the request is idempotent.
    */
@@ -52,9 +60,9 @@ export class Req {
 
   toString(): string {
     let headers = '';
-    Object.keys(this.nodeReq.headers).forEach((k) => (headers += format('%s: %s\n', k, this.nodeReq.headers[k])));
+    Object.keys(this.nodeReq.headers).forEach((k) => (headers += `${k}: ${this.nodeReq.headers[k]}\n`));
 
     const { method, url, httpVersion } = this.nodeReq;
-    return format('%s %s HTTP/%s\n%s', method, url, httpVersion, headers);
+    return `${this.requestId}: ${method} ${url} HTTP/${httpVersion}\n${headers}`;
   }
 }

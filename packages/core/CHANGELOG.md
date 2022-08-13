@@ -1,5 +1,12 @@
+<a name="core-2.3.0"></a>
+# [core-2.3.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.3.0) (2022-08-13)
+
+### Features
+
+- Added getter `req.requestId`.
+
 <a name="core-2.2.3"></a>
-# [core-2.2.3](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.3) (2022-08-08)
+## [core-2.2.3](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.3) (2022-08-08)
 
 ### Bug fix
 

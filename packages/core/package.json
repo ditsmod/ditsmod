@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/core",
-  "version": "2.2.3",
+  "version": "2.3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -13,6 +13,9 @@
   "types": "dist/index",
   "directories": {
     "lib": "src"
+  },
+  "engines": {
+    "node": ">= 14.17.0"
   },
   "scripts": {
     "test": "jest",
