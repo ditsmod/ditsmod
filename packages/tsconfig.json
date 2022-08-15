@@ -6,6 +6,7 @@
     { "path": "openapi" },
     { "path": "router" },
     { "path": "session-cookie" },
-    { "path": "jwt" }
+    { "path": "jwt" },
+    { "path": "i18next-fs-backend" },
   ]
 }
