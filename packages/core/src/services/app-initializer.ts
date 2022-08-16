@@ -248,9 +248,9 @@ export class AppInitializer {
     mExtensionsCounters: Map<ServiceProvider, number>
   ) {
     const extensionsContext = new ExtensionsContext();
-    const len = aMetadataPerMod1.length;
-    for (let i = 0; i < len; i++) {
-      const metadataPerMod1 = aMetadataPerMod1[i];
+    const lastIndex = aMetadataPerMod1.length - 1;
+    for (let i = 0; i <= lastIndex; i++) {
+      const metadataPerMod1 = aMetadataPerMod1[lastIndex - i];
       const { extensionsProviders, providersPerMod, name: moduleName, module } = metadataPerMod1.meta;
       const mod = getModule(module);
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild([mod, ...providersPerMod]);
@@ -258,6 +258,7 @@ export class AppInitializer {
       const loggerConfig = injectorPerMod.get(LoggerConfig) as LoggerConfig;
       this.logMediator.level = loggerConfig.level;
       this.logMediator.logger = injectorPerMod.get(Logger) as Logger;
+      this.logMediator.logger.setLevel(loggerConfig.level);
       this.logMediator.startExtensionsModuleInit(this, moduleName);
       this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
