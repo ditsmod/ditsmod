@@ -5,7 +5,7 @@ import { I18nextFsBackendModule } from '@ditsmod/i18next-fs-backend';
 import { HelloWorldController } from './hello-world.controller';
 
 @RootModule({
-  imports: [RouterModule, I18nextFsBackendModule.withParams()],
+  imports: [RouterModule, I18nextFsBackendModule.withParams({ fallbackLng: 'uk' })],
   controllers: [HelloWorldController],
 })
 export class AppModule {}

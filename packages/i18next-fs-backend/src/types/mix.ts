@@ -18,6 +18,5 @@ export interface I18nextFsBackendOptions {
   addPath: string;
 }
 
-export const I18NEXT_EXTENSIONS = new InjectionToken<Extension<i18n>>('I18NEXT_EXTENSIONS');
-export const I18NEXT_OPTIONS = new InjectionToken<InitOptions>('I18NEXT_OPTIONS');
+export const I18NEXT_FS_BACKEND_EXTENSIONS = new InjectionToken<Extension<i18n>>('I18NEXT_FS_BACKEND_EXTENSIONS');
 export const I18NEXT_FS_BACKEND_OPTIONS = new InjectionToken<InitOptions>('I18NEXT_FS_BACKEND_OPTIONS');
