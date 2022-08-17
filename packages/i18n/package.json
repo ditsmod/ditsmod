@@ -1,11 +1,11 @@
 {
-  "name": "@ditsmod/i18next-fs-backend",
+  "name": "@ditsmod/i18n",
   "version": "2.0.0-alpha.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
-  "description": "Ditsmod module to integration with i18next (internalization)",
+  "description": "Ditsmod module to integration with i18n (internalization)",
   "main": "dist/index",
   "typings": "dist/index",
   "directories": {
@@ -18,13 +18,9 @@
   "keywords": [],
   "author": "Костя Третяк",
   "license": "MIT",
-  "dependencies": {
-    "i18next": "^21.9.0",
-    "i18next-fs-backend": "^1.1.5"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@ts-stack/di": "^1.2.0",
-    "@types/i18next-fs-backend": "^1.1.2"
+    "@ts-stack/di": "^1.2.0"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.0.0",

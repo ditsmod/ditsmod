@@ -4,6 +4,5 @@ module.exports = {
   modulePathIgnorePatterns: ['<rootDir>/dist/'],
   moduleNameMapper: {
     '@ditsmod/core': '<rootDir>/../core/src',
-    '@ditsmod/router': '<rootDir>/../router/src',
   }
 };

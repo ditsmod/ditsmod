@@ -31,7 +31,7 @@
     "start12": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/12-testing/main.ts",
     "start13": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/13-module-encapsulation/main.ts",
     "start14": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/14-auth-jwt/main.ts",
-    "start15": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/15-i18next-fs-backend/main.ts",
+    "start15": "nodemon -e ts --exec ts-node --project examples/tsconfig.json -r tsconfig-paths/register examples/15-i18n/main.ts",
     "start16": "echo 'Not implemented yet.'",
     "start17": "echo 'Not implemented yet.'",
     "start18": "echo 'Not implemented yet.'",

@@ -1,6 +1,6 @@
 # About the project
 
-Ditsmod module to integration [i18next-fs-backend](https://github.com/i18next/i18next-fs-backend) (internalization).
+Ditsmod module to support i18n (internalization).
 
 ## Settings
 
@@ -22,4 +22,4 @@ Expected directory tree for current module:
 │               └── uk
 ```
 
-Where `one` and `two` this is external module that alsow has `i18next-fs-backend` integration.
+Where `one` and `two` this is external module that alsow has `i18n` integration.

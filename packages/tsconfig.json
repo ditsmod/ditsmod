@@ -7,6 +7,6 @@
     { "path": "router" },
     { "path": "session-cookie" },
     { "path": "jwt" },
-    { "path": "i18next-fs-backend" },
+    { "path": "i18n" },
   ]
 }
