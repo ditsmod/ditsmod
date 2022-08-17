@@ -1,10 +1,9 @@
-import { join } from 'path';
 import { Extension, Logger } from '@ditsmod/core';
 import { Inject, Injectable, Optional } from '@ts-stack/di';
 import i18next, { i18n, InitOptions, ModuleType } from 'i18next';
 import I18nextFsBackend from 'i18next-fs-backend';
 
-import { I18nextFsBackendOptions, I18NEXT_FS_BACKEND_OPTIONS } from './types/mix';
+import { I18NEXT_FS_BACKEND_OPTIONS } from './types/mix';
 
 @Injectable()
 export class I18nextFsBackendExtension implements Extension<i18n> {
@@ -20,17 +19,9 @@ export class I18nextFsBackendExtension implements Extension<i18n> {
       return this.i18nextFsBackend;
     }
 
-    const backend = this.fsBackendOptions.backend as I18nextFsBackendOptions | undefined;
-    const mergedBackendOptions: I18nextFsBackendOptions = {
-      loadPath: backend?.loadPath || join(__dirname, '../locales/{{lng}}/{{ns}}.json'),
-      addPath: backend?.addPath || join(__dirname, '../locales/{{lng}}/{{ns}}.missing.json'),
-    };
-
     if (!this.fsBackendOptions.backend) {
       this.fsBackendOptions.backend = {};
     }
-
-    Object.assign(this.fsBackendOptions.backend, mergedBackendOptions);
 
     const loggerPlugin = {
       type: 'logger' as ModuleType,
@@ -50,6 +41,8 @@ export class I18nextFsBackendExtension implements Extension<i18n> {
     this.i18nextFsBackend = i18next.createInstance().use(loggerPlugin).use(I18nextFsBackend);
 
     await this.i18nextFsBackend.init(this.fsBackendOptions || undefined);
+    await this.i18nextFsBackend.changeLanguage('en');
+    console.log(this.i18nextFsBackend.t('key', {lng: 'uk'}));
     return this.i18nextFsBackend;
   }
 }

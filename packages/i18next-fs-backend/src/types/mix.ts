@@ -11,11 +11,11 @@ export interface I18nextFsBackendOptions {
   /**
    * Path where resources get loaded from, or a function.
    */
-  loadPath: string | ((lngs: string[], namespaces: string[]) => string);
+  loadPath?: string | ((lngs: string[], namespaces: string[]) => string);
   /**
    * Path to post missing resources.
    */
-  addPath: string;
+  addPath?: string;
 }
 
 export const I18NEXT_FS_BACKEND_EXTENSIONS = new InjectionToken<Extension<i18n>>('I18NEXT_FS_BACKEND_EXTENSIONS');
