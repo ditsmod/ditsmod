@@ -897,4 +897,16 @@ describe('ModuleManager', () => {
     expect(mock.getMetadata('root')).toEqual(expectedMeta3);
     expect(mock.getMetadata(Module1)).toEqual(expectedMeta1);
   });
+
+  it('module can has readonly modulePath property', () => {
+    @Module({ providersPerApp: [{ provide: 'fake', useValue: 'fake' }] })
+    class Module1 {
+      static get modulePath() {
+        return __dirname;
+      }
+    }
+    mock.scanModule(Module1);
+    const meta = mock.getMetadata(Module1);
+    expect(meta?.modulePath).toBe(__dirname);
+  });
 });

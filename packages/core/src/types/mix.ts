@@ -11,7 +11,7 @@ import {
 import { MetadataPerMod1 } from './metadata-per-mod';
 import { ProvidersMetadata } from '../models/providers-metadata';
 
-export type ModuleType<T extends AnyObj = AnyObj> = Type<T>;
+export type ModuleType<T extends AnyObj = AnyObj> = Type<T> & { modulePath?: string };
 
 export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]> | `BEFORE ${string}`;
 export type ExtensionType<T = any> = Type<Extension<T>>;
