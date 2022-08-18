@@ -1,25 +1,24 @@
-import { RootModule, LogMediator, FilterConfig } from '@ditsmod/core';
+import { RootModule, LogMediator, LogMediatorConfig, FilterConfig, LoggerConfig } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
-import { HelloWorldController } from './hello-world.controller';
+import { MyLogMediator } from './my-log-mediator';
+import { SomeModule } from './modules/some/some.module';
+import { OtherModule } from './modules/other/other.module';
 
-class MyLogMediator extends LogMediator {
-  /**
-   * `serverName` is running at `host`:`port`.
-   */
-  override serverListen(self: object, serverName: string, host: string, port: number) {
-    const className = self.constructor.name;
-    const filterConfig = new FilterConfig();
-    filterConfig.classesNames = [className];
-    this.setLog('info', filterConfig, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
-  }
-}
+const loggerConfig = new LoggerConfig('trace');
+const filterConfig: FilterConfig = { modulesNames: ['OtherModule'] };
 
 @RootModule({
-  imports: [RouterModule],
-  controllers: [HelloWorldController],
+  imports: [
+    RouterModule,
+    { path: '', module: SomeModule },
+    { path: '', module: OtherModule },
+  ],
   providersPerApp: [
-    { provide: LogMediator, useClass: MyLogMediator }, // Here set your new MyLogMediator
+    MyLogMediator, // This allow use MyLogMediator in this application
+    { provide: LogMediator, useClass: MyLogMediator }, // This allow use MyLogMediator internaly in Ditsmod core
+    { provide: LoggerConfig, useValue: loggerConfig },
+    // { provide: LogMediatorConfig, useValue: { filterConfig } }, // Uncomment this to see only logs from OtherModule
   ],
 })
 export class AppModule {}
