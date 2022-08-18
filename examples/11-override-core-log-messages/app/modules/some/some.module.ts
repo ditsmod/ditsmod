@@ -1,10 +1,10 @@
 import { Module } from '@ditsmod/core';
 
-import { SomeController } from './some.controller';
 import { SomeLogMediator } from './some-log-mediator';
+import { SomeService } from './some.service';
 
 @Module({
-  controllers: [SomeController],
-  providersPerMod: [SomeLogMediator],
+  providersPerMod: [SomeLogMediator, SomeService],
+  exports: [SomeService]
 })
 export class SomeModule {}

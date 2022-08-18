@@ -10,13 +10,4 @@ export class MyLogMediator extends LogMediator {
     filterConfig.classesNames = [className];
     this.setLog('info', filterConfig, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
   }
-  /**
-   * MyLogMediator with newMethod says: "${additionalArgument}".
-   */
-  newMethod(self: object, additionalArgument: string) {
-    const className = self.constructor.name;
-    const filterConfig = new FilterConfig();
-    filterConfig.classesNames = [className];
-    this.setLog('info', filterConfig, `MyLogMediator with newMethod says: "${additionalArgument}"`);
-  }
 }

@@ -5,7 +5,7 @@ import { MyLogMediator } from './my-log-mediator';
 import { SomeModule } from './modules/some/some.module';
 import { OtherModule } from './modules/other/other.module';
 
-const loggerConfig = new LoggerConfig('trace');
+const loggerConfig = new LoggerConfig('info');
 const filterConfig: FilterConfig = { modulesNames: ['OtherModule'] };
 
 @RootModule({
