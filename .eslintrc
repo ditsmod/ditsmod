@@ -8,7 +8,7 @@
   },
   "rules": {
     "semi": ["error", "always"],
-    "quotes": ["warn", "single", { "avoidEscape": true }],
+    "quotes": ["single", { "avoidEscape": true }],
     "@typescript-eslint/no-non-null-assertion": 0,
     "@typescript-eslint/no-empty-function": 0,
     "@typescript-eslint/no-empty-interface": 0,
