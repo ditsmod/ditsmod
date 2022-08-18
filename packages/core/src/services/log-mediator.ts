@@ -82,7 +82,7 @@ export class LogMediator {
     return this.logManager;
   }
 
-  protected setLog(level: LogLevel, filterConfig: AnyObj, msg: any) {
+  protected setLog<T extends FilterConfig>(level: LogLevel, filterConfig: T, msg: any) {
     if (this.logManager.bufferLogs) {
       this.logManager.buffer.push({
         logger: this._logger,
@@ -130,7 +130,7 @@ export class LogMediator {
     buffer.splice(0);
   }
 
-  protected filterLogs(buffer: LogItem[], outputConfig: FilterConfig = {}) {
+  protected filterLogs<T extends FilterConfig>(buffer: LogItem[], outputConfig = {} as T) {
     return buffer.filter((item) => {
       const inputConfig = item.filterConfig;
       let hasTags: boolean | undefined = true;

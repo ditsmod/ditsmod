@@ -11,7 +11,7 @@ describe('Log', () => {
 
   class LogMediatorMock extends LogMediator {
     testMethod(level: LogLevel, tags: string[] = [], ...args: any[]) {
-      this.setLog(level, tags, `${args[0]}, ${args[1]}`);
+      this.setLog(level, { tags }, `${args[0]}, ${args[1]}`);
     }
   }
 
