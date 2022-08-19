@@ -1,11 +1,9 @@
 import { RootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
-import { I18nModule } from '@ditsmod/i18n';
 
-import { HelloWorldController } from './hello-world.controller';
+import { SomeModule } from './modules/some/some.module';
 
 @RootModule({
-  imports: [RouterModule, I18nModule.withParams()],
-  controllers: [HelloWorldController],
+  imports: [RouterModule, { path: '', module: SomeModule }],
 })
 export class AppModule {}
