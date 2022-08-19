@@ -70,8 +70,6 @@ export class LogMediator {
     }
   }
 
-  level: LogLevel = 'info';
-
   constructor(
     protected logManager: LogManager,
     @Optional() protected _logger: Logger = new ConsoleLogger(),
@@ -86,7 +84,7 @@ export class LogMediator {
     if (this.logManager.bufferLogs) {
       this.logManager.buffer.push({
         logger: this._logger,
-        currentLevel: this.level,
+        currentLevel: this._logger.config?.level || 'info',
         filterConfig,
         date: new Date(),
         messageLevel: level,
