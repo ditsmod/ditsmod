@@ -336,12 +336,10 @@ export class ModuleManager {
       throw new Error(`Module build failed: module "${modName}" does not have the "@Module()" decorator`);
     }
 
-    const moduleClass = getModule(mod);
-
     /**
      * Setting initial properties of metadata.
      */
-    const meta = new NormalizedModuleMetadata(moduleClass.modulePath);
+    const meta = new NormalizedModuleMetadata();
     meta.name = modName;
     meta.module = mod;
     /**

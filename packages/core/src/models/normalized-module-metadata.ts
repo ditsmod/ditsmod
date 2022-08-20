@@ -11,15 +11,6 @@ import { MultiProvider } from '../utils/type-guards';
 import { ProvidersMetadata } from './providers-metadata';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
-  constructor(
-    /**
-     * This property is set if your module class
-     * has a `modulePath` getter.
-     */
-    public readonly modulePath?: string
-  ) {
-    super();
-  }
   /**
    * The module setted here must be identical to the module
    * passed to "imports" or "exports" array of `@Module` metadata.
