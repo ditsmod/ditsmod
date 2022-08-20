@@ -3,7 +3,7 @@ import { isInjectionToken } from '../utils/type-guards';
 
 import { Logger, LogLevel } from '../types/logger';
 import { GlobalProviders, ImportObj } from '../types/metadata-per-mod';
-import { AnyObj, Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
+import { Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { getImportedTokens } from '../utils/get-imports';
 import { getModuleName } from '../utils/get-module-name';
 import { getProviderName } from '../utils/get-provider-name';

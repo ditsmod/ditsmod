@@ -255,10 +255,11 @@ export class AppInitializer {
       const mod = getModule(module);
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild([mod, ...providersPerMod]);
       injectorPerMod.get(mod); // Call module constructor.
+      const logMediator = injectorPerMod.get(LogMediator) as LogMediator;
       const loggerConfig = injectorPerMod.get(LoggerConfig) as LoggerConfig;
-      this.logMediator.logger = injectorPerMod.get(Logger) as Logger;
-      this.logMediator.logger.setLevel(loggerConfig.level);
-      this.logMediator.startExtensionsModuleInit(this, moduleName);
+      logMediator.logger = injectorPerMod.get(Logger) as Logger;
+      logMediator.logger.setLevel(loggerConfig.level);
+      logMediator.startExtensionsModuleInit(this, moduleName);
       this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
         ExtensionsManager,
