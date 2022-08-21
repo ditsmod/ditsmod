@@ -133,12 +133,12 @@ export class LogMediator {
       const inputConfig = item.filterConfig;
       let hasTags: boolean | undefined = true;
       let hasModuleName: boolean | undefined = true;
-      const hasClassName: boolean | undefined = true;
+      let hasClassName: boolean | undefined = true;
       if (outputConfig.modulesNames) {
-        hasModuleName = inputConfig.modulesNames?.some((tag) => outputConfig.modulesNames?.includes(tag));
+        hasModuleName = inputConfig.modulesNames?.some((modulesName) => outputConfig.modulesNames?.includes(modulesName));
       }
       if (outputConfig.classesNames) {
-        hasTags = inputConfig.classesNames?.some((tag) => outputConfig.classesNames?.includes(tag));
+        hasClassName = inputConfig.classesNames?.some((className) => outputConfig.classesNames?.includes(className));
       }
       if (outputConfig.tags) {
         hasTags = inputConfig.tags?.some((tag) => outputConfig.tags?.includes(tag));
