@@ -1,21 +1,21 @@
-import { Inject, Injectable, Injector, Type } from '@ts-stack/di';
-import { ISO639 } from './types/iso-639';
+import { Injectable, Injector, Type } from '@ts-stack/di';
 
-import { I18nOptions, I18nTranslation } from './types/mix';
+import { ISO639 } from './types/iso-639';
+import { I18nTranslation } from './types/mix';
 
 @Injectable()
 export class I18nService {
-  constructor(@Inject(I18nOptions) private i18n: any, private injector: Injector) {}
+  constructor(private injector: Injector) {}
 
   getAllDictionaries<T extends Type<I18nTranslation>>(namespace: T) {
-    return this.injector.get(namespace as any) as T['prototype'][];
+    return this.injector.get(namespace as any, []) as T['prototype'][];
   }
 
   getDictionary<T extends Type<I18nTranslation>>(namespace: T, lng: ISO639) {
     const dictionaries = this.getAllDictionaries(namespace);
     const dictionary = dictionaries.find(t => t.lng == lng);
     if (!dictionary) {
-      throw new Error(`For ${namespace.constructor.name} lng not found: ${lng}`);
+      throw new Error(`Translation not found for ${namespace.name}.${lng}`);
     }
     return dictionary;
   }

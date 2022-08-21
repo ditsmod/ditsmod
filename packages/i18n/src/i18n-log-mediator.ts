@@ -2,18 +2,18 @@ import { FilterConfig, LogMediator } from '@ditsmod/core';
 
 export class I18nLogMediator extends LogMediator {
   /**
-   * ${className}: I18nExtension did not found translation.
+   * ${className}: translation not found for ${namespace.constructor.name}.${lng}.
    */
-   notFoundTranslation(self: object) {
+  notFoundTranslation(self: object) {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.classesNames = [className];
-    this.setLog('warn', filterConfig, `${className}: I18nExtension did not found translation`);
+    this.setLog('debug', filterConfig, `${className}: translation not found`);
   }
   /**
    * ${className}: locales were found: [${paths.join(', ')}] in "${localesPath}".
    */
-   followingLocalesFound(self: object, localesPath: string, paths: string[]) {
+  followingLocalesFound(self: object, localesPath: string, paths: string[]) {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.classesNames = [className];
