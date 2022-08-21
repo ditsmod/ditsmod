@@ -1,8 +1,8 @@
-import { Extension, Logger, MetadataPerMod1 } from '@ditsmod/core';
-import { Injectable, Optional } from '@ts-stack/di';
+import { Extension, MetadataPerMod1 } from '@ditsmod/core';
+import { Inject, Injectable } from '@ts-stack/di';
 import { I18nLogMediator } from './i18n-log-mediator';
 
-import { I18nOptions } from './types/mix';
+import { I18nTranslation, I18N_TRANSLATIONS } from './types/mix';
 
 @Injectable()
 export class I18nExtension implements Extension<void> {
@@ -11,7 +11,7 @@ export class I18nExtension implements Extension<void> {
 
   constructor(
     private log: I18nLogMediator,
-    @Optional() private options: I18nOptions = {},
+    @Inject(I18N_TRANSLATIONS) private translations: I18nTranslation[] = [],
     private metadataPerMod1: MetadataPerMod1
   ) {}
 
@@ -20,13 +20,11 @@ export class I18nExtension implements Extension<void> {
       return;
     }
 
-    const moduleName = this.metadataPerMod1.meta.name;
-    
-    if (this.metadataPerMod1.meta.modulePath) {
-      console.log(this.metadataPerMod1.meta.modulePath);
-    } else if(moduleName != 'I18nModule') {
-      this.log.notDetectModulePath(this, moduleName);
-    }
+    // const moduleName = this.metadataPerMod1.meta.name;
+    // console.log(`${moduleName}:`, this.translations);
+    // if (moduleName != 'I18nModule') {
+    //   this.log.notFoundTranslation(this);
+    // }
 
     this.#inited = true;
   }
