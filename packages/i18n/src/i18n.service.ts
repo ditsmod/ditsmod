@@ -8,7 +8,7 @@ export class I18nService {
   constructor(private injector: Injector) {}
 
   getAllDictionaries<T extends Type<I18nTranslation>>(namespace: T) {
-    return this.injector.get(namespace as any, []) as T['prototype'][];
+    return this.injector.get(namespace, []) as T['prototype'][];
   }
 
   getDictionary<T extends Type<I18nTranslation>>(namespace: T, lng: ISO639) {

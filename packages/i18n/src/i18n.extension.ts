@@ -1,8 +1,8 @@
-import { Extension, ExtensionsManager, MetadataPerMod1, ROUTES_EXTENSIONS } from '@ditsmod/core';
+import { Extension, ExtensionsManager, ROUTES_EXTENSIONS } from '@ditsmod/core';
 import { Inject, Injectable, Optional } from '@ts-stack/di';
-import { I18nLogMediator } from './i18n-log-mediator';
 
-import { I18N_TRANSLATIONS, TranslationTuple } from './types/mix';
+import { I18nLogMediator } from './i18n-log-mediator';
+import { I18N_TRANSLATIONS, TranslationGroup } from './types/mix';
 
 @Injectable()
 export class I18nExtension implements Extension<void> {
@@ -11,7 +11,7 @@ export class I18nExtension implements Extension<void> {
 
   constructor(
     private log: I18nLogMediator,
-    @Optional() @Inject(I18N_TRANSLATIONS) private translations: TranslationTuple[][] = [],
+    @Optional() @Inject(I18N_TRANSLATIONS) private translations: TranslationGroup[][] = [],
     private extensionsManager: ExtensionsManager
   ) {}
 
@@ -24,14 +24,13 @@ export class I18nExtension implements Extension<void> {
     for (const metadataPerMod2 of aMetadataPerMod2) {
       const { moduleName, providersPerMod } = metadataPerMod2;
       this.translations.forEach((translation) => {
-        for (const tuple of translation) {
-          const base = tuple[0];
-          if (!base) {
+        for (const group of translation) {
+          const token = group[0]; // First class uses as group's token
+          if (!token) {
             break;
           }
-          providersPerMod.push({ provide: base, useClass: base, multi: true });
-          tuple.slice(1).forEach((t) => {
-            providersPerMod.push({ provide: base, useClass: t, multi: true });
+          group.forEach((t) => {
+            providersPerMod.push({ provide: token, useClass: t, multi: true });
           });
         }
       });

@@ -1,9 +1,11 @@
+import { ISO639 } from '@ditsmod/i18n';
 import { Injectable } from '@ts-stack/di';
+
 import { Errors } from '../en/errors';
 
 @Injectable()
 export class ErrorsUk extends Errors {
-  override lng = 'uk';
+  override lng: ISO639 = 'uk';
   /**
    * Can't connect to ${database}.
    */

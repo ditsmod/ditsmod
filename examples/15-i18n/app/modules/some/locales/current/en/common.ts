@@ -1,9 +1,9 @@
-import { I18nTranslation } from '@ditsmod/i18n';
+import { I18nTranslation, ISO639 } from '@ditsmod/i18n';
 import { Injectable } from '@ts-stack/di';
 
 @Injectable()
 export class Common implements I18nTranslation {
-  lng = 'en';
+  lng: ISO639 = 'en';
   /**
    * Hi, there!
    */
