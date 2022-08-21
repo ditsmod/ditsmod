@@ -4,7 +4,7 @@ Ditsmod module to support i18n (internalization).
 
 ## Settings
 
-Expected directory tree for current module:
+Recommended directory tree for current module:
 
 ```text
 └── your-modulename

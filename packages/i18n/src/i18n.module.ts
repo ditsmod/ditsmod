@@ -8,10 +8,10 @@ import { I18nOptions, I18N_EXTENSIONS, I18N_TRANSLATIONS, TranslationGroup } fro
 @Module({
   extensions: [[I18N_EXTENSIONS, PRE_ROUTER_EXTENSIONS, I18nExtension, true]],
   providersPerMod: [
-    I18nService,
     I18nOptions,
-    I18nLogMediator
+    I18nLogMediator,
   ],
+  providersPerReq: [I18nService],
   exports: [I18nService, I18nOptions]
 })
 export class I18nModule {
