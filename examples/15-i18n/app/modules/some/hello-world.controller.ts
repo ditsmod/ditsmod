@@ -1,7 +1,7 @@
 import { Controller, Res, Route } from '@ditsmod/core';
 import { I18nService } from '@ditsmod/i18n';
 
-import { TranslationDefault } from './locales/current/en/translation';
+import { Common } from './locales/current/en/common';
 
 @Controller()
 export class HelloWorldController {
@@ -9,19 +9,20 @@ export class HelloWorldController {
 
   @Route('GET')
   tellHello() {
-    const msg = this.i18nService.translate(TranslationDefault, 'uk', 'hello', 'Костя');
+    let msg = this.i18nService.translate(Common, 'uk', 'hello', 'Костя');
 
-    const hello = this.i18nService.getMethod(TranslationDefault, 'uk', 'hello');
-    hello('Костя');
+    // OR
+    const hello = this.i18nService.getMethod(Common, 'uk', 'hello');
+    msg = hello('Костя');
 
-    const dict = this.i18nService.getDictionary(TranslationDefault, 'uk');
-    dict.hello('Костя');
-    dict.hi();
-    
-    const dictionaries = this.i18nService.getAllDictionaries(TranslationDefault);
+    // OR
+    const dict = this.i18nService.getDictionary(Common, 'uk');
+    msg = dict.hello('Костя');
+
+    // OR
+    const dictionaries = this.i18nService.getAllDictionaries(Common);
     const dictionary = dictionaries.find(t => t.lng == 'uk');
-    dictionary.hello('Костя');
-    dictionary.hi();
+    msg = dictionary.hello('Костя');
 
     this.res.send(msg);
   }

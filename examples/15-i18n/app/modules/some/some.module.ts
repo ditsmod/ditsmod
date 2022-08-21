@@ -2,8 +2,7 @@ import { LoggerConfig, Module } from '@ditsmod/core';
 import { I18nModule } from '@ditsmod/i18n';
 
 import { HelloWorldController } from './hello-world.controller';
-import { TranslationUk } from './locales/current/uk/translation';
-import { TranslationDefault } from './locales/current/en/translation';
+import currentTranslations from './locales/current/providers';
 
 const loggerConfig = new LoggerConfig('info');
 
@@ -12,8 +11,7 @@ const loggerConfig = new LoggerConfig('info');
   controllers: [HelloWorldController],
   providersPerMod: [
     { provide: LoggerConfig, useValue: loggerConfig },
-    { provide: TranslationDefault, useClass: TranslationDefault, multi: true },
-    { provide: TranslationDefault, useClass: TranslationUk, multi: true },
+    ...currentTranslations
   ]
 })
 export class SomeModule {}

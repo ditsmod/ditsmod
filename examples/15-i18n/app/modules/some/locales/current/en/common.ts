@@ -2,7 +2,7 @@ import { I18nTranslation } from '@ditsmod/i18n';
 import { Injectable } from '@ts-stack/di';
 
 @Injectable()
-export class TranslationDefault implements I18nTranslation {
+export class Common implements I18nTranslation {
   lng = 'en';
   /**
    * Hi, there!
