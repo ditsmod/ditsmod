@@ -5,6 +5,12 @@ import { Injectable } from '@ts-stack/di';
 export class TranslationDefault implements I18nTranslation {
   lng = 'en';
   /**
+   * Hi, there!
+   */
+  hi() {
+    return `Hi, there!`;
+  }
+  /**
    * Hello, ${name}!
    */
   hello(name: string) {

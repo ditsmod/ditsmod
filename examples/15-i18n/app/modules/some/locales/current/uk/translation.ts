@@ -9,7 +9,6 @@ export class TranslationUk extends TranslationDefault {
    * Привіт, ${name}!
    */
   override hello(name: string) {
-    console.log('called');
     return `Привіт, ${name}!`;
   }
 }
