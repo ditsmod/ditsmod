@@ -2,22 +2,13 @@ import { FilterConfig, LogMediator } from '@ditsmod/core';
 
 export class I18nLogMediator extends LogMediator {
   /**
-   * ${className}: translation not found for ${namespace.constructor.name}.${lng}.
+   * ${className}: in ${extendedClassName} missing methods: [${methods}]..
    */
-  notFoundTranslation(self: object) {
+  missingMethods(self: object, extendedClassName: string, missingMethods: string[]) {
     const className = self.constructor.name;
     const filterConfig = new FilterConfig();
     filterConfig.classesNames = [className];
-    this.setLog('debug', filterConfig, `${className}: translation not found`);
-  }
-  /**
-   * ${className}: locales were found: [${paths.join(', ')}] in "${localesPath}".
-   */
-  followingLocalesFound(self: object, localesPath: string, paths: string[]) {
-    const className = self.constructor.name;
-    const filterConfig = new FilterConfig();
-    filterConfig.classesNames = [className];
-    const msg = `${className}: locales were found: [${paths.join(', ')}] in "${localesPath}"`;
-    this.setLog('debug', filterConfig, msg);
+    const methods = missingMethods.join(', ');
+    this.setLog('debug', filterConfig, `${className}: in ${extendedClassName} missing methods: [${methods}].`);
   }
 }

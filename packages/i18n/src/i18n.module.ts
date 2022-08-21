@@ -12,13 +12,16 @@ import { I18nOptions, I18N_EXTENSIONS, I18N_TRANSLATIONS, TranslationGroup } fro
     I18nLogMediator,
   ],
   providersPerReq: [I18nService],
-  exports: [I18nService, I18nOptions]
+  exports: [I18nService]
 })
 export class I18nModule {
-  static withParams(translationTuples: TranslationGroup[]): ModuleWithParams<I18nModule> {
+  static withParams(translationTuples: TranslationGroup[], i18nOptions: I18nOptions = new I18nOptions()): ModuleWithParams<I18nModule> {
     return {
       module: this,
-      providersPerMod: [{ provide: I18N_TRANSLATIONS, useValue: translationTuples, multi: true }],
+      providersPerMod: [
+        { provide: I18N_TRANSLATIONS, useValue: translationTuples, multi: true },
+        { provide: I18nOptions, useValue: i18nOptions },
+      ],
     };
   }
 }

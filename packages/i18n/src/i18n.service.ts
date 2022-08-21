@@ -28,11 +28,11 @@ export class I18nService {
   }
 
   translate<T extends Type<I18nTranslation>, K extends keyof Omit<T['prototype'], 'lng'>>(namespace: T, methodName: K, lng?: ISO639, ...args: Parameters<T['prototype'][K]>) {
-    const fn = this.getMethod(namespace, methodName, lng);
-    return fn(...args);
+    const method = this.getMethod(namespace, methodName, lng);
+    return method(...args);
   }
 
-  protected getLng() {
+  getLng() {
     const { lng } = this.req.queryParams;
     return lng || this.i18nOptions.defaultLng;
   }
