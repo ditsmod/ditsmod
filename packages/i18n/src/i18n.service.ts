@@ -22,7 +22,7 @@ export class I18nService {
 
   getMethod<T extends Type<I18nTranslation>, K extends keyof Omit<T['prototype'], 'lng'>>(namespace: T, lng: ISO639, methodName: K) {
     const dictionary = this.getDictionary(namespace, lng);
-    return dictionary[methodName].bind(dictionary) as (...args: Parameters<T['prototype'][K]>) => string;
+    return dictionary[methodName].bind(dictionary) as T['prototype'][K];
   }
 
   translate<T extends Type<I18nTranslation>, K extends keyof Omit<T['prototype'], 'lng'>>(namespace: T, lng: ISO639, methodName: K, ...args: Parameters<T['prototype'][K]>) {
