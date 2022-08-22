@@ -17,10 +17,7 @@ export class I18nService {
   getDictionary<T extends Type<I18nDictionary>>(namespace: T, lng?: ISO639) {
     const dictionaries = this.getAllDictionaries(namespace);
     lng = lng || this.lng;
-    const dictionary = dictionaries
-      .slice()
-      .reverse()
-      .find((t) => t.lng == lng); // Find last element.
+    const dictionary = dictionaries.find((t) => t.lng == lng); // Find last element.
     if (!dictionary) {
       throw new Error(`Translation not found for ${namespace.name}.${lng}`);
     }

@@ -8,6 +8,10 @@ export interface I18nDictionary {
   [key: string]: any;
 }
 
+export class Translation {
+  constructor(public current?: TranslationGroup[], public imported?: TranslationGroup[]) {}
+}
+
 export class I18nOptions {
   defaultLng?: ISO639;
   lngQueryParam?: string = 'lng';

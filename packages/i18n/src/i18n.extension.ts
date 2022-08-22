@@ -2,7 +2,7 @@ import { Extension, ExtensionsManager, ROUTES_EXTENSIONS } from '@ditsmod/core';
 import { Inject, Injectable, Optional, Type } from '@ts-stack/di';
 
 import { I18nLogMediator } from './i18n-log-mediator';
-import { I18nDictionary, I18N_TRANSLATIONS, TranslationGroup } from './types/mix';
+import { I18nDictionary, I18N_TRANSLATIONS, TranslationGroup, Translation } from './types/mix';
 
 @Injectable()
 export class I18nExtension implements Extension<void> {
@@ -11,7 +11,7 @@ export class I18nExtension implements Extension<void> {
 
   constructor(
     private log: I18nLogMediator,
-    @Optional() @Inject(I18N_TRANSLATIONS) private translations: TranslationGroup[][] = [],
+    @Optional() @Inject(I18N_TRANSLATIONS) private translations: Translation[] = [],
     private extensionsManager: ExtensionsManager
   ) {}
 
@@ -31,9 +31,21 @@ export class I18nExtension implements Extension<void> {
 
     const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS);
     for (const translation of this.translations) {
-      for (const dictionariesGroup of translation) {
+      for (const dictionariesGroup of translation.current || []) {
         const token = dictionariesGroup[0]; // First class uses as group's token
         for (const dict of dictionariesGroup) {
+          if (token !== dict) {
+            this.logMissingMethods(token, dict);
+          }
+          for (const metadataPerMod2 of aMetadataPerMod2) {
+            const { providersPerMod } = metadataPerMod2;
+            providersPerMod.push({ provide: token, useClass: dict, multi: true });
+          }
+        }
+      }
+      for (const dictionariesGroup of translation.imported || []) {
+        const token = dictionariesGroup[0]; // First class uses as group's token
+        for (const dict of dictionariesGroup.slice(1)) {
           if (token !== dict) {
             this.logMissingMethods(token, dict);
           }
