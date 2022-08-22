@@ -269,6 +269,28 @@ describe('ModuleManager', () => {
     expect(() => mock.scanModule(Module2)).not.toThrow();
   });
 
+  it('exports multi providers', () => {
+    class Multi {}
+
+    const exportedMultiProvidersPerMod = [{ provide: Multi, useClass: Multi, multi: true}];
+    
+    @Module({ exports: [Multi] })
+    class Module1 {
+      static withParams(): ModuleWithParams<Module1> {
+        return {
+          module: this,
+          providersPerMod: [{ provide: Multi, useClass: Multi, multi: true}]
+        };
+      }
+    }
+
+    const moduleWithParams = Module1.withParams();
+
+    const meta = mock.scanModule(moduleWithParams);
+    expect(meta.exportedProvidersPerMod.length).toBe(0);
+    expect(meta.exportedMultiProvidersPerMod).toEqual(exportedMultiProvidersPerMod);
+  });
+
   it('not properly reexport module with params, case 2', () => {
     @Controller()
     class Controller1 {}
