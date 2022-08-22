@@ -7,9 +7,7 @@ export class CommonDict implements I18nDictionary {
   /**
    * Hi, there!
    */
-  hi() {
-    return `Hi, there!`;
-  }
+  hi = `Hi, there!`;
   /**
    * Hello, ${name}!
    */

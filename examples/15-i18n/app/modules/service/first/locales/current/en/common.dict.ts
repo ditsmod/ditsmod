@@ -7,7 +7,5 @@ export class CommonDict implements I18nDictionary {
   /**
    * one, two, three
    */
-   countToThree() {
-    return `one, two, three`;
-  }
+   countToThree = 'one, two, three';
 }

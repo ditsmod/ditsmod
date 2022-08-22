@@ -9,7 +9,5 @@ export class CommonUkDict extends CommonEnDict {
   /**
    * one, two, three
    */
-  override countToThree() {
-    return `чотири, п'ять, шість`;
-  }
+  override countToThree = `чотири, п'ять, шість`;
 }

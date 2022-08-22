@@ -8,7 +8,5 @@ export class CommonEnDict extends CommonDict {
   /**
    * one, two, three
    */
-   override countToThree() {
-    return `four, five, six`;
-  }
+   override countToThree = 'four, five, six';
 }

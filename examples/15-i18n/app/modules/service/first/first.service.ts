@@ -9,6 +9,6 @@ export class FirstService {
 
   countToThree() {
     const dict = this.i18nService.getDictionary(CommonDict);
-    return dict.countToThree();
+    return dict.countToThree;
   }
 }
