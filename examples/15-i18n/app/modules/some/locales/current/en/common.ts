@@ -1,8 +1,8 @@
-import { I18nTranslation, ISO639 } from '@ditsmod/i18n';
+import { I18nDictionary, ISO639 } from '@ditsmod/i18n';
 import { Injectable } from '@ts-stack/di';
 
 @Injectable()
-export class Common implements I18nTranslation {
+export class Common implements I18nDictionary {
   lng: ISO639 = 'en';
   /**
    * Hi, there!
