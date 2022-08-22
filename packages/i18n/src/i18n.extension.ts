@@ -47,11 +47,11 @@ export class I18nExtension implements Extension<void> {
   }
 
   logMissingMethods(base: Type<I18nDictionary>, extended: Type<I18nDictionary>) {
-    const methodsBase = Object.getOwnPropertyNames(base.prototype).filter((name) => name != 'constructor');
-    const methodsExtended = Object.getOwnPropertyNames(extended.prototype).filter((name) => name != 'constructor');
+    const baseMethods = Object.getOwnPropertyNames(base.prototype);
+    const overridedMethods = Object.getOwnPropertyNames(extended.prototype);
     const missingMethods: string[] = [];
-    methodsBase.forEach((b) => {
-      if (!methodsExtended.includes(b)) {
+    baseMethods.forEach((b) => {
+      if (!overridedMethods.includes(b)) {
         missingMethods.push(b);
       }
     });
