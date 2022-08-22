@@ -10,6 +10,7 @@ export interface I18nDictionary {
 
 export class I18nOptions {
   defaultLng?: ISO639;
+  lngQueryParam?: string = 'lng';
 }
 export type TranslationGroup<T extends Type<I18nDictionary> = Type<I18nDictionary>> = [T, ...T[]];
 export const I18N_EXTENSIONS = new InjectionToken<Extension<void>>('I18N_EXTENSIONS');
