@@ -12,16 +12,10 @@ import { I18nOptions, I18N_EXTENSIONS, I18N_TRANSLATIONS, Translation } from './
   exports: [I18nService],
 })
 export class I18nModule {
-  static withParams(
-    translations: Translation,
-    i18nOptions: I18nOptions = new I18nOptions()
-  ): ModuleWithParams<I18nModule> {
+  static withParams(translations: Translation): ModuleWithParams<I18nModule> {
     return {
       module: this,
-      providersPerMod: [
-        { provide: I18N_TRANSLATIONS, useValue: translations, multi: true },
-        { provide: I18nOptions, useValue: i18nOptions },
-      ],
+      providersPerMod: [{ provide: I18N_TRANSLATIONS, useValue: translations, multi: true }],
     };
   }
 }
