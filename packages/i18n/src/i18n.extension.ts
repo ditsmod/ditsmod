@@ -21,26 +21,26 @@ export class I18nExtension implements Extension<void> {
     }
 
     const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS);
-    for (const metadataPerMod2 of aMetadataPerMod2) {
-      const { moduleName, providersPerMod } = metadataPerMod2;
-      if (moduleName == 'I18nModule') {
-        continue;
-      }
-      this.translations.forEach((translation) => {
-        for (const group of translation) {
-          const token = group[0]; // First class uses as group's token
-          if (!token) {
-            break;
-          }
-
-          group.forEach((t) => {
-            if (token !== t) {
-              this.logMissingMethods(token, t);
-            }
-            providersPerMod.push({ provide: token, useClass: t, multi: true });
-          });
+    for (const translation of this.translations) {
+      for (const group of translation) {
+        const token = group[0]; // First class uses as group's token
+        if (!token) {
+          break;
         }
-      });
+
+        for (const dict of group) {
+          if (token !== dict) {
+            this.logMissingMethods(token, dict);
+          }
+          for (const metadataPerMod2 of aMetadataPerMod2) {
+            const { moduleName, providersPerMod } = metadataPerMod2;
+            if (moduleName == 'I18nModule') {
+              continue;
+            }
+            providersPerMod.push({ provide: token, useClass: dict, multi: true });
+          }
+        }
+      }
     }
 
     this.#inited = true;
