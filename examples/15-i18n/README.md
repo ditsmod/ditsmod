@@ -14,11 +14,15 @@ yarn boot
 Start from first terminal:
 
 ```bash
-yarn start1
+yarn start15
 ```
 
 From second terminal:
 
 ```bash
-curl -isS localhost:3000
+curl -isS localhost:3000/first
+curl -isS localhost:3000/second?lng=en
+curl -isS localhost:3000/second
+curl -isS localhost:3000/second/your-name?lng=en
+curl -isS localhost:3000/second/your-name
 ```

@@ -1,5 +1,5 @@
 import { LoggerConfig, LogMediatorConfig, Module, FilterConfig } from '@ditsmod/core';
-import { I18nModule, I18nOptions, Translation } from '@ditsmod/i18n';
+import { I18nModule, I18nOptions, I18N_TRANSLATIONS, Translation } from '@ditsmod/i18n';
 
 import { FirstModule } from '../../service/first/first.module';
 import { SecondController } from './second.controller';
@@ -11,19 +11,17 @@ const filterConfig: FilterConfig = { classesNames: ['I18nExtension'] };
 const i18nOptions: I18nOptions = { defaultLng: 'uk' };
 const translations: Translation = {
   current: currentTranslations,
-  imported: importedTranslations
+  imported: importedTranslations,
 };
 
 @Module({
-  imports: [
-    I18nModule.withParams(translations),
-    FirstModule
-  ],
+  imports: [I18nModule, FirstModule],
   controllers: [SecondController],
   providersPerMod: [
     { provide: LoggerConfig, useValue: loggerConfig },
     { provide: LogMediatorConfig, useValue: { filterConfig } },
     { provide: I18nOptions, useValue: i18nOptions },
+    { provide: I18N_TRANSLATIONS, useValue: translations, multi: true },
   ],
 })
 export class SecondModule {}
