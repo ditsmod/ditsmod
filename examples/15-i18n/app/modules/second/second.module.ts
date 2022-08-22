@@ -16,4 +16,4 @@ const i18nOptions: I18nOptions = { defaultLng: 'uk' };
     { provide: LogMediatorConfig, useValue: { filterConfig } },
   ],
 })
-export class SomeModule {}
+export class SecondModule {}
