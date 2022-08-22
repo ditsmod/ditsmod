@@ -6,12 +6,13 @@ import { FirstService } from './first.service';
 import { FirstController } from './first.controller';
 
 const i18nOptions: I18nOptions = { defaultLng: 'en' };
-const i18nWithParams = I18nModule.withParams({ current: currentTranslations }, i18nOptions);
+const i18nWithParams = I18nModule.withParams({ current: currentTranslations });
 
 @Module({
   imports: [i18nWithParams],
   controllers: [FirstController],
   providersPerReq: [FirstService],
+  providersPerMod: [{ provide: I18nOptions, useValue: i18nOptions }],
   exports: [FirstService, i18nWithParams],
 })
 export class FirstModule {}

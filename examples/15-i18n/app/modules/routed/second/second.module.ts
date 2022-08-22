@@ -16,13 +16,14 @@ const translations: Translation = {
 
 @Module({
   imports: [
-    I18nModule.withParams(translations, i18nOptions),
+    I18nModule.withParams(translations),
     FirstModule
   ],
   controllers: [SecondController],
   providersPerMod: [
     { provide: LoggerConfig, useValue: loggerConfig },
     { provide: LogMediatorConfig, useValue: { filterConfig } },
+    { provide: I18nOptions, useValue: i18nOptions },
   ],
 })
 export class SecondModule {}
