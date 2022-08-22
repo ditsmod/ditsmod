@@ -24,19 +24,15 @@ export class I18nExtension implements Extension<void> {
     if (moduleName == 'I18nModule') {
       return;
     }
+
     if (!this.translations.length) {
       this.log.translationNotFound(this, moduleName);
     }
 
     const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS);
     for (const translation of this.translations) {
-      if (translation.some((t) => !Array.isArray(t))) {
-        this.log.wrongTranslation(this, moduleName);
-        break;
-      }
       for (const dictionariesGroup of translation) {
         const token = dictionariesGroup[0]; // First class uses as group's token
-
         for (const dict of dictionariesGroup) {
           if (token !== dict) {
             this.logMissingMethods(token, dict);
