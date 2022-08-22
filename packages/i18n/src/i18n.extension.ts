@@ -20,23 +20,29 @@ export class I18nExtension implements Extension<void> {
       return;
     }
 
+    const { moduleName } = this.extensionsManager;
+    if (moduleName == 'I18nModule') {
+      return;
+    }
+    if (!this.translations.length) {
+      this.log.translationNotFound(this, moduleName);
+    }
+
     const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS);
     for (const translation of this.translations) {
-      for (const group of translation) {
-        const token = group[0]; // First class uses as group's token
-        if (!token) {
-          break;
-        }
+      if (translation.some((t) => !Array.isArray(t))) {
+        this.log.wrongTranslation(this, moduleName);
+        break;
+      }
+      for (const dictionariesGroup of translation) {
+        const token = dictionariesGroup[0]; // First class uses as group's token
 
-        for (const dict of group) {
+        for (const dict of dictionariesGroup) {
           if (token !== dict) {
             this.logMissingMethods(token, dict);
           }
           for (const metadataPerMod2 of aMetadataPerMod2) {
-            const { moduleName, providersPerMod } = metadataPerMod2;
-            if (moduleName == 'I18nModule') {
-              continue;
-            }
+            const { providersPerMod } = metadataPerMod2;
             providersPerMod.push({ provide: token, useClass: dict, multi: true });
           }
         }
@@ -46,7 +52,7 @@ export class I18nExtension implements Extension<void> {
     this.#inited = true;
   }
 
-  logMissingMethods(base: Type<I18nDictionary>, extended: Type<I18nDictionary>) {
+  protected logMissingMethods(base: Type<I18nDictionary>, extended: Type<I18nDictionary>) {
     const baseMethods = Object.getOwnPropertyNames(base.prototype);
     const overridedMethods = Object.getOwnPropertyNames(extended.prototype);
     const missingMethods: string[] = [];
