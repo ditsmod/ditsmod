@@ -2,7 +2,7 @@ import { Controller, Req, Res, Route } from '@ditsmod/core';
 import { I18nService } from '@ditsmod/i18n';
 
 import { FirstService } from '../../service/first/first.service';
-import { Common } from './locales/current/en/common';
+import { CommonDict } from './locales/current/en/common.dict';
 
 @Controller()
 export class SecondController {
@@ -10,7 +10,7 @@ export class SecondController {
 
   @Route('GET', 'second/:userName')
   tellHello() {
-    const dict = this.i18nService.getDictionary(Common);
+    const dict = this.i18nService.getDictionary(CommonDict);
     const { userName } = this.req.pathParams;
     const msg = dict.hello(userName);
 

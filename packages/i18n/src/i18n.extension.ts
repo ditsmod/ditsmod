@@ -2,7 +2,7 @@ import { Extension, ExtensionsManager, ROUTES_EXTENSIONS } from '@ditsmod/core';
 import { Inject, Injectable, Optional, Type } from '@ts-stack/di';
 
 import { I18nLogMediator } from './i18n-log-mediator';
-import { I18nDictionary, I18N_TRANSLATIONS, TranslationGroup, Translation } from './types/mix';
+import { I18nDictionary, I18N_TRANSLATIONS, Translation } from './types/mix';
 
 @Injectable()
 export class I18nExtension implements Extension<void> {

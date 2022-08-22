@@ -2,7 +2,7 @@ import { I18nDictionary, ISO639 } from '@ditsmod/i18n';
 import { Injectable } from '@ts-stack/di';
 
 @Injectable()
-export class Errors implements I18nDictionary {
+export class ErrorsDict implements I18nDictionary {
   lng: ISO639 = 'en';
   /**
    * Can't connect to ${database}.

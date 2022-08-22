@@ -1,7 +1,7 @@
 import { TranslationGroup } from '@ditsmod/i18n';
 
-import { Common } from './en/common';
+import { CommonDict } from './en/common.dict';
 
 export const currentTranslations: TranslationGroup[] = [
-  [Common],
+  [CommonDict],
 ];

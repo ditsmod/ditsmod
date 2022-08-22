@@ -1,10 +1,10 @@
 import { ISO639 } from '@ditsmod/i18n';
 import { Injectable } from '@ts-stack/di';
 
-import { CommonEn } from '../en/common';
+import { CommonEnDict } from '../en/common-en.dict';
 
 @Injectable()
-export class CommonUk extends CommonEn {
+export class CommonUkDict extends CommonEnDict {
   override lng: ISO639 = 'uk';
   /**
    * one, two, three

@@ -2,7 +2,7 @@ import { I18nDictionary, ISO639 } from '@ditsmod/i18n';
 import { Injectable } from '@ts-stack/di';
 
 @Injectable()
-export class Common implements I18nDictionary {
+export class CommonDict implements I18nDictionary {
   lng: ISO639 = 'en';
   /**
    * Hi, there!
