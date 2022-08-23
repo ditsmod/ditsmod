@@ -2,7 +2,7 @@ import { Extension, ExtensionsManager, ROUTES_EXTENSIONS } from '@ditsmod/core';
 import { Inject, Injectable, Optional, Type } from '@ts-stack/di';
 
 import { I18nLogMediator } from './i18n-log-mediator';
-import { I18nDictionary, I18N_TRANSLATIONS, Translation } from './types/mix';
+import { Dictionary, I18N_TRANSLATIONS, Translations } from './types/mix';
 
 @Injectable()
 export class I18nExtension implements Extension<void> {
@@ -11,7 +11,7 @@ export class I18nExtension implements Extension<void> {
 
   constructor(
     private log: I18nLogMediator,
-    @Optional() @Inject(I18N_TRANSLATIONS) private translations: Translation[] = [],
+    @Optional() @Inject(I18N_TRANSLATIONS) private translations: Translations[] = [],
     private extensionsManager: ExtensionsManager
   ) {}
 
@@ -60,7 +60,7 @@ export class I18nExtension implements Extension<void> {
     this.#inited = true;
   }
 
-  protected logMissingMethods(base: Type<I18nDictionary>, extended: Type<I18nDictionary>) {
+  protected logMissingMethods(base: Type<Dictionary>, extended: Type<Dictionary>) {
     const baseMethods = Object.getOwnPropertyNames(base.prototype);
     const overridedMethods = Object.getOwnPropertyNames(extended.prototype);
     const missingMethods: string[] = [];

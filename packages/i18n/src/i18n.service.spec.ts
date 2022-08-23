@@ -4,7 +4,7 @@ import { Req } from '@ditsmod/core';
 import { describe, it, expect } from '@jest/globals';
 
 import { I18nOptions } from './types/mix';
-import { I18nService } from './i18n.service';
+import { DictService } from './dict.service';
 import { Common } from './test/common-en';
 import { CommonUk } from './test/common-uk';
 
@@ -14,13 +14,13 @@ describe('I18nService', () => {
   }
   function getService(options: Options) {
     const injector = ReflectiveInjector.resolveAndCreate([
-      I18nService,
+      DictService,
       { provide: Req, useValue: options.req },
       { provide: I18nOptions, useValue: options.i18nOptions },
       { provide: Common, useClass: Common, multi: true },
       { provide: Common, useClass: CommonUk, multi: true },
     ]);
-    return injector.get(I18nService) as I18nService;
+    return injector.get(DictService) as DictService;
   }
 
   it('lng is undefined by default', () => {
