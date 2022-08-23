@@ -6,7 +6,7 @@ import { SecondController } from './second.controller';
 import { current } from './locales/current';
 import { imported } from './locales/imported/first';
 
-const loggerConfig = new LoggerConfig('info');
+const loggerConfig = new LoggerConfig('debug');
 const filterConfig: FilterConfig = { classesNames: ['I18nExtension'] };
 
 @Module({

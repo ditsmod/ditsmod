@@ -20,4 +20,34 @@ export class I18nLogMediator extends LogMediator {
     const methods = missingMethods.join(', ');
     this.setLog('debug', filterConfig, `${className}: in ${extendedClassName} missing methods: [${methods}].`);
   }
+  /**
+   * ${className}: for dictionary "${tokenName}" found next locales: [${allLngs.join(', ')}]. Some methods: [${methods.join(', ')}].
+   */
+  currentLngs(self: object, tokenName: string, allLngs: string[], methods: string[]) {
+    const className = self.constructor.name;
+    const filterConfig = new FilterConfig();
+    filterConfig.classesNames = [className];
+    let msg = `${className}: for dictionary "${tokenName}" found next locales: [${allLngs.join(', ')}].`;
+    if (methods.length) {
+      msg += ` Some methods: [${methods.join(', ')}].`;
+    } else {
+      msg += ` No methods found.`;
+    }
+    this.setLog('debug', filterConfig, msg);
+  }
+  /**
+   * ${className}: for overrided imported dictionary "${tokenName}" found next locales: [${allLngs.join(', ')}]. Some methods: [${methods.join(', ')}].
+   */
+  importsLngs(self: object, tokenName: string, allLngs: string[], methods: string[]) {
+    const className = self.constructor.name;
+    const filterConfig = new FilterConfig();
+    filterConfig.classesNames = [className];
+    let msg = `${className}: for overrided imported dictionary "${tokenName}" found next locales: [${allLngs.join(', ')}].`;
+    if (methods.length) {
+      msg += ` Some methods: [${methods.join(', ')}].`;
+    } else {
+      msg += ` No methods found.`;
+    }
+    this.setLog('debug', filterConfig, msg);
+  }
 }

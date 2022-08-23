@@ -33,6 +33,11 @@ export class I18nExtension implements Extension<void> {
     for (const translation of this.translations) {
       for (const dictionariesGroup of translation.current || []) {
         const token = dictionariesGroup[0]; // First class uses as group's token
+
+        const allLngs = dictionariesGroup.map((d) => d.prototype.getLng());
+        const allMethods = Object.getOwnPropertyNames(token.prototype).filter(p => p != 'constructor' && p != 'getLng').slice(0, 5);
+        this.log.currentLngs(this, token.name, allLngs, allMethods);
+
         for (const dict of dictionariesGroup) {
           if (token !== dict) {
             this.logMissingMethods(token, dict);
@@ -51,10 +56,14 @@ export class I18nExtension implements Extension<void> {
          * then the token is not passed to DI as provider.
          */
         let group: Type<Dictionary>[] = dictionariesGroup.slice(1);
-        const lngList = group.map(d => d.prototype.getLng());
+        const lngList = group.map((d) => d.prototype.getLng());
         if (!lngList.includes(token.prototype.getLng())) {
           group = dictionariesGroup;
         }
+
+        const allLngs = group.map((d) => d.prototype.getLng());
+        const allMethods = Object.getOwnPropertyNames(token.prototype).filter(p => p != 'constructor' && p != 'getLng').slice(0, 5);
+        this.log.importsLngs(this, token.name, allLngs, allMethods);
 
         for (const dict of group) {
           if (token !== dict) {
