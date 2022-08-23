@@ -1,12 +1,12 @@
 import { Controller, Req, Res, Route } from '@ditsmod/core';
-import { I18nService } from '@ditsmod/i18n';
+import { DictService } from '@ditsmod/i18n';
 
 import { FirstService } from '../first/first.service';
 import { CommonDict } from '@dict/second/common.dict';
 
 @Controller()
 export class SecondController {
-  constructor(private req: Req, private res: Res, private i18nService: I18nService, private firstService: FirstService) {}
+  constructor(private req: Req, private res: Res, private i18nService: DictService, private firstService: FirstService) {}
 
   @Route('GET', 'second/:userName')
   tellHello() {
