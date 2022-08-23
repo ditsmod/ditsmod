@@ -36,7 +36,7 @@ export class I18nExtension implements Extension<void> {
 
         const allLngs = dictionariesGroup.map((d) => d.prototype.getLng());
         const allMethods = Object.getOwnPropertyNames(token.prototype).filter(p => p != 'constructor' && p != 'getLng').slice(0, 5);
-        this.log.currentLngs(this, token.name, allLngs, allMethods);
+        this.log.importedLngs(this, token.name, allLngs, allMethods, translation.moduleName);
 
         for (const dict of dictionariesGroup) {
           if (token !== dict) {
@@ -63,7 +63,7 @@ export class I18nExtension implements Extension<void> {
 
         const allLngs = group.map((d) => d.prototype.getLng());
         const allMethods = Object.getOwnPropertyNames(token.prototype).filter(p => p != 'constructor' && p != 'getLng').slice(0, 5);
-        this.log.importsLngs(this, token.name, allLngs, allMethods);
+        this.log.overridedLngs(this, token.name, allLngs, allMethods, translation.moduleName);
 
         for (const dict of group) {
           if (token !== dict) {
