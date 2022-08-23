@@ -4,6 +4,6 @@ import { CommonDict } from '@dict/first/common.dict';
 import { CommonEnDict } from './en/common-en.dict';
 import { CommonUkDict } from './uk/common-uk.dict';
 
-export const importedTranslations: DictGroup[] = [
+export const imported: DictGroup[] = [
   getDictGroup(CommonDict, CommonEnDict, CommonUkDict),
 ];

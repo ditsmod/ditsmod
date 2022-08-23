@@ -3,16 +3,13 @@ import { I18nModule, I18nOptions, I18N_TRANSLATIONS, Translation } from '@ditsmo
 
 import { FirstModule } from '../first/first.module';
 import { SecondController } from './second.controller';
-import { currentTranslations } from './locales/current/translations';
-import { importedTranslations } from './locales/imported/first/translations';
+import { current } from './locales/current/translations';
+import { imported } from './locales/imported/first/translations';
 
 const loggerConfig = new LoggerConfig('info');
 const filterConfig: FilterConfig = { classesNames: ['I18nExtension'] };
 const i18nOptions: I18nOptions = { defaultLng: 'uk' };
-const translations: Translation = {
-  current: currentTranslations,
-  imported: importedTranslations,
-};
+const translations: Translation = { current, imported };
 
 @Module({
   imports: [I18nModule, FirstModule],

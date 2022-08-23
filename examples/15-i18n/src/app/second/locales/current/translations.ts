@@ -5,7 +5,7 @@ import { ErrorsDict } from '@dict/second/errors.dict';
 import { CommonUkDict } from './uk/common-uk.dict';
 import { ErrorsUkDict } from './uk/errors-uk.dict';
 
-export const currentTranslations: DictGroup[] = [
+export const current: DictGroup[] = [
   getDictGroup(CommonDict, CommonUkDict),
   getDictGroup(ErrorsDict, ErrorsUkDict),
 ];

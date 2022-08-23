@@ -2,7 +2,6 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src",
     "baseUrl": "./",
     "paths": {
       "@ditsmod/body-parser": ["../../packages/body-parser/src"],
@@ -11,8 +10,8 @@
       "@ditsmod/openapi": ["../../packages/openapi/src"],
       "@ditsmod/jwt": ["../../packages/jwt/src"],
       "@ditsmod/i18n": ["../../packages/i18n/src"],
-      "@dict/first/*": ["src/app/first/locales/current/_base-en/*"],
-      "@dict/second/*": ["src/app/second/locales/current/_base-en/*"]
+      "@dict/first/*": ["./src/app/first/locales/current/_base-en/*"],
+      "@dict/second/*": ["./src/app/second/locales/current/_base-en/*"]
     }
   },
   "include": ["src"]
