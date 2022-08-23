@@ -1,7 +1,7 @@
 import { ISO639 } from '@ditsmod/i18n';
 import { Injectable } from '@ts-stack/di';
 
-import { ErrorsDict } from '../en/errors.dict';
+import { ErrorsDict } from '@dict/second/errors.dict';
 
 @Injectable()
 export class ErrorsUkDict extends ErrorsDict {

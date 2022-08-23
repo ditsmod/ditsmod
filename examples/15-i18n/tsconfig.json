@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "baseUrl": "./",
+    "paths": {
+      "@dict/first/*": ["src/app/first/locales/current/_base-en/*"],
+      "@dict/second/*": ["src/app/second/locales/current/_base-en/*"]
+    }
+  },
+  "include": ["src"]
+}

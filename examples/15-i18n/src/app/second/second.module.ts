@@ -1,7 +1,7 @@
 import { LoggerConfig, LogMediatorConfig, Module, FilterConfig } from '@ditsmod/core';
 import { I18nModule, I18nOptions, I18N_TRANSLATIONS, Translation } from '@ditsmod/i18n';
 
-import { FirstModule } from '../../service/first/first.module';
+import { FirstModule } from '../first/first.module';
 import { SecondController } from './second.controller';
 import { currentTranslations } from './locales/current/translations';
 import { importedTranslations } from './locales/imported/first/translations';

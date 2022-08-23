@@ -1,6 +1,7 @@
 import { ISO639 } from '@ditsmod/i18n';
 import { Injectable } from '@ts-stack/di';
-import { CommonDict } from '../../../../../../service/first/locales/current/en/common.dict';
+
+import { CommonDict } from '@dict/first/common.dict';
 
 @Injectable()
 export class CommonEnDict extends CommonDict {
@@ -8,5 +9,5 @@ export class CommonEnDict extends CommonDict {
   /**
    * one, two, three
    */
-   override countToThree = 'four, five, six';
+  override countToThree = 'four, five, six';
 }

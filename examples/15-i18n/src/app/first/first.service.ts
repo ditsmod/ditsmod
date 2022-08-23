@@ -1,7 +1,7 @@
 import { Injectable } from '@ts-stack/di';
 import { I18nService } from '@ditsmod/i18n';
 
-import { CommonDict } from './locales/current/en/common.dict';
+import { CommonDict } from '@dict/first/common.dict';
 
 @Injectable()
 export class FirstService {

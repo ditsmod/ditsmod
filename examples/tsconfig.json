@@ -23,6 +23,5 @@
       "@ditsmod/jwt": ["../packages/jwt/src"],
       "@ditsmod/i18n": ["../packages/i18n/src"],
     }
-  },
-  "include": ["./**/*"]
+  }
 }

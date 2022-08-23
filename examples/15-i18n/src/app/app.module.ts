@@ -1,8 +1,8 @@
 import { FilterConfig, LoggerConfig, LogMediatorConfig, RootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
-import { SecondModule } from './modules/routed/second/second.module';
-import { FirstModule } from './modules/service/first/first.module';
+import { SecondModule } from './second/second.module';
+import { FirstModule } from './first/first.module';
 
 const loggerConfig = new LoggerConfig('info');
 const filterConfig: FilterConfig = { modulesNames: ['SecondModule'] };

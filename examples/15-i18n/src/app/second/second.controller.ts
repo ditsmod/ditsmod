@@ -1,8 +1,8 @@
 import { Controller, Req, Res, Route } from '@ditsmod/core';
 import { I18nService } from '@ditsmod/i18n';
 
-import { FirstService } from '../../service/first/first.service';
-import { CommonDict } from './locales/current/en/common.dict';
+import { FirstService } from '../first/first.service';
+import { CommonDict } from '@dict/second/common.dict';
 
 @Controller()
 export class SecondController {
