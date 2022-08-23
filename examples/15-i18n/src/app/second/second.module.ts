@@ -15,7 +15,7 @@ const filterConfig: FilterConfig = { classesNames: ['I18nExtension'] };
   providersPerMod: [
     { provide: LoggerConfig, useValue: loggerConfig },
     { provide: LogMediatorConfig, useValue: { filterConfig } },
-    ...getI18nProviders({ current, imported, moduleName: 'SecondModule' }, { defaultLng: 'uk' })
+    ...getI18nProviders(this, { current, imported, moduleName: 'SecondModule' }, { defaultLng: 'uk' })
   ],
 })
 export class SecondModule {}
