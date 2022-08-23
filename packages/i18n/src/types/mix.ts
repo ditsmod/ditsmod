@@ -4,7 +4,7 @@ import { InjectionToken, Type } from '@ts-stack/di';
 import { ISO639 } from './iso-639';
 
 export interface Dictionary {
-  lng: ISO639;
+  getLng(): ISO639;
   [key: string]: any;
 }
 

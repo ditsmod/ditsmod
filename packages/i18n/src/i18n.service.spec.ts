@@ -78,9 +78,9 @@ describe('I18nService', () => {
     const options = new Options();
     const i18nService = getService(options);
     const dictionaryUk = i18nService.getDictionary(Common, 'uk');
-    expect(dictionaryUk.lng).toBe('uk');
+    expect(dictionaryUk.getLng()).toBe('uk');
     const dictionaryEn = i18nService.getDictionary(Common, 'en');
-    expect(dictionaryEn.lng).toBe('en');
+    expect(dictionaryEn.getLng()).toBe('en');
   });
 
   it('i18nService.getMethod() returns selected method', () => {

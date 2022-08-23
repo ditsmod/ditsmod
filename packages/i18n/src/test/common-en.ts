@@ -5,7 +5,9 @@ import { ISO639 } from '../types/iso-639';
 
 @Injectable()
 export class Common implements Dictionary {
-  lng: ISO639 = 'en';
+  getLng(): ISO639 {
+    return 'en';
+  }
   /**
    * Hi, there!
    */

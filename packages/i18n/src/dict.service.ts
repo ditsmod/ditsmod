@@ -17,7 +17,7 @@ export class DictService {
   getDictionary<T extends Type<Dictionary>>(namespace: T, lng?: ISO639) {
     const dictionaries = this.getAllDictionaries(namespace);
     lng = lng || this.lng;
-    const dictionary = dictionaries.find((t) => t.lng == lng); // Find last element.
+    const dictionary = dictionaries.find((t) => t.getLng() == lng); // Find last element.
     if (!dictionary) {
       throw new Error(`Translation not found for ${namespace.name}.${lng}`);
     }

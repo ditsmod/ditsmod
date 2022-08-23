@@ -5,7 +5,9 @@ import { Common } from './common-en';
 
 @Injectable()
 export class CommonUk extends Common {
-  override lng: ISO639 = 'uk';
+  override getLng(): ISO639 {
+    return 'uk';
+  }
 
   override hello(name: string) {
     return `Привіт, ${name}!`;

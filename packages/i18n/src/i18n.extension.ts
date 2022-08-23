@@ -45,7 +45,18 @@ export class I18nExtension implements Extension<void> {
       }
       for (const dictionariesGroup of translation.imported || []) {
         const token = dictionariesGroup[0]; // First class uses as group's token
-        for (const dict of dictionariesGroup.slice(1)) {
+
+        /**
+         * If the dictionariesGroup contains an overrided dictionary,
+         * then the token is not passed to DI as provider.
+         */
+        let group: Type<Dictionary>[] = dictionariesGroup.slice(1);
+        const lngList = group.map(d => d.prototype.getLng());
+        if (!lngList.includes(token.prototype.getLng())) {
+          group = dictionariesGroup;
+        }
+
+        for (const dict of group) {
           if (token !== dict) {
             this.logMissingMethods(token, dict);
           }
