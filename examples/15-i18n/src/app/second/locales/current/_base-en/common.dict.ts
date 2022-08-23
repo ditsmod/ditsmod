@@ -3,7 +3,9 @@ import { Injectable } from '@ts-stack/di';
 
 @Injectable()
 export class CommonDict implements Dictionary {
-  lng: ISO639 = 'en';
+  getLng(): ISO639 {
+    return 'en';
+  }
   /**
    * Hi, there!
    */

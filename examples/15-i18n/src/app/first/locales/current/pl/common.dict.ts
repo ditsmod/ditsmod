@@ -2,12 +2,12 @@ import { Dictionary, ISO639 } from '@ditsmod/i18n';
 import { Injectable } from '@ts-stack/di';
 
 @Injectable()
-export class CommonDict implements Dictionary {
+export class CommonPlDict implements Dictionary {
   getLng(): ISO639 {
-    return 'en';
+    return 'pl';
   }
   /**
-   * one, two, three
+   * nie, dwa, trzy
    */
-   countToThree = 'one, two, three';
+   countToThree = 'nie, dwa, trzy';
 }

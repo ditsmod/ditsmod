@@ -5,11 +5,13 @@ import { ErrorsDict } from '@dict/second/errors.dict';
 
 @Injectable()
 export class ErrorsUkDict extends ErrorsDict {
-  override lng: ISO639 = 'uk';
+  override getLng(): ISO639 {
+    return 'uk';
+  }
   /**
-   * Can't connect to ${database}.
+   * Не можна з'єднадись із базою даних ${database}.
    */
    override mysqlConnect(database: string) {
-    return `Can't connect to ${database}` as const;
+    return `Не можна з'єднадись із базою даних ${database}` as const;
   }
 }

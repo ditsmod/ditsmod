@@ -5,7 +5,9 @@ import { CommonDict } from '@dict/second/common.dict';
 
 @Injectable()
 export class CommonUkDict extends CommonDict {
-  override lng: ISO639 = 'uk';
+  override getLng(): ISO639 {
+    return 'uk';
+  }
 
   override hello(name: string) {
     return `Привіт, ${name}!`;

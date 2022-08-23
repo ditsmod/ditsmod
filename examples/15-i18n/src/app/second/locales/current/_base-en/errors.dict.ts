@@ -3,7 +3,9 @@ import { Injectable } from '@ts-stack/di';
 
 @Injectable()
 export class ErrorsDict implements Dictionary {
-  lng: ISO639 = 'en';
+  getLng(): ISO639 {
+    return 'en';
+  }
   /**
    * Can't connect to ${database}.
    */
