@@ -12,20 +12,27 @@ Recommended directory tree for current module:
     ├── locales
     │   ├── current
     │   │   ├── _base-en
+    │   │   ├── de
+    │   │   ├── fr
+    │   │   ├── pl
     │   │   ├── uk
-    │   │   └── translations.ts
+    │   │   └── index.ts
     │   └── imported
     │       ├── one
-    │       │   ├── en
-    │       │   ├── uk
-    │       │   └── translations.ts
-    │       └── two
-    │           ├── en
-    │           ├── uk
-    │           └── translations.ts
+    │       │   ├── de
+    │       │   ├── fr
+    │       │   ├── pl
+    │       │   └── uk
+    │       ├── two
+    │       │   ├── de
+    │       │   ├── fr
+    │       │   ├── pl
+    │       │   └── uk
+    │       └── index.ts
 ```
 
-Where `one` and `two` this are external modules that alsow has `@ditsmod/i18n` integration. File `translations.ts` has translation groups:
+Where `_base-en` - this is the base translation from which all other translations for the current module branch.
+And `one` and `two` this are external modules that alsow has `@ditsmod/i18n` integration. File `index.ts` has translation groups:
 
 ```ts
 import { TranslationGroup } from '@ditsmod/i18n';
@@ -35,7 +42,7 @@ import { CommonUk } from './uk/common';
 import { Errors } from './en/errors';
 import { ErrorsUk } from './uk/errors';
 
-export const currentTranslations: TranslationGroup[] = [
+export const current: TranslationGroup[] = [
   [Common, CommonUk],
   [Errors, ErrorsUk],
 ];

@@ -17,21 +17,33 @@ export class DictService {
   getDictionary<T extends Type<Dictionary>>(namespace: T, lng?: ISO639) {
     const dictionaries = this.getAllDictionaries(namespace);
     lng = lng || this.lng;
-    const dictionary = dictionaries.find((t) => t.getLng() == lng); // Find last element.
+    let dictionary = dictionaries.find((t) => t.getLng() == lng);
+    if (!dictionary) {
+      // Trying fallback to default lng
+      const tryLng = this.i18nOptions.defaultLng || lng;
+      dictionary = dictionaries.find((t) => t.getLng() == tryLng);
+    }
     if (!dictionary) {
       throw new Error(`Translation not found for ${namespace.name}.${lng}`);
     }
     return dictionary;
   }
 
-  // prettier-ignore
-  getMethod<T extends Type<Dictionary>, K extends keyof Omit<T['prototype'], 'lng'>>(namespace: T, methodName: K, lng?: ISO639) {
+  getMethod<T extends Type<Dictionary>, K extends keyof Omit<T['prototype'], 'lng'>>(
+    namespace: T,
+    methodName: K,
+    lng?: ISO639
+  ) {
     const dictionary = this.getDictionary(namespace, lng);
     return dictionary[methodName].bind(dictionary) as T['prototype'][K];
   }
 
-  // prettier-ignore
-  translate<T extends Type<Dictionary>, K extends keyof Omit<T['prototype'], 'lng'>>(namespace: T, methodName: K, lng?: ISO639, ...args: Parameters<T['prototype'][K]>) {
+  translate<T extends Type<Dictionary>, K extends keyof Omit<T['prototype'], 'lng'>>(
+    namespace: T,
+    methodName: K,
+    lng?: ISO639,
+    ...args: Parameters<T['prototype'][K]>
+  ) {
     const method = this.getMethod(namespace, methodName, lng);
     return method(...args);
   }

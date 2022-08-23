@@ -17,7 +17,7 @@ export class SecondController {
     this.res.send(msg);
   }
 
-  @Route('GET', 'second')
+  @Route('GET', 'first-extended')
   tellHefllo() {
     this.res.send(this.firstService.countToThree());
   }
