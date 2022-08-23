@@ -3,8 +3,8 @@ import { I18nModule, getI18nProviders } from '@ditsmod/i18n';
 
 import { FirstModule } from '../first/first.module';
 import { SecondController } from './second.controller';
-import { current } from './locales/current/translations';
-import { imported } from './locales/imported/first/translations';
+import { current } from './locales/current';
+import { imported } from './locales/imported/first';
 
 const loggerConfig = new LoggerConfig('info');
 const filterConfig: FilterConfig = { classesNames: ['I18nExtension'] };

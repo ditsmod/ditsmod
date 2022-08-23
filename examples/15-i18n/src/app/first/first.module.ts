@@ -1,7 +1,7 @@
 import { Module } from '@ditsmod/core';
 import { getI18nProviders, I18nModule, I18N_TRANSLATIONS } from '@ditsmod/i18n';
 
-import { current } from './locales/current/translations';
+import { current } from './locales/current';
 import { FirstService } from './first.service';
 import { FirstController } from './first.controller';
 
