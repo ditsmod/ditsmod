@@ -11,7 +11,7 @@ Recommended directory tree for current module:
     ├── ...
     ├── locales
     │   ├── current
-    │   │   ├── en
+    │   │   ├── _base-en
     │   │   ├── uk
     │   │   └── translations.ts
     │   └── imported

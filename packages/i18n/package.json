@@ -18,7 +18,6 @@
   "keywords": [],
   "author": "Костя Третяк",
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
     "@ts-stack/di": "^1.2.0"
   },
