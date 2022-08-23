@@ -4,7 +4,7 @@ import { I18nModule, getI18nProviders } from '@ditsmod/i18n';
 import { FirstModule } from '../first/first.module';
 import { SecondController } from './second.controller';
 import { current } from './locales/current';
-import { imported } from './locales/imported/first';
+import { imported } from './locales/imported';
 
 const loggerConfig = new LoggerConfig('debug');
 const filterConfig: FilterConfig = { classesNames: ['I18nExtension'] };
