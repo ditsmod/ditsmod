@@ -9,13 +9,13 @@ export interface I18nDictionary {
 }
 
 export class Translation {
-  constructor(public current?: TranslationGroup[], public imported?: TranslationGroup[]) {}
+  constructor(public current?: DictGroup[], public imported?: DictGroup[]) {}
 }
 
 export class I18nOptions {
   defaultLng?: ISO639;
   lngQueryParam?: string = 'lng';
 }
-export type TranslationGroup<T extends Type<I18nDictionary> = Type<I18nDictionary>> = [T, ...T[]];
+export type DictGroup<T extends Type<I18nDictionary> = Type<I18nDictionary>> = [T, ...T[]];
 export const I18N_EXTENSIONS = new InjectionToken<Extension<void>>('I18N_EXTENSIONS');
-export const I18N_TRANSLATIONS = new InjectionToken<TranslationGroup[][]>('I18N_TRANSLATIONS');
+export const I18N_TRANSLATIONS = new InjectionToken<DictGroup[][]>('I18N_TRANSLATIONS');
