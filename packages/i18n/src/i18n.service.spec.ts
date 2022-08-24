@@ -1,12 +1,13 @@
 import 'reflect-metadata';
 import { ReflectiveInjector } from '@ts-stack/di';
-import { Req } from '@ditsmod/core';
+import { LogManager, Req } from '@ditsmod/core';
 import { describe, it, expect } from '@jest/globals';
 
 import { I18nOptions } from './types/mix';
 import { DictService } from './dict.service';
 import { Common } from './test/common-en';
 import { CommonUk } from './test/common-uk';
+import { I18nLogMediator } from './i18n-log-mediator';
 
 describe('I18nService', () => {
   class Options {
@@ -15,6 +16,7 @@ describe('I18nService', () => {
   function getService(options: Options) {
     const injector = ReflectiveInjector.resolveAndCreate([
       DictService,
+      { provide: I18nLogMediator, useValue: { missingLng: jest.fn } },
       { provide: Req, useValue: options.req },
       { provide: I18nOptions, useValue: options.i18nOptions },
       { provide: Common, useClass: Common, multi: true },
@@ -109,12 +111,5 @@ describe('I18nService', () => {
     expect(i18nService.translate(Common, 'hello', 'en', 'Костя')).toBe('Hello, Костя!');
     expect(i18nService.translate(Common, 'hi', 'uk')).toBe('Hi, there!');
     expect(i18nService.translate(Common, 'hi', 'en')).toBe('Hi, there!');
-  });
-
-  it('dictionary throw an error when selected unknown lng', () => {
-    const options = new Options();
-    const i18nService = getService(options);
-    const msg = 'Translation not found for Common.fake';
-    expect(() => i18nService.getDictionary(Common, 'fake' as any)).toThrow(msg);
   });
 });
