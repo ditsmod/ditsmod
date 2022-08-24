@@ -7,7 +7,7 @@ Ditsmod module to support i18n (internalization).
 Recommended directory tree for current module:
 
 ```text
-└── your-modulename
+└── modulename
     ├── ...
     ├── locales
     │   ├── current

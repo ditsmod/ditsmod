@@ -62,7 +62,7 @@ describe('I18nService', () => {
   });
 
   it('custom param name for lng in req.queryParams', () => {
-    const options = new Options({ lngQueryParam: 'mylng' }, { queryParams: { lng: 'de', mylng: 'fr' } });
+    const options = new Options({ lngParam: 'mylng' }, { queryParams: { lng: 'de', mylng: 'fr' } });
     const i18nService = getService(options);
     expect(i18nService.lng).toBe('fr');
   });

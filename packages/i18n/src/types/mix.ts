@@ -14,7 +14,7 @@ export class Translations {
 
 export class I18nOptions {
   defaultLng?: ISO639;
-  lngQueryParam?: string = 'lng';
+  lngParam?: string = 'lng';
 }
 export type DictGroup<T extends Type<Dictionary> = Type<Dictionary>> = [T, ...T[]];
 export const I18N_EXTENSIONS = new InjectionToken<Extension<void>>('I18N_EXTENSIONS');
