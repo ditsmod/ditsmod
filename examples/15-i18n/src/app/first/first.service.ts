@@ -5,10 +5,10 @@ import { CommonDict } from '@dict/first/common.dict';
 
 @Injectable()
 export class FirstService {
-  constructor(private i18nService: DictService) {}
+  constructor(private dictService: DictService) {}
 
   countToThree() {
-    const dict = this.i18nService.getDictionary(CommonDict);
+    const dict = this.dictService.getDictionary(CommonDict);
     return dict.countToThree;
   }
 }

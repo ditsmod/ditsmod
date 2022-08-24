@@ -6,11 +6,11 @@ import { CommonDict } from '@dict/second/common.dict';
 
 @Controller()
 export class SecondController {
-  constructor(private req: Req, private res: Res, private i18nService: DictService, private firstService: FirstService) {}
+  constructor(private req: Req, private res: Res, private dictService: DictService, private firstService: FirstService) {}
 
   @Route('GET', 'second/:userName')
   tellHello() {
-    const dict = this.i18nService.getDictionary(CommonDict);
+    const dict = this.dictService.getDictionary(CommonDict);
     const { userName } = this.req.pathParams;
     const msg = dict.hello(userName);
 
