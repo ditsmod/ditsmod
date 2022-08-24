@@ -1,4 +1,5 @@
 import { FilterConfig, LogMediator } from '@ditsmod/core';
+import { ISO639 } from './types/iso-639';
 
 export class I18nLogMediator extends LogMediator {
   /**
@@ -19,6 +20,15 @@ export class I18nLogMediator extends LogMediator {
     filterConfig.classesNames = [className];
     const methods = missingMethods.join(', ');
     this.setLog('debug', filterConfig, `${className}: in ${extendedClassName} missing methods: [${methods}].`);
+  }
+  /**
+   * ${className}: in ${dictName} missing locale "${lng}".
+   */
+  missingLng(self: object, dictName: string, lng: ISO639) {
+    const className = self.constructor.name;
+    const filterConfig = new FilterConfig();
+    filterConfig.classesNames = [className];
+    this.setLog('debug', filterConfig, `${className}: in ${dictName} missing locale "${lng}".`);
   }
   /**
    * ${className}: in "${path}" found locales: [${allLngs.join(', ')}]. Some methods: [${methods.join(', ')}].

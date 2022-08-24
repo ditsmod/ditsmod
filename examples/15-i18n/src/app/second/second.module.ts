@@ -14,7 +14,7 @@ const filterConfig: FilterConfig = { classesNames: ['I18nExtension'] };
   controllers: [SecondController],
   providersPerMod: [
     { provide: LoggerConfig, useValue: loggerConfig },
-    { provide: LogMediatorConfig, useValue: { filterConfig } },
+    // { provide: LogMediatorConfig, useValue: { filterConfig } },
     ...getI18nProviders(this, { current, imported, moduleName: 'SecondModule' }, { defaultLng: 'uk' })
   ],
 })

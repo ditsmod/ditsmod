@@ -1,6 +1,7 @@
 import { Req } from '@ditsmod/core';
 import { Injectable, Injector, Type } from '@ts-stack/di';
 
+import { I18nLogMediator } from './i18n-log-mediator';
 import { ISO639 } from './types/iso-639';
 import { I18nOptions, Dictionary } from './types/mix';
 
@@ -8,7 +9,7 @@ import { I18nOptions, Dictionary } from './types/mix';
 export class DictService {
   private _lng?: ISO639;
 
-  constructor(private injector: Injector, private req: Req, private i18nOptions: I18nOptions) {}
+  constructor(private injector: Injector, private req: Req, private i18nOptions: I18nOptions, private log: I18nLogMediator) {}
 
   getAllDictionaries<T extends Type<Dictionary>>(namespace: T) {
     return this.injector.get(namespace, []) as T['prototype'][];
@@ -19,6 +20,7 @@ export class DictService {
     lng = lng || this.lng;
     let dictionary = dictionaries.find((t) => t.getLng() == lng);
     if (!dictionary) {
+      this.log.missingLng(this, namespace.name, lng);
       // Trying fallback to default lng
       const tryLng = this.i18nOptions.defaultLng || lng;
       dictionary = dictionaries.find((t) => t.getLng() == tryLng);
