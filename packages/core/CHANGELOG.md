@@ -1,5 +1,17 @@
+<a name="core-2.4.0"></a>
+# [core-2.4.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.4.0) (2022-08-24)
+
+### Bug fix
+
+- fixed `LogMediator` level for buferred logs
+- fixed `logMediator.filterLogs()`
+
+### Features
+
+- refactoring `appInitializer.handleExtensions()`. Now LogMediator gets from DI on module level.
+
 <a name="core-2.3.0"></a>
-# [core-2.3.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.3.0) (2022-08-13)
+## [core-2.3.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.3.0) (2022-08-13)
 
 ### Features
 
