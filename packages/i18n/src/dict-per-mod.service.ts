@@ -34,7 +34,7 @@ export class DictPerModService {
     return dictionary;
   }
 
-  getMethod<T extends Type<Dictionary>, K extends keyof Omit<T['prototype'], 'lng'>>(
+  getMethod<T extends Type<Dictionary>, K extends keyof Omit<T['prototype'], 'getLng'>>(
     token: T,
     methodName: K,
     lng?: ISO639
@@ -43,7 +43,7 @@ export class DictPerModService {
     return dictionary[methodName].bind(dictionary) as T['prototype'][K];
   }
 
-  translate<T extends Type<Dictionary>, K extends keyof Omit<T['prototype'], 'lng'>>(
+  translate<T extends Type<Dictionary>, K extends keyof Omit<T['prototype'], 'getLng'>>(
     token: T,
     methodName: K,
     lng?: ISO639,

@@ -13,7 +13,7 @@ export function getDictGroup<T extends Type<Dictionary>>(base: T, ...dicts: T[])
  * @todo Investigate why an object with the name of the module is passed as a key to "self" parameter.
  */
 export function getI18nProviders(
-  self: Type<any>,
+  self: any,
   translations: Translations,
   i18nOptions = new I18nOptions()
 ): ServiceProvider[] {
