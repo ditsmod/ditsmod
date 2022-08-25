@@ -1,5 +1,12 @@
+<a name="core-2.4.1"></a>
+# [core-2.4.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.4.1) (2022-08-25)
+
+### Bug fix
+
+- Fixed ImportsResolver [cfba1d89790](https://github.com/ditsmod/ditsmod/commit/cfba1d89790). Now ImportsResolver takes into account which of deps is optional
+
 <a name="core-2.4.0"></a>
-# [core-2.4.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.4.0) (2022-08-24)
+## [core-2.4.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.4.0) (2022-08-24)
 
 ### Bug fix
 
