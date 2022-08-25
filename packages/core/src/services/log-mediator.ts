@@ -125,20 +125,21 @@ export class LogMediator {
     buffer.splice(0);
   }
 
-  protected filterLogs<T extends LogFilter>(buffer: LogItem[], outputConfig = {} as T) {
+  protected filterLogs<T extends LogFilter>(buffer: LogItem[], outputConfig?: T) {
+    outputConfig = outputConfig || {} as T;
     return buffer.filter((item) => {
       const inputConfig = item.logFilter;
       let hasTags: boolean | undefined = true;
       let hasModuleName: boolean | undefined = true;
       let hasClassName: boolean | undefined = true;
-      if (outputConfig.modulesNames) {
-        hasModuleName = inputConfig.modulesNames?.some((modulesName) => outputConfig.modulesNames?.includes(modulesName));
+      if (outputConfig!.modulesNames) {
+        hasModuleName = inputConfig.modulesNames?.some((modulesName) => outputConfig!.modulesNames?.includes(modulesName));
       }
-      if (outputConfig.classesNames) {
-        hasClassName = inputConfig.classesNames?.some((className) => outputConfig.classesNames?.includes(className));
+      if (outputConfig!.classesNames) {
+        hasClassName = inputConfig.classesNames?.some((className) => outputConfig!.classesNames?.includes(className));
       }
-      if (outputConfig.tags) {
-        hasTags = inputConfig.tags?.some((tag) => outputConfig.tags?.includes(tag));
+      if (outputConfig!.tags) {
+        hasTags = inputConfig.tags?.some((tag) => outputConfig!.tags?.includes(tag));
       }
       return hasModuleName && hasClassName && hasTags;
     });
