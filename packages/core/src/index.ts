@@ -22,6 +22,7 @@ export { ModConfig } from './models/mod-config';
 export { ConsoleLogger } from './services/console-logger';
 export { Router } from './types/router';
 export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './utils/http-status-codes';
+export { providerUseValue } from './utils/provider-use-value';
 export { NodeResponse, NodeRequest, RequestListener } from './types/server-options';
 export { PathParam, RouterReturns, RouteHandler } from './types/router';
 export { RootMetadata } from './models/root-metadata';
