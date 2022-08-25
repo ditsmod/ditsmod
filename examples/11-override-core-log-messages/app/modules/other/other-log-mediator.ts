@@ -1,4 +1,4 @@
-import { FilterConfig } from '@ditsmod/core';
+import { LogFilter } from '@ditsmod/core';
 
 import { SomeLogMediator } from '../some/some-log-mediator';
 
@@ -8,8 +8,8 @@ export class OtherLogMediator extends SomeLogMediator {
    */
   override someNewMethod(self: object, additionalArgument: string) {
     const className = self.constructor.name;
-    const filterConfig = new FilterConfig();
-    filterConfig.classesNames = [className];
-    this.setLog('info', filterConfig, `OtherLogMediator with overrided someNewMethod says: "${additionalArgument}"`);
+    const logFilter = new LogFilter();
+    logFilter.classesNames = [className];
+    this.setLog('info', logFilter, `OtherLogMediator with overrided someNewMethod says: "${additionalArgument}"`);
   }
 }

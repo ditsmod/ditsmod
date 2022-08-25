@@ -36,7 +36,7 @@ yarn
 Тепер давайте проглянемо на `MyLogMediator`:
 
 ```ts
-import { LogMediator, FilterConfig } from '@ditsmod/core';
+import { LogMediator, LogFilter } from '@ditsmod/core';
 
 export class MyLogMediator extends LogMediator {
   /**
@@ -44,9 +44,9 @@ export class MyLogMediator extends LogMediator {
    */
   override serverListen(self: object, serverName: string, host: string, port: number) {
     const className = self.constructor.name;
-    const filterConfig = new FilterConfig();
-    filterConfig.classesNames = [className];
-    this.setLog('info', filterConfig, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
+    const logFilter = new LogFilter();
+    logFilter.classesNames = [className];
+    this.setLog('info', logFilter, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
   }
 }
 ```
@@ -57,30 +57,30 @@ export class MyLogMediator extends LogMediator {
 
 ## Фільтрування логів
 
-Як видно з попереднього прикладу, у `myLogMediator.serverListen()` використовуються метод `setLog()` та клас `FilterConfig`, які мають наступні типи:
+Як видно з попереднього прикладу, у `myLogMediator.serverListen()` використовуються метод `setLog()` та клас `LogFilter`, які мають наступні типи:
 
 ```ts
-setLog<T extends FilterConfig>(level: LogLevel, filterConfig: T, msg: any): void;
+setLog<T extends LogFilter>(level: LogLevel, logFilter: T, msg: any): void;
 
-class FilterConfig {
+class LogFilter {
   modulesNames?: string[];
   classesNames?: string[];
   tags?: string[];
 }
 ```
 
-Інстанс `FilterConfig` використовується для можливості подальшого фільтрування логів, наприклад так, як це показано у `AppModule`:
+Інстанс `LogFilter` використовується для можливості подальшого фільтрування логів, наприклад так, як це показано у `AppModule`:
 
 ```ts
-import { RootModule, LogMediatorConfig, FilterConfig } from '@ditsmod/core';
+import { RootModule, LogMediatorConfig, LogFilter } from '@ditsmod/core';
 
-const filterConfig: FilterConfig = { modulesNames: ['OtherModule'] };
+const logFilter: LogFilter = { modulesNames: ['OtherModule'] };
 
 @RootModule({
   // ...
   providersPerApp: [
     // ...
-    { provide: LogMediatorConfig, useValue: { filterConfig } },
+    { provide: LogMediatorConfig, useValue: { logFilter } },
   ],
 })
 export class AppModule {}

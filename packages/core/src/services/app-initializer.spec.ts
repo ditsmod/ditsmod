@@ -8,7 +8,7 @@ import { Logger, LoggerConfig, LogLevel } from '../types/logger';
 import { Router } from '../types/router';
 import { AppInitializer } from './app-initializer';
 import { LogManager } from './log-manager';
-import { FilterConfig, LogMediator } from './log-mediator';
+import { LogFilter, LogMediator } from './log-mediator';
 import { ModuleManager } from './module-manager';
 import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { Controller } from '../decorators/controller';
@@ -562,7 +562,7 @@ describe('AppInitializer', () => {
   describe('init()', () => {
     const testMethodSpy = jest.fn();
     class LogMediatorMock1 extends LogMediator {
-      testMethod(level: LogLevel, filterConfig: FilterConfig = {}, ...args: any[]) {
+      testMethod(level: LogLevel, filterConfig: LogFilter = {}, ...args: any[]) {
         testMethodSpy();
         this.setLog(level, filterConfig, `${args}`);
       }
