@@ -1,4 +1,4 @@
-import { RootModule, LogMediator, LogMediatorConfig, LogFilter, LoggerConfig } from '@ditsmod/core';
+import { RootModule, LogMediator, LogFilter, LoggerConfig, providerUseValue } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
 import { MyLogMediator } from './my-log-mediator';
@@ -18,7 +18,7 @@ const logFilter: LogFilter = { modulesNames: ['OtherModule'] };
     MyLogMediator, // This allow use MyLogMediator in this application
     { provide: LogMediator, useClass: MyLogMediator }, // This allow use MyLogMediator internaly in Ditsmod core
     { provide: LoggerConfig, useValue: loggerConfig },
-    // { provide: LogMediatorConfig, useValue: { logFilter } }, // Uncomment this to see only logs from OtherModule
+    providerUseValue(LogFilter, logFilter), // Uncomment this to see only logs from OtherModule
   ],
 })
 export class AppModule {}
