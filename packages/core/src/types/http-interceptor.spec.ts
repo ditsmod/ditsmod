@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { ReflectiveInjector } from '@ts-stack/di';
+import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
 import { HttpBackend, HttpHandler, HttpInterceptor, HttpFrontend } from './http-interceptor';
 import { defaultProvidersPerReq } from '../services/default-providers-per-req';

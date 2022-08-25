@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
+import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
 import { Extension } from '../types/mix';
 import { defaultProvidersPerApp } from './default-providers-per-app';

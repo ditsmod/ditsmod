@@ -1,4 +1,5 @@
 import { pickAllPropertiesAsGetters, pickPropertiesAsGetters } from './pick-properties';
+import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
 describe('pickAllPropertiesAsGetters', () => {
   it('signature1: result = pickAllPropertiesAsGetters(targetObj, sourceObj)', () => {

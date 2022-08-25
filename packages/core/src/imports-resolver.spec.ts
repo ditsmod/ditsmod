@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { Injectable } from '@ts-stack/di';
+import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
 import { ImportsResolver } from './imports-resolver';
 import { ImportedTokensMap, MetadataPerMod1 } from './types/metadata-per-mod';

@@ -1,4 +1,6 @@
 import { ValueProvider } from '@ts-stack/di';
+import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
+
 import { getLastProviders } from './get-last-providers';
 
 describe('getLastProviders()', () => {

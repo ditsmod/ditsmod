@@ -1,5 +1,28 @@
+<a name="core-2.6.0"></a>
+# [core-2.6.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.6.0) (2022-08-26)
+
+### Features
+
+- added `Providers` class which has utilites to adding providers to DI in more type safe way. You can use this as follow:
+
+```ts
+@Module({
+  // ...
+  providersPerMod: [
+    ...new Providers()
+      .useValue(LoggerConfig, new LoggerConfig('trace'))
+      .useClass(SomeService, ExtendedService)
+  ],
+})
+export class SomeModule {}
+```
+
+### BREAKING CHANGES
+
+- Removed `providerUseValue()` (use `...new Providers().useValue()` instead).
+
 <a name="core-2.5.0"></a>
-# [core-2.5.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.5.0) (2022-08-25)
+## [core-2.5.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.5.0) (2022-08-25)
 
 ### BREAKING CHANGES
 

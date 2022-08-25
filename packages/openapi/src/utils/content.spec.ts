@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { inspect } from 'util';
 import { MediaTypeObject } from '@ts-stack/openapi-spec';
+import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
 
 import { Column } from '../decorators/column';
 import { Content } from './content';

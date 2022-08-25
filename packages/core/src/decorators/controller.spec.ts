@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { reflector } from '@ts-stack/di';
+import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
 import { Controller } from './controller';
 

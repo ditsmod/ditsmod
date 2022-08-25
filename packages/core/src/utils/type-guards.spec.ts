@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { forwardRef, Injectable, InjectionToken, reflector, ValueProvider } from '@ts-stack/di';
+import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
 import { Module } from '../decorators/module';
 import {

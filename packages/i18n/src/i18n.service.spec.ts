@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { ReflectiveInjector } from '@ts-stack/di';
 import { LogManager, Req } from '@ditsmod/core';
-import { describe, it, expect } from '@jest/globals';
+import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
 import { I18nOptions } from './types/mix';
 import { DictService } from './dict.service';

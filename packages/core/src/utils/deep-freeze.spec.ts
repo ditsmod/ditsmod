@@ -1,3 +1,5 @@
+import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
+
 import { deepFreeze } from './deep-freeze';
 
 describe('deepFreeze', () => {
