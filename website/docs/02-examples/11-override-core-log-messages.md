@@ -72,15 +72,13 @@ class LogFilter {
 Інстанс `LogFilter` використовується для можливості подальшого фільтрування логів, наприклад так, як це показано у `AppModule`:
 
 ```ts
-import { RootModule, LogMediatorConfig, LogFilter } from '@ditsmod/core';
-
-const logFilter: LogFilter = { modulesNames: ['OtherModule'] };
+import { RootModule, providerUseValue, LogFilter } from '@ditsmod/core';
 
 @RootModule({
   // ...
   providersPerApp: [
     // ...
-    { provide: LogMediatorConfig, useValue: { logFilter } },
+    providerUseValue(LogFilter, { modulesNames: ['OtherModule'] }),
   ],
 })
 export class AppModule {}
@@ -92,7 +90,7 @@ export class AppModule {}
 const loggerConfig = new LoggerConfig('trace');
 ```
 
-Потім запустіть застосунок командою `yarn start11`, після чого ви повинні побачити багато логів. Тепер розкоментуйте рядок з `LogMediatorConfig`, і ви повинні побачити логи лише з модуля `OtherModule`.
+Потім запустіть застосунок командою `yarn start11`, після чого ви повинні побачити багато логів. Тепер розкоментуйте рядок з `providerUseValue()`, і ви повинні побачити логи лише з модуля `OtherModule`.
 
 ## Підміна LogMediator на рівні застосунку
 

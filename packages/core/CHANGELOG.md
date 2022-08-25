@@ -1,5 +1,17 @@
+<a name="core-2.5.0"></a>
+# [core-2.5.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.5.0) (2022-08-25)
+
+### BREAKING CHANGES
+
+- Renamed `FilterConfig` to `LogFilter`.
+- Removed `LogMediatorConfig` (use `LogFilter` instead).
+
+### Features
+
+- added `providerUseValue()` utilite to adding providers with `useValue` in more type safe way.
+
 <a name="core-2.4.1"></a>
-# [core-2.4.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.4.1) (2022-08-25)
+## [core-2.4.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.4.1) (2022-08-25)
 
 ### Bug fix
 
