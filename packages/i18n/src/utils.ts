@@ -10,6 +10,8 @@ export function getDictGroup<T extends Type<Dictionary>>(base: T, ...dicts: T[])
 /**
  * Stability: 1 - Experimental.
  *
+ * @param self Here expect `this` variable.
+ *
  * @todo Investigate why an object with the name of the module is passed as a key to "self" parameter.
  */
 export function getI18nProviders(
