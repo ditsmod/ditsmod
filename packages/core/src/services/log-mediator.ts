@@ -18,12 +18,6 @@ export class LogFilter {
   classesNames?: string[];
   tags?: string[];
 }
-/**
- * Used as DI token for `LogMediator` config.
- */
-export class LogMediatorConfig {
-  logFilter: LogFilter = {};
-}
 
 /**
  * Default type for Log buffer.
@@ -76,7 +70,7 @@ export class LogMediator {
   constructor(
     protected logManager: LogManager,
     @Optional() protected _logger: Logger = new ConsoleLogger(),
-    @Optional() protected logConfig: LogMediatorConfig = new LogMediatorConfig()
+    @Optional() protected logFilter: LogFilter = new LogFilter()
   ) {}
 
   getLogManager() {
@@ -105,7 +99,7 @@ export class LogMediator {
     const { buffer } = this.logManager;
     if (typeof global.it != 'function') {
       // This is not a test mode.
-      const { logFilter } = this.logConfig;
+      const logFilter = this.logFilter;
       let filteredBuffer = buffer;
       filteredBuffer = this.filterLogs(buffer, logFilter);
       filteredBuffer.forEach((logItem) => {
