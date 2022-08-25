@@ -14,7 +14,7 @@ import { getModuleName } from './utils/get-module-name';
 import { getProviderName } from './utils/get-provider-name';
 import { defaultExtensions, defaultExtensionsTokens } from './services/default-extensions';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
-import { getDependencies } from './utils/get-dependecies';
+import { getDependencies, ReflectiveDependecy } from './utils/get-dependecies';
 import { LogMediator } from './services/log-mediator';
 
 type AnyModule = ModuleType | ModuleWithParams;
@@ -101,9 +101,9 @@ export class ImportsResolver {
   protected grabDependecies(module: AnyModule, provider: ServiceProvider, scopes: Scope[], path: any[] = []) {
     const meta = this.moduleManager.getMetadata(module, true);
 
-    for (const token1 of this.getDependencies(provider)) {
+    for (const dep of this.getDependencies(provider)) {
       let found: boolean = false;
-      if (this.extensionsTokens.includes(token1)) {
+      if (this.extensionsTokens.includes(dep.token)) {
         continue;
       }
 
@@ -111,7 +111,7 @@ export class ImportsResolver {
         const providers = getLastProviders(meta[`providersPer${scope}`]);
 
         getTokens(providers).forEach((token2, i) => {
-          if (token2 === token1) {
+          if (token2 === dep.token) {
             this.meta[`providersPer${scope}`].unshift(providers[i]);
             found = true;
             // The loop does not breaks because there may be multi providers.
@@ -124,8 +124,8 @@ export class ImportsResolver {
       }
 
       if (!found) {
-        if (!this.tokensPerApp.includes(token1)) {
-          this.grabImportedDependecies(module, scopes, provider, token1, path);
+        if (!this.tokensPerApp.includes(dep.token)) {
+          this.grabImportedDependecies(module, scopes, provider, dep, path);
         }
       }
     }
@@ -134,21 +134,21 @@ export class ImportsResolver {
   /**
    * @param module1 Module from where imports providers.
    * @param provider Imported provider.
-   * @param token A token for dependecy of imported provider.
+   * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
   protected grabImportedDependecies(
     module1: AnyModule,
     scopes: Scope[],
     provider: ServiceProvider,
-    token: any,
+    dep: ReflectiveDependecy,
     path: any[] = []
   ) {
     let found = false;
     for (const scope of scopes) {
-      const importObj = this.appMetadataMap.get(module1)?.importedTokensMap[`per${scope}`].get(token);
+      const importObj = this.appMetadataMap.get(module1)?.importedTokensMap[`per${scope}`].get(dep.token);
       if (importObj) {
         found = true;
-        path.push(token);
+        path.push(dep.token);
         const { module: module2, providers } = importObj;
         this.meta[`providersPer${scope}`].unshift(...providers);
 
@@ -162,8 +162,8 @@ export class ImportsResolver {
       }
     }
 
-    if (!found) {
-      this.throwError(provider, path, token);
+    if (!found && dep.required) {
+      this.throwError(provider, path, dep.token);
     }
   }
 
@@ -191,7 +191,7 @@ export class ImportsResolver {
       RootMetadata,
     ];
 
-    return [...deps].filter((t) => !defaultTokens.includes(t));
+    return deps.filter((d) => !defaultTokens.includes(d.token));
   }
 
   protected fixDependecy(module: AnyModule, provider: ServiceProvider) {
