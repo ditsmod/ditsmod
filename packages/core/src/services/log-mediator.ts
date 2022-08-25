@@ -1,6 +1,6 @@
 import { Injectable, Optional } from '@ts-stack/di';
-import { isInjectionToken } from '../utils/type-guards';
 
+import { isInjectionToken } from '../utils/type-guards';
 import { Logger, LogLevel } from '../types/logger';
 import { GlobalProviders, ImportObj } from '../types/metadata-per-mod';
 import { Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
@@ -97,7 +97,7 @@ export class LogMediator {
    */
   flush() {
     const { buffer } = this.logManager;
-    if (typeof global.it != 'function') {
+    if (typeof (global as any).it != 'function') {
       // This is not a test mode.
       const logFilter = this.logFilter;
       let filteredBuffer = buffer;

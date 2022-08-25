@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
 import { LoggerConfig } from '../types/logger';
 import { Controller, ControllerMetadata } from '../decorators/controller';

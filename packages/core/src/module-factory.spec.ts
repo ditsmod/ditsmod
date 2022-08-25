@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
 import { Controller, ControllerMetadata } from './decorators/controller';
 import { Module } from './decorators/module';
@@ -533,7 +534,7 @@ describe('ModuleFactory', () => {
 
           moduleManager.scanRootModule(AppModule);
           expect(() => mock.exportGlobalProviders(moduleManager, [])).not.toThrow();
-          expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportObj][]>([
+          expect([...mock.importedProvidersPerMod]).toEqual([
             [Provider1, { module: Module1, providers: [{ provide: Provider1, useValue: 'one' }] }],
           ]);
         });
@@ -647,7 +648,7 @@ describe('ModuleFactory', () => {
           moduleManager.scanRootModule(AppModule);
           const callback = () => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set());
           expect(callback).not.toThrow();
-          expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportObj][]>([
+          expect([...mock.importedProvidersPerMod]).toEqual([
             [
               Provider2,
               {
@@ -656,7 +657,7 @@ describe('ModuleFactory', () => {
               },
             ],
           ]);
-          expect([...mock.importedMultiProvidersPerMod]).toEqual<[AnyModule, ServiceProvider[]][]>([
+          expect([...mock.importedMultiProvidersPerMod]).toEqual([
             [
               Module1,
               [
@@ -761,7 +762,7 @@ describe('ModuleFactory', () => {
           expect(() =>
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
-          expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportObj][]>([
+          expect([...mock.importedProvidersPerMod]).toEqual([
             [Provider1, { module: Module1, providers: [Provider1] }],
             [Provider2, { module: Module1, providers: [useFactoryProvider2] }],
             [Provider3, { module: Module2, providers: [Provider3] }],
@@ -800,7 +801,7 @@ describe('ModuleFactory', () => {
           expect(() =>
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
-          expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportObj][]>([
+          expect([...mock.importedProvidersPerMod]).toEqual([
             [Provider1, { module: Module1, providers: [Provider1] }],
             [Provider2, { module: moduleWithParams, providers: [Provider2] }],
           ]);
@@ -841,10 +842,10 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
           const mod3 = mock.appMetadataMap.get(Module3)!;
-          expect([...mod3.importedTokensMap.perMod]).toEqual<[any, ImportObj][]>([
+          expect([...mod3.importedTokensMap.perMod]).toEqual([
             [Provider1, { module: Module1, providers: [Provider1] }],
           ]);
-          expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportObj][]>([
+          expect([...mock.importedProvidersPerMod]).toEqual([
             [Provider1, { module: Module2, providers: [{ provide: Provider1, useValue: 'one' }] }],
           ]);
         });
@@ -940,7 +941,7 @@ describe('ModuleFactory', () => {
           expect(() =>
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
-          expect([...mock.importedProvidersPerReq]).toEqual<[any, ImportObj][]>([
+          expect([...mock.importedProvidersPerReq]).toEqual([
             [Provider1, { module: Module1, providers: [{ provide: Provider1, useExisting: Provider1 }] }],
             [Provider2, { module: Module2, providers: [{ provide: Provider2, useClass: Provider2 }] }],
             [Provider3, { module: Module2, providers: [Provider3] }],
@@ -1006,7 +1007,7 @@ describe('ModuleFactory', () => {
           expect(() =>
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
-          expect([...mock.importedProvidersPerReq]).toEqual<[any, ImportObj][]>([
+          expect([...mock.importedProvidersPerReq]).toEqual([
             [Provider1, { module: Module2, providers: [{ provide: Provider1, useExisting: Provider1 }] }],
             [Provider2, { module: Module1, providers: [Provider2] }],
           ]);
@@ -1055,7 +1056,7 @@ describe('ModuleFactory', () => {
           const callback = () =>
             mock.bootstrap([Provider1], new GlobalProviders(), '', AppModule, moduleManager, new Set());
           expect(callback).not.toThrow();
-          expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportObj][]>([
+          expect([...mock.importedProvidersPerMod]).toEqual([
             [Provider1, { module: Module1, providers: [{ provide: Provider1, useValue: 'fake' }] }],
           ]);
         });
@@ -1097,7 +1098,7 @@ describe('ModuleFactory', () => {
           expect(() =>
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
-          expect([...mock.importedProvidersPerReq]).toEqual<[any, ImportObj][]>([
+          expect([...mock.importedProvidersPerReq]).toEqual([
             [Provider1, { module: Module1, providers: [{ provide: Provider1, useClass: Provider1 }] }],
           ]);
         });
@@ -1127,8 +1128,8 @@ describe('ModuleFactory', () => {
           expect(() => {
             mock.bootstrap([Provider1], new GlobalProviders(), '', AppModule, moduleManager, new Set());
           }).not.toThrow();
-          expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportObj][]>([]);
-          expect([...mock.importedProvidersPerReq]).toEqual<[any, ImportObj][]>([
+          expect([...mock.importedProvidersPerMod]).toEqual([]);
+          expect([...mock.importedProvidersPerReq]).toEqual([
             [Provider1, { module: Module1, providers: [Provider1] }],
           ]);
         });
@@ -1151,7 +1152,7 @@ describe('ModuleFactory', () => {
           expect(() =>
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
-          expect([...mock.importedProvidersPerReq]).toEqual<[any, ImportObj][]>([]);
+          expect([...mock.importedProvidersPerReq]).toEqual([]);
         });
 
         it('wrong point to current module', () => {
@@ -1207,7 +1208,7 @@ describe('ModuleFactory', () => {
           expect(() =>
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
-          expect([...mock.importedProvidersPerReq]).toEqual<[any, ImportObj][]>([]);
+          expect([...mock.importedProvidersPerReq]).toEqual([]);
         });
 
         it('resolve 2 case 3', () => {
@@ -1227,7 +1228,7 @@ describe('ModuleFactory', () => {
           expect(() =>
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
-          expect([...mock.importedProvidersPerReq]).toEqual<[any, ImportObj][]>([
+          expect([...mock.importedProvidersPerReq]).toEqual([
             [Req, { module: Module1, providers: [{ provide: Req, useClass: Req }] }],
           ]);
         });
@@ -1266,7 +1267,7 @@ describe('ModuleFactory', () => {
           expect(() =>
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
-          expect([...mock.importedProvidersPerReq]).toEqual<[any, ImportObj][]>([]);
+          expect([...mock.importedProvidersPerReq]).toEqual([]);
         });
 
         it('resolved case 4', () => {
@@ -1286,7 +1287,7 @@ describe('ModuleFactory', () => {
           expect(() =>
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
-          expect([...mock.importedProvidersPerReq]).toEqual<[any, ImportObj][]>([
+          expect([...mock.importedProvidersPerReq]).toEqual([
             [NODE_REQ, { module: Module1, providers: [{ provide: NODE_REQ, useValue: '' }] }],
           ]);
         });

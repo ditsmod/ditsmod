@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
+import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';

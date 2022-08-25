@@ -1,4 +1,5 @@
 import { InjectionToken } from '@ts-stack/di';
+import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
 import { Extension, ExtensionProvider } from '../types/mix';
 import { ExtensionItem1, ExtensionItem2, ExtensionObj, getExtensionProvider } from './get-extension-provider';
@@ -15,7 +16,7 @@ describe('getExtensionProviders', () => {
 
     it('extension without exports (two arguments)', () => {
       const args: ExtensionItem2 = [MY_EXTENSION, Extension1];
-      expect(getExtensionProvider(...args)).toEqual<ExtensionObj>({
+      expect(getExtensionProvider(...args)).toEqual({
         exports: [],
         providers,
       });
@@ -23,7 +24,7 @@ describe('getExtensionProviders', () => {
 
     it('extension without exports (three arguments)', () => {
       const args: ExtensionItem2 = [MY_EXTENSION, Extension1, false];
-      expect(getExtensionProvider(...args)).toEqual<ExtensionObj>({
+      expect(getExtensionProvider(...args)).toEqual({
         exports: [],
         providers,
       });
@@ -31,7 +32,7 @@ describe('getExtensionProviders', () => {
 
     it('extension with exports', () => {
       const args: ExtensionItem2 = [MY_EXTENSION, Extension1, true];
-      expect(getExtensionProvider(...args)).toEqual<ExtensionObj>({
+      expect(getExtensionProvider(...args)).toEqual({
         exports: [MY_EXTENSION],
         providers,
       });
@@ -47,7 +48,7 @@ describe('getExtensionProviders', () => {
 
     it('extension without exports (three arguments)', () => {
       const args: ExtensionItem1 = [MY_EXTENSION, OTHER_EXTENSION, Extension1];
-      expect(getExtensionProvider(MY_EXTENSION, OTHER_EXTENSION, Extension1)).toEqual<ExtensionObj>({
+      expect(getExtensionProvider(MY_EXTENSION, OTHER_EXTENSION, Extension1)).toEqual({
         exports: [],
         providers,
       });
@@ -55,7 +56,7 @@ describe('getExtensionProviders', () => {
 
     it('extension without exports (foure arguments)', () => {
       const args: ExtensionItem1 = [MY_EXTENSION, OTHER_EXTENSION, Extension1, false];
-      expect(getExtensionProvider(...args)).toEqual<ExtensionObj>({
+      expect(getExtensionProvider(...args)).toEqual({
         exports: [],
         providers,
       });
@@ -63,7 +64,7 @@ describe('getExtensionProviders', () => {
 
     it('extension with exports', () => {
       const args: ExtensionItem1 = [MY_EXTENSION, OTHER_EXTENSION, Extension1, true];
-      expect(getExtensionProvider(...args)).toEqual<ExtensionObj>({
+      expect(getExtensionProvider(...args)).toEqual({
         exports: [Extension1, MY_EXTENSION, `BEFORE ${OTHER_EXTENSION}`],
         providers,
       });

@@ -2,12 +2,13 @@ import 'reflect-metadata';
 import { NodeRequest, NodeResponse } from '@ts-stack/cookies';
 import { ReflectiveInjector } from '@ts-stack/di';
 import { NODE_REQ, NODE_RES } from '@ditsmod/core';
+import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
 
 import { SessionCookie } from './session-cookie';
 import { SessionCookieOptions } from './types';
 
 describe('@ditsmod/session-cookie', () => {
-  const setHeaderMock = jest.fn<void, [string[]]>(() => {});
+  const setHeaderMock = jest.fn<(arg: string[]) => any>(() => {});
   let req: NodeRequest;
   let res: NodeResponse;
   let session: SessionCookie;

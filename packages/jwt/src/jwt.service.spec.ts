@@ -1,5 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 import { SignOptions, SignPayload } from 'jsonwebtoken';
+import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
 
 import { JwtService } from './jwt.service';
 import { JwtServiceOptions } from './models/jwt-service-options';
@@ -19,7 +20,7 @@ describe('JwtService', () => {
     });
 
     it('should return the same result as singing synchronously', async () => {
-      const payload: SignPayload = { foo: 'bar' };
+      const payload = { foo: 'bar' };
       const options: SignOptions = { algorithm: 'HS256' };
       const syncToken = jwt.sign(payload, secret, options);
       await expect(jwtService.signWithSecret(payload, { secret, ...options })).resolves.toBe(syncToken);
@@ -27,7 +28,7 @@ describe('JwtService', () => {
     });
 
     it('should work with none algorithm where secret is set', async () => {
-      const payload: SignPayload = { foo: 'bar' };
+      const payload = { foo: 'bar' };
       const options: SignOptions = { algorithm: 'none' };
       const syncToken = jwt.sign(payload, secret, options);
       expect(jwtService.decode(syncToken)).toMatchObject(payload);

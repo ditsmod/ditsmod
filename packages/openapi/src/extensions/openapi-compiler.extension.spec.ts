@@ -9,6 +9,7 @@ import {
   XResponsesObject,
 } from '@ts-stack/openapi-spec';
 import { ReflectiveInjector } from '@ts-stack/di';
+import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
 
 import { OpenapiCompilerExtension } from './openapi-compiler.extension';
 import { DEFAULT_OAS_OBJECT } from '../constants';

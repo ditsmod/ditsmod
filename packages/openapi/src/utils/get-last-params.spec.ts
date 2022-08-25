@@ -1,4 +1,5 @@
 import { ParameterObject, ReferenceObject } from '@ts-stack/openapi-spec';
+import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
 
 import { getLastParameterObjects, getLastReferenceObjects } from './get-last-params';
 

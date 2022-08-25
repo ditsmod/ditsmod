@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { SchemaObject, XParameterObject } from '@ts-stack/openapi-spec';
+import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
 
 import { Parameters } from './parameters';
 import { Column } from '../decorators/column';

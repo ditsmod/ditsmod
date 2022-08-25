@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import * as http from 'http';
 import { reflector } from '@ts-stack/di';
+import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
 import { RootModule } from './root-module';
 
