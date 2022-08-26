@@ -24,9 +24,10 @@ export class LogFilter {
  */
 export interface LogItem {
   date: Date;
-  logFilter: LogFilter;
-  currentLevel: LogLevel;
-  messageLevel: LogLevel;
+  msgLogFilter: LogFilter;
+  loggerLogFilter: LogFilter;
+  loggerLevel: LogLevel;
+  msgLevel: LogLevel;
   msg: string;
   logger: Logger;
 }
@@ -81,10 +82,11 @@ export class LogMediator {
     if (this.logManager.bufferLogs) {
       this.logManager.buffer.push({
         logger: this._logger,
-        currentLevel: this._logger.config?.level || 'info',
-        logFilter,
+        loggerLevel: this._logger.getLevel(),
+        loggerLogFilter: this.logFilter || new LogFilter(),
+        msgLevel: level,
+        msgLogFilter: logFilter,
         date: new Date(),
-        messageLevel: level,
         msg,
       });
     } else {
@@ -99,14 +101,13 @@ export class LogMediator {
     const { buffer } = this.logManager;
     if (typeof (global as any).it != 'function') {
       // This is not a test mode.
-      const logFilter = this.logFilter;
       let filteredBuffer = buffer;
-      filteredBuffer = this.filterLogs(buffer, logFilter);
+      filteredBuffer = this.filterLogs(buffer);
       filteredBuffer.forEach((logItem) => {
         // const dateTime = log.date.toLocaleString();
-        const partMsg = logItem.logFilter.tags ? ` (Tags: ${logItem.logFilter.tags.join(', ')})` : '';
+        const partMsg = logItem.msgLogFilter.tags ? ` (Tags: ${logItem.msgLogFilter.tags.join(', ')})` : '';
         const msg = `${logItem.msg}${partMsg}`;
-        logItem.logger.setLevel(logItem.currentLevel);
+        logItem.logger.setLevel(logItem.loggerLevel);
 
         if (!logItem.logger.log) {
           const loggerName = logItem.logger.constructor.name;
@@ -117,7 +118,7 @@ export class LogMediator {
             console.error(msg0, msg);
           }
         } else {
-          logItem.logger.log.call(logItem.logger, logItem.messageLevel, msg);
+          logItem.logger.log.call(logItem.logger, logItem.msgLevel, msg);
         }
       });
     }
@@ -125,21 +126,20 @@ export class LogMediator {
     buffer.splice(0);
   }
 
-  protected filterLogs<T extends LogFilter>(buffer: LogItem[], outputConfig?: T) {
-    outputConfig = outputConfig || {} as T;
+  protected filterLogs(buffer: LogItem[]) {
     return buffer.filter((item) => {
-      const inputConfig = item.logFilter;
+      const { msgLogFilter, loggerLogFilter } = item;
       let hasTags: boolean | undefined = true;
       let hasModuleName: boolean | undefined = true;
       let hasClassName: boolean | undefined = true;
-      if (outputConfig!.modulesNames) {
-        hasModuleName = inputConfig.modulesNames?.some((modulesName) => outputConfig!.modulesNames?.includes(modulesName));
+      if (loggerLogFilter!.modulesNames) {
+        hasModuleName = msgLogFilter.modulesNames?.some((modulesName) => loggerLogFilter!.modulesNames?.includes(modulesName));
       }
-      if (outputConfig!.classesNames) {
-        hasClassName = inputConfig.classesNames?.some((className) => outputConfig!.classesNames?.includes(className));
+      if (loggerLogFilter!.classesNames) {
+        hasClassName = msgLogFilter.classesNames?.some((className) => loggerLogFilter!.classesNames?.includes(className));
       }
-      if (outputConfig!.tags) {
-        hasTags = inputConfig.tags?.some((tag) => outputConfig!.tags?.includes(tag));
+      if (loggerLogFilter!.tags) {
+        hasTags = msgLogFilter.tags?.some((tag) => loggerLogFilter!.tags?.includes(tag));
       }
       return hasModuleName && hasClassName && hasTags;
     });

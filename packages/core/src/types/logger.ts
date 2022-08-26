@@ -41,4 +41,7 @@ export class Logger {
       this.config.level = value;
     }
   }
+  getLevel(): LogLevel {
+    return this.config?.level || 'info';
+  }
 }
