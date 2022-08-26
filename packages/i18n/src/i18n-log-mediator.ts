@@ -8,7 +8,7 @@ export class I18nLogMediator extends LogMediator {
   translationNotFound(self: object, moduleName: string) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('warn', msgLogFilter, `${className}: in ${moduleName} translation not found.`);
   }
   /**
@@ -17,7 +17,7 @@ export class I18nLogMediator extends LogMediator {
   missingMethods(self: object, extendedClassName: string, missingMethods: string[]) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     const methods = missingMethods.join(', ');
     this.setLog('debug', msgLogFilter, `${className}: in ${extendedClassName} missing methods: [${methods}].`);
   }
@@ -27,7 +27,7 @@ export class I18nLogMediator extends LogMediator {
   missingLng(self: object, dictName: string, lng: ISO639) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('debug', msgLogFilter, `${className}: in ${dictName} missing locale "${lng}".`);
   }
   /**
@@ -36,7 +36,7 @@ export class I18nLogMediator extends LogMediator {
   foundLngs(self: object, tokenName: string, allLngs: string[], methods: string[], methodName?: string) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     const path = methodName ? `${methodName} -> ${tokenName}` : `${tokenName}`;
     let msg = `${className}: in "${path}" found locales: [${allLngs.join(', ')}].`;
     if (methods.length) {
@@ -52,7 +52,7 @@ export class I18nLogMediator extends LogMediator {
   overridedLngs(self: object, tokenName: string, allLngs: string[], methods: string[], methodName?: string) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     const path = methodName ? `${methodName} -> ${tokenName}` : `${tokenName}`;
     let msg = `${className}: found overrides in "${path}" for locales: [${allLngs.join(', ')}].`;
     if (methods.length) {

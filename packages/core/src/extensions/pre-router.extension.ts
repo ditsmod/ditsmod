@@ -123,7 +123,7 @@ export class PreRouterExtension implements Extension<void> {
         throw new Error(msg);
       }
 
-      this.logMediator.printRoute(this, moduleName, httpMethod, path);
+      this.logMediator.printRoute(this, httpMethod, path);
 
       try {
         if (httpMethod == 'ALL') {

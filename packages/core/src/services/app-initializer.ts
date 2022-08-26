@@ -256,8 +256,9 @@ export class AppInitializer {
       injectorPerMod.get(mod); // Call module constructor.
       const logMediator = injectorPerMod.get(LogMediator) as LogMediator;
       const loggerConfig = injectorPerMod.get(LoggerConfig, new LoggerConfig()) as LoggerConfig;
+      logMediator.moduleName = moduleName;
       logMediator.logger.setLevel(loggerConfig.level);
-      logMediator.startExtensionsModuleInit(this, moduleName);
+      logMediator.startExtensionsModuleInit(this);
       this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
         ExtensionsManager,
@@ -282,7 +283,7 @@ export class AppInitializer {
         extensionsManager.beforeTokens = beforeTokens;
         await extensionsManager.initPairOfGroups(groupToken);
       }
-      this.logExtensionsStatistic(moduleName, logMediator);
+      this.logExtensionsStatistic(logMediator);
     }
   }
 
@@ -298,13 +299,13 @@ export class AppInitializer {
     });
   }
 
-  protected logExtensionsStatistic(moduleName: string, logMediator: LogMediator) {
+  protected logExtensionsStatistic(logMediator: LogMediator) {
     const counter = this.injectorPerApp.get(Counter) as Counter;
     const extensions = counter.getInitedExtensions();
     const names = Array.from(extensions)
       .map((e) => e.constructor.name)
       .join(', ');
-    logMediator.totalInitedExtensions(this, moduleName, extensions.size, names);
+    logMediator.totalInitedExtensions(this, extensions.size, names);
     counter.resetInitedExtensionsSet();
   }
 

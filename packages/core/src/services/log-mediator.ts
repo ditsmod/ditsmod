@@ -22,8 +22,7 @@ export class LogFilter {
  * Uses by LogMediator.
  */
 export class MsgLogFilter {
-  modulesName?: string;
-  classesName?: string;
+  className?: string;
   tags?: string[];
 }
 
@@ -31,6 +30,7 @@ export class MsgLogFilter {
  * Default type for Log buffer.
  */
 export interface LogItem {
+  moduleName: string;
   date: Date;
   msgLogFilter: MsgLogFilter;
   loggerLogFilter: LogFilter;
@@ -49,6 +49,7 @@ export interface LogItem {
  */
 @Injectable()
 export class LogMediator {
+  moduleName = 'AppModule';
   /**
    * If `bufferLogs === true` then all messages will be buffered.
    *
@@ -92,6 +93,7 @@ export class LogMediator {
       const loggerLevel: LogLevel = typeof this._logger.getLevel == 'function' ? this._logger.getLevel() : this.loggerConfig.level;
 
       this.logManager.buffer.push({
+        moduleName: this.moduleName,
         logger: this._logger,
         loggerLevel,
         loggerLogFilter: this.logFilter || new LogFilter(),
@@ -138,22 +140,40 @@ export class LogMediator {
   }
 
   protected filterLogs(buffer: LogItem[]) {
-    return buffer.filter((item) => {
-      const { msgLogFilter, loggerLogFilter } = item;
+    const uniqFilters = new Map<LogFilter, string>();
+
+    const filteredBuffer = buffer.filter((item) => {
+      const { msgLogFilter, loggerLogFilter, moduleName } = item;
+      uniqFilters.set(loggerLogFilter, moduleName);
       let hasTags: boolean | undefined = true;
       let hasModuleName: boolean | undefined = true;
       let hasClassName: boolean | undefined = true;
       if (loggerLogFilter!.modulesNames) {
-        hasModuleName = loggerLogFilter!.modulesNames?.includes(msgLogFilter.modulesName || '');
+        hasModuleName = loggerLogFilter!.modulesNames?.includes(moduleName);
       }
       if (loggerLogFilter!.classesNames) {
-        hasClassName = loggerLogFilter!.classesNames?.includes(msgLogFilter.classesName || '');
+        hasClassName = loggerLogFilter!.classesNames?.includes(msgLogFilter.className || '');
       }
       if (loggerLogFilter!.tags) {
         hasTags = msgLogFilter.tags?.some((tag) => loggerLogFilter!.tags?.includes(tag));
       }
       return hasModuleName && hasClassName && hasTags;
     });
+
+    if (uniqFilters.size > 1) {
+      this.detectedDifferentLogFilters(uniqFilters);
+    }
+
+    return filteredBuffer;
+  }
+
+  protected detectedDifferentLogFilters(uniqFilters: Map<LogFilter, string>) {
+    const filtersStr: string[] = [];
+    uniqFilters.forEach((moduleName, filter) => {
+      filtersStr.push(`${moduleName} ${JSON.stringify(filter)}`)
+    });
+
+    this.logger.log.call(this.logger, 'warn', `Detected ${uniqFilters.size} different LogFilters: ${filtersStr.join(', ')}`);
   }
 
   /**
@@ -162,7 +182,7 @@ export class LogMediator {
   moduleAlreadyImported(self: object, inputModule: ModuleType | ModuleWithParams, targetModuleId: string) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     const inputModuleId = getModuleName(inputModule);
     const msg = `${className}: "${inputModuleId}" has already been imported into "${targetModuleId}".`;
     this.setLog('warn', msgLogFilter, msg);
@@ -174,7 +194,7 @@ export class LogMediator {
   serverListen(self: object, serverName: string, host: string, port: number) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('info', msgLogFilter, `${className}: ${serverName} is running at http://${host}:${port}.`);
   }
 
@@ -184,7 +204,7 @@ export class LogMediator {
   startReinitApp(self: object) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('debug', msgLogFilter, `${className}: start reinit the application.`);
   }
 
@@ -194,7 +214,7 @@ export class LogMediator {
   skippingAutocommitModulesConfig(self: object) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('warn', msgLogFilter, `${className}: skipping autocommit of changes for config of moduleManager.`);
   }
 
@@ -204,7 +224,7 @@ export class LogMediator {
   finishReinitApp(self: object) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('debug', msgLogFilter, `${className}: finished reinit the application.`);
   }
 
@@ -214,7 +234,7 @@ export class LogMediator {
   printReinitError(self: object, err: any) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('error', msgLogFilter, err);
   }
 
@@ -224,7 +244,7 @@ export class LogMediator {
   startRollbackModuleConfigChanges(self: object) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     const msg = `${className}: start rollback of changes for config of moduleManager during reinit the application.`;
     this.setLog('debug', msgLogFilter, msg);
   }
@@ -235,7 +255,7 @@ export class LogMediator {
   successfulRollbackModuleConfigChanges(self: object) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     const msg = `${className}: successful rollback of changes for config of moduleManager during reinit the application.`;
     this.setLog('debug', msgLogFilter, msg);
   }
@@ -246,7 +266,7 @@ export class LogMediator {
   successfulAddedModuleToImport(self: object, inputModule: ModuleType | ModuleWithParams, targetMetaName: string) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     const inputModuleName = getModuleName(inputModule);
     this.setLog('debug', msgLogFilter, `${className}: successful added "${inputModuleName}" to "${targetMetaName}".`);
   }
@@ -257,7 +277,7 @@ export class LogMediator {
   moduleNotFound(self: object, moduleId: string) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('warn', msgLogFilter, `${className}: module with ID "${moduleId}" not found.`);
   }
 
@@ -267,18 +287,18 @@ export class LogMediator {
   moduleSuccessfulRemoved(self: object, inputMetaName: string, targetMetaName: string) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('debug', msgLogFilter, `${className}: ${inputMetaName} successful removed from ${targetMetaName}.`);
   }
 
   /**
    * `${moduleName} has ID: "${moduleId}".`
    */
-  moduleHasId(self: object, moduleName: string, moduleId: string) {
+  moduleHasId(self: object, moduleId: string) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
-    this.setLog('trace', msgLogFilter, `${className}: ${moduleName} has ID: "${moduleId}".`);
+    msgLogFilter.className = className;
+    this.setLog('trace', msgLogFilter, `${className}: ${this.moduleName} has ID: "${moduleId}".`);
   }
 
   /**
@@ -289,7 +309,7 @@ export class LogMediator {
   printGlobalProviders(self: object, globalProviders: GlobalProviders) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     const globalProvidersPerMod = this.getProvidersNames(globalProviders.importedProvidersPerMod);
     const globalProvidersPerRou = this.getProvidersNames(globalProviders.importedProvidersPerRou);
     const globalProvidersPerReq = this.getProvidersNames(globalProviders.importedProvidersPerReq);
@@ -307,22 +327,20 @@ export class LogMediator {
   /**
    * ================== ModuleName ======================.
    */
-  startExtensionsModuleInit(self: object, moduleName: string) {
+  startExtensionsModuleInit(self: object) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.modulesName = moduleName;
-    msgLogFilter.classesName = className;
-    this.setLog('debug', msgLogFilter, `${className}: ${'='.repeat(20)} ${moduleName} ${'='.repeat(20)}`);
+    msgLogFilter.className = className;
+    this.setLog('debug', msgLogFilter, `${className}: ${'='.repeat(20)} ${this.moduleName} ${'='.repeat(20)}`);
   }
 
   /**
    * `${tokenName} start init.`
    */
-  startExtensionsGroupInit(self: object, moduleName: string, unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
+  startExtensionsGroupInit(self: object, unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.modulesName = moduleName;
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', msgLogFilter, `${className}: ${path}: start init.`);
   }
@@ -340,11 +358,10 @@ export class LogMediator {
   /**
    * `finish init ${tokenName}.`
    */
-  finishExtensionsGroupInit(self: object, moduleName: string, unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
+  finishExtensionsGroupInit(self: object, unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.modulesName = moduleName;
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', msgLogFilter, `${className}: ${path}: finish init.`);
   }
@@ -355,7 +372,7 @@ export class LogMediator {
   noExtensionsFound(self: object, groupToken: any) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     const tokenName = getProviderName(groupToken);
     this.setLog('trace', msgLogFilter, `${className}: for ${tokenName} no extensions found.`);
   }
@@ -366,7 +383,7 @@ export class LogMediator {
   startInitExtension(self: object, unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', msgLogFilter, `${className}: ${path}: start init.`);
   }
@@ -377,7 +394,7 @@ export class LogMediator {
   finishInitExtension(self: object, unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>, data: any) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     const path = this.getExtentionPath(unfinishedInit);
     const withSomeValue = data === undefined ? ', no value returned' : ', returned some value';
     this.setLog('trace', msgLogFilter, `${className}: ${path}: finish init${withSomeValue}.`);
@@ -386,11 +403,10 @@ export class LogMediator {
   /**
    * `total inited ${extensionsNum} extensions: ${extensionsNames}.`
    */
-  totalInitedExtensions(self: object, moduleName: string, extensionsNum: number, extensionsNames: string) {
+  totalInitedExtensions(self: object, extensionsNum: number, extensionsNames: string) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.modulesName = moduleName;
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     const msg = `${className}: total inited ${extensionsNum} extensions: ${extensionsNames}.`;
     this.setLog('debug', msgLogFilter, msg);
   }
@@ -401,7 +417,7 @@ export class LogMediator {
   controllerHasError(self: object, err: any) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('error', msgLogFilter, err);
   }
 
@@ -411,7 +427,7 @@ export class LogMediator {
   internalServerError(self: object, err: any) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('error', msgLogFilter, err);
   }
 
@@ -421,7 +437,7 @@ export class LogMediator {
   youCannotActivateRoute(self: object, httpMethod: string, url: string) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('debug', msgLogFilter, `${className}: can not activate the route with URL: ${httpMethod} ${url}.`);
   }
 
@@ -431,18 +447,17 @@ export class LogMediator {
   noRoutes(self: object) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('warn', msgLogFilter, `${className}: the application has no routes.`);
   }
 
   /**
    * `setted route ${httpMethod} "/${path}"`.
    */
-  printRoute(self: object, moduleName: string, httpMethod: string, path: string) {
+  printRoute(self: object, httpMethod: string, path: string) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
-    msgLogFilter.modulesName = moduleName;
+    msgLogFilter.className = className;
     this.setLog('debug', msgLogFilter, `${className}: setted route ${httpMethod} "/${path}".`);
   }
 }
