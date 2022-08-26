@@ -9,7 +9,7 @@ const logger = createLogger({ name: 'bunyan-test' });
   controllers: [BunyanController],
   providersPerMod: [
     { provide: Logger, useValue: logger },
-    { provide: BunyanLogger, useExisting: Logger }
+    { provide: BunyanLogger, useExisting: Logger },
   ],
 })
 export class BunyanModule {
@@ -22,10 +22,22 @@ export class BunyanModule {
       logger[level](arg1, ...rest);
     };
 
-
     // Logger must have `setLevel` method.
     (logger as unknown as Logger).setLevel = (value: LogLevel) => {
       logger.level(value);
+    };
+
+    // Logger must have `getLevel` method.
+    (logger as unknown as Logger).getLevel = () => {
+      const bunyanLevels: { level: number; name: LogLevel }[] = [
+        { level: 10, name: 'trace' },
+        { level: 20, name: 'debug' },
+        { level: 30, name: 'info' },
+        { level: 40, name: 'warn' },
+        { level: 50, name: 'error' },
+        { level: 60, name: 'fatal' },
+      ];
+      return bunyanLevels.find((i) => i.level == logger.level())?.name || 'info';
     };
   }
 }
