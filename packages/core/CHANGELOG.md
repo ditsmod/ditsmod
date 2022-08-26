@@ -1,5 +1,12 @@
+<a name="core-2.7.1"></a>
+# [core-2.7.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.7.1) (2022-08-26)
+
+### Bug fix
+
+- Set log level to default if logger.getLevel() not yet implemented.
+
 <a name="core-2.7.0"></a>
-# [core-2.7.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.7.0) (2022-08-26)
+## [core-2.7.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.7.0) (2022-08-26)
 
 ### BREAKING CHANGES
 

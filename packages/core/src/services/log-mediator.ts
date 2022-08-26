@@ -88,9 +88,11 @@ export class LogMediator {
 
   protected setLog<T extends MsgLogFilter>(msgLevel: LogLevel, msgLogFilter: T, msg: any) {
     if (this.logManager.bufferLogs) {
+      const loggerLevel: LogLevel = typeof this._logger.getLevel == 'function' ? this._logger.getLevel() : 'info';
+
       this.logManager.buffer.push({
         logger: this._logger,
-        loggerLevel: this._logger.getLevel(),
+        loggerLevel,
         loggerLogFilter: this.logFilter || new LogFilter(),
         msgLevel,
         msgLogFilter,
