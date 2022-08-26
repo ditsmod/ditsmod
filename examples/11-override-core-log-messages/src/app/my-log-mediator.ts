@@ -7,7 +7,7 @@ export class MyLogMediator extends LogMediator {
   override serverListen(self: object, serverName: string, host: string, port: number) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('info', msgLogFilter, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
   }
 }

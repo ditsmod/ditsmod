@@ -7,7 +7,7 @@ export class SomeLogMediator extends LogMediator {
   someNewMethod(self: object, additionalArgument: string) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('info', msgLogFilter, `SomeLogMediator with someNewMethod says: "${additionalArgument}"`);
   }
 }

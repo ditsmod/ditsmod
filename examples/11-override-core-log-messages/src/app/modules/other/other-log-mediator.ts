@@ -9,7 +9,7 @@ export class OtherLogMediator extends SomeLogMediator {
   override someNewMethod(self: object, additionalArgument: string) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesName = className;
+    msgLogFilter.className = className;
     this.setLog('info', msgLogFilter, `OtherLogMediator with overrided someNewMethod says: "${additionalArgument}"`);
   }
 }

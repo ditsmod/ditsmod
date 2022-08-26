@@ -1,4 +1,4 @@
-import { LogFilter, LoggerConfig, Module, Providers } from '@ditsmod/core';
+import { Module, Providers } from '@ditsmod/core';
 
 import { SomeModule } from '../some/some.module';
 import { SomeLogMediator } from '../some/some-log-mediator';
