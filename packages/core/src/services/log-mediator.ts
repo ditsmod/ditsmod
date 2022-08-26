@@ -448,6 +448,7 @@ export class LogMediator {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
+    msgLogFilter.tags = ['route'];
     this.setLog('warn', msgLogFilter, `${className}: the application has no routes.`);
   }
 
@@ -458,6 +459,7 @@ export class LogMediator {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
+    msgLogFilter.tags = ['route'];
     this.setLog('debug', msgLogFilter, `${className}: setted route ${httpMethod} "/${path}".`);
   }
 }
