@@ -37,8 +37,8 @@ export class Providers {
     return this;
   }
 
-  useLogger<T extends Type<Logger>>(logger: T, useLogger: Partial<T['prototype']>, useConfig?: LoggerConfig) {
-    this.providers.push({ provide: logger, useValue: useLogger });
+  useLogger(useLogger: Partial<Logger>, useConfig?: LoggerConfig) {
+    this.providers.push({ provide: Logger, useValue: useLogger });
     if (useConfig) {
       this.providers.push({ provide: LoggerConfig, useValue: useConfig });
     }
