@@ -1,4 +1,4 @@
-import { LogMediator, LogFilter } from '@ditsmod/core';
+import { LogMediator, MsgLogFilter } from '@ditsmod/core';
 
 export class MyLogMediator extends LogMediator {
   /**
@@ -6,8 +6,8 @@ export class MyLogMediator extends LogMediator {
    */
   override serverListen(self: object, serverName: string, host: string, port: number) {
     const className = self.constructor.name;
-    const logFilter = new LogFilter();
-    logFilter.classesNames = [className];
-    this.setLog('info', logFilter, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
+    const msgLogFilter = new MsgLogFilter();
+    msgLogFilter.classesName = className;
+    this.setLog('info', msgLogFilter, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
   }
 }
