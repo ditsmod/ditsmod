@@ -1,7 +1,7 @@
 import { Injectable, Optional } from '@ts-stack/di';
 
 import { isInjectionToken } from '../utils/type-guards';
-import { Logger, LogLevel } from '../types/logger';
+import { Logger, LoggerConfig, LogLevel } from '../types/logger';
 import { GlobalProviders, ImportObj } from '../types/metadata-per-mod';
 import { Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { getImportedTokens } from '../utils/get-imports';
@@ -79,7 +79,8 @@ export class LogMediator {
   constructor(
     protected logManager: LogManager,
     @Optional() protected _logger: Logger = new ConsoleLogger(),
-    @Optional() protected logFilter: LogFilter = new LogFilter()
+    @Optional() protected logFilter: LogFilter = new LogFilter(),
+    @Optional() protected loggerConfig: LoggerConfig = new LoggerConfig(),
   ) {}
 
   getLogManager() {
@@ -88,7 +89,7 @@ export class LogMediator {
 
   protected setLog<T extends MsgLogFilter>(msgLevel: LogLevel, msgLogFilter: T, msg: any) {
     if (this.logManager.bufferLogs) {
-      const loggerLevel: LogLevel = typeof this._logger.getLevel == 'function' ? this._logger.getLevel() : 'info';
+      const loggerLevel: LogLevel = typeof this._logger.getLevel == 'function' ? this._logger.getLevel() : this.loggerConfig.level;
 
       this.logManager.buffer.push({
         logger: this._logger,

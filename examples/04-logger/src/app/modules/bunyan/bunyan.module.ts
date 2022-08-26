@@ -37,7 +37,9 @@ export class BunyanModule {
         { level: 50, name: 'error' },
         { level: 60, name: 'fatal' },
       ];
-      return bunyanLevels.find((i) => i.level == logger.level())?.name || 'info';
+      const levelNumber = logger.level();
+      const levelName = bunyanLevels.find((i) => i.level == levelNumber)?.name || config.level;
+      return levelName;
     };
   }
 }
