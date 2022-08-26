@@ -1,13 +1,11 @@
-import { LoggerConfig, Module } from '@ditsmod/core';
+import { LoggerConfig, Module, Providers } from '@ditsmod/core';
 
 import { SomeController } from './some.controller';
-
-const loggerConfig = new LoggerConfig('trace');
 
 @Module({
   controllers: [SomeController],
   providersPerMod: [
-    { provide: LoggerConfig, useValue: loggerConfig }
+    ...new Providers().useValue(LoggerConfig, new LoggerConfig('trace'))
   ],
 })
 export class SomeModule {}

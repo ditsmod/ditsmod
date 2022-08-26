@@ -1,16 +1,14 @@
-import { Logger, LoggerConfig, Module, LogLevel } from '@ditsmod/core';
+import { Logger, LoggerConfig, Module, LogLevel, Providers } from '@ditsmod/core';
 import { createLogger, addColors, format, transports } from 'winston';
 
 import { WinstonController } from './winston.controller';
 
 const logger = createLogger();
-const loggerConfig = new LoggerConfig('debug');
 
 @Module({
   controllers: [WinstonController],
   providersPerMod: [
-    { provide: Logger, useValue: logger },
-    { provide: LoggerConfig, useValue: loggerConfig }
+    ...new Providers().useLogger(logger, new LoggerConfig('debug'))
   ],
 })
 export class WinstonModule {
@@ -50,6 +48,11 @@ export class WinstonModule {
     // Logger must have `setLevel` method.
     (logger as unknown as Logger).setLevel = (value: LogLevel) => {
       logger.level = value;
+    };
+
+    // Logger must have `getLevel` method.
+    (logger as unknown as Logger).getLevel = () => {
+      return logger.level as LogLevel;
     };
 
     addColors(customLevels.colors);

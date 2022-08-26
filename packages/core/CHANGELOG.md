@@ -1,5 +1,36 @@
+<a name="core-2.8.0"></a>
+# [core-2.8.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.8.0) (2022-08-26)
+
+### BREAKING CHANGES
+
+- Removed moduleName options from `MsgLogFilter` because moduleName adds automatically to log filter.
+
+### Features
+
+- Added `logMediator.detectedDifferentLogFilters()` to warn about detected different log filters.
+
+<a name="core-2.7.1"></a>
+## [core-2.7.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.7.1) (2022-08-26)
+
+### Bug fix
+
+- Set log level to default if logger.getLevel() not yet implemented.
+
+<a name="core-2.7.0"></a>
+## [core-2.7.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.7.0) (2022-08-26)
+
+### BREAKING CHANGES
+
+- Now your logger must provide `getLog()` method.
+- Removed the need for a `Logger` token as the first argument for `providers.useLogger()` method.
+- Introduced `MsgLogFilter` instead `LogFilter` for `logMediator.setLog()`.
+
+### Bug fix
+
+- Fixed `LogMediator` and `LogFilter` on module level.
+
 <a name="core-2.6.0"></a>
-# [core-2.6.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.6.0) (2022-08-26)
+## [core-2.6.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.6.0) (2022-08-26)
 
 ### Features
 

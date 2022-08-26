@@ -216,7 +216,7 @@ export class ModuleManager {
 
     if (meta.id) {
       this.mapId.set(meta.id, modOrObj);
-      this.logMediator.moduleHasId(this, meta.name, meta.id);
+      this.logMediator.moduleHasId(this, meta.id);
     }
     this.map.set(modOrObj, meta);
     return meta;

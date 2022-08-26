@@ -18,21 +18,20 @@ import { Counter } from './counter';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ExtensionsManager } from './extensions-manager';
 import { LogManager } from './log-manager';
-import { LogMediator } from './log-mediator';
+import { LogFilter, LogMediator } from './log-mediator';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
 import { getLastProviders } from '../utils/get-last-providers';
 import { ExtensionsContext } from './extensions-context';
 import { InjectorPerApp } from '../models/injector-per-app';
 import { EXTENSIONS_COUNTERS } from '../constans';
-import { Logger, LoggerConfig } from '../types/logger';
+import { LoggerConfig } from '../types/logger';
 import { getModule } from '../utils/get-module';
 
 export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
   protected preRouter: PreRouter;
   protected meta: NormalizedModuleMetadata;
-  protected logManager: LogManager;
   protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
 
   constructor(
@@ -207,12 +206,12 @@ export class AppInitializer {
   }
 
   protected addDefaultProvidersPerApp() {
-    this.logManager = this.logMediator.getLogManager();
+    const logManager = this.logMediator.getLogManager();
     this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
       { provide: RootMetadata, useValue: this.rootMeta },
       { provide: ModuleManager, useValue: this.moduleManager },
-      { provide: LogManager, useValue: this.logManager },
+      { provide: LogManager, useValue: logManager },
       { provide: AppInitializer, useValue: this }
     );
   }
@@ -253,13 +252,13 @@ export class AppInitializer {
       const metadataPerMod1 = aMetadataPerMod1[lastIndex - i];
       const { extensionsProviders, providersPerMod, name: moduleName, module } = metadataPerMod1.meta;
       const mod = getModule(module);
-      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild([mod, ...providersPerMod]);
+      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild([mod, LogMediator, ...providersPerMod]);
       injectorPerMod.get(mod); // Call module constructor.
       const logMediator = injectorPerMod.get(LogMediator) as LogMediator;
       const loggerConfig = injectorPerMod.get(LoggerConfig, new LoggerConfig()) as LoggerConfig;
-      logMediator.logger = injectorPerMod.get(Logger) as Logger;
+      logMediator.moduleName = moduleName;
       logMediator.logger.setLevel(loggerConfig.level);
-      logMediator.startExtensionsModuleInit(this, moduleName);
+      logMediator.startExtensionsModuleInit(this);
       this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
         ExtensionsManager,
@@ -284,7 +283,7 @@ export class AppInitializer {
         extensionsManager.beforeTokens = beforeTokens;
         await extensionsManager.initPairOfGroups(groupToken);
       }
-      this.logExtensionsStatistic(moduleName);
+      this.logExtensionsStatistic(logMediator);
     }
   }
 
@@ -300,13 +299,13 @@ export class AppInitializer {
     });
   }
 
-  protected logExtensionsStatistic(moduleName: string) {
+  protected logExtensionsStatistic(logMediator: LogMediator) {
     const counter = this.injectorPerApp.get(Counter) as Counter;
     const extensions = counter.getInitedExtensions();
     const names = Array.from(extensions)
       .map((e) => e.constructor.name)
       .join(', ');
-    this.logMediator.totalInitedExtensions(this, moduleName, extensions.size, names);
+    logMediator.totalInitedExtensions(this, extensions.size, names);
     counter.resetInitedExtensionsSet();
   }
 

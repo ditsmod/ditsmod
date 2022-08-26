@@ -53,9 +53,9 @@ export class ExtensionsManager {
     let cache = this.getCache(beforeToken);
     if (!cache && this.beforeTokens.includes(beforeToken)) {
       this.unfinishedInit.add(beforeToken);
-      this.logMediator.startExtensionsGroupInit(this, this.moduleName, this.unfinishedInit);
+      this.logMediator.startExtensionsGroupInit(this, this.unfinishedInit);
       const value = await this.init(beforeToken);
-      this.logMediator.finishExtensionsGroupInit(this, this.moduleName, this.unfinishedInit);
+      this.logMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
       this.unfinishedInit.delete(beforeToken);
       const newCache = new Cache(beforeToken, value, autoMergeArrays, extension);
       this.cache.push(newCache);
@@ -66,9 +66,9 @@ export class ExtensionsManager {
       return cache.value;
     }
     this.unfinishedInit.add(groupToken);
-    this.logMediator.startExtensionsGroupInit(this, this.moduleName, this.unfinishedInit);
+    this.logMediator.startExtensionsGroupInit(this, this.unfinishedInit);
     const value = await this.init(groupToken, autoMergeArrays, extension);
-    this.logMediator.finishExtensionsGroupInit(this, this.moduleName, this.unfinishedInit);
+    this.logMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(groupToken);
     const newCache = new Cache(groupToken, value, autoMergeArrays, extension);
     this.cache.push(newCache);

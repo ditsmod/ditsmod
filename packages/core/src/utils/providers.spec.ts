@@ -1,5 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
-import { ServiceProvider } from 'src/types/mix';
+import { Logger } from '../types/logger';
+import { ServiceProvider } from '../types/mix';
 
 import { ConsoleLogger } from '../services/console-logger';
 import { Providers } from './providers';
@@ -36,15 +37,15 @@ describe('Providers', () => {
 
   it('works useLogger()', () => {
     const logger = new ConsoleLogger();
-    const value = new Providers().useLogger(ConsoleLogger, logger);
-    expect([...value]).toEqual([{ provide: ConsoleLogger, useValue: logger, multi: undefined }]);
+    const value = new Providers().useLogger(logger);
+    expect([...value]).toEqual([{ provide: Logger, useValue: logger, multi: undefined }]);
   });
 
   it('works multi calling', () => {
     const logger = new ConsoleLogger();
-    const value = new Providers().useLogger(ConsoleLogger, logger).useAnyValue('token', 'value');
+    const value = new Providers().useLogger(logger).useAnyValue('token', 'value');
     const expectedArr: ServiceProvider[] = [
-      { provide: ConsoleLogger, useValue: logger, multi: undefined },
+      { provide: Logger, useValue: logger, multi: undefined },
       { provide: 'token', useValue: 'value', multi: undefined }
     ];
     expect([...value]).toEqual(expectedArr);

@@ -30,7 +30,7 @@ export { NormalizedProvider } from './utils/ng-utils';
 export { HttpInterceptor, HttpHandler } from './types/http-interceptor';
 export { NODE_REQ, NODE_RES, HTTP_INTERCEPTORS, PATH_PARAMS, QUERY_STRING } from './constans';
 export { LogManager } from './services/log-manager';
-export { LogMediator, LogFilter } from './services/log-mediator';
+export { LogMediator, LogFilter, MsgLogFilter } from './services/log-mediator';
 
  export { PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from './constans';
  export { ControllerMetadata } from './decorators/controller';
