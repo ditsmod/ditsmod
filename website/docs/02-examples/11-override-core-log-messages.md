@@ -24,9 +24,9 @@ yarn
 {
   "compilerOptions": {
     // ...
-    "noImplicitOverride": true,
+    "noImplicitOverride": true
     // ...
-  },
+  }
   // ...
 }
 ```
@@ -36,7 +36,7 @@ yarn
 Тепер давайте проглянемо на `MyLogMediator`:
 
 ```ts
-import { LogMediator, LogFilter } from '@ditsmod/core';
+import { LogMediator, MsgLogFilter } from '@ditsmod/core';
 
 export class MyLogMediator extends LogMediator {
   /**
@@ -44,9 +44,9 @@ export class MyLogMediator extends LogMediator {
    */
   override serverListen(self: object, serverName: string, host: string, port: number) {
     const className = self.constructor.name;
-    const logFilter = new LogFilter();
-    logFilter.classesNames = [className];
-    this.setLog('info', logFilter, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
+    const msgLogFilter = new MsgLogFilter();
+    msgLogFilter.classesNames = [className];
+    this.setLog('info', msgLogFilter, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
   }
 }
 ```
@@ -57,43 +57,27 @@ export class MyLogMediator extends LogMediator {
 
 ## Фільтрування логів
 
-Як видно з попереднього прикладу, у `myLogMediator.serverListen()` використовуються метод `setLog()` та клас `LogFilter`, які мають наступні типи:
+Як видно з попереднього прикладу, у `myLogMediator.serverListen()` використовуються метод `setLog()` та клас `MsgLogFilter`, які мають наступні типи:
 
 ```ts
-setLog<T extends LogFilter>(level: LogLevel, logFilter: T, msg: any): void;
+setLog<T extends MsgLogFilter>(level: LogLevel, msgLogFilter: T, msg: any): void;
 
-class LogFilter {
-  modulesNames?: string[];
-  classesNames?: string[];
+class MsgLogFilter {
+  className?: string;
   tags?: string[];
 }
 ```
 
-Інстанс `LogFilter` використовується для можливості подальшого фільтрування логів, наприклад так, як це показано у `AppModule`:
+Інстанс `MsgLogFilter` використовується для можливості подальшого фільтрування логів. Щоб побачити як діють дані фільтри, у `AppModule` спочатку змініть рівень виводу логів на `trace`:
 
 ```ts
-import { RootModule, providerUseValue, LogFilter } from '@ditsmod/core';
-
-@RootModule({
-  // ...
-  providersPerApp: [
-    // ...
-    providerUseValue(LogFilter, { modulesNames: ['OtherModule'] }),
-  ],
-})
-export class AppModule {}
-```
-
-Щоб побачити як діють дані фільтри, у `AppModule` спочатку змініть рівень виводу логів на `trace`:
-
-```ts
-providerUseValue(LoggerConfig, new LoggerConfig('trace')),
+.useValue(LoggerConfig, new LoggerConfig('trace'))
 ```
 
 Потім запустіть застосунок командою `yarn start11`, після чого ви повинні побачити багато логів. Тепер розкоментуйте наступний рядок, і ви повинні побачити логи лише з модуля `OtherModule`:
 
 ```ts
-providerUseValue(LogFilter, { modulesNames: ['OtherModule'] })
+.useValue(LogFilter, { modulesNames: ['OtherModule'] })
 ```
 
 ## Підміна LogMediator на рівні застосунку
@@ -138,8 +122,5 @@ import { OtherLogMediator } from './other-log-mediator';
 })
 export class OtherModule {}
 ```
-
-
-
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/11-override-core-log-messages

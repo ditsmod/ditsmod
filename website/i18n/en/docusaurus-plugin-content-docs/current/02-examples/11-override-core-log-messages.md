@@ -36,7 +36,7 @@ This feature has been available in TypeScript since version 4.3, it allows you t
 Now let's take a look at `MyLogMediator`:
 
 ```ts
-import { LogMediator, LogFilter } from '@ditsmod/core';
+import { LogMediator, MsgLogFilter } from '@ditsmod/core';
 
 export class MyLogMediator extends LogMediator {
   /**
@@ -44,9 +44,9 @@ export class MyLogMediator extends LogMediator {
    */
   override serverListen(self: object, serverName: string, host: string, port: number) {
     const className = self.constructor.name;
-    const logFilter = new LogFilter();
-    logFilter.classesNames = [className];
-    this.setLog('info', logFilter, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
+    const msgLogFilter = new MsgLogFilter();
+    msgLogFilter.classesNames = [className];
+    this.setLog('info', msgLogFilter, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
   }
 }
 ```
@@ -57,43 +57,27 @@ The result can be seen if you run the application with the `yarn start11` comman
 
 ## Log filtering
 
-As you can see from the previous example, `myLogMediator.serverListen()` uses the `setLog()` method and the `LogFilter` class, which have the following types:
+As you can see from the previous example, `myLogMediator.serverListen()` uses the `setLog()` method and the `MsgLogFilter` class, which have the following types:
 
 ```ts
-setLog<T extends LogFilter>(level: LogLevel, logFilter: T, msg: any): void;
+setLog<T extends MsgLogFilter>(level: LogLevel, msgLogFilter: T, msg: any): void;
 
-class LogFilter {
-  modulesNames?: string[];
-  classesNames?: string[];
+class MsgLogFilter {
+  className?: string;
   tags?: string[];
 }
 ```
 
-The `LogFilter` instance is used to enable further log filtering, for example as shown in `AppModule`:
+The `MsgLogFilter` instance is used to enable further log filtering. To see how these filters work, first change the log output level to `trace' in `AppModule`:
 
 ```ts
-import { RootModule, providerUseValue, LogFilter } from '@ditsmod/core';
-
-@RootModule({
-  // ...
-  providersPerApp: [
-    // ...
-    providerUseValue(LogFilter, { modulesNames: ['OtherModule'] }),
-  ],
-})
-export class AppModule {}
-```
-
-To see how these filters work, first change the log output level to `trace' in `AppModule`:
-
-```ts
-providerUseValue(LoggerConfig, new LoggerConfig('trace')),
+.useValue(LoggerConfig, new LoggerConfig('trace'))
 ```
 
 Then run the application with the `yarn start11` command, after which you should see a lot of logs. Now uncomment the following line and you should see logs only from the `OtherModule` module:
 
 ```ts
-providerUseValue(LogFilter, { modulesNames: ['OtherModule'] })
+.useValue(LogFilter, { modulesNames: ['OtherModule'] })
 ```
 
 ## Application-level substitute of LogMediator
