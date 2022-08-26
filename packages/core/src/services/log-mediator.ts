@@ -173,7 +173,7 @@ export class LogMediator {
       filtersStr.push(`${moduleName} ${JSON.stringify(filter)}`)
     });
 
-    this.logger.log.call(this.logger, 'warn', `Detected ${uniqFilters.size} different LogFilters: ${filtersStr.join(', ')}`);
+    this.logger.log.call(this.logger, 'warn', `LogMediator: detected ${uniqFilters.size} different LogFilters: ${filtersStr.join(', ')}`);
   }
 
   /**
