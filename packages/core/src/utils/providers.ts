@@ -7,16 +7,46 @@ import { ServiceProvider } from '../types/mix';
  * 
  * You can use this as follow:
  * ```ts
-Module({
-  // ...
-  providersPerMod: [
-    ...new Providers()
-      .useValue(LoggerConfig, new LoggerConfig('trace'))
-      .useClass(SomeService, ExtendedService)
-  ],
-})
-export class SomeModule {}
+  Module({
+    // ...
+    providersPerMod: [
+      ...new Providers()
+        .useValue(LoggerConfig, new LoggerConfig('trace'))
+        .useClass(SomeService, ExtendedService)
+    ],
+  })
+  export class SomeModule {}
  * ```
+ * 
+ * ### Plugins
+ * 
+ * You can even use plugins for this class:
+ * 
+ * ```ts
+  class Plugin1 extends Providers {
+    method1() {
+      // ...
+      return this;
+    }
+  }
+
+  class Plugin2 extends Providers {
+    method2() {
+      // ...
+      return this;
+    }
+  }
+
+  ...new Providers()
+    .use(Plugin1)
+    .use(Plugin2)
+    .method1()
+    .method2()
+    .useValue(LoggerConfig, new LoggerConfig('trace'))
+    .useClass(SomeService, ExtendedService)
+ * ```
+ * 
+ * That is, after using the use() method, you will be able to use plugin methods.
  */
 export class Providers {
   protected providers: ServiceProvider[] = [];
@@ -43,6 +73,13 @@ export class Providers {
       this.providers.push({ provide: LoggerConfig, useValue: useConfig });
     }
 
+    return this;
+  }
+
+  use<T extends Type<any>>(Plugin: T): T['prototype'] & this {
+    Object.getOwnPropertyNames(Plugin.prototype).filter(p => p != 'constructor').forEach(p => {
+      (this as any)[p] = Plugin.prototype[p];
+    });
     return this;
   }
 
