@@ -1,5 +1,23 @@
+<a name="core-2.10.0"></a>
+# [core-2.10.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.10.0) (2022-08-27)
+
+### Features
+
+- Added `new Providers().useLogConfig()` method to reduce the amount of code when passing providers to DI:
+
+```ts
+Module({
+  // ...
+  providersPerMod: [
+    ...new Providers()
+      .useLogConfig({ level: 'debug' }, { tags: ['route', 'i18n'] })
+  ],
+})
+export class SomeModule {}
+```
+
 <a name="core-2.9.0"></a>
-# [core-2.9.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.9.0) (2022-08-27)
+## [core-2.9.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.9.0) (2022-08-27)
 
 ### Features
 
@@ -78,7 +96,7 @@ export class SomeModule {}
   // ...
   providersPerMod: [
     ...new Providers()
-      .useValue(LoggerConfig, new LoggerConfig('trace'))
+      .useLogConfig({ level: 'trace' })
       .useClass(SomeService, ExtendedService)
   ],
 })
