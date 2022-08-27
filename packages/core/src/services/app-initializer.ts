@@ -18,7 +18,7 @@ import { Counter } from './counter';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ExtensionsManager } from './extensions-manager';
 import { LogManager } from './log-manager';
-import { LogFilter, LogMediator } from './log-mediator';
+import { LogMediator } from './log-mediator';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
 import { getLastProviders } from '../utils/get-last-providers';
@@ -27,7 +27,6 @@ import { InjectorPerApp } from '../models/injector-per-app';
 import { EXTENSIONS_COUNTERS } from '../constans';
 import { LoggerConfig } from '../types/logger';
 import { getModule } from '../utils/get-module';
-import { ModuleExtract } from '../models/module-extract';
 
 export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
@@ -270,7 +269,7 @@ export class AppInitializer {
       ]);
       const extensionTokens: InjectionToken<Extension<any>[]>[] = [];
       const beforeTokens: string[] = [];
-      for(const token of getTokens(extensionsProviders)) {
+      for (const token of getTokens(extensionsProviders)) {
         if (token instanceof InjectionToken) {
           extensionTokens.push(token);
         } else {
