@@ -63,7 +63,7 @@ describe('AppInitializer', () => {
 
   describe('prepareProvidersPerApp()', () => {
     beforeEach(() => {
-      const logMediator = new LogMediator(new LogManager(), {name: 'fakeName'});
+      const logMediator = new LogMediator(new LogManager(), {moduleName: 'fakeName'});
       moduleManager = new ModuleManager(logMediator);
       const rootMeta = new RootMetadata();
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
@@ -297,7 +297,7 @@ describe('AppInitializer', () => {
     class AppModule {}
 
     beforeEach(() => {
-      const logMediator = new LogMediator(new LogManager(), {name: 'fakeName'});
+      const logMediator = new LogMediator(new LogManager(), {moduleName: 'fakeName'});
       moduleManager = new ModuleManager(logMediator);
       const rootMeta = new RootMetadata();
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
@@ -415,7 +415,7 @@ describe('AppInitializer', () => {
     let appMetadataMap: Map<AnyModule, MetadataPerMod1>;
 
     beforeAll(() => {
-      const logMediator = new LogMediator(new LogManager(), {name: 'fakeName'});
+      const logMediator = new LogMediator(new LogManager(), {moduleName: 'fakeName'});
       moduleManager = new ModuleManager(logMediator);
       const rootMeta = new RootMetadata();
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
@@ -534,7 +534,7 @@ describe('AppInitializer', () => {
       }
 
       // Simulation of a call from the Application
-      const logMediator = new LogMediatorMock(new LogManager(), {name: 'fakeName'});
+      const logMediator = new LogMediatorMock(new LogManager(), {moduleName: 'fakeName'});
       moduleManager = new ModuleManager(logMediator);
       const rootMeta = new RootMetadata();
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
@@ -585,7 +585,7 @@ describe('AppInitializer', () => {
 
     beforeEach(() => {
       testMethodSpy.mockRestore();
-      const logMediator = new LogMediator(new LogManager(), {name: 'fakeName'});
+      const logMediator = new LogMediator(new LogManager(), {moduleName: 'fakeName'});
       moduleManager = new ModuleManager(logMediator);
       const rootMeta = new RootMetadata();
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
@@ -628,7 +628,7 @@ describe('AppInitializer', () => {
 
     beforeEach(() => {
       jestFn.mockRestore();
-      const logMediator = new LogMediator(new LogManager(), {name: 'fakeName'});
+      const logMediator = new LogMediator(new LogManager(), {moduleName: 'fakeName'});
       moduleManager = new ModuleManager(logMediator);
       const rootMeta = new RootMetadata();
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);

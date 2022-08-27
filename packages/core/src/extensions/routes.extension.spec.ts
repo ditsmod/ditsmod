@@ -33,7 +33,7 @@ xdescribe('RoutesExtension', () => {
 
   beforeEach(() => {
     const logManager = new LogManager();
-    const log = new LogMediator(logManager, {name: 'fakeName'});
+    const log = new LogMediator(logManager, {moduleName: 'fakeName'});
     moduleManager = new ModuleManager(log);
     const injectorPerApp = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,

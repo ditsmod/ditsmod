@@ -74,7 +74,7 @@ describe('ModuleFactory', () => {
     ]);
     mock = injectorPerApp.get(MockModuleFactory);
     const logManager = new LogManager();
-    moduleManager = new ModuleManager(new LogMediator(logManager, {name: 'fakeName'}));
+    moduleManager = new ModuleManager(new LogMediator(logManager, {moduleName: 'fakeName'}));
   });
 
   describe('exportGlobalProviders()', () => {

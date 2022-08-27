@@ -35,7 +35,7 @@ export class Application {
   }
 
   protected async init(appModule: ModuleType) {
-    this.logMediator = new LogMediator(new LogManager(), { name: 'AppModule' });
+    this.logMediator = new LogMediator(new LogManager(), { moduleName: 'AppModule' });
     this.mergeRootMetadata(appModule);
     const appInitializer = this.getAppInitializer(appModule, this.logMediator);
     // Before init custom user logger, works default logger.

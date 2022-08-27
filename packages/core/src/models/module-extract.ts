@@ -5,7 +5,7 @@ export class ModuleExtract {
   /**
    * Module name.
    */
-  name: string = '';
+  moduleName: string = '';
   /**
    * Module prefix.
    */

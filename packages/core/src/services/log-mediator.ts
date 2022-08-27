@@ -94,7 +94,7 @@ export class LogMediator {
       const loggerLevel: LogLevel = typeof this._logger.getLevel == 'function' ? this._logger.getLevel() : this.loggerConfig.level;
 
       this.logManager.buffer.push({
-        moduleName: this.moduleExtract.name,
+        moduleName: this.moduleExtract.moduleName,
         logger: this._logger,
         loggerLevel,
         loggerLogFilter: this.logFilter || new LogFilter(),
@@ -299,7 +299,7 @@ export class LogMediator {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    this.setLog('trace', msgLogFilter, `${className}: ${this.moduleExtract.name} has ID: "${moduleId}".`);
+    this.setLog('trace', msgLogFilter, `${className}: ${this.moduleExtract.moduleName} has ID: "${moduleId}".`);
   }
 
   /**
@@ -332,7 +332,7 @@ export class LogMediator {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    this.setLog('debug', msgLogFilter, `${className}: ${'='.repeat(20)} ${this.moduleExtract.name} ${'='.repeat(20)}`);
+    this.setLog('debug', msgLogFilter, `${className}: ${'='.repeat(20)} ${this.moduleExtract.moduleName} ${'='.repeat(20)}`);
   }
 
   /**

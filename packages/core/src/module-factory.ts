@@ -105,7 +105,7 @@ export class ModuleFactory {
     this.unfinishedScanModules = unfinishedScanModules;
     this.meta = meta;
     this.importModules();
-    const moduleExtract: ModuleExtract = { path: this.prefixPerMod, name: meta.name };
+    const moduleExtract: ModuleExtract = { path: this.prefixPerMod, moduleName: meta.name };
     this.meta.providersPerMod.unshift({ provide: ModuleExtract, useValue: moduleExtract });
 
     let aControllersMetadata1: ControllersMetadata1<AnyObj, AnyObj>[] = [];
