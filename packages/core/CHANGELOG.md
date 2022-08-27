@@ -3,6 +3,24 @@
 
 ### Features
 
+- Added `new Providers().useLogMediator()` method to reduce the amount of code when passing providers to DI:
+
+```ts
+Module({
+  // ...
+  providersPerMod: [
+    ...new Providers()
+      .useLogMediator(MyLogMediator)
+  ],
+})
+export class SomeModule {}
+```
+
+<a name="core-2.10.0"></a>
+## [core-2.10.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.10.0) (2022-08-27)
+
+### Features
+
 - Added `new Providers().useLogConfig()` method to reduce the amount of code when passing providers to DI:
 
 ```ts

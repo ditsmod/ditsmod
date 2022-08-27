@@ -1,5 +1,5 @@
 import { Type } from '@ts-stack/di';
-import { LogFilter } from '../services/log-mediator';
+import { LogFilter, LogMediator } from '../services/log-mediator';
 import { Logger, LoggerConfig } from '../types/logger';
 import { ServiceProvider } from '../types/mix';
 
@@ -82,6 +82,12 @@ export class Providers {
     if (logFilter) {
       this.providers.push({ provide: LogFilter, useValue: logFilter });
     }
+
+    return this;
+  }
+
+  useLogMediator<T extends Type<LogMediator>>(CustomLogMediator: T) {
+    this.providers.push(CustomLogMediator, { provide: LogMediator, useExisting: CustomLogMediator });
 
     return this;
   }
