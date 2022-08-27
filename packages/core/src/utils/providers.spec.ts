@@ -1,4 +1,4 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, fit, expect, jest } from '@jest/globals';
 import { Logger } from '../types/logger';
 import { ServiceProvider } from '../types/mix';
 
@@ -46,8 +46,56 @@ describe('Providers', () => {
     const value = new Providers().useLogger(logger).useAnyValue('token', 'value');
     const expectedArr: ServiceProvider[] = [
       { provide: Logger, useValue: logger, multi: undefined },
-      { provide: 'token', useValue: 'value', multi: undefined }
+      { provide: 'token', useValue: 'value', multi: undefined },
     ];
     expect([...value]).toEqual(expectedArr);
+  });
+
+  it('works with plugins', () => {
+    class Some extends Providers {
+      one(name: string) {
+        this.useAnyValue(name, 'молоток');
+        return this;
+      }
+    }
+
+    class Other extends Providers {
+      two() {
+        return this;
+      }
+    }
+
+    class Third extends Providers {
+      three() {
+        return this;
+      }
+    }
+
+    jest.spyOn(Some.prototype, 'one');
+    jest.spyOn(Other.prototype, 'two');
+    jest.spyOn(Third.prototype, 'three');
+
+    const providers = new Providers();
+
+    function callback() {
+      providers
+        .use(Some)
+        .use(Other)
+        .two()
+        .two()
+        .one('Mostia')
+        .use(Third)
+        .three()
+        .useAnyValue('token', 'value');
+    }
+
+    expect(callback).not.toThrow();
+    expect(Some.prototype.one).toBeCalledTimes(1);
+    expect(Other.prototype.two).toBeCalledTimes(2);
+    expect(Third.prototype.three).toBeCalledTimes(1);
+    expect([...providers]).toEqual([
+      { provide: 'Mostia', useValue: 'молоток', multi: undefined },
+      { provide: 'token', useValue: 'value', multi: undefined },
+    ]);
   });
 });
