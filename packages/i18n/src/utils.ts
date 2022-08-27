@@ -9,15 +9,19 @@ export function getDictGroup<T extends Type<Dictionary>>(base: T, ...dicts: T[])
 
 export class I18nProviders extends Providers {
   /**
+   * Helper that adds providers in a type safe way.
+   *
    * Stability: 1 - Experimental.
    *
    * @param self Here expect `this` variable.
    *
    * @todo Investigate why an object with the name of the module is passed as a key to "self" parameter.
    */
-  getI18nProviders(self: any, translations: Translations, i18nOptions = new I18nOptions()) {
+  i18n(self: any, translations: Translations, i18nOptions = new I18nOptions()) {
     translations.moduleName = translations.moduleName || Object.keys(self)[0];
-    this.useAnyValue(I18N_TRANSLATIONS, translations, true).useValue(I18nOptions, i18nOptions);
+    this
+      .useAnyValue(I18N_TRANSLATIONS, translations, true)
+      .useValue(I18nOptions, i18nOptions);
     
     return this;
   }
