@@ -11,7 +11,7 @@ import { imported } from './locales/imported';
   controllers: [SecondController],
   providersPerMod: [
     ...new I18nProviders()
-      .i18n(this, { current, imported, moduleName: 'SecondModule' }, { defaultLng: 'uk' }),
+      .i18n({ current, imported }, { defaultLng: 'uk' }),
   ],
   exports: [I18N_TRANSLATIONS],
 })

@@ -10,7 +10,7 @@ import { FirstController } from './first.controller';
   controllers: [FirstController],
   providersPerReq: [FirstService],
   providersPerMod: [
-    ...new I18nProviders().i18n(this, { current }, { defaultLng: 'en' })
+    ...new I18nProviders().i18n({ current }, { defaultLng: 'en' })
   ],
   exports: [I18nModule, FirstService, I18N_TRANSLATIONS],
 })
