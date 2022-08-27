@@ -1,5 +1,5 @@
 import { describe, it, fit, xit, expect } from '@jest/globals';
-import { I18nProviders } from './utils';
+import { I18nProviders } from './i18n-providers';
 import { Common } from './test/common-en';
 import { CommonUk } from './test/common-uk';
 import { I18nOptions, I18N_TRANSLATIONS, Translations } from './types/mix';
