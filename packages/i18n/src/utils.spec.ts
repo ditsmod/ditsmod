@@ -11,11 +11,11 @@ describe('I18nProviders', () => {
 
     function callback() {
       providers = new I18nProviders();
-      providers.i18n({ I18nProviders: undefined }, { current: [[Common, CommonUk]] }, { defaultLng: 'uk' });
+      providers.i18n({ current: [[Common, CommonUk]] }, { defaultLng: 'uk' });
     }
 
     expect(callback).not.toThrow();
-    const expectedUseValue: Translations = { current: [[Common, CommonUk]], moduleName: 'I18nProviders' };
+    const expectedUseValue: Translations = { current: [[Common, CommonUk]] };
     expect([...providers!]).toEqual([
       { provide: I18N_TRANSLATIONS, useValue: expectedUseValue, multi: true },
       { provide: I18nOptions, useValue: { defaultLng: 'uk' }, multi: undefined },
@@ -27,11 +27,11 @@ describe('I18nProviders', () => {
 
     function callback() {
       providers = new Providers().use(I18nProviders);
-      providers.i18n({ I18nProviders: undefined }, { current: [[Common, CommonUk]] }, { defaultLng: 'uk' });
+      providers.i18n({ current: [[Common, CommonUk]] }, { defaultLng: 'uk' });
     }
 
     expect(callback).not.toThrow();
-    const expectedUseValue: Translations = { current: [[Common, CommonUk]], moduleName: 'I18nProviders' };
+    const expectedUseValue: Translations = { current: [[Common, CommonUk]] };
     expect([...providers!]).toEqual([
       { provide: I18N_TRANSLATIONS, useValue: expectedUseValue, multi: true },
       { provide: I18nOptions, useValue: { defaultLng: 'uk' }, multi: undefined },

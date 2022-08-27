@@ -23,7 +23,9 @@ export class DictPerModService {
     lng = lng || this.lng;
     let dictionary = dictionaries.find((t) => t.getLng() == lng);
     if (!dictionary) {
-      this.log.missingLng(this, token.name, lng);
+      if (lng) {
+        this.log.missingLng(this, token.name, lng);
+      }
       // Trying fallback to default lng
       const tryLng = this.i18nOptions.defaultLng || token.prototype.getLng() || lng;
       dictionary = dictionaries.find((t) => t.getLng() == tryLng);

@@ -9,7 +9,7 @@ export interface Dictionary {
 }
 
 export class Translations {
-  constructor(public current?: DictGroup[], public imported?: DictGroup[], public moduleName?: string) {}
+  constructor(public current?: DictGroup[], public imported?: DictGroup[]) {}
 }
 
 export class I18nOptions {
