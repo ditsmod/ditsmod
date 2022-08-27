@@ -1,5 +1,40 @@
+<a name="core-2.9.0"></a>
+# [core-2.9.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.9.0) (2022-08-27)
+
+### Features
+
+- Added `new Providers().use()` method to adding plugins:
+
+```ts
+class Plugin1 extends Providers {
+  method1() {
+    // ...
+  }
+}
+
+class Plugin2 extends Providers {
+  method2() {
+    // ...
+  }
+}
+
+Module({
+  // ...
+  providersPerMod: [
+    ...new Providers()
+      .use(Plugin1)
+      .use(Plugin2)
+      .method1()
+      .method2()
+      .useValue(LoggerConfig, new LoggerConfig('trace'))
+      .useClass(SomeService, ExtendedService)
+  ],
+})
+export class SomeModule {}
+```
+
 <a name="core-2.8.0"></a>
-# [core-2.8.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.8.0) (2022-08-26)
+## [core-2.8.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.8.0) (2022-08-26)
 
 ### BREAKING CHANGES
 
