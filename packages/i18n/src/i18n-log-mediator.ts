@@ -5,12 +5,12 @@ export class I18nLogMediator extends LogMediator {
   /**
    * ${className}: in ${moduleName} translation not found.
    */
-  translationNotFound(self: object, moduleName: string) {
+  translationNotFound(self: object) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
     msgLogFilter.tags = ['i18n', 'locales'];
-    this.setLog('warn', msgLogFilter, `${className}: in ${moduleName} translation not found.`);
+    this.setLog('warn', msgLogFilter, `${className}: in ${this.moduleName} translation not found.`);
   }
   /**
    * ${className}: in ${extendedClassName} missing methods: [${methods}].

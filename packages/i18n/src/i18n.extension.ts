@@ -26,7 +26,7 @@ export class I18nExtension implements Extension<void> {
     }
 
     if (!this.translations?.length) {
-      this.log.translationNotFound(this, moduleName);
+      this.log.translationNotFound(this);
       this.#inited = true;
       return;
     }
