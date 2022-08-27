@@ -26,12 +26,14 @@ import { ServiceProvider } from '../types/mix';
   class Plugin1 extends Providers {
     method1() {
       // ...
+      return this;
     }
   }
 
   class Plugin2 extends Providers {
     method2() {
       // ...
+      return this;
     }
   }
 
