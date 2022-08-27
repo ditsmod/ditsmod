@@ -9,6 +9,7 @@ import { getModuleName } from '../utils/get-module-name';
 import { getProviderName } from '../utils/get-provider-name';
 import { ConsoleLogger } from './console-logger';
 import { LogManager } from './log-manager';
+import { ModuleExtract } from '../models/module-extract';
 
 /**
  * Uses by LogMediator.
@@ -49,7 +50,6 @@ export interface LogItem {
  */
 @Injectable()
 export class LogMediator {
-  moduleName = 'AppModule';
   /**
    * If `bufferLogs === true` then all messages will be buffered.
    *
@@ -79,6 +79,7 @@ export class LogMediator {
 
   constructor(
     protected logManager: LogManager,
+    protected moduleExtract: ModuleExtract,
     @Optional() protected _logger: Logger = new ConsoleLogger(),
     @Optional() protected logFilter: LogFilter = new LogFilter(),
     @Optional() protected loggerConfig: LoggerConfig = new LoggerConfig(),
@@ -93,7 +94,7 @@ export class LogMediator {
       const loggerLevel: LogLevel = typeof this._logger.getLevel == 'function' ? this._logger.getLevel() : this.loggerConfig.level;
 
       this.logManager.buffer.push({
-        moduleName: this.moduleName,
+        moduleName: this.moduleExtract.moduleName,
         logger: this._logger,
         loggerLevel,
         loggerLogFilter: this.logFilter || new LogFilter(),
@@ -298,7 +299,7 @@ export class LogMediator {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    this.setLog('trace', msgLogFilter, `${className}: ${this.moduleName} has ID: "${moduleId}".`);
+    this.setLog('trace', msgLogFilter, `${className}: ${this.moduleExtract.moduleName} has ID: "${moduleId}".`);
   }
 
   /**
@@ -331,7 +332,7 @@ export class LogMediator {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    this.setLog('debug', msgLogFilter, `${className}: ${'='.repeat(20)} ${this.moduleName} ${'='.repeat(20)}`);
+    this.setLog('debug', msgLogFilter, `${className}: ${'='.repeat(20)} ${this.moduleExtract.moduleName} ${'='.repeat(20)}`);
   }
 
   /**

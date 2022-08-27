@@ -1,4 +1,4 @@
-import { RootModule, LogMediator, LogFilter, LoggerConfig, Providers } from '@ditsmod/core';
+import { RootModule, LogMediator, Providers } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
 import { MyLogMediator } from './my-log-mediator';
@@ -11,7 +11,7 @@ import { OtherModule } from './modules/other/other.module';
     MyLogMediator, // This allow use MyLogMediator in this application
     ...new Providers()
       .useClass(LogMediator, MyLogMediator) // This allow use MyLogMediator internaly in Ditsmod core
-      .useValue(LoggerConfig, new LoggerConfig('info'))
+      .useLogConfig({ level: 'info' })
       // .useValue(LogFilter, { modulesNames: ['OtherModule'] }),
   ],
 })

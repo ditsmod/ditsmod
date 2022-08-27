@@ -9,9 +9,10 @@ import { ConsoleLogger } from './console-logger';
 import { ModuleManager } from './module-manager';
 import { LogFilter, LogMediator } from './log-mediator';
 import { PreRouter } from './pre-router';
+import { ModuleExtract } from '../models/module-extract';
+import { Providers } from '../utils/providers';
 
 export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
-  { provide: Logger, useClass: ConsoleLogger },
   BodyParserConfig,
   {
     provide: ReflectiveInjector,
@@ -22,5 +23,8 @@ export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
   Counter,
   ModuleManager,
   LogMediator,
-  LogFilter
+  LogFilter,
+  ...new Providers()
+    .useValue(ModuleExtract, { moduleName: 'AppModule' })
+    .useClass(Logger, ConsoleLogger),
 ];

@@ -18,7 +18,7 @@ import { Counter } from './counter';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ExtensionsManager } from './extensions-manager';
 import { LogManager } from './log-manager';
-import { LogFilter, LogMediator } from './log-mediator';
+import { LogMediator } from './log-mediator';
 import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
 import { getLastProviders } from '../utils/get-last-providers';
@@ -256,7 +256,6 @@ export class AppInitializer {
       injectorPerMod.get(mod); // Call module constructor.
       const logMediator = injectorPerMod.get(LogMediator) as LogMediator;
       const loggerConfig = injectorPerMod.get(LoggerConfig, new LoggerConfig()) as LoggerConfig;
-      logMediator.moduleName = moduleName;
       logMediator.logger.setLevel(loggerConfig.level);
       logMediator.startExtensionsModuleInit(this);
       this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
@@ -270,7 +269,7 @@ export class AppInitializer {
       ]);
       const extensionTokens: InjectionToken<Extension<any>[]>[] = [];
       const beforeTokens: string[] = [];
-      for(const token of getTokens(extensionsProviders)) {
+      for (const token of getTokens(extensionsProviders)) {
         if (token instanceof InjectionToken) {
           extensionTokens.push(token);
         } else {

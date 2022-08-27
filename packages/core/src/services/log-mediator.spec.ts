@@ -7,6 +7,7 @@ import { Logger, LoggerConfig, LogLevel } from '../types/logger';
 import { ConsoleLogger } from './console-logger';
 import { LogMediator } from './log-mediator';
 import { LogManager } from './log-manager';
+import { ModuleExtract } from '../models/module-extract';
 
 describe('LogMediator', () => {
   class LogMediatorMock extends LogMediator {
@@ -27,7 +28,7 @@ describe('LogMediator', () => {
     const config = new LoggerConfig();
     const logger = new ConsoleLogger(config) as Logger;
     const logManager = new LogManager();
-    logMediator = new LogMediatorMock(logManager, logger);
+    logMediator = new LogMediatorMock(logManager, { moduleName: 'fakeName' }, logger);
   });
 
   afterEach(() => {
@@ -51,6 +52,7 @@ describe('LogMediator', () => {
   it('passing message with switch between buffer and logger', () => {
     const injector = ReflectiveInjector.resolveAndCreate([
       LogManager,
+      ModuleExtract,
       ...new Providers()
         .useClass(LogMediator, LogMediatorMock)
         .useLogger(loggerMock),

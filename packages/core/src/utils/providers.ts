@@ -1,4 +1,5 @@
 import { Type } from '@ts-stack/di';
+import { LogFilter, LogMediator } from '../services/log-mediator';
 import { Logger, LoggerConfig } from '../types/logger';
 import { ServiceProvider } from '../types/mix';
 
@@ -42,7 +43,7 @@ import { ServiceProvider } from '../types/mix';
     .use(Plugin2)
     .method1()
     .method2()
-    .useValue(LoggerConfig, new LoggerConfig('trace'))
+    .useLogConfig({ level: 'trace' })
     .useClass(SomeService, ExtendedService)
  * ```
  * 
@@ -72,6 +73,21 @@ export class Providers {
     if (useConfig) {
       this.providers.push({ provide: LoggerConfig, useValue: useConfig });
     }
+
+    return this;
+  }
+
+  useLogConfig(useConfig: LoggerConfig, logFilter?: LogFilter) {
+    this.providers.push({ provide: LoggerConfig, useValue: useConfig });
+    if (logFilter) {
+      this.providers.push({ provide: LogFilter, useValue: logFilter });
+    }
+
+    return this;
+  }
+
+  useLogMediator<T extends Type<LogMediator>>(CustomLogMediator: T) {
+    this.providers.push(CustomLogMediator, { provide: LogMediator, useExisting: CustomLogMediator });
 
     return this;
   }

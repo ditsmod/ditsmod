@@ -1,7 +1,7 @@
 import { Req } from '@ditsmod/core';
 import { Injectable, Injector } from '@ts-stack/di';
-import { DictPerModService } from './dict-per-mod.service';
 
+import { DictPerModService } from './dict-per-mod.service';
 import { I18nLogMediator } from './i18n-log-mediator';
 import { ISO639 } from './types/iso-639';
 import { I18nOptions } from './types/mix';

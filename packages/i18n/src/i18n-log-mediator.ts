@@ -5,11 +5,12 @@ export class I18nLogMediator extends LogMediator {
   /**
    * ${className}: in ${moduleName} translation not found.
    */
-  translationNotFound(self: object, moduleName: string) {
+  translationNotFound(self: object) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    this.setLog('warn', msgLogFilter, `${className}: in ${moduleName} translation not found.`);
+    msgLogFilter.tags = ['i18n', 'locales'];
+    this.setLog('warn', msgLogFilter, `${className}: in ${this.moduleExtract.moduleName} translation not found.`);
   }
   /**
    * ${className}: in ${extendedClassName} missing methods: [${methods}].
@@ -18,6 +19,7 @@ export class I18nLogMediator extends LogMediator {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
+    msgLogFilter.tags = ['i18n', 'locales'];
     const methods = missingMethods.join(', ');
     this.setLog('debug', msgLogFilter, `${className}: in ${extendedClassName} missing methods: [${methods}].`);
   }
@@ -28,17 +30,18 @@ export class I18nLogMediator extends LogMediator {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
+    msgLogFilter.tags = ['i18n', 'locales'];
     this.setLog('debug', msgLogFilter, `${className}: in ${dictName} missing locale "${lng}".`);
   }
   /**
-   * ${className}: in "${path}" found locales: [${allLngs.join(', ')}]. Some methods: [${methods.join(', ')}].
+   * ${className}: in "moduleName -> tokenName" found locales: [...]. Some methods: [...].
    */
-  foundLngs(self: object, tokenName: string, allLngs: string[], methods: string[], methodName?: string) {
+  foundLngs(self: object, tokenName: string, allLngs: string[], methods: string[]) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    const path = methodName ? `${methodName} -> ${tokenName}` : `${tokenName}`;
-    let msg = `${className}: in "${path}" found locales: [${allLngs.join(', ')}].`;
+    msgLogFilter.tags = ['i18n', 'locales'];
+    let msg = `${className}: in "${this.moduleExtract.moduleName} -> ${tokenName}" found locales: [${allLngs.join(', ')}].`;
     if (methods.length) {
       msg += ` Some methods: [${methods.join(', ')}].`;
     } else {
@@ -47,14 +50,14 @@ export class I18nLogMediator extends LogMediator {
     this.setLog('debug', msgLogFilter, msg);
   }
   /**
-   * ${className}: found overrides in "${path}" for locales: [${allLngs.join(', ')}]. Some methods: [${methods.join(', ')}].
+   * className: found overrides in "moduleName -> tokenName" for locales: [...]. Some methods: [...].
    */
-  overridedLngs(self: object, tokenName: string, allLngs: string[], methods: string[], methodName?: string) {
+  overridedLngs(self: object, tokenName: string, allLngs: string[], methods: string[]) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    const path = methodName ? `${methodName} -> ${tokenName}` : `${tokenName}`;
-    let msg = `${className}: found overrides in "${path}" for locales: [${allLngs.join(', ')}].`;
+    msgLogFilter.tags = ['i18n', 'locales'];
+    let msg = `${className}: found overrides in "${this.moduleExtract.moduleName} -> ${tokenName}" for locales: [${allLngs.join(', ')}].`;
     if (methods.length) {
       msg += ` Some methods: [${methods.join(', ')}].`;
     } else {

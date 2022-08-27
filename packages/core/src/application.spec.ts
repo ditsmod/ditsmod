@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
-import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
+import { it, describe, beforeEach, expect } from '@jest/globals';
 
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
@@ -10,7 +10,6 @@ import { RootMetadata } from './models/root-metadata';
 import { AppInitializer } from './services/app-initializer';
 import { LogMediator } from './services/log-mediator';
 import { ModuleType, ModuleWithParams } from './types/mix';
-
 
 describe('Application', () => {
   class ApplicationMock extends Application {
@@ -54,7 +53,7 @@ describe('Application', () => {
       class AppModule {}
 
       mock.mergeRootMetadata(AppModule);
-      const {serverName, serverOptions, listenOptions, path: prefixPerApp } = mock.rootMeta;
+      const { serverName, serverOptions, listenOptions, path: prefixPerApp } = mock.rootMeta;
       expect(serverName).toBe('customServerName');
       expect(prefixPerApp).toBe('customPrefix');
       expect(serverOptions).toEqual({ isHttp2SecureServer: false });

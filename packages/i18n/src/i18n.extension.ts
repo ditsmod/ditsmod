@@ -11,8 +11,8 @@ export class I18nExtension implements Extension<void> {
 
   constructor(
     private log: I18nLogMediator,
-    @Optional() @Inject(I18N_TRANSLATIONS) private translations: Translations[] = [],
-    private extensionsManager: ExtensionsManager
+    private extensionsManager: ExtensionsManager,
+    @Optional() @Inject(I18N_TRANSLATIONS) private translations?: Translations[],
   ) {}
 
   async init() {
@@ -25,8 +25,10 @@ export class I18nExtension implements Extension<void> {
       return;
     }
 
-    if (!this.translations.length) {
-      this.log.translationNotFound(this, moduleName);
+    if (!this.translations?.length) {
+      this.log.translationNotFound(this);
+      this.#inited = true;
+      return;
     }
 
     const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS);
@@ -35,8 +37,8 @@ export class I18nExtension implements Extension<void> {
         const token = dictionariesGroup[0]; // First class uses as group's token
 
         const allLngs = dictionariesGroup.map((d) => d.prototype.getLng());
-        const allMethods = Object.getOwnPropertyNames(token.prototype).filter(p => p != 'constructor' && p != 'getLng').slice(0, 5);
-        this.log.foundLngs(this, token.name, allLngs, allMethods, translation.moduleName);
+        const allMethods = Object.getOwnPropertyNames(token.prototype).filter(p => p != 'constructor' && p != 'getLng').slice(0, 3);
+        this.log.foundLngs(this, token.name, allLngs, allMethods);
 
         for (const dict of dictionariesGroup) {
           if (token !== dict) {
@@ -63,7 +65,7 @@ export class I18nExtension implements Extension<void> {
 
         const allLngs = group.map((d) => d.prototype.getLng());
         const allMethods = Object.getOwnPropertyNames(token.prototype).filter(p => p != 'constructor' && p != 'getLng').slice(0, 5);
-        this.log.overridedLngs(this, token.name, allLngs, allMethods, translation.moduleName);
+        this.log.overridedLngs(this, token.name, allLngs, allMethods);
 
         for (const dict of group) {
           if (token !== dict) {

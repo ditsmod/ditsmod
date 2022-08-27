@@ -4,4 +4,4 @@ export { I18N_EXTENSIONS, I18N_TRANSLATIONS, Dictionary, DictGroup, Translations
 export { I18nLogMediator } from './i18n-log-mediator';
 export { DictService } from './dict.service';
 export { DictPerModService } from './dict-per-mod.service';
-export { getDictGroup, I18nProviders } from './utils';
+export { getDictGroup, I18nProviders } from './i18n-providers';
