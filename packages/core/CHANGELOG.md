@@ -4,6 +4,7 @@
 ### BREAKING CHANGES
 
 - Renamed `ModConfig` to `ModuleExtract`.
+- Removed `moduleName` property from `LogMediator`.
 
 ### Features
 

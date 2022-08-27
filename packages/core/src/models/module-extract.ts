@@ -9,5 +9,5 @@ export class ModuleExtract {
   /**
    * Module prefix.
    */
-  path: string = '';
+  path?: string = '';
 }

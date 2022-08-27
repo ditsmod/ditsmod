@@ -27,7 +27,7 @@ describe('LogMediator', () => {
     const config = new LoggerConfig();
     const logger = new ConsoleLogger(config) as Logger;
     const logManager = new LogManager();
-    logMediator = new LogMediatorMock(logManager, logger);
+    logMediator = new LogMediatorMock(logManager, {name: 'fakeName', path: ''}, logger);
   });
 
   afterEach(() => {

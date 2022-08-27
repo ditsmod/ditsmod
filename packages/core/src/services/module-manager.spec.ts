@@ -43,7 +43,7 @@ describe('ModuleManager', () => {
     const config = new LoggerConfig();
     const logger = new ConsoleLogger(config);
     const logManager = new LogManager();
-    const logMediator = new LogMediator(logManager, logger);
+    const logMediator = new LogMediator(logManager, {name: 'fakeName', path: ''}, logger);
     mock = new MockModuleManager(logMediator);
   });
 
