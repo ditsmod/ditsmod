@@ -12,6 +12,6 @@ import { FirstController } from './first.controller';
   providersPerMod: [
     ...new I18nProviders().i18n(this, { current }, { defaultLng: 'en' })
   ],
-  exports: [FirstService, I18N_TRANSLATIONS],
+  exports: [I18nModule, FirstService, I18N_TRANSLATIONS],
 })
 export class FirstModule {}

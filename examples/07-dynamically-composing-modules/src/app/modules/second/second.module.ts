@@ -1,11 +1,9 @@
-import { LoggerConfig, Module } from '@ditsmod/core';
+import { Module, Providers } from '@ditsmod/core';
 
 import { SecondController } from './second.controller';
 
-const loggerConfig = new LoggerConfig('debug');
-
 @Module({
   controllers: [SecondController],
-  providersPerMod: [{ provide: LoggerConfig, useValue: loggerConfig }],
+  providersPerMod: [...new Providers().useLogConfig({ level: 'debug' })],
 })
 export class SecondModule {}

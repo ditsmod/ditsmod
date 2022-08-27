@@ -8,7 +8,7 @@ const logger = createLogger();
 @Module({
   controllers: [WinstonController],
   providersPerMod: [
-    ...new Providers().useLogger(logger, new LoggerConfig('debug'))
+    ...new Providers().useLogConfig({ level: 'debug' })
   ],
 })
 export class WinstonModule {

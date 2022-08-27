@@ -1,4 +1,4 @@
-import { RootModule, LoggerConfig, Providers } from '@ditsmod/core';
+import { RootModule, Providers } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
 import { BunyanModule } from './modules/bunyan/bunyan.module';
@@ -14,8 +14,6 @@ import { WinstonModule } from './modules/winston/winston.module';
     { path: '', module: PinoModule },
     { path: '', module: BunyanModule },
   ],
-  providersPerApp: [
-    ...new Providers().useValue(LoggerConfig, new LoggerConfig('info')),
-  ]
+  providersPerApp: [...new Providers().useLogConfig({ level: 'info' })],
 })
 export class AppModule {}
