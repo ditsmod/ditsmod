@@ -10,7 +10,7 @@ export class I18nLogMediator extends LogMediator {
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
     msgLogFilter.tags = ['i18n', 'locales'];
-    this.setLog('warn', msgLogFilter, `${className}: in ${this.moduleName} translation not found.`);
+    this.setLog('warn', msgLogFilter, `${className}: in ${this.moduleExtract.name} translation not found.`);
   }
   /**
    * ${className}: in ${extendedClassName} missing methods: [${methods}].
@@ -41,7 +41,7 @@ export class I18nLogMediator extends LogMediator {
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
     msgLogFilter.tags = ['i18n', 'locales'];
-    let msg = `${className}: in "${this.moduleName} -> ${tokenName}" found locales: [${allLngs.join(', ')}].`;
+    let msg = `${className}: in "${this.moduleExtract.name} -> ${tokenName}" found locales: [${allLngs.join(', ')}].`;
     if (methods.length) {
       msg += ` Some methods: [${methods.join(', ')}].`;
     } else {
@@ -57,7 +57,7 @@ export class I18nLogMediator extends LogMediator {
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
     msgLogFilter.tags = ['i18n', 'locales'];
-    let msg = `${className}: found overrides in "${this.moduleName} -> ${tokenName}" for locales: [${allLngs.join(', ')}].`;
+    let msg = `${className}: found overrides in "${this.moduleExtract.name} -> ${tokenName}" for locales: [${allLngs.join(', ')}].`;
     if (methods.length) {
       msg += ` Some methods: [${methods.join(', ')}].`;
     } else {
