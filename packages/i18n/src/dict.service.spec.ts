@@ -9,7 +9,7 @@ import { Common } from './test/common-en';
 import { CommonUk } from './test/common-uk';
 import { I18nLogMediator } from './i18n-log-mediator';
 
-describe('I18nService', () => {
+describe('DictService', () => {
   class Options {
     constructor(public i18nOptions: I18nOptions = {}, public req: Partial<Req> = { queryParams: {} }) {}
   }
