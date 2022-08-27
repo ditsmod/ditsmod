@@ -1,7 +1,7 @@
 <a name="openapi-2.1.0"></a>
 # [openapi-2.1.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.1.0) (2022-08-27)
 
-### Bug fix
+### BREAKING CHANGES
 
 - Migration to Ditsmod v2.11.0.
 
