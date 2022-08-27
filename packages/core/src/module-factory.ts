@@ -1,7 +1,7 @@
 import { Injectable, reflector } from '@ts-stack/di';
 
 import { defaultProvidersPerMod, NODE_REQ, NODE_RES } from './constans';
-import { ModConfig } from './models/mod-config';
+import { ModuleExtract } from './models/module-extract';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
@@ -105,8 +105,8 @@ export class ModuleFactory {
     this.unfinishedScanModules = unfinishedScanModules;
     this.meta = meta;
     this.importModules();
-    const modConfig: ModConfig = { prefixPerMod: this.prefixPerMod };
-    this.meta.providersPerMod.unshift({ provide: ModConfig, useValue: modConfig });
+    const moduleExtract: ModuleExtract = { path: this.prefixPerMod, name: meta.name };
+    this.meta.providersPerMod.unshift({ provide: ModuleExtract, useValue: moduleExtract });
 
     let aControllersMetadata1: ControllersMetadata1<AnyObj, AnyObj>[] = [];
     if (isRootModule(meta) || (isModuleWithParams(meta.module) && meta.module.path !== undefined)) {

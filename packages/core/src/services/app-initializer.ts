@@ -27,6 +27,7 @@ import { InjectorPerApp } from '../models/injector-per-app';
 import { EXTENSIONS_COUNTERS } from '../constans';
 import { LoggerConfig } from '../types/logger';
 import { getModule } from '../utils/get-module';
+import { ModuleExtract } from '../models/module-extract';
 
 export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;

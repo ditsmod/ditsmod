@@ -1,4 +1,4 @@
-import { Logger, ModConfig, RootMetadata } from '@ditsmod/core';
+import { Logger, ModuleExtract, RootMetadata } from '@ditsmod/core';
 import { Injectable, Injector } from '@ts-stack/di';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { existsSync } from 'fs';
@@ -21,7 +21,7 @@ export class SwaggerConfigManager {
   constructor(
     private log: Logger,
     private rootMeta: RootMetadata,
-    private modConfig: ModConfig,
+    private moduleExtract: ModuleExtract,
     private injectorPerMod: Injector
   ) {}
 
@@ -29,7 +29,7 @@ export class SwaggerConfigManager {
     if (this.inited) {
       return;
     }
-    const { prefixPerMod } = this.modConfig;
+    const { path: prefixPerMod } = this.moduleExtract;
     const { port } = this.rootMeta.listenOptions;
     const path = [this.rootMeta.path, prefixPerMod, 'openapi.yaml'].filter((p) => p).join('/');
     const oauthOptions = this.injectorPerMod.get(SwaggerOAuthOptions, null);

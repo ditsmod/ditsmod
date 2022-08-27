@@ -49,7 +49,7 @@ export interface LogItem {
  */
 @Injectable()
 export class LogMediator {
-  moduleName = 'AppModule';
+  moduleName = 'DefaultModuleName';
   /**
    * If `bufferLogs === true` then all messages will be buffered.
    *

@@ -1,5 +1,9 @@
-<a name="core-2.10.0"></a>
-# [core-2.10.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.10.0) (2022-08-27)
+<a name="core-2.11.0"></a>
+# [core-2.11.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.11.0) (2022-08-27)
+
+### BREAKING CHANGES
+
+- Renamed `ModConfig` to `ModuleExtract`.
 
 ### Features
 
