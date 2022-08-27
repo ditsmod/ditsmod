@@ -322,13 +322,13 @@ describe('ModuleFactory', () => {
         mock.bootstrap([], new GlobalProviders(), '', Module3, moduleManager, new Set());
 
         const mod0 = mock.appMetadataMap.get(Module0);
-        const providerPerMod0: ServiceProvider = { provide: ModuleExtract, useValue: { prefixPerMod: '' } };
+        const providerPerMod0: ServiceProvider = { provide: ModuleExtract, useValue: { path: '', moduleName: 'Module0' } };
         expect(mod0?.meta.providersPerMod).toEqual([providerPerMod0, Provider0]);
         expect(mod0?.meta.providersPerReq).toEqual([]);
         expect(mod0?.meta.ngMetadataName).toBe('Module');
 
         const mod1 = mock.appMetadataMap.get(Module1);
-        const providerPerMod1: ServiceProvider = { provide: ModuleExtract, useValue: { prefixPerMod: '' } };
+        const providerPerMod1: ServiceProvider = { provide: ModuleExtract, useValue: { path: '', moduleName: 'Module1' } };
         expect(mod1?.meta.providersPerMod).toEqual([providerPerMod1, Provider1, Provider2, Provider3]);
 
         const tokensPerMod = getImportedTokens(mod1?.importedTokensMap.perMod);
@@ -338,7 +338,7 @@ describe('ModuleFactory', () => {
         expect(mod1?.meta.ngMetadataName).toBe('Module');
 
         const mod2 = mock.appMetadataMap.get(Module2);
-        const providerPerMod2: ServiceProvider = { provide: ModuleExtract, useValue: { prefixPerMod: '' } };
+        const providerPerMod2: ServiceProvider = { provide: ModuleExtract, useValue: { path: '', moduleName: 'Module2' } };
         expect(mod2?.meta.providersPerMod).toEqual([providerPerMod2, Provider4, Provider5, Provider6]);
 
         const tokensPerMod2 = getImportedTokens(mod2?.importedTokensMap.perMod);
@@ -348,7 +348,7 @@ describe('ModuleFactory', () => {
         expect(mod2?.meta.ngMetadataName).toBe('Module');
 
         const mod3 = mock.appMetadataMap.get(Module3);
-        const providerPerMod3: ServiceProvider = { provide: ModuleExtract, useValue: { prefixPerMod: '' } };
+        const providerPerMod3: ServiceProvider = { provide: ModuleExtract, useValue: { path: '', moduleName: 'Module3' } };
         expect(mod3?.meta.providersPerMod).toEqual([providerPerMod3]);
 
         // expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overriddenProvider8]);
@@ -375,7 +375,7 @@ describe('ModuleFactory', () => {
 
         expect(mock.prefixPerMod).toBe('other');
         // expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
-        const providerPerMod: ServiceProvider = { provide: ModuleExtract, useValue: { prefixPerMod: 'other' } };
+        const providerPerMod: ServiceProvider = { provide: ModuleExtract, useValue: { path: 'other', moduleName: 'Module4' } };
         expect(mock.meta.providersPerMod).toEqual([providerPerMod]);
 
         expect(mock?.importedProvidersPerMod).toBeDefined();
