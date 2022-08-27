@@ -14,7 +14,12 @@ describe('I18nProviders', () => {
       providers.i18n({ I18nProviders: undefined }, { current: [[Common, CommonUk]] }, { defaultLng: 'uk' });
     }
 
-
+    expect(callback).not.toThrow();
+    const expectedUseValue: Translations = { current: [[Common, CommonUk]], moduleName: 'I18nProviders' };
+    expect([...providers!]).toEqual([
+      { provide: I18N_TRANSLATIONS, useValue: expectedUseValue, multi: true },
+      { provide: I18nOptions, useValue: { defaultLng: 'uk' }, multi: undefined },
+    ]);
   });
 
   it('works as plugin for Providers', () => {
