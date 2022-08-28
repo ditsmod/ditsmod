@@ -7,6 +7,7 @@
 git clone https://github.com/ditsmod/ditsmod.git
 cd ditsmod
 yarn
+yarn boot
 ```
 
 Після чого можете запустити один із застосунків, експерементувати з ними, і зразу бачити результат.
