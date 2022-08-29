@@ -267,13 +267,13 @@ export class AppInitializer {
         { provide: EXTENSIONS_COUNTERS, useValue: mExtensionsCounters },
         ...extensionsProviders,
       ]);
-      const extensionTokens: InjectionToken<Extension<any>[]>[] = [];
-      const beforeTokens: string[] = [];
+      const extensionTokens = new Set<InjectionToken<Extension<any>[]>>();
+      const beforeTokens = new Set<string>();
       for (const token of getTokens(extensionsProviders)) {
         if (token instanceof InjectionToken) {
-          extensionTokens.push(token);
+          extensionTokens.add(token);
         } else {
-          beforeTokens.push(token);
+          beforeTokens.add(token);
         }
       }
       const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
