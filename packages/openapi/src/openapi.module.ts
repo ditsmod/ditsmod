@@ -5,21 +5,20 @@ import {
   PRE_ROUTER_EXTENSIONS,
   RouteMeta,
   ROUTES_EXTENSIONS,
-  ServiceProvider,
 } from '@ditsmod/core';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension';
 import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension';
-import { OAS_COMPILER_EXTENSIONS, OAS_OBJECT } from './di-tokens';
-import { DEFAULT_OAS_OBJECT } from './constants';
+import { OAS_COMPILER_EXTENSIONS } from './di-tokens';
 import { OasRouteMeta } from './types/oas-route-meta';
 import { OpenapiController } from './openapi.controller';
 import { SwaggerConfigManager } from './services/swagger-config-manager';
 import { SwaggerOAuthOptions } from './swagger-ui/swagger-o-auth-options';
+import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-options';
 
 @Module({
   controllers: [OpenapiController],
-  providersPerApp: [{ provide: OAS_OBJECT, useValue: DEFAULT_OAS_OBJECT }],
+  providersPerApp: [OasConfigFiles],
   providersPerMod: [SwaggerConfigManager],
   providersPerRou: [{ provide: OasRouteMeta, useExisting: RouteMeta }],
   exports: [OasRouteMeta],
@@ -31,17 +30,17 @@ import { SwaggerOAuthOptions } from './swagger-ui/swagger-o-auth-options';
 export class OpenapiModule {
   static withParams(
     oasObject: XOasObject<any>,
-    swaggerOAuthOptions?: SwaggerOAuthOptions
+    swaggerOAuthOptions?: SwaggerOAuthOptions,
   ): ModuleWithParams<OpenapiModule> {
-    const providersPerApp: ServiceProvider[] = [{ provide: OAS_OBJECT, useValue: oasObject }];
-    if (swaggerOAuthOptions) {
-      providersPerApp.push({ provide: SwaggerOAuthOptions, useValue: swaggerOAuthOptions });
-    }
+    const oasExtensionOptions: OasExtensionOptions = {
+      oasObject,
+      swaggerOAuthOptions,
+    };
 
     return {
       module: OpenapiModule,
       path: '',
-      providersPerApp,
+      providersPerMod: [{ provide: OasExtensionOptions, useValue: oasExtensionOptions }],
     };
   }
 }

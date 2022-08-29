@@ -1,4 +1,4 @@
-import { writeFile, mkdir } from 'fs/promises';
+import { mkdir } from 'fs/promises';
 import { join } from 'path';
 import {
   Extension,
@@ -10,7 +10,7 @@ import {
   RouteMeta,
   ROUTES_EXTENSIONS,
 } from '@ditsmod/core';
-import { Injectable, reflector } from '@ts-stack/di';
+import { Injectable, Injector, reflector } from '@ts-stack/di';
 import {
   PathItemObject,
   XOasObject,
@@ -22,18 +22,22 @@ import {
 } from '@ts-stack/openapi-spec';
 import { stringify } from 'yaml';
 
-import { OAS_OBJECT } from '../di-tokens';
 import { OasRouteMeta } from '../types/oas-route-meta';
 import { DEFAULT_OAS_OBJECT } from '../constants';
 import { isOasGuard } from '../utils/type-guards';
 import { OpenapiModule } from '../openapi.module';
+import { OasConfigFiles, OasExtensionOptions } from '../types/oas-extension-options';
 
 @Injectable()
 export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   protected oasObject: XOasObject;
   private swaggerUiDist = join(__dirname, '../../dist/swagger-ui');
 
-  constructor(private injectorPerApp: InjectorPerApp, private extensionsManager: ExtensionsManager) {}
+  constructor(
+    private injectorPerApp: InjectorPerApp,
+    private injectorPerMod: Injector,
+    private extensionsManager: ExtensionsManager
+  ) {}
 
   async init() {
     if (this.oasObject) {
@@ -47,8 +51,10 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
 
     await this.compileOasObject(aMetadataPerMod2);
     await mkdir(this.swaggerUiDist, { recursive: true });
-    await writeFile(`${this.swaggerUiDist}/openapi.json`, JSON.stringify(this.oasObject));
-    await writeFile(`${this.swaggerUiDist}/openapi.yaml`, stringify(this.oasObject));
+
+    const oasConfigFiles = this.injectorPerApp.get(OasConfigFiles) as OasConfigFiles;
+    oasConfigFiles.json = JSON.stringify(this.oasObject);
+    oasConfigFiles.yaml = stringify(this.oasObject);
 
     return this.oasObject;
   }
@@ -65,9 +71,9 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
       } else if (modOrObj === OpenapiModule) {
         continue;
       }
+      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
 
       aControllersMetadata2.forEach(({ providersPerRou }) => {
-        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
         const oasRouteMeta = injectorPerRou.get(OasRouteMeta) as OasRouteMeta;
@@ -92,7 +98,8 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   }
 
   protected initOasObject() {
-    this.oasObject = Object.assign({}, DEFAULT_OAS_OBJECT, this.injectorPerApp.get(OAS_OBJECT));
+    const oasExtensionOptions = this.injectorPerMod.get(OasExtensionOptions, {});
+    this.oasObject = Object.assign({}, DEFAULT_OAS_OBJECT, oasExtensionOptions.oasObject);
     this.oasObject.components = { ...(this.oasObject.components || {}) };
   }
 

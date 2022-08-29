@@ -14,7 +14,6 @@ import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach
 import { OpenapiCompilerExtension } from './openapi-compiler.extension';
 import { DEFAULT_OAS_OBJECT } from '../constants';
 import { OasGuard } from '../decorators/oas-guard';
-import { OAS_OBJECT } from '../di-tokens';
 
 describe('OpenapiCompilerExtension', () => {
   class MockOpenapiCompilerExtension extends OpenapiCompilerExtension {
@@ -32,8 +31,8 @@ describe('OpenapiCompilerExtension', () => {
   let mock: MockOpenapiCompilerExtension;
 
   beforeEach(() => {
-    const injector = ReflectiveInjector.resolveAndCreate([{ provide: OAS_OBJECT, useValue: DEFAULT_OAS_OBJECT }]);
-    mock = new MockOpenapiCompilerExtension(injector, null as any);
+    const injector = ReflectiveInjector.resolveAndCreate([]);
+    mock = new MockOpenapiCompilerExtension(injector, injector, null as any);
   });
 
   describe('setSecurityInfo()', () => {

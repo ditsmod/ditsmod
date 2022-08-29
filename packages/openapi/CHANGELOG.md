@@ -1,5 +1,12 @@
+<a name="openapi-2.1.1"></a>
+# [openapi-2.1.1](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.1.1) (2022-08-30)
+
+### Improvements
+
+- Removed warns from webpack.
+
 <a name="openapi-2.1.0"></a>
-# [openapi-2.1.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.1.0) (2022-08-27)
+## [openapi-2.1.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.1.0) (2022-08-27)
 
 ### BREAKING CHANGES
 
