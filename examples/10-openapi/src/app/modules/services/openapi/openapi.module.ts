@@ -4,7 +4,7 @@ import { oasObject } from './oas-object';
 
 const swaggerOAuthOptions: SwaggerOAuthOptions = {
   appName: 'Swagger UI Webpack Demo',
-  // See https://demo.identityserver.io/ for configuration details.
+  // See https://demo.duendesoftware.com/ for configuration details.
   clientId: 'implicit',
 };
 
