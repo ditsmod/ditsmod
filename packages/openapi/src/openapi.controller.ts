@@ -3,10 +3,11 @@ import { Controller, Res, Status } from '@ditsmod/core';
 
 import { OasRoute } from './decorators/oas-route';
 import { SwaggerConfigManager } from './services/swagger-config-manager';
+import { OasConfigFiles } from './types/oas-extension-options';
 
 @Controller()
 export class OpenapiController {
-  constructor(private res: Res, private swaggerConfigManager: SwaggerConfigManager) {}
+  constructor(private res: Res, private swaggerConfigManager: SwaggerConfigManager, private configFiles: OasConfigFiles) {}
 
   @OasRoute('GET', 'openapi', [], {
     description: 'OpenAPI documentation',
@@ -35,8 +36,7 @@ export class OpenapiController {
     },
   })
   async getYaml() {
-    const openapiYaml = await readFile(`${this.swaggerConfigManager.swaggerDist}/openapi.yaml`, 'utf8');
-    this.res.setContentType('text/yaml; charset=utf-8').send(openapiYaml);
+    this.res.setContentType('text/yaml; charset=utf-8').send(this.configFiles.yaml);
   }
 
   @OasRoute('GET', 'openapi.json', [], {
@@ -50,8 +50,7 @@ export class OpenapiController {
     },
   })
   async getJson() {
-    const openapiJson = await readFile(`${this.swaggerConfigManager.swaggerDist}/openapi.json`, 'utf8');
-    this.res.setContentType('application/json; charset=utf-8').send(openapiJson);
+    this.res.setContentType('application/json; charset=utf-8').send(this.configFiles.json);
   }
 
   @OasRoute('GET', 'openapi.bundle.js', [], {

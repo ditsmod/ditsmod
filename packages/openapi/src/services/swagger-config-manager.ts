@@ -7,8 +7,8 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { join } from 'path';
 import webpack, { CleanPlugin, Configuration } from 'webpack';
 
-import { SwaggerOAuthOptions } from '../swagger-ui/swagger-o-auth-options';
 import { SwaggerOptions } from '../swagger-ui/interfaces';
+import { OasExtensionOptions } from '../types/oas-extension-options';
 
 @Injectable()
 export class SwaggerConfigManager {
@@ -32,7 +32,8 @@ export class SwaggerConfigManager {
     const { path: prefixPerMod } = this.moduleExtract;
     const { port } = this.rootMeta.listenOptions;
     const path = [this.rootMeta.path, prefixPerMod, 'openapi.yaml'].filter((p) => p).join('/');
-    const oauthOptions = this.injectorPerMod.get(SwaggerOAuthOptions, null);
+    const oasExtensionOptions = this.injectorPerMod.get(OasExtensionOptions, null);
+    const oauthOptions = oasExtensionOptions?.swaggerOAuthOptions;
     const swaggerOptions: SwaggerOptions = {
       initUi: { url: `http://localhost:${port}/${path}`, dom_id: '#swagger' },
       oauthOptions: oauthOptions || {
@@ -72,10 +73,6 @@ export class SwaggerConfigManager {
           reject(info.errors && info.errors[0]);
         }
 
-        if (stats.hasWarnings()) {
-          this.log.warn(info.warnings);
-        }
-
         this.log.trace(
           stats.toString({
             chunks: false, // Makes the build much quieter
@@ -100,7 +97,7 @@ export class SwaggerConfigManager {
 
   protected getWebpackConfig() {
     const webpackConfig: Configuration = {
-      mode: 'production',
+      mode: 'development',
       entry: {
         openapi: require.resolve(`${this.swaggerUiSrc}/index`),
       },

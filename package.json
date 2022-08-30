@@ -49,12 +49,9 @@
   "author": "Костя Третяк",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ditsmod/core/issues"
+    "url": "https://github.com/ditsmod/ditsmod/issues"
   },
-  "homepage": "https://github.com/ditsmod/core#readme",
-  "resolutions": {
-    "node-fetch": "^2.6.1"
-  },
+  "homepage": "https://github.com/ditsmod/ditsmod#readme",
   "devDependencies": {
     "@types/bunyan": "^1.8.8",
     "@types/eslint": "^8.2.1",

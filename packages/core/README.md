@@ -40,8 +40,8 @@ See also [seed for @ditsmod/seed project](https://github.com/ditsmod/seed).
 
 [1]: https://github.com/ts-stack/di
 [2]: https://github.com/ditsmod/seed
-[3]: https://github.com/ditsmod/core
-[4]: https://github.com/ditsmod/core/tree/main/examples
+[3]: https://github.com/ditsmod/ditsmod
+[4]: https://github.com/ditsmod/ditsmod/tree/main/examples
 [5]: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction#Introducing_Express
 [6]: https://github.com/nestjsx/nest-router
 [7]: https://github.com/ditsmod/vs-webframework

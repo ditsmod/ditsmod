@@ -26,7 +26,7 @@ export class ExtensionsManager {
   /**
    * Settings by AppInitializer.
    */
-  beforeTokens: string[] = [];
+  beforeTokens = new Set<string>();
   protected unfinishedInit = new Set<Extension<any> | ExtensionsGroupToken<any>>();
   protected cache: Cache[] = [];
 
@@ -51,7 +51,7 @@ export class ExtensionsManager {
   ): Promise<any[] | false> {
     const beforeToken = `BEFORE ${groupToken}` as const;
     let cache = this.getCache(beforeToken);
-    if (!cache && this.beforeTokens.includes(beforeToken)) {
+    if (!cache && this.beforeTokens.has(beforeToken)) {
       this.unfinishedInit.add(beforeToken);
       this.logMediator.startExtensionsGroupInit(this, this.unfinishedInit);
       const value = await this.init(beforeToken);
