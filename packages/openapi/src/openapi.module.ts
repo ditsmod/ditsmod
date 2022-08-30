@@ -3,6 +3,7 @@ import {
   Module,
   ModuleWithParams,
   PRE_ROUTER_EXTENSIONS,
+  Providers,
   RouteMeta,
   ROUTES_EXTENSIONS,
 } from '@ditsmod/core';
@@ -15,11 +16,12 @@ import { OpenapiController } from './openapi.controller';
 import { SwaggerConfigManager } from './services/swagger-config-manager';
 import { SwaggerOAuthOptions } from './swagger-ui/swagger-o-auth-options';
 import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-options';
+import { OpenapiLogMediator } from './services/openapi-log-mediator';
 
 @Module({
   controllers: [OpenapiController],
   providersPerApp: [OasConfigFiles],
-  providersPerMod: [SwaggerConfigManager],
+  providersPerMod: [SwaggerConfigManager, ...new Providers().useLogMediator(OpenapiLogMediator)],
   providersPerRou: [{ provide: OasRouteMeta, useExisting: RouteMeta }],
   exports: [OasRouteMeta],
   extensions: [

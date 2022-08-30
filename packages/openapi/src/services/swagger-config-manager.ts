@@ -9,6 +9,7 @@ import webpack, { CleanPlugin, Configuration } from 'webpack';
 
 import { SwaggerOptions } from '../swagger-ui/interfaces';
 import { OasExtensionOptions } from '../types/oas-extension-options';
+import { OpenapiLogMediator } from './openapi-log-mediator';
 
 @Injectable()
 export class SwaggerConfigManager {
@@ -19,7 +20,7 @@ export class SwaggerConfigManager {
   private openapiRoot = join(__dirname, '../..');
 
   constructor(
-    private log: Logger,
+    private log: OpenapiLogMediator,
     private rootMeta: RootMetadata,
     private moduleExtract: ModuleExtract,
     private injectorPerMod: Injector
@@ -47,16 +48,15 @@ export class SwaggerConfigManager {
     const currentFileContent = await readFile(filePath, 'utf8');
     const dirExists = existsSync(this.webpackDist);
     if (dirExists && currentFileContent == futureFileContent) {
-      this.log.debug(`Skipping override ${filePath}`);
+      this.log.skippingOverrideFilePath(this, filePath);
       return;
     }
-    const logMsg = `override ${filePath} from "${currentFileContent}" to "${futureFileContent}"`;
-    this.log.debug(`Start ${logMsg}`);
+    this.log.overrideFilePath(this, filePath, currentFileContent, futureFileContent, 'Start');
     await writeFile(filePath, futureFileContent, 'utf8');
-    await this.webpackCompile(logMsg, filePath, currentFileContent);
+    await this.webpackCompile(filePath, currentFileContent, futureFileContent);
   }
 
-  protected webpackCompile(logMsg: string, filePath: string, currentFileContent: string) {
+  protected webpackCompile(filePath: string, currentFileContent: string, futureFileContent: string) {
     const compiler = webpack(this.getWebpackConfig());
 
     const promise = new Promise<void>((resolve, reject) => {
@@ -73,21 +73,16 @@ export class SwaggerConfigManager {
           reject(info.errors && info.errors[0]);
         }
 
-        this.log.trace(
-          stats.toString({
-            chunks: false, // Makes the build much quieter
-            colors: false, // Shows colors
-          })
-        );
+        this.log.showStatTrace(this, stats);
 
         resolve();
         this.inited = true;
 
-        this.log.debug(`Finish ${logMsg}`);
+        this.log.overrideFilePath(this, filePath, currentFileContent, futureFileContent, 'Finish');
       });
     }).catch(async (err) => {
       // Rollback because webpack failed
-      this.log.error(`Rollback during ${logMsg}`);
+      this.log.overrideFilePath(this, filePath, currentFileContent, futureFileContent, 'Rollback during');
       await writeFile(filePath, currentFileContent, 'utf8');
       throw err;
     });

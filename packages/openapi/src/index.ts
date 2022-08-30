@@ -11,4 +11,4 @@ export { OasRouteMeta } from './types/oas-route-meta';
 export * from './utils/content';
 export { Parameters, getParams } from './utils/parameters';
 export * from './utils/type-guards';
-
+export { OpenapiLogMediator } from './services/openapi-log-mediator';
