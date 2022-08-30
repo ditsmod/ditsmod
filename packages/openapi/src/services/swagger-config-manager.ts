@@ -1,4 +1,4 @@
-import { Logger, ModuleExtract, RootMetadata } from '@ditsmod/core';
+import { ModuleExtract, RootMetadata } from '@ditsmod/core';
 import { Injectable, Injector } from '@ts-stack/di';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { existsSync } from 'fs';
@@ -9,7 +9,6 @@ import webpack, { CleanPlugin, Configuration } from 'webpack';
 
 import { SwaggerOptions } from '../swagger-ui/interfaces';
 import { OasExtensionOptions } from '../types/oas-extension-options';
-import { OpenapiLogMediator } from './openapi-log-mediator';
 
 @Injectable()
 export class SwaggerConfigManager {
@@ -20,7 +19,6 @@ export class SwaggerConfigManager {
   private openapiRoot = join(__dirname, '../..');
 
   constructor(
-    private log: OpenapiLogMediator,
     private rootMeta: RootMetadata,
     private moduleExtract: ModuleExtract,
     private injectorPerMod: Injector
@@ -48,10 +46,8 @@ export class SwaggerConfigManager {
     const currentFileContent = await readFile(filePath, 'utf8');
     const dirExists = existsSync(this.webpackDist);
     if (dirExists && currentFileContent == futureFileContent) {
-      this.log.skippingOverrideFilePath(this, filePath);
       return;
     }
-    this.log.overrideFilePath(this, filePath, currentFileContent, futureFileContent, 'Start');
     await writeFile(filePath, futureFileContent, 'utf8');
     await this.webpackCompile(filePath, currentFileContent, futureFileContent);
   }
@@ -73,16 +69,11 @@ export class SwaggerConfigManager {
           reject(info.errors && info.errors[0]);
         }
 
-        this.log.showStatTrace(this, stats);
-
         resolve();
         this.inited = true;
-
-        this.log.overrideFilePath(this, filePath, currentFileContent, futureFileContent, 'Finish');
       });
     }).catch(async (err) => {
       // Rollback because webpack failed
-      this.log.overrideFilePath(this, filePath, currentFileContent, futureFileContent, 'Rollback during');
       await writeFile(filePath, currentFileContent, 'utf8');
       throw err;
     });
