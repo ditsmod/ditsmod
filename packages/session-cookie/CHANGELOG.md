@@ -1,5 +1,12 @@
+<a name="session-cookie-2.1.0"></a>
+# [session-cookie-2.1.0](https://github.com/ts-stack/ditsmod/releases/tag/session-cookie-2.1.0) (2022-08-30)
+
+### Features
+
+- Added `SessionLogMediator`, so you can override its log message.
+
 <a name="session-2.0.0-next.0"></a>
-# [session-2.0.0-next.0](https://github.com/ts-stack/ditsmod/releases/tag/session-2.0.0-next.0) (2021-11-20)
+## [session-2.0.0-next.0](https://github.com/ts-stack/ditsmod/releases/tag/session-2.0.0-next.0) (2021-11-20)
 
 ### BREAKING CHANGES
 
