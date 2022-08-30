@@ -52,9 +52,6 @@
     "url": "https://github.com/ditsmod/core/issues"
   },
   "homepage": "https://github.com/ditsmod/core#readme",
-  "resolutions": {
-    "node-fetch": "^2.6.1"
-  },
   "devDependencies": {
     "@types/bunyan": "^1.8.8",
     "@types/eslint": "^8.2.1",
