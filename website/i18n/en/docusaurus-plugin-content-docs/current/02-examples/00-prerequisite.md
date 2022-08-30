@@ -14,4 +14,4 @@ Then you can run one of the applications, experiment with them, and immediately 
 
 Each example has README.md, which briefly describes its main features.
 
-[1]: https://github.com/ditsmod/core/tree/main/examples
+[1]: https://github.com/ditsmod/ditsmod/tree/main/examples

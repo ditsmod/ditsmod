@@ -14,4 +14,4 @@ yarn boot
 
 Кожен приклад має README.md, де коротко описано основні його особливості.
 
-[100]: https://github.com/ditsmod/core/tree/main/examples
+[100]: https://github.com/ditsmod/ditsmod/tree/main/examples
