@@ -7,7 +7,7 @@ export class ExtensionObj {
   providers: ExtensionProvider[];
 }
 
-export type ExtensionOptions = {
+export class ExtensionOptions {
   extension: ExtensionType;
   groupToken: InjectionToken<Extension<any>[]>;
   /**
@@ -18,7 +18,7 @@ export type ExtensionOptions = {
    * Indicates whether this extension needs to be exported.
    */
   exported?: boolean;
-};
+}
 
 export function getExtensionProvider(extensionOptions: ExtensionOptions): ExtensionObj {
   const { nextToken, exported, extension, groupToken } = extensionOptions;
