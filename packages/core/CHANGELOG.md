@@ -1,5 +1,32 @@
+<a name="core-2.12.0"></a>
+# [core-2.12.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.12.0) (2022-08-31)
+
+### BREAKING CHANGES
+
+- Replaced `ExtensionItem1` and `ExtensionItem1`, by `ExtensionOptions`. Now:
+
+```ts
+// Old way
+Module({
+  // ...
+  extensions: [
+    [MY_GROUP_EXTENSIONS, MyExtension, true]
+  ],
+})
+export class SomeModule {}
+
+// New way
+Module({
+  // ...
+  extensions: [
+    { extension: MyExtension, groupToken: MY_GROUP_EXTENSIONS, exported: true }
+  ],
+})
+export class SomeModule {}
+```
+
 <a name="core-2.11.0"></a>
-# [core-2.11.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.11.0) (2022-08-27)
+## [core-2.11.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.11.0) (2022-08-27)
 
 ### BREAKING CHANGES
 

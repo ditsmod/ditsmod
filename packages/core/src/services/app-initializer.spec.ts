@@ -63,7 +63,7 @@ describe('AppInitializer', () => {
 
   describe('prepareProvidersPerApp()', () => {
     beforeEach(() => {
-      const logMediator = new LogMediator(new LogManager(), {moduleName: 'fakeName'});
+      const logMediator = new LogMediator(new LogManager(), { moduleName: 'fakeName' });
       moduleManager = new ModuleManager(logMediator);
       const rootMeta = new RootMetadata();
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
@@ -297,7 +297,7 @@ describe('AppInitializer', () => {
     class AppModule {}
 
     beforeEach(() => {
-      const logMediator = new LogMediator(new LogManager(), {moduleName: 'fakeName'});
+      const logMediator = new LogMediator(new LogManager(), { moduleName: 'fakeName' });
       moduleManager = new ModuleManager(logMediator);
       const rootMeta = new RootMetadata();
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
@@ -415,7 +415,7 @@ describe('AppInitializer', () => {
     let appMetadataMap: Map<AnyModule, MetadataPerMod1>;
 
     beforeAll(() => {
-      const logMediator = new LogMediator(new LogManager(), {moduleName: 'fakeName'});
+      const logMediator = new LogMediator(new LogManager(), { moduleName: 'fakeName' });
       moduleManager = new ModuleManager(logMediator);
       const rootMeta = new RootMetadata();
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
@@ -484,7 +484,10 @@ describe('AppInitializer', () => {
     it('Module3', async () => {
       const mod3 = appMetadataMap.get(module3WithParams);
       expect(mod3?.meta.providersPerApp).toEqual([]);
-      const providerPerMod: ServiceProvider = { provide: ModuleExtract, useValue: { path: 'one', moduleName: 'Module3' } };
+      const providerPerMod: ServiceProvider = {
+        provide: ModuleExtract,
+        useValue: { path: 'one', moduleName: 'Module3' },
+      };
       expect(mod3?.meta.providersPerMod).toEqual([providerPerMod]);
       expect(mod3?.meta.providersPerReq).toEqual([Provider5, Provider6, Provider7]);
       checkGlobalProviders(mod3);
@@ -506,7 +509,10 @@ describe('AppInitializer', () => {
       const appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
       const root1 = appMetadataMap.get(AppModule);
       expect(root1?.meta.providersPerApp.slice(0, 2)).toEqual([Logger, { provide: Router, useValue: 'fake' }]);
-      const providerPerMod: ServiceProvider = { provide: ModuleExtract, useValue: { path: '', moduleName: 'AppModule' } };
+      const providerPerMod: ServiceProvider = {
+        provide: ModuleExtract,
+        useValue: { path: '', moduleName: 'AppModule' },
+      };
       expect(root1?.meta.providersPerMod).toEqual([providerPerMod]);
       expect(root1?.meta.providersPerReq).toEqual([]);
       checkGlobalProviders(root1);
@@ -534,7 +540,7 @@ describe('AppInitializer', () => {
       }
 
       // Simulation of a call from the Application
-      const logMediator = new LogMediatorMock(new LogManager(), {moduleName: 'fakeName'});
+      const logMediator = new LogMediatorMock(new LogManager(), { moduleName: 'fakeName' });
       moduleManager = new ModuleManager(logMediator);
       const rootMeta = new RootMetadata();
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
@@ -585,7 +591,7 @@ describe('AppInitializer', () => {
 
     beforeEach(() => {
       testMethodSpy.mockRestore();
-      const logMediator = new LogMediator(new LogManager(), {moduleName: 'fakeName'});
+      const logMediator = new LogMediator(new LogManager(), { moduleName: 'fakeName' });
       moduleManager = new ModuleManager(logMediator);
       const rootMeta = new RootMetadata();
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
@@ -628,7 +634,7 @@ describe('AppInitializer', () => {
 
     beforeEach(() => {
       jestFn.mockRestore();
-      const logMediator = new LogMediator(new LogManager(), {moduleName: 'fakeName'});
+      const logMediator = new LogMediator(new LogManager(), { moduleName: 'fakeName' });
       moduleManager = new ModuleManager(logMediator);
       const rootMeta = new RootMetadata();
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
@@ -656,7 +662,7 @@ describe('AppInitializer', () => {
     it('properly declared extensions in a root module', async () => {
       @RootModule({
         providersPerApp: [{ provide: Router, useValue: 'fake value for router' }],
-        extensions: [[MY_EXTENSIONS, Extension1]],
+        extensions: [{ extension: Extension1, groupToken: MY_EXTENSIONS }],
       })
       class AppModule {}
 
