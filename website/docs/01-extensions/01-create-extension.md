@@ -119,24 +119,24 @@ export const MY_EXTENSIONS = new InjectionToken<Extension<void>[]>('MY_EXTENSION
 
 ### Реєстрація розширення
 
-В масив `extensions`, що знаходиться в метаданих модуля, можуть передаватись масиви двох типів:
+В масив `extensions`, що знаходиться в метаданих модуля, можуть передаватись об'єкти наступного типу:
 
 ```ts
-type ExtensionItem1 = [
-  groupToken: InjectionToken<Extension<any>[]>,
-  nextToken: InjectionToken<Extension<any>[]>,
-  extension: ExtensionType,
-  exported?: boolean
-];
-
-type ExtensionItem2 = [
-  groupToken: InjectionToken<Extension<any>[]>,
-  extension: ExtensionType,
-  exported?: boolean
-];
+export class ExtensionOptions {
+  extension: ExtensionType;
+  groupToken: InjectionToken<Extension<any>[]>;
+  /**
+   * The token of the group before which this extension will be called.
+   */
+  nextToken?: InjectionToken<Extension<any>[]>;
+  /**
+   * Indicates whether this extension needs to be exported.
+   */
+  exported?: boolean;
+}
 ```
 
-Перший тип масиву використовується, коли вашу групу розширень потрібно запускати перед іншою групою розширень:
+Властивість `nextToken` використовується, коли вашу групу розширень потрібно запускати перед іншою групою розширень:
 
 ```ts
 import { Module, ROUTES_EXTENSIONS } from '@ditsmod/core';
@@ -145,15 +145,15 @@ import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
 @Module({
   extensions: [
-    [MY_EXTENSIONS, ROUTES_EXTENSIONS, MyExtension, true]
+    { extension: MyExtension, groupToken: MY_EXTENSIONS, nextToken: ROUTES_EXTENSIONS, exported: true }
   ],
 })
 export class SomeModule {}
 ```
 
-Тобто в масиві на першому місці йде токен групи розширень `MY_EXTENSIONS`, до якої належить ваше розширення. На другому місці йде група розширень `ROUTES_EXTENSIONS`, перед якою потрібно запускати групу `MY_EXTENSIONS`. На третьому місці - клас розширення, а на четвертому - `true` - це індикатор того, чи потрібно експортувати дане розширення з поточного модуля.
+Тобто у властивість `groupToken` передається токен групи `MY_EXTENSIONS`, до якої належить ваше розширення. У властивість `nextToken` передається токен групи розширень `ROUTES_EXTENSIONS`, перед якою потрібно запускати групу `MY_EXTENSIONS`. Властивість `exported` вказує на те, чи потрібно експортувати дане розширення з поточного модуля.
 
-Якщо ж для вашого розширення не важливо перед якою групою розширень воно працюватиме, можна використати другий тип масиву:
+Якщо ж для вашого розширення не важливо перед якою групою розширень воно працюватиме, можна спростити реєстрацію:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -162,13 +162,11 @@ import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
 @Module({
   extensions: [
-    [MY_EXTENSIONS, MyExtension, true]
+    { extension: MyExtension, groupToken: MY_EXTENSIONS, exported: true }
   ],
 })
 export class SomeModule {}
 ```
-
-Тобто усе те саме, що і у масиві першого типу, але без групи розширень, перед якою повинно стартувати ваше розширення.
 
 ## Використання ExtensionsManager
 

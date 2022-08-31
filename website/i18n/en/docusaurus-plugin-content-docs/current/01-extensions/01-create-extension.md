@@ -119,24 +119,24 @@ As you can see, each extension group must specify that DI will return an array o
 
 ### Extension registration
 
-Two types of arrays can be passed to the `extensions` array, which is in the module's metadata:
+Objects of the following type can be transferred to the `extensions` array, which is in the module's metadata:
 
 ```ts
-type ExtensionItem1 = [
-  groupToken: InjectionToken<Extension<any>[]>,
-  nextToken: InjectionToken<Extension<any>[]>,
-  extension: ExtensionType,
-  exported?: boolean
-];
-
-type ExtensionItem2 = [
-  groupToken: InjectionToken<Extension<any>[]>,
-  extension: ExtensionType,
-  exported?: boolean
-];
+export class ExtensionOptions {
+  extension: ExtensionType;
+  groupToken: InjectionToken<Extension<any>[]>;
+  /**
+   * The token of the group before which this extension will be called.
+   */
+  nextToken?: InjectionToken<Extension<any>[]>;
+  /**
+   * Indicates whether this extension needs to be exported.
+   */
+  exported?: boolean;
+}
 ```
 
-The first type of array is used when you need to run your extension group before another extension group:
+The `nextToken` property is used when you want your extension group to run before another extension group:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -146,15 +146,15 @@ import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
 @Module({
   extensions: [
-    [MY_EXTENSIONS, ROUTES_EXTENSIONS, MyExtension, true]
+    { extension: MyExtension, groupToken: MY_EXTENSIONS, nextToken: ROUTES_EXTENSIONS, exported: true }
   ],
 })
 export class SomeModule {}
 ```
 
-That is, in the array in the first place is the token of the extension group `MY_EXTENSIONS`, to which your extension belongs. In the second place is a group of extensions `ROUTES_EXTENSIONS`, before which you need to run the group `MY_EXTENSIONS`. In the third place - the extension class, and in the fourth - `true` - is an indicator of whether to export this extension from the current module.
+That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `groupToken` property. The token of the `ROUTES_EXTENSIONS` extension group, before which the `MY_EXTENSIONS` group should be started, is passed to the `nextToken` property. The `exported` property indicates whether this extension should be exported from the current module.
 
-If your extension doesn't care before which group of extensions it will work, you can use the second type of array:
+If for your extension it is not important for which group of extensions it will work, you can simplify the registration:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -163,13 +163,11 @@ import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
 @Module({
   extensions: [
-    [MY_EXTENSIONS, MyExtension, true]
+    { extension: MyExtension, groupToken: MY_EXTENSIONS, exported: true }
   ],
 })
 export class SomeModule {}
 ```
-
-That is, everything is the same as in the first type of array, but without a group of extensions, before which your extension should start.
 
 ## Using ExtensionsManager
 
