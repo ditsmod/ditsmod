@@ -7,8 +7,6 @@ import { MyExtension } from './my-extension';
 @RootModule({
   imports: [RouterModule],
   controllers: [HelloWorldController],
-  extensions: [
-    [PRE_ROUTER_EXTENSIONS, MyExtension],
-  ],
+  extensions: [{ extension: MyExtension, groupToken: PRE_ROUTER_EXTENSIONS }],
 })
 export class AppModule {}
