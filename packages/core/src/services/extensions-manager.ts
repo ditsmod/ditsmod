@@ -80,7 +80,7 @@ export class ExtensionsManager {
   // prettier-ignore
   async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays?: boolean, extension?: Type<Extension<any>>): Promise<T[]>;
   // prettier-ignore
-  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays = true, extension?: Type<Extension<any>>): Promise<T[] | false> {
+  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays = true, ExtensionAwaiting?: Type<Extension<any>>): Promise<T[] | false> {
     const lastItem = [...this.unfinishedInit].pop();
     if (lastItem && !isInjectionToken(lastItem) && typeof lastItem != 'string') {
       // lastItem is an extension
@@ -88,7 +88,7 @@ export class ExtensionsManager {
         this.throwCircularDeps(groupToken);
       }
       if (typeof groupToken != 'string') {
-        return this.initPairOfGroups(groupToken, autoMergeArrays, extension);
+        return this.initPairOfGroups(groupToken, autoMergeArrays, ExtensionAwaiting);
       }
     }
     const extensions = this.injector.get(groupToken, []) as Extension<T>[];
@@ -120,8 +120,8 @@ export class ExtensionsManager {
       }
     }
 
-    if (extension) {
-      return this.getDataFromAllModules(groupToken, extension, aCurrentData);
+    if (ExtensionAwaiting) {
+      return this.getDataFromAllModules(groupToken, ExtensionAwaiting, aCurrentData);
     } else {
       return aCurrentData;
     }
