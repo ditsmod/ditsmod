@@ -1,5 +1,12 @@
+<a name="openapi-2.1.2"></a>
+# [openapi-2.1.2](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.1.2) (2022-08-30)
+
+### Improvements
+
+- Removed useless log messages.
+
 <a name="openapi-2.1.1"></a>
-# [openapi-2.1.1](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.1.1) (2022-08-30)
+## [openapi-2.1.1](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.1.1) (2022-08-30)
 
 ### Improvements
 

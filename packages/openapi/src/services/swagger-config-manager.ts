@@ -1,4 +1,4 @@
-import { Logger, ModuleExtract, RootMetadata } from '@ditsmod/core';
+import { ModuleExtract, RootMetadata } from '@ditsmod/core';
 import { Injectable, Injector } from '@ts-stack/di';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { existsSync } from 'fs';
@@ -19,7 +19,6 @@ export class SwaggerConfigManager {
   private openapiRoot = join(__dirname, '../..');
 
   constructor(
-    private log: Logger,
     private rootMeta: RootMetadata,
     private moduleExtract: ModuleExtract,
     private injectorPerMod: Injector
@@ -47,16 +46,13 @@ export class SwaggerConfigManager {
     const currentFileContent = await readFile(filePath, 'utf8');
     const dirExists = existsSync(this.webpackDist);
     if (dirExists && currentFileContent == futureFileContent) {
-      this.log.debug(`Skipping override ${filePath}`);
       return;
     }
-    const logMsg = `override ${filePath} from "${currentFileContent}" to "${futureFileContent}"`;
-    this.log.debug(`Start ${logMsg}`);
     await writeFile(filePath, futureFileContent, 'utf8');
-    await this.webpackCompile(logMsg, filePath, currentFileContent);
+    await this.webpackCompile(filePath, currentFileContent, futureFileContent);
   }
 
-  protected webpackCompile(logMsg: string, filePath: string, currentFileContent: string) {
+  protected webpackCompile(filePath: string, currentFileContent: string, futureFileContent: string) {
     const compiler = webpack(this.getWebpackConfig());
 
     const promise = new Promise<void>((resolve, reject) => {
@@ -73,21 +69,11 @@ export class SwaggerConfigManager {
           reject(info.errors && info.errors[0]);
         }
 
-        this.log.trace(
-          stats.toString({
-            chunks: false, // Makes the build much quieter
-            colors: false, // Shows colors
-          })
-        );
-
         resolve();
         this.inited = true;
-
-        this.log.debug(`Finish ${logMsg}`);
       });
     }).catch(async (err) => {
       // Rollback because webpack failed
-      this.log.error(`Rollback during ${logMsg}`);
       await writeFile(filePath, currentFileContent, 'utf8');
       throw err;
     });

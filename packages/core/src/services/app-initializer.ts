@@ -222,7 +222,6 @@ export class AppInitializer {
   protected createInjectorAndSetLogMediator() {
     this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.meta.providersPerApp);
     const log = this.injectorPerApp.get(LogMediator) as LogMediator;
-    log.bufferLogs = true;
     this.logMediator = log;
   }
 

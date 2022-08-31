@@ -1,11 +1,5 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
-import {
-  Module,
-  ModuleWithParams,
-  PRE_ROUTER_EXTENSIONS,
-  RouteMeta,
-  ROUTES_EXTENSIONS,
-} from '@ditsmod/core';
+import { Module, ModuleWithParams, PRE_ROUTER_EXTENSIONS, RouteMeta, ROUTES_EXTENSIONS } from '@ditsmod/core';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension';
 import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension';
@@ -23,14 +17,19 @@ import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-optio
   providersPerRou: [{ provide: OasRouteMeta, useExisting: RouteMeta }],
   exports: [OasRouteMeta],
   extensions: [
-    [ROUTES_EXTENSIONS, OpenapiRoutesExtension, true],
-    [OAS_COMPILER_EXTENSIONS, PRE_ROUTER_EXTENSIONS, OpenapiCompilerExtension, true],
+    { extension: OpenapiRoutesExtension, groupToken: ROUTES_EXTENSIONS, exported: true },
+    {
+      extension: OpenapiCompilerExtension,
+      groupToken: OAS_COMPILER_EXTENSIONS,
+      nextToken: PRE_ROUTER_EXTENSIONS,
+      exported: true,
+    },
   ],
 })
 export class OpenapiModule {
   static withParams(
     oasObject: XOasObject<any>,
-    swaggerOAuthOptions?: SwaggerOAuthOptions,
+    swaggerOAuthOptions?: SwaggerOAuthOptions
   ): ModuleWithParams<OpenapiModule> {
     const oasExtensionOptions: OasExtensionOptions = {
       oasObject,

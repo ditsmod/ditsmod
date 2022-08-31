@@ -15,7 +15,7 @@ import {
   ServiceProvider,
 } from '../types/mix';
 import { ModuleMetadata } from '../types/module-metadata';
-import { ExtensionItem1, getExtensionProvider } from '../utils/get-extension-provider';
+import { getExtensionProvider } from '../utils/get-extension-provider';
 import { getModule } from '../utils/get-module';
 import { getModuleMetadata } from '../utils/get-module-metadata';
 import { getModuleName } from '../utils/get-module-name';
@@ -392,8 +392,8 @@ export class ModuleManager {
 
     this.checkReexportModules(meta);
 
-    rawMeta.extensions?.forEach((extensionTuple) => {
-      const extensionObj = getExtensionProvider(...(extensionTuple as ExtensionItem1));
+    rawMeta.extensions?.forEach((extensionOptions) => {
+      const extensionObj = getExtensionProvider(extensionOptions);
       extensionObj.providers.forEach((p) => this.checkExtension(modName, p));
       meta.extensionsProviders.push(...extensionObj.providers);
       extensionObj.exports.forEach((token) => {

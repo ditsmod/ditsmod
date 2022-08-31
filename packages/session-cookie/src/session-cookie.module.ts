@@ -1,19 +1,18 @@
-import { Logger, Module } from '@ditsmod/core';
+import { Logger, Module, Providers } from '@ditsmod/core';
 
 import { SessionCookie } from './session-cookie';
+import { SessionLogMediator } from './session-log-mediator';
 import { SessionCookieOptions } from './types';
 
 @Module({
-  providersPerMod: [SessionCookieOptions],
+  providersPerMod: [SessionCookieOptions, ...new Providers().useLogMediator(SessionLogMediator)],
   providersPerReq: [SessionCookie],
   exports: [SessionCookie, SessionCookieOptions],
 })
 export class SessionCookieModule {
-  constructor(opts: SessionCookieOptions, logger: Logger) {
+  constructor(opts: SessionCookieOptions, log: SessionLogMediator) {
     if (opts.expires && opts.maxAge) {
-      logger.warn(
-        'You cannot set opts.expires and opts.maxAge at the same time. For now, opts.maxAge will be ignored.'
-      );
+      log.cannotSetExpireAndMaxAge(this);
     }
   }
 }

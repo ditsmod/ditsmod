@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import * as http from 'http';
 import { Injectable, forwardRef, InjectionToken } from '@ts-stack/di';
-import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
+import { it, fit, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
 import { RootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
@@ -43,7 +43,7 @@ describe('ModuleManager', () => {
     const config = new LoggerConfig();
     const logger = new ConsoleLogger(config);
     const logManager = new LogManager();
-    const logMediator = new LogMediator(logManager, {moduleName: 'fakeName', path: ''}, logger);
+    const logMediator = new LogMediator(logManager, { moduleName: 'fakeName', path: '' }, logger);
     mock = new MockModuleManager(logMediator);
   });
 
@@ -67,7 +67,7 @@ describe('ModuleManager', () => {
       const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
 
       @Module({
-        extensions: [[GROUP1_EXTENSIONS, Ext, true]],
+        extensions: [{ extension: Ext, groupToken: GROUP1_EXTENSIONS, exported: true }],
       })
       class Module1 {}
 
@@ -273,14 +273,14 @@ describe('ModuleManager', () => {
   it('exports multi providers', () => {
     class Multi {}
 
-    const exportedMultiProvidersPerMod = [{ provide: Multi, useClass: Multi, multi: true}];
-    
+    const exportedMultiProvidersPerMod = [{ provide: Multi, useClass: Multi, multi: true }];
+
     @Module({ exports: [Multi] })
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
         return {
           module: this,
-          providersPerMod: [{ provide: Multi, useClass: Multi, multi: true}]
+          providersPerMod: [{ provide: Multi, useClass: Multi, multi: true }],
         };
       }
     }
@@ -355,7 +355,7 @@ describe('ModuleManager', () => {
     class Extension1 {}
     const TEST_EXTENSIONS = new InjectionToken<Extension<any>>('TEST_EXTENSIONS');
 
-    @Module({ extensions: [[TEST_EXTENSIONS, Extension1 as any, true]] })
+    @Module({ extensions: [{ extension: Extension1 as any, groupToken: TEST_EXTENSIONS, exported: true }] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).toThrow('must have init() method');
@@ -368,7 +368,7 @@ describe('ModuleManager', () => {
     }
     const TEST_EXTENSIONS = new InjectionToken<Extension<any>>('TEST_EXTENSIONS');
 
-    @Module({ extensions: [[TEST_EXTENSIONS, Extension1 as any, true]] })
+    @Module({ extensions: [{ extension: Extension1 as any, groupToken: TEST_EXTENSIONS, exported: true }] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).not.toThrow();
@@ -782,7 +782,7 @@ describe('ModuleManager', () => {
     const extensionsProviders: ExtensionProvider[] = [{ provide: GROUP_EXTENSIONS, useClass: Extension1, multi: true }];
 
     @Module({
-      extensions: [[GROUP_EXTENSIONS, Extension1, true]],
+      extensions: [{ extension: Extension1 as any, groupToken: GROUP_EXTENSIONS, exported: true }],
     })
     class Module1 {}
 
@@ -821,7 +821,7 @@ describe('ModuleManager', () => {
     const extensionsProviders: ExtensionProvider[] = [{ provide: GROUP_EXTENSIONS, useClass: Extension1, multi: true }];
 
     @Module({
-      extensions: [[GROUP_EXTENSIONS, Extension1, true]],
+      extensions: [{ extension: Extension1 as any, groupToken: GROUP_EXTENSIONS, exported: true }],
     })
     class Module1 {}
 

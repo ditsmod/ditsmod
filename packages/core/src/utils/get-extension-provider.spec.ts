@@ -2,7 +2,7 @@ import { InjectionToken } from '@ts-stack/di';
 import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
 import { Extension, ExtensionProvider } from '../types/mix';
-import { ExtensionItem1, ExtensionItem2, ExtensionObj, getExtensionProvider } from './get-extension-provider';
+import { ExtensionOptions, getExtensionProvider } from './get-extension-provider';
 
 describe('getExtensionProviders', () => {
   const MY_EXTENSION = new InjectionToken('MY_EXTENSION');
@@ -15,24 +15,24 @@ describe('getExtensionProviders', () => {
     const providers: ExtensionProvider[] = [{ provide: MY_EXTENSION, useClass: Extension1, multi: true }];
 
     it('extension without exports (two arguments)', () => {
-      const args: ExtensionItem2 = [MY_EXTENSION, Extension1];
-      expect(getExtensionProvider(...args)).toEqual({
+      const args: ExtensionOptions = { extension: Extension1, groupToken: MY_EXTENSION };
+      expect(getExtensionProvider(args)).toEqual({
         exports: [],
         providers,
       });
     });
 
     it('extension without exports (three arguments)', () => {
-      const args: ExtensionItem2 = [MY_EXTENSION, Extension1, false];
-      expect(getExtensionProvider(...args)).toEqual({
+      const args: ExtensionOptions = { extension: Extension1, groupToken: MY_EXTENSION, exported: false };
+      expect(getExtensionProvider(args)).toEqual({
         exports: [],
         providers,
       });
     });
 
     it('extension with exports', () => {
-      const args: ExtensionItem2 = [MY_EXTENSION, Extension1, true];
-      expect(getExtensionProvider(...args)).toEqual({
+      const args: ExtensionOptions = { extension: Extension1, groupToken: MY_EXTENSION, exported: true };
+      expect(getExtensionProvider(args)).toEqual({
         exports: [MY_EXTENSION],
         providers,
       });
@@ -47,24 +47,34 @@ describe('getExtensionProviders', () => {
     ];
 
     it('extension without exports (three arguments)', () => {
-      const args: ExtensionItem1 = [MY_EXTENSION, OTHER_EXTENSION, Extension1];
-      expect(getExtensionProvider(MY_EXTENSION, OTHER_EXTENSION, Extension1)).toEqual({
+      const args: ExtensionOptions = { extension: Extension1, groupToken: MY_EXTENSION, nextToken: OTHER_EXTENSION };
+      expect(getExtensionProvider(args)).toEqual({
         exports: [],
         providers,
       });
     });
 
     it('extension without exports (foure arguments)', () => {
-      const args: ExtensionItem1 = [MY_EXTENSION, OTHER_EXTENSION, Extension1, false];
-      expect(getExtensionProvider(...args)).toEqual({
+      const args: ExtensionOptions = {
+        extension: Extension1,
+        groupToken: MY_EXTENSION,
+        nextToken: OTHER_EXTENSION,
+        exported: false,
+      };
+      expect(getExtensionProvider(args)).toEqual({
         exports: [],
         providers,
       });
     });
 
     it('extension with exports', () => {
-      const args: ExtensionItem1 = [MY_EXTENSION, OTHER_EXTENSION, Extension1, true];
-      expect(getExtensionProvider(...args)).toEqual({
+      const args: ExtensionOptions = {
+        extension: Extension1,
+        groupToken: MY_EXTENSION,
+        nextToken: OTHER_EXTENSION,
+        exported: true,
+      };
+      expect(getExtensionProvider(args)).toEqual({
         exports: [Extension1, MY_EXTENSION, `BEFORE ${OTHER_EXTENSION}`],
         providers,
       });

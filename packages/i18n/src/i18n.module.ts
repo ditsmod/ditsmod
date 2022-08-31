@@ -7,7 +7,9 @@ import { I18nOptions, I18N_EXTENSIONS } from './types/mix';
 import { DictPerModService } from './dict-per-mod.service';
 
 @Module({
-  extensions: [[I18N_EXTENSIONS, PRE_ROUTER_EXTENSIONS, I18nExtension, true]],
+  extensions: [
+    { extension: I18nExtension, groupToken: I18N_EXTENSIONS, nextToken: PRE_ROUTER_EXTENSIONS, exported: true },
+  ],
   providersPerMod: [I18nOptions, DictPerModService, ...new Providers().useLogMediator(I18nLogMediator)],
   providersPerReq: [DictService],
   exports: [DictService],
