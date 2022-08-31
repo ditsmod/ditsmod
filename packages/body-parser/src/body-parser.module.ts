@@ -7,6 +7,13 @@ import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.exten
  * This is done using `BodyParserExtension` in `BODY_PARSER_EXTENSIONS` group.
  */
 @Module({
-  extensions: [[BODY_PARSER_EXTENSIONS, PRE_ROUTER_EXTENSIONS, BodyParserExtension, true]],
+  extensions: [
+    {
+      extension: BodyParserExtension,
+      groupToken: BODY_PARSER_EXTENSIONS,
+      nextToken: PRE_ROUTER_EXTENSIONS,
+      exported: true,
+    },
+  ],
 })
 export class BodyParserModule {}
