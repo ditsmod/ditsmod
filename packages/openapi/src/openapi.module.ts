@@ -47,8 +47,11 @@ export class OpenapiModule {
     return {
       module: OpenapiModule,
       path: '',
+      providersPerApp: [
+        ...new Providers().useValue(OasExtensionOptions, oasExtensionOptions),
+      ],
       providersPerMod: [
-        ...new Providers().useValue(OasExtensionOptions, oasExtensionOptions).useLogMediator(OpenapiLogMediator),
+        ...new Providers().useLogMediator(OpenapiLogMediator),
       ],
     };
   }
