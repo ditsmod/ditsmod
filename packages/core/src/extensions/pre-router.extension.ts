@@ -125,15 +125,10 @@ export class PreRouterExtension implements Extension<void> {
 
       this.logMediator.printRoute(this, httpMethod, path);
 
-      try {
-        if (httpMethod == 'ALL') {
-          this.router.all(`/${path}`, handle);
-        } else {
-          this.router.on(httpMethod, `/${path}`, handle);
-        }
-      } catch (err: any) {
-        const msg = `Setting route '/${path}' in ${moduleName} failed: ${err.message}`;
-        throw new Error(msg);
+      if (httpMethod == 'ALL') {
+        this.router.all(`/${path}`, handle);
+      } else {
+        this.router.on(httpMethod, `/${path}`, handle);
       }
     });
   }
