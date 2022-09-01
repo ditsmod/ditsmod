@@ -1,5 +1,12 @@
+<a name="core-2.13.1"></a>
+# [core-2.13.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.1) (2022-09-02)
+
+### Bug fix
+
+- Make `allowRaisedLogs` optional for `LoggerConfig`.
+
 <a name="core-2.13.0"></a>
-# [core-2.13.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.0) (2022-09-02)
+## [core-2.13.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.0) (2022-09-02)
 
 ### Features
 
@@ -8,7 +15,7 @@
 
 ### Bug fix
 
-- Fixed `importsResolver.resolveProvidersForExtensions()`;
+- Fixed `importsResolver.resolveProvidersForExtensions()`.
 
 <a name="core-2.12.0"></a>
 ## [core-2.12.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.12.0) (2022-08-31)

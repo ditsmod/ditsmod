@@ -11,7 +11,9 @@ export class LoggerConfig {
    * 
    * Default - true.
    */
-  constructor(public level: LogLevel = 'info', public allowRaisedLogs: boolean = true) {}
+  constructor(public level: LogLevel = 'info', public allowRaisedLogs?: boolean) {
+    this.allowRaisedLogs = allowRaisedLogs || true;
+  }
 }
 
 const msg = 'You need to implement "%s" method in "%s"';
