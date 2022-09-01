@@ -1,5 +1,12 @@
+<a name="core-2.13.0"></a>
+# [core-2.13.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.0) (2022-09-01)
+
+### Features
+
+- Automatic addition of module name to log message for `LogMediator` if the filter is applied.
+
 <a name="core-2.12.0"></a>
-# [core-2.12.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.12.0) (2022-08-31)
+## [core-2.12.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.12.0) (2022-08-31)
 
 ### BREAKING CHANGES
 

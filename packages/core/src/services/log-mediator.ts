@@ -82,7 +82,7 @@ export class LogMediator {
     protected moduleExtract: ModuleExtract,
     @Optional() protected _logger: Logger = new ConsoleLogger(),
     @Optional() protected logFilter: LogFilter = new LogFilter(),
-    @Optional() protected loggerConfig: LoggerConfig = new LoggerConfig(),
+    @Optional() protected loggerConfig: LoggerConfig = new LoggerConfig()
   ) {}
 
   getLogManager() {
@@ -91,7 +91,8 @@ export class LogMediator {
 
   protected setLog<T extends MsgLogFilter>(msgLevel: LogLevel, msgLogFilter: T, msg: any) {
     if (this.logManager.bufferLogs) {
-      const loggerLevel: LogLevel = typeof this._logger.getLevel == 'function' ? this._logger.getLevel() : this.loggerConfig.level;
+      const loggerLevel: LogLevel =
+        typeof this._logger.getLevel == 'function' ? this._logger.getLevel() : this.loggerConfig.level;
 
       this.logManager.buffer.push({
         moduleName: this.moduleExtract.moduleName,
@@ -149,15 +150,16 @@ export class LogMediator {
       let hasTags: boolean | undefined = true;
       let hasModuleName: boolean | undefined = true;
       let hasClassName: boolean | undefined = true;
-      if (loggerLogFilter!.modulesNames) {
+      if (loggerLogFilter.modulesNames) {
         hasModuleName = loggerLogFilter!.modulesNames?.includes(moduleName);
       }
-      if (loggerLogFilter!.classesNames) {
+      if (loggerLogFilter.classesNames) {
         hasClassName = loggerLogFilter!.classesNames?.includes(msgLogFilter.className || '');
       }
-      if (loggerLogFilter!.tags) {
+      if (loggerLogFilter.tags) {
         hasTags = msgLogFilter.tags?.some((tag) => loggerLogFilter!.tags?.includes(tag));
       }
+      this.transformMsgIfFilterApplied(item, loggerLogFilter);
       return hasModuleName && hasClassName && hasTags;
     });
 
@@ -168,13 +170,23 @@ export class LogMediator {
     return filteredBuffer;
   }
 
+  protected transformMsgIfFilterApplied(item: LogItem, loggerLogFilter: LogFilter) {
+    if (loggerLogFilter.modulesNames || loggerLogFilter.classesNames || loggerLogFilter.tags) {
+      item.msg = `${this.moduleExtract.moduleName}: ${item.msg}`;
+    }
+  }
+
   protected detectedDifferentLogFilters(uniqFilters: Map<LogFilter, string>) {
     const filtersStr: string[] = [];
     uniqFilters.forEach((moduleName, filter) => {
-      filtersStr.push(`${moduleName} ${JSON.stringify(filter)}`)
+      filtersStr.push(`${moduleName} ${JSON.stringify(filter)}`);
     });
 
-    this.logger.log.call(this.logger, 'warn', `LogMediator: detected ${uniqFilters.size} different LogFilters: ${filtersStr.join(', ')}`);
+    this.logger.log.call(
+      this.logger,
+      'warn',
+      `LogMediator: detected ${uniqFilters.size} different LogFilters: ${filtersStr.join(', ')}`
+    );
   }
 
   /**
@@ -332,7 +344,11 @@ export class LogMediator {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    this.setLog('debug', msgLogFilter, `${className}: ${'='.repeat(20)} ${this.moduleExtract.moduleName} ${'='.repeat(20)}`);
+    this.setLog(
+      'debug',
+      msgLogFilter,
+      `${className}: ${'='.repeat(20)} ${this.moduleExtract.moduleName} ${'='.repeat(20)}`
+    );
   }
 
   /**
@@ -347,13 +363,15 @@ export class LogMediator {
   }
 
   protected getExtentionPath(unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
-    return [...unfinishedInit].map((tokenOrExtension) => {
-      if (isInjectionToken(tokenOrExtension) || typeof tokenOrExtension == 'string') {
-        return getProviderName(tokenOrExtension);
-      } else {
-        return tokenOrExtension.constructor.name;
-      }
-    }).join(' -> ');
+    return [...unfinishedInit]
+      .map((tokenOrExtension) => {
+        if (isInjectionToken(tokenOrExtension) || typeof tokenOrExtension == 'string') {
+          return getProviderName(tokenOrExtension);
+        } else {
+          return tokenOrExtension.constructor.name;
+        }
+      })
+      .join(' -> ');
   }
 
   /**
