@@ -1,5 +1,12 @@
+<a name="openapi-2.2.0"></a>
+# [openapi-2.2.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.2.0) (2022-09-01)
+
+### Features
+
+- Added `OpenapiLogMediator`.
+
 <a name="openapi-2.1.2"></a>
-# [openapi-2.1.2](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.1.2) (2022-08-30)
+## [openapi-2.1.2](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.1.2) (2022-08-30)
 
 ### Improvements
 

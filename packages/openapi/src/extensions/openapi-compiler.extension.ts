@@ -27,6 +27,7 @@ import { DEFAULT_OAS_OBJECT } from '../constants';
 import { isOasGuard } from '../utils/type-guards';
 import { OpenapiModule } from '../openapi.module';
 import { OasConfigFiles, OasExtensionOptions } from '../types/oas-extension-options';
+import { OpenapiLogMediator } from '../services/openapi-log-mediator';
 
 @Injectable()
 export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
@@ -36,7 +37,8 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   constructor(
     private injectorPerApp: InjectorPerApp,
     private injectorPerMod: Injector,
-    private extensionsManager: ExtensionsManager
+    private extensionsManager: ExtensionsManager,
+    private log: OpenapiLogMediator
   ) {}
 
   async init() {
@@ -46,8 +48,10 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
 
     const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS, true, OpenapiCompilerExtension);
     if (!aMetadataPerMod2) {
+      this.log.dataAccumulation(this);
       return false;
     }
+    this.log.applyingAccumulatedData(this);
 
     await this.compileOasObject(aMetadataPerMod2);
     await mkdir(this.swaggerUiDist, { recursive: true });
@@ -98,7 +102,13 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   }
 
   protected initOasObject() {
-    const oasExtensionOptions = this.injectorPerMod.get(OasExtensionOptions, {});
+    let oasExtensionOptions = this.injectorPerMod.get(OasExtensionOptions, null);
+    if (!oasExtensionOptions) {
+      oasExtensionOptions = {};
+      this.log.oasObjectNotFound(this);
+    } else {
+      this.log.foundOasObject(this);
+    }
     this.oasObject = Object.assign({}, DEFAULT_OAS_OBJECT, oasExtensionOptions.oasObject);
     this.oasObject.components = { ...(this.oasObject.components || {}) };
   }
