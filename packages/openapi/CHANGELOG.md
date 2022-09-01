@@ -1,5 +1,12 @@
+<a name="openapi-2.2.1"></a>
+# [openapi-2.2.1](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.2.1) (2022-09-02)
+
+### Bug fix
+
+- Fixed `providersPerApp` and `providersPerMod` for `OpenapiModule`.
+
 <a name="openapi-2.2.0"></a>
-# [openapi-2.2.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.2.0) (2022-09-01)
+## [openapi-2.2.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.2.0) (2022-09-01)
 
 ### Features
 
