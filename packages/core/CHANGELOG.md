@@ -5,6 +5,10 @@
 
 - Automatic addition of module name to log message for `LogMediator` if the filter is applied.
 
+### Bug fix
+
+- Fixed `importsResolver.resolveProvidersForExtensions()`;
+
 <a name="core-2.12.0"></a>
 ## [core-2.12.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.12.0) (2022-08-31)
 

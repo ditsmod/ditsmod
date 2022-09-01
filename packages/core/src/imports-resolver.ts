@@ -16,6 +16,7 @@ import { defaultExtensions, defaultExtensionsTokens } from './services/default-e
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { getDependencies, ReflectiveDependecy } from './utils/get-dependecies';
 import { LogMediator } from './services/log-mediator';
+import { isClassProvider, isExistingProvider, isFactoryProvider, isValueProvider } from './utils/type-guards';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -75,7 +76,38 @@ export class ImportsResolver {
     this.extensionsTokens = getTokens([...defaultExtensionsTokens, ...currentExtensionsTokens]);
 
     importedTokensMap.extensions.forEach((providers, module) => {
-      const newProviders = providers.filter((p) => !meta.extensionsProviders.includes(p));
+      const newProviders = providers.filter((np) => {
+        for (const ep of meta.extensionsProviders) {
+          if (ep === np) {
+            return false;
+          }
+          if (isClassProvider(ep) && isClassProvider(np)) {
+            const equal = ep.provide === np.provide && ep.useClass === np.useClass;
+            if (equal) {
+              return false;
+            }
+          }
+          if (isExistingProvider(ep) && isExistingProvider(np)) {
+            const equal = ep.provide === np.provide && ep.useExisting === np.useExisting;
+            if (equal) {
+              return false;
+            }
+          }
+          if (isFactoryProvider(ep) && isFactoryProvider(np)) {
+            const equal = ep.provide === np.provide && ep.useFactory === np.useFactory;
+            if (equal) {
+              return false;
+            }
+          }
+          if (isValueProvider(ep) && isValueProvider(np)) {
+            const equal = ep.provide === np.provide && ep.useValue === np.useValue;
+            if (equal) {
+              return false;
+            }
+          }
+        }
+        return true;
+      });
       meta.extensionsProviders.unshift(...newProviders);
       providers.forEach((provider) => {
         this.grabDependecies(module, provider, ['Mod']);
