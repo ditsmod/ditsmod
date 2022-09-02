@@ -1,5 +1,5 @@
-<a name="core-2.13.2"></a>
-# [core-2.13.2](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.2) (2022-09-02)
+<a name="core-2.13.3"></a>
+# [core-2.13.3](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.3) (2022-09-02)
 
 ### Bug fix
 
