@@ -12,7 +12,7 @@ export class LoggerConfig {
    * Default - true.
    */
   constructor(public level: LogLevel = 'info', public allowRaisedLogs?: boolean) {
-    this.allowRaisedLogs = allowRaisedLogs || true;
+    this.allowRaisedLogs = allowRaisedLogs === undefined ? true : allowRaisedLogs;
   }
 }
 
