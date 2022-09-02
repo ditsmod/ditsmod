@@ -1,5 +1,12 @@
+<a name="core-2.13.2"></a>
+# [core-2.13.2](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.2) (2022-09-02)
+
+### Bug fix
+
+- Fixed `loggerConfig.transformMsgIfFilterApplied()`.
+
 <a name="core-2.13.1"></a>
-# [core-2.13.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.1) (2022-09-02)
+## [core-2.13.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.1) (2022-09-02)
 
 ### Bug fix
 

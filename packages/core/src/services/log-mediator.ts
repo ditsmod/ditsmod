@@ -194,7 +194,7 @@ export class LogMediator {
 
   protected transformMsgIfFilterApplied(item: LogItem, loggerLogFilter: LogFilter, prefix?: string) {
     if (loggerLogFilter.modulesNames || loggerLogFilter.classesNames || loggerLogFilter.tags) {
-      item.msg = `${prefix || ''}${this.moduleExtract.moduleName}: ${item.msg}`;
+      item.msg = `${prefix || ''}${item.moduleName}: ${item.msg}`;
     }
   }
 
