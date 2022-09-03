@@ -13,7 +13,7 @@ class Cache {
     public groupToken: ExtensionsGroupToken<any>,
     public value: any[] | false,
     public autoMergeArrays?: boolean,
-    public extension?: Type<Extension<any>>,
+    public extension?: Type<Extension<any>>
   ) {}
 }
 
@@ -38,63 +38,59 @@ export class ExtensionsManager {
     @Inject(EXTENSIONS_COUNTERS) private mExtensionsCounters: Map<Type<Extension<any>>, number>
   ) {}
 
-  /**
-   * Initializes pair of group extensions with `BEFORE ${someGroupToken}` and `someGroupToken`. After that,
-   * it returns the value from a group extensions with `someGroupToken`.
-   * 
-   * This method is called internally by Ditsmod, it should not be called directly from extensions.
-   */
-  async initPairOfGroups(
-    groupToken: ExtensionsGroupToken<any>,
+  async init<T>(
+    groupToken: ExtensionsGroupToken<T>,
+    autoMergeArrays: boolean,
+    ExtensionAwaiting: Type<Extension<any>>
+  ): Promise<T[] | false>;
+  async init<T>(
+    groupToken: ExtensionsGroupToken<T>,
     autoMergeArrays?: boolean,
-    extension?: Type<Extension<any>>
-  ): Promise<any[] | false> {
+    ExtensionAwaiting?: Type<Extension<any>>
+  ): Promise<T[]>;
+  async init<T>(
+    groupToken: ExtensionsGroupToken<T>,
+    autoMergeArrays = true,
+    ExtensionAwaiting?: Type<Extension<any>>
+  ): Promise<T[] | false> {
+    /**
+     * Initializes pair of group extensions with `BEFORE ${someGroupToken}` and `someGroupToken`. After that,
+     * it returns the value from a group extensions with `someGroupToken`.
+     */
+    if (this.unfinishedInit.has(groupToken)) {
+      this.throwCircularDeps(groupToken);
+    }
     const beforeToken = `BEFORE ${groupToken}` as const;
     let cache = this.getCache(beforeToken);
     if (!cache && this.beforeTokens.has(beforeToken)) {
       this.unfinishedInit.add(beforeToken);
       this.logMediator.startExtensionsGroupInit(this, this.unfinishedInit);
-      const value = await this.init(beforeToken, undefined, undefined, true);
+      const value = await this.initGroup(beforeToken);
       this.logMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
       this.unfinishedInit.delete(beforeToken);
-      const newCache = new Cache(beforeToken, value, autoMergeArrays, extension);
+      const newCache = new Cache(beforeToken, value, autoMergeArrays, ExtensionAwaiting);
       this.cache.push(newCache);
     }
 
-    cache = this.getCache(groupToken, autoMergeArrays, extension);
+    cache = this.getCache(groupToken, autoMergeArrays, ExtensionAwaiting);
     if (cache) {
       return cache.value;
     }
     this.unfinishedInit.add(groupToken);
     this.logMediator.startExtensionsGroupInit(this, this.unfinishedInit);
-    const value = await this.init(groupToken, autoMergeArrays, extension, true);
+    const value = await this.initGroup(groupToken, autoMergeArrays, ExtensionAwaiting);
     this.logMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(groupToken);
-    const newCache = new Cache(groupToken, value, autoMergeArrays, extension);
+    const newCache = new Cache(groupToken, value, autoMergeArrays, ExtensionAwaiting);
     this.cache.push(newCache);
     return value;
   }
 
-  // prettier-ignore
-  /**
-   * @param isInternalCall Internally used by the `ExtensionsManager`
-   * you should not use it directly in extensions.
-   */
-  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays: boolean, extension: Type<Extension<any>>, isInternalCall?: boolean): Promise<T[] | false>;
-  // prettier-ignore
-  /**
-   * @param isInternalCall Internally used by the `ExtensionsManager`
-   * you should not use it directly in extensions.
-   */
-  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays?: boolean, extension?: Type<Extension<any>>, isInternalCall?: boolean): Promise<T[]>;
-  // prettier-ignore
-  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays = true, ExtensionAwaiting?: Type<Extension<any>>, isInternalCall?: boolean): Promise<T[] | false> {
-    if (!isInternalCall) {
-      if (this.unfinishedInit.has(groupToken)) {
-        this.throwCircularDeps(groupToken);
-      }
-      return this.initPairOfGroups(groupToken, autoMergeArrays, ExtensionAwaiting);
-    }
+  protected async initGroup<T>(
+    groupToken: ExtensionsGroupToken<any>,
+    autoMergeArrays?: boolean,
+    ExtensionAwaiting?: Type<Extension<any>>
+  ): Promise<any[] | false> {
     const extensions = this.injector.get(groupToken, []) as Extension<T>[];
     const aCurrentData: T[] = [];
 
@@ -132,7 +128,7 @@ export class ExtensionsManager {
   }
 
   protected getCache(groupToken: ExtensionsGroupToken, autoMergeArrays = true, extension?: Type<Extension<any>>) {
-    return this.cache.find(c => {
+    return this.cache.find((c) => {
       return c.groupToken == groupToken && c.autoMergeArrays == autoMergeArrays && c.extension === extension;
     });
   }
