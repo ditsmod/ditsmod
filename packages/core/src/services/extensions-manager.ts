@@ -1,8 +1,8 @@
 import { Inject, Injectable, Injector, Type } from '@ts-stack/di';
+
 import { getProviderName } from '../utils/get-provider-name';
 import { isInjectionToken } from '../utils/type-guards';
 import { EXTENSIONS_COUNTERS } from '../constans';
-
 import { Extension, ExtensionsGroupToken } from '../types/mix';
 import { Counter } from './counter';
 import { ExtensionsContext } from './extensions-context';
