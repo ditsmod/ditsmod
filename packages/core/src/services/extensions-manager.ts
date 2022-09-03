@@ -54,7 +54,7 @@ export class ExtensionsManager {
     if (!cache && this.beforeTokens.has(beforeToken)) {
       this.unfinishedInit.add(beforeToken);
       this.logMediator.startExtensionsGroupInit(this, this.unfinishedInit);
-      const value = await this.init(beforeToken);
+      const value = await this.init(beforeToken, undefined, undefined, true);
       this.logMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
       this.unfinishedInit.delete(beforeToken);
       const newCache = new Cache(beforeToken, value, autoMergeArrays, extension);
@@ -67,7 +67,7 @@ export class ExtensionsManager {
     }
     this.unfinishedInit.add(groupToken);
     this.logMediator.startExtensionsGroupInit(this, this.unfinishedInit);
-    const value = await this.init(groupToken, autoMergeArrays, extension);
+    const value = await this.init(groupToken, autoMergeArrays, extension, true);
     this.logMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(groupToken);
     const newCache = new Cache(groupToken, value, autoMergeArrays, extension);
@@ -76,20 +76,24 @@ export class ExtensionsManager {
   }
 
   // prettier-ignore
-  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays: boolean, extension: Type<Extension<any>>): Promise<T[] | false>;
+  /**
+   * @param isInternalCall Internally used by the `ExtensionsManager`
+   * you should not use it directly in extensions.
+   */
+  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays: boolean, extension: Type<Extension<any>>, isInternalCall?: boolean): Promise<T[] | false>;
   // prettier-ignore
-  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays?: boolean, extension?: Type<Extension<any>>): Promise<T[]>;
+  /**
+   * @param isInternalCall Internally used by the `ExtensionsManager`
+   * you should not use it directly in extensions.
+   */
+  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays?: boolean, extension?: Type<Extension<any>>, isInternalCall?: boolean): Promise<T[]>;
   // prettier-ignore
-  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays = true, ExtensionAwaiting?: Type<Extension<any>>): Promise<T[] | false> {
-    const lastItem = [...this.unfinishedInit].pop();
-    if (lastItem && !isInjectionToken(lastItem) && typeof lastItem != 'string') {
-      // lastItem is an extension
+  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays = true, ExtensionAwaiting?: Type<Extension<any>>, isInternalCall?: boolean): Promise<T[] | false> {
+    if (!isInternalCall) {
       if (this.unfinishedInit.has(groupToken)) {
         this.throwCircularDeps(groupToken);
       }
-      if (typeof groupToken != 'string') {
-        return this.initPairOfGroups(groupToken, autoMergeArrays, ExtensionAwaiting);
-      }
+      return this.initPairOfGroups(groupToken, autoMergeArrays, ExtensionAwaiting);
     }
     const extensions = this.injector.get(groupToken, []) as Extension<T>[];
     const aCurrentData: T[] = [];
