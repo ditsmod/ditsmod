@@ -1,7 +1,7 @@
 import { Type } from '@ts-stack/di';
 import { LogFilter, LogMediator } from '../services/log-mediator';
 import { Logger, LoggerConfig } from '../types/logger';
-import { ServiceProvider } from '../types/mix';
+import { AnyFn, ServiceProvider } from '../types/mix';
 
 /**
  * This class has utilites to adding providers to DI in more type safe way.
@@ -63,6 +63,16 @@ export class Providers {
     return this;
   }
 
+  useExisting<A extends Type<any>, B extends A>(provide: A, useExisting: B, multi?: boolean) {
+    this.providers.push({ provide, useExisting, multi });
+    return this;
+  }
+
+  useFactory(provide: any, useFactory: AnyFn, deps?: any[], multi?: boolean) {
+    this.providers.push({ provide, useFactory, deps, multi });
+    return this;
+  }
+
   useAnyValue(provide: any, useValue: any, multi?: boolean) {
     this.providers.push({ provide, useValue, multi });
     return this;
@@ -92,7 +102,7 @@ export class Providers {
     return this;
   }
 
-  use<T extends Type<any>>(Plugin: T): T['prototype'] & this {
+  use<T extends Type<Providers>>(Plugin: T): T['prototype'] & this {
     Object.getOwnPropertyNames(Plugin.prototype).filter(p => p != 'constructor').forEach(p => {
       (this as any)[p] = Plugin.prototype[p];
     });
