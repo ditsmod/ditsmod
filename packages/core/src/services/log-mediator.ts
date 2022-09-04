@@ -180,8 +180,7 @@ export class LogMediator {
     const uniqFilters = new Map<LogFilter, string>();
 
     const filteredBuffer = buffer.filter((item) => {
-      const { loggerLogFilter, moduleName } = item;
-      uniqFilters.set(loggerLogFilter, moduleName);
+      uniqFilters.set(item.loggerLogFilter, item.moduleName);
       return this.filteredLog(item, item.loggerLogFilter);
     });
 
