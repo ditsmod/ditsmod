@@ -84,7 +84,7 @@ export class LogMediator {
     @Optional() protected logFilter: LogFilter = new LogFilter(),
     @Optional() protected loggerConfig?: LoggerConfig
   ) {
-    this.loggerConfig = loggerConfig || new LoggerConfig()
+    this.loggerConfig = loggerConfig || new LoggerConfig();
   }
 
   getLogManager() {
@@ -179,8 +179,10 @@ export class LogMediator {
   protected applyLogFilter(buffer: LogItem[]) {
     const uniqFilters = new Map<LogFilter, string>();
 
-    const filteredBuffer = buffer.filter((item) => {
-      uniqFilters.set(item.loggerLogFilter, item.moduleName);
+    let filteredBuffer = buffer.filter((item) => {
+      if (!uniqFilters.has(item.loggerLogFilter)) {
+        uniqFilters.set(item.loggerLogFilter, item.moduleName);
+      }
       return this.filteredLog(item, item.loggerLogFilter);
     });
 
@@ -188,7 +190,31 @@ export class LogMediator {
       this.detectedDifferentLogFilters(uniqFilters);
     }
 
+    if (!filteredBuffer.length) {
+      filteredBuffer = this.getWarnAboutEmptyFilteredLogs(uniqFilters);
+    }
+
     return filteredBuffer;
+  }
+
+  protected getWarnAboutEmptyFilteredLogs(uniqFilters: Map<LogFilter, string>): LogItem[] {
+    const filters = [...uniqFilters].map(([logFilter, moduleName]) => {
+      return `${moduleName}: ${JSON.stringify(logFilter)}`;
+    });
+
+    const msg = `There are no logs to display, the following filters are applied: ${filters.join(', ')}`;
+    return [
+      {
+        moduleName: this.moduleExtract.moduleName,
+        logger: this._logger,
+        loggerLevel: 'info',
+        loggerLogFilter: new LogFilter(),
+        msgLevel: 'warn',
+        msgLogFilter: new MsgLogFilter(),
+        date: new Date(),
+        msg,
+      },
+    ];
   }
 
   protected transformMsgIfFilterApplied(item: LogItem, loggerLogFilter: LogFilter, prefix?: string) {
