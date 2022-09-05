@@ -101,6 +101,7 @@ export class PreRouterExtension implements Extension<void> {
     }
     inj.get(HttpHandler);
     inj.get(HttpFrontend);
+    inj.get(LogMediator);
     routeMeta.guards.forEach((item) => inj.get(item.guard));
     inj.get(HttpBackend);
     inj.get(routeMeta.controller);
