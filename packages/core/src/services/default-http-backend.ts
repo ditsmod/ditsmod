@@ -10,6 +10,6 @@ export class DefaultHttpBackend implements HttpBackend {
   async handle() {
     const { controller, methodName } = this.routeMeta;
     const ctrl = this.injector.get(controller);
-    return await ctrl[methodName]();
+    return ctrl[methodName]();
   }
 }
