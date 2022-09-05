@@ -19,30 +19,29 @@ import { HttpFrontend, HttpBackend, HttpHandler, HttpInterceptor } from '../type
  * interceptors to themselves inject classes depending indirectly
  * on `DefaultHttpHandler` itself.
  */
- @Injectable()
- export class DefaultHttpHandler implements HttpHandler {
-   private chain: HttpHandler | null = null;
- 
-   constructor(private frontend: HttpFrontend, private backend: HttpBackend, private injector: Injector) {}
- 
-   handle(): Promise<any> {
-     if (this.chain === null) {
-       const interceptors = this.injector.get(HTTP_INTERCEPTORS, []).slice();
-       interceptors.unshift(this.frontend);
-       this.chain = interceptors.reduceRight(
-         (next, interceptor) => new HttpInterceptorHandler(next, interceptor),
-         this.backend
-       );
-     }
-     return this.chain.handle();
-   }
- }
- 
- export class HttpInterceptorHandler implements HttpHandler {
-   constructor(private next: HttpHandler, private interceptor: HttpInterceptor) {}
- 
-   async handle(): Promise<any> {
-     await this.interceptor.intercept(this.next);
-   }
- }
- 
+@Injectable()
+export class DefaultHttpHandler implements HttpHandler {
+  private chain: HttpHandler | null = null;
+
+  constructor(private frontend: HttpFrontend, private backend: HttpBackend, private injector: Injector) {}
+
+  handle(): Promise<any> {
+    if (this.chain === null) {
+      const interceptors = this.injector.get(HTTP_INTERCEPTORS, []).slice();
+      interceptors.unshift(this.frontend);
+      this.chain = interceptors.reduceRight(
+        (next, interceptor) => new HttpInterceptorHandler(next, interceptor),
+        this.backend
+      );
+    }
+    return this.chain.handle();
+  }
+}
+
+export class HttpInterceptorHandler implements HttpHandler {
+  constructor(private next: HttpHandler, private interceptor: HttpInterceptor) {}
+
+  async handle(): Promise<any> {
+    await this.interceptor.intercept(this.next);
+  }
+}
