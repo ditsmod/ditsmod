@@ -30,7 +30,7 @@ HttpFrontend -> [other interceptors] -> HttpBackend -> [controller]
 
 ## Creating an interceptor
 
-Each interceptor must be a class that implements the [HttpInterceptor][1] interface, and this class must have an annotation with the `Injectable` decorator:
+Each interceptor must be a class implementing the [HttpInterceptor][1] interface and annotated with the `Injectable` decorator:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
