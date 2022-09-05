@@ -1,5 +1,12 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
-import { Module, ModuleWithParams, PRE_ROUTER_EXTENSIONS, RouteMeta, ROUTES_EXTENSIONS } from '@ditsmod/core';
+import {
+  Module,
+  ModuleWithParams,
+  PRE_ROUTER_EXTENSIONS,
+  Providers,
+  RouteMeta,
+  ROUTES_EXTENSIONS,
+} from '@ditsmod/core';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension';
 import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension';
@@ -9,6 +16,7 @@ import { OpenapiController } from './openapi.controller';
 import { SwaggerConfigManager } from './services/swagger-config-manager';
 import { SwaggerOAuthOptions } from './swagger-ui/swagger-o-auth-options';
 import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-options';
+import { OpenapiLogMediator } from './services/openapi-log-mediator';
 
 @Module({
   controllers: [OpenapiController],
@@ -27,6 +35,10 @@ import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-optio
   ],
 })
 export class OpenapiModule {
+  /**
+   * @param oasObject This object used for OpenAPI per application
+   * @param swaggerOAuthOptions This options used for OpenAPI per application
+   */
   static withParams(
     oasObject: XOasObject<any>,
     swaggerOAuthOptions?: SwaggerOAuthOptions
@@ -39,7 +51,8 @@ export class OpenapiModule {
     return {
       module: OpenapiModule,
       path: '',
-      providersPerMod: [{ provide: OasExtensionOptions, useValue: oasExtensionOptions }],
+      providersPerApp: [...new Providers().useValue(OasExtensionOptions, oasExtensionOptions)],
+      providersPerMod: [...new Providers().useLogMediator(OpenapiLogMediator)],
     };
   }
 }

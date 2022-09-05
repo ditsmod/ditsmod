@@ -1,5 +1,12 @@
+<a name="router-2.2.0"></a>
+# [router-2.2.0](https://github.com/ts-stack/ditsmod/releases/tag/router-2.2.0) (2022-09-02)
+
+### Features
+
+- Added `RouterLogMediator`.
+
 <a name="router-2.1.0"></a>
-# [router-2.1.0](https://github.com/ts-stack/ditsmod/releases/tag/router-2.1.0) (2022-08-27)
+## [router-2.1.0](https://github.com/ts-stack/ditsmod/releases/tag/router-2.1.0) (2022-08-27)
 
 ### BREAKING CHANGES
 

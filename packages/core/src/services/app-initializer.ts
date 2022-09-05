@@ -279,7 +279,7 @@ export class AppInitializer {
       for (const groupToken of extensionTokens) {
         extensionsManager.moduleName = moduleName;
         extensionsManager.beforeTokens = beforeTokens;
-        await extensionsManager.initPairOfGroups(groupToken);
+        await extensionsManager.init(groupToken);
       }
       this.logExtensionsStatistic(logMediator);
     }

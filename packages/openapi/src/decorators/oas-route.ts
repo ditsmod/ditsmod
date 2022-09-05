@@ -46,9 +46,12 @@ function oasRouteCallback(
   }
 }
 
-// prettier-ignore
-declare function oasRoute(httpMethod: HttpMethod, path?: string, guards?: GuardItem[], operationObject?: XOperationObject): OasRouteDecorator;
-// prettier-ignore
+declare function oasRoute(
+  httpMethod: HttpMethod,
+  path?: string,
+  guards?: GuardItem[],
+  operationObject?: XOperationObject
+): OasRouteDecorator;
 declare function oasRoute(httpMethod: HttpMethod, path?: string, operationObject?: XOperationObject): OasRouteDecorator;
 
 /**

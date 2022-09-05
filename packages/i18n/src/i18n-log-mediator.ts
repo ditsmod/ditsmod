@@ -1,4 +1,5 @@
 import { MsgLogFilter, LogMediator } from '@ditsmod/core';
+
 import { ISO639 } from './types/iso-639';
 
 export class I18nLogMediator extends LogMediator {

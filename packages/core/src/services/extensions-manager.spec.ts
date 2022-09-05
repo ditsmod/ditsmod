@@ -28,7 +28,6 @@ describe('ExtensionsManager circular dependencies', () => {
       if (this.inited) {
         return;
       }
-
       this.inited = true;
     }
   }
@@ -43,9 +42,7 @@ describe('ExtensionsManager circular dependencies', () => {
       if (this.inited) {
         return;
       }
-
       await this.mockExtensionsManager.init(MY_EXTENSIONS3);
-
       this.inited = true;
     }
   }
@@ -60,9 +57,7 @@ describe('ExtensionsManager circular dependencies', () => {
       if (this.inited) {
         return;
       }
-
       await this.mockExtensionsManager.init(MY_EXTENSIONS4);
-
       this.inited = true;
     }
   }
@@ -76,9 +71,7 @@ describe('ExtensionsManager circular dependencies', () => {
       if (this.inited) {
         return;
       }
-
       await this.mockExtensionsManager.init(MY_EXTENSIONS3);
-
       this.inited = true;
     }
   }
@@ -104,17 +97,17 @@ describe('ExtensionsManager circular dependencies', () => {
   });
 
   it('MY_EXTENSIONS2 has circular dependencies', async () => {
-    const msg = 'Detected circular dependencies: MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3. It is started from Extension2.';
+    const msg = 'Detected circular dependencies: MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3. It is started from MY_EXTENSIONS2 -> Extension2.';
     await expect(mock.init(MY_EXTENSIONS2)).rejects.toThrowError(msg);
   });
 
   it('MY_EXTENSIONS3 has circular dependencies', async () => {
-    const msg = 'Detected circular dependencies: Extension3 -> MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3 -> Extension3.';
+    const msg = 'Detected circular dependencies: MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3.';
     await expect(mock.init(MY_EXTENSIONS3)).rejects.toThrowError(msg);
   });
 
   it('MY_EXTENSIONS4 has circular dependencies', async () => {
-    const msg = 'Detected circular dependencies: Extension4 -> MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4 -> Extension4.';
+    const msg = 'Detected circular dependencies: MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4.';
     await expect(mock.init(MY_EXTENSIONS4)).rejects.toThrowError(msg);
   });
 });

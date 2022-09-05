@@ -1,6 +1,7 @@
 import { Tree } from './tree';
 import { RouteParam } from './types';
 import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
+import { RouterLogMediator } from './router-log-mediator';
 
 class TestTree extends Tree {
   printTree(prefix = '') {
@@ -32,7 +33,7 @@ const noop = () => {};
 
 describe('Tree', () => {
   describe('addRoute() and search()', () => {
-    const tree = new TestTree();
+    const tree = new TestTree({} as any);
     const paths = [
       '/hi',
       '/contact',
@@ -80,7 +81,7 @@ describe('Tree', () => {
   });
 
   describe('search() with wildcard', () => {
-    const tree = new Tree();
+    const tree = new Tree({} as any);
     const paths = [
       '/',
       '/cmd/:tool/:sub',
@@ -193,7 +194,7 @@ describe('Tree', () => {
   });
 
   it('Invalid node type', () => {
-    const tree = new Tree();
+    const tree = new Tree({} as any);
     tree.addRoute('/', noop);
     tree.addRoute('/:page', noop);
 
@@ -203,7 +204,7 @@ describe('Tree', () => {
   });
 
   it('conflict', () => {
-    const tree = new Tree();
+    const tree = new Tree({} as any);
     tree.addRoute('/src3/*filepath', noop);
 
     expect(() => tree.addRoute('/src3/*filepath/x', noop)).toThrow();

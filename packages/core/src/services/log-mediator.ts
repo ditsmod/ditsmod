@@ -82,8 +82,10 @@ export class LogMediator {
     protected moduleExtract: ModuleExtract,
     @Optional() protected _logger: Logger = new ConsoleLogger(),
     @Optional() protected logFilter: LogFilter = new LogFilter(),
-    @Optional() protected loggerConfig: LoggerConfig = new LoggerConfig(),
-  ) {}
+    @Optional() protected loggerConfig?: LoggerConfig
+  ) {
+    this.loggerConfig = loggerConfig || new LoggerConfig();
+  }
 
   getLogManager() {
     return this.logManager;
@@ -91,7 +93,8 @@ export class LogMediator {
 
   protected setLog<T extends MsgLogFilter>(msgLevel: LogLevel, msgLogFilter: T, msg: any) {
     if (this.logManager.bufferLogs) {
-      const loggerLevel: LogLevel = typeof this._logger.getLevel == 'function' ? this._logger.getLevel() : this.loggerConfig.level;
+      const loggerLevel: LogLevel =
+        typeof this._logger.getLevel == 'function' ? this._logger.getLevel() : this.loggerConfig!.level;
 
       this.logManager.buffer.push({
         moduleName: this.moduleExtract.moduleName,
@@ -113,15 +116,18 @@ export class LogMediator {
    */
   flush() {
     const { buffer } = this.logManager;
+    this.renderLogs(this.applyLogFilter(buffer));
+    buffer.splice(0);
+  }
+
+  protected renderLogs(logItems: LogItem[], logLevel?: LogLevel) {
     if (typeof (global as any).it != 'function') {
       // This is not a test mode.
-      let filteredBuffer = buffer;
-      filteredBuffer = this.filterLogs(buffer);
-      filteredBuffer.forEach((logItem) => {
+      logItems.forEach((logItem) => {
         // const dateTime = log.date.toLocaleString();
         const partMsg = logItem.msgLogFilter.tags ? ` (Tags: ${logItem.msgLogFilter.tags.join(', ')})` : '';
         const msg = `${logItem.msg}${partMsg}`;
-        logItem.logger.setLevel(logItem.loggerLevel);
+        logItem.logger.setLevel(logLevel || logItem.loggerLevel);
 
         if (!logItem.logger.log) {
           const loggerName = logItem.logger.constructor.name;
@@ -136,45 +142,98 @@ export class LogMediator {
         }
       });
     }
-
-    buffer.splice(0);
   }
 
-  protected filterLogs(buffer: LogItem[]) {
+  protected filteredLog(item: LogItem, loggerLogFilter: LogFilter, prefix?: string) {
+    const { msgLogFilter, moduleName } = item;
+    let hasTags: boolean | undefined = true;
+    let hasModuleName: boolean | undefined = true;
+    let hasClassName: boolean | undefined = true;
+    if (loggerLogFilter.modulesNames) {
+      hasModuleName = loggerLogFilter!.modulesNames?.includes(moduleName);
+    }
+    if (loggerLogFilter.classesNames) {
+      hasClassName = loggerLogFilter!.classesNames?.includes(msgLogFilter.className || '');
+    }
+    if (loggerLogFilter.tags) {
+      hasTags = msgLogFilter.tags?.some((tag) => loggerLogFilter!.tags?.includes(tag));
+    }
+    this.transformMsgIfFilterApplied(item, loggerLogFilter, prefix);
+    return hasModuleName && hasClassName && hasTags;
+  }
+
+  protected applyCustomLogFilter(buffer: LogItem[], loggerLogFilter: LogFilter, prefix?: string) {
+    return buffer.filter((item) => {
+      return this.filteredLog(item, loggerLogFilter, prefix);
+    });
+  }
+
+  protected raiseLog(logFilter: LogFilter, logLevel: LogLevel) {
+    if (!this.loggerConfig?.allowRaisedLogs) {
+      return;
+    }
+    const logs = this.applyCustomLogFilter(this.buffer, logFilter, 'raised log: ');
+    this.renderLogs(logs, logLevel);
+  }
+
+  protected applyLogFilter(buffer: LogItem[]) {
     const uniqFilters = new Map<LogFilter, string>();
 
-    const filteredBuffer = buffer.filter((item) => {
-      const { msgLogFilter, loggerLogFilter, moduleName } = item;
-      uniqFilters.set(loggerLogFilter, moduleName);
-      let hasTags: boolean | undefined = true;
-      let hasModuleName: boolean | undefined = true;
-      let hasClassName: boolean | undefined = true;
-      if (loggerLogFilter!.modulesNames) {
-        hasModuleName = loggerLogFilter!.modulesNames?.includes(moduleName);
+    let filteredBuffer = buffer.filter((item) => {
+      if (!uniqFilters.has(item.loggerLogFilter)) {
+        uniqFilters.set(item.loggerLogFilter, item.moduleName);
       }
-      if (loggerLogFilter!.classesNames) {
-        hasClassName = loggerLogFilter!.classesNames?.includes(msgLogFilter.className || '');
-      }
-      if (loggerLogFilter!.tags) {
-        hasTags = msgLogFilter.tags?.some((tag) => loggerLogFilter!.tags?.includes(tag));
-      }
-      return hasModuleName && hasClassName && hasTags;
+      return this.filteredLog(item, item.loggerLogFilter);
     });
 
-    if (uniqFilters.size > 1) {
+    if (uniqFilters.size > 1 && typeof (global as any).it != 'function') {
       this.detectedDifferentLogFilters(uniqFilters);
+    }
+
+    if (!filteredBuffer.length) {
+      filteredBuffer = this.getWarnAboutEmptyFilteredLogs(uniqFilters);
     }
 
     return filteredBuffer;
   }
 
+  protected getWarnAboutEmptyFilteredLogs(uniqFilters: Map<LogFilter, string>): LogItem[] {
+    const filters = [...uniqFilters].map(([logFilter, moduleName]) => {
+      return `${moduleName}: ${JSON.stringify(logFilter)}`;
+    });
+
+    const msg = `There are no logs to display, the following filters are applied: ${filters.join(', ')}`;
+    return [
+      {
+        moduleName: this.moduleExtract.moduleName,
+        logger: this._logger,
+        loggerLevel: 'info',
+        loggerLogFilter: new LogFilter(),
+        msgLevel: 'warn',
+        msgLogFilter: new MsgLogFilter(),
+        date: new Date(),
+        msg,
+      },
+    ];
+  }
+
+  protected transformMsgIfFilterApplied(item: LogItem, loggerLogFilter: LogFilter, prefix?: string) {
+    if (loggerLogFilter.modulesNames || loggerLogFilter.classesNames || loggerLogFilter.tags) {
+      item.msg = `${prefix || ''}${item.moduleName}: ${item.msg}`;
+    }
+  }
+
   protected detectedDifferentLogFilters(uniqFilters: Map<LogFilter, string>) {
     const filtersStr: string[] = [];
     uniqFilters.forEach((moduleName, filter) => {
-      filtersStr.push(`${moduleName} ${JSON.stringify(filter)}`)
+      filtersStr.push(`${moduleName} ${JSON.stringify(filter)}`);
     });
 
-    this.logger.log.call(this.logger, 'warn', `LogMediator: detected ${uniqFilters.size} different LogFilters: ${filtersStr.join(', ')}`);
+    this.logger.log.call(
+      this.logger,
+      'warn',
+      `LogMediator: detected ${uniqFilters.size} different LogFilters: ${filtersStr.join(', ')}`
+    );
   }
 
   /**
@@ -332,7 +391,11 @@ export class LogMediator {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    this.setLog('debug', msgLogFilter, `${className}: ${'='.repeat(20)} ${this.moduleExtract.moduleName} ${'='.repeat(20)}`);
+    this.setLog(
+      'debug',
+      msgLogFilter,
+      `${className}: ${'='.repeat(20)} ${this.moduleExtract.moduleName} ${'='.repeat(20)}`
+    );
   }
 
   /**
@@ -347,13 +410,15 @@ export class LogMediator {
   }
 
   protected getExtentionPath(unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
-    return [...unfinishedInit].map((tokenOrExtension) => {
-      if (isInjectionToken(tokenOrExtension) || typeof tokenOrExtension == 'string') {
-        return getProviderName(tokenOrExtension);
-      } else {
-        return tokenOrExtension.constructor.name;
-      }
-    }).join(' -> ');
+    return [...unfinishedInit]
+      .map((tokenOrExtension) => {
+        if (isInjectionToken(tokenOrExtension) || typeof tokenOrExtension == 'string') {
+          return getProviderName(tokenOrExtension);
+        } else {
+          return tokenOrExtension.constructor.name;
+        }
+      })
+      .join(' -> ');
   }
 
   /**

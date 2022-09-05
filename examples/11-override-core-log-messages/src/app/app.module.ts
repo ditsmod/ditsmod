@@ -11,8 +11,7 @@ import { OtherModule } from './modules/other/other.module';
     MyLogMediator, // This allow use MyLogMediator in this application
     ...new Providers()
       .useClass(LogMediator, MyLogMediator) // This allow use MyLogMediator internaly in Ditsmod core
-      .useLogConfig({ level: 'info' })
-      // .useValue(LogFilter, { modulesNames: ['OtherModule'] }),
+      .useLogConfig({ level: 'trace' }, { modulesNames: ['OtherModule'] }) // You can remove filter with modulesNames
   ],
 })
 export class AppModule {}

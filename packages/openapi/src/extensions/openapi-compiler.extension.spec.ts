@@ -29,10 +29,11 @@ describe('OpenapiCompilerExtension', () => {
   }
 
   let mock: MockOpenapiCompilerExtension;
+  const log = { oasObjectNotFound() {} };
 
   beforeEach(() => {
     const injector = ReflectiveInjector.resolveAndCreate([]);
-    mock = new MockOpenapiCompilerExtension(injector, injector, null as any);
+    mock = new MockOpenapiCompilerExtension(injector, injector, null as any, log as any);
   });
 
   describe('setSecurityInfo()', () => {

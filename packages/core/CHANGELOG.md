@@ -1,5 +1,31 @@
+<a name="core-2.13.3"></a>
+# [core-2.13.3](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.3) (2022-09-02)
+
+### Bug fix
+
+- Fixed `loggerConfig.transformMsgIfFilterApplied()`.
+
+<a name="core-2.13.1"></a>
+## [core-2.13.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.1) (2022-09-02)
+
+### Bug fix
+
+- Make `allowRaisedLogs` optional for `LoggerConfig`.
+
+<a name="core-2.13.0"></a>
+## [core-2.13.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.0) (2022-09-02)
+
+### Features
+
+- Automatic addition of module name to log message for `LogMediator` if the filter is applied.
+- Added `allowRaisedLogs: boolean` options to `LoggerConfig`. If `LogMediator` is used to throw an error, this option allows you to raise the log level. For example, if you set the log level to `info` and the router throws an error about duplicates in routes paths, allowRaisedLog allows you to filter and show relevant logs, even if they have log level `debug`. Default - true.
+
+### Bug fix
+
+- Fixed `importsResolver.resolveProvidersForExtensions()`.
+
 <a name="core-2.12.0"></a>
-# [core-2.12.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.12.0) (2022-08-31)
+## [core-2.12.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.12.0) (2022-08-31)
 
 ### BREAKING CHANGES
 

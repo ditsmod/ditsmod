@@ -5,6 +5,7 @@ import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach
 import { DefaultRouter } from './router';
 import { Fn } from './types';
 import { Tree } from './tree';
+import { RouterLogMediator } from './router-log-mediator';
 
 describe('Router', () => {
   const noop: Fn = () => {};
@@ -14,6 +15,7 @@ describe('Router', () => {
     injector = ReflectiveInjector.resolveAndCreate([
       Tree,
       DefaultRouter,
+      {provide: RouterLogMediator, useValue: {}},
       { provide: ReflectiveInjector, useExisting: Injector },
     ]);
   });
