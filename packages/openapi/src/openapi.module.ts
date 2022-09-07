@@ -21,7 +21,7 @@ import { OpenapiLogMediator } from './services/openapi-log-mediator';
 @Module({
   controllers: [OpenapiController],
   providersPerApp: [OasConfigFiles],
-  providersPerMod: [SwaggerConfigManager],
+  providersPerMod: [SwaggerConfigManager, ...new Providers().useLogMediator(OpenapiLogMediator)],
   providersPerRou: [{ provide: OasRouteMeta, useExisting: RouteMeta }],
   exports: [OasRouteMeta],
   extensions: [
@@ -52,7 +52,6 @@ export class OpenapiModule {
       module: OpenapiModule,
       path: '',
       providersPerApp: [...new Providers().useValue(OasExtensionOptions, oasExtensionOptions)],
-      providersPerMod: [...new Providers().useLogMediator(OpenapiLogMediator)],
     };
   }
 }
