@@ -1,5 +1,12 @@
+<a name="core-2.14.1"></a>
+# [core-2.14.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.14.1) (2022-09-07)
+
+### Bug fix
+
+- Added `CustomError` and `ErrorOpts` to imports from `index.ts`.
+
 <a name="core-2.14.0"></a>
-# [core-2.14.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.14.0) (2022-09-07)
+## [core-2.14.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.14.0) (2022-09-07)
 
 ### Features
 
