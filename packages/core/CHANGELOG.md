@@ -1,5 +1,12 @@
+<a name="core-2.14.2"></a>
+# [core-2.14.2](https://github.com/ts-stack/ditsmod/releases/tag/core-2.14.2) (2022-09-07)
+
+### Bug fix
+
+- Fixed `logMediator.applyLogFilter()`.
+
 <a name="core-2.14.1"></a>
-# [core-2.14.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.14.1) (2022-09-07)
+## [core-2.14.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.14.1) (2022-09-07)
 
 ### Bug fix
 
