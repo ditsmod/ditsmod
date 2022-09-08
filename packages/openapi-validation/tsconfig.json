@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    // "baseUrl": ".", // See https://github.com/microsoft/TypeScript/issues/47114#issuecomment-1004360864
+    "outDir": "dist",
+    "rootDir": "src",
+    "paths": {
+      "@ditsmod/core": [
+        "../core/src"
+      ],
+      "@ditsmod/i18n": [
+        "../i18n/src"
+      ]
+    }
+  },
+  "include": [
+    "src"
+  ],
+  "files": [],
+  "references": [
+    { "path": "../core" },
+    { "path": "../i18n" },
+  ]
+}
