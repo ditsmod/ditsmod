@@ -14,7 +14,7 @@ export class FirstController {
     this.res.send('Hello, World!');
   }
 
-  @OasRoute('GET', 'guard', [BasicGuard])
+  @OasRoute('GET', 'guard', [BasicGuard], {})
   helloWithGuard() {
     this.res.send('Hello, user!');
   }
