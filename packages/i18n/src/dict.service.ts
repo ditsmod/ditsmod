@@ -1,5 +1,5 @@
 import { Req } from '@ditsmod/core';
-import { Injectable, Injector } from '@ts-stack/di';
+import { Injectable, Injector, Optional } from '@ts-stack/di';
 
 import { DictPerModService } from './dict-per-mod.service';
 import { I18nLogMediator } from './i18n-log-mediator';
@@ -9,12 +9,12 @@ import { I18nOptions } from './types/mix';
 @Injectable()
 export class DictService extends DictPerModService {
   constructor(
-    protected override injector: Injector,
-    protected override i18nOptions: I18nOptions,
-    protected override log: I18nLogMediator,
     protected req: Req,
+    protected override injector: Injector,
+    protected override log: I18nLogMediator,
+    @Optional() protected override i18nOptions?: I18nOptions,
   ) {
-    super(injector, i18nOptions, log);
+    super(injector, log, i18nOptions);
   }
 
   override set lng(lng: ISO639) {
@@ -29,7 +29,7 @@ export class DictService extends DictPerModService {
     if (this._lng) {
       return this._lng;
     }
-    const lng = this.req.queryParams[this.i18nOptions.lngParam || 'lng'];
-    return lng || this.i18nOptions.defaultLng;
+    const lng = this.req.queryParams[this.i18nOptions?.lngParam || 'lng'];
+    return lng || this.i18nOptions?.defaultLng;
   }
 }

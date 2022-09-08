@@ -1,4 +1,4 @@
-import { Injectable, Injector, Type } from '@ts-stack/di';
+import { Injectable, Injector, Optional, Type } from '@ts-stack/di';
 
 import { I18nLogMediator } from './i18n-log-mediator';
 import { ISO639 } from './types/iso-639';
@@ -10,8 +10,8 @@ export class DictPerModService {
 
   constructor(
     protected injector: Injector,
-    protected i18nOptions: I18nOptions,
-    protected log: I18nLogMediator
+    protected log: I18nLogMediator,
+    @Optional() protected i18nOptions?: I18nOptions,
   ) {}
 
   getAllDictionaries<T extends Type<Dictionary>>(token: T) {
@@ -27,7 +27,7 @@ export class DictPerModService {
         this.log.missingLng(this, token.name, lng);
       }
       // Trying fallback to default lng
-      const tryLng = this.i18nOptions.defaultLng || token.prototype.getLng() || lng;
+      const tryLng = this.i18nOptions?.defaultLng || token.prototype.getLng() || lng;
       dictionary = dictionaries.find((t) => t.getLng() == tryLng);
     }
     if (!dictionary) {
@@ -66,6 +66,6 @@ export class DictPerModService {
     if (this._lng) {
       return this._lng;
     }
-    return this.i18nOptions.defaultLng || 'en';
+    return this.i18nOptions?.defaultLng || 'en';
   }
 }
