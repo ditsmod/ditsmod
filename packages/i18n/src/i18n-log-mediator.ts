@@ -66,4 +66,10 @@ export class I18nLogMediator extends LogMediator {
     }
     this.setLog('debug', msgLogFilter, msg);
   }
+  /**
+   * Dictionary "${tokenName}" not found for lng "${lng}"
+   */
+  throwDictionaryNotFound(tokenName: string, lng: ISO639) {
+    throw new Error(`Dictionary "${tokenName}" not found for lng "${lng}"`);
+  }
 }

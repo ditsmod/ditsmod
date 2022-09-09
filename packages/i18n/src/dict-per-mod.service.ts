@@ -31,9 +31,9 @@ export class DictPerModService {
       dictionary = dictionaries.find((t) => t.getLng() == tryLng);
     }
     if (!dictionary) {
-      throw new Error(`Translation not found for ${token.name}.${lng}`);
+      this.log.throwDictionaryNotFound(token.name, lng);
     }
-    return dictionary;
+    return dictionary!;
   }
 
   getMethod<T extends Type<Dictionary>, K extends keyof Omit<T['prototype'], 'getLng'>>(
