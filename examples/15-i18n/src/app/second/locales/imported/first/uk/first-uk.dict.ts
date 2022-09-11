@@ -1,15 +1,15 @@
 import { ISO639 } from '@ditsmod/i18n';
 import { Injectable } from '@ts-stack/di';
 
-import { CommonDict } from '@dict/first/common.dict';
+import { FirstDict } from '@dict/first/first.dict';
 
 @Injectable()
-export class CommonUkDict extends CommonDict {
+export class FirstUkDict extends FirstDict {
   override getLng(): ISO639 {
     return 'uk';
   }
   /**
-   * one, two, three
+   * один, два, три
    */
   override countToThree = `один, два, три`;
 }

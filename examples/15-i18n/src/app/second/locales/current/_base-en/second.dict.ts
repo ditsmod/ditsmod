@@ -2,7 +2,7 @@ import { Dictionary, ISO639 } from '@ditsmod/i18n';
 import { Injectable } from '@ts-stack/di';
 
 @Injectable()
-export class CommonDict implements Dictionary {
+export class SecondDict implements Dictionary {
   getLng(): ISO639 {
     return 'en';
   }
