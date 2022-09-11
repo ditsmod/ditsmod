@@ -5,8 +5,8 @@ import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@j
 
 import { I18nOptions } from './types/mix';
 import { DictService } from './dict.service';
-import { Common } from './test/common-en';
-import { CommonUk } from './test/common-uk';
+import { CommonDict } from './test/current';
+import { CommonUkDict } from './test/current/common-uk.dict';
 import { I18nLogMediator } from './i18n-log-mediator';
 
 describe('DictService', () => {
@@ -19,8 +19,8 @@ describe('DictService', () => {
       { provide: I18nLogMediator, useValue: { missingLng: jest.fn } },
       { provide: Req, useValue: options.req },
       { provide: I18nOptions, useValue: options.i18nOptions },
-      { provide: Common, useClass: Common, multi: true },
-      { provide: Common, useClass: CommonUk, multi: true },
+      { provide: CommonDict, useClass: CommonDict, multi: true },
+      { provide: CommonDict, useClass: CommonUkDict, multi: true },
     ]);
     return injector.get(DictService) as DictService;
   }
@@ -72,33 +72,33 @@ describe('DictService', () => {
   it('i18nService.getAllDictionaries() returns two dictionaries', () => {
     const options = new Options();
     const i18nService = getService(options);
-    const dictionaries = i18nService.getAllDictionaries(Common);
+    const dictionaries = i18nService.getAllDictionaries(CommonDict);
     expect(dictionaries.length).toBe(2);
   });
 
   it('i18nService.getDictionary() returns dictionary with selected lng', () => {
     const options = new Options();
     const i18nService = getService(options);
-    const dictionaryUk = i18nService.getDictionary(Common, 'uk');
+    const dictionaryUk = i18nService.getDictionary(CommonDict, 'uk');
     expect(dictionaryUk.getLng()).toBe('uk');
-    const dictionaryEn = i18nService.getDictionary(Common, 'en');
+    const dictionaryEn = i18nService.getDictionary(CommonDict, 'en');
     expect(dictionaryEn.getLng()).toBe('en');
   });
 
   it('i18nService.getMethod() returns selected method', () => {
     const options = new Options();
     const i18nService = getService(options);
-    const method = i18nService.getMethod(Common, 'hello', 'uk');
+    const method = i18nService.getMethod(CommonDict, 'hello', 'uk');
     expect(() => method('Костя')).not.toThrow();
   });
 
   it('dictionary methods works as expected', () => {
     const options = new Options();
     const i18nService = getService(options);
-    const dictionaryUk = i18nService.getDictionary(Common, 'uk');
+    const dictionaryUk = i18nService.getDictionary(CommonDict, 'uk');
     expect(dictionaryUk.hello('Костя')).toBe('Привіт, Костя!');
     expect(dictionaryUk.hi()).toBe('Hi, there!');
-    const dictionaryEn = i18nService.getDictionary(Common, 'en');
+    const dictionaryEn = i18nService.getDictionary(CommonDict, 'en');
     expect(dictionaryEn.hello('Костя')).toBe('Hello, Костя!');
     expect(dictionaryEn.hi()).toBe('Hi, there!');
   });
@@ -106,10 +106,10 @@ describe('DictService', () => {
   it('i18nService.translate() works as expected', () => {
     const options = new Options();
     const i18nService = getService(options);
-    expect(() => i18nService.translate(Common, 'hello', 'uk', 'Костя')).not.toThrow();
-    expect(i18nService.translate(Common, 'hello', 'uk', 'Костя')).toBe('Привіт, Костя!');
-    expect(i18nService.translate(Common, 'hello', 'en', 'Костя')).toBe('Hello, Костя!');
-    expect(i18nService.translate(Common, 'hi', 'uk')).toBe('Hi, there!');
-    expect(i18nService.translate(Common, 'hi', 'en')).toBe('Hi, there!');
+    expect(() => i18nService.translate(CommonDict, 'hello', 'uk', 'Костя')).not.toThrow();
+    expect(i18nService.translate(CommonDict, 'hello', 'uk', 'Костя')).toBe('Привіт, Костя!');
+    expect(i18nService.translate(CommonDict, 'hello', 'en', 'Костя')).toBe('Hello, Костя!');
+    expect(i18nService.translate(CommonDict, 'hi', 'uk')).toBe('Hi, there!');
+    expect(i18nService.translate(CommonDict, 'hi', 'en')).toBe('Hi, there!');
   });
 });
