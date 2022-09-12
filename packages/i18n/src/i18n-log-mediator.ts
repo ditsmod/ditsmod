@@ -4,66 +4,56 @@ import { ISO639 } from './types/iso-639';
 
 export class I18nLogMediator extends LogMediator {
   /**
-   * ${className}: in ${moduleName} translation not found.
+   * className: in ${moduleName} translation not found.
    */
   translationNotFound(self: object) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    msgLogFilter.tags = ['i18n', 'locales'];
+    msgLogFilter.tags = ['i18n'];
     this.setLog('warn', msgLogFilter, `${className}: in ${this.moduleExtract.moduleName} translation not found.`);
   }
   /**
-   * ${className}: in ${extendedClassName} missing methods: [${methods}].
+   * className: in ${extendedClassName} missing methods: [${methods}].
    */
   missingMethods(self: object, extendedClassName: string, missingMethods: string[]) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    msgLogFilter.tags = ['i18n', 'locales'];
+    msgLogFilter.tags = ['i18n'];
     const methods = missingMethods.join(', ');
     this.setLog('debug', msgLogFilter, `${className}: in ${extendedClassName} missing methods: [${methods}].`);
   }
   /**
-   * ${className}: in ${dictName} missing locale "${lng}".
+   * className: in ${dictName} missing locale "${lng}".
    */
   missingLng(self: object, dictName: string, lng: ISO639) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    msgLogFilter.tags = ['i18n', 'locales'];
+    msgLogFilter.tags = ['i18n'];
     this.setLog('debug', msgLogFilter, `${className}: in ${dictName} missing locale "${lng}".`);
   }
   /**
-   * ${className}: in "moduleName -> tokenName" found locales: [...]. Some methods: [...].
+   * className: for tokenName found locales: [...].
    */
-  foundLngs(self: object, tokenName: string, allLngs: string[], methods: string[]) {
+  foundLngs(self: object, tokenName: string, allLngs: string[]) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    msgLogFilter.tags = ['i18n', 'locales'];
-    let msg = `${className}: in "${this.moduleExtract.moduleName} -> ${tokenName}" found locales: [${allLngs.join(', ')}].`;
-    if (methods.length) {
-      msg += ` Some methods: [${methods.join(', ')}].`;
-    } else {
-      msg += ` No methods found.`;
-    }
+    msgLogFilter.tags = ['i18n'];
+    const msg = `${className}: for ${tokenName} found locales: [${allLngs.join(', ')}].`;
     this.setLog('debug', msgLogFilter, msg);
   }
   /**
-   * className: found overrides in "moduleName -> tokenName" for locales: [...]. Some methods: [...].
+   * className: for tokenName found extended dictionaries for locales: [...].
    */
-  overridedLngs(self: object, tokenName: string, allLngs: string[], methods: string[]) {
+  overridedLngs(self: object, tokenName: string, allLngs: string[]) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    msgLogFilter.tags = ['i18n', 'locales'];
-    let msg = `${className}: found overrides in "${this.moduleExtract.moduleName} -> ${tokenName}" for locales: [${allLngs.join(', ')}].`;
-    if (methods.length) {
-      msg += ` Some methods: [${methods.join(', ')}].`;
-    } else {
-      msg += ` No methods found.`;
-    }
+    msgLogFilter.tags = ['i18n', 'i18n-extends'];
+    const msg = `${className}: for ${tokenName} found extended dictionaries for locales: [${allLngs.join(', ')}].`;
     this.setLog('debug', msgLogFilter, msg);
   }
   /**
