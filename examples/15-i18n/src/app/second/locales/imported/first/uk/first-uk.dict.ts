@@ -11,5 +11,5 @@ export class FirstUkDict extends FirstDict {
   /**
    * один, два, три
    */
-  override countToThree = `один, два, три`;
+  override countToThree = `extended: один, два, три`;
 }
