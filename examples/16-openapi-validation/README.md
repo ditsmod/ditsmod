@@ -30,5 +30,6 @@ curl -isS localhost:3000/resource/123
 And check invalid requests:
 
 ```bash
+curl -isS localhost:3000/resource/fake
 curl -isS localhost:3000/resource/1d
 ```
