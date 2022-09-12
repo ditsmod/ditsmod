@@ -8,6 +8,7 @@ import { AssertDict } from './locales/current';
 @Injectable()
 export class AssertService {
   #dict: AssertDict;
+
   private get dict(): AssertDict {
     if (!this.#dict) {
       this.#dict = this.dictService.getDictionary(AssertDict);
