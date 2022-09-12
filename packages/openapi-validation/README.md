@@ -1,3 +1,3 @@
 # About the project
 
-Ditsmod module to support validation.
+Ditsmod module to support openAPI validation.

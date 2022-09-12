@@ -1,0 +1,16 @@
+.gitignore
+tests
+docs
+examples
+spec
+tslint.json
+.prettierrc
+*.tgz
+*.log
+*.spec.*
+yarn.lock
+.js
+jest.config.js
+*.tsbuildinfo
+dist-*
+tsconfig.json
