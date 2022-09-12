@@ -15,7 +15,8 @@ export class DictPerModService {
   ) {}
 
   getAllDictionaries<T extends Type<Dictionary>>(token: T) {
-    return this.injector.get(token, []) as T['prototype'][];
+    const arr = this.injector.get(token, []) as T['prototype'][];
+    return arr.slice(0).reverse();
   }
 
   getDictionary<T extends Type<Dictionary>>(token: T, lng?: ISO639) {

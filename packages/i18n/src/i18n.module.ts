@@ -12,6 +12,6 @@ import { DictPerModService } from './dict-per-mod.service';
   ],
   providersPerMod: [DictPerModService, ...new Providers().useLogMediator(I18nLogMediator)],
   providersPerReq: [DictService],
-  exports: [DictService],
+  exports: [DictService, DictPerModService],
 })
 export class I18nModule {}
