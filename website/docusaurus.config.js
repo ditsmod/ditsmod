@@ -118,4 +118,38 @@ module.exports = {
       },
     ],
   ],
+  plugins: [
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        // fromExtensions: ['html', 'htm'], // /myPage.html -> /myPage
+        // toExtensions: ['exe', 'zip'], // /myAsset -> /myAsset.zip (if latter exists)
+        // redirects: [
+        //   // Redirect from multiple old paths to the new path
+        //   {
+        //     to: '/docs/newDoc2',
+        //     from: ['/docs/oldDocFrom2019', '/docs/legacyDocFrom2016'],
+        //   },
+        // ],
+        createRedirects(existingPath) {
+          const arr = [
+            ...getRedirect(existingPath, '/components-of-ditsmod-app/extensions', ['/extensions/create-extension','/extensions/about-extensions']),
+            ...getRedirect(existingPath, '/components-of-ditsmod-app', ['/core']),
+            ...getRedirect(existingPath, '/published-modules/openapi', ['/extensions/openapi']),
+          ];
+          return arr.length ? arr : undefined; // Return a falsy value: no redirect created
+        },
+      },
+    ],
+  ],
 };
+
+function getRedirect(existingPath, newPath, oldPaths) {
+  const arr = [];
+  if (existingPath.includes(newPath)) {
+    oldPaths.forEach((oldPath) => {
+      arr.push(existingPath.replace(newPath, oldPath));
+    });
+  }
+  return arr;
+}
