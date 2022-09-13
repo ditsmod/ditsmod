@@ -5,7 +5,7 @@ import { ISO639 } from './types/iso-639';
 import { I18nOptions, Dictionary } from './types/mix';
 
 @Injectable()
-export class DictPerModService {
+export class DictPerAppService {
   protected _lng?: ISO639;
 
   constructor(

@@ -1,13 +1,13 @@
 import { Req } from '@ditsmod/core';
 import { Injectable, Injector, Optional } from '@ts-stack/di';
 
-import { DictPerModService } from './dict-per-mod.service';
+import { DictPerAppService } from './dict-per-app.service';
 import { I18nLogMediator } from './i18n-log-mediator';
 import { ISO639 } from './types/iso-639';
 import { I18nOptions } from './types/mix';
 
 @Injectable()
-export class DictService extends DictPerModService {
+export class DictService extends DictPerAppService {
   constructor(
     protected req: Req,
     protected override injector: Injector,
