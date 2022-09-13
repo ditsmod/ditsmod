@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { ReflectiveInjector } from '@ts-stack/di';
+import { describe, beforeEach, it, expect } from '@jest/globals';
 
 import { MyService } from './my.service';
 import { OtherService } from './other.service';

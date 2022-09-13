@@ -1,14 +1,14 @@
 import { Injectable } from '@ts-stack/di';
 import { DictService } from '@ditsmod/i18n';
 
-import { CommonDict } from '@dict/first/common.dict';
+import { FirstDict } from '@dict/first/first.dict';
 
 @Injectable()
 export class FirstService {
   constructor(private dictService: DictService) {}
 
   countToThree() {
-    const dict = this.dictService.getDictionary(CommonDict);
+    const dict = this.dictService.getDictionary(FirstDict);
     return dict.countToThree;
   }
 }

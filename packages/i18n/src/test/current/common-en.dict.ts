@@ -1,10 +1,10 @@
 import { Injectable } from '@ts-stack/di';
 
-import { Dictionary } from '../types/mix';
-import { ISO639 } from '../types/iso-639';
+import { Dictionary } from '../../types/mix';
+import { ISO639 } from '../../types/iso-639';
 
 @Injectable()
-export class Common implements Dictionary {
+export class CommonDict implements Dictionary {
   getLng(): ISO639 {
     return 'en';
   }

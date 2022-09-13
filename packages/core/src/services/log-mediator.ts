@@ -190,7 +190,7 @@ export class LogMediator {
       this.detectedDifferentLogFilters(uniqFilters);
     }
 
-    if (!filteredBuffer.length) {
+    if (!filteredBuffer.length && uniqFilters.size) {
       filteredBuffer = this.getWarnAboutEmptyFilteredLogs(uniqFilters);
     }
 

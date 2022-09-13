@@ -11,10 +11,10 @@
     }
   },
   "include": [
-    "./src/**/*.ts"
+    "./src"
   ],
   "files": [],
   "references": [
-    { "path": "../core" },
+    { "path": "../core" }
   ]
 }

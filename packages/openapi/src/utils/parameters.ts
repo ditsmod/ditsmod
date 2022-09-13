@@ -10,12 +10,12 @@ type OptionalParamsIn = 'query' | 'header' | 'cookie';
 type KeyOf<T extends Type<AnyObj>> = Extract<keyof T['prototype'], string>;
 type KeysOf<T extends Type<AnyObj>> = [KeyOf<T>, ...KeyOf<T>[]];
 /**
- * Applies to importing `OasModuleWithParams`. OAS parameter's property, indicates the parameter
+ * Applies to importing `OpenapiModule.withParams()`. OAS parameter's property, indicates the parameter
  * should or not be bound to presence last param in a route path.
  */
 export const BOUND_TO_PATH_PARAM = 'x-bound-to-path-param';
 /**
- * Applies to importing `OasModuleWithParams`. OAS parameter's property, indicates the parameter
+ * Applies to importing `OpenapiModule.withParams()`. OAS parameter's property, indicates the parameter
  * should or not be bound to HTTP method in a route path.
  */
 export const BOUND_TO_HTTP_METHOD = 'x-bound-to-http-method';
@@ -61,7 +61,7 @@ export class Parameters {
   }
 
   /**
-   * Applies to importing `OasModuleWithParams`. Indicates the parameters that were added in the
+   * Applies to importing `OpenapiModule.withParams()`. Indicates the parameters that were added in the
    * previous step as bound to existence param in a route path.
    *
    * For example, if you first called `optional()` or `required()` with 2 parameters
@@ -73,7 +73,7 @@ export class Parameters {
    */
   bindTo(to: 'lastParamInPath', ifExists?: boolean): this;
   /**
-   * Applies to importing `OasModuleWithParams`. Indicates the parameters that were added in the
+   * Applies to importing `OpenapiModule.withParams()`. Indicates the parameters that were added in the
    * previous step as bound to HTTP method in a route.
    *
    * For example, if you first called `optional()` or `required()` with 2 parameters
@@ -91,6 +91,13 @@ export class Parameters {
   describe(...descriptions: [string, ...string[]]) {
     const params = this.getLastAddedParams();
     params.forEach((param, i) => (param.description = descriptions[i]));
+    return this;
+  }
+
+  use<T extends Type<Parameters>>(Plugin: T): T['prototype'] & this {
+    Object.getOwnPropertyNames(Plugin.prototype).filter(p => p != 'constructor').forEach(p => {
+      (this as any)[p] = Plugin.prototype[p];
+    });
     return this;
   }
 

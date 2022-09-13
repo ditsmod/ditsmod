@@ -1,7 +1,7 @@
-import { ISO639 } from '@ditsmod/i18n';
 import { Injectable } from '@ts-stack/di';
 
-import { CommonDict } from '@dict/second/common.dict';
+import { ISO639 } from '../../types/iso-639';
+import { CommonDict } from '../current/common-en.dict';
 
 @Injectable()
 export class CommonUkDict extends CommonDict {
@@ -10,6 +10,6 @@ export class CommonUkDict extends CommonDict {
   }
 
   override hello(name: string) {
-    return `Привіт, ${name}!`;
+    return `overrided: Привіт, ${name}!`;
   }
 }

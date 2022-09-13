@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/core",
-  "version": "2.13.3",
+  "version": "2.14.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -22,11 +22,13 @@
     "build": "rm -rf dist/* && tsc -b -f"
   },
   "devDependencies": {
-    "@ts-stack/di": "^1.2.0"
+    "@ts-stack/di": "^1.2.0",
+    "@ts-stack/chain-error": "^1.2.0"
   },
   "peerDependencies": {
     "@ts-stack/di": "^1.2.0",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "@ts-stack/chain-error": "^1.2.0"
   },
   "gitHead": "ee408df6b7617d0fb8bc6eff301e50f3602bb385"
 }

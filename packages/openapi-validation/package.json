@@ -1,0 +1,33 @@
+{
+  "name": "@ditsmod/openapi-validation",
+  "version": "2.0.0-beta.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ditsmod/ditsmod.git"
+  },
+  "description": "Ditsmod module to support simple OpenAPI validation",
+  "main": "dist/index",
+  "typings": "dist/index",
+  "directories": {
+    "lib": "src"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "rm -rf dist/* && tsc -b -f"
+  },
+  "keywords": [],
+  "author": "Костя Третяк",
+  "license": "MIT",
+  "dependencies": {
+    "@ts-stack/cookies": "^3.1.4"
+  },
+  "devDependencies": {
+    "@ts-stack/di": "^1.2.0"
+  },
+  "peerDependencies": {
+    "@ditsmod/core": "^2.14.2",
+    "@ts-stack/di": "^1.2.0",
+    "@ditsmod/openapi": "^2.2.1",
+    "@ditsmod/i18n": "^2.0.0-beta.8"
+  }
+}

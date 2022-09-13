@@ -8,5 +8,6 @@
     { "path": "session-cookie" },
     { "path": "jwt" },
     { "path": "i18n" },
+    { "path": "openapi-validation" }
   ]
 }

@@ -1,10 +1,10 @@
+import { ISO639 } from '@ditsmod/i18n';
 import { Injectable } from '@ts-stack/di';
 
-import { ISO639 } from '../types/iso-639';
-import { Common } from './common-en';
+import { SecondDict } from '@dict/second/second.dict';
 
 @Injectable()
-export class CommonUk extends Common {
+export class CommonUkDict extends SecondDict {
   override getLng(): ISO639 {
     return 'uk';
   }

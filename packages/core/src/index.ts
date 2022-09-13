@@ -31,6 +31,8 @@ export { HttpInterceptor, HttpHandler } from './types/http-interceptor';
 export { NODE_REQ, NODE_RES, HTTP_INTERCEPTORS, PATH_PARAMS, QUERY_STRING } from './constans';
 export { LogManager } from './services/log-manager';
 export { LogMediator, LogFilter, MsgLogFilter } from './services/log-mediator';
+export { CustomError } from './custom-error/custom-error';
+export { ErrorOpts } from './custom-error/error-opts';
 
  export { PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from './constans';
  export { ControllerMetadata } from './decorators/controller';

@@ -1,8 +1,9 @@
 import { DictGroup, getDictGroup } from '@ditsmod/i18n';
 
-import { CommonDict } from '@dict/first/common.dict';
-import { CommonPlDict } from './pl/common.dict';
+import { FirstDict } from '@dict/first/first.dict';
+import { FirstPlDict } from './pl/first.dict';
+export { FirstDict };
 
 export const current: DictGroup[] = [
-  getDictGroup(CommonDict, CommonPlDict),
+  getDictGroup(FirstDict, FirstPlDict),
 ];

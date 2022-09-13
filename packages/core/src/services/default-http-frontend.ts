@@ -18,7 +18,6 @@ export class DefaultHttpFrontend implements HttpFrontend {
   constructor(
     @Inject(PATH_PARAMS) protected aPathParams: PathParam[],
     @Inject(QUERY_STRING) protected queryString: any,
-    private logMediator: LogMediator,
     private routeMeta: RouteMeta,
     private rootMetadata: RootMetadata,
     private req: Req
@@ -43,8 +42,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
   }
 
   protected async canActivate() {
-    const { guards } = this.routeMeta;
-    const preparedGuards: { guard: CanActivate; params?: any[] }[] = guards.map((item) => {
+    const preparedGuards = this.routeMeta.guards.map<{ guard: CanActivate; params?: any[] }>((item) => {
       return {
         guard: this.req.injector.get(item.guard),
         params: item.params,
@@ -64,7 +62,8 @@ export class DefaultHttpFrontend implements HttpFrontend {
   }
 
   protected canNotActivateRoute(nodeReq: NodeRequest, nodeRes: NodeResponse, status?: Status) {
-    this.logMediator.youCannotActivateRoute(this, nodeReq.method!, nodeReq.url!);
+    const logMediator = this.req.injector.get(LogMediator) as LogMediator;
+    logMediator.youCannotActivateRoute(this, nodeReq.method!, nodeReq.url!);
     nodeRes.statusCode = status || Status.UNAUTHORIZED;
     nodeRes.end();
   }

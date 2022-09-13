@@ -1,5 +1,37 @@
+<a name="core-2.14.2"></a>
+# [core-2.14.2](https://github.com/ts-stack/ditsmod/releases/tag/core-2.14.2) (2022-09-07)
+
+### Bug fix
+
+- Fixed `logMediator.applyLogFilter()`.
+
+<a name="core-2.14.1"></a>
+## [core-2.14.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.14.1) (2022-09-07)
+
+### Bug fix
+
+- Added `CustomError` and `ErrorOpts` to imports from `index.ts`.
+
+<a name="core-2.14.0"></a>
+## [core-2.14.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.14.0) (2022-09-07)
+
+### Features
+
+- Added `CustomError` class. Now you can use it like this:
+
+```ts
+import { Status } from '@ditsmod/core';
+
+const msg1 = 'frontend %s message';
+const msg2 = 'backend %s message';
+const cause = new Error();
+const err = new CustomError({ msg1, msg2, level: 'warn', status: Status.CONFLICT }, cause);
+```
+
+- Refactoring `DefaultControllerErrorHandler` with `CustomError`, so you can specify log level and status for `CustomError`.
+
 <a name="core-2.13.3"></a>
-# [core-2.13.3](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.3) (2022-09-02)
+## [core-2.13.3](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.3) (2022-09-02)
 
 ### Bug fix
 
