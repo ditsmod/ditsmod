@@ -19,7 +19,7 @@
   "author": "Костя Третяк",
   "license": "MIT",
   "dependencies": {
-    "@ts-stack/cookies": "^3.1.4"
+    "@ts-stack/cookies": "^1.0.2"
   },
   "devDependencies": {
     "@ts-stack/di": "^1.2.0"
