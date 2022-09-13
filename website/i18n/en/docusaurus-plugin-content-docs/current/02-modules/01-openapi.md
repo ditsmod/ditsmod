@@ -1,8 +1,9 @@
 ---
 sidebar_position: 2
+title: OpenAPI
 ---
 
-# OpenAPI
+# @ditsmod/openapi
 
 To create a route according to the `OpenAPI` specification, you can use the `OasRoute` decorator, imported from `@ditsmod/openapi`.
 

@@ -1,8 +1,9 @@
 ---
 sidebar_position: 2
+title: OpenAPI
 ---
 
-# OpenAPI
+# @ditsmod/openapi
 
 Щоб створити маршрут за специфікацією `OpenAPI`, можна використовувати декоратор `OasRoute`, що імпортується з `@ditsmod/openapi`.
 

@@ -3,12 +3,12 @@
     "message": "Next",
     "description": "The label for version current"
   },
-  "sidebar.tutorialSidebar.category.Core": {
-    "message": "Core",
-    "description": "The label for category Core in sidebar tutorialSidebar"
+  "sidebar.tutorialSidebar.category.Складові Ditsmod-застосунку": {
+    "message": "Components of Ditsmod app",
+    "description": "The label for category Extensions in sidebar tutorialSidebar"
   },
-  "sidebar.tutorialSidebar.category.Extensions": {
-    "message": "Extensions",
+  "sidebar.tutorialSidebar.category.Опубліковані модулі": {
+    "message": "Published modules",
     "description": "The label for category Extensions in sidebar tutorialSidebar"
   },
   "sidebar.tutorialSidebar.category.Приклади застосунків": {
