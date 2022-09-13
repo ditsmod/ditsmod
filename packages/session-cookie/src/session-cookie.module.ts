@@ -1,4 +1,4 @@
-import { Logger, Module, Providers } from '@ditsmod/core';
+import { Module, Providers } from '@ditsmod/core';
 
 import { SessionCookie } from './session-cookie';
 import { SessionLogMediator } from './session-log-mediator';
