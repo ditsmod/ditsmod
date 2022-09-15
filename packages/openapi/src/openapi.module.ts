@@ -51,7 +51,7 @@ export class OpenapiModule {
       providersPerApp: [...new Providers().useValue(OasExtensionOptions, oasExtensionOptions)],
     };
 
-    if (path !== undefined) {
+    if (typeof path == 'string') {
       moduleWithParams.path = path;
     }
 
