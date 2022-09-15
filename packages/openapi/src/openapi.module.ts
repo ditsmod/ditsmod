@@ -36,8 +36,9 @@ import { OpenapiLogMediator } from './services/openapi-log-mediator';
 })
 export class OpenapiModule {
   /**
-   * @param oasObject This object used for OpenAPI per application
-   * @param swaggerOAuthOptions This options used for OpenAPI per application
+   * @param oasObject This object used for OpenAPI per application.
+   * @param path This path used for OpenAPI module with params.
+   * @param swaggerOAuthOptions This options used for OpenAPI per application.
    */
   static withParams(oasObject: XOasObject<any>, path?: string, swaggerOAuthOptions?: SwaggerOAuthOptions) {
     const oasExtensionOptions: OasExtensionOptions = {
