@@ -39,19 +39,21 @@ export class OpenapiModule {
    * @param oasObject This object used for OpenAPI per application
    * @param swaggerOAuthOptions This options used for OpenAPI per application
    */
-  static withParams(
-    oasObject: XOasObject<any>,
-    swaggerOAuthOptions?: SwaggerOAuthOptions
-  ): ModuleWithParams<OpenapiModule> {
+  static withParams(oasObject: XOasObject<any>, path?: string, swaggerOAuthOptions?: SwaggerOAuthOptions) {
     const oasExtensionOptions: OasExtensionOptions = {
       oasObject,
       swaggerOAuthOptions,
     };
 
-    return {
+    const moduleWithParams: ModuleWithParams<OpenapiModule> = {
       module: OpenapiModule,
-      path: '',
       providersPerApp: [...new Providers().useValue(OasExtensionOptions, oasExtensionOptions)],
     };
+
+    if (path !== undefined) {
+      moduleWithParams.path = path;
+    }
+
+    return moduleWithParams;
   }
 }
