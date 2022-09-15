@@ -1,5 +1,12 @@
+<a name="openapi-2.3.0"></a>
+# [openapi-2.3.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.3.0) (2022-09-15)
+
+### BREAKING CHANGES
+
+- Removed default [path = ''](https://github.com/ditsmod/ditsmod/commit/352978d56) for `OpenapiModule.withParams()`, and now you can give `path` as second argument for `OpenapiModule.withParams()`.
+
 <a name="openapi-2.2.2"></a>
-# [openapi-2.2.2](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.2.2) (2022-09-07)
+## [openapi-2.2.2](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.2.2) (2022-09-07)
 
 ### Bug fix
 
