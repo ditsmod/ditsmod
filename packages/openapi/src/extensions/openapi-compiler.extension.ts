@@ -11,7 +11,7 @@ import {
   RouteMeta,
   ROUTES_EXTENSIONS,
 } from '@ditsmod/core';
-import { Injectable, Injector, reflector } from '@ts-stack/di';
+import { Injectable, Injector, Optional, reflector } from '@ts-stack/di';
 import {
   PathItemObject,
   XOasObject,
@@ -41,7 +41,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     private injectorPerMod: Injector,
     private extensionsManager: ExtensionsManager,
     private log: OpenapiLogMediator,
-    private extensionsMetaPerApp: ExtensionsMetaPerApp
+    @Optional() private extensionsMetaPerApp?: ExtensionsMetaPerApp
   ) {}
 
   async init() {
@@ -61,7 +61,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
 
     const oasConfigFiles = this.injectorPerApp.get(OasConfigFiles) as OasConfigFiles;
     oasConfigFiles.json = JSON.stringify(this.oasObject);
-    const oasOptions = this.extensionsMetaPerApp.oasOptions as OasOptions | undefined;
+    const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
     oasConfigFiles.yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
 
     return this.oasObject;
