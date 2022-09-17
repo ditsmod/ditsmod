@@ -28,7 +28,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
     const prefixParams = oasOptions?.paratemers;
     const prefixTags = oasOptions?.tags;
 
-    const controllersMetadata2: ControllersMetadata2[] = [];
+    const aControllersMetadata2: ControllersMetadata2[] = [];
     for (const { controller, ctrlDecorValues, methods } of aControllersMetadata1) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
@@ -72,7 +72,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             guards,
           };
           providersPerRou.push({ provide: RouteMeta, useValue: routeMeta });
-          controllersMetadata2.push({
+          aControllersMetadata2.push({
             providersPerRou,
             providersPerReq,
             path,
@@ -82,7 +82,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
       }
     }
 
-    return controllersMetadata2;
+    return aControllersMetadata2;
   }
 
   protected mergeParams(
