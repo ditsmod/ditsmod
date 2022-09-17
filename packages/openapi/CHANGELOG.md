@@ -1,5 +1,12 @@
+<a name="openapi-2.4.0"></a>
+# [openapi-2.4.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.4.0) (2022-09-17)
+
+### Features
+
+- Added `oasOptions.yamlSchemaOptions` and `ExtensionsMetaPerApp`.
+
 <a name="openapi-2.3.0"></a>
-# [openapi-2.3.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.3.0) (2022-09-15)
+## [openapi-2.3.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.3.0) (2022-09-15)
 
 ### BREAKING CHANGES
 
