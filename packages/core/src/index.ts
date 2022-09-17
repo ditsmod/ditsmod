@@ -19,6 +19,7 @@ export { Logger, LoggerConfig, LogLevel } from './types/logger';
 export { ControllerErrorHandler } from './services/controller-error-handler';
 export { BodyParserConfig } from './models/body-parser-config';
 export { ModuleExtract } from './models/module-extract';
+export { ExtensionsMetaPerApp } from './models/extensions-meta-per-app';
 export { ConsoleLogger } from './services/console-logger';
 export { Router } from './types/router';
 export { Status, getStatusText, isSuccess, STATUS_CODE_INFO } from './utils/http-status-codes';
