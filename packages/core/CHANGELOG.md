@@ -1,5 +1,12 @@
+<a name="core-2.15.0"></a>
+# [core-2.15.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.15.0) (2022-09-17)
+
+### Features
+
+- Added `ExtensionsMetaPerApp` provider.
+
 <a name="core-2.14.2"></a>
-# [core-2.14.2](https://github.com/ts-stack/ditsmod/releases/tag/core-2.14.2) (2022-09-07)
+## [core-2.14.2](https://github.com/ts-stack/ditsmod/releases/tag/core-2.14.2) (2022-09-07)
 
 ### Bug fix
 
