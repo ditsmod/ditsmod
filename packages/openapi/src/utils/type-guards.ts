@@ -17,8 +17,8 @@ export function isOasRoute2(propMeatada: AnyObj): propMeatada is OasRouteMetadat
   return isOasRoute(propMeatada) && (propMeatada as OasRouteMetadata2).operationObject !== undefined;
 }
 
-export function isReferenceObject(obj: AnyObj): obj is ReferenceObject {
-  return obj.hasOwnProperty('$ref');
+export function isReferenceObject(obj?: AnyObj): obj is ReferenceObject {
+  return Boolean(obj?.hasOwnProperty('$ref'));
 }
 
 export function isOasGuard(classMeta: AnyObj): classMeta is OasGuardMetadata {
