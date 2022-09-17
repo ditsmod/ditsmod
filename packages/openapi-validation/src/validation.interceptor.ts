@@ -4,7 +4,7 @@ import { Cookies } from '@ts-stack/cookies';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { Dictionary, DictService } from '@ditsmod/i18n';
 
-import { IS_REQUIRED, ValidationArguments, ValidationRouteMeta, VALIDATION_ARGS } from './types';
+import { IS_REQUIRED, InvalidArgsValue, ValidationRouteMeta, INVALID_ARGS_KEY } from './types';
 import { AssertService } from './assert.service';
 import { AssertDict } from './locales/current';
 
@@ -30,7 +30,7 @@ export class ValidationInterceptor implements HttpInterceptor {
     for (const parameter of parameters) {
       const schema = parameter.schema as XSchemaObject<any>;
       const { required } = parameter;
-      const args = schema[VALIDATION_ARGS] || [];
+      const args = schema[INVALID_ARGS_KEY] || [];
       let value: any;
       if (parameter.in == 'path') {
         value = this.req.pathParams[parameter.name];
@@ -69,7 +69,7 @@ export class ValidationInterceptor implements HttpInterceptor {
 
     for (const prop in this.validationMeta.requestBodyProperties) {
       const schema = this.validationMeta.requestBodyProperties[prop] as XSchemaObject<any>;
-      const args = schema[VALIDATION_ARGS] || [];
+      const args = schema[INVALID_ARGS_KEY] || [];
       const required = schema[IS_REQUIRED] || false;
       const value = this.req.body[prop];
       this.checkParamsOrBody('body', schema, prop, value, required, args);
@@ -82,7 +82,7 @@ export class ValidationInterceptor implements HttpInterceptor {
     propertyName: string,
     value: any,
     required: boolean | undefined,
-    [Dict, key, ...args]: ValidationArguments<T>
+    [Dict, key, ...args]: InvalidArgsValue<T>
   ) {
     let errOpts: ErrorOpts | undefined;
 
@@ -140,7 +140,7 @@ export class ValidationInterceptor implements HttpInterceptor {
         const schema2 = schema.properties[propertyName2];
         const value2 = value?.[propertyName2];
         const required2 = schema2[IS_REQUIRED];
-        const args2 = schema2[VALIDATION_ARGS] || [];
+        const args2 = schema2[INVALID_ARGS_KEY] || [];
         // @todo Check how it's works with circular refereces
         this.checkParamsOrBody(paramIn, schema2, propertyName2, value2, required2, args2);
       }
@@ -155,7 +155,7 @@ export class ValidationInterceptor implements HttpInterceptor {
         schema.items.forEach((schema2, i) => {
           const value2 = value?.[i];
           const required2 = schema2[IS_REQUIRED];
-          const args2 = schema2[VALIDATION_ARGS] || [];
+          const args2 = schema2[INVALID_ARGS_KEY] || [];
           // @todo Check how it's works with circular refereces
           this.checkParamsOrBody(paramIn, schema2, `${propertyName}[${i}]`, value2, required2, args2);
         });
@@ -163,7 +163,7 @@ export class ValidationInterceptor implements HttpInterceptor {
         const schema2 = schema.items;
         ((value as any[]) || []).forEach((value2, i) => {
           const required2 = schema2[IS_REQUIRED];
-          const args2 = schema2[VALIDATION_ARGS] || [];
+          const args2 = schema2[INVALID_ARGS_KEY] || [];
           // @todo Check how it's works with circular refereces
           this.checkParamsOrBody(paramIn, schema2, `${propertyName}[${i}]`, value2, required2, args2);
         });

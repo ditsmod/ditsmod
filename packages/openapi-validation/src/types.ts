@@ -11,11 +11,23 @@ export class ValidationRouteMeta extends OasRouteMeta {
 /**
  * This OAS property contains validation error arguments.
  */
-export const VALIDATION_ARGS = 'x-invalid-args';
+export const INVALID_ARGS_KEY = 'x-invalid-args';
 
 /**
  * This OAS property indicates whether requestBody property is required or not.
  */
 export const IS_REQUIRED = 'x-body-property-required';
 
-export type ValidationArguments<T extends Type<Dictionary>> = [T, keyof T['prototype'], ...any[]];
+export type InvalidArgsValue<T extends Type<Dictionary>> = [T, keyof T['prototype'], ...any[]];
+
+interface ValidArgsObj<T extends Type<Dictionary>> {
+  [INVALID_ARGS_KEY]: InvalidArgsValue<T>;
+}
+
+export function getInvalidArgs<T extends Type<Dictionary>>(
+  dict: T,
+  key: Exclude<keyof T['prototype'], 'getLng'>,
+  ...args: any[]
+): ValidArgsObj<T> {
+  return { [INVALID_ARGS_KEY]: [dict, key, ...args] };
+}
