@@ -1,6 +1,8 @@
+import { ExtensionsMetaPerApp } from '@ditsmod/core';
 import { OpenapiModule, SwaggerOAuthOptions } from '@ditsmod/openapi';
 
 import { oasObject } from './oas-object';
+import { oasOptions } from './oas-options';
 
 const swaggerOAuthOptions: SwaggerOAuthOptions = {
   appName: 'Swagger UI Webpack Demo',
@@ -9,3 +11,8 @@ const swaggerOAuthOptions: SwaggerOAuthOptions = {
 };
 
 export const openapiModuleWithParams = OpenapiModule.withParams(oasObject, '', swaggerOAuthOptions);
+
+openapiModuleWithParams.providersPerApp = [
+  ...(openapiModuleWithParams.providersPerApp || []),
+  { provide: ExtensionsMetaPerApp, useValue: { oasOptions } },
+];

@@ -37,7 +37,7 @@ export class FirstController {
 
   @OasRoute('GET', 'resource2/:resourceId', {
     tags: ['withParameter'],
-    description: 'This route like previous, but uses template `{ data: Model1[], meta: any, error: any }`',
+    description: 'This route like previous, but uses template `{ data: Model1[], meta: any, error: any }` for responses.content',
     parameters: getParams('path', true, Model2, 'resourceId'),
     responses: {
       [Status.OK]: {
@@ -47,6 +47,19 @@ export class FirstController {
     },
   })
   getResourceId2() {
+    const { resourceId } = this.req.pathParams;
+    this.res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
+  }
+
+  @OasRoute('POST', 'resource3', {
+    tags: ['withParameter'],
+    description: 'This route like previous, but uses template `{ data: Model1[], meta: any, error: any }` for responses.content',
+    requestBody: {
+      description: 'Опис.',
+      content: getContent({ mediaType: 'application/json', model: Model2 }),
+    },
+  })
+  getResourceId3() {
     const { resourceId } = this.req.pathParams;
     this.res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
   }
