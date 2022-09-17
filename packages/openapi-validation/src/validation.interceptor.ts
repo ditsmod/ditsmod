@@ -1,10 +1,10 @@
-import { Injectable } from '@ts-stack/di';
-import { HttpHandler, HttpInterceptor, Req, Status, CustomError } from '@ditsmod/core';
+import { Injectable, Type } from '@ts-stack/di';
+import { HttpHandler, HttpInterceptor, Req, Status, CustomError, ErrorOpts } from '@ditsmod/core';
 import { Cookies } from '@ts-stack/cookies';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
-import { DictService } from '@ditsmod/i18n';
+import { Dictionary, DictService } from '@ditsmod/i18n';
 
-import { IS_REQUIRED, ValidationRouteMeta, VALIDATION_ARGS } from './types';
+import { IS_REQUIRED, ValidationArguments, ValidationRouteMeta, VALIDATION_ARGS } from './types';
 import { AssertService } from './assert.service';
 import { AssertDict } from './locales/current';
 
@@ -76,32 +76,44 @@ export class ValidationInterceptor implements HttpInterceptor {
     }
   }
 
-  protected checkParamsOrBody(
+  protected checkParamsOrBody<T extends Type<Dictionary>>(
     paramIn: ParamIn,
     schema: XSchemaObject,
     propertyName: string,
     value: any,
     required: boolean | undefined,
-    args: any
+    [Dict, key, ...args]: ValidationArguments<T>
   ) {
+    let errOpts: ErrorOpts | undefined;
+
+    if (Dict) {
+      const dict = this.dictService.getDictionary(Dict);
+      errOpts = new ErrorOpts();
+      if (typeof dict[key] == 'function') {
+        errOpts.msg1 = dict[key](...args);
+      } else {
+        errOpts.msg1 = dict[key];
+      }
+    }
+
     if (schema.type == 'number') {
       if (required) {
-        this.assert.number(propertyName, value, schema.minimum, schema.maximum, ...args);
+        this.assert.number(propertyName, value, schema.minimum, schema.maximum, errOpts);
       } else {
-        this.assert.optionalNumber(propertyName, value, schema.minimum, schema.maximum, ...args);
+        this.assert.optionalNumber(propertyName, value, schema.minimum, schema.maximum, errOpts);
       }
       if (value !== undefined) {
         this.coerceType(paramIn, propertyName, +value);
       }
     } else if (schema.type == 'string') {
       if (required) {
-        this.assert.string(propertyName, value, schema.minLength, schema.maxLength, ...args);
+        this.assert.string(propertyName, value, schema.minLength, schema.maxLength, errOpts);
       } else {
-        this.assert.optionalString(propertyName, value, schema.minLength, schema.maxLength, ...args);
+        this.assert.optionalString(propertyName, value, schema.minLength, schema.maxLength, errOpts);
       }
 
       if (schema.pattern) {
-        this.assert.pattern(propertyName, value, schema.pattern, ...args);
+        this.assert.pattern(propertyName, value, schema.pattern, errOpts);
       }
 
       if (value !== undefined) {
@@ -109,9 +121,9 @@ export class ValidationInterceptor implements HttpInterceptor {
       }
     } else if (schema.type == 'boolean') {
       if (required) {
-        this.assert.boolean(propertyName, value, ...args);
+        this.assert.boolean(propertyName, value, errOpts);
       } else {
-        this.assert.optionalBoolean(propertyName, value, ...args);
+        this.assert.optionalBoolean(propertyName, value, errOpts);
       }
 
       if (value !== undefined) {
@@ -119,9 +131,9 @@ export class ValidationInterceptor implements HttpInterceptor {
       }
     } else if (schema.type == 'object') {
       if (required) {
-        this.assert.object(propertyName, value, ...args);
+        this.assert.object(propertyName, value, errOpts);
       } else {
-        this.assert.optionalObject(propertyName, value, ...args);
+        this.assert.optionalObject(propertyName, value, errOpts);
       }
 
       for (const propertyName2 in schema.properties) {
@@ -134,9 +146,9 @@ export class ValidationInterceptor implements HttpInterceptor {
       }
     } else if (schema.type == 'array') {
       if (required) {
-        this.assert.array(propertyName, value, schema.minItems, schema.maxItems, ...args);
+        this.assert.array(propertyName, value, schema.minItems, schema.maxItems, errOpts);
       } else {
-        this.assert.optionalArray(propertyName, value, schema.minItems, schema.maxItems, ...args);
+        this.assert.optionalArray(propertyName, value, schema.minItems, schema.maxItems, errOpts);
       }
 
       if (Array.isArray(schema.items)) {
