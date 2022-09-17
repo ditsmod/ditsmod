@@ -33,7 +33,7 @@ describe('OpenapiCompilerExtension', () => {
 
   beforeEach(() => {
     const injector = ReflectiveInjector.resolveAndCreate([]);
-    mock = new MockOpenapiCompilerExtension(injector, injector, null as any, log as any);
+    mock = new MockOpenapiCompilerExtension(injector, injector, null as any, log as any, {});
   });
 
   describe('setSecurityInfo()', () => {
