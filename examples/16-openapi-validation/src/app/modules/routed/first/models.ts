@@ -1,5 +1,5 @@
 import { Column } from '@ditsmod/openapi';
-import { IS_REQUIRED, VALIDATION_ARGS } from '@ditsmod/openapi-validation';
+import { getInvalidArgs, IS_REQUIRED } from '@ditsmod/openapi-validation';
 
 import { OpenapiModelsDict } from './locales/current';
 
@@ -16,7 +16,7 @@ export class Model2 {
 
   @Column({
     [IS_REQUIRED]: true,
-    [VALIDATION_ARGS]: [OpenapiModelsDict, 'invalidUserName'],
+    ...getInvalidArgs(OpenapiModelsDict, 'invalidUserName'),
     description: `User name should be between 0 and 10 symbols.`,
   })
   username: string;
