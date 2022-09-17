@@ -22,6 +22,9 @@ export class DictService {
   }
 
   getDictionary<T extends Type<Dictionary>>(token: T, lng?: ISO639) {
+    if (!token) {
+      this.log.throwDictionaryMustBeDefined();
+    }
     const dictionaries = this.getAllDictionaries(token);
     lng = lng || this.lng;
     let dictionary = dictionaries.find((t) => t.getLng() == lng);
