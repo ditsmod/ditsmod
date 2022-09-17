@@ -1,5 +1,12 @@
+<a name="core-2.15.1"></a>
+# [core-2.15.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.15.1) (2022-09-18)
+
+### Features
+
+- removed `ExtensionsMetaPerApp` from defaultProvidersPerApp.
+
 <a name="core-2.15.0"></a>
-# [core-2.15.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.15.0) (2022-09-17)
+## [core-2.15.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.15.0) (2022-09-18)
 
 ### Features
 

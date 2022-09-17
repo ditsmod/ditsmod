@@ -11,7 +11,6 @@ import { LogFilter, LogMediator } from './log-mediator';
 import { PreRouter } from './pre-router';
 import { ModuleExtract } from '../models/module-extract';
 import { Providers } from '../utils/providers';
-import { ExtensionsMetaPerApp } from '../models/extensions-meta-per-app';
 
 export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
   BodyParserConfig,
@@ -25,7 +24,6 @@ export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
   ModuleManager,
   LogMediator,
   LogFilter,
-  ExtensionsMetaPerApp,
   ...new Providers()
     .useValue(ModuleExtract, { moduleName: 'AppModule' })
     .useClass(Logger, ConsoleLogger),
