@@ -3,6 +3,7 @@ import { join } from 'path';
 import {
   Extension,
   ExtensionsManager,
+  ExtensionsMetaPerApp,
   InjectorPerApp,
   isModuleWithParams,
   MetadataPerMod2,
@@ -28,6 +29,7 @@ import { isOasGuard } from '../utils/type-guards';
 import { OpenapiModule } from '../openapi.module';
 import { OasConfigFiles, OasExtensionOptions } from '../types/oas-extension-options';
 import { OpenapiLogMediator } from '../services/openapi-log-mediator';
+import { OasOptions } from '../types/oas-options';
 
 @Injectable()
 export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
@@ -38,7 +40,8 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     private injectorPerApp: InjectorPerApp,
     private injectorPerMod: Injector,
     private extensionsManager: ExtensionsManager,
-    private log: OpenapiLogMediator
+    private log: OpenapiLogMediator,
+    private extensionsMetaPerApp: ExtensionsMetaPerApp
   ) {}
 
   async init() {
@@ -58,7 +61,8 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
 
     const oasConfigFiles = this.injectorPerApp.get(OasConfigFiles) as OasConfigFiles;
     oasConfigFiles.json = JSON.stringify(this.oasObject);
-    oasConfigFiles.yaml = stringify(this.oasObject);
+    const oasOptions = this.extensionsMetaPerApp.oasOptions as OasOptions | undefined;
+    oasConfigFiles.yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
 
     return this.oasObject;
   }
