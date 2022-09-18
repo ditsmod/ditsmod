@@ -33,4 +33,5 @@ And check invalid requests:
 curl -isS localhost:3000/resource/1d
 curl -isS localhost:3000/resource/1d?lng=uk
 curl -isS localhost:3000/resource/1d?lng=en
+curl -isS localhost:3000/resource3 -d '{"one":1}' -H 'content-type: application/json'
 ```

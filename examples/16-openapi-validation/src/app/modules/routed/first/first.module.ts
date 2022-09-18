@@ -8,8 +8,8 @@ import { current } from './locales/current';
 import { imported } from './locales/imported';
 
 @Module({
-  imports: [ValidationModule, BodyParserModule],
+  imports: [ValidationModule.withParams(current), BodyParserModule],
   controllers: [FirstController],
-  providersPerMod: [...new I18nProviders().i18n({ current, imported })]
+  providersPerMod: [...new I18nProviders().i18n({ imported })]
 })
 export class FirstModule {}
