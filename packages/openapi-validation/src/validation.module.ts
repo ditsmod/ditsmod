@@ -1,5 +1,6 @@
-import { Module, PRE_ROUTER_EXTENSIONS } from '@ditsmod/core';
-import { I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
+import { Module, ModuleWithParams, PRE_ROUTER_EXTENSIONS } from '@ditsmod/core';
+import { DictGroup, Dictionary, I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
+import { Type } from '@ts-stack/di';
 
 import { AssertConfig } from './assert-config';
 import { AssertService } from './assert.service';
@@ -22,4 +23,11 @@ import { ValidationExtension } from './validation.extension';
     },
   ],
 })
-export class ValidationModule {}
+export class ValidationModule {
+  static withParams(current: DictGroup<Type<Dictionary>>[]): ModuleWithParams<ValidationModule> {
+    return {
+      module: this,
+      providersPerMod: [...new I18nProviders().i18n({ current })],
+    }
+  }
+}
