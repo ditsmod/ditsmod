@@ -24,10 +24,10 @@ interface ValidArgsObj<T extends Type<Dictionary>> {
   [INVALID_ARGS_KEY]: InvalidArgsValue<T>;
 }
 
-export function getInvalidArgs<T extends Type<Dictionary>>(
+export function getInvalidArgs<T extends Type<Dictionary>, K extends keyof Omit<T['prototype'], 'getLng'>>(
   dict: T,
   key: Exclude<keyof T['prototype'], 'getLng'>,
-  ...args: any[]
+  ...args: Parameters<T['prototype'][K]>
 ): ValidArgsObj<T> {
   return { [INVALID_ARGS_KEY]: [dict, key, ...args] };
 }
