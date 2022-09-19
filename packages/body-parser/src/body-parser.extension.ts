@@ -3,7 +3,7 @@ import {
   Extension,
   ExtensionsManager,
   HTTP_INTERCEPTORS,
-  InjectorPerApp,
+  PerAppService,
   RouteMeta,
   ROUTES_EXTENSIONS,
 } from '@ditsmod/core';
@@ -17,7 +17,7 @@ export const BODY_PARSER_EXTENSIONS = new InjectionToken<Extension<void>[]>('BOD
 export class BodyParserExtension implements Extension<void> {
   private inited: boolean;
 
-  constructor(protected extensionManager: ExtensionsManager, protected injectorPerApp: InjectorPerApp) {}
+  constructor(protected extensionManager: ExtensionsManager, protected perAppService: PerAppService) {}
 
   async init() {
     if (this.inited) {
@@ -33,7 +33,8 @@ export class BodyParserExtension implements Extension<void> {
         const mergedProvidersPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
 
         // Creating a hierarchy of injectors.
-        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+        const injectorPerApp = this.perAppService.createInjector();
+        const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
         const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
 
