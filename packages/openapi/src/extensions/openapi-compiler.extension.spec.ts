@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { CanActivate, NormalizedGuard, Status } from '@ditsmod/core';
+import { CanActivate, NormalizedGuard, PerAppService, Status } from '@ditsmod/core';
 import {
   ComponentsObject,
   OperationObject,
@@ -33,7 +33,7 @@ describe('OpenapiCompilerExtension', () => {
 
   beforeEach(() => {
     const injector = ReflectiveInjector.resolveAndCreate([]);
-    mock = new MockOpenapiCompilerExtension(injector, injector, null as any, log as any, {});
+    mock = new MockOpenapiCompilerExtension(new PerAppService(injector), injector, null as any, log as any, {});
   });
 
   describe('setSecurityInfo()', () => {

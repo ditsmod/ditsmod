@@ -11,6 +11,7 @@ import { MetadataPerMod2 } from '../types/metadata-per-mod';
 import { ExtensionsContext } from '../services/extensions-context';
 import { InjectorPerApp } from '../models/injector-per-app';
 import { getModule } from '../utils/get-module';
+import { PerAppService } from '../services/per-app.service';
 
 @Injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -22,6 +23,7 @@ export class PreRouterExtension implements Extension<void> {
     protected router: Router,
     protected extensionsManager: ExtensionsManager,
     protected logMediator: LogMediator,
+    private perAppService: PerAppService,
     private extensionsContext: ExtensionsContext
   ) {}
 
@@ -39,11 +41,12 @@ export class PreRouterExtension implements Extension<void> {
 
   protected prepareRoutesMeta(aMetadataPerMod2: MetadataPerMod2[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
+    const extendedInjectorPerApp = this.injectorPerApp.resolveAndCreateChild(this.perAppService.providers);
 
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       const { moduleName, aControllersMetadata2, providersPerMod } = metadataPerMod2;
       const mod = getModule(metadataPerMod2.module);
-      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild([mod, ...providersPerMod]);
+      const injectorPerMod = extendedInjectorPerApp.resolveAndCreateChild([mod, ...providersPerMod]);
       injectorPerMod.get(mod); // Call module constructor.
 
       aControllersMetadata2.forEach(({ httpMethod, path, providersPerRou, providersPerReq }) => {

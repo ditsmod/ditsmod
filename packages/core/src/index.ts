@@ -17,6 +17,7 @@ export { PreRouter } from './services/pre-router';
 export { Route } from './decorators/route';
 export { Logger, LoggerConfig, LogLevel } from './types/logger';
 export { ControllerErrorHandler } from './services/controller-error-handler';
+export { PerAppService } from './services/per-app.service';
 export { BodyParserConfig } from './models/body-parser-config';
 export { ModuleExtract } from './models/module-extract';
 export { ExtensionsMetaPerApp } from './models/extensions-meta-per-app';

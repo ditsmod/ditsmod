@@ -27,6 +27,7 @@ import { InjectorPerApp } from '../models/injector-per-app';
 import { EXTENSIONS_COUNTERS } from '../constans';
 import { LoggerConfig } from '../types/logger';
 import { getModule } from '../utils/get-module';
+import { PerAppService } from './per-app.service';
 
 export class AppInitializer {
   protected injectorPerApp: ReflectiveInjector;
@@ -247,11 +248,15 @@ export class AppInitializer {
   ) {
     const extensionsContext = new ExtensionsContext();
     const lastIndex = aMetadataPerMod1.length - 1;
+    const injectorPerApp = this.injectorPerApp.resolveAndCreateChild([
+      PerAppService,
+      { provide: InjectorPerApp, useValue: this.injectorPerApp }
+    ]);
     for (let i = 0; i <= lastIndex; i++) {
       const metadataPerMod1 = aMetadataPerMod1[lastIndex - i];
       const { extensionsProviders, providersPerMod, name: moduleName, module } = metadataPerMod1.meta;
       const mod = getModule(module);
-      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild([mod, LogMediator, ...providersPerMod]);
+      const injectorPerMod = injectorPerApp.resolveAndCreateChild([mod, LogMediator, ...providersPerMod]);
       injectorPerMod.get(mod); // Call module constructor.
       const logMediator = injectorPerMod.get(LogMediator) as LogMediator;
       const loggerConfig = injectorPerMod.get(LoggerConfig, new LoggerConfig()) as LoggerConfig;
@@ -262,7 +267,6 @@ export class AppInitializer {
         ExtensionsManager,
         { provide: ExtensionsContext, useValue: extensionsContext },
         { provide: MetadataPerMod1, useValue: metadataPerMod1 },
-        { provide: InjectorPerApp, useValue: this.injectorPerApp },
         { provide: EXTENSIONS_COUNTERS, useValue: mExtensionsCounters },
         ...extensionsProviders,
       ]);

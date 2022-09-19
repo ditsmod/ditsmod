@@ -4,14 +4,14 @@ import {
   Extension,
   ExtensionsManager,
   ExtensionsMetaPerApp,
-  InjectorPerApp,
   isModuleWithParams,
   MetadataPerMod2,
   NormalizedGuard,
+  PerAppService,
   RouteMeta,
   ROUTES_EXTENSIONS,
 } from '@ditsmod/core';
-import { Injectable, Injector, Optional, reflector } from '@ts-stack/di';
+import { Injectable, Injector, Optional, ReflectiveInjector, reflector } from '@ts-stack/di';
 import {
   PathItemObject,
   XOasObject,
@@ -37,7 +37,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   private swaggerUiDist = join(__dirname, '../../dist/swagger-ui');
 
   constructor(
-    private injectorPerApp: InjectorPerApp,
+    private perAppService: PerAppService,
     private injectorPerMod: Injector,
     private extensionsManager: ExtensionsManager,
     private log: OpenapiLogMediator,
@@ -56,10 +56,10 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     }
     this.log.applyingAccumulatedData(this);
 
-    await this.compileOasObject(aMetadataPerMod2);
+    const injectorPerApp = this.perAppService.createInjector();
+    await this.compileOasObject(aMetadataPerMod2, injectorPerApp);
     await mkdir(this.swaggerUiDist, { recursive: true });
-
-    const oasConfigFiles = this.injectorPerApp.get(OasConfigFiles) as OasConfigFiles;
+    const oasConfigFiles = injectorPerApp.get(OasConfigFiles) as OasConfigFiles;
     oasConfigFiles.json = JSON.stringify(this.oasObject);
     const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
     oasConfigFiles.yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
@@ -67,7 +67,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     return this.oasObject;
   }
 
-  protected async compileOasObject(aMetadataPerMod2: MetadataPerMod2[]) {
+  protected async compileOasObject(aMetadataPerMod2: MetadataPerMod2[], injectorPerApp: ReflectiveInjector) {
     const paths: XPathsObject = {};
     this.initOasObject();
     for (const metadataPerMod2 of aMetadataPerMod2) {
@@ -79,7 +79,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
       } else if (modOrObj === OpenapiModule) {
         continue;
       }
-      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+      const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
 
       aControllersMetadata2.forEach(({ providersPerRou }) => {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];

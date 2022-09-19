@@ -6,6 +6,7 @@ import { MetadataPerMod1 } from '../types/metadata-per-mod';
 import { ExtensionProvider } from '../types/mix';
 import { ExtensionsContext } from './extensions-context';
 import { ExtensionsManager } from './extensions-manager';
+import { PerAppService } from './per-app.service';
 
 export const defaultExtensions: Readonly<ExtensionProvider[]> = [
   { provide: PRE_ROUTER_EXTENSIONS, useClass: PreRouterExtension, multi: true },
@@ -18,4 +19,5 @@ export const defaultExtensionsTokens: Readonly<any[]> = [
   MetadataPerMod1,
   InjectorPerApp,
   EXTENSIONS_COUNTERS,
+  PerAppService
 ];
