@@ -13,14 +13,14 @@ export class PerAppService {
   constructor(private injector: InjectorPerApp) {}
 
   /**
-   * Returns copy of the providersPerApp.
+   * Returns copy of the providersPerApp accumulated by extensions.
    */
   get providers(): ServiceProvider[] {
     return [...this.#providers];
   }
 
   /**
-   * Merges new providersPerApp with existing providersPerApp.
+   * Merges new providersPerApp with existing providersPerApp accumulated by extensions.
    */
   set providers(providers: ServiceProvider[]) {
     this.#providers.push(...providers);
