@@ -1,6 +1,7 @@
 import {
   Extension,
   ExtensionsManager,
+  MetadataPerMod2,
   ModuleExtract,
   PerAppService,
   ROUTES_EXTENSIONS,
@@ -16,7 +17,7 @@ import { I18N_TRANSLATIONS, Translations } from './types/mix';
 export class I18nExtension implements Extension<void> {
   #inited: boolean;
   protected injector: ReflectiveInjector;
-  protected translations: Translations[];
+  protected translations: Translations[] | null;
 
   constructor(
     private log: I18nLogMediator,
@@ -37,10 +38,16 @@ export class I18nExtension implements Extension<void> {
     }
 
     const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    this.addI18nProviders(aMetadataPerMod2, isLastExtensionCall);
+
+    this.#inited = true;
+  }
+
+  protected addI18nProviders(aMetadataPerMod2: MetadataPerMod2[], isLastExtensionCall?: boolean) {
     const injectorPerApp = this.perAppService.createInjector();
 
-    const translationsPerApp: Translations[] = injectorPerApp.get(I18N_TRANSLATIONS, []);
-    if (isLastExtensionCall) {
+    const translationsPerApp: Translations[] | null = injectorPerApp.get(I18N_TRANSLATIONS, null);
+    if (isLastExtensionCall && translationsPerApp) {
       const providers = this.i18nTransformer.getProviders(translationsPerApp);
       this.perAppService.providers.push(...providers);
     }
@@ -50,20 +57,19 @@ export class I18nExtension implements Extension<void> {
       const { providersPerMod, providersPerRou, providersPerReq } = metadataPerMod2;
 
       this.injector = injectorPerApp;
-      this.addI18nProviders(providersPerMod);
-      this.addI18nProviders(providersPerRou);
-      this.addI18nProviders(providersPerReq);
+      this.addI18nProvidersToScope(providersPerMod);
+      this.addI18nProvidersToScope(providersPerRou);
+      this.addI18nProvidersToScope(providersPerReq);
 
       if (this.translations === translationsPerApp) {
         this.log.translationNotFound(this);
       }
     }
-    this.#inited = true;
   }
 
-  protected addI18nProviders(providers: ServiceProvider[]) {
+  protected addI18nProvidersToScope(providers: ServiceProvider[]) {
     this.injector = this.injector.resolveAndCreateChild(providers);
-    const translations: Translations[] = this.injector.get(I18N_TRANSLATIONS, []);
+    const translations: Translations[] = this.injector.get(I18N_TRANSLATIONS, null);
     if (translations !== this.translations) {
       providers.push(...this.i18nTransformer.getProviders(translations));
     }
