@@ -1,5 +1,12 @@
+<a name="core-2.16.0"></a>
+# [core-2.16.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.16.0) (2022-09-19)
+
+### Features
+
+- intoduced `PerAppService` and ability for extension to extends `providersPerApp`.
+
 <a name="core-2.15.1"></a>
-# [core-2.15.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.15.1) (2022-09-18)
+## [core-2.15.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.15.1) (2022-09-18)
 
 ### Features
 
