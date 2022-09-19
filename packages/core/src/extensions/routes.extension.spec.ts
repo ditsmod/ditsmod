@@ -1,8 +1,7 @@
 import 'reflect-metadata';
 import { Injectable, ReflectiveInjector } from '@ts-stack/di';
-import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
+import { it, describe, beforeEach, xdescribe } from '@jest/globals';
 
-import { LoggerConfig } from '../types/logger';
 import { Controller, ControllerMetadata } from '../decorators/controller';
 import { Route } from '../decorators/route';
 import { RootModule } from '../decorators/root-module';
@@ -10,7 +9,6 @@ import { CanActivate } from '../types/mix';
 import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleManager } from '../services/module-manager';
-import { ConsoleLogger } from '../services/console-logger';
 import { AppInitializer } from '../services/app-initializer';
 import { LogMediator } from '../services/log-mediator';
 import { LogManager } from '../services/log-manager';
