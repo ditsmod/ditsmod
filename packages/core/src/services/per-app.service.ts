@@ -25,9 +25,14 @@ export class PerAppService {
   }
 
   /**
-   * Applies providers per app to create new injector.
+   * Applies providers per app to create new injector. You probably don't need to use this method.
+   * At the moment, it is used after the work of all extensions that may have been dynamically
+   * added new providers.
    */
-  reinitInjector() {
+  reinitInjector(providers?: ServiceProvider[]) {
+    if (providers) {
+      this.providers = providers;
+    }
     this.#injector = ReflectiveInjector.resolveAndCreate(this.providers);
     return this.#injector;
   }

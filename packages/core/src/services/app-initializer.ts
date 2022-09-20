@@ -221,8 +221,7 @@ export class AppInitializer {
    * Creates injector per the application and sets log.
    */
   protected createInjectorAndSetLogMediator() {
-    this.perAppService.providers = this.meta.providersPerApp;
-    const injectorPerApp = this.perAppService.reinitInjector();
+    const injectorPerApp = this.perAppService.reinitInjector(this.meta.providersPerApp);
     const log = injectorPerApp.get(LogMediator) as LogMediator;
     this.logMediator = log;
   }
