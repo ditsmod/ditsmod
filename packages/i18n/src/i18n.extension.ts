@@ -44,7 +44,7 @@ export class I18nExtension implements Extension<void> {
   }
 
   protected addI18nProviders(aMetadataPerMod2: MetadataPerMod2[], isLastExtensionCall?: boolean) {
-    const injectorPerApp = this.perAppService.createInjector();
+    const injectorPerApp = this.perAppService.injector;
 
     const translationsPerApp: Translations[] | null = injectorPerApp.get(I18N_TRANSLATIONS, null);
     if (isLastExtensionCall && translationsPerApp) {
