@@ -21,7 +21,7 @@ export class PreRouterExtension implements Extension<void> {
     protected perAppService: PerAppService,
     protected router: Router,
     protected extensionsManager: ExtensionsManager,
-    protected logMediator: LogMediator,
+    protected log: LogMediator,
     protected extensionsContext: ExtensionsContext
   ) {}
 
@@ -57,6 +57,14 @@ export class PreRouterExtension implements Extension<void> {
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
         const resolvedPerReq = ReflectiveInjector.resolve(mergedPerReq);
         this.resolveAndInstantiate(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq);
+        this.log.showProvidersInLogs(
+          this,
+          mod.name,
+          providersPerReq,
+          providersPerRou,
+          providersPerMod,
+          this.perAppService.providers,
+        );
 
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
           const context = ReflectiveInjector.resolve([
@@ -116,7 +124,7 @@ export class PreRouterExtension implements Extension<void> {
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {
     this.extensionsContext.appHasRoutes = this.extensionsContext.appHasRoutes || !!preparedRouteMeta.length;
     if (this.#isLastExtensionCall && !this.extensionsContext.appHasRoutes) {
-      this.logMediator.noRoutes(this);
+      this.log.noRoutes(this);
       return;
     }
 
@@ -129,7 +137,7 @@ export class PreRouterExtension implements Extension<void> {
         throw new Error(msg);
       }
 
-      this.logMediator.printRoute(this, httpMethod, path);
+      this.log.printRoute(this, httpMethod, path);
 
       if (httpMethod == 'ALL') {
         this.router.all(`/${path}`, handle);
