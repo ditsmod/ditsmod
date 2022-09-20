@@ -117,7 +117,8 @@ export class ImportsResolver {
   }
 
   protected increaseExtensionsCounters() {
-    const uniqTargets = new Set<ServiceProvider>(getProvidersTargets(this.meta.extensionsProviders));
+    const extensionsProviders = [...defaultExtensions, ...this.meta.extensionsProviders];
+    const uniqTargets = new Set<ServiceProvider>(getProvidersTargets(extensionsProviders));
 
     uniqTargets.forEach((target) => {
       const counter = this.mExtensionsCounters.get(target) || 0;
