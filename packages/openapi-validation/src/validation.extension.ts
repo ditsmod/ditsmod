@@ -1,7 +1,7 @@
-import { Extension, ExtensionsManager, HTTP_INTERCEPTORS, RouteMeta, ROUTES_EXTENSIONS } from '@ditsmod/core';
+import { Extension, ExtensionsManager, HTTP_INTERCEPTORS, PerAppService, RouteMeta, ROUTES_EXTENSIONS } from '@ditsmod/core';
 import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 import { isReferenceObject, OasRouteMeta } from '@ditsmod/openapi';
-import { Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { Injectable } from '@ts-stack/di';
 
 import { ValidationRouteMeta } from './types';
 import { ValidationInterceptor } from './validation.interceptor';
@@ -10,7 +10,7 @@ import { ValidationInterceptor } from './validation.interceptor';
 export class ValidationExtension implements Extension<void> {
   private inited: boolean;
 
-  constructor(private injectorPerApp: ReflectiveInjector, private extensionsManager: ExtensionsManager) {}
+  constructor(private perAppService: PerAppService, private extensionsManager: ExtensionsManager) {}
 
   async init() {
     if (this.inited) {
@@ -27,7 +27,7 @@ export class ValidationExtension implements Extension<void> {
 
     metadataPerMod2Arr.forEach((metadataPerMod2) => {
       const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
-      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+      const injectorPerMod = this.perAppService.injector.resolveAndCreateChild(providersPerMod);
 
       aControllersMetadata2.forEach(({ providersPerRou, providersPerReq }) => {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
