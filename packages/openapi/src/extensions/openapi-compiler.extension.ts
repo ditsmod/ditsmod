@@ -8,6 +8,7 @@ import {
   MetadataPerMod2,
   NormalizedGuard,
   PerAppService,
+  Providers,
   RouteMeta,
   ROUTES_EXTENSIONS,
 } from '@ditsmod/core';
@@ -59,10 +60,12 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     const injectorPerApp = this.perAppService.injector;
     await this.compileOasObject(aMetadataPerMod2, injectorPerApp);
     await mkdir(this.swaggerUiDist, { recursive: true });
-    const oasConfigFiles = injectorPerApp.get(OasConfigFiles) as OasConfigFiles;
-    oasConfigFiles.json = JSON.stringify(this.oasObject);
+    const json = JSON.stringify(this.oasObject);
     const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
-    oasConfigFiles.yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
+    const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
+    this.perAppService.providers = [
+      ...new Providers().useValue(OasConfigFiles, { json, yaml })
+    ];
 
     return this.oasObject;
   }
