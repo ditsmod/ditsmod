@@ -1,5 +1,12 @@
+<a name="openapi-2.5.0"></a>
+# [openapi-2.5.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.5.0) (2022-09-17)
+
+### BREAKING CHANGES
+
+- Migration to core-2.17.0
+
 <a name="openapi-2.4.1"></a>
-# [openapi-2.4.1](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.4.1) (2022-09-17)
+## [openapi-2.4.1](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.4.1) (2022-09-17)
 
 ### Bug fix
 
