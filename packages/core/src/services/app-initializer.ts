@@ -27,7 +27,6 @@ import { EXTENSIONS_COUNTERS } from '../constans';
 import { LoggerConfig } from '../types/logger';
 import { getModule } from '../utils/get-module';
 import { PerAppService } from './per-app.service';
-import { Router } from '../types/router';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();
@@ -46,6 +45,7 @@ export class AppInitializer {
    */
   bootstrapProvidersPerApp() {
     this.meta = this.moduleManager.getMetadata('root', true);
+    this.perAppService.removeProviders();
     this.prepareProvidersPerApp();
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLogMediator();
