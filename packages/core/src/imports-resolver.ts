@@ -31,7 +31,7 @@ export class ImportsResolver {
     private moduleManager: ModuleManager,
     protected appMetadataMap: AppMetadataMap,
     protected providersPerApp: ServiceProvider[],
-    protected logMediator: LogMediator
+    protected log: LogMediator
   ) {}
 
   resolve() {
@@ -207,7 +207,15 @@ export class ImportsResolver {
       .join(' -> ');
 
     const partMsg = path.length > 1 ? `(${strPath})` : '';
-    this.logMediator.throwNoProviderDuringResolveImports(this.meta.name, token.name || token, partMsg);
+    this.log.showProvidersInLogs(
+      this,
+      this.meta.name,
+      this.meta.providersPerReq,
+      this.meta.providersPerRou,
+      this.meta.providersPerMod,
+    );
+
+    this.log.throwNoProviderDuringResolveImports(this.meta.name, token.name || token, partMsg);
   }
 
   protected getDependencies(provider: ServiceProvider) {

@@ -541,10 +541,13 @@ export class LogMediator {
    * no provider for ${tokenName}! ${partMsg}.
    */
   throwNoProviderDuringResolveImports(moduleName: string, tokenName: string, partMsg: string) {
-    this.raiseLog({ tags: ['provider'] }, 'debug');
+    this.raiseLog({ tags: ['provider'], modulesNames: [moduleName] }, 'debug');
     throw new Error(`${moduleName}: no provider for ${tokenName}! ${partMsg}.`);
   }
 
+  /**
+   * ModuleName: ClassName: providersPerMod: ...
+   */
   showProvidersInLogs(
     self: object,
     moduleName: string,
