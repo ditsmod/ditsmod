@@ -207,7 +207,7 @@ export class ImportsResolver {
       .join(' -> ');
 
     const partMsg = path.length > 1 ? `(${strPath})` : '';
-    throw new Error(`No provider for ${token.name || token}! ${partMsg}`);
+    this.logMediator.throwNoProviderDuringResolveImports(this.meta.name, token.name || token, partMsg);
   }
 
   protected getDependencies(provider: ServiceProvider) {

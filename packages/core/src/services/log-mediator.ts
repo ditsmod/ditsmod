@@ -190,7 +190,7 @@ export class LogMediator {
       this.detectedDifferentLogFilters(uniqFilters);
     }
 
-    if (!filteredBuffer.length && uniqFilters.size) {
+    if (buffer.length && !filteredBuffer.length && uniqFilters.size) {
       filteredBuffer = this.getWarnAboutEmptyFilteredLogs(uniqFilters);
     }
 
@@ -527,5 +527,9 @@ export class LogMediator {
     msgLogFilter.className = className;
     msgLogFilter.tags = ['route'];
     this.setLog('debug', msgLogFilter, `${className}: setted route ${httpMethod} "/${path}".`);
+  }
+
+  throwNoProviderDuringResolveImports(moduleName: string, tokenName: string, partMsg: string) {
+    throw new Error(`${moduleName}: no provider for ${tokenName}! ${partMsg}.`);
   }
 }
