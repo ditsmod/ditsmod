@@ -33,7 +33,7 @@ export class BodyParserExtension implements Extension<void> {
         const mergedProvidersPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
 
         // Creating a hierarchy of injectors.
-        const injectorPerApp = this.perAppService.createInjector();
+        const injectorPerApp = this.perAppService.injector;
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
         const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
