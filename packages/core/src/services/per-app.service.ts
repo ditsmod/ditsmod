@@ -11,21 +11,21 @@ export class PerAppService {
   #injector: ReflectiveInjector;
 
   /**
-   * Returns copy of the providersPerApp accumulated by extensions.
+   * Returns copy of the providersPerApp.
    */
   get providers(): ServiceProvider[] {
     return [...this.#providers];
   }
 
   /**
-   * Merges new providersPerApp with existing providersPerApp accumulated by extensions.
+   * Merges new providersPerApp with existing providersPerApp.
    */
   set providers(providers: ServiceProvider[]) {
     this.#providers.push(...providers);
   }
 
   /**
-   * Applies providers accumulated by extensions to create child from injector per app.
+   * Applies providers per app to create new injector.
    */
   reinitInjector() {
     this.#injector = ReflectiveInjector.resolveAndCreate(this.providers);
@@ -34,5 +34,9 @@ export class PerAppService {
 
   get injector() {
     return this.#injector;
+  }
+
+  removeProviders() {
+    this.#providers = [];
   }
 }
