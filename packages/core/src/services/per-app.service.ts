@@ -1,6 +1,5 @@
-import { Injectable } from '@ts-stack/di';
+import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
-import { InjectorPerApp } from '../models/injector-per-app';
 import { ServiceProvider } from '../types/mix';
 
 /**
@@ -9,8 +8,7 @@ import { ServiceProvider } from '../types/mix';
 @Injectable()
 export class PerAppService {
   #providers: ServiceProvider[] = [];
-
-  constructor(private injector: InjectorPerApp) {}
+  #injector: ReflectiveInjector;
 
   /**
    * Returns copy of the providersPerApp accumulated by extensions.
@@ -27,9 +25,18 @@ export class PerAppService {
   }
 
   /**
-   * Applies providers accumulated by extensions to create child from `InjectorPerApp`.
+   * Applies providers accumulated by extensions to create child from injector per app.
    */
-  createInjector() {
-    return this.injector.resolveAndCreateChild(this.providers);
+  reinitInjector() {
+    if (!this.#injector) {
+      this.#injector = ReflectiveInjector.resolveAndCreate(this.providers);
+    } else {
+      this.#injector = this.#injector.resolveAndCreateChild(this.providers);
+    }
+    return this.#injector;
+  }
+
+  get injector() {
+    return this.#injector;
   }
 }

@@ -1,7 +1,6 @@
 import { EXTENSIONS_COUNTERS, PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from '../constans';
 import { PreRouterExtension } from '../extensions/pre-router.extension';
 import { RoutesExtension } from '../extensions/routes.extension';
-import { InjectorPerApp } from '../models/injector-per-app';
 import { MetadataPerMod1 } from '../types/metadata-per-mod';
 import { ExtensionProvider } from '../types/mix';
 import { ExtensionsContext } from './extensions-context';
@@ -17,7 +16,6 @@ export const defaultExtensionsTokens: Readonly<any[]> = [
   ExtensionsManager,
   ExtensionsContext,
   MetadataPerMod1,
-  InjectorPerApp,
   EXTENSIONS_COUNTERS,
   PerAppService
 ];

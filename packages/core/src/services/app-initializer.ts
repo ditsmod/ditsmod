@@ -1,4 +1,4 @@
-import { InjectionToken, ReflectiveInjector } from '@ts-stack/di';
+import { InjectionToken } from '@ts-stack/di';
 
 import { ImportsResolver } from '../imports-resolver';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
@@ -23,14 +23,14 @@ import { ModuleManager } from './module-manager';
 import { PreRouter } from './pre-router';
 import { getLastProviders } from '../utils/get-last-providers';
 import { ExtensionsContext } from './extensions-context';
-import { InjectorPerApp } from '../models/injector-per-app';
 import { EXTENSIONS_COUNTERS } from '../constans';
 import { LoggerConfig } from '../types/logger';
 import { getModule } from '../utils/get-module';
 import { PerAppService } from './per-app.service';
+import { Router } from '../types/router';
 
 export class AppInitializer {
-  protected injectorPerApp: ReflectiveInjector;
+  protected perAppService = new PerAppService();
   protected preRouter: PreRouter;
   protected meta: NormalizedModuleMetadata;
   protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
@@ -163,7 +163,7 @@ export class AppInitializer {
     const mExtensionsCounters = importsResolver.resolve();
     const aMetadataPerMod1 = [...appMetadataMap].map(([, metadataPerMod1]) => metadataPerMod1);
     await this.handleExtensions(aMetadataPerMod1, mExtensionsCounters);
-    this.preRouter = this.injectorPerApp.get(PreRouter) as PreRouter;
+    this.preRouter = this.perAppService.injector.get(PreRouter) as PreRouter;
     return appMetadataMap;
   }
 
@@ -221,8 +221,9 @@ export class AppInitializer {
    * Creates injector per the application and sets log.
    */
   protected createInjectorAndSetLogMediator() {
-    this.injectorPerApp = ReflectiveInjector.resolveAndCreate(this.meta.providersPerApp);
-    const log = this.injectorPerApp.get(LogMediator) as LogMediator;
+    this.perAppService.providers = this.meta.providersPerApp;
+    const injectorPerApp = this.perAppService.reinitInjector();
+    const log = injectorPerApp.get(LogMediator) as LogMediator;
     this.logMediator = log;
   }
 
@@ -248,9 +249,8 @@ export class AppInitializer {
   ) {
     const extensionsContext = new ExtensionsContext();
     const lastIndex = aMetadataPerMod1.length - 1;
-    const injectorPerApp = this.injectorPerApp.resolveAndCreateChild([
-      PerAppService,
-      { provide: InjectorPerApp, useValue: this.injectorPerApp }
+    const injectorPerApp = this.perAppService.injector.resolveAndCreateChild([
+      { provide: PerAppService, useValue: this.perAppService },
     ]);
     for (let i = 0; i <= lastIndex; i++) {
       const metadataPerMod1 = aMetadataPerMod1[lastIndex - i];
@@ -302,7 +302,7 @@ export class AppInitializer {
   }
 
   protected logExtensionsStatistic(logMediator: LogMediator) {
-    const counter = this.injectorPerApp.get(Counter) as Counter;
+    const counter = this.perAppService.injector.get(Counter) as Counter;
     const extensions = counter.getInitedExtensions();
     const names = Array.from(extensions)
       .map((e) => e.constructor.name)
