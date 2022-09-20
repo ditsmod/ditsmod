@@ -56,7 +56,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     }
     this.log.applyingAccumulatedData(this);
 
-    const injectorPerApp = this.perAppService.createInjector();
+    const injectorPerApp = this.perAppService.injector;
     await this.compileOasObject(aMetadataPerMod2, injectorPerApp);
     await mkdir(this.swaggerUiDist, { recursive: true });
     const oasConfigFiles = injectorPerApp.get(OasConfigFiles) as OasConfigFiles;
