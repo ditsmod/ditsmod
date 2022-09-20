@@ -28,11 +28,7 @@ export class PerAppService {
    * Applies providers accumulated by extensions to create child from injector per app.
    */
   reinitInjector() {
-    if (!this.#injector) {
-      this.#injector = ReflectiveInjector.resolveAndCreate(this.providers);
-    } else {
-      this.#injector = this.#injector.resolveAndCreateChild(this.providers);
-    }
+    this.#injector = ReflectiveInjector.resolveAndCreate(this.providers);
     return this.#injector;
   }
 
