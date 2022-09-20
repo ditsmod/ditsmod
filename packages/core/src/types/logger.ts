@@ -3,17 +3,15 @@ import { Injectable, Optional } from '@ts-stack/di';
 export class LoggerConfig {
   /**
    * @param level Log level (trace, debug, info etc.)
-   * @param allowRaisedLogs If `LogMediator` is used to throw an error,
+   * @param disableRaisedLogs If `LogMediator` is used to throw an error,
    * this option allows you to raise the log level. For example,
    * if you set the log level to `info` and the router throws an error
    * about duplicates in routes paths, allowRaisedLog allows you to filter
    * and show relevant logs, even if they have log level `debug`.
    * 
-   * Default - true.
+   * Default - false.
    */
-  constructor(public level: LogLevel = 'info', public allowRaisedLogs?: boolean) {
-    this.allowRaisedLogs = allowRaisedLogs === undefined ? true : allowRaisedLogs;
-  }
+  constructor(public level: LogLevel = 'info', public disableRaisedLogs?: boolean) {}
 }
 
 const msg = 'You need to implement "%s" method in "%s"';

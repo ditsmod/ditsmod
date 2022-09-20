@@ -120,10 +120,18 @@ export class LogMediator {
     buffer.splice(0);
   }
 
+  protected raisedLogs: LogItem[] = [];
+
+  /**
+   * @param logLevel has only from raiseLog() call.
+   */
   protected renderLogs(logItems: LogItem[], logLevel?: LogLevel) {
     if (typeof (global as any).it != 'function') {
       // This is not a test mode.
       logItems.forEach((logItem) => {
+        if (!logLevel && this.raisedLogs.includes(logItem)) {
+          return;
+        }
         // const dateTime = log.date.toLocaleString();
         const partMsg = logItem.msgLogFilter.tags ? ` (Tags: ${logItem.msgLogFilter.tags.join(', ')})` : '';
         const msg = `${logItem.msg}${partMsg}`;
@@ -169,11 +177,11 @@ export class LogMediator {
   }
 
   protected raiseLog(logFilter: LogFilter, logLevel: LogLevel) {
-    if (!this.loggerConfig?.allowRaisedLogs) {
+    if (this.loggerConfig?.disableRaisedLogs) {
       return;
     }
-    const logs = this.applyCustomLogFilter(this.buffer, logFilter, 'raised log: ');
-    this.renderLogs(logs, logLevel);
+    this.raisedLogs = this.applyCustomLogFilter(this.buffer, logFilter, 'raised log: ');
+    this.renderLogs(this.raisedLogs, logLevel);
   }
 
   protected applyLogFilter(buffer: LogItem[]) {
@@ -529,7 +537,38 @@ export class LogMediator {
     this.setLog('debug', msgLogFilter, `${className}: setted route ${httpMethod} "/${path}".`);
   }
 
+  /**
+   * no provider for ${tokenName}! ${partMsg}.
+   */
   throwNoProviderDuringResolveImports(moduleName: string, tokenName: string, partMsg: string) {
+    this.raiseLog({ tags: ['provider'] }, 'debug');
     throw new Error(`${moduleName}: no provider for ${tokenName}! ${partMsg}.`);
+  }
+
+  showProvidersInLogs(
+    self: object,
+    moduleName: string,
+    providersPerReq: ServiceProvider[],
+    providersPerRou: ServiceProvider[],
+    providersPerMod: ServiceProvider[],
+    providersPerApp?: ServiceProvider[]
+  ) {
+    const className = self.constructor.name;
+    const msgLogFilter = new MsgLogFilter();
+    msgLogFilter.className = className;
+    msgLogFilter.tags = ['provider'];
+
+    const startStr = `${moduleName}: ${className}: providersPer`;
+    const perAppNames = (providersPerApp || []).map(getProviderName).join(', ') || '[]';
+    const perModNames = providersPerMod.map(getProviderName).join(', ') || '[]';
+    const perRouNames = providersPerRou.map(getProviderName).join(', ') || '[]';
+    const perReqNames = providersPerReq.map(getProviderName).join(', ') || '[]';
+
+    if (providersPerApp) {
+      this.setLog('debug', msgLogFilter, `${startStr}App: ${perAppNames}.`);
+    }
+    this.setLog('debug', msgLogFilter, `${startStr}Mod: ${perModNames}.`);
+    this.setLog('debug', msgLogFilter, `${startStr}Rou: ${perRouNames}.`);
+    this.setLog('debug', msgLogFilter, `${startStr}Req: ${perReqNames}.`);
   }
 }
