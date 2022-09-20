@@ -13,12 +13,13 @@ import { AppInitializer } from '../services/app-initializer';
 import { LogMediator } from '../services/log-mediator';
 import { LogManager } from '../services/log-manager';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
+import { PerAppService } from '../services/per-app.service';
 
 xdescribe('RoutesExtension', () => {
   @Injectable()
   class MockAppInitializer extends AppInitializer {
     override moduleManager: ModuleManager;
-    override injectorPerApp: ReflectiveInjector;
+    override perAppService = new PerAppService();
     override meta = new NormalizedModuleMetadata();
 
     override bootstrapModuleFactory(moduleManager: ModuleManager) {
@@ -31,7 +32,7 @@ xdescribe('RoutesExtension', () => {
 
   beforeEach(() => {
     const logManager = new LogManager();
-    const log = new LogMediator(logManager, {moduleName: 'fakeName'});
+    const log = new LogMediator(logManager, { moduleName: 'fakeName' });
     moduleManager = new ModuleManager(log);
     const injectorPerApp = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,
@@ -41,7 +42,6 @@ xdescribe('RoutesExtension', () => {
       MockAppInitializer,
     ]);
     mockAppInitializer = injectorPerApp.get(MockAppInitializer);
-    mockAppInitializer.injectorPerApp = injectorPerApp;
     // mockPreRoutes = new MockPreRoutes(injectorPerApp);
   });
 
