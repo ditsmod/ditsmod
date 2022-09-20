@@ -1,5 +1,20 @@
+<a name="core-2.17.0"></a>
+# [core-2.17.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.17.0) (2022-09-20)
+
+### BREAKING CHANGES
+
+- Removed `InjectorPerApp` class.
+
+### Features
+
+- Now extensions can dynamically add providers per the application.
+
+### Bug fix
+
+- Fixed passing parameter for `extension.init(isLastExtensionCall?: boolean)`.
+
 <a name="core-2.16.0"></a>
-# [core-2.16.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.16.0) (2022-09-19)
+## [core-2.16.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.16.0) (2022-09-19)
 
 ### Features
 
