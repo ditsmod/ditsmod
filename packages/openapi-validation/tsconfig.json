@@ -5,20 +5,18 @@
     "outDir": "dist",
     "rootDir": "src",
     "paths": {
-      "@ditsmod/core": [
-        "../core/src"
-      ],
-      "@ditsmod/i18n": [
-        "../i18n/src"
-      ]
+      "@ditsmod/core": ["../core/src"],
+      "@ditsmod/i18n": ["../i18n/src"],
+      "@ditsmod/body-parser": ["../body-parser/src"],
+      "@ditsmod/openapi": ["../openapi/src"]
     }
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "files": [],
   "references": [
     { "path": "../core" },
+    { "path": "../body-parser" },
+    { "path": "../openapi" },
     { "path": "../i18n" },
   ]
 }
