@@ -31,7 +31,11 @@ export class PreRouterExtension implements Extension<void> {
     }
 
     this.#isLastExtensionCall = isLastExtensionCall;
-    const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS, true, PreRouterExtension);
+    if (aMetadataPerMod2 === false) {
+      this.#inited = true;
+      return;
+    }
     const preparedRouteMeta = this.prepareRoutesMeta(aMetadataPerMod2);
     this.setRoutes(preparedRouteMeta);
     this.#inited = true;
