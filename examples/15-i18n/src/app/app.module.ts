@@ -14,7 +14,7 @@ import { ThirdModule } from './third/third.module';
   ],
   providersPerApp: [
     ...new Providers()
-      .useLogConfig({ level: 'debug' }, { tags: ['route', 'i18n'] }),
+      .useLogConfig({ level: 'info' }),
   ],
 })
 export class AppModule {}
