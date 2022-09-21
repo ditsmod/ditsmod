@@ -12,6 +12,7 @@ import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 import { I18nTransformer } from './i18n-transformer';
 import { I18nLogMediator } from './i18n-log-mediator';
 import { I18N_TRANSLATIONS, Translations } from './types/mix';
+import { DictService } from './dict.service';
 
 @Injectable()
 export class I18nExtension implements Extension<void> {
@@ -73,6 +74,7 @@ export class I18nExtension implements Extension<void> {
     if (translations !== this.translations) {
       providers.push(...this.i18nTransformer.getProviders(translations));
     }
+    providers.unshift(DictService);
     this.translations = translations;
   }
 }

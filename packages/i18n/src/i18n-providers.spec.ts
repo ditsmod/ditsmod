@@ -21,9 +21,6 @@ describe('I18nProviders', () => {
     const expectedUseValue: Translations = { current: [[CommonDict, CommonUkDict]] };
     expect([...providers!]).toEqual(
       expect.arrayContaining([
-        DictService,
-        I18nTransformer,
-        I18nLogMediator,
         { provide: I18N_TRANSLATIONS, useValue: expectedUseValue, multi: true },
         { provide: I18nOptions, useValue: { defaultLng: 'uk' }, multi: undefined },
       ])
@@ -42,9 +39,6 @@ describe('I18nProviders', () => {
     const expectedUseValue: Translations = { current: [[CommonDict, CommonUkDict]] };
     expect([...providers!]).toEqual(
       expect.arrayContaining([
-        DictService,
-        I18nTransformer,
-        I18nLogMediator,
         { provide: I18N_TRANSLATIONS, useValue: expectedUseValue, multi: true },
         { provide: I18nOptions, useValue: { defaultLng: 'uk' }, multi: undefined },
       ])
