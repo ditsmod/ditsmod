@@ -541,7 +541,7 @@ export class LogMediator {
    * no provider for ${tokenName}! ${partMsg}.
    */
   throwNoProviderDuringResolveImports(moduleName: string, tokenName: string, partMsg: string) {
-    this.raiseLog({ tags: ['provider'], modulesNames: [moduleName] }, 'debug');
+    this.raiseLog({ tags: ['provider'], modulesNames: [moduleName] }, 'trace');
     throw new Error(`${moduleName}: no provider for ${tokenName}! ${partMsg}.`);
   }
 
@@ -568,10 +568,10 @@ export class LogMediator {
     const perReqNames = providersPerReq.map(getProviderName).join(', ') || '[]';
 
     if (providersPerApp) {
-      this.setLog('debug', msgLogFilter, `${startStr}App: ${perAppNames}.`);
+      this.setLog('trace', msgLogFilter, `${startStr}App: ${perAppNames}.`);
     }
-    this.setLog('debug', msgLogFilter, `${startStr}Mod: ${perModNames}.`);
-    this.setLog('debug', msgLogFilter, `${startStr}Rou: ${perRouNames}.`);
-    this.setLog('debug', msgLogFilter, `${startStr}Req: ${perReqNames}.`);
+    this.setLog('trace', msgLogFilter, `${startStr}Mod: ${perModNames}.`);
+    this.setLog('trace', msgLogFilter, `${startStr}Rou: ${perRouNames}.`);
+    this.setLog('trace', msgLogFilter, `${startStr}Req: ${perReqNames}.`);
   }
 }
