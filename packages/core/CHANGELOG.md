@@ -1,5 +1,17 @@
+<a name="core-2.18.0"></a>
+# [core-2.18.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.18.0) (2022-09-21)
+
+### Features
+
+- moved part logic from `ImportResolver` to `logMediator.throwNoProviderDuringResolveImports()`.
+- added `logMediator.showProvidersInLogs()` to `ImportsResolver`.
+
+### Bug fix
+
+- fixed `logMediator.renderLogs()`.
+
 <a name="core-2.17.0"></a>
-# [core-2.17.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.17.0) (2022-09-20)
+## [core-2.17.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.17.0) (2022-09-20)
 
 ### BREAKING CHANGES
 
