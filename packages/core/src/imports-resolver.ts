@@ -110,7 +110,9 @@ export class ImportsResolver {
       });
       meta.extensionsProviders.unshift(...newProviders);
       providers.forEach((provider) => {
-        this.grabDependecies(module, provider, ['Mod']);
+        if (this.hasUnresolvedDependecies(meta.module, provider, ['Mod'])) {
+          this.grabDependecies(module, provider, ['Mod']);
+        }
       });
     });
     this.increaseExtensionsCounters();
@@ -156,10 +158,8 @@ export class ImportsResolver {
         }
       }
 
-      if (!found) {
-        if (!this.tokensPerApp.includes(dep.token)) {
-          this.grabImportedDependecies(module, scopes, provider, dep, path);
-        }
+      if (!found && !this.tokensPerApp.includes(dep.token)) {
+        this.grabImportedDependecies(module, scopes, provider, dep, path);
       }
     }
   }
@@ -200,6 +200,62 @@ export class ImportsResolver {
     }
   }
 
+  protected hasUnresolvedDependecies(module: AnyModule, provider: ServiceProvider, scopes: Scope[]) {
+    const meta = this.moduleManager.getMetadata(module, true);
+
+    for (const dep of this.getDependencies(provider)) {
+      let found: boolean = false;
+      if (this.extensionsTokens.includes(dep.token)) {
+        continue;
+      }
+
+      forScope: for (const scope of scopes) {
+        const providers = getLastProviders(meta[`providersPer${scope}`]);
+
+        for (const token of getTokens(providers)) {
+          if (token === dep.token) {
+            found = true;
+            break forScope;
+          }
+        }
+      }
+
+      if (!found && !this.tokensPerApp.includes(dep.token)) {
+        if (this.hasUnresolvedImportedDependecies(module, scopes, dep)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  protected hasUnresolvedImportedDependecies(module1: AnyModule, scopes: Scope[], dep: ReflectiveDependecy) {
+    let found = false;
+    for (const scope of scopes) {
+      const importObj = this.appMetadataMap.get(module1)?.importedTokensMap[`per${scope}`].get(dep.token);
+      if (importObj) {
+        found = true;
+        const { module: module2, providers } = importObj;
+
+        // Loop for multi providers.
+        for (const provider of providers) {
+          this.fixDependecy(module2, provider);
+          found = !this.hasUnresolvedDependecies(module2, provider, scopes);
+          this.unfixDependecy(module2, provider);
+          if (!found) {
+            return true;
+          }
+        }
+        break;
+      }
+    }
+
+    if (!found && dep.required) {
+      return true;
+    }
+    return false;
+  }
+
   protected throwError(provider: ServiceProvider, path: any[], token: any) {
     path = [provider, ...path, token];
     const strPath = getTokens(path)
@@ -212,7 +268,7 @@ export class ImportsResolver {
       this.meta.name,
       this.meta.providersPerReq,
       this.meta.providersPerRou,
-      this.meta.providersPerMod,
+      this.meta.providersPerMod
     );
 
     this.log.throwNoProviderDuringResolveImports(this.meta.name, token.name || token, partMsg);
