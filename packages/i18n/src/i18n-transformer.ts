@@ -7,7 +7,7 @@ import { Dictionary, Translations } from './types/mix';
 /**
  * Transforms `Translations[]` to `ServiceProvider[]`.
  */
- @Injectable()
+@Injectable()
 export class I18nTransformer {
   constructor(private log: I18nLogMediator) {}
 
