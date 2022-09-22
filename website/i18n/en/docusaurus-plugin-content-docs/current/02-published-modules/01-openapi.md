@@ -1,15 +1,43 @@
 ---
-sidebar_position: 2
-title: OpenAPI
+sidebar_position: 1
+title: OpenAPI-документація
 ---
 
 # @ditsmod/openapi
 
-To create a route according to the `OpenAPI` specification, you can use the `OasRoute` decorator, imported from `@ditsmod/openapi`.
+To create a route according to the [OpenAPI][0] specification, you can use the `OasRoute` decorator imported from `@ditsmod/openapi`. In this decorator, the fourth or third parameter (if there are no guards) is the so-called [Operation Object][1]:
 
-## Parameters
+```ts
+import { Controller } from '@ditsmod/core';
+import { OasRoute } from '@ditsmod/openapi';
 
-The easiest way to pass parameters is to use the `getParams()` function. The following example describes the optional `page` parameter in `query`:
+@Controller()
+export class SomeController {
+  // ...
+  @OasRoute('GET', 'users/:username', {
+    parameters: [
+      {
+        name: 'username',
+        in: 'path',
+        required: true,
+        description: 'Username of the profile to get',
+        schema: {
+          type: 'string',
+        },
+      },
+    ],
+  })
+  async getSome() {
+    // ...
+  }
+}
+```
+
+Ditsmod has good support for TypeScript models for OpenAPI v3.1.0, including Operation Object, but it is not necessary to manually write the entire Operation Object directly in the code for each route. It is better to use helpers that will generate the necessary code for you, and also reduce the number of errors due to even better TypeScript support. Ditsmod has several such helpers: `getParams()`, `getContent()`, `Parameters`, `Content`. They are all imported from the `@ditsmod/openapi` module.
+
+## Passing Operation Object parameters
+
+In the following example, with the helper `getParams()`, almost everything that we wrote manually for `parameters` in the previous example is recorded:
 
 ```ts
 import { Controller } from '@ditsmod/core';
@@ -18,8 +46,8 @@ import { OasRoute, getParams } from '@ditsmod/openapi';
 @Controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', '', {
-    parameters: getParams('query', false, 'page')
+  @OasRoute('GET', 'users/:username', {
+    parameters: getParams('path', true, 'username'),
   })
   async getSome() {
     // ...
@@ -27,26 +55,74 @@ export class SomeController {
 }
 ```
 
-In this case, the data type for the `page` parameter is undefined. To fix this, you need specify a class that is a data model:
+The data type for the `username` parameter and its description are missing here. We recommend using a TypeScript class as a model so that you can then refer to it using helpers that can read its metadata and return ready-made JSON objects.
+
+## Creation of TypeScript models
+
+The following example shows a model with three parameters:
+
+```ts
+import { Column } from '@ditsmod/openapi';
+
+class Params {
+  @Column({ description: 'Username of the profile to get.' })
+  username: string;
+
+  @Column({ minimum: 1, maximum: 100, description: 'Page number.' })
+  page: number;
+
+  @Column()
+  hasName: boolean;
+}
+```
+
+As you can see, to attach metadata to the model, the `@Column()` decorator is used, where you can pass [Schema Object][3] as the first argument.
+
+Note that in this case the `type` property is not specified in the metadata, as the types specified here are automatically read by helpers. However, not all types available in TypeScript can be read. For example, helpers will not be able to automatically see what type of array you are passing, in which case you need to pass a hint as the second argument to the `@Column()` decorator:
+
+```ts
+import { Column } from '@ditsmod/openapi';
+
+class Params {
+  @Column({}, String)
+  usernames: string[];
+}
+```
+
+Although the links of some models to others are also quite readable. In the following example, `Model2` has a reference to `Model1`:
+
+```ts
+import { Column } from '@ditsmod/openapi';
+
+export class Model1 {
+  @Column()
+  property1: string;
+}
+
+export class Model2 {
+  @Column()
+  model1: Model1;
+
+  @Column({}, Model1)
+  arrModel1: Model1[];
+}
+```
+
+## Using TypeScript models
+
+The `getParams()` helper allows you to use models, and if you make a mistake in a parameter name, TypeScript will tell you about it:
 
 ```ts
 import { Controller } from '@ditsmod/core';
-import { OasRoute, getParams, Column } from '@ditsmod/openapi';
+import { OasRoute, getParams } from '@ditsmod/openapi';
 
-// This is a parameter model
-class Params {
-  @Column({ minimum: 1, maximum: 100, description: 'Page number.' })
-  page: number;
-  @Column({ description: 'Another parameter.' })
-  otherParam: string;
-}
+import { Params } from './params';
 
-// This is a controller that uses a parameter model
 @Controller()
 export class SomeController {
   // ...
   @OasRoute('GET', '', {
-    parameters: getParams('query', false, Params, 'page', 'otherParam')
+    parameters: getParams('path', true, Params, 'username'),
   })
   async getSome() {
     // ...
@@ -54,45 +130,22 @@ export class SomeController {
 }
 ```
 
-It is enough to have single model for the whole project.
-
-If you need to pass parameters to `OasRoute` via data models for automatic validation, this is done using the `VALIDATION_ARGS` constant:
-
-```ts
-/**
- * This OAS property contains validation error arguments.
- */
-export const VALIDATION_ARGS = 'x-validation-args';
-
-export class Params {
-  // ...
-  @Column({
-    minLength: config.sizeEmailToken * 2,
-    maxLength: config.sizeEmailToken * 2,
-    [VALIDATION_ARGS]: [new ServerMsg().invalidEmailToken],
-  })
-  // ...
-}
-```
-
-If the parameter name changes in the parameter model, TypeScript shows an error within `OasRoute`. It is true that this error is difficult to understand, but first check the presence of the specified parameter in the parameter model.
-
-The `getParams()` function is not intended to be simultaneously used for both - mandatory and optional parameters. It is also not possible to transmit a parameter description that differs from the parameter description in the parameter model. For such purposes, you can use the class `Parameters`:
+But the helper `getParams()` is not intended to be used simultaneously for mandatory and optional parameters. It also cannot pass a parameter description that differs from the parameter description in the parameter model. For such purposes, you can use another helper - `Parameters`:
 
 ```ts
 import { Controller } from '@ditsmod/core';
 import { OasRoute, Parameters } from '@ditsmod/openapi';
 
-import { Params } from '@models/params';
+import { Params } from './params';
 
 @Controller()
 export class SomeController {
   // ...
   @OasRoute('GET', '', {
     parameters: new Parameters()
-      .required('query', Params, 'otherParam').describe('Some other description')
-      .optional('query', Params, 'page')
-      .getParams()
+      .required('path', Params, 'username')
+      .optional('query', Params, 'page', 'hasName')
+      .getParams(),
   })
   async getSome() {
     // ...
@@ -100,20 +153,15 @@ export class SomeController {
 }
 ```
 
-## requestBody and responses content
+### requestBody and responses content
 
-To describe the content of the `requestBody` or the `responses` for the `OpenAPI` specification, you can use the `getContent()` function:
+To describe the content of the request `requestBody` or server `responses` according to the `OpenAPI` specification, you can use the `getContent()` helper:
 
 ```ts
 import { Controller, Status } from '@ditsmod/core';
 import { OasRoute, getContent } from '@ditsmod/openapi';
 
-class SomeModel {
-  @Column()
-  property1: number;
-  @Column()
-  property2: string;
-}
+import { SomeModel } from './some-model';
 
 @Controller()
 export class SomeController {
@@ -122,7 +170,7 @@ export class SomeController {
     responses: {
       [Status.OK]: {
         description: 'Description of content with this status',
-        content: getContent({ mediaType: '*/*', model: SomeModel })
+        content: getContent({ mediaType: '*/*', model: SomeModel }),
       },
     },
   })
@@ -132,7 +180,7 @@ export class SomeController {
 }
 ```
 
-The `getContent()` function takes an short version of the data when you want to describe a single `mediaType`. If you need to describe more `mediaType`, you can use the `Content` class:
+The `getContent()` helper accepts a shortened version of the data when describing a single `mediaType` variant. If you need to describe a larger number of `mediaType`, you can use the `Content` class:
 
 ```ts
 import { Controller, Status } from '@ditsmod/core';
@@ -150,7 +198,7 @@ export class SomeController {
         content: new Content()
           .set({ mediaType: 'application/xml', model: SomeModel })
           .set({ mediaType: 'application/json', model: SomeModel })
-          .get()
+          .get(),
       },
     },
   })
@@ -160,7 +208,7 @@ export class SomeController {
 }
 ```
 
-## OpenAPI options at the module level
+## OpenAPI module-level options
 
 Tags and parameters can be passed at the module level:
 
@@ -171,10 +219,16 @@ Tags and parameters can be passed at the module level:
     oasOptions: {
       tags: ['i18n'],
       paratemers: new Parameters()
-                    .optional('query', Params, 'lcl').describe('Localization')
-                    .getParams(),
+        .optional('query', Params, 'lcl')
+        .describe('Internalization')
+        .getParams(),
     } as OasOptions,
   },
 })
 export class I18nModule {}
 ```
+
+[0]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md
+[1]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#operationObject
+[2]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#referenceObject
+[3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#schemaObject
