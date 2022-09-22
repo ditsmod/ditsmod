@@ -26,3 +26,5 @@ Check from second terminal:
 curl -isS localhost:3000
 curl -isS localhost:3000/resource/123
 ```
+
+For more info see the [docs](https://ditsmod.github.io/en/published-modules/openapi)
