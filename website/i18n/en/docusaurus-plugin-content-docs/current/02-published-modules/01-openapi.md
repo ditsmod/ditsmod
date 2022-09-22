@@ -238,4 +238,4 @@ The previous examples showed helpers that return parts of the [Operation Object]
 [1]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#operationObject
 [2]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#referenceObject
 [3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#schemaObject
-[4]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/routed/profiles/profiles.controller.ts#L24-L30
+[4]: https://github.com/ditsmod/realworld/blob/e8947f8767/packages/server/src/app/modules/routed/profiles/profiles.controller.ts#L24-L30
