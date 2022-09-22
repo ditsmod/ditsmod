@@ -234,9 +234,70 @@ export class I18nModule {}
 
 У попередніх прикладах були показані хелпери, що повертають частини [Operation Object][2], але, звичайно ж, ви можете створити власні хелпери, які повертають цілі Operation Object. Один із прикладів використання таких хелперів показаний в репозиторії [RealWorld][4].
 
+## Спеціальний декоратор для ґардів
+
+Модуль `@ditsmod/openapi` має спеціальний декоратор `OasGuard`, що дозволяє закріпити метадані OpenAPI за ґардами:
+
+```ts
+import { CanActivate } from '@ditsmod/core';
+import { OasGuard } from '@ditsmod/openapi';
+
+@OasGuard({
+  tags: ['withBasicAuth'],
+  securitySchemeObject: {
+    type: 'http',
+    scheme: 'basic',
+    description:
+      'Enter username: `demo`, password: `p@55w0rd`. For more info see ' +
+      '[Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication)',
+  },
+  responses: {
+    [Status.UNAUTHORIZED]: {
+      $ref: '#/components/responses/UnauthorizedError',
+    },
+  },
+})
+export class BasicGuard implements CanActivate {
+  // ...
+}
+```
+
+На даний момент декоратор `OasGuard` приймає наступний тип даних:
+
+```ts
+interface OasGuardMetadata {
+  securitySchemeObject: XSecuritySchemeObject;
+  responses?: XResponsesObject;
+  tags?: string[];
+}
+```
+
+Де `securitySchemeObject` має тип [Security Scheme Object][5], а `responses` - [Responses Object][6].
+
+Використовуються такі ґарди точно так само, як і "звичайні" ґарди:
+
+```ts
+import { Controller } from '@ditsmod/core';
+import { OasRoute } from '@ditsmod/openapi';
+
+@Controller()
+export class SomeController {
+  // ...
+  @OasRoute('GET', 'users/:username', [BasicGuard])
+  async getSome() {
+    // ...
+  }
+}
+```
+
+
+
+
 
 [0]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md
 [1]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#operationObject
 [2]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#referenceObject
 [3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#schemaObject
 [4]: https://github.com/ditsmod/realworld/blob/e8947f8767/packages/server/src/app/modules/routed/profiles/profiles.controller.ts#L24-L30
+[5]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#securitySchemeObject
+[6]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#responsesObject
