@@ -213,6 +213,8 @@ export class SomeController {
 Tags and parameters can be passed at the module level:
 
 ```ts
+import { OasOptions } from '@ditsmod/openapi';
+
 @Module({
   // ...
   extensionsMeta: {
@@ -228,7 +230,12 @@ Tags and parameters can be passed at the module level:
 export class I18nModule {}
 ```
 
+## Helpers that return an entire Operation Object
+
+The previous examples showed helpers that return parts of the [Operation Object][2], but of course you can create your own helpers that return the entire Operation Object. One of the examples of the use of such helpers is shown in the [RealWorld][4] repository.
+
 [0]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md
 [1]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#operationObject
 [2]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#referenceObject
 [3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#schemaObject
+[4]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/routed/profiles/profiles.controller.ts#L24-L30

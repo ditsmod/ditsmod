@@ -213,6 +213,8 @@ export class SomeController {
 Теги та параметри можна передавати на рівні модуля:
 
 ```ts
+import { OasOptions } from '@ditsmod/openapi';
+
 @Module({
   // ...
   extensionsMeta: {
@@ -228,7 +230,13 @@ export class SomeController {
 export class I18nModule {}
 ```
 
+## Хелпери, що повертають цілий Operation Object
+
+У попередніх прикладах були показані хелпери, що повертають частини [Operation Object][2], але, звичайно ж, ви можете створити власні хелпери, які повертають цілі Operation Object. Один із прикладів використання таких хелперів показаний в репозиторії [RealWorld][4].
+
+
 [0]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md
 [1]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#operationObject
 [2]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#referenceObject
 [3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#schemaObject
+[4]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/routed/profiles/profiles.controller.ts#L24-L30
