@@ -23,16 +23,18 @@ should be OpenAPI documentation.
 Check from second terminal valid requests:
 
 ```bash
-curl -isS localhost:3000
-curl -isS localhost:3000/resource/123
+curl -isS localhost:3000/resource/5
+curl -isS localhost:3000/resource/10
 ```
 
 And check invalid requests:
 
 ```bash
+curl -isS localhost:3000/resource/2
 curl -isS localhost:3000/resource/1d
 curl -isS localhost:3000/resource/1d?lng=uk
 curl -isS localhost:3000/resource/1d?lng=pl
 curl -isS localhost:3000/resource/1d?lng=en
-curl -isS localhost:3000/resource3 -d '{"one":1}' -H 'content-type: application/json'
+curl -isS -d '{"one":1}' -H 'content-type: application/json' localhost:3000/resource
+curl -isS -d '{"one":1}' -H 'content-type: application/json' localhost:3000/resource?lng=uk
 ```

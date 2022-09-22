@@ -1,66 +1,29 @@
-import { Controller, Req, Res, Route, Status } from '@ditsmod/core';
+import { Controller, Req, Res } from '@ditsmod/core';
 import { getParams, getContent, OasRoute } from '@ditsmod/openapi';
 
-import { BasicGuard } from './basic.guard';
-import { Model2 } from './models';
-import { getMetaContent } from './overriden-helper';
+import { Model1 } from './models';
 
-@Controller({ providersPerReq: [BasicGuard] })
+@Controller()
 export class FirstController {
   constructor(private req: Req, private res: Res) {}
 
-  @Route('GET')
-  hello() {
-    this.res.send('Hello, World!');
-  }
-
-  @OasRoute('GET', 'guard', [BasicGuard], {})
-  helloWithGuard() {
-    this.res.send('Hello, user!');
-  }
-
   @OasRoute('GET', 'resource/:resourceId', {
-    tags: ['withParameter'],
-    description: 'This route uses `getParams()` and `getContent()` helpers from @ditsmod/openapi',
-    parameters: getParams('path', true, Model2, 'resourceId'),
-    responses: {
-      [Status.OK]: {
-        description: 'Single item',
-        content: getContent({ mediaType: 'application/json', model: Model2 }),
-      },
-    },
+    description: 'Route wtih required path parameter',
+    parameters: getParams('path', true, Model1, 'resourceId'),
   })
   getResourceId() {
     const { resourceId } = this.req.pathParams;
-    this.res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
+    this.res.sendJson({ resourceId });
   }
 
-  @OasRoute('GET', 'resource2/:resourceId', {
-    tags: ['withParameter'],
-    description: 'This route like previous, but uses template `{ data: Model1[], meta: any, error: any }` for responses.content',
-    parameters: getParams('path', true, Model2, 'resourceId'),
-    responses: {
-      [Status.OK]: {
-        description: 'Single item',
-        content: getMetaContent({ mediaType: 'application/json', model: Model2 }),
-      },
-    },
-  })
-  getResourceId2() {
-    const { resourceId } = this.req.pathParams;
-    this.res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
-  }
-
-  @OasRoute('POST', 'resource3', {
-    tags: ['withParameter'],
-    description: 'This route like previous, but uses template `{ data: Model1[], meta: any, error: any }` for responses.content',
+  @OasRoute('POST', 'resource', {
+    description: 'Route with requestBody',
     requestBody: {
-      description: 'Опис.',
-      content: getContent({ mediaType: 'application/json', model: Model2 }),
+      description: 'All properties are taken from Model1.',
+      content: getContent({ mediaType: 'application/json', model: Model1 }),
     },
   })
-  getResourceId3() {
-    const { resourceId } = this.req.pathParams;
-    this.res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
+  postResourceId() {
+    this.res.sendJson(this.req.body);
   }
 }
