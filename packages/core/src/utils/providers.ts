@@ -73,7 +73,7 @@ export class Providers {
     return this;
   }
 
-  useAnyValue(provide: any, useValue: any, multi?: boolean) {
+  useAnyValue<T>(provide: any, useValue: T, multi?: boolean) {
     this.providers.push({ provide, useValue, multi });
     return this;
   }
