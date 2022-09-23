@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/openapi-validation",
-  "version": "2.0.0-beta.6",
+  "version": "2.0.0-beta.7",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -20,6 +20,8 @@
   "license": "MIT",
   "dependencies": {
     "@ts-stack/cookies": "^1.0.2",
+    "@ditsmod/i18n": "^2.0.0-beta.16",
+    "@ditsmod/openapi": "^2.5.0",
     "ajv": "^8.11.0"
   },
   "devDependencies": {
@@ -27,8 +29,6 @@
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.17.0",
-    "@ditsmod/i18n": "^2.0.0-beta.15",
-    "@ditsmod/openapi": "^2.5.0",
     "@ts-stack/di": "^1.2.0"
   }
 }
