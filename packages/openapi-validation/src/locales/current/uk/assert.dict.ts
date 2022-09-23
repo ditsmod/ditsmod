@@ -76,4 +76,10 @@ export class AssertUkDict extends AssertDict {
    * Не знайдено JSON-схеми для ajv
    */
   override ajvSchemaNotFound = 'Не знайдено JSON-схеми для ajv';
+  /**
+   * Невистачає необхідного параметра '${param}' у ${paramIn}
+   */
+  override missingRequiredParameter(param: string, paramIn?: string) {
+    return `Невистачає необхідного параметра '${param}' у ${paramIn}`;
+  }
 }

@@ -10,12 +10,7 @@ import { AjvService } from './ajv.service';
 
 @Injectable()
 export class ValidationInterceptor implements HttpInterceptor {
-  constructor(
-    private req: Req,
-    private validationMeta: ValidationRouteMeta,
-    private dictService: DictService,
-    private ajvService: AjvService
-  ) {}
+  constructor(private req: Req, private validationMeta: ValidationRouteMeta, private ajvService: AjvService) {}
 
   intercept(next: HttpHandler) {
     this.validateParams();
@@ -27,7 +22,6 @@ export class ValidationInterceptor implements HttpInterceptor {
     const { parameters } = this.validationMeta;
     for (const parameter of parameters) {
       const schema = parameter.schema as XSchemaObject<any>;
-      const { required } = parameter;
       let value: any;
       if (parameter.in == 'path') {
         value = this.req.pathParams[parameter.name];
@@ -40,6 +34,17 @@ export class ValidationInterceptor implements HttpInterceptor {
         value = this.req.nodeReq.headers[parameter.name];
       }
 
+      if (value === undefined) {
+        if (parameter.required) {
+          const dict = this.getDict();
+          throw new CustomError({
+            msg1: dict.missingRequiredParameter(parameter.name, parameter.in),
+            status: Status.BAD_REQUEST,
+          });
+        }
+        return;
+      }
+
       this.validate(schema, value);
     }
   }
@@ -49,8 +54,8 @@ export class ValidationInterceptor implements HttpInterceptor {
       return;
     }
 
-    if (!this.req.body) {
-      const dict = this.dictService.getDictionary(AssertDict);
+    if (this.req.body === undefined) {
+      const dict = this.getDict();
       throw new CustomError({ msg1: dict.missingRequestBody, status: Status.BAD_REQUEST });
     }
 
@@ -60,12 +65,17 @@ export class ValidationInterceptor implements HttpInterceptor {
   protected validate(schema: XSchemaObject, value: any) {
     const validate = this.ajvService.getValidator(schema);
     if (!validate) {
-      const dict = this.dictService.getDictionary(AssertDict);
-      throw new CustomError({ msg2: dict.ajvSchemaNotFound, status: Status.INTERNAL_SERVER_ERROR, level: 'warn' });
+      const dict = this.getDict();
+      throw new CustomError({ msg2: dict.ajvSchemaNotFound, status: Status.INTERNAL_SERVER_ERROR, level: 'error' });
     }
     if (!validate(value)) {
       const msg1 = this.ajvService.ajv.errorsText(validate.errors);
       throw new CustomError({ msg1, status: Status.BAD_REQUEST });
     }
+  }
+
+  protected getDict() {
+    const dictService: DictService = this.req.injector.get(DictService);
+    return dictService.getDictionary(AssertDict);
   }
 }

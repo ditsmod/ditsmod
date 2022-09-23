@@ -60,4 +60,10 @@ export class AssertDict implements Dictionary {
    * JSON schema not found for ajv
    */
   ajvSchemaNotFound = 'JSON schema not found for ajv';
+  /**
+   * Missing required parameter '${param}' in ${paramIn}
+   */
+  missingRequiredParameter(param: string, paramIn?: string) {
+    return `Missing required parameter '${param}' in ${paramIn}`;
+  }
 }
