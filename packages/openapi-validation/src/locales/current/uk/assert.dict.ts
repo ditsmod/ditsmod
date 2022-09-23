@@ -72,4 +72,8 @@ export class AssertUkDict extends AssertDict {
    * Відсутнє тіло запиту
    */
   override missingRequestBody = 'Відсутнє тіло запиту';
+  /**
+   * Не знайдено JSON-схеми для ajv
+   */
+  override ajvSchemaNotFound = 'Не знайдено JSON-схеми для ajv';
 }

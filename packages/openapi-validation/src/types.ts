@@ -5,7 +5,7 @@ import { XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
 
 export class ValidationRouteMeta extends OasRouteMeta {
   parameters: XParameterObject[];
-  requestBodyProperties: XSchemaObject;
+  requestBodySchema: XSchemaObject;
 }
 
 /**

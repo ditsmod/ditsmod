@@ -56,4 +56,8 @@ export class AssertDict implements Dictionary {
    * Missing request body
    */
   missingRequestBody = 'Missing request body';
+  /**
+   * JSON schema not found for ajv
+   */
+  ajvSchemaNotFound = 'JSON schema not found for ajv';
 }

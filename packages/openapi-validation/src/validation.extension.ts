@@ -1,24 +1,39 @@
-import { Extension, ExtensionsManager, HTTP_INTERCEPTORS, PerAppService, RouteMeta, ROUTES_EXTENSIONS } from '@ditsmod/core';
+import {
+  Extension,
+  ExtensionsManager,
+  HTTP_INTERCEPTORS,
+  PerAppService,
+  RouteMeta,
+  ROUTES_EXTENSIONS,
+} from '@ditsmod/core';
 import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 import { isReferenceObject, OasRouteMeta } from '@ditsmod/openapi';
 import { Injectable } from '@ts-stack/di';
 
 import { ValidationRouteMeta } from './types';
 import { ValidationInterceptor } from './validation.interceptor';
+import { AjvService } from './ajv.service';
 
 @Injectable()
 export class ValidationExtension implements Extension<void> {
   private inited: boolean;
 
-  constructor(private perAppService: PerAppService, private extensionsManager: ExtensionsManager) {}
+  constructor(
+    private perAppService: PerAppService,
+    private extensionsManager: ExtensionsManager,
+    private ajvService: AjvService
+  ) {}
 
-  async init() {
+  async init(isLastExtensionCall?: boolean) {
     if (this.inited) {
       return;
     }
 
     await this.extensionsManager.init(BODY_PARSER_EXTENSIONS);
     await this.filterParameters();
+    if (isLastExtensionCall) {
+      this.perAppService.providers = [{ provide: AjvService, useValue: this.ajvService }];
+    }
     this.inited = true;
   }
 
@@ -37,21 +52,20 @@ export class ValidationExtension implements Extension<void> {
         if (validationRouteMeta.operationObject?.parameters?.length) {
           validationRouteMeta.operationObject.parameters.forEach((p) => {
             if (!isReferenceObject(p) && p.schema) {
+              this.ajvService.addValidator(p.schema);
               validationRouteMeta.parameters.push(p);
             }
           });
         }
 
         const requestBody = validationRouteMeta.operationObject?.requestBody;
-        if (
-          requestBody &&
-          !isReferenceObject(requestBody) &&
-          requestBody.content?.['application/json']?.schema?.properties
-        ) {
-          validationRouteMeta.requestBodyProperties = requestBody.content['application/json'].schema.properties;
+        if (!isReferenceObject(requestBody) && requestBody?.content?.['application/json']?.schema) {
+          const { schema } = requestBody.content['application/json'];
+          this.ajvService.addValidator(schema);
+          validationRouteMeta.requestBodySchema = schema;
         }
 
-        if (validationRouteMeta.parameters.length || validationRouteMeta.requestBodyProperties) {
+        if (validationRouteMeta.parameters.length || validationRouteMeta.requestBodySchema) {
           providersPerRou.push({ provide: ValidationRouteMeta, useExisting: RouteMeta });
           providersPerReq.push({
             provide: HTTP_INTERCEPTORS,

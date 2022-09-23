@@ -30,11 +30,7 @@ curl -isS localhost:3000/resource/10
 And check invalid requests:
 
 ```bash
-curl -isS localhost:3000/resource/2
-curl -isS localhost:3000/resource/1d
-curl -isS localhost:3000/resource/1d?lng=uk
-curl -isS localhost:3000/resource/1d?lng=pl
-curl -isS localhost:3000/resource/1d?lng=en
-curl -isS -d '{"one":1}' -H 'content-type: application/json' localhost:3000/resource
-curl -isS -d '{"one":1}' -H 'content-type: application/json' localhost:3000/resource?lng=uk
+curl -isS localhost:3000/users/ff
+curl -isS -H 'content-type: application/json' localhost:3000/model1 -d '{"id":{"resourceId": ""}}'
+curl -isS -H 'content-type: application/json' localhost:3000/model2 -d '{"model1":{"numbers": ["d"]}}'
 ```

@@ -19,15 +19,16 @@
   "author": "Костя Третяк",
   "license": "MIT",
   "dependencies": {
-    "@ts-stack/cookies": "^1.0.2"
+    "@ts-stack/cookies": "^1.0.2",
+    "ajv": "^8.11.0"
   },
   "devDependencies": {
     "@ts-stack/di": "^1.2.0"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.17.0",
-    "@ts-stack/di": "^1.2.0",
+    "@ditsmod/i18n": "^2.0.0-beta.15",
     "@ditsmod/openapi": "^2.5.0",
-    "@ditsmod/i18n": "^2.0.0-beta.15"
+    "@ts-stack/di": "^1.2.0"
   }
 }
