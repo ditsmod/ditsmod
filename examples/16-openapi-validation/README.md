@@ -23,14 +23,14 @@ should be OpenAPI documentation.
 Check from second terminal valid requests:
 
 ```bash
-curl -isS localhost:3000/resource/5
-curl -isS localhost:3000/resource/10
+curl -isS localhost:3000/users/Kostia
+curl -isS -H 'content-type: application/json' localhost:3000/model1 -d '{"numbers": [5]}'
 ```
 
 And check invalid requests:
 
 ```bash
 curl -isS localhost:3000/users/ff
-curl -isS -H 'content-type: application/json' localhost:3000/model1 -d '{"id":{"resourceId": ""}}'
+curl -isS -H 'content-type: application/json' localhost:3000/model1 -d '{}'
 curl -isS -H 'content-type: application/json' localhost:3000/model2 -d '{"model1":{"numbers": ["d"]}}'
 ```

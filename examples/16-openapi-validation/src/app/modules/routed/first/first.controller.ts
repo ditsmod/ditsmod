@@ -12,8 +12,8 @@ export class FirstController {
     parameters: getParams('path', true, Model1, 'username'),
   })
   getResourceId() {
-    const { resourceId } = this.req.pathParams;
-    this.res.sendJson({ resourceId });
+    const { username } = this.req.pathParams;
+    this.res.sendJson({ username });
   }
 
   @OasRoute('POST', 'model1', {

@@ -1,4 +1,4 @@
-import { Column } from '@ditsmod/openapi';
+import { Column, REQUIRED } from '@ditsmod/openapi';
 
 export class Model1 {
   @Column({ minimum: 3, maximum: 50, description: `ID should be between 3 and 50.` })
@@ -7,7 +7,7 @@ export class Model1 {
   @Column({ minLength: 3, maxLength: 10 })
   username: string;
 
-  @Column({}, Number)
+  @Column({ [REQUIRED]: true }, Number)
   numbers: number[];
 }
 
