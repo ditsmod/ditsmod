@@ -78,7 +78,7 @@ export class Content {
       } else {
         parentSchema.required.push(propertyName);
       }
-      delete decoratorItem.schema?.[REQUIRED];
+      delete decoratorItem.schema[REQUIRED];
     }
   }
 
