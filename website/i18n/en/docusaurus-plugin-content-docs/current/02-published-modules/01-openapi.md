@@ -155,7 +155,34 @@ export class SomeController {
 
 ### requestBody and responses content
 
-To describe the content of the request `requestBody` or server `responses` according to the `OpenAPI` specification, you can use the `getContent()` helper:
+Data models are also used to describe the content of the `requestBody`, but there is one slight difference. By default, all model properties are optional, and to mark a particular property as required, you need to use the `REQUIRED` constant:
+
+```ts
+import { Column, REQUIRED } from '@ditsmod/openapi';
+
+class Model1 {
+  @Column()
+  property1: string;
+  @Column({ [REQUIRED]: true })
+  property2: number;
+}
+```
+
+If this model will be used to describe `requestBody`, then `property2` in it will be required. But if this model is used to describe parameters, the `REQUIRED` marker will be ignored:
+
+```ts
+class SomeController {
+  // ...
+  @OasRoute('GET', 'users', {
+    parameters: getParams('query', false, Model1, 'property2'),
+  })
+  async getSome() {
+    // ...
+  }
+}
+```
+
+To describe the content in `requestBody` and `responses`, there is also a helper `getContent()`:
 
 ```ts
 import { Controller, Status } from '@ditsmod/core';
@@ -167,11 +194,9 @@ import { SomeModel } from './some-model';
 export class SomeController {
   // ...
   @OasRoute('GET', '', {
-    responses: {
-      [Status.OK]: {
-        description: 'Description of content with this status',
-        content: getContent({ mediaType: '*/*', model: SomeModel }),
-      },
+    requestBody: {
+      description: 'All properties are taken from Model1.',
+      content: getContent({ mediaType: 'application/json', model: Model1 }),
     },
   })
   async getSome() {
@@ -220,10 +245,7 @@ import { OasOptions } from '@ditsmod/openapi';
   extensionsMeta: {
     oasOptions: {
       tags: ['i18n'],
-      paratemers: new Parameters()
-        .optional('query', Params, 'lcl')
-        .describe('Internalization')
-        .getParams(),
+      paratemers: new Parameters().optional('query', Params, 'lcl').describe('Internalization').getParams(),
     } as OasOptions,
   },
 })
@@ -289,10 +311,6 @@ export class SomeController {
   }
 }
 ```
-
-
-
-
 
 [0]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md
 [1]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#operationObject

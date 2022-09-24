@@ -155,7 +155,34 @@ export class SomeController {
 
 ### requestBody та responses content
 
-Щоб описати контент запиту `requestBody` чи відповіді сервера `responses` по специфікації `OpenAPI`, можна скористатись хелпером `getContent()`:
+Моделі даних також використовуються щоб описати контент запиту `requestBody`, але тут є одна невелика відмінність. По дефолту, усі властивості моделі є необов'язковими, і щоб позначити певну властивість обов'язковою, необхідно скористатись константою `REQUIRED`:
+
+```ts
+import { Column, REQUIRED } from '@ditsmod/openapi';
+
+class Model1 {
+  @Column()
+  property1: string;
+  @Column({ [REQUIRED]: true })
+  property2: number;
+}
+```
+
+Якщо дана модель буде використовуватись для опису `requestBody`, то `property2` в ній буде обов'язковою. Але якщо цю модель використовувати для опису параметрів, маркер `REQUIRED` буде ігноруватись:
+
+```ts
+class SomeController {
+  // ...
+  @OasRoute('GET', 'users', {
+    parameters: getParams('query', false, Model1, 'property2'),
+  })
+  async getSome() {
+    // ...
+  }
+}
+```
+
+Для опису контента в `requestBody` та `responses` існує також хелпер `getContent()`:
 
 ```ts
 import { Controller, Status } from '@ditsmod/core';
@@ -167,11 +194,9 @@ import { SomeModel } from './some-model';
 export class SomeController {
   // ...
   @OasRoute('GET', '', {
-    responses: {
-      [Status.OK]: {
-        description: 'Опис контенту із даним статусом',
-        content: getContent({ mediaType: '*/*', model: SomeModel }),
-      },
+    requestBody: {
+      description: 'All properties are taken from Model1.',
+      content: getContent({ mediaType: 'application/json', model: Model1 }),
     },
   })
   async getSome() {
