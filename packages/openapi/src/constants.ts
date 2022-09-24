@@ -1,6 +1,11 @@
 import { deepFreeze } from '@ditsmod/core';
 import { openapi, XOasObject } from '@ts-stack/openapi-spec';
 
+/**
+ * Used inside OpenAPI models to indicates whether requestBody property is required or not.
+ */
+ export const REQUIRED = 'x-required';
+
 export const DEFAULT_OAS_OBJECT: XOasObject = {
   openapi,
   servers: [{ url: 'http://localhost:3000' }],

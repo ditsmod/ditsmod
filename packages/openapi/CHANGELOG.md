@@ -1,5 +1,13 @@
+<a name="openapi-2.6.0"></a>
+# [openapi-2.6.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.6.0) (2022-09-24)
+
+### Features
+
+- Added `REQUIRED` constant to ability marks required properties inside `requestBody`.
+- Improvements `Content` helper to support required properties inside `requestBody`.
+
 <a name="openapi-2.5.0"></a>
-# [openapi-2.5.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.5.0) (2022-09-17)
+## [openapi-2.5.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.5.0) (2022-09-17)
 
 ### BREAKING CHANGES
 

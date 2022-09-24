@@ -1,4 +1,4 @@
-export * from './constants';
+export { REQUIRED, DEFAULT_OAS_OBJECT } from './constants';
 export { OasGuard, OasGuardMetadata } from './decorators/oas-guard';
 export { OasRoute, OasRouteMetadata1, OasRouteMetadata2 } from './decorators/oas-route';
 export { Column } from './decorators/column';

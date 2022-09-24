@@ -1,6 +1,7 @@
 import { AnyObj } from '@ditsmod/core';
 import { reflector, Type } from '@ts-stack/di';
 import { SchemaObject, SchemaObjectType, XEncodingObject, XMediaTypeObject } from '@ts-stack/openapi-spec';
+import { REQUIRED } from '../constants';
 
 import { ColumnDecoratorItem, ColumnDecoratorMetadata } from '../decorators/column';
 import { mediaTypeName } from '../types/media-types';
@@ -62,11 +63,23 @@ export class Content {
       if (!schema.properties) {
         schema.properties = {};
       }
+      this.checkRequired(schema, property, decoratorItem);
       schema.properties[property] = this.patchPropertySchema(model, propertyType, decoratorItem);
     }
 
     this.scanInProgress.delete(model);
     return schema;
+  }
+
+  protected checkRequired(parentSchema: SchemaObject, propertyName: string, decoratorItem: ColumnDecoratorItem) {
+    if (decoratorItem.schema?.[REQUIRED]) {
+      if (!parentSchema.required) {
+        parentSchema.required = [propertyName];
+      } else {
+        parentSchema.required.push(propertyName);
+      }
+      delete decoratorItem.schema?.[REQUIRED];
+    }
   }
 
   protected getTypedSchema(model: Type<AnyObj>) {
@@ -86,11 +99,7 @@ export class Content {
   /**
    * @todo Refactor this.
    */
-  protected patchPropertySchema(
-    model: Type<AnyObj>,
-    propertyType: Type<AnyObj>,
-    decoratorItem: ColumnDecoratorItem
-  ) {
+  protected patchPropertySchema(model: Type<AnyObj>, propertyType: Type<AnyObj>, decoratorItem: ColumnDecoratorItem) {
     let schema = { ...decoratorItem.schema } || {};
     const { arrayModels: arrayModel } = decoratorItem;
     if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {

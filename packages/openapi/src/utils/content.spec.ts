@@ -1,17 +1,17 @@
 import 'reflect-metadata';
-import { inspect } from 'util';
 import { MediaTypeObject } from '@ts-stack/openapi-spec';
-import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
+import { it, fit, describe, expect } from '@jest/globals';
 
 import { Column } from '../decorators/column';
 import { Content } from './content';
+import { REQUIRED } from '../constants';
 
 describe('Content', () => {
   it('simply model', () => {
     class Model1 {
-      @Column()
+      @Column({ [REQUIRED]: true })
       property1: string;
-      @Column()
+      @Column({ [REQUIRED]: true })
       property2: number;
     }
 
@@ -28,6 +28,7 @@ describe('Content', () => {
               type: 'number',
             },
           },
+          required: ['property1', 'property2']
         },
       } as MediaTypeObject,
     };
