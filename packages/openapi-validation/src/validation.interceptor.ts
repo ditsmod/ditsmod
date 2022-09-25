@@ -45,7 +45,7 @@ export class ValidationInterceptor implements HttpInterceptor {
         return;
       }
 
-      this.validate(schema, value);
+      this.validate(schema, value, parameter.name);
     }
   }
 
@@ -65,7 +65,7 @@ export class ValidationInterceptor implements HttpInterceptor {
     this.validate(this.meta.requestBodySchema, this.req.body);
   }
 
-  protected validate(schema: XSchemaObject, value: any) {
+  protected validate(schema: XSchemaObject, value: any, parameter?: string) {
     const validate = this.ajvService.getValidator(schema);
     if (!validate) {
       const dict = this.getDict();
@@ -73,7 +73,12 @@ export class ValidationInterceptor implements HttpInterceptor {
     }
     if (!validate(value)) {
       const msg1 = this.ajvService.ajv.errorsText(validate.errors);
-      const args1 = validate.errors;
+      let args1: any;
+      if (parameter) {
+        args1 = { parameter };
+      } else {
+        args1 = validate.errors;
+      }
       throw new CustomError({ msg1, args1, status: this.meta.options.invalidStatus });
     }
   }
