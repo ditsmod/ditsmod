@@ -1,5 +1,18 @@
+<a name="core-2.19.0"></a>
+# [core-2.19.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.19.0) (2022-09-25)
+
+### Features
+
+- added generic to `providers.useAnyValue()`.
+- added `args1` and `args2` to `ErrorOpts`.
+
+### Inprovements
+
+- refactoring `DefaultControllerErrorHandler`.
+- removed print all providers in `PreRouterExtension`.
+
 <a name="core-2.18.0"></a>
-# [core-2.18.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.18.0) (2022-09-21)
+## [core-2.18.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.18.0) (2022-09-21)
 
 ### Features
 
