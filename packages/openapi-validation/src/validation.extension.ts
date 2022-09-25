@@ -8,11 +8,12 @@ import {
 } from '@ditsmod/core';
 import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 import { isReferenceObject, OasRouteMeta } from '@ditsmod/openapi';
-import { Injectable } from '@ts-stack/di';
+import { Injectable, Optional } from '@ts-stack/di';
 
 import { ValidationRouteMeta } from './types';
 import { ValidationInterceptor } from './validation.interceptor';
 import { AjvService } from './ajv.service';
+import { ValidationOptions } from './validation-options';
 
 @Injectable()
 export class ValidationExtension implements Extension<void> {
@@ -21,7 +22,8 @@ export class ValidationExtension implements Extension<void> {
   constructor(
     private perAppService: PerAppService,
     private extensionsManager: ExtensionsManager,
-    private ajvService: AjvService
+    private ajvService: AjvService,
+    @Optional() private validationOptions?: ValidationOptions
   ) {}
 
   async init(isLastExtensionCall?: boolean) {
@@ -64,8 +66,9 @@ export class ValidationExtension implements Extension<void> {
           this.ajvService.addValidator(schema);
           validationRouteMeta.requestBodySchema = schema;
         }
-
+        
         if (validationRouteMeta.parameters.length || validationRouteMeta.requestBodySchema) {
+          validationRouteMeta.validationOptions = this.validationOptions || new ValidationOptions();
           providersPerRou.push({ provide: ValidationRouteMeta, useExisting: RouteMeta });
           providersPerReq.push({
             provide: HTTP_INTERCEPTORS,

@@ -3,9 +3,12 @@ import { Dictionary } from '@ditsmod/i18n';
 import { OasRouteMeta } from '@ditsmod/openapi';
 import { XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
 
+import { ValidationOptions } from './validation-options';
+
 export class ValidationRouteMeta extends OasRouteMeta {
   parameters: XParameterObject[];
   requestBodySchema: XSchemaObject;
+  validationOptions: ValidationOptions
 }
 
 /**
