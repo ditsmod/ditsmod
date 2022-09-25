@@ -2,16 +2,16 @@ import 'reflect-metadata';
 import { MediaTypeObject } from '@ts-stack/openapi-spec';
 import { it, fit, describe, expect } from '@jest/globals';
 
-import { Column } from '../decorators/column';
+import { Property } from '../decorators/property';
 import { Content } from './content';
 import { REQUIRED } from '../constants';
 
 describe('Content', () => {
   it('simply model', () => {
     class Model1 {
-      @Column({ [REQUIRED]: true })
+      @Property({ [REQUIRED]: true })
       property1: string;
-      @Column({ [REQUIRED]: true })
+      @Property({ [REQUIRED]: true })
       property2: number;
     }
 
@@ -37,16 +37,16 @@ describe('Content', () => {
 
   it('array of Model1', () => {
     class Model1 {
-      @Column()
+      @Property()
       property1: string;
-      @Column()
+      @Property()
       property2: number;
     }
 
     class Model2 {
-      @Column()
+      @Property()
       property1: string;
-      @Column({ type: 'array' }, Model1)
+      @Property({ type: 'array' }, Model1)
       property2: Model1[];
     }
 
@@ -76,9 +76,9 @@ describe('Content', () => {
   });
   it('array of Model1 with circular references', () => {
     class Model1 {
-      @Column()
+      @Property()
       property1: string;
-      @Column({ type: 'array' }, Model1)
+      @Property({ type: 'array' }, Model1)
       property2: Model1[];
     }
 
@@ -109,9 +109,9 @@ describe('Content', () => {
 
   it('array of Number', () => {
     class Model1 {
-      @Column()
+      @Property()
       property1: string;
-      @Column({ type: 'array' }, Number)
+      @Property({ type: 'array' }, Number)
       property2: number[];
     }
 
@@ -136,9 +136,9 @@ describe('Content', () => {
 
   it('circular references', () => {
     class Model1 {
-      @Column()
+      @Property()
       property1: string;
-      @Column()
+      @Property()
       property2: Model1;
     }
 

@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { reflector } from '@ts-stack/di';
 import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
 
-import { Column, ColumnDecoratorMetadata } from './column';
+import { Property, PropertyDecoratorMetadata } from './property';
 
 describe('@Column', () => {
   it('model without properties', () => {
@@ -13,18 +13,18 @@ describe('@Column', () => {
 
   it('empty value', () => {
     class Model1 {
-      @Column()
+      @Property()
       prop1: string;
-      @Column()
+      @Property()
       prop2: string;
-      @Column()
-      @Column()
+      @Property()
+      @Property()
       prop3: string;
     }
 
     const actualMeta = reflector.propMetadata(Model1);
     // console.log(actualMeta);
-    const expectedMeta: ColumnDecoratorMetadata = {
+    const expectedMeta: PropertyDecoratorMetadata = {
       prop1: [String, { schema: undefined, arrayModels: undefined }],
       prop2: [String, { schema: undefined, arrayModels: undefined }],
       prop3: [String, { schema: undefined, arrayModels: undefined }, { schema: undefined, arrayModels: undefined }],
@@ -34,7 +34,7 @@ describe('@Column', () => {
 
   it('object', () => {
     class Model1 {
-      @Column({
+      @Property({
         type: 'string',
         minimum: 1,
       })
@@ -42,7 +42,7 @@ describe('@Column', () => {
     }
 
     const actualMeta = reflector.propMetadata(Model1);
-    const expectedMeta: ColumnDecoratorMetadata = {
+    const expectedMeta: PropertyDecoratorMetadata = {
       prop1: [
         String,
         {
@@ -59,12 +59,12 @@ describe('@Column', () => {
 
   it('array with one item', () => {
     class Model1 {
-      @Column({}, Boolean)
+      @Property({}, Boolean)
       prop1: Boolean[];
     }
 
     const actualMeta = reflector.propMetadata(Model1);
-    const expectedMeta: ColumnDecoratorMetadata = {
+    const expectedMeta: PropertyDecoratorMetadata = {
       prop1: [
         Array,
         {
@@ -78,12 +78,12 @@ describe('@Column', () => {
 
   it('array with multi items', () => {
     class Model1 {
-      @Column({}, Boolean, String)
+      @Property({}, Boolean, String)
       prop1: [Boolean, String];
     }
 
     const actualMeta = reflector.propMetadata(Model1);
-    const expectedMeta: ColumnDecoratorMetadata = {
+    const expectedMeta: PropertyDecoratorMetadata = {
       prop1: [
         Array,
         {

@@ -1,22 +1,22 @@
-import { Column } from '@ditsmod/openapi';
+import { Property } from '@ditsmod/openapi';
 
 export class Model1 {
-  @Column()
+  @Property()
   property1: string;
-  @Column()
+  @Property()
   property2: number;
 }
 
 export class Model2 {
-  @Column({ minimum: 1, maximum: 100000 })
+  @Property({ minimum: 1, maximum: 100000 })
   resourceId: number;
 
-  @Column()
+  @Property()
   model1: Model1;
 
-  @Column({ type: 'array' }, Number)
+  @Property({ type: 'array' }, Number)
   model2: number[];
 
-  @Column({ type: 'array' }, Model1)
+  @Property({ type: 'array' }, Model1)
   model3: Model1[];
 }

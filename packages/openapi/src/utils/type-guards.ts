@@ -1,6 +1,6 @@
 import { AnyObj } from '@ditsmod/core';
 import { ReferenceObject } from '@ts-stack/openapi-spec';
-import { ColumnDecoratorItem } from '../decorators/column';
+import { PropertyDecoratorItem } from '../decorators/property';
 
 import { OasGuardMetadata } from '../decorators/oas-guard';
 import { OasRouteMetadata1, OasRouteMetadata2 } from '../decorators/oas-route';
@@ -25,6 +25,6 @@ export function isOasGuard(classMeta: AnyObj): classMeta is OasGuardMetadata {
   return (classMeta as any)?.ngMetadataName == 'OasGuard';
 }
 
-export function isColumn(propertyMeta: AnyObj): propertyMeta is ColumnDecoratorItem {
-  return (propertyMeta as any)?.ngMetadataName == 'Column';
+export function isProperty(propertyMeta: AnyObj): propertyMeta is PropertyDecoratorItem {
+  return (propertyMeta as any)?.ngMetadataName == 'Property';
 }

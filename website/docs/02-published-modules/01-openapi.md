@@ -62,29 +62,29 @@ export class SomeController {
 В наступному прикладі показано модель з трьома параметрами:
 
 ```ts
-import { Column } from '@ditsmod/openapi';
+import { Property } from '@ditsmod/openapi';
 
 class Params {
-  @Column({ description: 'Username of the profile to get.' })
+  @Property({ description: 'Username of the profile to get.' })
   username: string;
 
-  @Column({ minimum: 1, maximum: 100, description: 'Page number.' })
+  @Property({ minimum: 1, maximum: 100, description: 'Page number.' })
   page: number;
 
-  @Column()
+  @Property()
   hasName: boolean;
 }
 ```
 
-Як бачите, щоб закріпити метадані за моделлю, використовується декоратор `@Column()`, куди ви можете передавати першим аргументом [Schema Object][3].
+Як бачите, щоб закріпити метадані за моделлю, використовується декоратор `@Property()`, куди ви можете передавати першим аргументом [Schema Object][3].
 
-Зверніть увагу, що в даному разі властивість `type` не прописується у метаданих, оскільки указані тут типи автоматично читаються хелперами. Щоправда не усі наявні у TypeScript типи можуть читатись. Наприклад, хелпери не зможуть автоматично побачити який тип масиву ви передаєте, в такому разі необхідно передавати підказку у якості другого аргументу в декоратор `@Column()`:
+Зверніть увагу, що в даному разі властивість `type` не прописується у метаданих, оскільки указані тут типи автоматично читаються хелперами. Щоправда не усі наявні у TypeScript типи можуть читатись. Наприклад, хелпери не зможуть автоматично побачити який тип масиву ви передаєте, в такому разі необхідно передавати підказку у якості другого аргументу в декоратор `@Property()`:
 
 ```ts
-import { Column } from '@ditsmod/openapi';
+import { Property } from '@ditsmod/openapi';
 
 class Params {
-  @Column({}, String)
+  @Property({}, String)
   usernames: string[];
 }
 ```
@@ -92,18 +92,18 @@ class Params {
 Хоча посилання одних моделей на інші теж досить добре читаються. В наступному прикладі `Model2` має посилання на `Model1`:
 
 ```ts
-import { Column } from '@ditsmod/openapi';
+import { Property } from '@ditsmod/openapi';
 
 export class Model1 {
-  @Column()
+  @Property()
   property1: string;
 }
 
 export class Model2 {
-  @Column()
+  @Property()
   model1: Model1;
 
-  @Column({}, Model1)
+  @Property({}, Model1)
   arrModel1: Model1[];
 }
 ```
@@ -158,12 +158,12 @@ export class SomeController {
 Моделі даних також використовуються щоб описати контент `requestBody`, але тут є одна невелика відмінність. По дефолту, усі властивості моделі є необов'язковими, і щоб позначити певну властивість обов'язковою, необхідно скористатись константою `REQUIRED`:
 
 ```ts
-import { Column, REQUIRED } from '@ditsmod/openapi';
+import { Property, REQUIRED } from '@ditsmod/openapi';
 
 class Model1 {
-  @Column()
+  @Property()
   property1: string;
-  @Column({ [REQUIRED]: true })
+  @Property({ [REQUIRED]: true })
   property2: number;
 }
 ```

@@ -1,7 +1,7 @@
 export { REQUIRED, DEFAULT_OAS_OBJECT } from './constants';
 export { OasGuard, OasGuardMetadata } from './decorators/oas-guard';
 export { OasRoute, OasRouteMetadata1, OasRouteMetadata2 } from './decorators/oas-route';
-export { Column } from './decorators/column';
+export { Property } from './decorators/property';
 export * from './di-tokens';
 export { OpenapiModule } from './openapi.module';
 export * from './swagger-ui/swagger-o-auth-options';

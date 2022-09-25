@@ -2,8 +2,8 @@ import { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/ope
 import { AnyObj, HttpMethod } from '@ditsmod/core';
 import { Type, reflector } from '@ts-stack/di';
 
-import { ColumnDecoratorMetadata } from '../decorators/column';
-import { isColumn } from './type-guards';
+import { PropertyDecoratorMetadata } from '../decorators/property';
+import { isProperty } from './type-guards';
 
 type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';
 type OptionalParamsIn = 'query' | 'header' | 'cookie';
@@ -138,17 +138,17 @@ export class Parameters {
    * Sets metadata from a model to parameters.
    */
   protected setMetadata(model: Type<any>, paramsObjects: XParameterObject[]): XParameterObject[] {
-    const meta = reflector.propMetadata(model) as ColumnDecoratorMetadata;
+    const meta = reflector.propMetadata(model) as PropertyDecoratorMetadata;
     return paramsObjects.map((paramObject) => {
       const propertyDecorator = meta[paramObject.name];
       if (propertyDecorator) {
         const propertyType = propertyDecorator[0];
-        const schemas = propertyDecorator.filter(isColumn).map(val => val.schema);
+        const schemas = propertyDecorator.filter(isProperty).map(val => val.schema);
         paramObject.schema = Object.assign({}, ...schemas, paramObject.schema) as XSchemaObject<any>;
         if (paramObject.schema.description) {
           paramObject.description = paramObject.description || paramObject.schema.description;
         }
-        this.setColumnType(paramObject.schema, propertyType);
+        this.setPropertyType(paramObject.schema, propertyType);
         if (paramObject.schema.type == 'array' && !paramObject.schema.items) {
           paramObject.schema.items = {};
         }
@@ -157,7 +157,7 @@ export class Parameters {
     });
   }
 
-  protected setColumnType(schema: XSchemaObject, propertyType: Type<AnyObj>) {
+  protected setPropertyType(schema: XSchemaObject, propertyType: Type<AnyObj>) {
     if (schema.type === undefined) {
       if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {
         schema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;

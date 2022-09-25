@@ -62,29 +62,29 @@ The data type for the `username` parameter and its description are missing here.
 The following example shows a model with three parameters:
 
 ```ts
-import { Column } from '@ditsmod/openapi';
+import { Property } from '@ditsmod/openapi';
 
 class Params {
-  @Column({ description: 'Username of the profile to get.' })
+  @Property({ description: 'Username of the profile to get.' })
   username: string;
 
-  @Column({ minimum: 1, maximum: 100, description: 'Page number.' })
+  @Property({ minimum: 1, maximum: 100, description: 'Page number.' })
   page: number;
 
-  @Column()
+  @Property()
   hasName: boolean;
 }
 ```
 
-As you can see, to attach metadata to the model, the `@Column()` decorator is used, where you can pass [Schema Object][3] as the first argument.
+As you can see, to attach metadata to the model, the `@Property()` decorator is used, where you can pass [Schema Object][3] as the first argument.
 
-Note that in this case the `type` property is not specified in the metadata, as the types specified here are automatically read by helpers. However, not all types available in TypeScript can be read. For example, helpers will not be able to automatically see what type of array you are passing, in which case you need to pass a hint as the second argument to the `@Column()` decorator:
+Note that in this case the `type` property is not specified in the metadata, as the types specified here are automatically read by helpers. However, not all types available in TypeScript can be read. For example, helpers will not be able to automatically see what type of array you are passing, in which case you need to pass a hint as the second argument to the `@Property()` decorator:
 
 ```ts
-import { Column } from '@ditsmod/openapi';
+import { Property } from '@ditsmod/openapi';
 
 class Params {
-  @Column({}, String)
+  @Property({}, String)
   usernames: string[];
 }
 ```
@@ -92,18 +92,18 @@ class Params {
 Although the links of some models to others are also quite readable. In the following example, `Model2` has a reference to `Model1`:
 
 ```ts
-import { Column } from '@ditsmod/openapi';
+import { Property } from '@ditsmod/openapi';
 
 export class Model1 {
-  @Column()
+  @Property()
   property1: string;
 }
 
 export class Model2 {
-  @Column()
+  @Property()
   model1: Model1;
 
-  @Column({}, Model1)
+  @Property({}, Model1)
   arrModel1: Model1[];
 }
 ```
@@ -158,12 +158,12 @@ export class SomeController {
 Data models are also used to describe the content of the `requestBody`, but there is one slight difference. By default, all model properties are optional, and to mark a particular property as required, you need to use the `REQUIRED` constant:
 
 ```ts
-import { Column, REQUIRED } from '@ditsmod/openapi';
+import { Property, REQUIRED } from '@ditsmod/openapi';
 
 class Model1 {
-  @Column()
+  @Property()
   property1: string;
-  @Column({ [REQUIRED]: true })
+  @Property({ [REQUIRED]: true })
   property2: number;
 }
 ```

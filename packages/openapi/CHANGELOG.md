@@ -1,5 +1,12 @@
+<a name="openapi-2.7.0"></a>
+# [openapi-2.7.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.7.0) (2022-09-24)
+
+### BREAKING CHANGES
+
+- Renamed decorator `@Column` to `@Property`.
+
 <a name="openapi-2.6.0"></a>
-# [openapi-2.6.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.6.0) (2022-09-24)
+## [openapi-2.6.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.6.0) (2022-09-24)
 
 ### Features
 

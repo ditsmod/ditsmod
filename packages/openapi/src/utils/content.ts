@@ -3,9 +3,9 @@ import { reflector, Type } from '@ts-stack/di';
 import { SchemaObject, SchemaObjectType, XEncodingObject, XMediaTypeObject } from '@ts-stack/openapi-spec';
 import { REQUIRED } from '../constants';
 
-import { ColumnDecoratorItem, ColumnDecoratorMetadata } from '../decorators/column';
+import { PropertyDecoratorItem, PropertyDecoratorMetadata } from '../decorators/property';
 import { mediaTypeName } from '../types/media-types';
-import { isColumn } from './type-guards';
+import { isProperty } from './type-guards';
 
 export interface ContentOptions<T extends mediaTypeName = mediaTypeName> {
   mediaType: T;
@@ -52,10 +52,10 @@ export class Content {
 
   protected getSchema(model: Type<AnyObj>) {
     const schema = this.getTypedSchema(model);
-    const modelMeta = reflector.propMetadata(model) as ColumnDecoratorMetadata;
+    const modelMeta = reflector.propMetadata(model) as PropertyDecoratorMetadata;
 
     for (const property in modelMeta) {
-      const decoratorItem = modelMeta[property].find(isColumn);
+      const decoratorItem = modelMeta[property].find(isProperty);
       if (!decoratorItem || (decoratorItem.schema?.type !== undefined && decoratorItem.schema?.type != 'array')) {
         continue;
       }
@@ -71,7 +71,7 @@ export class Content {
     return schema;
   }
 
-  protected checkRequired(parentSchema: SchemaObject, propertyName: string, decoratorItem: ColumnDecoratorItem) {
+  protected checkRequired(parentSchema: SchemaObject, propertyName: string, decoratorItem: PropertyDecoratorItem) {
     if (decoratorItem.schema?.[REQUIRED]) {
       if (!parentSchema.required) {
         parentSchema.required = [propertyName];
@@ -99,7 +99,7 @@ export class Content {
   /**
    * @todo Refactor this.
    */
-  protected patchPropertySchema(model: Type<AnyObj>, propertyType: Type<AnyObj>, decoratorItem: ColumnDecoratorItem) {
+  protected patchPropertySchema(model: Type<AnyObj>, propertyType: Type<AnyObj>, decoratorItem: PropertyDecoratorItem) {
     let schema = { ...decoratorItem.schema } || {};
     const { arrayModels: arrayModel } = decoratorItem;
     if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {

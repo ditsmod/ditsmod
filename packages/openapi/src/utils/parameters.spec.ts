@@ -3,7 +3,7 @@ import { SchemaObject, XParameterObject } from '@ts-stack/openapi-spec';
 import { it, describe, expect } from '@jest/globals';
 
 import { Parameters } from './parameters';
-import { Column } from '../decorators/column';
+import { Property } from '../decorators/property';
 
 describe('Parameters', () => {
   describe('without data model', () => {
@@ -61,9 +61,9 @@ describe('Parameters', () => {
     const column1: SchemaObject = { type: 'number', minimum: 0, maximum: 100 };
     const column2: SchemaObject = { type: 'string', minLength: 1, maxLength: 5 };
     class Model1 {
-      @Column(column1)
+      @Property(column1)
       prop1: number;
-      @Column(column2)
+      @Property(column2)
       prop2?: string;
     }
 
