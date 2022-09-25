@@ -1,5 +1,4 @@
 import { Injectable } from '@ts-stack/di';
-import { ChainError } from '@ts-stack/chain-error';
 
 import { Req } from '../services/request';
 import { ControllerErrorHandler } from '../services/controller-error-handler';
@@ -7,28 +6,28 @@ import { Res } from '../services/response';
 import { Logger } from '../types/logger';
 import { Status } from '../utils/http-status-codes';
 import { ErrorOpts } from '../custom-error/error-opts';
+import { isChainError } from '../utils/type-guards';
 
 
 @Injectable()
 export class DefaultControllerErrorHandler implements ControllerErrorHandler {
   constructor(private req: Req, private res: Res, private logger: Logger) {}
 
-  async handleError(err: ChainError<ErrorOpts> | Error) {
-    const req = this.req.toString();
-    if (err instanceof ChainError) {
+  async handleError(err: Error) {
+    if (isChainError<ErrorOpts>(err)) {
       const { level, status } = err.info;
-      delete err.info.level;
-      this.logger.log(level || 'debug', { err, ...err.info, req });
-      if (!this.res.nodeRes.headersSent) {
-        this.addRequestIdToHeader();
-        this.res.sendJson({ error: err.message }, status);
-      }
+      this.logger.log(level || 'debug', err.message);
+      this.sendError(err.message, status);
     } else {
-      this.logger.error({ err, req });
-      if (!this.res.nodeRes.headersSent) {
-        this.addRequestIdToHeader();
-        this.res.sendJson({ error: 'Internal server error' }, Status.INTERNAL_SERVER_ERROR);
-      }
+      this.logger.error(err.message);
+      this.sendError('Internal server error', Status.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  protected sendError(error: string, status?: Status) {
+    if (!this.res.nodeRes.headersSent) {
+      this.addRequestIdToHeader();
+      this.res.sendJson({ error }, status);
     }
   }
 

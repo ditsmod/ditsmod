@@ -1,3 +1,4 @@
+import { ChainError } from '@ts-stack/chain-error';
 import {
   ClassProvider,
   ExistingProvider,
@@ -26,6 +27,10 @@ export function isHttp2SecureServerOptions(serverOptions: ServerOptions): server
 
 export function isForwardRef(type: any): type is ForwardRefFn {
   return typeof type == 'function' && type.hasOwnProperty('__forward_ref__') && type.__forward_ref__ === forwardRef;
+}
+
+export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
+  return err instanceof ChainError;
 }
 
 export function isModule(moduleMetadata: AnyObj): moduleMetadata is ModuleMetadata {
