@@ -73,7 +73,8 @@ export class ValidationInterceptor implements HttpInterceptor {
     }
     if (!validate(value)) {
       const msg1 = this.ajvService.ajv.errorsText(validate.errors);
-      throw new CustomError({ msg1, status: this.meta.options.invalidStatus });
+      const args1 = validate.errors;
+      throw new CustomError({ msg1, args1, status: this.meta.options.invalidStatus });
     }
   }
 
