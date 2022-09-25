@@ -3,13 +3,21 @@ import { Status } from '../utils/http-status-codes';
 
 export class ErrorOpts {
   /**
-   * Message to the client.
+   * Message to send it to a client.
    */
   msg1?: string = 'Internal server error';
   /**
-   * A message to the server.
+   * A message to send it to a logger.
    */
   msg2?: string = '';
+  /**
+   * Arguments for error handler to send it to a client.
+   */
+  args1?: any;
+  /**
+   * Arguments for error handler to send it to a logger.
+   */
+  args2?: any;
   /**
    * Log level. By default - `debug`.
    */
