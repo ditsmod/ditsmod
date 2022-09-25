@@ -10,7 +10,7 @@ import { AjvService } from './ajv.service';
 
 @Injectable()
 export class ValidationInterceptor implements HttpInterceptor {
-  constructor(private req: Req, private validationMeta: ValidationRouteMeta, private ajvService: AjvService) {}
+  constructor(private req: Req, private meta: ValidationRouteMeta, private ajvService: AjvService) {}
 
   intercept(next: HttpHandler) {
     this.validateParams();
@@ -19,7 +19,7 @@ export class ValidationInterceptor implements HttpInterceptor {
   }
 
   protected validateParams() {
-    const { parameters } = this.validationMeta;
+    const { parameters } = this.meta;
     for (const parameter of parameters) {
       const schema = parameter.schema as XSchemaObject<any>;
       let value: any;
@@ -39,7 +39,7 @@ export class ValidationInterceptor implements HttpInterceptor {
           const dict = this.getDict();
           throw new CustomError({
             msg1: dict.missingRequiredParameter(parameter.name, parameter.in),
-            status: this.validationMeta.options.invalidStatus,
+            status: this.meta.options.invalidStatus,
           });
         }
         return;
@@ -50,7 +50,7 @@ export class ValidationInterceptor implements HttpInterceptor {
   }
 
   protected validateRequestBody() {
-    if (!this.validationMeta.requestBodySchema) {
+    if (!this.meta.requestBodySchema) {
       return;
     }
 
@@ -58,11 +58,11 @@ export class ValidationInterceptor implements HttpInterceptor {
       const dict = this.getDict();
       throw new CustomError({
         msg1: dict.missingRequestBody,
-        status: this.validationMeta.options.invalidStatus,
+        status: this.meta.options.invalidStatus,
       });
     }
 
-    this.validate(this.validationMeta.requestBodySchema, this.req.body);
+    this.validate(this.meta.requestBodySchema, this.req.body);
   }
 
   protected validate(schema: XSchemaObject, value: any) {
@@ -73,7 +73,7 @@ export class ValidationInterceptor implements HttpInterceptor {
     }
     if (!validate(value)) {
       const msg1 = this.ajvService.ajv.errorsText(validate.errors);
-      throw new CustomError({ msg1, status: this.validationMeta.options.invalidStatus });
+      throw new CustomError({ msg1, status: this.meta.options.invalidStatus });
     }
   }
 
