@@ -39,7 +39,7 @@ export class ValidationInterceptor implements HttpInterceptor {
           const dict = this.getDict();
           throw new CustomError({
             msg1: dict.missingRequiredParameter(parameter.name, parameter.in),
-            status: this.validationMeta.validationOptions.invalidStatus,
+            status: this.validationMeta.options.invalidStatus,
           });
         }
         return;
@@ -58,7 +58,7 @@ export class ValidationInterceptor implements HttpInterceptor {
       const dict = this.getDict();
       throw new CustomError({
         msg1: dict.missingRequestBody,
-        status: this.validationMeta.validationOptions.invalidStatus,
+        status: this.validationMeta.options.invalidStatus,
       });
     }
 
@@ -73,7 +73,7 @@ export class ValidationInterceptor implements HttpInterceptor {
     }
     if (!validate(value)) {
       const msg1 = this.ajvService.ajv.errorsText(validate.errors);
-      throw new CustomError({ msg1, status: this.validationMeta.validationOptions.invalidStatus });
+      throw new CustomError({ msg1, status: this.validationMeta.options.invalidStatus });
     }
   }
 

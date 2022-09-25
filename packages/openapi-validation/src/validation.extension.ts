@@ -68,7 +68,7 @@ export class ValidationExtension implements Extension<void> {
         }
         
         if (validationRouteMeta.parameters.length || validationRouteMeta.requestBodySchema) {
-          validationRouteMeta.validationOptions = this.validationOptions || new ValidationOptions();
+          validationRouteMeta.options = this.validationOptions || new ValidationOptions();
           providersPerRou.push({ provide: ValidationRouteMeta, useExisting: RouteMeta });
           providersPerReq.push({
             provide: HTTP_INTERCEPTORS,
