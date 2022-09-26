@@ -1,5 +1,41 @@
+<a name="openapi-2.8.0"></a>
+# [openapi-2.8.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.8.0) (2022-09-26)
+
+### BREAKING CHANGES
+
+- Changes second parameter for `@Property` decorator.
+
+Before:
+
+```ts
+class Model1 {
+  @Property({}, Model1)
+  property1: Model1[];
+}
+```
+
+After:
+
+```ts
+class Model1 {
+  @Property({}, { array: Model1 })
+  property1: Model1[];
+}
+```
+
+### Features
+
+- Added support for `enum` in type model:
+
+```ts
+class Model1 {
+  @Property({}, { enum: NumberEnum })
+  property1: number;
+}
+```
+
 <a name="openapi-2.7.0"></a>
-# [openapi-2.7.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.7.0) (2022-09-24)
+## [openapi-2.7.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.7.0) (2022-09-24)
 
 ### BREAKING CHANGES
 

@@ -28,7 +28,52 @@ describe('Content', () => {
               type: 'number',
             },
           },
-          required: ['property1', 'property2']
+          required: ['property1', 'property2'],
+        },
+      } as MediaTypeObject,
+    };
+    expect(content).toEqual(expectContent);
+  });
+
+  it('model with enum and array', () => {
+    enum NumberEnum {
+      one,
+      two,
+      three,
+    }
+    enum StringEnum {
+      one = 'value1',
+      two = 'value2',
+      three = 3,
+    }
+    class Model1 {
+      @Property({}, { enum: NumberEnum })
+      property1: number;
+      @Property({}, { enum: StringEnum })
+      property2: string;
+      @Property({}, { enum: [NumberEnum, StringEnum] })
+      property3: (number | string)[];
+    }
+
+    const content = new Content().get({ mediaType: 'application/json', model: Model1 });
+    const expectContent = {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            property1: {
+              type: 'number',
+              enum: [0, 1, 2],
+            },
+            property2: {
+              type: ['string', 'number'],
+              enum: ['value1', 'value2', 3],
+            },
+            property3: {
+              type: ['number', 'string'],
+              enum: [0, 1, 2, 'value1', 'value2', 3],
+            },
+          },
         },
       } as MediaTypeObject,
     };
@@ -46,7 +91,7 @@ describe('Content', () => {
     class Model2 {
       @Property()
       property1: string;
-      @Property({ type: 'array' }, Model1)
+      @Property({ type: 'array' }, { array: Model1 })
       property2: Model1[];
     }
 
@@ -78,7 +123,7 @@ describe('Content', () => {
     class Model1 {
       @Property()
       property1: string;
-      @Property({ type: 'array' }, Model1)
+      @Property({ type: 'array' }, { array: Model1 })
       property2: Model1[];
     }
 
@@ -111,7 +156,7 @@ describe('Content', () => {
     class Model1 {
       @Property()
       property1: string;
-      @Property({ type: 'array' }, Number)
+      @Property({ type: 'array' }, { array: Number })
       property2: number[];
     }
 

@@ -3,7 +3,7 @@ import { reflector, Type } from '@ts-stack/di';
 import { SchemaObject, SchemaObjectType, XEncodingObject, XMediaTypeObject } from '@ts-stack/openapi-spec';
 import { REQUIRED } from '../constants';
 
-import { PropertyDecoratorItem, PropertyDecoratorMetadata } from '../decorators/property';
+import { AnyEnum, PropertyDecoratorItem, PropertyDecoratorMetadata } from '../decorators/property';
 import { mediaTypeName } from '../types/media-types';
 import { isProperty } from './type-guards';
 
@@ -101,8 +101,12 @@ export class Content {
    */
   protected patchPropertySchema(model: Type<AnyObj>, propertyType: Type<AnyObj>, decoratorItem: PropertyDecoratorItem) {
     let schema = { ...decoratorItem.schema } || {};
-    const { arrayModels } = decoratorItem;
-    if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {
+    const { customType } = decoratorItem;
+    if (customType?.enum) {
+      const { type, value } = this.getEnumArray(customType.enum);
+      schema.type = type as SchemaObjectType;
+      schema.enum = value;
+    } else if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {
       schema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;
     } else if (propertyType instanceof Type) {
       if (this.scanInProgress.has(model)) {
@@ -115,17 +119,18 @@ export class Content {
     } else {
       schema.type = 'null';
     }
+
     if (schema.type == 'array' && !schema.items) {
       if (this.scanInProgress.has(model)) {
         const description = `[Circular references to ${model.name}]`;
         schema = { type: 'array', description, items: {} } as SchemaObject;
       } else {
         this.scanInProgress.add(model);
-        if (arrayModels) {
-          if (Array.isArray(arrayModels)) {
-            schema.items = arrayModels.map((modelItem) => this.getSchema(modelItem));
+        if (customType?.array) {
+          if (Array.isArray(customType.array)) {
+            schema.items = customType.array.map((modelItem) => this.getSchema(modelItem));
           } else {
-            schema.items = this.getSchema(arrayModels);
+            schema.items = this.getSchema(customType.array);
           }
         } else {
           schema.items = [];
@@ -133,6 +138,30 @@ export class Content {
       }
     }
     return schema;
+  }
+
+  protected getEnumArray(obj: AnyEnum | AnyEnum[]) {
+    const enums: AnyEnum[] = Array.isArray(obj) ? obj : [obj];
+    const typeSet = new Set<string>();
+    const value: (number | string)[] = [];
+    enums.forEach((enm) => {
+      Object.keys(enm).forEach((key) => {
+        // An enum member cannot have a numeric name
+        if (isNaN(+key)) {
+          value.push(enm[key]);
+          typeSet.add(typeof enm[key]);
+        }
+      });
+    });
+    let type: string | string[];
+    if (typeSet.size == 1) {
+      type = [...typeSet][0];
+    } else if (typeSet.size > 1) {
+      type = [...typeSet];
+    } else {
+      type = 'string';
+    }
+    return { value, type };
   }
 }
 

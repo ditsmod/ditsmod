@@ -2,22 +2,24 @@ import { AnyObj } from '@ditsmod/core';
 import { makePropTypeDecorator, Type } from '@ts-stack/di';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 
-export type PropertyDecoratorFactory = (schema?: XSchemaObject, ...arrayModels: Type<AnyObj>[]) => PropertyDecorator;
+export type AnyEnum<T extends number | string = number | string> = Record<T, T>;
+
+interface CustomType {
+  array?: Type<AnyObj> | Type<AnyObj>[];
+  enum?: AnyEnum | AnyEnum[];
+}
+export type PropertyDecoratorFactory = (schema?: XSchemaObject, customType?: CustomType) => PropertyDecorator;
 export interface PropertyDecoratorItem {
   schema?: XSchemaObject;
-  arrayModels?: Type<AnyObj> | Type<AnyObj>[];
+  customType?: CustomType;
 }
 export type PropertyDecoratorValue = [Type<AnyObj>, PropertyDecoratorItem, ...PropertyDecoratorItem[]];
 export interface PropertyDecoratorMetadata {
   [key: string]: PropertyDecoratorValue;
 }
 
-function transformPropertyMeta(schema?: XSchemaObject, ...arrayModels: Type<AnyObj>[]) {
-  if (arrayModels.length < 2) {
-    return { schema, arrayModels: arrayModels[0] } as PropertyDecoratorItem;
-  } else {
-    return { schema, arrayModels } as PropertyDecoratorItem;
-  }
+function transformPropertyMeta(schema?: XSchemaObject, customType?: CustomType) {
+  return { schema, customType };
 }
 
 /**

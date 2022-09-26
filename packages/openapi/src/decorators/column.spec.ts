@@ -4,7 +4,7 @@ import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach
 
 import { Property, PropertyDecoratorMetadata } from './property';
 
-describe('@Column', () => {
+describe('@Property', () => {
   it('model without properties', () => {
     class Model1 {}
 
@@ -25,9 +25,9 @@ describe('@Column', () => {
     const actualMeta = reflector.propMetadata(Model1);
     // console.log(actualMeta);
     const expectedMeta: PropertyDecoratorMetadata = {
-      prop1: [String, { schema: undefined, arrayModels: undefined }],
-      prop2: [String, { schema: undefined, arrayModels: undefined }],
-      prop3: [String, { schema: undefined, arrayModels: undefined }, { schema: undefined, arrayModels: undefined }],
+      prop1: [String, { schema: undefined, customType: undefined }],
+      prop2: [String, { schema: undefined, customType: undefined }],
+      prop3: [String, { schema: undefined, customType: undefined }, { schema: undefined, customType: undefined }],
     };
     expect(actualMeta).toEqual(expectedMeta);
   });
@@ -50,7 +50,7 @@ describe('@Column', () => {
             type: 'string',
             minimum: 1,
           },
-          arrayModels: undefined,
+          customType: undefined,
         },
       ],
     };
@@ -59,7 +59,7 @@ describe('@Column', () => {
 
   it('array with one item', () => {
     class Model1 {
-      @Property({}, Boolean)
+      @Property({}, { array: Boolean })
       prop1: Boolean[];
     }
 
@@ -69,7 +69,7 @@ describe('@Column', () => {
         Array,
         {
           schema: {},
-          arrayModels: Boolean,
+          customType: { array: Boolean },
         },
       ],
     };
@@ -78,7 +78,7 @@ describe('@Column', () => {
 
   it('array with multi items', () => {
     class Model1 {
-      @Property({}, Boolean, String)
+      @Property({}, { array: [Boolean, String] })
       prop1: [Boolean, String];
     }
 
@@ -88,7 +88,7 @@ describe('@Column', () => {
         Array,
         {
           schema: {},
-          arrayModels: [Boolean, String],
+          customType: { array: [Boolean, String] },
         },
       ],
     };

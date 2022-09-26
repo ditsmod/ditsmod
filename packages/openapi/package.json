@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/openapi",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -20,7 +20,7 @@
   "license": "MIT",
   "gitHead": "ee408df6b7617d0fb8bc6eff301e50f3602bb385",
   "dependencies": {
-    "@ts-stack/openapi-spec": "^3.1.2",
+    "@ts-stack/openapi-spec": "^3.1.5",
     "copy-webpack-plugin": "^8.1.1",
     "css-loader": "^5.2.4",
     "html-webpack-plugin": "^5.3.1",
