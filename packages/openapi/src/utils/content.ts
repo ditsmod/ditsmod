@@ -101,7 +101,7 @@ export class Content {
    */
   protected patchPropertySchema(model: Type<AnyObj>, propertyType: Type<AnyObj>, decoratorItem: PropertyDecoratorItem) {
     let schema = { ...decoratorItem.schema } || {};
-    const { arrayModels: arrayModel } = decoratorItem;
+    const { arrayModels } = decoratorItem;
     if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {
       schema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;
     } else if (propertyType instanceof Type) {
@@ -121,11 +121,11 @@ export class Content {
         schema = { type: 'array', description, items: {} } as SchemaObject;
       } else {
         this.scanInProgress.add(model);
-        if (arrayModel) {
-          if (Array.isArray(arrayModel)) {
-            schema.items = arrayModel.map((modelItem) => this.getSchema(modelItem));
+        if (arrayModels) {
+          if (Array.isArray(arrayModels)) {
+            schema.items = arrayModels.map((modelItem) => this.getSchema(modelItem));
           } else {
-            schema.items = this.getSchema(arrayModel);
+            schema.items = this.getSchema(arrayModels);
           }
         } else {
           schema.items = [];
