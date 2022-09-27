@@ -4,7 +4,7 @@ import { XSchemaObject } from '@ts-stack/openapi-spec';
 
 export type AnyEnum<T extends number | string = number | string> = Record<T, T>;
 
-interface CustomType {
+export interface CustomType {
   array?: Type<AnyObj> | Type<AnyObj>[];
   enum?: AnyEnum | AnyEnum[];
 }
