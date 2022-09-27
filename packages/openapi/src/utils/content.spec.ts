@@ -70,9 +70,13 @@ describe('Content', () => {
   it('array in array', () => {
     class Model1 {
       @Property({}, { array: [String] })
-      property1: string[][];
-      @Property({}, { array: [String, Number] })
+      property1: string[];
+      @Property({}, { array: [[String, Number]] })
       property2: (string | number)[][];
+      @Property({}, { array: [String, Number] })
+      property3: (string | number)[];
+      @Property({}, { array: [[String]] })
+      property4: string[][];
     }
 
     const content = new Content().get({ mediaType: 'application/json', model: Model1 });
@@ -84,10 +88,7 @@ describe('Content', () => {
             property1: {
               type: 'array',
               items: {
-                type: 'array',
-                items: {
-                  type: 'string',
-                },
+                type: 'string',
               },
             },
             property2: {
@@ -99,6 +100,16 @@ describe('Content', () => {
                 },
               },
             },
+            property3: {
+              type: 'array',
+              items: {
+                type: ['string', 'number'],
+              },
+            },
+            property4: {
+              type: 'array',
+              items: { type: 'array', items: { type: 'string' } }
+            }
           },
         },
       } as MediaTypeObject,
@@ -108,7 +119,7 @@ describe('Content', () => {
 
   it('array in array with circular references', () => {
     class Model1 {
-      @Property({}, { array: [Model1] })
+      @Property({}, { array: [[Model1]] })
       property1: Model1[][];
     }
 

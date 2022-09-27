@@ -163,9 +163,30 @@ export class Content {
     return propertySchema;
   }
 
+  /**
+   * @todo Refactor this.
+   */
   protected fillItems(model: Type<AnyObj>, propertySchema: SchemaObject, customType?: CustomType) {
     if (customType?.array) {
-      if (Array.isArray(customType.array)) {
+      if (Array.isArray(customType.array) && customType.array.every((item) => Array.isArray(item))) {
+        customType.array.forEach((item: any[]) => {
+          const modelNames = item.map((customItem) => customItem.name.toLowerCase());
+          if (modelNames.every((type) => this.standartTypesStrings.includes(type as any))) {
+            let type: SchemaObjectType;
+            if (modelNames.length == 1) {
+              type = modelNames[0]! as any;
+            } else {
+              type = modelNames as any;
+            }
+            propertySchema.items = { type: 'array', items: { type } };
+          } else {
+            propertySchema.items = { type: 'array', items: [] };
+            item.forEach((customItem) => {
+              this.checkCircularRefAndFillItems(model.name, propertySchema, customItem, 'object');
+            });
+          }
+        });
+      } else if (Array.isArray(customType.array)) {
         const modelNames = customType.array.map((customItem) => customItem.name.toLowerCase());
         if (modelNames.every((type) => this.standartTypesStrings.includes(type as any))) {
           let type: SchemaObjectType;
@@ -174,9 +195,9 @@ export class Content {
           } else {
             type = modelNames as any;
           }
-          propertySchema.items = { type: 'array', items: { type } };
+          propertySchema.items = { type };
         } else {
-          propertySchema.items = { type: 'array', items: [] };
+          propertySchema.items = [];
           customType.array.forEach((customItem) => {
             this.checkCircularRefAndFillItems(model.name, propertySchema, customItem, 'object');
           });
@@ -189,6 +210,9 @@ export class Content {
     }
   }
 
+  /**
+   * @todo Refactor this.
+   */
   protected checkCircularRefAndFillItems(
     modelName: string,
     propertySchema: SchemaObject,
@@ -204,7 +228,10 @@ export class Content {
       schema = this.getSchema(customItem);
     }
     if (whatIs == 'object') {
-      const items = (propertySchema.items as SchemaObject).items as any[];
+      const items = Array.isArray(propertySchema.items)
+        ? propertySchema.items
+        : (propertySchema.items?.items! as SchemaObject[]);
+
       if (description) {
         items.push({
           type: 'object',
