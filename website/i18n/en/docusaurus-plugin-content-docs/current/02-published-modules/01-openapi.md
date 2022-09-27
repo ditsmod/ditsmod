@@ -78,18 +78,35 @@ class Params {
 
 As you can see, to attach metadata to the model, the `@Property()` decorator is used, where you can pass [Schema Object][3] as the first argument.
 
-Note that in this case the `type` property is not specified in the metadata, as the types specified here are automatically read by helpers. However, not all types available in TypeScript can be read. For example, helpers will not be able to automatically see what type of array you are passing, in which case you need to pass a hint as the second argument to the `@Property()` decorator:
+Note that in this case the `type` property is not specified in the metadata, as the types specified here are automatically read by helpers. However, not all types available in TypeScript can be read. For example, helpers will not be able to automatically see what type of array you are passing. This is exactly the case with `enum`. Also, helpers do not see whether an object's property is optional or not.
+
+The array type or `enum` can be passed as the second parameter to the `@Property()` decorator:
 
 ```ts
 import { Property } from '@ditsmod/openapi';
 
+enum NumberEnum {
+  one,
+  two,
+  three,
+}
+
 class Params {
-  @Property({}, String)
-  usernames: string[];
+  @Property({}, { enum: NumberEnum })
+  property1: NumberEnum;
+
+  @Property({}, { array: String })
+  property2: string[];
+
+  @Property({}, { array: [String, Number] })
+  property3: (string | number)[];
+
+  @Property({}, { array: [[String]] }) // Array in array
+  property4: string[][];
 }
 ```
 
-Although the links of some models to others are also quite readable. In the following example, `Model2` has a reference to `Model1`:
+References of some models to others are also quite readable. In the following example, `Model2` has a reference to `Model1`:
 
 ```ts
 import { Property } from '@ditsmod/openapi';
