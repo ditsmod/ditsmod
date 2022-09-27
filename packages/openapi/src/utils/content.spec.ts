@@ -67,6 +67,38 @@ describe('Content', () => {
     expect(content).toEqual(expectContent);
   });
 
+  it('array with defined items should not rewiretes', () => {
+    class Model1 {
+      @Property(
+        {
+          type: 'array',
+          maxItems: 5,
+          items: { type: 'string', minLength: 3, maxLength: 50 },
+        },
+        { array: String }
+      )
+      tagList: string[];
+    }
+
+    const content = new Content().get({ mediaType: 'application/json', model: Model1 });
+    const expectContent = {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            tagList: {
+              type: 'array',
+              maxItems: 5,
+              items: { type: 'string', minLength: 3, maxLength: 50 }
+            }
+          }
+        },
+        encoding: undefined,
+      } as MediaTypeObject,
+    };
+    expect(content).toEqual(expectContent);
+  });
+
   it('array in array', () => {
     class Model1 {
       @Property({}, { array: [String] })
@@ -108,8 +140,8 @@ describe('Content', () => {
             },
             property4: {
               type: 'array',
-              items: { type: 'array', items: { type: 'string' } }
-            }
+              items: { type: 'array', items: { type: 'string' } },
+            },
           },
         },
       } as MediaTypeObject,

@@ -1,5 +1,12 @@
+<a name="openapi-2.8.2"></a>
+# [openapi-2.8.2](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.8.2) (2022-09-28)
+
+### Bug fix
+
+- Fixed `Content` helper. If array has defined items, don't rewrite the items.
+
 <a name="openapi-2.8.1"></a>
-# [openapi-2.8.1](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.8.1) (2022-09-28)
+## [openapi-2.8.1](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.8.1) (2022-09-28)
 
 ### Bug fix
 

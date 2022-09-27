@@ -157,7 +157,7 @@ export class Content {
       propertySchema.type = 'null';
     }
 
-    if (propertySchema.type == 'array') {
+    if (propertySchema.type == 'array' && !propertySchema.items) {
       this.fillItems(model, propertySchema, customType);
     }
     return propertySchema;
