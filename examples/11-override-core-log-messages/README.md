@@ -21,6 +21,4 @@ From second terminal:
 
 ```bash
 curl -isS localhost:3000
-curl -isS localhost:3000/some
-curl -isS localhost:3000/other
 ```
