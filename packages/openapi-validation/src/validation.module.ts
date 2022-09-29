@@ -12,7 +12,7 @@ import { ValidationExtension } from './validation.extension';
   imports: [I18nModule],
   providersPerApp: [
     AjvService,
-    ...new Providers().useAnyValue<Options>(AJV_OPTIONS, { coerceTypes: true }),
+    ...new Providers().useValue<Options>(AJV_OPTIONS, { coerceTypes: true }),
   ],
   providersPerMod: [...new I18nProviders().i18n({ current })],
   exports: [I18nModule, I18N_TRANSLATIONS],
