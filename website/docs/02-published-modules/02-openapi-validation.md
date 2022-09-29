@@ -7,7 +7,7 @@ title: OpenAPI-валідація
 
 Щоб забезпечити автоматичну валідацію в застосунках Ditsmod на основі метаданих для OpenAPI, можна скористатись модулем `@ditsmod/openapi-validation`. Під капотом цей модуль має інтеграцію з бібліотекою [ajv][1], яка безпосередньо виконує щойно згадану валідацію.
 
-На даний момент, автоматична валідація відбувається тільки для HTTP-запитів, що мають медіа-тип `application/json`.
+На даний момент, автоматична валідація працює тільки для HTTP-запитів, що мають медіа-тип `application/json` і не посилаються на [Reference Object][3].
 
 ## Встановлення
 
@@ -41,3 +41,4 @@ export class SomeModule {}
 
 [1]: https://ajv.js.org/guide/getting-started.html
 [2]: ./01-openapi.md
+[3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#referenceObject

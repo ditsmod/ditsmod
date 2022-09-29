@@ -7,7 +7,7 @@ title: OpenAPI validation
 
 To provide automatic metadata-based validation in Ditsmod applications for OpenAPI, you can use the `@ditsmod/openapi-validation` module. Under the hood, this module has an integration with the [ajv][1] library, which directly performs the validation just mentioned.
 
-At the moment, automatic validation occurs only for HTTP requests with media type `application/json`.
+Currently, automatic validation only works for HTTP requests that have a media type of `application/json` and do not refer to [Reference Object][3].
 
 ## Installation
 
@@ -41,3 +41,4 @@ export class SomeModule {}
 
 [1]: https://ajv.js.org/guide/getting-started.html
 [2]: ./01-openapi.md
+[3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#referenceObject

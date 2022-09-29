@@ -5,7 +5,17 @@ title: OpenAPI-documentation
 
 # @ditsmod/openapi
 
-To create a route according to the [OpenAPI][0] specification, you can use the `OasRoute` decorator imported from `@ditsmod/openapi`. In this decorator, the fourth or third parameter (if there are no guards) is the so-called [Operation Object][1]:
+You can use the `@ditsmod/openapi` module to create [OpenAPI][0] documentation.
+
+## Installation
+
+```bash
+yarn add @ditsmod/openapi
+```
+
+## Creation of documentation
+
+To create individual routes, use the `OasRoute` decorator, in which the fourth or third parameter (if there are no guards) is the so-called [Operation Object][1]:
 
 ```ts
 import { Controller } from '@ditsmod/core';
