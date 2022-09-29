@@ -38,7 +38,31 @@ import { Options } from 'ajv';
 export class SomeModule {}
 ```
 
+## Substituting of validation interceptors
+
+The `ParametersInterceptor` and `RequestBodyInterceptor` classes are responsible for validating the request body and request parameters. They can be substituted in the `providersPerReq` array at the module or controller level:
+
+```ts
+import { Module } from '@ditsmod/core';
+import { ParametersInterceptor } from '@ditsmod/openapi-validation';
+
+import { MyInterceptor } from './my.interceptor';
+
+@Module({
+  // ...
+  providersPerReq: [
+    { provide: ParametersInterceptor, useClass: MyInterceptor }
+  ]
+  // ...
+})
+export class SomeModule {}
+```
+
+Before writing your interceptor for validation, you can first review how is written, for example [ParametersInterceptor][4].
+
 
 [1]: https://ajv.js.org/guide/getting-started.html
 [2]: ./01-openapi.md
 [3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#referenceObject
+[4]: https://github.com/ditsmod/ditsmod/blob/main/packages/openapi-validation/src/parameters.interceptor.ts
+
