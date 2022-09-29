@@ -1,7 +1,9 @@
-import { Type } from '@ts-stack/di';
+import { FactoryProvider, Type } from '@ts-stack/di';
+
 import { LogFilter, LogMediator } from '../services/log-mediator';
 import { Logger, LoggerConfig } from '../types/logger';
 import { AnyFn, ServiceProvider } from '../types/mix';
+import { NormalizedProvider } from './ng-utils';
 
 /**
  * This class has utilites to adding providers to DI in more type safe way.
@@ -53,28 +55,28 @@ export class Providers {
   protected providers: ServiceProvider[] = [];
   protected index = -1;
 
+  useAnyValue<T>(provide: any, useValue: T, multi?: boolean) {
+    this.pushProvider({ provide, useValue }, multi);
+    return this;
+  }
+
   useValue<T extends Type<any>>(provide: T, useValue: T['prototype'], multi?: boolean) {
-    this.providers.push({ provide, useValue, multi });
+    this.pushProvider({ provide, useValue }, multi);
     return this;
   }
 
   useClass<A extends Type<any>, B extends A>(provide: A, useClass: B, multi?: boolean) {
-    this.providers.push({ provide, useClass, multi });
+    this.pushProvider({ provide, useClass }, multi);
     return this;
   }
 
   useExisting<A extends Type<any>, B extends A>(provide: A, useExisting: B, multi?: boolean) {
-    this.providers.push({ provide, useExisting, multi });
+    this.pushProvider({ provide, useExisting }, multi);
     return this;
   }
 
   useFactory(provide: any, useFactory: AnyFn, deps?: any[], multi?: boolean) {
-    this.providers.push({ provide, useFactory, deps, multi });
-    return this;
-  }
-
-  useAnyValue<T>(provide: any, useValue: T, multi?: boolean) {
-    this.providers.push({ provide, useValue, multi });
+    this.pushProvider({ provide, useFactory }, multi, deps);
     return this;
   }
 
@@ -115,5 +117,15 @@ export class Providers {
 
   protected next() {
     return { value: this.providers[++this.index], done: !(this.index in this.providers) };
+  }
+
+  protected pushProvider(provider: NormalizedProvider, multi?: boolean, deps?: any[]) {
+    if (multi) {
+      provider.multi = multi;
+    }
+    if (deps) {
+      (provider as FactoryProvider).deps = deps;
+    }
+    this.providers.push(provider);
   }
 }
