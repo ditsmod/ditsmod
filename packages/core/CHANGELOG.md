@@ -1,9 +1,16 @@
+<a name="core-2.20.0"></a>
+# [core-2.20.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.20.0) (2022-09-29)
+
+### BREAKING CHANGES
+
+- removed `providers.useAnyValue()`.
+
 <a name="core-2.19.0"></a>
-# [core-2.19.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.19.0) (2022-09-25)
+## [core-2.19.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.19.0) (2022-09-25)
 
 ### Features
 
-- added generic to `providers.useAnyValue()`.
+- added generic to `providers.useValue()`.
 - added `args1` and `args2` to `ErrorOpts`.
 
 ### Inprovements

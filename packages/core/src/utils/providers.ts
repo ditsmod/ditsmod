@@ -55,12 +55,7 @@ export class Providers {
   protected providers: ServiceProvider[] = [];
   protected index = -1;
 
-  useAnyValue<T>(provide: any, useValue: T, multi?: boolean) {
-    this.pushProvider({ provide, useValue }, multi);
-    return this;
-  }
-
-  useValue<T extends Type<any>>(provide: T, useValue: T['prototype'], multi?: boolean) {
+  useValue<T>(provide: any, useValue: T, multi?: boolean) {
     this.pushProvider({ provide, useValue }, multi);
     return this;
   }

@@ -11,8 +11,8 @@ describe('Providers', () => {
     expect(() => new Providers()).not.toThrow();
   });
 
-  it('works useAnyValue()', () => {
-    const value = new Providers().useAnyValue('token', 'value');
+  it('works useValue()', () => {
+    const value = new Providers().useValue('token', 'value');
     expect([...value]).toEqual([{ provide: 'token', useValue: 'value' }]);
   });
 
@@ -64,7 +64,7 @@ describe('Providers', () => {
 
   it('works multi calling', () => {
     const logger = new ConsoleLogger();
-    const value = new Providers().useLogger(logger).useAnyValue('token', 'value');
+    const value = new Providers().useLogger(logger).useValue('token', 'value');
     const expectedArr: ServiceProvider[] = [
       { provide: Logger, useValue: logger },
       { provide: 'token', useValue: 'value' },
@@ -75,7 +75,7 @@ describe('Providers', () => {
   it('works with plugins', () => {
     class Some extends Providers {
       one(name: string) {
-        this.useAnyValue(name, 'молоток');
+        this.useValue(name, 'молоток');
         return this;
       }
     }
@@ -99,7 +99,7 @@ describe('Providers', () => {
     const providers = new Providers();
 
     function callback() {
-      providers.use(Some).use(Other).two().two().one('Mostia').use(Third).three().useAnyValue('token', 'value');
+      providers.use(Some).use(Other).two().two().one('Mostia').use(Third).three().useValue('token', 'value');
     }
 
     expect(callback).not.toThrow();
