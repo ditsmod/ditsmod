@@ -14,7 +14,7 @@ import { NormalizedProvider } from './ng-utils';
     // ...
     providersPerMod: [
       ...new Providers()
-        .useValue(LoggerConfig, new LoggerConfig('trace'))
+        .useLogConfig({ level: 'debug' })
         .useClass(SomeService, ExtendedService)
     ],
   })

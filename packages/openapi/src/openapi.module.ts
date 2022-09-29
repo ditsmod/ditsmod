@@ -48,7 +48,7 @@ export class OpenapiModule {
 
     const moduleWithParams: ModuleWithParams<OpenapiModule> = {
       module: OpenapiModule,
-      providersPerApp: [...new Providers().useValue(OasExtensionOptions, oasExtensionOptions)],
+      providersPerApp: [...new Providers().useValue<OasExtensionOptions>(OasExtensionOptions, oasExtensionOptions)],
     };
 
     if (typeof path == 'string') {

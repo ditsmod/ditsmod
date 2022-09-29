@@ -30,7 +30,7 @@ import { Options } from 'ajv';
   imports: [ValidationModule],
   providersPerApp: [
     ...new Providers()
-      .useValue(ValidationOptions, { invalidStatus: Status.UNPROCESSABLE_ENTRY })
+      .useValue<ValidationOptions>(ValidationOptions, { invalidStatus: Status.UNPROCESSABLE_ENTRY })
       .useValue<Options>(AJV_OPTIONS, { allErrors: true })
   ]
   // ...

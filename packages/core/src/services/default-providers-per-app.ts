@@ -25,6 +25,6 @@ export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
   LogMediator,
   LogFilter,
   ...new Providers()
-    .useValue(ModuleExtract, { moduleName: 'AppModule' })
+    .useValue<ModuleExtract>(ModuleExtract, { moduleName: 'AppModule' })
     .useClass(Logger, ConsoleLogger),
 ];

@@ -20,7 +20,7 @@ describe('Providers', () => {
     class A {
       one: string;
     }
-    const value = new Providers().useValue(A, { one: 'value' });
+    const value = new Providers().useValue<A>(A, { one: 'value' });
     expect([...value]).toEqual([{ provide: A, useValue: { one: 'value' } }]);
   });
 
