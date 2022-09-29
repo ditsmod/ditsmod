@@ -79,16 +79,18 @@ export class ValidationExtension implements Extension<void> {
         providersPerRou.push({ provide: ValidationRouteMeta, useExisting: RouteMeta });
 
         if (validationRouteMeta.parameters.length) {
+          metadataPerMod2.providersPerReq.unshift(ParametersInterceptor);
           providersPerReq.push({
             provide: HTTP_INTERCEPTORS,
-            useClass: ParametersInterceptor,
+            useExisting: ParametersInterceptor,
             multi: true,
           });
         }
         if (validationRouteMeta.requestBodySchema) {
+          metadataPerMod2.providersPerReq.unshift(RequestBodyInterceptor);
           providersPerReq.push({
             provide: HTTP_INTERCEPTORS,
-            useClass: RequestBodyInterceptor,
+            useExisting: RequestBodyInterceptor,
             multi: true,
           });
         }
