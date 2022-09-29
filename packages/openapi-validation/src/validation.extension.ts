@@ -11,9 +11,10 @@ import { isReferenceObject, OasRouteMeta } from '@ditsmod/openapi';
 import { Injectable, Optional } from '@ts-stack/di';
 
 import { ValidationRouteMeta } from './types';
-import { ValidationInterceptor } from './validation.interceptor';
+import { ParametersInterceptor } from './parameters.interceptor';
 import { AjvService } from './ajv.service';
 import { ValidationOptions } from './validation-options';
+import { RequestBodyInterceptor } from './request-body.interceptor';
 
 @Injectable()
 export class ValidationExtension implements Extension<void> {
@@ -53,8 +54,11 @@ export class ValidationExtension implements Extension<void> {
         validationRouteMeta.parameters = [];
         if (validationRouteMeta.operationObject?.parameters?.length) {
           validationRouteMeta.operationObject.parameters.forEach((p) => {
-            if (!isReferenceObject(p) && p.schema) {
-              this.ajvService.addValidator(p.schema);
+            if (!isReferenceObject(p)) {
+              if (!p.schema) {
+                p = { ...p, schema: { type: 'string' } };
+              }
+              this.ajvService.addValidator(p.schema!);
               validationRouteMeta.parameters.push(p);
             }
           });
@@ -66,13 +70,25 @@ export class ValidationExtension implements Extension<void> {
           this.ajvService.addValidator(schema);
           validationRouteMeta.requestBodySchema = schema;
         }
-        
-        if (validationRouteMeta.parameters.length || validationRouteMeta.requestBodySchema) {
-          validationRouteMeta.options = this.validationOptions || new ValidationOptions();
-          providersPerRou.push({ provide: ValidationRouteMeta, useExisting: RouteMeta });
+
+        if (!validationRouteMeta.parameters.length && !validationRouteMeta.requestBodySchema) {
+          return;
+        }
+
+        validationRouteMeta.options = this.validationOptions || new ValidationOptions();
+        providersPerRou.push({ provide: ValidationRouteMeta, useExisting: RouteMeta });
+
+        if (validationRouteMeta.parameters.length) {
           providersPerReq.push({
             provide: HTTP_INTERCEPTORS,
-            useClass: ValidationInterceptor,
+            useClass: ParametersInterceptor,
+            multi: true,
+          });
+        }
+        if (validationRouteMeta.requestBodySchema) {
+          providersPerReq.push({
+            provide: HTTP_INTERCEPTORS,
+            useClass: RequestBodyInterceptor,
             multi: true,
           });
         }
