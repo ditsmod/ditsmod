@@ -9,7 +9,7 @@ export class MetaContent extends Content {
   override set<T extends mediaTypeName = mediaTypeName>(contentOptions: ContentOptions<T>) {
     contentOptions = { ...contentOptions };
     class ApiResponse {
-      @Property({ type: 'array' }, contentOptions.model!)
+      @Property({ type: 'array' }, { array: contentOptions.model! })
       data: any[];
       @Property()
       meta: any;

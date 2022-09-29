@@ -7,7 +7,7 @@ export class Model1 {
   @Property({ minLength: 3, maxLength: 10 })
   username: string;
 
-  @Property({ [REQUIRED]: true }, Number)
+  @Property({ [REQUIRED]: true }, { array: Number })
   numbers: number[];
 }
 

@@ -14,9 +14,9 @@ export class Model2 {
   @Property()
   model1: Model1;
 
-  @Property({ type: 'array' }, Number)
+  @Property({ type: 'array' }, { array: Number })
   model2: number[];
 
-  @Property({ type: 'array' }, Model1)
+  @Property({ type: 'array' }, { array: Model1 })
   model3: Model1[];
 }
