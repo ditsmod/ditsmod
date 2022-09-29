@@ -31,7 +31,7 @@ import { Options } from 'ajv';
   providersPerApp: [
     ...new Providers()
       .useValue(ValidationOptions, { invalidStatus: Status.UNPROCESSABLE_ENTRY })
-      .useAnyValue<Options>(AJV_OPTIONS, { allErrors: true })
+      .useValue<Options>(AJV_OPTIONS, { allErrors: true })
   ]
   // ...
 })
