@@ -1,12 +1,14 @@
 import { Injectable } from '@ts-stack/di';
 import {
   ControllersMetadata2,
+  ControllerType,
   Extension,
   HttpMethod,
   isController,
   MetadataPerMod1,
   MetadataPerMod2,
   NormalizedGuard,
+  RootMetadata,
   RouteMeta,
   RoutesExtension,
   ServiceProvider,
@@ -18,9 +20,17 @@ import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '../utils/parameters';
 import { OasRouteMeta } from '../types/oas-route-meta';
 import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-last-params';
 import { OasOptions } from '../types/oas-options';
+import { OpenapiLogMediator } from '../services/openapi-log-mediator';
 
 @Injectable()
 export class OpenapiRoutesExtension extends RoutesExtension implements Extension<MetadataPerMod2> {
+  constructor(
+    protected override rootMetadata: RootMetadata,
+    protected override metadataPerMod1: MetadataPerMod1,
+    protected log: OpenapiLogMediator
+  ) {
+    super(rootMetadata, metadataPerMod1);
+  }
   protected override getControllersMetadata2(prefixPerApp: string, metadataPerMod1: MetadataPerMod1) {
     const { aControllersMetadata1, prefixPerMod, guardsPerMod, meta } = metadataPerMod1;
 
@@ -53,6 +63,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
           const { paramsRefs, paramsInPath, paramsNonPath } = this.mergeParams(
             httpMethod,
             path,
+            controller.name,
             prefixParams,
             parameters
           );
@@ -88,6 +99,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
   protected mergeParams(
     httpMethod: HttpMethod,
     path: string,
+    controllerName: string,
     prefixParams?: (XParameterObject<any> | ReferenceObject)[],
     params?: (XParameterObject<any> | ReferenceObject)[]
   ) {
@@ -100,8 +112,11 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
         referenceObjects.push(p);
       } else {
         if (p.in == 'path') {
-          if (path.includes(`:${p.name}`)) {
+          const paramName = `:${p.name}`;
+          if (path.includes(paramName)) {
             paramsInPath.push(p);
+          } else {
+            this.log.throwParamNotFoundInPath(controllerName, paramName, path);
           }
         } else {
           this.bindParams(httpMethod, path, paramsNonPath, p);

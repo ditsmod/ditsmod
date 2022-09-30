@@ -41,4 +41,12 @@ export class OpenapiLogMediator extends LogMediator {
     msgLogFilter.tags = ['openapi'];
     this.setLog('trace', msgLogFilter, `${className}: found config file (with XOasObject type), merge with default.`);
   }
+  /**
+   * Settings OpenAPI parameters in ${moduleName} failed: parameter "${paramName}" not found in "${path}".
+   */
+  throwParamNotFoundInPath(controllerName: string, paramName: string, path: string) {
+    const moduleName = this.moduleExtract.moduleName;
+    const msg = `Settings OpenAPI parameters in ${moduleName} -> ${controllerName} failed: parameter "${paramName}" not found in "${path}".`;
+    throw new Error(msg);
+  }
 }
