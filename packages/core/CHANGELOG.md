@@ -1,5 +1,12 @@
+<a name="core-2.20.1"></a>
+# [core-2.20.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.20.1) (2022-09-30)
+
+### Bug fix
+
+- [fixed](https://github.com/ditsmod/ditsmod/commit/e20e2fb9fc) Providers TypeScript definitions.
+
 <a name="core-2.20.0"></a>
-# [core-2.20.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.20.0) (2022-09-29)
+## [core-2.20.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.20.0) (2022-09-29)
 
 ### BREAKING CHANGES
 
