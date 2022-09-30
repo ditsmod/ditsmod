@@ -1,32 +1,13 @@
-import { Logger, LoggerConfig, LogLevel, Module } from '@ditsmod/core';
-import pino from 'pino';
+import { Logger, LoggerConfig, Module, Providers } from '@ditsmod/core';
 
+import { patchLogger } from './patch-logger';
 import { PinoController } from './pino.controller';
-
-const logger = pino();
 
 @Module({
   controllers: [PinoController],
-  providersPerMod: [{ provide: Logger, useValue: logger }],
+  providersPerMod: [
+    ...new Providers()
+      .useFactory(Logger, patchLogger, [LoggerConfig])
+  ],
 })
-export class PinoModule {
-  constructor(config: LoggerConfig) {
-    logger.level = config.level;
-
-    // Logger must have `log` method.
-    (logger as unknown as Logger).log = (level: string, ...args: any[]) => {
-      const [arg1, ...rest] = args;
-      logger[level](arg1, ...rest);
-    };
-
-    // Logger must have `setLevel` method.
-    (logger as unknown as Logger).setLevel = (value: LogLevel) => {
-      logger.level = value;
-    };
-
-    // Logger must have `getLevel` method.
-    (logger as unknown as Logger).getLevel = () => {
-      return logger.level as LogLevel;
-    };
-  }
-}
+export class PinoModule {}
