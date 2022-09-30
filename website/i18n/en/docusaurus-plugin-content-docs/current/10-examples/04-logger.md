@@ -46,14 +46,13 @@ import { Logger } from '@ditsmod/core';
 When using `Logger` in the constructor, the by default logger is essentially requested from DI, since there is no substitution for another logger in `SomeModule`. At the same time, `SomeModule` has a substitution for `LoggerConfig` and the log level has been changed:
 
 ```ts
-import { LoggerConfig } from '@ditsmod/core';
-// ...
-const loggerConfig = new LoggerConfig('trace');
+import { LoggerConfig, Providers } from '@ditsmod/core';
+
 // ...
   providersPerMod: [
-    { provide: LoggerConfig, useValue: loggerConfig }
+    ...new Providers().useLogConfig({ level: 'trace' })
   ],
-  // ...
+// ...
 ```
 
 Because of this, all loggers within `SomeModule` will output information at the `trace` level.
@@ -69,41 +68,29 @@ import BunyanLogger from 'bunyan';
 // ...
 ```
 
-Note that `BunyanLogger` is actually a **class**, not an interface or anonymous function, because DI would not work with an interface or anonymous function.
-
-But in order for DI to issue the corresponding logger using the `BunyanLogger` token, the following settings must be made in the module:
+Note that `BunyanLogger` is actually a **class**, not an interface or anonymous function, because DI would not work with an interface or anonymous function. But in order for DI to issue the corresponding logger using the `BunyanLogger` token, the following settings can be made in the module:
 
 ```ts
-import { Logger } from '@ditsmod/core';
 import { createLogger } from 'bunyan';
 
 const logger = createLogger({ name: 'bunyan-test' });
-// ...
-  providersPerMod: [
-    { provide: Logger, useValue: logger },
-    // ...
-  ],
-// ...
-```
-
-As you can see, first a `bunyan` instance is created, then this instance is passed to the `providersPerMod` array using the `Logger` token imported from `@ditsmod/core`. At this stage of configuration, in any constructor within the `BunyanModule`, the `bunyan` instance can be issued by the above-mentioned `Logger` token.
-
-But we can do better, we can issue this instance by a native class that by default is imported from `bunyan`. That is why the second element in the `providersPerMod` array is the object with the property [useExisting][8]:
-
-```ts
+  // ...
   providersPerMod: [
     { provide: Logger, useValue: logger },
     { provide: BunyanLogger, useExisting: Logger }
   ],
+  // ...
 ```
 
-In essence, an object with the `useExisting` property says: "When the DI is requested for a provider by the `BunyanLogger` token, the corresponding value must be searched for by the `Logger` token." That is, in fact, the second element of the array, in this case, refers to the first element of the array.
+In essence, an object with the `useExisting` property says: "When the DI is queried for a provider by the `BunyanLogger` token, the corresponding value must be searched for by the `Logger` token." That is, in fact, the second element of the array refers to the first element of the array.
 
 You can read more about `useExisting` in [documentation @ts-stack/di][8].
 
 Let's go further. At this stage of configuration, in any controller within a `BunyanModule`, a `bunyan` instance can be issued by both a `Logger` token and a `BunyanLogger` token. By the way, it could be done more simply, instead of two instructions for DI, you could pass one instruction:
 
 ```ts
+import { createLogger } from 'bunyan';
+
 const logger = createLogger({ name: 'bunyan-test' });
   // ...
   providersPerMod: [
@@ -112,39 +99,31 @@ const logger = createLogger({ name: 'bunyan-test' });
   // ...
 ```
 
-In this case, within `BunyanModule`, DI would issue `ConsoleLogger` on the `Logger` token, and a native instance of `bunyan` would issue on `BunyanLogger` token. This is a slightly worse option, because under the hood Ditsmod uses the `Logger` token to work with the logger, so all syslogs will be written using `ConsoleLogger`, which in most cases is only suitable for development, not for production mode.
+In this case, within the limits of `BunyanModule`, DI would issue `ConsoleLogger` on the `Logger` token, and a native instance of `bunyan` would issue on the `BunyanLogger` token. This is a slightly worse option, because under the hood Ditsmod uses the `Logger` token to work with the logger, so all syslogs will be written using `ConsoleLogger`, which in most cases is only suitable for development, not for production mode.
 
-Let's go back to our previous (correct) configuration where a `bunyan` instance can be issued by both a `Logger` token and a `BunyanLogger` token. Now it remains for us to make the `bunyan` instance compatible with the `Logger` class interface. For this, in the module constructor, the `log()` and `setLevel()` methods are added to the `bunyan` instance:
+Let's go back to our previous (correct) setup where a `bunyan` instance can be issued by both a `Logger` token and a `BunyanLogger` token. Now it remains for us to make the `bunyan` instance compatible with the `Logger` class interface, that is, we need to add `log()`, `getLevel()` and `setLevel()` methods to the `bunyan` instance. This is best done in a separate `patchLogger()` function, which can then be passed to DI:
 
 ```ts
-export class BunyanModule {
-  constructor(config: LoggerConfig) {
-    logger.level(config.level as LogLevel);
+import { Logger, LoggerConfig, Module } from '@ditsmod/core';
+import BunyanLogger from 'bunyan';
 
-    (logger as unknown as Logger).log = (level: LogLevelString, ...args: any[]) => {
-      const [arg1, ...rest] = args;
-      logger[level](arg1, ...rest);
-    };
+import { patchLogger } from './patch-logger';
 
-
-    (logger as unknown as Logger).setLevel = (value: LogLevels) => {
-      logger.level(value);
-    };
-  }
-}
+@Module({
+  // ...
+  providersPerMod: [
+    { provide: Logger, useFactory: patchLogger, deps: [LoggerConfig] }
+    { provide: BunyanLogger, useExisting: Logger }
+  ],
+})
+export class BunyanModule {}
 ```
+
+DI will call `patchLogger()` on the first `Logger` request and pass the `LoggerConfig` instance (which we specified in the `deps` array as a dependency) as the first argument.
 
 ## PinoModule
 
-In Ditsmod, the [pino][7] logger is configured similarly to `bunyan`, except for the token for DI. The fact is that currently the `pino` library only has an interface for its logger, and for DI it would be better to have a class instead of an interface. Therefore, we cannot use the [useExisting][8] property on the provider object. Instead, you will have to use the instruction:
-
-```ts
-const logger = pino();
-// ...
-  providersPerMod: [{ provide: Logger, useValue: logger }],
-```
-
-And in the constructor of the controller or service, you need to use `@Inject`:
+In Ditsmod, the [pino][7] logger is configured similarly to `bunyan`, except for the token for DI. The fact is that currently the `pino` library only has an interface for its logger, and for DI it would be better to have a class instead of an interface. Therefore, we cannot use the [useExisting][8] property on the provider object. In this case, you need to use `@Inject` in the constructor of the controller or service:
 
 ```ts
 import { Inject } from '@ts-stack/di';
@@ -154,20 +133,11 @@ import { BaseLogger as PinoLogger } from 'pino';
   constructor(@Inject(Logger) private logger: PinoLogger) {}
 ```
 
-Note that `LoggerConfig` is not passed in `PinoModule` and `BunyanModule` for DI, so these modules will default to log level (`info`).
+Note that `LoggerConfig` is not passed to `PinoModule` and `BunyanModule` for DI, so these modules will default to the information output level (`info`).
 
 ## WinstonModule
 
-In Ditsmod, the [winston][5] logger is configured similarly to `pino`, but `winston` has additional settings. In addition, thanks to the `LoggerConfig` setting, within the `WinstonModule` the log level will be changed to `debug`:
-
-```ts
-const loggerConfig = new LoggerConfig('debug');
-// ...
-  providersPerMod: [
-    // ...
-    { provide: LoggerConfig, useValue: loggerConfig }
-  ],
-```
+In this Ditsmod application, the [winston][5] logger is configured similarly to `pino`, but `winston` has additional settings. Also, by setting `LoggerConfig`, within `WinstonModule`, the output level will be changed to `debug`.
 
 [5]: https://github.com/winstonjs/winston
 [6]: https://github.com/trentm/node-bunyan
