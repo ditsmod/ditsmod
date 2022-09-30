@@ -65,7 +65,7 @@ export class Providers {
     return this;
   }
 
-  useExisting<A extends Type<any>, B extends A>(provide: A, useExisting: B, multi?: boolean) {
+  useExisting<T>(provide: any, useExisting: T, multi?: boolean) {
     this.pushProvider({ provide, useExisting }, multi);
     return this;
   }
