@@ -38,7 +38,7 @@ export class ParametersInterceptor extends ValidationInterceptor {
             status: this.meta.options.invalidStatus,
           });
         }
-        return;
+        continue;
       }
 
       this.validate(schema, value, parameter.name);
