@@ -1,5 +1,5 @@
 import { XParameterObject, ReferenceObject } from '@ts-stack/openapi-spec';
-import { Schema } from 'yaml/types';
+import { SchemaOptions } from 'yaml';
 
 /**
  * Related to OpenAPI documentation, passed in the module metadata in the `oasOptions` property,
@@ -8,5 +8,5 @@ import { Schema } from 'yaml/types';
 export interface OasOptions {
   paratemers?: (XParameterObject | ReferenceObject)[];
   tags?: string[];
-  yamlSchemaOptions?: Schema.Options
+  yamlSchemaOptions?: SchemaOptions
 }
