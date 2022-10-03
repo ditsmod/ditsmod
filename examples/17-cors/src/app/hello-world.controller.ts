@@ -1,13 +1,6 @@
-import { Controller, Providers, Res, Route } from '@ditsmod/core';
-import { CorsOptions } from '@ts-stack/cors';
+import { Controller, Res, Route } from '@ditsmod/core';
 
-@Controller({
-  providersPerRou: [
-    ...new Providers()
-      .useLogConfig({ level: 'info' })
-      .useValue<CorsOptions>(CorsOptions, { origin: 'https://mblog.dev' })
-  ]
-})
+@Controller()
 export class HelloWorldController {
   constructor(private res: Res) {}
 
