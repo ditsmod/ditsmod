@@ -41,9 +41,9 @@ export class ValidationExtension implements Extension<void> {
   }
 
   protected async filterParameters() {
-    const metadataPerMod2Arr = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS);
 
-    metadataPerMod2Arr.forEach((metadataPerMod2) => {
+    aMetadataPerMod2.forEach((metadataPerMod2) => {
       const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
       const injectorPerMod = this.perAppService.injector.resolveAndCreateChild(providersPerMod);
 
