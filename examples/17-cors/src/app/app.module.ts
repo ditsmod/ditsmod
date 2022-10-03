@@ -1,7 +1,6 @@
 import { Providers, RootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
-import { CorsModule } from '@ditsmod/cors';
-import { CorsOptions } from '@ts-stack/cors';
+import { CorsModule, CorsOptions } from '@ditsmod/cors';
 
 import { HelloWorldController } from './hello-world.controller';
 

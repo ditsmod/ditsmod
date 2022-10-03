@@ -4,7 +4,7 @@ import { Controller, Res, Route } from '@ditsmod/core';
 export class HelloWorldController {
   constructor(private res: Res) {}
 
-  @Route('OPTIONS')
+  @Route('GET')
   tellHello() {
     this.res.send('Hello World!\n');
   }
