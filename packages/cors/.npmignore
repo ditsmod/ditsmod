@@ -1,0 +1,12 @@
+spec
+*.tgz
+*.log
+*.spec.*
+yarn.lock
+jest.config.js
+.*
+nodemon.json
+CHANGELOG.md
+*.tsbuildinfo
+tsconfig.json
+src/test

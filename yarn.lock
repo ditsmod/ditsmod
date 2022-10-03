@@ -1883,6 +1883,13 @@
   dependencies:
     keygrip "~1.1.0"
 
+"@ts-stack/cors@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@ts-stack/cors/-/cors-1.0.5.tgz#456c90ba89bc35f580711fbe6cd7e8091934d068"
+  integrity sha512-Yaw3UuOMR9QpR7SdAhgzDVYQx9UFfbgeFIfHyJWoXjTnianj3s9HtKKtBuyf4xFlhxYtmzK+u5m5VsGXwISlLw==
+  dependencies:
+    vary "^1.1.2"
+
 "@ts-stack/di@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@ts-stack/di/-/di-1.2.0.tgz#a389d7f9655e5d8b61b3d5e89e995e20e4b16f4c"
@@ -8579,6 +8586,11 @@ validate-npm-package-name@^4.0.0:
   integrity sha512-mzR0L8ZDktZjpX4OB46KT+56MAhl4EIazWP/+G/HPGuvfdaqg4YsCdtOm6U9+LOFyYDoh4dpnpxZRB9MQQns5Q==
   dependencies:
     builtins "^5.0.0"
+
+vary@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
+  integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
 walk-up-path@^1.0.0:
   version "1.0.0"

@@ -1,0 +1,33 @@
+{
+  "name": "@ditsmod/cors",
+  "version": "2.0.0-beta.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ditsmod/ditsmod.git"
+  },
+  "description": "Ditsmod module to integration with i18n (internalization)",
+  "main": "dist/index",
+  "typings": "dist/index",
+  "directories": {
+    "lib": "src"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "rm -rf dist/* && tsc -b -f"
+  },
+  "keywords": [
+    "ditsmod",
+    "cors"
+  ],
+  "author": "Костя Третяк",
+  "license": "MIT",
+  "devDependencies": {
+    "@ts-stack/cors": "^1.0.5",
+    "@ts-stack/di": "^1.2.0"
+  },
+  "peerDependencies": {
+    "@ditsmod/core": "^2.20.1",
+    "@ts-stack/cors": "^1.0.5",
+    "@ts-stack/di": "^1.2.0"
+  }
+}

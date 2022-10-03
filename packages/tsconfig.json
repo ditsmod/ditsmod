@@ -8,6 +8,7 @@
     { "path": "session-cookie" },
     { "path": "jwt" },
     { "path": "i18n" },
+    { "path": "cors" },
     { "path": "openapi-validation" }
   ]
 }
