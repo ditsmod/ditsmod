@@ -1883,10 +1883,10 @@
   dependencies:
     keygrip "~1.1.0"
 
-"@ts-stack/cors@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@ts-stack/cors/-/cors-1.0.5.tgz#456c90ba89bc35f580711fbe6cd7e8091934d068"
-  integrity sha512-Yaw3UuOMR9QpR7SdAhgzDVYQx9UFfbgeFIfHyJWoXjTnianj3s9HtKKtBuyf4xFlhxYtmzK+u5m5VsGXwISlLw==
+"@ts-stack/cors@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@ts-stack/cors/-/cors-1.1.0.tgz#5457ca0d7f81ceedcceacd2208243fc30637b9f7"
+  integrity sha512-hAMJUCS0hu3oF2fj16UqrC7jtviqu1dJr/FX6PadVItCagDb/Te3ZvCufUtOLOnkZ8ptjQjNtzXK8pzG2r9YPg==
   dependencies:
     vary "^1.1.2"
 
