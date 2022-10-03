@@ -22,12 +22,12 @@
   "author": "Костя Третяк",
   "license": "MIT",
   "devDependencies": {
-    "@ts-stack/cors": "^1.0.5",
+    "@ts-stack/cors": "^1.1.0",
     "@ts-stack/di": "^1.2.0"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.20.1",
-    "@ts-stack/cors": "^1.0.5",
+    "@ts-stack/cors": "^1.1.0",
     "@ts-stack/di": "^1.2.0"
   }
 }
