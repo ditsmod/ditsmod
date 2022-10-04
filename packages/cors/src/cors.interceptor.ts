@@ -9,7 +9,7 @@ export class CorsInterceptor implements HttpInterceptor {
   constructor(private req: Req, private res: Res, private mergedCorsOptions: MergedCorsOptions) {}
 
   async intercept(next: HttpHandler) {
-    const headersSent = await cors(this.req.nodeReq, this.res.nodeRes, this.mergedCorsOptions);
+    const headersSent = cors(this.req.nodeReq, this.res.nodeRes, this.mergedCorsOptions);
     if (headersSent) {
       return;
     }
