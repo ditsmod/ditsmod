@@ -116,7 +116,7 @@ class Params {
 }
 ```
 
-References of some models to others are also quite readable. In the following example, `Model2` has a reference to `Model1`:
+References of some models to others are quite readable. In the following example, `Model2` has a reference to `Model1`:
 
 ```ts
 import { Property } from '@ditsmod/openapi';
@@ -182,7 +182,7 @@ export class SomeController {
 
 ### requestBody and responses content
 
-Data models are also used to describe the content of the `requestBody`, but there is one slight difference. By default, all model properties are optional, and to mark a particular property as required, you need to use the `REQUIRED` constant:
+Data models are also used to describe the content of `requestBody`, but there is one slight difference compared to parameters. By default, all model properties are optional, and to mark a particular property as required, you need to use the `REQUIRED` constant:
 
 ```ts
 import { Property, REQUIRED } from '@ditsmod/openapi';
