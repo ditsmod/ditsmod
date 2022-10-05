@@ -10,7 +10,7 @@ To provide automatic metadata-based validation in Ditsmod applications for OpenA
 Currently, automatic validation only works for HTTP requests that have a media type of `application/json` and do not refer to [Reference Object][3]. Automatic validation works for parameters in:
 - path
 - query
-- cookies
+- cookie
 - header
 - request's body.
 
