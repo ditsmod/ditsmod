@@ -67,3 +67,4 @@ export { ErrorOpts } from './custom-error/error-opts';
  export { pickProperties } from './utils/pick-properties';
  export * from './utils/type-guards';
  export { isModule } from './utils/type-guards';
+ export { getModule } from './utils/get-module';
