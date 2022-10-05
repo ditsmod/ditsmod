@@ -11,6 +11,13 @@ import {
 import { MetadataPerMod1 } from './metadata-per-mod';
 import { ProvidersMetadata } from '../models/providers-metadata';
 
+/**
+ * A key for the injector that you can use within the controller instance (e.g. `(this as any)[injectorKey]`)
+ * to get the injector per request. It is used to obtain an injector without accessing the controller's
+ * constructor (e.g. when dynamically adding controller methods).
+ */
+export const injectorKey = Symbol.for('injector');
+
 export type ModuleType<T extends AnyObj = AnyObj> = Type<T>;
 
 export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]> | `BEFORE ${string}`;
