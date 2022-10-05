@@ -16,10 +16,10 @@ export class DefaultControllerErrorHandler implements ControllerErrorHandler {
   async handleError(err: Error) {
     if (isChainError<ErrorOpts>(err)) {
       const { level, status } = err.info;
-      this.logger.log(level || 'debug', err.message);
+      this.logger.log(level || 'debug', err);
       this.sendError(err.message, status);
     } else {
-      this.logger.error(err.message);
+      this.logger.error(err);
       this.sendError('Internal server error', Status.INTERNAL_SERVER_ERROR);
     }
   }
