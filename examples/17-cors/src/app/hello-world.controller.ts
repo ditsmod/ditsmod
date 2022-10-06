@@ -5,7 +5,17 @@ export class HelloWorldController {
   constructor(private res: Res) {}
 
   @Route('GET')
-  tellHello() {
-    this.res.send('Hello World!\n');
+  getMethod() {
+    this.res.send('GET method\n');
+  }
+
+  @Route('POST')
+  postMethod() {
+    this.res.send('POST method\n');
+  }
+
+  @Route('PATCH')
+  patchMethod() {
+    this.res.send('PATCH method\n');
   }
 }
