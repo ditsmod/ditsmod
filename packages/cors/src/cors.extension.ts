@@ -71,8 +71,8 @@ export class CorsExtension implements Extension<void | false> {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
         const corsOptions = injectorPerRou.get(CorsOptions, {}) as CorsOptions;
-        if (!corsOptions.methods?.length) {
-          corsOptions.methods = injectorPerRou.get(ALLOW_METHODS, []) as HttpMethod[];
+        if (!corsOptions.allowedMethods?.length) {
+          corsOptions.allowedMethods = injectorPerRou.get(ALLOW_METHODS, []) as HttpMethod[];
         }
         const mergedCorsOptions = mergeOptions(corsOptions);
         providersPerRou.unshift({
