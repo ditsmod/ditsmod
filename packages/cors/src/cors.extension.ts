@@ -14,12 +14,11 @@ import {
   Res,
   injectorKey,
 } from '@ditsmod/core';
-import { CorsOptions } from '@ts-stack/cors';
-import { Optional } from '@ts-stack/di';
+import { CorsOptions, mergeOptions } from '@ts-stack/cors';
 
-import { initCors } from './init-cors';
 import { CorsInterceptor } from './cors.interceptor';
 import { MergedCorsOptions } from './merged-cors-options';
+import { ALLOW_METHODS } from './constans';
 
 @Injectable()
 export class CorsExtension implements Extension<void | false> {
@@ -51,7 +50,7 @@ export class CorsExtension implements Extension<void | false> {
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
       const newArrControllersMetadata2: ControllersMetadata2[] = [];
 
-      aControllersMetadata2.forEach(({ providersPerReq, providersPerRou, httpMethod, path }) => {
+      aControllersMetadata2.forEach(({ providersPerRou, httpMethod, path }) => {
         if (!allPathWithOptions.has(path)) {
           const controllersMetadata2 = this.getControllersMetadata2(
             path,
@@ -64,11 +63,21 @@ export class CorsExtension implements Extension<void | false> {
             newArrControllersMetadata2.push(controllersMetadata2);
           }
         }
+      });
 
+      aControllersMetadata2.push(...newArrControllersMetadata2);
+
+      aControllersMetadata2.forEach(({ providersPerReq, providersPerRou }) => {
+        const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
+        const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
+        const corsOptions = injectorPerRou.get(CorsOptions, {}) as CorsOptions;
+        if (!corsOptions.methods?.length) {
+          corsOptions.methods = injectorPerRou.get(ALLOW_METHODS, []) as HttpMethod[];
+        }
+        const mergedCorsOptions = mergeOptions(corsOptions);
         providersPerRou.unshift({
           provide: MergedCorsOptions,
-          useFactory: initCors,
-          deps: [[CorsOptions, new Optional()]],
+          useValue: mergedCorsOptions
         });
 
         providersPerReq.push({
@@ -77,8 +86,6 @@ export class CorsExtension implements Extension<void | false> {
           multi: true,
         });
       });
-
-      aControllersMetadata2.push(...newArrControllersMetadata2);
     });
 
     this.inited = true;
@@ -92,9 +99,6 @@ export class CorsExtension implements Extension<void | false> {
     providersPerRou: ServiceProvider[],
     injectorPerMod: ReflectiveInjector
   ) {
-    if (httpMethod == 'OPTIONS') {
-      return;
-    }
     const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
     const routeMeta = injectorPerRou.get(RouteMeta) as RouteMeta;
@@ -122,7 +126,10 @@ export class CorsExtension implements Extension<void | false> {
     const controllersMetadata2: ControllersMetadata2 = {
       httpMethod: 'OPTIONS',
       path,
-      providersPerRou: [{ provide: RouteMeta, useValue: newRouteMeta }],
+      providersPerRou: [
+        { provide: ALLOW_METHODS, useValue: httpMethods },
+        { provide: RouteMeta, useValue: newRouteMeta },
+      ],
       providersPerReq: [DynamicController],
     };
     return controllersMetadata2;
