@@ -1,5 +1,14 @@
+<a name="core-2.21.0"></a>
+# [core-2.21.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.21.0) (2022-09-30)
+
+### Features
+
+- added ability passing `methodName` for `RouteMeta` as symbol.
+- added getModule() util to export.
+- introduce `injectorKey`. A key for the injector that you can use within the controller instance (e.g. `(this as any)[injectorKey]`) to get the injector per request. It is used to obtain an injector without accessing the controller's constructor (e.g. when dynamically adding controller methods).
+
 <a name="core-2.20.1"></a>
-# [core-2.20.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.20.1) (2022-09-30)
+## [core-2.20.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.20.1) (2022-09-30)
 
 ### Bug fix
 
