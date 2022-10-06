@@ -59,7 +59,7 @@ describe('ErrorHandler', () => {
     expect(() => errorHandler.handleError(err)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'Internal server error' }, Status.INTERNAL_SERVER_ERROR);
     expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.error).toBeCalledWith('one');
+    expect(logger.error).toBeCalledWith(err);
     expect(logger.error).toBeCalledTimes(1);
     expect(logger.log).toBeCalledTimes(0);
   });
@@ -70,7 +70,7 @@ describe('ErrorHandler', () => {
     expect(() => errorHandler.handleError(err)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'one' }, Status.BAD_REQUEST);
     expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('debug', msg1);
+    expect(logger.log).toBeCalledWith('debug', err);
     expect(logger.log).toBeCalledTimes(1);
     expect(logger.error).toBeCalledTimes(0);
   });
@@ -81,7 +81,7 @@ describe('ErrorHandler', () => {
     expect(() => errorHandler.handleError(err)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'one' }, Status.CONFLICT);
     expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('fatal', msg1);
+    expect(logger.log).toBeCalledWith('fatal', err);
     expect(logger.log).toBeCalledTimes(1);
     expect(logger.error).toBeCalledTimes(0);
   });
@@ -92,7 +92,7 @@ describe('ErrorHandler', () => {
     expect(() => errorHandler.handleError(err)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'one two' }, Status.BAD_REQUEST);
     expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('debug', msg1);
+    expect(logger.log).toBeCalledWith('debug', err);
     expect(logger.log).toBeCalledTimes(1);
     expect(logger.error).toBeCalledTimes(0);
   });
@@ -103,7 +103,7 @@ describe('ErrorHandler', () => {
     expect(() => errorHandler.handleError(err)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'Internal server error' }, Status.BAD_REQUEST);
     expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('debug', 'Internal server error');
+    expect(logger.log).toBeCalledWith('debug', err);
     expect(logger.log).toBeCalledTimes(1);
     expect(logger.error).toBeCalledTimes(0);
   });
@@ -113,7 +113,7 @@ describe('ErrorHandler', () => {
     const err = new CustomError({ msg2 });
     expect(() => errorHandler.handleError(err)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'Internal server error' }, Status.BAD_REQUEST);
-    expect(logger.log).toBeCalledWith('debug', 'Internal server error');
+    expect(logger.log).toBeCalledWith('debug', err);
     expect(logger.log).toBeCalledTimes(1);
     expect(logger.error).toBeCalledTimes(0);
   });
@@ -125,7 +125,7 @@ describe('ErrorHandler', () => {
     expect(() => errorHandler.handleError(err)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'one two' }, Status.BAD_REQUEST);
     expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('debug', msg1);
+    expect(logger.log).toBeCalledWith('debug', err);
     expect(logger.log).toBeCalledTimes(1);
     expect(logger.error).toBeCalledTimes(0);
   });
