@@ -1,7 +1,7 @@
 import { Controller, Res, Route } from '@ditsmod/core';
 
 @Controller()
-export class HelloWorldController {
+export class FirstController {
   constructor(private res: Res) {}
 
   @Route('GET')
@@ -15,6 +15,16 @@ export class HelloWorldController {
   }
 
   @Route('PATCH')
+  patchMethod() {
+    this.res.send('PATCH method\n');
+  }
+}
+
+@Controller()
+export class SecondController {
+  constructor(private res: Res) {}
+
+  @Route('PATCH', 'other')
   patchMethod() {
     this.res.send('PATCH method\n');
   }

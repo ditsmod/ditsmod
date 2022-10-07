@@ -2,11 +2,11 @@ import { Providers, RootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 import { CorsModule, CorsOptions } from '@ditsmod/cors';
 
-import { HelloWorldController } from './hello-world.controller';
+import { FirstController, SecondController } from './controllers';
 
 @RootModule({
   imports: [RouterModule, CorsModule],
-  controllers: [HelloWorldController],
+  controllers: [FirstController, SecondController],
   providersPerApp: [
     ...new Providers()
       .useLogConfig({ level: 'info' })

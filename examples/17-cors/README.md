@@ -20,5 +20,16 @@ yarn start17
 From second terminal:
 
 ```bash
-curl -isS localhost:3000
+# Simply OPTIONS request
+curl -isS localhost:3000 -X OPTIONS
+
+# CORS request
+curl -isS localhost:3000 -X OPTIONS -H "Origin: https://example.com"
+
+# PrePreflighted CORS request
+curl -isS localhost:3000\
+ -X OPTIONS\
+ -H "Origin: https://example.com"\
+ -H 'Access-Control-Request-Method: POST'\
+ -H 'Access-Control-Request-Headers: X-PINGOTHER, Content-Type'
 ```
