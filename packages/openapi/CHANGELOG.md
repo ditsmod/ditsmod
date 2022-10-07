@@ -1,5 +1,12 @@
+<a name="openapi-2.9.1"></a>
+# [openapi-2.9.1](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.9.1) (2022-01-07)
+
+### Bug fix
+
+- Fix deps for webpack.
+
 <a name="openapi-2.9.0"></a>
-# [openapi-2.9.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.9.0) (2022-01-07)
+## [openapi-2.9.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.9.0) (2022-01-07)
 
 ### Bug fix
 

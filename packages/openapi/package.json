@@ -25,6 +25,7 @@
     "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.3.1",
     "json-loader": "^0.5.7",
+    "stream-browserify": "^3.0.0",
     "style-loader": "^3.3.1",
     "swagger-ui": "^4.14.2",
     "webpack": "^5.34.0",

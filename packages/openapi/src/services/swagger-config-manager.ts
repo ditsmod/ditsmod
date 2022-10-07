@@ -18,11 +18,7 @@ export class SwaggerConfigManager {
   private inited: boolean;
   private openapiRoot = join(__dirname, '../..');
 
-  constructor(
-    private rootMeta: RootMetadata,
-    private moduleExtract: ModuleExtract,
-    private injectorPerMod: Injector
-  ) {}
+  constructor(private rootMeta: RootMetadata, private moduleExtract: ModuleExtract, private injectorPerMod: Injector) {}
 
   async applyConfig() {
     if (this.inited) {
@@ -89,6 +85,7 @@ export class SwaggerConfigManager {
       },
       resolve: {
         extensions: ['.ts', '.js'],
+        fallback: { stream: require.resolve('stream-browserify') },
       },
       devtool: 'inline-source-map',
       module: {
