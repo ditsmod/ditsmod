@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/cors",
-  "version": "2.0.0-beta.5",
+  "version": "2.0.0-beta.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -29,7 +29,7 @@
     "@ts-stack/di": "^1.2.0"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.21.0",
+    "@ditsmod/core": "^2.22.0",
     "@ts-stack/di": "^1.2.0"
   }
 }
