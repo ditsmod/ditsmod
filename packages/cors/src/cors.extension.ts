@@ -36,48 +36,34 @@ export class CorsExtension implements Extension<void | false> {
     if (aMetadataPerMod2 === false) {
       return false;
     }
-    const allPathWithOptions = new Set<string>();
+    this.prepareDataAndSetInterceptors(aMetadataPerMod2, this.perAppService.injector);
 
-    aMetadataPerMod2.forEach((metadataPerMod2) => {
-      metadataPerMod2.aControllersMetadata2
-        .filter(({ httpMethod }) => httpMethod == 'OPTIONS')
-        .forEach(({ path }) => allPathWithOptions.add(path));
-    });
+    this.inited = true;
+    return; // Make TypeScript happy
+  }
 
+  protected prepareDataAndSetInterceptors(aMetadataPerMod2: MetadataPerMod2[], injectorPerApp: ReflectiveInjector) {
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
-      const injectorPerApp = this.perAppService.injector;
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
-      const newArrControllersMetadata2: ControllersMetadata2[] = [];
 
-      aControllersMetadata2.forEach(({ providersPerRou, httpMethod, path }) => {
-        if (!allPathWithOptions.has(path)) {
-          const controllersMetadata2 = this.getControllersMetadata2(
-            path,
-            httpMethod,
-            metadataPerMod2,
-            providersPerRou,
-            injectorPerMod
-          );
-          if (controllersMetadata2) {
-            newArrControllersMetadata2.push(controllersMetadata2);
-          }
-        }
-      });
+      const routesWithOptions = this.getRoutesWithOptions(
+        aMetadataPerMod2,
+        aControllersMetadata2,
+        metadataPerMod2,
+        injectorPerMod
+      );
 
-      aControllersMetadata2.push(...newArrControllersMetadata2);
+      aControllersMetadata2.push(...routesWithOptions);
 
       aControllersMetadata2.forEach(({ providersPerReq, providersPerRou }) => {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
-        const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
-        const corsOptions = injectorPerRou.get(CorsOptions, {}) as CorsOptions;
-        if (!corsOptions.allowedMethods?.length) {
-          corsOptions.allowedMethods = injectorPerRou.get(ALLOW_METHODS, []) as HttpMethod[];
-        }
+        const corsOptions = this.getCorsOptions(injectorPerMod, mergedPerRou);
         const mergedCorsOptions = mergeOptions(corsOptions);
+
         providersPerRou.unshift({
           provide: MergedCorsOptions,
-          useValue: mergedCorsOptions
+          useValue: mergedCorsOptions,
         });
 
         providersPerReq.push({
@@ -87,51 +73,86 @@ export class CorsExtension implements Extension<void | false> {
         });
       });
     });
-
-    this.inited = true;
-    return; // Make TypeScript happy
   }
 
-  protected getControllersMetadata2(
-    path: string,
-    httpMethod: HttpMethod,
+  protected getCorsOptions(injectorPerMod: ReflectiveInjector, mergedPerRou: ServiceProvider[]) {
+    const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
+    const corsOptions = injectorPerRou.get(CorsOptions, {}) as CorsOptions;
+    const clonedCorsOptions = { ...corsOptions };
+    if (!clonedCorsOptions.allowedMethods?.length) {
+      clonedCorsOptions.allowedMethods = injectorPerRou.get(ALLOW_METHODS, []) as HttpMethod[];
+    }
+
+    return clonedCorsOptions;
+  }
+
+  protected getPathWtihOptions(aMetadataPerMod2: MetadataPerMod2[]) {
+    const sPathWithOptions = new Set<string>();
+
+    aMetadataPerMod2.forEach((metadataPerMod2) => {
+      metadataPerMod2.aControllersMetadata2
+        .filter(({ httpMethod }) => httpMethod == 'OPTIONS')
+        .forEach(({ path }) => sPathWithOptions.add(path));
+    });
+
+    return sPathWithOptions;
+  }
+
+  protected getRoutesWithOptions(
+    aMetadataPerMod2: MetadataPerMod2[],
+    aControllersMetadata2: ControllersMetadata2[],
     metadataPerMod2: MetadataPerMod2,
-    providersPerRou: ServiceProvider[],
     injectorPerMod: ReflectiveInjector
   ) {
-    const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
-    const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
-    const routeMeta = injectorPerRou.get(RouteMeta) as RouteMeta;
-    const newRouteMeta = { ...routeMeta };
-    newRouteMeta.httpMethod = 'OPTIONS';
-    const methodName = Symbol.for(path);
-    const httpMethods = this.registeredPathForOptions.get(path) || [];
-    if (httpMethods.length) {
-      httpMethods.push(httpMethod);
-      return;
-    }
-    httpMethods.push('OPTIONS', httpMethod);
-    this.registeredPathForOptions.set(path, httpMethods);
-    // prettier-ignore
-    class DynamicController extends (newRouteMeta.controller) {
-      [methodName]() {
-        const inj = (this as any)[injectorKey] as Injector;
-        const res = inj.get(Res) as Res;
-        res.nodeRes.setHeader('Allow', httpMethods.join());
-        res.send(undefined, Status.NO_CONTENT);
+    const sPathWithOptions = this.getPathWtihOptions(aMetadataPerMod2);
+    const newArrControllersMetadata2: ControllersMetadata2[] = []; // Routes with OPTIONS methods
+
+    aControllersMetadata2.forEach(({ providersPerRou, httpMethod, path }) => {
+      // Search routes with non-OPTIONS methods, and makes new routes with OPTIONS methods
+      if (sPathWithOptions.has(path)) {
+        return;
       }
-    }
-    newRouteMeta.controller = DynamicController;
-    newRouteMeta.methodName = methodName;
-    const controllersMetadata2: ControllersMetadata2 = {
-      httpMethod: 'OPTIONS',
-      path,
-      providersPerRou: [
-        { provide: ALLOW_METHODS, useValue: httpMethods },
-        { provide: RouteMeta, useValue: newRouteMeta },
-      ],
-      providersPerReq: [DynamicController],
-    };
-    return controllersMetadata2;
+
+      const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
+      const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
+      const routeMeta = injectorPerRou.get(RouteMeta) as RouteMeta;
+      const newRouteMeta = { ...routeMeta };
+      const methodName = Symbol.for(path);
+      const httpMethods = this.registeredPathForOptions.get(path) || [];
+      if (httpMethods.length) {
+        httpMethods.push(httpMethod);
+        return;
+      }
+      httpMethods.push('OPTIONS', httpMethod);
+      this.registeredPathForOptions.set(path, httpMethods);
+
+      // prettier-ignore
+      class DynamicController extends (newRouteMeta.controller) {
+        [methodName]() {
+          const inj = (this as any)[injectorKey] as Injector;
+          const res = inj.get(Res) as Res;
+          res.nodeRes.setHeader('Allow', httpMethods.join());
+          res.send(undefined, Status.NO_CONTENT);
+        }
+      }
+
+      newRouteMeta.controller = DynamicController;
+      newRouteMeta.guards = [];
+      newRouteMeta.httpMethod = 'OPTIONS';
+      newRouteMeta.methodName = methodName;
+      const controllersMetadata2: ControllersMetadata2 = {
+        httpMethod: 'OPTIONS',
+        path,
+        providersPerRou: [
+          { provide: ALLOW_METHODS, useValue: httpMethods },
+          { provide: RouteMeta, useValue: newRouteMeta },
+        ],
+        providersPerReq: [DynamicController],
+      };
+
+      newArrControllersMetadata2.push(controllersMetadata2);
+    });
+
+    return newArrControllersMetadata2;
   }
 }
