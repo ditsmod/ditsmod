@@ -1,5 +1,12 @@
+<a name="core-2.22.0"></a>
+# [core-2.22.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.22.0) (2022-01-07)
+
+### BREAKING CHANGES
+
+- Removed `httpMethod` and `path` from `RouteMeta`.
+
 <a name="core-2.21.0"></a>
-# [core-2.21.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.21.0) (2022-09-30)
+## [core-2.21.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.21.0) (2022-09-30)
 
 ### Features
 
