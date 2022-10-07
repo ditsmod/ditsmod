@@ -101,6 +101,9 @@ export class SwaggerConfigManager {
         ],
       },
       plugins: [
+        new webpack.ProvidePlugin({
+          Buffer: ['buffer', 'Buffer'],
+        }),
         new CleanPlugin(),
         new CopyWebpackPlugin({
           patterns: [
