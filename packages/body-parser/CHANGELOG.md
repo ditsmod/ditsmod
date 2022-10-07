@@ -1,5 +1,12 @@
+<a name="body-parser-2.4.0"></a>
+# [body-parser-2.4.0](https://github.com/ts-stack/ditsmod/releases/tag/body-parser-2.4.0) (2022-01-07)
+
+### Features
+
+- migration to core-2.22.0.
+
 <a name="body-parser-2.3.0"></a>
-# [body-parser-2.3.0](https://github.com/ts-stack/ditsmod/releases/tag/body-parser-2.3.0) (2022-09-20)
+## [body-parser-2.3.0](https://github.com/ts-stack/ditsmod/releases/tag/body-parser-2.3.0) (2022-09-20)
 
 ### Features
 
