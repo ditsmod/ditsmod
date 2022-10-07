@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/openapi",
-  "version": "2.9.0",
+  "version": "2.9.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -33,8 +33,7 @@
     "yaml-loader": "^0.8.0"
   },
   "devDependencies": {
-    "@ts-stack/di": "^1.2.0",
-    "@types/copy-webpack-plugin": "^10.1.0"
+    "@ts-stack/di": "^1.2.0"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.22.0",
