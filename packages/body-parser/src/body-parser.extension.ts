@@ -27,7 +27,7 @@ export class BodyParserExtension implements Extension<void> {
     const aMetadataPerMod2 = await this.extensionManager.init(ROUTES_EXTENSIONS);
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
-      aControllersMetadata2.forEach(({ providersPerRou, providersPerReq }) => {
+      aControllersMetadata2.forEach(({ providersPerRou, providersPerReq, httpMethod }) => {
         // Merging the providers from a module and a controller
         const mergedProvidersPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const mergedProvidersPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
@@ -37,10 +37,8 @@ export class BodyParserExtension implements Extension<void> {
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
         const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
-
-        const routeMeta = injectorPerRou.get(RouteMeta) as RouteMeta;
         const bodyParserConfig = injectorPerReq.resolveAndInstantiate(BodyParserConfig) as BodyParserConfig;
-        if (bodyParserConfig.acceptMethods.includes(routeMeta.httpMethod)) {
+        if (bodyParserConfig.acceptMethods.includes(httpMethod)) {
           providersPerReq.push({ provide: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
         }
       });
