@@ -46,14 +46,7 @@ export class CorsExtension implements Extension<void | false> {
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
-
-      const routesWithOptions = this.getRoutesWithOptions(
-        aMetadataPerMod2,
-        aControllersMetadata2,
-        metadataPerMod2,
-        injectorPerMod
-      );
-
+      const routesWithOptions = this.getRoutesWithOptions(aMetadataPerMod2, aControllersMetadata2);
       aControllersMetadata2.push(...routesWithOptions);
 
       aControllersMetadata2.forEach(({ providersPerReq, providersPerRou }) => {
@@ -98,25 +91,15 @@ export class CorsExtension implements Extension<void | false> {
     return sPathWithOptions;
   }
 
-  protected getRoutesWithOptions(
-    aMetadataPerMod2: MetadataPerMod2[],
-    aControllersMetadata2: ControllersMetadata2[],
-    metadataPerMod2: MetadataPerMod2,
-    injectorPerMod: ReflectiveInjector
-  ) {
+  protected getRoutesWithOptions(aMetadataPerMod2: MetadataPerMod2[], aControllersMetadata2: ControllersMetadata2[]) {
     const sPathWithOptions = this.getPathWtihOptions(aMetadataPerMod2);
     const newArrControllersMetadata2: ControllersMetadata2[] = []; // Routes with OPTIONS methods
 
-    aControllersMetadata2.forEach(({ providersPerRou, httpMethod, path }) => {
+    aControllersMetadata2.forEach(({ httpMethod, path }) => {
       // Search routes with non-OPTIONS methods, and makes new routes with OPTIONS methods
       if (sPathWithOptions.has(path)) {
         return;
       }
-
-      const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
-      const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
-      const routeMeta = injectorPerRou.get(RouteMeta) as RouteMeta;
-      const newRouteMeta = { ...routeMeta };
       const methodName = Symbol.for(path);
       const httpMethods = this.registeredPathForOptions.get(path) || [];
       if (httpMethods.length) {
@@ -127,7 +110,7 @@ export class CorsExtension implements Extension<void | false> {
       this.registeredPathForOptions.set(path, httpMethods);
 
       // prettier-ignore
-      class DynamicController extends (newRouteMeta.controller) {
+      class DynamicController {
         [methodName]() {
           const inj = (this as any)[injectorKey] as Injector;
           const res = inj.get(Res) as Res;
@@ -136,10 +119,15 @@ export class CorsExtension implements Extension<void | false> {
         }
       }
 
-      newRouteMeta.controller = DynamicController;
-      newRouteMeta.guards = [];
-      newRouteMeta.httpMethod = 'OPTIONS';
-      newRouteMeta.methodName = methodName;
+      const newRouteMeta: RouteMeta = {
+        path,
+        decoratorMetadata: {} as any,
+        controller: DynamicController,
+        guards: [],
+        httpMethod: 'OPTIONS',
+        methodName: methodName,
+      };
+
       const controllersMetadata2: ControllersMetadata2 = {
         httpMethod: 'OPTIONS',
         path,
