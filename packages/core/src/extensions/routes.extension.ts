@@ -53,8 +53,6 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           const { path: controllerPath, httpMethod } = route;
           const path = this.getPath(prefix, controllerPath);
           const routeMeta: RouteMeta = {
-            httpMethod: route.httpMethod,
-            path,
             decoratorMetadata,
             controller,
             methodName,

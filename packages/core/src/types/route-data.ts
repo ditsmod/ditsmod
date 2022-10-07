@@ -6,8 +6,6 @@ import { RouteHandler } from './router';
  * a route.
  */
 export class RouteMeta {
-  httpMethod: HttpMethod;
-  path: string;
   controller: ControllerType;
   /**
    * The controller's method name.
