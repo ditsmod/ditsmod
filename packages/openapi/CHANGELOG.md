@@ -1,5 +1,12 @@
+<a name="openapi-2.9.0"></a>
+# [openapi-2.9.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.9.0) (2022-01-07)
+
+### Bug fix
+
+- Migration to core-2.22.0.
+
 <a name="openapi-2.8.2"></a>
-# [openapi-2.8.2](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.8.2) (2022-09-28)
+## [openapi-2.8.2](https://github.com/ts-stack/ditsmod/releases/tag/openapi-2.8.2) (2022-09-28)
 
 ### Bug fix
 
