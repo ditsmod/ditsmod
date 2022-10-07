@@ -17,7 +17,6 @@ import {
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
 
 import { CorsInterceptor } from './cors.interceptor';
-import { MergedCorsOptions } from './merged-cors-options';
 import { ALLOW_METHODS } from './constans';
 
 @Injectable()
@@ -53,17 +52,8 @@ export class CorsExtension implements Extension<void | false> {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const corsOptions = this.getCorsOptions(injectorPerMod, mergedPerRou);
         const mergedCorsOptions = mergeOptions(corsOptions);
-
-        providersPerRou.unshift({
-          provide: MergedCorsOptions,
-          useValue: mergedCorsOptions,
-        });
-
-        providersPerReq.push({
-          provide: HTTP_INTERCEPTORS,
-          useClass: CorsInterceptor,
-          multi: true,
-        });
+        providersPerRou.unshift({ provide: CorsOptions, useValue: mergedCorsOptions });
+        providersPerReq.push({ provide: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
       });
     });
   }
@@ -109,7 +99,6 @@ export class CorsExtension implements Extension<void | false> {
       httpMethods.push('OPTIONS', httpMethod);
       this.registeredPathForOptions.set(path, httpMethods);
 
-      // prettier-ignore
       class DynamicController {
         [methodName]() {
           const inj = (this as any)[injectorKey] as Injector;
