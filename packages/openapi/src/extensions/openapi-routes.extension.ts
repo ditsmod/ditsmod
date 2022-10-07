@@ -73,9 +73,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
           const oasPath = this.transformToOasPath(meta.name, path, paramsInPath);
           providersPerRou.push(...(ctrlDecorator?.providersPerRou || []));
           const routeMeta: OasRouteMeta = {
-            httpMethod,
             oasPath,
-            path,
             operationObject: clonedOperationObject,
             decoratorMetadata,
             controller,

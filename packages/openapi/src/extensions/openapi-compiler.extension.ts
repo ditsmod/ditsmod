@@ -4,6 +4,7 @@ import {
   Extension,
   ExtensionsManager,
   ExtensionsMetaPerApp,
+  HttpMethod,
   isModuleWithParams,
   MetadataPerMod2,
   NormalizedGuard,
@@ -84,21 +85,21 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
       }
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
 
-      aControllersMetadata2.forEach(({ providersPerRou }) => {
+      aControllersMetadata2.forEach(({ providersPerRou, httpMethod, path }) => {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
         const oasRouteMeta = injectorPerRou.get(OasRouteMeta) as OasRouteMeta;
-        const { httpMethod, oasPath, path, guards, operationObject } = oasRouteMeta;
+        const { oasPath, guards, operationObject } = oasRouteMeta;
         if (operationObject) {
           const clonedOperationObject = { ...operationObject };
           this.setSecurityInfo(clonedOperationObject, guards);
           const pathItemObject: PathItemObject = { [httpMethod.toLowerCase()]: clonedOperationObject };
           paths[`/${oasPath}`] = { ...(paths[`/${oasPath}`] || {}), ...pathItemObject };
         } else {
-          if (!oasRouteMeta.httpMethod) {
+          if (!httpMethod) {
             throw new Error('OpenapiCompilerExtension: OasRouteMeta not found.');
           }
-          this.applyNonOasRoute(path, paths, oasRouteMeta, guards);
+          this.applyNonOasRoute(path, paths, httpMethod, guards);
         }
       });
     }
@@ -168,8 +169,8 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     operationObject.responses = { ...(operationObject.responses || {}), ...responses };
   }
 
-  protected applyNonOasRoute(path: string, paths: XPathsObject, routeMeta: RouteMeta, guards: NormalizedGuard[]) {
-    const httpMethod = routeMeta.httpMethod.toLowerCase();
+  protected applyNonOasRoute(path: string, paths: XPathsObject, httpMethod: HttpMethod, guards: NormalizedGuard[]) {
+    httpMethod = httpMethod.toLowerCase() as HttpMethod;
     const parameters: XParameterObject[] = [];
     path = `/${path}`.replace(/:([^/]+)/g, (_, name) => {
       parameters.push({ in: 'path', name, required: true });
