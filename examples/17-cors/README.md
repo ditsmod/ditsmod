@@ -27,9 +27,15 @@ curl -isS localhost:3000 -X OPTIONS
 curl -isS localhost:3000 -X OPTIONS -H "Origin: https://example.com"
 
 # PrePreflighted CORS request
-curl -isS localhost:3000\
- -X OPTIONS\
- -H "Origin: https://example.com"\
- -H 'Access-Control-Request-Method: POST'\
- -H 'Access-Control-Request-Headers: X-PINGOTHER, Content-Type'
+curl -isS localhost:3000 \
+-X OPTIONS \
+-H "Origin: https://example.com" \
+-H 'Access-Control-Request-Method: POST' \
+-H 'Access-Control-Request-Headers: X-PINGOTHER, Content-Type'
 ```
+
+For more info see:
+
+- [OPTIONS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS)
+- [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
+- [CORS Preflight](https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request)
