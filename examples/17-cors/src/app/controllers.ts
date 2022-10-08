@@ -1,6 +1,5 @@
 import { Controller, Res, Route } from '@ditsmod/core';
-
-import { AuthGuard } from './auth.guard';
+import { CorsService } from '@ditsmod/cors';
 
 @Controller()
 export class FirstController {
@@ -24,10 +23,11 @@ export class FirstController {
 
 @Controller()
 export class SecondController {
-  constructor(private res: Res) {}
+  constructor(private res: Res, private corsService: CorsService) {}
 
-  @Route('PUT', '', [AuthGuard])
-  puthMethod() {
-    this.res.send('PUT method\n');
+  @Route('GET', 'credentials')
+  getMethod() {
+    this.corsService.setCookie('one', 'value for one');
+    this.res.send('Here GET request with "Access-Control-Allow-Credentials: true" header.\n');
   }
 }

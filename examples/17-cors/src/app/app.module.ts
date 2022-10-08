@@ -1,9 +1,8 @@
 import { Providers, RootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
-import { CorsModule, CorsOptions } from '@ditsmod/cors';
+import { CorsModule, CorsOpts } from '@ditsmod/cors';
 
 import { FirstController, SecondController } from './controllers';
-import { AuthGuard } from './auth.guard';
 
 @RootModule({
   imports: [RouterModule, CorsModule],
@@ -11,8 +10,7 @@ import { AuthGuard } from './auth.guard';
   providersPerApp: [
     ...new Providers()
       .useLogConfig({ level: 'info' })
-      .useValue<CorsOptions>(CorsOptions, { origin: 'https://example.com' }),
-  ],
-  providersPerReq: [AuthGuard]
+      .useValue<CorsOpts>(CorsOpts, { origin: 'https://example.com' }),
+  ]
 })
 export class AppModule {}
