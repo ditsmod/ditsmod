@@ -24,8 +24,8 @@ export class FirstController {
 export class SecondController {
   constructor(private res: Res) {}
 
-  @Route('PATCH', 'other')
-  patchMethod() {
-    this.res.send('PATCH method\n');
+  @Route('PUT', '')
+  puthMethod() {
+    this.res.send('PUT method\n');
   }
 }
