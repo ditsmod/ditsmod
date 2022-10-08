@@ -5,7 +5,7 @@ title: OPTIONS and CORS
 
 # @ditsmod/cors
 
-If your application needs to use the [OPTIONS][1] HTTP methods or the [CORS][2] or [preflight CORS][3] mechanisms, you can use the `@ditsmod/cors` module.
+If your application needs to use the [OPTIONS][1] HTTP methods or the [CORS][2] or [CORS preflight][3] mechanisms, you can use the `@ditsmod/cors` module.
 
 ## Install
 
@@ -47,7 +47,7 @@ curl -isS localhost:3000 -X OPTIONS -H "Origin: https://example.com"
 # GET CORS request
 curl -isS localhost:3000 -H "Origin: https://example.com"
 
-# PrePreflighted CORS request
+# CORS preflight request
 curl -isS localhost:3000 \
 -X OPTIONS \
 -H "Origin: https://example.com" \
