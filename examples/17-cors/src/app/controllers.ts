@@ -1,5 +1,7 @@
 import { Controller, Res, Route } from '@ditsmod/core';
 
+import { AuthGuard } from './auth.guard';
+
 @Controller()
 export class FirstController {
   constructor(private res: Res) {}
@@ -24,7 +26,7 @@ export class FirstController {
 export class SecondController {
   constructor(private res: Res) {}
 
-  @Route('PUT', '')
+  @Route('PUT', '', [AuthGuard])
   puthMethod() {
     this.res.send('PUT method\n');
   }
