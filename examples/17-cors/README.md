@@ -9,7 +9,7 @@ yarn
 yarn boot
 ```
 
-## Hello world
+## OPTIONS, CORS, CORS preflight
 
 Start from first terminal:
 
@@ -29,7 +29,7 @@ curl -isS localhost:3000 -X OPTIONS -H 'Origin: https://example.com'
 # GET CORS request
 curl -isS localhost:3000 -H 'Origin: https://example.com'
 
-# PrePreflighted CORS request
+# Preflighted CORS request
 curl -isS localhost:3000 \
 -X OPTIONS \
 -H 'Origin: https://example.com' \
