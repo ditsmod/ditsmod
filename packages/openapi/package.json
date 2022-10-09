@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/openapi",
-  "version": "2.9.2",
+  "version": "2.9.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -21,6 +21,7 @@
   "gitHead": "ee408df6b7617d0fb8bc6eff301e50f3602bb385",
   "dependencies": {
     "@ts-stack/openapi-spec": "^3.1.5",
+    "buffer": "^6.0.3",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.3.1",
