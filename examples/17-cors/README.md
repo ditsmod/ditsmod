@@ -24,17 +24,20 @@ From second terminal:
 curl -isS localhost:3000 -X OPTIONS
 
 # OPTIONS CORS request
-curl -isS localhost:3000 -X OPTIONS -H "Origin: https://example.com"
+curl -isS localhost:3000 -X OPTIONS -H 'Origin: https://example.com'
 
 # GET CORS request
-curl -isS localhost:3000 -H "Origin: https://example.com"
+curl -isS localhost:3000 -H 'Origin: https://example.com'
 
 # PrePreflighted CORS request
 curl -isS localhost:3000 \
 -X OPTIONS \
--H "Origin: https://example.com" \
+-H 'Origin: https://example.com' \
 -H 'Access-Control-Request-Method: POST' \
 -H 'Access-Control-Request-Headers: X-PINGOTHER, Content-Type'
+
+# CORS request with credentials
+curl -isS localhost:3000/credentials
 ```
 
 For more info see:
