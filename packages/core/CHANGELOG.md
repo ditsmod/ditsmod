@@ -1,5 +1,12 @@
+<a name="core-2.23.0"></a>
+# [core-2.23.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.23.0) (2022-10-12)
+
+### BREAKING CHANGES
+
+- Added `DefaultHttpFrontend`, `DefaultHttpBackend`, `HttpBackend` and `HttpFrontend` to export from index.ts.
+
 <a name="core-2.22.0"></a>
-# [core-2.22.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.22.0) (2022-01-07)
+# [core-2.22.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.22.0) (2022-10-07)
 
 ### BREAKING CHANGES
 
