@@ -259,11 +259,11 @@ export class LogMediator {
   /**
    * `${serverName} is running at ${host}:${port}.`
    */
-  serverListen(self: object, serverName: string, host: string, port: number) {
+  serverListen(self: object, host: string, port: number) {
     const className = self.constructor.name;
     const msgLogFilter = new MsgLogFilter();
     msgLogFilter.className = className;
-    this.setLog('info', msgLogFilter, `${className}: ${serverName} is running at http://${host}:${port}.`);
+    this.setLog('info', msgLogFilter, `${className}: Node.js is running at http://${host}:${port}.`);
   }
 
   /**

@@ -320,7 +320,7 @@ export class AppInitializer {
   }
 
   serverListen() {
-    const { listenOptions, serverName } = this.rootMeta;
-    this.logMediator.serverListen(this, serverName, listenOptions.host!, listenOptions.port!);
+    const { listenOptions } = this.rootMeta;
+    this.logMediator.serverListen(this, listenOptions.host!, listenOptions.port!);
   }
 }

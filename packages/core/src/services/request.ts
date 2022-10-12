@@ -1,10 +1,9 @@
-import { Injectable, Inject, Injector } from '@ts-stack/di';
+import { Injectable, Inject } from '@ts-stack/di';
 import { randomUUID } from 'crypto';
 
-import { NODE_REQ, NODE_RES } from '../constans';
+import { NODE_REQ } from '../constans';
 import { PathParam } from '../types/router';
-
-import { NodeRequest, NodeResponse } from '../types/server-options';
+import { NodeRequest } from '../types/server-options';
 
 @Injectable()
 export class Req {
@@ -39,9 +38,10 @@ export class Req {
   jwtPayload?: any;
 
   constructor(
+    /**
+     * Native Node.js request.
+     */
     @Inject(NODE_REQ) public readonly nodeReq: NodeRequest,
-    @Inject(NODE_RES) public readonly nodeRes: NodeResponse,
-    public injector: Injector
   ) {}
 
   get requestId() {

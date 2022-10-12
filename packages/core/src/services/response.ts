@@ -1,19 +1,18 @@
 import { format } from 'util';
-import * as http from 'http';
 import { Injectable, Inject } from '@ts-stack/di';
 
-import { Req } from './request';
 import { Status } from '../utils/http-status-codes';
 import { RedirectStatusCodes } from '../types/mix';
-import { NodeRequest, NodeResponse } from '../types/server-options';
-import { NODE_REQ, NODE_RES } from '../constans';
+import { NodeResponse } from '../types/server-options';
+import { NODE_RES } from '../constans';
 
 @Injectable()
 export class Res<T = any> {
   constructor(
-    @Inject(NODE_REQ) protected readonly nodeReq: NodeRequest,
-    @Inject(NODE_RES) public readonly nodeRes: NodeResponse,
-    protected req: Req
+    /**
+     * Native Node.js response.
+     */
+    @Inject(NODE_RES) public readonly nodeRes: NodeResponse
   ) {}
 
   /**
@@ -54,22 +53,5 @@ export class Res<T = any> {
   redirect(statusCode: RedirectStatusCodes, path: string) {
     this.nodeRes.writeHead(statusCode, { Location: path });
     this.nodeRes.end();
-  }
-
-  toString() {
-    const headers = this.nodeReq.headers;
-    let headerString = '';
-
-    Object.keys(headers).forEach((k) => (headerString += k + ': ' + headers[k] + '\n'));
-
-    const str = format(
-      'HTTP/%s %s %s\n%s',
-      this.nodeReq.httpVersion,
-      this.nodeRes.statusCode,
-      http.STATUS_CODES[this.nodeRes.statusCode],
-      headerString
-    );
-
-    return str;
   }
 }
