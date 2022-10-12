@@ -29,7 +29,7 @@ export { NodeResponse, NodeRequest, RequestListener } from './types/server-optio
 export { PathParam, RouterReturns, RouteHandler } from './types/router';
 export { RootMetadata } from './models/root-metadata';
 export { NormalizedProvider } from './utils/ng-utils';
-export { HttpInterceptor, HttpHandler } from './types/http-interceptor';
+export { HttpInterceptor, HttpHandler, HttpBackend, HttpFrontend } from './types/http-interceptor';
 export { NODE_REQ, NODE_RES, HTTP_INTERCEPTORS, PATH_PARAMS, QUERY_STRING } from './constans';
 export { LogManager } from './services/log-manager';
 export { LogMediator, LogFilter, MsgLogFilter } from './services/log-mediator';
@@ -48,6 +48,8 @@ export { ExtensionsManager } from './services/extensions-manager';
 export { ModuleManager } from './services/module-manager';
 export { ExtensionOptions } from './utils/get-extension-provider';
 export { ExtensionsContext } from './services/extensions-context';
+export { DefaultHttpBackend } from './services/default-http-backend';
+export { DefaultHttpFrontend } from './services/default-http-frontend';
 export { MetadataPerMod1, MetadataPerMod2 } from './types/metadata-per-mod';
 export { ControllersMetadata1, ControllersMetadata2 } from './types/controller-metadata';
 export {

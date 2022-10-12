@@ -18,9 +18,9 @@ export class DefaultHttpFrontend implements HttpFrontend {
   constructor(
     @Inject(PATH_PARAMS) protected aPathParams: PathParam[],
     @Inject(QUERY_STRING) protected queryString: any,
-    private routeMeta: RouteMeta,
-    private rootMetadata: RootMetadata,
-    private req: Req
+    protected routeMeta: RouteMeta,
+    protected rootMetadata: RootMetadata,
+    protected req: Req
   ) {}
 
   async intercept(next: HttpHandler) {
