@@ -20,6 +20,13 @@ yarn start18
 From second terminal:
 
 ```bash
-curl -isS localhost:3000/json
-curl -isS localhost:3000/string
+curl -isS localhost:3000/first
+
+# This request should stuck because FirstModule not have `return` feature
+curl -isS localhost:3000/first-return
+
+# This requests should works
+curl -isS localhost:3000/second
+curl -isS localhost:3000/second-json
+curl -isS localhost:3000/second-string
 ```

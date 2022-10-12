@@ -1,14 +1,14 @@
-import { HttpBackend, Providers, RootModule } from '@ditsmod/core';
+import { RootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
-import { ReturnModule } from '@ditsmod/return';
 
-import { HelloWorldController } from './hello-world.controller';
+import { FirstModule } from './modules/first/first.module';
+import { SecondModule } from './modules/second/second.module';
 
 @RootModule({
-  imports: [RouterModule, ReturnModule],
-  controllers: [HelloWorldController],
-  resolvedCollisionsPerReq: [[HttpBackend, ReturnModule]],
-  providersPerApp: [...new Providers().useLogConfig({ level: 'info' })],
-  exports: [ReturnModule],
+  imports: [
+    RouterModule,
+    { path: '', module: FirstModule },
+    { path: '', module: SecondModule },
+  ]
 })
 export class AppModule {}

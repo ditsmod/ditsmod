@@ -12,5 +12,4 @@ export class HelloWorldController {
     return 'Hello World!\n';
   }
 }
-
 ```
