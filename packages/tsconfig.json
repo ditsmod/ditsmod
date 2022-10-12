@@ -9,6 +9,7 @@
     { "path": "jwt" },
     { "path": "i18n" },
     { "path": "cors" },
+    { "path": "return" },
     { "path": "openapi-validation" }
   ]
 }
