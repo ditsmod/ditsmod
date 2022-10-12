@@ -34,7 +34,7 @@
     "start15": "nodemon -e ts --exec ts-node --project examples/15-i18n/tsconfig.json -r tsconfig-paths/register examples/15-i18n/src/main.ts",
     "start16": "nodemon -e ts --exec ts-node --project examples/16-openapi-validation/tsconfig.json -r tsconfig-paths/register examples/16-openapi-validation/src/main.ts",
     "start17": "nodemon -e ts --exec ts-node --project examples/17-cors/tsconfig.json -r tsconfig-paths/register examples/17-cors/src/main.ts",
-    "start18": "echo 'Not implemented yet.'",
+    "start18": "nodemon -e ts --exec ts-node --project examples/18-return/tsconfig.json -r tsconfig-paths/register examples/18-return/src/main.ts",
     "start19": "echo 'Not implemented yet.'",
     "start20": "echo 'Not implemented yet.'"
   },
