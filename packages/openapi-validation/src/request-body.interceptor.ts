@@ -1,5 +1,5 @@
 import { Injectable } from '@ts-stack/di';
-import { CustomError } from '@ditsmod/core';
+import { CustomError, Req } from '@ditsmod/core';
 
 import { ValidationInterceptor } from './validation.interceptor';
 
@@ -9,7 +9,8 @@ import { ValidationInterceptor } from './validation.interceptor';
 @Injectable()
 export class RequestBodyInterceptor extends ValidationInterceptor {
   protected override prepareAndValidate() {
-    if (this.req.body === undefined) {
+    const req = this.injector.get(Req);
+    if (req.body === undefined) {
       const dict = this.getDict();
       throw new CustomError({
         msg1: dict.missingRequestBody,
@@ -17,6 +18,6 @@ export class RequestBodyInterceptor extends ValidationInterceptor {
       });
     }
 
-    this.validate(this.meta.requestBodySchema, this.req.body);
+    this.validate(this.meta.requestBodySchema, req.body);
   }
 }

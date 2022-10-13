@@ -1,5 +1,5 @@
-import { Injectable } from '@ts-stack/di';
-import { HttpHandler, HttpInterceptor, Req, Status, CustomError } from '@ditsmod/core';
+import { Injectable, Injector } from '@ts-stack/di';
+import { HttpHandler, HttpInterceptor, Status, CustomError } from '@ditsmod/core';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { DictService } from '@ditsmod/i18n';
 
@@ -9,7 +9,7 @@ import { AjvService } from './ajv.service';
 
 @Injectable()
 export class ValidationInterceptor implements HttpInterceptor {
-  constructor(protected req: Req, protected meta: ValidationRouteMeta, protected ajvService: AjvService) {}
+  constructor(protected injector: Injector, protected meta: ValidationRouteMeta, protected ajvService: AjvService) {}
 
   intercept(next: HttpHandler) {
     this.prepareAndValidate();
@@ -37,7 +37,7 @@ export class ValidationInterceptor implements HttpInterceptor {
   }
 
   protected getDict() {
-    const dictService: DictService = this.req.injector.get(DictService);
+    const dictService: DictService = this.injector.get(DictService);
     return dictService.getDictionary(AssertDict);
   }
 }
