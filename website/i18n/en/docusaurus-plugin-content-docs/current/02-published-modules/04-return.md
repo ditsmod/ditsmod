@@ -19,6 +19,8 @@ export class HelloWorldController {
 }
 ```
 
+If you want such functionality to be available only in a separate module, you can view [a finished example in the Ditsmod repository][3].
+
 ## Installation and importing
 
 Installation:
@@ -49,7 +51,24 @@ export class AppModule {}
 
 As you can see, in addition to importing, the `ReturnModule` is also exported in the root module so that the functionality provided by the `ReturnModule` module is available to any controller.
 
-If you want such functionality to be available only in a separate module, you can view [a finished example in the Ditsmod repository][3].
+## HTTP statuses and headers
+
+By default, the interceptor in the `@ditsmod/return` module automatically substitutes the 201 status for requests with the `POST` HTTP method, the 204 - for `OPTIONS`, and the 200 status - for the rest. If you need to change this behavior, you should use the standard mechanism (without using the `return` statement):
+
+```ts
+import { Controller, Res, Route, Status } from '@ditsmod/core';
+
+@Controller()
+export class UsersController {
+  constructor(private res: Res) {}
+
+  @Route('GET')
+  getUsersList() {
+    // ...
+    this.res.sendJson({ error: 'Page not found' }, Status.NOT_FOUND);
+  }
+}
+```
 
 
 
