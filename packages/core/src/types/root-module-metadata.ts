@@ -6,7 +6,6 @@ import { ModuleType, ModuleWithParams } from './mix';
 
 export interface RootModuleMetadata {
   httpModule?: HttpModule;
-  serverName?: string;
   serverOptions?: ServerOptions;
   listenOptions?: ListenOptions;
   path?: string;

@@ -6,6 +6,8 @@ import { SecondController } from './second.controller';
 @Module({
   imports: [ReturnModule],
   controllers: [SecondController],
-  resolvedCollisionsPerReq: [[HttpBackend, ReturnModule]],
+  resolvedCollisionsPerReq: [
+    [HttpBackend, ReturnModule]
+  ],
 })
 export class SecondModule {}

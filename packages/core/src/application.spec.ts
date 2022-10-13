@@ -44,7 +44,6 @@ describe('Application', () => {
       class Provider1 {}
 
       @RootModule({
-        serverName: 'customServerName',
         serverOptions: { isHttp2SecureServer: false },
         listenOptions: { host: 'customHost', port: 3000 },
         path: 'customPrefix',

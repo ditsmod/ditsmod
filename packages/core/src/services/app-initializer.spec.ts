@@ -401,7 +401,6 @@ describe('AppInitializer', () => {
     const module3WithParams: ModuleWithParams = { path: 'one', module: Module3 };
     const module4WithParams: ModuleWithParams = { guards: [], module: Module4 };
     @RootModule({
-      serverName: 'custom-server',
       imports: [Module0, Module1, module2WithParams, Module5, module3WithParams, module4WithParams],
       exports: [Module0, module2WithParams, module3WithParams],
       providersPerApp: [

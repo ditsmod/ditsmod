@@ -180,7 +180,6 @@ describe('ModuleManager', () => {
       httpModule: http,
       listenOptions: { host: 'localhost', port: 3000 },
       path: 'api',
-      serverName: 'Some-Server',
       serverOptions: {},
       imports: [],
       providersPerRou: [],
