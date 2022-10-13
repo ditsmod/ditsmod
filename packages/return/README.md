@@ -8,7 +8,7 @@ import { Controller, Route } from '@ditsmod/core';
 @Controller()
 export class HelloWorldController {
   @Route('GET')
-  async tellAsyncHello() {
+  async tellHello() {
     return 'Hello World!\n';
   }
 }
