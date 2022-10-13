@@ -1,5 +1,12 @@
+<a name="openapi-validation-2.2.0"></a>
+# [openapi-validation-2.2.0](https://github.com/ts-stack/ditsmod/releases/tag/openapi-validation-2.2.0) (2022-10-13)
+
+### Features
+
+- Migration to core-2.24.0.
+
 <a name="openapi-validation-2.1.1"></a>
-# [openapi-validation-2.1.1](https://github.com/ts-stack/ditsmod/releases/tag/openapi-validation-2.1.1) (2022-09-30)
+## [openapi-validation-2.1.1](https://github.com/ts-stack/ditsmod/releases/tag/openapi-validation-2.1.1) (2022-09-30)
 
 ### Bug fix
 
