@@ -1,5 +1,12 @@
+<a name="core-2.24.0"></a>
+# [core-2.24.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.24.0) (2022-10-13)
+
+### BREAKING CHANGES
+
+- Refactoring `Request` and `Response`: removed unused properties.
+
 <a name="core-2.23.0"></a>
-# [core-2.23.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.23.0) (2022-10-12)
+## [core-2.23.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.23.0) (2022-10-12)
 
 ### Features
 
