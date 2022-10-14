@@ -50,7 +50,7 @@ Note that each call to the interceptor returns `Promise<any>`, and it eventually
 
 However, at the moment (Ditsmod v2.0.0), `HttpFrontend` and `HttpBackend` by default ignores everything that returns the controller or interceptors, so this promise resolve can be useful for other purposes - to collect metrics, logging, etc.
 
-On the other hand, through DI you can easily substitute `HttpFrontend` and `HttpBackend` with your own interceptors to take into account the value returned by the controller method. By default, this is not done because sometimes the controller needs to be resumed works after sending an HTTP response.
+On the other hand, with DI you can easily replace `HttpFrontend` and `HttpBackend` with your own interceptors to take into account the return value of the controller method. One of the variants of this functionality is implemented in the [@ditsmod/return][4] module. By default, this is not done because sometimes the controller needs to continue after sending an HTTP response.
 
 ## Declare interceptor
 
@@ -71,3 +71,4 @@ export class SomeModule {}
 [1]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L9-L11
 [2]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L18-L20
 [3]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L41-L43
+[4]: ../02-published-modules/04-return.md

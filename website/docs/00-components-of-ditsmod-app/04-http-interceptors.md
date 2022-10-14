@@ -50,7 +50,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
 
 Щоправда, на даний момент (Ditsmod v2.0.0), `HttpFrontend` та `HttpBackend` by default ігнорують усе, що повертає контролер чи інтерсептори, тому такий резолв проміса може бути корисним для інших цілей - для збору метрик, логування і т.п.
 
-З іншого боку, через DI ви легко можете підмінити `HttpFrontend` та `HttpBackend` своїми власними інтерсепторами, щоб брати до уваги значення, що повертає метод контролера. By default це не зроблено тому, що інколи роботу контролера потрібно продовжити після відправки HTTP-відповіді.
+З іншого боку, через DI ви легко можете підмінити `HttpFrontend` та `HttpBackend` своїми власними інтерсепторами, щоб брати до уваги значення, що повертає метод контролера. Один із варіантів такої функціональності реалізовано у модулі [@ditsmod/return][4]. By default це не зроблено тому, що інколи роботу контролера потрібно продовжити після відправки HTTP-відповіді.
 
 ## Оголошення інтерсептора
 
@@ -71,3 +71,4 @@ export class SomeModule {}
 [1]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L9-L11
 [2]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L18-L20
 [3]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L41-L43
+[4]: ../02-published-modules/04-return.md
