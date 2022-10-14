@@ -1,5 +1,6 @@
-import { Module, PRE_ROUTER_EXTENSIONS } from '@ditsmod/core';
+import { Module, ModuleWithParams, PRE_ROUTER_EXTENSIONS } from '@ditsmod/core';
 
+import { BodyParserConfig } from './body-parser-config';
 import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.extension';
 
 /**
@@ -16,4 +17,11 @@ import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.exten
     },
   ],
 })
-export class BodyParserModule {}
+export class BodyParserModule {
+  static withParams(config: BodyParserConfig): ModuleWithParams<BodyParserModule> {
+    return {
+      module: this,
+      providersPerMod: [{ provide: BodyParserConfig, useValue: config }],
+    };
+  }
+}
