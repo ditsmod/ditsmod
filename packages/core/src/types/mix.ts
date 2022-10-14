@@ -70,19 +70,6 @@ export interface DecoratorMetadata<MV extends AnyObj = AnyObj> {
 export type AppMetadataMap = Map<ModuleType | ModuleWithParams, MetadataPerMod1>;
 export type GuardItem = Type<CanActivate> | [Type<CanActivate>, any, ...any[]];
 
-export interface MultipartBodyParserOptions {
-  overrideParams?: boolean;
-  multiples?: boolean;
-  keepExtensions?: boolean;
-  uploadDir?: string;
-  maxFieldsSize?: number;
-  hash?: string;
-  multipartFileHandler?: AnyFn;
-  multipartHandler?: AnyFn;
-  mapParams?: boolean;
-  mapFiles?: boolean;
-}
-
 export interface NormalizedGuard {
   guard: Type<CanActivate>;
   params?: any[];

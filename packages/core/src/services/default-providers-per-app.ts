@@ -1,6 +1,5 @@
 import { Injector, ReflectiveInjector } from '@ts-stack/di';
 
-import { BodyParserConfig } from '../models/body-parser-config';
 import { RootMetadata } from '../models/root-metadata';
 import { Logger } from '../types/logger';
 import { ServiceProvider } from '../types/mix';
@@ -13,7 +12,6 @@ import { ModuleExtract } from '../models/module-extract';
 import { Providers } from '../utils/providers';
 
 export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
-  BodyParserConfig,
   {
     provide: ReflectiveInjector,
     useExisting: Injector,
