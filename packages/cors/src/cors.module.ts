@@ -19,6 +19,7 @@ export class CorsModule {
       providersPerMod: [
         ...new Providers().useValue<CorsOpts>(CorsOpts, options)
       ],
+      exports: [CorsOpts]
     };
   }
 }
