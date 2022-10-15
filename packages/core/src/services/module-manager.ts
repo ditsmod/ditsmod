@@ -374,22 +374,7 @@ export class ModuleManager {
       resolvedCollisionsPerScope.push(...(rawMeta.resolvedCollisionsPerApp || []));
     }
     resolvedCollisionsPerScope.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
-
-    rawMeta.exports?.forEach((exp, i) => {
-      exp = resolveForwardRef(exp);
-      this.throwIfUndefined(modName, 'Ex', exp, i);
-      this.throwExportsIfNormalizedProvider(modName, exp);
-      if (isModuleWithParams(exp)) {
-        meta.exportsWithParams.push(exp);
-      } else if (isProvider(exp) || providersTokens.includes(exp)) {
-        this.findAndSetProviders(exp, rawMeta, meta);
-      } else if (getModuleMetadata(exp)) {
-        meta.exportsModules.push(exp);
-      } else {
-        this.throwUnidentifiedToken(modName, exp);
-      }
-    });
-
+    this.exportFromRawMeta(rawMeta, modName, providersTokens, meta);
     this.checkReexportModules(meta);
 
     rawMeta.extensions?.forEach((extensionOptions) => {
@@ -408,6 +393,31 @@ export class ModuleManager {
     this.quickCheckMetadata(meta);
 
     return meta;
+  }
+
+  protected exportFromRawMeta(
+    rawMeta: ModuleMetadata,
+    modName: string,
+    providersTokens: any[],
+    meta: NormalizedModuleMetadata
+  ) {
+    rawMeta.exports?.forEach((exp, i) => {
+      exp = resolveForwardRef(exp);
+      this.throwIfUndefined(modName, 'Ex', exp, i);
+      this.throwExportsIfNormalizedProvider(modName, exp);
+      if (isModuleWithParams(exp)) {
+        meta.exportsWithParams.push(exp);
+        if (exp.exports?.length) {
+          this.exportFromRawMeta(exp, modName, providersTokens, meta);
+        }
+      } else if (isProvider(exp) || providersTokens.includes(exp)) {
+        this.findAndSetProviders(exp, rawMeta, meta);
+      } else if (getModuleMetadata(exp)) {
+        meta.exportsModules.push(exp);
+      } else {
+        this.throwUnidentifiedToken(modName, exp);
+      }
+    });
   }
 
   protected checkReexportModules(meta: NormalizedModuleMetadata) {
