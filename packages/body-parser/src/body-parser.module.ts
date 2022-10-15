@@ -22,6 +22,7 @@ export class BodyParserModule {
     return {
       module: this,
       providersPerMod: [{ provide: BodyParserConfig, useValue: config }],
+      exports: [BodyParserConfig],
     };
   }
 }

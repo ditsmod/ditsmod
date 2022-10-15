@@ -1,10 +1,4 @@
-import {
-  Extension,
-  ExtensionsManager,
-  HTTP_INTERCEPTORS,
-  PerAppService,
-  ROUTES_EXTENSIONS,
-} from '@ditsmod/core';
+import { Extension, ExtensionsManager, HTTP_INTERCEPTORS, PerAppService, ROUTES_EXTENSIONS } from '@ditsmod/core';
 import { Injectable, InjectionToken } from '@ts-stack/di';
 
 import { BodyParserConfig } from './body-parser-config';
@@ -36,7 +30,8 @@ export class BodyParserExtension implements Extension<void> {
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
         const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
-        const bodyParserConfig = injectorPerReq.resolveAndInstantiate(BodyParserConfig) as BodyParserConfig;
+        let bodyParserConfig = injectorPerReq.get(BodyParserConfig, {}) as BodyParserConfig;
+        bodyParserConfig = Object.assign({}, new BodyParserConfig(), bodyParserConfig); // Merge with default.
         if (bodyParserConfig.acceptMethods?.includes(httpMethod)) {
           providersPerReq.push({ provide: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
         }
