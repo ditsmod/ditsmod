@@ -19,7 +19,7 @@ export class HelloWorldController {
 }
 ```
 
-If you want such functionality to be available only in a separate module, you can view [a finished example in the Ditsmod repository][3].
+If you want such functionality to be available only in a separate module, you can view [a finished example in the Ditsmod repository][1].
 
 ## Installation and importing
 
@@ -75,4 +75,3 @@ export class UsersController {
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/18-return
 [2]: ../00-components-of-ditsmod-app/06-providers-collisions.md
-[3]: https://github.com/ditsmod/ditsmod/tree/main/examples/18-return

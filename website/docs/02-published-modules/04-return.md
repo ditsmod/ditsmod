@@ -19,7 +19,7 @@ export class HelloWorldController {
 }
 ```
 
-Якщо ви хочете щоб така функціональність була доступною тільки в окремому модулі, можете проглянути [готовий приклад у репозиторії Ditsmod][3].
+Якщо ви хочете щоб така функціональність була доступною тільки в окремому модулі, можете проглянути [готовий приклад у репозиторії Ditsmod][1].
 
 ## Встановлення та підключення
 
@@ -75,4 +75,3 @@ export class UsersController {
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/18-return
 [2]: ../00-components-of-ditsmod-app/06-providers-collisions.md
-[3]: https://github.com/ditsmod/ditsmod/tree/main/examples/18-return
