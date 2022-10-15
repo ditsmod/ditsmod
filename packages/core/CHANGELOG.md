@@ -1,5 +1,17 @@
+<a name="core-2.25.0"></a>
+# [core-2.25.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.25.0) (2022-10-15)
+
+### BREAKING CHANGES
+
+- Removed `serverName` from `RootModuleMetadata`.
+- Removed body parser options.
+
+### Features
+
+- Added `exports` property to `ModuleWithParams`.
+
 <a name="core-2.24.0"></a>
-# [core-2.24.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.24.0) (2022-10-13)
+## [core-2.24.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.24.0) (2022-10-13)
 
 ### BREAKING CHANGES
 
