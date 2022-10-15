@@ -1,5 +1,12 @@
+<a name="body-parser-2.6.1"></a>
+# [body-parser-2.6.1](https://github.com/ts-stack/ditsmod/releases/tag/body-parser-2.6.1) (2022-10-15)
+
+### Bug fix
+
+- Fixed passing `BodyParserConfig` from `providersPerMod` array.
+
 <a name="body-parser-2.6.0"></a>
-# [body-parser-2.6.0](https://github.com/ts-stack/ditsmod/releases/tag/body-parser-2.6.0) (2022-10-15)
+## [body-parser-2.6.0](https://github.com/ts-stack/ditsmod/releases/tag/body-parser-2.6.0) (2022-10-15)
 
 ### Bug fix
 
