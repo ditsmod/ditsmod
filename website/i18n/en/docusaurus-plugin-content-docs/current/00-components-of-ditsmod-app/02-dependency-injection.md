@@ -44,7 +44,7 @@ That is, the work of the injector is that when it is asked `Service3`, it looks 
 
 In this case, you may not know the whole chain of dependencies `Service3`, entrust this work to the injector, the main thing - give to its array all the necessary classes.
 
-## Hierarchy of injectors in `@ts-stack/di`
+## Hierarchy of injectors
 
 The `@ts-stack/di` library also allows you to create a hierarchy of injectors - this is when there are parent and child injectors. At first glance, there is nothing interesting in such a hierarchy, because it is not clear why it is needed, but in Ditsmod this feature is used very often, because it allows you to make the application architecture modular. Special attention should be paid to the study of the specifics of the hierarchy, it will save you a lot of time in the future, because you will know how it works and why it does not find this dependence...
 
