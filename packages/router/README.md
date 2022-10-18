@@ -27,7 +27,7 @@ const { handle, params } = router.find('GET', '/');
 ## Benchmarks
 
 ```bash
-git clone git@github.com:ts-stack/ditsmod-plugins.git
+git clone git@github.com:ditsmod/ditsmod-plugins.git
 cd ditsmod-plugins/src/router
 yarn
 yarn boot

@@ -1,5 +1,5 @@
 <a name="core-2.25.0"></a>
-# [core-2.25.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.25.0) (2022-10-15)
+# [core-2.25.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.25.0) (2022-10-15)
 
 ### BREAKING CHANGES
 
@@ -11,28 +11,28 @@
 - Added `exports` property to `ModuleWithParams`.
 
 <a name="core-2.24.0"></a>
-## [core-2.24.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.24.0) (2022-10-13)
+## [core-2.24.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.24.0) (2022-10-13)
 
 ### BREAKING CHANGES
 
 - Refactoring `Request` and `Response`: removed unused properties.
 
 <a name="core-2.23.0"></a>
-## [core-2.23.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.23.0) (2022-10-12)
+## [core-2.23.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.23.0) (2022-10-12)
 
 ### Features
 
 - Added `DefaultHttpFrontend`, `DefaultHttpBackend`, `HttpBackend` and `HttpFrontend` to export from index.ts.
 
 <a name="core-2.22.0"></a>
-# [core-2.22.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.22.0) (2022-10-07)
+# [core-2.22.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.22.0) (2022-10-07)
 
 ### BREAKING CHANGES
 
 - Removed `httpMethod` and `path` from `RouteMeta`.
 
 <a name="core-2.21.0"></a>
-## [core-2.21.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.21.0) (2022-09-30)
+## [core-2.21.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.21.0) (2022-09-30)
 
 ### Features
 
@@ -41,21 +41,21 @@
 - introduce `injectorKey`. A key for the injector that you can use within the controller instance (e.g. `(this as any)[injectorKey]`) to get the injector per request. It is used to obtain an injector without accessing the controller's constructor (e.g. when dynamically adding controller methods).
 
 <a name="core-2.20.1"></a>
-## [core-2.20.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.20.1) (2022-09-30)
+## [core-2.20.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.20.1) (2022-09-30)
 
 ### Bug fix
 
 - [fixed](https://github.com/ditsmod/ditsmod/commit/e20e2fb9fc) Providers TypeScript definitions.
 
 <a name="core-2.20.0"></a>
-## [core-2.20.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.20.0) (2022-09-29)
+## [core-2.20.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.20.0) (2022-09-29)
 
 ### BREAKING CHANGES
 
 - removed `providers.useAnyValue()`.
 
 <a name="core-2.19.0"></a>
-## [core-2.19.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.19.0) (2022-09-25)
+## [core-2.19.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.19.0) (2022-09-25)
 
 ### Features
 
@@ -68,7 +68,7 @@
 - removed print all providers in `PreRouterExtension`.
 
 <a name="core-2.18.0"></a>
-## [core-2.18.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.18.0) (2022-09-21)
+## [core-2.18.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.18.0) (2022-09-21)
 
 ### Features
 
@@ -80,7 +80,7 @@
 - fixed `logMediator.renderLogs()`.
 
 <a name="core-2.17.0"></a>
-## [core-2.17.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.17.0) (2022-09-20)
+## [core-2.17.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.17.0) (2022-09-20)
 
 ### BREAKING CHANGES
 
@@ -95,42 +95,42 @@
 - Fixed passing parameter for `extension.init(isLastExtensionCall?: boolean)`.
 
 <a name="core-2.16.0"></a>
-## [core-2.16.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.16.0) (2022-09-19)
+## [core-2.16.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.16.0) (2022-09-19)
 
 ### Features
 
 - intoduced `PerAppService` and ability for extension to extends `providersPerApp`.
 
 <a name="core-2.15.1"></a>
-## [core-2.15.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.15.1) (2022-09-18)
+## [core-2.15.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.15.1) (2022-09-18)
 
 ### Features
 
 - removed `ExtensionsMetaPerApp` from defaultProvidersPerApp.
 
 <a name="core-2.15.0"></a>
-## [core-2.15.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.15.0) (2022-09-18)
+## [core-2.15.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.15.0) (2022-09-18)
 
 ### Features
 
 - Added `ExtensionsMetaPerApp` provider.
 
 <a name="core-2.14.2"></a>
-## [core-2.14.2](https://github.com/ts-stack/ditsmod/releases/tag/core-2.14.2) (2022-09-07)
+## [core-2.14.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.14.2) (2022-09-07)
 
 ### Bug fix
 
 - Fixed `logMediator.applyLogFilter()`.
 
 <a name="core-2.14.1"></a>
-## [core-2.14.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.14.1) (2022-09-07)
+## [core-2.14.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.14.1) (2022-09-07)
 
 ### Bug fix
 
 - Added `CustomError` and `ErrorOpts` to imports from `index.ts`.
 
 <a name="core-2.14.0"></a>
-## [core-2.14.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.14.0) (2022-09-07)
+## [core-2.14.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.14.0) (2022-09-07)
 
 ### Features
 
@@ -148,21 +148,21 @@ const err = new CustomError({ msg1, msg2, level: 'warn', status: Status.CONFLICT
 - Refactoring `DefaultControllerErrorHandler` with `CustomError`, so you can specify log level and status for `CustomError`.
 
 <a name="core-2.13.3"></a>
-## [core-2.13.3](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.3) (2022-09-02)
+## [core-2.13.3](https://github.com/ditsmod/ditsmod/releases/tag/core-2.13.3) (2022-09-02)
 
 ### Bug fix
 
 - Fixed `loggerConfig.transformMsgIfFilterApplied()`.
 
 <a name="core-2.13.1"></a>
-## [core-2.13.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.1) (2022-09-02)
+## [core-2.13.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.13.1) (2022-09-02)
 
 ### Bug fix
 
 - Make `allowRaisedLogs` optional for `LoggerConfig`.
 
 <a name="core-2.13.0"></a>
-## [core-2.13.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.13.0) (2022-09-02)
+## [core-2.13.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.13.0) (2022-09-02)
 
 ### Features
 
@@ -174,7 +174,7 @@ const err = new CustomError({ msg1, msg2, level: 'warn', status: Status.CONFLICT
 - Fixed `importsResolver.resolveProvidersForExtensions()`.
 
 <a name="core-2.12.0"></a>
-## [core-2.12.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.12.0) (2022-08-31)
+## [core-2.12.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.12.0) (2022-08-31)
 
 ### BREAKING CHANGES
 
@@ -201,7 +201,7 @@ export class SomeModule {}
 ```
 
 <a name="core-2.11.0"></a>
-## [core-2.11.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.11.0) (2022-08-27)
+## [core-2.11.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.11.0) (2022-08-27)
 
 ### BREAKING CHANGES
 
@@ -224,7 +224,7 @@ export class SomeModule {}
 ```
 
 <a name="core-2.10.0"></a>
-## [core-2.10.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.10.0) (2022-08-27)
+## [core-2.10.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.10.0) (2022-08-27)
 
 ### Features
 
@@ -242,7 +242,7 @@ export class SomeModule {}
 ```
 
 <a name="core-2.9.0"></a>
-## [core-2.9.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.9.0) (2022-08-27)
+## [core-2.9.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.9.0) (2022-08-27)
 
 ### Features
 
@@ -279,7 +279,7 @@ export class SomeModule {}
 ```
 
 <a name="core-2.8.0"></a>
-## [core-2.8.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.8.0) (2022-08-26)
+## [core-2.8.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.8.0) (2022-08-26)
 
 ### BREAKING CHANGES
 
@@ -290,14 +290,14 @@ export class SomeModule {}
 - Added `logMediator.detectedDifferentLogFilters()` to warn about detected different log filters.
 
 <a name="core-2.7.1"></a>
-## [core-2.7.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.7.1) (2022-08-26)
+## [core-2.7.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.7.1) (2022-08-26)
 
 ### Bug fix
 
 - Set log level to default if logger.getLevel() not yet implemented.
 
 <a name="core-2.7.0"></a>
-## [core-2.7.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.7.0) (2022-08-26)
+## [core-2.7.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.7.0) (2022-08-26)
 
 ### BREAKING CHANGES
 
@@ -310,7 +310,7 @@ export class SomeModule {}
 - Fixed `LogMediator` and `LogFilter` on module level.
 
 <a name="core-2.6.0"></a>
-## [core-2.6.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.6.0) (2022-08-26)
+## [core-2.6.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.6.0) (2022-08-26)
 
 ### Features
 
@@ -333,7 +333,7 @@ export class SomeModule {}
 - Removed `providerUseValue()` (use `...new Providers().useValue()` instead).
 
 <a name="core-2.5.0"></a>
-## [core-2.5.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.5.0) (2022-08-25)
+## [core-2.5.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.5.0) (2022-08-25)
 
 ### BREAKING CHANGES
 
@@ -345,14 +345,14 @@ export class SomeModule {}
 - added `providerUseValue()` utilite to adding providers with `useValue` in more type safe way.
 
 <a name="core-2.4.1"></a>
-## [core-2.4.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.4.1) (2022-08-25)
+## [core-2.4.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.4.1) (2022-08-25)
 
 ### Bug fix
 
 - Fixed ImportsResolver [cfba1d89790](https://github.com/ditsmod/ditsmod/commit/cfba1d89790). Now ImportsResolver takes into account which of deps is optional
 
 <a name="core-2.4.0"></a>
-## [core-2.4.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.4.0) (2022-08-24)
+## [core-2.4.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.4.0) (2022-08-24)
 
 ### Bug fix
 
@@ -364,42 +364,42 @@ export class SomeModule {}
 - refactoring `appInitializer.handleExtensions()`. Now LogMediator gets from DI on module level.
 
 <a name="core-2.3.0"></a>
-## [core-2.3.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.3.0) (2022-08-13)
+## [core-2.3.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.3.0) (2022-08-13)
 
 ### Features
 
 - Added getter `req.requestId`.
 
 <a name="core-2.2.3"></a>
-## [core-2.2.3](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.3) (2022-08-08)
+## [core-2.2.3](https://github.com/ditsmod/ditsmod/releases/tag/core-2.2.3) (2022-08-08)
 
 ### Bug fix
 
 - Fixed `extensionsManager.init()`.
 
 <a name="core-2.2.2"></a>
-## [core-2.2.2](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.2) (2022-08-06)
+## [core-2.2.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.2.2) (2022-08-06)
 
 ### BREAKING CHANGES
 
 - Renamed `LogLevels` to `LogLevel`.
 
 <a name="core-2.2.1"></a>
-## [core-2.2.1](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.1) (2022-08-06)
+## [core-2.2.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.2.1) (2022-08-06)
 
 ### Bug fix
 
 - Fixed `appInitializer.handleExtensions()` and `logMediator.setLog()`.
 
 <a name="core-2.2.0"></a>
-## [core-2.2.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.2.0) (2022-08-05)
+## [core-2.2.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.2.0) (2022-08-05)
 
 ### Features
 
 - Log levels for a module.
 
 <a name="core-2.1.0"></a>
-## [core-2.1.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.1.0) (2022-07-31)
+## [core-2.1.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.1.0) (2022-07-31)
 
 ### Features
 
@@ -411,14 +411,14 @@ export class SomeModule {}
 - Removed `LoggerMethod`.
 
 <a name="core-2.0.0"></a>
-## [core-2.0.0](https://github.com/ts-stack/ditsmod/releases/tag/core-2.0.0) (2022-07-18)
+## [core-2.0.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.0.0) (2022-07-18)
 
 ### BREAKING CHANGES
 
 - Migration to Ditsmod v2.
 
 <a name="core-1.0.0"></a>
-## [core-1.0.0](https://github.com/ts-stack/ditsmod/releases/tag/core-1.0.0) (2021-05-23)
+## [core-1.0.0](https://github.com/ditsmod/ditsmod/releases/tag/core-1.0.0) (2021-05-23)
 
 ### BREAKING CHANGES
 
@@ -434,14 +434,14 @@ export class SomeModule {}
 - set strict mode for tsconfig [861c4a3](https://github.com/ditsmod/ditsmod/commit/861c4a3).
 
 <a name="core-beta.21"></a>
-## [core-beta.21](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.21) (2021-05-10)
+## [core-beta.21](https://github.com/ditsmod/ditsmod/releases/tag/core-beta.21) (2021-05-10)
 
 ### BREAKING CHANGES
 
 - removed `parseBody` feature from core [3a77bb](https://github.com/ditsmod/ditsmod/commit/3a77bb).
 
 <a name="core-beta.20"></a>
-## [core-beta.20](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.20) (2021-05-09)
+## [core-beta.20](https://github.com/ditsmod/ditsmod/releases/tag/core-beta.20) (2021-05-09)
 
 ### BREAKING CHANGES
 
@@ -452,7 +452,7 @@ export class SomeModule {}
 - allow `ModuleWithParams` to have `extensionsMeta` [3bf166](https://github.com/ditsmod/ditsmod/commit/3bf166).
 
 <a name="core-beta.19"></a>
-## [core-beta.19](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.19) (2021-05-07)
+## [core-beta.19](https://github.com/ditsmod/ditsmod/releases/tag/core-beta.19) (2021-05-07)
 
 ### BREAKING CHANGES
 
@@ -463,7 +463,7 @@ export class SomeModule {}
 - added `instantiateProvidersPerReq()` during init an app [0a0be76](https://github.com/ditsmod/ditsmod/commit/0a0be76).
 
 <a name="core-beta.18"></a>
-## [core-beta.18](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.18) (2021-05-07)
+## [core-beta.18](https://github.com/ditsmod/ditsmod/releases/tag/core-beta.18) (2021-05-07)
 
 ### BREAKING CHANGES
 
@@ -474,7 +474,7 @@ export class SomeModule {}
 - moved request error handler to `PreRouter` [1b3100](https://github.com/ditsmod/ditsmod/commit/1b3100).
 
 <a name="core-beta.17"></a>
-## [core-beta.17](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.17) (2021-05-03)
+## [core-beta.17](https://github.com/ditsmod/ditsmod/releases/tag/core-beta.17) (2021-05-03)
 
 ### BREAKING CHANGES
 
@@ -485,84 +485,84 @@ export class SomeModule {}
 - introduce `BEFORE` extensions hook [1b3100](https://github.com/ditsmod/ditsmod/commit/1b3100).
 
 <a name="core-beta.16"></a>
-## [core-beta.16](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.16) (2021-04-27)
+## [core-beta.16](https://github.com/ditsmod/ditsmod/releases/tag/core-beta.16) (2021-04-27)
 
 ### Features
 
 - delegated getPath() from `PreRouter` to `RoutesExtension` [7cbbae](https://github.com/ditsmod/ditsmod/commit/7cbbae).
 
 <a name="core-beta.14"></a>
-## [core-beta.14](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.14) (2021-04-20)
+## [core-beta.14](https://github.com/ditsmod/ditsmod/releases/tag/core-beta.14) (2021-04-20)
 
 ### Features
 
 - added `Log` class as proxy for logger [8dd134](https://github.com/ditsmod/ditsmod/commit/8dd134).
 
 <a name="core-beta.13"></a>
-## [core-beta.13](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.13) (2021-04-19)
+## [core-beta.13](https://github.com/ditsmod/ditsmod/releases/tag/core-beta.13) (2021-04-19)
 
 ### Features
 
 - Added ModConfig to `providersPerMod` [5335dd](https://github.com/ditsmod/ditsmod/commit/5335dd).
 
 <a name="core-beta.12"></a>
-## [core-beta.12](https://github.com/ts-stack/ditsmod/releases/tag/core-beta.12) (2021-04-18)
+## [core-beta.12](https://github.com/ditsmod/ditsmod/releases/tag/core-beta.12) (2021-04-18)
 
 ### Features
 
 - Allow `ModuleWithParams` for exports [447359](https://github.com/ditsmod/ditsmod/commit/447359).
 
 <a name="beta.11"></a>
-## [beta.11](https://github.com/ts-stack/ditsmod/releases/tag/beta.11) (2021-04-16)
+## [beta.11](https://github.com/ditsmod/ditsmod/releases/tag/beta.11) (2021-04-16)
 
 ### Features
 
 - Export more type for `edk` (Extension Development Kit).
 
 <a name="beta.10"></a>
-## [beta.10](https://github.com/ts-stack/ditsmod/releases/tag/beta.10) (2021-04-07)
+## [beta.10](https://github.com/ditsmod/ditsmod/releases/tag/beta.10) (2021-04-07)
 
 ### Features
 
 - Freeze module metadata (see [a510a55](https://github.com/ditsmod/ditsmod/commit/a510a55)).
 
 <a name="beta.9"></a>
-## [beta.9](https://github.com/ts-stack/ditsmod/releases/tag/beta.9) (2021-04-06)
+## [beta.9](https://github.com/ditsmod/ditsmod/releases/tag/beta.9) (2021-04-06)
 
 ### Bug fix
 
 - Fixed `mapExtensionsToInjectors()` (see [b032737](https://github.com/ditsmod/ditsmod/commit/b032737)).
 
 <a name="beta.8"></a>
-## [beta.8](https://github.com/ts-stack/ditsmod/releases/tag/beta.8) (2021-04-06)
+## [beta.8](https://github.com/ditsmod/ditsmod/releases/tag/beta.8) (2021-04-06)
 
 ### Bug fix
 
 - Fixed `mapExtensionsToInjectors()` (see [ef4f2036](https://github.com/ditsmod/ditsmod/commit/ef4f2036)).
 
 <a name="beta.7"></a>
-## [beta.7](https://github.com/ts-stack/ditsmod/releases/tag/beta.7) (2021-04-05)
+## [beta.7](https://github.com/ditsmod/ditsmod/releases/tag/beta.7) (2021-04-05)
 
 ### Bug fix
 
 - Fixed instantiate extensions (see [53ca4357](https://github.com/ditsmod/ditsmod/commit/53ca4357)).
 
 <a name="beta.6"></a>
-## [beta.6](https://github.com/ts-stack/ditsmod/releases/tag/beta.6) (2021-04-05)
+## [beta.6](https://github.com/ditsmod/ditsmod/releases/tag/beta.6) (2021-04-05)
 
 ### Features
 
 - Added `ExtensionsManager`.
 
 <a name="beta.5"></a>
-## [beta.5](https://github.com/ts-stack/ditsmod/releases/tag/beta.5) (2021-04-05)
+## [beta.5](https://github.com/ditsmod/ditsmod/releases/tag/beta.5) (2021-04-05)
 
 ### Features
 
 - Added extensions (see [examples](./examples)).
 
 <a name="beta.4"></a>
-## [beta.4](https://github.com/ts-stack/ditsmod/releases/tag/beta.4) (2021-03-21)
+## [beta.4](https://github.com/ditsmod/ditsmod/releases/tag/beta.4) (2021-03-21)
 
 ### Features
 
