@@ -19,8 +19,7 @@
     "build": "rm -rf dist/* && tsc -b -f"
   },
   "dependencies": {
-    "@ts-stack/cookies": "^1.0.2",
-    "reflect-metadata": "^0.1.13"
+    "@ts-stack/cookies": "^1.0.2"
   },
   "devDependencies": {
     "@ts-stack/di": "^1.2.0"
