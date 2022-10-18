@@ -1,17 +1,18 @@
 import { Module, Providers } from '@ditsmod/core';
+import { Optional } from '@ts-stack/di';
 
 import { SessionCookie } from './session-cookie';
 import { SessionLogMediator } from './session-log-mediator';
 import { SessionCookieOptions } from './types';
 
 @Module({
-  providersPerMod: [SessionCookieOptions, ...new Providers().useLogMediator(SessionLogMediator)],
+  providersPerMod: [...new Providers().useLogMediator(SessionLogMediator)],
   providersPerReq: [SessionCookie],
-  exports: [SessionCookie, SessionCookieOptions],
+  exports: [SessionCookie],
 })
 export class SessionCookieModule {
-  constructor(opts: SessionCookieOptions, log: SessionLogMediator) {
-    if (opts.expires && opts.maxAge) {
+  constructor(log: SessionLogMediator, @Optional() opts?: SessionCookieOptions) {
+    if (opts?.expires && opts.maxAge) {
       log.cannotSetExpireAndMaxAge(this);
     }
   }
