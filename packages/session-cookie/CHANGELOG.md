@@ -1,5 +1,5 @@
-<a name="session-cookie-2.1.1"></a>
-# [session-cookie-2.1.1](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.1.1) (2022-10-18)
+<a name="session-cookie-2.2.0"></a>
+# [session-cookie-2.2.0](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.2.0) (2022-10-18)
 
 ### Bug fix
 
