@@ -18,6 +18,8 @@ describe('Content', () => {
       property1: string;
       @Property({ [REQUIRED]: true })
       property2: number;
+      @Property({ [REQUIRED]: false })
+      property3: number;
     }
 
     const content = new Content().get({ mediaType: 'application/json', model: Model1 });
@@ -30,6 +32,9 @@ describe('Content', () => {
               type: 'string',
             },
             property2: {
+              type: 'number',
+            },
+            property3: {
               type: 'number',
             },
           },
