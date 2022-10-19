@@ -1,26 +1,33 @@
+<a name="openapi-2.9.4"></a>
+# [openapi-2.9.4](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.9.4) (2022-10-19)
+
+### Bug fix
+
+- Fixed `Content` utilite.
+
 <a name="openapi-2.9.3"></a>
-# [openapi-2.9.3](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.9.3) (2022-01-09)
+## [openapi-2.9.3](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.9.3) (2022-10-09)
 
 ### Bug fix
 
 - Fix deps for webpack.
 
 <a name="openapi-2.9.2"></a>
-## [openapi-2.9.2](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.9.2) (2022-01-08)
+## [openapi-2.9.2](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.9.2) (2022-10-08)
 
 ### Bug fix
 
 - Fix deps for webpack.
 
 <a name="openapi-2.9.1"></a>
-## [openapi-2.9.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.9.1) (2022-01-07)
+## [openapi-2.9.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.9.1) (2022-10-07)
 
 ### Bug fix
 
 - Fix deps for webpack.
 
 <a name="openapi-2.9.0"></a>
-## [openapi-2.9.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.9.0) (2022-01-07)
+## [openapi-2.9.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.9.0) (2022-10-07)
 
 ### Bug fix
 
