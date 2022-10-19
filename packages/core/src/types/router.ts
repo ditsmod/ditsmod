@@ -23,8 +23,8 @@ export type RouteHandler = (
 ) => Promise<void>;
 
 export class RouterReturns {
-  handle: RouteHandler;
-  params: PathParam[];
+  handle: RouteHandler | null;
+  params: PathParam[] | null;
 }
 
 export interface PathParam {

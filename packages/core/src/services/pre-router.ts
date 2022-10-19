@@ -20,7 +20,7 @@ export class PreRouter {
       this.sendNotFound(nodeRes);
       return;
     }
-    await handle(nodeReq, nodeRes, params, queryString).catch((err) => {
+    await handle(nodeReq, nodeRes, params!, queryString).catch((err) => {
       this.sendInternalServerError(nodeRes, err);
     });
   };
