@@ -1,5 +1,12 @@
+<a name="core-2.26.0"></a>
+# [core-2.26.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.26.0) (2022-10-19)
+
+### BREAKING CHANGES
+
+- [Fixed](https://github.com/ditsmod/ditsmod/commit/0b3fdd5556) `RouterReturns`.
+
 <a name="core-2.25.0"></a>
-# [core-2.25.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.25.0) (2022-10-15)
+## [core-2.25.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.25.0) (2022-10-15)
 
 ### BREAKING CHANGES
 
