@@ -161,4 +161,4 @@ export class SecondService {
 
 As you can see, the rules for obtaining a class instance in the service are the same as in the controller. That is, we in the constructor with `private` access modifier declare property of class `firstService` with data type `FirstService`.
 
-[1]: /core/exports-and-imports#import-of-the-module
+[1]: /components-of-ditsmod-app/exports-and-imports#import-of-the-module

@@ -154,4 +154,4 @@ export class SecondService {
 
 Як бачите, правила отримання інстансу класу в сервісі такі ж самі, як і в контролері. Тобто, ми в конструкторі за допомогою модифікатора доступу `private` оголошуємо властивість класу `firstService` із типом даних `FirstService`.
 
-[1]: /core/exports-and-imports#імпорт-модуля
+[1]: /components-of-ditsmod-app/exports-and-imports#імпорт-модуля
