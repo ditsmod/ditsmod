@@ -1,30 +1,10 @@
 ---
-sidebar_position: 3
+sidebar_position: 2
 ---
 
 # Ґарди (охоронці)
 
-## Ґарди
-
-Якщо ви хочете обмежити доступ до певних маршрутів, ви можете у третьому параметрі декоратора `Route` в масиві передати `AuthGuard`:
-
-```ts
-import { Controller, Res, Route } from '@ditsmod/core';
-
-import { AuthGuard } from './auth.guard';
-
-@Controller()
-export class SomeController {
-  constructor(private res: Res) {}
-
-  @Route('GET', 'some-url', [AuthGuard])
-  tellHello() {
-    this.res.send('Hello admin!');
-  }
-}
-```
-
-Готовий приклад застосунку із ґардом ви можете проглянути у теці [examples][1], або у [RealWorld example][2].
+Якщо ви хочете обмежити доступ до певних маршрутів, ви можете скористатись ґардами. Готовий приклад застосунку із ґардами ви можете проглянути у теці [examples][1], або у [RealWorld example][2].
 
 Будь-який ґард повинен бути класом, що впроваджує інтерфейс `CanActivate`:
 
@@ -59,7 +39,27 @@ export class AuthGuard implements CanActivate {
 - `true` чи `Promise<true>`, значить Ditsmod буде обробляти відповідний маршрут із цим ґардом;
 - `false` чи `Promise<false>`, значить відповідь на запит міститиме 401 статус і обробки маршруту
 з боку контролера не буде;
-- `number` чи `Promise<number>` Ditsmod інтерпретує це як номер статусу (403, 401 і т.п.), який треба повернути у відповіді на HTTP-запит.
+- `number` чи `Promise<number>` Ditsmod інтерпретує як номер статусу (403, 401 і т.п.), який треба повернути у відповіді на HTTP-запит.
+
+## Використання ґардів
+
+Ґарди передаються в масиві у третьому параметрі декоратора `Route`:
+
+```ts
+import { Controller, Res, Route } from '@ditsmod/core';
+
+import { AuthGuard } from './auth.guard';
+
+@Controller()
+export class SomeController {
+  constructor(private res: Res) {}
+
+  @Route('GET', 'some-url', [AuthGuard])
+  tellHello() {
+    this.res.send('Hello admin!');
+  }
+}
+```
 
 ## Ґарди з параметрами
 
@@ -109,7 +109,7 @@ export class PermissionsGuard implements CanActivate {
 
 ## Оголошення ґардів
 
-Оскільки ґарди є підмножиною провайдерів, оголошуються вони у масиві провайдерів, але лише на рівні запиту. Це можна зробити або в контролері, або у модулі:
+Оскільки ґарди є підмножиною сервісів, оголошуються вони у масиві провайдерів, але лише на рівні запиту. Це можна зробити або в контролері, або у модулі:
 
 ```ts
 import { Module } from '@ditsmod/core';
