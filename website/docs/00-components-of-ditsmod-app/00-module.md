@@ -86,7 +86,6 @@ import { RootModule } from '@ditsmod/core';
   // Метадані для HTTP-сервера
   httpModule: http,
   listenOptions: { host: 'localhost', port: 3000 },
-  serverName: 'Node.js',
   serverOptions: {},
 
   // Метадані для модуля, плюс - path - префікс, що додаватиметься до усіх маршрутів

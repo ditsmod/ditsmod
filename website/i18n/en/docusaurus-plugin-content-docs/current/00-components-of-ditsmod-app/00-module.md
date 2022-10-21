@@ -86,7 +86,6 @@ import { RootModule } from '@ditsmod/core';
   // Metadata for the HTTP server
   httpModule: http,
   listenOptions: { host: 'localhost', port: 3000 },
-  serverName: 'Node.js',
   serverOptions: {},
 
   // Metadata for the module, plus - path - a prefix that will be added to all routes
