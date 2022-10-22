@@ -1,34 +1,34 @@
 ---
-sidebar_position: 5
-title: Парсер тіла запиту
+sidebar_position: 1
+title: Body parser
 ---
 
 # @ditsmod/body-parser
 
-Цей модуль додає інтерсептор для парсінгу тіла запиту до усіх роутів, що мають HTTP-методи вказані у `bodyParserConfig.acceptMethods`, по-дефолту це:
+This module adds an interceptor for parsing the request body to all routes that have the HTTP methods specified in `bodyParserConfig.acceptMethods`, by default it is:
 
 - `POST`
 - `PUT`
 - `PATCH`
 
-Підтримуються наступні типи даних:
+The following data types are supported:
 
 - `application/json`
 - `application/x-www-form-urlencoded`
 - `text/plain`
 - `text/html`
 
-Даний модуль не парсить тіло запиту при завантаженні файлів, для цього можете скористатись стороннім модулем [multiparty][2].
+This module does not parse the request body when uploading files, for this you can use the third-party module [multiparty][2].
 
-## Встановлення
+## Installation
 
 ```bash
 yarn add @ditsmod/body-parser
 ```
 
-## Підключення
+## Importing
 
-Щоб глобально підключити `@ditsmod/body-parser`, потрібно імпортувати та експортувати `BodyParserModule` в кореневому модулі:
+To enable `@ditsmod/body-parser` globally, you need to import and export `BodyParserModule` in the root module:
 
 ```ts
 import { RootModule } from '@ditsmod/core';
@@ -44,7 +44,7 @@ import { BodyParserModule } from '@ditsmod/body-parser';
 export class AppModule {}
 ```
 
-В такому разі будуть працювати дефолтні налаштування. Якщо ж вам потрібно змінити деякі опції, можете це зробити наступним чином:
+In this case, the default settings will work. If you need to change some options, you can do it as follows:
 
 ```ts
 import { RootModule } from '@ditsmod/core';
@@ -62,7 +62,7 @@ const moduleWithBodyParserConfig = BodyParserModule.withParams({ maxBodySize: 10
 export class AppModule {}
 ```
 
-Ще один варіант передачі конфігурації:
+Another option for passing the configuration:
 
 ```ts
 import { RootModule, Providers } from '@ditsmod/core';
@@ -82,9 +82,9 @@ import { BodyParserModule, BodyParserConfig } from '@ditsmod/body-parser';
 export class AppModule {}
 ```
 
-## Використання
+## Usage
 
-Результат роботи інтерсептора можна отримати у `this.req.body`:
+The result of the interceptor can be obtained in `this.req.body`:
 
 ```ts
 import { Controller, Req, Res, Route } from '@ditsmod/core';
