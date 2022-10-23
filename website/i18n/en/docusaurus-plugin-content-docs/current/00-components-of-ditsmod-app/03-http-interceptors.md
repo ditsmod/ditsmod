@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # HTTP Interceptors
 
-Interceptors are very close in functionality to controllers, but they do not create routes, they are tied to existing routes. Each route can work a group of interceptors running one after another.
+Interceptors are very close in functionality to controllers, but they do not create routes, they are tied to existing routes. Each route can work a group of interceptors running one after another. Interceptors are analogous to [middleware in ExpressJS][5], but interceptors can use [DI][6]. In addition, interceptors can work both before and after the operation of the controller.
 
 Given that interceptors do the same job that controllers can do, you can work without interceptors. But in this case, at least, you will have to call different services in the controllers more often.
 
@@ -16,17 +16,25 @@ Typically, interceptors are used to automate standard processing, such as:
 
 Interceptors can be centrally connected or disconnected without changing the method code of the controllers to which they are attached.
 
-When HTTP request processing begins, Ditsmod first retrieves [HttpFrontend][2] via DI, puts it first in the interceptor chain, and calls it automatically. By default, this interceptor is responsible for calling guards, installing `req.pathParams` and `req.queryParams`, and for handling errors that occur during the operation of interceptors and the controller.
+## HTTP request processing scheme
 
-The second and subsequent interceptors may not be called, depending on whether the previous one in the chain interceptor will run them.
+HTTP request processing has the following workflow:
 
-If all interceptors have worked, Ditsmod calls [HttpBackend][3], which is also extracted via DI. By default, `HttpBackend` runs directly the controller method that is responsible for processing the current request.
+1. Ditsmod extracted [PreRouter][7] via [DI][6].
+2. `PreRouter` uses the router to search for the request handler according to the URI.
+3. If the request handler is not found, `PreRouter` issues a 404 error.
+4. If a request handler is found, Ditsmod extracted [HttpFrontend][2] via DI, puts it first in the interceptor queue, and calls it automatically. By default, this interceptor is responsible for calling guards, setting `req.pathParams` and `req.queryParams`, as well as handling errors that occur during the operation of interceptors and the controller.
+5. The second and subsequent interceptors may not start, it depends on whether the previous interceptor in the queue will start them.
+6. If all interceptors have worked, Ditsmod runs [HttpBackend][3], which is also extracted via DI. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
-Therefore, the order of processing the request is as follows:
+So, the request processing procedure is as follows:
 
 ```text
-HttpFrontend -> [other interceptors] -> HttpBackend -> [controller]
+request -> PreRouter (create Promise) -> HttpFrontend -> [other interceptors] -> HttpBackend -> [controller]
+response <- PreRouter (resolved Promise) <- HttpFrontend <- [other interceptors] <- HttpBackend <- [controller]
 ```
+
+Since `PreRouter`, `HttpFrontend` and `HttpBackend` are extracted via DI, you can substitute them with your version of the respective classes. For example, if you don't just want to send a 404 status when the required route is missing, but you also want to add some text or change the headers, you can substitute `PreRouter` with your version of this class.
 
 ## Creating an interceptor
 
@@ -72,3 +80,6 @@ export class SomeModule {}
 [2]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L18-L20
 [3]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L41-L43
 [4]: ../02-published-modules/05-return.md
+[5]: https://expressjs.com/en/guide/writing-middleware.html
+[6]: ./04-dependency-injection.md
+[7]: https://github.com/ditsmod/ditsmod/blob/router-2.3.0/packages/core/src/services/pre-router.ts
