@@ -27,7 +27,7 @@ HTTP request processing has the following workflow:
 5. The second and subsequent interceptors may not start, it depends on whether the previous interceptor in the queue will start them.
 6. If all interceptors have worked, Ditsmod runs [HttpBackend][3], which is also extracted via DI. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
-So, the request processing procedure is as follows:
+So, the approximate order of processing the request is as follows:
 
 ```text
 request -> PreRouter (create Promise) -> HttpFrontend -> [other interceptors] -> HttpBackend -> [controller]
