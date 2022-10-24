@@ -6,7 +6,7 @@ sidebar_position: 3
 
 Interceptors are very close in functionality to controllers, but they do not create routes, they are tied to existing routes. Each route can work a group of interceptors running one after another. Interceptors are analogous to [middleware in ExpressJS][5], but interceptors can use [DI][6]. In addition, interceptors can work both before and after the operation of the controller.
 
-Given that interceptors do the same job that controllers can do, you can work without interceptors. But in this case, at least, you will have to call different services in the controllers more often.
+Given that interceptors do the same job that controllers can do, you can work without interceptors. But in this case, you will have to call various services in the controllers much more often.
 
 Typically, interceptors are used to automate standard processing, such as:
 
@@ -34,7 +34,7 @@ request -> PreRouter (create Promise) -> HttpFrontend -> [other interceptors] ->
 response <- PreRouter (resolved Promise) <- HttpFrontend <- [other interceptors] <- HttpBackend <- [controller]
 ```
 
-Since `PreRouter`, `HttpFrontend` and `HttpBackend` are extracted via DI, you can substitute them with your version of the respective classes. For example, if you don't just want to send a 404 status when the required route is missing, but you also want to add some text or change the headers, you can substitute `PreRouter` with your version of this class.
+Since `PreRouter`, `HttpFrontend` and `HttpBackend` are extracted via DI, you can substitute them with your version of the respective classes. For example, if you don't just want to send a 404 status when the required route is missing, but also want to add some text or change headers, you can substitute `PreRouter` with your own class.
 
 ## Creating an interceptor
 
@@ -54,11 +54,9 @@ export class MyHttpInterceptor implements HttpInterceptor {
 
 As you can see, the `intercept()` method gets a single argument - this is the instance of the handler that calls the next interceptor. If the interceptor needs certain data for the work, it can be received in constructor through DI, as well as in any service.
 
-Note that each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promice resolve, which returns the method of the controller.
+Note that each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promice resolve, which returns the method of the controller. However, at the moment (Ditsmod v2.0.0), `HttpFrontend` and `HttpBackend` by default ignores everything that returns the controller or interceptors, so this promise resolve can be useful for other purposes - to collect metrics, logging, etc.
 
-However, at the moment (Ditsmod v2.0.0), `HttpFrontend` and `HttpBackend` by default ignores everything that returns the controller or interceptors, so this promise resolve can be useful for other purposes - to collect metrics, logging, etc.
-
-On the other hand, with DI you can easily replace `HttpFrontend` and `HttpBackend` with your own interceptors to take into account the return value of the controller method. One of the variants of this functionality is implemented in the [@ditsmod/return][4] module. By default, this is not done because sometimes the controller needs to continue after sending an HTTP response.
+On the other hand, with DI you can easily replace `HttpFrontend` and `HttpBackend` with your own interceptors to take into account the return value of the controller method. One of the variants of this functionality is implemented in the [@ditsmod/return][4] module.
 
 ## Declare interceptor
 
