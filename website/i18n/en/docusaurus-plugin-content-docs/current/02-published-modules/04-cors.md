@@ -5,7 +5,7 @@ title: OPTIONS and CORS
 
 # @ditsmod/cors
 
-If your application needs to use the [OPTIONS][1] HTTP methods or the [CORS][2] or [CORS preflight][3] mechanisms, you can use the `@ditsmod/cors` module.
+If your application needs to use the [OPTIONS][1] HTTP method or the [CORS][2] or [CORS preflight][3] mechanisms, you can use the `@ditsmod/cors` module.
 
 ## Install
 

@@ -58,9 +58,9 @@ Note that each call to the interceptor returns `Promise<any>`, and it eventually
 
 On the other hand, with DI you can easily replace `HttpFrontend` and `HttpBackend` with your own interceptors to take into account the return value of the controller method. One of the variants of this functionality is implemented in the [@ditsmod/return][4] module.
 
-## Declare interceptor
+## Passing interceptor to injector
 
-Any interceptor is declared at the request level by multi-providers with the token `HTTP_INTERCEPTORS`:
+Any interceptor is passing to the injector at the request level by multi-providers with the token `HTTP_INTERCEPTORS`:
 
 ```ts
 import { HTTP_INTERCEPTORS, Module } from '@ditsmod/core';

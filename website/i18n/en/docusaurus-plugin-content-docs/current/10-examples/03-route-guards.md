@@ -2,9 +2,9 @@
 
 To try this example, you should first [prepare the prerequisite][1].
 
-In this example, `SomeModule` is imported into the root module, where there is a controller with secure routes. Protection of these routes occurs with the help of [guards][103]. These guards are declared in `AuthModule`, and the module itself is exported from root module without import to it. The export of modules concerns only the increase of the scope of providers for DI. It doesn't make sense to export modules if you are not going to increase the scope of the providers declared in them.
+In this example, `SomeModule` is imported into the root module, which has a controller with protected routes. Protection of these routes takes place with the help of [guards][103]. These guards are in `AuthModule`, and the module itself is exported from the root module. Exporting modules only applies to providers for DI. There's no point in exporting modules if you don't need providers from them.
 
-However, if you do [export a specific module from the root module][102], the scope of its providers may increase by the entire application. This is exactly what happens in the `AuthModule` module.
+However, if you [export a specific module from the root module][102], its providers are copied to every application module. This is exactly what happens in the `AuthModule` module.
 
 `SomeController` shows two options for using guards. The first option without arguments:
 

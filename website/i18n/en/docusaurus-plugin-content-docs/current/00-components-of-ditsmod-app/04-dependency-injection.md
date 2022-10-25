@@ -170,7 +170,7 @@ You can find these property names either in the controller metadata or in the mo
 
 ### Hierarchy of service injectors
 
-Unlike a controller, the injector of a certain service can be at any level: at the application, module, route, or request level. In practice, this means that the provider for this service is transferred to one (or several) of the above-mentioned arrays. For example, in the following example `SomeService` is declared at the request level and `OtherService` is declared at the module level:
+Unlike a controller, the injector of a certain service can be at any level: at the application, module, route, or request level. In practice, this means that the provider for this service is transferred to one (or several) of the above-mentioned arrays. For example, in the following example `SomeService` is passed to the injector at the request level and `OtherService` - at the module level:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -220,14 +220,14 @@ The first 2 stages occur during application initialization, before starting the 
 
 ## Multiple provider additions
 
-In some module, a same provider can be added many times at the same level, but DI will choose the most recent one (there are exceptions to this rule, but this only applies to [multi-providers][10]). Additionally, the same provider can be declared at four levels at the same time, but DI will always choose the closest injectors (ie, if a value for a provider is asking at the request level, the injector at the request level will be looked up first, and only if the desired provider is not there, DI will rise to the parent injectors).
+In some module, a same provider can be added many times at the same level, but DI will choose the most recent one (there are exceptions to this rule, but this only applies to [multi-providers][10]). Additionally, the same provider can be passed at four levels at the same time, but DI will always choose the closest injectors (ie, if a value for a provider is asking at the request level, the injector at the request level will be looked up first, and only if the desired provider is not there, DI will rise to the parent injectors).
 
 This can be used, for example, as follows:
 
-1. first declare a some configuration provider **at the application level** in the root module;
+1. first pass a some configuration provider **at the application level** in the root module;
 2. if you need to change this configuration only for a separate module, replace this provider, but **at the module level**.
 
-Also, if you are importing a some provider from an external module, and you have a provider with the same token in the current module, the local provider will have the highest priority, provided they are declared at the same level.
+Also, if you are importing a some provider from an external module, and you have a provider with the same token in the current module, the local provider will have the highest priority, provided they are passed at the same level.
 
 ## Substitution providers
 
@@ -256,24 +256,12 @@ To substitute any Ditsmod default provider with your own provider, the algorithm
 2. implement the same API in your providers;
 3. make a substitution default provider by your provider.
 
-## The scopes and the declaration levels
+## When DI cannot find the right provider
 
-Do not confuse the four levels of provider declaration with their scopes. When you passing a provider to one of the arrays: `providersPerApp`,` providersPerMod`, `providersPerRou` or `providersPerReq` - you declare at which level the [singleton][12] of this provider will be created. But this is not the same as the scopes of providers.
-
-For example, if in `SomeModule` you declare `ConfigService` at the `providersPerMod` level, it means that the singleton of this service will be created at this module level and will be available only within this module. That is, any other module will not be able to see `ConfigService` for a while.
-
-However, to increase the scope of `ConfigService` you must export it from `SomeModule`, then all modules that import `SomeModule` will also have their own singleton `ConfigService` at the module level.
-
-As you can see, the scope of providers is expanded by [exporting these providers][107] followed by importing the modules where they are declared. If the necessary providers are exported in the root module, their visibility will increase for the entire application, taking into account the hierarchy of injectors (they become global).
-
-But if the scope is not extended, it will be limited only by the [hierarchy of DI injectors][101].
-
-:::tip When DI cannot find the desired provider
 Remember that when DI cannot find the required provider, there are only three possible reasons:
 1. you did not add the required provider to the metadata of the module or controller;
-2. you have not imported the module where the provider you need is declared, or this provider is not exported;
+2. you have not imported the module where the provider you need is passed, or this provider is not exported;
 3. you ask the parent injector for the provider from the child injector.
-:::
 
 
 [12]: https://en.wikipedia.org/wiki/Singleton_pattern

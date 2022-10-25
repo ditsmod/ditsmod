@@ -107,9 +107,9 @@ export class PermissionsGuard implements CanActivate {
 }
 ```
 
-## Declaration of guards
+## Passing guards to injectors
 
-Because guards are a subset of services, they are declared in the providers array, but only at the request level. This can be done either in the controller or in the module:
+Guards are passed to DI only for injectors at the request level. This can be done either in the controller or in the module:
 
 ```ts
 import { Module } from '@ditsmod/core';

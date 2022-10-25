@@ -20,21 +20,21 @@ import { SomeService } from './some.service';
 export class SomeModule {}
 ```
 
-Note that not only is `SomeService` added to the `exports` array, this provider is also declared at the `providersPerMod` level. When exporting, the provider's _declaration_ at a certain level is required.
+Note that not only `SomeService` is added to the `exports` array, this provider is also added to the `providersPerMod`. When exporting, _passing_ the provider to the injector at some level is mandatory.
 
-Providers can only export those that are declared:
+Providers can only export those that are passed:
 
 1. at the module level (ie in the array `providersPerMod`);
 2. or at the route level (ie in the array `providersPerRou`);
 3. or at the request level (ie in the array `providersPerReq`).
 
-It doesn't make sense to export providers declared at the application level (ie in the `providersPerApp` array), because _declaration_ them at the application level means _exporting_ them at that level.
+It doesn't make sense to export providers passed at the application level (ie in the `providersPerApp` array), because _passing_ them to the injector at application level means _exporting_ them at that level.
 
 It also does not make sense to export controllers, as exports apply only to providers.
 
 ## Export of the providers from the root module
 
-Exporting providers from the root module means that these providers become available to any service or controller in the application, with their declaration level preserved:
+Exporting providers from the root module means that these providers become available to any service or controller in the application, and their transmission level is preserved:
 
 ```ts
 import { RootModule } from '@ditsmod/core';
@@ -50,7 +50,7 @@ import { OtherModule } from './other.module';
 export class AppModule {}
 ```
 
-As you can see, in addition to exporting individual providers declared in the root module, you can also export entire modules.
+As you can see, in addition to exporting individual providers passed to root module injectors, you can also export entire modules.
 
 ## Import of the module
 
@@ -71,7 +71,7 @@ export class ThridModule {}
 
 For example, if `FirstModule` exports `SomeService`, then this service can now be used in `ThridModule` in any of its services or controllers.
 
-Note that when importing, the provider's declaration level remains the same as it was when exporting. For example, if `SomeService` was declared at the module level, then the same level will remain when importing.
+Please note that when importing, the transmission level of the provider remains the same as it was when exporting. For example, if `SomeService` was passed at the module level, it will remain at the same level during import.
 
 However, if `FirstModule` has controllers, they will be ignored in this import form. For Ditsmod to take into account the controllers from the imported module, you need to use an object with the following interface:
 
@@ -110,7 +110,7 @@ Although here `path` is an empty string, for Ditsmod the presence of `path` mean
 1. that the controllers from the imported module must also be taken into account;
 2. to use `path` as a prefix for all controllers imported from `FirstModule`.
 
-You should also keep in mind that the current module does not prohibit re-declaring the provider level already announced in the external module, but this is not recommended. If you need a provider from an external module, import this module completely.
+You should also keep in mind that it is not forbidden for injectors of the current module to transfer providers that are in an external module, but it is not recommended to do so. If you need a provider from an external module, import the module in its entirety.
 
 And if you want to use a provider that is not exported from an external module, it is also not recommended to do so, because you will rely on a non-public API, which can change at any time without notice.
 
