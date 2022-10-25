@@ -213,10 +213,10 @@ We can distinguish 4 main stages:
 
 1. Scanning metadata collected from module decorators, controllers and services.
 2. On the basis of scanned metadata, the formation of a hierarchy of injectors taking into account the import/export declarations of each module.
-3. Request an instance of a certain provider.
-4. Creation of an instance of this provider using previously created injectors.
+3. Request a specific dependency.
+4. Resolving this dependency using previously formed injectors.
 
-The first 2 stages occur during application initialization, before the web server starts.
+The first 2 stages occur during application initialization, before starting the web server, and the rest - during HTTP request processing.
 
 ## Multiple provider additions
 
@@ -225,7 +225,7 @@ In some module, a same provider can be added many times at the same level, but D
 This can be used, for example, as follows:
 
 1. first declare a some configuration provider **at the application level** in the root module;
-2. if you need to change this configuration only for a some module, declare the same configuration provider, but **at the module level**, and make its substitution.
+2. if you need to change this configuration only for a separate module, replace this provider, but **at the module level**.
 
 Also, if you are importing a some provider from an external module, and you have a provider with the same token in the current module, the local provider will have the highest priority, provided they are declared at the same level.
 
