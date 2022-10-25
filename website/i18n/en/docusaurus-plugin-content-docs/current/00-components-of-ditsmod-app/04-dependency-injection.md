@@ -6,15 +6,57 @@ sidebar_position: 4
 
 ## Базові поняття
 
-Ditsmod uses [@ts-stack/di][9] as a library for Dependency Injection, it has the following basic concepts:
+Ditsmod uses [@ts-stack/di][9] as a library for Dependency Injection (abbreviated - DI), it has the following basic concepts:
 
-- provider
+- dependence
 - token
+- provider
 - injector
 - hierarchy of injectors
-- substituting of providers
+- change of providers
 
-If greatly simplify the scheme of Dependency Injection (abbreviated - DI), we can say that DI accepts an array of providers at the input, and at the output it issues an injector that is able to create instances of the accepted providers taking into account the dependencies between them.
+## Dependency
+
+In the DI system, a dependency is everything that you specify in the constructors of controllers, services, and modules. For example, if you write the following in the service constructor:
+
+```ts
+import { Injectable } from '@ts-stack/di';
+
+import { FirstService } from './first.service';
+
+@Injectable()
+export class SecondService {
+  constructor(private firstService: FirstService) {}
+  // ...
+}
+```
+
+this means that `SecondService` has a dependency on `FirstService`, and expected that DI will be resolve this dependency as follows: before creating an instance of `SecondService`, an instance of `FirstService` will be created first.
+
+## Token
+
+A token is an identifier for a specific dependency. That is, the "dependency" is what you want to get in the final result in the constructor, and the "token" is the identifier by which this dependency will be looked up in DI. In the previous example in the constructor - `FirstService` is the dependency token.
+
+DI allows you to pass any value to the constructor for the same token. This feature is convenient to use for testing, because instead of a real dependency, you can pass a mock or stub to the constructor.
+
+## Provider
+
+DI resolves the dependency using the appropriate providers. For one dependency, you need to pass one or more providers to DI. In `@ts-stack/di`, the provider can be either a class or an object with the following properties:
+
+```txt
+{ provide: <token>, useClass: <class> },
+{ provide: <token>, useValue: <any value> },
+{ provide: <token>, useFactory: <function>, deps: [<array of providers>] },
+{ provide: <token>, useExisting: <another token> },
+```
+
+Every provider has a token, but not every token can be the provider. In fact, only a class can act both as a provider and as a token. And, for example, a text value can only be a token, but not a provider.
+
+Examples of the use of these objects are shown in the section [Switching providers][102].
+
+## Injector
+
+If greatly simplify the scheme of DI, we can say that DI accepts an array of providers at the input, and at the output it issues an injector that is able to create instances of the accepted providers taking into account the dependencies between them.
 
 If you abstract from Ditsmod, in practice it has approximately the following picture:
 
@@ -40,7 +82,13 @@ const service3 = injector.get(Service3);
 
 The `ReflectiveInjector.resolveAndCreate()` method takes an array of classes at the input and outputs a specific object called an injector. This injector obviously contains the transferred classes, and is able to create their instances, considering all chain of dependencies (`Service3` -> `Service2` -> `Service1`).
 
-That is, the work of the injector is that when it is asked `Service3`, it looks at the constructor of this class, sees the dependence on `Service2`, then sees its constructor, sees the dependence on `Service1`, looks at its constructor, does not find there dependencies, and therefore creates the first - instance `Service1`. Once you have the `Service1` instance, you can create the `Service2` instance, and once you've done that, you can finally create the `Service3` instance.
+What the injector does:
+
+- when `Service3` is requested, injector looks at the constructor of this class, sees the dependency on `Service2`;
+- then looks at the constructor in `Service2`, sees the dependency on `Service1`;
+- then looks at the constructor in `Service1`, does not find dependencies there, and therefore first creates an instance of `Service1`;
+- then creates an instance of `Service2`
+- and the last one creates the `Service3` instance.
 
 In this case, you may not know the whole chain of dependencies `Service3`, entrust this work to the injector, the main thing - give to its array all the necessary classes.
 
@@ -99,7 +147,7 @@ As you can see, when creating a child injector, it was not given `Service1`, so 
 parent.get(Service1) === child.get(Service1); // true
 ```
 
-And `Service2` has both injectors, so each of them will create its own local version, and that's why this expression returns `false`:
+And `Service2` has both injectors, so each of them will create its own local version of this service, and that's why this expression returns `false`:
 
 ```ts
 parent.get(Service2) === child.get(Service2); // false
@@ -111,7 +159,7 @@ Well, both injectors can't create a `Service4` instance because they weren't giv
 
 ### Hierarchy of controller injectors
 
-Any controller, in addition to its own injector at the request level, also has three parent injectors at the root, module, and application levels. These injectors are generated based on the data you pass in the following arrays:
+Any controller, in addition to its own injector at the request level, also has three parent injectors: at the root, module, and application levels. These injectors are generated based on the data you pass in the following arrays:
 
 - `providersPerApp`;
 - `providersPerMod`;
@@ -120,9 +168,9 @@ Any controller, in addition to its own injector at the request level, also has t
 
 You can find these property names either in the controller metadata or in the module metadata.
 
-### Hierarchy of provider injectors
+### Hierarchy of service injectors
 
-Unlike a controller, a provider of a given service may not have any parent injectors at all, although it may have as many as the controller does, depending on the **level** of the provider's declaration. In practice, this means that the provider is transferred to one (or several) of the above-mentioned arrays. For example, in the following example `SomeService` is declared at the request level and `OtherService` is declared at the module level:
+Unlike a controller, the injector of a certain service can be at any level: at the application, module, route, or request level. In practice, this means that the provider for this service is transferred to one (or several) of the above-mentioned arrays. For example, in the following example `SomeService` is declared at the request level and `OtherService` is declared at the module level:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -152,12 +200,12 @@ export class SecondService {
   constructor(private injector: Injector) {}
 
   someMethod() {
-    const firstService = this.injector.get(FirstService);
+    const firstService = this.injector.get(FirstService);  // Lazy loading of dependency
   }
 }
 ```
 
-Keep in mind that this way you get the injector that created the instance of this provider.
+Keep in mind that this way you get the injector that created the instance of this service.
 
 ## Basic stages of DI operation in Ditsmod applications
 
@@ -238,3 +286,4 @@ Remember that when DI cannot find the required provider, there are only three po
 [121]: ./providers-collisions
 [100]: #substitution-providers
 [101]: #hierarchy-of-injectors
+[102]: #substitution-providers
