@@ -31,7 +31,10 @@ export class SecondService {
 }
 ```
 
-this means that `SecondService` has a dependency on `FirstService`, and expected that DI will be resolve this dependency as follows: before creating an instance of `SecondService`, an instance of `FirstService` will be created first.
+this means that `SecondService` has a dependency on `FirstService`, and expected that DI will be resolve this dependency as follows:
+
+1. an instance of `FirstService` will be created first;
+2. to create an instance of `SecondService`, an instance of `FirstService` will be passed to its constructor.
 
 ## Token
 
@@ -50,9 +53,9 @@ DI resolves the dependency using the appropriate providers. For one dependency, 
 { provide: <token>, useExisting: <another token> },
 ```
 
-Every provider has a token, but not every token can be the provider. In fact, only a class can act both as a provider and as a token. And, for example, a text value can only be a token, but not a provider.
-
 Examples of the use of these objects are shown in the section [Switching providers][102].
+
+Every provider has a token, but not every token can be the provider. In fact, only a class can act both as a provider and as a token. And, for example, a text value can only be a token, but not a provider.
 
 ## Injector
 
