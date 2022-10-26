@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
 ---
 
 # HTTP Інтерсептори
@@ -79,5 +79,5 @@ export class SomeModule {}
 [3]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L41-L43
 [4]: ../02-published-modules/05-return.md
 [5]: https://expressjs.com/en/guide/writing-middleware.html
-[6]: ./04-dependency-injection.md
+[6]: ./02-dependency-injection.md
 [7]: https://github.com/ditsmod/ditsmod/blob/router-2.3.0/packages/core/src/services/pre-router.ts
