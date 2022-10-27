@@ -36,7 +36,7 @@
     "start17": "nodemon -e ts --exec ts-node --project examples/17-cors/tsconfig.json -r tsconfig-paths/register examples/17-cors/src/main.ts",
     "start18": "nodemon -e ts --exec ts-node --project examples/18-return/tsconfig.json -r tsconfig-paths/register examples/18-return/src/main.ts",
     "start19": "nodemon -e ts --exec ts-node --project examples/19-session-cookie/tsconfig.json -r tsconfig-paths/register examples/19-session-cookie/src/main.ts",
-    "start20": "echo 'Not implemented yet.'"
+    "start20": "nodemon -e ts --exec ts-node --project examples/20-versions/tsconfig.json -r tsconfig-paths/register examples/20-versions/src/main.ts"
   },
   "repository": {
     "type": "git",

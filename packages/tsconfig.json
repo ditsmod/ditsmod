@@ -10,6 +10,7 @@
     { "path": "i18n" },
     { "path": "cors" },
     { "path": "return" },
+    { "path": "versions" },
     { "path": "openapi-validation" }
   ]
 }
