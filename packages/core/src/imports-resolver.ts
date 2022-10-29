@@ -1,21 +1,21 @@
 import { Injector } from '@ts-stack/di';
 
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
-import { AppMetadataMap, ModuleType, ModuleWithParams, Scope, ServiceProvider } from './types/mix';
-import { getLastProviders } from './utils/get-last-providers';
-import { defaultProvidersPerReq } from './services/default-providers-per-req';
-import { ModuleManager } from './services/module-manager';
-import { getProvidersTargets, getTokens } from './utils/get-tokens';
-import { ImportedTokensMap } from './types/metadata-per-mod';
-import { RouteMeta } from './types/route-data';
+import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { RootMetadata } from './models/root-metadata';
+import { defaultExtensions, defaultExtensionsTokens } from './services/default-extensions';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
+import { defaultProvidersPerReq } from './services/default-providers-per-req';
+import { LogMediator } from './services/log-mediator';
+import { ModuleManager } from './services/module-manager';
+import { ImportedTokensMap } from './types/metadata-per-mod';
+import { AppMetadataMap, ModuleType, ModuleWithParams, Scope, ServiceProvider } from './types/mix';
+import { RouteMeta } from './types/route-data';
+import { getDependencies, ReflectiveDependecy } from './utils/get-dependecies';
+import { getLastProviders } from './utils/get-last-providers';
 import { getModuleName } from './utils/get-module-name';
 import { getProviderName } from './utils/get-provider-name';
-import { defaultExtensions, defaultExtensionsTokens } from './services/default-extensions';
-import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
-import { getDependencies, ReflectiveDependecy } from './utils/get-dependecies';
-import { LogMediator } from './services/log-mediator';
+import { getProvidersTargets, getTokens } from './utils/get-tokens';
 import { isClassProvider, isExistingProvider, isFactoryProvider, isValueProvider } from './utils/type-guards';
 
 type AnyModule = ModuleType | ModuleWithParams;

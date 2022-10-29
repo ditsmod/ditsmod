@@ -2,8 +2,8 @@ import type * as http from 'http';
 import type * as http2 from 'http2';
 import type * as https from 'https';
 
-import { RootMetadata } from './models/root-metadata';
 import { AppInitializer } from './app-initializer';
+import { RootMetadata } from './models/root-metadata';
 import { LogManager } from './services/log-manager';
 import { LogMediator } from './services/log-mediator';
 import { ModuleManager } from './services/module-manager';

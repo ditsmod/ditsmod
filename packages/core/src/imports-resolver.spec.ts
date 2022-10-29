@@ -1,11 +1,11 @@
 import 'reflect-metadata';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import { Injectable } from '@ts-stack/di';
-import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
 import { ImportsResolver } from './imports-resolver';
-import { ImportedTokensMap, MetadataPerMod1 } from './types/metadata-per-mod';
-import { ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
+import { ImportedTokensMap } from './types/metadata-per-mod';
+import { ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
 
 describe('ImportsResolver', () => {
   @Injectable()
@@ -58,7 +58,8 @@ describe('ImportsResolver', () => {
         mock.fixDependecy(Module1, Provider1);
         mock.fixDependecy(Module2, Provider2);
         mock.fixDependecy(Module3, Provider3);
-        const msg = 'Detected circular dependencies: [Provider2 in Module2] -> [Provider3 in Module3] -> [Provider2 in Module2]. It is started from [Provider1 in Module1].';
+        const msg =
+          'Detected circular dependencies: [Provider2 in Module2] -> [Provider3 in Module3] -> [Provider2 in Module2]. It is started from [Provider1 in Module1].';
         expect(() => mock.fixDependecy(Module2, Provider2)).toThrow(msg);
       });
     });

@@ -6,7 +6,7 @@ import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ControllersMetadata1 } from './types/controller-metadata';
-import { ImportObj, GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod';
+import { GlobalProviders, ImportObj, MetadataPerMod1 } from './types/metadata-per-mod';
 import {
   AnyObj,
   DecoratorMetadata,
@@ -19,12 +19,12 @@ import {
 } from './types/mix';
 import { deepFreeze } from './utils/deep-freeze';
 import { getCollisions } from './utils/get-collisions';
+import { getImportedProviders, getImportedTokens } from './utils/get-imports';
+import { getLastProviders } from './utils/get-last-providers';
+import { getModuleName } from './utils/get-module-name';
 import { getToken, getTokens } from './utils/get-tokens';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
 import { isController, isModuleWithParams, isRootModule } from './utils/type-guards';
-import { getImportedProviders, getImportedTokens } from './utils/get-imports';
-import { getModuleName } from './utils/get-module-name';
-import { getLastProviders } from './utils/get-last-providers';
 
 type AnyModule = ModuleType | ModuleWithParams;
 

@@ -1,7 +1,8 @@
 import 'reflect-metadata';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import { Injectable, ReflectiveInjector } from '@ts-stack/di';
-import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
+import { NODE_REQ } from './constans';
 import { Controller, ControllerMetadata } from './decorators/controller';
 import { Module } from './decorators/module';
 import { RootModule } from './decorators/root-module';
@@ -13,8 +14,9 @@ import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { LogManager } from './services/log-manager';
 import { LogMediator } from './services/log-mediator';
 import { ModuleManager } from './services/module-manager';
+import { Req } from './services/request';
 import { Logger } from './types/logger';
-import { ImportObj, GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod';
+import { GlobalProviders, ImportObj, MetadataPerMod1 } from './types/metadata-per-mod';
 import {
   DecoratorMetadata,
   ExtensionProvider,
@@ -25,8 +27,6 @@ import {
 } from './types/mix';
 import { Router } from './types/router';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports';
-import { NODE_REQ } from './constans';
-import { Req } from './services/request';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -74,7 +74,7 @@ describe('ModuleFactory', () => {
     ]);
     mock = injectorPerApp.get(MockModuleFactory);
     const logManager = new LogManager();
-    moduleManager = new ModuleManager(new LogMediator(logManager, {moduleName: 'fakeName'}));
+    moduleManager = new ModuleManager(new LogMediator(logManager, { moduleName: 'fakeName' }));
   });
 
   describe('exportGlobalProviders()', () => {
@@ -322,13 +322,19 @@ describe('ModuleFactory', () => {
         mock.bootstrap([], new GlobalProviders(), '', Module3, moduleManager, new Set());
 
         const mod0 = mock.appMetadataMap.get(Module0);
-        const providerPerMod0: ServiceProvider = { provide: ModuleExtract, useValue: { path: '', moduleName: 'Module0' } };
+        const providerPerMod0: ServiceProvider = {
+          provide: ModuleExtract,
+          useValue: { path: '', moduleName: 'Module0' },
+        };
         expect(mod0?.meta.providersPerMod).toEqual([providerPerMod0, Provider0]);
         expect(mod0?.meta.providersPerReq).toEqual([]);
         expect(mod0?.meta.ngMetadataName).toBe('Module');
 
         const mod1 = mock.appMetadataMap.get(Module1);
-        const providerPerMod1: ServiceProvider = { provide: ModuleExtract, useValue: { path: '', moduleName: 'Module1' } };
+        const providerPerMod1: ServiceProvider = {
+          provide: ModuleExtract,
+          useValue: { path: '', moduleName: 'Module1' },
+        };
         expect(mod1?.meta.providersPerMod).toEqual([providerPerMod1, Provider1, Provider2, Provider3]);
 
         const tokensPerMod = getImportedTokens(mod1?.importedTokensMap.perMod);
@@ -338,7 +344,10 @@ describe('ModuleFactory', () => {
         expect(mod1?.meta.ngMetadataName).toBe('Module');
 
         const mod2 = mock.appMetadataMap.get(Module2);
-        const providerPerMod2: ServiceProvider = { provide: ModuleExtract, useValue: { path: '', moduleName: 'Module2' } };
+        const providerPerMod2: ServiceProvider = {
+          provide: ModuleExtract,
+          useValue: { path: '', moduleName: 'Module2' },
+        };
         expect(mod2?.meta.providersPerMod).toEqual([providerPerMod2, Provider4, Provider5, Provider6]);
 
         const tokensPerMod2 = getImportedTokens(mod2?.importedTokensMap.perMod);
@@ -348,7 +357,10 @@ describe('ModuleFactory', () => {
         expect(mod2?.meta.ngMetadataName).toBe('Module');
 
         const mod3 = mock.appMetadataMap.get(Module3);
-        const providerPerMod3: ServiceProvider = { provide: ModuleExtract, useValue: { path: '', moduleName: 'Module3' } };
+        const providerPerMod3: ServiceProvider = {
+          provide: ModuleExtract,
+          useValue: { path: '', moduleName: 'Module3' },
+        };
         expect(mod3?.meta.providersPerMod).toEqual([providerPerMod3]);
 
         // expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overriddenProvider8]);
@@ -375,7 +387,10 @@ describe('ModuleFactory', () => {
 
         expect(mock.prefixPerMod).toBe('other');
         // expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
-        const providerPerMod: ServiceProvider = { provide: ModuleExtract, useValue: { path: 'other', moduleName: 'Module4' } };
+        const providerPerMod: ServiceProvider = {
+          provide: ModuleExtract,
+          useValue: { path: 'other', moduleName: 'Module4' },
+        };
         expect(mock.meta.providersPerMod).toEqual([providerPerMod]);
 
         expect(mock?.importedProvidersPerMod).toBeDefined();
@@ -500,7 +515,7 @@ describe('ModuleFactory', () => {
 
           @RootModule({
             imports: [Module2],
-            exports: [Module2]
+            exports: [Module2],
           })
           class AppModule {}
 
@@ -1129,9 +1144,7 @@ describe('ModuleFactory', () => {
             mock.bootstrap([Provider1], new GlobalProviders(), '', AppModule, moduleManager, new Set());
           }).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([]);
-          expect([...mock.importedProvidersPerReq]).toEqual([
-            [Provider1, { module: Module1, providers: [Provider1] }],
-          ]);
+          expect([...mock.importedProvidersPerReq]).toEqual([[Provider1, { module: Module1, providers: [Provider1] }]]);
         });
 
         it('point to current module to increase scope and to resolve case 2', () => {
@@ -1170,7 +1183,8 @@ describe('ModuleFactory', () => {
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
-          const msg = 'AppModule failed: Provider1 mapped with AppModule, but providersPerReq does not imports Provider1';
+          const msg =
+            'AppModule failed: Provider1 mapped with AppModule, but providersPerReq does not imports Provider1';
           expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
 

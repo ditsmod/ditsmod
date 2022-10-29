@@ -1,32 +1,32 @@
 import { InjectionToken } from '@ts-stack/di';
 
+import { EXTENSIONS_COUNTERS } from './constans';
 import { ImportsResolver } from './imports-resolver';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { RootMetadata } from './models/root-metadata';
 import { ModuleFactory } from './module-factory';
-import { MetadataPerMod1 } from './types/metadata-per-mod';
-import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
-import { RequestListener } from './types/server-options';
-import { getDuplicates } from './utils/get-duplicates';
-import { getModuleName } from './utils/get-module-name';
-import { getProvidersTargets, getToken, getTokens } from './utils/get-tokens';
-import { getCollisions } from './utils/get-collisions';
-import { normalizeProviders } from './utils/ng-utils';
-import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
-import { isMultiProvider, isRootModule } from './utils/type-guards';
 import { Counter } from './services/counter';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
+import { ExtensionsContext } from './services/extensions-context';
 import { ExtensionsManager } from './services/extensions-manager';
 import { LogManager } from './services/log-manager';
 import { LogMediator } from './services/log-mediator';
 import { ModuleManager } from './services/module-manager';
-import { PreRouter } from './services/pre-router';
-import { getLastProviders } from './utils/get-last-providers';
-import { ExtensionsContext } from './services/extensions-context';
-import { EXTENSIONS_COUNTERS } from './constans';
-import { LoggerConfig } from './types/logger';
-import { getModule } from './utils/get-module';
 import { PerAppService } from './services/per-app.service';
+import { PreRouter } from './services/pre-router';
+import { LoggerConfig } from './types/logger';
+import { MetadataPerMod1 } from './types/metadata-per-mod';
+import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
+import { RequestListener } from './types/server-options';
+import { getCollisions } from './utils/get-collisions';
+import { getDuplicates } from './utils/get-duplicates';
+import { getLastProviders } from './utils/get-last-providers';
+import { getModule } from './utils/get-module';
+import { getModuleName } from './utils/get-module-name';
+import { getProvidersTargets, getToken, getTokens } from './utils/get-tokens';
+import { normalizeProviders } from './utils/ng-utils';
+import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
+import { isMultiProvider, isRootModule } from './utils/type-guards';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();

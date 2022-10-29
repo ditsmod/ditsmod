@@ -1,13 +1,13 @@
 import 'reflect-metadata';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
-import { it, describe, beforeEach, expect } from '@jest/globals';
 
+import { AppInitializer } from './app-initializer';
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
 import { RootMetadata } from './models/root-metadata';
-import { AppInitializer } from './app-initializer';
 import { LogMediator } from './services/log-mediator';
 import { ModuleType, ModuleWithParams } from './types/mix';
 
