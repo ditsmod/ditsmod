@@ -42,7 +42,7 @@ export { RoutesExtension } from './extensions/routes.extension';
 export { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 export { ProvidersMetadata } from './models/providers-metadata';
 export { ModuleFactory } from './module-factory';
-export { AppInitializer } from './services/app-initializer';
+export { AppInitializer } from './app-initializer';
 export { ExtensionsManager } from './services/extensions-manager';
 export { ModuleManager } from './services/module-manager';
 export { ExtensionOptions } from './utils/get-extension-provider';

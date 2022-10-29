@@ -9,7 +9,7 @@ import { CanActivate } from '../types/mix';
 import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleManager } from '../services/module-manager';
-import { AppInitializer } from '../services/app-initializer';
+import { AppInitializer } from '../app-initializer';
 import { LogMediator } from '../services/log-mediator';
 import { LogManager } from '../services/log-manager';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';

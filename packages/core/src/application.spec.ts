@@ -7,7 +7,7 @@ import { it, describe, beforeEach, expect } from '@jest/globals';
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
 import { RootMetadata } from './models/root-metadata';
-import { AppInitializer } from './services/app-initializer';
+import { AppInitializer } from './app-initializer';
 import { LogMediator } from './services/log-mediator';
 import { ModuleType, ModuleWithParams } from './types/mix';
 

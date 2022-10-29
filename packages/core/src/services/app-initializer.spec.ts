@@ -7,7 +7,7 @@ import { RootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { Logger, LoggerConfig, LogLevel } from '../types/logger';
 import { Router } from '../types/router';
-import { AppInitializer } from './app-initializer';
+import { AppInitializer } from '../app-initializer';
 import { LogManager } from './log-manager';
 import { LogFilter, LogMediator } from './log-mediator';
 import { ModuleManager } from './module-manager';
