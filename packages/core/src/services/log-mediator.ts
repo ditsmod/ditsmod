@@ -57,21 +57,9 @@ export class LogMediator {
   static bufferLogs: boolean = true;
   static buffer: LogItem[] = [];
 
-  get logger() {
-    return this._logger;
-  }
-
-  set logger(logger: Logger) {
-    if (logger) {
-      this._logger = logger;
-    } else {
-      throw new TypeError('Can not set empty value to logger.');
-    }
-  }
-
   constructor(
     protected moduleExtract: ModuleExtract,
-    @Optional() protected _logger: Logger = new ConsoleLogger(),
+    @Optional() public logger: Logger = new ConsoleLogger(),
     @Optional() protected logFilter: LogFilter = new LogFilter(),
     @Optional() protected loggerConfig?: LoggerConfig
   ) {
@@ -81,11 +69,11 @@ export class LogMediator {
   protected setLog<T extends MsgLogFilter>(msgLevel: LogLevel, msgLogFilter: T, msg: any) {
     if (LogMediator.bufferLogs) {
       const loggerLevel: LogLevel =
-        typeof this._logger.getLevel == 'function' ? this._logger.getLevel() : this.loggerConfig!.level;
+        typeof this.logger.getLevel == 'function' ? this.logger.getLevel() : this.loggerConfig!.level;
 
       LogMediator.buffer.push({
         moduleName: this.moduleExtract.moduleName,
-        logger: this._logger,
+        logger: this.logger,
         loggerLevel,
         loggerLogFilter: this.logFilter || new LogFilter(),
         msgLevel,
@@ -201,7 +189,7 @@ export class LogMediator {
     return [
       {
         moduleName: this.moduleExtract.moduleName,
-        logger: this._logger,
+        logger: this.logger,
         loggerLevel: 'info',
         loggerLogFilter: new LogFilter(),
         msgLevel: 'warn',
