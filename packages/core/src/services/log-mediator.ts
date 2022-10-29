@@ -8,7 +8,6 @@ import { getImportedTokens } from '../utils/get-imports';
 import { getModuleName } from '../utils/get-module-name';
 import { getProviderName } from '../utils/get-provider-name';
 import { ConsoleLogger } from './console-logger';
-import { LogManager } from './log-manager';
 import { ModuleExtract } from '../models/module-extract';
 
 /**
@@ -55,15 +54,8 @@ export class LogMediator {
    *
    * If you need logging all buffered messages, call `log.flush()`.
    */
-  set bufferLogs(val: boolean) {
-    this.logManager.bufferLogs = val;
-  }
-  get bufferLogs() {
-    return this.logManager.bufferLogs;
-  }
-  get buffer() {
-    return this.logManager.buffer;
-  }
+  static bufferLogs: boolean = true;
+  static buffer: LogItem[] = [];
 
   get logger() {
     return this._logger;
@@ -78,7 +70,6 @@ export class LogMediator {
   }
 
   constructor(
-    protected logManager: LogManager,
     protected moduleExtract: ModuleExtract,
     @Optional() protected _logger: Logger = new ConsoleLogger(),
     @Optional() protected logFilter: LogFilter = new LogFilter(),
@@ -87,16 +78,12 @@ export class LogMediator {
     this.loggerConfig = loggerConfig || new LoggerConfig();
   }
 
-  getLogManager() {
-    return this.logManager;
-  }
-
   protected setLog<T extends MsgLogFilter>(msgLevel: LogLevel, msgLogFilter: T, msg: any) {
-    if (this.logManager.bufferLogs) {
+    if (LogMediator.bufferLogs) {
       const loggerLevel: LogLevel =
         typeof this._logger.getLevel == 'function' ? this._logger.getLevel() : this.loggerConfig!.level;
 
-      this.logManager.buffer.push({
+      LogMediator.buffer.push({
         moduleName: this.moduleExtract.moduleName,
         logger: this._logger,
         loggerLevel,
@@ -115,7 +102,7 @@ export class LogMediator {
    * @todo Refactor this method.
    */
   flush() {
-    const { buffer } = this.logManager;
+    const { buffer } = LogMediator;
     this.renderLogs(this.applyLogFilter(buffer));
     buffer.splice(0);
   }
@@ -180,7 +167,7 @@ export class LogMediator {
     if (this.loggerConfig?.disableRaisedLogs) {
       return;
     }
-    this.raisedLogs = this.applyCustomLogFilter(this.buffer, logFilter, 'raised log: ');
+    this.raisedLogs = this.applyCustomLogFilter(LogMediator.buffer, logFilter, 'raised log: ');
     this.renderLogs(this.raisedLogs, logLevel);
   }
 

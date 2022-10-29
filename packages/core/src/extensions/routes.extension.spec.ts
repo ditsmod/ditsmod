@@ -11,7 +11,6 @@ import { RootMetadata } from '../models/root-metadata';
 import { ModuleManager } from '../services/module-manager';
 import { AppInitializer } from '../app-initializer';
 import { LogMediator } from '../services/log-mediator';
-import { LogManager } from '../services/log-manager';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { PerAppService } from '../services/per-app.service';
 
@@ -31,14 +30,12 @@ xdescribe('RoutesExtension', () => {
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
-    const logManager = new LogManager();
-    const log = new LogMediator(logManager, { moduleName: 'fakeName' });
+    const log = new LogMediator({ moduleName: 'fakeName' });
     moduleManager = new ModuleManager(log);
     const injectorPerApp = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,
       { provide: ModuleManager, useValue: moduleManager },
       { provide: RootMetadata, useValue: new RootMetadata() },
-      { provide: LogManager, useValue: new LogManager() },
       MockAppInitializer,
     ]);
     mockAppInitializer = injectorPerApp.get(MockAppInitializer);

@@ -11,7 +11,6 @@ import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj, Extension, Exten
 import { LoggerConfig } from '../types/logger';
 import { ConsoleLogger } from './console-logger';
 import { LogMediator } from './log-mediator';
-import { LogManager } from './log-manager';
 import { Controller } from '../decorators/controller';
 import { isMultiProvider } from '../utils/type-guards';
 
@@ -42,8 +41,7 @@ describe('ModuleManager', () => {
   beforeEach(() => {
     const config = new LoggerConfig();
     const logger = new ConsoleLogger(config);
-    const logManager = new LogManager();
-    const logMediator = new LogMediator(logManager, { moduleName: 'fakeName', path: '' }, logger);
+    const logMediator = new LogMediator({ moduleName: 'fakeName', path: '' }, logger);
     mock = new MockModuleManager(logMediator);
   });
 

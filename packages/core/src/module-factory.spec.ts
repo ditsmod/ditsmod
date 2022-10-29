@@ -11,7 +11,6 @@ import { ModuleExtract } from './models/module-extract';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ModuleFactory } from './module-factory';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
-import { LogManager } from './services/log-manager';
 import { LogMediator } from './services/log-mediator';
 import { ModuleManager } from './services/module-manager';
 import { Req } from './services/request';
@@ -69,12 +68,10 @@ describe('ModuleFactory', () => {
     const injectorPerApp = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,
       { provide: Logger, useClass: MyLogger },
-      { provide: LogManager, useValue: new LogManager() },
       MockModuleFactory,
     ]);
     mock = injectorPerApp.get(MockModuleFactory);
-    const logManager = new LogManager();
-    moduleManager = new ModuleManager(new LogMediator(logManager, { moduleName: 'fakeName' }));
+    moduleManager = new ModuleManager(new LogMediator({ moduleName: 'fakeName' }));
   });
 
   describe('exportGlobalProviders()', () => {
@@ -95,7 +92,6 @@ describe('ModuleFactory', () => {
       @RootModule({
         imports: [Module2],
         exports: [Module2],
-        providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
       class AppModule {}
 
@@ -121,7 +117,6 @@ describe('ModuleFactory', () => {
       @RootModule({
         imports: [Module2],
         exports: [Module2],
-        providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
       class AppModule {}
 
@@ -151,7 +146,6 @@ describe('ModuleFactory', () => {
       @RootModule({
         imports: [Module2],
         exports: [Module2],
-        providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
       class AppModule {}
 
@@ -183,7 +177,6 @@ describe('ModuleFactory', () => {
       @RootModule({
         imports: [Module2],
         exports: [Module2],
-        providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
       })
       class AppModule {}
 
@@ -313,7 +306,6 @@ describe('ModuleFactory', () => {
         const injectorPerApp = ReflectiveInjector.resolveAndCreate([
           ...defaultProvidersPerApp,
           { provide: Logger, useClass: MyLogger },
-          { provide: LogManager, useValue: new LogManager() },
         ]);
 
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
@@ -371,14 +363,9 @@ describe('ModuleFactory', () => {
       it('case 2', () => {
         @RootModule({
           imports: [Module3],
-          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
         })
         class Module4 {}
-        const providers: ServiceProvider[] = [
-          ...defaultProvidersPerApp,
-          { provide: Router, useValue: 'fake' },
-          { provide: LogManager, useValue: new LogManager() },
-        ];
+        const providers: ServiceProvider[] = [...defaultProvidersPerApp, { provide: Router, useValue: 'fake' }];
         const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
@@ -452,7 +439,6 @@ describe('ModuleFactory', () => {
         const injectorPerApp = ReflectiveInjector.resolveAndCreate([
           ...defaultProvidersPerApp,
           { provide: Logger, useClass: MyLogger },
-          LogManager,
         ]);
 
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
@@ -480,13 +466,9 @@ describe('ModuleFactory', () => {
 
         @RootModule({
           imports: [Module6],
-          providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
         })
         class Module7 {}
-        const providers = [
-          ...defaultProvidersPerApp,
-          { provide: LogManager, useValue: new LogManager() },
-        ] as ServiceProvider[];
+        const providers = [...defaultProvidersPerApp] as ServiceProvider[];
         const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
@@ -735,10 +717,7 @@ describe('ModuleFactory', () => {
 
           @RootModule({
             imports: [Module1, Module2],
-            providersPerApp: [
-              { provide: Router, useValue: 'fake' },
-              { provide: LogManager, useValue: new LogManager() },
-            ],
+            providersPerApp: [{ provide: Router, useValue: 'fake' }],
           })
           class AppModule {}
 
@@ -919,7 +898,6 @@ describe('ModuleFactory', () => {
 
           @RootModule({
             imports: [Module2],
-            providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
           })
           class AppModule {}
 
@@ -981,7 +959,6 @@ describe('ModuleFactory', () => {
 
           @RootModule({
             imports: [Module0, Module1],
-            providersPerApp: [{ provide: LogManager, useValue: new LogManager() }],
           })
           class AppModule {}
 

@@ -4,7 +4,6 @@ import type * as https from 'https';
 
 import { AppInitializer } from './app-initializer';
 import { RootMetadata } from './models/root-metadata';
-import { LogManager } from './services/log-manager';
 import { LogMediator } from './services/log-mediator';
 import { ModuleManager } from './services/module-manager';
 import { ModuleType, ModuleWithParams } from './types/mix';
@@ -27,7 +26,7 @@ export class Application {
           resolve({ server });
         });
       } catch (err) {
-        this.logMediator.bufferLogs = false;
+        LogMediator.bufferLogs = false;
         this.logMediator.flush();
         reject(err);
       }
@@ -35,7 +34,7 @@ export class Application {
   }
 
   protected async init(appModule: ModuleType) {
-    this.logMediator = new LogMediator(new LogManager(), { moduleName: 'AppModule' });
+    this.logMediator = new LogMediator({ moduleName: 'AppModule' });
     this.mergeRootMetadata(appModule);
     const appInitializer = this.getAppInitializer(appModule, this.logMediator);
     // Before init custom user logger, works default logger.

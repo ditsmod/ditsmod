@@ -5,7 +5,6 @@ import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@j
 import { Extension } from '../types/mix';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ExtensionsManager } from './extensions-manager';
-import { LogManager } from './log-manager';
 import { ExtensionsContext } from './extensions-context';
 import { EXTENSIONS_COUNTERS } from '../constans';
 
@@ -77,7 +76,6 @@ describe('ExtensionsManager circular dependencies', () => {
   }
 
   beforeEach(() => {
-    const logManager = new LogManager();
     const injector = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,
       MockExtensionsManager,
@@ -86,7 +84,6 @@ describe('ExtensionsManager circular dependencies', () => {
       { provide: MY_EXTENSIONS2, useClass: Extension2, multi: true },
       { provide: MY_EXTENSIONS3, useClass: Extension3, multi: true },
       { provide: MY_EXTENSIONS4, useClass: Extension4, multi: true },
-      { provide: LogManager, useValue: logManager },
       { provide: EXTENSIONS_COUNTERS, useValue: new Map() },
     ]);
     mock = injector.get(MockExtensionsManager) as MockExtensionsManager;
@@ -97,17 +94,20 @@ describe('ExtensionsManager circular dependencies', () => {
   });
 
   it('MY_EXTENSIONS2 has circular dependencies', async () => {
-    const msg = 'Detected circular dependencies: MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3. It is started from MY_EXTENSIONS2 -> Extension2.';
+    const msg =
+      'Detected circular dependencies: MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3. It is started from MY_EXTENSIONS2 -> Extension2.';
     await expect(mock.init(MY_EXTENSIONS2)).rejects.toThrowError(msg);
   });
 
   it('MY_EXTENSIONS3 has circular dependencies', async () => {
-    const msg = 'Detected circular dependencies: MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3.';
+    const msg =
+      'Detected circular dependencies: MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3.';
     await expect(mock.init(MY_EXTENSIONS3)).rejects.toThrowError(msg);
   });
 
   it('MY_EXTENSIONS4 has circular dependencies', async () => {
-    const msg = 'Detected circular dependencies: MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4.';
+    const msg =
+      'Detected circular dependencies: MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4.';
     await expect(mock.init(MY_EXTENSIONS4)).rejects.toThrowError(msg);
   });
 });

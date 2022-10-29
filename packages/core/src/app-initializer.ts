@@ -9,7 +9,6 @@ import { Counter } from './services/counter';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { ExtensionsContext } from './services/extensions-context';
 import { ExtensionsManager } from './services/extensions-manager';
-import { LogManager } from './services/log-manager';
 import { LogMediator } from './services/log-mediator';
 import { ModuleManager } from './services/module-manager';
 import { PerAppService } from './services/per-app.service';
@@ -168,6 +167,8 @@ export class AppInitializer {
   }
 
   async reinit(autocommit: boolean = true): Promise<void | Error> {
+    LogMediator.bufferLogs = true;
+    LogMediator.buffer = [];
     const previousLogger = this.logMediator.logger;
     this.logMediator.startReinitApp(this);
     // Before init new logger, works previous logger.
@@ -175,7 +176,7 @@ export class AppInitializer {
       this.bootstrapProvidersPerApp();
     } catch (err) {
       this.logMediator.logger = previousLogger;
-      this.logMediator.bufferLogs = false;
+      LogMediator.bufferLogs = false;
       this.logMediator.flush();
       return this.handleReinitError(err);
     }
@@ -191,7 +192,7 @@ export class AppInitializer {
     } catch (err) {
       return this.handleReinitError(err);
     } finally {
-      this.logMediator.bufferLogs = false;
+      LogMediator.bufferLogs = false;
       this.logMediator.flush();
     }
   }
@@ -207,12 +208,10 @@ export class AppInitializer {
   }
 
   protected addDefaultProvidersPerApp() {
-    const logManager = this.logMediator.getLogManager();
     this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
       { provide: RootMetadata, useValue: this.rootMeta },
       { provide: ModuleManager, useValue: this.moduleManager },
-      { provide: LogManager, useValue: logManager },
       { provide: AppInitializer, useValue: this }
     );
   }
@@ -315,7 +314,7 @@ export class AppInitializer {
   };
 
   flushLogs() {
-    this.logMediator.bufferLogs = false;
+    LogMediator.bufferLogs = false;
     this.logMediator.flush();
   }
 
