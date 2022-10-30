@@ -14,6 +14,9 @@ export class ConsoleLogger extends Logger {
 
   protected consoleLoggerFn(level: LogLevel) {
     const callback: AnyFn = (...args: any[]) => {
+      if (this.config!.hideLogs) {
+        return;
+      }
       const allLevels: LogLevel[] = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
       const index = allLevels.indexOf(this.config!.level);
       const availableLevels = allLevels.slice(index);

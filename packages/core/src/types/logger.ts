@@ -3,6 +3,7 @@ import { Injectable, Optional } from '@ts-stack/di';
 export class LoggerConfig {
   /**
    * @param level Log level (trace, debug, info etc.)
+   * @param hideLogs Specifies whether or not to hide logs.
    * @param disableRaisedLogs If `LogMediator` is used to throw an error,
    * this option allows you to raise the log level. For example,
    * if you set the log level to `info` and the router throws an error
@@ -11,7 +12,7 @@ export class LoggerConfig {
    * 
    * Default - false.
    */
-  constructor(public level: LogLevel = 'info', public disableRaisedLogs?: boolean) {}
+  constructor(public level: LogLevel = 'info', public hideLogs?: boolean, public disableRaisedLogs?: boolean) {}
 }
 
 const msg = 'You need to implement "%s" method in "%s"';
