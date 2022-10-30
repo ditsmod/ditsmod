@@ -15,6 +15,7 @@ import { Controller } from '../decorators/controller';
 import { ModuleExtract } from '../models/module-extract';
 import { ImportObj, MetadataPerMod1 } from '../types/metadata-per-mod';
 import { RootMetadata } from '../models/root-metadata';
+import { Providers } from '../utils/providers';
 
 describe('AppInitializer', () => {
   type AnyModule = ModuleType | ModuleWithParams;
@@ -540,23 +541,22 @@ describe('AppInitializer', () => {
       mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
 
       // Simulation of a call from the AppModule
-      const config2 = new LoggerConfig('trace');
       @RootModule({
         providersPerApp: [
           Router,
-          { provide: LoggerConfig, useValue: config2 },
-          { provide: LogMediator, useClass: LogMediatorMock },
+          ...new Providers()
+            .useLogConfig({ level: 'trace' })
+            .useLogMediator(LogMediatorMock)
         ],
       })
       class AppModule {}
 
       moduleManager.scanRootModule(AppModule);
       mock.bootstrapProvidersPerApp();
-      // Here log used from Application
+      // Here logMediator used from Application
       logMediator.flush();
-      mock.flushLogs();
-      expect(loggerSpy.mock.calls[0]).toEqual(['info']);
-      expect(loggerSpy.mock.calls[1]).toEqual(['trace']);
+      // mock.flushLogs();
+      expect(loggerSpy).nthCalledWith(1, 'info');
     });
   });
 

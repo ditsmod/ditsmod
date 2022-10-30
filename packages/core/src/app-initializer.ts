@@ -36,7 +36,7 @@ export class AppInitializer {
   constructor(
     protected rootMeta: RootMetadata,
     protected moduleManager: ModuleManager,
-    protected logMediator: LogMediator
+    public logMediator: LogMediator
   ) {}
 
   /**
@@ -311,14 +311,4 @@ export class AppInitializer {
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
     await this.preRouter.requestListener(nodeReq, nodeRes);
   };
-
-  flushLogs() {
-    LogMediator.bufferLogs = false;
-    this.logMediator.flush();
-  }
-
-  setLogAboutServerListen() {
-    const { listenOptions } = this.rootMeta;
-    this.logMediator.serverListen(this, listenOptions.host!, listenOptions.port!);
-  }
 }

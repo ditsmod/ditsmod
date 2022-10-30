@@ -22,13 +22,12 @@ export class Application {
         const appInitializer = await this.init(appModule);
         const server = this.createServer(appInitializer.requestListener);
         server.listen(this.rootMeta.listenOptions, () => {
-          appInitializer.setLogAboutServerListen();
+          const { listenOptions } = this.rootMeta;
+          this.logMediator.serverListen(this, listenOptions.host!, listenOptions.port!);
           resolve({ server });
         });
       } catch (err) {
-        LogMediator.bufferLogs = false;
-        // Here works default logger.
-        this.logMediator.flush();
+        this.flushLogs();
         reject(err);
       }
     });
@@ -41,14 +40,10 @@ export class Application {
     // Here, before init custom logger, works default logger.
     appInitializer.bootstrapProvidersPerApp();
     // Here, after init custom logger, works this custom logger.
-    try {
-      await appInitializer.bootstrapModulesAndExtensions();
-      this.checkSecureServerOption(appModule);
-    } catch (err) {
-      appInitializer.flushLogs();
-      throw err;
-    }
-    appInitializer.flushLogs();
+    this.logMediator = appInitializer.logMediator;
+    await appInitializer.bootstrapModulesAndExtensions();
+    this.checkSecureServerOption(appModule);
+    this.flushLogs();
     return appInitializer;
   }
 
@@ -75,6 +70,11 @@ export class Application {
     if (serverOptions?.isHttp2SecureServer && !(this.rootMeta.httpModule as typeof http2).createSecureServer) {
       throw new TypeError(`serverModule.createSecureServer() not found (see ${appModule.name} settings)`);
     }
+  }
+
+  protected flushLogs() {
+    LogMediator.bufferLogs = false;
+    this.logMediator.flush();
   }
 
   protected createServer(requestListener: RequestListener) {
