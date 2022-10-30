@@ -36,7 +36,7 @@ export class Application {
   protected async init(appModule: ModuleType) {
     this.logMediator = new LogMediator({ moduleName: 'AppModule' });
     this.mergeRootMetadata(appModule);
-    const appInitializer = this.getAppInitializer(appModule, this.logMediator);
+    const appInitializer = this.scanRootAndGetAppInitializer(appModule, this.logMediator);
     // Here, before init custom logger, works default logger.
     appInitializer.bootstrapProvidersPerApp();
     // Here, after init custom logger, works this custom logger.
@@ -59,7 +59,7 @@ export class Application {
     listenOptions.port = listenOptions.port || 3000;
   }
 
-  protected getAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
+  protected scanRootAndGetAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
     const moduleManager = new ModuleManager(logMediator);
     moduleManager.scanRootModule(appModule);
     return new AppInitializer(this.rootMeta, moduleManager, logMediator);

@@ -24,8 +24,8 @@ describe('Application', () => {
       return super.checkSecureServerOption(appModule);
     }
 
-    override getAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
-      return super.getAppInitializer(appModule, logMediator);
+    override scanRootAndGetAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
+      return super.scanRootAndGetAppInitializer(appModule, logMediator);
     }
 
     override mergeRootMetadata(module: ModuleType | ModuleWithParams) {
@@ -59,12 +59,12 @@ describe('Application', () => {
     });
   });
 
-  describe('getAppInitializer()', () => {
+  describe('scanRootAndGetAppInitializer()', () => {
     @RootModule()
     class AppModule {}
 
     it('should return instance of AppInitializer', () => {
-      expect(mock.getAppInitializer(AppModule, {} as LogMediator)).toBeInstanceOf(AppInitializer);
+      expect(mock.scanRootAndGetAppInitializer(AppModule, {} as LogMediator)).toBeInstanceOf(AppInitializer);
     });
   });
 
