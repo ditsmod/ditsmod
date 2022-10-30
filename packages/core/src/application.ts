@@ -16,16 +16,20 @@ export class Application {
   protected rootMeta: RootMetadata;
   protected logMediator: LogMediator;
 
-  bootstrap(appModule: ModuleType) {
+  bootstrap(appModule: ModuleType, listen: boolean = true) {
     return new Promise<{ server: Server }>(async (resolve, reject) => {
       try {
         const appInitializer = await this.init(appModule);
         const server = this.createServer(appInitializer.requestListener);
-        server.listen(this.rootMeta.listenOptions, () => {
-          const { listenOptions } = this.rootMeta;
-          this.logMediator.serverListen(this, listenOptions.host!, listenOptions.port!);
+        if (listen) {
+          server.listen(this.rootMeta.listenOptions, () => {
+            const { listenOptions } = this.rootMeta;
+            this.logMediator.serverListen(this, listenOptions.host!, listenOptions.port!);
+            resolve({ server });
+          });
+        } else {
           resolve({ server });
-        });
+        }
       } catch (err) {
         this.flushLogs();
         reject(err);
