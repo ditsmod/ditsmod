@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import request from 'supertest';
-import { describe, it } from '@jest/globals';
+import { describe, it, jest } from '@jest/globals';
 import { Application } from '@ditsmod/core';
 
 import { AppModule } from '../src/app/app.module';
@@ -18,6 +18,7 @@ describe('02-controller-error-handler', () => {
   });
 
   it('should throw an error', async () => {
+    console.log = jest.fn(); // Hide logs
     const { server } = await new Application().bootstrap(AppModule, false);
     await request(server)
       .get('/throw-error')
