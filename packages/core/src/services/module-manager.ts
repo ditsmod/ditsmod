@@ -54,7 +54,7 @@ export class ModuleManager {
   constructor(protected logMediator: LogMediator) {}
 
   /**
-   * Returns a snapshot of NormalizedModuleMetadata for the root module.
+   * Creates a snapshot of NormalizedModuleMetadata for the root module, stores locally and returns it.
    */
   scanRootModule(appModule: ModuleType) {
     if (!getModuleMetadata(appModule, true)) {

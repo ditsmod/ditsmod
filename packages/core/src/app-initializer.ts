@@ -221,8 +221,8 @@ export class AppInitializer {
    */
   protected createInjectorAndSetLogMediator() {
     const injectorPerApp = this.perAppService.reinitInjector(this.meta.providersPerApp);
-    const log = injectorPerApp.get(LogMediator) as LogMediator;
-    this.logMediator = log;
+    const logMediator = injectorPerApp.get(LogMediator) as LogMediator;
+    this.logMediator = logMediator;
   }
 
   protected bootstrapModuleFactory(moduleManager: ModuleManager) {
@@ -246,12 +246,11 @@ export class AppInitializer {
     mExtensionsCounters: Map<ServiceProvider, number>
   ) {
     const extensionsContext = new ExtensionsContext();
-    const lastIndex = aMetadataPerMod1.length - 1;
     const injectorPerApp = this.perAppService.injector.resolveAndCreateChild([
       { provide: PerAppService, useValue: this.perAppService },
     ]);
-    for (let i = 0; i <= lastIndex; i++) {
-      const metadataPerMod1 = aMetadataPerMod1[lastIndex - i];
+    for (let i = 0; i < aMetadataPerMod1.length; i++) {
+      const metadataPerMod1 = aMetadataPerMod1[i];
       const { extensionsProviders, providersPerMod, name: moduleName, module } = metadataPerMod1.meta;
       const mod = getModule(module);
       const injectorPerMod = injectorPerApp.resolveAndCreateChild([mod, LogMediator, ...providersPerMod]);
@@ -318,7 +317,7 @@ export class AppInitializer {
     this.logMediator.flush();
   }
 
-  serverListen() {
+  setLogAboutServerListen() {
     const { listenOptions } = this.rootMeta;
     this.logMediator.serverListen(this, listenOptions.host!, listenOptions.port!);
   }

@@ -22,11 +22,12 @@ export class Application {
         const appInitializer = await this.init(appModule);
         const server = this.createServer(appInitializer.requestListener);
         server.listen(this.rootMeta.listenOptions, () => {
-          appInitializer.serverListen();
+          appInitializer.setLogAboutServerListen();
           resolve({ server });
         });
       } catch (err) {
         LogMediator.bufferLogs = false;
+        // Here works default logger.
         this.logMediator.flush();
         reject(err);
       }
@@ -37,9 +38,9 @@ export class Application {
     this.logMediator = new LogMediator({ moduleName: 'AppModule' });
     this.mergeRootMetadata(appModule);
     const appInitializer = this.getAppInitializer(appModule, this.logMediator);
-    // Before init custom user logger, works default logger.
+    // Here, before init custom logger, works default logger.
     appInitializer.bootstrapProvidersPerApp();
-    // After init custom user logger, works this custom logger.
+    // Here, after init custom logger, works this custom logger.
     try {
       await appInitializer.bootstrapModulesAndExtensions();
       this.checkSecureServerOption(appModule);
