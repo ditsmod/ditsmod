@@ -6,7 +6,7 @@ export function patchLogger(config: LoggerConfig) {
   logger.level = config.level;
 
   // Logger must have `log` method.
-  (logger as unknown as Logger).log = (level: string, ...args: any[]) => {
+  (logger as unknown as Logger).log = (level: LogLevel, ...args: any[]) => {
     const [arg1, ...rest] = args;
     logger[level](arg1, ...rest);
   };
