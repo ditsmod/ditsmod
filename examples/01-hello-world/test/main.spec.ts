@@ -7,7 +7,7 @@ import { AppModule } from '../src/app/app.module';
 
 
 describe('01-hello-world', () => {
-  it('works controller', async () => {
+  it('controller works', async () => {
     const { server } = await new Application().bootstrap(AppModule, false);
     await request(server)
       .get('/')

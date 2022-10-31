@@ -9,7 +9,7 @@ import { AppModule } from '../src/app/app.module';
 describe('09-one-extension', () => {
   console.log = jest.fn(); // Hide logs
 
-  it('works controller', async () => {
+  it('controller works', async () => {
     const { server } = await new Application().bootstrap(AppModule, false);
     await request(server)
       .get('/')
