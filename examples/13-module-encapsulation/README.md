@@ -21,4 +21,9 @@ From second terminal:
 
 ```bash
 curl -isS localhost:3000
+curl -isS localhost:3000
+curl -isS localhost:3000
+curl -isS localhost:3000/first
+curl -isS localhost:3000/second
+curl -isS localhost:3000/third
 ```
