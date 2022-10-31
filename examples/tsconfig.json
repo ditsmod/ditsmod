@@ -22,6 +22,7 @@
       "@ditsmod/router": ["../packages/router/src"],
       "@ditsmod/body-parser": ["../packages/body-parser/src"],
       "@ditsmod/openapi": ["../packages/openapi/src"],
+      "@ditsmod/jwt": ["../packages/jwt/src"],
     }
   }
 }

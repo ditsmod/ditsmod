@@ -1,0 +1,37 @@
+import 'reflect-metadata';
+import request from 'supertest';
+import { describe, it, jest } from '@jest/globals';
+import { Application } from '@ditsmod/core';
+
+import { AppModule } from '../src/app/app.module';
+
+
+describe('13-module-encapsulation', () => {
+  console.log = jest.fn(); // Hide logs
+
+  it('works controller', async () => {
+    const { server } = await new Application().bootstrap(AppModule, false);
+    await request(server)
+      .get('/')
+      .expect(200)
+      .expect(`Hello World!\n`);
+
+    const response = await request(server)
+      .get('/get-token-for/Kostia')
+      .expect(200);
+
+    await request(server)
+      .get('/profile')
+      .expect(401);
+
+    await request(server)
+      .get('/profile')
+      .set('Authorization', `Bearer ${response.text}`)
+      .expect(200)
+      .expect('Hello, Kostia! You have successfully authorized.')
+      ;
+
+
+    server.close();
+  });
+});
