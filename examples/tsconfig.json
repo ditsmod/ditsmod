@@ -22,6 +22,7 @@
       "@ditsmod/cors": ["../packages/cors/src"],
       "@ditsmod/return": ["../packages/return/src"],
       "@ditsmod/router": ["../packages/router/src"],
+      "@ditsmod/session-cookie": ["../packages/session-cookie/src"],
       "@ditsmod/body-parser": ["../packages/body-parser/src"],
       "@ditsmod/openapi": ["../packages/openapi/src"],
       "@ditsmod/openapi-validation": ["../packages/openapi-validation/src"],

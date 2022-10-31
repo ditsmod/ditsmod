@@ -8,6 +8,7 @@ module.exports = {
     '@ditsmod/return': '<rootDir>/../packages/return/src',
     '@ditsmod/router': '<rootDir>/../packages/router/src',
     '@ditsmod/body-parser': '<rootDir>/../packages/body-parser/src',
+    '@ditsmod/session-cookie': '<rootDir>/../packages/session-cookie/src',
     '@ditsmod/openapi': '<rootDir>/../packages/openapi/src',
     '@ditsmod/openapi-validation': '<rootDir>/../packages/openapi-validation/src',
     '@ditsmod/jwt': '<rootDir>/../packages/jwt/src',

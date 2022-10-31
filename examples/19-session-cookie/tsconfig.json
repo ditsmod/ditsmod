@@ -4,14 +4,17 @@
     "outDir": "dist",
     "baseUrl": "./",
     "paths": {
-      "@ditsmod/body-parser": ["../../packages/body-parser/src"],
       "@ditsmod/core": ["../../packages/core/src"],
+      "@ditsmod/cors": ["../../packages/cors/src"],
+      "@ditsmod/return": ["../../packages/cors/return"],
       "@ditsmod/router": ["../../packages/router/src"],
       "@ditsmod/openapi": ["../../packages/openapi/src"],
-      "@ditsmod/jwt": ["../../packages/jwt/src"],
       "@ditsmod/session-cookie": ["../../packages/session-cookie/src"],
-      "@ditsmod/i18n": ["../../packages/i18n/src"]
+      "@ditsmod/jwt": ["../../packages/jwt/src"],
+      "@ditsmod/i18n": ["../../packages/i18n/src"],
+      "@dict/first/*": ["./src/app/first/locales/current/_base-en/*"],
+      "@dict/second/*": ["./src/app/second/locales/current/_base-en/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "test"]
 }
