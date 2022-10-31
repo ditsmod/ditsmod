@@ -6,5 +6,6 @@ module.exports = {
     '@ditsmod/core': '<rootDir>/../packages/core/src',
     '@ditsmod/router': '<rootDir>/../packages/router/src',
     '@ditsmod/body-parser': '<rootDir>/../packages/body-parser/src',
+    '@ditsmod/openapi': '<rootDir>/../packages/openapi/src',
   },
 };

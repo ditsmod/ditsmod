@@ -11,7 +11,7 @@ export class FirstController {
 
   @Route('GET')
   hello() {
-    this.res.send('Hello, World!');
+    this.res.send('Hello World!\n');
   }
 
   @OasRoute('GET', 'guard', [BasicGuard])
