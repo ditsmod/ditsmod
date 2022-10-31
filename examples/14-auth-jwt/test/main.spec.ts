@@ -6,7 +6,7 @@ import { Application } from '@ditsmod/core';
 import { AppModule } from '../src/app/app.module';
 
 
-describe('13-module-encapsulation', () => {
+describe('14-auth-jwt', () => {
   console.log = jest.fn(); // Hide logs
 
   it('works controller', async () => {

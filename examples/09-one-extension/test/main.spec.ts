@@ -6,7 +6,7 @@ import { Application } from '@ditsmod/core';
 import { AppModule } from '../src/app/app.module';
 
 
-describe('08-http-interceptors', () => {
+describe('09-one-extension', () => {
   console.log = jest.fn(); // Hide logs
 
   it('works controller', async () => {
