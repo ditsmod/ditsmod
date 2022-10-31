@@ -5,5 +5,6 @@ module.exports = {
   moduleNameMapper: {
     '@ditsmod/core': '<rootDir>/../packages/core/src',
     '@ditsmod/router': '<rootDir>/../packages/router/src',
+    '@ditsmod/body-parser': '<rootDir>/../packages/body-parser/src',
   },
 };

@@ -6,11 +6,11 @@ export class SomeController {
 
   @Route('GET')
   tellHello() {
-    this.res.send('Hello, you need send POST request\n');
+    this.res.send('Hello, you need send POST request');
   }
 
   @Route('POST')
   ok() {
-    this.res.sendText(this.req.body);
+    this.res.sendJson(this.req.body);
   }
 }
