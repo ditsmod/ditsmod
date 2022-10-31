@@ -1,5 +1,26 @@
+<a name="core-2.27.0"></a>
+# [core-2.27.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.27.0) (2022-10-31)
+
+### Feature
+
+- Added second parameter for `application.bootstrap()`. Now you can test:
+
+```ts
+it('controller should works', async () => {
+  const { server } = await new Application().bootstrap(AppModule, false);
+  await request(server)
+    .get('/')
+    .expect(200)
+    .expect('Hello World!');
+
+  server.close();
+});
+```
+
+- Adding `hideLogs` options for logger config.
+
 <a name="core-2.26.0"></a>
-# [core-2.26.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.26.0) (2022-10-19)
+## [core-2.26.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.26.0) (2022-10-19)
 
 ### BREAKING CHANGES
 
