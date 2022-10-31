@@ -14,5 +14,5 @@ yarn boot
 Run test:
 
 ```bash
-yarn test --config examples/12-testing/jest.config.ts
+yarn test-examples examples/12
 ```
