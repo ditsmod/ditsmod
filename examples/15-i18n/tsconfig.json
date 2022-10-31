@@ -4,7 +4,6 @@
     "outDir": "dist",
     "baseUrl": "./",
     "paths": {
-      "@ditsmod/body-parser": ["../../packages/body-parser/src"],
       "@ditsmod/core": ["../../packages/core/src"],
       "@ditsmod/router": ["../../packages/router/src"],
       "@ditsmod/openapi": ["../../packages/openapi/src"],
@@ -14,5 +13,5 @@
       "@dict/second/*": ["./src/app/second/locales/current/_base-en/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "test"]
 }
