@@ -5,6 +5,7 @@ module.exports = {
   moduleNameMapper: {
     '@ditsmod/core': '<rootDir>/../packages/core/src',
     '@ditsmod/cors': '<rootDir>/../packages/cors/src',
+    '@ditsmod/return': '<rootDir>/../packages/return/src',
     '@ditsmod/router': '<rootDir>/../packages/router/src',
     '@ditsmod/body-parser': '<rootDir>/../packages/body-parser/src',
     '@ditsmod/openapi': '<rootDir>/../packages/openapi/src',

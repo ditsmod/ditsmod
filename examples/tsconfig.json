@@ -20,6 +20,7 @@
     "paths": {
       "@ditsmod/core": ["../packages/core/src"],
       "@ditsmod/cors": ["../packages/cors/src"],
+      "@ditsmod/return": ["../packages/return/src"],
       "@ditsmod/router": ["../packages/router/src"],
       "@ditsmod/body-parser": ["../packages/body-parser/src"],
       "@ditsmod/openapi": ["../packages/openapi/src"],
