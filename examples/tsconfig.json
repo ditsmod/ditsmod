@@ -19,9 +19,11 @@
     "allowJs": false,
     "paths": {
       "@ditsmod/core": ["../packages/core/src"],
+      "@ditsmod/cors": ["../packages/cors/src"],
       "@ditsmod/router": ["../packages/router/src"],
       "@ditsmod/body-parser": ["../packages/body-parser/src"],
       "@ditsmod/openapi": ["../packages/openapi/src"],
+      "@ditsmod/openapi-validation": ["../packages/openapi-validation/src"],
       "@ditsmod/jwt": ["../packages/jwt/src"],
       "@ditsmod/i18n": ["../packages/i18n/src"],
       "@dict/first/*": ["./15-i18n/src/app/first/locales/current/_base-en/*"],

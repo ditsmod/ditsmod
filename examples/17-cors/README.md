@@ -37,7 +37,7 @@ curl -isS localhost:3000 \
 -H 'Access-Control-Request-Headers: X-PINGOTHER, Content-Type'
 
 # CORS request with credentials
-curl -isS localhost:3000/credentials
+curl -isS localhost:3000/credentials -H 'Origin: https://example.com'
 ```
 
 For more info see:

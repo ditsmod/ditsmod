@@ -4,9 +4,11 @@ module.exports = {
   modulePathIgnorePatterns: ['<rootDir>/dist/'],
   moduleNameMapper: {
     '@ditsmod/core': '<rootDir>/../packages/core/src',
+    '@ditsmod/cors': '<rootDir>/../packages/cors/src',
     '@ditsmod/router': '<rootDir>/../packages/router/src',
     '@ditsmod/body-parser': '<rootDir>/../packages/body-parser/src',
     '@ditsmod/openapi': '<rootDir>/../packages/openapi/src',
+    '@ditsmod/openapi-validation': '<rootDir>/../packages/openapi-validation/src',
     '@ditsmod/jwt': '<rootDir>/../packages/jwt/src',
     '@ditsmod/i18n': '<rootDir>/../packages/i18n/src',
     "@dict/first/first.dict": '<rootDir>/15-i18n/src/app/first/locales/current/_base-en/first.dict',
