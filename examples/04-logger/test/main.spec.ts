@@ -1,12 +1,15 @@
 import 'reflect-metadata';
 import request from 'supertest';
-import { describe, it, jest } from '@jest/globals';
+import { describe, it, jest, beforeAll } from '@jest/globals';
 import { Application } from '@ditsmod/core';
 
 import { AppModule } from '../src/app/app.module';
 
 describe('04-logger', () => {
-  console.log = jest.fn(); // Hide logs
+  beforeAll(() => {
+    console.log = jest.fn() as any; // Hide logs
+    process.stdout.write = jest.fn() as any; // Hide logs
+  });
 
   it('should works', async () => {
     const { server } = await new Application().bootstrap(AppModule, false);

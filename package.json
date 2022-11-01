@@ -11,8 +11,8 @@
     "example": "examples"
   },
   "scripts": {
-    "test": "jest",
-    "test-examples": "jest --config examples/jest.config.ts",
+    "test": "jest --silent",
+    "test-examples": "jest --silent --config examples/jest.config.ts",
     "boot": "lerna bootstrap",
     "pub": "lerna publish from-package",
     "build": "yarn clean && tsc -b -f packages",
