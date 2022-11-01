@@ -23,9 +23,10 @@ export class Application {
     return new Promise<{ server: Server }>(async (resolve, reject) => {
       try {
         this.initRootModule(appModule);
-        const requestListener = await this.getRequestListener(appModule, this.logMediator);
+        const appInitializer = this.scanRootModuleAndGetAppInitializer(appModule, this.logMediator);
+        await this.bootstrapApplication(appInitializer);
         this.flushLogs();
-        const server = this.createServer(requestListener);
+        const server = this.createServer(appInitializer.requestListener);
         if (listen) {
           server.listen(this.rootMeta.listenOptions, () => {
             const { listenOptions } = this.rootMeta;
@@ -68,24 +69,18 @@ export class Application {
     }
   }
 
-  protected async getRequestListener(appModule: ModuleType, logMediator: LogMediator) {
-    const appInitializer = this.scanRootModuleAndGetAppInitializer(appModule, logMediator);
-    await this.initAppAndSetLogMediator(appInitializer);
-    return appInitializer.requestListener;
-  }
-
   protected scanRootModuleAndGetAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
     const moduleManager = new ModuleManager(logMediator);
     moduleManager.scanRootModule(appModule);
     return new AppInitializer(this.rootMeta, moduleManager, logMediator);
   }
 
-  protected initAppAndSetLogMediator(appInitializer: AppInitializer) {
+  protected async bootstrapApplication(appInitializer: AppInitializer) {
     // Here, before init custom logger, works default logger.
     appInitializer.bootstrapProvidersPerApp();
     // Here, after init custom logger, works this custom logger.
     this.logMediator = appInitializer.logMediator;
-    return appInitializer.bootstrapModulesAndExtensions();
+    await appInitializer.bootstrapModulesAndExtensions();
   }
 
   protected flushLogs() {

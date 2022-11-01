@@ -27,14 +27,6 @@ describe('Application', () => {
     override scanRootModuleAndGetAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
       return super.scanRootModuleAndGetAppInitializer(appModule, logMediator);
     }
-
-    override getRequestListener(appModule: ModuleType, logMediator: LogMediator) {
-      return super.getRequestListener(appModule, logMediator);
-    }
-
-    override initAppAndSetLogMediator(appInitializer: AppInitializer) {
-      return super.initAppAndSetLogMediator(appInitializer);
-    }
   }
 
   let mock: ApplicationMock;
@@ -109,19 +101,6 @@ describe('Application', () => {
 
     it('should return instance of AppInitializer', () => {
       expect(mock.scanRootModuleAndGetAppInitializer(AppModule, {} as LogMediator)).toBeInstanceOf(AppInitializer);
-    });
-  });
-
-  describe('getRequestListener()', () => {
-    @RootModule()
-    class AppModule {}
-
-    it('should return instance of RequestListener', async () => {
-      // Disable initAppAndSetLogMediator()
-      jest.spyOn(mock, 'initAppAndSetLogMediator').mockImplementation((...args) => jest.fn() as any);
-
-      const fn = await mock.getRequestListener(AppModule, {} as LogMediator);
-      expect(fn).toBeInstanceOf(Function);
     });
   });
 });
