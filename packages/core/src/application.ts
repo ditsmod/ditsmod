@@ -16,11 +16,16 @@ export class Application {
   protected rootMeta: RootMetadata;
   protected logMediator: LogMediator;
 
+  /**
+   * @param listen If this parameter seted to `false` then `server.listen()` is not called. By default `true`.
+   */
   bootstrap(appModule: ModuleType, listen: boolean = true) {
     return new Promise<{ server: Server }>(async (resolve, reject) => {
       try {
-        const appInitializer = await this.init(appModule);
-        const server = this.createServer(appInitializer.requestListener);
+        this.initRootModule(appModule);
+        const requestListener = await this.getRequestListener(appModule, this.logMediator);
+        this.flushLogs();
+        const server = this.createServer(requestListener);
         if (listen) {
           server.listen(this.rootMeta.listenOptions, () => {
             const { listenOptions } = this.rootMeta;
@@ -31,24 +36,17 @@ export class Application {
           resolve({ server });
         }
       } catch (err) {
+        this.logMediator.internalServerError(this, err);
         this.flushLogs();
         reject(err);
       }
     });
   }
 
-  protected async init(appModule: ModuleType) {
+  protected initRootModule(appModule: ModuleType) {
     this.logMediator = new LogMediator({ moduleName: 'AppModule' });
     this.mergeRootMetadata(appModule);
-    const appInitializer = this.scanRootAndGetAppInitializer(appModule, this.logMediator);
-    // Here, before init custom logger, works default logger.
-    appInitializer.bootstrapProvidersPerApp();
-    // Here, after init custom logger, works this custom logger.
-    this.logMediator = appInitializer.logMediator;
-    await appInitializer.bootstrapModulesAndExtensions();
-    this.checkSecureServerOption(appModule);
-    this.flushLogs();
-    return appInitializer;
+    this.checkSecureServerOption(appModule.name);
   }
 
   /**
@@ -63,17 +61,31 @@ export class Application {
     listenOptions.port = listenOptions.port || 3000;
   }
 
-  protected scanRootAndGetAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
+  protected checkSecureServerOption(rootModuleName: string) {
+    const serverOptions = this.rootMeta.serverOptions as Http2SecureServerOptions;
+    if (serverOptions?.isHttp2SecureServer && !(this.rootMeta.httpModule as typeof http2).createSecureServer) {
+      throw new TypeError(`serverModule.createSecureServer() not found (see ${rootModuleName} settings)`);
+    }
+  }
+
+  protected async getRequestListener(appModule: ModuleType, logMediator: LogMediator) {
+    const appInitializer = this.scanRootModuleAndGetAppInitializer(appModule, logMediator);
+    await this.initAppAndSetLogMediator(appInitializer);
+    return appInitializer.requestListener;
+  }
+
+  protected scanRootModuleAndGetAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
     const moduleManager = new ModuleManager(logMediator);
     moduleManager.scanRootModule(appModule);
     return new AppInitializer(this.rootMeta, moduleManager, logMediator);
   }
 
-  protected checkSecureServerOption(appModule: ModuleType) {
-    const serverOptions = this.rootMeta.serverOptions as Http2SecureServerOptions;
-    if (serverOptions?.isHttp2SecureServer && !(this.rootMeta.httpModule as typeof http2).createSecureServer) {
-      throw new TypeError(`serverModule.createSecureServer() not found (see ${appModule.name} settings)`);
-    }
+  protected initAppAndSetLogMediator(appInitializer: AppInitializer) {
+    // Here, before init custom logger, works default logger.
+    appInitializer.bootstrapProvidersPerApp();
+    // Here, after init custom logger, works this custom logger.
+    this.logMediator = appInitializer.logMediator;
+    return appInitializer.bootstrapModulesAndExtensions();
   }
 
   protected flushLogs() {
@@ -81,7 +93,7 @@ export class Application {
     this.logMediator.flush();
   }
 
-  protected createServer(requestListener: RequestListener) {
+  protected createServer(requestListener: RequestListener): Server {
     if (isHttp2SecureServerOptions(this.rootMeta.serverOptions)) {
       const serverModule = this.rootMeta.httpModule as typeof http2;
       return serverModule.createSecureServer(this.rootMeta.serverOptions, requestListener);

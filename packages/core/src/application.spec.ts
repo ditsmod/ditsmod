@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { beforeEach, describe, expect, it } from '@jest/globals';
+import { beforeEach, fdescribe, describe, expect, it } from '@jest/globals';
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
@@ -16,20 +16,16 @@ describe('Application', () => {
     override rootMeta = new RootMetadata();
     override logMediator: LogMediator;
 
-    override init(appModule: ModuleType) {
-      return super.init(appModule);
-    }
-
-    override checkSecureServerOption(appModule: ModuleType) {
-      return super.checkSecureServerOption(appModule);
-    }
-
-    override scanRootAndGetAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
-      return super.scanRootAndGetAppInitializer(appModule, logMediator);
-    }
-
     override mergeRootMetadata(module: ModuleType | ModuleWithParams) {
       return super.mergeRootMetadata(module);
+    }
+
+    override checkSecureServerOption(rootModuleName: string) {
+      return super.checkSecureServerOption(rootModuleName);
+    }
+
+    override scanRootModuleAndGetAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
+      return super.scanRootModuleAndGetAppInitializer(appModule, logMediator);
     }
   }
 
@@ -59,15 +55,6 @@ describe('Application', () => {
     });
   });
 
-  describe('scanRootAndGetAppInitializer()', () => {
-    @RootModule()
-    class AppModule {}
-
-    it('should return instance of AppInitializer', () => {
-      expect(mock.scanRootAndGetAppInitializer(AppModule, {} as LogMediator)).toBeInstanceOf(AppInitializer);
-    });
-  });
-
   describe('checkSecureServerOption()', () => {
     class Provider1 {}
     class Provider2 {}
@@ -80,27 +67,36 @@ describe('Application', () => {
     it('should not to throw with http2 and isHttp2SecureServer == true', () => {
       mock.rootMeta.serverOptions = { isHttp2SecureServer: true };
       mock.rootMeta.httpModule = http2;
-      expect(() => mock.checkSecureServerOption(AppModule)).not.toThrow();
+      expect(() => mock.checkSecureServerOption(AppModule.name)).not.toThrow();
     });
 
     it('should to throw with http and isHttp2SecureServer == true', () => {
       mock.rootMeta.serverOptions = { isHttp2SecureServer: true };
       mock.rootMeta.httpModule = http;
       const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
-      expect(() => mock.checkSecureServerOption(AppModule)).toThrowError(msg);
+      expect(() => mock.checkSecureServerOption(AppModule.name)).toThrowError(msg);
     });
 
     it('should not to throw with http and isHttp2SecureServer == false', () => {
       mock.rootMeta.httpModule = http;
       const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
-      expect(() => mock.checkSecureServerOption(AppModule)).not.toThrowError(msg);
+      expect(() => mock.checkSecureServerOption(AppModule.name)).not.toThrowError(msg);
     });
 
     it('should to throw with https and isHttp2SecureServer == true', () => {
       mock.rootMeta.serverOptions = { isHttp2SecureServer: true };
       mock.rootMeta.httpModule = https;
       const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
-      expect(() => mock.checkSecureServerOption(AppModule)).toThrowError(msg);
+      expect(() => mock.checkSecureServerOption(AppModule.name)).toThrowError(msg);
+    });
+  });
+
+  describe('scanRootModuleAndGetAppInitializer()', () => {
+    @RootModule()
+    class AppModule {}
+
+    it('should return instance of AppInitializer', () => {
+      expect(mock.scanRootModuleAndGetAppInitializer(AppModule, {} as LogMediator)).toBeInstanceOf(AppInitializer);
     });
   });
 });
