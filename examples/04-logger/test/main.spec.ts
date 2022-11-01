@@ -7,8 +7,9 @@ import { AppModule } from '../src/app/app.module';
 
 describe('04-logger', () => {
   beforeAll(() => {
-    console.log = jest.fn() as any; // Hide logs
-    process.stdout.write = jest.fn() as any; // Hide logs
+    // Hide logs
+    console.log = jest.fn() as any;
+    process.stdout.write = jest.fn() as any;
   });
 
   it('should works', async () => {
