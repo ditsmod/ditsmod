@@ -1,6 +1,6 @@
 import { Logger, LoggerConfig, Module, Providers } from '@ditsmod/core';
-import { patchLogger } from './patch-logger';
 
+import { patchLogger } from './patch-logger';
 import { WinstonController } from './winston.controller';
 
 @Module({
