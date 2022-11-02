@@ -10,6 +10,7 @@ import { RootModule } from './decorators/root-module';
 import { RootMetadata } from './models/root-metadata';
 import { LogMediator } from './services/log-mediator';
 import { ModuleType, ModuleWithParams } from './types/mix';
+import { Router } from './types/router';
 
 describe('Application', () => {
   class ApplicationMock extends Application {
@@ -26,6 +27,10 @@ describe('Application', () => {
 
     override scanRootModuleAndGetAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
       return super.scanRootModuleAndGetAppInitializer(appModule, logMediator);
+    }
+
+    override bootstrapApplication(appInitializer: AppInitializer) {
+      return super.bootstrapApplication(appInitializer);
     }
   }
 
@@ -101,6 +106,20 @@ describe('Application', () => {
 
     it('should return instance of AppInitializer', () => {
       expect(mock.scanRootModuleAndGetAppInitializer(AppModule, {} as LogMediator)).toBeInstanceOf(AppInitializer);
+    });
+  });
+
+  describe('bootstrapApplication()', () => {
+    @RootModule({
+      providersPerApp: [{ provide: Router, useValue: {}}]
+    })
+    class AppModule {}
+
+    it('should replace logMediator during call bootstrapApplication()', () => {
+      const appInitializer = mock.scanRootModuleAndGetAppInitializer(AppModule, {} as LogMediator);
+      const { logMediator } = mock;
+      mock.bootstrapApplication(appInitializer);
+      expect(mock.logMediator !== logMediator).toBe(true);
     });
   });
 });
