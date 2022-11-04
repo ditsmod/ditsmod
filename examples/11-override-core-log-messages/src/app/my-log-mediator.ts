@@ -1,6 +1,6 @@
-import { LogMediator, MsgLogFilter } from '@ditsmod/core';
+import { SystemLogMediator, MsgLogFilter } from '@ditsmod/core';
 
-export class MyLogMediator extends LogMediator {
+export class MyLogMediator extends SystemLogMediator {
   /**
    * Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"
    */
