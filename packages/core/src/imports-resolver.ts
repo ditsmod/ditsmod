@@ -6,7 +6,6 @@ import { RootMetadata } from './models/root-metadata';
 import { defaultExtensions, defaultExtensionsTokens } from './services/default-extensions';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
-import { LogMediator } from './log-mediator/log-mediator';
 import { ModuleManager } from './services/module-manager';
 import { ImportedTokensMap } from './types/metadata-per-mod';
 import { AppMetadataMap, ModuleType, ModuleWithParams, Scope, ServiceProvider } from './types/mix';
@@ -17,6 +16,7 @@ import { getModuleName } from './utils/get-module-name';
 import { getProviderName } from './utils/get-provider-name';
 import { getProvidersTargets, getTokens } from './utils/get-tokens';
 import { isClassProvider, isExistingProvider, isFactoryProvider, isValueProvider } from './utils/type-guards';
+import { SystemLogMediator } from './log-mediator/system-log-mediator';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -31,7 +31,7 @@ export class ImportsResolver {
     private moduleManager: ModuleManager,
     protected appMetadataMap: AppMetadataMap,
     protected providersPerApp: ServiceProvider[],
-    protected log: LogMediator
+    protected log: SystemLogMediator
   ) {}
 
   resolve() {

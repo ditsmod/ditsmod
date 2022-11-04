@@ -26,6 +26,7 @@ import { getProvidersTargets, getToken, getTokens } from './utils/get-tokens';
 import { normalizeProviders } from './utils/ng-utils';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
 import { isMultiProvider, isRootModule } from './utils/type-guards';
+import { SystemLogMediator } from './log-mediator/system-log-mediator';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();
@@ -36,7 +37,7 @@ export class AppInitializer {
   constructor(
     protected rootMeta: RootMetadata,
     protected moduleManager: ModuleManager,
-    public logMediator: LogMediator
+    public systemLogMediator: SystemLogMediator
   ) {}
 
   /**
@@ -157,7 +158,7 @@ export class AppInitializer {
       this.moduleManager,
       appMetadataMap,
       this.meta.providersPerApp,
-      this.logMediator
+      this.systemLogMediator
     );
     const mExtensionsCounters = importsResolver.resolve();
     const aMetadataPerMod1 = [...appMetadataMap].map(([, metadataPerMod1]) => metadataPerMod1);
@@ -169,15 +170,15 @@ export class AppInitializer {
   async reinit(autocommit: boolean = true): Promise<void | Error> {
     LogMediator.bufferLogs = true;
     LogMediator.buffer = [];
-    const previousLogger = this.logMediator.logger;
-    this.logMediator.startReinitApp(this);
+    const previousLogger = this.systemLogMediator.logger;
+    this.systemLogMediator.startReinitApp(this);
     // Before init new logger, works previous logger.
     try {
       this.bootstrapProvidersPerApp();
     } catch (err) {
-      this.logMediator.logger = previousLogger;
+      this.systemLogMediator.logger = previousLogger;
       LogMediator.bufferLogs = false;
-      this.logMediator.flush();
+      this.systemLogMediator.flush();
       return this.handleReinitError(err);
     }
     // After init new logger, works new logger.
@@ -186,24 +187,24 @@ export class AppInitializer {
       if (autocommit) {
         this.moduleManager.commit();
       } else {
-        this.logMediator.skippingAutocommitModulesConfig(this);
+        this.systemLogMediator.skippingAutocommitModulesConfig(this);
       }
-      this.logMediator.finishReinitApp(this);
+      this.systemLogMediator.finishReinitApp(this);
     } catch (err) {
       return this.handleReinitError(err);
     } finally {
       LogMediator.bufferLogs = false;
-      this.logMediator.flush();
+      this.systemLogMediator.flush();
     }
   }
 
   protected async handleReinitError(err: unknown) {
-    this.logMediator.printReinitError(this, err);
-    this.logMediator.startRollbackModuleConfigChanges(this);
+    this.systemLogMediator.printReinitError(this, err);
+    this.systemLogMediator.startRollbackModuleConfigChanges(this);
     this.moduleManager.rollback();
     this.bootstrapProvidersPerApp();
     await this.bootstrapModulesAndExtensions();
-    this.logMediator.successfulRollbackModuleConfigChanges(this);
+    this.systemLogMediator.successfulRollbackModuleConfigChanges(this);
     return err as Error;
   }
 
@@ -221,14 +222,14 @@ export class AppInitializer {
    */
   protected createInjectorAndSetLogMediator() {
     const injectorPerApp = this.perAppService.reinitInjector(this.meta.providersPerApp);
-    const logMediator = injectorPerApp.get(LogMediator) as LogMediator;
-    this.logMediator = logMediator;
+    const systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
+    this.systemLogMediator = systemLogMediator;
   }
 
   protected bootstrapModuleFactory(moduleManager: ModuleManager) {
     const moduleFactory1 = new ModuleFactory();
     const globalProviders = moduleFactory1.exportGlobalProviders(moduleManager, this.meta.providersPerApp);
-    this.logMediator.printGlobalProviders(this, globalProviders);
+    this.systemLogMediator.printGlobalProviders(this, globalProviders);
     const moduleFactory2 = new ModuleFactory();
     const appModule = moduleManager.getMetadata('root', true).module;
     return moduleFactory2.bootstrap(
@@ -255,10 +256,10 @@ export class AppInitializer {
       const mod = getModule(module);
       const injectorPerMod = injectorPerApp.resolveAndCreateChild([mod, LogMediator, ...providersPerMod]);
       injectorPerMod.get(mod); // Call module constructor.
-      const logMediator = injectorPerMod.get(LogMediator) as LogMediator;
+      const systemLogMediator = injectorPerMod.get(SystemLogMediator) as SystemLogMediator;
       const loggerConfig = injectorPerMod.get(LoggerConfig, new LoggerConfig()) as LoggerConfig;
-      logMediator.logger.setLevel(loggerConfig.level);
-      logMediator.startExtensionsModuleInit(this);
+      systemLogMediator.logger.setLevel(loggerConfig.level);
+      systemLogMediator.startExtensionsModuleInit(this);
       this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
         ExtensionsManager,
@@ -282,7 +283,7 @@ export class AppInitializer {
         extensionsManager.beforeTokens = beforeTokens;
         await extensionsManager.init(groupToken);
       }
-      this.logExtensionsStatistic(logMediator);
+      this.logExtensionsStatistic(systemLogMediator);
     }
   }
 
@@ -298,13 +299,13 @@ export class AppInitializer {
     });
   }
 
-  protected logExtensionsStatistic(logMediator: LogMediator) {
+  protected logExtensionsStatistic(systemLogMediator: SystemLogMediator) {
     const counter = this.perAppService.injector.get(Counter) as Counter;
     const extensions = counter.getInitedExtensions();
     const names = Array.from(extensions)
       .map((e) => e.constructor.name)
       .join(', ');
-    logMediator.totalInitedExtensions(this, extensions.size, names);
+    systemLogMediator.totalInitedExtensions(this, extensions.size, names);
     counter.resetInitedExtensionsSet();
   }
 

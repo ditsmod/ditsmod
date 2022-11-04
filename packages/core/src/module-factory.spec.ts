@@ -11,7 +11,6 @@ import { ModuleExtract } from './models/module-extract';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ModuleFactory } from './module-factory';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
-import { LogMediator } from './log-mediator/log-mediator';
 import { ModuleManager } from './services/module-manager';
 import { Req } from './services/request';
 import { Logger } from './types/logger';
@@ -26,6 +25,7 @@ import {
 } from './types/mix';
 import { Router } from './types/router';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports';
+import { SystemLogMediator } from './log-mediator/system-log-mediator';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -71,7 +71,7 @@ describe('ModuleFactory', () => {
       MockModuleFactory,
     ]);
     mock = injectorPerApp.get(MockModuleFactory);
-    moduleManager = new ModuleManager(new LogMediator({ moduleName: 'fakeName' }));
+    moduleManager = new ModuleManager(new SystemLogMediator({ moduleName: 'fakeName' }));
   });
 
   describe('exportGlobalProviders()', () => {

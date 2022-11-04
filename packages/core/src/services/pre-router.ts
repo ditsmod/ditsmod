@@ -4,13 +4,13 @@ import { HttpMethod } from '../types/mix';
 import { Router } from '../types/router';
 import { NodeResponse, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
-import { LogMediator } from '../log-mediator/log-mediator';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 @Injectable()
 export class PreRouter {
   constructor(
     protected router: Router,
-    protected logMediator: LogMediator
+    protected systemLogMediator: SystemLogMediator
   ) {}
 
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
@@ -35,7 +35,7 @@ export class PreRouter {
    * @param err An error to logs it (not sends).
    */
   protected sendInternalServerError(nodeRes: NodeResponse, err: Error) {
-    this.logMediator.internalServerError(this, err);
+    this.systemLogMediator.internalServerError(this, err);
     nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
     nodeRes.end();
   }

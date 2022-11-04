@@ -29,6 +29,7 @@ export { DefaultHttpFrontend } from './services/default-http-frontend';
 export { ExtensionsContext } from './services/extensions-context';
 export { ExtensionsManager } from './services/extensions-manager';
 export { LogFilter, LogMediator, MsgLogFilter } from './log-mediator/log-mediator';
+export { SystemLogMediator } from './log-mediator/system-log-mediator';
 export { ModuleManager } from './services/module-manager';
 export { PerAppService } from './services/per-app.service';
 export { PreRouter } from './services/pre-router';

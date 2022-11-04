@@ -10,9 +10,9 @@ import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleManager } from '../services/module-manager';
 import { AppInitializer } from '../app-initializer';
-import { LogMediator } from '../log-mediator/log-mediator';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { PerAppService } from '../services/per-app.service';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 xdescribe('RoutesExtension', () => {
   @Injectable()
@@ -30,7 +30,7 @@ xdescribe('RoutesExtension', () => {
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
-    const log = new LogMediator({ moduleName: 'fakeName' });
+    const log = new SystemLogMediator({ moduleName: 'fakeName' });
     moduleManager = new ModuleManager(log);
     const injectorPerApp = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,

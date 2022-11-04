@@ -9,9 +9,9 @@ import { PathParam } from '../types/router';
 import { NODE_RES, PATH_PARAMS, QUERY_STRING } from '../constans';
 import { NodeRequest, NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
-import { LogMediator } from '../log-mediator/log-mediator';
 import { RouteMeta } from '../types/route-data';
 import { RootMetadata } from '../models/root-metadata';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 @Injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
@@ -63,8 +63,8 @@ export class DefaultHttpFrontend implements HttpFrontend {
   }
 
   protected canNotActivateRoute(nodeReq: NodeRequest, nodeRes: NodeResponse, status?: Status) {
-    const logMediator = this.injector.get(LogMediator) as LogMediator;
-    logMediator.youCannotActivateRoute(this, nodeReq.method!, nodeReq.url!);
+    const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
+    systemLogMediator.youCannotActivateRoute(this, nodeReq.method!, nodeReq.url!);
     nodeRes.statusCode = status || Status.UNAUTHORIZED;
     nodeRes.end();
   }

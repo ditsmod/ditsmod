@@ -5,6 +5,7 @@ import type * as https from 'https';
 import { AppInitializer } from './app-initializer';
 import { RootMetadata } from './models/root-metadata';
 import { LogMediator } from './log-mediator/log-mediator';
+import { SystemLogMediator } from './log-mediator/system-log-mediator';
 import { ModuleManager } from './services/module-manager';
 import { ModuleType, ModuleWithParams } from './types/mix';
 import { Http2SecureServerOptions, RequestListener, Server } from './types/server-options';
@@ -14,7 +15,7 @@ import { isHttp2SecureServerOptions } from './utils/type-guards';
 
 export class Application {
   protected rootMeta: RootMetadata;
-  protected logMediator: LogMediator;
+  protected systemLogMediator: SystemLogMediator;
 
   /**
    * @param listen If this parameter seted to `false` then `server.listen()` is not called. By default `true`.
@@ -23,21 +24,21 @@ export class Application {
     return new Promise<{ server: Server }>(async (resolve, reject) => {
       try {
         this.initRootModule(appModule);
-        const appInitializer = this.scanRootModuleAndGetAppInitializer(appModule, this.logMediator);
+        const appInitializer = this.scanRootModuleAndGetAppInitializer(appModule, this.systemLogMediator);
         await this.bootstrapApplication(appInitializer);
         this.flushLogs();
         const server = this.createServer(appInitializer.requestListener);
         if (listen) {
           server.listen(this.rootMeta.listenOptions, () => {
             const { listenOptions } = this.rootMeta;
-            this.logMediator.serverListen(this, listenOptions.host!, listenOptions.port!);
+            this.systemLogMediator.serverListen(this, listenOptions.host!, listenOptions.port!);
             resolve({ server });
           });
         } else {
           resolve({ server });
         }
       } catch (err) {
-        this.logMediator.internalServerError(this, err);
+        this.systemLogMediator.internalServerError(this, err);
         this.flushLogs();
         reject(err);
       }
@@ -45,7 +46,7 @@ export class Application {
   }
 
   protected initRootModule(appModule: ModuleType) {
-    this.logMediator = new LogMediator({ moduleName: 'AppModule' });
+    this.systemLogMediator = new SystemLogMediator({ moduleName: 'AppModule' });
     this.mergeRootMetadata(appModule);
     this.checkSecureServerOption(appModule.name);
   }
@@ -69,23 +70,23 @@ export class Application {
     }
   }
 
-  protected scanRootModuleAndGetAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
-    const moduleManager = new ModuleManager(logMediator);
+  protected scanRootModuleAndGetAppInitializer(appModule: ModuleType, systemLogMediator: SystemLogMediator) {
+    const moduleManager = new ModuleManager(systemLogMediator);
     moduleManager.scanRootModule(appModule);
-    return new AppInitializer(this.rootMeta, moduleManager, logMediator);
+    return new AppInitializer(this.rootMeta, moduleManager, systemLogMediator);
   }
 
   protected async bootstrapApplication(appInitializer: AppInitializer) {
     // Here, before init custom logger, works default logger.
     appInitializer.bootstrapProvidersPerApp();
     // Here, after init custom logger, works this custom logger.
-    this.logMediator = appInitializer.logMediator;
+    this.systemLogMediator = appInitializer.systemLogMediator;
     await appInitializer.bootstrapModulesAndExtensions();
   }
 
   protected flushLogs() {
     LogMediator.bufferLogs = false;
-    this.logMediator.flush();
+    this.systemLogMediator.flush();
   }
 
   protected createServer(requestListener: RequestListener): Server {

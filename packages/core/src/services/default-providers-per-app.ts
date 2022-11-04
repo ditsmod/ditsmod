@@ -6,10 +6,11 @@ import { ServiceProvider } from '../types/mix';
 import { Counter } from './counter';
 import { ConsoleLogger } from './console-logger';
 import { ModuleManager } from './module-manager';
-import { LogFilter, LogMediator } from '../log-mediator/log-mediator';
+import { LogFilter } from '../log-mediator/log-mediator';
 import { PreRouter } from './pre-router';
 import { ModuleExtract } from '../models/module-extract';
 import { Providers } from '../utils/providers';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
   {
@@ -20,7 +21,7 @@ export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
   PreRouter,
   Counter,
   ModuleManager,
-  LogMediator,
+  SystemLogMediator,
   LogFilter,
   ...new Providers()
     .useValue<ModuleExtract>(ModuleExtract, { moduleName: 'AppModule' })

@@ -10,9 +10,9 @@ import { Module } from '../decorators/module';
 import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj, Extension, ExtensionProvider } from '../types/mix';
 import { LoggerConfig } from '../types/logger';
 import { ConsoleLogger } from './console-logger';
-import { LogMediator } from '../log-mediator/log-mediator';
 import { Controller } from '../decorators/controller';
 import { isMultiProvider } from '../utils/type-guards';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 describe('ModuleManager', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;
@@ -41,8 +41,8 @@ describe('ModuleManager', () => {
   beforeEach(() => {
     const config = new LoggerConfig();
     const logger = new ConsoleLogger(config);
-    const logMediator = new LogMediator({ moduleName: 'fakeName', path: '' }, logger);
-    mock = new MockModuleManager(logMediator);
+    const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName', path: '' }, logger);
+    mock = new MockModuleManager(systemLogMediator);
   });
 
   describe('quickCheckMetadata()', () => {

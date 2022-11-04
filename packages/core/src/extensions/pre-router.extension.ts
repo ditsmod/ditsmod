@@ -6,11 +6,11 @@ import { Extension, HttpMethod } from '../types/mix';
 import { PreparedRouteMeta, RouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { ExtensionsManager } from '../services/extensions-manager';
-import { LogMediator } from '../log-mediator/log-mediator';
 import { MetadataPerMod2 } from '../types/metadata-per-mod';
 import { ExtensionsContext } from '../services/extensions-context';
 import { getModule } from '../utils/get-module';
 import { PerAppService } from '../services/per-app.service';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 @Injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -21,7 +21,7 @@ export class PreRouterExtension implements Extension<void> {
     protected perAppService: PerAppService,
     protected router: Router,
     protected extensionsManager: ExtensionsManager,
-    protected log: LogMediator,
+    protected log: SystemLogMediator,
     protected extensionsContext: ExtensionsContext
   ) {}
 
@@ -106,7 +106,7 @@ export class PreRouterExtension implements Extension<void> {
     }
     inj.get(HttpHandler);
     inj.get(HttpFrontend);
-    inj.get(LogMediator);
+    inj.get(SystemLogMediator);
     routeMeta.guards.forEach((item) => inj.get(item.guard));
     inj.get(HttpBackend);
     inj.get(routeMeta.controller);

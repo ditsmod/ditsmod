@@ -6,7 +6,7 @@ import { EXTENSIONS_COUNTERS } from '../constans';
 import { Extension, ExtensionsGroupToken } from '../types/mix';
 import { Counter } from './counter';
 import { ExtensionsContext } from './extensions-context';
-import { LogMediator } from '../log-mediator/log-mediator';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 class Cache {
   constructor(
@@ -32,7 +32,7 @@ export class ExtensionsManager {
 
   constructor(
     private injector: Injector,
-    private logMediator: LogMediator,
+    private systemLogMediator: SystemLogMediator,
     private counter: Counter,
     private extensionsContext: ExtensionsContext,
     @Inject(EXTENSIONS_COUNTERS) private mExtensionsCounters: Map<Type<Extension<any>>, number>
@@ -64,9 +64,9 @@ export class ExtensionsManager {
     let cache = this.getCache(beforeToken);
     if (!cache && this.beforeTokens.has(beforeToken)) {
       this.unfinishedInit.add(beforeToken);
-      this.logMediator.startExtensionsGroupInit(this, this.unfinishedInit);
+      this.systemLogMediator.startExtensionsGroupInit(this, this.unfinishedInit);
       const value = await this.initGroup(beforeToken);
-      this.logMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
+      this.systemLogMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
       this.unfinishedInit.delete(beforeToken);
       const newCache = new Cache(beforeToken, value, autoMergeArrays, ExtensionAwaiting);
       this.cache.push(newCache);
@@ -77,9 +77,9 @@ export class ExtensionsManager {
       return cache.value;
     }
     this.unfinishedInit.add(groupToken);
-    this.logMediator.startExtensionsGroupInit(this, this.unfinishedInit);
+    this.systemLogMediator.startExtensionsGroupInit(this, this.unfinishedInit);
     const value = await this.initGroup(groupToken, autoMergeArrays, ExtensionAwaiting);
-    this.logMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
+    this.systemLogMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(groupToken);
     const newCache = new Cache(groupToken, value, autoMergeArrays, ExtensionAwaiting);
     this.cache.push(newCache);
@@ -95,7 +95,7 @@ export class ExtensionsManager {
     const aCurrentData: T[] = [];
 
     if (!extensions.length) {
-      this.logMediator.noExtensionsFound(this, groupToken);
+      this.systemLogMediator.noExtensionsFound(this, groupToken);
     }
 
     for (const extension of extensions) {
@@ -104,10 +104,10 @@ export class ExtensionsManager {
       }
 
       this.unfinishedInit.add(extension);
-      this.logMediator.startInitExtension(this, this.unfinishedInit);
+      this.systemLogMediator.startInitExtension(this, this.unfinishedInit);
       const isLastExtensionCall = this.mExtensionsCounters.get(extension.constructor as Type<Extension<T>>) === 0;
       const data = await extension.init(isLastExtensionCall);
-      this.logMediator.finishInitExtension(this, this.unfinishedInit, data);
+      this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);
       this.unfinishedInit.delete(extension);
       if (data === undefined) {

@@ -8,14 +8,14 @@ import { AppInitializer } from './app-initializer';
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
 import { RootMetadata } from './models/root-metadata';
-import { LogMediator } from './log-mediator/log-mediator';
 import { ModuleType, ModuleWithParams } from './types/mix';
 import { Router } from './types/router';
+import { SystemLogMediator } from './log-mediator/system-log-mediator';
 
 describe('Application', () => {
   class ApplicationMock extends Application {
     override rootMeta = new RootMetadata();
-    override logMediator: LogMediator;
+    override systemLogMediator: SystemLogMediator;
 
     override mergeRootMetadata(module: ModuleType | ModuleWithParams) {
       return super.mergeRootMetadata(module);
@@ -25,8 +25,8 @@ describe('Application', () => {
       return super.checkSecureServerOption(rootModuleName);
     }
 
-    override scanRootModuleAndGetAppInitializer(appModule: ModuleType, logMediator: LogMediator) {
-      return super.scanRootModuleAndGetAppInitializer(appModule, logMediator);
+    override scanRootModuleAndGetAppInitializer(appModule: ModuleType, systemLogMediator: SystemLogMediator) {
+      return super.scanRootModuleAndGetAppInitializer(appModule, systemLogMediator);
     }
 
     override bootstrapApplication(appInitializer: AppInitializer) {
@@ -105,7 +105,7 @@ describe('Application', () => {
     class AppModule {}
 
     it('should return instance of AppInitializer', () => {
-      expect(mock.scanRootModuleAndGetAppInitializer(AppModule, {} as LogMediator)).toBeInstanceOf(AppInitializer);
+      expect(mock.scanRootModuleAndGetAppInitializer(AppModule, {} as SystemLogMediator)).toBeInstanceOf(AppInitializer);
     });
   });
 
@@ -116,10 +116,10 @@ describe('Application', () => {
     class AppModule {}
 
     it('should replace logMediator during call bootstrapApplication()', () => {
-      const appInitializer = mock.scanRootModuleAndGetAppInitializer(AppModule, {} as LogMediator);
-      const { logMediator } = mock;
+      const appInitializer = mock.scanRootModuleAndGetAppInitializer(AppModule, {} as SystemLogMediator);
+      const { systemLogMediator } = mock;
       mock.bootstrapApplication(appInitializer);
-      expect(mock.logMediator !== logMediator).toBe(true);
+      expect(mock.systemLogMediator !== systemLogMediator).toBe(true);
     });
   });
 });

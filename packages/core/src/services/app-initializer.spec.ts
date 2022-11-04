@@ -16,6 +16,7 @@ import { ModuleExtract } from '../models/module-extract';
 import { ImportObj, MetadataPerMod1 } from '../types/metadata-per-mod';
 import { RootMetadata } from '../models/root-metadata';
 import { Providers } from '../utils/providers';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 describe('AppInitializer', () => {
   type AnyModule = ModuleType | ModuleWithParams;
@@ -27,9 +28,9 @@ describe('AppInitializer', () => {
     constructor(
       public override rootMeta: RootMetadata,
       public override moduleManager: ModuleManager,
-      public override logMediator: LogMediator
+      public override systemLogMediator: SystemLogMediator
     ) {
-      super(rootMeta, moduleManager, logMediator);
+      super(rootMeta, moduleManager, systemLogMediator);
     }
 
     async init() {
@@ -63,10 +64,10 @@ describe('AppInitializer', () => {
 
   describe('prepareProvidersPerApp()', () => {
     beforeEach(() => {
-      const logMediator = new LogMediator({ moduleName: 'fakeName' });
-      moduleManager = new ModuleManager(logMediator);
+      const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
+      moduleManager = new ModuleManager(systemLogMediator);
       const rootMeta = new RootMetadata();
-      mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
+      mock = new AppInitializerMock(rootMeta, moduleManager, systemLogMediator);
     });
 
     it('should throw an error about collision', () => {
@@ -297,10 +298,10 @@ describe('AppInitializer', () => {
     class AppModule {}
 
     beforeEach(() => {
-      const logMediator = new LogMediator({ moduleName: 'fakeName' });
-      moduleManager = new ModuleManager(logMediator);
+      const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
+      moduleManager = new ModuleManager(systemLogMediator);
       const rootMeta = new RootMetadata();
-      mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
+      mock = new AppInitializerMock(rootMeta, moduleManager, systemLogMediator);
     });
 
     it('should collects providers from exports array without imports them', () => {
@@ -410,10 +411,10 @@ describe('AppInitializer', () => {
     let appMetadataMap: Map<AnyModule, MetadataPerMod1>;
 
     beforeAll(() => {
-      const logMediator = new LogMediator({ moduleName: 'fakeName' });
-      moduleManager = new ModuleManager(logMediator);
+      const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
+      moduleManager = new ModuleManager(systemLogMediator);
       const rootMeta = new RootMetadata();
-      mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
+      mock = new AppInitializerMock(rootMeta, moduleManager, systemLogMediator);
       moduleManager.scanRootModule(AppModule);
       appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
     });
@@ -526,7 +527,7 @@ describe('AppInitializer', () => {
     it('logMediator should has different instances in contexts of Application and AppInitializer', () => {
       const loggerSpy = jest.fn();
 
-      class LogMediatorMock extends LogMediator {
+      class LogMediatorMock extends SystemLogMediator {
         override flush() {
           const { level } = (this.logger as any).config;
           loggerSpy(level);
@@ -562,7 +563,7 @@ describe('AppInitializer', () => {
 
   describe('init()', () => {
     const testMethodSpy = jest.fn();
-    class LogMediatorMock1 extends LogMediator {
+    class LogMediatorMock1 extends SystemLogMediator {
       testMethod(level: LogLevel, filterConfig: LogFilter = {}, ...args: any[]) {
         testMethodSpy();
         this.setLog(level, filterConfig, `${args}`);
@@ -577,7 +578,7 @@ describe('AppInitializer', () => {
       imports: [Module1],
       providersPerApp: [
         { provide: Router, useValue: 'fake' },
-        { provide: LogMediator, useClass: LogMediatorMock1 },
+        { provide: SystemLogMediator, useClass: LogMediatorMock1 },
       ],
     })
     class AppModule {}
@@ -586,23 +587,23 @@ describe('AppInitializer', () => {
       testMethodSpy.mockRestore();
       LogMediator.bufferLogs = true;
       LogMediator.buffer = [];
-      const logMediator = new LogMediator({ moduleName: 'fakeName' });
-      moduleManager = new ModuleManager(logMediator);
+      const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
+      moduleManager = new ModuleManager(systemLogMediator);
       const rootMeta = new RootMetadata();
-      mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
+      mock = new AppInitializerMock(rootMeta, moduleManager, systemLogMediator);
     });
 
     it('logs should collects between two init()', async () => {
       expect(LogMediator.buffer).toHaveLength(0);
-      expect(mock.logMediator).toBeInstanceOf(LogMediator);
-      expect(mock.logMediator).not.toBeInstanceOf(LogMediatorMock1);
+      expect(mock.systemLogMediator).toBeInstanceOf(SystemLogMediator);
+      expect(mock.systemLogMediator).not.toBeInstanceOf(LogMediatorMock1);
       moduleManager.scanRootModule(AppModule);
 
       // First init
       await mock.init();
       const { buffer } = LogMediator;
-      expect(mock.logMediator).toBeInstanceOf(LogMediatorMock1);
-      (mock.logMediator as LogMediatorMock1).testMethod('debug', {}, 'one', 'two');
+      expect(mock.systemLogMediator).toBeInstanceOf(LogMediatorMock1);
+      (mock.systemLogMediator as LogMediatorMock1).testMethod('debug', {}, 'one', 'two');
       const msgIndex1 = buffer.length - 1;
       expect(buffer[msgIndex1].msgLevel).toBe('debug');
       expect(buffer[msgIndex1].msg).toBe('one,two');
@@ -610,8 +611,8 @@ describe('AppInitializer', () => {
 
       // Second init
       await mock.init();
-      expect(mock.logMediator).toBeInstanceOf(LogMediatorMock1);
-      (mock.logMediator as LogMediatorMock1).testMethod('info', {}, 'three', 'four');
+      expect(mock.systemLogMediator).toBeInstanceOf(LogMediatorMock1);
+      (mock.systemLogMediator as LogMediatorMock1).testMethod('info', {}, 'three', 'four');
       // Logs from first init() still here
       expect(buffer[msgIndex1].msgLevel).toBe('debug');
       expect(buffer[msgIndex1].msg).toBe('one,two');
@@ -619,7 +620,7 @@ describe('AppInitializer', () => {
       expect(buffer[msgIndex2].msgLevel).toBe('info');
       expect(buffer[msgIndex2].msg).toBe('three,four');
       expect(testMethodSpy.mock.calls.length).toBe(2);
-      mock.logMediator.flush();
+      mock.systemLogMediator.flush();
       expect(buffer.length).toBe(0);
     });
   });
@@ -629,10 +630,10 @@ describe('AppInitializer', () => {
 
     beforeEach(() => {
       jestFn.mockRestore();
-      const logMediator = new LogMediator({ moduleName: 'fakeName' });
-      moduleManager = new ModuleManager(logMediator);
+      const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
+      moduleManager = new ModuleManager(systemLogMediator);
       const rootMeta = new RootMetadata();
-      mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
+      mock = new AppInitializerMock(rootMeta, moduleManager, systemLogMediator);
     });
 
     interface MyInterface {

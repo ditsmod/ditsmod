@@ -33,7 +33,7 @@ import {
   isValueProvider,
   MultiProvider,
 } from '../utils/type-guards';
-import { LogMediator } from '../log-mediator/log-mediator';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 export type ModulesMap = Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
 export type ModulesMapId = Map<string, ModuleType | ModuleWithParams>;
@@ -51,7 +51,7 @@ export class ModuleManager {
   protected oldMapId = new Map<string, AnyModule>();
   protected unfinishedScanModules = new Set<AnyModule>();
 
-  constructor(protected logMediator: LogMediator) {}
+  constructor(protected systemLogMediator: SystemLogMediator) {}
 
   /**
    * Creates a snapshot of NormalizedModuleMetadata for the root module, stores locally and returns it.
@@ -112,7 +112,7 @@ export class ModuleManager {
     const prop = isModuleWithParams(inputModule) ? 'importsWithParams' : 'importsModules';
     if (targetMeta[prop].some((imp: AnyModule) => imp === inputModule)) {
       const modIdStr = format(targetModuleId);
-      this.logMediator.moduleAlreadyImported(this, inputModule, modIdStr);
+      this.systemLogMediator.moduleAlreadyImported(this, inputModule, modIdStr);
       return false;
     }
 
@@ -120,7 +120,7 @@ export class ModuleManager {
     try {
       (targetMeta[prop] as AnyModule[]).push(inputModule);
       this.scanRawModule(inputModule);
-      this.logMediator.successfulAddedModuleToImport(this, inputModule, targetMeta.name);
+      this.systemLogMediator.successfulAddedModuleToImport(this, inputModule, targetMeta.name);
       return true;
     } catch (err) {
       this.rollback(err as Error);
@@ -134,7 +134,7 @@ export class ModuleManager {
     const inputMeta = this.getRawMetadata(inputModuleId);
     if (!inputMeta) {
       const modIdStr = format(inputModuleId);
-      this.logMediator.moduleNotFound(this, modIdStr);
+      this.systemLogMediator.moduleNotFound(this, modIdStr);
       return false;
     }
 
@@ -148,7 +148,7 @@ export class ModuleManager {
     const index = targetMeta[prop].findIndex((imp: AnyModule) => imp === inputMeta.module);
     if (index == -1) {
       const modIdStr = format(inputModuleId);
-      this.logMediator.moduleNotFound(this, modIdStr);
+      this.systemLogMediator.moduleNotFound(this, modIdStr);
       return false;
     }
 
@@ -161,7 +161,7 @@ export class ModuleManager {
         }
         this.map.delete(inputMeta.module);
       }
-      this.logMediator.moduleSuccessfulRemoved(this, inputMeta.name, targetMeta.name);
+      this.systemLogMediator.moduleSuccessfulRemoved(this, inputMeta.name, targetMeta.name);
       return true;
     } catch (err) {
       this.rollback(err as Error);
@@ -216,7 +216,7 @@ export class ModuleManager {
 
     if (meta.id) {
       this.mapId.set(meta.id, modOrObj);
-      this.logMediator.moduleHasId(this, meta.id);
+      this.systemLogMediator.moduleHasId(this, meta.id);
     }
     this.map.set(modOrObj, meta);
     return meta;
