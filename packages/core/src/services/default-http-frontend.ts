@@ -9,7 +9,7 @@ import { PathParam } from '../types/router';
 import { NODE_RES, PATH_PARAMS, QUERY_STRING } from '../constans';
 import { NodeRequest, NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
-import { LogMediator } from './log-mediator';
+import { LogMediator } from '../log-mediator/log-mediator';
 import { RouteMeta } from '../types/route-data';
 import { RootMetadata } from '../models/root-metadata';
 

@@ -8,7 +8,7 @@ import { AppInitializer } from './app-initializer';
 import { Application } from './application';
 import { RootModule } from './decorators/root-module';
 import { RootMetadata } from './models/root-metadata';
-import { LogMediator } from './services/log-mediator';
+import { LogMediator } from './log-mediator/log-mediator';
 import { ModuleType, ModuleWithParams } from './types/mix';
 import { Router } from './types/router';
 

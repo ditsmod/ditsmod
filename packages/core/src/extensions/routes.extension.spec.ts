@@ -10,7 +10,7 @@ import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { RootMetadata } from '../models/root-metadata';
 import { ModuleManager } from '../services/module-manager';
 import { AppInitializer } from '../app-initializer';
-import { LogMediator } from '../services/log-mediator';
+import { LogMediator } from '../log-mediator/log-mediator';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { PerAppService } from '../services/per-app.service';
 

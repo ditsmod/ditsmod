@@ -4,7 +4,7 @@ import type * as https from 'https';
 
 import { AppInitializer } from './app-initializer';
 import { RootMetadata } from './models/root-metadata';
-import { LogMediator } from './services/log-mediator';
+import { LogMediator } from './log-mediator/log-mediator';
 import { ModuleManager } from './services/module-manager';
 import { ModuleType, ModuleWithParams } from './types/mix';
 import { Http2SecureServerOptions, RequestListener, Server } from './types/server-options';

@@ -11,7 +11,7 @@ import { ModuleExtract } from './models/module-extract';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ModuleFactory } from './module-factory';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
-import { LogMediator } from './services/log-mediator';
+import { LogMediator } from './log-mediator/log-mediator';
 import { ModuleManager } from './services/module-manager';
 import { Req } from './services/request';
 import { Logger } from './types/logger';

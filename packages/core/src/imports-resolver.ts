@@ -6,7 +6,7 @@ import { RootMetadata } from './models/root-metadata';
 import { defaultExtensions, defaultExtensionsTokens } from './services/default-extensions';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
-import { LogMediator } from './services/log-mediator';
+import { LogMediator } from './log-mediator/log-mediator';
 import { ModuleManager } from './services/module-manager';
 import { ImportedTokensMap } from './types/metadata-per-mod';
 import { AppMetadataMap, ModuleType, ModuleWithParams, Scope, ServiceProvider } from './types/mix';

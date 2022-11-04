@@ -6,7 +6,7 @@ import { Extension, HttpMethod } from '../types/mix';
 import { PreparedRouteMeta, RouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { ExtensionsManager } from '../services/extensions-manager';
-import { LogMediator } from '../services/log-mediator';
+import { LogMediator } from '../log-mediator/log-mediator';
 import { MetadataPerMod2 } from '../types/metadata-per-mod';
 import { ExtensionsContext } from '../services/extensions-context';
 import { getModule } from '../utils/get-module';

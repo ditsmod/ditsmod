@@ -7,7 +7,7 @@ import { Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceP
 import { getImportedTokens } from '../utils/get-imports';
 import { getModuleName } from '../utils/get-module-name';
 import { getProviderName } from '../utils/get-provider-name';
-import { ConsoleLogger } from './console-logger';
+import { ConsoleLogger } from '../services/console-logger';
 import { ModuleExtract } from '../models/module-extract';
 
 /**

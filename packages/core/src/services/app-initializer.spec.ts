@@ -8,7 +8,7 @@ import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { Logger, LoggerConfig, LogLevel } from '../types/logger';
 import { Router } from '../types/router';
 import { AppInitializer } from '../app-initializer';
-import { LogFilter, LogMediator } from './log-mediator';
+import { LogFilter, LogMediator } from '../log-mediator/log-mediator';
 import { ModuleManager } from './module-manager';
 import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { Controller } from '../decorators/controller';

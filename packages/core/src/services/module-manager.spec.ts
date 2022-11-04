@@ -10,7 +10,7 @@ import { Module } from '../decorators/module';
 import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj, Extension, ExtensionProvider } from '../types/mix';
 import { LoggerConfig } from '../types/logger';
 import { ConsoleLogger } from './console-logger';
-import { LogMediator } from './log-mediator';
+import { LogMediator } from '../log-mediator/log-mediator';
 import { Controller } from '../decorators/controller';
 import { isMultiProvider } from '../utils/type-guards';
 

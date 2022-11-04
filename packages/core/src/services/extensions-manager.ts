@@ -6,7 +6,7 @@ import { EXTENSIONS_COUNTERS } from '../constans';
 import { Extension, ExtensionsGroupToken } from '../types/mix';
 import { Counter } from './counter';
 import { ExtensionsContext } from './extensions-context';
-import { LogMediator } from './log-mediator';
+import { LogMediator } from '../log-mediator/log-mediator';
 
 class Cache {
   constructor(

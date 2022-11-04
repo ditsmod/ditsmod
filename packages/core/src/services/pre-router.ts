@@ -4,7 +4,7 @@ import { HttpMethod } from '../types/mix';
 import { Router } from '../types/router';
 import { NodeResponse, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
-import { LogMediator } from '../services/log-mediator';
+import { LogMediator } from '../log-mediator/log-mediator';
 
 @Injectable()
 export class PreRouter {

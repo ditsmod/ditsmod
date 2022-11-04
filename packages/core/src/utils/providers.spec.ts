@@ -4,7 +4,7 @@ import { ServiceProvider } from '../types/mix';
 
 import { ConsoleLogger } from '../services/console-logger';
 import { Providers } from './providers';
-import { LogFilter, LogMediator } from '../services/log-mediator';
+import { LogFilter, LogMediator } from '../log-mediator/log-mediator';
 
 describe('Providers', () => {
   it('call constuctor not to throw', () => {

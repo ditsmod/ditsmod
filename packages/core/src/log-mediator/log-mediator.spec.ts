@@ -4,7 +4,7 @@ import { it, jest, describe, beforeEach, expect, afterEach } from '@jest/globals
 
 import { Providers } from '../utils/providers';
 import { Logger, LoggerConfig, LogLevel } from '../types/logger';
-import { ConsoleLogger } from './console-logger';
+import { ConsoleLogger } from '../services/console-logger';
 import { LogMediator } from './log-mediator';
 import { ModuleExtract } from '../models/module-extract';
 

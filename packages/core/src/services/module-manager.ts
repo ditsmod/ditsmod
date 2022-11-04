@@ -33,7 +33,7 @@ import {
   isValueProvider,
   MultiProvider,
 } from '../utils/type-guards';
-import { LogMediator } from './log-mediator';
+import { LogMediator } from '../log-mediator/log-mediator';
 
 export type ModulesMap = Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
 export type ModulesMapId = Map<string, ModuleType | ModuleWithParams>;

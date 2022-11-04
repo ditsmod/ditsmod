@@ -9,7 +9,7 @@ import { Counter } from './services/counter';
 import { defaultProvidersPerApp } from './services/default-providers-per-app';
 import { ExtensionsContext } from './services/extensions-context';
 import { ExtensionsManager } from './services/extensions-manager';
-import { LogMediator } from './services/log-mediator';
+import { LogMediator } from './log-mediator/log-mediator';
 import { ModuleManager } from './services/module-manager';
 import { PerAppService } from './services/per-app.service';
 import { PreRouter } from './services/pre-router';
