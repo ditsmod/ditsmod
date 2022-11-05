@@ -50,7 +50,7 @@ describe('Application', () => {
 
       @RootModule({
         serverOptions: { isHttp2SecureServer: false },
-        listenOptions: { host: 'customHost', port: 3000 },
+        listenOptions: { host: 'customHost', port: 3010 },
         path: 'customPrefix',
         providersPerApp: [Provider1],
       })
@@ -60,7 +60,7 @@ describe('Application', () => {
       const { serverOptions, listenOptions, path: prefixPerApp } = mock.rootMeta;
       expect(prefixPerApp).toBe('customPrefix');
       expect(serverOptions).toEqual({ isHttp2SecureServer: false });
-      expect(listenOptions).toEqual({ host: 'customHost', port: 3000 });
+      expect(listenOptions).toEqual({ host: 'customHost', port: 3010 });
     });
   });
 
