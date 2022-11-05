@@ -5,6 +5,7 @@ import { ServiceProvider } from '../types/mix';
 import { ConsoleLogger } from '../services/console-logger';
 import { Providers } from './providers';
 import { LogFilter, LogMediator } from '../log-mediator/log-mediator';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 describe('Providers', () => {
   it('call constuctor not to throw', () => {
@@ -55,11 +56,11 @@ describe('Providers', () => {
     ]);
   });
 
-  it('works useLogMediator()', () => {
+  it('works useSystemLogMediator()', () => {
     class CustomLogMediator extends LogMediator {}
 
-    const config1 = new Providers().useLogMediator(CustomLogMediator);
-    expect([...config1]).toEqual([CustomLogMediator, { provide: LogMediator, useExisting: CustomLogMediator }]);
+    const config1 = new Providers().useSystemLogMediator(CustomLogMediator);
+    expect([...config1]).toEqual([CustomLogMediator, { provide: SystemLogMediator, useExisting: CustomLogMediator }]);
   });
 
   it('works multi calling', () => {

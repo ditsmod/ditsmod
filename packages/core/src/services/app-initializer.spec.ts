@@ -547,7 +547,7 @@ describe('AppInitializer', () => {
           Router,
           ...new Providers()
             .useLogConfig({ level: 'trace' })
-            .useLogMediator(LogMediatorMock)
+            .useSystemLogMediator(LogMediatorMock)
         ],
       })
       class AppModule {}

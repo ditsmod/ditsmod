@@ -1,5 +1,6 @@
 import { FactoryProvider, Type } from '@ts-stack/di';
 
+import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { LogFilter, LogMediator } from '../log-mediator/log-mediator';
 import { Logger, LoggerConfig } from '../types/logger';
 import { AnyFn, ServiceProvider } from '../types/mix';
@@ -93,8 +94,8 @@ export class Providers {
     return this;
   }
 
-  useLogMediator<T extends Type<LogMediator>>(CustomLogMediator: T) {
-    this.providers.push(CustomLogMediator, { provide: LogMediator, useExisting: CustomLogMediator });
+  useSystemLogMediator<T extends Type<LogMediator>>(CustomLogMediator: T) {
+    this.providers.push(CustomLogMediator, { provide: SystemLogMediator, useExisting: CustomLogMediator });
 
     return this;
   }
