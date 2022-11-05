@@ -46,6 +46,7 @@ export class LogMediator {
    */
   static bufferLogs: boolean = true;
   static buffer: LogItem[] = [];
+  protected raisedLogs: LogItem[] = [];
 
   constructor(
     protected moduleExtract: ModuleExtract,
@@ -75,7 +76,6 @@ export class LogMediator {
       this.logger.log(msgLevel, msg);
     }
   }
-  protected raisedLogs: LogItem[] = [];
 
   /**
    * @param logLevel has only from raiseLog() call.
