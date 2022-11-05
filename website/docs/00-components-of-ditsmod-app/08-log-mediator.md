@@ -1,4 +1,8 @@
-# 11-override-core-log-messages
+---
+sidebar_position: 8
+---
+
+# LogMediator
 
 У Ditsmod можна підмінити дефолтний логер на свій логер, завдяки чому ви зможете у свій спосіб записувати навіть ті повідомлення, що видаються у `@ditsmod/core`. Але підміна логера не дозволяє змінювати текст самих повідомлень та рівень логування (trace, debug, info, warn, error). Для цього використовується `LogMediator`. Звичайно ж, якщо ви маєте безпосередній доступ до коду, де логер записує певне повідомлення, то ви тут же на місці зможете це повідомлення змінити і без `LogMediator`. А якщо повідомлення видає сам фреймворк Ditsmod або його модулі, без `LogMediator` не обійтись.
 
@@ -60,7 +64,7 @@ export class MyLogMediator extends LogMediator {
 Як видно з попереднього прикладу, у `myLogMediator.serverListen()` використовуються метод `setLog()` та клас `MsgLogFilter`, які мають наступні типи:
 
 ```ts
-setLog<T extends MsgLogFilter>(level: LogLevel, msgLogFilter: T, msg: any): void;
+setLog<T extends MsgLogFilter>(msgLevel: LogLevel, msgLogFilter: T, msg: any): void;
 
 class MsgLogFilter {
   className?: string;

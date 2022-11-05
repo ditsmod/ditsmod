@@ -1,4 +1,8 @@
-# 11-override-core-log-messages
+---
+sidebar_position: 8
+---
+
+# LogMediator
 
 In Ditsmod, you can replace the default logger with your own logger, so you can record in your own way even those messages issued in `@ditsmod/core`. But changing the logger does not allow you to change the text of the messages themselves and the level of logging (trace, debug, info, warn, error). `LogMediator` is used for this. Of course, if you have direct access to the code where the logger writes a certain message, then you can change this message on the spot without `LogMediator`. And if the message is issued by the Ditsmod framework itself or its modules, `LogMediator` cannot be dispensed with.
 
