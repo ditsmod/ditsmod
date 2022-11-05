@@ -6,7 +6,7 @@ import { SessionLogMediator } from './session-log-mediator';
 import { SessionCookieOptions } from './types';
 
 @Module({
-  providersPerMod: [...new Providers().useLogMediator(SessionLogMediator)],
+  providersPerMod: [SessionLogMediator],
   providersPerReq: [SessionCookie],
   exports: [SessionCookie],
 })

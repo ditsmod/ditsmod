@@ -11,7 +11,7 @@ describe('19-session-cookie', () => {
 
   it('should set cookie', async () => {
     const { server } = await new Application().bootstrap(AppModule, false);
-    const res = await request(server)
+    await request(server)
       .get('/set')
       .expect(200)
       .expect('set-cookie', /custom-session-name=123/)
