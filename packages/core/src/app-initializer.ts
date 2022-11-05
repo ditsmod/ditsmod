@@ -254,7 +254,7 @@ export class AppInitializer {
       const metadataPerMod1 = aMetadataPerMod1[i];
       const { extensionsProviders, providersPerMod, name: moduleName, module } = metadataPerMod1.meta;
       const mod = getModule(module);
-      const injectorPerMod = injectorPerApp.resolveAndCreateChild([mod, LogMediator, ...providersPerMod]);
+      const injectorPerMod = injectorPerApp.resolveAndCreateChild([mod, SystemLogMediator, ...providersPerMod]);
       injectorPerMod.get(mod); // Call module constructor.
       const systemLogMediator = injectorPerMod.get(SystemLogMediator) as SystemLogMediator;
       const loggerConfig = injectorPerMod.get(LoggerConfig, new LoggerConfig()) as LoggerConfig;
