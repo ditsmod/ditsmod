@@ -7,6 +7,7 @@ import { getImportedTokens } from '../utils/get-imports';
 import { getModuleName } from '../utils/get-module-name';
 import { getProviderName } from '../utils/get-provider-name';
 import { LogMediator, MsgLogFilter } from './log-mediator';
+import { Logger, LogLevel } from '../types/logger';
 
 /**
  * Mediator between core logger and custom user's logger.
@@ -17,6 +18,28 @@ import { LogMediator, MsgLogFilter } from './log-mediator';
  */
 @Injectable()
 export class SystemLogMediator extends LogMediator {
+  protected static previousLogger: Logger;
+
+  flush() {
+    const { buffer } = LogMediator;
+    this.renderLogs(this.applyLogFilter(buffer));
+    buffer.splice(0);
+  }
+
+  preserveLogger() {
+    SystemLogMediator.previousLogger = this.logger;
+  }
+
+  restorePreviousLogger() {
+    if (!SystemLogMediator.previousLogger) {
+      throw new TypeError(`The logger was not previously seted.`);
+    }
+    this.logger = SystemLogMediator.previousLogger;
+  }
+
+  setLogLevel(logLevel: LogLevel) {
+    this.logger.setLevel(logLevel);
+  }
 
   /**
    * `"${moduleName}" has already been imported into "${moduleId}".`

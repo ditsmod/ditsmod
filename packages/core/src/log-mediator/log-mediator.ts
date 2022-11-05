@@ -36,10 +36,6 @@ export interface LogItem {
 
 /**
  * Mediator between core logger and custom user's logger.
- *
- * If you want to rewrite messages written by the core logger, you need:
- * 1. override the methods of this class in your own class;
- * 2. via DI, at the application level, substitute the `LogMediator` class with your class.
  */
 @Injectable()
 export class LogMediator {
@@ -53,7 +49,7 @@ export class LogMediator {
 
   constructor(
     protected moduleExtract: ModuleExtract,
-    @Optional() public logger: Logger = new ConsoleLogger(),
+    @Optional() protected logger: Logger = new ConsoleLogger(),
     @Optional() protected logFilter: LogFilter = new LogFilter(),
     @Optional() protected loggerConfig?: LoggerConfig
   ) {
@@ -79,16 +75,6 @@ export class LogMediator {
       this.logger.log(msgLevel, msg);
     }
   }
-
-  /**
-   * @todo Refactor this method.
-   */
-  flush() {
-    const { buffer } = LogMediator;
-    this.renderLogs(this.applyLogFilter(buffer));
-    buffer.splice(0);
-  }
-
   protected raisedLogs: LogItem[] = [];
 
   /**

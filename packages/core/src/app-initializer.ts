@@ -170,13 +170,13 @@ export class AppInitializer {
   async reinit(autocommit: boolean = true): Promise<void | Error> {
     LogMediator.bufferLogs = true;
     LogMediator.buffer = [];
-    const previousLogger = this.systemLogMediator.logger;
+    this.systemLogMediator.preserveLogger();
     this.systemLogMediator.startReinitApp(this);
     // Before init new logger, works previous logger.
     try {
       this.bootstrapProvidersPerApp();
     } catch (err) {
-      this.systemLogMediator.logger = previousLogger;
+      this.systemLogMediator.restorePreviousLogger();
       LogMediator.bufferLogs = false;
       this.systemLogMediator.flush();
       return this.handleReinitError(err);
@@ -258,7 +258,7 @@ export class AppInitializer {
       injectorPerMod.get(mod); // Call module constructor.
       const systemLogMediator = injectorPerMod.get(SystemLogMediator) as SystemLogMediator;
       const loggerConfig = injectorPerMod.get(LoggerConfig, new LoggerConfig()) as LoggerConfig;
-      systemLogMediator.logger.setLevel(loggerConfig.level);
+      systemLogMediator.setLogLevel(loggerConfig.level);
       systemLogMediator.startExtensionsModuleInit(this);
       this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([

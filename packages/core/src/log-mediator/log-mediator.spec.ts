@@ -7,9 +7,10 @@ import { Logger, LoggerConfig, LogLevel } from '../types/logger';
 import { ConsoleLogger } from '../services/console-logger';
 import { LogMediator } from './log-mediator';
 import { ModuleExtract } from '../models/module-extract';
+import { SystemLogMediator } from './system-log-mediator';
 
 describe('LogMediator', () => {
-  class LogMediatorMock extends LogMediator {
+  class LogMediatorMock extends SystemLogMediator {
     testMethod(level: LogLevel, tags: string[] = [], ...args: any[]) {
       this.setLog(level, { tags }, `${args[0]}, ${args[1]}`);
     }
