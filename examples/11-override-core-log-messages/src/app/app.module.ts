@@ -1,4 +1,4 @@
-import { RootModule, LogMediator, Providers } from '@ditsmod/core';
+import { RootModule, Providers, SystemLogMediator } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
 import { MyLogMediator } from './my-log-mediator';
@@ -10,7 +10,7 @@ import { OtherModule } from './modules/other/other.module';
   providersPerApp: [
     MyLogMediator, // This allow use MyLogMediator in this application
     ...new Providers()
-      .useClass(LogMediator, MyLogMediator) // This allow use MyLogMediator internaly in Ditsmod core
+      .useClass(SystemLogMediator, MyLogMediator) // This allow use MyLogMediator internaly in Ditsmod core
       .useLogConfig({ level: 'trace' }, { modulesNames: ['OtherModule'] }) // You can remove filter with modulesNames
   ],
 })
