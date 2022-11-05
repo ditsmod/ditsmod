@@ -84,7 +84,7 @@ export class SomeController {
 }
 ```
 
-Як бачите, на місці третього параметра у `Route` передається масив в масивів, де на першому місці указано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
+Як бачите, на місці третього параметра у `Route` передається масив в масиві, де на першому місці указано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
@@ -136,7 +136,7 @@ import { AuthGuard } from '../auth/auth.guard';
 @Module({
   imports: [
     AuthModule,
-    { module: OtherModule, guards: [AuthGuard] }
+    { path: 'some-path', module: OtherModule, guards: [AuthGuard] }
   ]
 })
 export class SomeModule {}

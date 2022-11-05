@@ -136,7 +136,7 @@ import { AuthGuard } from '../auth/auth.guard';
 @Module({
   imports: [
     AuthModule,
-    { module: OtherModule, guards: [AuthGuard] }
+    { path: 'some-path', module: OtherModule, guards: [AuthGuard] }
   ]
 })
 export class SomeModule {}
