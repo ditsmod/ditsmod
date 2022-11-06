@@ -83,30 +83,27 @@ export class LogMediator {
    * @param logLevel has only from raiseLog() call.
    */
   protected renderLogs(logItems: LogItem[], logLevel?: LogLevel) {
-    if (typeof (global as any).it != 'function') {
-      // This is not a test mode.
-      logItems.forEach((logItem) => {
-        if (!logLevel && this.raisedLogs.includes(logItem)) {
-          return;
-        }
-        // const dateTime = log.date.toLocaleString();
-        const partMsg = logItem.msgLogFilter.tags ? ` (Tags: ${logItem.msgLogFilter.tags.join(', ')})` : '';
-        const msg = `${logItem.msg}${partMsg}`;
-        logItem.logger.setLevel(logLevel || logItem.loggerLevel);
+    logItems.forEach((logItem) => {
+      if (!logLevel && this.raisedLogs.includes(logItem)) {
+        return;
+      }
+      // const dateTime = log.date.toLocaleString();
+      const partMsg = logItem.msgLogFilter.tags ? ` (Tags: ${logItem.msgLogFilter.tags.join(', ')})` : '';
+      const msg = `${logItem.msg}${partMsg}`;
+      logItem.logger.setLevel(logLevel || logItem.loggerLevel);
 
-        if (!logItem.logger.log) {
-          const loggerName = logItem.logger.constructor.name;
-          const msg0 = `error: you need to implement "log" method in "${loggerName}";`;
-          if (logItem.logger.error) {
-            logItem.logger.error.call(logItem.logger, msg0, msg);
-          } else {
-            console.error(msg0, msg);
-          }
+      if (!logItem.logger.log) {
+        const loggerName = logItem.logger.constructor.name;
+        const msg0 = `error: you need to implement "log" method in "${loggerName}";`;
+        if (logItem.logger.error) {
+          logItem.logger.error.call(logItem.logger, msg0, msg);
         } else {
-          logItem.logger.log.call(logItem.logger, logItem.msgLevel, msg);
+          console.error(msg0, msg);
         }
-      });
-    }
+      } else {
+        logItem.logger.log.call(logItem.logger, logItem.msgLevel, msg);
+      }
+    });
   }
 
   protected filteredLog(item: LogItem, loggerLogFilter: LogFilter, prefix?: string) {
