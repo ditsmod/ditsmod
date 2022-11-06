@@ -42,7 +42,7 @@ export class LogMediator {
   /**
    * If `bufferLogs === true` then all messages will be buffered.
    *
-   * If you need logging all buffered messages, call `log.flush()`.
+   * If you need logging all buffered messages, call `systemLogMediator.flush()`.
    */
   static bufferLogs: boolean = true;
   static buffer: LogItem[] = [];
@@ -52,8 +52,10 @@ export class LogMediator {
     protected moduleExtract: ModuleExtract,
     @Optional() protected logger: Logger = new ConsoleLogger(),
     @Optional() protected logFilter: LogFilter = new LogFilter(),
-    @Optional() protected loggerConfig?: LoggerConfig
+    @Optional() protected loggerConfig: LoggerConfig = new LoggerConfig()
   ) {
+    this.logger = logger || new ConsoleLogger();
+    this.logFilter = logFilter || new LogFilter();
     this.loggerConfig = loggerConfig || new LoggerConfig();
   }
 
@@ -132,11 +134,12 @@ export class LogMediator {
   }
 
   protected raiseLog(logFilter: LogFilter, logLevel: LogLevel) {
-    if (this.loggerConfig?.disableRaisedLogs) {
+    if (this.loggerConfig!.disableRaisedLogs) {
       return;
     }
     this.raisedLogs = this.applyCustomLogFilter(LogMediator.buffer, logFilter, 'raised log: ');
     this.renderLogs(this.raisedLogs, logLevel);
+    this.raisedLogs = [];
   }
 
   protected applyLogFilter(buffer: LogItem[]) {
