@@ -45,28 +45,30 @@ describe('SystemLogMediator', () => {
 
   it('passing message with switch between buffer and logger', () => {
     const logMediator = getLogMediator();
-    const loggerMock = (logMediator as any).logger;
-    jest.spyOn((logMediator as any).logger, 'log');
+    const { logger } = (logMediator as any);
+    jest.spyOn(logger, 'log');
+
     logMediator.testMethod('trace', [], 'one', 'two');
     expect(LogMediator.buffer.length).toBe(1);
-    expect(loggerMock.log).toBeCalledTimes(0);
+    expect(logger.log).toBeCalledTimes(0);
     expect(LogMediator.buffer[0].msgLevel).toEqual('trace');
     expect(LogMediator.buffer[0].msg).toEqual('one, two');
 
     logMediator.testMethod('trace', [], 'one', 'two');
     expect(LogMediator.buffer.length).toBe(2);
-    expect(loggerMock.log).toBeCalledTimes(0);
+    expect(logger.log).toBeCalledTimes(0);
 
     LogMediator.bufferLogs = false;
     logMediator.testMethod('trace', [], 'one', 'two');
     expect(LogMediator.buffer.length).toBe(2);
-    expect(loggerMock.log).toBeCalledTimes(1);
+    expect(logger.log).toBeCalledTimes(1);
 
     logMediator.testMethod('trace', [], 'one', 'two');
     expect(LogMediator.buffer.length).toBe(2);
-    expect(loggerMock.log).toBeCalledTimes(2);
+    expect(logger.log).toBeCalledTimes(2);
 
     logMediator.flush();
     expect(LogMediator.buffer).toEqual([]);
+    expect(logger.log).toBeCalledTimes(4);
   });
 });

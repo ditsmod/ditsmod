@@ -63,6 +63,10 @@ describe('AppInitializer', () => {
   let moduleManager: ModuleManager;
 
   describe('prepareProvidersPerApp()', () => {
+    beforeAll(() => {
+      console.log = jest.fn() as any;
+    });
+
     beforeEach(() => {
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(systemLogMediator);
