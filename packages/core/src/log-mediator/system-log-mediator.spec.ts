@@ -1,10 +1,8 @@
 import 'reflect-metadata';
-import { ReflectiveInjector } from '@ts-stack/di';
+import { Provider, ReflectiveInjector } from '@ts-stack/di';
 import { it, jest, describe, beforeEach, expect, afterEach } from '@jest/globals';
 
-import { Providers } from '../utils/providers';
-import { Logger, LoggerConfig, LogLevel } from '../types/logger';
-import { ConsoleLogger } from '../services/console-logger';
+import { LogLevel } from '../types/logger';
 import { LogMediator } from './log-mediator';
 import { ModuleExtract } from '../models/module-extract';
 import { SystemLogMediator } from './system-log-mediator';
@@ -16,67 +14,59 @@ describe('SystemLogMediator', () => {
     }
   }
 
-  const loggerMock = {
-    log(...args: any[]) {},
-    getLevel() {},
-  } as Logger;
+  function getLogMediator(providers?: Provider[]): SystemLogMediatorMock {
+    const injector = ReflectiveInjector.resolveAndCreate([
+      ModuleExtract,
+      SystemLogMediatorMock,
+      ...(providers || [])
+    ]);
 
-  let mock: SystemLogMediatorMock;
-
-  beforeEach(() => {
-    jest.spyOn(loggerMock, 'log');
-    const config = new LoggerConfig();
-    const logger = new ConsoleLogger(config) as Logger;
-    mock = new SystemLogMediatorMock({ moduleName: 'fakeName' }, logger);
-  });
+    return injector.get(SystemLogMediatorMock);
+  }
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  it('default state', () => {
+  it(`LogMediator's default state`, () => {
     expect(LogMediator.bufferLogs).toBe(true);
     expect(LogMediator.buffer).toEqual([]);
   });
 
   it('passing message to the buffer', () => {
-    mock.testMethod('trace', [], 'one', 'two');
+    const logMediator = getLogMediator();
+    logMediator.testMethod('trace', [], 'one', 'two');
     expect(LogMediator.buffer.length).toBe(1);
     expect(LogMediator.buffer[0].msgLevel).toEqual('trace');
     expect(LogMediator.buffer[0].msg).toEqual('one, two');
-    mock.flush();
+    logMediator.flush();
     expect(LogMediator.buffer).toEqual([]);
   });
 
   it('passing message with switch between buffer and logger', () => {
-    const injector = ReflectiveInjector.resolveAndCreate([
-      ModuleExtract,
-      SystemLogMediatorMock,
-      ...new Providers()
-        .useLogger(loggerMock),
-    ]);
-    const log = injector.get(SystemLogMediatorMock) as SystemLogMediatorMock;
-
-    log.testMethod('trace', [], 'one', 'two');
+    const logMediator = getLogMediator();
+    const loggerMock = (logMediator as any).logger;
+    jest.spyOn((logMediator as any).logger, 'log');
+    logMediator.testMethod('trace', [], 'one', 'two');
     expect(LogMediator.buffer.length).toBe(1);
     expect(loggerMock.log).toBeCalledTimes(0);
     expect(LogMediator.buffer[0].msgLevel).toEqual('trace');
     expect(LogMediator.buffer[0].msg).toEqual('one, two');
 
-    log.testMethod('trace', [], 'one', 'two');
+    logMediator.testMethod('trace', [], 'one', 'two');
     expect(LogMediator.buffer.length).toBe(2);
     expect(loggerMock.log).toBeCalledTimes(0);
 
     LogMediator.bufferLogs = false;
-    log.testMethod('trace', [], 'one', 'two');
+    logMediator.testMethod('trace', [], 'one', 'two');
     expect(LogMediator.buffer.length).toBe(2);
     expect(loggerMock.log).toBeCalledTimes(1);
 
-    log.testMethod('trace', [], 'one', 'two');
+    logMediator.testMethod('trace', [], 'one', 'two');
     expect(LogMediator.buffer.length).toBe(2);
     expect(loggerMock.log).toBeCalledTimes(2);
 
-    log.flush();
+    logMediator.flush();
     expect(LogMediator.buffer).toEqual([]);
   });
 });
