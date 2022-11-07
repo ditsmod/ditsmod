@@ -168,8 +168,8 @@ export class AppInitializer {
   }
 
   async reinit(autocommit: boolean = true): Promise<void | Error> {
+    this.systemLogMediator.flush();
     LogMediator.bufferLogs = true;
-    LogMediator.buffer = [];
     this.systemLogMediator.preserveLogger();
     this.systemLogMediator.startReinitApp(this);
     // Before init new logger, works previous logger.

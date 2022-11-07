@@ -149,7 +149,7 @@ export class LogMediator {
       return this.filteredLog(item, item.loggerLogFilter);
     });
 
-    if (uniqFilters.size > 1 && typeof (global as any).it != 'function') {
+    if (uniqFilters.size > 1) {
       this.detectedDifferentLogFilters(uniqFilters);
     }
 
