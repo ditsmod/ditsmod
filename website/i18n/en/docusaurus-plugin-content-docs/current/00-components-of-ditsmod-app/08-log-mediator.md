@@ -8,7 +8,7 @@ In Ditsmod, you can replace the default logger with your own logger, so you can 
 
 If you want to write a module for a Ditsmod application to publish on, for example, npmjs.com, it is recommended that you use `LogMediator` instead of `Logger`, as users will be able to modify the messages that your module writes.
 
-In addition to changing the messages and logging level, `LogMediator` also allows you to filter logs by various parameters. For example, if you enable the most verbose `trace` logs level for the logger, Ditsmod can output a lot of detailed information, and the configuration file for `LogMediator` will allow you to filter messages only for certain modules.
+In addition to changing the messages and logging level, `LogMediator` also allows you to filter logs by various parameters. For example, if you enable the most verbose `trace` logs level for the logger, Ditsmod will output a lot of detailed information, and the configuration file for `LogMediator` will allow you to filter messages only for certain modules.
 
 The Ditsmod repository has a custom example [11-override-core-log-messages][1] that demonstrates several uses of `LogMediator`. To try this example, you can first clone the repository and install the dependencies:
 
