@@ -8,7 +8,7 @@ import { AppModule } from '../src/app/app.module';
 describe('07-dynamically-composing-modules', () => {
   console.log = jest.fn(); // Hide logs
 
-  it('first module should works', async () => {
+  it('should works', async () => {
     const { server } = await new Application().bootstrap(AppModule, false);
     await request(server)
       .get('/')
