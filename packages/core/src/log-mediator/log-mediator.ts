@@ -79,6 +79,27 @@ export class LogMediator {
     }
   }
 
+  protected applyLogFilter(buffer: LogItem[]) {
+    const uniqFilters = new Map<LogFilter, string>();
+
+    let filteredBuffer = buffer.filter((item) => {
+      if (!uniqFilters.has(item.loggerLogFilter)) {
+        uniqFilters.set(item.loggerLogFilter, item.moduleName);
+      }
+      return this.filteredLog(item, item.loggerLogFilter);
+    });
+
+    if (uniqFilters.size > 1) {
+      this.detectedDifferentLogFilters(uniqFilters);
+    }
+
+    if (buffer.length && !filteredBuffer.length && uniqFilters.size) {
+      filteredBuffer = this.getWarnAboutEmptyFilteredLogs(uniqFilters);
+    }
+
+    return filteredBuffer;
+  }
+
   /**
    * @param logLevel has only from raiseLog() call.
    */
@@ -137,27 +158,6 @@ export class LogMediator {
     this.raisedLogs = this.applyCustomLogFilter(LogMediator.buffer, logFilter, 'raised log: ');
     this.renderLogs(this.raisedLogs, logLevel);
     this.raisedLogs = [];
-  }
-
-  protected applyLogFilter(buffer: LogItem[]) {
-    const uniqFilters = new Map<LogFilter, string>();
-
-    let filteredBuffer = buffer.filter((item) => {
-      if (!uniqFilters.has(item.loggerLogFilter)) {
-        uniqFilters.set(item.loggerLogFilter, item.moduleName);
-      }
-      return this.filteredLog(item, item.loggerLogFilter);
-    });
-
-    if (uniqFilters.size > 1) {
-      this.detectedDifferentLogFilters(uniqFilters);
-    }
-
-    if (buffer.length && !filteredBuffer.length && uniqFilters.size) {
-      filteredBuffer = this.getWarnAboutEmptyFilteredLogs(uniqFilters);
-    }
-
-    return filteredBuffer;
   }
 
   protected getWarnAboutEmptyFilteredLogs(uniqFilters: Map<LogFilter, string>): LogItem[] {
