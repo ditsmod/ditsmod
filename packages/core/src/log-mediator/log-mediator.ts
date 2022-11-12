@@ -108,9 +108,9 @@ export class LogMediator {
 
   protected filteredLog(item: LogItem, loggerLogFilter: LogFilter, prefix?: string) {
     const { msgLogFilter, moduleName } = item;
-    let hasTags: boolean | undefined = true;
     let hasModuleName: boolean | undefined = true;
     let hasClassName: boolean | undefined = true;
+    let hasTags: boolean | undefined = true;
     if (loggerLogFilter.modulesNames) {
       hasModuleName = loggerLogFilter!.modulesNames?.includes(moduleName);
     }
@@ -124,6 +124,11 @@ export class LogMediator {
     return hasModuleName && hasClassName && hasTags;
   }
 
+  protected transformMsgIfFilterApplied(item: LogItem, loggerLogFilter: LogFilter, prefix?: string) {
+    if (loggerLogFilter.modulesNames || loggerLogFilter.classesNames || loggerLogFilter.tags) {
+      item.msg = `${prefix || ''}${item.moduleName}: ${item.msg}`;
+    }
+  }
 
   /**
    * @param logLevel has only from raiseLog() call.
@@ -151,6 +156,7 @@ export class LogMediator {
       }
     });
   }
+
   protected raiseLog(logFilter: LogFilter, logLevel: LogLevel) {
     if (this.loggerConfig!.disableRaisedLogs) {
       return;
@@ -178,12 +184,6 @@ export class LogMediator {
         msg,
       },
     ];
-  }
-
-  protected transformMsgIfFilterApplied(item: LogItem, loggerLogFilter: LogFilter, prefix?: string) {
-    if (loggerLogFilter.modulesNames || loggerLogFilter.classesNames || loggerLogFilter.tags) {
-      item.msg = `${prefix || ''}${item.moduleName}: ${item.msg}`;
-    }
   }
 
   protected detectedDifferentLogFilters(uniqFilters: Map<LogFilter, string>) {
