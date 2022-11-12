@@ -100,6 +100,12 @@ export class LogMediator {
     return filteredBuffer;
   }
 
+  protected applyCustomLogFilter(buffer: LogItem[], loggerLogFilter: LogFilter, prefix?: string) {
+    return buffer.filter((item) => {
+      return this.filteredLog(item, loggerLogFilter, prefix);
+    });
+  }
+
   /**
    * @param logLevel has only from raiseLog() call.
    */
@@ -143,12 +149,6 @@ export class LogMediator {
     }
     this.transformMsgIfFilterApplied(item, loggerLogFilter, prefix);
     return hasModuleName && hasClassName && hasTags;
-  }
-
-  protected applyCustomLogFilter(buffer: LogItem[], loggerLogFilter: LogFilter, prefix?: string) {
-    return buffer.filter((item) => {
-      return this.filteredLog(item, loggerLogFilter, prefix);
-    });
   }
 
   protected raiseLog(logFilter: LogFilter, logLevel: LogLevel) {
