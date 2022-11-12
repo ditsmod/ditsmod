@@ -106,6 +106,25 @@ export class LogMediator {
     });
   }
 
+  protected filteredLog(item: LogItem, loggerLogFilter: LogFilter, prefix?: string) {
+    const { msgLogFilter, moduleName } = item;
+    let hasTags: boolean | undefined = true;
+    let hasModuleName: boolean | undefined = true;
+    let hasClassName: boolean | undefined = true;
+    if (loggerLogFilter.modulesNames) {
+      hasModuleName = loggerLogFilter!.modulesNames?.includes(moduleName);
+    }
+    if (loggerLogFilter.classesNames) {
+      hasClassName = loggerLogFilter!.classesNames?.includes(msgLogFilter.className || '');
+    }
+    if (loggerLogFilter.tags) {
+      hasTags = msgLogFilter.tags?.some((tag) => loggerLogFilter!.tags?.includes(tag));
+    }
+    this.transformMsgIfFilterApplied(item, loggerLogFilter, prefix);
+    return hasModuleName && hasClassName && hasTags;
+  }
+
+
   /**
    * @param logLevel has only from raiseLog() call.
    */
@@ -132,25 +151,6 @@ export class LogMediator {
       }
     });
   }
-
-  protected filteredLog(item: LogItem, loggerLogFilter: LogFilter, prefix?: string) {
-    const { msgLogFilter, moduleName } = item;
-    let hasTags: boolean | undefined = true;
-    let hasModuleName: boolean | undefined = true;
-    let hasClassName: boolean | undefined = true;
-    if (loggerLogFilter.modulesNames) {
-      hasModuleName = loggerLogFilter!.modulesNames?.includes(moduleName);
-    }
-    if (loggerLogFilter.classesNames) {
-      hasClassName = loggerLogFilter!.classesNames?.includes(msgLogFilter.className || '');
-    }
-    if (loggerLogFilter.tags) {
-      hasTags = msgLogFilter.tags?.some((tag) => loggerLogFilter!.tags?.includes(tag));
-    }
-    this.transformMsgIfFilterApplied(item, loggerLogFilter, prefix);
-    return hasModuleName && hasClassName && hasTags;
-  }
-
   protected raiseLog(logFilter: LogFilter, logLevel: LogLevel) {
     if (this.loggerConfig!.disableRaisedLogs) {
       return;
