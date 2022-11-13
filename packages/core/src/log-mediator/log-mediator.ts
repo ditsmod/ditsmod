@@ -91,7 +91,7 @@ export class LogMediator {
       if (!uniqFilters.has(item.outputLogFilter)) {
         uniqFilters.set(item.outputLogFilter, item.moduleName);
       }
-      return this.filteredLog(item, item.outputLogFilter);
+      return this.isFilteredLog(item, item.outputLogFilter);
     });
 
     if (uniqFilters.size > 1) {
@@ -107,11 +107,11 @@ export class LogMediator {
 
   protected applyCustomLogFilter(buffer: LogItem[], outputLogFilter: OutputLogFilter, prefix?: string) {
     return buffer.filter((item) => {
-      return this.filteredLog(item, outputLogFilter, prefix);
+      return this.isFilteredLog(item, outputLogFilter, prefix);
     });
   }
 
-  protected filteredLog(item: LogItem, outputLogFilter: OutputLogFilter, prefix?: string) {
+  protected isFilteredLog(item: LogItem, outputLogFilter: OutputLogFilter, prefix?: string) {
     const { inputLogFilter, moduleName } = item;
     let hasModuleName: boolean | undefined = true;
     let hasClassName: boolean | undefined = true;
