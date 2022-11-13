@@ -37,7 +37,7 @@ describe('SystemLogMediator', () => {
     const logMediator = getLogMediator();
     logMediator.testMethod('trace', [], 'one', 'two');
     expect(LogMediator.buffer.length).toBe(1);
-    expect(LogMediator.buffer[0].msgLevel).toEqual('trace');
+    expect(LogMediator.buffer[0].inputLogLevel).toEqual('trace');
     expect(LogMediator.buffer[0].msg).toEqual('one, two');
     logMediator.flush();
     expect(LogMediator.buffer).toEqual([]);
@@ -51,7 +51,7 @@ describe('SystemLogMediator', () => {
     logMediator.testMethod('trace', [], 'one', 'two');
     expect(LogMediator.buffer.length).toBe(1);
     expect(logger.log).toBeCalledTimes(0);
-    expect(LogMediator.buffer[0].msgLevel).toEqual('trace');
+    expect(LogMediator.buffer[0].inputLogLevel).toEqual('trace');
     expect(LogMediator.buffer[0].msg).toEqual('one, two');
 
     logMediator.testMethod('trace', [], 'one', 'two');

@@ -5,10 +5,10 @@ import { fit, it, jest, describe, beforeEach, expect, xdescribe, beforeAll } fro
 import { Module } from '../decorators/module';
 import { RootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { Logger, LoggerConfig, LogLevel } from '../types/logger';
+import { Logger, LogLevel } from '../types/logger';
 import { Router } from '../types/router';
 import { AppInitializer } from '../app-initializer';
-import { LogFilter, LogMediator } from '../log-mediator/log-mediator';
+import { OutputLogFilter, LogMediator } from '../log-mediator/log-mediator';
 import { ModuleManager } from './module-manager';
 import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { Controller } from '../decorators/controller';
@@ -568,9 +568,9 @@ describe('AppInitializer', () => {
   describe('init()', () => {
     const testMethodSpy = jest.fn();
     class LogMediatorMock1 extends SystemLogMediator {
-      testMethod(level: LogLevel, filterConfig: LogFilter = {}, ...args: any[]) {
+      testMethod(level: LogLevel, outputLogFilter: OutputLogFilter = {}, ...args: any[]) {
         testMethodSpy();
-        this.setLog(level, filterConfig, `${args}`);
+        this.setLog(level, outputLogFilter, `${args}`);
       }
     }
     class LogMediatorMock2 extends LogMediator {}
@@ -609,7 +609,7 @@ describe('AppInitializer', () => {
       expect(mock.systemLogMediator).toBeInstanceOf(LogMediatorMock1);
       (mock.systemLogMediator as LogMediatorMock1).testMethod('debug', {}, 'one', 'two');
       const msgIndex1 = buffer.length - 1;
-      expect(buffer[msgIndex1].msgLevel).toBe('debug');
+      expect(buffer[msgIndex1].inputLogLevel).toBe('debug');
       expect(buffer[msgIndex1].msg).toBe('one,two');
       expect(testMethodSpy.mock.calls.length).toBe(1);
 
@@ -618,10 +618,10 @@ describe('AppInitializer', () => {
       expect(mock.systemLogMediator).toBeInstanceOf(LogMediatorMock1);
       (mock.systemLogMediator as LogMediatorMock1).testMethod('info', {}, 'three', 'four');
       // Logs from first init() still here
-      expect(buffer[msgIndex1].msgLevel).toBe('debug');
+      expect(buffer[msgIndex1].inputLogLevel).toBe('debug');
       expect(buffer[msgIndex1].msg).toBe('one,two');
       const msgIndex2 = buffer.length - 1;
-      expect(buffer[msgIndex2].msgLevel).toBe('info');
+      expect(buffer[msgIndex2].inputLogLevel).toBe('info');
       expect(buffer[msgIndex2].msg).toBe('three,four');
       expect(testMethodSpy.mock.calls.length).toBe(2);
       mock.systemLogMediator.flush();

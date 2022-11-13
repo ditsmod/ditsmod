@@ -1,7 +1,7 @@
 import { FactoryProvider, Type } from '@ts-stack/di';
 
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
-import { LogFilter, LogMediator } from '../log-mediator/log-mediator';
+import { OutputLogFilter, LogMediator } from '../log-mediator/log-mediator';
 import { Logger, LoggerConfig } from '../types/logger';
 import { AnyFn, ServiceProvider } from '../types/mix';
 import { NormalizedProvider } from './ng-utils';
@@ -85,10 +85,10 @@ export class Providers {
     return this;
   }
 
-  useLogConfig(useConfig: LoggerConfig, logFilter?: LogFilter) {
+  useLogConfig(useConfig: LoggerConfig, outputLogFilter?: OutputLogFilter) {
     this.providers.push({ provide: LoggerConfig, useValue: useConfig });
-    if (logFilter) {
-      this.providers.push({ provide: LogFilter, useValue: logFilter });
+    if (outputLogFilter) {
+      this.providers.push({ provide: OutputLogFilter, useValue: outputLogFilter });
     }
 
     return this;

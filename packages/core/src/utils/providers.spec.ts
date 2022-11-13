@@ -4,7 +4,7 @@ import { ServiceProvider } from '../types/mix';
 
 import { ConsoleLogger } from '../services/console-logger';
 import { Providers } from './providers';
-import { LogFilter, LogMediator } from '../log-mediator/log-mediator';
+import { OutputLogFilter, LogMediator } from '../log-mediator/log-mediator';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 describe('Providers', () => {
@@ -52,7 +52,7 @@ describe('Providers', () => {
     const config2 = new Providers().useLogConfig(loggerConfig, { tags: ['one'] });
     expect([...config2]).toEqual([
       { provide: LoggerConfig, useValue: loggerConfig },
-      { provide: LogFilter, useValue: { tags: ['one'] } },
+      { provide: OutputLogFilter, useValue: { tags: ['one'] } },
     ]);
   });
 
