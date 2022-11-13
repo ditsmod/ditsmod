@@ -105,32 +105,32 @@ export class LogMediator {
     return filteredBuffer;
   }
 
-  protected applyCustomLogFilter(buffer: LogItem[], loggerLogFilter: OutputLogFilter, prefix?: string) {
+  protected applyCustomLogFilter(buffer: LogItem[], outputLogFilter: OutputLogFilter, prefix?: string) {
     return buffer.filter((item) => {
-      return this.filteredLog(item, loggerLogFilter, prefix);
+      return this.filteredLog(item, outputLogFilter, prefix);
     });
   }
 
-  protected filteredLog(item: LogItem, loggerLogFilter: OutputLogFilter, prefix?: string) {
+  protected filteredLog(item: LogItem, outputLogFilter: OutputLogFilter, prefix?: string) {
     const { inputLogFilter, moduleName } = item;
     let hasModuleName: boolean | undefined = true;
     let hasClassName: boolean | undefined = true;
     let hasTags: boolean | undefined = true;
-    if (loggerLogFilter.modulesNames) {
-      hasModuleName = loggerLogFilter!.modulesNames?.includes(moduleName);
+    if (outputLogFilter.modulesNames) {
+      hasModuleName = outputLogFilter!.modulesNames?.includes(moduleName);
     }
-    if (loggerLogFilter.classesNames) {
-      hasClassName = loggerLogFilter!.classesNames?.includes(inputLogFilter.className || '');
+    if (outputLogFilter.classesNames) {
+      hasClassName = outputLogFilter!.classesNames?.includes(inputLogFilter.className || '');
     }
-    if (loggerLogFilter.tags) {
-      hasTags = inputLogFilter.tags?.some((tag) => loggerLogFilter!.tags?.includes(tag));
+    if (outputLogFilter.tags) {
+      hasTags = inputLogFilter.tags?.some((tag) => outputLogFilter!.tags?.includes(tag));
     }
-    this.transformMsgIfFilterApplied(item, loggerLogFilter, prefix);
+    this.transformMsgIfFilterApplied(item, outputLogFilter, prefix);
     return hasModuleName && hasClassName && hasTags;
   }
 
-  protected transformMsgIfFilterApplied(item: LogItem, loggerLogFilter: OutputLogFilter, prefix?: string) {
-    if (loggerLogFilter.modulesNames || loggerLogFilter.classesNames || loggerLogFilter.tags) {
+  protected transformMsgIfFilterApplied(item: LogItem, outputLogFilter: OutputLogFilter, prefix?: string) {
+    if (outputLogFilter.modulesNames || outputLogFilter.classesNames || outputLogFilter.tags) {
       item.msg = `${prefix || ''}${item.moduleName}: ${item.msg}`;
     }
   }
