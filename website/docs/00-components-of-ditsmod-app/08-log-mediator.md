@@ -40,7 +40,7 @@ yarn
 Тепер давайте проглянемо на `MyLogMediator`:
 
 ```ts
-import { LogMediator, MsgLogFilter } from '@ditsmod/core';
+import { LogMediator, InputLogFilter } from '@ditsmod/core';
 
 export class MyLogMediator extends LogMediator {
   /**
@@ -48,9 +48,9 @@ export class MyLogMediator extends LogMediator {
    */
   override serverListen(self: object, serverName: string, host: string, port: number) {
     const className = self.constructor.name;
-    const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesNames = [className];
-    this.setLog('info', msgLogFilter, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
+    const inputLogFilter = new InputLogFilter();
+    inputLogFilter.classesNames = [className];
+    this.setLog('info', inputLogFilter, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
   }
 }
 ```
@@ -61,18 +61,18 @@ export class MyLogMediator extends LogMediator {
 
 ## Фільтрування логів
 
-Як видно з попереднього прикладу, у `myLogMediator.serverListen()` використовуються метод `setLog()` та клас `MsgLogFilter`, які мають наступні типи:
+Як видно з попереднього прикладу, у `myLogMediator.serverListen()` використовуються метод `setLog()` та клас `InputLogFilter`, які мають наступні типи:
 
 ```ts
-setLog<T extends MsgLogFilter>(msgLevel: LogLevel, msgLogFilter: T, msg: any): void;
+setLog<T extends InputLogFilter>(msgLevel: LogLevel, inputLogFilter: T, msg: any): void;
 
-class MsgLogFilter {
+class InputLogFilter {
   className?: string;
   tags?: string[];
 }
 ```
 
-Інстанс `MsgLogFilter` використовується для можливості подальшого фільтрування логів. Щоб побачити як діють дані фільтри, у `AppModule` спочатку змініть рівень виводу логів на `trace`:
+Інстанс `InputLogFilter` використовується для можливості подальшого фільтрування логів. Щоб побачити як діють дані фільтри, у `AppModule` спочатку змініть рівень виводу логів на `trace`:
 
 ```ts
 .useValue(LoggerConfig, new LoggerConfig('trace'))
@@ -81,7 +81,7 @@ class MsgLogFilter {
 Потім запустіть застосунок командою `yarn start11`, після чого ви повинні побачити багато логів. Тепер розкоментуйте наступний рядок, і ви повинні побачити логи лише з модуля `OtherModule`:
 
 ```ts
-.useValue(LogFilter, { modulesNames: ['OtherModule'] })
+.useValue(OutputLogFilter, { modulesNames: ['OtherModule'] })
 ```
 
 ## Підміна LogMediator на рівні застосунку

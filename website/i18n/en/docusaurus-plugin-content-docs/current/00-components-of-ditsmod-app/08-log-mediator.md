@@ -40,7 +40,7 @@ This feature has been available in TypeScript since version 4.3, it allows you t
 Now let's take a look at `MyLogMediator`:
 
 ```ts
-import { LogMediator, MsgLogFilter } from '@ditsmod/core';
+import { LogMediator, InputLogFilter } from '@ditsmod/core';
 
 export class MyLogMediator extends LogMediator {
   /**
@@ -48,9 +48,9 @@ export class MyLogMediator extends LogMediator {
    */
   override serverListen(self: object, serverName: string, host: string, port: number) {
     const className = self.constructor.name;
-    const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.classesNames = [className];
-    this.setLog('info', msgLogFilter, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
+    const inputLogFilter = new InputLogFilter();
+    inputLogFilter.classesNames = [className];
+    this.setLog('info', inputLogFilter, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
   }
 }
 ```
@@ -61,18 +61,18 @@ The result can be seen if you run the application with the `yarn start11` comman
 
 ## Log filtering
 
-As you can see from the previous example, `myLogMediator.serverListen()` uses the `setLog()` method and the `MsgLogFilter` class, which have the following types:
+As you can see from the previous example, `myLogMediator.serverListen()` uses the `setLog()` method and the `InputLogFilter` class, which have the following types:
 
 ```ts
-setLog<T extends MsgLogFilter>(level: LogLevel, msgLogFilter: T, msg: any): void;
+setLog<T extends InputLogFilter>(level: LogLevel, inputLogFilter: T, msg: any): void;
 
-class MsgLogFilter {
+class InputLogFilter {
   className?: string;
   tags?: string[];
 }
 ```
 
-The `MsgLogFilter` instance is used to enable further log filtering. To see how these filters work, first change the log output level to `trace' in `AppModule`:
+The `InputLogFilter` instance is used to enable further log filtering. To see how these filters work, first change the log output level to `trace' in `AppModule`:
 
 ```ts
 .useValue(LoggerConfig, new LoggerConfig('trace'))
@@ -81,7 +81,7 @@ The `MsgLogFilter` instance is used to enable further log filtering. To see how 
 Then run the application with the `yarn start11` command, after which you should see a lot of logs. Now uncomment the following line and you should see logs only from the `OtherModule` module:
 
 ```ts
-.useValue(LogFilter, { modulesNames: ['OtherModule'] })
+.useValue(OutputLogFilter, { modulesNames: ['OtherModule'] })
 ```
 
 ## Application-level substitute of LogMediator
