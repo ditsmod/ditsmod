@@ -5,7 +5,8 @@ import { ConsoleLogger } from '../services/console-logger';
 import { ModuleExtract } from '../models/module-extract';
 
 /**
- * Uses by LogMediator.
+ * This class is used to limit log output by certain options.
+ * Uses by `LogMediator`.
  */
 export class OutputLogFilter {
   modulesNames?: string[];
@@ -13,7 +14,8 @@ export class OutputLogFilter {
   tags?: string[];
 }
 /**
- * Uses by LogMediator.
+ * This class is used to generate logs that will be used for `OutputLogFilter`.
+ * Uses by `LogMediator`.
  */
 export class InputLogFilter {
   className?: string;
