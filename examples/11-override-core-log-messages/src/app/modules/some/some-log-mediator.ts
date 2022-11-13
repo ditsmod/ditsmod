@@ -1,4 +1,4 @@
-import { LogMediator, MsgLogFilter } from '@ditsmod/core';
+import { LogMediator, InputLogFilter } from '@ditsmod/core';
 
 export class SomeLogMediator extends LogMediator {
   /**
@@ -6,8 +6,8 @@ export class SomeLogMediator extends LogMediator {
    */
   someNewMethod(self: object, additionalArgument: string) {
     const className = self.constructor.name;
-    const msgLogFilter = new MsgLogFilter();
-    msgLogFilter.className = className;
-    this.setLog('info', msgLogFilter, `SomeLogMediator with someNewMethod says: "${additionalArgument}"`);
+    const inputLogFilter = new InputLogFilter();
+    inputLogFilter.className = className;
+    this.setLog('info', inputLogFilter, `SomeLogMediator with someNewMethod says: "${additionalArgument}"`);
   }
 }
