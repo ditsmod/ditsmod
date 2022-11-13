@@ -59,7 +59,35 @@ describe('LogMediator', () => {
       expect(logMediator.getWarnAboutEmptyFilteredLogs).toBeCalledTimes(0);
     });
 
-    it(`works with relevant input and output log filters`, () => {
+    it(`works with filtered items by module name`, () => {
+      const outputLogFilter = new OutputLogFilter();
+      outputLogFilter.modulesNames = [baseLogItem.moduleName];
+
+      const item1: LogItem = {
+        ...baseLogItem,
+        msg: 'fake message 2',
+        inputLogFilter: { className: 'class1' },
+        outputLogFilter,
+      };
+
+      const item2: LogItem = {
+        ...baseLogItem,
+        msg: 'fake message 3',
+        inputLogFilter: { tags: ['tag1', 'tag2'] },
+        outputLogFilter,
+      };
+
+      const buffer: LogItem[] = [item1, item2];
+      const logMediator = getLogMediator();
+      jest.spyOn(logMediator, 'detectedDifferentLogFilters');
+      jest.spyOn(logMediator, 'getWarnAboutEmptyFilteredLogs');
+
+      expect(logMediator.applyLogFilter(buffer)).toEqual([item1, item2]);
+      expect(logMediator.detectedDifferentLogFilters).toBeCalledTimes(0);
+      expect(logMediator.getWarnAboutEmptyFilteredLogs).toBeCalledTimes(0);
+    });
+
+    it(`works with filtered items by class name`, () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.classesNames = ['class1'];
 
@@ -84,6 +112,35 @@ describe('LogMediator', () => {
       jest.spyOn(logMediator, 'getWarnAboutEmptyFilteredLogs');
 
       expect(logMediator.applyLogFilter(buffer)).toEqual([item1]);
+      expect(logMediator.detectedDifferentLogFilters).toBeCalledTimes(0);
+      expect(logMediator.getWarnAboutEmptyFilteredLogs).toBeCalledTimes(0);
+    });
+
+    it(`works with filtered items by tag name`, () => {
+      const outputLogFilter = new OutputLogFilter();
+      outputLogFilter.tags = ['tag2'];
+
+      const item1: LogItem = {
+        ...baseLogItem,
+        msg: 'fake message 2',
+        inputLogFilter: { className: 'class1' },
+        outputLogFilter,
+      };
+
+      const item2: LogItem = {
+        ...baseLogItem,
+        moduleName: 'fakeName2',
+        msg: 'fake message 3',
+        inputLogFilter: { tags: ['tag1', 'tag2'] },
+        outputLogFilter,
+      };
+
+      const buffer: LogItem[] = [item1, item2];
+      const logMediator = getLogMediator();
+      jest.spyOn(logMediator, 'detectedDifferentLogFilters');
+      jest.spyOn(logMediator, 'getWarnAboutEmptyFilteredLogs');
+
+      expect(logMediator.applyLogFilter(buffer)).toEqual([item2]);
       expect(logMediator.detectedDifferentLogFilters).toBeCalledTimes(0);
       expect(logMediator.getWarnAboutEmptyFilteredLogs).toBeCalledTimes(0);
     });
