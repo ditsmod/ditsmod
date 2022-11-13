@@ -200,7 +200,7 @@ export class LogMediator {
     this.logger.log.call(
       this.logger,
       'warn',
-      `LogMediator: detected ${uniqFilters.size} different LogFilters: ${filtersStr.join(', ')}`
+      `LogMediator: detected ${uniqFilters.size} different OutputLogFilters: ${filtersStr.join(', ')}`
     );
   }
 }
