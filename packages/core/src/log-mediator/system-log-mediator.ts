@@ -6,7 +6,7 @@ import { Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceP
 import { getImportedTokens } from '../utils/get-imports';
 import { getModuleName } from '../utils/get-module-name';
 import { getProviderName } from '../utils/get-provider-name';
-import { LogMediator, InputLogFilter } from './log-mediator';
+import { LogMediator, InputLogFilter, OutputLogFilter } from './log-mediator';
 import { Logger, LogLevel } from '../types/logger';
 
 /**
@@ -19,6 +19,20 @@ import { Logger, LogLevel } from '../types/logger';
 @Injectable()
 export class SystemLogMediator extends LogMediator {
   protected static previousLogger: Logger;
+
+  /**
+   * Updates all logs with current:
+   * - logger;
+   * - outputLogLevel;
+   * - outputLogFilter.
+   */
+  updateLogsWithCurrentLogConfig() {
+    LogMediator.buffer.forEach((logItem) => {
+      logItem.logger = this.logger;
+      logItem.outputLogLevel = this.getLogLevel();
+      logItem.outputLogFilter = this.outputLogFilter || new OutputLogFilter();
+    });
+  }
 
   flush() {
     const { buffer } = LogMediator;

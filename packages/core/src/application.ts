@@ -81,6 +81,7 @@ export class Application {
     appInitializer.bootstrapProvidersPerApp();
     // Here, after init custom logger, works this custom logger.
     this.systemLogMediator = appInitializer.systemLogMediator;
+    this.systemLogMediator.updateLogsWithCurrentLogConfig();
     await appInitializer.bootstrapModulesAndExtensions();
   }
 

@@ -63,8 +63,7 @@ export class LogMediator {
 
   protected setLog<T extends InputLogFilter>(inputLogLevel: LogLevel, inputLogFilter: T, msg: any) {
     if (LogMediator.bufferLogs) {
-      const logLevel: LogLevel =
-        typeof this.logger.getLevel == 'function' ? this.logger.getLevel() : this.loggerConfig!.level;
+      const logLevel = this.getLogLevel();
 
       LogMediator.buffer.push({
         moduleName: this.moduleExtract.moduleName,
@@ -79,6 +78,10 @@ export class LogMediator {
     } else {
       this.logger.log(inputLogLevel, msg);
     }
+  }
+
+  protected getLogLevel(): LogLevel {
+    return typeof this.logger.getLevel == 'function' ? this.logger.getLevel() : this.loggerConfig!.level;
   }
 
   protected applyLogFilter(buffer: LogItem[]) {
