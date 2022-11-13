@@ -21,7 +21,7 @@ export class MsgLogFilter {
 }
 
 /**
- * Default type for Log buffer.
+ * Default type for `LogMediator.buffer`.
  */
 export interface LogItem {
   moduleName: string;
