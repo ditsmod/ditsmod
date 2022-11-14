@@ -19,6 +19,14 @@ describe('LogMediator', () => {
     override getWarnAboutEmptyFilteredLogs(uniqFilters: Map<OutputLogFilter, string>) {
       return super.getWarnAboutEmptyFilteredLogs(uniqFilters);
     }
+
+    override isFilteredLog(item: LogItem, outputLogFilter: OutputLogFilter, prefix?: string) {
+      return super.isFilteredLog(item, outputLogFilter, prefix);
+    }
+
+    override transformMsgIfFilterApplied(item: LogItem, outputLogFilter: OutputLogFilter, prefix?: string) {
+      return super.transformMsgIfFilterApplied(item, outputLogFilter, prefix);
+    }
   }
 
   function getLogMediator(providers?: Provider[]): LogMediatorMock {
@@ -200,6 +208,115 @@ describe('LogMediator', () => {
       expect(result[0].msg).toMatch(/no logs to display/);
       expect(logMediator.detectedDifferentLogFilters).toBeCalledTimes(0);
       expect(logMediator.getWarnAboutEmptyFilteredLogs).toBeCalledTimes(1);
+    });
+  });
+
+  describe(`isFilteredLog()`, () => {
+    const baseLogItem: LogItem = {
+      moduleName: 'fakeName1',
+      date: new Date(),
+      outputLogFilter: {},
+      outputLogLevel: 'debug',
+      inputLogLevel: 'error',
+      inputLogFilter: {},
+      logger: new ConsoleLogger(),
+      msg: 'fake messge 1',
+    };
+
+    it(`filter not matched by module name`, () => {
+      const outputLogFilter = new OutputLogFilter();
+      outputLogFilter.modulesNames = ['module2'];
+
+      const item1: LogItem = {
+        ...baseLogItem,
+        moduleName: 'module3',
+        inputLogFilter: { className: 'class2' },
+        outputLogFilter,
+      };
+
+      const logMediator = getLogMediator();
+      const result = logMediator.isFilteredLog(item1, outputLogFilter);
+      expect(result).toBe(false);
+    });
+
+    it(`filter matched by module name`, () => {
+      const outputLogFilter = new OutputLogFilter();
+      outputLogFilter.modulesNames = ['module3'];
+
+      const item1: LogItem = {
+        ...baseLogItem,
+        moduleName: 'module3',
+        inputLogFilter: { className: 'class2' },
+        outputLogFilter,
+      };
+
+      const logMediator = getLogMediator();
+      const result = logMediator.isFilteredLog(item1, outputLogFilter);
+      expect(result).toBe(true);
+    });
+
+    it(`filter not matched by class name`, () => {
+      const outputLogFilter = new OutputLogFilter();
+      outputLogFilter.classesNames = ['class1'];
+
+      const item1: LogItem = {
+        ...baseLogItem,
+        msg: 'fake message 2',
+        inputLogFilter: { className: 'class2' },
+        outputLogFilter,
+      };
+
+      const logMediator = getLogMediator();
+      const result = logMediator.isFilteredLog(item1, outputLogFilter);
+      expect(result).toBe(false);
+    });
+
+    it(`filter matched by class name`, () => {
+      const outputLogFilter = new OutputLogFilter();
+      outputLogFilter.classesNames = ['class2'];
+
+      const item1: LogItem = {
+        ...baseLogItem,
+        msg: 'fake message 2',
+        inputLogFilter: { className: 'class2' },
+        outputLogFilter,
+      };
+
+      const logMediator = getLogMediator();
+      const result = logMediator.isFilteredLog(item1, outputLogFilter);
+      expect(result).toBe(true);
+    });
+
+    it(`filter not matched by tag name`, () => {
+      const outputLogFilter = new OutputLogFilter();
+      outputLogFilter.tags = ['tag4'];
+
+      const item1: LogItem = {
+        ...baseLogItem,
+        msg: 'fake message 2',
+        inputLogFilter: { className: 'class2', tags: ['tag3'] },
+        outputLogFilter,
+      };
+
+      const logMediator = getLogMediator();
+      const result = logMediator.isFilteredLog(item1, outputLogFilter);
+      expect(result).toBe(false);
+    });
+
+    it(`filter matched by tag name`, () => {
+      const outputLogFilter = new OutputLogFilter();
+      outputLogFilter.tags = ['tag4'];
+
+      const item1: LogItem = {
+        ...baseLogItem,
+        msg: 'fake message 2',
+        inputLogFilter: { className: 'class2', tags: ['tag4'] },
+        outputLogFilter,
+      };
+
+      const logMediator = getLogMediator();
+      const result = logMediator.isFilteredLog(item1, outputLogFilter);
+      expect(result).toBe(true);
     });
   });
 });
