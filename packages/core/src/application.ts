@@ -97,7 +97,8 @@ export class Application {
     } else {
       const serverModule = this.rootMeta.httpModule as typeof http | typeof https;
       const serverOptions = this.rootMeta.serverOptions as http.ServerOptions | https.ServerOptions;
-      return serverModule.createServer(serverOptions, requestListener);
+      // @todo remove casting after fix https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/63269
+      return (serverModule as typeof http).createServer(serverOptions, requestListener);
     }
   }
 }

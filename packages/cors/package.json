@@ -23,8 +23,8 @@
   "author": "Костя Третяк",
   "license": "MIT",
   "dependencies": {
-    "@ts-stack/cors": "^1.3.0",
-    "@ts-stack/cookies": "^1.0.2"
+    "@ts-stack/cookies": "^1.0.2",
+    "@ts-stack/cors": "^1.3.0"
   },
   "devDependencies": {
     "@ts-stack/di": "^1.2.0"

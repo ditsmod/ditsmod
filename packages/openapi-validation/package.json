@@ -27,8 +27,8 @@
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.24.0",
-    "@ts-stack/di": "^1.2.0",
     "@ditsmod/i18n": "^2.0.0-beta.16",
-    "@ditsmod/openapi": "^2.6.0"
+    "@ditsmod/openapi": "^2.6.0",
+    "@ts-stack/di": "^1.2.0"
   }
 }

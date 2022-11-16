@@ -1,5 +1,4 @@
 import { OasOptions } from '@ditsmod/openapi';
-import { Scalar } from 'yaml';
 
 export const oasOptions: OasOptions = {
   yamlSchemaOptions: {
@@ -9,7 +8,7 @@ export const oasOptions: OasOptions = {
         tag: 'tag:yaml.org,2002:str',
         default: true,
         resolve: () => 'fake resolve for @ditsmod/i18n dictionary',
-        stringify: (node: Scalar<any>) => node.value?.name,
+        stringify: (node) => (node.value as any).name,
       });
       return tags;
     },
