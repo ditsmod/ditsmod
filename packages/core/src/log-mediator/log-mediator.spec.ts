@@ -322,6 +322,55 @@ describe('LogMediator', () => {
   });
 
   describe(`writeLogs()`, () => {
-    
+    const baseLogItem: LogItem = {
+      moduleName: 'fakeName1',
+      date: new Date(),
+      outputLogFilter: {},
+      outputLogLevel: 'info',
+      inputLogLevel: 'info',
+      inputLogFilter: {},
+      logger: new ConsoleLogger(),
+      msg: 'fake messge 1',
+    };
+
+    it(`inputLogLevel == outputLogLevel`, () => {
+      const outputLogFilter = new OutputLogFilter();
+      outputLogFilter.tags = ['tag4'];
+
+      const item1: LogItem = {
+        ...baseLogItem,
+        msg: 'fake message 2'
+      };
+
+      const logMediator = getLogMediator();
+      jest.spyOn(baseLogItem.logger, 'log');
+      jest.spyOn(console, 'log');
+      logMediator.writeLogs([item1]);
+      expect(console.log).toBeCalledTimes(1);
+      expect(baseLogItem.logger.log).toBeCalledTimes(1);
+      expect(baseLogItem.logger.log).toBeCalledWith(item1.inputLogLevel, item1.msg);
+      expect(baseLogItem.logger.getLevel()).toBe('info'); // Restored previous log level.
+    });
+
+    it(`inputLogLevel < outputLogLevel`, () => {
+      const outputLogFilter = new OutputLogFilter();
+      outputLogFilter.tags = ['tag4'];
+
+      const item1: LogItem = {
+        ...baseLogItem,
+        msg: 'fake message 2',
+        inputLogLevel: 'debug',
+        outputLogLevel: 'error',
+      };
+
+      const logMediator = getLogMediator();
+      jest.spyOn(baseLogItem.logger, 'log');
+      jest.spyOn(console, 'log');
+      logMediator.writeLogs([item1]);
+      expect(console.log).toBeCalledTimes(0);
+      expect(baseLogItem.logger.log).toBeCalledTimes(1);
+      expect(baseLogItem.logger.log).toBeCalledWith(item1.inputLogLevel, item1.msg);
+      expect(baseLogItem.logger.getLevel()).toBe('info'); // Restored previous log level.
+    });
   });
 });
