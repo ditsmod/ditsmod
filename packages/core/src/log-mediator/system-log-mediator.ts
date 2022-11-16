@@ -36,7 +36,7 @@ export class SystemLogMediator extends LogMediator {
 
   flush() {
     const { buffer } = LogMediator;
-    this.renderLogs(this.applyLogFilter(buffer));
+    this.writeLogs(this.applyLogFilter(buffer));
     buffer.splice(0);
   }
 

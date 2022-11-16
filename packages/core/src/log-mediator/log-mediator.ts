@@ -105,7 +105,7 @@ export class LogMediator {
     return filteredBuffer;
   }
 
-  protected applyCustomLogFilter(buffer: LogItem[], outputLogFilter: OutputLogFilter, prefix?: string) {
+  protected applyCustomOutputLogFilter(buffer: LogItem[], outputLogFilter: OutputLogFilter, prefix?: string) {
     return buffer.filter((item) => {
       return this.isFilteredLog(item, outputLogFilter, prefix);
     });
@@ -136,38 +136,48 @@ export class LogMediator {
   }
 
   /**
-   * @param logLevel has only from raiseLog() call.
+   * Writing of logs by loggers.
+   *
+   * @param logLevel come only from raiseLog() call.
    */
-  protected renderLogs(logItems: LogItem[], logLevel?: LogLevel) {
+  protected writeLogs(logItems: LogItem[], logLevel?: LogLevel) {
+    const previousLogLevels = new Map<Logger, LogLevel>();
+
     logItems.forEach((logItem) => {
       if (!logLevel && this.raisedLogs.includes(logItem)) {
         return;
       }
-      // const dateTime = log.date.toLocaleString();
+      const { logger } = logItem;
+      if (!previousLogLevels.has(logger)) {
+        previousLogLevels.set(logger, logger.getLevel());
+      }
+      logger.setLevel(logLevel || logItem.outputLogLevel);
+
       const partMsg = logItem.inputLogFilter.tags ? ` (Tags: ${logItem.inputLogFilter.tags.join(', ')})` : '';
       const msg = `${logItem.msg}${partMsg}`;
-      logItem.logger.setLevel(logLevel || logItem.outputLogLevel);
-
-      if (!logItem.logger.log) {
-        const loggerName = logItem.logger.constructor.name;
+      if (!logger.log) {
+        const loggerName = logger.constructor.name;
         const msg0 = `error: you need to implement "log" method in "${loggerName}";`;
-        if (logItem.logger.error) {
-          logItem.logger.error.call(logItem.logger, msg0, msg);
+        if (logger.error) {
+          logger.error.call(logger, msg0, msg);
         } else {
           console.error(msg0, msg);
         }
       } else {
-        logItem.logger.log.call(logItem.logger, logItem.inputLogLevel, msg);
+        logger.log.call(logger, logItem.inputLogLevel, msg);
       }
     });
+
+    // Restore previous log level for each logger.
+    previousLogLevels.forEach((outputLogLevel, logger) => logger.setLevel(outputLogLevel));
   }
 
   protected raiseLog(outputLogFilter: OutputLogFilter, logLevel: LogLevel) {
-    if (this.loggerConfig!.disableRaisedLogs) {
+    if (this.loggerConfig!.disabledRaisedLogs) {
       return;
     }
-    this.raisedLogs = this.applyCustomLogFilter(LogMediator.buffer, outputLogFilter, 'raised log: ');
-    this.renderLogs(this.raisedLogs, logLevel);
+    this.raisedLogs = this.applyCustomOutputLogFilter(LogMediator.buffer, outputLogFilter, 'raised log: ');
+    this.writeLogs(this.raisedLogs, logLevel);
     this.raisedLogs = [];
   }
 

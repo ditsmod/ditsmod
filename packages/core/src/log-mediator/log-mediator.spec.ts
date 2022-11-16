@@ -5,6 +5,7 @@ import { it, fit, jest, describe, fdescribe, beforeEach, expect, afterEach } fro
 import { LogItem, LogMediator, OutputLogFilter } from './log-mediator';
 import { ModuleExtract } from '../models/module-extract';
 import { ConsoleLogger } from '../services/console-logger';
+import { LogLevel } from '../types/logger';
 
 describe('LogMediator', () => {
   class LogMediatorMock extends LogMediator {
@@ -24,8 +25,8 @@ describe('LogMediator', () => {
       return super.isFilteredLog(item, outputLogFilter, prefix);
     }
 
-    override transformMsgIfFilterApplied(item: LogItem, outputLogFilter: OutputLogFilter, prefix?: string) {
-      return super.transformMsgIfFilterApplied(item, outputLogFilter, prefix);
+    override writeLogs(logItems: LogItem[], logLevel?: LogLevel) {
+      return super.writeLogs(logItems, logLevel);
     }
   }
 
@@ -318,5 +319,9 @@ describe('LogMediator', () => {
       const result = logMediator.isFilteredLog(item1, outputLogFilter);
       expect(result).toBe(true);
     });
+  });
+
+  describe(`writeLogs()`, () => {
+    
   });
 });
