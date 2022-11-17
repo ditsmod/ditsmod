@@ -6,7 +6,7 @@ sidebar_position: 3
 
 If you want to restrict access to certain routes, you can use guards. You can view a finished example of an application with a guards in the [examples][1] folder or in [RealWorld example][2].
 
-Any guard must be a class implementing the `CanActivate` interface:
+Any guard is a [DI provider][3] passed to request-scoped injectors. Each guard must be a class implementing the `CanActivate` interface:
 
 ```ts
 interface CanActivate {
@@ -146,3 +146,4 @@ In this case, `AuthGuard` will be automatically added to each route in `OtherMod
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/03-route-guards
 [2]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
+[3]: ./dependency-injection#provider

@@ -17,7 +17,7 @@ Ditsmod uses [@ts-stack/di][9] as a library for Dependency Injection (abbreviate
 
 ## Dependency
 
-In the DI system, dependency is all that you ask in the constructors of controllers, services, modules. For example, if you write the following in the service constructor:
+In a DI system, a dependency is everything you ask in the constructors of controllers, services, modules. For example, if you write the following in the service constructor:
 
 ```ts
 import { Injectable } from '@ts-stack/di';
