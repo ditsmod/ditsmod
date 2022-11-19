@@ -124,7 +124,7 @@ As you can see, `Extension1` receives data for its work directly through the con
 
 ## Extension registration
 
-Register the extension in an existing extension group, or create a new group, even if it has a single extension. You will need to create a new DI token for the new group.
+[Register the extension][4] in an existing extension group, or create a new group, even if it has a single extension. You will need to create a new DI token for the new group.
 
 ### What do you need extension groups for
 
@@ -163,7 +163,7 @@ export const MY_EXTENSIONS = new InjectionToken<Extension<void>[]>('MY_EXTENSION
 
 As you can see, each extension group must specify that DI will return an array of extension instances: `Extension<void>[]`. This must be done, the only difference may be in the generic `Extension<T>[]`.
 
-### Extension registration
+### Registering an extension in a group
 
 Objects of the following type can be transferred to the `extensions` array, which is in the module's metadata:
 
@@ -353,3 +353,4 @@ Of course, such a dynamic addition of providers is possible only before the star
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
 [2]: #creating-an-extension-class
 [3]: https://github.com/ditsmod/ditsmod/blob/0c4660a77/packages/body-parser/src/body-parser.extension.ts#L27-L40
+[4]: #registering-an-extension-in-a-group
