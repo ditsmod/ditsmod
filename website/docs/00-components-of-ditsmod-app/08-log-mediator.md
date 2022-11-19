@@ -4,11 +4,11 @@ sidebar_position: 8
 
 # LogMediator
 
-У Ditsmod можна підмінити дефолтний логер на свій логер, завдяки чому ви зможете у свій спосіб записувати навіть ті повідомлення, що видаються у `@ditsmod/core`. Але підміна логера не дозволяє змінювати текст самих повідомлень та рівень логування (trace, debug, info, warn, error). Для цього використовується `LogMediator`. Звичайно ж, якщо ви маєте безпосередній доступ до коду, де логер записує певне повідомлення, то ви тут же на місці зможете це повідомлення змінити і без `LogMediator`. А якщо повідомлення видає сам фреймворк Ditsmod або його модулі, без `LogMediator` не обійтись.
+У Ditsmod можна підмінити дефолтний логер на свій логер, завдяки чому ви зможете у свій спосіб записувати навіть ті повідомлення, що видаються у `@ditsmod/core`. Але підміна логера не дозволяє змінювати текст самих повідомлень та рівень логування (trace, debug, info, warn, error). Для цього використовується `LogMediator` (або його дочірній клас `SystemLogMediator`). Звичайно ж, якщо ви маєте безпосередній доступ до коду, де логер записує певне повідомлення, то ви тут же на місці зможете це повідомлення змінити і без `LogMediator`. А якщо повідомлення видає сам фреймворк Ditsmod або його модулі, без `LogMediator` не обійтись.
 
 Якщо ви захочете написати модуль для застосунку Ditsmod, щоб опублікувати його, наприклад, на npmjs.com, то рекомендується використовувати саме `LogMediator` замість `Logger`, оскільки користувачі зможуть змінювати повідомлення, які пише ваш модуль.
 
-Окрім зміни повідомлень та рівня логування, `LogMediator` також дозволяє фільтрувати логи по різним параметрам. Наприклад, якщо ви включите для логера максимально багатослівний режим `trace`, Ditsmod видасть багато деталізованої інформації, а конфігураційний файл для `LogMediator` дозволить відфільтрувати повідомлення лише для окремих модулів.
+Окрім зміни повідомлень та рівня логування, `LogMediator` також дозволяє фільтрувати логи по різним параметрам. Наприклад, якщо ви включите для логера максимально багатослівний режим `trace`, Ditsmod видасть багато деталізованої інформації, а конфігураційний файл для `LogMediator` дозволить відфільтрувати повідомлення лише для окремих модулів, або логи, записані певним класом чи певним тегом.
 
 У репозиторії Ditsmod є спеціальний приклад [11-override-core-log-messages][1], де продемонстровано декілька варіантів використання `LogMediator`. Щоб спробувати даний приклад, необхідно спочатку клонувати репозиторій та встановити залежності:
 
@@ -16,6 +16,7 @@ sidebar_position: 8
 git clone https://github.com/ditsmod/ditsmod.git
 cd ditsmod
 yarn
+yarn boot
 ```
 
 Після чого ви зможете у своєму редакторі безпосередньо проглядати та експериментувати з даним прикладом.
@@ -40,22 +41,22 @@ yarn
 Тепер давайте проглянемо на `MyLogMediator`:
 
 ```ts
-import { LogMediator, InputLogFilter } from '@ditsmod/core';
+import { SystemLogMediator, InputLogFilter } from '@ditsmod/core';
 
-export class MyLogMediator extends LogMediator {
+export class MyLogMediator extends SystemLogMediator {
   /**
-   * Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"
+   * Here host: "${host}", and here port: "${port}"
    */
-  override serverListen(self: object, serverName: string, host: string, port: number) {
+  override serverListen(self: object, host: string, port: number) {
     const className = self.constructor.name;
     const inputLogFilter = new InputLogFilter();
     inputLogFilter.classesNames = [className];
-    this.setLog('info', inputLogFilter, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
+    this.setLog('info', inputLogFilter, `Here host: "${host}", and here port: "${port}"`);
   }
 }
 ```
 
-Як бачите, `MyLogMediator` розширює `LogMediator`, а метод `serverListen()` позначено ключовим словом `override`, оскільки тут переписується батьківський метод із точно такою назвою. У коментарях до методу написано текст повідомлення, що буде записуватись у логи. У будь-який метод `LogMediator` (для запису логів) першим аргументом завжди передається `this` того інстансу класу, де використовується `LogMediator`, щоб можна було легко отримати ім'я цього класу. Решта аргументів є довільною, усе залежить від контексту використання цих методів.
+Як бачите, `MyLogMediator` розширює `SystemLogMediator`, а метод `serverListen()` позначено ключовим словом `override`, оскільки тут переписується батьківський метод із точно такою назвою. У коментарях до методу написано текст повідомлення, що буде записуватись у логи. У методи `SystemLogMediator` першим аргументом передається `this` того інстансу класу, де використовується `SystemLogMediator`, щоб можна було легко отримати ім'я того класу. Решта аргументів є довільною, усе залежить від контексту використання цих методів.
 
 Результат можна побачити, якщо запустити застосунок командою `yarn start11`, після чого вам повинно видатись саме те повідомлення, яке сформовано у даному методі `myLogMediator.serverListen()`.
 
@@ -86,15 +87,15 @@ class InputLogFilter {
 
 ## Підміна LogMediator на рівні застосунку
 
-Якщо проглянути `AppModule`, можна побачити як підміняється `LogMediator` на `MyLogMediator`:
+Якщо проглянути `AppModule`, можна побачити як підміняється `SystemLogMediator` на `MyLogMediator`:
 
 ```ts
-import { LogMediator } from '@ditsmod/core';
+import { SystemLogMediator } from '@ditsmod/core';
 
 import { MyLogMediator } from './my-log-mediator';
 // ...
   providersPerApp: [
-    { provide: LogMediator, useClass: MyLogMediator },
+    { provide: SystemLogMediator, useClass: MyLogMediator },
     MyLogMediator,
   ],
 // ...

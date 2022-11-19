@@ -4,11 +4,11 @@ sidebar_position: 8
 
 # LogMediator
 
-In Ditsmod, you can replace the default logger with your own logger, so you can record in your own way even those messages issued in `@ditsmod/core`. But changing the logger does not allow you to change the text of the messages themselves and the level of logging (trace, debug, info, warn, error). `LogMediator` is used for this. Of course, if you have direct access to the code where the logger writes a certain message, then you can change this message on the spot without `LogMediator`. And if the message is issued by the Ditsmod framework itself or its modules, `LogMediator` cannot be dispensed with.
+In Ditsmod, you can replace the default logger with your own logger, so you can record in your own way even those messages issued in `@ditsmod/core`. But changing the logger does not allow you to change the text of the messages themselves and the level of logging (trace, debug, info, warn, error). `LogMediator` (or its child class `SystemLogMediator`) is used for this. Of course, if you have direct access to the code where the logger writes a certain message, then you can change this message on the spot without `LogMediator`. And if the message is issued by the Ditsmod framework itself or its modules, `LogMediator` cannot be dispensed with.
 
 If you want to write a module for a Ditsmod application to publish on, for example, npmjs.com, it is recommended that you use `LogMediator` instead of `Logger`, as users will be able to modify the messages that your module writes.
 
-In addition to changing the messages and logging level, `LogMediator` also allows you to filter logs by various parameters. For example, if you enable the most verbose `trace` logs level for the logger, Ditsmod will output a lot of detailed information, and the configuration file for `LogMediator` will allow you to filter messages only for certain modules.
+In addition to changing the messages and logging level, `LogMediator` also allows you to filter logs by various parameters. For example, if you enable the most verbose `trace` logs level for the logger, Ditsmod will output a lot of detailed information, and the configuration file for `LogMediator` will allow you to filter messages only for certain modules, or logs writed by a certain class or a certain tag.
 
 The Ditsmod repository has a custom example [11-override-core-log-messages][1] that demonstrates several uses of `LogMediator`. To try this example, you can first clone the repository and install the dependencies:
 
@@ -16,6 +16,7 @@ The Ditsmod repository has a custom example [11-override-core-log-messages][1] t
 git clone https://github.com/ditsmod/ditsmod.git
 cd ditsmod
 yarn
+yarn boot
 ```
 
 After that, you can directly view and experiment with this example in your editor.
@@ -40,22 +41,22 @@ This feature has been available in TypeScript since version 4.3, it allows you t
 Now let's take a look at `MyLogMediator`:
 
 ```ts
-import { LogMediator, InputLogFilter } from '@ditsmod/core';
+import { SystemLogMediator, InputLogFilter } from '@ditsmod/core';
 
-export class MyLogMediator extends LogMediator {
+export class MyLogMediator extends SystemLogMediator {
   /**
-   * Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"
+   * Here host: "${host}", and here port: "${port}"
    */
-  override serverListen(self: object, serverName: string, host: string, port: number) {
+  override serverListen(self: object, host: string, port: number) {
     const className = self.constructor.name;
     const inputLogFilter = new InputLogFilter();
     inputLogFilter.classesNames = [className];
-    this.setLog('info', inputLogFilter, `Here serverName: "${serverName}", here host: "${host}", and here port: "${port}"`);
+    this.setLog('info', inputLogFilter, `Here host: "${host}", and here port: "${port}"`);
   }
 }
 ```
 
-As you can see, `MyLogMediator` extends `LogMediator` and the `serverListen()` method is marked with the `override` keyword because it overrides a parent method with the exact same name. The text of the message that will be recorded in the logs is written in the comments to the method. Any `LogMediator` method (for logging) is always passed the `this` of the instance of the class using the `LogMediator` as its first argument, so that the name of that class can be easily retrieved. The rest of the arguments are arbitrary, everything depends on the context of using these methods.
+As you can see, `MyLogMediator` extends `LogMediator` and the `serverListen()` method is marked with the `override` keyword because it overrides a parent method with the exact same name. The text of the message that will be recorded in the logs is written in the comments to the method. In `SystemLogMediator` method is passed `this` of the instance of the class that uses the `SystemLogMediator` as its first argument, so that the name of that class can be easily retrieved. The rest of the arguments are arbitrary, everything depends on the context of using these methods.
 
 The result can be seen if you run the application with the `yarn start11` command, after which you should receive exactly the message that was generated in this `myLogMediator.serverListen()` method.
 
