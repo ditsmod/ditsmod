@@ -44,7 +44,9 @@ DI allows you to pass any value to the constructor for the same token. This feat
 
 ## Provider
 
-DI resolves the dependency using the appropriate providers. For one dependency, you need to pass one or more providers to DI. In `@ts-stack/di`, the provider can be either a class or an object with the following properties:
+DI resolves the dependency using the appropriate providers. For one dependency, DI needs to pass one or more providers in the metadata of the module or controller, although sometimes they are passed directly to the injectors (see the next section).
+
+In `@ts-stack/di`, the provider can be either a class or an object with the following properties:
 
 ```txt
 { provide: <token>, useClass: <class> },
@@ -223,7 +225,7 @@ The first 2 stages occur during application initialization, before starting the 
 
 ## Multiple provider additions
 
-In some module, a same provider can be added many times at the same level, but DI will choose the most recent one (there are exceptions to this rule, but this only applies to [multi-providers][10]). Additionally, the same provider can be passed at four levels at the same time, but DI will always choose the closest injectors (ie, if a value for a provider is asking at the request level, the injector at the request level will be looked up first, and only if the desired provider is not there, DI will rise to the parent injectors).
+In a given module, the same provider can be added multiple times to the same injector, but DI will select the provider that was added last (there are exceptions to this rule, but this only applies to [multi-providers][10]). In addition, the same provider can be transmitted simultaneously to up to four injectors at different levels, but DI will always choose the closest injectors (ie, if a value for a provider is asking at the request level, the injector at the request level will be looked up first, and only if the desired provider is not there, DI will rise to the parent injectors).
 
 This can be used, for example, as follows:
 
@@ -262,7 +264,7 @@ To substitute any Ditsmod default provider with your own provider, the algorithm
 ## When DI cannot find the right provider
 
 Remember that when DI cannot find the required provider, there are only three possible reasons:
-1. you did not add the required provider to the metadata of the module or controller;
+1. you did not transfer the required provider to DI;
 2. you have not imported the module where the provider you need is passed, or this provider is not exported;
 3. you ask the parent injector for the provider from the child injector.
 

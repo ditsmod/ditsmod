@@ -107,7 +107,7 @@ import { SomeController } from './some.controller';
 export class SomeModule {}
 ```
 
-How to add a certain prefix centrally in the module, you can see in the section [Exporting and importing modules][1].
+How to centrally add a certain prefix to a module, you can see in the section [Export and import of modules][1].
 
 ## Sevices
 
@@ -117,7 +117,7 @@ What services can do:
 
 - provide configuration;
 - validate the request;
-- parsing the body of the HTTP request;
+- parsing the body of the request;
 - check access permissions;
 - works with databases, with mail:
 - etc.
