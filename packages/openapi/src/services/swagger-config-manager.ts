@@ -93,12 +93,10 @@ export class SwaggerConfigManager {
           {
             test: /\.yaml$/,
             use: [{ loader: 'yaml-loader' }, { loader: 'json-loader' }],
-            resolve: { modules: [ require.resolve('yaml-loader'), require.resolve('json-loader') ] },
           },
           {
             test: /\.css$/,
             use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
-            resolve: { modules: [ require.resolve('style-loader'), require.resolve('css-loader') ] },
           },
         ],
       },
