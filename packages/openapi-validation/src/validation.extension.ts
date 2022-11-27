@@ -25,18 +25,15 @@ export class ValidationExtension implements Extension<void> {
     private extensionsManager: ExtensionsManager,
     private ajvService: AjvService,
     @Optional() private validationOptions?: ValidationOptions
-  ) {}
+  ) { }
 
-  async init(isLastExtensionCall?: boolean) {
+  async init() {
     if (this.inited) {
       return;
     }
 
     await this.extensionsManager.init(BODY_PARSER_EXTENSIONS);
     await this.filterParameters();
-    if (isLastExtensionCall) {
-      this.perAppService.providers = [{ provide: AjvService, useValue: this.ajvService }];
-    }
     this.inited = true;
   }
 
@@ -45,6 +42,7 @@ export class ValidationExtension implements Extension<void> {
 
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
+      providersPerMod.push({ provide: AjvService, useValue: this.ajvService });
       const injectorPerMod = this.perAppService.injector.resolveAndCreateChild(providersPerMod);
 
       aControllersMetadata2.forEach(({ providersPerRou, providersPerReq }) => {
