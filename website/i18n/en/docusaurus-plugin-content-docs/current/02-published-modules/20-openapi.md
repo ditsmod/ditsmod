@@ -220,13 +220,13 @@ import { SomeModel } from './some-model';
 @Controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', '', {
+  @OasRoute('POST', '', {
     requestBody: {
       description: 'All properties are taken from Model1.',
       content: getContent({ mediaType: 'application/json', model: Model1 }),
     },
   })
-  async getSome() {
+  async postSome() {
     // ...
   }
 }
