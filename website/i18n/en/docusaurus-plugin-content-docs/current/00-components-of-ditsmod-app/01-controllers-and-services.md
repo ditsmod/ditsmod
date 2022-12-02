@@ -109,7 +109,7 @@ export class SomeModule {}
 
 How to centrally add a certain prefix to a module, you can see in the section [Export and import of modules][1].
 
-## Sevices
+## Services
 
 Although from a technical point of view, it is possible to get by with just one controller to handle a HTTP request, but it is better to separate the voluminous code with business logic into separate classes so that this code can be reused if necessary, and easier to test. These separate classes with business logic are called _services_.
 
