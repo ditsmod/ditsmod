@@ -119,7 +119,7 @@ What services can do:
 - validate the request;
 - parsing the body of the request;
 - check access permissions;
-- works with databases, with mail:
+- works with databases, with emails:
 - etc.
 
 The TypeScript class becomes a Ditsmod service with `Injectable` decorator:
@@ -131,7 +131,7 @@ import { Injectable } from '@ts-stack/di';
 export class SomeService {}
 ```
 
-It is recommended that service files end with `*.service.ts` and that their class names end with `*Service`.
+It is recommended that service file names end with `*.service.ts` and that their class names end with `*Service`.
 
 Note that this decorator is imported from `@ts-stack/di`, not from `@ditsmod/core`.
 

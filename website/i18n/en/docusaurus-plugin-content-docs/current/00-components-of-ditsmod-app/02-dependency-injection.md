@@ -4,16 +4,16 @@ sidebar_position: 2
 
 # Dependency Injection
 
-## Базові поняття
+## Basic concepts
 
 Ditsmod uses [@ts-stack/di][9] as a library for Dependency Injection (abbreviated - DI), it has the following basic concepts:
 
-- dependence
-- token
+- dependency
+- dependency token
 - provider
 - injector
 - hierarchy of injectors
-- change of providers
+- substitution providers
 
 ## Dependency
 
@@ -36,26 +36,28 @@ this means that `SecondService` has a dependency on `FirstService`, and expected
 1. an instance of `FirstService` will be created first;
 2. to create an instance of `SecondService`, an instance of `FirstService` will be passed to its constructor.
 
-## Token
+## Dependency token
 
-A token is an identifier for a specific dependency. That is, the "dependency" is what you want to get in the final result in the constructor, and the "token" is the identifier by which this dependency will be looked up in DI. In the previous example in the constructor - `FirstService` is the dependency token.
+A dependency token is an identifier for a specific dependency. That is, the "dependency" is what you want to get in the final result in the constructor, and the "token" is the identifier by which this dependency will be looked up in DI. In the previous example in the constructor - `FirstService` is the dependency token.
 
 DI allows you to pass any value to the constructor for the same token. This feature is convenient to use for testing, because instead of a real dependency, you can pass a mock or stub to the constructor.
 
 ## Provider
 
-DI resolves the dependency using the appropriate providers. For one dependency, DI needs to pass one or more providers in the metadata of the module or controller, although sometimes they are passed directly to the injectors (see the next section).
+DI resolves the dependency using the appropriate providers. For one dependency you need to pass to DI one or more providers in the metadata of the module or controller, although sometimes they are passed directly to the injectors (see the next section).
 
-In `@ts-stack/di`, the provider can be either a class or an object with the following properties:
+In `@ts-stack/di`, the provider can be either a class or an object with following type:
 
-```txt
-{ provide: <token>, useClass: <class> },
-{ provide: <token>, useValue: <any value> },
-{ provide: <token>, useFactory: <function>, deps: [<array of providers>] },
-{ provide: <token>, useExisting: <another token> },
+```ts
+import { Type } from '@ts-stack/di';
+
+type Provider = { provide: any, useClass: Type<any>, multi?: boolean } |
+{ provide: any, useValue: any, multi?: boolean } |
+{ provide: any, useFactory: Function, deps?: any[], multi?: boolean } |
+{ provide: any, useExisting: any, multi?: boolean }
 ```
 
-Examples of the use of these objects are shown in the section [Switching providers][102].
+Examples of the use of these objects are shown in the section [Substitution providers][102].
 
 Every provider has a token, but not every token can be the provider. In fact, only a class can act both as a provider and as a token. And, for example, a text value can only be a token, but not a provider.
 
@@ -99,7 +101,7 @@ In this case, you may not know the whole chain of dependencies `Service3`, entru
 
 ## Hierarchy of injectors
 
-The `@ts-stack/di` library also allows you to create a hierarchy of injectors - this is when there are parent and child injectors. At first glance, there is nothing interesting in such a hierarchy, because it is not clear why it is needed, but in Ditsmod this feature is used very often, because it allows you to make the application architecture modular. Special attention should be paid to the study of the specifics of the hierarchy, it will save you a lot of time in the future, because you will know how it works and why it does not find this dependence...
+The `@ts-stack/di` library also allows you to create a hierarchy of injectors - this is when there are parent and child injectors. At first glance, there is nothing interesting in such a hierarchy, because it is not clear why it is needed, but in Ditsmod this feature is used very often, because it allows you to make the application architecture modular. Special attention should be paid to the study of the specifics of the hierarchy, it will save you a lot of time in the future, because you will know how it works and why it does not find this dependency...
 
 When creating a hierarchy, the connection is held only by the child injector, it has the object of the parent injector. At the same time, the parent injector knows nothing about its child injectors. That is, the connection between the injectors is one-way. Conventionally, it looks like this:
 
