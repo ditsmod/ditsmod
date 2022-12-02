@@ -74,4 +74,4 @@ You can read what the guards are in the [Guards][4] section.
 [1]: https://github.com/auth0/node-jsonwebtoken
 [2]: https://www.rfc-editor.org/rfc/rfc7519
 [3]: https://github.com/ditsmod/ditsmod/tree/main/examples/14-auth-jwt
-[4]: ../00-components-of-ditsmod-app/03-guards.md
+[4]: ../components-of-ditsmod-app/guards
