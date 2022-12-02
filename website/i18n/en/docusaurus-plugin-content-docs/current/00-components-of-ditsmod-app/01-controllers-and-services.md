@@ -134,13 +134,6 @@ export class SomeService {}
 It is recommended that service files end with `*.service.ts` and that their class names end with `*Service`.
 
 Note that this decorator is imported from `@ts-stack/di`, not from `@ditsmod/core`.
-Examples of Ditsmod services:
-
-- configuration service;
-- service for working with databases, email, etc .;
-- service for parsing the body of the HTTP-request;
-- service for checking access rights;
-- etc.
 
 Often some services depend on other services, and to get an instance of a particular service, you need specify its class in the constructor:
 
