@@ -96,7 +96,7 @@ export class SomeController {
 
 Прив'язується контролер до модуля через масив `controllers`:
 
-```ts
+```ts {6}
 import { Module } from '@ditsmod/core';
 
 import { SomeController } from './some.controller';
@@ -107,7 +107,22 @@ import { SomeController } from './some.controller';
 export class SomeModule {}
 ```
 
-Як до модуля централізовано додати певний префікс, ви можете проглянути у розділі [Експорт та імпорт модулів][1].
+Після прив'язки контролерів до модуля, щоб Ditsmod брав до уваги ці контролери, даний модуль потрібно імпортувати у формі об'єкта, що має інтерфейс `ModuleWithParams`:
+
+```ts {7}
+import { Module } from '@ditsmod/core';
+
+import { SomeModule } from './some.module';
+
+@Module({
+  imports: [
+    { path: '', module: SomeModule }
+  ]
+})
+export class OtherModule {}
+```
+
+Більш докладну інформацію ви можете прочитати у розділі [Експорт та імпорт модулів][1].
 
 ## Сервіси
 

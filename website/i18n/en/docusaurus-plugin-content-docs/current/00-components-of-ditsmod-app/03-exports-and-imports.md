@@ -4,39 +4,40 @@ sidebar_position: 3
 
 # Export and import
 
-## Export of the providers from non-root module
+## Export providers from non-root module
 
-By exporting providers from a particular module, you are declaring that they are available for use in other modules that will import that module:
+By exporting providers from a particular module, you declare that they are available for use in other modules that will import that module:
 
-```ts
+```ts {8}
 import { Module } from '@ditsmod/core';
 
-import { SomeService } from './some.service';
+import { FirstService } from './first.service';
+import { SecondService } from './second.service';
 
 @Module({
-  providersPerMod: [SomeService],
-  exports: [SomeService],
+  providersPerMod: [FirstService, SecondService],
+  exports: [SecondService],
 })
 export class SomeModule {}
 ```
 
-Note that not only `SomeService` is added to the `exports` array, this provider is also added to the `providersPerMod`. When exporting, _passing_ the provider to the injector at some level is mandatory.
+Only those services that will be directly used in external modules need to be exported from a specific module. In this case, `SecondService` can depend on `FirstService`, but `FirstService` does not need to be exported unless it is directly used in an external module. In this way, encapsulation of modules is ensured.
 
-Providers can only export those that are passed:
+You can export providers only those that are transferred to the following arrays:
 
-1. at the module level (ie in the array `providersPerMod`);
-2. or at the route level (ie in the array `providersPerRou`);
-3. or at the request level (ie in the array `providersPerReq`).
+- `providersPerMod`;
+- `providersPerRou`;
+- `providersPerReq`.
 
-It doesn't make sense to export providers passed at the application level (ie in the `providersPerApp` array), because _passing_ them to the injector at application level means _exporting_ them at that level.
+Exporting the providers passed in `providersPerApp` does not make sense, as using this array DI will generate [injector][1] at the application level. That is, providers from this array will be available for any module, at any level, and without export.
 
-It also does not make sense to export controllers, as exports apply only to providers.
+It also doesn't make sense to export the controllers, because the export only affects the providers.
 
-## Export of the providers from the root module
+## Export providers from the root module
 
-Exporting providers from the root module means that these providers become available to any service or controller in the application, and their transmission level is preserved:
+Exporting providers from the root module means that these providers will automatically be added to every module in the application:
 
-```ts
+```ts {9}
 import { RootModule } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
@@ -44,19 +45,19 @@ import { OtherModule } from './other.module';
 
 @RootModule({
   imports: [OtherModule],
-  providersPerMod: [SomeService],
+  providersPerRou: [SomeService],
   exports: [SomeService, OtherModule],
 })
 export class AppModule {}
 ```
 
-As you can see, in addition to exporting individual providers passed to root module injectors, you can also export entire modules.
+In this case, `SomeService` will be added to absolutely all application modules at the route level. As you can see, you can also export entire modules. In this case, all providers exported from `OtherModule` will be added to each application module.
 
-## Import of the module
+## Import module
 
-You cannot import a single provider into the Ditsmod module, but you can import an entire module with all the providers exported from it:
+You cannot import a single provider into a Ditsmod module, but you can import an entire module with all the providers exported in it:
 
-```ts
+```ts {7}
 import { Module } from '@ditsmod/core';
 
 import { FirstModule } from './first.module';
@@ -66,14 +67,27 @@ import { FirstModule } from './first.module';
     FirstModule
   ]
 })
-export class ThridModule {}
+export class SecondModule {}
 ```
 
-For example, if `FirstModule` exports `SomeService`, then this service can now be used in `ThridModule` in any of its services or controllers.
+If `FirstModule` exports, for example, `SomeService`, then this service can now be used in `SecondModule` in any of its services or controllers. However, if `FirstModule` has controllers, they will be ignored in this import form. For Ditsmod to take into account controllers from an imported module, the module must be imported with a prefix passed in `path`:
 
-Please note that when importing, the transmission level of the provider remains the same as it was when exporting. For example, if `SomeService` was passed at the module level, it will remain at the same level during import.
+```ts {4}
+// ...
+@Module({
+  imports: [
+    { path: '', module: FirstModule }
+  ]
+})
+export class SecondModule {}
+```
 
-However, if `FirstModule` has controllers, they will be ignored in this import form. For Ditsmod to take into account the controllers from the imported module, you need to use an object with the following interface:
+Although here `path` is an empty string, for Ditsmod the presence of `path` means:
+
+1. that you also need to take into account the controllers from the imported module;
+2. use `path` as a prefix for all controllers imported from `FirstModule`.
+
+As you can see, in the previous example, this time, neither the service nor the module is imported, but the object. This object has the following interface:
 
 ```ts
 interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> {
@@ -89,34 +103,9 @@ interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
 }
 ```
 
-Such an interface allows you to transfer, in addition to the module itself, certain arguments for the listed parameters:
-
-```ts
-import { Module } from '@ditsmod/core';
-
-import { FirstModule } from './first.module';
-import { AuthGuard } from './auth.guard';
-
-@Module({
-  imports: [
-    { path: '', guards: [AuthGuard], module: FirstModule }
-  ]
-})
-export class ThridModule {}
-```
-
-Although here `path` is an empty string, for Ditsmod the presence of `path` means:
-
-1. that the controllers from the imported module must also be taken into account;
-2. to use `path` as a prefix for all controllers imported from `FirstModule`.
-
-You should also keep in mind that it is not forbidden for injectors of the current module to transfer providers that are in an external module, but it is not recommended to do so. If you need a provider from an external module, import the module in its entirety.
-
-And if you want to use a provider that is not exported from an external module, it is also not recommended to do so, because you will rely on a non-public API, which can change at any time without notice.
-
 ## Re-export of the module
 
-In addition to importing a specific module, the same module can be exported at the same time:
+In addition to importing a specific module, the same module can be simultaneously exported:
 
 ```ts
 import { Module } from '@ditsmod/core';
@@ -130,7 +119,7 @@ import { FirstModule } from './first.module';
 export class SecondModule {}
 ```
 
-What's the point of this? - Now, if you import `SecondModule` into some other module, you will actually have `FirstModule` also imported.
+What is the meaning of this? - Now if you import `SecondModule` into some other module, you will actually have `FirstModule` imported as well.
 
 
-[121]: ./providers-collisions
+[1]: ./dependency-injection#injector

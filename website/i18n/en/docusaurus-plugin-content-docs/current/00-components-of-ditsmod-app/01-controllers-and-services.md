@@ -96,7 +96,7 @@ This example does not show, but remember that the native Node.js request object 
 
 The controller is bound to the module through an array of `controllers`:
 
-```ts
+```ts {6}
 import { Module } from '@ditsmod/core';
 
 import { SomeController } from './some.controller';
@@ -107,7 +107,22 @@ import { SomeController } from './some.controller';
 export class SomeModule {}
 ```
 
-How to centrally add a certain prefix to a module, you can see in the section [Export and import of modules][1].
+After binding controllers to a module, in order for Ditsmod to take these controllers into account, the module must be imported in the form of an object with the `ModuleWithParams` interface:
+
+```ts {7}
+import { Module } from '@ditsmod/core';
+
+import { SomeModule } from './some.module';
+
+@Module({
+  imports: [
+    { path: '', module: SomeModule }
+  ]
+})
+export class OtherModule {}
+```
+
+You can read more detailed information in the section [Export and import of modules][1].
 
 ## Services
 
