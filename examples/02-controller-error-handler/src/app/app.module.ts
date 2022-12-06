@@ -5,7 +5,8 @@ import { MyControllerErrorHandler } from './my-controller-error-handler';
 import { SomeModule } from './modules/some/some.module';
 
 @RootModule({
-  imports: [RouterModule, { path: '', module: SomeModule }],
+  imports: [RouterModule],
+  appends: [SomeModule],
   providersPerReq: [{ provide: ControllerErrorHandler, useClass: MyControllerErrorHandler }],
   exports: [ControllerErrorHandler],
 })

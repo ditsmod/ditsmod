@@ -1,6 +1,19 @@
 import { ProvidersMetadata } from '../models/providers-metadata';
-import { ControllerType, ModuleType, ModuleWithParams, AnyObj } from '../types/mix';
+import { ControllerType, ModuleType, ModuleWithParams, AnyObj, GuardItem } from '../types/mix';
 import { ExtensionOptions } from '../utils/get-extension-provider';
+
+/**
+ * Used for module metadata, for `appends` array.
+ */
+export interface AppendsWithParams<T extends AnyObj = AnyObj> {
+  /**
+   * The module ID.
+   */
+  id?: string;
+  path: string;
+  module: ModuleType<T>;
+  guards?: GuardItem[];
+}
 
 export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
   /**
@@ -12,6 +25,12 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    * Also you can imports modules and set some prefix per each the module.
    */
   imports?: Array<ModuleType | ModuleWithParams>;
+  /**
+   * List of modules that must contain controllers. Providers and extensions from these modules
+   * are not imported into the current module. If the current module has a prefix,
+   * that prefix will be added to each controller route from the appended modules.
+   */
+  appends?: Array<ModuleType | AppendsWithParams>;
   /**
    * List of modules, `ModuleWithParams` or tokens of providers exported by this
    * module.

@@ -17,6 +17,7 @@ import {
   Scope,
   ServiceProvider,
 } from './types/mix';
+import { AppendsWithParams } from './types/module-metadata';
 import { deepFreeze } from './utils/deep-freeze';
 import { getCollisions } from './utils/get-collisions';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports';
@@ -24,7 +25,7 @@ import { getLastProviders } from './utils/get-last-providers';
 import { getModuleName } from './utils/get-module-name';
 import { getToken, getTokens } from './utils/get-tokens';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
-import { isController, isModuleWithParams, isRootModule } from './utils/type-guards';
+import { isAppendsWithParams, isController, isModuleWithParams, isRootModule } from './utils/type-guards';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -67,7 +68,7 @@ export class ModuleFactory {
     this.moduleName = meta.name;
     this.meta = meta;
     this.providersPerApp = providersPerApp;
-    this.importProviders(meta);
+    this.importProvidersAndExtensions(meta);
     this.checkAllCollisionsWithScopesMix();
 
     return {
@@ -93,7 +94,8 @@ export class ModuleFactory {
     modOrObj: AnyModule,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<AnyModule>,
-    guardsPerMod?: NormalizedGuard[]
+    guardsPerMod?: NormalizedGuard[],
+    isAppends?: boolean
   ) {
     const meta = moduleManager.getMetadata(modOrObj, true);
     this.moduleManager = moduleManager;
@@ -104,12 +106,13 @@ export class ModuleFactory {
     this.guardsPerMod = guardsPerMod || [];
     this.unfinishedScanModules = unfinishedScanModules;
     this.meta = meta;
-    this.importModules();
+    this.checkImportsAndAppends(meta);
+    this.importAndAppendModules();
     const moduleExtract: ModuleExtract = { path: this.prefixPerMod, moduleName: meta.name };
     this.meta.providersPerMod.unshift({ provide: ModuleExtract, useValue: moduleExtract });
 
     let aControllersMetadata1: ControllersMetadata1<AnyObj, AnyObj>[] = [];
-    if (isRootModule(meta) || (isModuleWithParams(meta.module) && meta.module.path !== undefined)) {
+    if (isRootModule(meta) || isAppends || (isModuleWithParams(meta.module) && meta.module.path !== undefined)) {
       aControllersMetadata1 = this.getControllersMetadata();
     }
 
@@ -130,14 +133,22 @@ export class ModuleFactory {
     });
   }
 
-  protected importModules() {
-    for (const imp of [...this.meta.importsModules, ...this.meta.importsWithParams]) {
+  protected importAndAppendModules() {
+    this.importOrAppendModules([...this.meta.importsModules, ...this.meta.importsWithParams], true);
+    this.importOrAppendModules(this.meta.appendsWithParams);
+    this.checkAllCollisionsWithScopesMix();
+  }
+
+  protected importOrAppendModules(arr: Array<ModuleType<AnyObj> | ModuleWithParams | AppendsWithParams>, imports?: boolean) {
+    for (const imp of arr) {
       const meta = this.moduleManager.getMetadata(imp, true);
-      this.importProviders(meta);
+      if (imports) {
+        this.importProvidersAndExtensions(meta);
+      }
 
       let prefixPerMod = '';
       let guardsPerMod: NormalizedGuard[] = [];
-      if (isModuleWithParams(imp)) {
+      if ((imports && isModuleWithParams(imp)) || isAppendsWithParams(imp)) {
         prefixPerMod = [this.prefixPerMod, imp.path].filter((s) => s).join('/');
         guardsPerMod = [...this.guardsPerMod, ...meta.normalizedGuardsPerMod];
       }
@@ -155,27 +166,27 @@ export class ModuleFactory {
         imp,
         this.moduleManager,
         this.unfinishedScanModules,
-        guardsPerMod
+        guardsPerMod,
+        !imports
       );
       this.unfinishedScanModules.delete(imp);
 
       this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
     }
-    this.checkAllCollisionsWithScopesMix();
   }
 
   /**
-   * Recursively imports providers.
+   * Recursively imports providers and extensions.
    *
    * @param meta1 Module metadata from where imports providers.
    */
-  protected importProviders(meta1: NormalizedModuleMetadata) {
+  protected importProvidersAndExtensions(meta1: NormalizedModuleMetadata) {
     const { module, exportsModules, exportsWithParams } = meta1;
 
     for (const mod of [...exportsModules, ...exportsWithParams]) {
       const meta2 = this.moduleManager.getMetadata(mod, true);
       // Reexported module
-      this.importProviders(meta2);
+      this.importProvidersAndExtensions(meta2);
     }
 
     this.addProviders('Mod', module, meta1);
@@ -346,5 +357,30 @@ export class ModuleFactory {
     }
 
     return arrControllerMetadata;
+  }
+
+  protected checkImportsAndAppends(meta: NormalizedModuleMetadata) {
+    const appendedModules: Array<ModuleType | ModuleWithParams> = [];
+
+    this.meta.appendsWithParams.forEach((mod) => {
+      const appendedMeta = this.moduleManager.getMetadata(mod, true);
+      if (!appendedMeta.controllers.length) {
+        const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" must have controllers.`;
+        throw new Error(msg);
+      }
+      appendedModules.push(appendedMeta.module);
+    });
+
+    if (!appendedModules.length) {
+      return;
+    }
+
+    [...meta.importsModules, ...meta.importsWithParams].forEach((imp) => {
+      const importedMeta = this.moduleManager.getMetadata(imp, true);
+      if (appendedModules.includes(importedMeta.module)) {
+        const msg = `Appends to "${meta.name}" failed: "${importedMeta.name}" includes in both: imports and appends arrays.`;
+        throw new Error(msg);
+      }
+    });
   }
 }

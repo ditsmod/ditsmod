@@ -23,6 +23,7 @@ import { getToken, getTokens } from '../utils/get-tokens';
 import { normalizeProviders } from '../utils/ng-utils';
 import { pickProperties } from '../utils/pick-properties';
 import {
+  isAppendsWithParams,
   isClassProvider,
   isExistingProvider,
   isModuleWithParams,
@@ -203,6 +204,7 @@ export class ModuleManager {
       ...meta.importsWithParams,
       ...meta.exportsModules,
       ...meta.exportsWithParams,
+      ...meta.appendsWithParams,
     ];
 
     for (const impOrExp of importsOrExports) {
@@ -226,6 +228,7 @@ export class ModuleManager {
     meta = { ...(meta || ({} as NormalizedModuleMetadata<T, A>)) };
     meta.importsModules = meta.importsModules.slice();
     meta.importsWithParams = meta.importsWithParams.slice();
+    meta.appendsWithParams = meta.appendsWithParams.slice();
     meta.controllers = meta.controllers.slice();
     meta.extensionsProviders = meta.extensionsProviders.slice();
     meta.exportsModules = meta.exportsModules.slice();
@@ -287,6 +290,7 @@ export class ModuleManager {
       const oldMeta = { ...meta };
       oldMeta.importsModules = oldMeta.importsModules.slice();
       oldMeta.importsWithParams = oldMeta.importsWithParams.slice();
+      oldMeta.appendsWithParams = oldMeta.appendsWithParams.slice();
       oldMeta.exportsModules = oldMeta.exportsModules.slice();
       oldMeta.exportsWithParams = oldMeta.exportsWithParams.slice();
       this.oldMap.set(key, oldMeta);
@@ -311,6 +315,7 @@ export class ModuleManager {
       importsOrExports.push(
         ...targetMeta.importsModules,
         ...targetMeta.importsWithParams,
+        ...targetMeta.appendsWithParams,
         ...targetMeta.exportsModules,
         ...targetMeta.exportsWithParams
       );
@@ -349,13 +354,25 @@ export class ModuleManager {
 
     rawMeta.imports?.forEach((imp, i) => {
       imp = resolveForwardRef(imp);
-      this.throwIfUndefined(modName, 'Im', imp, i);
+      this.throwIfUndefined(modName, 'Imports', imp, i);
       if (isModuleWithParams(imp)) {
         meta.importsWithParams.push(imp);
         meta.normalizedGuardsPerMod = this.normalizeGuards(imp.guards);
         this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
       } else {
         meta.importsModules.push(imp);
+      }
+    });
+
+    rawMeta.appends?.forEach((ap, i) => {
+      ap = resolveForwardRef(ap);
+      this.throwIfUndefined(modName, 'Appends', ap, i);
+      if (isAppendsWithParams(ap)) {
+        meta.appendsWithParams.push(ap);
+        meta.normalizedGuardsPerMod = this.normalizeGuards(ap.guards);
+        this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
+      } else {
+        meta.appendsWithParams.push({ path: '', module: ap });
       }
     });
 
@@ -403,7 +420,7 @@ export class ModuleManager {
   ) {
     rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
-      this.throwIfUndefined(modName, 'Ex', exp, i);
+      this.throwIfUndefined(modName, 'Exports', exp, i);
       this.throwExportsIfNormalizedProvider(modName, exp);
       if (isModuleWithParams(exp)) {
         meta.exportsWithParams.push(exp);
@@ -495,11 +512,16 @@ export class ModuleManager {
     }
   }
 
-  protected throwIfUndefined(modName: string, imOrEx: 'Im' | 'Ex', imp: AnyModule | ServiceProvider, i: number) {
+  protected throwIfUndefined(
+    modName: string,
+    action: 'Imports' | 'Exports' | 'Appends',
+    imp: AnyModule | ServiceProvider,
+    i: number
+  ) {
     if (imp === undefined) {
-      const lowerImOrEx = imOrEx.toLowerCase();
+      const lowerAction = action.toLowerCase();
       const msg =
-        `${imOrEx}porting into "${modName}" failed: element at ${lowerImOrEx}ports[${i}] has "undefined" type. ` +
+        `${action} into "${modName}" failed: element at ${lowerAction}[${i}] has "undefined" type. ` +
         'This can be caused by circular dependency. Try to replace this element with this expression: ' +
         '"forwardRef(() => YourModule)". Tip: "forwardRef" has @ts-stack/di module.';
       throw new Error(msg);

@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { beforeEach, describe, expect, it } from '@jest/globals';
+import { beforeEach, describe, expect, it, fit, xit, fdescribe } from '@jest/globals';
 import { Injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { NODE_REQ } from './constans';
@@ -72,6 +72,116 @@ describe('ModuleFactory', () => {
     ]);
     mock = injectorPerApp.get(MockModuleFactory);
     moduleManager = new ModuleManager(new SystemLogMediator({ moduleName: 'fakeName' }));
+  });
+
+  describe('appending modules', () => {
+    function bootstrap (mod: ModuleType) {
+      expect(() => moduleManager.scanModule(mod)).not.toThrow();
+      mock.bootstrap([], new GlobalProviders(), '', mod, moduleManager, new Set());
+    }
+
+    it('should not throw an error during appending modules', () => {
+      @Controller()
+      class Controller1 {}
+
+      @Module({ controllers: [Controller1] })
+      class Module1 {}
+
+      @Module({ controllers: [Controller1] })
+      class Module2 {}
+
+      @Module({
+        appends: [Module1, { path: '', module: Module2 }],
+        controllers: [Controller1],
+      })
+      class Module3 {}
+
+      expect(() => bootstrap(Module3)).not.toThrow();
+    });
+
+    xit('should throw an error during importing and appending same module', () => {
+      @Controller()
+      class Controller1 {}
+
+      @Module({ controllers: [Controller1] })
+      class Module1 {}
+
+      @Module({
+        imports: [Module1],
+        appends: [Module1],
+        controllers: [Controller1],
+      })
+      class Module2 {}
+
+      const msg = 'Appends to "Module2" failed: "Module1" includes in both: imports and appends arrays';
+      expect(() => bootstrap(Module2)).toThrow(msg);
+    });
+
+    it('should throw an error during appending module without controllers (common module)', () => {
+      class Provider1 {}
+      class Provider2 {}
+      @Controller()
+      class Controller1 {}
+
+      @Module({
+        providersPerMod: [Provider1, Provider2],
+        exports: [Provider1, Provider2],
+      })
+      class Module1 {}
+
+      @Module({
+        appends: [Module1],
+        controllers: [Controller1],
+      })
+      class Module2 {}
+
+      const msg = 'Appends to "Module2" failed: "Module1" must have controllers';
+      expect(() => bootstrap(Module2)).toThrow(msg);
+    });
+
+    it('should throw an error during appending module without controllers (AppendsWithParams)', () => {
+      class Provider1 {}
+      class Provider2 {}
+      @Controller()
+      class Controller1 {}
+
+      @Module({
+        providersPerMod: [Provider1, Provider2],
+        exports: [Provider1, Provider2],
+      })
+      class Module1 {}
+
+      @Module({
+        appends: [{ path: '', module: Module1 }],
+        controllers: [Controller1],
+      })
+      class Module2 {}
+
+      const msg = 'Appends to "Module2" failed: "Module1" must have controllers';
+      expect(() => bootstrap(Module2)).toThrow('Appends to "Module2" failed: "Module1" must have controllers');
+    });
+
+    it('should not throw an error during appending module with controllers', () => {
+      class Provider1 {}
+      class Provider2 {}
+      @Controller()
+      class Controller1 {}
+
+      @Module({
+        providersPerMod: [Provider1, Provider2],
+        exports: [Provider1, Provider2],
+        controllers: [Controller1],
+      })
+      class Module1 {}
+
+      @Module({
+        appends: [Module1],
+        controllers: [Controller1],
+      })
+      class Module2 {}
+
+      expect(() => bootstrap(Module2)).not.toThrow();
+    });
   });
 
   describe('exportGlobalProviders()', () => {

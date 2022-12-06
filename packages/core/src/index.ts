@@ -57,7 +57,7 @@ export {
   RedirectStatusCodes,
   ServiceProvider,
 } from './types/mix';
-export { ModuleMetadata } from './types/module-metadata';
+export { ModuleMetadata, AppendsWithParams } from './types/module-metadata';
 export { RouteMeta } from './types/route-data';
 export { PathParam, RouteHandler, Router, RouterReturns } from './types/router';
 export { NodeRequest, NodeResponse, RequestListener } from './types/server-options';

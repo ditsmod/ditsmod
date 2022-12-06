@@ -1,3 +1,4 @@
+import { AppendsWithParams } from '../types/module-metadata';
 import {
   AnyObj,
   ControllerType,
@@ -13,9 +14,9 @@ import { ProvidersMetadata } from './providers-metadata';
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
   /**
    * The module setted here must be identical to the module
-   * passed to "imports" or "exports" array of `@Module` metadata.
+   * passed to "imports", "exports" or "appends" array of `@Module` metadata.
    */
-  module: ModuleType<T> | ModuleWithParams<T>;
+  module: ModuleType<T> | ModuleWithParams<T> | AppendsWithParams<T>;
   /**
    * The module name.
    */
@@ -26,6 +27,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   id?: string = '';
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];
+  appendsWithParams: AppendsWithParams[] = [];
   controllers: ControllerType[] = [];
   ngMetadataName: string;
   exportsModules: ModuleType[] = [];

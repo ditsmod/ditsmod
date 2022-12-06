@@ -16,7 +16,7 @@ import {
 import { ControllerMetadata } from '../decorators/controller';
 import { RouteMetadata } from '../decorators/route';
 import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../types/mix';
-import { ModuleMetadata } from '../types/module-metadata';
+import { AppendsWithParams, ModuleMetadata } from '../types/module-metadata';
 import { RootModuleMetadata } from '../types/root-module-metadata';
 import { Http2SecureServerOptions, ServerOptions } from '../types/server-options';
 import { NormalizedProvider } from './ng-utils';
@@ -51,6 +51,10 @@ export function isRoute(propMeatada: AnyObj): propMeatada is RouteMetadata {
 
 export function isModuleWithParams(mod: ServiceProvider | ModuleWithParams | ModuleType): mod is ModuleWithParams {
   return (mod as ModuleWithParams)?.module !== undefined;
+}
+
+export function isAppendsWithParams(mod: ModuleType | ModuleWithParams | AppendsWithParams): mod is AppendsWithParams {
+  return (mod as AppendsWithParams)?.module !== undefined && (mod as AppendsWithParams)?.path !== undefined;
 }
 
 export function isInjectionToken(token: any): token is InjectionToken<any> {
@@ -110,7 +114,6 @@ export function isProvider(maybeProvider: any): maybeProvider is ServiceProvider
  * ```
  */
 export function isNormalizedProvider(provider: ServiceProvider): provider is NormalizedProvider {
-
   return ok(provider);
 
   /**

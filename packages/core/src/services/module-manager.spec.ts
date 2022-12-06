@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import * as http from 'http';
 import { Injectable, forwardRef, InjectionToken } from '@ts-stack/di';
-import { it, fit, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
+import { it, fit, fdescribe, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
 import { RootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
