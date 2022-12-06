@@ -38,6 +38,7 @@ export class Application {
           resolve({ server });
         }
       } catch (err) {
+        // @todo Refactor this for case when ConsoleLogger duplicate logs with console.log() in Ditsmod application
         this.systemLogMediator.internalServerError(this, err);
         this.flushLogs();
         reject(err);
