@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# Export and import
+# Export, import, append
 
 ## Export providers from non-root module
 
@@ -55,7 +55,7 @@ In this case, `SomeService` will be added to absolutely all application modules 
 
 ## Import module
 
-You cannot import a single provider into a Ditsmod module, but you can import an entire module with all the providers exported in it:
+You cannot import a single provider into a Ditsmod module, but you can import an entire module with all the providers and [extensions][2] exported in it:
 
 ```ts {7}
 import { Module } from '@ditsmod/core';
@@ -85,7 +85,7 @@ export class SecondModule {}
 Although here `path` is an empty string, for Ditsmod the presence of `path` means:
 
 1. that you also need to take into account the controllers from the imported module;
-2. use `path` as a prefix for all controllers imported from `FirstModule`.
+2. use `path` as a prefix for all routes imported from `FirstModule`.
 
 As you can see, in the previous example, this time, neither the service nor the module is imported, but the object. This object has the following interface:
 
@@ -100,6 +100,44 @@ interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
   providersPerRou?: ServiceProvider[];
   providersPerReq?: ServiceProvider[];
   extensionsMeta?: E;
+}
+```
+
+## Appending of the module
+
+If you don't need to import providers and [extensions][2] into the current module, but just append the external module to the prefix of the current module, you can use the `appends` array:
+
+```ts {6}
+import { Module } from '@ditsmod/core';
+
+import { FirstModule } from './first.module';
+
+@Module({
+  appends: [FirstModule]
+})
+export class SecondModule {}
+```
+
+In this case, if `SecondModule` has a prefix, it will be used as a prefix for all routes contained in `FirstModule`. Only those modules with controllers can be appending.
+
+You can also attach an additional prefix to `FirstModule`:
+
+```ts {3}
+// ...
+@Module({
+  appends: [{ path: 'some-path', module: FirstModule }]
+})
+export class SecondModule {}
+```
+
+In this example, an object was used, in which the module is passed for appending, it has the following interface:
+
+```ts
+interface AppendsWithParams<T extends AnyObj = AnyObj> {
+  id?: string;
+  path: string;
+  module: ModuleType<T>;
+  guards?: GuardItem[];
 }
 ```
 
@@ -123,3 +161,4 @@ What is the meaning of this? - Now if you import `SecondModule` into some other 
 
 
 [1]: ./dependency-injection#injector
+[2]: ./extensions

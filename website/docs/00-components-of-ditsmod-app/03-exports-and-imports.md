@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# Експорт та імпорт
+# Експорт, імпорт, прикріплення
 
 ## Експорт провайдерів з некореневого модуля
 
@@ -55,7 +55,7 @@ export class AppModule {}
 
 ## Імпорт модуля
 
-Імпортувати окремий провайдер в модуль Ditsmod не можна, але можна імпортувати цілий модуль з усіма провайдерами, що експортуються в ньому:
+Імпортувати окремий провайдер в модуль Ditsmod не можна, але можна імпортувати цілий модуль з усіма провайдерами та [розширеннями][2], що експортуються в ньому:
 
 ```ts {7}
 import { Module } from '@ditsmod/core';
@@ -103,6 +103,44 @@ interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
 }
 ```
 
+## Прикріплення модуля
+
+Якщо вам не потрібно імпортувати провайдери та [розширення][2] в поточний модуль, а потрібно всього лиш прикріпити зовнішній модуль до префікса поточного модуля, можна скористатись масивом `appends`:
+
+```ts {6}
+import { Module } from '@ditsmod/core';
+
+import { FirstModule } from './first.module';
+
+@Module({
+  appends: [FirstModule]
+})
+export class SecondModule {}
+```
+
+В даному випадку, якщо `SecondModule` має  префікс, він буде використовуватись у якості префіксу для усіх маршрутів, що є у `FirstModule`. Прикріплятись можуть лише ті модулі, що мають контролери. 
+
+Також можна закріпити додатковий префікс за `FirstModule`:
+
+```ts {3}
+// ...
+@Module({
+  appends: [{ path: 'some-path', module: FirstModule }]
+})
+export class SecondModule {}
+```
+
+У даному прикладі був використаний об'єкт, в якому передається модуль для закріплення, він має наступний інтерфейс:
+
+```ts
+interface AppendsWithParams<T extends AnyObj = AnyObj> {
+  id?: string;
+  path: string;
+  module: ModuleType<T>;
+  guards?: GuardItem[];
+}
+```
+
 ## Реекспорт модуля
 
 Окрім імпорту певного модуля, цей же модуль можна одночасно й експортувати:
@@ -123,3 +161,4 @@ export class SecondModule {}
 
 
 [1]: ./dependency-injection#інжектор
+[2]: ./extensions
