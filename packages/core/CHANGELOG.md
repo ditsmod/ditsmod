@@ -1,5 +1,30 @@
+<a name="core-2.28.0-beta.2"></a>
+# [core-2.28.0-beta.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.28.0-beta.2) (2022-12-06)
+
+### BREAKING CHANGES
+
+- `LogFilter` renamed to `OutputLogFilter`
+- `MsgLogFilter` renamed to `InputLogFilter`
+
+### Feature
+
+- added "appends" prop to module meta. With this feature you can appending modules without imports providers and extensions from them:
+
+```ts {6}
+import { Module } from '@ditsmod/core';
+
+import { FirstModule } from './first.module';
+
+@Module({
+  appends: [FirstModule]
+})
+export class SecondModule {}
+```
+
+For more info see [Appending of the module](https://ditsmod.github.io/en/components-of-ditsmod-app/exports-and-imports#appending-of-the-module).
+
 <a name="core-2.27.0"></a>
-# [core-2.27.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.27.0) (2022-10-31)
+## [core-2.27.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.27.0) (2022-10-31)
 
 ### Feature
 
