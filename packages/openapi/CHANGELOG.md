@@ -1,5 +1,12 @@
+<a name="openapi-2.10.0-beta.1"></a>
+# [openapi-2.10.0-beta.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.10.0-beta.1) (2022-12-06)
+
+### BREAKING CHANGES
+
+- Migrate to core-2.28.0-beta.2.
+
 <a name="openapi-2.9.4"></a>
-# [openapi-2.9.4](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.9.4) (2022-10-19)
+## [openapi-2.9.4](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.9.4) (2022-10-19)
 
 ### Bug fix
 
