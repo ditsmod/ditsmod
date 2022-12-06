@@ -132,7 +132,7 @@ describe('ModuleManager', () => {
     expect(mock.getMetadata('root')).toEqual(expectedMeta);
   });
 
-  it('circular imports modules', () => {
+  it('circular imports modules with forwardRef()', () => {
     @Controller()
     class Controller1 {}
 
