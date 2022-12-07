@@ -1,5 +1,5 @@
-<a name="core-2.28.0-beta.2"></a>
-# [core-2.28.0-beta.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.28.0-beta.2) (2022-12-06)
+<a name="core-2.28.0"></a>
+# [core-2.28.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.28.0) (2022-12-07)
 
 ### BREAKING CHANGES
 
