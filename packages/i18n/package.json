@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/i18n",
-  "version": "2.2.0-beta.1",
+  "version": "2.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -22,7 +22,7 @@
     "@ts-stack/di": "^1.2.0"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.28.0-beta.2",
+    "@ditsmod/core": "^2.28.0",
     "@ts-stack/di": "^1.2.0"
   }
 }
