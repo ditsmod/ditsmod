@@ -49,6 +49,7 @@ import { Module } from '@ditsmod/core';
 
 @Module({
   imports: [], // Імпорт модулів
+  appends: [], // Прикріплені модулі (вони потрібні лише для успадкування префікса у поточного модуля)
   controllers: [], // Прив'язка контролерів до модуля
   providersPerApp: [], // Провайдери на рівні застосунку
   providersPerMod: [], //         ...на рівні модуля
@@ -91,6 +92,7 @@ import { RootModule } from '@ditsmod/core';
   // Метадані для модуля, плюс - path - префікс, що додаватиметься до усіх маршрутів
   path: 'api',
   imports: [],
+  appends: [],
   controllers: [],
   providersPerApp: [],
   providersPerMod: [],
