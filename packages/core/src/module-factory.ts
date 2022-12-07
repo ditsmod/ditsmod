@@ -27,7 +27,7 @@ import { getToken, getTokens } from './utils/get-tokens';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
 import { isAppendsWithParams, isController, isModuleWithParams, isRootModule } from './utils/type-guards';
 
-type AnyModule = ModuleType | ModuleWithParams;
+type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 
 /**
  * - exports and imports global providers;
@@ -139,37 +139,37 @@ export class ModuleFactory {
     this.checkAllCollisionsWithScopesMix();
   }
 
-  protected importOrAppendModules(arr: Array<ModuleType<AnyObj> | ModuleWithParams | AppendsWithParams>, imports?: boolean) {
-    for (const imp of arr) {
-      const meta = this.moduleManager.getMetadata(imp, true);
+  protected importOrAppendModules(inputs: Array<AnyModule>, imports?: boolean) {
+    for (const input of inputs) {
+      const meta = this.moduleManager.getMetadata(input, true);
       if (imports) {
         this.importProvidersAndExtensions(meta);
       }
 
       let prefixPerMod = '';
       let guardsPerMod: NormalizedGuard[] = [];
-      if ((imports && isModuleWithParams(imp)) || isAppendsWithParams(imp)) {
-        prefixPerMod = [this.prefixPerMod, imp.path].filter((s) => s).join('/');
+      if ((imports && isModuleWithParams(input)) || isAppendsWithParams(input)) {
+        prefixPerMod = [this.prefixPerMod, input.path].filter((s) => s).join('/');
         guardsPerMod = [...this.guardsPerMod, ...meta.normalizedGuardsPerMod];
       }
 
       const moduleFactory = new ModuleFactory();
 
-      if (this.unfinishedScanModules.has(imp)) {
+      if (this.unfinishedScanModules.has(input)) {
         continue;
       }
-      this.unfinishedScanModules.add(imp);
+      this.unfinishedScanModules.add(input);
       const appMetadataMap = moduleFactory.bootstrap(
         this.providersPerApp,
         this.glProviders,
         prefixPerMod,
-        imp,
+        input,
         this.moduleManager,
         this.unfinishedScanModules,
         guardsPerMod,
         !imports
       );
-      this.unfinishedScanModules.delete(imp);
+      this.unfinishedScanModules.delete(input);
 
       this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
     }

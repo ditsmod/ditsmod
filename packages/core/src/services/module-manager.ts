@@ -14,7 +14,7 @@ import {
   Scope,
   ServiceProvider,
 } from '../types/mix';
-import { ModuleMetadata } from '../types/module-metadata';
+import { AppendsWithParams, ModuleMetadata } from '../types/module-metadata';
 import { getExtensionProvider } from '../utils/get-extension-provider';
 import { getModule } from '../utils/get-module';
 import { getModuleMetadata } from '../utils/get-module-metadata';
@@ -41,7 +41,7 @@ export type ModulesMapId = Map<string, ModuleType | ModuleWithParams>;
 /**
  * Don't use this for public API (worse readable).
  */
-type AnyModule = ModuleType | ModuleWithParams;
+type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 type ModuleId = string | ModuleType | ModuleWithParams;
 
 @Injectable()
@@ -199,7 +199,7 @@ export class ModuleManager {
   protected scanRawModule(modOrObj: AnyModule) {
     const meta = this.normalizeMetadata(modOrObj);
 
-    const importsOrExports = [
+    const inputs = [
       ...meta.importsModules,
       ...meta.importsWithParams,
       ...meta.exportsModules,
@@ -207,13 +207,13 @@ export class ModuleManager {
       ...meta.appendsWithParams,
     ];
 
-    for (const impOrExp of importsOrExports) {
-      if (this.unfinishedScanModules.has(impOrExp)) {
+    for (const input of inputs) {
+      if (this.unfinishedScanModules.has(input)) {
         continue;
       }
-      this.unfinishedScanModules.add(impOrExp);
-      this.scanRawModule(impOrExp);
-      this.unfinishedScanModules.delete(impOrExp);
+      this.unfinishedScanModules.add(input);
+      this.scanRawModule(input);
+      this.unfinishedScanModules.delete(input);
     }
 
     if (meta.id) {
