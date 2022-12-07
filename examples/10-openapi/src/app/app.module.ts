@@ -8,12 +8,8 @@ import { openapiModuleWithParams } from './modules/services/openapi/openapi.modu
 @RootModule({
   // Here works the application and serves OpenAPI documentation.
   listenOptions: { host: 'localhost', port: 3000 },
-  imports: [
-    RouterModule,
-    { path: '', module: FirstModule },
-    { path: '', module: SecondModule },
-    openapiModuleWithParams,
-  ],
+  imports: [RouterModule, openapiModuleWithParams],
+  appends: [FirstModule, SecondModule],
   exports: [openapiModuleWithParams],
 })
 export class AppModule {}

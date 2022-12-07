@@ -5,10 +5,7 @@ import { FirstModule } from './modules/first/first.module';
 import { SecondModule } from './modules/second/second.module';
 
 @RootModule({
-  imports: [
-    RouterModule,
-    { path: '', module: FirstModule },
-    { path: '', module: SecondModule },
-  ]
+  imports: [RouterModule],
+  appends: [FirstModule, SecondModule]
 })
 export class AppModule {}

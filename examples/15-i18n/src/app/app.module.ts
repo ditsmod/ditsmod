@@ -10,8 +10,8 @@ import { ThirdModule } from './third/third.module';
     RouterModule,
     { path: '', module: FirstModule },
     { path: '', module: SecondModule },
-    { path: '', module: ThirdModule },
   ],
+  appends: [ThirdModule],
   providersPerApp: [
     ...new Providers()
       .useLogConfig({ level: 'info' }),

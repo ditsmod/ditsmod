@@ -4,9 +4,7 @@ import { RouterModule } from '@ditsmod/router';
 import { FirstModule } from './modules/first/first.module';
 
 @RootModule({
-  imports: [
-    RouterModule,
-    { path: '', module: FirstModule }
-  ]
+  imports: [RouterModule],
+  appends: [FirstModule]
 })
 export class AppModule {}

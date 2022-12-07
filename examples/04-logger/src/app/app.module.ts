@@ -7,13 +7,8 @@ import { SomeModule } from './modules/some/some.module';
 import { WinstonModule } from './modules/winston/winston.module';
 
 @RootModule({
-  imports: [
-    RouterModule,
-    { path: '', module: SomeModule },
-    { path: '', module: WinstonModule },
-    { path: '', module: PinoModule },
-    { path: '', module: BunyanModule },
-  ],
+  imports: [RouterModule],
+  appends: [SomeModule, WinstonModule, PinoModule, BunyanModule],
   providersPerApp: [...new Providers().useLogConfig({ level: 'info' })],
 })
 export class AppModule {}
