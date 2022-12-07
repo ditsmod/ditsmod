@@ -77,7 +77,7 @@ export class SomeModule {}
 [1]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L9-L11
 [2]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L18-L20
 [3]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L41-L43
-[4]: ../02-published-modules/05-return.md
+[4]: /published-modules/return
 [5]: https://expressjs.com/en/guide/writing-middleware.html
-[6]: ./02-dependency-injection.md
+[6]: /components-of-ditsmod-app/dependency-injection
 [7]: https://github.com/ditsmod/ditsmod/blob/router-2.3.0/packages/core/src/services/pre-router.ts

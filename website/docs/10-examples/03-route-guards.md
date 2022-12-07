@@ -38,5 +38,5 @@ curl -isS localhost:3000/unauth
 curl -isS localhost:3000/forbidden
 ```
 
-[102]: ../components-of-ditsmod-app/exports-and-imports#експорт-провайдерів-із-кореневого-модуля
-[103]: ../components-of-ditsmod-app/guards
+[102]: /components-of-ditsmod-app/exports-and-imports#експорт-провайдерів-із-кореневого-модуля
+[103]: /components-of-ditsmod-app/guards

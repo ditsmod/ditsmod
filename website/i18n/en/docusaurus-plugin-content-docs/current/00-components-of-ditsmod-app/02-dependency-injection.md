@@ -277,8 +277,8 @@ Remember that when DI cannot find the required provider, there are only three po
 [9]: https://ts-stack.github.io/di/en/
 [10]: https://ts-stack.github.io/di/en/#multi-providers
 
-[107]: ./exports-and-imports
-[121]: ./providers-collisions
+[107]: /components-of-ditsmod-app/exports-and-imports
+[121]: /components-of-ditsmod-app/providers-collisions
 [100]: #substitution-providers
 [101]: #hierarchy-of-injectors
 [102]: #substitution-providers

@@ -19,4 +19,4 @@ curl -isS localhost:3000/api/posts/123/comments
 curl -isS localhost:3000/api/posts/123/comments/456
 ```
 
-[1]: ./prerequisite
+[1]: /examples/prerequisite

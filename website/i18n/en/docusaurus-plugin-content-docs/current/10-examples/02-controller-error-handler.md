@@ -36,4 +36,4 @@ curl -isS localhost:3000
 curl -isS localhost:3000/throw-error
 ```
 
-[1]: ./prerequisite
+[1]: /examples/prerequisite

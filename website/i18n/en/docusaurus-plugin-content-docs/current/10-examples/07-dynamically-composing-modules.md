@@ -42,4 +42,4 @@ curl -isS localhost:3000
 ```
 
 
-[1]: ./prerequisite
+[1]: /examples/prerequisite

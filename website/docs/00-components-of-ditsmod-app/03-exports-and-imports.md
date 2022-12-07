@@ -160,5 +160,5 @@ export class SecondModule {}
 Який у цьому сенс? - Тепер, якщо ви зробите імпорт `SecondModule` у якийсь інший модуль, ви фактично матимете імпортованим ще й `FirstModule`.
 
 
-[1]: ./dependency-injection#інжектор
-[2]: ./extensions
+[1]: /components-of-ditsmod-app/dependency-injection#інжектор
+[2]: /components-of-ditsmod-app/extensions

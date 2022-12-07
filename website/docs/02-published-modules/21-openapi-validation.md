@@ -67,6 +67,6 @@ export class SomeModule {}
 
 
 [1]: https://ajv.js.org/guide/getting-started.html
-[2]: ./20-openapi.md
+[2]: /published-modules/openapi
 [3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#referenceObject
 [4]: https://github.com/ditsmod/ditsmod/blob/main/packages/openapi-validation/src/parameters.interceptor.ts

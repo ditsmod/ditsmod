@@ -14,4 +14,4 @@ From the second terminal check the work:
 curl -isS localhost:3000 -d '{"one":1}' -H 'content-type: application/json'
 ```
 
-[1]: ./prerequisite
+[1]: /examples/prerequisite
