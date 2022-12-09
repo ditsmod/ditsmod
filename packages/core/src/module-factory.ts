@@ -139,16 +139,16 @@ export class ModuleFactory {
     this.checkAllCollisionsWithScopesMix();
   }
 
-  protected importOrAppendModules(inputs: Array<AnyModule>, imports?: boolean) {
+  protected importOrAppendModules(inputs: Array<AnyModule>, isImport?: boolean) {
     for (const input of inputs) {
       const meta = this.moduleManager.getMetadata(input, true);
-      if (imports) {
+      if (isImport) {
         this.importProvidersAndExtensions(meta);
       }
 
       let prefixPerMod = '';
       let guardsPerMod: NormalizedGuard[] = [];
-      if ((imports && isModuleWithParams(input)) || isAppendsWithParams(input)) {
+      if ((isImport && isModuleWithParams(input)) || isAppendsWithParams(input)) {
         prefixPerMod = [this.prefixPerMod, input.path].filter((s) => s).join('/');
         guardsPerMod = [...this.guardsPerMod, ...meta.normalizedGuardsPerMod];
       }
@@ -167,7 +167,7 @@ export class ModuleFactory {
         this.moduleManager,
         this.unfinishedScanModules,
         guardsPerMod,
-        !imports
+        !isImport
       );
       this.unfinishedScanModules.delete(input);
 
