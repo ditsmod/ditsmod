@@ -8,7 +8,7 @@ Imagine you have `Module1` where you imported `Module2` and `Module3`. You did t
 
 To prevent this from happening, if you import two or more modules that export non-identical providers with the same token, Ditsmod will throw the following error:
 
-> Error: Importing providers to Module1 failed: exports from Module2 and Module3 causes collision with Service3. If Module1 declared in your application (it is not imported from node_modules), you should add Service3 to resolvedCollisionsPer* in Module1. For example: resolvedCollisionsPerReq: [ [Service3, Module3] ].
+> Error: Importing providers to Module1 failed: exports from Module2 and Module3 causes collision with Service3. If Module1 declared in your application (it is not imported from node_modules), you should add Service3 to resolvedCollisionsPer* in this module. For example: resolvedCollisionsPerReq: [ [Service3, Module3] ].
 
 Specifically in this case:
 

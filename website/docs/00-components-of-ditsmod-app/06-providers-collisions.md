@@ -8,7 +8,7 @@ sidebar_position: 6
 
 Щоб цього не сталось, якщо ви імпортуєте два або більше модулі, в яких експортуються неідентичні провайдери з однаковим токеном, Ditsmod кидатиме приблизно таку помилку:
 
-> Error: Importing providers to Module1 failed: exports from Module2 and Module3 causes collision with Service3. If Module1 declared in your application (it is not imported from node_modules), you should add Service3 to resolvedCollisionsPer* in Module1. For example: resolvedCollisionsPerReq: [ [Service3, Module3] ].
+> Error: Importing providers to Module1 failed: exports from Module2 and Module3 causes collision with Service3. If Module1 declared in your application (it is not imported from node_modules), you should add Service3 to resolvedCollisionsPer* in this module. For example: resolvedCollisionsPerReq: [ [Service3, Module3] ].
 
 Конкретно у цій ситуації:
 
