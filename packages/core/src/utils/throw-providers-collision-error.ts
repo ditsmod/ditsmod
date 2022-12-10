@@ -17,6 +17,6 @@ export function throwProvidersCollisionError(
   const resolvedCollisionsPer = scope ? `resolvedCollisionsPer${scope}` : 'resolvedCollisionsPer*';
   const msg =
     `Importing providers to ${moduleName} failed: exports ${fromModules}causes collision with ${namesStr}. ` +
-    `If ${moduleName} declared in your application (it is not imported from node_modules), you should add ${namesStr} to ${resolvedCollisionsPer} in ${moduleName}.${example}`;
+    `If ${moduleName} declared in your application (it is not imported from node_modules), you should add ${namesStr} to ${resolvedCollisionsPer} in this module.${example}`;
   throw new Error(msg);
 }
