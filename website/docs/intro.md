@@ -25,7 +25,7 @@ Ditsmod є Node.js веб-фреймворком, його назва склад
 Мінімальний базовий набір для роботи застосунку має репозиторій [ditsmod-seed][2]. Клонуйте його та встановіть залежності:
 
 ```bash
-git clone https://github.com/ditsmod/seed.git my-app
+git clone --depth 1 https://github.com/ditsmod/seed.git my-app
 cd my-app
 yarn
 ```
