@@ -103,6 +103,63 @@ interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
 }
 ```
 
+Note that in this interface only the property to which the module is passed is required.
+
+When importing an object with this type, you can pass a module with certain options/parameters in abbreviated form. To see this clearly, let's take the previous example again:
+
+```ts {4}
+// ...
+@Module({
+  imports: [
+    { path: '', module: FirstModule }
+  ]
+})
+export class SecondModule {}
+```
+
+If you wrote `FirstModule` and knew that this module would make sense to be imported many times into different modules with different prefixes, then in this case you could write a static method in this class that returns an object specially designed for import:
+
+```ts
+// ...
+export class FirstModule {
+  static withPrefix(path: string) {
+    return {
+      module: this,
+      path
+    }
+  }
+}
+```
+
+Now the object returned by this method can be imported as follows:
+
+```ts {4}
+// ...
+@Module({
+  imports: [
+    FirstModule.withPrefix('some-prefix')
+  ]
+})
+export class SecondModule {}
+```
+
+In this case, the reduction of the code almost did not occur compared to the previous example, when we imported the object directly, and the readability also worsened. So when writing static import methods, consider whether they simplify the code.
+
+In order for TypeScript to control exactly what the static import method returns, it is recommended to use the `ModuleWithParams` interface:
+
+```ts
+import { ModuleWithParams } from '@ditsmod/core';
+// ...
+export class SomeModule {
+  static withParams(someParams: SomeParams): ModuleWithParams<SomeModule> {
+    return {
+      module: this,
+      // ...
+    }
+  }
+}
+```
+
 ## Appending of the module
 
 If you don't need to import providers and [extensions][2] into the current module, but just append the external module to the prefix of the current module, you can use the `appends` array:
