@@ -103,7 +103,7 @@ interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
 }
 ```
 
-Note that in this interface only the property to which the module is passed is required.
+Note that only the `module` property is required in this interface.
 
 When importing an object with this type, you can pass a module with certain options/parameters in abbreviated form. To see this clearly, let's take the previous example again:
 
