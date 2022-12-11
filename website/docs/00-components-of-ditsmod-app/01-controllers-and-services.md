@@ -107,7 +107,7 @@ import { SomeController } from './some.controller';
 export class SomeModule {}
 ```
 
-Після прив'язки контролерів до модуля, щоб Ditsmod брав до уваги ці контролери, даний модуль потрібно імпортувати у формі об'єкта, що має інтерфейс `ModuleWithParams`:
+Після прив'язки контролерів до модуля, щоб Ditsmod брав до уваги ці контролери, даний модуль потрібно імпортувати в об'єкті, що має інтерфейс `ModuleWithParams`:
 
 ```ts {7}
 import { Module } from '@ditsmod/core';

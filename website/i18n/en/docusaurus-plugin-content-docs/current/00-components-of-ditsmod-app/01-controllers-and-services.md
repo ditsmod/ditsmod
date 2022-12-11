@@ -107,7 +107,7 @@ import { SomeController } from './some.controller';
 export class SomeModule {}
 ```
 
-After binding controllers to a module, in order for Ditsmod to take these controllers into account, the module must be imported in the form of an object with the `ModuleWithParams` interface:
+After binding the controllers to the module, in order for Ditsmod to take these controllers into account, this module must be imported within an object with the `ModuleWithParams` interface:
 
 ```ts {7}
 import { Module } from '@ditsmod/core';
