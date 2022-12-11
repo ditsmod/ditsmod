@@ -48,8 +48,8 @@ In general, an object with the following properties can be passed to the `Module
 import { Module } from '@ditsmod/core';
 
 @Module({
-  imports: [], // Import modules
   appends: [], // Appended modules (these are only needed to inherit the path prefix from the current module)
+  imports: [], // Import modules
   controllers: [], // Binding controllers to the module
   providersPerApp: [], // Application-level providers
   providersPerMod: [], // Module-level providers
@@ -91,8 +91,8 @@ import { RootModule } from '@ditsmod/core';
 
   // Metadata for the module, plus - path - a prefix that will be added to all routes
   path: 'api',
-  imports: [],
   appends: [],
+  imports: [],
   controllers: [],
   providersPerApp: [],
   providersPerMod: [],
