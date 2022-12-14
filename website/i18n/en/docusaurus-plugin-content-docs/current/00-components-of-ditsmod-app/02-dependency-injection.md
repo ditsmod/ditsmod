@@ -9,7 +9,7 @@ sidebar_position: 2
 Ditsmod uses [@ts-stack/di][9] as a library for Dependency Injection (abbreviated - DI), it has the following basic concepts:
 
 - dependency
-- dependency token
+- dependency token, token types
 - provider
 - injector
 - hierarchy of injectors
@@ -33,14 +33,65 @@ export class SecondService {
 
 this means that `SecondService` has a dependency on `FirstService`, and expected that DI will be resolve this dependency as follows:
 
-1. an instance of `FirstService` will be created first;
-2. to create an instance of `SecondService`, an instance of `FirstService` will be passed to its constructor.
+1. first, DI will look at the `FirstService` constructor;
+2. then, if `FirstService` has no dependency, an instance of `FirstService` will be created;
+3. this instance will be passed to the `SecondService` constructor.
+
+If, after executing the first item, it turns out that `FirstService` has its own dependencies, then DI will execute these three items for each given dependency.
+
+### Optional dependency
+
+Sometimes you may need to specify an optional dependency in the constructor. Let's consider the following example, where after the `firstService` property is followed a question mark, thus indicating to TypeScript that this property is optional:
+
+```ts {7}
+import { Injectable } from '@ts-stack/di';
+
+import { FirstService } from './first.service';
+
+@Injectable()
+export class SecondService {
+  constructor(private firstService?: FirstService) {}
+  // ...
+}
+```
+
+But DI will ignore this optionality and throw an error if there is no way to create `FirstService`. For this code to work, you need to use the `Optional` decorator:
+
+```ts {7}
+import { Injectable, Optional } from '@ts-stack/di';
+
+import { FirstService } from './first.service';
+
+@Injectable()
+export class SecondService {
+  constructor(@Optional() private firstService?: FirstService) {}
+  // ...
+}
+```
 
 ## Dependency token
 
-A dependency token is an identifier for a specific dependency. That is, the "dependency" is what you want to get in the final result in the constructor, and the "token" is the identifier by which this dependency will be looked up in DI. In the previous example in the constructor - `FirstService` is the dependency token.
+DI has a registry that contains a mapping between a token and a value for a given dependency. In the previous example in the constructor - `FirstService` is a dependency token, and DI will resolve this dependency by searching its registry for a corresponding value based on this token.
 
-DI allows you to pass any value to the constructor for the same token. This feature is convenient to use for testing, because instead of a real dependency, you can pass a mock or stub to the constructor.
+In the section [Ditsmod Provider Replacement][100] you will learn that DI allows for the same token to pass any value to the constructor. This feature is convenient to use for testing, because instead of a real dependency, you can pass a mock or stub to the constructor.
+
+On the other hand, a token can be of any type except an array or enum. Additionally, you must remember that the token must remain in the JavaScript file after compilation from TypeScript code, so interfaces or types declared with the `type` keyword cannot be used as a token.
+
+If you need to pass an array or enum to the constructor of your class, you can use the `Inject` decorator:
+
+```ts {7}
+import { Injectable, Inject } from '@ts-stack/di';
+
+import { InterfaceOfItem } from './types';
+
+@Injectable()
+export class SecondService {
+  constructor(@Inject('some token for an array') private someArray: InterfaceOfItem[]) {}
+  // ...
+}
+```
+
+As you can see, the `Inject` decorator accepts a token for a specific dependency.
 
 ## Provider
 
@@ -57,7 +108,7 @@ type Provider = { provide: any, useClass: Type<any>, multi?: boolean } |
 { provide: any, useExisting: any, multi?: boolean }
 ```
 
-Examples of the use of these objects are shown in the section [Substitution providers][102].
+Examples of the use of these objects are shown in the section [Substitution providers][100].
 
 Every provider has a token, but not every token can be the provider. In fact, only a class can act both as a provider and as a token. And, for example, a text value can only be a token, but not a provider.
 
@@ -281,4 +332,3 @@ Remember that when DI cannot find the required provider, there are only three po
 [121]: /components-of-ditsmod-app/providers-collisions
 [100]: #substitution-providers
 [101]: #hierarchy-of-injectors
-[102]: #substitution-providers
