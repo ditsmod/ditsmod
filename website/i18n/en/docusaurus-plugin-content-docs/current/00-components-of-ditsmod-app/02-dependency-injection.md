@@ -17,7 +17,7 @@ Ditsmod uses [@ts-stack/di][9] as a library for Dependency Injection (abbreviate
 
 ## Dependency
 
-In a DI system, a dependency is everything you ask in the constructors of controllers, services, modules. For example, if you write the following in the service constructor:
+In a DI system, dependency is everything you want to get in the final result in the constructors of controllers, services, modules. For example, if you write the following in the service constructor:
 
 ```ts {7}
 import { Injectable } from '@ts-stack/di';
@@ -71,7 +71,7 @@ export class SecondService {
 
 ## Dependency token
 
-DI has a registry that contains a mapping between a token and a value for a given dependency. In the previous example in the constructor - `FirstService` is a dependency token, and DI will resolve this dependency by searching its registry for a corresponding value based on this token.
+DI has a registry that contains a mapping between a token and a value for a given dependency. Basically, a token is an identifier for a particular dependency. In the constructors of modules, services, or controllers actually specify the dependency tokens, not the dependencies themselves. To resolve dependencies, DI will search its registry for matching values specifically by tokens.
 
 In the section [Ditsmod Provider Replacement][100] you will learn that DI allows for the same token to pass any value to the constructor. This feature is convenient to use for testing, because instead of a real dependency, you can pass a mock or stub to the constructor.
 
@@ -91,13 +91,11 @@ export class SecondService {
 }
 ```
 
-As you can see, the `Inject` decorator accepts a token for a specific dependency.
+As you can see, `Inject` accepts a token for a specific dependency. When `Inject` is used, DI ignores the type of the variable in back of this decorator.
 
 ## Provider
 
-DI resolves the dependency using the appropriate providers. For one dependency you need to pass to DI one or more providers in the metadata of the module or controller, although sometimes they are passed directly to the injectors (see the next section).
-
-In `@ts-stack/di`, the provider can be either a class or an object with following type:
+DI resolves the dependency using the appropriate providers. In `@ts-stack/di`, the provider can be either a class or an object with the following type:
 
 ```ts {3-6}
 import { Type } from '@ts-stack/di';
@@ -108,9 +106,110 @@ type Provider = { provide: any, useClass: Type<any>, multi?: boolean } |
 { provide: any, useExisting: any, multi?: boolean }
 ```
 
-Examples of the use of these objects are shown in the section [Substitution providers][100].
+For one dependency, you need to transfer one or more providers to the DI registry. Most often, this transfer occurs via module or controller metadata, although sometimes it is passed directly to [injectors][102].
 
-Every provider has a token, but not every token can be the provider. In fact, only a class can act both as a provider and as a token. And, for example, a text value can only be a token, but not a provider.
+Now that you have already familiarized with the concept of **provider**, you can clarify that **dependency** means dependency on providers. **Consumers** of providers have this dependency either in class constructors or in the `get()` method of [injectors][102] (it will be mentioned later).
+
+The preceding code shows the definition of the provider object type, there a token is passed to the `provide` property, and the value that needs to be transferred for this token is passed to the other properties:
+
+  - `useClass` - the passed class (DI will instantiate this class).
+  - `useValue` - any value is passed.
+  - `useFactory` - a callback is passed that should return any value. If the callback has dependencies, the tokens of these dependencies must be passed in the `deps: []` array. For example, if the callback is:
+
+  ```ts
+  function callback(someService: SomeService) {
+    // ...
+    return 'some value';
+  }
+  ```
+
+  In this case, you need to transfer the provider in the following format:
+
+  ```ts
+  { provide: 'some token here', useFactory: callback, deps: [SomeService] }
+  ```
+
+  - `useExisting` - another token is passed. If you write the following:
+
+  ```ts
+  { provide: SecondService, useExisting: FirstService }
+  ```
+
+  this way you tell the DI: "When provider consumers request a `SecondService` token, the value assigned to the `FirstService` token must be used." In other words, this directive makes an alias `SecondService` that points to `FirstService`. The DI work algorithm in such cases is as follows:
+     - When provider consumers request a `SecondService`, DI will search in its registry for a value for it by the `FirstService` token.
+     - Once DI finds a value for `FirstService`, that value will be used.
+
+### Examples of transferring providers to the DI registry
+
+Most often, providers are transferred to the DI registry via module metadata. In the following example, `SomeService` is passed into the `providersPerMod` array:
+
+```ts {7}
+import { Module } from '@ditsmod/core';
+
+import { SomeService } from './some.service';
+
+@Module({
+  providersPerMod: [
+    SomeService
+  ],
+})
+export class SomeModule {}
+```
+
+After such transfer, consumers of providers can use `SomeService` within `SomeModule`. The identical result will be if we transfer the same provider in the object format:
+
+```ts {7}
+import { Module } from '@ditsmod/core';
+
+import { SomeService } from './some.service';
+
+@Module({
+  providersPerMod: [
+    { provide: SomeService, useClass: SomeService }
+  ],
+})
+export class SomeModule {}
+```
+
+And now let's pass another provider in the controller metadata with the same token:
+
+```ts {3}
+@Controller({
+  providersPerReq: [
+    { provide: SomeService, useClass: OtherService }
+  ]
+})
+export class SomeController {
+  constructor(private someService: SomeService) {}
+  // ...
+}
+```
+
+Note the highlighted line. Thus, we tell DI: "If there is a dependency with the token `SomeService` in the constructor of this controller, it must be substituted by an instance of `OtherService`." This substitution will only work for this controller. All other controllers in `SomeModule` will receive `SomeService` instances by the `SomeService` token.
+
+A similar substitution can be made at the application level and at the module level. This can sometimes be necessary, for example when you want to have default configuration values at the application level, but custom values of this configuration at the level of a specific module. In this case, we will first transfer the default config in the root module:
+
+```ts {4}
+// ...
+@RootModule({
+  providersPerApp: [
+    ConfigService
+  ],
+})
+export class AppModule {}
+```
+
+And in a certain module, we replace `ConfigService` with an arbitrary value:
+
+```ts {4}
+// ...
+@Module({
+  providersPerMod: [
+    { provide: ConfigService, useValue: { propery1: 'some value' } }
+  ],
+})
+export class SomeModule {}
+```
 
 ## Injector
 
@@ -264,17 +363,6 @@ export class SecondService {
 ```
 
 Keep in mind that this way you get the injector that created the instance of this service.
-
-## Basic stages of DI operation in Ditsmod applications
-
-We can distinguish 4 main stages:
-
-1. Scanning metadata collected from module decorators, controllers and services.
-2. On the basis of scanned metadata, the formation of a hierarchy of injectors taking into account the import/export declarations of each module.
-3. Request a specific dependency.
-4. Resolving this dependency using previously formed injectors.
-
-The first 2 stages occur during application initialization, before starting the web server, and the rest - during HTTP request processing.
 
 ## Multiple provider additions
 
