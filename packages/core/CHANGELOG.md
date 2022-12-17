@@ -1,5 +1,12 @@
+<a name="core-2.28.1"></a>
+# [core-2.28.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.28.1) (2022-12-17)
+
+### Bug fix
+
+- [Fixed](https://github.com/ditsmod/ditsmod/commit/4698cdacdd8) duplicate of console logs if application have an error before starting web server.
+
 <a name="core-2.28.0"></a>
-# [core-2.28.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.28.0) (2022-12-07)
+## [core-2.28.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.28.0) (2022-12-07)
 
 ### BREAKING CHANGES
 
