@@ -8,6 +8,7 @@ import { getModuleName } from '../utils/get-module-name';
 import { getProviderName } from '../utils/get-provider-name';
 import { LogMediator, InputLogFilter, OutputLogFilter } from './log-mediator';
 import { Logger, LogLevel } from '../types/logger';
+import { ConsoleLogger } from '../services/console-logger';
 
 /**
  * Mediator between core logger and custom user's logger.
@@ -309,7 +310,10 @@ export class SystemLogMediator extends LogMediator {
   /**
    * [internal error]
    */
-  internalServerError(self: object, err: any) {
+  internalServerError(self: object, err: any, hideConsoleLoggerMsg?: boolean) {
+    if (hideConsoleLoggerMsg && this.logger instanceof ConsoleLogger) {
+      return;
+    }
     const className = self.constructor.name;
     const inputLogFilter = new InputLogFilter();
     inputLogFilter.className = className;
