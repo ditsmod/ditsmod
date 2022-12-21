@@ -22,11 +22,10 @@
     "build": "rm -rf dist/* && tsc -b -f"
   },
   "devDependencies": {
-    "@ts-stack/di": "^1.2.0",
     "@ts-stack/chain-error": "^1.2.0"
   },
   "peerDependencies": {
-    "@ts-stack/di": "^1.2.0",
+    "@ts-stack/di": "^2.0.0",
     "reflect-metadata": "^0.1.13",
     "@ts-stack/chain-error": "^1.2.0"
   },
