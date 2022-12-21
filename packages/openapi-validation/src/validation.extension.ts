@@ -25,7 +25,7 @@ export class ValidationExtension implements Extension<void> {
     private extensionsManager: ExtensionsManager,
     private ajvService: AjvService,
     @Optional() private validationOptions?: ValidationOptions
-  ) { }
+  ) {}
 
   async init() {
     if (this.inited) {
