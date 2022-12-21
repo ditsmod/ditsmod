@@ -29,7 +29,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   importsWithParams: ModuleWithParams[] = [];
   appendsWithParams: AppendsWithParams[] = [];
   controllers: ControllerType[] = [];
-  ngMetadataName: string;
+  decoratorName: string;
   exportsModules: ModuleType[] = [];
   exportsWithParams: ModuleWithParams[] = [];
   exportedProvidersPerMod: ServiceProvider[] = [];

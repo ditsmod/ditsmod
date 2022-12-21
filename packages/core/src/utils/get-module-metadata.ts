@@ -20,7 +20,7 @@ export function getModuleMetadata(
 
   if (isModuleWithParams(modOrObj)) {
     const modWitParams = modOrObj;
-    const modMetadata = reflector.annotations(modWitParams.module).find(typeGuard) as ModuleMetadata | undefined;
+    const modMetadata = reflector.getClassMetadata(modWitParams.module).find(typeGuard) as ModuleMetadata | undefined;
     const modName = getModuleName(modWitParams.module);
     if (!modMetadata) {
       return modMetadata;
@@ -41,6 +41,6 @@ export function getModuleMetadata(
     metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
     return metadata;
   } else {
-    return reflector.annotations(modOrObj).find(typeGuard);
+    return reflector.getClassMetadata(modOrObj).find(typeGuard);
   }
 }

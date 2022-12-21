@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { forwardRef, Injectable, InjectionToken, reflector, ValueProvider } from '@ts-stack/di';
-import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
+import { it, fit, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
 import { Module } from '../decorators/module';
 import {
@@ -27,13 +27,13 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @Module()
       class Module1 {}
-      const metadata = reflector.annotations(Module1)[0] as ModuleMetadata;
+      const metadata = reflector.getClassMetadata(Module1)[0] as ModuleMetadata;
       expect(isModule(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = reflector.annotations(Module1)[0] as ModuleMetadata;
+      const metadata = reflector.getClassMetadata(Module1)[0] as ModuleMetadata;
       expect(isModule(metadata)).toBe(false);
     });
   });
@@ -42,13 +42,13 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @RootModule()
       class Module1 {}
-      const metadata = reflector.annotations(Module1)[0] as ModuleMetadata;
+      const metadata = reflector.getClassMetadata(Module1)[0] as ModuleMetadata;
       expect(isRootModule(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = reflector.annotations(Module1)[0] as ModuleMetadata;
+      const metadata = reflector.getClassMetadata(Module1)[0] as ModuleMetadata;
       expect(isRootModule(metadata)).toBe(false);
     });
   });
@@ -57,13 +57,13 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @Controller()
       class Module1 {}
-      const metadata = reflector.annotations(Module1)[0] as ModuleMetadata;
+      const metadata = reflector.getClassMetadata(Module1)[0] as ModuleMetadata;
       expect(isController(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = reflector.annotations(Module1)[0] as ModuleMetadata;
+      const metadata = reflector.getClassMetadata(Module1)[0] as ModuleMetadata;
       expect(isController(metadata)).toBe(false);
     });
   });
@@ -85,8 +85,8 @@ describe('type guards', () => {
     }
 
     it('should recognize the route', () => {
-      const propMetadata = reflector.propMetadata(ClassWithDecorators) as RouteDecoratorMetadata;
-      expect(isRoute(propMetadata.some[0])).toBe(true);
+      const propMetadata = reflector.getPropMetadata(ClassWithDecorators);
+      expect(isRoute(propMetadata.some[1])).toBe(true);
     });
   });
 

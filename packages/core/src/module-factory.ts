@@ -336,7 +336,7 @@ export class ModuleFactory {
   protected getControllersMetadata() {
     const arrControllerMetadata: ControllersMetadata1[] = [];
     for (const controller of this.meta.controllers) {
-      const ctrlDecorValues = reflector.annotations(controller);
+      const ctrlDecorValues = reflector.getClassMetadata(controller);
       if (!ctrlDecorValues.find(isController)) {
         throw new Error(
           `Collecting controller's metadata in ${this.moduleName} failed: class ` +
@@ -344,13 +344,13 @@ export class ModuleFactory {
         );
       }
       const controllerMetadata: ControllersMetadata1 = { controller, ctrlDecorValues, methods: {} };
-      const propMetadata = reflector.propMetadata(controller);
-      for (const methodName in propMetadata) {
-        const methodDecorValues = propMetadata[methodName];
-        controllerMetadata.methods[methodName] = methodDecorValues.map<DecoratorMetadata>((decoratorValue, i) => {
+      const propertyMetadata = reflector.getPropMetadata(controller);
+      for (const propertyKey in propertyMetadata) {
+        const [type, ...methodDecorValues] = propertyMetadata[propertyKey];
+        controllerMetadata.methods[propertyKey] = methodDecorValues.map<DecoratorMetadata>((decoratorValue, i) => {
           const otherDecorators = methodDecorValues.slice();
           otherDecorators.splice(i, 1);
-          return { otherDecorators, value: decoratorValue };
+          return { otherDecorators, value: decoratorValue, type };
         });
       }
       arrControllerMetadata.push(controllerMetadata);

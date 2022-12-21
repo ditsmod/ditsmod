@@ -34,19 +34,19 @@ export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
 }
 
 export function isModule(moduleMetadata: AnyObj): moduleMetadata is ModuleMetadata {
-  return (moduleMetadata as any)?.ngMetadataName == 'Module';
+  return (moduleMetadata as any)?.decoratorName == 'Module';
 }
 
 export function isRootModule(moduleMetadata: AnyObj): moduleMetadata is RootModuleMetadata {
-  return (moduleMetadata as any)?.ngMetadataName == 'RootModule';
+  return (moduleMetadata as any)?.decoratorName == 'RootModule';
 }
 
 export function isController(ctrlMeatada: AnyObj): ctrlMeatada is ControllerMetadata {
-  return (ctrlMeatada as any)?.ngMetadataName == 'Controller';
+  return (ctrlMeatada as any)?.decoratorName == 'Controller';
 }
 
 export function isRoute(propMeatada: AnyObj): propMeatada is RouteMetadata {
-  return (propMeatada as any)?.ngMetadataName == 'Route';
+  return (propMeatada as any)?.decoratorName == 'Route';
 }
 
 export function isModuleWithParams(mod: ServiceProvider | ModuleWithParams | ModuleType): mod is ModuleWithParams {
@@ -103,7 +103,7 @@ export function isProvider(maybeProvider: any): maybeProvider is ServiceProvider
   if (isModuleWithParams(maybeProvider)) {
     return false;
   }
-  const isSomeModule = reflector.annotations(maybeProvider).some((m) => isRootModule(m) || isModule(m));
+  const isSomeModule = reflector.getClassMetadata(maybeProvider).some((m) => isRootModule(m) || isModule(m));
   return (maybeProvider instanceof Type && !isSomeModule) || isNormalizedProvider(maybeProvider);
 }
 

@@ -3,23 +3,24 @@ import { reflector } from '@ts-stack/di';
 import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
 import { Controller } from './controller';
+import { AnyObj } from '../types/mix';
 
 describe('Controller decorator', () => {
   it('empty decorator', () => {
     @Controller()
     class Controller1 {}
 
-    const metadata = reflector.annotations(Controller1);
+    const metadata = reflector.getClassMetadata<AnyObj>(Controller1);
     expect(metadata.length).toBe(1);
     expect(metadata[0]).toEqual({});
-    expect(metadata[0].ngMetadataName).toBe('Controller');
+    expect(metadata[0].decoratorName).toBe('Controller');
   });
 
   it('decorator with some data', () => {
     @Controller({ providersPerReq: [] })
     class Controller1 {}
 
-    const metadata = reflector.annotations(Controller1);
+    const metadata = reflector.getClassMetadata(Controller1);
     expect(metadata.length).toBe(1);
     expect(metadata[0]).toEqual({ providersPerReq: [] });
   });
@@ -29,7 +30,7 @@ describe('Controller decorator', () => {
     @Controller({ providersPerReq: [] })
     class Controller1 {}
 
-    const metadata = reflector.annotations(Controller1);
+    const metadata = reflector.getClassMetadata(Controller1);
     expect(metadata.length).toBe(2);
     expect(metadata[0]).toEqual({ providersPerReq: [] });
     expect(metadata[1]).toEqual({ providersPerReq: [] });
@@ -39,7 +40,7 @@ describe('Controller decorator', () => {
     @Controller({ providersPerRou: [], providersPerReq: [] })
     class Controller1 {}
 
-    const metadata = reflector.annotations(Controller1);
+    const metadata = reflector.getClassMetadata(Controller1);
     expect(metadata.length).toBe(1);
     expect(metadata[0]).toEqual({ providersPerRou: [], providersPerReq: [] });
   });

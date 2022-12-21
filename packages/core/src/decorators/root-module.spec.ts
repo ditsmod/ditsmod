@@ -4,23 +4,24 @@ import { reflector } from '@ts-stack/di';
 import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
 import { RootModule } from './root-module';
+import { AnyObj } from '../types/mix';
 
 describe('RootModule decorator', () => {
   it('empty decorator', () => {
     @RootModule()
     class Module1 {}
 
-    const metadata = reflector.annotations(Module1);
+    const metadata = reflector.getClassMetadata<AnyObj>(Module1);
     expect(metadata.length).toBe(1);
     expect(metadata[0]).toEqual({});
-    expect(metadata[0].ngMetadataName).toBe('RootModule');
+    expect(metadata[0].decoratorName).toBe('RootModule');
   });
 
   it('decorator with some data', () => {
     @RootModule({ controllers: [] })
     class Module1 {}
 
-    const metadata = reflector.annotations(Module1);
+    const metadata = reflector.getClassMetadata(Module1);
     expect(metadata.length).toBe(1);
     expect(metadata[0]).toEqual({ controllers: [] });
   });
@@ -30,7 +31,7 @@ describe('RootModule decorator', () => {
     @RootModule({ controllers: [] })
     class Module1 {}
 
-    const metadata = reflector.annotations(Module1);
+    const metadata = reflector.getClassMetadata(Module1);
     expect(metadata.length).toBe(2);
     expect(metadata[0]).toEqual({ controllers: [] });
     expect(metadata[1]).toEqual({ providersPerApp: [] });
@@ -52,7 +53,7 @@ describe('RootModule decorator', () => {
     })
     class Module1 {}
 
-    const metadata = reflector.annotations(Module1);
+    const metadata = reflector.getClassMetadata(Module1);
     expect(metadata.length).toBe(1);
     expect(metadata[0]).toEqual({
       httpModule: http,

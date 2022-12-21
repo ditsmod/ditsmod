@@ -348,9 +348,9 @@ export class ModuleManager {
     meta.name = modName;
     meta.module = mod;
     /**
-     * `ngMetadataName` is used only internally and is hidden from the public API.
+     * `decoratorName` is used only internally and is hidden from the public API.
      */
-    meta.ngMetadataName = (rawMeta as any).ngMetadataName;
+    meta.decoratorName = (rawMeta as any).decoratorName;
 
     rawMeta.imports?.forEach((imp, i) => {
       imp = resolveForwardRef(imp);
