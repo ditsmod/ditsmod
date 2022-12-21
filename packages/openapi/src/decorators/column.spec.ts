@@ -8,7 +8,7 @@ describe('@Property', () => {
   it('model without properties', () => {
     class Model1 {}
 
-    expect(reflector.propMetadata(Model1)).toEqual({});
+    expect(reflector.getPropMetadata(Model1)).toEqual({});
   });
 
   it('empty value', () => {
@@ -22,7 +22,7 @@ describe('@Property', () => {
       prop3: string;
     }
 
-    const actualMeta = reflector.propMetadata(Model1);
+    const actualMeta = reflector.getPropMetadata(Model1);
     // console.log(actualMeta);
     const expectedMeta: PropertyDecoratorMetadata = {
       prop1: [String, { schema: undefined, customType: undefined }],
@@ -41,7 +41,7 @@ describe('@Property', () => {
       prop1: string;
     }
 
-    const actualMeta = reflector.propMetadata(Model1);
+    const actualMeta = reflector.getPropMetadata(Model1);
     const expectedMeta: PropertyDecoratorMetadata = {
       prop1: [
         String,
@@ -63,7 +63,7 @@ describe('@Property', () => {
       prop1: Boolean[];
     }
 
-    const actualMeta = reflector.propMetadata(Model1);
+    const actualMeta = reflector.getPropMetadata(Model1);
     const expectedMeta: PropertyDecoratorMetadata = {
       prop1: [
         Array,
@@ -82,7 +82,7 @@ describe('@Property', () => {
       prop1: [Boolean, String];
     }
 
-    const actualMeta = reflector.propMetadata(Model1);
+    const actualMeta = reflector.getPropMetadata(Model1);
     const expectedMeta: PropertyDecoratorMetadata = {
       prop1: [
         Array,

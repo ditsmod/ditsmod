@@ -60,7 +60,7 @@ export class Content {
 
   protected getSchema(model: Type<AnyObj>) {
     const schema = this.getSchemaStubForModel(model);
-    const modelMeta = reflector.propMetadata(model) as PropertyDecoratorMetadata;
+    const modelMeta = reflector.getPropMetadata(model) as PropertyDecoratorMetadata;
 
     for (const property in modelMeta) {
       const propertyMeta = modelMeta[property].find(isProperty);
@@ -140,7 +140,7 @@ export class Content {
     originPropertySchema?: XSchemaObject,
     customType?: CustomType
   ) {
-    let propertySchema: SchemaObject = { ...originPropertySchema } || {};
+    const propertySchema: SchemaObject = { ...originPropertySchema } || {};
 
     if (customType?.enum) {
       this.fillEnum(propertySchema, customType.enum);

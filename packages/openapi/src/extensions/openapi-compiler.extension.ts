@@ -126,7 +126,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     const tags: string[] = [];
     const responses: XResponsesObject = {};
     guards.forEach((normalizedGuard) => {
-      const decoratorsValues = reflector.annotations(normalizedGuard.guard);
+      const decoratorsValues = reflector.getClassMetadata(normalizedGuard.guard);
       const aOasGuardMetadata = decoratorsValues.filter(isOasGuard);
       const guardName = normalizedGuard.guard.name;
 

@@ -13,7 +13,7 @@ describe('@OasRoute', () => {
     @Controller()
     class Controller1 {}
 
-    expect(reflector.propMetadata(Controller1)).toEqual({});
+    expect(reflector.getPropMetadata(Controller1)).toEqual({});
   });
 
   it('one method, without operation object', () => {
@@ -23,9 +23,9 @@ describe('@OasRoute', () => {
       method() {}
     }
 
-    const actualMeta = reflector.propMetadata(Controller1);
-    const expectedMeta: OasRouteDecoratorMetadata = {
-      method: [{ httpMethod: 'GET', path: undefined }],
+    const actualMeta = reflector.getPropMetadata(Controller1);
+    const expectedMeta = {
+      method: [Function, { httpMethod: 'GET', path: undefined }],
     };
     expect(actualMeta).toEqual(expectedMeta);
   });
@@ -42,9 +42,10 @@ describe('@OasRoute', () => {
       method() {}
     }
 
-    const actualMeta = reflector.propMetadata(Controller1);
-    const expectedMeta: OasRouteDecoratorMetadata = {
+    const actualMeta = reflector.getPropMetadata(Controller1);
+    const expectedMeta = {
       method: [
+        Function,
         {
           httpMethod: 'GET',
           path: 'posts',
@@ -63,9 +64,10 @@ describe('@OasRoute', () => {
       method() {}
     }
 
-    const actualMeta = reflector.propMetadata(Controller1);
-    const expectedMeta: OasRouteDecoratorMetadata = {
+    const actualMeta = reflector.getPropMetadata(Controller1);
+    const expectedMeta = {
       method: [
+        Function,
         {
           httpMethod: 'GET',
           path: 'path',
