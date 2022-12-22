@@ -13,8 +13,10 @@ import {
   ValueProvider,
 } from '@ts-stack/di';
 
-import { ControllerMetadata } from '../decorators/controller';
-import { RouteMetadata } from '../decorators/route';
+import { Module } from '../decorators/module';
+import { Controller, ControllerMetadata } from '../decorators/controller';
+import { Route, RouteMetadata } from '../decorators/route';
+import { RootModule } from '../decorators/root-module';
 import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../types/mix';
 import { AppendsWithParams, ModuleMetadata } from '../types/module-metadata';
 import { RootModuleMetadata } from '../types/root-module-metadata';
@@ -34,19 +36,19 @@ export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
 }
 
 export function isModule(moduleMetadata: AnyObj): moduleMetadata is ModuleMetadata {
-  return (moduleMetadata as any)?.decoratorName == 'Module';
+  return moduleMetadata instanceof Module;
 }
 
 export function isRootModule(moduleMetadata: AnyObj): moduleMetadata is RootModuleMetadata {
-  return (moduleMetadata as any)?.decoratorName == 'RootModule';
+  return moduleMetadata instanceof RootModule;
 }
 
 export function isController(ctrlMeatada: AnyObj): ctrlMeatada is ControllerMetadata {
-  return (ctrlMeatada as any)?.decoratorName == 'Controller';
+  return ctrlMeatada instanceof Controller;
 }
 
 export function isRoute(propMeatada: AnyObj): propMeatada is RouteMetadata {
-  return (propMeatada as any)?.decoratorName == 'Route';
+  return propMeatada instanceof Route;
 }
 
 export function isModuleWithParams(mod: ServiceProvider | ModuleWithParams | ModuleType): mod is ModuleWithParams {
