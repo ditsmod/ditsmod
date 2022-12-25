@@ -20,11 +20,11 @@ Ditsmod uses [@ts-stack/di][9] as a library for Dependency Injection (abbreviate
 In a DI system, dependency is everything you want to get in the final result in the constructors of controllers, services, modules. For example, if you write the following in the service constructor:
 
 ```ts {7}
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { FirstService } from './first.service';
 
-@Injectable()
+@injectable()
 export class SecondService {
   constructor(private firstService: FirstService) {}
   // ...
@@ -39,32 +39,32 @@ this means that `SecondService` has a dependency on `FirstService`, and expected
 
 If, after executing the first item, it turns out that `FirstService` has its own dependencies, then DI will execute these three items for each given dependency.
 
-### Optional dependency
+### optional dependency
 
 Sometimes you may need to specify an optional dependency in the constructor. Let's consider the following example, where after the `firstService` property is followed a question mark, thus indicating to TypeScript that this property is optional:
 
 ```ts {7}
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { FirstService } from './first.service';
 
-@Injectable()
+@injectable()
 export class SecondService {
   constructor(private firstService?: FirstService) {}
   // ...
 }
 ```
 
-But DI will ignore this optionality and throw an error if there is no way to create `FirstService`. For this code to work, you need to use the `Optional` decorator:
+But DI will ignore this optionality and throw an error if there is no way to create `FirstService`. For this code to work, you need to use the `optional` decorator:
 
 ```ts {7}
-import { Injectable, Optional } from '@ts-stack/di';
+import { injectable, optional } from '@ts-stack/di';
 
 import { FirstService } from './first.service';
 
-@Injectable()
+@injectable()
 export class SecondService {
-  constructor(@Optional() private firstService?: FirstService) {}
+  constructor(@optional() private firstService?: FirstService) {}
   // ...
 }
 ```
@@ -77,21 +77,21 @@ In the section [Ditsmod Provider Replacement][100] you will learn that DI allows
 
 On the other hand, a token can be of any type except an array or enum. Additionally, you must remember that the token must remain in the JavaScript file after compilation from TypeScript code, so interfaces or types declared with the `type` keyword cannot be used as a token.
 
-If you need to pass an array or enum to the constructor of your class, you can use the `Inject` decorator:
+If you need to pass an array or enum to the constructor of your class, you can use the `inject` decorator:
 
 ```ts {7}
-import { Injectable, Inject } from '@ts-stack/di';
+import { injectable, inject } from '@ts-stack/di';
 
 import { InterfaceOfItem } from './types';
 
-@Injectable()
+@injectable()
 export class SecondService {
-  constructor(@Inject('some token for an array') private someArray: InterfaceOfItem[]) {}
+  constructor(@inject('some token for an array') private someArray: InterfaceOfItem[]) {}
   // ...
 }
 ```
 
-As you can see, `Inject` accepts a token for a specific dependency. When `Inject` is used, DI ignores the type of the variable in back of this decorator.
+As you can see, `inject` accepts a token for a specific dependency. When `inject` is used, DI ignores the type of the variable in back of this decorator.
 
 ## Provider
 
@@ -100,10 +100,10 @@ DI resolves the dependency using the appropriate providers. In `@ts-stack/di`, t
 ```ts {3-6}
 import { Type } from '@ts-stack/di';
 
-type Provider = { provide: any, useClass: Type<any>, multi?: boolean } |
-{ provide: any, useValue: any, multi?: boolean } |
-{ provide: any, useFactory: Function, deps?: any[], multi?: boolean } |
-{ provide: any, useExisting: any, multi?: boolean }
+type Provider = { token: any, useClass: Type<any>, multi?: boolean } |
+{ token: any, useValue: any, multi?: boolean } |
+{ token: any, useFactory: Function, deps?: any[], multi?: boolean } |
+{ token: any, useExisting: any, multi?: boolean }
 ```
 
 For one dependency, you need to transfer one or more providers to the DI registry. Most often, this transfer occurs via module or controller metadata, although sometimes it is passed directly to [injectors][102].
@@ -126,13 +126,13 @@ The preceding code shows the definition of the provider object type, there a tok
   In this case, you need to transfer the provider in the following format:
 
   ```ts
-  { provide: 'some token here', useFactory: callback, deps: [SomeService] }
+  { token: 'some token here', useFactory: callback, deps: [SomeService] }
   ```
 
   - `useExisting` - another token is passed. If you write the following:
 
   ```ts
-  { provide: SecondService, useExisting: FirstService }
+  { token: SecondService, useExisting: FirstService }
   ```
 
   this way you tell the DI: "When provider consumers request a `SecondService` token, the value assigned to the `FirstService` token must be used." In other words, this directive makes an alias `SecondService` that points to `FirstService`. The DI work algorithm in such cases is as follows:
@@ -165,7 +165,7 @@ import { SomeService } from './some.service';
 
 @Module({
   providersPerMod: [
-    { provide: SomeService, useClass: SomeService }
+    { token: SomeService, useClass: SomeService }
   ],
 })
 export class SomeModule {}
@@ -176,7 +176,7 @@ And now let's pass another provider in the controller metadata with the same tok
 ```ts {3}
 @Controller({
   providersPerReq: [
-    { provide: SomeService, useClass: OtherService }
+    { token: SomeService, useClass: OtherService }
   ]
 })
 export class SomeController {
@@ -205,7 +205,7 @@ And in a certain module, we replace `ConfigService` with an arbitrary value:
 // ...
 @Module({
   providersPerMod: [
-    { provide: ConfigService, useValue: { propery1: 'some value' } }
+    { token: ConfigService, useValue: { propery1: 'some value' } }
   ],
 })
 export class SomeModule {}
@@ -219,16 +219,16 @@ If you abstract from Ditsmod, in practice it has approximately the following pic
 
 ```ts {16}
 import 'reflect-metadata';
-import { ReflectiveInjector, Injectable } from '@ts-stack/di';
+import { ReflectiveInjector, injectable } from '@ts-stack/di';
 
 class Service1 {}
 
-@Injectable()
+@injectable()
 class Service2 {
   constructor(service1: Service1) {}
 }
 
-@Injectable()
+@injectable()
 class Service3 {
   constructor(service2: Service2) {}
 }
@@ -349,10 +349,10 @@ In this case, if `SomeService` has a dependency on `OtherService`, DI will be ab
 You may rarely need the injector itself, but you can get it from the constructor like any other instance of the provider:
 
 ```ts
-import { Injectable, Injector } from '@ts-stack/di';
+import { injectable, Injector } from '@ts-stack/di';
 import { FirstService } from './first.service';
 
-@Injectable()
+@injectable()
 export class SecondService {
   constructor(private injector: Injector) {}
 
@@ -391,7 +391,7 @@ import { RootModule, Logger } from '@ditsmod/core';
 import { MyLogger } from './my-logger';
 
 @RootModule({
-  providersPerApp: [{ provide: Logger, useClass: MyLogger }],
+  providersPerApp: [{ token: Logger, useClass: MyLogger }],
 })
 export class SomeModule {}
 ```

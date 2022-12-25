@@ -1,4 +1,4 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { HttpMethod } from '../types/mix';
 import { Router } from '../types/router';
@@ -6,7 +6,7 @@ import { NodeResponse, RequestListener } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
-@Injectable()
+@injectable()
 export class PreRouter {
   constructor(
     protected router: Router,

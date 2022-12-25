@@ -38,13 +38,13 @@ sidebar_position: 4
 
 ## Створення інтерсептора
 
-Кожен інтерсептор повинен бути класом, що впроваджує інтерфейс [HttpInterceptor][1], та має анотацію з декоратором `Injectable`:
+Кожен інтерсептор повинен бути класом, що впроваджує інтерфейс [HttpInterceptor][1], та має анотацію з декоратором `injectable`:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { HttpHandler, HttpInterceptor } from '@ditsmod/core';
 
-@Injectable()
+@injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
   intercept(next: HttpHandler) {
     return next.handle(); // Here returns Promise<any>;
@@ -69,7 +69,7 @@ import { MyHttpInterceptor } from './my-http-interceptor';
 
 @Module({
   // ...
-  providersPerReq: [{ provide: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
+  providersPerReq: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
 })
 export class SomeModule {}
 ```

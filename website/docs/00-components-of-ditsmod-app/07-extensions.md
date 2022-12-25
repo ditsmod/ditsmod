@@ -57,10 +57,10 @@ async init() {
 Створіть клас, що впроваджує інтерфейс `Extension`:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { Extension } from '@ditsmod/core';
 
-@Injectable()
+@injectable()
 export class MyExtension implements Extension<void> {
   private data: boolean;
 
@@ -80,10 +80,10 @@ export class MyExtension implements Extension<void> {
 Для роботи розширення, усі необхідні дані ви можете отримати або через конструктор, або від іншого розширення через виклик його методу `init()`:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { Extension, MetadataPerMod1 } from '@ditsmod/core';
 
-@Injectable()
+@injectable()
 export class Extension1 implements Extension<any> {
   private data: any;
 
@@ -100,7 +100,7 @@ export class Extension1 implements Extension<any> {
   }
 }
 
-@Injectable()
+@injectable()
 export class Extension2 implements Extension<void> {
   private inited: boolean;
 
@@ -223,12 +223,12 @@ export class SomeModule {}
 Припустимо `MyExtension` повинно дочекатись завершення ініціалізації групи `OTHER_EXTENSIONS`. Щоб зробити це, у конструкторі треба указувати залежність від `ExtensionsManager`, а у `init()` викликати `init()` цього сервісу:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions';
 
-@Injectable()
+@injectable()
 export class MyExtension implements Extension<void> {
   private inited: boolean;
 
@@ -257,12 +257,12 @@ await this.extensionsManager.init(OTHER_EXTENSIONS, false);
 У випадку, коли вам потрібно накопичувати результати роботи певного розширення з усіх модулів, необхідно робити наступне:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions';
 
-@Injectable()
+@injectable()
 export class MyExtension implements Extension<void | false> {
   private inited: boolean;
 
@@ -303,7 +303,7 @@ const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExten
 Можна проглянути як це зроблено у [BodyParserExtension][3]:
 
 ```ts
-@Injectable()
+@injectable()
 export class BodyParserExtension implements Extension<void> {
   private inited: boolean;
 
@@ -337,7 +337,7 @@ export class BodyParserExtension implements Extension<void> {
         const routeMeta = injectorPerRou.get(RouteMeta) as RouteMeta;
         const bodyParserConfig = injectorPerReq.resolveAndInstantiate(BodyParserConfig) as BodyParserConfig;
         if (bodyParserConfig.acceptMethods.includes(routeMeta.httpMethod)) {
-          providersPerReq.push({ provide: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
+          providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
         }
       });
     });

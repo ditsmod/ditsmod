@@ -1,9 +1,9 @@
 import { ISO639 } from '@ditsmod/i18n';
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { SecondDict } from '@dict/second/second.dict';
 
-@Injectable()
+@injectable()
 export class CommonUkDict extends SecondDict {
   override getLng(): ISO639 {
     return 'uk';

@@ -1,10 +1,10 @@
-import { Injectable, Injector } from '@ts-stack/di';
+import { injectable, Injector } from '@ts-stack/di';
 
 import { injectorKey } from '../types/mix';
 import { HttpBackend } from '../types/http-interceptor';
 import { RouteMeta } from '../types/route-data';
 
-@Injectable()
+@injectable()
 export class DefaultHttpBackend implements HttpBackend {
   constructor(protected injector: Injector, protected routeMeta: RouteMeta) {}
 

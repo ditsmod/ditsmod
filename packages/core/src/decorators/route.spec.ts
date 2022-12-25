@@ -2,22 +2,22 @@ import 'reflect-metadata';
 import { reflector } from '@ts-stack/di';
 import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
-import { Route } from './route';
-import { Controller } from './controller';
+import { route } from './route';
+import { controller } from './controller';
 import { CanActivate } from '../types/mix';
 
 describe('Route decorator', () => {
   it('controller without methods', () => {
-    @Controller()
+    @controller()
     class Controller1 {}
 
     expect(reflector.getPropMetadata(Controller1)).toEqual({});
   });
 
   it('one method, one decorator', () => {
-    @Controller()
+    @controller()
     class Controller1 {
-      @Route('GET')
+      @route('GET')
       method() {}
     }
 
@@ -26,10 +26,10 @@ describe('Route decorator', () => {
   });
 
   it('one method, two decorators', () => {
-    @Controller()
+    @controller()
     class Controller1 {
-      @Route('GET')
-      @Route('POST')
+      @route('GET')
+      @route('POST')
       method() {}
     }
 
@@ -49,9 +49,9 @@ describe('Route decorator', () => {
         return true;
       }
     }
-    @Controller()
+    @controller()
     class Controller1 {
-      @Route('GET', 'posts/:postId', [Guard])
+      @route('GET', 'posts/:postId', [Guard])
       method() {}
     }
 
@@ -65,9 +65,9 @@ describe('Route decorator', () => {
         return true;
       }
     }
-    @Controller()
+    @controller()
     class Controller1 {
-      @Route('GET', 'posts/:postId', [Guard, Guard])
+      @route('GET', 'posts/:postId', [Guard, Guard])
       method() {}
     }
 
@@ -83,9 +83,9 @@ describe('Route decorator', () => {
         return true;
       }
     }
-    @Controller()
+    @controller()
     class Controller1 {
-      @Route('GET', 'posts/:postId', [
+      @route('GET', 'posts/:postId', [
         [Guard, 'one', 123],
         [Guard, []],
       ])

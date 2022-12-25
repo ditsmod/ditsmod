@@ -137,12 +137,12 @@ What services can do:
 - works with databases, with emails:
 - etc.
 
-The TypeScript class becomes a Ditsmod service with `Injectable` decorator:
+The TypeScript class becomes a Ditsmod service with `injectable` decorator:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
-@Injectable()
+@injectable()
 export class SomeService {}
 ```
 
@@ -153,11 +153,11 @@ Note that this decorator is imported from `@ts-stack/di`, not from `@ditsmod/cor
 Often some services depend on other services, and to get an instance of a particular service, you need specify its class in the constructor:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { FirstService } from './first.service';
 
-@Injectable()
+@injectable()
 export class SecondService {
   constructor(private firstService: FirstService) {}
 

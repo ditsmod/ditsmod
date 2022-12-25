@@ -1,11 +1,11 @@
-import { Injectable, Optional } from '@ts-stack/di';
+import { injectable, optional } from '@ts-stack/di';
 import { Cookies, CookieOptions } from '@ts-stack/cookies';
 import { Req, Res } from '@ditsmod/core';
 import { CorsOptions, cors, mergeOptions } from '@ts-stack/cors';
 
-@Injectable()
+@injectable()
 export class CorsService {
-  constructor(private req: Req, private res: Res, @Optional() private corsOptions?: CorsOptions) {}
+  constructor(private req: Req, private res: Res, @optional() private corsOptions?: CorsOptions) {}
 
   setCookie(name: string, value?: any, opts?: CookieOptions) {
     const cookies = new Cookies(this.req.nodeReq, this.res.nodeRes);

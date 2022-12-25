@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { ImportsResolver } from './imports-resolver';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
@@ -8,7 +8,7 @@ import { ImportedTokensMap } from './types/metadata-per-mod';
 import { ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
 
 describe('ImportsResolver', () => {
-  @Injectable()
+  @injectable()
   class ImportsResolverMock extends ImportsResolver {
     override unfinishedSearchDependecies: [ModuleType | ModuleWithParams, ServiceProvider][];
     override resolveImportedProviders(importedTokensMap: ImportedTokensMap, meta: NormalizedModuleMetadata) {

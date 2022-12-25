@@ -1,4 +1,4 @@
-import { Injectable, resolveForwardRef, Type } from '@ts-stack/di';
+import { injectable, resolveForwardRef, Type } from '@ts-stack/di';
 import { format } from 'util';
 import { HTTP_INTERCEPTORS } from '../constans';
 
@@ -44,7 +44,7 @@ export type ModulesMapId = Map<string, ModuleType | ModuleWithParams>;
 type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 type ModuleId = string | ModuleType | ModuleWithParams;
 
-@Injectable()
+@injectable()
 export class ModuleManager {
   protected map: ModulesMap = new Map();
   protected mapId = new Map<string, AnyModule>();
@@ -388,7 +388,7 @@ export class ModuleManager {
       ...(rawMeta.resolvedCollisionsPerReq || []),
     ];
     if (isRootModule(rawMeta)) {
-      resolvedCollisionsPerScope.push(...(rawMeta.resolvedCollisionsPerApp || []));
+      resolvedCollisionsPerScope.push(...(rawMeta.value.resolvedCollisionsPerApp || []));
     }
     resolvedCollisionsPerScope.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
     this.exportFromRawMeta(rawMeta, modName, providersTokens, meta);
@@ -506,7 +506,7 @@ export class ModuleManager {
     ].filter(isNormalizedProvider);
     const moduleNames = [...this.unfinishedScanModules].map((mod) => getModuleName(mod)).join(' -> ') || meta.name;
 
-    if (normProviders.find((np) => np.provide === HTTP_INTERCEPTORS)) {
+    if (normProviders.find((np) => np.token === HTTP_INTERCEPTORS)) {
       const msg = `Validation ${moduleNames} failed: "HTTP_INTERCEPTORS" can be includes in the "providersPerReq" array only.`;
       throw new Error(msg);
     }
@@ -533,8 +533,8 @@ export class ModuleManager {
     let extensionClass: Type<Extension<any>>;
     if (isClassProvider(np)) {
       extensionClass = np.useClass;
-    } else if (isExistingProvider(np) && np.useExisting instanceof Type) {
-      extensionClass = np.useExisting;
+    } else if (isExistingProvider(np) && np.useToken instanceof Type) {
+      extensionClass = np.useToken;
     } else if (isValueProvider(np) && np.useValue.constructor instanceof Type) {
       extensionClass = np.useValue.constructor;
     }
@@ -558,7 +558,7 @@ export class ModuleManager {
 
   protected throwIfNormalizedProvider(moduleName: string, provider: any) {
     if (isNormalizedProvider(provider)) {
-      const providerName = provider.provide.name || provider.provide;
+      const providerName = provider.token.name || provider.token;
       const msg =
         `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
         '"resolvedCollisionPer*" array must be includes tokens only.';
@@ -568,7 +568,7 @@ export class ModuleManager {
 
   protected throwExportsIfNormalizedProvider(moduleName: string, provider: any) {
     if (isNormalizedProvider(provider)) {
-      const providerName = provider.provide.name || provider.provide;
+      const providerName = provider.token.name || provider.token;
       const msg = `Exporting "${providerName}" from "${moduleName}" failed: in "exports" array must be includes tokens only.`;
       throw new TypeError(msg);
     }

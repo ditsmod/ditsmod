@@ -1,4 +1,4 @@
-import { Injectable, Optional } from '@ts-stack/di';
+import { injectable, optional } from '@ts-stack/di';
 
 export class LoggerConfig {
   /**
@@ -21,9 +21,9 @@ export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 /**
  * @todo reaplace setLevel() by setConfig() method.
  */
-@Injectable()
+@injectable()
 export class Logger {
-    constructor(@Optional() public config?: LoggerConfig) {
+    constructor(@optional() public config?: LoggerConfig) {
     this.config = config ? { ...config } : new LoggerConfig();
   }
   trace(...args: any[]): any {

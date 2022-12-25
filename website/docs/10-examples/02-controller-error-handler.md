@@ -5,7 +5,7 @@
 Ditsmod в ядрі передає клас `ControllerErrorHandler` до інжектора на рівні HTTP-запиту та використовує DI щоб отримати інстанс цього класу для обробки помилок, що виникають під час роботи контролерів. Початково, цей клас підміняється класом `DefaultControllerErrorHandler`, що робить мінімальну обробку помилок:
 
 ```ts
-@Injectable()
+@injectable()
 export class DefaultControllerErrorHandler implements ControllerErrorHandler {
   constructor(private res: Res, private log: Log) {}
 

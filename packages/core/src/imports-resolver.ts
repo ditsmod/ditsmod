@@ -82,25 +82,25 @@ export class ImportsResolver {
             return false;
           }
           if (isClassProvider(ep) && isClassProvider(np)) {
-            const equal = ep.provide === np.provide && ep.useClass === np.useClass;
+            const equal = ep.token === np.token && ep.useClass === np.useClass;
             if (equal) {
               return false;
             }
           }
           if (isExistingProvider(ep) && isExistingProvider(np)) {
-            const equal = ep.provide === np.provide && ep.useExisting === np.useExisting;
+            const equal = ep.token === np.token && ep.useToken === np.useToken;
             if (equal) {
               return false;
             }
           }
           if (isFactoryProvider(ep) && isFactoryProvider(np)) {
-            const equal = ep.provide === np.provide && ep.useFactory === np.useFactory;
+            const equal = ep.token === np.token && ep.useFactory === np.useFactory;
             if (equal) {
               return false;
             }
           }
           if (isValueProvider(ep) && isValueProvider(np)) {
-            const equal = ep.provide === np.provide && ep.useValue === np.useValue;
+            const equal = ep.token === np.token && ep.useValue === np.useValue;
             if (equal) {
               return false;
             }

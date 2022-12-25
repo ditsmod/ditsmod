@@ -1,4 +1,4 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { CustomError, Req } from '@ditsmod/core';
 
 import { ValidationInterceptor } from './validation.interceptor';
@@ -6,7 +6,7 @@ import { ValidationInterceptor } from './validation.interceptor';
 /**
  * Interceptor to validate OpenAPI `requestBody`.
  */
-@Injectable()
+@injectable()
 export class RequestBodyInterceptor extends ValidationInterceptor {
   protected override prepareAndValidate() {
     const req = this.injector.get(Req);

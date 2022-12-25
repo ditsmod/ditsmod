@@ -1,6 +1,5 @@
-import { reflector } from '@ts-stack/di';
+import { Container, reflector } from '@ts-stack/di';
 
-import { Module } from '../decorators/module';
 import { ModuleMetadata } from '../types/module-metadata';
 import { ModuleType, ModuleWithParams } from '../types/mix';
 import { getModuleName } from './get-module-name';
@@ -12,7 +11,7 @@ export function getModuleMetadata(
   modOrObj: ModuleType | ModuleWithParams,
   isRoot?: boolean
 ): ModuleMetadata | undefined {
-  const typeGuard = isRoot ? isRootModule : (m: ModuleMetadata) => isModule(m) || isRootModule(m);
+  const typeGuard = isRoot ? isRootModule : (m: Container) => isModule(m) || isRootModule(m);
 
   if (isForwardRef(modOrObj)) {
     modOrObj = modOrObj();
@@ -20,7 +19,10 @@ export function getModuleMetadata(
 
   if (isModuleWithParams(modOrObj)) {
     const modWitParams = modOrObj;
-    const modMetadata = reflector.getClassMetadata(modWitParams.module).find(typeGuard) as ModuleMetadata | undefined;
+    const modMetadata = reflector
+      .getClassMetadata<ModuleMetadata>(modWitParams.module)
+      .find((container) => typeGuard(container))?.value;
+    
     const modName = getModuleName(modWitParams.module);
     if (!modMetadata) {
       return modMetadata;
@@ -32,7 +34,7 @@ export function getModuleMetadata(
         'Instead, you can specify the "id" in the object that contains the module parameters.';
       throw new Error(msg);
     }
-    const metadata = new Module(modMetadata);
+    const metadata = Object.assign({}, modMetadata);
     metadata.id = modWitParams.id;
     metadata.providersPerApp = getLastProviders(mergeArrays(modMetadata.providersPerApp, modWitParams.providersPerApp));
     metadata.providersPerMod = getLastProviders(mergeArrays(modMetadata.providersPerMod, modWitParams.providersPerMod));
@@ -41,6 +43,6 @@ export function getModuleMetadata(
     metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
     return metadata;
   } else {
-    return reflector.getClassMetadata(modOrObj).find(typeGuard);
+    return reflector.getClassMetadata<ModuleMetadata>(modOrObj).find((container) => typeGuard(container))?.value;
   }
 }

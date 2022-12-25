@@ -1,10 +1,5 @@
-import { makeDecorator } from '@ts-stack/di';
+import { makeClassDecorator } from '@ts-stack/di';
 import { XResponsesObject, XSecuritySchemeObject } from '@ts-stack/openapi-spec';
-
-export interface OasGuardDecoratorFactory {
-  (data?: OasGuardMetadata): any;
-  new (data?: OasGuardMetadata): OasGuardMetadata;
-}
 
 export interface OasGuardMetadata {
   /**
@@ -45,4 +40,4 @@ export interface OasGuardMetadata {
   tags?: string[];
 }
 
-export const OasGuard = makeDecorator('OasGuard', (data: any) => data) as OasGuardDecoratorFactory;
+export const oasGuard = makeClassDecorator((data: OasGuardMetadata) => data);

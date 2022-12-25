@@ -1,11 +1,6 @@
-import { makeDecorator } from '@ts-stack/di';
+import { makeClassDecorator } from '@ts-stack/di';
 
 import { ServiceProvider } from '../types/mix';
-
-export interface ControllerDecoratorFactory {
-  (data?: ControllerMetadata): any;
-  new (data?: ControllerMetadata): ControllerMetadata;
-}
 
 export interface ControllerMetadata {
   /**
@@ -18,4 +13,4 @@ export interface ControllerMetadata {
   providersPerRou?: ServiceProvider[];
 }
 
-export const Controller = makeDecorator('Controller', (data: any) => data) as ControllerDecoratorFactory;
+export const controller = makeClassDecorator((data?: ControllerMetadata) => data);

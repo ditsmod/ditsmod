@@ -8,7 +8,7 @@ import {
 } from '@ditsmod/core';
 import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 import { isReferenceObject, OasRouteMeta } from '@ditsmod/openapi';
-import { Injectable, Optional } from '@ts-stack/di';
+import { injectable, optional } from '@ts-stack/di';
 
 import { ValidationRouteMeta } from './types';
 import { ParametersInterceptor } from './parameters.interceptor';
@@ -16,7 +16,7 @@ import { AjvService } from './ajv.service';
 import { ValidationOptions } from './validation-options';
 import { RequestBodyInterceptor } from './request-body.interceptor';
 
-@Injectable()
+@injectable()
 export class ValidationExtension implements Extension<void> {
   private inited: boolean;
 
@@ -24,7 +24,7 @@ export class ValidationExtension implements Extension<void> {
     private perAppService: PerAppService,
     private extensionsManager: ExtensionsManager,
     private ajvService: AjvService,
-    @Optional() private validationOptions?: ValidationOptions
+    @optional() private validationOptions?: ValidationOptions
   ) {}
 
   async init() {
@@ -42,7 +42,7 @@ export class ValidationExtension implements Extension<void> {
 
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
-      providersPerMod.push({ provide: AjvService, useValue: this.ajvService });
+      providersPerMod.push({ token: AjvService, useValue: this.ajvService });
       const injectorPerMod = this.perAppService.injector.resolveAndCreateChild(providersPerMod);
 
       aControllersMetadata2.forEach(({ providersPerRou, providersPerReq }) => {
@@ -74,21 +74,21 @@ export class ValidationExtension implements Extension<void> {
         }
 
         validationRouteMeta.options = this.validationOptions || new ValidationOptions();
-        providersPerRou.push({ provide: ValidationRouteMeta, useExisting: RouteMeta });
+        providersPerRou.push({ token: ValidationRouteMeta, useToken: RouteMeta });
 
         if (validationRouteMeta.parameters.length) {
           metadataPerMod2.providersPerReq.unshift(ParametersInterceptor);
           providersPerReq.push({
-            provide: HTTP_INTERCEPTORS,
-            useExisting: ParametersInterceptor,
+            token: HTTP_INTERCEPTORS,
+            useToken: ParametersInterceptor,
             multi: true,
           });
         }
         if (validationRouteMeta.requestBodySchema) {
           metadataPerMod2.providersPerReq.unshift(RequestBodyInterceptor);
           providersPerReq.push({
-            provide: HTTP_INTERCEPTORS,
-            useExisting: RequestBodyInterceptor,
+            token: HTTP_INTERCEPTORS,
+            useToken: RequestBodyInterceptor,
             multi: true,
           });
         }

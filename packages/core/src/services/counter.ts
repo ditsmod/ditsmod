@@ -1,11 +1,11 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { Extension } from '../types/mix';
 
 /**
  * Used to collect various statistics.
  */
-@Injectable()
+@injectable()
 export class Counter {
   #extensionsManagerId = 0;
   #initedExtensions = new Set<Extension<any>>();

@@ -11,10 +11,10 @@ export {
 } from './constans';
 export { CustomError } from './custom-error/custom-error';
 export { ErrorOpts } from './custom-error/error-opts';
-export { Controller, ControllerMetadata } from './decorators/controller';
-export { Module } from './decorators/module';
-export { RootModule } from './decorators/root-module';
-export { Route, RouteMetadata } from './decorators/route';
+export { controller, ControllerMetadata } from './decorators/controller';
+export { mod } from './decorators/module';
+export { rootModule } from './decorators/root-module';
+export { route, RouteMetadata } from './decorators/route';
 export { RoutesExtension } from './extensions/routes.extension';
 export { ExtensionsMetaPerApp } from './models/extensions-meta-per-app';
 export { ModuleExtract } from './models/module-extract';

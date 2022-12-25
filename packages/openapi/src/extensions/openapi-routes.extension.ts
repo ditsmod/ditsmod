@@ -1,4 +1,4 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import {
   ControllersMetadata2,
   ControllerType,
@@ -22,7 +22,7 @@ import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-l
 import { OasOptions } from '../types/oas-options';
 import { OpenapiLogMediator } from '../services/openapi-log-mediator';
 
-@Injectable()
+@injectable()
 export class OpenapiRoutesExtension extends RoutesExtension implements Extension<MetadataPerMod2> {
   constructor(
     protected override rootMetadata: RootMetadata,
@@ -54,7 +54,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
           if (isOasRoute1(oasRoute)) {
             guards.push(...this.normalizeGuards(oasRoute.guards));
           }
-          providersPerReq.push(...(ctrlDecorator?.providersPerReq || []), controller);
+          providersPerReq.push(...(ctrlDecorator?.value.providersPerReq || []), controller);
           const { httpMethod, path: controllerPath, operationObject } = oasRoute;
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const path = this.getPath(prefix, controllerPath);
@@ -71,7 +71,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
           clonedOperationObject.tags = [...(clonedOperationObject.tags || []), ...(prefixTags || [])];
           // For now, here ReferenceObjects is ignored, if it is intended for a path.
           const oasPath = this.transformToOasPath(meta.name, path, paramsInPath);
-          providersPerRou.push(...(ctrlDecorator?.providersPerRou || []));
+          providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
           const routeMeta: OasRouteMeta = {
             oasPath,
             operationObject: clonedOperationObject,
@@ -80,7 +80,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             methodName,
             guards,
           };
-          providersPerRou.push({ provide: RouteMeta, useValue: routeMeta });
+          providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
           aControllersMetadata2.push({
             providersPerRou,
             providersPerReq,

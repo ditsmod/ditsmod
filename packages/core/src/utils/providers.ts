@@ -1,9 +1,9 @@
-import { FactoryProvider, Type } from '@ts-stack/di';
+import { Type } from '@ts-stack/di';
 
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { OutputLogFilter, LogMediator } from '../log-mediator/log-mediator';
 import { Logger, LoggerConfig } from '../types/logger';
-import { AnyFn, ServiceProvider } from '../types/mix';
+import { ServiceProvider } from '../types/mix';
 import { NormalizedProvider } from './ng-utils';
 
 /**
@@ -56,46 +56,46 @@ export class Providers {
   protected providers: ServiceProvider[] = [];
   protected index = -1;
 
-  useValue<T>(provide: any, useValue: T, multi?: boolean) {
-    this.pushProvider({ provide, useValue }, multi);
+  useValue<T>(token: any, useValue: T, multi?: boolean) {
+    this.pushProvider({ token, useValue }, multi);
     return this;
   }
 
-  useClass<A extends Type<any>, B extends A>(provide: A, useClass: B, multi?: boolean) {
-    this.pushProvider({ provide, useClass }, multi);
+  useClass<A extends Type<any>, B extends A>(token: A, useClass: B, multi?: boolean) {
+    this.pushProvider({ token, useClass }, multi);
     return this;
   }
 
-  useExisting<T>(provide: any, useExisting: T, multi?: boolean) {
-    this.pushProvider({ provide, useExisting }, multi);
+  useExisting<T>(token: any, useToken: T, multi?: boolean) {
+    this.pushProvider({ token, useToken }, multi);
     return this;
   }
 
-  useFactory(provide: any, useFactory: AnyFn, deps?: any[], multi?: boolean) {
-    this.pushProvider({ provide, useFactory }, multi, deps);
+  useFactory(token: any, useFactory: [Type<any>, (...args: any[]) => unknown], multi?: boolean) {
+    this.pushProvider({ token, useFactory }, multi);
     return this;
   }
 
   useLogger(useLogger: Partial<Logger>, useConfig?: LoggerConfig) {
-    this.providers.push({ provide: Logger, useValue: useLogger });
+    this.providers.push({ token: Logger, useValue: useLogger });
     if (useConfig) {
-      this.providers.push({ provide: LoggerConfig, useValue: useConfig });
+      this.providers.push({ token: LoggerConfig, useValue: useConfig });
     }
 
     return this;
   }
 
   useLogConfig(useConfig: LoggerConfig, outputLogFilter?: OutputLogFilter) {
-    this.providers.push({ provide: LoggerConfig, useValue: useConfig });
+    this.providers.push({ token: LoggerConfig, useValue: useConfig });
     if (outputLogFilter) {
-      this.providers.push({ provide: OutputLogFilter, useValue: outputLogFilter });
+      this.providers.push({ token: OutputLogFilter, useValue: outputLogFilter });
     }
 
     return this;
   }
 
   useSystemLogMediator<T extends Type<LogMediator>>(CustomLogMediator: T) {
-    this.providers.push(CustomLogMediator, { provide: SystemLogMediator, useExisting: CustomLogMediator });
+    this.providers.push(CustomLogMediator, { token: SystemLogMediator, useToken: CustomLogMediator });
 
     return this;
   }
@@ -115,12 +115,9 @@ export class Providers {
     return { value: this.providers[++this.index], done: !(this.index in this.providers) };
   }
 
-  protected pushProvider(provider: NormalizedProvider, multi?: boolean, deps?: any[]) {
+  protected pushProvider(provider: NormalizedProvider, multi?: boolean) {
     if (multi) {
       provider.multi = multi;
-    }
-    if (deps) {
-      (provider as FactoryProvider).deps = deps;
     }
     this.providers.push(provider);
   }

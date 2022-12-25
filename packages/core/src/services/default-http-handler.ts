@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Injectable, Injector } from '@ts-stack/di';
+import { injectable, Injector } from '@ts-stack/di';
 
 import { HTTP_INTERCEPTORS } from '../constans';
 import { HttpFrontend, HttpBackend, HttpHandler, HttpInterceptor } from '../types/http-interceptor';
@@ -19,7 +19,7 @@ import { HttpFrontend, HttpBackend, HttpHandler, HttpInterceptor } from '../type
  * interceptors to themselves inject classes depending indirectly
  * on `DefaultHttpHandler` itself.
  */
-@Injectable()
+@injectable()
 export class DefaultHttpHandler implements HttpHandler {
   private chain: HttpHandler | null = null;
 

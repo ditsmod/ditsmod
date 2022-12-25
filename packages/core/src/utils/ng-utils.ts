@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Provider, Type, ValueProvider, ClassProvider, ExistingProvider, FactoryProvider } from '@ts-stack/di';
+import { Provider, Type, ValueProvider, ClassProvider, TokenProvider, FactoryProvider } from '@ts-stack/di';
 import { format } from 'util';
 
 /**
@@ -40,7 +40,7 @@ export function flatten<T = any>(list: any[], dst?: any[]): T[] {
 export function normalizeProviders(providers: Provider[], arrayOfProviders: NormalizedProvider[] = []) {
   providers.forEach((provider) => {
     if (provider instanceof Type) {
-      arrayOfProviders.push({ provide: provider, useClass: provider });
+      arrayOfProviders.push({ token: provider, useClass: provider });
     } else if (provider && typeof provider == 'object' && (provider as any).provide !== undefined) {
       arrayOfProviders.push(provider as NormalizedProvider);
     } else {
@@ -51,7 +51,7 @@ export function normalizeProviders(providers: Provider[], arrayOfProviders: Norm
   return arrayOfProviders;
 }
 
-export type NormalizedProvider = ValueProvider | ClassProvider | ExistingProvider | FactoryProvider;
+export type NormalizedProvider = ValueProvider | ClassProvider | TokenProvider | FactoryProvider;
 
 export function stringify(token: any): string {
   if (typeof token == 'string') {

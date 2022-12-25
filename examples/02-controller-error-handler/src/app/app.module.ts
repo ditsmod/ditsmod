@@ -7,7 +7,7 @@ import { SomeModule } from './modules/some/some.module';
 @RootModule({
   imports: [RouterModule],
   appends: [SomeModule],
-  providersPerReq: [{ provide: ControllerErrorHandler, useClass: MyControllerErrorHandler }],
+  providersPerReq: [{ token: ControllerErrorHandler, useClass: MyControllerErrorHandler }],
   exports: [ControllerErrorHandler],
 })
 export class AppModule {}

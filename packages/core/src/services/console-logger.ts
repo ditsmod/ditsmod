@@ -1,9 +1,9 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { AnyFn } from '../types/mix';
 import { Logger, LogLevel } from '../types/logger';
 
-@Injectable()
+@injectable()
 export class ConsoleLogger extends Logger {
   override trace = this.consoleLoggerFn('trace');
   override debug = this.consoleLoggerFn('debug');

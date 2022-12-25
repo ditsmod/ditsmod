@@ -1,18 +1,18 @@
 import { format } from 'util';
-import { Injectable, Inject } from '@ts-stack/di';
+import { injectable, inject } from '@ts-stack/di';
 
 import { Status } from '../utils/http-status-codes';
 import { RedirectStatusCodes } from '../types/mix';
 import { NodeResponse } from '../types/server-options';
 import { NODE_RES } from '../constans';
 
-@Injectable()
+@injectable()
 export class Res<T = any> {
   constructor(
     /**
      * Native Node.js response.
      */
-    @Inject(NODE_RES) public readonly nodeRes: NodeResponse
+    @inject(NODE_RES) public readonly nodeRes: NodeResponse
   ) {}
 
   /**

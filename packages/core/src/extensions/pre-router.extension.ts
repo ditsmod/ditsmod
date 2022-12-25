@@ -1,4 +1,4 @@
-import { Injectable, ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-stack/di';
+import { injectable, ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-stack/di';
 
 import { HTTP_INTERCEPTORS, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpBackend, HttpFrontend, HttpHandler } from '../types/http-interceptor';
@@ -12,7 +12,7 @@ import { getModule } from '../utils/get-module';
 import { PerAppService } from '../services/per-app.service';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
-@Injectable()
+@injectable()
 export class PreRouterExtension implements Extension<void> {
   #inited: boolean;
   #isLastExtensionCall: boolean;
@@ -43,7 +43,7 @@ export class PreRouterExtension implements Extension<void> {
 
   protected prepareRoutesMeta(aMetadataPerMod2: MetadataPerMod2[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
-    const injectorPerApp = this.perAppService.reinitInjector([{ provide: Router, useValue: this.router }]);
+    const injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
 
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       const { moduleName, aControllersMetadata2, providersPerMod } = metadataPerMod2;
@@ -60,10 +60,10 @@ export class PreRouterExtension implements Extension<void> {
 
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
           const context = ReflectiveInjector.resolve([
-            { provide: NODE_REQ, useValue: nodeReq },
-            { provide: NODE_RES, useValue: nodeRes },
-            { provide: PATH_PARAMS, useValue: params },
-            { provide: QUERY_STRING, useValue: queryString },
+            { token: NODE_REQ, useValue: nodeReq },
+            { token: NODE_RES, useValue: nodeRes },
+            { token: PATH_PARAMS, useValue: params },
+            { token: QUERY_STRING, useValue: queryString },
           ]);
           const inj = injectorPerRou.createChildFromResolved([...resolvedPerReq, ...context]);
 
@@ -91,10 +91,10 @@ export class PreRouterExtension implements Extension<void> {
   ) {
     const fakeObj = { info: 'this is test of a route before set it' };
     const context = ReflectiveInjector.resolve([
-      { provide: NODE_REQ, useValue: fakeObj },
-      { provide: NODE_RES, useValue: fakeObj },
-      { provide: PATH_PARAMS, useValue: fakeObj },
-      { provide: QUERY_STRING, useValue: fakeObj },
+      { token: NODE_REQ, useValue: fakeObj },
+      { token: NODE_RES, useValue: fakeObj },
+      { token: PATH_PARAMS, useValue: fakeObj },
+      { token: QUERY_STRING, useValue: fakeObj },
     ]);
     const inj = injectorPerRou.createChildFromResolved([...resolvedPerReq, ...context]);
     const routeMeta = inj.get(RouteMeta) as RouteMeta;

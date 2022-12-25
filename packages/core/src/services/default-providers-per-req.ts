@@ -9,10 +9,10 @@ import { DefaultHttpFrontend } from './default-http-frontend';
 import { DefaultHttpHandler } from './default-http-handler';
 
 export const defaultProvidersPerReq: Readonly<ServiceProvider[]> = [
-  { provide: ControllerErrorHandler, useClass: DefaultControllerErrorHandler },
-  { provide: HttpFrontend, useClass: DefaultHttpFrontend },
-  { provide: HttpBackend, useClass: DefaultHttpBackend },
-  { provide: HttpHandler, useClass: DefaultHttpHandler },
+  { token: ControllerErrorHandler, useClass: DefaultControllerErrorHandler },
+  { token: HttpFrontend, useClass: DefaultHttpFrontend },
+  { token: HttpBackend, useClass: DefaultHttpBackend },
+  { token: HttpHandler, useClass: DefaultHttpHandler },
   Req,
   Res,
 ];

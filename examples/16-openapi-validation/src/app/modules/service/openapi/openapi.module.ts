@@ -14,5 +14,5 @@ export const openapiModuleWithParams = OpenapiModule.withParams(oasObject, '', s
 
 openapiModuleWithParams.providersPerApp = [
   ...(openapiModuleWithParams.providersPerApp || []),
-  { provide: ExtensionsMetaPerApp, useValue: { oasOptions } },
+  { token: ExtensionsMetaPerApp, useValue: { oasOptions } },
 ];

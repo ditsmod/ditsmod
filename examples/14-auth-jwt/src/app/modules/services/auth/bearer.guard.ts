@@ -1,8 +1,8 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { CanActivate, Req } from '@ditsmod/core';
 import { JwtService, VerifyErrors } from '@ditsmod/jwt';
 
-@Injectable()
+@injectable()
 export class BearerGuard implements CanActivate {
   constructor(private req: Req, private jwtService: JwtService) {}
 

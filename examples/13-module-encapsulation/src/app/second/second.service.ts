@@ -1,8 +1,8 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { FirstService } from '../first/first.service';
 
-@Injectable()
+@injectable()
 export class SecondService {
   constructor(private oneService: FirstService) {}
 

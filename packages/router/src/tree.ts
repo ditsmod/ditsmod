@@ -1,9 +1,9 @@
-import { Injectable, Optional } from '@ts-stack/di';
+import { injectable, optional } from '@ts-stack/di';
 
 import { RouterLogMediator } from './router-log-mediator';
 import { Fn, TreeConfig, RouteType, RouteParam } from './types';
 
-@Injectable()
+@injectable()
 export class Tree {
   type: RouteType;
   children: this[];
@@ -13,7 +13,7 @@ export class Tree {
   protected indices: string;
   protected priority: number;
 
-  constructor(private log: RouterLogMediator, @Optional() treeConfig?: TreeConfig) {
+  constructor(private log: RouterLogMediator, @optional() treeConfig?: TreeConfig) {
     Object.assign(this, new TreeConfig(), treeConfig);
   }
 

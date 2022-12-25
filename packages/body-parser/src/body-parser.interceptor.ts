@@ -1,12 +1,12 @@
 import { HttpHandler, HttpInterceptor, Req } from '@ditsmod/core';
-import { Injectable, Optional } from '@ts-stack/di';
+import { injectable, optional } from '@ts-stack/di';
 import { parse, Headers, Options } from 'get-body';
 
 import { BodyParserConfig } from './body-parser-config';
 
-@Injectable()
+@injectable()
 export class BodyParserInterceptor implements HttpInterceptor {
-  constructor(private req: Req, @Optional() private config?: BodyParserConfig) {
+  constructor(private req: Req, @optional() private config?: BodyParserConfig) {
     this.config = Object.assign({}, new BodyParserConfig(), config); // Merge with default.
   }
 

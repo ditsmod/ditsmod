@@ -20,11 +20,11 @@ Ditsmod використовує [@ts-stack/di][9] у якості бібліо�
 В системі DI, залежність - це усе те, що ви хочете отримати в кінцевому результаті в конструкторах контролерів, сервісів, модулів. Наприклад, якщо в конструкторі сервісу ви прописуєте ось таке:
 
 ```ts {7}
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { FirstService } from './first.service';
 
-@Injectable()
+@injectable()
 export class SecondService {
   constructor(private firstService: FirstService) {}
   // ...
@@ -44,27 +44,27 @@ export class SecondService {
 Інколи вам може знадобитись вказати опціональну (необов'язкову) залежність в конструкторі. Давайте розглянемо наступний приклад, де після властивості `firstService` поставлено знак питання, і таким чином вказано для TypeScript що ця властивість є опціональною:
 
 ```ts {7}
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { FirstService } from './first.service';
 
-@Injectable()
+@injectable()
 export class SecondService {
   constructor(private firstService?: FirstService) {}
   // ...
 }
 ```
 
-Але DI проігнорує цю опціональність і видасть помилку у разі відсутності можливості для створення `FirstService`. Щоб даний код працював, необхідно скористатись декоратором `Optional`:
+Але DI проігнорує цю опціональність і видасть помилку у разі відсутності можливості для створення `FirstService`. Щоб даний код працював, необхідно скористатись декоратором `optional`:
 
 ```ts {7}
-import { Injectable, Optional } from '@ts-stack/di';
+import { injectable, optional } from '@ts-stack/di';
 
 import { FirstService } from './first.service';
 
-@Injectable()
+@injectable()
 export class SecondService {
-  constructor(@Optional() private firstService?: FirstService) {}
+  constructor(@optional() private firstService?: FirstService) {}
   // ...
 }
 ```
@@ -77,21 +77,21 @@ export class SecondService {
 
 З іншого боку, токен може мати будь-який тип, окрім масиву чи enum. Окрім цього, ви повинні пам'ятати, що токен повинен залишитись у JavaScript-файлі після компіляції з TypeScript-коду, тому у якості токена не можна використовувати інтерфейси або типи, що оголошені за допомогою ключового слова `type`.
 
-Якщо в конструктор вашого класу треба передати масив чи enum, можна скористатись декоратором `Inject`:
+Якщо в конструктор вашого класу треба передати масив чи enum, можна скористатись декоратором `inject`:
 
 ```ts {7}
-import { Injectable, Inject } from '@ts-stack/di';
+import { injectable, inject } from '@ts-stack/di';
 
 import { InterfaceOfItem } from './types';
 
-@Injectable()
+@injectable()
 export class SecondService {
-  constructor(@Inject('some token for an array') private someArray: InterfaceOfItem[]) {}
+  constructor(@inject('some token for an array') private someArray: InterfaceOfItem[]) {}
   // ...
 }
 ```
 
-Як бачите, `Inject` приймає токен для певної залежності. Коли використовується `Inject`, DI ігнорує тип змінної, перед якою знаходиться цей декоратор.
+Як бачите, `inject` приймає токен для певної залежності. Коли використовується `inject`, DI ігнорує тип змінної, перед якою знаходиться цей декоратор.
 
 ## Провайдер
 
@@ -100,10 +100,10 @@ DI вирішує залежність за допомогою відповід�
 ```ts {3-6}
 import { Type } from '@ts-stack/di';
 
-type Provider = { provide: any, useClass: Type<any>, multi?: boolean } |
-{ provide: any, useValue: any, multi?: boolean } |
-{ provide: any, useFactory: Function, deps?: any[], multi?: boolean } |
-{ provide: any, useExisting: any, multi?: boolean }
+type Provider = { token: any, useClass: Type<any>, multi?: boolean } |
+{ token: any, useValue: any, multi?: boolean } |
+{ token: any, useFactory: Function, deps?: any[], multi?: boolean } |
+{ token: any, useExisting: any, multi?: boolean }
 ```
 
 На одну залежність, в реєстр DI потрібно передавати один або декілька провайдерів. Частіше за все, така передача відбувається через метадані модуля чи контролера, хоча інколи вони передаються напряму в [інжектори][102].
@@ -126,13 +126,13 @@ type Provider = { provide: any, useClass: Type<any>, multi?: boolean } |
   В такому разі потрібно передавати провайдер в наступному форматі:
 
   ```ts
-  { provide: 'some token here', useFactory: callback, deps: [SomeService] }
+  { token: 'some token here', useFactory: callback, deps: [SomeService] }
   ```
 
 - `useExisting` - передається інший токен. Якщо ви записуєте таке:
 
   ```ts
-  { provide: SecondService, useExisting: FirstService }
+  { token: SecondService, useExisting: FirstService }
   ```
 
   таким чином ви говорите DI: "Коли споживачі провайдерів запитують токен `SecondService` потрібно використати значення, призначене для токена `FirstService`". Іншими словами, ця директива робить аліас `SecondService`, який вказує на `FirstService`. Алгоритм роботи DI в таких випадках наступний:
@@ -165,7 +165,7 @@ import { SomeService } from './some.service';
 
 @Module({
   providersPerMod: [
-    { provide: SomeService, useClass: SomeService }
+    { token: SomeService, useClass: SomeService }
   ],
 })
 export class SomeModule {}
@@ -176,7 +176,7 @@ export class SomeModule {}
 ```ts {3}
 @Controller({
   providersPerReq: [
-    { provide: SomeService, useClass: OtherService }
+    { token: SomeService, useClass: OtherService }
   ]
 })
 export class SomeController {
@@ -205,7 +205,7 @@ export class AppModule {}
 // ...
 @Module({
   providersPerMod: [
-    { provide: ConfigService, useValue: { propery1: 'some value' } }
+    { token: ConfigService, useValue: { propery1: 'some value' } }
   ],
 })
 export class SomeModule {}
@@ -219,16 +219,16 @@ export class SomeModule {}
 
 ```ts {16}
 import 'reflect-metadata';
-import { ReflectiveInjector, Injectable } from '@ts-stack/di';
+import { ReflectiveInjector, injectable } from '@ts-stack/di';
 
 class Service1 {}
 
-@Injectable()
+@injectable()
 class Service2 {
   constructor(service1: Service1) {}
 }
 
-@Injectable()
+@injectable()
 class Service3 {
   constructor(service2: Service2) {}
 }
@@ -349,10 +349,10 @@ export class SomeModule {}
 Безпосередньо сам інжектор вам рідко може знадобиться, але ви його можете отримати у конструкторі як і будь-який інший інстанс провайдера:
 
 ```ts
-import { Injectable, Injector } from '@ts-stack/di';
+import { injectable, Injector } from '@ts-stack/di';
 import { FirstService } from './first.service';
 
-@Injectable()
+@injectable()
 export class SecondService {
   constructor(private injector: Injector) {}
 
@@ -391,7 +391,7 @@ import { RootModule, Logger } from '@ditsmod/core';
 import { MyLogger } from './my-logger';
 
 @RootModule({
-  providersPerApp: [{ provide: Logger, useClass: MyLogger }],
+  providersPerApp: [{ token: Logger, useClass: MyLogger }],
 })
 export class SomeModule {}
 ```

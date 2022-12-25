@@ -16,11 +16,11 @@ describe('DictService', () => {
   function getService(options: Options) {
     const injector = ReflectiveInjector.resolveAndCreate([
       DictService,
-      { provide: I18nLogMediator, useValue: { missingLng: jest.fn } },
-      { provide: Req, useValue: options.req },
-      { provide: I18nOptions, useValue: options.i18nOptions },
-      { provide: CommonDict, useClass: CommonDict, multi: true },
-      { provide: CommonDict, useClass: CommonUkDict, multi: true },
+      { token: I18nLogMediator, useValue: { missingLng: jest.fn } },
+      { token: Req, useValue: options.req },
+      { token: I18nOptions, useValue: options.i18nOptions },
+      { token: CommonDict, useClass: CommonDict, multi: true },
+      { token: CommonDict, useClass: CommonUkDict, multi: true },
     ]);
     return injector.get(DictService) as DictService;
   }

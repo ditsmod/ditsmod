@@ -1,7 +1,7 @@
-import { Injectable, Injector } from '@ts-stack/di';
+import { injectable, Injector } from '@ts-stack/di';
 import { RouteMeta, HttpBackend, Res, DefaultHttpBackend, Status, HttpMethod, NODE_REQ } from '@ditsmod/core';
 
-@Injectable()
+@injectable()
 export class ReturnHttpBackend extends DefaultHttpBackend implements HttpBackend {
   constructor(protected override injector: Injector, protected override routeMeta: RouteMeta, protected res: Res) {
     super(injector, routeMeta);

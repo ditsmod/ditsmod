@@ -1,7 +1,7 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { HttpHandler, HttpInterceptor, Logger, Req, Res } from '@ditsmod/core';
 
-@Injectable()
+@injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
   constructor(private req: Req, private res: Res, private logger: Logger) {}
 

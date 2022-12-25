@@ -1,4 +1,4 @@
-import { Inject } from '@ts-stack/di';
+import { inject } from '@ts-stack/di';
 import { Controller, Res, Route } from '@ditsmod/core';
 
 import { FirstPerRouService } from './first/first-per-rou.service';
@@ -10,7 +10,7 @@ export class AppController {
     private threeService: ThirdService,
     private onePerRouService: FirstPerRouService,
     private res: Res,
-    @Inject('multi-provider') private multiProvider: any
+    @inject('multi-provider') private multiProvider: any
   ) {}
 
   @Route('GET')

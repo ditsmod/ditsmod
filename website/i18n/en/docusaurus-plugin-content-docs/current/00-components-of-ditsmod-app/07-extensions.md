@@ -57,10 +57,10 @@ You can see a simple example in the folder [09-one-extension][1].
 Create a class that implements the `Extension` interface:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { Extension } from '@ditsmod/core';
 
-@Injectable()
+@injectable()
 export class MyExtension implements Extension<void> {
   private data: boolean;
 
@@ -80,10 +80,10 @@ export class MyExtension implements Extension<void> {
 For the extension to work, you can get all the necessary data either through the constructor or from another extension by calling its `init()` method:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { Extension, MetadataPerMod1 } from '@ditsmod/core';
 
-@Injectable()
+@injectable()
 export class Extension1 implements Extension<any> {
   private data: any;
 
@@ -100,7 +100,7 @@ export class Extension1 implements Extension<any> {
   }
 }
 
-@Injectable()
+@injectable()
 export class Extension2 implements Extension<void> {
   private inited: boolean;
 
@@ -224,12 +224,12 @@ For simplicity, [Creating an extension class][2] contains an example where the d
 Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor, and in `init()` call `init()` of this service:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions';
 
-@Injectable()
+@injectable()
 export class MyExtension implements Extension<void> {
   private inited: boolean;
 
@@ -258,12 +258,12 @@ It is important to remember that running `init()` a particular extension process
 In case you need to accumulate the results of a certain extension from all modules, you need to do the following:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions';
 
-@Injectable()
+@injectable()
 export class MyExtension implements Extension<void | false> {
   private inited: boolean;
 
@@ -304,7 +304,7 @@ Each extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dyna
 You can see how it is done in [BodyParserExtension][3]:
 
 ```ts
-@Injectable()
+@injectable()
 export class BodyParserExtension implements Extension<void> {
   private inited: boolean;
 
@@ -338,7 +338,7 @@ export class BodyParserExtension implements Extension<void> {
         const routeMeta = injectorPerRou.get(RouteMeta) as RouteMeta;
         const bodyParserConfig = injectorPerReq.resolveAndInstantiate(BodyParserConfig) as BodyParserConfig;
         if (bodyParserConfig.acceptMethods.includes(routeMeta.httpMethod)) {
-          providersPerReq.push({ provide: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
+          providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
         }
       });
     });

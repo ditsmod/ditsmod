@@ -8,6 +8,6 @@ import { ThirdController } from './third.controller';
 @Module({
   imports: [FirstModule],
   controllers: [ThirdController],
-  providersPerReq: [{ provide: DictService, useClass: MyDictService }],
+  providersPerReq: [{ token: DictService, useClass: MyDictService }],
 })
 export class ThirdModule {}

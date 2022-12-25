@@ -1,8 +1,9 @@
 import 'reflect-metadata';
-import { forwardRef, Injectable, InjectionToken, reflector, ValueProvider } from '@ts-stack/di';
+import { forwardRef, injectable, InjectionToken, makePropDecorator, ValueProvider } from '@ts-stack/di';
+import { reflector } from '@ts-stack/di';
 import { it, fit, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
-import { Module } from '../decorators/module';
+import { mod } from '../decorators/module';
 import {
   isController,
   isInjectionToken,
@@ -17,59 +18,59 @@ import {
   MultiProvider,
 } from './type-guards';
 import { ModuleMetadata } from '../types/module-metadata';
-import { RootModule } from '../decorators/root-module';
-import { Controller } from '../decorators/controller';
-import { Route, RouteDecoratorMetadata } from '../decorators/route';
+import { rootModule } from '../decorators/root-module';
+import { controller } from '../decorators/controller';
+import { route, RouteDecoratorMetadata } from '../decorators/route';
 import { CanActivate, ServiceProvider, Extension } from '../types/mix';
 
 describe('type guards', () => {
   describe('isModule()', () => {
     it('class with decorator', () => {
-      @Module()
+      @mod({})
       class Module1 {}
-      const metadata = reflector.getClassMetadata(Module1)[0] as ModuleMetadata;
+      const metadata = reflector.getClassMetadata(Module1)[0];
       expect(isModule(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = reflector.getClassMetadata(Module1)[0] as ModuleMetadata;
+      const metadata = reflector.getClassMetadata(Module1)[0];
       expect(isModule(metadata)).toBe(false);
     });
   });
 
   describe('isRootModule()', () => {
     it('class with decorator', () => {
-      @RootModule()
+      @rootModule({})
       class Module1 {}
-      const metadata = reflector.getClassMetadata(Module1)[0] as ModuleMetadata;
+      const metadata = reflector.getClassMetadata(Module1)[0];
       expect(isRootModule(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = reflector.getClassMetadata(Module1)[0] as ModuleMetadata;
+      const metadata = reflector.getClassMetadata(Module1)[0];
       expect(isRootModule(metadata)).toBe(false);
     });
   });
 
   describe('isController()', () => {
     it('class with decorator', () => {
-      @Controller()
+      @controller()
       class Module1 {}
-      const metadata = reflector.getClassMetadata(Module1)[0] as ModuleMetadata;
+      const metadata = reflector.getClassMetadata(Module1)[0];
       expect(isController(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = reflector.getClassMetadata(Module1)[0] as ModuleMetadata;
+      const metadata = reflector.getClassMetadata(Module1)[0];
       expect(isController(metadata)).toBe(false);
     });
   });
 
   describe('isRoute()', () => {
-    @Injectable()
+    @injectable()
     class Guard1 implements CanActivate {
       canActivate() {
         return true;
@@ -78,9 +79,9 @@ describe('type guards', () => {
       other() {}
     }
 
-    @Controller()
+    @controller()
     class ClassWithDecorators {
-      @Route('GET', '', [Guard1])
+      @route('GET', '', [Guard1])
       some() {}
     }
 
@@ -92,14 +93,14 @@ describe('type guards', () => {
 
   describe('isModuleWithParams', () => {
     it('module without params', () => {
-      @Module()
+      @mod({})
       class Module1 {}
 
       expect(isModuleWithParams(Module1)).toBe(false);
     });
 
     it('module with params', () => {
-      @Module()
+      @mod({})
       class Module1 {
         static withParams() {
           return {
@@ -109,20 +110,20 @@ describe('type guards', () => {
         }
       }
 
-      const mod = Module1.withParams();
-      expect(isModuleWithParams(mod)).toBe(true);
+      const modObj = Module1.withParams();
+      expect(isModuleWithParams(modObj)).toBe(true);
     });
   });
 
   describe('isProvider()', () => {
     it('should filtered all types of providers', () => {
-      @Module()
+      @mod({})
       class Module1 {}
-      @RootModule()
+      @rootModule({})
       class Module2 {}
 
       expect(isProvider(class {})).toBe(true);
-      expect(isProvider({ provide: '', useValue: '' })).toBe(true);
+      expect(isProvider({ token: '', useValue: '' })).toBe(true);
       expect(isProvider(Module1)).toBe(false);
       expect(isProvider(Module2)).toBe(false);
       expect(isProvider(5 as any)).toBe(false);
@@ -132,10 +133,10 @@ describe('type guards', () => {
   describe('isNormalizedProvider()', () => {
     it('should recognize all types of providers', () => {
       const providers: ServiceProvider[] = [
-        { provide: '', useValue: '' },
-        { provide: '', useClass: class {} },
-        { provide: '', useExisting: class {} },
-        { provide: '', useFactory: class {} },
+        { token: '', useValue: '' },
+        { token: '', useClass: class {} },
+        { token: '', useToken: class {} },
+        { token: '', useFactory: class {} as any },
       ];
       expect(providers.every(isNormalizedProvider)).toBe(true);
     });
@@ -179,42 +180,56 @@ describe('type guards', () => {
 
   describe('isMultiProvider()', () => {
     it('true ValueProvider', () => {
-      const provider: MultiProvider = { provide: 'token', useValue: 'fake', multi: true };
+      const provider: MultiProvider = { token: 'token', useValue: 'fake', multi: true };
       expect(isMultiProvider(provider)).toBe(true);
     });
 
     it('true ClassProvider', () => {
-      const provider: MultiProvider = { provide: 'token', useClass: class {}, multi: true };
+      const provider: MultiProvider = { token: 'token', useClass: class {}, multi: true };
       expect(isMultiProvider(provider)).toBe(true);
     });
 
     it('true ExistingProvider', () => {
-      const provider: MultiProvider = { provide: 'token', useExisting: class {}, multi: true };
+      const provider: MultiProvider = { token: 'token', useToken: class {}, multi: true };
       expect(isMultiProvider(provider)).toBe(true);
     });
 
     it('true FactoryProvider', () => {
-      const provider: MultiProvider = { provide: 'token', useFactory: () => '', multi: true };
+      const factory = makePropDecorator();
+      class ClassWithDecorators {
+        @factory()
+        method1() {
+          return '';
+        }
+      }
+      const provider: MultiProvider = { token: 'token', useFactory: [ClassWithDecorators, ClassWithDecorators.prototype.method1], multi: true };
       expect(isMultiProvider(provider)).toBe(true);
     });
 
     it('false ValueProvider', () => {
-      const provider: ServiceProvider = { provide: 'token', useValue: 'fake' };
+      const provider: ServiceProvider = { token: 'token', useValue: 'fake' };
       expect(isMultiProvider(provider)).toBe(false);
     });
 
     it('false ClassProvider', () => {
-      const provider: ServiceProvider = { provide: 'token', useClass: class {} };
+      const provider: ServiceProvider = { token: 'token', useClass: class {} };
       expect(isMultiProvider(provider)).toBe(false);
     });
 
     it('false ExistingProvider', () => {
-      const provider: ServiceProvider = { provide: 'token', useExisting: class {} };
+      const provider: ServiceProvider = { token: 'token', useToken: class {} };
       expect(isMultiProvider(provider)).toBe(false);
     });
 
     it('false FactoryProvider', () => {
-      const provider: ServiceProvider = { provide: 'token', useFactory: () => '' };
+      const factory = makePropDecorator();
+      class ClassWithDecorators {
+        @factory()
+        method1() {
+          return '';
+        }
+      }
+      const provider: ServiceProvider = { token: 'token', useFactory: [ClassWithDecorators, ClassWithDecorators.prototype.method1] };
       expect(isMultiProvider(provider)).toBe(false);
     });
   });

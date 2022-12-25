@@ -24,7 +24,7 @@ sidebar_position: 10
 При імпорті рекомендується не змішувати імпорт з локальних файлів та імпорт з `node_modules`. Вгорі йдуть імпорти з `node_modules`, через один рядок йдуть локальні імпорти:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { CanActivate, Status } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';

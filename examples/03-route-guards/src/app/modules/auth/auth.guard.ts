@@ -1,7 +1,7 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { CanActivate } from '@ditsmod/core';
 
-@Injectable()
+@injectable()
 export class AuthGuard implements CanActivate {
   /**
    * Here you need implement more logic.

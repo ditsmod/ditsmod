@@ -38,11 +38,11 @@ export class AuthModule {}
 As you can see, you can pass certain options to `JwtModule` during import. Now within `AuthModule` you can use `JwtService`:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { CanActivate, Req } from '@ditsmod/core';
 import { JwtService, VerifyErrors } from '@ditsmod/jwt';
 
-@Injectable()
+@injectable()
 export class BearerGuard implements CanActivate {
   constructor(private req: Req, private jwtService: JwtService) {}
 

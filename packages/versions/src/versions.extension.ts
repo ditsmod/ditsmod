@@ -1,7 +1,7 @@
 import { Extension, ExtensionsManager, ROUTES_EXTENSIONS } from '@ditsmod/core';
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
-@Injectable()
+@injectable()
 export class VersionsExtension implements Extension<void> {
   constructor(protected extensionManager: ExtensionsManager) {}
 

@@ -14,7 +14,7 @@ describe('Providers', () => {
 
   it('works useValue()', () => {
     const value = new Providers().useValue('token', 'value');
-    expect([...value]).toEqual([{ provide: 'token', useValue: 'value' }]);
+    expect([...value]).toEqual([{ token: 'token', useValue: 'value' }]);
   });
 
   it('works useValue()', () => {
@@ -22,7 +22,7 @@ describe('Providers', () => {
       one: string;
     }
     const value = new Providers().useValue<A>(A, { one: 'value' });
-    expect([...value]).toEqual([{ provide: A, useValue: { one: 'value' } }]);
+    expect([...value]).toEqual([{ token: A, useValue: { one: 'value' } }]);
   });
 
   it('works useClass()', () => {
@@ -34,25 +34,25 @@ describe('Providers', () => {
       two: number;
     }
     const value = new Providers().useClass(A, B);
-    expect([...value]).toEqual([{ provide: A, useClass: B }]);
+    expect([...value]).toEqual([{ token: A, useClass: B }]);
   });
 
   it('works useLogger()', () => {
     const logger = new ConsoleLogger();
     const value = new Providers().useLogger(logger);
-    expect([...value]).toEqual([{ provide: Logger, useValue: logger }]);
+    expect([...value]).toEqual([{ token: Logger, useValue: logger }]);
   });
 
   it('works useLogConfig()', () => {
     const loggerConfig = new LoggerConfig();
 
     const config1 = new Providers().useLogConfig(loggerConfig);
-    expect([...config1]).toEqual([{ provide: LoggerConfig, useValue: loggerConfig }]);
+    expect([...config1]).toEqual([{ token: LoggerConfig, useValue: loggerConfig }]);
 
     const config2 = new Providers().useLogConfig(loggerConfig, { tags: ['one'] });
     expect([...config2]).toEqual([
-      { provide: LoggerConfig, useValue: loggerConfig },
-      { provide: OutputLogFilter, useValue: { tags: ['one'] } },
+      { token: LoggerConfig, useValue: loggerConfig },
+      { token: OutputLogFilter, useValue: { tags: ['one'] } },
     ]);
   });
 
@@ -60,15 +60,15 @@ describe('Providers', () => {
     class CustomLogMediator extends LogMediator {}
 
     const config1 = new Providers().useSystemLogMediator(CustomLogMediator);
-    expect([...config1]).toEqual([CustomLogMediator, { provide: SystemLogMediator, useExisting: CustomLogMediator }]);
+    expect([...config1]).toEqual([CustomLogMediator, { token: SystemLogMediator, useToken: CustomLogMediator }]);
   });
 
   it('works multi calling', () => {
     const logger = new ConsoleLogger();
     const value = new Providers().useLogger(logger).useValue('token', 'value');
     const expectedArr: ServiceProvider[] = [
-      { provide: Logger, useValue: logger },
-      { provide: 'token', useValue: 'value' },
+      { token: Logger, useValue: logger },
+      { token: 'token', useValue: 'value' },
     ];
     expect([...value]).toEqual(expectedArr);
   });
@@ -108,8 +108,8 @@ describe('Providers', () => {
     expect(Other.prototype.two).toBeCalledTimes(2);
     expect(Third.prototype.three).toBeCalledTimes(1);
     expect([...providers]).toEqual([
-      { provide: 'Mostia', useValue: 'молоток' },
-      { provide: 'token', useValue: 'value' },
+      { token: 'Mostia', useValue: 'молоток' },
+      { token: 'token', useValue: 'value' },
     ]);
   });
 });

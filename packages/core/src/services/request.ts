@@ -1,11 +1,11 @@
-import { Injectable, Inject } from '@ts-stack/di';
+import { injectable, inject } from '@ts-stack/di';
 import { randomUUID } from 'crypto';
 
 import { NODE_REQ } from '../constans';
 import { PathParam } from '../types/router';
 import { NodeRequest } from '../types/server-options';
 
-@Injectable()
+@injectable()
 export class Req {
   #requestId: string;
   /**
@@ -41,7 +41,7 @@ export class Req {
     /**
      * Native Node.js request.
      */
-    @Inject(NODE_REQ) public readonly nodeReq: NodeRequest,
+    @inject(NODE_REQ) public readonly nodeReq: NodeRequest,
   ) {}
 
   get requestId() {

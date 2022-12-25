@@ -1,4 +1,4 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { RootMetadata } from '../models/root-metadata';
 import { ControllersMetadata2 } from '../types/controller-metadata';
@@ -7,7 +7,7 @@ import { GuardItem, NormalizedGuard, Extension, ServiceProvider } from '../types
 import { RouteMeta } from '../types/route-data';
 import { isController, isRoute } from '../utils/type-guards';
 
-@Injectable()
+@injectable()
 export class RoutesExtension implements Extension<MetadataPerMod2> {
   protected metadataPerMod2: MetadataPerMod2;
 
@@ -39,7 +39,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
         for (const decoratorMetadata of methodWithDecorators) {
-          if (!isRoute(decoratorMetadata.value)) {
+          if (!isRoute(decoratorMetadata)) {
             continue;
           }
           const providersPerRou: ServiceProvider[] = [];
@@ -47,8 +47,8 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           const route = decoratorMetadata.value;
           const ctrlDecorator = ctrlDecorValues.find(isController);
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
-          providersPerRou.push(...(ctrlDecorator?.providersPerRou || []));
-          providersPerReq.push(...(ctrlDecorator?.providersPerReq || []), controller);
+          providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
+          providersPerReq.push(...(ctrlDecorator?.value.providersPerReq || []), controller);
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const { path: controllerPath, httpMethod } = route;
           const path = this.getPath(prefix, controllerPath);
@@ -58,7 +58,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
             methodName,
             guards,
           };
-          providersPerRou.push({ provide: RouteMeta, useValue: routeMeta });
+          providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
           controllersMetadata2.push({
             httpMethod,
             path,

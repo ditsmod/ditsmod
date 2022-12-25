@@ -6,7 +6,7 @@ import * as https from 'https';
 
 import { AppInitializer } from './app-initializer';
 import { Application } from './application';
-import { RootModule } from './decorators/root-module';
+import { rootModule } from './decorators/root-module';
 import { RootMetadata } from './models/root-metadata';
 import { ModuleType, ModuleWithParams } from './types/mix';
 import { Router } from './types/router';
@@ -48,7 +48,7 @@ describe('Application', () => {
     it('should merge custom options for the root module', () => {
       class Provider1 {}
 
-      @RootModule({
+      @rootModule({
         serverOptions: { isHttp2SecureServer: false },
         listenOptions: { host: 'customHost', port: 3010 },
         path: 'customPrefix',
@@ -67,7 +67,7 @@ describe('Application', () => {
   describe('checkSecureServerOption()', () => {
     class Provider1 {}
     class Provider2 {}
-    @RootModule({
+    @rootModule({
       controllers: [Provider1],
       providersPerApp: [Provider2],
     })
@@ -101,7 +101,7 @@ describe('Application', () => {
   });
 
   describe('scanRootModuleAndGetAppInitializer()', () => {
-    @RootModule()
+    @rootModule({})
     class AppModule {}
 
     it('should return instance of AppInitializer', () => {
@@ -110,8 +110,8 @@ describe('Application', () => {
   });
 
   describe('bootstrapApplication()', () => {
-    @RootModule({
-      providersPerApp: [{ provide: Router, useValue: {}}]
+    @rootModule({
+      providersPerApp: [{ token: Router, useValue: {}}]
     })
     class AppModule {}
 

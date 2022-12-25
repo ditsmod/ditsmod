@@ -1,4 +1,4 @@
-import { Inject, Injectable, Injector, Type } from '@ts-stack/di';
+import { inject, injectable, Injector, Type } from '@ts-stack/di';
 
 import { getProviderName } from '../utils/get-provider-name';
 import { isInjectionToken } from '../utils/type-guards';
@@ -17,7 +17,7 @@ class Cache {
   ) {}
 }
 
-@Injectable()
+@injectable()
 export class ExtensionsManager {
   /**
    * Settings by AppInitializer.
@@ -35,7 +35,7 @@ export class ExtensionsManager {
     private systemLogMediator: SystemLogMediator,
     private counter: Counter,
     private extensionsContext: ExtensionsContext,
-    @Inject(EXTENSIONS_COUNTERS) private mExtensionsCounters: Map<Type<Extension<any>>, number>
+    @inject(EXTENSIONS_COUNTERS) private mExtensionsCounters: Map<Type<Extension<any>>, number>
   ) {}
 
   async init<T>(

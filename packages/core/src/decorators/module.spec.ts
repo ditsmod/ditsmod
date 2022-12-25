@@ -2,42 +2,41 @@ import 'reflect-metadata';
 import { reflector } from '@ts-stack/di';
 import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
-import { Module } from './module';
-import { AnyObj } from 'src/types/mix';
+import { mod } from './module';
 
 describe('Module decorator', () => {
   it('empty decorator', () => {
-    @Module()
+    @mod({})
     class Module1 {}
 
-    const metadata = reflector.getClassMetadata<AnyObj>(Module1);
+    const metadata = reflector.getClassMetadata<{}>(Module1);
     expect(metadata.length).toBe(1);
-    expect(metadata[0]).toEqual({});
-    expect(metadata[0].decoratorName).toBe('Module');
+    expect(metadata[0].factory).toBe(mod);
+    expect(metadata[0].value).toBeUndefined();
   });
 
   it('decorator with some data', () => {
-    @Module({ controllers: [] })
+    @mod({ controllers: [] })
     class Module1 {}
 
-    const metadata = reflector.getClassMetadata<AnyObj>(Module1);
+    const metadata = reflector.getClassMetadata(Module1);
     expect(metadata.length).toBe(1);
-    expect(metadata[0]).toEqual({ controllers: [] });
+    expect(metadata[0].value).toEqual({ controllers: [] });
   });
 
   it('multi decorator with some data', () => {
-    @Module({ providersPerApp: [] })
-    @Module({ controllers: [] })
+    @mod({ providersPerApp: [] })
+    @mod({ controllers: [] })
     class Module1 {}
 
     const metadata = reflector.getClassMetadata(Module1);
     expect(metadata.length).toBe(2);
-    expect(metadata[0]).toEqual({ controllers: [] });
-    expect(metadata[1]).toEqual({ providersPerApp: [] });
+    expect(metadata[0].value).toEqual({ controllers: [] });
+    expect(metadata[1].value).toEqual({ providersPerApp: [] });
   });
 
   it('decorator with all allowed properties', () => {
-    @Module({
+    @mod({
       imports: [],
       providersPerApp: [],
       providersPerMod: [],
@@ -50,7 +49,7 @@ describe('Module decorator', () => {
 
     const metadata = reflector.getClassMetadata(Module1);
     expect(metadata.length).toBe(1);
-    expect(metadata[0]).toEqual({
+    expect(metadata[0].value).toEqual({
       imports: [],
       providersPerApp: [],
       providersPerMod: [],

@@ -1,4 +1,4 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import {
   SignPayload,
   SecretOrPrivateKey,
@@ -20,7 +20,7 @@ import {
   VerifyWithSecretOptions,
 } from './types/mix';
 
-@Injectable()
+@injectable()
 export class JwtService {
   constructor(private options: JwtServiceOptions) {}
   /**

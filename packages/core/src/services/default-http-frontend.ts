@@ -1,4 +1,4 @@
-import { Inject, Injectable, Injector } from '@ts-stack/di';
+import { inject, injectable, Injector } from '@ts-stack/di';
 import { parse } from 'querystring';
 
 import { ControllerErrorHandler } from '../services/controller-error-handler';
@@ -13,11 +13,11 @@ import { RouteMeta } from '../types/route-data';
 import { RootMetadata } from '../models/root-metadata';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
-@Injectable()
+@injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
   constructor(
-    @Inject(PATH_PARAMS) protected aPathParams: PathParam[],
-    @Inject(QUERY_STRING) protected queryString: any,
+    @inject(PATH_PARAMS) protected aPathParams: PathParam[],
+    @inject(QUERY_STRING) protected queryString: any,
     protected routeMeta: RouteMeta,
     protected rootMetadata: RootMetadata,
     protected req: Req,

@@ -13,7 +13,7 @@ import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach
 
 import { OpenapiCompilerExtension } from './openapi-compiler.extension';
 import { DEFAULT_OAS_OBJECT } from '../constants';
-import { OasGuard } from '../decorators/oas-guard';
+import { oasGuard } from '../decorators/oas-guard';
 
 describe('OpenapiCompilerExtension', () => {
   class MockOpenapiCompilerExtension extends OpenapiCompilerExtension {
@@ -58,7 +58,7 @@ describe('OpenapiCompilerExtension', () => {
         },
       };
 
-      @OasGuard({
+      @oasGuard({
         tags,
         securitySchemeObject,
         responses,
@@ -92,7 +92,7 @@ describe('OpenapiCompilerExtension', () => {
         },
       };
 
-      @OasGuard({
+      @oasGuard({
         tags,
         securitySchemeObject,
         responses,
@@ -126,7 +126,7 @@ describe('OpenapiCompilerExtension', () => {
         },
       };
 
-      @OasGuard({
+      @oasGuard({
         tags,
         securitySchemeObject,
         responses,
@@ -164,12 +164,12 @@ describe('OpenapiCompilerExtension', () => {
         },
       };
 
-      @OasGuard({
+      @oasGuard({
         tags: ['tag2'],
         securitySchemeObject: securitySchemeObject2,
         responses,
       })
-      @OasGuard({
+      @oasGuard({
         tags: ['tag1'],
         securitySchemeObject: securitySchemeObject1,
         responses,

@@ -60,22 +60,22 @@ export class Content {
 
   protected getSchema(model: Type<AnyObj>) {
     const schema = this.getSchemaStubForModel(model);
-    const modelMeta = reflector.getPropMetadata(model) as PropertyDecoratorMetadata;
+    const modelMeta = reflector.getPropMetadata<PropertyDecoratorMetadata>(model);
 
     for (const property in modelMeta) {
       const propertyMeta = modelMeta[property].find(isProperty);
-      if (propertyMeta && (!propertyMeta.schema?.type || propertyMeta.schema.type == 'array')) {
+      if (propertyMeta && (!propertyMeta.value.schema?.type || propertyMeta.value.schema.type == 'array')) {
         const propertyType = modelMeta[property][0];
-        this.checkTypeDefinitionConflict(model.name, property, propertyType, schema.type, propertyMeta.customType);
+        this.checkTypeDefinitionConflict(model.name, property, propertyType, schema.type, propertyMeta.value.customType);
         if (!schema.properties) {
           schema.properties = {};
         }
-        this.setRequiredProperties(schema, property, propertyMeta.schema);
+        this.setRequiredProperties(schema, property, propertyMeta.value.schema);
         schema.properties[property] = this.fillPropertySchema(
           model,
           propertyType,
-          propertyMeta.schema,
-          propertyMeta.customType
+          propertyMeta.value.schema,
+          propertyMeta.value.customType
         );
       }
     }

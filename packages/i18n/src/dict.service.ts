@@ -1,19 +1,19 @@
 import { Req } from '@ditsmod/core';
-import { Injectable, Injector, Optional, Type } from '@ts-stack/di';
+import { injectable, Injector, optional, Type } from '@ts-stack/di';
 
 import { I18nLogMediator } from './i18n-log-mediator';
 import { ISO639 } from './types/iso-639';
 import { Dictionary, I18nOptions } from './types/mix';
 
-@Injectable()
+@injectable()
 export class DictService {
   protected _lng?: ISO639;
 
   constructor(
     protected injector: Injector,
     protected log: I18nLogMediator,
-    @Optional() protected i18nOptions?: I18nOptions,
-    @Optional() protected req?: Req,
+    @optional() protected i18nOptions?: I18nOptions,
+    @optional() protected req?: Req,
   ) {}
 
   getAllDictionaries<T extends Type<Dictionary>>(token: T) {

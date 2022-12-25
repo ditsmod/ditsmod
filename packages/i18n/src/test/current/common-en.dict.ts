@@ -1,9 +1,9 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { Dictionary } from '../../types/mix';
 import { ISO639 } from '../../types/iso-639';
 
-@Injectable()
+@injectable()
 export class CommonDict implements Dictionary {
   getLng(): ISO639 {
     return 'en';

@@ -1,4 +1,4 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { Req } from '../services/request';
 import { ControllerErrorHandler } from '../services/controller-error-handler';
@@ -9,7 +9,7 @@ import { ErrorOpts } from '../custom-error/error-opts';
 import { isChainError } from '../utils/type-guards';
 
 
-@Injectable()
+@injectable()
 export class DefaultControllerErrorHandler implements ControllerErrorHandler {
   constructor(private req: Req, private res: Res, private logger: Logger) {}
 

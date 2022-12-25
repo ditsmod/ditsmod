@@ -1,5 +1,5 @@
 import { ServiceProvider } from '@ditsmod/core';
-import { Injectable, Type } from '@ts-stack/di';
+import { injectable, Type } from '@ts-stack/di';
 
 import { I18nLogMediator } from './i18n-log-mediator';
 import { Dictionary, Translations } from './types/mix';
@@ -7,7 +7,7 @@ import { Dictionary, Translations } from './types/mix';
 /**
  * Transforms `Translations[]` to `ServiceProvider[]`.
  */
-@Injectable()
+@injectable()
 export class I18nTransformer {
   constructor(private log: I18nLogMediator) {}
 
@@ -43,7 +43,7 @@ export class I18nTransformer {
       if (token !== dict) {
         this.logMissingMethodsIfExists(token, dict);
       }
-      providers.push({ provide: token, useClass: dict, multi: true });
+      providers.push({ token: token, useClass: dict, multi: true });
     }
     return providers;
   }

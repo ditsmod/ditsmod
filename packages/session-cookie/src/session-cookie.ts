@@ -1,19 +1,19 @@
 import { Cookies, NodeRequest, NodeResponse } from '@ts-stack/cookies';
-import { Inject, Injectable, Optional } from '@ts-stack/di';
+import { inject, injectable, optional } from '@ts-stack/di';
 import { NODE_REQ, NODE_RES } from '@ditsmod/core';
 
 import { SessionCookieOptions } from './types';
 
-@Injectable()
+@injectable()
 export class SessionCookie {
   protected _id: string | null = '';
   protected cookies: Cookies;
   protected maxAge: number;
 
   constructor(
-    @Inject(NODE_REQ) req: NodeRequest,
-    @Inject(NODE_RES) res: NodeResponse,
-    @Optional() protected opts: SessionCookieOptions
+    @inject(NODE_REQ) req: NodeRequest,
+    @inject(NODE_RES) res: NodeResponse,
+    @optional() protected opts: SessionCookieOptions
   ) {
     this.opts = { ...(opts || {}) };
 

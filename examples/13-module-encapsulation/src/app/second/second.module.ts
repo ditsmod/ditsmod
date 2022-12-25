@@ -8,7 +8,7 @@ import { SecondService } from './second.service';
 @Module({
   imports: [FirstModule],
   controllers: [SecondController],
-  providersPerReq: [SecondService, { provide: 'multi-provider', useClass: SecondMultiProviderService, multi: true }],
+  providersPerReq: [SecondService, { token: 'multi-provider', useClass: SecondMultiProviderService, multi: true }],
   exports: [SecondService, 'multi-provider'],
 })
 export class SecondModule {}

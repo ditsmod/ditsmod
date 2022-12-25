@@ -3,6 +3,7 @@ import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals
 
 import { ServiceProvider } from '../types/mix';
 import { getCollisions } from './get-collisions';
+import { makePropDecorator } from '@ts-stack/di/dist/decorator-factories';
 
 describe('getTokensCollisions()', () => {
   it('duplicates are identical', () => {
@@ -29,9 +30,9 @@ describe('getTokensCollisions()', () => {
       Provider3,
       Provider5,
       Provider3,
-      { provide: Provider3, useClass: Provider3 },
-      { provide: Provider7, useClass: Provider7 },
-      { provide: Provider7, useClass: Provider6 },
+      { token: Provider3, useClass: Provider3 },
+      { token: Provider7, useClass: Provider7 },
+      { token: Provider7, useClass: Provider6 },
     ];
     duplTokens = getCollisions(duplTokens, providers);
     expect(duplTokens).toEqual([Provider3, Provider7]);
@@ -48,9 +49,9 @@ describe('getTokensCollisions()', () => {
       Provider4,
       Provider3,
       Provider5,
-      { provide: Provider6, useClass: Provider7 },
-      { provide: Provider6, useClass: Provider7 },
-      { provide: Provider7, useClass: Provider7 },
+      { token: Provider6, useClass: Provider7 },
+      { token: Provider6, useClass: Provider7 },
+      { token: Provider7, useClass: Provider7 },
     ];
     duplTokens = getCollisions(duplTokens, providers);
     expect(duplTokens).toEqual([]);
@@ -62,17 +63,21 @@ describe('getTokensCollisions()', () => {
     class Provider5 {}
     class Provider6 {}
     class Provider7 {}
-    let duplTokens: any[] = [Provider6];
-    function factory() {
-      return new Provider7();
+    const decorFactory = makePropDecorator();
+    class ClassWithFactory {
+      @decorFactory()
+      method1() {
+        return new Provider7();
+      }
     }
+    let duplTokens: any[] = [Provider6];
     const providers: ServiceProvider[] = [
       Provider4,
       Provider3,
       Provider5,
-      { provide: Provider6, useFactory: factory },
-      { provide: Provider6, useFactory: factory },
-      { provide: Provider7, useClass: Provider7 },
+      { token: Provider6, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
+      { token: Provider6, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
+      { token: Provider7, useClass: Provider7 },
     ];
     duplTokens = getCollisions(duplTokens, providers);
     expect(duplTokens).toEqual([]);

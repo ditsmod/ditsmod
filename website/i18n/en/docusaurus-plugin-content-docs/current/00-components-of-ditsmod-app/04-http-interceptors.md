@@ -38,13 +38,13 @@ Since `PreRouter`, `HttpFrontend` and `HttpBackend` are extracted via DI, you ca
 
 ## Creating an interceptor
 
-Each interceptor must be a class implementing the [HttpInterceptor][1] interface and annotated with the `Injectable` decorator:
+Each interceptor must be a class implementing the [HttpInterceptor][1] interface and annotated with the `injectable` decorator:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { HttpHandler, HttpInterceptor } from '@ditsmod/core';
 
-@Injectable()
+@injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
   intercept(next: HttpHandler) {
     return next.handle(); // Here returns Promise<any>;
@@ -69,7 +69,7 @@ import { MyHttpInterceptor } from './my-http-interceptor';
 
 @Module({
   // ...
-  providersPerReq: [{ provide: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
+  providersPerReq: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
 })
 export class SomeModule {}
 ```

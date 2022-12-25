@@ -1,6 +1,6 @@
 import {
   ClassProvider,
-  ExistingProvider,
+  TokenProvider,
   FactoryProvider,
   InjectionToken,
   Type,
@@ -29,7 +29,7 @@ export interface Extension<T> {
 
 export type ExtensionProvider =
   | TypeProvider
-  | ((ClassProvider | ExistingProvider | FactoryProvider | ValueProvider) & { multi: true });
+  | ((ClassProvider | TokenProvider | FactoryProvider | ValueProvider) & { multi: true });
 
 export interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
   extends Partial<ProvidersMetadata> {
@@ -94,7 +94,7 @@ export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
  *
  * For more details, see the [Dependency Injection Guide](https://v4.angular.io/guide/dependency-injection).
  */
-export type ServiceProvider = TypeProvider | ValueProvider | ClassProvider | ExistingProvider | FactoryProvider;
+export type ServiceProvider = TypeProvider | ValueProvider | ClassProvider | TokenProvider | FactoryProvider;
 
 export type Scope = 'Mod' | 'Rou' | 'Req';
 

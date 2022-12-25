@@ -95,7 +95,7 @@ import { LogMediator } from '@ditsmod/core';
 import { MyLogMediator } from './my-log-mediator';
 // ...
   providersPerApp: [
-    { provide: LogMediator, useClass: MyLogMediator },
+    { token: LogMediator, useClass: MyLogMediator },
     MyLogMediator,
   ],
 // ...
@@ -123,7 +123,7 @@ import { OtherLogMediator } from './other-log-mediator';
 @Module({
   imports: [SomeModule],
   controllers: [OtherController],
-  providersPerMod: [{ provide: SomeLogMediator, useClass: OtherLogMediator }],
+  providersPerMod: [{ token: SomeLogMediator, useClass: OtherLogMediator }],
 })
 export class OtherModule {}
 ```

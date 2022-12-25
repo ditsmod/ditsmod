@@ -8,8 +8,8 @@ import { ExtensionsManager } from './extensions-manager';
 import { PerAppService } from './per-app.service';
 
 export const defaultExtensions: Readonly<ExtensionProvider[]> = [
-  { provide: PRE_ROUTER_EXTENSIONS, useClass: PreRouterExtension, multi: true },
-  { provide: ROUTES_EXTENSIONS, useClass: RoutesExtension, multi: true },
+  { token: PRE_ROUTER_EXTENSIONS, useClass: PreRouterExtension, multi: true },
+  { token: ROUTES_EXTENSIONS, useClass: RoutesExtension, multi: true },
 ];
 
 export const defaultExtensionsTokens: Readonly<any[]> = [

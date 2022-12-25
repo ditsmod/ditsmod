@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@ts-stack/di';
+import { injectable, Injector } from '@ts-stack/di';
 import { HttpHandler, HttpInterceptor, Status, CustomError } from '@ditsmod/core';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { DictService } from '@ditsmod/i18n';
@@ -7,7 +7,7 @@ import { ValidationRouteMeta } from './types';
 import { AssertDict } from './locales/current';
 import { AjvService } from './ajv.service';
 
-@Injectable()
+@injectable()
 export class ValidationInterceptor implements HttpInterceptor {
   constructor(protected injector: Injector, protected meta: ValidationRouteMeta, protected ajvService: AjvService) {}
 

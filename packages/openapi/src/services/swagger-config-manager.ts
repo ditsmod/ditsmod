@@ -1,5 +1,5 @@
 import { ModuleExtract, RootMetadata } from '@ditsmod/core';
-import { Injectable, Injector } from '@ts-stack/di';
+import { injectable, Injector } from '@ts-stack/di';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { existsSync } from 'fs';
 import { readFile, writeFile } from 'fs/promises';
@@ -10,7 +10,7 @@ import webpack, { CleanPlugin, Configuration } from 'webpack';
 import { SwaggerOptions } from '../swagger-ui/interfaces';
 import { OasExtensionOptions } from '../types/oas-extension-options';
 
-@Injectable()
+@injectable()
 export class SwaggerConfigManager {
   readonly webpackDist = join(__dirname, '../../dist-webpack');
   readonly swaggerDist = join(__dirname, '../../dist/swagger-ui');

@@ -67,7 +67,7 @@ import { Module, Router } from '@ditsmod/core';
 import { MyRouter } from './my-router';
 
 @Module({
-  providersPerApp: [{ provide: Router, useClass: MyRouter }],
+  providersPerApp: [{ token: Router, useClass: MyRouter }],
 })
 export class MyCustomRouterModule {}
 ```

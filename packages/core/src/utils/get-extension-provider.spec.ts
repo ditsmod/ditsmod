@@ -12,7 +12,7 @@ describe('getExtensionProviders', () => {
   }
 
   describe('without BEFORE group', () => {
-    const providers: ExtensionProvider[] = [{ provide: MY_EXTENSION, useClass: Extension1, multi: true }];
+    const providers: ExtensionProvider[] = [{ token: MY_EXTENSION, useClass: Extension1, multi: true }];
 
     it('extension without exports (two arguments)', () => {
       const args: ExtensionOptions = { extension: Extension1, groupToken: MY_EXTENSION };
@@ -42,8 +42,8 @@ describe('getExtensionProviders', () => {
   describe('with BEFORE group', () => {
     const providers: ExtensionProvider[] = [
       Extension1,
-      { provide: MY_EXTENSION, useExisting: Extension1, multi: true },
-      { provide: `BEFORE ${OTHER_EXTENSION}`, useExisting: Extension1, multi: true },
+      { token: MY_EXTENSION, useToken: Extension1, multi: true },
+      { token: `BEFORE ${OTHER_EXTENSION}`, useToken: Extension1, multi: true },
     ];
 
     it('extension without exports (three arguments)', () => {

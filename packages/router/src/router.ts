@@ -1,11 +1,11 @@
 import * as http from 'http';
-import { Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { injectable, ReflectiveInjector } from '@ts-stack/di';
 import { Router, RouterReturns } from '@ditsmod/core';
 
 import { Tree } from './tree';
 import { HttpMethod, MethodTree, Fn } from './types';
 
-@Injectable()
+@injectable()
 export class DefaultRouter implements Router {
   private trees: MethodTree = {};
 

@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { reflector } from '@ts-stack/di';
 import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
 
-import { Property, PropertyDecoratorMetadata } from './property';
+import { property, PropertyDecoratorMetadata } from './property';
 
 describe('@Property', () => {
   it('model without properties', () => {
@@ -13,12 +13,12 @@ describe('@Property', () => {
 
   it('empty value', () => {
     class Model1 {
-      @Property()
+      @property()
       prop1: string;
-      @Property()
+      @property()
       prop2: string;
-      @Property()
-      @Property()
+      @property()
+      @property()
       prop3: string;
     }
 
@@ -34,7 +34,7 @@ describe('@Property', () => {
 
   it('object', () => {
     class Model1 {
-      @Property({
+      @property({
         type: 'string',
         minimum: 1,
       })
@@ -59,7 +59,7 @@ describe('@Property', () => {
 
   it('array with one item', () => {
     class Model1 {
-      @Property({}, { array: Boolean })
+      @property({}, { array: Boolean })
       prop1: Boolean[];
     }
 
@@ -78,7 +78,7 @@ describe('@Property', () => {
 
   it('array with multi items', () => {
     class Model1 {
-      @Property({}, { array: [Boolean, String] })
+      @property({}, { array: [Boolean, String] })
       prop1: [Boolean, String];
     }
 

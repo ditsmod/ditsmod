@@ -1,4 +1,4 @@
-import { Injectable, reflector } from '@ts-stack/di';
+import { injectable, reflector } from '@ts-stack/di';
 
 import { defaultProvidersPerMod, NODE_REQ, NODE_RES } from './constans';
 import { ModuleExtract } from './models/module-extract';
@@ -35,7 +35,7 @@ type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
  * - checks on providers collisions;
  * - collects module and controllers metadata.
  */
-@Injectable()
+@injectable()
 export class ModuleFactory {
   protected providersPerApp: ServiceProvider[];
   protected moduleName: string;
@@ -109,7 +109,7 @@ export class ModuleFactory {
     this.checkImportsAndAppends(meta);
     this.importAndAppendModules();
     const moduleExtract: ModuleExtract = { path: this.prefixPerMod, moduleName: meta.name };
-    this.meta.providersPerMod.unshift({ provide: ModuleExtract, useValue: moduleExtract });
+    this.meta.providersPerMod.unshift({ token: ModuleExtract, useValue: moduleExtract });
 
     let aControllersMetadata1: ControllersMetadata1<AnyObj, AnyObj>[] = [];
     if (isRootModule(meta) || isAppends || (isModuleWithParams(meta.module) && meta.module.path !== undefined)) {

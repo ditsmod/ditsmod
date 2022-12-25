@@ -1,8 +1,8 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { SomeLogMediator } from './some-log-mediator';
 
-@Injectable()
+@injectable()
 export class SomeService {
   constructor(private someLogMediator: SomeLogMediator) {}
 

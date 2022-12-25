@@ -1,8 +1,8 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { Permission } from './types';
 
-@Injectable()
+@injectable()
 export class AuthService {
   /**
    * Here you need implement more logic.

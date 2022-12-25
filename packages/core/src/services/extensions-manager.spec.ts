@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
+import { injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
 import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
 import { Extension } from '../types/mix';
@@ -19,7 +19,7 @@ describe('ExtensionsManager circular dependencies', () => {
   const MY_EXTENSIONS3 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS3');
   const MY_EXTENSIONS4 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS4');
 
-  @Injectable()
+  @injectable()
   class Extension1 implements Extension<any> {
     private inited: boolean;
 
@@ -31,7 +31,7 @@ describe('ExtensionsManager circular dependencies', () => {
     }
   }
 
-  @Injectable()
+  @injectable()
   class Extension2 implements Extension<any> {
     private inited: boolean;
 
@@ -46,7 +46,7 @@ describe('ExtensionsManager circular dependencies', () => {
     }
   }
 
-  @Injectable()
+  @injectable()
   class Extension3 implements Extension<any> {
     private inited: boolean;
 
@@ -60,7 +60,7 @@ describe('ExtensionsManager circular dependencies', () => {
       this.inited = true;
     }
   }
-  @Injectable()
+  @injectable()
   class Extension4 implements Extension<any> {
     private inited: boolean;
 
@@ -80,11 +80,11 @@ describe('ExtensionsManager circular dependencies', () => {
       ...defaultProvidersPerApp,
       MockExtensionsManager,
       ExtensionsContext,
-      { provide: MY_EXTENSIONS1, useClass: Extension1, multi: true },
-      { provide: MY_EXTENSIONS2, useClass: Extension2, multi: true },
-      { provide: MY_EXTENSIONS3, useClass: Extension3, multi: true },
-      { provide: MY_EXTENSIONS4, useClass: Extension4, multi: true },
-      { provide: EXTENSIONS_COUNTERS, useValue: new Map() },
+      { token: MY_EXTENSIONS1, useClass: Extension1, multi: true },
+      { token: MY_EXTENSIONS2, useClass: Extension2, multi: true },
+      { token: MY_EXTENSIONS3, useClass: Extension3, multi: true },
+      { token: MY_EXTENSIONS4, useClass: Extension4, multi: true },
+      { token: EXTENSIONS_COUNTERS, useValue: new Map() },
     ]);
     mock = injector.get(MockExtensionsManager) as MockExtensionsManager;
   });

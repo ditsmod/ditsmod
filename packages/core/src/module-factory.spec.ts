@@ -1,12 +1,12 @@
 import 'reflect-metadata';
 import { beforeEach, describe, expect, it, fit, xit, fdescribe } from '@jest/globals';
-import { Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { FactoryProvider, injectable, Provider, ReflectiveInjector } from '@ts-stack/di';
 
 import { NODE_REQ } from './constans';
-import { Controller, ControllerMetadata } from './decorators/controller';
-import { Module } from './decorators/module';
-import { RootModule } from './decorators/root-module';
-import { Route, RouteMetadata } from './decorators/route';
+import { controller, ControllerMetadata } from './decorators/controller';
+import { mod } from './decorators/module';
+import { rootModule } from './decorators/root-module';
+import { route, RouteMetadata } from './decorators/route';
 import { ModuleExtract } from './models/module-extract';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { ModuleFactory } from './module-factory';
@@ -26,11 +26,12 @@ import {
 import { Router } from './types/router';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports';
 import { SystemLogMediator } from './log-mediator/system-log-mediator';
+import { makePropDecorator } from '@ts-stack/di/dist/decorator-factories';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
 describe('ModuleFactory', () => {
-  @Injectable()
+  @injectable()
   class MockModuleFactory extends ModuleFactory {
     injectorPerMod: ReflectiveInjector;
     override prefixPerMod: string;
@@ -67,7 +68,7 @@ describe('ModuleFactory', () => {
   beforeEach(() => {
     const injectorPerApp = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,
-      { provide: Logger, useClass: MyLogger },
+      { token: Logger, useClass: MyLogger },
       MockModuleFactory,
     ]);
     mock = injectorPerApp.get(MockModuleFactory);
@@ -81,16 +82,16 @@ describe('ModuleFactory', () => {
     }
 
     it('should not throw an error during appending modules', () => {
-      @Controller()
+      @controller()
       class Controller1 {}
 
-      @Module({ controllers: [Controller1] })
+      @mod({ controllers: [Controller1] })
       class Module1 {}
 
-      @Module({ controllers: [Controller1] })
+      @mod({ controllers: [Controller1] })
       class Module2 {}
 
-      @Module({
+      @mod({
         appends: [Module1, { path: '', module: Module2 }],
         controllers: [Controller1],
       })
@@ -100,13 +101,13 @@ describe('ModuleFactory', () => {
     });
 
     xit('should throw an error during importing and appending same module', () => {
-      @Controller()
+      @controller()
       class Controller1 {}
 
-      @Module({ controllers: [Controller1] })
+      @mod({ controllers: [Controller1] })
       class Module1 {}
 
-      @Module({
+      @mod({
         imports: [Module1],
         appends: [Module1],
         controllers: [Controller1],
@@ -120,16 +121,16 @@ describe('ModuleFactory', () => {
     it('should throw an error during appending module without controllers (common module)', () => {
       class Provider1 {}
       class Provider2 {}
-      @Controller()
+      @controller()
       class Controller1 {}
 
-      @Module({
+      @mod({
         providersPerMod: [Provider1, Provider2],
         exports: [Provider1, Provider2],
       })
       class Module1 {}
 
-      @Module({
+      @mod({
         appends: [Module1],
         controllers: [Controller1],
       })
@@ -142,16 +143,16 @@ describe('ModuleFactory', () => {
     it('should throw an error during appending module without controllers (AppendsWithParams)', () => {
       class Provider1 {}
       class Provider2 {}
-      @Controller()
+      @controller()
       class Controller1 {}
 
-      @Module({
+      @mod({
         providersPerMod: [Provider1, Provider2],
         exports: [Provider1, Provider2],
       })
       class Module1 {}
 
-      @Module({
+      @mod({
         appends: [{ path: '', module: Module1 }],
         controllers: [Controller1],
       })
@@ -164,17 +165,17 @@ describe('ModuleFactory', () => {
     it('should not throw an error during appending module with controllers', () => {
       class Provider1 {}
       class Provider2 {}
-      @Controller()
+      @controller()
       class Controller1 {}
 
-      @Module({
+      @mod({
         providersPerMod: [Provider1, Provider2],
         exports: [Provider1, Provider2],
         controllers: [Controller1],
       })
       class Module1 {}
 
-      @Module({
+      @mod({
         appends: [Module1],
         controllers: [Controller1],
       })
@@ -188,18 +189,18 @@ describe('ModuleFactory', () => {
     it('forbidden reexports providers', () => {
       class Provider1 {}
 
-      @Module({
+      @mod({
         providersPerReq: [Provider1],
       })
       class Module1 {}
 
-      @Module({
+      @mod({
         imports: [Module1],
         exports: [Provider1],
       })
       class Module2 {}
 
-      @RootModule({
+      @rootModule({
         imports: [Module2],
         exports: [Module2],
       })
@@ -212,19 +213,19 @@ describe('ModuleFactory', () => {
     it('allow reexports module', () => {
       class Provider1 {}
 
-      @Module({
+      @mod({
         providersPerReq: [Provider1],
         exports: [Provider1],
       })
       class Module1 {}
 
-      @Module({
+      @mod({
         imports: [Module1],
         exports: [Module1],
       })
       class Module2 {}
 
-      @RootModule({
+      @rootModule({
         imports: [Module2],
         exports: [Module2],
       })
@@ -240,20 +241,20 @@ describe('ModuleFactory', () => {
       class Provider1 {}
       class Provider2 {}
 
-      @Module({
+      @mod({
         providersPerReq: [Provider1],
         exports: [Provider1],
       })
       class Module1 {}
 
-      @Module({
+      @mod({
         providersPerMod: [Provider2],
         imports: [Module1],
         exports: [Provider2, Module1],
       })
       class Module2 {}
 
-      @RootModule({
+      @rootModule({
         imports: [Module2],
         exports: [Module2],
       })
@@ -271,20 +272,20 @@ describe('ModuleFactory', () => {
       class Provider3 {}
       class Provider4 {}
 
-      @Module({
+      @mod({
         providersPerMod: [Provider1, Provider2],
         exports: [Provider1, Provider2],
       })
       class Module1 {}
 
-      @Module({
+      @mod({
         imports: [Module1],
         providersPerMod: [Provider3, Provider4],
         exports: [Module1, Provider3, Provider4],
       })
       class Module2 {}
 
-      @RootModule({
+      @rootModule({
         imports: [Module2],
         exports: [Module2],
       })
@@ -297,31 +298,31 @@ describe('ModuleFactory', () => {
     });
 
     it('import dependencies of global imported providers', () => {
-      @Injectable()
+      @injectable()
       class Provider1 {}
 
-      @Injectable()
+      @injectable()
       class Provider2 {
         constructor(provider1: Provider1) {}
       }
 
-      @Injectable()
+      @injectable()
       class Provider3 {}
 
-      @Module({
+      @mod({
         providersPerReq: [Provider1],
         exports: [Provider1],
       })
       class Module1 {}
 
-      @Module({
+      @mod({
         imports: [Module1],
         providersPerReq: [Provider2],
         exports: [Provider2, Module1],
       })
       class Module2 {}
 
-      @RootModule({
+      @rootModule({
         imports: [Module2],
         providersPerReq: [Provider3],
         exports: [Module2, Provider3],
@@ -356,24 +357,24 @@ describe('ModuleFactory', () => {
     class Provider6 {}
     class Provider7 {}
     class Provider8 {}
-    const overriddenProvider8 = { provide: Provider8, useValue: 'overridden' };
+    const overriddenProvider8: Provider = { token: Provider8, useValue: 'overridden' };
     class Provider9 {}
 
     describe('exporting providers order', () => {
-      @Module({
+      @mod({
         exports: [Provider0],
         providersPerMod: [Provider0],
       })
       class Module0 {}
 
-      @Module({
+      @mod({
         imports: [Module0],
         exports: [Module0, Provider1, Provider2, Provider3],
         providersPerMod: [Provider1, Provider2, Provider3],
       })
       class Module1 {}
 
-      @Module({
+      @mod({
         imports: [Module1],
         exports: [Module1, Provider5, Provider8],
         providersPerMod: [Provider4, Provider5, Provider6],
@@ -381,13 +382,13 @@ describe('ModuleFactory', () => {
       })
       class Module2 {}
 
-      @Controller()
+      @controller()
       class Ctrl {
-        @Route('GET')
+        @route('GET')
         method() {}
       }
 
-      @Module({
+      @mod({
         imports: [Module2],
         exports: [Module2],
         providersPerReq: [Provider9, overriddenProvider8],
@@ -396,10 +397,10 @@ describe('ModuleFactory', () => {
       class Module3 {}
 
       it('case 0', () => {
-        @Module({ controllers: [Ctrl] })
+        @mod({ controllers: [Ctrl] })
         class Module1 {}
 
-        @RootModule({
+        @rootModule({
           imports: [Module1],
         })
         class AppModule {}
@@ -415,7 +416,7 @@ describe('ModuleFactory', () => {
       it('case 1', () => {
         const injectorPerApp = ReflectiveInjector.resolveAndCreate([
           ...defaultProvidersPerApp,
-          { provide: Logger, useClass: MyLogger },
+          { token: Logger, useClass: MyLogger },
         ]);
 
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
@@ -425,7 +426,7 @@ describe('ModuleFactory', () => {
 
         const mod0 = mock.appMetadataMap.get(Module0);
         const providerPerMod0: ServiceProvider = {
-          provide: ModuleExtract,
+          token: ModuleExtract,
           useValue: { path: '', moduleName: 'Module0' },
         };
         expect(mod0?.meta.providersPerMod).toEqual([providerPerMod0, Provider0]);
@@ -434,7 +435,7 @@ describe('ModuleFactory', () => {
 
         const mod1 = mock.appMetadataMap.get(Module1);
         const providerPerMod1: ServiceProvider = {
-          provide: ModuleExtract,
+          token: ModuleExtract,
           useValue: { path: '', moduleName: 'Module1' },
         };
         expect(mod1?.meta.providersPerMod).toEqual([providerPerMod1, Provider1, Provider2, Provider3]);
@@ -447,7 +448,7 @@ describe('ModuleFactory', () => {
 
         const mod2 = mock.appMetadataMap.get(Module2);
         const providerPerMod2: ServiceProvider = {
-          provide: ModuleExtract,
+          token: ModuleExtract,
           useValue: { path: '', moduleName: 'Module2' },
         };
         expect(mod2?.meta.providersPerMod).toEqual([providerPerMod2, Provider4, Provider5, Provider6]);
@@ -460,7 +461,7 @@ describe('ModuleFactory', () => {
 
         const mod3 = mock.appMetadataMap.get(Module3);
         const providerPerMod3: ServiceProvider = {
-          provide: ModuleExtract,
+          token: ModuleExtract,
           useValue: { path: '', moduleName: 'Module3' },
         };
         expect(mod3?.meta.providersPerMod).toEqual([providerPerMod3]);
@@ -471,11 +472,11 @@ describe('ModuleFactory', () => {
       });
 
       it('case 2', () => {
-        @RootModule({
+        @rootModule({
           imports: [Module3],
         })
         class Module4 {}
-        const providers: ServiceProvider[] = [...defaultProvidersPerApp, { provide: Router, useValue: 'fake' }];
+        const providers: ServiceProvider[] = [...defaultProvidersPerApp, { token: Router, useValue: 'fake' }];
         const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
@@ -485,7 +486,7 @@ describe('ModuleFactory', () => {
         expect(mock.prefixPerMod).toBe('other');
         // expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
         const providerPerMod: ServiceProvider = {
-          provide: ModuleExtract,
+          token: ModuleExtract,
           useValue: { path: 'other', moduleName: 'Module4' },
         };
         expect(mock.meta.providersPerMod).toEqual([providerPerMod]);
@@ -519,27 +520,27 @@ describe('ModuleFactory', () => {
       it('importDependenciesOfImportedProviders() case 1', () => {
         class Provider1 {}
 
-        @Injectable()
+        @injectable()
         class Provider2 {
           constructor(provider1: Provider1) {}
         }
 
         class Provider3 {}
 
-        @Module({
+        @mod({
           providersPerReq: [Provider1],
           exports: [Provider1],
         })
         class Module1 {}
 
-        @Module({
+        @mod({
           imports: [Module1],
           providersPerReq: [Provider2],
           exports: [Provider2],
         })
         class Module2 {}
 
-        @Module({
+        @mod({
           imports: [Module2],
           providersPerReq: [Provider3],
           controllers: [Ctrl],
@@ -548,7 +549,7 @@ describe('ModuleFactory', () => {
 
         const injectorPerApp = ReflectiveInjector.resolveAndCreate([
           ...defaultProvidersPerApp,
-          { provide: Logger, useClass: MyLogger },
+          { token: Logger, useClass: MyLogger },
         ]);
 
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
@@ -568,13 +569,13 @@ describe('ModuleFactory', () => {
       });
 
       it('should throw an error about not proper provider exports', () => {
-        @Module({
+        @mod({
           exports: [Provider1, Provider2, Provider3],
           providersPerMod: [Provider1, Provider3],
         })
         class Module6 {}
 
-        @RootModule({
+        @rootModule({
           imports: [Module6],
         })
         class Module7 {}
@@ -592,20 +593,20 @@ describe('ModuleFactory', () => {
         it('in global providers', () => {
           class Provider1 {}
 
-          @Module({
-            providersPerMod: [{ provide: Provider1, useValue: 'one' }],
+          @mod({
+            providersPerMod: [{ token: Provider1, useValue: 'one' }],
             exports: [Provider1],
           })
           class Module1 {}
 
-          @Module({
+          @mod({
             imports: [Module1],
             providersPerMod: [Provider1],
             exports: [Module1, Provider1],
           })
           class Module2 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module2],
             exports: [Module2],
           })
@@ -619,20 +620,20 @@ describe('ModuleFactory', () => {
         it('in AppModule with exported provider, but it has resolvedCollisionsPerMod array', () => {
           class Provider1 {}
 
-          @Module({
-            providersPerMod: [{ provide: Provider1, useValue: 'one' }],
+          @mod({
+            providersPerMod: [{ token: Provider1, useValue: 'one' }],
             exports: [Provider1],
           })
           class Module1 {}
 
-          @Module({
+          @mod({
             imports: [Module1],
             providersPerMod: [Provider1],
             exports: [Module1, Provider1],
           })
           class Module2 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module2],
             resolvedCollisionsPerMod: [[Provider1, Module1]],
             exports: [Module2],
@@ -642,27 +643,27 @@ describe('ModuleFactory', () => {
           moduleManager.scanRootModule(AppModule);
           expect(() => mock.exportGlobalProviders(moduleManager, [])).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([
-            [Provider1, { module: Module1, providers: [{ provide: Provider1, useValue: 'one' }] }],
+            [Provider1, { module: Module1, providers: [{ token: Provider1, useValue: 'one' }] }],
           ]);
         });
 
         it('identical duplicates but not collision with exported providers', () => {
           class Provider1 {}
 
-          @Module({
-            providersPerMod: [{ provide: Provider1, useValue: 'one' }],
+          @mod({
+            providersPerMod: [{ token: Provider1, useValue: 'one' }],
             exports: [Provider1],
           })
           class Module1 {}
 
-          @Module({
+          @mod({
             imports: [Module1],
-            providersPerMod: [{ provide: Provider1, useValue: 'one' }],
+            providersPerMod: [{ token: Provider1, useValue: 'one' }],
             exports: [Module1, Provider1],
           })
           class Module2 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module2],
             exports: [Module2],
           })
@@ -676,21 +677,27 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
           class Provider3 {}
+          const factory = makePropDecorator();
 
-          @Module({
-            providersPerMod: [Provider1, { provide: Provider2, useFactory: () => {} }],
+          class ClassWithFactory {
+            @factory()
+            method1() {}
+          }
+
+          @mod({
+            providersPerMod: [Provider1, { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }],
             exports: [Provider1, Provider2],
           })
           class Module1 {}
 
-          @Module({
+          @mod({
             imports: [Module1],
             providersPerMod: [Provider2, Provider3],
             exports: [Module1, Provider2, Provider3],
           })
           class Module2 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module2],
           })
           class AppModule {}
@@ -703,20 +710,26 @@ describe('ModuleFactory', () => {
         it('import Module2 and Module1 with collision - Provider1', () => {
           class Provider1 {}
           class Provider2 {}
+          const factory = makePropDecorator();
 
-          @Module({
+          class ClassWithFactory {
+            @factory()
+            method1() {}
+          }
+
+          @mod({
             exports: [Provider1],
-            providersPerMod: [{ provide: Provider1, useClass: Provider1 }, Provider2],
+            providersPerMod: [{ token: Provider1, useClass: Provider1 }, Provider2],
           })
           class Module1 {}
 
-          @Module({
+          @mod({
             exports: [Provider1, Provider2],
-            providersPerMod: [Provider1, { provide: Provider2, useFactory: () => {} }],
+            providersPerMod: [Provider1, { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }],
           })
           class Module2 {}
 
-          @RootModule({ imports: [Module1, Module2] })
+          @rootModule({ imports: [Module1, Module2] })
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
@@ -728,28 +741,28 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
 
-          @Module({
+          @mod({
             exports: [Provider1],
             providersPerMod: [
-              { provide: Provider1, useValue: 'value1 of module1', multi: true },
-              { provide: Provider1, useValue: 'value2 of module1', multi: true },
+              { token: Provider1, useValue: 'value1 of module1', multi: true },
+              { token: Provider1, useValue: 'value2 of module1', multi: true },
               Provider2,
             ],
           })
           class Module1 {}
 
-          @Module({
+          @mod({
             exports: [Provider1, Provider2],
             providersPerMod: [
-              { provide: Provider1, useValue: 'value1 of module2', multi: true },
-              { provide: Provider1, useValue: 'value2 of module2', multi: true },
-              { provide: Provider1, useValue: 'value3 of module2', multi: true },
-              { provide: Provider2, useValue: 'value100' },
+              { token: Provider1, useValue: 'value1 of module2', multi: true },
+              { token: Provider1, useValue: 'value2 of module2', multi: true },
+              { token: Provider1, useValue: 'value3 of module2', multi: true },
+              { token: Provider2, useValue: 'value100' },
             ],
           })
           class Module2 {}
 
-          @RootModule({ imports: [Module1, Module2] })
+          @rootModule({ imports: [Module1, Module2] })
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
@@ -760,7 +773,7 @@ describe('ModuleFactory', () => {
               Provider2,
               {
                 module: Module2,
-                providers: [{ provide: Provider2, useValue: 'value100' }],
+                providers: [{ token: Provider2, useValue: 'value100' }],
               },
             ],
           ]);
@@ -768,16 +781,16 @@ describe('ModuleFactory', () => {
             [
               Module1,
               [
-                { provide: Provider1, useValue: 'value1 of module1', multi: true },
-                { provide: Provider1, useValue: 'value2 of module1', multi: true },
+                { token: Provider1, useValue: 'value1 of module1', multi: true },
+                { token: Provider1, useValue: 'value2 of module1', multi: true },
               ],
             ],
             [
               Module2,
               [
-                { provide: Provider1, useValue: 'value1 of module2', multi: true },
-                { provide: Provider1, useValue: 'value2 of module2', multi: true },
-                { provide: Provider1, useValue: 'value3 of module2', multi: true },
+                { token: Provider1, useValue: 'value1 of module2', multi: true },
+                { token: Provider1, useValue: 'value2 of module2', multi: true },
+                { token: Provider1, useValue: 'value3 of module2', multi: true },
               ],
             ],
           ]);
@@ -786,19 +799,19 @@ describe('ModuleFactory', () => {
         it('should throw an error when resolving multi providers duplicates', () => {
           class Provider1 {}
 
-          @Module({
+          @mod({
             exports: [Provider1],
-            providersPerMod: [{ provide: Provider1, useValue: 'value1 of module1', multi: true }],
+            providersPerMod: [{ token: Provider1, useValue: 'value1 of module1', multi: true }],
           })
           class Module1 {}
 
-          @Module({
+          @mod({
             exports: [Provider1],
-            providersPerMod: [{ provide: Provider1, useValue: 'value1 of module2', multi: true }],
+            providersPerMod: [{ token: Provider1, useValue: 'value1 of module2', multi: true }],
           })
           class Module2 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module1, Module2],
             resolvedCollisionsPerMod: [[Provider1, Module1]],
           })
@@ -813,21 +826,21 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
 
-          @Module({
+          @mod({
             exports: [Provider1],
-            providersPerMod: [{ provide: Provider1, useClass: Provider1, multi: true }, Provider2],
+            providersPerMod: [{ token: Provider1, useClass: Provider1, multi: true }, Provider2],
           })
           class Module1 {}
 
-          @Module({
+          @mod({
             exports: [Provider1],
-            providersPerMod: [{ provide: Provider1, useClass: Provider1, multi: true }],
+            providersPerMod: [{ token: Provider1, useClass: Provider1, multi: true }],
           })
           class Module2 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module1, Module2],
-            providersPerApp: [{ provide: Router, useValue: 'fake' }],
+            providersPerApp: [{ token: Router, useValue: 'fake' }],
           })
           class AppModule {}
 
@@ -841,22 +854,28 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
           class Provider3 {}
-          const useFactoryProvider2 = { provide: Provider2, useFactory: () => {} };
+          const factory = makePropDecorator();
 
-          @Module({
+          class ClassWithFactory {
+            @factory()
+            method1() {}
+          }
+          const useFactoryProvider2: FactoryProvider = { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] };
+
+          @mod({
             providersPerMod: [Provider1, useFactoryProvider2],
             exports: [Provider1, Provider2],
           })
           class Module1 {}
 
-          @Module({
+          @mod({
             imports: [Module1],
             providersPerMod: [Provider2, Provider3],
             exports: [Module1, Provider2, Provider3],
           })
           class Module2 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module2],
             resolvedCollisionsPerMod: [[Provider2, Module1]],
           })
@@ -877,15 +896,15 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
 
-          @Module({
+          @mod({
             exports: [Provider1],
             providersPerMod: [Provider1, Provider2],
           })
           class Module1 {}
 
-          @Module({
+          @mod({
             exports: [Provider1, Provider2],
-            providersPerMod: [{ provide: Provider1, useClass: Provider1 }, Provider2],
+            providersPerMod: [{ token: Provider1, useClass: Provider1 }, Provider2],
           })
           class Module2 {
             static withParams() {
@@ -895,7 +914,7 @@ describe('ModuleFactory', () => {
 
           const moduleWithParams = Module2.withParams();
 
-          @RootModule({
+          @rootModule({
             imports: [Module1, moduleWithParams],
             resolvedCollisionsPerMod: [[Provider1, Module1]],
           })
@@ -912,22 +931,22 @@ describe('ModuleFactory', () => {
         });
 
         it('resolved collision for non-root module', () => {
-          @Controller()
+          @controller()
           class SomeController {}
 
-          @Module({
+          @mod({
             providersPerMod: [Provider1],
             exports: [Provider1],
           })
           class Module1 {}
 
-          @Module({
-            providersPerMod: [{ provide: Provider1, useValue: 'one' }],
+          @mod({
+            providersPerMod: [{ token: Provider1, useValue: 'one' }],
             exports: [Provider1],
           })
           class Module2 {}
 
-          @Module({
+          @mod({
             imports: [Module1, Module2],
             controllers: [SomeController],
             resolvedCollisionsPerMod: [[Provider1, Module1]],
@@ -935,7 +954,7 @@ describe('ModuleFactory', () => {
           })
           class Module3 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module3],
             resolvedCollisionsPerMod: [[Provider1, Module2]],
           })
@@ -950,33 +969,33 @@ describe('ModuleFactory', () => {
             [Provider1, { module: Module1, providers: [Provider1] }],
           ]);
           expect([...mock.importedProvidersPerMod]).toEqual([
-            [Provider1, { module: Module2, providers: [{ provide: Provider1, useValue: 'one' }] }],
+            [Provider1, { module: Module2, providers: [{ token: Provider1, useValue: 'one' }] }],
           ]);
         });
 
         it('for non-root module', () => {
-          @Controller()
+          @controller()
           class SomeController {}
 
-          @Module({
+          @mod({
             providersPerMod: [Provider1],
             exports: [Provider1],
           })
           class Module1 {}
 
-          @Module({
-            providersPerMod: [{ provide: Provider1, useValue: 'one' }],
+          @mod({
+            providersPerMod: [{ token: Provider1, useValue: 'one' }],
             exports: [Provider1],
           })
           class Module2 {}
 
-          @Module({
+          @mod({
             imports: [Module1, Module2],
             controllers: [SomeController],
           })
           class Module3 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module3],
           })
           class AppModule {}
@@ -993,20 +1012,20 @@ describe('ModuleFactory', () => {
           class Provider2 {}
           class Provider3 {}
 
-          @Module({
+          @mod({
             exports: [Provider1, Provider2],
-            providersPerReq: [{ provide: Provider1, useExisting: Provider1 }, Provider2],
+            providersPerReq: [{ token: Provider1, useToken: Provider1 }, Provider2],
           })
           class Module1 {}
 
-          @Module({
+          @mod({
             imports: [Module1],
             exports: [Module1, Provider2, Provider3],
-            providersPerReq: [{ provide: Provider2, useClass: Provider2 }, Provider3],
+            providersPerReq: [{ token: Provider2, useClass: Provider2 }, Provider3],
           })
           class Module2 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module2],
           })
           class AppModule {}
@@ -1021,20 +1040,20 @@ describe('ModuleFactory', () => {
           class Provider2 {}
           class Provider3 {}
 
-          @Module({
+          @mod({
             exports: [Provider1, Provider2],
-            providersPerReq: [{ provide: Provider1, useExisting: Provider1 }, Provider2],
+            providersPerReq: [{ token: Provider1, useToken: Provider1 }, Provider2],
           })
           class Module1 {}
 
-          @Module({
+          @mod({
             imports: [Module1],
             exports: [Module1, Provider2, Provider3],
-            providersPerReq: [{ provide: Provider2, useClass: Provider2 }, Provider3],
+            providersPerReq: [{ token: Provider2, useClass: Provider2 }, Provider3],
           })
           class Module2 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module2],
             resolvedCollisionsPerReq: [[Provider2, Module2]],
           })
@@ -1045,8 +1064,8 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
           expect([...mock.importedProvidersPerReq]).toEqual([
-            [Provider1, { module: Module1, providers: [{ provide: Provider1, useExisting: Provider1 }] }],
-            [Provider2, { module: Module2, providers: [{ provide: Provider2, useClass: Provider2 }] }],
+            [Provider1, { module: Module1, providers: [{ token: Provider1, useToken: Provider1 }] }],
+            [Provider2, { module: Module2, providers: [{ token: Provider2, useClass: Provider2 }] }],
             [Provider3, { module: Module2, providers: [Provider3] }],
           ]);
         });
@@ -1055,19 +1074,19 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
 
-          @Module({
+          @mod({
             exports: [Provider1],
-            providersPerReq: [{ provide: Provider1, useClass: Provider1 }, Provider2],
+            providersPerReq: [{ token: Provider1, useClass: Provider1 }, Provider2],
           })
           class Module0 {}
 
-          @Module({
+          @mod({
             exports: [Provider1, Provider2],
-            providersPerReq: [{ provide: Provider1, useExisting: Provider1 }, Provider2],
+            providersPerReq: [{ token: Provider1, useToken: Provider1 }, Provider2],
           })
           class Module1 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module0, Module1],
           })
           class AppModule {}
@@ -1081,22 +1100,22 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
 
-          @Module({
+          @mod({
             exports: [Provider1, Provider2],
-            providersPerReq: [{ provide: Provider1, useClass: Provider2 }, Provider2],
+            providersPerReq: [{ token: Provider1, useClass: Provider2 }, Provider2],
           })
           class Module1 {}
 
-          @Module({
+          @mod({
             exports: [Provider1, Provider2],
             providersPerReq: [
-              { provide: Provider1, useExisting: Provider1 },
-              { provide: Provider2, useExisting: Provider1 },
+              { token: Provider1, useToken: Provider1 },
+              { token: Provider2, useToken: Provider1 },
             ],
           })
           class Module2 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module1, Module2],
             resolvedCollisionsPerReq: [
               [Provider1, Module2],
@@ -1110,7 +1129,7 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
           expect([...mock.importedProvidersPerReq]).toEqual([
-            [Provider1, { module: Module2, providers: [{ provide: Provider1, useExisting: Provider1 }] }],
+            [Provider1, { module: Module2, providers: [{ token: Provider1, useToken: Provider1 }] }],
             [Provider2, { module: Module1, providers: [Provider2] }],
           ]);
         });
@@ -1121,13 +1140,13 @@ describe('ModuleFactory', () => {
         class Provider1 {}
 
         it('case 1', () => {
-          @Module({
+          @mod({
             exports: [Provider0],
             providersPerMod: [Provider0],
           })
           class Module0 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module0],
             providersPerApp: [Provider0],
           })
@@ -1141,13 +1160,13 @@ describe('ModuleFactory', () => {
         });
 
         it('resolved case 1', () => {
-          @Module({
+          @mod({
             exports: [Provider1],
-            providersPerMod: [{ provide: Provider1, useValue: 'fake' }],
+            providersPerMod: [{ token: Provider1, useValue: 'fake' }],
           })
           class Module1 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module1],
             providersPerApp: [Provider1],
             resolvedCollisionsPerMod: [[Provider1, Module1]],
@@ -1159,18 +1178,18 @@ describe('ModuleFactory', () => {
             mock.bootstrap([Provider1], new GlobalProviders(), '', AppModule, moduleManager, new Set());
           expect(callback).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([
-            [Provider1, { module: Module1, providers: [{ provide: Provider1, useValue: 'fake' }] }],
+            [Provider1, { module: Module1, providers: [{ token: Provider1, useValue: 'fake' }] }],
           ]);
         });
 
         it('case 2', () => {
-          @Module({
+          @mod({
             exports: [Provider1],
-            providersPerReq: [{ provide: Provider1, useClass: Provider1 }],
+            providersPerReq: [{ token: Provider1, useClass: Provider1 }],
           })
           class Module0 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module0],
             providersPerMod: [Provider1],
             providersPerReq: [],
@@ -1183,13 +1202,13 @@ describe('ModuleFactory', () => {
         });
 
         it('resolved case 2', () => {
-          @Module({
+          @mod({
             exports: [Provider1],
-            providersPerReq: [{ provide: Provider1, useClass: Provider1 }],
+            providersPerReq: [{ token: Provider1, useClass: Provider1 }],
           })
           class Module1 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module1],
             providersPerMod: [Provider1],
             resolvedCollisionsPerReq: [[Provider1, Module1]],
@@ -1201,24 +1220,24 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
           expect([...mock.importedProvidersPerReq]).toEqual([
-            [Provider1, { module: Module1, providers: [{ provide: Provider1, useClass: Provider1 }] }],
+            [Provider1, { module: Module1, providers: [{ token: Provider1, useClass: Provider1 }] }],
           ]);
         });
 
         it('double resolve', () => {
-          @Module({
+          @mod({
             exports: [Provider1],
             providersPerReq: [Provider1],
           })
           class Module1 {}
 
-          @Module({
+          @mod({
             exports: [Provider1],
-            providersPerMod: [{ provide: Provider1, useClass: Provider2 }],
+            providersPerMod: [{ token: Provider1, useClass: Provider2 }],
           })
           class Module2 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module1, Module2],
             providersPerApp: [Provider1],
             resolvedCollisionsPerMod: [[Provider1, AppModule]],
@@ -1235,13 +1254,13 @@ describe('ModuleFactory', () => {
         });
 
         it('point to current module to increase scope and to resolve case 2', () => {
-          @Module({
+          @mod({
             exports: [Provider1],
-            providersPerReq: [{ provide: Provider1, useClass: Provider1 }],
+            providersPerReq: [{ token: Provider1, useClass: Provider1 }],
           })
           class Module1 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module1],
             providersPerMod: [Provider1],
             resolvedCollisionsPerReq: [[Provider1, AppModule]],
@@ -1256,13 +1275,13 @@ describe('ModuleFactory', () => {
         });
 
         it('wrong point to current module', () => {
-          @Module({
+          @mod({
             exports: [Provider2],
-            providersPerReq: [{ provide: Provider2, useClass: Provider1 }],
+            providersPerReq: [{ token: Provider2, useClass: Provider1 }],
           })
           class Module1 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module1],
             providersPerMod: [Provider1],
             resolvedCollisionsPerReq: [[Provider1, AppModule]],
@@ -1276,13 +1295,13 @@ describe('ModuleFactory', () => {
         });
 
         it('case 3', () => {
-          @Module({
+          @mod({
             exports: [Req],
-            providersPerReq: [{ provide: Req, useClass: Req }],
+            providersPerReq: [{ token: Req, useClass: Req }],
           })
           class Module0 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module0],
           })
           class AppModule {}
@@ -1293,13 +1312,13 @@ describe('ModuleFactory', () => {
         });
 
         it('resolve case 3', () => {
-          @Module({
+          @mod({
             exports: [Req],
-            providersPerReq: [{ provide: Req, useClass: Req }],
+            providersPerReq: [{ token: Req, useClass: Req }],
           })
           class Module0 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module0],
             resolvedCollisionsPerReq: [[Req, AppModule]],
           })
@@ -1313,13 +1332,13 @@ describe('ModuleFactory', () => {
         });
 
         it('resolve 2 case 3', () => {
-          @Module({
+          @mod({
             exports: [Req],
-            providersPerReq: [{ provide: Req, useClass: Req }],
+            providersPerReq: [{ token: Req, useClass: Req }],
           })
           class Module1 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module1],
             resolvedCollisionsPerReq: [[Req, Module1]],
           })
@@ -1330,18 +1349,18 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
           expect([...mock.importedProvidersPerReq]).toEqual([
-            [Req, { module: Module1, providers: [{ provide: Req, useClass: Req }] }],
+            [Req, { module: Module1, providers: [{ token: Req, useClass: Req }] }],
           ]);
         });
 
         it('case 4', () => {
-          @Module({
+          @mod({
             exports: [NODE_REQ],
-            providersPerReq: [{ provide: NODE_REQ, useValue: '' }],
+            providersPerReq: [{ token: NODE_REQ, useValue: '' }],
           })
           class Module0 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module0],
           })
           class AppModule {}
@@ -1352,13 +1371,13 @@ describe('ModuleFactory', () => {
         });
 
         it('resolve case 4', () => {
-          @Module({
+          @mod({
             exports: [NODE_REQ],
-            providersPerReq: [{ provide: NODE_REQ, useValue: '' }],
+            providersPerReq: [{ token: NODE_REQ, useValue: '' }],
           })
           class Module0 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module0],
             resolvedCollisionsPerReq: [[NODE_REQ, AppModule]],
           })
@@ -1372,13 +1391,13 @@ describe('ModuleFactory', () => {
         });
 
         it('resolved case 4', () => {
-          @Module({
+          @mod({
             exports: [NODE_REQ],
-            providersPerReq: [{ provide: NODE_REQ, useValue: '' }],
+            providersPerReq: [{ token: NODE_REQ, useValue: '' }],
           })
           class Module1 {}
 
-          @RootModule({
+          @rootModule({
             imports: [Module1],
             resolvedCollisionsPerReq: [[NODE_REQ, Module1]],
           })
@@ -1389,7 +1408,7 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
           expect([...mock.importedProvidersPerReq]).toEqual([
-            [NODE_REQ, { module: Module1, providers: [{ provide: NODE_REQ, useValue: '' }] }],
+            [NODE_REQ, { module: Module1, providers: [{ token: NODE_REQ, useValue: '' }] }],
           ]);
         });
       });
@@ -1405,13 +1424,13 @@ describe('ModuleFactory', () => {
 
     it('controller with multiple @Route on single method', () => {
       const ctrlMetadata = { providersPerReq: [] } as ControllerMetadata;
-      @Controller(ctrlMetadata)
+      @controller(ctrlMetadata)
       class Controller1 {
-        @Route('GET', 'url1')
+        @route('GET', 'url1')
         method1() {}
 
-        @Route('POST', 'url2')
-        @Route('GET', 'url3')
+        @route('POST', 'url2')
+        @route('GET', 'url3')
         method2() {}
       }
       mock.meta.controllers = [Controller1];

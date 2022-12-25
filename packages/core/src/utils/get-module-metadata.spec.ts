@@ -1,8 +1,8 @@
 import 'reflect-metadata';
-import { forwardRef, Injectable } from '@ts-stack/di';
-import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
+import { forwardRef, injectable } from '@ts-stack/di';
+import { it, fit, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
-import { Module } from '../decorators/module';
+import { mod } from '../decorators/module';
 import { ModuleWithParams, ServiceProvider } from '../types/mix';
 import { getModuleMetadata } from './get-module-metadata';
 
@@ -15,7 +15,7 @@ describe('getModuleMetadata', () => {
   });
 
   it('empty decorator', () => {
-    @Module()
+    @mod({})
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
@@ -23,7 +23,7 @@ describe('getModuleMetadata', () => {
   });
 
   it('@Module() decorator with id', () => {
-    @Module({ id: 'someId' })
+    @mod({ id: 'someId' })
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
@@ -31,7 +31,7 @@ describe('getModuleMetadata', () => {
   });
 
   it('decorator with some data', () => {
-    @Module({ controllers: [] })
+    @mod({ controllers: [] })
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
@@ -39,10 +39,10 @@ describe('getModuleMetadata', () => {
   });
 
   it('module with params', () => {
-    @Injectable()
+    @injectable()
     class Provider1 {}
 
-    @Module()
+    @mod({})
     class Module1 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module1> {
         return {
@@ -63,10 +63,10 @@ describe('getModuleMetadata', () => {
   });
 
   it('module with params in forwardRef() function', () => {
-    @Injectable()
+    @injectable()
     class Provider1 {}
 
-    @Module()
+    @mod({})
     class Module1 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module1> {
         return {
@@ -88,10 +88,10 @@ describe('getModuleMetadata', () => {
   });
 
   it('module with params has id', () => {
-    @Injectable()
+    @injectable()
     class Provider1 {}
 
-    @Module({ id: 'someId' })
+    @mod({ id: 'someId' })
     class Module1 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module1> {
         return {

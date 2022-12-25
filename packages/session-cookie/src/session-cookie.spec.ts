@@ -26,9 +26,9 @@ describe('@ditsmod/session-cookie', () => {
       writeHead: (): any => {},
     } as unknown as NodeResponse;
     const injector = ReflectiveInjector.resolveAndCreate([
-      { provide: NODE_REQ, useValue: req },
-      { provide: NODE_RES, useValue: res },
-      { provide: SessionCookieOptions, useValue: config },
+      { token: NODE_REQ, useValue: req },
+      { token: NODE_RES, useValue: res },
+      { token: SessionCookieOptions, useValue: config },
       SessionCookie,
     ]);
     session = injector.get(SessionCookie);

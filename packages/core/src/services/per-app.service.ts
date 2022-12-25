@@ -1,11 +1,11 @@
-import { Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { ServiceProvider } from '../types/mix';
 
 /**
  * Used only for extensions.
  */
-@Injectable()
+@injectable()
 export class PerAppService {
   #providers: ServiceProvider[] = [];
   #injector: ReflectiveInjector;

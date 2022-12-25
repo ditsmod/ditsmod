@@ -14,8 +14,8 @@ import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
   {
-    provide: ReflectiveInjector,
-    useExisting: Injector,
+    token: ReflectiveInjector,
+    useToken: Injector,
   },
   RootMetadata,
   PreRouter,

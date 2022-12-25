@@ -13,7 +13,7 @@ import {
   RouteMeta,
   ROUTES_EXTENSIONS,
 } from '@ditsmod/core';
-import { Injectable, Injector, Optional, ReflectiveInjector, reflector } from '@ts-stack/di';
+import { injectable, Injector, optional, ReflectiveInjector, reflector } from '@ts-stack/di';
 import {
   PathItemObject,
   XOasObject,
@@ -33,7 +33,7 @@ import { OasConfigFiles, OasExtensionOptions } from '../types/oas-extension-opti
 import { OpenapiLogMediator } from '../services/openapi-log-mediator';
 import { OasOptions } from '../types/oas-options';
 
-@Injectable()
+@injectable()
 export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   protected oasObject: XOasObject;
   private swaggerUiDist = join(__dirname, '../../dist/swagger-ui');
@@ -43,7 +43,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     private injectorPerMod: Injector,
     private extensionsManager: ExtensionsManager,
     private log: OpenapiLogMediator,
-    @Optional() private extensionsMetaPerApp?: ExtensionsMetaPerApp
+    @optional() private extensionsMetaPerApp?: ExtensionsMetaPerApp
   ) {}
 
   async init() {
@@ -134,14 +134,14 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
         let securityName = aOasGuardMetadata.length > 1 ? `${guardName}_${index}` : guardName;
         securityName = securityName.charAt(0).toLowerCase() + securityName.slice(1);
         this.oasObject.components!.securitySchemes = { ...(this.oasObject.components!.securitySchemes || {}) };
-        this.oasObject.components!.securitySchemes[securityName] = oasGuardMetadata.securitySchemeObject;
+        this.oasObject.components!.securitySchemes[securityName] = oasGuardMetadata.value.securitySchemeObject;
         let scopes = normalizedGuard.params || [];
         if (!scopes.some((scope) => typeof scope == 'string')) {
           scopes = [];
         }
         security.push({ [securityName]: scopes });
-        tags.push(...(oasGuardMetadata.tags || []));
-        Object.assign(responses, oasGuardMetadata.responses);
+        tags.push(...(oasGuardMetadata.value.tags || []));
+        Object.assign(responses, oasGuardMetadata.value.responses);
       });
     });
     this.mergeOperationObjects(operationObject, security, tags, responses);

@@ -76,8 +76,8 @@ import { createLogger } from 'bunyan';
 const logger = createLogger({ name: 'bunyan-test' });
   // ...
   providersPerMod: [
-    { provide: Logger, useValue: logger },
-    { provide: BunyanLogger, useExisting: Logger }
+    { token: Logger, useValue: logger },
+    { token: BunyanLogger, useExisting: Logger }
   ],
   // ...
 ```
@@ -94,7 +94,7 @@ import { createLogger } from 'bunyan';
 const logger = createLogger({ name: 'bunyan-test' });
   // ...
   providersPerMod: [
-    { provide: BunyanLogger, useValue: logger },
+    { token: BunyanLogger, useValue: logger },
   ],
   // ...
 ```
@@ -112,8 +112,8 @@ import { patchLogger } from './patch-logger';
 @Module({
   // ...
   providersPerMod: [
-    { provide: Logger, useFactory: patchLogger, deps: [LoggerConfig] }
-    { provide: BunyanLogger, useExisting: Logger }
+    { token: Logger, useFactory: patchLogger, deps: [LoggerConfig] }
+    { token: BunyanLogger, useExisting: Logger }
   ],
 })
 export class BunyanModule {}
@@ -123,14 +123,14 @@ DI буде викликати `patchLogger()` при першому запит�
 
 ## PinoModule
 
-У застосунку Ditsmod логер [pino][7] налаштовується подібно до `bunyan`, за виключенням токена для DI. Справа в тому, що на даний момент бібліотека `pino` має лише інтерфейс для свого логера, а для DI було б краще мати клас замість інтерфейсу. Тому ми не можемо використати властивість [useExisting][8] для об'єкту провайдера. В такому разі в конструкторі контролера чи сервісу потрібно використовувати `@Inject`:
+У застосунку Ditsmod логер [pino][7] налаштовується подібно до `bunyan`, за виключенням токена для DI. Справа в тому, що на даний момент бібліотека `pino` має лише інтерфейс для свого логера, а для DI було б краще мати клас замість інтерфейсу. Тому ми не можемо використати властивість [useExisting][8] для об'єкту провайдера. В такому разі в конструкторі контролера чи сервісу потрібно використовувати `@inject`:
 
 ```ts
-import { Inject } from '@ts-stack/di';
+import { inject } from '@ts-stack/di';
 import { Logger } from '@ditsmod/core';
 import { BaseLogger as PinoLogger } from 'pino';
 // ...
-  constructor(@Inject(Logger) private logger: PinoLogger) {}
+  constructor(@inject(Logger) private logger: PinoLogger) {}
 ```
 
 Зверніть увагу, що у `PinoModule` та `BunyanModule` для DI не передається `LoggerConfig`, тому ці модулі матимуть дефолтне налаштування для рівня виводу інформації (`info`).

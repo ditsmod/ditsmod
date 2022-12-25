@@ -43,11 +43,11 @@ describe('HttpInterceptor', () => {
   const defaultProviders: ServiceProvider[] = [
     ...defaultProvidersPerApp,
     ...defaultProvidersPerReq,
-    { provide: NODE_REQ, useValue: {} },
-    { provide: NODE_RES, useValue: {} },
-    { provide: RouteMeta, useValue: {} },
-    { provide: PATH_PARAMS, useValue: [] },
-    { provide: QUERY_STRING, useValue: {} },
+    { token: NODE_REQ, useValue: {} },
+    { token: NODE_RES, useValue: {} },
+    { token: RouteMeta, useValue: {} },
+    { token: PATH_PARAMS, useValue: [] },
+    { token: QUERY_STRING, useValue: {} },
   ];
 
   beforeEach(() => {
@@ -64,11 +64,11 @@ describe('HttpInterceptor', () => {
 
     const injector = ReflectiveInjector.resolveAndCreate([
       ...defaultProviders,
-      { provide: HttpFrontend, useClass: MockHttpFrontend },
-      { provide: HttpBackend, useClass: MockHttpBackend },
-      { provide: HTTP_INTERCEPTORS, useClass: Interceptor1, multi: true },
-      { provide: HTTP_INTERCEPTORS, useClass: Interceptor2, multi: true },
-      { provide: HTTP_INTERCEPTORS, useClass: Interceptor3, multi: true },
+      { token: HttpFrontend, useClass: MockHttpFrontend },
+      { token: HttpBackend, useClass: MockHttpBackend },
+      { token: HTTP_INTERCEPTORS, useClass: Interceptor1, multi: true },
+      { token: HTTP_INTERCEPTORS, useClass: Interceptor2, multi: true },
+      { token: HTTP_INTERCEPTORS, useClass: Interceptor3, multi: true },
     ]);
 
     const chain = injector.get(HttpHandler) as HttpHandler;
@@ -92,10 +92,10 @@ describe('HttpInterceptor', () => {
 
     const injector = ReflectiveInjector.resolveAndCreate([
       ...defaultProviders,
-      { provide: HttpFrontend, useClass: MockHttpFrontend },
-      { provide: HTTP_INTERCEPTORS, useClass: Interceptor1, multi: true },
-      { provide: HTTP_INTERCEPTORS, useClass: Interceptor2, multi: true },
-      { provide: HTTP_INTERCEPTORS, useClass: Interceptor3, multi: true },
+      { token: HttpFrontend, useClass: MockHttpFrontend },
+      { token: HTTP_INTERCEPTORS, useClass: Interceptor1, multi: true },
+      { token: HTTP_INTERCEPTORS, useClass: Interceptor2, multi: true },
+      { token: HTTP_INTERCEPTORS, useClass: Interceptor3, multi: true },
     ]);
 
     const chain = injector.get(HttpHandler) as HttpHandler;

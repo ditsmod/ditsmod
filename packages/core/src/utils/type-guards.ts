@@ -1,22 +1,22 @@
 import { ChainError } from '@ts-stack/chain-error';
 import {
   ClassProvider,
-  ExistingProvider,
   FactoryProvider,
   forwardRef,
   ForwardRefFn,
   InjectionToken,
   Provider,
-  reflector,
   Type,
   TypeProvider,
   ValueProvider,
+  TokenProvider
 } from '@ts-stack/di';
+import { Container, reflector } from '@ts-stack/di';
 
-import { Module } from '../decorators/module';
-import { Controller, ControllerMetadata } from '../decorators/controller';
-import { Route, RouteMetadata } from '../decorators/route';
-import { RootModule } from '../decorators/root-module';
+import { mod } from '../decorators/module';
+import { controller, ControllerMetadata } from '../decorators/controller';
+import { route, RouteMetadata } from '../decorators/route';
+import { rootModule } from '../decorators/root-module';
 import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../types/mix';
 import { AppendsWithParams, ModuleMetadata } from '../types/module-metadata';
 import { RootModuleMetadata } from '../types/root-module-metadata';
@@ -35,20 +35,20 @@ export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
   return err instanceof ChainError;
 }
 
-export function isModule(moduleMetadata: AnyObj): moduleMetadata is ModuleMetadata {
-  return moduleMetadata instanceof Module;
+export function isModule(container: AnyObj): container is Container<ModuleMetadata> {
+  return container.factory === mod;
 }
 
-export function isRootModule(moduleMetadata: AnyObj): moduleMetadata is RootModuleMetadata {
-  return moduleMetadata instanceof RootModule;
+export function isRootModule(container: AnyObj): container is Container<RootModuleMetadata> {
+  return container.factory === rootModule;
 }
 
-export function isController(ctrlMeatada: AnyObj): ctrlMeatada is ControllerMetadata {
-  return ctrlMeatada instanceof Controller;
+export function isController(container: AnyObj): container is Container<ControllerMetadata> {
+  return container.factory === controller;
 }
 
-export function isRoute(propMeatada: AnyObj): propMeatada is RouteMetadata {
-  return propMeatada instanceof Route;
+export function isRoute(container: AnyObj): container is Container<RouteMetadata> {
+  return container.factory === route;
 }
 
 export function isModuleWithParams(mod: ServiceProvider | ModuleWithParams | ModuleType): mod is ModuleWithParams {
@@ -80,8 +80,8 @@ export function isClassProvider(provider: Provider): provider is ClassProvider {
   return (provider as ClassProvider)?.useClass !== undefined;
 }
 
-export function isExistingProvider(provider: Provider): provider is ExistingProvider {
-  return (provider as ExistingProvider)?.useExisting !== undefined;
+export function isExistingProvider(provider: Provider): provider is TokenProvider {
+  return (provider as TokenProvider)?.useToken !== undefined;
 }
 
 export function isFactoryProvider(provider: Provider): provider is FactoryProvider {
@@ -92,11 +92,11 @@ export type MultiProvider = Exclude<ServiceProvider, TypeProvider> & { multi: bo
 
 export function isMultiProvider(provider: Provider): provider is MultiProvider {
   return (
-    (provider as ValueProvider)?.provide !== undefined &&
+    (provider as ValueProvider)?.token !== undefined &&
     (provider as ValueProvider)?.multi !== undefined &&
     ((provider as ValueProvider)?.useValue !== undefined ||
       (provider as ClassProvider)?.useClass !== undefined ||
-      (provider as ExistingProvider)?.useExisting !== undefined ||
+      (provider as TokenProvider)?.useToken !== undefined ||
       (provider as FactoryProvider)?.useFactory !== undefined)
   );
 }
@@ -112,7 +112,7 @@ export function isProvider(maybeProvider: any): maybeProvider is ServiceProvider
 /**
  * Returns true if providers declares in format:
  * ```ts
- * { provide: SomeClas, useClass: OtherClass }
+ * { token: SomeClas, useClass: OtherClass }
  * ```
  */
 export function isNormalizedProvider(provider: ServiceProvider): provider is NormalizedProvider {

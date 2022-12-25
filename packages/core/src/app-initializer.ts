@@ -63,8 +63,8 @@ export class AppInitializer {
     this.unfinishedScanModules.clear();
     const exportedProviders = this.collectProvidersPerApp(this.meta);
     const exportedNormProviders = normalizeProviders(exportedProviders);
-    const exportedTokens = exportedNormProviders.map((np) => np.provide);
-    const exportedMultiTokens = exportedNormProviders.filter((np) => np.multi).map((np) => np.provide);
+    const exportedTokens = exportedNormProviders.map((np) => np.token);
+    const exportedMultiTokens = exportedNormProviders.filter((np) => np.multi).map((np) => np.token);
     const resolvedTokens = this.meta.resolvedCollisionsPerApp.map(([token]) => token);
     const defaultTokens = getTokens(defaultProvidersPerApp);
     const rootTokens = getTokens(this.meta.providersPerApp);
@@ -212,9 +212,9 @@ export class AppInitializer {
   protected addDefaultProvidersPerApp() {
     this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
-      { provide: RootMetadata, useValue: this.rootMeta },
-      { provide: ModuleManager, useValue: this.moduleManager },
-      { provide: AppInitializer, useValue: this }
+      { token: RootMetadata, useValue: this.rootMeta },
+      { token: ModuleManager, useValue: this.moduleManager },
+      { token: AppInitializer, useValue: this }
     );
   }
 
@@ -249,7 +249,7 @@ export class AppInitializer {
   ) {
     const extensionsContext = new ExtensionsContext();
     const injectorPerApp = this.perAppService.injector.resolveAndCreateChild([
-      { provide: PerAppService, useValue: this.perAppService },
+      { token: PerAppService, useValue: this.perAppService },
     ]);
     for (let i = 0; i < aMetadataPerMod1.length; i++) {
       const metadataPerMod1 = aMetadataPerMod1[i];
@@ -264,9 +264,9 @@ export class AppInitializer {
       this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
         ExtensionsManager,
-        { provide: ExtensionsContext, useValue: extensionsContext },
-        { provide: MetadataPerMod1, useValue: metadataPerMod1 },
-        { provide: EXTENSIONS_COUNTERS, useValue: mExtensionsCounters },
+        { token: ExtensionsContext, useValue: extensionsContext },
+        { token: MetadataPerMod1, useValue: metadataPerMod1 },
+        { token: EXTENSIONS_COUNTERS, useValue: mExtensionsCounters },
         ...extensionsProviders,
       ]);
       const extensionTokens = new Set<InjectionToken<Extension<any>[]>>();

@@ -46,13 +46,13 @@ module.exports = {
       apiKey: '4d1c9badb24964d992fb4d1b6badc88e',
       indexName: 'ditsmod',
 
-      // Optional: see doc section below
+      // optional: see doc section below
       contextualSearch: true,
 
-      // Optional: see doc section below
+      // optional: see doc section below
       // appId: 'YOUR_APP_ID',
 
-      // Optional: Algolia search parameters
+      // optional: Algolia search parameters
       // searchParameters: { facetFilters: ["type:content", "language:LANGUAGE"] },
 
       //... other Algolia params
@@ -96,7 +96,7 @@ module.exports = {
       {
         gtag: {
           trackingID: 'G-JB9Z2HZH02',
-          // Optional fields.
+          // optional fields.
           // anonymizeIP: true, // Should IPs be anonymized?
         },
         docs: {

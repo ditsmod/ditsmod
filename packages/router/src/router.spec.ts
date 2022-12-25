@@ -15,8 +15,8 @@ describe('Router', () => {
     injector = ReflectiveInjector.resolveAndCreate([
       Tree,
       DefaultRouter,
-      {provide: RouterLogMediator, useValue: {}},
-      { provide: ReflectiveInjector, useExisting: Injector },
+      {token: RouterLogMediator, useValue: {}},
+      { token: ReflectiveInjector, useToken: Injector },
     ]);
   });
 

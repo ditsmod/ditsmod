@@ -1,4 +1,4 @@
-import { Module, ModuleWithParams, PRE_ROUTER_EXTENSIONS, Providers } from '@ditsmod/core';
+import { mod, ModuleWithParams, PRE_ROUTER_EXTENSIONS, Providers } from '@ditsmod/core';
 import { DictGroup, Dictionary, I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
 import { Type } from '@ts-stack/di';
 import { Options } from 'ajv';
@@ -8,7 +8,7 @@ import { AJV_OPTIONS, VALIDATION_EXTENSIONS } from './constants';
 import { current } from './locales/current';
 import { ValidationExtension } from './validation.extension';
 
-@Module({
+@mod({
   imports: [I18nModule],
   providersPerApp: [
     AjvService,

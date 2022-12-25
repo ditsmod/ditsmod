@@ -7,14 +7,14 @@ import {
   ROUTES_EXTENSIONS,
   ServiceProvider,
 } from '@ditsmod/core';
-import { Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { injectable, ReflectiveInjector } from '@ts-stack/di';
 
 import { I18nTransformer } from './i18n-transformer';
 import { I18nLogMediator } from './i18n-log-mediator';
 import { I18N_TRANSLATIONS, Translations } from './types/mix';
 import { DictService } from './dict.service';
 
-@Injectable()
+@injectable()
 export class I18nExtension implements Extension<void> {
   #inited: boolean;
   protected injector: ReflectiveInjector;

@@ -10,7 +10,7 @@ import { FirstMultiProviderService } from './first-multi-provider.service';
   imports: [BodyParserModule],
   controllers: [FirstController],
   providersPerRou: [FirstPerRouService],
-  providersPerReq: [FirstService, { provide: 'multi-provider', useClass: FirstMultiProviderService, multi: true }],
+  providersPerReq: [FirstService, { token: 'multi-provider', useClass: FirstMultiProviderService, multi: true }],
   exports: [FirstService, FirstPerRouService, BodyParserModule, 'multi-provider'],
 })
 export class FirstModule {}

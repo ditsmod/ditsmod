@@ -14,7 +14,7 @@ Specifically in this case:
 
 1. `Module2` substitute and then exports the provider with the token `Service3`;
 2. and `Module3` substitute and then exports the provider with the token `Service3`;
-3. providers with token `Service3` are not identical in `Module2` and `Module3`, ie from module `Module2` can be exported, for example, object `{ provide: Service3, useValue: {} }`, and from `Module3``Service3` can be exported as a class.
+3. providers with token `Service3` are not identical in `Module2` and `Module3`, ie from module `Module2` can be exported, for example, object `{ token: Service3, useValue: {} }`, and from `Module3``Service3` can be exported as a class.
 
 And since both of these modules are imported into `Module1`, this causes a "provider collisions", because the developer may not know which of these substitutions will work in `Module1`.
 

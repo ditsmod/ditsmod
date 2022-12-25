@@ -46,15 +46,7 @@ function oasRouteCallback(
   }
 }
 
-declare function oasRoute(
-  httpMethod: HttpMethod,
-  path?: string,
-  guards?: GuardItem[],
-  operationObject?: XOperationObject
-): OasRouteDecorator;
-declare function oasRoute(httpMethod: HttpMethod, path?: string, operationObject?: XOperationObject): OasRouteDecorator;
-
 /**
  * Open API Specification Route.
  */
-export const OasRoute = makePropDecorator('OasRoute', oasRouteCallback) as typeof oasRoute;
+export const oasRoute = makePropDecorator(oasRouteCallback);

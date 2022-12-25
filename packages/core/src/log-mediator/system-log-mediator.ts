@@ -1,4 +1,4 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { isInjectionToken } from '../utils/type-guards';
 import { GlobalProviders, ImportObj } from '../types/metadata-per-mod';
@@ -17,7 +17,7 @@ import { ConsoleLogger } from '../services/console-logger';
  * 1. override the methods of this class in your own class;
  * 2. via DI, at the application level, substitute the `LogMediator` class with your class.
  */
-@Injectable()
+@injectable()
 export class SystemLogMediator extends LogMediator {
   protected static previousLogger: Logger;
 

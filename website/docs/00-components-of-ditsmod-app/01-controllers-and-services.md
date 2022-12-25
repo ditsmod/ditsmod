@@ -137,12 +137,12 @@ export class OtherModule {}
 - парцювати з базами даних, з поштою:
 - і т.п.
 
-TypeScript клас стає сервісом Ditsmod завдяки декоратору `Injectable`:
+TypeScript клас стає сервісом Ditsmod завдяки декоратору `injectable`:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
-@Injectable()
+@injectable()
 export class SomeService {}
 ```
 
@@ -153,11 +153,11 @@ export class SomeService {}
 Часто одні сервіси залежать від інших сервісів, і щоб отримати інстанс певного сервіса, необхідно указувати його клас в конструкторі:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { FirstService } from './first.service';
 
-@Injectable()
+@injectable()
 export class SecondService {
   constructor(private firstService: FirstService) {}
 

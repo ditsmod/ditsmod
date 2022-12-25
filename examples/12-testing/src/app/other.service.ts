@@ -1,6 +1,6 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
-@Injectable()
+@injectable()
 export class OtherService {
   constructor() {}
 

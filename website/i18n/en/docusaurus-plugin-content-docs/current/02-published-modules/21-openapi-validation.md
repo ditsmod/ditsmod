@@ -56,7 +56,7 @@ import { MyInterceptor } from './my.interceptor';
 @Module({
   // ...
   providersPerReq: [
-    { provide: ParametersInterceptor, useClass: MyInterceptor }
+    { token: ParametersInterceptor, useClass: MyInterceptor }
   ]
   // ...
 })

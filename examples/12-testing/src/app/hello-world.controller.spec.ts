@@ -15,7 +15,7 @@ describe('HelloWorldController', () => {
       MyService,
       OtherService,
       HelloWorldController,
-      { provide: Res, useValue: { send: () => {} } },
+      { token: Res, useValue: { send: () => {} } },
     ]);
 
     helloWorldController = injector.get(HelloWorldController);

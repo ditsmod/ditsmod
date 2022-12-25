@@ -1,7 +1,7 @@
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { Extension, ExtensionsManager, Logger, ROUTES_EXTENSIONS } from '@ditsmod/core';
 
-@Injectable()
+@injectable()
 export class MyExtension implements Extension<void> {
   #inited: boolean;
 

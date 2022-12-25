@@ -51,7 +51,7 @@ async function runBench() {
 
       if (lib.name == '@ditsmod/router') {
         const injector = ReflectiveInjector.resolveAndCreate([
-          { provide: ReflectiveInjector, useExisting: Injector },
+          { token: ReflectiveInjector, useToken: Injector },
           Tree,
           DefaultRouter,
         ]);

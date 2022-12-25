@@ -28,12 +28,12 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
       exports,
       providers: [
         extension,
-        { provide: groupToken, useExisting: extension, multi: true },
-        { provide: `BEFORE ${nextToken}`, useExisting: extension, multi: true },
+        { token: groupToken, useToken: extension, multi: true },
+        { token: `BEFORE ${nextToken}`, useToken: extension, multi: true },
       ],
     };
   } else {
     const exports = exported ? [groupToken] : [];
-    return { exports, providers: [{ provide: groupToken, useClass: extension, multi: true }] };
+    return { exports, providers: [{ token: groupToken, useClass: extension, multi: true }] };
   }
 }

@@ -1,25 +1,25 @@
 import 'reflect-metadata';
 import { inspect } from 'util';
 import { reflector } from '@ts-stack/di';
-import { Controller, CanActivate } from '@ditsmod/core';
+import { controller, CanActivate } from '@ditsmod/core';
 import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
 
-import { OasRoute, OasRouteDecoratorMetadata } from './oas-route';
+import { oasRoute, OasRouteDecoratorMetadata } from './oas-route';
 
 // console.log(inspect(actualMeta, false, 5));
 
 describe('@OasRoute', () => {
   it('controller without methods', () => {
-    @Controller()
+    @controller()
     class Controller1 {}
 
     expect(reflector.getPropMetadata(Controller1)).toEqual({});
   });
 
   it('one method, without operation object', () => {
-    @Controller()
+    @controller()
     class Controller1 {
-      @OasRoute('GET')
+      @oasRoute('GET')
       method() {}
     }
 
@@ -36,9 +36,9 @@ describe('@OasRoute', () => {
         return true;
       }
     }
-    @Controller()
+    @controller()
     class Controller1 {
-      @OasRoute('GET', 'posts', [Guard], { operationId: 'someId' })
+      @oasRoute('GET', 'posts', [Guard], { operationId: 'someId' })
       method() {}
     }
 
@@ -58,9 +58,9 @@ describe('@OasRoute', () => {
   });
 
   it('route with operationObject as third argument', () => {
-    @Controller()
+    @controller()
     class Controller1 {
-      @OasRoute('GET', 'path', { operationId: 'someId' })
+      @oasRoute('GET', 'path', { operationId: 'someId' })
       method() {}
     }
 

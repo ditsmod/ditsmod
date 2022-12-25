@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { MediaTypeObject } from '@ts-stack/openapi-spec';
 import { it, fit, xit, describe, expect } from '@jest/globals';
 
-import { Property } from '../decorators/property';
+import { property } from '../decorators/property';
 import { Content } from './content';
 import { REQUIRED } from '../constants';
 import { inspect } from 'util';
@@ -14,11 +14,11 @@ function print(obj: any) {
 describe('Content', () => {
   it('simply model', () => {
     class Model1 {
-      @Property({ [REQUIRED]: true })
+      @property({ [REQUIRED]: true })
       property1: string;
-      @Property({ [REQUIRED]: true })
+      @property({ [REQUIRED]: true })
       property2: number;
-      @Property({ [REQUIRED]: false })
+      @property({ [REQUIRED]: false })
       property3: number;
     }
 
@@ -47,9 +47,9 @@ describe('Content', () => {
 
   it('array of Number', () => {
     class Model1 {
-      @Property()
+      @property()
       property1: string;
-      @Property({}, { array: Number })
+      @property({}, { array: Number })
       property2: number[];
     }
 
@@ -74,7 +74,7 @@ describe('Content', () => {
 
   it('array with defined items should not rewiretes', () => {
     class Model1 {
-      @Property(
+      @property(
         {
           type: 'array',
           maxItems: 5,
@@ -106,13 +106,13 @@ describe('Content', () => {
 
   it('array in array', () => {
     class Model1 {
-      @Property({}, { array: [String] })
+      @property({}, { array: [String] })
       property1: string[];
-      @Property({}, { array: [[String, Number]] })
+      @property({}, { array: [[String, Number]] })
       property2: (string | number)[][];
-      @Property({}, { array: [String, Number] })
+      @property({}, { array: [String, Number] })
       property3: (string | number)[];
-      @Property({}, { array: [[String]] })
+      @property({}, { array: [[String]] })
       property4: string[][];
     }
 
@@ -156,7 +156,7 @@ describe('Content', () => {
 
   it('array in array with circular references', () => {
     class Model1 {
-      @Property({}, { array: [[Model1]] })
+      @property({}, { array: [[Model1]] })
       property1: Model1[][];
     }
 
@@ -211,11 +211,11 @@ describe('Content', () => {
       three = 3,
     }
     class Model1 {
-      @Property({}, { enum: NumberEnum })
+      @property({}, { enum: NumberEnum })
       property1: number;
-      @Property({}, { enum: StringEnum })
+      @property({}, { enum: StringEnum })
       property2: string;
-      @Property({}, { enum: [NumberEnum, StringEnum] })
+      @property({}, { enum: [NumberEnum, StringEnum] })
       property3: number | string;
     }
 
@@ -256,7 +256,7 @@ describe('Content', () => {
       three = 3,
     }
     class Model1 {
-      @Property({}, { enum: [NumberEnum, StringEnum] })
+      @property({}, { enum: [NumberEnum, StringEnum] })
       property1: (number | string)[];
     }
 
@@ -266,16 +266,16 @@ describe('Content', () => {
 
   it('array of Model1', () => {
     class Model1 {
-      @Property()
+      @property()
       property1: string;
-      @Property()
+      @property()
       property2: number;
     }
 
     class Model2 {
-      @Property()
+      @property()
       property1: string;
-      @Property({ type: 'array' }, { array: Model1 })
+      @property({ type: 'array' }, { array: Model1 })
       property2: Model1[];
     }
 
@@ -306,7 +306,7 @@ describe('Content', () => {
 
   it('conflict with an array definition between schema and TypeScript type', () => {
     class Model1 {
-      @Property({ type: 'array' }, { array: Model1 })
+      @property({ type: 'array' }, { array: Model1 })
       property1: Model1;
     }
 
@@ -316,9 +316,9 @@ describe('Content', () => {
 
   it('array of Model1 with circular references', () => {
     class Model1 {
-      @Property()
+      @property()
       property1: string;
-      @Property({}, { array: Model1 })
+      @property({}, { array: Model1 })
       property2: Model1[];
     }
 
@@ -349,9 +349,9 @@ describe('Content', () => {
 
   it('circular references', () => {
     class Model1 {
-      @Property()
+      @property()
       property1: string;
-      @Property()
+      @property()
       property2: Model1;
     }
 

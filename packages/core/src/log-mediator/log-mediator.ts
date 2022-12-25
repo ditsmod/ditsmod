@@ -1,4 +1,4 @@
-import { Injectable, Optional } from '@ts-stack/di';
+import { injectable, optional } from '@ts-stack/di';
 
 import { Logger, LoggerConfig, LogLevel } from '../types/logger';
 import { ConsoleLogger } from '../services/console-logger';
@@ -39,7 +39,7 @@ export interface LogItem {
 /**
  * Mediator between core logger and custom user's logger.
  */
-@Injectable()
+@injectable()
 export class LogMediator {
   /**
    * If `bufferLogs === true` then all messages will be buffered.
@@ -52,9 +52,9 @@ export class LogMediator {
 
   constructor(
     protected moduleExtract: ModuleExtract,
-    @Optional() protected logger: Logger = new ConsoleLogger(),
-    @Optional() protected outputLogFilter: OutputLogFilter = new OutputLogFilter(),
-    @Optional() protected loggerConfig: LoggerConfig = new LoggerConfig()
+    @optional() protected logger: Logger = new ConsoleLogger(),
+    @optional() protected outputLogFilter: OutputLogFilter = new OutputLogFilter(),
+    @optional() protected loggerConfig: LoggerConfig = new LoggerConfig()
   ) {
     this.logger = logger || new ConsoleLogger();
     this.outputLogFilter = outputLogFilter || new OutputLogFilter();

@@ -1,14 +1,14 @@
 import { Req } from '@ditsmod/core';
 import { DictService, I18nLogMediator, I18nOptions, ISO639 } from '@ditsmod/i18n';
-import { Injectable, Injector, Optional } from '@ts-stack/di';
+import { injectable, Injector, optional } from '@ts-stack/di';
 
-@Injectable()
+@injectable()
 export class MyDictService extends DictService {
   constructor(
     protected override injector: Injector,
     protected override log: I18nLogMediator,
-    @Optional() protected override i18nOptions?: I18nOptions,
-    @Optional() protected override req?: Req,
+    @optional() protected override i18nOptions?: I18nOptions,
+    @optional() protected override req?: Req,
   ) {
     super(injector, log, i18nOptions, req);
   }

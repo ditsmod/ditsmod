@@ -5,7 +5,7 @@ To try this example, you should first [prepare the prerequisite][1].
 Ditsmod in the core passes the `ControllerErrorHandler` class to the injector at the HTTP request level and uses DI to obtain an instance of this class to handle errors that occur when the controllers are running. Initially, this class is replaced by the `DefaultControllerErrorHandler` class, which makes minimal error handling:
 
 ```ts
-@Injectable()
+@injectable()
 export class DefaultControllerErrorHandler implements ControllerErrorHandler {
   constructor(private res: Res, private log: Log) {}
 

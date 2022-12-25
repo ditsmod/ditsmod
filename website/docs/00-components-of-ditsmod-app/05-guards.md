@@ -17,12 +17,12 @@ interface CanActivate {
 Наприклад, це можна зробити так:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { CanActivate } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';
 
-@Injectable()
+@injectable()
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
@@ -87,13 +87,13 @@ export class SomeController {
 Як бачите, на місці третього параметра у `Route` передається масив в масиві, де на першому місці указано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
 
 ```ts
-import { Injectable } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 import { CanActivate, Status } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';
 import { Permission } from './permission';
 
-@Injectable()
+@injectable()
 export class PermissionsGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 

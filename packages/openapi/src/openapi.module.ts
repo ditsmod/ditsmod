@@ -1,6 +1,6 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
 import {
-  Module,
+  mod,
   ModuleWithParams,
   PRE_ROUTER_EXTENSIONS,
   Providers,
@@ -18,11 +18,11 @@ import { SwaggerOAuthOptions } from './swagger-ui/swagger-o-auth-options';
 import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-options';
 import { OpenapiLogMediator } from './services/openapi-log-mediator';
 
-@Module({
+@mod({
   controllers: [OpenapiController],
   providersPerApp: [OasConfigFiles],
   providersPerMod: [SwaggerConfigManager, OpenapiLogMediator],
-  providersPerRou: [{ provide: OasRouteMeta, useExisting: RouteMeta }],
+  providersPerRou: [{ token: OasRouteMeta, useToken: RouteMeta }],
   exports: [OasRouteMeta],
   extensions: [
     { extension: OpenapiRoutesExtension, groupToken: ROUTES_EXTENSIONS, exported: true },

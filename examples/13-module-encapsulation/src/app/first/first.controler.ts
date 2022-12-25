@@ -1,9 +1,9 @@
-import { Inject } from '@ts-stack/di';
+import { inject } from '@ts-stack/di';
 import { Controller, Res, Route } from '@ditsmod/core';
 
 @Controller()
 export class FirstController {
-  constructor(private res: Res, @Inject('multi-provider') private multiProvider: any) {}
+  constructor(private res: Res, @inject('multi-provider') private multiProvider: any) {}
 
   @Route('GET', 'first')
   getHello() {

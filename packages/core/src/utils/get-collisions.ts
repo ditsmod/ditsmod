@@ -32,7 +32,7 @@ export function getCollisions(uniqDuplTokens: any[], providers: ServiceProvider[
             collisions.add(token);
           }
         } else if (isExistingProvider(lastProvider) && isExistingProvider(currProvider)) {
-          if (lastProvider.useExisting !== currProvider.useExisting) {
+          if (lastProvider.useToken !== currProvider.useToken) {
             collisions.add(token);
           }
         } else if (isFactoryProvider(lastProvider) && isFactoryProvider(currProvider)) {

@@ -1,4 +1,4 @@
-import { Injectable, Injector, ReflectiveInjector } from '@ts-stack/di';
+import { injectable, Injector, ReflectiveInjector } from '@ts-stack/di';
 import {
   Extension,
   ExtensionsManager,
@@ -19,7 +19,7 @@ import { CorsOptions, mergeOptions } from '@ts-stack/cors';
 import { CorsInterceptor } from './cors.interceptor';
 import { ALLOW_METHODS } from './constans';
 
-@Injectable()
+@injectable()
 export class CorsExtension implements Extension<void | false> {
   private inited: boolean;
   private registeredPathForOptions = new Map<string, HttpMethod[]>();
@@ -52,8 +52,8 @@ export class CorsExtension implements Extension<void | false> {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const corsOptions = this.getCorsOptions(injectorPerMod, mergedPerRou);
         const mergedCorsOptions = mergeOptions(corsOptions);
-        providersPerRou.unshift({ provide: CorsOptions, useValue: mergedCorsOptions });
-        providersPerReq.push({ provide: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
+        providersPerRou.unshift({ token: CorsOptions, useValue: mergedCorsOptions });
+        providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
       });
     });
   }
@@ -119,8 +119,8 @@ export class CorsExtension implements Extension<void | false> {
         httpMethod: 'OPTIONS',
         path,
         providersPerRou: [
-          { provide: ALLOW_METHODS, useValue: httpMethods },
-          { provide: RouteMeta, useValue: routeMeta },
+          { token: ALLOW_METHODS, useValue: httpMethods },
+          { token: RouteMeta, useValue: routeMeta },
         ],
         providersPerReq: [DynamicController],
       };

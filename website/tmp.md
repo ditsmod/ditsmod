@@ -32,7 +32,7 @@ import { Module, BodyParserConfig } from '@ditsmod/core';
 import { MyBodyParserConfig } from './my-body-parser-config';
 
 @Module({
-  providersPerMod: [{ provide: BodyParserConfig, useClass: MyBodyParserConfig }],
+  providersPerMod: [{ token: BodyParserConfig, useClass: MyBodyParserConfig }],
 })
 export class SomeModule {}
 ```
@@ -50,12 +50,12 @@ export class SomeModule {}
 Для цього достатньо розширити клас `Log` та підмінити його через DI:
 
 ```ts
-import { Injectable, RootModule, Log, LogLevels } from '@ditsmod/core';
+import { injectable, RootModule, Log, LogLevels } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
 import { HelloWorldController } from './hello-world.controller';
 
-@Injectable()
+@injectable()
 class MyLog extends Log {
   /**
    * `serverName` is running at `host`:`port`.
@@ -69,7 +69,7 @@ class MyLog extends Log {
   imports: [RouterModule],
   controllers: [HelloWorldController],
   providersPerApp: [
-    { provide: Log, useClass: MyLog }, // Here set your new MyLog
+    { token: Log, useClass: MyLog }, // Here set your new MyLog
   ],
 })
 export class AppModule {}

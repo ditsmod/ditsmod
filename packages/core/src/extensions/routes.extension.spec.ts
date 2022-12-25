@@ -1,10 +1,10 @@
 import 'reflect-metadata';
-import { Injectable, ReflectiveInjector } from '@ts-stack/di';
+import { injectable, ReflectiveInjector } from '@ts-stack/di';
 import { it, describe, beforeEach, xdescribe } from '@jest/globals';
 
-import { Controller, ControllerMetadata } from '../decorators/controller';
-import { Route } from '../decorators/route';
-import { RootModule } from '../decorators/root-module';
+import { controller, ControllerMetadata } from '../decorators/controller';
+import { route } from '../decorators/route';
+import { rootModule } from '../decorators/root-module';
 import { CanActivate } from '../types/mix';
 import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { RootMetadata } from '../models/root-metadata';
@@ -15,7 +15,7 @@ import { PerAppService } from '../services/per-app.service';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 xdescribe('RoutesExtension', () => {
-  @Injectable()
+  @injectable()
   class MockAppInitializer extends AppInitializer {
     override moduleManager: ModuleManager;
     override perAppService = new PerAppService();
@@ -34,8 +34,8 @@ xdescribe('RoutesExtension', () => {
     moduleManager = new ModuleManager(log);
     const injectorPerApp = ReflectiveInjector.resolveAndCreate([
       ...defaultProvidersPerApp,
-      { provide: ModuleManager, useValue: moduleManager },
-      { provide: RootMetadata, useValue: new RootMetadata() },
+      { token: ModuleManager, useValue: moduleManager },
+      { token: RootMetadata, useValue: new RootMetadata() },
       MockAppInitializer,
     ]);
     mockAppInitializer = injectorPerApp.get(MockAppInitializer);
@@ -55,13 +55,13 @@ xdescribe('RoutesExtension', () => {
     it('bad guard', () => {
       const ctrlMetadata = { providersPerReq: [] } as ControllerMetadata;
       class MyGuard {}
-      @Controller(ctrlMetadata)
+      @controller(ctrlMetadata)
       class Controller1 {
-        @Route('GET', 'url1', [MyGuard as any])
+        @route('GET', 'url1', [MyGuard as any])
         method1() {}
       }
 
-      @RootModule({
+      @rootModule({
         controllers: [Controller1],
       })
       class AppModule {}
@@ -84,17 +84,17 @@ xdescribe('RoutesExtension', () => {
           return true;
         }
       }
-      @Controller(ctrlMetadata)
+      @controller(ctrlMetadata)
       class Controller1 {
-        @Route('GET', 'url1', [MyGuard1, [MyGuard2, 'one', 2]])
+        @route('GET', 'url1', [MyGuard1, [MyGuard2, 'one', 2]])
         method1() {}
 
-        @Route('POST', 'url2')
-        @Route('GET', 'url3')
+        @route('POST', 'url2')
+        @route('GET', 'url3')
         method2() {}
       }
 
-      @RootModule({
+      @rootModule({
         controllers: [Controller1],
       })
       class AppModule {}

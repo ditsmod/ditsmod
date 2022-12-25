@@ -37,9 +37,9 @@ describe('ErrorHandler', () => {
 
   beforeEach(() => {
     const injector = ReflectiveInjector.resolveAndCreate([
-      { provide: Req, useValue: req },
-      { provide: Res, useValue: res },
-      { provide: Logger, useValue: logger },
+      { token: Req, useValue: req },
+      { token: Res, useValue: res },
+      { token: Logger, useValue: logger },
       ErrorHandler,
     ]);
 
