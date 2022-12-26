@@ -17,7 +17,7 @@ interface CanActivate {
 For example, it can be done like this:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { CanActivate } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';
@@ -87,7 +87,7 @@ export class SomeController {
 As you can see, in place of the third parameter in `Route`, an array of arrays is passed, where `PermissionsGuard` is specified in the first place, followed by arguments for it. In this case, `PermissionsGuard` will receive these arguments in its `canActivate()` method:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { CanActivate, Status } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';

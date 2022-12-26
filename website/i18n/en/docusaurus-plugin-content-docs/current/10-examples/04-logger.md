@@ -126,7 +126,7 @@ DI will call `patchLogger()` on the first `Logger` request and pass the `LoggerC
 In Ditsmod, the [pino][7] logger is configured similarly to `bunyan`, except for the token for DI. The fact is that currently the `pino` library only has an interface for its logger, and for DI it would be better to have a class instead of an interface. Therefore, we cannot use the [useExisting][8] property on the provider object. In this case, you need to use `@inject` in the constructor of the controller or service:
 
 ```ts
-import { inject } from '@ts-stack/di';
+import { inject } from '@ditsmod/core';
 import { Logger } from '@ditsmod/core';
 import { BaseLogger as PinoLogger } from 'pino';
 // ...

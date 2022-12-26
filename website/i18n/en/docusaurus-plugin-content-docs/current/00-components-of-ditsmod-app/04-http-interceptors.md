@@ -41,7 +41,7 @@ Since `PreRouter`, `HttpFrontend` and `HttpBackend` are extracted via DI, you ca
 Each interceptor must be a class implementing the [HttpInterceptor][1] interface and annotated with the `injectable` decorator:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { HttpHandler, HttpInterceptor } from '@ditsmod/core';
 
 @injectable()

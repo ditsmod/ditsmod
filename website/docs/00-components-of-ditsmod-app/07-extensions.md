@@ -24,7 +24,7 @@ interface Extension<T> {
 
 Кожне розширення потрібно реєструвати, про це буде згадано пізніше, а зараз припустимо, що така реєстрація відбулася, застосунок запущено, після чого йде наступний процес:
 
-1. збираються метадані з усіх декораторів (`@RootModule`, `@Module`, `@Controller`, `@Route`... і навіть із невідомих декораторів, але при умові, що вони створені за допомогою бібліотеки `@ts-stack/di`);
+1. збираються метадані з усіх декораторів (`@RootModule`, `@Module`, `@Controller`, `@Route`... і навіть із невідомих декораторів, але при умові, що вони створені за допомогою Ditsmod DI);
 2. зібрані метадані передаються в DI з токеном `MetadataPerMod1`, отже - будь-яке розширення може отримати ці метадані у себе в конструкторі;
 3. починається по-модульна робота розширень, тобто, для кожного модуля Ditsmod відбираються  розширення, створені у цьому модулі, або імпортовані в цей модуль, їм передаються метадані,  зібрані теж у цьому модулі, і викликаються їхні методи `init()`;
 4. стартує вебсервер, і застосунок починає працювати у звичному режимі, обробляючи HTTP-запити.
@@ -57,7 +57,7 @@ async init() {
 Створіть клас, що впроваджує інтерфейс `Extension`:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { Extension } from '@ditsmod/core';
 
 @injectable()
@@ -80,7 +80,7 @@ export class MyExtension implements Extension<void> {
 Для роботи розширення, усі необхідні дані ви можете отримати або через конструктор, або від іншого розширення через виклик його методу `init()`:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { Extension, MetadataPerMod1 } from '@ditsmod/core';
 
 @injectable()
@@ -155,7 +155,7 @@ export class Extension2 implements Extension<void> {
 Наприклад, щоб створити токен для групи `MY_EXTENSIONS`, необхідно зробити наступне:
 
 ```ts
-import { InjectionToken } from '@ts-stack/di';
+import { InjectionToken } from '@ditsmod/core';
 import { Extension } from '@ditsmod/core';
 
 export const MY_EXTENSIONS = new InjectionToken<Extension<void>[]>('MY_EXTENSIONS');
@@ -223,7 +223,7 @@ export class SomeModule {}
 Припустимо `MyExtension` повинно дочекатись завершення ініціалізації групи `OTHER_EXTENSIONS`. Щоб зробити це, у конструкторі треба указувати залежність від `ExtensionsManager`, а у `init()` викликати `init()` цього сервісу:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions';
@@ -257,7 +257,7 @@ await this.extensionsManager.init(OTHER_EXTENSIONS, false);
 У випадку, коли вам потрібно накопичувати результати роботи певного розширення з усіх модулів, необхідно робити наступне:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions';

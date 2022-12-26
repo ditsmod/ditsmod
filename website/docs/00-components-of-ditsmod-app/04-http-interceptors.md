@@ -41,7 +41,7 @@ sidebar_position: 4
 Кожен інтерсептор повинен бути класом, що впроваджує інтерфейс [HttpInterceptor][1], та має анотацію з декоратором `injectable`:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { HttpHandler, HttpInterceptor } from '@ditsmod/core';
 
 @injectable()

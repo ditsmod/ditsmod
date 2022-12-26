@@ -140,7 +140,7 @@ What services can do:
 The TypeScript class becomes a Ditsmod service with `injectable` decorator:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 
 @injectable()
 export class SomeService {}
@@ -148,12 +148,10 @@ export class SomeService {}
 
 It is recommended that service file names end with `*.service.ts` and that their class names end with `*Service`.
 
-Note that this decorator is imported from `@ts-stack/di`, not from `@ditsmod/core`.
-
 Often some services depend on other services, and to get an instance of a particular service, you need specify its class in the constructor:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 
 import { FirstService } from './first.service';
 

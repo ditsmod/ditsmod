@@ -38,7 +38,7 @@ export class AuthModule {}
 As you can see, you can pass certain options to `JwtModule` during import. Now within `AuthModule` you can use `JwtService`:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { CanActivate, Req } from '@ditsmod/core';
 import { JwtService, VerifyErrors } from '@ditsmod/jwt';
 

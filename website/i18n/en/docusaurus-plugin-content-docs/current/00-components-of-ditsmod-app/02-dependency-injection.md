@@ -6,7 +6,7 @@ sidebar_position: 2
 
 ## Basic concepts
 
-Ditsmod uses [@ts-stack/di][9] as a library for Dependency Injection (abbreviated - DI), it has the following basic concepts:
+Under the hood, Ditsmod uses [@ts-stack/di][9] as a library for Dependency Injection (DI for short), it has the following basic concepts:
 
 - dependency
 - dependency token, token types
@@ -20,7 +20,7 @@ Ditsmod uses [@ts-stack/di][9] as a library for Dependency Injection (abbreviate
 In a DI system, dependency is everything you want to get in the final result in the constructors of controllers, services, modules. For example, if you write the following in the service constructor:
 
 ```ts {7}
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 
 import { FirstService } from './first.service';
 
@@ -44,7 +44,7 @@ If, after executing the first item, it turns out that `FirstService` has its own
 Sometimes you may need to specify an optional dependency in the constructor. Let's consider the following example, where after the `firstService` property is followed a question mark, thus indicating to TypeScript that this property is optional:
 
 ```ts {7}
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 
 import { FirstService } from './first.service';
 
@@ -58,7 +58,7 @@ export class SecondService {
 But DI will ignore this optionality and throw an error if there is no way to create `FirstService`. For this code to work, you need to use the `optional` decorator:
 
 ```ts {7}
-import { injectable, optional } from '@ts-stack/di';
+import { injectable, optional } from '@ditsmod/core';
 
 import { FirstService } from './first.service';
 
@@ -80,7 +80,7 @@ On the other hand, a token can be of any type except an array or enum. Additiona
 If you need to pass an array or enum to the constructor of your class, you can use the `inject` decorator:
 
 ```ts {7}
-import { injectable, inject } from '@ts-stack/di';
+import { injectable, inject } from '@ditsmod/core';
 
 import { InterfaceOfItem } from './types';
 
@@ -95,10 +95,10 @@ As you can see, `inject` accepts a token for a specific dependency. When `inject
 
 ## Provider
 
-DI resolves the dependency using the appropriate providers. In `@ts-stack/di`, the provider can be either a class or an object with the following type:
+DI resolves the dependency using appropriate providers, which can be either classes or objects of the following type:
 
 ```ts {3-6}
-import { Type } from '@ts-stack/di';
+import { Type } from '@ditsmod/core';
 
 type Provider = { token: any, useClass: Type<any>, multi?: boolean } |
 { token: any, useValue: any, multi?: boolean } |
@@ -219,7 +219,7 @@ If you abstract from Ditsmod, in practice it has approximately the following pic
 
 ```ts {16}
 import 'reflect-metadata';
-import { ReflectiveInjector, injectable } from '@ts-stack/di';
+import { ReflectiveInjector, injectable } from '@ditsmod/core';
 
 class Service1 {}
 
@@ -251,7 +251,7 @@ In this case, you may not know the whole chain of dependencies `Service3`, entru
 
 ## Hierarchy of injectors
 
-The `@ts-stack/di` library also allows you to create a hierarchy of injectors - this is when there are parent and child injectors. At first glance, there is nothing interesting in such a hierarchy, because it is not clear why it is needed, but in Ditsmod this feature is used very often, because it allows you to make the application architecture modular. Special attention should be paid to the study of the specifics of the hierarchy, it will save you a lot of time in the future, because you will know how it works and why it does not find this dependency...
+Ditsmod DI also allows you to create a hierarchy of injectors - this is when there are parent and child injectors. At first glance, there is nothing interesting in such a hierarchy, because it is not clear why it is needed, but in Ditsmod this feature is used very often, because it allows you to make the application architecture modular. Special attention should be paid to the study of the specifics of the hierarchy, it will save you a lot of time in the future, because you will know how it works and why it does not find this dependency...
 
 When creating a hierarchy, the connection is held only by the child injector, it has the object of the parent injector. At the same time, the parent injector knows nothing about its child injectors. That is, the connection between the injectors is one-way. Conventionally, it looks like this:
 
@@ -271,7 +271,7 @@ Due to the presence of the parent injector object, the child injector may contac
 Let's consider the following example. For simplicity, decorators are not used here at all, as each class is independent:
 
 ```ts {8-9}
-import { ReflectiveInjector } from '@ts-stack/di';
+import { ReflectiveInjector } from '@ditsmod/core';
 
 class Service1 {}
 class Service2 {}
@@ -349,7 +349,7 @@ In this case, if `SomeService` has a dependency on `OtherService`, DI will be ab
 You may rarely need the injector itself, but you can get it from the constructor like any other instance of the provider:
 
 ```ts
-import { injectable, Injector } from '@ts-stack/di';
+import { injectable, Injector } from '@ditsmod/core';
 import { FirstService } from './first.service';
 
 @injectable()

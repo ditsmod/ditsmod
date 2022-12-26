@@ -17,7 +17,7 @@ interface CanActivate {
 Наприклад, це можна зробити так:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { CanActivate } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';
@@ -87,7 +87,7 @@ export class SomeController {
 Як бачите, на місці третього параметра у `Route` передається масив в масиві, де на першому місці указано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { CanActivate, Status } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';

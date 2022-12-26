@@ -140,7 +140,7 @@ export class OtherModule {}
 TypeScript клас стає сервісом Ditsmod завдяки декоратору `injectable`:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 
 @injectable()
 export class SomeService {}
@@ -148,12 +148,10 @@ export class SomeService {}
 
 Файли сервісів рекомендується називати із закінченням `*.service.ts`, а їхні класи - із закінченням `*Service`.
 
-Зверніть увагу, що цей декоратор імпортується із `@ts-stack/di`, а не із `@ditsmod/core`.
-
 Часто одні сервіси залежать від інших сервісів, і щоб отримати інстанс певного сервіса, необхідно указувати його клас в конструкторі:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 
 import { FirstService } from './first.service';
 

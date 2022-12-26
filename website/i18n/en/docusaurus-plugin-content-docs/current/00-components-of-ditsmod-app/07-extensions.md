@@ -24,7 +24,7 @@ interface Extension<T> {
 
 Each extension needs to be registered, this will be mentioned later, and now let's assume that such registration has taken place, the application is running, and then goes the following process:
 
-1. collecting metadata from all decorators (`@RootModule`, `@Module`, `@Controller`, `@Route` ...and even from unknown decorators, but provided that they are created using the `@ts-stack/di` library);
+1. metadata is collected from all decorators (`@RootModule`, `@Module`, `@Controller`, `@Route`... and even from unknown decorators, but provided that they are created using Ditsmod DI);
 2. this metadata then passing to DI with token `MetadataPerMod1`, therefore - any extension can receive this metadata in the constructor;
 3. per module work of extensions begins, that is, for each Ditsmod module the extensions registered in this module or imported in this module are selected, and the metadata collected in this module is also transmitted to them; then the `init()` method of each extension is called;
 4. the web server starts, and the application starts working normally, processing HTTP requests.
@@ -57,7 +57,7 @@ You can see a simple example in the folder [09-one-extension][1].
 Create a class that implements the `Extension` interface:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { Extension } from '@ditsmod/core';
 
 @injectable()
@@ -80,7 +80,7 @@ export class MyExtension implements Extension<void> {
 For the extension to work, you can get all the necessary data either through the constructor or from another extension by calling its `init()` method:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { Extension, MetadataPerMod1 } from '@ditsmod/core';
 
 @injectable()
@@ -155,7 +155,7 @@ The extension group token must be an instance of the `InjectionToken` class.
 For example, to create a token for the group `MY_EXTENSIONS`, you need to do the following:
 
 ```ts
-import { InjectionToken } from '@ts-stack/di';
+import { InjectionToken } from '@ditsmod/core';
 import { Extension } from '@ditsmod/core';
 
 export const MY_EXTENSIONS = new InjectionToken<Extension<void>[]>('MY_EXTENSIONS');
@@ -224,7 +224,7 @@ For simplicity, [Creating an extension class][2] contains an example where the d
 Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor, and in `init()` call `init()` of this service:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions';
@@ -258,7 +258,7 @@ It is important to remember that running `init()` a particular extension process
 In case you need to accumulate the results of a certain extension from all modules, you need to do the following:
 
 ```ts
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions';
