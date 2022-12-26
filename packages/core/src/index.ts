@@ -1,3 +1,5 @@
+export * from '@ts-stack/di';
+
 export { AppInitializer } from './app-initializer';
 export { Application } from './application';
 export {
