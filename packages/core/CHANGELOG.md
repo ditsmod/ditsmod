@@ -1,5 +1,86 @@
+<a name="core-2.29.0"></a>
+# [core-2.29.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.29.0) (2022-12-26)
+
+### BREAKING CHANGES
+
+- Migration to `@ts-stack/di` v2:
+  - Now the first letters of all decorators are lowercase.
+  - Renamed `@Module` to `@featureModule` (because just `module` - this is JavaScript keyword).
+  - Now all DI symbols imports from `@ditsmod/core` instead `@ts-stack/di`.
+  - `useExisting` renamed to `useToken`.
+  - In DI providers renamed property `provide` to `token`, like this: `{ token: SomeClass, useClass: SomeClass }`.
+  - DI factory provider changes and introduced `@methodFactory()` decorator. Now you need to create a class with callback method:
+
+  ```ts
+  import { methodFactory } from '@ditsmod/core';
+
+  export class ClassWithFactory {
+    @methodFactory()
+    method1(deps1: Deps1, deps2: Deps2) {
+      // ...
+      return '...';
+    }
+  }
+  ```
+
+  Then you need passing this class to DI:
+
+  ```ts
+  //...
+  providersPerReq: [
+    { token: 'some token', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }
+  ]
+  //...
+  ```
+
+  In this case token is optional:
+
+  ```ts
+  //...
+  providersPerReq: [
+    { useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }
+  ]
+  //...
+  ```
+
+  Here `ClassWithFactory.prototype.method1` is used as DI token.
+
+### Feature
+
+Now you can (optional) inject dependencies directly in controller methods that have a `@route()` decorator:
+
+**now**:
+
+```ts
+import { controller, Res, route } from '@ditsmod/core';
+
+@controller()
+export class HelloWorldController {
+  @route('GET')
+  tellHello(res: Res) {
+    res.send('Hello World!');
+  }
+}
+```
+
+**before** `@ditsmod/core` v2.29.0:
+
+```ts
+import { Controller, Res, Route } from '@ditsmod/core';
+
+@Controller()
+export class HelloWorldController {
+  constructor(private res: Res) {}
+
+  @Route('GET')
+  tellHello() {
+    this.res.send('Hello World!');
+  }
+}
+```
+
 <a name="core-2.28.1"></a>
-# [core-2.28.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.28.1) (2022-12-17)
+## [core-2.28.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.28.1) (2022-12-17)
 
 ### Bug fix
 
