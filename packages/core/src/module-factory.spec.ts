@@ -1463,19 +1463,19 @@ describe('ModuleFactory', () => {
               path: 'url1',
               guards: [],
             },
-            type: Function,
+            decoratorFactory: route,
           },
         ],
         method2: [
           {
             otherDecorators: [routeMeta3],
             value: routeMeta2,
-            type: Function,
+            decoratorFactory: route,
           },
           {
             otherDecorators: [routeMeta2],
             value: routeMeta3,
-            type: Function,
+            decoratorFactory: route,
           },
         ],
       };

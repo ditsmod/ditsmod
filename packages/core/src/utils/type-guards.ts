@@ -17,7 +17,7 @@ import { featureModule } from '../decorators/module';
 import { controller, ControllerMetadata } from '../decorators/controller';
 import { route, RouteMetadata } from '../decorators/route';
 import { rootModule } from '../decorators/root-module';
-import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider, Extension, AnyFn } from '../types/mix';
+import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider, Extension, AnyFn, DecoratorMetadata } from '../types/mix';
 import { AppendsWithParams, ModuleMetadata } from '../types/module-metadata';
 import { RootModuleMetadata } from '../types/root-module-metadata';
 import { Http2SecureServerOptions, ServerOptions } from '../types/server-options';
@@ -60,8 +60,8 @@ export function isController(container: AnyObj): container is Container<Controll
   return container?.factory === controller;
 }
 
-export function isRoute(container: AnyObj): container is Container<RouteMetadata> {
-  return container?.factory === route;
+export function isRoute(container: AnyObj): container is DecoratorMetadata {
+  return (container as DecoratorMetadata)?.decoratorFactory === route;
 }
 
 export function isModuleWithParams(mod: ServiceProvider | ModuleWithParams | ModuleType): mod is ModuleWithParams {

@@ -1,9 +1,8 @@
 import 'reflect-metadata';
-import { inspect } from 'util';
 import { PropMeta, reflector } from '@ts-stack/di';
 import { controller, CanActivate } from '@ditsmod/core';
 
-import { oasRoute, OasRouteDecoratorMetadata } from './oas-route';
+import { oasRoute } from './oas-route';
 
 // console.log(inspect(actualMeta, false, 5));
 

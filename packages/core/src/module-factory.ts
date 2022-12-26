@@ -346,11 +346,11 @@ export class ModuleFactory {
       const controllerMetadata: ControllersMetadata1 = { controller, ctrlDecorValues, methods: {} };
       const propertyMetadata = reflector.getPropMetadata(controller);
       for (const propertyKey in propertyMetadata) {
-        const [type, ...methodDecorValues] = propertyMetadata[propertyKey];
-        controllerMetadata.methods[propertyKey] = methodDecorValues.map<DecoratorMetadata>((decoratorValue, i) => {
+        const [, ...methodDecorValues] = propertyMetadata[propertyKey];
+        controllerMetadata.methods[propertyKey] = methodDecorValues.map<DecoratorMetadata>((decoratorPayload, i) => {
           const otherDecorators = methodDecorValues.map(d => d.value);
           otherDecorators.splice(i, 1);
-          return { otherDecorators, value: decoratorValue.value, type };
+          return { otherDecorators, value: decoratorPayload.value, decoratorFactory: decoratorPayload.factory };
         });
       }
       arrControllerMetadata.push(controllerMetadata);

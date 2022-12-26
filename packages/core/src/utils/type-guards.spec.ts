@@ -86,7 +86,7 @@ describe('type guards', () => {
 
     it('should recognize the route', () => {
       const propMetadata = reflector.getPropMetadata(ClassWithDecorators);
-      expect(isRoute(propMetadata.some[1])).toBe(true);
+      expect(isRoute({ decoratorFactory: propMetadata.some[1].factory, value: propMetadata.some[1].value })).toBe(true);
     });
   });
 
@@ -201,7 +201,11 @@ describe('type guards', () => {
           return '';
         }
       }
-      const provider: MultiProvider = { token: 'token', useFactory: [ClassWithDecorators, ClassWithDecorators.prototype.method1], multi: true };
+      const provider: MultiProvider = {
+        token: 'token',
+        useFactory: [ClassWithDecorators, ClassWithDecorators.prototype.method1],
+        multi: true,
+      };
       expect(isMultiProvider(provider)).toBe(true);
     });
 
@@ -228,7 +232,10 @@ describe('type guards', () => {
           return '';
         }
       }
-      const provider: ServiceProvider = { token: 'token', useFactory: [ClassWithDecorators, ClassWithDecorators.prototype.method1] };
+      const provider: ServiceProvider = {
+        token: 'token',
+        useFactory: [ClassWithDecorators, ClassWithDecorators.prototype.method1],
+      };
       expect(isMultiProvider(provider)).toBe(false);
     });
   });

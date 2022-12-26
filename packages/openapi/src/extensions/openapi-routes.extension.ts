@@ -43,10 +43,10 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
         for (const decoratorMetadata of methodWithDecorators) {
-          const oasRoute = decoratorMetadata.value;
-          if (!isOasRoute(oasRoute)) {
+          if (!isOasRoute(decoratorMetadata)) {
             continue;
           }
+          const oasRoute = decoratorMetadata.value;
           const providersPerRou: ServiceProvider[] = [];
           const providersPerReq: ServiceProvider[] = [];
           const ctrlDecorator = ctrlDecorValues.find(isController);

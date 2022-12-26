@@ -1,15 +1,15 @@
-import { AnyObj, GuardItem, HttpMethod } from '@ditsmod/core';
+import { GuardItem, HttpMethod } from '@ditsmod/core';
+import { AnyFn } from '@ditsmod/core/src/types/mix';
 import { makePropDecorator } from '@ts-stack/di';
 import { XOperationObject } from '@ts-stack/openapi-spec';
 
-export type OasRouteDecorator = <T>(
-  target: AnyObj,
-  propertyName: string,
-  descriptor: TypedPropertyDescriptor<T>
-) => OasRouteDecoratorMetadata;
-
 export interface OasRouteDecoratorMetadata {
-  [key: string]: (OasRouteMetadata1 | OasRouteMetadata2)[];
+  otherDecorators: any[];
+  /**
+   * Decorator value.
+   */
+  value: (OasRouteMetadata1 | OasRouteMetadata2);
+  decoratorFactory: AnyFn;
 }
 
 export interface OasRouteMetadata1 {
