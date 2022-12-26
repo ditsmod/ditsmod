@@ -15,16 +15,16 @@ yarn add @ditsmod/openapi
 
 ## Creation of documentation
 
-To create individual routes, use the `OasRoute` decorator, in which the fourth or third parameter (if there are no guards) is the so-called [Operation Object][1]:
+To create individual routes, use the `oasRoute` decorator, in which the fourth or third parameter (if there are no guards) is the so-called [Operation Object][1]:
 
 ```ts
 import { controller } from '@ditsmod/core';
-import { OasRoute } from '@ditsmod/openapi';
+import { oasRoute } from '@ditsmod/openapi';
 
 @controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', 'users/:username', {
+  @oasRoute('GET', 'users/:username', {
     parameters: [
       {
         name: 'username',
@@ -51,12 +51,12 @@ In the following example, with the helper `getParams()`, almost everything that 
 
 ```ts
 import { controller } from '@ditsmod/core';
-import { OasRoute, getParams } from '@ditsmod/openapi';
+import { oasRoute, getParams } from '@ditsmod/openapi';
 
 @controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', 'users/:username', {
+  @oasRoute('GET', 'users/:username', {
     parameters: getParams('path', true, 'username'),
   })
   async getSome() {
@@ -72,28 +72,28 @@ The data type for the `username` parameter and its description are missing here.
 The following example shows a model with three parameters:
 
 ```ts
-import { Property } from '@ditsmod/openapi';
+import { property } from '@ditsmod/openapi';
 
 class Params {
-  @Property({ description: 'Username of the profile to get.' })
+  @property({ description: 'Username of the profile to get.' })
   username: string;
 
-  @Property({ minimum: 1, maximum: 100, description: 'Page number.' })
+  @property({ minimum: 1, maximum: 100, description: 'Page number.' })
   page: number;
 
-  @Property()
+  @property()
   hasName: boolean;
 }
 ```
 
-As you can see, to attach metadata to the model, the `@Property()` decorator is used, where you can pass [Schema Object][3] as the first argument.
+As you can see, to attach metadata to the model, the `@property()` decorator is used, where you can pass [Schema Object][3] as the first argument.
 
 Note that in this case the `type` property is not specified in the metadata, as the types specified here are automatically read by helpers. However, not all types available in TypeScript can be read. For example, helpers will not be able to automatically see what type of array you are passing. This is exactly the case with `enum`. Also, helpers do not see whether an object's property is optional or not.
 
-The array type or `enum` can be passed as the second parameter to the `@Property()` decorator:
+The array type or `enum` can be passed as the second parameter to the `@property()` decorator:
 
 ```ts
-import { Property } from '@ditsmod/openapi';
+import { property } from '@ditsmod/openapi';
 
 enum NumberEnum {
   one,
@@ -102,16 +102,16 @@ enum NumberEnum {
 }
 
 class Params {
-  @Property({}, { enum: NumberEnum })
+  @property({}, { enum: NumberEnum })
   property1: NumberEnum;
 
-  @Property({}, { array: String })
+  @property({}, { array: String })
   property2: string[];
 
-  @Property({}, { array: [String, Number] })
+  @property({}, { array: [String, Number] })
   property3: (string | number)[];
 
-  @Property({}, { array: [[String]] }) // Array in array
+  @property({}, { array: [[String]] }) // Array in array
   property4: string[][];
 }
 ```
@@ -119,18 +119,18 @@ class Params {
 References of some models to others are quite readable. In the following example, `Model2` has a reference to `Model1`:
 
 ```ts
-import { Property } from '@ditsmod/openapi';
+import { property } from '@ditsmod/openapi';
 
 export class Model1 {
-  @Property()
+  @property()
   property1: string;
 }
 
 export class Model2 {
-  @Property()
+  @property()
   model1: Model1;
 
-  @Property({}, Model1)
+  @property({}, Model1)
   arrModel1: Model1[];
 }
 ```
@@ -141,14 +141,14 @@ The `getParams()` helper allows you to use models, and if you make a mistake in 
 
 ```ts
 import { controller } from '@ditsmod/core';
-import { OasRoute, getParams } from '@ditsmod/openapi';
+import { oasRoute, getParams } from '@ditsmod/openapi';
 
 import { Params } from './params';
 
 @controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', '', {
+  @oasRoute('GET', '', {
     parameters: getParams('path', true, Params, 'username'),
   })
   async getSome() {
@@ -161,14 +161,14 @@ But the helper `getParams()` is not intended to be used simultaneously for manda
 
 ```ts
 import { controller } from '@ditsmod/core';
-import { OasRoute, Parameters } from '@ditsmod/openapi';
+import { oasRoute, Parameters } from '@ditsmod/openapi';
 
 import { Params } from './params';
 
 @controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', '', {
+  @oasRoute('GET', '', {
     parameters: new Parameters()
       .required('path', Params, 'username')
       .optional('query', Params, 'page', 'hasName')
@@ -185,12 +185,12 @@ export class SomeController {
 Data models are also used to describe the content of `requestBody`, but there is one slight difference compared to parameters. By default, all model properties are optional, and to mark a particular property as required, you need to use the `REQUIRED` constant:
 
 ```ts
-import { Property, REQUIRED } from '@ditsmod/openapi';
+import { property, REQUIRED } from '@ditsmod/openapi';
 
 class Model1 {
-  @Property()
+  @property()
   property1: string;
-  @Property({ [REQUIRED]: true })
+  @property({ [REQUIRED]: true })
   property2: number;
 }
 ```
@@ -200,7 +200,7 @@ If this model will be used to describe `requestBody`, then `property2` in it wil
 ```ts
 class SomeController {
   // ...
-  @OasRoute('GET', 'users', {
+  @oasRoute('GET', 'users', {
     parameters: getParams('query', false, Model1, 'property2'),
   })
   async getSome() {
@@ -213,14 +213,14 @@ To describe the content in `requestBody` and `responses`, there is also a helper
 
 ```ts
 import { controller, Status } from '@ditsmod/core';
-import { OasRoute, getContent } from '@ditsmod/openapi';
+import { oasRoute, getContent } from '@ditsmod/openapi';
 
 import { SomeModel } from './some-model';
 
 @controller()
 export class SomeController {
   // ...
-  @OasRoute('POST', '', {
+  @oasRoute('POST', '', {
     requestBody: {
       description: 'All properties are taken from Model1.',
       content: getContent({ mediaType: 'application/json', model: Model1 }),
@@ -236,14 +236,14 @@ The `getContent()` helper accepts a shortened version of the data when describin
 
 ```ts
 import { controller, Status } from '@ditsmod/core';
-import { OasRoute, Content } from '@ditsmod/openapi';
+import { oasRoute, Content } from '@ditsmod/openapi';
 
 import { SomeModel } from '@models/some';
 
 @controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', '', {
+  @oasRoute('GET', '', {
     responses: {
       [Status.OK]: {
         description: 'Description of content with this status',
@@ -285,13 +285,13 @@ The previous examples showed helpers that return parts of the [Operation Object]
 
 ## Special decorator for guards
 
-The `@ditsmod/openapi` module has a special `OasGuard` decorator that allows you to attach OpenAPI metadata behind guards:
+The `@ditsmod/openapi` module has a special `oasGuard` decorator that allows you to attach OpenAPI metadata behind guards:
 
 ```ts
 import { CanActivate } from '@ditsmod/core';
-import { OasGuard } from '@ditsmod/openapi';
+import { oasGuard } from '@ditsmod/openapi';
 
-@OasGuard({
+@oasGuard({
   tags: ['withBasicAuth'],
   securitySchemeObject: {
     type: 'http',
@@ -311,7 +311,7 @@ export class BasicGuard implements CanActivate {
 }
 ```
 
-At the moment, the `OasGuard` decorator accepts the following data type:
+At the moment, the `oasGuard` decorator accepts the following data type:
 
 ```ts
 interface OasGuardMetadata {
@@ -327,12 +327,12 @@ This guards are used in exactly the same way as "normal" guards:
 
 ```ts
 import { controller } from '@ditsmod/core';
-import { OasRoute } from '@ditsmod/openapi';
+import { oasRoute } from '@ditsmod/openapi';
 
 @controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', 'users/:username', [BasicGuard])
+  @oasRoute('GET', 'users/:username', [BasicGuard])
   async getSome() {
     // ...
   }

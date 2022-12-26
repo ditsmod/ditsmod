@@ -18,7 +18,7 @@ yarn add @ditsmod/session-cookie
 Importing:
 
 ```ts
-import { RootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 import { SessionCookieModule } from '@ditsmod/session-cookie';
 
 const sessionModuleWithParams = SessionCookieModule.withParsms({
@@ -26,7 +26,7 @@ const sessionModuleWithParams = SessionCookieModule.withParsms({
   httpOnly: true,
 });
 
-@RootModule({
+@rootModule({
   imports: [
     sessionModuleWithParams,
     // ...
@@ -39,20 +39,20 @@ export class AppModule {}
 Usage:
 
 ```ts
-import { controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 import { SessionCookie } from '@ditsmod/session-cookie';
 
 @controller()
 export class HelloWorldController {
   constructor(private session: SessionCookie, private res: Res) {}
 
-  @Route('GET', 'set')
+  @route('GET', 'set')
   setCookie() {
     this.session.id = '123';
     this.res.send('Hello World!\n');
   }
 
-  @Route('GET', 'get')
+  @route('GET', 'get')
   getCookie() {
     this.res.send(`session ID: ${this.session.id}`);
   }

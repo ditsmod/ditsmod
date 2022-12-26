@@ -38,12 +38,12 @@ It also doesn't make sense to export the controllers, because the export only af
 Exporting providers from the root module means that these providers will automatically be added to every module in the application:
 
 ```ts {9}
-import { RootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
 import { OtherModule } from './other.module';
 
-@RootModule({
+@rootModule({
   imports: [OtherModule],
   providersPerRou: [SomeService],
   exports: [SomeService, OtherModule],

@@ -191,7 +191,7 @@ A similar substitution can be made at the application level and at the module le
 
 ```ts {4}
 // ...
-@RootModule({
+@rootModule({
   providersPerApp: [
     ConfigService
   ],
@@ -386,11 +386,11 @@ What does "used as an interface" mean? - This means that if you want to substitu
 When your provider implements the `Logger` interface, you will have to substitute it with DI:
 
 ```ts {6}
-import { RootModule, Logger } from '@ditsmod/core';
+import { rootModule, Logger } from '@ditsmod/core';
 
 import { MyLogger } from './my-logger';
 
-@RootModule({
+@rootModule({
   providersPerApp: [{ token: Logger, useClass: MyLogger }],
 })
 export class SomeModule {}

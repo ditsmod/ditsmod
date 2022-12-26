@@ -8,11 +8,11 @@ title: Return listener
 The `@ditsmod/return` module allows you to send an HTTP response using the `return` operator within a method that binds to a specific route:
 
 ```ts
-import { controller, Route } from '@ditsmod/core';
+import { controller, route } from '@ditsmod/core';
 
 @controller()
 export class HelloWorldController {
-  @Route('GET')
+  @route('GET')
   async tellHello() {
     return 'Hello World!\n';
   }
@@ -32,10 +32,10 @@ yarn add @ditsmod/return
 When importing `ReturnModule`, you also need to [resolve a collision][2] in the `resolvedCollisionsPerReq` array, because `ReturnModule` substitutes the provider for the `HttpBackend` token, which is also substitutes under the hood in `@ditsmod/core`:
 
 ```ts
-import { HttpBackend, RootModule } from '@ditsmod/core';
+import { HttpBackend, rootModule } from '@ditsmod/core';
 import { ReturnModule } from '@ditsmod/return';
 
-@RootModule({
+@rootModule({
   imports: [
     ReturnModule
     // ...
@@ -56,13 +56,13 @@ As you can see, in addition to importing, the `ReturnModule` is also exported in
 By default, the interceptor in the `@ditsmod/return` module automatically substitutes the 201 status for requests with the `POST` HTTP method, the 204 - for `OPTIONS`, and the 200 status - for the rest. If you need to change this behavior, you should use the standard mechanism (without using the `return` statement):
 
 ```ts
-import { controller, Res, Route, Status } from '@ditsmod/core';
+import { controller, Res, route, Status } from '@ditsmod/core';
 
 @controller()
 export class UsersController {
   constructor(private res: Res) {}
 
-  @Route('GET')
+  @route('GET')
   getUsersList() {
     // ...
     this.res.sendJson({ error: 'Page not found' }, Status.NOT_FOUND);

@@ -38,12 +38,12 @@ export class SomeModule {}
 Експорт провайдерів з кореневого модуля означає, що ці провайдери будуть автоматично додаватись до кожного модуля, що є в застосунку:
 
 ```ts {9}
-import { RootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
 import { OtherModule } from './other.module';
 
-@RootModule({
+@rootModule({
   imports: [OtherModule],
   providersPerRou: [SomeService],
   exports: [SomeService, OtherModule],

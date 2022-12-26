@@ -10,7 +10,7 @@ The main difference between an extension and a regular service is that the exten
 
 For example, `@ditsmod/body-parser` module has an extension that dynamically adds an HTTP interceptor for parsing the request body to each route that has the appropriate method (POST, PATCH, PUT). It does this once before the start of the web server, so there is no need to test the need for such parsing for each request.
 
-Another example. For example, the `@ditsmod/openapi` module allows you to create OpenAPI documentation using the new `@OasRoute` decorator. Without extensions, the metadata passed to this decorator would be incomprehensible to `@ditsmod/core`.
+Another example. For example, the `@ditsmod/openapi` module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without extensions, the metadata passed to this decorator would be incomprehensible to `@ditsmod/core`.
 
 ## What is Ditsmod extension
 
@@ -24,7 +24,7 @@ interface Extension<T> {
 
 Each extension needs to be registered, this will be mentioned later, and now let's assume that such registration has taken place, the application is running, and then goes the following process:
 
-1. metadata is collected from all decorators (`@RootModule`, `@featureModule`, `@controller`, `@Route`... and even from unknown decorators, but provided that they are created using Ditsmod DI);
+1. metadata is collected from all decorators (`@rootModule`, `@featureModule`, `@controller`, `@route`... and even from unknown decorators, but provided that they are created using Ditsmod DI);
 2. this metadata then passing to DI with token `MetadataPerMod1`, therefore - any extension can receive this metadata in the constructor;
 3. per module work of extensions begins, that is, for each Ditsmod module the extensions registered in this module or imported in this module are selected, and the metadata collected in this module is also transmitted to them; then the `init()` method of each extension is called;
 4. the web server starts, and the application starts working normally, processing HTTP requests.
@@ -133,7 +133,7 @@ What it gives:
 - If you create extensions group in the current module, it can be supplemented by other extensions in external modules, without having to change the code in the current module. Sometimes it will not even be necessary to call any services from the current module in order to integrate it into an external module, it will be enough to import it.
 - You can arrange the sequence of work of extensions that perform different types of work. By "different types of work" it is meant, for example, that one group of extensions can add routes, the second - HTTP interceptors, the third - set metrics, etc.
 
-For example, in `@ditsmod/core` there is a `ROUTES_EXTENSIONS` group, which by default includes a single extension that handles metadata collected from the `@Route()` decorator. If an application requires OpenAPI documentation, you can use `@ditsmod/openapi`, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@OasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for setting router routes. These extensions are grouped together because their `init()` methods return data with the same base interface.
+For example, in `@ditsmod/core` there is a `ROUTES_EXTENSIONS` group, which by default includes a single extension that handles metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can use `@ditsmod/openapi`, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for setting router routes. These extensions are grouped together because their `init()` methods return data with the same base interface.
 
 A single base interface for all extensions in a group is an important requirement because other extensions can expect data from that group and will rely on that base interface. Of course, if necessary, the basic interface can be expanded, but not narrowed.
 
@@ -146,7 +146,7 @@ This is how the `@ditsmod/body-parser` extension works, for example. You simply 
 1. data interface that will be returned by extensions from the `ROUTES_EXTENSIONS` group;
 2. order of execution, so that routes are not set before it works (that is, so that the group `PRE_ROUTER_EXTENSIONS` works after it, and not before it).
 
-This means that `BodyParserModule` will take into account routes set using the `@Route()` or `@OasRoute()` decorators, or any other decorators from this group, as they are handled by the running extensions before it in the `ROUTES_EXTENSIONS` group.
+This means that `BodyParserModule` will take into account routes set using the `@route()` or `@oasRoute()` decorators, or any other decorators from this group, as they are handled by the running extensions before it in the `ROUTES_EXTENSIONS` group.
 
 ### Creating a new group token
 

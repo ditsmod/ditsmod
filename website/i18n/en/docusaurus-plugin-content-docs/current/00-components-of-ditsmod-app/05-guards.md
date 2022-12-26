@@ -43,10 +43,10 @@ there will be no from the controller;
 
 ## Use of guards
 
-Guards are passed in an array in the third parameter of the `Route` decorator:
+Guards are passed in an array in the third parameter of the `route` decorator:
 
 ```ts
-import { controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
 import { AuthGuard } from './auth.guard';
 
@@ -54,7 +54,7 @@ import { AuthGuard } from './auth.guard';
 export class SomeController {
   constructor(private res: Res) {}
 
-  @Route('GET', 'some-url', [AuthGuard])
+  @route('GET', 'some-url', [AuthGuard])
   tellHello() {
     this.res.send('Hello admin!');
   }
@@ -63,12 +63,12 @@ export class SomeController {
 
 ## Guards with parameters
 
-In the `canActivate()` method, the guard has one parameter. Arguments for this parameter can be passed in the `Route` decorator in an array where a particular guard comes first.
+In the `canActivate()` method, the guard has one parameter. Arguments for this parameter can be passed in the `route` decorator in an array where a particular guard comes first.
 
 Let's consider such an example:
 
 ```ts
-import { controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
 import { PermissionsGuard } from './permissions.guard';
 import { Permission } from './permission';
@@ -77,14 +77,14 @@ import { Permission } from './permission';
 export class SomeController {
   constructor(private res: Res) {}
 
-  @Route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
+  @route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
   tellHello() {
     this.res.send('Hello admin!');
   }
 }
 ```
 
-As you can see, in place of the third parameter in `Route`, an array of arrays is passed, where `PermissionsGuard` is specified in the first place, followed by arguments for it. In this case, `PermissionsGuard` will receive these arguments in its `canActivate()` method:
+As you can see, in place of the third parameter in `route`, an array of arrays is passed, where `PermissionsGuard` is specified in the first place, followed by arguments for it. In this case, `PermissionsGuard` will receive these arguments in its `canActivate()` method:
 
 ```ts
 import { injectable } from '@ditsmod/core';

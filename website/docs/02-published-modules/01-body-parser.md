@@ -31,10 +31,10 @@ yarn add @ditsmod/body-parser
 Щоб глобально підключити `@ditsmod/body-parser`, потрібно імпортувати та експортувати `BodyParserModule` в кореневому модулі:
 
 ```ts
-import { RootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
-@RootModule({
+@rootModule({
   imports: [
     BodyParserModule,
     // ...
@@ -47,12 +47,12 @@ export class AppModule {}
 В такому разі будуть працювати дефолтні налаштування. Якщо ж вам потрібно змінити деякі опції, можете це зробити наступним чином:
 
 ```ts
-import { RootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
 const moduleWithBodyParserConfig = BodyParserModule.withParams({ maxBodySize: 1024 * 1024 });
 
-@RootModule({
+@rootModule({
   imports: [
     moduleWithBodyParserConfig,
     // ...
@@ -65,10 +65,10 @@ export class AppModule {}
 Ще один варіант передачі конфігурації:
 
 ```ts
-import { RootModule, Providers } from '@ditsmod/core';
+import { rootModule, Providers } from '@ditsmod/core';
 import { BodyParserModule, BodyParserConfig } from '@ditsmod/body-parser';
 
-@RootModule({
+@rootModule({
   imports: [
     BodyParserModule,
     // ...
@@ -87,13 +87,13 @@ export class AppModule {}
 Результат роботи інтерсептора можна отримати у `this.req.body`:
 
 ```ts
-import { controller, Req, Res, Route } from '@ditsmod/core';
+import { controller, Req, Res, route } from '@ditsmod/core';
 
 @controller()
 export class SomeController {
   constructor(private req: Req, private res: Res) {}
 
-  @Route('POST')
+  @route('POST')
   ok() {
     this.res.sendJson(this.req.body);
   }

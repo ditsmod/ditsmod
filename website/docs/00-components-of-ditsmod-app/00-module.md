@@ -68,22 +68,22 @@ export class SomeModule {}
 
 ## Кореневий модуль Ditsmod
 
-До кореневого модуля підв'язуються інші модулі, він є єдиним на увесь застосунок, а його клас рекомендовано називати `AppModule`. TypeScript клас стає кореневим модулем Ditsmod завдяки декоратору `RootModule`:
+До кореневого модуля підв'язуються інші модулі, він є єдиним на увесь застосунок, а його клас рекомендовано називати `AppModule`. TypeScript клас стає кореневим модулем Ditsmod завдяки декоратору `rootModule`:
 
 ```ts
-import { RootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 
-@RootModule()
+@rootModule()
 export class AppModule {}
 ```
 
-Він може містити метадані як для HTTP-сервера так і для самого модуля. Загалом, в декоратор `RootModule` можна передавати об'єкт з такими властивостями:
+Він може містити метадані як для HTTP-сервера так і для самого модуля. Загалом, в декоратор `rootModule` можна передавати об'єкт з такими властивостями:
 
 ```ts
 import * as http from 'http';
-import { RootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 
-@RootModule({
+@rootModule({
   // Метадані для HTTP-сервера
   httpModule: http,
   listenOptions: { host: 'localhost', port: 3000 },

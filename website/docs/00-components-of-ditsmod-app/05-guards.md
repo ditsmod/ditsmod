@@ -43,10 +43,10 @@ export class AuthGuard implements CanActivate {
 
 ## Використання ґардів
 
-Ґарди передаються в масиві у третьому параметрі декоратора `Route`:
+Ґарди передаються в масиві у третьому параметрі декоратора `route`:
 
 ```ts
-import { controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
 import { AuthGuard } from './auth.guard';
 
@@ -54,7 +54,7 @@ import { AuthGuard } from './auth.guard';
 export class SomeController {
   constructor(private res: Res) {}
 
-  @Route('GET', 'some-url', [AuthGuard])
+  @route('GET', 'some-url', [AuthGuard])
   tellHello() {
     this.res.send('Hello admin!');
   }
@@ -63,12 +63,12 @@ export class SomeController {
 
 ## Ґарди з параметрами
 
-У методі `canActivate()` ґард має один параметр. Аргументи для цього параметру можна передавати у декораторі `Route` у масиві, де на першому місці йде певний ґард.
+У методі `canActivate()` ґард має один параметр. Аргументи для цього параметру можна передавати у декораторі `route` у масиві, де на першому місці йде певний ґард.
 
 Давайте розглянемо такий приклад:
 
 ```ts
-import { controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
 import { PermissionsGuard } from './permissions.guard';
 import { Permission } from './permission';
@@ -77,14 +77,14 @@ import { Permission } from './permission';
 export class SomeController {
   constructor(private res: Res) {}
 
-  @Route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
+  @route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
   tellHello() {
     this.res.send('Hello admin!');
   }
 }
 ```
 
-Як бачите, на місці третього параметра у `Route` передається масив в масиві, де на першому місці указано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
+Як бачите, на місці третього параметра у `route` передається масив в масиві, де на першому місці указано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
 
 ```ts
 import { injectable } from '@ditsmod/core';

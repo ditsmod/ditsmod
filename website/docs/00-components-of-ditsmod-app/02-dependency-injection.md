@@ -191,7 +191,7 @@ export class SomeController {
 
 ```ts {4}
 // ...
-@RootModule({
+@rootModule({
   providersPerApp: [
     ConfigService
   ],
@@ -386,11 +386,11 @@ export class SecondService {
 Коли ваш провайдер впровадить інтерфейс `Logger`, вам залишиться зробити його підміну за допомогою DI:
 
 ```ts {6}
-import { RootModule, Logger } from '@ditsmod/core';
+import { rootModule, Logger } from '@ditsmod/core';
 
 import { MyLogger } from './my-logger';
 
-@RootModule({
+@rootModule({
   providersPerApp: [{ token: Logger, useClass: MyLogger }],
 })
 export class SomeModule {}

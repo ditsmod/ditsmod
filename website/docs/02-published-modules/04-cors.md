@@ -102,14 +102,14 @@ export class SomeModule {}
 Коли вам потрібно щоб CORS HTTP-відповідь містила куки, і ці куки приймались веб-браузерами, можна скористатись `CorsService`:
 
 ```ts
-import { controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 import { CorsService } from '@ditsmod/cors';
 
 @controller()
 export class SomeController {
   constructor(private res: Res, private corsService: CorsService) {}
 
-  @Route('GET')
+  @route('GET')
   getMethod() {
     this.corsService.setCookie('one', 'value for one');
     this.res.send('Some response');

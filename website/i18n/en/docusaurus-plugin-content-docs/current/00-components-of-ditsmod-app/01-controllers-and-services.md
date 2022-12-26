@@ -24,28 +24,28 @@ In general, you can transfer an object with the following properties to the `con
 import { controller } from '@ditsmod/core';
 
 @controller({
-  providersPerRou: [], // Route-level providers
+  providersPerRou: [], // route-level providers
   providersPerReq: [] // Request-level providers
 })
 export class SomeController {}
 ```
 -->
 
-The HTTP requests are tied to the methods of controllers through the routing system, using the decorator `Route`. The following example creates two routes that accept `GET` requests to `/hello` and `/throw-error`:
+The HTTP requests are tied to the methods of controllers through the routing system, using the decorator `route`. The following example creates two routes that accept `GET` requests to `/hello` and `/throw-error`:
 
 ```ts
-import { controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
 @controller()
 export class SomeController {
   constructor(private res: Res) {}
 
-  @Route('GET', 'hello')
+  @route('GET', 'hello')
   tellHello() {
     this.res.send('Hello World!');
   }
 
-  @Route('GET', 'throw-error')
+  @route('GET', 'throw-error')
   thrwoError() {
     throw new Error('Here some error occurred');
   }
@@ -55,7 +55,7 @@ export class SomeController {
 What we see here:
 
 1. In the constructor of the class using `private` access modifier, the property of class `res` with data type `Res` is declared. So we ask Ditsmod to create an instance of the `Res` class and pass it to the `res` variable. By the way, `res` is short for the word _response_.
-2. Routes are created using the `Route` decorator, which is placed before the class method, and it does not matter what the name of this method is.
+2. Routes are created using the `route` decorator, which is placed before the class method, and it does not matter what the name of this method is.
 3. Text responses to HTTP requests are sent via `this.res.send()`.
 4. Error objects can be thrown directly in the class method in the common way for JavaScript - with the keyword `throw`.
 
@@ -66,19 +66,19 @@ The access modifier in the constructor can be any (private, protected or public)
 To use `pathParams`, `queryParams` or `body`, you should ask the `Req` in the controller constructor:
 
 ```ts
-import { controller, Req, Res, Route } from '@ditsmod/core';
+import { controller, Req, Res, route } from '@ditsmod/core';
 
 @controller()
 export class SomeController {
   constructor(private req: Req, private res: Res) {}
 
-  @Route('GET', 'hello/:userName')
+  @route('GET', 'hello/:userName')
   getHello() {
     const { pathParams } = this.req;
     this.res.send(`Hello, ${pathParams.userName}`);
   }
 
-  @Route('POST', 'some-url')
+  @route('POST', 'some-url')
   postSomeUrl() {
     const { body, queryParams } = this.req;
     this.res.sendJson(body, queryParams);

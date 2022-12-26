@@ -5,7 +5,7 @@
 ## Автопарсинг тіла запиту
 
 Якщо ви експортували `BodyParserModule` із кореневого модуля, Ditsmod на етапі ініціалізації
-застосунку проглядає який HTTP-метод указується в декораторі `Route` для певного маршрута, щоб
+застосунку проглядає який HTTP-метод указується в декораторі `route` для певного маршрута, щоб
 визначити чи потрібно парсити тіло запиту в майбутньому. Перелік HTTP-методів, для яких потрібно
 парсити тіло запиту, указано в класі `BodyParserConfig` у властивості `acceptMethods`:
 
@@ -50,7 +50,7 @@ export class SomeModule {}
 Для цього достатньо розширити клас `Log` та підмінити його через DI:
 
 ```ts
-import { injectable, RootModule, Log, LogLevels } from '@ditsmod/core';
+import { injectable, rootModule, Log, LogLevels } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
 import { HelloWorldController } from './hello-world.controller';
@@ -65,7 +65,7 @@ class MyLog extends Log {
   }
 }
 
-@RootModule({
+@rootModule({
   imports: [RouterModule],
   controllers: [HelloWorldController],
   providersPerApp: [
@@ -116,7 +116,7 @@ this.log.youForgotRegisterExtension('warn', [moduleName, p.provide, p.useClass.n
 
 Цей сервіс призначено для:
 
-- сканування та нормалізації метаданих, зібраних із декораторів `@featureModule` та `@RootModule`;
+- сканування та нормалізації метаданих, зібраних із декораторів `@featureModule` та `@rootModule`;
 - зберігання результату сканування;
 - додавання або видалення певних модулів із масивів імпорту чи експорту інших модулів.
 

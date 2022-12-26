@@ -31,10 +31,10 @@ yarn add @ditsmod/body-parser
 To enable `@ditsmod/body-parser` globally, you need to import and export `BodyParserModule` in the root module:
 
 ```ts
-import { RootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
-@RootModule({
+@rootModule({
   imports: [
     BodyParserModule,
     // ...
@@ -47,12 +47,12 @@ export class AppModule {}
 In this case, the default settings will work. If you need to change some options, you can do it as follows:
 
 ```ts
-import { RootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
 const moduleWithBodyParserConfig = BodyParserModule.withParams({ maxBodySize: 1024 * 1024 });
 
-@RootModule({
+@rootModule({
   imports: [
     moduleWithBodyParserConfig,
     // ...
@@ -65,10 +65,10 @@ export class AppModule {}
 Another option for passing the configuration:
 
 ```ts
-import { RootModule, Providers } from '@ditsmod/core';
+import { rootModule, Providers } from '@ditsmod/core';
 import { BodyParserModule, BodyParserConfig } from '@ditsmod/body-parser';
 
-@RootModule({
+@rootModule({
   imports: [
     BodyParserModule,
     // ...
@@ -87,13 +87,13 @@ export class AppModule {}
 The result of the interceptor can be obtained in `this.req.body`:
 
 ```ts
-import { controller, Req, Res, Route } from '@ditsmod/core';
+import { controller, Req, Res, route } from '@ditsmod/core';
 
 @controller()
 export class SomeController {
   constructor(private req: Req, private res: Res) {}
 
-  @Route('POST')
+  @route('POST')
   ok() {
     this.res.sendJson(this.req.body);
   }

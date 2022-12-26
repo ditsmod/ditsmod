@@ -102,14 +102,14 @@ export class SomeModule {}
 When you need the CORS HTTP response to contain cookies, and for those cookies to be accepted by web browsers, you can use `CorsService`:
 
 ```ts
-import { controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 import { CorsService } from '@ditsmod/cors';
 
 @controller()
 export class SomeController {
   constructor(private res: Res, private corsService: CorsService) {}
 
-  @Route('GET')
+  @route('GET')
   getMethod() {
     this.corsService.setCookie('one', 'value for one');
     this.res.send('Some response');

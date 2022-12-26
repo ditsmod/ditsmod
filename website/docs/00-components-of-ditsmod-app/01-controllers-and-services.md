@@ -31,21 +31,21 @@ export class SomeController {}
 ```
 -->
 
-HTTP-запити прив'язуються до методів контролерів через систему маршрутизації, з використанням декоратора `Route`. В наступному прикладі створено два маршрути, що приймають `GET` запити за адресами `/hello` та `/throw-error`:
+HTTP-запити прив'язуються до методів контролерів через систему маршрутизації, з використанням декоратора `route`. В наступному прикладі створено два маршрути, що приймають `GET` запити за адресами `/hello` та `/throw-error`:
 
 ```ts
-import { controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
 @controller()
 export class SomeController {
   constructor(private res: Res) {}
 
-  @Route('GET', 'hello')
+  @route('GET', 'hello')
   tellHello() {
     this.res.send('Hello World!');
   }
 
-  @Route('GET', 'throw-error')
+  @route('GET', 'throw-error')
   thrwoError() {
     throw new Error('Here some error occurred');
   }
@@ -55,7 +55,7 @@ export class SomeController {
 Що ми тут бачимо:
 
 1. В конструкторі класу за допомогою модифікатора доступу `private` оголошується властивість класу `res` із типом даних `Res`. Таким чином ми просимо Ditsmod щоб він створив інстанс класу `Res` і передав його у змінну `res`. До речі, `res` - це скорочення від слова _response_.
-2. Маршрути створюються за допомогою декоратора `Route`, що ставиться перед методом класу, причому не важливо як саме називається цей метод.
+2. Маршрути створюються за допомогою декоратора `route`, що ставиться перед методом класу, причому не важливо як саме називається цей метод.
 3. Текстові відповіді на HTTP-запити відправляються через `this.res.send()`.
 4. Об'єкти помилок можна кидати прямо в методі класу звичайним для JavaScript способом, тобто за допомогою ключового слова `throw`.
 
@@ -66,19 +66,19 @@ export class SomeController {
 Щоб використовувати `pathParams`, `queryParams` чи `body`, у конструкторі контролера необхідно запитати інстанс класу `Req`:
 
 ```ts
-import { controller, Req, Res, Route } from '@ditsmod/core';
+import { controller, Req, Res, route } from '@ditsmod/core';
 
 @controller()
 export class SomeController {
   constructor(private req: Req, private res: Res) {}
 
-  @Route('GET', 'hello/:userName')
+  @route('GET', 'hello/:userName')
   getHello() {
     const { pathParams } = this.req;
     this.res.send(`Hello, ${pathParams.userName}`);
   }
 
-  @Route('POST', 'some-url')
+  @route('POST', 'some-url')
   postSomeUrl() {
     const { body, queryParams } = this.req;
     this.res.sendJson(body, queryParams);

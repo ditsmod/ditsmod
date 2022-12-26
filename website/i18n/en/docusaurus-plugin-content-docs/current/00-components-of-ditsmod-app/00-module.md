@@ -53,7 +53,7 @@ import { featureModule } from '@ditsmod/core';
   controllers: [], // Binding controllers to the module
   providersPerApp: [], // Application-level providers
   providersPerMod: [], // featureModule-level providers
-  providersPerRou: [], // Route-level providers
+  providersPerRou: [], // route-level providers
   providersPerReq: [], // Request-level providers
   exports: [], // Export modules and providers from the current module
   extensions: [],
@@ -68,22 +68,22 @@ export class SomeModule {}
 
 ## Ditsmod root module
 
-Other modules are imported into the root module, it is the only one for the whole application, and its class is recommended to be called `AppModule`. The TypeScript class becomes the root module of Ditsmod with `RootModule` decorator:
+Other modules are imported into the root module, it is the only one for the whole application, and its class is recommended to be called `AppModule`. The TypeScript class becomes the root module of Ditsmod with `rootModule` decorator:
 
 ```ts
-import { RootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 
-@RootModule()
+@rootModule()
 export class AppModule {}
 ```
 
-It can contain metadata for both the HTTP server and the module itself. In general, an object with the following properties can be passed to the `RootModule` decorator:
+It can contain metadata for both the HTTP server and the module itself. In general, an object with the following properties can be passed to the `rootModule` decorator:
 
 ```ts
 import * as http from 'http';
-import { RootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 
-@RootModule({
+@rootModule({
   // Metadata for the HTTP server
   httpModule: http,
   listenOptions: { host: 'localhost', port: 3000 },

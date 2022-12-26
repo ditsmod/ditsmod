@@ -9,7 +9,7 @@
 В `SomeController` показано два варіанти використання ґардів. Перший варіант без аргументів:
 
 ```ts
-@Route('GET', 'unauth', [AuthGuard])
+@route('GET', 'unauth', [AuthGuard])
 throw401Error() {
   this.res.send('some secret');
 }
@@ -18,7 +18,7 @@ throw401Error() {
 Другий варіант з аргументами:
 
 ```ts
-@Route('GET', 'forbidden', [[PermissionsGuard, Permission.canActivateAdministration]])
+@route('GET', 'forbidden', [[PermissionsGuard, Permission.canActivateAdministration]])
 throw403Error() {
   this.res.send('some secret');
 }

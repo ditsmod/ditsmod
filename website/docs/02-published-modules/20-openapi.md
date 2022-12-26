@@ -15,16 +15,16 @@ yarn add @ditsmod/openapi
 
 ## Створення документації
 
-Щоб створювати окремі маршрути, користуйтесь декоратором `OasRoute`, в якому четвертим або третім параметром (якщо немає ґардів) йде так званий [Operation Object][1]:
+Щоб створювати окремі маршрути, користуйтесь декоратором `oasRoute`, в якому четвертим або третім параметром (якщо немає ґардів) йде так званий [Operation Object][1]:
 
 ```ts
 import { controller } from '@ditsmod/core';
-import { OasRoute } from '@ditsmod/openapi';
+import { oasRoute } from '@ditsmod/openapi';
 
 @controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', 'users/:username', {
+  @oasRoute('GET', 'users/:username', {
     parameters: [
       {
         name: 'username',
@@ -51,12 +51,12 @@ Ditsmod має хорошу підтримку TypeScript-моделей для 
 
 ```ts
 import { controller } from '@ditsmod/core';
-import { OasRoute, getParams } from '@ditsmod/openapi';
+import { oasRoute, getParams } from '@ditsmod/openapi';
 
 @controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', 'users/:username', {
+  @oasRoute('GET', 'users/:username', {
     parameters: getParams('path', true, 'username'),
   })
   async getSome() {
@@ -72,28 +72,28 @@ export class SomeController {
 В наступному прикладі показано модель з трьома параметрами:
 
 ```ts
-import { Property } from '@ditsmod/openapi';
+import { property } from '@ditsmod/openapi';
 
 class Params {
-  @Property({ description: 'Username of the profile to get.' })
+  @property({ description: 'Username of the profile to get.' })
   username: string;
 
-  @Property({ minimum: 1, maximum: 100, description: 'Page number.' })
+  @property({ minimum: 1, maximum: 100, description: 'Page number.' })
   page: number;
 
-  @Property()
+  @property()
   hasName: boolean;
 }
 ```
 
-Як бачите, щоб закріпити метадані за моделлю, використовується декоратор `@Property()`, куди ви можете передавати першим аргументом [Schema Object][3].
+Як бачите, щоб закріпити метадані за моделлю, використовується декоратор `@property()`, куди ви можете передавати першим аргументом [Schema Object][3].
 
 Зверніть увагу, що в даному разі властивість `type` не прописується у метаданих, оскільки указані тут типи автоматично читаються хелперами. Щоправда не усі наявні у TypeScript типи можуть читатись. Наприклад, хелпери не зможуть автоматично побачити який тип масиву ви передаєте. Це саме стосується `enum`. Також хелпери не бачать чи є властивість об'єкта опціональною чи ні.
 
-Тип масиву чи `enum` можна передати другим параметром в декоратор `@Property()`:
+Тип масиву чи `enum` можна передати другим параметром в декоратор `@property()`:
 
 ```ts
-import { Property } from '@ditsmod/openapi';
+import { property } from '@ditsmod/openapi';
 
 enum NumberEnum {
   one,
@@ -102,16 +102,16 @@ enum NumberEnum {
 }
 
 class Params {
-  @Property({}, { enum: NumberEnum })
+  @property({}, { enum: NumberEnum })
   property1: NumberEnum;
 
-  @Property({}, { array: String })
+  @property({}, { array: String })
   property2: string[];
 
-  @Property({}, { array: [String, Number] })
+  @property({}, { array: [String, Number] })
   property3: (string | number)[];
 
-  @Property({}, { array: [[String]] }) // Масив в масиві
+  @property({}, { array: [[String]] }) // Масив в масиві
   property4: string[][];
 }
 ```
@@ -119,18 +119,18 @@ class Params {
 Посилання одних моделей на інші добре читаються. В наступному прикладі `Model2` має посилання на `Model1`:
 
 ```ts
-import { Property } from '@ditsmod/openapi';
+import { property } from '@ditsmod/openapi';
 
 export class Model1 {
-  @Property()
+  @property()
   property1: string;
 }
 
 export class Model2 {
-  @Property()
+  @property()
   model1: Model1;
 
-  @Property({}, Model1)
+  @property({}, Model1)
   arrModel1: Model1[];
 }
 ```
@@ -141,14 +141,14 @@ export class Model2 {
 
 ```ts
 import { controller } from '@ditsmod/core';
-import { OasRoute, getParams } from '@ditsmod/openapi';
+import { oasRoute, getParams } from '@ditsmod/openapi';
 
 import { Params } from './params';
 
 @controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', '', {
+  @oasRoute('GET', '', {
     parameters: getParams('path', true, Params, 'username'),
   })
   async getSome() {
@@ -161,14 +161,14 @@ export class SomeController {
 
 ```ts
 import { controller } from '@ditsmod/core';
-import { OasRoute, Parameters } from '@ditsmod/openapi';
+import { oasRoute, Parameters } from '@ditsmod/openapi';
 
 import { Params } from './params';
 
 @controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', '', {
+  @oasRoute('GET', '', {
     parameters: new Parameters()
       .required('path', Params, 'username')
       .optional('query', Params, 'page', 'hasName')
@@ -185,12 +185,12 @@ export class SomeController {
 Моделі даних також використовуються щоб описати контент `requestBody`, але тут є одна невелика відмінність у порівнянні з параметрами. По дефолту, усі властивості моделі є необов'язковими, і щоб позначити певну властивість обов'язковою, необхідно скористатись константою `REQUIRED`:
 
 ```ts
-import { Property, REQUIRED } from '@ditsmod/openapi';
+import { property, REQUIRED } from '@ditsmod/openapi';
 
 class Model1 {
-  @Property()
+  @property()
   property1: string;
-  @Property({ [REQUIRED]: true })
+  @property({ [REQUIRED]: true })
   property2: number;
 }
 ```
@@ -200,7 +200,7 @@ class Model1 {
 ```ts
 class SomeController {
   // ...
-  @OasRoute('GET', 'users', {
+  @oasRoute('GET', 'users', {
     parameters: getParams('query', false, Model1, 'property2'),
   })
   async getSome() {
@@ -213,14 +213,14 @@ class SomeController {
 
 ```ts
 import { controller, Status } from '@ditsmod/core';
-import { OasRoute, getContent } from '@ditsmod/openapi';
+import { oasRoute, getContent } from '@ditsmod/openapi';
 
 import { SomeModel } from './some-model';
 
 @controller()
 export class SomeController {
   // ...
-  @OasRoute('POST', '', {
+  @oasRoute('POST', '', {
     requestBody: {
       description: 'All properties are taken from Model1.',
       content: getContent({ mediaType: 'application/json', model: Model1 }),
@@ -236,14 +236,14 @@ export class SomeController {
 
 ```ts
 import { controller, Status } from '@ditsmod/core';
-import { OasRoute, Content } from '@ditsmod/openapi';
+import { oasRoute, Content } from '@ditsmod/openapi';
 
 import { SomeModel } from '@models/some';
 
 @controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', '', {
+  @oasRoute('GET', '', {
     responses: {
       [Status.OK]: {
         description: 'Опис контенту із даним статусом',
@@ -288,13 +288,13 @@ export class I18nModule {}
 
 ## Спеціальний декоратор для ґардів
 
-Модуль `@ditsmod/openapi` має спеціальний декоратор `OasGuard`, що дозволяє закріпити метадані OpenAPI за ґардами:
+Модуль `@ditsmod/openapi` має спеціальний декоратор `oasGuard`, що дозволяє закріпити метадані OpenAPI за ґардами:
 
 ```ts
 import { CanActivate } from '@ditsmod/core';
-import { OasGuard } from '@ditsmod/openapi';
+import { oasGuard } from '@ditsmod/openapi';
 
-@OasGuard({
+@oasGuard({
   tags: ['withBasicAuth'],
   securitySchemeObject: {
     type: 'http',
@@ -314,7 +314,7 @@ export class BasicGuard implements CanActivate {
 }
 ```
 
-На даний момент декоратор `OasGuard` приймає наступний тип даних:
+На даний момент декоратор `oasGuard` приймає наступний тип даних:
 
 ```ts
 interface OasGuardMetadata {
@@ -330,12 +330,12 @@ interface OasGuardMetadata {
 
 ```ts
 import { controller } from '@ditsmod/core';
-import { OasRoute } from '@ditsmod/openapi';
+import { oasRoute } from '@ditsmod/openapi';
 
 @controller()
 export class SomeController {
   // ...
-  @OasRoute('GET', 'users/:username', [BasicGuard])
+  @oasRoute('GET', 'users/:username', [BasicGuard])
   async getSome() {
     // ...
   }

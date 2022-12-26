@@ -47,10 +47,10 @@ yarn add @ditsmod/router
 Підключення:
 
 ```ts
-import { RootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
-@RootModule({
+@rootModule({
   imports: [RouterModule],
   // ..
 })

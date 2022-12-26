@@ -8,11 +8,11 @@ title: Слухач return
 Модуль `@ditsmod/return` дозволяє відправляти HTTP-відповідь за допомогою оператора `return` у межах метода, що прив'язується до конкретного роута:
 
 ```ts
-import { controller, Route } from '@ditsmod/core';
+import { controller, route } from '@ditsmod/core';
 
 @controller()
 export class HelloWorldController {
-  @Route('GET')
+  @route('GET')
   async tellHello() {
     return 'Hello World!\n';
   }
@@ -32,10 +32,10 @@ yarn add @ditsmod/return
 При імпорті `ReturnModule` потрібно ще й [вирішувати колізію][2] в масиві `resolvedCollisionsPerReq`, оскільки `ReturnModule` підміняє провайдер для токена `HttpBackend`, який також під капотом підміняється у `@ditsmod/core`:
 
 ```ts
-import { HttpBackend, RootModule } from '@ditsmod/core';
+import { HttpBackend, rootModule } from '@ditsmod/core';
 import { ReturnModule } from '@ditsmod/return';
 
-@RootModule({
+@rootModule({
   imports: [
     ReturnModule
     // ...
@@ -56,13 +56,13 @@ export class AppModule {}
 По дефолту, інтерсептор в модулі `@ditsmod/return` автоматично підставляє 201-ий статус для запитів з HTTP-методом `POST`, 204-ий - для `OPTIONS`, і 200-ий статус - для решти. Якщо вам потрібно змінити цю поведінку, варто використовувати стандартний механізм (без використання оператора `return`):
 
 ```ts
-import { controller, Res, Route, Status } from '@ditsmod/core';
+import { controller, Res, route, Status } from '@ditsmod/core';
 
 @controller()
 export class UsersController {
   constructor(private res: Res) {}
 
-  @Route('GET')
+  @route('GET')
   getUsersList() {
     // ...
     this.res.sendJson({ error: 'Page not found' }, Status.NOT_FOUND);

@@ -9,7 +9,7 @@ However, if you [export a specific module from the root module][102], its provid
 `SomeController` shows two options for using guards. The first option without arguments:
 
 ```ts
-@Route('GET', 'unauth', [AuthGuard])
+@route('GET', 'unauth', [AuthGuard])
 throw401Error() {
   this.res.send('some secret');
 }
@@ -18,7 +18,7 @@ throw401Error() {
 The second option with arguments:
 
 ```ts
-@Route('GET', 'forbidden', [[PermissionsGuard, Permission.canActivateAdministration]])
+@route('GET', 'forbidden', [[PermissionsGuard, Permission.canActivateAdministration]])
 throw403Error() {
   this.res.send('some secret');
 }
