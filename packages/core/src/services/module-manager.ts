@@ -30,6 +30,7 @@ import {
   isMultiProvider,
   isNormalizedProvider,
   isProvider,
+  isRawRootModule,
   isRootModule,
   isValueProvider,
   MultiProvider,
@@ -384,8 +385,8 @@ export class ModuleManager {
       ...(rawMeta.resolvedCollisionsPerRou || []),
       ...(rawMeta.resolvedCollisionsPerReq || []),
     ];
-    if (isRootModule(rawMeta)) {
-      resolvedCollisionsPerScope.push(...(rawMeta.value.resolvedCollisionsPerApp || []));
+    if (isRawRootModule(rawMeta)) {
+      resolvedCollisionsPerScope.push(...(rawMeta.resolvedCollisionsPerApp || []));
     }
     resolvedCollisionsPerScope.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
     this.exportFromRawMeta(rawMeta, modName, providersTokens, meta);

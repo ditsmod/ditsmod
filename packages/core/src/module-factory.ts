@@ -25,7 +25,7 @@ import { getLastProviders } from './utils/get-last-providers';
 import { getModuleName } from './utils/get-module-name';
 import { getToken, getTokens } from './utils/get-tokens';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
-import { isAppendsWithParams, isController, isModuleWithParams, isRootModule } from './utils/type-guards';
+import { isAppendsWithParams, isController, isModuleWithParams, isNormRootModule } from './utils/type-guards';
 
 type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 
@@ -112,7 +112,7 @@ export class ModuleFactory {
     this.meta.providersPerMod.unshift({ token: ModuleExtract, useValue: moduleExtract });
 
     let aControllersMetadata1: ControllersMetadata1<AnyObj, AnyObj>[] = [];
-    if (isRootModule(meta) || isAppends || (isModuleWithParams(meta.module) && meta.module.path !== undefined)) {
+    if (isNormRootModule(meta) || isAppends || (isModuleWithParams(meta.module) && meta.module.path !== undefined)) {
       aControllersMetadata1 = this.getControllersMetadata();
     }
 

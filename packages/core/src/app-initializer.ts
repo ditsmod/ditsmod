@@ -25,7 +25,7 @@ import { getModuleName } from './utils/get-module-name';
 import { getProvidersTargets, getToken, getTokens } from './utils/get-tokens';
 import { normalizeProviders } from './utils/ng-utils';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
-import { isMultiProvider, isRootModule } from './utils/type-guards';
+import { isMultiProvider, isNormRootModule, isRootModule } from './utils/type-guards';
 import { SystemLogMediator } from './log-mediator/system-log-mediator';
 
 export class AppInitializer {
@@ -103,7 +103,7 @@ export class AppInitializer {
       providersPerApp.push(...this.collectProvidersPerApp(meta2));
       this.unfinishedScanModules.delete(mod);
     }
-    const currProvidersPerApp = isRootModule(meta1) ? [] : meta1.providersPerApp;
+    const currProvidersPerApp = isNormRootModule(meta1) ? [] : meta1.providersPerApp;
 
     return [...providersPerApp, ...currProvidersPerApp];
   }

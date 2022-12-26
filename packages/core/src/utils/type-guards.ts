@@ -9,7 +9,7 @@ import {
   Type,
   TypeProvider,
   ValueProvider,
-  TokenProvider
+  TokenProvider,
 } from '@ts-stack/di';
 import { Container, reflector } from '@ts-stack/di';
 
@@ -17,30 +17,43 @@ import { featureModule } from '../decorators/module';
 import { controller, ControllerMetadata } from '../decorators/controller';
 import { route, RouteMetadata } from '../decorators/route';
 import { rootModule } from '../decorators/root-module';
-import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider, Extension } from '../types/mix';
+import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider, Extension, AnyFn } from '../types/mix';
 import { AppendsWithParams, ModuleMetadata } from '../types/module-metadata';
 import { RootModuleMetadata } from '../types/root-module-metadata';
 import { Http2SecureServerOptions, ServerOptions } from '../types/server-options';
 import { NormalizedProvider } from './ng-utils';
+import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
 }
 
 export function isForwardRef(type: any): type is ForwardRefFn {
-  return typeof type == 'function' && type.hasOwnProperty('__forward_ref__') && type.__forward_ref__ === forwardRef;
+  return typeof type == 'function' && type.__forward_ref__ === forwardRef;
 }
 
 export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
   return err instanceof ChainError;
 }
 
-export function isFeatureModule(container: AnyObj): container is Container<ModuleMetadata> {
+export function isFeatureModule(container: Container): container is Container<ModuleMetadata> {
   return container.factory === featureModule;
 }
 
-export function isRootModule(container: AnyObj): container is Container<RootModuleMetadata> {
+export function isRootModule(container: Container): container is Container<RootModuleMetadata> {
   return container.factory === rootModule;
+}
+
+export function isRawRootModule(
+  rawModule: RootModuleMetadata & { decoratorFactory?: AnyFn }
+): rawModule is RootModuleMetadata {
+  return rawModule.decoratorFactory === rootModule;
+}
+
+export function isNormRootModule(
+  rawModule: NormalizedModuleMetadata
+): rawModule is NormalizedModuleMetadata<RootModuleMetadata> {
+  return rawModule.decoratorFactory === rootModule;
 }
 
 export function isController(container: AnyObj): container is Container<ControllerMetadata> {
