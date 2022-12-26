@@ -1,4 +1,4 @@
-import { injectable, Injector, ReflectiveInjector } from '@ts-stack/di';
+import { injectable, ReflectiveInjector } from '@ts-stack/di';
 import {
   Extension,
   ExtensionsManager,
@@ -12,7 +12,7 @@ import {
   MetadataPerMod2,
   ServiceProvider,
   Res,
-  injectorKey,
+  methodFactory,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
 
@@ -90,7 +90,7 @@ export class CorsExtension implements Extension<void | false> {
       if (sPathWithOptions.has(path)) {
         return;
       }
-      const methodName = Symbol.for(path);
+      const methodName = 'test';
       const httpMethods = this.registeredPathForOptions.get(path) || [];
       if (httpMethods.length) {
         httpMethods.push(httpMethod);
@@ -100,9 +100,8 @@ export class CorsExtension implements Extension<void | false> {
       this.registeredPathForOptions.set(path, httpMethods);
 
       class DynamicController {
-        [methodName]() {
-          const inj = (this as any)[injectorKey] as Injector;
-          const res = inj.get(Res) as Res;
+        @methodFactory()
+        [methodName](res: Res) {
           res.nodeRes.setHeader('Allow', httpMethods.join());
           res.send(undefined, Status.NO_CONTENT);
         }
@@ -112,7 +111,7 @@ export class CorsExtension implements Extension<void | false> {
         decoratorMetadata: {} as any,
         controller: DynamicController,
         guards: [],
-        methodName: methodName,
+        methodName,
       };
 
       const controllersMetadata2: ControllersMetadata2 = {
@@ -122,7 +121,7 @@ export class CorsExtension implements Extension<void | false> {
           { token: ALLOW_METHODS, useValue: httpMethods },
           { token: RouteMeta, useValue: routeMeta },
         ],
-        providersPerReq: [DynamicController],
+        providersPerReq: [{ useFactory: [DynamicController, DynamicController.prototype[methodName]] }],
       };
 
       newArrControllersMetadata2.push(controllersMetadata2);

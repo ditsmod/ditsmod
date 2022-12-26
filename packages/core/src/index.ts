@@ -51,7 +51,6 @@ export {
   ExtensionType,
   GuardItem,
   HttpMethod,
-  injectorKey,
   ModuleType,
   ModuleWithParams,
   NormalizedGuard,
