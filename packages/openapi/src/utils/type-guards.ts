@@ -27,5 +27,5 @@ export function isOasGuard(container: AnyObj): container is Container<OasGuardMe
 }
 
 export function isProperty(container: AnyObj): container is Container<PropertyDecoratorItem> {
-  return (container as any)?.decoratorName == 'Property';
+  return (container as any)?.decoratorFactory == 'Property';
 }

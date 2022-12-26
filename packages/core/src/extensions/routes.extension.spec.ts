@@ -105,7 +105,7 @@ xdescribe('RoutesExtension', () => {
       // const routesMetadata = mockPreRoutes.getRoutesData(metadata);
       // expect(routesMetadata.length).toBe(3);
       // expect(routesMetadata[0].decoratorMetadata.otherDecorators).toEqual([]);
-      // expect(routesMetadata[0].decoratorMetadata.otherDecorators.map(d => d.decoratorName)).toEqual([]);
+      // expect(routesMetadata[0].decoratorMetadata.otherDecorators.map(d => d.decoratorFactory)).toEqual([]);
       // expect(routesMetadata[0].controller).toBe(Controller1);
       // expect(routesMetadata[0].methodName).toBe('method1');
       // expect(routesMetadata[0].route.httpMethod).toBe('GET');
@@ -117,7 +117,7 @@ xdescribe('RoutesExtension', () => {
       // expect(routesMetadata[0].guards).toEqual([{ guard: MyGuard1 }, { guard: MyGuard2, params: ['one', 2] }]);
 
       // expect(routesMetadata[1].decoratorMetadata.otherDecorators).toEqual([{ guards: [], httpMethod: 'GET', path: 'url3' }]);
-      // expect(routesMetadata[1].decoratorMetadata.otherDecorators.map(d => d.decoratorName)).toEqual(['Route']);
+      // expect(routesMetadata[1].decoratorMetadata.otherDecorators.map(d => d.decoratorFactory)).toEqual(['Route']);
       // expect(routesMetadata[1].controller).toBe(Controller1);
       // expect(routesMetadata[1].methodName).toBe('method2');
       // expect(routesMetadata[1].route.httpMethod).toBe('POST');
@@ -129,7 +129,7 @@ xdescribe('RoutesExtension', () => {
       // expect(routesMetadata[1].guards).toEqual([]);
 
       // expect(routesMetadata[2].decoratorMetadata.otherDecorators).toEqual([{ guards: [], httpMethod: 'POST', path: 'url2' }]);
-      // expect(routesMetadata[2].decoratorMetadata.otherDecorators.map(d => d.decoratorName)).toEqual(['Route']);
+      // expect(routesMetadata[2].decoratorMetadata.otherDecorators.map(d => d.decoratorFactory)).toEqual(['Route']);
       // expect(routesMetadata[2].controller).toBe(Controller1);
       // expect(routesMetadata[2].methodName).toBe('method2');
       // expect(routesMetadata[2].route.httpMethod).toBe('GET');

@@ -55,7 +55,7 @@ export class Application {
    * Merge AppModule metadata with default metadata for root module.
    */
   protected mergeRootMetadata(module: ModuleType | ModuleWithParams): void {
-    const serverMetadata = getModuleMetadata(module, true) as RootMetadata;
+    const serverMetadata = getModuleMetadata(module, true) as unknown as RootMetadata;
     this.rootMeta = new RootMetadata();
     pickProperties(this.rootMeta, serverMetadata);
     const { listenOptions } = this.rootMeta;

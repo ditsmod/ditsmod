@@ -347,10 +347,7 @@ export class ModuleManager {
     const meta = new NormalizedModuleMetadata();
     meta.name = modName;
     meta.module = mod;
-    /**
-     * `decoratorName` is used only internally and is hidden from the public API.
-     */
-    meta.decoratorName = (rawMeta as any).decoratorName;
+    meta.decoratorFactory = rawMeta.decoratorFactory;
 
     rawMeta.imports?.forEach((imp, i) => {
       imp = resolveForwardRef(imp);

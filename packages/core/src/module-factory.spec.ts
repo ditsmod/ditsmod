@@ -431,7 +431,7 @@ describe('ModuleFactory', () => {
         };
         expect(mod0?.meta.providersPerMod).toEqual([providerPerMod0, Provider0]);
         expect(mod0?.meta.providersPerReq).toEqual([]);
-        expect(mod0?.meta.decoratorName).toBe('Module');
+        expect(mod0?.meta.decoratorFactory).toBe(featureModule);
 
         const mod1 = mock.appMetadataMap.get(Module1);
         const providerPerMod1: ServiceProvider = {
@@ -444,7 +444,7 @@ describe('ModuleFactory', () => {
         expect(tokensPerMod).toEqual([Provider0]);
 
         expect(mod1?.meta.providersPerReq).toEqual([]);
-        expect(mod1?.meta.decoratorName).toBe('Module');
+        expect(mod1?.meta.decoratorFactory).toBe(featureModule);
 
         const mod2 = mock.appMetadataMap.get(Module2);
         const providerPerMod2: ServiceProvider = {
@@ -457,7 +457,7 @@ describe('ModuleFactory', () => {
         expect(tokensPerMod2).toEqual([Provider0, Provider1, Provider2, Provider3]);
 
         expect(mod2?.meta.providersPerReq).toEqual([Provider7, Provider8]);
-        expect(mod2?.meta.decoratorName).toBe('Module');
+        expect(mod2?.meta.decoratorFactory).toBe(featureModule);
 
         const mod3 = mock.appMetadataMap.get(Module3);
         const providerPerMod3: ServiceProvider = {
@@ -468,7 +468,7 @@ describe('ModuleFactory', () => {
 
         // expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overriddenProvider8]);
         expect(mod3?.meta.controllers).toEqual([Ctrl]);
-        expect(mod3?.meta.decoratorName).toBe('Module');
+        expect(mod3?.meta.decoratorFactory).toBe(featureModule);
       });
 
       it('case 2', () => {
@@ -514,7 +514,7 @@ describe('ModuleFactory', () => {
         importObj.module = Module2;
         importObj.providers = [Provider8];
         expect(mock?.importedProvidersPerReq.get(Provider8)).toEqual(importObj);
-        expect((mock.meta as any).decoratorName).toBe('RootModule');
+        expect(mock.meta.decoratorFactory).toBe('RootModule');
       });
 
       it('importDependenciesOfImportedProviders() case 1', () => {
@@ -565,7 +565,7 @@ describe('ModuleFactory', () => {
         importObj.module = Module2;
         importObj.providers = [Provider2];
         expect(mock?.importedProvidersPerReq.get(Provider2)).toEqual(importObj);
-        expect(mod3?.meta.decoratorName).toBe('Module');
+        expect(mod3?.meta.decoratorFactory).toBe(featureModule);
       });
 
       it('should throw an error about not proper provider exports', () => {

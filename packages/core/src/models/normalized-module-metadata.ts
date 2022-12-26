@@ -7,6 +7,7 @@ import {
   ServiceProvider,
   ExtensionProvider,
   NormalizedGuard,
+  AnyFn,
 } from '../types/mix';
 import { MultiProvider } from '../utils/type-guards';
 import { ProvidersMetadata } from './providers-metadata';
@@ -29,7 +30,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   importsWithParams: ModuleWithParams[] = [];
   appendsWithParams: AppendsWithParams[] = [];
   controllers: ControllerType[] = [];
-  decoratorName: string;
+  decoratorFactory: AnyFn;
   exportsModules: ModuleType[] = [];
   exportsWithParams: ModuleWithParams[] = [];
   exportedProvidersPerMod: ServiceProvider[] = [];

@@ -1,7 +1,7 @@
 import { Container, reflector } from '@ts-stack/di';
 
 import { ModuleMetadata } from '../types/module-metadata';
-import { ModuleType, ModuleWithParams } from '../types/mix';
+import { AnyFn, ModuleType, ModuleWithParams } from '../types/mix';
 import { getModuleName } from './get-module-name';
 import { mergeArrays } from './merge-arrays';
 import { isForwardRef, isFeatureModule, isModuleWithParams, isRootModule } from './type-guards';
@@ -10,7 +10,7 @@ import { getLastProviders } from './get-last-providers';
 export function getModuleMetadata(
   modOrObj: ModuleType | ModuleWithParams,
   isRoot?: boolean
-): ModuleMetadata | undefined {
+): (ModuleMetadata & { decoratorFactory: AnyFn }) | undefined {
   const typeGuard = isRoot ? isRootModule : (m: Container) => isFeatureModule(m) || isRootModule(m);
 
   if (isForwardRef(modOrObj)) {
@@ -19,10 +19,11 @@ export function getModuleMetadata(
 
   if (isModuleWithParams(modOrObj)) {
     const modWitParams = modOrObj;
-    const modMetadata = reflector
+    const container = reflector
       .getClassMetadata<ModuleMetadata>(modWitParams.module)
-      .find((container) => typeGuard(container))?.value;
-    
+      .find((container) => typeGuard(container));
+
+    const modMetadata = container?.value;
     const modName = getModuleName(modWitParams.module);
     if (!modMetadata) {
       return modMetadata;
@@ -41,8 +42,9 @@ export function getModuleMetadata(
     metadata.providersPerRou = getLastProviders(mergeArrays(modMetadata.providersPerRou, modWitParams.providersPerRou));
     metadata.providersPerReq = getLastProviders(mergeArrays(modMetadata.providersPerReq, modWitParams.providersPerReq));
     metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
-    return metadata;
+    return { ...metadata, decoratorFactory: container.factory };
   } else {
-    return reflector.getClassMetadata<ModuleMetadata>(modOrObj).find((container) => typeGuard(container))?.value;
+    const container = reflector.getClassMetadata<ModuleMetadata>(modOrObj).find((container) => typeGuard(container));
+    return container ? { ...container.value, decoratorFactory: container.factory } : undefined;
   }
 }
