@@ -63,11 +63,11 @@ export class MyHttpInterceptor implements HttpInterceptor {
 Будь-який інтерсептор передається в інжектор на рівні запиту за допомогою мульти-провайдерів із токеном `HTTP_INTERCEPTORS`:
 
 ```ts
-import { HTTP_INTERCEPTORS, Module } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS, featureModule } from '@ditsmod/core';
 
 import { MyHttpInterceptor } from './my-http-interceptor';
 
-@Module({
+@featureModule({
   // ...
   providersPerReq: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
 })

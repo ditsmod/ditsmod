@@ -24,7 +24,7 @@ interface Extension<T> {
 
 Each extension needs to be registered, this will be mentioned later, and now let's assume that such registration has taken place, the application is running, and then goes the following process:
 
-1. metadata is collected from all decorators (`@RootModule`, `@Module`, `@Controller`, `@Route`... and even from unknown decorators, but provided that they are created using Ditsmod DI);
+1. metadata is collected from all decorators (`@RootModule`, `@featureModule`, `@controller`, `@Route`... and even from unknown decorators, but provided that they are created using Ditsmod DI);
 2. this metadata then passing to DI with token `MetadataPerMod1`, therefore - any extension can receive this metadata in the constructor;
 3. per module work of extensions begins, that is, for each Ditsmod module the extensions registered in this module or imported in this module are selected, and the metadata collected in this module is also transmitted to them; then the `init()` method of each extension is called;
 4. the web server starts, and the application starts working normally, processing HTTP requests.
@@ -185,12 +185,12 @@ export class ExtensionOptions {
 The `nextToken` property is used when you want your extension group to run before another extension group:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 import { ROUTES_EXTENSIONS } from '@ditsmod/core';
 
 import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
-@Module({
+@featureModule({
   extensions: [
     { extension: MyExtension, groupToken: MY_EXTENSIONS, nextToken: ROUTES_EXTENSIONS, exported: true }
   ],
@@ -203,11 +203,11 @@ That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs
 If for your extension it is not important for which group of extensions it will work, you can simplify the registration:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
-@Module({
+@featureModule({
   extensions: [
     { extension: MyExtension, groupToken: MY_EXTENSIONS, exported: true }
   ],

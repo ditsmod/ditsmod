@@ -9,12 +9,12 @@ sidebar_position: 3
 Експортуючи провайдери з певного модуля, ви тим самим декларуєте, що вони є доступними для використання в інших модулях, які імпортуватимуть цей модуль:
 
 ```ts {8}
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { FirstService } from './first.service';
 import { SecondService } from './second.service';
 
-@Module({
+@featureModule({
   providersPerMod: [FirstService, SecondService],
   exports: [SecondService],
 })
@@ -58,11 +58,11 @@ export class AppModule {}
 Імпортувати окремий провайдер в модуль Ditsmod не можна, але можна імпортувати цілий модуль з усіма провайдерами та [розширеннями][2], що експортуються в ньому:
 
 ```ts {7}
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { FirstModule } from './first.module';
 
-@Module({
+@featureModule({
   imports: [
     FirstModule
   ]
@@ -74,7 +74,7 @@ export class SecondModule {}
 
 ```ts {4}
 // ...
-@Module({
+@featureModule({
   imports: [
     { path: '', module: FirstModule }
   ]
@@ -109,7 +109,7 @@ interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
 
 ```ts {4}
 // ...
-@Module({
+@featureModule({
   imports: [
     { path: '', module: FirstModule }
   ]
@@ -135,7 +135,7 @@ export class FirstModule {
 
 ```ts {4}
 // ...
-@Module({
+@featureModule({
   imports: [
     FirstModule.withPrefix('some-prefix')
   ]
@@ -165,11 +165,11 @@ export class SomeModule {
 Якщо вам не потрібно імпортувати провайдери та [розширення][2] в поточний модуль, а потрібно всього лиш прикріпити зовнішній модуль до префікса поточного модуля, можна скористатись масивом `appends`:
 
 ```ts {6}
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { FirstModule } from './first.module';
 
-@Module({
+@featureModule({
   appends: [FirstModule]
 })
 export class SecondModule {}
@@ -181,7 +181,7 @@ export class SecondModule {}
 
 ```ts {3}
 // ...
-@Module({
+@featureModule({
   appends: [{ path: 'some-path', module: FirstModule }]
 })
 export class SecondModule {}
@@ -203,11 +203,11 @@ interface AppendsWithParams<T extends AnyObj = AnyObj> {
 Окрім імпорту певного модуля, цей же модуль можна одночасно й експортувати:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { FirstModule } from './first.module';
 
-@Module({
+@featureModule({
   imports: [FirstModule],
   exports: [FirstModule],
 })

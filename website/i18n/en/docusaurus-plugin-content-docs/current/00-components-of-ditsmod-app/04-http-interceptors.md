@@ -63,11 +63,11 @@ On the other hand, with DI you can easily replace `HttpFrontend` and `HttpBacken
 Any interceptor is passing to the injector at the request level by multi-providers with the token `HTTP_INTERCEPTORS`:
 
 ```ts
-import { HTTP_INTERCEPTORS, Module } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS, featureModule } from '@ditsmod/core';
 
 import { MyHttpInterceptor } from './my-http-interceptor';
 
-@Module({
+@featureModule({
   // ...
   providersPerReq: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
 })

@@ -6,24 +6,24 @@ sidebar_position: 1
 
 ## Що являє собою контролер
 
-Контролери призначаються для прийому HTTP-запитів та відправки HTTP-відповідей. TypeScript клас стає контролером Ditsmod завдяки декоратору `Controller`:
+Контролери призначаються для прийому HTTP-запитів та відправки HTTP-відповідей. TypeScript клас стає контролером Ditsmod завдяки декоратору `controller`:
 
 ```ts
-import { Controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class SomeController {}
 ```
 
-Файли контролерів рекомендується називати із закінченням `*.controller.ts`, а імена їхніх класів - із закінченням `*Controller`.
+Файли контролерів рекомендується називати із закінченням `*.controller.ts`, а імена їхніх класів - із закінченням `*controller`.
 
 <!--
-Загалом, в декоратор `Controller` можна передавати об'єкт із такими властивостями:
+Загалом, в декоратор `controller` можна передавати об'єкт із такими властивостями:
 
 ```ts
-import { Controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 
-@Controller({
+@controller({
   providersPerRou: [], // Провайдери на рівні роута
   providersPerReq: [] // Провайдери на рівні запиту
 })
@@ -34,9 +34,9 @@ export class SomeController {}
 HTTP-запити прив'язуються до методів контролерів через систему маршрутизації, з використанням декоратора `Route`. В наступному прикладі створено два маршрути, що приймають `GET` запити за адресами `/hello` та `/throw-error`:
 
 ```ts
-import { Controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, Route } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class SomeController {
   constructor(private res: Res) {}
 
@@ -66,9 +66,9 @@ export class SomeController {
 Щоб використовувати `pathParams`, `queryParams` чи `body`, у конструкторі контролера необхідно запитати інстанс класу `Req`:
 
 ```ts
-import { Controller, Req, Res, Route } from '@ditsmod/core';
+import { controller, Req, Res, Route } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class SomeController {
   constructor(private req: Req, private res: Res) {}
 
@@ -97,11 +97,11 @@ export class SomeController {
 Прив'язується контролер до модуля через масив `controllers`:
 
 ```ts {6}
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { SomeController } from './some.controller';
 
-@Module({
+@featureModule({
   controllers: [SomeController]
 })
 export class SomeModule {}
@@ -110,11 +110,11 @@ export class SomeModule {}
 Після прив'язки контролерів до модуля, щоб Ditsmod брав до уваги ці контролери, даний модуль потрібно імпортувати в об'єкті, що має інтерфейс `ModuleWithParams`:
 
 ```ts {7}
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { SomeModule } from './some.module';
 
-@Module({
+@featureModule({
   imports: [
     { path: '', module: SomeModule }
   ]

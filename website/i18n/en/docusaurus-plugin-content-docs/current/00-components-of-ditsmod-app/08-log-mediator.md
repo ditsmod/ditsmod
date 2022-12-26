@@ -104,7 +104,7 @@ export class AppModule {}
 
 In this case, the first element of the array `providersPerApp` will allow using `MyLogMediator` in the Ditsmod core code, the second element - will allow requesting the instance of `MyLogMediator` in the constructors of controllers or services of your application.
 
-## Module-level substitute of LogMediator
+## featureModule-level substitute of LogMediator
 
 As mentioned at the beginning, if you plan to publish your module to other users, it is recommended to use `LogMediator` instead of `Logger`. In this case, users will be able to change the messages written by your module, as well as filter them.
 
@@ -113,14 +113,14 @@ In this example, `SomeModule` has `SomeService`, which uses `SomeLogMediator`. Y
 To change messages from an external service, `SomeLogMediator` has been extended in `OtherModule` and the method that works in `SomeService` has been overrided. After that, `SomeLogMediator` was substituted to `OtherLogMediator`:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { SomeModule } from '../some/some.module';
 import { SomeLogMediator } from '../some/some-log-mediator';
 import { OtherController } from './other.controller';
 import { OtherLogMediator } from './other-log-mediator';
 
-@Module({
+@featureModule({
   imports: [SomeModule],
   controllers: [OtherController],
   providersPerMod: [{ token: SomeLogMediator, useClass: OtherLogMediator }],

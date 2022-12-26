@@ -144,11 +144,11 @@ The preceding code shows the definition of the provider object type, there a tok
 Most often, providers are transferred to the DI registry via module metadata. In the following example, `SomeService` is passed into the `providersPerMod` array:
 
 ```ts {7}
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
 
-@Module({
+@featureModule({
   providersPerMod: [
     SomeService
   ],
@@ -159,11 +159,11 @@ export class SomeModule {}
 After such transfer, consumers of providers can use `SomeService` within `SomeModule`. The identical result will be if we transfer the same provider in the object format:
 
 ```ts {7}
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
 
-@Module({
+@featureModule({
   providersPerMod: [
     { token: SomeService, useClass: SomeService }
   ],
@@ -174,7 +174,7 @@ export class SomeModule {}
 And now let's pass another provider in the controller metadata with the same token:
 
 ```ts {3}
-@Controller({
+@controller({
   providersPerReq: [
     { token: SomeService, useClass: OtherService }
   ]
@@ -203,7 +203,7 @@ And in a certain module, we replace `ConfigService` with an arbitrary value:
 
 ```ts {4}
 // ...
-@Module({
+@featureModule({
   providersPerMod: [
     { token: ConfigService, useValue: { propery1: 'some value' } }
   ],
@@ -330,12 +330,12 @@ You can find these property names either in the controller metadata or in the mo
 Unlike a controller, the injector of a certain service can be at any level: at the application, module, route, or request level. In practice, this means that the provider for this service is transferred to one (or several) of the above-mentioned arrays. For example, in the following example `SomeService` is passed to the injector at the request level and `OtherService` - at the module level:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
 import { OtherService } from './other.service';
 
-@Module({
+@featureModule({
   providersPerMod: [OtherService],
   providersPerReq: [SomeService],
 })

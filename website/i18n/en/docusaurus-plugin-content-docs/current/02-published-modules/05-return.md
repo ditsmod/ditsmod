@@ -8,9 +8,9 @@ title: Return listener
 The `@ditsmod/return` module allows you to send an HTTP response using the `return` operator within a method that binds to a specific route:
 
 ```ts
-import { Controller, Route } from '@ditsmod/core';
+import { controller, Route } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class HelloWorldController {
   @Route('GET')
   async tellHello() {
@@ -56,9 +56,9 @@ As you can see, in addition to importing, the `ReturnModule` is also exported in
 By default, the interceptor in the `@ditsmod/return` module automatically substitutes the 201 status for requests with the `POST` HTTP method, the 204 - for `OPTIONS`, and the 200 status - for the rest. If you need to change this behavior, you should use the standard mechanism (without using the `return` statement):
 
 ```ts
-import { Controller, Res, Route, Status } from '@ditsmod/core';
+import { controller, Res, Route, Status } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class UsersController {
   constructor(private res: Res) {}
 

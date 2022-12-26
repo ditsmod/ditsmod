@@ -18,12 +18,12 @@ sidebar_position: 0
 - сервіси, де описується бізнес логіка застосунку;
 - інші класи, інтерфейси, хелпери, типи даних, що призначаються для роботи поточного модуля.
 
-TypeScript клас стає модулем Ditsmod завдяки декоратору `Module`:
+TypeScript клас стає модулем Ditsmod завдяки декоратору `featureModule`:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
-@Module()
+@featureModule()
 export class SomeModule {}
 ```
 
@@ -42,12 +42,12 @@ export class SomeModule {}
 
 Декоратори дозволяють декларативно описувати структуру застосунку, а тому можна легко проглядати що належить модулю, а також зв'язки одних модулів з іншими.
 
-Загалом, в декоратор `Module` можна передавати об'єкт з такими властивостями:
+Загалом, в декоратор `featureModule` можна передавати об'єкт з такими властивостями:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
-@Module({
+@featureModule({
   appends: [], // Прикріплені модулі (вони потрібні лише для успадкування префікса у поточного модуля)
   imports: [], // Імпорт модулів
   controllers: [], // Прив'язка контролерів до модуля

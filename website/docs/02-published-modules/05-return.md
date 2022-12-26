@@ -8,9 +8,9 @@ title: Слухач return
 Модуль `@ditsmod/return` дозволяє відправляти HTTP-відповідь за допомогою оператора `return` у межах метода, що прив'язується до конкретного роута:
 
 ```ts
-import { Controller, Route } from '@ditsmod/core';
+import { controller, Route } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class HelloWorldController {
   @Route('GET')
   async tellHello() {
@@ -56,9 +56,9 @@ export class AppModule {}
 По дефолту, інтерсептор в модулі `@ditsmod/return` автоматично підставляє 201-ий статус для запитів з HTTP-методом `POST`, 204-ий - для `OPTIONS`, і 200-ий статус - для решти. Якщо вам потрібно змінити цю поведінку, варто використовувати стандартний механізм (без використання оператора `return`):
 
 ```ts
-import { Controller, Res, Route, Status } from '@ditsmod/core';
+import { controller, Res, Route, Status } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class UsersController {
   constructor(private res: Res) {}
 

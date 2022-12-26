@@ -20,10 +20,10 @@ yarn add @ditsmod/cors
 Модуль може працювати з дефолтними налаштуваннями зразу після імпорту:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 import { CorsModule } from '@ditsmod/cors';
 
-@Module({
+@featureModule({
   imports: [
     CorsModule,
     // ...
@@ -63,10 +63,10 @@ curl -isS localhost:3000/credentials
 Якщо ви хочете змінити дефолтні налаштування, при імпорті можете передати деякі опції, які будуть братись до уваги на рівні модуля:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 import { CorsModule } from '@ditsmod/cors';
 
-@Module({
+@featureModule({
   imports: [
     CorsModule.withParams({ origin: 'https://example.com' }),
     // ...
@@ -79,10 +79,10 @@ export class SomeModule {}
 Також є можливість передати CORS-опції на рівні роуту:
 
 ```ts
-import { Module, Providers } from '@ditsmod/core';
+import { featureModule, Providers } from '@ditsmod/core';
 import { CorsModule, CorsOpts } from '@ditsmod/cors';
 
-@Module({
+@featureModule({
   imports: [
     CorsModule,
     // ...
@@ -102,10 +102,10 @@ export class SomeModule {}
 Коли вам потрібно щоб CORS HTTP-відповідь містила куки, і ці куки приймались веб-браузерами, можна скористатись `CorsService`:
 
 ```ts
-import { Controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, Route } from '@ditsmod/core';
 import { CorsService } from '@ditsmod/cors';
 
-@Controller()
+@controller()
 export class SomeController {
   constructor(private res: Res, private corsService: CorsService) {}
 

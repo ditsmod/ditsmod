@@ -46,11 +46,11 @@ export class AuthGuard implements CanActivate {
 Ґарди передаються в масиві у третьому параметрі декоратора `Route`:
 
 ```ts
-import { Controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, Route } from '@ditsmod/core';
 
 import { AuthGuard } from './auth.guard';
 
-@Controller()
+@controller()
 export class SomeController {
   constructor(private res: Res) {}
 
@@ -68,12 +68,12 @@ export class SomeController {
 Давайте розглянемо такий приклад:
 
 ```ts
-import { Controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, Route } from '@ditsmod/core';
 
 import { PermissionsGuard } from './permissions.guard';
 import { Permission } from './permission';
 
-@Controller()
+@controller()
 export class SomeController {
   constructor(private res: Res) {}
 
@@ -112,11 +112,11 @@ export class PermissionsGuard implements CanActivate {
 Ґарди передаються в DI лише для інжекторів на рівні запиту. Це можна зробити або в контролері, або у модулі:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { AuthGuard } from 'auth.guard';
 
-@Module({
+@featureModule({
   providersPerReq: [AuthGuard],
 })
 export class SomeModule {}
@@ -127,13 +127,13 @@ export class SomeModule {}
 Можна також централізовано підключати ґарди на рівні модуля:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { OtherModule } from '../other/other.module';
 import { AuthModule } from '../auth/auth.module';
 import { AuthGuard } from '../auth/auth.guard';
 
-@Module({
+@featureModule({
   imports: [
     AuthModule,
     { path: 'some-path', module: OtherModule, guards: [AuthGuard] }

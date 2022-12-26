@@ -18,16 +18,16 @@ Modules can contain:
 - services where the business logic of the application is described;
 - other classes, interfaces, helpers, data types intended for the operation of the current module.
 
-The TypeScript class becomes a Ditsmod module with `Module` decorator:
+The TypeScript class becomes a Ditsmod module with `featureModule` decorator:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
-@Module()
+@featureModule()
 export class SomeModule {}
 ```
 
-It is recommended that module files end with `*.module.ts` and that their class names end with `*Module`.
+It is recommended that module files end with `*.module.ts` and that their class names end with `*featureModule`.
 
 Ditsmod uses several decorators. But why decorators? Because they allow to scan classes. Thanks to decorators, you can programmatically recognize:
 - what conventional role is assigned to a certain class (role of module, controller, service, etc.);
@@ -42,17 +42,17 @@ The class roles mentioned here - module, controller, service - are conventions (
 
 Decorators allow you to declaratively describe the structure of the application, and therefore you can easily see what belongs to the module, as well as the connections of some modules with others.
 
-In general, an object with the following properties can be passed to the `Module` decorator:
+In general, an object with the following properties can be passed to the `featureModule` decorator:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
-@Module({
+@featureModule({
   appends: [], // Appended modules (these are only needed to inherit the path prefix from the current module)
   imports: [], // Import modules
   controllers: [], // Binding controllers to the module
   providersPerApp: [], // Application-level providers
-  providersPerMod: [], // Module-level providers
+  providersPerMod: [], // featureModule-level providers
   providersPerRou: [], // Route-level providers
   providersPerReq: [], // Request-level providers
   exports: [], // Export modules and providers from the current module

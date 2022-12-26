@@ -18,10 +18,10 @@ yarn add @ditsmod/openapi
 Щоб створювати окремі маршрути, користуйтесь декоратором `OasRoute`, в якому четвертим або третім параметром (якщо немає ґардів) йде так званий [Operation Object][1]:
 
 ```ts
-import { Controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 import { OasRoute } from '@ditsmod/openapi';
 
-@Controller()
+@controller()
 export class SomeController {
   // ...
   @OasRoute('GET', 'users/:username', {
@@ -50,10 +50,10 @@ Ditsmod має хорошу підтримку TypeScript-моделей для 
 В наступному прикладі за допомогою хелпера `getParams()` записано майже усе те, що у попередньому прикладі ми прописали вручну для `parameters`:
 
 ```ts
-import { Controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 import { OasRoute, getParams } from '@ditsmod/openapi';
 
-@Controller()
+@controller()
 export class SomeController {
   // ...
   @OasRoute('GET', 'users/:username', {
@@ -140,12 +140,12 @@ export class Model2 {
 Хелпер `getParams()` дозволяє використовувати моделі, і якщо ви зробите помилку у назві параметра, TypeScript скаже вам про це:
 
 ```ts
-import { Controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 import { OasRoute, getParams } from '@ditsmod/openapi';
 
 import { Params } from './params';
 
-@Controller()
+@controller()
 export class SomeController {
   // ...
   @OasRoute('GET', '', {
@@ -160,12 +160,12 @@ export class SomeController {
 Але хелпер `getParams()` не призначений щоб його використовували одночасно для обов'язкових та необов'язкових параметрів. Також через нього не можна передавати опис параметрів, який відрізняється від опису параметрів у моделі параметрів. Для таких цілей можна скористатись іншим хелпером - `Parameters`:
 
 ```ts
-import { Controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 import { OasRoute, Parameters } from '@ditsmod/openapi';
 
 import { Params } from './params';
 
-@Controller()
+@controller()
 export class SomeController {
   // ...
   @OasRoute('GET', '', {
@@ -212,12 +212,12 @@ class SomeController {
 Для опису контента в `requestBody` та `responses` існує також хелпер `getContent()`:
 
 ```ts
-import { Controller, Status } from '@ditsmod/core';
+import { controller, Status } from '@ditsmod/core';
 import { OasRoute, getContent } from '@ditsmod/openapi';
 
 import { SomeModel } from './some-model';
 
-@Controller()
+@controller()
 export class SomeController {
   // ...
   @OasRoute('POST', '', {
@@ -235,12 +235,12 @@ export class SomeController {
 Хелпер `getContent()` приймає скорочену версію даних, коли потрібно описати єдиний варіант `mediaType`. Якщо ж вам потрібно описати більшу кількість `mediaType`, можна скористатись класом `Content`:
 
 ```ts
-import { Controller, Status } from '@ditsmod/core';
+import { controller, Status } from '@ditsmod/core';
 import { OasRoute, Content } from '@ditsmod/openapi';
 
 import { SomeModel } from '@models/some';
 
-@Controller()
+@controller()
 export class SomeController {
   // ...
   @OasRoute('GET', '', {
@@ -267,7 +267,7 @@ export class SomeController {
 ```ts
 import { OasOptions } from '@ditsmod/openapi';
 
-@Module({
+@featureModule({
   // ...
   extensionsMeta: {
     oasOptions: {
@@ -329,10 +329,10 @@ interface OasGuardMetadata {
 Використовуються такі ґарди точно так само, як і "звичайні" ґарди:
 
 ```ts
-import { Controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 import { OasRoute } from '@ditsmod/openapi';
 
-@Controller()
+@controller()
 export class SomeController {
   // ...
   @OasRoute('GET', 'users/:username', [BasicGuard])

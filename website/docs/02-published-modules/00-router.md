@@ -62,11 +62,11 @@ export class AppModule {}
 Якщо ви хочете інтегрувати кастомний роутер для застосунку Ditsmod, достатньо щоб ваш роутер імплементував вищезазначений інтерфейс `Router`, після чого його можна додавати в провайдери на рівні застосунку:
 
 ```ts
-import { Module, Router } from '@ditsmod/core';
+import { featureModule, Router } from '@ditsmod/core';
 
 import { MyRouter } from './my-router';
 
-@Module({
+@featureModule({
   providersPerApp: [{ token: Router, useClass: MyRouter }],
 })
 export class MyCustomRouterModule {}

@@ -6,24 +6,24 @@ sidebar_position: 1
 
 ## What is a controller
 
-The controllers are intended to receive HTTP requests and send HTTP responses. The TypeScript class becomes a Ditsmod controller with `Controller` decorator:
+The controllers are intended to receive HTTP requests and send HTTP responses. The TypeScript class becomes a Ditsmod controller with `controller` decorator:
 
 ```ts
-import { Controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class SomeController {}
 ```
 
-It is recommended that files of controllers end with `*.controller.ts` and that their class names end with `*Controller`.
+It is recommended that files of controllers end with `*.controller.ts` and that their class names end with `*controller`.
 
 <!--
-In general, you can transfer an object with the following properties to the `Controller` decorator:
+In general, you can transfer an object with the following properties to the `controller` decorator:
 
 ```ts
-import { Controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 
-@Controller({
+@controller({
   providersPerRou: [], // Route-level providers
   providersPerReq: [] // Request-level providers
 })
@@ -34,9 +34,9 @@ export class SomeController {}
 The HTTP requests are tied to the methods of controllers through the routing system, using the decorator `Route`. The following example creates two routes that accept `GET` requests to `/hello` and `/throw-error`:
 
 ```ts
-import { Controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, Route } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class SomeController {
   constructor(private res: Res) {}
 
@@ -66,9 +66,9 @@ The access modifier in the constructor can be any (private, protected or public)
 To use `pathParams`, `queryParams` or `body`, you should ask the `Req` in the controller constructor:
 
 ```ts
-import { Controller, Req, Res, Route } from '@ditsmod/core';
+import { controller, Req, Res, Route } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class SomeController {
   constructor(private req: Req, private res: Res) {}
 
@@ -97,11 +97,11 @@ This example does not show, but remember that the native Node.js request object 
 The controller is bound to the module through an array of `controllers`:
 
 ```ts {6}
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { SomeController } from './some.controller';
 
-@Module({
+@featureModule({
   controllers: [SomeController]
 })
 export class SomeModule {}
@@ -110,11 +110,11 @@ export class SomeModule {}
 After binding the controllers to the module, in order for Ditsmod to take these controllers into account, this module must be imported within an object with the `ModuleWithParams` interface:
 
 ```ts {7}
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { SomeModule } from './some.module';
 
-@Module({
+@featureModule({
   imports: [
     { path: '', module: SomeModule }
   ]

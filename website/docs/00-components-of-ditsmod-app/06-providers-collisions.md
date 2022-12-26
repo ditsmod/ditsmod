@@ -26,7 +26,7 @@ sidebar_position: 6
 import { Module2 } from './module2';
 import { Module3, Service3 } from './module3';
 
-@Module({
+@featureModule({
   imports: [Module2, Module3],
   resolvedCollisionsPerReq: [ [Service3, Module3] ]
 })

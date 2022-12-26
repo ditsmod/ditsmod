@@ -144,11 +144,11 @@ type Provider = { token: any, useClass: Type<any>, multi?: boolean } |
 Частіше за все провайдери передаються в реєстр DI через метадані модулів. В наступному прикладі `SomeService` передається в масив `providersPerMod`:
 
 ```ts {7}
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
 
-@Module({
+@featureModule({
   providersPerMod: [
     SomeService
   ],
@@ -159,11 +159,11 @@ export class SomeModule {}
 Після такої передачі, споживачі провайдерів можуть використовувати `SomeService` в межах `SomeModule`. Ідентичний результат буде, якщо ми цей же провайдер передамо у форматі об'єкта:
 
 ```ts {7}
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
 
-@Module({
+@featureModule({
   providersPerMod: [
     { token: SomeService, useClass: SomeService }
   ],
@@ -174,7 +174,7 @@ export class SomeModule {}
 І тепер давайте з цим же токеном передамо інший провайдер у метадані контролера:
 
 ```ts {3}
-@Controller({
+@controller({
   providersPerReq: [
     { token: SomeService, useClass: OtherService }
   ]
@@ -203,7 +203,7 @@ export class AppModule {}
 
 ```ts {4}
 // ...
-@Module({
+@featureModule({
   providersPerMod: [
     { token: ConfigService, useValue: { propery1: 'some value' } }
   ],
@@ -330,12 +330,12 @@ parent.get(Service2) === child.get(Service2); // false
 На відміну від контролера, інжектор певного сервіса може бути на будь-якому рівні: на рівні застосунку, модуля, роуту, чи запиту. На практиці це означає, що провайдер для даного сервіса передається в один (або в декілька) із вищезазначених масивів. Наприклад, в наступному прикладі `SomeService` передається інжектору на рівні запиту, а `OtherService` - на рівні модуля:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
 import { OtherService } from './other.service';
 
-@Module({
+@featureModule({
   providersPerMod: [OtherService],
   providersPerReq: [SomeService],
 })

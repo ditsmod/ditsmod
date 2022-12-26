@@ -62,11 +62,11 @@ export class AppModule {}
 If you want to integrate a custom router for the Ditsmod application, it is enough for your router to implement the above `Router` interface, after which it can be added to the providers at the application level:
 
 ```ts
-import { Module, Router } from '@ditsmod/core';
+import { featureModule, Router } from '@ditsmod/core';
 
 import { MyRouter } from './my-router';
 
-@Module({
+@featureModule({
   providersPerApp: [{ token: Router, useClass: MyRouter }],
 })
 export class MyCustomRouterModule {}

@@ -104,12 +104,12 @@ const logger = createLogger({ name: 'bunyan-test' });
 Повертаємось до нашого попереднього (правильного) налаштування, коли інстанс `bunyan` може видаватись як по токену `Logger`, так і по токену `BunyanLogger`. Тепер нам залишилось зробити сумісність інстансу `bunyan` з інтерфейсом класу `Logger`, тобто до інстансу `bunyan` потрібно додати методи `log()`, `getLevel()` та `setLevel()`. Це краще зробити в окремій функції `patchLogger()`, яку потім можна буде передати до DI:
 
 ```ts
-import { Logger, LoggerConfig, Module } from '@ditsmod/core';
+import { Logger, LoggerConfig, featureModule } from '@ditsmod/core';
 import BunyanLogger from 'bunyan';
 
 import { patchLogger } from './patch-logger';
 
-@Module({
+@featureModule({
   // ...
   providersPerMod: [
     { token: Logger, useFactory: patchLogger, deps: [LoggerConfig] }

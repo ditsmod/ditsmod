@@ -9,12 +9,12 @@ sidebar_position: 3
 By exporting providers from a particular module, you declare that they are available for use in other modules that will import that module:
 
 ```ts {8}
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { FirstService } from './first.service';
 import { SecondService } from './second.service';
 
-@Module({
+@featureModule({
   providersPerMod: [FirstService, SecondService],
   exports: [SecondService],
 })
@@ -58,11 +58,11 @@ In this case, `SomeService` will be added to absolutely all application modules 
 You cannot import a single provider into a Ditsmod module, but you can import an entire module with all the providers and [extensions][2] exported in it:
 
 ```ts {7}
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { FirstModule } from './first.module';
 
-@Module({
+@featureModule({
   imports: [
     FirstModule
   ]
@@ -74,7 +74,7 @@ If `FirstModule` exports, for example, `SomeService`, then this service can now 
 
 ```ts {4}
 // ...
-@Module({
+@featureModule({
   imports: [
     { path: '', module: FirstModule }
   ]
@@ -109,7 +109,7 @@ When importing an object with this type, you can pass a module with certain opti
 
 ```ts {4}
 // ...
-@Module({
+@featureModule({
   imports: [
     { path: '', module: FirstModule }
   ]
@@ -135,7 +135,7 @@ Now the object returned by this method can be imported as follows:
 
 ```ts {4}
 // ...
-@Module({
+@featureModule({
   imports: [
     FirstModule.withPrefix('some-prefix')
   ]
@@ -165,11 +165,11 @@ export class SomeModule {
 If you don't need to import providers and [extensions][2] into the current module, but just append the external module to the prefix of the current module, you can use the `appends` array:
 
 ```ts {6}
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { FirstModule } from './first.module';
 
-@Module({
+@featureModule({
   appends: [FirstModule]
 })
 export class SecondModule {}
@@ -181,7 +181,7 @@ You can also attach an additional prefix to `FirstModule`:
 
 ```ts {3}
 // ...
-@Module({
+@featureModule({
   appends: [{ path: 'some-path', module: FirstModule }]
 })
 export class SecondModule {}
@@ -203,11 +203,11 @@ interface AppendsWithParams<T extends AnyObj = AnyObj> {
 In addition to importing a specific module, the same module can be simultaneously exported:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { FirstModule } from './first.module';
 
-@Module({
+@featureModule({
   imports: [FirstModule],
   exports: [FirstModule],
 })

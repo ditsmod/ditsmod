@@ -18,10 +18,10 @@ yarn add @ditsmod/openapi
 To create individual routes, use the `OasRoute` decorator, in which the fourth or third parameter (if there are no guards) is the so-called [Operation Object][1]:
 
 ```ts
-import { Controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 import { OasRoute } from '@ditsmod/openapi';
 
-@Controller()
+@controller()
 export class SomeController {
   // ...
   @OasRoute('GET', 'users/:username', {
@@ -50,10 +50,10 @@ Ditsmod has good support for TypeScript models for OpenAPI v3.1.0, including Ope
 In the following example, with the helper `getParams()`, almost everything that we wrote manually for `parameters` in the previous example is recorded:
 
 ```ts
-import { Controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 import { OasRoute, getParams } from '@ditsmod/openapi';
 
-@Controller()
+@controller()
 export class SomeController {
   // ...
   @OasRoute('GET', 'users/:username', {
@@ -140,12 +140,12 @@ export class Model2 {
 The `getParams()` helper allows you to use models, and if you make a mistake in a parameter name, TypeScript will tell you about it:
 
 ```ts
-import { Controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 import { OasRoute, getParams } from '@ditsmod/openapi';
 
 import { Params } from './params';
 
-@Controller()
+@controller()
 export class SomeController {
   // ...
   @OasRoute('GET', '', {
@@ -160,12 +160,12 @@ export class SomeController {
 But the helper `getParams()` is not intended to be used simultaneously for mandatory and optional parameters. It also cannot pass a parameter description that differs from the parameter description in the parameter model. For such purposes, you can use another helper - `Parameters`:
 
 ```ts
-import { Controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 import { OasRoute, Parameters } from '@ditsmod/openapi';
 
 import { Params } from './params';
 
-@Controller()
+@controller()
 export class SomeController {
   // ...
   @OasRoute('GET', '', {
@@ -212,12 +212,12 @@ class SomeController {
 To describe the content in `requestBody` and `responses`, there is also a helper `getContent()`:
 
 ```ts
-import { Controller, Status } from '@ditsmod/core';
+import { controller, Status } from '@ditsmod/core';
 import { OasRoute, getContent } from '@ditsmod/openapi';
 
 import { SomeModel } from './some-model';
 
-@Controller()
+@controller()
 export class SomeController {
   // ...
   @OasRoute('POST', '', {
@@ -235,12 +235,12 @@ export class SomeController {
 The `getContent()` helper accepts a shortened version of the data when describing a single `mediaType` variant. If you need to describe a larger number of `mediaType`, you can use the `Content` class:
 
 ```ts
-import { Controller, Status } from '@ditsmod/core';
+import { controller, Status } from '@ditsmod/core';
 import { OasRoute, Content } from '@ditsmod/openapi';
 
 import { SomeModel } from '@models/some';
 
-@Controller()
+@controller()
 export class SomeController {
   // ...
   @OasRoute('GET', '', {
@@ -267,7 +267,7 @@ Tags and parameters can be passed at the module level:
 ```ts
 import { OasOptions } from '@ditsmod/openapi';
 
-@Module({
+@featureModule({
   // ...
   extensionsMeta: {
     oasOptions: {
@@ -326,10 +326,10 @@ Where `securitySchemeObject` is of type [Security Scheme Object][5] and `respons
 This guards are used in exactly the same way as "normal" guards:
 
 ```ts
-import { Controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 import { OasRoute } from '@ditsmod/openapi';
 
-@Controller()
+@controller()
 export class SomeController {
   // ...
   @OasRoute('GET', 'users/:username', [BasicGuard])

@@ -113,14 +113,14 @@ export class AppModule {}
 Щоб змінити повідомлення із зовнішнього сервісу, у `OtherModule` розширено `SomeLogMediator` та переписано той метод, що працює у `SomeService`. Після цього зроблену підміну `SomeLogMediator` на `OtherLogMediator`:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { SomeModule } from '../some/some.module';
 import { SomeLogMediator } from '../some/some-log-mediator';
 import { OtherController } from './other.controller';
 import { OtherLogMediator } from './other-log-mediator';
 
-@Module({
+@featureModule({
   imports: [SomeModule],
   controllers: [OtherController],
   providersPerMod: [{ token: SomeLogMediator, useClass: OtherLogMediator }],

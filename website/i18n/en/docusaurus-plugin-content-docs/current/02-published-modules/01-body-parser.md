@@ -87,9 +87,9 @@ export class AppModule {}
 The result of the interceptor can be obtained in `this.req.body`:
 
 ```ts
-import { Controller, Req, Res, Route } from '@ditsmod/core';
+import { controller, Req, Res, Route } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class SomeController {
   constructor(private req: Req, private res: Res) {}
 

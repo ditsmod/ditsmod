@@ -26,7 +26,7 @@ If `Module3` is declared in your application (it is not imported from `node_modu
 import { Module2 } from './module2';
 import { Module3, Service3 } from './module3';
 
-@Module({
+@featureModule({
   imports: [Module2, Module3],
   resolvedCollisionsPerReq: [ [Service3, Module3] ]
 })

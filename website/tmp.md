@@ -27,11 +27,11 @@ export class BodyParserConfig {
 `BodyParserConfig` вашим власним класом:
 
 ```ts
-import { Module, BodyParserConfig } from '@ditsmod/core';
+import { featureModule, BodyParserConfig } from '@ditsmod/core';
 
 import { MyBodyParserConfig } from './my-body-parser-config';
 
-@Module({
+@featureModule({
   providersPerMod: [{ token: BodyParserConfig, useClass: MyBodyParserConfig }],
 })
 export class SomeModule {}
@@ -98,7 +98,7 @@ this.log.youForgotRegisterExtension('warn', [moduleName, p.provide, p.useClass.n
 - перевірки на колізії глобальних провайдерів;
 - створення інжектора на рівні застосунку;
 - створення інстансів `Logger` та `PreRouter`;
-- перевірки можливості вирішення залежностей для класів з декоратором `@Module`;
+- перевірки можливості вирішення залежностей для класів з декоратором `@featureModule`;
 - створення інстансу `ModuleFactory` та запуску процесу формування модулів Ditsmod;
 - створення інстансів розширень Ditsmod та запуск їхньої ініціалізації.
 
@@ -116,7 +116,7 @@ this.log.youForgotRegisterExtension('warn', [moduleName, p.provide, p.useClass.n
 
 Цей сервіс призначено для:
 
-- сканування та нормалізації метаданих, зібраних із декораторів `@Module` та `@RootModule`;
+- сканування та нормалізації метаданих, зібраних із декораторів `@featureModule` та `@RootModule`;
 - зберігання результату сканування;
 - додавання або видалення певних модулів із масивів імпорту чи експорту інших модулів.
 

@@ -39,10 +39,10 @@ export class AppModule {}
 Використання:
 
 ```ts
-import { Controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, Route } from '@ditsmod/core';
 import { SessionCookie } from '@ditsmod/session-cookie';
 
-@Controller()
+@controller()
 export class HelloWorldController {
   constructor(private session: SessionCookie, private res: Res) {}
 

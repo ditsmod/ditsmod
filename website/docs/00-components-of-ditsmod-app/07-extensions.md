@@ -24,7 +24,7 @@ interface Extension<T> {
 
 Кожне розширення потрібно реєструвати, про це буде згадано пізніше, а зараз припустимо, що така реєстрація відбулася, застосунок запущено, після чого йде наступний процес:
 
-1. збираються метадані з усіх декораторів (`@RootModule`, `@Module`, `@Controller`, `@Route`... і навіть із невідомих декораторів, але при умові, що вони створені за допомогою Ditsmod DI);
+1. збираються метадані з усіх декораторів (`@RootModule`, `@featureModule`, `@controller`, `@Route`... і навіть із невідомих декораторів, але при умові, що вони створені за допомогою Ditsmod DI);
 2. зібрані метадані передаються в DI з токеном `MetadataPerMod1`, отже - будь-яке розширення може отримати ці метадані у себе в конструкторі;
 3. починається по-модульна робота розширень, тобто, для кожного модуля Ditsmod відбираються  розширення, створені у цьому модулі, або імпортовані в цей модуль, їм передаються метадані,  зібрані теж у цьому модулі, і викликаються їхні методи `init()`;
 4. стартує вебсервер, і застосунок починає працювати у звичному режимі, обробляючи HTTP-запити.
@@ -185,11 +185,11 @@ export class ExtensionOptions {
 Властивість `nextToken` використовується, коли вашу групу розширень потрібно запускати перед іншою групою розширень:
 
 ```ts
-import { Module, ROUTES_EXTENSIONS } from '@ditsmod/core';
+import { featureModule, ROUTES_EXTENSIONS } from '@ditsmod/core';
 
 import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
-@Module({
+@featureModule({
   extensions: [
     { extension: MyExtension, groupToken: MY_EXTENSIONS, nextToken: ROUTES_EXTENSIONS, exported: true }
   ],
@@ -202,11 +202,11 @@ export class SomeModule {}
 Якщо ж для вашого розширення не важливо перед якою групою розширень воно працюватиме, можна спростити реєстрацію:
 
 ```ts
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
-@Module({
+@featureModule({
   extensions: [
     { extension: MyExtension, groupToken: MY_EXTENSIONS, exported: true }
   ],

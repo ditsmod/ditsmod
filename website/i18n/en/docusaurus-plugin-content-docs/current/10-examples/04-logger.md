@@ -104,12 +104,12 @@ In this case, within the limits of `BunyanModule`, DI would issue `ConsoleLogger
 Let's go back to our previous (correct) setup where a `bunyan` instance can be issued by both a `Logger` token and a `BunyanLogger` token. Now it remains for us to make the `bunyan` instance compatible with the `Logger` class interface, that is, we need to add `log()`, `getLevel()` and `setLevel()` methods to the `bunyan` instance. This is best done in a separate `patchLogger()` function, which can then be passed to DI:
 
 ```ts
-import { Logger, LoggerConfig, Module } from '@ditsmod/core';
+import { Logger, LoggerConfig, featureModule } from '@ditsmod/core';
 import BunyanLogger from 'bunyan';
 
 import { patchLogger } from './patch-logger';
 
-@Module({
+@featureModule({
   // ...
   providersPerMod: [
     { token: Logger, useFactory: patchLogger, deps: [LoggerConfig] }
