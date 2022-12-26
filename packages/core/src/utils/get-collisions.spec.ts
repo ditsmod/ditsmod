@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
 import { ServiceProvider } from '../types/mix';
 import { getCollisions } from './get-collisions';

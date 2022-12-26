@@ -7,7 +7,6 @@
  */
 
 import { flatten } from './ng-utils';
-import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
 describe('flatten', () => {
   it('should convert undefined to empty array', () => {

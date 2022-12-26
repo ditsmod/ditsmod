@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import { Provider, ReflectiveInjector } from '@ts-stack/di';
-import { it, fit, jest, describe, fdescribe, beforeEach, expect, afterEach } from '@jest/globals';
 
 import { LogItem, LogMediator, OutputLogFilter } from './log-mediator';
 import { ModuleExtract } from '../models/module-extract';

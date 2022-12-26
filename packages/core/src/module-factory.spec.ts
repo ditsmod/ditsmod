@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import { beforeEach, describe, expect, it, fit, xit, fdescribe } from '@jest/globals';
 import { FactoryProvider, injectable, Provider, ReflectiveInjector } from '@ts-stack/di';
 
 import { NODE_REQ } from './constans';

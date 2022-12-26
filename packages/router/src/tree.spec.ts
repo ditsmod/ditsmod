@@ -1,7 +1,5 @@
 import { Tree } from './tree';
 import { RouteParam } from './types';
-import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
-import { RouterLogMediator } from './router-log-mediator';
 
 class TestTree extends Tree {
   printTree(prefix = '') {

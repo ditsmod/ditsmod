@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import { describe, beforeEach, it, expect, jest, afterEach } from '@jest/globals';
 import { ReflectiveInjector } from '@ts-stack/di';
 
 import { ErrorOpts } from '../custom-error/error-opts';

@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import { injectable, ReflectiveInjector } from '@ts-stack/di';
-import { it, describe, beforeEach, xdescribe } from '@jest/globals';
 
 import { controller, ControllerMetadata } from '../decorators/controller';
 import { route } from '../decorators/route';

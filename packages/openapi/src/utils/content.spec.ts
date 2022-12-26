@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import { MediaTypeObject } from '@ts-stack/openapi-spec';
-import { it, fit, xit, describe, expect } from '@jest/globals';
 
 import { property } from '../decorators/property';
 import { Content } from './content';

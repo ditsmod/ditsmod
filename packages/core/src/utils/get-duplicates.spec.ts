@@ -1,5 +1,3 @@
-import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
-
 import { getDuplicates } from './get-duplicates';
 
 describe('getDuplicates()', () => {

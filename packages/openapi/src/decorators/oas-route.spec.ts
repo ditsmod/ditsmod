@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import { inspect } from 'util';
 import { reflector } from '@ts-stack/di';
 import { controller, CanActivate } from '@ditsmod/core';
-import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
 
 import { oasRoute, OasRouteDecoratorMetadata } from './oas-route';
 

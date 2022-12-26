@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { forwardRef, injectable, InjectionToken, makePropDecorator, ValueProvider } from '@ts-stack/di';
 import { reflector } from '@ts-stack/di';
-import { it, fit, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
 import { featureModule } from '../decorators/module';
 import {

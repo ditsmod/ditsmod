@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import { Injector, ReflectiveInjector } from '@ts-stack/di';
-import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
 
 import { DefaultRouter } from './router';
 import { Fn } from './types';

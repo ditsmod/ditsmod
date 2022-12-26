@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import { ParameterObject, ReferenceObject, XParameterObject } from '@ts-stack/openapi-spec';
-import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
 
 import { OpenapiRoutesExtension } from './openapi-routes.extension';
 import { HttpMethod } from '@ditsmod/core';

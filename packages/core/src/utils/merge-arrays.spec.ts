@@ -1,5 +1,4 @@
 import { mergeArrays } from './merge-arrays';
-import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
 describe('mergeArrays()', () => {
   it('should merge with undefined', () => {

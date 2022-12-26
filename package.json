@@ -58,6 +58,7 @@
     "@ts-stack/di": "^2.0.0-beta.3",
     "@types/bunyan": "^1.8.8",
     "@types/eslint": "^8.4.6",
+    "@types/jest": "^29.2.4",
     "@types/node": "^18.11.17",
     "@types/pino": "^7.0.5",
     "@types/supertest": "^2.0.12",

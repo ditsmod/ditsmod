@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import { describe, it, fit, expect, beforeEach } from '@jest/globals';
 
 import { CorsExtension } from './cors.extension';
 

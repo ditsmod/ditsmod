@@ -1,5 +1,4 @@
 import { InjectionToken } from '@ts-stack/di';
-import { it, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
 import { Extension, ExtensionProvider } from '../types/mix';
 import { ExtensionOptions, getExtensionProvider } from './get-extension-provider';

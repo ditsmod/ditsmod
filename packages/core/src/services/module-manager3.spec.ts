@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import { forwardRef } from '@ts-stack/di';
-import { it, fit, describe, beforeEach, expect } from '@jest/globals';
 
 import { rootModule } from '../decorators/root-module';
 import { ModuleManager } from './module-manager';

@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import { beforeEach, describe, expect, it } from '@jest/globals';
 import { injectable } from '@ts-stack/di';
 
 import { ImportsResolver } from './imports-resolver';

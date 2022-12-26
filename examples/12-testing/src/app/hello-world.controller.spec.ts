@@ -1,8 +1,6 @@
 import 'reflect-metadata';
 import { ReflectiveInjector } from '@ts-stack/di';
 import { Res } from '@ditsmod/core';
-import { describe, beforeEach, it, expect } from '@jest/globals';
-
 import { HelloWorldController } from './hello-world.controller';
 import { MyService } from './my.service';
 import { OtherService } from './other.service';

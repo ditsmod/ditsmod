@@ -1,6 +1,5 @@
 import * as jwt from 'jsonwebtoken';
 import { SignOptions, SignPayload } from 'jsonwebtoken';
-import { it, jest, describe, beforeEach, expect, xdescribe, beforeAll, afterEach } from '@jest/globals';
 
 import { JwtService } from './jwt.service';
 import { JwtServiceOptions } from './models/jwt-service-options';
