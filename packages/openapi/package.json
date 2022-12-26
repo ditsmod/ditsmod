@@ -18,7 +18,7 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "gitHead": "ee408df6b7617d0fb8bc6eff301e50f3602bb385",
+  "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172",
   "dependencies": {
     "@ts-stack/openapi-spec": "^3.1.5",
     "buffer": "^6.0.3",

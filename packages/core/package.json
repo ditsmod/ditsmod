@@ -30,5 +30,6 @@
   "peerDependencies": {
     "@ts-stack/chain-error": "^1.2.0",
     "reflect-metadata": "^0.1.13"
-  }
+  },
+  "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }

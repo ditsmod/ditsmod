@@ -22,5 +22,6 @@
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.29.1"
-  }
+  },
+  "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }
