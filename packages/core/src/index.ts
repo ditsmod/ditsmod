@@ -14,6 +14,7 @@ export { ErrorOpts } from './custom-error/error-opts';
 export { controller, ControllerMetadata } from './decorators/controller';
 export { featureModule } from './decorators/module';
 export { rootModule } from './decorators/root-module';
+export { methodFactory } from './decorators/method-factory';
 export { route, RouteMetadata } from './decorators/route';
 export { RoutesExtension } from './extensions/routes.extension';
 export { ExtensionsMetaPerApp } from './models/extensions-meta-per-app';
