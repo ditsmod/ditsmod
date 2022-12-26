@@ -90,7 +90,7 @@ export class CorsExtension implements Extension<void | false> {
       if (sPathWithOptions.has(path)) {
         return;
       }
-      const methodName = 'test';
+      const methodName = Symbol(path);
       const httpMethods = this.registeredPathForOptions.get(path) || [];
       if (httpMethods.length) {
         httpMethods.push(httpMethod);
@@ -121,7 +121,7 @@ export class CorsExtension implements Extension<void | false> {
           { token: ALLOW_METHODS, useValue: httpMethods },
           { token: RouteMeta, useValue: routeMeta },
         ],
-        providersPerReq: [{ useFactory: [DynamicController, DynamicController.prototype[methodName]] }],
+        providersPerReq: [{ useFactory: [DynamicController, (DynamicController.prototype)[methodName]] }],
       };
 
       newArrControllersMetadata2.push(controllersMetadata2);
