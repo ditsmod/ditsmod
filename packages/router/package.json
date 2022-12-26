@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/router",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "homepage": "https://github.com/ditsmod/ditsmod",
   "description": "Router module for Ditsmod applications",
@@ -18,15 +18,6 @@
     "build": "rm -rf dist/* && tsc -b -f",
     "bench": "node --expose-gc dist/bench.js"
   },
-  "devDependencies": {
-    "find-my-way": "^7.3.1",
-    "koa-tree-router": "^0.12.0",
-    "trek-router": "^1.2.0"
-  },
-  "peerDependencies": {
-    "@ts-stack/di": "^2.0.0",
-    "@ditsmod/core": "^2.26.0"
-  },
   "keywords": [
     "router",
     "fast",
@@ -34,5 +25,13 @@
     "tree",
     "typescript"
   ],
-  "gitHead": "ee408df6b7617d0fb8bc6eff301e50f3602bb385"
+  "devDependencies": {
+    "find-my-way": "^7.3.1",
+    "koa-tree-router": "^0.12.0",
+    "trek-router": "^1.2.0"
+  },
+  "peerDependencies": {
+    "@ts-stack/di": "^2.0.0-beta.5",
+    "@ditsmod/core": "^2.29.0"
+  }
 }

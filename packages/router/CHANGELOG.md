@@ -1,5 +1,12 @@
+<a name="router-2.4.0"></a>
+# [router-2.4.0](https://github.com/ditsmod/ditsmod/releases/tag/router-2.4.0) (2022-12-26)
+
+### BREAKING CHANGES
+
+- Migration to core-2.29.0.
+
 <a name="router-2.3.0"></a>
-# [router-2.3.0](https://github.com/ditsmod/ditsmod/releases/tag/router-2.3.0) (2022-10-19)
+## [router-2.3.0](https://github.com/ditsmod/ditsmod/releases/tag/router-2.3.0) (2022-10-19)
 
 ### BREAKING CHANGES
 
