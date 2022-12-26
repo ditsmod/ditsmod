@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/session-cookie",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -22,7 +22,6 @@
     "@ts-stack/cookies": "^1.0.2"
   },
   "peerDependencies": {
-    "@ts-stack/di": "^2.0.0-beta.5",
-    "@ditsmod/core": "^2.29.0"
+    "@ditsmod/core": "^2.29.1"
   }
 }
