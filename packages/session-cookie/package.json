@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
-  "homepage": "https://github.com/ditsmod/ditsmod",
+  "homepage": "https://ditsmod.github.io/en/",
   "description": "REST framework",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "license": "MIT",
