@@ -1,7 +1,7 @@
 <a name="body-parser-2.7.0"></a>
 # [body-parser-2.7.0](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.7.0) (2022-12-26)
 
-### Bug fix
+### Breaking changes
 
 - Migration to `@ts-stack/di` v2.
 
