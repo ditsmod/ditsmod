@@ -6,7 +6,7 @@ import { it, fit, fdescribe, jest, describe, beforeEach, expect, xdescribe } fro
 import { rootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleManager } from './module-manager';
-import { mod } from '../decorators/module';
+import { featureModule } from '../decorators/module';
 import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj, Extension, ExtensionProvider } from '../types/mix';
 import { LoggerConfig } from '../types/logger';
 import { ConsoleLogger } from './console-logger';
@@ -50,7 +50,7 @@ describe('ModuleManager', () => {
       class Provider1 {}
       class Provider2 {}
 
-      @mod({
+      @featureModule({
         providersPerMod: [Provider1, Provider2],
       })
       class Module1 {}
@@ -64,7 +64,7 @@ describe('ModuleManager', () => {
       }
       const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
 
-      @mod({
+      @featureModule({
         extensions: [{ extension: Ext, groupToken: GROUP1_EXTENSIONS, exported: true }],
       })
       class Module1 {}
@@ -78,13 +78,13 @@ describe('ModuleManager', () => {
       @controller()
       class Controller1 {}
 
-      @mod({
+      @featureModule({
         providersPerMod: [Provider1, Provider2],
         controllers: [Controller1],
       })
       class Module1 {}
 
-      @mod({ imports: [Module1] })
+      @featureModule({ imports: [Module1] })
       class Module2 {}
 
       expect(() => mock.scanModule(Module2)).toThrow('Validation Module2 failed: this module should have');
@@ -94,7 +94,7 @@ describe('ModuleManager', () => {
       class Provider1 {}
       class Provider2 {}
 
-      @mod({
+      @featureModule({
         exports: [Provider1],
         providersPerMod: [Provider1, Provider2],
       })
@@ -107,7 +107,7 @@ describe('ModuleManager', () => {
       class Provider1 {}
       class Provider2 {}
 
-      @mod({
+      @featureModule({
         controllers: [Provider1],
         providersPerMod: [Provider1, Provider2],
       })
@@ -139,16 +139,16 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider1 {}
 
-    @mod({ providersPerApp: [Provider1], imports: [forwardRef(() => Module3)] })
+    @featureModule({ providersPerApp: [Provider1], imports: [forwardRef(() => Module3)] })
     class Module1 {}
 
-    @mod({ imports: [Module1], controllers: [Controller1] })
+    @featureModule({ imports: [Module1], controllers: [Controller1] })
     class Module2 {}
 
-    @mod({ imports: [Module2], controllers: [Controller1] })
+    @featureModule({ imports: [Module2], controllers: [Controller1] })
     class Module3 {}
 
-    @mod({ imports: [Module3], controllers: [Controller1] })
+    @featureModule({ imports: [Module3], controllers: [Controller1] })
     class Module4 {}
 
     @rootModule({
@@ -201,7 +201,7 @@ describe('ModuleManager', () => {
   });
 
   it('root module without @RootModule decorator', () => {
-    @mod({})
+    @featureModule({})
     class Module1 {}
 
     expect(() => mock.scanRootModule(Module1)).toThrow('"Module1" does not have the "@RootModule()" decorator');
@@ -219,7 +219,7 @@ describe('ModuleManager', () => {
   it('module reexported another module without @Module decorator', () => {
     class Module1 {}
 
-    @mod({ imports: [Module1], exports: [Module1] })
+    @featureModule({ imports: [Module1], exports: [Module1] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).toThrow(/if "Module1" is a provider, it must be included in/);
@@ -229,10 +229,10 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @mod({ controllers: [Controller1] })
+    @featureModule({ controllers: [Controller1] })
     class Module1 {}
 
-    @mod({
+    @featureModule({
       imports: [Module1],
       controllers: [Controller1],
       exports: [Module1],
@@ -246,7 +246,7 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @mod({ controllers: [Controller1] })
+    @featureModule({ controllers: [Controller1] })
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
         return {
@@ -257,7 +257,7 @@ describe('ModuleManager', () => {
 
     const moduleWithParams = Module1.withParams();
 
-    @mod({
+    @featureModule({
       imports: [moduleWithParams],
       controllers: [Controller1],
       exports: [moduleWithParams],
@@ -272,7 +272,7 @@ describe('ModuleManager', () => {
 
     const exportedMultiProvidersPerMod = [{ token: Multi, useClass: Multi, multi: true }];
 
-    @mod({ exports: [Multi] })
+    @featureModule({ exports: [Multi] })
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
         return {
@@ -293,7 +293,7 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @mod({ controllers: [Controller1] })
+    @featureModule({ controllers: [Controller1] })
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
         return {
@@ -304,7 +304,7 @@ describe('ModuleManager', () => {
 
     const moduleWithParams = Module1.withParams();
 
-    @mod({
+    @featureModule({
       imports: [moduleWithParams],
       controllers: [Controller1],
       exports: [Module1],
@@ -318,10 +318,10 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @mod({ controllers: [Controller1] })
+    @featureModule({ controllers: [Controller1] })
     class Module1 {}
 
-    @mod({ controllers: [Controller1], exports: [Module1] })
+    @featureModule({ controllers: [Controller1], exports: [Module1] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).toThrow(/Reexport from Module2 failed: Module1 includes in exports/);
@@ -331,7 +331,7 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider1 {}
 
-    @mod({ providersPerApp: [Provider1], exports: [Provider1] })
+    @featureModule({ providersPerApp: [Provider1], exports: [Provider1] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).toThrow(/includes in "providersPerApp" and "exports" of/);
@@ -341,7 +341,7 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider1 {}
 
-    @mod({ providersPerReq: [Provider1], exports: [{ token: Provider1, useClass: Provider1 }] })
+    @featureModule({ providersPerReq: [Provider1], exports: [{ token: Provider1, useClass: Provider1 }] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).toThrow('failed: in "exports" array must be includes tokens only');
@@ -352,7 +352,7 @@ describe('ModuleManager', () => {
     class Extension1 {}
     const TEST_EXTENSIONS = new InjectionToken<Extension<any>>('TEST_EXTENSIONS');
 
-    @mod({ extensions: [{ extension: Extension1 as any, groupToken: TEST_EXTENSIONS, exported: true }] })
+    @featureModule({ extensions: [{ extension: Extension1 as any, groupToken: TEST_EXTENSIONS, exported: true }] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).toThrow('must have init() method');
@@ -365,7 +365,7 @@ describe('ModuleManager', () => {
     }
     const TEST_EXTENSIONS = new InjectionToken<Extension<any>>('TEST_EXTENSIONS');
 
-    @mod({ extensions: [{ extension: Extension1 as any, groupToken: TEST_EXTENSIONS, exported: true }] })
+    @featureModule({ extensions: [{ extension: Extension1 as any, groupToken: TEST_EXTENSIONS, exported: true }] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).not.toThrow();
@@ -376,7 +376,7 @@ describe('ModuleManager', () => {
     class Controller1 {}
 
     const fn = () => module4WithParams;
-    @mod({ id: '1', imports: [forwardRef(fn)], controllers: [Controller1] })
+    @featureModule({ id: '1', imports: [forwardRef(fn)], controllers: [Controller1] })
     class Module1 {}
 
     @injectable()
@@ -385,7 +385,7 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider1 {}
 
-    @mod({
+    @featureModule({
       imports: [Module1],
       providersPerMod: [Provider0],
       providersPerRou: [Provider1],
@@ -393,7 +393,7 @@ describe('ModuleManager', () => {
     })
     class Module2 {}
 
-    @mod({ controllers: [Controller1] })
+    @featureModule({ controllers: [Controller1] })
     class Module4 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module4> {
         return {
@@ -479,13 +479,13 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    @mod({ controllers: [Controller1] })
+    @featureModule({ controllers: [Controller1] })
     class Module1 {}
 
-    @mod({ controllers: [Controller1] })
+    @featureModule({ controllers: [Controller1] })
     class Module2 {}
 
-    @mod({ controllers: [Controller1] })
+    @featureModule({ controllers: [Controller1] })
     class Module3 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module3> {
         return {
@@ -495,7 +495,7 @@ describe('ModuleManager', () => {
       }
     }
 
-    @mod({ controllers: [Controller1] })
+    @featureModule({ controllers: [Controller1] })
     class Module4 {}
 
     @injectable()
@@ -610,16 +610,16 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @mod({ controllers: [Controller1] })
+    @featureModule({ controllers: [Controller1] })
     class Module0 {}
 
-    @mod({ controllers: [Controller1], imports: [Module0] })
+    @featureModule({ controllers: [Controller1], imports: [Module0] })
     class Module1 {}
 
-    @mod({ controllers: [Controller1], imports: [Module0] })
+    @featureModule({ controllers: [Controller1], imports: [Module0] })
     class Module2 {}
 
-    @mod({ controllers: [Controller1] })
+    @featureModule({ controllers: [Controller1] })
     class Module3 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module3> {
         return {
@@ -635,7 +635,7 @@ describe('ModuleManager', () => {
     const module3WithProviders = Module3.withParams([Provider2]);
 
     const moduleId = 'my-mix';
-    @mod({ controllers: [Controller1] })
+    @featureModule({ controllers: [Controller1] })
     class Module4 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module4> {
         return {
@@ -778,7 +778,7 @@ describe('ModuleManager', () => {
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
     const extensionsProviders: ExtensionProvider[] = [{ token: GROUP_EXTENSIONS, useClass: Extension1, multi: true }];
 
-    @mod({
+    @featureModule({
       extensions: [{ extension: Extension1 as any, groupToken: GROUP_EXTENSIONS, exported: true }],
     })
     class Module1 {}
@@ -817,7 +817,7 @@ describe('ModuleManager', () => {
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
     const extensionsProviders: ExtensionProvider[] = [{ token: GROUP_EXTENSIONS, useClass: Extension1, multi: true }];
 
-    @mod({
+    @featureModule({
       extensions: [{ extension: Extension1 as any, groupToken: GROUP_EXTENSIONS, exported: true }],
     })
     class Module1 {}
@@ -886,7 +886,7 @@ describe('ModuleManager', () => {
       Provider3,
     ];
 
-    @mod({
+    @featureModule({
       providersPerReq,
       exports: [Provider2, Provider1, Provider3],
     })

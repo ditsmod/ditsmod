@@ -1,11 +1,11 @@
-import { mod, ModuleWithParams, PRE_ROUTER_EXTENSIONS, Providers } from '@ditsmod/core';
+import { featureModule, ModuleWithParams, PRE_ROUTER_EXTENSIONS, Providers } from '@ditsmod/core';
 import { CorsOptions as CorsOpts } from '@ts-stack/cors';
 
 import { CORS_EXTENSIONS } from './constans';
 import { CorsExtension } from './cors.extension';
 import { CorsService } from './cors.service';
 
-@mod({
+@featureModule({
   providersPerReq: [CorsService],
   exports: [CorsService],
   extensions: [

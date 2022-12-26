@@ -4,7 +4,7 @@ import { FactoryProvider, injectable, Provider, ReflectiveInjector } from '@ts-s
 
 import { NODE_REQ } from './constans';
 import { controller, ControllerMetadata } from './decorators/controller';
-import { mod } from './decorators/module';
+import { featureModule } from './decorators/module';
 import { rootModule } from './decorators/root-module';
 import { route, RouteMetadata } from './decorators/route';
 import { ModuleExtract } from './models/module-extract';
@@ -85,13 +85,13 @@ describe('ModuleFactory', () => {
       @controller()
       class Controller1 {}
 
-      @mod({ controllers: [Controller1] })
+      @featureModule({ controllers: [Controller1] })
       class Module1 {}
 
-      @mod({ controllers: [Controller1] })
+      @featureModule({ controllers: [Controller1] })
       class Module2 {}
 
-      @mod({
+      @featureModule({
         appends: [Module1, { path: '', module: Module2 }],
         controllers: [Controller1],
       })
@@ -104,10 +104,10 @@ describe('ModuleFactory', () => {
       @controller()
       class Controller1 {}
 
-      @mod({ controllers: [Controller1] })
+      @featureModule({ controllers: [Controller1] })
       class Module1 {}
 
-      @mod({
+      @featureModule({
         imports: [Module1],
         appends: [Module1],
         controllers: [Controller1],
@@ -124,13 +124,13 @@ describe('ModuleFactory', () => {
       @controller()
       class Controller1 {}
 
-      @mod({
+      @featureModule({
         providersPerMod: [Provider1, Provider2],
         exports: [Provider1, Provider2],
       })
       class Module1 {}
 
-      @mod({
+      @featureModule({
         appends: [Module1],
         controllers: [Controller1],
       })
@@ -146,13 +146,13 @@ describe('ModuleFactory', () => {
       @controller()
       class Controller1 {}
 
-      @mod({
+      @featureModule({
         providersPerMod: [Provider1, Provider2],
         exports: [Provider1, Provider2],
       })
       class Module1 {}
 
-      @mod({
+      @featureModule({
         appends: [{ path: '', module: Module1 }],
         controllers: [Controller1],
       })
@@ -168,14 +168,14 @@ describe('ModuleFactory', () => {
       @controller()
       class Controller1 {}
 
-      @mod({
+      @featureModule({
         providersPerMod: [Provider1, Provider2],
         exports: [Provider1, Provider2],
         controllers: [Controller1],
       })
       class Module1 {}
 
-      @mod({
+      @featureModule({
         appends: [Module1],
         controllers: [Controller1],
       })
@@ -189,12 +189,12 @@ describe('ModuleFactory', () => {
     it('forbidden reexports providers', () => {
       class Provider1 {}
 
-      @mod({
+      @featureModule({
         providersPerReq: [Provider1],
       })
       class Module1 {}
 
-      @mod({
+      @featureModule({
         imports: [Module1],
         exports: [Provider1],
       })
@@ -213,13 +213,13 @@ describe('ModuleFactory', () => {
     it('allow reexports module', () => {
       class Provider1 {}
 
-      @mod({
+      @featureModule({
         providersPerReq: [Provider1],
         exports: [Provider1],
       })
       class Module1 {}
 
-      @mod({
+      @featureModule({
         imports: [Module1],
         exports: [Module1],
       })
@@ -241,13 +241,13 @@ describe('ModuleFactory', () => {
       class Provider1 {}
       class Provider2 {}
 
-      @mod({
+      @featureModule({
         providersPerReq: [Provider1],
         exports: [Provider1],
       })
       class Module1 {}
 
-      @mod({
+      @featureModule({
         providersPerMod: [Provider2],
         imports: [Module1],
         exports: [Provider2, Module1],
@@ -272,13 +272,13 @@ describe('ModuleFactory', () => {
       class Provider3 {}
       class Provider4 {}
 
-      @mod({
+      @featureModule({
         providersPerMod: [Provider1, Provider2],
         exports: [Provider1, Provider2],
       })
       class Module1 {}
 
-      @mod({
+      @featureModule({
         imports: [Module1],
         providersPerMod: [Provider3, Provider4],
         exports: [Module1, Provider3, Provider4],
@@ -309,13 +309,13 @@ describe('ModuleFactory', () => {
       @injectable()
       class Provider3 {}
 
-      @mod({
+      @featureModule({
         providersPerReq: [Provider1],
         exports: [Provider1],
       })
       class Module1 {}
 
-      @mod({
+      @featureModule({
         imports: [Module1],
         providersPerReq: [Provider2],
         exports: [Provider2, Module1],
@@ -361,20 +361,20 @@ describe('ModuleFactory', () => {
     class Provider9 {}
 
     describe('exporting providers order', () => {
-      @mod({
+      @featureModule({
         exports: [Provider0],
         providersPerMod: [Provider0],
       })
       class Module0 {}
 
-      @mod({
+      @featureModule({
         imports: [Module0],
         exports: [Module0, Provider1, Provider2, Provider3],
         providersPerMod: [Provider1, Provider2, Provider3],
       })
       class Module1 {}
 
-      @mod({
+      @featureModule({
         imports: [Module1],
         exports: [Module1, Provider5, Provider8],
         providersPerMod: [Provider4, Provider5, Provider6],
@@ -388,7 +388,7 @@ describe('ModuleFactory', () => {
         method() {}
       }
 
-      @mod({
+      @featureModule({
         imports: [Module2],
         exports: [Module2],
         providersPerReq: [Provider9, overriddenProvider8],
@@ -397,7 +397,7 @@ describe('ModuleFactory', () => {
       class Module3 {}
 
       it('case 0', () => {
-        @mod({ controllers: [Ctrl] })
+        @featureModule({ controllers: [Ctrl] })
         class Module1 {}
 
         @rootModule({
@@ -527,20 +527,20 @@ describe('ModuleFactory', () => {
 
         class Provider3 {}
 
-        @mod({
+        @featureModule({
           providersPerReq: [Provider1],
           exports: [Provider1],
         })
         class Module1 {}
 
-        @mod({
+        @featureModule({
           imports: [Module1],
           providersPerReq: [Provider2],
           exports: [Provider2],
         })
         class Module2 {}
 
-        @mod({
+        @featureModule({
           imports: [Module2],
           providersPerReq: [Provider3],
           controllers: [Ctrl],
@@ -569,7 +569,7 @@ describe('ModuleFactory', () => {
       });
 
       it('should throw an error about not proper provider exports', () => {
-        @mod({
+        @featureModule({
           exports: [Provider1, Provider2, Provider3],
           providersPerMod: [Provider1, Provider3],
         })
@@ -593,13 +593,13 @@ describe('ModuleFactory', () => {
         it('in global providers', () => {
           class Provider1 {}
 
-          @mod({
+          @featureModule({
             providersPerMod: [{ token: Provider1, useValue: 'one' }],
             exports: [Provider1],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             imports: [Module1],
             providersPerMod: [Provider1],
             exports: [Module1, Provider1],
@@ -620,13 +620,13 @@ describe('ModuleFactory', () => {
         it('in AppModule with exported provider, but it has resolvedCollisionsPerMod array', () => {
           class Provider1 {}
 
-          @mod({
+          @featureModule({
             providersPerMod: [{ token: Provider1, useValue: 'one' }],
             exports: [Provider1],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             imports: [Module1],
             providersPerMod: [Provider1],
             exports: [Module1, Provider1],
@@ -650,13 +650,13 @@ describe('ModuleFactory', () => {
         it('identical duplicates but not collision with exported providers', () => {
           class Provider1 {}
 
-          @mod({
+          @featureModule({
             providersPerMod: [{ token: Provider1, useValue: 'one' }],
             exports: [Provider1],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             imports: [Module1],
             providersPerMod: [{ token: Provider1, useValue: 'one' }],
             exports: [Module1, Provider1],
@@ -684,13 +684,13 @@ describe('ModuleFactory', () => {
             method1() {}
           }
 
-          @mod({
+          @featureModule({
             providersPerMod: [Provider1, { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }],
             exports: [Provider1, Provider2],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             imports: [Module1],
             providersPerMod: [Provider2, Provider3],
             exports: [Module1, Provider2, Provider3],
@@ -717,13 +717,13 @@ describe('ModuleFactory', () => {
             method1() {}
           }
 
-          @mod({
+          @featureModule({
             exports: [Provider1],
             providersPerMod: [{ token: Provider1, useClass: Provider1 }, Provider2],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1, Provider2],
             providersPerMod: [Provider1, { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }],
           })
@@ -741,7 +741,7 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1],
             providersPerMod: [
               { token: Provider1, useValue: 'value1 of module1', multi: true },
@@ -751,7 +751,7 @@ describe('ModuleFactory', () => {
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1, Provider2],
             providersPerMod: [
               { token: Provider1, useValue: 'value1 of module2', multi: true },
@@ -799,13 +799,13 @@ describe('ModuleFactory', () => {
         it('should throw an error when resolving multi providers duplicates', () => {
           class Provider1 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1],
             providersPerMod: [{ token: Provider1, useValue: 'value1 of module1', multi: true }],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1],
             providersPerMod: [{ token: Provider1, useValue: 'value1 of module2', multi: true }],
           })
@@ -826,13 +826,13 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1],
             providersPerMod: [{ token: Provider1, useClass: Provider1, multi: true }, Provider2],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1],
             providersPerMod: [{ token: Provider1, useClass: Provider1, multi: true }],
           })
@@ -862,13 +862,13 @@ describe('ModuleFactory', () => {
           }
           const useFactoryProvider2: FactoryProvider = { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] };
 
-          @mod({
+          @featureModule({
             providersPerMod: [Provider1, useFactoryProvider2],
             exports: [Provider1, Provider2],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             imports: [Module1],
             providersPerMod: [Provider2, Provider3],
             exports: [Module1, Provider2, Provider3],
@@ -896,13 +896,13 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1],
             providersPerMod: [Provider1, Provider2],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1, Provider2],
             providersPerMod: [{ token: Provider1, useClass: Provider1 }, Provider2],
           })
@@ -934,19 +934,19 @@ describe('ModuleFactory', () => {
           @controller()
           class SomeController {}
 
-          @mod({
+          @featureModule({
             providersPerMod: [Provider1],
             exports: [Provider1],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             providersPerMod: [{ token: Provider1, useValue: 'one' }],
             exports: [Provider1],
           })
           class Module2 {}
 
-          @mod({
+          @featureModule({
             imports: [Module1, Module2],
             controllers: [SomeController],
             resolvedCollisionsPerMod: [[Provider1, Module1]],
@@ -977,19 +977,19 @@ describe('ModuleFactory', () => {
           @controller()
           class SomeController {}
 
-          @mod({
+          @featureModule({
             providersPerMod: [Provider1],
             exports: [Provider1],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             providersPerMod: [{ token: Provider1, useValue: 'one' }],
             exports: [Provider1],
           })
           class Module2 {}
 
-          @mod({
+          @featureModule({
             imports: [Module1, Module2],
             controllers: [SomeController],
           })
@@ -1012,13 +1012,13 @@ describe('ModuleFactory', () => {
           class Provider2 {}
           class Provider3 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1, Provider2],
             providersPerReq: [{ token: Provider1, useToken: Provider1 }, Provider2],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             imports: [Module1],
             exports: [Module1, Provider2, Provider3],
             providersPerReq: [{ token: Provider2, useClass: Provider2 }, Provider3],
@@ -1040,13 +1040,13 @@ describe('ModuleFactory', () => {
           class Provider2 {}
           class Provider3 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1, Provider2],
             providersPerReq: [{ token: Provider1, useToken: Provider1 }, Provider2],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             imports: [Module1],
             exports: [Module1, Provider2, Provider3],
             providersPerReq: [{ token: Provider2, useClass: Provider2 }, Provider3],
@@ -1074,13 +1074,13 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1],
             providersPerReq: [{ token: Provider1, useClass: Provider1 }, Provider2],
           })
           class Module0 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1, Provider2],
             providersPerReq: [{ token: Provider1, useToken: Provider1 }, Provider2],
           })
@@ -1100,13 +1100,13 @@ describe('ModuleFactory', () => {
           class Provider1 {}
           class Provider2 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1, Provider2],
             providersPerReq: [{ token: Provider1, useClass: Provider2 }, Provider2],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1, Provider2],
             providersPerReq: [
               { token: Provider1, useToken: Provider1 },
@@ -1140,7 +1140,7 @@ describe('ModuleFactory', () => {
         class Provider1 {}
 
         it('case 1', () => {
-          @mod({
+          @featureModule({
             exports: [Provider0],
             providersPerMod: [Provider0],
           })
@@ -1160,7 +1160,7 @@ describe('ModuleFactory', () => {
         });
 
         it('resolved case 1', () => {
-          @mod({
+          @featureModule({
             exports: [Provider1],
             providersPerMod: [{ token: Provider1, useValue: 'fake' }],
           })
@@ -1183,7 +1183,7 @@ describe('ModuleFactory', () => {
         });
 
         it('case 2', () => {
-          @mod({
+          @featureModule({
             exports: [Provider1],
             providersPerReq: [{ token: Provider1, useClass: Provider1 }],
           })
@@ -1202,7 +1202,7 @@ describe('ModuleFactory', () => {
         });
 
         it('resolved case 2', () => {
-          @mod({
+          @featureModule({
             exports: [Provider1],
             providersPerReq: [{ token: Provider1, useClass: Provider1 }],
           })
@@ -1225,13 +1225,13 @@ describe('ModuleFactory', () => {
         });
 
         it('double resolve', () => {
-          @mod({
+          @featureModule({
             exports: [Provider1],
             providersPerReq: [Provider1],
           })
           class Module1 {}
 
-          @mod({
+          @featureModule({
             exports: [Provider1],
             providersPerMod: [{ token: Provider1, useClass: Provider2 }],
           })
@@ -1254,7 +1254,7 @@ describe('ModuleFactory', () => {
         });
 
         it('point to current module to increase scope and to resolve case 2', () => {
-          @mod({
+          @featureModule({
             exports: [Provider1],
             providersPerReq: [{ token: Provider1, useClass: Provider1 }],
           })
@@ -1275,7 +1275,7 @@ describe('ModuleFactory', () => {
         });
 
         it('wrong point to current module', () => {
-          @mod({
+          @featureModule({
             exports: [Provider2],
             providersPerReq: [{ token: Provider2, useClass: Provider1 }],
           })
@@ -1295,7 +1295,7 @@ describe('ModuleFactory', () => {
         });
 
         it('case 3', () => {
-          @mod({
+          @featureModule({
             exports: [Req],
             providersPerReq: [{ token: Req, useClass: Req }],
           })
@@ -1312,7 +1312,7 @@ describe('ModuleFactory', () => {
         });
 
         it('resolve case 3', () => {
-          @mod({
+          @featureModule({
             exports: [Req],
             providersPerReq: [{ token: Req, useClass: Req }],
           })
@@ -1332,7 +1332,7 @@ describe('ModuleFactory', () => {
         });
 
         it('resolve 2 case 3', () => {
-          @mod({
+          @featureModule({
             exports: [Req],
             providersPerReq: [{ token: Req, useClass: Req }],
           })
@@ -1354,7 +1354,7 @@ describe('ModuleFactory', () => {
         });
 
         it('case 4', () => {
-          @mod({
+          @featureModule({
             exports: [NODE_REQ],
             providersPerReq: [{ token: NODE_REQ, useValue: '' }],
           })
@@ -1371,7 +1371,7 @@ describe('ModuleFactory', () => {
         });
 
         it('resolve case 4', () => {
-          @mod({
+          @featureModule({
             exports: [NODE_REQ],
             providersPerReq: [{ token: NODE_REQ, useValue: '' }],
           })
@@ -1391,7 +1391,7 @@ describe('ModuleFactory', () => {
         });
 
         it('resolved case 4', () => {
-          @mod({
+          @featureModule({
             exports: [NODE_REQ],
             providersPerReq: [{ token: NODE_REQ, useValue: '' }],
           })

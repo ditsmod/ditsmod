@@ -3,12 +3,12 @@ import { forwardRef, injectable, InjectionToken, makePropDecorator, ValueProvide
 import { reflector } from '@ts-stack/di';
 import { it, fit, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
-import { mod } from '../decorators/module';
+import { featureModule } from '../decorators/module';
 import {
   isController,
   isInjectionToken,
   isForwardRef,
-  isModule,
+  isFeatureModule,
   isModuleWithParams,
   isNormalizedProvider,
   isProvider,
@@ -26,16 +26,16 @@ import { CanActivate, ServiceProvider, Extension } from '../types/mix';
 describe('type guards', () => {
   describe('isModule()', () => {
     it('class with decorator', () => {
-      @mod({})
+      @featureModule({})
       class Module1 {}
       const metadata = reflector.getClassMetadata(Module1)[0];
-      expect(isModule(metadata)).toBe(true);
+      expect(isFeatureModule(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
       const metadata = reflector.getClassMetadata(Module1)[0];
-      expect(isModule(metadata)).toBe(false);
+      expect(isFeatureModule(metadata)).toBe(false);
     });
   });
 
@@ -93,14 +93,14 @@ describe('type guards', () => {
 
   describe('isModuleWithParams', () => {
     it('module without params', () => {
-      @mod({})
+      @featureModule({})
       class Module1 {}
 
       expect(isModuleWithParams(Module1)).toBe(false);
     });
 
     it('module with params', () => {
-      @mod({})
+      @featureModule({})
       class Module1 {
         static withParams() {
           return {
@@ -117,7 +117,7 @@ describe('type guards', () => {
 
   describe('isProvider()', () => {
     it('should filtered all types of providers', () => {
-      @mod({})
+      @featureModule({})
       class Module1 {}
       @rootModule({})
       class Module2 {}

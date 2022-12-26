@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { forwardRef, injectable } from '@ts-stack/di';
 import { it, fit, jest, describe, beforeEach, expect, xdescribe } from '@jest/globals';
 
-import { mod } from '../decorators/module';
+import { featureModule } from '../decorators/module';
 import { ModuleWithParams, ServiceProvider } from '../types/mix';
 import { getModuleMetadata } from './get-module-metadata';
 
@@ -15,7 +15,7 @@ describe('getModuleMetadata', () => {
   });
 
   it('empty decorator', () => {
-    @mod({})
+    @featureModule({})
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
@@ -23,7 +23,7 @@ describe('getModuleMetadata', () => {
   });
 
   it('@Module() decorator with id', () => {
-    @mod({ id: 'someId' })
+    @featureModule({ id: 'someId' })
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
@@ -31,7 +31,7 @@ describe('getModuleMetadata', () => {
   });
 
   it('decorator with some data', () => {
-    @mod({ controllers: [] })
+    @featureModule({ controllers: [] })
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
@@ -42,7 +42,7 @@ describe('getModuleMetadata', () => {
     @injectable()
     class Provider1 {}
 
-    @mod({})
+    @featureModule({})
     class Module1 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module1> {
         return {
@@ -66,7 +66,7 @@ describe('getModuleMetadata', () => {
     @injectable()
     class Provider1 {}
 
-    @mod({})
+    @featureModule({})
     class Module1 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module1> {
         return {
@@ -91,7 +91,7 @@ describe('getModuleMetadata', () => {
     @injectable()
     class Provider1 {}
 
-    @mod({ id: 'someId' })
+    @featureModule({ id: 'someId' })
     class Module1 {
       static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module1> {
         return {

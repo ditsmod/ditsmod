@@ -3,7 +3,7 @@ import { it, fit, describe, beforeEach, expect } from '@jest/globals';
 
 import { rootModule } from '../decorators/root-module';
 import { ModuleManager } from './module-manager';
-import { mod } from '../decorators/module';
+import { featureModule } from '../decorators/module';
 import { controller } from '../decorators/controller';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { Module1 } from './module-manager2.spec';
@@ -11,10 +11,10 @@ import { Module1 } from './module-manager2.spec';
 @controller()
 class Controller1 {}
 
-@mod({ imports: [Module1], controllers: [Controller1] })
+@featureModule({ imports: [Module1], controllers: [Controller1] })
 class Module2 {}
 
-@mod({ imports: [Module2], controllers: [Controller1] })
+@featureModule({ imports: [Module2], controllers: [Controller1] })
 export class Module3 {}
 
 describe('ModuleManager', () => {
@@ -26,7 +26,7 @@ describe('ModuleManager', () => {
   });
 
   it('circular imports modules', () => {
-    @mod({ imports: [Module3], controllers: [Controller1] })
+    @featureModule({ imports: [Module3], controllers: [Controller1] })
     class Module4 {}
 
     @rootModule({

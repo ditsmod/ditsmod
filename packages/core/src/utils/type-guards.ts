@@ -13,7 +13,7 @@ import {
 } from '@ts-stack/di';
 import { Container, reflector } from '@ts-stack/di';
 
-import { mod } from '../decorators/module';
+import { featureModule } from '../decorators/module';
 import { controller, ControllerMetadata } from '../decorators/controller';
 import { route, RouteMetadata } from '../decorators/route';
 import { rootModule } from '../decorators/root-module';
@@ -35,8 +35,8 @@ export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
   return err instanceof ChainError;
 }
 
-export function isModule(container: AnyObj): container is Container<ModuleMetadata> {
-  return container.factory === mod;
+export function isFeatureModule(container: AnyObj): container is Container<ModuleMetadata> {
+  return container.factory === featureModule;
 }
 
 export function isRootModule(container: AnyObj): container is Container<RootModuleMetadata> {
@@ -105,7 +105,7 @@ export function isProvider(maybeProvider: any): maybeProvider is ServiceProvider
   if (isModuleWithParams(maybeProvider)) {
     return false;
   }
-  const isSomeModule = reflector.getClassMetadata(maybeProvider).some((m) => isRootModule(m) || isModule(m));
+  const isSomeModule = reflector.getClassMetadata(maybeProvider).some((m) => isRootModule(m) || isFeatureModule(m));
   return (maybeProvider instanceof Type && !isSomeModule) || isNormalizedProvider(maybeProvider);
 }
 

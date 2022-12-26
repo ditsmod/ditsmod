@@ -4,14 +4,14 @@ import { ModuleMetadata } from '../types/module-metadata';
 import { ModuleType, ModuleWithParams } from '../types/mix';
 import { getModuleName } from './get-module-name';
 import { mergeArrays } from './merge-arrays';
-import { isForwardRef, isModule, isModuleWithParams, isRootModule } from './type-guards';
+import { isForwardRef, isFeatureModule, isModuleWithParams, isRootModule } from './type-guards';
 import { getLastProviders } from './get-last-providers';
 
 export function getModuleMetadata(
   modOrObj: ModuleType | ModuleWithParams,
   isRoot?: boolean
 ): ModuleMetadata | undefined {
-  const typeGuard = isRoot ? isRootModule : (m: Container) => isModule(m) || isRootModule(m);
+  const typeGuard = isRoot ? isRootModule : (m: Container) => isFeatureModule(m) || isRootModule(m);
 
   if (isForwardRef(modOrObj)) {
     modOrObj = modOrObj();

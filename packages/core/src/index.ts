@@ -12,7 +12,7 @@ export {
 export { CustomError } from './custom-error/custom-error';
 export { ErrorOpts } from './custom-error/error-opts';
 export { controller, ControllerMetadata } from './decorators/controller';
-export { mod } from './decorators/module';
+export { featureModule } from './decorators/module';
 export { rootModule } from './decorators/root-module';
 export { route, RouteMetadata } from './decorators/route';
 export { RoutesExtension } from './extensions/routes.extension';
@@ -70,4 +70,4 @@ export { NormalizedProvider } from './utils/ng-utils';
 export { pickProperties } from './utils/pick-properties';
 export { Providers } from './utils/providers';
 export * from './utils/type-guards';
-export { isModule } from './utils/type-guards';
+export { isFeatureModule } from './utils/type-guards';

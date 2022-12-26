@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { injectable, InjectionToken } from '@ts-stack/di';
 import { fit, it, jest, describe, beforeEach, expect, xdescribe, beforeAll } from '@jest/globals';
 
-import { mod } from '../decorators/module';
+import { featureModule } from '../decorators/module';
 import { rootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { Logger, LogLevel } from '../types/logger';
@@ -77,10 +77,10 @@ describe('AppInitializer', () => {
     it('should throw an error about collision', () => {
       class Provider1 {}
 
-      @mod({ providersPerApp: [{ token: Provider1, useClass: Provider1 }] })
+      @featureModule({ providersPerApp: [{ token: Provider1, useClass: Provider1 }] })
       class Module1 {}
 
-      @mod({ providersPerApp: [Provider1] })
+      @featureModule({ providersPerApp: [Provider1] })
       class Module2 {}
 
       @rootModule({
@@ -97,10 +97,10 @@ describe('AppInitializer', () => {
       class Provider1 {}
       class Provider2 {}
 
-      @mod({ providersPerApp: [{ token: Provider1, useClass: Provider2 }] })
+      @featureModule({ providersPerApp: [{ token: Provider1, useClass: Provider2 }] })
       class Module1 {}
 
-      @mod({ providersPerApp: [Provider1] })
+      @featureModule({ providersPerApp: [Provider1] })
       class Module2 {}
 
       @rootModule({
@@ -119,13 +119,13 @@ describe('AppInitializer', () => {
     it('should throw an error because resolvedCollisionsPerApp not properly setted', () => {
       class Provider1 {}
 
-      @mod({})
+      @featureModule({})
       class Module0 {}
 
-      @mod({ providersPerApp: [{ token: Provider1, useClass: Provider1 }] })
+      @featureModule({ providersPerApp: [{ token: Provider1, useClass: Provider1 }] })
       class Module1 {}
 
-      @mod({ providersPerApp: [Provider1] })
+      @featureModule({ providersPerApp: [Provider1] })
       class Module2 {}
 
       @rootModule({
@@ -143,18 +143,18 @@ describe('AppInitializer', () => {
       class Provider1 {}
       class Provider2 {}
 
-      @mod({
+      @featureModule({
         providersPerMod: [Provider2],
         exports: [Provider2],
       })
       class Module0 {}
 
-      @mod({
+      @featureModule({
         providersPerApp: [{ token: Provider1, useValue: 'value1 of module1', multi: true }],
       })
       class Module1 {}
 
-      @mod({
+      @featureModule({
         providersPerApp: [{ token: Provider1, useValue: 'value1 of module2', multi: true }],
       })
       class Module2 {}
@@ -176,18 +176,18 @@ describe('AppInitializer', () => {
       class Provider1 {}
       class Provider2 {}
 
-      @mod({
+      @featureModule({
         providersPerMod: [Provider2],
         exports: [Provider2],
       })
       class Module0 {}
 
-      @mod({
+      @featureModule({
         providersPerApp: [{ token: Provider1, useValue: 'value1 of module1', multi: true }],
       })
       class Module1 {}
 
-      @mod({
+      @featureModule({
         providersPerApp: [{ token: Provider1, useValue: 'value1 of module2', multi: true }],
       })
       class Module2 {}
@@ -206,16 +206,16 @@ describe('AppInitializer', () => {
       class Provider1 {}
       class Provider2 {}
 
-      @mod({
+      @featureModule({
         providersPerMod: [Provider2],
         exports: [Provider2],
       })
       class Module0 {}
 
-      @mod({ providersPerApp: [{ token: Provider1, useClass: Provider1 }] })
+      @featureModule({ providersPerApp: [{ token: Provider1, useClass: Provider1 }] })
       class Module1 {}
 
-      @mod({ providersPerApp: [Provider1] })
+      @featureModule({ providersPerApp: [Provider1] })
       class Module2 {}
 
       @rootModule({
@@ -232,10 +232,10 @@ describe('AppInitializer', () => {
     it('should works with identical duplicates', () => {
       class Provider1 {}
 
-      @mod({ providersPerApp: [Provider1] })
+      @featureModule({ providersPerApp: [Provider1] })
       class Module1 {}
 
-      @mod({ providersPerApp: [Provider1] })
+      @featureModule({ providersPerApp: [Provider1] })
       class Module2 {}
 
       @rootModule({
@@ -276,19 +276,19 @@ describe('AppInitializer', () => {
     class Provider6 {}
     class Provider7 {}
 
-    @mod({ providersPerApp: [Provider0] })
+    @featureModule({ providersPerApp: [Provider0] })
     class Module0 {}
 
-    @mod({ providersPerApp: [Provider1] })
+    @featureModule({ providersPerApp: [Provider1] })
     class Module1 {}
 
-    @mod({
+    @featureModule({
       providersPerApp: [Provider2, Provider3, Provider4],
       imports: [Module1],
     })
     class Module2 {}
 
-    @mod({
+    @featureModule({
       providersPerApp: [Provider5, Provider6],
       imports: [Module2],
     })
@@ -321,7 +321,7 @@ describe('AppInitializer', () => {
     });
 
     it('should works with moduleWithParams', () => {
-      @mod({})
+      @featureModule({})
       class Module6 {
         static withParams(providers: ServiceProvider[]): ModuleWithParams<Module6> {
           return { module: Module6, providersPerApp: providers };
@@ -337,7 +337,7 @@ describe('AppInitializer', () => {
       @controller()
       class Controller1 {}
 
-      @mod({ controllers: [Controller1] })
+      @featureModule({ controllers: [Controller1] })
       class Module7 {}
 
       const meta = moduleManager.scanModule(Module7);
@@ -361,21 +361,21 @@ describe('AppInitializer', () => {
     @controller()
     class Ctrl {}
 
-    @mod({
+    @featureModule({
       exports: [Provider0],
       providersPerMod: [Provider0],
     })
     class Module0 {}
 
     const obj1 = { token: Provider1, useClass: Provider1 };
-    @mod({
+    @featureModule({
       controllers: [Ctrl],
       providersPerMod: [obj1, Provider2],
       exports: [Provider1],
     })
     class Module1 {}
 
-    @mod({
+    @featureModule({
       providersPerMod: [Provider3, Provider4],
       exports: [Provider3, Provider4],
     })
@@ -385,19 +385,19 @@ describe('AppInitializer', () => {
       }
     }
 
-    @mod({
+    @featureModule({
       providersPerReq: [Provider5, Provider6, Provider7],
       exports: [Provider5, Provider6, Provider7],
     })
     class Module3 {}
 
-    @mod({
+    @featureModule({
       providersPerReq: [Provider8, Provider9],
       exports: [Provider8, Provider9],
     })
     class Module4 {}
 
-    @mod({
+    @featureModule({
       providersPerApp: [{ token: Logger, useValue: 'fake value' }],
     })
     class Module5 {}
@@ -575,7 +575,7 @@ describe('AppInitializer', () => {
     }
     class LogMediatorMock2 extends LogMediator {}
 
-    @mod({ providersPerApp: [{ token: LogMediator, useClass: LogMediatorMock2 }] })
+    @featureModule({ providersPerApp: [{ token: LogMediator, useClass: LogMediatorMock2 }] })
     class Module1 {}
 
     @rootModule({

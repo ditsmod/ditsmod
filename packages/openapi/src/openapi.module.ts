@@ -1,6 +1,6 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
 import {
-  mod,
+  featureModule,
   ModuleWithParams,
   PRE_ROUTER_EXTENSIONS,
   Providers,
@@ -18,7 +18,7 @@ import { SwaggerOAuthOptions } from './swagger-ui/swagger-o-auth-options';
 import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-options';
 import { OpenapiLogMediator } from './services/openapi-log-mediator';
 
-@mod({
+@featureModule({
   controllers: [OpenapiController],
   providersPerApp: [OasConfigFiles],
   providersPerMod: [SwaggerConfigManager, OpenapiLogMediator],

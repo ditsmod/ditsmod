@@ -1,9 +1,9 @@
-import { mod, ModuleWithParams } from '@ditsmod/core';
+import { featureModule, ModuleWithParams } from '@ditsmod/core';
 
 import { JwtService } from './jwt.service';
 import { JwtServiceOptions } from './models/jwt-service-options';
 
-@mod({
+@featureModule({
   providersPerApp: [JwtServiceOptions],
   providersPerReq: [JwtService],
   exports: [JwtService],
