@@ -1,5 +1,4 @@
-import { injectable } from '@ts-stack/di';
-import { HttpHandler, HttpInterceptor, Logger, Req, Res } from '@ditsmod/core';
+import { injectable, HttpHandler, HttpInterceptor, Logger, Req, Res } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {

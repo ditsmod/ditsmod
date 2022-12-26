@@ -1,5 +1,4 @@
-import { injectable } from '@ts-stack/di';
-import { Req } from '@ditsmod/core';
+import { Req, injectable } from '@ditsmod/core';
 
 @injectable()
 export class FirstService {

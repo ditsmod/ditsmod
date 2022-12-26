@@ -1,5 +1,4 @@
-import { injectable } from '@ts-stack/di';
-import { Extension, ExtensionsManager, Logger, ROUTES_EXTENSIONS } from '@ditsmod/core';
+import { injectable, Extension, ExtensionsManager, Logger, ROUTES_EXTENSIONS } from '@ditsmod/core';
 
 @injectable()
 export class MyExtension implements Extension<void> {

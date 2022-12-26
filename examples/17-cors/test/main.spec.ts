@@ -13,7 +13,7 @@ describe('17-cors', () => {
     const res = await request(server)
       .get('/')
       .expect(200)
-      .expect(`GET method\n`)
+      .expect('GET method\n')
       ;
 
       expect(res.headers['access-control-allow-origin']).toBeUndefined();

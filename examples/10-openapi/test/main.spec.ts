@@ -23,7 +23,7 @@ describe('10-openapi', () => {
     await request(server)
       .get('/resource/123')
       .expect(200)
-      .expect({ resourceId: '123', body: `some body for resourceId 123` });
+      .expect({ resourceId: '123', body: 'some body for resourceId 123' });
 
     server.close();
   });

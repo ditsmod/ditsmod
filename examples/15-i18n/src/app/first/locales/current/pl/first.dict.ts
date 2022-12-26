@@ -1,6 +1,7 @@
-import { FirstDict } from '@dict/first/first.dict';
 import { ISO639 } from '@ditsmod/i18n';
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
+
+import { FirstDict } from '@dict/first/first.dict';
 
 @injectable()
 export class FirstPlDict extends FirstDict {

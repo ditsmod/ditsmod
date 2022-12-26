@@ -1,5 +1,4 @@
-import { injectable } from '@ts-stack/di';
-import { CanActivate, Status } from '@ditsmod/core';
+import { CanActivate, Status, injectable } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';
 import { Permission } from './types';

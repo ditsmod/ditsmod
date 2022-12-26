@@ -1,5 +1,5 @@
 import { ISO639 } from '@ditsmod/i18n';
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 
 import { FirstDict } from '@dict/first/first.dict';
 
@@ -11,5 +11,5 @@ export class FirstUkDict extends FirstDict {
   /**
    * один, два, три
    */
-  override countToThree = `extended: один, два, три`;
+  override countToThree = 'extended: один, два, три';
 }

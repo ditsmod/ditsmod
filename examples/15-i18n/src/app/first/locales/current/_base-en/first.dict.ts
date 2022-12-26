@@ -1,5 +1,5 @@
 import { Dictionary, ISO639 } from '@ditsmod/i18n';
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 
 @injectable()
 export class FirstDict implements Dictionary {

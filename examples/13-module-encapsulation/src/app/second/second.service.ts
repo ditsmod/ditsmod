@@ -1,4 +1,4 @@
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 
 import { FirstService } from '../first/first.service';
 

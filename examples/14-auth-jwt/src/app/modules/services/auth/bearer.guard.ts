@@ -1,5 +1,4 @@
-import { injectable } from '@ts-stack/di';
-import { CanActivate, Req } from '@ditsmod/core';
+import { CanActivate, Req, injectable } from '@ditsmod/core';
 import { JwtService, VerifyErrors } from '@ditsmod/jwt';
 
 @injectable()

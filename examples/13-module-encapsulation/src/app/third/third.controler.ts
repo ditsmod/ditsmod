@@ -1,5 +1,4 @@
-import { inject } from '@ts-stack/di';
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, Res, route, inject } from '@ditsmod/core';
 
 @controller()
 export class ThirdController {

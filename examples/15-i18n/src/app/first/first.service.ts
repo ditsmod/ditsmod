@@ -1,4 +1,4 @@
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 import { DictService } from '@ditsmod/i18n';
 
 import { FirstDict } from '@dict/first/first.dict';

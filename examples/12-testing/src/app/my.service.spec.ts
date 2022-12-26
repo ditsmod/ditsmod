@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ReflectiveInjector } from '@ts-stack/di';
+import { ReflectiveInjector } from '@ditsmod/core';
 
 import { MyService } from './my.service';
 import { OtherService } from './other.service';

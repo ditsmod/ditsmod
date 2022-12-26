@@ -1,5 +1,5 @@
 import { ISO639 } from '@ditsmod/i18n';
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 
 import { FirstDict } from '@dict/first/first.dict';
 
@@ -11,5 +11,5 @@ export class FirstEnDict extends FirstDict {
   /**
    * overrided: one, two, three
    */
-  override countToThree = `overrided: one, two, three`;
+  override countToThree = 'overrided: one, two, three';
 }
