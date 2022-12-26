@@ -55,7 +55,6 @@
   },
   "homepage": "https://github.com/ditsmod/ditsmod#readme",
   "devDependencies": {
-    "@ts-stack/di": "^2.0.0-beta.5",
     "@types/bunyan": "^1.8.8",
     "@types/eslint": "^8.4.6",
     "@types/jest": "^29.2.4",
