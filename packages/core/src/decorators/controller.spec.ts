@@ -11,8 +11,8 @@ describe('Controller decorator', () => {
 
     const metadata = reflector.getClassMetadata<AnyObj>(Controller1);
     expect(metadata.length).toBe(1);
-    expect(metadata[0]).toEqual({});
-    expect(metadata[0].value.decoratorFactory).toBe('Controller');
+    expect(metadata[0].value).toEqual({});
+    expect(metadata[0].factory).toBe(controller);
   });
 
   it('decorator with some data', () => {
@@ -21,7 +21,7 @@ describe('Controller decorator', () => {
 
     const metadata = reflector.getClassMetadata(Controller1);
     expect(metadata.length).toBe(1);
-    expect(metadata[0]).toEqual({ providersPerReq: [] });
+    expect(metadata[0].value).toEqual({ providersPerReq: [] });
   });
 
   it('multi decorator with some data', () => {
@@ -31,8 +31,8 @@ describe('Controller decorator', () => {
 
     const metadata = reflector.getClassMetadata(Controller1);
     expect(metadata.length).toBe(2);
-    expect(metadata[0]).toEqual({ providersPerReq: [] });
-    expect(metadata[1]).toEqual({ providersPerReq: [] });
+    expect(metadata[0].value).toEqual({ providersPerReq: [] });
+    expect(metadata[1].value).toEqual({ providersPerReq: [] });
   });
 
   it('decorator with all allowed properties', () => {
@@ -41,6 +41,6 @@ describe('Controller decorator', () => {
 
     const metadata = reflector.getClassMetadata(Controller1);
     expect(metadata.length).toBe(1);
-    expect(metadata[0]).toEqual({ providersPerRou: [], providersPerReq: [] });
+    expect(metadata[0].value).toEqual({ providersPerRou: [], providersPerReq: [] });
   });
 });

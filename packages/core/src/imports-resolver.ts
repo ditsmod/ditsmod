@@ -15,7 +15,7 @@ import { getLastProviders } from './utils/get-last-providers';
 import { getModuleName } from './utils/get-module-name';
 import { getProviderName } from './utils/get-provider-name';
 import { getProvidersTargets, getTokens } from './utils/get-tokens';
-import { isClassProvider, isExistingProvider, isFactoryProvider, isValueProvider } from './utils/type-guards';
+import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } from './utils/type-guards';
 import { SystemLogMediator } from './log-mediator/system-log-mediator';
 
 type AnyModule = ModuleType | ModuleWithParams;
@@ -87,7 +87,7 @@ export class ImportsResolver {
               return false;
             }
           }
-          if (isExistingProvider(ep) && isExistingProvider(np)) {
+          if (isTokenProvider(ep) && isTokenProvider(np)) {
             const equal = ep.token === np.token && ep.useToken === np.useToken;
             if (equal) {
               return false;

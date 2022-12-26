@@ -25,7 +25,7 @@ import { pickProperties } from '../utils/pick-properties';
 import {
   isAppendsWithParams,
   isClassProvider,
-  isExistingProvider,
+  isTokenProvider,
   isModuleWithParams,
   isMultiProvider,
   isNormalizedProvider,
@@ -532,7 +532,7 @@ export class ModuleManager {
     let extensionClass: Type<Extension<any>>;
     if (isClassProvider(np)) {
       extensionClass = np.useClass;
-    } else if (isExistingProvider(np) && np.useToken instanceof Type) {
+    } else if (isTokenProvider(np) && np.useToken instanceof Type) {
       extensionClass = np.useToken;
     } else if (isValueProvider(np) && np.useValue.constructor instanceof Type) {
       extensionClass = np.useValue.constructor;

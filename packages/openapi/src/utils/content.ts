@@ -61,9 +61,10 @@ export class Content {
   protected getSchema(model: Type<AnyObj>) {
     const schema = this.getSchemaStubForModel(model);
     const modelMeta = reflector.getPropMetadata<PropertyDecoratorMetadata>(model);
-
+    
     for (const property in modelMeta) {
       const propertyMeta = modelMeta[property].find(isProperty);
+      // console.log(propertyMeta);
       if (propertyMeta && (!propertyMeta.value.schema?.type || propertyMeta.value.schema.type == 'array')) {
         const propertyType = modelMeta[property][0];
         this.checkTypeDefinitionConflict(model.name, property, propertyType, schema.type, propertyMeta.value.customType);

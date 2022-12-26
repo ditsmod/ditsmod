@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { reflector } from '@ts-stack/di';
+import { PropMeta, reflector } from '@ts-stack/di';
 
 import { property, PropertyDecoratorMetadata } from './property';
 
@@ -23,10 +23,32 @@ describe('@Property', () => {
 
     const actualMeta = reflector.getPropMetadata(Model1);
     // console.log(actualMeta);
-    const expectedMeta: PropertyDecoratorMetadata = {
-      prop1: [String, { schema: undefined, customType: undefined }],
-      prop2: [String, { schema: undefined, customType: undefined }],
-      prop3: [String, { schema: undefined, customType: undefined }, { schema: undefined, customType: undefined }],
+    const expectedMeta: PropMeta<PropertyDecoratorMetadata> = {
+      prop1: [
+        String,
+        {
+          factory: property,
+          value: { schema: undefined, customType: undefined },
+        },
+      ],
+      prop2: [
+        String,
+        {
+          factory: property,
+          value: { schema: undefined, customType: undefined },
+        },
+      ],
+      prop3: [
+        String,
+        {
+          factory: property,
+          value: { schema: undefined, customType: undefined },
+        },
+        {
+          factory: property,
+          value: { schema: undefined, customType: undefined },
+        },
+      ],
     };
     expect(actualMeta).toEqual(expectedMeta);
   });
@@ -41,15 +63,18 @@ describe('@Property', () => {
     }
 
     const actualMeta = reflector.getPropMetadata(Model1);
-    const expectedMeta: PropertyDecoratorMetadata = {
+    const expectedMeta: PropMeta<PropertyDecoratorMetadata> = {
       prop1: [
         String,
         {
-          schema: {
-            type: 'string',
-            minimum: 1,
+          factory: property,
+          value: {
+            schema: {
+              type: 'string',
+              minimum: 1,
+            },
+            customType: undefined,
           },
-          customType: undefined,
         },
       ],
     };
@@ -63,12 +88,12 @@ describe('@Property', () => {
     }
 
     const actualMeta = reflector.getPropMetadata(Model1);
-    const expectedMeta: PropertyDecoratorMetadata = {
+    const expectedMeta: PropMeta<PropertyDecoratorMetadata> = {
       prop1: [
         Array,
         {
-          schema: {},
-          customType: { array: Boolean },
+          factory: property,
+          value: { schema: {}, customType: { array: Boolean } },
         },
       ],
     };
@@ -82,12 +107,12 @@ describe('@Property', () => {
     }
 
     const actualMeta = reflector.getPropMetadata(Model1);
-    const expectedMeta: PropertyDecoratorMetadata = {
+    const expectedMeta: PropMeta<PropertyDecoratorMetadata> = {
       prop1: [
         Array,
         {
-          schema: {},
-          customType: { array: [Boolean, String] },
+          factory: property,
+          value: { schema: {}, customType: { array: [Boolean, String] } },
         },
       ],
     };

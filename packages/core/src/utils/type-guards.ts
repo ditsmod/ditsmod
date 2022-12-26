@@ -37,11 +37,11 @@ export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
 }
 
 export function isFeatureModule(container: Container): container is Container<ModuleMetadata> {
-  return container.factory === featureModule;
+  return container?.factory === featureModule;
 }
 
 export function isRootModule(container: Container): container is Container<RootModuleMetadata> {
-  return container.factory === rootModule;
+  return container?.factory === rootModule;
 }
 
 export function isRawRootModule(
@@ -57,11 +57,11 @@ export function isNormRootModule(
 }
 
 export function isController(container: AnyObj): container is Container<ControllerMetadata> {
-  return container.factory === controller;
+  return container?.factory === controller;
 }
 
 export function isRoute(container: AnyObj): container is Container<RouteMetadata> {
-  return container.factory === route;
+  return container?.factory === route;
 }
 
 export function isModuleWithParams(mod: ServiceProvider | ModuleWithParams | ModuleType): mod is ModuleWithParams {
@@ -93,7 +93,7 @@ export function isClassProvider(provider: Provider): provider is ClassProvider {
   return (provider as ClassProvider)?.useClass !== undefined;
 }
 
-export function isExistingProvider(provider: Provider): provider is TokenProvider {
+export function isTokenProvider(provider: Provider): provider is TokenProvider {
   return (provider as TokenProvider)?.useToken !== undefined;
 }
 
@@ -135,6 +135,6 @@ export function isNormalizedProvider(provider: ServiceProvider): provider is Nor
    * TypeProvider there is normalized to other form Provider
    */
   function ok(prov: Provider) {
-    return isValueProvider(prov) || isClassProvider(prov) || isExistingProvider(prov) || isFactoryProvider(prov);
+    return isValueProvider(prov) || isClassProvider(prov) || isTokenProvider(prov) || isFactoryProvider(prov);
   }
 }

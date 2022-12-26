@@ -18,7 +18,7 @@ describe('getModuleMetadata', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({});
+    expect(metadata).toEqual({ decoratorFactory: featureModule });
   });
 
   it('@Module() decorator with id', () => {
@@ -26,7 +26,7 @@ describe('getModuleMetadata', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({ id: 'someId' });
+    expect(metadata).toEqual({ decoratorFactory: featureModule, id: 'someId' });
   });
 
   it('decorator with some data', () => {
@@ -34,7 +34,10 @@ describe('getModuleMetadata', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({ controllers: [] });
+    expect(metadata).toEqual({
+      decoratorFactory: featureModule,
+      controllers: [],
+    });
   });
 
   it('module with params', () => {
@@ -53,6 +56,7 @@ describe('getModuleMetadata', () => {
 
     const metadata = getModuleMetadata(Module1.withParams([Provider1]));
     expect(metadata).toEqual({
+      decoratorFactory: featureModule,
       extensionsMeta: {},
       providersPerApp: [],
       providersPerMod: [Provider1],
@@ -78,6 +82,7 @@ describe('getModuleMetadata', () => {
     const fn = () => Module1.withParams([Provider1]);
     const metadata = getModuleMetadata(forwardRef(fn));
     expect(metadata).toEqual({
+      decoratorFactory: featureModule,
       extensionsMeta: {},
       providersPerApp: [],
       providersPerMod: [Provider1],

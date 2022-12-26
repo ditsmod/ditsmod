@@ -348,9 +348,9 @@ export class ModuleFactory {
       for (const propertyKey in propertyMetadata) {
         const [type, ...methodDecorValues] = propertyMetadata[propertyKey];
         controllerMetadata.methods[propertyKey] = methodDecorValues.map<DecoratorMetadata>((decoratorValue, i) => {
-          const otherDecorators = methodDecorValues.slice();
+          const otherDecorators = methodDecorValues.map(d => d.value);
           otherDecorators.splice(i, 1);
-          return { otherDecorators, value: decoratorValue, type };
+          return { otherDecorators, value: decoratorValue.value, type };
         });
       }
       arrControllerMetadata.push(controllerMetadata);

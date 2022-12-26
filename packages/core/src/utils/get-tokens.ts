@@ -1,6 +1,6 @@
 import { ServiceProvider } from '../types/mix';
 import { normalizeProviders } from './ng-utils';
-import { isClassProvider, isExistingProvider, isFactoryProvider, isProvider, isValueProvider } from './type-guards';
+import { isClassProvider, isTokenProvider, isFactoryProvider, isProvider, isValueProvider } from './type-guards';
 
 export function getToken(provider: ServiceProvider): any {
   return normalizeProviders([provider]).map((p) => p.token)[0];
@@ -22,7 +22,7 @@ export function getTokens(providers: ServiceProvider[] | ReadonlyArray<ServicePr
 export function getProviderTarget(provider: ServiceProvider) {
   if (isClassProvider(provider)) {
     return provider.useClass;
-  } else if (isExistingProvider(provider)) {
+  } else if (isTokenProvider(provider)) {
     return provider.useToken;
   } else if (isValueProvider(provider)) {
     return provider.useValue;

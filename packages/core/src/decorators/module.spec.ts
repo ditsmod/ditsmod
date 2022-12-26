@@ -11,7 +11,7 @@ describe('Module decorator', () => {
     const metadata = reflector.getClassMetadata<{}>(Module1);
     expect(metadata.length).toBe(1);
     expect(metadata[0].factory).toBe(featureModule);
-    expect(metadata[0].value).toBeUndefined();
+    expect(metadata[0].value).toEqual({});
   });
 
   it('decorator with some data', () => {

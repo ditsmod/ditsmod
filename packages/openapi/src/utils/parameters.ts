@@ -1,6 +1,6 @@
 import { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
 import { AnyObj, HttpMethod } from '@ditsmod/core';
-import { Type, reflector } from '@ts-stack/di';
+import { Type, reflector, isContainer, Container } from '@ts-stack/di';
 
 import { PropertyDecoratorMetadata } from '../decorators/property';
 import { isProperty } from './type-guards';
@@ -143,7 +143,7 @@ export class Parameters {
       const propertyDecorator = meta[paramObject.name];
       if (propertyDecorator) {
         const propertyType = propertyDecorator[0];
-        const schemas = propertyDecorator.filter(isProperty).map(val => val.value.schema);
+        const schemas = propertyDecorator.filter(item => isContainer(item)).map(val => (val as Container).value.schema);
         paramObject.schema = Object.assign({}, ...schemas, paramObject.schema) as XSchemaObject<any>;
         if (paramObject.schema.description) {
           paramObject.description = paramObject.description || paramObject.schema.description;

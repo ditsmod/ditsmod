@@ -39,7 +39,7 @@ describe('JwtService', () => {
       const options: SignOptions = { algorithm: 'RS256' };
       //this throw an error because the secret is not a cert and RS256 requires a cert.
       // const msg = 'error:0909006C:PEM routines:get_name:no start line';
-      const msg = 'error:';
+      const msg = 'secretOrPrivateKey must be an asymmetric key when using RS256';
       await expect(jwtService.signWithSecret(payload, { secret, ...options })).rejects.toThrow(msg);
     });
 
@@ -48,7 +48,7 @@ describe('JwtService', () => {
       const options: SignOptions = { algorithm: 'PS256' };
       // this throw an error because the secret is not a cert and PS256 requires a cert.
       // const msg = 'error:0909006C:PEM routines:get_name:no start line';
-      const msg = 'error:';
+      const msg = 'secretOrPrivateKey must be an asymmetric key when using PS256';
       await expect(jwtService.signWithSecret(payload, { secret, ...options })).rejects.toThrow(msg);
     });
 

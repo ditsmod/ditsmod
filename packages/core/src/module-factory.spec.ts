@@ -26,6 +26,7 @@ import { Router } from './types/router';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports';
 import { SystemLogMediator } from './log-mediator/system-log-mediator';
 import { makePropDecorator } from '@ts-stack/di/dist/decorator-factories';
+import { inspect } from 'util';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -75,7 +76,7 @@ describe('ModuleFactory', () => {
   });
 
   describe('appending modules', () => {
-    function bootstrap (mod: ModuleType) {
+    function bootstrap(mod: ModuleType) {
       expect(() => moduleManager.scanModule(mod)).not.toThrow();
       mock.bootstrap([], new GlobalProviders(), '', mod, moduleManager, new Set());
     }
@@ -513,7 +514,7 @@ describe('ModuleFactory', () => {
         importObj.module = Module2;
         importObj.providers = [Provider8];
         expect(mock?.importedProvidersPerReq.get(Provider8)).toEqual(importObj);
-        expect(mock.meta.decoratorFactory).toBe('RootModule');
+        expect(mock.meta.decoratorFactory).toBe(rootModule);
       });
 
       it('importDependenciesOfImportedProviders() case 1', () => {
@@ -684,7 +685,10 @@ describe('ModuleFactory', () => {
           }
 
           @featureModule({
-            providersPerMod: [Provider1, { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }],
+            providersPerMod: [
+              Provider1,
+              { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
+            ],
             exports: [Provider1, Provider2],
           })
           class Module1 {}
@@ -724,7 +728,10 @@ describe('ModuleFactory', () => {
 
           @featureModule({
             exports: [Provider1, Provider2],
-            providersPerMod: [Provider1, { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }],
+            providersPerMod: [
+              Provider1,
+              { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
+            ],
           })
           class Module2 {}
 
@@ -859,7 +866,10 @@ describe('ModuleFactory', () => {
             @factory()
             method1() {}
           }
-          const useFactoryProvider2: FactoryProvider = { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] };
+          const useFactoryProvider2: FactoryProvider = {
+            token: Provider2,
+            useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1],
+          };
 
           @featureModule({
             providersPerMod: [Provider1, useFactoryProvider2],
@@ -1453,7 +1463,7 @@ describe('ModuleFactory', () => {
               path: 'url1',
               guards: [],
             },
-            type: Function
+            type: Function,
           },
         ],
         method2: [
@@ -1471,7 +1481,7 @@ describe('ModuleFactory', () => {
       };
       expect(metadata.length).toBe(1);
       expect(metadata[0].controller === Controller1).toBe(true);
-      expect(metadata[0].ctrlDecorValues).toEqual([ctrlMetadata]);
+      expect(metadata[0].ctrlDecorValues).toEqual([{ factory: controller, value: ctrlMetadata }]);
       expect(metadata[0].methods).toEqual(methods);
     });
   });

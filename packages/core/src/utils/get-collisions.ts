@@ -1,11 +1,13 @@
 import { ServiceProvider } from '../types/mix';
 import { getTokens } from './get-tokens';
-import { isClassProvider, isExistingProvider, isFactoryProvider, isValueProvider } from './type-guards';
+import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } from './type-guards';
 
 /**
  * Returns array of uniq tokens.
  *
  * If you have a replacement for some provider - you have a collision.
+ * 
+ * @todo Add checks for FactoryProvider.
  */
 export function getCollisions(uniqDuplTokens: any[], providers: ServiceProvider[]) {
   uniqDuplTokens = uniqDuplTokens || [];
@@ -31,12 +33,12 @@ export function getCollisions(uniqDuplTokens: any[], providers: ServiceProvider[
           if (lastProvider.useValue !== currProvider.useValue) {
             collisions.add(token);
           }
-        } else if (isExistingProvider(lastProvider) && isExistingProvider(currProvider)) {
+        } else if (isTokenProvider(lastProvider) && isTokenProvider(currProvider)) {
           if (lastProvider.useToken !== currProvider.useToken) {
             collisions.add(token);
           }
         } else if (isFactoryProvider(lastProvider) && isFactoryProvider(currProvider)) {
-          if (lastProvider.useFactory !== currProvider.useFactory) {
+          if (lastProvider.useFactory[1] !== currProvider.useFactory[1]) {
             collisions.add(token);
           }
         } else if (lastProvider !== currProvider) {

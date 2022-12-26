@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { inspect } from 'util';
-import { reflector } from '@ts-stack/di';
+import { PropMeta, reflector } from '@ts-stack/di';
 import { controller, CanActivate } from '@ditsmod/core';
 
 import { oasRoute, OasRouteDecoratorMetadata } from './oas-route';
@@ -24,7 +24,13 @@ describe('@OasRoute', () => {
 
     const actualMeta = reflector.getPropMetadata(Controller1);
     const expectedMeta = {
-      method: [Function, { httpMethod: 'GET', path: undefined }],
+      method: [
+        Function,
+        {
+          factory: oasRoute,
+          value: { httpMethod: 'GET', path: undefined },
+        },
+      ],
     };
     expect(actualMeta).toEqual(expectedMeta);
   });
@@ -46,10 +52,8 @@ describe('@OasRoute', () => {
       method: [
         Function,
         {
-          httpMethod: 'GET',
-          path: 'posts',
-          guards: [Guard],
-          operationObject: { operationId: 'someId' },
+          factory: oasRoute,
+          value: { httpMethod: 'GET', path: 'posts', guards: [Guard], operationObject: { operationId: 'someId' } },
         },
       ],
     };
@@ -64,13 +68,12 @@ describe('@OasRoute', () => {
     }
 
     const actualMeta = reflector.getPropMetadata(Controller1);
-    const expectedMeta = {
+    const expectedMeta: PropMeta<Controller1> = {
       method: [
         Function,
         {
-          httpMethod: 'GET',
-          path: 'path',
-          operationObject: { operationId: 'someId' },
+          factory: oasRoute,
+          value: { httpMethod: 'GET', path: 'path', operationObject: { operationId: 'someId' } },
         },
       ],
     };

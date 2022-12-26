@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { reflector } from '@ts-stack/di';
+import { reflector, PropMeta } from '@ts-stack/di';
 
 import { route } from './route';
 import { controller } from './controller';
@@ -21,7 +21,19 @@ describe('Route decorator', () => {
     }
 
     const metadata = reflector.getPropMetadata(Controller1);
-    expect(metadata).toEqual({ method: [Function, { httpMethod: 'GET', path: '', guards: [] }] });
+    expect(metadata).toEqual<PropMeta<Controller1>>({
+      method: [
+        Function,
+        {
+          factory: route,
+          value: {
+            httpMethod: 'GET',
+            path: '',
+            guards: [],
+          },
+        },
+      ],
+    });
   });
 
   it('one method, two decorators', () => {
@@ -33,11 +45,25 @@ describe('Route decorator', () => {
     }
 
     const metadata = reflector.getPropMetadata(Controller1);
-    expect(metadata).toEqual({
+    expect(metadata).toEqual<PropMeta<Controller1>>({
       method: [
         Function,
-        { httpMethod: 'GET', path: '', guards: [] },
-        { httpMethod: 'POST', path: '', guards: [] },
+        {
+          factory: route,
+          value: {
+            httpMethod: 'GET',
+            path: '',
+            guards: [],
+          },
+        },
+        {
+          factory: route,
+          value: {
+            httpMethod: 'POST',
+            path: '',
+            guards: [],
+          },
+        },
       ],
     });
   });
@@ -55,7 +81,19 @@ describe('Route decorator', () => {
     }
 
     const metadata = reflector.getPropMetadata(Controller1);
-    expect(metadata).toEqual({ method: [Function, { httpMethod: 'GET', path: 'posts/:postId', guards: [Guard] }] });
+    expect(metadata).toEqual<PropMeta<Controller1>>({
+      method: [
+        Function,
+        {
+          factory: route,
+          value: {
+            httpMethod: 'GET',
+            path: 'posts/:postId',
+            guards: [Guard],
+          },
+        },
+      ],
+    });
   });
 
   it('two guards without params', () => {
@@ -71,8 +109,18 @@ describe('Route decorator', () => {
     }
 
     const metadata = reflector.getPropMetadata(Controller1);
-    expect(metadata).toEqual({
-      method: [Function, { httpMethod: 'GET', path: 'posts/:postId', guards: [Guard, Guard] }],
+    expect(metadata).toEqual<PropMeta<Controller1>>({
+      method: [
+        Function,
+        {
+          factory: route,
+          value: {
+            httpMethod: 'GET',
+            path: 'posts/:postId',
+            guards: [Guard, Guard],
+          },
+        },
+      ],
     });
   });
 
@@ -92,16 +140,19 @@ describe('Route decorator', () => {
     }
 
     const metadata = reflector.getPropMetadata(Controller1);
-    expect(metadata).toEqual({
+    expect(metadata).toEqual<PropMeta<Controller1>>({
       method: [
         Function,
         {
-          httpMethod: 'GET',
-          path: 'posts/:postId',
-          guards: [
-            [Guard, 'one', 123],
-            [Guard, []],
-          ],
+          factory: route,
+          value: {
+            httpMethod: 'GET',
+            path: 'posts/:postId',
+            guards: [
+              [Guard, 'one', 123],
+              [Guard, []],
+            ],
+          },
         },
       ],
     });

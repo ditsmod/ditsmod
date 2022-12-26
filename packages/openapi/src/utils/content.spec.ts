@@ -180,7 +180,7 @@ describe('Content', () => {
                           items: [
                             {
                               type: 'object',
-                              description: `[Circular references to Model1]`,
+                              description: '[Circular references to Model1]',
                               properties: {},
                             },
                           ],
@@ -259,7 +259,7 @@ describe('Content', () => {
       property1: (number | string)[];
     }
 
-    const msg = `Wrong definition for Model1: property 'property1' is an enum or an array?`;
+    const msg = "Wrong definition for Model1: property 'property1' is an enum or an array?";
     expect(() => new Content().get({ mediaType: 'application/json', model: Model1 })).toThrow(msg);
   });
 
@@ -309,7 +309,7 @@ describe('Content', () => {
       property1: Model1;
     }
 
-    const msg = `Wrong definition for Model1: property 'property1' is an array or not array?`;
+    const msg = "Wrong definition for Model1: property 'property1' is an array or not array?";
     expect(() => new Content().get({ mediaType: 'application/json', model: Model1 })).toThrow(msg);
   });
 

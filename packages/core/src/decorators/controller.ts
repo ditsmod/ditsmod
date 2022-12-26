@@ -13,4 +13,4 @@ export interface ControllerMetadata {
   providersPerRou?: ServiceProvider[];
 }
 
-export const controller = makeClassDecorator((data?: ControllerMetadata) => data);
+export const controller = makeClassDecorator((data?: ControllerMetadata) => data || {});
