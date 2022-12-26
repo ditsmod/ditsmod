@@ -103,7 +103,7 @@ import { Type } from '@ditsmod/core';
 type Provider = { token: any, useClass: Type<any>, multi?: boolean } |
 { token: any, useValue: any, multi?: boolean } |
 { token: any, useFactory: Function, deps?: any[], multi?: boolean } |
-{ token: any, useExisting: any, multi?: boolean }
+{ token: any, useToken: any, multi?: boolean }
 ```
 
 На одну залежність, в реєстр DI потрібно передавати один або декілька провайдерів. Частіше за все, така передача відбувається через метадані модуля чи контролера, хоча інколи вони передаються напряму в [інжектори][102].
@@ -129,10 +129,10 @@ type Provider = { token: any, useClass: Type<any>, multi?: boolean } |
   { token: 'some token here', useFactory: callback, deps: [SomeService] }
   ```
 
-- `useExisting` - передається інший токен. Якщо ви записуєте таке:
+- `useToken` - передається інший токен. Якщо ви записуєте таке:
 
   ```ts
-  { token: SecondService, useExisting: FirstService }
+  { token: SecondService, useToken: FirstService }
   ```
 
   таким чином ви говорите DI: "Коли споживачі провайдерів запитують токен `SecondService` потрібно використати значення, призначене для токена `FirstService`". Іншими словами, ця директива робить аліас `SecondService`, який вказує на `FirstService`. Алгоритм роботи DI в таких випадках наступний:

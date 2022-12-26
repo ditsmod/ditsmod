@@ -103,7 +103,7 @@ import { Type } from '@ditsmod/core';
 type Provider = { token: any, useClass: Type<any>, multi?: boolean } |
 { token: any, useValue: any, multi?: boolean } |
 { token: any, useFactory: Function, deps?: any[], multi?: boolean } |
-{ token: any, useExisting: any, multi?: boolean }
+{ token: any, useToken: any, multi?: boolean }
 ```
 
 For one dependency, you need to transfer one or more providers to the DI registry. Most often, this transfer occurs via module or controller metadata, although sometimes it is passed directly to [injectors][102].
@@ -129,10 +129,10 @@ The preceding code shows the definition of the provider object type, there a tok
   { token: 'some token here', useFactory: callback, deps: [SomeService] }
   ```
 
-  - `useExisting` - another token is passed. If you write the following:
+  - `useToken` - another token is passed. If you write the following:
 
   ```ts
-  { token: SecondService, useExisting: FirstService }
+  { token: SecondService, useToken: FirstService }
   ```
 
   this way you tell the DI: "When provider consumers request a `SecondService` token, the value assigned to the `FirstService` token must be used." In other words, this directive makes an alias `SecondService` that points to `FirstService`. The DI work algorithm in such cases is as follows:
