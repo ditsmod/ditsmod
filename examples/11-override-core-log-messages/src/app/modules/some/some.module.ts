@@ -1,9 +1,9 @@
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { SomeLogMediator } from './some-log-mediator';
 import { SomeService } from './some.service';
 
-@Module({
+@featureModule({
   providersPerMod: [SomeLogMediator, SomeService],
   exports: [SomeService]
 })

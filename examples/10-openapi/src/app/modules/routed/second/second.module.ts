@@ -1,8 +1,8 @@
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { SecondController } from './second.controller';
 
-@Module({
+@featureModule({
   controllers: [SecondController]
 })
 export class SecondModule {}

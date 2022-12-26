@@ -1,11 +1,11 @@
-import { Providers, RootModule } from '@ditsmod/core';
+import { Providers, rootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
 import { SecondModule } from './second/second.module';
 import { FirstModule } from './first/first.module';
 import { ThirdModule } from './third/third.module';
 
-@RootModule({
+@rootModule({
   imports: [
     RouterModule,
     { path: '', module: FirstModule },

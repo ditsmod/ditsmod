@@ -1,4 +1,4 @@
-import { Providers, RootModule } from '@ditsmod/core';
+import { Providers, rootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 import { SessionCookieModule } from '@ditsmod/session-cookie';
 
@@ -9,7 +9,7 @@ const sessionModuleWithParams = SessionCookieModule.withParsms({
   httpOnly: true,
 });
 
-@RootModule({
+@rootModule({
   imports: [RouterModule, sessionModuleWithParams],
   controllers: [HelloWorldController],
   providersPerApp: [...new Providers().useLogConfig({ level: 'info' })],

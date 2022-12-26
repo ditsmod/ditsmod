@@ -1,7 +1,7 @@
 import { CanActivate, Req, Res, Status } from '@ditsmod/core';
-import { OasGuard } from '@ditsmod/openapi';
+import { oasGuard } from '@ditsmod/openapi';
 
-@OasGuard({
+@oasGuard({
   tags: ['withBasicAuth'],
   securitySchemeObject: {
     type: 'http',

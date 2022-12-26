@@ -1,9 +1,9 @@
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { CommentsModule } from './comments/comments.module';
 import { PostsController } from './posts.controller';
 
-@Module({
+@featureModule({
   appends: [{ path: 'comments/:commentId', module: CommentsModule }],
   controllers: [PostsController],
 })

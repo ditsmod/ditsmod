@@ -1,10 +1,10 @@
-import { Controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class SecondController {
   constructor(private res: Res) {}
 
-  @Route('GET', 'second')
+  @route('GET', 'second')
   getSome() {
     this.res.sendJson({ ok: 1 });
   }

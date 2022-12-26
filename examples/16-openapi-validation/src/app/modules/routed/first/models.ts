@@ -1,17 +1,17 @@
-import { Property, REQUIRED } from '@ditsmod/openapi';
+import { property, REQUIRED } from '@ditsmod/openapi';
 
 export class Model1 {
-  @Property({ minimum: 3, maximum: 50, description: `ID should be between 3 and 50.` })
+  @property({ minimum: 3, maximum: 50, description: 'ID should be between 3 and 50.' })
   id: number;
 
-  @Property({ minLength: 3, maxLength: 10 })
+  @property({ minLength: 3, maxLength: 10 })
   username: string;
 
-  @Property({ [REQUIRED]: true }, { array: Number })
+  @property({ [REQUIRED]: true }, { array: Number })
   numbers: number[];
 }
 
 export class Model2 {
-  @Property()
+  @property()
   model1: Model1;
 }

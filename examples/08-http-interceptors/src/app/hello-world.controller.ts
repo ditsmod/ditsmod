@@ -1,15 +1,15 @@
-import { Controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class HelloWorldController {
   constructor(private res: Res) {}
 
-  @Route('GET')
+  @route('GET')
   tellHello() {
     this.res.send('Hello World!\n');
   }
 
-  @Route('GET', 'throw-error')
+  @route('GET', 'throw-error')
   throwError() {
     throw new Error('some error here!');
   }

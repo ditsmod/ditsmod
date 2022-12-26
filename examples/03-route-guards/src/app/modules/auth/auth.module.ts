@@ -1,10 +1,10 @@
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { PermissionsGuard } from './permissions.guard';
 
-@Module({
+@featureModule({
   providersPerReq: [AuthGuard, PermissionsGuard, AuthService],
   exports: [AuthGuard, PermissionsGuard],
 })

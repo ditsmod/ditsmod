@@ -1,8 +1,8 @@
-import { Module, Providers } from '@ditsmod/core';
+import { featureModule, Providers } from '@ditsmod/core';
 
 import { SecondController } from './second.controller';
 
-@Module({
+@featureModule({
   controllers: [SecondController],
   providersPerMod: [...new Providers().useLogConfig({ level: 'debug' })],
 })

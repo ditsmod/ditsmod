@@ -1,14 +1,14 @@
-import { Logger, LoggerConfig, Module, Providers } from '@ditsmod/core';
+import { Logger, featureModule, Providers } from '@ditsmod/core';
 
-import { patchLogger } from './patch-logger';
+import { PatchLogger } from './patch-logger';
 import { WinstonController } from './winston.controller';
 
-@Module({
+@featureModule({
   controllers: [WinstonController],
   providersPerMod: [
     ...new Providers()
       .useLogConfig({ level: 'debug' })
-      .useFactory(Logger, patchLogger, [LoggerConfig])
+      .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
   ],
 })
 export class WinstonModule {}

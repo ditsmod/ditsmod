@@ -13,9 +13,9 @@ yarn boot
 
 Note the following:
 
-- from `RootModule` exports (in application scope) only `AuthModule`;
+- from `rootModule` exports (in application scope) only `AuthModule`;
 - `SomeController` can use services from `AuthModule` without direct import `AuthModule`;
-this is because `AuthModule` is exported from `RootModule`;
+this is because `AuthModule` is exported from `rootModule`;
 
 Start from first terminal:
 

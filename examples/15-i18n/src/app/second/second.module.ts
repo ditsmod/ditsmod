@@ -1,4 +1,4 @@
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 import { I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
 
 import { FirstModule } from '../first/first.module';
@@ -6,7 +6,7 @@ import { SecondController } from './second.controller';
 import { current } from './locales/current';
 import { imported } from './locales/imported';
 
-@Module({
+@featureModule({
   imports: [I18nModule, FirstModule],
   controllers: [SecondController],
   providersPerMod: [

@@ -1,4 +1,4 @@
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 import { JwtModule } from '@ditsmod/jwt';
 
 import { AuthController } from './auth.controller';
@@ -6,7 +6,7 @@ import { BearerGuard } from './bearer.guard';
 
 const moduleWithParams = JwtModule.withParams({ secret: 'hard-to-guess-secret', signOptions: { expiresIn: '2m' } });
 
-@Module({
+@featureModule({
   imports: [moduleWithParams],
   controllers: [AuthController],
   providersPerReq: [BearerGuard],

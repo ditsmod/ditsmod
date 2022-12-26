@@ -1,9 +1,9 @@
-import { HttpBackend, Module } from '@ditsmod/core';
+import { HttpBackend, featureModule } from '@ditsmod/core';
 import { ReturnModule } from '@ditsmod/return';
 
 import { SecondController } from './second.controller';
 
-@Module({
+@featureModule({
   imports: [ReturnModule],
   controllers: [SecondController],
   resolvedCollisionsPerReq: [

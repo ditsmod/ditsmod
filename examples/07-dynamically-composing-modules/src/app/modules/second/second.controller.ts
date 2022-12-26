@@ -1,10 +1,10 @@
-import { Controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class SecondController {
   constructor(private res: Res) {}
 
-  @Route('GET', 'get-2')
+  @route('GET', 'get-2')
   async tellHello() {
     this.res.send('second module.\n');
   }

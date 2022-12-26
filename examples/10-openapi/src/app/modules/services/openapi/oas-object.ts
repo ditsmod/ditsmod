@@ -9,9 +9,9 @@ export const oasObject: XOasObject = {
     {
       name: 'NonOasRoutes',
       description:
-        'Routes that used `@Route()` decorator. If you want to change this description, ' +
+        'Routes that used `@route()` decorator. If you want to change this description, ' +
         '[use tags](https://swagger.io/docs/specification/grouping-operations-with-tags/) ' +
-        'for `@OasRoute()` imported from @ditsmod/openapi.',
+        'for `@oasRoute()` imported from @ditsmod/openapi.',
     },
     {
       name: 'withParameter',

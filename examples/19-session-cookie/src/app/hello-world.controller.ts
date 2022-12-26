@@ -1,17 +1,17 @@
-import { Controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 import { SessionCookie } from '@ditsmod/session-cookie';
 
-@Controller()
+@controller()
 export class HelloWorldController {
   constructor(private session: SessionCookie, private res: Res) {}
 
-  @Route('GET', 'set')
+  @route('GET', 'set')
   setCookie() {
     this.session.id = '123';
     this.res.send('Hello World!\n');
   }
 
-  @Route('GET', 'get')
+  @route('GET', 'get')
   getCookie() {
     this.res.send(`session ID: ${this.session.id}`);
   }

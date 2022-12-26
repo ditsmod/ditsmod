@@ -1,24 +1,24 @@
-import { Controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
 import { AuthGuard } from '../auth/auth.guard';
 import { PermissionsGuard } from '../auth/permissions.guard';
 import { Permission } from '../auth/types';
 
-@Controller()
+@controller()
 export class SomeController {
   constructor(private res: Res) {}
 
-  @Route('GET')
+  @route('GET')
   ok() {
     this.res.send('ok');
   }
 
-  @Route('GET', 'unauth', [AuthGuard])
+  @route('GET', 'unauth', [AuthGuard])
   throw401Error() {
     this.res.send('some secret');
   }
 
-  @Route('GET', 'forbidden', [[PermissionsGuard, Permission.canActivateAdministration]])
+  @route('GET', 'forbidden', [[PermissionsGuard, Permission.canActivateAdministration]])
   throw403Error() {
     this.res.send('some secret');
   }

@@ -1,25 +1,25 @@
-import { Controller, Req, Res, Route, Status } from '@ditsmod/core';
-import { getParams, getContent, OasRoute } from '@ditsmod/openapi';
+import { controller, Req, Res, route, Status } from '@ditsmod/core';
+import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 
 import { BasicGuard } from './basic.guard';
 import { Model2 } from './models';
 import { getMetaContent } from './overriden-helper';
 
-@Controller({ providersPerReq: [BasicGuard] })
+@controller({ providersPerReq: [BasicGuard] })
 export class FirstController {
   constructor(private req: Req, private res: Res) {}
 
-  @Route('GET')
+  @route('GET')
   hello() {
     this.res.send('Hello World!\n');
   }
 
-  @OasRoute('GET', 'guard', [BasicGuard])
+  @oasRoute('GET', 'guard', [BasicGuard])
   helloWithGuard() {
     this.res.send('Hello, user!');
   }
 
-  @OasRoute('GET', 'resource/:resourceId', {
+  @oasRoute('GET', 'resource/:resourceId', {
     tags: ['withParameter'],
     description: 'This route uses `getParams()` and `getContent()` helpers from @ditsmod/openapi',
     parameters: getParams('path', true, Model2, 'resourceId'),
@@ -35,7 +35,7 @@ export class FirstController {
     this.res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
   }
 
-  @OasRoute('GET', 'resource2/:resourceId', {
+  @oasRoute('GET', 'resource2/:resourceId', {
     tags: ['withParameter'],
     description: 'This route like previous, but uses template `{ data: Model1[], meta: any, error: any }`',
     parameters: getParams('path', true, Model2, 'resourceId'),

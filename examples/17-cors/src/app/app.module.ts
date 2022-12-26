@@ -1,10 +1,10 @@
-import { Providers, RootModule } from '@ditsmod/core';
+import { Providers, rootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 import { CorsModule } from '@ditsmod/cors';
 
 import { FirstController, SecondController } from './controllers';
 
-@RootModule({
+@rootModule({
   imports: [
     RouterModule,
     CorsModule.withParams({ origin: 'https://example.com' })

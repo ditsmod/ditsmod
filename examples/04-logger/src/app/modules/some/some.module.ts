@@ -1,8 +1,8 @@
-import { Module, Providers } from '@ditsmod/core';
+import { featureModule, Providers } from '@ditsmod/core';
 
 import { SomeController } from './some.controller';
 
-@Module({
+@featureModule({
   controllers: [SomeController],
   providersPerMod: [
     ...new Providers().useLogConfig({ level: 'trace' })

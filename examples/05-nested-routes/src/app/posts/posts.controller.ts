@@ -1,14 +1,14 @@
-import { Controller, Req, Res, Route } from '@ditsmod/core';
+import { controller, Req, Res, route } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class PostsController {
   constructor(private req: Req, private res: Res) {}
 
   /**
-   * As you seen, you can apply multi `@Route` statement to a single method.
+   * As you seen, you can apply multi `@route` statement to a single method.
    */
-  @Route('GET')
-  @Route('GET', ':postId')
+  @route('GET')
+  @route('GET', ':postId')
   sendPosts() {
     const { pathParams } = this.req;
     this.res.sendJson({ pathParams });

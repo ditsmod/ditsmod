@@ -1,14 +1,14 @@
-import { Logger, LoggerConfig, Module, Providers } from '@ditsmod/core';
+import { Logger, featureModule, Providers } from '@ditsmod/core';
 import BunyanLogger from 'bunyan';
 
 import { BunyanController } from './bunyan.controller';
-import { patchLogger } from './patch-logger';
+import { PatchLogger } from './patch-logger';
 
-@Module({
+@featureModule({
   controllers: [BunyanController],
   providersPerMod: [
     ...new Providers()
-      .useFactory(Logger, patchLogger, [LoggerConfig])
+      .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
       .useExisting(BunyanLogger, Logger),
   ],
 })

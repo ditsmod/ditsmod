@@ -1,9 +1,9 @@
-import { RootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
 import { FirstModule } from './modules/first/first.module';
 
-@RootModule({
+@rootModule({
   imports: [RouterModule],
   appends: [FirstModule]
 })

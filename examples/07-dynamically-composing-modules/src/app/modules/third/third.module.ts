@@ -1,4 +1,4 @@
-import { Module } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
-@Module()
+@featureModule({})
 export class ThirdModule {}

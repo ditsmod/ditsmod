@@ -1,10 +1,10 @@
 import { inject } from '@ts-stack/di';
-import { Controller, Res, Route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
 import { FirstPerRouService } from './first/first-per-rou.service';
 import { ThirdService } from './third/three.service';
 
-@Controller()
+@controller()
 export class AppController {
   constructor(
     private threeService: ThirdService,
@@ -13,18 +13,18 @@ export class AppController {
     @inject('multi-provider') private multiProvider: any
   ) {}
 
-  @Route('GET')
+  @route('GET')
   showCounters() {
     const msg = `per req counter: ${this.threeService.getCounter()}, per rou counter: ${this.onePerRouService.getCounter()}`;
     this.res.send(msg);
   }
 
-  @Route('POST')
+  @route('POST')
   showRequestBody() {
     this.res.sendJson({ body: this.threeService.getBody() });
   }
 
-  @Route('GET', 'zero')
+  @route('GET', 'zero')
   getMultiProvideValue() {
     this.res.sendJson(this.multiProvider);
   }

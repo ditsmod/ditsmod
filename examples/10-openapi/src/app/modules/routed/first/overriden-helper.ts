@@ -1,4 +1,4 @@
-import { Content, mediaTypeName, ContentOptions, Property } from '@ditsmod/openapi';
+import { Content, mediaTypeName, ContentOptions, property } from '@ditsmod/openapi';
 
 /**
  * This class uses template to putting type model to `content`.
@@ -9,11 +9,11 @@ export class MetaContent extends Content {
   override set<T extends mediaTypeName = mediaTypeName>(contentOptions: ContentOptions<T>) {
     contentOptions = { ...contentOptions };
     class ApiResponse {
-      @Property({ type: 'array' }, { array: contentOptions.model! })
+      @property({ type: 'array' }, { array: contentOptions.model! })
       data: any[];
-      @Property()
+      @property()
       meta: any;
-      @Property()
+      @property()
       error: any;
     }
     contentOptions.model = ApiResponse;
