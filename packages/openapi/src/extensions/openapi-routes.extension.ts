@@ -1,4 +1,4 @@
-import { injectable } from '@ts-stack/di';
+import { FactoryProvider, injectable } from '@ts-stack/di';
 import {
   ControllersMetadata2,
   Extension,
@@ -53,7 +53,8 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
           if (isOasRoute1(oasRoute)) {
             guards.push(...this.normalizeGuards(oasRoute.guards));
           }
-          providersPerReq.push(...(ctrlDecorator?.value.providersPerReq || []), controller);
+          const controllerFactory: FactoryProvider = { useFactory: [controller, controller.prototype[methodName]] };
+          providersPerReq.push(...(ctrlDecorator?.value.providersPerReq || []), controllerFactory);
           const { httpMethod, path: controllerPath, operationObject } = oasRoute;
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const path = this.getPath(prefix, controllerPath);
