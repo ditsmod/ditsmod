@@ -54,7 +54,7 @@ describe('RootModule decorator', () => {
 
     const metadata = reflector.getClassMetadata(Module1);
     expect(metadata.length).toBe(1);
-    expect(metadata[0]).toEqual({
+    expect(metadata[0].value).toEqual({
       httpModule: http,
       listenOptions: { host: 'localhost', port: 3000 },
       path: 'api',

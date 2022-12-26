@@ -29,6 +29,7 @@ import {
   isModuleWithParams,
   isMultiProvider,
   isNormalizedProvider,
+  isNormRootModule,
   isProvider,
   isRawRootModule,
   isRootModule,
@@ -472,7 +473,7 @@ export class ModuleManager {
 
   protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
     if (
-      !isRootModule(meta as any) &&
+      !isNormRootModule(meta) &&
       !meta.providersPerApp.length &&
       !meta.controllers.length &&
       !meta.exportedProvidersPerMod.length &&
