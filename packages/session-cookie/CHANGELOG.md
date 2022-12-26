@@ -1,5 +1,12 @@
+<a name="session-cookie-2.3.0"></a>
+# [session-cookie-2.3.0](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.3.0) (2022-12-26)
+
+### BREAKING CHANGES
+
+- Migration to core-2.29.0.
+
 <a name="session-cookie-2.2.0"></a>
-# [session-cookie-2.2.0](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.2.0) (2022-10-18)
+## [session-cookie-2.2.0](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.2.0) (2022-10-18)
 
 ### Features
 
