@@ -1,7 +1,6 @@
 import { injectable } from '@ts-stack/di';
 import {
   ControllersMetadata2,
-  ControllerType,
   Extension,
   HttpMethod,
   isController,

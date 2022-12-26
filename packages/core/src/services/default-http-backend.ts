@@ -1,6 +1,5 @@
 import { injectable, Injector } from '@ts-stack/di';
 
-import { injectorKey } from '../types/mix';
 import { HttpBackend } from '../types/http-interceptor';
 import { RouteMeta } from '../types/route-data';
 
@@ -10,8 +9,6 @@ export class DefaultHttpBackend implements HttpBackend {
 
   async handle() {
     const { controller, methodName } = this.routeMeta;
-    const ctrl = this.injector.get(controller);
-    ctrl[injectorKey] = this.injector;
-    return ctrl[methodName]();
+    return this.injector.get(controller.prototype[methodName]);
   }
 }
