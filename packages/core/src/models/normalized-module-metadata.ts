@@ -1,7 +1,6 @@
 import { AppendsWithParams } from '../types/module-metadata';
 import {
   AnyObj,
-  ControllerType,
   ModuleType,
   ModuleWithParams,
   ServiceProvider,
@@ -11,6 +10,7 @@ import {
 } from '../types/mix';
 import { MultiProvider } from '../utils/type-guards';
 import { ProvidersMetadata } from './providers-metadata';
+import { Type } from '@ts-stack/di';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
   /**
@@ -29,7 +29,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];
   appendsWithParams: AppendsWithParams[] = [];
-  controllers: ControllerType[] = [];
+  controllers: Type<any>[] = [];
   decoratorFactory: AnyFn;
   exportsModules: ModuleType[] = [];
   exportsWithParams: ModuleWithParams[] = [];

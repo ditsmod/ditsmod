@@ -1,7 +1,8 @@
-import { AnyObj, ControllerType, DecoratorMetadata, HttpMethod, ServiceProvider } from './mix';
+import { Type } from '@ts-stack/di';
+import { AnyObj, DecoratorMetadata, HttpMethod, ServiceProvider } from './mix';
 
 export interface ControllerMetadata1<CV extends AnyObj = AnyObj, MV extends AnyObj = AnyObj> {
-  controller: ControllerType;
+  controller: Type<any>;
   /**
    * Controller decorators values.
    */

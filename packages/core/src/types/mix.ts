@@ -56,8 +56,6 @@ export interface CanActivate {
   canActivate(params?: any[]): boolean | number | Promise<boolean | number>;
 }
 
-export type ControllerType = Type<any>;
-
 export interface DecoratorMetadata<MV extends AnyObj = AnyObj> {
   otherDecorators: any[];
   /**

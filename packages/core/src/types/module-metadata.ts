@@ -1,5 +1,6 @@
+import { Type } from '@ts-stack/di';
 import { ProvidersMetadata } from '../models/providers-metadata';
-import { ControllerType, ModuleType, ModuleWithParams, AnyObj, GuardItem } from '../types/mix';
+import { ModuleType, ModuleWithParams, AnyObj, GuardItem } from '../types/mix';
 import { ExtensionOptions } from '../utils/get-extension-provider';
 
 /**
@@ -39,7 +40,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
   /**
    * The application controllers.
    */
-  controllers?: ControllerType[];
+  controllers?: Type<any>[];
   /**
    * The application extensions.
    */

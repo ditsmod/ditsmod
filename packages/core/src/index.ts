@@ -45,7 +45,6 @@ export { MetadataPerMod1, MetadataPerMod2 } from './types/metadata-per-mod';
 export {
   AnyObj,
   CanActivate,
-  ControllerType,
   DecoratorMetadata,
   Extension,
   ExtensionProvider,
