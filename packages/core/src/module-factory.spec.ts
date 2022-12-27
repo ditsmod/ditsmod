@@ -26,7 +26,7 @@ import { Router } from './types/router';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports';
 import { SystemLogMediator } from './log-mediator/system-log-mediator';
 import { makePropDecorator } from '@ts-stack/di/dist/decorator-factories';
-import { inspect } from 'util';
+import { transformControllersMetadata } from './utils/transform-controllers-metadata';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -49,10 +49,6 @@ describe('ModuleFactory', () => {
 
     override exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: ServiceProvider[]) {
       return super.exportGlobalProviders(moduleManager, providersPerApp);
-    }
-
-    override getControllersMetadata() {
-      return super.getControllersMetadata();
     }
   }
 
@@ -1428,7 +1424,7 @@ describe('ModuleFactory', () => {
     it('without @Controller decorator', () => {
       mock.meta.controllers = [class Controller1 {}];
       const msg = 'Collecting controller\'s metadata in MockModule failed: class "Controller1"';
-      expect(() => mock.getControllersMetadata()).toThrowError(msg);
+      expect(() => transformControllersMetadata(mock.meta.controllers, 'MockModule')).toThrowError(msg);
     });
 
     it('controller with multiple @Route on single method', () => {
@@ -1443,7 +1439,7 @@ describe('ModuleFactory', () => {
         method2() {}
       }
       mock.meta.controllers = [Controller1];
-      const metadata = mock.getControllersMetadata();
+      const metadata = transformControllersMetadata(mock.meta.controllers, 'MockModule');
       const routeMeta2: RouteMetadata = {
         httpMethod: 'POST',
         path: 'url2',

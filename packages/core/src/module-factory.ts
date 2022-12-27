@@ -1,4 +1,4 @@
-import { injectable, reflector } from '@ts-stack/di';
+import { injectable } from '@ts-stack/di';
 
 import { defaultProvidersPerMod, NODE_REQ, NODE_RES } from './constans';
 import { ModuleExtract } from './models/module-extract';
@@ -9,7 +9,6 @@ import { ControllersMetadata1 } from './types/controller-metadata';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from './types/metadata-per-mod';
 import {
   AnyObj,
-  DecoratorMetadata,
   ExtensionProvider,
   ModuleType,
   ModuleWithParams,
@@ -25,7 +24,8 @@ import { getLastProviders } from './utils/get-last-providers';
 import { getModuleName } from './utils/get-module-name';
 import { getToken, getTokens } from './utils/get-tokens';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
-import { isAppendsWithParams, isController, isModuleWithParams, isNormRootModule } from './utils/type-guards';
+import { transformControllersMetadata } from './utils/transform-controllers-metadata';
+import { isAppendsWithParams, isModuleWithParams, isNormRootModule } from './utils/type-guards';
 
 type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 
@@ -113,7 +113,7 @@ export class ModuleFactory {
 
     let aControllersMetadata1: ControllersMetadata1<AnyObj, AnyObj>[] = [];
     if (isNormRootModule(meta) || isAppends || (isModuleWithParams(meta.module) && meta.module.path !== undefined)) {
-      aControllersMetadata1 = this.getControllersMetadata();
+      aControllersMetadata1 = transformControllersMetadata(this.meta.controllers, this.moduleName);
     }
 
     return this.appMetadataMap.set(modOrObj, {
@@ -331,32 +331,6 @@ export class ModuleFactory {
         this.getResolvedCollisionsPerScope(scope, token1);
       }
     }
-  }
-
-  protected getControllersMetadata() {
-    const arrControllerMetadata: ControllersMetadata1[] = [];
-    for (const controller of this.meta.controllers) {
-      const ctrlDecorValues = reflector.getClassMetadata(controller);
-      if (!ctrlDecorValues.find(isController)) {
-        throw new Error(
-          `Collecting controller's metadata in ${this.moduleName} failed: class ` +
-            `"${controller.name}" does not have the "@Controller()" decorator.`
-        );
-      }
-      const controllerMetadata: ControllersMetadata1 = { controller, ctrlDecorValues, methods: {} };
-      const propertyMetadata = reflector.getPropMetadata(controller);
-      for (const propertyKey in propertyMetadata) {
-        const [, ...methodDecorValues] = propertyMetadata[propertyKey];
-        controllerMetadata.methods[propertyKey] = methodDecorValues.map<DecoratorMetadata>((decoratorPayload, i) => {
-          const otherDecorators = methodDecorValues.map(d => d.value);
-          otherDecorators.splice(i, 1);
-          return { otherDecorators, value: decoratorPayload.value, decoratorFactory: decoratorPayload.factory };
-        });
-      }
-      arrControllerMetadata.push(controllerMetadata);
-    }
-
-    return arrControllerMetadata;
   }
 
   protected checkImportsAndAppends(meta: NormalizedModuleMetadata) {
