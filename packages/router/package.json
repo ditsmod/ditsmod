@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/router",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "homepage": "https://ditsmod.github.io/en/",
   "description": "Router module for Ditsmod applications",
