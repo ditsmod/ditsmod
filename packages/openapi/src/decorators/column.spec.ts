@@ -27,25 +27,25 @@ describe('@Property', () => {
       prop1: [
         String,
         {
-          factory: property,
+          decorator: property,
           value: { schema: undefined, customType: undefined },
         },
       ],
       prop2: [
         String,
         {
-          factory: property,
+          decorator: property,
           value: { schema: undefined, customType: undefined },
         },
       ],
       prop3: [
         String,
         {
-          factory: property,
+          decorator: property,
           value: { schema: undefined, customType: undefined },
         },
         {
-          factory: property,
+          decorator: property,
           value: { schema: undefined, customType: undefined },
         },
       ],
@@ -67,7 +67,7 @@ describe('@Property', () => {
       prop1: [
         String,
         {
-          factory: property,
+          decorator: property,
           value: {
             schema: {
               type: 'string',
@@ -92,7 +92,7 @@ describe('@Property', () => {
       prop1: [
         Array,
         {
-          factory: property,
+          decorator: property,
           value: { schema: {}, customType: { array: Boolean } },
         },
       ],
@@ -111,7 +111,7 @@ describe('@Property', () => {
       prop1: [
         Array,
         {
-          factory: property,
+          decorator: property,
           value: { schema: {}, customType: { array: [Boolean, String] } },
         },
       ],

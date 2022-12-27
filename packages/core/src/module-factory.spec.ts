@@ -1453,32 +1453,32 @@ describe('ModuleFactory', () => {
       const methods: { [methodName: string]: DecoratorMetadata<RouteMetadata>[] } = {
         method1: [
           {
-            otherDecorators: [],
+            decorator: route,
             value: {
               httpMethod: 'GET',
               path: 'url1',
-              guards: [],
+              guards: []
             },
-            decoratorFactory: route,
+            otherDecorators: [],
           },
         ],
         method2: [
           {
-            otherDecorators: [routeMeta3],
+            decorator: route,
             value: routeMeta2,
-            decoratorFactory: route,
+            otherDecorators: [{ decorator: route, value: routeMeta3 }],
           },
           {
-            otherDecorators: [routeMeta2],
+            decorator: route,
             value: routeMeta3,
-            decoratorFactory: route,
+            otherDecorators: [{ decorator: route, value: routeMeta2 }],
           },
         ],
       };
       expect(metadata.length).toBe(1);
       expect(metadata[0].controller === Controller1).toBe(true);
-      expect(metadata[0].ctrlDecorValues).toEqual([{ factory: controller, value: ctrlMetadata }]);
-      expect(metadata[0].methods).toEqual(methods);
+      expect(metadata[0].decoratorsAndValues).toEqual([{ decorator: controller, value: ctrlMetadata }]);
+      expect(metadata[0].properties).toEqual(methods);
     });
   });
 });

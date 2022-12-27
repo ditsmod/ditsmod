@@ -12,7 +12,7 @@ describe('Controller decorator', () => {
     const metadata = reflector.getClassMetadata<AnyObj>(Controller1);
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual({});
-    expect(metadata[0].factory).toBe(controller);
+    expect(metadata[0].decorator).toBe(controller);
   });
 
   it('decorator with some data', () => {

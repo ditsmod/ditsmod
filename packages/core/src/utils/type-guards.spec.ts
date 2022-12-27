@@ -86,7 +86,7 @@ describe('type guards', () => {
 
     it('should recognize the route', () => {
       const propMetadata = reflector.getPropMetadata(ClassWithDecorators);
-      expect(isRoute({ decoratorFactory: propMetadata.some[1].factory, value: propMetadata.some[1].value })).toBe(true);
+      expect(isRoute({ decorator: propMetadata.some[1].decorator, value: propMetadata.some[1].value })).toBe(true);
     });
   });
 

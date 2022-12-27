@@ -35,7 +35,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
     const { aControllersMetadata1, prefixPerMod, guardsPerMod } = metadataPerMod1;
 
     const controllersMetadata2: ControllerMetadata2[] = [];
-    for (const { controller, ctrlDecorValues, methods } of aControllersMetadata1) {
+    for (const { controller, decoratorsAndValues: container, properties: methods } of aControllersMetadata1) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
         for (const decoratorMetadata of methodWithDecorators) {
@@ -45,7 +45,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           const providersPerRou: ServiceProvider[] = [];
           const providersPerReq: ServiceProvider[] = [];
           const route = decoratorMetadata.value;
-          const ctrlDecorator = ctrlDecorValues.find(isController);
+          const ctrlDecorator = container.find(isController);
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
           const controllerFactory: FactoryProvider = { useFactory: [controller, controller.prototype[methodName]] };

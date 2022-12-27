@@ -13,7 +13,7 @@ describe('RootModule decorator', () => {
     const metadata = reflector.getClassMetadata<AnyObj>(Module1);
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual({});
-    expect(metadata[0].factory).toBe(rootModule);
+    expect(metadata[0].decorator).toBe(rootModule);
   });
 
   it('decorator with some data', () => {

@@ -62,7 +62,7 @@ export interface DecoratorMetadata<MV extends AnyObj = AnyObj> {
    * Decorator value.
    */
   value: MV;
-  decoratorFactory: AnyFn;
+  decorator: AnyFn;
 }
 export type AppMetadataMap = Map<ModuleType | ModuleWithParams, MetadataPerMod1>;
 export type GuardItem = Type<CanActivate> | [Type<CanActivate>, any, ...any[]];

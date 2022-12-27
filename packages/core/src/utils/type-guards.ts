@@ -10,13 +10,13 @@ import {
   TypeProvider,
   ValueProvider,
   TokenProvider,
-  Container,
+  DecoratorsAndValues,
   reflector,
 } from '@ts-stack/di';
 
 import { featureModule } from '../decorators/module';
 import { controller, ControllerMetadata } from '../decorators/controller';
-import { route, RouteMetadata } from '../decorators/route';
+import { route } from '../decorators/route';
 import { rootModule } from '../decorators/root-module';
 import {
   AnyObj,
@@ -45,12 +45,16 @@ export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
   return err instanceof ChainError;
 }
 
-export function isFeatureModule(container: Container): container is Container<ModuleMetadata> {
-  return container?.factory === featureModule;
+export function isFeatureModule(
+  decoratorsAndValues: DecoratorsAndValues
+): decoratorsAndValues is DecoratorsAndValues<ModuleMetadata> {
+  return decoratorsAndValues?.decorator === featureModule;
 }
 
-export function isRootModule(container: Container): container is Container<RootModuleMetadata> {
-  return container?.factory === rootModule;
+export function isRootModule(
+  decoratorsAndValues: DecoratorsAndValues
+): decoratorsAndValues is DecoratorsAndValues<RootModuleMetadata> {
+  return decoratorsAndValues?.decorator === rootModule;
 }
 
 export function isRawRootModule(
@@ -65,12 +69,14 @@ export function isNormRootModule(
   return rawModule.decoratorFactory === rootModule;
 }
 
-export function isController(container: AnyObj): container is Container<ControllerMetadata> {
-  return container?.factory === controller;
+export function isController(
+  decoratorsAndValues: AnyObj
+): decoratorsAndValues is DecoratorsAndValues<ControllerMetadata> {
+  return decoratorsAndValues?.decorator === controller;
 }
 
 export function isRoute(container: AnyObj): container is DecoratorMetadata {
-  return (container as DecoratorMetadata)?.decoratorFactory === route;
+  return (container as DecoratorMetadata)?.decorator === route;
 }
 
 export function isModuleWithParams(mod: ServiceProvider | ModuleWithParams | ModuleType): mod is ModuleWithParams {

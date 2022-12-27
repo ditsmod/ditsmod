@@ -111,16 +111,16 @@ export class ModuleFactory {
     const moduleExtract: ModuleExtract = { path: this.prefixPerMod, moduleName: meta.name };
     this.meta.providersPerMod.unshift({ token: ModuleExtract, useValue: moduleExtract });
 
-    let aControllersMetadata1: ControllerMetadata1<AnyObj, AnyObj>[] = [];
+    let aControllerMetadata1: ControllerMetadata1[] = [];
     if (isNormRootModule(meta) || isAppends || (isModuleWithParams(meta.module) && meta.module.path !== undefined)) {
-      aControllersMetadata1 = transformControllersMetadata(this.meta.controllers, this.moduleName);
+      aControllerMetadata1 = transformControllersMetadata(this.meta.controllers, this.moduleName);
     }
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
       guardsPerMod: this.guardsPerMod,
       meta: this.meta,
-      aControllersMetadata1: deepFreeze(aControllersMetadata1),
+      aControllersMetadata1: deepFreeze(aControllerMetadata1),
       importedTokensMap: {
         perMod: new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]),
         perRou: new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]),

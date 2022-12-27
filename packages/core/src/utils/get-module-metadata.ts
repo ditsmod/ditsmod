@@ -1,4 +1,4 @@
-import { Container, reflector } from '@ts-stack/di';
+import { DecoratorsAndValues, reflector } from '@ts-stack/di';
 
 import { ModuleMetadata } from '../types/module-metadata';
 import { AnyFn, ModuleType, ModuleWithParams } from '../types/mix';
@@ -11,7 +11,7 @@ export function getModuleMetadata(
   modOrObj: ModuleType | ModuleWithParams,
   isRoot?: boolean
 ): (ModuleMetadata & { decoratorFactory: AnyFn }) | undefined {
-  const typeGuard = isRoot ? isRootModule : (m: Container) => isFeatureModule(m) || isRootModule(m);
+  const typeGuard = isRoot ? isRootModule : (m: DecoratorsAndValues) => isFeatureModule(m) || isRootModule(m);
 
   if (isForwardRef(modOrObj)) {
     modOrObj = modOrObj();
@@ -42,9 +42,9 @@ export function getModuleMetadata(
     metadata.providersPerRou = getLastProviders(mergeArrays(modMetadata.providersPerRou, modWitParams.providersPerRou));
     metadata.providersPerReq = getLastProviders(mergeArrays(modMetadata.providersPerReq, modWitParams.providersPerReq));
     metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
-    return { ...metadata, decoratorFactory: container.factory };
+    return { ...metadata, decoratorFactory: container.decorator };
   } else {
     const container = reflector.getClassMetadata<ModuleMetadata>(modOrObj).find((container) => typeGuard(container));
-    return container ? { ...container.value, decoratorFactory: container.factory } : undefined;
+    return container ? { ...container.value, decoratorFactory: container.decorator } : undefined;
   }
 }

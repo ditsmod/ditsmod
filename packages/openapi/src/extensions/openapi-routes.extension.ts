@@ -38,7 +38,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
     const prefixTags = oasOptions?.tags;
 
     const aControllersMetadata2: ControllerMetadata2[] = [];
-    for (const { controller, ctrlDecorValues, methods } of aControllersMetadata1) {
+    for (const { controller, decoratorsAndValues: container, properties: methods } of aControllersMetadata1) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
         for (const decoratorMetadata of methodWithDecorators) {
@@ -48,7 +48,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
           const oasRoute = decoratorMetadata.value;
           const providersPerRou: ServiceProvider[] = [];
           const providersPerReq: ServiceProvider[] = [];
-          const ctrlDecorator = ctrlDecorValues.find(isController);
+          const ctrlDecorator = container.find(isController);
           const guards: NormalizedGuard[] = [...guardsPerMod];
           if (isOasRoute1(decoratorMetadata)) {
             guards.push(...this.normalizeGuards(decoratorMetadata.value.guards));

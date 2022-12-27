@@ -9,7 +9,7 @@ export interface OasRouteDecoratorMetadata<T = (OasRouteMetadata1 | OasRouteMeta
    * Decorator value.
    */
   value: T;
-  decoratorFactory: AnyFn;
+  decorator: AnyFn;
 }
 
 export interface OasRouteMetadata1 {

@@ -26,7 +26,7 @@ describe('@OasRoute', () => {
       method: [
         Function,
         {
-          factory: oasRoute,
+          decorator: oasRoute,
           value: { httpMethod: 'GET', path: undefined },
         },
       ],
@@ -51,7 +51,7 @@ describe('@OasRoute', () => {
       method: [
         Function,
         {
-          factory: oasRoute,
+          decorator: oasRoute,
           value: { httpMethod: 'GET', path: 'posts', guards: [Guard], operationObject: { operationId: 'someId' } },
         },
       ],
@@ -71,7 +71,7 @@ describe('@OasRoute', () => {
       method: [
         Function,
         {
-          factory: oasRoute,
+          decorator: oasRoute,
           value: { httpMethod: 'GET', path: 'path', operationObject: { operationId: 'someId' } },
         },
       ],

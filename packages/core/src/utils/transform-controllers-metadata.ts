@@ -15,21 +15,21 @@ export function transformControllersMetadata(controllers: Type<any>[], moduleNam
 }
 
 export function getControllerMetadata1(Controller: Type<any>, moduleName: string) {
-  const ctrlDecorValues = reflector.getClassMetadata(Controller);
-  if (!ctrlDecorValues.find(isController)) {
+  const decoratorsAndValues = reflector.getClassMetadata(Controller);
+  if (!decoratorsAndValues.find(isController)) {
     throw new Error(
       `Collecting controller's metadata in ${moduleName} failed: class ` +
-        `"${Controller.name}" does not have the "@Controller()" decorator.`
+        `"${Controller.name}" does not have the "@controller()" decorator.`
     );
   }
-  const controllerMetadata: ControllerMetadata1 = { controller: Controller, ctrlDecorValues, methods: {} };
+  const controllerMetadata: ControllerMetadata1 = { controller: Controller, decoratorsAndValues, properties: {} };
   const propertyMetadata = reflector.getPropMetadata(Controller);
   for (const propertyKey in propertyMetadata) {
     const [, ...methodDecorValues] = propertyMetadata[propertyKey];
-    controllerMetadata.methods[propertyKey] = methodDecorValues.map<DecoratorMetadata>((decoratorPayload, i) => {
-      const otherDecorators = methodDecorValues.map(d => d.value);
+    controllerMetadata.properties[propertyKey] = methodDecorValues.map<DecoratorMetadata>((decoratorPayload, i) => {
+      const otherDecorators = methodDecorValues.slice();
       otherDecorators.splice(i, 1);
-      return { otherDecorators, value: decoratorPayload.value, decoratorFactory: decoratorPayload.factory };
+      return { ...decoratorPayload, otherDecorators };
     });
   }
   return controllerMetadata;

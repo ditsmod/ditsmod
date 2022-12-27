@@ -25,7 +25,7 @@ describe('Route decorator', () => {
       method: [
         Function,
         {
-          factory: route,
+          decorator: route,
           value: {
             httpMethod: 'GET',
             path: '',
@@ -49,7 +49,7 @@ describe('Route decorator', () => {
       method: [
         Function,
         {
-          factory: route,
+          decorator: route,
           value: {
             httpMethod: 'GET',
             path: '',
@@ -57,7 +57,7 @@ describe('Route decorator', () => {
           },
         },
         {
-          factory: route,
+          decorator: route,
           value: {
             httpMethod: 'POST',
             path: '',
@@ -85,7 +85,7 @@ describe('Route decorator', () => {
       method: [
         Function,
         {
-          factory: route,
+          decorator: route,
           value: {
             httpMethod: 'GET',
             path: 'posts/:postId',
@@ -113,7 +113,7 @@ describe('Route decorator', () => {
       method: [
         Function,
         {
-          factory: route,
+          decorator: route,
           value: {
             httpMethod: 'GET',
             path: 'posts/:postId',
@@ -144,7 +144,7 @@ describe('Route decorator', () => {
       method: [
         Function,
         {
-          factory: route,
+          decorator: route,
           value: {
             httpMethod: 'GET',
             path: 'posts/:postId',
