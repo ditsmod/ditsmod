@@ -1,7 +1,7 @@
 import { FactoryProvider, injectable } from '@ts-stack/di';
 
 import { RootMetadata } from '../models/root-metadata';
-import { ControllersMetadata2 } from '../types/controller-metadata';
+import { ControllerMetadata2 } from '../types/controller-metadata';
 import { MetadataPerMod1, MetadataPerMod2 } from '../types/metadata-per-mod';
 import { GuardItem, NormalizedGuard, Extension, ServiceProvider } from '../types/mix';
 import { RouteMeta } from '../types/route-data';
@@ -34,7 +34,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
   protected getControllersMetadata2(prefixPerApp: string, metadataPerMod1: MetadataPerMod1) {
     const { aControllersMetadata1, prefixPerMod, guardsPerMod } = metadataPerMod1;
 
-    const controllersMetadata2: ControllersMetadata2[] = [];
+    const controllersMetadata2: ControllerMetadata2[] = [];
     for (const { controller, ctrlDecorValues, methods } of aControllersMetadata1) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];

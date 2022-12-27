@@ -1,5 +1,5 @@
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { ControllersMetadata1, ControllersMetadata2 } from './controller-metadata';
+import { ControllerMetadata1, ControllerMetadata2 } from './controller-metadata';
 import { ExtensionProvider, ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix';
 
 /**
@@ -34,7 +34,7 @@ export class MetadataPerMod1 {
   /**
    * The controller metadata collected from all controllers of current module.
    */
-  aControllersMetadata1: ControllersMetadata1[];
+  aControllersMetadata1: ControllerMetadata1[];
   /**
    * Map between a token and its ImportObj per scope.
    */
@@ -70,5 +70,5 @@ export class MetadataPerMod2 {
    * Providers per a request.
    */
   providersPerReq: ServiceProvider[];
-  aControllersMetadata2: ControllersMetadata2[];
+  aControllersMetadata2: ControllerMetadata2[];
 }

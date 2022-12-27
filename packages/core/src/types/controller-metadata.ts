@@ -1,6 +1,6 @@
 import { AnyObj, ControllerType, DecoratorMetadata, HttpMethod, ServiceProvider } from './mix';
 
-export interface ControllersMetadata1<CV extends AnyObj = AnyObj, MV extends AnyObj = AnyObj> {
+export interface ControllerMetadata1<CV extends AnyObj = AnyObj, MV extends AnyObj = AnyObj> {
   controller: ControllerType;
   /**
    * Controller decorators values.
@@ -11,7 +11,7 @@ export interface ControllersMetadata1<CV extends AnyObj = AnyObj, MV extends Any
   };
 }
 
-export interface ControllersMetadata2 {
+export interface ControllerMetadata2 {
   /**
    * Providers per a route.
    */

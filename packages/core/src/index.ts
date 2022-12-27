@@ -38,7 +38,7 @@ export { PerAppService } from './services/per-app.service';
 export { PreRouter } from './services/pre-router';
 export { Req } from './services/request';
 export { Res } from './services/response';
-export { ControllersMetadata1, ControllersMetadata2 } from './types/controller-metadata';
+export { ControllerMetadata1, ControllerMetadata2 } from './types/controller-metadata';
 export { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from './types/http-interceptor';
 export { Logger, LoggerConfig, LogLevel } from './types/logger';
 export { MetadataPerMod1, MetadataPerMod2 } from './types/metadata-per-mod';

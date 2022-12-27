@@ -5,7 +5,7 @@ import { ModuleExtract } from './models/module-extract';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
-import { ControllersMetadata1 } from './types/controller-metadata';
+import { ControllerMetadata1 } from './types/controller-metadata';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from './types/metadata-per-mod';
 import {
   AnyObj,
@@ -111,7 +111,7 @@ export class ModuleFactory {
     const moduleExtract: ModuleExtract = { path: this.prefixPerMod, moduleName: meta.name };
     this.meta.providersPerMod.unshift({ token: ModuleExtract, useValue: moduleExtract });
 
-    let aControllersMetadata1: ControllersMetadata1<AnyObj, AnyObj>[] = [];
+    let aControllersMetadata1: ControllerMetadata1<AnyObj, AnyObj>[] = [];
     if (isNormRootModule(meta) || isAppends || (isModuleWithParams(meta.module) && meta.module.path !== undefined)) {
       aControllersMetadata1 = transformControllersMetadata(this.meta.controllers, this.moduleName);
     }

@@ -1,6 +1,6 @@
 import { FactoryProvider, injectable } from '@ditsmod/core';
 import {
-  ControllersMetadata2,
+  ControllerMetadata2,
   Extension,
   HttpMethod,
   isController,
@@ -37,7 +37,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
     const prefixParams = oasOptions?.paratemers;
     const prefixTags = oasOptions?.tags;
 
-    const aControllersMetadata2: ControllersMetadata2[] = [];
+    const aControllersMetadata2: ControllerMetadata2[] = [];
     for (const { controller, ctrlDecorValues, methods } of aControllersMetadata1) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];

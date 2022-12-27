@@ -6,7 +6,7 @@ import {
   RouteMeta,
   ROUTES_EXTENSIONS,
   PerAppService,
-  ControllersMetadata2,
+  ControllerMetadata2,
   Status,
   HttpMethod,
   MetadataPerMod2,
@@ -81,9 +81,9 @@ export class CorsExtension implements Extension<void | false> {
     return sPathWithOptions;
   }
 
-  protected getRoutesWithOptions(aMetadataPerMod2: MetadataPerMod2[], aControllersMetadata2: ControllersMetadata2[]) {
+  protected getRoutesWithOptions(aMetadataPerMod2: MetadataPerMod2[], aControllersMetadata2: ControllerMetadata2[]) {
     const sPathWithOptions = this.getPathWtihOptions(aMetadataPerMod2);
-    const newArrControllersMetadata2: ControllersMetadata2[] = []; // Routes with OPTIONS methods
+    const newArrControllersMetadata2: ControllerMetadata2[] = []; // Routes with OPTIONS methods
 
     aControllersMetadata2.forEach(({ httpMethod, path }) => {
       // Search routes with non-OPTIONS methods, and makes new routes with OPTIONS methods
@@ -114,7 +114,7 @@ export class CorsExtension implements Extension<void | false> {
         methodName,
       };
 
-      const controllersMetadata2: ControllersMetadata2 = {
+      const controllersMetadata2: ControllerMetadata2 = {
         httpMethod: 'OPTIONS',
         path,
         providersPerRou: [

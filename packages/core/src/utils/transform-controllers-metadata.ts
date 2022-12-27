@@ -1,11 +1,11 @@
 import { reflector, Type } from '@ts-stack/di';
 
-import { ControllersMetadata1 } from '../types/controller-metadata';
+import { ControllerMetadata1 } from '../types/controller-metadata';
 import { DecoratorMetadata } from '../types/mix';
 import { isController } from './type-guards';
 
 export function transformControllersMetadata(controllers: Type<any>[], moduleName: string) {
-  const arrControllerMetadata: ControllersMetadata1[] = [];
+  const arrControllerMetadata: ControllerMetadata1[] = [];
   for (const controller of controllers) {
     const controllerMetadata1 = getControllerMetadata1(controller, moduleName);
     arrControllerMetadata.push(controllerMetadata1);
@@ -22,7 +22,7 @@ export function getControllerMetadata1(Controller: Type<any>, moduleName: string
         `"${Controller.name}" does not have the "@Controller()" decorator.`
     );
   }
-  const controllerMetadata: ControllersMetadata1 = { controller: Controller, ctrlDecorValues, methods: {} };
+  const controllerMetadata: ControllerMetadata1 = { controller: Controller, ctrlDecorValues, methods: {} };
   const propertyMetadata = reflector.getPropMetadata(Controller);
   for (const propertyKey in propertyMetadata) {
     const [, ...methodDecorValues] = propertyMetadata[propertyKey];
