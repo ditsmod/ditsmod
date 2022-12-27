@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "@ditsmod/versions",
   "version": "2.0.0-alpha.1",
   "repository": {
