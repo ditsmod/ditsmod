@@ -27,4 +27,13 @@ describe('10-openapi', () => {
 
     server.close();
   });
+
+  it('guard works', async () => {
+    const { server } = await new Application().bootstrap(AppModule, false);
+    await request(server)
+      .get('/second')
+      .expect(401);
+
+    server.close();
+  });
 });
