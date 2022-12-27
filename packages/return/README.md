@@ -3,9 +3,9 @@
 `@ditsmod/return` - it's Ditsmod module to listen value returned by a controller's route:
 
 ```ts
-import { Controller, Route } from '@ditsmod/core';
+import { controller, Route } from '@ditsmod/core';
 
-@Controller()
+@controller()
 export class HelloWorldController {
   @Route('GET')
   async tellHello() {
