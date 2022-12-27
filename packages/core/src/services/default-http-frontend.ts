@@ -10,7 +10,6 @@ import { NODE_RES, PATH_PARAMS, QUERY_STRING } from '../constans';
 import { NodeRequest, NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { RouteMeta } from '../types/route-data';
-import { RootMetadata } from '../models/root-metadata';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 @injectable()
@@ -19,7 +18,6 @@ export class DefaultHttpFrontend implements HttpFrontend {
     @inject(PATH_PARAMS) protected aPathParams: PathParam[],
     @inject(QUERY_STRING) protected queryString: any,
     protected routeMeta: RouteMeta,
-    protected rootMetadata: RootMetadata,
     protected req: Req,
     protected injector: Injector
   ) {}
