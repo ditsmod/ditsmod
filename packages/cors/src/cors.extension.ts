@@ -1,4 +1,4 @@
-import { injectable, ReflectiveInjector } from '@ts-stack/di';
+import { injectable, ReflectiveInjector } from '@ditsmod/core';
 import {
   Extension,
   ExtensionsManager,

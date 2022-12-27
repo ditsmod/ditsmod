@@ -1,5 +1,5 @@
 import { Extension } from '@ditsmod/core';
-import { InjectionToken } from '@ts-stack/di';
+import { InjectionToken } from '@ditsmod/core';
 import { XOasObject } from '@ts-stack/openapi-spec';
 
 /**

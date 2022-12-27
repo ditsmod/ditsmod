@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { PropMeta, reflector } from '@ts-stack/di';
+import { PropMeta, reflector } from '@ditsmod/core';
 
 import { property, PropertyDecoratorMetadata } from './property';
 

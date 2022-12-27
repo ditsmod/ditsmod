@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { PropMeta, reflector } from '@ts-stack/di';
+import { PropMeta, reflector } from '@ditsmod/core';
 import { controller, CanActivate } from '@ditsmod/core';
 
 import { oasRoute } from './oas-route';

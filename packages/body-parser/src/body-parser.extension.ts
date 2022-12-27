@@ -1,5 +1,5 @@
 import { Extension, ExtensionsManager, HTTP_INTERCEPTORS, PerAppService, ROUTES_EXTENSIONS } from '@ditsmod/core';
-import { injectable, InjectionToken } from '@ts-stack/di';
+import { injectable, InjectionToken } from '@ditsmod/core';
 
 import { BodyParserConfig } from './body-parser-config';
 import { BodyParserInterceptor } from './body-parser.interceptor';

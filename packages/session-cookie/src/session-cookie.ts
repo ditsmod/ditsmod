@@ -1,5 +1,5 @@
 import { Cookies, NodeRequest, NodeResponse } from '@ts-stack/cookies';
-import { inject, injectable, optional } from '@ts-stack/di';
+import { inject, injectable, optional } from '@ditsmod/core';
 import { NODE_REQ, NODE_RES } from '@ditsmod/core';
 
 import { SessionCookieOptions } from './types';

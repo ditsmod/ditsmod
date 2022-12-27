@@ -1,4 +1,4 @@
-import { injectable, Injector } from '@ts-stack/di';
+import { injectable, Injector } from '@ditsmod/core';
 import { RouteMeta, HttpBackend, Res, DefaultHttpBackend, Status, HttpMethod, NODE_REQ } from '@ditsmod/core';
 
 @injectable()

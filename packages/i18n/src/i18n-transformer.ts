@@ -1,5 +1,5 @@
 import { ServiceProvider } from '@ditsmod/core';
-import { injectable, Type } from '@ts-stack/di';
+import { injectable, Type } from '@ditsmod/core';
 
 import { I18nLogMediator } from './i18n-log-mediator';
 import { Dictionary, Translations } from './types/mix';

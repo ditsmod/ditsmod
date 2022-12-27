@@ -1,5 +1,5 @@
 import { HttpHandler, HttpInterceptor, Req } from '@ditsmod/core';
-import { injectable, optional } from '@ts-stack/di';
+import { injectable, optional } from '@ditsmod/core';
 import { parse, Headers, Options } from 'get-body';
 
 import { BodyParserConfig } from './body-parser-config';

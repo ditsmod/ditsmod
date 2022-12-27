@@ -1,5 +1,5 @@
 import { Req } from '@ditsmod/core';
-import { injectable, Injector, optional, Type } from '@ts-stack/di';
+import { injectable, Injector, optional, Type } from '@ditsmod/core';
 
 import { I18nLogMediator } from './i18n-log-mediator';
 import { ISO639 } from './types/iso-639';

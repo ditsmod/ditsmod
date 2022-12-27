@@ -8,7 +8,7 @@ import {
 } from '@ditsmod/core';
 import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 import { isReferenceObject, OasRouteMeta } from '@ditsmod/openapi';
-import { injectable, optional } from '@ts-stack/di';
+import { injectable, optional } from '@ditsmod/core';
 
 import { ValidationRouteMeta } from './types';
 import { ParametersInterceptor } from './parameters.interceptor';

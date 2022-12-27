@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ReflectiveInjector } from '@ts-stack/di';
+import { ReflectiveInjector } from '@ditsmod/core';
 import { Req } from '@ditsmod/core';
 
 import { I18nOptions } from './types/mix';

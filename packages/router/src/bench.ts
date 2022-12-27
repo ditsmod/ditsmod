@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import * as path from 'path';
-import { Injector, ReflectiveInjector } from '@ts-stack/di';
+import { Injector, ReflectiveInjector } from '@ditsmod/core';
 
 import { Fn } from './types';
 import { Tree } from './tree';

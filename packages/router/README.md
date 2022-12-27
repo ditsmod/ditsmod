@@ -16,7 +16,7 @@ Where [@ts-stack/di](https://github.com/KostyaTretyak/@ts-stack/di) is a depende
 
 ```ts
 import { Router, Tree } from '@ditsmod/router';
-import { ReflectiveInjector } from '@ts-stack/di'; // This is a dependency
+import { ReflectiveInjector } from '@ditsmod/core'; // This is a dependency
 
 const injector = ReflectiveInjector.resolveAndCreate([Tree, Router]);
 const router = injector.get(Router) as Router;

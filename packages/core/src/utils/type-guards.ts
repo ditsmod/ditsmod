@@ -10,14 +10,23 @@ import {
   TypeProvider,
   ValueProvider,
   TokenProvider,
+  Container,
+  reflector,
 } from '@ts-stack/di';
-import { Container, reflector } from '@ts-stack/di';
 
 import { featureModule } from '../decorators/module';
 import { controller, ControllerMetadata } from '../decorators/controller';
 import { route, RouteMetadata } from '../decorators/route';
 import { rootModule } from '../decorators/root-module';
-import { AnyObj, ModuleType, ModuleWithParams, ServiceProvider, Extension, AnyFn, DecoratorMetadata } from '../types/mix';
+import {
+  AnyObj,
+  ModuleType,
+  ModuleWithParams,
+  ServiceProvider,
+  Extension,
+  AnyFn,
+  DecoratorMetadata,
+} from '../types/mix';
 import { AppendsWithParams, ModuleMetadata } from '../types/module-metadata';
 import { RootModuleMetadata } from '../types/root-module-metadata';
 import { Http2SecureServerOptions, ServerOptions } from '../types/server-options';

@@ -1,6 +1,6 @@
 import { GuardItem, HttpMethod } from '@ditsmod/core';
 import { AnyFn } from '@ditsmod/core/src/types/mix';
-import { makePropDecorator } from '@ts-stack/di';
+import { makePropDecorator } from '@ditsmod/core';
 import { XOperationObject } from '@ts-stack/openapi-spec';
 
 export interface OasRouteDecoratorMetadata {

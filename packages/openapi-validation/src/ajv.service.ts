@@ -1,4 +1,4 @@
-import { inject, injectable, optional } from '@ts-stack/di';
+import { inject, injectable, optional } from '@ditsmod/core';
 import Ajv, { Options, ValidateFunction } from 'ajv';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 

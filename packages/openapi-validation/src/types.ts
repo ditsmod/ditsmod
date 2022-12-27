@@ -1,4 +1,4 @@
-import { Type } from '@ts-stack/di';
+import { Type } from '@ditsmod/core';
 import { Dictionary } from '@ditsmod/i18n';
 import { OasRouteMeta } from '@ditsmod/openapi';
 import { XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';

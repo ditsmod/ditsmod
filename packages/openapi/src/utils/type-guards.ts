@@ -1,7 +1,7 @@
 import { AnyObj } from '@ditsmod/core';
 import { ReferenceObject } from '@ts-stack/openapi-spec';
 import { property, PropertyDecoratorItem } from '../decorators/property';
-import { Container } from '@ts-stack/di';
+import { Container } from '@ditsmod/core';
 
 import { oasGuard, OasGuardMetadata } from '../decorators/oas-guard';
 import { oasRoute, OasRouteDecoratorMetadata, OasRouteMetadata1, OasRouteMetadata2 } from '../decorators/oas-route';

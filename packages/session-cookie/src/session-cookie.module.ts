@@ -1,5 +1,5 @@
 import { featureModule, ModuleWithParams, Providers } from '@ditsmod/core';
-import { optional } from '@ts-stack/di';
+import { optional } from '@ditsmod/core';
 
 import { SessionCookie } from './session-cookie';
 import { SessionLogMediator } from './session-log-mediator';

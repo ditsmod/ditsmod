@@ -1,5 +1,5 @@
 import { ModuleExtract, RootMetadata } from '@ditsmod/core';
-import { injectable, Injector } from '@ts-stack/di';
+import { injectable, Injector } from '@ditsmod/core';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { existsSync } from 'fs';
 import { readFile, writeFile } from 'fs/promises';

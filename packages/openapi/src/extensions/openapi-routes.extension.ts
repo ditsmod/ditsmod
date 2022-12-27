@@ -1,4 +1,4 @@
-import { FactoryProvider, injectable } from '@ts-stack/di';
+import { FactoryProvider, injectable } from '@ditsmod/core';
 import {
   ControllersMetadata2,
   Extension,

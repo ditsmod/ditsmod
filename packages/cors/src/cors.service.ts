@@ -1,4 +1,4 @@
-import { injectable, optional } from '@ts-stack/di';
+import { injectable, optional } from '@ditsmod/core';
 import { Cookies, CookieOptions } from '@ts-stack/cookies';
 import { Req, Res } from '@ditsmod/core';
 import { CorsOptions, cors, mergeOptions } from '@ts-stack/cors';

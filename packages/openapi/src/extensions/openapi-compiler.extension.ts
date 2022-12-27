@@ -13,7 +13,7 @@ import {
   RouteMeta,
   ROUTES_EXTENSIONS,
 } from '@ditsmod/core';
-import { injectable, Injector, optional, ReflectiveInjector, reflector } from '@ts-stack/di';
+import { injectable, Injector, optional, ReflectiveInjector, reflector } from '@ditsmod/core';
 import {
   PathItemObject,
   XOasObject,

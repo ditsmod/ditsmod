@@ -8,7 +8,7 @@ import {
   XOperationObject,
   XResponsesObject,
 } from '@ts-stack/openapi-spec';
-import { ReflectiveInjector } from '@ts-stack/di';
+import { ReflectiveInjector } from '@ditsmod/core';
 
 import { OpenapiCompilerExtension } from './openapi-compiler.extension';
 import { DEFAULT_OAS_OBJECT } from '../constants';

@@ -7,7 +7,7 @@ import {
   ROUTES_EXTENSIONS,
   ServiceProvider,
 } from '@ditsmod/core';
-import { injectable, ReflectiveInjector } from '@ts-stack/di';
+import { injectable, ReflectiveInjector } from '@ditsmod/core';
 
 import { I18nTransformer } from './i18n-transformer';
 import { I18nLogMediator } from './i18n-log-mediator';

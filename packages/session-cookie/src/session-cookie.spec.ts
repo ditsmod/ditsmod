@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { NodeRequest, NodeResponse } from '@ts-stack/cookies';
-import { ReflectiveInjector } from '@ts-stack/di';
+import { ReflectiveInjector } from '@ditsmod/core';
 import { NODE_REQ, NODE_RES } from '@ditsmod/core';
 
 import { SessionCookie } from './session-cookie';

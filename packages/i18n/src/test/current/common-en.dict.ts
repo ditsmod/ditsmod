@@ -1,4 +1,4 @@
-import { injectable } from '@ts-stack/di';
+import { injectable } from '@ditsmod/core';
 
 import { Dictionary } from '../../types/mix';
 import { ISO639 } from '../../types/iso-639';

@@ -1,5 +1,5 @@
 import * as http from 'http';
-import { injectable, ReflectiveInjector } from '@ts-stack/di';
+import { injectable, ReflectiveInjector } from '@ditsmod/core';
 import { Router, RouterReturns } from '@ditsmod/core';
 
 import { Tree } from './tree';

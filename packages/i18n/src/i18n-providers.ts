@@ -1,5 +1,5 @@
 import { Providers } from '@ditsmod/core';
-import { Type } from '@ts-stack/di';
+import { Type } from '@ditsmod/core';
 
 import { Dictionary, DictGroup, Translations, I18N_TRANSLATIONS, I18nOptions } from './types/mix';
 

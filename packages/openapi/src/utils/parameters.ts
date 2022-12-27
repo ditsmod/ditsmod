@@ -1,6 +1,6 @@
 import { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
 import { AnyObj, HttpMethod } from '@ditsmod/core';
-import { Type, reflector, isContainer, Container } from '@ts-stack/di';
+import { Type, reflector, isContainer, Container } from '@ditsmod/core';
 
 import { PropertyDecoratorMetadata } from '../decorators/property';
 import { isProperty } from './type-guards';

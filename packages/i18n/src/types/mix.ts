@@ -1,5 +1,5 @@
 import { Extension } from '@ditsmod/core';
-import { InjectionToken, Type } from '@ts-stack/di';
+import { InjectionToken, Type } from '@ditsmod/core';
 
 import { ISO639 } from './iso-639';
 

@@ -1,4 +1,4 @@
-import { injectable, optional } from '@ts-stack/di';
+import { injectable, optional } from '@ditsmod/core';
 
 import { RouterLogMediator } from './router-log-mediator';
 import { Fn, TreeConfig, RouteType, RouteParam } from './types';

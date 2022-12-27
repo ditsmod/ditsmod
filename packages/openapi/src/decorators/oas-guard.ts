@@ -1,4 +1,4 @@
-import { makeClassDecorator } from '@ts-stack/di';
+import { makeClassDecorator } from '@ditsmod/core';
 import { XResponsesObject, XSecuritySchemeObject } from '@ts-stack/openapi-spec';
 
 export interface OasGuardMetadata {

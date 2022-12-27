@@ -1,4 +1,4 @@
-import { injectable, Injector } from '@ts-stack/di';
+import { injectable, Injector } from '@ditsmod/core';
 import { HttpHandler, HttpInterceptor, Status, CustomError } from '@ditsmod/core';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { DictService } from '@ditsmod/i18n';

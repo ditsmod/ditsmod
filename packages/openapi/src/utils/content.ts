@@ -1,5 +1,5 @@
 import { AnyObj } from '@ditsmod/core';
-import { reflector, Type } from '@ts-stack/di';
+import { reflector, Type } from '@ditsmod/core';
 import {
   SchemaObject,
   SchemaObjectType,

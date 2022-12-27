@@ -1,5 +1,5 @@
 import { Extension } from '@ditsmod/core';
-import { InjectionToken } from '@ts-stack/di';
+import { InjectionToken } from '@ditsmod/core';
 import { Options } from 'ajv';
 
 /**
