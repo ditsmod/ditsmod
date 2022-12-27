@@ -10,11 +10,11 @@ export function isOasRoute(propMeatada: AnyObj): propMeatada is OasRouteDecorato
   return (propMeatada as OasRouteDecoratorMetadata).decoratorFactory === oasRoute;
 }
 
-export function isOasRoute1(propMeatada: AnyObj): propMeatada is OasRouteMetadata1 {
+export function isOasRoute1(propMeatada: OasRouteDecoratorMetadata): propMeatada is OasRouteDecoratorMetadata<OasRouteMetadata1> {
   return isOasRoute(propMeatada) && (propMeatada.value as OasRouteMetadata1).guards !== undefined;
 }
 
-export function isOasRoute2(propMeatada: AnyObj): propMeatada is OasRouteMetadata2 {
+export function isOasRoute2(propMeatada: OasRouteDecoratorMetadata): propMeatada is OasRouteDecoratorMetadata<OasRouteMetadata2> {
   return isOasRoute(propMeatada) && (propMeatada.value as OasRouteMetadata2).operationObject !== undefined;
 }
 
