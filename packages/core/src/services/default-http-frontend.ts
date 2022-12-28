@@ -30,12 +30,12 @@ export class DefaultHttpFrontend implements HttpFrontend {
       }
       this.setParams();
     } catch (err) {
-      await this.loadErrorHandler(err);
+      await this.callErrorHandler(err);
       return;
     }
 
     return next.handle().catch((err) => {
-      return this.loadErrorHandler(err);
+      return this.callErrorHandler(err);
     });
   }
 
@@ -79,7 +79,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
     }
   }
 
-  protected async loadErrorHandler(err: any) {
+  protected async callErrorHandler(err: any) {
     const errorHandler = this.injector.get(ControllerErrorHandler);
     await errorHandler.handleError(err);
   }
