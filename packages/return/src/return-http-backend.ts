@@ -3,12 +3,12 @@ import { RouteMeta, HttpBackend, Res, DefaultHttpBackend, Status, HttpMethod, NO
 
 @injectable()
 export class ReturnHttpBackend extends DefaultHttpBackend implements HttpBackend {
-  constructor(protected override injector: Injector, protected override routeMeta: RouteMeta, protected res: Res) {
-    super(injector, routeMeta);
+  constructor(protected override injector: Injector, protected res: Res) {
+    super(injector);
   }
 
-  override async handle() {
-    const value = await super.handle(); // Controller's route returned value.
+  override async handle(routeMeta: RouteMeta) {
+    const value = await super.handle(routeMeta); // Controller's route returned value.
     let { statusCode } = this.res.nodeRes;
     if (!statusCode) {
       const nodeReq = this.injector.get(NODE_REQ);
