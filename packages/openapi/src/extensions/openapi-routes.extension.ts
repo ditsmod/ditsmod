@@ -80,12 +80,12 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             methodName,
             guards,
           };
-          providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
           aControllersMetadata2.push({
             providersPerRou,
             providersPerReq,
             path,
             httpMethod,
+            routeMeta
           });
         }
       }

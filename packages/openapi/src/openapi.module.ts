@@ -11,7 +11,6 @@ import {
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension';
 import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension';
 import { OAS_COMPILER_EXTENSIONS } from './di-tokens';
-import { OasRouteMeta } from './types/oas-route-meta';
 import { OpenapiController } from './openapi.controller';
 import { SwaggerConfigManager } from './services/swagger-config-manager';
 import { SwaggerOAuthOptions } from './swagger-ui/swagger-o-auth-options';
@@ -22,8 +21,6 @@ import { OpenapiLogMediator } from './services/openapi-log-mediator';
   controllers: [OpenapiController],
   providersPerApp: [OasConfigFiles],
   providersPerMod: [SwaggerConfigManager, OpenapiLogMediator],
-  providersPerRou: [{ token: OasRouteMeta, useToken: RouteMeta }],
-  exports: [OasRouteMeta],
   extensions: [
     { extension: OpenapiRoutesExtension, groupToken: ROUTES_EXTENSIONS, exported: true },
     {

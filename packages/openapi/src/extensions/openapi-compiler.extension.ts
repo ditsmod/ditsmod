@@ -10,7 +10,6 @@ import {
   NormalizedGuard,
   PerAppService,
   Providers,
-  RouteMeta,
   ROUTES_EXTENSIONS,
 } from '@ditsmod/core';
 import { injectable, Injector, optional, ReflectiveInjector, reflector } from '@ditsmod/core';
@@ -75,7 +74,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     const paths: XPathsObject = {};
     this.initOasObject();
     for (const metadataPerMod2 of aMetadataPerMod2) {
-      const { aControllersMetadata2, providersPerMod, module: modOrObj } = metadataPerMod2;
+      const { aControllersMetadata2, module: modOrObj } = metadataPerMod2;
 
       // Hide internal APIs for OpenAPI
       if (isModuleWithParams(modOrObj) && modOrObj.module === OpenapiModule) {
@@ -83,13 +82,9 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
       } else if (modOrObj === OpenapiModule) {
         continue;
       }
-      const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
 
-      aControllersMetadata2.forEach(({ providersPerRou, httpMethod, path }) => {
-        const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
-        const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
-        const oasRouteMeta = injectorPerRou.get(OasRouteMeta) as OasRouteMeta;
-        const { oasPath, guards, operationObject } = oasRouteMeta;
+      aControllersMetadata2.forEach(({ httpMethod, path, routeMeta }) => {
+        const { oasPath, guards, operationObject } = routeMeta as OasRouteMeta;
         if (operationObject) {
           const clonedOperationObject = { ...operationObject };
           this.setSecurityInfo(clonedOperationObject, guards);
