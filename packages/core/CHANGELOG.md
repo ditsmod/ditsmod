@@ -1,3 +1,10 @@
+<a name="core-2.30.0"></a>
+# [core-2.30.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.30.0) (2022-12-28)
+
+### BREAKING CHANGES
+
+- `RouteMeta` now passing as argument for interceptors.
+
 <a name="core-2.29.0"></a>
 # [core-2.29.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.29.0) (2022-12-26)
 
