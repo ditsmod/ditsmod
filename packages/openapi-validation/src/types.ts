@@ -8,7 +8,7 @@ import { ValidationOptions } from './validation-options';
 export class ValidationRouteMeta extends OasRouteMeta {
   parameters: XParameterObject[];
   requestBodySchema: XSchemaObject;
-  options: ValidationOptions
+  options: ValidationOptions;
 }
 
 /**

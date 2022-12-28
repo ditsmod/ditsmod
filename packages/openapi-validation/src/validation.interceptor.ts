@@ -9,16 +9,16 @@ import { AjvService } from './ajv.service';
 
 @injectable()
 export class ValidationInterceptor implements HttpInterceptor {
-  constructor(protected injector: Injector, protected meta: ValidationRouteMeta, protected ajvService: AjvService) {}
+  constructor(protected injector: Injector, protected ajvService: AjvService) {}
 
-  intercept(next: HttpHandler) {
-    this.prepareAndValidate();
-    return next.handle();
+  intercept(routeMeta: ValidationRouteMeta, next: HttpHandler) {
+    this.prepareAndValidate(routeMeta);
+    return next.handle(routeMeta);
   }
 
-  protected prepareAndValidate() {}
+  protected prepareAndValidate(routeMeta: ValidationRouteMeta) {}
 
-  protected validate(schema: XSchemaObject, value: any, parameter?: string) {
+  protected validate(routeMeta: ValidationRouteMeta, schema: XSchemaObject, value: any, parameter?: string) {
     const validate = this.ajvService.getValidator(schema);
     if (!validate) {
       const dict = this.getDict();
@@ -32,7 +32,7 @@ export class ValidationInterceptor implements HttpInterceptor {
       } else {
         args1 = validate.errors;
       }
-      throw new CustomError({ msg1, args1, status: this.meta.options.invalidStatus });
+      throw new CustomError({ msg1, args1, status: routeMeta.options.invalidStatus });
     }
   }
 

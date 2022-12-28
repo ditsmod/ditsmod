@@ -3,6 +3,7 @@ import { CustomError, Req } from '@ditsmod/core';
 import { Cookies } from '@ts-stack/cookies';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 
+import { ValidationRouteMeta } from './types';
 import { ValidationInterceptor } from './validation.interceptor';
 
 /**
@@ -14,8 +15,8 @@ import { ValidationInterceptor } from './validation.interceptor';
  */
 @injectable()
 export class ParametersInterceptor extends ValidationInterceptor {
-  protected override prepareAndValidate() {
-    const { parameters } = this.meta;
+  protected override prepareAndValidate(routeMeta: ValidationRouteMeta) {
+    const { parameters } = routeMeta;
     for (const parameter of parameters) {
       const schema = parameter.schema as XSchemaObject<any>;
       let value: any;
@@ -36,13 +37,13 @@ export class ParametersInterceptor extends ValidationInterceptor {
           const dict = this.getDict();
           throw new CustomError({
             msg1: dict.missingRequiredParameter(parameter.name, parameter.in),
-            status: this.meta.options.invalidStatus,
+            status: routeMeta.options.invalidStatus,
           });
         }
         continue;
       }
 
-      this.validate(schema, value, parameter.name);
+      this.validate(routeMeta, schema, value, parameter.name);
     }
   }
 }

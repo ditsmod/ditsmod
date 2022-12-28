@@ -1,6 +1,7 @@
 import { injectable } from '@ditsmod/core';
 import { CustomError, Req } from '@ditsmod/core';
 
+import { ValidationRouteMeta } from './types';
 import { ValidationInterceptor } from './validation.interceptor';
 
 /**
@@ -8,16 +9,16 @@ import { ValidationInterceptor } from './validation.interceptor';
  */
 @injectable()
 export class RequestBodyInterceptor extends ValidationInterceptor {
-  protected override prepareAndValidate() {
+  protected override prepareAndValidate(routeMeta: ValidationRouteMeta) {
     const req = this.injector.get(Req);
     if (req.body === undefined) {
       const dict = this.getDict();
       throw new CustomError({
         msg1: dict.missingRequestBody,
-        status: this.meta.options.invalidStatus,
+        status: routeMeta.options.invalidStatus,
       });
     }
 
-    this.validate(this.meta.requestBodySchema, req.body);
+    this.validate(routeMeta, routeMeta.requestBodySchema, req.body);
   }
 }

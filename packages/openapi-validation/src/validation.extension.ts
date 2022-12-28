@@ -1,13 +1,6 @@
-import {
-  Extension,
-  ExtensionsManager,
-  HTTP_INTERCEPTORS,
-  PerAppService,
-  RouteMeta,
-  ROUTES_EXTENSIONS,
-} from '@ditsmod/core';
+import { Extension, ExtensionsManager, HTTP_INTERCEPTORS, PerAppService, ROUTES_EXTENSIONS } from '@ditsmod/core';
 import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
-import { isReferenceObject, OasRouteMeta } from '@ditsmod/openapi';
+import { isReferenceObject } from '@ditsmod/openapi';
 import { injectable, optional } from '@ditsmod/core';
 
 import { ValidationRouteMeta } from './types';
@@ -43,12 +36,9 @@ export class ValidationExtension implements Extension<void> {
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
       providersPerMod.push({ token: AjvService, useValue: this.ajvService });
-      const injectorPerMod = this.perAppService.injector.resolveAndCreateChild(providersPerMod);
 
-      aControllersMetadata2.forEach(({ providersPerRou, providersPerReq }) => {
-        const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
-        const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
-        const validationRouteMeta = injectorPerRou.get(OasRouteMeta) as ValidationRouteMeta;
+      aControllersMetadata2.forEach(({ providersPerReq, routeMeta }) => {
+        const validationRouteMeta = routeMeta as ValidationRouteMeta;
         validationRouteMeta.parameters = [];
         if (validationRouteMeta.operationObject?.parameters?.length) {
           validationRouteMeta.operationObject.parameters.forEach((p) => {
@@ -74,7 +64,6 @@ export class ValidationExtension implements Extension<void> {
         }
 
         validationRouteMeta.options = this.validationOptions || new ValidationOptions();
-        providersPerRou.push({ token: ValidationRouteMeta, useToken: RouteMeta });
 
         if (validationRouteMeta.parameters.length) {
           metadataPerMod2.providersPerReq.unshift(ParametersInterceptor);
