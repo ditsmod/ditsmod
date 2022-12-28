@@ -51,12 +51,12 @@ export class PreRouterExtension implements Extension<void> {
       const injectorPerMod = injectorPerApp.resolveAndCreateChild([mod, ...providersPerMod]);
       injectorPerMod.get(mod); // Call module constructor.
 
-      aControllersMetadata2.forEach(({ httpMethod, path, providersPerRou, providersPerReq }) => {
+      aControllersMetadata2.forEach(({ httpMethod, path, providersPerRou, providersPerReq, routeMeta }) => {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
         const resolvedPerReq = ReflectiveInjector.resolve(mergedPerReq);
-        this.resolveAndInstantiate(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq);
+        this.resolveAndInstantiate(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
 
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
           const context = ReflectiveInjector.resolve([
@@ -69,7 +69,7 @@ export class PreRouterExtension implements Extension<void> {
 
           // First HTTP handler in the chain of HTTP interceptors.
           const chain = inj.get(HttpHandler) as HttpHandler;
-          await chain.handle();
+          await chain.handle(routeMeta);
         }) as RouteHandler;
 
         preparedRouteMeta.push({ moduleName, httpMethod, path, handle });
@@ -87,7 +87,8 @@ export class PreRouterExtension implements Extension<void> {
     httpMethod: HttpMethod,
     path: string,
     injectorPerRou: ReflectiveInjector,
-    resolvedPerReq: ResolvedProvider[]
+    resolvedPerReq: ResolvedProvider[],
+    routeMeta: RouteMeta
   ) {
     const fakeObj = { info: 'this is test of a route before set it' };
     const context = ReflectiveInjector.resolve([
@@ -97,7 +98,6 @@ export class PreRouterExtension implements Extension<void> {
       { token: QUERY_STRING, useValue: fakeObj },
     ]);
     const inj = injectorPerRou.createChildFromResolved([...resolvedPerReq, ...context]);
-    const routeMeta = inj.get(RouteMeta) as RouteMeta;
     if (!routeMeta?.controller) {
       const msg =
         `Setting routes in ${moduleName} failed: can't instantiate RouteMeta with ` +

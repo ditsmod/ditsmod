@@ -12,28 +12,28 @@ describe('HttpInterceptor', () => {
   const jestFn = jest.fn((interceptorName: string) => interceptorName);
 
   class Interceptor1 implements HttpInterceptor {
-    intercept(next: HttpHandler) {
+    intercept(routeMeta: RouteMeta, next: HttpHandler) {
       jestFn('Interceptor1');
-      return next.handle();
+      return next.handle(routeMeta);
     }
   }
 
   class Interceptor2 implements HttpInterceptor {
-    intercept(next: HttpHandler) {
+    intercept(routeMeta: RouteMeta, next: HttpHandler) {
       jestFn('Interceptor2');
-      return next.handle();
+      return next.handle(routeMeta);
     }
   }
 
   class MockHttpFrontend implements HttpFrontend {
-    intercept(next: HttpHandler) {
+    intercept(routeMeta: RouteMeta, next: HttpHandler) {
       jestFn('HttpFrontend');
-      return next.handle();
+      return next.handle(routeMeta);
     }
   }
 
   class MockHttpBackend implements HttpHandler {
-    handle() {
+    handle(routeMeta: RouteMeta) {
       jestFn('HttpBackend');
       return Promise.resolve();
     }
@@ -55,9 +55,9 @@ describe('HttpInterceptor', () => {
 
   it('each interceptor calls next.handle()', () => {
     class Interceptor3 implements HttpInterceptor {
-      intercept(next: HttpHandler) {
+      intercept(routeMeta: RouteMeta, next: HttpHandler) {
         jestFn('Interceptor3');
-        return next.handle();
+        return next.handle(routeMeta);
       }
     }
 
@@ -71,7 +71,7 @@ describe('HttpInterceptor', () => {
     ]);
 
     const chain = injector.get(HttpHandler) as HttpHandler;
-    chain.handle();
+    chain.handle({} as RouteMeta);
     expect(jestFn.mock.calls).toEqual([
       ['HttpFrontend'],
       ['Interceptor1'],
@@ -98,7 +98,7 @@ describe('HttpInterceptor', () => {
     ]);
 
     const chain = injector.get(HttpHandler) as HttpHandler;
-    chain.handle();
+    chain.handle({} as RouteMeta);
     expect(jestFn.mock.calls).toEqual([['HttpFrontend'], ['Interceptor1'], ['Interceptor2'], ['Interceptor3']]);
   });
 

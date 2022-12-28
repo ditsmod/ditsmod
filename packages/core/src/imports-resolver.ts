@@ -9,7 +9,6 @@ import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { ModuleManager } from './services/module-manager';
 import { ImportedTokensMap } from './types/metadata-per-mod';
 import { AppMetadataMap, ModuleType, ModuleWithParams, Scope, ServiceProvider } from './types/mix';
-import { RouteMeta } from './types/route-data';
 import { getDependencies, ReflectiveDependecy } from './utils/get-dependecies';
 import { getLastProviders } from './utils/get-last-providers';
 import { getModuleName } from './utils/get-module-name';
@@ -284,7 +283,6 @@ export class ImportsResolver {
       PATH_PARAMS,
       QUERY_STRING,
       Injector,
-      RouteMeta,
       RootMetadata,
     ];
 

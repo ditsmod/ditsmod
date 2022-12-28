@@ -6,8 +6,10 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
+import { RouteMeta } from './route-data';
+
 export interface HttpInterceptor {
-  intercept(next?: HttpHandler): Promise<any>;
+  intercept(routeMeta: RouteMeta, next?: HttpHandler): Promise<any>;
 }
 
 /**
@@ -16,7 +18,7 @@ export interface HttpInterceptor {
  * Interceptors sit between the `HttpFrontend` and the `HttpBackend`.
  */
 export abstract class HttpFrontend implements HttpInterceptor {
-  abstract intercept(next?: HttpHandler): Promise<any>;
+  abstract intercept(routeMeta: RouteMeta, next?: HttpHandler): Promise<any>;
 }
 
 /**
@@ -27,7 +29,7 @@ export abstract class HttpFrontend implements HttpInterceptor {
  * In an `HttpInterceptor`, the `HttpHandler` parameter is the next interceptor in the chain.
  */
 export abstract class HttpHandler {
-  abstract handle(): Promise<any>;
+  abstract handle(routeMeta: RouteMeta): Promise<any>;
 }
 
 /**
@@ -39,5 +41,5 @@ export abstract class HttpHandler {
  * controller's route method, without going through the next interceptors in the chain.
  */
 export abstract class HttpBackend implements HttpHandler {
-  abstract handle(): Promise<any>;
+  abstract handle(routeMeta: RouteMeta): Promise<any>;
 }

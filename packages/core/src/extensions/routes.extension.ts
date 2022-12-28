@@ -59,12 +59,12 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
             methodName,
             guards,
           };
-          providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
           controllersMetadata2.push({
             httpMethod,
             path,
             providersPerRou,
             providersPerReq,
+            routeMeta
           });
         }
       }

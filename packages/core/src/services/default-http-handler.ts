@@ -7,6 +7,7 @@
  */
 
 import { injectable, Injector } from '@ts-stack/di';
+import { RouteMeta } from '../types/route-data';
 
 import { HTTP_INTERCEPTORS } from '../constans';
 import { HttpFrontend, HttpBackend, HttpHandler, HttpInterceptor } from '../types/http-interceptor';
@@ -25,7 +26,7 @@ export class DefaultHttpHandler implements HttpHandler {
 
   constructor(private frontend: HttpFrontend, private backend: HttpBackend, private injector: Injector) {}
 
-  handle(): Promise<any> {
+  handle(routeMeta: RouteMeta): Promise<any> {
     if (!this.chain) {
       const interceptors = this.injector.get(HTTP_INTERCEPTORS, []).slice();
       interceptors.unshift(this.frontend);
@@ -34,14 +35,14 @@ export class DefaultHttpHandler implements HttpHandler {
         this.backend
       );
     }
-    return this.chain.handle();
+    return this.chain.handle(routeMeta);
   }
 }
 
 export class HttpInterceptorHandler implements HttpHandler {
   constructor(private next: HttpHandler, private interceptor: HttpInterceptor) {}
 
-  async handle(): Promise<any> {
-    await this.interceptor.intercept(this.next);
+  async handle(routeMeta: RouteMeta): Promise<any> {
+    await this.interceptor.intercept(routeMeta, this.next);
   }
 }

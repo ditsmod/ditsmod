@@ -1,5 +1,6 @@
-import { DecoratorAndValue, Type } from '@ts-stack/di';
-import { AnyObj, DecoratorMetadata, HttpMethod, ServiceProvider } from './mix';
+import type { DecoratorAndValue, Type } from '@ts-stack/di';
+import type { RouteMeta } from './route-data';
+import type { AnyObj, DecoratorMetadata, HttpMethod, ServiceProvider } from './mix';
 
 export interface ControllerMetadata1 {
   controller: Type<any>;
@@ -37,4 +38,5 @@ export interface ControllerMetadata2 {
   providersPerReq: ServiceProvider[];
   path: string;
   httpMethod: HttpMethod;
+  routeMeta: RouteMeta;
 }

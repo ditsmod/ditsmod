@@ -5,10 +5,9 @@ import { RouteMeta } from '../types/route-data';
 
 @injectable()
 export class DefaultHttpBackend implements HttpBackend {
-  constructor(protected injector: Injector, protected routeMeta: RouteMeta) {}
+  constructor(protected injector: Injector) {}
 
-  async handle() {
-    const { controller, methodName } = this.routeMeta;
+  async handle({ controller, methodName }: RouteMeta) {
     return this.injector.get(controller.prototype[methodName]);
   }
 }

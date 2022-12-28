@@ -17,14 +17,13 @@ export class DefaultHttpFrontend implements HttpFrontend {
   constructor(
     @inject(PATH_PARAMS) protected aPathParams: PathParam[],
     @inject(QUERY_STRING) protected queryString: any,
-    protected routeMeta: RouteMeta,
     protected req: Req,
     protected injector: Injector
   ) {}
 
-  async intercept(next: HttpHandler) {
+  async intercept(routeMeta: RouteMeta, next: HttpHandler) {
     try {
-      const canActivate = await this.canActivate();
+      const canActivate = await this.canActivate(routeMeta);
       if (!canActivate) {
         return;
       }
@@ -34,13 +33,13 @@ export class DefaultHttpFrontend implements HttpFrontend {
       return;
     }
 
-    return next.handle().catch((err) => {
+    return next.handle(routeMeta).catch((err) => {
       return this.callErrorHandler(err);
     });
   }
 
-  protected async canActivate() {
-    const preparedGuards = this.routeMeta.guards.map<{ guard: CanActivate; params?: any[] }>((item) => {
+  protected async canActivate(routeMeta: RouteMeta) {
+    const preparedGuards = routeMeta.guards.map<{ guard: CanActivate; params?: any[] }>((item) => {
       return {
         guard: this.injector.get(item.guard),
         params: item.params,
