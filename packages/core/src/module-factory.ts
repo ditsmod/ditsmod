@@ -1,22 +1,16 @@
 import { injectable } from '@ts-stack/di';
 
-import { defaultProvidersPerMod, NODE_REQ, NODE_RES } from './constans';
+import type { AppendsWithParams } from './types/module-metadata';
+import type { ModuleManager } from './services/module-manager';
+import type { NormalizedModuleMetadata } from './models/normalized-module-metadata';
+import type { ControllerMetadata1 } from './types/controller-metadata';
+import type { GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod';
+import type { ExtensionProvider, ModuleType, ModuleWithParams, NormalizedGuard, Scope, ServiceProvider } from './types/mix';
+
+import { ImportObj } from './types/metadata-per-mod';
 import { ModuleExtract } from './models/module-extract';
-import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
+import { defaultProvidersPerMod, NODE_REQ, NODE_RES } from './constans';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
-import { ModuleManager } from './services/module-manager';
-import { ControllerMetadata1 } from './types/controller-metadata';
-import { GlobalProviders, ImportObj, MetadataPerMod1 } from './types/metadata-per-mod';
-import {
-  AnyObj,
-  ExtensionProvider,
-  ModuleType,
-  ModuleWithParams,
-  NormalizedGuard,
-  Scope,
-  ServiceProvider,
-} from './types/mix';
-import { AppendsWithParams } from './types/module-metadata';
 import { deepFreeze } from './utils/deep-freeze';
 import { getCollisions } from './utils/get-collisions';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports';
