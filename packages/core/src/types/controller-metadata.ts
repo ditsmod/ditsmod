@@ -1,4 +1,4 @@
-import { DecoratorsAndValues, Type } from '@ts-stack/di';
+import { DecoratorAndValue, Type } from '@ts-stack/di';
 import { AnyObj, DecoratorMetadata, HttpMethod, ServiceProvider } from './mix';
 
 export interface ControllerMetadata1 {
@@ -20,7 +20,7 @@ export interface ControllerMetadata1 {
    * item.decoratorFactory === controller;
    * ```
    */
-  decoratorsAndValues: DecoratorsAndValues[];
+  decoratorsAndValues: DecoratorAndValue[];
   properties: {
     [propertyKey: string | symbol]: DecoratorMetadata<AnyObj>[];
   };

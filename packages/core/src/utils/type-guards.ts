@@ -10,7 +10,7 @@ import {
   TypeProvider,
   ValueProvider,
   TokenProvider,
-  DecoratorsAndValues,
+  DecoratorAndValue,
   reflector,
 } from '@ts-stack/di';
 
@@ -46,15 +46,15 @@ export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
 }
 
 export function isFeatureModule(
-  decoratorsAndValues: DecoratorsAndValues
-): decoratorsAndValues is DecoratorsAndValues<ModuleMetadata> {
-  return decoratorsAndValues?.decorator === featureModule;
+  decoratorAndValue: DecoratorAndValue
+): decoratorAndValue is DecoratorAndValue<ModuleMetadata> {
+  return decoratorAndValue?.decorator === featureModule;
 }
 
 export function isRootModule(
-  decoratorsAndValues: DecoratorsAndValues
-): decoratorsAndValues is DecoratorsAndValues<RootModuleMetadata> {
-  return decoratorsAndValues?.decorator === rootModule;
+  decoratorAndValue: DecoratorAndValue
+): decoratorAndValue is DecoratorAndValue<RootModuleMetadata> {
+  return decoratorAndValue?.decorator === rootModule;
 }
 
 export function isRawRootModule(
@@ -69,10 +69,8 @@ export function isNormRootModule(
   return rawModule.decoratorFactory === rootModule;
 }
 
-export function isController(
-  decoratorsAndValues: AnyObj
-): decoratorsAndValues is DecoratorsAndValues<ControllerMetadata> {
-  return decoratorsAndValues?.decorator === controller;
+export function isController(decoratorAndValue: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerMetadata> {
+  return decoratorAndValue?.decorator === controller;
 }
 
 export function isRoute(container: AnyObj): container is DecoratorMetadata {

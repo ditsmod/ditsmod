@@ -1,4 +1,4 @@
-import { injectable, ReflectiveInjector, ResolvedReflectiveProvider } from '@ts-stack/di';
+import { injectable, ReflectiveInjector, ResolvedProvider } from '@ts-stack/di';
 
 import { HTTP_INTERCEPTORS, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpBackend, HttpFrontend, HttpHandler } from '../types/http-interceptor';
@@ -87,7 +87,7 @@ export class PreRouterExtension implements Extension<void> {
     httpMethod: HttpMethod,
     path: string,
     injectorPerRou: ReflectiveInjector,
-    resolvedPerReq: ResolvedReflectiveProvider[]
+    resolvedPerReq: ResolvedProvider[]
   ) {
     const fakeObj = { info: 'this is test of a route before set it' };
     const context = ReflectiveInjector.resolve([

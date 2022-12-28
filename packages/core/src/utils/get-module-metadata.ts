@@ -1,4 +1,4 @@
-import { DecoratorsAndValues, reflector } from '@ts-stack/di';
+import { DecoratorAndValue, reflector } from '@ts-stack/di';
 
 import { ModuleMetadata } from '../types/module-metadata';
 import { AnyFn, ModuleType, ModuleWithParams } from '../types/mix';
@@ -11,7 +11,7 @@ export function getModuleMetadata(
   modOrObj: ModuleType | ModuleWithParams,
   isRoot?: boolean
 ): (ModuleMetadata & { decoratorFactory: AnyFn }) | undefined {
-  const typeGuard = isRoot ? isRootModule : (m: DecoratorsAndValues) => isFeatureModule(m) || isRootModule(m);
+  const typeGuard = isRoot ? isRootModule : (m: DecoratorAndValue) => isFeatureModule(m) || isRootModule(m);
 
   if (isForwardRef(modOrObj)) {
     modOrObj = modOrObj();

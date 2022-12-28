@@ -21,12 +21,12 @@ import { HttpFrontend, HttpBackend, HttpHandler, HttpInterceptor } from '../type
  */
 @injectable()
 export class DefaultHttpHandler implements HttpHandler {
-  private chain: HttpHandler | null = null;
+  private chain: HttpHandler | null;
 
   constructor(private frontend: HttpFrontend, private backend: HttpBackend, private injector: Injector) {}
 
   handle(): Promise<any> {
-    if (this.chain === null) {
+    if (!this.chain) {
       const interceptors = this.injector.get(HTTP_INTERCEPTORS, []).slice();
       interceptors.unshift(this.frontend);
       this.chain = interceptors.reduceRight(
