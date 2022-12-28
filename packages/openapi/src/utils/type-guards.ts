@@ -1,7 +1,7 @@
 import { AnyObj } from '@ditsmod/core';
 import { ReferenceObject } from '@ts-stack/openapi-spec';
 import { property, PropertyDecoratorItem } from '../decorators/property';
-import { DecoratorsAndValues } from '@ditsmod/core';
+import { DecoratorAndValue } from '@ditsmod/core';
 
 import { oasGuard, OasGuardMetadata } from '../decorators/oas-guard';
 import { oasRoute, OasRouteDecoratorMetadata, OasRouteMetadata1, OasRouteMetadata2 } from '../decorators/oas-route';
@@ -26,12 +26,12 @@ export function isReferenceObject(obj?: AnyObj): obj is ReferenceObject {
   return Boolean(obj?.hasOwnProperty('$ref'));
 }
 
-export function isOasGuard(decoratorsAndValues: AnyObj): decoratorsAndValues is DecoratorsAndValues<OasGuardMetadata> {
-  return (decoratorsAndValues as DecoratorsAndValues<OasGuardMetadata>).decorator === oasGuard;
+export function isOasGuard(decoratorsAndValues: AnyObj): decoratorsAndValues is DecoratorAndValue<OasGuardMetadata> {
+  return (decoratorsAndValues as DecoratorAndValue<OasGuardMetadata>).decorator === oasGuard;
 }
 
 export function isProperty(
   decoratorsAndValues: any
-): decoratorsAndValues is DecoratorsAndValues<PropertyDecoratorItem> {
+): decoratorsAndValues is DecoratorAndValue<PropertyDecoratorItem> {
   return decoratorsAndValues?.decorator == property;
 }
