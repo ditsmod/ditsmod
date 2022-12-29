@@ -6,7 +6,7 @@ import {
   ForwardRefFn,
   InjectionToken,
   Provider,
-  Type,
+  Class,
   TypeProvider,
   ValueProvider,
   TokenProvider,
@@ -89,13 +89,13 @@ export function isInjectionToken(token: any): token is InjectionToken<any> {
   return token instanceof InjectionToken;
 }
 
-export function isExtensionProvider(provider: Provider): provider is Type<Extension<any>> {
-  const init = (provider as Type<Extension<any>>)?.prototype?.init;
+export function isExtensionProvider(provider: Provider): provider is Class<Extension<any>> {
+  const init = (provider as Class<Extension<any>>)?.prototype?.init;
   return typeof init == 'function';
 }
 
 export function isTypeProvider(provider: Provider): provider is TypeProvider {
-  return provider instanceof Type;
+  return provider instanceof Class;
 }
 
 export function isValueProvider(provider: Provider): provider is ValueProvider {
@@ -132,7 +132,7 @@ export function isProvider(maybeProvider: any): maybeProvider is ServiceProvider
     return false;
   }
   const isSomeModule = reflector.getClassMetadata(maybeProvider).some((m) => isRootModule(m) || isFeatureModule(m));
-  return (maybeProvider instanceof Type && !isSomeModule) || isNormalizedProvider(maybeProvider);
+  return (maybeProvider instanceof Class && !isSomeModule) || isNormalizedProvider(maybeProvider);
 }
 
 /**

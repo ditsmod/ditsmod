@@ -1,5 +1,5 @@
 import { Req } from '@ditsmod/core';
-import { injectable, Injector, optional, Type } from '@ditsmod/core';
+import { injectable, Injector, optional, Class } from '@ditsmod/core';
 
 import { I18nLogMediator } from './i18n-log-mediator';
 import { ISO639 } from './types/iso-639';
@@ -16,12 +16,12 @@ export class DictService {
     @optional() protected req?: Req,
   ) {}
 
-  getAllDictionaries<T extends Type<Dictionary>>(token: T) {
+  getAllDictionaries<T extends Class<Dictionary>>(token: T) {
     const arr = this.injector.get(token, []) as T['prototype'][];
     return arr.slice(0).reverse();
   }
 
-  getDictionary<T extends Type<Dictionary>>(token: T, lng?: ISO639) {
+  getDictionary<T extends Class<Dictionary>>(token: T, lng?: ISO639) {
     if (!token) {
       this.log.throwDictionaryMustBeDefined();
     }
@@ -42,7 +42,7 @@ export class DictService {
     return dictionary!;
   }
 
-  getMethod<T extends Type<Dictionary>, K extends keyof Omit<T['prototype'], 'getLng'>>(
+  getMethod<T extends Class<Dictionary>, K extends keyof Omit<T['prototype'], 'getLng'>>(
     token: T,
     methodName: K,
     lng?: ISO639
@@ -51,7 +51,7 @@ export class DictService {
     return dictionary[methodName].bind(dictionary) as T['prototype'][K];
   }
 
-  translate<T extends Type<Dictionary>, K extends keyof Omit<T['prototype'], 'getLng'>>(
+  translate<T extends Class<Dictionary>, K extends keyof Omit<T['prototype'], 'getLng'>>(
     token: T,
     methodName: K,
     lng?: ISO639,

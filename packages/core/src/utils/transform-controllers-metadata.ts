@@ -1,10 +1,10 @@
-import { reflector, Type } from '@ts-stack/di';
+import { reflector, Class } from '@ts-stack/di';
 
 import { ControllerMetadata1 } from '../types/controller-metadata';
 import { DecoratorMetadata } from '../types/mix';
 import { isController } from './type-guards';
 
-export function transformControllersMetadata(controllers: Type<any>[], moduleName: string) {
+export function transformControllersMetadata(controllers: Class<any>[], moduleName: string) {
   const arrControllerMetadata: ControllerMetadata1[] = [];
   for (const controller of controllers) {
     const controllerMetadata1 = getControllerMetadata1(controller, moduleName);
@@ -14,7 +14,7 @@ export function transformControllersMetadata(controllers: Type<any>[], moduleNam
   return arrControllerMetadata;
 }
 
-export function getControllerMetadata1(Controller: Type<any>, moduleName: string) {
+export function getControllerMetadata1(Controller: Class<any>, moduleName: string) {
   const decoratorsAndValues = reflector.getClassMetadata(Controller);
   if (!decoratorsAndValues.find(isController)) {
     throw new Error(

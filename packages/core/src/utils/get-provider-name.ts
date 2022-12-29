@@ -1,4 +1,4 @@
-import { Type } from '@ts-stack/di';
+import { Class } from '@ts-stack/di';
 import { getToken } from './get-tokens';
 import { isNormalizedProvider } from './type-guards';
 
@@ -7,7 +7,7 @@ import { isNormalizedProvider } from './type-guards';
  */
 export function getProviderName(provider: any) {
   let token: any;
-  if (isNormalizedProvider(provider) || provider instanceof Type) {
+  if (isNormalizedProvider(provider) || provider instanceof Class) {
     token = getToken(provider);
   } else {
     token = provider;

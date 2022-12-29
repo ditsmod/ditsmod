@@ -1,11 +1,11 @@
 import { AnyObj } from '@ditsmod/core';
-import { makePropDecorator, Type } from '@ditsmod/core';
+import { makePropDecorator, Class } from '@ditsmod/core';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 
 export type AnyEnum<T extends number | string = number | string> = Record<T, T>;
 
 export interface CustomType {
-  array?: Type<AnyObj> | any[];
+  array?: Class<AnyObj> | any[];
   enum?: AnyEnum | AnyEnum[];
 }
 export type PropertyDecoratorFactory = (schema?: XSchemaObject, customType?: CustomType) => PropertyDecorator;
@@ -13,7 +13,7 @@ export interface PropertyDecoratorItem {
   schema?: XSchemaObject;
   customType?: CustomType;
 }
-export type PropertyDecoratorValue = [Type<AnyObj>, PropertyDecoratorItem, ...PropertyDecoratorItem[]];
+export type PropertyDecoratorValue = [Class<AnyObj>, PropertyDecoratorItem, ...PropertyDecoratorItem[]];
 export interface PropertyDecoratorMetadata {
   [key: string]: PropertyDecoratorValue;
 }

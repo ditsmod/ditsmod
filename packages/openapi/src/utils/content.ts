@@ -1,5 +1,5 @@
 import { AnyObj } from '@ditsmod/core';
-import { reflector, Type } from '@ditsmod/core';
+import { reflector, Class } from '@ditsmod/core';
 import {
   SchemaObject,
   SchemaObjectType,
@@ -16,7 +16,7 @@ import { isProperty } from './type-guards';
 export interface ContentOptions<T extends mediaTypeName = mediaTypeName> {
   mediaType: T;
   mediaTypeParams?: string;
-  model?: Type<AnyObj>;
+  model?: Class<AnyObj>;
   /**
    * A map between a property name and its encoding information. The key, being the property name,
    * MUST exist in the schema as a property. The encoding object SHALL only apply to `requestBody`
@@ -58,7 +58,7 @@ export class Content {
     return { ...this.content };
   }
 
-  protected getSchema(model: Type<AnyObj>) {
+  protected getSchema(model: Class<AnyObj>) {
     const schema = this.getSchemaStubForModel(model);
     const modelMeta = reflector.getPropMetadata<PropertyDecoratorMetadata>(model);
     
@@ -90,14 +90,14 @@ export class Content {
    * - `type` if it's standart model (Boolean, Number, String, Array, Object);
    * - init empty `items` and `properties` if it's suitable.
    */
-  protected getSchemaStubForModel(model: Type<AnyObj>) {
+  protected getSchemaStubForModel(model: Class<AnyObj>) {
     const schema = {} as SchemaObject;
     if (this.standartTypes.includes(model as any)) {
       schema.type = (model.name?.toLowerCase() || 'null') as SchemaObjectType;
       if (schema.type == 'array' && !schema.items) {
         schema.items = {};
       }
-    } else if (model instanceof Type) {
+    } else if (model instanceof Class) {
       schema.type = 'object';
       schema.properties = {};
     }
@@ -107,7 +107,7 @@ export class Content {
   protected checkTypeDefinitionConflict(
     modelName: string,
     property: string,
-    propertyType: Type<AnyObj>,
+    propertyType: Class<AnyObj>,
     type?: SchemaObjectType | SchemaObjectType[],
     customType?: CustomType
   ) {
@@ -136,8 +136,8 @@ export class Content {
   }
 
   protected fillPropertySchema(
-    model: Type<AnyObj>,
-    propertyType: Type<AnyObj>,
+    model: Class<AnyObj>,
+    propertyType: Class<AnyObj>,
     originPropertySchema?: XSchemaObject,
     customType?: CustomType
   ) {
@@ -147,7 +147,7 @@ export class Content {
       this.fillEnum(propertySchema, customType.enum);
     } else if (this.standartTypes.includes(propertyType as any)) {
       propertySchema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;
-    } else if (propertyType instanceof Type) {
+    } else if (propertyType instanceof Class) {
       if (this.scanInProgress.has(model)) {
         propertySchema.type = 'object';
         propertySchema.description = `[Circular references to ${model.name}]`;
@@ -169,7 +169,7 @@ export class Content {
   /**
    * @todo Refactor this.
    */
-  protected fillItems(model: Type<AnyObj>, propertySchema: SchemaObject, customType?: CustomType) {
+  protected fillItems(model: Class<AnyObj>, propertySchema: SchemaObject, customType?: CustomType) {
     if (customType?.array) {
       if (Array.isArray(customType.array) && customType.array.every((item) => Array.isArray(item))) {
         customType.array.forEach((item: any[]) => {
@@ -219,7 +219,7 @@ export class Content {
   protected checkCircularRefAndFillItems(
     modelName: string,
     propertySchema: SchemaObject,
-    customItem: Type<AnyObj>,
+    customItem: Class<AnyObj>,
     whatIs: 'array' | 'object'
   ) {
     let description = '';

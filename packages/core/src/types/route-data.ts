@@ -1,4 +1,4 @@
-import { Type } from '@ts-stack/di';
+import { Class } from '@ts-stack/di';
 import { DecoratorMetadata, HttpMethod, NormalizedGuard } from './mix';
 import { RouteHandler } from './router';
 
@@ -7,7 +7,7 @@ import { RouteHandler } from './router';
  * a route.
  */
 export class RouteMeta {
-  controller: Type<any>;
+  controller: Class<any>;
   /**
    * The controller's method name.
    */

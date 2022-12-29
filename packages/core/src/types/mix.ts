@@ -3,7 +3,7 @@ import {
   TokenProvider,
   FactoryProvider,
   InjectionToken,
-  Type,
+  Class,
   TypeProvider,
   ValueProvider,
 } from '@ts-stack/di';
@@ -11,10 +11,10 @@ import {
 import { MetadataPerMod1 } from './metadata-per-mod';
 import { ProvidersMetadata } from '../models/providers-metadata';
 
-export type ModuleType<T extends AnyObj = AnyObj> = Type<T>;
+export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
 
 export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]> | `BEFORE ${string}`;
-export type ExtensionType<T = any> = Type<Extension<T>>;
+export type ExtensionType<T = any> = Class<Extension<T>>;
 
 export interface Extension<T> {
   init(isLastExtensionCall: boolean): Promise<T>;
@@ -65,10 +65,10 @@ export interface DecoratorMetadata<MV extends AnyObj = AnyObj> {
   decorator: AnyFn;
 }
 export type AppMetadataMap = Map<ModuleType | ModuleWithParams, MetadataPerMod1>;
-export type GuardItem = Type<CanActivate> | [Type<CanActivate>, any, ...any[]];
+export type GuardItem = Class<CanActivate> | [Class<CanActivate>, any, ...any[]];
 
 export interface NormalizedGuard {
-  guard: Type<CanActivate>;
+  guard: Class<CanActivate>;
   params?: any[];
 }
 

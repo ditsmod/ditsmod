@@ -1,4 +1,4 @@
-import { injectable, resolveForwardRef, Type } from '@ts-stack/di';
+import { injectable, resolveForwardRef, Class } from '@ts-stack/di';
 import { format } from 'util';
 import { HTTP_INTERCEPTORS } from '../constans';
 
@@ -529,12 +529,12 @@ export class ModuleManager {
 
   protected checkExtension(modName: string, extensionsProvider: ExtensionProvider) {
     const np = normalizeProviders([extensionsProvider])[0];
-    let extensionClass: Type<Extension<any>>;
+    let extensionClass: Class<Extension<any>>;
     if (isClassProvider(np)) {
       extensionClass = np.useClass;
-    } else if (isTokenProvider(np) && np.useToken instanceof Type) {
+    } else if (isTokenProvider(np) && np.useToken instanceof Class) {
       extensionClass = np.useToken;
-    } else if (isValueProvider(np) && np.useValue.constructor instanceof Type) {
+    } else if (isValueProvider(np) && np.useValue.constructor instanceof Class) {
       extensionClass = np.useValue.constructor;
     }
 

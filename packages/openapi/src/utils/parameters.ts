@@ -1,11 +1,11 @@
 import { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
 import { AnyObj, HttpMethod } from '@ditsmod/core';
-import { Type, reflector, isContainer, DecoratorAndValue } from '@ditsmod/core';
+import { Class, reflector, isContainer, DecoratorAndValue } from '@ditsmod/core';
 
 type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';
 type OptionalParamsIn = 'query' | 'header' | 'cookie';
-type KeyOf<T extends Type<AnyObj>> = Extract<keyof T['prototype'], string>;
-type KeysOf<T extends Type<AnyObj>> = [KeyOf<T>, ...KeyOf<T>[]];
+type KeyOf<T extends Class<AnyObj>> = Extract<keyof T['prototype'], string>;
+type KeysOf<T extends Class<AnyObj>> = [KeyOf<T>, ...KeyOf<T>[]];
 /**
  * Applies to importing `OpenapiModule.withParams()`. OAS parameter's property, indicates the parameter
  * should or not be bound to presence last param in a route path.
@@ -24,33 +24,33 @@ export class Parameters {
   protected countOfLastPushedParams: number;
 
   // prettier-ignore
-  required<T extends Type<AnyObj>>(paramsIn: RequiredParamsIn, model: T, ...params: KeysOf<T>): this;
+  required<T extends Class<AnyObj>>(paramsIn: RequiredParamsIn, model: T, ...params: KeysOf<T>): this;
   // prettier-ignore
   required(paramsIn: RequiredParamsIn, ...params: [string, ...string[]]): this;
   // prettier-ignore
-  required<T extends Type<AnyObj>>(paramsIn: RequiredParamsIn, modelOrString: T | string, ...params: (KeyOf<T> | string)[]) {
+  required<T extends Class<AnyObj>>(paramsIn: RequiredParamsIn, modelOrString: T | string, ...params: (KeyOf<T> | string)[]) {
     return this.setParams(true, paramsIn, modelOrString, ...params);
   }
 
   // prettier-ignore
-  optional<T extends Type<AnyObj>>(paramsIn: OptionalParamsIn, model: T, ...params: KeysOf<T>): this;
+  optional<T extends Class<AnyObj>>(paramsIn: OptionalParamsIn, model: T, ...params: KeysOf<T>): this;
   // prettier-ignore
   optional(paramsIn: OptionalParamsIn, ...params: [string, ...string[]]): this;
   // prettier-ignore
-  optional<T extends Type<AnyObj>>(paramsIn: OptionalParamsIn, modelOrString: T | string, ...params: (KeyOf<T> | string)[]
+  optional<T extends Class<AnyObj>>(paramsIn: OptionalParamsIn, modelOrString: T | string, ...params: (KeyOf<T> | string)[]
   ) {
     return this.setParams(false, paramsIn, modelOrString, ...params);
   }
 
   getParams(): XParameterObject[];
   // prettier-ignore
-  getParams<T extends Type<AnyObj>>(paramsIn: 'path', isRequired: true, model: T, ...params: KeysOf<T>): XParameterObject[];
+  getParams<T extends Class<AnyObj>>(paramsIn: 'path', isRequired: true, model: T, ...params: KeysOf<T>): XParameterObject[];
   // prettier-ignore
-  getParams<T extends Type<AnyObj>>(paramsIn: OptionalParamsIn, isRequired: boolean, model: T, ...params: KeysOf<T>): XParameterObject[];
+  getParams<T extends Class<AnyObj>>(paramsIn: OptionalParamsIn, isRequired: boolean, model: T, ...params: KeysOf<T>): XParameterObject[];
   // prettier-ignore
   getParams(paramsIn: OptionalParamsIn, isRequired: boolean, ...params: [string, ...string[]]): XParameterObject[];
   // prettier-ignore
-  getParams<T extends Type<AnyObj>>(paramsIn?: RequiredParamsIn, isRequired?: boolean, modelOrString?: T | string, ...params: (KeyOf<T> | string)[]): XParameterObject[] {
+  getParams<T extends Class<AnyObj>>(paramsIn?: RequiredParamsIn, isRequired?: boolean, modelOrString?: T | string, ...params: (KeyOf<T> | string)[]): XParameterObject[] {
     if (isRequired !== undefined) {
       this.setParams(isRequired, paramsIn!, modelOrString!, ...params);
     }
@@ -91,7 +91,7 @@ export class Parameters {
     return this;
   }
 
-  use<T extends Type<Parameters>>(Plugin: T): T['prototype'] & this {
+  use<T extends Class<Parameters>>(Plugin: T): T['prototype'] & this {
     Object.getOwnPropertyNames(Plugin.prototype).filter(p => p != 'constructor').forEach(p => {
       (this as any)[p] = Plugin.prototype[p];
     });
@@ -105,7 +105,7 @@ export class Parameters {
     return this.parameters.slice(-this.countOfLastPushedParams);
   }
 
-  protected setParams<T extends Type<AnyObj>>(
+  protected setParams<T extends Class<AnyObj>>(
     isRequired: boolean,
     paramsIn: RequiredParamsIn,
     modelOrString: T | string,
@@ -134,7 +134,7 @@ export class Parameters {
   /**
    * Sets metadata from a model to parameters.
    */
-  protected setMetadata(model: Type<any>, paramsObjects: XParameterObject[]): XParameterObject[] {
+  protected setMetadata(model: Class<any>, paramsObjects: XParameterObject[]): XParameterObject[] {
     const meta = reflector.getPropMetadata(model);
     return paramsObjects.map((paramObject) => {
       const propertyDecorator = meta[paramObject.name];
@@ -154,11 +154,11 @@ export class Parameters {
     });
   }
 
-  protected setPropertyType(schema: XSchemaObject, propertyType: Type<AnyObj>) {
+  protected setPropertyType(schema: XSchemaObject, propertyType: Class<AnyObj>) {
     if (schema.type === undefined) {
       if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {
         schema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;
-      } else if (propertyType instanceof Type) {
+      } else if (propertyType instanceof Class) {
         schema.type = 'object';
       } else {
         schema.type = 'null';
@@ -168,13 +168,13 @@ export class Parameters {
 }
 
 // prettier-ignore
-export function getParams<T extends Type<AnyObj>>(paramsIn: 'path', isRequired: true, model: T, ...params: KeysOf<T>): XParameterObject[];
+export function getParams<T extends Class<AnyObj>>(paramsIn: 'path', isRequired: true, model: T, ...params: KeysOf<T>): XParameterObject[];
 // prettier-ignore
-export function getParams<T extends Type<AnyObj>>(paramsIn: OptionalParamsIn, isRequired: boolean, model: T, ...params: KeysOf<T>): XParameterObject[];
+export function getParams<T extends Class<AnyObj>>(paramsIn: OptionalParamsIn, isRequired: boolean, model: T, ...params: KeysOf<T>): XParameterObject[];
 // prettier-ignore
 export function getParams(paramsIn: OptionalParamsIn, isRequired: boolean, ...params: [string, ...string[]]): XParameterObject[];
 // prettier-ignore
-export function getParams<T extends Type<AnyObj>>(paramsIn?: any, isRequired?: boolean, modelOrString?: any, ...params: (KeyOf<T> | string)[]
+export function getParams<T extends Class<AnyObj>>(paramsIn?: any, isRequired?: boolean, modelOrString?: any, ...params: (KeyOf<T> | string)[]
 ) {
   return new Parameters().getParams(paramsIn, isRequired!, modelOrString, ...params);
 }

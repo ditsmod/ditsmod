@@ -1,4 +1,4 @@
-import { Type } from '@ts-stack/di';
+import { Class } from '@ts-stack/di';
 
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { OutputLogFilter, LogMediator } from '../log-mediator/log-mediator';
@@ -61,7 +61,7 @@ export class Providers {
     return this;
   }
 
-  useClass<A extends Type<any>, B extends A>(token: A, useClass: B, multi?: boolean) {
+  useClass<A extends Class<any>, B extends A>(token: A, useClass: B, multi?: boolean) {
     this.pushProvider({ token, useClass }, multi);
     return this;
   }
@@ -71,7 +71,7 @@ export class Providers {
     return this;
   }
 
-  useFactory(token: any, useFactory: [Type<any>, (...args: any[]) => unknown], multi?: boolean) {
+  useFactory(token: any, useFactory: [Class<any>, (...args: any[]) => unknown], multi?: boolean) {
     this.pushProvider({ token, useFactory }, multi);
     return this;
   }
@@ -94,13 +94,13 @@ export class Providers {
     return this;
   }
 
-  useSystemLogMediator<T extends Type<LogMediator>>(CustomLogMediator: T) {
+  useSystemLogMediator<T extends Class<LogMediator>>(CustomLogMediator: T) {
     this.providers.push(CustomLogMediator, { token: SystemLogMediator, useToken: CustomLogMediator });
 
     return this;
   }
 
-  use<T extends Type<Providers>>(Plugin: T): T['prototype'] & this {
+  use<T extends Class<Providers>>(Plugin: T): T['prototype'] & this {
     Object.getOwnPropertyNames(Plugin.prototype).filter(p => p != 'constructor').forEach(p => {
       (this as any)[p] = Plugin.prototype[p];
     });

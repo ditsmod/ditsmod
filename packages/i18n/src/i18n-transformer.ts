@@ -1,5 +1,5 @@
 import { ServiceProvider } from '@ditsmod/core';
-import { injectable, Type } from '@ditsmod/core';
+import { injectable, Class } from '@ditsmod/core';
 
 import { I18nLogMediator } from './i18n-log-mediator';
 import { Dictionary, Translations } from './types/mix';
@@ -37,7 +37,7 @@ export class I18nTransformer {
     return providers;
   }
 
-  protected getCurrentOrImportedProviders(token: Type<Dictionary>, group: Type<Dictionary>[]) {
+  protected getCurrentOrImportedProviders(token: Class<Dictionary>, group: Class<Dictionary>[]) {
     const providers: ServiceProvider[] = [];
     for (const dict of group) {
       if (token !== dict) {
@@ -48,7 +48,7 @@ export class I18nTransformer {
     return providers;
   }
 
-  protected logMissingMethodsIfExists(base: Type<Dictionary>, extended: Type<Dictionary>) {
+  protected logMissingMethodsIfExists(base: Class<Dictionary>, extended: Class<Dictionary>) {
     const baseMethods = Object.getOwnPropertyNames(base.prototype);
     const overridedMethods = Object.getOwnPropertyNames(extended.prototype);
     const missingMethods: string[] = [];

@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Provider, Type, ValueProvider, ClassProvider, TokenProvider, FactoryProvider } from '@ts-stack/di';
+import { Provider, Class, ValueProvider, ClassProvider, TokenProvider, FactoryProvider } from '@ts-stack/di';
 import { format } from 'util';
 
 /**
@@ -39,12 +39,12 @@ export function flatten<T = any>(list: any[], dst?: any[]): T[] {
  */
 export function normalizeProviders(providers: Provider[], arrayOfProviders: NormalizedProvider[] = []) {
   providers.forEach((provider) => {
-    if (provider instanceof Type) {
+    if (provider instanceof Class) {
       arrayOfProviders.push({ token: provider, useClass: provider });
     } else if (provider && typeof provider == 'object' && provider.token !== undefined) {
       arrayOfProviders.push(provider as NormalizedProvider);
     } else {
-      throw new Error(format('Invalid provider - only instances of Provider and Type are allowed, got:', provider));
+      throw new Error(format('Invalid provider - only instances of Provider and Class are allowed, got:', provider));
     }
   });
 

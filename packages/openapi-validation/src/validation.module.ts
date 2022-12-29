@@ -1,6 +1,6 @@
 import { featureModule, ModuleWithParams, PRE_ROUTER_EXTENSIONS, Providers } from '@ditsmod/core';
 import { DictGroup, Dictionary, I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
-import { Type } from '@ditsmod/core';
+import { Class } from '@ditsmod/core';
 import { Options } from 'ajv';
 
 import { AjvService } from './ajv.service';
@@ -26,7 +26,7 @@ import { ValidationExtension } from './validation.extension';
   ],
 })
 export class ValidationModule {
-  static withParams(current: DictGroup<Type<Dictionary>>[]): ModuleWithParams<ValidationModule> {
+  static withParams(current: DictGroup<Class<Dictionary>>[]): ModuleWithParams<ValidationModule> {
     return {
       module: this,
       providersPerMod: [...new I18nProviders().i18n({ current })],

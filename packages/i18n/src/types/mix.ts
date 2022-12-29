@@ -1,5 +1,5 @@
 import { Extension } from '@ditsmod/core';
-import { InjectionToken, Type } from '@ditsmod/core';
+import { InjectionToken, Class } from '@ditsmod/core';
 
 import { ISO639 } from './iso-639';
 
@@ -16,7 +16,7 @@ export class I18nOptions {
   defaultLng?: ISO639;
   lngParam?: string = 'lng';
 }
-export type DictGroup<T extends Type<Dictionary> = Type<Dictionary>> = [T, ...T[]];
+export type DictGroup<T extends Class<Dictionary> = Class<Dictionary>> = [T, ...T[]];
 /**
  * A group of extensions that add dictionaries to providers for internalization.
  */

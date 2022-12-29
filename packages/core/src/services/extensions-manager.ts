@@ -1,4 +1,4 @@
-import { inject, injectable, Injector, Type } from '@ts-stack/di';
+import { inject, injectable, Injector, Class } from '@ts-stack/di';
 
 import { getProviderName } from '../utils/get-provider-name';
 import { isInjectionToken } from '../utils/type-guards';
@@ -13,7 +13,7 @@ class Cache {
     public groupToken: ExtensionsGroupToken<any>,
     public value: any[] | false,
     public autoMergeArrays?: boolean,
-    public extension?: Type<Extension<any>>
+    public extension?: Class<Extension<any>>
   ) {}
 }
 
@@ -35,23 +35,23 @@ export class ExtensionsManager {
     private systemLogMediator: SystemLogMediator,
     private counter: Counter,
     private extensionsContext: ExtensionsContext,
-    @inject(EXTENSIONS_COUNTERS) private mExtensionsCounters: Map<Type<Extension<any>>, number>
+    @inject(EXTENSIONS_COUNTERS) private mExtensionsCounters: Map<Class<Extension<any>>, number>
   ) {}
 
   async init<T>(
     groupToken: ExtensionsGroupToken<T>,
     autoMergeArrays: boolean,
-    ExtensionAwaiting: Type<Extension<any>>
+    ExtensionAwaiting: Class<Extension<any>>
   ): Promise<T[] | false>;
   async init<T>(
     groupToken: ExtensionsGroupToken<T>,
     autoMergeArrays?: boolean,
-    ExtensionAwaiting?: Type<Extension<any>>
+    ExtensionAwaiting?: Class<Extension<any>>
   ): Promise<T[]>;
   async init<T>(
     groupToken: ExtensionsGroupToken<T>,
     autoMergeArrays = true,
-    ExtensionAwaiting?: Type<Extension<any>>
+    ExtensionAwaiting?: Class<Extension<any>>
   ): Promise<T[] | false> {
     /**
      * Initializes pair of group extensions with `BEFORE ${someGroupToken}` and `someGroupToken`. After that,
@@ -89,7 +89,7 @@ export class ExtensionsManager {
   protected async initGroup<T>(
     groupToken: ExtensionsGroupToken<any>,
     autoMergeArrays?: boolean,
-    ExtensionAwaiting?: Type<Extension<any>>
+    ExtensionAwaiting?: Class<Extension<any>>
   ): Promise<any[] | false> {
     const extensions = this.injector.get(groupToken, []) as Extension<T>[];
     const aCurrentData: T[] = [];
@@ -105,7 +105,7 @@ export class ExtensionsManager {
 
       this.unfinishedInit.add(extension);
       this.systemLogMediator.startInitExtension(this, this.unfinishedInit);
-      const isLastExtensionCall = this.mExtensionsCounters.get(extension.constructor as Type<Extension<T>>) === 0;
+      const isLastExtensionCall = this.mExtensionsCounters.get(extension.constructor as Class<Extension<T>>) === 0;
       const data = await extension.init(isLastExtensionCall);
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);
@@ -127,7 +127,7 @@ export class ExtensionsManager {
     }
   }
 
-  protected getCache(groupToken: ExtensionsGroupToken, autoMergeArrays = true, extension?: Type<Extension<any>>) {
+  protected getCache(groupToken: ExtensionsGroupToken, autoMergeArrays = true, extension?: Class<Extension<any>>) {
     return this.cache.find((c) => {
       return c.groupToken == groupToken && c.autoMergeArrays == autoMergeArrays && c.extension === extension;
     });
@@ -135,7 +135,7 @@ export class ExtensionsManager {
 
   protected getDataFromAllModules<T>(
     groupToken: ExtensionsGroupToken<T>,
-    extension: Type<Extension<T>>,
+    extension: Class<Extension<T>>,
     aCurrentData: T[]
   ) {
     const { mExtensionsData: mAllExtensionsData } = this.extensionsContext;
