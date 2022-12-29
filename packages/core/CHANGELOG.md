@@ -1,5 +1,12 @@
+<a name="core-2.31.0"></a>
+# [core-2.31.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.31.0) (2022-12-29)
+
+### BREAKING CHANGES
+
+- Renamed `Type` to `Class`.
+
 <a name="core-2.30.0"></a>
-# [core-2.30.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.30.0) (2022-12-28)
+## [core-2.30.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.30.0) (2022-12-28)
 
 ### BREAKING CHANGES
 
