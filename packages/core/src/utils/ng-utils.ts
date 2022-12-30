@@ -8,6 +8,7 @@
 
 import { Provider, Class, ValueProvider, ClassProvider, TokenProvider, FactoryProvider } from '@ts-stack/di';
 import { format } from 'util';
+import { isNormalizedProvider } from './type-guards';
 
 /**
  * Flattens an array.
@@ -41,7 +42,7 @@ export function normalizeProviders(providers: Provider[], arrayOfProviders: Norm
   providers.forEach((provider) => {
     if (provider instanceof Class) {
       arrayOfProviders.push({ token: provider, useClass: provider });
-    } else if (provider && typeof provider == 'object' && provider.token !== undefined) {
+    } else if (isNormalizedProvider(provider)) {
       arrayOfProviders.push(provider as NormalizedProvider);
     } else {
       throw new Error(format('Invalid provider - only instances of Provider and Class are allowed, got:', provider));

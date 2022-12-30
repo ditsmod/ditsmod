@@ -99,7 +99,7 @@ export function isTypeProvider(provider: Provider): provider is TypeProvider {
 }
 
 export function isValueProvider(provider: Provider): provider is ValueProvider {
-  return (provider as ValueProvider)?.useValue !== undefined;
+  return provider.hasOwnProperty('useValue');
 }
 
 export function isClassProvider(provider: Provider): provider is ClassProvider {
@@ -141,13 +141,8 @@ export function isProvider(maybeProvider: any): maybeProvider is ServiceProvider
  * { token: SomeClas, useClass: OtherClass }
  * ```
  */
-export function isNormalizedProvider(provider: ServiceProvider): provider is NormalizedProvider {
-  return ok(provider);
-
-  /**
-   * TypeProvider there is normalized to other form Provider
-   */
-  function ok(prov: Provider) {
-    return isValueProvider(prov) || isClassProvider(prov) || isTokenProvider(prov) || isFactoryProvider(prov);
-  }
+export function isNormalizedProvider(provider: Provider): provider is NormalizedProvider {
+  return (
+    isValueProvider(provider) || isClassProvider(provider) || isTokenProvider(provider) || isFactoryProvider(provider)
+  );
 }
