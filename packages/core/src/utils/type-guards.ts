@@ -37,10 +37,6 @@ export function isHttp2SecureServerOptions(serverOptions: ServerOptions): server
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
 }
 
-export function isForwardRef(type: any): type is ForwardRefFn {
-  return typeof type == 'function' && type.__forward_ref__ === forwardRef;
-}
-
 export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
   return err instanceof ChainError;
 }
@@ -55,6 +51,10 @@ export function isRootModule(
   decoratorAndValue: DecoratorAndValue
 ): decoratorAndValue is DecoratorAndValue<RootModuleMetadata> {
   return decoratorAndValue?.decorator === rootModule;
+}
+
+export function isDecoratorAndValue(decoratorAndValue: DecoratorAndValue | Class): decoratorAndValue is DecoratorAndValue {
+  return (decoratorAndValue as DecoratorAndValue)?.decorator !== undefined && decoratorAndValue?.hasOwnProperty('value');
 }
 
 export function isRawRootModule(

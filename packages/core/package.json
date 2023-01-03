@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/core",
-  "version": "2.31.0",
+  "version": "2.32.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -22,7 +22,7 @@
     "build": "rm -rf dist/* && tsc -b -f"
   },
   "dependencies": {
-    "@ts-stack/di": "^2.2.0"
+    "@ts-stack/di": "^2.3.3"
   },
   "devDependencies": {
     "@ts-stack/chain-error": "^1.2.0"

@@ -1,5 +1,12 @@
+<a name="core-2.32.0"></a>
+# [core-2.32.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.32.0) (2023-01-03)
+
+### Features
+
+- After migration to `@ts-stack/di` v2.3.3, in Ditsmod available `injector.runDry()` to test all dependencies for given token.
+
 <a name="core-2.31.0"></a>
-# [core-2.31.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.31.0) (2022-12-29)
+## [core-2.31.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.31.0) (2022-12-29)
 
 ### BREAKING CHANGES
 

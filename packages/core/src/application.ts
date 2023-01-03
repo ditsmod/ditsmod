@@ -12,6 +12,7 @@ import { Http2SecureServerOptions, RequestListener, Server } from './types/serve
 import { getModuleMetadata } from './utils/get-module-metadata';
 import { pickProperties } from './utils/pick-properties';
 import { isHttp2SecureServerOptions } from './utils/type-guards';
+import { clearErrorTrace } from './utils/clear-error-trace';
 
 export class Application {
   protected rootMeta: RootMetadata;
@@ -37,9 +38,10 @@ export class Application {
         } else {
           resolve({ server });
         }
-      } catch (err) {
+      } catch (err: any) {
         this.systemLogMediator.internalServerError(this, err, true);
         this.flushLogs();
+        clearErrorTrace(err);
         reject(err);
       }
     });

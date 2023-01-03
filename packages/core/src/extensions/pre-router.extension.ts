@@ -56,7 +56,7 @@ export class PreRouterExtension implements Extension<void> {
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
         const resolvedPerReq = ReflectiveInjector.resolve(mergedPerReq);
-        this.resolveAndInstantiate(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
+        this.runDry(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
 
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
           const context = ReflectiveInjector.resolve([
@@ -82,7 +82,7 @@ export class PreRouterExtension implements Extension<void> {
   /**
    * Used as "sandbox" to test resolvable of controllers and HTTP interceptors.
    */
-  protected resolveAndInstantiate(
+  protected runDry(
     moduleName: string,
     httpMethod: HttpMethod,
     path: string,
@@ -104,13 +104,13 @@ export class PreRouterExtension implements Extension<void> {
         `${httpMethod} "/${path}" in sandbox mode.`;
       throw new Error(msg);
     }
-    inj.get(HttpHandler);
-    inj.get(HttpFrontend);
-    inj.get(SystemLogMediator);
-    routeMeta.guards.forEach((item) => inj.get(item.guard));
-    inj.get(HttpBackend);
-    inj.get(routeMeta.controller);
-    inj.get(HTTP_INTERCEPTORS, []);
+    inj.runDry(HttpHandler);
+    inj.runDry(HttpFrontend);
+    inj.runDry(SystemLogMediator);
+    routeMeta.guards.forEach((item) => inj.runDry(item.guard));
+    inj.runDry(HttpBackend);
+    inj.runDry(routeMeta.controller.prototype[routeMeta.methodName]);
+    inj.runDry(HTTP_INTERCEPTORS, []);
   }
 
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {

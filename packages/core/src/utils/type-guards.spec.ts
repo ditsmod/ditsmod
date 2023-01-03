@@ -1,12 +1,11 @@
 import 'reflect-metadata';
-import { forwardRef, injectable, InjectionToken, makePropDecorator, ValueProvider } from '@ts-stack/di';
+import { forwardRef, injectable, InjectionToken, makePropDecorator } from '@ts-stack/di';
 import { reflector } from '@ts-stack/di';
 
 import { featureModule } from '../decorators/module';
 import {
   isController,
   isInjectionToken,
-  isForwardRef,
   isFeatureModule,
   isModuleWithParams,
   isNormalizedProvider,
@@ -16,10 +15,9 @@ import {
   isMultiProvider,
   MultiProvider,
 } from './type-guards';
-import { ModuleMetadata } from '../types/module-metadata';
 import { rootModule } from '../decorators/root-module';
 import { controller } from '../decorators/controller';
-import { route, RouteDecoratorMetadata } from '../decorators/route';
+import { route } from '../decorators/route';
 import { CanActivate, ServiceProvider, Extension } from '../types/mix';
 
 describe('type guards', () => {
@@ -161,19 +159,6 @@ describe('type guards', () => {
       expect(isInjectionToken(token1)).toBe(true);
       expect(isInjectionToken(token2)).toBe(false);
       expect(isInjectionToken(token3)).toBe(false);
-    });
-  });
-
-  describe('isForwardRef()', () => {
-    it('true', () => {
-      const fn = forwardRef(() => 'one');
-      expect(isForwardRef(fn)).toBe(true);
-    });
-
-    it('false', () => {
-      function forwardRef(...args: any[]) {}
-      const fn = forwardRef(() => 'one');
-      expect(isForwardRef(fn)).toBe(false);
     });
   });
 

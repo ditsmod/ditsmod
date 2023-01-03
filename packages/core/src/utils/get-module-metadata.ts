@@ -1,10 +1,10 @@
-import { DecoratorAndValue, reflector } from '@ts-stack/di';
+import { DecoratorAndValue, reflector, resolveForwardRef } from '@ts-stack/di';
 
 import { ModuleMetadata } from '../types/module-metadata';
 import { AnyFn, ModuleType, ModuleWithParams } from '../types/mix';
 import { getModuleName } from './get-module-name';
 import { mergeArrays } from './merge-arrays';
-import { isForwardRef, isFeatureModule, isModuleWithParams, isRootModule } from './type-guards';
+import { isFeatureModule, isModuleWithParams, isRootModule } from './type-guards';
 import { getLastProviders } from './get-last-providers';
 
 export function getModuleMetadata(
@@ -13,9 +13,7 @@ export function getModuleMetadata(
 ): (ModuleMetadata & { decoratorFactory: AnyFn }) | undefined {
   const typeGuard = isRoot ? isRootModule : (m: DecoratorAndValue) => isFeatureModule(m) || isRootModule(m);
 
-  if (isForwardRef(modOrObj)) {
-    modOrObj = modOrObj();
-  }
+  modOrObj = resolveForwardRef(modOrObj);
 
   if (isModuleWithParams(modOrObj)) {
     const modWitParams = modOrObj;

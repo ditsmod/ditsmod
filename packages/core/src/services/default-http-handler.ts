@@ -7,8 +7,8 @@
  */
 
 import { injectable, Injector } from '@ts-stack/di';
-import { RouteMeta } from '../types/route-data';
 
+import { RouteMeta } from '../types/route-data';
 import { HTTP_INTERCEPTORS } from '../constans';
 import { HttpFrontend, HttpBackend, HttpHandler, HttpInterceptor } from '../types/http-interceptor';
 

@@ -69,5 +69,27 @@ export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from './utils/http
 export { NormalizedProvider } from './utils/ng-utils';
 export { pickProperties } from './utils/pick-properties';
 export { Providers } from './utils/providers';
-export * from './utils/type-guards';
-export { isFeatureModule } from './utils/type-guards';
+export {
+  MultiProvider,
+  isAppendsWithParams,
+  isChainError,
+  isClassProvider,
+  isController,
+  isExtensionProvider,
+  isFactoryProvider,
+  isModuleWithParams,
+  isFeatureModule,
+  isDecoratorAndValue,
+  isHttp2SecureServerOptions,
+  isInjectionToken,
+  isMultiProvider,
+  isNormRootModule,
+  isNormalizedProvider,
+  isProvider,
+  isRawRootModule,
+  isRootModule,
+  isRoute,
+  isTokenProvider,
+  isTypeProvider,
+  isValueProvider
+} from './utils/type-guards';
