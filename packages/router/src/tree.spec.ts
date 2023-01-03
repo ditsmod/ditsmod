@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Tree } from './tree';
 import { RouteParam } from './types';
 
