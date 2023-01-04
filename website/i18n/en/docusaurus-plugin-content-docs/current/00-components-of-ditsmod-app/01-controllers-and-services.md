@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## What is a controller
 
-The controllers are intended to receive HTTP requests and send HTTP responses. The TypeScript class becomes a Ditsmod controller with `controller` decorator:
+Controllers are designed to receive HTTP requests and send HTTP responses. A TypeScript class becomes a Ditsmod controller thanks to the `controller` decorator:
 
 ```ts
 import { controller } from '@ditsmod/core';
@@ -15,86 +15,94 @@ import { controller } from '@ditsmod/core';
 export class SomeController {}
 ```
 
-It is recommended that files of controllers end with `*.controller.ts` and that their class names end with `*controller`.
+It is recommended that controller files end with `*.controller.ts` and their class names end with `*Controller`.
 
 <!--
-In general, you can transfer an object with the following properties to the `controller` decorator:
+Загалом, в декоратор `controller` можна передавати об'єкт із такими властивостями:
 
 ```ts
 import { controller } from '@ditsmod/core';
 
 @controller({
-  providersPerRou: [], // route-level providers
-  providersPerReq: [] // Request-level providers
+  providersPerRou: [], // Провайдери на рівні роута
+  providersPerReq: [] // Провайдери на рівні запиту
 })
 export class SomeController {}
 ```
 -->
 
-The HTTP requests are tied to the methods of controllers through the routing system, using the decorator `route`. The following example creates two routes that accept `GET` requests to `/hello` and `/throw-error`:
+HTTP requests are bound to controller methods through the routing system, using the `route` decorator. In the following example, a single route is created that accepts `GET` request at `/hello`:
 
 ```ts
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, route, Res } from '@ditsmod/core';
 
 @controller()
-export class SomeController {
-  constructor(private res: Res) {}
-
+export class HelloWorldController {
   @route('GET', 'hello')
-  tellHello() {
-    this.res.send('Hello World!');
-  }
-
-  @route('GET', 'throw-error')
-  thrwoError() {
-    throw new Error('Here some error occurred');
+  method1(res: Res) {
+    res.send('Hello World!');
   }
 }
 ```
 
 What we see here:
 
-1. In the constructor of the class using `private` access modifier, the property of class `res` with data type `Res` is declared. So we ask Ditsmod to create an instance of the `Res` class and pass it to the `res` variable. By the way, `res` is short for the word _response_.
-2. Routes are created using the `route` decorator, which is placed before the class method, and it does not matter what the name of this method is.
-3. Text responses to HTTP requests are sent via `this.res.send()`.
-4. Error objects can be thrown directly in the class method in the common way for JavaScript - with the keyword `throw`.
+1. The route is created using the `route` decorator, which is placed in front of the class method, and it does not matter what the name of this method is.
+2. In the class method, the parameter `res` is declared with the data type `Res`. So we ask Ditsmod to create an instance of `Res` and pass it to the appropriate variable. By the way, `res` is short for the word _response_.
+3. Text responses to HTTP requests are sent via `res.send()`.
 
-:::tip Use an access modifier
-The access modifier in the constructor can be any (private, protected or public), but without the modifier - `res` will be a simple parameter with visibility only in the constructor.
+Although in the previous example the instance of `Res` was requested in `method1()`, we can similarly use the constructor:
+
+```ts
+import { controller, route, Res } from '@ditsmod/core';
+
+@controller()
+export class HelloWorldController {
+  constructor(private res: Res) {}
+
+  @route('GET', 'hello')
+  method1() {
+    this.res.send('Hello World!');
+  }
+}
+```
+
+Of course, other instances of classes can be requested in the parameters, and the order of the parameters is not important.
+
+:::tip Use the access modifier
+The access modifier in the constructor can be any (private, protected or public), but without a modifier - `res' will be just a simple parameter with visibility only in the constructor.
 :::
 
-To use `pathParams`, `queryParams` or `body`, you should ask the `Req` in the controller constructor:
+To use `pathParams`, `queryParams` or `body`, you need to request an instance of the `Req` class:
 
 ```ts
 import { controller, Req, Res, route } from '@ditsmod/core';
 
 @controller()
 export class SomeController {
-  constructor(private req: Req, private res: Res) {}
-
   @route('GET', 'hello/:userName')
-  getHello() {
-    const { pathParams } = this.req;
-    this.res.send(`Hello, ${pathParams.userName}`);
+  getHello(req: Req, res: Res) {
+    const { pathParams } = req;
+    res.send(`Hello, ${pathParams.userName}`);
   }
 
   @route('POST', 'some-url')
-  postSomeUrl() {
-    const { body, queryParams } = this.req;
-    this.res.sendJson(body, queryParams);
+  postSomeUrl(req: Req, res: Res) {
+    const { body, queryParams } = req;
+    res.sendJson(body, queryParams);
   }
 }
 ```
 
 By the way, `req` is short for _request_.
 
-As you can see, to send responses with objects, you need to use the `this.res.sendJson()` method instead of `this.res.send()` (because it only sends text).
+As you can see, to send responses with objects, you need to use the `res.sendJson()` method instead of `res.send()` (because it only sends text).
 
-This example does not show, but remember that the native Node.js request object is in `this.req.nodeReq`.
+Not shown in this example, but remember that the native Node.js request object is in `req.nodeReq`.
 
-### Binding of the controller to the module
+## Binding of the controller to the module
 
-The controller is bound to the module through an array of `controllers`:
+The controller is bound to the module through the `controllers` array:
 
 ```ts {6}
 import { featureModule } from '@ditsmod/core';
@@ -107,17 +115,17 @@ import { SomeController } from './some.controller';
 export class SomeModule {}
 ```
 
-After binding the controllers to the module, in order for Ditsmod to take these controllers into account, this module must be imported within an object with the `ModuleWithParams` interface:
+After binding controllers to a module, in order for Ditsmod to take these controllers into account, the module should be either attached or imported in an object that has the [ModuleWithParams][2] interface. The following example shows both the attachment and the full import of the module (this is done only to demonstrate the possibility, in practice it does not make sense to do simultaneous attachment and import):
 
-```ts {7}
+```ts {6-8}
 import { featureModule } from '@ditsmod/core';
 
 import { SomeModule } from './some.module';
 
 @featureModule({
-  imports: [
-    { path: '', module: SomeModule }
-  ]
+  appends: [SomeModule],
+  // OR
+  imports: [{ path: 'some-prefix', module: SomeModule }]
 })
 export class OtherModule {}
 ```
@@ -126,15 +134,15 @@ You can read more detailed information in the section [Export and import of modu
 
 ## Services
 
-Although from a technical point of view, it is possible to get by with just one controller to handle a HTTP request, but it is better to separate the voluminous code with business logic into separate classes so that this code can be reused if necessary, and easier to test. These separate classes with business logic are called _services_.
+Although from a technical point of view, it's possible to get by with just one controller to handle a HTTP request, it's better to separate the voluminous code with business logic into separate classes so that the code can be reused when needed and easier to test. These separate classes with business logic are usually called _services_.
 
 What services can do:
 
 - provide configuration;
 - validate the request;
-- parsing the body of the request;
-- check access permissions;
-- works with databases, with emails:
+- parsing the request body;
+- check access rights;
+- work with databases, with mail;
 - etc.
 
 The TypeScript class becomes a Ditsmod service with `injectable` decorator:
@@ -146,9 +154,9 @@ import { injectable } from '@ditsmod/core';
 export class SomeService {}
 ```
 
-It is recommended that service file names end with `*.service.ts` and that their class names end with `*Service`.
+It is recommended that service files end with `*.service.ts`, and their classes end with `*Service`.
 
-Often some services depend on other services, and to get an instance of a particular service, you need specify its class in the constructor:
+Often, some services depend on other services, and to get an instance of a certain service, you need to specify its class in the constructor:
 
 ```ts
 import { injectable } from '@ditsmod/core';
@@ -165,6 +173,11 @@ export class SecondService {
 }
 ```
 
-As you can see, the rules for obtaining a class instance in the service are the same as in the controller. That is, we in the constructor with `private` access modifier declare property of class `firstService` with data type `FirstService`.
+As you can see, the rules for obtaining a class instance in the constructor are the same as in the controllers: using the `private` access modifier, we declare the `firstService` class property with the `FirstService` data type.
+
+Please note that it is possible to request dependencies in the parameters of _methods_ services, but, firstly, above these methods you need to use any decorator for class properties (for example `@methodFactory()`), and secondly - these methods need to be used in providers with the [useFactory][3] property.
+
 
 [1]: /components-of-ditsmod-app/exports-and-imports#import-module
+[2]: /components-of-ditsmod-app/exports-and-imports#ModuleWithParams
+[3]: /components-of-ditsmod-app/dependency-injection#provider

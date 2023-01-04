@@ -89,6 +89,8 @@ Although here `path` is an empty string, for Ditsmod the presence of `path` mean
 
 As you can see, in the previous example, this time, neither the service nor the module is imported, but the object. This object has the following interface:
 
+<a id="ModuleWithParams"></a>
+
 ```ts
 interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> {
   id?: string;

@@ -89,6 +89,8 @@ export class SecondModule {}
 
 Як бачите, у попередньому прикладі імпортується на цей раз і не сервіс, і не модуль, а об'єкт. Цей об'єкт має наступний інтерфейс:
 
+<a id="ModuleWithParams"></a>
+
 ```ts
 interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> {
   id?: string;
