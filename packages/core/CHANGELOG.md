@@ -1,5 +1,12 @@
+<a name="core-2.32.1"></a>
+# [core-2.32.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.32.1) (2023-01-01)
+
+### Bug fixes
+
+- Upgrade `@ts-stack/di` to fix some loop.
+
 <a name="core-2.32.0"></a>
-# [core-2.32.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.32.0) (2023-01-03)
+## [core-2.32.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.32.0) (2023-01-03)
 
 ### Features
 
