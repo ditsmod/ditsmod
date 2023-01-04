@@ -435,7 +435,7 @@ Keep in mind that this way you get an injector that created an instance of this 
 
 ## Re-adding providers
 
-The same provider can be added multiple times in the metadata of a module or controller, but DI will choose the provider that was added last (there is an exception to this rule, but it only applies to [multi-providers][10]). Additionally, the same provider can be passed simultaneously to four injectors at different levels of the hierarchy, but DI will always choose the closest injectors (ie, if a value for a provider is queried at the request level, then the injector at the request level will be looked up first, and only if there is no required provider, DI will rise to the parent injectors).
+The same provider can be added multiple times in the metadata of a module or controller, but DI will choose the provider that was added last (there is an exception to this rule, but it only applies to multi-providers). Additionally, the same provider can be passed simultaneously to four injectors at different levels of the hierarchy, but DI will always choose the closest injectors (ie, if a value for a provider is queried at the request level, then the injector at the request level will be looked up first, and only if there is no required provider, DI will rise to the parent injectors).
 
 Also, if you import a specific provider from an external module and you have a provider with the same token in the current module, the local provider will have higher priority, provided they were passed at the same level of the injector hierarchy.
 
@@ -451,8 +451,7 @@ Remember that when DI cannot find the right provider, there are only three possi
 [12]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
 [14]: https://github.com/ditsmod/seed/blob/901f247/src/app/app.module.ts#L18
 [8]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
-[9]: https://ts-stack.github.io/di/en/
-[10]: https://ts-stack.github.io/di/#%D0%BC%D1%83%D0%BB%D1%8C%D1%82%D0%B8-%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B9%D0%B4%D0%B5%D1%80%D0%B8
+[9]: https://github.com/ts-stack/di
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 
 [107]: /components-of-ditsmod-app/exports-and-imports

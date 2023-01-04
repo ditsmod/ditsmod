@@ -84,8 +84,6 @@ const logger = createLogger({ name: 'bunyan-test' });
 
 In essence, an object with the `useToken` property says: "When the DI is queried for a provider by the `BunyanLogger` token, the corresponding value must be searched for by the `Logger` token." That is, in fact, the second element of the array refers to the first element of the array.
 
-You can read more about `useToken` in [documentation @ts-stack/di][8].
-
 Let's go further. At this stage of configuration, in any controller within a `BunyanModule`, a `bunyan` instance can be issued by both a `Logger` token and a `BunyanLogger` token. By the way, it could be done more simply, instead of two instructions for DI, you could pass one instruction:
 
 ```ts
@@ -123,7 +121,7 @@ DI will call `patchLogger()` on the first `Logger` request and pass the `LoggerC
 
 ## PinoModule
 
-In Ditsmod, the [pino][7] logger is configured similarly to `bunyan`, except for the token for DI. The fact is that currently the `pino` library only has an interface for its logger, and for DI it would be better to have a class instead of an interface. Therefore, we cannot use the [useToken][8] property on the provider object. In this case, you need to use `@inject` in the constructor of the controller or service:
+In Ditsmod, the [pino][7] logger is configured similarly to `bunyan`, except for the token for DI. The fact is that currently the `pino` library only has an interface for its logger, and for DI it would be better to have a class instead of an interface. Therefore, we cannot use the `useToken` property on the provider object. In this case, you need to use `@inject` in the constructor of the controller or service:
 
 ```ts
 import { inject } from '@ditsmod/core';
@@ -142,4 +140,3 @@ In this Ditsmod application, the [winston][5] logger is configured similarly to 
 [5]: https://github.com/winstonjs/winston
 [6]: https://github.com/trentm/node-bunyan
 [7]: https://github.com/pinojs/pino
-[8]: https://ts-stack.github.io/di/en/#useexisting
