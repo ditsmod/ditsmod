@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Ґарди (охоронці)
 
-Якщо ви хочете обмежити доступ до певних маршрутів, ви можете скористатись ґардами. Готовий приклад застосунку із ґардами ви можете проглянути у теці [examples][1], або у [RealWorld example][2].
+Якщо ви хочете обмежити доступ до певних маршрутів, ви можете скористатись ґардами. Готовий приклад застосунку з ґардами ви можете проглянути у теці [examples][1], або у [RealWorld example][2].
 
 Будь-який ґард є [DI провайдером][3], що передається в інжектори на рівні запиту. Кожен ґард повинен бути класом, що впроваджує інтерфейс `CanActivate`:
 
@@ -52,11 +52,9 @@ import { AuthGuard } from './auth.guard';
 
 @controller()
 export class SomeController {
-  constructor(private res: Res) {}
-
   @route('GET', 'some-url', [AuthGuard])
-  tellHello() {
-    this.res.send('Hello admin!');
+  tellHello(res: Res) {
+    res.send('Hello admin!');
   }
 }
 ```
@@ -75,11 +73,9 @@ import { Permission } from './permission';
 
 @controller()
 export class SomeController {
-  constructor(private res: Res) {}
-
   @route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
-  tellHello() {
-    this.res.send('Hello admin!');
+  tellHello(res: Res) {
+    res.send('Hello admin!');
   }
 }
 ```

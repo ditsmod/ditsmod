@@ -52,11 +52,9 @@ import { AuthGuard } from './auth.guard';
 
 @controller()
 export class SomeController {
-  constructor(private res: Res) {}
-
   @route('GET', 'some-url', [AuthGuard])
-  tellHello() {
-    this.res.send('Hello admin!');
+  tellHello(res: Res) {
+    res.send('Hello admin!');
   }
 }
 ```
@@ -75,11 +73,9 @@ import { Permission } from './permission';
 
 @controller()
 export class SomeController {
-  constructor(private res: Res) {}
-
   @route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
-  tellHello() {
-    this.res.send('Hello admin!');
+  tellHello(res: Res) {
+    res.send('Hello admin!');
   }
 }
 ```
