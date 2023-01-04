@@ -104,13 +104,13 @@ export class PreRouterExtension implements Extension<void> {
         `${httpMethod} "/${path}" in sandbox mode.`;
       throw new Error(msg);
     }
-    inj.runDry(HttpHandler);
-    inj.runDry(HttpFrontend);
-    inj.runDry(SystemLogMediator);
-    routeMeta.guards.forEach((item) => inj.runDry(item.guard));
-    inj.runDry(HttpBackend);
-    inj.runDry(routeMeta.controller.prototype[routeMeta.methodName]);
-    inj.runDry(HTTP_INTERCEPTORS, []);
+    inj.checkDeps(HttpHandler);
+    inj.checkDeps(HttpFrontend);
+    inj.checkDeps(SystemLogMediator);
+    routeMeta.guards.forEach((item) => inj.checkDeps(item.guard));
+    inj.checkDeps(HttpBackend);
+    inj.checkDeps(routeMeta.controller.prototype[routeMeta.methodName]);
+    inj.checkDeps(HTTP_INTERCEPTORS, []);
   }
 
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {

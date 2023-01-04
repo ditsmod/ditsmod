@@ -22,7 +22,7 @@
     "build": "rm -rf dist/* && tsc -b -f"
   },
   "dependencies": {
-    "@ts-stack/di": "^2.3.4"
+    "@ts-stack/di": "^2.4.0"
   },
   "devDependencies": {
     "@ts-stack/chain-error": "^1.2.0"

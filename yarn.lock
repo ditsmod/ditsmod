@@ -1683,10 +1683,10 @@
   dependencies:
     vary "^1.1.2"
 
-"@ts-stack/di@^2.3.4":
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/@ts-stack/di/-/di-2.3.4.tgz#c0edec79c2835d7e15656372c0ce0468e3825abc"
-  integrity sha512-w5MAr4IrnBaRTJJKWOQNYD0TaVm/0pPZSMVxWCyYp9E//3pDY1g7dBiZwC1w7saRI3ps+dv5Nf/ru3JWpRJnqw==
+"@ts-stack/di@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@ts-stack/di/-/di-2.4.0.tgz#2574111efbc0be84ddfb9ea2e50ab10aef6b4a53"
+  integrity sha512-vTVbNq1e80Pbj+5eNEbWQcPqf5zDA5TGNVdy8ug0lQ/QCTR3Gt1S1T/dDxjyS6MJETmfTVIYfMsxQ/oBq9U9vA==
 
 "@ts-stack/openapi-spec@^3.1.5":
   version "3.1.5"
