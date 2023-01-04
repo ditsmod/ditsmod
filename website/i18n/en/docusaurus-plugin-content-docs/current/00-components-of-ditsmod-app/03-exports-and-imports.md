@@ -97,10 +97,20 @@ interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
   module: ModuleType<M>;
   path?: string;
   guards?: GuardItem[];
+  /**
+   * List of modules, `ModuleWithParams` or tokens of providers exported by this
+   * module.
+   */
+  exports?: any[];
   providersPerApp?: ServiceProvider[];
   providersPerMod?: ServiceProvider[];
   providersPerRou?: ServiceProvider[];
   providersPerReq?: ServiceProvider[];
+  /**
+   * This property allows you to pass any information to extensions.
+   *
+   * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
+   */
   extensionsMeta?: E;
 }
 ```
