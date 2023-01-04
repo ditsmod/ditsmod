@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # HTTP Інтерсептори
 
-Інтерсептори дуже близькі по функціональності до контролерів, але вони не створюють роутів, вони прив'язуються до вже існуючих роутів. На одному роуті може працювати ціла група інтерсепторів, що запускаються один за одним. Інтерсептори - це аналог [middleware в ExpressJS][5], але інтерсептори можуть використовувати [DI][6]. Окрім цього, інтерсептори можуть працювати до та після роботи контролера.
+Інтерсептори дуже близькі по функціональності до контролерів, але вони не створюють роутів, вони прив'язуються до вже існуючих роутів. На одному роуті може працювати ціла група інтерсепторів, що запускаються один за одним. Інтерсептори - це аналог [middleware в ExpressJS][5], але інтерсептори можуть використовувати [DI][106]. Окрім цього, інтерсептори можуть працювати до та після роботи контролера.
 
 Враховуючи що інтерсептори роблять таку ж роботу, яку можуть робити контролери, без інтерсепторів можна обійтись. Але в такому разі вам прийдеться значно частіше викликати різні сервіси в контролерах.
 
@@ -20,7 +20,7 @@ sidebar_position: 4
 
 Обробка HTTP-запиту має наступний робочий потік:
 
-1. Ditsmod витягує [PreRouter][7] через [DI][6] (на рівні застосунку).
+1. Ditsmod витягує [PreRouter][7] через [DI][106] (на рівні застосунку).
 2. `PreRouter` за допомогою роутера шукає обробника запиту відповідно до URI.
 3. Якщо обробника запиту не знайдено, `PreRouter` видає помилку зі статусом 404.
 4. Якщо знайшовся обробник запиту, Ditsmod витягує [HttpFrontend][2] через DI, ставить його першим у черзі інтерсепторів і автоматично викликає. By default, цей інтерсептор відповідає за виклик ґардів, встановлення `req.pathParams` та `req.queryParams`, а також за обробку помилок, що виникають під час роботи інтерсепторів та контролера.
@@ -30,8 +30,8 @@ sidebar_position: 4
 Отже, приблизний порядок обробки запиту такий:
 
 ```text
-запит -> PreRouter (створення Promise) -> HttpFrontend -> [інші інтерсептори] -> HttpBackend -> [контролер]
-відповідь <- PreRouter (вирішено Promise) <- HttpFrontend <- [інші інтерсептори] <- HttpBackend <- [контролер]
+запит -> PreRouter -> HttpFrontend -> [інші інтерсептори] -> HttpBackend -> [контролер]
+відповідь <- PreRouter <- HttpFrontend <- [інші інтерсептори] <- HttpBackend <- [контролер]
 ```
 
 Оскільки `PreRouter`, `HttpFrontend` та `HttpBackend` витягуються через DI, ви можете їх підміняти своєю версією відповідних класів. Наприклад, якщо ви хочете не просто відправити 404-ий статус у випадку відсутності потрібного роута, а хочете ще й додати певний текст чи змінити заголовки, ви можете підмінити `PreRouter` своїм класом.
@@ -46,21 +46,21 @@ import { HttpHandler, HttpInterceptor } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
-  intercept(next: HttpHandler) {
-    return next.handle(); // Here returns Promise<any>;
+  intercept(routeMeta: RouteMeta, next: HttpHandler) {
+    return next.handle(routeMeta); // Here returns Promise<any>;
   }
 }
 ```
 
-Як бачите, метод `intercept()` отримує єдиний аргумент - це інстанс обробника, що викликає наступний інтерсептор. Якщо для своєї роботи інтерсептор потребує певних даних, їх можна отримати в конструкторі через DI, як і в будь-якому сервісі.
+Як бачите, метод `intercept()` отримує два аргументи - першим передаються метадані, що мають інтерфейс [RouteMeta][8]; на другому місці - йде інстанс обробника, що викликає наступний інтерсептор, він повинен передати `routeMeta` до наступного інтерсептора. Якщо для своєї роботи інтерсептор потребує додаткових даних, їх можна отримати в конструкторі через DI, як і в будь-якому сервісі.
 
 Зверніть увагу, що кожен виклик інтерсептора повертає `Promise<any>`, і в кінцевому підсумку він приводить до метода контролера, прив'язаного до відповідного роута. Це означає, що в інтерсепторі ви можете слухати результат резолву проміса, що повертає метод контролера. Щоправда, на даний момент (Ditsmod v2.0.0), `HttpFrontend` та `HttpBackend` by default ігнорують усе, що повертає контролер чи інтерсептори, тому такий резолв проміса може бути корисним для інших цілей - для збору метрик, логування і т.п.
 
-З іншого боку, через DI ви легко можете підмінити `HttpFrontend` та `HttpBackend` своїми власними інтерсепторами, щоб брати до уваги значення, що повертає метод контролера. Один із варіантів такої функціональності реалізовано у модулі [@ditsmod/return][4].
+З іншого боку, через DI ви легко можете підмінити `HttpFrontend` та `HttpBackend` своїми власними інтерсепторами, щоб брати до уваги значення, що повертає метод контролера. Один із варіантів такої функціональності реалізовано у модулі [@ditsmod/return][104].
 
 ## Передача інтерсептора в інжектор
 
-Будь-який інтерсептор передається в інжектор на рівні запиту за допомогою мульти-провайдерів із токеном `HTTP_INTERCEPTORS`:
+Будь-який інтерсептор передається в інжектор на рівні запиту за допомогою мульти-провайдерів з токеном `HTTP_INTERCEPTORS`:
 
 ```ts
 import { HTTP_INTERCEPTORS, featureModule } from '@ditsmod/core';
@@ -74,10 +74,12 @@ import { MyHttpInterceptor } from './my-http-interceptor';
 export class SomeModule {}
 ```
 
-[1]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L9-L11
-[2]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L18-L20
-[3]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L41-L43
-[4]: /published-modules/return
+[1]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/http-interceptor.ts#L11-L13
+[2]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/http-interceptor.ts#L20-L22
+[3]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/http-interceptor.ts#L43-L45
 [5]: https://expressjs.com/en/guide/writing-middleware.html
-[6]: /components-of-ditsmod-app/dependency-injection
-[7]: https://github.com/ditsmod/ditsmod/blob/router-2.3.0/packages/core/src/services/pre-router.ts
+[7]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/services/pre-router.ts
+[8]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/route-data.ts
+
+[104]: /published-modules/return
+[106]: /components-of-ditsmod-app/dependency-injection

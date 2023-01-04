@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # HTTP Interceptors
 
-Interceptors are very close in functionality to controllers, but they do not create routes, they are tied to existing routes. Each route can work a group of interceptors running one after another. Interceptors are analogous to [middleware in ExpressJS][5], but interceptors can use [DI][6]. In addition, interceptors can work both before and after the operation of the controller.
+Interceptors are very close in functionality to controllers, but they do not create routes, they are tied to existing routes. Each route can work a group of interceptors running one after another. Interceptors are analogous to [middleware in ExpressJS][5], but interceptors can use [DI][106]. In addition, interceptors can work both before and after the operation of the controller.
 
 Given that interceptors do the same job that controllers can do, you can work without interceptors. But in this case, you will have to call various services in the controllers much more often.
 
@@ -20,7 +20,7 @@ Interceptors can be centrally connected or disconnected without changing the met
 
 HTTP request processing has the following workflow:
 
-1. Ditsmod extracted [PreRouter][7] via [DI][6] (at the application level).
+1. Ditsmod extracted [PreRouter][7] via [DI][106] (at the application level).
 2. `PreRouter` uses the router to search for the request handler according to the URI.
 3. If the request handler is not found, `PreRouter` issues a 404 error.
 4. If a request handler is found, Ditsmod extracted [HttpFrontend][2] via DI, puts it first in the interceptor queue, and calls it automatically. By default, this interceptor is responsible for calling guards, setting `req.pathParams` and `req.queryParams`, as well as handling errors that occur during the operation of interceptors and the controller.
@@ -30,8 +30,8 @@ HTTP request processing has the following workflow:
 So, the approximate order of processing the request is as follows:
 
 ```text
-request -> PreRouter (create Promise) -> HttpFrontend -> [other interceptors] -> HttpBackend -> [controller]
-response <- PreRouter (resolved Promise) <- HttpFrontend <- [other interceptors] <- HttpBackend <- [controller]
+request -> PreRouter -> HttpFrontend -> [other interceptors] -> HttpBackend -> [controller]
+response <- PreRouter <- HttpFrontend <- [other interceptors] <- HttpBackend <- [controller]
 ```
 
 Since `PreRouter`, `HttpFrontend` and `HttpBackend` are extracted via DI, you can substitute them with your version of the respective classes. For example, if you don't just want to send a 404 status when the required route is missing, but also want to add some text or change headers, you can substitute `PreRouter` with your own class.
@@ -46,17 +46,17 @@ import { HttpHandler, HttpInterceptor } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
-  intercept(next: HttpHandler) {
-    return next.handle(); // Here returns Promise<any>;
+  intercept(routeMeta: RouteMeta, next: HttpHandler) {
+    return next.handle(routeMeta); // Here returns Promise<any>;
   }
 }
 ```
 
-As you can see, the `intercept()` method gets a single argument - this is the instance of the handler that calls the next interceptor. If the interceptor needs certain data for the work, it can be received in constructor through DI, as well as in any service.
+As you can see, the `intercept()` method receives two arguments - the first is the metadata that has the interface [RouteMeta][8]; in the second place - there is an instance of the handler that calls the next interceptor, it must pass `routeMeta` to the next interceptor. If the interceptor needs additional data for its work, it can be obtained in the constructor through DI, as in any service.
 
 Note that each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promice resolve, which returns the method of the controller. However, at the moment (Ditsmod v2.0.0), `HttpFrontend` and `HttpBackend` by default ignores everything that returns the controller or interceptors, so this promise resolve can be useful for other purposes - to collect metrics, logging, etc.
 
-On the other hand, with DI you can easily replace `HttpFrontend` and `HttpBackend` with your own interceptors to take into account the return value of the controller method. One of the variants of this functionality is implemented in the [@ditsmod/return][4] module.
+On the other hand, with DI you can easily replace `HttpFrontend` and `HttpBackend` with your own interceptors to take into account the return value of the controller method. One of the variants of this functionality is implemented in the [@ditsmod/return][104] module.
 
 ## Passing interceptor to injector
 
@@ -74,10 +74,12 @@ import { MyHttpInterceptor } from './my-http-interceptor';
 export class SomeModule {}
 ```
 
-[1]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L9-L11
-[2]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L18-L20
-[3]: https://github.com/ditsmod/ditsmod/blob/core-1.0.0/packages/core/src/types/http-interceptor.ts#L41-L43
-[4]: /published-modules/return
+[1]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/http-interceptor.ts#L11-L13
+[2]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/http-interceptor.ts#L20-L22
+[3]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/http-interceptor.ts#L43-L45
 [5]: https://expressjs.com/en/guide/writing-middleware.html
-[6]: /components-of-ditsmod-app/dependency-injection
-[7]: https://github.com/ditsmod/ditsmod/blob/router-2.3.0/packages/core/src/services/pre-router.ts
+[7]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/services/pre-router.ts
+[8]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/route-data.ts
+
+[104]: /published-modules/return
+[106]: /components-of-ditsmod-app/dependency-injection
