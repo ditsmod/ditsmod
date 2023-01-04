@@ -9,15 +9,15 @@ sidebar_position: 2
 Under the hood, Ditsmod uses [@ts-stack/di][9] v2 as a library for Dependency Injection (DI for short), it has the following basic concepts:
 
 - dependency
-- dependency token, token's types
+- dependency token, token types
 - provider
 - injector
-- hierarchy of injectors
-- substitute of providers
+- injector hierarchy
+- provider substitution
 
 ## Dependency
 
-In a DI system, a dependency is what you want to get in the final result in particular in the constructors of controllers, services, modules. For example, if you write the following in the service constructor:
+In the DI system, dependency is, in particular, what you want to get in the end result in the constructors of controllers, services, modules. For example, if you write this in the service constructor:
 
 ```ts {7}
 import { injectable } from '@ditsmod/core';
@@ -33,15 +33,15 @@ export class SecondService {
 
 this means that `SecondService` has a dependency on `FirstService`, and DI is expected to resolve this dependency as follows:
 
-1. first, DI will look at the `FirstService` constructor;
-2. if `FirstService` does not have a dependency, an instance of `FirstService` will be created;
+1. DI will first look through the constructor of `FirstService`;
+2. if `FirstService` has no dependency, an instance of `FirstService` will be created;
 3. this instance will be passed to the `SecondService` constructor.
 
-If, after executing the first clause, it turns out that `FirstService` has its own dependencies, then DI will recursively execute these three clauses for each given dependency.
+If after the first step it turns out that `FirstService` has its own dependencies, then DI will recursively execute these three steps for each given dependency.
 
 ### Optional dependency
 
-Sometimes you may need to specify an optional dependency in the constructor. Let's consider the following example, where near the `firstService` property is a question mark, thus indicating to TypeScript that this property is optional:
+Sometimes you may need to specify an optional dependency in the constructor. Let's take a look at the following example, where a question mark is placed after the `firstService` property, thus indicating to TypeScript that this property is optional:
 
 ```ts {7}
 import { injectable } from '@ditsmod/core';
@@ -55,7 +55,7 @@ export class SecondService {
 }
 ```
 
-But DI will ignore this optionality and throw an error if there is no way to create `FirstService`. For this code to work, you need to use the `optional` decorator:
+But DI will ignore this optionality and generate an error if there is no possibility to create `FirstService`. To make this code work, you need use the `optional` decorator:
 
 ```ts {7}
 import { injectable, optional } from '@ditsmod/core';
@@ -71,7 +71,7 @@ export class SecondService {
 
 ## Dependency token
 
-DI has a registry that contains the mapping between a token and its value. This registry is formed by the DI user, and schematically it looks like this:
+DI has a registry containing the mapping between a token and its value. This registry is formed by the DI user himself, and schematically it looks like this:
 
 ```
 token1 => value15
@@ -79,9 +79,9 @@ token2 => value100
 ...
 ```
 
-To resolve dependencies, DI will search its registry for matching values specifically by tokens. Basically, a token is an identifier for a particular dependency. In the constructors of modules, services or controllers, tokens are specified.
+To resolve dependencies, DI will search its registry for the corresponding values by token. In fact, a token is an identifier for a certain dependency. In the constructors of modules, services or controllers, tokens are specified. 
 
-In the section [Transferring providers to the DI registry][100], you will learn that DI allows you to transfer any value for the same token. This feature is convenient to use for unit-testing, because instead of a real dependency, you can pass a mock or stub to the registry. In this case, the DI registry will appear approximately as follows:
+In the section [Passing providers to the DI registry][100] you will learn that DI allows you to pass any value for the same token. This feature is convenient to use for unit testing, because instead of a real dependency, you can pass a mock or stub to the registry. In this case, the DI registry looks something like this:
 
 ```
 token1 => value1
@@ -91,7 +91,7 @@ token2 => stub
 ...
 ```
 
-A token can be of any type, but DI currently has a feature that makes DI not distinguish between different types of _array_ or _enum_. In addition, you should remember that the token must remain in the JavaScript file after compilation from TypeScript code, so interfaces or types declared with the `type` keyword cannot be used as a token. The `inject` decorator allows you to use an alternative token, it is necessary to receive an array, enum, or any other value in the constructor:
+The token can be of any type, but currently DI has a feature where DI doesn't distinguish between different types of _array_ or _enum_. In addition, you should remember that the token must remain in the JavaScript file after compilation from TypeScript code, so you cannot use interfaces or types declared with the `type` keyword as a token. The `inject` decorator allows you to use an alternative token, it is necessary to get an array, enum, or any other value in the constructor:
 
 ```ts {7}
 import { injectable, inject } from '@ditsmod/core';
@@ -105,9 +105,9 @@ export class SecondService {
 }
 ```
 
-When `inject` is used, DI uses the token passed to it and ignores the type of the variable that this decorator is in front of, so that type can even be an interface.
+When `inject` is used, DI uses the token passed to it, and ignores the type of the variable in back of this decorator, so this type can even be an interface.
 
-Keep in mind that the easiest and most reliable type of dependency to use is a class. DI is good at recognizing types of different classes, even if they have the same name, so you can avoid using the `inject` decorator with them. For all other types of dependencies, we recommend using an instance of the `InjectionToken<T>` class as a token, an arbitrary text value for a short description is passed to its constructor:
+Keep in mind that the easiest and most reliable dependency type to use is a class. DI recognizes well the types of different classes, even if they have the same name, so the `inject` decorator can not be used with them. For all other types of dependencies, we recommend using an instance of the `InjectionToken<T>` class as a token, and passing an arbitrary text value to its constructor for a short description:
 
 ```ts {14}
 // tokens.ts
@@ -130,7 +130,7 @@ export class SecondService {
 
 ## Provider
 
-It was said above that DI has a registry that contains the mapping between the token and the value that needs to be issued for a particular dependency.
+It was said above that DI has a registry containing the mapping between the token and the value to be issued for a particular dependency.
 
 ```
 token1 => value15
@@ -138,7 +138,7 @@ token2 => value100
 ...
 ```
 
-So, these values are created by DI using providers. In essence, DI resolves the dependency using the appropriate providers. So, to resolve a certain dependency, you first need to pass the corresponding provider to the DI registry, and then DI will issue an instance of that provider by its token. Providers can be either classes or objects with the following type:
+So these are the values DI creates using providers. In fact, DI resolves dependencies using the appropriate providers. So, to resolve a certain dependency, you first need to pass the corresponding provider to the DI registry, and then DI will issue an instance of this provider by its token. Providers can be either classes or objects of this type:
 
 ```ts {3-6}
 import { Class } from '@ditsmod/core';
@@ -149,19 +149,19 @@ type Provider = { token: any, useClass: Class<any>, multi?: boolean } |
 { token: any, useToken: any, multi?: boolean }
 ```
 
-_* Here, the entry `Class<any>` means any class._
+_* here `Class<any>` means any class._
 
-Note that the token for the provider with the `useFactory` property is optional because DI can use a method of the specified class as a token.
+Note that the token for the provider with the `useFactory` property is optional, since DI can use the method of the specified class as a token.
 
-For one dependency, you need to transfer one or more providers to the DI registry. Most often, this transfer occurs via module or controller metadata, although sometimes it is passed directly to [injectors][102].
+Per dependency, one or more providers must be passed to the DI registry. Most often, this is done through the metadata of the module or controller, although sometimes they are passed directly to [injectors][102].
 
-Now that you have already familiarized with the concept of **provider**, you can clarify that **dependency** means dependency on providers. **Consumers** of providers have such a dependency either in service constructors, or in constructors or methods of controllers, or in the `get()` method of [injectors][102] (this will be mentioned later).
+Now that you are familiar with the concept of **provider**, we can clarify that **dependency** means dependency on providers. Such dependencies are made by **consumers** of providers either in service constructors, or in constructors or methods of controllers, or in the `get()` method of [injectors][102] (more on this later).
 
 In the example above, the definition of the provider object type is shown, the following values are passed to its properties:
 
-- `useClass` - passed class, DI will instantiate this class.
+- `useClass` - the class is passed, DI will make an instance of this class.
 - `useValue` - any value is passed, DI will output it unchanged.
-- `useFactory` - is passed [tuple][11], where the first place should be the class, and the second place should be a method of this class, which should return any value for the specified token. For example, if the class is like this:
+- `useFactory` - [tuple][11] is passed, where the class should be in the first place, and in the second place - the method of this class, which should return any value for the specified token. For example, if the class is like this:
 
   ```ts
   import { methodFactory } from '@ditsmod/core';
@@ -175,27 +175,27 @@ In the example above, the definition of the provider object type is shown, the f
   }
   ```
 
-  in this case, the provider should be transferred to the DI registry in the following format:
+  in this case, the provider must be transferred to the DI registry in the following format:
 
   ```ts
   { token: 'some token', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }
   ```
 
-  First, DI will create an instance of this class, then call its method and get a result that will be associated with the specified token.
+  First, DI will create an instance of this class, then call its method and get the result, which will be associated with the specified token.
 
-- `useToken` - another token is passed to this property of the provider. If you write the following:
+- `useToken` - another token is passed to this provider property. If you write the following:
 
   ```ts
   { token: SecondService, useToken: FirstService }
   ```
 
-  this way you tell the DI: "When provider consumers request a `SecondService` token, the value for the `FirstService` token must be used." In other words, this directive makes an alias `SecondService` that points to `FirstService`. The DI work algorithm in such cases is as follows:
-    - When providers consumers request a `SecondService`, DI will search its registry for a value for it by the `FirstService` token.
-    - After DI finds a value for `FirstService`, it will be returned to the consumer that searched for `SecondService`.
+  this is how you say DI: "When provider consumers request the `SecondService` token, the value for the `FirstService` token should be used". In other words, this directive makes an alias `SecondService` that points to `FirstService`. The DI algorithm in such cases is as follows:
+    - When provider consumers request `SecondService`, DI will look up the value for it in its registry using the `FirstService` token.
+    - After DI finds the value for `FirstService`, it will be returned to the consumer who requested `SecondService`.
 
-### Transfer of providers to the DI registry
+### Passing of providers to the DI registry
 
-Most often, providers are passed to the DI registry via module metadata. In the following example, `SomeService` is passed into the `providersPerMod` array:
+Most often, providers are passed to the DI registry through module metadata. In the following example, `SomeService` is passed to the `providersPerMod` array:
 
 ```ts {7}
 import { featureModule } from '@ditsmod/core';
@@ -210,7 +210,7 @@ import { SomeService } from './some.service';
 export class SomeModule {}
 ```
 
-After such transfer, consumers of providers can use `SomeService` within `SomeModule`. The identical result will be if we transfer the same provider in the object format:
+After such a passing, consumers of providers can use `SomeService` within `SomeModule`. The identical result will be if we pass the same provider in object format:
 
 ```ts {7}
 import { featureModule } from '@ditsmod/core';
@@ -225,7 +225,7 @@ import { SomeService } from './some.service';
 export class SomeModule {}
 ```
 
-And now let's additionally pass another provider with the same token, but this time in the metadata of the controller:
+And now let's additionally pass another provider with the same token, but this time in the controller metadata:
 
 ```ts {3}
 @controller({
@@ -239,9 +239,9 @@ export class SomeController {
 }
 ```
 
-Note the highlighted line. This way we tell DI: "If this controller has a dependency on a provider with the `SomeService` token, it needs to be substituted by an instance of the `OtherService` class." This substitute will only work for this controller. All other controllers in `SomeModule` will receive `SomeService` class instances by `SomeService` token.
+Pay attention to the highlighted line. This is how we say DI: "If this controller has a dependency on a provider with token `SomeService`, it should be substituted with an instance of class `OtherService`". This substitution will be valid only for this controller. All other controllers in `SomeModule` will receive `SomeService` class instances by `SomeService` token.
 
-A similar substitution can be made at the application level and at the module level. This can sometimes be necessary, for example when you want to have default configuration values at the application level, but custom values of this configuration at the level of a specific module. In this case, we will first transfer the default config in the root module:
+Similar substitution can be done at the application level and at the module level. This may sometimes be necessary, for example, when you want to have default configuration values at the application level, but custom values of this configuration at the level of a specific module. In this case, pass the default configuration in the root module first:
 
 ```ts {4}
 // ...
@@ -377,13 +377,13 @@ Earlier in the documentation, you encountered the following object properties th
 - `providersPerRou` - providers at the route level;
 - `providersPerReq` - providers at the HTTP request level.
 
-Using these arrays, Ditsmod forms from them four different injectors which are connected by a hierarchical connection. The highest in the hierarchy is the injector at the application level, its registry is formed from the `providersPerApp` array. The second in the hierarchy is the injector at the module level, the third is the injector at the route level, and the fourth is the injector at the HTTP request level. When you plan to pass providers to injectors, be sure to consider their hierarchy. Let me remind you that injectors higher in the hierarchy do not have access to injectors lower in the hierarchy.
+Using these arrays, Ditsmod forms four different injectors from them, which are connected by a hierarchical relationship. The highest in the hierarchy is the injector at the application level, its registry is formed from the `providersPerApp` array. The second in the hierarchy is the module level injector, the third is the route level injector, and the fourth is the HTTP request level injector. When you plan to pass providers to injectors, be sure to consider their hierarchy. Remember that injectors higher in the hierarchy do not have access to injectors lower in the hierarchy.
 
-For example, if you write a class that has a dependency on an HTTP request, you can pass it only to the `providersPerReq` array, because only from this array forms an injector that will have access to the HTTP request. On the other hand, this provider will have access to all of its parent injectors: at the route, module, and application level. At the same time, it is worth remembering that if the providers are classes or factories (objects with the `useFactory` property), their instances will be created every time, for every HTTP request.
+For example, if you write a class that has a dependency on an HTTP request, you will be able to pass it only to the `providersPerReq` array, because only this array is used to create an injector that will have access to the HTTP request. On the other hand, this provider will have access to all its parent injectors: at the routing, module, and application levels. It should be remembered that if the providers are classes or factories (objects with the `useFactory` property), their instances will be created each time, for each HTTP request.
 
-You can also write a class and pass it to the `providersPerMod` array, in which case it can depend only on providers at the module level or at the application level. If you try to add to its constructor the providers that you passed in the `providersPerRou` or `providersPerReq` array, you will get an error saying that those providers were not found. Instances of providers at the module level are created only once after the application is launched.
+You can also write a class and pass it to the `providersPerMod` array, in which case it can depend only on providers at the module level, or at the application level. If you try to add to its constructor providers that you passed to the `providersPerRou` or `providersPerReq` array, you will get an error that those providers are not found. Instances of providers at the module level are created only once after the application is launched.
 
-Of course, you can also pass providers to the application or route level, and they will have similar restrictions given the injector hierarchy.
+Of course, you can also pass providers to the application or routing level, and they will have similar limitations given the injector hierarchy.
 
 ### Hierarchy of controller injectors
 
@@ -457,6 +457,6 @@ Remember that when DI cannot find the right provider, there are only three possi
 
 [107]: /components-of-ditsmod-app/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions
-[100]: #transfer-of-providers-to-the-di-registry
+[100]: #passing-of-providers-to-the-di-registry
 [101]: #hierarchy-of-injectors
 [102]: #injector
