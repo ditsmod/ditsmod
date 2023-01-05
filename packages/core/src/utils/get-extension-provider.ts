@@ -1,4 +1,4 @@
-import { InjectionToken } from '@ts-stack/di';
+import { InjectionToken } from '../di';
 
 import { Extension, ExtensionProvider, ExtensionType } from '../types/mix';
 

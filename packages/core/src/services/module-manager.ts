@@ -1,4 +1,4 @@
-import { injectable, resolveForwardRef, Class } from '@ts-stack/di';
+import { injectable, resolveForwardRef, Class } from '../di';
 import { format } from 'util';
 import { HTTP_INTERCEPTORS } from '../constans';
 

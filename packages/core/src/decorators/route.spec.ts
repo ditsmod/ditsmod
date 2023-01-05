@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { reflector, PropMeta } from '@ts-stack/di';
+import { reflector, PropMeta } from '../di';
 
 import { route } from './route';
 import { controller } from './controller';

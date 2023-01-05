@@ -1,4 +1,4 @@
-import { InjectionToken } from '@ts-stack/di';
+import { InjectionToken } from './di';
 
 import { EXTENSIONS_COUNTERS } from './constans';
 import { ImportsResolver } from './imports-resolver';

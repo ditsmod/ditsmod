@@ -1,4 +1,4 @@
-import { injectable } from '@ts-stack/di';
+import { injectable } from '../di';
 
 import { Extension } from '../types/mix';
 

@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { forwardRef } from '@ts-stack/di';
+import { forwardRef } from '../di';
 
 import { rootModule } from '../decorators/root-module';
 import { ModuleManager } from './module-manager';

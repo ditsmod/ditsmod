@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { injectable, Injector } from '@ts-stack/di';
+import { injectable, Injector } from '../di';
 
 import { RouteMeta } from '../types/route-data';
 import { HTTP_INTERCEPTORS } from '../constans';

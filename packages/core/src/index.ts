@@ -1,4 +1,4 @@
-export * from '@ts-stack/di';
+export * from './di';
 
 export { AppInitializer } from './app-initializer';
 export { Application } from './application';

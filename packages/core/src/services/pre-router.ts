@@ -1,4 +1,4 @@
-import { injectable } from '@ts-stack/di';
+import { injectable } from '../di';
 
 import { HttpMethod } from '../types/mix';
 import { Router } from '../types/router';

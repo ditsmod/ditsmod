@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ReflectiveInjector } from '@ts-stack/di';
+import { ReflectiveInjector } from '../di';
 
 import { ErrorOpts } from '../custom-error/error-opts';
 import { DefaultControllerErrorHandler as ErrorHandler } from './default-controller-error-handler';

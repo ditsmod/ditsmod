@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { injectable } from '@ts-stack/di';
+import { injectable } from './di';
 
 import { ImportsResolver } from './imports-resolver';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';

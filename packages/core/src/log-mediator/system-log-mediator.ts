@@ -1,4 +1,4 @@
-import { injectable } from '@ts-stack/di';
+import { injectable } from '../di';
 
 import { isInjectionToken } from '../utils/type-guards';
 import { GlobalProviders, ImportObj } from '../types/metadata-per-mod';

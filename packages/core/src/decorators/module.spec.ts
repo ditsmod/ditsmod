@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { reflector } from '@ts-stack/di';
+import { reflector } from '../di';
 
 import { featureModule } from './module';
 

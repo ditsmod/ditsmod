@@ -1,4 +1,4 @@
-import { injectable, ReflectiveInjector, ResolvedProvider } from '@ts-stack/di';
+import { injectable, ReflectiveInjector, ResolvedProvider } from '../di';
 
 import { HTTP_INTERCEPTORS, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpBackend, HttpFrontend, HttpHandler } from '../types/http-interceptor';
@@ -59,13 +59,14 @@ export class PreRouterExtension implements Extension<void> {
         this.runDry(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
 
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
-          const context = ReflectiveInjector.resolve([
+          const ctxMap = ReflectiveInjector.resolve([
             { token: NODE_REQ, useValue: nodeReq },
             { token: NODE_RES, useValue: nodeRes },
             { token: PATH_PARAMS, useValue: params },
             { token: QUERY_STRING, useValue: queryString },
           ]);
-          const inj = injectorPerRou.createChildFromResolved([...resolvedPerReq, ...context]);
+          ctxMap.forEach((resolvedProvider, token) => resolvedPerReq.set(token, resolvedProvider));
+          const inj = injectorPerRou.createChildFromResolved(resolvedPerReq);
 
           // First HTTP handler in the chain of HTTP interceptors.
           const chain = inj.get(HttpHandler) as HttpHandler;
@@ -87,7 +88,7 @@ export class PreRouterExtension implements Extension<void> {
     httpMethod: HttpMethod,
     path: string,
     injectorPerRou: ReflectiveInjector,
-    resolvedPerReq: ResolvedProvider[],
+    resolvedPerReq: Map<any, ResolvedProvider>,
     routeMeta: RouteMeta
   ) {
     const fakeObj = { info: 'this is test of a route before set it' };
@@ -97,7 +98,8 @@ export class PreRouterExtension implements Extension<void> {
       { token: PATH_PARAMS, useValue: fakeObj },
       { token: QUERY_STRING, useValue: fakeObj },
     ]);
-    const inj = injectorPerRou.createChildFromResolved([...resolvedPerReq, ...context]);
+    const merged = new Map([...resolvedPerReq, ...context]);
+    const inj = injectorPerRou.createChildFromResolved(merged);
     if (!routeMeta?.controller) {
       const msg =
         `Setting routes in ${moduleName} failed: can't instantiate RouteMeta with ` +

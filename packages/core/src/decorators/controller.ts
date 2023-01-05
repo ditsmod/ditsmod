@@ -1,4 +1,4 @@
-import { makeClassDecorator } from '@ts-stack/di';
+import { makeClassDecorator } from '../di';
 
 import { ServiceProvider } from '../types/mix';
 

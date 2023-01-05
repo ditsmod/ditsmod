@@ -1,4 +1,4 @@
-import { inject, injectable, Injector } from '@ts-stack/di';
+import { inject, injectable, Injector } from '../di';
 import { parse } from 'querystring';
 
 import { ControllerErrorHandler } from '../services/controller-error-handler';

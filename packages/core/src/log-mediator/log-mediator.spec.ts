@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Provider, ReflectiveInjector } from '@ts-stack/di';
+import { Provider, ReflectiveInjector } from '../di';
 
 import { LogItem, LogMediator, OutputLogFilter } from './log-mediator';
 import { ModuleExtract } from '../models/module-extract';

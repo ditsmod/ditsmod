@@ -1,4 +1,4 @@
-import { injectable, Injector } from '@ts-stack/di';
+import { injectable, Injector } from '../di';
 
 import { HttpBackend } from '../types/http-interceptor';
 import { RouteMeta } from '../types/route-data';

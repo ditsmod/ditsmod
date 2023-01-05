@@ -1,0 +1,157 @@
+import {
+  Class,
+  ClassProvider,
+  DecoratorAndValue,
+  FactoryProvider,
+  NormalizedProvider,
+  Provider,
+  TokenProvider,
+  TypeProvider,
+  ValueProvider,
+} from './types-and-models';
+
+export const DEBUG_NAME = 'debugName';
+
+export function stringify(token: any): string {
+  if (typeof token == 'string') {
+    return token;
+  }
+
+  if (token == null) {
+    return '' + token;
+  }
+
+  if (token[DEBUG_NAME]) {
+    return `${token[DEBUG_NAME]}`;
+  }
+
+  if (token.name) {
+    return `${token.name}`;
+  }
+
+  const res = token.toString();
+
+  if (res == null) {
+    return '' + res;
+  }
+
+  const newLineIndex = res.indexOf('\n');
+  return newLineIndex === -1 ? res : res.substring(0, newLineIndex);
+}
+
+/**
+ * Equivalent to ES6 spread, add each item to an array.
+ *
+ * @param items The items to add
+ * @param arr The array to which you want to add the items
+ */
+export function addAllToArray(items: any[], arr: any[]) {
+  for (let i = 0; i < items.length; i++) {
+    arr.push(items[i]);
+  }
+}
+
+/**
+ * Flattens an array.
+ */
+export function flatten(list: any[], dst?: any[]): any[] {
+  if (dst === undefined) {
+    dst = list;
+  }
+  for (let i = 0; i < list.length; i++) {
+    const item = list[i];
+    if (Array.isArray(item)) {
+      // we need to inline it.
+      if (dst === list) {
+        // Our assumption that the list was already flat was wrong and
+        // we need to clone flat since we need to write to it.
+        dst = list.slice(0, i);
+      }
+      flatten(item, dst);
+    } else if (dst !== list) {
+      dst.push(item);
+    }
+  }
+  return dst;
+}
+
+export function deepForEach<T>(input: (T | any[])[], fn: (value: T) => void): void {
+  input.forEach((value) => (Array.isArray(value) ? deepForEach(value, fn) : fn(value)));
+}
+
+export function addToArray(arr: any[], index: number, value: any): void {
+  // perf: array.push is faster than array.splice!
+  if (index >= arr.length) {
+    arr.push(value);
+  } else {
+    arr.splice(index, 0, value);
+  }
+}
+
+export function removeFromArray(arr: any[], index: number): any {
+  // perf: array.pop is faster than array.splice!
+  if (index >= arr.length - 1) {
+    return arr.pop();
+  } else {
+    return arr.splice(index, 1)[0];
+  }
+}
+
+export function newArray<T = any>(size: number): T[];
+export function newArray<T>(size: number, value: T): T[];
+export function newArray<T>(size: number, value?: T): T[] {
+  const list: T[] = [];
+  for (let i = 0; i < size; i++) {
+    list.push(value!);
+  }
+  return list;
+}
+
+export function isDecoratorAndValue(container: any): container is DecoratorAndValue {
+  return (
+    typeof (container as DecoratorAndValue)?.decorator == 'function' &&
+    (container as DecoratorAndValue)?.hasOwnProperty('value')
+  );
+}
+
+export function isType(v: any): v is Class {
+  return typeof v == 'function';
+}
+
+export function isTypeProvider(provider: Provider): provider is TypeProvider {
+  return provider instanceof Class;
+}
+
+export function isValueProvider(provider: Provider): provider is ValueProvider {
+  return provider.hasOwnProperty('useValue');
+}
+
+export function isClassProvider(provider: Provider): provider is ClassProvider {
+  return (provider as ClassProvider)?.useClass !== undefined;
+}
+
+export function isTokenProvider(provider: Provider): provider is TokenProvider {
+  return (provider as TokenProvider)?.useToken !== undefined;
+}
+
+export function isFactoryProvider(provider: Provider): provider is FactoryProvider {
+  return (provider as FactoryProvider)?.useFactory !== undefined;
+}
+
+export type MultiProvider = Exclude<Provider, TypeProvider> & { multi: boolean };
+
+export function isMultiProvider(provider: Provider): provider is MultiProvider {
+  return isNormalizedProvider(provider) && !!provider.multi;
+}
+
+/**
+ * Returns true if providers declares in format:
+ * ```ts
+ * { token: SomeClas, useClass: OtherClass }
+ * ```
+ */
+export function isNormalizedProvider(provider: Provider): provider is NormalizedProvider {
+  return (
+    isClassProvider(provider) || isValueProvider(provider) || isFactoryProvider(provider) || isTokenProvider(provider)
+  );
+}

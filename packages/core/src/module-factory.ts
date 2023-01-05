@@ -1,4 +1,4 @@
-import { injectable } from '@ts-stack/di';
+import { injectable } from './di';
 
 import type { AppendsWithParams } from './types/module-metadata';
 import type { ModuleManager } from './services/module-manager';

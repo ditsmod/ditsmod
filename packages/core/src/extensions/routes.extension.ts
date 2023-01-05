@@ -1,4 +1,4 @@
-import { FactoryProvider, injectable } from '@ts-stack/di';
+import { FactoryProvider, injectable } from '../di';
 
 import { RootMetadata } from '../models/root-metadata';
 import { ControllerMetadata2 } from '../types/controller-metadata';

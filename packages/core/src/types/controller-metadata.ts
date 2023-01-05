@@ -1,4 +1,4 @@
-import type { DecoratorAndValue, Class } from '@ts-stack/di';
+import type { DecoratorAndValue, Class } from '../di';
 import type { RouteMeta } from './route-data';
 import type { AnyObj, DecoratorMetadata, HttpMethod, ServiceProvider } from './mix';
 

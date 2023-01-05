@@ -6,7 +6,7 @@ import {
   Class,
   TypeProvider,
   ValueProvider,
-} from '@ts-stack/di';
+} from '../di';
 
 import { MetadataPerMod1 } from './metadata-per-mod';
 import { ProvidersMetadata } from '../models/providers-metadata';

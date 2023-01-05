@@ -1,4 +1,4 @@
-import { Class } from '@ts-stack/di';
+import { Class } from '../di';
 import { getToken } from './get-tokens';
 import { isNormalizedProvider } from './type-guards';
 

@@ -1,4 +1,4 @@
-import { injectable, optional } from '@ts-stack/di';
+import { injectable, optional } from '../di';
 
 export class LoggerConfig {
   /**

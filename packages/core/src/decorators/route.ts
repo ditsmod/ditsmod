@@ -1,4 +1,4 @@
-import { makePropDecorator } from '@ts-stack/di';
+import { makePropDecorator } from '../di';
 
 import { GuardItem, HttpMethod } from '../types/mix';
 

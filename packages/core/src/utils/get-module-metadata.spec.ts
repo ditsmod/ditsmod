@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { forwardRef, injectable } from '@ts-stack/di';
+import { forwardRef, injectable } from '../di';
 
 import { featureModule } from '../decorators/module';
 import { ModuleWithParams, ServiceProvider } from '../types/mix';

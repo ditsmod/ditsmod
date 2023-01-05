@@ -1,6 +1,5 @@
 import 'reflect-metadata';
-import { forwardRef, injectable, InjectionToken, makePropDecorator } from '@ts-stack/di';
-import { reflector } from '@ts-stack/di';
+import { injectable, InjectionToken, makePropDecorator, reflector } from '../di';
 
 import { featureModule } from '../decorators/module';
 import {

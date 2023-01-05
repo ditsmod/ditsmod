@@ -1,4 +1,4 @@
-import { Class } from '@ts-stack/di';
+import { Class } from '../di';
 
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { OutputLogFilter, LogMediator } from '../log-mediator/log-mediator';

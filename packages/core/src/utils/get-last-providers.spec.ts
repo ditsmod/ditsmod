@@ -1,4 +1,4 @@
-import { ValueProvider } from '@ts-stack/di';
+import { ValueProvider } from '../di';
 
 import { getLastProviders } from './get-last-providers';
 

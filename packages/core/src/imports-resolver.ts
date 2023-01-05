@@ -1,4 +1,4 @@
-import { Injector } from '@ts-stack/di';
+import { Injector } from './di';
 
 import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';

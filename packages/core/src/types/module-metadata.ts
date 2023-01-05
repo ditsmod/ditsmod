@@ -1,4 +1,4 @@
-import { Class } from '@ts-stack/di';
+import { Class } from '../di';
 import { ProvidersMetadata } from '../models/providers-metadata';
 import { ModuleType, ModuleWithParams, AnyObj, GuardItem } from '../types/mix';
 import { ExtensionOptions } from '../utils/get-extension-provider';

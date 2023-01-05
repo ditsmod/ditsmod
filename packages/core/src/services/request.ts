@@ -1,4 +1,4 @@
-import { injectable, inject } from '@ts-stack/di';
+import { injectable, inject } from '../di';
 import { randomUUID } from 'crypto';
 
 import { NODE_REQ } from '../constans';

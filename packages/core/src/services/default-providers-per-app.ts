@@ -1,4 +1,4 @@
-import { Injector, ReflectiveInjector } from '@ts-stack/di';
+import { Injector, ReflectiveInjector } from '../di';
 
 import { RootMetadata } from '../models/root-metadata';
 import { Logger } from '../types/logger';

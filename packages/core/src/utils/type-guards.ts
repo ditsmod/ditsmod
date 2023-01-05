@@ -2,8 +2,6 @@ import { ChainError } from '@ts-stack/chain-error';
 import {
   ClassProvider,
   FactoryProvider,
-  forwardRef,
-  ForwardRefFn,
   InjectionToken,
   Provider,
   Class,
@@ -12,7 +10,7 @@ import {
   TokenProvider,
   DecoratorAndValue,
   reflector,
-} from '@ts-stack/di';
+} from '../di';
 
 import { featureModule } from '../decorators/module';
 import { controller, ControllerMetadata } from '../decorators/controller';
@@ -53,8 +51,12 @@ export function isRootModule(
   return decoratorAndValue?.decorator === rootModule;
 }
 
-export function isDecoratorAndValue(decoratorAndValue: DecoratorAndValue | Class): decoratorAndValue is DecoratorAndValue {
-  return (decoratorAndValue as DecoratorAndValue)?.decorator !== undefined && decoratorAndValue?.hasOwnProperty('value');
+export function isDecoratorAndValue(
+  decoratorAndValue: DecoratorAndValue | Class
+): decoratorAndValue is DecoratorAndValue {
+  return (
+    (decoratorAndValue as DecoratorAndValue)?.decorator !== undefined && decoratorAndValue?.hasOwnProperty('value')
+  );
 }
 
 export function isRawRootModule(

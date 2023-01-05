@@ -1,4 +1,4 @@
-import { ReflectiveInjector } from '@ts-stack/di';
+import { ReflectiveInjector } from '../di';
 
 import { ServiceProvider } from '../types/mix';
 

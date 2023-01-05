@@ -10,7 +10,7 @@ import {
 } from '../types/mix';
 import { MultiProvider } from '../utils/type-guards';
 import { ProvidersMetadata } from './providers-metadata';
-import { Class } from '@ts-stack/di';
+import { Class } from '../di';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
   /**

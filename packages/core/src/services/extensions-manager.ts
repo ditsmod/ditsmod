@@ -1,4 +1,4 @@
-import { inject, injectable, Injector, Class } from '@ts-stack/di';
+import { inject, injectable, Injector, Class } from '../di';
 
 import { getProviderName } from '../utils/get-provider-name';
 import { isInjectionToken } from '../utils/type-guards';

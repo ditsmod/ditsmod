@@ -1,4 +1,4 @@
-import { DecoratorAndValue, reflector, resolveForwardRef } from '@ts-stack/di';
+import { DecoratorAndValue, reflector, resolveForwardRef } from '../di';
 
 import { ModuleMetadata } from '../types/module-metadata';
 import { AnyFn, ModuleType, ModuleWithParams } from '../types/mix';

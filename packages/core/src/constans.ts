@@ -1,4 +1,4 @@
-import { InjectionToken } from '@ts-stack/di';
+import { InjectionToken } from './di';
 
 import { ModuleExtract } from './models/module-extract';
 import { HttpInterceptor } from './types/http-interceptor';

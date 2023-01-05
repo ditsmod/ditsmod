@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import * as http from 'http';
-import { reflector } from '@ts-stack/di';
+import { reflector } from '../di';
 
 import { rootModule } from './root-module';
 import { AnyObj } from '../types/mix';

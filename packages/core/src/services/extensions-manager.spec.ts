@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { injectable, InjectionToken, ReflectiveInjector } from '@ts-stack/di';
+import { injectable, InjectionToken, ReflectiveInjector } from '../di';
 
 import { Extension } from '../types/mix';
 import { defaultProvidersPerApp } from './default-providers-per-app';

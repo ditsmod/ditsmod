@@ -1,5 +1,5 @@
 import { format } from 'util';
-import { injectable, inject } from '@ts-stack/di';
+import { injectable, inject } from '../di';
 
 import { Status } from '../utils/http-status-codes';
 import { RedirectStatusCodes } from '../types/mix';

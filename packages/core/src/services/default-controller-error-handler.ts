@@ -1,4 +1,4 @@
-import { injectable } from '@ts-stack/di';
+import { injectable } from '../di';
 
 import { Req } from '../services/request';
 import { ControllerErrorHandler } from '../services/controller-error-handler';

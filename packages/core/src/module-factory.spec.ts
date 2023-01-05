@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { FactoryProvider, injectable, Provider, ReflectiveInjector } from '@ts-stack/di';
+import { FactoryProvider, injectable, Provider, ReflectiveInjector } from './di';
 
 import { NODE_REQ } from './constans';
 import { controller, ControllerMetadata } from './decorators/controller';
@@ -25,7 +25,7 @@ import {
 import { Router } from './types/router';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports';
 import { SystemLogMediator } from './log-mediator/system-log-mediator';
-import { makePropDecorator } from '@ts-stack/di/dist/decorator-factories';
+import { makePropDecorator } from './di';
 import { transformControllersMetadata } from './utils/transform-controllers-metadata';
 
 type AnyModule = ModuleType | ModuleWithParams;

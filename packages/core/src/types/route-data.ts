@@ -1,4 +1,4 @@
-import { Class } from '@ts-stack/di';
+import { Class } from '../di';
 import { DecoratorMetadata, HttpMethod, NormalizedGuard } from './mix';
 import { RouteHandler } from './router';
 

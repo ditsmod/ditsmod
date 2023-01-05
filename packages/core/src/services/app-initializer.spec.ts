@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { injectable, InjectionToken } from '@ts-stack/di';
+import { injectable, InjectionToken } from '../di';
 
 import { featureModule } from '../decorators/module';
 import { rootModule } from '../decorators/root-module';

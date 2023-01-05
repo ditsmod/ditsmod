@@ -1,4 +1,4 @@
-import { DiError } from '@ts-stack/di';
+import { DiError } from '../di';
 import { PreRouterExtension } from '../extensions/pre-router.extension';
 
 export function clearErrorTrace(error: any) {

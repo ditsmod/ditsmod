@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 import { ServiceProvider } from '../types/mix';
 import { getCollisions } from './get-collisions';
-import { makePropDecorator } from '@ts-stack/di/dist/decorator-factories';
+import { makePropDecorator } from '../di';
 
 describe('getTokensCollisions()', () => {
   it('duplicates are identical', () => {

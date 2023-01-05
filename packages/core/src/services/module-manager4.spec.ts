@@ -1,4 +1,4 @@
-import { injectable, forwardRef } from '@ts-stack/di';
+import { injectable, forwardRef } from '../di';
 
 import { featureModule } from '../decorators/module';
 import { Module3 } from './module-manager3.spec';

@@ -21,9 +21,6 @@
     "test": "jest",
     "build": "rm -rf dist/* && tsc -b -f"
   },
-  "dependencies": {
-    "@ts-stack/di": "^2.4.2"
-  },
   "devDependencies": {
     "@ts-stack/chain-error": "^1.2.0"
   },

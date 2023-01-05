@@ -1,4 +1,4 @@
-import { injectable, optional } from '@ts-stack/di';
+import { injectable, optional } from '../di';
 
 import { Logger, LoggerConfig, LogLevel } from '../types/logger';
 import { ConsoleLogger } from '../services/console-logger';
