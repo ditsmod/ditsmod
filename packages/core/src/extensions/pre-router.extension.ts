@@ -56,7 +56,7 @@ export class PreRouterExtension implements Extension<void> {
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
         const resolvedPerReq = ReflectiveInjector.resolve(mergedPerReq);
-        this.runDry(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
+        this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
 
         const handle = (async (nodeReq, nodeRes, params, queryString) => {
           const ctxMap = ReflectiveInjector.resolve([
@@ -83,7 +83,7 @@ export class PreRouterExtension implements Extension<void> {
   /**
    * Used as "sandbox" to test resolvable of controllers and HTTP interceptors.
    */
-  protected runDry(
+  protected checkDeps(
     moduleName: string,
     httpMethod: HttpMethod,
     path: string,
