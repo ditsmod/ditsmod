@@ -18,7 +18,7 @@ The main features of Ditsmod:
 - Has OpenAPI support, and has the ability to validate queries based on OpenAPI metadata.
 - To date, [Ditsmod is one of the fastest][14] among Node.js web frameworks.
 
-Some concepts of Ditsmod architecture are taken from [Angular][9] concepts. featureModule [DI][11] is actually extracted from Angular v4.4.7. (with minimal modifications) and integrated into Ditsmod.
+Some concepts of Ditsmod architecture are taken from [Angular][9] concepts, in particular DI.
 
 ## Install the Ditsmod seed
 

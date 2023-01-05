@@ -6,7 +6,7 @@ sidebar_position: 2
 
 ## Basic concepts
 
-Under the hood, Ditsmod uses [@ts-stack/di][9] v2 as a library for Dependency Injection (DI for short), it has the following basic concepts:
+Ditsmod DI has the following basic concepts:
 
 - dependency
 - dependency token, token types

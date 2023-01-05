@@ -522,7 +522,7 @@ export class ModuleManager {
       const msg =
         `${action} into "${modName}" failed: element at ${lowerAction}[${i}] has "undefined" type. ` +
         'This can be caused by circular dependency. Try to replace this element with this expression: ' +
-        '"forwardRef(() => YourModule)". Tip: "forwardRef" has @ts-stack/di module.';
+        '"forwardRef(() => YourModule)".';
       throw new Error(msg);
     }
   }

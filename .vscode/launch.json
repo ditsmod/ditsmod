@@ -7,8 +7,8 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run start4",
-      "command": "yarn start4",
+      "name": "Run start1",
+      "command": "yarn start1",
       "request": "launch",
       "type": "node-terminal"
     },
