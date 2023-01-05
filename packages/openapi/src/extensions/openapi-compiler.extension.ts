@@ -105,7 +105,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   }
 
   protected initOasObject() {
-    let oasExtensionOptions = this.injectorPerMod.get(OasExtensionOptions, null);
+    let oasExtensionOptions = this.injectorPerMod.get(OasExtensionOptions, undefined, null);
     if (!oasExtensionOptions) {
       oasExtensionOptions = {};
       this.log.oasObjectNotFound(this);
