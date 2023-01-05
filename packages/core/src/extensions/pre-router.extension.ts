@@ -1,4 +1,4 @@
-import { injectable, ReflectiveInjector, ResolvedProvider } from '../di';
+import { fromSelf, injectable, ReflectiveInjector, ResolvedProvider } from '../di';
 
 import { HTTP_INTERCEPTORS, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
 import { HttpBackend, HttpFrontend, HttpHandler } from '../types/http-interceptor';
@@ -112,7 +112,7 @@ export class PreRouterExtension implements Extension<void> {
     routeMeta.guards.forEach((item) => inj.checkDeps(item.guard));
     inj.checkDeps(HttpBackend);
     inj.checkDeps(routeMeta.controller.prototype[routeMeta.methodName]);
-    inj.checkDeps(HTTP_INTERCEPTORS, []);
+    inj.checkDeps(HTTP_INTERCEPTORS, fromSelf, []);
   }
 
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {

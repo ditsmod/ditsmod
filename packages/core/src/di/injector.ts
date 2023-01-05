@@ -1,4 +1,4 @@
-import { Visibility, ParamsMeta, Provider, NormalizedProvider, DiError } from './types-and-models';
+import { Visibility, ParamsMeta, Provider, NormalizedProvider, DiError, RESOLVED_PROVIDER } from './types-and-models';
 import { Dependency, ResolvedFactory, ResolvedProvider, Class, DecoratorAndValue } from './types-and-models';
 import { fromSelf, skipSelf, inject, optional } from './decorators';
 import {
@@ -20,11 +20,10 @@ import {
   isTypeProvider,
   DEBUG_NAME,
   stringify,
+  isValueProvider,
 } from './utils';
 
 const THROW_IF_NOT_FOUND = Symbol();
-// ID That uses to indentify instance of this class ResolvedProvider (instead use "instanceof").
-const RESOLVED_PROVIDER = Symbol();
 type Func = (...args: any[]) => any;
 
 /**
@@ -35,8 +34,8 @@ export abstract class Injector {
    * Retrieves an instance from the injector based on the provided token.
    * If not found, returns the `notFoundValue` otherwise
    */
-  abstract get<T>(token: Class<T> | InjectionToken<T>, notFoundValue?: T): T;
-  abstract get(token: any, notFoundValue?: any): any;
+  abstract get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, notFoundValue?: T): T;
+  abstract get(token: any, visibility?: Visibility, notFoundValue?: any): any;
 }
 
 /**
@@ -194,7 +193,9 @@ expect(injector.get(Car) instanceof Car).toBe(true);
    * Resolve a single provider.
    */
   private static resolveProvider(provider: NormalizedProvider): ResolvedProvider[] {
-    if (isClassProvider(provider)) {
+    if (isValueProvider(provider)) {
+      return [this.getResolvedProvider(provider.token, () => provider.useValue, [], provider.multi)];
+    } else if (isClassProvider(provider)) {
       const Cls = resolveForwardRef(provider.useClass) as Class;
       const factoryFn = (...args: any[]) => new Cls(...args);
       const resolvedDeps = this.getDependencies(Cls);
@@ -228,7 +229,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       const deps = [...resolvedDeps1, ...resolvedDeps2];
       return [this.getResolvedProvider(token, factoryFn, deps, provider.multi)];
     } else {
-      return [this.getResolvedProvider(provider.token, () => provider.useValue, [], provider.multi)];
+      throw new DiError(`Unknown provider: ${stringify(provider)}`);
     }
   }
 
@@ -236,7 +237,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     token = resolveForwardRef(token);
     const resolvedFactory = new ResolvedFactory(factoryFn, resolvedDeps);
     isMulti = isMulti || false;
-    return new ResolvedProvider(token, [resolvedFactory], isMulti, RESOLVED_PROVIDER);
+    return new ResolvedProvider(token, [resolvedFactory], isMulti);
   }
 
   /**
@@ -337,8 +338,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
           resolvedProvider = new ResolvedProvider(
             provider.token,
             provider.resolvedFactories.slice(),
-            provider.multi,
-            RESOLVED_PROVIDER
+            provider.multi
           );
         } else {
           resolvedProvider = provider;
@@ -487,8 +487,8 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     }
   }
 
-  get(token: any, notFoundValue: any = THROW_IF_NOT_FOUND): any {
-    return this.checkVisibilityAndGet(token, [], null, notFoundValue);
+  get(token: any, visibility: Visibility = null, notFoundValue: any = THROW_IF_NOT_FOUND): any {
+    return this.checkVisibilityAndGet(token, [], visibility, notFoundValue);
   }
 
   /**
@@ -498,8 +498,8 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
    *
    * If there are problems with dependencies, throws the corresponding error.
    */
-  checkDeps(token: any, notFoundValue: any = THROW_IF_NOT_FOUND): any {
-    return this.checkVisibilityAndCheckDeps(token, [], null, notFoundValue);
+  checkDeps(token: any, visibility: Visibility = null, notFoundValue: any = THROW_IF_NOT_FOUND): any {
+    return this.checkVisibilityAndCheckDeps(token, [], visibility, notFoundValue);
   }
 
   private instantiate(token: any, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
@@ -542,7 +542,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         if (!onlyFromSelf && inj.#parent) {
           return inj.#parent.getOrThrow(inj.#parent, token, parentTokens, notFoundValue);
         }
-      } else if (value?.id === RESOLVED_PROVIDER) {
+      } else if (value?.[RESOLVED_PROVIDER]) {
         if (inj.constructionCounter++ > inj.countOfProviders) {
           throw cyclicDependencyError([value.token, ...parentTokens]);
         }
@@ -604,7 +604,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         if (!onlyFromSelf && inj.#parent) {
           return inj.#parent.runDryOrThrow(inj.#parent, token, parentTokens, notFoundValue);
         }
-      } else if (value?.id === RESOLVED_PROVIDER) {
+      } else if (value?.[RESOLVED_PROVIDER]) {
         inj.checkMultiOrRegularDeps(value, parentTokens);
         return;
       } else {

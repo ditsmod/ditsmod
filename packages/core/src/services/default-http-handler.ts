@@ -6,8 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { injectable, Injector } from '../di';
-
+import { fromSelf, injectable, Injector } from '../di';
 import { RouteMeta } from '../types/route-data';
 import { HTTP_INTERCEPTORS } from '../constans';
 import { HttpFrontend, HttpBackend, HttpHandler, HttpInterceptor } from '../types/http-interceptor';
@@ -28,7 +27,7 @@ export class DefaultHttpHandler implements HttpHandler {
 
   handle(routeMeta: RouteMeta): Promise<any> {
     if (!this.chain) {
-      const interceptors = this.injector.get(HTTP_INTERCEPTORS, []).slice();
+      const interceptors = this.injector.get(HTTP_INTERCEPTORS, fromSelf, []).slice();
       interceptors.unshift(this.frontend);
       this.chain = interceptors.reduceRight(
         (next, interceptor) => new HttpInterceptorHandler(next, interceptor),

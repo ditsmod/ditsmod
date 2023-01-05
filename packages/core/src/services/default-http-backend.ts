@@ -1,5 +1,4 @@
-import { injectable, Injector } from '../di';
-
+import { fromSelf, injectable, Injector } from '../di';
 import { HttpBackend } from '../types/http-interceptor';
 import { RouteMeta } from '../types/route-data';
 
@@ -8,6 +7,6 @@ export class DefaultHttpBackend implements HttpBackend {
   constructor(protected injector: Injector) {}
 
   async handle({ controller, methodName }: RouteMeta) {
-    return this.injector.get(controller.prototype[methodName]);
+    return this.injector.get(controller.prototype[methodName], fromSelf);
   }
 }

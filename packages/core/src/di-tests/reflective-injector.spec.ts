@@ -537,12 +537,12 @@ describe('child', () => {
     const child = parent.resolveAndCreateChild([]);
 
     expect(() => {
-      const result = parent.get(Engine, []);
+      const result = parent.get(Engine, undefined, []);
       expect(result).toEqual([]);
     }).not.toThrow();
 
     expect(() => {
-      const result = child.get(Engine, []);
+      const result = child.get(Engine, undefined, []);
       expect(result).toEqual([]);
     }).not.toThrow();
   });
@@ -1105,8 +1105,8 @@ describe("null as provider's value", () => {
       }
       const parent = ReflectiveInjector.resolveAndCreate([]);
       const child = parent.resolveAndCreateChild([]);
-      expect(() => parent.checkDeps(Dependecy1, [])).not.toThrow();
-      expect(() => child.checkDeps(Dependecy1, [])).not.toThrow();
+      expect(() => parent.checkDeps(Dependecy1, undefined, [])).not.toThrow();
+      expect(() => child.checkDeps(Dependecy1, undefined, [])).not.toThrow();
       expect(spy).toBeCalledTimes(0);
     });
 

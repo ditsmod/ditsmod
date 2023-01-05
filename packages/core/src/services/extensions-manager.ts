@@ -91,7 +91,7 @@ export class ExtensionsManager {
     autoMergeArrays?: boolean,
     ExtensionAwaiting?: Class<Extension<any>>
   ): Promise<any[] | false> {
-    const extensions = this.injector.get(groupToken, []) as Extension<T>[];
+    const extensions = this.injector.get(groupToken, undefined, []) as Extension<T>[];
     const aCurrentData: T[] = [];
 
     if (!extensions.length) {
