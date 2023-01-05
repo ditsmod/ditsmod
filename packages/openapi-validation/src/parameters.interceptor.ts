@@ -1,4 +1,4 @@
-import { injectable } from '@ditsmod/core';
+import { injectable, RequestContext } from '@ditsmod/core';
 import { CustomError, Req } from '@ditsmod/core';
 import { Cookies } from '@ts-stack/cookies';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
@@ -15,8 +15,8 @@ import { ValidationInterceptor } from './validation.interceptor';
  */
 @injectable()
 export class ParametersInterceptor extends ValidationInterceptor {
-  protected override prepareAndValidate(routeMeta: ValidationRouteMeta) {
-    const { parameters } = routeMeta;
+  protected override prepareAndValidate(ctx: RequestContext) {
+    const { parameters, options } = ctx.routeMeta as ValidationRouteMeta;
     for (const parameter of parameters) {
       const schema = parameter.schema as XSchemaObject<any>;
       let value: any;
@@ -37,13 +37,13 @@ export class ParametersInterceptor extends ValidationInterceptor {
           const dict = this.getDict();
           throw new CustomError({
             msg1: dict.missingRequiredParameter(parameter.name, parameter.in),
-            status: routeMeta.options.invalidStatus,
+            status: options.invalidStatus,
           });
         }
         continue;
       }
 
-      this.validate(routeMeta, schema, value, parameter.name);
+      this.validate(ctx, schema, value, parameter.name);
     }
   }
 }
