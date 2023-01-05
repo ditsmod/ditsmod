@@ -1,6 +1,5 @@
 import { Cookies, NodeRequest, NodeResponse } from '@ts-stack/cookies';
-import { inject, injectable, optional } from '@ditsmod/core';
-import { NODE_REQ, NODE_RES } from '@ditsmod/core';
+import { inject, injectable, optional, Req, Res } from '@ditsmod/core';
 
 import { SessionCookieOptions } from './types';
 
@@ -11,20 +10,20 @@ export class SessionCookie {
   protected maxAge: number;
 
   constructor(
-    @inject(NODE_REQ) req: NodeRequest,
-    @inject(NODE_RES) res: NodeResponse,
+    public req: Req,
+    public res: Res,
     @optional() protected opts: SessionCookieOptions
   ) {
     this.opts = { ...(opts || {}) };
 
-    this.cookies = new Cookies(req, res);
+    this.cookies = new Cookies(this.req.nodeReq, this.res.nodeRes);
     this.opts.cookieName = opts.cookieName || 'session_id';
     this.maxAge = opts.maxAge === undefined ? 1000 * 60 * 60 * 24 : opts.maxAge; // By default - 24 hours
 
-    const writeHead = res.writeHead as Function;
-    res.writeHead = (...args: any[]) => {
+    const writeHead = this.res.nodeRes.writeHead as Function;
+    this.res.nodeRes.writeHead = (...args: any[]) => {
       this.updateSessionCookie();
-      return writeHead.apply(res, args);
+      return writeHead.apply(this.res.nodeRes, args);
     };
   }
 
