@@ -195,14 +195,10 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   private static resolveProvider(provider: NormalizedProvider): ResolvedProvider[] {
     if (isValueProvider(provider)) {
       return [this.getResolvedProvider(provider.token, () => provider.useValue, [], provider.multi)];
-    } else if (isClassProvider(provider)) {
+    } else  if (isClassProvider(provider)) {
       const Cls = resolveForwardRef(provider.useClass) as Class;
       const factoryFn = (...args: any[]) => new Cls(...args);
       const resolvedDeps = this.getDependencies(Cls);
-      return [this.getResolvedProvider(provider.token, factoryFn, resolvedDeps, provider.multi)];
-    } else if (isTokenProvider(provider)) {
-      const factoryFn = (aliasInstance: any) => aliasInstance;
-      const resolvedDeps = [Dependency.fromToken(provider.useToken)];
       return [this.getResolvedProvider(provider.token, factoryFn, resolvedDeps, provider.multi)];
     } else if (isFactoryProvider(provider)) {
       const [rawClass, rawFactory] = provider.useFactory;
@@ -229,7 +225,9 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       const deps = [...resolvedDeps1, ...resolvedDeps2];
       return [this.getResolvedProvider(token, factoryFn, deps, provider.multi)];
     } else {
-      throw new DiError(`Unknown provider: ${stringify(provider)}`);
+      const factoryFn = (aliasInstance: any) => aliasInstance;
+      const resolvedDeps = [Dependency.fromToken(provider.useToken)];
+      return [this.getResolvedProvider(provider.token, factoryFn, resolvedDeps, provider.multi)];
     }
   }
 
