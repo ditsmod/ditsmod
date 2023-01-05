@@ -60,10 +60,10 @@ export class CorsExtension implements Extension<void | false> {
 
   protected getCorsOptions(injectorPerMod: ReflectiveInjector, mergedPerRou: ServiceProvider[]) {
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
-    const corsOptions = injectorPerRou.get(CorsOptions, {}) as CorsOptions;
+    const corsOptions = injectorPerRou.get(CorsOptions, undefined, {}) as CorsOptions;
     const clonedCorsOptions = { ...corsOptions };
     if (!clonedCorsOptions.allowedMethods?.length) {
-      clonedCorsOptions.allowedMethods = injectorPerRou.get(ALLOW_METHODS, []) as HttpMethod[];
+      clonedCorsOptions.allowedMethods = injectorPerRou.get(ALLOW_METHODS, undefined, []) as HttpMethod[];
     }
 
     return clonedCorsOptions;
