@@ -1,5 +1,5 @@
-import { injectable, Injector } from '@ditsmod/core';
-import { RouteMeta, HttpBackend, Res, DefaultHttpBackend, Status, HttpMethod, NODE_REQ } from '@ditsmod/core';
+import { injectable, Injector, RequestContext } from '@ditsmod/core';
+import { HttpBackend, Res, DefaultHttpBackend, Status, HttpMethod } from '@ditsmod/core';
 
 @injectable()
 export class ReturnHttpBackend extends DefaultHttpBackend implements HttpBackend {
@@ -7,12 +7,11 @@ export class ReturnHttpBackend extends DefaultHttpBackend implements HttpBackend
     super(injector);
   }
 
-  override async handle(routeMeta: RouteMeta) {
-    const value = await super.handle(routeMeta); // Controller's route returned value.
+  override async handle(ctx: RequestContext) {
+    const value = await super.handle(ctx); // Controller's route returned value.
     let { statusCode } = this.res.nodeRes;
     if (!statusCode) {
-      const nodeReq = this.injector.get(NODE_REQ);
-      const httpMethod = nodeReq.method as HttpMethod;
+      const httpMethod = ctx.nodeReq.method as HttpMethod;
       if (httpMethod == 'GET') {
         statusCode = Status.OK;
       } else if (httpMethod == 'POST') {
