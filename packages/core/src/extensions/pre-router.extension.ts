@@ -1,9 +1,9 @@
 import { fromSelf, injectable, ReflectiveInjector, ResolvedProvider } from '../di';
 
-import { HTTP_INTERCEPTORS, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, ROUTES_EXTENSIONS } from '../constans';
+import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '../constans';
 import { HttpBackend, HttpFrontend, HttpHandler } from '../types/http-interceptor';
 import { Extension, HttpMethod } from '../types/mix';
-import { PreparedRouteMeta, RouteMeta } from '../types/route-data';
+import { PreparedRouteMeta, RequestContext, RouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { ExtensionsManager } from '../services/extensions-manager';
 import { MetadataPerMod2 } from '../types/metadata-per-mod';
@@ -11,6 +11,8 @@ import { ExtensionsContext } from '../services/extensions-context';
 import { getModule } from '../utils/get-module';
 import { PerAppService } from '../services/per-app.service';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
+import { Req } from '../services/request';
+import { Res } from '../services/response';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -58,19 +60,23 @@ export class PreRouterExtension implements Extension<void> {
         const resolvedPerReq = ReflectiveInjector.resolve(mergedPerReq);
         this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
 
-        const handle = (async (nodeReq, nodeRes, params, queryString) => {
-          const ctxMap = ReflectiveInjector.resolve([
-            { token: NODE_REQ, useValue: nodeReq },
-            { token: NODE_RES, useValue: nodeRes },
-            { token: PATH_PARAMS, useValue: params },
-            { token: QUERY_STRING, useValue: queryString },
-          ]);
-          ctxMap.forEach((resolvedProvider, token) => resolvedPerReq.set(token, resolvedProvider));
+        const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
           const inj = injectorPerRou.createChildFromResolved(resolvedPerReq);
 
           // First HTTP handler in the chain of HTTP interceptors.
           const chain = inj.get(HttpHandler) as HttpHandler;
-          await chain.handle(routeMeta);
+          const req = new Req(nodeReq);
+          const res = new Res(nodeRes);
+          const ctx: RequestContext = {
+            routeMeta,
+            nodeReq,
+            nodeRes,
+            queryString,
+            aPathParams,
+            req,
+            res
+          };
+          await chain.handle(ctx);
         }) as RouteHandler;
 
         preparedRouteMeta.push({ moduleName, httpMethod, path, handle });
@@ -91,15 +97,7 @@ export class PreRouterExtension implements Extension<void> {
     resolvedPerReq: Map<any, ResolvedProvider>,
     routeMeta: RouteMeta
   ) {
-    const fakeObj = { info: 'this is test of a route before set it' };
-    const context = ReflectiveInjector.resolve([
-      { token: NODE_REQ, useValue: fakeObj },
-      { token: NODE_RES, useValue: fakeObj },
-      { token: PATH_PARAMS, useValue: fakeObj },
-      { token: QUERY_STRING, useValue: fakeObj },
-    ]);
-    const merged = new Map([...resolvedPerReq, ...context]);
-    const inj = injectorPerRou.createChildFromResolved(merged);
+    const inj = injectorPerRou.createChildFromResolved(resolvedPerReq);
     if (!routeMeta?.controller) {
       const msg =
         `Setting routes in ${moduleName} failed: can't instantiate RouteMeta with ` +

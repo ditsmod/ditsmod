@@ -1,45 +1,37 @@
-import { inject, injectable, Injector } from '../di';
 import { parse } from 'querystring';
 
+import { injectable, Injector } from '../di';
 import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
-import { Req } from './request';
 import { AnyObj, CanActivate } from '../types/mix';
-import { PathParam } from '../types/router';
-import { NODE_RES, PATH_PARAMS, QUERY_STRING } from '../constans';
 import { NodeRequest, NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
-import { RouteMeta } from '../types/route-data';
+import { RequestContext } from '../types/route-data';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 @injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
-  constructor(
-    @inject(PATH_PARAMS) protected aPathParams: PathParam[],
-    @inject(QUERY_STRING) protected queryString: any,
-    protected req: Req,
-    protected injector: Injector
-  ) {}
+  constructor(protected injector: Injector) {}
 
-  async intercept(routeMeta: RouteMeta, next: HttpHandler) {
+  async intercept(ctx: RequestContext, next: HttpHandler) {
     try {
-      const canActivate = await this.canActivate(routeMeta);
+      const canActivate = await this.canActivate(ctx);
       if (!canActivate) {
         return;
       }
-      this.setParams();
+      this.setParams(ctx);
     } catch (err) {
       await this.callErrorHandler(err);
       return;
     }
 
-    return next.handle(routeMeta).catch((err) => {
+    return next.handle(ctx).catch((err) => {
       return this.callErrorHandler(err);
     });
   }
 
-  protected async canActivate(routeMeta: RouteMeta) {
-    const preparedGuards = routeMeta.guards.map<{ guard: CanActivate; params?: any[] }>((item) => {
+  protected async canActivate(ctx: RequestContext) {
+    const preparedGuards = ctx.routeMeta.guards.map<{ guard: CanActivate; params?: any[] }>((item) => {
       return {
         guard: this.injector.get(item.guard),
         params: item.params,
@@ -50,8 +42,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
       const canActivate = await item.guard.canActivate(item.params);
       if (canActivate !== true) {
         const status = typeof canActivate == 'number' ? canActivate : undefined;
-        const nodeRes = this.injector.get(NODE_RES);
-        this.canNotActivateRoute(this.req.nodeReq, nodeRes, status);
+        this.canNotActivateRoute(ctx.nodeReq, ctx.nodeRes, status);
         return false;
       }
     }
@@ -66,15 +57,15 @@ export class DefaultHttpFrontend implements HttpFrontend {
     nodeRes.end();
   }
 
-  protected setParams() {
-    if (this.queryString) {
-      this.req.queryParams = parse(this.queryString);
+  protected setParams(ctx: RequestContext) {
+    if (ctx.queryString) {
+      ctx.req.queryParams = parse(ctx.queryString);
     }
-    if (this.aPathParams) {
-      this.req.aPathParams = this.aPathParams;
+    if (ctx.aPathParams) {
+      ctx.req.aPathParams = ctx.aPathParams;
       const pathParams: AnyObj = {};
-      this.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
-      this.req.pathParams = pathParams;
+      ctx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
+      ctx.req.pathParams = pathParams;
     }
   }
 

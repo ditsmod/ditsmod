@@ -1,6 +1,5 @@
 import { Injector } from './di';
 
-import { NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING } from './constans';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 import { RootMetadata } from './models/root-metadata';
 import { defaultExtensions, defaultExtensionsTokens } from './services/default-extensions';
@@ -278,10 +277,6 @@ export class ImportsResolver {
 
     const defaultTokens = [
       ...getTokens([...defaultProvidersPerApp, ...defaultProvidersPerReq]),
-      NODE_REQ,
-      NODE_RES,
-      PATH_PARAMS,
-      QUERY_STRING,
       Injector,
       RootMetadata,
     ];

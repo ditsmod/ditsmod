@@ -2,15 +2,7 @@ export * from './di';
 
 export { AppInitializer } from './app-initializer';
 export { Application } from './application';
-export {
-  HTTP_INTERCEPTORS,
-  NODE_REQ,
-  NODE_RES,
-  PATH_PARAMS,
-  PRE_ROUTER_EXTENSIONS,
-  QUERY_STRING,
-  ROUTES_EXTENSIONS,
-} from './constans';
+export { HTTP_INTERCEPTORS, PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from './constans';
 export { CustomError } from './custom-error/custom-error';
 export { ErrorOpts } from './custom-error/error-opts';
 export { controller, ControllerMetadata } from './decorators/controller';
@@ -58,7 +50,7 @@ export {
   ServiceProvider,
 } from './types/mix';
 export { ModuleMetadata, AppendsWithParams } from './types/module-metadata';
-export { RouteMeta } from './types/route-data';
+export { RouteMeta, RequestContext } from './types/route-data';
 export { PathParam, RouteHandler, Router, RouterReturns } from './types/router';
 export { NodeRequest, NodeResponse, RequestListener } from './types/server-options';
 export { deepFreeze } from './utils/deep-freeze';
@@ -91,5 +83,5 @@ export {
   isRoute,
   isTokenProvider,
   isTypeProvider,
-  isValueProvider
+  isValueProvider,
 } from './utils/type-guards';

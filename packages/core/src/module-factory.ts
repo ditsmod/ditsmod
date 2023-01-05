@@ -9,7 +9,7 @@ import type { ExtensionProvider, ModuleType, ModuleWithParams, NormalizedGuard, 
 
 import { ImportObj } from './types/metadata-per-mod';
 import { ModuleExtract } from './models/module-extract';
-import { defaultProvidersPerMod, NODE_REQ, NODE_RES } from './constans';
+import { defaultProvidersPerMod } from './constans';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
 import { deepFreeze } from './utils/deep-freeze';
 import { getCollisions } from './utils/get-collisions';
@@ -284,9 +284,7 @@ export class ModuleFactory {
     const mergedProvidersAndTokens = [
       ...this.meta.providersPerRou,
       ...getImportedProviders(this.importedProvidersPerRou),
-      ...defaultProvidersPerReq,
-      NODE_REQ,
-      NODE_RES,
+      ...defaultProvidersPerReq
     ];
     this.checkCollisionsWithScopesMix(mergedProvidersAndTokens, ['Req']);
   }

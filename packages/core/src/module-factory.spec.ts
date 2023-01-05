@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { FactoryProvider, injectable, Provider, ReflectiveInjector } from './di';
 
-import { NODE_REQ } from './constans';
 import { controller, ControllerMetadata } from './decorators/controller';
 import { featureModule } from './decorators/module';
 import { rootModule } from './decorators/root-module';
@@ -27,6 +26,7 @@ import { getImportedProviders, getImportedTokens } from './utils/get-imports';
 import { SystemLogMediator } from './log-mediator/system-log-mediator';
 import { makePropDecorator } from './di';
 import { transformControllersMetadata } from './utils/transform-controllers-metadata';
+import { HttpHandler } from './types/http-interceptor';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -1360,8 +1360,8 @@ describe('ModuleFactory', () => {
 
         it('case 4', () => {
           @featureModule({
-            exports: [NODE_REQ],
-            providersPerReq: [{ token: NODE_REQ, useValue: '' }],
+            exports: [HttpHandler],
+            providersPerReq: [{ token: HttpHandler, useValue: '' }],
           })
           class Module0 {}
 
@@ -1371,20 +1371,20 @@ describe('ModuleFactory', () => {
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
-          const msg = 'AppModule failed: exports from Module0 causes collision with InjectionToken NODE_REQ.';
+          const msg = 'AppModule failed: exports from Module0 causes collision with InjectionToken HttpHandler.';
           expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
         it('resolve case 4', () => {
           @featureModule({
-            exports: [NODE_REQ],
-            providersPerReq: [{ token: NODE_REQ, useValue: '' }],
+            exports: [HttpHandler],
+            providersPerReq: [{ token: HttpHandler, useValue: '' }],
           })
           class Module0 {}
 
           @rootModule({
             imports: [Module0],
-            resolvedCollisionsPerReq: [[NODE_REQ, AppModule]],
+            resolvedCollisionsPerReq: [[HttpHandler, AppModule]],
           })
           class AppModule {}
 
@@ -1397,14 +1397,14 @@ describe('ModuleFactory', () => {
 
         it('resolved case 4', () => {
           @featureModule({
-            exports: [NODE_REQ],
-            providersPerReq: [{ token: NODE_REQ, useValue: '' }],
+            exports: [HttpHandler],
+            providersPerReq: [{ token: HttpHandler, useValue: '' }],
           })
           class Module1 {}
 
           @rootModule({
             imports: [Module1],
-            resolvedCollisionsPerReq: [[NODE_REQ, Module1]],
+            resolvedCollisionsPerReq: [[HttpHandler, Module1]],
           })
           class AppModule {}
 
@@ -1413,7 +1413,7 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
           expect([...mock.importedProvidersPerReq]).toEqual([
-            [NODE_REQ, { module: Module1, providers: [{ token: NODE_REQ, useValue: '' }] }],
+            [HttpHandler, { module: Module1, providers: [{ token: HttpHandler, useValue: '' }] }],
           ]);
         });
       });
