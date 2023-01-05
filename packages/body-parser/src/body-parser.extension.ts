@@ -30,7 +30,7 @@ export class BodyParserExtension implements Extension<void> {
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
         const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
-        let bodyParserConfig = injectorPerReq.get(BodyParserConfig, {}) as BodyParserConfig;
+        let bodyParserConfig = injectorPerReq.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
         bodyParserConfig = Object.assign({}, new BodyParserConfig(), bodyParserConfig); // Merge with default.
         if (bodyParserConfig.acceptMethods?.includes(httpMethod)) {
           providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
