@@ -1,14 +1,14 @@
-import { Logger, Status, Res, ControllerErrorHandler, injectable } from '@ditsmod/core';
+import { Logger, Status, ControllerErrorHandler, injectable, RequestContext } from '@ditsmod/core';
 
 @injectable()
 export class MyControllerErrorHandler implements ControllerErrorHandler {
-  constructor(private res: Res, private logger: Logger) {}
+  constructor(private logger: Logger) {}
 
-  handleError(err: Error) {
+  handleError(ctx: RequestContext, err: Error) {
     const message = err.message;
     this.logger.error({ note: 'This is my implementation of ControllerErrorHandler', err });
-    if (!this.res.nodeRes.headersSent) {
-      this.res.sendJson({ error: { message } }, Status.INTERNAL_SERVER_ERROR);
+    if (!ctx.res.nodeRes.headersSent) {
+      ctx.res.sendJson({ error: { message } }, Status.INTERNAL_SERVER_ERROR);
     }
   }
 }

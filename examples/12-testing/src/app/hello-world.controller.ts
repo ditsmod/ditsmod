@@ -1,20 +1,20 @@
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, RequestContext, route } from '@ditsmod/core';
 
 import { MyService } from './my.service';
 
 @controller()
 export class HelloWorldController {
-  constructor(private res: Res, private myService: MyService) {}
+  constructor(private myService: MyService) {}
 
   @route('GET')
-  async helloWorld() {
+  async helloWorld(ctx: RequestContext) {
     const message = await this.myService.helloWorld();
-    this.res.send(message);
+    ctx.res.send(message);
   }
 
   @route('GET', 'admin')
-  async helloAdmin() {
+  async helloAdmin(ctx: RequestContext) {
     const message = await this.myService.helloAdmin();
-    this.res.send(message);
+    ctx.res.send(message);
   }
 }

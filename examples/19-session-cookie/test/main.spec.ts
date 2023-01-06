@@ -14,7 +14,7 @@ describe('19-session-cookie', () => {
       .get('/set')
       .expect(200)
       .expect('set-cookie', /custom-session-name=123/)
-      .expect(`Hello World!\n`)
+      .expect('Hello World!\n')
       ;
 
     server.close();
@@ -26,7 +26,7 @@ describe('19-session-cookie', () => {
       .get('/get')
       .set('cookie', 'custom-session-name=123')
       .expect(200)
-      .expect(`session ID: 123`)
+      .expect('session ID: 123')
       ;
 
     server.close();

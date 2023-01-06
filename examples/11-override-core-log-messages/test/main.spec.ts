@@ -13,7 +13,7 @@ describe('11-override-core-log-messages', () => {
     await request(server)
       .get('/')
       .expect(200)
-      .expect(`I'm OtherController\n`);
+      .expect("I'm OtherController\n");
 
     server.close();
   });

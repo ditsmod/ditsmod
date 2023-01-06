@@ -1,14 +1,14 @@
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, RequestContext, Res, route } from '@ditsmod/core';
 
 import { SomeService } from '../some/some.service';
 
 @controller()
 export class OtherController {
-  constructor(private res: Res, private someService: SomeService) {}
+  constructor(private someService: SomeService) {}
 
   @route('GET')
-  tellHello() {
+  tellHello(ctx: RequestContext) {
     this.someService.setSomeLog();
-    this.res.send(`I'm OtherController\n`);
+    ctx.res.send("I'm OtherController\n");
   }
 }

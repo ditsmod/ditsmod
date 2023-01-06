@@ -1,4 +1,12 @@
-import { AppInitializer, controller, ModuleManager, ModuleWithParams, Res, route } from '@ditsmod/core';
+import {
+  AppInitializer,
+  controller,
+  ModuleManager,
+  ModuleWithParams,
+  RequestContext,
+  route,
+  skipSelf,
+} from '@ditsmod/core';
 
 import { SecondModule } from '../second/second.module';
 import { ThirdModule } from '../third/third.module';
@@ -8,43 +16,43 @@ const thirdModuleWithParams: ModuleWithParams = { path: '', module: ThirdModule 
 
 @controller()
 export class FirstController {
-  constructor(private res: Res, private moduleManager: ModuleManager, private appInitializer: AppInitializer) {}
+  constructor(@skipSelf() private moduleManager: ModuleManager, @skipSelf() private appInitializer: AppInitializer) {}
 
   @route('GET')
-  tellHello() {
-    this.res.send('first module.\n');
+  tellHello(ctx: RequestContext) {
+    ctx.res.send('first module.\n');
   }
 
   @route('GET', 'add-2')
-  async addSecondModule() {
+  async addSecondModule(ctx: RequestContext) {
     this.moduleManager.addImport(secondModuleWithParams);
-    await this.reinitApp('second', 'importing');
+    await this.reinitApp(ctx, 'second', 'importing');
   }
 
   @route('GET', 'del-2')
-  async removeSecondModule() {
+  async removeSecondModule(ctx: RequestContext) {
     this.moduleManager.removeImport(secondModuleWithParams);
-    await this.reinitApp('second', 'removing');
+    await this.reinitApp(ctx, 'second', 'removing');
   }
 
   @route('GET', 'add-3')
-  async addThirdModule() {
+  async addThirdModule(ctx: RequestContext) {
     this.moduleManager.addImport(thirdModuleWithParams);
-    await this.reinitApp('third', 'importing');
+    await this.reinitApp(ctx, 'third', 'importing');
   }
 
   @route('GET', 'del-3')
-  async removeThirdModule() {
+  async removeThirdModule(ctx: RequestContext) {
     this.moduleManager.removeImport(thirdModuleWithParams);
-    await this.reinitApp('third', 'removing');
+    await this.reinitApp(ctx, 'third', 'removing');
   }
 
-  private async reinitApp(moduleName: 'second' | 'third', action: 'importing' | 'removing') {
+  private async reinitApp(ctx: RequestContext, moduleName: 'second' | 'third', action: 'importing' | 'removing') {
     const err = await this.appInitializer.reinit();
     if (err) {
-      this.res.send(`${action} ${moduleName} failed: ${err.message}\n`);
+      ctx.res.send(`${action} ${moduleName} failed: ${err.message}\n`);
     } else {
-      this.res.send(`${moduleName} successfully ${action}!\n`);
+      ctx.res.send(`${moduleName} successfully ${action}!\n`);
     }
   }
 }

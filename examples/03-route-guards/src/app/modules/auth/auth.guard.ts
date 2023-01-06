@@ -1,11 +1,11 @@
-import { CanActivate, injectable } from '@ditsmod/core';
+import { CanActivate, injectable, RequestContext } from '@ditsmod/core';
 
 @injectable()
 export class AuthGuard implements CanActivate {
   /**
    * Here you need implement more logic.
    */
-  async canActivate(params: any[]) {
+  async canActivate(ctx: RequestContext, params: any[]) {
     return false;
   }
 }

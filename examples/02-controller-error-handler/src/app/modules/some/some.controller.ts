@@ -1,12 +1,10 @@
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, RequestContext, route } from '@ditsmod/core';
 
 @controller()
 export class SomeController {
-  constructor(private res: Res) {}
-
   @route('GET')
-  ok() {
-    this.res.send('ok');
+  ok(ctx: RequestContext) {
+    ctx.res.send('ok');
   }
 
   @route('GET', 'throw-error')

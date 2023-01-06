@@ -13,13 +13,13 @@ describe('18-return', () => {
     await request(server)
       .get('/first')
       .expect(200)
-      .expect(`first module.\n`)
+      .expect('first module.\n')
       ;
 
     await request(server)
       .get('/second')
       .expect(200)
-      .expect(`default send`)
+      .expect('default send')
       ;
 
     await request(server)
@@ -31,7 +31,7 @@ describe('18-return', () => {
     await request(server)
       .get('/second-string')
       .expect(200)
-      .expect(`Some string`)
+      .expect('Some string')
       ;
 
     server.close();

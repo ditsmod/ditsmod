@@ -1,13 +1,13 @@
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, RequestContext, Res, route } from '@ditsmod/core';
 import BunyanLogger from 'bunyan';
 
 @controller()
 export class BunyanController {
-  constructor(private res: Res, private logger: BunyanLogger) {}
+  constructor(private logger: BunyanLogger) {}
 
   @route('GET', 'bunyan')
-  ok() {
-    this.res.send('see console of node process\n');
+  ok(ctx: RequestContext) {
+    ctx.res.send('see console of node process\n');
     this.logger.info("it's works!");
   }
 }

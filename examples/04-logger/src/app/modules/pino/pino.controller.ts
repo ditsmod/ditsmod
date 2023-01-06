@@ -1,13 +1,13 @@
-import { inject, controller, Res, route, Logger } from '@ditsmod/core';
+import { inject, controller, route, Logger, RequestContext } from '@ditsmod/core';
 import { BaseLogger as PinoLogger } from 'pino';
 
 @controller()
 export class PinoController {
-  constructor(private res: Res, @inject(Logger) private logger: PinoLogger) {}
+  constructor(@inject(Logger) private logger: PinoLogger) {}
 
   @route('GET', 'pino')
-  ok() {
-    this.res.send('see console of node process\n');
+  ok(ctx: RequestContext) {
+    ctx.res.send('see console of node process\n');
     this.logger.info("it's works!");
   }
 }
