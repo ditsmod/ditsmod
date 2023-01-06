@@ -58,7 +58,7 @@ export class PreRouterExtension implements Extension<void> {
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
         const resolvedPerReq = ReflectiveInjector.resolve(mergedPerReq);
-        this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
+        // this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
 
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
           const inj = injectorPerRou.createChildFromResolved(resolvedPerReq);

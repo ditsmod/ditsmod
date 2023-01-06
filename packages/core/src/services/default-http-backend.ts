@@ -8,6 +8,7 @@ export class DefaultHttpBackend implements HttpBackend {
 
   async handle(ctx: RequestContext) {
     const { controller, methodName } = ctx.routeMeta;
-    return this.injector.get(controller.prototype[methodName], fromSelf);
+    const [factory, deps] = this.injector.prepare(controller.prototype[methodName], 1);
+    return factory(ctx, deps);
   }
 }
