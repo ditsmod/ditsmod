@@ -193,14 +193,14 @@ expect(injector.get(Car) instanceof Car).toBe(true);
    * Resolve a single provider.
    */
   private static resolveProvider(provider: NormalizedProvider): ResolvedProvider[] {
-    if (isValueProvider(provider)) {
-      return [this.getResolvedProvider(provider.token, () => provider.useValue, [], provider.multi)];
-    } else  if (isClassProvider(provider)) {
+    if (isClassProvider(provider)) {
       const Cls = resolveForwardRef(provider.useClass) as Class;
       const factoryFn = (...args: any[]) => new Cls(...args);
       const resolvedDeps = this.getDependencies(Cls);
       return [this.getResolvedProvider(provider.token, factoryFn, resolvedDeps, provider.multi)];
-    } else if (isFactoryProvider(provider)) {
+    } else if (isValueProvider(provider)) {
+      return [this.getResolvedProvider(provider.token, () => provider.useValue, [], provider.multi)];
+    } else  if (isFactoryProvider(provider)) {
       const [rawClass, rawFactory] = provider.useFactory;
       const Cls = resolveForwardRef(rawClass) as Class;
       const factory = resolveForwardRef(rawFactory) as Func;
