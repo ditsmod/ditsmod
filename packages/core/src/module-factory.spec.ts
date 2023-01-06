@@ -26,7 +26,7 @@ import { getImportedProviders, getImportedTokens } from './utils/get-imports';
 import { SystemLogMediator } from './log-mediator/system-log-mediator';
 import { makePropDecorator } from './di';
 import { transformControllersMetadata } from './utils/transform-controllers-metadata';
-import { HttpHandler } from './types/http-interceptor';
+import { HttpBackend } from './types/http-interceptor';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -1299,33 +1299,16 @@ describe('ModuleFactory', () => {
           expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
-        it('case 3', () => {
-          @featureModule({
-            exports: [Req],
-            providersPerReq: [{ token: Req, useClass: Req }],
-          })
-          class Module0 {}
-
-          @rootModule({
-            imports: [Module0],
-          })
-          class AppModule {}
-
-          moduleManager.scanRootModule(AppModule);
-          const msg = 'AppModule failed: exports from Module0 causes collision with Req.';
-          expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
-        });
-
         it('resolve case 3', () => {
           @featureModule({
-            exports: [Req],
-            providersPerReq: [{ token: Req, useClass: Req }],
+            exports: [HttpBackend],
+            providersPerReq: [{ token: HttpBackend, useValue: '' }],
           })
           class Module0 {}
 
           @rootModule({
             imports: [Module0],
-            resolvedCollisionsPerReq: [[Req, AppModule]],
+            resolvedCollisionsPerReq: [[HttpBackend, AppModule]],
           })
           class AppModule {}
 
@@ -1360,8 +1343,8 @@ describe('ModuleFactory', () => {
 
         it('case 4', () => {
           @featureModule({
-            exports: [HttpHandler],
-            providersPerReq: [{ token: HttpHandler, useValue: '' }],
+            exports: [HttpBackend],
+            providersPerReq: [{ token: HttpBackend, useValue: '' }],
           })
           class Module0 {}
 
@@ -1371,20 +1354,20 @@ describe('ModuleFactory', () => {
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
-          const msg = 'AppModule failed: exports from Module0 causes collision with InjectionToken HttpHandler.';
+          const msg = 'AppModule failed: exports from Module0 causes collision with HttpBackend.';
           expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
         it('resolve case 4', () => {
           @featureModule({
-            exports: [HttpHandler],
-            providersPerReq: [{ token: HttpHandler, useValue: '' }],
+            exports: [HttpBackend],
+            providersPerReq: [{ token: HttpBackend, useValue: '' }],
           })
           class Module0 {}
 
           @rootModule({
             imports: [Module0],
-            resolvedCollisionsPerReq: [[HttpHandler, AppModule]],
+            resolvedCollisionsPerReq: [[HttpBackend, AppModule]],
           })
           class AppModule {}
 
@@ -1397,14 +1380,14 @@ describe('ModuleFactory', () => {
 
         it('resolved case 4', () => {
           @featureModule({
-            exports: [HttpHandler],
-            providersPerReq: [{ token: HttpHandler, useValue: '' }],
+            exports: [HttpBackend],
+            providersPerReq: [{ token: HttpBackend, useValue: '' }],
           })
           class Module1 {}
 
           @rootModule({
             imports: [Module1],
-            resolvedCollisionsPerReq: [[HttpHandler, Module1]],
+            resolvedCollisionsPerReq: [[HttpBackend, Module1]],
           })
           class AppModule {}
 
@@ -1413,7 +1396,7 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())
           ).not.toThrow();
           expect([...mock.importedProvidersPerReq]).toEqual([
-            [HttpHandler, { module: Module1, providers: [{ token: HttpHandler, useValue: '' }] }],
+            [HttpBackend, { module: Module1, providers: [{ token: HttpBackend, useValue: '' }] }],
           ]);
         });
       });
