@@ -1,5 +1,5 @@
-import { Cookies, NodeRequest, NodeResponse } from '@ts-stack/cookies';
-import { inject, injectable, optional, Req, Res } from '@ditsmod/core';
+import { Cookies } from '@ts-stack/cookies';
+import { injectable, optional, RequestContext } from '@ditsmod/core';
 
 import { SessionCookieOptions } from './types';
 
@@ -9,21 +9,24 @@ export class SessionCookie {
   protected cookies: Cookies;
   protected maxAge: number;
 
-  constructor(
-    public req: Req,
-    public res: Res,
-    @optional() protected opts: SessionCookieOptions
-  ) {
+  constructor(@optional() protected opts: SessionCookieOptions) {
+    this.opts = { ...(opts || {}) };
+  }
+
+  /**
+   * @todo Refactor this. For now it's not called from anywhere.
+   */
+  init(ctx: RequestContext, opts: SessionCookieOptions) {
     this.opts = { ...(opts || {}) };
 
-    this.cookies = new Cookies(this.req.nodeReq, this.res.nodeRes);
+    this.cookies = new Cookies(ctx.req.nodeReq, ctx.res.nodeRes);
     this.opts.cookieName = opts.cookieName || 'session_id';
     this.maxAge = opts.maxAge === undefined ? 1000 * 60 * 60 * 24 : opts.maxAge; // By default - 24 hours
 
-    const writeHead = this.res.nodeRes.writeHead as Function;
-    this.res.nodeRes.writeHead = (...args: any[]) => {
+    const writeHead = ctx.res.nodeRes.writeHead as Function;
+    ctx.res.nodeRes.writeHead = (...args: any[]) => {
       this.updateSessionCookie();
-      return writeHead.apply(this.res.nodeRes, args);
+      return writeHead.apply(ctx.res.nodeRes, args);
     };
   }
 
