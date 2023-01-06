@@ -21,12 +21,12 @@ export class DefaultHttpFrontend implements HttpFrontend {
       }
       this.setParams(ctx);
     } catch (err) {
-      await this.callErrorHandler(err);
+      await this.callErrorHandler(ctx, err);
       return;
     }
 
     return next.handle(ctx).catch((err) => {
-      return this.callErrorHandler(err);
+      return this.callErrorHandler(ctx, err);
     });
   }
 
@@ -39,7 +39,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
     });
 
     for (const item of preparedGuards) {
-      const canActivate = await item.guard.canActivate(item.params);
+      const canActivate = await item.guard.canActivate(ctx, item.params);
       if (canActivate !== true) {
         const status = typeof canActivate == 'number' ? canActivate : undefined;
         this.canNotActivateRoute(ctx.nodeReq, ctx.nodeRes, status);
@@ -69,8 +69,8 @@ export class DefaultHttpFrontend implements HttpFrontend {
     }
   }
 
-  protected async callErrorHandler(err: any) {
+  protected async callErrorHandler(ctx: RequestContext, err: any) {
     const errorHandler = this.injector.get(ControllerErrorHandler);
-    await errorHandler.handleError(err);
+    await errorHandler.handleError(ctx, err);
   }
 }

@@ -1,38 +1,37 @@
 import { injectable } from '../di';
 
-import { Req } from '../services/request';
 import { ControllerErrorHandler } from '../services/controller-error-handler';
-import { Res } from '../services/response';
 import { Logger } from '../types/logger';
 import { Status } from '../utils/http-status-codes';
 import { ErrorOpts } from '../custom-error/error-opts';
 import { isChainError } from '../utils/type-guards';
+import { RequestContext } from '../types/route-data';
 
 
 @injectable()
 export class DefaultControllerErrorHandler implements ControllerErrorHandler {
-  constructor(private req: Req, private res: Res, private logger: Logger) {}
+  constructor(private logger: Logger) {}
 
-  async handleError(err: Error) {
+  async handleError(ctx: RequestContext, err: Error) {
     if (isChainError<ErrorOpts>(err)) {
       const { level, status } = err.info;
       this.logger.log(level || 'debug', err);
-      this.sendError(err.message, status);
+      this.sendError(ctx, err.message, status);
     } else {
       this.logger.error(err);
-      this.sendError('Internal server error', Status.INTERNAL_SERVER_ERROR);
+      this.sendError(ctx, 'Internal server error', Status.INTERNAL_SERVER_ERROR);
     }
   }
 
-  protected sendError(error: string, status?: Status) {
-    if (!this.res.nodeRes.headersSent) {
-      this.addRequestIdToHeader();
-      this.res.sendJson({ error }, status);
+  protected sendError(ctx: RequestContext, error: string, status?: Status) {
+    if (!ctx.res.nodeRes.headersSent) {
+      this.addRequestIdToHeader(ctx);
+      ctx.res.sendJson({ error }, status);
     }
   }
 
-  protected addRequestIdToHeader() {
+  protected addRequestIdToHeader(ctx: RequestContext) {
     const header = 'x-requestId';
-    this.res.nodeRes.setHeader(header, this.req.requestId);
+    ctx.res.nodeRes.setHeader(header, ctx.req.requestId);
   }
 }
