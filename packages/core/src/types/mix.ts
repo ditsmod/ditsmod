@@ -7,9 +7,9 @@ import {
   TypeProvider,
   ValueProvider,
 } from '../di';
-
 import { MetadataPerMod1 } from './metadata-per-mod';
 import { ProvidersMetadata } from '../models/providers-metadata';
+import { RequestContext } from './route-data';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
 
@@ -53,7 +53,7 @@ export interface AnyObj {
 }
 
 export interface CanActivate {
-  canActivate(params?: any[]): boolean | number | Promise<boolean | number>;
+  canActivate(ctx: RequestContext, params?: any[]): boolean | number | Promise<boolean | number>;
 }
 
 export interface DecoratorMetadata<MV extends AnyObj = AnyObj> {
