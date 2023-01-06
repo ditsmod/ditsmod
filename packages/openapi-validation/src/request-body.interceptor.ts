@@ -1,5 +1,5 @@
 import { injectable, RequestContext } from '@ditsmod/core';
-import { CustomError, Req } from '@ditsmod/core';
+import { CustomError } from '@ditsmod/core';
 
 import { ValidationRouteMeta } from './types';
 import { ValidationInterceptor } from './validation.interceptor';
@@ -11,7 +11,7 @@ import { ValidationInterceptor } from './validation.interceptor';
 export class RequestBodyInterceptor extends ValidationInterceptor {
   protected override prepareAndValidate(ctx: RequestContext) {
     const { options, requestBodySchema } = ctx.routeMeta as ValidationRouteMeta;
-    const req = this.injector.get(Req);
+    const { req } = ctx;
     if (req.body === undefined) {
       const dict = this.getDict();
       throw new CustomError({

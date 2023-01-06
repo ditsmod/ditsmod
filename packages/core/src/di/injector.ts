@@ -32,7 +32,6 @@ import {
 
 const THROW_IF_NOT_FOUND = Symbol();
 type Func = (...args: any[]) => any;
-type FuncName = 'prepareResolved' | 'instantiateResolved';
 
 /**
  * Returns value by token.
@@ -44,8 +43,12 @@ export abstract class Injector {
    */
   abstract get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, notFoundValue?: T): T;
   abstract get(token: any, visibility?: Visibility, notFoundValue?: any): any;
-  abstract resolveAndPrepare(provider: Provider, skipFirst?: number): PreparedFactory;
-  abstract prepare(token: any, skipFirst?: number, visibility?: Visibility, notFoundValue?: any): PreparedFactory
+  abstract getFactoryWithArgs(
+    token: Func,
+    skipFirst: number,
+    visibility?: Visibility,
+    notFoundValue?: any
+  ): PreparedFactory;
 }
 
 /**
@@ -225,14 +228,14 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       }
       const factoryKey = this.getFactoryKey(Cls, factory);
       const resolvedDeps1 = this.getDependencies(Cls);
-      const numArgs = resolvedDeps1.length;
+      const resolvedDeps2 = this.getDependencies(Cls, factoryKey);
+      const numArgs2 = resolvedDeps2.length;
       const factoryFn = (...args: any[]) => {
-        const args1 = args.slice(0, numArgs);
-        const args2 = args.slice(numArgs);
+        const args1 = args.slice(numArgs2);
+        const args2 = args.slice(0, numArgs2);
         return new Cls(...args1)[factoryKey](...args2);
       };
-      const resolvedDeps2 = this.getDependencies(Cls, factoryKey);
-      const deps = [...resolvedDeps1, ...resolvedDeps2];
+      const deps = [...resolvedDeps2, ...resolvedDeps1];
       return [this.getResolvedProvider(token, factoryFn, deps, provider.multi)];
     } else {
       const factoryFn = (aliasInstance: any) => aliasInstance;
@@ -455,12 +458,6 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     return this.instantiateResolved(resolvedProvider);
   }
 
-  resolveAndPrepare(provider: Provider, skipFirst?: number) {
-    const map = ReflectiveInjector.resolve([provider]).values();
-    const resolvedProvider = Array.from(map)[0];
-    return this.prepareResolved(resolvedProvider, [], skipFirst);
-  }
-
   /**
    * Instantiates an object using a resolved provider in the context of the injector.
    *
@@ -501,23 +498,28 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     // if (provider.multi) {
     //   const res = new Array(provider.resolvedFactories.length);
     //   for (let i = 0; i < provider.resolvedFactories.length; ++i) {
-    //     const deps = this.prepareDeps(provider.token, parentTokens, provider.resolvedFactories[i].dependencies);
-    //     res[i] = [provider.resolvedFactories[i].factory, deps];
+    //     const args = this.prepareArgs(provider.token, parentTokens, provider.resolvedFactories[i].dependencies);
+    //     res[i] = [provider.resolvedFactories[i].factory, args];
     //   }
     //   return res;
     // } else {
-      const deps = provider.resolvedFactories[0].dependencies.slice(skipFirst);
-      const args = this.prepareArgs(provider.token, parentTokens, deps);
-      return [provider.resolvedFactories[0].factory, args];
+    const deps = provider.resolvedFactories[0].dependencies.slice(skipFirst);
+    const args = this.prepareArgs(provider.token, parentTokens, deps);
+    return [provider.resolvedFactories[0].factory, args];
     // }
   }
 
   get(token: any, visibility: Visibility = null, notFoundValue: any = THROW_IF_NOT_FOUND): any {
-    return this.checkVisibilityAndGet('instantiateResolved', token, [], visibility, notFoundValue);
+    return this.checkVisibilityAndGet(token, [], visibility, notFoundValue);
   }
 
-  prepare(token: any, skipFirst?: number, visibility: Visibility = null, notFoundValue: any = THROW_IF_NOT_FOUND): PreparedFactory {
-    return this.checkVisibilityAndPrepare('prepareResolved', token, [], visibility, notFoundValue, skipFirst);
+  getFactoryWithArgs(
+    token: Func,
+    skipFirst: number,
+    visibility: Visibility = null,
+    notFoundValue: any = THROW_IF_NOT_FOUND
+  ): PreparedFactory {
+    return this.checkVisibilityAndGet(token, [], visibility, notFoundValue, skipFirst);
   }
 
   /**
@@ -534,7 +536,6 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   private instantiate(token: any, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
       return this.checkVisibilityAndGet(
-        'instantiateResolved',
         dep.token,
         [token, ...parentTokens],
         dep.visibility,
@@ -552,7 +553,6 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   private prepareArgs(token: any, parentTokens: any[], dependencies: Dependency[]): any[] {
     return dependencies.map((dep) => {
       return this.checkVisibilityAndGet(
-        'prepareResolved',
         dep.token,
         [token, ...parentTokens],
         dep.visibility,
@@ -561,28 +561,23 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     });
   }
 
-  private checkVisibilityAndGet(fn: FuncName, token: any, parentTokens: any[], visibility: Visibility, notFoundValue: any) {
+  private checkVisibilityAndGet(
+    token: any,
+    parentTokens: any[],
+    visibility: Visibility,
+    notFoundValue: any,
+    skipFirst?: number
+  ) {
     if (token === Injector) {
       return this;
     }
 
     const injector = visibility === skipSelf ? this.#parent : this;
     const onlyFromSelf = visibility === fromSelf;
-    return this.getOrThrow(fn, injector, token, parentTokens, notFoundValue, onlyFromSelf);
-  }
-
-  private checkVisibilityAndPrepare(fn: FuncName, token: any, parentTokens: any[], visibility: Visibility, notFoundValue: any, skipFirst?: number) {
-    if (token === Injector) {
-      return this;
-    }
-
-    const injector = visibility === skipSelf ? this.#parent : this;
-    const onlyFromSelf = visibility === fromSelf;
-    return this.getOrThrow(fn, injector, token, parentTokens, notFoundValue, onlyFromSelf, skipFirst);
+    return this.getOrThrow(injector, token, parentTokens, notFoundValue, onlyFromSelf, skipFirst);
   }
 
   private getOrThrow(
-    fn: FuncName,
     inj: ReflectiveInjector | null,
     token: any,
     parentTokens: any[],
@@ -594,15 +589,21 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
       const value: ResolvedProvider | undefined = inj.#map.get(token);
       if (!value && !inj.#map.has(token)) {
         if (!onlyFromSelf && inj.#parent) {
-          return inj.#parent.getOrThrow(fn, inj.#parent, token, parentTokens, notFoundValue, false, skipFirst);
+          return inj.#parent.getOrThrow(inj.#parent, token, parentTokens, notFoundValue);
         }
       } else if (value?.[RESOLVED_PROVIDER]) {
         if (inj.constructionCounter++ > inj.countOfProviders) {
           throw cyclicDependencyError([value.token, ...parentTokens]);
         }
-        const newValue = inj[fn](value, parentTokens, skipFirst);
-        inj.#map.set(token, newValue);
-        return newValue;
+        if (skipFirst) {
+          const newValue = inj.prepareResolved(value, parentTokens, skipFirst);
+          inj.#map.set(token, newValue as any);
+          return newValue;
+        } else {
+          const newValue = inj.instantiateResolved(value, parentTokens);
+          inj.#map.set(token, newValue);
+          return newValue;
+        }
       } else {
         return value as any;
       }

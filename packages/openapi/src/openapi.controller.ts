@@ -1,5 +1,5 @@
 import { readFile } from 'fs/promises';
-import { controller, Res, Status } from '@ditsmod/core';
+import { controller, RequestContext, Res, Status } from '@ditsmod/core';
 
 import { oasRoute } from './decorators/oas-route';
 import { SwaggerConfigManager } from './services/swagger-config-manager';
@@ -7,7 +7,7 @@ import { OasConfigFiles } from './types/oas-extension-options';
 
 @controller()
 export class OpenapiController {
-  constructor(private res: Res, private swaggerConfigManager: SwaggerConfigManager, private configFiles: OasConfigFiles) {}
+  constructor(private swaggerConfigManager: SwaggerConfigManager, private configFiles: OasConfigFiles) {}
 
   @oasRoute('GET', 'openapi', [], {
     description: 'OpenAPI documentation',
@@ -19,10 +19,10 @@ export class OpenapiController {
       },
     },
   })
-  async getIndex() {
+  async getIndex(ctx: RequestContext) {
     await this.swaggerConfigManager.applyConfig();
     const indexHtml = await readFile(`${this.swaggerConfigManager.webpackDist}/index.html`, 'utf8');
-    this.res.setContentType('text/html; charset=utf-8').send(indexHtml);
+    ctx.res.setContentType('text/html; charset=utf-8').send(indexHtml);
   }
 
   @oasRoute('GET', 'openapi.yaml', [], {
@@ -35,8 +35,8 @@ export class OpenapiController {
       },
     },
   })
-  async getYaml() {
-    this.res.setContentType('text/yaml; charset=utf-8').send(this.configFiles.yaml);
+  async getYaml(ctx: RequestContext) {
+    ctx.res.setContentType('text/yaml; charset=utf-8').send(this.configFiles.yaml);
   }
 
   @oasRoute('GET', 'openapi.json', [], {
@@ -49,8 +49,8 @@ export class OpenapiController {
       },
     },
   })
-  async getJson() {
-    this.res.setContentType('application/json; charset=utf-8').send(this.configFiles.json);
+  async getJson(ctx: RequestContext) {
+    ctx.res.setContentType('application/json; charset=utf-8').send(this.configFiles.json);
   }
 
   @oasRoute('GET', 'openapi.bundle.js', [], {
@@ -63,8 +63,8 @@ export class OpenapiController {
       },
     },
   })
-  async getJavaScript() {
+  async getJavaScript(ctx: RequestContext) {
     const appBundle = await readFile(`${this.swaggerConfigManager.webpackDist}/openapi.bundle.js`, 'utf8');
-    this.res.setContentType('text/javascript; charset=utf-8').send(appBundle);
+    ctx.res.setContentType('text/javascript; charset=utf-8').send(appBundle);
   }
 }

@@ -1,4 +1,4 @@
-import { injectable, ReflectiveInjector } from '@ditsmod/core';
+import { injectable, ReflectiveInjector, RequestContext } from '@ditsmod/core';
 import {
   Extension,
   ExtensionsManager,
@@ -11,7 +11,6 @@ import {
   HttpMethod,
   MetadataPerMod2,
   ServiceProvider,
-  Res,
   methodFactory,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
@@ -101,9 +100,9 @@ export class CorsExtension implements Extension<void | false> {
 
       class DynamicController {
         @methodFactory()
-        [methodName](res: Res) {
-          res.nodeRes.setHeader('Allow', httpMethods.join());
-          res.send(undefined, Status.NO_CONTENT);
+        [methodName](ctx: RequestContext) {
+          ctx.nodeRes.setHeader('Allow', httpMethods.join());
+          ctx.res.send(undefined, Status.NO_CONTENT);
         }
       }
 

@@ -47,7 +47,7 @@ export class I18nExtension implements Extension<void> {
   protected addI18nProviders(aMetadataPerMod2: MetadataPerMod2[], isLastExtensionCall?: boolean) {
     const injectorPerApp = this.perAppService.injector;
 
-    const translationsPerApp: Translations[] | null = injectorPerApp.get(I18N_TRANSLATIONS, null);
+    const translationsPerApp: Translations[] | null = injectorPerApp.get(I18N_TRANSLATIONS, undefined, null);
     if (isLastExtensionCall && translationsPerApp) {
       const providers = this.i18nTransformer.getProviders(translationsPerApp);
       this.perAppService.providers = providers;
@@ -70,7 +70,7 @@ export class I18nExtension implements Extension<void> {
 
   protected addI18nProvidersToScope(providers: ServiceProvider[]) {
     this.injector = this.injector.resolveAndCreateChild(providers);
-    const translations: Translations[] = this.injector.get(I18N_TRANSLATIONS, null);
+    const translations: Translations[] = this.injector.get(I18N_TRANSLATIONS, undefined, null);
     if (translations !== this.translations) {
       providers.push(...this.i18nTransformer.getProviders(translations));
     }

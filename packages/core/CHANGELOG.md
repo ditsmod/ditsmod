@@ -94,13 +94,13 @@ Now you can (optional) inject dependencies directly in controller methods that h
 **now**:
 
 ```ts
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, route, RequestContext } from '@ditsmod/core';
 
 @controller()
 export class HelloWorldController {
   @route('GET')
-  tellHello(res: Res) {
-    res.send('Hello World!');
+  tellHello(ctx: RequestContext) {
+    ctx.res.send('Hello World!');
   }
 }
 ```
