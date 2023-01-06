@@ -13,20 +13,15 @@ export class SessionCookie {
     this.opts = { ...(opts || {}) };
   }
 
-  /**
-   * @todo Refactor this. For now it's not called from anywhere.
-   */
-  init(ctx: RequestContext, opts: SessionCookieOptions) {
-    this.opts = { ...(opts || {}) };
+  init(ctx: RequestContext) {
+    this.cookies = new Cookies(ctx.nodeReq, ctx.nodeRes);
+    this.opts.cookieName = this.opts.cookieName || 'session_id';
+    this.maxAge = this.opts.maxAge === undefined ? 1000 * 60 * 60 * 24 : this.opts.maxAge; // By default - 24 hours
 
-    this.cookies = new Cookies(ctx.req.nodeReq, ctx.res.nodeRes);
-    this.opts.cookieName = opts.cookieName || 'session_id';
-    this.maxAge = opts.maxAge === undefined ? 1000 * 60 * 60 * 24 : opts.maxAge; // By default - 24 hours
-
-    const writeHead = ctx.res.nodeRes.writeHead as Function;
-    ctx.res.nodeRes.writeHead = (...args: any[]) => {
+    const writeHead = ctx.nodeRes.writeHead as Function;
+    ctx.nodeRes.writeHead = (...args: any[]) => {
       this.updateSessionCookie();
-      return writeHead.apply(ctx.res.nodeRes, args);
+      return writeHead.apply(ctx.nodeRes, args);
     };
   }
 

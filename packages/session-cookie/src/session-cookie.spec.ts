@@ -1,22 +1,22 @@
 import 'reflect-metadata';
 import { NodeRequest, NodeResponse } from '@ts-stack/cookies';
-import { ReflectiveInjector, Req } from '@ditsmod/core';
+import { ReflectiveInjector, Req, RequestContext } from '@ditsmod/core';
 
 import { SessionCookie } from './session-cookie';
 import { SessionCookieOptions } from './types';
 
 describe('@ditsmod/session-cookie', () => {
   const setHeaderMock = jest.fn<(arg: string[]) => any, any>((() => {}) as any);
-  let req: NodeRequest;
-  let res: NodeResponse;
+  let nodeReq: NodeRequest;
+  let nodeRes: NodeResponse;
   let session: SessionCookie;
   const config = new SessionCookieOptions();
   config.cookieName = 'session';
   config.maxAge = 1000 * 3600 * 24 * 30; // 30 днів;
 
   beforeEach(() => {
-    req = { headers: { cookie: '' } } as NodeRequest;
-    res = {
+    nodeReq = { headers: { cookie: '' } } as NodeRequest;
+    nodeRes = {
       getHeader: (): any => {},
       setHeader: (headerName: string, headerValue: string[]): any => {
         setHeaderMock(headerValue);
@@ -25,10 +25,10 @@ describe('@ditsmod/session-cookie', () => {
     } as unknown as NodeResponse;
     const injector = ReflectiveInjector.resolveAndCreate([
       { token: SessionCookieOptions, useValue: config },
-      { token: Req, useValue: {} },
       SessionCookie,
     ]);
     session = injector.get(SessionCookie);
+    session.init({ nodeReq, nodeRes } as unknown as RequestContext);
   });
 
   afterEach(() => {
@@ -60,7 +60,7 @@ describe('@ditsmod/session-cookie', () => {
 
   it('includes cookie headers', async () => {
     session.id = 'foobar';
-    res.writeHead(200);
+    nodeRes.writeHead(200);
     const calls = setHeaderMock.mock.calls;
     expect(calls.length).toBe(1);
     const cookie = calls[0][0][0];
@@ -74,7 +74,7 @@ describe('@ditsmod/session-cookie', () => {
     const maxAge = 1000 * 60 * 60 * 3;
     session.setMaxAge(maxAge);
     session.id = 'foobar';
-    res.writeHead(200);
+    nodeRes.writeHead(200);
     const calls = setHeaderMock.mock.calls;
     expect(calls.length).toBe(1);
     const cookie = calls[0][0][0];
@@ -88,7 +88,7 @@ describe('@ditsmod/session-cookie', () => {
     session.id = 'foobar';
     const maxAge = 1000 * 60 * 60 * 3;
     session.setMaxAge(maxAge);
-    res.writeHead(200);
+    nodeRes.writeHead(200);
     const calls = setHeaderMock.mock.calls;
     expect(calls.length).toBe(1);
     const cookie = calls[0][0][0];
