@@ -1,20 +1,18 @@
-import { controller, Req, Res, route } from '@ditsmod/core';
+import { controller, RequestContext, route } from '@ditsmod/core';
 
 import { BearerGuard } from './modules/services/auth/bearer.guard';
 import { MyJwtPayload } from './modules/services/auth/types';
 
 @controller()
 export class HelloWorldController {
-  constructor(private req: Req, private res: Res) {}
-
   @route('GET')
-  async getToken() {
-    this.res.send('Hello World!\n');
+  async getToken(ctx: RequestContext) {
+    ctx.res.send('Hello World!\n');
   }
 
   @route('GET', 'profile', [BearerGuard])
-  async getProfile() {
-    const payload: MyJwtPayload = this.req.jwtPayload;
-    this.res.send(`Hello, ${payload.userName}! You have successfully authorized.`);
+  async getProfile(ctx: RequestContext) {
+    const payload: MyJwtPayload = ctx.req.jwtPayload;
+    ctx.res.send(`Hello, ${payload.userName}! You have successfully authorized.`);
   }
 }

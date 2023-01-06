@@ -1,4 +1,4 @@
-import { controller, Res, route, inject} from '@ditsmod/core';
+import { controller, Res, route, inject, RequestContext} from '@ditsmod/core';
 
 import { FirstPerRouService } from './first/first-per-rou.service';
 import { ThirdService } from './third/three.service';
@@ -19,8 +19,8 @@ export class AppController {
   }
 
   @route('POST')
-  showRequestBody() {
-    this.res.sendJson({ body: this.threeService.getBody() });
+  showRequestBody(ctx: RequestContext) {
+    this.res.sendJson({ body: this.threeService.getBody(ctx.req) });
   }
 
   @route('GET', 'zero')

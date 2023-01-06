@@ -4,13 +4,11 @@ import { Req, injectable } from '@ditsmod/core';
 export class FirstService {
   private counter = 0;
 
-  constructor(private req: Req) {}
-
   getCounter() {
     return ++this.counter;
   }
 
-  getBody() {
-    return this.req.body;
+  getBody(req: Req) {
+    return req.body;
   }
 }
