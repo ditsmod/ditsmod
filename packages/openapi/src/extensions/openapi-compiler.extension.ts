@@ -12,7 +12,7 @@ import {
   Providers,
   ROUTES_EXTENSIONS,
 } from '@ditsmod/core';
-import { injectable, Injector, optional, Injector, reflector } from '@ditsmod/core';
+import { injectable, Injector, optional, reflector } from '@ditsmod/core';
 import {
   PathItemObject,
   XOasObject,

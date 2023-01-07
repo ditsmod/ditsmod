@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Injector, Injector } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
 
 import { DefaultRouter } from './router';
 import { Fn } from './types';

@@ -5,7 +5,7 @@ import { HttpBackend, HttpHandler, HttpInterceptor, HttpFrontend } from './http-
 import { defaultProvidersPerReq } from '../services/default-providers-per-req';
 import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { ServiceProvider } from './mix';
-import { RequestContext, RouteMeta } from './route-data';
+import { RequestContext } from './route-data';
 import { HTTP_INTERCEPTORS } from '../constans';
 
 describe('HttpInterceptor', () => {

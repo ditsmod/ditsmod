@@ -6,7 +6,7 @@ export class BearerGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
 
   async canActivate(ctx: RequestContext) {
-    const authValue = ctx.req.nodeReq.headers.authorization?.split(' ');
+    const authValue = ctx.nodeReq.headers.authorization?.split(' ');
     if (authValue?.[0] != 'Bearer') {
       return false;
     }

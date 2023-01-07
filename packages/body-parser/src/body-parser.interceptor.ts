@@ -11,13 +11,13 @@ export class BodyParserInterceptor implements HttpInterceptor {
   }
 
   async intercept(ctx: RequestContext, next: HttpHandler) {
-    const contentType = ctx.req.nodeReq.headers['content-type'];
+    const contentType = ctx.nodeReq.headers['content-type'];
     const hasAcceptableHeaders = this.config?.acceptHeaders?.some((type) => contentType?.includes(type));
     if (!hasAcceptableHeaders) {
       return next.handle(ctx);
     }
     const options: Options = { limit: this.config?.maxBodySize };
-    ctx.req.body = await parse(ctx.req.nodeReq, ctx.req.nodeReq.headers as Headers, options);
+    ctx.req.body = await parse(ctx.nodeReq, ctx.nodeReq.headers as Headers, options);
 
     return next.handle(ctx);
   }

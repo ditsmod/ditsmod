@@ -27,7 +27,7 @@ export class DefaultHttpHandler implements HttpHandler {
 
   handle(ctx: RequestContext): Promise<any> {
     if (!this.chain) {
-      const interceptors = this.injector.get(HTTP_INTERCEPTORS, fromSelf, []).slice();
+      const interceptors: HttpInterceptor[] = this.injector.get(HTTP_INTERCEPTORS, fromSelf, []).slice();
       interceptors.unshift(this.frontend);
       this.chain = interceptors.reduceRight(
         (next, interceptor) => new HttpInterceptorHandler(next, interceptor),

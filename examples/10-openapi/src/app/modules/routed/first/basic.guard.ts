@@ -18,7 +18,7 @@ import { oasGuard } from '@ditsmod/openapi';
 })
 export class BasicGuard implements CanActivate {
   canActivate(ctx: RequestContext) {
-    const { authorization } = ctx.req.nodeReq.headers;
+    const { authorization } = ctx.nodeReq.headers;
     if (!authorization) {
       return this.unauth(ctx);
     }
@@ -31,7 +31,7 @@ export class BasicGuard implements CanActivate {
   }
 
   protected unauth(ctx: RequestContext) {
-    ctx.res.nodeRes.setHeader('WWW-Authenticate', 'Basic realm="Access to the API endpoint"');
+    ctx.nodeRes.setHeader('WWW-Authenticate', 'Basic realm="Access to the API endpoint"');
     return Status.UNAUTHORIZED;
   }
 }

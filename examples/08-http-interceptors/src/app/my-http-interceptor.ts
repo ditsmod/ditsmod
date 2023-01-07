@@ -8,8 +8,8 @@ export class MyHttpInterceptor implements HttpInterceptor {
     // Handling request to `HelloWorldController`
     return next.handle(ctx).finally(() => {
       // You can to do something after, for example, log status:
-      if (ctx.res.nodeRes.headersSent) {
-        this.logger.info(`MyHttpInterceptor works! Status code: ${ctx.res.nodeRes.statusCode}`);
+      if (ctx.nodeRes.headersSent) {
+        this.logger.info(`MyHttpInterceptor works! Status code: ${ctx.nodeRes.statusCode}`);
       } else {
         this.logger.info('MyHttpInterceptor works! But... Do you forgot send response or just an error occurred?');
       }

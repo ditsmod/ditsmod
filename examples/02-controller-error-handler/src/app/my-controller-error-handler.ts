@@ -7,7 +7,7 @@ export class MyControllerErrorHandler implements ControllerErrorHandler {
   handleError(ctx: RequestContext, err: Error) {
     const message = err.message;
     this.logger.error({ note: 'This is my implementation of ControllerErrorHandler', err });
-    if (!ctx.res.nodeRes.headersSent) {
+    if (!ctx.nodeRes.headersSent) {
       ctx.res.sendJson({ error: { message } }, Status.INTERNAL_SERVER_ERROR);
     }
   }
