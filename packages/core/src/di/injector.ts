@@ -505,7 +505,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
    * Retrieves an instance from the injector based on the provided token.
    * If not found, returns the `notFoundValue` otherwise
    */
-  get<T>(token: Class<T>, visibility?: Visibility, notFoundValue?: T): T;
+  get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, notFoundValue?: T): T;
   get(token: any, visibility?: Visibility, notFoundValue?: any): any;
   get(token: any, visibility: Visibility = null, notFoundValue: any = THROW_IF_NOT_FOUND): any {
     return this.checkVisibilityAndGet(token, [], visibility, notFoundValue);
