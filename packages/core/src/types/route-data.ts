@@ -1,5 +1,5 @@
 import { Req } from '../services/request';
-import { Class } from '../di';
+import { Class, FactoryProvider, ReflectiveInjector, ResolvedProvider } from '../di';
 import { DecoratorMetadata, HttpMethod, NormalizedGuard } from './mix';
 import { PathParam, RouteHandler } from './router';
 import { NodeRequest, NodeResponse } from './server-options';
@@ -10,11 +10,17 @@ import { Res } from '../services/response';
  * HTTP interceptors in first argument, in oblect with RequestContext type.
  */
 export class RouteMeta {
-  controller: Class<any>;
   /**
-   * The controller's method name.
+   * Useful to set `routeMeta.resolvedFactory`.
    */
-  methodName: string | symbol;
+  static getResolvedFactory(controller: Class, propertyKey: string | symbol) {
+    const factoryProvider: FactoryProvider = { useFactory: [controller, controller.prototype[propertyKey]] };
+    return ReflectiveInjector.resolve([factoryProvider]).get(controller.prototype[propertyKey])!;
+  }
+  /**
+   * This property is used to speed up the search for DI.
+   */
+  resolvedFactory: ResolvedProvider;
   /**
    * An array of DI tokens used to look up `CanActivate()` handlers,
    * in order to determine if the current user is allowed to activate the controller.

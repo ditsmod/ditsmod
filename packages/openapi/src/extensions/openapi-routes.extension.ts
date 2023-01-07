@@ -76,9 +76,8 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             oasPath,
             operationObject: clonedOperationObject,
             decoratorMetadata,
-            controller,
-            methodName,
             guards,
+            resolvedFactory: RouteMeta.getResolvedFactory(controller, methodName)
           };
           aControllersMetadata2.push({
             providersPerRou,
