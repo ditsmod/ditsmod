@@ -1096,7 +1096,7 @@ describe("null as provider's value", () => {
       expect(spy).toBeCalledTimes(0);
     });
 
-    it('should load default value even with parent injector', () => {
+    it('should ignore some deps even with parent injector', () => {
       class Dependecy1 {
         constructor() {
           spy();
@@ -1104,8 +1104,8 @@ describe("null as provider's value", () => {
       }
       const parent = Injector.resolveAndCreate([]);
       const child = parent.resolveAndCreateChild([]);
-      expect(() => parent.checkDeps(Dependecy1, undefined, [])).not.toThrow();
-      expect(() => child.checkDeps(Dependecy1, undefined, [])).not.toThrow();
+      expect(() => parent.checkDeps(Dependecy1, undefined, [Dependecy1])).not.toThrow();
+      expect(() => child.checkDeps(Dependecy1, undefined, [Dependecy1])).not.toThrow();
       expect(spy).toBeCalledTimes(0);
     });
 

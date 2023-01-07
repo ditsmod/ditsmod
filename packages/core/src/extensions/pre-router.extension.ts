@@ -59,7 +59,7 @@ export class PreRouterExtension implements Extension<void> {
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'injectorPerRou');
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
         const resolvedPerReq = Injector.resolve(mergedPerReq);
-        // this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
+        this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
         const lastHttpHandler = getLastProviders(mergedPerReq).find((p) => {
           return isNormalizedProvider(p) && p.token === HttpHandler;
         })!;
@@ -111,13 +111,14 @@ export class PreRouterExtension implements Extension<void> {
         `${httpMethod} "/${path}" in sandbox mode.`;
       throw new Error(msg);
     }
-    inj.checkDeps(HttpHandler);
-    inj.checkDeps(HttpFrontend);
-    inj.checkDeps(SystemLogMediator);
-    routeMeta.guards.forEach((item) => inj.checkDeps(item.guard));
-    inj.checkDeps(HttpBackend);
-    inj.prepareResolved(routeMeta.resolvedFactory);
-    inj.checkDeps(HTTP_INTERCEPTORS, fromSelf, []);
+    const ignoreDeps: any[] = [RequestContext, HTTP_INTERCEPTORS];
+    inj.checkDeps(HttpHandler, undefined, ignoreDeps);
+    inj.checkDeps(HttpFrontend, undefined, ignoreDeps);
+    inj.checkDeps(SystemLogMediator, undefined, ignoreDeps);
+    routeMeta.guards.forEach((item) => inj.checkDeps(item.guard, undefined, ignoreDeps));
+    inj.checkDeps(HttpBackend, undefined, ignoreDeps);
+    inj.checkDepsInResolved(routeMeta.resolvedFactory, [], ignoreDeps);
+    inj.checkDeps(HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
   }
 
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {
