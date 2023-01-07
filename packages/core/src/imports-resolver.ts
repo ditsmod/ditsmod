@@ -15,6 +15,7 @@ import { getProviderName } from './utils/get-provider-name';
 import { getProvidersTargets, getTokens } from './utils/get-tokens';
 import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } from './utils/type-guards';
 import { SystemLogMediator } from './log-mediator/system-log-mediator';
+import { RequestContext } from './types/route-data';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -279,6 +280,7 @@ export class ImportsResolver {
       ...getTokens([...defaultProvidersPerApp, ...defaultProvidersPerReq]),
       Injector,
       RootMetadata,
+      RequestContext
     ];
 
     return deps.filter((d) => !defaultTokens.includes(d.token));

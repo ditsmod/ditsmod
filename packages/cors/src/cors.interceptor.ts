@@ -4,13 +4,13 @@ import { injectable } from '@ditsmod/core';
 
 @injectable()
 export class CorsInterceptor implements HttpInterceptor {
-  constructor(private corsOptions: CorsOptions) {}
+  constructor(private corsOptions: CorsOptions, private ctx: RequestContext) {}
 
-  async intercept(ctx: RequestContext, next: HttpHandler) {
-    const headersSent = cors(ctx.nodeReq, ctx.nodeRes, this.corsOptions);
+  async intercept(next: HttpHandler) {
+    const headersSent = cors(this.ctx.nodeReq, this.ctx.nodeRes, this.corsOptions);
     if (headersSent) {
       return;
     }
-    return next.handle(ctx);
+    return next.handle();
   }
 }

@@ -13,25 +13,25 @@ import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 export class DefaultHttpFrontend implements HttpFrontend {
   constructor(protected injector: Injector, @fromSelf() private ctx: RequestContext) {}
 
-  async intercept(ctx: RequestContext, next: HttpHandler) {
+  async intercept(next: HttpHandler) {
     try {
-      const canActivate = await this.canActivate(ctx);
+      const canActivate = await this.canActivate();
       if (!canActivate) {
         return;
       }
-      this.setParams(ctx);
+      this.setParams();
     } catch (err) {
-      await this.callErrorHandler(ctx, err);
+      await this.callErrorHandler(err);
       return;
     }
 
-    return next.handle(ctx).catch((err) => {
-      return this.callErrorHandler(ctx, err);
+    return next.handle().catch((err) => {
+      return this.callErrorHandler(err);
     });
   }
 
-  protected async canActivate(ctx: RequestContext) {
-    const preparedGuards = ctx.routeMeta.guards.map<{ guard: CanActivate; params?: any[] }>((item) => {
+  protected async canActivate() {
+    const preparedGuards = this.ctx.routeMeta.guards.map<{ guard: CanActivate; params?: any[] }>((item) => {
       return {
         guard: this.injector.get(item.guard),
         params: item.params,
@@ -39,10 +39,10 @@ export class DefaultHttpFrontend implements HttpFrontend {
     });
 
     for (const item of preparedGuards) {
-      const canActivate = await item.guard.canActivate(ctx, item.params);
+      const canActivate = await item.guard.canActivate(this.ctx, item.params);
       if (canActivate !== true) {
         const status = typeof canActivate == 'number' ? canActivate : undefined;
-        this.canNotActivateRoute(ctx.nodeReq, ctx.nodeRes, status);
+        this.canNotActivateRoute(this.ctx.nodeReq, this.ctx.nodeRes, status);
         return false;
       }
     }
@@ -57,20 +57,20 @@ export class DefaultHttpFrontend implements HttpFrontend {
     nodeRes.end();
   }
 
-  protected setParams(ctx: RequestContext) {
-    if (ctx.queryString) {
-      ctx.req.queryParams = parse(ctx.queryString);
+  protected setParams() {
+    if (this.ctx.queryString) {
+      this.ctx.req.queryParams = parse(this.ctx.queryString);
     }
-    if (ctx.aPathParams) {
-      ctx.req.aPathParams = ctx.aPathParams;
+    if (this.ctx.aPathParams) {
+      this.ctx.req.aPathParams = this.ctx.aPathParams;
       const pathParams: AnyObj = {};
-      ctx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
-      ctx.req.pathParams = pathParams;
+      this.ctx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
+      this.ctx.req.pathParams = pathParams;
     }
   }
 
-  protected async callErrorHandler(ctx: RequestContext, err: any) {
+  protected async callErrorHandler(err: any) {
     const errorHandler = this.injector.get(ControllerErrorHandler);
-    await errorHandler.handleError(ctx, err);
+    await errorHandler.handleError(err);
   }
 }

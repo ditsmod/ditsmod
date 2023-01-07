@@ -10,28 +10,28 @@ import { RequestContext } from '../types/route-data';
 
 @injectable()
 export class DefaultControllerErrorHandler implements ControllerErrorHandler {
-  constructor(private logger: Logger) {}
+  constructor(private logger: Logger, private ctx: RequestContext) {}
 
-  async handleError(ctx: RequestContext, err: Error) {
+  async handleError(err: Error) {
     if (isChainError<ErrorOpts>(err)) {
       const { level, status } = err.info;
       this.logger.log(level || 'debug', err);
-      this.sendError(ctx, err.message, status);
+      this.sendError(err.message, status);
     } else {
       this.logger.error(err);
-      this.sendError(ctx, 'Internal server error', Status.INTERNAL_SERVER_ERROR);
+      this.sendError('Internal server error', Status.INTERNAL_SERVER_ERROR);
     }
   }
 
-  protected sendError(ctx: RequestContext, error: string, status?: Status) {
-    if (!ctx.nodeRes.headersSent) {
-      this.addRequestIdToHeader(ctx);
-      ctx.res.sendJson({ error }, status);
+  protected sendError(error: string, status?: Status) {
+    if (!this.ctx.nodeRes.headersSent) {
+      this.addRequestIdToHeader();
+      this.ctx.res.sendJson({ error }, status);
     }
   }
 
-  protected addRequestIdToHeader(ctx: RequestContext) {
+  protected addRequestIdToHeader() {
     const header = 'x-requestId';
-    ctx.nodeRes.setHeader(header, ctx.req.requestId);
+    this.ctx.nodeRes.setHeader(header, this.ctx.req.requestId);
   }
 }

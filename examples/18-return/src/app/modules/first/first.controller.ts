@@ -8,7 +8,7 @@ export class FirstController {
   }
 
   @route('GET', 'first-return')
-  tellHelloWithReturn(ctx: RequestContext) {
+  tellHelloWithReturn() {
     // This method not works because in this module not imported ReturnModule
     return 'first module.\n';
   }

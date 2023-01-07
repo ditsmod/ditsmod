@@ -2,14 +2,14 @@ import { injectable, HttpHandler, HttpInterceptor, Logger, RequestContext } from
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
-  constructor(private logger: Logger) {}
+  constructor(private logger: Logger, private ctx: RequestContext) {}
 
-  intercept(ctx: RequestContext, next: HttpHandler) {
+  intercept(next: HttpHandler) {
     // Handling request to `HelloWorldController`
-    return next.handle(ctx).finally(() => {
+    return next.handle().finally(() => {
       // You can to do something after, for example, log status:
-      if (ctx.nodeRes.headersSent) {
-        this.logger.info(`MyHttpInterceptor works! Status code: ${ctx.nodeRes.statusCode}`);
+      if (this.ctx.nodeRes.headersSent) {
+        this.logger.info(`MyHttpInterceptor works! Status code: ${this.ctx.nodeRes.statusCode}`);
       } else {
         this.logger.info('MyHttpInterceptor works! But... Do you forgot send response or just an error occurred?');
       }

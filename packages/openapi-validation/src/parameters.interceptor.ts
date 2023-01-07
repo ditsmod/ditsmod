@@ -15,21 +15,21 @@ import { ValidationInterceptor } from './validation.interceptor';
  */
 @injectable()
 export class ParametersInterceptor extends ValidationInterceptor {
-  protected override prepareAndValidate(ctx: RequestContext) {
-    const { parameters, options } = ctx.routeMeta as ValidationRouteMeta;
+  protected override prepareAndValidate() {
+    const { parameters, options } = this.ctx.routeMeta as ValidationRouteMeta;
     for (const parameter of parameters) {
       const schema = parameter.schema as XSchemaObject<any>;
       let value: any;
-      const { req } = ctx;
+      const { req } = this.ctx;
       if (parameter.in == 'path') {
         value = req.pathParams[parameter.name];
       } else if (parameter.in == 'query') {
         value = req.queryParams[parameter.name];
       } else if (parameter.in == 'cookie') {
-        const cookies = new Cookies(req.nodeReq, ctx.nodeRes);
+        const cookies = new Cookies(this.ctx.nodeReq, this.ctx.nodeRes);
         value = cookies.get(parameter.name);
       } else if (parameter.in == 'header') {
-        value = req.nodeReq.headers[parameter.name];
+        value = this.ctx.nodeReq.headers[parameter.name];
       }
 
       if (value === undefined) {
@@ -43,7 +43,7 @@ export class ParametersInterceptor extends ValidationInterceptor {
         continue;
       }
 
-      this.validate(ctx, schema, value, parameter.name);
+      this.validate(schema, value, parameter.name);
     }
   }
 }

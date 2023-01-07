@@ -78,7 +78,7 @@ export class PreRouterExtension implements Extension<void> {
 
           // First HTTP handler in the chain of HTTP interceptors.
           const chain = inj.get(HttpHandler) as HttpHandler;
-          await chain.handle(ctx);
+          await chain.handle();
         }) as RouteHandler;
 
         preparedRouteMeta.push({ moduleName, httpMethod, path, handle });

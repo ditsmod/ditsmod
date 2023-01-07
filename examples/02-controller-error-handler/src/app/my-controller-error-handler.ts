@@ -2,13 +2,13 @@ import { Logger, Status, ControllerErrorHandler, injectable, RequestContext } fr
 
 @injectable()
 export class MyControllerErrorHandler implements ControllerErrorHandler {
-  constructor(private logger: Logger) {}
+  constructor(private ctx: RequestContext, private logger: Logger) {}
 
-  handleError(ctx: RequestContext, err: Error) {
+  handleError(err: Error) {
     const message = err.message;
     this.logger.error({ note: 'This is my implementation of ControllerErrorHandler', err });
-    if (!ctx.nodeRes.headersSent) {
-      ctx.res.sendJson({ error: { message } }, Status.INTERNAL_SERVER_ERROR);
+    if (!this.ctx.nodeRes.headersSent) {
+      this.ctx.res.sendJson({ error: { message } }, Status.INTERNAL_SERVER_ERROR);
     }
   }
 }

@@ -12,6 +12,7 @@
   },
   "scripts": {
     "test": "jest",
+    "postinstall": "lerna bootstrap",
     "test-examples": "jest --silent --config examples/jest.config.ts",
     "test-all": "yarn test && yarn test-examples",
     "boot": "lerna bootstrap",

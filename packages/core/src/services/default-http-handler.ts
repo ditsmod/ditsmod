@@ -25,7 +25,7 @@ export class DefaultHttpHandler implements HttpHandler {
 
   constructor(private frontend: HttpFrontend, private backend: HttpBackend, private injector: Injector) {}
 
-  handle(ctx: RequestContext): Promise<any> {
+  handle(): Promise<any> {
     if (!this.chain) {
       const interceptors: HttpInterceptor[] = this.injector.get(HTTP_INTERCEPTORS, fromSelf, []).slice();
       interceptors.unshift(this.frontend);
@@ -34,14 +34,14 @@ export class DefaultHttpHandler implements HttpHandler {
         this.backend
       );
     }
-    return this.chain.handle(ctx);
+    return this.chain.handle();
   }
 }
 
 export class HttpInterceptorHandler implements HttpHandler {
   constructor(private next: HttpHandler, private interceptor: HttpInterceptor) {}
 
-  async handle(ctx: RequestContext): Promise<any> {
-    await this.interceptor.intercept(ctx, this.next);
+  async handle(): Promise<any> {
+    await this.interceptor.intercept(this.next);
   }
 }

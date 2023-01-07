@@ -12,28 +12,28 @@ describe('HttpInterceptor', () => {
   const jestFn = jest.fn((interceptorName: string) => interceptorName);
 
   class Interceptor1 implements HttpInterceptor {
-    intercept(ctx: RequestContext, next: HttpHandler) {
+    intercept(next: HttpHandler) {
       jestFn('Interceptor1');
-      return next.handle(ctx);
+      return next.handle();
     }
   }
 
   class Interceptor2 implements HttpInterceptor {
-    intercept(ctx: RequestContext, next: HttpHandler) {
+    intercept(next: HttpHandler) {
       jestFn('Interceptor2');
-      return next.handle(ctx);
+      return next.handle();
     }
   }
 
   class MockHttpFrontend implements HttpFrontend {
-    intercept(ctx: RequestContext, next: HttpHandler) {
+    intercept(next: HttpHandler) {
       jestFn('HttpFrontend');
-      return next.handle(ctx);
+      return next.handle();
     }
   }
 
   class MockHttpBackend implements HttpHandler {
-    handle(ctx: RequestContext) {
+    handle() {
       jestFn('HttpBackend');
       return Promise.resolve();
     }
@@ -47,9 +47,9 @@ describe('HttpInterceptor', () => {
 
   it('each interceptor calls next.handle()', () => {
     class Interceptor3 implements HttpInterceptor {
-      intercept(ctx: RequestContext, next: HttpHandler) {
+      intercept(next: HttpHandler) {
         jestFn('Interceptor3');
-        return next.handle(ctx);
+        return next.handle();
       }
     }
 
@@ -63,7 +63,7 @@ describe('HttpInterceptor', () => {
     ]);
 
     const chain = injector.get(HttpHandler) as HttpHandler;
-    chain.handle({} as RequestContext);
+    chain.handle();
     expect(jestFn.mock.calls).toEqual([
       ['HttpFrontend'],
       ['Interceptor1'],
@@ -87,15 +87,16 @@ describe('HttpInterceptor', () => {
       { token: HTTP_INTERCEPTORS, useClass: Interceptor1, multi: true },
       { token: HTTP_INTERCEPTORS, useClass: Interceptor2, multi: true },
       { token: HTTP_INTERCEPTORS, useClass: Interceptor3, multi: true },
+      { token: RequestContext, useValue: {} },
     ]);
 
     const chain = injector.get(HttpHandler) as HttpHandler;
-    chain.handle({} as RequestContext);
+    chain.handle();
     expect(jestFn.mock.calls).toEqual([['HttpFrontend'], ['Interceptor1'], ['Interceptor2'], ['Interceptor3']]);
   });
 
   it('without HTTP_INTERCEPTORS, chain should be HttpBackend', () => {
-    const injector = Injector.resolveAndCreate([...defaultProviders]);
+    const injector = Injector.resolveAndCreate([...defaultProviders, { token: RequestContext, useValue: {} }]);
 
     const chain = injector.get(HttpHandler) as HttpHandler;
     const frontend = injector.get(HttpFrontend) as HttpFrontend;

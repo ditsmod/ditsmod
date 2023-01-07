@@ -6,10 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { RequestContext } from './route-data';
-
 export interface HttpInterceptor {
-  intercept(ctx: RequestContext, next?: HttpHandler): Promise<any>;
+  intercept(next?: HttpHandler): Promise<any>;
 }
 
 /**
@@ -18,7 +16,7 @@ export interface HttpInterceptor {
  * Interceptors sit between the `HttpFrontend` and the `HttpBackend`.
  */
 export abstract class HttpFrontend implements HttpInterceptor {
-  abstract intercept(ctx: RequestContext, next?: HttpHandler): Promise<any>;
+  abstract intercept(next?: HttpHandler): Promise<any>;
 }
 
 /**
@@ -29,7 +27,7 @@ export abstract class HttpFrontend implements HttpInterceptor {
  * In an `HttpInterceptor`, the `HttpHandler` parameter is the next interceptor in the chain.
  */
 export abstract class HttpHandler {
-  abstract handle(ctx: RequestContext): Promise<any>;
+  abstract handle(): Promise<any>;
 }
 
 /**
@@ -41,5 +39,5 @@ export abstract class HttpHandler {
  * controller's route method, without going through the next interceptors in the chain.
  */
 export abstract class HttpBackend implements HttpHandler {
-  abstract handle(ctx: RequestContext): Promise<any>;
+  abstract handle(): Promise<any>;
 }

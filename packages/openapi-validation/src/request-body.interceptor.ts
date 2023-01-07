@@ -9,9 +9,9 @@ import { ValidationInterceptor } from './validation.interceptor';
  */
 @injectable()
 export class RequestBodyInterceptor extends ValidationInterceptor {
-  protected override prepareAndValidate(ctx: RequestContext) {
-    const { options, requestBodySchema } = ctx.routeMeta as ValidationRouteMeta;
-    const { req } = ctx;
+  protected override prepareAndValidate() {
+    const { options, requestBodySchema } = this.ctx.routeMeta as ValidationRouteMeta;
+    const { req } = this.ctx;
     if (req.body === undefined) {
       const dict = this.getDict();
       throw new CustomError({
@@ -20,6 +20,6 @@ export class RequestBodyInterceptor extends ValidationInterceptor {
       });
     }
 
-    this.validate(ctx, requestBodySchema, req.body);
+    this.validate(requestBodySchema, req.body);
   }
 }

@@ -9,11 +9,8 @@ export class SessionCookie {
   protected cookies: Cookies;
   protected maxAge: number;
 
-  constructor(@optional() protected opts: SessionCookieOptions) {
+  constructor(ctx: RequestContext, @optional() protected opts: SessionCookieOptions) {
     this.opts = { ...(opts || {}) };
-  }
-
-  init(ctx: RequestContext) {
     this.cookies = new Cookies(ctx.nodeReq, ctx.nodeRes);
     this.opts.cookieName = this.opts.cookieName || 'session_id';
     this.maxAge = this.opts.maxAge === undefined ? 1000 * 60 * 60 * 24 : this.opts.maxAge; // By default - 24 hours

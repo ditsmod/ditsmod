@@ -25,10 +25,10 @@ describe('@ditsmod/session-cookie', () => {
     } as unknown as NodeResponse;
     const injector = Injector.resolveAndCreate([
       { token: SessionCookieOptions, useValue: config },
+      { token: RequestContext, useValue: { nodeReq, nodeRes } },
       SessionCookie,
     ]);
     session = injector.get(SessionCookie);
-    session.init({ nodeReq, nodeRes } as unknown as RequestContext);
   });
 
   afterEach(() => {
