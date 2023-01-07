@@ -1,6 +1,6 @@
 export * from './decorators';
 export { forwardRef, resolveForwardRef, ForwardRefFn } from './forward-ref';
-export { ReflectiveInjector, Injector } from './injector';
+export { Injector, Injector } from './injector';
 export {
   Provider,
   TypeProvider,

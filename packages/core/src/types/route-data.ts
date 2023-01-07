@@ -1,5 +1,5 @@
 import { Req } from '../services/request';
-import { Class, FactoryProvider, ReflectiveInjector, ResolvedProvider } from '../di';
+import { Class, FactoryProvider, Injector, ResolvedProvider } from '../di';
 import { DecoratorMetadata, HttpMethod, NormalizedGuard } from './mix';
 import { PathParam, RouteHandler } from './router';
 import { NodeRequest, NodeResponse } from './server-options';
@@ -15,7 +15,7 @@ export class RouteMeta {
    */
   static getResolvedFactory(controller: Class, propertyKey: string | symbol) {
     const factoryProvider: FactoryProvider = { useFactory: [controller, controller.prototype[propertyKey]] };
-    return ReflectiveInjector.resolve([factoryProvider]).get(controller.prototype[propertyKey])!;
+    return Injector.resolve([factoryProvider]).get(controller.prototype[propertyKey])!;
   }
   /**
    * This property is used to speed up the search for DI.

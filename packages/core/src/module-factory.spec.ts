@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { FactoryProvider, injectable, Provider, ReflectiveInjector } from './di';
+import { FactoryProvider, injectable, Provider, Injector } from './di';
 
 import { controller, ControllerMetadata } from './decorators/controller';
 import { featureModule } from './decorators/module';
@@ -33,7 +33,7 @@ type AnyModule = ModuleType | ModuleWithParams;
 describe('ModuleFactory', () => {
   @injectable()
   class MockModuleFactory extends ModuleFactory {
-    injectorPerMod: ReflectiveInjector;
+    injectorPerMod: Injector;
     override prefixPerMod: string;
     override moduleName = 'MockModule';
     override meta = new NormalizedModuleMetadata();
@@ -62,7 +62,7 @@ describe('ModuleFactory', () => {
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
-    const injectorPerApp = ReflectiveInjector.resolveAndCreate([
+    const injectorPerApp = Injector.resolveAndCreate([
       ...defaultProvidersPerApp,
       { token: Logger, useClass: MyLogger },
       MockModuleFactory,
@@ -410,7 +410,7 @@ describe('ModuleFactory', () => {
       });
 
       it('case 1', () => {
-        const injectorPerApp = ReflectiveInjector.resolveAndCreate([
+        const injectorPerApp = Injector.resolveAndCreate([
           ...defaultProvidersPerApp,
           { token: Logger, useClass: MyLogger },
         ]);
@@ -473,7 +473,7 @@ describe('ModuleFactory', () => {
         })
         class Module4 {}
         const providers: ServiceProvider[] = [...defaultProvidersPerApp, { token: Router, useValue: 'fake' }];
-        const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
+        const injectorPerApp = Injector.resolveAndCreate(providers);
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
         moduleManager.scanModule(Module4);
@@ -543,7 +543,7 @@ describe('ModuleFactory', () => {
         })
         class Module3 {}
 
-        const injectorPerApp = ReflectiveInjector.resolveAndCreate([
+        const injectorPerApp = Injector.resolveAndCreate([
           ...defaultProvidersPerApp,
           { token: Logger, useClass: MyLogger },
         ]);
@@ -576,7 +576,7 @@ describe('ModuleFactory', () => {
         })
         class Module7 {}
         const providers = [...defaultProvidersPerApp] as ServiceProvider[];
-        const injectorPerApp = ReflectiveInjector.resolveAndCreate(providers);
+        const injectorPerApp = Injector.resolveAndCreate(providers);
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
         mock.injectorPerMod = injectorPerApp;
         const msg = 'Module6 failed: if "Provider2" is a provider';

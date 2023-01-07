@@ -273,7 +273,7 @@ If you greatly simplify the working scheme of DI, you can say that DI accepts an
 
 ```ts {16}
 import 'reflect-metadata';
-import { ReflectiveInjector, injectable } from '@ditsmod/core';
+import { Injector, injectable } from '@ditsmod/core';
 
 class Service1 {}
 
@@ -287,11 +287,11 @@ class Service3 {
   constructor(service2: Service2) {}
 }
 
-const injector = ReflectiveInjector.resolveAndCreate([Service1, Service2, Service3]);
+const injector = Injector.resolveAndCreate([Service1, Service2, Service3]);
 const service3 = injector.get(Service3);
 ```
 
-The `ReflectiveInjector.resolveAndCreate()` method takes an array of classes into its registry at the input, and outputs a certain object, which is exactly what is called an **injector**. This injector obviously contains a registry of transferred classes, and is able to create their instances, taking into account the entire chain of dependencies (`Service3` -> `Service2` -> `Service1`).
+The `Injector.resolveAndCreate()` method takes an array of classes into its registry at the input, and outputs a certain object, which is exactly what is called an **injector**. This injector obviously contains a registry of transferred classes, and is able to create their instances, taking into account the entire chain of dependencies (`Service3` -> `Service2` -> `Service1`).
 
 What the injector does:
 
@@ -325,14 +325,14 @@ By having a parent injector object, a child injector can refer to its parent whe
 Let's consider the following example. For simplicity, no decorators are used here at all, since each class is independent:
 
 ```ts {8-9}
-import { ReflectiveInjector } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
 
 class Service1 {}
 class Service2 {}
 class Service3 {}
 class Service4 {}
 
-const parent = ReflectiveInjector.resolveAndCreate([Service1, Service2]); // Parent injector
+const parent = Injector.resolveAndCreate([Service1, Service2]); // Parent injector
 const child = parent.resolveAndCreateChild([Service2, Service3]); // Child injector
 
 child.get(Service1); // ОК
@@ -443,7 +443,7 @@ Also, if you import a specific provider from an external module and you have a p
 
 Remember that when DI cannot find the right provider, there are only three possible reasons:
 
-1. you did not transfer the required provider to DI in the metadata of the module or controller (well, or in the case of testing - in `ReflectiveInjector.resolveAndCreate()`);
+1. you did not transfer the required provider to DI in the metadata of the module or controller (well, or in the case of testing - in `Injector.resolveAndCreate()`);
 2. you did not import the module where the provider you need is transferred, or this provider is not exported;
 3. you ask the parent injector for the provider from the child injector.
 

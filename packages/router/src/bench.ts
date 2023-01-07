@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import * as path from 'path';
-import { Injector, ReflectiveInjector } from '@ditsmod/core';
+import { Injector, Injector } from '@ditsmod/core';
 
 import { Fn } from './types';
 import { Tree } from './tree';
@@ -50,8 +50,7 @@ async function runBench() {
       let router: any;
 
       if (lib.name == '@ditsmod/router') {
-        const injector = ReflectiveInjector.resolveAndCreate([
-          { token: ReflectiveInjector, useToken: Injector },
+        const injector = Injector.resolveAndCreate([
           Tree,
           DefaultRouter,
         ]);

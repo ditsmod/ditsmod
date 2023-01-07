@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { injectable, ReflectiveInjector } from '../di';
+import { injectable, Injector } from '../di';
 
 import { controller, ControllerMetadata } from '../decorators/controller';
 import { route } from '../decorators/route';
@@ -31,7 +31,7 @@ xdescribe('RoutesExtension', () => {
   beforeEach(() => {
     const log = new SystemLogMediator({ moduleName: 'fakeName' });
     moduleManager = new ModuleManager(log);
-    const injectorPerApp = ReflectiveInjector.resolveAndCreate([
+    const injectorPerApp = Injector.resolveAndCreate([
       ...defaultProvidersPerApp,
       { token: ModuleManager, useValue: moduleManager },
       { token: RootMetadata, useValue: new RootMetadata() },

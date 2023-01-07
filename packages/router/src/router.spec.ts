@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Injector, ReflectiveInjector } from '@ditsmod/core';
+import { Injector, Injector } from '@ditsmod/core';
 
 import { DefaultRouter } from './router';
 import { Fn } from './types';
@@ -8,18 +8,17 @@ import { RouterLogMediator } from './router-log-mediator';
 
 describe('Router', () => {
   const noop: Fn = () => {};
-  let injector: ReflectiveInjector;
+  let injector: Injector;
 
   beforeEach(() => {
-    injector = ReflectiveInjector.resolveAndCreate([
+    injector = Injector.resolveAndCreate([
       Tree,
       DefaultRouter,
-      {token: RouterLogMediator, useValue: {}},
-      { token: ReflectiveInjector, useToken: Injector },
+      {token: RouterLogMediator, useValue: {}}
     ]);
   });
 
-  it('injector instanceof ReflectiveInjector', () => {
+  it('injector instanceof Injector', () => {
     expect(injector).toBeTruthy();
   });
 

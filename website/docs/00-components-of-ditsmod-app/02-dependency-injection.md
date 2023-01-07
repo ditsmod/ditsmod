@@ -273,7 +273,7 @@ export class SomeModule {}
 
 ```ts {16}
 import 'reflect-metadata';
-import { ReflectiveInjector, injectable } from '@ditsmod/core';
+import { Injector, injectable } from '@ditsmod/core';
 
 class Service1 {}
 
@@ -287,11 +287,11 @@ class Service3 {
   constructor(service2: Service2) {}
 }
 
-const injector = ReflectiveInjector.resolveAndCreate([Service1, Service2, Service3]);
+const injector = Injector.resolveAndCreate([Service1, Service2, Service3]);
 const service3 = injector.get(Service3);
 ```
 
-Метод `ReflectiveInjector.resolveAndCreate()` на вході приймає масив класів у свій реєстр, а на виході видає певний об'єкт, що якраз і називається **інжектором**. Цей інжектор очевидно містить у собі реєстр переданих класів, і вміє створювати їхні інстанси, враховуючи весь ланцюжок залежностей (`Service3` -> `Service2` -> `Service1`).
+Метод `Injector.resolveAndCreate()` на вході приймає масив класів у свій реєстр, а на виході видає певний об'єкт, що якраз і називається **інжектором**. Цей інжектор очевидно містить у собі реєстр переданих класів, і вміє створювати їхні інстанси, враховуючи весь ланцюжок залежностей (`Service3` -> `Service2` -> `Service1`).
 
 Що робить інжектор:
 
@@ -325,14 +325,14 @@ interface Child {
 Давайте розглянемо наступний приклад. Для спрощення, тут взагалі не використовуються декоратори, оскільки кожен клас є незалежним:
 
 ```ts {8-9}
-import { ReflectiveInjector } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
 
 class Service1 {}
 class Service2 {}
 class Service3 {}
 class Service4 {}
 
-const parent = ReflectiveInjector.resolveAndCreate([Service1, Service2]); // Батьківський інжектор
+const parent = Injector.resolveAndCreate([Service1, Service2]); // Батьківський інжектор
 const child = parent.resolveAndCreateChild([Service2, Service3]); // Дочірній інжектор
 
 child.get(Service1); // ОК
@@ -443,7 +443,7 @@ export class SecondService {
 
 Пам'ятайте, що коли DI не може знайти потрібного провайдера, існує всього три можливі причини:
 
-1. ви не передали потрібний провайдер до DI в метадані модуля чи контролера (ну або у випадку тестування - у `ReflectiveInjector.resolveAndCreate()`);
+1. ви не передали потрібний провайдер до DI в метадані модуля чи контролера (ну або у випадку тестування - у `Injector.resolveAndCreate()`);
 2. ви не імпортували модуль, де передається потрібний вам провайдер, або ж цей провайдер не експортується;
 3. ви запитуєте у батьківському інжекторі провайдер з дочірнього інжектора.
 

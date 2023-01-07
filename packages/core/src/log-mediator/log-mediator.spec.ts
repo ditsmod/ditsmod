@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Provider, ReflectiveInjector } from '../di';
+import { Provider, Injector } from '../di';
 
 import { LogItem, LogMediator, OutputLogFilter } from './log-mediator';
 import { ModuleExtract } from '../models/module-extract';
@@ -30,7 +30,7 @@ describe('LogMediator', () => {
   }
 
   function getLogMediator(providers?: Provider[]): LogMediatorMock {
-    const injector = ReflectiveInjector.resolveAndCreate([ModuleExtract, LogMediatorMock, ...(providers || [])]);
+    const injector = Injector.resolveAndCreate([ModuleExtract, LogMediatorMock, ...(providers || [])]);
 
     return injector.get(LogMediatorMock);
   }

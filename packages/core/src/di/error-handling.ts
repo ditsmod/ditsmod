@@ -1,6 +1,6 @@
 import { Class, DiError } from './types-and-models';
 import { stringify } from './utils';
-import { ReflectiveInjector } from './injector';
+import { Injector } from './injector';
 
 export const ERROR_ORIGINAL_ERROR = 'TsStackDiOriginalError';
 
@@ -48,7 +48,7 @@ class A {
   constructor(b:B) {}
 }
 
-expect(() => ReflectiveInjector.resolveAndCreate([A])).toThrowError();
+expect(() => Injector.resolveAndCreate([A])).toThrowError();
 ```
  */
 export function noProviderError(tokens: any[]) {
@@ -96,7 +96,7 @@ class A {
   }
 }
 
-let injector = ReflectiveInjector.resolveAndCreate([A]);
+let injector = Injector.resolveAndCreate([A]);
 
 try {
   injector.get(A);
@@ -119,7 +119,7 @@ function clearErrorTrace(error: any) {
   if (!Error.hasOwnProperty('captureStackTrace')) {
     return error;
   }
-  const str = 'ReflectiveInjector.';
+  const str = 'Injector.';
   let lastIndex: number = 0;
   let prevStack = '';
   const originalStackTraceLimit = Error.stackTraceLimit;
@@ -130,7 +130,7 @@ function clearErrorTrace(error: any) {
     if (lastIndex !== -1) {
       const part = error.stack.substring(lastIndex);
       const methodName = part.substring(str.length, part.indexOf(' '));
-      (Error as any).captureStackTrace(error, (ReflectiveInjector as any).prototype[methodName]);
+      (Error as any).captureStackTrace(error, (Injector as any).prototype[methodName]);
     }
   }
   if (error[ERROR_ORIGINAL_ERROR]) {
@@ -146,7 +146,7 @@ function clearErrorTrace(error: any) {
  * ### Example
  *
 ```ts
-expect(() => ReflectiveInjector.resolveAndCreate(["not a type"])).toThrowError();
+expect(() => Injector.resolveAndCreate(["not a type"])).toThrowError();
 ```
  */
 export function invalidProviderError(provider: any) {
@@ -166,7 +166,7 @@ class A {
   constructor(b) {}
 }
 
-expect(() => ReflectiveInjector.resolveAndCreate([A])).toThrowError();
+expect(() => Injector.resolveAndCreate([A])).toThrowError();
 ```
  *
  * This error is also thrown when the class not marked with `injectable` has parameter types.
@@ -178,7 +178,7 @@ class A {
   constructor(b:B) {} // no information about the parameter types of A is available at runtime.
 }
 
-expect(() => ReflectiveInjector.resolveAndCreate([A,B])).toThrowError();
+expect(() => Injector.resolveAndCreate([A,B])).toThrowError();
 ```
  */
 export function noAnnotationError(Cls: Class, params: any[], propertyKey?: string | symbol): DiError {
@@ -217,7 +217,7 @@ function getSignature(params: any[]) {
  * ### Example
  *
 ```ts
-expect(() => ReflectiveInjector.resolveAndCreate([
+expect(() => Injector.resolveAndCreate([
   { provide: "Strings", useValue: "string1", multi: true},
   { provide: "Strings", useValue: "string2", multi: false}
 ])).toThrowError();

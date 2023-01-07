@@ -1,4 +1,4 @@
-import { injectable, ReflectiveInjector } from '../di';
+import { injectable, Injector } from '../di';
 
 import { ServiceProvider } from '../types/mix';
 
@@ -8,7 +8,7 @@ import { ServiceProvider } from '../types/mix';
 @injectable()
 export class PerAppService {
   #providers: ServiceProvider[] = [];
-  #injector: ReflectiveInjector;
+  #injector: Injector;
 
   /**
    * Returns copy of the providersPerApp.
@@ -33,7 +33,7 @@ export class PerAppService {
     if (providers) {
       this.providers = providers;
     }
-    this.#injector = ReflectiveInjector.resolveAndCreate(this.providers, 'injectorPerApp');
+    this.#injector = Injector.resolveAndCreate(this.providers, 'injectorPerApp');
     return this.#injector;
   }
 

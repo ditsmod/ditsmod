@@ -35,7 +35,7 @@ class Door {
 // Only at this point Lock is defined.
 class Lock {}
 
-const injector = ReflectiveInjector.resolveAndCreate([Door, Lock]);
+const injector = Injector.resolveAndCreate([Door, Lock]);
 const door = injector.get(Door);
 expect(door instanceof Door).toBeTruthy();
 expect(door.lock instanceof Lock).toBeTruthy();

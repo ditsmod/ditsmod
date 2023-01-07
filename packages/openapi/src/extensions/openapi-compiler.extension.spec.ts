@@ -8,7 +8,7 @@ import {
   XOperationObject,
   XResponsesObject,
 } from '@ts-stack/openapi-spec';
-import { ReflectiveInjector } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
 
 import { OpenapiCompilerExtension } from './openapi-compiler.extension';
 import { DEFAULT_OAS_OBJECT } from '../constants';
@@ -31,7 +31,7 @@ describe('OpenapiCompilerExtension', () => {
   const log = { oasObjectNotFound() {} };
 
   beforeEach(() => {
-    const injector = ReflectiveInjector.resolveAndCreate([]);
+    const injector = Injector.resolveAndCreate([]);
     mock = new MockOpenapiCompilerExtension(new PerAppService(), injector, null as any, log as any, {});
   });
 

@@ -12,7 +12,7 @@ class Car {
 }
 
 const injector =
-    ReflectiveInjector.resolveAndCreate([{token: 'MyEngine', useClass: Engine}, Car]);
+    Injector.resolveAndCreate([{token: 'MyEngine', useClass: Engine}, Car]);
 
 expect(injector.get(Car).engine instanceof Engine).toBe(true);
 ```
@@ -31,7 +31,7 @@ class Car {
   }  // same as constructor(@inject(Engine) engine:Engine)
 }
 
-const injector = ReflectiveInjector.resolveAndCreate([Engine, Car]);
+const injector = Injector.resolveAndCreate([Engine, Car]);
 expect(injector.get(Car).engine instanceof Engine).toBe(true);
 ```
    */
@@ -51,7 +51,7 @@ class Car {
   constructor(@optional() public engine: Engine) {}
 }
 
-const injector = ReflectiveInjector.resolveAndCreate([Car]);
+const injector = Injector.resolveAndCreate([Car]);
 expect(injector.get(Car).engine).toBeNull();
 ```
  */
@@ -91,7 +91,7 @@ class NeedsService {
   constructor(public service: UsefulService) {}
 }
 
-const injector = ReflectiveInjector.resolveAndCreate([NeedsService, UsefulService]);
+const injector = Injector.resolveAndCreate([NeedsService, UsefulService]);
 expect(injector.get(NeedsService).service instanceof UsefulService).toBe(true);
 ```
  *
@@ -105,7 +105,7 @@ class NeedsService {
   constructor(public service: UsefulService) {}
 }
 
-expect(() => ReflectiveInjector.resolveAndCreate([NeedsService, UsefulService])).toThrow();
+expect(() => Injector.resolveAndCreate([NeedsService, UsefulService])).toThrow();
 ```
  */
 export const injectable = makeClassDecorator();
@@ -133,12 +133,12 @@ class NeedsDependency {
   constructor(@fromSelf() public dependency: Dependency) {}
 }
 
-let inj = ReflectiveInjector.resolveAndCreate([Dependency, NeedsDependency]);
+let inj = Injector.resolveAndCreate([Dependency, NeedsDependency]);
 const nd = inj.get(NeedsDependency);
 
 expect(nd.dependency instanceof Dependency).toBe(true);
 
-inj = ReflectiveInjector.resolveAndCreate([Dependency]);
+inj = Injector.resolveAndCreate([Dependency]);
 const child = inj.resolveAndCreateChild([NeedsDependency]);
 expect(() => child.get(NeedsDependency)).toThrowError();
 ```
@@ -170,11 +170,11 @@ class NeedsDependency {
   constructor(@skipSelf() public dependency: Dependency) { this.dependency = dependency; }
 }
 
-const parent = ReflectiveInjector.resolveAndCreate([Dependency]);
+const parent = Injector.resolveAndCreate([Dependency]);
 const child = parent.resolveAndCreateChild([NeedsDependency]);
 expect(child.get(NeedsDependency).dependency instanceof Dependency).toBe(true);
 
-const inj = ReflectiveInjector.resolveAndCreate([Dependency, NeedsDependency]);
+const inj = Injector.resolveAndCreate([Dependency, NeedsDependency]);
 expect(() => inj.get(NeedsDependency)).toThrowError();
 ```
  */

@@ -1,4 +1,4 @@
-import { ReflectiveInjector } from '../di';
+import { Injector } from '../di';
 
 import { ServiceProvider } from '../types/mix';
 
@@ -11,7 +11,7 @@ export function getDependencies(provider: ServiceProvider) {
   const uniqDeps = new Set<any>();
   const required = new Set<any>();
 
-  ReflectiveInjector.resolve([provider]).forEach(({ resolvedFactories }) => {
+  Injector.resolve([provider]).forEach(({ resolvedFactories }) => {
     resolvedFactories.forEach((rf) => {
       rf.dependencies.forEach((dep) => {
         if (!dep.optional) {

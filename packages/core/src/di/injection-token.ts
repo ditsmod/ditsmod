@@ -19,7 +19,7 @@ let myInterface = injector.get(new InjectionToken<MyInterface>('SomeToken'));
 ```ts
 const BASE_URL = new InjectionToken<string>('BaseUrl');
 const injector =
-    ReflectiveInjector.resolveAndCreate([{token: BASE_URL, useValue: 'http://localhost'}]);
+    Injector.resolveAndCreate([{token: BASE_URL, useValue: 'http://localhost'}]);
 const url = injector.get(BASE_URL);
 // here `url` is inferred to be `string` because `BASE_URL` is `InjectionToken<string>`.
 expect(url).toBe('http://localhost');

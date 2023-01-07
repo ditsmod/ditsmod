@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ReflectiveInjector } from '../di';
+import { Injector } from '../di';
 
 import { ErrorOpts } from '../custom-error/error-opts';
 import { DefaultControllerErrorHandler as ErrorHandler } from './default-controller-error-handler';
@@ -36,7 +36,7 @@ describe('ErrorHandler', () => {
   } as Logger;
 
   beforeEach(() => {
-    const injector = ReflectiveInjector.resolveAndCreate([{ token: Logger, useValue: logger }, ErrorHandler]);
+    const injector = Injector.resolveAndCreate([{ token: Logger, useValue: logger }, ErrorHandler]);
 
     errorHandler = injector.get(ErrorHandler);
 

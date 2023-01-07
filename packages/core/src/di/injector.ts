@@ -34,24 +34,6 @@ const THROW_IF_NOT_FOUND = Symbol();
 type Func = (...args: any[]) => any;
 
 /**
- * Returns value by token.
- */
-export abstract class Injector {
-  /**
-   * Retrieves an instance from the injector based on the provided token.
-   * If not found, returns the `notFoundValue` otherwise
-   */
-  abstract get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, notFoundValue?: T): T;
-  abstract get(token: any, visibility?: Visibility, notFoundValue?: any): any;
-  abstract getFactoryWithArgs(
-    token: Func,
-    skipFirst: number,
-    visibility?: Visibility,
-    notFoundValue?: any
-  ): PreparedFactory;
-}
-
-/**
  * A ReflectiveDependency injection container used for instantiating objects and resolving
  * dependencies.
  *
@@ -75,7 +57,7 @@ class Car {
   constructor(public engine:Engine) {}
 }
 
-const injector = ReflectiveInjector.resolveAndCreate([Car, Engine]);
+const injector = Injector.resolveAndCreate([Car, Engine]);
 const car = injector.get(Car);
 expect(car instanceof Car).toBe(true);
 expect(car.engine instanceof Engine).toBe(true);
@@ -84,8 +66,8 @@ expect(car.engine instanceof Engine).toBe(true);
  * Notice, we don't use the `new` operator because we explicitly want to have the `Injector`
  * resolve all of the object's dependencies automatically.
  */
-export class ReflectiveInjector implements Injector {
-  #parent: ReflectiveInjector | null;
+export class Injector {
+  #parent: Injector | null;
   #map: Map<any, ResolvedProvider>;
   private countOfProviders = 0;
   private constructionCounter = 0;
@@ -93,9 +75,9 @@ export class ReflectiveInjector implements Injector {
   /**
    * @param injectorName Injector name. Useful for debugging.
    */
-  constructor(map: Map<any, ResolvedProvider>, parent?: Injector | ReflectiveInjector, public readonly injectorName?: string) {
+  constructor(map: Map<any, ResolvedProvider>, parent?: Injector | Injector, public readonly injectorName?: string) {
     this.#map = new Map(map);
-    this.#parent = (parent as ReflectiveInjector) || null;
+    this.#parent = parent || null;
     this.countOfProviders = map.size;
   }
 
@@ -110,7 +92,7 @@ export class ReflectiveInjector implements Injector {
   ```ts
 import 'reflect-metadata';
 
-import { injectable, ReflectiveInjector } from './di';
+import { injectable, Injector } from './di';
 
 @injectable()
 class Engine {}
@@ -120,7 +102,7 @@ class Car {
   constructor(public engine: Engine) {}
 }
 
-const providers = ReflectiveInjector.resolve([Car, Engine]);
+const providers = Injector.resolve([Car, Engine]);
 console.log(providers[0].resolvedFactories[0].dependencies);
   ```
    *
@@ -152,17 +134,17 @@ class Car {
   constructor(public engine:Engine) {}
 }
 
-const injector = ReflectiveInjector.resolveAndCreate([Car, Engine]);
+const injector = Injector.resolveAndCreate([Car, Engine]);
 expect(injector.get(Car) instanceof Car).toBe(true);
 ```
    *
    * This function is slower than the corresponding `fromResolvedProviders`
    * because it needs to resolve the passed-in providers first.
-   * See `ReflectiveInjector.resolve()` and `ReflectiveInjector.fromResolvedProviders()`.
+   * See `Injector.resolve()` and `Injector.fromResolvedProviders()`.
    * 
    * @param injectorName Injector name. Useful for debugging.
    */
-  static resolveAndCreate(providers: Provider[], injectorName?: string): ReflectiveInjector {
+  static resolveAndCreate(providers: Provider[], injectorName?: string): Injector {
     const resolvedProviders = this.resolve(providers);
     return this.fromResolvedProviders(resolvedProviders, injectorName);
   }
@@ -184,15 +166,15 @@ class Car {
   constructor(public engine:Engine) {}
 }
 
-const providers = ReflectiveInjector.resolve([Car, Engine]);
-const injector = ReflectiveInjector.fromResolvedProviders(providers);
+const providers = Injector.resolve([Car, Engine]);
+const injector = Injector.fromResolvedProviders(providers);
 expect(injector.get(Car) instanceof Car).toBe(true);
 ```
   *
   * @param injectorName Injector name. Useful for debugging.
    */
-  static fromResolvedProviders(providers: Map<any, ResolvedProvider>, injectorName?: string): ReflectiveInjector {
-    return new ReflectiveInjector(providers, undefined, injectorName);
+  static fromResolvedProviders(providers: Map<any, ResolvedProvider>, injectorName?: string): Injector {
+    return new Injector(providers, undefined, injectorName);
   }
 
   private static normalizeProviders(providers: Provider[], normProviders: NormalizedProvider[]): NormalizedProvider[] {
@@ -369,7 +351,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
    * ### Example
    *
 ```ts
-const parent = ReflectiveInjector.resolveAndCreate([]);
+const parent = Injector.resolveAndCreate([]);
 const child = parent.resolveAndCreateChild([]);
 expect(child.parent).toBe(parent);
 ```
@@ -390,7 +372,7 @@ expect(child.parent).toBe(parent);
 class ParentProvider {}
 class ChildProvider {}
 
-const parent = ReflectiveInjector.resolveAndCreate([ParentProvider]);
+const parent = Injector.resolveAndCreate([ParentProvider]);
 const child = parent.resolveAndCreateChild([ChildProvider]);
 
 expect(child.get(ParentProvider) instanceof ParentProvider).toBe(true);
@@ -401,12 +383,12 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    * This function is slower than the corresponding `createChildFromResolved`
    * because it needs to resolve the passed-in providers first.
    *
-   * See `ReflectiveInjector.resolve()` and `ReflectiveInjector.createChildFromResolved()`.
+   * See `Injector.resolve()` and `Injector.createChildFromResolved()`.
    * 
    * @param injectorName Injector name. Useful for debugging.
    */
-  resolveAndCreateChild(providers: Provider[], injectorName?: string): ReflectiveInjector {
-    const resolvedReflectiveProviders = ReflectiveInjector.resolve(providers);
+  resolveAndCreateChild(providers: Provider[], injectorName?: string): Injector {
+    const resolvedReflectiveProviders = Injector.resolve(providers);
     return this.createChildFromResolved(resolvedReflectiveProviders, injectorName);
   }
 
@@ -421,10 +403,10 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
 class ParentProvider {}
 class ChildProvider {}
 
-const parentProviders = ReflectiveInjector.resolve([ParentProvider]);
-const childProviders = ReflectiveInjector.resolve([ChildProvider]);
+const parentProviders = Injector.resolve([ParentProvider]);
+const childProviders = Injector.resolve([ChildProvider]);
 
-const parent = ReflectiveInjector.fromResolvedProviders(parentProviders);
+const parent = Injector.fromResolvedProviders(parentProviders);
 const child = parent.createChildFromResolved(childProviders);
 
 expect(child.get(ParentProvider) instanceof ParentProvider).toBe(true);
@@ -434,8 +416,8 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    *
    * @param injectorName Injector name. Useful for debugging.
    */
-  createChildFromResolved(providers: Map<any, ResolvedProvider>, injectorName?: string): ReflectiveInjector {
-    return new ReflectiveInjector(providers, this, injectorName);
+  createChildFromResolved(providers: Map<any, ResolvedProvider>, injectorName?: string): Injector {
+    return new Injector(providers, this, injectorName);
   }
 
   /**
@@ -455,7 +437,7 @@ class Car {
   constructor(public engine:Engine) {}
 }
 
-const injector = ReflectiveInjector.resolveAndCreate([Engine]);
+const injector = Injector.resolveAndCreate([Engine]);
 
 const car = injector.resolveAndInstantiate(Car);
 expect(car.engine).toBe(injector.get(Engine));
@@ -463,7 +445,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
 ```
    */
   resolveAndInstantiate(provider: Provider): any {
-    const map = ReflectiveInjector.resolve([provider]).values();
+    const map = Injector.resolve([provider]).values();
     const resolvedProvider = Array.from(map)[0];
     return this.instantiateResolved(resolvedProvider);
   }
@@ -485,8 +467,8 @@ class Car {
   constructor(public engine:Engine) {}
 }
 
-const injector = ReflectiveInjector.resolveAndCreate([Engine]);
-const carProvider = ReflectiveInjector.resolve([Car])[0];
+const injector = Injector.resolveAndCreate([Engine]);
+const carProvider = Injector.resolve([Car])[0];
 const car = injector.instantiateResolved(carProvider);
 expect(car.engine).toBe(injector.get(Engine));
 expect(car).not.toBe(injector.instantiateResolved(carProvider));
@@ -518,7 +500,13 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     return [provider.resolvedFactories[0].factory, args];
     // }
   }
-
+  
+  /**
+   * Retrieves an instance from the injector based on the provided token.
+   * If not found, returns the `notFoundValue` otherwise
+   */
+  get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, notFoundValue?: T): T;
+  get(token: any, visibility?: Visibility, notFoundValue?: any): any;
   get(token: any, visibility: Visibility = null, notFoundValue: any = THROW_IF_NOT_FOUND): any {
     return this.checkVisibilityAndGet(token, [], visibility, notFoundValue);
   }
@@ -588,7 +576,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   }
 
   private getOrThrow(
-    inj: ReflectiveInjector | null,
+    inj: Injector | null,
     token: any,
     parentTokens: any[],
     notFoundValue: any,
@@ -657,7 +645,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   }
 
   private runDryOrThrow(
-    inj: ReflectiveInjector | null,
+    inj: Injector | null,
     token: any,
     parentTokens: any[],
     notFoundValue?: any,

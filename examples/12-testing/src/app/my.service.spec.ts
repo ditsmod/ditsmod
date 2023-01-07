@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ReflectiveInjector } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
 
 import { MyService } from './my.service';
 import { OtherService } from './other.service';
@@ -8,7 +8,7 @@ describe('MyService', () => {
   let myService: MyService;
 
   beforeEach(() => {
-    const injector = ReflectiveInjector.resolveAndCreate([
+    const injector = Injector.resolveAndCreate([
       MyService,
       OtherService
     ]);

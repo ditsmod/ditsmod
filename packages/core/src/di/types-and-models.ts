@@ -154,7 +154,7 @@ class Greeting {
   salutation = 'Hello';
 }
 
-const injector = ReflectiveInjector.resolveAndCreate([
+const injector = Injector.resolveAndCreate([
   Greeting,  // Shorthand for { token: Greeting, useClass: Greeting }
 ]);
 
@@ -176,7 +176,7 @@ export interface BaseNormalizedProvider {
    * ### Example
    *
 ```ts
-const injector = ReflectiveInjector.resolveAndCreate([
+const injector = Injector.resolveAndCreate([
   {token: 'local', multi: true, useValue: 'en'},
   {token: 'local', multi: true, useValue: 'sk'},
 ]);
@@ -211,7 +211,7 @@ const provider: ValueProvider = {token: 'someToken', useValue: 'someValue'};
  *
 ```ts
 const injector =
-    ReflectiveInjector.resolveAndCreate([{token: String, useValue: 'Hello'}]);
+    Injector.resolveAndCreate([{token: String, useValue: 'Hello'}]);
 
 expect(injector.get(String)).toEqual('Hello');
 ```
@@ -255,7 +255,7 @@ class Square extends Shape {
   name = 'square';
 }
 
-const injector = ReflectiveInjector.resolveAndCreate([{token: Shape, useClass: Square}]);
+const injector = Injector.resolveAndCreate([{token: Shape, useClass: Square}]);
 
 const shape: Shape = injector.get(Shape);
 expect(shape.name).toEqual('square');
@@ -273,7 +273,7 @@ class FormalGreeting extends Greeting {
   salutation = 'Greetings';
 }
 
-const injector = ReflectiveInjector.resolveAndCreate(
+const injector = Injector.resolveAndCreate(
     [FormalGreeting, {token: Greeting, useClass: FormalGreeting}]);
 
 // The injector returns different instances.
@@ -320,7 +320,7 @@ class FormalGreeting extends Greeting {
   salutation = 'Greetings';
 }
 
-const injector = ReflectiveInjector.resolveAndCreate(
+const injector = Injector.resolveAndCreate(
     [FormalGreeting, {token: Greeting, useToken: FormalGreeting}]);
 
 expect(injector.get(Greeting).salutation).toEqual('Greetings');
@@ -355,7 +355,7 @@ export class ClassWithFactory {
   }
 }
 
-const injector = ReflectiveInjector.resolveAndCreate([
+const injector = Injector.resolveAndCreate([
   { token: Hash, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1]
 }]);
 

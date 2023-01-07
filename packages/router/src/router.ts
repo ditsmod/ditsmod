@@ -1,5 +1,5 @@
 import * as http from 'http';
-import { injectable, ReflectiveInjector } from '@ditsmod/core';
+import { injectable, Injector } from '@ditsmod/core';
 import { Router, RouterReturns } from '@ditsmod/core';
 
 import { Tree } from './tree';
@@ -9,7 +9,7 @@ import { HttpMethod, MethodTree, Fn } from './types';
 export class DefaultRouter implements Router {
   private trees: MethodTree = {};
 
-  constructor(private injector: ReflectiveInjector) {}
+  constructor(private injector: Injector) {}
 
   on(method: HttpMethod, path: string, handle: Fn): this {
     if (path[0] != '/') {

@@ -12,7 +12,7 @@ import {
   Providers,
   ROUTES_EXTENSIONS,
 } from '@ditsmod/core';
-import { injectable, Injector, optional, ReflectiveInjector, reflector } from '@ditsmod/core';
+import { injectable, Injector, optional, Injector, reflector } from '@ditsmod/core';
 import {
   PathItemObject,
   XOasObject,
@@ -70,7 +70,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     return this.oasObject;
   }
 
-  protected async compileOasObject(aMetadataPerMod2: MetadataPerMod2[], injectorPerApp: ReflectiveInjector) {
+  protected async compileOasObject(aMetadataPerMod2: MetadataPerMod2[], injectorPerApp: Injector) {
     const paths: XPathsObject = {};
     this.initOasObject();
     for (const metadataPerMod2 of aMetadataPerMod2) {

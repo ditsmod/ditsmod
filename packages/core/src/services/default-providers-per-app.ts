@@ -1,5 +1,3 @@
-import { Injector, ReflectiveInjector } from '../di';
-
 import { RootMetadata } from '../models/root-metadata';
 import { Logger } from '../types/logger';
 import { ServiceProvider } from '../types/mix';
@@ -13,10 +11,6 @@ import { Providers } from '../utils/providers';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
-  {
-    token: ReflectiveInjector,
-    useToken: Injector,
-  },
   RootMetadata,
   PreRouter,
   Counter,

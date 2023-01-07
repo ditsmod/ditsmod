@@ -1,4 +1,4 @@
-import { fromSelf, injectable, ReflectiveInjector, ResolvedProvider } from '../di';
+import { fromSelf, injectable, Injector, ResolvedProvider } from '../di';
 
 import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '../constans';
 import { HttpBackend, HttpFrontend, HttpHandler } from '../types/http-interceptor';
@@ -57,7 +57,7 @@ export class PreRouterExtension implements Extension<void> {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'injectorPerRou');
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
-        const resolvedPerReq = ReflectiveInjector.resolve(mergedPerReq);
+        const resolvedPerReq = Injector.resolve(mergedPerReq);
         // this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
 
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
@@ -72,7 +72,7 @@ export class PreRouterExtension implements Extension<void> {
             req,
             res,
           };
-          const map = ReflectiveInjector.resolve([{ token: RequestContext, useValue: ctx }]);
+          const map = Injector.resolve([{ token: RequestContext, useValue: ctx }]);
           map.forEach((value, token) => resolvedPerReq.set(token, value));
           const inj = injectorPerRou.createChildFromResolved(resolvedPerReq, 'injectorPerReq');
 
@@ -95,7 +95,7 @@ export class PreRouterExtension implements Extension<void> {
     moduleName: string,
     httpMethod: HttpMethod,
     path: string,
-    injectorPerRou: ReflectiveInjector,
+    injectorPerRou: Injector,
     resolvedPerReq: Map<any, ResolvedProvider>,
     routeMeta: RouteMeta
   ) {

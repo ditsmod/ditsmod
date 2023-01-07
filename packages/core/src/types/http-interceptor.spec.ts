@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ReflectiveInjector } from '../di';
+import { Injector } from '../di';
 
 import { HttpBackend, HttpHandler, HttpInterceptor, HttpFrontend } from './http-interceptor';
 import { defaultProvidersPerReq } from '../services/default-providers-per-req';
@@ -53,7 +53,7 @@ describe('HttpInterceptor', () => {
       }
     }
 
-    const injector = ReflectiveInjector.resolveAndCreate([
+    const injector = Injector.resolveAndCreate([
       ...defaultProviders,
       { token: HttpFrontend, useClass: MockHttpFrontend },
       { token: HttpBackend, useClass: MockHttpBackend },
@@ -81,7 +81,7 @@ describe('HttpInterceptor', () => {
       }
     }
 
-    const injector = ReflectiveInjector.resolveAndCreate([
+    const injector = Injector.resolveAndCreate([
       ...defaultProviders,
       { token: HttpFrontend, useClass: MockHttpFrontend },
       { token: HTTP_INTERCEPTORS, useClass: Interceptor1, multi: true },
@@ -95,7 +95,7 @@ describe('HttpInterceptor', () => {
   });
 
   it('without HTTP_INTERCEPTORS, chain should be HttpBackend', () => {
-    const injector = ReflectiveInjector.resolveAndCreate([...defaultProviders]);
+    const injector = Injector.resolveAndCreate([...defaultProviders]);
 
     const chain = injector.get(HttpHandler) as HttpHandler;
     const frontend = injector.get(HttpFrontend) as HttpFrontend;

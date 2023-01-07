@@ -1,4 +1,4 @@
-import { injectable, ReflectiveInjector, RequestContext } from '@ditsmod/core';
+import { injectable, Injector, RequestContext } from '@ditsmod/core';
 import {
   Extension,
   ExtensionsManager,
@@ -40,7 +40,7 @@ export class CorsExtension implements Extension<void | false> {
     return; // Make TypeScript happy
   }
 
-  protected prepareDataAndSetInterceptors(aMetadataPerMod2: MetadataPerMod2[], injectorPerApp: ReflectiveInjector) {
+  protected prepareDataAndSetInterceptors(aMetadataPerMod2: MetadataPerMod2[], injectorPerApp: Injector) {
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
@@ -57,7 +57,7 @@ export class CorsExtension implements Extension<void | false> {
     });
   }
 
-  protected getCorsOptions(injectorPerMod: ReflectiveInjector, mergedPerRou: ServiceProvider[]) {
+  protected getCorsOptions(injectorPerMod: Injector, mergedPerRou: ServiceProvider[]) {
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
     const corsOptions = injectorPerRou.get(CorsOptions, undefined, {}) as CorsOptions;
     const clonedCorsOptions = { ...corsOptions };

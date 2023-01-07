@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { injectable, InjectionToken, ReflectiveInjector } from '../di';
+import { injectable, InjectionToken, Injector } from '../di';
 
 import { Extension } from '../types/mix';
 import { defaultProvidersPerApp } from './default-providers-per-app';
@@ -75,7 +75,7 @@ describe('ExtensionsManager circular dependencies', () => {
   }
 
   beforeEach(() => {
-    const injector = ReflectiveInjector.resolveAndCreate([
+    const injector = Injector.resolveAndCreate([
       ...defaultProvidersPerApp,
       MockExtensionsManager,
       ExtensionsContext,

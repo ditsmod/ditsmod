@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ReflectiveInjector } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
 import { Req } from '@ditsmod/core';
 
 import { I18nOptions } from './types/mix';
@@ -13,7 +13,7 @@ describe('DictService', () => {
     constructor(public i18nOptions: I18nOptions = {}, public req: Partial<Req> = { queryParams: {} }) {}
   }
   function getService(options: Options) {
-    const injector = ReflectiveInjector.resolveAndCreate([
+    const injector = Injector.resolveAndCreate([
       DictService,
       { token: I18nLogMediator, useValue: { missingLng: jest.fn } },
       { token: Req, useValue: options.req },
