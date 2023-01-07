@@ -9,7 +9,7 @@ export class Res<T = any> {
     /**
      * Native Node.js response.
      */
-    public readonly nodeRes: NodeResponse
+    private readonly nodeRes: NodeResponse
   ) {}
 
   /**

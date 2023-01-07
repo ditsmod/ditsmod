@@ -38,7 +38,7 @@ export class Req {
     /**
      * Native Node.js request.
      */
-    public readonly nodeReq: NodeRequest,
+    private readonly nodeReq: NodeRequest,
   ) {}
 
   get requestId() {
