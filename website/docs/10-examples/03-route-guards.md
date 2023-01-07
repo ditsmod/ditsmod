@@ -10,8 +10,8 @@
 
 ```ts
 @route('GET', 'unauth', [AuthGuard])
-throw401Error() {
-  this.res.send('some secret');
+throw401Error(ctx: RequestContext) {
+  ctx.res.send('some secret');
 }
 ```
 
@@ -19,8 +19,8 @@ throw401Error() {
 
 ```ts
 @route('GET', 'forbidden', [[PermissionsGuard, Permission.canActivateAdministration]])
-throw403Error() {
-  this.res.send('some secret');
+throw403Error(ctx: RequestContext) {
+  ctx.res.send('some secret');
 }
 ```
 

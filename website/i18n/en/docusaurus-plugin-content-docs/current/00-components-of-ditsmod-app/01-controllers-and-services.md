@@ -34,13 +34,13 @@ export class SomeController {}
 HTTP requests are bound to controller methods through the routing system, using the `route` decorator. In the following example, a single route is created that accepts `GET` request at `/hello`:
 
 ```ts
-import { controller, route, Res } from '@ditsmod/core';
+import { controller, route, RequestContext } from '@ditsmod/core';
 
 @controller()
 export class HelloWorldController {
   @route('GET', 'hello')
-  method1(res: Res) {
-    res.send('Hello World!');
+  method1(ctx: RequestContext) {
+    ctx.res.send('Hello World!');
   }
 }
 ```
@@ -48,21 +48,21 @@ export class HelloWorldController {
 What we see here:
 
 1. The route is created using the `route` decorator, which is placed in front of the class method, and it does not matter what the name of this method is.
-2. In the class method, the parameter `res` is declared with the data type `Res`. So we ask Ditsmod to create an instance of `Res` and pass it to the appropriate variable. By the way, `res` is short for the word _response_.
+2. In the class method, the parameter `ctx` is declared with the data type `RequestContext`. So we ask Ditsmod to create an instance of `RequestContext` and pass it to the appropriate variable. By the way, `ctx` is short for the word _response_, and `res` - it's _response_.
 3. Text responses to HTTP requests are sent via `res.send()`.
 
-Although in the previous example the instance of `Res` was requested in `method1()`, we can similarly use the constructor:
+Although in the previous example the instance of `RequestContext` was requested in `method1()`, we can similarly use the constructor:
 
 ```ts
-import { controller, route, Res } from '@ditsmod/core';
+import { controller, route, RequestContext } from '@ditsmod/core';
 
 @controller()
 export class HelloWorldController {
-  constructor(private res: Res) {}
+  constructor(private ctx: RequestContext) {}
 
   @route('GET', 'hello')
   method1() {
-    this.res.send('Hello World!');
+    this.ctx.res.send('Hello World!');
   }
 }
 ```
@@ -70,26 +70,26 @@ export class HelloWorldController {
 Of course, other instances of classes can be requested in the parameters, and the order of the parameters is not important.
 
 :::tip Use the access modifier
-The access modifier in the constructor can be any (private, protected or public), but without a modifier - `res' will be just a simple parameter with visibility only in the constructor.
+The access modifier in the constructor can be any (private, protected or public), but without a modifier - `ctx` will be just a simple parameter with visibility only in the constructor.
 :::
 
-To use `pathParams`, `queryParams` or `body`, you need to request an instance of the `Req` class:
+To use `pathParams`, `queryParams` or `body`, you should be used `ctx.req`:
 
 ```ts
-import { controller, Req, Res, route } from '@ditsmod/core';
+import { controller, RequestContext, route } from '@ditsmod/core';
 
 @controller()
 export class SomeController {
   @route('GET', 'hello/:userName')
-  getHello(req: Req, res: Res) {
-    const { pathParams } = req;
-    res.send(`Hello, ${pathParams.userName}`);
+  getHello(ctx: RequestContext) {
+    const { pathParams } = ctx.req;
+    ctx.res.send(`Hello, ${pathParams.userName}`);
   }
 
   @route('POST', 'some-url')
-  postSomeUrl(req: Req, res: Res) {
-    const { body, queryParams } = req;
-    res.sendJson(body, queryParams);
+  postSomeUrl(ctx: RequestContext) {
+    const { body, queryParams } = ctx.req;
+    ctx.res.sendJson(body, queryParams);
   }
 }
 ```
@@ -98,7 +98,7 @@ By the way, `req` is short for _request_.
 
 As you can see, to send responses with objects, you need to use the `res.sendJson()` method instead of `res.send()` (because it only sends text).
 
-Not shown in this example, but remember that the native Node.js request object is in `req.nodeReq`.
+Not shown in this example, but remember that the native Node.js request object is in `ctx.nodeReq`.
 
 ## Binding of the controller to the module
 

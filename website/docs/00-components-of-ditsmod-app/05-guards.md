@@ -46,15 +46,15 @@ export class AuthGuard implements CanActivate {
 Ґарди передаються в масиві у третьому параметрі декоратора `route`:
 
 ```ts
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, RequestContext, route } from '@ditsmod/core';
 
 import { AuthGuard } from './auth.guard';
 
 @controller()
 export class SomeController {
   @route('GET', 'some-url', [AuthGuard])
-  tellHello(res: Res) {
-    res.send('Hello admin!');
+  tellHello(ctx: RequestContext) {
+    ctx.res.send('Hello admin!');
   }
 }
 ```
@@ -66,7 +66,7 @@ export class SomeController {
 Давайте розглянемо такий приклад:
 
 ```ts
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, RequestContext, route } from '@ditsmod/core';
 
 import { PermissionsGuard } from './permissions.guard';
 import { Permission } from './permission';
@@ -74,8 +74,8 @@ import { Permission } from './permission';
 @controller()
 export class SomeController {
   @route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
-  tellHello(res: Res) {
-    res.send('Hello admin!');
+  tellHello(ctx: RequestContext) {
+    ctx.res.send('Hello admin!');
   }
 }
 ```

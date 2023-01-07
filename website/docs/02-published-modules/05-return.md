@@ -56,16 +56,16 @@ export class AppModule {}
 По дефолту, інтерсептор в модулі `@ditsmod/return` автоматично підставляє 201-ий статус для запитів з HTTP-методом `POST`, 204-ий - для `OPTIONS`, і 200-ий статус - для решти. Якщо вам потрібно змінити цю поведінку, варто використовувати стандартний механізм (без використання оператора `return`):
 
 ```ts
-import { controller, Res, route, Status } from '@ditsmod/core';
+import { controller, RequestContext, route, Status } from '@ditsmod/core';
 
 @controller()
 export class UsersController {
-  constructor(private res: Res) {}
+  constructor(private ctx: RequestContext) {}
 
   @route('GET')
   getUsersList() {
     // ...
-    this.res.sendJson({ error: 'Page not found' }, Status.NOT_FOUND);
+    this.ctx.res.sendJson({ error: 'Page not found' }, Status.NOT_FOUND);
   }
 }
 ```

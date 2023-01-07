@@ -84,18 +84,16 @@ export class AppModule {}
 
 ## Використання
 
-Результат роботи інтерсептора можна отримати у `this.req.body`:
+Результат роботи інтерсептора можна отримати у `ctx.req.body`:
 
 ```ts
-import { controller, Req, Res, route } from '@ditsmod/core';
+import { controller, RequestContext, route } from '@ditsmod/core';
 
 @controller()
 export class SomeController {
-  constructor(private req: Req, private res: Res) {}
-
   @route('POST')
-  ok() {
-    this.res.sendJson(this.req.body);
+  ok(ctx: RequestContext) {
+    ctx.res.sendJson(this.ctx.req.body);
   }
 }
 ```

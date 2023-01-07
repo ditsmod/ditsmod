@@ -56,16 +56,16 @@ As you can see, in addition to importing, the `ReturnModule` is also exported in
 By default, the interceptor in the `@ditsmod/return` module automatically substitutes the 201 status for requests with the `POST` HTTP method, the 204 - for `OPTIONS`, and the 200 status - for the rest. If you need to change this behavior, you should use the standard mechanism (without using the `return` statement):
 
 ```ts
-import { controller, Res, route, Status } from '@ditsmod/core';
+import { controller, RequestContext, route, Status } from '@ditsmod/core';
 
 @controller()
 export class UsersController {
-  constructor(private res: Res) {}
+  constructor(private ctx: RequestContext) {}
 
   @route('GET')
   getUsersList() {
     // ...
-    this.res.sendJson({ error: 'Page not found' }, Status.NOT_FOUND);
+    this.ctx.res.sendJson({ error: 'Page not found' }, Status.NOT_FOUND);
   }
 }
 ```

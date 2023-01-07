@@ -87,15 +87,13 @@ export class AppModule {}
 The result of the interceptor can be obtained in `this.req.body`:
 
 ```ts
-import { controller, Req, Res, route } from '@ditsmod/core';
+import { controller, RequestContext, route } from '@ditsmod/core';
 
 @controller()
 export class SomeController {
-  constructor(private req: Req, private res: Res) {}
-
   @route('POST')
-  ok() {
-    this.res.sendJson(this.req.body);
+  ok(ctx: RequestContext) {
+    ctx.res.sendJson(this.ctx.req.body);
   }
 }
 ```

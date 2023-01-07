@@ -46,15 +46,15 @@ there will be no from the controller;
 Guards are passed in an array in the third parameter of the `route` decorator:
 
 ```ts
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, RequestContext, route } from '@ditsmod/core';
 
 import { AuthGuard } from './auth.guard';
 
 @controller()
 export class SomeController {
   @route('GET', 'some-url', [AuthGuard])
-  tellHello(res: Res) {
-    res.send('Hello admin!');
+  tellHello(ctx: RequestContext) {
+    ctx.res.send('Hello admin!');
   }
 }
 ```
@@ -66,7 +66,7 @@ In the `canActivate()` method, the guard has one parameter. Arguments for this p
 Let's consider such an example:
 
 ```ts
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, RequestContext, route } from '@ditsmod/core';
 
 import { PermissionsGuard } from './permissions.guard';
 import { Permission } from './permission';
@@ -74,8 +74,8 @@ import { Permission } from './permission';
 @controller()
 export class SomeController {
   @route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
-  tellHello(res: Res) {
-    res.send('Hello admin!');
+  tellHello(ctx: RequestContext) {
+    ctx.res.send('Hello admin!');
   }
 }
 ```
