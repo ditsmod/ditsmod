@@ -24,4 +24,4 @@ export const I18N_EXTENSIONS = new InjectionToken<Extension<void>>('I18N_EXTENSI
 /**
  * Current and imported dictionaries for internalization.
  */
-export const I18N_TRANSLATIONS = new InjectionToken<DictGroup[][]>('I18N_TRANSLATIONS');
+export const I18N_TRANSLATIONS = new InjectionToken<Translations[]>('I18N_TRANSLATIONS');
