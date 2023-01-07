@@ -33,7 +33,7 @@ export class PerAppService {
     if (providers) {
       this.providers = providers;
     }
-    this.#injector = ReflectiveInjector.resolveAndCreate(this.providers);
+    this.#injector = ReflectiveInjector.resolveAndCreate(this.providers, 'injectorPerApp');
     return this.#injector;
   }
 

@@ -28,7 +28,7 @@ describe('ErrorHandler', () => {
       setHeader(...args: any[]) {},
     },
     sendJson(...args: any[]) {},
-  } as Res;
+  } as unknown as Res;
 
   const logger = {
     log(...args: any[]) {},

@@ -1,4 +1,4 @@
-import { FactoryProvider, injectable } from '../di';
+import { injectable } from '../di';
 
 import { RootMetadata } from '../models/root-metadata';
 import { ControllerMetadata2 } from '../types/controller-metadata';
@@ -48,23 +48,22 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           const ctrlDecorator = container.find(isController);
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
-          const controllerFactory: FactoryProvider = { useFactory: [controller, controller.prototype[methodName]] };
-          providersPerReq.push(...(ctrlDecorator?.value.providersPerReq || []), controllerFactory);
+          const resolvedFactory = RouteMeta.getResolvedFactory(controller, methodName);
+          providersPerReq.push(...(ctrlDecorator?.value.providersPerReq || []));
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const { path: controllerPath, httpMethod } = route;
           const path = this.getPath(prefix, controllerPath);
           const routeMeta: RouteMeta = {
             decoratorMetadata,
-            controller,
-            methodName,
             guards,
+            resolvedFactory,
           };
           controllersMetadata2.push({
             httpMethod,
             path,
             providersPerRou,
             providersPerReq,
-            routeMeta
+            routeMeta,
           });
         }
       }

@@ -50,21 +50,17 @@ export class PreRouterExtension implements Extension<void> {
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       const { moduleName, aControllersMetadata2, providersPerMod } = metadataPerMod2;
       const mod = getModule(metadataPerMod2.module);
-      const injectorPerMod = injectorPerApp.resolveAndCreateChild([mod, ...providersPerMod]);
+      const injectorPerMod = injectorPerApp.resolveAndCreateChild([mod, ...providersPerMod], 'injectorPerMod');
       injectorPerMod.get(mod); // Call module constructor.
 
       aControllersMetadata2.forEach(({ httpMethod, path, providersPerRou, providersPerReq, routeMeta }) => {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
-        const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
+        const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'injectorPerRou');
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
         const resolvedPerReq = ReflectiveInjector.resolve(mergedPerReq);
         // this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
 
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
-          const inj = injectorPerRou.createChildFromResolved(resolvedPerReq);
-
-          // First HTTP handler in the chain of HTTP interceptors.
-          const chain = inj.get(HttpHandler) as HttpHandler;
           const req = new Req(nodeReq);
           const res = new Res(nodeRes);
           const ctx: RequestContext = {
@@ -74,8 +70,14 @@ export class PreRouterExtension implements Extension<void> {
             queryString,
             aPathParams,
             req,
-            res
+            res,
           };
+          const map = ReflectiveInjector.resolve([{ token: RequestContext, useValue: ctx }]);
+          map.forEach((value, token) => resolvedPerReq.set(token, value));
+          const inj = injectorPerRou.createChildFromResolved(resolvedPerReq, 'injectorPerReq');
+
+          // First HTTP handler in the chain of HTTP interceptors.
+          const chain = inj.get(HttpHandler) as HttpHandler;
           await chain.handle(ctx);
         }) as RouteHandler;
 
@@ -98,7 +100,7 @@ export class PreRouterExtension implements Extension<void> {
     routeMeta: RouteMeta
   ) {
     const inj = injectorPerRou.createChildFromResolved(resolvedPerReq);
-    if (!routeMeta?.controller) {
+    if (!routeMeta?.resolvedFactory) {
       const msg =
         `Setting routes in ${moduleName} failed: can't instantiate RouteMeta with ` +
         `${httpMethod} "/${path}" in sandbox mode.`;
@@ -109,7 +111,7 @@ export class PreRouterExtension implements Extension<void> {
     inj.checkDeps(SystemLogMediator);
     routeMeta.guards.forEach((item) => inj.checkDeps(item.guard));
     inj.checkDeps(HttpBackend);
-    inj.checkDeps(routeMeta.controller.prototype[routeMeta.methodName]);
+    inj.prepareResolved(routeMeta.resolvedFactory);
     inj.checkDeps(HTTP_INTERCEPTORS, fromSelf, []);
   }
 

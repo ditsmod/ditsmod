@@ -24,7 +24,7 @@ export class DefaultControllerErrorHandler implements ControllerErrorHandler {
   }
 
   protected sendError(ctx: RequestContext, error: string, status?: Status) {
-    if (!ctx.res.nodeRes.headersSent) {
+    if (!ctx.nodeRes.headersSent) {
       this.addRequestIdToHeader(ctx);
       ctx.res.sendJson({ error }, status);
     }
@@ -32,6 +32,6 @@ export class DefaultControllerErrorHandler implements ControllerErrorHandler {
 
   protected addRequestIdToHeader(ctx: RequestContext) {
     const header = 'x-requestId';
-    ctx.res.nodeRes.setHeader(header, ctx.req.requestId);
+    ctx.nodeRes.setHeader(header, ctx.req.requestId);
   }
 }

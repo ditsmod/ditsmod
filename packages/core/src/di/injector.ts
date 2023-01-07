@@ -90,7 +90,10 @@ export class ReflectiveInjector implements Injector {
   private countOfProviders = 0;
   private constructionCounter = 0;
 
-  constructor(map: Map<any, ResolvedProvider>, parent?: Injector | ReflectiveInjector) {
+  /**
+   * @param injectorName Injector name. Useful for debugging.
+   */
+  constructor(map: Map<any, ResolvedProvider>, parent?: Injector | ReflectiveInjector, public readonly injectorName?: string) {
     this.#map = new Map(map);
     this.#parent = (parent as ReflectiveInjector) || null;
     this.countOfProviders = map.size;
@@ -156,10 +159,12 @@ expect(injector.get(Car) instanceof Car).toBe(true);
    * This function is slower than the corresponding `fromResolvedProviders`
    * because it needs to resolve the passed-in providers first.
    * See `ReflectiveInjector.resolve()` and `ReflectiveInjector.fromResolvedProviders()`.
+   * 
+   * @param injectorName Injector name. Useful for debugging.
    */
-  static resolveAndCreate(providers: Provider[]): ReflectiveInjector {
+  static resolveAndCreate(providers: Provider[], injectorName?: string): ReflectiveInjector {
     const resolvedProviders = this.resolve(providers);
-    return this.fromResolvedProviders(resolvedProviders);
+    return this.fromResolvedProviders(resolvedProviders, injectorName);
   }
 
   /**
@@ -183,9 +188,11 @@ const providers = ReflectiveInjector.resolve([Car, Engine]);
 const injector = ReflectiveInjector.fromResolvedProviders(providers);
 expect(injector.get(Car) instanceof Car).toBe(true);
 ```
+  *
+  * @param injectorName Injector name. Useful for debugging.
    */
-  static fromResolvedProviders(providers: Map<any, ResolvedProvider>): ReflectiveInjector {
-    return new ReflectiveInjector(providers);
+  static fromResolvedProviders(providers: Map<any, ResolvedProvider>, injectorName?: string): ReflectiveInjector {
+    return new ReflectiveInjector(providers, undefined, injectorName);
   }
 
   private static normalizeProviders(providers: Provider[], normProviders: NormalizedProvider[]): NormalizedProvider[] {
@@ -395,10 +402,12 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    * because it needs to resolve the passed-in providers first.
    *
    * See `ReflectiveInjector.resolve()` and `ReflectiveInjector.createChildFromResolved()`.
+   * 
+   * @param injectorName Injector name. Useful for debugging.
    */
-  resolveAndCreateChild(providers: Provider[]): ReflectiveInjector {
+  resolveAndCreateChild(providers: Provider[], injectorName?: string): ReflectiveInjector {
     const resolvedReflectiveProviders = ReflectiveInjector.resolve(providers);
-    return this.createChildFromResolved(resolvedReflectiveProviders);
+    return this.createChildFromResolved(resolvedReflectiveProviders, injectorName);
   }
 
   /**
@@ -423,9 +432,10 @@ expect(child.get(ChildProvider) instanceof ChildProvider).toBe(true);
 expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
 ```
    *
+   * @param injectorName Injector name. Useful for debugging.
    */
-  createChildFromResolved(providers: Map<any, ResolvedProvider>): ReflectiveInjector {
-    return new ReflectiveInjector(providers, this);
+  createChildFromResolved(providers: Map<any, ResolvedProvider>, injectorName?: string): ReflectiveInjector {
+    return new ReflectiveInjector(providers, this, injectorName);
   }
 
   /**

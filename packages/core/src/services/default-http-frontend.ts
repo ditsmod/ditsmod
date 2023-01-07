@@ -1,6 +1,6 @@
 import { parse } from 'querystring';
 
-import { injectable, Injector } from '../di';
+import { fromSelf, injectable, Injector } from '../di';
 import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
 import { AnyObj, CanActivate } from '../types/mix';
@@ -11,7 +11,7 @@ import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 @injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
-  constructor(protected injector: Injector) {}
+  constructor(protected injector: Injector, @fromSelf() private ctx: RequestContext) {}
 
   async intercept(ctx: RequestContext, next: HttpHandler) {
     try {

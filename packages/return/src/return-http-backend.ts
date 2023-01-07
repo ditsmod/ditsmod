@@ -1,17 +1,17 @@
-import { injectable, Injector, RequestContext } from '@ditsmod/core';
+import { fromSelf, injectable, Injector, RequestContext } from '@ditsmod/core';
 import { HttpBackend, DefaultHttpBackend, Status, HttpMethod } from '@ditsmod/core';
 
 @injectable()
 export class ReturnHttpBackend extends DefaultHttpBackend implements HttpBackend {
-  constructor(protected override injector: Injector) {
-    super(injector);
+  constructor(protected override injector: Injector, @fromSelf() protected override ctx: RequestContext) {
+    super(injector, ctx);
   }
 
-  override async handle(ctx: RequestContext) {
-    const value = await super.handle(ctx); // Controller's route returned value.
-    let { statusCode } = ctx.nodeRes;
+  override async handle() {
+    const value = await super.handle(); // Controller's route returned value.
+    let { statusCode } = this.ctx.nodeRes;
     if (!statusCode) {
-      const httpMethod = ctx.nodeReq.method as HttpMethod;
+      const httpMethod = this.ctx.nodeReq.method as HttpMethod;
       if (httpMethod == 'GET') {
         statusCode = Status.OK;
       } else if (httpMethod == 'POST') {
@@ -23,10 +23,10 @@ export class ReturnHttpBackend extends DefaultHttpBackend implements HttpBackend
       }
     }
 
-    if (typeof value == 'object' || ctx.nodeRes.getHeader('content-type') == 'application/json') {
-      ctx.res.sendJson(value, statusCode);
+    if (typeof value == 'object' || this.ctx.nodeRes.getHeader('content-type') == 'application/json') {
+      this.ctx.res.sendJson(value, statusCode);
     } else {
-      ctx.res.send(value, statusCode);
+      this.ctx.res.send(value, statusCode);
     }
   }
 }
