@@ -1,5 +1,12 @@
+<a name="core-2.33.0"></a>
+# [core-2.33.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.33.0) (2023-01-07)
+
+### BREAKING CHANGES
+
+- Introduced new type `RequestContext` for DI. It contains a group of contextual metadata such as: `RouteMeta`, `NodeReq`, `NodeRes`, `Req`, `Res`.
+
 <a name="core-2.32.3"></a>
-# [core-2.32.3](https://github.com/ditsmod/ditsmod/releases/tag/core-2.32.3) (2023-01-04)
+## [core-2.32.3](https://github.com/ditsmod/ditsmod/releases/tag/core-2.32.3) (2023-01-04)
 
 ### Bug fixes
 
