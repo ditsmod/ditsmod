@@ -1,4 +1,4 @@
-import { fromSelf, injectable, Injector, ResolvedProvider } from '../di';
+import { fromSelf, injectable, Injector, isNormalizedProvider, ResolvedProvider } from '../di';
 
 import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '../constans';
 import { HttpBackend, HttpFrontend, HttpHandler } from '../types/http-interceptor';
@@ -13,6 +13,7 @@ import { PerAppService } from '../services/per-app.service';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { Req } from '../services/request';
 import { Res } from '../services/response';
+import { getLastProviders } from '../utils/get-last-providers';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -59,6 +60,10 @@ export class PreRouterExtension implements Extension<void> {
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
         const resolvedPerReq = Injector.resolve(mergedPerReq);
         // this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
+        const lastHttpHandler = getLastProviders(mergedPerReq).find((p) => {
+          return isNormalizedProvider(p) && p.token === HttpHandler;
+        })!;
+        const resolvedHttpHandler = Injector.resolve([lastHttpHandler]).get(HttpHandler)!;
 
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
           const req = new Req(nodeReq);
@@ -77,7 +82,7 @@ export class PreRouterExtension implements Extension<void> {
           const inj = injectorPerRou.createChildFromResolved(resolvedPerReq, 'injectorPerReq');
 
           // First HTTP handler in the chain of HTTP interceptors.
-          const chain = inj.get(HttpHandler) as HttpHandler;
+          const chain = inj.instantiateResolved(resolvedHttpHandler) as HttpHandler;
           await chain.handle();
         }) as RouteHandler;
 

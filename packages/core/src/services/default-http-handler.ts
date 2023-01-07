@@ -7,7 +7,6 @@
  */
 
 import { fromSelf, injectable, Injector } from '../di';
-import { RequestContext } from '../types/route-data';
 import { HTTP_INTERCEPTORS } from '../constans';
 import { HttpFrontend, HttpBackend, HttpHandler, HttpInterceptor } from '../types/http-interceptor';
 
