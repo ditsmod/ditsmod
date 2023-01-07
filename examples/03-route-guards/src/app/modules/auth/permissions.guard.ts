@@ -5,9 +5,9 @@ import { Permission } from './types';
 
 @injectable()
 export class PermissionsGuard implements CanActivate {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private ctx: RequestContext) {}
 
-  async canActivate(ctx: RequestContext, params?: Permission[]) {
+  async canActivate(params?: Permission[]) {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {

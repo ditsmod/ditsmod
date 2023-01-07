@@ -53,7 +53,7 @@ export interface AnyObj {
 }
 
 export interface CanActivate {
-  canActivate(ctx: RequestContext, params?: any[]): boolean | number | Promise<boolean | number>;
+  canActivate(params?: any[]): boolean | number | Promise<boolean | number>;
 }
 
 export interface DecoratorMetadata<MV extends AnyObj = AnyObj> {

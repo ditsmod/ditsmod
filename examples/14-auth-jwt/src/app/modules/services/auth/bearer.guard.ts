@@ -3,10 +3,10 @@ import { JwtService, VerifyErrors } from '@ditsmod/jwt';
 
 @injectable()
 export class BearerGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(private jwtService: JwtService, private ctx: RequestContext) {}
 
-  async canActivate(ctx: RequestContext) {
-    const authValue = ctx.nodeReq.headers.authorization?.split(' ');
+  async canActivate() {
+    const authValue = this.ctx.nodeReq.headers.authorization?.split(' ');
     if (authValue?.[0] != 'Bearer') {
       return false;
     }
@@ -18,7 +18,7 @@ export class BearerGuard implements CanActivate {
       .catch((err: VerifyErrors) => false as const); // Here `as const` to narrow down returned type.
 
     if (payload) {
-      ctx.req.jwtPayload = payload;
+      this.ctx.req.jwtPayload = payload;
       return true;
     } else {
       return false;

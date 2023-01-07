@@ -39,7 +39,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
     });
 
     for (const item of preparedGuards) {
-      const canActivate = await item.guard.canActivate(this.ctx, item.params);
+      const canActivate = await item.guard.canActivate(item.params);
       if (canActivate !== true) {
         const status = typeof canActivate == 'number' ? canActivate : undefined;
         this.canNotActivateRoute(this.ctx.nodeReq, this.ctx.nodeRes, status);

@@ -17,14 +17,15 @@ import { oasGuard } from '@ditsmod/openapi';
   },
 })
 export class BasicGuard implements CanActivate {
-  canActivate(ctx: RequestContext) {
-    const { authorization } = ctx.nodeReq.headers;
+  constructor(private ctx: RequestContext) {}
+  canActivate() {
+    const { authorization } = this.ctx.nodeReq.headers;
     if (!authorization) {
-      return this.unauth(ctx);
+      return this.unauth(this.ctx);
     }
     const [, base64] = authorization.split(' ');
     if (base64 != 'ZGVtbzpwQDU1dzByZA==') {
-      return this.unauth(ctx);
+      return this.unauth(this.ctx);
     }
 
     return true;
