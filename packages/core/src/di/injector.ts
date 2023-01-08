@@ -23,39 +23,6 @@ import {
 } from './utils';
 
 const THROW_IF_NOT_FOUND = Symbol();
-type Func = (...args: any[]) => any;
-
-interface BaseConfig {
-  parentTokens: any[];
-  injector?: Injector | null;
-  token?: any;
-  visibility?: Visibility;
-  ignoreDeps?: any[];
-  dependencies?: Dependency[];
-  provider?: ResolvedProvider;
-  onlyFromSelf?: boolean;
-  notFoundValue?: any;
-  isOptional?: boolean;
-}
-
-interface Config4 extends BaseConfig {
-  provider: ResolvedProvider;
-}
-
-interface Config3 extends BaseConfig {
-  token: any;
-  dependencies: Dependency[];
-}
-
-interface Config2 extends BaseConfig {
-  token: any;
-  visibility: Visibility;
-}
-
-interface Config1 extends BaseConfig {
-  injector: Injector | null;
-  token: any;
-}
 
 /**
  * A ReflectiveDependency injection container used for instantiating objects and resolving
@@ -666,7 +633,13 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
       const value: ResolvedProvider | undefined = injector.#map.get(token);
       if (!value && !injector.#map.has(token)) {
         if (!onlyFromSelf && injector.#parent) {
-          return injector.#parent.runDryOrThrow({ injector: injector.#parent, token, parentTokens, ignoreDeps, isOptional });
+          return injector.#parent.runDryOrThrow({
+            injector: injector.#parent,
+            token,
+            parentTokens,
+            ignoreDeps,
+            isOptional,
+          });
         }
       } else if (value?.[RESOLVED_PROVIDER]) {
         injector.checkMultiOrRegularDeps({ provider: value, parentTokens, ignoreDeps });
@@ -679,4 +652,40 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
       throw noProviderError([token, ...parentTokens]);
     }
   }
+}
+
+// Types of methods parameters.
+
+type Func = (...args: any[]) => any;
+
+interface BaseConfig {
+  parentTokens: any[];
+  injector?: Injector | null;
+  token?: any;
+  visibility?: Visibility;
+  ignoreDeps?: any[];
+  dependencies?: Dependency[];
+  provider?: ResolvedProvider;
+  onlyFromSelf?: boolean;
+  notFoundValue?: any;
+  isOptional?: boolean;
+}
+
+interface Config4 extends BaseConfig {
+  provider: ResolvedProvider;
+}
+
+interface Config3 extends BaseConfig {
+  token: any;
+  dependencies: Dependency[];
+}
+
+interface Config2 extends BaseConfig {
+  token: any;
+  visibility: Visibility;
+}
+
+interface Config1 extends BaseConfig {
+  injector: Injector | null;
+  token: any;
 }
