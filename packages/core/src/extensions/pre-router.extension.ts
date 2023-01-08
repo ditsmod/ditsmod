@@ -63,7 +63,8 @@ export class PreRouterExtension implements Extension<void> {
         const lastHttpHandler = getLastProviders(mergedPerReq).find((p) => {
           return isNormalizedProvider(p) && p.token === HttpHandler;
         })!;
-        const resolvedHttpHandler = Injector.resolve([lastHttpHandler]).get(HttpHandler)!;
+        const resolvedHttpHandler = Injector.resolve([lastHttpHandler])[0];
+        const Storage = Injector.prepareStorage(resolvedPerReq);
 
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
           const req = new Req(nodeReq);
@@ -77,9 +78,9 @@ export class PreRouterExtension implements Extension<void> {
             req,
             res,
           };
-          const map = Injector.resolve([{ token: RequestContext, useValue: ctx }]);
-          map.forEach((value, token) => resolvedPerReq.set(token, value));
-          const inj = injectorPerRou.createChildFromResolved(resolvedPerReq, 'injectorPerReq');
+          const resolvedCtx = Injector.resolve([{ token: RequestContext, useValue: ctx }]);
+          const CtxStorage = Injector.prepareStorage(resolvedCtx, Storage);
+          const inj = injectorPerRou.createChildFromStorage(CtxStorage, 'injectorPerReq');
 
           // First HTTP handler in the chain of HTTP interceptors.
           const chain = inj.instantiateResolved(resolvedHttpHandler) as HttpHandler;
@@ -101,7 +102,7 @@ export class PreRouterExtension implements Extension<void> {
     httpMethod: HttpMethod,
     path: string,
     injectorPerRou: Injector,
-    resolvedPerReq: Map<any, ResolvedProvider>,
+    resolvedPerReq: ResolvedProvider[],
     routeMeta: RouteMeta
   ) {
     const inj = injectorPerRou.createChildFromResolved(resolvedPerReq);

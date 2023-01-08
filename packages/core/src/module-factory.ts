@@ -11,7 +11,6 @@ import { ImportObj } from './types/metadata-per-mod';
 import { ModuleExtract } from './models/module-extract';
 import { defaultProvidersPerMod } from './constans';
 import { defaultProvidersPerReq } from './services/default-providers-per-req';
-import { deepFreeze } from './utils/deep-freeze';
 import { getCollisions } from './utils/get-collisions';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports';
 import { getLastProviders } from './utils/get-last-providers';
@@ -114,7 +113,7 @@ export class ModuleFactory {
       prefixPerMod,
       guardsPerMod: this.guardsPerMod,
       meta: this.meta,
-      aControllersMetadata1: deepFreeze(aControllerMetadata1),
+      aControllersMetadata1: aControllerMetadata1,
       importedTokensMap: {
         perMod: new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]),
         perRou: new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]),

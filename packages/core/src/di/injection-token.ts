@@ -25,7 +25,7 @@ const url = injector.get(BASE_URL);
 expect(url).toBe('http://localhost');
 ```
  */
-export class InjectionToken<T> {
+export class InjectionToken<T = any> {
   constructor(protected desc: string) {}
 
   toString(): string {

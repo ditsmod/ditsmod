@@ -15,7 +15,7 @@ export class RouteMeta {
    */
   static getResolvedFactory(controller: Class, propertyKey: string | symbol) {
     const factoryProvider: FactoryProvider = { useFactory: [controller, controller.prototype[propertyKey]] };
-    return Injector.resolve([factoryProvider]).get(controller.prototype[propertyKey])!;
+    return Injector.resolve([factoryProvider])[0];
   }
   /**
    * This property is used to speed up the search for DI.

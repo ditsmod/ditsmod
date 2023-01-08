@@ -1,4 +1,15 @@
-import { Visibility, ParamsMeta, Provider, NormalizedProvider, DiError, RESOLVED_PROVIDER } from './types-and-models';
+import {
+  Visibility,
+  ParamsMeta,
+  Provider,
+  NormalizedProvider,
+  DiError,
+  DiToken,
+  KEY,
+  getNewStateStorage,
+  IStateStorage,
+  DependecyMeta,
+} from './types-and-models';
 import { Dependency, ResolvedFactory, ResolvedProvider, Class, DecoratorAndValue } from './types-and-models';
 import { fromSelf, skipSelf, inject, optional } from './decorators';
 import {
@@ -59,17 +70,15 @@ expect(car.engine instanceof Engine).toBe(true);
  */
 export class Injector {
   #parent: Injector | null;
-  #map: Map<any, ResolvedProvider>;
-  private countOfProviders = 0;
+  #storage: IStateStorage;
   private constructionCounter = 0;
 
   /**
    * @param injectorName Injector name. Useful for debugging.
    */
-  constructor(map: Map<any, ResolvedProvider>, parent?: Injector | Injector, public readonly injectorName?: string) {
-    this.#map = new Map(map);
+  constructor(Storage: Class<IStateStorage>, parent?: Injector, public readonly injectorName?: string) {
+    this.#storage = new Storage();
     this.#parent = parent || null;
-    this.countOfProviders = map.size;
   }
 
   /**
@@ -99,13 +108,29 @@ console.log(providers[0].resolvedFactories[0].dependencies);
    *
    * See `fromResolvedProviders` for more info.
    */
-  static resolve(providers: Provider[]): Map<any, ResolvedProvider> {
+  static resolve(providers: Provider[]): ResolvedProvider[] {
     const normalized = this.normalizeProviders(providers, []);
     const aResolvedProviders: ResolvedProvider[] = [];
     normalized.forEach((normProvider) => {
       aResolvedProviders.push(...this.resolveProvider(normProvider));
     });
-    return this.mergeResolvedProviders(aResolvedProviders, new Map());
+    const map = this.mergeResolvedProviders(aResolvedProviders, new Map());
+    return Array.from(map.values());
+  }
+
+  /**
+   * @param Storage If provided, `providers` extends the `Storage`.
+   */
+  static prepareStorage(providers: ResolvedProvider[], Storage?: Class<IStateStorage>): Class<IStateStorage> {
+    if (!Storage) {
+      Storage = getNewStateStorage();
+    }
+    providers.forEach((p) => {
+      const metaId = p.token[KEY] = p.token.hasOwnProperty(KEY) ? p.token[KEY] : Symbol();
+      Storage!.prototype[metaId] = { resolvedProvider: p } as DependecyMeta;
+    });
+    Storage.prototype.countOfProviders = (Storage.prototype.countOfProviders || 0) + providers.length;
+    return Storage;
   }
 
   /**
@@ -164,8 +189,8 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   *
   * @param injectorName Injector name. Useful for debugging.
    */
-  static fromResolvedProviders(providers: Map<any, ResolvedProvider>, injectorName?: string): Injector {
-    return new Injector(providers, undefined, injectorName);
+  static fromResolvedProviders(providers: ResolvedProvider[], injectorName?: string): Injector {
+    return new Injector(this.prepareStorage(providers), undefined, injectorName);
   }
 
   private static normalizeProviders(providers: Provider[], normProviders: NormalizedProvider[]): NormalizedProvider[] {
@@ -407,8 +432,12 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    *
    * @param injectorName Injector name. Useful for debugging.
    */
-  createChildFromResolved(providers: Map<any, ResolvedProvider>, injectorName?: string): Injector {
-    return new Injector(providers, this, injectorName);
+  createChildFromResolved(providers: ResolvedProvider[], injectorName?: string): Injector {
+    return new Injector(Injector.prepareStorage(providers), this, injectorName);
+  }
+
+  createChildFromStorage(Storage: Class<IStateStorage>, injectorName?: string): Injector {
+    return new Injector(Storage, this, injectorName);
   }
 
   /**
@@ -550,33 +579,37 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   }
 
   private getOrThrow(
-    inj: Injector | null,
-    token: any,
+    injector: Injector | null,
+    diToken: DiToken,
     parentTokens: any[],
     notFoundValue: any,
     onlyFromSelf?: boolean
   ): any {
-    if (inj) {
-      const value: ResolvedProvider | undefined = inj.#map.get(token);
-      if (!value && !inj.#map.has(token)) {
-        if (!onlyFromSelf && inj.#parent) {
-          return inj.#parent.getOrThrow(inj.#parent, token, parentTokens, notFoundValue);
+    if (injector) {
+      const metaId = diToken[KEY];
+      if (metaId) {
+        const meta = injector.#storage[metaId];
+        if (!meta) {
+          if (!onlyFromSelf && injector.#parent) {
+            return injector.#parent.getOrThrow(injector.#parent, diToken, parentTokens, notFoundValue);
+          }
+        } else if (!meta.done) {
+          if (injector.constructionCounter++ > injector.#storage.countOfProviders) {
+            throw cyclicDependencyError([meta.resolvedProvider.token, ...parentTokens]);
+          }
+          const newValue = injector.instantiateResolved(meta.resolvedProvider, parentTokens);
+          meta.value = newValue;
+          meta.done = true;
+          return newValue;
+        } else {
+          return meta.value;
         }
-      } else if (value?.[RESOLVED_PROVIDER]) {
-        if (inj.constructionCounter++ > inj.countOfProviders) {
-          throw cyclicDependencyError([value.token, ...parentTokens]);
-        }
-        const newValue = inj.instantiateResolved(value, parentTokens);
-        inj.#map.set(token, newValue);
-        return newValue;
-      } else {
-        return value as any;
       }
     }
     if (notFoundValue !== THROW_IF_NOT_FOUND) {
       return notFoundValue;
     } else {
-      throw noProviderError([token, ...parentTokens]);
+      throw noProviderError([diToken, ...parentTokens]);
     }
   }
 
@@ -622,34 +655,37 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
 
     const injector = visibility === skipSelf ? this.#parent : this;
     const onlyFromSelf = visibility === fromSelf;
-    return this.runDryOrThrow({ injector, token, parentTokens, ignoreDeps, onlyFromSelf, isOptional });
+    return this.runDryOrThrow({ injector, diToken: token, parentTokens, ignoreDeps, onlyFromSelf, isOptional });
   }
 
-  private runDryOrThrow({ injector, token, parentTokens, ignoreDeps, onlyFromSelf, isOptional }: Config1): any {
+  private runDryOrThrow({ injector, diToken, parentTokens, ignoreDeps, onlyFromSelf, isOptional }: Config1): any {
     if (injector) {
-      if (ignoreDeps?.includes(token)) {
+      if (ignoreDeps?.includes(diToken)) {
         return;
       }
-      const value: ResolvedProvider | undefined = injector.#map.get(token);
-      if (!value && !injector.#map.has(token)) {
-        if (!onlyFromSelf && injector.#parent) {
-          return injector.#parent.runDryOrThrow({
-            injector: injector.#parent,
-            token,
-            parentTokens,
-            ignoreDeps,
-            isOptional,
-          });
+      const metaId = diToken[KEY];
+      if (metaId) {
+        const meta = injector.#storage[metaId];
+        if (!meta) {
+          if (!onlyFromSelf && injector.#parent) {
+            return injector.#parent.runDryOrThrow({
+              injector: injector.#parent,
+              diToken,
+              parentTokens,
+              ignoreDeps,
+              isOptional,
+            });
+          }
+        } else if (!meta.done) {
+          injector.checkMultiOrRegularDeps({ provider: meta.resolvedProvider, parentTokens, ignoreDeps });
+          return;
+        } else {
+          return;
         }
-      } else if (value?.[RESOLVED_PROVIDER]) {
-        injector.checkMultiOrRegularDeps({ provider: value, parentTokens, ignoreDeps });
-        return;
-      } else {
-        return;
       }
     }
     if (!isOptional) {
-      throw noProviderError([token, ...parentTokens]);
+      throw noProviderError([diToken, ...parentTokens]);
     }
   }
 }
@@ -662,6 +698,7 @@ interface BaseConfig {
   parentTokens: any[];
   injector?: Injector | null;
   token?: any;
+  diToken?: DiToken;
   visibility?: Visibility;
   ignoreDeps?: any[];
   dependencies?: Dependency[];
@@ -687,5 +724,5 @@ interface Config2 extends BaseConfig {
 
 interface Config1 extends BaseConfig {
   injector: Injector | null;
-  token: any;
+  diToken: DiToken;
 }

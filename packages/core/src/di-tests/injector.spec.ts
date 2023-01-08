@@ -17,6 +17,7 @@ import {
 import { stringify } from '../di/utils';
 import { makeClassDecorator, makePropDecorator } from '../di/decorator-factories';
 import { getOriginalError } from '../di/error-handling';
+import { KEY } from '../di/types-and-models';
 
 class Engine {}
 
@@ -68,19 +69,30 @@ class NoAnnotations {
 }
 
 const factory = makePropDecorator();
+const provider0 = new InjectionToken('provider0');
+const provider1 = new InjectionToken('provider1');
+const provider2 = new InjectionToken('provider2');
+const provider3 = new InjectionToken('provider3');
+const provider4 = new InjectionToken('provider4');
+const provider5 = new InjectionToken('provider5');
+const provider6 = new InjectionToken('provider6');
+const provider7 = new InjectionToken('provider7');
+const provider8 = new InjectionToken('provider8');
+const provider9 = new InjectionToken('provider9');
+const provider10 = new InjectionToken('provider10');
 
 const dynamicProviders = [
-  { token: 'provider0', useValue: 1 },
-  { token: 'provider1', useValue: 1 },
-  { token: 'provider2', useValue: 1 },
-  { token: 'provider3', useValue: 1 },
-  { token: 'provider4', useValue: 1 },
-  { token: 'provider5', useValue: 1 },
-  { token: 'provider6', useValue: 1 },
-  { token: 'provider7', useValue: 1 },
-  { token: 'provider8', useValue: 1 },
-  { token: 'provider9', useValue: 1 },
-  { token: 'provider10', useValue: 1 },
+  { token: provider0, useValue: 1 },
+  { token: provider1, useValue: 1 },
+  { token: provider2, useValue: 1 },
+  { token: provider3, useValue: 1 },
+  { token: provider4, useValue: 1 },
+  { token: provider5, useValue: 1 },
+  { token: provider6, useValue: 1 },
+  { token: provider7, useValue: 1 },
+  { token: provider8, useValue: 1 },
+  { token: provider9, useValue: 1 },
+  { token: provider10, useValue: 1 },
 ];
 
 function createInjector(providers: Provider[], parent?: Injector | null): Injector {
@@ -93,6 +105,16 @@ function createInjector(providers: Provider[], parent?: Injector | null): Inject
 }
 
 describe('injector', () => {
+  it('should twiсe instantiate a class without side affect', () => {
+    const injector1 = createInjector([Engine]);
+    const engine1: Engine = injector1.get(Engine);
+    const injector2 = createInjector([Engine]);
+    const engine2: Engine = injector2.get(Engine);
+
+    expect(engine1).toBeInstanceOf(Engine);
+    expect(engine2).toBeInstanceOf(Engine);
+  });
+
   it('should support method factory', () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
@@ -119,12 +141,13 @@ describe('injector', () => {
       }
     }
 
+    const myCarToken = new InjectionToken('myCar');
     const injector = createInjector([
       DashboardSoftware,
       Engine,
       Dashboard,
       { token: Car, useFactory: [Controller, Controller.prototype.method1] },
-      { token: 'myCar', useFactory: [Controller, Controller.prototype.method2] },
+      { token: myCarToken, useFactory: [Controller, Controller.prototype.method2] },
     ]);
 
     const car: SportsCar = injector.get(Car);
@@ -134,7 +157,7 @@ describe('injector', () => {
     expect(spy2).toBeCalledTimes(1);
     expect(spy3).toBeCalledTimes(0);
 
-    const myCar: CarWithDashboard = injector.get('myCar');
+    const myCar: CarWithDashboard = injector.get(myCarToken);
     expect(myCar).toBeInstanceOf(CarWithDashboard);
     expect(myCar.engine).toBeInstanceOf(Engine);
     expect(myCar.dashboard).toBeInstanceOf(Dashboard);
@@ -220,14 +243,6 @@ describe('injector', () => {
     const engine: Engine = injector.get(Engine);
 
     expect(engine).toBeInstanceOf(Engine);
-  });
-
-  it('should resolve dependencies based on type information', () => {
-    const injector = createInjector([Engine, Car, CarWithOptionalEngine]);
-    const car: Car = injector.get(Car);
-
-    expect(car).toBeInstanceOf(Car);
-    expect(car.engine).toBeInstanceOf(Engine);
   });
 
   it('should resolve dependencies based on @inject annotation', () => {
@@ -339,6 +354,14 @@ describe('injector', () => {
     expect(engine).toBeNull();
   });
 
+  it('should resolve dependencies based on type information', () => {
+    const injector = createInjector([Engine, Car, CarWithOptionalEngine]);
+    const car: Car = injector.get(Car);
+
+    expect(car).toBeInstanceOf(Car);
+    expect(car.engine).toBeInstanceOf(Engine);
+  });
+
   it('should token to an alias', () => {
     const injector = createInjector([Engine, SportsCar, { token: Car, useToken: SportsCar }]);
 
@@ -347,6 +370,14 @@ describe('injector', () => {
     expect(car).toBeInstanceOf(SportsCar);
     expect(car).toBe(sportsCar);
     expect(sportsCar.engine).toBeInstanceOf(Engine);
+  });
+
+  it('should support multiProviders that are created using useToken', () => {
+    const injector = createInjector([Engine, SportsCar, { token: Car, useToken: SportsCar, multi: true }]);
+
+    const cars: [SportsCar] = injector.get(Car);
+    expect(cars.length).toEqual(1);
+    expect(cars[0]).toBe(injector.get(SportsCar));
   });
 
   it('should support multiProviders', () => {
@@ -362,26 +393,21 @@ describe('injector', () => {
     expect(cars[1]).toBeInstanceOf(CarWithOptionalEngine);
   });
 
-  it('should support multiProviders that are created using useToken', () => {
-    const injector = createInjector([Engine, SportsCar, { token: Car, useToken: SportsCar, multi: true }]);
-
-    const cars: [SportsCar] = injector.get(Car);
-    expect(cars.length).toEqual(1);
-    expect(cars[0]).toBe(injector.get(SportsCar));
-  });
-
   it('should throw when the aliased provider does not exist', () => {
-    const injector = createInjector([{ token: 'car', useToken: SportsCar }]);
-    const e = `No provider for ${stringify(SportsCar)}! (car -> ${stringify(SportsCar)})`;
-    expect(() => injector.get('car')).toThrowError(e);
+    const carToken = new InjectionToken('carToken');
+    const injector = createInjector([{ token: carToken, useToken: SportsCar }]);
+    const msg = 'No provider for SportsCar! (InjectionToken carToken -> SportsCar)';
+    expect(() => injector.get(carToken)).toThrowError(msg);
   });
 
   it('should handle forwardRef in useToken', () => {
+    const originalEngine = new InjectionToken('originalEngine');
+    const aliasedEngine = new InjectionToken('aliasedEngine');
     const injector = createInjector([
-      { token: 'originalEngine', useClass: forwardRef(() => Engine) },
-      { token: 'aliasedEngine', useToken: forwardRef(() => 'originalEngine') },
+      { token: originalEngine, useClass: forwardRef(() => Engine) },
+      { token: aliasedEngine, useToken: forwardRef(() => originalEngine) },
     ]);
-    expect(injector.get('aliasedEngine')).toBeInstanceOf(Engine);
+    expect(injector.get(aliasedEngine)).toBeInstanceOf(Engine);
   });
 
   it('should support overriding factory dependencies', () => {
@@ -436,12 +462,6 @@ describe('injector', () => {
     expect(injector.get(Engine)).toBeInstanceOf(TurboEngine);
   });
 
-  it('should use non-type tokens', () => {
-    const injector = createInjector([{ token: 'token', useValue: 'value' }]);
-
-    expect(injector.get('token')).toEqual('value');
-  });
-
   it('should throw when given invalid providers', () => {
     expect(() => createInjector(['blah'] as any)).toThrowError(
       'Invalid provider - only instances of Provider and Class are allowed, got: blah'
@@ -479,8 +499,8 @@ describe('injector', () => {
 
   it('should show the full path when error happens in a constructor', () => {
     const providers = Injector.resolve([Car, { token: Engine, useClass: BrokenEngine }]);
-
-    const injector = new Injector(providers);
+    const Storage = Injector.prepareStorage(providers);
+    const injector = new Injector(Storage);
 
     try {
       injector.get(Car);
@@ -515,8 +535,9 @@ describe('injector', () => {
   });
 
   it('should support null values', () => {
-    const injector = createInjector([{ token: 'null', useValue: null }]);
-    expect(injector.get('null')).toBe(null);
+    const valueToken = new InjectionToken('valueToken');
+    const injector = createInjector([{ token: valueToken, useValue: null }]);
+    expect(injector.get(valueToken)).toBe(null);
   });
 });
 
@@ -739,24 +760,26 @@ describe('resolve', () => {
   });
 
   it('should support overriding factory dependencies with dependency annotations', () => {
+    const factoryToken = new InjectionToken('factoryToken');
+    const valueToken = new InjectionToken('valueToken');
     class ClassWithFactory {
       @factory()
-      method1(@inject('dep') one: number) {
+      method1(@inject(valueToken) one: number) {
         return one;
       }
     }
 
     const useValue = "It's works!";
     const map = Injector.resolve([
-      { token: 'token', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
-      { token: 'dep', useValue },
+      { token: factoryToken, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
+      { token: valueToken, useValue },
     ]);
     const resolvedProviders = Array.from(map.values());
     const resolvedProvider = resolvedProviders[0];
 
-    expect(resolvedProvider.resolvedFactories[0].dependencies[0].token).toEqual('dep');
+    expect(resolvedProvider.resolvedFactories[0].dependencies[0].token).toEqual(valueToken);
     const injector = Injector.fromResolvedProviders(map);
-    expect(injector.get('token')).toBe(useValue);
+    expect(injector.get(factoryToken)).toBe(useValue);
   });
 });
 
@@ -846,7 +869,7 @@ describe("null as provider's value", () => {
   });
 
   it('@skipSelf() should cause return value from parent', () => {
-    const token = 'token';
+    const token = new InjectionToken('token');
     @injectable()
     class A {
       constructor(@inject(token) @skipSelf() public a: string) {}
@@ -861,14 +884,15 @@ describe("null as provider's value", () => {
   });
 
   it('@skipSelf() should throw', () => {
-    const token = 'token';
+    const token = new InjectionToken('token');
     @injectable()
     class A {
       constructor(@inject(token) @skipSelf() public a: string) {}
     }
     const parent = Injector.resolveAndCreate([]);
     const child = parent.resolveAndCreateChild([A, { token, useValue: "child's value" }]);
-    expect(() => child.get(A)).toThrow('No provider for token! (A -> token)');
+    const msg = 'No provider for InjectionToken token! (A -> InjectionToken token)';
+    expect(() => child.get(A)).toThrow(msg);
   });
 
   describe('checkDeps()', () => {
@@ -1069,7 +1093,7 @@ describe("null as provider's value", () => {
     });
 
     it('@skipSelf() should cause return value from parent', () => {
-      const token = 'token';
+      const token = new InjectionToken('token');
       @injectable()
       class A {
         constructor(@inject(token) @skipSelf() public a: string) {
@@ -1083,7 +1107,7 @@ describe("null as provider's value", () => {
     });
 
     it('@skipSelf() should throw', () => {
-      const token = 'token';
+      const token = new InjectionToken('token');
       @injectable()
       class A {
         constructor(@inject(token) @skipSelf() public a: string) {
@@ -1092,7 +1116,8 @@ describe("null as provider's value", () => {
       }
       const parent = Injector.resolveAndCreate([]);
       const child = parent.resolveAndCreateChild([A, { token, useValue: "child's value" }]);
-      expect(() => child.checkDeps(A)).toThrow('No provider for token! (A -> token)');
+      const msg = 'No provider for InjectionToken token! (A -> InjectionToken token)';
+      expect(() => child.checkDeps(A)).toThrow(msg);
       expect(spy).toBeCalledTimes(0);
     });
 
