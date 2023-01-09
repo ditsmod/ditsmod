@@ -40,7 +40,7 @@ describe('LogMediator', () => {
     jest.restoreAllMocks();
   });
 
-  describe(`applyLogFilter()`, () => {
+  describe('applyLogFilter()', () => {
     const baseLogItem: LogItem = {
       moduleName: 'fakeName1',
       date: new Date(),
@@ -52,7 +52,7 @@ describe('LogMediator', () => {
       msg: 'fake messge 1',
     };
 
-    it(`works with empty input and output log filters`, () => {
+    it('works with empty input and output log filters', () => {
       const buffer: LogItem[] = [
         { ...baseLogItem },
         { ...baseLogItem, msg: 'fake message 2' },
@@ -67,7 +67,7 @@ describe('LogMediator', () => {
       expect(logMediator.getWarnAboutEmptyFilteredLogs).toBeCalledTimes(0);
     });
 
-    it(`works with filtered items by module name`, () => {
+    it('works with filtered items by module name', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.modulesNames = [baseLogItem.moduleName];
 
@@ -95,7 +95,7 @@ describe('LogMediator', () => {
       expect(logMediator.getWarnAboutEmptyFilteredLogs).toBeCalledTimes(0);
     });
 
-    it(`works with filtered items by class name`, () => {
+    it('works with filtered items by class name', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.classesNames = ['class1'];
 
@@ -124,7 +124,7 @@ describe('LogMediator', () => {
       expect(logMediator.getWarnAboutEmptyFilteredLogs).toBeCalledTimes(0);
     });
 
-    it(`works with filtered items by tag name`, () => {
+    it('works with filtered items by tag name', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.tags = ['tag2'];
 
@@ -153,7 +153,7 @@ describe('LogMediator', () => {
       expect(logMediator.getWarnAboutEmptyFilteredLogs).toBeCalledTimes(0);
     });
 
-    it(`works with two different output log filters`, () => {
+    it('works with two different output log filters', () => {
       const item1: LogItem = {
         ...baseLogItem,
         msg: 'fake message 2',
@@ -179,7 +179,7 @@ describe('LogMediator', () => {
       expect(logMediator.getWarnAboutEmptyFilteredLogs).toBeCalledTimes(0);
     });
 
-    it(`works with empty output log buffer`, () => {
+    it('works with empty output log buffer', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.classesNames = ['class1'];
 
@@ -211,7 +211,7 @@ describe('LogMediator', () => {
     });
   });
 
-  describe(`isFilteredLog()`, () => {
+  describe('isFilteredLog()', () => {
     const baseLogItem: LogItem = {
       moduleName: 'fakeName1',
       date: new Date(),
@@ -223,7 +223,7 @@ describe('LogMediator', () => {
       msg: 'fake messge 1',
     };
 
-    it(`filter not matched by module name`, () => {
+    it('filter not matched by module name', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.modulesNames = ['module2'];
 
@@ -239,7 +239,7 @@ describe('LogMediator', () => {
       expect(result).toBe(false);
     });
 
-    it(`filter matched by module name`, () => {
+    it('filter matched by module name', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.modulesNames = ['module3'];
 
@@ -255,7 +255,7 @@ describe('LogMediator', () => {
       expect(result).toBe(true);
     });
 
-    it(`filter not matched by class name`, () => {
+    it('filter not matched by class name', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.classesNames = ['class1'];
 
@@ -271,7 +271,7 @@ describe('LogMediator', () => {
       expect(result).toBe(false);
     });
 
-    it(`filter matched by class name`, () => {
+    it('filter matched by class name', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.classesNames = ['class2'];
 
@@ -287,7 +287,7 @@ describe('LogMediator', () => {
       expect(result).toBe(true);
     });
 
-    it(`filter not matched by tag name`, () => {
+    it('filter not matched by tag name', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.tags = ['tag4'];
 
@@ -303,7 +303,7 @@ describe('LogMediator', () => {
       expect(result).toBe(false);
     });
 
-    it(`filter matched by tag name`, () => {
+    it('filter matched by tag name', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.tags = ['tag4'];
 
@@ -320,7 +320,7 @@ describe('LogMediator', () => {
     });
   });
 
-  describe(`writeLogs()`, () => {
+  describe('writeLogs()', () => {
     const baseLogItem: LogItem = {
       moduleName: 'fakeName1',
       date: new Date(),
@@ -332,7 +332,7 @@ describe('LogMediator', () => {
       msg: 'fake messge 1',
     };
 
-    it(`inputLogLevel == outputLogLevel`, () => {
+    it('inputLogLevel == outputLogLevel', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.tags = ['tag4'];
 
@@ -351,7 +351,7 @@ describe('LogMediator', () => {
       expect(baseLogItem.logger.getLevel()).toBe('info'); // Restored previous log level.
     });
 
-    it(`inputLogLevel < outputLogLevel`, () => {
+    it('inputLogLevel < outputLogLevel', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.tags = ['tag4'];
 

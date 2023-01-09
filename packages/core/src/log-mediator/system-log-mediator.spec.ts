@@ -36,8 +36,8 @@ describe('SystemLogMediator', () => {
     jest.restoreAllMocks();
   });
 
-  describe(`testMethod()`, () => {
-    it(`LogMediator's default state`, () => {
+  describe('testMethod()', () => {
+    it("LogMediator's default state", () => {
       expect(LogMediator.bufferLogs).toBe(true);
       expect(LogMediator.buffer).toEqual([]);
     });
