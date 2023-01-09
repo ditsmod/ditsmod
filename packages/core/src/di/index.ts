@@ -14,6 +14,7 @@ export {
 export { InjectionToken } from './injection-token';
 export { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories';
 export { reflector } from './reflection';
+export { DualKey } from './dual-key';
 export {
   PropMeta,
   ParamsMeta,
