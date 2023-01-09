@@ -30,7 +30,7 @@ import {
   stringify,
   isValueProvider,
 } from './utils';
-import { DualKey } from './key-registry';
+import { DualKey } from './dual-key';
 
 const THROW_IF_NOT_FOUND = Symbol();
 
@@ -439,14 +439,13 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
     return new Injector(Storage, this, injectorName);
   }
 
-  updateValue(token: any, value: any) {
-    const dualKey = DualKey.get(token);
-    const meta = this.#storage[dualKey.id];
+  updateValue(id: number, value: any) {
+    const meta = this.#storage[id];
     if (!meta) {
-      const msg = `Updating via injector.updateValue() failed: cannot find ${stringify(token)}`;
+      const msg = `Updating via injector.updateValue() failed: cannot find ${stringify(id)}`;
       throw new DiError(msg);
     }
-    this.#storage[dualKey.id] = { value, done: true };
+    this.#storage[id] = { value, done: true };
   }
 
   /**

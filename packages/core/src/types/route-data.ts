@@ -17,10 +17,9 @@ export class RouteMeta {
     const factoryProvider: FactoryProvider = { useFactory: [controller, controller.prototype[propertyKey]] };
     return Injector.resolve([factoryProvider])[0];
   }
-  /**
-   * This property is used to speed up the search for DI.
-   */
+
   resolvedFactory: ResolvedProvider;
+  resolvedDeps?: ResolvedProvider[];
   /**
    * An array of DI tokens used to look up `CanActivate()` handlers,
    * in order to determine if the current user is allowed to activate the controller.

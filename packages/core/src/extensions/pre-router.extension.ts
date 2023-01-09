@@ -14,6 +14,7 @@ import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { Req } from '../services/request';
 import { Res } from '../services/response';
 import { getLastProviders } from '../utils/get-last-providers';
+import { DualKey } from '../di/dual-key';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -69,6 +70,7 @@ export class PreRouterExtension implements Extension<void> {
         })!;
         const resolvedHttpHandler = Injector.resolve([lastHttpHandler])[0];
         const StoragePerReq = Injector.prepareStorage(resolvedPerReq);
+        const ctxId = DualKey.get(RequestContext).id;
 
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
           const req = new Req(nodeReq);
@@ -83,7 +85,7 @@ export class PreRouterExtension implements Extension<void> {
             res,
           };
           const inj = injectorPerRou.createChildFromStorage(StoragePerReq, 'injectorPerReq');
-          inj.updateValue(RequestContext, ctx);
+          inj.updateValue(ctxId, ctx);
 
           // First HTTP handler in the chain of HTTP interceptors.
           const chain = inj.instantiateResolved(resolvedHttpHandler) as HttpHandler;
