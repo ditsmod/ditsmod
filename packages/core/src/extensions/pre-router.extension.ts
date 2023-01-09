@@ -57,14 +57,18 @@ export class PreRouterExtension implements Extension<void> {
       aControllersMetadata2.forEach(({ httpMethod, path, providersPerRou, providersPerReq, routeMeta }) => {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'injectorPerRou');
-        const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
+        const mergedPerReq = [
+          ...metadataPerMod2.providersPerReq,
+          ...providersPerReq,
+          { token: RequestContext, useValue: {} },
+        ];
         const resolvedPerReq = Injector.resolve(mergedPerReq);
         this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
         const lastHttpHandler = getLastProviders(mergedPerReq).find((p) => {
           return isNormalizedProvider(p) && p.token === HttpHandler;
         })!;
         const resolvedHttpHandler = Injector.resolve([lastHttpHandler])[0];
-        const Storage = Injector.prepareStorage(resolvedPerReq);
+        const StoragePerReq = Injector.prepareStorage(resolvedPerReq);
 
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
           const req = new Req(nodeReq);
@@ -78,9 +82,8 @@ export class PreRouterExtension implements Extension<void> {
             req,
             res,
           };
-          const resolvedCtx = Injector.resolve([{ token: RequestContext, useValue: ctx }]);
-          const CtxStorage = Injector.prepareStorage(resolvedCtx, Storage);
-          const inj = injectorPerRou.createChildFromStorage(CtxStorage, 'injectorPerReq');
+          const inj = injectorPerRou.createChildFromStorage(StoragePerReq, 'injectorPerReq');
+          inj.updateValue(RequestContext, ctx);
 
           // First HTTP handler in the chain of HTTP interceptors.
           const chain = inj.instantiateResolved(resolvedHttpHandler) as HttpHandler;

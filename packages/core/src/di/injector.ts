@@ -4,8 +4,6 @@ import {
   Provider,
   NormalizedProvider,
   DiError,
-  DiToken,
-  KEY,
   getNewStateStorage,
   IStateStorage,
   DependecyMeta,
@@ -32,11 +30,12 @@ import {
   stringify,
   isValueProvider,
 } from './utils';
+import { DualKey } from './key-registry';
 
 const THROW_IF_NOT_FOUND = Symbol();
 
 /**
- * A ReflectiveDependency injection container used for instantiating objects and resolving
+ * A dependency injection container used for instantiating objects and resolving
  * dependencies.
  *
  * An `Injector` is a replacement for a `new` operator, which can automatically resolve the
@@ -126,8 +125,7 @@ console.log(providers[0].resolvedFactories[0].dependencies);
       Storage = getNewStateStorage();
     }
     providers.forEach((p) => {
-      const metaId = p.token[KEY] = p.token.hasOwnProperty(KEY) ? p.token[KEY] : Symbol();
-      Storage!.prototype[metaId] = { resolvedProvider: p } as DependecyMeta;
+      Storage!.prototype[p.dualKey.id] = { resolvedProvider: p } as DependecyMeta;
     });
     Storage.prototype.countOfProviders = (Storage.prototype.countOfProviders || 0) + providers.length;
     return Storage;
@@ -244,16 +242,17 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       return [this.getResolvedProvider(token, factoryFn, deps, provider.multi)];
     } else {
       const factoryFn = (aliasInstance: any) => aliasInstance;
-      const resolvedDeps = [Dependency.fromToken(provider.useToken)];
+      const dualKey = DualKey.get(provider.useToken);
+      const resolvedDeps = [Dependency.fromDualKey(dualKey)];
       return [this.getResolvedProvider(provider.token, factoryFn, resolvedDeps, provider.multi)];
     }
   }
 
   private static getResolvedProvider(token: any, factoryFn: Func, resolvedDeps: Dependency[], isMulti?: boolean) {
-    token = resolveForwardRef(token);
+    const dualKey = DualKey.get(token);
     const resolvedFactory = new ResolvedFactory(factoryFn, resolvedDeps);
     isMulti = isMulti || false;
-    return new ResolvedProvider(token, [resolvedFactory], isMulti);
+    return new ResolvedProvider(dualKey, [resolvedFactory], isMulti);
   }
 
   /**
@@ -291,7 +290,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     return aParamsMeta.map((paramsMeta) => {
       const { token, isOptional, visibility } = this.extractPayload(paramsMeta!);
       if (token != null) {
-        return new Dependency(token, isOptional, visibility);
+        return new Dependency(DualKey.get(token), isOptional, visibility);
       } else {
         throw noAnnotationError(Cls, aParamsMeta, propertyKey);
       }
@@ -332,30 +331,30 @@ expect(injector.get(Car) instanceof Car).toBe(true);
    */
   private static mergeResolvedProviders(
     resolvedProviders: ResolvedProvider[],
-    normalizedProvidersMap: Map<any, ResolvedProvider>
-  ): Map<any, ResolvedProvider> {
+    normalizedProvidersMap: Map<number, ResolvedProvider>
+  ): Map<number, ResolvedProvider> {
     for (let i = 0; i < resolvedProviders.length; i++) {
       const provider = resolvedProviders[i];
-      const existing = normalizedProvidersMap.get(provider.token);
+      const existing = normalizedProvidersMap.get(provider.dualKey.id);
       if (existing) {
         if (provider.multi !== existing.multi) {
-          throw mixMultiProvidersWithRegularProvidersError(existing.token);
+          throw mixMultiProvidersWithRegularProvidersError(existing.dualKey.token);
         }
         if (provider.multi) {
           for (let j = 0; j < provider.resolvedFactories.length; j++) {
             existing.resolvedFactories.push(provider.resolvedFactories[j]);
           }
         } else {
-          normalizedProvidersMap.set(provider.token, provider);
+          normalizedProvidersMap.set(provider.dualKey.id, provider);
         }
       } else {
         let resolvedProvider: ResolvedProvider;
         if (provider.multi) {
-          resolvedProvider = new ResolvedProvider(provider.token, provider.resolvedFactories.slice(), provider.multi);
+          resolvedProvider = new ResolvedProvider(provider.dualKey, provider.resolvedFactories.slice(), provider.multi);
         } else {
           resolvedProvider = provider;
         }
-        normalizedProvidersMap.set(provider.token, resolvedProvider);
+        normalizedProvidersMap.set(provider.dualKey.id, resolvedProvider);
       }
     }
     return normalizedProvidersMap;
@@ -404,8 +403,8 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    * @param injectorName Injector name. Useful for debugging.
    */
   resolveAndCreateChild(providers: Provider[], injectorName?: string): Injector {
-    const resolvedReflectiveProviders = Injector.resolve(providers);
-    return this.createChildFromResolved(resolvedReflectiveProviders, injectorName);
+    const resolvedProviders = Injector.resolve(providers);
+    return this.createChildFromResolved(resolvedProviders, injectorName);
   }
 
   /**
@@ -438,6 +437,16 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
 
   createChildFromStorage(Storage: Class<IStateStorage>, injectorName?: string): Injector {
     return new Injector(Storage, this, injectorName);
+  }
+
+  updateValue(token: any, value: any) {
+    const dualKey = DualKey.get(token);
+    const meta = this.#storage[dualKey.id];
+    if (!meta) {
+      const msg = `Updating via injector.updateValue() failed: cannot find ${stringify(token)}`;
+      throw new DiError(msg);
+    }
+    this.#storage[dualKey.id] = { value, done: true };
   }
 
   /**
@@ -498,11 +507,11 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     if (provider.multi) {
       const res = new Array(provider.resolvedFactories.length);
       for (let i = 0; i < provider.resolvedFactories.length; ++i) {
-        res[i] = this.instantiate(provider.token, parentTokens, provider.resolvedFactories[i]);
+        res[i] = this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[i]);
       }
       return res;
     } else {
-      return this.instantiate(provider.token, parentTokens, provider.resolvedFactories[0]);
+      return this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[0]);
     }
   }
 
@@ -511,7 +520,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
       const res = new Array(provider.resolvedFactories.length);
       for (let i = 0; i < provider.resolvedFactories.length; ++i) {
         const config3: Config3 = {
-          token: provider.token,
+          dualKey: provider.dualKey,
           parentTokens,
           dependencies: provider.resolvedFactories[i].dependencies,
           ignoreDeps,
@@ -521,7 +530,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
       return res;
     } else {
       const config3: Config3 = {
-        token: provider.token,
+        dualKey: provider.dualKey,
         parentTokens,
         dependencies: provider.resolvedFactories[0].dependencies,
         ignoreDeps,
@@ -537,7 +546,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, notFoundValue?: T): T;
   get(token: any, visibility?: Visibility, notFoundValue?: any): any;
   get(token: any, visibility: Visibility = null, notFoundValue: any = THROW_IF_NOT_FOUND): any {
-    return this.checkVisibilityAndGet(token, [], visibility, notFoundValue);
+    return this.checkVisibilityAndGet(DualKey.get(token), [], visibility, notFoundValue);
   }
 
   /**
@@ -548,13 +557,13 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
    * If there are problems with dependencies, throws the corresponding error.
    */
   checkDeps(token: any, visibility: Visibility = null, ignoreDeps?: any[]): any {
-    return this.checkVisibilityAndCheckDeps({ token, parentTokens: [], visibility, ignoreDeps });
+    return this.checkVisibilityAndCheckDeps({ dualKey: DualKey.get(token), parentTokens: [], visibility, ignoreDeps });
   }
 
   private instantiate(token: any, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
       return this.checkVisibilityAndGet(
-        dep.token,
+        dep.dualKey,
         [token, ...parentTokens],
         dep.visibility,
         dep.optional ? null : THROW_IF_NOT_FOUND
@@ -568,48 +577,44 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     }
   }
 
-  private checkVisibilityAndGet(token: any, parentTokens: any[], visibility: Visibility, notFoundValue: any) {
-    if (token === Injector) {
+  private checkVisibilityAndGet(dualKey: DualKey, parentTokens: any[], visibility: Visibility, notFoundValue: any) {
+    if (dualKey.token === Injector) {
       return this;
     }
 
     const injector = visibility === skipSelf ? this.#parent : this;
     const onlyFromSelf = visibility === fromSelf;
-    return this.getOrThrow(injector, token, parentTokens, notFoundValue, onlyFromSelf);
+    return this.getOrThrow(injector, dualKey, parentTokens, notFoundValue, onlyFromSelf);
   }
 
   private getOrThrow(
     injector: Injector | null,
-    diToken: DiToken,
+    dualKey: DualKey,
     parentTokens: any[],
     notFoundValue: any,
     onlyFromSelf?: boolean
   ): any {
     if (injector) {
-      const metaId = diToken[KEY];
-      if (metaId) {
-        const meta = injector.#storage[metaId];
-        if (!meta) {
-          if (!onlyFromSelf && injector.#parent) {
-            return injector.#parent.getOrThrow(injector.#parent, diToken, parentTokens, notFoundValue);
-          }
-        } else if (!meta.done) {
-          if (injector.constructionCounter++ > injector.#storage.countOfProviders) {
-            throw cyclicDependencyError([meta.resolvedProvider.token, ...parentTokens]);
-          }
-          const newValue = injector.instantiateResolved(meta.resolvedProvider, parentTokens);
-          meta.value = newValue;
-          meta.done = true;
-          return newValue;
-        } else {
-          return meta.value;
+      const meta = injector.#storage[dualKey.id];
+      if (!meta) {
+        if (!onlyFromSelf && injector.#parent) {
+          return injector.#parent.getOrThrow(injector.#parent, dualKey, parentTokens, notFoundValue);
         }
+      } else if (meta.done) {
+        return meta.value;
+      } else {
+        if (injector.constructionCounter++ > injector.#storage.countOfProviders) {
+          throw cyclicDependencyError([meta.resolvedProvider!.dualKey, ...parentTokens]);
+        }
+        const value = injector.instantiateResolved(meta.resolvedProvider!, parentTokens);
+        injector.#storage[dualKey.id] = { value, done: true };
+        return value;
       }
     }
     if (notFoundValue !== THROW_IF_NOT_FOUND) {
       return notFoundValue;
     } else {
-      throw noProviderError([diToken, ...parentTokens]);
+      throw noProviderError([dualKey.token, ...parentTokens]);
     }
   }
 
@@ -617,7 +622,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     if (provider.multi) {
       provider.resolvedFactories.forEach(({ dependencies }) => {
         const config3: Config3 = {
-          token: provider.token,
+          dualKey: provider.dualKey,
           parentTokens,
           dependencies,
           ignoreDeps,
@@ -626,7 +631,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
       });
     } else {
       const config3: Config3 = {
-        token: provider.token,
+        dualKey: provider.dualKey,
         parentTokens,
         dependencies: provider.resolvedFactories[0].dependencies,
         ignoreDeps,
@@ -635,12 +640,12 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     }
   }
 
-  private runDry({ token, parentTokens, dependencies, ignoreDeps }: Config3): any {
-    dependencies = dependencies.filter((dep) => !ignoreDeps?.includes(dep.token));
+  private runDry({ dualKey, parentTokens, dependencies, ignoreDeps }: Config3): any {
+    dependencies = dependencies.filter((dep) => !ignoreDeps?.includes(dep.dualKey));
     dependencies.forEach((dep) => {
       return this.checkVisibilityAndCheckDeps({
-        token: dep.token,
-        parentTokens: [token, ...parentTokens],
+        dualKey: dep.dualKey,
+        parentTokens: [dualKey.token, ...parentTokens],
         visibility: dep.visibility,
         ignoreDeps,
         isOptional: dep.optional,
@@ -648,44 +653,41 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     });
   }
 
-  private checkVisibilityAndCheckDeps({ token, parentTokens, visibility, ignoreDeps, isOptional }: Config2) {
-    if (token === Injector) {
+  private checkVisibilityAndCheckDeps({ dualKey, parentTokens, visibility, ignoreDeps, isOptional }: Config2) {
+    if (dualKey.token === Injector) {
       return;
     }
 
     const injector = visibility === skipSelf ? this.#parent : this;
     const onlyFromSelf = visibility === fromSelf;
-    return this.runDryOrThrow({ injector, diToken: token, parentTokens, ignoreDeps, onlyFromSelf, isOptional });
+    return this.runDryOrThrow({ injector, dualKey: dualKey, parentTokens, ignoreDeps, onlyFromSelf, isOptional });
   }
 
-  private runDryOrThrow({ injector, diToken, parentTokens, ignoreDeps, onlyFromSelf, isOptional }: Config1): any {
+  private runDryOrThrow({ injector, dualKey, parentTokens, ignoreDeps, onlyFromSelf, isOptional }: Config1): any {
     if (injector) {
-      if (ignoreDeps?.includes(diToken)) {
+      if (ignoreDeps?.includes(dualKey.token)) {
         return;
       }
-      const metaId = diToken[KEY];
-      if (metaId) {
-        const meta = injector.#storage[metaId];
-        if (!meta) {
-          if (!onlyFromSelf && injector.#parent) {
-            return injector.#parent.runDryOrThrow({
-              injector: injector.#parent,
-              diToken,
-              parentTokens,
-              ignoreDeps,
-              isOptional,
-            });
-          }
-        } else if (!meta.done) {
-          injector.checkMultiOrRegularDeps({ provider: meta.resolvedProvider, parentTokens, ignoreDeps });
-          return;
-        } else {
-          return;
+      const meta = injector.#storage[dualKey.id];
+      if (!meta) {
+        if (!onlyFromSelf && injector.#parent) {
+          return injector.#parent.runDryOrThrow({
+            injector: injector.#parent,
+            dualKey,
+            parentTokens,
+            ignoreDeps,
+            isOptional,
+          });
         }
+      } else if (!meta.done) {
+        injector.checkMultiOrRegularDeps({ provider: meta.resolvedProvider!, parentTokens, ignoreDeps });
+        return;
+      } else {
+        return;
       }
     }
     if (!isOptional) {
-      throw noProviderError([diToken, ...parentTokens]);
+      throw noProviderError([dualKey.token, ...parentTokens]);
     }
   }
 }
@@ -697,8 +699,7 @@ type Func = (...args: any[]) => any;
 interface BaseConfig {
   parentTokens: any[];
   injector?: Injector | null;
-  token?: any;
-  diToken?: DiToken;
+  dualKey?: DualKey;
   visibility?: Visibility;
   ignoreDeps?: any[];
   dependencies?: Dependency[];
@@ -713,16 +714,16 @@ interface Config4 extends BaseConfig {
 }
 
 interface Config3 extends BaseConfig {
-  token: any;
+  dualKey: DualKey;
   dependencies: Dependency[];
 }
 
 interface Config2 extends BaseConfig {
-  token: any;
+  dualKey: DualKey;
   visibility: Visibility;
 }
 
 interface Config1 extends BaseConfig {
   injector: Injector | null;
-  diToken: DiToken;
+  dualKey: DualKey;
 }

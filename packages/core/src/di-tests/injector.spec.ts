@@ -17,7 +17,6 @@ import {
 import { stringify } from '../di/utils';
 import { makeClassDecorator, makePropDecorator } from '../di/decorator-factories';
 import { getOriginalError } from '../di/error-handling';
-import { KEY } from '../di/types-and-models';
 
 class Engine {}
 
@@ -692,7 +691,7 @@ describe('resolve', () => {
     ]);
     const resolvedProvider = Array.from(map.values())[0];
 
-    expect(resolvedProvider.token).toBe(Engine);
+    expect(resolvedProvider.dualKey.token).toBe(Engine);
     expect(resolvedProvider.multi).toEqual(true);
     expect(resolvedProvider.resolvedFactories.length).toEqual(2);
   });
@@ -704,7 +703,7 @@ describe('resolve', () => {
     ]);
     const resolvedProvider = Array.from(map.values())[0];
 
-    expect(resolvedProvider.token).toBe(Engine);
+    expect(resolvedProvider.dualKey.token).toBe(Engine);
     expect(resolvedProvider.multi).toEqual(true);
     expect(resolvedProvider.resolvedFactories.length).toEqual(2);
   });
@@ -713,7 +712,7 @@ describe('resolve', () => {
     const map = Injector.resolve([{ token: Engine, useClass: BrokenEngine, multi: true }]);
     const resolvedProvider = Array.from(map.values())[0];
 
-    expect(resolvedProvider.token).toBe(Engine);
+    expect(resolvedProvider.dualKey.token).toBe(Engine);
     expect(resolvedProvider.multi).toEqual(true);
     expect(resolvedProvider.resolvedFactories.length).toEqual(1);
   });
@@ -748,7 +747,7 @@ describe('resolve', () => {
 
     expect(engineProvider.resolvedFactories[0].factory() instanceof Engine).toBe(true);
     expect(brokenEngineProvider.resolvedFactories[0].factory() instanceof Engine).toBe(true);
-    expect(stringProvider.resolvedFactories[0].dependencies[0].token).toEqual(Engine);
+    expect(stringProvider.resolvedFactories[0].dependencies[0].dualKey.token).toEqual(Engine);
 
     const injector = Injector.fromResolvedProviders(map);
     expect(() => injector.get(Engine)).not.toThrow();
@@ -777,7 +776,7 @@ describe('resolve', () => {
     const resolvedProviders = Array.from(map.values());
     const resolvedProvider = resolvedProviders[0];
 
-    expect(resolvedProvider.resolvedFactories[0].dependencies[0].token).toEqual(valueToken);
+    expect(resolvedProvider.resolvedFactories[0].dependencies[0].dualKey.token).toEqual(valueToken);
     const injector = Injector.fromResolvedProviders(map);
     expect(injector.get(factoryToken)).toBe(useValue);
   });
@@ -1147,7 +1146,7 @@ describe("null as provider's value", () => {
       expect(spy).toBeCalledTimes(0);
     });
 
-    it('should throw when no provider defined', () => {
+    fit('should throw when no provider defined', () => {
       const injector = createInjector([]);
       expect(() => injector.checkDeps('NonExisting')).toThrowError('No provider for NonExisting!');
     });

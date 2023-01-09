@@ -1,6 +1,7 @@
 import type { skipSelf, fromSelf } from './decorators';
 import { resolveForwardRef } from './forward-ref';
 import type { InjectionToken } from './injection-token';
+import { DualKey } from './key-registry';
 
 type Func = (...args: any[]) => any;
 /**
@@ -61,10 +62,10 @@ export type NormalizedProvider = ValueProvider | ClassProvider | TokenProvider |
  * This is internal and should not be used directly.
  */
 export class Dependency {
-  constructor(public token: any, public optional: boolean, public visibility: Visibility) {}
+  constructor(public dualKey: DualKey, public optional: boolean, public visibility: Visibility) {}
 
-  static fromToken(token: any): Dependency {
-    return new Dependency(resolveForwardRef(token), false, null);
+  static fromDualKey(dualKey: DualKey): Dependency {
+    return new Dependency(dualKey, false, null);
   }
 }
 
@@ -86,30 +87,24 @@ expect(injector.get('message')).toEqual('Hello');
  * 
  */
 export class ResolvedProvider {
-  constructor(public token: any, public resolvedFactories: ResolvedFactory[], public multi: boolean) {}
-}
-
-export const KEY = Symbol();
-
-export interface DiToken {
-  [KEY]?: symbol;
+  constructor(public dualKey: DualKey, public resolvedFactories: ResolvedFactory[], public multi: boolean) {}
 }
 
 export interface DependecyMeta {
-  resolvedProvider: ResolvedProvider;
   value: any;
+  resolvedProvider?: ResolvedProvider;
   done?: boolean;
 }
 
 export interface IStateStorage {
   countOfProviders: number;
-  [tokenId: symbol]: DependecyMeta;
+  [id: number]: DependecyMeta;
 }
 
 export function getNewStateStorage(): Class<IStateStorage> {
   class StateStorage implements IStateStorage {
     countOfProviders: number;
-    [tokenId: symbol]: DependecyMeta;
+    [id: number]: DependecyMeta;
   }
 
   return StateStorage;

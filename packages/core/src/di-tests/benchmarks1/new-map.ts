@@ -1,13 +1,13 @@
 import 'reflect-metadata';
-import { inspect } from 'util';
+// import { inspect } from 'util';
 
-import { injectable, methodFactory, Provider, Injector, reflector } from '../../di';
+// import { injectable, methodFactory, Provider, Injector, reflector } from '../../di';
 
-@injectable()
+// @injectable()
 class Class1 {}
 
 function getClass2() {
-  @injectable()
+  // @injectable()
   class Class2 {
     constructor(class1: Class1) {}
   }
@@ -64,3 +64,16 @@ for (let i = 0; i < times; i++) {
   new Cls2();
 }
 console.timeEnd('new class2');
+
+console.time('read map');
+for (let i = 0; i < times; i++) {
+  map1.get(class {});
+}
+console.timeEnd('read map');
+
+const obj = new Cls2() as any;
+console.time('read obj');
+for (let i = 0; i < times; i++) {
+  obj['stringstringstringstringstring'];
+}
+console.timeEnd('read obj');

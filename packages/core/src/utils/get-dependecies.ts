@@ -15,9 +15,9 @@ export function getDependencies(provider: ServiceProvider) {
     resolvedFactories.forEach((rf) => {
       rf.dependencies.forEach((dep) => {
         if (!dep.optional) {
-          required.add(dep.token);
+          required.add(dep.dualKey.token);
         }
-        uniqDeps.add(dep.token);
+        uniqDeps.add(dep.dualKey.token);
       });
     });
   });
