@@ -1,7 +1,6 @@
 import type { skipSelf, fromSelf } from './decorators';
-import { resolveForwardRef } from './forward-ref';
 import type { InjectionToken } from './injection-token';
-import { DualKey } from './key-registry';
+import { DualKey } from './dual-key';
 
 type Func = (...args: any[]) => any;
 /**
