@@ -442,7 +442,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
   updateValue(id: number, value: any) {
     const meta = this.#storage[id];
     if (!meta) {
-      const msg = `Updating via injector.updateValue() failed: cannot find ${stringify(id)}`;
+      const msg = `Updating DI value failed: cannot find ID: ${stringify(id)}`;
       throw new DiError(msg);
     }
     this.#storage[id] = { value, done: true };
