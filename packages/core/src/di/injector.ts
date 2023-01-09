@@ -30,7 +30,7 @@ import {
   stringify,
   isValueProvider,
 } from './utils';
-import { DualKey } from './dual-key';
+import { DualKey, KeyRegistry } from './dual-key';
 
 const THROW_IF_NOT_FOUND = Symbol();
 
@@ -242,14 +242,14 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       return [this.getResolvedProvider(token, factoryFn, deps, provider.multi)];
     } else {
       const factoryFn = (aliasInstance: any) => aliasInstance;
-      const dualKey = DualKey.get(provider.useToken);
+      const dualKey = KeyRegistry.get(provider.useToken);
       const resolvedDeps = [Dependency.fromDualKey(dualKey)];
       return [this.getResolvedProvider(provider.token, factoryFn, resolvedDeps, provider.multi)];
     }
   }
 
   private static getResolvedProvider(token: any, factoryFn: Func, resolvedDeps: Dependency[], isMulti?: boolean) {
-    const dualKey = DualKey.get(token);
+    const dualKey = KeyRegistry.get(token);
     const resolvedFactory = new ResolvedFactory(factoryFn, resolvedDeps);
     isMulti = isMulti || false;
     return new ResolvedProvider(dualKey, [resolvedFactory], isMulti);
@@ -290,7 +290,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     return aParamsMeta.map((paramsMeta) => {
       const { token, isOptional, visibility } = this.extractPayload(paramsMeta!);
       if (token != null) {
-        return new Dependency(DualKey.get(token), isOptional, visibility);
+        return new Dependency(KeyRegistry.get(token), isOptional, visibility);
       } else {
         throw noAnnotationError(Cls, aParamsMeta, propertyKey);
       }
@@ -545,7 +545,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, notFoundValue?: T): T;
   get(token: any, visibility?: Visibility, notFoundValue?: any): any;
   get(token: any, visibility: Visibility = null, notFoundValue: any = THROW_IF_NOT_FOUND): any {
-    return this.checkVisibilityAndGet(DualKey.get(token), [], visibility, notFoundValue);
+    return this.checkVisibilityAndGet(KeyRegistry.get(token), [], visibility, notFoundValue);
   }
 
   /**
@@ -556,7 +556,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
    * If there are problems with dependencies, throws the corresponding error.
    */
   checkDeps(token: any, visibility: Visibility = null, ignoreDeps?: any[]): any {
-    return this.checkVisibilityAndCheckDeps({ dualKey: DualKey.get(token), parentTokens: [], visibility, ignoreDeps });
+    return this.checkVisibilityAndCheckDeps({ dualKey: KeyRegistry.get(token), parentTokens: [], visibility, ignoreDeps });
   }
 
   private instantiate(token: any, parentTokens: any[], resolvedFactory: ResolvedFactory): any {

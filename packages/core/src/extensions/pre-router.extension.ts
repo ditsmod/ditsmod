@@ -14,7 +14,7 @@ import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { Req } from '../services/request';
 import { Res } from '../services/response';
 import { getLastProviders } from '../utils/get-last-providers';
-import { DualKey } from '../di/dual-key';
+import { KeyRegistry } from '../di/dual-key';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -70,7 +70,7 @@ export class PreRouterExtension implements Extension<void> {
         })!;
         const resolvedHttpHandler = Injector.resolve([lastHttpHandler])[0];
         const StoragePerReq = Injector.prepareStorage(resolvedPerReq);
-        const ctxId = DualKey.get(RequestContext).id;
+        const ctxId = KeyRegistry.get(RequestContext).id;
 
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
           const req = new Req(nodeReq);

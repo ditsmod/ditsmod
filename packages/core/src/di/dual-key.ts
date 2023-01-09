@@ -1,68 +1,49 @@
-import { stringify } from './utils';
 import { resolveForwardRef } from './forward-ref';
 
 /**
- * A unique object used for retrieving items from the `ReflectiveInjector`.
+ * A unique object used for retrieving items from the `Injector`.
  *
  * Keys have:
  * - a system-wide unique `id`.
  * - a `token`.
  *
- * `Key` is used internally by `ReflectiveInjector` because its system-wide unique `id` allows
- * the
- * injector to store created objects in a more efficient way.
+ * `DualKey` is used internally by `Injector` because its system-wide unique `id` allows
+ * the injector to store created objects in a more efficient way.
  *
- * `Key` should not be created directly. `ReflectiveInjector` creates keys automatically when
+ * `DualKey` should not be created directly. `Injector` creates keys automatically when
  * resolving
  * providers.
  */
 export class DualKey {
-  public readonly displayName: string;
+  constructor(public token: any, public id: number) {}
+}
+
+export class KeyRegistry {
+  static #allKeys = new Map<any, DualKey>();
+
   /**
-   * Private
+   * Retrieves a `DualKey` for a token.
    */
-  constructor(public token: any, public id: number) {
+  static get(token: any): DualKey {
+    token = resolveForwardRef(token);
+
+    const value = this.#allKeys.get(token);
+    if (value || this.#allKeys.has(token)) {
+      return value!;
+    }
+
     if (!token) {
       throw new Error('Token must be defined!');
     }
-    this.displayName = stringify(this.token);
-  }
-
-  /**
-   * Retrieves a `Key` for a token.
-   */
-  static get(token: any): DualKey {
-    return _globalKeyRegistry.get(resolveForwardRef(token));
+    const newKey = new DualKey(token, this.numberOfKeys);
+    this.#allKeys.set(token, newKey);
+    return newKey;
   }
 
   /**
    * @returns the number of keys registered in the system.
    */
   static get numberOfKeys(): number {
-    return _globalKeyRegistry.numberOfKeys;
+    return this.#allKeys.size;
   }
 }
-
-export class KeyRegistry {
-  private _allKeys = new Map<any, DualKey>();
-
-  get(token: any): DualKey {
-    if (token instanceof DualKey) {
-      return token;
-    }
-
-    if (this._allKeys.has(token)) {
-      return this._allKeys.get(token)!;
-    }
-
-    const newKey = new DualKey(token, DualKey.numberOfKeys);
-    this._allKeys.set(token, newKey);
-    return newKey;
-  }
-
-  get numberOfKeys(): number {
-    return this._allKeys.size;
-  }
-}
-
-const _globalKeyRegistry = new KeyRegistry();

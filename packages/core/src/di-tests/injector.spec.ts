@@ -1146,7 +1146,7 @@ describe("null as provider's value", () => {
       expect(spy).toBeCalledTimes(0);
     });
 
-    fit('should throw when no provider defined', () => {
+    it('should throw when no provider defined', () => {
       const injector = createInjector([]);
       expect(() => injector.checkDeps('NonExisting')).toThrowError('No provider for NonExisting!');
     });
