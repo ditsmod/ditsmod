@@ -33,15 +33,6 @@ import {
 import { DualKey, KeyRegistry } from './key-registry';
 
 const THROW_IF_NOT_FOUND = Symbol();
-class Cache {
-  public value: any;
-  public done: boolean;
-  constructor(value: any) {
-    this.value = value;
-  }
-}
-Cache.prototype.value = null;
-Cache.prototype.done = true;
 
 /**
  * A dependency injection container used for instantiating objects and resolving
@@ -132,7 +123,10 @@ console.log(providers[0].resolvedFactories[0].dependencies);
    *
    * @param Registry If provided, `providers` extends the `Registry`.
    */
-  static prepareRegistry(providers: ResolvedProvider[], Registry?: Class<RegistryOfInjector>): Class<RegistryOfInjector> {
+  static prepareRegistry(
+    providers: ResolvedProvider[],
+    Registry?: Class<RegistryOfInjector>
+  ): Class<RegistryOfInjector> {
     if (!Registry) {
       Registry = getNewRegistry();
     }
@@ -460,7 +454,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
       const msg = `Updating DI value failed: cannot find ID: ${stringify(id)}`;
       throw new DiError(msg);
     }
-    this.#registry[id] = new Cache(value);
+    this.#registry[id] = { value, done: true };
     return this;
   }
 
@@ -624,7 +618,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
           throw cyclicDependencyError([meta.resolvedProvider!.dualKey.token, ...parentTokens]);
         }
         const value = injector.instantiateResolved(meta.resolvedProvider!, parentTokens);
-        injector.#registry[dualKey.id] = new Cache(value);
+        injector.#registry[dualKey.id] = { value, done: true };
         return value;
       }
     }
