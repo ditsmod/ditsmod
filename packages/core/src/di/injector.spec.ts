@@ -525,10 +525,10 @@ describe('injector', () => {
 
   it('should throw when trying to instantiate a cyclic dependency', () => {
     const injector = createInjector([Car, { token: Engine, useClass: CyclicEngine }]);
+    const msg = 'Cannot instantiate cyclic dependency! (Car -> Engine -> Car)';
 
-    expect(() => injector.get(Car)).toThrowError(
-      `Cannot instantiate cyclic dependency! (${stringify(Car)} -> ${stringify(Engine)} -> ${stringify(Car)})`
-    );
+    expect(() => injector.checkDeps(Car)).toThrowError(msg);
+    expect(() => injector.get(Car)).toThrowError(msg);
   });
 
   it('should show the full path when error happens in a constructor', () => {

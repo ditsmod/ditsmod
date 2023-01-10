@@ -688,6 +688,9 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
           });
         }
       } else if (!meta.done) {
+        if (parentTokens.includes(dualKey.token)) {
+          throw cyclicDependencyError([meta.resolvedProvider!.dualKey.token, ...parentTokens]);
+        }
         injector.checkMultiOrRegularDeps({ provider: meta.resolvedProvider!, parentTokens, ignoreDeps });
         return;
       } else {
