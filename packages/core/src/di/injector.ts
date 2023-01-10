@@ -594,8 +594,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     }
 
     const injector = visibility === skipSelf ? this.#parent : this;
-    const onlyFromSelf = visibility === fromSelf;
-    return this.getOrThrow(injector, dualKey, parentTokens, notFoundValue, onlyFromSelf);
+    return this.getOrThrow(injector, dualKey, parentTokens, notFoundValue, visibility);
   }
 
   private getOrThrow(
@@ -603,12 +602,12 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     dualKey: DualKey,
     parentTokens: any[],
     notFoundValue: any,
-    onlyFromSelf?: boolean
+    visibility?: Visibility
   ): any {
     if (injector) {
       const meta = injector.#registry[dualKey.id];
       if (!meta) {
-        if (!onlyFromSelf && injector.#parent) {
+        if (visibility !== fromSelf && injector.#parent) {
           return injector.#parent.getOrThrow(injector.#parent, dualKey, parentTokens, notFoundValue);
         }
       } else if (meta.done) {
