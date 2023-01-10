@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 
-import { CLASS_KEY, makeClassDecorator, makePropDecorator } from '../di/decorator-factories';
-import { reflector } from '../di/reflection';
-import { DecoratorAndValue, PropMetadataTuple } from '../di/types-and-models';
+import { CLASS_KEY, makeClassDecorator, makePropDecorator } from './decorator-factories';
+import { reflector } from './reflection';
+import { DecoratorAndValue, PropMetadataTuple } from './types-and-models';
 
 class DecoratedParent {}
 class DecoratedChild extends DecoratedParent {}

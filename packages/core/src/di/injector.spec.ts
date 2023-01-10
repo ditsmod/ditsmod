@@ -1,4 +1,4 @@
-import './matchers';
+import 'reflect-metadata';
 import {
   fromSelf,
   inject,
@@ -12,11 +12,11 @@ import {
   ResolvedProvider,
   methodFactory,
   skipSelf,
-} from '../di';
+} from '.';
 
-import { stringify } from '../di/utils';
-import { makeClassDecorator, makePropDecorator } from '../di/decorator-factories';
-import { getOriginalError } from '../di/error-handling';
+import { stringify } from './utils';
+import { makeClassDecorator, makePropDecorator } from './decorator-factories';
+import { getOriginalError } from './error-handling';
 
 class Engine {}
 
