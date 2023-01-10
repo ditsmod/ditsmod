@@ -18,7 +18,7 @@ import { stringify } from './utils';
 import { makeClassDecorator, makePropDecorator } from './decorator-factories';
 import { getOriginalError } from './error-handling';
 import { KeyRegistry } from './key-registry';
-import { getNewStateStorage } from './types-and-models';
+import { getNewRegistry } from './types-and-models';
 
 class Engine {}
 
@@ -106,15 +106,15 @@ function createInjector(providers: Provider[], parent?: Injector | null): Inject
 }
 
 describe('injector', () => {
-  describe('class of storage', () => {
-    it('getNewStateStorage() should return different class on each call', () => {
-      expect(getNewStateStorage() !== getNewStateStorage()).toBe(true);
+  describe('class of registry', () => {
+    it('getNewRegistry() should return different class on each call', () => {
+      expect(getNewRegistry() !== getNewRegistry()).toBe(true);
     });
 
-    it('prepared storage class no save state', () => {
-      const Storage = Injector.prepareStorage(Injector.resolve([Engine]));
-      const injector1 = new Injector(Storage);
-      const injector2 = new Injector(Storage);
+    it('prepared registry class no save state', () => {
+      const Registry = Injector.prepareRegistry(Injector.resolve([Engine]));
+      const injector1 = new Injector(Registry);
+      const injector2 = new Injector(Registry);
       const engine1 = injector1.get(Engine);
       const engine2 = injector2.get(Engine);
 
@@ -123,15 +123,15 @@ describe('injector', () => {
       expect(engine1 !== engine2).toBe(true);
     });
 
-    it('prepared storage should allow extends it after creation', () => {
-      const Storage = Injector.prepareStorage(Injector.resolve([Engine]));
-      expect(new Storage()).toMatchObject({ countOfProviders: 1 });
+    it('prepared registry should allow extends it after creation', () => {
+      const Registry = Injector.prepareRegistry(Injector.resolve([Engine]));
+      expect(new Registry()).toMatchObject({ countOfProviders: 1 });
 
       const resolvedDeps = Injector.resolve([DashboardSoftware]);
-      Injector.prepareStorage(resolvedDeps, Storage);
-      expect(new Storage()).toMatchObject({ countOfProviders: 2 });
+      Injector.prepareRegistry(resolvedDeps, Registry);
+      expect(new Registry()).toMatchObject({ countOfProviders: 2 });
 
-      const injector = new Injector(Storage);
+      const injector = new Injector(Registry);
       const engine = injector.get(Engine);
       const dashboardSoftware = injector.get(DashboardSoftware);
 
@@ -533,8 +533,8 @@ describe('injector', () => {
 
   it('should show the full path when error happens in a constructor', () => {
     const providers = Injector.resolve([Car, { token: Engine, useClass: BrokenEngine }]);
-    const Storage = Injector.prepareStorage(providers);
-    const injector = new Injector(Storage);
+    const Registry = Injector.prepareRegistry(providers);
+    const injector = new Injector(Registry);
 
     try {
       injector.get(Car);

@@ -4,8 +4,8 @@ import {
   Provider,
   NormalizedProvider,
   DiError,
-  getNewStateStorage,
-  IStateStorage,
+  getNewRegistry,
+  RegistryOfInjector,
   DependecyMeta,
 } from './types-and-models';
 import { Dependency, ResolvedFactory, ResolvedProvider, Class, DecoratorAndValue } from './types-and-models';
@@ -69,14 +69,14 @@ expect(car.engine instanceof Engine).toBe(true);
  */
 export class Injector {
   #parent: Injector | null;
-  #storage: IStateStorage;
+  #registry: RegistryOfInjector;
   private constructionCounter = 0;
 
   /**
    * @param injectorName Injector name. Useful for debugging.
    */
-  constructor(Storage: Class<IStateStorage>, parent?: Injector, public readonly injectorName?: string) {
-    this.#storage = new Storage();
+  constructor(Registry: Class<RegistryOfInjector>, parent?: Injector, public readonly injectorName?: string) {
+    this.#registry = new Registry();
     this.#parent = parent || null;
   }
 
@@ -118,21 +118,21 @@ console.log(providers[0].resolvedFactories[0].dependencies);
   }
 
   /**
-   * Create new or extends existing class of storage. Where "class of storage" means
+   * Create new or extends existing class of registry. Where "class of registry" means
    * just class that has resolved providers in its prototype,
    * where property names are taken from resolved providers IDs.
    *
-   * @param Storage If provided, `providers` extends the `Storage`.
+   * @param Registry If provided, `providers` extends the `Registry`.
    */
-  static prepareStorage(providers: ResolvedProvider[], Storage?: Class<IStateStorage>): Class<IStateStorage> {
-    if (!Storage) {
-      Storage = getNewStateStorage();
+  static prepareRegistry(providers: ResolvedProvider[], Registry?: Class<RegistryOfInjector>): Class<RegistryOfInjector> {
+    if (!Registry) {
+      Registry = getNewRegistry();
     }
     providers.forEach((p) => {
-      Storage!.prototype[p.dualKey.id] = { resolvedProvider: p } as DependecyMeta;
+      Registry!.prototype[p.dualKey.id] = { resolvedProvider: p } as DependecyMeta;
     });
-    Storage.prototype.countOfProviders = (Storage.prototype.countOfProviders || 0) + providers.length;
-    return Storage;
+    Registry.prototype.countOfProviders = (Registry.prototype.countOfProviders || 0) + providers.length;
+    return Registry;
   }
 
   /**
@@ -192,7 +192,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   * @param injectorName Injector name. Useful for debugging.
    */
   static fromResolvedProviders(providers: ResolvedProvider[], injectorName?: string): Injector {
-    return new Injector(this.prepareStorage(providers), undefined, injectorName);
+    return new Injector(this.prepareRegistry(providers), undefined, injectorName);
   }
 
   private static normalizeProviders(providers: Provider[], normProviders: NormalizedProvider[]): NormalizedProvider[] {
@@ -436,11 +436,11 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    * @param injectorName Injector name. Useful for debugging.
    */
   createChildFromResolved(providers: ResolvedProvider[], injectorName?: string): Injector {
-    return new Injector(Injector.prepareStorage(providers), this, injectorName);
+    return new Injector(Injector.prepareRegistry(providers), this, injectorName);
   }
 
-  createChildFromStorage(Storage: Class<IStateStorage>, injectorName?: string): Injector {
-    return new Injector(Storage, this, injectorName);
+  createChildFromRegistry(Registry: Class<RegistryOfInjector>, injectorName?: string): Injector {
+    return new Injector(Registry, this, injectorName);
   }
 
   /**
@@ -451,12 +451,12 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    * @param value New value for this ID.
    */
   updateValue(id: number, value: any) {
-    const meta = this.#storage[id];
+    const meta = this.#registry[id];
     if (!meta) {
       const msg = `Updating DI value failed: cannot find ID: ${stringify(id)}`;
       throw new DiError(msg);
     }
-    this.#storage[id] = { value, done: true };
+    this.#registry[id] = { value, done: true };
   }
 
   /**
@@ -607,7 +607,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     onlyFromSelf?: boolean
   ): any {
     if (injector) {
-      const meta = injector.#storage[dualKey.id];
+      const meta = injector.#registry[dualKey.id];
       if (!meta) {
         if (!onlyFromSelf && injector.#parent) {
           return injector.#parent.getOrThrow(injector.#parent, dualKey, parentTokens, notFoundValue);
@@ -615,11 +615,11 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
       } else if (meta.done) {
         return meta.value;
       } else {
-        if (injector.constructionCounter++ > injector.#storage.countOfProviders) {
+        if (injector.constructionCounter++ > injector.#registry.countOfProviders) {
           throw cyclicDependencyError([meta.resolvedProvider!.dualKey, ...parentTokens]);
         }
         const value = injector.instantiateResolved(meta.resolvedProvider!, parentTokens);
-        injector.#storage[dualKey.id] = { value, done: true };
+        injector.#registry[dualKey.id] = { value, done: true };
         return value;
       }
     }
@@ -680,7 +680,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
       if (ignoreDeps?.includes(dualKey.token)) {
         return;
       }
-      const meta = injector.#storage[dualKey.id];
+      const meta = injector.#registry[dualKey.id];
       if (!meta) {
         if (!onlyFromSelf && injector.#parent) {
           return injector.#parent.runDryOrThrow({

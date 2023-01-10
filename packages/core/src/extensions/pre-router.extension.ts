@@ -69,7 +69,7 @@ export class PreRouterExtension implements Extension<void> {
           return isNormalizedProvider(p) && p.token === HttpHandler;
         })!;
         const resolvedHttpHandler = Injector.resolve([lastHttpHandler])[0];
-        const StoragePerReq = Injector.prepareStorage(resolvedPerReq);
+        const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
         const ctxId = KeyRegistry.get(RequestContext).id;
 
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
@@ -84,7 +84,7 @@ export class PreRouterExtension implements Extension<void> {
             req,
             res,
           };
-          const inj = injectorPerRou.createChildFromStorage(StoragePerReq, 'injectorPerReq');
+          const inj = injectorPerRou.createChildFromRegistry(RegistryPerReq, 'injectorPerReq');
           inj.updateValue(ctxId, ctx);
 
           // First HTTP handler in the chain of HTTP interceptors.

@@ -10,6 +10,7 @@ export {
   FactoryProvider,
   Class,
   NormalizedProvider,
+  RegistryOfInjector,
 } from './types-and-models';
 export { InjectionToken } from './injection-token';
 export { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories';

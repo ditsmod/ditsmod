@@ -95,13 +95,16 @@ export interface DependecyMeta {
   done?: boolean;
 }
 
-export interface IStateStorage {
+export interface RegistryOfInjector {
   countOfProviders: number;
   [id: number]: DependecyMeta;
 }
 
-export function getNewStateStorage(): Class<IStateStorage> {
-  return class StateStorage implements IStateStorage {
+/**
+ * Returns new class with `RegistryOfInjector` interface.
+ */
+export function getNewRegistry(): Class<RegistryOfInjector> {
+  return class RegistryOfInjector {
     countOfProviders: number;
     [id: number]: DependecyMeta;
   };
