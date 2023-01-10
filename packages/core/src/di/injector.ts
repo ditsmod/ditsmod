@@ -70,7 +70,6 @@ expect(car.engine instanceof Engine).toBe(true);
 export class Injector {
   #parent: Injector | null;
   #registry: RegistryOfInjector;
-  private constructionCounter = 0;
 
   /**
    * @param injectorName Injector name. Useful for debugging.
@@ -612,8 +611,8 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
       } else if (meta.done) {
         return meta.value;
       } else {
-        if (injector.constructionCounter++ > injector.#registry.countOfProviders) {
-          throw cyclicDependencyError([meta.resolvedProvider!.dualKey, ...parentTokens]);
+        if (parentTokens.includes(dualKey.token)) {
+          throw cyclicDependencyError([meta.resolvedProvider!.dualKey.token, ...parentTokens]);
         }
         const value = injector.instantiateResolved(meta.resolvedProvider!, parentTokens);
         injector.#registry[dualKey.id] = { value, done: true };
