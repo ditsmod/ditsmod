@@ -114,8 +114,8 @@ describe('injector', () => {
     it('prepared registry class no save state', () => {
       const Registry = Injector.prepareRegistry(Injector.resolve([Engine]));
       const injector1 = new Injector(Registry);
-      const injector2 = new Injector(Registry);
       const engine1 = injector1.get(Engine);
+      const injector2 = new Injector(Registry);
       const engine2 = injector2.get(Engine);
 
       expect(engine1).toBeInstanceOf(Engine);
@@ -139,7 +139,7 @@ describe('injector', () => {
       expect(dashboardSoftware).toBeInstanceOf(DashboardSoftware);
     });
 
-    it('updateValue() should works', () => {
+    it('injector.updateValue() should works', () => {
       const { id } = KeyRegistry.get(1);
       const injector = Injector.resolveAndCreate([Engine, { token: 1, useValue: 'value 1' }]);
       expect(injector.get(Engine)).toBeInstanceOf(Engine);

@@ -33,6 +33,15 @@ import {
 import { DualKey, KeyRegistry } from './key-registry';
 
 const THROW_IF_NOT_FOUND = Symbol();
+class Cache {
+  public value: any;
+  public done: boolean;
+  constructor(value: any) {
+    this.value = value;
+  }
+}
+Cache.prototype.value = null;
+Cache.prototype.done = true;
 
 /**
  * A dependency injection container used for instantiating objects and resolving
@@ -451,7 +460,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
       const msg = `Updating DI value failed: cannot find ID: ${stringify(id)}`;
       throw new DiError(msg);
     }
-    this.#registry[id] = { value, done: true };
+    this.#registry[id] = new Cache(value);
     return this;
   }
 
@@ -615,7 +624,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
           throw cyclicDependencyError([meta.resolvedProvider!.dualKey.token, ...parentTokens]);
         }
         const value = injector.instantiateResolved(meta.resolvedProvider!, parentTokens);
-        injector.#registry[dualKey.id] = { value, done: true };
+        injector.#registry[dualKey.id] = new Cache(value);
         return value;
       }
     }
