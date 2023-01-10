@@ -78,7 +78,7 @@ Once compiled, it becomes `dist/main.js` and becomes the entry point for running
 node dist/main.js
 ```
 
-Note the `import 'reflect-metadata'` in the first line of the file. This module is required for Ditsmod decorators to work, but it is sufficient to specify it only once in the entry file for Node.js.
+Note the `import 'reflect-metadata'` in the first line of the file. This module is required for Ditsmod Dependecy Injection to work, but it is sufficient to specify it only once in the entry file for Node.js.
 
 This import should also be done for tests, because when testing the input file will be a entry file, not `dist/main.js`. For example, if you use [jest][10] as a test framework and the `test-file.js` file contains a compiled test, to run it like this:
 
