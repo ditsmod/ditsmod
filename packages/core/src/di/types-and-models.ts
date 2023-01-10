@@ -1,6 +1,6 @@
 import type { skipSelf, fromSelf } from './decorators';
 import type { InjectionToken } from './injection-token';
-import { DualKey } from './dual-key';
+import { DualKey } from './key-registry';
 
 type Func = (...args: any[]) => any;
 /**
@@ -90,7 +90,7 @@ export class ResolvedProvider {
 }
 
 export interface DependecyMeta {
-  value: any;
+  value?: any;
   resolvedProvider?: ResolvedProvider;
   done?: boolean;
 }
@@ -101,12 +101,10 @@ export interface IStateStorage {
 }
 
 export function getNewStateStorage(): Class<IStateStorage> {
-  class StateStorage implements IStateStorage {
+  return class StateStorage implements IStateStorage {
     countOfProviders: number;
     [id: number]: DependecyMeta;
-  }
-
-  return StateStorage;
+  };
 }
 
 /**
