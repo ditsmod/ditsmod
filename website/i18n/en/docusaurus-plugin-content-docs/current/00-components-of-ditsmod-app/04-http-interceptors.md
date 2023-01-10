@@ -46,13 +46,13 @@ import { HttpHandler, HttpInterceptor } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
-  intercept(routeMeta: RouteMeta, next: HttpHandler) {
-    return next.handle(routeMeta); // Here returns Promise<any>;
+  intercept(next: HttpHandler) {
+    return next.handle(); // Here returns Promise<any>;
   }
 }
 ```
 
-As you can see, the `intercept()` method receives two arguments - the first is the metadata that has the interface [RouteMeta][8]; in the second place - there is an instance of the handler that calls the next interceptor, it must pass `routeMeta` to the next interceptor. If the interceptor needs additional data for its work, it can be obtained in the constructor through DI, as in any service.
+As you can see, the `intercept()` method has a single parameter - this is the instance of the handler that calls the next intersceptor. If the interceptor needs additional data for its work, it can be obtained in the constructor through DI, as in any service.
 
 Note that each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promice resolve, which returns the method of the controller. However, at the moment (Ditsmod v2.0.0), `HttpFrontend` and `HttpBackend` by default ignores everything that returns the controller or interceptors, so this promise resolve can be useful for other purposes - to collect metrics, logging, etc.
 
