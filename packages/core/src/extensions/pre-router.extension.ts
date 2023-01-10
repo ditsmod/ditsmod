@@ -14,7 +14,7 @@ import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { Req } from '../services/request';
 import { Res } from '../services/response';
 import { getLastProviders } from '../utils/get-last-providers';
-import { KeyRegistry } from '../di/dual-key';
+import { KeyRegistry } from '../di/key-registry';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
