@@ -667,34 +667,31 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     }
 
     const injector = visibility === skipSelf ? this.#parent : this;
-    const onlyFromSelf = visibility === fromSelf;
-    return this.runDryOrThrow({ injector, dualKey: dualKey, parentTokens, ignoreDeps, onlyFromSelf, isOptional });
+    return this.runDryOrThrow({ injector, dualKey: dualKey, parentTokens, ignoreDeps, visibility, isOptional });
   }
 
-  private runDryOrThrow({ injector, dualKey, parentTokens, ignoreDeps, onlyFromSelf, isOptional }: Config1): any {
+  private runDryOrThrow({ injector, dualKey, parentTokens, ignoreDeps, visibility, isOptional }: Config1): any {
     if (injector) {
       if (ignoreDeps?.includes(dualKey.token)) {
         return;
       }
       const meta = injector.#registry[dualKey.id];
-      if (!meta) {
-        if (!onlyFromSelf && injector.#parent) {
-          return injector.#parent.runDryOrThrow({
-            injector: injector.#parent,
-            dualKey,
-            parentTokens,
-            ignoreDeps,
-            isOptional,
-          });
-        }
-      } else if (!meta.done) {
+      if (meta?.done) {
+        return;
+      } else if (meta) {
         if (parentTokens.includes(dualKey.token)) {
           throw cyclicDependencyError([dualKey.token, ...parentTokens]);
         }
         injector.checkMultiOrRegularDeps({ provider: meta.resolvedProvider!, parentTokens, ignoreDeps });
         return;
-      } else {
-        return;
+      } else if (visibility !== fromSelf && injector.#parent) {
+        return injector.#parent.runDryOrThrow({
+          injector: injector.#parent,
+          dualKey,
+          parentTokens,
+          ignoreDeps,
+          isOptional,
+        });
       }
     }
     if (!isOptional) {
