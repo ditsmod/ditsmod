@@ -1,5 +1,12 @@
+<a name="core-2.34.0"></a>
+# [core-2.34.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.34.0) (2023-01-10)
+
+### Features
+
+- Improvements speed of DI.
+
 <a name="core-2.33.1"></a>
-# [core-2.33.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.33.1) (2023-01-07)
+## [core-2.33.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.33.1) (2023-01-07)
 
 ### Bug fixes
 
