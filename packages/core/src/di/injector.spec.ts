@@ -17,6 +17,8 @@ import {
 import { stringify } from './utils';
 import { makeClassDecorator, makePropDecorator } from './decorator-factories';
 import { getOriginalError } from './error-handling';
+import { KeyRegistry } from './key-registry';
+import { getNewStateStorage } from './types-and-models';
 
 class Engine {}
 
@@ -104,14 +106,47 @@ function createInjector(providers: Provider[], parent?: Injector | null): Inject
 }
 
 describe('injector', () => {
-  it('should twiсe instantiate a class without side affect', () => {
-    const injector1 = createInjector([Engine]);
-    const engine1: Engine = injector1.get(Engine);
-    const injector2 = createInjector([Engine]);
-    const engine2: Engine = injector2.get(Engine);
+  describe('class of storage', () => {
+    it('getNewStateStorage() should return different class on each call', () => {
+      expect(getNewStateStorage() !== getNewStateStorage()).toBe(true);
+    });
 
-    expect(engine1).toBeInstanceOf(Engine);
-    expect(engine2).toBeInstanceOf(Engine);
+    it('prepared storage class no save state', () => {
+      const Storage = Injector.prepareStorage(Injector.resolve([Engine]));
+      const injector1 = new Injector(Storage);
+      const injector2 = new Injector(Storage);
+      const engine1 = injector1.get(Engine);
+      const engine2 = injector2.get(Engine);
+
+      expect(engine1).toBeInstanceOf(Engine);
+      expect(engine2).toBeInstanceOf(Engine);
+      expect(engine1 !== engine2).toBe(true);
+    });
+
+    it('prepared storage should allow extends it after creation', () => {
+      const Storage = Injector.prepareStorage(Injector.resolve([Engine]));
+      expect(new Storage()).toMatchObject({ countOfProviders: 1 });
+
+      const resolvedDeps = Injector.resolve([DashboardSoftware]);
+      Injector.prepareStorage(resolvedDeps, Storage);
+      expect(new Storage()).toMatchObject({ countOfProviders: 2 });
+
+      const injector = new Injector(Storage);
+      const engine = injector.get(Engine);
+      const dashboardSoftware = injector.get(DashboardSoftware);
+
+      expect(engine).toBeInstanceOf(Engine);
+      expect(dashboardSoftware).toBeInstanceOf(DashboardSoftware);
+    });
+
+    it('updateValue() should works', () => {
+      const { id } = KeyRegistry.get(1);
+      const injector = Injector.resolveAndCreate([Engine, { token: 1, useValue: 'value 1' }]);
+      expect(injector.get(Engine)).toBeInstanceOf(Engine);
+      expect(injector.get(1)).toBe('value 1');
+      injector.updateValue(id, 'value 2');
+      expect(injector.get(1)).toBe('value 2');
+    });
   });
 
   it('should support method factory', () => {
@@ -523,9 +558,7 @@ describe('injector', () => {
       { token: Engine, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
     ]);
 
-    const msg =
-      'Broken Engine: Error during instantiation of ' +
-      'Engine! (Car -> Engine). Caused by: Broken Engine';
+    const msg = 'Broken Engine: Error during instantiation of ' + 'Engine! (Car -> Engine). Caused by: Broken Engine';
     expect(() => injector.get(Car)).toThrowError(msg);
 
     isBroken = false;
@@ -836,10 +869,7 @@ describe("null as provider's value", () => {
       method1(dashboard: Dashboard) {}
     }
 
-    const injector = Injector.resolveAndCreate([
-      Dashboard,
-      { token: Car, useFactory: [Car, Car.prototype.method1] },
-    ]);
+    const injector = Injector.resolveAndCreate([Dashboard, { token: Car, useFactory: [Car, Car.prototype.method1] }]);
 
     const msg = 'No provider for DashboardSoftware! (Car -> Dashboard -> DashboardSoftware)';
     expect(() => injector.get(Car)).toThrow(msg);
