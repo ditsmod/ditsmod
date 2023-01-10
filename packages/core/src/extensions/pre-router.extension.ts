@@ -73,23 +73,18 @@ export class PreRouterExtension implements Extension<void> {
         const ctxId = KeyRegistry.get(RequestContext).id;
 
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
-          const req = new Req(nodeReq);
-          const res = new Res(nodeRes);
-          const ctx: RequestContext = {
-            routeMeta,
-            nodeReq,
-            nodeRes,
-            queryString,
-            aPathParams,
-            req,
-            res,
-          };
-          const inj = injectorPerRou.createChildFromRegistry(RegistryPerReq, 'injectorPerReq');
-          inj.updateValue(ctxId, ctx);
-
-          // First HTTP handler in the chain of HTTP interceptors.
-          const chain = inj.instantiateResolved(resolvedHttpHandler) as HttpHandler;
-          await chain.handle();
+          await new Injector(RegistryPerReq, injectorPerRou, 'injectorPerReq')
+            .updateValue(ctxId, {
+              req: new Req(nodeReq),
+              res: new Res(nodeRes),
+              queryString,
+              aPathParams,
+              nodeReq,
+              nodeRes,
+              routeMeta,
+            } as RequestContext)
+            .instantiateResolved(resolvedHttpHandler)
+            .handle(); // First HTTP handler in the chain of HTTP interceptors.
         }) as RouteHandler;
 
         preparedRouteMeta.push({ moduleName, httpMethod, path, handle });
