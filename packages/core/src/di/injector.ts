@@ -606,19 +606,17 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   ): any {
     if (injector) {
       const meta = injector.#registry[dualKey.id];
-      if (!meta) {
-        if (visibility !== fromSelf && injector.#parent) {
-          return injector.#parent.getOrThrow(injector.#parent, dualKey, parentTokens, notFoundValue);
-        }
-      } else if (meta.done) {
+      if (meta?.done) {
         return meta.value;
-      } else {
+      } else if (meta) {
         if (parentTokens.includes(dualKey.token)) {
           throw cyclicDependencyError([dualKey.token, ...parentTokens]);
         }
         const value = injector.instantiateResolved(meta.resolvedProvider!, parentTokens);
         injector.#registry[dualKey.id] = { value, done: true };
         return value;
+      } else if (visibility !== fromSelf && injector.#parent) {
+        return injector.#parent.getOrThrow(injector.#parent, dualKey, parentTokens, notFoundValue);
       }
     }
     if (notFoundValue !== THROW_IF_NOT_FOUND) {
