@@ -615,7 +615,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         return meta.value;
       } else {
         if (parentTokens.includes(dualKey.token)) {
-          throw cyclicDependencyError([meta.resolvedProvider!.dualKey.token, ...parentTokens]);
+          throw cyclicDependencyError([dualKey.token, ...parentTokens]);
         }
         const value = injector.instantiateResolved(meta.resolvedProvider!, parentTokens);
         injector.#registry[dualKey.id] = { value, done: true };
@@ -692,7 +692,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         }
       } else if (!meta.done) {
         if (parentTokens.includes(dualKey.token)) {
-          throw cyclicDependencyError([meta.resolvedProvider!.dualKey.token, ...parentTokens]);
+          throw cyclicDependencyError([dualKey.token, ...parentTokens]);
         }
         injector.checkMultiOrRegularDeps({ provider: meta.resolvedProvider!, parentTokens, ignoreDeps });
         return;
