@@ -1,5 +1,4 @@
-import { fromSelf, injectable, Injector, isNormalizedProvider, ResolvedProvider } from '../di';
-
+import { fromSelf, injectable, Injector, ResolvedProvider } from '../di';
 import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '../constans';
 import { HttpBackend, HttpFrontend, HttpHandler } from '../types/http-interceptor';
 import { Extension, HttpMethod } from '../types/mix';
@@ -11,7 +10,6 @@ import { ExtensionsContext } from '../services/extensions-context';
 import { getModule } from '../utils/get-module';
 import { PerAppService } from '../services/per-app.service';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
-import { getLastProviders } from '../utils/get-last-providers';
 import { KeyRegistry } from '../di/key-registry';
 
 @injectable()
@@ -59,10 +57,7 @@ export class PreRouterExtension implements Extension<void> {
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
         const resolvedPerReq = Injector.resolve(mergedPerReq);
         this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
-        const lastHttpHandler = getLastProviders(mergedPerReq).find((p) => {
-          return isNormalizedProvider(p) && p.token === HttpHandler;
-        })!;
-        const resolvedHttpHandler = Injector.resolve([lastHttpHandler])[0];
+        const resolvedHttpHandler = resolvedPerReq.find((rp) => rp.dualKey.token === HttpHandler)!;
         const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
         const ctxId = KeyRegistry.get(RequestContext).id;
 
@@ -109,7 +104,7 @@ export class PreRouterExtension implements Extension<void> {
     inj.checkDeps(SystemLogMediator, undefined, ignoreDeps);
     routeMeta.guards.forEach((item) => inj.checkDeps(item.guard, undefined, ignoreDeps));
     inj.checkDeps(HttpBackend, undefined, ignoreDeps);
-    inj.checkDepsInResolved(routeMeta.resolvedFactory, [], ignoreDeps);
+    inj.checkDepsInResolved(routeMeta.resolvedFactory, undefined, ignoreDeps);
     inj.checkDeps(HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
   }
 
