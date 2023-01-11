@@ -1,9 +1,9 @@
-import { fromSelf, injectable, Injector, RequestContext } from '@ditsmod/core';
+import { fromSelf, injectable, Injector, RequestContext, Res } from '@ditsmod/core';
 import { HttpBackend, DefaultHttpBackend, Status, HttpMethod } from '@ditsmod/core';
 
 @injectable()
 export class ReturnHttpBackend extends DefaultHttpBackend implements HttpBackend {
-  constructor(protected override injector: Injector, @fromSelf() protected override ctx: RequestContext) {
+  constructor(protected override injector: Injector, @fromSelf() protected override ctx: RequestContext, protected res: Res) {
     super(injector, ctx);
   }
 
@@ -24,9 +24,9 @@ export class ReturnHttpBackend extends DefaultHttpBackend implements HttpBackend
     }
 
     if (typeof value == 'object' || this.ctx.nodeRes.getHeader('content-type') == 'application/json') {
-      this.ctx.res.sendJson(value, statusCode);
+      this.res.sendJson(value, statusCode);
     } else {
-      this.ctx.res.send(value, statusCode);
+      this.res.send(value, statusCode);
     }
   }
 }
