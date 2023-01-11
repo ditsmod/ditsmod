@@ -1,18 +1,23 @@
 import { parse } from 'querystring';
 
-import { fromSelf, injectable, Injector } from '../di';
+import { fromSelf, injectable, Injector, skipSelf } from '../di';
 import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
 import { AnyObj, CanActivate } from '../types/mix';
 import { NodeRequest, NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
-import { RequestContext } from '../types/route-data';
+import { RequestContext, RouteMeta } from '../types/route-data';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { Req } from './request';
 
 @injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
-  constructor(protected injector: Injector, @fromSelf() private ctx: RequestContext, @fromSelf() private req: Req) {}
+  constructor(
+    protected injector: Injector,
+    @fromSelf() private ctx: RequestContext,
+    @fromSelf() private req: Req,
+    @skipSelf() private routeMeta: RouteMeta
+  ) {}
 
   async intercept(next: HttpHandler) {
     try {
@@ -32,7 +37,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
   }
 
   protected async canActivate() {
-    const preparedGuards = this.ctx.routeMeta.guards.map<{ guard: CanActivate; params?: any[] }>((item) => {
+    const preparedGuards = this.routeMeta.guards.map<{ guard: CanActivate; params?: any[] }>((item) => {
       return {
         guard: this.injector.get(item.guard),
         params: item.params,

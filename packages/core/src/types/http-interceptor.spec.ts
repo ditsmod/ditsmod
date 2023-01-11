@@ -5,7 +5,7 @@ import { HttpBackend, HttpHandler, HttpInterceptor, HttpFrontend } from './http-
 import { defaultProvidersPerReq } from '../services/default-providers-per-req';
 import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { ServiceProvider } from './mix';
-import { RequestContext } from './route-data';
+import { RequestContext, RouteMeta } from './route-data';
 import { HTTP_INTERCEPTORS } from '../constans';
 
 describe('HttpInterceptor', () => {
@@ -81,7 +81,7 @@ describe('HttpInterceptor', () => {
       }
     }
 
-    const injector = Injector.resolveAndCreate([
+    const injector = Injector.resolveAndCreate([RouteMeta]).resolveAndCreateChild([
       ...defaultProviders,
       { token: HttpFrontend, useClass: MockHttpFrontend },
       { token: HTTP_INTERCEPTORS, useClass: Interceptor1, multi: true },
@@ -96,7 +96,10 @@ describe('HttpInterceptor', () => {
   });
 
   it('without HTTP_INTERCEPTORS, chain should be HttpBackend', () => {
-    const injector = Injector.resolveAndCreate([...defaultProviders, { token: RequestContext, useValue: {} }]);
+    const injector = Injector.resolveAndCreate([RouteMeta]).resolveAndCreateChild([
+      ...defaultProviders,
+      { token: RequestContext, useValue: {} },
+    ]);
 
     const chain = injector.get(HttpHandler) as HttpHandler;
     const frontend = injector.get(HttpFrontend) as HttpFrontend;

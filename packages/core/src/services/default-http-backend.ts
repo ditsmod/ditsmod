@@ -1,12 +1,12 @@
-import { fromSelf, injectable, Injector } from '../di';
+import { injectable, Injector, skipSelf } from '../di';
 import { HttpBackend } from '../types/http-interceptor';
-import { RequestContext } from '../types/route-data';
+import { RouteMeta } from '../types/route-data';
 
 @injectable()
 export class DefaultHttpBackend implements HttpBackend {
-  constructor(protected injector: Injector, @fromSelf() protected ctx: RequestContext) {}
+  constructor(protected injector: Injector, @skipSelf() protected routeMeta: RouteMeta) {}
 
   async handle() {
-    return this.injector.instantiateResolved(this.ctx.routeMeta.resolvedFactory);
+    return this.injector.instantiateResolved(this.routeMeta.resolvedFactory);
   }
 }

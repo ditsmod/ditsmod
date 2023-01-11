@@ -11,8 +11,6 @@ import { ExtensionsContext } from '../services/extensions-context';
 import { getModule } from '../utils/get-module';
 import { PerAppService } from '../services/per-app.service';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
-import { Req } from '../services/request';
-import { Res } from '../services/response';
 import { getLastProviders } from '../utils/get-last-providers';
 import { KeyRegistry } from '../di/key-registry';
 
@@ -71,7 +69,6 @@ export class PreRouterExtension implements Extension<void> {
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
           await new Injector(RegistryPerReq, injectorPerRou, 'injectorPerReq')
             .updateValue(ctxId, {
-              routeMeta,
               nodeReq,
               nodeRes,
               queryString,

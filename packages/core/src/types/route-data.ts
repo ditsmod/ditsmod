@@ -32,7 +32,6 @@ export class RouteMeta {
 }
 
 export class RequestContext {
-  routeMeta: RouteMeta;
   nodeReq: NodeRequest;
   nodeRes: NodeResponse;
   queryString: string;
