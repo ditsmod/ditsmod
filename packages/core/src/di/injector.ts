@@ -489,42 +489,6 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
   }
 
   /**
-   * Instantiates an object using a resolved provider in the context of the injector.
-   *
-   * The created object does not get cached by the injector, but create the cache of its dependecies.
-   *
-   * ### Example
-   *
-```ts
-@injectable()
-class Engine {
-}
-
-@injectable()
-class Car {
-  constructor(public engine:Engine) {}
-}
-
-const injector = Injector.resolveAndCreate([Engine]);
-const carProvider = Injector.resolve([Car])[0];
-const car = injector.instantiateResolved(carProvider);
-expect(car.engine).toBe(injector.get(Engine));
-expect(car).not.toBe(injector.instantiateResolved(carProvider));
-```
-   */
-  instantiateResolved(provider: ResolvedProvider, parentTokens: any[] = []): any {
-    if (provider.multi) {
-      const res = new Array(provider.resolvedFactories.length);
-      for (let i = 0; i < provider.resolvedFactories.length; ++i) {
-        res[i] = this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[i]);
-      }
-      return res;
-    } else {
-      return this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[0]);
-    }
-  }
-
-  /**
    * Retrieves an instance from the injector based on the provided token.
    * If not found, returns the `notFoundValue` otherwise
    */
@@ -532,23 +496,6 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   get(token: any, visibility?: Visibility, notFoundValue?: any): any;
   get(token: any, visibility: Visibility = null, notFoundValue: any = THROW_IF_NOT_FOUND): any {
     return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, notFoundValue);
-  }
-
-  private instantiate(token: any, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
-    const deps = resolvedFactory.dependencies.map((dep) => {
-      return this.selectInjectorAndGet(
-        dep.dualKey,
-        [token, ...parentTokens],
-        dep.visibility,
-        dep.optional ? null : THROW_IF_NOT_FOUND
-      );
-    });
-
-    try {
-      return resolvedFactory.factory(...deps);
-    } catch (e: any) {
-      throw instantiationError(e, [token, ...parentTokens]);
-    }
   }
 
   private selectInjectorAndGet(dualKey: DualKey, parentTokens: any[], visibility: Visibility, notFoundValue: any) {
@@ -586,6 +533,59 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
       return notFoundValue;
     } else {
       throw noProviderError([dualKey.token, ...parentTokens]);
+    }
+  }
+
+  /**
+   * Instantiates an object using a resolved provider in the context of the injector.
+   *
+   * The created object does not get cached by the injector, but create the cache of its dependecies.
+   *
+   * ### Example
+   *
+```ts
+@injectable()
+class Engine {
+}
+
+@injectable()
+class Car {
+  constructor(public engine:Engine) {}
+}
+
+const injector = Injector.resolveAndCreate([Engine]);
+const carProvider = Injector.resolve([Car])[0];
+const car = injector.instantiateResolved(carProvider);
+expect(car.engine).toBe(injector.get(Engine));
+expect(car).not.toBe(injector.instantiateResolved(carProvider));
+```
+   */
+  instantiateResolved(provider: ResolvedProvider, parentTokens: any[] = []): any {
+    if (provider.multi) {
+      const res = new Array(provider.resolvedFactories.length);
+      for (let i = 0; i < provider.resolvedFactories.length; ++i) {
+        res[i] = this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[i]);
+      }
+      return res;
+    } else {
+      return this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[0]);
+    }
+  }
+
+  private instantiate(token: any, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
+    const deps = resolvedFactory.dependencies.map((dep) => {
+      return this.selectInjectorAndGet(
+        dep.dualKey,
+        [token, ...parentTokens],
+        dep.visibility,
+        dep.optional ? null : THROW_IF_NOT_FOUND
+      );
+    });
+
+    try {
+      return resolvedFactory.factory(...deps);
+    } catch (e: any) {
+      throw instantiationError(e, [token, ...parentTokens]);
     }
   }
 
