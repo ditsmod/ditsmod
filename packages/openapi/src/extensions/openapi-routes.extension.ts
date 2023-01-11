@@ -79,6 +79,9 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             guards,
             resolvedFactory: RouteMeta.getResolvedFactory(controller, methodName)
           };
+          
+          providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
+
           aControllersMetadata2.push({
             providersPerRou,
             providersPerReq,

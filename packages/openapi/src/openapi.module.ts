@@ -16,11 +16,13 @@ import { SwaggerConfigManager } from './services/swagger-config-manager';
 import { SwaggerOAuthOptions } from './swagger-ui/swagger-o-auth-options';
 import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-options';
 import { OpenapiLogMediator } from './services/openapi-log-mediator';
+import { OasRouteMeta } from './types/oas-route-meta';
 
 @featureModule({
   controllers: [OpenapiController],
   providersPerApp: [OasConfigFiles],
   providersPerMod: [SwaggerConfigManager, OpenapiLogMediator],
+  providersPerRou: [{ token: OasRouteMeta, useToken: RouteMeta }],
   extensions: [
     { extension: OpenapiRoutesExtension, groupToken: ROUTES_EXTENSIONS, exported: true },
     {
@@ -30,6 +32,7 @@ import { OpenapiLogMediator } from './services/openapi-log-mediator';
       exported: true,
     },
   ],
+  exports: [OasRouteMeta]
 })
 export class OpenapiModule {
   /**
