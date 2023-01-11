@@ -11,8 +11,7 @@ import { ValidationInterceptor } from './validation.interceptor';
 export class RequestBodyInterceptor extends ValidationInterceptor {
   protected override prepareAndValidate() {
     const { options, requestBodySchema } = this.ctx.routeMeta as ValidationRouteMeta;
-    const { req } = this.ctx;
-    if (req.body === undefined) {
+    if (this.req.body === undefined) {
       const dict = this.getDict();
       throw new CustomError({
         msg1: dict.missingRequestBody,
@@ -20,6 +19,6 @@ export class RequestBodyInterceptor extends ValidationInterceptor {
       });
     }
 
-    this.validate(requestBodySchema, req.body);
+    this.validate(requestBodySchema, this.req.body);
   }
 }

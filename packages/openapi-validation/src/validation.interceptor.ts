@@ -1,4 +1,4 @@
-import { injectable, Injector, RequestContext } from '@ditsmod/core';
+import { injectable, Injector, Req, RequestContext } from '@ditsmod/core';
 import { HttpHandler, HttpInterceptor, Status, CustomError } from '@ditsmod/core';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { DictService } from '@ditsmod/i18n';
@@ -9,7 +9,7 @@ import { AjvService } from './ajv.service';
 
 @injectable()
 export class ValidationInterceptor implements HttpInterceptor {
-  constructor(protected injector: Injector, protected ajvService: AjvService, protected ctx: RequestContext) {}
+  constructor(protected injector: Injector, protected ajvService: AjvService, protected ctx: RequestContext, protected req: Req) {}
 
   intercept(next: HttpHandler) {
     this.prepareAndValidate();

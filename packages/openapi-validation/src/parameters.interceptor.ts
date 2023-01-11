@@ -20,11 +20,10 @@ export class ParametersInterceptor extends ValidationInterceptor {
     for (const parameter of parameters) {
       const schema = parameter.schema as XSchemaObject<any>;
       let value: any;
-      const { req } = this.ctx;
       if (parameter.in == 'path') {
-        value = req.pathParams[parameter.name];
+        value = this.req.pathParams[parameter.name];
       } else if (parameter.in == 'query') {
-        value = req.queryParams[parameter.name];
+        value = this.req.queryParams[parameter.name];
       } else if (parameter.in == 'cookie') {
         const cookies = new Cookies(this.ctx.nodeReq, this.ctx.nodeRes);
         value = cookies.get(parameter.name);
