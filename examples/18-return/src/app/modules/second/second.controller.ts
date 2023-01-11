@@ -1,10 +1,10 @@
-import { controller, RequestContext, route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
 @controller()
 export class SecondController {
   @route('GET', 'second')
-  async method1(ctx: RequestContext) {
-    ctx.res.send('default send');
+  async method1(res: Res) {
+    res.send('default send');
   }
 
   @route('GET', 'second-json')

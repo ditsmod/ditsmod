@@ -1,14 +1,14 @@
-import { controller, RequestContext, route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
 @controller()
 export class HelloWorldController {
   @route('GET')
-  tellHello(ctx: RequestContext) {
-    ctx.res.send('Hello World!\n');
+  tellHello(res: Res) {
+    res.send('Hello World!\n');
   }
 
   @route('GET', 'throw-error')
-  throwError(ctx: RequestContext) {
+  throwError() {
     throw new Error('some error here!');
   }
 }

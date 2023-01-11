@@ -1,4 +1,4 @@
-import { controller, route, inject, RequestContext} from '@ditsmod/core';
+import { controller, route, inject, RequestContext, Res, Req} from '@ditsmod/core';
 
 import { FirstPerRouService } from './first/first-per-rou.service';
 import { ThirdService } from './third/three.service';
@@ -12,18 +12,18 @@ export class AppController {
   ) {}
 
   @route('GET')
-  showCounters(ctx: RequestContext) {
+  showCounters(res: Res) {
     const msg = `per req counter: ${this.threeService.getCounter()}, per rou counter: ${this.onePerRouService.getCounter()}`;
-    ctx.res.send(msg);
+    res.send(msg);
   }
 
   @route('POST')
-  showRequestBody(ctx: RequestContext) {
-    ctx.res.sendJson({ body: this.threeService.getBody(ctx.req) });
+  showRequestBody(res: Res, req: Req) {
+    res.sendJson({ body: this.threeService.getBody(req) });
   }
 
   @route('GET', 'zero')
-  getMultiProvideValue(ctx: RequestContext) {
-    ctx.res.sendJson(this.multiProvider);
+  getMultiProvideValue(res: Res) {
+    res.sendJson(this.multiProvider);
   }
 }

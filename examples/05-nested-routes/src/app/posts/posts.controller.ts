@@ -1,4 +1,4 @@
-import { controller, RequestContext, route } from '@ditsmod/core';
+import { controller, Req, RequestContext, Res, route } from '@ditsmod/core';
 
 @controller()
 export class PostsController {
@@ -7,8 +7,8 @@ export class PostsController {
    */
   @route('GET')
   @route('GET', ':postId')
-  sendPosts(ctx: RequestContext) {
-    const { pathParams } = ctx.req;
-    ctx.res.sendJson({ pathParams });
+  sendPosts(req: Req, res: Res) {
+    const { pathParams } = req;
+    res.sendJson({ pathParams });
   }
 }

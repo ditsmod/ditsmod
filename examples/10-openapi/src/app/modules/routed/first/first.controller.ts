@@ -1,4 +1,4 @@
-import { controller, RequestContext, route, Status } from '@ditsmod/core';
+import { controller, Req, RequestContext, Res, route, Status } from '@ditsmod/core';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 
 import { BasicGuard } from './basic.guard';
@@ -8,13 +8,13 @@ import { getMetaContent } from './overriden-helper';
 @controller({ providersPerReq: [BasicGuard] })
 export class FirstController {
   @route('GET')
-  hello(ctx: RequestContext) {
-    ctx.res.send('Hello World!\n');
+  hello(res: Res) {
+    res.send('Hello World!\n');
   }
 
   @oasRoute('GET', 'guard', [BasicGuard])
-  helloWithGuard(ctx: RequestContext) {
-    ctx.res.send('Hello, user!');
+  helloWithGuard(res: Res) {
+    res.send('Hello, user!');
   }
 
   @oasRoute('GET', 'resource/:resourceId', {
@@ -28,9 +28,9 @@ export class FirstController {
       },
     },
   })
-  getResourceId(ctx: RequestContext) {
-    const { resourceId } = ctx.req.pathParams;
-    ctx.res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
+  getResourceId(req: Req, res: Res) {
+    const { resourceId } = req.pathParams;
+    res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
   }
 
   @oasRoute('GET', 'resource2/:resourceId', {
@@ -44,8 +44,8 @@ export class FirstController {
       },
     },
   })
-  getResourceId2(ctx: RequestContext) {
-    const { resourceId } = ctx.req.pathParams;
-    ctx.res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
+  getResourceId2(req: Req, res: Res) {
+    const { resourceId } = req.pathParams;
+    res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
   }
 }

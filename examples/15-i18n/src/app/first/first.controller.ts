@@ -1,4 +1,4 @@
-import { controller, RequestContext, route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
 import { FirstService } from './first.service';
 
@@ -7,7 +7,7 @@ export class FirstController {
   constructor(private firstService: FirstService) {}
 
   @route('GET', 'first')
-  tellHefllo(ctx: RequestContext) {
-    ctx.res.send(this.firstService.countToThree());
+  tellHefllo(res: Res) {
+    res.send(this.firstService.countToThree());
   }
 }

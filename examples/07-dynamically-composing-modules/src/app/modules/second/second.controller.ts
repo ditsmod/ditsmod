@@ -1,9 +1,9 @@
-import { controller, RequestContext, route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
 @controller()
 export class SecondController {
   @route('GET', 'get-2')
-  async tellHello(ctx: RequestContext) {
-    ctx.res.send('second module.\n');
+  async tellHello(res: Res) {
+    res.send('second module.\n');
   }
 }

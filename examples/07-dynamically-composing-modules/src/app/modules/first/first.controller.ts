@@ -4,6 +4,7 @@ import {
   ModuleManager,
   ModuleWithParams,
   RequestContext,
+  Res,
   route,
   skipSelf,
 } from '@ditsmod/core';
@@ -19,40 +20,40 @@ export class FirstController {
   constructor(@skipSelf() private moduleManager: ModuleManager, @skipSelf() private appInitializer: AppInitializer) {}
 
   @route('GET')
-  tellHello(ctx: RequestContext) {
-    ctx.res.send('first module.\n');
+  tellHello(res: Res) {
+    res.send('first module.\n');
   }
 
   @route('GET', 'add-2')
-  async addSecondModule(ctx: RequestContext) {
+  async addSecondModule(res: Res) {
     this.moduleManager.addImport(secondModuleWithParams);
-    await this.reinitApp(ctx, 'second', 'importing');
+    await this.reinitApp(res, 'second', 'importing');
   }
 
   @route('GET', 'del-2')
-  async removeSecondModule(ctx: RequestContext) {
+  async removeSecondModule(res: Res) {
     this.moduleManager.removeImport(secondModuleWithParams);
-    await this.reinitApp(ctx, 'second', 'removing');
+    await this.reinitApp(res, 'second', 'removing');
   }
 
   @route('GET', 'add-3')
-  async addThirdModule(ctx: RequestContext) {
+  async addThirdModule(res: Res) {
     this.moduleManager.addImport(thirdModuleWithParams);
-    await this.reinitApp(ctx, 'third', 'importing');
+    await this.reinitApp(res, 'third', 'importing');
   }
 
   @route('GET', 'del-3')
-  async removeThirdModule(ctx: RequestContext) {
+  async removeThirdModule(res: Res) {
     this.moduleManager.removeImport(thirdModuleWithParams);
-    await this.reinitApp(ctx, 'third', 'removing');
+    await this.reinitApp(res, 'third', 'removing');
   }
 
-  private async reinitApp(ctx: RequestContext, moduleName: 'second' | 'third', action: 'importing' | 'removing') {
+  private async reinitApp(res: Res, moduleName: 'second' | 'third', action: 'importing' | 'removing') {
     const err = await this.appInitializer.reinit();
     if (err) {
-      ctx.res.send(`${action} ${moduleName} failed: ${err.message}\n`);
+      res.send(`${action} ${moduleName} failed: ${err.message}\n`);
     } else {
-      ctx.res.send(`${moduleName} successfully ${action}!\n`);
+      res.send(`${moduleName} successfully ${action}!\n`);
     }
   }
 }

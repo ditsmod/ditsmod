@@ -1,9 +1,9 @@
-import { CanActivate, injectable, RequestContext } from '@ditsmod/core';
+import { CanActivate, injectable, Req, RequestContext } from '@ditsmod/core';
 import { JwtService, VerifyErrors } from '@ditsmod/jwt';
 
 @injectable()
 export class BearerGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private ctx: RequestContext) {}
+  constructor(private jwtService: JwtService, private ctx: RequestContext, private req: Req) {}
 
   async canActivate() {
     const authValue = this.ctx.nodeReq.headers.authorization?.split(' ');
@@ -18,7 +18,7 @@ export class BearerGuard implements CanActivate {
       .catch((err: VerifyErrors) => false as const); // Here `as const` to narrow down returned type.
 
     if (payload) {
-      this.ctx.req.jwtPayload = payload;
+      this.req.jwtPayload = payload;
       return true;
     } else {
       return false;

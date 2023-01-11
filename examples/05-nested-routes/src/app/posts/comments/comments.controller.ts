@@ -1,4 +1,4 @@
-import { controller, RequestContext, route } from '@ditsmod/core';
+import { controller, Req, Res, route } from '@ditsmod/core';
 
 @controller()
 export class CommentsController {
@@ -7,8 +7,8 @@ export class CommentsController {
    */
   @route('GET')
   @route('GET', ':commentId')
-  sendComments(ctx: RequestContext) {
-    const { pathParams } = ctx.req;
-    ctx.res.sendJson({ pathParams });
+  sendComments(req: Req, res: Res) {
+    const { pathParams } = req;
+    res.sendJson({ pathParams });
   }
 }

@@ -1,4 +1,4 @@
-import { controller, RequestContext } from '@ditsmod/core';
+import { controller, Req, RequestContext, Res } from '@ditsmod/core';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 
 import { Model1, Model2 } from './models';
@@ -9,9 +9,9 @@ export class FirstController {
     description: 'Route wtih required path parameter',
     parameters: getParams('path', true, Model1, 'username'),
   })
-  getResourceId(ctx: RequestContext) {
-    const { username } = ctx.req.pathParams;
-    ctx.res.sendJson({ username });
+  getResourceId(req: Req, res: Res) {
+    const { username } = req.pathParams;
+    res.sendJson({ username });
   }
 
   @oasRoute('POST', 'model1', {
@@ -21,8 +21,8 @@ export class FirstController {
       content: getContent({ mediaType: 'application/json', model: Model1 }),
     },
   })
-  postModel1(ctx: RequestContext) {
-    ctx.res.sendJson(ctx.req.body);
+  postModel1(req: Req, res: Res) {
+    res.sendJson(req.body);
   }
 
   @oasRoute('POST', 'model2', {
@@ -32,7 +32,7 @@ export class FirstController {
       content: getContent({ mediaType: 'application/json', model: Model2 }),
     },
   })
-  postModel2(ctx: RequestContext) {
-    ctx.res.sendJson(ctx.req.body);
+  postModel2(req: Req, res: Res) {
+    res.sendJson(req.body);
   }
 }
