@@ -109,7 +109,7 @@ export class CorsExtension implements Extension<void | false> {
       const routeMeta: RouteMeta = {
         decoratorMetadata: {} as any,
         guards: [],
-        resolvedFactory: RouteMeta.getResolvedFactory(DynamicController, methodName)
+        resolvedFactory: RouteMeta.getResolvedFactory(DynamicController, methodName),
       };
 
       const controllersMetadata2: ControllerMetadata2 = {
@@ -117,9 +117,10 @@ export class CorsExtension implements Extension<void | false> {
         path,
         providersPerRou: [
           { token: ALLOW_METHODS, useValue: httpMethods },
+          { token: RouteMeta, useValue: routeMeta },
         ],
-        providersPerReq: [{ useFactory: [DynamicController, (DynamicController.prototype)[methodName]] }],
-        routeMeta
+        providersPerReq: [{ useFactory: [DynamicController, DynamicController.prototype[methodName]] }],
+        routeMeta,
       };
 
       newArrControllersMetadata2.push(controllersMetadata2);
