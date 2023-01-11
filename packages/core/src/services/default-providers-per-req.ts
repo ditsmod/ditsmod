@@ -7,12 +7,14 @@ import { DefaultHttpFrontend } from './default-http-frontend';
 import { DefaultHttpHandler } from './default-http-handler';
 import { Req } from './request';
 import { Res } from './response';
+import { RequestContext } from '../types/route-data';
 
 export const defaultProvidersPerReq: Readonly<ServiceProvider[]> = [
   { token: ControllerErrorHandler, useClass: DefaultControllerErrorHandler },
   { token: HttpFrontend, useClass: DefaultHttpFrontend },
   { token: HttpBackend, useClass: DefaultHttpBackend },
   { token: HttpHandler, useClass: DefaultHttpHandler },
+  RequestContext,
   Req,
   Res
 ];

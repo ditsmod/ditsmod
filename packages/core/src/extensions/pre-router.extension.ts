@@ -58,11 +58,7 @@ export class PreRouterExtension implements Extension<void> {
       aControllersMetadata2.forEach(({ httpMethod, path, providersPerRou, providersPerReq, routeMeta }) => {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'injectorPerRou');
-        const mergedPerReq = [
-          ...metadataPerMod2.providersPerReq,
-          ...providersPerReq,
-          { token: RequestContext, useValue: {} },
-        ];
+        const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
         const resolvedPerReq = Injector.resolve(mergedPerReq);
         this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
         const lastHttpHandler = getLastProviders(mergedPerReq).find((p) => {
@@ -75,11 +71,11 @@ export class PreRouterExtension implements Extension<void> {
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
           await new Injector(RegistryPerReq, injectorPerRou, 'injectorPerReq')
             .updateValue(ctxId, {
-              queryString,
-              aPathParams,
+              routeMeta,
               nodeReq,
               nodeRes,
-              routeMeta,
+              queryString,
+              aPathParams,
             } as RequestContext)
             .instantiateResolved(resolvedHttpHandler)
             .handle(); // First HTTP handler in the chain of HTTP interceptors.
@@ -110,7 +106,7 @@ export class PreRouterExtension implements Extension<void> {
         `${httpMethod} "/${path}" in sandbox mode.`;
       throw new Error(msg);
     }
-    const ignoreDeps: any[] = [RequestContext, HTTP_INTERCEPTORS];
+    const ignoreDeps: any[] = [HTTP_INTERCEPTORS];
     inj.checkDeps(HttpHandler, undefined, ignoreDeps);
     inj.checkDeps(HttpFrontend, undefined, ignoreDeps);
     inj.checkDeps(SystemLogMediator, undefined, ignoreDeps);
