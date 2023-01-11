@@ -524,30 +524,6 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     }
   }
 
-  checkDepsInResolved(provider: ResolvedProvider, parentTokens: any[] = [], ignoreDeps?: any[]): any {
-    if (provider.multi) {
-      const res = new Array(provider.resolvedFactories.length);
-      for (let i = 0; i < provider.resolvedFactories.length; ++i) {
-        const config3: Config3 = {
-          dualKey: provider.dualKey,
-          parentTokens,
-          dependencies: provider.resolvedFactories[i].dependencies,
-          ignoreDeps,
-        };
-        res[i] = this.runDry(config3);
-      }
-      return res;
-    } else {
-      const config3: Config3 = {
-        dualKey: provider.dualKey,
-        parentTokens,
-        dependencies: provider.resolvedFactories[0].dependencies,
-        ignoreDeps,
-      };
-      return this.runDry(config3);
-    }
-  }
-
   /**
    * Retrieves an instance from the injector based on the provided token.
    * If not found, returns the `notFoundValue` otherwise
@@ -555,25 +531,12 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, notFoundValue?: T): T;
   get(token: any, visibility?: Visibility, notFoundValue?: any): any;
   get(token: any, visibility: Visibility = null, notFoundValue: any = THROW_IF_NOT_FOUND): any {
-    return this.checkVisibilityAndGet(KeyRegistry.get(token), [], visibility, notFoundValue);
-  }
-
-  /**
-   * An analogue of `injector.get()`, but this method only checks the presence
-   * of dependencies for given token. In this case, an instance of the corresponding
-   * class is not created, the action bound to `useFactory` is not executed, etc.
-   *
-   * If there are problems with dependencies, throws the corresponding error.
-   */
-  checkDeps(token: any, visibility: Visibility = null, ignoreDeps?: any[]): any {
-    const dualKey = KeyRegistry.get(token);
-    const parentTokens: any[] = [];
-    return this.checkVisibilityAndCheckDeps({ dualKey, parentTokens, visibility, ignoreDeps });
+    return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, notFoundValue);
   }
 
   private instantiate(token: any, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
-      return this.checkVisibilityAndGet(
+      return this.selectInjectorAndGet(
         dep.dualKey,
         [token, ...parentTokens],
         dep.visibility,
@@ -588,7 +551,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     }
   }
 
-  private checkVisibilityAndGet(dualKey: DualKey, parentTokens: any[], visibility: Visibility, notFoundValue: any) {
+  private selectInjectorAndGet(dualKey: DualKey, parentTokens: any[], visibility: Visibility, notFoundValue: any) {
     if (dualKey.token === Injector) {
       return this;
     }
@@ -626,51 +589,47 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     }
   }
 
-  private checkMultiOrRegularDeps({ provider, parentTokens, ignoreDeps }: Config4): any {
-    if (provider.multi) {
-      provider.resolvedFactories.forEach(({ dependencies }) => {
-        const config3: Config3 = {
-          dualKey: provider.dualKey,
-          parentTokens,
-          dependencies,
-          ignoreDeps,
-        };
-        this.runDry(config3);
-      });
-    } else {
-      const config3: Config3 = {
-        dualKey: provider.dualKey,
-        parentTokens,
-        dependencies: provider.resolvedFactories[0].dependencies,
-        ignoreDeps,
-      };
-      return this.runDry(config3);
-    }
+  checkDepsForResolved(provider: ResolvedProvider, ignoreDeps?: any[]): any {
+    this.checkMultiOrRegularProvider({ provider, parentTokens: [], ignoreDeps });
   }
 
-  private runDry({ dualKey, parentTokens, dependencies, ignoreDeps }: Config3): any {
-    dependencies = dependencies.filter((dep) => !ignoreDeps?.includes(dep.dualKey));
-    dependencies.forEach((dep) => {
-      return this.checkVisibilityAndCheckDeps({
-        dualKey: dep.dualKey,
-        parentTokens: [dualKey.token, ...parentTokens],
-        visibility: dep.visibility,
-        ignoreDeps,
-        isOptional: dep.optional,
-      });
-    });
+  /**
+   * An analogue of `injector.get()`, but this method only checks the presence
+   * of dependencies for given token. In this case, an instance of the corresponding
+   * class is not created, the action bound to `useFactory` is not executed, etc.
+   *
+   * If there are problems with dependencies, throws the corresponding error.
+   */
+  checkDeps(token: any, visibility: Visibility = null, ignoreDeps?: any[]): any {
+    const dualKey = KeyRegistry.get(token);
+    const parentTokens: any[] = [];
+    return this.selectInjectorAndCheckDeps({ dualKey, parentTokens, visibility, ignoreDeps });
   }
 
-  private checkVisibilityAndCheckDeps({ dualKey, parentTokens, visibility, ignoreDeps, isOptional }: Config2) {
+  private selectInjectorAndCheckDeps({ dualKey, parentTokens, visibility, ignoreDeps, isOptional }: Config2) {
     if (dualKey.token === Injector) {
       return;
     }
 
     const injector = visibility === skipSelf ? this.#parent : this;
-    return this.runDryOrThrow({ injector, dualKey: dualKey, parentTokens, ignoreDeps, visibility, isOptional });
+    return this.findInRegistryCurrentProvider({
+      injector,
+      dualKey,
+      parentTokens,
+      ignoreDeps,
+      visibility,
+      isOptional,
+    });
   }
 
-  private runDryOrThrow({ injector, dualKey, parentTokens, ignoreDeps, visibility, isOptional }: Config1): any {
+  private findInRegistryCurrentProvider({
+    injector,
+    dualKey,
+    parentTokens,
+    ignoreDeps,
+    visibility,
+    isOptional,
+  }: Config1): any {
     if (injector) {
       if (ignoreDeps?.includes(dualKey.token)) {
         return;
@@ -682,10 +641,10 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         if (parentTokens.includes(dualKey.token)) {
           throw cyclicDependencyError([dualKey.token, ...parentTokens]);
         }
-        injector.checkMultiOrRegularDeps({ provider: meta.resolvedProvider!, parentTokens, ignoreDeps });
+        injector.checkMultiOrRegularProvider({ provider: meta.resolvedProvider!, parentTokens, ignoreDeps });
         return;
       } else if (visibility !== fromSelf && injector.#parent) {
-        return injector.#parent.runDryOrThrow({
+        return injector.#parent.findInRegistryCurrentProvider({
           injector: injector.#parent,
           dualKey,
           parentTokens,
@@ -697,6 +656,41 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     if (!isOptional) {
       throw noProviderError([dualKey.token, ...parentTokens]);
     }
+  }
+
+  private checkMultiOrRegularProvider({ provider, parentTokens, ignoreDeps }: Config4): any {
+    if (provider.multi) {
+      provider.resolvedFactories.forEach(({ dependencies }) => {
+        const config3: Config3 = {
+          dualKey: provider.dualKey,
+          parentTokens,
+          dependencies,
+          ignoreDeps,
+        };
+        this.findInRegistryDeps(config3);
+      });
+    } else {
+      const config3: Config3 = {
+        dualKey: provider.dualKey,
+        parentTokens,
+        dependencies: provider.resolvedFactories[0].dependencies,
+        ignoreDeps,
+      };
+      return this.findInRegistryDeps(config3);
+    }
+  }
+
+  private findInRegistryDeps({ dualKey, parentTokens, dependencies, ignoreDeps }: Config3): any {
+    dependencies = dependencies.filter((dep) => !ignoreDeps?.includes(dep.dualKey));
+    dependencies.forEach((dep) => {
+      return this.selectInjectorAndCheckDeps({
+        dualKey: dep.dualKey,
+        parentTokens: [dualKey.token, ...parentTokens],
+        visibility: dep.visibility,
+        ignoreDeps,
+        isOptional: dep.optional,
+      });
+    });
   }
 }
 
