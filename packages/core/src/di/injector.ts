@@ -262,7 +262,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   }
 
   /**
-   * When an user give a class factory provider (eg. `{ useFactory: [Class, Cls.prototype.factoryKey] }`),
+   * When an user give a class factory provider (eg. `{ useFactory: [Class, Class.prototype.factoryKey] }`),
    * "factory key" means "property key in class that has factory".
    */
   private static getFactoryKey(Cls: Class, factory: Func): string | symbol {
