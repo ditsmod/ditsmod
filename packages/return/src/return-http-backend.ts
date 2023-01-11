@@ -1,10 +1,15 @@
-import { fromSelf, injectable, Injector, RequestContext, Res } from '@ditsmod/core';
+import { fromSelf, injectable, Injector, RequestContext, Res, RouteMeta, skipSelf } from '@ditsmod/core';
 import { HttpBackend, DefaultHttpBackend, Status, HttpMethod } from '@ditsmod/core';
 
 @injectable()
 export class ReturnHttpBackend extends DefaultHttpBackend implements HttpBackend {
-  constructor(protected override injector: Injector, @fromSelf() protected override ctx: RequestContext, protected res: Res) {
-    super(injector, ctx);
+  constructor(
+    @fromSelf() protected ctx: RequestContext,
+    @skipSelf() protected override routeMeta: RouteMeta,
+    protected override injector: Injector,
+    protected res: Res,
+  ) {
+    super(injector, routeMeta);
   }
 
   override async handle() {
