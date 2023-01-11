@@ -1,5 +1,15 @@
-import { injectable, Injector, Req, RequestContext } from '@ditsmod/core';
-import { HttpHandler, HttpInterceptor, Status, CustomError } from '@ditsmod/core';
+import {
+  injectable,
+  Injector,
+  Req,
+  skipSelf,
+  RouteMeta,
+  HttpHandler,
+  HttpInterceptor,
+  Status,
+  CustomError,
+  RequestContext,
+} from '@ditsmod/core';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { DictService } from '@ditsmod/i18n';
 
@@ -9,7 +19,13 @@ import { AjvService } from './ajv.service';
 
 @injectable()
 export class ValidationInterceptor implements HttpInterceptor {
-  constructor(protected injector: Injector, protected ajvService: AjvService, protected ctx: RequestContext, protected req: Req) {}
+  constructor(
+    @skipSelf() protected routeMeta: RouteMeta,
+    protected injector: Injector,
+    protected ajvService: AjvService,
+    protected req: Req,
+    protected ctx: RequestContext,
+  ) {}
 
   intercept(next: HttpHandler) {
     this.prepareAndValidate();
@@ -32,7 +48,7 @@ export class ValidationInterceptor implements HttpInterceptor {
       } else {
         args1 = validate.errors;
       }
-      const validationRouteMeta = this.ctx.routeMeta as ValidationRouteMeta;
+      const validationRouteMeta = this.routeMeta as ValidationRouteMeta;
       throw new CustomError({ msg1, args1, status: validationRouteMeta.options.invalidStatus });
     }
   }

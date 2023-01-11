@@ -10,7 +10,7 @@ import { ValidationInterceptor } from './validation.interceptor';
 @injectable()
 export class RequestBodyInterceptor extends ValidationInterceptor {
   protected override prepareAndValidate() {
-    const { options, requestBodySchema } = this.ctx.routeMeta as ValidationRouteMeta;
+    const { options, requestBodySchema } = this.routeMeta as ValidationRouteMeta;
     if (this.req.body === undefined) {
       const dict = this.getDict();
       throw new CustomError({

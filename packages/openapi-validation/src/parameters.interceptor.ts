@@ -16,7 +16,7 @@ import { ValidationInterceptor } from './validation.interceptor';
 @injectable()
 export class ParametersInterceptor extends ValidationInterceptor {
   protected override prepareAndValidate() {
-    const { parameters, options } = this.ctx.routeMeta as ValidationRouteMeta;
+    const { parameters, options } = this.routeMeta as ValidationRouteMeta;
     for (const parameter of parameters) {
       const schema = parameter.schema as XSchemaObject<any>;
       let value: any;
