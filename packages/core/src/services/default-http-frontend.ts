@@ -8,10 +8,11 @@ import { NodeRequest, NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { RequestContext } from '../types/route-data';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
+import { Req } from './request';
 
 @injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
-  constructor(protected injector: Injector, @fromSelf() private ctx: RequestContext) {}
+  constructor(protected injector: Injector, @fromSelf() private ctx: RequestContext, @fromSelf() private req: Req) {}
 
   async intercept(next: HttpHandler) {
     try {
@@ -59,13 +60,13 @@ export class DefaultHttpFrontend implements HttpFrontend {
 
   protected setParams() {
     if (this.ctx.queryString) {
-      this.ctx.req.queryParams = parse(this.ctx.queryString);
+      this.req.queryParams = parse(this.ctx.queryString);
     }
     if (this.ctx.aPathParams) {
-      this.ctx.req.aPathParams = this.ctx.aPathParams;
+      this.req.aPathParams = this.ctx.aPathParams;
       const pathParams: AnyObj = {};
       this.ctx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
-      this.ctx.req.pathParams = pathParams;
+      this.req.pathParams = pathParams;
     }
   }
 

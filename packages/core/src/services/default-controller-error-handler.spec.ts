@@ -44,7 +44,9 @@ describe('ErrorHandler', () => {
 
   beforeEach(() => {
     const injector = Injector.resolveAndCreate([
-      { token: RequestContext, useValue: { req, res, nodeRes } },
+      { token: RequestContext, useValue: { nodeRes } },
+      { token: Req, useValue: req },
+      { token: Res, useValue: res },
       { token: Logger, useValue: logger },
       ErrorHandler
     ]);

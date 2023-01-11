@@ -6,11 +6,13 @@ import { Status } from '../utils/http-status-codes';
 import { ErrorOpts } from '../custom-error/error-opts';
 import { isChainError } from '../utils/type-guards';
 import { RequestContext } from '../types/route-data';
+import { Res } from './response';
+import { Req } from './request';
 
 
 @injectable()
 export class DefaultControllerErrorHandler implements ControllerErrorHandler {
-  constructor(private logger: Logger, private ctx: RequestContext) {}
+  constructor(private logger: Logger, private ctx: RequestContext, private res: Res, private req: Req) {}
 
   async handleError(err: Error) {
     if (isChainError<ErrorOpts>(err)) {
@@ -26,12 +28,12 @@ export class DefaultControllerErrorHandler implements ControllerErrorHandler {
   protected sendError(error: string, status?: Status) {
     if (!this.ctx.nodeRes.headersSent) {
       this.addRequestIdToHeader();
-      this.ctx.res.sendJson({ error }, status);
+      this.res.sendJson({ error }, status);
     }
   }
 
   protected addRequestIdToHeader() {
     const header = 'x-requestId';
-    this.ctx.nodeRes.setHeader(header, this.ctx.req.requestId);
+    this.ctx.nodeRes.setHeader(header, this.req.requestId);
   }
 }
