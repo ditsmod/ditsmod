@@ -16,7 +16,7 @@ describe('DictService', () => {
     const injector = Injector.resolveAndCreate([
       DictService,
       { token: I18nLogMediator, useValue: { missingLng: jest.fn } },
-      { token: RequestContext, useValue: { req: options.req } },
+      { token: Req, useValue: options.req },
       { token: I18nOptions, useValue: options.i18nOptions },
       { token: CommonDict, useClass: CommonDict, multi: true },
       { token: CommonDict, useClass: CommonUkDict, multi: true },
