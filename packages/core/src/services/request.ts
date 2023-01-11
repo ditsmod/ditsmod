@@ -1,7 +1,6 @@
 import { randomUUID } from 'crypto';
 
 import { PathParam } from '../types/router';
-import { NodeRequest } from '../types/server-options';
 
 export class Req {
   #requestId: string;
@@ -34,32 +33,10 @@ export class Req {
    */
   jwtPayload?: any;
 
-  constructor(
-    /**
-     * Native Node.js request.
-     */
-    private readonly nodeReq: NodeRequest,
-  ) {}
-
   get requestId() {
     if (!this.#requestId) {
       this.#requestId = randomUUID();
     }
     return this.#requestId;
-  }
-
-  /**
-   * Check if the request is idempotent.
-   */
-  isIdempotent() {
-    return ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'].includes(this.nodeReq.method || '');
-  }
-
-  toString(): string {
-    let headers = '';
-    Object.keys(this.nodeReq.headers).forEach((k) => (headers += `${k}: ${this.nodeReq.headers[k]}\n`));
-
-    const { method, url, httpVersion } = this.nodeReq;
-    return `requestId: ${this.requestId}\n${method} ${url} HTTP/${httpVersion}\n${headers}`;
   }
 }

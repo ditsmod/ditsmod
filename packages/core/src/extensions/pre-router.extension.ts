@@ -75,7 +75,7 @@ export class PreRouterExtension implements Extension<void> {
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
           await new Injector(RegistryPerReq, injectorPerRou, 'injectorPerReq')
             .updateValue(ctxId, {
-              req: new Req(nodeReq),
+              req: new Req(),
               res: new Res(nodeRes),
               queryString,
               aPathParams,
