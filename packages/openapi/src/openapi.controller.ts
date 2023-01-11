@@ -1,5 +1,5 @@
 import { readFile } from 'fs/promises';
-import { controller, RequestContext, Res, Status } from '@ditsmod/core';
+import { controller, RequestContext, Status, Res } from '@ditsmod/core';
 
 import { oasRoute } from './decorators/oas-route';
 import { SwaggerConfigManager } from './services/swagger-config-manager';
@@ -7,7 +7,7 @@ import { OasConfigFiles } from './types/oas-extension-options';
 
 @controller()
 export class OpenapiController {
-  constructor(private swaggerConfigManager: SwaggerConfigManager, private configFiles: OasConfigFiles) {}
+  constructor(private swaggerConfigManager: SwaggerConfigManager, private configFiles: OasConfigFiles, private res: Res) {}
 
   @oasRoute('GET', 'openapi', [], {
     description: 'OpenAPI documentation',
@@ -22,7 +22,7 @@ export class OpenapiController {
   async getIndex(ctx: RequestContext) {
     await this.swaggerConfigManager.applyConfig();
     const indexHtml = await readFile(`${this.swaggerConfigManager.webpackDist}/index.html`, 'utf8');
-    ctx.res.setContentType('text/html; charset=utf-8').send(indexHtml);
+    this.res.setContentType('text/html; charset=utf-8').send(indexHtml);
   }
 
   @oasRoute('GET', 'openapi.yaml', [], {
@@ -36,7 +36,7 @@ export class OpenapiController {
     },
   })
   async getYaml(ctx: RequestContext) {
-    ctx.res.setContentType('text/yaml; charset=utf-8').send(this.configFiles.yaml);
+    this.res.setContentType('text/yaml; charset=utf-8').send(this.configFiles.yaml);
   }
 
   @oasRoute('GET', 'openapi.json', [], {
@@ -50,7 +50,7 @@ export class OpenapiController {
     },
   })
   async getJson(ctx: RequestContext) {
-    ctx.res.setContentType('application/json; charset=utf-8').send(this.configFiles.json);
+    this.res.setContentType('application/json; charset=utf-8').send(this.configFiles.json);
   }
 
   @oasRoute('GET', 'openapi.bundle.js', [], {
@@ -65,6 +65,6 @@ export class OpenapiController {
   })
   async getJavaScript(ctx: RequestContext) {
     const appBundle = await readFile(`${this.swaggerConfigManager.webpackDist}/openapi.bundle.js`, 'utf8');
-    ctx.res.setContentType('text/javascript; charset=utf-8').send(appBundle);
+    this.res.setContentType('text/javascript; charset=utf-8').send(appBundle);
   }
 }
