@@ -1,5 +1,12 @@
+<a name="return-2.3.0"></a>
+# [return-2.3.0](https://github.com/ditsmod/ditsmod/releases/tag/return-2.3.0) (2023-01-12)
+
+### Breaking changes
+
+- Migration to core-2.35.0.
+
 <a name="return-2.2.0"></a>
-# [return-2.2.0](https://github.com/ditsmod/ditsmod/releases/tag/return-2.2.0) (2023-01-07)
+## [return-2.2.0](https://github.com/ditsmod/ditsmod/releases/tag/return-2.2.0) (2023-01-07)
 
 ### Breaking changes
 
