@@ -1,5 +1,13 @@
+<a name="core-2.35.0"></a>
+# [core-2.35.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.35.0) (2023-01-12)
+
+### BREAKING CHANGES
+
+- Removed `RequestContext`.
+- Added `NODE_REQ`, `NODE_RES`, `A_PATH_PARAMS`, `QUERY_STRING`.
+
 <a name="core-2.34.0"></a>
-# [core-2.34.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.34.0) (2023-01-10)
+## [core-2.34.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.34.0) (2023-01-10)
 
 ### Features
 
@@ -11,13 +19,6 @@
 ### Bug fixes
 
 - Fixed `CanActivate` interface.
-
-<a name="core-2.33.0"></a>
-## [core-2.33.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.33.0) (2023-01-07)
-
-### BREAKING CHANGES
-
-- Introduced new type `RequestContext` for DI. It contains a group of contextual metadata such as: `RouteMeta`, `NodeReq`, `NodeRes`, `Req`, `Res`.
 
 <a name="core-2.32.3"></a>
 ## [core-2.32.3](https://github.com/ditsmod/ditsmod/releases/tag/core-2.32.3) (2023-01-04)
@@ -115,13 +116,13 @@ Now you can (optional) inject dependencies directly in controller methods that h
 **now**:
 
 ```ts
-import { controller, route, RequestContext } from '@ditsmod/core';
+import { controller, route, Res } from '@ditsmod/core';
 
 @controller()
 export class HelloWorldController {
   @route('GET')
-  tellHello(ctx: RequestContext) {
-    ctx.res.send('Hello World!');
+  tellHello(res: Res) {
+    res.send('Hello World!');
   }
 }
 ```

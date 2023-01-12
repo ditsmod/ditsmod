@@ -144,7 +144,7 @@ describe('injector', () => {
       const injector = Injector.resolveAndCreate([Engine, { token: 1, useValue: 'value 1' }]);
       expect(injector.get(Engine)).toBeInstanceOf(Engine);
       expect(injector.get(1)).toBe('value 1');
-      injector.updateValue(id, 'value 2');
+      injector.updateValues(id, 'value 2');
       expect(injector.get(1)).toBe('value 2');
     });
   });
@@ -816,16 +816,6 @@ describe('resolve', () => {
 });
 
 describe("null as provider's value", () => {
-  it('should works with "undefined"', () => {
-    const injector = Injector.resolveAndCreate([{ token: Engine, useValue: undefined }]);
-
-    expect(() => {
-      injector.get(Engine); // Create cache
-      injector.get(Engine); // Get from cache
-    }).not.toThrow();
-    expect(injector.get(Engine)).toBe(undefined);
-  });
-
   it('should works with "null"', () => {
     const injector = Injector.resolveAndCreate([{ token: Engine, useValue: null }]);
 

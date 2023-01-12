@@ -5,7 +5,7 @@ import { HttpBackend, HttpHandler, HttpInterceptor, HttpFrontend } from './http-
 import { defaultProvidersPerReq } from '../services/default-providers-per-req';
 import { defaultProvidersPerApp } from '../services/default-providers-per-app';
 import { ServiceProvider } from './mix';
-import { RequestContext, RouteMeta } from './route-data';
+import { RouteMeta } from './route-data';
 import { HTTP_INTERCEPTORS } from '../constans';
 
 describe('HttpInterceptor', () => {
@@ -87,7 +87,6 @@ describe('HttpInterceptor', () => {
       { token: HTTP_INTERCEPTORS, useClass: Interceptor1, multi: true },
       { token: HTTP_INTERCEPTORS, useClass: Interceptor2, multi: true },
       { token: HTTP_INTERCEPTORS, useClass: Interceptor3, multi: true },
-      { token: RequestContext, useValue: {} },
     ]);
 
     const chain = injector.get(HttpHandler) as HttpHandler;
@@ -96,10 +95,7 @@ describe('HttpInterceptor', () => {
   });
 
   it('without HTTP_INTERCEPTORS, chain should be HttpBackend', () => {
-    const injector = Injector.resolveAndCreate([RouteMeta]).resolveAndCreateChild([
-      ...defaultProviders,
-      { token: RequestContext, useValue: {} },
-    ]);
+    const injector = Injector.resolveAndCreate([RouteMeta]).resolveAndCreateChild([...defaultProviders]);
 
     const chain = injector.get(HttpHandler) as HttpHandler;
     const frontend = injector.get(HttpFrontend) as HttpFrontend;

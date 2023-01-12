@@ -69,6 +69,12 @@ export class Dependency {
 }
 
 /**
+ * This ID is used (instead `instanceof ResolvedProvider`) to quickly identify the type of values that the DI registry contains.
+ * 
+ */
+export const ID = Symbol();
+
+/**
  * An internal resolved representation of a `Provider` used by the `Injector`.
  *
  * It is usually created automatically by `Injector.resolveAndCreate`.
@@ -86,18 +92,13 @@ expect(injector.get('message')).toEqual('Hello');
  * 
  */
 export class ResolvedProvider {
+  [ID] = true;
   constructor(public dualKey: DualKey, public resolvedFactories: ResolvedFactory[], public multi: boolean) {}
-}
-
-export interface DependecyMeta {
-  value?: any;
-  resolvedProvider?: ResolvedProvider;
-  done?: boolean;
 }
 
 export interface RegistryOfInjector {
   countOfProviders: number;
-  [id: number]: DependecyMeta;
+  [id: number]: ResolvedProvider;
 }
 
 /**
@@ -106,7 +107,7 @@ export interface RegistryOfInjector {
 export function getNewRegistry(): Class<RegistryOfInjector> {
   return class RegistryOfInjector {
     countOfProviders: number;
-    [id: number]: DependecyMeta;
+    [id: number]: ResolvedProvider;
   };
 }
 

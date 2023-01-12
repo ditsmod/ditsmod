@@ -9,7 +9,6 @@ import {
 } from '../di';
 import { MetadataPerMod1 } from './metadata-per-mod';
 import { ProvidersMetadata } from '../models/providers-metadata';
-import { RequestContext } from './route-data';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
 

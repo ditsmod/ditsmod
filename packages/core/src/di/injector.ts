@@ -6,7 +6,7 @@ import {
   DiError,
   getNewRegistry,
   RegistryOfInjector,
-  DependecyMeta,
+  ID,
 } from './types-and-models';
 import { Dependency, ResolvedFactory, ResolvedProvider, Class, DecoratorAndValue } from './types-and-models';
 import { fromSelf, skipSelf, inject, optional } from './decorators';
@@ -131,7 +131,7 @@ console.log(providers[0].resolvedFactories[0].dependencies);
       Registry = getNewRegistry();
     }
     providers.forEach((p) => {
-      Registry!.prototype[p.dualKey.id] = { resolvedProvider: p } as DependecyMeta;
+      Registry!.prototype[p.dualKey.id] = p;
     });
     Registry.prototype.countOfProviders = (Registry.prototype.countOfProviders || 0) + providers.length;
     return Registry;
@@ -448,14 +448,19 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    * @param id The ID from KeyRegistry for some token.
    * @param value New value for this ID.
    */
-  updateValue(id: number, value: any) {
+  updateValues(id: number, value: any) {
     const meta = this.#registry[id];
     if (!meta) {
       const msg = `Updating DI value failed: cannot find ID: ${stringify(id)}`;
       throw new DiError(msg);
     }
-    this.#registry[id] = { value, done: true };
+    this.#registry[id] = value;
     return this;
+  }
+
+  clear(): void {
+    this.#registry = undefined as any;
+    this.#parent = undefined as any;
   }
 
   /**
@@ -516,15 +521,14 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
   ): any {
     if (injector) {
       const meta = injector.#registry[dualKey.id];
-      if (meta?.done) {
-        return meta.value;
-      } else if (meta) {
+      if (meta?.[ID]) {
         if (parentTokens.includes(dualKey.token)) {
           throw cyclicDependencyError([dualKey.token, ...parentTokens]);
         }
-        const value = injector.instantiateResolved(meta.resolvedProvider!, parentTokens);
-        injector.#registry[dualKey.id] = { value, done: true };
-        return value;
+        const value = injector.instantiateResolved(meta, parentTokens);
+        return (injector.#registry[dualKey.id] = value);
+      } else if (meta !== undefined) {
+        return meta;
       } else if (visibility !== fromSelf && injector.#parent) {
         return injector.#parent.getOrThrow(injector.#parent, dualKey, parentTokens, notFoundValue);
       }
@@ -560,13 +564,13 @@ expect(car.engine).toBe(injector.get(Engine));
 expect(car).not.toBe(injector.instantiateResolved(carProvider));
 ```
    */
-  instantiateResolved(provider: ResolvedProvider, parentTokens: any[] = []): any {
+  instantiateResolved<T = any>(provider: ResolvedProvider, parentTokens: any[] = []): T {
     if (provider.multi) {
       const res = new Array(provider.resolvedFactories.length);
       for (let i = 0; i < provider.resolvedFactories.length; ++i) {
         res[i] = this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[i]);
       }
-      return res;
+      return res as T;
     } else {
       return this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[0]);
     }
@@ -635,13 +639,13 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         return;
       }
       const meta = injector.#registry[dualKey.id];
-      if (meta?.done) {
-        return;
-      } else if (meta) {
+      if (meta?.[ID]) {
         if (parentTokens.includes(dualKey.token)) {
           throw cyclicDependencyError([dualKey.token, ...parentTokens]);
         }
-        injector.checkMultiOrRegularProvider({ provider: meta.resolvedProvider!, parentTokens, ignoreDeps });
+        injector.checkMultiOrRegularProvider({ provider: meta, parentTokens, ignoreDeps });
+        return;
+      } else if (meta !== undefined) {
         return;
       } else if (visibility !== fromSelf && injector.#parent) {
         return injector.#parent.findInRegistryCurrentProvider({

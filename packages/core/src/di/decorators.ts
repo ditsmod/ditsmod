@@ -111,7 +111,7 @@ expect(() => Injector.resolveAndCreate([NeedsService, UsefulService])).toThrow()
 export const injectable = makeClassDecorator();
 
 /**
- * Specifies that an `Injector` should retrieve a dependency only from itself.
+ * Specifies that an `Injector` should retrieve a dependency only from itself (ignore parent injectors).
  *
  * ### Example
  *

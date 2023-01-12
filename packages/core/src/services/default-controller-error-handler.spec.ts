@@ -8,8 +8,8 @@ import { Res } from './response';
 import { Logger } from '../types/logger';
 import { Status } from '../utils/http-status-codes';
 import { CustomError } from '../custom-error/custom-error';
-import { RequestContext } from '../types/route-data';
 import { NodeResponse } from '../types/server-options';
+import { NODE_RES } from '../constans';
 
 describe('ErrorHandler', () => {
   type ErrorLog = ErrorOpts & { err?: any };
@@ -44,11 +44,11 @@ describe('ErrorHandler', () => {
 
   beforeEach(() => {
     const injector = Injector.resolveAndCreate([
-      { token: RequestContext, useValue: { nodeRes } },
       { token: Req, useValue: req },
       { token: Res, useValue: res },
       { token: Logger, useValue: logger },
-      ErrorHandler
+      { token: NODE_RES, useValue: nodeRes },
+      ErrorHandler,
     ]);
 
     errorHandler = injector.get(ErrorHandler);

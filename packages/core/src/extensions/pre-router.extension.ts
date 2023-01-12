@@ -1,8 +1,8 @@
 import { fromSelf, injectable, Injector, ResolvedProvider } from '../di';
-import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '../constans';
+import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS, NODE_REQ, NODE_RES, QUERY_STRING, A_PATH_PARAMS } from '../constans';
 import { HttpBackend, HttpFrontend, HttpHandler } from '../types/http-interceptor';
 import { Extension, HttpMethod } from '../types/mix';
-import { PreparedRouteMeta, RequestContext, RouteMeta } from '../types/route-data';
+import { PreparedRouteMeta, RouteMeta } from '../types/route-data';
 import { RouteHandler, Router } from '../types/router';
 import { ExtensionsManager } from '../services/extensions-manager';
 import { MetadataPerMod2 } from '../types/metadata-per-mod';
@@ -59,18 +59,22 @@ export class PreRouterExtension implements Extension<void> {
         this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
         const resolvedHttpHandler = resolvedPerReq.find((rp) => rp.dualKey.token === HttpHandler)!;
         const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
-        const ctxId = KeyRegistry.get(RequestContext).id;
+        const nodeReqId = KeyRegistry.get(NODE_REQ).id;
+        const nodeResId = KeyRegistry.get(NODE_RES).id;
+        const aPathParamsId = KeyRegistry.get(A_PATH_PARAMS).id;
+        const queryStringId = KeyRegistry.get(QUERY_STRING).id;
 
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
-          await new Injector(RegistryPerReq, injectorPerRou, 'injectorPerReq')
-            .updateValue(ctxId, {
-              nodeReq,
-              nodeRes,
-              queryString,
-              aPathParams,
-            } as RequestContext)
-            .instantiateResolved(resolvedHttpHandler)
+          const injector = new Injector(RegistryPerReq, injectorPerRou, 'injectorPerReq');
+          await injector
+            .updateValues(nodeReqId, nodeReq)
+            .updateValues(nodeResId, nodeRes)
+            .updateValues(aPathParamsId, aPathParams)
+            .updateValues(queryStringId, queryString || '')
+            .instantiateResolved<HttpHandler>(resolvedHttpHandler)
             .handle(); // First HTTP handler in the chain of HTTP interceptors.
+
+            injector.clear();
         }) as RouteHandler;
 
         preparedRouteMeta.push({ moduleName, httpMethod, path, handle });

@@ -1,20 +1,25 @@
 import { parse } from 'querystring';
 
-import { fromSelf, injectable, Injector, skipSelf } from '../di';
+import { fromSelf, inject, injectable, Injector, skipSelf } from '../di';
 import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
 import { AnyObj, CanActivate } from '../types/mix';
 import { NodeRequest, NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
-import { RequestContext, RouteMeta } from '../types/route-data';
+import { RouteMeta } from '../types/route-data';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { Req } from './request';
+import { A_PATH_PARAMS, QUERY_STRING, NODE_REQ, NODE_RES } from '../constans';
+import { PathParam } from '../types/router';
 
 @injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
   constructor(
     protected injector: Injector,
-    @fromSelf() private ctx: RequestContext,
+    @fromSelf() @inject(NODE_REQ) private nodeReq: NodeRequest,
+    @fromSelf() @inject(NODE_RES) private nodeRes: NodeResponse,
+    @fromSelf() @inject(A_PATH_PARAMS) private aPathParams: PathParam[],
+    @fromSelf() @inject(QUERY_STRING) private queryString: string,
     @fromSelf() private req: Req,
     @skipSelf() private routeMeta: RouteMeta
   ) {}
@@ -48,7 +53,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
       const canActivate = await item.guard.canActivate(item.params);
       if (canActivate !== true) {
         const status = typeof canActivate == 'number' ? canActivate : undefined;
-        this.canNotActivateRoute(this.ctx.nodeReq, this.ctx.nodeRes, status);
+        this.canNotActivateRoute(this.nodeReq, this.nodeRes, status);
         return false;
       }
     }
@@ -64,13 +69,13 @@ export class DefaultHttpFrontend implements HttpFrontend {
   }
 
   protected setParams() {
-    if (this.ctx.queryString) {
-      this.req.queryParams = parse(this.ctx.queryString);
+    if (this.queryString) {
+      this.req.queryParams = parse(this.queryString);
     }
-    if (this.ctx.aPathParams) {
-      this.req.aPathParams = this.ctx.aPathParams;
+    if (this.aPathParams) {
+      this.req.aPathParams = this.aPathParams;
       const pathParams: AnyObj = {};
-      this.ctx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
+      this.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
       this.req.pathParams = pathParams;
     }
   }
