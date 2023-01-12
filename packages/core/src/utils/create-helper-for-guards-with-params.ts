@@ -1,4 +1,6 @@
-import { Class, CanActivate } from '@ditsmod/core';
+import { Class } from '../di';
+import { CanActivate } from '../types/mix';
+
 
 /**
  * This factory creates a helper that makes it easier to work with guards that have parameters.
