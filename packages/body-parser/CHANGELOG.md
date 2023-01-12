@@ -1,5 +1,12 @@
+<a name="body-parser-2.10.0"></a>
+# [body-parser-2.10.0](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.10.0) (2023-01-12)
+
+### Breaking changes
+
+- Migration to core-2.35.0.
+
 <a name="body-parser-2.9.0"></a>
-# [body-parser-2.9.0](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.9.0) (2023-01-07)
+## [body-parser-2.9.0](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.9.0) (2023-01-07)
 
 ### Breaking changes
 
