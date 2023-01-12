@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { NodeRequest, NodeResponse } from '@ts-stack/cookies';
-import { Injector, Req, RequestContext } from '@ditsmod/core';
+import { Injector, NODE_REQ, NODE_RES } from '@ditsmod/core';
 
 import { SessionCookie } from './session-cookie';
 import { SessionCookieOptions } from './types';
@@ -25,7 +25,8 @@ describe('@ditsmod/session-cookie', () => {
     } as unknown as NodeResponse;
     const injector = Injector.resolveAndCreate([
       { token: SessionCookieOptions, useValue: config },
-      { token: RequestContext, useValue: { nodeReq, nodeRes } },
+      { token: NODE_REQ, useValue: nodeReq },
+      { token: NODE_RES, useValue: nodeRes },
       SessionCookie,
     ]);
     session = injector.get(SessionCookie);
