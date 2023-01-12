@@ -39,15 +39,15 @@ export class AuthModule {}
 
 ```ts
 import { injectable } from '@ditsmod/core';
-import { CanActivate, RequestContext } from '@ditsmod/core';
+import { CanActivate, Req } from '@ditsmod/core';
 import { JwtService, VerifyErrors } from '@ditsmod/jwt';
 
 @injectable()
 export class BearerGuard implements CanActivate {
-  constructor(private ctx: RequestContext, private jwtService: JwtService) {}
+  constructor(private req: Req, private jwtService: JwtService) {}
 
   async canActivate() {
-    const authValue = this.ctx.req.nodeReq.headers.authorization?.split(' ');
+    const authValue = this.req.nodeReq.headers.authorization?.split(' ');
     if (authValue?.[0] != 'Bearer') {
       return false;
     }
@@ -59,7 +59,7 @@ export class BearerGuard implements CanActivate {
       .catch((err: VerifyErrors) => false as const); // Here `as const` to narrow down returned type.
 
     if (payload) {
-      this.ctx.req.jwtPayload = payload;
+      this.req.jwtPayload = payload;
       return true;
     } else {
       return false;

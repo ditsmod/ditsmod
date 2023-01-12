@@ -39,22 +39,22 @@ export class AppModule {}
 Використання:
 
 ```ts
-import { controller, RequestContext, route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 import { SessionCookie } from '@ditsmod/session-cookie';
 
 @controller()
 export class HelloWorldController {
-  constructor(private session: SessionCookie, private ctx: RequestContext) {}
+  constructor(private session: SessionCookie, private res: Res) {}
 
   @route('GET', 'set')
   setCookie() {
     this.session.id = '123';
-    this.ctx.res.send('Hello World!\n');
+    this.res.send('Hello World!\n');
   }
 
   @route('GET', 'get')
   getCookie() {
-    this.ctx.res.send(`session ID: ${this.session.id}`);
+    this.res.send(`session ID: ${this.session.id}`);
   }
 }
 ```

@@ -34,13 +34,13 @@ export class SomeController {}
 HTTP-запити прив'язуються до методів контролерів через систему маршрутизації, з використанням декоратора `route`. В наступному прикладі створено єдиний маршрут, що приймає `GET` запит за адресою `/hello`:
 
 ```ts
-import { controller, route, RequestContext } from '@ditsmod/core';
+import { controller, route, Res } from '@ditsmod/core';
 
 @controller()
 export class HelloWorldController {
   @route('GET', 'hello')
-  method1(ctx: RequestContext) {
-    ctx.res.send('Hello World!');
+  method1(res: Res) {
+    res.send('Hello World!');
   }
 }
 ```
@@ -48,21 +48,21 @@ export class HelloWorldController {
 Що ми тут бачимо:
 
 1. Маршрут створюється за допомогою декоратора `route`, що ставиться перед методом класу, причому не важливо як саме називається цей метод.
-2. В методі класу оголошується параметр `ctx` з типом даних `RequestContext`. Таким чином ми просимо Ditsmod щоб він створив інстанс `RequestContext` і передав його у відповідну змінну. До речі, `ctx` - це скорочення від слова _context_, а `res` - від слова _response_.
+2. В методі класу оголошується параметр `res` з типом даних `Res`. Таким чином ми просимо Ditsmod щоб він створив інстанс `Res` і передав його у відповідну змінну. До речі, `res` - це скорочення від слова _context_.
 3. Текстові відповіді на HTTP-запити відправляються через `res.send()`.
 
-Хоча в попередньому прикладі інстанс `RequestContext` запитувався у `method1()`, але аналогічним чином ми можемо використати й конструктор:
+Хоча в попередньому прикладі інстанс `Res` запитувався у `method1()`, але аналогічним чином ми можемо використати й конструктор:
 
 ```ts
-import { controller, route, RequestContext } from '@ditsmod/core';
+import { controller, route, Res } from '@ditsmod/core';
 
 @controller()
 export class HelloWorldController {
-  constructor(private ctx: RequestContext) {}
+  constructor(private res: Res) {}
 
   @route('GET', 'hello')
   method1() {
-    this.ctx.res.send('Hello World!');
+    this.res.send('Hello World!');
   }
 }
 ```
@@ -70,26 +70,26 @@ export class HelloWorldController {
 Звичайно ж, у параметрах можна запитувати й інші інстанси класів, причому послідовність параметрів є неважливою.
 
 :::tip Використовуйте модифікатор доступу
-Модифікатор доступу в конструкторі може бути будь-яким (private, protected або public), але взагалі без модифікатора - `ctx` вже буде простим параметром з видимістю лише в конструкторі.
+Модифікатор доступу в конструкторі може бути будь-яким (private, protected або public), але взагалі без модифікатора - `res` вже буде простим параметром з видимістю лише в конструкторі.
 :::
 
-Щоб використовувати `pathParams`, `queryParams` чи `body`, потрібно використовувати `ctx.req`:
+Щоб використовувати `pathParams`, `queryParams` чи `body`, можна використовувати `req`:
 
 ```ts
-import { controller, RequestContext, route } from '@ditsmod/core';
+import { controller, Req, Res, route } from '@ditsmod/core';
 
 @controller()
 export class SomeController {
   @route('GET', 'hello/:userName')
-  getHello(ctx: RequestContext) {
-    const { pathParams } = ctx.req;
-    ctx.res.send(`Hello, ${pathParams.userName}`);
+  getHello(req: Req, res: Res) {
+    const { pathParams } = req;
+    res.send(`Hello, ${pathParams.userName}`);
   }
 
   @route('POST', 'some-url')
-  postSomeUrl(ctx: RequestContext) {
-    const { body, queryParams } = ctx.req;
-    ctx.res.sendJson(body, queryParams);
+  postSomeUrl(req: Req, res: Res) {
+    const { body, queryParams } = req;
+    res.sendJson(body, queryParams);
   }
 }
 ```
@@ -98,7 +98,26 @@ export class SomeController {
 
 Як бачите, щоб відправляти відповіді з об'єктами, необхідно використовувати метод `res.sendJson()` замість `res.send()` (бо він відправляє тільки текст).
 
-В даному прикладі не показано, але пам'ятайте, що нативний Node.js об'єкт запиту також знаходиться у `ctx.nodeReq`.
+Рідний Node.js об'єкт запиту та відповіді можна отримати за токенами відповідно - `NODE_REQ` та `NODE_RES`:
+
+```ts
+import { controller, route, inject, NODE_REQ, NODE_RES, NodeRequest, NodeResponse } from '@ditsmod/core';
+
+@controller()
+export class HelloWorldController {
+  constructor(
+    @inject(NODE_REQ) private nodeReq: NodeRequest,
+    @inject(NODE_RES) private nodeRes: NodeResponse,
+  ) {}
+
+  @route('GET', 'hello')
+  method1() {
+    this.nodeRes.end('Hello World!');
+  }
+}
+```
+
+Більше інформації про токени та декоратор `inject` ви можете отримати з розділу [Dependecy Injection][4].
 
 ## Прив'язка контролера до модуля
 
@@ -181,3 +200,4 @@ export class SecondService {
 [1]: /components-of-ditsmod-app/exports-and-imports#імпорт-модуля
 [2]: /components-of-ditsmod-app/exports-and-imports#ModuleWithParams
 [3]: /components-of-ditsmod-app/dependency-injection#провайдер
+[4]: /components-of-ditsmod-app/dependency-injection#токен-залежності
