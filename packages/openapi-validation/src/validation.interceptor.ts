@@ -8,7 +8,12 @@ import {
   HttpInterceptor,
   Status,
   CustomError,
-  RequestContext,
+  NodeRequest,
+  NodeResponse,
+  inject,
+  NODE_REQ,
+  NODE_RES,
+  fromSelf,
 } from '@ditsmod/core';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { DictService } from '@ditsmod/i18n';
@@ -21,10 +26,11 @@ import { AjvService } from './ajv.service';
 export class ValidationInterceptor implements HttpInterceptor {
   constructor(
     @skipSelf() protected routeMeta: RouteMeta,
+    @fromSelf() @inject(NODE_REQ) protected nodeReq: NodeRequest,
+    @fromSelf() @inject(NODE_RES) protected nodeRes: NodeResponse,
     protected injector: Injector,
     protected ajvService: AjvService,
-    protected req: Req,
-    protected ctx: RequestContext,
+    protected req: Req
   ) {}
 
   intercept(next: HttpHandler) {

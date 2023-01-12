@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/openapi-validation",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -23,7 +23,7 @@
     "ajv": "^8.11.0"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.33.0",
+    "@ditsmod/core": "^2.35.0",
     "@ditsmod/i18n": "^2.1.0",
     "@ditsmod/openapi": "^2.7.0"
   },

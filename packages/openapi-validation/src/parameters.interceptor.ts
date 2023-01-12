@@ -25,10 +25,10 @@ export class ParametersInterceptor extends ValidationInterceptor {
       } else if (parameter.in == 'query') {
         value = this.req.queryParams[parameter.name];
       } else if (parameter.in == 'cookie') {
-        const cookies = new Cookies(this.ctx.nodeReq, this.ctx.nodeRes);
+        const cookies = new Cookies(this.nodeReq, this.nodeRes);
         value = cookies.get(parameter.name);
       } else if (parameter.in == 'header') {
-        value = this.ctx.nodeReq.headers[parameter.name];
+        value = this.nodeReq.headers[parameter.name];
       }
 
       if (value === undefined) {

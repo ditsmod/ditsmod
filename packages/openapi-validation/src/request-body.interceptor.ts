@@ -1,4 +1,4 @@
-import { injectable, RequestContext } from '@ditsmod/core';
+import { injectable } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core';
 
 import { ValidationRouteMeta } from './types';
