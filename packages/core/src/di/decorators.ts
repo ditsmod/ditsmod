@@ -57,7 +57,7 @@ const injector = Injector.resolveAndCreate([Car]);
 expect(injector.get(Car).engine).toBeNull();
 ```
  */
-export const optional = makeParamDecorator();
+export const optional = makeParamDecorator(() => undefined);
 
 /**
  * A marker metadata that marks a class as available to `Injector` for creation.
@@ -92,7 +92,7 @@ class Service2 {
 expect(() => Injector.resolveAndCreate([Service2, Service1])).toThrow();
 ```
  */
-export const injectable = makeClassDecorator();
+export const injectable = makeClassDecorator(() => undefined);
 
 /**
  * Specifies that an injector should retrieve a dependency only from itself (ignore parent injectors).
@@ -118,7 +118,7 @@ const child = parent.resolveAndCreateChild([]);
 expect(() => child.get(Service2)).toThrowError();
 ```
  */
-export const fromSelf = makeParamDecorator();
+export const fromSelf = makeParamDecorator(() => undefined);
 
 /**
  * ### Description
@@ -145,9 +145,9 @@ const inj = Injector.resolveAndCreate([Service1, Service2]);
 expect(() => inj.get(Service2)).toThrowError();
 ```
  */
-export const skipSelf = makeParamDecorator();
+export const skipSelf = makeParamDecorator(() => undefined);
 
 /**
  * Used to mark methods in a class for FactoryProvider.
  */
-export const methodFactory = makePropDecorator();
+export const methodFactory = makePropDecorator(() => undefined);
