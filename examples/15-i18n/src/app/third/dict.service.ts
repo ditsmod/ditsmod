@@ -1,4 +1,4 @@
-import { injectable, Injector, optional, Req, RequestContext } from '@ditsmod/core';
+import { fromSelf, inject, injectable, Injector, NodeRequest, NODE_REQ, optional, Req } from '@ditsmod/core';
 import { DictService, I18nLogMediator, I18nOptions, ISO639 } from '@ditsmod/i18n';
 
 @injectable()
@@ -8,7 +8,7 @@ export class MyDictService extends DictService {
     protected override log: I18nLogMediator,
     @optional() protected override i18nOptions?: I18nOptions,
     @optional() protected override req?: Req,
-    @optional() protected ctx?: RequestContext
+    @optional() @fromSelf() @inject(NODE_REQ) protected nodeReq?: NodeRequest
   ) {
     super(injector, log, i18nOptions, req);
   }
@@ -26,7 +26,7 @@ export class MyDictService extends DictService {
   }
 
   protected getHeaderLng(): ISO639 | void {
-    const acceptLanguage = this.ctx?.nodeReq.headers['accept-language']; // Here string like: uk,en-US;q=0.9,en;q=0.8
+    const acceptLanguage = this.nodeReq?.headers['accept-language']; // Here string like: uk,en-US;q=0.9,en;q=0.8
     // ... here your code for parsing acceptLanguage, after that you should returns result
     console.log('works custom DictService');
   }

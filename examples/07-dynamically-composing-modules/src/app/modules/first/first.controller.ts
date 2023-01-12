@@ -3,7 +3,6 @@ import {
   controller,
   ModuleManager,
   ModuleWithParams,
-  RequestContext,
   Res,
   route,
   skipSelf,

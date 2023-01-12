@@ -1,4 +1,4 @@
-import { controller, Req, RequestContext, Res, route } from '@ditsmod/core';
+import { controller, Req, Res, route } from '@ditsmod/core';
 
 @controller()
 export class PostsController {

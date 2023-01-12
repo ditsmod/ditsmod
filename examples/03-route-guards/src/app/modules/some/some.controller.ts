@@ -1,4 +1,4 @@
-import { controller, RequestContext, Res, route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 
 import { AuthGuard } from '../auth/auth.guard';
 import { PermissionsGuard } from '../auth/permissions.guard';

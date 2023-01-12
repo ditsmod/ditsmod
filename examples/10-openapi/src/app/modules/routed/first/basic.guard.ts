@@ -1,4 +1,4 @@
-import { CanActivate, RequestContext, Status } from '@ditsmod/core';
+import { CanActivate, fromSelf, inject, NodeRequest, NodeResponse, NODE_REQ, NODE_RES, Status } from '@ditsmod/core';
 import { oasGuard } from '@ditsmod/openapi';
 
 @oasGuard({
@@ -17,22 +17,26 @@ import { oasGuard } from '@ditsmod/openapi';
   },
 })
 export class BasicGuard implements CanActivate {
-  constructor(private ctx: RequestContext) {}
+  constructor(
+    @fromSelf() @inject(NODE_REQ) private nodeReq: NodeRequest,
+    @fromSelf() @inject(NODE_RES) private nodeRes: NodeResponse
+  ) {}
+
   canActivate() {
-    const { authorization } = this.ctx.nodeReq.headers;
+    const { authorization } = this.nodeReq.headers;
     if (!authorization) {
-      return this.unauth(this.ctx);
+      return this.unauth();
     }
     const [, base64] = authorization.split(' ');
     if (base64 != 'ZGVtbzpwQDU1dzByZA==') {
-      return this.unauth(this.ctx);
+      return this.unauth();
     }
 
     return true;
   }
 
-  protected unauth(ctx: RequestContext) {
-    ctx.nodeRes.setHeader('WWW-Authenticate', 'Basic realm="Access to the API endpoint"');
+  protected unauth() {
+    this.nodeRes.setHeader('WWW-Authenticate', 'Basic realm="Access to the API endpoint"');
     return Status.UNAUTHORIZED;
   }
 }

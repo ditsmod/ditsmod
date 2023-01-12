@@ -1,4 +1,4 @@
-import { controller, Req, RequestContext, Res } from '@ditsmod/core';
+import { controller, Req, Res } from '@ditsmod/core';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 
 import { Model1, Model2 } from './models';

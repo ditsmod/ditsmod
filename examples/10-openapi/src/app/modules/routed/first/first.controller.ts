@@ -1,4 +1,4 @@
-import { controller, Req, RequestContext, Res, route, Status } from '@ditsmod/core';
+import { controller, Req, Res, route, Status } from '@ditsmod/core';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 
 import { BasicGuard } from './basic.guard';

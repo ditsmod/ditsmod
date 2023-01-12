@@ -1,4 +1,4 @@
-import { CanActivate, Req, RequestContext, Status } from '@ditsmod/core';
+import { CanActivate, fromSelf, inject, NodeRequest, NODE_REQ, Req, Status } from '@ditsmod/core';
 import { JwtService, VerifyErrors } from '@ditsmod/jwt';
 import { oasGuard } from '@ditsmod/openapi';
 
@@ -20,10 +20,14 @@ import { oasGuard } from '@ditsmod/openapi';
   },
 })
 export class BearerGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private ctx: RequestContext, private req: Req) {}
+  constructor(
+    private jwtService: JwtService,
+    @fromSelf() @inject(NODE_REQ) private nodeReq: NodeRequest,
+    private req: Req
+  ) {}
 
   async canActivate() {
-    const authValue = this.ctx.nodeReq.headers.authorization?.split(' ');
+    const authValue = this.nodeReq.headers.authorization?.split(' ');
     if (authValue?.[0] != 'Token') {
       return false;
     }

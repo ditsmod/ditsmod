@@ -1,4 +1,4 @@
-import { controller, RequestContext, Res, route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
 import { CorsService } from '@ditsmod/cors';
 
 @controller()
@@ -24,8 +24,8 @@ export class SecondController {
   constructor(private corsService: CorsService) {}
 
   @route('GET', 'credentials')
-  getMethod(res: Res, ctx: RequestContext) {
-    this.corsService.setCookie(ctx, 'one', 'value for one');
+  getMethod(res: Res) {
+    this.corsService.setCookie('one', 'value for one');
     res.send('Here GET request with "Access-Control-Allow-Credentials: true" header.\n');
   }
 }

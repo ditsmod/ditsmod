@@ -1,4 +1,4 @@
-import { controller, Req, RequestContext, Res, route } from '@ditsmod/core';
+import { controller, Req, Res, route } from '@ditsmod/core';
 import { DictService } from '@ditsmod/i18n';
 
 import { FirstService } from '../first/first.service';
