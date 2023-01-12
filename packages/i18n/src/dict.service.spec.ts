@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Injector, RequestContext } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
 import { Req } from '@ditsmod/core';
 
 import { I18nOptions } from './types/mix';
