@@ -74,7 +74,7 @@ export class PreRouterExtension implements Extension<void> {
             .instantiateResolved<HttpHandler>(resolvedHttpHandler)
             .handle(); // First HTTP handler in the chain of HTTP interceptors.
 
-            injector.clear();
+          injector.clear();
         }) as RouteHandler;
 
         preparedRouteMeta.push({ moduleName, httpMethod, path, handle });
