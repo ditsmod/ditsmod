@@ -2,7 +2,15 @@ export * from './di';
 
 export { AppInitializer } from './app-initializer';
 export { Application } from './application';
-export { HTTP_INTERCEPTORS, PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS, NODE_REQ, NODE_RES, A_PATH_PARAMS, QUERY_STRING } from './constans';
+export {
+  HTTP_INTERCEPTORS,
+  PRE_ROUTER_EXTENSIONS,
+  ROUTES_EXTENSIONS,
+  NODE_REQ,
+  NODE_RES,
+  A_PATH_PARAMS,
+  QUERY_STRING,
+} from './constans';
 export { CustomError } from './custom-error/custom-error';
 export { ErrorOpts } from './custom-error/error-opts';
 export { controller, ControllerMetadata } from './decorators/controller';
@@ -53,6 +61,7 @@ export { ModuleMetadata, AppendsWithParams } from './types/module-metadata';
 export { RouteMeta } from './types/route-data';
 export { PathParam, RouteHandler, Router, RouterReturns } from './types/router';
 export { NodeRequest, NodeResponse, RequestListener } from './types/server-options';
+export { createHelperForGuardWithParams } from './utils/create-helper-for-guards-with-params';
 export { deepFreeze } from './utils/deep-freeze';
 export { getDependencies } from './utils/get-dependecies';
 export { ExtensionOptions } from './utils/get-extension-provider';

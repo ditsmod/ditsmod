@@ -1,5 +1,40 @@
+<a name="core-2.36.0"></a>
+# [core-2.36.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.36.0) (2023-01-12)
+
+### Features
+
+- Added `createHelperForGuardWithParams()`. This factory creates a helper that makes it easier to work with guards that have parameters.
+
+An example of creating a helper:
+
+```ts
+// In guards-utils.ts
+import { createHelperForGuardWithParams } from '@ditsmod/core';
+import { Permission } from './types';
+
+export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
+```
+
+Usage:
+
+```ts
+// In some-controller.ts
+import { controller, Res, route } from '@ditsmod/core';
+
+import { requirePermissions } from '../auth/guards-utils';
+import { Permission } from '../auth/types';
+
+@controller()
+export class SomeController {
+  @route('GET', 'administration', [requirePermissions(Permission.canActivateAdministration)])
+  helloAdmin(res: Res) {
+    res.send('some secret');
+  }
+}
+```
+
 <a name="core-2.35.0"></a>
-# [core-2.35.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.35.0) (2023-01-12)
+## [core-2.35.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.35.0) (2023-01-12)
 
 ### BREAKING CHANGES
 
