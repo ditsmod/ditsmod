@@ -1,7 +1,7 @@
 import { controller, Res, route } from '@ditsmod/core';
 
 import { AuthGuard } from '../auth/auth.guard';
-import { PermissionsGuard } from '../auth/permissions.guard';
+import { requirePermissions } from '../auth/guards-utils';
 import { Permission } from '../auth/types';
 
 @controller()
@@ -16,7 +16,7 @@ export class SomeController {
     res.send('some secret');
   }
 
-  @route('GET', 'forbidden', [[PermissionsGuard, Permission.canActivateAdministration]])
+  @route('GET', 'forbidden', [requirePermissions(Permission.canActivateAdministration)])
   throw403Error(res: Res) {
     res.send('some secret');
   }
