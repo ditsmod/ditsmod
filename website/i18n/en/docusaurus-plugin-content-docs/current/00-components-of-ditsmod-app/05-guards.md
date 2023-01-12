@@ -103,6 +103,36 @@ export class PermissionsGuard implements CanActivate {
 }
 ```
 
+## Helpers for guards with parameters
+
+Because parameter guards must be passed as an array within an array, this makes readability and type safety worse. For such cases, it is better to create a helper using the `createHelperForGuardWithParams()` factory:
+
+```ts
+import { createHelperForGuardWithParams } from '@ditsmod/core';
+import { Permission } from './types';
+
+export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
+```
+
+`PermissionsGuard` is passed as an argument to this factory, which takes parameters of type `Permission`.
+
+`requirePermissions()` can now be used to create routes:
+
+```ts
+import { controller, Res, route } from '@ditsmod/core';
+
+import { requirePermissions } from '../auth/guards-utils';
+import { Permission } from '../auth/types';
+
+@controller()
+export class SomeController {
+  @route('GET', 'administration', [requirePermissions(Permission.canActivateAdministration)])
+  helloAdmin(res: Res) {
+    res.send('some secret');
+  }
+}
+```
+
 ## Passing guards to injectors
 
 Guards are passed to DI only for injectors at the request level. This can be done either in the controller or in the module:

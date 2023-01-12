@@ -10,7 +10,7 @@ Given that interceptors do the same job that controllers can do, you can work wi
 
 Typically, interceptors are used to automate standard processing, such as:
 
-- parsing the body of the request, cookies, headers;
+- parsing the body of the request or headers;
 - validation of the request;
 - collecting and logging various application metrics.
 
@@ -21,16 +21,16 @@ Interceptors can be centrally connected or disconnected without changing the met
 HTTP request processing has the following workflow:
 
 1. Ditsmod extracted [PreRouter][7] via [DI][106] (at the application level).
-2. `PreRouter` uses the router to search for the request handler according to the URI.
+2. `PreRouter` uses the router to search for the request handler according to the URI. In other words, the router checks if there is a corresponding router.
 3. If the request handler is not found, `PreRouter` issues a 404 error.
-4. If a request handler is found, Ditsmod extracted [HttpFrontend][2] via DI, puts it first in the interceptor queue, and calls it automatically. By default, this interceptor is responsible for calling guards, setting `req.pathParams` and `req.queryParams`, as well as handling errors that occur during the operation of interceptors and the controller.
+4. If a request handler is found, Ditsmod extracted [HttpFrontend][2] via DI (at the request level), puts it first in the interceptor queue, and calls it automatically. By default, this interceptor is responsible for calling guards, setting `req.pathParams` and `req.queryParams`, as well as handling errors that occur during the operation of interceptors and the controller.
 5. The second and subsequent interceptors may not start, it depends on whether the previous interceptor in the queue will start them.
-6. If all interceptors have worked, Ditsmod runs [HttpBackend][3], which is also extracted via DI. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
+6. If all interceptors have worked, Ditsmod runs [HttpBackend][3], which is also extracted via DI (at the request level). By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
 So, the approximate order of processing the request is as follows:
 
 ```text
-request -> PreRouter -> HttpFrontend -> [other interceptors] -> HttpBackend -> [controller]
+ request -> PreRouter -> HttpFrontend -> [other interceptors] -> HttpBackend -> [controller]
 response <- PreRouter <- HttpFrontend <- [other interceptors] <- HttpBackend <- [controller]
 ```
 
@@ -74,12 +74,12 @@ import { MyHttpInterceptor } from './my-http-interceptor';
 export class SomeModule {}
 ```
 
-[1]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/http-interceptor.ts#L11-L13
-[2]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/http-interceptor.ts#L20-L22
-[3]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/http-interceptor.ts#L43-L45
+[1]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/types/http-interceptor.ts#L9-L11
+[2]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/types/http-interceptor.ts#L18-L20
+[3]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/types/http-interceptor.ts#L41-L43
 [5]: https://expressjs.com/en/guide/writing-middleware.html
-[7]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/services/pre-router.ts
-[8]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/route-data.ts
+[7]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/services/pre-router.ts
+[8]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/types/route-data.ts
 
 [104]: /published-modules/return
 [106]: /components-of-ditsmod-app/dependency-injection

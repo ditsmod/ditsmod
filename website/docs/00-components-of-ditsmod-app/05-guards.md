@@ -103,6 +103,36 @@ export class PermissionsGuard implements CanActivate {
 }
 ```
 
+## Хелпери для ґардів з параметрами
+
+Оскільки ґарди з параметрами повинні передаватись у вигляді масива в масиві, це ускладнює читабельність та погіршує безпечність типів. Для таких випадків краще створити хелпер за допомогою фабрики `createHelperForGuardWithParams()`:
+
+```ts
+import { createHelperForGuardWithParams } from '@ditsmod/core';
+import { Permission } from './types';
+
+export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
+```
+
+У якості аргументу для цієї фабрики передається `PermissionsGuard`, який приймає параметри з типом `Permission`. 
+
+Тепер `requirePermissions()` можна використовувати для створення роутів:
+
+```ts
+import { controller, Res, route } from '@ditsmod/core';
+
+import { requirePermissions } from '../auth/guards-utils';
+import { Permission } from '../auth/types';
+
+@controller()
+export class SomeController {
+  @route('GET', 'administration', [requirePermissions(Permission.canActivateAdministration)])
+  helloAdmin(res: Res) {
+    res.send('some secret');
+  }
+}
+```
+
 ## Передача ґардів до інжекторів
 
 Ґарди передаються в DI лише для інжекторів на рівні запиту. Це можна зробити або в контролері, або у модулі:

@@ -10,7 +10,7 @@ sidebar_position: 4
 
 Як правило, інтерсептори використовуються для автоматизації стандартної обробки, такої як:
 
-- парсинг тіла запиту, куків, заголовків;
+- парсинг тіла запиту чи заголовків;
 - валідація запиту;
 - збирання та логування різних метрик роботи застосунку.
 
@@ -21,16 +21,16 @@ sidebar_position: 4
 Обробка HTTP-запиту має наступний робочий потік:
 
 1. Ditsmod витягує [PreRouter][7] через [DI][106] (на рівні застосунку).
-2. `PreRouter` за допомогою роутера шукає обробника запиту відповідно до URI.
+2. `PreRouter` за допомогою роутера шукає обробника запиту відповідно до URI. Іншими словами, роутер перевіряє чи є відповідний роут.
 3. Якщо обробника запиту не знайдено, `PreRouter` видає помилку зі статусом 404.
-4. Якщо знайшовся обробник запиту, Ditsmod витягує [HttpFrontend][2] через DI, ставить його першим у черзі інтерсепторів і автоматично викликає. By default, цей інтерсептор відповідає за виклик ґардів, встановлення `req.pathParams` та `req.queryParams`, а також за обробку помилок, що виникають під час роботи інтерсепторів та контролера.
+4. Якщо знайшовся обробник запиту, Ditsmod витягує [HttpFrontend][2] через DI (на рівні запиту), ставить його першим у черзі інтерсепторів і автоматично викликає. By default, цей інтерсептор відповідає за виклик ґардів, встановлення `req.pathParams` та `req.queryParams`, а також за обробку помилок, що виникають під час роботи інтерсепторів та контролера.
 5. Другий та наступні інтерсептори можуть і не запуститись, це залежать від того, чи запустить їх попередній у черзі інтерсептор.
-6. Якщо усі інтерсептори відпрацювали, Ditsmod запускає [HttpBackend][3], що також витягується через DI. By default, `HttpBackend` запускає безпосередньо метод контролера, що відповідає за обробку поточного запиту.
+6. Якщо усі інтерсептори відпрацювали, Ditsmod запускає [HttpBackend][3], що також витягується через DI (на рівні запиту). By default, `HttpBackend` запускає безпосередньо метод контролера, що відповідає за обробку поточного запиту.
 
 Отже, приблизний порядок обробки запиту такий:
 
 ```text
-запит -> PreRouter -> HttpFrontend -> [інші інтерсептори] -> HttpBackend -> [контролер]
+    запит -> PreRouter -> HttpFrontend -> [інші інтерсептори] -> HttpBackend -> [контролер]
 відповідь <- PreRouter <- HttpFrontend <- [інші інтерсептори] <- HttpBackend <- [контролер]
 ```
 
@@ -74,12 +74,12 @@ import { MyHttpInterceptor } from './my-http-interceptor';
 export class SomeModule {}
 ```
 
-[1]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/http-interceptor.ts#L11-L13
-[2]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/http-interceptor.ts#L20-L22
-[3]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/http-interceptor.ts#L43-L45
+[1]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/types/http-interceptor.ts#L9-L11
+[2]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/types/http-interceptor.ts#L18-L20
+[3]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/types/http-interceptor.ts#L41-L43
 [5]: https://expressjs.com/en/guide/writing-middleware.html
-[7]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/services/pre-router.ts
-[8]: https://github.com/ditsmod/ditsmod/blob/core-2.32.1/packages/core/src/types/route-data.ts
+[7]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/services/pre-router.ts
+[8]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/types/route-data.ts
 
 [104]: /published-modules/return
 [106]: /components-of-ditsmod-app/dependency-injection
