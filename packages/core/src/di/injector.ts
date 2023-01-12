@@ -32,8 +32,6 @@ import {
 } from './utils';
 import { DualKey, KeyRegistry } from './key-registry';
 
-const THROW_IF_NOT_FOUND = Symbol();
-
 /**
  * A dependency injection container used for instantiating objects and resolving
  * dependencies.
@@ -499,7 +497,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    */
   get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, notFoundValue?: T): T;
   get(token: any, visibility?: Visibility, notFoundValue?: any): any;
-  get(token: any, visibility: Visibility = null, notFoundValue: any = THROW_IF_NOT_FOUND): any {
+  get(token: any, visibility: Visibility = null, notFoundValue?: any): any {
     return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, notFoundValue);
   }
 
@@ -533,7 +531,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
         return injector.#parent.getOrThrow(injector.#parent, dualKey, parentTokens, notFoundValue);
       }
     }
-    if (notFoundValue !== THROW_IF_NOT_FOUND) {
+    if (notFoundValue !== undefined) {
       return notFoundValue;
     } else {
       throw noProviderError([dualKey.token, ...parentTokens]);
@@ -582,7 +580,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         dep.dualKey,
         [token, ...parentTokens],
         dep.visibility,
-        dep.optional ? null : THROW_IF_NOT_FOUND
+        dep.optional ? null : undefined
       );
     });
 
