@@ -1,4 +1,4 @@
-import { injectable, Injector, RequestContext, Res } from '@ditsmod/core';
+import { fromSelf, inject, injectable, Injector, NodeResponse, NODE_RES, Res } from '@ditsmod/core';
 import {
   Extension,
   ExtensionsManager,
@@ -100,8 +100,8 @@ export class CorsExtension implements Extension<void | false> {
 
       class DynamicController {
         @methodFactory()
-        [methodName](ctx: RequestContext, res: Res) {
-          ctx.nodeRes.setHeader('Allow', httpMethods.join());
+        [methodName](@fromSelf() @inject(NODE_RES) nodeRes: NodeResponse, res: Res) {
+          nodeRes.setHeader('Allow', httpMethods.join());
           res.send(undefined, Status.NO_CONTENT);
         }
       }

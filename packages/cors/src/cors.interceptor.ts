@@ -1,13 +1,26 @@
-import { HttpHandler, HttpInterceptor, RequestContext } from '@ditsmod/core';
+import {
+  fromSelf,
+  HttpHandler,
+  HttpInterceptor,
+  inject,
+  NodeRequest,
+  NodeResponse,
+  NODE_REQ,
+  NODE_RES,
+} from '@ditsmod/core';
 import { cors, CorsOptions } from '@ts-stack/cors';
 import { injectable } from '@ditsmod/core';
 
 @injectable()
 export class CorsInterceptor implements HttpInterceptor {
-  constructor(private corsOptions: CorsOptions, private ctx: RequestContext) {}
+  constructor(
+    private corsOptions: CorsOptions,
+    @fromSelf() @inject(NODE_REQ) private nodeReq: NodeRequest,
+    @fromSelf() @inject(NODE_RES) private nodeRes: NodeResponse
+  ) {}
 
   async intercept(next: HttpHandler) {
-    const headersSent = cors(this.ctx.nodeReq, this.ctx.nodeRes, this.corsOptions);
+    const headersSent = cors(this.nodeReq, this.nodeRes, this.corsOptions);
     if (headersSent) {
       return;
     }
