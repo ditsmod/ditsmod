@@ -1,5 +1,5 @@
 import { readFile } from 'fs/promises';
-import { controller, RequestContext, Status, Res } from '@ditsmod/core';
+import { controller, Status, Res } from '@ditsmod/core';
 
 import { oasRoute } from './decorators/oas-route';
 import { SwaggerConfigManager } from './services/swagger-config-manager';
@@ -19,7 +19,7 @@ export class OpenapiController {
       },
     },
   })
-  async getIndex(ctx: RequestContext) {
+  async getIndex() {
     await this.swaggerConfigManager.applyConfig();
     const indexHtml = await readFile(`${this.swaggerConfigManager.webpackDist}/index.html`, 'utf8');
     this.res.setContentType('text/html; charset=utf-8').send(indexHtml);
@@ -35,7 +35,7 @@ export class OpenapiController {
       },
     },
   })
-  async getYaml(ctx: RequestContext) {
+  async getYaml() {
     this.res.setContentType('text/yaml; charset=utf-8').send(this.configFiles.yaml);
   }
 
@@ -49,7 +49,7 @@ export class OpenapiController {
       },
     },
   })
-  async getJson(ctx: RequestContext) {
+  async getJson() {
     this.res.setContentType('application/json; charset=utf-8').send(this.configFiles.json);
   }
 
@@ -63,7 +63,7 @@ export class OpenapiController {
       },
     },
   })
-  async getJavaScript(ctx: RequestContext) {
+  async getJavaScript() {
     const appBundle = await readFile(`${this.swaggerConfigManager.webpackDist}/openapi.bundle.js`, 'utf8');
     this.res.setContentType('text/javascript; charset=utf-8').send(appBundle);
   }
