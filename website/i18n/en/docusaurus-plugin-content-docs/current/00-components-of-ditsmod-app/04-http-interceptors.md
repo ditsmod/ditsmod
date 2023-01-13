@@ -23,7 +23,7 @@ HTTP request processing has the following workflow:
 1. Ditsmod extracted [PreRouter][7] via [DI][106] (at the application level).
 2. `PreRouter` uses the router to search for the request handler according to the URI. In other words, the router checks if there is a corresponding router.
 3. If the request handler is not found, `PreRouter` issues a 404 error.
-4. If a request handler is found, Ditsmod extracted [HttpFrontend][2] via DI (at the request level), puts it first in the interceptor queue, and calls it automatically. By default, this interceptor is responsible for calling guards, setting `req.pathParams` and `req.queryParams`, as well as handling errors that occur during the operation of interceptors and the controller.
+4. If a request handler is found, Ditsmod retrieves [HttpFrontend][2] via DI (at the request level), puts it first in the interceptors queue and automatically calls it. By default, this interceptor is responsible for calling the guards, setting `req.pathParams` and `req.queryParams`, and calling the error handler for errors that occur during the operation of interceptors and controller.
 5. The second and subsequent interceptors may not start, it depends on whether the previous interceptor in the queue will start them.
 6. If all interceptors have worked, Ditsmod runs [HttpBackend][3], which is also extracted via DI (at the request level). By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
