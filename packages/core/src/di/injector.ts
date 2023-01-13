@@ -449,7 +449,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
   updateValue(id: number, value: any) {
     const meta = this.#registry[id];
     if (!meta) {
-      const msg = `Updating DI value failed: cannot find ID: ${stringify(id)}`;
+      const msg = `Updating DI value failed: cannot find ID: ${id}`;
       throw new DiError(msg);
     }
     this.#registry[id] = value;
