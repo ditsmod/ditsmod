@@ -519,7 +519,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
   ): any {
     if (injector) {
       const meta = injector.#registry[dualKey.id];
-      if (meta?.[ID]) {
+      if (meta?.[ID]) { // This is an alternative to the "instanceof ResolvedProvider" expression.
         if (parentTokens.includes(dualKey.token)) {
           throw cyclicDependencyError([dualKey.token, ...parentTokens]);
         }
@@ -637,7 +637,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         return;
       }
       const meta = injector.#registry[dualKey.id];
-      if (meta?.[ID]) {
+      if (meta?.[ID]) { // This is an alternative to the "instanceof ResolvedProvider" expression.
         if (parentTokens.includes(dualKey.token)) {
           throw cyclicDependencyError([dualKey.token, ...parentTokens]);
         }

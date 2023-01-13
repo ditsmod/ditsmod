@@ -4,7 +4,6 @@ import { fromSelf, inject, injectable, Injector, skipSelf } from '../di';
 import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
 import { AnyObj, CanActivate } from '../types/mix';
-import { NodeRequest, NodeResponse } from '../types/server-options';
 import { Status } from '../utils/http-status-codes';
 import { RouteMeta } from '../types/route-data';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
@@ -16,8 +15,6 @@ import { PathParam } from '../types/router';
 export class DefaultHttpFrontend implements HttpFrontend {
   constructor(
     protected injector: Injector,
-    @fromSelf() @inject(NODE_REQ) private nodeReq: NodeRequest,
-    @fromSelf() @inject(NODE_RES) private nodeRes: NodeResponse,
     @fromSelf() @inject(A_PATH_PARAMS) private aPathParams: PathParam[],
     @fromSelf() @inject(QUERY_STRING) private queryString: string,
     @fromSelf() private req: Req,
@@ -53,7 +50,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
       const canActivate = await item.guard.canActivate(item.params);
       if (canActivate !== true) {
         const status = typeof canActivate == 'number' ? canActivate : undefined;
-        this.canNotActivateRoute(this.nodeReq, this.nodeRes, status);
+        this.canNotActivateRoute(status);
         return false;
       }
     }
@@ -61,7 +58,9 @@ export class DefaultHttpFrontend implements HttpFrontend {
     return true;
   }
 
-  protected canNotActivateRoute(nodeReq: NodeRequest, nodeRes: NodeResponse, status?: Status) {
+  protected canNotActivateRoute(status?: Status) {
+    const nodeReq = this.injector.get(NODE_REQ, fromSelf);
+    const nodeRes = this.injector.get(NODE_RES, fromSelf);
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
     systemLogMediator.youCannotActivateRoute(this, nodeReq.method!, nodeReq.url!);
     nodeRes.statusCode = status || Status.UNAUTHORIZED;
