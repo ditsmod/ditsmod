@@ -1,5 +1,5 @@
 <a name="core-2.36.0"></a>
-# [core-2.36.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.36.0) (2023-01-12)
+# [core-2.36.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.36.0) (2023-01-13)
 
 ### Features
 
