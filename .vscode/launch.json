@@ -13,6 +13,15 @@
       "type": "node-terminal"
     },
     {
+      "name": "Launch tmp file",
+      "program": "${workspaceFolder}/examples/01-hello-world/src/tmp.js",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
+    },
+    {
       "name": "Attach by Process ID",
       "processId": "${command:PickProcess}",
       "request": "attach",
