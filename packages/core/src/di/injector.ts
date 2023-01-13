@@ -446,7 +446,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    * @param id The ID from KeyRegistry for some token.
    * @param value New value for this ID.
    */
-  updateValues(id: number, value: any) {
+  updateValue(id: number, value: any) {
     const meta = this.#registry[id];
     if (!meta) {
       const msg = `Updating DI value failed: cannot find ID: ${stringify(id)}`;
