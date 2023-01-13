@@ -484,7 +484,7 @@ describe('injector', () => {
 
     const car: CarWithOptionalEngine = injector.get(CarWithOptionalEngine);
     expect(car).toBeInstanceOf(CarWithOptionalEngine);
-    expect(car.engine).toEqual(null);
+    expect(car.engine).toEqual(undefined);
   });
 
   it('should use the last provider when there are multiple providers for same token', () => {

@@ -32,6 +32,8 @@ import {
 } from './utils';
 import { DualKey, KeyRegistry } from './key-registry';
 
+const NoDefaultValue = Symbol();
+
 /**
  * A dependency injection container used for instantiating objects and resolving
  * dependencies.
@@ -493,33 +495,35 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
 
   /**
    * Retrieves an instance from the injector based on the provided token.
-   * If not found, returns the `notFoundValue` otherwise
+   * If not found, returns the `defaultValue` otherwise
    */
-  get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, notFoundValue?: T): T;
-  get(token: any, visibility?: Visibility, notFoundValue?: any): any;
-  get(token: any, visibility: Visibility = null, notFoundValue?: any): any {
-    return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, notFoundValue);
+  get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, defaultValue?: T): T;
+  get(token: any, visibility?: Visibility, defaultValue?: any): any;
+  get(token: any, visibility: Visibility = null, defaultValue: any = NoDefaultValue): any {
+    return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, defaultValue);
   }
 
-  private selectInjectorAndGet(dualKey: DualKey, parentTokens: any[], visibility: Visibility, notFoundValue: any) {
+  private selectInjectorAndGet(dualKey: DualKey, parentTokens: any[], visibility: Visibility, defaultValue: any) {
     if (dualKey.token === Injector) {
       return this;
     }
 
     const injector = visibility === skipSelf ? this.#parent : this;
-    return this.getOrThrow(injector, dualKey, parentTokens, notFoundValue, visibility);
+    return this.getOrThrow(injector, dualKey, parentTokens, defaultValue, visibility);
   }
 
   private getOrThrow(
     injector: Injector | null,
     dualKey: DualKey,
     parentTokens: any[],
-    notFoundValue: any,
+    defaultValue: any,
     visibility?: Visibility
   ): any {
     if (injector) {
       const meta = injector.#registry[dualKey.id];
-      if (meta?.[ID]) { // This is an alternative to the "instanceof ResolvedProvider" expression.
+
+      // This is an alternative to the "instanceof ResolvedProvider" expression.
+      if (meta?.[ID]) {
         if (parentTokens.includes(dualKey.token)) {
           throw cyclicDependencyError([dualKey.token, ...parentTokens]);
         }
@@ -528,13 +532,13 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
       } else if (meta !== undefined) {
         return meta;
       } else if (visibility !== fromSelf && injector.#parent) {
-        return injector.#parent.getOrThrow(injector.#parent, dualKey, parentTokens, notFoundValue);
+        return injector.#parent.getOrThrow(injector.#parent, dualKey, parentTokens, defaultValue);
       }
     }
-    if (notFoundValue !== undefined) {
-      return notFoundValue;
-    } else {
+    if (defaultValue === NoDefaultValue) {
       throw noProviderError([dualKey.token, ...parentTokens]);
+    } else {
+      return defaultValue;
     }
   }
 
@@ -580,7 +584,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         dep.dualKey,
         [token, ...parentTokens],
         dep.visibility,
-        dep.optional ? null : undefined
+        dep.optional ? undefined : NoDefaultValue
       );
     });
 
@@ -637,7 +641,9 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         return;
       }
       const meta = injector.#registry[dualKey.id];
-      if (meta?.[ID]) { // This is an alternative to the "instanceof ResolvedProvider" expression.
+
+      // This is an alternative to the "instanceof ResolvedProvider" expression.
+      if (meta?.[ID]) {
         if (parentTokens.includes(dualKey.token)) {
           throw cyclicDependencyError([dualKey.token, ...parentTokens]);
         }
@@ -709,7 +715,7 @@ interface BaseConfig {
   dependencies?: Dependency[];
   provider?: ResolvedProvider;
   onlyFromSelf?: boolean;
-  notFoundValue?: any;
+  defaultValue?: any;
   isOptional?: boolean;
 }
 
