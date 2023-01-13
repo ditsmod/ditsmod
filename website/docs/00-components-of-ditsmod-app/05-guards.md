@@ -114,7 +114,7 @@ import { Permission } from './types';
 export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
 ```
 
-У якості аргументу для цієї фабрики передається `PermissionsGuard`, який приймає параметри з типом `Permission`. 
+В даному прикладі у якості аргументу передається `PermissionsGuard`, який приймає параметри з типом `Permission`. 
 
 Тепер `requirePermissions()` можна використовувати для створення роутів:
 

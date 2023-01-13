@@ -114,7 +114,7 @@ import { Permission } from './types';
 export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
 ```
 
-`PermissionsGuard` is passed as an argument to this factory, which takes parameters of type `Permission`.
+In this example, `PermissionsGuard' is passed as an argument, which accepts parameters of type `Permission'.
 
 `requirePermissions()` can now be used to create routes:
 
