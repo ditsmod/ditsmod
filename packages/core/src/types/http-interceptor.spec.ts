@@ -4,6 +4,7 @@ import { Injector } from '../di';
 import { HttpBackend, HttpHandler, HttpInterceptor, HttpFrontend } from './http-interceptor';
 import { defaultProvidersPerReq } from '../services/default-providers-per-req';
 import { defaultProvidersPerApp } from '../services/default-providers-per-app';
+import { ChainMaker } from '../services/chain-maker';
 import { ServiceProvider } from './mix';
 import { RouteMeta } from './route-data';
 import { HTTP_INTERCEPTORS } from '../constans';
@@ -62,7 +63,7 @@ describe('HttpInterceptor', () => {
       { token: HTTP_INTERCEPTORS, useClass: Interceptor3, multi: true },
     ]);
 
-    const chain = injector.get(HttpHandler) as HttpHandler;
+    const chain = injector.get(ChainMaker) as unknown as HttpHandler;
     chain.handle();
     expect(jestFn.mock.calls).toEqual([
       ['HttpFrontend'],
@@ -89,7 +90,7 @@ describe('HttpInterceptor', () => {
       { token: HTTP_INTERCEPTORS, useClass: Interceptor3, multi: true },
     ]);
 
-    const chain = injector.get(HttpHandler) as HttpHandler;
+    const chain = injector.get(ChainMaker) as unknown as HttpHandler;
     chain.handle();
     expect(jestFn.mock.calls).toEqual([['HttpFrontend'], ['Interceptor1'], ['Interceptor2'], ['Interceptor3']]);
   });
@@ -97,10 +98,10 @@ describe('HttpInterceptor', () => {
   it('without HTTP_INTERCEPTORS, chain should be HttpBackend', () => {
     const injector = Injector.resolveAndCreate([RouteMeta]).resolveAndCreateChild([...defaultProviders]);
 
-    const chain = injector.get(HttpHandler) as HttpHandler;
+    const chain = injector.get(ChainMaker) as ChainMaker;
     const frontend = injector.get(HttpFrontend) as HttpFrontend;
     const backend = injector.get(HttpBackend) as HttpBackend;
-    expect((chain as any).frontend).toBe(frontend);
-    expect((chain as any).backend).toBe(backend);
+    expect((chain as any).interceptor).toBe(frontend);
+    expect((chain as any).next).toBe(backend);
   });
 });

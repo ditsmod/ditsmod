@@ -11,6 +11,7 @@ import { getModule } from '../utils/get-module';
 import { PerAppService } from '../services/per-app.service';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { KeyRegistry } from '../di/key-registry';
+import { ChainMaker } from '../services/chain-maker';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -57,7 +58,7 @@ export class PreRouterExtension implements Extension<void> {
         const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
         const resolvedPerReq = Injector.resolve(mergedPerReq);
         this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
-        const resolvedHttpHandler = resolvedPerReq.find((rp) => rp.dualKey.token === HttpHandler)!;
+        const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
         const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
         const nodeReqId = KeyRegistry.get(NODE_REQ).id;
         const nodeResId = KeyRegistry.get(NODE_RES).id;
@@ -71,7 +72,7 @@ export class PreRouterExtension implements Extension<void> {
             .updateValue(nodeResId, nodeRes)
             .updateValue(aPathParamsId, aPathParams)
             .updateValue(queryStringId, queryString || '')
-            .instantiateResolved<HttpHandler>(resolvedHttpHandler)
+            .instantiateResolved<HttpHandler>(resolvedChainMaker)
             .handle(); // First HTTP handler in the chain of HTTP interceptors.
 
           injector.clear();
@@ -103,7 +104,7 @@ export class PreRouterExtension implements Extension<void> {
       throw new Error(msg);
     }
     const ignoreDeps: any[] = [HTTP_INTERCEPTORS];
-    inj.checkDeps(HttpHandler, undefined, ignoreDeps);
+    inj.checkDeps(ChainMaker, undefined, ignoreDeps);
     inj.checkDeps(HttpFrontend, undefined, ignoreDeps);
     inj.checkDeps(SystemLogMediator, undefined, ignoreDeps);
     routeMeta.guards.forEach((item) => inj.checkDeps(item.guard, undefined, ignoreDeps));

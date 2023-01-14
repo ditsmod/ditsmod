@@ -33,7 +33,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
       return;
     }
 
-    return next.handle().catch((err) => {
+    return next.handle().catch((err: any) => {
       return this.callErrorHandler(err);
     });
   }
