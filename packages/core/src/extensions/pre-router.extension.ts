@@ -76,7 +76,10 @@ export class PreRouterExtension implements Extension<void> {
             .updateValue(queryStringId, queryString || '')
             .instantiateResolved<HttpHandler>(resolvedChainMaker)
             .handle() // First HTTP handler in the chain of HTTP interceptors.
-            .catch((err) => this.callErrorHandler(injector, resolvedCtrlErrHandler, err));
+            .catch((err) => {
+              const errorHandler = injector.instantiateResolved(resolvedCtrlErrHandler);
+              return errorHandler.handleError(err);
+            });
 
           injector.clear();
         }) as RouteHandler;
@@ -86,11 +89,6 @@ export class PreRouterExtension implements Extension<void> {
     });
 
     return preparedRouteMeta;
-  }
-
-  protected async callErrorHandler(injector: Injector, resolvedCtrlErrHandler: ResolvedProvider, err: any) {
-    const errorHandler = injector.instantiateResolved(resolvedCtrlErrHandler);
-    await errorHandler.handleError(err);
   }
 
   /**
