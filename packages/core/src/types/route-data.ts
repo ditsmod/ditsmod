@@ -1,5 +1,5 @@
 import { Class, FactoryProvider, Injector, ResolvedProvider } from '../di';
-import { DecoratorMetadata, HttpMethod, NormalizedGuard } from './mix';
+import { DecoratorMetadata, HttpMethod, NormalizedGuard, ResolvedGuard } from './mix';
 import { RouteHandler } from './router';
 
 /**
@@ -14,8 +14,14 @@ export class RouteMeta {
     return Injector.resolve([factoryProvider])[0];
   }
 
+  static resolveGuards(guards: NormalizedGuard[]): ResolvedGuard[] {
+    return guards.map((g) => {
+      return { guard: Injector.resolve([g.guard])[0], params: g.params };
+    });
+  }
+
   resolvedFactory: ResolvedProvider;
-  resolvedDeps?: ResolvedProvider[];
+  resolvedGuards: ResolvedGuard[];
   /**
    * An array of DI tokens used to look up `CanActivate()` handlers,
    * in order to determine if the current user is allowed to activate the controller.

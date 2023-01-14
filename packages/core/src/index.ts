@@ -54,6 +54,7 @@ export {
   ModuleType,
   ModuleWithParams,
   NormalizedGuard,
+  ResolvedGuard,
   RedirectStatusCodes,
   ServiceProvider,
 } from './types/mix';

@@ -21,16 +21,16 @@ export class DefaultHttpFrontend implements HttpFrontend {
   ) {}
 
   async intercept(next: HttpHandler) {
-    if (await this.canActivate()) {
+    if (!this.routeMeta.guards.length || await this.canActivate()) {
       this.setParams();
       return next.handle();
     }
   }
 
   protected async canActivate() {
-    const preparedGuards = this.routeMeta.guards.map<{ guard: CanActivate; params?: any[] }>((item) => {
+    const preparedGuards = this.routeMeta.resolvedGuards.map<{ guard: CanActivate; params?: any[] }>((item) => {
       return {
-        guard: this.injector.get(item.guard),
+        guard: this.injector.instantiateResolved(item.guard),
         params: item.params,
       };
     });

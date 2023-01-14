@@ -56,6 +56,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           const routeMeta: RouteMeta = {
             decoratorMetadata,
             guards,
+            resolvedGuards: RouteMeta.resolveGuards(guards),
             resolvedFactory,
           };
           providersPerRou.push({ token: RouteMeta, useValue: routeMeta });

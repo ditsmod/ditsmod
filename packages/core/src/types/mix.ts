@@ -6,6 +6,7 @@ import {
   Class,
   TypeProvider,
   ValueProvider,
+  ResolvedProvider,
 } from '../di';
 import { MetadataPerMod1 } from './metadata-per-mod';
 import { ProvidersMetadata } from '../models/providers-metadata';
@@ -68,6 +69,11 @@ export type GuardItem = Class<CanActivate> | [Class<CanActivate>, any, ...any[]]
 
 export interface NormalizedGuard {
   guard: Class<CanActivate>;
+  params?: any[];
+}
+
+export interface ResolvedGuard {
+  guard: ResolvedProvider;
   params?: any[];
 }
 
