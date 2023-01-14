@@ -16,7 +16,6 @@ import {
 
 import { stringify } from './utils';
 import { makeClassDecorator, makePropDecorator } from './decorator-factories';
-import { getOriginalError } from './error-handling';
 import { KeyRegistry } from './key-registry';
 import { getNewRegistry } from './types-and-models';
 
@@ -540,8 +539,7 @@ describe('injector', () => {
       injector.get(Car);
       throw new Error('Must throw');
     } catch (e: any) {
-      expect(e.message).toContain(`Error during instantiation of Engine! (${stringify(Car)} -> Engine)`);
-      expect(getOriginalError(e) instanceof Error).toBeTruthy();
+      expect(e.message).toContain('Broken Engine; this error during instantiation of Engine! (Car -> Engine)');
     }
   });
 
@@ -558,7 +556,7 @@ describe('injector', () => {
       { token: Engine, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
     ]);
 
-    const msg = 'Broken Engine: Error during instantiation of ' + 'Engine! (Car -> Engine). Caused by: Broken Engine';
+    const msg = 'Broken Engine; this error during instantiation of Engine! (Car -> Engine)';
     expect(() => injector.get(Car)).toThrowError(msg);
 
     isBroken = false;

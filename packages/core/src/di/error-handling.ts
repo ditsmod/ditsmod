@@ -2,19 +2,6 @@ import { Class, DiError } from './types-and-models';
 import { stringify } from './utils';
 import { Injector } from './injector';
 
-export const ERROR_ORIGINAL_ERROR = 'TsStackDiOriginalError';
-
-export function getOriginalError(error: Error): Error {
-  return (error as any)[ERROR_ORIGINAL_ERROR];
-}
-
-function wrappedError(message: string, originalError: any): DiError {
-  const msg = `${message} Caused by: ${originalError instanceof Error ? originalError.message : originalError}`;
-  const error = new DiError(msg);
-  (error as any)[ERROR_ORIGINAL_ERROR] = originalError;
-  return error;
-}
-
 function findFirstClosedCycle(tokens: any[]): any[] {
   const res: any[] = [];
   for (let i = 0; i < tokens.length; ++i) {
@@ -109,10 +96,9 @@ try {
  */
 export function instantiationError(originalException: any, tokens: any[]) {
   const first = stringify(tokens[0]);
-  const msg = `${originalException.message}: Error during instantiation of ${first}!${constructResolvingPath(tokens)}.`;
-  const error = wrappedError(msg, originalException);
-  (error as any)[ERROR_ORIGINAL_ERROR] = originalException;
-  return clearErrorTrace(error);
+  const action = first.includes('.prototype.') ? 'calling' : 'instantiation of';
+  originalException.message = `${originalException.message}; this error during ${action} ${first}!${constructResolvingPath(tokens)}`;
+  return originalException;
 }
 
 function clearErrorTrace(error: any) {
@@ -132,9 +118,6 @@ function clearErrorTrace(error: any) {
       const methodName = part.substring(str.length, part.indexOf(' '));
       (Error as any).captureStackTrace(error, (Injector as any).prototype[methodName]);
     }
-  }
-  if (error[ERROR_ORIGINAL_ERROR]) {
-    clearErrorTrace(error[ERROR_ORIGINAL_ERROR]);
   }
   Error.stackTraceLimit = originalStackTraceLimit;
   return error;
