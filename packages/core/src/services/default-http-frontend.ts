@@ -1,7 +1,6 @@
 import { parse } from 'querystring';
 
 import { fromSelf, inject, injectable, Injector, skipSelf } from '../di';
-import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
 import { AnyObj, CanActivate } from '../types/mix';
 import { Status } from '../utils/http-status-codes';
@@ -22,20 +21,10 @@ export class DefaultHttpFrontend implements HttpFrontend {
   ) {}
 
   async intercept(next: HttpHandler) {
-    try {
-      const canActivate = await this.canActivate();
-      if (!canActivate) {
-        return;
-      }
+    if (await this.canActivate()) {
       this.setParams();
-    } catch (err) {
-      await this.callErrorHandler(err);
-      return;
+      return next.handle();
     }
-
-    return next.handle().catch((err: any) => {
-      return this.callErrorHandler(err);
-    });
   }
 
   protected async canActivate() {
@@ -50,7 +39,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
       const canActivate = await item.guard.canActivate(item.params);
       if (canActivate !== true) {
         const status = typeof canActivate == 'number' ? canActivate : undefined;
-        this.canNotActivateRoute(status);
+        this.denialActivate(status);
         return false;
       }
     }
@@ -58,7 +47,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
     return true;
   }
 
-  protected canNotActivateRoute(status?: Status) {
+  protected denialActivate(status?: Status) {
     const nodeReq = this.injector.get(NODE_REQ, fromSelf);
     const nodeRes = this.injector.get(NODE_RES, fromSelf);
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
@@ -77,10 +66,5 @@ export class DefaultHttpFrontend implements HttpFrontend {
       this.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
       this.req.pathParams = pathParams;
     }
-  }
-
-  protected async callErrorHandler(err: any) {
-    const errorHandler = this.injector.get(ControllerErrorHandler);
-    await errorHandler.handleError(err);
   }
 }

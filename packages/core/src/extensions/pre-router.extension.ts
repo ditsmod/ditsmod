@@ -12,6 +12,7 @@ import { PerAppService } from '../services/per-app.service';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { KeyRegistry } from '../di/key-registry';
 import { ChainMaker } from '../services/chain-maker';
+import { ControllerErrorHandler } from '../services/controller-error-handler';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -59,6 +60,7 @@ export class PreRouterExtension implements Extension<void> {
         const resolvedPerReq = Injector.resolve(mergedPerReq);
         this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
         const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
+        const resolvedCtrlErrHandler = resolvedPerReq.find((rp) => rp.dualKey.token === ControllerErrorHandler)!;
         const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
         const nodeReqId = KeyRegistry.get(NODE_REQ).id;
         const nodeResId = KeyRegistry.get(NODE_RES).id;
@@ -73,7 +75,8 @@ export class PreRouterExtension implements Extension<void> {
             .updateValue(aPathParamsId, aPathParams)
             .updateValue(queryStringId, queryString || '')
             .instantiateResolved<HttpHandler>(resolvedChainMaker)
-            .handle(); // First HTTP handler in the chain of HTTP interceptors.
+            .handle() // First HTTP handler in the chain of HTTP interceptors.
+            .catch((err) => this.callErrorHandler(injector, resolvedCtrlErrHandler, err));
 
           injector.clear();
         }) as RouteHandler;
@@ -83,6 +86,11 @@ export class PreRouterExtension implements Extension<void> {
     });
 
     return preparedRouteMeta;
+  }
+
+  protected async callErrorHandler(injector: Injector, resolvedCtrlErrHandler: ResolvedProvider, err: any) {
+    const errorHandler = injector.instantiateResolved(resolvedCtrlErrHandler);
+    await errorHandler.handleError(err);
   }
 
   /**
