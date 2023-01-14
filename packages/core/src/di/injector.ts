@@ -498,6 +498,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    * If not found, returns the `defaultValue` otherwise
    */
   get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, defaultValue?: T): T;
+  get<T extends Func>(token: T, visibility?: Visibility, defaultValue?: T): ReturnType<T>;
   get(token: any, visibility?: Visibility, defaultValue?: any): any;
   get(token: any, visibility: Visibility = null, defaultValue: any = NoDefaultValue): any {
     return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, defaultValue);
