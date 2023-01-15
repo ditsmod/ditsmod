@@ -55,7 +55,6 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           const path = this.getPath(prefix, controllerPath);
           const routeMeta: RouteMeta = {
             decoratorMetadata,
-            guards,
             resolvedGuards: RouteMeta.resolveGuards(guards),
             resolvedFactory,
           };

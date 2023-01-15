@@ -112,7 +112,7 @@ export class PreRouterExtension implements Extension<void> {
     inj.checkDeps(ChainMaker, undefined, ignoreDeps);
     inj.checkDeps(HttpFrontend, undefined, ignoreDeps);
     inj.checkDeps(SystemLogMediator, undefined, ignoreDeps);
-    routeMeta.guards.forEach((item) => inj.checkDeps(item.guard, undefined, ignoreDeps));
+    routeMeta.resolvedGuards.forEach((item) => inj.checkDepsForResolved(item.guard, ignoreDeps));
     inj.checkDeps(HttpBackend, undefined, ignoreDeps);
     inj.checkDepsForResolved(routeMeta.resolvedFactory, ignoreDeps);
     inj.checkDeps(HTTP_INTERCEPTORS, fromSelf, ignoreDeps);

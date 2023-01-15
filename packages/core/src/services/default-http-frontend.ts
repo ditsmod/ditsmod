@@ -21,7 +21,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
   ) {}
 
   async intercept(next: HttpHandler) {
-    if (!this.routeMeta.guards.length || await this.canActivate()) {
+    if (!this.routeMeta.resolvedGuards.length || await this.canActivate()) {
       this.setParams();
       return next.handle();
     }
