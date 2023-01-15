@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { CanActivate, NormalizedGuard, PerAppService, Status } from '@ditsmod/core';
+import { CanActivate, PerAppService, ResolvedGuard, Status } from '@ditsmod/core';
 import {
   ComponentsObject,
   OperationObject,
@@ -18,7 +18,7 @@ describe('OpenapiCompilerExtension', () => {
   class MockOpenapiCompilerExtension extends OpenapiCompilerExtension {
     override oasObject: XOasObject;
 
-    override setSecurityInfo(operationObject: XOperationObject, guards: NormalizedGuard[]) {
+    override setSecurityInfo(operationObject: XOperationObject, guards: ResolvedGuard[]) {
       return super.setSecurityInfo(operationObject, guards);
     }
 
@@ -68,7 +68,7 @@ describe('OpenapiCompilerExtension', () => {
         }
       }
 
-      const guards: NormalizedGuard[] = [{ guard: Guard1 }];
+      const guards: ResolvedGuard[] = [{ guard: Injector.resolve([Guard1])[0] }];
       mock.setSecurityInfo(operationObject, guards);
       expect(mock.oasObject).not.toEqual(DEFAULT_OAS_OBJECT);
       const expectedComponents: ComponentsObject = { securitySchemes: { guard1: securitySchemeObject } };
@@ -102,7 +102,7 @@ describe('OpenapiCompilerExtension', () => {
         }
       }
 
-      const guards: NormalizedGuard[] = [{ guard: Guard1, params: ['scope1', 'scope2'] }];
+      const guards: ResolvedGuard[] = [{ guard: Injector.resolve([Guard1])[0], params: ['scope1', 'scope2'] }];
       mock.setSecurityInfo(operationObject, guards);
       expect(mock.oasObject).not.toEqual(DEFAULT_OAS_OBJECT);
       const expectedcomponents: ComponentsObject = { securitySchemes: { guard1: securitySchemeObject } };
@@ -136,7 +136,7 @@ describe('OpenapiCompilerExtension', () => {
         }
       }
 
-      const guards: NormalizedGuard[] = [{ guard: Guard1 }, { guard: Guard1 }];
+      const guards: ResolvedGuard[] = [{ guard: Injector.resolve([Guard1])[0] }, { guard: Injector.resolve([Guard1])[0] }];
       mock.setSecurityInfo(operationObject, guards);
       expect(mock.oasObject).not.toEqual(DEFAULT_OAS_OBJECT);
       const expectedcomponents: ComponentsObject = { securitySchemes: { guard1: securitySchemeObject } };
@@ -179,7 +179,7 @@ describe('OpenapiCompilerExtension', () => {
         }
       }
 
-      const guards: NormalizedGuard[] = [{ guard: Guard1 }];
+      const guards: ResolvedGuard[] = [{ guard: Injector.resolve([Guard1])[0] }];
       mock.setSecurityInfo(operationObject, guards);
       expect(mock.oasObject).not.toEqual(DEFAULT_OAS_OBJECT);
       const expectedComponentsObject: ComponentsObject = {

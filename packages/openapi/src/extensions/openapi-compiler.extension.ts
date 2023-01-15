@@ -7,9 +7,9 @@ import {
   HttpMethod,
   isModuleWithParams,
   MetadataPerMod2,
-  NormalizedGuard,
   PerAppService,
   Providers,
+  ResolvedGuard,
   ROUTES_EXTENSIONS,
 } from '@ditsmod/core';
 import { injectable, Injector, optional, reflector } from '@ditsmod/core';
@@ -63,9 +63,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     const json = JSON.stringify(this.oasObject);
     const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
     const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
-    this.perAppService.providers = [
-      ...new Providers().useValue(OasConfigFiles, { json, yaml })
-    ];
+    this.perAppService.providers = [...new Providers().useValue(OasConfigFiles, { json, yaml })];
 
     return this.oasObject;
   }
@@ -84,17 +82,17 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
       }
 
       aControllersMetadata2.forEach(({ httpMethod, path, routeMeta }) => {
-        const { oasPath, guards, operationObject } = routeMeta as OasRouteMeta;
+        const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;
         if (operationObject) {
           const clonedOperationObject = { ...operationObject };
-          this.setSecurityInfo(clonedOperationObject, guards);
+          this.setSecurityInfo(clonedOperationObject, resolvedGuards);
           const pathItemObject: PathItemObject = { [httpMethod.toLowerCase()]: clonedOperationObject };
           paths[`/${oasPath}`] = { ...(paths[`/${oasPath}`] || {}), ...pathItemObject };
         } else {
           if (!httpMethod) {
             throw new Error('OpenapiCompilerExtension: OasRouteMeta not found.');
           }
-          this.applyNonOasRoute(path, paths, httpMethod, guards);
+          this.applyNonOasRoute(path, paths, httpMethod, resolvedGuards);
         }
       });
     }
@@ -116,21 +114,21 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     this.oasObject.components = { ...(this.oasObject.components || {}) };
   }
 
-  protected setSecurityInfo(operationObject: XOperationObject, guards: NormalizedGuard[]) {
+  protected setSecurityInfo(operationObject: XOperationObject, resolvedGuards: ResolvedGuard[]) {
     const security: XSecurityRequirementObject[] = [];
     const tags: string[] = [];
     const responses: XResponsesObject = {};
-    guards.forEach((normalizedGuard) => {
-      const decoratorsValues = reflector.getClassMetadata(normalizedGuard.guard);
+    resolvedGuards.forEach((resolvedGuard) => {
+      const decoratorsValues = reflector.getClassMetadata(resolvedGuard.guard.dualKey.token);
       const aOasGuardMetadata = decoratorsValues.filter(isOasGuard);
-      const guardName = normalizedGuard.guard.name;
+      const guardName = resolvedGuard.guard.dualKey.token.name;
 
       aOasGuardMetadata.forEach((oasGuardMetadata, index) => {
         let securityName = aOasGuardMetadata.length > 1 ? `${guardName}_${index}` : guardName;
         securityName = securityName.charAt(0).toLowerCase() + securityName.slice(1);
         this.oasObject.components!.securitySchemes = { ...(this.oasObject.components!.securitySchemes || {}) };
         this.oasObject.components!.securitySchemes[securityName] = oasGuardMetadata.value.securitySchemeObject;
-        let scopes = normalizedGuard.params || [];
+        let scopes = resolvedGuard.params || [];
         if (!scopes.some((scope) => typeof scope == 'string')) {
           scopes = [];
         }
@@ -164,7 +162,12 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     operationObject.responses = { ...(operationObject.responses || {}), ...responses };
   }
 
-  protected applyNonOasRoute(path: string, paths: XPathsObject, httpMethod: HttpMethod, guards: NormalizedGuard[]) {
+  protected applyNonOasRoute(
+    path: string,
+    paths: XPathsObject,
+    httpMethod: HttpMethod,
+    resolvedGuards: ResolvedGuard[]
+  ) {
     httpMethod = httpMethod.toLowerCase() as HttpMethod;
     const parameters: XParameterObject[] = [];
     path = `/${path}`.replace(/:([^/]+)/g, (_, name) => {
@@ -172,7 +175,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
       return `{${name}}`;
     });
     const operationObject: XOperationObject = { tags: ['NonOasRoutes'], parameters, responses: {} };
-    this.setSecurityInfo(operationObject, guards);
+    this.setSecurityInfo(operationObject, resolvedGuards);
     if (['POST', 'PATCH', 'PUT'].includes(httpMethod)) {
       operationObject.requestBody = {
         description: 'It is default content field for non-OasRoute',
