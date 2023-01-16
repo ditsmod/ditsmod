@@ -1,5 +1,14 @@
+<a name="core-2.37.0"></a>
+# [core-2.37.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.37.0) (2023-01-16)
+
+### Features
+
+- If some dependecy is optional DI returns `undefined` instead `null`.
+- Added more type for `injector.get()`.
+- Faster `HttpFrontend` thanks to resolved guards.
+
 <a name="core-2.36.0"></a>
-# [core-2.36.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.36.0) (2023-01-13)
+## [core-2.36.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.36.0) (2023-01-13)
 
 ### Features
 
