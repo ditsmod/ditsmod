@@ -1,7 +1,6 @@
-spec
 *.tgz
 *.log
-*.spec.*
+*.spec.ts
 yarn.lock
 jest.config.js
 .*

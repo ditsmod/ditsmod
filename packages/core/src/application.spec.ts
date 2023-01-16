@@ -39,10 +39,6 @@ describe('Application', () => {
     mock = new ApplicationMock();
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   describe('mergeRootMetadata()', () => {
     it('should merge custom options for the root module', () => {
       class Provider1 {}

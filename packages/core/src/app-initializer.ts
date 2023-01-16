@@ -25,7 +25,7 @@ import { getModuleName } from './utils/get-module-name';
 import { getProvidersTargets, getToken, getTokens } from './utils/get-tokens';
 import { normalizeProviders } from './utils/ng-utils';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
-import { isMultiProvider, isNormRootModule, isRootModule } from './utils/type-guards';
+import { isMultiProvider, isNormRootModule } from './utils/type-guards';
 import { SystemLogMediator } from './log-mediator/system-log-mediator';
 
 export class AppInitializer {
