@@ -19,13 +19,13 @@ export class Application {
   protected systemLogMediator: SystemLogMediator;
 
   /**
-   * @param listen If this parameter seted to `false` then `server.listen()` is not called. By default `true`.
+   * @param listen If this parameter seted to `false` then `server.listen()` is not called. Default - `true`.
    */
   bootstrap(appModule: ModuleType, listen: boolean = true) {
     return new Promise<{ server: Server }>(async (resolve, reject) => {
       try {
         this.initRootModule(appModule);
-        const appInitializer = this.scanRootModuleAndGetAppInitializer(appModule, this.systemLogMediator);
+        const appInitializer = this.scanRootModuleAndGetAppInitializer(appModule);
         await this.bootstrapApplication(appInitializer);
         this.flushLogs();
         const server = this.createServer(appInitializer.requestListener);
@@ -72,10 +72,10 @@ export class Application {
     }
   }
 
-  protected scanRootModuleAndGetAppInitializer(appModule: ModuleType, systemLogMediator: SystemLogMediator) {
-    const moduleManager = new ModuleManager(systemLogMediator);
+  protected scanRootModuleAndGetAppInitializer(appModule: ModuleType) {
+    const moduleManager = new ModuleManager(this.systemLogMediator);
     moduleManager.scanRootModule(appModule);
-    return new AppInitializer(this.rootMeta, moduleManager, systemLogMediator);
+    return new AppInitializer(this.rootMeta, moduleManager, this.systemLogMediator);
   }
 
   protected async bootstrapApplication(appInitializer: AppInitializer) {

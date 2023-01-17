@@ -24,8 +24,8 @@ describe('Application', () => {
       return super.checkSecureServerOption(rootModuleName);
     }
 
-    override scanRootModuleAndGetAppInitializer(appModule: ModuleType, systemLogMediator: SystemLogMediator) {
-      return super.scanRootModuleAndGetAppInitializer(appModule, systemLogMediator);
+    override scanRootModuleAndGetAppInitializer(appModule: ModuleType) {
+      return super.scanRootModuleAndGetAppInitializer(appModule);
     }
 
     override bootstrapApplication(appInitializer: AppInitializer) {
@@ -100,7 +100,7 @@ describe('Application', () => {
     class AppModule {}
 
     it('should return instance of AppInitializer', () => {
-      expect(mock.scanRootModuleAndGetAppInitializer(AppModule, {} as SystemLogMediator)).toBeInstanceOf(AppInitializer);
+      expect(mock.scanRootModuleAndGetAppInitializer(AppModule)).toBeInstanceOf(AppInitializer);
     });
   });
 
@@ -111,7 +111,7 @@ describe('Application', () => {
     class AppModule {}
 
     it('should replace logMediator during call bootstrapApplication()', () => {
-      const appInitializer = mock.scanRootModuleAndGetAppInitializer(AppModule, {} as SystemLogMediator);
+      const appInitializer = mock.scanRootModuleAndGetAppInitializer(AppModule);
       const { systemLogMediator } = mock;
       mock.bootstrapApplication(appInitializer);
       expect(mock.systemLogMediator !== systemLogMediator).toBe(true);
