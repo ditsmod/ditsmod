@@ -1,5 +1,4 @@
 import { injectable, optional } from '../di';
-
 import { Logger, LoggerConfig, LogLevel } from '../types/logger';
 import { ConsoleLogger } from '../services/console-logger';
 import { ModuleExtract } from '../models/module-extract';
@@ -40,7 +39,7 @@ export interface LogItem {
  * Mediator between core logger and custom user's logger.
  */
 @injectable()
-export class LogMediator {
+export abstract class LogMediator {
   /**
    * If `bufferLogs === true` then all messages will be buffered.
    *
@@ -55,11 +54,7 @@ export class LogMediator {
     @optional() protected logger: Logger = new ConsoleLogger(),
     @optional() protected outputLogFilter: OutputLogFilter = new OutputLogFilter(),
     @optional() protected loggerConfig: LoggerConfig = new LoggerConfig()
-  ) {
-    this.logger = logger || new ConsoleLogger();
-    this.outputLogFilter = outputLogFilter || new OutputLogFilter();
-    this.loggerConfig = loggerConfig || new LoggerConfig();
-  }
+  ) {}
 
   protected setLog<T extends InputLogFilter>(inputLogLevel: LogLevel, inputLogFilter: T, msg: any) {
     if (LogMediator.bufferLogs) {
@@ -117,13 +112,13 @@ export class LogMediator {
     let hasClassName: boolean | undefined = true;
     let hasTags: boolean | undefined = true;
     if (outputLogFilter.modulesNames) {
-      hasModuleName = outputLogFilter!.modulesNames?.includes(moduleName);
+      hasModuleName = outputLogFilter.modulesNames?.includes(moduleName);
     }
     if (outputLogFilter.classesNames) {
-      hasClassName = outputLogFilter!.classesNames?.includes(inputLogFilter.className || '');
+      hasClassName = outputLogFilter.classesNames?.includes(inputLogFilter.className || '');
     }
     if (outputLogFilter.tags) {
-      hasTags = inputLogFilter.tags?.some((tag) => outputLogFilter!.tags?.includes(tag));
+      hasTags = inputLogFilter.tags?.some((tag) => outputLogFilter.tags?.includes(tag));
     }
     this.transformMsgIfFilterApplied(item, outputLogFilter, prefix);
     return hasModuleName && hasClassName && hasTags;
