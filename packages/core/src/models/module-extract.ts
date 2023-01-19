@@ -1,5 +1,5 @@
 /**
- * Extaction from current module.
+ * Extraction from current module.
  */
 export class ModuleExtract {
   /**
