@@ -1,12 +1,12 @@
 import { injectable } from '../di';
-
 import { isInjectionToken } from '../utils/type-guards';
 import { GlobalProviders, ImportObj } from '../types/metadata-per-mod';
 import { Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
 import { getImportedTokens } from '../utils/get-imports';
 import { getModuleName } from '../utils/get-module-name';
 import { getProviderName } from '../utils/get-provider-name';
-import { LogMediator, InputLogFilter, OutputLogFilter } from './log-mediator';
+import { LogMediator } from './log-mediator';
+import { InputLogFilter, OutputLogFilter } from './types';
 import { Logger, LogLevel } from '../types/logger';
 import { ConsoleLogger } from '../services/console-logger';
 

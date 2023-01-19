@@ -1,7 +1,7 @@
 import { Class } from '../di';
-
+import { LogMediator } from '../log-mediator/log-mediator';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
-import { OutputLogFilter, LogMediator } from '../log-mediator/log-mediator';
+import { OutputLogFilter } from '../log-mediator/types';
 import { Logger, LoggerConfig } from '../types/logger';
 import { ServiceProvider } from '../types/mix';
 import { NormalizedProvider } from './ng-utils';

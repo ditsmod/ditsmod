@@ -4,7 +4,7 @@ import { ServiceProvider } from '../types/mix';
 import { Counter } from './counter';
 import { ConsoleLogger } from './console-logger';
 import { ModuleManager } from './module-manager';
-import { OutputLogFilter } from '../log-mediator/log-mediator';
+import { OutputLogFilter } from '../log-mediator/types';
 import { PreRouter } from './pre-router';
 import { ModuleExtract } from '../models/module-extract';
 import { Providers } from '../utils/providers';

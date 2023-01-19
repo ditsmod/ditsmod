@@ -2,38 +2,7 @@ import { injectable, optional } from '../di';
 import { Logger, LoggerConfig, LogLevel } from '../types/logger';
 import { ConsoleLogger } from '../services/console-logger';
 import { ModuleExtract } from '../models/module-extract';
-
-/**
- * This class is used to limit log output by certain options.
- * Uses by `LogMediator`.
- */
-export class OutputLogFilter {
-  modulesNames?: string[];
-  classesNames?: string[];
-  tags?: string[];
-}
-/**
- * This class is used to generate logs that will be used for `OutputLogFilter`.
- * Uses by `LogMediator`.
- */
-export class InputLogFilter {
-  className?: string;
-  tags?: string[];
-}
-
-/**
- * Default type for `LogMediator.buffer`.
- */
-export interface LogItem {
-  moduleName: string;
-  date: Date;
-  outputLogFilter: OutputLogFilter;
-  outputLogLevel: LogLevel;
-  inputLogFilter: InputLogFilter;
-  inputLogLevel: LogLevel;
-  msg: string;
-  logger: Logger;
-}
+import { InputLogFilter, LogItem, OutputLogFilter } from './types';
 
 /**
  * Mediator between core logger and custom user's logger.

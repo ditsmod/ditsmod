@@ -1,8 +1,9 @@
 import 'reflect-metadata';
-import { Provider, Injector } from '../di';
 
+import { Provider, Injector } from '../di';
 import { LogLevel } from '../types/logger';
-import { LogItem, LogMediator, OutputLogFilter } from './log-mediator';
+import { LogMediator } from './log-mediator';
+import { LogItem, OutputLogFilter } from './types';
 import { ModuleExtract } from '../models/module-extract';
 import { SystemLogMediator } from './system-log-mediator';
 

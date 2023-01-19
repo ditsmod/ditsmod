@@ -1,10 +1,11 @@
 import 'reflect-metadata';
+
 import { Logger, LoggerConfig } from '../types/logger';
 import { ServiceProvider } from '../types/mix';
-
 import { ConsoleLogger } from '../services/console-logger';
 import { Providers } from './providers';
-import { OutputLogFilter, LogMediator } from '../log-mediator/log-mediator';
+import { LogMediator } from '../log-mediator/log-mediator';
+import { OutputLogFilter } from '../log-mediator/types';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 describe('Providers', () => {

@@ -58,6 +58,7 @@ export class ModuleManager {
 
   /**
    * Creates a snapshot of NormalizedModuleMetadata for the root module, stores locally and returns it.
+   * You can get the result this way: `moduleManager.getMetadata('root')`.
    */
   scanRootModule(appModule: ModuleType) {
     if (!getModuleMetadata(appModule, true)) {
