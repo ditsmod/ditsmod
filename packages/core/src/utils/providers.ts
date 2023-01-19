@@ -61,7 +61,7 @@ export class Providers {
     return this;
   }
 
-  useClass<A extends Class<any>, B extends A>(token: A, useClass: B, multi?: boolean) {
+  useClass<A extends Class, B extends A>(token: A, useClass: B, multi?: boolean) {
     this.pushProvider({ token, useClass }, multi);
     return this;
   }
@@ -71,7 +71,7 @@ export class Providers {
     return this;
   }
 
-  useFactory(token: any, useFactory: [Class<any>, (...args: any[]) => unknown], multi?: boolean) {
+  useFactory(token: any, useFactory: [Class, (...args: any[]) => unknown], multi?: boolean) {
     this.pushProvider({ token, useFactory }, multi);
     return this;
   }

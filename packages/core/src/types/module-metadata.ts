@@ -40,7 +40,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
   /**
    * The application controllers.
    */
-  controllers?: Class<any>[];
+  controllers?: Class[];
   /**
    * The application extensions.
    */
