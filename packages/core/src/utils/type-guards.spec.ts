@@ -172,7 +172,7 @@ describe('type guards', () => {
       expect(isMultiProvider(provider)).toBe(true);
     });
 
-    it('true ExistingProvider', () => {
+    it('true TokenProvider', () => {
       const provider: MultiProvider = { token: 'token', useToken: class {}, multi: true };
       expect(isMultiProvider(provider)).toBe(true);
     });
@@ -203,7 +203,7 @@ describe('type guards', () => {
       expect(isMultiProvider(provider)).toBe(false);
     });
 
-    it('false ExistingProvider', () => {
+    it('false TokenProvider', () => {
       const provider: ServiceProvider = { token: 'token', useToken: class {} };
       expect(isMultiProvider(provider)).toBe(false);
     });

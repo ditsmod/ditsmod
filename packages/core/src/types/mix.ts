@@ -86,7 +86,7 @@ export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
  * Describes how the `Injector` should be configured.
  *
  * ### How To Use
- * See `TypeProvider`, `ValueProvider`, `ClassProvider`, `ExistingProvider`, `FactoryProvider`.
+ * See `TypeProvider`, `ValueProvider`, `ClassProvider`, `TokenProvider`, `FactoryProvider`.
  *
  * For more details, see the [Dependency Injection Guide](https://v4.angular.io/guide/dependency-injection).
  */

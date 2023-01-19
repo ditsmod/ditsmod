@@ -66,7 +66,7 @@ export class Providers {
     return this;
   }
 
-  useExisting<T>(token: any, useToken: T, multi?: boolean) {
+  useToken<T>(token: any, useToken: T, multi?: boolean) {
     this.pushProvider({ token, useToken }, multi);
     return this;
   }
