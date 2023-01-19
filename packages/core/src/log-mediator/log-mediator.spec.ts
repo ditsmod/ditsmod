@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import { Provider, Injector } from '../di';
 
+import { Provider, Injector } from '../di';
 import { LogItem, LogMediator, OutputLogFilter } from './log-mediator';
 import { ModuleExtract } from '../models/module-extract';
 import { ConsoleLogger } from '../services/console-logger';
@@ -31,7 +31,6 @@ describe('LogMediator', () => {
 
   function getLogMediator(providers?: Provider[]): LogMediatorMock {
     const injector = Injector.resolveAndCreate([ModuleExtract, LogMediatorMock, ...(providers || [])]);
-
     return injector.get(LogMediatorMock);
   }
 
@@ -71,6 +70,14 @@ describe('LogMediator', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.modulesNames = [baseLogItem.moduleName];
 
+      const item0: LogItem = {
+        ...baseLogItem,
+        msg: 'fake message 0',
+        inputLogFilter: { className: 'class0' },
+        outputLogFilter,
+        moduleName: 'fakeName0',
+      };
+
       const item1: LogItem = {
         ...baseLogItem,
         msg: 'fake message 2',
@@ -85,7 +92,7 @@ describe('LogMediator', () => {
         outputLogFilter,
       };
 
-      const buffer: LogItem[] = [item1, item2];
+      const buffer: LogItem[] = [item0, item1, item2];
       const logMediator = getLogMediator();
       jest.spyOn(logMediator, 'detectedDifferentLogFilters');
       jest.spyOn(logMediator, 'getWarnAboutEmptyFilteredLogs');
@@ -99,6 +106,14 @@ describe('LogMediator', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.classesNames = ['class1'];
 
+      const item0: LogItem = {
+        ...baseLogItem,
+        msg: 'fake message 0',
+        inputLogFilter: { className: 'class0' },
+        outputLogFilter,
+        moduleName: 'fakeName0',
+      };
+
       const item1: LogItem = {
         ...baseLogItem,
         msg: 'fake message 2',
@@ -114,7 +129,7 @@ describe('LogMediator', () => {
         outputLogFilter,
       };
 
-      const buffer: LogItem[] = [item1, item2];
+      const buffer: LogItem[] = [item0, item1, item2];
       const logMediator = getLogMediator();
       jest.spyOn(logMediator, 'detectedDifferentLogFilters');
       jest.spyOn(logMediator, 'getWarnAboutEmptyFilteredLogs');
@@ -128,6 +143,14 @@ describe('LogMediator', () => {
       const outputLogFilter = new OutputLogFilter();
       outputLogFilter.tags = ['tag2'];
 
+      const item0: LogItem = {
+        ...baseLogItem,
+        msg: 'fake message 0',
+        inputLogFilter: { className: 'class0' },
+        outputLogFilter,
+        moduleName: 'fakeName0',
+      };
+
       const item1: LogItem = {
         ...baseLogItem,
         msg: 'fake message 2',
@@ -143,7 +166,7 @@ describe('LogMediator', () => {
         outputLogFilter,
       };
 
-      const buffer: LogItem[] = [item1, item2];
+      const buffer: LogItem[] = [item0, item1, item2];
       const logMediator = getLogMediator();
       jest.spyOn(logMediator, 'detectedDifferentLogFilters');
       jest.spyOn(logMediator, 'getWarnAboutEmptyFilteredLogs');
@@ -154,6 +177,14 @@ describe('LogMediator', () => {
     });
 
     it('works with two different output log filters', () => {
+      const item0: LogItem = {
+        ...baseLogItem,
+        msg: 'fake message 0',
+        inputLogFilter: { className: 'class0' },
+        outputLogFilter: { classesNames: ['class1'] },
+        moduleName: 'fakeName0',
+      };
+
       const item1: LogItem = {
         ...baseLogItem,
         msg: 'fake message 2',
@@ -169,7 +200,7 @@ describe('LogMediator', () => {
         outputLogFilter: { tags: ['tag1'] },
       };
 
-      const buffer: LogItem[] = [item1, item2];
+      const buffer: LogItem[] = [item0, item1, item2];
       const logMediator = getLogMediator();
       jest.spyOn(logMediator, 'detectedDifferentLogFilters');
       jest.spyOn(logMediator, 'getWarnAboutEmptyFilteredLogs');
@@ -333,9 +364,6 @@ describe('LogMediator', () => {
     };
 
     it('inputLogLevel == outputLogLevel', () => {
-      const outputLogFilter = new OutputLogFilter();
-      outputLogFilter.tags = ['tag4'];
-
       const item1: LogItem = {
         ...baseLogItem,
         msg: 'fake message 2'
@@ -352,9 +380,6 @@ describe('LogMediator', () => {
     });
 
     it('inputLogLevel < outputLogLevel', () => {
-      const outputLogFilter = new OutputLogFilter();
-      outputLogFilter.tags = ['tag4'];
-
       const item1: LogItem = {
         ...baseLogItem,
         msg: 'fake message 2',
