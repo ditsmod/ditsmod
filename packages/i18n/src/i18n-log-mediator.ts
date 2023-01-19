@@ -66,6 +66,6 @@ export class I18nLogMediator extends LogMediator {
    * Token for a dictionary must be defined.
    */
   throwDictionaryMustBeDefined() {
-    throw new Error(`Token for a dictionary must be defined.`);
+    throw new Error('Token for a dictionary must be defined.');
   }
 }
