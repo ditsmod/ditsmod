@@ -9,7 +9,7 @@ import { PatchLogger } from './patch-logger';
   providersPerMod: [
     ...new Providers()
       .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
-      .useExisting(BunyanLogger, Logger),
+      .useToken(BunyanLogger, Logger),
   ],
 })
 export class BunyanModule {}
