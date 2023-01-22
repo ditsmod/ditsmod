@@ -223,8 +223,7 @@ export class AppInitializer {
    */
   protected createInjectorAndSetLogMediator() {
     const injectorPerApp = this.perAppService.reinitInjector(this.meta.providersPerApp);
-    const systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
-    this.systemLogMediator = systemLogMediator;
+    this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
   }
 
   protected bootstrapModuleFactory(moduleManager: ModuleManager) {
