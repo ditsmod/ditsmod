@@ -458,6 +458,23 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
     return this;
   }
 
+  /**
+   * Sets value in injector registry by its token.
+   *
+   * @param value New value for this ID.
+   */
+  setByToken(token: any, value: any) {
+    const { id } = KeyRegistry.get(token);
+    const meta = this.#registry[id];
+    if (!meta) {
+      const displayToken = stringify(token);
+      const msg = `Updating DI value failed: cannot find token: ${displayToken}`;
+      throw new DiError(msg);
+    }
+    this.#registry[id] = value;
+    return this;
+  }
+
   clear(): void {
     this.#registry = undefined as any;
     this.#parent = undefined as any;
