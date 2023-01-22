@@ -70,10 +70,10 @@ export class PreRouterExtension implements Extension<void> {
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
           const injector = new Injector(RegistryPerReq, injectorPerRou, 'injectorPerReq');
           await injector
-            .updateValue(nodeReqId, nodeReq)
-            .updateValue(nodeResId, nodeRes)
-            .updateValue(aPathParamsId, aPathParams)
-            .updateValue(queryStringId, queryString || '')
+            .setById(nodeReqId, nodeReq)
+            .setById(nodeResId, nodeRes)
+            .setById(aPathParamsId, aPathParams)
+            .setById(queryStringId, queryString || '')
             .instantiateResolved<HttpHandler>(resolvedChainMaker)
             .handle() // First HTTP handler in the chain of HTTP interceptors.
             .catch((err) => {

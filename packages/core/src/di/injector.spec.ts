@@ -143,7 +143,7 @@ describe('injector', () => {
       const injector = Injector.resolveAndCreate([Engine, { token: 1, useValue: 'value 1' }]);
       expect(injector.get(Engine)).toBeInstanceOf(Engine);
       expect(injector.get(1)).toBe('value 1');
-      injector.updateValue(id, 'value 2');
+      injector.setById(id, 'value 2');
       expect(injector.get(1)).toBe('value 2');
     });
   });
