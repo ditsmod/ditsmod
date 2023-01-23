@@ -18,3 +18,4 @@ export {
   VerifyWithPublicKeyOptions,
 } from './types/mix';
 export { JwtServiceOptions } from './models/jwt-service-options';
+export { JwtPayload } from './jwt-payload';
