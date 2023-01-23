@@ -16,7 +16,7 @@ import { oasGuard } from '../decorators/oas-guard';
 
 describe('OpenapiCompilerExtension', () => {
   class MockOpenapiCompilerExtension extends OpenapiCompilerExtension {
-    override oasObject: XOasObject;
+    declare oasObject: XOasObject;
 
     override setSecurityInfo(operationObject: XOperationObject, guards: ResolvedGuard[]) {
       return super.setSecurityInfo(operationObject, guards);

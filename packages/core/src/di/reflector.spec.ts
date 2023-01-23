@@ -341,11 +341,11 @@ describe('Reflector', () => {
 
       class Child extends Parent {
         @propDecorator('b2')
-        override b: B;
+        declare b: B;
         @propDecorator('c')
         c: C;
         @propDecorator('type child')
-        override d: D;
+        declare d: D;
       }
 
       class NoDecorators {}

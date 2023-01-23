@@ -52,7 +52,7 @@ describe('deepFreeze', () => {
     }
     deepFreeze(A);
     expect(() => (A.one = 2)).toThrowError(/Cannot assign to read only property/);
-    expect(() => (A.two = 3)).toThrowError(/Cannot add property/);
+    expect(() => (A.two = 3)).toThrowError(/Cannot assign to read only property/);
     expect(A.one).toBe(1);
     expect(A.two).toBe(undefined);
   });

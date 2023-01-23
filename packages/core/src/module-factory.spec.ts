@@ -34,7 +34,7 @@ describe('ModuleFactory', () => {
   @injectable()
   class MockModuleFactory extends ModuleFactory {
     injectorPerMod: Injector;
-    override prefixPerMod: string;
+    declare prefixPerMod: string;
     override moduleName = 'MockModule';
     override meta = new NormalizedModuleMetadata();
     override appMetadataMap = new Map<ModuleType, MetadataPerMod1>();

@@ -14,7 +14,7 @@ import { SystemLogMediator } from './log-mediator/system-log-mediator';
 describe('Application', () => {
   class ApplicationMock extends Application {
     override rootMeta = new RootMetadata();
-    override systemLogMediator: SystemLogMediator;
+    declare systemLogMediator: SystemLogMediator;
 
     override mergeRootMetadata(module: ModuleType | ModuleWithParams) {
       return super.mergeRootMetadata(module);

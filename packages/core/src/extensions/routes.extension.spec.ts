@@ -16,7 +16,7 @@ import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 xdescribe('RoutesExtension', () => {
   @injectable()
   class MockAppInitializer extends AppInitializer {
-    override moduleManager: ModuleManager;
+    declare moduleManager: ModuleManager;
     override perAppService = new PerAppService();
     override meta = new NormalizedModuleMetadata();
 

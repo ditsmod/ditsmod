@@ -9,7 +9,7 @@ import { ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
 describe('ImportsResolver', () => {
   @injectable()
   class ImportsResolverMock extends ImportsResolver {
-    override unfinishedSearchDependecies: [ModuleType | ModuleWithParams, ServiceProvider][];
+    declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, ServiceProvider][];
     override resolveImportedProviders(importedTokensMap: ImportedTokensMap, meta: NormalizedModuleMetadata) {
       return super.resolveImportedProviders(importedTokensMap, meta);
     }
