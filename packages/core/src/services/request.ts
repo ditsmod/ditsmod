@@ -1,7 +1,5 @@
 import { randomUUID } from 'crypto';
 
-import { PathParam } from '../types/router';
-
 export class Req {
   #requestId: string;
   /**
@@ -9,11 +7,6 @@ export class Req {
    * For example, route `/api/resource/:param1/:param2` have two params.
    */
   pathParams?: any;
-  /**
-   * Array with path params.
-   * For example, route `/api/resource/:param1/:param2` have two params.
-   */
-  aPathParams?: PathParam[];
   /**
    * This value is set after checking `guard.canActivate()` and before parse the request body.
    * Here is the result of the `querystring.parse()` function,

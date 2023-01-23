@@ -61,7 +61,6 @@ export class DefaultHttpFrontend implements HttpFrontend {
       this.req.queryParams = parse(this.queryString);
     }
     if (this.aPathParams.length) {
-      this.req.aPathParams = this.aPathParams;
       const pathParams: AnyObj = {};
       this.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
       this.req.pathParams = pathParams;
