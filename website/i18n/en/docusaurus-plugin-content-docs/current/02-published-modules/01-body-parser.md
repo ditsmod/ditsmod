@@ -84,16 +84,17 @@ export class AppModule {}
 
 ## Usage
 
-The result of the interceptor can be obtained in `req.body`:
+The result of the interceptor can be obtained by `HttpBody` token:
 
 ```ts
-import { controller, Req, Res, route } from '@ditsmod/core';
+import { controller, Res, route } from '@ditsmod/core';
+import { HttpBody } from '@ditsmod/body-parser';
 
 @controller()
 export class SomeController {
   @route('POST')
-  ok(req: Req, res: Res) {
-    res.sendJson(req.body);
+  ok(body: HttpBody, res: Res) {
+    res.sendJson(body);
   }
 }
 ```
