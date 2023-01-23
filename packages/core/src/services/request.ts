@@ -20,11 +20,6 @@ export class Req {
    * so if query params are missing, there will be an empty object.
    */
   queryParams?: any = {};
-  /**
-   * Payload of JSON Web Token. For this parameter, request is not automatically parsed.
-   * To get JWT payload, you can use the `@ditsmod/jwt` module.
-   */
-  jwtPayload?: any;
 
   get requestId() {
     if (!this.#requestId) {
