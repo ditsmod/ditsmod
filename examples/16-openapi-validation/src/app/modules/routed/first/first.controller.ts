@@ -1,4 +1,5 @@
 import { controller, Req, Res } from '@ditsmod/core';
+import { HttpBody } from '@ditsmod/body-parser';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 
 import { Model1, Model2 } from './models';
@@ -21,8 +22,8 @@ export class FirstController {
       content: getContent({ mediaType: 'application/json', model: Model1 }),
     },
   })
-  postModel1(req: Req, res: Res) {
-    res.sendJson(req.body);
+  postModel1(body: HttpBody, res: Res) {
+    res.sendJson(body);
   }
 
   @oasRoute('POST', 'model2', {
@@ -32,7 +33,7 @@ export class FirstController {
       content: getContent({ mediaType: 'application/json', model: Model2 }),
     },
   })
-  postModel2(req: Req, res: Res) {
-    res.sendJson(req.body);
+  postModel2(body: HttpBody, res: Res) {
+    res.sendJson(body);
   }
 }

@@ -1,4 +1,9 @@
-import { controller, Req, Res, route } from '@ditsmod/core';
+import { controller, inject, Res, route } from '@ditsmod/core';
+import { HttpBody } from '@ditsmod/body-parser';
+
+interface Body {
+  one: number;
+}
 
 @controller()
 export class SomeController {
@@ -8,7 +13,7 @@ export class SomeController {
   }
 
   @route('POST')
-  ok(req: Req, res: Res) {
-    res.sendJson(req.body);
+  ok(@inject(HttpBody) body: Body, res: Res) {
+    res.sendJson(body);
   }
 }

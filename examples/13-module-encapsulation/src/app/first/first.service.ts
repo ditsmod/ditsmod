@@ -1,4 +1,5 @@
-import { Req, injectable } from '@ditsmod/core';
+import { HttpBody } from '@ditsmod/body-parser';
+import { injectable } from '@ditsmod/core';
 
 @injectable()
 export class FirstService {
@@ -8,7 +9,7 @@ export class FirstService {
     return ++this.counter;
   }
 
-  getBody(req: Req) {
-    return req.body;
+  getBody(body: HttpBody) {
+    return body;
   }
 }
