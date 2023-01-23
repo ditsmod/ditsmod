@@ -73,22 +73,17 @@ Of course, other instances of classes can be requested in the parameters, and th
 The access modifier in the constructor can be any (private, protected or public), but without a modifier - `res` will be just a simple parameter with visibility only in the constructor.
 :::
 
-To use `pathParams`, `queryParams` or `body`, you should be used `req`:
+You can get `pathParams`, `queryParams` or `body` in the following way:
 
 ```ts
 import { controller, Req, Res, route } from '@ditsmod/core';
+import { HttpBody } from '@ditsmod/body-parser';
 
 @controller()
 export class SomeController {
-  @route('GET', 'hello/:userName')
-  getHello(req: Req, res: Res) {
-    const { pathParams } = req;
-    res.send(`Hello, ${pathParams.userName}`);
-  }
-
   @route('POST', 'some-url')
-  postSomeUrl(req: Req, res: Res) {
-    const { body, queryParams } = req;
+  postSomeUrl(req: Req, res: Res, body: HttpBody) {
+    const { pathParams, queryParams } = req;
     res.sendJson(body, queryParams);
   }
 }
