@@ -1,4 +1,4 @@
-import { controller, Req, Res, route } from '@ditsmod/core';
+import { AnyObj, controller, inject, PATH_PARAMS, Res, route } from '@ditsmod/core';
 import { DictService } from '@ditsmod/i18n';
 
 import { FirstService } from '../first/first.service';
@@ -9,9 +9,9 @@ export class SecondController {
   constructor(private dictService: DictService, private firstService: FirstService) {}
 
   @route('GET', 'second/:userName')
-  tellHello(req: Req, res: Res) {
+  tellHello(@inject(PATH_PARAMS) pathParams: AnyObj, res: Res) {
     const dict = this.dictService.getDictionary(SecondDict);
-    const { userName } = req.pathParams;
+    const { userName } = pathParams;
     const msg = dict.hello(userName);
 
     res.send(msg);

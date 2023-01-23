@@ -1,4 +1,4 @@
-import { controller, Req, Res } from '@ditsmod/core';
+import { AnyObj, controller, inject, PATH_PARAMS, Res } from '@ditsmod/core';
 import { HttpBody } from '@ditsmod/body-parser';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 
@@ -10,8 +10,8 @@ export class FirstController {
     description: 'Route wtih required path parameter',
     parameters: getParams('path', true, Model1, 'username'),
   })
-  getResourceId(req: Req, res: Res) {
-    const { username } = req.pathParams;
+  getResourceId(@inject(PATH_PARAMS) pathParams: AnyObj, res: Res) {
+    const { username } = pathParams;
     res.sendJson({ username });
   }
 

@@ -1,4 +1,4 @@
-import { controller, Req, Res, route, Status } from '@ditsmod/core';
+import { AnyObj, controller, inject, PATH_PARAMS, Req, Res, route, Status } from '@ditsmod/core';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 
 import { BasicGuard } from './basic.guard';
@@ -28,8 +28,8 @@ export class FirstController {
       },
     },
   })
-  getResourceId(req: Req, res: Res) {
-    const { resourceId } = req.pathParams;
+  getResourceId(@inject(PATH_PARAMS) pathParams: AnyObj, res: Res) {
+    const { resourceId } = pathParams;
     res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
   }
 
@@ -44,8 +44,8 @@ export class FirstController {
       },
     },
   })
-  getResourceId2(req: Req, res: Res) {
-    const { resourceId } = req.pathParams;
+  getResourceId2(@inject(PATH_PARAMS) pathParams: AnyObj, res: Res) {
+    const { resourceId } = pathParams;
     res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
   }
 }

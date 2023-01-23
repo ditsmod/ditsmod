@@ -1,4 +1,14 @@
-import { fromSelf, inject, injectable, Injector, NodeRequest, NODE_REQ, optional, Req } from '@ditsmod/core';
+import {
+  AnyObj,
+  fromSelf,
+  inject,
+  injectable,
+  Injector,
+  NodeRequest,
+  NODE_REQ,
+  optional,
+  QUERY_PARAMS,
+} from '@ditsmod/core';
 import { DictService, I18nLogMediator, I18nOptions, ISO639 } from '@ditsmod/i18n';
 
 @injectable()
@@ -7,10 +17,10 @@ export class MyDictService extends DictService {
     protected override injector: Injector,
     protected override log: I18nLogMediator,
     @optional() protected override i18nOptions?: I18nOptions,
-    @optional() protected override req?: Req,
+    @inject(QUERY_PARAMS) protected override queryParams?: AnyObj,
     @optional() @fromSelf() @inject(NODE_REQ) protected nodeReq?: NodeRequest
   ) {
-    super(injector, log, i18nOptions, req);
+    super(injector, log, i18nOptions, queryParams);
   }
 
   override set lng(lng: ISO639) {
@@ -21,7 +31,7 @@ export class MyDictService extends DictService {
     if (this._lng) {
       return this._lng;
     }
-    const lng = this.getHeaderLng() || this.req?.queryParams[this.i18nOptions?.lngParam || 'lng'];
+    const lng = this.getHeaderLng() || this.queryParams?.[this.i18nOptions?.lngParam || 'lng'];
     return lng || this.i18nOptions?.defaultLng;
   }
 
