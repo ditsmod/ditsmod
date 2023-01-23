@@ -1,4 +1,4 @@
-import { Req } from '@ditsmod/core';
+import { AnyObj, inject, QUERY_PARAMS } from '@ditsmod/core';
 import { injectable, Injector, optional, Class } from '@ditsmod/core';
 
 import { I18nLogMediator } from './i18n-log-mediator';
@@ -13,7 +13,7 @@ export class DictService {
     protected injector: Injector,
     protected log: I18nLogMediator,
     @optional() protected i18nOptions?: I18nOptions,
-    @optional() protected req?: Req,
+    @optional() @inject(QUERY_PARAMS) protected queryParams?: AnyObj,
   ) {}
 
   getAllDictionaries<T extends Class<Dictionary>>(token: T) {
@@ -73,7 +73,7 @@ export class DictService {
     if (this._lng) {
       return this._lng;
     }
-    const lng = this.req?.queryParams[this.i18nOptions?.lngParam || 'lng'];
+    const lng = this.queryParams?.[this.i18nOptions?.lngParam || 'lng'];
     return lng || this.i18nOptions?.defaultLng;
   }
 }
