@@ -1,12 +1,12 @@
-import { CanActivate, fromSelf, inject, injectable, NodeRequest, NODE_REQ, Req } from '@ditsmod/core';
-import { JwtService, VerifyErrors } from '@ditsmod/jwt';
+import { CanActivate, fromSelf, inject, injectable, Injector, NodeRequest, NODE_REQ } from '@ditsmod/core';
+import { JwtService, JwtPayload, VerifyErrors } from '@ditsmod/jwt';
 
 @injectable()
 export class BearerGuard implements CanActivate {
   constructor(
     @fromSelf() private jwtService: JwtService,
     @fromSelf() @inject(NODE_REQ) private nodeReq: NodeRequest,
-    @fromSelf() private req: Req
+    @fromSelf() private injector: Injector
   ) {}
 
   async canActivate() {
@@ -22,7 +22,7 @@ export class BearerGuard implements CanActivate {
       .catch((err: VerifyErrors) => false as const); // Here `as const` to narrow down returned type.
 
     if (payload) {
-      this.req.jwtPayload = payload;
+      this.injector.setByToken(JwtPayload, payload);
       return true;
     } else {
       return false;

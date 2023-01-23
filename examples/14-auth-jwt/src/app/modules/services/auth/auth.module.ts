@@ -10,6 +10,6 @@ const moduleWithParams = JwtModule.withParams({ secret: 'hard-to-guess-secret', 
   imports: [moduleWithParams],
   controllers: [AuthController],
   providersPerReq: [BearerGuard],
-  exports: [BearerGuard]
+  exports: [BearerGuard, moduleWithParams]
 })
 export class AuthModule {}

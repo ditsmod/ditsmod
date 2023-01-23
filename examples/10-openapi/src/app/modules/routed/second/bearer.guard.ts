@@ -1,9 +1,9 @@
-import { CanActivate, fromSelf, inject, NodeRequest, NODE_REQ, Req, Status } from '@ditsmod/core';
-import { JwtService, VerifyErrors } from '@ditsmod/jwt';
+import { CanActivate, fromSelf, inject, Injector, NodeRequest, NODE_REQ, Status } from '@ditsmod/core';
+import { JwtService, VerifyErrors, JwtPayload } from '@ditsmod/jwt';
 import { oasGuard } from '@ditsmod/openapi';
 
 /**
- * If user successfully passed this guard, you can use `this.req.jwtPayload`.
+ * If user successfully passed this guard, you can use JWT payload by `JwtPayload` token.
  */
 @oasGuard({
   securitySchemeObject: {
@@ -23,7 +23,7 @@ export class BearerGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     @fromSelf() @inject(NODE_REQ) private nodeReq: NodeRequest,
-    private req: Req
+    @fromSelf() private injector: Injector
   ) {}
 
   async canActivate() {
@@ -39,7 +39,7 @@ export class BearerGuard implements CanActivate {
       .catch((err: VerifyErrors) => false as const); // Here `as const` to narrow down returned type.
 
     if (payload) {
-      this.req.jwtPayload = payload;
+      this.injector.setByToken(JwtPayload, payload);
       return true;
     } else {
       return false;
