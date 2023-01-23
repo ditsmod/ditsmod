@@ -1,15 +1,24 @@
-import { fromSelf, HttpHandler, HttpInterceptor, inject, Req, NODE_REQ, NodeRequest } from '@ditsmod/core';
+import {
+  fromSelf,
+  HttpHandler,
+  HttpInterceptor,
+  inject,
+  NODE_REQ,
+  NodeRequest,
+  Injector,
+  skipSelf,
+} from '@ditsmod/core';
 import { injectable, optional } from '@ditsmod/core';
 import { parse, Headers, Options } from 'get-body';
 
-import { BodyParserConfig } from './body-parser-config';
+import { HttpBody, BodyParserConfig } from './body-parser-config';
 
 @injectable()
 export class BodyParserInterceptor implements HttpInterceptor {
   constructor(
+    @fromSelf() private injector: Injector,
     @fromSelf() @inject(NODE_REQ) private nodeReq: NodeRequest,
-    @fromSelf() private req: Req,
-    @optional() private config?: BodyParserConfig
+    @optional() @skipSelf() private config?: BodyParserConfig
   ) {
     this.config = Object.assign({}, new BodyParserConfig(), config); // Merge with default.
   }
@@ -21,7 +30,8 @@ export class BodyParserInterceptor implements HttpInterceptor {
       return next.handle();
     }
     const options: Options = { limit: this.config?.maxBodySize };
-    this.req.body = await parse(this.nodeReq, this.nodeReq.headers as Headers, options);
+    const body = await parse(this.nodeReq, this.nodeReq.headers as Headers, options);
+    this.injector.setByToken(HttpBody, body);
 
     return next.handle();
   }

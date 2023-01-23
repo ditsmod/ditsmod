@@ -1,6 +1,6 @@
 import { featureModule, ModuleWithParams, PRE_ROUTER_EXTENSIONS } from '@ditsmod/core';
 
-import { BodyParserConfig } from './body-parser-config';
+import { HttpBody, BodyParserConfig } from './body-parser-config';
 import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.extension';
 
 /**
@@ -8,6 +8,8 @@ import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.exten
  * This is done using `BodyParserExtension` in `BODY_PARSER_EXTENSIONS` group.
  */
 @featureModule({
+  providersPerReq: [HttpBody],
+  exports: [HttpBody],
   extensions: [
     {
       extension: BodyParserExtension,
