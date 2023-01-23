@@ -10,6 +10,8 @@ export {
   NODE_RES,
   A_PATH_PARAMS,
   QUERY_STRING,
+  PATH_PARAMS,
+  QUERY_PARAMS,
 } from './constans';
 export { CustomError } from './custom-error/custom-error';
 export { ErrorOpts } from './custom-error/error-opts';

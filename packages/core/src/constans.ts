@@ -3,7 +3,7 @@ import { InjectionToken } from './di';
 import { ModuleExtract } from './models/module-extract';
 import { HttpInterceptor } from './types/http-interceptor';
 import { MetadataPerMod2 } from './types/metadata-per-mod';
-import { Extension, ServiceProvider } from './types/mix';
+import { AnyObj, Extension, ServiceProvider } from './types/mix';
 import { NodeRequest, NodeResponse } from './types/server-options';
 /**
  * A group of extensions that setting routes for router.
@@ -28,6 +28,8 @@ export const NODE_RES = new InjectionToken<NodeResponse>('NODE_RES');
  * DI token for path params that is returned by `@ditsmod/router`.
  */
 export const A_PATH_PARAMS = new InjectionToken<NodeResponse>('A_PATH_PARAMS');
+export const PATH_PARAMS = new InjectionToken<AnyObj>('PATH_PARAMS');
+export const QUERY_PARAMS = new InjectionToken<AnyObj>('QUERY_PARAMS');
 /**
  * DI token for querystring that is returned by `PreRouter` after spliting `nodeReq.url` by question mark.
  */

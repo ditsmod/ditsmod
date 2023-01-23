@@ -6,22 +6,20 @@ import { AnyObj, CanActivate } from '../types/mix';
 import { Status } from '../utils/http-status-codes';
 import { RouteMeta } from '../types/route-data';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
-import { Req } from './request';
-import { A_PATH_PARAMS, QUERY_STRING, NODE_REQ, NODE_RES } from '../constans';
+import { A_PATH_PARAMS, QUERY_STRING, NODE_REQ, NODE_RES, QUERY_PARAMS, PATH_PARAMS } from '../constans';
 import { PathParam } from '../types/router';
 
 @injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
   constructor(
     protected injector: Injector,
-    @fromSelf() @inject(A_PATH_PARAMS) private aPathParams: PathParam[],
-    @fromSelf() @inject(QUERY_STRING) private queryString: string,
-    @fromSelf() private req: Req,
-    @skipSelf() private routeMeta: RouteMeta
+    @skipSelf() private routeMeta: RouteMeta,
+    @fromSelf() @inject(A_PATH_PARAMS) private aPathParams?: PathParam[],
+    @fromSelf() @inject(QUERY_STRING) private queryString?: string
   ) {}
 
   async intercept(next: HttpHandler) {
-    if (!this.routeMeta.resolvedGuards.length || await this.canActivate()) {
+    if (!this.routeMeta.resolvedGuards.length || (await this.canActivate())) {
       this.setParams();
       return next.handle();
     }
@@ -58,14 +56,12 @@ export class DefaultHttpFrontend implements HttpFrontend {
 
   protected setParams() {
     if (this.queryString) {
-      this.req.queryParams = parse(this.queryString);
+      this.injector.setByToken(QUERY_PARAMS, parse(this.queryString));
     }
-    if (this.aPathParams.length) {
+    if (this.aPathParams?.length) {
       const pathParams: AnyObj = {};
       this.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
-      this.req.pathParams = pathParams;
-    } else {
-      this.req.pathParams = {};
+      this.injector.setByToken(PATH_PARAMS, pathParams);
     }
   }
 }
