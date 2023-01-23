@@ -39,7 +39,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
       const canActivate = await item.guard.canActivate(item.params);
       if (canActivate !== true) {
         const status = typeof canActivate == 'number' ? canActivate : undefined;
-        this.denialActivate(status);
+        this.prohibitActivation(status);
         return false;
       }
     }
@@ -47,7 +47,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
     return true;
   }
 
-  protected denialActivate(status?: Status) {
+  protected prohibitActivation(status?: Status) {
     const nodeReq = this.injector.get(NODE_REQ, fromSelf);
     const nodeRes = this.injector.get(NODE_RES, fromSelf);
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
