@@ -77,7 +77,8 @@ export class PreRouterExtension implements Extension<void> {
             .instantiateResolved<HttpHandler>(resolvedChainMaker)
             .handle() // First HTTP handler in the chain of HTTP interceptors.
             .catch((err) => {
-              return injector.instantiateResolved(resolvedCtrlErrHandler).handleError(err);
+              const errorHandler = injector.instantiateResolved(resolvedCtrlErrHandler) as ControllerErrorHandler;
+              return errorHandler.handleError(err);
             });
 
           injector.clear();
