@@ -1,4 +1,3 @@
-import { HttpBody } from '@ditsmod/body-parser';
 import { injectable } from '@ditsmod/core';
 
 @injectable()
@@ -9,7 +8,7 @@ export class FirstService {
     return ++this.counter;
   }
 
-  getBody(body: HttpBody) {
+  getBody(body: any) {
     return body;
   }
 }

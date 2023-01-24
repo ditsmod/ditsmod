@@ -1,5 +1,5 @@
 import { controller, inject, Res, route } from '@ditsmod/core';
-import { HttpBody } from '@ditsmod/body-parser';
+import { HTTP_BODY } from '@ditsmod/body-parser';
 
 interface Body {
   one: number;
@@ -13,7 +13,7 @@ export class SomeController {
   }
 
   @route('POST')
-  ok(@inject(HttpBody) body: Body, res: Res) {
+  ok(@inject(HTTP_BODY) body: Body, res: Res) {
     res.sendJson(body);
   }
 }

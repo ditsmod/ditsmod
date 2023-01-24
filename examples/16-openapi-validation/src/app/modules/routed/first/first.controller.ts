@@ -1,5 +1,5 @@
 import { AnyObj, controller, inject, PATH_PARAMS, Res } from '@ditsmod/core';
-import { HttpBody } from '@ditsmod/body-parser';
+import { HTTP_BODY } from '@ditsmod/body-parser';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 
 import { Model1, Model2 } from './models';
@@ -22,7 +22,7 @@ export class FirstController {
       content: getContent({ mediaType: 'application/json', model: Model1 }),
     },
   })
-  postModel1(body: HttpBody, res: Res) {
+  postModel1(@inject(HTTP_BODY) body: any, res: Res) {
     res.sendJson(body);
   }
 
@@ -33,7 +33,7 @@ export class FirstController {
       content: getContent({ mediaType: 'application/json', model: Model2 }),
     },
   })
-  postModel2(body: HttpBody, res: Res) {
+  postModel2(@inject(HTTP_BODY) body: any, res: Res) {
     res.sendJson(body);
   }
 }
