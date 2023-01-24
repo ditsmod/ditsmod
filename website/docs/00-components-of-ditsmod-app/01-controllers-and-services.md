@@ -76,8 +76,8 @@ export class HelloWorldController {
 Наступним чином можна отримати `pathParams`, `queryParams` чи `body`:
 
 ```ts
-import { controller, Req, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
-import { HttpBody } from '@ditsmod/body-parser';
+import { controller, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
+import { HTTP_BODY } from '@ditsmod/body-parser';
 
 @controller()
 export class SomeController {
@@ -85,15 +85,13 @@ export class SomeController {
   postSomeUrl(
     @inject(PATH_PARAMS) pathParams: AnyObj,
     @inject(QUERY_PARAMS) queryParams: AnyObj,
-    @inject(HttpBody) body: AnyObj,
+    @inject(HTTP_BODY) body: any,
     res: Res
   ) {
     res.sendJson(body, queryParams);
   }
 }
 ```
-
-До речі, `req` - це скорочення від слова _request_.
 
 Як бачите, щоб відправляти відповіді з об'єктами, необхідно використовувати метод `res.sendJson()` замість `res.send()` (бо він відправляє тільки текст).
 

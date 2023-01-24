@@ -76,8 +76,8 @@ The access modifier in the constructor can be any (private, protected or public)
 You can get `pathParams`, `queryParams` or `body` in the following way:
 
 ```ts
-import { controller, Req, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
-import { HttpBody } from '@ditsmod/body-parser';
+import { controller, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
+import { HTTP_BODY } from '@ditsmod/body-parser';
 
 @controller()
 export class SomeController {
@@ -85,15 +85,13 @@ export class SomeController {
   postSomeUrl(
     @inject(PATH_PARAMS) pathParams: AnyObj,
     @inject(QUERY_PARAMS) queryParams: AnyObj,
-    @inject(HttpBody) body: AnyObj,
+    @inject(HTTP_BODY) body: any,
     res: Res
   ) {
     res.sendJson(body, queryParams);
   }
 }
 ```
-
-By the way, `req` is short for _request_.
 
 As you can see, to send responses with objects, you need to use the `res.sendJson()` method instead of `res.send()` (because it only sends text).
 
