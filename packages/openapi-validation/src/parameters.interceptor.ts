@@ -1,4 +1,4 @@
-import { injectable } from '@ditsmod/core';
+import { AnyObj, fromSelf, inject, injectable, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core';
 import { Cookies } from '@ts-stack/cookies';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
@@ -21,9 +21,11 @@ export class ParametersInterceptor extends ValidationInterceptor {
       const schema = parameter.schema as XSchemaObject<any>;
       let value: any;
       if (parameter.in == 'path') {
-        value = this.pathParams?.[parameter.name];
+        const pathParams = this.injector.get(PATH_PARAMS, fromSelf);
+        value = pathParams?.[parameter.name];
       } else if (parameter.in == 'query') {
-        value = this.queryParams?.[parameter.name];
+        const queryParams = this.injector.get(QUERY_PARAMS, fromSelf);
+        value = queryParams?.[parameter.name];
       } else if (parameter.in == 'cookie') {
         const cookies = new Cookies(this.nodeReq, this.nodeRes);
         value = cookies.get(parameter.name);

@@ -1,7 +1,6 @@
 import {
   injectable,
   Injector,
-  Req,
   skipSelf,
   RouteMeta,
   HttpHandler,
@@ -13,10 +12,7 @@ import {
   inject,
   NODE_REQ,
   NODE_RES,
-  fromSelf,
-  PATH_PARAMS,
-  QUERY_PARAMS,
-  AnyObj,
+  fromSelf
 } from '@ditsmod/core';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { DictService } from '@ditsmod/i18n';
@@ -33,8 +29,6 @@ export class ValidationInterceptor implements HttpInterceptor {
     @skipSelf() protected routeMeta: RouteMeta,
     @fromSelf() @inject(NODE_REQ) protected nodeReq: NodeRequest,
     @fromSelf() @inject(NODE_RES) protected nodeRes: NodeResponse,
-    @fromSelf() @inject(PATH_PARAMS) protected pathParams?: AnyObj,
-    @fromSelf() @inject(QUERY_PARAMS) protected queryParams?: AnyObj,
   ) {}
 
   intercept(next: HttpHandler) {
