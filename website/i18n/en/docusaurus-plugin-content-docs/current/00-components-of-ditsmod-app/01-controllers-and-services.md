@@ -112,7 +112,7 @@ export class HelloWorldController {
 }
 ```
 
-More information about tokens and the `inject` decorator can be found in [Dependency Injection][4].
+More information about tokens and the `inject` decorator can be found in [Dependency Injection][4]. You may also be interested in [how to get the HTTP request body][5].
 
 ## Binding of the controller to the module
 
@@ -196,3 +196,4 @@ Please note that it is possible to request dependencies in the parameters of _me
 [2]: /components-of-ditsmod-app/exports-and-imports#ModuleWithParams
 [3]: /components-of-ditsmod-app/dependency-injection#provider
 [4]: /components-of-ditsmod-app/dependency-injection#dependency-token
+[5]: /native-modules/body-parser#usage

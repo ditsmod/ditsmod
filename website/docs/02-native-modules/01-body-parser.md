@@ -83,16 +83,20 @@ export class AppModule {}
 
 ## Використання
 
-Результат роботи інтерсептора можна отримати за допомогою токена `HttpBody`:
+Результат роботи інтерсептора можна отримати за допомогою токена `HTTP_BODY`:
 
 ```ts
-import { controller, Res, route } from '@ditsmod/core';
-import { HttpBody } from '@ditsmod/body-parser';
+import { controller, Res, route, inject } from '@ditsmod/core';
+import { HTTP_BODY } from '@ditsmod/body-parser';
+
+interface Body {
+  one: number;
+}
 
 @controller()
 export class SomeController {
   @route('POST')
-  ok(body: HttpBody, res: Res) {
+  ok(@inject(HTTP_BODY) body: Body, res: Res) {
     res.sendJson(body);
   }
 }

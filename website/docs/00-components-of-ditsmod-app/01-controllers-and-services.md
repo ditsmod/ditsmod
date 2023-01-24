@@ -112,7 +112,7 @@ export class HelloWorldController {
 }
 ```
 
-Більше інформації про токени та декоратор `inject` ви можете отримати з розділу [Dependecy Injection][4].
+Більше інформації про токени та декоратор `inject` ви можете отримати з розділу [Dependecy Injection][4]. Вас також може зацікавити [як можна отримати тіло HTTP-запиту][5].
 
 ## Прив'язка контролера до модуля
 
@@ -196,3 +196,4 @@ export class SecondService {
 [2]: /components-of-ditsmod-app/exports-and-imports#ModuleWithParams
 [3]: /components-of-ditsmod-app/dependency-injection#провайдер
 [4]: /components-of-ditsmod-app/dependency-injection#токен-залежності
+[5]: /native-modules/body-parser#використання
