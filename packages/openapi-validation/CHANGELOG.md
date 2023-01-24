@@ -1,5 +1,12 @@
+<a name="openapi-validation-2.8.0"></a>
+# [openapi-validation-2.8.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.8.0) (2023-01-25)
+
+### BREAKING CHANGES
+
+- Migrate to core-2.38.0.
+
 <a name="openapi-validation-2.7.0"></a>
-# [openapi-validation-2.7.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.7.0) (2023-01-12)
+## [openapi-validation-2.7.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.7.0) (2023-01-12)
 
 ### BREAKING CHANGES
 
