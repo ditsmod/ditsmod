@@ -449,13 +449,12 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    * @param value New value for this ID.
    */
   setById(id: number, value: any) {
-    const meta = this.#registry[id];
-    if (!meta) {
-      const msg = `Updating DI value failed: cannot find ID: ${id}`;
-      throw new DiError(msg);
+    if (id in this.#registry) {
+      this.#registry[id] = value;
+      return this;
     }
-    this.#registry[id] = value;
-    return this;
+    const msg = `Updating DI value failed: cannot find ID: ${id}`;
+    throw new DiError(msg);
   }
 
   /**
@@ -465,14 +464,13 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    */
   setByToken(token: any, value: any) {
     const { id } = KeyRegistry.get(token);
-    const meta = this.#registry[id];
-    if (!meta) {
-      const displayToken = stringify(token);
-      const msg = `Updating DI value failed: cannot find token: ${displayToken}`;
-      throw new DiError(msg);
+    if (id in this.#registry) {
+      this.#registry[id] = value;
+      return this;
     }
-    this.#registry[id] = value;
-    return this;
+    const displayToken = stringify(token);
+    const msg = `Updating DI value failed: cannot find token: ${displayToken}`;
+    throw new DiError(msg);
   }
 
   clear(): void {
