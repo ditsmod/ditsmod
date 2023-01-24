@@ -7,7 +7,7 @@ export class PostsController {
    */
   @route('GET')
   @route('GET', ':postId')
-  sendPosts(res: Res, @inject(PATH_PARAMS) pathParams?: AnyObj) {
+  sendPosts(res: Res, @inject(PATH_PARAMS) pathParams: AnyObj = {}) {
     res.sendJson({ pathParams });
   }
 }
