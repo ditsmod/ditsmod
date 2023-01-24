@@ -1,5 +1,5 @@
 import { controller, inject, Res, route } from '@ditsmod/core';
-import { JwtPayload } from '@ditsmod/jwt';
+import { JWT_PAYLOAD } from '@ditsmod/jwt';
 
 import { BearerGuard } from './modules/services/auth/bearer.guard';
 import { MyJwtPayload } from './modules/services/auth/types';
@@ -12,7 +12,7 @@ export class HelloWorldController {
   }
 
   @route('GET', 'profile', [BearerGuard])
-  async getProfile(@inject(JwtPayload) jwtPayload: MyJwtPayload, res: Res) {
+  async getProfile(@inject(JWT_PAYLOAD) jwtPayload: MyJwtPayload, res: Res) {
     res.send(`Hello, ${jwtPayload.userName}! You have successfully authorized.`);
   }
 }

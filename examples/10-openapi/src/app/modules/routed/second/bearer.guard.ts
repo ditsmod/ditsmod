@@ -1,5 +1,5 @@
 import { CanActivate, fromSelf, inject, Injector, NodeRequest, NODE_REQ, Status } from '@ditsmod/core';
-import { JwtService, VerifyErrors, JwtPayload } from '@ditsmod/jwt';
+import { JwtService, VerifyErrors, JWT_PAYLOAD } from '@ditsmod/jwt';
 import { oasGuard } from '@ditsmod/openapi';
 
 /**
@@ -39,7 +39,7 @@ export class BearerGuard implements CanActivate {
       .catch((err: VerifyErrors) => false as const); // Here `as const` to narrow down returned type.
 
     if (payload) {
-      this.injector.setByToken(JwtPayload, payload);
+      this.injector.setByToken(JWT_PAYLOAD, payload);
       return true;
     } else {
       return false;
