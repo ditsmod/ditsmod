@@ -11,7 +11,7 @@ import {
 import { injectable, optional } from '@ditsmod/core';
 import { parse, Headers, Options } from 'get-body';
 
-import { HttpBody, BodyParserConfig } from './body-parser-config';
+import { HTTP_BODY, BodyParserConfig } from './body-parser-config';
 
 @injectable()
 export class BodyParserInterceptor implements HttpInterceptor {
@@ -31,7 +31,7 @@ export class BodyParserInterceptor implements HttpInterceptor {
     }
     const options: Options = { limit: this.config?.maxBodySize };
     const body = await parse(this.nodeReq, this.nodeReq.headers as Headers, options);
-    this.injector.setByToken(HttpBody, body);
+    this.injector.setByToken(HTTP_BODY, body);
 
     return next.handle();
   }

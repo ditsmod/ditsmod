@@ -1,4 +1,4 @@
-import { HttpMethod } from '@ditsmod/core';
+import { HttpMethod, InjectionToken } from '@ditsmod/core';
 
 export class BodyParserConfig {
   acceptMethods?: HttpMethod[] = ['POST', 'PUT', 'PATCH'];
@@ -9,6 +9,4 @@ export class BodyParserConfig {
 /**
  * It is used as a DI token.
  */
-export class HttpBody {
-  [key: string | number | symbol]: any;
-}
+export const HTTP_BODY = new InjectionToken<any>('HTTP_BODY');
