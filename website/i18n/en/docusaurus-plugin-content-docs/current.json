@@ -7,8 +7,8 @@
     "message": "Components of Ditsmod app",
     "description": "The label for category Extensions in sidebar tutorialSidebar"
   },
-  "sidebar.tutorialSidebar.category.Опубліковані модулі": {
-    "message": "Published modules",
+  "sidebar.tutorialSidebar.category.Рідні Ditsmod-модулі": {
+    "message": "Native Ditsmod modules",
     "description": "The label for category Extensions in sidebar tutorialSidebar"
   },
   "sidebar.tutorialSidebar.category.Приклади застосунків": {

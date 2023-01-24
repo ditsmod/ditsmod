@@ -1,6 +1,5 @@
 ---
 sidebar_position: 1
-title: Парсер тіла запиту
 ---
 
 # @ditsmod/body-parser

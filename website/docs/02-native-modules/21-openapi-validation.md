@@ -1,6 +1,5 @@
 ---
 sidebar_position: 21
-title: OpenAPI-валідація
 ---
 
 # @ditsmod/openapi-validation

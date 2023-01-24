@@ -1,6 +1,5 @@
 ---
 sidebar_position: 5
-title: Слухач return
 ---
 
 # @ditsmod/return

@@ -1,11 +1,10 @@
 ---
 sidebar_position: 0
-title: Router
 ---
 
 # @ditsmod/router
 
-The `@ditsmod/router` module implements a router with the `Router` interface:
+В модулі `@ditsmod/router` реалізується маршрутизатор, що має інтерфейс `Router`:
 
 ```ts
 interface Router {
@@ -34,17 +33,17 @@ interface PathParam {
 }
 ```
 
-A ready-made example of using this module can be found in any example in the [Ditsmod repository][1].
+Готовий приклад використання даного модуля можна знайти в будь-якому прикладі в [репозиторії Ditsmod][1].
 
-## Installation and importing
+## Встановлення та підключення
 
-Installation:
+Встановлення:
 
 ```bash
 yarn add @ditsmod/router
 ```
 
-Importing:
+Підключення:
 
 ```ts
 import { rootModule } from '@ditsmod/core';
@@ -57,9 +56,9 @@ import { RouterModule } from '@ditsmod/router';
 export class AppModule {}
 ```
 
-## Custom router integration
+## Інтеграція кастомного роутера
 
-If you want to integrate a custom router for the Ditsmod application, it is enough for your router to implement the above `Router` interface, after which it can be added to the providers at the application level:
+Якщо ви хочете інтегрувати кастомний роутер для застосунку Ditsmod, достатньо щоб ваш роутер імплементував вищезазначений інтерфейс `Router`, після чого його можна додавати в провайдери на рівні застосунку:
 
 ```ts
 import { featureModule, Router } from '@ditsmod/core';

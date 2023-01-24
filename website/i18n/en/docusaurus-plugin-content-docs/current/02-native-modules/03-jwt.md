@@ -1,21 +1,20 @@
 ---
 sidebar_position: 3
-title: JWT
 ---
 
 # @ditsmod/jwt
 
-Модуль `@ditsmod/jwt` інтегрує [jsonwebtoken][1] у Ditsmod-застосунок для аутентифікації, що працює на основі [JSON Web Token][2]. Готовий приклад використання цього модуля можете проглянути в [репозиторії Ditsmod][3].
+The `@ditsmod/jwt` module integrates [jsonwebtoken][1] into a Ditsmod authentication application based on [JSON Web Token][2]. You can view a finished example of using this module in the [Ditsmod repository][3].
 
-## Встановлення та підключення
+## Installation and importing
 
-Встановлення:
+Installation:
 
 ```bash
 yarn add @ditsmod/jwt
 ```
 
-Підключення:
+Importing:
 
 ```ts
 import { featureModule } from '@ditsmod/core';
@@ -35,7 +34,7 @@ const moduleWithParams = JwtModule.withParams({ secret: 'hard-to-guess-secret', 
 export class AuthModule {}
 ```
 
-Як бачите, під час імпорту можна передавати певні опції для `JwtModule`. Тепер в межах `AuthModule` можете використовувати `JwtService`:
+As you can see, you can pass certain options to `JwtModule` during import. Now within `AuthModule` you can use `JwtService`:
 
 ```ts
 import { injectable, CanActivate, Injector } from '@ditsmod/core';
@@ -71,7 +70,7 @@ export class BearerGuard implements CanActivate {
 }
 ```
 
-Що таке ґарди, можете прочитати у розділі [Guards (охоронці)][4].
+You can read what the guards are in the [Guards][4] section.
 
 
 [1]: https://github.com/auth0/node-jsonwebtoken

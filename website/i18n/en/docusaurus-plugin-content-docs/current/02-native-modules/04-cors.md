@@ -1,6 +1,5 @@
 ---
 sidebar_position: 4
-title: OPTIONS and CORS
 ---
 
 # @ditsmod/cors

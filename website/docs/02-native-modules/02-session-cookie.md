@@ -1,6 +1,5 @@
 ---
 sidebar_position: 2
-title: Куки сесії
 ---
 
 # @ditsmod/session-cookie

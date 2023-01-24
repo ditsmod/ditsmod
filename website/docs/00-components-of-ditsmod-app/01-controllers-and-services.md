@@ -73,22 +73,20 @@ export class HelloWorldController {
 Модифікатор доступу в конструкторі може бути будь-яким (private, protected або public), але взагалі без модифікатора - `res` вже буде простим параметром з видимістю лише в конструкторі.
 :::
 
-Наступним чином можна отримати `pathParams`, `queryParams` чи `body`:
+Наступним чином можна отримати `pathParams` чи `queryParams`:
 
 ```ts
 import { controller, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
-import { HTTP_BODY } from '@ditsmod/body-parser';
 
 @controller()
 export class SomeController {
   @route('POST', 'some-url')
   postSomeUrl(
     @inject(PATH_PARAMS) pathParams: AnyObj,
-    @inject(QUERY_PARAMS) queryParams: AnyObj,
-    @inject(HTTP_BODY) body: any,
+    @inject(QUERY_PARAMS) queryParams: AnyObj
     res: Res
   ) {
-    res.sendJson(body, queryParams);
+    res.sendJson(pathParams, queryParams);
   }
 }
 ```

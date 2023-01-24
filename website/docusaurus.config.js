@@ -135,6 +135,7 @@ module.exports = {
           const arr = [
             ...getRedirect(existingPath, '/components-of-ditsmod-app/extensions', ['/extensions/create-extension','/extensions/about-extensions']),
             ...getRedirect(existingPath, '/components-of-ditsmod-app', ['/core']),
+            ...getRedirect(existingPath, '/native-modules/', ['/published-modules/']),
             ...getRedirect(existingPath, '/published-modules/openapi', ['/extensions/openapi']),
             ...getRedirect(existingPath, '/components-of-ditsmod-app/log-mediator', ['/examples/override-core-log-messages']),
           ];

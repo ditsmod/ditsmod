@@ -73,22 +73,20 @@ Of course, other instances of classes can be requested in the parameters, and th
 The access modifier in the constructor can be any (private, protected or public), but without a modifier - `res` will be just a simple parameter with visibility only in the constructor.
 :::
 
-You can get `pathParams`, `queryParams` or `body` in the following way:
+You can get `pathParams` or `queryParams` in the following way:
 
 ```ts
 import { controller, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
-import { HTTP_BODY } from '@ditsmod/body-parser';
 
 @controller()
 export class SomeController {
   @route('POST', 'some-url')
   postSomeUrl(
     @inject(PATH_PARAMS) pathParams: AnyObj,
-    @inject(QUERY_PARAMS) queryParams: AnyObj,
-    @inject(HTTP_BODY) body: any,
+    @inject(QUERY_PARAMS) queryParams: AnyObj
     res: Res
   ) {
-    res.sendJson(body, queryParams);
+    res.sendJson(pathParams, queryParams);
   }
 }
 ```

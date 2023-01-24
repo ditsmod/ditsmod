@@ -1,6 +1,5 @@
 ---
 sidebar_position: 20
-title: OpenAPI-документація
 ---
 
 # @ditsmod/openapi
