@@ -34,11 +34,13 @@ const moduleWithParams = JwtModule.withParams({ secret: 'hard-to-guess-secret', 
 export class AuthModule {}
 ```
 
-Як бачите, під час імпорту можна передавати певні опції для `JwtModule`. Тепер в межах `AuthModule` можете використовувати `JwtService`:
+Як бачите, під час імпорту можна передавати певні опції для `JwtModule`.
+
+Тепер в межах `AuthModule` можете використовувати `JwtService`:
 
 ```ts
 import { injectable, CanActivate, Injector } from '@ditsmod/core';
-import { JwtService, VerifyErrors } from '@ditsmod/jwt';
+import { JwtService, VerifyErrors, JWT_PAYLOAD } from '@ditsmod/jwt';
 
 @injectable()
 export class BearerGuard implements CanActivate {
@@ -61,7 +63,7 @@ export class BearerGuard implements CanActivate {
       .catch((err: VerifyErrors) => false as const); // Here `as const` to narrow down returned type.
 
     if (payload) {
-      this.injector.setByToken(JwtPayload, payload);
+      this.injector.setByToken(JWT_PAYLOAD, payload);
       return true;
     } else {
       return false;
