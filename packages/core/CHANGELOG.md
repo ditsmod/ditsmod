@@ -1,5 +1,13 @@
+<a name="core-2.38.0"></a>
+# [core-2.38.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.38.0) (2023-01-25)
+
+### BREAKING CHANGES
+
+- Renamed `Providers.useExisting()` to `Providers.useToken()`.
+- Removed `req.body`, `req.jwtPayload`, `req.pathParams`, `req.queryParams` and `req.aPathParams` properties.
+
 <a name="core-2.37.0"></a>
-# [core-2.37.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.37.0) (2023-01-16)
+## [core-2.37.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.37.0) (2023-01-16)
 
 ### Features
 
