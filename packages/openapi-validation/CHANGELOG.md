@@ -1,5 +1,12 @@
+<a name="openapi-validation-2.8.1"></a>
+# [openapi-validation-2.8.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.8.1) (2023-01-25)
+
+### BREAKING CHANGES
+
+- Fixed `ParametersInterceptor`.
+
 <a name="openapi-validation-2.8.0"></a>
-# [openapi-validation-2.8.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.8.0) (2023-01-25)
+## [openapi-validation-2.8.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.8.0) (2023-01-25)
 
 ### BREAKING CHANGES
 
