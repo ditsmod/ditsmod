@@ -21,10 +21,10 @@ export class ParametersInterceptor extends ValidationInterceptor {
       const schema = parameter.schema as XSchemaObject<any>;
       let value: any;
       if (parameter.in == 'path') {
-        const pathParams = this.injector.get(PATH_PARAMS, fromSelf);
+        const pathParams = this.injector.get(PATH_PARAMS, fromSelf, null);
         value = pathParams?.[parameter.name];
       } else if (parameter.in == 'query') {
-        const queryParams = this.injector.get(QUERY_PARAMS, fromSelf);
+        const queryParams = this.injector.get(QUERY_PARAMS, fromSelf, null);
         value = queryParams?.[parameter.name];
       } else if (parameter.in == 'cookie') {
         const cookies = new Cookies(this.nodeReq, this.nodeRes);
