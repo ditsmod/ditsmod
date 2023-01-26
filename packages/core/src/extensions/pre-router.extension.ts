@@ -13,6 +13,7 @@ import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { KeyRegistry } from '../di/key-registry';
 import { ChainMaker } from '../services/chain-maker';
 import { ControllerErrorHandler } from '../services/controller-error-handler';
+import { DepsChecker } from '../di/deps-checker';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -110,13 +111,13 @@ export class PreRouterExtension implements Extension<void> {
       throw new Error(msg);
     }
     const ignoreDeps: any[] = [HTTP_INTERCEPTORS];
-    inj.checkDeps(ChainMaker, undefined, ignoreDeps);
-    inj.checkDeps(HttpFrontend, undefined, ignoreDeps);
-    inj.checkDeps(SystemLogMediator, undefined, ignoreDeps);
-    routeMeta.resolvedGuards.forEach((item) => inj.checkDepsForResolved(item.guard, ignoreDeps));
-    inj.checkDeps(HttpBackend, undefined, ignoreDeps);
-    inj.checkDepsForResolved(routeMeta.resolvedFactory, ignoreDeps);
-    inj.checkDeps(HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
+    DepsChecker.checkDeps(inj, ChainMaker, undefined, ignoreDeps);
+    DepsChecker.checkDeps(inj, HttpFrontend, undefined, ignoreDeps);
+    DepsChecker.checkDeps(inj, SystemLogMediator, undefined, ignoreDeps);
+    routeMeta.resolvedGuards.forEach((item) => DepsChecker.checkDepsForResolved(inj, item.guard, ignoreDeps));
+    DepsChecker.checkDeps(inj, HttpBackend, undefined, ignoreDeps);
+    DepsChecker.checkDepsForResolved(inj, routeMeta.resolvedFactory, ignoreDeps);
+    DepsChecker.checkDeps(inj, HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
   }
 
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {

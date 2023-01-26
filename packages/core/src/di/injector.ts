@@ -31,6 +31,7 @@ import {
   isValueProvider,
 } from './utils';
 import { DualKey, KeyRegistry } from './key-registry';
+import { AnyFn } from '../types/mix';
 
 const NoDefaultValue = Symbol();
 
@@ -225,7 +226,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     } else if (isFactoryProvider(provider)) {
       const [rawClass, rawFactory] = provider.useFactory;
       const Cls = resolveForwardRef(rawClass) as Class;
-      const factory = resolveForwardRef(rawFactory) as Func;
+      const factory = resolveForwardRef(rawFactory) as AnyFn;
       const token = provider.token || factory;
       if (typeof factory == 'function') {
         (factory as any)[DEBUG_NAME] = `${Cls.name}.prototype.${factory.name}`;
@@ -254,7 +255,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     }
   }
 
-  private static getResolvedProvider(token: any, factoryFn: Func, resolvedDeps: Dependency[], isMulti?: boolean) {
+  private static getResolvedProvider(token: any, factoryFn: AnyFn, resolvedDeps: Dependency[], isMulti?: boolean) {
     const dualKey = KeyRegistry.get(token);
     const resolvedFactory = new ResolvedFactory(factoryFn, resolvedDeps);
     isMulti = isMulti || false;
@@ -265,7 +266,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
    * When an user give a class factory provider (eg. `{ useFactory: [Class, Class.prototype.factoryKey] }`),
    * "factory key" means "property key in class that has factory".
    */
-  private static getFactoryKey(Cls: Class, factory: Func): string | symbol {
+  private static getFactoryKey(Cls: Class, factory: AnyFn): string | symbol {
     if (typeof factory == 'function') {
       const methods: (string | symbol)[] = Object.getOwnPropertyNames(Cls.prototype);
       const symMethods = Object.getOwnPropertySymbols(Cls.prototype);
@@ -513,7 +514,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    * If not found, returns the `defaultValue` otherwise
    */
   get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, defaultValue?: T): T;
-  get<T extends Func>(token: T, visibility?: Visibility, defaultValue?: T): ReturnType<T>;
+  get<T extends AnyFn>(token: T, visibility?: Visibility, defaultValue?: T): ReturnType<T>;
   get(token: any, visibility?: Visibility, defaultValue?: any): any;
   get(token: any, visibility: Visibility = null, defaultValue: any = NoDefaultValue): any {
     return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, defaultValue);
@@ -611,145 +612,10 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     }
   }
 
-  checkDepsForResolved(provider: ResolvedProvider, ignoreDeps?: any[]): any {
-    this.checkMultiOrRegularProvider({ provider, parentTokens: [], ignoreDeps });
-  }
-
   /**
-   * An analogue of `injector.get()`, but this method only checks the presence
-   * of dependencies for given token. In this case, an instance of the corresponding
-   * class is not created, the action bound to `useFactory` is not executed, etc.
-   *
-   * If there are problems with dependencies, throws the corresponding error.
+   * Returns provider's value from registry by ID.
    */
-  checkDeps(token: any, visibility: Visibility = null, ignoreDeps?: any[]): any {
-    const dualKey = KeyRegistry.get(token);
-    const parentTokens: any[] = [];
-    return this.selectInjectorAndCheckDeps({ dualKey, parentTokens, visibility, ignoreDeps });
+  getValue(id: number) {
+    return this.#registry[id];
   }
-
-  private selectInjectorAndCheckDeps({ dualKey, parentTokens, visibility, ignoreDeps, isOptional }: Config2) {
-    if (dualKey.token === Injector) {
-      return;
-    }
-
-    const injector = visibility === skipSelf ? this.#parent : this;
-    return this.findInRegistryCurrentProvider({
-      injector,
-      dualKey,
-      parentTokens,
-      ignoreDeps,
-      visibility,
-      isOptional,
-    });
-  }
-
-  private findInRegistryCurrentProvider({
-    injector,
-    dualKey,
-    parentTokens,
-    ignoreDeps,
-    visibility,
-    isOptional,
-  }: Config1): any {
-    if (injector) {
-      if (ignoreDeps?.includes(dualKey.token)) {
-        return;
-      }
-      const meta = injector.#registry[dualKey.id];
-
-      // This is an alternative to the "instanceof ResolvedProvider" expression.
-      if (meta?.[ID]) {
-        if (parentTokens.includes(dualKey.token)) {
-          throw cyclicDependencyError([dualKey.token, ...parentTokens]);
-        }
-        injector.checkMultiOrRegularProvider({ provider: meta, parentTokens, ignoreDeps });
-        return;
-      } else if (meta !== undefined) {
-        return;
-      } else if (visibility !== fromSelf && injector.#parent) {
-        return injector.#parent.findInRegistryCurrentProvider({
-          injector: injector.#parent,
-          dualKey,
-          parentTokens,
-          ignoreDeps,
-          isOptional,
-        });
-      }
-    }
-    if (!isOptional) {
-      throw noProviderError([dualKey.token, ...parentTokens]);
-    }
-  }
-
-  private checkMultiOrRegularProvider({ provider, parentTokens, ignoreDeps }: Config4): any {
-    if (provider.multi) {
-      provider.resolvedFactories.forEach(({ dependencies }) => {
-        const config3: Config3 = {
-          dualKey: provider.dualKey,
-          parentTokens,
-          dependencies,
-          ignoreDeps,
-        };
-        this.findInRegistryDeps(config3);
-      });
-    } else {
-      const config3: Config3 = {
-        dualKey: provider.dualKey,
-        parentTokens,
-        dependencies: provider.resolvedFactories[0].dependencies,
-        ignoreDeps,
-      };
-      return this.findInRegistryDeps(config3);
-    }
-  }
-
-  private findInRegistryDeps({ dualKey, parentTokens, dependencies, ignoreDeps }: Config3): any {
-    dependencies = dependencies.filter((dep) => !ignoreDeps?.includes(dep.dualKey));
-    dependencies.forEach((dep) => {
-      return this.selectInjectorAndCheckDeps({
-        dualKey: dep.dualKey,
-        parentTokens: [dualKey.token, ...parentTokens],
-        visibility: dep.visibility,
-        ignoreDeps,
-        isOptional: dep.optional,
-      });
-    });
-  }
-}
-
-// Types of methods parameters.
-
-type Func = (...args: any[]) => any;
-
-interface BaseConfig {
-  parentTokens: any[];
-  injector?: Injector | null;
-  dualKey?: DualKey;
-  visibility?: Visibility;
-  ignoreDeps?: any[];
-  dependencies?: Dependency[];
-  provider?: ResolvedProvider;
-  onlyFromSelf?: boolean;
-  defaultValue?: any;
-  isOptional?: boolean;
-}
-
-interface Config4 extends BaseConfig {
-  provider: ResolvedProvider;
-}
-
-interface Config3 extends BaseConfig {
-  dualKey: DualKey;
-  dependencies: Dependency[];
-}
-
-interface Config2 extends BaseConfig {
-  dualKey: DualKey;
-  visibility: Visibility;
-}
-
-interface Config1 extends BaseConfig {
-  injector: Injector | null;
-  dualKey: DualKey;
 }
