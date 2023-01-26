@@ -13,7 +13,7 @@ describe('14-auth-jwt', () => {
     await request(server)
       .get('/')
       .expect(200)
-      .expect(`Hello World!\n`);
+      .expect('Hello World!\n');
 
     const response = await request(server)
       .get('/get-token-for/Kostia')
