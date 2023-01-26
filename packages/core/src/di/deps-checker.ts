@@ -9,7 +9,7 @@ import { Injector } from './injector';
  * Allow check dependecies for given provider.
  */
 export class DepsChecker {
-  static checkDepsForResolved(injector: Injector, provider: ResolvedProvider, ignoreDeps?: any[]): any {
+  static checkForResolved(injector: Injector, provider: ResolvedProvider, ignoreDeps?: any[]): any {
     this.checkMultiOrRegularProvider({ injector, provider, parentTokens: [], ignoreDeps });
   }
 
@@ -20,7 +20,7 @@ export class DepsChecker {
    *
    * If there are problems with dependencies, throws the corresponding error.
    */
-  static checkDeps(injector: Injector, token: any, visibility: Visibility = null, ignoreDeps?: any[]): any {
+  static check(injector: Injector, token: any, visibility: Visibility = null, ignoreDeps?: any[]): any {
     const dualKey = KeyRegistry.get(token);
     const parentTokens: any[] = [];
     return this.selectInjectorAndCheckDeps({ injector, dualKey, parentTokens, visibility, ignoreDeps });
