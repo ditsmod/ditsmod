@@ -45,10 +45,10 @@ export class SelectBuilder {
     const jb = new JoinBuilder();
     const jbResult = cb(jb);
     if (jbResult instanceof JoinOnBuilder) {
-      const query = (jbResult as OpenedJoinOnBuilder).getQuery();
-      query.join[0] = `${joinType} ${table}\n  on ${query.join.at(0)}`;
+      const join = (jbResult as OpenedJoinOnBuilder).join;
+      join[0] = `${joinType} ${table}\n  on ${join.at(0)}`;
       b.mergeQuery(this.#query);
-      b.mergeQuery(query);
+      b.mergeQuery({ join });
     } else {
       b.mergeQuery(this.#query);
       b.mergeQuery({ join: [`${joinType} ${table}\n  using(${jbResult})`] });
