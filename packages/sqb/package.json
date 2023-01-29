@@ -1,0 +1,25 @@
+{
+  "private": true,
+  "name": "@ditsmod/sqb",
+  "version": "2.0.0-alpha.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ditsmod/ditsmod.git"
+  },
+  "description": "Ditsmod module to simplify the building SQL queries to the database.",
+  "main": "dist/index",
+  "typings": "dist/index",
+  "directories": {
+    "lib": "src"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "rm -rf dist/* && tsc -b -f"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "@ditsmod/core": "^2.38.0"
+  }
+}
