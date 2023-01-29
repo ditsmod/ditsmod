@@ -7,15 +7,14 @@ class JoinQuery {
 export class JoinBuilder {
   #query = new JoinQuery();
 
-  protected mergeQuery(query = new JoinQuery()) {
-    this.#query.join.push(...(query.join || []));
+  protected mergeQuery(query: JoinQuery) {
+    this.#query.join.push(...query.join);
     return this.#query;
   }
 
   on(clause: string) {
     const b = new JoinOnBuilder();
-    const query = (b as OpenedJoinOnBuilder).mergeQuery(new JoinQuery());
-    query.join.push(clause);
+    (b as OpenedJoinOnBuilder).getQuery().join.push(clause);
     return b;
   }
 
@@ -60,9 +59,10 @@ export class JoinOnBuilder {
 
 export abstract class OpenedJoinOnBuilder extends JoinOnBuilder {
   override mergeQuery(query?: JoinQuery): JoinQuery {
-    return '' as any;
+    return super.mergeQuery(query);
   }
+
   override getQuery(): JoinQuery {
-    return '' as any;
+    return super.getQuery();
   }
 }

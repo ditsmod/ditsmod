@@ -10,7 +10,7 @@ class SelectQuery {
 export class SelectBuilder {
   #query = new SelectQuery();
 
-  protected mergeQuery(query: Partial<SelectQuery> = new SelectQuery()) {
+  protected mergeQuery(query: Partial<SelectQuery>) {
     this.#query.select.push(...(query.select || []));
     this.#query.from.push(...(query.from || []));
     this.#query.join.push(...(query.join || []));
@@ -26,15 +26,13 @@ export class SelectBuilder {
       }
     });
     const b = new SelectBuilder();
-    const query = b.mergeQuery(this.#query);
-    query.select.push(...fields);
+    b.mergeQuery(this.#query).select.push(...fields);
     return b;
   }
 
-  from(...objects: object[]) {
+  from(...tables: object[]) {
     const b = new SelectBuilder();
-    const query = b.mergeQuery(this.#query);
-    query.from.push(...objects);
+    b.mergeQuery(this.#query).from.push(...tables);
     return b;
   }
 
@@ -63,13 +61,11 @@ export class SelectBuilder {
 
   where(...expression: string[]) {
     const b = new SelectBuilder();
-    const query = b.mergeQuery(this.#query);
-    query.where.push(...expression);
+    b.mergeQuery(this.#query).where.push(...expression);
     return b;
   }
 
   toString(): string {
-    this.mergeQuery(); // Init if query is empty.
     const { select, from, join, where } = this.#query;
     let sql = '';
 
