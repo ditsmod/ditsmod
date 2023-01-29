@@ -1,13 +1,11 @@
 import 'reflect-metadata';
-import { makeClassDecorator } from '@ditsmod/core';
 
 import { setAlias } from '../utils';
 import { SelectBuilder } from '../mysql-builders/select-builder';
+import { table } from '../decorators/table';
 
 describe('SelectBuilder', () => {
-  const sqb = makeClassDecorator((tableName: string) => tableName);
-
-  @sqb('table_1')
+  @table({ tableName: 'table_1' })
   class Table1 {
     id: number;
     one: string;
@@ -15,7 +13,7 @@ describe('SelectBuilder', () => {
     three: string;
   }
 
-  @sqb('table_2')
+  @table({ tableName: 'table_2' })
   class Table2 {
     id: number;
     four: string;
@@ -23,7 +21,7 @@ describe('SelectBuilder', () => {
     six: string;
   }
 
-  @sqb('table_3')
+  @table({ tableName: 'table_3' })
   class Table3 {
     seven: string;
   }
