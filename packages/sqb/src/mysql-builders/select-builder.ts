@@ -78,11 +78,22 @@ export class SelectBuilder {
 
   toString(): string {
     this.mergeQuery(new Query()); // Init if query is empty.
-    const joinSeparator = this.#query.join.length ? '\n' : '';
+    const { select, from, join, where } = this.#query;
+    let sql = '';
 
-    return `select\n  ${this.#query.select.join(',\n  ')}
-from ${this.#query.from.join(', ')} ${joinSeparator + this.#query.join.join('\n')}
-where ${this.#query.where.join('\n  and ')}
-    `;
+    if (select.length) {
+      sql += `select\n  ${select.join(',\n  ')}`;
+    }
+    if (from.length) {
+      sql += `\nfrom ${from.join(', ')}`;
+    }
+    if (join.length) {
+      sql += `\n${join.join('\n')}`;
+    }
+    if (where.length) {
+      sql += `\nwhere ${where.join('\n  and ')}`;
+    }
+
+    return sql;
   }
 }
