@@ -50,13 +50,13 @@ export class SelectBuilder {
   }
 
   $if(condition: any, cb: (sb: SelectBuilder) => SelectBuilder) {
-    const b = new SelectBuilder();
-    b.mergeQuery(this.#query);
+    const b1 = new SelectBuilder();
+    b1.mergeQuery(this.#query);
     if (condition) {
-      const additionalSelect = cb(new SelectBuilder());
-      additionalSelect.mergeQuery(additionalSelect.#query);
+      const b2 = cb(new SelectBuilder());
+      b1.mergeQuery(b2.#query);
     }
-    return b;
+    return b1;
   }
 
   where(...expression: string[]) {
