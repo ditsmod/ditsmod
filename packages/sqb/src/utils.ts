@@ -1,9 +1,12 @@
 import { Class, reflector } from '@ditsmod/core';
 
+import { TableConfig } from './types';
+
 export function setAlias<T extends Class>(Cls: T, alias: string): InstanceType<T> {
   const newObj: any = {
     toString() {
-      return `${reflector.getClassMetadata(Cls)[0]?.value} as ${alias}`;
+      const config: TableConfig | undefined = reflector.getClassMetadata(Cls)[0]?.value;
+      return `${config?.tableName || Cls.name} as ${alias}`;
     },
   };
 
