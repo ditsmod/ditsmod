@@ -1,17 +1,10 @@
 import { Class } from '@ditsmod/core';
 
 class JoinQuery {
-  join: any[] = [];
+  join: string[] = [];
 }
 
 export class JoinBuilder {
-  #query = new JoinQuery();
-
-  protected mergeQuery(query: JoinQuery) {
-    this.#query.join.push(...query.join);
-    return this.#query;
-  }
-
   on(clause: string) {
     const b = new JoinOnBuilder();
     (b as OpenedJoinOnBuilder).getQuery().join.push(clause);
@@ -21,12 +14,8 @@ export class JoinBuilder {
   using<T1 extends Class, T2 extends Class>(
     classes: [T1, T2],
     ...fields: (keyof InstanceType<T1> & keyof InstanceType<T2>)[]
-  ): Pick<JoinBuilder, 'toString'> {
-    return this;
-  }
-
-  toString(): string {
-    return '';
+  ) {
+    return fields.join(', ');
   }
 }
 
@@ -44,21 +33,19 @@ export class JoinOnBuilder {
 
   and(clause: string) {
     const b = new JoinOnBuilder();
-    const query = b.mergeQuery(this.#query);
-    query.join.push(`    and ${clause}`);
+    b.mergeQuery(this.#query).join.push(`    and ${clause}`);
     return b;
   }
 
   or(clause: string) {
     const b = new JoinOnBuilder();
-    const query = b.mergeQuery(this.#query);
-    query.join.push(`    or ${clause}`);
+    b.mergeQuery(this.#query).join.push(`    or ${clause}`);
     return b;
   }
 }
 
 export abstract class OpenedJoinOnBuilder extends JoinOnBuilder {
-  override mergeQuery(query?: JoinQuery): JoinQuery {
+  override mergeQuery(query: JoinQuery): JoinQuery {
     return super.mergeQuery(query);
   }
 

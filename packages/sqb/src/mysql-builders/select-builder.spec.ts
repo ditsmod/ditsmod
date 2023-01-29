@@ -8,6 +8,7 @@ describe('SelectBuilder', () => {
   @table({ tableName: 'table_1' })
   class Table1 {
     id: number;
+    id2: number;
     one: string;
     two: number;
     three: string;
@@ -16,6 +17,7 @@ describe('SelectBuilder', () => {
   @table({ tableName: 'table_2' })
   class Table2 {
     id: number;
+    id2: number;
     four: string;
     five: number;
     six: string;
@@ -30,7 +32,7 @@ describe('SelectBuilder', () => {
   const t2 = setAlias(Table2, 't2');
   const t3 = setAlias(Table3, 't3');
 
-  it('case1', () => {
+  it('should works all features', () => {
     const sql1 = new SelectBuilder()
       .select(t1.one, t1.two, t2.six, t3.seven)
       .from(t1)
@@ -41,7 +43,12 @@ describe('SelectBuilder', () => {
           return jb.on(`${t1.one} = ${t2.id}`);
         });
       })
-      // .join(t3, (jb) => jb.using([Table2, Table1], 'id'))
+      .$if(false, (sb) => {
+        return sb.rightJoin(t1, (jb) => {
+          return jb.on(`${t1.one} = ${t2.id}`);
+        });
+      })
+      .join(t3, (jb) => jb.using([Table2, Table1], 'id', 'id2'))
       .where(`${t2.six} > 6`, `${t2.six} < 10`);
 
     console.log(`${sql1}`);

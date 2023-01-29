@@ -39,7 +39,7 @@ export class SelectBuilder {
   protected baseJoin(
     joinType: 'join' | 'left join' | 'right join',
     table: object,
-    cb: (jb: JoinBuilder) => JoinOnBuilder | Pick<JoinBuilder, 'toString'>
+    cb: (jb: JoinBuilder) => JoinOnBuilder | string
   ) {
     const b = new SelectBuilder();
     const jb = new JoinBuilder();
@@ -49,19 +49,22 @@ export class SelectBuilder {
       query.join[0] = `${joinType} ${table}\n  on ${query.join.at(0)}`;
       b.mergeQuery(this.#query);
       b.mergeQuery(query);
+    } else {
+      b.mergeQuery(this.#query);
+      b.mergeQuery({ join: [`${joinType} ${table}\n  using(${jbResult})`] });
     }
     return b;
   }
 
-  join(table: object, cb: (jb: JoinBuilder) => JoinOnBuilder | Pick<JoinBuilder, 'toString'>) {
+  join(table: object, cb: (jb: JoinBuilder) => JoinOnBuilder | string) {
     return this.baseJoin('join', table, cb);
   }
 
-  leftJoin(table: object, cb: (jb: JoinBuilder) => JoinOnBuilder | Pick<JoinBuilder, 'toString'>) {
+  leftJoin(table: object, cb: (jb: JoinBuilder) => JoinOnBuilder | string) {
     return this.baseJoin('left join', table, cb);
   }
 
-  rightJoin(table: object, cb: (jb: JoinBuilder) => JoinOnBuilder | Pick<JoinBuilder, 'toString'>) {
+  rightJoin(table: object, cb: (jb: JoinBuilder) => JoinOnBuilder | string) {
     return this.baseJoin('right join', table, cb);
   }
 
