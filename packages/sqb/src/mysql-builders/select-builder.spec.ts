@@ -35,9 +35,9 @@ describe('SelectBuilder', () => {
       .select(t1.one, t1.two, t2.six, t3.seven)
       .from(t1)
       .join(t2, (jb) => jb.on(`${t2.five} = ${t1.two}`).and(`${t2.five} > 6`).or(`${t1.two} < 8`))
-      .join(t3, (jb) => jb.on(`${t2.four} = ${t1.two}`).or(`${t3.seven} = 7`))
+      .leftJoin(t3, (jb) => jb.on(`${t2.four} = ${t1.two}`).or(`${t3.seven} = 7`))
       .$if(true, (sb) => {
-        return sb.join(t1, (jb) => {
+        return sb.rightJoin(t1, (jb) => {
           return jb.on(`${t1.one} = ${t2.id}`);
         });
       })
