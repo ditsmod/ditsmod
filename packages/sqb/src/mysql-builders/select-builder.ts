@@ -1,35 +1,27 @@
 import { JoinBuilder, JoinOnBuilder, OpenedJoinOnBuilder } from './join-builder';
 
-class Query {
-  select: string[];
-  from: object[];
-  join: any[];
-  where: string[];
+class SelectQuery {
+  select: string[] = [];
+  from: object[] = [];
+  join: any[] = [];
+  where: string[] = [];
 }
 
 export class SelectBuilder {
-  #query: Query;
+  #query = new SelectQuery();
 
-  protected mergeQuery(query: Query) {
-    if (this.#query) {
-      this.#query.select.push(...(query?.select || []));
-      this.#query.from.push(...(query?.from || []));
-      this.#query.join.push(...(query?.join || []));
-      this.#query.where.push(...(query?.where || []));
-    } else {
-      this.#query = { ...query };
-      this.#query.select = (query?.select || []).slice();
-      this.#query.from = (query?.from || []).slice();
-      this.#query.join = (query?.join || []).slice();
-      this.#query.where = (query?.where || []).slice();
-    }
+  protected mergeQuery(query: Partial<SelectQuery> = new SelectQuery()) {
+    this.#query.select.push(...(query.select || []));
+    this.#query.from.push(...(query.from || []));
+    this.#query.join.push(...(query.join || []));
+    this.#query.where.push(...(query.where || []));
     return this.#query;
   }
 
   select(...fields: any[]) {
     fields.forEach((f, i) => {
       if (typeof f != 'string') {
-        const msg = `SelectBuilder: failed build query select: element with ${i} index must have string type (got ${typeof f})`;
+        const msg = `SelectBuilder: failed query select building: element with ${i} index must have string type (got ${typeof f})`;
         throw new TypeError(msg);
       }
     });
@@ -42,19 +34,19 @@ export class SelectBuilder {
   from(...objects: object[]) {
     const b = new SelectBuilder();
     const query = b.mergeQuery(this.#query);
-    objects.forEach((obj) => query.from.push(obj));
+    query.from.push(...objects);
     return b;
   }
 
-  join(obj: object, cb: (jb: JoinBuilder) => JoinOnBuilder | Pick<JoinBuilder, 'toString'>) {
+  join(table: object, cb: (jb: JoinBuilder) => JoinOnBuilder | Pick<JoinBuilder, 'toString'>) {
     const b = new SelectBuilder();
     const jb = new JoinBuilder();
     const jbResult = cb(jb);
     if (jbResult instanceof JoinOnBuilder) {
-      const query = (jbResult as OpenedJoinOnBuilder).mergeQuery(new Query());
-      query.join[0] = `join ${obj}\n  on ${query.join.at(0)}`;
+      const query = (jbResult as OpenedJoinOnBuilder).getQuery();
+      query.join[0] = `join ${table}\n  on ${query.join.at(0)}`;
       b.mergeQuery(this.#query);
-      b.mergeQuery(query as Query);
+      b.mergeQuery(query);
     }
     return b;
   }
@@ -77,7 +69,7 @@ export class SelectBuilder {
   }
 
   toString(): string {
-    this.mergeQuery(new Query()); // Init if query is empty.
+    this.mergeQuery(); // Init if query is empty.
     const { select, from, join, where } = this.#query;
     let sql = '';
 

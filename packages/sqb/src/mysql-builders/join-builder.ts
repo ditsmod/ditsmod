@@ -1,19 +1,14 @@
 import { Class } from '@ditsmod/core';
 
 class JoinQuery {
-  join: any[];
+  join: any[] = [];
 }
 
 export class JoinBuilder {
-  #query: JoinQuery;
+  #query = new JoinQuery();
 
-  protected mergeQuery(query: JoinQuery) {
-    if (this.#query) {
-      this.#query.join.push(...(query?.join || []));
-    } else {
-      this.#query = { ...query };
-      this.#query.join = (query?.join || []).slice();
-    }
+  protected mergeQuery(query = new JoinQuery()) {
+    this.#query.join.push(...(query.join || []));
     return this.#query;
   }
 
@@ -37,15 +32,14 @@ export class JoinBuilder {
 }
 
 export class JoinOnBuilder {
-  #query: JoinQuery;
+  #query = new JoinQuery();
 
-  protected mergeQuery(query: JoinQuery) {
-    if (this.#query) {
-      this.#query.join.push(...(query?.join || []));
-    } else {
-      this.#query = { ...query };
-      this.#query.join = (query?.join || []).slice();
-    }
+  protected mergeQuery(query = new JoinQuery()) {
+    this.#query.join.push(...query.join);
+    return this.#query;
+  }
+
+  protected getQuery() {
     return this.#query;
   }
 
@@ -65,7 +59,10 @@ export class JoinOnBuilder {
 }
 
 export abstract class OpenedJoinOnBuilder extends JoinOnBuilder {
-  override mergeQuery(query: JoinQuery): JoinQuery {
+  override mergeQuery(query?: JoinQuery): JoinQuery {
+    return '' as any;
+  }
+  override getQuery(): JoinQuery {
     return '' as any;
   }
 }
