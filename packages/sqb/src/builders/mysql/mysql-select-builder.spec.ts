@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 
-import { setAlias } from '../utils';
-import { SelectBuilder } from '../mysql-builders/select-builder';
-import { table } from '../decorators/table';
+import { setAlias } from '../../utils';
+import { MySqlSelectBuilder } from './mysql-select-builder';
+import { table } from '../../decorators/table';
 
 describe('SelectBuilder', () => {
   @table({ tableName: 'table_1' })
@@ -33,7 +33,7 @@ describe('SelectBuilder', () => {
   const t3 = setAlias(Table3, 't3');
 
   it('should not store state', () => {
-    const sb = new SelectBuilder();
+    const sb = new MySqlSelectBuilder();
     expect(`${sb}`).toBe('');
     expect(`${sb.select(t1.one, t1.two, t2.six, t3.seven)}`).toBe(`select
   t1.one,
@@ -59,7 +59,7 @@ describe('SelectBuilder', () => {
   });
 
   it('should works all features', () => {
-    const sql1 = new SelectBuilder()
+    const sql1 = new MySqlSelectBuilder()
       .select(t1.one, t1.two, t2.six, t3.seven)
       .from(t1)
       .join(t2, (jb) => jb.on(`${t2.five} = ${t1.two}`).and(`${t2.five} > 6`).or(`${t1.two} < 8`))

@@ -11,7 +11,7 @@ class SelectQuery {
   limit: string = '';
 }
 
-export class SelectBuilder {
+export class MySqlSelectBuilder {
   #query = new SelectQuery();
 
   protected mergeQuery(query: Partial<SelectQuery>) {
@@ -33,13 +33,13 @@ export class SelectBuilder {
         throw new TypeError(msg);
       }
     });
-    const b = new SelectBuilder();
+    const b = new MySqlSelectBuilder();
     b.mergeQuery(this.#query).select.push(...fields);
     return b;
   }
 
   from(...tables: [object, ...object[]]) {
-    const b = new SelectBuilder();
+    const b = new MySqlSelectBuilder();
     b.mergeQuery(this.#query).from.push(...tables);
     return b;
   }
@@ -49,7 +49,7 @@ export class SelectBuilder {
     table: object,
     cb: (jb: JoinBuilder) => JoinOnBuilder | string
   ) {
-    const b = new SelectBuilder();
+    const b = new MySqlSelectBuilder();
     const jb = new JoinBuilder();
     const jbResult = cb(jb);
     if (jbResult instanceof JoinOnBuilder) {
@@ -76,44 +76,44 @@ export class SelectBuilder {
     return this.baseJoin('right join', table, cb);
   }
 
-  $if(condition: any, cb: (sb: SelectBuilder) => SelectBuilder) {
-    const b1 = new SelectBuilder();
+  $if(condition: any, cb: (sb: MySqlSelectBuilder) => MySqlSelectBuilder) {
+    const b1 = new MySqlSelectBuilder();
     b1.mergeQuery(this.#query);
     if (condition) {
-      const b2 = cb(new SelectBuilder());
+      const b2 = cb(new MySqlSelectBuilder());
       b1.mergeQuery(b2.#query);
     }
     return b1;
   }
 
   where(...expression: [string, ...string[]]) {
-    const b = new SelectBuilder();
+    const b = new MySqlSelectBuilder();
     b.mergeQuery(this.#query).where.push(...expression);
     return b;
   }
 
   groupBy(...fields: [any, ...any[]]) {
-    const b = new SelectBuilder();
+    const b = new MySqlSelectBuilder();
     b.mergeQuery(this.#query).groupBy.push(...fields);
     return b;
   }
 
   having(...expression: [string, ...string[]]) {
-    const b = new SelectBuilder();
+    const b = new MySqlSelectBuilder();
     b.mergeQuery(this.#query).having.push(...expression);
     return b;
   }
 
   orderBy(...fields: [any, ...any[]]) {
-    const b = new SelectBuilder();
+    const b = new MySqlSelectBuilder();
     b.mergeQuery(this.#query).orderBy.push(...fields);
     return b;
   }
 
-  limit(rowCount: number): SelectBuilder;
-  limit(offset: number, rowCount: number): SelectBuilder;
+  limit(rowCount: number): MySqlSelectBuilder;
+  limit(offset: number, rowCount: number): MySqlSelectBuilder;
   limit(offsetOrCount: number, rowCount?: number) {
-    const b = new SelectBuilder();
+    const b = new MySqlSelectBuilder();
     const limit = rowCount ? [offsetOrCount, rowCount] : [];
     b.mergeQuery(this.#query).limit = limit.join(', ');
     return b;
