@@ -4,7 +4,7 @@ import { getTableMetadata } from '../../utils';
 import { MySqlSelectBuilder } from './mysql-select-builder';
 import { table } from '../../decorators/table';
 
-describe('SelectBuilder', () => {
+describe('MySqlSelectBuilder', () => {
   @table({ tableName: 'users' })
   class Users {
     userId: number;
