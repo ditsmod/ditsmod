@@ -2,8 +2,8 @@ import { JoinBuilder, AndOrBuilder, OpenedAndOrBuilder } from './join-builder';
 
 class SelectQuery {
   select: string[] = [];
-  from: object[] = [];
-  join: any[] = [];
+  from: string[] = [];
+  join: string[] = [];
   where: string[] = [];
   groupBy: string[] = [];
   having: string[] = [];
@@ -38,7 +38,7 @@ export class MySqlSelectBuilder {
     return b;
   }
 
-  from(...tables: [object, ...object[]]) {
+  from(...tables: [string, ...string[]]) {
     const b = new MySqlSelectBuilder();
     b.mergeQuery(this.#query).from.push(...tables);
     return b;
@@ -46,7 +46,7 @@ export class MySqlSelectBuilder {
 
   protected baseJoin(
     joinType: 'join' | 'left join' | 'right join',
-    table: object,
+    table: string,
     cb: (jb: JoinBuilder) => AndOrBuilder | string
   ) {
     const b = new MySqlSelectBuilder();
@@ -64,15 +64,15 @@ export class MySqlSelectBuilder {
     return b;
   }
 
-  join(table: object, cb: (jb: JoinBuilder) => AndOrBuilder | string) {
+  join(table: string, cb: (jb: JoinBuilder) => AndOrBuilder | string) {
     return this.baseJoin('join', table, cb);
   }
 
-  leftJoin(table: object, cb: (jb: JoinBuilder) => AndOrBuilder | string) {
+  leftJoin(table: string, cb: (jb: JoinBuilder) => AndOrBuilder | string) {
     return this.baseJoin('left join', table, cb);
   }
 
-  rightJoin(table: object, cb: (jb: JoinBuilder) => AndOrBuilder | string) {
+  rightJoin(table: string, cb: (jb: JoinBuilder) => AndOrBuilder | string) {
     return this.baseJoin('right join', table, cb);
   }
 
