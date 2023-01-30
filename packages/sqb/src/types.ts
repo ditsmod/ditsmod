@@ -5,3 +5,5 @@ export const SQB_EXTENSIONS = new InjectionToken<Extension<void>[]>('SQB_EXTENSI
 export interface TableConfig {
   tableName?: string;
 }
+
+export type OneSqlExpression = [any, string, any] | [any];

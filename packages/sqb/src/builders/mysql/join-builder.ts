@@ -1,8 +1,9 @@
 import { Class } from '@ditsmod/core';
+import { OneSqlExpression } from '../../types';
 
 export class JoinBuilder {
-  on(...clause: [any, string, any]) {
-    return new JoinOnBuilder([clause.join(' ')]);
+  on(...clause: OneSqlExpression) {
+    return new AndOrBuilder([clause.join(' ')]);
   }
 
   using<T1 extends Class, T2 extends Class>(
@@ -13,26 +14,26 @@ export class JoinBuilder {
   }
 }
 
-export class JoinOnBuilder {
-  protected join: string[] = [];
+export class AndOrBuilder {
+  protected expressions: string[] = [];
 
-  constructor(join: string[]) {
-    this.join.push(...join);
+  constructor(expressions: string[] = []) {
+    this.expressions.push(...expressions);
   }
 
-  and(...clause: [any, string, any]) {
-    const b = new JoinOnBuilder(this.join);
-    b.join.push(`    and ${clause.join(' ')}`);
+  and(...clause: OneSqlExpression) {
+    const b = new AndOrBuilder(this.expressions);
+    b.expressions.push(`    and ${clause.join(' ')}`);
     return b;
   }
 
-  or(...clause: [any, string, any]) {
-    const b = new JoinOnBuilder(this.join);
-    b.join.push(`    or ${clause.join(' ')}`);
+  or(...clause: OneSqlExpression) {
+    const b = new AndOrBuilder(this.expressions);
+    b.expressions.push(`    or ${clause.join(' ')}`);
     return b;
   }
 }
 
-export class OpenedJoinOnBuilder extends JoinOnBuilder {
-  declare join: string[];
+export class OpenedAndOrBuilder extends AndOrBuilder {
+  declare expressions: string[];
 }
