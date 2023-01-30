@@ -5,9 +5,9 @@ class SelectQuery {
   from: object[] = [];
   join: any[] = [];
   where: string[] = [];
-  orderBy: string[] = [];
   groupBy: string[] = [];
   having: string[] = [];
+  orderBy: string[] = [];
   limit: string = '';
 }
 
@@ -19,9 +19,9 @@ export class SelectBuilder {
     this.#query.from.push(...(query.from || []));
     this.#query.join.push(...(query.join || []));
     this.#query.where.push(...(query.where || []));
-    this.#query.orderBy.push(...(query.orderBy || []));
     this.#query.groupBy.push(...(query.groupBy || []));
     this.#query.having.push(...(query.having || []));
+    this.#query.orderBy.push(...(query.orderBy || []));
     this.#query.limit = query.limit || '';
     return this.#query;
   }
@@ -92,12 +92,6 @@ export class SelectBuilder {
     return b;
   }
 
-  orderBy(...fields: [any, ...any[]]) {
-    const b = new SelectBuilder();
-    b.mergeQuery(this.#query).orderBy.push(...fields);
-    return b;
-  }
-
   groupBy(...fields: [any, ...any[]]) {
     const b = new SelectBuilder();
     b.mergeQuery(this.#query).groupBy.push(...fields);
@@ -107,6 +101,12 @@ export class SelectBuilder {
   having(...expression: [string, ...string[]]) {
     const b = new SelectBuilder();
     b.mergeQuery(this.#query).having.push(...expression);
+    return b;
+  }
+
+  orderBy(...fields: [any, ...any[]]) {
+    const b = new SelectBuilder();
+    b.mergeQuery(this.#query).orderBy.push(...fields);
     return b;
   }
 
