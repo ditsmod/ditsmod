@@ -48,6 +48,14 @@ describe('SelectBuilder', () => {
     expect(`${sb}`).toBe('');
     expect(`${sb.where(`${t2.four} = ${t1.two}`)}`).toBe('\nwhere t2.four = t1.two');
     expect(`${sb}`).toBe('');
+    expect(`${sb.orderBy(t3.seven, t1.one)}`).toBe('\norder by\n  t3.seven,\n  t1.one');
+    expect(`${sb}`).toBe('');
+    expect(`${sb.groupBy(t1.two)}`).toBe('\ngroup by\n  t1.two');
+    expect(`${sb}`).toBe('');
+    expect(`${sb.having(`${t1.two} > 1`, `${t2.six} > 6`)}`).toBe('\nhaving t1.two > 1\n  and t2.six > 6');
+    expect(`${sb}`).toBe('');
+    expect(`${sb.limit(1, 54)}`).toBe('\nlimit 1, 54');
+    expect(`${sb}`).toBe('');
   });
 
   it('should works all features', () => {
@@ -67,7 +75,12 @@ describe('SelectBuilder', () => {
         });
       })
       .join(t3, (jb) => jb.using([Table2, Table1], 'id', 'id2'))
-      .where(`${t2.six} > 6`, `${t2.six} < 10`);
+      .where(`${t2.six} > 6`, `${t2.six} < 10`)
+      .orderBy(t3.seven, t1.one)
+      .groupBy(t1.two)
+      .having(`${t1.two} > 1`, `${t2.six} > 6`)
+      .limit(1, 54)
+      ;
 
     const expectSql = `select
   t1.one,
@@ -87,7 +100,15 @@ right join table_1 as t1
 join table_3 as t3
   using(id, id2)
 where t2.six > 6
-  and t2.six < 10`;
+  and t2.six < 10
+order by
+  t3.seven,
+  t1.one
+group by
+  t1.two
+having t1.two > 1
+  and t2.six > 6
+limit 1, 54`;
 
     expect(`${sql1}`).toBe(expectSql);
   });
