@@ -1,8 +1,8 @@
 import { Class } from '@ditsmod/core';
 
 export class JoinBuilder {
-  on(clause: string) {
-    return new JoinOnBuilder([clause]);
+  on(...clause: [any, string, any]) {
+    return new JoinOnBuilder([clause.join(' ')]);
   }
 
   using<T1 extends Class, T2 extends Class>(
@@ -20,15 +20,15 @@ export class JoinOnBuilder {
     this.join.push(...join);
   }
 
-  and(clause: string) {
+  and(...clause: [any, string, any]) {
     const b = new JoinOnBuilder(this.join);
-    b.join.push(`    and ${clause}`);
+    b.join.push(`    and ${clause.join(' ')}`);
     return b;
   }
 
-  or(clause: string) {
+  or(...clause: [any, string, any]) {
     const b = new JoinOnBuilder(this.join);
-    b.join.push(`    or ${clause}`);
+    b.join.push(`    or ${clause.join(' ')}`);
     return b;
   }
 }
