@@ -32,6 +32,24 @@ describe('SelectBuilder', () => {
   const t2 = setAlias(Table2, 't2');
   const t3 = setAlias(Table3, 't3');
 
+  it('should not store state', () => {
+    const sb = new SelectBuilder();
+    expect(`${sb}`).toBe('');
+    expect(`${sb.select(t1.one, t1.two, t2.six, t3.seven)}`).toBe(`select
+  t1.one,
+  t1.two,
+  t2.six,
+  t3.seven`);
+    expect(`${sb}`).toBe('');
+    expect(`${sb.from(t3)}`).toBe('\nfrom table_3 as t3');
+    expect(`${sb}`).toBe('');
+    const expectedJoin = '\njoin table_2 as t2\n  on t2.five = t1.two';
+    expect(`${sb.join(t2, (jb) => jb.on(`${t2.five} = ${t1.two}`))}`).toBe(expectedJoin);
+    expect(`${sb}`).toBe('');
+    expect(`${sb.where(`${t2.four} = ${t1.two}`)}`).toBe('\nwhere t2.four = t1.two');
+    expect(`${sb}`).toBe('');
+  });
+
   it('should works all features', () => {
     const sql1 = new SelectBuilder()
       .select(t1.one, t1.two, t2.six, t3.seven)
@@ -51,6 +69,26 @@ describe('SelectBuilder', () => {
       .join(t3, (jb) => jb.using([Table2, Table1], 'id', 'id2'))
       .where(`${t2.six} > 6`, `${t2.six} < 10`);
 
-    console.log(`${sql1}`);
+    const expectSql = `select
+  t1.one,
+  t1.two,
+  t2.six,
+  t3.seven
+from table_1 as t1
+join table_2 as t2
+  on t2.five = t1.two
+    and t2.five > 6
+    or t1.two < 8
+left join table_3 as t3
+  on t2.four = t1.two
+    or t3.seven = 7
+right join table_1 as t1
+  on t1.one = t2.id
+join table_3 as t3
+  using(id, id2)
+where t2.six > 6
+  and t2.six < 10`;
+
+    expect(`${sql1}`).toBe(expectSql);
   });
 });
