@@ -101,13 +101,13 @@ join table_3 as t3
   using(id, id2)
 where t2.six > 6
   and t2.six < 10
-order by
-  t3.seven,
-  t1.one
 group by
   t1.two
 having t1.two > 1
   and t2.six > 6
+order by
+  t3.seven,
+  t1.one
 limit 1, 54`;
 
     expect(`${sql1}`).toBe(expectSql);
