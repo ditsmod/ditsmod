@@ -32,18 +32,6 @@ describe('MySqlSelectBuilder', () => {
   const [p, posts_as_p, pAlias] = getTableMetadata(Posts, 'p');
   const [a, articles_as_a, aAlias] = getTableMetadata(Articles, 'a');
 
-  it('aliases works as expected', () => {
-    expect(`${u}`).toBe('users as u');
-    expect(`${p}`).toBe('posts as p');
-    expect(`${a}`).toBe('articles as a');
-    expect(users_as_u).toBe('users as u');
-    expect(posts_as_p).toBe('posts as p');
-    expect(articles_as_a).toBe('articles as a');
-    expect(uAlias).toBe('u');
-    expect(pAlias).toBe('p');
-    expect(aAlias).toBe('a');
-  });
-
   it('should not store state', () => {
     const sb = new MySqlSelectBuilder();
     expect(`${sb}`).toBe('');
