@@ -1,5 +1,6 @@
 import { Class } from '@ditsmod/core';
 import { OneSqlExpression } from '../../types';
+import { AndOrBuilder } from './and-or-builder';
 
 export class JoinBuilder {
   on(...clause: OneSqlExpression) {
@@ -12,34 +13,4 @@ export class JoinBuilder {
   ) {
     return fields.join(', ');
   }
-}
-
-export class ExpressionBuilder {
-  isTrue(...condition: OneSqlExpression) {
-    return new AndOrBuilder([condition.join(' ')]);
-  }
-}
-
-export class AndOrBuilder {
-  protected expressions: string[] = [];
-
-  constructor(expressions: string[] = [], protected spaces = 2) {
-    this.expressions.push(...expressions);
-  }
-
-  and(...clause: OneSqlExpression) {
-    const b = new AndOrBuilder(this.expressions, this.spaces);
-    b.expressions.push(`${' '.repeat(this.spaces - 1)} and ${clause.join(' ')}`);
-    return b;
-  }
-
-  or(...clause: OneSqlExpression) {
-    const b = new AndOrBuilder(this.expressions, this.spaces);
-    b.expressions.push(`${' '.repeat(this.spaces - 1)} or ${clause.join(' ')}`);
-    return b;
-  }
-}
-
-export class OpenedAndOrBuilder extends AndOrBuilder {
-  declare expressions: string[];
 }

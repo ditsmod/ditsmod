@@ -1,4 +1,6 @@
-import { JoinBuilder, AndOrBuilder, OpenedAndOrBuilder, ExpressionBuilder } from './join-builder';
+import { AndOrBuilder, OpenedAndOrBuilder } from './and-or-builder';
+import { ExpressionBuilder } from './expression-builder';
+import { JoinBuilder } from './join-builder';
 
 class SelectQuery {
   select: string[] = [];
