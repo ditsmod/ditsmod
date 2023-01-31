@@ -78,16 +78,6 @@ export class MySqlSelectBuilder {
     return this.baseJoin('right join', table, cb);
   }
 
-  $if(condition: any, cb: (sb: MySqlSelectBuilder) => MySqlSelectBuilder) {
-    const b1 = new MySqlSelectBuilder();
-    b1.mergeQuery(this.#query);
-    if (condition) {
-      const b2 = cb(new MySqlSelectBuilder());
-      b1.mergeQuery(b2.#query);
-    }
-    return b1;
-  }
-
   where(cb: (eb: ExpressionBuilder) => AndOrBuilder) {
     const b = new MySqlSelectBuilder();
     const eb = new ExpressionBuilder();
@@ -127,6 +117,16 @@ export class MySqlSelectBuilder {
     const limit = rowCount ? [offsetOrCount, rowCount] : [];
     b.mergeQuery(this.#query).limit = limit.join(', ');
     return b;
+  }
+
+  $if(condition: any, cb: (sb: MySqlSelectBuilder) => MySqlSelectBuilder) {
+    const b1 = new MySqlSelectBuilder();
+    b1.mergeQuery(this.#query);
+    if (condition) {
+      const b2 = cb(new MySqlSelectBuilder());
+      b1.mergeQuery(b2.#query);
+    }
+    return b1;
   }
 
   toString(): string {
