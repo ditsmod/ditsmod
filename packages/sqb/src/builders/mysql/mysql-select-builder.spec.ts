@@ -58,13 +58,14 @@ describe('MySqlSelectBuilder', () => {
     const expectedJoin = '\njoin posts as p\n  on p.five = u.two';
     expect(`${sb.join(posts_as_p, (jb) => jb.on(p.five, '=', u.two))}`).toBe(expectedJoin);
     expect(`${sb}`).toBe('');
-    expect(`${sb.where(`${p.four} = ${u.two}`)}`).toBe('\nwhere p.four = u.two');
+    expect(`${sb.where((eb) => eb.isTrue(p.four, '=', u.two))}`).toBe('\nwhere p.four = u.two');
     expect(`${sb}`).toBe('');
     expect(`${sb.orderBy(a.seven, u.one)}`).toBe('\norder by\n  a.seven,\n  u.one');
     expect(`${sb}`).toBe('');
     expect(`${sb.groupBy(u.two)}`).toBe('\ngroup by\n  u.two');
     expect(`${sb}`).toBe('');
-    expect(`${sb.having(`${u.two} > 1`, `${p.six} > 6`)}`).toBe('\nhaving u.two > 1\n  and p.six > 6');
+    const expectedHaving = '\nhaving u.two > 1\n  and p.six > 6';
+    expect(`${sb.having((eb) => eb.isTrue(u.two, '>', 1).and(p.six, '>', 6))}`).toBe(expectedHaving);
     expect(`${sb}`).toBe('');
     expect(`${sb.limit(1, 54)}`).toBe('\nlimit 1, 54');
     expect(`${sb}`).toBe('');
@@ -87,10 +88,10 @@ describe('MySqlSelectBuilder', () => {
         });
       })
       .join(articles_as_a, (jb) => jb.using([Posts, Users], 'userId', 'id2'))
-      .where(`${p.six} > 6`, `${p.six} < 10`)
+      .where((eb) => eb.isTrue(p.six, '>', 6).and(p.six, '<', 10))
       .orderBy(a.seven, u.one)
       .groupBy(u.two)
-      .having(`${u.two} > 1`, `${p.six} > 6`)
+      .having((eb) => eb.isTrue(u.two, '>', 1).and(p.six, '>', 6))
       .limit(1, 54);
 
     const expectSql = `select

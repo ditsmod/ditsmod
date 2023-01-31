@@ -1,4 +1,4 @@
-import { JoinBuilder, AndOrBuilder, OpenedAndOrBuilder } from './join-builder';
+import { JoinBuilder, AndOrBuilder, OpenedAndOrBuilder, ExpressionBuilder } from './join-builder';
 
 class SelectQuery {
   select: string[] = [];
@@ -86,9 +86,13 @@ export class MySqlSelectBuilder {
     return b1;
   }
 
-  where(...expression: [string, ...string[]]) {
+  where(cb: (eb: ExpressionBuilder) => AndOrBuilder) {
     const b = new MySqlSelectBuilder();
-    b.mergeQuery(this.#query).where.push(...expression);
+    const eb = new ExpressionBuilder();
+    const ebResult = cb(eb);
+    const where = (ebResult as OpenedAndOrBuilder).expressions;
+    b.mergeQuery(this.#query);
+    b.mergeQuery({ where });
     return b;
   }
 
@@ -98,9 +102,13 @@ export class MySqlSelectBuilder {
     return b;
   }
 
-  having(...expression: [string, ...string[]]) {
+  having(cb: (eb: ExpressionBuilder) => AndOrBuilder) {
     const b = new MySqlSelectBuilder();
-    b.mergeQuery(this.#query).having.push(...expression);
+    const eb = new ExpressionBuilder();
+    const ebResult = cb(eb);
+    const having = (ebResult as OpenedAndOrBuilder).expressions;
+    b.mergeQuery(this.#query);
+    b.mergeQuery({ having });
     return b;
   }
 
@@ -133,13 +141,13 @@ export class MySqlSelectBuilder {
       sql += `\n${join.join('\n')}`;
     }
     if (where.length) {
-      sql += `\nwhere ${where.join('\n  and ')}`;
+      sql += `\nwhere ${where.join('\n')}`;
     }
     if (groupBy.length) {
       sql += `\ngroup by\n  ${groupBy.join(',\n  ')}`;
     }
     if (having.length) {
-      sql += `\nhaving ${having.join('\n  and ')}`;
+      sql += `\nhaving ${having.join('\n')}`;
     }
     if (orderBy.length) {
       sql += `\norder by\n  ${orderBy.join(',\n  ')}`;
