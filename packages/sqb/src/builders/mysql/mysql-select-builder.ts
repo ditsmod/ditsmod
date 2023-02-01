@@ -78,8 +78,6 @@ export class MySqlSelectBuilder {
     selectOrJoinCallback: JoinCallback | SelectCallback,
     joinCallback?: JoinCallback
   ) {
-    const currentBuilder = new MySqlSelectBuilder();
-    const joinBuilder = new JoinBuilder();
     if (joinCallback) {
       const innerSelectBuilder = new MySqlSelectBuilder();
       const selectQuery = (selectOrJoinCallback as SelectCallback)(innerSelectBuilder);
@@ -87,6 +85,8 @@ export class MySqlSelectBuilder {
     } else {
       joinCallback = selectOrJoinCallback as JoinCallback;
     }
+    const currentBuilder = new MySqlSelectBuilder();
+    const joinBuilder = new JoinBuilder();
     const joinQuery = joinCallback(joinBuilder);
     if (joinQuery instanceof AndOrBuilder) {
       const join = (joinQuery as OpenedAndOrBuilder).expressions;
