@@ -13,8 +13,17 @@ class SelectQuery {
   limit: string = '';
 }
 
+class MySqlSelectBuilderConfig {
+  indentation = 0;
+}
+
+type JoinType = 'join' | 'left join' | 'right join';
+type JoinCallback = (joinBuilder: JoinBuilder) => AndOrBuilder | string;
+type SelectCallback = (selectBuilder: MySqlSelectBuilder) => MySqlSelectBuilder;
+
 export class MySqlSelectBuilder {
   #query = new SelectQuery();
+  #config = new MySqlSelectBuilderConfig();
 
   protected mergeQuery(query: Partial<SelectQuery>) {
     this.#query.select.push(...(query.select || []));
@@ -40,42 +49,73 @@ export class MySqlSelectBuilder {
     return b;
   }
 
-  from(...tables: [string, ...string[]]) {
+  from(alias: string, cb: (builder: MySqlSelectBuilder) => MySqlSelectBuilder): MySqlSelectBuilder;
+  from(table: string): MySqlSelectBuilder;
+  from(tableOrAlias: string, cb?: (b: MySqlSelectBuilder) => MySqlSelectBuilder) {
     const b = new MySqlSelectBuilder();
-    b.mergeQuery(this.#query).from.push(...tables);
-    return b;
-  }
+    let from = '';
 
-  protected baseJoin(
-    joinType: 'join' | 'left join' | 'right join',
-    table: string,
-    cb: (jb: JoinBuilder) => AndOrBuilder | string
-  ) {
-    const b = new MySqlSelectBuilder();
-    const jb = new JoinBuilder();
-    const jbResult = cb(jb);
-    if (jbResult instanceof AndOrBuilder) {
-      const join = (jbResult as OpenedAndOrBuilder).expressions;
-      join[0] = `${joinType} ${table}\n  on ${join.at(0)}`;
-      b.mergeQuery(this.#query);
-      b.mergeQuery({ join });
+    if (cb) {
+      const sbResult = cb(b);
+      from = `(\n${sbResult}\n) as ${tableOrAlias}`;
     } else {
-      b.mergeQuery(this.#query);
-      b.mergeQuery({ join: [`${joinType} ${table}\n  using(${jbResult})`] });
+      from = tableOrAlias;
     }
+    b.mergeQuery(this.#query).from.push(from);
     return b;
   }
 
-  join(table: string, cb: (jb: JoinBuilder) => AndOrBuilder | string) {
-    return this.baseJoin('join', table, cb);
+  protected baseJoin(joinType: JoinType, table: string, joinCallback: JoinCallback): MySqlSelectBuilder;
+  protected baseJoin(
+    joinType: JoinType,
+    alias: string,
+    selectCallback: SelectCallback,
+    joinCallback: JoinCallback
+  ): MySqlSelectBuilder;
+  protected baseJoin(
+    joinType: JoinType,
+    tableOrAlias: string,
+    selectOrJoinCallback: JoinCallback | SelectCallback,
+    joinCallback?: JoinCallback
+  ) {
+    const currentBuilder = new MySqlSelectBuilder();
+    const joinBuilder = new JoinBuilder();
+    if (joinCallback) {
+      const innerSelectBuilder = new MySqlSelectBuilder();
+      const selectQuery = (selectOrJoinCallback as SelectCallback)(innerSelectBuilder);
+      tableOrAlias = `(\n${selectQuery}\n) as ${tableOrAlias}`;
+    } else {
+      joinCallback = selectOrJoinCallback as JoinCallback;
+    }
+    const joinQuery = joinCallback(joinBuilder);
+    if (joinQuery instanceof AndOrBuilder) {
+      const join = (joinQuery as OpenedAndOrBuilder).expressions;
+      join[0] = `${joinType} ${tableOrAlias}\n  on ${join.at(0)}`;
+      currentBuilder.mergeQuery(this.#query);
+      currentBuilder.mergeQuery({ join });
+    } else {
+      currentBuilder.mergeQuery(this.#query);
+      currentBuilder.mergeQuery({ join: [`${joinType} ${tableOrAlias}\n  using(${joinQuery})`] });
+    }
+    return currentBuilder;
   }
 
-  leftJoin(table: string, cb: (jb: JoinBuilder) => AndOrBuilder | string) {
-    return this.baseJoin('left join', table, cb);
+  join(table: string, joinCallback: JoinCallback): MySqlSelectBuilder;
+  join(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlSelectBuilder;
+  join(table: string, selectOrJoinCallback: any, joinCallback?: any) {
+    return this.baseJoin('join', table, selectOrJoinCallback, joinCallback);
   }
 
-  rightJoin(table: string, cb: (jb: JoinBuilder) => AndOrBuilder | string) {
-    return this.baseJoin('right join', table, cb);
+  leftJoin(table: string, joinCallback: JoinCallback): MySqlSelectBuilder;
+  leftJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlSelectBuilder;
+  leftJoin(table: string, selectOrJoinCallback: any, joinCallback?: any) {
+    return this.baseJoin('left join', table, selectOrJoinCallback, joinCallback);
+  }
+
+  rightJoin(table: string, joinCallback: JoinCallback): MySqlSelectBuilder;
+  rightJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlSelectBuilder;
+  rightJoin(table: string, selectOrJoinCallback: any, joinCallback?: any) {
+    return this.baseJoin('right join', table, selectOrJoinCallback, joinCallback);
   }
 
   where(cb: (eb: ExpressionBuilder) => AndOrBuilder) {
@@ -131,31 +171,33 @@ export class MySqlSelectBuilder {
 
   toString(): string {
     const { select, from, join, where, orderBy, groupBy, having, limit } = this.#query;
+    const indentation = ' '.repeat(this.#config.indentation);
+    const separator = `\n${indentation}`;
     let sql = '';
 
     if (select.length) {
-      sql += `select\n  ${select.join(',\n  ')}`;
+      sql += `${indentation}select${separator}  ${select.join(`,${separator}  `)}`;
     }
     if (from.length) {
-      sql += `\nfrom ${from.join(', ')}`;
+      sql += `${separator}from ${from.join(', ')}`;
     }
     if (join.length) {
-      sql += `\n${join.join('\n')}`;
+      sql += `${separator}${join.join(`${separator}`)}`;
     }
     if (where.length) {
-      sql += `\nwhere ${where.join('\n')}`;
+      sql += `${separator}where ${where.join(`${separator}`)}`;
     }
     if (groupBy.length) {
-      sql += `\ngroup by\n  ${groupBy.join(',\n  ')}`;
+      sql += `${separator}group by${separator}  ${groupBy.join(`,${separator}  `)}`;
     }
     if (having.length) {
-      sql += `\nhaving ${having.join('\n')}`;
+      sql += `${separator}having ${having.join(`${separator}`)}`;
     }
     if (orderBy.length) {
-      sql += `\norder by\n  ${orderBy.join(',\n  ')}`;
+      sql += `${separator}order by${separator}  ${orderBy.join(`,${separator}  `)}`;
     }
     if (limit.length) {
-      sql += `\nlimit ${limit}`;
+      sql += `${separator}limit ${limit}`;
     }
 
     return sql;

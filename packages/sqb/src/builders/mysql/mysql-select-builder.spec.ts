@@ -63,7 +63,17 @@ describe('MySqlSelectBuilder', () => {
     const sql1 = new MySqlSelectBuilder()
       .select(u.one, u.two, p.six, a.seven)
       .from(users_as_u)
+      .from('alias_lvl1', (b1) => {
+        return b1.select('one').from('alias_lvl2', (b2) => {
+          return b2.select('one', 'three').from('other');
+        });
+      })
       .join(posts_as_p, (jb) => jb.on(p.five, '=', u.two).and(p.five, '>', 6).or(u.two, '<', 8))
+      .join(
+        'm',
+        (s) => s.select('one').from('table1'),
+        (jb) => jb.on('m.five', '=', u.two).and('m.five', '>', 6).or('m.two', '<', 8)
+      )
       .leftJoin(articles_as_a, (jb) => jb.on(p.four, '=', u.two).or(a.seven, '=', 7))
       .$if(true, (sb) => {
         return sb.rightJoin(users_as_u, (jb) => {
@@ -87,11 +97,28 @@ describe('MySqlSelectBuilder', () => {
   u.two,
   p.six,
   a.seven
-from users as u
+from users as u, (
+select
+  one
+from (
+select
+  one,
+  three
+from other
+) as alias_lvl2
+) as alias_lvl1
 join posts as p
   on p.five = u.two
     and p.five > 6
     or u.two < 8
+join (
+select
+  one
+from table1
+) as m
+  on m.five = u.two
+    and m.five > 6
+    or m.two < 8
 left join articles as a
   on p.four = u.two
     or a.seven = 7
