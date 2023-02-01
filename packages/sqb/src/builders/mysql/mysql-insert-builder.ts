@@ -18,14 +18,6 @@ export class MysqlInsertBuilder {
     return this.#query;
   }
 
-  static insertInto(
-    table: string,
-    fields: string[],
-    selectCallback: (selectBuilder: MySqlSelectBuilder) => MySqlSelectBuilder
-  ) {
-    return new this().insertInto(table, fields, selectCallback);
-  }
-
   insertInto(
     table: string,
     fields: string[],

@@ -15,7 +15,7 @@ describe('MysqlInsertBuilder', () => {
   const [u, users, uAlias] = getTableMetadata(Users, 'u', true);
 
   it('case1', () => {
-    const sql = MysqlInsertBuilder.insertInto(users, [u.firstName, u.lastName], (builder) => {
+    const sql = new MysqlInsertBuilder().insertInto(users, [u.firstName, u.lastName], 'fromSelect', (builder) => {
       return builder
         .select(u.firstName, u.lastName)
         .from(users)

@@ -37,10 +37,6 @@ export class MySqlSelectBuilder {
     return this.#query;
   }
 
-  static select(...fields: [any, ...any[]]) {
-    return new this().select(...fields);
-  }
-
   select(...fields: [any, ...any[]]) {
     fields.forEach((f, i) => {
       if (typeof f != 'string') {
