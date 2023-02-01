@@ -12,21 +12,13 @@ describe('MysqlInsertBuilder', () => {
     lastName: string;
   }
 
-  @table({ tableName: 'posts' })
-  class Posts {
-    postId: number;
-    authodId: number;
-    postBody: string;
-  }
-
-  const [u, users_as_u, uAlias] = getTableMetadata(Users, 'u');
-  const [p, posts_as_p, pAlias] = getTableMetadata(Posts, 'p');
+  const [u, users, uAlias] = getTableMetadata(Users, 'u', true);
 
   it('case1', () => {
-    const sql = MysqlInsertBuilder.insertInto(users_as_u, [u.firstName, u.lastName], (builder) => {
+    const sql = MysqlInsertBuilder.insertInto(users, [u.firstName, u.lastName], (builder) => {
       return builder
         .select(u.firstName, u.lastName)
-        .from(users_as_u)
+        .from(users)
         .where((eb) => eb.isTrue(u.userId, '=', 1));
     });
 

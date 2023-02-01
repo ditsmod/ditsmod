@@ -2,9 +2,10 @@ import { Class, reflector } from '@ditsmod/core';
 
 import { TableConfig } from './types';
 
-export function getTableMetadata<T extends Class>(Cls: T, alias: string): TableMetadata<T> {
+export function getTableMetadata<T extends Class>(Cls: T, alias: string, withoutAlias?: boolean): TableMetadata<T> {
   const config: TableConfig | undefined = reflector.getClassMetadata(Cls)[0]?.value;
-  const tableNameWithAlias = `${config?.tableName || Cls.name} as ${alias}`;
+  const className = config?.tableName || Cls.name;
+  const tableNameWithAlias = withoutAlias ? `${className}` : `${className} as ${alias}`;
 
   const newObj: any = {
     toString() {
@@ -13,7 +14,7 @@ export function getTableMetadata<T extends Class>(Cls: T, alias: string): TableM
   };
 
   for (const key in new Cls()) {
-    newObj[key] = `${alias}.${key}`;
+    newObj[key] = withoutAlias ? key : `${alias}.${key}`;
   }
 
   return [newObj, tableNameWithAlias, alias];
