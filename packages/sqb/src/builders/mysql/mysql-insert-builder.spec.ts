@@ -9,13 +9,35 @@ describe('MysqlInsertBuilder', () => {
   class Users {
     userId: number;
     firstName: string;
+    middleName: string;
     lastName: string;
   }
 
   const [u, users, uAlias] = getTableMetadata(Users, 'u', true);
 
-  it('case1', () => {
-    const sql = new MysqlInsertBuilder().insertInto(users, [u.firstName, u.lastName], (builder) => {
+  it('insert from values as array of arrays', () => {
+    const sql = new MysqlInsertBuilder().insertFromValues(
+      users,
+      [u.firstName, u.middleName, u.lastName],
+      [
+        ["'Kostia'", "'middleName'", "'Tretiak'"],
+        ["'FirstName'", "'middleName'", "'LastName'"],
+      ]
+    );
+
+    console.log(sql.toString());
+  });
+
+  it('insert from values with builder', () => {
+    const sql = new MysqlInsertBuilder().insertFromValues(users, [u.firstName, u.lastName], (builder) => {
+      return builder.row("'Kostia'", "'Tretiak'").row("'FirstName'", "'LastName'");
+    });
+
+    console.log(sql.toString());
+  });
+
+  it('insert from select', () => {
+    const sql = new MysqlInsertBuilder().insertFromSelect(users, [u.firstName, u.lastName], (builder) => {
       return builder
         .select(u.firstName, u.lastName)
         .from(users)
