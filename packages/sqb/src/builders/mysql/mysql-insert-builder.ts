@@ -104,10 +104,10 @@ export class MysqlInsertBuilder {
 }
 
 class ValuesBuilder {
-  protected rows: any[][] = [];
+  protected rows: (string | number)[][] = [];
   protected index = -1;
 
-  row(...row: any[]): ValuesBuilder {
+  row(...row: (string | number)[]): ValuesBuilder {
     const b = new ValuesBuilder();
     b.rows.push(...this.rows, row);
     return b;
