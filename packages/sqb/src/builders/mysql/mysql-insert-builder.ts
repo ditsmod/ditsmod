@@ -4,7 +4,7 @@ class InsertQuery {
   table: string = '';
   fields: string[] = [];
   set: string[] = [];
-  values: any[][] = [];
+  values: string[] = [];
   ignore: boolean = false;
   selectQuery: string = '';
 }
@@ -32,7 +32,7 @@ export class MysqlInsertBuilder {
     return insertBuilder;
   }
 
-  insertFromValues(table: string, fields: string[], values: any[][]): MysqlInsertBuilder;
+  insertFromValues(table: string, fields: string[], values: (string | number)[][]): MysqlInsertBuilder;
   insertFromValues(
     table: string,
     fields: string[],
@@ -41,17 +41,19 @@ export class MysqlInsertBuilder {
   insertFromValues(
     table: string,
     fields: string[],
-    arrayOrCallback: any[][] | ((valuesBuilder: ValuesBuilder) => ValuesBuilder)
+    arrayOrCallback: (string | number)[][] | ((valuesBuilder: ValuesBuilder) => ValuesBuilder)
   ) {
     const insertBuilder = new MysqlInsertBuilder();
     const insertQuery = insertBuilder.mergeQuery(this.#query);
     insertQuery.table = table;
     insertQuery.fields.push(...fields);
+    let values: (string | number)[][];
     if (Array.isArray(arrayOrCallback)) {
-      insertQuery.values.push(...arrayOrCallback);
+      values = arrayOrCallback;
     } else {
-      insertQuery.values.push(...arrayOrCallback(new ValuesBuilder()));
+      values = [...arrayOrCallback(new ValuesBuilder())];
     }
+    values.forEach(tuple => insertQuery.values.push(`(${tuple.join(', ')})`));
     return insertBuilder;
   }
 
@@ -93,7 +95,7 @@ export class MysqlInsertBuilder {
     if (set.length) {
       sql += `\nset ${set.join(', ')}`;
     } else if (values.length) {
-      sql += `\nvalues (${values.map((v) => v.join(', ')).join('), (')})`;
+      sql += `\nvalues ${values.join(', ')}`;
     } else if (selectQuery.length) {
       sql += `\n${selectQuery}`;
     }
