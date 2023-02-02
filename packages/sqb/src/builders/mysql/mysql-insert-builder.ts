@@ -3,7 +3,7 @@ import { MySqlSelectBuilder } from './mysql-select-builder';
 class InsertQuery {
   table: string = '';
   fields: string[] = [];
-  set: any[][] = [];
+  set: string[] = [];
   values: any[][] = [];
   ignore: boolean = false;
   selectQuery: string = '';
@@ -27,7 +27,7 @@ export class MysqlInsertBuilder {
     const insertQuery = insertBuilder.mergeQuery(this.#query);
     insertQuery.table = table;
     for (const prop in obj) {
-      insertQuery.set.push([prop, obj[prop]]);
+      insertQuery.set.push(`${prop} = ${obj[prop]}`);
     }
     return insertBuilder;
   }
@@ -91,7 +91,7 @@ export class MysqlInsertBuilder {
       sql += ` (\n  ${fields.join(',\n  ')}\n)`;
     }
     if (set.length) {
-      sql += `\nset ${set.map(pair => pair.join(' = ')).join(', ')}`;
+      sql += `\nset ${set.join(', ')}`;
     } else if (values.length) {
       sql += `\nvalues (${values.map((v) => v.join(', ')).join('), (')})`;
     } else if (selectQuery.length) {
