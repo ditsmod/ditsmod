@@ -60,7 +60,8 @@ describe('MySqlSelectBuilder', () => {
   });
 
   it('should works all features', () => {
-    const sql1 = new MySqlSelectBuilder().select(u.one, u.two, p.six, a.seven)
+    const sql1 = new MySqlSelectBuilder()
+      .select(u.one, u.two, p.six, a.seven)
       .from(users_as_u)
       .from('alias_lvl1', (b1) => {
         return b1.select('one').from('alias_lvl2', (b2) => {
