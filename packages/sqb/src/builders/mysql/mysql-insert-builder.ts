@@ -1,8 +1,8 @@
 import { MySqlSelectBuilder } from './mysql-select-builder';
 
 class InsertQuery {
-  insertIntoTable: string = '';
-  insertIntoFields: string[] = [];
+  table: string = '';
+  fields: string[] = [];
   ignore: boolean = false;
   selectQuery: string = '';
 }
@@ -11,8 +11,8 @@ export class MysqlInsertBuilder {
   #query = new InsertQuery();
 
   protected mergeQuery(query: Partial<InsertQuery>) {
-    this.#query.insertIntoTable = query.insertIntoTable || '';
-    this.#query.insertIntoFields.push(...(query.insertIntoFields || []));
+    this.#query.table = query.table || '';
+    this.#query.fields.push(...(query.fields || []));
     this.#query.ignore = query.ignore || false;
     this.#query.selectQuery = query.selectQuery || '';
     return this.#query;
@@ -25,8 +25,8 @@ export class MysqlInsertBuilder {
   ) {
     const insertBuilder = new MysqlInsertBuilder();
     const insertQuery = insertBuilder.mergeQuery(this.#query);
-    insertQuery.insertIntoTable = table;
-    insertQuery.insertIntoFields.push(...fields);
+    insertQuery.table = table;
+    insertQuery.fields.push(...fields);
     insertQuery.selectQuery = selectCallback(new MySqlSelectBuilder()).toString();
     return insertBuilder;
   }
@@ -40,18 +40,18 @@ export class MysqlInsertBuilder {
   onDuplicateKeyUpdate(table: string) {}
 
   toString(): string {
-    const { insertIntoTable, insertIntoFields, ignore, selectQuery } = this.#query;
+    const { table, fields, ignore, selectQuery } = this.#query;
     let sql = '';
 
-    if (insertIntoTable) {
+    if (table) {
       sql += 'insert';
       if (ignore) {
         sql += ' ignore';
       }
-      sql += ` into ${insertIntoTable}`;
+      sql += ` into ${table}`;
     }
-    if (insertIntoFields.length) {
-      sql += `\n  ${insertIntoFields.join(',\n  ')}`;
+    if (fields.length) {
+      sql += `\n  ${fields.join(',\n  ')}`;
     }
     if (selectQuery.length) {
       sql += `\n${selectQuery}`;
