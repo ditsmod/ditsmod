@@ -2,6 +2,7 @@ import { OneSqlExpression } from '../../types';
 
 export class AndOrBuilder {
   protected expressions: string[] = [];
+  protected index = -1;
 
   constructor(expressions: string[] = [], protected spaces = 2) {
     this.expressions.push(...expressions);
@@ -18,8 +19,12 @@ export class AndOrBuilder {
     b.expressions.push(`${' '.repeat(this.spaces - 1)} or ${clause.join(' ')}`);
     return b;
   }
-}
 
-export class OpenedAndOrBuilder extends AndOrBuilder {
-  declare expressions: string[];
+  protected [Symbol.iterator]() {
+    return this;
+  }
+
+  protected next() {
+    return { value: this.expressions[++this.index], done: !(this.index in this.expressions) };
+  }
 }

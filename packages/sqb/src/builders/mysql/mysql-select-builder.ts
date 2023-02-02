@@ -1,4 +1,4 @@
-import { AndOrBuilder, OpenedAndOrBuilder } from './and-or-builder';
+import { AndOrBuilder } from './and-or-builder';
 import { ExpressionBuilder } from './expression-builder';
 import { JoinBuilder } from './join-builder';
 
@@ -89,7 +89,7 @@ export class MySqlSelectBuilder {
     const joinBuilder = new JoinBuilder();
     const joinQuery = joinCallback(joinBuilder);
     if (joinQuery instanceof AndOrBuilder) {
-      const join = (joinQuery as OpenedAndOrBuilder).expressions;
+      const join = [...joinQuery];
       join[0] = `${joinType} ${tableOrAlias}\n  on ${join.at(0)}`;
       currentBuilder.mergeQuery(this.#query);
       currentBuilder.mergeQuery({ join });
@@ -121,10 +121,8 @@ export class MySqlSelectBuilder {
   where(cb: (eb: ExpressionBuilder) => AndOrBuilder) {
     const b = new MySqlSelectBuilder();
     const eb = new ExpressionBuilder();
-    const ebResult = cb(eb);
-    const where = (ebResult as OpenedAndOrBuilder).expressions;
     b.mergeQuery(this.#query);
-    b.mergeQuery({ where });
+    b.mergeQuery({ where: [...cb(eb)] });
     return b;
   }
 
@@ -137,10 +135,8 @@ export class MySqlSelectBuilder {
   having(cb: (eb: ExpressionBuilder) => AndOrBuilder) {
     const b = new MySqlSelectBuilder();
     const eb = new ExpressionBuilder();
-    const ebResult = cb(eb);
-    const having = (ebResult as OpenedAndOrBuilder).expressions;
     b.mergeQuery(this.#query);
-    b.mergeQuery({ having });
+    b.mergeQuery({ having: [...cb(eb)] });
     return b;
   }
 
