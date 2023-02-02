@@ -3,6 +3,7 @@ import { MySqlSelectBuilder } from './mysql-select-builder';
 class InsertQuery {
   table: string = '';
   fields: string[] = [];
+  set: any[][] = [];
   values: any[][] = [];
   ignore: boolean = false;
   selectQuery: string = '';
@@ -13,11 +14,22 @@ export class MysqlInsertBuilder {
 
   protected mergeQuery(query: Partial<InsertQuery>) {
     this.#query.table = query.table || '';
-    this.#query.fields.push(...(query.fields || []));
+    this.#query.fields = query.fields || [];
+    this.#query.set.push(...(query.set || []));
     this.#query.values.push(...(query.values || []));
     this.#query.ignore = query.ignore || false;
     this.#query.selectQuery = query.selectQuery || '';
     return this.#query;
+  }
+
+  insertFromSet<T extends object>(table: string, obj: T) {
+    const insertBuilder = new MysqlInsertBuilder();
+    const insertQuery = insertBuilder.mergeQuery(this.#query);
+    insertQuery.table = table;
+    for (const prop in obj) {
+      insertQuery.set.push([prop, obj[prop]]);
+    }
+    return insertBuilder;
   }
 
   insertFromValues(table: string, fields: string[], values: any[][]): MysqlInsertBuilder;
@@ -65,7 +77,7 @@ export class MysqlInsertBuilder {
   onDuplicateKeyUpdate(table: string) {}
 
   toString(): string {
-    const { table, fields, ignore, values, selectQuery } = this.#query;
+    const { table, fields, ignore, set, values, selectQuery } = this.#query;
     let sql = '';
 
     if (table) {
@@ -78,7 +90,9 @@ export class MysqlInsertBuilder {
     if (fields.length) {
       sql += ` (\n  ${fields.join(',\n  ')}\n)`;
     }
-    if (values.length) {
+    if (set.length) {
+      sql += `\nset ${set.map(pair => pair.join(' = ')).join(', ')}`;
+    } else if (values.length) {
       sql += `\nvalues (${values.map((v) => v.join(', ')).join('), (')})`;
     } else if (selectQuery.length) {
       sql += `\n${selectQuery}`;

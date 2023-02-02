@@ -15,6 +15,16 @@ describe('MysqlInsertBuilder', () => {
 
   const [u, users, uAlias] = getTableMetadata(Users, 'u', true);
 
+  it('insert from set', () => {
+    const sql = new MysqlInsertBuilder().insertFromSet<Partial<Users>>(users, {
+      firstName: "'Kostia'",
+      lastName: "'Tretiak'",
+    });
+
+    expect(sql.toString()).toBe(`insert into users
+set firstName = 'Kostia', lastName = 'Tretiak'`);
+  });
+
   it('insert from values as array of arrays', () => {
     const sql = new MysqlInsertBuilder().insertFromValues(
       users,
@@ -25,7 +35,12 @@ describe('MysqlInsertBuilder', () => {
       ]
     );
 
-    console.log(sql.toString());
+    expect(sql.toString()).toBe(`insert into users (
+  firstName,
+  middleName,
+  lastName
+)
+values ('Kostia', 'middleName', 'Tretiak'), ('FirstName', 'middleName', 'LastName')`);
   });
 
   it('insert from values with builder', () => {
@@ -33,7 +48,11 @@ describe('MysqlInsertBuilder', () => {
       return builder.row("'Kostia'", "'Tretiak'").row("'FirstName'", "'LastName'");
     });
 
-    console.log(sql.toString());
+    expect(sql.toString()).toBe(`insert into users (
+  firstName,
+  lastName
+)
+values ('Kostia', 'Tretiak'), ('FirstName', 'LastName')`);
   });
 
   it('insert from select', () => {
@@ -44,6 +63,14 @@ describe('MysqlInsertBuilder', () => {
         .where((eb) => eb.isTrue(u.userId, '=', 1));
     });
 
-    console.log(sql.toString());
+    expect(sql.toString()).toBe(`insert into users (
+  firstName,
+  lastName
+)
+select
+  firstName,
+  lastName
+from users
+where userId = 1`);
   });
 });
