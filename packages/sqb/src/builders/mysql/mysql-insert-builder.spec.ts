@@ -69,6 +69,25 @@ on duplicate key update firstName = 'Mostia'`);
 values ('Kostia', 'middleName', 'Tretiak'), ('FirstName', 'middleName', 'LastName')`);
   });
 
+  it('insert from values as array of arrays with "ON DUPLICATE KEY UPDATE" and alias', () => {
+    const sql = new MysqlInsertBuilder().insertFromValues(
+      users,
+      [u.firstName, u.middleName, u.lastName],
+      [
+        ["'Kostia'", "'middleName'", "'Tretiak'"],
+        ["'FirstName'", "'middleName'", "'LastName'"],
+      ]
+    ).onDuplicateKeyUpdate('new', { firstName: 'Mostia' });
+
+    expect(sql.toString()).toBe(`insert into users (
+  firstName,
+  middleName,
+  lastName
+)
+values ('Kostia', 'middleName', 'Tretiak'), ('FirstName', 'middleName', 'LastName') as new
+on duplicate key update firstName = Mostia`);
+  });
+
   it('insert from values with builder', () => {
     const sql = new MysqlInsertBuilder().insertFromValues(users, [u.firstName, u.lastName], (builder) => {
       return builder.row("'Kostia'", "'Tretiak'").row("'FirstName'", "'LastName'");

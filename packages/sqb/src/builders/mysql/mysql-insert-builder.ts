@@ -112,12 +112,6 @@ export class MysqlInsertBuilder<T extends object = object> {
     }
     if (set.length) {
       sql += `\nset ${set.join(', ')}`;
-      if (alias.length) {
-        sql += ` as ${alias}`;
-      }
-      if (onDuplicateKeyUpdate.length) {
-        sql += `\non duplicate key update ${onDuplicateKeyUpdate.join(', ')}`;
-      }
     } else if (values.length) {
       sql += `\nvalues ${values.join(', ')}`;
     } else if (selectQuery.length) {
@@ -125,6 +119,15 @@ export class MysqlInsertBuilder<T extends object = object> {
         sql += `\nselect * from (\n${selectQuery}\n) as ${alias}`;
       } else {
         sql += `\n${selectQuery}`;
+      }
+      if (onDuplicateKeyUpdate.length) {
+        sql += `\non duplicate key update ${onDuplicateKeyUpdate.join(', ')}`;
+      }
+    }
+
+    if (set.length || values.length) {
+      if (alias.length) {
+        sql += ` as ${alias}`;
       }
       if (onDuplicateKeyUpdate.length) {
         sql += `\non duplicate key update ${onDuplicateKeyUpdate.join(', ')}`;
