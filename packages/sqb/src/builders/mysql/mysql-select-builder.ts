@@ -37,13 +37,7 @@ export class MySqlSelectBuilder {
     return this.#query;
   }
 
-  select(...fields: [any, ...any[]]) {
-    fields.forEach((f, i) => {
-      if (typeof f != 'string') {
-        const msg = `SelectBuilder: failed query select building: element with ${i} index must have string type (got ${typeof f})`;
-        throw new TypeError(msg);
-      }
-    });
+  select(...fields: [string, ...string[]]) {
     const b = new MySqlSelectBuilder();
     b.mergeQuery(this.#query).select.push(...fields);
     return b;
@@ -126,7 +120,7 @@ export class MySqlSelectBuilder {
     return b;
   }
 
-  groupBy(...fields: [any, ...any[]]) {
+  groupBy(...fields: [string, ...string[]]) {
     const b = new MySqlSelectBuilder();
     b.mergeQuery(this.#query).groupBy.push(...fields);
     return b;
@@ -140,7 +134,7 @@ export class MySqlSelectBuilder {
     return b;
   }
 
-  orderBy(...fields: [any, ...any[]]) {
+  orderBy(...fields: [string, ...string[]]) {
     const b = new MySqlSelectBuilder();
     b.mergeQuery(this.#query).orderBy.push(...fields);
     return b;
