@@ -26,7 +26,7 @@ export class MysqlInsertBuilder<T extends object = object> {
     return this.#query;
   }
 
-  insertFromSet<T extends object>(table: string, obj: T) {
+  insertFromSet<T extends object>(table: string, obj: T): MysqlInsertBuilder<T> {
     const insertBuilder = new MysqlInsertBuilder<T>();
     const insertQuery = insertBuilder.mergeQuery(this.#query);
     insertQuery.table = table;
@@ -36,18 +36,22 @@ export class MysqlInsertBuilder<T extends object = object> {
     return insertBuilder;
   }
 
-  insertFromValues(table: string, fields: string[], values: (string | number)[][]): MysqlInsertBuilder;
-  insertFromValues(
+  insertFromValues<T extends object>(
     table: string,
-    fields: string[],
+    fields: (keyof T)[],
+    values: (string | number)[][]
+  ): MysqlInsertBuilder<T>;
+  insertFromValues<T extends object>(
+    table: string,
+    fields: (keyof T)[],
     valuesCallback: (valuesBuilder: ValuesBuilder) => ValuesBuilder
-  ): MysqlInsertBuilder;
-  insertFromValues(
+  ): MysqlInsertBuilder<T>;
+  insertFromValues<T extends object>(
     table: string,
-    fields: string[],
+    fields: Extract<keyof T, string>[],
     arrayOrCallback: (string | number)[][] | ((valuesBuilder: ValuesBuilder) => ValuesBuilder)
   ) {
-    const insertBuilder = new MysqlInsertBuilder();
+    const insertBuilder = new MysqlInsertBuilder<T>();
     const insertQuery = insertBuilder.mergeQuery(this.#query);
     insertQuery.table = table;
     insertQuery.fields.push(...fields);
@@ -61,12 +65,12 @@ export class MysqlInsertBuilder<T extends object = object> {
     return insertBuilder;
   }
 
-  insertFromSelect(
+  insertFromSelect<T extends object>(
     table: string,
-    fields: string[],
+    fields: Extract<keyof T, string>[],
     selectCallback: (selectBuilder: MySqlSelectBuilder) => MySqlSelectBuilder
-  ) {
-    const insertBuilder = new MysqlInsertBuilder();
+  ): MysqlInsertBuilder<T> {
+    const insertBuilder = new MysqlInsertBuilder<T>();
     const insertQuery = insertBuilder.mergeQuery(this.#query);
     insertQuery.table = table;
     insertQuery.fields.push(...fields);
@@ -75,7 +79,7 @@ export class MysqlInsertBuilder<T extends object = object> {
   }
 
   ignore() {
-    const insertBuilder = new MysqlInsertBuilder();
+    const insertBuilder = new MysqlInsertBuilder<T>();
     insertBuilder.mergeQuery(this.#query).ignore = true;
     return insertBuilder;
   }
