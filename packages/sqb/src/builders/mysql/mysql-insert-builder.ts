@@ -121,7 +121,14 @@ export class MysqlInsertBuilder<T extends object = object> {
     } else if (values.length) {
       sql += `\nvalues ${values.join(', ')}`;
     } else if (selectQuery.length) {
-      sql += `\n${selectQuery}`;
+      if (alias.length) {
+        sql += `\nselect * from (\n${selectQuery}\n) as ${alias}`;
+      } else {
+        sql += `\n${selectQuery}`;
+      }
+      if (onDuplicateKeyUpdate.length) {
+        sql += `\non duplicate key update ${onDuplicateKeyUpdate.join(', ')}`;
+      }
     }
     return sql;
   }

@@ -33,7 +33,7 @@ set firstName = 'Kostia', lastName = 'Tretiak'`);
       })
       .onDuplicateKeyUpdate({ firstName: "'Mostia'" });
 
-        expect(sql.toString()).toBe(`insert into users
+    expect(sql.toString()).toBe(`insert into users
 set firstName = 'Kostia', lastName = 'Tretiak'
 on duplicate key update firstName = 'Mostia'`);
   });
@@ -46,7 +46,7 @@ on duplicate key update firstName = 'Mostia'`);
       })
       .onDuplicateKeyUpdate('new', { firstName: "'Mostia'" });
 
-      expect(sql.toString()).toBe(`insert into users
+    expect(sql.toString()).toBe(`insert into users
 set firstName = 'Kostia', lastName = 'Tretiak' as new
 on duplicate key update firstName = 'Mostia'`);
   });
@@ -98,5 +98,29 @@ select
   lastName
 from users
 where userId = 1`);
+  });
+
+  it('insert from select with "ON DUPLICATE KEY UPDATE" and alias', () => {
+    const sql = new MysqlInsertBuilder()
+      .insertFromSelect(users, [u.firstName, u.lastName], (builder) => {
+        return builder
+          .select(u.firstName, u.lastName)
+          .from(users)
+          .where((eb) => eb.isTrue(u.userId, '=', 1));
+      })
+      .onDuplicateKeyUpdate('new', { firstName: 'Mostia' });
+
+        expect(sql.toString()).toBe(`insert into users (
+  firstName,
+  lastName
+)
+select * from (
+select
+  firstName,
+  lastName
+from users
+where userId = 1
+) as new
+on duplicate key update firstName = Mostia`);
   });
 });
