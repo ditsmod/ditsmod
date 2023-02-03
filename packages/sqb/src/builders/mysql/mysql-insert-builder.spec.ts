@@ -25,6 +25,32 @@ describe('MysqlInsertBuilder', () => {
 set firstName = 'Kostia', lastName = 'Tretiak'`);
   });
 
+  it('insert from set with "ON DUPLICATE KEY UPDATE"', () => {
+    const sql = new MysqlInsertBuilder()
+      .insertFromSet<Partial<Users>>(users, {
+        firstName: "'Kostia'",
+        lastName: "'Tretiak'",
+      })
+      .onDuplicateKeyUpdate({ firstName: "'Mostia'" });
+
+        expect(sql.toString()).toBe(`insert into users
+set firstName = 'Kostia', lastName = 'Tretiak'
+on duplicate key update firstName = 'Mostia'`);
+  });
+
+  it('insert from set with "ON DUPLICATE KEY UPDATE" with alias', () => {
+    const sql = new MysqlInsertBuilder()
+      .insertFromSet<Partial<Users>>(users, {
+        firstName: "'Kostia'",
+        lastName: "'Tretiak'",
+      })
+      .onDuplicateKeyUpdate('new', { firstName: "'Mostia'" });
+
+      expect(sql.toString()).toBe(`insert into users
+set firstName = 'Kostia', lastName = 'Tretiak' as new
+on duplicate key update firstName = 'Mostia'`);
+  });
+
   it('insert from values as array of arrays', () => {
     const sql = new MysqlInsertBuilder().insertFromValues(
       users,

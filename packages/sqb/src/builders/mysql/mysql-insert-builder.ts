@@ -7,9 +7,11 @@ class InsertQuery {
   values: string[] = [];
   ignore: boolean = false;
   selectQuery: string = '';
+  alias: string = '';
+  onDuplicateKeyUpdate: string[] = [];
 }
 
-export class MysqlInsertBuilder {
+export class MysqlInsertBuilder<T extends object = object> {
   #query = new InsertQuery();
 
   protected mergeQuery(query: Partial<InsertQuery>) {
@@ -19,11 +21,13 @@ export class MysqlInsertBuilder {
     this.#query.values.push(...(query.values || []));
     this.#query.ignore = query.ignore || false;
     this.#query.selectQuery = query.selectQuery || '';
+    this.#query.alias = query.alias || '';
+    this.#query.onDuplicateKeyUpdate.push(...(query.onDuplicateKeyUpdate || []));
     return this.#query;
   }
 
   insertFromSet<T extends object>(table: string, obj: T) {
-    const insertBuilder = new MysqlInsertBuilder();
+    const insertBuilder = new MysqlInsertBuilder<T>();
     const insertQuery = insertBuilder.mergeQuery(this.#query);
     insertQuery.table = table;
     for (const prop in obj) {
@@ -53,7 +57,7 @@ export class MysqlInsertBuilder {
     } else {
       values = [...arrayOrCallback(new ValuesBuilder())];
     }
-    values.forEach(tuple => insertQuery.values.push(`(${tuple.join(', ')})`));
+    values.forEach((tuple) => insertQuery.values.push(`(${tuple.join(', ')})`));
     return insertBuilder;
   }
 
@@ -76,10 +80,24 @@ export class MysqlInsertBuilder {
     return insertBuilder;
   }
 
-  onDuplicateKeyUpdate(table: string) {}
+  onDuplicateKeyUpdate(obj: Partial<T>): MysqlInsertBuilder<T>;
+  onDuplicateKeyUpdate(alias: string, obj: Partial<T>): MysqlInsertBuilder<T>;
+  onDuplicateKeyUpdate(aliasOrObj: string | Partial<T>, obj?: Partial<T>) {
+    const insertBuilder = new MysqlInsertBuilder<T>();
+    const insertQuery = insertBuilder.mergeQuery(this.#query);
+    if (obj) {
+      insertQuery.alias = aliasOrObj as string;
+    } else {
+      obj = aliasOrObj as Partial<T>;
+    }
+    for (const prop in obj) {
+      insertQuery.onDuplicateKeyUpdate.push(`${prop} = ${obj[prop]}`);
+    }
+    return insertBuilder;
+  }
 
   toString(): string {
-    const { table, fields, ignore, set, values, selectQuery } = this.#query;
+    const { table, fields, ignore, set, values, selectQuery, alias, onDuplicateKeyUpdate } = this.#query;
     let sql = '';
 
     if (table) {
@@ -94,6 +112,12 @@ export class MysqlInsertBuilder {
     }
     if (set.length) {
       sql += `\nset ${set.join(', ')}`;
+      if (alias.length) {
+        sql += ` as ${alias}`;
+      }
+      if (onDuplicateKeyUpdate.length) {
+        sql += `\non duplicate key update ${onDuplicateKeyUpdate.join(', ')}`;
+      }
     } else if (values.length) {
       sql += `\nvalues ${values.join(', ')}`;
     } else if (selectQuery.length) {
