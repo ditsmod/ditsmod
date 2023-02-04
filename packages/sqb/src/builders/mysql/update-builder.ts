@@ -150,7 +150,7 @@ export class UpdateBuilder {
     let sql = '';
 
     if (update.length) {
-      sql += `${separator}update ${update.join(', ')}`;
+      sql += `update ${update.join(', ')}`;
     }
     if (join.length) {
       sql += `${separator}${join.join(`${separator}`)}`;

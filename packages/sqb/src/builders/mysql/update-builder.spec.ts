@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 
 import { getTableMetadata } from '../../utils';
-import { MySqlSelectBuilder } from './mysql-select-builder';
 import { table } from '../../decorators/table';
 import { UpdateBuilder } from './update-builder';
 
@@ -60,9 +59,38 @@ describe('UpdateBuilder', () => {
       .orderBy(a.seven, u.one)
       .limit(1, 54);
 
-    const expectSql = '';
+    const expectSql = `update users as u, (
+select
+  one
+from some_table
+) as inner_select
+join posts as p
+  on p.five = u.two
+    and p.five > 6
+    or u.two < 8
+join (
+select
+  one
+from table1
+) as m
+  on m.five = u.two
+    and m.five > 6
+    or m.two < 8
+left join articles as a
+  on p.four = u.two
+    or a.seven = 7
+right join users as u
+  on u.one = p.userId
+join articles as a
+  using(userId, id2)
+set one = someone
+where p.six > 6
+  and p.six < 10
+order by
+  a.seven,
+  u.one
+limit 1, 54`;
 
-    // expect(`${sql1}`).toBe(expectSql);
-    console.log(sql1.toString());
+    expect(`${sql1}`).toBe(expectSql);
   });
 });
