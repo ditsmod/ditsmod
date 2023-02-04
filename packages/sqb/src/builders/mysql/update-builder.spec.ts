@@ -1,0 +1,68 @@
+import 'reflect-metadata';
+
+import { getTableMetadata } from '../../utils';
+import { MySqlSelectBuilder } from './mysql-select-builder';
+import { table } from '../../decorators/table';
+import { UpdateBuilder } from './update-builder';
+
+describe('UpdateBuilder', () => {
+  @table({ tableName: 'users' })
+  class Users {
+    userId: number;
+    id2: number;
+    one: string;
+    two: number;
+    three: string;
+  }
+
+  @table({ tableName: 'posts' })
+  class Posts {
+    userId: number;
+    id2: number;
+    four: string;
+    five: number;
+    six: string;
+  }
+
+  @table({ tableName: 'articles' })
+  class Articles {
+    seven: object;
+  }
+
+  const [u, users_as_u, uAlias] = getTableMetadata(Users, 'u');
+  const [p, posts_as_p, pAlias] = getTableMetadata(Posts, 'p');
+  const [a, articles_as_a, aAlias] = getTableMetadata(Articles, 'a');
+
+  it('should works all features', () => {
+    const sql1 = new UpdateBuilder()
+      .update(users_as_u)
+      .update('inner_select', (selectBuilder) => selectBuilder.select('one').from('some_table'))
+      .join(posts_as_p, (jb) => jb.on(p.five, '=', u.two).and(p.five, '>', 6).or(u.two, '<', 8))
+      .join(
+        'm',
+        (s) => s.select('one').from('table1'),
+        (jb) => jb.on('m.five', '=', u.two).and('m.five', '>', 6).or('m.two', '<', 8)
+      )
+      .leftJoin(articles_as_a, (jb) => jb.on(p.four, '=', u.two).or(a.seven, '=', 7))
+      .$if(true, (selectBuilder) => {
+        return selectBuilder.rightJoin(users_as_u, (joinBuilder) => {
+          return joinBuilder.on(u.one, '=', p.userId);
+        });
+      })
+      .$if(false, (selectBuilder) => {
+        return selectBuilder.rightJoin(users_as_u, (joinBuilder) => {
+          return joinBuilder.on(u.one, '=', p.userId);
+        });
+      })
+      .join(articles_as_a, (jb) => jb.using([Posts, Users], 'userId', 'id2'))
+      .where((eb) => eb.isTrue(p.six, '>', 6).and(p.six, '<', 10))
+      .set<Partial<Users>>({ one: 'someone' })
+      .orderBy(a.seven, u.one)
+      .limit(1, 54);
+
+    const expectSql = '';
+
+    // expect(`${sql1}`).toBe(expectSql);
+    console.log(sql1.toString());
+  });
+});
