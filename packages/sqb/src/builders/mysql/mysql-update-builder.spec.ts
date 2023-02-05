@@ -2,9 +2,9 @@ import 'reflect-metadata';
 
 import { getTableMetadata } from '../../utils';
 import { table } from '../../decorators/table';
-import { UpdateBuilder } from './update-builder';
+import { MySqlUpdateBuilder } from './mysql-update-builder';
 
-describe('UpdateBuilder', () => {
+describe('MySqlUpdateBuilder', () => {
   @table({ tableName: 'users' })
   class Users {
     userId: number;
@@ -33,7 +33,7 @@ describe('UpdateBuilder', () => {
   const [a, articles_as_a, aAlias] = getTableMetadata(Articles, 'a');
 
   it('should works all features', () => {
-    const sql1 = new UpdateBuilder()
+    const sql1 = new MySqlUpdateBuilder()
       .update(users_as_u)
       .update('inner_select', (selectBuilder) => selectBuilder.select('one').from('some_table'))
       .join(posts_as_p, (jb) => jb.on(p.five, '=', u.two).and(p.five, '>', 6).or(u.two, '<', 8))

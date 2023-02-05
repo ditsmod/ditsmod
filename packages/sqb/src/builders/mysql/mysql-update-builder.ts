@@ -20,7 +20,7 @@ type JoinType = 'join' | 'left join' | 'right join';
 type JoinCallback = (joinBuilder: JoinBuilder) => AndOrBuilder | string;
 type SelectCallback = (selectBuilder: MySqlSelectBuilder) => MySqlSelectBuilder;
 
-export class UpdateBuilder {
+export class MySqlUpdateBuilder {
   #query = new UpdateQuery();
   #config = new UpdateBuilderConfig();
 
@@ -34,10 +34,10 @@ export class UpdateBuilder {
     return this.#query;
   }
 
-  update(alias: string, selectCallback: SelectCallback): UpdateBuilder;
-  update(table: string): UpdateBuilder;
+  update(alias: string, selectCallback: SelectCallback): MySqlUpdateBuilder;
+  update(table: string): MySqlUpdateBuilder;
   update(tableOrAlias: string, selectCallback?: SelectCallback) {
-    const builder = new UpdateBuilder();
+    const builder = new MySqlUpdateBuilder();
     let update = '';
 
     if (selectCallback) {
@@ -50,13 +50,13 @@ export class UpdateBuilder {
     return builder;
   }
 
-  protected baseJoin(joinType: JoinType, table: string, joinCallback: JoinCallback): UpdateBuilder;
+  protected baseJoin(joinType: JoinType, table: string, joinCallback: JoinCallback): MySqlUpdateBuilder;
   protected baseJoin(
     joinType: JoinType,
     alias: string,
     selectCallback: SelectCallback,
     joinCallback: JoinCallback
-  ): UpdateBuilder;
+  ): MySqlUpdateBuilder;
   protected baseJoin(
     joinType: JoinType,
     tableOrAlias: string,
@@ -69,7 +69,7 @@ export class UpdateBuilder {
     } else {
       joinCallback = selectOrJoinCallback as JoinCallback;
     }
-    const updateBuilder = new UpdateBuilder();
+    const updateBuilder = new MySqlUpdateBuilder();
     const joinQuery = joinCallback(new JoinBuilder());
     if (joinQuery instanceof AndOrBuilder) {
       const join = [...joinQuery];
@@ -83,26 +83,26 @@ export class UpdateBuilder {
     return updateBuilder;
   }
 
-  join(table: string, joinCallback: JoinCallback): UpdateBuilder;
-  join(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): UpdateBuilder;
+  join(table: string, joinCallback: JoinCallback): MySqlUpdateBuilder;
+  join(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlUpdateBuilder;
   join(table: string, selectOrJoinCallback: any, joinCallback?: any) {
     return this.baseJoin('join', table, selectOrJoinCallback, joinCallback);
   }
 
-  leftJoin(table: string, joinCallback: JoinCallback): UpdateBuilder;
-  leftJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): UpdateBuilder;
+  leftJoin(table: string, joinCallback: JoinCallback): MySqlUpdateBuilder;
+  leftJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlUpdateBuilder;
   leftJoin(table: string, selectOrJoinCallback: any, joinCallback?: any) {
     return this.baseJoin('left join', table, selectOrJoinCallback, joinCallback);
   }
 
-  rightJoin(table: string, joinCallback: JoinCallback): UpdateBuilder;
-  rightJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): UpdateBuilder;
+  rightJoin(table: string, joinCallback: JoinCallback): MySqlUpdateBuilder;
+  rightJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlUpdateBuilder;
   rightJoin(table: string, selectOrJoinCallback: any, joinCallback?: any) {
     return this.baseJoin('right join', table, selectOrJoinCallback, joinCallback);
   }
 
-  set<T extends object>(obj: T): UpdateBuilder {
-    const updateBuilder = new UpdateBuilder();
+  set<T extends object>(obj: T): MySqlUpdateBuilder {
+    const updateBuilder = new MySqlUpdateBuilder();
     const updateQuery = updateBuilder.mergeQuery(this.#query);
     for (const prop in obj) {
       updateQuery.set.push(`${prop} = ${obj[prop]}`);
@@ -111,7 +111,7 @@ export class UpdateBuilder {
   }
 
   where(cb: (eb: ExpressionBuilder) => AndOrBuilder) {
-    const b = new UpdateBuilder();
+    const b = new MySqlUpdateBuilder();
     const eb = new ExpressionBuilder();
     b.mergeQuery(this.#query);
     b.mergeQuery({ where: [...cb(eb)] });
@@ -119,25 +119,25 @@ export class UpdateBuilder {
   }
 
   orderBy(...fields: [string, ...string[]]) {
-    const b = new UpdateBuilder();
+    const b = new MySqlUpdateBuilder();
     b.mergeQuery(this.#query).orderBy.push(...fields);
     return b;
   }
 
-  limit(rowCount: number): UpdateBuilder;
-  limit(offset: number, rowCount: number): UpdateBuilder;
+  limit(rowCount: number): MySqlUpdateBuilder;
+  limit(offset: number, rowCount: number): MySqlUpdateBuilder;
   limit(offsetOrCount: number, rowCount?: number) {
-    const b = new UpdateBuilder();
+    const b = new MySqlUpdateBuilder();
     const limit = rowCount ? [offsetOrCount, rowCount] : [];
     b.mergeQuery(this.#query).limit = limit.join(', ');
     return b;
   }
 
-  $if(condition: any, updateCallback: (updatebuilder: UpdateBuilder) => UpdateBuilder) {
-    const b1 = new UpdateBuilder();
+  $if(condition: any, updateCallback: (updatebuilder: MySqlUpdateBuilder) => MySqlUpdateBuilder) {
+    const b1 = new MySqlUpdateBuilder();
     b1.mergeQuery(this.#query);
     if (condition) {
-      const b2 = updateCallback(new UpdateBuilder());
+      const b2 = updateCallback(new MySqlUpdateBuilder());
       b1.mergeQuery(b2.#query);
     }
     return b1;
