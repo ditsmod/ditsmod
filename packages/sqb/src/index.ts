@@ -5,3 +5,4 @@ export { table } from './decorators/table';
 export { MySqlSelectBuilder } from './builders/mysql/mysql-select-builder';
 export { MysqlInsertBuilder } from './builders/mysql/mysql-insert-builder';
 export { MySqlUpdateBuilder } from './builders/mysql/mysql-update-builder';
+export { MySqlDeleteBuilder } from './builders/mysql/mysql-delete-builder';
