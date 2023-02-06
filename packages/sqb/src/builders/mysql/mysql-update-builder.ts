@@ -110,11 +110,11 @@ export class MySqlUpdateBuilder {
     return updateBuilder;
   }
 
-  where(cb: (eb: ExpressionBuilder) => AndOrBuilder) {
+  where(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
     const b = new MySqlUpdateBuilder();
     const eb = new ExpressionBuilder();
     b.mergeQuery(this.#query);
-    b.mergeQuery({ where: [...cb(eb)] });
+    b.mergeQuery({ where: [...expressCallback(eb)] });
     return b;
   }
 

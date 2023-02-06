@@ -115,11 +115,11 @@ export class MySqlDeleteBuilder {
     return this.baseJoin('right join', table, selectOrJoinCallback, joinCallback);
   }
 
-  where(cb: (eb: ExpressionBuilder) => AndOrBuilder) {
+  where(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
     const b = new MySqlDeleteBuilder();
     const eb = new ExpressionBuilder();
     b.mergeQuery(this.#query);
-    b.mergeQuery({ where: [...cb(eb)] });
+    b.mergeQuery({ where: [...expressCallback(eb)] });
     return b;
   }
 

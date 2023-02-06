@@ -43,14 +43,14 @@ export class MySqlSelectBuilder {
     return b;
   }
 
-  from(alias: string, cb: (builder: MySqlSelectBuilder) => MySqlSelectBuilder): MySqlSelectBuilder;
+  from(alias: string, selectCallback: (builder: MySqlSelectBuilder) => MySqlSelectBuilder): MySqlSelectBuilder;
   from(table: string): MySqlSelectBuilder;
-  from(tableOrAlias: string, cb?: (b: MySqlSelectBuilder) => MySqlSelectBuilder) {
+  from(tableOrAlias: string, selectCallback?: (b: MySqlSelectBuilder) => MySqlSelectBuilder) {
     const b = new MySqlSelectBuilder();
     let from = '';
 
-    if (cb) {
-      const sbResult = cb(b);
+    if (selectCallback) {
+      const sbResult = selectCallback(b);
       from = `(\n${sbResult}\n) as ${tableOrAlias}`;
     } else {
       from = tableOrAlias;
@@ -112,11 +112,11 @@ export class MySqlSelectBuilder {
     return this.baseJoin('right join', table, selectOrJoinCallback, joinCallback);
   }
 
-  where(cb: (eb: ExpressionBuilder) => AndOrBuilder) {
+  where(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
     const b = new MySqlSelectBuilder();
     const eb = new ExpressionBuilder();
     b.mergeQuery(this.#query);
-    b.mergeQuery({ where: [...cb(eb)] });
+    b.mergeQuery({ where: [...expressCallback(eb)] });
     return b;
   }
 
@@ -126,11 +126,11 @@ export class MySqlSelectBuilder {
     return b;
   }
 
-  having(cb: (eb: ExpressionBuilder) => AndOrBuilder) {
+  having(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
     const b = new MySqlSelectBuilder();
     const eb = new ExpressionBuilder();
     b.mergeQuery(this.#query);
-    b.mergeQuery({ having: [...cb(eb)] });
+    b.mergeQuery({ having: [...expressCallback(eb)] });
     return b;
   }
 
@@ -149,11 +149,11 @@ export class MySqlSelectBuilder {
     return b;
   }
 
-  $if(condition: any, cb: (sb: MySqlSelectBuilder) => MySqlSelectBuilder) {
+  $if(condition: any, selectCallback: (sb: MySqlSelectBuilder) => MySqlSelectBuilder) {
     const b1 = new MySqlSelectBuilder();
     b1.mergeQuery(this.#query);
     if (condition) {
-      const b2 = cb(new MySqlSelectBuilder());
+      const b2 = selectCallback(new MySqlSelectBuilder());
       b1.mergeQuery(b2.#query);
     }
     return b1;
