@@ -28,6 +28,14 @@ describe('MySqlUpdateBuilder', () => {
     seven: object;
   }
 
+  interface Tables {
+    users: Users,
+    posts: Posts,
+    articles: Articles,
+    other: unknown,
+    table1: unknown,
+  }
+
   const [u, users_as_u, uAlias] = getTableMetadata(Users, 'u');
   const [p, posts_as_p, pAlias] = getTableMetadata(Posts, 'p');
   const [a, articles_as_a, aAlias] = getTableMetadata(Articles, 'a');

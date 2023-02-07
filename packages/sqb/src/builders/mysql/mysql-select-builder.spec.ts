@@ -28,12 +28,20 @@ describe('MySqlSelectBuilder', () => {
     seven: object;
   }
 
+  interface Tables {
+    users: Users,
+    posts: Posts,
+    articles: Articles,
+    other: unknown,
+    table1: unknown,
+  }
+
   const [u, users_as_u, uAlias] = getTableMetadata(Users, 'u');
   const [p, posts_as_p, pAlias] = getTableMetadata(Posts, 'p');
   const [a, articles_as_a, aAlias] = getTableMetadata(Articles, 'a');
 
   it('should not store state', () => {
-    const sb = new MySqlSelectBuilder();
+    const sb = new MySqlSelectBuilder<Tables>();
     expect(`${sb}`).toBe('');
     expect(`${sb.select(u.one, u.two, p.six, a.seven)}`).toBe(`select
   u.one,
@@ -41,10 +49,10 @@ describe('MySqlSelectBuilder', () => {
   p.six,
   a.seven`);
     expect(`${sb}`).toBe('');
-    expect(`${sb.from(articles_as_a)}`).toBe('\nfrom articles as a');
+    expect(`${sb.from('articles as a')}`).toBe('\nfrom articles as a');
     expect(`${sb}`).toBe('');
     const expectedJoin = '\njoin posts as p\n  on p.five = u.two';
-    expect(`${sb.join(posts_as_p, (jb) => jb.on(p.five, '=', u.two))}`).toBe(expectedJoin);
+    expect(`${sb.join('posts as p', (jb) => jb.on(p.five, '=', u.two))}`).toBe(expectedJoin);
     expect(`${sb}`).toBe('');
     expect(`${sb.where((eb) => eb.isTrue(p.four, '=', u.two))}`).toBe('\nwhere p.four = u.two');
     expect(`${sb}`).toBe('');
@@ -60,32 +68,32 @@ describe('MySqlSelectBuilder', () => {
   });
 
   it('should works all features', () => {
-    const sql1 = new MySqlSelectBuilder()
+    const sql1 = new MySqlSelectBuilder<Tables>()
       .select(u.one, u.two, p.six, a.seven)
-      .from(users_as_u)
+      .from('users as u')
       .from('alias_lvl1', (b1) => {
         return b1.select('one').from('alias_lvl2', (b2) => {
           return b2.select('one', 'three').from('other');
         });
       })
-      .join(posts_as_p, (jb) => jb.on(p.five, '=', u.two).and(p.five, '>', 6).or(u.two, '<', 8))
+      .join('posts as p', (jb) => jb.on(p.five, '=', u.two).and(p.five, '>', 6).or(u.two, '<', 8))
       .join(
         'm',
         (s) => s.select('one').from('table1'),
         (jb) => jb.on('m.five', '=', u.two).and('m.five', '>', 6).or('m.two', '<', 8)
       )
-      .leftJoin(articles_as_a, (jb) => jb.on(p.four, '=', u.two).or(a.seven, '=', 7))
+      .leftJoin('articles as a', (jb) => jb.on(p.four, '=', u.two).or(a.seven, '=', 7))
       .$if(true, (sb) => {
-        return sb.rightJoin(users_as_u, (jb) => {
+        return sb.rightJoin('users as u', (jb) => {
           return jb.on(u.one, '=', p.userId);
         });
       })
       .$if(false, (sb) => {
-        return sb.rightJoin(users_as_u, (jb) => {
+        return sb.rightJoin('users as u', (jb) => {
           return jb.on(u.one, '=', p.userId);
         });
       })
-      .join(articles_as_a, (jb) => jb.using([Posts, Users], 'userId', 'id2'))
+      .join('articles as a', (jb) => jb.using([Posts, Users], 'userId', 'id2'))
       .where((eb) => eb.isTrue(p.six, '>', 6).and(p.six, '<', 10))
       .orderBy(a.seven, u.one)
       .groupBy(u.two)

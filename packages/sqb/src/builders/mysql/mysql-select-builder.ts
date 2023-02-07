@@ -19,9 +19,10 @@ class MySqlSelectBuilderConfig {
 
 type JoinType = 'join' | 'left join' | 'right join';
 type JoinCallback = (joinBuilder: JoinBuilder) => AndOrBuilder | string;
-type SelectCallback = (selectBuilder: MySqlSelectBuilder) => MySqlSelectBuilder;
+type SelectCallback<T extends object = any> = (selectBuilder: MySqlSelectBuilder<T>) => MySqlSelectBuilder<T>;
+type TableAndAlias<T> = T | `${Extract<T, string>} as ${string}`;
 
-export class MySqlSelectBuilder {
+export class MySqlSelectBuilder<T extends object = any> {
   #query = new SelectQuery();
   #config = new MySqlSelectBuilderConfig();
 
@@ -38,82 +39,86 @@ export class MySqlSelectBuilder {
   }
 
   select(...fields: [string, ...string[]]) {
-    const b = new MySqlSelectBuilder();
+    const b = new MySqlSelectBuilder<T>();
     b.mergeQuery(this.#query).select.push(...fields);
     return b;
   }
 
-  from(alias: string, selectCallback: (builder: MySqlSelectBuilder) => MySqlSelectBuilder): MySqlSelectBuilder;
-  from(table: string): MySqlSelectBuilder;
-  from(tableOrAlias: string, selectCallback?: (b: MySqlSelectBuilder) => MySqlSelectBuilder) {
-    const b = new MySqlSelectBuilder();
+  from(alias: string, selectCallback: (builder: MySqlSelectBuilder<T>) => MySqlSelectBuilder<T>): MySqlSelectBuilder<T>;
+  from(table: TableAndAlias<keyof T>): MySqlSelectBuilder<T>;
+  from(tableOrAlias: string | keyof T, selectCallback?: (b: MySqlSelectBuilder<T>) => MySqlSelectBuilder<T>) {
+    const b = new MySqlSelectBuilder<T>();
     let from = '';
 
     if (selectCallback) {
       const sbResult = selectCallback(b);
-      from = `(\n${sbResult}\n) as ${tableOrAlias}`;
+      from = `(\n${sbResult}\n) as ${tableOrAlias as string}`;
     } else {
-      from = tableOrAlias;
+      from = tableOrAlias as string;
     }
     b.mergeQuery(this.#query).from.push(from);
     return b;
   }
 
-  protected baseJoin(joinType: JoinType, table: string, joinCallback: JoinCallback): MySqlSelectBuilder;
+  protected baseJoin(
+    joinType: JoinType,
+    table: TableAndAlias<keyof T>,
+    joinCallback: JoinCallback
+  ): MySqlSelectBuilder<T>;
   protected baseJoin(
     joinType: JoinType,
     alias: string,
     selectCallback: SelectCallback,
     joinCallback: JoinCallback
-  ): MySqlSelectBuilder;
+  ): MySqlSelectBuilder<T>;
   protected baseJoin(
     joinType: JoinType,
-    tableOrAlias: string,
+    tableOrAlias: string | TableAndAlias<keyof T>,
     selectOrJoinCallback: JoinCallback | SelectCallback,
     joinCallback?: JoinCallback
   ) {
     if (joinCallback) {
-      const innerSelectBuilder = new MySqlSelectBuilder();
+      const innerSelectBuilder = new MySqlSelectBuilder<T>();
       const selectQuery = (selectOrJoinCallback as SelectCallback)(innerSelectBuilder);
-      tableOrAlias = `(\n${selectQuery}\n) as ${tableOrAlias}`;
+      tableOrAlias = `(\n${selectQuery}\n) as ${tableOrAlias as string}`;
     } else {
       joinCallback = selectOrJoinCallback as JoinCallback;
     }
-    const currentBuilder = new MySqlSelectBuilder();
+    const currentBuilder = new MySqlSelectBuilder<T>();
     const joinBuilder = new JoinBuilder();
     const joinQuery = joinCallback(joinBuilder);
     if (joinQuery instanceof AndOrBuilder) {
       const join = [...joinQuery];
-      join[0] = `${joinType} ${tableOrAlias}\n  on ${join.at(0)}`;
+      join[0] = `${joinType} ${tableOrAlias as string}\n  on ${join.at(0)}`;
       currentBuilder.mergeQuery(this.#query);
       currentBuilder.mergeQuery({ join });
     } else {
       currentBuilder.mergeQuery(this.#query);
-      currentBuilder.mergeQuery({ join: [`${joinType} ${tableOrAlias}\n  using(${joinQuery})`] });
+      currentBuilder.mergeQuery({ join: [`${joinType} ${tableOrAlias as string}\n  using(${joinQuery})`] });
     }
     return currentBuilder;
   }
 
-  join(table: string, joinCallback: JoinCallback): MySqlSelectBuilder;
-  join(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlSelectBuilder;
-  join(table: string, selectOrJoinCallback: any, joinCallback?: any) {
-    return this.baseJoin('join', table, selectOrJoinCallback, joinCallback);
+  join(table: TableAndAlias<keyof T>, joinCallback: JoinCallback): MySqlSelectBuilder<T>;
+  join(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlSelectBuilder<T>;
+  join(table: string | TableAndAlias<keyof T>, selectOrJoinCallback: any, joinCallback?: any) {
+    return this.baseJoin('join', table as string, selectOrJoinCallback, joinCallback);
   }
 
-  leftJoin(table: string, joinCallback: JoinCallback): MySqlSelectBuilder;
-  leftJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlSelectBuilder;
-  leftJoin(table: string, selectOrJoinCallback: any, joinCallback?: any) {
-    return this.baseJoin('left join', table, selectOrJoinCallback, joinCallback);
+  leftJoin(table: TableAndAlias<keyof T>, joinCallback: JoinCallback): MySqlSelectBuilder<T>;
+  leftJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlSelectBuilder<T>;
+  leftJoin(table: string | TableAndAlias<keyof T>, selectOrJoinCallback: any, joinCallback?: any) {
+    return this.baseJoin('left join', table as string, selectOrJoinCallback, joinCallback);
   }
 
-  rightJoin(table: string, joinCallback: JoinCallback): MySqlSelectBuilder;
-  rightJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlSelectBuilder;
-  rightJoin(table: string, selectOrJoinCallback: any, joinCallback?: any) {
-    return this.baseJoin('right join', table, selectOrJoinCallback, joinCallback);
+  rightJoin(table: TableAndAlias<keyof T>, joinCallback: JoinCallback): MySqlSelectBuilder<T>;
+  rightJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlSelectBuilder<T>;
+  rightJoin(table: string | TableAndAlias<keyof T>, selectOrJoinCallback: any, joinCallback?: any) {
+    return this.baseJoin('right join', table as string, selectOrJoinCallback, joinCallback);
   }
 
   where(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
-    const b = new MySqlSelectBuilder();
+    const b = new MySqlSelectBuilder<T>();
     const eb = new ExpressionBuilder();
     b.mergeQuery(this.#query);
     b.mergeQuery({ where: [...expressCallback(eb)] });
@@ -121,13 +126,13 @@ export class MySqlSelectBuilder {
   }
 
   groupBy(...fields: [string, ...string[]]) {
-    const b = new MySqlSelectBuilder();
+    const b = new MySqlSelectBuilder<T>();
     b.mergeQuery(this.#query).groupBy.push(...fields);
     return b;
   }
 
   having(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
-    const b = new MySqlSelectBuilder();
+    const b = new MySqlSelectBuilder<T>();
     const eb = new ExpressionBuilder();
     b.mergeQuery(this.#query);
     b.mergeQuery({ having: [...expressCallback(eb)] });
@@ -135,25 +140,25 @@ export class MySqlSelectBuilder {
   }
 
   orderBy(...fields: [string, ...string[]]) {
-    const b = new MySqlSelectBuilder();
+    const b = new MySqlSelectBuilder<T>();
     b.mergeQuery(this.#query).orderBy.push(...fields);
     return b;
   }
 
-  limit(rowCount: number): MySqlSelectBuilder;
-  limit(offset: number, rowCount: number): MySqlSelectBuilder;
+  limit(rowCount: number): MySqlSelectBuilder<T>;
+  limit(offset: number, rowCount: number): MySqlSelectBuilder<T>;
   limit(offsetOrCount: number, rowCount?: number) {
-    const b = new MySqlSelectBuilder();
+    const b = new MySqlSelectBuilder<T>();
     const limit = rowCount ? [offsetOrCount, rowCount] : [];
     b.mergeQuery(this.#query).limit = limit.join(', ');
     return b;
   }
 
-  $if(condition: any, selectCallback: (sb: MySqlSelectBuilder) => MySqlSelectBuilder) {
-    const b1 = new MySqlSelectBuilder();
+  $if(condition: any, selectCallback: (sb: MySqlSelectBuilder<T>) => MySqlSelectBuilder<T>) {
+    const b1 = new MySqlSelectBuilder<T>();
     b1.mergeQuery(this.#query);
     if (condition) {
-      const b2 = selectCallback(new MySqlSelectBuilder());
+      const b2 = selectCallback(new MySqlSelectBuilder<T>());
       b1.mergeQuery(b2.#query);
     }
     return b1;
