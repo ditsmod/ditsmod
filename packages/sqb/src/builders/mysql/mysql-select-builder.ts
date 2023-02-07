@@ -26,7 +26,6 @@ type TableAndAlias<T> = T | `${Extract<T, string>} as ${string}`;
 export class MySqlSelectBuilder<T extends object = any> {
   #query = new SelectQuery();
   #config = new MySqlSelectBuilderConfig();
-  #run: (query: string, ...args: any[]) => any = (query) => query;
 
   protected mergeQuery(query: Partial<SelectQuery>) {
     this.#query.select.push(...(query.select || []));
@@ -36,8 +35,8 @@ export class MySqlSelectBuilder<T extends object = any> {
     this.#query.groupBy.push(...(query.groupBy || []));
     this.#query.having.push(...(query.having || []));
     this.#query.orderBy.push(...(query.orderBy || []));
-    this.#query.limit = query.limit || '';
-    this.#query.run = query.run || ((query) => query);
+    this.#query.limit = query.limit || this.#query.limit;
+    this.#query.run = query.run || this.#query.run;
     return this.#query;
   }
 
@@ -174,7 +173,7 @@ export class MySqlSelectBuilder<T extends object = any> {
   }
 
   $run<T = string>(...args: any[]): T {
-    return this.#run(this.toString(), ...args);
+    return this.#query.run(this.toString(), ...args);
   }
 
   toString(): string {
