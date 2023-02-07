@@ -79,10 +79,10 @@ export class MysqlInsertBuilder<T extends object = object> {
   }
 
   $if(condition: any, insertCallback: (updatebuilder: MysqlInsertBuilder) => MysqlInsertBuilder) {
-    const b1 = new MysqlInsertBuilder();
+    const b1 = new MysqlInsertBuilder<T>();
     b1.mergeQuery(this.#query);
     if (condition) {
-      const b2 = insertCallback(new MysqlInsertBuilder());
+      const b2 = insertCallback(new MysqlInsertBuilder<T>());
       b1.mergeQuery(b2.#query);
     }
     return b1;
