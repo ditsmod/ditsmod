@@ -1,3 +1,4 @@
+import { RunCallback } from '../types';
 import { MySqlSelectBuilder } from './mysql-select-builder';
 
 class InsertQuery {
@@ -9,9 +10,10 @@ class InsertQuery {
   selectQuery: string = '';
   alias: string = '';
   onDuplicateKeyUpdate: string[] = [];
+  run: (query: string, ...args: any[]) => any = (query) => query;
 }
 
-export class MysqlInsertBuilder<T extends object = object> {
+export class MysqlInsertBuilder<T extends object = object> implements RunCallback {
   #query = new InsertQuery();
 
   protected mergeQuery(query: Partial<InsertQuery>) {
@@ -23,6 +25,7 @@ export class MysqlInsertBuilder<T extends object = object> {
     this.#query.selectQuery = query.selectQuery || '';
     this.#query.alias = query.alias || '';
     this.#query.onDuplicateKeyUpdate.push(...(query.onDuplicateKeyUpdate || []));
+    this.#query.run = query.run || this.#query.run;
     return this.#query;
   }
 
@@ -78,16 +81,6 @@ export class MysqlInsertBuilder<T extends object = object> {
     return insertBuilder;
   }
 
-  $if(condition: any, insertCallback: (updatebuilder: MysqlInsertBuilder) => MysqlInsertBuilder) {
-    const b1 = new MysqlInsertBuilder<T>();
-    b1.mergeQuery(this.#query);
-    if (condition) {
-      const b2 = insertCallback(new MysqlInsertBuilder<T>());
-      b1.mergeQuery(b2.#query);
-    }
-    return b1;
-  }
-
   ignore() {
     const insertBuilder = new MysqlInsertBuilder<T>();
     insertBuilder.mergeQuery(this.#query).ignore = true;
@@ -108,6 +101,26 @@ export class MysqlInsertBuilder<T extends object = object> {
       insertQuery.onDuplicateKeyUpdate.push(`${prop} = ${obj[prop]}`);
     }
     return insertBuilder;
+  }
+
+  $if(condition: any, insertCallback: (updatebuilder: MysqlInsertBuilder) => MysqlInsertBuilder) {
+    const b1 = new MysqlInsertBuilder<T>();
+    b1.mergeQuery(this.#query);
+    if (condition) {
+      const b2 = insertCallback(new MysqlInsertBuilder<T>());
+      b1.mergeQuery(b2.#query);
+    }
+    return b1;
+  }
+
+  $setRun(callback: (query: string, ...args: any[]) => any) {
+    const b = new MysqlInsertBuilder<T>();
+    b.mergeQuery(this.#query).run = callback;
+    return b;
+  }
+
+  $run<T = string>(...args: any[]): Promise<T> {
+    return this.#query.run(this.toString(), ...args);
   }
 
   toString(): string {

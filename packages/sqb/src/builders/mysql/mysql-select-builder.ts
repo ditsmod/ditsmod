@@ -1,3 +1,4 @@
+import { RunCallback } from '../types';
 import { AndOrBuilder } from './and-or-builder';
 import { ExpressionBuilder } from './expression-builder';
 import { JoinBuilder } from './join-builder';
@@ -23,7 +24,7 @@ type JoinCallback = (joinBuilder: JoinBuilder) => AndOrBuilder | string;
 type SelectCallback<T extends object = any> = (selectBuilder: MySqlSelectBuilder<T>) => MySqlSelectBuilder<T>;
 type TableAndAlias<T> = T | `${Extract<T, string>} as ${string}`;
 
-export class MySqlSelectBuilder<T extends object = any> {
+export class MySqlSelectBuilder<T extends object = any> implements RunCallback {
   #query = new SelectQuery();
   #config = new MySqlSelectBuilderConfig();
 
@@ -172,7 +173,7 @@ export class MySqlSelectBuilder<T extends object = any> {
     return b;
   }
 
-  $run<T = string>(...args: any[]): T {
+  $run<T = string>(...args: any[]): Promise<T> {
     return this.#query.run(this.toString(), ...args);
   }
 
