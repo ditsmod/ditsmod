@@ -1,5 +1,4 @@
 import { AndOrBuilder } from './and-or-builder';
-import { ExpressionBuilder } from './expression-builder';
 import { JoinBuilder } from './join-builder';
 import { MySqlSelectBuilder } from './mysql-select-builder';
 
@@ -115,9 +114,9 @@ export class MySqlDeleteBuilder {
     return this.baseJoin('right join', table, selectOrJoinCallback, joinCallback);
   }
 
-  where(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
+  where(expressCallback: (eb: AndOrBuilder) => AndOrBuilder) {
     const b = new MySqlDeleteBuilder();
-    const eb = new ExpressionBuilder();
+    const eb = new AndOrBuilder();
     b.mergeQuery(this.#query);
     b.mergeQuery({ where: [...expressCallback(eb)] });
     return b;

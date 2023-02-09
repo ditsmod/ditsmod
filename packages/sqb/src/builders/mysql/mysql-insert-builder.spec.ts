@@ -107,7 +107,7 @@ values ('Kostia', 'Tretiak'), ('FirstName', 'LastName')`);
       return builder
         .select(u.firstName, u.lastName)
         .from(users)
-        .where((eb) => eb.isTrue(u.userId, '=', 1));
+        .where((eb) => eb.and(u.userId, '=', 1));
     });
 
     expect(sql.toString()).toBe(`insert into users (
@@ -127,7 +127,7 @@ where userId = 1`);
         return builder
           .select(u.firstName, u.lastName)
           .from(users)
-          .where((eb) => eb.isTrue(u.userId, '=', 1));
+          .where((eb) => eb.and(u.userId, '=', 1));
       })
       .onDuplicateKeyUpdate('new', { firstName: 'Mostia' });
 

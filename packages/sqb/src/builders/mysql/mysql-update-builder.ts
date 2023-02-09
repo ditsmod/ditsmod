@@ -1,5 +1,4 @@
 import { AndOrBuilder } from './and-or-builder';
-import { ExpressionBuilder } from './expression-builder';
 import { JoinBuilder } from './join-builder';
 import { MySqlSelectBuilder } from './mysql-select-builder';
 
@@ -110,9 +109,9 @@ export class MySqlUpdateBuilder {
     return updateBuilder;
   }
 
-  where(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
+  where(expressCallback: (eb: AndOrBuilder) => AndOrBuilder) {
     const b = new MySqlUpdateBuilder();
-    const eb = new ExpressionBuilder();
+    const eb = new AndOrBuilder();
     b.mergeQuery(this.#query);
     b.mergeQuery({ where: [...expressCallback(eb)] });
     return b;

@@ -29,11 +29,11 @@ describe('MySqlSelectBuilder', () => {
   }
 
   interface Tables {
-    users: Users,
-    posts: Posts,
-    articles: Articles,
-    other: unknown,
-    table1: unknown,
+    users: Users;
+    posts: Posts;
+    articles: Articles;
+    other: unknown;
+    table1: unknown;
   }
 
   const [u, users_as_u, uAlias] = getTableMetadata(Users, 'u');
@@ -54,14 +54,15 @@ describe('MySqlSelectBuilder', () => {
     const expectedJoin = '\njoin posts as p\n  on p.five = u.two';
     expect(`${sb.join('posts as p', (jb) => jb.on(p.five, '=', u.two))}`).toBe(expectedJoin);
     expect(`${sb}`).toBe('');
-    expect(`${sb.where((eb) => eb.isTrue(p.four, '=', u.two))}`).toBe('\nwhere p.four = u.two');
+    expect(`${sb.where((eb) => eb.and(p.four, '=', u.two))}`).toBe('\nwhere p.four = u.two');
     expect(`${sb}`).toBe('');
+    expect(`${sb.where((eb) => eb.and({ four: 'two' }))}`).toBe('\nwhere four = two');
     expect(`${sb.orderBy(a.seven, u.one)}`).toBe('\norder by\n  a.seven,\n  u.one');
     expect(`${sb}`).toBe('');
     expect(`${sb.groupBy(u.two)}`).toBe('\ngroup by\n  u.two');
     expect(`${sb}`).toBe('');
     const expectedHaving = '\nhaving u.two > 1\n  and p.six > 6';
-    expect(`${sb.having((eb) => eb.isTrue(u.two, '>', 1).and(p.six, '>', 6))}`).toBe(expectedHaving);
+    expect(`${sb.having((eb) => eb.and(u.two, '>', 1).and(p.six, '>', 6))}`).toBe(expectedHaving);
     expect(`${sb}`).toBe('');
     expect(`${sb.limit(1, 54)}`).toBe('\nlimit 1, 54');
     expect(`${sb}`).toBe('');
@@ -94,10 +95,10 @@ describe('MySqlSelectBuilder', () => {
         });
       })
       .join('articles as a', (jb) => jb.using([Posts, Users], 'userId', 'id2'))
-      .where((eb) => eb.isTrue(p.six, '>', 6).and(p.six, '<', 10))
+      .where((eb) => eb.and(p.six, '>', 6).and(p.six, '<', 10))
       .orderBy(a.seven, u.one)
       .groupBy(u.two)
-      .having((eb) => eb.isTrue(u.two, '>', 1).and(p.six, '>', 6))
+      .having((eb) => eb.and(u.two, '>', 1).and(p.six, '>', 6))
       .limit(1, 54);
 
     const expectSql = `select
