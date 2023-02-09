@@ -12,6 +12,7 @@ class SelectQuery {
   orderBy: string[] = [];
   limit: string = '';
   run: (query: string, ...args: any[]) => any = (query) => query;
+  escape: (value: any) => string = (value) => value;
 }
 
 class MySqlSelectBuilderConfig {
@@ -36,6 +37,7 @@ export class MySqlSelectBuilder<T extends object = any> implements RunCallback {
     this.#query.having.push(...(query.having || []));
     this.#query.orderBy.push(...(query.orderBy || []));
     this.#query.limit = query.limit || this.#query.limit;
+    this.#query.escape = query.escape || this.#query.escape;
     this.#query.run = query.run || this.#query.run;
     return this.#query;
   }
@@ -121,7 +123,7 @@ export class MySqlSelectBuilder<T extends object = any> implements RunCallback {
 
   where(expressCallback: (eb: AndOrBuilder) => AndOrBuilder) {
     const b = new MySqlSelectBuilder<T>();
-    const eb = new AndOrBuilder();
+    const eb = new AndOrBuilder([], 2, this.#query.escape);
     b.mergeQuery(this.#query);
     b.mergeQuery({ where: [...expressCallback(eb)] });
     return b;
@@ -135,7 +137,7 @@ export class MySqlSelectBuilder<T extends object = any> implements RunCallback {
 
   having(expressCallback: (eb: AndOrBuilder) => AndOrBuilder) {
     const b = new MySqlSelectBuilder<T>();
-    const eb = new AndOrBuilder();
+    const eb = new AndOrBuilder([], 2, this.#query.escape);
     b.mergeQuery(this.#query);
     b.mergeQuery({ having: [...expressCallback(eb)] });
     return b;
@@ -164,6 +166,12 @@ export class MySqlSelectBuilder<T extends object = any> implements RunCallback {
       b1.mergeQuery(b2.#query);
     }
     return b1;
+  }
+
+  $setEscape(callback: (value: any) => string): MySqlSelectBuilder {
+    const b = new MySqlSelectBuilder<T>();
+    b.mergeQuery(this.#query).escape = callback;
+    return b;
   }
 
   $setRun(callback: (query: string, ...args: any[]) => any) {

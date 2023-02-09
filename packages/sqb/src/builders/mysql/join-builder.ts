@@ -1,4 +1,5 @@
 import { Class } from '@ditsmod/core';
+
 import { OneSqlExpression } from '../../types';
 import { AndOrBuilder } from './and-or-builder';
 
