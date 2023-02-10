@@ -1,4 +1,4 @@
-import { RunCallback } from '../types';
+import { NoSqlActions } from '../types';
 import { MySqlSelectBuilder } from './mysql-select-builder';
 
 class InsertQuery {
@@ -14,7 +14,7 @@ class InsertQuery {
   escape: (value: any) => string = (value) => value;
 }
 
-export class MysqlInsertBuilder<T extends object = object> implements RunCallback {
+export class MysqlInsertBuilder<T extends object = object> implements NoSqlActions {
   #query = new InsertQuery();
 
   protected mergeQuery(query: Partial<InsertQuery>) {

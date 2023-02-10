@@ -1,4 +1,4 @@
-import { RunCallback } from '../types';
+import { NoSqlActions } from '../types';
 import { AndOrBuilder } from './and-or-builder';
 import { JoinBuilder } from './join-builder';
 
@@ -24,7 +24,7 @@ type JoinCallback = (joinBuilder: JoinBuilder) => AndOrBuilder | string;
 type SelectCallback<T extends object = any> = (selectBuilder: MySqlSelectBuilder<T>) => MySqlSelectBuilder<T>;
 type TableAndAlias<T> = T | `${Extract<T, string>} as ${string}`;
 
-export class MySqlSelectBuilder<T extends object = any> implements RunCallback {
+export class MySqlSelectBuilder<T extends object = any> implements NoSqlActions {
   #query = new SelectQuery();
   #config = new MySqlSelectBuilderConfig();
 
