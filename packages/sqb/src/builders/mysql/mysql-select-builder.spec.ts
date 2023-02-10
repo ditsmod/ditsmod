@@ -68,6 +68,23 @@ describe('MySqlSelectBuilder', () => {
     expect(`${sb}`).toBe('');
   });
 
+  it('internal "and" "or" expressions', () => {
+    const sb = new MySqlSelectBuilder<Tables>();
+
+    const exp = `${sb.where((eb) =>
+      eb.isTrue({ four: 'two' }).and((b) => {
+        return b.or('p.six = 1').or('p.six = 2');
+      })
+    )}`;
+    const actual = `
+where four = two
+  and (
+    p.six = 1
+      or p.six = 2
+  )`;
+    expect(exp).toBe(actual);
+  });
+
   it('should works all features', () => {
     const sql1 = new MySqlSelectBuilder<Tables>()
       .select(u.one, u.two, p.six, a.seven)

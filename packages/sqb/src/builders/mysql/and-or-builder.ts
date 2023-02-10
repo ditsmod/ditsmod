@@ -34,6 +34,10 @@ export class AndOrBuilder<T extends object = any> {
         clauses.push(`${prop} = ${this.escape(firstEl[prop])}`);
       }
       currentClause = clauses.join(`\n${indentation} ${type} `);
+    } else if (clause.length == 1 && typeof firstEl == 'function') {
+      const b = new AndOrBuilder([], this.spaces, this.escape);
+      const result = firstEl(b) as AndOrBuilder;
+      currentClause = `  ${type} (\n    ${[...result].join('\n    ')}\n  )`;
     } else if (this.expressions.length == 0) {
       currentClause = clause.join(' ');
     } else {
@@ -43,12 +47,14 @@ export class AndOrBuilder<T extends object = any> {
     return b;
   }
 
+  and(callback: (cb: AndOrBuilder) => AndOrBuilder): AndOrBuilder;
   and(obj: T): AndOrBuilder;
   and(...clause: OneSqlExpression): AndOrBuilder;
   and(...clause: OneSqlExpression) {
     return this.andOr('and', ...clause);
   }
 
+  or(callback: (cb: AndOrBuilder) => AndOrBuilder): AndOrBuilder;
   or(obj: T): AndOrBuilder;
   or(...clause: OneSqlExpression): AndOrBuilder;
   or(...clause: OneSqlExpression) {
