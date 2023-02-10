@@ -1,5 +1,7 @@
 import { OneSqlExpression } from '../../types';
 
+type AndOrType = 'and' | 'or';
+
 export class AndOrBuilder<T extends object = any> {
   protected expressions: string[] = [];
   protected index = -1;
@@ -10,9 +12,9 @@ export class AndOrBuilder<T extends object = any> {
     this.expressions.push(...expressions);
   }
 
-  and(obj: T): AndOrBuilder;
-  and(...clause: OneSqlExpression): AndOrBuilder;
-  and(...clause: OneSqlExpression) {
+  protected andOr(type: AndOrType, obj: T): AndOrBuilder;
+  protected andOr(type: AndOrType, ...clause: OneSqlExpression): AndOrBuilder;
+  protected andOr(type: AndOrType, ...clause: OneSqlExpression) {
     const b = new AndOrBuilder(this.expressions, this.spaces, this.escape);
     const firstEl = clause[0];
     const indentation = ' '.repeat(this.spaces - 1);
@@ -22,20 +24,26 @@ export class AndOrBuilder<T extends object = any> {
       for (const prop in firstEl) {
         clauses.push(`${prop} = ${this.escape(firstEl[prop])}`);
       }
-      currentClause = clauses.join(`\n${indentation} and `);
+      currentClause = clauses.join(`\n${indentation} ${type} `);
     } else if (this.expressions.length == 0) {
       currentClause = clause.join(' ');
     } else {
-      currentClause = `${indentation} and ${clause.join(' ')}`;
+      currentClause = `${indentation} ${type} ${clause.join(' ')}`;
     }
     b.expressions.push(currentClause);
     return b;
   }
 
+  and(obj: T): AndOrBuilder;
+  and(...clause: OneSqlExpression): AndOrBuilder;
+  and(...clause: OneSqlExpression) {
+    return this.andOr('and', ...clause);
+  }
+
+  or(obj: T): AndOrBuilder;
+  or(...clause: OneSqlExpression): AndOrBuilder;
   or(...clause: OneSqlExpression) {
-    const b = new AndOrBuilder(this.expressions, this.spaces, this.escape);
-    b.expressions.push(`${' '.repeat(this.spaces - 1)} or ${clause.join(' ')}`);
-    return b;
+    return this.andOr('or', ...clause);
   }
 
   protected [Symbol.iterator]() {
