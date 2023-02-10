@@ -55,7 +55,7 @@ describe('MySqlDeleteBuilder', () => {
         });
       })
       .join(articles_as_a, (jb) => jb.using([Posts, Users], 'userId', 'id2'))
-      .where((eb) => eb.and(p.six, '>', 6).and(p.six, '<', 10))
+      .where((eb) => eb.isTrue(p.six, '>', 6).and(p.six, '<', 10))
       .orderBy(a.seven, u.one)
       .limit(1, 54);
 

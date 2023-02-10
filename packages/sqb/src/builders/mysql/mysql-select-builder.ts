@@ -1,5 +1,5 @@
 import { NoSqlActions } from '../types';
-import { AndOrBuilder } from './and-or-builder';
+import { AndOrBuilder, ExpressionBuilder } from './and-or-builder';
 import { JoinBuilder } from './join-builder';
 
 class SelectQuery {
@@ -121,9 +121,9 @@ export class MySqlSelectBuilder<T extends object = any> implements NoSqlActions 
     return this.baseJoin('right join', table as string, selectOrJoinCallback, joinCallback);
   }
 
-  where(expressCallback: (eb: AndOrBuilder) => AndOrBuilder) {
+  where(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
     const b = new MySqlSelectBuilder<T>();
-    const eb = new AndOrBuilder([], 2, this.#query.escape);
+    const eb = new ExpressionBuilder(this.#query.escape);
     b.mergeQuery(this.#query);
     b.mergeQuery({ where: [...expressCallback(eb)] });
     return b;
@@ -135,9 +135,9 @@ export class MySqlSelectBuilder<T extends object = any> implements NoSqlActions 
     return b;
   }
 
-  having(expressCallback: (eb: AndOrBuilder) => AndOrBuilder) {
+  having(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
     const b = new MySqlSelectBuilder<T>();
-    const eb = new AndOrBuilder([], 2, this.#query.escape);
+    const eb = new ExpressionBuilder(this.#query.escape);
     b.mergeQuery(this.#query);
     b.mergeQuery({ having: [...expressCallback(eb)] });
     return b;

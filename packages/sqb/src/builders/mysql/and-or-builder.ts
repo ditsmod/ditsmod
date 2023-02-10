@@ -2,15 +2,24 @@ import { OneSqlExpression } from '../../types';
 
 type AndOrType = 'and' | 'or';
 
-export class AndOrBuilder<T extends object = any> {
-  protected expressions: string[] = [];
-  protected index = -1;
-  protected escape: (value: any) => string = (value) => value;
+export class ExpressionBuilder<T extends object = any> {
+  constructor(protected escape: (value: any) => string = (value) => value) {}
 
-  constructor(expressions: string[] = [], protected spaces = 2, escape?: (value: any) => string) {
-    this.escape = escape || this.escape;
-    this.expressions.push(...expressions);
+  isTrue(obj: T): AndOrBuilder;
+  isTrue(...condition: OneSqlExpression): AndOrBuilder;
+  isTrue(...condition: OneSqlExpression) {
+    return new AndOrBuilder([], 2, this.escape).and(...condition);
   }
+}
+
+export class AndOrBuilder<T extends object = any> {
+  protected index = -1;
+
+  constructor(
+    protected expressions: string[] = [],
+    protected spaces = 2,
+    protected escape: (value: any) => string = (value) => value
+  ) {}
 
   protected andOr(type: AndOrType, obj: T): AndOrBuilder;
   protected andOr(type: AndOrType, ...clause: OneSqlExpression): AndOrBuilder;
