@@ -11,6 +11,7 @@ class InsertQuery {
   alias: string = '';
   onDuplicateKeyUpdate: string[] = [];
   run: (query: string, ...args: any[]) => any = (query) => query;
+  escape: (value: any) => string = (value) => value;
 }
 
 export class MysqlInsertBuilder<T extends object = object> implements RunCallback {
@@ -25,6 +26,7 @@ export class MysqlInsertBuilder<T extends object = object> implements RunCallbac
     this.#query.selectQuery = query.selectQuery || '';
     this.#query.alias = query.alias || '';
     this.#query.onDuplicateKeyUpdate.push(...(query.onDuplicateKeyUpdate || []));
+    this.#query.escape = query.escape || this.#query.escape;
     this.#query.run = query.run || this.#query.run;
     return this.#query;
   }
@@ -34,7 +36,7 @@ export class MysqlInsertBuilder<T extends object = object> implements RunCallbac
     const insertQuery = insertBuilder.mergeQuery(this.#query);
     insertQuery.table = table;
     for (const prop in obj) {
-      insertQuery.set.push(`${prop} = ${obj[prop]}`);
+      insertQuery.set.push(`${prop} = ${this.#query.escape(obj[prop])}`);
     }
     return insertBuilder;
   }
@@ -98,7 +100,7 @@ export class MysqlInsertBuilder<T extends object = object> implements RunCallbac
       obj = aliasOrObj as Partial<T>;
     }
     for (const prop in obj) {
-      insertQuery.onDuplicateKeyUpdate.push(`${prop} = ${obj[prop]}`);
+      insertQuery.onDuplicateKeyUpdate.push(`${prop} = ${this.#query.escape(obj[prop])}`);
     }
     return insertBuilder;
   }
@@ -111,6 +113,12 @@ export class MysqlInsertBuilder<T extends object = object> implements RunCallbac
       b1.mergeQuery(b2.#query);
     }
     return b1;
+  }
+
+  $setEscape(callback: (value: any) => string): MysqlInsertBuilder {
+    const b = new MysqlInsertBuilder<T>();
+    b.mergeQuery(this.#query).escape = callback;
+    return b;
   }
 
   $setRun(callback: (query: string, ...args: any[]) => any) {
