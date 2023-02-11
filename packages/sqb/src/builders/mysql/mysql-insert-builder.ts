@@ -1,4 +1,4 @@
-import { NoSqlActions } from '../types';
+import { RunOptions, NoSqlActions } from '../types';
 import { MySqlSelectBuilder } from './mysql-select-builder';
 
 class InsertQuery {
@@ -10,7 +10,7 @@ class InsertQuery {
   selectQuery: string = '';
   alias: string = '';
   onDuplicateKeyUpdate: string[] = [];
-  run: (query: string, ...args: any[]) => any = (query) => query;
+  run: (query: string, opts: any, ...args: any[]) => any = (query) => query;
   escape: (value: any) => string = (value) => value;
 }
 
@@ -121,14 +121,14 @@ export class MysqlInsertBuilder<T extends object = object> implements NoSqlActio
     return b;
   }
 
-  $setRun(callback: (query: string, ...args: any[]) => any) {
+  $setRun<R = string, O extends object = any>(callback: (query: string, opts: O, ...args: any[]) => R) {
     const b = new MysqlInsertBuilder<T>();
     b.mergeQuery(this.#query).run = callback;
     return b;
   }
 
-  $run<T = string>(...args: any[]): Promise<T> {
-    return this.#query.run(this.toString(), ...args);
+  $run<R = string, O extends object = any>(opts = {} as O, ...args: any[]): Promise<R> {
+    return this.#query.run(this.toString(), opts, ...args);
   }
 
   toString(): string {

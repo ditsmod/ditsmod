@@ -1,6 +1,10 @@
+export interface RunOptions {
+  first?: boolean;
+}
+
 export interface NoSqlActions {
   $if(condition: any, callback: (cb: unknown) => unknown): unknown;
   $setRun(callback: (query: string, ...args: any[]) => any): unknown;
-  $run<T = string>(...args: any[]): Promise<T>;
+  $run<R = string, O extends object = any>(opts?: O, ...args: any[]): Promise<R>;
   $setEscape(callback: (value: any) => string): unknown;
 }
