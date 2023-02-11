@@ -1,3 +1,4 @@
+import { NoSqlActions } from '../types';
 import { AndOrBuilder, ExpressionBuilder } from './and-or-builder';
 import { JoinBuilder } from './join-builder';
 import { MySqlSelectBuilder } from './mysql-select-builder';
@@ -10,6 +11,8 @@ class DeleteQuery {
   where: string[] = [];
   orderBy: string[] = [];
   limit: string = '';
+  run: (query: string, opts: any, ...args: any[]) => any = (query) => query;
+  escape: (value: any) => string = (value) => value;
 }
 
 class DeleteBuilderConfig {
@@ -20,7 +23,7 @@ type JoinType = 'join' | 'left join' | 'right join';
 type JoinCallback = (joinBuilder: JoinBuilder) => AndOrBuilder | string;
 type SelectCallback = (selectBuilder: MySqlSelectBuilder) => MySqlSelectBuilder;
 
-export class MySqlDeleteBuilder {
+export class MySqlDeleteBuilder<T extends object = any> implements NoSqlActions {
   #query = new DeleteQuery();
   #config = new DeleteBuilderConfig();
 
@@ -32,6 +35,8 @@ export class MySqlDeleteBuilder {
     this.#query.where.push(...(query.where || []));
     this.#query.orderBy.push(...(query.orderBy || []));
     this.#query.limit = query.limit || '';
+    this.#query.escape = query.escape || this.#query.escape;
+    this.#query.run = query.run || this.#query.run;
     return this.#query;
   }
 
@@ -145,6 +150,22 @@ export class MySqlDeleteBuilder {
       b1.mergeQuery(b2.#query);
     }
     return b1;
+  }
+
+  $setEscape(callback: (value: any) => string) {
+    const b = new MySqlDeleteBuilder<T>();
+    b.mergeQuery(this.#query).escape = callback;
+    return b;
+  }
+
+  $setRun<R = string, O extends object = any>(callback: (query: string, opts: O, ...args: any[]) => R) {
+    const b = new MySqlDeleteBuilder<T>();
+    b.mergeQuery(this.#query).run = callback;
+    return b;
+  }
+
+  $run<R = string, O extends object = any>(opts = {} as O, ...args: any[]): Promise<R> {
+    return this.#query.run(this.toString(), opts, ...args);
   }
 
   toString(): string {
