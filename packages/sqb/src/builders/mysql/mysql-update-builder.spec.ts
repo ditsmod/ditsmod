@@ -41,8 +41,8 @@ describe('MySqlUpdateBuilder', () => {
   const [a, articles_as_a, aAlias] = getTableMetadata(Articles, 'a');
 
   it('should works all features', () => {
-    const sql1 = new MySqlUpdateBuilder()
-      .update(users_as_u)
+    const sql1 = new MySqlUpdateBuilder<Tables>()
+      .update('users as u')
       .update('inner_select', (selectBuilder) => selectBuilder.select('one').from('some_table'))
       .join(posts_as_p, (jb) => jb.on(p.five, '=', u.two).and(p.five, '>', 6).or(u.two, '<', 8))
       .join(
