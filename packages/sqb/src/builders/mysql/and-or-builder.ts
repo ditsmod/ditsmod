@@ -24,26 +24,29 @@ export class AndOrBuilder<T extends object = any> {
   protected andOr(type: AndOrType, obj: T): AndOrBuilder;
   protected andOr(type: AndOrType, ...clause: OneSqlExpression): AndOrBuilder;
   protected andOr(type: AndOrType, ...clause: OneSqlExpression) {
-    const b = new AndOrBuilder(this.expressions, this.spaces, this.escape);
-    const firstEl = clause[0];
+    const [firstEl, , thirdEl] = clause;
+    if (thirdEl) {
+      clause[2] = this.escape(thirdEl);
+    }
     const indentation = ' '.repeat(this.spaces - 1);
-    let currentClause = '';
+    let clauseAsStr = '';
     if (clause.length == 1 && typeof firstEl == 'object') {
       const clauses: string[] = [];
       for (const prop in firstEl) {
         clauses.push(`${prop} = ${this.escape(firstEl[prop])}`);
       }
-      currentClause = clauses.join(`\n${indentation} ${type} `);
+      clauseAsStr = clauses.join(`\n${indentation} ${type} `);
     } else if (clause.length == 1 && typeof firstEl == 'function') {
       const b = new AndOrBuilder([], this.spaces, this.escape);
       const result = firstEl(b) as AndOrBuilder;
-      currentClause = `  ${type} (\n    ${[...result].join('\n    ')}\n  )`;
+      clauseAsStr = `  ${type} (\n    ${[...result].join('\n    ')}\n  )`;
     } else if (this.expressions.length == 0) {
-      currentClause = clause.join(' ');
+      clauseAsStr = clause.join(' ');
     } else {
-      currentClause = `${indentation} ${type} ${clause.join(' ')}`;
+      clauseAsStr = `${indentation} ${type} ${clause.join(' ')}`;
     }
-    b.expressions.push(currentClause);
+    const b = new AndOrBuilder(this.expressions, this.spaces, this.escape);
+    b.expressions.push(clauseAsStr);
     return b;
   }
 
