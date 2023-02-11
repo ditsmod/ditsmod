@@ -115,7 +115,7 @@ export class MysqlInsertBuilder<T extends object = object> implements NoSqlActio
     return b1;
   }
 
-  $setEscape(callback: (value: any) => string): MysqlInsertBuilder {
+  $setEscape(callback: (value: any) => string) {
     const b = new MysqlInsertBuilder<T>();
     b.mergeQuery(this.#query).escape = callback;
     return b;

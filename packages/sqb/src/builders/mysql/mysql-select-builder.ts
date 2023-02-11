@@ -168,7 +168,7 @@ export class MySqlSelectBuilder<T extends object = any> implements NoSqlActions 
     return b1;
   }
 
-  $setEscape(callback: (value: any) => string): MySqlSelectBuilder {
+  $setEscape(callback: (value: any) => string) {
     const b = new MySqlSelectBuilder<T>();
     b.mergeQuery(this.#query).escape = callback;
     return b;
