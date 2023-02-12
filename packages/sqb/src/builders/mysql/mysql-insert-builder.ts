@@ -1,4 +1,4 @@
-import { RunOptions, NoSqlActions, TableAndAlias } from '../types';
+import { NoSqlActions, TableAndAlias } from '../types';
 import { MySqlSelectBuilder } from './mysql-select-builder';
 
 class InsertQuery {
@@ -14,7 +14,9 @@ class InsertQuery {
   escape: (value: any) => string = (value) => value;
 }
 
-export class MysqlInsertBuilder<Tables extends object = object> implements NoSqlActions {
+export class MysqlInsertBuilder<Tables extends object = object, IntoTable extends keyof Tables = keyof Tables>
+  implements NoSqlActions
+{
   #query = new InsertQuery();
 
   protected mergeQuery(query: Partial<InsertQuery>) {
@@ -31,8 +33,8 @@ export class MysqlInsertBuilder<Tables extends object = object> implements NoSql
     return this.#query;
   }
 
-  insertFromSet<T extends object>(table: TableAndAlias<keyof Tables>, obj: T): MysqlInsertBuilder<T> {
-    const insertBuilder = new MysqlInsertBuilder<T>();
+  insertFromSet(table: IntoTable, obj: Partial<Tables[IntoTable]>): MysqlInsertBuilder<Tables, IntoTable> {
+    const insertBuilder = new MysqlInsertBuilder<Tables, IntoTable>();
     const insertQuery = insertBuilder.mergeQuery(this.#query);
     insertQuery.table = table as string;
     for (const prop in obj) {
@@ -41,22 +43,22 @@ export class MysqlInsertBuilder<Tables extends object = object> implements NoSql
     return insertBuilder;
   }
 
-  insertFromValues<T extends object>(
-    table: TableAndAlias<keyof Tables>,
-    fields: (keyof T)[],
+  insertFromValues(
+    table: IntoTable,
+    fields: (keyof Tables[IntoTable])[],
     values: (string | number)[][]
-  ): MysqlInsertBuilder<T>;
-  insertFromValues<T extends object>(
-    table: TableAndAlias<keyof Tables>,
-    fields: (keyof T)[],
+  ): MysqlInsertBuilder<Tables, IntoTable>;
+  insertFromValues(
+    table: IntoTable,
+    fields: (keyof Tables[IntoTable])[],
     valuesCallback: (valuesBuilder: ValuesBuilder) => ValuesBuilder
-  ): MysqlInsertBuilder<T>;
-  insertFromValues<T extends object>(
-    table: TableAndAlias<keyof Tables>,
-    fields: Extract<keyof T, string>[],
+  ): MysqlInsertBuilder<Tables, IntoTable>;
+  insertFromValues(
+    table: IntoTable,
+    fields: Extract<keyof Tables[IntoTable], string>[],
     arrayOrCallback: (string | number)[][] | ((valuesBuilder: ValuesBuilder) => ValuesBuilder)
   ) {
-    const insertBuilder = new MysqlInsertBuilder<T>();
+    const insertBuilder = new MysqlInsertBuilder<Tables, IntoTable>();
     const insertQuery = insertBuilder.mergeQuery(this.#query);
     insertQuery.table = table as string;
     insertQuery.fields.push(...fields);
@@ -70,12 +72,12 @@ export class MysqlInsertBuilder<Tables extends object = object> implements NoSql
     return insertBuilder;
   }
 
-  insertFromSelect<T extends object>(
-    table: TableAndAlias<keyof Tables>,
-    fields: Extract<keyof T, string>[],
-    selectCallback: (selectBuilder: MySqlSelectBuilder) => MySqlSelectBuilder
-  ): MysqlInsertBuilder<T> {
-    const insertBuilder = new MysqlInsertBuilder<T>();
+  insertFromSelect(
+    table: IntoTable,
+    fields: Extract<keyof Tables[IntoTable], string>[],
+    selectCallback: (selectBuilder: MySqlSelectBuilder<Tables>) => MySqlSelectBuilder<Tables>
+  ): MysqlInsertBuilder<Tables, IntoTable> {
+    const insertBuilder = new MysqlInsertBuilder<Tables, IntoTable>();
     const insertQuery = insertBuilder.mergeQuery(this.#query);
     insertQuery.table = table as string;
     insertQuery.fields.push(...fields);
@@ -89,15 +91,15 @@ export class MysqlInsertBuilder<Tables extends object = object> implements NoSql
     return insertBuilder;
   }
 
-  onDuplicateKeyUpdate(obj: Partial<Tables>): MysqlInsertBuilder<Tables>;
-  onDuplicateKeyUpdate(alias: string, obj: Partial<Tables>): MysqlInsertBuilder<Tables>;
-  onDuplicateKeyUpdate(aliasOrObj: string | Partial<Tables>, obj?: Partial<Tables>) {
-    const insertBuilder = new MysqlInsertBuilder<Tables>();
+  onDuplicateKeyUpdate(obj: Partial<Tables[IntoTable]>): MysqlInsertBuilder<Tables, IntoTable>;
+  onDuplicateKeyUpdate(alias: string, obj: Partial<Tables[IntoTable]>): MysqlInsertBuilder<Tables, IntoTable>;
+  onDuplicateKeyUpdate(aliasOrObj: string | Partial<Tables[IntoTable]>, obj?: Partial<Tables[IntoTable]>) {
+    const insertBuilder = new MysqlInsertBuilder<Tables, IntoTable>();
     const insertQuery = insertBuilder.mergeQuery(this.#query);
     if (obj) {
       insertQuery.alias = aliasOrObj as string;
     } else {
-      obj = aliasOrObj as Partial<Tables>;
+      obj = aliasOrObj as Partial<Tables[IntoTable]>;
     }
     for (const prop in obj) {
       insertQuery.onDuplicateKeyUpdate.push(`${prop} = ${this.#query.escape(obj[prop])}`);
