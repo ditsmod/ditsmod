@@ -62,8 +62,10 @@ describe('MySqlUpdateBuilder', () => {
         });
       })
       .join(articles_as_a, (jb) => jb.using([Posts, Users], 'userId', 'id2'))
-      .set<Partial<Users>>({ one: 'someone' })
-      .where((eb) => eb.and(p.six, '>', 6).and(p.six, '<', 10))
+      .set<Partial<Users>>({ one: 'someone', two: 1 })
+      .set('other', '=', 'some_other')
+      .set('other2 = some_other2')
+      .where((eb) => eb.isTrue(p.six, '>', 6).and(p.six, '<', 10))
       .orderBy(a.seven, u.one)
       .limit(1, 54);
 
@@ -91,7 +93,10 @@ right join users as u
   on u.one = p.userId
 join articles as a
   using(userId, id2)
-set one = someone
+set one = someone,
+  two = 1,
+  other = some_other,
+  other2 = some_other2
 where p.six > 6
   and p.six < 10
 order by

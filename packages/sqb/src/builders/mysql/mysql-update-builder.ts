@@ -1,5 +1,6 @@
+import { OneSqlExpression } from '../../types';
 import { NoSqlActions, TableAndAlias } from '../types';
-import { AndOrBuilder } from './and-or-builder';
+import { AndOrBuilder, ExpressionBuilder } from './and-or-builder';
 import { JoinBuilder } from './join-builder';
 import { MySqlSelectBuilder } from './mysql-select-builder';
 
@@ -105,18 +106,28 @@ export class MySqlUpdateBuilder<T extends object = any> implements NoSqlActions 
     return this.baseJoin('right join', table, selectOrJoinCallback, joinCallback);
   }
 
-  set<T extends object>(obj: T): MySqlUpdateBuilder<T> {
+  set<T extends object>(obj: T): MySqlUpdateBuilder<T>;
+  set(...clause: OneSqlExpression): MySqlUpdateBuilder<T>;
+  set<T extends object>(...clause: OneSqlExpression): MySqlUpdateBuilder<T> {
+    const [firstEl, , thirdEl] = clause;
+    if (thirdEl) {
+      clause[2] = this.#query.escape(thirdEl);
+    }
     const updateBuilder = new MySqlUpdateBuilder<T>();
     const updateQuery = updateBuilder.mergeQuery(this.#query);
-    for (const prop in obj) {
-      updateQuery.set.push(`${prop} = ${obj[prop]}`);
+    if (clause.length == 1 && typeof firstEl == 'object') {
+      for (const prop in firstEl) {
+        updateQuery.set.push(`${prop} = ${this.#query.escape(firstEl[prop])}`);
+      }
+    } else {
+      updateQuery.set.push(clause.join(' '));
     }
     return updateBuilder;
   }
 
-  where(expressCallback: (eb: AndOrBuilder) => AndOrBuilder) {
+  where(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
     const b = new MySqlUpdateBuilder<T>();
-    const eb = new AndOrBuilder();
+    const eb = new ExpressionBuilder();
     b.mergeQuery(this.#query);
     b.mergeQuery({ where: [...expressCallback(eb)] });
     return b;
@@ -176,7 +187,7 @@ export class MySqlUpdateBuilder<T extends object = any> implements NoSqlActions 
       sql += `${separator}${join.join(`${separator}`)}`;
     }
     if (set.length) {
-      sql += `\nset ${set.join(', ')}`;
+      sql += `\nset ${set.join(',\n  ')}`;
     }
     if (where.length) {
       sql += `${separator}where ${where.join(`${separator}`)}`;
