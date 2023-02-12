@@ -13,10 +13,14 @@ describe('MysqlInsertBuilder', () => {
     lastName: string;
   }
 
+  interface Tables {
+    users: Users;
+  }
+
   const [u, users, uAlias] = getTableMetadata(Users, 'u', true);
 
   it('insert from set', () => {
-    const sql = new MysqlInsertBuilder().insertFromSet<Partial<Users>>(users, {
+    const sql = new MysqlInsertBuilder<Tables>().insertFromSet<Partial<Users>>('users', {
       firstName: "'Kostia'",
       lastName: "'Tretiak'",
     });
@@ -26,8 +30,8 @@ set firstName = 'Kostia', lastName = 'Tretiak'`);
   });
 
   it('insert from set with "ON DUPLICATE KEY UPDATE"', () => {
-    const sql = new MysqlInsertBuilder()
-      .insertFromSet<Partial<Users>>(users, {
+    const sql = new MysqlInsertBuilder<Tables>()
+      .insertFromSet<Partial<Users>>('users', {
         firstName: "'Kostia'",
         lastName: "'Tretiak'",
       })
@@ -39,8 +43,8 @@ on duplicate key update firstName = 'Mostia'`);
   });
 
   it('insert from set with "ON DUPLICATE KEY UPDATE" with alias', () => {
-    const sql = new MysqlInsertBuilder()
-      .insertFromSet<Partial<Users>>(users, {
+    const sql = new MysqlInsertBuilder<Tables>()
+      .insertFromSet<Partial<Users>>('users', {
         firstName: "'Kostia'",
         lastName: "'Tretiak'",
       })
@@ -52,8 +56,8 @@ on duplicate key update firstName = 'Mostia'`);
   });
 
   it('insert from values as array of arrays', () => {
-    const sql = new MysqlInsertBuilder().insertFromValues<Users>(
-      users,
+    const sql = new MysqlInsertBuilder<Tables>().insertFromValues<Users>(
+      'users',
       ['firstName', 'middleName', 'lastName'],
       [
         ["'Kostia'", "'middleName'", "'Tretiak'"],
@@ -70,9 +74,9 @@ values ('Kostia', 'middleName', 'Tretiak'), ('FirstName', 'middleName', 'LastNam
   });
 
   it('insert from values as array of arrays with "ON DUPLICATE KEY UPDATE" and alias', () => {
-    const sql = new MysqlInsertBuilder()
+    const sql = new MysqlInsertBuilder<Tables>()
       .insertFromValues<Users>(
-        users,
+        'users',
         ['firstName', 'middleName', 'lastName'],
         [
           ["'Kostia'", "'middleName'", "'Tretiak'"],
@@ -91,9 +95,13 @@ on duplicate key update firstName = Mostia`);
   });
 
   it('insert from values with builder', () => {
-    const sql = new MysqlInsertBuilder().insertFromValues<Users>(users, ['firstName', 'lastName'], (builder) => {
-      return builder.row("'Kostia'", "'Tretiak'").row("'FirstName'", "'LastName'");
-    });
+    const sql = new MysqlInsertBuilder<Tables>().insertFromValues<Users>(
+      'users',
+      ['firstName', 'lastName'],
+      (builder) => {
+        return builder.row("'Kostia'", "'Tretiak'").row("'FirstName'", "'LastName'");
+      }
+    );
 
     expect(sql.toString()).toBe(`insert into users (
   firstName,
@@ -103,12 +111,16 @@ values ('Kostia', 'Tretiak'), ('FirstName', 'LastName')`);
   });
 
   it('insert from select', () => {
-    const sql = new MysqlInsertBuilder().insertFromSelect<Users>(users, ['firstName', 'lastName'], (builder) => {
-      return builder
-        .select(u.firstName, u.lastName)
-        .from(users)
-        .where((eb) => eb.isTrue(u.userId, '=', 1));
-    });
+    const sql = new MysqlInsertBuilder<Tables>().insertFromSelect<Users>(
+      'users',
+      ['firstName', 'lastName'],
+      (builder) => {
+        return builder
+          .select(u.firstName, u.lastName)
+          .from(users)
+          .where((eb) => eb.isTrue(u.userId, '=', 1));
+      }
+    );
 
     expect(sql.toString()).toBe(`insert into users (
   firstName,
@@ -122,8 +134,8 @@ where userId = 1`);
   });
 
   it('insert from select with "ON DUPLICATE KEY UPDATE" and alias', () => {
-    const sql = new MysqlInsertBuilder()
-      .insertFromSelect<Users>(users, ['firstName', 'lastName'], (builder) => {
+    const sql = new MysqlInsertBuilder<Tables>()
+      .insertFromSelect<Users>('users', ['firstName', 'lastName'], (builder) => {
         return builder
           .select(u.firstName, u.lastName)
           .from(users)
