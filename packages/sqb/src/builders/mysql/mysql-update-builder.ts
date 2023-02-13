@@ -46,8 +46,9 @@ export class MySqlUpdateBuilder<T extends object = any> implements NoSqlActions 
     let update = '';
 
     if (selectCallback) {
-      const selectBuilder = selectCallback(new MySqlSelectBuilder());
-      update = `(\n${selectBuilder}\n) as ${tableOrAlias as string}`;
+      const selectBuilder = new MySqlSelectBuilder().$setEscape(this.#query.escape);
+      const selectResult = selectCallback(selectBuilder);
+      update = `(\n${selectResult}\n) as ${tableOrAlias as string}`;
     } else {
       update = tableOrAlias as string;
     }
@@ -69,8 +70,9 @@ export class MySqlUpdateBuilder<T extends object = any> implements NoSqlActions 
     joinCallback?: JoinCallback
   ) {
     if (joinCallback) {
-      const selectBuilder = (selectOrJoinCallback as SelectCallback)(new MySqlSelectBuilder());
-      tableOrAlias = `(\n${selectBuilder}\n) as ${tableOrAlias}`;
+      const selectBuilder = new MySqlSelectBuilder().$setEscape(this.#query.escape);
+      const selectResult = (selectOrJoinCallback as SelectCallback)(selectBuilder);
+      tableOrAlias = `(\n${selectResult}\n) as ${tableOrAlias}`;
     } else {
       joinCallback = selectOrJoinCallback as JoinCallback;
     }
@@ -127,7 +129,7 @@ export class MySqlUpdateBuilder<T extends object = any> implements NoSqlActions 
 
   where(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
     const b = new MySqlUpdateBuilder<T>();
-    const eb = new ExpressionBuilder();
+    const eb = new ExpressionBuilder(this.#query.escape);
     b.mergeQuery(this.#query);
     b.mergeQuery({ where: [...expressCallback(eb)] });
     return b;

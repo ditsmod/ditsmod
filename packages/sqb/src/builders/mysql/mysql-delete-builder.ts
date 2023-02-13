@@ -1,4 +1,4 @@
-import { NoSqlActions } from '../types';
+import { NoSqlActions, TableAndAlias } from '../types';
 import { AndOrBuilder, ExpressionBuilder } from './and-or-builder';
 import { JoinBuilder } from './join-builder';
 import { MySqlSelectBuilder } from './mysql-select-builder';
@@ -23,7 +23,9 @@ type JoinType = 'join' | 'left join' | 'right join';
 type JoinCallback = (joinBuilder: JoinBuilder) => AndOrBuilder | string;
 type SelectCallback = (selectBuilder: MySqlSelectBuilder) => MySqlSelectBuilder;
 
-export class MySqlDeleteBuilder<T extends object = any> implements NoSqlActions {
+export class MySqlDeleteBuilder<Tables extends object = any, FromTable extends keyof Tables = keyof Tables>
+  implements NoSqlActions
+{
   #query = new DeleteQuery();
   #config = new DeleteBuilderConfig();
 
@@ -41,125 +43,132 @@ export class MySqlDeleteBuilder<T extends object = any> implements NoSqlActions 
   }
 
   delete(...tables: string[]) {
-    const builder = new MySqlDeleteBuilder<T>();
-    builder.mergeQuery(this.#query).del.push(...tables);
+    const builder = new MySqlDeleteBuilder<Tables>();
+    builder.mergeQuery(this.#query).del.push(...(tables as string[]));
     return builder;
   }
 
-  from(alias: string, selectCallback: (builder: MySqlSelectBuilder) => MySqlSelectBuilder): MySqlDeleteBuilder<T>;
-  from(table: string): MySqlDeleteBuilder<T>;
-  from(tableOrAlias: string, selectCallback?: (b: MySqlSelectBuilder) => MySqlSelectBuilder) {
-    const b = new MySqlDeleteBuilder<T>();
+  from(alias: string, selectCallback: (builder: MySqlSelectBuilder) => MySqlSelectBuilder): MySqlDeleteBuilder<Tables>;
+  from(table: TableAndAlias<FromTable>): MySqlDeleteBuilder<Tables>;
+  from(
+    tableOrAlias: string | TableAndAlias<FromTable>,
+    selectCallback?: (b: MySqlSelectBuilder) => MySqlSelectBuilder
+  ) {
+    const b = new MySqlDeleteBuilder<Tables>();
     let from = '';
 
     if (selectCallback) {
       const selectBuilder = selectCallback(new MySqlSelectBuilder());
-      from = `(\n${selectBuilder}\n) as ${tableOrAlias}`;
+      from = `(\n${selectBuilder}\n) as ${tableOrAlias as string}`;
     } else {
-      from = tableOrAlias;
+      from = tableOrAlias as string;
     }
     b.mergeQuery(this.#query).from.push(from);
     return b;
   }
 
   using(...tables: string[]) {
-    const builder = new MySqlDeleteBuilder<T>();
+    const builder = new MySqlDeleteBuilder<Tables>();
     builder.mergeQuery(this.#query).using.push(...tables);
     return builder;
   }
 
-  protected baseJoin(joinType: JoinType, table: string, joinCallback: JoinCallback): MySqlDeleteBuilder<T>;
+  protected baseJoin(
+    joinType: JoinType,
+    table: TableAndAlias<FromTable>,
+    joinCallback: JoinCallback
+  ): MySqlDeleteBuilder<Tables>;
   protected baseJoin(
     joinType: JoinType,
     alias: string,
     selectCallback: SelectCallback,
     joinCallback: JoinCallback
-  ): MySqlDeleteBuilder<T>;
+  ): MySqlDeleteBuilder<Tables>;
   protected baseJoin(
     joinType: JoinType,
-    tableOrAlias: string,
+    tableOrAlias: string | TableAndAlias<FromTable>,
     selectOrJoinCallback: JoinCallback | SelectCallback,
     joinCallback?: JoinCallback
   ) {
     if (joinCallback) {
       const selectBuilder = (selectOrJoinCallback as SelectCallback)(new MySqlSelectBuilder());
-      tableOrAlias = `(\n${selectBuilder}\n) as ${tableOrAlias}`;
+      tableOrAlias = `(\n${selectBuilder}\n) as ${tableOrAlias as string}`;
     } else {
       joinCallback = selectOrJoinCallback as JoinCallback;
     }
-    const deleteBuilder = new MySqlDeleteBuilder<T>();
+    const deleteBuilder = new MySqlDeleteBuilder<Tables>();
     const joinQuery = joinCallback(new JoinBuilder());
     if (joinQuery instanceof AndOrBuilder) {
       const join = [...joinQuery];
-      join[0] = `${joinType} ${tableOrAlias}\n  on ${join.at(0)}`;
+      join[0] = `${joinType} ${tableOrAlias as string}\n  on ${join.at(0)}`;
       deleteBuilder.mergeQuery(this.#query);
       deleteBuilder.mergeQuery({ join });
     } else {
       deleteBuilder.mergeQuery(this.#query);
-      deleteBuilder.mergeQuery({ join: [`${joinType} ${tableOrAlias}\n  using(${joinQuery})`] });
+      deleteBuilder.mergeQuery({ join: [`${joinType} ${tableOrAlias as string}\n  using(${joinQuery})`] });
     }
     return deleteBuilder;
   }
 
-  join(table: string, joinCallback: JoinCallback): MySqlDeleteBuilder<T>;
-  join(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlDeleteBuilder<T>;
-  join(table: string, selectOrJoinCallback: any, joinCallback?: any) {
-    return this.baseJoin('join', table, selectOrJoinCallback, joinCallback);
+  join(table: TableAndAlias<FromTable>, joinCallback: JoinCallback): MySqlDeleteBuilder<Tables>;
+  join(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlDeleteBuilder<Tables>;
+  join(table: string | TableAndAlias<FromTable>, selectOrJoinCallback: any, joinCallback?: any) {
+    return this.baseJoin('join', table as string, selectOrJoinCallback, joinCallback);
   }
 
-  leftJoin(table: string, joinCallback: JoinCallback): MySqlDeleteBuilder<T>;
-  leftJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlDeleteBuilder<T>;
-  leftJoin(table: string, selectOrJoinCallback: any, joinCallback?: any) {
-    return this.baseJoin('left join', table, selectOrJoinCallback, joinCallback);
+  leftJoin(table: TableAndAlias<FromTable>, joinCallback: JoinCallback): MySqlDeleteBuilder<Tables>;
+  leftJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlDeleteBuilder<Tables>;
+  leftJoin(table: string | TableAndAlias<FromTable>, selectOrJoinCallback: any, joinCallback?: any) {
+    return this.baseJoin('left join', table as string, selectOrJoinCallback, joinCallback);
   }
 
-  rightJoin(table: string, joinCallback: JoinCallback): MySqlDeleteBuilder<T>;
-  rightJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlDeleteBuilder<T>;
-  rightJoin(table: string, selectOrJoinCallback: any, joinCallback?: any) {
-    return this.baseJoin('right join', table, selectOrJoinCallback, joinCallback);
+  rightJoin(table: TableAndAlias<FromTable>, joinCallback: JoinCallback): MySqlDeleteBuilder<Tables>;
+  rightJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlDeleteBuilder<Tables>;
+  rightJoin(table: string | TableAndAlias<FromTable>, selectOrJoinCallback: any, joinCallback?: any) {
+    return this.baseJoin('right join', table as string, selectOrJoinCallback, joinCallback);
   }
 
   where(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
-    const b = new MySqlDeleteBuilder<T>();
-    const eb = new ExpressionBuilder();
+    const b = new MySqlDeleteBuilder<Tables>();
+    const eb = new ExpressionBuilder(this.#query.escape);
     b.mergeQuery(this.#query);
     b.mergeQuery({ where: [...expressCallback(eb)] });
     return b;
   }
 
   orderBy(...fields: [string, ...string[]]) {
-    const b = new MySqlDeleteBuilder<T>();
+    const b = new MySqlDeleteBuilder<Tables>();
     b.mergeQuery(this.#query).orderBy.push(...fields);
     return b;
   }
 
-  limit(rowCount: number): MySqlDeleteBuilder<T>;
-  limit(offset: number, rowCount: number): MySqlDeleteBuilder<T>;
+  limit(rowCount: number): MySqlDeleteBuilder<Tables>;
+  limit(offset: number, rowCount: number): MySqlDeleteBuilder<Tables>;
   limit(offsetOrCount: number, rowCount?: number) {
-    const b = new MySqlDeleteBuilder<T>();
+    const b = new MySqlDeleteBuilder<Tables>();
     const limit = rowCount ? [offsetOrCount, rowCount] : [];
     b.mergeQuery(this.#query).limit = limit.join(', ');
     return b;
   }
 
-  $if(condition: any, deleteCallback: (deletebuilder: MySqlDeleteBuilder<T>) => MySqlDeleteBuilder<T>) {
-    const b1 = new MySqlDeleteBuilder<T>();
+  $if(condition: any, deleteCallback: (deletebuilder: MySqlDeleteBuilder<Tables>) => MySqlDeleteBuilder<Tables>) {
+    const b1 = new MySqlDeleteBuilder<Tables>();
     b1.mergeQuery(this.#query);
     if (condition) {
-      const b2 = deleteCallback(new MySqlDeleteBuilder<T>());
+      const b2 = deleteCallback(new MySqlDeleteBuilder<Tables>());
       b1.mergeQuery(b2.#query);
     }
     return b1;
   }
 
   $setEscape(callback: (value: any) => string) {
-    const b = new MySqlDeleteBuilder<T>();
+    const b = new MySqlDeleteBuilder<Tables>();
     b.mergeQuery(this.#query).escape = callback;
     return b;
   }
 
   $setRun<R = string, O extends object = any>(callback: (query: string, opts: O, ...args: any[]) => R) {
-    const b = new MySqlDeleteBuilder<T>();
+    const b = new MySqlDeleteBuilder<Tables>();
     b.mergeQuery(this.#query).run = callback;
     return b;
   }

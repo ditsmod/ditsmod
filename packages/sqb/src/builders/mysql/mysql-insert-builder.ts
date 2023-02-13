@@ -81,7 +81,8 @@ export class MysqlInsertBuilder<Tables extends object = object, IntoTable extend
     const insertQuery = insertBuilder.mergeQuery(this.#query);
     insertQuery.table = table as string;
     insertQuery.fields.push(...fields);
-    insertQuery.selectQuery = selectCallback(new MySqlSelectBuilder()).toString();
+    const selectBuilder = new MySqlSelectBuilder().$setEscape(this.#query.escape);
+    insertQuery.selectQuery = selectCallback(selectBuilder).toString();
     return insertBuilder;
   }
 

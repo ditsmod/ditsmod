@@ -95,13 +95,9 @@ on duplicate key update firstName = Mostia`);
   });
 
   it('insert from values with builder', () => {
-    const sql = new MysqlInsertBuilder<Tables>().insertFromValues(
-      'users',
-      ['firstName', 'lastName'],
-      (builder) => {
-        return builder.row("'Kostia'", "'Tretiak'").row("'FirstName'", "'LastName'");
-      }
-    );
+    const sql = new MysqlInsertBuilder<Tables>().insertFromValues('users', ['firstName', 'lastName'], (builder) => {
+      return builder.row("'Kostia'", "'Tretiak'").row("'FirstName'", "'LastName'");
+    });
 
     expect(sql.toString()).toBe(`insert into users (
   firstName,
@@ -111,16 +107,12 @@ values ('Kostia', 'Tretiak'), ('FirstName', 'LastName')`);
   });
 
   it('insert from select', () => {
-    const sql = new MysqlInsertBuilder<Tables>().insertFromSelect(
-      'users',
-      ['firstName', 'lastName'],
-      (builder) => {
-        return builder
-          .select(u.firstName, u.lastName)
-          .from('users')
-          .where((eb) => eb.isTrue(u.userId, '=', 1));
-      }
-    );
+    const sql = new MysqlInsertBuilder<Tables>().insertFromSelect('users', ['firstName', 'lastName'], (builder) => {
+      return builder
+        .select(u.firstName, u.lastName)
+        .from('users')
+        .where((eb) => eb.isTrue(u.userId, '=', 1));
+    });
 
     expect(sql.toString()).toBe(`insert into users (
   firstName,
@@ -131,6 +123,27 @@ select
   lastName
 from users
 where userId = 1`);
+  });
+
+  it('insert from select with "where" and escape value in it', () => {
+    const sql = new MysqlInsertBuilder<Tables>()
+      .$setEscape((value) => `'${value}'`)
+      .insertFromSelect('users', ['firstName', 'lastName'], (builder) => {
+        return builder
+          .select(u.firstName, u.lastName)
+          .from('users')
+          .where((eb) => eb.isTrue({ firstName: 'other-name' }));
+      });
+
+    expect(sql.toString()).toBe(`insert into users (
+  firstName,
+  lastName
+)
+select
+  firstName,
+  lastName
+from users
+where firstName = 'other-name'`);
   });
 
   it('insert from select with "ON DUPLICATE KEY UPDATE" and alias', () => {

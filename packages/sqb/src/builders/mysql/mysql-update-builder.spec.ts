@@ -29,16 +29,24 @@ describe('MySqlUpdateBuilder', () => {
   }
 
   interface Tables {
-    users: Users,
-    posts: Posts,
-    articles: Articles,
-    other: unknown,
-    table1: unknown,
+    users: Users;
+    posts: Posts;
+    articles: Articles;
+    other: unknown;
+    table1: unknown;
   }
 
   const [u, users_as_u, uAlias] = getTableMetadata(Users, 'u');
   const [p, posts_as_p, pAlias] = getTableMetadata(Posts, 'p');
   const [a, articles_as_a, aAlias] = getTableMetadata(Articles, 'a');
+
+  it('should escape value', () => {
+    const sql1 = new MySqlUpdateBuilder<Tables>()
+      .$setEscape((value) => `'${value}'`)
+      .where((eb) => eb.isTrue({ one: 'two' }));
+
+    expect(`${sql1}`).toBe("\nwhere one = 'two'");
+  });
 
   it('should works all features', () => {
     const sql1 = new MySqlUpdateBuilder<Tables>()

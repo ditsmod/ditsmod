@@ -56,6 +56,7 @@ describe('MySqlSelectBuilder', () => {
     expect(`${sb}`).toBe('');
     expect(`${sb.where((eb) => eb.isTrue(p.four, '=', u.two))}`).toBe('\nwhere p.four = u.two');
     expect(`${sb.where((eb) => eb.isTrue({ four: 'two' }))}`).toBe('\nwhere four = two');
+    expect(`${sb.$setEscape(value => `'${value}'`).where((eb) => eb.isTrue({ four: 'two' }))}`).toBe("\nwhere four = 'two'");
     expect(`${sb}`).toBe('');
     expect(`${sb.orderBy(a.seven, u.one)}`).toBe('\norder by\n  a.seven,\n  u.one');
     expect(`${sb}`).toBe('');
