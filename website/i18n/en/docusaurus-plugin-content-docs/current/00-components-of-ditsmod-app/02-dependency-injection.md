@@ -31,11 +31,11 @@ export class SecondService {
 }
 ```
 
-this means that `SecondService` has a dependency on `FirstService`, and DI is expected to resolve this dependency as follows:
+this means that `SecondService` has a dependency on `FirstService`, and you is expected that DI will resolve this dependency as follows:
 
 1. DI will first look through the constructor of `FirstService`;
 2. if `FirstService` has no dependency, an instance of `FirstService` will be created;
-3. this instance will be passed to the `SecondService` constructor.
+3. instance of `FirstService` will be passed to the `SecondService` constructor.
 
 If after the first step it turns out that `FirstService` has its own dependencies, then DI will recursively execute these three steps for each given dependency.
 
@@ -91,7 +91,9 @@ token2 => stub
 ...
 ```
 
-The token can be of any type, but currently DI has a feature where DI doesn't distinguish between different types of _array_ or _enum_. In addition, you should remember that the token must remain in the JavaScript file after compilation from TypeScript code, so you cannot use interfaces or types declared with the `type` keyword as a token. The `inject` decorator allows you to use an alternative token, it is necessary to get an array, enum, or any other value in the constructor:
+The token can be of any type, but currently DI has a limitation where DI doesn't distinguish between different types of _array_ or _enum_. In addition, you should remember that the token must remain in the JavaScript file after compilation from TypeScript code, so you cannot use interfaces or types declared with the `type` keyword as a token.
+
+The `inject` decorator allows you to use an alternative token, it is necessary to get an array, enum, or any other value in the constructor:
 
 ```ts {7}
 import { injectable, inject } from '@ditsmod/core';
@@ -105,7 +107,7 @@ export class SecondService {
 }
 ```
 
-When `inject` is used, DI uses the token passed to it, and ignores the type of the variable in back of this decorator, so this type can even be an interface.
+When `inject` is used, DI uses the token passed to it and ignores the type of the variable in back of this decorator, so this type can even be an interface.
 
 Keep in mind that the easiest and most reliable dependency type to use is a class. DI recognizes well the types of different classes, even if they have the same name, so the `inject` decorator can not be used with them. For all other types of dependencies, we recommend using an instance of the `InjectionToken<T>` class as a token, and passing an arbitrary text value to its constructor for a short description:
 
