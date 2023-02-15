@@ -13,8 +13,26 @@ describe('MysqlInsertBuilder', () => {
     lastName: string;
   }
 
+  @table({ tableName: 'posts' })
+  class Posts {
+    userId: number;
+    id2: number;
+    four: string;
+    five: number;
+    six: string;
+  }
+
+  @table({ tableName: 'articles' })
+  class Articles {
+    seven: object;
+  }
+
   interface Tables {
     users: Users;
+    posts: Posts;
+    articles: Articles;
+    other: unknown;
+    table1: unknown;
   }
 
   const [u, users, uAlias] = getTableMetadata(Users, 'u', true);
