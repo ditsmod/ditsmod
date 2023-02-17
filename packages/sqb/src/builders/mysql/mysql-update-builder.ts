@@ -23,7 +23,7 @@ type JoinType = 'join' | 'left join' | 'right join';
 type JoinCallback = (joinBuilder: JoinBuilder) => AndOrBuilder | string;
 type SelectCallback = (selectBuilder: MySqlSelectBuilder) => MySqlSelectBuilder;
 
-export class MySqlUpdateBuilder<T extends object = any> implements NoSqlActions {
+export class MySqlUpdateBuilder<Tables extends object = any> implements NoSqlActions {
   #query = new UpdateQuery();
   #config = new UpdateBuilderConfig();
 
@@ -39,10 +39,10 @@ export class MySqlUpdateBuilder<T extends object = any> implements NoSqlActions 
     return this.#query;
   }
 
-  update(alias: string, selectCallback: SelectCallback): MySqlUpdateBuilder<T>;
-  update(table: TableAndAlias<keyof T>): MySqlUpdateBuilder<T>;
-  update(tableOrAlias: string | TableAndAlias<keyof T>, selectCallback?: SelectCallback) {
-    const builder = new MySqlUpdateBuilder<T>();
+  update(alias: string, selectCallback: SelectCallback): MySqlUpdateBuilder<Tables>;
+  update(table: TableAndAlias<keyof Tables>): MySqlUpdateBuilder<Tables>;
+  update(tableOrAlias: string | TableAndAlias<keyof Tables>, selectCallback?: SelectCallback) {
+    const builder = new MySqlUpdateBuilder<Tables>();
     let update = '';
 
     if (selectCallback) {
@@ -56,13 +56,13 @@ export class MySqlUpdateBuilder<T extends object = any> implements NoSqlActions 
     return builder;
   }
 
-  protected baseJoin(joinType: JoinType, table: string, joinCallback: JoinCallback): MySqlUpdateBuilder<T>;
+  protected baseJoin(joinType: JoinType, table: string, joinCallback: JoinCallback): MySqlUpdateBuilder<Tables>;
   protected baseJoin(
     joinType: JoinType,
     alias: string,
     selectCallback: SelectCallback,
     joinCallback: JoinCallback
-  ): MySqlUpdateBuilder<T>;
+  ): MySqlUpdateBuilder<Tables>;
   protected baseJoin(
     joinType: JoinType,
     tableOrAlias: string,
@@ -76,7 +76,7 @@ export class MySqlUpdateBuilder<T extends object = any> implements NoSqlActions 
     } else {
       joinCallback = selectOrJoinCallback as JoinCallback;
     }
-    const updateBuilder = new MySqlUpdateBuilder<T>();
+    const updateBuilder = new MySqlUpdateBuilder<Tables>();
     const joinQuery = joinCallback(new JoinBuilder());
     if (joinQuery instanceof AndOrBuilder) {
       const join = [...joinQuery];
@@ -90,26 +90,26 @@ export class MySqlUpdateBuilder<T extends object = any> implements NoSqlActions 
     return updateBuilder;
   }
 
-  join(table: string, joinCallback: JoinCallback): MySqlUpdateBuilder<T>;
-  join(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlUpdateBuilder<T>;
+  join(table: string, joinCallback: JoinCallback): MySqlUpdateBuilder<Tables>;
+  join(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlUpdateBuilder<Tables>;
   join(table: string, selectOrJoinCallback: any, joinCallback?: any) {
     return this.baseJoin('join', table, selectOrJoinCallback, joinCallback);
   }
 
-  leftJoin(table: string, joinCallback: JoinCallback): MySqlUpdateBuilder<T>;
-  leftJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlUpdateBuilder<T>;
+  leftJoin(table: string, joinCallback: JoinCallback): MySqlUpdateBuilder<Tables>;
+  leftJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlUpdateBuilder<Tables>;
   leftJoin(table: string, selectOrJoinCallback: any, joinCallback?: any) {
     return this.baseJoin('left join', table, selectOrJoinCallback, joinCallback);
   }
 
-  rightJoin(table: string, joinCallback: JoinCallback): MySqlUpdateBuilder<T>;
-  rightJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlUpdateBuilder<T>;
+  rightJoin(table: string, joinCallback: JoinCallback): MySqlUpdateBuilder<Tables>;
+  rightJoin(alias: string, selectCallback: SelectCallback, joinCallback: JoinCallback): MySqlUpdateBuilder<Tables>;
   rightJoin(table: string, selectOrJoinCallback: any, joinCallback?: any) {
     return this.baseJoin('right join', table, selectOrJoinCallback, joinCallback);
   }
 
   set<T extends object>(obj: T): MySqlUpdateBuilder<T>;
-  set(...clause: OneSqlExpression): MySqlUpdateBuilder<T>;
+  set(...clause: OneSqlExpression): MySqlUpdateBuilder<Tables>;
   set<T extends object>(...clause: OneSqlExpression): MySqlUpdateBuilder<T> {
     const [firstEl, , thirdEl] = clause;
     if (thirdEl) {
@@ -128,7 +128,7 @@ export class MySqlUpdateBuilder<T extends object = any> implements NoSqlActions 
   }
 
   where(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
-    const b = new MySqlUpdateBuilder<T>();
+    const b = new MySqlUpdateBuilder<Tables>();
     const eb = new ExpressionBuilder(this.#query.escape);
     b.mergeQuery(this.#query);
     b.mergeQuery({ where: [...expressCallback(eb)] });
@@ -136,38 +136,38 @@ export class MySqlUpdateBuilder<T extends object = any> implements NoSqlActions 
   }
 
   orderBy(...fields: [string, ...string[]]) {
-    const b = new MySqlUpdateBuilder<T>();
+    const b = new MySqlUpdateBuilder<Tables>();
     b.mergeQuery(this.#query).orderBy.push(...fields);
     return b;
   }
 
-  limit(rowCount: number): MySqlUpdateBuilder<T>;
-  limit(offset: number, rowCount: number): MySqlUpdateBuilder<T>;
+  limit(rowCount: number): MySqlUpdateBuilder<Tables>;
+  limit(offset: number, rowCount: number): MySqlUpdateBuilder<Tables>;
   limit(offsetOrCount: number, rowCount?: number) {
-    const b = new MySqlUpdateBuilder<T>();
+    const b = new MySqlUpdateBuilder<Tables>();
     const limit = rowCount ? [offsetOrCount, rowCount] : [];
     b.mergeQuery(this.#query).limit = limit.join(', ');
     return b;
   }
 
-  $if(condition: any, updateCallback: (updatebuilder: MySqlUpdateBuilder<T>) => MySqlUpdateBuilder<T>) {
-    const b1 = new MySqlUpdateBuilder<T>();
+  $if(condition: any, updateCallback: (updatebuilder: MySqlUpdateBuilder<Tables>) => MySqlUpdateBuilder<Tables>) {
+    const b1 = new MySqlUpdateBuilder<Tables>();
     b1.mergeQuery(this.#query);
     if (condition) {
-      const b2 = updateCallback(new MySqlUpdateBuilder<T>());
+      const b2 = updateCallback(new MySqlUpdateBuilder<Tables>());
       b1.mergeQuery(b2.#query);
     }
     return b1;
   }
 
   $setEscape(callback: (value: any) => string) {
-    const b = new MySqlUpdateBuilder<T>();
+    const b = new MySqlUpdateBuilder<Tables>();
     b.mergeQuery(this.#query).escape = callback;
     return b;
   }
 
   $setRun<R = string, O extends object = any>(callback: (query: string, opts: O, ...args: any[]) => R) {
-    const b = new MySqlUpdateBuilder<T>();
+    const b = new MySqlUpdateBuilder<Tables>();
     b.mergeQuery(this.#query).run = callback;
     return b;
   }
