@@ -48,6 +48,23 @@ describe('MySqlUpdateBuilder', () => {
     expect(`${sql1}`).toBe("\nwhere one = 'two'");
   });
 
+  it('multi "where" should join with "and"', () => {
+    const sql1 = new MySqlUpdateBuilder<Tables>()
+      .where((eb) => eb.isTrue({ one: 'two' }))
+      .where((eb) => eb.isTrue({ three: 'four' }))
+      ;
+
+      expect(`${sql1}`).toBe('\nwhere one = two\n  and three = four');
+  });
+
+  it('$if with "where" should work', () => {
+    const sql1 = new MySqlUpdateBuilder<Tables>()
+      .where((eb) => eb.isTrue({ one: 'two' }))
+      .$if(true, (b) => b.where((eb) => eb.isTrue({ three: 'four' })));
+
+    expect(`${sql1}`).toBe('\nwhere one = two\n  and three = four');
+  });
+
   it('should works all features', () => {
     const sql1 = new MySqlUpdateBuilder<Tables>()
       .update('users as u')
