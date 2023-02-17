@@ -8,6 +8,6 @@ export { TableAndAlias } from './builders/types';
 export { table } from './decorators/table';
 export { getTableMetadata } from './utils';
 export { MySqlSelectBuilder } from './builders/mysql/mysql-select-builder';
-export { MysqlInsertBuilder } from './builders/mysql/mysql-insert-builder';
+export { MysqlInsertBuilder, ValuesBuilder } from './builders/mysql/mysql-insert-builder';
 export { MySqlUpdateBuilder } from './builders/mysql/mysql-update-builder';
 export { MySqlDeleteBuilder } from './builders/mysql/mysql-delete-builder';
