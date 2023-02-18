@@ -43,15 +43,15 @@ describe('MySqlUpdateBuilder', () => {
   it('should escape value', () => {
     const sql1 = new MySqlUpdateBuilder<Tables>()
       .$setEscape((value) => `'${value}'`)
-      .where((eb) => eb.isTrue({ one: 'two' }));
+      .where({ one: 'two' });
 
     expect(`${sql1}`).toBe("\nwhere one = 'two'");
   });
 
   it('multi "where" should join with "and"', () => {
     const sql1 = new MySqlUpdateBuilder<Tables>()
-      .where((eb) => eb.isTrue({ one: 'two' }))
-      .where((eb) => eb.isTrue({ three: 'four' }))
+      .where({ one: 'two' })
+      .where({ three: 'four' })
       ;
 
       expect(`${sql1}`).toBe('\nwhere one = two\n  and three = four');
@@ -59,8 +59,8 @@ describe('MySqlUpdateBuilder', () => {
 
   it('$if with "where" should work', () => {
     const sql1 = new MySqlUpdateBuilder<Tables>()
-      .where((eb) => eb.isTrue({ one: 'two' }))
-      .$if(true, (b) => b.where((eb) => eb.isTrue({ three: 'four' })));
+      .where({ one: 'two' })
+      .$if(true, (b) => b.where({ three: 'four' }));
 
     expect(`${sql1}`).toBe('\nwhere one = two\n  and three = four');
   });
@@ -81,8 +81,8 @@ describe('MySqlUpdateBuilder', () => {
           return joinBuilder.on(u.one, '=', p.userId);
         });
       })
-      .$if(false, (selectBuilder) => {
-        return selectBuilder.rightJoin(users_as_u, (joinBuilder) => {
+      .$if(false, (updateBuilder) => {
+        return updateBuilder.rightJoin(users_as_u, (joinBuilder) => {
           return joinBuilder.on(u.one, '=', p.userId);
         });
       })
@@ -90,7 +90,8 @@ describe('MySqlUpdateBuilder', () => {
       .set<Partial<Users>>({ one: 'someone', two: 1 })
       .set('other', '=', 'some_other')
       .set('other2 = some_other2')
-      .where((eb) => eb.isTrue(p.six, '>', 6).and(p.six, '<', 10))
+      .where(p.six, '>', 6)
+      .where(p.six, '<', 10)
       .orderBy(a.seven, u.one)
       .limit(1, 54);
 

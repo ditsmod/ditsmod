@@ -21,6 +21,7 @@ export class AndOrBuilder<T extends object = any> {
     protected escape: (value: any) => string = (value) => value
   ) {}
 
+  protected andOr(type: AndOrType, callback: (cb: AndOrBuilder) => AndOrBuilder): AndOrBuilder;
   protected andOr(type: AndOrType, obj: T): AndOrBuilder;
   protected andOr(type: AndOrType, ...clause: OneSqlExpression): AndOrBuilder;
   protected andOr(type: AndOrType, ...clause: OneSqlExpression) {

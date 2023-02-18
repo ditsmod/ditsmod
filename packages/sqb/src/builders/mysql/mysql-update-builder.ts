@@ -1,6 +1,6 @@
 import { OneSqlExpression } from '../../types';
 import { NoSqlActions, TableAndAlias } from '../types';
-import { AndOrBuilder, ExpressionBuilder } from './and-or-builder';
+import { AndOrBuilder } from './and-or-builder';
 import { JoinBuilder } from './join-builder';
 import { MySqlSelectBuilder } from './mysql-select-builder';
 
@@ -108,14 +108,14 @@ export class MySqlUpdateBuilder<Tables extends object = any> implements NoSqlAct
     return this.baseJoin('right join', table, selectOrJoinCallback, joinCallback);
   }
 
-  set<T extends object>(obj: T): MySqlUpdateBuilder<T>;
+  set<T extends object>(obj: T): MySqlUpdateBuilder<Tables>;
   set(...clause: OneSqlExpression): MySqlUpdateBuilder<Tables>;
-  set<T extends object>(...clause: OneSqlExpression): MySqlUpdateBuilder<T> {
+  set<T extends object>(...clause: OneSqlExpression): MySqlUpdateBuilder<Tables> {
     const [firstEl, , thirdEl] = clause;
     if (thirdEl) {
       clause[2] = this.#query.escape(thirdEl);
     }
-    const updateBuilder = new MySqlUpdateBuilder<T>();
+    const updateBuilder = new MySqlUpdateBuilder<Tables>();
     const updateQuery = updateBuilder.mergeQuery(this.#query);
     if (clause.length == 1 && typeof firstEl == 'object') {
       for (const prop in firstEl) {
@@ -127,12 +127,29 @@ export class MySqlUpdateBuilder<Tables extends object = any> implements NoSqlAct
     return updateBuilder;
   }
 
-  where(expressCallback: (eb: ExpressionBuilder) => AndOrBuilder) {
-    const b = new MySqlUpdateBuilder<Tables>();
-    const eb = new ExpressionBuilder(this.#query.escape);
-    b.mergeQuery(this.#query);
-    b.mergeQuery({ where: [...expressCallback(eb)] });
-    return b;
+  where(expressCallback: (aob: AndOrBuilder) => AndOrBuilder): MySqlUpdateBuilder<Tables>;
+  where<T extends object>(obj: T): MySqlUpdateBuilder<Tables>;
+  where(...clause: OneSqlExpression): MySqlUpdateBuilder<Tables>;
+  where<T extends object>(...clause: any[]) {
+    const [firstEl, , thirdEl] = clause;
+    if (thirdEl) {
+      clause[2] = this.#query.escape(thirdEl);
+    }
+    const updateBuilder = new MySqlUpdateBuilder<Tables>();
+    const updateQuery = updateBuilder.mergeQuery(this.#query);
+    if (typeof firstEl == 'function') {
+      const andOrBuilder = new AndOrBuilder([], 2, this.#query.escape);
+      updateBuilder.mergeQuery({ where: [...firstEl(andOrBuilder)] });
+    } else if (typeof firstEl == 'object') {
+      const andClause: string[] = [];
+      for (const prop in firstEl) {
+        andClause.push(`${prop} = ${this.#query.escape(firstEl[prop])}`);
+      }
+      updateQuery.where.push(andClause.join('\n  and '));
+    } else {
+      updateQuery.where.push(`${clause.join(' ')}`);
+    }
+    return updateBuilder;
   }
 
   orderBy(...fields: [string, ...string[]]) {
@@ -192,7 +209,7 @@ export class MySqlUpdateBuilder<Tables extends object = any> implements NoSqlAct
       sql += `\nset ${set.join(',\n  ')}`;
     }
     if (where.length) {
-      sql += `${separator}where ${where.join(`${separator}`)}`;
+      sql += `${separator}where ${where.join(`${separator}  and `)}`;
     }
     if (orderBy.length) {
       sql += `${separator}order by${separator}  ${orderBy.join(`,${separator}  `)}`;
