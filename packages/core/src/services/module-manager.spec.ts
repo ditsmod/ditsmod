@@ -271,7 +271,7 @@ describe('ModuleManager', () => {
 
     const exportedMultiProvidersPerMod = [{ token: Multi, useClass: Multi, multi: true }];
 
-    @featureModule({ providersPerApp: [] })
+    @featureModule()
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
         return {
