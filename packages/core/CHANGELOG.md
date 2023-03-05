@@ -1,5 +1,12 @@
+<a name="core-2.38.1"></a>
+# [core-2.38.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.38.1) (2023-03-05)
+
+### Bug fixes
+
+- [Fixed](https://github.com/ditsmod/ditsmod/commit/c5d70d2586) `getModuleMetadata()`.
+
 <a name="core-2.38.0"></a>
-# [core-2.38.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.38.0) (2023-01-25)
+## [core-2.38.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.38.0) (2023-01-25)
 
 ### BREAKING CHANGES
 
