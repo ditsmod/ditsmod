@@ -200,7 +200,7 @@ describe('ModuleManager', () => {
   });
 
   it('root module without @RootModule decorator', () => {
-    @featureModule({})
+    @featureModule()
     class Module1 {}
 
     expect(() => mock.scanRootModule(Module1)).toThrow('"Module1" does not have the "@RootModule()" decorator');
