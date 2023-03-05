@@ -39,6 +39,7 @@ export function getModuleMetadata(
     metadata.providersPerMod = getLastProviders(mergeArrays(modMetadata.providersPerMod, modWitParams.providersPerMod));
     metadata.providersPerRou = getLastProviders(mergeArrays(modMetadata.providersPerRou, modWitParams.providersPerRou));
     metadata.providersPerReq = getLastProviders(mergeArrays(modMetadata.providersPerReq, modWitParams.providersPerReq));
+    metadata.exports = getLastProviders(mergeArrays(modMetadata.exports, modWitParams.exports));
     metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
     return { ...metadata, decoratorFactory: container.decorator };
   } else {
