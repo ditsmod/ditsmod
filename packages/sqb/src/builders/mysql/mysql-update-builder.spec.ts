@@ -72,7 +72,7 @@ describe('MySqlUpdateBuilder', () => {
       .join(posts_as_p, (jb) => jb.on(p.five, '=', u.two).and(p.five, '>', 6).or(u.two, '<', 8))
       .join(
         'm',
-        (s) => s.select('one').from('table1'),
+        (selectBuilder) => selectBuilder.select('one').from('table1'),
         (jb) => jb.on('m.five', '=', u.two).and('m.five', '>', 6).or('m.two', '<', 8)
       )
       .leftJoin(articles_as_a, (jb) => jb.on(p.four, '=', u.two).or(a.seven, '=', 7))
