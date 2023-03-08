@@ -1,7 +1,7 @@
-import { injectable, resolveForwardRef, Class } from '../di';
 import { format } from 'util';
-import { HTTP_INTERCEPTORS } from '../constans';
 
+import { injectable, resolveForwardRef, Class } from '../di';
+import { HTTP_INTERCEPTORS } from '../constans';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import {
   AnyObj,
@@ -32,7 +32,6 @@ import {
   isNormRootModule,
   isProvider,
   isRawRootModule,
-  isRootModule,
   isValueProvider,
   MultiProvider,
 } from '../utils/type-guards';
