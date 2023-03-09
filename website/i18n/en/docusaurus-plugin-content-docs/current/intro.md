@@ -18,7 +18,7 @@ The main features of Ditsmod:
 - Has OpenAPI support, and has the ability to validate queries based on OpenAPI metadata.
 - To date, [Ditsmod is one of the fastest][14] among Node.js web frameworks.
 
-Some concepts of Ditsmod architecture are taken from [Angular][9] concepts, in particular DI.
+Some concepts of Ditsmod architecture are taken from Angular concepts, and DI is built based on the native Angular DI module.
 
 ## Install the Ditsmod seed
 
@@ -78,7 +78,7 @@ Once compiled, it becomes `dist/main.js` and becomes the entry point for running
 node dist/main.js
 ```
 
-Note the `import 'reflect-metadata'` in the first line of the file. This module is required for Ditsmod Dependecy Injection to work, but it is sufficient to specify it only once in the entry file for Node.js.
+Note the `import 'reflect-metadata'` in the first line of the file. This module is required for Dependecy Injection to work, but it is sufficient to specify it only once in the entry file for Node.js.
 
 This import should also be done for tests, because when testing the input file will be a entry file, not `dist/main.js`. For example, if you use [jest][10] as a test framework and the `test-file.js` file contains a compiled test, to run it like this:
 
