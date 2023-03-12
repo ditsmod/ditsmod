@@ -74,12 +74,12 @@ import { MyHttpInterceptor } from './my-http-interceptor';
 export class SomeModule {}
 ```
 
-[1]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/types/http-interceptor.ts#L9-L11
-[2]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/types/http-interceptor.ts#L18-L20
-[3]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/types/http-interceptor.ts#L41-L43
+[1]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/types/http-interceptor.ts#L9-L11
+[2]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/types/http-interceptor.ts#L18-L20
+[3]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/types/http-interceptor.ts#L41-L43
 [5]: https://expressjs.com/en/guide/writing-middleware.html
-[7]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/services/pre-router.ts
-[8]: https://github.com/ditsmod/ditsmod/blob/core-2.35.0/packages/core/src/types/route-data.ts
+[7]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/pre-router.ts
+[8]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/types/route-data.ts
 
 [104]: /published-modules/return
 [106]: /components-of-ditsmod-app/dependency-injection

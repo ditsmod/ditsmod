@@ -2,11 +2,17 @@
 sidebar_position: 1
 ---
 
-# Controllers and services
+# Router, controllers, and services
 
-## What is a controller
+## What does a router do?
 
-Controllers are designed to receive HTTP requests and send HTTP responses. A TypeScript class becomes a Ditsmod controller thanks to the `controller` decorator:
+After receiving an HTTP request and passing it to Ditsmod, Node.js immediately breaks down the request URL into two parts separated by a question mark. The first part contains the so-called _path_, and the second part contains the _query parameters_. If the URL does not contain a question mark, then the request will only have a _path_.
+
+The router's task is to find the HTTP request handler by _path_, and _query parameters_ are simply passed to the found handler. In Ditsmod applications, in most cases, query processors invoke controller methods.
+
+# What is a controller?
+
+A TypeScript class becomes a Ditsmod controller thanks to the controller decorator.
 
 ```ts
 import { controller } from '@ditsmod/core';
@@ -17,21 +23,7 @@ export class SomeController {}
 
 It is recommended that controller files end with `*.controller.ts` and their class names end with `*Controller`.
 
-<!--
-Загалом, в декоратор `controller` можна передавати об'єкт із такими властивостями:
-
-```ts
-import { controller } from '@ditsmod/core';
-
-@controller({
-  providersPerRou: [], // Провайдери на рівні роута
-  providersPerReq: [] // Провайдери на рівні запиту
-})
-export class SomeController {}
-```
--->
-
-HTTP requests are bound to controller methods through the routing system, using the `route` decorator. In the following example, a single route is created that accepts `GET` request at `/hello`:
+As mentioned above, HTTP request handlers can call controller methods. HTTP requests are bound to controller methods through the routing system using the `route` decorator. In the following example, a single route is created that accepts a `GET` request at the address `/hello`:
 
 ```ts
 import { controller, route, Res } from '@ditsmod/core';
@@ -51,7 +43,7 @@ What we see here:
 2. In the class method, the parameter `res` is declared with the data type `Res`. So we ask Ditsmod to create an instance of `Res` and pass it to the appropriate variable. By the way, `res` is short for the word _response_.
 3. Text responses to HTTP requests are sent via `res.send()`.
 
-Although in the previous example the instance of `Res` was requested in `method1()`, we can similarly use the constructor:
+Although in the previous example, the `Res` instance was requested in DI through `method1()`, we can also request this instance in the constructor in a similar way:
 
 ```ts
 import { controller, route, Res } from '@ditsmod/core';
@@ -73,7 +65,7 @@ Of course, other instances of classes can be requested in the parameters, and th
 The access modifier in the constructor can be any (private, protected or public), but without a modifier - `res` will be just a simple parameter with visibility only in the constructor.
 :::
 
-You can get `pathParams` or `queryParams` in the following way:
+To obtain `pathParams` or `queryParams`, we need to use the `inject` decorator and the `PATH_PARAMS` and `QUERY_PARAMS` tokens:
 
 ```ts
 import { controller, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
@@ -91,7 +83,9 @@ export class SomeController {
 }
 ```
 
-As you can see, to send responses with objects, you need to use the `res.sendJson()` method instead of `res.send()` (because it only sends text).
+You can find more information about what a token is and what the `inject` decorator does in the [Dependency Injection][4] section.
+
+As you can see from the previous example, to send responses with objects, you need to use the `res.sendJson()` method instead of `res.send()` (which only sends text).
 
 The native Node.js request and response object can be obtained by tokens, respectively - `NODE_REQ` and `NODE_RES`:
 
@@ -112,7 +106,7 @@ export class HelloWorldController {
 }
 ```
 
-More information about tokens and the `inject` decorator can be found in [Dependency Injection][4]. You may also be interested in [how to get the HTTP request body][5].
+You may also be interested in [how to get the HTTP request body][5].
 
 ## Binding of the controller to the module
 
@@ -197,3 +191,4 @@ Please note that it is possible to request dependencies in the parameters of _me
 [3]: /components-of-ditsmod-app/dependency-injection#provider
 [4]: /components-of-ditsmod-app/dependency-injection#dependency-token
 [5]: /native-modules/body-parser#usage
+[6]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/pre-router.ts
