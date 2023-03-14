@@ -8,7 +8,7 @@ sidebar_position: 1
 
 After receiving an HTTP request and passing it to Ditsmod, Node.js immediately breaks down the request URL into two parts separated by a question mark. The first part contains the so-called _path_, and the second part contains the _query parameters_. If the URL does not contain a question mark, then the request will only have a _path_.
 
-The router's task is to find the HTTP request handler by _path_, and _query parameters_ are simply passed to the found handler. In Ditsmod applications, in most cases, query processors invoke controller methods.
+The router's task is to find the HTTP request handler by path, while query parameters are simply passed on to the found handler. In Ditsmod applications, in most cases, request handlers then call controller methods.
 
 # What is a controller?
 
@@ -23,7 +23,7 @@ export class SomeController {}
 
 It is recommended that controller files end with `*.controller.ts` and their class names end with `*Controller`.
 
-As mentioned above, HTTP request handlers can call controller methods. HTTP requests are bound to controller methods through the routing system using the `route` decorator. In the following example, a single route is created that accepts a `GET` request at the address `/hello`:
+As already mentioned above, after the router has found the HTTP request handler, the controller method can then be called. To make this possible, HTTP requests are first bound to controller methods through a routing system using the `route` decorator. In the following example, a single route is created that accepts a `GET` request at the address `/hello`:
 
 ```ts
 import { controller, route, Res } from '@ditsmod/core';
