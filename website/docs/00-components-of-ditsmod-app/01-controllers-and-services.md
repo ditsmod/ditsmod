@@ -6,9 +6,9 @@ sidebar_position: 1
 
 ## Що робить роутер
 
-Зразу після того, як Node.js отримує HTTP-запит і передає його в Ditsmod, URL запиту розбивається на дві частини, які розділяються знаком питання. Перша частина містить так званий _path_, а друга частина - _query-параметри_. Якщо URL не містить знака питання, відповідно - запит матиме лише _path_.
+Зразу після того, як Node.js отримує HTTP-запит і передає його в Ditsmod, URL запиту розбивається на дві частини, які розділяються знаком питання (якщо він є). Перша частина завжди містить так званий _path_, а друга частина - _query-параметри_, якщо URL містить знак питання.
 
-Задача роутера полягає в тому, щоб знайти обробник HTTP-запиту по _path_, а _query-параметри_ просто передаються потім у знайдений обробник. У Ditsmod-застосунках, у більшості випадків, обробники запитів потім викликають методи контролерів.
+Задача роутера полягає в тому, щоб знайти обробник HTTP-запиту по _path_. Після чого, у більшості випадків, обробник запиту викликає метод контролера.
 
 ## Що являє собою контролер
 
@@ -23,9 +23,9 @@ export class SomeController {}
 
 Файли контролерів рекомендується називати із закінченням `*.controller.ts`, а імена їхніх класів - із закінченням `*Controller`.
 
-Як вже було сказао вище, після того, як роутер знайшов обробника HTTP-запиту, далі може викликатись метод контролера. Щоб це стало можливим, спочатку HTTP-запити прив'язуються до методів контролерів через систему маршрутизації, з використанням декоратора `route`. В наступному прикладі створено єдиний маршрут, що приймає `GET` запит за адресою `/hello`:
+Як вже було сказао вище, після того, як роутер знайшов обробника HTTP-запиту, цей обробник може викликати метод контролера. Щоб це стало можливим, спочатку HTTP-запити прив'язуються до методів контролерів через систему маршрутизації, з використанням декоратора `route`. В наступному прикладі створено єдиний маршрут, що приймає `GET` запит за адресою `/hello`:
 
-```ts
+```ts {5}
 import { controller, route, Res } from '@ditsmod/core';
 
 @controller()
@@ -45,7 +45,7 @@ export class HelloWorldController {
 
 Хоча в попередньому прикладі інстанс `Res` запитувався у DI через `method1()`, але аналогічним чином ми можемо запитати цей інстанс і в конструкторі:
 
-```ts
+```ts {5}
 import { controller, route, Res } from '@ditsmod/core';
 
 @controller()
@@ -67,7 +67,7 @@ export class HelloWorldController {
 
 Щоб отримати `pathParams` чи `queryParams` доведеться скористатись декоратором `inject` та токенами `PATH_PARAMS` і `QUERY_PARAMS`:
 
-```ts
+```ts {7-8}
 import { controller, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
 
 @controller()
@@ -75,7 +75,7 @@ export class SomeController {
   @route('POST', 'some-url')
   postSomeUrl(
     @inject(PATH_PARAMS) pathParams: AnyObj,
-    @inject(QUERY_PARAMS) queryParams: AnyObj
+    @inject(QUERY_PARAMS) queryParams: AnyObj,
     res: Res
   ) {
     res.sendJson(pathParams, queryParams);
@@ -89,14 +89,14 @@ export class SomeController {
 
 Рідний Node.js об'єкт запиту та відповіді можна отримати за токенами відповідно - `NODE_REQ` та `NODE_RES`:
 
-```ts
+```ts {6-7}
 import { controller, route, inject, NODE_REQ, NODE_RES, NodeRequest, NodeResponse } from '@ditsmod/core';
 
 @controller()
 export class HelloWorldController {
   constructor(
     @inject(NODE_REQ) private nodeReq: NodeRequest,
-    @inject(NODE_RES) private nodeRes: NodeResponse,
+    @inject(NODE_RES) private nodeRes: NodeResponse
   ) {}
 
   @route('GET', 'hello')
@@ -166,7 +166,7 @@ export class SomeService {}
 
 Часто одні сервіси залежать від інших сервісів, і щоб отримати інстанс певного сервісу, необхідно указувати його клас в конструкторі:
 
-```ts
+```ts {7}
 import { injectable } from '@ditsmod/core';
 
 import { FirstService } from './first.service';

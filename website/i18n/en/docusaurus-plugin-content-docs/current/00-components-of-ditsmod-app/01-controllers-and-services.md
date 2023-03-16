@@ -6,9 +6,9 @@ sidebar_position: 1
 
 ## What does a router do?
 
-After receiving an HTTP request and passing it to Ditsmod, Node.js immediately breaks down the request URL into two parts separated by a question mark. The first part contains the so-called _path_, and the second part contains the _query parameters_. If the URL does not contain a question mark, then the request will only have a _path_.
+Right after Node.js receives an HTTP request and passes it to Ditsmod, the request URL is split into two parts separated by a question mark (if present). The first part always contains the so-called _path_, while the second part contains the _query parameters_, if the URL included a question mark.
 
-The router's task is to find the HTTP request handler by path, while query parameters are simply passed on to the found handler. In Ditsmod applications, in most cases, request handlers then call controller methods.
+The task of the router is to find the HTTP request handler by the _path_. After that, in most cases, the request handler calls the controller method.
 
 # What is a controller?
 
@@ -23,9 +23,9 @@ export class SomeController {}
 
 It is recommended that controller files end with `*.controller.ts` and their class names end with `*Controller`.
 
-As already mentioned above, after the router has found the HTTP request handler, the controller method can then be called. To make this possible, HTTP requests are first bound to controller methods through a routing system using the `route` decorator. In the following example, a single route is created that accepts a `GET` request at the address `/hello`:
+As mentioned above, after the router finds the HTTP request handler, this handler can call the controller method. To make this possible, HTTP requests are first bound to controller methods through a routing system using the `route` decorator. In the following example, a single route is created that accepts a `GET` request at the address `/hello`:
 
-```ts
+```ts {5}
 import { controller, route, Res } from '@ditsmod/core';
 
 @controller()
@@ -45,7 +45,7 @@ What we see here:
 
 Although in the previous example, the `Res` instance was requested in DI through `method1()`, we can also request this instance in the constructor in a similar way:
 
-```ts
+```ts {5}
 import { controller, route, Res } from '@ditsmod/core';
 
 @controller()
@@ -67,7 +67,7 @@ The access modifier in the constructor can be any (private, protected or public)
 
 To obtain `pathParams` or `queryParams`, we need to use the `inject` decorator and the `PATH_PARAMS` and `QUERY_PARAMS` tokens:
 
-```ts
+```ts {7-8}
 import { controller, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
 
 @controller()
@@ -75,7 +75,7 @@ export class SomeController {
   @route('POST', 'some-url')
   postSomeUrl(
     @inject(PATH_PARAMS) pathParams: AnyObj,
-    @inject(QUERY_PARAMS) queryParams: AnyObj
+    @inject(QUERY_PARAMS) queryParams: AnyObj,
     res: Res
   ) {
     res.sendJson(pathParams, queryParams);
@@ -89,14 +89,14 @@ As you can see from the previous example, to send responses with objects, you ne
 
 The native Node.js request and response object can be obtained by tokens, respectively - `NODE_REQ` and `NODE_RES`:
 
-```ts
+```ts {6-7}
 import { controller, route, inject, NODE_REQ, NODE_RES, NodeRequest, NodeResponse } from '@ditsmod/core';
 
 @controller()
 export class HelloWorldController {
   constructor(
     @inject(NODE_REQ) private nodeReq: NodeRequest,
-    @inject(NODE_RES) private nodeRes: NodeResponse,
+    @inject(NODE_RES) private nodeRes: NodeResponse
   ) {}
 
   @route('GET', 'hello')
@@ -123,7 +123,7 @@ import { SomeController } from './some.controller';
 export class SomeModule {}
 ```
 
-After binding controllers to a module, in order for Ditsmod to take these controllers into account, the module should be either attached or imported in an object that has the [ModuleWithParams][2] interface. The following example shows both the attachment and the full import of the module (this is done only to demonstrate the possibility, in practice it does not make sense to do simultaneous attachment and import):
+After binding controllers to a module, in order for Ditsmod to take these controllers into account, the module should be either appended or imported in an object that has the [ModuleWithParams][2] interface. The following example shows both the appendage and the full import of the module (this is done only to demonstrate the possibility, in practice it does not make sense to do simultaneous appendage and import):
 
 ```ts {6-8}
 import { featureModule } from '@ditsmod/core';
@@ -166,7 +166,7 @@ It is recommended that service files end with `*.service.ts`, and their classes 
 
 Often, some services depend on other services, and to get an instance of a certain service, you need to specify its class in the constructor:
 
-```ts
+```ts {7}
 import { injectable } from '@ditsmod/core';
 
 import { FirstService } from './first.service';
