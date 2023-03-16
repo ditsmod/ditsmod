@@ -17,7 +17,7 @@ Ditsmod DI has the following basic concepts:
 
 ## Dependency
 
-In the DI system, dependency is, in particular, what you want to get in the end result in the constructors of controllers, services, modules. For example, if you write this in the service constructor:
+If creating an instance of a given class requires first creating instances of other classes, then that class has dependencies. For example, if you write this in the service constructor:
 
 ```ts {7}
 import { injectable } from '@ditsmod/core';
@@ -71,7 +71,7 @@ export class SecondService {
 
 ## Dependency token
 
-DI has a registry containing the mapping between a token and its value. This registry is formed by the DI user himself, and schematically it looks like this:
+One of the main features of DI is resolving a certain dependency, and when this dependency is requested again, providing a resolved value from the cache. That is, DI has a registry that contains a mapping between a particular dependency and its corresponding value. To uniquely identify each dependency, so-called **tokens** are used, which can have any JavaScript type except `undefined`. The dependency registry is formed when writing a Ditsmod application and schematically looks like the following:
 
 ```
 token1 => value15
@@ -79,7 +79,7 @@ token2 => value100
 ...
 ```
 
-To resolve dependencies, DI will search its registry for the corresponding values by token. In fact, a token is an identifier for a certain dependency. In the constructors of modules, services or controllers, tokens are specified. 
+To resolve dependencies, DI will search its registry for the corresponding values by token. In the constructors of modules, services or controllers, tokens are specified.
 
 In the section [Passing providers to the DI registry][100] you will learn that DI allows you to pass any value for the same token. This feature is convenient to use for unit testing, because instead of a real dependency, you can pass a mock or stub to the registry. In this case, the DI registry looks something like this:
 
@@ -91,9 +91,11 @@ token2 => stub
 ...
 ```
 
-The token can be of any type, but currently DI has a limitation where DI doesn't distinguish between different types of _array_ or _enum_. In addition, you should remember that the token must remain in the JavaScript file after compilation from TypeScript code, so you cannot use interfaces or types declared with the `type` keyword as a token.
+The token can have any type, but currently, there are limitations in DI that prevent it from distinguishing between different types of _arrays_ or _enums_. Additionally, it's important to remember that the token must remain in the JavaScript file after being compiled from TypeScript code, so interfaces or types declared using the `type` keyword cannot be used as tokens.
 
-The `inject` decorator allows you to use an alternative token, it is necessary to get an array, enum, or any other value in the constructor:
+# The `inject` decorator
+
+The `inject` decorator allows for the use of an alternative token, which is necessary for obtaining arrays, enums, or any other value in the constructor:
 
 ```ts {7}
 import { injectable, inject } from '@ditsmod/core';
@@ -107,7 +109,7 @@ export class SecondService {
 }
 ```
 
-When `inject` is used, DI uses the token passed to it and ignores the type of the variable in back of this decorator, so this type can even be an interface.
+When `inject` is used, DI uses the token passed to it and ignores the type of the variable after the decorator, so this type can even be an interface.
 
 Keep in mind that the easiest and most reliable dependency type to use is a class. DI recognizes well the types of different classes, even if they have the same name, so the `inject` decorator can not be used with them. For all other types of dependencies, we recommend using an instance of the `InjectionToken<T>` class as a token, and passing an arbitrary text value to its constructor for a short description:
 
@@ -140,7 +142,7 @@ token2 => value100
 ...
 ```
 
-So these are the values DI creates using providers. In fact, DI resolves dependencies using the appropriate providers. So, to resolve a certain dependency, you first need to pass the corresponding provider to the DI registry, and then DI will issue an instance of this provider by its token. Providers can be either classes or objects of this type:
+So these are the values DI creates using **providers**. In fact, DI resolves dependencies using the appropriate providers. So, to resolve a certain dependency, you first need to pass the corresponding provider to the DI registry, and then DI will issue an instance of this provider by its token. Providers can be either classes or objects of this type:
 
 ```ts {3-6}
 import { Class } from '@ditsmod/core';
@@ -354,7 +356,7 @@ child.get(Service4); // Error - No provider for Service4!
 parent.get(Service4); // Error - No provider for Service4!
 ```
 
-As you can see, when the child injector was created, `Service1` was not passed to it, so when an instance of this class is requested, it will turn to the parent. By the way, there is one non-obvious but very important point here: although child injectors request certain instances of classes from parent injectors, they do not create them themselves. This is why this expression returns `true`:
+As you can see, when the child injector was created, `Service1` was not passed to it, so when an instance of this class is requested, it will turn to the parent. By the way, there is one non-obvious but very important point here: child injectors only request certain instances of classes from parent injectors and do not create them on their own. That is why this expression returns `true`:
 
 ```ts
 parent.get(Service1) === child.get(Service1); // true
@@ -379,7 +381,7 @@ Earlier in the documentation, you encountered the following object properties th
 - `providersPerRou` - providers at the route level;
 - `providersPerReq` - providers at the HTTP request level.
 
-Using these arrays, Ditsmod forms four different injectors from them, which are connected by a hierarchical relationship. The highest in the hierarchy is the injector at the application level, its registry is formed from the `providersPerApp` array. The second in the hierarchy is the module level injector, the third is the route level injector, and the fourth is the HTTP request level injector. When you plan to pass providers to injectors, be sure to consider their hierarchy. Remember that injectors higher in the hierarchy do not have access to injectors lower in the hierarchy.
+Using these arrays, Ditsmod forms four different injectors from them, which are connected by a hierarchical relationship. The highest in the hierarchy is the application-level injector, whose registry is formed from the `providersPerApp` array. The second in the hierarchy is the module-level injector, the third is the route-level injector, and the fourth is the HTTP request-level injector. When planning to pass providers to the arrays mentioned above, always consider the hierarchy of injectors. Note that higher-level injectors do not have access to lower-level injectors.
 
 For example, if you write a class that has a dependency on an HTTP request, you will be able to pass it only to the `providersPerReq` array, because only this array is used to create an injector that will have access to the HTTP request. On the other hand, this provider will have access to all its parent injectors: at the routing, module, and application levels. It should be remembered that if the providers are classes or factories (objects with the `useFactory` property), their instances will be created each time, for each HTTP request.
 
