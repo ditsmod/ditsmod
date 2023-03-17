@@ -32,10 +32,10 @@ export function makeParamDecorator<T extends (...args: any[]) => any>(transform?
   return function paramDecorFactory(...args: Parameters<T>) {
     checkImportReflectMetadata();
     const value = transform ? transform(...args) : [...args];
-    return function paramDecorator(clsOrObj: Class | object, propertyKey: string | symbol, index: number): void {
+    return function paramDecorator(clsOrObj: Class | object, propertyKey: unknown, index: number): void {
       // This function can be called for a class constructor and methods.
       const Cls = isType(clsOrObj) ? clsOrObj : (clsOrObj.constructor as Class);
-      const key = getMetaKey(PARAMS_KEY, propertyKey);
+      const key = getMetaKey(PARAMS_KEY, propertyKey as string | symbol);
       const parameters: any[] = getMetadata(Cls, key, []);
 
       // There might be gaps if some in between parameters do not have annotations.

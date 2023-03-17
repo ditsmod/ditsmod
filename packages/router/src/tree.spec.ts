@@ -197,7 +197,7 @@ describe('Tree', () => {
     tree.addRoute('/', noop);
     tree.addRoute('/:page', noop);
 
-    tree.children[0].type = 42;
+    tree.children[0].type = 42 as any;
 
     expect(() => tree.search('/test')).toThrow();
   });
