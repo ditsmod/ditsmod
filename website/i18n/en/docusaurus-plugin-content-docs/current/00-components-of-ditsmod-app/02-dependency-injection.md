@@ -71,27 +71,25 @@ export class SecondService {
 
 ## Dependency token
 
-One of the main features of DI is resolving a certain dependency, and when this dependency is requested again, providing a resolved value from the cache. That is, DI has a registry that contains a mapping between a particular dependency and its corresponding value. To uniquely identify each dependency, so-called **tokens** are used, which can have any JavaScript type except `undefined`. The dependency registry is formed when writing a Ditsmod application and schematically looks like the following:
+Above it was mentioned that dependencies are specified in class constructors in order for DI to resolve these dependencies. It is now necessary to clarify that dependencies in constructors are specified using so-called **tokens** - identifiers from which DI forms a registry of dependencies.
 
-```
-token1 => value15
-token2 => value100
-...
-```
+Let's revisit the previous example:
 
-To resolve dependencies, DI will search its registry for the corresponding values by token. In the constructors of modules, services or controllers, tokens are specified.
+```ts {7}
+import { injectable } from '@ditsmod/core';
 
-In the section [Passing providers to the DI registry][100] you will learn that DI allows you to pass any value for the same token. This feature is convenient to use for unit testing, because instead of a real dependency, you can pass a mock or stub to the registry. In this case, the DI registry looks something like this:
+import { FirstService } from './first.service';
 
-```
-token1 => value1
-token1 => mock
-token2 => value14
-token2 => stub
-...
+@injectable()
+export class SecondService {
+  constructor(private firstService?: FirstService) {}
+  // ...
+}
 ```
 
-The token can have any type, but currently, there are limitations in DI that prevent it from distinguishing between different types of _arrays_ or _enums_. Additionally, it's important to remember that the token must remain in the JavaScript file after being compiled from TypeScript code, so interfaces or types declared using the `type` keyword cannot be used as tokens.
+Here, `FirstService` is a token that specifies the dependency of `SecondService` on `FirstService`.
+
+A token can have any type, but there are currently limitations in DI that do not differentiate between different types of _arrays_ or _enums_. Additionally, it's important to note that the token must remain in the JavaScript file after compilation from TypeScript code, so interfaces or types declared using the `type` keyword cannot be used as tokens.
 
 # The `inject` decorator
 
