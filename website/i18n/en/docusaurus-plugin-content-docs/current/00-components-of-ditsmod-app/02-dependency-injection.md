@@ -71,7 +71,7 @@ export class SecondService {
 
 ## Dependency token
 
-Above it was mentioned that dependencies are specified in class constructors in order for DI to resolve these dependencies. It is necessary to clarify that dependencies in constructors are specified using so-called **tokens** - identifiers from which DI forms a registry of dependencies.
+Above it was mentioned that dependencies are specified in class constructors in order for DI to resolve these dependencies. It should be clarified that dependencies in constructors are specified using so-called **tokens**, from which DI forms a registry of dependencies.
 
 Let's revisit the previous example:
 
@@ -89,11 +89,11 @@ export class SecondService {
 
 Here, `FirstService` is a token that specifies the dependency of `SecondService` on `FirstService`.
 
-A token can have any type, but there are currently limitations in DI that do not distinguishing between different primitive types, _arrays_ or _enums_. Additionally, it's important to note that the token must remain in the JavaScript file after compilation from TypeScript code, so interfaces or types declared using the `type` keyword cannot be used as tokens.
+A token can have any type, but currently DI has a limitation that prevents it from distinguishing between different primitive types, different types of arrays, or enums. Additionally, it's important to note that the token must remain in the JavaScript file after compilation from TypeScript code, so interfaces or types declared using the `type` keyword cannot be used as tokens.
 
 # The `inject` decorator
 
-The `inject` decorator allows using an alternative token, which is necessary for obtaining various primitive types, arrays, enums, or any other value in the constructor.:
+The `inject` decorator allows using an alternative token, which is necessary for obtaining various primitive types, arrays, enums, or any other value in the constructor:
 
 ```ts {7}
 import { injectable, inject } from '@ditsmod/core';
@@ -132,7 +132,7 @@ export class SecondService {
 
 ## Provider
 
-It was said above that DI has a registry containing the mapping between the token and the value to be issued for a particular dependency.
+Above it was mentioned that DI has a dependency registry. This registry is a mapping between a token and the value that needs to be output for a particular dependency. Conditionally, this can be shown as follows:
 
 ```
 token1 => value15
@@ -140,7 +140,7 @@ token2 => value100
 ...
 ```
 
-So these are the values DI creates using **providers**. In fact, DI resolves dependencies using the appropriate providers. So, to resolve a certain dependency, you first need to pass the corresponding provider to the DI registry, and then DI will issue an instance of this provider by its token. Providers can be either classes or objects of this type:
+These are the values DI creates using **providers**. In fact, DI resolves dependencies using the appropriate providers. So, to resolve a certain dependency, you first need to pass the corresponding provider to the DI registry, and then DI will issue an instance of this provider by its token. The [next section][100] discusses how providers can be passed to DI. Providers can be either classes or objects of this type:
 
 ```ts {3-6}
 import { Class } from '@ditsmod/core';
