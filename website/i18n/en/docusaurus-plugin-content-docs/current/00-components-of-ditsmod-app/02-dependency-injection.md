@@ -71,7 +71,7 @@ export class SecondService {
 
 ## Dependency token
 
-Above it was mentioned that dependencies are specified in class constructors in order for DI to resolve these dependencies. It is now necessary to clarify that dependencies in constructors are specified using so-called **tokens** - identifiers from which DI forms a registry of dependencies.
+Above it was mentioned that dependencies are specified in class constructors in order for DI to resolve these dependencies. It is necessary to clarify that dependencies in constructors are specified using so-called **tokens** - identifiers from which DI forms a registry of dependencies.
 
 Let's revisit the previous example:
 
@@ -82,18 +82,18 @@ import { FirstService } from './first.service';
 
 @injectable()
 export class SecondService {
-  constructor(private firstService?: FirstService) {}
+  constructor(private firstService: FirstService) {}
   // ...
 }
 ```
 
 Here, `FirstService` is a token that specifies the dependency of `SecondService` on `FirstService`.
 
-A token can have any type, but there are currently limitations in DI that do not differentiate between different types of _arrays_ or _enums_. Additionally, it's important to note that the token must remain in the JavaScript file after compilation from TypeScript code, so interfaces or types declared using the `type` keyword cannot be used as tokens.
+A token can have any type, but there are currently limitations in DI that do not distinguishing between different primitive types, _arrays_ or _enums_. Additionally, it's important to note that the token must remain in the JavaScript file after compilation from TypeScript code, so interfaces or types declared using the `type` keyword cannot be used as tokens.
 
 # The `inject` decorator
 
-The `inject` decorator allows for the use of an alternative token, which is necessary for obtaining arrays, enums, or any other value in the constructor:
+The `inject` decorator allows using an alternative token, which is necessary for obtaining various primitive types, arrays, enums, or any other value in the constructor.:
 
 ```ts {7}
 import { injectable, inject } from '@ditsmod/core';
@@ -107,7 +107,7 @@ export class SecondService {
 }
 ```
 
-When `inject` is used, DI uses the token passed to it and ignores the type of the variable after the decorator, so this type can even be an interface.
+When `inject` is used, DI ignores the variable type and instead uses an alternative token passed to it. In this case, DI ignores the variable type - `InterfaceOfItem[]`, using `some token for an array` as the token instead.
 
 Keep in mind that the easiest and most reliable dependency type to use is a class. DI recognizes well the types of different classes, even if they have the same name, so the `inject` decorator can not be used with them. For all other types of dependencies, we recommend using an instance of the `InjectionToken<T>` class as a token, and passing an arbitrary text value to its constructor for a short description:
 
