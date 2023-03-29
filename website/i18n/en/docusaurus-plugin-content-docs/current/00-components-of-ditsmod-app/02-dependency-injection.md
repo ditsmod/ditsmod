@@ -140,7 +140,7 @@ token2 => value100
 ...
 ```
 
-These are the values DI creates using **providers**. In fact, DI resolves dependencies using the appropriate providers. So, to resolve a certain dependency, you first need to pass the corresponding provider to the DI registry, and then DI will issue an instance of this provider by its token. The [next section][100] discusses how providers can be passed to DI. Providers can be either classes or objects of this type:
+Such values are created by DI using **providers**. In fact, DI resolves dependencies using the appropriate providers. So, to resolve a certain dependency, you first need to pass the corresponding provider to the DI registry, and then DI will issue an instance of this provider by its token. The [next section][100] discusses how providers can be passed to DI. Providers can be either classes or objects of this type:
 
 ```ts {3-6}
 import { Class } from '@ditsmod/core';
