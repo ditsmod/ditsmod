@@ -140,12 +140,13 @@ token2 => value100
 ...
 ```
 
-Such values are created by DI using **providers**. In fact, DI resolves dependencies using the appropriate providers. So, to resolve a certain dependency, you first need to pass the corresponding provider to the DI registry, and then DI will issue an instance of this provider by its token. The [next section][100] discusses how providers can be passed to DI. Providers can be either classes or objects of this type:
+Such values are created by DI using **providers**. In essence, DI resolves the dependency by using appropriate providers that gives a some value. So, to resolve a certain dependency, you first need to pass the corresponding provider to the DI registry, and then DI will issue value of this provider by its token. The [next section][100] discusses how providers can be passed to DI. Providers have this type:
 
-```ts {3-6}
+```ts {3-7}
 import { Class } from '@ditsmod/core';
 
-type Provider = { token: any, useClass: Class<any>, multi?: boolean } |
+type Provider = Class<any> |
+{ token: any, useClass: Class<any>, multi?: boolean } |
 { token: any, useValue: any, multi?: boolean } |
 { token?: any, useFactory: [Class<any>, Class<any>.prototype.methodName], multi?: boolean } |
 { token: any, useToken: any, multi?: boolean }
@@ -155,9 +156,6 @@ _* here `Class<any>` means any class._
 
 Note that the token for the provider with the `useFactory` property is optional, since DI can use the method of the specified class as a token.
 
-Per dependency, one or more providers must be passed to the DI registry. Most often, this is done through the metadata of the module or controller, although sometimes they are passed directly to [injectors][102].
-
-Now that you are familiar with the concept of **provider**, we can clarify that **dependency** means dependency on providers. Such dependencies are made by **consumers** of providers either in service constructors, or in constructors or methods of controllers, or in the `get()` method of [injectors][102] (more on this later).
 
 In the example above, the definition of the provider object type is shown, the following values are passed to its properties:
 
@@ -195,9 +193,11 @@ In the example above, the definition of the provider object type is shown, the f
     - When provider consumers request `SecondService`, DI will look up the value for it in its registry using the `FirstService` token.
     - After DI finds the value for `FirstService`, it will be returned to the consumer who requested `SecondService`.
 
+Now that you are familiar with the concept of **provider**, we can clarify that **dependency** means dependency on providers. Such dependencies are made by **consumers** of providers either in service constructors, or in constructors or methods of controllers, or in the `get()` method of [injectors][102] (more on this later).
+
 ### Passing of providers to the DI registry
 
-Most often, providers are passed to the DI registry through module metadata. In the following example, `SomeService` is passed to the `providersPerMod` array:
+For one dependency, you need to transfer one or more providers to the DI registry. Most often, providers are passed to the DI registry via module metadata, although sometimes they are passed to controller metadata, or even directly to [injectors][102]. In the following example, `SomeService` is passed into the `providersPerMod` array:
 
 ```ts {7}
 import { featureModule } from '@ditsmod/core';
