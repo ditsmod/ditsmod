@@ -15,13 +15,13 @@ import { FirstService } from './first.service';
 import { SecondService } from './second.service';
 
 @featureModule({
-  providersPerMod: [FirstService, SecondService],
+  providersPerMod: [FirstService, { token: SecondService, useClass: SecondService }],
   exports: [SecondService],
 })
 export class SomeModule {}
 ```
 
-З конкретного модуля потрібно експортувати лише ті сервіси, які безпосередньо будуть використовуватись у зовнішніх модулях. В даному разі, `SecondService` може залежити від `FirstService`, але `FirstService` не потрібно експортувати, якщо він безпосередньо не використовується у зовнішньому модулі. Таким чином забезпечується інкапсуляція модулів.
+Зверніть увагу, що до масиву `exports` можна додавати лише токени провайдерів або модулі. В даному разі до масиву `exports` не можна додавати провайдер `{ token: SecondService, useClass: SecondService }`. Також майте на увазі, що з конкретного модуля потрібно експортувати лише ті сервіси, які безпосередньо будуть використовуватись у зовнішніх модулях. В даному разі, `SecondService` може залежити від `FirstService`, але `FirstService` не потрібно експортувати, якщо він безпосередньо не використовується у зовнішньому модулі. Таким чином забезпечується інкапсуляція модулів.
 
 Експортувати провайдери можна лише ті, що передаються в наступні масиви:
 

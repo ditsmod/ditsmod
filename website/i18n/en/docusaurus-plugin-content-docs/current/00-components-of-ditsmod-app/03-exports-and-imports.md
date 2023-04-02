@@ -15,13 +15,13 @@ import { FirstService } from './first.service';
 import { SecondService } from './second.service';
 
 @featureModule({
-  providersPerMod: [FirstService, SecondService],
+  providersPerMod: [FirstService, { token: SecondService, useClass: SecondService }],
   exports: [SecondService],
 })
 export class SomeModule {}
 ```
 
-Only those services that will be directly used in external modules need to be exported from a specific module. In this case, `SecondService` can depend on `FirstService`, but `FirstService` does not need to be exported unless it is directly used in an external module. In this way, encapsulation of modules is ensured.
+Please note that only provider tokens or modules can be added to the `exports` array. In this case, the provider `{ token: SecondService, useClass: SecondService }` cannot be added to the `exports` array. Also, keep in mind that only the services that will be directly used in external modules need to be exported from a specific module. In this case, `SecondService` may depend on `FirstService`, but `FirstService` does not need to be exported if it is not directly used in an external module. This ensures module encapsulation.
 
 You can export providers only those that are transferred to the following arrays:
 
