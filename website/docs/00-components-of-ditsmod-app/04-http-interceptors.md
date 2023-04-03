@@ -23,7 +23,7 @@ sidebar_position: 4
 1. Ditsmod створює інстанс [PreRouter][7] на рівні застосунку.
 2. `PreRouter` за допомогою роутера шукає обробника запиту відповідно до URI. Іншими словами, роутер перевіряє чи є відповідний роут.
 3. Якщо обробника запиту не знайдено, `PreRouter` видає помилку зі статусом 404.
-4. Якщо знайшовся обробник запиту, Ditsmod створює інстанс [HttpFrontend][2] на рівні запиту, ставить його першим у черзі інтерсепторів і автоматично викликає. By default, цей інтерсептор відповідає за виклик ґардів та встановлення значень для провайдерів з токенами `QUERY_PARAMS` та `PATH_PARAMS`.
+4. Якщо знайшовся обробник запиту, Ditsmod створює інстанс провайдера з токеном [HttpFrontend][2] на рівні запиту, ставить його першим у черзі інтерсепторів і автоматично викликає. By default, цей інтерсептор відповідає за виклик ґардів та встановлення значень для провайдерів з токенами `QUERY_PARAMS` та `PATH_PARAMS`.
 5. Другий та наступні інтерсептори можуть і не запуститись, це залежать від того, чи запустить їх попередній у черзі інтерсептор.
 6. Якщо усі інтерсептори відпрацювали, Ditsmod запускає [HttpBackend][3], інстанс якого створюється на рівні запиту. By default, `HttpBackend` запускає безпосередньо метод контролера, що відповідає за обробку поточного запиту.
 
@@ -34,7 +34,7 @@ sidebar_position: 4
 відповідь <- PreRouter <- HttpFrontend <- [інші інтерсептори] <- HttpBackend <- [контролер]
 ```
 
-Оскільки `PreRouter`, `HttpFrontend` та `HttpBackend` витягуються через DI, ви можете їх підміняти своєю версією відповідних класів. Наприклад, якщо ви хочете не просто відправити 404-ий статус у випадку відсутності потрібного роута, а хочете ще й додати певний текст чи змінити заголовки, ви можете підмінити `PreRouter` своїм класом.
+Оскільки `PreRouter`, `HttpFrontend` та `HttpBackend` витягуються через DI, ви можете їх підміняти своєю версією відповідних класів. Наприклад, якщо ви хочете не просто відправити 404-ий статус у випадку відсутності потрібного роута, а хочете ще й додати певний текст чи змінити заголовки, ви можете підмінити [PreRouter][7] своїм класом.
 
 ## Створення інтерсептора
 
@@ -75,11 +75,11 @@ export class SomeModule {}
 ```
 
 [1]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/types/http-interceptor.ts#L20-L22
-[2]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/types/http-interceptor.ts#L37-L39
-[3]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/types/http-interceptor.ts#L49-L51
+[2]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/default-http-frontend.ts
+[3]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/default-http-backend.ts
 [5]: https://expressjs.com/en/guide/writing-middleware.html
 [7]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/pre-router.ts
 [8]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/types/route-data.ts
 
-[104]: /published-modules/return
+[104]: /native-modules/return
 [106]: /components-of-ditsmod-app/dependency-injection
