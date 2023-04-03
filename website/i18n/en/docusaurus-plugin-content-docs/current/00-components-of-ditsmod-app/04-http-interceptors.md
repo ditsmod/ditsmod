@@ -20,12 +20,12 @@ Interceptors can be centrally connected or disconnected without changing the met
 
 HTTP request processing has the following workflow:
 
-1. Ditsmod extracted [PreRouter][7] via [DI][106] (at the application level).
+1. Ditsmod creates an instance of [PreRouter][7] at the application level.
 2. `PreRouter` uses the router to search for the request handler according to the URI. In other words, the router checks if there is a corresponding router.
 3. If the request handler is not found, `PreRouter` issues a 404 error.
-4. If a request handler is found, Ditsmod retrieves [HttpFrontend][2] via DI (at the request level), puts it first in the interceptors queue and automatically calls it. By default, this interceptor is responsible for calling the guards and setting `req.pathParams` and `req.queryParams`.
+4. If a request handler is found, Ditsmod creates an instance of [HttpFrontend][2] at the request level, puts it first in the interceptors queue and automatically calls it. By default, this interceptor is responsible for calling guards and setting values for providers with `QUERY_PARAMS` and `PATH_PARAMS` tokens.
 5. The second and subsequent interceptors may not start, it depends on whether the previous interceptor in the queue will start them.
-6. If all interceptors have worked, Ditsmod runs [HttpBackend][3], which is also extracted via DI (at the request level). By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
+6. If all interceptors have worked, Ditsmod starts [HttpBackend][3], which is instantiated at the request level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
 So, the approximate order of processing the request is as follows:
 
