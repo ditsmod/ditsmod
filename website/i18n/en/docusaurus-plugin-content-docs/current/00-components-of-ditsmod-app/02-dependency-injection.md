@@ -102,16 +102,16 @@ import { InterfaceOfItem } from './types';
 
 @injectable()
 export class SecondService {
-  constructor(@inject('some token for an array') private someArray: InterfaceOfItem[]) {}
+  constructor(@inject('some-string') private someArray: InterfaceOfItem[]) {}
   // ...
 }
 ```
 
-When `inject` is used, DI ignores the variable type and instead uses an alternative token passed to it. In this case, DI ignores the variable type - `InterfaceOfItem[]`, using `some token for an array` as the token instead.
+When `inject` is used, DI ignores the variable type and instead uses an alternative token passed to it. In this case, DI ignores the variable type - `InterfaceOfItem[]`, using `some-string` as the token instead.
 
 Keep in mind that the easiest and most reliable dependency type to use is a class. DI recognizes well the types of different classes, even if they have the same name, so the `inject` decorator can not be used with them. For all other types of dependencies, we recommend using an instance of the `InjectionToken<T>` class as a token, and passing an arbitrary text value to its constructor for a short description:
 
-```ts {14}
+```ts {5}
 // tokens.ts
 import { InjectionToken } from '@ditsmod/core';
 import { InterfaceOfItem } from './types';

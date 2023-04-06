@@ -102,16 +102,16 @@ import { InterfaceOfItem } from './types';
 
 @injectable()
 export class SecondService {
-  constructor(@inject('some token for an array') private someArray: InterfaceOfItem[]) {}
+  constructor(@inject('some-string') private someArray: InterfaceOfItem[]) {}
   // ...
 }
 ```
 
-Коли використовується `inject`, DI ігнорує тип змінної, натомість використовується переданий в нього альтернативний токен. В даному разі DI ігнорує тип змінної - `InterfaceOfItem[]`, використовуючи в якості токена текстовий токен `some token for an array`.
+Коли використовується `inject`, DI ігнорує тип змінної, натомість використовується переданий в нього альтернативний токен. В даному разі DI ігнорує тип змінної - `InterfaceOfItem[]`, використовуючи в якості токена текстовий токен `some-string`.
 
 Майте на увазі, що самий простий та надійний у використанні тип залежності - це клас. DI добре розпізнає типи різних класів, навіть якщо вони мають однакове ім'я, тому декоратор `inject` з ними можна не використовувати. Для усіх інших типів залежностей рекомендуємо використовувати інстанс класу `InjectionToken<T>` у якості токена, в його конструктор передається довільне текстове значення для короткого опису:
 
-```ts {14}
+```ts {5}
 // tokens.ts
 import { InjectionToken } from '@ditsmod/core';
 import { InterfaceOfItem } from './types';
