@@ -33,6 +33,4 @@ import { Module2 } from './module2';
 export class Module3 {}
 ```
 
-If you have installed `Module3` using packages manager (npm, yarn, etc.), there is no point in modifying this module locally to resolve the collision.
-
-This situation can only occur if `Module2` and `Module1` are exported from the root module, so you need to remove one of these modules from there. And, of course, after that you will have to explicitly import another module into those modules where it is needed.
+If you have installed `Module3` using packages manager (npm, yarn, etc.), there is no point in modifying this module locally to resolve the collision. This situation can only occur if `Module2` and `Module1` are exported from the root module, so you need to remove one of these modules from there. And, of course, after that you will have to explicitly import another module into those modules where it is needed.
