@@ -16,7 +16,7 @@ interface CanActivate {
 
 Наприклад, це можна зробити так:
 
-```ts
+```ts {10-12}
 import { injectable } from '@ditsmod/core';
 import { CanActivate } from '@ditsmod/core';
 
@@ -45,7 +45,7 @@ export class AuthGuard implements CanActivate {
 
 Ґарди передаються в масиві у третьому параметрі декоратора `route`:
 
-```ts
+```ts {7}
 import { controller, Res, route } from '@ditsmod/core';
 
 import { AuthGuard } from './auth.guard';
@@ -65,7 +65,7 @@ export class SomeController {
 
 Давайте розглянемо такий приклад:
 
-```ts
+```ts {8}
 import { controller, Res, route } from '@ditsmod/core';
 
 import { PermissionsGuard } from './permissions.guard';
@@ -82,7 +82,7 @@ export class SomeController {
 
 Як бачите, на місці третього параметра у `route` передається масив в масиві, де на першому місці указано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
 
-```ts
+```ts {11}
 import { injectable } from '@ditsmod/core';
 import { CanActivate, Status } from '@ditsmod/core';
 
@@ -107,9 +107,10 @@ export class PermissionsGuard implements CanActivate {
 
 Оскільки ґарди з параметрами повинні передаватись у вигляді масива в масиві, це ускладнює читабельність та погіршує безпечність типів. Для таких випадків краще створити хелпер за допомогою фабрики `createHelperForGuardWithParams()`:
 
-```ts
+```ts {5}
 import { createHelperForGuardWithParams } from '@ditsmod/core';
 import { Permission } from './types';
+import { PermissionsGuard } from './permissions-guard';
 
 export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
 ```
@@ -118,7 +119,7 @@ export const requirePermissions = createHelperForGuardWithParams<Permission>(Per
 
 Тепер `requirePermissions()` можна використовувати для створення роутів:
 
-```ts
+```ts {8}
 import { controller, Res, route } from '@ditsmod/core';
 
 import { requirePermissions } from '../auth/guards-utils';

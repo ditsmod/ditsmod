@@ -16,7 +16,7 @@ interface CanActivate {
 
 For example, it can be done like this:
 
-```ts
+```ts {10-12}
 import { injectable } from '@ditsmod/core';
 import { CanActivate } from '@ditsmod/core';
 
@@ -45,7 +45,7 @@ there will be no from the controller;
 
 Guards are passed in an array in the third parameter of the `route` decorator:
 
-```ts
+```ts {7}
 import { controller, Res, route } from '@ditsmod/core';
 
 import { AuthGuard } from './auth.guard';
@@ -65,7 +65,7 @@ In the `canActivate()` method, the guard has one parameter. Arguments for this p
 
 Let's consider such an example:
 
-```ts
+```ts {8}
 import { controller, Res, route } from '@ditsmod/core';
 
 import { PermissionsGuard } from './permissions.guard';
@@ -82,7 +82,7 @@ export class SomeController {
 
 As you can see, in place of the third parameter in `route`, an array of arrays is passed, where `PermissionsGuard` is specified in the first place, followed by arguments for it. In this case, `PermissionsGuard` will receive these arguments in its `canActivate()` method:
 
-```ts
+```ts {11}
 import { injectable } from '@ditsmod/core';
 import { CanActivate, Status } from '@ditsmod/core';
 
@@ -107,9 +107,10 @@ export class PermissionsGuard implements CanActivate {
 
 Because parameter guards must be passed as an array within an array, this makes readability and type safety worse. For such cases, it is better to create a helper using the `createHelperForGuardWithParams()` factory:
 
-```ts
+```ts {5}
 import { createHelperForGuardWithParams } from '@ditsmod/core';
 import { Permission } from './types';
+import { PermissionsGuard } from './permissions-guard';
 
 export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
 ```
@@ -118,7 +119,7 @@ In this example, `PermissionsGuard' is passed as an argument, which accepts para
 
 `requirePermissions()` can now be used to create routes:
 
-```ts
+```ts {8}
 import { controller, Res, route } from '@ditsmod/core';
 
 import { requirePermissions } from '../auth/guards-utils';
