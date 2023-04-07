@@ -271,7 +271,7 @@ export class SomeModule {}
 
 The above has been said many times for the so-called **DI registry**. Now that you know what DI uses the registry for, it's time to learn that these registries are in injectors, and there can be many such injectors in a Ditsmod application. But first, let's understand how injectors work.
 
-If you greatly simplify the working scheme of DI, you can say that DI accepts an array of providers at the input, and at the output it issues an injector that is able to create instances of the transferred providers taking into account the dependencies between them. It has approximately the following picture:
+If we simplify the DI working scheme greatly, we can say that DI takes an array of providers as input and outputs an injector that can create instances of the passed providers, taking into account their dependencies. It has approximately the following picture:
 
 ```ts {16}
 import 'reflect-metadata';
