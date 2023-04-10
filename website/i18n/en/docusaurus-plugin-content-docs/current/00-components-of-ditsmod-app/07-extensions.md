@@ -45,7 +45,10 @@ async init() {
   if (this.inited) {
     return;
   }
+
   // Do something good.
+  // ...
+
   this.inited = true;
 }
 ```
