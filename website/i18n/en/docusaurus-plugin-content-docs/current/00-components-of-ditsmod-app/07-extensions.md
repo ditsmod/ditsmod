@@ -24,7 +24,7 @@ interface Extension<T> {
 
 Each extension needs to be registered, this will be mentioned later, and now let's assume that such registration has taken place, the application is running, and then goes the following process:
 
-1. metadata is collected from all decorators (`@rootModule`, `@featureModule`, `@controller`, `@route`... and even from unknown decorators, but provided that they are created using Ditsmod DI);
+1. metadata is collected from all decorators (`@rootModule`, `@featureModule`, `@controller`, `@route`);
 2. this metadata then passing to DI with token `MetadataPerMod1`, therefore - any extension can receive this metadata in the constructor;
 3. per module work of extensions begins, that is, for each Ditsmod module the extensions registered in this module or imported in this module are selected, and the metadata collected in this module is also transmitted to them; then the `init()` method of each extension is called;
 4. the web server starts, and the application starts working normally, processing HTTP requests.
