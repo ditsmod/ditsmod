@@ -181,7 +181,7 @@ export class SecondService {
 }
 ```
 
-As you can see, the rules for obtaining a class instance in the constructor are the same as in the controllers: using the `private` access modifier, we declare the `firstService` class property with the `FirstService` data type.
+As you can see, the rules for obtaining a class instance in the constructor are the same as in the controllers: using the `private` access modifier, we declare the `firstService` class property with the `FirstService` data type. More detailed information about the rules for obtaining class instances using DI can be found in [Dependency Injection][7].
 
 Please note that it is possible to request dependencies in the parameters of _methods_ services, but, firstly, above these methods you need to use any decorator for class properties (for example `@methodFactory()`), and secondly - these methods need to be used in providers with the [useFactory][3] property.
 
@@ -192,3 +192,4 @@ Please note that it is possible to request dependencies in the parameters of _me
 [4]: /components-of-ditsmod-app/dependency-injection#dependency-token
 [5]: /native-modules/body-parser#usage
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/pre-router.ts
+[7]: /components-of-ditsmod-app/dependency-injection

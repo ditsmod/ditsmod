@@ -181,7 +181,7 @@ export class SecondService {
 }
 ```
 
-Як бачите, правила отримання інстансу класу в конструкторі такі ж, як і в контролерах: за допомогою модифікатора доступу `private` оголошуємо властивість класу `firstService` з типом даних `FirstService`.
+Як бачите, правила отримання інстансу класу в конструкторі такі ж, як і в контролерах: за допомогою модифікатора доступу `private` оголошуємо властивість класу `firstService` з типом даних `FirstService`. Більш докладну інформацію про правила отримання інстансів класів за допомогою DI можна отримати в розділі [Dependency Injection][7].
 
 Зверніть увагу, що запитувати залежності у параметрах _методів_ сервісів можна, але, по-перше, перед даними методами потрібно використовувати будь-який декоратор для властивостей класу (наприклад `@methodFactory()`), а по-друге - ці методи потрібно використати у провайдері з властивістю [useFactory][3].
 
@@ -192,3 +192,4 @@ export class SecondService {
 [4]: /components-of-ditsmod-app/dependency-injection#токен-залежності
 [5]: /native-modules/body-parser#використання
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/pre-router.ts
+[7]: /components-of-ditsmod-app/dependency-injection
