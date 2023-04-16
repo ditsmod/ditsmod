@@ -72,7 +72,7 @@ import { controller, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } fro
 
 @controller()
 export class SomeController {
-  @route('POST', 'some-url')
+  @route('POST', 'some-url/:param1/:param2')
   postSomeUrl(
     @inject(PATH_PARAMS) pathParams: AnyObj,
     @inject(QUERY_PARAMS) queryParams: AnyObj,
@@ -87,7 +87,7 @@ export class SomeController {
 
 Як бачите з попереднього прикладу, щоб відправляти відповіді з об'єктами, необхідно використовувати метод `res.sendJson()` замість `res.send()` (бо він відправляє тільки текст).
 
-Рідний Node.js об'єкт запиту та відповіді можна отримати за токенами відповідно - `NODE_REQ` та `NODE_RES`:
+Рідні Node.js об'єкти запиту та відповіді можна отримати за токенами відповідно - `NODE_REQ` та `NODE_RES`:
 
 ```ts {6-7}
 import { controller, route, inject, NODE_REQ, NODE_RES, NodeRequest, NodeResponse } from '@ditsmod/core';

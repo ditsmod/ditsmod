@@ -72,7 +72,7 @@ import { controller, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } fro
 
 @controller()
 export class SomeController {
-  @route('POST', 'some-url')
+  @route('POST', 'some-url/:param1/:param2')
   postSomeUrl(
     @inject(PATH_PARAMS) pathParams: AnyObj,
     @inject(QUERY_PARAMS) queryParams: AnyObj,
@@ -87,7 +87,7 @@ You can find more information about what a token is and what the `inject` decora
 
 As you can see from the previous example, to send responses with objects, you need to use the `res.sendJson()` method instead of `res.send()` (which only sends text).
 
-The native Node.js request and response object can be obtained by tokens, respectively - `NODE_REQ` and `NODE_RES`:
+Native Node.js request and response objects can be obtained by tokens, respectively - `NODE_REQ` and `NODE_RES`:
 
 ```ts {6-7}
 import { controller, route, inject, NODE_REQ, NODE_RES, NodeRequest, NodeResponse } from '@ditsmod/core';
