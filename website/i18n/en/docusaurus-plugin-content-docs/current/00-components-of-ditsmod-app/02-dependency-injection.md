@@ -197,7 +197,7 @@ Now that you are familiar with the concept of **provider**, we can clarify that 
 
 ### Passing of providers to the DI registry
 
-For one dependency, you need to transfer one or more providers to the DI registry. Most often, providers are passed to the DI registry via module metadata, although sometimes they are passed to controller metadata, or even directly to [injectors][102]. In the following example, `SomeService` is passed into the `providersPerMod` array:
+For one dependency, you need to transfer one or more providers to the DI registry. Most often, providers are passed to the DI registry via module metadata, although sometimes they are passed via controller metadata, or even directly to [injectors][102]. In the following example, `SomeService` is passed into the `providersPerMod` array:
 
 ```ts {7}
 import { featureModule } from '@ditsmod/core';
@@ -293,7 +293,7 @@ const injector = Injector.resolveAndCreate([Service1, Service2, Service3]);
 const service3 = injector.get(Service3);
 ```
 
-The `Injector.resolveAndCreate()` method takes an array of classes into its registry at the input, and outputs a certain object, which is exactly what is called an **injector**. This injector obviously contains a registry of transferred classes, and is able to create their instances, taking into account the entire chain of dependencies (`Service3` -> `Service2` -> `Service1`).
+The `Injector.resolveAndCreate()` method takes an array of providers into its registry at the input, and outputs a certain object, which is exactly what is called an **injector**. This injector obviously contains a registry of transferred providers, and is able to create their instances, taking into account the entire chain of dependencies (`Service3` -> `Service2` -> `Service1`).
 
 What the injector does:
 
@@ -379,11 +379,29 @@ Earlier in the documentation, you encountered the following object properties th
 - `providersPerRou` - providers at the route level;
 - `providersPerReq` - providers at the HTTP request level.
 
-Using these arrays, Ditsmod forms four different injectors, which are connected to each other in a hierarchical relationship. The highest in the hierarchy is the application-level injector, which is registered with the `providersPerApp` array. The second in the hierarchy is the module-level injector, the third is the route-level injector, and the fourth is the HTTP request-level injector. It should be noted that injectors higher up in the hierarchy do not have access to injectors lower in the hierarchy. To successfully resolve the dependencies of a particular provider, that provider must be passed to the lowest injector in the hierarchy among those injectors that will participate in resolving those dependencies.
+Using these arrays, Ditsmod creates four different injectors, which are interconnected in a hierarchical relationship. Such a hierarchy can be simulated as follows:
+
+```ts
+import { Injector } from '@ditsmod/core';
+
+const providersPerApp = [];
+const providersPerMod = [];
+const providersPerRou = [];
+const providersPerReq = [];
+
+const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
+const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
+const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
+const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
+```
+
+Under the hood, Ditsmod performs a similar procedure multiple times for different modules, routes, and requests. For example, if the Ditsmod application has two modules and ten routes, one injector will be created at the application level, one injector for each module (2 pcs), one injector for each route (10 pcs), and one injector for each request. Request-level injectors are automatically removed after processing each request.
+
+It should be noted that higher-level injectors do not have access to lower-level injectors. To successfully resolve the dependencies of a particular provider with DI, the provider must be passed to the lowest-level injector among those that will be involved in resolving the dependencies.
 
 For example, if you write a class that depends on an HTTP request, you can only pass it to the `providersPerReq` array, as only from this array an injector is formed, to which Ditsmod will automatically add the provider with the HTTP request object. On the other hand, an instance of this class will have access to all of its parent injectors: at the route, module, and application levels.
 
-You can also write a certain class and pass it to the `providersPerMod` array. In this case, it can only depend on providers at the module or application level. If you try to add in its constructor dependencies on providers that you passed to the `providersPerRou` or `providersPerReq` arrays, you will receive an error that these providers were not found. Instances of providers at the module level are created only once after the application is launched.
+You can also write a certain class and pass it to the `providersPerMod` array. In this case, it can only depend on providers at the module or application level. If you try to add in its constructor dependencies on providers that you passed to the `providersPerRou` or `providersPerReq` arrays, you will receive an error that these providers were not found.
 
 ### Hierarchy of controller injectors
 

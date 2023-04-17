@@ -6,11 +6,11 @@ sidebar_position: 7
 
 ## The purpose of Ditsmod extension
 
-The main difference between an extension and a regular service is that the extension can do its job before the web server starts, and it can dynamically add providers. To modify or extend the behavior of the application, an extension typically uses metadata attached to certain decorators.
+An extension performs its job before the web server starts, and it can dynamically add providers. To modify or extend the behavior of the application, an extension typically uses metadata attached to certain decorators. Extensions can be initialized asynchronously, and can depend on each other.
 
-For example, `@ditsmod/body-parser` module has an extension that dynamically adds an HTTP interceptor for parsing the request body to each route that has the appropriate method (POST, PATCH, PUT). It does this once before the start of the web server, so there is no need to test the need for such parsing for each request.
+For example, [@ditsmod/body-parser][5] module has an extension that dynamically adds an HTTP interceptor for parsing the request body to each route that has the appropriate method (POST, PATCH, PUT). It does this once before the start of the web server, so there is no need to test the need for such parsing for each request.
 
-Another example. For example, the `@ditsmod/openapi` module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without extensions, the metadata passed to this decorator would be incomprehensible to `@ditsmod/core`.
+Another example. For example, the [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without working extensions, Ditsmod will ignore this new decorator.
 
 ## What is Ditsmod extension
 
@@ -24,7 +24,7 @@ interface Extension<T> {
 
 Each extension needs to be registered, this will be mentioned later, and now let's assume that such registration has taken place, the application is running, and then goes the following process:
 
-1. metadata is collected from all decorators (`@rootModule`, `@featureModule`, `@controller`, `@route`);
+1. metadata is collected from all decorators (`@rootModule`, `@featureModule`, `@controller`, `@route`...);
 2. this metadata then passing to DI with token `MetadataPerMod1`, therefore - any extension can receive this metadata in the constructor;
 3. per module work of extensions begins, that is, for each Ditsmod module the extensions registered in this module or imported in this module are selected, and the metadata collected in this module is also transmitted to them; then the `init()` method of each extension is called;
 4. the web server starts, and the application starts working normally, processing HTTP requests.
