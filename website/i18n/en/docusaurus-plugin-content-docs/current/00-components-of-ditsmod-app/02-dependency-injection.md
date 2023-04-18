@@ -401,7 +401,7 @@ It should be noted that higher-level injectors do not have access to lower-level
 
 For example, if you write a class that depends on an HTTP request, you can only pass it to the `providersPerReq` array, as only from this array an injector is formed, to which Ditsmod will automatically add the provider with the HTTP request object. On the other hand, an instance of this class will have access to all of its parent injectors: at the route, module, and application levels.
 
-You can also write a certain class and pass it to the `providersPerMod` array. In this case, it can only depend on providers at the module or application level. If you try to add in its constructor dependencies on providers that you passed to the `providersPerRou` or `providersPerReq` arrays, you will receive an error that these providers were not found.
+You can also write a certain class and pass it to the `providersPerMod` array. In this case, it can only depend on providers at the module or application level. If it depends on the providers you passed in the `providersPerRou` or `providersPerReq` array, you will get an error saying that those providers were not found.
 
 ### Hierarchy of controller injectors
 
