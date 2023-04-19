@@ -71,9 +71,7 @@ export class SecondService {
 
 ## Dependency token
 
-Dependencies are specified in class constructors in order for DI to resolve these dependencies. Moreover, dependencies in constructors are specified using so-called **tokens**.
-
-Let's revisit the previous example:
+In class constructors, dependencies are specified using so-called **tokens**. Let's revisit the previous example:
 
 ```ts {7}
 import { injectable } from '@ditsmod/core';
@@ -87,7 +85,7 @@ export class SecondService {
 }
 ```
 
-Here, `FirstService` is used as a token that indicates the dependency of `SecondService` on an instance of class `FirstService`. That is, in this case `FirstService` is used both as a token and as a variable type.
+In this case, `FirstService` is used both as a variable type and as a token to indicate the dependency of `SecondService` on an instance of the `FirstService` class.
 
 A token can have any JavaScript type, but currently DI has a limitation that prevents it from distinguishing between different primitive types, different types of arrays, or enums. Additionally, it's important to note that the token must remain in the JavaScript file after compilation from TypeScript code, so interfaces or types declared using the `type` keyword cannot be used as tokens.
 
@@ -140,7 +138,7 @@ token2 => value100
 ...
 ```
 
-Such values are created by DI using **providers**. In essence, DI resolves the dependency by using appropriate providers that gives a some value. So, to resolve a certain dependency, you first need to pass the corresponding provider to the DI registry, and then DI will issue value of this provider by its token. The [next section][100] discusses how providers can be passed to DI. Providers have this type:
+Such values are created by DI using **providers**. So, to resolve a certain dependency, you first need to pass the corresponding provider to the DI registry, and then DI will issue value of this provider by its token. The [next section][100] discusses how providers can be passed to DI. Providers have this type:
 
 ```ts {3-7}
 import { Class } from '@ditsmod/core';
@@ -159,8 +157,16 @@ Note that the token for the provider with the `useFactory` property is optional,
 
 In the example above, the definition of the provider object type is shown, the following values are passed to its properties:
 
-- `useClass` - the class is passed, DI will make an instance of this class.
-- `useValue` - any value is passed, DI will output it unchanged.
+- `useClass` - the class is passed, DI will make an instance of this class. An example of such a provider:
+
+  ```ts
+  { token: 'token1', useClass: SomeService }
+  ```
+- `useValue` - any value is passed, DI will output it unchanged. An example of such a provider:
+
+  ```ts
+  { token: 'token2', useValue: 'some value' }
+  ```
 - `useFactory` - [tuple][11] is passed, where the class should be in the first place, and in the second place - the method of this class, which should return any value for the specified token. For example, if the class is like this:
 
   ```ts
@@ -178,7 +184,7 @@ In the example above, the definition of the provider object type is shown, the f
   in this case, the provider must be transferred to the DI registry in the following format:
 
   ```ts
-  { token: 'some token', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }
+  { token: 'token3', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }
   ```
 
   First, DI will create an instance of this class, then call its method and get the result, which will be associated with the specified token.
@@ -197,7 +203,7 @@ Now that you are familiar with the concept of **provider**, we can clarify that 
 
 ## Injector
 
-The so-called **DI registry** has been mentioned many times above. Now that you know what DI uses the registry for, it's time to learn that these registries are in injectors, and there can be many such injectors in a Ditsmod application. But first, let's understand how injectors work.
+The so-called **DI registry** has been mentioned above. Now that you know what DI uses the registry for, it's time to learn that these registries are in injectors, and there can be many such injectors in a Ditsmod application. But first, let's understand how injectors work.
 
 If we simplify the DI working scheme greatly, we can say that DI takes an array of providers as input and outputs an injector that can create instances of the passed providers, taking into account their dependencies. It has approximately the following picture:
 
@@ -495,7 +501,7 @@ import { featureModule } from '@ditsmod/core';
 export class SomeModule {}
 ```
 
-In this case, within `SomeModule` token `token1` will be issued `value3` at the request level, `value2` - at the route level, and `value1` - at the module level.
+In this case, within `SomeModule`, `value3` will be returned at the module, route, or request level for `token1`.
 
 Also, if you import a specific provider from an external module and you have a provider with the same token in the current module, the local provider will have higher priority, provided they were passed at the same level of the injector hierarchy.
 
