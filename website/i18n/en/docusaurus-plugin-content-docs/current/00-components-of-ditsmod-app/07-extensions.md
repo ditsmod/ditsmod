@@ -10,7 +10,7 @@ An extension performs its job before the web server starts, and it can dynamical
 
 For example, [@ditsmod/body-parser][5] module has an extension that dynamically adds an HTTP interceptor for parsing the request body to each route that has the appropriate method (POST, PATCH, PUT). It does this once before the start of the web server, so there is no need to test the need for such parsing for each request.
 
-Another example. For example, the [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without working extensions, Ditsmod will ignore this new decorator.
+Another example. For example, the [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without working the extension, Ditsmod will ignore this new decorator.
 
 ## What is Ditsmod extension
 
@@ -27,8 +27,8 @@ Each extension needs to be registered, this will be mentioned later, and now let
 1. metadata is collected from all decorators (`@rootModule`, `@featureModule`, `@controller`, `@route`...);
 2. this metadata then passing to DI with token `MetadataPerMod1`, therefore - any extension can receive this metadata in the constructor;
 3. per module work of extensions begins:
-    - for each Ditsmod module, extensions created within these modules or imported into these modules are selected;
-    - the metadata collected within each of these modules is passed to these extensions, and the `init()` methods of the extensions are invoked.
+    - in each Ditsmod module, the extensions created within this module or imported into this module are collected;
+    - each of these extensions receives metadata, also collected in this module, and the `init()` methods of given extensions are called.
 4. the web server starts, and the application starts working normally, processing HTTP requests.
 
 It should be noted that the order of running extensions can be considered as "random", so each extension must declare dependence on another extension (if any) in its constructors, as well as in the methods `init()`. In this case, regardless of the startup order, all extensions will work correctly:
