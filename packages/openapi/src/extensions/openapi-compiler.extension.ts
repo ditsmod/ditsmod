@@ -57,8 +57,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     }
     this.log.applyingAccumulatedData(this);
 
-    const injectorPerApp = this.perAppService.injector;
-    await this.compileOasObject(aMetadataPerMod2, injectorPerApp);
+    await this.compileOasObject(aMetadataPerMod2);
     await mkdir(this.swaggerUiDist, { recursive: true });
     const json = JSON.stringify(this.oasObject);
     const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
@@ -68,7 +67,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     return this.oasObject;
   }
 
-  protected async compileOasObject(aMetadataPerMod2: MetadataPerMod2[], injectorPerApp: Injector) {
+  protected async compileOasObject(aMetadataPerMod2: MetadataPerMod2[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
     for (const metadataPerMod2 of aMetadataPerMod2) {
