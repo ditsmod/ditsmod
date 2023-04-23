@@ -1,12 +1,5 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
-import {
-  featureModule,
-  ModuleWithParams,
-  PRE_ROUTER_EXTENSIONS,
-  Providers,
-  RouteMeta,
-  ROUTES_EXTENSIONS,
-} from '@ditsmod/core';
+import { featureModule, ModuleWithParams, PRE_ROUTER_EXTENSIONS, Providers, ROUTES_EXTENSIONS } from '@ditsmod/core';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension';
 import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension';
@@ -29,7 +22,7 @@ import { OpenapiLogMediator } from './services/openapi-log-mediator';
       nextToken: PRE_ROUTER_EXTENSIONS,
       exported: true,
     },
-  ]
+  ],
 })
 export class OpenapiModule {
   /**
