@@ -31,7 +31,7 @@ Each extension needs to be registered, this will be mentioned later, and now let
     - each of these extensions receives metadata, also collected in this module, and the `init()` methods of given extensions are called.
 4. the web server starts, and the application starts working normally, processing HTTP requests.
 
-It should be noted that the order of running extensions can be considered as "random", so each extension must declare dependence on another extension (if any) in its constructors, as well as in the methods `init()`. In this case, regardless of the startup order, all extensions will work correctly:
+It's worth considering that the order of extension running can be considered "random", so each extension should specify its dependency on another extension (if any) in its constructor as well as in the `init()` method. In this case, regardless of the startup order, all extensions will work correctly:
 
 ```ts
 async init() {
