@@ -185,6 +185,23 @@ export class SecondService {
 
 Зверніть увагу, що запитувати залежності у параметрах _методів_ сервісів можна, але, по-перше, перед даними методами потрібно використовувати будь-який декоратор для властивостей класу (наприклад `@methodFactory()`), а по-друге - ці методи потрібно використати у провайдері з властивістю [useFactory][3].
 
+### Сервіси в контролерах
+
+Якщо ви створили `FirstService` і [передали його до DI][7], тепер ви зможете запитувати його інстанс в контролерах:
+
+```ts {8}
+import { controller, route, Res } from '@ditsmod/core';
+
+import { FirstService } from './first.service';
+
+@controller()
+export class HelloWorldController {
+  @route('GET', 'hello')
+  method1(res: Res, firstService: FirstService) {
+    res.send(firstService.sayHello());
+  }
+}
+```
 
 [1]: /components-of-ditsmod-app/exports-and-imports#імпорт-модуля
 [2]: /components-of-ditsmod-app/exports-and-imports#ModuleWithParams

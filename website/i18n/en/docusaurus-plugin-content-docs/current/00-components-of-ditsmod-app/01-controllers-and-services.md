@@ -12,7 +12,7 @@ The task of the router is to find the HTTP request handler by the _path_. After 
 
 # What is a controller?
 
-A TypeScript class becomes a Ditsmod controller thanks to the controller decorator.
+A TypeScript class becomes a Ditsmod controller thanks to the `controller` decorator.
 
 ```ts
 import { controller } from '@ditsmod/core';
@@ -150,7 +150,7 @@ What services can do:
 - validate the request;
 - parsing the request body;
 - check access rights;
-- work with databases, with mail;
+- work with databases, with email;
 - etc.
 
 The TypeScript class becomes a Ditsmod service with `injectable` decorator:
@@ -185,6 +185,23 @@ As you can see, the rules for obtaining a class instance in the constructor are 
 
 Please note that it is possible to request dependencies in the parameters of _methods_ services, but, firstly, above these methods you need to use any decorator for class properties (for example `@methodFactory()`), and secondly - these methods need to be used in providers with the [useFactory][3] property.
 
+### Services in controllers
+
+If you have created a `FirstService` and [passed it to DI][7], you will now be able to request its instance in controllers:
+
+```ts {8}
+import { controller, route, Res } from '@ditsmod/core';
+
+import { FirstService } from './first.service';
+
+@controller()
+export class HelloWorldController {
+  @route('GET', 'hello')
+  method1(res: Res, firstService: FirstService) {
+    res.send(firstService.sayHello());
+  }
+}
+```
 
 [1]: /components-of-ditsmod-app/exports-and-imports#import-module
 [2]: /components-of-ditsmod-app/exports-and-imports#ModuleWithParams
