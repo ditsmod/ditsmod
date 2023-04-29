@@ -128,7 +128,7 @@ export class SecondService {
 }
 ```
 
-## Provider
+## Providers
 
 DI has a dependency registry, which is essentially a mapping between a token and a value to be emitted for a particular dependency. It can be schematically shown as follows:
 
@@ -385,6 +385,102 @@ export class SecondService {
 ```
 
 Keep in mind that this way you get an injector that created an instance of this service. The hierarchy level of this injector depends only on the registry of the injector to which `SecondService` was transferred.
+
+## Multi-providers
+
+This type of providers exists only in the form of an object, and it differs from ordinary DI providers by the presence of the `multi: true` property. Such providers are advisable to use when there is a need to transfer several providers with the same token to DI at once, so that DI returns the same number of values for these providers in one array:
+
+```ts
+import { Injector } from '@ditsmod/core';
+
+import { LOCAL } from './tokens';
+
+const injector = Injector.resolveAndCreate([
+  { token: LOCAL, useValue: 'uk', multi: true },
+  { token: LOCAL, useValue: 'en', multi: true },
+]);
+
+const locals = injector.get(LOCAL); // ['uk', 'en']
+```
+
+Basically, multi-providers allow you to create groups of providers that share a common token. This feature is particularly used to create the `HTTP_INTERCEPTORS` group, as well as to create various extension groups.
+
+It is not allowed that both ordinary and multi-providers have the same token in one injector:
+
+```ts
+import { Injector } from '@ditsmod/core';
+
+import { LOCAL } from './tokens';
+
+const injector = Injector.resolveAndCreate([
+  { token: LOCAL, useValue: 'uk' },
+  { token: LOCAL, useValue: 'en', multi: true },
+]);
+
+const locals = injector.get(LOCAL); // Error: Cannot mix multi providers and regular providers
+```
+
+Child injectors can return multi-providers of the parent injector only if no providers with the same tokens were passed to them when the child injectors were created:
+
+```ts
+import { Injector } from '@ditsmod/core';
+
+import { LOCAL } from './tokens';
+
+const parent = Injector.resolveAndCreate([
+  { token: LOCAL, useValue: 'uk', multi: true },
+  { token: LOCAL, useValue: 'en', multi: true },
+]);
+
+const child = parent.resolveAndCreateChild([]);
+
+const locals = child.get(LOCAL); // ['uk', 'en']
+```
+
+If both the child and the parent injector have multi-providers with the same token, the child injector will return values only from its array:
+
+```ts
+import { Injector } from '@ditsmod/core';
+
+import { LOCAL } from './tokens';
+
+const parent = Injector.resolveAndCreate([
+  { token: LOCAL, useValue: 'uk', multi: true },
+  { token: LOCAL, useValue: 'en', multi: true },
+]);
+
+const child = parent.resolveAndCreateChild([
+  { token: LOCAL, useValue: 'аа', multi: true }
+]);
+
+const locals = child.get(LOCAL); // ['аа']
+```
+
+### Changing multi-providers
+
+To make it possible to change a specific multi-provider, you can do the following:
+
+1. first pass the multi-provider and use the `useExisting` property;
+2. then transfer the class you want to replace;
+3. and at the end of the array, pass the class that replaces the class you need.
+
+```ts
+import { Injector } from '@ditsmod/core';
+
+import { HTTP_INTERCEPTORS } from './constants';
+import { DefaultInterceptor } from './default.interceptor';
+import { MyInterceptor } from './my.interceptor';
+
+const injector = Injector.resolveAndCreate([
+  { token: HTTP_INTERCEPTORS, useExisting: DefaultInterceptor, multi: true },
+  DefaultInterceptor,
+  { token: DefaultInterceptor, useClass: MyInterceptor }
+]);
+
+const locals = injector.get(HTTP_INTERCEPTORS); // [MyInterceptor]
+```
+
+This construction makes sense, for example, if the first two points are performed somewhere in an external module to which you do not have access to edit, and the third point is already performed by the user of this module.
 
 ## Passing of providers to the DI registry
 

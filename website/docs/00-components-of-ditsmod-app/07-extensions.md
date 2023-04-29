@@ -42,26 +42,7 @@ async init() {
 
 Це означає, що метод `init()` певного розширення може викликатись стільки разів, скільки разів він прописаний у тілі інших розширень, які залежать від роботи даного розширення. Цю особливість необхідно обов'язково враховувати, щоб не відбувалась зайва ініціалізація:
 
-```ts
-async init() {
-  if (this.inited) {
-    return;
-  }
-
-  // Щось хороше робите.
-  // ...
-
-  this.inited = true;
-}
-```
-
-## Створення класу розширення
-
-Готовий простий приклад ви можете проглянути у теці [09-one-extension][1].
-
-Створіть клас, що впроваджує інтерфейс `Extension`:
-
-```ts
+```ts {9-11}
 import { injectable } from '@ditsmod/core';
 import { Extension } from '@ditsmod/core';
 
@@ -73,59 +54,18 @@ export class MyExtension implements Extension<void> {
     if (this.data) {
       return this.data;
     }
+
     // ...
     // Щось хороше робите
     // ...
+
     this.data = result;
     return this.data;
   }
 }
 ```
 
-Для роботи розширення, усі необхідні дані ви можете отримати або через конструктор, або від іншого розширення через виклик його методу `init()`:
-
-```ts
-import { injectable } from '@ditsmod/core';
-import { Extension, MetadataPerMod1 } from '@ditsmod/core';
-
-@injectable()
-export class Extension1 implements Extension<any> {
-  private data: any;
-
-  constructor(private metadataPerMod1: MetadataPerMod1) {}
-
-  async init() {
-    if (this.data) {
-      return this.data;
-    }
-    // Щось хороше робите із this.metadataPerMod1.
-    // ...
-    this.data = result;
-    return this.data;
-  }
-}
-
-@injectable()
-export class Extension2 implements Extension<void> {
-  private inited: boolean;
-
-  constructor(private extension1: Extension1) {}
-
-  async init() {
-    if (this.inited) {
-      return;
-    }
-
-    const data = await this.extension1.init();
-    // Do something here.
-    this.inited = true;
-  }
-}
-```
-
-Як бачите, `Extension1` отримує дані для своєї роботи безпосередньо через конструктор. Після того, як воно виконало свою роботу, результат зберігається локально і видається при повторних викликах.
-
-В `Extension2` теж враховано можливість повторного виклику `init()`, тому під час другого виклику, цей метод не буде робити повторну ініціалізацію. Окрім цього, `Extension2` залежить від даних, взятих з `Extension1`, тому в його конструкторі указано `Extension1`, а в тілі `init()` асинхронно викликається `this.extension1.init()`.
+Готовий простий приклад ви можете проглянути у теці [09-one-extension][1].
 
 ## Реєстрація розширення
 

@@ -205,7 +205,7 @@ export class HelloWorldController {
 
 [1]: /components-of-ditsmod-app/exports-and-imports#import-module
 [2]: /components-of-ditsmod-app/exports-and-imports#ModuleWithParams
-[3]: /components-of-ditsmod-app/dependency-injection#provider
+[3]: /components-of-ditsmod-app/dependency-injection#providers
 [4]: /components-of-ditsmod-app/dependency-injection#dependency-token
 [5]: /native-modules/body-parser#usage
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/pre-router.ts

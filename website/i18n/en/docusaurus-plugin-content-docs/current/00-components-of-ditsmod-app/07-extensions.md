@@ -42,26 +42,7 @@ async init() {
 
 This means that the `init()` method of a particular extension can be called as many times as it is written in the body of other extensions that depend on the job of that extension. This specificity must be taken into account:
 
-```ts
-async init() {
-  if (this.inited) {
-    return;
-  }
-
-  // Do something good.
-  // ...
-
-  this.inited = true;
-}
-```
-
-## Creating an extension class
-
-You can see a simple example in the folder [09-one-extension][1].
-
-Create a class that implements the `Extension` interface:
-
-```ts
+```ts {9-11}
 import { injectable } from '@ditsmod/core';
 import { Extension } from '@ditsmod/core';
 
@@ -73,59 +54,18 @@ export class MyExtension implements Extension<void> {
     if (this.data) {
       return this.data;
     }
+
     // ...
     // Do something good
     // ...
+
     this.data = result;
     return this.data;
   }
 }
 ```
 
-For the extension to work, you can get all the necessary data either through the constructor or from another extension by calling its `init()` method:
-
-```ts
-import { injectable } from '@ditsmod/core';
-import { Extension, MetadataPerMod1 } from '@ditsmod/core';
-
-@injectable()
-export class Extension1 implements Extension<any> {
-  private data: any;
-
-  constructor(private metadataPerMod1: MetadataPerMod1) {}
-
-  async init() {
-    if (this.data) {
-      return this.data;
-    }
-    // Do something good with `this.metadataPerMod1`.
-    // ...
-    this.data = result;
-    return this.data;
-  }
-}
-
-@injectable()
-export class Extension2 implements Extension<void> {
-  private inited: boolean;
-
-  constructor(private extension1: Extension1) {}
-
-  async init() {
-    if (this.inited) {
-      return;
-    }
-
-    const data = await this.extension1.init();
-    // Do something here.
-    this.inited = true;
-  }
-}
-```
-
-As you can see, `Extension1` receives data for its work directly through the constructor. Once it has done its job, the result is stored locally and issued on repeated calls.
-
-`Extension2` also takes into account the possibility of re-calling `init()`, so during the second call, this method will not re-initialize. In addition, `Extension2` depends on the data taken from `Extension1`, so its constructor specifies `Extension1`, and in the body `init()` asynchronously called `this.extension1.init()`.
+You can see a simple example in the folder [09-one-extension][1].
 
 ## Extension registration
 
