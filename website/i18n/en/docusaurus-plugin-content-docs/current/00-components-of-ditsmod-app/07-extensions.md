@@ -67,18 +67,22 @@ export class MyExtension implements Extension<void> {
 
 You can see a simple example in the folder [09-one-extension][1].
 
-## Extension registration
+## Extensions groups
 
-[Register the extension][4] in an existing extension group, or create a new group, even if it has a single extension. You will need to create a new DI token for the new group.
+In Ditsmod applications, extensions can perform different types of work, for example:
 
-### What do you need extension groups for
+- route settings;
+- use of routes to create OpenAPI documentation;
+- use of routes to add an HTTP interceptor that will perform request validation;
+- use of routes for the router;
+- set the metrics;
+- etc.
 
-What it gives:
+In order to distinguish and complement each type of work with extensions, as well as to organize the sequence of each type of work, the concept of **extensions groups** exists in Ditsmod. Currently, each extension should belong to one or several groups.
 
-- If you create extensions group in the current module, it can be supplemented by other extensions in external modules, without having to change the code in the current module. Sometimes it will not even be necessary to call any services from the current module in order to integrate it into an external module, it will be enough to import it.
-- You can arrange the sequence of work of extensions that perform different types of work. By "different types of work" it is meant, for example, that one group of extensions can add routes, the second - HTTP interceptors, the third - set metrics, etc.
+If you create an extension group in the current module, it can be supplemented by other extensions in external modules without having to change the code in the current module. Sometimes it will not even be necessary to call any services from the current module in order to integrate it into an external module, it will be enough to import it.
 
-For example, in `@ditsmod/core` there is a `ROUTES_EXTENSIONS` group, which by default includes a single extension that handles metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can use `@ditsmod/openapi`, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for setting router routes. These extensions are grouped together because their `init()` methods return data with the same base interface.
+For example, in `@ditsmod/core` there is a `ROUTES_EXTENSIONS` group, which by default includes a single extension that handles metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can use `@ditsmod/openapi`, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for setting router routes. These extensions are grouped together because they configure routes and their `init()` methods return data with the same base interface.
 
 A single base interface for all extensions in a group is an important requirement because other extensions can expect data from that group and will rely on that base interface. Of course, if necessary, the basic interface can be expanded, but not narrowed.
 
@@ -92,6 +96,10 @@ This is how the `@ditsmod/body-parser` extension works, for example. You simply 
 2. order of execution, so that routes are not set before it works (that is, so that the group `PRE_ROUTER_EXTENSIONS` works after it, and not before it).
 
 This means that `BodyParserModule` will take into account routes set using the `@route()` or `@oasRoute()` decorators, or any other decorators from this group, as they are handled by the running extensions before it in the `ROUTES_EXTENSIONS` group.
+
+## Extension registration
+
+[Register the extension][4] in an existing extension group, or create a new group, even if it has a single extension. You will need to create a new DI token for the new group.
 
 ### Creating a new group token
 
@@ -130,8 +138,7 @@ export class ExtensionOptions {
 The `nextToken` property is used when you want your extension group to run before another extension group:
 
 ```ts
-import { featureModule } from '@ditsmod/core';
-import { ROUTES_EXTENSIONS } from '@ditsmod/core';
+import { featureModule, ROUTES_EXTENSIONS } from '@ditsmod/core';
 
 import { MY_EXTENSIONS, MyExtension } from './my.extension';
 
@@ -299,3 +306,6 @@ Of course, such a dynamic addition of providers is possible only before the star
 [2]: #creating-an-extension-class
 [3]: https://github.com/ditsmod/ditsmod/blob/0c4660a77/packages/body-parser/src/body-parser.extension.ts#L27-L40
 [4]: #registering-an-extension-in-a-group
+[5]: /native-modules/body-parser
+[6]: /native-modules/openapi
+
