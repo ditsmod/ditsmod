@@ -78,7 +78,7 @@ In Ditsmod applications, extensions can perform different types of work, for exa
 - set the metrics;
 - etc.
 
-In order to distinguish and complement each type of work with extensions, as well as to organize the sequence of each type of work, the concept of **extensions groups** exists in Ditsmod. Currently, each extension should belong to one or several groups.
+In order to distinguish and complement each type of work with extensions, as well as to organize the sequence of each type of work, the concept of **extensions groups** exists in Ditsmod. Each extension should belong to one or several groups.
 
 If you create an extension group in the current module, it can be supplemented by other extensions in external modules without having to change the code in the current module. Sometimes it will not even be necessary to call any services from the current module in order to integrate it into an external module, it will be enough to import it.
 
@@ -169,9 +169,7 @@ export class SomeModule {}
 
 ## Using ExtensionsManager
 
-For simplicity, [Creating an extension class][2] contains an example where the dependence of `Extension2` on `Extension1` is specified, but it is recommended to specify the dependence on the group of extensions, and not directly on a specific extension. In this case, you do not need to know the names of all the extensions in the extension group, just know the interface of the data returned with `init()`.
-
-`ExtensionsManager` is used to run groups of extensions, it is also useful in that it throws errors about cyclic dependencies between extensions, and shows the whole chain of extensions that led to loops. Additionally, `ExtensionsManager` allows you to collect extensions initialization results from the entire application, not just from a single module.
+If a certain extension has a dependency on another extension, it is recommended to specify that dependency indirectly through the extension group. To do this, you need `ExtensionsManager`, which initializes extension groups, throws errors about cyclic dependencies between extensions, and shows the entire chain of extensions that caused the loop. Additionally, `ExtensionsManager` allows you to collect extensions initialization results from the entire application, not just from a single module.
 
 Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor, and in `init()` call `init()` of this service:
 
