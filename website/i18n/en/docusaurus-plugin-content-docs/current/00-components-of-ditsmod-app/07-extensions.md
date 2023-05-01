@@ -78,7 +78,9 @@ In Ditsmod applications, extensions can perform different types of work, for exa
 - set the metrics;
 - etc.
 
-In order to distinguish and complement each type of work with extensions, as well as to organize the sequence of each type of work, the concept of **extensions groups** exists in Ditsmod. Each extension should belong to one or several groups.
+In Ditsmod, there is a concept **group of extensions** so that you can fix a separate group of extensions for each type of work. Any extension must belong to one or more groups. Under the hood of Ditsmod, extensions groups are essentially groups of [multi-providers][7] that generally return data with the same basic interface.
+
+Extensions groups can be initialized in an orderly fashion. For example, it is important that an extension group responsible for setting up routes runs before another extension group responsible for using those routes.
 
 If you create an extension group in the current module, it can be supplemented by other extensions in external modules without having to change the code in the current module. Sometimes it will not even be necessary to call any services from the current module in order to integrate it into an external module, it will be enough to import it.
 
@@ -173,7 +175,7 @@ If a certain extension has a dependency on another extension, it is recommended 
 
 Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor, and in `init()` call `init()` of this service:
 
-```ts
+```ts {17}
 import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
@@ -190,7 +192,7 @@ export class MyExtension implements Extension<void> {
       return;
     }
 
-    await this.extensionsManager.init(OTHER_EXTENSIONS);
+    const result = await this.extensionsManager.init(OTHER_EXTENSIONS);
     // Do something here.
     this.inited = true;
   }
@@ -207,7 +209,7 @@ It is important to remember that running `init()` a particular extension process
 
 In case you need to accumulate the results of a certain extension from all modules, you need to do the following:
 
-```ts
+```ts {17}
 import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
@@ -306,4 +308,4 @@ Of course, such a dynamic addition of providers is possible only before the star
 [4]: #registering-an-extension-in-a-group
 [5]: /native-modules/body-parser
 [6]: /native-modules/openapi
-
+[7]: /components-of-ditsmod-app/dependency-injection#multi-providers
