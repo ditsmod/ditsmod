@@ -10,7 +10,7 @@ An extension performs its job before the web server starts, and it can dynamical
 
 For example, [@ditsmod/body-parser][5] module has an extension that dynamically adds an HTTP interceptor for parsing the request body to each route that has the appropriate method (POST, PATCH, PUT). It does this once before the start of the web server, so there is no need to test the need for such parsing for each request.
 
-Another example. For example, the [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without working the extension, Ditsmod will ignore this new decorator.
+Another example. [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without working the extension, Ditsmod will ignore this new decorator.
 
 ## What is Ditsmod extension
 
@@ -90,7 +90,7 @@ A single base interface for all extensions in a group is an important requiremen
 
 In our example, after all the extensions from the `ROUTES_EXTENSIONS` group have worked, their data is collected in one array and transferred to the `PRE_ROUTER_EXTENSIONS` group. Even if you later register more new extensions in the `ROUTES_EXTENSIONS` group, the `PRE_ROUTER_EXTENSIONS` group will still start after all the extensions in the `ROUTES_EXTENSIONS` group have worked, including your new extensions.
 
-This feature is very useful because it sometimes allows you to integrate external Ditsmod modules (for example from npmjs.com) into your application without any configuration, just by importing them into the desired module. Thanks to extension groups, imported extensions will run in the correct sequence, even if they are imported from different external modules.
+This feature is very useful because it sometimes allows you to integrate external Ditsmod modules (for example from npmjs.com) into your application without any configuration, just by importing them into the desired module. Thanks to extensions groups, imported extensions will run in the correct sequence, even if they are imported from different external modules.
 
 This is how the `@ditsmod/body-parser` extension works, for example. You simply import `BodyParserModule` and its extension will already run in the correct order that is specified in this module. In this case, its extension will run after the `ROUTES_EXTENSIONS` group, but before the `PRE_ROUTER_EXTENSIONS` group. Moreover, please note that `BodyParserModule` has no idea which extensions will work in these groups, it only cares about:
 
@@ -152,7 +152,7 @@ import { MY_EXTENSIONS, MyExtension } from './my.extension';
 export class SomeModule {}
 ```
 
-That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `groupToken` property. The token of the `ROUTES_EXTENSIONS` extension group, before which the `MY_EXTENSIONS` group should be started, is passed to the `nextToken` property. The `exported` property indicates whether this extension should be exported from the current module.
+That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `groupToken` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `nextToken` property. The `exported` property indicates whether this extension should be exported from the current module.
 
 If for your extension it is not important for which group of extensions it will work, you can simplify the registration:
 
@@ -171,7 +171,7 @@ export class SomeModule {}
 
 ## Using ExtensionsManager
 
-If a certain extension has a dependency on another extension, it is recommended to specify that dependency indirectly through the extension group. To do this, you need `ExtensionsManager`, which initializes extension groups, throws errors about cyclic dependencies between extensions, and shows the entire chain of extensions that caused the loop. Additionally, `ExtensionsManager` allows you to collect extensions initialization results from the entire application, not just from a single module.
+If a certain extension has a dependency on another extension, it is recommended to specify that dependency indirectly through the extension group. To do this, you need `ExtensionsManager`, which initializes extensions groups, throws errors about cyclic dependencies between extensions, and shows the entire chain of extensions that caused the loop. Additionally, `ExtensionsManager` allows you to collect extensions initialization results from the entire application, not just from a single module.
 
 Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor, and in `init()` call `init()` of this service:
 
@@ -300,7 +300,7 @@ export class BodyParserExtension implements Extension<void> {
 }
 ```
 
-Of course, such a dynamic addition of providers is possible only before the start of the web server.
+Of course, such a dynamic addition of providers is possible only before the start of the web server. As you can see, in this example, a [hierarchy of injectors][8] is created to obtain the correct data with the `RouteMeta` token.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
 [2]: #creating-an-extension-class
@@ -309,3 +309,4 @@ Of course, such a dynamic addition of providers is possible only before the star
 [5]: /native-modules/body-parser
 [6]: /native-modules/openapi
 [7]: /components-of-ditsmod-app/dependency-injection#multi-providers
+[8]: /components-of-ditsmod-app/dependency-injection#hierarchy-of-injectors
