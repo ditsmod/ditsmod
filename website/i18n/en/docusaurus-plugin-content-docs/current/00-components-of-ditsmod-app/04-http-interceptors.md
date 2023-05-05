@@ -21,7 +21,7 @@ Interceptors can be centrally connected or disconnected without changing the met
 HTTP request processing has the following workflow:
 
 1. Ditsmod creates an instance of [PreRouter][7] at the application level.
-2. `PreRouter` uses the router to search for the request handler according to the URI. In other words, the router checks if there is a corresponding route.
+2. `PreRouter` uses the router to search for the request handler according to the URI.
 3. If the request handler is not found, `PreRouter` issues a 404 error.
 4. If a request handler is found, Ditsmod creates a provider instance with the [HttpFrontend][2] token at the request level, places it first in the queue of interceptors, and automatically calls it. By default, this interceptor is responsible for calling guards and setting values for providers with `QUERY_PARAMS` and `PATH_PARAMS` tokens.
 5. The second and subsequent interceptors may not start, it depends on whether the previous interceptor in the queue will start them.
@@ -35,6 +35,10 @@ response <- PreRouter <- HttpFrontend <- [other interceptors] <- HttpBackend <- 
 ```
 
 As `PreRouter`, `HttpFrontend`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 404 status when the required route is missing, but also want to add some text or change headers, you can substitute [PreRouter][7] with your own class.
+
+Note that each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller. However, at the moment (Ditsmod v2.0.0), `HttpFrontend` and `HttpBackend` by default ignores everything that returns the controller or interceptors, so this promise resolve can be useful for other purposes - to collect metrics, logging, etc.
+
+On the other hand, with DI you can easily replace `HttpFrontend` and `HttpBackend` with your own interceptors to take into account the return value of the controller method. One of the variants of this functionality is implemented in the [@ditsmod/return][104] module.
 
 ## Creating an interceptor
 
@@ -54,13 +58,9 @@ export class MyHttpInterceptor implements HttpInterceptor {
 
 As you can see, the `intercept()` method has a single parameter - this is the instance of the handler that calls the next intersceptor. If the interceptor needs additional data for its work, it can be obtained in the constructor through DI, as in any service.
 
-Note that each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller. However, at the moment (Ditsmod v2.0.0), `HttpFrontend` and `HttpBackend` by default ignores everything that returns the controller or interceptors, so this promise resolve can be useful for other purposes - to collect metrics, logging, etc.
-
-On the other hand, with DI you can easily replace `HttpFrontend` and `HttpBackend` with your own interceptors to take into account the return value of the controller method. One of the variants of this functionality is implemented in the [@ditsmod/return][104] module.
-
 ## Passing interceptor to the injector
 
-Any interceptor is passed to the injector at the request level using multi-providers with the `HTTP_INTERCEPTORS` token:
+Any interceptor is passed to the injector at the request level using [multi-providers][107] with the `HTTP_INTERCEPTORS` token:
 
 ```ts
 import { HTTP_INTERCEPTORS, featureModule } from '@ditsmod/core';
@@ -83,3 +83,4 @@ export class SomeModule {}
 
 [104]: /native-modules/return
 [106]: /components-of-ditsmod-app/dependency-injection
+[107]: /components-of-ditsmod-app/dependency-injection#multi-providers
