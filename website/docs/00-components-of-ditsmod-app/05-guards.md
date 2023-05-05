@@ -16,9 +16,8 @@ interface CanActivate {
 
 Наприклад, це можна зробити так:
 
-```ts {10-12}
-import { injectable } from '@ditsmod/core';
-import { CanActivate } from '@ditsmod/core';
+```ts {9-11}
+import { injectable, CanActivate } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';
 
@@ -43,7 +42,7 @@ export class AuthGuard implements CanActivate {
 
 ## Використання ґардів
 
-Ґарди передаються в масиві у третьому параметрі декоратора `route`:
+Ґарди передаються до контролерів в масиві у третьому параметрі декоратора `route`:
 
 ```ts {7}
 import { controller, Res, route } from '@ditsmod/core';
@@ -61,7 +60,7 @@ export class SomeController {
 
 ## Ґарди з параметрами
 
-У методі `canActivate()` ґард має один параметр. Аргументи для цього параметру можна передавати у декораторі `route` у масиві, де на першому місці йде певний ґард.
+Ґард у методі `canActivate()` має один параметр. Аргументи для цього параметру можна передавати у декораторі `route` у масиві, де на першому місці йде певний ґард.
 
 Давайте розглянемо такий приклад:
 
@@ -82,9 +81,8 @@ export class SomeController {
 
 Як бачите, на місці третього параметра у `route` передається масив в масиві, де на першому місці указано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
 
-```ts {11}
-import { injectable } from '@ditsmod/core';
-import { CanActivate, Status } from '@ditsmod/core';
+```ts {10}
+import { injectable, CanActivate, Status } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';
 import { Permission } from './permission';
@@ -138,7 +136,7 @@ export class SomeController {
 
 Ґарди передаються в DI лише для інжекторів на рівні запиту. Це можна зробити або в контролері, або у модулі:
 
-```ts
+```ts {6}
 import { featureModule } from '@ditsmod/core';
 
 import { AuthGuard } from 'auth.guard';
@@ -153,7 +151,7 @@ export class SomeModule {}
 
 Можна також централізовано підключати ґарди на рівні модуля:
 
-```ts
+```ts {10}
 import { featureModule } from '@ditsmod/core';
 
 import { OtherModule } from '../other/other.module';

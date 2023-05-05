@@ -16,9 +16,8 @@ interface CanActivate {
 
 For example, it can be done like this:
 
-```ts {10-12}
-import { injectable } from '@ditsmod/core';
-import { CanActivate } from '@ditsmod/core';
+```ts {9-11}
+import { injectable, CanActivate } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';
 
@@ -43,7 +42,7 @@ there will be no from the controller;
 
 ## Use of guards
 
-Guards are passed in an array in the third parameter of the `route` decorator:
+The guards are passed to the controllers in the array in the third parameter of the `route` decorator:
 
 ```ts {7}
 import { controller, Res, route } from '@ditsmod/core';
@@ -61,7 +60,7 @@ export class SomeController {
 
 ## Guards with parameters
 
-In the `canActivate()` method, the guard has one parameter. Arguments for this parameter can be passed in the `route` decorator in an array where a particular guard comes first.
+The guard in the `canActivate()` method has one parameter. Arguments for this parameter can be passed in the `route` decorator in an array where a particular guard comes first.
 
 Let's consider such an example:
 
@@ -82,9 +81,8 @@ export class SomeController {
 
 As you can see, in place of the third parameter in `route`, an array of arrays is passed, where `PermissionsGuard` is specified in the first place, followed by arguments for it. In this case, `PermissionsGuard` will receive these arguments in its `canActivate()` method:
 
-```ts {11}
-import { injectable } from '@ditsmod/core';
-import { CanActivate, Status } from '@ditsmod/core';
+```ts {10}
+import { injectable, CanActivate, Status } from '@ditsmod/core';
 
 import { AuthService } from './auth.service';
 import { Permission } from './permission';
@@ -138,7 +136,7 @@ export class SomeController {
 
 Guards are passed to DI only for injectors at the request level. This can be done either in the controller or in the module:
 
-```ts
+```ts {6}
 import { featureModule } from '@ditsmod/core';
 
 import { AuthGuard } from 'auth.guard';
@@ -153,7 +151,7 @@ export class SomeModule {}
 
 You can also centrally set guards at the module level:
 
-```ts
+```ts {10}
 import { featureModule } from '@ditsmod/core';
 
 import { OtherModule } from '../other/other.module';
