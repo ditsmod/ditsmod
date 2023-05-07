@@ -17,6 +17,7 @@ git clone https://github.com/ditsmod/ditsmod.git
 cd ditsmod
 yarn
 yarn boot
+yarn start11
 ```
 
 Після чого ви зможете у своєму редакторі безпосередньо проглядати та експериментувати з даним прикладом.
