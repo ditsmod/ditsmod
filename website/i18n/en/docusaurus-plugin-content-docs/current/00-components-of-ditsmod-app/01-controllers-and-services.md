@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Router, controllers, and services
+# Router, controllers and services
 
 ## What does a router do?
 
