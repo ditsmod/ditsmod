@@ -1,4 +1,13 @@
-import { injectable, HttpHandler, HttpInterceptor, Logger, fromSelf, inject, NodeResponse, NODE_RES } from '@ditsmod/core';
+import {
+  injectable,
+  HttpHandler,
+  HttpInterceptor,
+  Logger,
+  fromSelf,
+  inject,
+  NodeResponse,
+  NODE_RES,
+} from '@ditsmod/core';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
