@@ -59,7 +59,7 @@
     "@types/bunyan": "^1.8.8",
     "@types/eslint": "^8.21.2",
     "@types/jest": "^29.5.0",
-    "@types/node": "^18.15.3",
+    "@types/node": "^20.2.5",
     "@types/pino": "^7.0.5",
     "@types/supertest": "^2.0.12",
     "@types/winston": "^2.4.4",
@@ -78,6 +78,6 @@
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.1",
     "typescript": "^5.0.2",
-    "winston": "^3.8.2"
+    "winston": "^3.9.0"
   }
 }
