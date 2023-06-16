@@ -22,7 +22,7 @@ Some concepts of Ditsmod architecture are taken from Angular concepts, and DI is
 
 ## Install the Ditsmod seed
 
-The [ditsmod-seed][2] repository has the minimum basic set for application operation. Clone it and install the dependencies:
+The [ditsmod-seed][2] repository has the basic set for application operation. Clone it and install the dependencies:
 
 ```bash
 git clone --depth 1 https://github.com/ditsmod/seed.git my-app
