@@ -71,10 +71,6 @@ export class SecondService {
 
 ## Dependency token
 
-In class constructors, dependencies are specified using so-called **tokens**. Basically, a token is an identifier with which a certain dependency is associated, and this association occurs in the Node.js runtime. That is, data types that are present in TypeScript and not in JavaScript are not suitable for use as tokens.
-
-A token can be of any JavaScript type, but DI currently has a limitation where DI does not distinguish between different primitive types, different _array_ or _enum_ types. In addition, you should remember that the token must remain in the JavaScript file after compilation from TypeScript code, so in particular interfaces or types declared with the `type` keyword cannot be used as a token.
-
 Let's revisit the previous example:
 
 ```ts {7}
@@ -89,7 +85,9 @@ export class SecondService {
 }
 ```
 
-In this case, `FirstService` is used both as a variable type and as a token to indicate the dependency of `SecondService` on an instance of the `FirstService` class. This means that `FirstService` must be a class, but not an interface or a primitive type.
+In this case, `FirstService` is used both as a variable type and as a **token** to indicate the dependency of `SecondService` on an instance of the `FirstService` class.
+
+Basically, a token is an identifier with which a certain dependency is associated, and this association happens under the hood of Ditsmod in the Node.js runtime. That is, the token cannot be declared with the keywords `interface`, `type`, etc., because after compiling TypeScript code into JavaScript code, such a token will disappear. A token can be of any JavaScript type, but DI currently has a limitation where DI does not distinguish between different primitive types, different _array_ or _enum_ types.
 
 # The `inject` decorator
 
