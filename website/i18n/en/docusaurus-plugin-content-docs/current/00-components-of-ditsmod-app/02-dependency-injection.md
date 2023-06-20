@@ -91,7 +91,7 @@ Basically, a token is an identifier with which a certain dependency is associate
 
 # The `inject` decorator
 
-The `inject` decorator allows using an alternative token, which is necessary for obtaining various primitive types, arrays, enums, or any other value in the constructor:
+Декоратор `inject` дозволяє використовувати альтернативний токен:
 
 ```ts {7}
 import { injectable, inject } from '@ditsmod/core';
@@ -105,7 +105,7 @@ export class SecondService {
 }
 ```
 
-When `inject` is used, DI ignores the variable type and instead uses an alternative token passed to it. In this case, DI ignores the variable type - `InterfaceOfItem[]`, using `some-string` as the token instead.
+When `inject` is used, DI takes into account the token passed to it and ignores the type of the variable preceded by `inject`. In this case, DI ignores the variable type - `InterfaceOfItem[]`, using the `some-string` text as a token. Thus, DI makes it possible to separate token and variable type, so you can get any type of dependency in the constructor, including arrays and enums.
 
 Keep in mind that the easiest and most reliable dependency type to use is a class. DI recognizes well the types of different classes, even if they have the same name, so the `inject` decorator can not be used with them. For all other types of dependencies, we recommend using an instance of the `InjectionToken<T>` class as a token, and passing an arbitrary text value to its constructor for a short description:
 
