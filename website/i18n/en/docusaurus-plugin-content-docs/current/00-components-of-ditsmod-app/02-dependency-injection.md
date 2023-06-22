@@ -87,7 +87,7 @@ export class SecondService {
 
 In this case, `FirstService` is used both as a variable type and as a **token** to indicate the dependency of `SecondService` on an instance of the `FirstService` class.
 
-Basically, a token is an identifier with which a certain dependency is associated, and this association happens under the hood of Ditsmod in the Node.js runtime. That is, the token cannot be declared with the keywords `interface`, `type`, etc., because after compiling TypeScript code into JavaScript code, such a token will disappear. A token can be of any JavaScript type, but DI currently has a limitation where DI does not distinguish between different primitive types, different _array_ or _enum_ types.
+Basically, a token is an identifier with which a certain dependency is associated, and this association happens under the hood of Ditsmod in the Node.js runtime. That is, the token cannot be declared with the keywords `interface`, `type`, etc., because after compiling TypeScript code into JavaScript code, such a token will disappear. A token can have any JavaScript type except `undefined`, but there is currently a limitation that prevents DI from distinguishing between different primitive types, different _array_ or _enum_ types.
 
 # The `inject` decorator
 
