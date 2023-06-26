@@ -130,7 +130,7 @@ export class SecondService {
 
 ## Providers
 
-DI has a dependency registry, which is essentially a mapping between a token and a value to be emitted for a particular dependency. It can be schematically shown as follows:
+DI has a dependency registry, which is essentially a mapping between a token and the value to be issued for that token. It can be schematically shown as follows:
 
 ```
 token1 => value15
