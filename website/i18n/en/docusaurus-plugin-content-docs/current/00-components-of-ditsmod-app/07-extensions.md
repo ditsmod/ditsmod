@@ -6,7 +6,7 @@ sidebar_position: 7
 
 ## The purpose of Ditsmod extension
 
-An extension performs its job before the web server starts, and it can dynamically add providers. To modify or extend the behavior of the application, an extension typically uses metadata attached to certain decorators. Extensions can be initialized asynchronously, and can depend on each other.
+The extension does its work before creating HTTP request handlers, and it can dynamically add [providers][9]. To modify or extend the behavior of the application, an extension typically uses metadata attached to certain decorators. Extensions can be initialized asynchronously, and can depend on each other.
 
 For example, [@ditsmod/body-parser][5] module has an extension that dynamically adds an HTTP interceptor for parsing the request body to each route that has the appropriate method (POST, PATCH, PUT). It does this once before the start of the web server, so there is no need to test the need for such parsing for each request.
 
@@ -310,3 +310,4 @@ Of course, such a dynamic addition of providers is possible only before the star
 [6]: /native-modules/openapi
 [7]: /components-of-ditsmod-app/dependency-injection#multi-providers
 [8]: /components-of-ditsmod-app/dependency-injection#hierarchy-of-injectors
+[9]: /components-of-ditsmod-app/dependency-injection#providers
