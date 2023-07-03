@@ -138,7 +138,7 @@ import { SomeModule } from './some.module';
 export class OtherModule {}
 ```
 
-You can read more detailed information in the section [Export and import of modules][1].
+You can read more detailed information in the section [Export, import and appends of modules][1].
 
 ## Services
 
