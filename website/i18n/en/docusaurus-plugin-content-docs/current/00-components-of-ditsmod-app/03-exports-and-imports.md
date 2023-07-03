@@ -21,7 +21,7 @@ import { SecondService } from './second.service';
 export class SomeModule {}
 ```
 
-Please note that only provider tokens or modules can be added to the `exports` array. In this case, the provider `{ token: SecondService, useClass: SecondService }` cannot be added to the `exports` array. Also, keep in mind that only the services that will be directly used in external modules need to be exported from a specific module. In this case, `SecondService` may depend on `FirstService`, but `FirstService` does not need to be exported if it is not directly used in an external module. This ensures module encapsulation.
+Please note that only provider tokens or modules can be added to the `exports` array. In this case, the `{ token: SecondService, useClass: SecondService }` object cannot be added to the `exports` array, because this object is not a token or a module. Also, keep in mind that only the services that will be directly used in external modules need to be exported from a specific module. In this case, `SecondService` may depend on `FirstService`, but `FirstService` does not need to be exported if it is not directly used in an external module. This ensures module encapsulation.
 
 You can export providers only those that are transferred to the following arrays:
 
@@ -51,7 +51,7 @@ import { OtherModule } from './other.module';
 export class AppModule {}
 ```
 
-In this case, `SomeService` will be added to absolutely all application modules at the route level. As you can see, you can also export entire modules. In this case, all providers exported from `OtherModule` will be added to each application module.
+In this case, `SomeService` will be added to absolutely all application modules at the route level. As you can see, you can also export entire modules. In this case, all providers exported from `OtherModule` will also be added to each application module.
 
 ## Import module
 
@@ -227,6 +227,22 @@ export class SecondModule {}
 ```
 
 What is the meaning of this? - Now if you import `SecondModule` into some other module, you will actually have `FirstModule` imported as well.
+
+Pay attention! If during re-export you import an object with `ModuleWithParams` interface, the same object must also be exported:
+
+```ts
+import { featureModule, ModuleWithParams } from '@ditsmod/core';
+
+import { FirstModule } from './first.module';
+
+const firstModuleWithParams: ModuleWithParams = { path: 'some-path', module: FirstModule };
+
+@featureModule({
+  imports: [firstModuleWithParams],
+  exports: [firstModuleWithParams],
+})
+export class SecondModule {}
+```
 
 
 [1]: /components-of-ditsmod-app/dependency-injection#injector
