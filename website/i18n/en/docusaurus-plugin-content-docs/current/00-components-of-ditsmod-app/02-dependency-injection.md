@@ -71,7 +71,7 @@ export class SecondService {
 
 ## Dependency token
 
-A dependency token is an identifier associated with a particular dependency. Such an association can be made in the short and long form of specifying a dependency. Let's revisit the previous example:
+A dependency token is an identifier associated with a particular dependency. Such an association can be made in the short or long form of specifying a dependency. Let's revisit the previous example:
 
 ```ts {7}
 import { injectable } from '@ditsmod/core';
