@@ -8,9 +8,9 @@ sidebar_position: 7
 
 The extension does its work before creating HTTP request handlers, and it can dynamically add [providers][9]. To modify or extend the behavior of the application, an extension typically uses metadata attached to certain decorators. Extensions can be initialized asynchronously, and can depend on each other.
 
-For example, [@ditsmod/body-parser][5] module has an extension that dynamically adds an HTTP interceptor for parsing the request body to each route that has the appropriate method (POST, PATCH, PUT). It does this once before the start of the web server, so there is no need to test the need for such parsing for each request.
+For example, [@ditsmod/body-parser][5] module has an extension that dynamically adds an HTTP interceptor for parsing the request body to each route that has the appropriate method (POST, PATCH, PUT). It does this once before creating HTTP request handlers, so there is no need to test the need for such parsing for each request.
 
-Another example. [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without working the extension, Ditsmod will ignore this new decorator.
+Another example. [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without the extension working, Ditsmod will ignore the metadata from this new decorator.
 
 ## What is Ditsmod extension
 
@@ -29,7 +29,8 @@ Each extension needs to be registered, this will be mentioned later, and now let
 3. per module work of extensions begins:
     - in each Ditsmod module, the extensions created within this module or imported into this module are collected;
     - each of these extensions receives metadata, also collected in this module, and the `init()` methods of given extensions are called.
-4. the web server starts, and the application starts working normally, processing HTTP requests.
+4. HTTP request handlers are created;
+5. the application starts working in the usual mode, processing HTTP requests.
 
 It's worth considering that the order of extension running can be considered "random", so each extension should specify its dependency on another extension (if any) in its constructor as well as in the `init()` method. In this case, regardless of the startup order, all extensions will work correctly:
 
@@ -48,7 +49,7 @@ import { Extension } from '@ditsmod/core';
 
 @injectable()
 export class MyExtension implements Extension<void> {
-  private data: boolean;
+  private data: any;
 
   async init() {
     if (this.data) {
@@ -69,16 +70,14 @@ You can see a simple example in the folder [09-one-extension][1].
 
 ## Extensions groups
 
-In Ditsmod applications, extensions can perform different types of work, for example:
+The concept of **extension groups** was introduced to:
 
-- route settings;
-- use of routes to create OpenAPI documentation;
-- use of routes to add an HTTP interceptor that will perform request validation;
-- use of routes for the router;
-- set the metrics;
-- etc.
+1. a whole set of extensions could work on the same metadata, and the order of work within this set is unimportant;
+2. it was possible to configure the order of operation between different sets of extensions.
 
-In Ditsmod, there is a concept **group of extensions** so that you can fix a separate group of extensions for each type of work. Any extension must belong to one or more groups. Under the hood of Ditsmod, extensions groups are essentially groups of [multi-providers][7] that generally return data with the same basic interface.
+In other words, to form one group of extensions, the order of operation of each of these extensions is unimportant (as a rule). On the other hand, if the order of operation between different extensions is important, you should consider separating these extensions into different groups.
+
+Any extension must belong to one or more groups. Under the hood of Ditsmod, extension groups are essentially groups of [multi-providers][7] that typically work on the same metadata and return other metadata that share the same underlying interface.
 
 Extensions groups can be initialized in an orderly fashion. For example, it is important that an extension group responsible for setting up routes runs before another extension group responsible for using those routes.
 
@@ -300,7 +299,7 @@ export class BodyParserExtension implements Extension<void> {
 }
 ```
 
-Of course, such a dynamic addition of providers is possible only before the start of the web server. As you can see, in this example, a [hierarchy of injectors][8] is created to obtain the correct data with the `RouteMeta` token.
+Of course, such dynamic addition of providers is possible only before creating HTTP request handlers. As you can see, in this example, a [hierarchy of injectors][8] is created to obtain the correct data with the `RouteMeta` token.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
 [2]: #creating-an-extension-class
