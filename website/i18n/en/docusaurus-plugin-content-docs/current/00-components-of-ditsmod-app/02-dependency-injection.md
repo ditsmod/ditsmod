@@ -71,7 +71,7 @@ export class SecondService {
 
 ## Dependency token
 
-A dependency token is an identifier associated with a particular dependency. Such an association can be made in the short or long form of specifying a dependency. Let's revisit the previous example:
+DI actually ignores the dependency type and takes into account only its JavaScript value - the **token** with which it will associate this dependency in the future. You can transfer the token in the short or long form of specifying the dependency. Let's revisit the previous example:
 
 ```ts {7}
 import { injectable } from '@ditsmod/core';
@@ -85,7 +85,7 @@ export class SecondService {
 }
 ```
 
-This is a **short form** of specifying a dependency, it has significant limitations. In this case, `FirstService` is used both as a variable type and as a token to specifying the dependency of `SecondService` on an instance of the `FirstService` class.
+This is a **short form** of specifying a dependency, it has significant limitations, because in this way you can specify a dependency only on a certain class. In this case, `FirstService` is used both as a variable type (for DI it is not important) and as a token to indicate the dependency of `SecondService` on an instance of the `FirstService` class. In other words, for DI it is not important what properties or methods the `FirstService` class has, only the JavaScript value of this class is important - that is, a reference to this class.
 
 And there is a **long form** of specifying a dependency using the `inject` decorator, which allows you to use an alternative token:
 
@@ -101,11 +101,11 @@ export class SecondService {
 }
 ```
 
-When `inject` is used, DI takes into account the token passed to it and ignores the type of the variable preceded by `inject`. In this case, DI ignores the variable type - `InterfaceOfItem[]`, using the text `some-string` as a token. Thus, DI makes it possible to separate token and variable type, so you can get any type of dependency in the constructor, including arrays and enums.
+When `inject` is used, DI takes into account only the token passed to it. In this case, DI ignores the variable type - `InterfaceOfItem[]`, using the text `some-string` as a token. Thus, DI makes it possible to separate token and variable type, so you can get any type of dependency in the constructor, including different types of arrays or enums.
 
-The token cannot be declared with the keywords `interface`, `type`, etc., because after compiling TypeScript code into JavaScript code, such a token will disappear. The token can be of any JavaScript type except `undefined`, but there is currently a limitation on the short form of the dependency specification, which causes DI to not distinguish between different primitive types, different _array_ or _enum_ types.
+The token cannot be declared with the keywords `interface`, `type`, etc., because after compiling TypeScript code into JavaScript code, such a token will disappear. In the long form of specifying dependencies, the token can have any JavaScript type except `undefined`, array or enum (but remember that the type of the token and the type of the dependency in the long form can be different, so as the value of the dependency you can get any value, except `undefined`). In the short form of specifying dependencies, a token can only be a class.
 
-Keep in mind that the easiest and most reliable type of dependency to use is a class. DI is good at recognizing types of different classes, even if they have the same name, so you can avoid using the `inject` decorator with them. For all other types of dependencies, we recommend using an instance of the `InjectionToken<T>` class as a token, an arbitrary text value for a short description is passed to its constructor:
+The easiest and most reliable type of dependency to use is a class. DI is good at recognizing references to different classes, even if they have the same name, so you can avoid using the `inject` decorator with them. For all other types of dependencies, we recommend using an instance of the `InjectionToken<T>` class as a token:
 
 ```ts {5}
 // tokens.ts
