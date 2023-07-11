@@ -128,7 +128,7 @@ export class SecondService {
 
 ## Providers
 
-DI has a dependency registry, which is essentially a mapping between a token and the value to be issued for that token. It can be schematically shown as follows:
+DI has a dependency registry, which is essentially a mapping between a token and the value to be issued for that token. Schematically, this register can be shown as follows:
 
 ```
 token1 => value15
@@ -136,7 +136,7 @@ token2 => value100
 ...
 ```
 
-Such values are created by DI using **providers**. So, to resolve a certain dependency, you first need to pass the corresponding provider to the DI registry, and then DI will issue value of this provider by its token. The [next section][100] discusses how providers can be passed to DI. Providers have this type:
+The values specified here are created by DI using **providers**. So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. The [next section][100] discusses how providers can be passed to DI. Providers have this type:
 
 ```ts {3-7}
 import { Class } from '@ditsmod/core';
@@ -239,7 +239,7 @@ Using DI, you may not know the entire `Service3` dependency chain, entrust this 
 
 ## Hierarchy of injectors
 
-Ditsmod DI also allows you to create a hierarchy of injectors - this is when there are parent and child injectors. At first glance, there is nothing interesting in such a hierarchy, because it is not clear what it is needed for, but in Ditsmod this possibility is used very often, since it allows you to make the application architecture modular. It is worth paying special attention to the study of the specifics of the hierarchy, it will save you more than one hour of time in the future, because you will know how it works and why it does not find this dependency...
+DI also allows you to create a hierarchy of injectors - this is when there are parent and child injectors. At first glance, there is nothing interesting in such a hierarchy, because it is not clear what it is needed for, but in Ditsmod this possibility is used very often, since it allows you to make the application architecture modular. It is worth paying special attention to the study of the specifics of the hierarchy, it will save you more than one hour of time in the future, because you will know how it works and why it does not find this dependency...
 
 When creating a hierarchy, only the child injector holds the connection, it has an object of the parent injector. At the same time, the parent injector knows nothing about its child injectors. That is, the connection between injectors in the hierarchy is one-way. Conditionally, it looks like this:
 
@@ -346,10 +346,11 @@ Any controller, in addition to its own injector at the request level, also has t
 
 ### Hierarchy of service injectors
 
-Unlike the controller, the injector of a certain service can be at any level: at the application, module, route, or request level. In practice, this means that the provider for this service is transferred to one (or several) of the above-mentioned arrays. For example, in the following example, `SomeService` is passed to the injector at the request level, and `OtherService` is passed to the injector at the module level:
+Unlike the controller, the injector of a certain service can be at any level: at the application, module, route, or request level. In practice, this means that the provider for this service is transferred to one (or several) of the above-mentioned arrays. For example, in the following example, `SomeService` is passed to the injector at the route level, and `OtherService` is passed to the injector at the module level:
 
-```ts {4-5}
+```ts {5-6}
 import { Injector } from '@ditsmod/core';
+// ...
 
 const providersPerApp = [];
 const providersPerMod = [OtherService];
@@ -458,7 +459,7 @@ const locals = child.get(LOCAL); // ['аа']
 
 To make it possible to change a specific multi-provider, you can do the following:
 
-1. first pass the multi-provider and use the `useExisting` property;
+1. first pass the multi-provider to the array to form the injector and use the `useToken` property;
 2. then transfer the class you want to replace;
 3. and at the end of the array, pass the class that replaces the class you need.
 
@@ -470,7 +471,7 @@ import { DefaultInterceptor } from './default.interceptor';
 import { MyInterceptor } from './my.interceptor';
 
 const injector = Injector.resolveAndCreate([
-  { token: HTTP_INTERCEPTORS, useExisting: DefaultInterceptor, multi: true },
+  { token: HTTP_INTERCEPTORS, useToken: DefaultInterceptor, multi: true },
   DefaultInterceptor,
   { token: DefaultInterceptor, useClass: MyInterceptor }
 ]);
