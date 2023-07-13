@@ -6,7 +6,7 @@ sidebar_position: 2
 
 ## Basic concepts
 
-Ditsmod DI has the following basic concepts:
+Ditsmod Dependency Injection (or simply DI) has the following basic concepts:
 
 - dependency
 - dependency token, token types
@@ -71,7 +71,7 @@ export class SecondService {
 
 ## Dependency token
 
-DI actually ignores the dependency type and takes into account only its JavaScript value - the **token** with which it will associate this dependency in the future. You can transfer the token in the short or long form of specifying the dependency. Let's revisit the previous example:
+DI actually ignores the dependency type and takes into account only its JavaScript value, with which it will later associate this dependency. Such a JavaScript value is called a **token** in the context of DI. You can transfer the token in the short or long form of specifying the dependency. Let's revisit the previous example:
 
 ```ts {7}
 import { injectable } from '@ditsmod/core';
@@ -131,12 +131,12 @@ export class SecondService {
 DI has a dependency registry, which is essentially a mapping between a token and the value to be issued for that token. Schematically, this register can be shown as follows:
 
 ```
-token1 => value15
-token2 => value100
+token1 -> value15
+token2 -> value100
 ...
 ```
 
-The values specified here are created by DI using **providers**. So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. The [next section][100] discusses how providers can be passed to DI. Providers have this type:
+The values specified here are created by DI using **providers**. So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. In other words, providers actually resolve dependencies. Therefore, if you specified a certain dependency in a class, but did not pass the corresponding provider, DI will not be able to resolve that dependency. The [next section][100] discusses how providers can be passed to DI. Providers have this type:
 
 ```ts {3-7}
 import { Class } from '@ditsmod/core';
@@ -148,19 +148,17 @@ type Provider = Class<any> |
 { token: any, useToken: any, multi?: boolean }
 ```
 
-_* here `Class<any>` means any class._
-
 Note that the token for the provider with the `useFactory` property is optional, since DI can use the method of the specified class as a token.
 
 
-In the example above, the definition of the provider object type is shown, the following values are passed to its properties:
+If the provider is represented as an object, the following values can be passed to its properties:
 
 - `useClass` - the class is passed, DI will make an instance of this class. An example of such a provider:
 
   ```ts
   { token: 'token1', useClass: SomeService }
   ```
-- `useValue` - any value is passed, DI will output it unchanged. An example of such a provider:
+- `useValue` - any value other than `undefined` is passed, DI will output it unchanged. An example of such a provider:
 
   ```ts
   { token: 'token2', useValue: 'some value' }
@@ -185,7 +183,7 @@ In the example above, the definition of the provider object type is shown, the f
   { token: 'token3', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }
   ```
 
-  First, DI will create an instance of this class, then call its method and get the result, which will be associated with the specified token.
+  First, DI will create an instance of this class, then call its method and get the result, which will be associated with the specified token. A method of the specified class can return any value except `undefined`.
 
 - `useToken` - another token is passed to this provider property. If you write the following:
 
@@ -201,7 +199,7 @@ Now that you are familiar with the concept of **provider**, we can clarify that 
 
 ## Injector
 
-The so-called **DI registry** has been mentioned above. Now that you know what DI uses the registry for, it's time to learn that these registries are in injectors, and there can be many such injectors in a Ditsmod application. But first, let's understand how injectors work.
+The so-called **DI registry** has been mentioned above. Now that you know what DI uses this register for, it's time to learn that these registers are in injectors, and there can be many such injectors in a Ditsmod application. But first, let's understand how injectors work.
 
 If we simplify the DI working scheme greatly, we can say that DI takes an array of providers as input and outputs an injector that can create instances of the passed providers, taking into account their dependencies. It has approximately the following picture:
 
@@ -223,17 +221,24 @@ class Service3 {
 
 const injector = Injector.resolveAndCreate([Service1, Service2, Service3]);
 const service3 = injector.get(Service3);
+service3 === injector.get(Service3); // true
+service3 === injector.resolveAndInstantiate(Service3); // false
 ```
 
 The `Injector.resolveAndCreate()` method accepts an array of providers as input, and outputs a certain object, which is exactly what is called an **injector**. This injector obviously contains a registry of transferred providers, and is able to create their instances using the `injector.get()` method, taking into account the entire chain of dependencies (`Service3` -> `Service2` -> `Service1`).
 
-What the injector does:
+What the `injector.get()` does:
 
 - when `Service3` is requested, injector looks at the constructor of this class, sees the dependency on `Service2`;
 - then looks at the constructor in `Service2`, sees the dependency on `Service1`;
 - then looks at the constructor in `Service1`, does not find dependencies there, and therefore first creates an instance of `Service1`;
-- then creates an instance of `Service2`
-- and the last one creates the `Service3` instance.
+- then creates an instance of `Service2`;
+- and the last one creates the `Service3` instance;
+- if the `Service3` instance is requested again later, the `injector.get()` method will return the previously created `Service3` instance from the cache of this injector.
+
+Sometimes the last point (when the `Service3` instance is returned from the injector cache) is undesirable. In this case, you can use the `injector.resolveAndInstantiate()` method. In fact, it does everything that `injector.get()` does, but returns a new instance each time.
+
+Ditsmod under the hood uses the `injector.get()` method when DI resolves a dependency it finds in the service or controller constructor.
 
 Using DI, you may not know the entire `Service3` dependency chain, entrust this work to the injector, the main thing is to transfer all necessary classes to the DI registry. Keep in mind that you can write unit tests for individual classes this way.
 
