@@ -1,5 +1,12 @@
+<a name="session-cookie-2.5.1"></a>
+# [session-cookie-2.5.1](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.5.1) (2023-07-14)
+
+### Bug fix
+
+- Fixed typo in static method name: `withParsms` -> `withParams`;
+
 <a name="session-cookie-2.5.0"></a>
-# [session-cookie-2.5.0](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.5.0) (2023-01-12)
+## [session-cookie-2.5.0](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.5.0) (2023-01-12)
 
 ### BREAKING CHANGES
 

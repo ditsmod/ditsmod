@@ -4,7 +4,7 @@ import { SessionCookieModule } from '@ditsmod/session-cookie';
 
 import { HelloWorldController } from './hello-world.controller';
 
-const sessionModuleWithParams = SessionCookieModule.withParsms({
+const sessionModuleWithParams = SessionCookieModule.withParams({
   cookieName: 'custom-session-name',
   httpOnly: true,
 });

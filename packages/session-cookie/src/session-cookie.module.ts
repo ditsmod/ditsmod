@@ -11,7 +11,7 @@ import { SessionCookieOptions } from './types';
   exports: [SessionCookie],
 })
 export class SessionCookieModule {
-  static withParsms(opts: SessionCookieOptions): ModuleWithParams<SessionCookieModule> {
+  static withParams(opts: SessionCookieOptions): ModuleWithParams<SessionCookieModule> {
     return {
       module: this,
       providersPerMod: [{ token: SessionCookieOptions, useValue: opts }],
