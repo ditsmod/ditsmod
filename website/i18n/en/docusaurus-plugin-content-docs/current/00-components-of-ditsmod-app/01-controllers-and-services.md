@@ -6,9 +6,25 @@ sidebar_position: 1
 
 ## What does a router do?
 
+The router has a mapping between the URL and the HTTP request handler. Although you will not have to manually write this mapping, but for a general idea of how the router works, in a very simplified form, this mapping can be imagined as follows:
+
+```ts
+const routes = new Map<string, Function>();
+routes.set('/one', function() { /** request processing... **/ });
+routes.set('/two', function() { /** request processing... **/ });
+routes.set('/three', function() { /** request processing... **/ });
+// ...
+```
+
 Right after Node.js receives an HTTP request and passes it to Ditsmod, the request URL is split into two parts separated by a question mark (if present). The first part always contains the so-called _path_, while the second part contains the _query parameters_, if the URL included a question mark.
 
-The task of the router is to find the HTTP request handler by the _path_. After that, in most cases, the request handler calls the controller method.
+The task of the router is to find the HTTP request handler by the _path_. After that, in most cases, the request handler calls the controller method. In a very simplified form, this process can be imagined as follows:
+
+```ts
+const path = '/two';
+const handle = routes.get(path);
+handle();
+```
 
 # What is a controller?
 
