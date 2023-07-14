@@ -20,7 +20,7 @@ Importing:
 import { rootModule } from '@ditsmod/core';
 import { SessionCookieModule } from '@ditsmod/session-cookie';
 
-const sessionModuleWithParams = SessionCookieModule.withParsms({
+const sessionModuleWithParams = SessionCookieModule.withParams({
   cookieName: 'custom-session-name',
   httpOnly: true,
 });

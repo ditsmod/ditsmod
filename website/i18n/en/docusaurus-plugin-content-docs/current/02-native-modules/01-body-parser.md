@@ -45,7 +45,7 @@ export class AppModule {}
 
 In this case, the default settings will work. If you need to change some options, you can do it as follows:
 
-```ts
+```ts {4}
 import { rootModule } from '@ditsmod/core';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
@@ -85,7 +85,7 @@ export class AppModule {}
 
 The result of the interceptor can be obtained by `HTTP_BODY` token:
 
-```ts
+```ts {11}
 import { controller, Res, route, inject } from '@ditsmod/core';
 import { HTTP_BODY } from '@ditsmod/body-parser';
 

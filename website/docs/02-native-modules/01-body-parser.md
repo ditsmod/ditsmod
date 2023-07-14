@@ -45,7 +45,7 @@ export class AppModule {}
 
 В такому разі будуть працювати дефолтні налаштування. Якщо ж вам потрібно змінити деякі опції, можете це зробити наступним чином:
 
-```ts
+```ts {4}
 import { rootModule } from '@ditsmod/core';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
@@ -85,7 +85,7 @@ export class AppModule {}
 
 Результат роботи інтерсептора можна отримати за допомогою токена `HTTP_BODY`:
 
-```ts
+```ts {11}
 import { controller, Res, route, inject } from '@ditsmod/core';
 import { HTTP_BODY } from '@ditsmod/body-parser';
 
