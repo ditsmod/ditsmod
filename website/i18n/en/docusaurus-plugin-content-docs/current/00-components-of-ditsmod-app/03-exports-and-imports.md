@@ -29,7 +29,7 @@ You can export providers only those that are transferred to the following arrays
 - `providersPerRou`;
 - `providersPerReq`.
 
-Exporting the providers passed in `providersPerApp` does not make sense, as using this array DI will generate [injector][1] at the application level. That is, providers from this array will be available for any module, at any level, and without export.
+Exporting the providers passed in `providersPerApp` does not make sense, as using this array DI will generate an [injector][1] at the application level. That is, providers from this array will be available for any module, at any level, and without export.
 
 It also doesn't make sense to export the controllers, because the export only affects the providers.
 
