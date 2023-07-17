@@ -158,7 +158,7 @@ You can read more detailed information in the section [Export, import and append
 
 ## Services
 
-Although from a technical point of view, it's possible to get by with just one controller to handle a HTTP request, it's better to separate the voluminous code with business logic into separate classes so that the code can be reused when needed and easier to test. These separate classes with business logic are usually called _services_.
+Although from a technical point of view, it's possible to get by with just one controller to handle an HTTP request, it's better to separate the voluminous code with business logic into separate classes so that the code can be reused when needed and easier to test. These separate classes with business logic are usually called _services_.
 
 What services can do:
 

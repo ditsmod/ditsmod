@@ -14,7 +14,7 @@ However, modules can also have different types. Two types are most often used:
 - **routed** - modules that serve a certain part of the URL should be assigned to this type: for example, one module can process all HTTP requests at the address `/api/users`, another module - at the address `/api/posts` .
 
 Modules can contain:
-- controllers that accepts HTTP requests and sends HTTP responses;
+- controllers that accept HTTP requests and send HTTP responses;
 - services where the business logic of the application is described;
 - other classes, interfaces, helpers, data types intended for the operation of the current module.
 

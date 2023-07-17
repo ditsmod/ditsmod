@@ -259,7 +259,7 @@ interface Child {
 }
 ```
 
-By having a parent injector object, a child injector can refer to its parent when child needs a provider instance that it does not have.
+By having a parent injector object, a child injector can refer to its parent when the child needs a provider instance that it does not have.
 
 Let's consider the following example. For simplicity, no decorators are used here at all, since each class is independent:
 
@@ -392,7 +392,7 @@ Keep in mind that this way you get an injector that created an instance of this 
 
 ## Multi-providers
 
-This type of providers exists only in the form of an object, and it differs from ordinary DI providers by the presence of the `multi: true` property. Such providers are advisable to use when there is a need to transfer several providers with the same token to DI at once, so that DI returns the same number of values for these providers in one array:
+This type of provider exists only in the form of an object, and it differs from ordinary DI providers by the presence of the `multi: true` property. Such providers are advisable to use when there is a need to transfer several providers with the same token to DI at once, so that DI returns the same number of values for these providers in one array:
 
 ```ts
 import { Injector } from '@ditsmod/core';
@@ -588,7 +588,7 @@ export class SomeModule {}
 
 In this case, within `SomeModule`, `value3` will be issued on `token1` at the module, route or request level.
 
-In addition, the same provider can be transmitted simultaneously at several different levels of the hierarchy, but DI will always choose the closest injectors (ie, if a value for a provider is queried at the request level, then the injector at the request level will be looked up first, and only if there is no required provider, DI will rise to the parent injectors):
+In addition, the same provider can be transmitted simultaneously at several different levels of the hierarchy, but DI will always choose the closest injectors (i.e., if a value for a provider is queried at the request level, then the injector at the request level will be looked up first, and only if there is no required provider, DI will rise to the parent injectors):
 
 ```ts
 import { featureModule } from '@ditsmod/core';

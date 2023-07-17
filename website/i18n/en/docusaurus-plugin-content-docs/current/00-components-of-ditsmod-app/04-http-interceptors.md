@@ -56,7 +56,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
 }
 ```
 
-As you can see, the `intercept()` method has a single parameter - this is the instance of the handler that calls the next intersceptor. If the interceptor needs additional data for its work, it can be obtained in the constructor through DI, as in any service.
+As you can see, the `intercept()` method has a single parameter - this is the instance of the handler that calls the next interceptor. If the interceptor needs additional data for its work, it can be obtained in the constructor through DI, as in any service.
 
 ## Passing interceptor to the injector
 
