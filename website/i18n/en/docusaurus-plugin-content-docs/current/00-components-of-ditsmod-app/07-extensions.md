@@ -61,33 +61,31 @@ You can see a simple example in the folder [09-one-extension][1].
 
 ## Extensions groups
 
-The concept of **extension groups** was introduced to:
+The concept of **extension groups** has been introduced so that:
 
-1. a whole set of extensions could work on the same metadata, and the order of work within this set is unimportant;
-2. it was possible to configure the order of operation between different sets of extensions.
+1. a set of extensions can work on the same metadata, and the order of work within that set is not important;
+2. it was possible to customize the order of work between different sets of extensions.
 
-In other words, to form one group of extensions, the order of operation of each of these extensions is unimportant (as a rule). On the other hand, if the order of operation between different extensions is important, you should consider separating these extensions into different groups.
+In other words, to form a single group of extensions, the order of operation of each extension is not important (usually). On the other hand, if the order of operation between different extensions is important, you should consider splitting these extensions into different groups.
 
-Any extension must belong to one or more groups. Under the hood of Ditsmod, extension groups are essentially groups of [multi-providers][7] that typically work on the same metadata and return other metadata that share the same underlying interface.
+Each extension should belong to one or more groups. Under the hood of Ditsmod, extension groups are essentially groups of [multi-providers][7] that typically work on the same metadata and also return other metadata that share the same basic interface.
 
-Extensions groups can be initialized in an orderly fashion. For example, it is important that an extension group responsible for setting up routes runs before another extension group responsible for using those routes.
+If you create an extension group in the current module, you can add other extensions to it in external modules without having to change the code in the current module. Sometimes you don't even need to call any services from the current module to integrate it into an external module, just import it.
 
-If you create an extension group in the current module, it can be supplemented by other extensions in external modules without having to change the code in the current module. Sometimes it will not even be necessary to call any services from the current module in order to integrate it into an external module, it will be enough to import it.
+For example, in `@ditsmod/core` there is a group `ROUTES_EXTENSIONS` which by default includes a single extension that processes metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can import the `@ditsmod/openapi` module, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for establishing the router's routes. These extensions are grouped together because they configure routes and their `init()` methods return data with the same basic interface.
 
-For example, in `@ditsmod/core` there is a `ROUTES_EXTENSIONS` group, which by default includes a single extension that handles metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can use `@ditsmod/openapi`, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for setting router routes. These extensions are grouped together because they configure routes and their `init()` methods return data with the same base interface.
+Having a single base interface for all extensions in a group is important because other extensions can expect data from that group and they will rely on that base interface. Of course, the base interface can be expanded if necessary, but not narrowed.
 
-A single base interface for all extensions in a group is an important requirement because other extensions can expect data from that group and will rely on that base interface. Of course, if necessary, the basic interface can be expanded, but not narrowed.
+In our example, after all the extensions from the `ROUTES_EXTENSIONS` group have worked, their data is collected in one array and passed to the `PRE_ROUTER_EXTENSIONS` group. Even if you later register more new extensions in the `ROUTES_EXTENSIONS` group, the `PRE_ROUTER_EXTENSIONS` group will still be started after absolutely all extensions from the `ROUTES_EXTENSIONS` group, including your new extensions, have been worked out.
 
-In our example, after all the extensions from the `ROUTES_EXTENSIONS` group have worked, their data is collected in one array and transferred to the `PRE_ROUTER_EXTENSIONS` group. Even if you later register more new extensions in the `ROUTES_EXTENSIONS` group, the `PRE_ROUTER_EXTENSIONS` group will still start after all the extensions in the `ROUTES_EXTENSIONS` group have worked, including your new extensions.
+This feature is very handy because it sometimes allows you to integrate external Ditsmod modules (for example, from npmjs.com) into your application without any customization, just by importing them into the desired module. Thanks to extension groups, the imported extensions will be executed in the correct order, even if they are imported from different external modules.
 
-This feature is very useful because it sometimes allows you to integrate external Ditsmod modules (for example from npmjs.com) into your application without any configuration, just by importing them into the desired module. Thanks to extensions groups, imported extensions will run in the correct sequence, even if they are imported from different external modules.
+This is how the extension from `@ditsmod/body-parser` works, for example. You simply import `BodyParserModule`, and its extensions will already be run in the correct order, which is written in this module. In this case, its extension will run after the `ROUTES_EXTENSIONS` group, but before the `PRE_ROUTER_EXTENSIONS` group. And note that `BodyParserModule` has no idea which extensions will work in these groups, it only cares about
 
-This is how the `@ditsmod/body-parser` extension works, for example. You simply import `BodyParserModule` and its extension will already run in the correct order that is specified in this module. In this case, its extension will run after the `ROUTES_EXTENSIONS` group, but before the `PRE_ROUTER_EXTENSIONS` group. Moreover, please note that `BodyParserModule` has no idea which extensions will work in these groups, it only cares about:
+1. the data interface that the extensions in the `ROUTES_EXTENSIONS` group will return;
+2. the startup order, so that the routes are not installed before this module works (i.e. the `PRE_ROUTER_EXTENSIONS` group works after it, not before).
 
-1. data interface that will be returned by extensions from the `ROUTES_EXTENSIONS` group;
-2. order of execution, so that routes are not set before it works (that is, so that the group `PRE_ROUTER_EXTENSIONS` works after it, and not before it).
-
-This means that `BodyParserModule` will take into account routes set using the `@route()` or `@oasRoute()` decorators, or any other decorators from this group, as they are handled by the running extensions before it in the `ROUTES_EXTENSIONS` group.
+This means that the `BodyParserModule` will take into account the routes set with the `@route()` or `@oasRoute()` decorators, or any other decorators from this group, since they are processed by the extensions that run before it in the `ROUTES_EXTENSIONS` group.
 
 ## Extension registration
 
