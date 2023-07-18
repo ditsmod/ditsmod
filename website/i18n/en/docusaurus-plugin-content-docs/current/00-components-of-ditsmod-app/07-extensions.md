@@ -8,9 +8,9 @@ sidebar_position: 7
 
 The extension does its work before creating HTTP request handlers, and it can dynamically add [providers][9]. To modify or extend the behavior of the application, an extension typically uses metadata attached to certain decorators. Extensions can be initialized asynchronously, and can depend on each other.
 
-For example, [@ditsmod/body-parser][5] module has an extension that dynamically adds an HTTP interceptor for parsing the request body to each route that has the appropriate method (POST, PATCH, PUT). It does this once before creating HTTP request handlers, so there is no need to test the need for such parsing for each request.
+For example, the [@ditsmod/body-parser][5] module has an extension that dynamically adds an HTTP interceptor for parsing the request body to any route that has the appropriate method (POST, PATCH, PUT). It does this once before creating HTTP request handlers, so there is no need to test the need for such parsing for each request.
 
-Another example. [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without the extension working, Ditsmod will ignore the metadata from this new decorator.
+Another example. the [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without the extension working, Ditsmod will ignore the metadata from this new decorator.
 
 ## What is Ditsmod extension
 
@@ -22,26 +22,17 @@ interface Extension<T> {
 }
 ```
 
-Each extension needs to be registered, this will be mentioned later, and now let's assume that such registration has taken place, the application is running, and then goes the following process:
+Each extension needs to be registered, this will be mentioned later, and now let's assume that such registration has taken place, the application is running, and then the following process goes on:
 
 1. metadata is collected from all decorators (`@rootModule`, `@featureModule`, `@controller`, `@route`...);
-2. this metadata then passing to DI with token `MetadataPerMod1`, therefore - any extension can receive this metadata in the constructor;
-3. per module work of extensions begins:
-    - in each Ditsmod module, the extensions created within this module or imported into this module are collected;
-    - each of these extensions receives metadata, also collected in this module, and the `init()` methods of given extensions are called.
+2. this metadata is then passed to DI with token `MetadataPerMod1`, so - every extension can get this metadata in the constructor;
+3. the work on the extensions starts per module:
+    - in each module, the extensions created within this module or imported into this module are collected;
+    - each of these extensions gets metadata, also collected in this module, and the `init()` methods of given extensions are called.
 4. HTTP request handlers are created;
 5. the application starts working in the usual mode, processing HTTP requests.
 
-It's worth considering that the order of extension running can be considered "random", so each extension should specify its dependency on another extension (if any) in its constructor as well as in the `init()` method. In this case, regardless of the startup order, all extensions will work correctly:
-
-```ts
-async init() {
-  await this.otherExtention.init();
-  // The current extension works after the initialization of another extension is completed.
-}
-```
-
-This means that the `init()` method of a particular extension can be called as many times as it is written in the body of other extensions that depend on the job of that extension. This specificity must be taken into account:
+The `init()` method of a given extension can be called as many times as it is written in the body of other extensions that depend on the operation of that extension, +1. This feature must be taken into account to avoid unnecessary initialization:
 
 ```ts {9-11}
 import { injectable } from '@ditsmod/core';
