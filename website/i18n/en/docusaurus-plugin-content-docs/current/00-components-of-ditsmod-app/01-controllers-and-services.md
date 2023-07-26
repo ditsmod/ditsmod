@@ -59,7 +59,7 @@ What we see here:
 2. In the class method, the parameter `res` is declared with the data type `Res`. So we ask Ditsmod to create an instance of the `Res` class and pass it to the corresponding variable. By the way, `res` is short for the word _response_.
 3. Text responses to HTTP requests are sent via `res.send()`.
 
-Although in the previous example, an instance of the `Res` class was requested in DI through `method1()`, we can similarly request this instance in the constructor:
+Although in the previous example, an instance of the `Res` class was requested through `method1()`, we can similarly request this instance in the constructor:
 
 ```ts {5}
 import { controller, route, Res } from '@ditsmod/core';
