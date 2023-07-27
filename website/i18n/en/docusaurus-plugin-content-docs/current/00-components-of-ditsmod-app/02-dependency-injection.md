@@ -195,7 +195,7 @@ If the provider is represented as an object, the following values can be passed 
     - When provider consumers request `SecondService`, DI will look up the value for it in its registry using the `FirstService` token.
     - After DI finds the value for `FirstService`, it will be returned to the consumer who requested `SecondService`.
 
-Now that you are familiar with the concept of **provider**, we can clarify that **dependency** means dependency on providers. Such dependencies are made by **consumers** of providers either in service constructors, or in constructors or methods of controllers, or in the `get()` method of [injectors][102] (more on this later).
+Now that you are familiar with the concept of **provider**, you can clarify that **dependency** means dependency on **provider value**. Consumers of provider values have such a dependency either in service constructors, in controller constructors or methods, or in the `get()` method of injectors[102] (more on this later).
 
 ## Injector
 
