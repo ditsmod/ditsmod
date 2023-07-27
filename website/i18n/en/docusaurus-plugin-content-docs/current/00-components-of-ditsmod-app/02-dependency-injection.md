@@ -136,7 +136,7 @@ token2 -> value100
 ...
 ```
 
-The values specified here are created by DI using **providers**. So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. In other words, providers actually resolve dependencies. Therefore, if you specified a certain dependency in a class, but did not pass the corresponding provider, DI will not be able to resolve that dependency. The [next section][100] discusses how providers can be passed to DI. Providers have this type:
+The values specified here are created by DI using **providers**. So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. In other words, providers actually resolve dependencies. Therefore, if you specified a certain dependency in a class, but did not pass the corresponding provider, DI will not be able to resolve that dependency. The [next section][100] discusses how providers can be passed to DI. A provider can be either a class or an object:
 
 ```ts {3-7}
 import { Class } from '@ditsmod/core';
@@ -153,17 +153,17 @@ Note that the token for the provider with the `useFactory` property is optional,
 
 If the provider is represented as an object, the following values can be passed to its properties:
 
-- `useClass` - the class is passed, DI will make an instance of this class. An example of such a provider:
+- `useClass` - the class whose instance will be used to resolve the dependency with the specified token is passed here. An example of such a provider:
 
   ```ts
   { token: 'token1', useClass: SomeService }
   ```
-- `useValue` - any value other than `undefined` is passed, DI will output it unchanged. An example of such a provider:
+- `useValue` - any value other than `undefined` is passed here, DI will output it unchanged. An example of such a provider:
 
   ```ts
   { token: 'token2', useValue: 'some value' }
   ```
-- `useFactory` - [tuple][11] is passed, where the class should be in the first place, and in the second place - the method of this class, which should return any value for the specified token. For example, if the class is like this:
+- `useFactory` - a [tuple][11] is passed here, where the first place should be a class, and the second place should be a method of that class that returns any value for the given token. For example, if the class is like this:
 
   ```ts
   import { methodFactory } from '@ditsmod/core';
@@ -191,7 +191,7 @@ If the provider is represented as an object, the following values can be passed 
   { token: SecondService, useToken: FirstService }
   ```
 
-  this is how you say DI: "When provider consumers request the `SecondService` token, the value for the `FirstService` token should be used". In other words, this directive makes an alias `SecondService` that points to `FirstService`. The DI algorithm in such cases is as follows:
+  this is how you tell DI: "When consumers of providers request the `SecondService` token, the value for the `FirstService` token should be used". In other words, this directive makes an alias `SecondService` that points to `FirstService`. The DI algorithm in such cases is as follows:
     - When provider consumers request `SecondService`, DI will look up the value for it in its registry using the `FirstService` token.
     - After DI finds the value for `FirstService`, it will be returned to the consumer who requested `SecondService`.
 
