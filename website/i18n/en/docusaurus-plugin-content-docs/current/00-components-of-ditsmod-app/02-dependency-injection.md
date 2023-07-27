@@ -259,7 +259,7 @@ interface Child {
 }
 ```
 
-By having a parent injector object, a child injector can refer to its parent when the child needs a provider instance that it does not have.
+By having a parent injector object, a child injector can refer to its parent when the child needs a provider value that it does not have.
 
 Let's consider the following example. For simplicity, no decorators are used here at all, since each class is independent:
 
@@ -372,7 +372,7 @@ In this case, if `SomeService` has a dependency on `OtherService`, DI will be ab
 
 ### Current injector
 
-You may rarely need the service or controller injector itself directly, but you can get it in the constructor like any other provider instance:
+You may rarely need the service or controller injector itself, but you can get it in the constructor, just like the values of any other provider:
 
 ```ts
 import { injectable, Injector } from '@ditsmod/core';
