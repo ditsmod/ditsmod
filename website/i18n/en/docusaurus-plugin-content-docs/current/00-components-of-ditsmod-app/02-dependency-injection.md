@@ -10,7 +10,7 @@ Ditsmod Dependency Injection (or simply DI) has the following basic concepts:
 
 - dependency
 - dependency token, token types
-- provider
+- provider, provider value
 - injector
 - injector hierarchy
 - provider substitution
@@ -136,7 +136,7 @@ token2 -> value100
 ...
 ```
 
-The values specified here are created by DI using **providers**. So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. In other words, providers actually resolve dependencies. Therefore, if you specified a certain dependency in a class, but did not pass the corresponding provider, DI will not be able to resolve that dependency. The [next section][100] discusses how providers can be passed to DI. A provider can be either a class or an object:
+The values specified here are created by DI using **providers**. So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. In other words, the **provider value** actually resolves the dependency. Therefore, if you specified a certain dependency in a class, but did not pass the corresponding provider, DI will not be able to resolve that dependency. The [next section][100] discusses how providers can be passed to DI. A provider can be either a class or an object:
 
 ```ts {3-7}
 import { Class } from '@ditsmod/core';
@@ -201,7 +201,7 @@ Now that you are familiar with the concept of **provider**, we can clarify that 
 
 The so-called **DI registry** has been mentioned above. Now that you know what DI uses this register for, it's time to learn that these registers are in injectors, and there can be many such injectors in a Ditsmod application. But first, let's understand how injectors work.
 
-If we simplify the DI working scheme greatly, we can say that DI takes an array of providers as input and outputs an injector that can create instances of the passed providers, taking into account their dependencies. It has approximately the following picture:
+If we greatly simplify the scheme of operation of DI, we can say that DI accepts an array of providers at the input, and at the output it issues an injector that is able to create values for each passed provider. It has approximately the following picture:
 
 ```ts {16}
 import 'reflect-metadata';
@@ -225,7 +225,7 @@ service3 === injector.get(Service3); // true
 service3 === injector.resolveAndInstantiate(Service3); // false
 ```
 
-The `Injector.resolveAndCreate()` method accepts an array of providers as input, and outputs a certain object, which is exactly what is called an **injector**. This injector obviously contains a registry of transferred providers, and is able to create their instances using the `injector.get()` method, taking into account the entire chain of dependencies (`Service3` -> `Service2` -> `Service1`).
+The `Injector.resolveAndCreate()` method accepts an array of providers as input, and outputs a certain object, which is exactly what is called an **injector**. This injector obviously knows how to output the value of each provider by its token using the `injector.get()` method, taking into account the entire chain of dependencies (`Service3` -> `Service2` -> `Service1`).
 
 What the `injector.get()` does:
 
