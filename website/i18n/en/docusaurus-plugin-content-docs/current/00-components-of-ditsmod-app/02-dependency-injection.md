@@ -74,7 +74,7 @@ export class SecondService {
 
 ## Dependency token
 
-DI actually ignores the dependency type and takes into account only its JavaScript value, with which it will later associate this dependency. Such a JavaScript value is called a **token** in the context of DI. You can transfer the token in the short or long form of specifying the dependency. Let's revisit the previous example:
+DI actually ignores the type of the dependency and only takes into account its JavaScript value - that is, the **token** with which this dependency will be associated in the future. A token can be a reference to a class, object, or function, and primitive values other than `undefined` can also be used as tokens. You can pass the token in the short or long form of specifying a dependency. Let's revisit the previous example:
 
 ```ts {7}
 import { injectable } from '@ditsmod/core';
@@ -88,7 +88,7 @@ export class SecondService {
 }
 ```
 
-This is a **short form** of specifying a dependency, it has significant limitations, because in this way you can specify a dependency only on a certain class. In this case, `FirstService` is used both as a variable type (for DI it is not important) and as a token to indicate the dependency of `SecondService` on an instance of the `FirstService` class. In other words, for DI it is not important what properties or methods the `FirstService` class has, only the JavaScript value of this class is important - that is, a reference to this class.
+This is a **short form** of specifying a dependency, it has significant limitations, because in this way you can specify a dependency only on a certain class. In this case, `FirstService` is used both as a variable type and as a token.
 
 And there is a **long form** of specifying a dependency using the `inject` decorator, which allows you to use an alternative token:
 
@@ -106,7 +106,7 @@ export class SecondService {
 
 When `inject` is used, DI takes into account only the token passed to it. In this case, DI ignores the variable type - `InterfaceOfItem[]`, using the text `some-string` as a token. Thus, DI makes it possible to separate token and variable type, so you can get any type of dependency in the constructor, including different types of arrays or enums.
 
-The token cannot be declared with the keywords `interface`, `type`, etc., because after compiling TypeScript code into JavaScript code, such a token will disappear. In the long form of specifying dependencies, the token can have any JavaScript type except `undefined`, array or enum (but remember that the type of the token and the type of the dependency in the long form can be different, so as the value of the dependency you can get any value, except `undefined`). In the short form of specifying dependencies, a token can only be a class.
+The token cannot be declared with the keywords `interface`, `type`, etc., because after compiling TypeScript code into JavaScript code, such a token will disappear.
 
 The easiest and most reliable type of dependency to use is a class. DI is good at recognizing references to different classes, even if they have the same name, so you can avoid using the `inject` decorator with them. For all other types of dependencies, we recommend using an instance of the `InjectionToken<T>` class as a token:
 
