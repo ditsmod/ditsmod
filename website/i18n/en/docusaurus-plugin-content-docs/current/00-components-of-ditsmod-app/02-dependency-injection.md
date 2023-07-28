@@ -4,16 +4,17 @@ sidebar_position: 2
 
 # Dependency Injection
 
-## Basic concepts
+## The "magic" of working with metadata
 
-Ditsmod Dependency Injection (or simply DI) has the following basic concepts:
+If you look at the repository containing the starter project for Ditsmod applications, you can see that:
 
-- dependency
-- dependency token, token types
-- provider, provider value
-- injector
-- injector hierarchy
-- provider substitution
+1. in the file `tsconfig.json` is specified ["emitDecoratorMetadata": true][12];
+2. the `package.json` file specifies the dependency on the [reflect-metadata][13] library, which is imported only once in the [src/main.ts][15] file (the same import is required in the Node.js input file, when you write unit tests);
+3. there are a number of decorators (`rootModule`, `featureModule`, `controller`, `injectable`...).
+
+All these components provide the "magic" of reading and saving the metadata that you write in your classes. You may not have a deep understanding of exactly how this "magic" works, but you should at least remember what its components are.
+
+It's also worth noting that Ditsmod doesn't use [new decorators][14] because they don't yet have an API for handling method parameters.
 
 ## Dependency
 
@@ -614,11 +615,11 @@ Remember that when DI cannot find the right provider, there are only three possi
 3. you ask the parent injector for the provider from the child injector.
 
 
-[12]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
-[14]: https://github.com/ditsmod/seed/blob/901f247/src/app/app.module.ts#L18
-[8]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
-[9]: https://github.com/ts-stack/di
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
+[12]: https://github.com/ditsmod/seed/blob/99c3d757552d6c99fb4b8ca762cf82eb9170f756/tsconfig.json#L11
+[13]: https://github.com/ditsmod/seed/blob/99c3d757552d6c99fb4b8ca762cf82eb9170f756/package.json#L27
+[14]: https://github.com/tc39/proposal-decorators
+[15]: https://github.com/ditsmod/seed/blob/99c3d757552d6c99fb4b8ca762cf82eb9170f756/src/main.ts#L1
 
 [107]: /components-of-ditsmod-app/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions
