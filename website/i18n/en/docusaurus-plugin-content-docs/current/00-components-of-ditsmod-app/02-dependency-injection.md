@@ -40,6 +40,8 @@ this means that `SecondService` has a dependency on `FirstService`, and you is e
 
 If after the first step it turns out that `FirstService` has its own dependencies, then DI will recursively execute these three steps for each given dependency.
 
+If you forget to write (or intentionally remove) the `injectable` decorator before a class that has dependencies in the constructor, DI will throw an error saying that it cannot resolve the dependency of the given class. This is because `injectable` is involved in reading and saving class metadata.
+
 ### Optional dependency
 
 Sometimes you may need to specify an optional dependency in the constructor. Let's take a look at the following example, where a question mark is placed after the `firstService` property, thus indicating to TypeScript that this property is optional:
