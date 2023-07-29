@@ -6,13 +6,13 @@ sidebar_position: 2
 
 ## The "magic" of working with metadata
 
-From a JavaScript developer's point of view, the fact that DI can somehow look through class constructors and see other classes there that are not yet set to a variable is "magic". If you look at the repository containing the starter project for Ditsmod applications, you can see that:
+From a JavaScript developer's point of view, the fact that DI can somehow look through the parameters of class constructors and see other classes there can be called "magic". If you look at the repository containing the starter project for Ditsmod applications, you can see that:
 
 1. in the file `tsconfig.json` is specified ["emitDecoratorMetadata": true][12];
-2. the `package.json` file specifies the dependency on the [reflect-metadata][13] library, which is imported only once in the [src/main.ts][15] file (the same import is required in the Node.js input file, when you write unit tests);
+2. the `package.json` file specifies the dependency on the [reflect-metadata][13] library, which is imported only once in the [src/main.ts][15] file;
 3. there are a number of decorators (`rootModule`, `featureModule`, `controller`, `injectable`...).
 
-All these components provide the "magic" of reading and saving the metadata that you write in your classes. You may not have a deep understanding of exactly how this "magic" works, but you should at least remember what its components are.
+All of these components provide the "magic" of reading and storing the metadata that you write in your classes using decorators. You may not have a deep understanding of exactly how this "magic" works, but you should at least remember what its components are.
 
 It's also worth noting that Ditsmod doesn't use [new decorators][14] because they don't yet have an API for handling method parameters.
 
@@ -156,7 +156,7 @@ Note that the token for the provider with the `useFactory` property is optional,
 
 If the provider is represented as an object, the following values can be passed to its properties:
 
-- `useClass` - the class whose instance will be used to resolve the dependency with the specified token is passed here. An example of such a provider:
+- `useClass` - the class whose instance will be used as the value of this provider is passed here. An example of such a provider:
 
   ```ts
   { token: 'token1', useClass: SomeService }
@@ -166,7 +166,7 @@ If the provider is represented as an object, the following values can be passed 
   ```ts
   { token: 'token2', useValue: 'some value' }
   ```
-- `useFactory` - a [tuple][11] is passed here, where the first place should be a class, and the second place should be a method of that class that returns any value for the given token. For example, if the class is like this:
+- `useFactory` - a [tuple][11] is passed here, where the first place should be a class, and the second place should be a method of that class that returns some value for the given token. For example, if the class is like this:
 
   ```ts
   import { methodFactory } from '@ditsmod/core';
@@ -198,7 +198,7 @@ If the provider is represented as an object, the following values can be passed 
     - When provider consumers request `SecondService`, DI will look up the value for it in its registry using the `FirstService` token.
     - After DI finds the value for `FirstService`, it will be returned to the consumer who requested `SecondService`.
 
-Now that you are familiar with the concept of **provider**, you can clarify that **dependency** means dependency on **provider value**. Consumers of provider values have such a dependency either in service constructors, in controller constructors or methods, or in the `get()` method of injectors[102] (more on this later).
+Now that you are familiar with the concept of **provider**, you can clarify that **dependency** means dependency on **provider value**. Consumers of provider values have such a dependency either in service constructors, in controller constructors or methods, or in the `get()` method of [injectors][102] (more on this later).
 
 ## Injector
 
@@ -235,13 +235,13 @@ What the `injector.get()` does:
 - when `Service3` is requested, injector looks at the constructor of this class, sees the dependency on `Service2`;
 - then looks at the constructor in `Service2`, sees the dependency on `Service1`;
 - then looks at the constructor in `Service1`, does not find dependencies there, and therefore first creates an instance of `Service1`;
-- then creates an instance of `Service2`;
-- and the last one creates the `Service3` instance;
+- then creates the `Service2` instance using the `Service1` instance;
+- and lastly creates the `Service3` instance using the `Service2` instance;
 - if the `Service3` instance is requested again later, the `injector.get()` method will return the previously created `Service3` instance from the cache of this injector.
 
 Sometimes the last point (when the `Service3` instance is returned from the injector cache) is undesirable. In this case, you can use the `injector.resolveAndInstantiate()` method. In fact, it does everything that `injector.get()` does, but returns a new instance each time.
 
-Ditsmod under the hood uses the `injector.get()` method when DI resolves a dependency it finds in the service or controller constructor.
+Ditsmod uses the `injector.get()` method under the hood when DI resolves a dependency it finds in the class constructor.
 
 Using DI, you may not know the entire `Service3` dependency chain, entrust this work to the injector, the main thing is to transfer all necessary classes to the DI registry. Keep in mind that you can write unit tests for individual classes this way.
 
@@ -294,7 +294,7 @@ child.get(Service4); // Error - No provider for Service4!
 parent.get(Service4); // Error - No provider for Service4!
 ```
 
-As you can see, when the child injector was created, `Service1` was not passed to it, so when an instance of this class is requested, it will turn to the parent. By the way, there is one non-obvious but very important point here: child injectors only request certain instances of classes from parent injectors and do not create them on their own. That is why this expression returns `true`:
+As you can see, when the child injector was created, `Service1` was not passed to it, so when an instance of that class is requested, it goes to the parent. By the way, there is one non-obvious but very important point here: child injectors only request certain instances of classes from parent injectors and do not create them on their own. That is why this expression returns `true`:
 
 ```ts
 parent.get(Service1) === child.get(Service1); // true
@@ -319,7 +319,7 @@ Earlier in the documentation, you encountered the following object properties th
 - `providersPerRou` - providers at the route level;
 - `providersPerReq` - providers at the HTTP request level.
 
-Using these arrays, Ditsmod creates four different injectors, which are interconnected in a hierarchical relationship. Such a hierarchy can be simulated as follows:
+Using these arrays, Ditsmod creates four different injectors, which are connected in a hierarchical relationship. Such a hierarchy can be simulated as follows:
 
 ```ts
 import { Injector } from '@ditsmod/core';
@@ -337,7 +337,7 @@ const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
 
 Under the hood, Ditsmod performs a similar procedure multiple times for different modules, routes, and requests. For example, if the Ditsmod application has two modules and ten routes, one injector will be created at the application level, one injector for each module (2 pcs), one injector for each route (10 pcs), and one injector for each request. Request-level injectors are automatically removed after processing each request.
 
-It should be noted that higher-level injectors do not have access to lower-level injectors. To successfully resolve the dependencies of a particular provider with DI, the provider must be passed to the lowest-level injector among those that will be involved in resolving the dependencies.
+Recall that injectors higher in the hierarchy do not have access to injectors lower in the hierarchy. This means that when passing a class to a particular injector, you need to take into account the minimum level of its dependency hierarchy.
 
 For example, if you write a class that depends on an HTTP request, you can only pass it to the `providersPerReq` array, as only from this array an injector is formed, to which Ditsmod will automatically add the provider with the HTTP request object. On the other hand, an instance of this class will have access to all of its parent injectors: at the route, module, and application levels. Therefore, this class can depend on providers at any level.
 
@@ -351,6 +351,8 @@ Any controller, in addition to its own injector at the request level, also has t
 - `providersPerMod`;
 - `providersPerRou`;
 - `providersPerReq` (<-- this is the array from which the injector for the controller is formed).
+
+That is, the controller can depend on services at any level.
 
 ### Hierarchy of service injectors
 
@@ -377,7 +379,7 @@ In this case, if `SomeService` has a dependency on `OtherService`, DI will be ab
 
 You may rarely need the service or controller injector itself, but you can get it in the constructor, just like the values of any other provider:
 
-```ts
+```ts {6}
 import { injectable, Injector } from '@ditsmod/core';
 import { FirstService } from './first.service';
 
