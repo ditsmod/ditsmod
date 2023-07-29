@@ -6,7 +6,7 @@ sidebar_position: 2
 
 ## The "magic" of working with metadata
 
-If you look at the repository containing the starter project for Ditsmod applications, you can see that:
+From a JavaScript developer's point of view, the fact that DI can somehow look through class constructors and see other classes there that are not yet set to a variable is "magic". If you look at the repository containing the starter project for Ditsmod applications, you can see that:
 
 1. in the file `tsconfig.json` is specified ["emitDecoratorMetadata": true][12];
 2. the `package.json` file specifies the dependency on the [reflect-metadata][13] library, which is imported only once in the [src/main.ts][15] file (the same import is required in the Node.js input file, when you write unit tests);
