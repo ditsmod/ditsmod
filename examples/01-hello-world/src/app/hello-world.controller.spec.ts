@@ -4,12 +4,12 @@ import { Injector, Res } from '@ditsmod/core';
 import { HelloWorldController } from './hello-world.controller';
 
 describe('HelloWorldController', () => {
-  const send = jest.fn((value) => value);
+  const send = jest.fn();
   const res = { send } as unknown as Res;
   let helloWorldController: HelloWorldController;
 
   beforeEach(() => {
-    send.mockRestore();
+    jest.restoreAllMocks();
     const injector = Injector.resolveAndCreate([HelloWorldController]);
     helloWorldController = injector.get(HelloWorldController);
   });
