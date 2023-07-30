@@ -4,6 +4,91 @@ sidebar_position: 2
 
 # Dependency Injection
 
+## Why do you need DI?
+
+Let's first get a general idea of how [Dependency Injection][1] (or just DI) works, and then look at each important component in detail.
+
+It's probably easiest to understand exactly what DI does with examples. We need a `greeting()` method that will be used in many places in our program:
+
+```ts
+// services.ts
+export class Service1 {}
+
+export class Service2 {
+  constructor(service1: Service1) {}
+}
+
+export class Service3 {
+  constructor(service2: Service2) {}
+
+  greeting() {
+    // ...
+  }
+}
+```
+
+While `service3.greeting()` is used quite simply:
+
+```ts {5-8}
+import { Service1, Service2, Service3 } from './services';
+
+export class SomeService {
+  method1() {
+    const service1 = new Service1();
+    const service2 = new Service2(service1);
+    const service3 = new Service3(service2);
+    service3.greeting();
+  }
+}
+```
+
+Now imagine a task that requires the `Service3` constructor to take two parameters. Also imagine that `Service3` is used in 20 other files in our program. We need to go through all of those files to make the appropriate update.
+
+All this work could not have happened, if we had not relied on the specific implementation of creating the `Service3` instance. In fact, it is not important to us how many parameters the `Service3` constructor has, the main thing for us is the use of an instance of this class.
+
+The following example is almost the same as the previous one, where we also declared the `Service3` class, but here we have added an `injectable` decorator above each class that has a constructor with parameters:
+
+```ts {6,11}
+// services.ts
+import { injectable } from '@ditsmod/core';
+
+export class Service1 {}
+
+@injectable()
+export class Service2 {
+  constructor(service1: Service1) {}
+}
+
+@injectable()
+export class Service3 {
+  constructor(service2: Service2) {}
+
+  greeting() {
+    // ...
+  }
+}
+```
+
+For now, you may not know what exactly the `injectable` decorator does, it's more important to know how we can now request a `Service3` instance anywhere in our program:
+
+```ts {9}
+import { injectable } from '@ditsmod/core';
+import { Service3 } from './services';
+
+@injectable()
+export class SomeService {
+  constructor(private service3: Service3) {}
+
+  method1() {
+    this.service3.greeting();
+  }
+}
+```
+
+As you can see, we no longer create an instance of `Service3` using the `new` statement, instead, DI does this and passes the finished instance to the constructor. Even if the parameters in the `Service3` constructor are changed later, nothing will have to be changed in the places where `Service3` is used.
+
+However, in order for DI to create an instance of the `Service3` class, you need to pass all the necessary classes in the array to the DI registry (this will be discussed later). DI is able to look through the parameters of each of these classes, so it can create and automatically substitute the appropriate class instances.
+
 ## The "magic" of working with metadata
 
 From a JavaScript developer's point of view, the fact that DI can somehow look through the parameters of class constructors and see other classes there can be called "magic". If you look at the repository containing the starter project for Ditsmod applications, you can see that:
@@ -619,6 +704,7 @@ Remember that when DI cannot find the right provider, there are only three possi
 3. you ask the parent injector for the provider from the child injector.
 
 
+[1]: https://en.wikipedia.org/wiki/Dependency_injection
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [12]: https://github.com/ditsmod/seed/blob/99c3d757552d6c99fb4b8ca762cf82eb9170f756/tsconfig.json#L11
 [13]: https://github.com/ditsmod/seed/blob/99c3d757552d6c99fb4b8ca762cf82eb9170f756/package.json#L27

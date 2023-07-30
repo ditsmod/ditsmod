@@ -4,6 +4,91 @@ sidebar_position: 2
 
 # Dependency Injection
 
+## Для чого потрібен DI?
+
+Давайте спочатку ознайомимось із загальною картиною роботи [Dependency Injection][1] (або просто DI), а потім в деталях розглянемо кожен важливий компонент окремо.
+
+Мабуть найпростіше зрозуміти, що саме робить DI, на прикладах. Нам потрібен метод `greeting()`, який буде використовуватись у багатьох місцях нашої програми:
+
+```ts
+// services.ts
+export class Service1 {}
+
+export class Service2 {
+  constructor(service1: Service1) {}
+}
+
+export class Service3 {
+  constructor(service2: Service2) {}
+
+  greeting() {
+    // ...
+  }
+}
+```
+
+Покищо `service3.greeting()` використовується досить просто:
+
+```ts {5-8}
+import { Service1, Service2, Service3 } from './services';
+
+export class SomeService {
+  method1() {
+    const service1 = new Service1();
+    const service2 = new Service2(service1);
+    const service3 = new Service3(service2);
+    service3.greeting();
+  }
+}
+```
+
+Тепер уявіть задачу, яка вимагає щоб конструктор `Service3` приймав два параметри. Також уявіть, що `Service3` використовується у 20 інших файлах нашої програми. Нам прийдеться обійти усі ці файли, щоб внести відповідні корективи.
+
+Усієї цієї роботи могло і не бути, якщо б ми не опирались на конкретну реалізацію створення інстансу `Service3`. По-суті, нам не важливо скільки параметрів має конструктор `Service3`, головне для нас - це використання інстансу цього класу.
+
+Наступний приклад майже не відрізняється від попереднього прикладу, де ми також оголошували клас `Service3`, але тут ми дописали декоратор `injectable` над кожним класом, який має конструктор з параметрами:
+
+```ts {6,11}
+// services.ts
+import { injectable } from '@ditsmod/core';
+
+export class Service1 {}
+
+@injectable()
+export class Service2 {
+  constructor(service1: Service1) {}
+}
+
+@injectable()
+export class Service3 {
+  constructor(service2: Service2) {}
+
+  greeting() {
+    // ...
+  }
+}
+```
+
+Покищо можна і не знати що саме робить декоратор `injectable`, зараз важливіше дізнатись - як тепер ми можемо запитувати інстанс `Service3` у будь-якому місці нашої програми:
+
+```ts {9}
+import { injectable } from '@ditsmod/core';
+import { Service3 } from './services';
+
+@injectable()
+export class SomeService {
+  constructor(private service3: Service3) {}
+
+  method1() {
+    this.service3.greeting();
+  }
+}
+```
+
+Як бачите, ми більше не створюємо інстансу `Service3` за допомогою оператора `new`, натомість цим займається DI і передає у конструктор готовий інстанс. Навіть якщо згодом у конструкторі `Service3` параметри будуть змінюватись, нічого не прийдеться змінювати у тих місцях, де використовується `Service3`.
+
+Щоправда, щоб DI зміг створити інстанс класу `Service3`, до реєстру DI потрібно передати усі необхідні класи в масиві (про це буде йти мова пізніше). DI має змогу проглядати параметри конструкторів кожного з цих класів, тому він може створювати та автоматично підставляти відповідні інстанси класів.
+
 ## "Магія" роботи з метаданими
 
 З точки зору JavaScript-розробника, в тому, що DI якимось чином може проглядати параметри конструкторів класів і бачити там інші класи - це можна назвати "магією". Якщо проглянути репозиторій, що містить стартовий проект для Ditsmod-застосунків, можна побачити що:
@@ -619,6 +704,7 @@ export class SomeModule {}
 3. ви запитуєте у батьківському інжекторі провайдер з дочірнього інжектора.
 
 
+[1]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [12]: https://github.com/ditsmod/seed/blob/99c3d757552d6c99fb4b8ca762cf82eb9170f756/tsconfig.json#L11
 [13]: https://github.com/ditsmod/seed/blob/99c3d757552d6c99fb4b8ca762cf82eb9170f756/package.json#L27
