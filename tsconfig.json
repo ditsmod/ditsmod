@@ -4,7 +4,6 @@
     "declarationMap": true,
     "sourceMap": true,
     "composite": true,
-
     "noImplicitOverride": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -24,5 +23,7 @@
       ]
     }
   },
-  "exclude": ["**/node_modules/*"]
+  "exclude": [
+    "**/node_modules/*"
+  ]
 }

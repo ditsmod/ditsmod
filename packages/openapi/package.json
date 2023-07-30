@@ -28,7 +28,7 @@
     "json-loader": "^0.5.7",
     "stream-browserify": "^3.0.0",
     "style-loader": "^3.3.2",
-    "swagger-ui": "^4.19.0",
+    "swagger-ui": "^5.2.0",
     "webpack": "^5.84.1",
     "yaml": "^2.3.1",
     "yaml-loader": "^0.8.0"
