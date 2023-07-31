@@ -706,10 +706,10 @@ Remember that when DI cannot find the right provider, there are only three possi
 
 [1]: https://en.wikipedia.org/wiki/Dependency_injection
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
-[12]: https://github.com/ditsmod/seed/blob/99c3d757552d6c99fb4b8ca762cf82eb9170f756/tsconfig.json#L11
-[13]: https://github.com/ditsmod/seed/blob/99c3d757552d6c99fb4b8ca762cf82eb9170f756/package.json#L27
+[12]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/tsconfig.json#L11
+[13]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/package.json#L27
 [14]: https://github.com/tc39/proposal-decorators
-[15]: https://github.com/ditsmod/seed/blob/99c3d757552d6c99fb4b8ca762cf82eb9170f756/src/main.ts#L1
+[15]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/src/main.ts#L1
 
 [107]: /components-of-ditsmod-app/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions
