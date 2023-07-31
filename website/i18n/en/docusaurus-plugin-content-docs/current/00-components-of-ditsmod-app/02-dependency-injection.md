@@ -8,7 +8,7 @@ sidebar_position: 2
 
 Let's first get a general idea of how [Dependency Injection][1] (or just DI) works, and then look at each important component in detail.
 
-It's probably easiest to understand exactly what DI does with examples. We need a `greeting()` method that will be used in many places in our program:
+It's probably easiest to understand exactly what DI does with examples. We need a `doSomething()` method that will be used in many places in our program:
 
 ```ts
 // services.ts
@@ -21,13 +21,13 @@ export class Service2 {
 export class Service3 {
   constructor(service2: Service2) {}
 
-  greeting() {
+  doSomething(param1: any) {
     // ...
   }
 }
 ```
 
-While `service3.greeting()` is used quite simply:
+Assume that instances of classes need to be created at each place where `service3.doSomething()` is used:
 
 ```ts {5-8}
 import { Service1, Service2, Service3 } from './services';
@@ -37,7 +37,7 @@ export class SomeService {
     const service1 = new Service1();
     const service2 = new Service2(service1);
     const service3 = new Service3(service2);
-    service3.greeting();
+    service3.doSomething(123);
   }
 }
 ```
@@ -63,7 +63,7 @@ export class Service2 {
 export class Service3 {
   constructor(service2: Service2) {}
 
-  greeting() {
+  doSomething(param1: any) {
     // ...
   }
 }
@@ -71,7 +71,7 @@ export class Service3 {
 
 For now, you may not know what exactly the `injectable` decorator does, it's more important to know how we can now request a `Service3` instance anywhere in our program:
 
-```ts {9}
+```ts {4,6,9}
 import { injectable } from '@ditsmod/core';
 import { Service3 } from './services';
 
@@ -80,7 +80,7 @@ export class SomeService {
   constructor(private service3: Service3) {}
 
   method1() {
-    this.service3.greeting();
+    this.service3.doSomething(123);
   }
 }
 ```

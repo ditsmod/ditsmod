@@ -8,7 +8,7 @@ sidebar_position: 2
 
 Давайте спочатку ознайомимось із загальною картиною роботи [Dependency Injection][1] (або просто DI), а потім в деталях розглянемо кожен важливий компонент окремо.
 
-Мабуть найпростіше зрозуміти, що саме робить DI, на прикладах. Нам потрібен метод `greeting()`, який буде використовуватись у багатьох місцях нашої програми:
+Мабуть найпростіше зрозуміти, що саме робить DI, на прикладах. Нам потрібен метод `doSomething()`, який буде використовуватись у багатьох місцях нашої програми:
 
 ```ts
 // services.ts
@@ -21,13 +21,13 @@ export class Service2 {
 export class Service3 {
   constructor(service2: Service2) {}
 
-  greeting() {
+  doSomething(param1: any) {
     // ...
   }
 }
 ```
 
-Покищо `service3.greeting()` використовується досить просто:
+Припустимо, що інстанси класів необхідно створювати кожен раз нові у кожному місці, де використовується `service3.doSomething()`:
 
 ```ts {5-8}
 import { Service1, Service2, Service3 } from './services';
@@ -37,7 +37,7 @@ export class SomeService {
     const service1 = new Service1();
     const service2 = new Service2(service1);
     const service3 = new Service3(service2);
-    service3.greeting();
+    service3.doSomething(123);
   }
 }
 ```
@@ -63,15 +63,15 @@ export class Service2 {
 export class Service3 {
   constructor(service2: Service2) {}
 
-  greeting() {
+  doSomething(param1: any) {
     // ...
   }
 }
 ```
 
-Покищо можна і не знати що саме робить декоратор `injectable`, зараз важливіше дізнатись - як тепер ми можемо запитувати інстанс `Service3` у будь-якому місці нашої програми:
+Покищо можна і не знати що саме робить декоратор `injectable`, зараз важливіше дізнатись, як тепер ми можемо запитувати інстанс `Service3` у будь-якому місці нашої програми:
 
-```ts {9}
+```ts {4,6,9}
 import { injectable } from '@ditsmod/core';
 import { Service3 } from './services';
 
@@ -80,7 +80,7 @@ export class SomeService {
   constructor(private service3: Service3) {}
 
   method1() {
-    this.service3.greeting();
+    this.service3.doSomething(123);
   }
 }
 ```
