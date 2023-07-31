@@ -8,7 +8,7 @@ sidebar_position: 2
 
 Let's first get a general idea of how [Dependency Injection][1] (or just DI) works, and then look at each important component in detail.
 
-It's probably easiest to understand exactly what DI does with examples. We need a `doSomething()` method that will be used in many places in our program:
+It's probably easiest to understand exactly what DI does with examples. In this case, we need a `doSomething()` method that will be used in many places in our program:
 
 ```ts
 // services.ts
@@ -27,7 +27,7 @@ export class Service3 {
 }
 ```
 
-Assume that instances of classes need to be created at each place where `service3.doSomething()` is used:
+So far, `service3.doSomething()` is used quite simply:
 
 ```ts {5-8}
 import { Service1, Service2, Service3 } from './services';
