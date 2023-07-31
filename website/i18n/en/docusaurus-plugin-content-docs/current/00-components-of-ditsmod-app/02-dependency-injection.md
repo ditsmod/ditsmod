@@ -195,7 +195,7 @@ The token cannot be declared with the keywords `interface`, `type`, etc., becaus
 
 The easiest and most reliable type of dependency to use is a class. DI is good at recognizing references to different classes, even if they have the same name, so you can avoid using the `inject` decorator with them. For all other types of dependencies, we recommend using an instance of the `InjectionToken<T>` class as a token:
 
-```ts {5}
+```ts {5,14}
 // tokens.ts
 import { InjectionToken } from '@ditsmod/core';
 import { InterfaceOfItem } from './types';
@@ -216,7 +216,7 @@ export class SecondService {
 
 ## Providers
 
-DI has a dependency registry, which is essentially a mapping between a token and the value to be issued for that token. Schematically, this register can be shown as follows:
+DI has a registry, which is essentially a mapping between a token and the value to be issued for that token. Schematically, this register can be shown as follows:
 
 ```
 token1 -> value15
@@ -224,7 +224,9 @@ token2 -> value100
 ...
 ```
 
-The values specified here are created by DI using **providers**. So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. In other words, the **provider value** actually resolves the dependency. Therefore, if you specified a certain dependency in a class, but did not pass the corresponding provider, DI will not be able to resolve that dependency. The [next section][100] discusses how providers can be passed to DI. A provider can be either a class or an object:
+As you might guess, when DI resolves a dependency, it takes tokens from the constructor parameters of a particular class and looks for their values in the DI registry. If all the required tokens are found in the registry, their values are passed to the constructor, and the dependency of that class is successfully resolved.
+
+DI creates values for each token using what are called **providers**. So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. Therefore, if you specified a certain dependency in a class, but did not pass the corresponding provider, DI will not be able to resolve that dependency. The [next section][100] discusses how providers can be passed to DI. A provider can be either a class or an object:
 
 ```ts {3-7}
 import { Class } from '@ditsmod/core';
