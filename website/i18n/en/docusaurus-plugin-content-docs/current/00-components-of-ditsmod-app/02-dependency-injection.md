@@ -226,7 +226,7 @@ token2 -> value100
 
 As you might guess, when DI resolves a dependency, it takes tokens from the constructor parameters of a particular class and looks for their values in the DI registry. If all the required tokens are found in the registry, their values are passed to the constructor, and the dependency of that class is successfully resolved.
 
-DI creates values for each token using what are called **providers**. So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. Therefore, if you specified a certain dependency in a class, but did not pass the corresponding provider, DI will not be able to resolve that dependency. The [next section][100] discusses how providers can be passed to DI. A provider can be either a class or an object:
+DI creates values in the registry for each token using what are called **providers**. So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. Therefore, if you specified a certain dependency in a class, but did not pass the corresponding provider, DI will not be able to resolve that dependency. The [next section][100] discusses how providers can be passed to DI. A provider can be either a class or an object:
 
 ```ts {3-7}
 import { Class } from '@ditsmod/core';
