@@ -159,7 +159,51 @@ export class SecondService {
 
 ## Dependency token
 
-DI actually ignores the type of the dependency and only takes into account its JavaScript value - that is, the **token** with which this dependency will be associated in the future. A token can be a reference to a class, object, or function, and primitive values other than `undefined` can also be used as tokens. You can pass the token in the short or long form of specifying a dependency. Let's revisit the previous example:
+Let's try to understand exactly how DI gets the full information about the class constructor parameters to successfully resolve the specified dependency. The following example shows a class whose constructor has three parameters, each of which has its own TypeScript type:
+
+```ts
+// ...
+class MyService {
+  constructor(
+    private one: One,
+    private two: Two,
+    private three: Three,
+  ) {
+    // ...
+  }
+}
+```
+
+Now let's see what this class looks like when compiled into JavaScript code:
+
+```ts
+// ...
+class MyService {
+  one;
+  two;
+  three;
+
+  constructor(one, two, three) {
+    this.one = one;
+    this.two = two;
+    this.three = three;
+  }
+}
+```
+
+This means that TypeScript types disappear from constructor parameters in JavaScript code. So during compilation, TypeScript needs to generate a special function that saves the TypeScript types that we pass to the constructor parameters. This function can be something like the following:
+
+```ts
+function setConstructorTokens(tokens) {
+  MyService.staticProperty = tokens;
+}
+
+setConstructorTokens([One, Two, Three]);
+```
+
+That's pretty much how it works. The TypeScript compiler generates similar functions in every file that contains classes with the `injectable` decorator. Obviously, in our example, the `setConstructorTokens` function can only work with JavaScript values, it will not be able to take as arguments those types that we declare in the TypeScript code with the `interface`, `type`, `enum`, etc. keywords, because they do not exist in the JavaScript code.
+
+The JavaScript values accepted by `setConstructorTokens` are called **tokens** in the context of DI. You can pass the token in the short or long form of the dependency specification. Let's go back to the previous example:
 
 ```ts {7}
 import { injectable } from '@ditsmod/core';
@@ -173,7 +217,7 @@ export class SecondService {
 }
 ```
 
-This is a **short form** of specifying a dependency, it has significant limitations, because in this way you can specify a dependency only on a certain class. In this case, `FirstService` is used both as a variable type and as a token.
+This is a **short form** of specifying a dependency, it has significant limitations because you can only specify a dependency on a specific _class_ this way. In this case, `FirstService` is used both as a variable type and as a token.
 
 And there is a **long form** of specifying a dependency using the `inject` decorator, which allows you to use an alternative token:
 
@@ -189,11 +233,9 @@ export class SecondService {
 }
 ```
 
-When `inject` is used, DI takes into account only the token passed to it. In this case, DI ignores the variable type - `InterfaceOfItem[]`, using the text `some-string` as a token. Thus, DI makes it possible to separate token and variable type, so you can get any type of dependency in the constructor, including different types of arrays or enums.
+When `inject` is used, DI only considers the token passed to it. In this case, DI ignores the variable type - `InterfaceOfItem[]` - and uses the `some-string` as the token. Thus, DI allows you to separate token and variable type, so you can get any kind of dependency in the constructor, including different types of arrays or enums.
 
-The token cannot be declared with the keywords `interface`, `type`, etc., because after compiling TypeScript code into JavaScript code, such a token will disappear.
-
-The easiest and most reliable type of dependency to use is a class. DI is good at recognizing references to different classes, even if they have the same name, so you can avoid using the `inject` decorator with them. For all other types of dependencies, we recommend using an instance of the `InjectionToken<T>` class as a token:
+A token can be a reference to a class, object, or function, and primitive values other than `undefined` can also be used as tokens. For a long form of specifying dependencies, we recommend using an instance of the `InjectionToken<T>` class as a token:
 
 ```ts {5,14}
 // tokens.ts
