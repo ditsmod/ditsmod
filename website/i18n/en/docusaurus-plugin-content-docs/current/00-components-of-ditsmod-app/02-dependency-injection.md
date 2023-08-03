@@ -159,7 +159,7 @@ export class SecondService {
 
 ## Dependency token
 
-Let's try to understand exactly how DI gets the full information about the class constructor parameters to successfully resolve the specified dependency. The following example shows a class whose constructor has three parameters, each of which has its own TypeScript type:
+Let's try to understand exactly how DI gets full information about the parameters of the class constructor. The following example shows a class whose constructor has three parameters, each of which has its own TypeScript type:
 
 ```ts
 // ...
@@ -201,9 +201,9 @@ function setConstructorTokens(tokens) {
 setConstructorTokens([One, Two, Three]);
 ```
 
-That's pretty much how it works. The TypeScript compiler generates similar functions in every file that contains classes with the `injectable` decorator. Obviously, in our example, the `setConstructorTokens` function can only work with JavaScript values, it will not be able to take as arguments those types that we declare in the TypeScript code with the `interface`, `type`, `enum`, etc. keywords, because they do not exist in the JavaScript code.
+That's pretty much how it works. The TypeScript compiler automatically generates similar functions in any file that contains classes with decorators. Obviously, in our example, the `setConstructorTokens` function can only work with JavaScript values, it will not be able to take as arguments those types that we declare in the TypeScript code with the `interface`, `type`, etc. keywords, because they do not exist in the JavaScript code.
 
-The JavaScript values accepted by `setConstructorTokens` are called **tokens** in the context of DI. You can pass the token in the short or long form of the dependency specification. Let's go back to the previous example:
+The JavaScript values accepted by `setConstructorTokens` are called **tokens**. You can pass the token in the short or long form of the dependency specification. Let's go back to the previous example:
 
 ```ts {7}
 import { injectable } from '@ditsmod/core';
@@ -235,7 +235,7 @@ export class SecondService {
 
 When `inject` is used, DI only considers the token passed to it. In this case, DI ignores the variable type - `InterfaceOfItem[]` - and uses the `some-string` as the token. Thus, DI allows you to separate token and variable type, so you can get any kind of dependency in the constructor, including different types of arrays or enums.
 
-A token can be a reference to a class, object, or function, and primitive values other than `undefined` can also be used as tokens. For a long form of specifying dependencies, we recommend using an instance of the `InjectionToken<T>` class as a token:
+A token can be a reference to a class, object, or function, and primitive values other than `undefined` can also be used as tokens. For the long form of specifying dependencies, we recommend using an instance of the `InjectionToken<T>` class as the token, since the `InjectionToken<T>` class has a parameterized type `T` that can be used to specify the type of data associated with that token:
 
 ```ts {5,14}
 // tokens.ts
