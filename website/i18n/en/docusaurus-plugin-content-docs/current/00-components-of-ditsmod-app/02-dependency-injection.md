@@ -266,7 +266,7 @@ token2 -> value100
 ...
 ```
 
-As you might guess, when DI resolves a dependency, it takes tokens from the constructor parameters of a particular class and looks for their values in the DI registry. If all the required tokens are found in the registry, their values are passed to the constructor, and the dependency of that class is successfully resolved.
+As you might guess, when DI resolves a dependency, it takes tokens from the constructor parameters of a particular class and looks for their values in the DI registry. If all the required tokens are found in the registry, their values are passed to the constructor, successfully resolving the dependency of that class.
 
 DI creates values in the registry for each token using what are called **providers**. So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. Therefore, if you specified a certain dependency in a class, but did not pass the corresponding provider, DI will not be able to resolve that dependency. The [next section][100] discusses how providers can be passed to DI. A provider can be either a class or an object:
 
@@ -323,9 +323,7 @@ If the provider is represented as an object, the following values can be passed 
   { token: SecondService, useToken: FirstService }
   ```
 
-  this is how you tell DI: "When consumers of providers request the `SecondService` token, the value for the `FirstService` token should be used". In other words, this directive makes an alias `SecondService` that points to `FirstService`. The DI algorithm in such cases is as follows:
-    - When provider consumers request `SecondService`, DI will look up the value for it in its registry using the `FirstService` token.
-    - After DI finds the value for `FirstService`, it will be returned to the consumer who requested `SecondService`.
+  this is how you tell DI: "When consumers of providers request the `SecondService` token, the value for the `FirstService` token should be used". In other words, this directive makes an alias `SecondService` that points to `FirstService`.
 
 Now that you are familiar with the concept of **provider**, you can clarify that **dependency** means dependency on **provider value**. Consumers of provider values have such a dependency either in service constructors, in controller constructors or methods, or in the `get()` method of [injectors][102] (more on this later).
 
