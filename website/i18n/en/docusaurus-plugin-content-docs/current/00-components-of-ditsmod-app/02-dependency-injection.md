@@ -368,7 +368,7 @@ What the `injector.get()` does:
 
 Sometimes the last point (when the `Service3` instance is returned from the injector cache) is undesirable. In this case, you can use the `injector.resolveAndInstantiate()` method. In fact, it does everything that `injector.get()` does, but returns a new instance each time.
 
-Ditsmod uses the `injector.get()` method under the hood when DI resolves a dependency it finds in the class constructor.
+When automatically resolving a class dependency (when the injector is not used directly), Ditsmod uses the `injector.get()` method under the hood.
 
 Using DI, you may not know the entire `Service3` dependency chain, entrust this work to the injector, the main thing is to transfer all necessary classes to the DI registry. Keep in mind that you can write unit tests for individual classes this way.
 
