@@ -464,7 +464,7 @@ const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
 
 Under the hood, Ditsmod performs a similar procedure multiple times for different modules, routes, and requests. For example, if the Ditsmod application has two modules and ten routes, one injector will be created at the application level, one injector for each module (2 pcs), one injector for each route (10 pcs), and one injector for each request. Request-level injectors are automatically removed after processing each request.
 
-Recall that injectors higher in the hierarchy do not have access to injectors lower in the hierarchy. This means that when passing a class to a particular injector, you need to take into account the minimum level of its dependency hierarchy.
+Recall that injectors higher in the hierarchy do not have access to injectors lower in the hierarchy. This means that **when you transfer a class to a particular injector, you need to consider the minimum level of its dependency hierarchy**.
 
 For example, if you write a class that depends on an HTTP request, you can only pass it to the `providersPerReq` array, as only from this array an injector is formed, to which Ditsmod will automatically add the provider with the HTTP request object. On the other hand, an instance of this class will have access to all of its parent injectors: at the route, module, and application levels. Therefore, this class can depend on providers at any level.
 
