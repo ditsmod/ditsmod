@@ -16,7 +16,7 @@ yarn add @ditsmod/jwt
 
 Підключення:
 
-```ts
+```ts {7,10}
 import { featureModule } from '@ditsmod/core';
 import { JwtModule } from '@ditsmod/jwt';
 
@@ -38,7 +38,7 @@ export class AuthModule {}
 
 Тепер в межах `AuthModule` можете використовувати `JwtService`:
 
-```ts
+```ts {7,19-22}
 import { injectable, CanActivate, Injector } from '@ditsmod/core';
 import { JwtService, VerifyErrors, JWT_PAYLOAD } from '@ditsmod/jwt';
 
