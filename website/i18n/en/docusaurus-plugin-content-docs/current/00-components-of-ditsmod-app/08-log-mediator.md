@@ -101,7 +101,7 @@ export class AppModule {}
 
 In this case, the first element of the array `providersPerApp` will allow using `MyLogMediator` in the Ditsmod core code, the second element - will allow requesting the instance of `MyLogMediator` in the constructors of controllers or services of your application.
 
-## featureModule-level substitute of LogMediator
+## Module-level substitute of LogMediator
 
 As mentioned at the beginning, if you plan to publish your module to other users, it is recommended to use `LogMediator` instead of `Logger`. In this case, users will be able to change the messages written by your module, as well as filter them.
 

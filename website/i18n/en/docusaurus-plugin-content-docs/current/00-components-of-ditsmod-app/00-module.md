@@ -52,8 +52,8 @@ import { featureModule } from '@ditsmod/core';
   imports: [], // Import modules
   controllers: [], // Binding controllers to the module
   providersPerApp: [], // Application-level providers
-  providersPerMod: [], // featureModule-level providers
-  providersPerRou: [], // route-level providers
+  providersPerMod: [], // Module-level providers
+  providersPerRou: [], // Route-level providers
   providersPerReq: [], // Request-level providers
   exports: [], // Export modules and providers from the current module
   extensions: [],
