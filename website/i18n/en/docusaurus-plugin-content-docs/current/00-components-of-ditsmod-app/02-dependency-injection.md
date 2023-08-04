@@ -543,7 +543,7 @@ Basically, multi-providers allow you to create groups of providers that share a 
 
 It is not allowed that both ordinary and multi-providers have the same token in one injector:
 
-```ts
+```ts {6-7}
 import { Injector } from '@ditsmod/core';
 
 import { LOCAL } from './tokens';
@@ -556,7 +556,7 @@ const injector = Injector.resolveAndCreate([
 const locals = injector.get(LOCAL); // Error: Cannot mix multi providers and regular providers
 ```
 
-Child injectors can return multi-providers of the parent injector only if no providers with the same tokens were passed to them when the child injectors were created:
+Child injectors can only return multi-provider values from the parent injector if no providers with the same tokens were passed to them when they were created:
 
 ```ts
 import { Injector } from '@ditsmod/core';
@@ -622,12 +622,14 @@ This construction makes sense, for example, if the first two points are performe
 
 For one dependency, you need to transfer one or more providers to the DI registry. Most often, providers are passed to the DI registry via module metadata, although sometimes they are passed via controller metadata, or even directly to [injectors][102]. In the following example, `SomeService` is passed into the `providersPerMod` array:
 
-```ts {7}
+```ts {9}
 import { featureModule } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
+import { SomeController } from './some.controller';
 
 @featureModule({
+  controllers: [SomeController],
   providersPerMod: [
     SomeService
   ],
@@ -637,12 +639,14 @@ export class SomeModule {}
 
 After such a passing, consumers of providers can use `SomeService` within `SomeModule`. The identical result will be if we pass the same provider in object format:
 
-```ts {7}
+```ts {9}
 import { featureModule } from '@ditsmod/core';
 
 import { SomeService } from './some.service';
+import { SomeController } from './some.controller';
 
 @featureModule({
+  controllers: [SomeController],
   providersPerMod: [
     { token: SomeService, useClass: SomeService }
   ],
@@ -703,7 +707,7 @@ export class SomeModule {}
 
 ## Re-adding providers
 
-The same provider can be added multiple times in the metadata of a module or controller, but DI will choose the provider that was added last (there is an exception to this rule, but it only applies to multi-providers):
+Different providers with the same token can be added multiple times in the metadata of a module or controller, but DI will choose the last provider added (there is an exception to this rule, but it only applies to multi-providers):
 
 ```ts
 import { featureModule } from '@ditsmod/core';
@@ -720,7 +724,7 @@ export class SomeModule {}
 
 In this case, within `SomeModule`, `value3` will be issued on `token1` at the module, route or request level.
 
-In addition, the same provider can be transmitted simultaneously at several different levels of the hierarchy, but DI will always choose the closest injectors (i.e., if a value for a provider is queried at the request level, then the injector at the request level will be looked up first, and only if there is no required provider, DI will rise to the parent injectors):
+In addition, different providers with the same token can be passed at the same time at different levels of the hierarchy, but DI will always choose the closest injectors (i.e., if a value for a provider is queried at the request level, then the injector at the request level will be looked up first, and only if there is no required provider, DI will rise to the parent injectors):
 
 ```ts
 import { featureModule } from '@ditsmod/core';
