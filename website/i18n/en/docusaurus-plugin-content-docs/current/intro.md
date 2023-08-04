@@ -12,7 +12,7 @@ Ditsmod is a Node.js web framework, named **DI** + **TS** + **Mod** to emphasize
 The main features of Ditsmod:
 
 - Modular architecture on decorators, which allows you to declaratively describe the structure of the application.
-- Convenient mechanism for [specifying and resolving][8] between different application classes: you in constructor specify instances of which classes you need, and DI undertakes a difficult task "how to get it".
+- A convenient mechanism for [specifying and resolving dependencies][8] between different classes: you specify the instances of which classes you need in the constructor, and DI does the hard work of "how to get them".
 - Ability to write your own extensions (sometimes called plugins) that can be asynchronously initialized and that can depend on each other.
 - Ability to dynamically add and remove modules after starting the web server, without the need to restart.
 - Has OpenAPI support, and has the ability to validate queries based on OpenAPI metadata.
