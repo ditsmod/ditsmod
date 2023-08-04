@@ -27,7 +27,7 @@ import { featureModule } from '@ditsmod/core';
 export class SomeModule {}
 ```
 
-It is recommended that module files end with `*.module.ts` and that their class names end with `*featureModule`.
+It is recommended that module files end with `*.module.ts` and that their class names end with `*Module`.
 
 Ditsmod uses several decorators. But why decorators? Because they allow you to conveniently attach metadata to classes. Thanks to decorators (in combination with the [reflect-metadata][1] library), it is possible to programmatically recognize:
 - what conventional role is assigned to a certain class (role of module, controller, service, etc.);
