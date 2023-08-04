@@ -85,9 +85,9 @@ export class SomeService {
 }
 ```
 
-As you can see, we no longer create an instance of `Service3` using the `new` statement, instead, DI does this and passes the finished instance to the constructor. Even if the parameters in the `Service3` constructor are changed later, nothing will have to be changed in the places where `Service3` is used.
+As you can see, we no longer create an instance of `Service3` using the `new` operator, instead, DI does this and passes the finished instance to the constructor. Even if the parameters in the `Service3` constructor are changed later, nothing will have to be changed in the places where `Service3` is used.
 
-However, in order for DI to create an instance of the `Service3` class, you need to pass all the necessary classes in the array to the DI registry (this will be discussed later). DI is able to look through the parameters of each of these classes, so it can create and automatically substitute the appropriate class instances.
+However, in order for DI to create an instance of the `Service3` class, we need to pass all the necessary classes in the array to the DI registry (this will be discussed later). DI is able to look through the parameters of each of these classes, so it can create and automatically substitute the appropriate class instances.
 
 ## The "magic" of working with metadata
 
@@ -203,7 +203,7 @@ setConstructorTokens([One, Two, Three]);
 
 That's pretty much how it works. The TypeScript compiler automatically generates similar functions in any file that contains classes with decorators. Obviously, in our example, the `setConstructorTokens` function can only work with JavaScript values, it will not be able to take as arguments those types that we declare in the TypeScript code with the `interface`, `type`, etc. keywords, because they do not exist in the JavaScript code.
 
-The JavaScript values accepted by `setConstructorTokens` are called **tokens**. You can pass the token in the short or long form of the dependency specification. Let's go back to the previous example:
+The JavaScript values accepted by `setConstructorTokens` are called **tokens**. You can pass the token in the short or long form of the specifying a dependency. Let's go back to the previous example:
 
 ```ts {7}
 import { injectable } from '@ditsmod/core';
@@ -258,7 +258,7 @@ export class SecondService {
 
 ## Providers
 
-DI has a registry, which is essentially a mapping between a token and the value to be issued for that token. Schematically, this register can be shown as follows:
+DI has a registry, which is essentially a mapping between a token and the value to be issued for that token. Schematically, this registry can be shown as follows:
 
 ```
 token1 -> value15
@@ -329,7 +329,7 @@ Now that you are familiar with the concept of **provider**, you can clarify that
 
 ## Injector
 
-The so-called **DI registry** has been mentioned above. Now that you know what DI uses this register for, it's time to learn that these registers are in injectors, and there can be many such injectors in a Ditsmod application. But first, let's understand how injectors work.
+The so-called **DI registry** has been mentioned above. Now that you know what DI uses this registry for, it's time to learn that these registries are in injectors, and there can be many such injectors in a Ditsmod application. But first, let's understand how injectors work.
 
 If we greatly simplify the scheme of operation of DI, we can say that DI accepts an array of providers at the input, and at the output it issues an injector that is able to create values for each passed provider. It has approximately the following picture:
 
@@ -439,7 +439,7 @@ Well, both injectors cannot issue `Service4` instance, because they were not giv
 
 ### Hierarchy of injectors in the Ditsmod application
 
-Earlier in the documentation, you encountered the following object properties that are passed in module or controller metadata:
+Earlier in this documentation, you encountered the following object properties that are passed in module or controller metadata:
 
 - `providersPerApp` - providers at the application level;
 - `providersPerMod` - providers at the module level;
@@ -722,7 +722,7 @@ import { featureModule } from '@ditsmod/core';
 export class SomeModule {}
 ```
 
-In this case, within `SomeModule`, `value3` will be issued on `token1` at the module, route or request level.
+In this case, within the `SomeModule`, `value3` will be returned at the module, route, or request level for `token1`.
 
 In addition, different providers with the same token can be passed at the same time at different levels of the hierarchy, but DI will always choose the closest injectors (i.e., if a value for a provider is queried at the request level, then the injector at the request level will be looked up first, and only if there is no required provider, DI will rise to the parent injectors):
 
@@ -737,7 +737,7 @@ import { featureModule } from '@ditsmod/core';
 export class SomeModule {}
 ```
 
-In this case, within `SomeModule`, `value3` will be returned at the module, route, or request level for `token1`.
+In this case, within the `SomeModule`, `value3` will be returned at the request level for `token1`, `value2` - at the route level, and `value1` - at the module level.
 
 Also, if you import a specific provider from an external module and you have a provider with the same token in the current module, the local provider will have higher priority, provided they were passed at the same level of the injector hierarchy.
 
@@ -747,7 +747,7 @@ Remember that when DI cannot find the right provider, there are only three possi
 
 1. you did not transfer the required provider to DI in the metadata of the module or controller (well, or in the case of testing - in `Injector.resolveAndCreate()`);
 2. you did not import the module where the provider you need is transferred, or this provider is not exported;
-3. you ask the parent injector for the provider from the child injector.
+3. you are requesting a provider from the parent injector to the child injector.
 
 
 [1]: https://en.wikipedia.org/wiki/Dependency_injection
