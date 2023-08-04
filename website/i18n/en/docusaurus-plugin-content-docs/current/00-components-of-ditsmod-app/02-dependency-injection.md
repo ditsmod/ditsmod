@@ -87,7 +87,7 @@ export class SomeService {
 
 As you can see, we no longer create an instance of `Service3` using the `new` operator, instead, DI does this and passes the finished instance to the constructor. Even if the parameters in the `Service3` constructor are changed later, nothing will have to be changed in the places where `Service3` is used.
 
-However, in order for DI to create an instance of the `Service3` class, we need to pass all the necessary classes in the array to the DI registry (this will be discussed later). DI is able to look through the parameters of each of these classes, so it can create and automatically substitute the appropriate class instances.
+However, in order for DI to create an instance of the `Service3` class, we need to pass all the necessary classes in the array to the DI registry (this will be discussed later). DI is able to view the constructor parameters of each of these classes so that it can create and automatically substitute the appropriate class instances.
 
 ## The "magic" of working with metadata
 
