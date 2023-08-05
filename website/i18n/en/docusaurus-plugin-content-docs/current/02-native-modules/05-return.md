@@ -30,7 +30,7 @@ yarn add @ditsmod/return
 
 When importing `ReturnModule`, you also need to [resolve a collision][2] in the `resolvedCollisionsPerReq` array, because `ReturnModule` substitutes the provider for the `HttpBackend` token, which is also substitutes under the hood in `@ditsmod/core`:
 
-```ts
+```ts {6,10,12}
 import { HttpBackend, rootModule } from '@ditsmod/core';
 import { ReturnModule } from '@ditsmod/return';
 

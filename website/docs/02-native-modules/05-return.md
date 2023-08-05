@@ -30,7 +30,7 @@ yarn add @ditsmod/return
 
 При імпорті `ReturnModule` потрібно ще й [вирішувати колізію][2] в масиві `resolvedCollisionsPerReq`, оскільки `ReturnModule` підміняє провайдер для токена `HttpBackend`, який також під капотом підміняється у `@ditsmod/core`:
 
-```ts
+```ts {6,10,12}
 import { HttpBackend, rootModule } from '@ditsmod/core';
 import { ReturnModule } from '@ditsmod/return';
 
