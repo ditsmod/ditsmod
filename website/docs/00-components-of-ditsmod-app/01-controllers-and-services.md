@@ -225,34 +225,14 @@ import { SomeService } from './some.service';
   ],
 })
 export class SomeController {
-  constructor(private res: Res, private someService: SomeService) {}
-
-  @route('GET', 'some-path')
-  method1() {
-    this.res.send(this.someService.sayHello());
+  @route('GET', 'hello')
+  method1(res: Res, someService: SomeService) {
+    res.send(someService.sayHello());
   }
 }
 ```
 
 В останніх двох прикладах сервіс передається у масив `providersPerReq`, але це не єдиний спосіб передачі сервісів. Більш докладну інформацію про правила роботи з DI можна отримати у розділі [Dependency Injection][7].
-
-### Сервіси в контролерах
-
-Якщо ви створили `FirstService` і передали його в метадані модуля чи контролера, тепер ви зможете запитувати його інстанс в контролерах:
-
-```ts {8}
-import { controller, route, Res } from '@ditsmod/core';
-
-import { FirstService } from './first.service';
-
-@controller()
-export class HelloWorldController {
-  @route('GET', 'hello')
-  method1(res: Res, firstService: FirstService) {
-    res.send(firstService.sayHello());
-  }
-}
-```
 
 [1]: /components-of-ditsmod-app/exports-and-imports#імпорт-модуля
 [2]: /components-of-ditsmod-app/exports-and-imports#ModuleWithParams

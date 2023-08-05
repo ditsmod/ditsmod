@@ -225,34 +225,14 @@ import { SomeService } from './some.service';
   ],
 })
 export class SomeController {
-  constructor(private res: Res, private someService: SomeService) {}
-
-  @route('GET', 'some-path')
-  method1() {
-    this.res.send(this.someService.sayHello());
+  @route('GET', 'hello')
+  method1(res: Res, someService: SomeService) {
+    res.send(someService.sayHello());
   }
 }
 ```
 
 In the last two examples, the service is passed to the `providersPerReq` array, but this is not the only way to pass services. For more information about the rules of working with DI, see [Dependency Injection][7].
-
-### Services in controllers
-
-If you have created a `FirstService` and passed it to the metadata of a module or controller, you can now request its instance in controllers:
-
-```ts {8}
-import { controller, route, Res } from '@ditsmod/core';
-
-import { FirstService } from './first.service';
-
-@controller()
-export class HelloWorldController {
-  @route('GET', 'hello')
-  method1(res: Res, firstService: FirstService) {
-    res.send(firstService.sayHello());
-  }
-}
-```
 
 [1]: /components-of-ditsmod-app/exports-and-imports#import-module
 [2]: /components-of-ditsmod-app/exports-and-imports#ModuleWithParams
