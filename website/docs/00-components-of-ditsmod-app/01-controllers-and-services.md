@@ -197,11 +197,48 @@ export class SecondService {
 }
 ```
 
-Як бачите, правила отримання інстансу класу в конструкторі такі ж, як і в контролерах: за допомогою модифікатора доступу `private` оголошуємо властивість класу `firstService` з типом даних `FirstService`. Більш докладну інформацію про правила отримання інстансів класів за допомогою DI можна отримати в розділі [Dependency Injection][7].
+Як бачите, правила отримання інстансу класу в конструкторі такі ж, як і в контролерах: за допомогою модифікатора доступу `private` оголошуємо властивість класу `firstService` з типом даних `FirstService`.
+
+Щоб можна було користуватись новоствореними класами сервісів, їх потрібно передати у метадані **поточного** модуля чи контролера. Передати сервіс у метадані модуля можна наступним чином:
+
+```ts {6}
+import { featureModule } from '@ditsmod/core';
+import { SomeService } from './some.service';
+
+@featureModule({
+  providersPerReq: [
+    SomeService
+  ],
+})
+export class SomeModule {}
+```
+
+Аналогічно сервіс передається у метадані контролера:
+
+```ts {6}
+import { controller, route, Res } from '@ditsmod/core';
+import { SomeService } from './some.service';
+
+@controller({
+  providersPerReq: [
+    SomeService
+  ],
+})
+export class SomeController {
+  constructor(private res: Res, private someService: SomeService) {}
+
+  @route('GET', 'some-path')
+  method1() {
+    this.res.send(this.someService.sayHello());
+  }
+}
+```
+
+В останніх двох прикладах сервіс передається у масив `providersPerReq`, але це не єдиний спосіб передачі сервісів. Більш докладну інформацію про правила роботи з DI можна отримати у розділі [Dependency Injection][7].
 
 ### Сервіси в контролерах
 
-Якщо ви створили `FirstService` і [передали його до DI][8], тепер ви зможете запитувати його інстанс в контролерах:
+Якщо ви створили `FirstService` і передали його в метадані модуля чи контролера, тепер ви зможете запитувати його інстанс в контролерах:
 
 ```ts {8}
 import { controller, route, Res } from '@ditsmod/core';
@@ -224,4 +261,3 @@ export class HelloWorldController {
 [5]: /native-modules/body-parser#використання
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/pre-router.ts
 [7]: /components-of-ditsmod-app/dependency-injection
-[8]: /components-of-ditsmod-app/dependency-injection#передача-провайдерів-в-реєстр-di

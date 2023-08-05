@@ -197,11 +197,48 @@ export class SecondService {
 }
 ```
 
-As you can see, the rules for obtaining a class instance in the constructor are the same as in the controllers: using the `private` access modifier, we declare the `firstService` class property with the `FirstService` data type. More detailed information about the rules for obtaining class instances using DI can be found in [Dependency Injection][7].
+As you can see, the rules for getting a class instance in the constructor are the same as in controllers: using the `private` access modifier, we declare a property of the `firstService` class with the `FirstService` data type.
+
+To be able to use the newly created service classes, they must be passed in the metadata of the **current** module or controller. You can pass the service in the module metadata as follows:
+
+```ts {6}
+import { featureModule } from '@ditsmod/core';
+import { SomeService } from './some.service';
+
+@featureModule({
+  providersPerReq: [
+    SomeService
+  ],
+})
+export class SomeModule {}
+```
+
+Similarly, the service is passed in the controller metadata:
+
+```ts {6}
+import { controller, route, Res } from '@ditsmod/core';
+import { SomeService } from './some.service';
+
+@controller({
+  providersPerReq: [
+    SomeService
+  ],
+})
+export class SomeController {
+  constructor(private res: Res, private someService: SomeService) {}
+
+  @route('GET', 'some-path')
+  method1() {
+    this.res.send(this.someService.sayHello());
+  }
+}
+```
+
+In the last two examples, the service is passed to the `providersPerReq` array, but this is not the only way to pass services. For more information about the rules of working with DI, see [Dependency Injection][7].
 
 ### Services in controllers
 
-If you have created a `FirstService` and [passed it to DI][8], you will now be able to request its instance in controllers:
+If you have created a `FirstService` and passed it to the metadata of a module or controller, you can now request its instance in controllers:
 
 ```ts {8}
 import { controller, route, Res } from '@ditsmod/core';
@@ -224,4 +261,3 @@ export class HelloWorldController {
 [5]: /native-modules/body-parser#usage
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/pre-router.ts
 [7]: /components-of-ditsmod-app/dependency-injection
-[8]: /components-of-ditsmod-app/dependency-injection#passing-of-providers-to-the-di-registry
