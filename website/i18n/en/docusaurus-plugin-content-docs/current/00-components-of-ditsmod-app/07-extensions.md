@@ -142,7 +142,7 @@ export class SomeModule {}
 
 That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `groupToken` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `nextToken` property. The `exported` property indicates whether this extension should be exported from the current module.
 
-If for your extension it is not important for which group of extensions it will work, you can simplify the registration:
+If it doesn't matter which group of extensions your extension will work in front of, you can simplify registration:
 
 ```ts
 import { featureModule } from '@ditsmod/core';
@@ -197,7 +197,7 @@ It is important to remember that running `init()` a particular extension process
 
 In case you need to accumulate the results of a certain extension from all modules, you need to do the following:
 
-```ts {17}
+```ts {17-20}
 import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 

@@ -197,7 +197,7 @@ await this.extensionsManager.init(OTHER_EXTENSIONS, false);
 
 У випадку, коли вам потрібно накопичувати результати роботи певного розширення з усіх модулів, необхідно робити наступне:
 
-```ts {17}
+```ts {17-20}
 import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
