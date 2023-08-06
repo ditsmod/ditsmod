@@ -1,5 +1,12 @@
+<a name="core-2.39.0"></a>
+# [core-2.39.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.39.0) (2023-08-07)
+
+### Features
+
+- Added import `reflect-metadata` to the core.
+
 <a name="core-2.38.1"></a>
-# [core-2.38.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.38.1) (2023-03-05)
+## [core-2.38.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.38.1) (2023-03-05)
 
 ### Bug fixes
 
