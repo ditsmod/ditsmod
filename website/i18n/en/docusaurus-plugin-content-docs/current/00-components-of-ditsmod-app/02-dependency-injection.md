@@ -94,7 +94,7 @@ However, in order for DI to create an instance of the `Service3` class, we need 
 From a JavaScript developer's point of view, the fact that DI can somehow look through the parameters of class constructors and see other classes there can be called "magic". If you look at the repository containing the starter project for Ditsmod applications, you can see that:
 
 1. in the file `tsconfig.json` is specified ["emitDecoratorMetadata": true][12];
-2. the `package.json` file specifies the dependency on the [reflect-metadata][13] library, which is imported only once in the [src/main.ts][15] file;
+2. the `package.json` file specifies the dependency on the [reflect-metadata][13] library;
 3. there are a number of decorators (`rootModule`, `featureModule`, `controller`, `injectable`...).
 
 All of these components provide the "magic" of reading and storing the metadata that you write in your classes using decorators. You may not have a deep understanding of exactly how this "magic" works, but you should at least remember what its components are.
@@ -755,7 +755,6 @@ Remember that when DI cannot find the right provider, there are only three possi
 [12]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/tsconfig.json#L11
 [13]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/package.json#L27
 [14]: https://github.com/tc39/proposal-decorators
-[15]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/src/main.ts#L1
 
 [107]: /components-of-ditsmod-app/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions

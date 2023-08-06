@@ -94,7 +94,7 @@ export class SomeService {
 З точки зору JavaScript-розробника, в тому, що DI якимось чином може проглядати параметри конструкторів класів і бачити там інші класи - це можна назвати "магією". Якщо проглянути репозиторій, що містить стартовий проект для Ditsmod-застосунків, можна побачити що:
 
 1. у файлі `tsconfig.json` вказано ["emitDecoratorMetadata": true][12];
-2. у файлі `package.json` вказано залежність від бібліотеки [reflect-metadata][13], яка імпортується єдиний раз у файлі [src/main.ts][15];
+2. у файлі `package.json` вказано залежність від бібліотеки [reflect-metadata][13];
 3. є цілий ряд декоратораторів (`rootModule`, `featureModule`, `controller`, `injectable`...).
 
 Усі ці складові якраз і забезпечують "магію" зчитування та збереження метаданих, які ви прописуєте у своїх класах за допомогою декораторів. Вам можна глибоко і не розбиратись як саме працює ця "магія", але варто пам'ятати хоча б які саме складові вона має.
@@ -333,8 +333,7 @@ type Provider = Class<any> |
 
 Якщо сильно спростити схему роботи DI, можна сказати що DI приймає масив провайдерів на вході, а на виході видає інжектор, який вміє створювати значення для кожного переданого провайдера. Це має приблизно наступну картину:
 
-```ts {16}
-import 'reflect-metadata';
+```ts {15}
 import { Injector, injectable } from '@ditsmod/core';
 
 class Service1 {}
@@ -755,7 +754,6 @@ export class SomeModule {}
 [12]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/tsconfig.json#L11
 [13]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/package.json#L27
 [14]: https://github.com/tc39/proposal-decorators
-[15]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/src/main.ts#L1
 
 [107]: /components-of-ditsmod-app/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions

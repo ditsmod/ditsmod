@@ -62,7 +62,6 @@ yarn start-prod
 Давайте розглянемо файл `src/main.ts`:
 
 ```ts
-import 'reflect-metadata';
 import { Application } from '@ditsmod/core';
 
 import { AppModule } from './app/app.module';
@@ -77,16 +76,6 @@ new Application().bootstrap(AppModule).catch((err) => {
 ```bash
 node dist/main.js
 ```
-
-Варто звернути увагу на `import 'reflect-metadata'` у першому рядку файла. Цей модуль необхідний для роботи Dependecy Injection, але його достатньо указувати єдиний раз у вхідному файлі для Node.js.
-
-Такий імпорт потрібно робити і для тестів, оскільки при тестуванні вхідним файлом вже буде файл тесту, а не `dist/main.js`. Наприклад, якщо ви будете використовувати [jest][10] у якості фреймворку для тестів, а файл `test-file.js` міститиме скомпільований тест, то щоб запустити його ось так:
-
-```bash
-jest test-file.js
-```
-
-у даному файлі повинен бути імпорт `reflect-metadata`.
 
 Проглядаючи далі файл `src/main.ts`, ви можете бачити, що створюється інстанс класу `Application`, а у якості аргументу для методу `bootstrap()` передається `AppModule`. Тут `AppModule` є кореневим модулем, до якого вже підв'язуються інші модулі застосунку.
 
