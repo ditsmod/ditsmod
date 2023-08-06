@@ -36,8 +36,7 @@ export class AuthGuard implements CanActivate {
 Якщо `canActivate()` повертає:
 
 - `true` чи `Promise<true>`, значить Ditsmod буде обробляти відповідний маршрут із цим ґардом;
-- `false` чи `Promise<false>`, значить відповідь на запит міститиме 401 статус і обробки маршруту
-з боку контролера не буде;
+- `false` чи `Promise<false>`, значить відповідь на запит міститиме 401 статус і обробки маршруту з боку контролера не буде;
 - `number` чи `Promise<number>` Ditsmod інтерпретує як номер статусу (403, 401 і т.п.), який треба повернути у відповіді на HTTP-запит.
 
 ## Використання ґардів
@@ -113,7 +112,7 @@ import { PermissionsGuard } from './permissions-guard';
 export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
 ```
 
-В даному прикладі у якості аргументу передається `PermissionsGuard`, який приймає параметри з типом `Permission`. 
+В даному прикладі у якості аргументу передається `PermissionsGuard`, який приймає параметри з типом `Permission` у своєму методі `canActivate()`. 
 
 Тепер `requirePermissions()` можна використовувати для створення роутів:
 

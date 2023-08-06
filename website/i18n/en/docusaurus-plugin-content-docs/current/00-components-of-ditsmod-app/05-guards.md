@@ -36,8 +36,7 @@ It is recommended that guard files end with `*.guard.ts` and their class names e
 If `canActivate()` returns:
 
 - `true` or `Promise<true>`, means Ditsmod will process the corresponding route with this guard;
-- `false` or `Promise<false>`, so the response to the request will contain a 401 status and route processing
-there will be no from the controller;
+- `false` or `Promise<false>`, so the response to the request will contain a 401 status and the controller will not process the route;
 - `number` or `Promise<number>` is interpreted by Ditsmod as a status number (403, 401, etc.) that should be returned in response to an HTTP request.
 
 ## Use of guards
@@ -113,7 +112,7 @@ import { PermissionsGuard } from './permissions-guard';
 export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
 ```
 
-In this example, `PermissionsGuard` is passed as an argument, which accepts parameters of type `Permission`.
+In this example, `PermissionsGuard` is passed as an argument, which accepts parameters of type `Permission` in its `canActivate()` method.
 
 `requirePermissions()` can now be used to create routes:
 
