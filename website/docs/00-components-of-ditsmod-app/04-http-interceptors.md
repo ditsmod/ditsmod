@@ -12,7 +12,9 @@ sidebar_position: 4
 
 - парсинг тіла запиту чи заголовків;
 - валідація запиту;
-- збирання та логування різних метрик роботи застосунку.
+- збирання та логування різних метрик роботи застосунку;
+- кешування;
+- і т.д.
 
 Інтерсептори можна централізовано підключати або відключати, не змінюючи при цьому код методів контролерів, до яких вони прив'язуються.
 
@@ -74,13 +76,17 @@ import { MyHttpInterceptor } from './my-http-interceptor';
 export class SomeModule {}
 ```
 
+В даному разі інтерсептори передаються в метадані модуля. Так само вони можуть передаватись у метадані контролера. Тобто інтерсептори можуть працювати або для усіх контролерів у модулі без виключень, або тільки для конкретного контролера. Якщо інтерсептори потрібно додати лише до окремих роутів у межах контролерів, це ви можете зробити за допомогою [розширень][108] (таким чином додаються [інтерсептори для парсингу тіла запиту][9]).
+
 [1]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/types/http-interceptor.ts#L20-L22
 [2]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/default-http-frontend.ts
 [3]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/default-http-backend.ts
 [5]: https://expressjs.com/en/guide/writing-middleware.html
 [7]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/pre-router.ts
 [8]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/types/route-data.ts
+[9]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/body-parser/src/body-parser.extension.ts#L36
 
 [104]: /native-modules/return
 [106]: /components-of-ditsmod-app/dependency-injection
 [107]: /components-of-ditsmod-app/dependency-injection#мульти-провайдери
+[108]: /components-of-ditsmod-app/extensions

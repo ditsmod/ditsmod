@@ -12,7 +12,9 @@ Typically, interceptors are used to automate standard processing, such as:
 
 - parsing the body of the request or headers;
 - validation of the request;
-- collecting and logging various application metrics.
+- collecting and logging various application metrics;
+- caching;
+- etc.
 
 Interceptors can be centrally connected or disconnected without changing the method code of the controllers to which they are attached.
 
@@ -24,7 +26,7 @@ HTTP request processing has the following workflow:
 2. `PreRouter` uses the router to search for the request handler according to the URI.
 3. If the request handler is not found, `PreRouter` issues a 404 error.
 4. If a request handler is found, Ditsmod creates a provider instance with the [HttpFrontend][2] token at the request level, places it first in the queue of interceptors, and automatically calls it. By default, this interceptor is responsible for calling guards and setting values for providers with `QUERY_PARAMS` and `PATH_PARAMS` tokens.
-5. The second and subsequent interceptors may not start, it depends on whether the previous interceptor in the queue will start them.
+5. The second and subsequent interceptors may not start, depending on whether the previous interceptor in the queue will start them.
 6. If all interceptors have worked, Ditsmod starts [HttpBackend][3], which is instantiated at the request level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
 So, the approximate order of processing the request is as follows:
@@ -74,13 +76,17 @@ import { MyHttpInterceptor } from './my-http-interceptor';
 export class SomeModule {}
 ```
 
+In this case, the interceptors are passed in the module's metadata. They can also be passed in the controller metadata. This means that interceptors can either work for all controllers in the module without exception, or only for a specific controller. If you only need to add interceptors to individual routes within controllers, you can do so with [extensions][108] (this is how [interceptors for parsing the request body][9] are added).
+
 [1]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/types/http-interceptor.ts#L20-L22
 [2]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/default-http-frontend.ts
 [3]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/default-http-backend.ts
 [5]: https://expressjs.com/en/guide/writing-middleware.html
 [7]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/pre-router.ts
 [8]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/types/route-data.ts
+[9]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/body-parser/src/body-parser.extension.ts#L36
 
 [104]: /native-modules/return
 [106]: /components-of-ditsmod-app/dependency-injection
 [107]: /components-of-ditsmod-app/dependency-injection#multi-providers
+[108]: /components-of-ditsmod-app/extensions
