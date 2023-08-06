@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import request from 'supertest';
 import { Application } from '@ditsmod/core';
 

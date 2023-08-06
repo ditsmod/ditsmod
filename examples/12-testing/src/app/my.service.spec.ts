@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Injector } from '@ditsmod/core';
 
 import { MyService } from './my.service';

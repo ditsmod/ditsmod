@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Injector, Res } from '@ditsmod/core';
 
 import { HelloWorldController } from './hello-world.controller';
