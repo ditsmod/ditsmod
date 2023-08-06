@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 export * from './decorators';
 export { forwardRef, resolveForwardRef, ForwardRefFn } from './forward-ref';
 export { Injector } from './injector';

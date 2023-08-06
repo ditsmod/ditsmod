@@ -89,8 +89,6 @@ export class Injector {
    * ### Example
    *
   ```ts
-import 'reflect-metadata';
-
 import { injectable, Injector } from '@ditsmod/core';
 
 @injectable()
