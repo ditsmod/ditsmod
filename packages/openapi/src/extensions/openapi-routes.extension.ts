@@ -1,5 +1,6 @@
-import { FactoryProvider, injectable } from '@ditsmod/core';
 import {
+  FactoryProvider,
+  injectable,
   ControllerMetadata2,
   Extension,
   HttpMethod,
@@ -26,7 +27,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
   constructor(
     protected override rootMetadata: RootMetadata,
     protected override metadataPerMod1: MetadataPerMod1,
-    protected log: OpenapiLogMediator
+    protected log: OpenapiLogMediator,
   ) {
     super(rootMetadata, metadataPerMod1);
   }
@@ -65,7 +66,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             path,
             controller.name,
             prefixParams,
-            parameters
+            parameters,
           );
           clonedOperationObject.parameters = [...paramsRefs, ...paramsInPath, ...paramsNonPath];
           clonedOperationObject.tags = [...(clonedOperationObject.tags || []), ...(prefixTags || [])];
@@ -77,9 +78,9 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             operationObject: clonedOperationObject,
             decoratorMetadata,
             resolvedGuards: RouteMeta.resolveGuards(guards),
-            resolvedFactory: RouteMeta.getResolvedFactory(controller, methodName)
+            resolvedFactory: RouteMeta.getResolvedFactory(controller, methodName),
           };
-          
+
           providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
 
           aControllersMetadata2.push({
@@ -87,7 +88,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             providersPerReq,
             path,
             httpMethod,
-            routeMeta
+            routeMeta,
           });
         }
       }
@@ -101,7 +102,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
     path: string,
     controllerName: string,
     prefixParams?: (XParameterObject<any> | ReferenceObject)[],
-    params?: (XParameterObject<any> | ReferenceObject)[]
+    params?: (XParameterObject<any> | ReferenceObject)[],
   ) {
     params = [...(prefixParams || []), ...(params || [])];
     const referenceObjects: ReferenceObject[] = [];
@@ -134,7 +135,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
     httpMethod: HttpMethod,
     path: string,
     paramsNonPath: XParameterObject[],
-    param: XParameterObject
+    param: XParameterObject,
   ) {
     const boundToLastParam: boolean = param[BOUND_TO_PATH_PARAM];
     const boundToMethod = param[BOUND_TO_HTTP_METHOD];
