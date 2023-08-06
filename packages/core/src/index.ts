@@ -1,4 +1,5 @@
 export * from './di';
+export * from '@ts-stack/chain-error';
 
 export { AppInitializer } from './app-initializer';
 export { Application } from './application';
