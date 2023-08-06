@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { CanActivate, reflector } from '@ditsmod/core';
 import { oasGuard } from '../decorators/oas-guard';
 import { isOasGuard } from './type-guards';

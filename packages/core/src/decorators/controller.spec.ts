@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { reflector } from '../di';
 
 import { controller } from './controller';

@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { forwardRef } from '../di';
 
 import { rootModule } from '../decorators/root-module';

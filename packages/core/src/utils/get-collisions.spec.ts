@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 
 import { ServiceProvider } from '../types/mix';
 import { getCollisions } from './get-collisions';

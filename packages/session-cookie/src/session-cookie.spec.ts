@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { NodeRequest, NodeResponse } from '@ts-stack/cookies';
 import { Injector, NODE_REQ, NODE_RES } from '@ditsmod/core';
 

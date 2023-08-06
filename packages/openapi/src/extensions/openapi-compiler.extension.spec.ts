@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { CanActivate, PerAppService, ResolvedGuard, Status } from '@ditsmod/core';
 import {
   ComponentsObject,

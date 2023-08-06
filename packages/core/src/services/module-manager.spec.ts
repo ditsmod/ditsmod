@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import * as http from 'http';
 import { injectable, forwardRef, InjectionToken } from '../di';
 

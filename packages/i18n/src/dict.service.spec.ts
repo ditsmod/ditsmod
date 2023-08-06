@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { AnyObj, Injector, QUERY_PARAMS } from '@ditsmod/core';
 
 import { I18nOptions } from './types/mix';

@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { ParameterObject, ReferenceObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { OpenapiRoutesExtension } from './openapi-routes.extension';

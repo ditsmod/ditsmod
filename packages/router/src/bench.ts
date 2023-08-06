@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import * as path from 'path';
 import { Injector } from '@ditsmod/core';
 

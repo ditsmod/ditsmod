@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { FactoryProvider, injectable, Provider, Injector } from './di';
 
 import { controller, ControllerMetadata } from './decorators/controller';

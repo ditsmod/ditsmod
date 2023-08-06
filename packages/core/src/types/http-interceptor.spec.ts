@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Injector } from '../di';
 
 import { HttpBackend, HttpHandler, HttpInterceptor, HttpFrontend } from './http-interceptor';

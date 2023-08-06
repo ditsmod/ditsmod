@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { injectable } from './di';
 
 import { ImportsResolver } from './imports-resolver';

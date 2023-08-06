@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Injector } from '@ditsmod/core';
 
 import { DefaultRouter } from './router';

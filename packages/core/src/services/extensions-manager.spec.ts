@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { injectable, InjectionToken, Injector } from '../di';
 
 import { Extension } from '../types/mix';

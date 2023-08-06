@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 
 import { getTableMetadata } from '../../utils';
 import { table } from '../../decorators/table';

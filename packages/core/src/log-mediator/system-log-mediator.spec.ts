@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 
 import { Provider, Injector } from '../di';
 import { LogLevel } from '../types/logger';

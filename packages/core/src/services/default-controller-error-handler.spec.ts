@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Injector } from '../di';
 
 import { ErrorOpts } from '../custom-error/error-opts';

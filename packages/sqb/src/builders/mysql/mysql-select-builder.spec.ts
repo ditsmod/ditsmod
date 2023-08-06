@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 
 import { getTableMetadata } from '../../utils';
 import { MySqlSelectBuilder } from './mysql-select-builder';

@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 
 import { Logger, LoggerConfig } from '../types/logger';
 import { ServiceProvider } from '../types/mix';

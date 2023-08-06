@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { injectable, InjectionToken } from '../di';
 
 import { featureModule } from '../decorators/module';

@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { MediaTypeObject } from '@ts-stack/openapi-spec';
 
 import { property } from '../decorators/property';

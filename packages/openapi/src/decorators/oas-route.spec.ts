@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { PropMeta, reflector } from '@ditsmod/core';
 import { controller, CanActivate } from '@ditsmod/core';
 

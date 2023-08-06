@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { forwardRef, injectable } from '../di';
 
 import { featureModule } from '../decorators/module';

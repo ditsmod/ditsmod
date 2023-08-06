@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 
 import { CorsExtension } from './cors.extension';
 

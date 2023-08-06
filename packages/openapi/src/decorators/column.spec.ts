@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { PropMeta, reflector } from '@ditsmod/core';
 
 import { property, PropertyDecoratorMetadata } from './property';

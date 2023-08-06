@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { SchemaObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { Parameters } from './parameters';

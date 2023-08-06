@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { reflector, PropMeta } from '../di';
 
 import { route } from './route';

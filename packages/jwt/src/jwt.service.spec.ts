@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import * as jwt from 'jsonwebtoken';
 import { SignOptions, SignPayload } from 'jsonwebtoken';
 

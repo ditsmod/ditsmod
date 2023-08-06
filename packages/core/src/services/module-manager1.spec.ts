@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 
 import { rootModule } from '../decorators/root-module';
 import { ModuleManager } from './module-manager';

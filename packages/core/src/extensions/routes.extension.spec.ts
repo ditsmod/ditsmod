@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { injectable, Injector } from '../di';
 
 import { controller, ControllerMetadata } from '../decorators/controller';

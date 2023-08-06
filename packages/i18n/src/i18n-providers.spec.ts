@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Providers } from '@ditsmod/core';
 
 import { I18nProviders } from './i18n-providers';

@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 
 import { I18nExtension } from './i18n.extension';
 
