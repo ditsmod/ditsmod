@@ -90,6 +90,34 @@ describe('Service2', () => {
 });
 ```
 
+## HTTP server testing
+
+One of the most popular frameworks for HTTP server testing is [supertest][102].
+
+To start a web server to test your application, pass `false` as the second argument to `Application#bootstrap()`:
+
+```ts {8}
+import request from 'supertest';
+import { Application } from '@ditsmod/core';
+
+import { AppModule } from '../src/app/app.module';
+
+describe('Integration testing', () => {
+  it('Hello world works', async () => {
+    const { server } = await new Application().bootstrap(AppModule, false);
+
+    await request(server)
+      .get('/')
+      .expect(200)
+      .expect('Hello World!');
+
+    server.close();
+  });
+});
+```
+
+As you can see, a web server is created in the highlighted line, which has not yet called the `server.listen()` method. Therefore, supertest can automatically do this by substituting a random port number, which is crucial when asynchronously calling multiple tests at once. Here, `AppModule` is the root module of the application.
+
 
 
 
