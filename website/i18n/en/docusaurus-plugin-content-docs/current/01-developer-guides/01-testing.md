@@ -90,6 +90,8 @@ describe('Service2', () => {
 });
 ```
 
+We recommend that you place your unit test files close to the files they test. That is, if the file is called `some.service.ts`, it is better to place the test file next to a name that ends with `.spec.ts` or `.test.ts`, for example `some.service.spec.ts`. This makes working with tests much easier, and also allows you to immediately see which files have not yet been tested.
+
 ## HTTP server testing
 
 One of the most popular frameworks for HTTP server testing is [supertest][102].
@@ -102,7 +104,7 @@ import { Application } from '@ditsmod/core';
 
 import { AppModule } from '../src/app/app.module';
 
-describe('Integration testing', () => {
+describe('HTTP server testing', () => {
   it('Hello world works', async () => {
     const { server } = await new Application().bootstrap(AppModule, false);
 
@@ -118,7 +120,7 @@ describe('Integration testing', () => {
 
 As you can see, a web server is created in the highlighted line, which has not yet called the `server.listen()` method. Therefore, supertest can automatically do this by substituting a random port number, which is crucial when asynchronously calling multiple tests at once. Here, `AppModule` is the root module of the application.
 
-
+We recommend keeping such tests in a separate directory called `tests`, at the same level as the `src` root directory.
 
 
 
