@@ -131,13 +131,14 @@ module.exports = {
         //     from: ['/docs/oldDocFrom2019', '/docs/legacyDocFrom2016'],
         //   },
         // ],
-        createRedirects(existingPath) {
+        createRedirects(currentPath) {
           const arr = [
-            ...getRedirect(existingPath, '/components-of-ditsmod-app/extensions', ['/extensions/create-extension','/extensions/about-extensions']),
-            ...getRedirect(existingPath, '/components-of-ditsmod-app', ['/core']),
-            ...getRedirect(existingPath, '/native-modules/', ['/published-modules/']),
-            ...getRedirect(existingPath, '/native-modules/openapi', ['/extensions/openapi']),
-            ...getRedirect(existingPath, '/components-of-ditsmod-app/log-mediator', ['/examples/override-core-log-messages']),
+            ...getRedirect(currentPath, '/developer-guides/providers-collisions', ['/components-of-ditsmod-app/providers-collisions']),
+            ...getRedirect(currentPath, '/components-of-ditsmod-app/extensions', ['/extensions/create-extension','/extensions/about-extensions']),
+            ...getRedirect(currentPath, '/components-of-ditsmod-app', ['/core']),
+            ...getRedirect(currentPath, '/native-modules/', ['/published-modules/']),
+            ...getRedirect(currentPath, '/native-modules/openapi', ['/extensions/openapi']),
+            ...getRedirect(currentPath, '/components-of-ditsmod-app/log-mediator', ['/examples/override-core-log-messages']),
           ];
           return arr.length ? arr : undefined; // Return a falsy value: no redirect created
         },
@@ -146,11 +147,11 @@ module.exports = {
   ],
 };
 
-function getRedirect(existingPath, newPath, oldPaths) {
+function getRedirect(currentPath, newPath, oldPaths) {
   const arr = [];
-  if (existingPath.includes(newPath)) {
+  if (currentPath.includes(newPath)) {
     oldPaths.forEach((oldPath) => {
-      arr.push(existingPath.replace(newPath, oldPath));
+      arr.push(currentPath.replace(newPath, oldPath));
     });
   }
   return arr;

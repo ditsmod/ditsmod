@@ -73,4 +73,4 @@ export class UsersController {
 
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/18-return
-[2]: /00-components-of-ditsmod-app/06-providers-collisions.md
+[2]: /developer-guides/providers-collisions
