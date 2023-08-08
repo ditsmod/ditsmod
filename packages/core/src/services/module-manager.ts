@@ -61,7 +61,7 @@ export class ModuleManager {
    */
   scanRootModule(appModule: ModuleType) {
     if (!getModuleMetadata(appModule, true)) {
-      throw new Error(`Module scaning failed: "${appModule.name}" does not have the "@RootModule()" decorator`);
+      throw new Error(`Module scaning failed: "${appModule.name}" does not have the "@rootModule()" decorator`);
     }
 
     const meta = this.scanRawModule(appModule);

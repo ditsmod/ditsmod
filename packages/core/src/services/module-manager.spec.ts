@@ -198,11 +198,11 @@ describe('ModuleManager', () => {
     expect(mock.getMetadata('root')).toEqual(expectedMeta);
   });
 
-  it('root module without @RootModule decorator', () => {
+  it('root module without @rootModule decorator', () => {
     @featureModule()
     class Module1 {}
 
-    expect(() => mock.scanRootModule(Module1)).toThrow('"Module1" does not have the "@RootModule()" decorator');
+    expect(() => mock.scanRootModule(Module1)).toThrow('"Module1" does not have the "@rootModule()" decorator');
   });
 
   it('root module imported module without @Module decorator', () => {
