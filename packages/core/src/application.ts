@@ -25,7 +25,8 @@ export class Application {
     return new Promise<{ server: Server }>(async (resolve, reject) => {
       try {
         this.initRootModule(appModule);
-        const appInitializer = this.scanRootModuleAndGetAppInitializer(appModule);
+        const moduleManager = this.scanRootModule(appModule);
+        const appInitializer = this.getAppInitializer(moduleManager);
         await this.bootstrapApplication(appInitializer);
         this.flushLogs();
         const server = this.createServer(appInitializer.requestListener);
@@ -72,9 +73,13 @@ export class Application {
     }
   }
 
-  protected scanRootModuleAndGetAppInitializer(appModule: ModuleType) {
+  protected scanRootModule(appModule: ModuleType) {
     const moduleManager = new ModuleManager(this.systemLogMediator);
     moduleManager.scanRootModule(appModule);
+    return moduleManager;
+  }
+
+  protected getAppInitializer(moduleManager: ModuleManager) {
     return new AppInitializer(this.rootMeta, moduleManager, this.systemLogMediator);
   }
 

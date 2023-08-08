@@ -9,6 +9,7 @@ import { RootMetadata } from './models/root-metadata';
 import { ModuleType, ModuleWithParams } from './types/mix';
 import { Router } from './types/router';
 import { SystemLogMediator } from './log-mediator/system-log-mediator';
+import { ModuleManager } from './services/module-manager';
 
 describe('Application', () => {
   class ApplicationMock extends Application {
@@ -23,8 +24,12 @@ describe('Application', () => {
       return super.checkSecureServerOption(rootModuleName);
     }
 
-    override scanRootModuleAndGetAppInitializer(appModule: ModuleType) {
-      return super.scanRootModuleAndGetAppInitializer(appModule);
+    override scanRootModule(appModule: ModuleType) {
+      return super.scanRootModule(appModule);
+    }
+
+    override getAppInitializer(moduleManager: ModuleManager) {
+      return new AppInitializer(this.rootMeta, moduleManager, this.systemLogMediator);
     }
 
     override bootstrapApplication(appInitializer: AppInitializer) {
@@ -94,12 +99,12 @@ describe('Application', () => {
     });
   });
 
-  describe('scanRootModuleAndGetAppInitializer()', () => {
+  describe('scanRootModule()', () => {
     @rootModule({})
     class AppModule {}
 
-    it('should return instance of AppInitializer', () => {
-      expect(mock.scanRootModuleAndGetAppInitializer(AppModule)).toBeInstanceOf(AppInitializer);
+    it('should return instance of ModuleManager', () => {
+      expect(mock.scanRootModule(AppModule)).toBeInstanceOf(ModuleManager);
     });
   });
 
@@ -110,7 +115,8 @@ describe('Application', () => {
     class AppModule {}
 
     it('should replace logMediator during call bootstrapApplication()', () => {
-      const appInitializer = mock.scanRootModuleAndGetAppInitializer(AppModule);
+      const moduleManager = mock.scanRootModule(AppModule);
+      const appInitializer = mock.getAppInitializer(moduleManager);
       const { systemLogMediator } = mock;
       mock.bootstrapApplication(appInitializer);
       expect(mock.systemLogMediator !== systemLogMediator).toBe(true);
