@@ -7,6 +7,7 @@
       "@ditsmod/core": ["../../packages/core/src"],
       "@ditsmod/router": ["../../packages/router/src"],
       "@ditsmod/openapi": ["../../packages/openapi/src"],
+      "@ditsmod/testing": ["../../packages/testing/src"],
     }
   },
   "include": ["src", "test"]
