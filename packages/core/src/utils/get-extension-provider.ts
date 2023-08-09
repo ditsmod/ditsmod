@@ -1,13 +1,13 @@
 import { InjectionToken } from '../di';
 
-import { Extension, ExtensionProvider, ExtensionType } from '../types/mix';
+import { AnyObj, Extension, ExtensionProvider, ExtensionType } from '../types/mix';
 
 export class ExtensionObj {
   exports: any[];
   providers: ExtensionProvider[];
 }
 
-export class ExtensionOptions {
+export interface ExtensionOptions1 {
   extension: ExtensionType;
   groupToken: InjectionToken<Extension<any>[]>;
   /**
@@ -18,11 +18,29 @@ export class ExtensionOptions {
    * Indicates whether this extension needs to be exported.
    */
   exported?: boolean;
+  overrideExtension?: never;
+}
+
+export interface ExtensionOptions2 {
+  extension: ExtensionType;
+  overrideExtension: ExtensionType;
+}
+
+export type ExtensionOptions = ExtensionOptions1 | ExtensionOptions2;
+
+function isExtensionOptions(extensionOptions: AnyObj): extensionOptions is ExtensionOptions2 {
+  return (extensionOptions as ExtensionOptions2).overrideExtension !== undefined;
 }
 
 export function getExtensionProvider(extensionOptions: ExtensionOptions): ExtensionObj {
-  const { nextToken, exported, extension, groupToken } = extensionOptions;
-  if (nextToken) {
+  if (isExtensionOptions(extensionOptions)) {
+    const { extension, overrideExtension } = extensionOptions;
+    return {
+      exports: [],
+      providers: [{ token: overrideExtension, useClass: extension }],
+    };
+  } else if (extensionOptions.nextToken) {
+    const { nextToken, exported, extension, groupToken } = extensionOptions;
     const exports = exported ? [extension, groupToken, `BEFORE ${nextToken}`] : [];
     return {
       exports,
@@ -33,7 +51,11 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
       ],
     };
   } else {
-    const exports = exported ? [groupToken] : [];
-    return { exports, providers: [{ token: groupToken, useClass: extension, multi: true }] };
+    const { exported, extension, groupToken } = extensionOptions;
+    const exports = exported ? [extension, groupToken] : [];
+    return {
+      exports,
+      providers: [extension, { token: groupToken, useToken: extension, multi: true }],
+    };
   }
 }

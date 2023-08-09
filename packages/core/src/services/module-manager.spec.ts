@@ -775,7 +775,7 @@ describe('ModuleManager', () => {
     }
 
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
-    const extensionsProviders: ExtensionProvider[] = [{ token: GROUP_EXTENSIONS, useClass: Extension1, multi: true }];
+    const extensionsProviders: ExtensionProvider[] = [Extension1, { token: GROUP_EXTENSIONS, useToken: Extension1, multi: true }];
 
     @featureModule({
       extensions: [{ extension: Extension1 as any, groupToken: GROUP_EXTENSIONS, exported: true }],
@@ -814,7 +814,7 @@ describe('ModuleManager', () => {
     }
 
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
-    const extensionsProviders: ExtensionProvider[] = [{ token: GROUP_EXTENSIONS, useClass: Extension1, multi: true }];
+    const extensionsProviders: ExtensionProvider[] = [Extension1, { token: GROUP_EXTENSIONS, useToken: Extension1, multi: true }];
 
     @featureModule({
       extensions: [{ extension: Extension1 as any, groupToken: GROUP_EXTENSIONS, exported: true }],

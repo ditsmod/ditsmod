@@ -7,6 +7,7 @@ import {
   TypeProvider,
   ValueProvider,
   ResolvedProvider,
+  NormalizedProvider,
 } from '../di';
 import { MetadataPerMod1 } from './metadata-per-mod';
 import { ProvidersMetadata } from '../models/providers-metadata';
@@ -20,9 +21,7 @@ export interface Extension<T> {
   init(isLastExtensionCall: boolean): Promise<T>;
 }
 
-export type ExtensionProvider =
-  | TypeProvider
-  | ((ClassProvider | TokenProvider | FactoryProvider | ValueProvider) & { multi: true });
+export type ExtensionProvider = ServiceProvider;
 
 export interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
   extends Partial<ProvidersMetadata> {
