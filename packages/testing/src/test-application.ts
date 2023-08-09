@@ -18,9 +18,10 @@ export class TestApplication extends Application {
   
   overrideProviders(providers: Provider[]) {
     this.testModuleManager.setProvidersToOverride(providers);
+    return this;
   }
 
-  bootstrapTestApplication(listen: boolean = true) {
+  bootstrapTestApplication(listen: boolean = false) {
     return new Promise<{ server: Server }>(async (resolve, reject) => {
       try {
         const appInitializer = this.getAppInitializer(this.testModuleManager);

@@ -29,7 +29,6 @@ export class TestingExtension extends PreRouterExtension {
   }
 
   override async init(isLastExtensionCall: boolean) {
-    console.log('init TestingExtension');
     if (this.inited) {
       return;
     }

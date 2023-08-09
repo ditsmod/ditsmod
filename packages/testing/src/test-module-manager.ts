@@ -14,8 +14,13 @@ type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 export class TestModuleManager extends ModuleManager {
   protected providersToOverride: Provider[] = [];
 
-  setProvidersToOverride(providers: Provider[]) {}
-  getProvidersToOverride() {}
+  setProvidersToOverride(providers: Provider[]) {
+    this.providersToOverride = providers;
+  }
+
+  getProvidersToOverride() {
+    return this.providersToOverride;
+  }
 
   protected override normalizeMetadata(mod: AnyModule): NormalizedModuleMetadata {
     const meta = super.normalizeMetadata(mod);
