@@ -21,6 +21,7 @@ export { featureModule } from './decorators/module';
 export { rootModule } from './decorators/root-module';
 export { route, RouteMetadata } from './decorators/route';
 export { RoutesExtension } from './extensions/routes.extension';
+export { PreRouterExtension } from './extensions/pre-router.extension';
 export { ExtensionsMetaPerApp } from './models/extensions-meta-per-app';
 export { ModuleExtract } from './models/module-extract';
 export { NormalizedModuleMetadata } from './models/normalized-module-metadata';
@@ -65,7 +66,7 @@ export {
 export { ModuleMetadata, AppendsWithParams } from './types/module-metadata';
 export { RouteMeta } from './types/route-data';
 export { PathParam, RouteHandler, Router, RouterReturns } from './types/router';
-export { NodeRequest, NodeResponse, RequestListener } from './types/server-options';
+export { NodeRequest, NodeResponse, RequestListener, Server } from './types/server-options';
 export { createHelperForGuardWithParams } from './utils/create-helper-for-guards-with-params';
 export { deepFreeze } from './utils/deep-freeze';
 export { getDependencies } from './utils/get-dependecies';
