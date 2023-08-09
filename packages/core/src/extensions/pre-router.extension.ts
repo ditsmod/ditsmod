@@ -17,8 +17,8 @@ import { DepsChecker } from '../di/deps-checker';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
-  #inited: boolean;
-  #isLastExtensionCall: boolean;
+  protected inited: boolean;
+  protected isLastExtensionCall: boolean;
 
   constructor(
     protected perAppService: PerAppService,
@@ -29,19 +29,19 @@ export class PreRouterExtension implements Extension<void> {
   ) {}
 
   async init(isLastExtensionCall: boolean) {
-    if (this.#inited) {
+    if (this.inited) {
       return;
     }
 
-    this.#isLastExtensionCall = isLastExtensionCall;
+    this.isLastExtensionCall = isLastExtensionCall;
     const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS, true, PreRouterExtension);
     if (aMetadataPerMod2 === false) {
-      this.#inited = true;
+      this.inited = true;
       return;
     }
     const preparedRouteMeta = this.prepareRoutesMeta(aMetadataPerMod2);
     this.setRoutes(preparedRouteMeta);
-    this.#inited = true;
+    this.inited = true;
   }
 
   protected prepareRoutesMeta(aMetadataPerMod2: MetadataPerMod2[]) {
@@ -122,7 +122,7 @@ export class PreRouterExtension implements Extension<void> {
 
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {
     this.extensionsContext.appHasRoutes = this.extensionsContext.appHasRoutes || !!preparedRouteMeta.length;
-    if (this.#isLastExtensionCall && !this.extensionsContext.appHasRoutes) {
+    if (this.isLastExtensionCall && !this.extensionsContext.appHasRoutes) {
       this.log.noRoutes(this);
       return;
     }
