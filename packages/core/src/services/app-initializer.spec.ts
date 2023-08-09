@@ -632,7 +632,7 @@ describe('AppInitializer', () => {
     const jestFn = jest.fn((extensionName: string) => extensionName);
 
     beforeEach(() => {
-      jestFn.mockRestore();
+      jest.restoreAllMocks();
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(systemLogMediator);
       const rootMeta = new RootMetadata();
@@ -667,7 +667,7 @@ describe('AppInitializer', () => {
 
       expect(() => moduleManager.scanRootModule(AppModule)).not.toThrow();
       await expect(mock.init()).resolves.not.toThrow();
-      expect(jestFn.mock.calls).toEqual([['Extension1']]);
+      expect(jestFn).toBeCalledWith('Extension1');
     });
   });
 });
