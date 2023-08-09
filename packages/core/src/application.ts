@@ -7,7 +7,7 @@ import { RootMetadata } from './models/root-metadata';
 import { LogMediator } from './log-mediator/log-mediator';
 import { SystemLogMediator } from './log-mediator/system-log-mediator';
 import { ModuleManager } from './services/module-manager';
-import { ModuleType, ModuleWithParams } from './types/mix';
+import { AnyFn, ModuleType, ModuleWithParams } from './types/mix';
 import { Http2SecureServerOptions, RequestListener, Server } from './types/server-options';
 import { getModuleMetadata } from './utils/get-module-metadata';
 import { pickProperties } from './utils/pick-properties';
@@ -28,17 +28,7 @@ export class Application {
         const moduleManager = this.scanRootModule(appModule);
         const appInitializer = this.getAppInitializer(moduleManager);
         await this.bootstrapApplication(appInitializer);
-        this.flushLogs();
-        const server = this.createServer(appInitializer.requestListener);
-        if (listen) {
-          server.listen(this.rootMeta.listenOptions, () => {
-            const { listenOptions } = this.rootMeta;
-            this.systemLogMediator.serverListen(this, listenOptions.host!, listenOptions.port!);
-            resolve({ server });
-          });
-        } else {
-          resolve({ server });
-        }
+        this.finishBootstrap(appInitializer, resolve, listen);
       } catch (err: any) {
         this.systemLogMediator.internalServerError(this, err, true);
         this.flushLogs();
@@ -46,6 +36,20 @@ export class Application {
         reject(err);
       }
     });
+  }
+
+  protected finishBootstrap(appInitializer: AppInitializer, resolve: AnyFn, listen: boolean) {
+    this.flushLogs();
+    const server = this.createServer(appInitializer.requestListener);
+    if (listen) {
+      server.listen(this.rootMeta.listenOptions, () => {
+        const { listenOptions } = this.rootMeta;
+        this.systemLogMediator.serverListen(this, listenOptions.host!, listenOptions.port!);
+        resolve({ server });
+      });
+    } else {
+      resolve({ server });
+    }
   }
 
   protected initRootModule(appModule: ModuleType) {
