@@ -2,7 +2,7 @@ import {
   ExtensionsContext,
   ExtensionsManager,
   MetadataPerMod2,
-  ModuleType,
+  normalizeProviders,
   PerAppService,
   PreRouterExtension,
   Provider,
@@ -13,7 +13,15 @@ import {
   inject,
   injectable,
 } from '@ditsmod/core';
+
 import { TestModuleManager } from './test-module-manager';
+
+type Scope = 'Mod' | 'Rou' | 'Req';
+interface Meta {
+  providersPerMod?: Provider[];
+  providersPerRou: Provider[];
+  providersPerReq: Provider[];
+}
 
 @injectable()
 export class TestingExtension extends PreRouterExtension {
@@ -39,27 +47,41 @@ export class TestingExtension extends PreRouterExtension {
       this.inited = true;
       return;
     }
-    this.addProviders(aMetadataPerMod2);
+
+    // Added only this line to override super.init()
+    this.overrideAllProviders(aMetadataPerMod2);
+
     const preparedRouteMeta = this.prepareRoutesMeta(aMetadataPerMod2);
     this.setRoutes(preparedRouteMeta);
     this.inited = true;
   }
 
-  protected addProviders(aMetadataPerMod2: MetadataPerMod2[]) {
+  protected overrideAllProviders(aMetadataPerMod2: MetadataPerMod2[]) {
+    const providersToOverride = this.testModuleManager.getProvidersToOverride();
+
     aMetadataPerMod2.forEach((metadataPerMod2) => {
-      const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
-      providersPerMod;
-      metadataPerMod2.providersPerRou;
-      metadataPerMod2.providersPerReq;
-      this.testModuleManager.getProvidersToOverride();
-      aControllersMetadata2.forEach(({ providersPerRou, providersPerReq }) => {
-        providersPerRou;
-        providersPerReq;
+      providersToOverride.forEach((provider) => {
+        this.overrideProvider(['Mod', 'Rou', 'Req'], metadataPerMod2, provider);
+      });
+      metadataPerMod2.aControllersMetadata2.forEach((controllerMetadata2) => {
+        providersToOverride.forEach((provider) => {
+          this.overrideProvider(['Rou', 'Req'], controllerMetadata2, provider);
+        });
       });
     });
   }
 
-  overrideProvidersInModule(module: ModuleType, providers: Provider[]): any {}
-
-  overrideProviders(providers: Provider[]) {}
+  /**
+   * If the token of the `provider` that needs to be overridden is found in the `metadata`,
+   * that `provider` is added to the `metadata` array last in the same scope.
+   */
+  protected overrideProvider(scopes: Scope[], metadata: Meta, provider: Provider) {
+    scopes.forEach((scope) => {
+      const normExistingProviders = normalizeProviders(metadata[`providersPer${scope}`] || []);
+      const normProvider = normalizeProviders([provider])[0];
+      if (normExistingProviders.some((p) => p.token === normProvider.token)) {
+        metadata[`providersPer${scope}`]!.push(provider);
+      }
+    });
+  }
 }

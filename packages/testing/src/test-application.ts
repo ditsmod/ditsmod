@@ -13,8 +13,6 @@ export class TestApplication extends Application {
     this.testModuleManager.scanRootModule(appModule);
     return this;
   }
-
-  overrideProvidersInModule(module: ModuleType, providers: Provider[]) {}
   
   overrideProviders(providers: Provider[]) {
     this.testModuleManager.setProvidersToOverride(providers);
