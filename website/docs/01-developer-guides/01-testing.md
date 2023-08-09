@@ -99,7 +99,7 @@ describe('Service2', () => {
 Щоб запустити вебсервер для тестування вашого застосунку, передайте `false` другим аргументом для `Application#bootstrap()`:
 
 ```ts {8}
-import request from 'supertest';
+import * as request from 'supertest';
 import { Application } from '@ditsmod/core';
 
 import { AppModule } from '../src/app/app.module';

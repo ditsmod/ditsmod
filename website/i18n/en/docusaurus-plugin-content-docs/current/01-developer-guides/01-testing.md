@@ -99,7 +99,7 @@ One of the most popular frameworks for HTTP server testing is [supertest][102].
 To start a web server to test your application, pass `false` as the second argument to `Application#bootstrap()`:
 
 ```ts {8}
-import request from 'supertest';
+import * as request from 'supertest';
 import { Application } from '@ditsmod/core';
 
 import { AppModule } from '../src/app/app.module';
