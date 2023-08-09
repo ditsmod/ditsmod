@@ -73,7 +73,7 @@ export { getDependencies } from './utils/get-dependecies';
 export { ExtensionOptions } from './utils/get-extension-provider';
 export { getModule } from './utils/get-module';
 export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from './utils/http-status-codes';
-export { NormalizedProvider } from './utils/ng-utils';
+export { NormalizedProvider, normalizeProviders } from './utils/ng-utils';
 export { pickProperties } from './utils/pick-properties';
 export { Providers } from './utils/providers';
 export {
