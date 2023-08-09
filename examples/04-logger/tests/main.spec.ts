@@ -1,11 +1,15 @@
 import request from 'supertest';
-import { Application } from '@ditsmod/core';
+import { Providers } from '@ditsmod/core';
+import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
 
 describe('04-logger', () => {
   beforeAll(() => {
-    process.stdout.write = jest.fn() as any;
+    const { server } = new TestApplication()
+    .initRootModule(AppModule)
+    .overrideProviders([...new Providers().useLogConfig({ level: 'error' })])
+    .bootstrapTestApplication();
   });
 
   it('should works', async () => {

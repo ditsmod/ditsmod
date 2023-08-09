@@ -8,5 +8,5 @@
       "@ditsmod/router": ["../../packages/router/src"],
     }
   },
-  "include": ["src", "test"]
+  "include": ["src", "tests"]
 }

@@ -10,5 +10,5 @@
       "@ditsmod/jwt": ["../../packages/jwt/src"],
     }
   },
-  "include": ["src", "test"]
+  "include": ["src", "tests"]
 }

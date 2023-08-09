@@ -9,6 +9,6 @@
       "@ditsmod/openapi": ["../../packages/openapi/src"],
     }
   },
-  "include": ["src", "test"]
+  "include": ["src", "tests"]
 }
 

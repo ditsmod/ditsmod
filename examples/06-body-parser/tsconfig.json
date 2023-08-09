@@ -9,5 +9,5 @@
       "@ditsmod/body-parser": ["../../packages/body-parser/src"],
     }
   },
-  "include": ["src", "test"]
+  "include": ["src", "tests"]
 }
