@@ -35,7 +35,12 @@ export class TestApplication extends Application {
     return this;
   }
 
-  bootstrapTestApplication(listen: boolean = false) {
+  async getServer(listen: boolean = false) {
+    const { server } = await this.bootstrapTestApplication(listen);
+    return server;
+  }
+
+  protected bootstrapTestApplication(listen: boolean = false) {
     return new Promise<{ server: Server }>(async (resolve, reject) => {
       try {
         const testAppInitializer = this.getAppInitializer(this.testModuleManager);

@@ -1,4 +1,4 @@
-import * as request from 'supertest';
+import request = require('supertest');
 import { Providers, Server } from '@ditsmod/core';
 
 import { TestApplication } from '../src/test-application';
@@ -12,16 +12,14 @@ describe('@ditsmod/testing', () => {
   beforeEach(async () => {
     jest.restoreAllMocks();
 
-    const obj = await new TestApplication(AppModule)
+    server = await new TestApplication(AppModule)
       .setLogLevelForInit('error')
       .overrideProviders([
         ...new Providers()
         .useLogConfig({ level: 'error' })
         .useValue(OtherService, { helloAdmin }),
       ])
-      .bootstrapTestApplication();
-
-    server = obj.server;
+      .getServer();
   });
 
   it('override OtherService', async () => {

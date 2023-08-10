@@ -8,12 +8,10 @@ describe('04-logger', () => {
   let server: Server;
 
   beforeEach(async () => {
-    const obj = await new TestApplication(AppModule)
+    server = await new TestApplication(AppModule)
       .setLogLevelForInit('error')
       .overrideProviders([...new Providers().useLogConfig({ level: 'error' })])
-      .bootstrapTestApplication();
-
-    server = obj.server;
+      .getServer();
   });
 
   it('should works', async () => {
