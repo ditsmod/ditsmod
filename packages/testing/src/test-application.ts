@@ -33,9 +33,10 @@ export class TestApplication extends Application {
   bootstrapTestApplication(listen: boolean = false) {
     return new Promise<{ server: Server }>(async (resolve, reject) => {
       try {
-        const appInitializer = this.getAppInitializer(this.testModuleManager);
-        await this.bootstrapApplication(appInitializer);
-        this.finishBootstrap(appInitializer, resolve, listen);
+        const testAppInitializer = this.getAppInitializer(this.testModuleManager);
+        testAppInitializer.setLogLevelForInit(this.logLevel);
+        await this.bootstrapApplication(testAppInitializer);
+        this.finishBootstrap(testAppInitializer, resolve, listen);
       } catch (err: any) {
         this.systemLogMediator.internalServerError(this, err, true);
         this.flushLogs();
@@ -45,8 +46,6 @@ export class TestApplication extends Application {
   }
 
   protected override getAppInitializer(moduleManager: ModuleManager) {
-    const testAppInitializer = new TestAppInitializer(this.rootMeta, moduleManager, this.systemLogMediator);
-    testAppInitializer.setLogLevelForInit(this.logLevel);
-    return testAppInitializer;
+    return new TestAppInitializer(this.rootMeta, moduleManager, this.systemLogMediator);
   }
 }
