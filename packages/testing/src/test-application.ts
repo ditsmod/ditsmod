@@ -8,7 +8,12 @@ export class TestApplication extends Application {
   protected testModuleManager: TestModuleManager;
   protected logLevel: LogLevel;
 
-  override initRootModule(appModule: ModuleType) {
+  constructor(appModule: ModuleType) {
+    super();
+    this.initRootModule(appModule);
+  }
+
+  protected override initRootModule(appModule: ModuleType) {
     this.appModule = appModule;
     super.initRootModule(appModule);
     this.testModuleManager = new TestModuleManager(this.systemLogMediator);

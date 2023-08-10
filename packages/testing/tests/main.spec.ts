@@ -1,4 +1,4 @@
-import request from 'supertest';
+import * as request from 'supertest';
 import { Providers, Server } from '@ditsmod/core';
 
 import { TestApplication } from '../src/test-application';
@@ -12,8 +12,7 @@ describe('@ditsmod/testing', () => {
   beforeEach(async () => {
     jest.restoreAllMocks();
 
-    const obj = await new TestApplication()
-      .initRootModule(AppModule)
+    const obj = await new TestApplication(AppModule)
       .setLogLevelForInit('error')
       .overrideProviders([
         ...new Providers()
