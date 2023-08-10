@@ -1,4 +1,4 @@
-import request from 'supertest';
+import request = require('supertest');
 import { Application } from '@ditsmod/core';
 
 import { AppModule } from '../src/app/app.module';
