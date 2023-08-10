@@ -1,5 +1,12 @@
+<a name="testing-2.0.0-beta.4"></a>
+# testing-2.0.0-beta.4 (2023-08-10)
+
+### Breaking chanages
+
+- Simplifying `TestApplication` API: added `getServer()` method.
+
 <a name="testing-2.0.0-beta.3"></a>
-# testing-2.0.0-beta.3 (2023-08-10)
+## testing-2.0.0-beta.3 (2023-08-10)
 
 ### Breaking chanages
 
