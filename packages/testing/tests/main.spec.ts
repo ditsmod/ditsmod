@@ -1,4 +1,4 @@
-import * as request from 'supertest';
+import request from 'supertest';
 import { Providers, Server } from '@ditsmod/core';
 
 import { TestApplication } from '../src/test-application';

@@ -265,7 +265,7 @@ For more info see [Appending of the module](https://ditsmod.github.io/en/compone
 - Added second parameter for `application.bootstrap()`. Now you can test:
 
 ```ts
-import * as request from 'supertest';
+import request from 'supertest';
 import { Application } from '@ditsmod/core';
 
 import { AppModule } from '../src/app/app.module';
