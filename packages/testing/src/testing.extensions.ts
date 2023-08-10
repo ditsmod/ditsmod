@@ -15,13 +15,7 @@ import {
 } from '@ditsmod/core';
 
 import { TestModuleManager } from './test-module-manager';
-
-type Scope = 'Mod' | 'Rou' | 'Req';
-interface Meta {
-  providersPerMod?: Provider[];
-  providersPerRou: Provider[];
-  providersPerReq: Provider[];
-}
+import { Scope, Meta } from './types';
 
 @injectable()
 export class TestingExtension extends PreRouterExtension {

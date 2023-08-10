@@ -1,10 +1,12 @@
-import { Application, ModuleType, Provider, Server } from '@ditsmod/core';
+import { Application, LogLevel, ModuleManager, ModuleType, Provider, Server } from '@ditsmod/core';
 
 import { TestModuleManager } from './test-module-manager';
+import { TestAppInitializer } from './test-app-initializer';
 
 export class TestApplication extends Application {
   protected appModule: ModuleType;
   protected testModuleManager: TestModuleManager;
+  protected logLevel: LogLevel;
 
   override initRootModule(appModule: ModuleType) {
     this.appModule = appModule;
@@ -13,9 +15,18 @@ export class TestApplication extends Application {
     this.testModuleManager.scanRootModule(appModule);
     return this;
   }
-  
+
   overrideProviders(providers: Provider[]) {
     this.testModuleManager.setProvidersToOverride(providers);
+    return this;
+  }
+
+  /**
+   * This setting of log level only works during initialization,
+   * before HTTP request handlers are created.
+   */
+  setLogLevelForInit(logLevel: LogLevel) {
+    this.logLevel = logLevel;
     return this;
   }
 
@@ -31,5 +42,11 @@ export class TestApplication extends Application {
         reject(err);
       }
     });
+  }
+
+  protected override getAppInitializer(moduleManager: ModuleManager) {
+    const testAppInitializer = new TestAppInitializer(this.rootMeta, moduleManager, this.systemLogMediator);
+    testAppInitializer.setLogLevelForInit(this.logLevel);
+    return testAppInitializer;
   }
 }
