@@ -221,12 +221,12 @@ const injector =
 expect(injector.get(String)).toEqual('Hello');
 ```
  */
-export interface ValueProvider extends BaseNormalizedProvider {
+export interface ValueProvider <T = any> extends BaseNormalizedProvider {
   token: any;
   /**
    * The value to inject.
    */
-  useValue: any;
+  useValue: T;
 }
 
 /**
