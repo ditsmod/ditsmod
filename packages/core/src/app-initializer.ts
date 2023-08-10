@@ -37,7 +37,7 @@ export class AppInitializer {
   constructor(
     protected rootMeta: RootMetadata,
     protected moduleManager: ModuleManager,
-    public systemLogMediator: SystemLogMediator
+    public systemLogMediator: SystemLogMediator,
   ) {}
 
   /**
@@ -70,7 +70,7 @@ export class AppInitializer {
     const rootTokens = getTokens(this.meta.providersPerApp);
     const mergedTokens = [...exportedTokens, ...defaultTokens];
     const exportedTokensDuplicates = getDuplicates(mergedTokens).filter(
-      (d) => ![...resolvedTokens, ...rootTokens, ...exportedMultiTokens].includes(d)
+      (d) => ![...resolvedTokens, ...rootTokens, ...exportedMultiTokens].includes(d),
     );
     const mergedProviders = [...defaultProvidersPerApp, ...exportedProviders];
     const collisions = getCollisions(exportedTokensDuplicates, mergedProviders);
@@ -159,7 +159,7 @@ export class AppInitializer {
       this.moduleManager,
       appMetadataMap,
       this.meta.providersPerApp,
-      this.systemLogMediator
+      this.systemLogMediator,
     );
     const mExtensionsCounters = importsResolver.resolve();
     const aMetadataPerMod1 = [...appMetadataMap].map(([, metadataPerMod1]) => metadataPerMod1);
@@ -214,7 +214,7 @@ export class AppInitializer {
       ...defaultProvidersPerApp,
       { token: RootMetadata, useValue: this.rootMeta },
       { token: ModuleManager, useValue: this.moduleManager },
-      { token: AppInitializer, useValue: this }
+      { token: AppInitializer, useValue: this },
     );
   }
 
@@ -238,20 +238,20 @@ export class AppInitializer {
       '',
       appModule,
       moduleManager,
-      new Set()
+      new Set(),
     );
   }
 
   protected async handleExtensions(
     aMetadataPerMod1: MetadataPerMod1[],
-    mExtensionsCounters: Map<ServiceProvider, number>
+    mExtensionsCounters: Map<ServiceProvider, number>,
   ) {
     const extensionsContext = new ExtensionsContext();
     const injectorPerApp = this.perAppService.injector.resolveAndCreateChild([
       { token: PerAppService, useValue: this.perAppService },
     ]);
     for (let i = 0; i < aMetadataPerMod1.length; i++) {
-      const metadataPerMod1 = aMetadataPerMod1[i];
+      const metadataPerMod1 = this.prepareMetadataPerMod1(aMetadataPerMod1[i]);
       const { extensionsProviders, providersPerMod, name: moduleName, module } = metadataPerMod1.meta;
       const mod = getModule(module);
       const injectorPerMod = injectorPerApp.resolveAndCreateChild([mod, SystemLogMediator, ...providersPerMod]);
@@ -287,9 +287,18 @@ export class AppInitializer {
     }
   }
 
+  /**
+   * This method is needed to be able to forcibly change the metadata (for example, during testing).
+   *
+   * See `TestAppInitializer` in `@ditsmod/testing` for more info.
+   */
+  protected prepareMetadataPerMod1(metadataPerMod1: MetadataPerMod1) {
+    return metadataPerMod1;
+  }
+
   protected decreaseExtensionsCounters(
     mExtensionsCounters: Map<ServiceProvider, number>,
-    extensions: ServiceProvider[]
+    extensions: ServiceProvider[],
   ) {
     const uniqTargets = new Set<ServiceProvider>(getProvidersTargets(extensions));
 
