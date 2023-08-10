@@ -71,10 +71,10 @@ new Application().bootstrap(AppModule).catch((err) => {
 });
 ```
 
-Once compiled, it becomes `dist/main.js` and becomes the entry point for running the application in production mode, which is why you will specify it as an argument for Node.js:
+After compilation, it becomes `dist/src/main.js` (or just `dist/main.js`, depending on your `tsconfig.json` configuration) and becomes the entry point for running the application in production mode, and so why you will specify it as an argument to Node.js:
 
 ```bash
-node dist/main.js
+node dist/src/main.js
 ```
 
 Looking further at the file `src/main.ts`, you can see that an instance of the class `Application` is created, and as an argument for the method `bootstrap()` is passed `AppModule`. Here `AppModule` is the root module to which other application modules then imports.

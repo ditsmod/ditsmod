@@ -8,9 +8,9 @@ sidebar_position: 0
 
 Зараз мабуть самим популярним фреймворком для написання юніт-тестів для JavaScript-коду є [jest][100]. В даній документації ми будемо використовувати саме цей фреймворк.
 
-Якщо ви знаєте як працює [DI][1], ви легко зможете написати юніт-тести для класів Ditsmod-застосунку. DI дозволяє суттєво спростити процес написання тестів. Перш за все, ви повинні навчитись працювати з [інжекторами][2] та з [ієрархією інжекторів][3].
+Якщо ви знаєте як працює [DI][1], ви легко зможете написати юніт-тести для класів Ditsmod-застосунку. Перш за все, ви повинні навчитись працювати з [інжекторами][2] та з [ієрархією інжекторів][3].
 
-Припустимо, ми хочемо протестувати `Service2` у цьому прикладі:
+Припустимо, ви хочете протестувати `Service2` у цьому прикладі:
 
 ```ts
 // service1.ts
@@ -90,35 +90,57 @@ describe('Service2', () => {
 });
 ```
 
-Рекомендуємо тримати файли юніт-тестів поруч з тими файлами, які вони тестують. Тобто якщо файл називається `some.service.ts`, то файл тестів краще розташовувати поруч з назвою, яка має закінчення `.spec.ts` або `.test.ts`, наприклад, `some.service.spec.ts`. Це суттєво спрощує роботу з тестами, а також дозволяє зразу бачити які файли ще не протестовані.
+Рекомендуємо тримати файли юніт-тестів поруч з тими файлами, які вони тестують. Тобто якщо файл називається `some.service.ts`, то файл тестів краще називати `some.service.spec.ts` або `some.service.test.ts`. Це суттєво спрощує роботу з тестами, а також дозволяє зразу бачити які файли ще не протестовані.
 
-## Тестування HTTP-сервера
+## End-to-end тестування
 
-Одним із самих популярних фреймворків для тестування HTTP-сервера є [supertest][102].
+Під час end-to-end тестування перевіряють роботу цілого застосунку. Для цього можна використовувати, наприклад, [supertest][102]. Частіше за все, для такого тестування необхідно зробити моки тільки для тих сервісів, які працюють із зовнішніми сервісами: з базами даними, з відправкою email і т.д.
 
-Щоб запустити вебсервер для тестування вашого застосунку, передайте `false` другим аргументом для `Application#bootstrap()`:
+Давайте розглянемо ситуацію, коли ми робимо мок для `DatabaseService`:
 
-```ts {8}
-import * as request from 'supertest';
-import { Application } from '@ditsmod/core';
+```ts {17-19}
+import request = require('supertest');
+import { Server } from '@ditsmod/core';
+import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
+import { DatabaseService } from '../src/app/database.service';
+import { InterfaceOfDatabaseService } from '../src/app/types';
 
-describe('HTTP server testing', () => {
-  it('Hello world works', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+describe('End-to-end testing', () => {
+  let server: Server;
+  const query = jest.fn();
+  const useValue = { query } as InterfaceOfDatabaseService;
+
+  beforeEach(async () => {
+    jest.restoreAllMocks();
+
+    server = await new TestApplication(AppModule)
+      .overrideProviders([{ token: DatabaseService, useValue }])
+      .getServer();
+  });
+
+  it('work with DatabaseService', async () => {
+    const values = [{ one: 1, two: 2 }];
+    query.mockImplementation(() => values);
 
     await request(server)
-      .get('/')
+      .get('/get-some-from-database')
       .expect(200)
-      .expect('Hello World!');
+      .expect(values);
+
+    expect(query).toBeCalledTimes(1);
 
     server.close();
   });
 });
 ```
 
-Як бачите, у виділеному рядку створюється вебсервер, який ще не викликав метод `server.listen()`, тому supertest має змогу автоматично це зробити підставляючи рандомний номер порту, що є дуже важливим моментом під час асинхронного виклику зразу декількох тестів. Тут `AppModule` - це кореневий модуль застосунку.
+:::info Дефолтний імпорт supertest
+Перш за все, зверніть увагу у першому рядку на імпорт бібліотеки `supertest`. Це досить специфічний імпорт. Якщо ви тільки не використовуєте модулі ECMAScript, краще використовувати саме його для цієї бібліотеки.
+:::
+
+Як бачите, у виділених рядках створюється тестовий застосунок за допомогою інстансу класу `TestApplication`, потім робиться підстановка моку для `DatabaseService`. В самому кінці викликається метод `getServer()` і таким чином створюється та повертається вебсервер, який ще не викликав метод `server.listen()`, тому supertest має змогу автоматично це зробити підставляючи рандомний номер порту, що є важливим моментом під час асинхронного виклику зразу декількох тестів. Тут `AppModule` - це кореневий модуль застосунку.
 
 Рекомендуємо подібні тести тримати в окремому каталозі з назвою `tests`, на одному рівні з кореневим каталогом `src`.
 

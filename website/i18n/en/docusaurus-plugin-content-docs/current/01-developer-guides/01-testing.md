@@ -8,9 +8,9 @@ sidebar_position: 0
 
 Currently, perhaps the most popular framework for writing unit tests for JavaScript code is [jest][100]. In this documentation we will use this framework.
 
-If you know how [DI][1] works, you can easily write unit tests for Ditsmod application classes. DI allows you to greatly simplify the process of writing tests. First, you need to learn how to work with [injectors][2] and the [injector hierarchy][3].
+If you know how [DI][1] works, you can easily write unit tests for Ditsmod application classes. First, you need to learn how to work with [injectors][2] and the [injector hierarchy][3].
 
-Let's say we want to test `Service2` in this example:
+Let's say you want to test `Service2` in this example:
 
 ```ts
 // service1.ts
@@ -90,35 +90,57 @@ describe('Service2', () => {
 });
 ```
 
-We recommend that you place your unit test files close to the files they test. That is, if the file is called `some.service.ts`, it is better to place the test file next to a name that ends with `.spec.ts` or `.test.ts`, for example `some.service.spec.ts`. This makes working with tests much easier, and also allows you to immediately see which files have not yet been tested.
+We recommend that you place your unit test files close to the files they test. That is, if the file is called `some.service.ts`, then the test file should be called `some.service.spec.ts` or `some.service.test.ts`. This makes working with tests much easier, and also allows you to immediately see which files have not yet been tested.
 
-## HTTP server testing
+## End-to-end testing
 
-One of the most popular frameworks for HTTP server testing is [supertest][102].
+During end-to-end testing, the entire application is tested. For this purpose, you can use, for example, [supertest][102]. Most often, for such testing, it is necessary to make mocks only for those services that work with external services: with databases, with sending email, etc.
 
-To start a web server to test your application, pass `false` as the second argument to `Application#bootstrap()`:
+Let's look at the situation when we make a mock for `DatabaseService`:
 
-```ts {8}
-import * as request from 'supertest';
-import { Application } from '@ditsmod/core';
+```ts {17-19}
+import request = require('supertest');
+import { Server } from '@ditsmod/core';
+import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
+import { DatabaseService } from '../src/app/database.service';
+import { InterfaceOfDatabaseService } from '../src/app/types';
 
-describe('HTTP server testing', () => {
-  it('Hello world works', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+describe('End-to-end testing', () => {
+  let server: Server;
+  const query = jest.fn();
+  const useValue = { query } as InterfaceOfDatabaseService;
+
+  beforeEach(async () => {
+    jest.restoreAllMocks();
+
+    server = await new TestApplication(AppModule)
+      .overrideProviders([{ token: DatabaseService, useValue }])
+      .getServer();
+  });
+
+  it('work with DatabaseService', async () => {
+    const values = [{ one: 1, two: 2 }];
+    query.mockImplementation(() => values);
 
     await request(server)
-      .get('/')
+      .get('/get-some-from-database')
       .expect(200)
-      .expect('Hello World!');
+      .expect(values);
+
+    expect(query).toBeCalledTimes(1);
 
     server.close();
   });
 });
 ```
 
-As you can see, a web server is created in the highlighted line, which has not yet called the `server.listen()` method. Therefore, supertest can automatically do this by substituting a random port number, which is crucial when asynchronously calling multiple tests at once. Here, `AppModule` is the root module of the application.
+:::info Default import supertest
+First of all, pay attention to the import of the `supertest` library in the first line. This is a rather specific import. Unless you are using ECMAScript modules, it is better to use it for this library.
+:::
+
+As you can see, in the highlighted lines, a test application is created using an instance of the `TestApplication` class, then a mock is substituted for the `DatabaseService`. At the very end, the `getServer()` method is called and thus creates and returns a web server that has not yet called the `server.listen()` method, so supertest can automatically do this by substituting a random port number, which is an important point when asynchronously calling several tests at once. Here `AppModule` is the root module of the application.
 
 We recommend keeping such tests in a separate directory called `tests`, at the same level as the `src` root directory.
 
