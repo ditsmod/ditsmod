@@ -4,7 +4,7 @@ import { injectable } from '@ditsmod/core';
 export class OtherService {
   constructor() {}
 
-  async helloAdmin() {
+  helloAdmin() {
     return 'Hello, admin!\n';
   }
 }

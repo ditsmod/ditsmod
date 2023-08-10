@@ -15,11 +15,11 @@ describe('MyService', () => {
     myService = injector.get(MyService);
   });
 
-  it('should return "Hello, World!"', async () => {
-    await expect(myService.helloWorld()).resolves.toBe('Hello, World!\n');
+  it('should return "Hello, World!"', () => {
+    expect(myService.helloWorld()).toBe('Hello, World!\n');
   });
 
-  it('should return "Hello, admin!"', async () => {
-    await expect(myService.helloAdmin()).resolves.toBe('Hello, admin!\n');
+  it('should return "Hello, admin!"', () => {
+    expect(myService.helloAdmin()).toBe('Hello, admin!\n');
   });
 });
