@@ -3,7 +3,6 @@ import {
   LogLevel,
   LoggerConfig,
   MetadataPerMod1,
-  Providers,
   ValueProvider,
   normalizeProviders,
 } from '@ditsmod/core';
@@ -24,7 +23,8 @@ export class TestAppInitializer extends AppInitializer {
         useValue.level = this.logLevel;
         metadataPerMod1.meta.providersPerMod.push({ token: LoggerConfig, useValue });
       } else {
-        metadataPerMod1.meta.providersPerMod.push(...new Providers().useLogConfig({ level: this.logLevel }));
+        const useValue: LoggerConfig = { level: this.logLevel };
+        metadataPerMod1.meta.providersPerMod.push({ token: LoggerConfig, useValue });
       }
     }
     return metadataPerMod1;
