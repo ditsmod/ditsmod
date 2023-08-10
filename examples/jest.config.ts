@@ -11,6 +11,7 @@ module.exports = {
     '@ditsmod/session-cookie': '<rootDir>/../packages/session-cookie/src',
     '@ditsmod/openapi-validation': '<rootDir>/../packages/openapi-validation/src',
     '@ditsmod/openapi': '<rootDir>/../packages/openapi/src',
+    '@ditsmod/testing': '<rootDir>/../packages/testing/src',
     '@ditsmod/jwt': '<rootDir>/../packages/jwt/src',
     '@ditsmod/i18n': '<rootDir>/../packages/i18n/src',
     '@dict/first/first.dict': '<rootDir>/15-i18n/src/app/first/locales/current/_base-en/first.dict',
