@@ -11,8 +11,7 @@
     }
   },
   "include": [
-    "src",
-    "tests"
+    "src"
   ],
   "files": [],
   "references": [
