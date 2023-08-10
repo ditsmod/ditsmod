@@ -58,6 +58,7 @@ export class TestingExtension extends PreRouterExtension {
 
   protected overrideAllProviders(aMetadataPerMod2: MetadataPerMod2[]) {
     const providersToOverride = this.testModuleManager.getProvidersToOverride();
+    this.perAppService.reinitInjector(providersToOverride);
 
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       providersToOverride.forEach((provider) => {
