@@ -1,5 +1,5 @@
 import { controller, Res, route } from '@ditsmod/core';
-import BunyanLogger from 'bunyan';
+import BunyanLogger = require('bunyan');
 
 @controller()
 export class BunyanController {

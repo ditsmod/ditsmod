@@ -1,4 +1,4 @@
-import request from 'supertest';
+import request = require('supertest');
 import { Providers, Server } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 

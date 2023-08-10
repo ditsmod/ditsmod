@@ -2,9 +2,8 @@
   "compilerOptions": {
     "strict": true,
     "strictPropertyInitialization": false,
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2020",
+    "target": "es2022",
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "dist",
