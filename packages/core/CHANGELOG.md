@@ -1,5 +1,14 @@
+<a name="core-2.40.0"></a>
+# [core-2.40.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.40.0) (2023-08-10)
+
+### Features
+
+- added `normalizeProviders()`, `getToken()` to index.ts;
+- added `T` param to `ValueProvider<T>`;
+- added some code to support new package `@ditsmod/testing`.
+
 <a name="core-2.39.1"></a>
-# [core-2.39.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.39.1) (2023-08-07)
+## [core-2.39.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.39.1) (2023-08-07)
 
 ### Bug fixes
 
