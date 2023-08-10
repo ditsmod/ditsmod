@@ -6,11 +6,11 @@ import { OtherService } from './other.service';
 export class MyService {
   constructor(protected otherService: OtherService) {}
 
-  async helloWorld() {
+  helloWorld() {
     return 'Hello, World!\n';
   }
 
-  async helloAdmin() {
+  helloAdmin() {
     return this.otherService.helloAdmin();
   }
 }

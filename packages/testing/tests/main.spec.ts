@@ -1,19 +1,37 @@
 import * as request from 'supertest';
+import { Providers, Server } from '@ditsmod/core';
 
 import { TestApplication } from '../src/test-application';
 import { AppModule } from './app/app.module';
-import { Providers } from '@ditsmod/core';
+import { OtherService } from './app/other.service';
 
 describe('@ditsmod/testing', () => {
-  it('controller works', async () => {
-    const { server } = await new TestApplication()
+  let server: Server;
+  const helloAdmin = jest.fn();
+
+  beforeEach(async () => {
+    jest.restoreAllMocks();
+
+    const obj = await new TestApplication()
       .initRootModule(AppModule)
-      .overrideProviders([...new Providers().useLogConfig({ level: 'error' })])
+      .setLogLevelForInit('error')
+      .overrideProviders([
+        ...new Providers()
+        .useLogConfig({ level: 'error' })
+        .useValue(OtherService, { helloAdmin }),
+      ])
       .bootstrapTestApplication();
 
+    server = obj.server;
+  });
+
+  it('override OtherService', async () => {
     await request(server).get('/').expect(200).expect('Hello, World!\n');
 
-    await request(server).get('/admin').expect(200).expect('Hello, admin!\n');
+    const message = 'any-string';
+    helloAdmin.mockImplementation(() => message);
+    await request(server).get('/admin').expect(200).expect(message);
+    expect(helloAdmin).toBeCalledTimes(1);
 
     server.close();
   });
