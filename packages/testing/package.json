@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/testing",
-  "version": "2.0.0-alpha.0",
+  "version": "2.0.0-beta.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -19,7 +19,7 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^2.39.0"
+    "@ditsmod/core": "^2.40.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }
