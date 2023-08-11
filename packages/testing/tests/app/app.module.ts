@@ -1,13 +1,15 @@
 import { rootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
-import { HelloWorldController } from './hello-world.controller';
-import { MyService } from './my.service';
-import { OtherService } from './other.service';
+import { Controller1 } from './controllers';
+import { ServicePerApp, ServicePerMod, ServicePerReq, ServicePerRou } from './services';
 
 @rootModule({
   imports: [RouterModule],
-  controllers: [HelloWorldController],
-  providersPerReq: [MyService, OtherService]
+  controllers: [Controller1],
+  providersPerApp: [ServicePerApp],
+  providersPerMod: [ServicePerMod],
+  providersPerRou: [ServicePerRou],
+  providersPerReq: [ServicePerReq],
 })
 export class AppModule {}

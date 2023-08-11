@@ -3,32 +3,80 @@ import { Providers, Server } from '@ditsmod/core';
 
 import { TestApplication } from '../src/test-application';
 import { AppModule } from './app/app.module';
-import { OtherService } from './app/other.service';
+import {
+  ServicePerApp,
+  ServicePerMod,
+  ServicePerRou,
+  ServicePerReq,
+  ServicePerRou2,
+  ServicePerReq2,
+  ServicePerRou3
+} from './app/services';
 
 describe('@ditsmod/testing', () => {
-  let server: Server;
-  const helloAdmin = jest.fn();
+  const methodPerApp = jest.fn();
+  const methodPerMod = jest.fn();
+  const methodPerRou = jest.fn();
+  const methodPerReq = jest.fn();
+  const methodPerRou2 = jest.fn();
+  const methodPerReq2 = jest.fn();
+  const methodPerRou3 = jest.fn();
 
-  beforeEach(async () => {
+  beforeEach(() => {
     jest.restoreAllMocks();
-
-    server = await new TestApplication(AppModule)
-      .setLogLevelForInit('error')
-      .overrideProviders([
-        ...new Providers()
-        .useLogConfig({ level: 'error' })
-        .useValue(OtherService, { helloAdmin }),
-      ])
-      .getServer();
   });
 
-  it('override OtherService', async () => {
-    await request(server).get('/').expect(200).expect('Hello, World!\n');
+  it('override services at any level', async () => {
+    const server = await new TestApplication(AppModule)
+      .overrideProviders([
+        ...new Providers()
+          .useValue(ServicePerApp, { method: methodPerApp })
+          .useValue(ServicePerMod, { method: methodPerMod })
+          .useValue(ServicePerRou, { method: methodPerRou })
+          .useValue(ServicePerReq, { method: methodPerReq })
+          .useValue(ServicePerRou2, { method: methodPerRou2 })
+          .useValue(ServicePerReq2, { method: methodPerReq2 })
+      ])
+      .getServer();
 
     const message = 'any-string';
-    helloAdmin.mockImplementation(() => message);
-    await request(server).get('/admin').expect(200).expect(message);
-    expect(helloAdmin).toBeCalledTimes(1);
+
+    methodPerApp.mockImplementation(() => message);
+    methodPerMod.mockImplementation(() => message);
+    methodPerRou.mockImplementation(() => message);
+    methodPerReq.mockImplementation(() => message);
+    methodPerRou2.mockImplementation(() => message);
+    methodPerReq2.mockImplementation(() => message);
+
+    await request(server).get('/per-app').expect(200).expect(message);
+    await request(server).get('/per-mod').expect(200).expect(message);
+    await request(server).get('/per-rou').expect(200).expect(message);
+    await request(server).get('/per-req').expect(200).expect(message);
+    await request(server).get('/per-rou2').expect(200).expect(message);
+    await request(server).get('/per-req2').expect(200).expect(message);
+    expect(methodPerApp).toBeCalledTimes(1);
+    expect(methodPerMod).toBeCalledTimes(1);
+    expect(methodPerRou).toBeCalledTimes(1);
+    expect(methodPerReq).toBeCalledTimes(1);
+    expect(methodPerRou2).toBeCalledTimes(1);
+    expect(methodPerReq2).toBeCalledTimes(1);
+
+    server.close();
+  });
+
+  it('should failed', async () => {
+    const server = await new TestApplication(AppModule)
+      .overrideProviders([
+        ...new Providers()
+          .useValue(ServicePerRou3, { method: methodPerRou3 })
+          .useLogConfig({ level: 'fatal' }) // Expected an error, so no need to log it for the tests
+      ])
+      .getServer();
+
+    const message = 'any-string';
+    methodPerRou3.mockImplementation(() => message);
+    await request(server).get('/per-rou3').expect(500);
+    expect(methodPerRou3).toBeCalledTimes(0);
 
     server.close();
   });
