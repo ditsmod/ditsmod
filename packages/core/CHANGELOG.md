@@ -1,5 +1,12 @@
+<a name="core-2.41.0"></a>
+# [core-2.41.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.41.0) (2023-08-11)
+
+### Breaking changes
+
+- Simplifying API for `PerAppService`. This is an internal service, so users of the framework are unlikely to experience it.
+
 <a name="core-2.40.0"></a>
-# [core-2.40.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.40.0) (2023-08-10)
+## [core-2.40.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.40.0) (2023-08-10)
 
 ### Features
 

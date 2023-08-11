@@ -45,7 +45,7 @@ export class AppInitializer {
    */
   bootstrapProvidersPerApp() {
     this.meta = this.moduleManager.getMetadata('root', true);
-    this.perAppService.removeProviders();
+    this.perAppService.providers = [];
     this.prepareProvidersPerApp();
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLogMediator();
