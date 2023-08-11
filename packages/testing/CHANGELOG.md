@@ -1,5 +1,12 @@
+<a name="testing-2.0.0-beta.5"></a>
+# testing-2.0.0-beta.5 (2023-08-11)
+
+### Migration
+
+- migration to core-2.41.0.
+
 <a name="testing-2.0.0-beta.4"></a>
-# testing-2.0.0-beta.4 (2023-08-10)
+## testing-2.0.0-beta.4 (2023-08-10)
 
 ### Breaking chanages
 

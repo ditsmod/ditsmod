@@ -1,9 +1,10 @@
 import { Provider } from '@ditsmod/core';
 
-export type Scope = 'Mod' | 'Rou' | 'Req';
+export type Scope = 'App' | 'Mod' | 'Rou' | 'Req';
 
 export interface Meta {
+  providersPerApp?: Provider[];
   providersPerMod?: Provider[];
-  providersPerRou: Provider[];
-  providersPerReq: Provider[];
+  providersPerRou?: Provider[];
+  providersPerReq?: Provider[];
 }
