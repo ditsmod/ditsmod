@@ -161,7 +161,7 @@ First of all, notice the `supertest` library import in the first line. This feat
 
 As you can see in the test code, first, a test application is created based on the `TestApplication` class, then a mock is substituted for `DatabaseService`. At the very end, the `getServer()` method is called and thus creates and returns a web server that has not yet called the `server.listen()` method, so supertest can automatically do this by substituting a random port number, which is an important point when asynchronously calling several tests at once. Here `AppModule` is the root module of the application.
 
-Overriding mocks with the `testApplication.overrideProviders()` method works globally at any level of the injector hierarchy. Providers with mocks passed to this method are first added at the application level. Then, if there are providers with the same token at other levels (module, routing, or request), they will be added at those levels as well.
+Overriding mocks with the `testApplication.overrideProviders()` method works globally at any level of the injector hierarchy. Providers with mosks are transferred to the DI at a certain level of the hierarchy only if there are corresponding providers with the same tokens at that level.
 
 We recommend keeping such tests in a separate directory called `tests`, at the same level as the `src` root directory.
 
