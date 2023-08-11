@@ -6,7 +6,7 @@ sidebar_position: 0
 
 ## What is unit testing
 
-Basically, unit testing is a testing method that allows you to verify that the smallest parts of an application work correctly, such as functions and methods of classes (which can also be considered a function). To perform testing, you alternately focus on a separate function while isolating all other parts of the program that interact with that function.
+In fact, unit testing is a testing method that allows you to verify that the smallest parts of an application, such as functions and class methods (which are also essentially functions), work correctly. To perform testing, you alternately focus on a separate function while isolating all other parts of the program that interact with that function.
 
 Properly written unit tests allow you to read them as documentation for your program. It can be said that most projects document only the public part of the application's API, and the rest is documentation based on unit tests and comments in the code.
 
@@ -70,7 +70,11 @@ As you can see, in the highlighted line, instead of `Service1`, a value provider
 
 Now you can write a test using this technique of substituting providers:
 
-```ts {2-3,10}
+```ts {6-7,14}
+import { Injector } from '@ditsmod/core';
+import { Service1 } from './service1';
+import { Service2 } from './service2';
+
 describe('Service2', () => {
   const saySomething = jest.fn();
   const MockService1 = { saySomething } as Service1;
@@ -95,6 +99,12 @@ describe('Service2', () => {
     expect(saySomething).toBeCalledTimes(1);
   });
 });
+```
+
+To make `jest` work in a similar way, don't forget to install the TypeScript types for it along with this framework:
+
+```bash
+yarn add -D jest @types/jest
 ```
 
 We recommend that you place your unit test files close to the files they test. That is, if the file is called `some.service.ts`, then the test file should be called `some.service.spec.ts` or `some.service.test.ts`. This makes working with tests much easier, and also allows you to immediately see which files have not yet been tested.
