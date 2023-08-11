@@ -1,5 +1,12 @@
+<a name="i18n-2.7.0"></a>
+# [i18n-2.7.0](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.7.0) (2023-08-11)
+
+### Migration
+
+- Migrate to core-2.41.0.
+
 <a name="i18n-2.6.0"></a>
-# [i18n-2.6.0](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.6.0) (2023-01-12)
+## [i18n-2.6.0](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.6.0) (2023-01-12)
 
 ### BREAKING CHANGES
 
