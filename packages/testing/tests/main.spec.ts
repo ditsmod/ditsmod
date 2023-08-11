@@ -1,5 +1,5 @@
 import request = require('supertest');
-import { Providers, Server } from '@ditsmod/core';
+import { LoggerConfig, Providers } from '@ditsmod/core';
 
 import { TestApplication } from '../src/test-application';
 import { AppModule } from './app/app.module';
@@ -10,7 +10,7 @@ import {
   ServicePerReq,
   ServicePerRou2,
   ServicePerReq2,
-  ServicePerRou3
+  ServicePerRou3,
 } from './app/services';
 
 describe('@ditsmod/testing', () => {
@@ -35,7 +35,7 @@ describe('@ditsmod/testing', () => {
           .useValue(ServicePerRou, { method: methodPerRou })
           .useValue(ServicePerReq, { method: methodPerReq })
           .useValue(ServicePerRou2, { method: methodPerRou2 })
-          .useValue(ServicePerReq2, { method: methodPerReq2 })
+          .useValue(ServicePerReq2, { method: methodPerReq2 }),
       ])
       .getServer();
 
@@ -66,16 +66,13 @@ describe('@ditsmod/testing', () => {
 
   it('should failed', async () => {
     const server = await new TestApplication(AppModule)
-      .overrideProviders([
-        ...new Providers()
-          .useValue(ServicePerRou3, { method: methodPerRou3 })
-          .useLogConfig({ level: 'fatal' }) // Expected an error, so no need to log it for the tests
-      ])
+      .overrideProviders([{ token: ServicePerRou3, useValue: { method: methodPerRou3 } }])
+      .setProvidersPerApp([{ token: LoggerConfig, useValue: { level: 'fatal' } }]) // Expected an error, so no need to log it for the tests
       .getServer();
 
     const message = 'any-string';
     methodPerRou3.mockImplementation(() => message);
-    await request(server).get('/per-rou3').expect(500);
+    await request(server).get('/per-rou3').expect(500).expect({ error: 'Internal server error' });
     expect(methodPerRou3).toBeCalledTimes(0);
 
     server.close();

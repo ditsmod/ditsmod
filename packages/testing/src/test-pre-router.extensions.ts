@@ -52,10 +52,14 @@ export class TestPreRouterExtension extends PreRouterExtension {
 
   protected overrideAllProviders(aMetadataPerMod2: MetadataPerMod2[]) {
     const providersToOverride = this.testModuleManager.getProvidersToOverride();
+    const providersToSetPerApp = this.testModuleManager.getProvidersToSetPerApp();
+    this.perAppService.providers.push(...providersToSetPerApp);
+
     providersToOverride.forEach((provider) => {
       const providersPerApp = this.perAppService.providers;
       this.overrideProvider(['App'], { providersPerApp }, provider);
     });
+
     this.perAppService.reinitInjector();
 
     aMetadataPerMod2.forEach((metadataPerMod2) => {

@@ -13,13 +13,22 @@ type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 
 export class TestModuleManager extends ModuleManager {
   protected providersToOverride: Provider[] = [];
+  protected providersToSetPerApp: Provider[] = [];
 
-  setProvidersToOverride(providers: Provider[]) {
+  overrideProviders(providers: Provider[]) {
     this.providersToOverride = providers;
+  }
+
+  setProvidersPerApp(providers: Provider[]) {
+    this.providersToSetPerApp = providers;
   }
 
   getProvidersToOverride() {
     return this.providersToOverride;
+  }
+
+  getProvidersToSetPerApp() {
+    return this.providersToSetPerApp;
   }
 
   protected override normalizeMetadata(mod: AnyModule): NormalizedModuleMetadata {
