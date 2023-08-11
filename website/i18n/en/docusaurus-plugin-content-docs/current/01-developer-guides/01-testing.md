@@ -4,11 +4,17 @@ sidebar_position: 0
 
 # Testing
 
-## Unit testing
+## What is unit testing
 
-Currently, perhaps the most popular framework for writing unit tests for JavaScript code is [jest][100]. In this documentation we will use this framework.
+Basically, unit testing is a testing method that allows you to verify that the smallest parts of an application work correctly, such as functions and methods of classes (which can also be considered a function). To perform testing, you alternately focus on a separate function while isolating all other parts of the program that interact with that function.
 
-If you know how [DI][1] works, you can easily write unit tests for Ditsmod application classes. First, you need to learn how to work with [injectors][2] and the [injector hierarchy][3].
+Properly written unit tests allow you to read them as documentation for your program. It can be said that most projects document only the public part of the application's API, and the rest is documentation based on unit tests and comments in the code.
+
+One of the most popular frameworks for writing unit tests for JavaScript code is [jest][100]. In this section, we will use this framework.
+
+## Prerequisites for writing unit tests
+
+A good knowledge of the [Ditsmod DI][1] architecture will help you easily write unit tests for Ditsmod applications, since one of the main advantages of DI is its ease of testing. First, you need to learn how to work with [injectors][2] and the [injector hierarchy][3].
 
 Let's say you want to test `Service2` in this example:
 
@@ -33,7 +39,7 @@ class Service2 {
 }
 ```
 
-As you can see, `Service2` depends on `Service1`. Before we write the tests, let's recall how we can create an injector that can resolve class dependencies from our example:
+Since `Service2` depends on `Service1`, we need to isolate this service from interacting with `Service1`. Before we write the tests, let's recall how we can create an injector that can resolve class dependencies from our example:
 
 ```ts
 import { Injector } from '@ditsmod/core';
@@ -64,16 +70,17 @@ As you can see, in the highlighted line, instead of `Service1`, a value provider
 
 Now you can write a test using this technique of substituting providers:
 
-```ts {2,9}
+```ts {2-3,10}
 describe('Service2', () => {
   const saySomething = jest.fn();
+  const MockService1 = { saySomething } as Service1;
   let service2: Service2;
 
   beforeEach(() => {
     jest.restoreAllMocks();
 
     const injector = Injector.resolveAndCreate([
-      { token: Service1, useValue: { saySomething } },
+      { token: Service1, useValue: MockService1 },
       Service2
     ]);
 
@@ -94,11 +101,11 @@ We recommend that you place your unit test files close to the files they test. T
 
 ## End-to-end testing
 
-During end-to-end testing, the entire application is tested. For this purpose, you can use, for example, [supertest][102]. Most often, for such testing, it is necessary to make mocks only for those services that work with external services: with databases, with sending email, etc.
+End-to-end testing checks the operation of the entire application. For this purpose, you can use, for example, [supertest][102]. Most often, for such tests, it is necessary to create mocks only for those services that work with external services: with databases, with sending email, etc.
 
 Let's look at the situation when we make a mock for `DatabaseService`:
 
-```ts {17-19}
+```ts {12,19}
 import request = require('supertest');
 import { Server } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
@@ -110,13 +117,15 @@ import { InterfaceOfDatabaseService } from '../src/app/types';
 describe('End-to-end testing', () => {
   let server: Server;
   const query = jest.fn();
-  const useValue = { query } as InterfaceOfDatabaseService;
+  const MockDatabaseService = { query } as InterfaceOfDatabaseService;
 
   beforeEach(async () => {
     jest.restoreAllMocks();
 
     server = await new TestApplication(AppModule)
-      .overrideProviders([{ token: DatabaseService, useValue }])
+      .overrideProviders([
+        { token: DatabaseService, useValue: MockDatabaseService }
+      ])
       .getServer();
   });
 
@@ -137,10 +146,12 @@ describe('End-to-end testing', () => {
 ```
 
 :::info Default import supertest
-First of all, pay attention to the import of the `supertest` library in the first line. This is a rather specific import. Unless you are using ECMAScript modules, it is better to use it for this library.
+First of all, notice the `supertest` library import in the first line. This feature occurs because `supertest` defaults to exporting a function rather than an object, which is against ES2015+ export standards. You can also import this library as follows: `import request from 'supertest'`, while also setting [`"esModuleInterop": true`][103] in the `tsconfig` file.
 :::
 
-As you can see, in the highlighted lines, a test application is created using an instance of the `TestApplication` class, then a mock is substituted for the `DatabaseService`. At the very end, the `getServer()` method is called and thus creates and returns a web server that has not yet called the `server.listen()` method, so supertest can automatically do this by substituting a random port number, which is an important point when asynchronously calling several tests at once. Here `AppModule` is the root module of the application.
+As you can see in the test code, the test application is first created using an instance of the `TestApplication` class, then a mock substitution is made for `DatabaseService`. At the very end, the `getServer()` method is called and thus creates and returns a web server that has not yet called the `server.listen()` method, so supertest can automatically do this by substituting a random port number, which is an important point when asynchronously calling several tests at once. Here `AppModule` is the root module of the application.
+
+Overriding mocks with the `testApplication.overrideProviders()` method works globally at any level of the injector hierarchy. Providers with mocks passed to this method are first added at the application level. Then, if there are providers with the same token at other levels (module, routing, or request), they will be added at those levels as well.
 
 We recommend keeping such tests in a separate directory called `tests`, at the same level as the `src` root directory.
 
