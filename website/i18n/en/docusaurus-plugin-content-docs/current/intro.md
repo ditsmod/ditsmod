@@ -20,6 +20,10 @@ The main features of Ditsmod:
 
 Some concepts of Ditsmod architecture are taken from Angular concepts, and DI is built based on the native Angular DI module.
 
+## Prerequisites
+
+Please make sure that Node.js >= v18.17.1 is installed on your operating system.
+
 ## Install the Ditsmod seed
 
 The [ditsmod-seed][2] repository has the basic set for application operation. Clone it and install the dependencies:
