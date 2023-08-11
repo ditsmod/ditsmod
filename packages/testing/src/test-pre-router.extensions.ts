@@ -18,7 +18,7 @@ import { TestModuleManager } from './test-module-manager';
 import { Scope, Meta } from './types';
 
 @injectable()
-export class TestingExtension extends PreRouterExtension {
+export class TestPreRouterExtension extends PreRouterExtension {
   constructor(
     @inject(forwardRef(() => TestModuleManager)) protected testModuleManager: TestModuleManager,
     perAppService: PerAppService,

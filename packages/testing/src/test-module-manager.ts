@@ -7,7 +7,7 @@ import {
   PreRouterExtension,
   Provider,
 } from '@ditsmod/core';
-import { TestingExtension } from './testing.extensions';
+import { TestPreRouterExtension } from './test-pre-router.extensions';
 
 type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 
@@ -24,7 +24,7 @@ export class TestModuleManager extends ModuleManager {
 
   protected override normalizeMetadata(mod: AnyModule): NormalizedModuleMetadata {
     const meta = super.normalizeMetadata(mod);
-    meta.extensionsProviders.push({ token: PreRouterExtension, useClass: TestingExtension });
+    meta.extensionsProviders.push({ token: PreRouterExtension, useClass: TestPreRouterExtension });
     meta.providersPerApp.push({ token: TestModuleManager, useToken: ModuleManager });
     return meta;
   }
