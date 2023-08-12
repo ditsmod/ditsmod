@@ -77,4 +77,12 @@ export class TestApplication extends Application {
   protected override getAppInitializer(moduleManager: ModuleManager) {
     return new TestAppInitializer(this.rootMeta, moduleManager, this.systemLogMediator);
   }
+
+  /**
+   * This method exists here only because `TestApplication` extends the `Application` class.
+   * Most likely, you will not need it during testing.
+   */
+  override bootstrap(appModule: ModuleType, listen: boolean = true) {
+    return super.bootstrap(appModule, listen);
+  }
 }
