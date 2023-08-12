@@ -13,7 +13,7 @@ export class SomeController {
   }
 
   @route('POST')
-  ok(@inject(HTTP_BODY) body: Body, res: Res) {
+  post(res: Res, @inject(HTTP_BODY) body: Body) {
     res.sendJson(body);
   }
 }
