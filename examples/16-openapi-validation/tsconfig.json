@@ -10,6 +10,7 @@
       "@ditsmod/body-parser": ["../../packages/body-parser/src"],
       "@ditsmod/openapi-validation": ["../../packages/openapi-validation/src"],
       "@ditsmod/jwt": ["../../packages/jwt/src"],
+      "@ditsmod/testing": ["../../packages/testing/src"],
       "@ditsmod/i18n": ["../../packages/i18n/src"]
     }
   },

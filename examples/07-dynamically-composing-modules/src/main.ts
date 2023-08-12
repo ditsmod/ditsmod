@@ -1,4 +1,4 @@
-import { Application } from '@ditsmod/core';
+import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from './app/app.module';
 

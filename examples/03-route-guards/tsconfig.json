@@ -6,6 +6,7 @@
     "paths": {
       "@ditsmod/core": ["../../packages/core/src"],
       "@ditsmod/router": ["../../packages/router/src"],
+      "@ditsmod/testing": ["../../packages/testing/src"],
     }
   },
   "include": ["src", "tests"]

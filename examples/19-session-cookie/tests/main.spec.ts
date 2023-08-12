@@ -1,5 +1,5 @@
 import request = require('supertest');
-import { Application } from '@ditsmod/core';
+import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
 
@@ -8,7 +8,7 @@ describe('19-session-cookie', () => {
   // console.log = jest.fn(); // Hide logs
 
   it('should set cookie', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     await request(server)
       .get('/set')
       .expect(200)
@@ -20,7 +20,7 @@ describe('19-session-cookie', () => {
   });
 
   it('should read cookie', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     await request(server)
       .get('/get')
       .set('cookie', 'custom-session-name=123')

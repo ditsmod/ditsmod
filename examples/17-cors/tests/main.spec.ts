@@ -1,5 +1,5 @@
 import request = require('supertest');
-import { Application } from '@ditsmod/core';
+import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
 
@@ -8,7 +8,7 @@ describe('17-cors', () => {
   // console.log = jest.fn(); // Hide logs
 
   it('simply GET request', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     const res = await request(server)
       .get('/')
       .expect(200)
@@ -25,7 +25,7 @@ describe('17-cors', () => {
   });
 
   it('Simply OPTIONS request', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     const res = await request(server)
       .options('/')
       .expect(204)
@@ -41,7 +41,7 @@ describe('17-cors', () => {
   });
 
   it('OPTIONS CORS request', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     const res = await request(server)
       .options('/')
       .set('Origin', 'https://example.com')
@@ -58,7 +58,7 @@ describe('17-cors', () => {
   });
 
   it('GET CORS request', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     const res = await request(server)
       .get('/')
       .set('Origin', 'https://example.com')
@@ -75,7 +75,7 @@ describe('17-cors', () => {
   });
 
   it('Preflighted CORS request', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     const res = await request(server)
       .options('/')
       .set('Origin', 'https://example.com')
@@ -94,7 +94,7 @@ describe('17-cors', () => {
   });
 
   it('CORS request with credentials', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     const res = await request(server)
       .get('/credentials')
       .set('Origin', 'https://example.com')

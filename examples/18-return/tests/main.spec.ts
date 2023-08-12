@@ -1,5 +1,5 @@
 import request = require('supertest');
-import { Application } from '@ditsmod/core';
+import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
 
@@ -8,7 +8,7 @@ describe('18-return', () => {
   // console.log = jest.fn(); // Hide logs
 
   it('case 1', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     await request(server)
       .get('/first')
       .expect(200)

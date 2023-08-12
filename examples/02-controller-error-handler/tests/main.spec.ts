@@ -1,12 +1,12 @@
 import request = require('supertest');
-import { Application } from '@ditsmod/core';
+import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
 
 
 describe('02-controller-error-handler', () => {
   it('should works', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     await request(server)
       .get('/')
       .expect(200)
@@ -17,7 +17,7 @@ describe('02-controller-error-handler', () => {
 
   it('should throw an error', async () => {
     console.log = jest.fn(); // Hide logs
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     await request(server)
       .get('/throw-error')
       .expect(500);

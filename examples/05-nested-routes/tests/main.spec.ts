@@ -1,5 +1,5 @@
 import request = require('supertest');
-import { Application } from '@ditsmod/core';
+import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
 
@@ -7,7 +7,7 @@ describe('05-nested-routes', () => {
   console.log = jest.fn(); // Hide logs
 
   it('should works with /api/posts', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     await request(server)
       .get('/api/posts')
       .expect(200)
@@ -17,7 +17,7 @@ describe('05-nested-routes', () => {
   });
 
   it('should works with /api/posts/123', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     await request(server)
       .get('/api/posts/123')
       .expect(200)
@@ -27,7 +27,7 @@ describe('05-nested-routes', () => {
   });
 
   it('should works with /api/posts/123/comments', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     await request(server)
       .get('/api/posts/123/comments')
       .expect(200)
@@ -37,7 +37,7 @@ describe('05-nested-routes', () => {
   });
 
   it('should works with /api/posts/123/comments/456', async () => {
-    const { server } = await new Application().bootstrap(AppModule, false);
+    const server = await new TestApplication(AppModule).getServer();
     await request(server)
       .get('/api/posts/123/comments/456')
       .expect(200)
