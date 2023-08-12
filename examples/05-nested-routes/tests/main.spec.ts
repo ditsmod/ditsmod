@@ -1,48 +1,45 @@
 import request = require('supertest');
 import { TestApplication } from '@ditsmod/testing';
+import { Providers, Server } from '@ditsmod/core';
 
 import { AppModule } from '../src/app/app.module';
 
 describe('05-nested-routes', () => {
-  console.log = jest.fn(); // Hide logs
+  let server: Server;
 
-  it('should works with /api/posts', async () => {
-    const server = await new TestApplication(AppModule).getServer();
-    await request(server)
-      .get('/api/posts')
-      .expect(200)
-      .expect({ pathParams: {} });
+  beforeAll(async () => {
+    server = await new TestApplication(AppModule)
+      .setLogLevelForInit('error')
+      .overrideProviders([...new Providers().useLogConfig({ level: 'error' })])
+      .getServer();
+  });
 
+  afterAll(() => {
     server.close();
   });
 
+  it('should works with /api/posts', async () => {
+    await request(server).get('/api/posts').expect(200).expect({ pathParams: {} });
+  });
+
   it('should works with /api/posts/123', async () => {
-    const server = await new TestApplication(AppModule).getServer();
     await request(server)
       .get('/api/posts/123')
       .expect(200)
       .expect({ pathParams: { postId: '123' } });
-
-    server.close();
   });
 
   it('should works with /api/posts/123/comments', async () => {
-    const server = await new TestApplication(AppModule).getServer();
     await request(server)
       .get('/api/posts/123/comments')
       .expect(200)
       .expect({ pathParams: { postId: '123' } });
-
-    server.close();
   });
 
   it('should works with /api/posts/123/comments/456', async () => {
-    const server = await new TestApplication(AppModule).getServer();
     await request(server)
       .get('/api/posts/123/comments/456')
       .expect(200)
       .expect({ pathParams: { postId: '123', commentId: '456' } });
-
-    server.close();
   });
 });

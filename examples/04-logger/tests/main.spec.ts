@@ -7,14 +7,14 @@ import { AppModule } from '../src/app/app.module';
 describe('04-logger', () => {
   let server: Server;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     server = await new TestApplication(AppModule)
       .setLogLevelForInit('error')
       .overrideProviders([...new Providers().useLogConfig({ level: 'error' })])
       .getServer();
   });
 
-  afterEach(() => {
+  afterAll(() => {
     server.close();
   });
 
