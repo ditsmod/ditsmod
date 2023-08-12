@@ -1,27 +1,29 @@
 import request = require('supertest');
+import { Server, Providers } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
 
-
 describe('02-controller-error-handler', () => {
-  it('should works', async () => {
-    const server = await new TestApplication(AppModule).getServer();
-    await request(server)
-      .get('/')
-      .expect(200)
-      .expect('ok');
+  let server: Server;
 
+  beforeAll(async () => {
+    // The controller method is expected to throw an error, so we force the log level to "fatal"
+    // to avoid outputting an error to the console.
+    server = await new TestApplication(AppModule)
+      .setProvidersPerApp([...new Providers().useLogConfig({ level: 'fatal' })])
+      .getServer();
+  });
+
+  afterAll(() => {
     server.close();
   });
 
-  it('should throw an error', async () => {
-    console.log = jest.fn(); // Hide logs
-    const server = await new TestApplication(AppModule).getServer();
-    await request(server)
-      .get('/throw-error')
-      .expect(500);
+  it('should works', async () => {
+    await request(server).get('/').expect(200).expect('ok');
+  });
 
-    server.close();
+  it('should throw an error', async () => {
+    await request(server).get('/throw-error').expect(500);
   });
 });
