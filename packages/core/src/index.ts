@@ -66,7 +66,7 @@ export {
 export { ModuleMetadata, AppendsWithParams } from './types/module-metadata';
 export { RouteMeta } from './types/route-data';
 export { PathParam, RouteHandler, Router, RouterReturns } from './types/router';
-export { NodeRequest, NodeResponse, RequestListener, Server } from './types/server-options';
+export { NodeRequest, NodeResponse, RequestListener, Server, NodeServer } from './types/server-options';
 export { createHelperForGuardWithParams } from './utils/create-helper-for-guards-with-params';
 export { deepFreeze } from './utils/deep-freeze';
 export { getDependencies } from './utils/get-dependecies';

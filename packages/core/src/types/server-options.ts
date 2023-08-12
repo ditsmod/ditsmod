@@ -9,3 +9,4 @@ export type NodeRequest = http.IncomingMessage | Http2ServerRequest;
 export type NodeResponse = http.ServerResponse | Http2ServerResponse;
 export type RequestListener = (request: NodeRequest, response: NodeResponse) => void | Promise<void>;
 export type Server = http.Server | https.Server | Http2Server | Http2SecureServer;
+export type NodeServer = Server; // Alias for more unambiguous import.
