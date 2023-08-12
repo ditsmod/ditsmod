@@ -1,13 +1,21 @@
 import request = require('supertest');
 import { TestApplication } from '@ditsmod/testing';
+import { Server } from '@ditsmod/core';
 
 import { AppModule } from '../src/app/app.module';
 
 describe('07-dynamically-composing-modules', () => {
-  console.log = jest.fn(); // Hide logs
+  let server: Server;
+
+  beforeAll(async () => {
+    server = await new TestApplication(AppModule).getServer();
+  });
+
+  afterAll(() => {
+    server.close();
+  });
 
   it('should works', async () => {
-    const server = await new TestApplication(AppModule).getServer();
     await request(server)
       .get('/')
       .expect(200)
@@ -55,7 +63,5 @@ describe('07-dynamically-composing-modules', () => {
       .get('/')
       .expect(200)
       .expect('first module.\n');
-
-    server.close();
   });
 });
