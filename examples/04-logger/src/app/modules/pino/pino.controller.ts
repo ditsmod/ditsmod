@@ -3,11 +3,9 @@ import { BaseLogger as PinoLogger } from 'pino';
 
 @controller()
 export class PinoController {
-  constructor(@inject(Logger) private logger: PinoLogger) {}
-
   @route('GET', 'pino')
-  ok(res: Res) {
+  async ok(res: Res, @inject(Logger) logger: PinoLogger) {
     res.send('see console of node process\n');
-    this.logger.info("it's works!");
+    logger.info("it's works!");
   }
 }

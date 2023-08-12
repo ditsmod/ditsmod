@@ -14,27 +14,23 @@ describe('04-logger', () => {
       .getServer();
   });
 
+  afterEach(() => {
+    server.close();
+  });
+
   it('should works', async () => {
     await request(server).get('/').expect(200).expect('ok');
-
-    server.close();
   });
 
   it('should works with winston', async () => {
     await request(server).get('/winston').expect(200);
-
-    server.close();
   });
 
   it('should works with bunyan', async () => {
     await request(server).get('/bunyan').expect(200);
-
-    server.close();
   });
 
   it('should works with pino', async () => {
     await request(server).get('/pino').expect(200);
-
-    server.close();
   });
 });

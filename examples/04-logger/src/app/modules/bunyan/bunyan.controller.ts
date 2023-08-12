@@ -3,11 +3,9 @@ import BunyanLogger = require('bunyan');
 
 @controller()
 export class BunyanController {
-  constructor(private logger: BunyanLogger) {}
-
   @route('GET', 'bunyan')
-  ok(res: Res) {
+  async ok(res: Res, logger: BunyanLogger) {
     res.send('see console of node process\n');
-    this.logger.info("it's works!");
+    logger.info("it's works!");
   }
 }

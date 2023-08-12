@@ -3,11 +3,9 @@ import { Logger as WinstonLogger } from 'winston';
 
 @controller()
 export class WinstonController {
-  constructor(@inject(Logger) private logger: WinstonLogger) {}
-
   @route('GET', 'winston')
-  ok(res: Res) {
+  async ok(res: Res, @inject(Logger) logger: WinstonLogger) {
     res.send('see console of node process\n');
-    this.logger.info("it's works!");
+    logger.info("it's works!");
   }
 }
