@@ -1,24 +1,14 @@
-import { Application, LogLevel, ModuleManager, ModuleType, Provider, Server } from '@ditsmod/core';
+import { LogLevel, ModuleType, Provider } from '@ditsmod/core';
 
-import { TestModuleManager } from './test-module-manager';
-import { TestAppInitializer } from './test-app-initializer';
+import { PreTestApplication } from './pre-test-application';
 
-export class TestApplication extends Application {
-  protected appModule: ModuleType;
-  protected testModuleManager: TestModuleManager;
-  protected logLevel: LogLevel;
+// This class is only needed as a wrapper over the PreTestApplication
+// class to hide the bootstrap() method from the public API.
+export class TestApplication {
+  protected preTestApplication: PreTestApplication;
 
   constructor(appModule: ModuleType) {
-    super();
-    this.initRootModule(appModule);
-  }
-
-  protected override initRootModule(appModule: ModuleType) {
-    this.appModule = appModule;
-    super.initRootModule(appModule);
-    this.testModuleManager = new TestModuleManager(this.systemLogMediator);
-    this.testModuleManager.scanRootModule(appModule);
-    return this;
+    this.preTestApplication = new PreTestApplication(appModule);
   }
 
   /**
@@ -29,7 +19,7 @@ export class TestApplication extends Application {
    * In most cases, this is the method you need.
    */
   overrideProviders(providers: Provider[]) {
-    this.testModuleManager.overrideProviders(providers);
+    this.preTestApplication.overrideProviders(providers);
     return this;
   }
 
@@ -41,7 +31,7 @@ export class TestApplication extends Application {
    * you should use the `overrideProviders()` method instead.
    */
   setProvidersPerApp(providers: Provider[]) {
-    this.testModuleManager.setProvidersPerApp(providers);
+    this.preTestApplication.setProvidersPerApp(providers);
     return this;
   }
 
@@ -50,39 +40,11 @@ export class TestApplication extends Application {
    * before HTTP request handlers are created.
    */
   setLogLevelForInit(logLevel: LogLevel) {
-    this.logLevel = logLevel;
+    this.preTestApplication.setLogLevelForInit(logLevel);
     return this;
   }
 
-  async getServer(listen: boolean = false) {
-    const { server } = await this.bootstrapTestApplication(listen);
-    return server;
-  }
-
-  protected bootstrapTestApplication(listen: boolean = false) {
-    return new Promise<{ server: Server }>(async (resolve, reject) => {
-      try {
-        const testAppInitializer = this.getAppInitializer(this.testModuleManager);
-        testAppInitializer.setLogLevelForInit(this.logLevel);
-        await this.bootstrapApplication(testAppInitializer);
-        this.finishBootstrap(testAppInitializer, resolve, listen);
-      } catch (err: any) {
-        this.systemLogMediator.internalServerError(this, err, true);
-        this.flushLogs();
-        reject(err);
-      }
-    });
-  }
-
-  protected override getAppInitializer(moduleManager: ModuleManager) {
-    return new TestAppInitializer(this.rootMeta, moduleManager, this.systemLogMediator);
-  }
-
-  /**
-   * This method exists here only because `TestApplication` extends the `Application` class.
-   * Most likely, you will not need it during testing.
-   */
-  override bootstrap(appModule: ModuleType, listen: boolean = true) {
-    return super.bootstrap(appModule, listen);
+  getServer(listen: boolean = false) {
+    return this.preTestApplication.getServer(listen);
   }
 }
