@@ -12,6 +12,6 @@ tslint.json
 *.spec.*
 yarn.lock
 .js
-jest.config.js
+jest.config.ts
 *.tsbuildinfo
 tsconfig.json

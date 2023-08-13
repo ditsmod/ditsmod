@@ -2,7 +2,7 @@
 *.log
 *.spec.ts
 yarn.lock
-jest.config.js
+jest.config.ts
 .*
 nodemon.json
 CHANGELOG.md
