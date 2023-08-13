@@ -5,21 +5,21 @@ import {
   ModuleWithParams,
   NormalizedModuleMetadata,
   PreRouterExtension,
-  Provider,
+  NormalizedProvider,
 } from '@ditsmod/core';
 import { TestPreRouterExtension } from './test-pre-router.extensions';
 
 type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 
 export class TestModuleManager extends ModuleManager {
-  protected providersToOverride: Provider[] = [];
-  protected providersToSetPerApp: Provider[] = [];
+  protected providersToOverride: NormalizedProvider[] = [];
+  protected providersToSetPerApp: NormalizedProvider[] = [];
 
-  overrideProviders(providers: Provider[]) {
+  overrideProviders(providers: NormalizedProvider[]) {
     this.providersToOverride = providers;
   }
 
-  setProvidersPerApp(providers: Provider[]) {
+  setProvidersPerApp(providers: NormalizedProvider[]) {
     this.providersToSetPerApp = providers;
   }
 
