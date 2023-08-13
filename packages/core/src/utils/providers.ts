@@ -3,7 +3,6 @@ import { LogMediator } from '../log-mediator/log-mediator';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { OutputLogFilter } from '../log-mediator/types';
 import { Logger, LoggerConfig } from '../types/logger';
-import { ServiceProvider } from '../types/mix';
 import { NormalizedProvider } from './ng-utils';
 
 /**
@@ -53,7 +52,7 @@ import { NormalizedProvider } from './ng-utils';
  * That is, after using the use() method, you will be able to use plugin methods.
  */
 export class Providers {
-  protected providers: ServiceProvider[] = [];
+  protected providers: NormalizedProvider[] = [];
   protected index = -1;
 
   useValue<T>(token: any, useValue: T, multi?: boolean) {
@@ -95,15 +94,20 @@ export class Providers {
   }
 
   useSystemLogMediator<T extends Class<LogMediator>>(CustomLogMediator: T) {
-    this.providers.push(CustomLogMediator, { token: SystemLogMediator, useToken: CustomLogMediator });
+    this.providers.push(
+      { token: CustomLogMediator, useClass: CustomLogMediator },
+      { token: SystemLogMediator, useToken: CustomLogMediator },
+    );
 
     return this;
   }
 
   use<T extends Class<Providers>>(Plugin: T): T['prototype'] & this {
-    Object.getOwnPropertyNames(Plugin.prototype).filter(p => p != 'constructor').forEach(p => {
-      (this as any)[p] = Plugin.prototype[p];
-    });
+    Object.getOwnPropertyNames(Plugin.prototype)
+      .filter((p) => p != 'constructor')
+      .forEach((p) => {
+        (this as any)[p] = Plugin.prototype[p];
+      });
     return this;
   }
 

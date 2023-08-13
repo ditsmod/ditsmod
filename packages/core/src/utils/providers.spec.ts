@@ -1,4 +1,3 @@
-
 import { Logger, LoggerConfig } from '../types/logger';
 import { ServiceProvider } from '../types/mix';
 import { ConsoleLogger } from '../services/console-logger';
@@ -60,7 +59,10 @@ describe('Providers', () => {
     class CustomLogMediator extends LogMediator {}
 
     const config1 = new Providers().useSystemLogMediator(CustomLogMediator);
-    expect([...config1]).toEqual([CustomLogMediator, { token: SystemLogMediator, useToken: CustomLogMediator }]);
+    expect([...config1]).toEqual([
+      { token: CustomLogMediator, useClass: CustomLogMediator },
+      { token: SystemLogMediator, useToken: CustomLogMediator },
+    ]);
   });
 
   it('works multi calling', () => {
