@@ -7,13 +7,13 @@
   },
   "description": "",
   "main": "dist/index",
-  "typings": "dist/index",
+  "types": "src/index",
   "directories": {
     "lib": "src"
   },
   "scripts": {
     "test": "jest",
-    "build": "rm -rf dist/* && tsc -b -f"
+    "build": "rm -rf dist/* && tsc -b tsconfig.build.json -f"
   },
   "keywords": [],
   "author": "",
