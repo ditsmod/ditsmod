@@ -8,7 +8,7 @@ import { LogMediator } from './log-mediator/log-mediator';
 import { SystemLogMediator } from './log-mediator/system-log-mediator';
 import { ModuleManager } from './services/module-manager';
 import { AnyFn, ModuleType, ModuleWithParams } from './types/mix';
-import { Http2SecureServerOptions, RequestListener, Server } from './types/server-options';
+import { Http2SecureServerOptions, RequestListener, NodeServer } from './types/server-options';
 import { getModuleMetadata } from './utils/get-module-metadata';
 import { pickProperties } from './utils/pick-properties';
 import { isHttp2SecureServerOptions } from './utils/type-guards';
@@ -22,7 +22,7 @@ export class Application {
    * @param listen If this parameter seted to `false` then `server.listen()` is not called. Default - `true`.
    */
   bootstrap(appModule: ModuleType, listen: boolean = true) {
-    return new Promise<{ server: Server }>(async (resolve, reject) => {
+    return new Promise<{ server: NodeServer }>(async (resolve, reject) => {
       try {
         this.initRootModule(appModule);
         const moduleManager = this.scanRootModule(appModule);
@@ -101,7 +101,7 @@ export class Application {
     this.systemLogMediator.flush();
   }
 
-  protected createServer(requestListener: RequestListener): Server {
+  protected createServer(requestListener: RequestListener): NodeServer {
     if (isHttp2SecureServerOptions(this.rootMeta.serverOptions)) {
       const serverModule = this.rootMeta.httpModule as typeof http2;
       return serverModule.createSecureServer(this.rootMeta.serverOptions, requestListener);
