@@ -4,7 +4,7 @@ sidebar_position: 8
 
 # LogMediator
 
-In Ditsmod, you can substitute the default logger with your own logger, and this will allow you to record in your own way even those messages that are issued in `@ditsmod/core`. But changing the logger does not allow you to change the text of the messages themselves and the level of logging (trace, debug, info, warn, error). `LogMediator` (or its child class `SystemLogMediator`) is used for this. Of course, if you have direct access to the code where the logger writes a certain message, then you can change this message on the spot without `LogMediator`. And if the message is issued by the Ditsmod framework itself or its modules, `LogMediator` cannot be dispensed with.
+In Ditsmod, you can substitute the default logger with your own logger, and this will allow you to record in your own way even those messages that are issued in `@ditsmod/core`. But changing the logger does not allow you to change the text of the messages themselves and the level of logging (trace, debug, info, warn, error). `LogMediator` (or its child class `SystemLogMediator`) is used for this. Of course, if you have direct access to the code where the logger writes a certain message, then you can change this message on the spot without `LogMediator`. And if the message is issued by the Ditsmod framework itself or its modules, `LogMediator` is essential.
 
 If you want to write a module for a Ditsmod application to publish on, for example, npmjs.com, it is recommended that you use `LogMediator` instead of `Logger`, as users will be able to modify the messages that your module writes.
 
