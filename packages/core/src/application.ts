@@ -38,24 +38,11 @@ export class Application {
     });
   }
 
-  protected finishBootstrap(appInitializer: AppInitializer, resolve: AnyFn, listen: boolean) {
-    this.flushLogs();
-    const server = this.createServer(appInitializer.requestListener);
-    if (listen) {
-      server.listen(this.rootMeta.listenOptions, () => {
-        const { listenOptions } = this.rootMeta;
-        this.systemLogMediator.serverListen(this, listenOptions.host!, listenOptions.port!);
-        resolve({ server });
-      });
-    } else {
-      resolve({ server });
-    }
-  }
-
   protected initRootModule(appModule: ModuleType) {
     this.systemLogMediator = new SystemLogMediator({ moduleName: 'AppModule' });
     this.mergeRootMetadata(appModule);
     this.checkSecureServerOption(appModule.name);
+    return this.systemLogMediator;
   }
 
   /**
@@ -94,6 +81,20 @@ export class Application {
     this.systemLogMediator = appInitializer.systemLogMediator;
     this.systemLogMediator.updateLogsWithCurrentLogConfig();
     await appInitializer.bootstrapModulesAndExtensions();
+  }
+
+  protected finishBootstrap(appInitializer: AppInitializer, resolve: AnyFn, listen: boolean) {
+    this.flushLogs();
+    const server = this.createServer(appInitializer.requestListener);
+    if (listen) {
+      server.listen(this.rootMeta.listenOptions, () => {
+        const { listenOptions } = this.rootMeta;
+        this.systemLogMediator.serverListen(this, listenOptions.host!, listenOptions.port!);
+        resolve({ server });
+      });
+    } else {
+      resolve({ server });
+    }
   }
 
   protected flushLogs() {
