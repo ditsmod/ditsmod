@@ -8,7 +8,8 @@ export class TestApplication {
   protected preTestApplication: PreTestApplication;
 
   constructor(appModule: ModuleType) {
-    this.preTestApplication = new PreTestApplication(appModule);
+    this.preTestApplication = new PreTestApplication();
+    this.preTestApplication.initRootModule(appModule);
   }
 
   /**

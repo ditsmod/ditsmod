@@ -4,17 +4,10 @@ import { TestModuleManager } from './test-module-manager';
 import { TestAppInitializer } from './test-app-initializer';
 
 export class PreTestApplication extends Application {
-  protected appModule: ModuleType;
   protected testModuleManager: TestModuleManager;
   protected logLevel: LogLevel;
 
-  constructor(appModule: ModuleType) {
-    super();
-    this.initRootModule(appModule);
-  }
-
-  protected override initRootModule(appModule: ModuleType) {
-    this.appModule = appModule;
+  override initRootModule(appModule: ModuleType) {
     super.initRootModule(appModule);
     this.testModuleManager = new TestModuleManager(this.systemLogMediator);
     this.testModuleManager.scanRootModule(appModule);
@@ -24,7 +17,7 @@ export class PreTestApplication extends Application {
    * Overrides providers at any level if there are matching providers at those levels
    * (they have the same tokens). Therefore, unlike the `setProvidersPerApp()` method,
    * this method does not always add providers to the DI.
-   * 
+   *
    * In most cases, this is the method you need.
    */
   overrideProviders(providers: NormalizedProvider[]) {
@@ -34,7 +27,7 @@ export class PreTestApplication extends Application {
   /**
    * Adds providers at the application level. This method is intended, for example,
    * to set the level of logs during testing, etc.
-   * 
+   *
    * If you need to _override_ a specific provider at the application level,
    * you should use the `overrideProviders()` method instead.
    */
