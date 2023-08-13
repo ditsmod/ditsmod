@@ -1,4 +1,4 @@
-import { LogLevel, ModuleType, Provider } from '@ditsmod/core';
+import { LogLevel, ModuleType, NormalizedProvider } from '@ditsmod/core';
 
 import { PreTestApplication } from './pre-test-application';
 
@@ -18,7 +18,7 @@ export class TestApplication {
    * 
    * In most cases, this is the method you need.
    */
-  overrideProviders(providers: Provider[]) {
+  overrideProviders(providers: NormalizedProvider[]) {
     this.preTestApplication.overrideProviders(providers);
     return this;
   }
@@ -30,7 +30,7 @@ export class TestApplication {
    * If you need to _override_ a specific provider at the application level,
    * you should use the `overrideProviders()` method instead.
    */
-  setProvidersPerApp(providers: Provider[]) {
+  setProvidersPerApp(providers: NormalizedProvider[]) {
     this.preTestApplication.setProvidersPerApp(providers);
     return this;
   }

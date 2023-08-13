@@ -1,4 +1,4 @@
-import { Application, LogLevel, ModuleManager, ModuleType, Provider, Server } from '@ditsmod/core';
+import { Application, LogLevel, ModuleManager, ModuleType, Server, NormalizedProvider } from '@ditsmod/core';
 
 import { TestModuleManager } from './test-module-manager';
 import { TestAppInitializer } from './test-app-initializer';
@@ -27,7 +27,7 @@ export class PreTestApplication extends Application {
    * 
    * In most cases, this is the method you need.
    */
-  overrideProviders(providers: Provider[]) {
+  overrideProviders(providers: NormalizedProvider[]) {
     this.testModuleManager.overrideProviders(providers);
   }
 
@@ -38,7 +38,7 @@ export class PreTestApplication extends Application {
    * If you need to _override_ a specific provider at the application level,
    * you should use the `overrideProviders()` method instead.
    */
-  setProvidersPerApp(providers: Provider[]) {
+  setProvidersPerApp(providers: NormalizedProvider[]) {
     this.testModuleManager.setProvidersPerApp(providers);
   }
 
