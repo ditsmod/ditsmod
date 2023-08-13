@@ -2,6 +2,6 @@ node_modules
 dist*
 *.tgz
 *.log
-tsconfig.tsbuildinfo
+*.tsbuildinfo
 .vscode/settings.json
 .yarn
