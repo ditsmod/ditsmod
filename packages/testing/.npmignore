@@ -9,3 +9,4 @@ nodemon.json
 CHANGELOG.md
 *.tsbuildinfo
 tsconfig.json
+tests
