@@ -12,7 +12,7 @@ export class PreTestApplication extends Application {
     return new Promise<{ server: Server }>(async (resolve, reject) => {
       try {
         const testAppInitializer = new TestAppInitializer(this.rootMeta, testModuleManager, this.systemLogMediator);
-        testAppInitializer.setLogLevelForInit(logLevel);
+        testAppInitializer.setInitLogLevel(logLevel);
         await this.bootstrapApplication(testAppInitializer);
         this.finishBootstrap(testAppInitializer, resolve, listen);
       } catch (err: any) {

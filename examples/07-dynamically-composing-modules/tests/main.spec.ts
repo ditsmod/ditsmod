@@ -9,7 +9,7 @@ describe('07-dynamically-composing-modules', () => {
 
   beforeAll(async () => {
     server = await new TestApplication(AppModule)
-      .setLogLevelForInit('fatal')
+      .setInitLogLevel('fatal')
       .setProvidersPerApp([...new Providers().useLogConfig({ level: 'fatal' })])
       .getServer();
   });

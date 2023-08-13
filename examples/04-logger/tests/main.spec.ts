@@ -9,7 +9,7 @@ describe('04-logger', () => {
 
   beforeAll(async () => {
     server = await new TestApplication(AppModule)
-      .setLogLevelForInit('error')
+      .setInitLogLevel('error')
       .overrideProviders([...new Providers().useLogConfig({ level: 'error' })])
       .getServer();
   });

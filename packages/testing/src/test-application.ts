@@ -50,7 +50,7 @@ export class TestApplication {
    * This setting of log level only works during initialization,
    * before HTTP request handlers are created.
    */
-  setLogLevelForInit(logLevel: LogLevel) {
+  setInitLogLevel(logLevel: LogLevel) {
     this.logLevel = logLevel;
     return this;
   }
