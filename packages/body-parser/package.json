@@ -12,7 +12,7 @@
     "lib": "src"
   },
   "scripts": {
-    "build": "rm -rf dist/* && tsc -b -f"
+    "build": "rm -rf dist/* && tsc -b tsconfig.build.json -f"
   },
   "keywords": [],
   "author": "",
