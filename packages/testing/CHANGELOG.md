@@ -1,5 +1,17 @@
+<a name="testing-2.0.0"></a>
+# testing-2.0.0 (2023-08-14)
+
+### Breaking chanages
+
+- `TestApplication#overrideProviders()` accept only normalized providers.
+- rename `setLogLevelForInit()` to `setInitLogLevel()`.
+
+### Features
+
+- Added `TestApplication#setProvidersPerApp()`.
+
 <a name="testing-2.0.0-beta.5"></a>
-# testing-2.0.0-beta.5 (2023-08-11)
+## testing-2.0.0-beta.5 (2023-08-11)
 
 ### Migration
 
