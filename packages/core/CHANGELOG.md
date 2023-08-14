@@ -1,5 +1,17 @@
+<a name="core-2.42.0"></a>
+# [core-2.42.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.42.0) (2023-08-11)
+
+### Breaking changes
+
+- `Providers` class returns only normalized providers.
+
+### Features
+
+- Added `NodeServer` alias for `Server` type.
+- `Application#initRootModule()` returns `SystemLogMediator`, so it can use `TestApplication`.
+
 <a name="core-2.41.0"></a>
-# [core-2.41.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.41.0) (2023-08-11)
+## [core-2.41.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.41.0) (2023-08-11)
 
 ### Breaking changes
 
