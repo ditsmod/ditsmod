@@ -19,7 +19,7 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "rm -rf dist/* && tsc -b -f"
+    "build": "rm -rf dist/* && tsc -b tsconfig.build.json -f"
   },
   "dependencies": {
     "@ts-stack/chain-error": "^1.2.0",
