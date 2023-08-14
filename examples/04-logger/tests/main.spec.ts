@@ -1,11 +1,11 @@
 import request = require('supertest');
-import { Providers, Server } from '@ditsmod/core';
+import { Providers, NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
 
 describe('04-logger', () => {
-  let server: Server;
+  let server: NodeServer;
 
   beforeAll(async () => {
     server = await new TestApplication(AppModule)

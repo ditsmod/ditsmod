@@ -1,11 +1,11 @@
 import request = require('supertest');
 import { TestApplication } from '@ditsmod/testing';
-import { Server } from '@ditsmod/core';
+import { NodeServer } from '@ditsmod/core';
 
 import { AppModule } from '../src/app/app.module';
 
 describe('06-body-parser', () => {
-  let server: Server;
+  let server: NodeServer;
 
   beforeAll(async () => {
     server = await new TestApplication(AppModule).getServer();

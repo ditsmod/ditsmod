@@ -1,11 +1,11 @@
 import request = require('supertest');
-import { Server, Providers } from '@ditsmod/core';
+import { NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
 
 describe('03-route-guards', () => {
-  let server: Server;
+  let server: NodeServer;
 
   beforeAll(async () => {
     server = await new TestApplication(AppModule).getServer();

@@ -1,11 +1,11 @@
 import request = require('supertest');
 import { TestApplication } from '@ditsmod/testing';
-import { Providers, Server } from '@ditsmod/core';
+import { Providers, NodeServer } from '@ditsmod/core';
 
 import { AppModule } from '../src/app/app.module';
 
 describe('07-dynamically-composing-modules', () => {
-  let server: Server;
+  let server: NodeServer;
 
   beforeAll(async () => {
     server = await new TestApplication(AppModule)

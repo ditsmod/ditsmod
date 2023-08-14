@@ -1,11 +1,11 @@
 import request = require('supertest');
-import { Server, Providers } from '@ditsmod/core';
+import { NodeServer, Providers } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
 
 describe('02-controller-error-handler', () => {
-  let server: Server;
+  let server: NodeServer;
 
   beforeAll(async () => {
     // The controller method is expected to throw an error, so we force the log level to "fatal"
