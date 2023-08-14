@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    // "baseUrl": ".", // See https://github.com/microsoft/TypeScript/issues/47114#issuecomment-1004360864
+    "baseUrl": ".",
     "outDir": "dist",
     "rootDir": "src",
     "paths": {
@@ -13,8 +13,11 @@
   "include": [
     "src"
   ],
+  "exclude": [
+    "./**/*.spec.ts"
+  ],
   "files": [],
   "references": [
-    { "path": "../core" }
+    { "path": "../core" },
   ]
 }

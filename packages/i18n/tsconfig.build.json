@@ -11,7 +11,10 @@
     }
   },
   "include": [
-    "src"
+    "./src"
+  ],
+  "exclude": [
+    "./**/*.spec.ts"
   ],
   "files": [],
   "references": [

@@ -13,6 +13,9 @@
   "include": [
     "src"
   ],
+  "exclude": [
+    "./**/*.spec.ts"
+  ],
   "files": [],
   "references": [
     { "path": "../core" }
