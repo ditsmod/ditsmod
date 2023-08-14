@@ -1,4 +1,4 @@
-import { DecoratorAndValue, DiError, type Class } from './types-and-models';
+import { DecoratorAndValue, type Class } from './types-and-models';
 import { isType } from './utils';
 
 /**
@@ -19,7 +19,6 @@ export const PROP_KEY = Symbol();
 
 export function makeClassDecorator<T extends (...args: any[]) => any>(transform?: T) {
   return function classDecorFactory(...args: Parameters<T>): any {
-    checkImportReflectMetadata();
     const value = transform ? transform(...args) : [...args];
     return function classDecorator(Cls: Class): void {
       const annotations = getMetadata(Cls, CLASS_KEY, []);
@@ -30,7 +29,6 @@ export function makeClassDecorator<T extends (...args: any[]) => any>(transform?
 
 export function makeParamDecorator<T extends (...args: any[]) => any>(transform?: T) {
   return function paramDecorFactory(...args: Parameters<T>) {
-    checkImportReflectMetadata();
     const value = transform ? transform(...args) : [...args];
     return function paramDecorator(clsOrObj: Class | object, propertyKey: string | symbol | undefined, index: number): void {
       // This function can be called for a class constructor and methods.
@@ -51,7 +49,6 @@ export function makeParamDecorator<T extends (...args: any[]) => any>(transform?
 
 export function makePropDecorator<T extends (...args: any[]) => any>(transform?: T) {
   return function propDecorFactory(...args: Parameters<T>) {
-    checkImportReflectMetadata();
     const value = transform ? transform(...args) : [...args];
     return function propDecorator(target: any, propertyKey: string | symbol): void {
       const Cls = target.constructor as Class;
@@ -74,11 +71,4 @@ function getMetadata(cls: any, key: symbol, defaultValue: any) {
   // Use of Object.defineProperty is important since it creates non-enumerable property which
   // prevents the property is copied during subclassing.
   return cls.hasOwnProperty(key) ? cls[key] : Object.defineProperty(cls, key, { value: defaultValue })[key];
-}
-
-function checkImportReflectMetadata() {
-  if (!(Reflect as any)?.getOwnMetadata) {
-    const msg = "To use decorators with Reflect class, you needs to import 'reflect-metadata' in the node entry point file.";
-    throw new DiError(msg);
-  }
 }
