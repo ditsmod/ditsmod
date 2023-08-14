@@ -1,21 +1,21 @@
-import { injectable, InjectionToken } from '../di';
+import { injectable, InjectionToken } from './di';
 
-import { featureModule } from '../decorators/module';
-import { rootModule } from '../decorators/root-module';
-import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { Logger, LogLevel } from '../types/logger';
-import { Router } from '../types/router';
-import { AppInitializer } from '../app-initializer';
-import { LogMediator } from '../log-mediator/log-mediator';
-import { OutputLogFilter } from '../log-mediator/types';
-import { ModuleManager } from './module-manager';
-import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
-import { controller } from '../decorators/controller';
-import { ModuleExtract } from '../models/module-extract';
-import { ImportObj, MetadataPerMod1 } from '../types/metadata-per-mod';
-import { RootMetadata } from '../models/root-metadata';
-import { Providers } from '../utils/providers';
-import { SystemLogMediator } from '../log-mediator/system-log-mediator';
+import { featureModule } from './decorators/module';
+import { rootModule } from './decorators/root-module';
+import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
+import { Logger, LogLevel } from './types/logger';
+import { Router } from './types/router';
+import { AppInitializer } from './app-initializer';
+import { LogMediator } from './log-mediator/log-mediator';
+import { OutputLogFilter } from './log-mediator/types';
+import { ModuleManager } from './services/module-manager';
+import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
+import { controller } from './decorators/controller';
+import { ModuleExtract } from './models/module-extract';
+import { ImportObj, MetadataPerMod1 } from './types/metadata-per-mod';
+import { RootMetadata } from './models/root-metadata';
+import { Providers } from './utils/providers';
+import { SystemLogMediator } from './log-mediator/system-log-mediator';
 
 describe('AppInitializer', () => {
   type AnyModule = ModuleType | ModuleWithParams;
