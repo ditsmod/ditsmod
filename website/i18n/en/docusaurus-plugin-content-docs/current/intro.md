@@ -22,7 +22,7 @@ Some concepts of Ditsmod architecture are taken from Angular concepts, and DI is
 
 ## Prerequisites
 
-Please make sure that Node.js >= v18.17.1 is installed on your operating system.
+Please make sure that Node.js >= v18.0.0 is installed on your operating system.
 
 ## Install the Ditsmod seed
 
