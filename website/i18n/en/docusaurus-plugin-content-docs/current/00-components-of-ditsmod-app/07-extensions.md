@@ -10,7 +10,7 @@ The extension does its work before creating HTTP request handlers, and it can dy
 
 For example, the [@ditsmod/body-parser][5] module has an extension that dynamically adds an HTTP interceptor for parsing the request body to any route that has the appropriate method (POST, PATCH, PUT). It does this once before creating HTTP request handlers, so there is no need to test the need for such parsing for each request.
 
-Another example. the [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without the extension working, Ditsmod will ignore the metadata from this new decorator.
+Another example. The [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without the extension working, Ditsmod will ignore the metadata from this new decorator.
 
 ## What is Ditsmod extension
 
