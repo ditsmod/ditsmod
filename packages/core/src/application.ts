@@ -13,6 +13,7 @@ import { getModuleMetadata } from './utils/get-module-metadata';
 import { pickProperties } from './utils/pick-properties';
 import { isHttp2SecureServerOptions } from './utils/type-guards';
 import { clearErrorTrace } from './utils/clear-error-trace';
+import { HttpServerModule, HttpsServerModule } from './types/http-module';
 
 export class Application {
   protected rootMeta: RootMetadata;
@@ -29,7 +30,7 @@ export class Application {
         const moduleManager = this.scanRootModule(appModule);
         const appInitializer = this.getAppInitializer(moduleManager);
         await this.bootstrapApplication(appInitializer);
-        this.createServerAndListen(appInitializer, resolve, listen);
+        await this.createServerAndListen(appInitializer, resolve, listen);
       } catch (err: any) {
         this.systemLogMediator.internalServerError(this, err, true);
         this.flushLogs();
@@ -84,9 +85,9 @@ export class Application {
     await appInitializer.bootstrapModulesAndExtensions();
   }
 
-  protected createServerAndListen(appInitializer: AppInitializer, resolve: AnyFn, listen: boolean) {
+  protected async createServerAndListen(appInitializer: AppInitializer, resolve: AnyFn, listen: boolean) {
     this.flushLogs();
-    const server = this.createServer(appInitializer.requestListener);
+    const server = await this.createServer(appInitializer.requestListener);
     if (listen) {
       server.listen(this.rootMeta.listenOptions, () => {
         const { listenOptions } = this.rootMeta;
@@ -103,15 +104,14 @@ export class Application {
     this.systemLogMediator.flush();
   }
 
-  protected createServer(requestListener: RequestListener): NodeServer {
+  protected async createServer(requestListener: RequestListener): Promise<NodeServer> {
     if (isHttp2SecureServerOptions(this.rootMeta.serverOptions)) {
       const serverModule = this.rootMeta.httpModule as typeof http2;
       return serverModule.createSecureServer(this.rootMeta.serverOptions, requestListener);
     } else {
-      const serverModule = this.rootMeta.httpModule as typeof http | typeof https;
+      const serverModule = (this.rootMeta.httpModule || (await import('http'))) as HttpServerModule | HttpsServerModule;
       const serverOptions = this.rootMeta.serverOptions as http.ServerOptions | https.ServerOptions;
-      // @todo remove casting after fix https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/63269
-      return (serverModule as typeof http).createServer(serverOptions, requestListener);
+      return serverModule.createServer(serverOptions, requestListener);
     }
   }
 }
