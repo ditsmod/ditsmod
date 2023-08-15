@@ -19,6 +19,7 @@ export class Application {
   protected systemLogMediator: SystemLogMediator;
 
   /**
+   * @param appModule The root module of the application.
    * @param listen If this parameter seted to `false` then `server.listen()` is not called. Default - `true`.
    */
   bootstrap(appModule: ModuleType, listen: boolean = true) {
@@ -28,7 +29,7 @@ export class Application {
         const moduleManager = this.scanRootModule(appModule);
         const appInitializer = this.getAppInitializer(moduleManager);
         await this.bootstrapApplication(appInitializer);
-        this.finishBootstrap(appInitializer, resolve, listen);
+        this.createServerAndListen(appInitializer, resolve, listen);
       } catch (err: any) {
         this.systemLogMediator.internalServerError(this, err, true);
         this.flushLogs();
@@ -83,7 +84,7 @@ export class Application {
     await appInitializer.bootstrapModulesAndExtensions();
   }
 
-  protected finishBootstrap(appInitializer: AppInitializer, resolve: AnyFn, listen: boolean) {
+  protected createServerAndListen(appInitializer: AppInitializer, resolve: AnyFn, listen: boolean) {
     this.flushLogs();
     const server = this.createServer(appInitializer.requestListener);
     if (listen) {
