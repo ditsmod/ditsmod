@@ -14,7 +14,7 @@ export class PreTestApplication extends Application {
         const testAppInitializer = new TestAppInitializer(this.rootMeta, testModuleManager, this.systemLogMediator);
         testAppInitializer.setInitLogLevel(logLevel);
         await this.bootstrapApplication(testAppInitializer);
-        this.finishBootstrap(testAppInitializer, resolve, listen);
+        this.createServerAndListen(testAppInitializer, resolve, listen);
       } catch (err: any) {
         this.systemLogMediator.internalServerError(this, err, true);
         this.flushLogs();
