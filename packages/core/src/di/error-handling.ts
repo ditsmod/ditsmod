@@ -102,9 +102,6 @@ export function instantiationError(originalException: any, tokens: any[]) {
 }
 
 function clearErrorTrace(error: any) {
-  if (!Error.hasOwnProperty('captureStackTrace')) {
-    return error;
-  }
   const str = 'Injector.';
   let lastIndex: number = 0;
   let prevStack = '';
