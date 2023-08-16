@@ -8,14 +8,15 @@ import {
   NormalizedProvider,
 } from '@ditsmod/core';
 import { TestPreRouterExtension } from './test-pre-router.extensions';
+import { TestProvider } from './types';
 
 type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 
 export class TestModuleManager extends ModuleManager {
-  protected providersToOverride: NormalizedProvider[] = [];
+  protected providersToOverride: TestProvider[] = [];
   protected providersToSetPerApp: NormalizedProvider[] = [];
 
-  overrideProviders(providers: NormalizedProvider[]) {
+  overrideProviders(providers: TestProvider[]) {
     this.providersToOverride = providers;
   }
 

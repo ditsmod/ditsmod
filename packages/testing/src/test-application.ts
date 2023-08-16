@@ -2,6 +2,7 @@ import { LogLevel, ModuleType, NormalizedProvider } from '@ditsmod/core';
 
 import { PreTestApplication } from './pre-test-application';
 import { TestModuleManager } from './test-module-manager';
+import { TestProvider } from './types';
 
 // This class is only needed as a wrapper over the PreTestApplication
 // class to hide the bootstrap() method from the public API.
@@ -29,7 +30,7 @@ export class TestApplication {
    *
    * In most cases, this is the method you need.
    */
-  overrideProviders(providers: NormalizedProvider[]) {
+  overrideProviders(providers: TestProvider[]) {
     this.testModuleManager.overrideProviders(providers);
     return this;
   }

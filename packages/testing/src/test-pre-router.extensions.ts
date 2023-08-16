@@ -5,17 +5,18 @@ import {
   normalizeProviders,
   PerAppService,
   PreRouterExtension,
-  Provider,
   ROUTES_EXTENSIONS,
   Router,
   SystemLogMediator,
   forwardRef,
   inject,
   injectable,
+  isClassProvider,
+  isFactoryProvider,
 } from '@ditsmod/core';
 
 import { TestModuleManager } from './test-module-manager';
-import { Scope, Meta } from './types';
+import { Scope, Meta, TestProvider } from './types';
 
 @injectable()
 export class TestPreRouterExtension extends PreRouterExtension {
@@ -78,12 +79,16 @@ export class TestPreRouterExtension extends PreRouterExtension {
    * If the token of the `provider` that needs to be overridden is found in the `metadata`,
    * that `provider` is added to the `metadata` array last in the same scope.
    */
-  protected overrideProvider(scopes: Scope[], metadata: Meta, provider: Provider) {
+  protected overrideProvider(scopes: Scope[], metadata: Meta, provider: TestProvider) {
     scopes.forEach((scope) => {
       const normExistingProviders = normalizeProviders(metadata[`providersPer${scope}`] || []);
       const normProvider = normalizeProviders([provider])[0];
       if (normExistingProviders.some((p) => p.token === normProvider.token)) {
         metadata[`providersPer${scope}`]!.push(provider);
+        if (isClassProvider(provider) || isFactoryProvider(provider)) {
+          const inlineProviders = provider.providers || [];
+          metadata[`providersPer${scope}`]!.push(...inlineProviders);
+        }
       }
     });
   }
