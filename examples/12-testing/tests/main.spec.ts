@@ -12,12 +12,12 @@ describe('12-testing', () => {
     await request(server)
       .get('/')
       .expect(200)
-      .expect(`Hello, World!\n`);
+      .expect('Hello, World!\n');
 
     await request(server)
       .get('/admin')
       .expect(200)
-      .expect(`Hello, admin!\n`);
+      .expect('Hello, admin!\n');
 
     server.close();
   });
