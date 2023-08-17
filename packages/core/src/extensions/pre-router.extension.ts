@@ -12,7 +12,7 @@ import { PerAppService } from '../services/per-app.service';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 import { KeyRegistry } from '../di/key-registry';
 import { ChainMaker } from '../services/chain-maker';
-import { ControllerErrorHandler } from '../services/controller-error-handler';
+import { HttpErrorHandler } from '../services/http-error-handler';
 import { DepsChecker } from '../di/deps-checker';
 
 @injectable()
@@ -62,7 +62,7 @@ export class PreRouterExtension implements Extension<void> {
         const resolvedPerReq = Injector.resolve(mergedPerReq);
         this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
         const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
-        const resolvedCtrlErrHandler = resolvedPerReq.find((rp) => rp.dualKey.token === ControllerErrorHandler)!;
+        const resolvedCtrlErrHandler = resolvedPerReq.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
         const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
         const nodeReqId = KeyRegistry.get(NODE_REQ).id;
         const nodeResId = KeyRegistry.get(NODE_RES).id;
@@ -79,7 +79,7 @@ export class PreRouterExtension implements Extension<void> {
             .instantiateResolved<HttpHandler>(resolvedChainMaker)
             .handle() // First HTTP handler in the chain of HTTP interceptors.
             .catch((err) => {
-              const errorHandler = injector.instantiateResolved(resolvedCtrlErrHandler) as ControllerErrorHandler;
+              const errorHandler = injector.instantiateResolved(resolvedCtrlErrHandler) as HttpErrorHandler;
               return errorHandler.handleError(err);
             });
 

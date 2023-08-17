@@ -1,5 +1,5 @@
 import { fromSelf, inject, injectable } from '../di';
-import { ControllerErrorHandler } from '../services/controller-error-handler';
+import { HttpErrorHandler } from './http-error-handler';
 import { Logger } from '../types/logger';
 import { Status } from '../utils/http-status-codes';
 import { ErrorOpts } from '../custom-error/error-opts';
@@ -11,7 +11,7 @@ import { NODE_RES } from '../constans';
 import { cleanErrorTrace } from '../utils/clean-error-trace';
 
 @injectable()
-export class DefaultControllerErrorHandler implements ControllerErrorHandler {
+export class DefaultControllerErrorHandler implements HttpErrorHandler {
   constructor(
     protected logger: Logger,
     @fromSelf() protected res: Res,
