@@ -262,13 +262,21 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.22.5"
 
-"@babel/runtime-corejs3@^7.20.13", "@babel/runtime-corejs3@^7.20.7", "@babel/runtime-corejs3@^7.22.6":
+"@babel/runtime-corejs3@^7.20.13", "@babel/runtime-corejs3@^7.20.7":
   version "7.22.6"
   resolved "https://registry.yarnpkg.com/@babel/runtime-corejs3/-/runtime-corejs3-7.22.6.tgz#e8e625eb3db29491e0326b3aeb9929c43b270ae4"
   integrity sha512-M+37LLIRBTEVjktoJjbw4KVhupF0U/3PYUCbBwgAd9k17hoKhRu1n935QiG7Tuxv0LJOMrb2vuKEeYUlv0iyiw==
   dependencies:
     core-js-pure "^3.30.2"
     regenerator-runtime "^0.13.11"
+
+"@babel/runtime-corejs3@^7.22.10":
+  version "7.22.10"
+  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs3/-/runtime-corejs3-7.22.10.tgz#5ecc3d32faa70009f084cc2e087d79e5f5cdcca9"
+  integrity sha512-IcixfV2Jl3UrqZX4c81+7lVg5++2ufYJyAFW3Aux/ZTvY6LVYYhJ9rMgnbX0zGVq6eqfVpnoatTjZdVki/GmWA==
+  dependencies:
+    core-js-pure "^3.30.2"
+    regenerator-runtime "^0.14.0"
 
 "@babel/runtime@^7.12.1", "@babel/runtime@^7.3.1", "@babel/runtime@^7.9.2":
   version "7.22.6"
@@ -316,10 +324,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@braintree/sanitize-url@=6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@braintree/sanitize-url/-/sanitize-url-6.0.2.tgz#6110f918d273fe2af8ea1c4398a88774bb9fc12f"
-  integrity sha512-Tbsj02wXCbqGmzdnXNk0SOF19ChhRU70BsroIi4Pm6Ehp56in6vch94mfbdQ17DozxkL3BAVjbZ4Qc1a0HFRAg==
+"@braintree/sanitize-url@=6.0.4":
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/@braintree/sanitize-url/-/sanitize-url-6.0.4.tgz#923ca57e173c6b232bbbb07347b1be982f03e783"
+  integrity sha512-s3jaWicZd0pkP0jf5ysyHUI/RE7MHos6qlToFcGWXVp+ykHOy77OUMrfbgJ9it2C5bow7OIQwYYaHjk9XlBQ2A==
 
 "@colors/colors@1.5.0":
   version "1.5.0"
@@ -1033,7 +1041,7 @@
     stampit "^4.3.2"
     unraw "^3.0.0"
 
-"@swagger-api/apidom-core@>=0.71.0 <1.0.0", "@swagger-api/apidom-core@^0.74.1":
+"@swagger-api/apidom-core@>=0.74.1 <1.0.0", "@swagger-api/apidom-core@^0.74.1":
   version "0.74.1"
   resolved "https://registry.yarnpkg.com/@swagger-api/apidom-core/-/apidom-core-0.74.1.tgz#76c970ede4cbd3180744425083c183e8547b1ce7"
   integrity sha512-y70oo/CrNMSi7TtUkATXkSWd+Q/4BjchwCuLpWbhSJuIpJM+W9yGyzWOFTFLZQpDbwK0yzocMk8iPClq/rWNPw==
@@ -1047,7 +1055,7 @@
     short-unique-id "^4.4.4"
     stampit "^4.3.2"
 
-"@swagger-api/apidom-json-pointer@>=0.71.0 <1.0.0", "@swagger-api/apidom-json-pointer@^0.74.1":
+"@swagger-api/apidom-json-pointer@>=0.74.1 <1.0.0", "@swagger-api/apidom-json-pointer@^0.74.1":
   version "0.74.1"
   resolved "https://registry.yarnpkg.com/@swagger-api/apidom-json-pointer/-/apidom-json-pointer-0.74.1.tgz#36452136f9ef408f151d7655cb7544f14401ca84"
   integrity sha512-UusZdVY2AbYSyMK0aPSNvCiCtgn6NcGnS9fbAPVFsV+ALEtWYdMs/ZjfqYhbuzd+nRY34J9GCF7m+kVysZ9EWw==
@@ -1136,7 +1144,7 @@
     ramda-adjunct "^4.0.0"
     stampit "^4.3.2"
 
-"@swagger-api/apidom-ns-openapi-3-1@>=0.71.0 <1.0.0", "@swagger-api/apidom-ns-openapi-3-1@^0.74.1":
+"@swagger-api/apidom-ns-openapi-3-1@>=0.74.1 <1.0.0", "@swagger-api/apidom-ns-openapi-3-1@^0.74.1":
   version "0.74.1"
   resolved "https://registry.yarnpkg.com/@swagger-api/apidom-ns-openapi-3-1/-/apidom-ns-openapi-3-1-0.74.1.tgz#777b0ace104e1c7d75827b8fc05a0a6667c50f17"
   integrity sha512-8ZqQBjMfiCEwePUbwdKIAStl7nIPIiyKGrON4Sy+PWTwvCQiam3haKeT5r6TDiTFyrS3idSplfXijuWfZF//Ag==
@@ -1286,7 +1294,7 @@
     tree-sitter-yaml "=0.5.0"
     web-tree-sitter "=0.20.3"
 
-"@swagger-api/apidom-reference@>=0.71.1 <1.0.0":
+"@swagger-api/apidom-reference@>=0.74.1 <1.0.0":
   version "0.74.1"
   resolved "https://registry.yarnpkg.com/@swagger-api/apidom-reference/-/apidom-reference-0.74.1.tgz#b682af605975dd87236483981ec27455681db3f5"
   integrity sha512-DwMGmTA2VkiPf8CLDnhhR4PObqzrGGOKydxd3uWWFFI0/itU8mZcBZssMHseW1dV2fC9hvkva672Gt2W/wSJng==
@@ -5126,6 +5134,13 @@ json-stable-stringify-without-jsonify@^1.0.1:
   resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
   integrity sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==
 
+json-stable-stringify@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/json-stable-stringify/-/json-stable-stringify-1.0.2.tgz#e06f23128e0bbe342dc996ed5a19e28b57b580e0"
+  integrity sha512-eunSSaEnxV12z+Z73y/j5N37/In40GK4GmsSy+tEHJMxknvqnA7/djeYtAgW0GsWHUfg+847WJjKaEylk2y09g==
+  dependencies:
+    jsonify "^0.0.1"
+
 json-stringify-safe@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
@@ -5149,6 +5164,11 @@ jsonfile@^6.0.1:
     universalify "^2.0.0"
   optionalDependencies:
     graceful-fs "^4.1.6"
+
+jsonify@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.1.tgz#2aa3111dae3d34a0f151c63f3a45d995d9420978"
+  integrity sha512-2/Ki0GcmuqSrgFyelQq9M05y7PS0mEwuIzrf3f1fPqkVDVRvZrPZtVSMHxdgo8Aq0sxAOb/cr2aqqA3LeWHVPg==
 
 jsonparse@^1.2.0, jsonparse@^1.3.1:
   version "1.3.1"
@@ -6459,10 +6479,10 @@ pascal-case@^3.1.2:
     no-case "^3.0.4"
     tslib "^2.0.3"
 
-patch-package@^7.0.2:
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/patch-package/-/patch-package-7.0.2.tgz#c01589bb6964854b5210506a5845d47900641f5a"
-  integrity sha512-PMYfL8LXxGIRmxXLqlEaBxzKPu7/SdP13ld6GSfAUJUZRmBDPp8chZs0dpzaAFn9TSPnFiMwkC6PJt6pBiAl8Q==
+patch-package@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/patch-package/-/patch-package-8.0.0.tgz#d191e2f1b6e06a4624a0116bcb88edd6714ede61"
+  integrity sha512-da8BVIhzjtgScwDJ2TtKsfT5JFWz1hYoBl9rUQ1f38MC2HwnEIkK8VN3dKMKcP7P7bvvgzNDbfNHtx3MsQb5vA==
   dependencies:
     "@yarnpkg/lockfile" "^1.1.0"
     chalk "^4.1.2"
@@ -6470,6 +6490,7 @@ patch-package@^7.0.2:
     cross-spawn "^7.0.3"
     find-yarn-workspace-root "^2.0.0"
     fs-extra "^9.0.0"
+    json-stable-stringify "^1.0.2"
     klaw-sync "^6.0.0"
     minimist "^1.2.6"
     open "^7.4.2"
@@ -6927,7 +6948,7 @@ react-is@^18.0.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-18.2.0.tgz#199431eeaaa2e09f86427efbb4f1473edb47609b"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
 
-react-redux@^8.1.1:
+react-redux@^8.1.2:
   version "8.1.2"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-8.1.2.tgz#9076bbc6b60f746659ad6d51cb05de9c5e1e9188"
   integrity sha512-xJKYI189VwfsFc4CJvHqHlDrzyFTY/3vZACbE+rr/zQ34Xx1wQfB4OTOSeOSNrF6BDVe8OOdxIrAnMGXA3ggfw==
@@ -7107,6 +7128,11 @@ regenerator-runtime@^0.13.11:
   version "0.13.11"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz#f6dca3e7ceec20590d07ada785636a90cdca17f9"
   integrity sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==
+
+regenerator-runtime@^0.14.0:
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.14.0.tgz#5e19d68eb12d486f797e15a3c6a918f7cec5eb45"
+  integrity sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==
 
 relateurl@^0.2.7:
   version "0.2.7"
@@ -7790,16 +7816,16 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
-swagger-client@^3.19.11:
-  version "3.19.11"
-  resolved "https://registry.yarnpkg.com/swagger-client/-/swagger-client-3.19.11.tgz#b0725d260a9cb13745326dcec2b7dac0be3bcb23"
-  integrity sha512-ef4t4nRGC8NuC8rz6OazEGU/QgkrFVMUba1vDmCL1Zuov50rTix9f33COr6RSmzQEc9aqY/kd+6f43a/7TbHhQ==
+swagger-client@^3.20.0:
+  version "3.20.0"
+  resolved "https://registry.yarnpkg.com/swagger-client/-/swagger-client-3.20.0.tgz#fe85c486732172d175612cb1f6afada67e814159"
+  integrity sha512-5RLge2NIE1UppIT/AjUPEceT05hcBAzjiQkrXJYjpxsbFV/UDH3pp+fsrWbAeuZtgRdhNB9KDo+szLoUpzkydQ==
   dependencies:
     "@babel/runtime-corejs3" "^7.20.13"
-    "@swagger-api/apidom-core" ">=0.71.0 <1.0.0"
-    "@swagger-api/apidom-json-pointer" ">=0.71.0 <1.0.0"
-    "@swagger-api/apidom-ns-openapi-3-1" ">=0.71.0 <1.0.0"
-    "@swagger-api/apidom-reference" ">=0.71.1 <1.0.0"
+    "@swagger-api/apidom-core" ">=0.74.1 <1.0.0"
+    "@swagger-api/apidom-json-pointer" ">=0.74.1 <1.0.0"
+    "@swagger-api/apidom-ns-openapi-3-1" ">=0.74.1 <1.0.0"
+    "@swagger-api/apidom-reference" ">=0.74.1 <1.0.0"
     cookie "~0.5.0"
     cross-fetch "^3.1.5"
     deepmerge "~4.3.0"
@@ -7813,13 +7839,13 @@ swagger-client@^3.19.11:
     traverse "~0.6.6"
     url "~0.11.0"
 
-swagger-ui@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/swagger-ui/-/swagger-ui-5.2.0.tgz#fda8b8cd63a122b678a130d3867652fd874bce14"
-  integrity sha512-rAn2Qj4C6AqNa/Eznj5iuFb9TTSJDEiFlxuJ6YikRmKpLy/o8jPJiwMLnMc9us/07Nb2DcvtnJGggnVv7vonAQ==
+swagger-ui@^5.4.2:
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/swagger-ui/-/swagger-ui-5.4.2.tgz#6ec6370261bdca526d4972f6cc851a358cc19043"
+  integrity sha512-EQtY7Ur53JWfn6GEU64x3xQEpJ2hfg79oplboR+2dhmqUjyeDZNFL5r8zfATjlREdkKI9IqzrcdK7CP5DNaBFg==
   dependencies:
-    "@babel/runtime-corejs3" "^7.22.6"
-    "@braintree/sanitize-url" "=6.0.2"
+    "@babel/runtime-corejs3" "^7.22.10"
+    "@braintree/sanitize-url" "=6.0.4"
     base64-js "^1.5.1"
     classnames "^2.3.1"
     css.escape "1.5.1"
@@ -7830,7 +7856,7 @@ swagger-ui@^5.2.0:
     js-file-download "^0.4.12"
     js-yaml "=4.1.0"
     lodash "^4.17.21"
-    patch-package "^7.0.2"
+    patch-package "^8.0.0"
     prop-types "^15.8.1"
     randexp "^0.5.3"
     randombytes "^2.1.0"
@@ -7841,7 +7867,7 @@ swagger-ui@^5.2.0:
     react-immutable-proptypes "2.2.0"
     react-immutable-pure-component "^2.2.0"
     react-inspector "^6.0.1"
-    react-redux "^8.1.1"
+    react-redux "^8.1.2"
     react-syntax-highlighter "^15.5.0"
     redux "^4.1.2"
     redux-immutable "^4.0.0"
@@ -7849,7 +7875,7 @@ swagger-ui@^5.2.0:
     reselect "^4.1.8"
     serialize-error "^8.1.0"
     sha.js "^2.4.11"
-    swagger-client "^3.19.11"
+    swagger-client "^3.20.0"
     url-parse "^1.5.10"
     xml "=1.0.1"
     xml-but-prettier "^1.0.1"
