@@ -12,7 +12,7 @@ import { Http2SecureServerOptions, RequestListener, NodeServer } from './types/s
 import { getModuleMetadata } from './utils/get-module-metadata';
 import { pickProperties } from './utils/pick-properties';
 import { isHttp2SecureServerOptions } from './utils/type-guards';
-import { clearErrorTrace } from './utils/clear-error-trace';
+import { cleanInitErrorTrace } from './utils/clear-error-trace';
 import { HttpServerModule, HttpsServerModule } from './types/http-module';
 
 export class Application {
@@ -34,7 +34,7 @@ export class Application {
       } catch (err: any) {
         this.systemLogMediator.internalServerError(this, err, true);
         this.flushLogs();
-        clearErrorTrace(err);
+        cleanInitErrorTrace(err);
         reject(err);
       }
     });

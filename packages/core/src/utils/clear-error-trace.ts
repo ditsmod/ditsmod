@@ -1,11 +1,17 @@
+import { StackUtils } from '@ts-stack/stack-utils';
+
 import { DiError } from '../di';
-import { PreRouterExtension } from '../extensions/pre-router.extension';
 
-export function clearErrorTrace(error: any) {
-  // In first line we have stack with "PreRouterExtension.checkDeps()".
-  const regExp = /Error: No provider for [^\n]+\n\s+ at PreRouterExtension.checkDeps/;
-
-  if (error instanceof DiError && regExp.test((error as any).stack)) {
-    Error.captureStackTrace(error, (PreRouterExtension as any).prototype.checkDeps);
+export function cleanInitErrorTrace(error: any) {
+  if (error instanceof DiError) {
+    const internals: any[] = [
+      ...StackUtils.nodeInternals(),
+      /\/di\/error-handling\./,
+      /\/di\/deps-checker\./,
+      /\/di\/injector\./,
+      /^\s+at Array.forEach \(<anonymous>\)$/,
+    ];
+    const stack = new StackUtils({ internals, removeFirstLine: false });
+    error.stack = stack.clean(error.stack || '');
   }
 }
