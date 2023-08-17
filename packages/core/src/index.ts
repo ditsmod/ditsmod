@@ -30,6 +30,7 @@ export { RootMetadata } from './models/root-metadata';
 export { ModuleFactory } from './module-factory';
 export { ConsoleLogger } from './services/console-logger';
 export { ControllerErrorHandler } from './services/controller-error-handler';
+export { DefaultControllerErrorHandler } from './services/default-controller-error-handler';
 export { DefaultHttpBackend } from './services/default-http-backend';
 export { DefaultHttpFrontend } from './services/default-http-frontend';
 export { ExtensionsContext } from './services/extensions-context';
