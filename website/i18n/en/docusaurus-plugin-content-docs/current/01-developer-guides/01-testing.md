@@ -8,13 +8,13 @@ sidebar_position: 0
 
 In fact, unit testing is a testing method that allows you to verify that the smallest parts of an application, such as functions and class methods (which are also essentially functions), work correctly. To perform testing, you alternately focus on a separate function while isolating all other parts of the program that interact with that function.
 
-Properly written unit tests allow you to read them as documentation for your program. It can be said that most projects document only the public part of the application's API, and the rest is documentation based on unit tests and comments in the code.
+Properly written unit tests allow you to read them as documentation for your program. It can be said that in most projects only the public part of the application API is documented, and the rest is TypeScript types, documentation based on unit tests and comments in the code.
 
 One of the most popular frameworks for writing unit tests for JavaScript code is [jest][100]. In this section, we will use this framework.
 
 ## Prerequisites for writing unit tests
 
-A good knowledge of the [Ditsmod DI][1] architecture will help you easily write unit tests for Ditsmod applications, since one of the main advantages of DI is its ease of testing. First, you need to learn how to work with [injectors][2] and the [injector hierarchy][3].
+A good knowledge of the [Ditsmod DI][1] architecture will help you easily write unit tests for Ditsmod applications, as one of the main advantages of DI is the ease of testing. First, you need to learn how to work with [injectors][2] and the [injector hierarchy][3].
 
 Let's say you want to test `Service2` in this example:
 
@@ -101,12 +101,6 @@ describe('Service2', () => {
 });
 ```
 
-To make `jest` work in a similar way, don't forget to install the TypeScript types for it along with this framework:
-
-```bash
-yarn add -D jest @types/jest
-```
-
 We recommend that you place your unit test files close to the files they test. That is, if the file is called `some.service.ts`, then the test file should be called `some.service.spec.ts` or `some.service.test.ts`. This makes working with tests much easier, and also allows you to immediately see which files have not yet been tested.
 
 ## End-to-end testing
@@ -155,8 +149,10 @@ describe('End-to-end testing', () => {
 });
 ```
 
-:::info Default import supertest
-First of all, notice the `supertest` library import in the first line. This feature occurs because `supertest` defaults to exporting a function rather than an object, which is against ES2015+ export standards. You can also import this library as follows: `import request from 'supertest'`, while also setting [`"esModuleInterop": true`][103] in the `tsconfig` file.
+:::info Default import of supertest
+Note in the first line that when importing the `supertest` library, the keywords `import` and `reuire` are used at the same time. This feature occurs because `supertest` defaults to exporting a function rather than an object, which is against ES2015+ export standards.
+
+You can also import this library as follows: `import request from 'supertest'`, while also setting [`"esModuleInterop": true`][103] in the `tsconfig` file.
 :::
 
 As you can see in the test code, first, a test application is created based on the `TestApplication` class, then a mock is substituted for `DatabaseService`. At the very end, the `getServer()` method is called and thus creates and returns a web server that has not yet called the `server.listen()` method, so supertest can automatically do this by substituting a random port number, which is an important point when asynchronously calling several tests at once. Here `AppModule` is the root module of the application.
@@ -176,3 +172,5 @@ We recommend keeping such tests in a separate directory called `tests`, at the s
 
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions
+[102]: https://github.com/ladjs/supertest
+[103]: https://www.typescriptlang.org/tsconfig#esModuleInterop
