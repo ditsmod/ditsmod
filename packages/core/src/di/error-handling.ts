@@ -1,5 +1,3 @@
-import { StackUtils } from '@ts-stack/stack-utils';
-
 import { Class, DiError } from './types-and-models';
 import { stringify } from './utils';
 
@@ -42,7 +40,7 @@ expect(() => Injector.resolveAndCreate([A])).toThrowError();
 export function noProviderError(tokens: any[]) {
   const first = stringify(tokens[0]);
   const error = new DiError(`No provider for ${first}!${constructResolvingPath(tokens)}`);
-  return cleanErrorTrace(error);
+  return error;
 }
 
 /**
@@ -66,7 +64,7 @@ class B {
  */
 export function cyclicDependencyError(tokens: any[]) {
   const error = new DiError(`Cannot instantiate cyclic dependency!${constructResolvingPath(tokens)}`);
-  return cleanErrorTrace(error);
+  return error;
 }
 
 /**
@@ -104,16 +102,6 @@ export function instantiationError(originalException: any, tokens: any[]) {
   return originalException;
 }
 
-function cleanErrorTrace(error: any) {
-  const internals: any[] = [
-    ...StackUtils.nodeInternals(),
-    /\/ditsmod(:?\/packages)?\/core\//,
-    /^\s+at Array.forEach \(<anonymous>\)$/,
-  ];
-  const stack = new StackUtils({ internals, removeFirstLine: false });
-  error.stack = stack.clean(error.stack || '');
-  return error;
-}
 /**
  * Thrown when an object other then `Provider` (or `Class`) is passed to `Injector`
  * creation.

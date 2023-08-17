@@ -8,6 +8,7 @@ import { Res } from './response';
 import { Req } from './request';
 import { NodeResponse } from '../types/server-options';
 import { NODE_RES } from '../constans';
+import { cleanErrorTrace } from '../utils/clean-error-trace';
 
 @injectable()
 export class DefaultControllerErrorHandler implements ControllerErrorHandler {
@@ -19,6 +20,7 @@ export class DefaultControllerErrorHandler implements ControllerErrorHandler {
   ) {}
 
   async handleError(err: Error) {
+    cleanErrorTrace(err);
     if (isChainError<ErrorOpts>(err)) {
       const { level, status } = err.info;
       this.logger.log(level || 'debug', err);
