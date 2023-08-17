@@ -1,6 +1,6 @@
 import {
   Status,
-  DefaultControllerErrorHandler,
+  DefaultHttpErrorHandler,
   injectable,
   Res,
   NodeResponse,
@@ -14,7 +14,7 @@ import {
 import { ErrorContainer } from './error-container';
 
 @injectable()
-export class CustomControllerErrorHandler extends DefaultControllerErrorHandler {
+export class CustomHttpErrorHandler extends DefaultHttpErrorHandler {
   constructor(
     protected override logger: Logger,
     protected override res: Res,

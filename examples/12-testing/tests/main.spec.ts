@@ -3,7 +3,7 @@ import { HttpErrorHandler, LoggerConfig, NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
-import { CustomControllerErrorHandler } from './custom-controller-error-handler';
+import { CustomHttpErrorHandler } from './custom-controller-error-handler';
 import { ErrorContainer } from './error-container';
 
 describe('12-testing', () => {
@@ -24,7 +24,7 @@ describe('12-testing', () => {
         .overrideProviders([
           {
             token: HttpErrorHandler,
-            useClass: CustomControllerErrorHandler,
+            useClass: CustomHttpErrorHandler,
             providers: [{ token: ErrorContainer, useValue: errorContainer }],
           },
         ])
