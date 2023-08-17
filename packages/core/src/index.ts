@@ -77,6 +77,7 @@ export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from './utils/http
 export { NormalizedProvider, normalizeProviders } from './utils/ng-utils';
 export { pickProperties } from './utils/pick-properties';
 export { Providers } from './utils/providers';
+export { cleanErrorTrace } from './utils/clean-error-trace';
 export * from './utils/get-tokens';
 export {
   MultiProvider,
