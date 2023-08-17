@@ -11,7 +11,7 @@ import { NODE_RES } from '../constans';
 import { cleanErrorTrace } from '../utils/clean-error-trace';
 
 @injectable()
-export class DefaultControllerErrorHandler implements HttpErrorHandler {
+export class DefaultHttpErrorHandler implements HttpErrorHandler {
   constructor(
     protected logger: Logger,
     @fromSelf() protected res: Res,

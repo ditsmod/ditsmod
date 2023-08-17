@@ -1,6 +1,6 @@
 import { HttpErrorHandler } from './http-error-handler';
 import { ServiceProvider } from '../types/mix';
-import { DefaultControllerErrorHandler } from './default-controller-error-handler';
+import { DefaultHttpErrorHandler } from './default-http-error-handler';
 import { HttpBackend, HttpFrontend } from '../types/http-interceptor';
 import { DefaultHttpBackend } from './default-http-backend';
 import { DefaultHttpFrontend } from './default-http-frontend';
@@ -10,7 +10,7 @@ import { A_PATH_PARAMS, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, QUERY_PAR
 import { ChainMaker } from './chain-maker';
 
 export const defaultProvidersPerReq: Readonly<ServiceProvider[]> = [
-  { token: HttpErrorHandler, useClass: DefaultControllerErrorHandler },
+  { token: HttpErrorHandler, useClass: DefaultHttpErrorHandler },
   { token: HttpFrontend, useClass: DefaultHttpFrontend },
   { token: HttpBackend, useClass: DefaultHttpBackend },
   { token: ChainMaker, useFactory: [ChainMaker, ChainMaker.prototype.makeChain] },

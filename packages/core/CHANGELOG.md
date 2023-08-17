@@ -375,7 +375,7 @@ it('controller should works', async () => {
 
 ### Inprovements
 
-- refactoring `DefaultControllerErrorHandler`.
+- refactoring `DefaultHttpErrorHandler`.
 - removed print all providers in `PreRouterExtension`.
 
 <a name="core-2.18.0"></a>
@@ -456,7 +456,7 @@ const cause = new Error();
 const err = new CustomError({ msg1, msg2, level: 'warn', status: Status.CONFLICT }, cause);
 ```
 
-- Refactoring `DefaultControllerErrorHandler` with `CustomError`, so you can specify log level and status for `CustomError`.
+- Refactoring `DefaultHttpErrorHandler` with `CustomError`, so you can specify log level and status for `CustomError`.
 
 <a name="core-2.13.3"></a>
 ## [core-2.13.3](https://github.com/ditsmod/ditsmod/releases/tag/core-2.13.3) (2022-09-02)

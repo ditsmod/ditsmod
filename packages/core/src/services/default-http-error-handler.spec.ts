@@ -1,7 +1,7 @@
 import { Injector } from '../di';
 
 import { ErrorOpts } from '../custom-error/error-opts';
-import { DefaultControllerErrorHandler as ErrorHandler } from './default-controller-error-handler';
+import { DefaultHttpErrorHandler as ErrorHandler } from './default-http-error-handler';
 import { Req } from './request';
 import { Res } from './response';
 import { Logger } from '../types/logger';
