@@ -1,5 +1,5 @@
 import request = require('supertest');
-import { ControllerErrorHandler, LoggerConfig, NodeServer } from '@ditsmod/core';
+import { HttpErrorHandler, LoggerConfig, NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
@@ -23,7 +23,7 @@ describe('12-testing', () => {
       server = await new TestApplication(AppModule)
         .overrideProviders([
           {
-            token: ControllerErrorHandler,
+            token: HttpErrorHandler,
             useClass: CustomControllerErrorHandler,
             providers: [{ token: ErrorContainer, useValue: errorContainer }],
           },
