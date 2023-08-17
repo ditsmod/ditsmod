@@ -107,9 +107,7 @@ export function instantiationError(originalException: any, tokens: any[]) {
 function cleanErrorTrace(error: any) {
   const internals: any[] = [
     ...StackUtils.nodeInternals(),
-    /\/di\/error-handling\./,
-    /\/di\/deps-checker\./,
-    /\/di\/injector\./,
+    /\/ditsmod(:?\/packages)?\/core\//,
     /^\s+at Array.forEach \(<anonymous>\)$/,
   ];
   const stack = new StackUtils({ internals, removeFirstLine: false });
