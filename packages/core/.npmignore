@@ -1,10 +1,12 @@
 *.tgz
 *.log
 *.spec.ts
-yarn.lock
-jest.config.ts
+yarn.*
+jest.*
 .*
 nodemon.json
 CHANGELOG.md
 *.tsbuildinfo
-tsconfig.json
+tsconfig.*
+test
+tests
