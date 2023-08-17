@@ -1,5 +1,4 @@
 import { fromSelf, inject, injectable } from '../di';
-
 import { ControllerErrorHandler } from '../services/controller-error-handler';
 import { Logger } from '../types/logger';
 import { Status } from '../utils/http-status-codes';
@@ -13,10 +12,10 @@ import { NODE_RES } from '../constans';
 @injectable()
 export class DefaultControllerErrorHandler implements ControllerErrorHandler {
   constructor(
-    private logger: Logger,
-    @fromSelf() private res: Res,
-    @fromSelf() private req: Req,
-    @fromSelf() @inject(NODE_RES) private nodeRes: NodeResponse
+    protected logger: Logger,
+    @fromSelf() protected res: Res,
+    @fromSelf() protected req: Req,
+    @fromSelf() @inject(NODE_RES) protected nodeRes: NodeResponse
   ) {}
 
   async handleError(err: Error) {
