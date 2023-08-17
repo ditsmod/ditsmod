@@ -1,5 +1,21 @@
+<a name="core-2.43.0"></a>
+# [core-2.43.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.43.0) (2023-08-18)
+
+### Breaking changes
+
+- `ControllerErrorHandler` and `DefaultControllerErrorHandler` renamed to `HttpErrorHandler` and `DefaultHttpErrorHandler`.
+- Renamed `Application#finishBootstrap()` to `Application#createServerAndListen()`.
+
+### Features
+
+- Exports `cleanErrorTrace()` - the function that cleans error stack traces.
+
+### Improvements
+
+- Thanks to the `cleanErrorTrace()` function, the output of the stack trace has been improved.
+
 <a name="core-2.42.0"></a>
-# [core-2.42.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.42.0) (2023-08-11)
+## [core-2.42.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.42.0) (2023-08-11)
 
 ### Breaking changes
 
