@@ -1,6 +1,7 @@
+import { StackUtils } from '@ts-stack/stack-utils';
+
 import { Class, DiError } from './types-and-models';
 import { stringify } from './utils';
-import { Injector } from './injector';
 
 function findFirstClosedCycle(tokens: any[]): any[] {
   const res: any[] = [];
@@ -41,7 +42,7 @@ expect(() => Injector.resolveAndCreate([A])).toThrowError();
 export function noProviderError(tokens: any[]) {
   const first = stringify(tokens[0]);
   const error = new DiError(`No provider for ${first}!${constructResolvingPath(tokens)}`);
-  return clearErrorTrace(error);
+  return cleanErrorTrace(error);
 }
 
 /**
@@ -65,7 +66,7 @@ class B {
  */
 export function cyclicDependencyError(tokens: any[]) {
   const error = new DiError(`Cannot instantiate cyclic dependency!${constructResolvingPath(tokens)}`);
-  return clearErrorTrace(error);
+  return cleanErrorTrace(error);
 }
 
 /**
@@ -97,26 +98,22 @@ try {
 export function instantiationError(originalException: any, tokens: any[]) {
   const first = stringify(tokens[0]);
   const action = first.includes('.prototype.') ? 'calling' : 'instantiation of';
-  originalException.message = `${originalException.message}; this error during ${action} ${first}!${constructResolvingPath(tokens)}`;
+  originalException.message = `${
+    originalException.message
+  }; this error during ${action} ${first}!${constructResolvingPath(tokens)}`;
   return originalException;
 }
 
-function clearErrorTrace(error: any) {
-  const str = 'Injector.';
-  let lastIndex: number = 0;
-  let prevStack = '';
-  const originalStackTraceLimit = Error.stackTraceLimit;
-  Error.stackTraceLimit = 1000;
-  while (lastIndex !== -1 && prevStack != error.stack) {
-    prevStack = error.stack;
-    lastIndex = error.stack.lastIndexOf(str);
-    if (lastIndex !== -1) {
-      const part = error.stack.substring(lastIndex);
-      const methodName = part.substring(str.length, part.indexOf(' '));
-      (Error as any).captureStackTrace(error, (Injector as any).prototype[methodName]);
-    }
-  }
-  Error.stackTraceLimit = originalStackTraceLimit;
+function cleanErrorTrace(error: any) {
+  const internals: any[] = [
+    ...StackUtils.nodeInternals(),
+    /\/di\/error-handling\./,
+    /\/di\/deps-checker\./,
+    /\/di\/injector\./,
+    /^\s+at Array.forEach \(<anonymous>\)$/,
+  ];
+  const stack = new StackUtils({ internals, removeFirstLine: false });
+  error.stack = stack.clean(error.stack || '');
   return error;
 }
 /**
@@ -168,13 +165,13 @@ export function noAnnotationError(Cls: Class, params: any[], propertyKey?: strin
     return new DiError(
       `Cannot resolve all parameters for '${path}(${signature.join(', ')})'. ` +
         'Make sure that all the parameters are decorated with inject or have valid type annotations' +
-        ` and that '${path}()' is decorated with some property decorator.`
+        ` and that '${path}()' is decorated with some property decorator.`,
     );
   }
   return new DiError(
     `Cannot resolve all parameters for '${stringify(Cls)}(${signature.join(', ')})'. ` +
       'Make sure that all the parameters are decorated with inject or have valid type annotations' +
-      ` and that '${stringify(Cls)}' is decorated with some class decorator.`
+      ` and that '${stringify(Cls)}' is decorated with some class decorator.`,
   );
 }
 
