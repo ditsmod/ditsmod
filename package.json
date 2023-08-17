@@ -20,7 +20,7 @@
     "lint": "eslint . --ext .ts",
     "clean": "rimraf packages/**/dist packages/**/out-tsc* packages/**/*.tsbuildinfo",
     "start1": "nodemon -e ts --exec ts-node --project examples/01-hello-world/tsconfig.json -r tsconfig-paths/register examples/01-hello-world/src/main.ts",
-    "start2": "nodemon -e ts --exec ts-node --project examples/02-controller-error-handler/tsconfig.json -r tsconfig-paths/register examples/02-controller-error-handler/src/main.ts",
+    "start2": "nodemon -e ts --exec ts-node --project examples/02-http-error-handler/tsconfig.json -r tsconfig-paths/register examples/02-http-error-handler/src/main.ts",
     "start3": "nodemon -e ts --exec ts-node --project examples/03-route-guards/tsconfig.json -r tsconfig-paths/register examples/03-route-guards/src/main.ts",
     "start4": "nodemon -e ts --exec ts-node --project examples/04-logger/tsconfig.json -r tsconfig-paths/register examples/04-logger/src/main.ts",
     "start5": "nodemon -e ts --exec ts-node --project examples/05-nested-routes/tsconfig.json -r tsconfig-paths/register examples/05-nested-routes/src/main.ts",
