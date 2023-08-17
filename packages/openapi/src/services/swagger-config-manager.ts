@@ -1,11 +1,11 @@
 import { ModuleExtract, RootMetadata } from '@ditsmod/core';
 import { injectable, Injector } from '@ditsmod/core';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
+import * as CopyWebpackPlugin from 'copy-webpack-plugin';
 import { existsSync } from 'fs';
 import { readFile, writeFile } from 'fs/promises';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
+import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import { join } from 'path';
-import webpack, { CleanPlugin, Configuration } from 'webpack';
+import * as webpack from 'webpack';
 
 import { SwaggerOptions } from '../swagger-ui/interfaces';
 import { OasExtensionOptions } from '../types/oas-extension-options';
@@ -78,7 +78,7 @@ export class SwaggerConfigManager {
   }
 
   protected getWebpackConfig() {
-    const webpackConfig: Configuration = {
+    const webpackConfig: webpack.Configuration = {
       mode: 'development',
       entry: {
         openapi: require.resolve(`${this.swaggerUiSrc}/index`),
@@ -104,7 +104,7 @@ export class SwaggerConfigManager {
         new webpack.ProvidePlugin({
           Buffer: ['buffer', 'Buffer'],
         }),
-        new CleanPlugin(),
+        new webpack.CleanPlugin(),
         new CopyWebpackPlugin({
           patterns: [
             {

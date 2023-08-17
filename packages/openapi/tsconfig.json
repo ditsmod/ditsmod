@@ -1,11 +1,8 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "outDir": "dist",
-    "rootDir": "src",
     "paths": {
       "@ditsmod/core": [
         "../core/src"
