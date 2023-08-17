@@ -18,6 +18,6 @@
   ],
   "files": [],
   "references": [
-    { "path": "../core" }
+    { "path": "../core/tsconfig.build.json" }
   ]
 }

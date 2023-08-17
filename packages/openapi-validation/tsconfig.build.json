@@ -19,9 +19,9 @@
   ],
   "files": [],
   "references": [
-    { "path": "../core" },
-    { "path": "../body-parser" },
-    { "path": "../openapi" },
-    { "path": "../i18n" },
+    { "path": "../core/tsconfig.build.json" },
+    { "path": "../body-parser/tsconfig.build.json" },
+    { "path": "../openapi/tsconfig.build.json" },
+    { "path": "../i18n/tsconfig.build.json" },
   ]
 }

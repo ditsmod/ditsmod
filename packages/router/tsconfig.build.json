@@ -14,5 +14,5 @@
   "exclude": [
     "./**/*.spec.ts"
   ],
-  "references": [{ "path": "../core" }]
+  "references": [{ "path": "../core/tsconfig.build.json" }]
 }
