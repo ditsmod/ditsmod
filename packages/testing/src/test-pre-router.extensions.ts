@@ -13,10 +13,12 @@ import {
   injectable,
   isClassProvider,
   isFactoryProvider,
+  getDependencies,
+  ServiceProvider,
 } from '@ditsmod/core';
 
 import { TestModuleManager } from './test-module-manager';
-import { Scope, Meta, TestProvider } from './types';
+import { Scope, Meta, TestProvider, TestFactoryProvider, TestClassProvider } from './types';
 
 @injectable()
 export class TestPreRouterExtension extends PreRouterExtension {
@@ -86,10 +88,29 @@ export class TestPreRouterExtension extends PreRouterExtension {
       if (normExistingProviders.some((p) => p.token === normProvider.token)) {
         metadata[`providersPer${scope}`]!.push(provider);
         if (isClassProvider(provider) || isFactoryProvider(provider)) {
-          const inlineProviders = provider.providers || [];
-          metadata[`providersPer${scope}`]!.push(...inlineProviders);
+          const allowedDeps = this.getAllowedDeps(provider);
+          metadata[`providersPer${scope}`]!.push(...allowedDeps);
         }
       }
     });
+  }
+
+  /**
+   * We don't want to blindly add all the providers that are in the `provider.providers` property,
+   * as this can lead to unwanted results. We first need to check if the current provider depends
+   * on the prepared providers, and if it does, then only add them at the same scope.
+   */
+  protected getAllowedDeps(provider: TestClassProvider | TestFactoryProvider) {
+    const tokensOfDeps = getDependencies(provider).map((reflectiveDependecy) => reflectiveDependecy.token);
+    const allowedDeps: ServiceProvider[] = [];
+
+    (provider.providers || []).forEach((preparedProvider) => {
+      const { token } = normalizeProviders([preparedProvider])[0];
+      if (tokensOfDeps.includes(token)) {
+        allowedDeps.push(preparedProvider);
+      }
+    });
+
+    return allowedDeps;
   }
 }
