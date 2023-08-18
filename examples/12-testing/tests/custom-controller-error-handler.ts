@@ -1,15 +1,4 @@
-import {
-  Status,
-  DefaultHttpErrorHandler,
-  injectable,
-  Res,
-  NodeResponse,
-  inject,
-  NODE_RES,
-  DiError,
-  Logger,
-  Req,
-} from '@ditsmod/core';
+import { DefaultHttpErrorHandler, injectable, Res, NodeResponse, inject, NODE_RES, Logger, Req } from '@ditsmod/core';
 
 import { ErrorContainer } from './error-container';
 
@@ -20,7 +9,7 @@ export class CustomHttpErrorHandler extends DefaultHttpErrorHandler {
     protected override res: Res,
     protected override req: Req,
     @inject(NODE_RES) protected override nodeRes: NodeResponse,
-    private errorContainer: ErrorContainer
+    private errorContainer: ErrorContainer,
   ) {
     super(logger, res, req, nodeRes);
   }
