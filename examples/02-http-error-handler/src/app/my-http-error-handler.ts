@@ -12,7 +12,11 @@ import {
 
 @injectable()
 export class MyHttpErrorHandler implements HttpErrorHandler {
-  constructor(@fromSelf() @inject(NODE_RES) private nodeRes: NodeResponse, private res: Res, private logger: Logger) {}
+  constructor(
+    @fromSelf() @inject(NODE_RES) private nodeRes: NodeResponse,
+    private res: Res,
+    private logger: Logger,
+  ) {}
 
   handleError(err: Error) {
     const message = err.message;

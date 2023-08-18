@@ -1,7 +1,7 @@
 import { rootModule, HttpErrorHandler } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
-import { MyHttpErrorHandler } from './my-controller-error-handler';
+import { MyHttpErrorHandler } from './my-http-error-handler';
 import { SomeModule } from './modules/some/some.module';
 
 @rootModule({
