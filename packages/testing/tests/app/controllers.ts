@@ -47,7 +47,7 @@ export class Controller1 {
 
   @route('GET', 'per-rou3')
   perRou3(res: Res, injector: Injector) {
-    const perRou3 = injector.get(ServicePerRou3);
+    const perRou3 = injector.get(ServicePerRou3); // This provider is not passed to DI
     res.send(perRou3.method());
   }
 }
