@@ -1,4 +1,4 @@
-import { LogLevel, ModuleType, NormalizedProvider } from '@ditsmod/core';
+import { ApplicationOptions, LogLevel, ModuleType, NormalizedProvider } from '@ditsmod/core';
 
 import { PreTestApplication } from './pre-test-application';
 import { TestModuleManager } from './test-module-manager';
@@ -10,14 +10,16 @@ export class TestApplication {
   protected preTestApplication: PreTestApplication;
   protected testModuleManager: TestModuleManager;
   protected logLevel: LogLevel;
+  protected appModule: ModuleType;
 
-  constructor(appModule: ModuleType) {
+  constructor(appModule: ModuleType, appOptions: ApplicationOptions = new ApplicationOptions()) {
+    this.appModule = appModule;
     this.preTestApplication = new PreTestApplication();
-    this.initRootModule(appModule);
+    this.initRootModule(appModule, appOptions);
   }
 
-  protected initRootModule(appModule: ModuleType) {
-    const systemLogMediator = this.preTestApplication.initRootModule(appModule);
+  protected initRootModule(appModule: ModuleType, appOptions: ApplicationOptions) {
+    const systemLogMediator = this.preTestApplication.init(appModule.name, appOptions);
     this.testModuleManager = new TestModuleManager(systemLogMediator);
     this.testModuleManager.scanRootModule(appModule);
     return this.testModuleManager;
@@ -56,12 +58,8 @@ export class TestApplication {
     return this;
   }
 
-  async getServer(listen: boolean = false) {
-    const { server } = await this.preTestApplication.bootstrapTestApplication(
-      this.testModuleManager,
-      this.logLevel,
-      listen,
-    );
+  async getServer() {
+    const { server } = await this.preTestApplication.bootstrapTestApplication(this.testModuleManager, this.logLevel);
     return server;
   }
 }

@@ -6,6 +6,9 @@
     "paths": {
       "@ditsmod/core": [
         "../core/src"
+      ],
+      "@ditsmod/router": [
+        "../router/src"
       ]
     }
   },
@@ -17,6 +20,9 @@
   "references": [
     {
       "path": "../core/tsconfig.build.json"
+    },
+    {
+      "path": "../router/tsconfig.build.json"
     },
   ]
 }
