@@ -1,5 +1,4 @@
 import {
-  fromSelf,
   inject,
   injectable,
   Injector,
@@ -16,11 +15,11 @@ import { HttpBackend, DefaultHttpBackend, Status, HttpMethod } from '@ditsmod/co
 @injectable()
 export class ReturnHttpBackend extends DefaultHttpBackend implements HttpBackend {
   constructor(
-    @fromSelf() @inject(NODE_REQ) protected nodeReq: NodeRequest,
-    @fromSelf() @inject(NODE_RES) protected nodeRes: NodeResponse,
+    @inject(NODE_REQ) protected nodeReq: NodeRequest,
+    @inject(NODE_RES) protected nodeRes: NodeResponse,
     @skipSelf() protected override routeMeta: RouteMeta,
     protected override injector: Injector,
-    protected res: Res
+    protected res: Res,
   ) {
     super(injector, routeMeta);
   }
