@@ -1,5 +1,12 @@
+<a name="testing-2.2.0"></a>
+# [testing-2.2.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.2.0) (2023-08-20)
+
+### Breaking chanages
+
+- Now, when creating an instance of `TestApplication`, in the constructor the second parameter is the options for the server. Before there was `listen`.
+
 <a name="testing-2.1.0"></a>
-# [testing-2.1.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.1.0) (2023-08-18)
+## [testing-2.1.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.1.0) (2023-08-18)
 
 ### Features
 

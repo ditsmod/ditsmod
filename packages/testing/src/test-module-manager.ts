@@ -7,6 +7,7 @@ import {
   PreRouterExtension,
   NormalizedProvider,
 } from '@ditsmod/core';
+
 import { TestPreRouterExtension } from './test-pre-router.extensions';
 import { TestProvider } from './types';
 
