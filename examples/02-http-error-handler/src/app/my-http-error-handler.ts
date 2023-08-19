@@ -1,4 +1,14 @@
-import { Logger, Status, HttpErrorHandler, injectable, Res, NodeResponse, inject, NODE_RES } from '@ditsmod/core';
+import {
+  Logger,
+  Status,
+  HttpErrorHandler,
+  injectable,
+  Res,
+  NodeResponse,
+  inject,
+  NODE_RES,
+  cleanErrorTrace,
+} from '@ditsmod/core';
 
 @injectable()
 export class MyHttpErrorHandler implements HttpErrorHandler {
@@ -9,6 +19,7 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
   ) {}
 
   handleError(err: Error) {
+    cleanErrorTrace(err);
     const message = err.message;
     this.logger.error({ note: 'This is my implementation of HttpErrorHandler', err });
     if (!this.nodeRes.headersSent) {
