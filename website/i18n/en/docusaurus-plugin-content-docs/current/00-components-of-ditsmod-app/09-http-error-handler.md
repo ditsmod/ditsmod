@@ -64,7 +64,7 @@ export class AppModule {}
 
 Of course, if there are error handling specifics for a separate module or controller, you can just as easily add your new handler to its metadata without affecting other components of your application.
 
-If you're adding such a handler to the metadata of a regular non-root module, you probably don't need to export it. On the other hand, if you want to write a custom error handling _module_ and still want to export `HttpErrorHandler` from it, be aware that importing it into any module will require [provider collision][1] to be resolved. This occurs because a default error handler has already been added to any module in your application, and when you import the module with its new error handler, the two error handlers collide. This can be easily resolved:
+If you're adding such a handler to the metadata of a regular non-root module, you probably don't need to export it. On the other hand, if you want to write a custom error handling module and still want to export `HttpErrorHandler` from it, be aware that importing it into any module will require [provider collision][1] to be resolved. This occurs because a default error handler has already been added to any module in your application, and when you import the module with its new error handler, the two error handlers collide. This can be easily resolved:
 
 ```ts {8}
 import { featureModule, HttpErrorHandler } from '@ditsmod/core';
