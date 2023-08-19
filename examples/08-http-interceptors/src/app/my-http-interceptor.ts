@@ -1,17 +1,11 @@
-import {
-  injectable,
-  HttpHandler,
-  HttpInterceptor,
-  Logger,
-  fromSelf,
-  inject,
-  NodeResponse,
-  NODE_RES,
-} from '@ditsmod/core';
+import { injectable, HttpHandler, HttpInterceptor, Logger, inject, NodeResponse, NODE_RES } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
-  constructor(private logger: Logger, @fromSelf() @inject(NODE_RES) private nodeRes: NodeResponse) {}
+  constructor(
+    private logger: Logger,
+    @inject(NODE_RES) private nodeRes: NodeResponse,
+  ) {}
 
   intercept(next: HttpHandler) {
     // Handling request to `HelloWorldController`

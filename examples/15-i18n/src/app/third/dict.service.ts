@@ -1,14 +1,4 @@
-import {
-  AnyObj,
-  fromSelf,
-  inject,
-  injectable,
-  Injector,
-  NodeRequest,
-  NODE_REQ,
-  optional,
-  QUERY_PARAMS,
-} from '@ditsmod/core';
+import { AnyObj, inject, injectable, Injector, NodeRequest, NODE_REQ, optional, QUERY_PARAMS } from '@ditsmod/core';
 import { DictService, I18nLogMediator, I18nOptions, ISO639 } from '@ditsmod/i18n';
 
 @injectable()
@@ -18,7 +8,7 @@ export class MyDictService extends DictService {
     protected override log: I18nLogMediator,
     @optional() protected override i18nOptions?: I18nOptions,
     @inject(QUERY_PARAMS) protected override queryParams?: AnyObj,
-    @optional() @fromSelf() @inject(NODE_REQ) protected nodeReq?: NodeRequest
+    @optional() @inject(NODE_REQ) protected nodeReq?: NodeRequest,
   ) {
     super(injector, log, i18nOptions, queryParams);
   }

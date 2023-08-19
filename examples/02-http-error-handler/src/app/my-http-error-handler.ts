@@ -1,19 +1,9 @@
-import {
-  Logger,
-  Status,
-  HttpErrorHandler,
-  injectable,
-  Res,
-  NodeResponse,
-  fromSelf,
-  inject,
-  NODE_RES,
-} from '@ditsmod/core';
+import { Logger, Status, HttpErrorHandler, injectable, Res, NodeResponse, inject, NODE_RES } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpErrorHandler implements HttpErrorHandler {
   constructor(
-    @fromSelf() @inject(NODE_RES) private nodeRes: NodeResponse,
+    @inject(NODE_RES) private nodeRes: NodeResponse,
     private res: Res,
     private logger: Logger,
   ) {}

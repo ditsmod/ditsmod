@@ -1,4 +1,4 @@
-import { CanActivate, fromSelf, inject, NodeRequest, NodeResponse, NODE_REQ, NODE_RES, Status } from '@ditsmod/core';
+import { CanActivate, inject, NodeRequest, NodeResponse, NODE_REQ, NODE_RES, Status } from '@ditsmod/core';
 import { oasGuard } from '@ditsmod/openapi';
 
 @oasGuard({
@@ -18,8 +18,8 @@ import { oasGuard } from '@ditsmod/openapi';
 })
 export class BasicGuard implements CanActivate {
   constructor(
-    @fromSelf() @inject(NODE_REQ) private nodeReq: NodeRequest,
-    @fromSelf() @inject(NODE_RES) private nodeRes: NodeResponse
+    @inject(NODE_REQ) private nodeReq: NodeRequest,
+    @inject(NODE_RES) private nodeRes: NodeResponse
   ) {}
 
   canActivate() {
