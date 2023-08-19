@@ -234,8 +234,8 @@ export class SomeController {
 
 В останніх двох прикладах сервіс передається у масив `providersPerReq`, але це не єдиний спосіб передачі сервісів. Більш докладну інформацію про правила роботи з DI можна отримати у розділі [Dependency Injection][7].
 
-[1]: /components-of-ditsmod-app/exports-and-imports#імпорт-модуля
-[2]: /components-of-ditsmod-app/exports-and-imports#ModuleWithParams
+[1]: /developer-guides/exports-and-imports#імпорт-модуля
+[2]: /developer-guides/exports-and-imports#ModuleWithParams
 [3]: /components-of-ditsmod-app/dependency-injection#провайдери
 [4]: /components-of-ditsmod-app/dependency-injection#токен-залежності
 [5]: /native-modules/body-parser#використання

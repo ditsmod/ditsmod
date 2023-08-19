@@ -813,7 +813,7 @@ Remember that when DI cannot find the right provider, there are only three possi
 [13]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/package.json#L27
 [14]: https://github.com/tc39/proposal-decorators
 
-[107]: /components-of-ditsmod-app/exports-and-imports
+[107]: /developer-guides/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions
 [100]: #passing-of-providers-to-the-di-registry
 [101]: #hierarchy-of-injectors

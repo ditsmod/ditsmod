@@ -234,8 +234,8 @@ export class SomeController {
 
 In the last two examples, the service is passed to the `providersPerReq` array, but this is not the only way to pass services. For more information about the rules of working with DI, see [Dependency Injection][7].
 
-[1]: /components-of-ditsmod-app/exports-and-imports#import-module
-[2]: /components-of-ditsmod-app/exports-and-imports#ModuleWithParams
+[1]: /developer-guides/exports-and-imports#import-module
+[2]: /developer-guides/exports-and-imports#ModuleWithParams
 [3]: /components-of-ditsmod-app/dependency-injection#providers
 [4]: /components-of-ditsmod-app/dependency-injection#dependency-token
 [5]: /native-modules/body-parser#usage

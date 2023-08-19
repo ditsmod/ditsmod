@@ -133,6 +133,7 @@ module.exports = {
         // ],
         createRedirects(currentPath) {
           const arr = [
+            ...getRedirect(currentPath, '/developer-guides/exports-and-imports', ['/components-of-ditsmod-app/exports-and-imports']),
             ...getRedirect(currentPath, '/developer-guides/providers-collisions', ['/components-of-ditsmod-app/providers-collisions']),
             ...getRedirect(currentPath, '/components-of-ditsmod-app/extensions', ['/extensions/create-extension','/extensions/about-extensions']),
             ...getRedirect(currentPath, '/components-of-ditsmod-app', ['/core']),

@@ -813,7 +813,7 @@ service2.service1 instanceof Service1; // true
 [13]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/package.json#L27
 [14]: https://github.com/tc39/proposal-decorators
 
-[107]: /components-of-ditsmod-app/exports-and-imports
+[107]: /developer-guides/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions
 [100]: #передача-провайдерів-в-реєстр-di
 [101]: #ієрархія-інжекторів

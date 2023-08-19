@@ -39,5 +39,5 @@ curl -isS localhost:3000/forbidden
 ```
 
 [1]: /examples/prerequisite
-[102]: /components-of-ditsmod-app/exports-and-imports#export-of-the-providers-from-the-root-module
+[102]: /developer-guides/exports-and-imports#export-of-the-providers-from-the-root-module
 [103]: /components-of-ditsmod-app/guards
