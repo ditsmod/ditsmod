@@ -151,7 +151,8 @@ it('the parent cannot instantiate Service2', () => {
 });
 
 it('the child can instantiate Service2', () => {
-  expect(child.get(Service2).service1 instanceof Service1).toBe(true);
+  const service2 = child.get(Service2) as Service2;
+  expect(service2.service1).toBeInstanceOf(Service1);
 });
 ```
  */
