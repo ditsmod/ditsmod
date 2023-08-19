@@ -77,20 +77,13 @@ import { rootModule } from '@ditsmod/core';
 export class AppModule {}
 ```
 
-It can contain metadata for both the HTTP server and the module itself. In general, an object with the following properties can be passed to the `rootModule` decorator:
+It can contain exactly the same metadata as non-root modules:
 
 ```ts
 import * as http from 'http';
 import { rootModule } from '@ditsmod/core';
 
 @rootModule({
-  // Metadata for the HTTP server
-  httpModule: http,
-  listenOptions: { host: 'localhost', port: 3000 },
-  serverOptions: {},
-
-  // Metadata for the module, plus - path - a prefix that will be added to all routes
-  path: 'api',
   appends: [],
   imports: [],
   controllers: [],

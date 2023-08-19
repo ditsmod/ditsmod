@@ -77,20 +77,13 @@ import { rootModule } from '@ditsmod/core';
 export class AppModule {}
 ```
 
-Він може містити метадані як для HTTP-сервера так і для самого модуля. Загалом, в декоратор `rootModule` можна передавати об'єкт з такими властивостями:
+Він може містити точно такі самі метадані як і некореневі модулі:
 
 ```ts
 import * as http from 'http';
 import { rootModule } from '@ditsmod/core';
 
 @rootModule({
-  // Метадані для HTTP-сервера
-  httpModule: http,
-  listenOptions: { host: 'localhost', port: 3000 },
-  serverOptions: {},
-
-  // Метадані для модуля, плюс - path - префікс, що додаватиметься до усіх маршрутів
-  path: 'api',
   appends: [],
   imports: [],
   controllers: [],
