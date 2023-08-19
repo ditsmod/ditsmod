@@ -1,5 +1,12 @@
+<a name="openapi-2.19.0"></a>
+# [openapi-2.19.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.19.0) (2023-08-20)
+
+### Migration
+
+- Migrate to core-2.44.0.
+
 <a name="openapi-2.18.0"></a>
-# [openapi-2.18.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.18.0) (2023-08-11)
+## [openapi-2.18.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.18.0) (2023-08-11)
 
 ### Migration
 

@@ -5,7 +5,7 @@ import { existsSync } from 'fs';
 import { readFile, writeFile } from 'fs/promises';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import { join } from 'path';
-import * as webpack from 'webpack';
+import webpack = require('webpack');
 
 import { SwaggerOptions } from '../swagger-ui/interfaces';
 import { OasExtensionOptions } from '../types/oas-extension-options';
