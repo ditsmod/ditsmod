@@ -761,14 +761,10 @@ class Service2 {
 const parent = Injector.resolveAndCreate([Service1, Service2]);
 const child = parent.resolveAndCreateChild([Service2]);
 
-it('the parent can instantiate Service2', () => {
-  const service2 = parent.get(Service2) as Service2;
-  expect(service2.service1).toBeInstanceOf(Service1);
-});
+const service2 = parent.get(Service2) as Service2;
+service2.service1 instanceof Service1; // true
 
-it('the child cannot instantiate Service2', () => {
-  expect(() => child.get(Service2)).toThrowError();
-});
+child.get(Service2); // Error - Service1 not found
 ```
 
 As you can see, `Service2` depends on `Service1`, and the `fromSelf` decorator tells DI: "When creating an instance of `Service1`, use only the same injector that will create an instance of `Service2`, and do not need to refer to the parent injector". When the parent injector is created, it is passed both required services, so when the `Service2` token is requested, it will successfully resolve the dependency and issue an instance of this class.
@@ -792,14 +788,10 @@ class Service2 {
 const parent = Injector.resolveAndCreate([Service1, Service2]);
 const child = parent.resolveAndCreateChild([Service2]);
 
-it('the parent cannot instantiate Service2', () => {
-  expect(() => parent.get(Service2)).toThrowError();
-});
+parent.get(Service2); // Error - Service1 not found
 
-it('the child can instantiate Service2', () => {
-  const service2 = child.get(Service2) as Service2;
-  expect(service2.service1).toBeInstanceOf(Service1);
-});
+const service2 = child.get(Service2) as Service2;
+service2.service1 instanceof Service1; // true
 ```
 
 As you can see, `Service2` depends on `Service1`, and the `skipSelf` decorator tells DI: "When creating an instance of `Service1`, skip the injector that will create an instance of `Service2` and immediately call the parent injector". When the parent injector is created, it is passed both required services, but because of `skipSelf`, it will not be able to contact the parent injector because it does not have one. Therefore, the parent injector will not be able to resolve the dependency.

@@ -761,14 +761,10 @@ class Service2 {
 const parent = Injector.resolveAndCreate([Service1, Service2]);
 const child = parent.resolveAndCreateChild([Service2]);
 
-it('the parent can instantiate Service2', () => {
-  const service2 = parent.get(Service2) as Service2;
-  expect(service2.service1).toBeInstanceOf(Service1);
-});
+const service2 = parent.get(Service2) as Service2;
+service2.service1 instanceof Service1; // true
 
-it('the child cannot instantiate Service2', () => {
-  expect(() => child.get(Service2)).toThrowError();
-});
+child.get(Service2); // Error - Service1 not found
 ```
 
 Як бачите, `Service2` залежить від `Service1`, причому декоратор `fromSelf` вказує DI: "При створенні інстансу `Service1` використовувати тільки той самий інжектор, який створить інстанс `Service2`, а до батьківського інжектора не потрібно звертатись". Коли створюється батьківський інжектор, йому передають обидва необхідні сервіси, тому при запиті токену `Service2` він успішно вирішить залежність та видасть інстанс цього класу.
@@ -792,14 +788,10 @@ class Service2 {
 const parent = Injector.resolveAndCreate([Service1, Service2]);
 const child = parent.resolveAndCreateChild([Service2]);
 
-it('the parent cannot instantiate Service2', () => {
-  expect(() => parent.get(Service2)).toThrowError();
-});
+parent.get(Service2); // Error - Service1 not found
 
-it('the child can instantiate Service2', () => {
-  const service2 = child.get(Service2) as Service2;
-  expect(service2.service1).toBeInstanceOf(Service1);
-});
+const service2 = child.get(Service2) as Service2;
+service2.service1 instanceof Service1; // true
 ```
 
 Як бачите, `Service2` залежить від `Service1`, причому декоратор `skipSelf` вказує DI: "При створенні інстансу `Service1` пропустити той інжектор, який створить інстанс `Service2`, і зразу звертатись до батьківського інжектора". Коли створюється батьківський інжектор, йому передають обидва необхідні сервіси, але через `skipSelf` він не зможе звернутись до батьківського інжектора, бо його у нього немає. Тому батьківський інжектор не зможе вирішити залежність.
