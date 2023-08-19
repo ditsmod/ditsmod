@@ -26,6 +26,7 @@ export { ExtensionsMetaPerApp } from './models/extensions-meta-per-app';
 export { ModuleExtract } from './models/module-extract';
 export { NormalizedModuleMetadata } from './models/normalized-module-metadata';
 export { ProvidersMetadata } from './models/providers-metadata';
+export { ApplicationOptions } from './models/application-options';
 export { RootMetadata } from './models/root-metadata';
 export { ModuleFactory } from './module-factory';
 export { ConsoleLogger } from './services/console-logger';

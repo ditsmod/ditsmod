@@ -1,36 +1,37 @@
 import type * as http from 'http';
 import type * as http2 from 'http2';
 import type * as https from 'https';
+import type { AddressInfo } from 'net';
 
 import { AppInitializer } from './app-initializer';
 import { RootMetadata } from './models/root-metadata';
+import { ApplicationOptions } from './models/application-options';
 import { LogMediator } from './log-mediator/log-mediator';
 import { SystemLogMediator } from './log-mediator/system-log-mediator';
 import { ModuleManager } from './services/module-manager';
-import { AnyFn, ModuleType, ModuleWithParams } from './types/mix';
+import { AnyFn, ModuleType } from './types/mix';
 import { Http2SecureServerOptions, RequestListener, NodeServer } from './types/server-options';
-import { getModuleMetadata } from './utils/get-module-metadata';
-import { pickProperties } from './utils/pick-properties';
 import { isHttp2SecureServerOptions } from './utils/type-guards';
 import { cleanErrorTrace } from './utils/clean-error-trace';
 import { HttpServerModule, HttpsServerModule } from './types/http-module';
 
 export class Application {
-  protected rootMeta: RootMetadata;
+  protected appOptions: ApplicationOptions;
   protected systemLogMediator: SystemLogMediator;
+  protected rootMeta = new RootMetadata();
 
   /**
    * @param appModule The root module of the application.
    * @param listen If this parameter seted to `false` then `server.listen()` is not called. Default - `true`.
    */
-  bootstrap(appModule: ModuleType, listen: boolean = true) {
+  bootstrap(appModule: ModuleType, appOptions: ApplicationOptions = new ApplicationOptions()) {
     return new Promise<{ server: NodeServer }>(async (resolve, reject) => {
       try {
-        this.initRootModule(appModule);
+        this.init(appModule.name, appOptions);
         const moduleManager = this.scanRootModule(appModule);
         const appInitializer = this.getAppInitializer(moduleManager);
         await this.bootstrapApplication(appInitializer);
-        await this.createServerAndListen(appInitializer, resolve, listen);
+        await this.createServerAndListen(appInitializer, resolve);
       } catch (err: any) {
         this.systemLogMediator.internalServerError(this, err, true);
         this.flushLogs();
@@ -40,28 +41,17 @@ export class Application {
     });
   }
 
-  protected initRootModule(appModule: ModuleType) {
+  protected init(rootModuleName: string, appOptions: ApplicationOptions) {
     this.systemLogMediator = new SystemLogMediator({ moduleName: 'AppModule' });
-    this.mergeRootMetadata(appModule);
-    this.checkSecureServerOption(appModule.name);
+    this.appOptions = Object.assign(new ApplicationOptions(), appOptions);
+    this.rootMeta.path = this.appOptions.path || '';
+    this.checkSecureServerOption(rootModuleName);
     return this.systemLogMediator;
   }
 
-  /**
-   * Merge AppModule metadata with default metadata for root module.
-   */
-  protected mergeRootMetadata(module: ModuleType | ModuleWithParams): void {
-    const serverMetadata = getModuleMetadata(module, true) as unknown as RootMetadata;
-    this.rootMeta = new RootMetadata();
-    pickProperties(this.rootMeta, serverMetadata);
-    const { listenOptions } = this.rootMeta;
-    listenOptions.host = listenOptions.host || 'localhost';
-    listenOptions.port = listenOptions.port || 3000;
-  }
-
   protected checkSecureServerOption(rootModuleName: string) {
-    const serverOptions = this.rootMeta.serverOptions as Http2SecureServerOptions;
-    if (serverOptions?.isHttp2SecureServer && !(this.rootMeta.httpModule as typeof http2).createSecureServer) {
+    const serverOptions = this.appOptions.serverOptions as Http2SecureServerOptions;
+    if (serverOptions?.isHttp2SecureServer && !(this.appOptions.httpModule as typeof http2).createSecureServer) {
       throw new TypeError(`serverModule.createSecureServer() not found (see ${rootModuleName} settings)`);
     }
   }
@@ -85,18 +75,15 @@ export class Application {
     await appInitializer.bootstrapModulesAndExtensions();
   }
 
-  protected async createServerAndListen(appInitializer: AppInitializer, resolve: AnyFn, listen: boolean) {
+  protected async createServerAndListen(appInitializer: AppInitializer, resolve: AnyFn) {
     this.flushLogs();
     const server = await this.createServer(appInitializer.requestListener);
-    if (listen) {
-      server.listen(this.rootMeta.listenOptions, () => {
-        const { listenOptions } = this.rootMeta;
-        this.systemLogMediator.serverListen(this, listenOptions.host!, listenOptions.port!);
-        resolve({ server });
-      });
-    } else {
-      resolve({ server });
-    }
+    server.on('listening', () => {
+      const info = server.address() as AddressInfo;
+      this.rootMeta.addressInfo = info;
+      this.systemLogMediator.serverListen(this, info.address, info.port);
+    });
+    resolve({ server });
   }
 
   protected flushLogs() {
@@ -105,12 +92,14 @@ export class Application {
   }
 
   protected async createServer(requestListener: RequestListener): Promise<NodeServer> {
-    if (isHttp2SecureServerOptions(this.rootMeta.serverOptions)) {
-      const serverModule = this.rootMeta.httpModule as typeof http2;
-      return serverModule.createSecureServer(this.rootMeta.serverOptions, requestListener);
+    if (isHttp2SecureServerOptions(this.appOptions.serverOptions || {})) {
+      const serverModule = this.appOptions.httpModule as typeof http2;
+      return serverModule.createSecureServer(this.appOptions.serverOptions || {}, requestListener);
     } else {
-      const serverModule = (this.rootMeta.httpModule || (await import('http'))) as HttpServerModule | HttpsServerModule;
-      const serverOptions = this.rootMeta.serverOptions as http.ServerOptions | https.ServerOptions;
+      const serverModule = (this.appOptions.httpModule || (await import('http'))) as
+        | HttpServerModule
+        | HttpsServerModule;
+      const serverOptions = this.appOptions.serverOptions as http.ServerOptions | https.ServerOptions;
       return serverModule.createServer(serverOptions, requestListener);
     }
   }

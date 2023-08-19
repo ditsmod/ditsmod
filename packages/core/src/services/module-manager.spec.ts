@@ -173,10 +173,6 @@ describe('ModuleManager', () => {
     class Provider1 {}
 
     @rootModule({
-      httpModule: http,
-      listenOptions: { host: 'localhost', port: 3000 },
-      path: 'api',
-      serverOptions: {},
       imports: [],
       providersPerRou: [],
       providersPerReq: [Provider1],

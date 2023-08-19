@@ -1,6 +1,4 @@
-import * as http from 'http';
 import { reflector } from '../di';
-
 import { rootModule } from './root-module';
 import { AnyObj } from '../types/mix';
 
@@ -37,10 +35,6 @@ describe('RootModule decorator', () => {
 
   it('decorator with all allowed properties', () => {
     @rootModule({
-      httpModule: http,
-      listenOptions: { host: 'localhost', port: 3000 },
-      path: 'api',
-      serverOptions: {},
       imports: [],
       providersPerApp: [],
       providersPerMod: [],
@@ -54,10 +48,6 @@ describe('RootModule decorator', () => {
     const metadata = reflector.getClassMetadata(Module1);
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual({
-      httpModule: http,
-      listenOptions: { host: 'localhost', port: 3000 },
-      path: 'api',
-      serverOptions: {},
       imports: [],
       providersPerApp: [],
       providersPerMod: [],

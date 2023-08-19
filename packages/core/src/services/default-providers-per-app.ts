@@ -1,4 +1,3 @@
-import { RootMetadata } from '../models/root-metadata';
 import { Logger } from '../types/logger';
 import { ServiceProvider } from '../types/mix';
 import { Counter } from './counter';
@@ -11,7 +10,6 @@ import { Providers } from '../utils/providers';
 import { SystemLogMediator } from '../log-mediator/system-log-mediator';
 
 export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
-  RootMetadata,
   PreRouter,
   Counter,
   ModuleManager,
