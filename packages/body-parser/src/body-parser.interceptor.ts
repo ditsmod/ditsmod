@@ -1,13 +1,4 @@
-import {
-  fromSelf,
-  HttpHandler,
-  HttpInterceptor,
-  inject,
-  NODE_REQ,
-  NodeRequest,
-  Injector,
-  skipSelf,
-} from '@ditsmod/core';
+import { HttpHandler, HttpInterceptor, inject, NODE_REQ, NodeRequest, Injector } from '@ditsmod/core';
 import { injectable, optional } from '@ditsmod/core';
 import { parse, Headers, Options } from 'get-body';
 
@@ -16,9 +7,9 @@ import { HTTP_BODY, BodyParserConfig } from './body-parser-config';
 @injectable()
 export class BodyParserInterceptor implements HttpInterceptor {
   constructor(
-    @fromSelf() private injector: Injector,
-    @fromSelf() @inject(NODE_REQ) private nodeReq: NodeRequest,
-    @optional() @skipSelf() private config?: BodyParserConfig
+    private injector: Injector,
+    @inject(NODE_REQ) private nodeReq: NodeRequest,
+    @optional() private config?: BodyParserConfig,
   ) {
     this.config = Object.assign({}, new BodyParserConfig(), config); // Merge with default.
   }
