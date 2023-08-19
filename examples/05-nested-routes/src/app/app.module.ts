@@ -4,7 +4,6 @@ import { RouterModule } from '@ditsmod/router';
 import { PostsModule } from './posts/posts.module';
 
 @rootModule({
-  path: 'api',
   imports: [RouterModule],
   appends: [{ path: 'posts/:postId', module: PostsModule }],
 })

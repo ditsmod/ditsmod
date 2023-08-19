@@ -8,7 +8,7 @@ describe('05-nested-routes', () => {
   let server: NodeServer;
 
   beforeAll(async () => {
-    server = await new TestApplication(AppModule).getServer();
+    server = await new TestApplication(AppModule).getServer({ path: 'api' });
   });
 
   afterAll(() => {
