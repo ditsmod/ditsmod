@@ -1,6 +1,6 @@
 {
   "name": "@ditsmod/core",
-  "version": "2.43.0",
+  "version": "2.44.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -10,7 +10,7 @@
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "license": "MIT",
   "main": "dist/index",
-  "types": "dist/index",
+  "types": "src/index",
   "directories": {
     "lib": "src"
   },

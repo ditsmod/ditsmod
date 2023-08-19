@@ -1,5 +1,27 @@
+<a name="core-2.44.0"></a>
+# [core-2.44.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.44.0) (2023-08-20)
+
+### Breaking changes
+
+- Moved application options out of the root module. Now an app start like this:
+
+```ts
+import { Application } from '@ditsmod/core';
+
+import { AppModule } from './app/app.module';
+
+new Application()
+  .bootstrap(AppModule)
+  .then((app) => {
+    app.server.listen(3000);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+```
+
 <a name="core-2.43.0"></a>
-# [core-2.43.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.43.0) (2023-08-18)
+## [core-2.43.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.43.0) (2023-08-18)
 
 ### Breaking changes
 
