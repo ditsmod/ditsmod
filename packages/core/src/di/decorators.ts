@@ -101,6 +101,8 @@ export const injectable = makeClassDecorator(() => undefined);
  * ### Example
  *
 ```ts
+import { injectable, fromSelf, Injector } from '@ditsmod/core';
+
 class Service1 {}
 
 @injectable()
@@ -108,14 +110,17 @@ class Service2 {
   constructor(@fromSelf() public service1: Service1) {}
 }
 
-const inj = Injector.resolveAndCreate([Service1, Service2]);
-const service2 = inj.get(Service2);
+const parent = Injector.resolveAndCreate([Service1, Service2]);
+const child = parent.resolveAndCreateChild([Service2]);
 
-expect(service2.service1 instanceof Service1).toBe(true);
+it('parent can create instance of Service2', () => {
+  const service2 = parent.get(Service2) as Service2;
+  expect(service2.service1).toBeInstanceOf(Service1);
+});
 
-parent = Injector.resolveAndCreate([Service1, Service2]);
-const child = parent.resolveAndCreateChild([]);
-expect(() => child.get(Service2)).toThrowError();
+it('child cannot create instance of Service2', () => {
+  expect(() => child.get(Service2)).toThrowError();
+});
 ```
  */
 export const fromSelf = makeParamDecorator(() => undefined);
@@ -129,6 +134,8 @@ export const fromSelf = makeParamDecorator(() => undefined);
  * ### Example
  *
 ```ts
+import { injectable, skipSelf, Injector } from '@ditsmod/core';
+
 class Service1 {}
 
 @injectable()
@@ -136,13 +143,16 @@ class Service2 {
   constructor(@skipSelf() public service1: Service1) {}
 }
 
-const parent = Injector.resolveAndCreate([Service1]);
+const parent = Injector.resolveAndCreate([Service1, Service2]);
 const child = parent.resolveAndCreateChild([Service2]);
-const service2 = inj.get(Service2);
-expect(service2.service1 instanceof Service1).toBe(true);
 
-const inj = Injector.resolveAndCreate([Service1, Service2]);
-expect(() => inj.get(Service2)).toThrowError();
+it('the parent cannot instantiate Service2', () => {
+  expect(() => parent.get(Service2)).toThrowError();
+});
+
+it('the child can instantiate Service2', () => {
+  expect(child.get(Service2).service1 instanceof Service1).toBe(true);
+});
 ```
  */
 export const skipSelf = makeParamDecorator(() => undefined);
