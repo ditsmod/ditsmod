@@ -25,7 +25,7 @@ export class SwaggerConfigManager {
       return;
     }
     const { path: prefixPerMod } = this.moduleExtract;
-    const { port } = this.rootMeta.listenOptions;
+    const { port } = this.rootMeta.addressInfo;
     const path = [this.rootMeta.path, prefixPerMod, 'openapi.yaml'].filter((p) => p).join('/');
     const oasExtensionOptions = this.injectorPerMod.get(OasExtensionOptions, null);
     const oauthOptions = oasExtensionOptions?.swaggerOAuthOptions;
