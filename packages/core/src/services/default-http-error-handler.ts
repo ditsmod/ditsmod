@@ -1,4 +1,4 @@
-import { fromSelf, inject, injectable } from '../di';
+import { inject, injectable } from '../di';
 import { HttpErrorHandler } from './http-error-handler';
 import { Logger } from '../types/logger';
 import { Status } from '../utils/http-status-codes';
@@ -14,9 +14,9 @@ import { cleanErrorTrace } from '../utils/clean-error-trace';
 export class DefaultHttpErrorHandler implements HttpErrorHandler {
   constructor(
     protected logger: Logger,
-    @fromSelf() protected res: Res,
-    @fromSelf() protected req: Req,
-    @fromSelf() @inject(NODE_RES) protected nodeRes: NodeResponse
+    protected res: Res,
+    protected req: Req,
+    @inject(NODE_RES) protected nodeRes: NodeResponse,
   ) {}
 
   async handleError(err: Error) {

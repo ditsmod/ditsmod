@@ -2,7 +2,7 @@ import { format } from 'util';
 
 import { Status } from '../utils/http-status-codes';
 import { RedirectStatusCodes } from '../types/mix';
-import { fromSelf, inject, injectable } from '../di';
+import { inject, injectable } from '../di';
 import { NODE_RES } from '../constans';
 import { NodeResponse } from '../types/server-options';
 
@@ -12,7 +12,7 @@ export class Res<T = any> {
     /**
      * Native Node.js response.
      */
-    @fromSelf() @inject(NODE_RES) private nodeRes: NodeResponse
+    @inject(NODE_RES) private nodeRes: NodeResponse
   ) {}
 
   /**

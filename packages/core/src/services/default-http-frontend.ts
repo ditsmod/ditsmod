@@ -1,6 +1,6 @@
 import { parse } from 'querystring';
 
-import { fromSelf, inject, injectable, Injector, skipSelf } from '../di';
+import { inject, injectable, Injector, skipSelf } from '../di';
 import { HttpFrontend, HttpHandler } from '../types/http-interceptor';
 import { AnyObj, CanActivate } from '../types/mix';
 import { Status } from '../utils/http-status-codes';
@@ -14,8 +14,8 @@ export class DefaultHttpFrontend implements HttpFrontend {
   constructor(
     protected injector: Injector,
     @skipSelf() private routeMeta: RouteMeta,
-    @fromSelf() @inject(A_PATH_PARAMS) private aPathParams?: PathParam[],
-    @fromSelf() @inject(QUERY_STRING) private queryString?: string
+    @inject(A_PATH_PARAMS) private aPathParams?: PathParam[],
+    @inject(QUERY_STRING) private queryString?: string
   ) {}
 
   async intercept(next: HttpHandler) {
@@ -46,8 +46,8 @@ export class DefaultHttpFrontend implements HttpFrontend {
   }
 
   protected prohibitActivation(status?: Status) {
-    const nodeReq = this.injector.get(NODE_REQ, fromSelf);
-    const nodeRes = this.injector.get(NODE_RES, fromSelf);
+    const nodeReq = this.injector.get(NODE_REQ);
+    const nodeRes = this.injector.get(NODE_RES);
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
     systemLogMediator.youCannotActivateRoute(this, nodeReq.method!, nodeReq.url!);
     nodeRes.statusCode = status || Status.UNAUTHORIZED;
