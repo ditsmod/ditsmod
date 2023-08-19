@@ -1,5 +1,10 @@
-import { fromSelf, inject, injectable, Injector, NodeResponse, NODE_RES, Res } from '@ditsmod/core';
 import {
+  inject,
+  injectable,
+  Injector,
+  NodeResponse,
+  NODE_RES,
+  Res,
   Extension,
   ExtensionsManager,
   HTTP_INTERCEPTORS,
@@ -23,7 +28,10 @@ export class CorsExtension implements Extension<void | false> {
   private inited: boolean;
   private registeredPathForOptions = new Map<string, HttpMethod[]>();
 
-  constructor(protected perAppService: PerAppService, private extensionsManager: ExtensionsManager) {}
+  constructor(
+    protected perAppService: PerAppService,
+    private extensionsManager: ExtensionsManager,
+  ) {}
 
   async init() {
     if (this.inited) {
@@ -100,7 +108,7 @@ export class CorsExtension implements Extension<void | false> {
 
       class DynamicController {
         @methodFactory()
-        [methodName](@fromSelf() @inject(NODE_RES) nodeRes: NodeResponse, res: Res) {
+        [methodName](@inject(NODE_RES) nodeRes: NodeResponse, res: Res) {
           nodeRes.setHeader('Allow', httpMethods.join());
           res.send(undefined, Status.NO_CONTENT);
         }
