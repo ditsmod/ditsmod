@@ -740,6 +740,72 @@ export class SomeModule {}
 
 Також, якщо ви імпортуєте певний провайдер із зовнішнього модуля, і у вас у поточному модулі є провайдер з таким же токеном, то локальний провайдер матиме вищій пріоритет, при умові, що вони передавались на однаковому рівні ієрархії інжекторів.
 
+## Декоратори fromSelf та skipSelf
+
+Ці декоратори використовуються для управління поведінкою інжектора під час пошуку значень для певного токена. Вони мають сенс у випадку, коли існує певна ієрархія інжекторів.
+
+### fromSelf
+
+Декоратор `fromSelf` використовується дуже рідко.
+
+```ts
+import { injectable, fromSelf, Injector } from '@ditsmod/core';
+
+class Service1 {}
+
+@injectable()
+class Service2 {
+  constructor(@fromSelf() public service1: Service1) {}
+}
+
+const parent = Injector.resolveAndCreate([Service1, Service2]);
+const child = parent.resolveAndCreateChild([Service2]);
+
+it('the parent can instantiate Service2', () => {
+  const service2 = parent.get(Service2) as Service2;
+  expect(service2.service1).toBeInstanceOf(Service1);
+});
+
+it('the child cannot instantiate Service2', () => {
+  expect(() => child.get(Service2)).toThrowError();
+});
+```
+
+Як бачите, `Service2` залежить від `Service1`, причому декоратор `fromSelf` вказує DI: "При створенні інстансу `Service1` використовувати тільки той самий інжектор, який створить інстанс `Service2`, а до батьківського інжектора не потрібно звертатись". Коли створюється батьківський інжектор, йому передають обидва необхідні сервіси, тому при запиті токену `Service2` він успішно вирішить залежність та видасть інстанс цього класу.
+
+А ось при створенні дочірнього інжектора, йому не передали `Service1`, тому при запиті токену `Service2` він не зможе вирішити залежність цього сервісу. Якщо прибрати декоратор `fromSelf` з конструктора, то дочірній іжектор успішно вирішить залежність `Service2`.
+
+### skipSelf
+
+Декоратор `skipSelf` використовується частіше, ніж `fromSelf`, але також рідко.
+
+```ts
+import { injectable, skipSelf, Injector } from '@ditsmod/core';
+
+class Service1 {}
+
+@injectable()
+class Service2 {
+  constructor(@skipSelf() public service1: Service1) {}
+}
+
+const parent = Injector.resolveAndCreate([Service1, Service2]);
+const child = parent.resolveAndCreateChild([Service2]);
+
+it('the parent cannot instantiate Service2', () => {
+  expect(() => parent.get(Service2)).toThrowError();
+});
+
+it('the child can instantiate Service2', () => {
+  const service2 = child.get(Service2) as Service2;
+  expect(service2.service1).toBeInstanceOf(Service1);
+});
+```
+
+Як бачите, `Service2` залежить від `Service1`, причому декоратор `skipSelf` вказує DI: "При створенні інстансу `Service1` пропустити той інжектор, який створить інстанс `Service2`, і зразу звертатись до батьківського інжектора". Коли створюється батьківський інжектор, йому передають обидва необхідні сервіси, але через `skipSelf` він не зможе звернутись до батьківського інжектора, бо його у нього немає. Тому батьківський інжектор не зможе вирішити залежність.
+
+А при створенні дочірнього інжектора, йому не передали `Service1`, зате він може звернутись до батьківського інжектора за ним. Тому дочірній інжектор успішно вирішить залежність `Service2`.
+
 ## Коли DI не може знайти потрібного провайдера
 
 Пам'ятайте, що коли DI не може знайти потрібного провайдера, існує всього три можливі причини:

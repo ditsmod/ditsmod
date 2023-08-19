@@ -334,7 +334,6 @@ The so-called **DI registry** has been mentioned above. Now that you know what D
 If we greatly simplify the scheme of operation of DI, we can say that DI accepts an array of providers at the input, and at the output it issues an injector that is able to create values for each passed provider. It has approximately the following picture:
 
 ```ts {16}
-import 'reflect-metadata';
 import { Injector, injectable } from '@ditsmod/core';
 
 class Service1 {}
@@ -740,6 +739,72 @@ export class SomeModule {}
 In this case, within the `SomeModule`, `value3` will be returned at the request level for `token1`, `value2` - at the route level, and `value1` - at the module level.
 
 Also, if you import a specific provider from an external module and you have a provider with the same token in the current module, the local provider will have higher priority, provided they were passed at the same level of the injector hierarchy.
+
+## The fromSelf and skipSelf decorators
+
+These decorators are used to control the behavior of the injector when searching for values for a particular token. They make sense in the case where there is a certain hierarchy of injectors.
+
+### fromSelf
+
+The decorator `fromSelf` is used very rarely.
+
+```ts
+import { injectable, fromSelf, Injector } from '@ditsmod/core';
+
+class Service1 {}
+
+@injectable()
+class Service2 {
+  constructor(@fromSelf() public service1: Service1) {}
+}
+
+const parent = Injector.resolveAndCreate([Service1, Service2]);
+const child = parent.resolveAndCreateChild([Service2]);
+
+it('the parent can instantiate Service2', () => {
+  const service2 = parent.get(Service2) as Service2;
+  expect(service2.service1).toBeInstanceOf(Service1);
+});
+
+it('the child cannot instantiate Service2', () => {
+  expect(() => child.get(Service2)).toThrowError();
+});
+```
+
+As you can see, `Service2` depends on `Service1`, and the `fromSelf` decorator tells DI: "When creating an instance of `Service1`, use only the same injector that will create an instance of `Service2`, and do not need to refer to the parent injector". When the parent injector is created, it is passed both required services, so when the `Service2` token is requested, it will successfully resolve the dependency and issue an instance of this class.
+
+But when creating a child injector, `Service1` was not passed to it, so when requesting a `Service2` token, it will not be able to resolve the dependency of this service. If you remove the `fromSelf` decorator from the constructor, the child injector will successfully resolve the `Service2` dependency.
+
+### skipSelf
+
+The `skipSelf` decorator is used more often than `fromSelf`, but also rarely.
+
+```ts
+import { injectable, skipSelf, Injector } from '@ditsmod/core';
+
+class Service1 {}
+
+@injectable()
+class Service2 {
+  constructor(@skipSelf() public service1: Service1) {}
+}
+
+const parent = Injector.resolveAndCreate([Service1, Service2]);
+const child = parent.resolveAndCreateChild([Service2]);
+
+it('the parent cannot instantiate Service2', () => {
+  expect(() => parent.get(Service2)).toThrowError();
+});
+
+it('the child can instantiate Service2', () => {
+  const service2 = child.get(Service2) as Service2;
+  expect(service2.service1).toBeInstanceOf(Service1);
+});
+```
+
+As you can see, `Service2` depends on `Service1`, and the `skipSelf` decorator tells DI: "When creating an instance of `Service1`, skip the injector that will create an instance of `Service2` and immediately call the parent injector". When the parent injector is created, it is passed both required services, but because of `skipSelf`, it will not be able to contact the parent injector because it does not have one. Therefore, the parent injector will not be able to resolve the dependency.
+
+And when creating a child injector, `Service1` was not passed to it, but it can turn to the parent injector for it. Therefore, the child injector will successfully resolve the `Service2` dependency.
 
 ## When DI can't find the right provider
 
