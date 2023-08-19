@@ -45,9 +45,9 @@ import { JwtService, VerifyErrors, JWT_PAYLOAD } from '@ditsmod/jwt';
 @injectable()
 export class BearerGuard implements CanActivate {
   constructor(
-    @fromSelf() private jwtService: JwtService,
-    @fromSelf() @inject(NODE_REQ) private nodeReq: NodeRequest,
-    @fromSelf() private injector: Injector
+    private jwtService: JwtService,
+    @inject(NODE_REQ) private nodeReq: NodeRequest,
+    private injector: Injector
   ) {}
 
   async canActivate() {
