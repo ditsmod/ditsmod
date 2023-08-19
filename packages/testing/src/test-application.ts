@@ -59,6 +59,7 @@ export class TestApplication {
   }
 
   async getServer() {
+    this.logLevel = this.logLevel || 'fatal';
     const { server } = await this.preTestApplication.bootstrapTestApplication(this.testModuleManager, this.logLevel);
     return server;
   }
