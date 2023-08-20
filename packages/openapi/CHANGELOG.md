@@ -1,5 +1,12 @@
+<a name="openapi-2.19.1"></a>
+# [openapi-2.19.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.19.1) (2023-08-20)
+
+### Bug fix
+
+- Fixed import `swagger-ui`.
+
 <a name="openapi-2.19.0"></a>
-# [openapi-2.19.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.19.0) (2023-08-20)
+## [openapi-2.19.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.19.0) (2023-08-20)
 
 ### Migration
 
