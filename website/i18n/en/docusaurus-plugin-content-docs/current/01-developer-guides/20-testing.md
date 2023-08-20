@@ -105,9 +105,9 @@ We recommend that you place your unit test files close to the files they test. T
 
 ## End-to-end testing
 
-End-to-end testing checks the operation of the entire application. For this purpose, you can use, for example, [supertest][102]. Most often, for such tests, it is necessary to create mocks only for those services that work with external services: with databases, with sending email, etc. The rest of the application works as it would in production mode, so we will refer to it as "production" in this documentation.
+End-to-end testing checks the operation of the entire application. For this purpose, you can use, for example, [supertest][102]. Most often, for such tests, it is necessary to create mocks only for those services that work with external services: with sending email, with databases, etc. The rest of the application works as it would in production mode, so we will refer to it as "production" in this documentation.
 
-Let's look at the situation when we make a mock for `DatabaseService`:
+Let's look at the situation when we make a mock for `EmailService`:
 
 ```ts {12,19}
 import request = require('supertest');
@@ -115,30 +115,30 @@ import { Server } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
-import { DatabaseService } from '../src/app/database.service';
-import { InterfaceOfDatabaseService } from '../src/app/types';
+import { EmailService } from '../src/app/email.service';
+import { InterfaceOfEmailService } from '../src/app/types';
 
 describe('End-to-end testing', () => {
   let server: Server;
   const query = jest.fn();
-  const MockDatabaseService = { query } as InterfaceOfDatabaseService;
+  const MockEmailService = { query } as InterfaceOfEmailService;
 
   beforeEach(async () => {
     jest.restoreAllMocks();
 
     server = await new TestApplication(AppModule)
       .overrideProviders([
-        { token: DatabaseService, useValue: MockDatabaseService }
+        { token: EmailService, useValue: MockEmailService }
       ])
       .getServer();
   });
 
-  it('work with DatabaseService', async () => {
+  it('work with EmailService', async () => {
     const values = [{ one: 1, two: 2 }];
     query.mockImplementation(() => values);
 
     await request(server)
-      .get('/get-some-from-database')
+      .get('/get-some-from-email')
       .expect(200)
       .expect(values);
 
@@ -155,7 +155,7 @@ Note in the first line that when importing the `supertest` library, the keywords
 You can also import this library as follows: `import request from 'supertest'`, while also setting [`"esModuleInterop": true`][103] in the `tsconfig` file.
 :::
 
-As you can see in the test code, first, a test application is created based on the `TestApplication` class, then a mock is substituted for `DatabaseService`. At the very end, the `getServer()` method is called and thus creates and returns a web server that has not yet called the `server.listen()` method, so supertest can automatically do this by substituting a random port number, which is an important point when asynchronously calling several tests at once. Here `AppModule` is the root module of the application.
+As you can see in the test code, first, a test application is created based on the `TestApplication` class, then a mock is substituted for `EmailService`. At the very end, the `getServer()` method is called and thus creates and returns a web server that has not yet called the `server.listen()` method, so supertest can automatically do this by substituting a random port number, which is an important point when asynchronously calling several tests at once. Here `AppModule` is the root module of the application.
 
 Overriding mocks with the `testApplication.overrideProviders()` method works globally at any level of the injector hierarchy. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in production at that level.
 

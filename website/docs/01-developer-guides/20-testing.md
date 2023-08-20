@@ -105,9 +105,9 @@ describe('Service2', () => {
 
 ## End-to-end тестування
 
-Під час end-to-end тестування перевіряють роботу цілого застосунку. Для цього можна використовувати, наприклад, [supertest][102]. Частіше за все, для такого тестування необхідно робити моки тільки для тих сервісів, які працюють із зовнішніми сервісами: з базами даних, з відправкою email і т.д. Решта застосунку працює так, як буде працювати у продуктовому режимі, тому у цій документації ми будемо умовно називати її "продакшен".
+Під час end-to-end тестування перевіряють роботу цілого застосунку. Для цього можна використовувати, наприклад, [supertest][102]. Частіше за все, для такого тестування необхідно робити моки тільки для тих сервісів, які працюють із зовнішніми сервісами: з відправкою email, з базами даних і т.д. Решта застосунку працює так, як буде працювати у продуктовому режимі, тому у цій документації ми будемо умовно називати її "продакшен".
 
-Давайте розглянемо ситуацію, коли ми робимо мок для `DatabaseService`:
+Давайте розглянемо ситуацію, коли ми робимо мок для `EmailService`:
 
 ```ts {12,19}
 import request = require('supertest');
@@ -115,30 +115,30 @@ import { Server } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
-import { DatabaseService } from '../src/app/database.service';
-import { InterfaceOfDatabaseService } from '../src/app/types';
+import { EmailService } from '../src/app/email.service';
+import { InterfaceOfEmailService } from '../src/app/types';
 
 describe('End-to-end testing', () => {
   let server: Server;
   const query = jest.fn();
-  const MockDatabaseService = { query } as InterfaceOfDatabaseService;
+  const MockEmailService = { query } as InterfaceOfEmailService;
 
   beforeEach(async () => {
     jest.restoreAllMocks();
 
     server = await new TestApplication(AppModule)
       .overrideProviders([
-        { token: DatabaseService, useValue: MockDatabaseService }
+        { token: EmailService, useValue: MockEmailService }
       ])
       .getServer();
   });
 
-  it('work with DatabaseService', async () => {
+  it('work with EmailService', async () => {
     const values = [{ one: 1, two: 2 }];
     query.mockImplementation(() => values);
 
     await request(server)
-      .get('/get-some-from-database')
+      .get('/get-some-from-email')
       .expect(200)
       .expect(values);
 
@@ -155,7 +155,7 @@ describe('End-to-end testing', () => {
 Також можна імпортувати цю бібліотеку ось так: `import request from 'supertest'`, при цьому потрібно також встановити [`"esModuleInterop": true`][103] у файлі `tsconfig`.
 :::
 
-Як бачите у коді тесту, спочатку створюється тестовий застосунок на базі класу `TestApplication`, потім робиться підстановка моку для `DatabaseService`. В самому кінці викликається метод `getServer()` і таким чином створюється та повертається вебсервер, який ще не викликав метод `server.listen()`, тому supertest має змогу автоматично це зробити підставляючи рандомний номер порту, що є важливим моментом під час асинхронного виклику зразу декількох тестів. Тут `AppModule` - це кореневий модуль застосунку.
+Як бачите у коді тесту, спочатку створюється тестовий застосунок на базі класу `TestApplication`, потім робиться підстановка моку для `EmailService`. В самому кінці викликається метод `getServer()` і таким чином створюється та повертається вебсервер, який ще не викликав метод `server.listen()`, тому supertest має змогу автоматично це зробити підставляючи рандомний номер порту, що є важливим моментом під час асинхронного виклику зразу декількох тестів. Тут `AppModule` - це кореневий модуль застосунку.
 
 Підміна моків, за допомогою методу `testApplication.overrideProviders()`, працює глобально на будь-якому рівні ієрархії інжекторів. Провайдери з моками передаються до DI на певний рівень ієрархії, тільки якщо у продакшені на цьому рівні є відповідні провайдери з такими самими токенами.
 
