@@ -1,5 +1,17 @@
+<a name="testing-2.3.0"></a>
+# [testing-2.3.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.3.0) (2023-08-22)
+
+### Breaking chanages
+
+- Renamed `setInitLogLevel()` method to `setLogLevel()`.
+- Removed `setProvidersPerApp()` method.
+
+### Features
+
+- The `setLogLevel()` method now sets the logging level both for application initialization and after.
+
 <a name="testing-2.2.0"></a>
-# [testing-2.2.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.2.0) (2023-08-20)
+## [testing-2.2.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.2.0) (2023-08-20)
 
 ### Breaking chanages
 
