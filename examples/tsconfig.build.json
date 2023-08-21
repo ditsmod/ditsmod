@@ -1,0 +1,24 @@
+{
+  "files": [],
+  "references": [
+    { "path": "01-hello-world/tsconfig.build.json" },
+    { "path": "02-http-error-handler/tsconfig.build.json" },
+    { "path": "03-route-guards/tsconfig.build.json" },
+    { "path": "04-logger/tsconfig.build.json" },
+    { "path": "05-nested-routes/tsconfig.build.json" },
+    { "path": "06-body-parser/tsconfig.build.json" },
+    { "path": "07-dynamically-composing-modules/tsconfig.build.json" },
+    { "path": "08-http-interceptors/tsconfig.build.json" },
+    { "path": "09-one-extension/tsconfig.build.json" },
+    { "path": "10-openapi/tsconfig.build.json" },
+    { "path": "11-override-core-log-messages/tsconfig.build.json" },
+    { "path": "12-testing/tsconfig.build.json" },
+    { "path": "13-module-encapsulation/tsconfig.build.json" },
+    { "path": "14-auth-jwt/tsconfig.build.json" },
+    { "path": "15-i18n/tsconfig.build.json" },
+    { "path": "16-openapi-validation/tsconfig.build.json" },
+    { "path": "17-cors/tsconfig.build.json" },
+    { "path": "18-return/tsconfig.build.json" },
+    { "path": "19-session-cookie/tsconfig.build.json" },
+  ]
+}
