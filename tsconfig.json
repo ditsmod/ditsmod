@@ -16,12 +16,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "removeComments": false,
-    "moduleResolution": "node",
-    "paths": {
-      "@ditsmod/router": [
-        "./packages/router/src"
-      ]
-    }
+    "moduleResolution": "node"
   },
   "exclude": [
     "**/node_modules/*"

@@ -1,0 +1,10 @@
+{
+  "name": "examples",
+  "license": "MIT",
+  "main": "dist/index",
+  "types": "src/index",
+  "scripts": {
+    "test": "jest",
+    "build": "rm -rf dist/* && tsc -b tsconfig.build.json -f"
+  }
+}

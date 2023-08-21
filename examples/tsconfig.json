@@ -1,34 +1,24 @@
 {
-  "compilerOptions": {
-    "strict": true,
-    "strictPropertyInitialization": false,
-    "target": "es2022",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "outDir": "dist",
-    "sourceMap": true,
-    "baseUrl": "./",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "noImplicitOverride": true,
-    "removeComments": false,
-    "noImplicitAny": true, // https://blogs.msdn.microsoft.com/typescript/2016/12/07/announcing-typescript-2-1/
-    "declaration": true,
-    "allowJs": false,
-    "paths": {
-      "@ditsmod/core": ["../packages/core/src"],
-      "@ditsmod/cors": ["../packages/cors/src"],
-      "@ditsmod/return": ["../packages/return/src"],
-      "@ditsmod/router": ["../packages/router/src"],
-      "@ditsmod/session-cookie": ["../packages/session-cookie/src"],
-      "@ditsmod/body-parser": ["../packages/body-parser/src"],
-      "@ditsmod/openapi": ["../packages/openapi/src"],
-      "@ditsmod/openapi-validation": ["../packages/openapi-validation/src"],
-      "@ditsmod/jwt": ["../packages/jwt/src"],
-      "@ditsmod/i18n": ["../packages/i18n/src"],
-      "@ditsmod/testing": ["../packages/testing/src"],
-      "@dict/first/*": ["./15-i18n/src/app/first/locales/current/_base-en/*"],
-      "@dict/second/*": ["./15-i18n/src/app/second/locales/current/_base-en/*"]
-    }
-  }
+  "files": [],
+  "references": [
+    { "path": "01-hello-world/tsconfig.build.json" },
+    { "path": "02-http-error-handler/tsconfig.build.json" },
+    { "path": "03-route-guards/tsconfig.build.json" },
+    { "path": "04-logger/tsconfig.build.json" },
+    { "path": "05-nested-routes/tsconfig.build.json" },
+    { "path": "06-body-parser/tsconfig.build.json" },
+    { "path": "07-dynamically-composing-modules/tsconfig.build.json" },
+    { "path": "08-http-interceptors/tsconfig.build.json" },
+    { "path": "09-one-extension/tsconfig.build.json" },
+    { "path": "10-openapi/tsconfig.build.json" },
+    { "path": "11-override-core-log-messages/tsconfig.build.json" },
+    { "path": "12-testing/tsconfig.build.json" },
+    { "path": "13-module-encapsulation/tsconfig.build.json" },
+    { "path": "14-auth-jwt/tsconfig.build.json" },
+    { "path": "15-i18n/tsconfig.build.json" },
+    { "path": "16-openapi-validation/tsconfig.build.json" },
+    { "path": "17-cors/tsconfig.build.json" },
+    { "path": "18-return/tsconfig.build.json" },
+    { "path": "19-session-cookie/tsconfig.build.json" },
+  ]
 }
