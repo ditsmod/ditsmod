@@ -5,7 +5,7 @@ import {
   ModuleWithParams,
   NormalizedModuleMetadata,
   PreRouterExtension,
-  NormalizedProvider,
+  LogLevel,
 } from '@ditsmod/core';
 
 import { TestPreRouterExtension } from './test-pre-router.extensions';
@@ -15,22 +15,26 @@ type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 
 export class TestModuleManager extends ModuleManager {
   protected providersToOverride: TestProvider[] = [];
-  protected providersToSetPerApp: NormalizedProvider[] = [];
+  protected logLevel: LogLevel;
 
   overrideProviders(providers: TestProvider[]) {
     this.providersToOverride = providers;
   }
 
-  setProvidersPerApp(providers: NormalizedProvider[]) {
-    this.providersToSetPerApp = providers;
+  /**
+   * This `logLevel` is set after the HTTP request handlers are installed.
+   * It does not cover application initialization time.
+   */
+  setLogLevel(logLevel: LogLevel) {
+    this.logLevel = logLevel;
+  }
+
+  getLogLevel() {
+    return this.logLevel || 'off';
   }
 
   getProvidersToOverride() {
     return this.providersToOverride;
-  }
-
-  getProvidersToSetPerApp() {
-    return this.providersToSetPerApp;
   }
 
   protected override normalizeMetadata(mod: AnyModule): NormalizedModuleMetadata {

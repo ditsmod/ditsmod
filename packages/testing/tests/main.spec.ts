@@ -64,13 +64,12 @@ describe('@ditsmod/testing', () => {
     server.close();
   });
 
-  it('should failed because we trying override non-passed provider', async () => {
+  it('should failed because we trying to override non-passed provider', async () => {
     const server = await new TestApplication(AppModule)
       .overrideProviders([
         { token: ServicePerRou3, useValue: { method: methodPerRou3 } },
         { token: Res, useClass: Res, providers: [ServicePerRou3] },
       ])
-      .setProvidersPerApp([{ token: LoggerConfig, useValue: { level: 'fatal' } }]) // Expected an error, so no need to log it for the tests
       .getServer();
 
     const message = 'any-string';

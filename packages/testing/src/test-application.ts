@@ -1,4 +1,4 @@
-import { ApplicationOptions, LogLevel, ModuleType, NormalizedProvider } from '@ditsmod/core';
+import { ApplicationOptions, LogLevel, ModuleType } from '@ditsmod/core';
 
 import { PreTestApplication } from './pre-test-application';
 import { TestModuleManager } from './test-module-manager';
@@ -38,28 +38,15 @@ export class TestApplication {
   }
 
   /**
-   * Adds providers at the application level. This method is intended, for example,
-   * to set the level of logs during testing, etc.
-   *
-   * If you need to _override_ a specific provider at the application level,
-   * you should use the `overrideProviders()` method instead.
+   * During testing, the logging level is set to `off` by default (any logs are disabled).
    */
-  setProvidersPerApp(providers: NormalizedProvider[]) {
-    this.testModuleManager.setProvidersPerApp(providers);
-    return this;
-  }
-
-  /**
-   * This setting of log level only works during initialization,
-   * before HTTP request handlers are created.
-   */
-  setInitLogLevel(logLevel: LogLevel) {
+  setLogLevel(logLevel: LogLevel) {
     this.logLevel = logLevel;
+    this.testModuleManager.setLogLevel(logLevel);
     return this;
   }
 
   async getServer() {
-    this.logLevel = this.logLevel || 'fatal';
     const { server } = await this.preTestApplication.bootstrapTestApplication(this.testModuleManager, this.logLevel);
     return server;
   }

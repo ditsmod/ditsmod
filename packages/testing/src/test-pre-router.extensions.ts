@@ -19,6 +19,7 @@ import {
 
 import { TestModuleManager } from './test-module-manager';
 import { Scope, Meta, TestProvider, TestFactoryProvider, TestClassProvider } from './types';
+import { overrideLogLevel } from './utils';
 
 @injectable()
 export class TestPreRouterExtension extends PreRouterExtension {
@@ -55,8 +56,8 @@ export class TestPreRouterExtension extends PreRouterExtension {
 
   protected overrideAllProviders(aMetadataPerMod2: MetadataPerMod2[]) {
     const providersToOverride = this.testModuleManager.getProvidersToOverride();
-    const providersToSetPerApp = this.testModuleManager.getProvidersToSetPerApp();
-    this.perAppService.providers.push(...providersToSetPerApp);
+    const logLevel = this.testModuleManager.getLogLevel();
+    overrideLogLevel(this.perAppService.providers, logLevel);
 
     providersToOverride.forEach((provider) => {
       const providersPerApp = this.perAppService.providers;
@@ -66,10 +67,15 @@ export class TestPreRouterExtension extends PreRouterExtension {
     this.perAppService.reinitInjector();
 
     aMetadataPerMod2.forEach((metadataPerMod2) => {
+      overrideLogLevel(metadataPerMod2.providersPerMod, logLevel);
+      overrideLogLevel(metadataPerMod2.providersPerRou, logLevel);
+      overrideLogLevel(metadataPerMod2.providersPerReq, logLevel);
       providersToOverride.forEach((provider) => {
         this.overrideProvider(['Mod', 'Rou', 'Req'], metadataPerMod2, provider);
       });
       metadataPerMod2.aControllersMetadata2.forEach((controllerMetadata2) => {
+        overrideLogLevel(controllerMetadata2.providersPerRou, logLevel);
+        overrideLogLevel(controllerMetadata2.providersPerReq, logLevel);
         providersToOverride.forEach((provider) => {
           this.overrideProvider(['Rou', 'Req'], controllerMetadata2, provider);
         });

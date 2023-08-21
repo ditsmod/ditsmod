@@ -18,7 +18,7 @@
 ### Breaking chanages
 
 - `TestApplication#overrideProviders()` accept only normalized providers.
-- rename `setLogLevelForInit()` to `setInitLogLevel()`.
+- rename `setLogLevelForInit()` to `setLogLevel()`.
 
 ### Features
 

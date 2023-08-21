@@ -1,32 +1,12 @@
-import {
-  AppInitializer,
-  LogLevel,
-  LoggerConfig,
-  MetadataPerMod1,
-  ValueProvider,
-  normalizeProviders,
-} from '@ditsmod/core';
+import { AppInitializer, LogLevel, MetadataPerMod1 } from '@ditsmod/core';
+
+import { overrideLogLevel } from './utils';
 
 export class TestAppInitializer extends AppInitializer {
   protected logLevel: LogLevel;
 
   protected override prepareMetadataPerMod1(metadataPerMod1: MetadataPerMod1) {
-    if (this.logLevel) {
-      // Trying to override only logLevel in existing LoggerConfig.
-
-      const normProviders = normalizeProviders(metadataPerMod1.meta.providersPerMod);
-      const tokens = normProviders.map((p) => p.token);
-      const index = tokens.lastIndexOf(LoggerConfig);
-      if (index != 1) {
-        const provider = normProviders.at(index) as ValueProvider<LoggerConfig>;
-        const useValue = { ...provider.useValue };
-        useValue.level = this.logLevel;
-        metadataPerMod1.meta.providersPerMod.push({ token: LoggerConfig, useValue });
-      } else {
-        const useValue: LoggerConfig = { level: this.logLevel };
-        metadataPerMod1.meta.providersPerMod.push({ token: LoggerConfig, useValue });
-      }
-    }
+    overrideLogLevel(metadataPerMod1.meta.providersPerMod, this.logLevel);
     return metadataPerMod1;
   }
 
@@ -34,7 +14,7 @@ export class TestAppInitializer extends AppInitializer {
    * This setting of log level only works during initialization,
    * before HTTP request handlers are created.
    */
-  setInitLogLevel(logLevel: LogLevel) {
+  setInitLogLevel(logLevel: LogLevel = 'off') {
     this.logLevel = logLevel;
   }
 }
