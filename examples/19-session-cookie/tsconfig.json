@@ -17,5 +17,5 @@
       "@dict/second/*": ["./src/app/second/locales/current/_base-en/*"]
     }
   },
-  "include": ["src", "tests"]
+  "include": ["src", "test"]
 }

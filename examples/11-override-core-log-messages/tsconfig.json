@@ -10,6 +10,6 @@
       "@ditsmod/testing": ["../../packages/testing/src"],
     }
   },
-  "include": ["src", "tests"]
+  "include": ["src", "test"]
 }
 

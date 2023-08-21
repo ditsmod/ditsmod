@@ -14,5 +14,5 @@
       "@ditsmod/i18n": ["../../packages/i18n/src"]
     }
   },
-  "include": ["src", "tests"]
+  "include": ["src", "test"]
 }
