@@ -40,7 +40,9 @@ export abstract class LogMediator {
         msg,
       });
     } else {
-      this.logger.log(inputLogLevel, msg);
+      if (inputLogLevel != 'off') {
+        this.logger.log(inputLogLevel, msg);
+      }
     }
   }
 
@@ -128,7 +130,9 @@ export abstract class LogMediator {
           console.error(msg0, msg);
         }
       } else {
-        logger.log.call(logger, logItem.inputLogLevel, msg);
+        if (logItem.inputLogLevel != 'off') {
+          logger.log.call(logger, logItem.inputLogLevel, msg);
+        }
       }
     });
 

@@ -23,7 +23,9 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
     cleanErrorTrace(err);
     if (isChainError<ErrorOpts>(err)) {
       const { level, status } = err.info;
-      this.logger.log(level || 'debug', err);
+      if (level != 'off') {
+        this.logger.log(level || 'debug', err);
+      }
       this.sendError(err.message, status);
     } else {
       this.logger.error(err);

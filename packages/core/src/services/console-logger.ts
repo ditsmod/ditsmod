@@ -5,6 +5,7 @@ import { Logger, LogLevel } from '../types/logger';
 
 @injectable()
 export class ConsoleLogger extends Logger {
+  override all = this.consoleLoggerFn('all');
   override trace = this.consoleLoggerFn('trace');
   override debug = this.consoleLoggerFn('debug');
   override info = this.consoleLoggerFn('info');
@@ -14,20 +15,22 @@ export class ConsoleLogger extends Logger {
 
   protected consoleLoggerFn(level: LogLevel) {
     const callback: AnyFn = (...args: any[]) => {
-      if (this.config!.hideLogs) {
-        return;
-      }
-      const allLevels: LogLevel[] = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
+      const allLevels: LogLevel[] = ['all', 'trace', 'debug', 'info', 'warn', 'error', 'fatal', 'off'];
       const index = allLevels.indexOf(this.config!.level);
       const availableLevels = allLevels.slice(index);
       if (availableLevels.includes(level)) {
-        args = args.length == 1 ? args[0] : args;
-        console.log(`[ConsoleLogger:${level}]`, args);
+        if (level != 'off') {
+          args = args.length == 1 ? args[0] : args;
+          console.log(`[ConsoleLogger:${level}]`, args);
+        }
       } else if (!allLevels.includes(this.config!.level)) {
-        console.log('[ConsoleLogger]', `unexpected level "${this.config!.level}" (available levels: ${allLevels.join(', ')})`);
+        console.log(
+          '[ConsoleLogger]',
+          `unexpected level "${this.config!.level}" (available levels: ${allLevels.join(', ')})`,
+        );
       }
     };
-  
+
     return callback;
   }
 }
