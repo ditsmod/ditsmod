@@ -12,10 +12,7 @@
       ]
     }
   },
-  "include": [
-    "src",
-    "tests"
-  ],
+  "include": [ "src", "test"],
   "files": [],
   "references": [
     {
