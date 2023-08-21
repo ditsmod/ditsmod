@@ -1,5 +1,5 @@
 ---
-sidebar_position: 20
+sidebar_position: 40
 ---
 
 # Testing
@@ -159,7 +159,7 @@ As you can see in the test code, first, a test application is created based on t
 
 Overriding mocks with the `testApplication.overrideProviders()` method works globally at any level of the injector hierarchy. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in production at that level.
 
-We recommend keeping such tests in a separate directory called `tests`, at the same level as the `src` root directory.
+We recommend keeping such tests in a separate directory called `test`, at the same level as the `src` root directory.
 
 ### Nested providers for testing
 
