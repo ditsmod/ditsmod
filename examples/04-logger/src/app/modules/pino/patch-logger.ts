@@ -4,13 +4,13 @@ import pino from 'pino';
 export class PatchLogger {
   @methodFactory()
   patchLogger(config: LoggerConfig) {
-    const logger = pino();
+    const logger = pino({ customLevels: { off: 100, all: 0 } });
     logger.level = config.level;
 
     // Logger must have `log` method.
     (logger as unknown as Logger).log = (level: MethodLogLevel, ...args: any[]) => {
       const [arg1, ...rest] = args;
-      (logger as unknown as Logger)[level](arg1, ...rest);
+      logger[level](arg1, ...rest);
     };
 
     // Logger must have `setLevel` method.
@@ -25,4 +25,5 @@ export class PatchLogger {
 
     return logger;
   }
+
 }

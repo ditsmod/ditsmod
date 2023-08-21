@@ -10,9 +10,7 @@ describe('02-controller-error-handler', () => {
   beforeAll(async () => {
     // The controller method is expected to throw an error, so we force the log level to "fatal"
     // to avoid outputting an error to the console.
-    server = await new TestApplication(AppModule)
-      .setProvidersPerApp([...new Providers().useLogConfig({ level: 'fatal' })])
-      .getServer();
+    server = await new TestApplication(AppModule).getServer();
   });
 
   afterAll(() => {

@@ -1,11 +1,12 @@
 import { Logger, LoggerConfig, LogLevel, methodFactory, MethodLogLevel } from '@ditsmod/core';
 import { createLogger, LogLevel as BunyanLogLevel } from 'bunyan';
+import * as BunyanLogger from 'bunyan';
 
 export class PatchLogger {
   @methodFactory()
   patchLogger(config: LoggerConfig) {
     const logger = createLogger({ name: 'bunyan-test' });
-    logger.level(config.level as BunyanLogLevel);
+    this.setLogLeveL(logger, config.level);
 
     // Logger must have `log` method.
     (logger as unknown as Logger).log = (level: MethodLogLevel, ...args: any[]) => {
@@ -15,7 +16,7 @@ export class PatchLogger {
 
     // Logger must have `setLevel` method.
     (logger as unknown as Logger).setLevel = (value: LogLevel) => {
-      logger.level(value as BunyanLogLevel);
+      this.setLogLeveL(logger, value);
     };
 
     // Logger must have `getLevel` method.
@@ -36,5 +37,15 @@ export class PatchLogger {
     };
 
     return logger;
+  }
+
+  protected setLogLeveL(logger: BunyanLogger, logLevel: LogLevel) {
+    if (logLevel == 'off') {
+      logger.level(100);
+    } else if (logLevel == 'all') {
+      logger.level(0);
+    } else {
+      logger.level(logLevel as BunyanLogLevel);
+    }
   }
 }

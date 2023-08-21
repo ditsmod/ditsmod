@@ -1,5 +1,5 @@
 import request = require('supertest');
-import { Providers, NodeServer } from '@ditsmod/core';
+import { NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
@@ -8,10 +8,7 @@ describe('04-logger', () => {
   let server: NodeServer;
 
   beforeAll(async () => {
-    server = await new TestApplication(AppModule)
-      .setInitLogLevel('error')
-      .overrideProviders([...new Providers().useLogConfig({ level: 'error' })])
-      .getServer();
+    server = await new TestApplication(AppModule).getServer();
   });
 
   afterAll(() => {

@@ -1,6 +1,6 @@
 import request = require('supertest');
 import { TestApplication } from '@ditsmod/testing';
-import { Providers, NodeServer } from '@ditsmod/core';
+import { NodeServer } from '@ditsmod/core';
 
 import { AppModule } from '../src/app/app.module';
 
@@ -8,10 +8,7 @@ describe('07-dynamically-composing-modules', () => {
   let server: NodeServer;
 
   beforeAll(async () => {
-    server = await new TestApplication(AppModule)
-      .setInitLogLevel('fatal')
-      .setProvidersPerApp([...new Providers().useLogConfig({ level: 'fatal' })])
-      .getServer();
+    server = await new TestApplication(AppModule).getServer();
   });
 
   afterAll(() => {

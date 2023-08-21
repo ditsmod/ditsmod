@@ -28,7 +28,6 @@ describe('12-testing', () => {
             providers: [{ token: ErrorContainer, useValue: errorContainer }],
           },
         ])
-        .setProvidersPerApp([{ token: LoggerConfig, useValue: { level: 'fatal' } }])
         .getServer();
     });
 
