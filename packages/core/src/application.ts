@@ -22,7 +22,7 @@ export class Application {
 
   /**
    * @param appModule The root module of the application.
-   * @param listen If this parameter seted to `false` then `server.listen()` is not called. Default - `true`.
+   * @param appOptions Application options.
    */
   bootstrap(appModule: ModuleType, appOptions: ApplicationOptions = new ApplicationOptions()) {
     return new Promise<{ server: NodeServer }>(async (resolve, reject) => {
