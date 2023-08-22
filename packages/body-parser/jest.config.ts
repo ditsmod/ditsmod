@@ -1,9 +1,8 @@
 module.exports = {
-  preset: 'ts-jest',
   testEnvironment: 'node',
-  modulePathIgnorePatterns: ['<rootDir>/dist/'],
+  modulePathIgnorePatterns: ['<rootDir>/src/'],
   moduleNameMapper: {
-    '@ditsmod/core': '<rootDir>/../core/src',
-    '@ditsmod/router': '<rootDir>/../router/src',
-  }
+    '@ditsmod/core': '<rootDir>/../core/dist',
+    '@ditsmod/router': '<rootDir>/../router/dist',
+  },
 };
