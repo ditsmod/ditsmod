@@ -9,7 +9,6 @@
     "outDir": "dist/tmp",
     "sourceMap": true,
     "baseUrl": "./",
-    "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "noImplicitOverride": true,

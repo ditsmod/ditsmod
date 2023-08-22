@@ -1,10 +1,12 @@
 {
   "name": "examples15",
+  "version": "1.0.0",
   "license": "MIT",
   "main": "dist/index",
   "types": "src/index",
   "scripts": {
+    "start": "nodemon -e ts --exec ts-node -r tsconfig-paths/register src/main.ts",
     "test": "jest",
-    "build": "rm -rf dist/* && tsc -b tsconfig.build.json -f"
+    "build": "tsc -b tsconfig.build.json"
   }
 }

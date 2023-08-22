@@ -1,10 +1,12 @@
 {
   "name": "examples10",
+  "version": "1.0.0",
   "license": "MIT",
   "main": "dist/index",
   "types": "src/index",
   "scripts": {
+    "start": "yarn build && node dist/main.js",
     "test": "jest",
-    "build": "rm -rf dist/* && tsc -b tsconfig.build.json -f"
+    "build": "tsc -b tsconfig.build.json"
   }
 }
