@@ -19,7 +19,7 @@ In practice, it is unlikely that you will need more than one logger, but in this
 You can run the application from the first terminal:
 
 ```bash
-yarn start4
+yarn start
 ```
 
 From the second terminal, check the work:

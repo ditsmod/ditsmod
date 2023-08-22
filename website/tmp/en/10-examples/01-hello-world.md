@@ -11,7 +11,7 @@ To try this example, you should first [prepare the prerequisite][1].
 Launch the application from the first terminal:
 
 ```bash
-yarn start1
+yarn start
 ```
 
 From the second terminal check the work:

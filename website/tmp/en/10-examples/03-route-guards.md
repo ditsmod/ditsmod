@@ -27,7 +27,7 @@ throw403Error(res: Res) {
 You can run the application from the first terminal:
 
 ```bash
-yarn start3
+yarn start
 ```
 
 From the second terminal check the work:

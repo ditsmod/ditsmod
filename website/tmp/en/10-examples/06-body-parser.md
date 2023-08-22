@@ -5,7 +5,7 @@ To try this example, you should first [prepare the prerequisite][1].
 You can run the application from the first terminal:
 
 ```bash
-yarn start6
+yarn start
 ```
 
 From the second terminal check the work:
