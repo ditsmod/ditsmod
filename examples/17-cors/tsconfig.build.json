@@ -6,6 +6,7 @@
     "baseUrl": "./",
     "paths": {
       "@ditsmod/core": ["../../packages/core/src"],
+      "@ditsmod/cors": ["../../packages/cors/src"],
       "@ditsmod/router": ["../../packages/router/src"],
       "@ditsmod/testing": ["../../packages/testing/src"],
     }
@@ -14,6 +15,7 @@
   "references": [
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/router/tsconfig.build.json" },
+    { "path": "../../packages/cors/tsconfig.build.json" },
     { "path": "../../packages/testing/tsconfig.build.json" },
   ]
 }

@@ -14,6 +14,7 @@
   "references": [
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/router/tsconfig.build.json" },
+    { "path": "../../packages/session-cookie/tsconfig.build.json" },
     { "path": "../../packages/testing/tsconfig.build.json" },
   ]
 }
