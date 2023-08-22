@@ -16,7 +16,7 @@
     "test-all": "yarn test && yarn test-examples && yarn build-examples && yarn build-vscode",
     "boot": "lerna bootstrap",
     "pub": "lerna publish from-package --no-git-tag-version",
-    "build": "yarn clean && tsc -b packages -f",
+    "build": "tsc -b packages",
     "build-examples": "tsc -b examples/tsconfig.build.json",
     "build-vscode": "tsc -b examples/tsconfig.vscode.json",
     "lint": "eslint . --ext .ts",

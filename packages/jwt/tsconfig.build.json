@@ -4,6 +4,7 @@
     // "baseUrl": ".", // See https://github.com/microsoft/TypeScript/issues/47114#issuecomment-1004360864
     "outDir": "dist",
     "rootDir": "src",
+    "tsBuildInfoFile": "dist/build.tsbuildinfo",
     "paths": {
       "@ditsmod/core": [
         "../core/src"

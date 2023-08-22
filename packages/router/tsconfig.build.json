@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "rootDir": "src",
+    "tsBuildInfoFile": "dist/build.tsbuildinfo",
     "outDir": "dist",
     "paths": {
       "@ditsmod/core": ["../core/src"]
