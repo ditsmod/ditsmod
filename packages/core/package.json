@@ -18,8 +18,8 @@
     "node": ">= 18.0.0"
   },
   "scripts": {
-    "test": "jest",
-    "build": "rm -rf dist/* && tsc -b tsconfig.build.json -f"
+    "test": "yarn build && jest dist",
+    "build": "tsc -b tsconfig.build.json"
   },
   "dependencies": {
     "@ts-stack/chain-error": "^1.2.0",
