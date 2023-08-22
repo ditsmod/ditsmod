@@ -8,15 +8,16 @@
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
-  "main": "dist/index",
+  "main": "dist/src/index",
   "types": "dist/index",
   "directories": {
     "lib": "src"
   },
   "scripts": {
-    "test": "jest",
-    "build": "rm -rf dist/* && tsc -b tsconfig.build.json -f",
-    "bench": "node --expose-gc dist/bench.js"
+    "test": "yarn build && jest dist",
+    "build": "tsc -b tsconfig.build.json",
+    "clean": "rm -rf dist/*",
+    "bench": "yarn build && node --expose-gc dist/src/bench.js"
   },
   "keywords": [
     "router",
