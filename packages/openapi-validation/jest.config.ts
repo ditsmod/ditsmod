@@ -1,10 +1,9 @@
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  modulePathIgnorePatterns: ['<rootDir>/dist/'],
+    testEnvironment: 'node',
+  modulePathIgnorePatterns: ['<rootDir>/src/'],
   moduleNameMapper: {
-    '@ditsmod/core': '<rootDir>/../core/src',
-    '@ditsmod/openapi': '<rootDir>/../openapi/src',
-    '@ditsmod/i18n': '<rootDir>/../i18n/src'
+    '@ditsmod/core': '<rootDir>/../core/dist/src',
+    '@ditsmod/openapi': '<rootDir>/../openapi/dist/src',
+    '@ditsmod/i18n': '<rootDir>/../i18n/dist/src'
   }
 };
