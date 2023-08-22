@@ -14,7 +14,7 @@ yarn boot
 Start from first terminal:
 
 ```bash
-yarn start7
+yarn start
 ```
 
 Check from second terminal:

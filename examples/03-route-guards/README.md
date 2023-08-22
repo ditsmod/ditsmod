@@ -20,7 +20,7 @@ this is because `AuthModule` is exported from `rootModule`;
 Start from first terminal:
 
 ```bash
-yarn start3
+yarn start
 ```
 
 From second terminal:

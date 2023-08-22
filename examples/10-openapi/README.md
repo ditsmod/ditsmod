@@ -14,7 +14,7 @@ yarn boot
 Start from first terminal:
 
 ```bash
-yarn start10
+yarn start
 ```
 
 Open your browser with http://localhost:3000/openapi and there
