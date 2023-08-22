@@ -1,5 +1,12 @@
+<a name="core-2.45.2"></a>
+# [core-2.45.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.45.2) (2023-08-22)
+
+### Bug fixes
+
+- Fixed log level in `ErrorOpts`.
+
 <a name="core-2.45.1"></a>
-# [core-2.45.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.45.1) (2023-08-22)
+## [core-2.45.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.45.1) (2023-08-22)
 
 ### Bug fixes
 
