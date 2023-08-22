@@ -1,5 +1,4 @@
 import { makeClassDecorator } from '../di';
-
 import { ServiceProvider } from '../types/mix';
 
 export interface ControllerMetadata {

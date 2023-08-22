@@ -1,5 +1,4 @@
 import { injectable, InjectionToken, makePropDecorator, reflector } from '../di';
-
 import { featureModule } from '../decorators/module';
 import {
   isController,

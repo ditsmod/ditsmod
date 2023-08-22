@@ -1,5 +1,4 @@
 import { injectable } from '../di';
-
 import { RootMetadata } from '../models/root-metadata';
 import { ControllerMetadata2 } from '../types/controller-metadata';
 import { MetadataPerMod1, MetadataPerMod2 } from '../types/metadata-per-mod';

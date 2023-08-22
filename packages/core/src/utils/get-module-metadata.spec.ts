@@ -1,5 +1,4 @@
 import { forwardRef, injectable } from '../di';
-
 import { featureModule } from '../decorators/module';
 import { ModuleWithParams, ServiceProvider } from '../types/mix';
 import { getModuleMetadata } from './get-module-metadata';

@@ -1,5 +1,4 @@
 import { injectable, Injector } from '../di';
-
 import { controller, ControllerMetadata } from '../decorators/controller';
 import { route } from '../decorators/route';
 import { rootModule } from '../decorators/root-module';

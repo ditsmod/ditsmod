@@ -1,6 +1,5 @@
 import * as http from 'http';
 import { injectable, forwardRef, InjectionToken } from '../di';
-
 import { rootModule } from '../decorators/root-module';
 import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
 import { ModuleManager } from './module-manager';

@@ -1,5 +1,4 @@
 import { injectable, InjectionToken, Injector } from '../di';
-
 import { Extension } from '../types/mix';
 import { defaultProvidersPerApp } from './default-providers-per-app';
 import { ExtensionsManager } from './extensions-manager';

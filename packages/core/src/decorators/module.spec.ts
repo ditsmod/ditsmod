@@ -1,5 +1,4 @@
 import { reflector } from '../di';
-
 import { featureModule } from './module';
 
 describe('Module decorator', () => {

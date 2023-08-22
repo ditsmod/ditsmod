@@ -1,5 +1,4 @@
 import { forwardRef } from '../di';
-
 import { rootModule } from '../decorators/root-module';
 import { ModuleManager } from './module-manager';
 import { featureModule } from '../decorators/module';

@@ -1,5 +1,4 @@
 import { injectable } from '../di';
-
 import { AnyFn } from '../types/mix';
 import { Logger, LogLevel } from '../types/logger';
 

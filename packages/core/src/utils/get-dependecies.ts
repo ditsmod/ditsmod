@@ -1,5 +1,4 @@
 import { Injector } from '../di';
-
 import { ServiceProvider } from '../types/mix';
 
 export interface ReflectiveDependecy {

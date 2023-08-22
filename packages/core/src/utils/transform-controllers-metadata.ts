@@ -1,5 +1,4 @@
 import { reflector, Class } from '../di';
-
 import { ControllerMetadata1 } from '../types/controller-metadata';
 import { DecoratorMetadata } from '../types/mix';
 import { isController } from './type-guards';

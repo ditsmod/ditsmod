@@ -1,5 +1,4 @@
 import { injectable } from '../di';
-
 import { HttpMethod } from '../types/mix';
 import { Router } from '../types/router';
 import { NodeResponse, RequestListener } from '../types/server-options';

@@ -1,5 +1,4 @@
 import { makePropDecorator } from '../di';
-
 import { GuardItem, HttpMethod } from '../types/mix';
 
 export interface RouteDecoratorMetadata {

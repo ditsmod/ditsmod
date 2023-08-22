@@ -1,5 +1,4 @@
 import { InjectionToken } from '../di';
-
 import { AnyObj, Extension, ExtensionProvider, ExtensionType } from '../types/mix';
 
 export class ExtensionObj {

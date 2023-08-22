@@ -1,5 +1,4 @@
 import { injectable } from '../di';
-
 import { Extension } from '../types/mix';
 
 /**

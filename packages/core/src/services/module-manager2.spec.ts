@@ -1,5 +1,4 @@
 import { injectable } from '../di';
-
 import { featureModule } from '../decorators/module';
 import { Module3 } from './module-manager1.spec';
 

@@ -1,5 +1,4 @@
 import { injectable, Class } from '../di';
-
 import { Extension, ExtensionsGroupToken } from '../types/mix';
 
 @injectable()

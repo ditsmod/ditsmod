@@ -1,5 +1,4 @@
 import { injectable, Injector } from '../di';
-
 import { ServiceProvider } from '../types/mix';
 
 /**

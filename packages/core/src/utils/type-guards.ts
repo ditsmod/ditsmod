@@ -11,7 +11,6 @@ import {
   DecoratorAndValue,
   reflector,
 } from '../di';
-
 import { featureModule } from '../decorators/module';
 import { controller, ControllerMetadata } from '../decorators/controller';
 import { route } from '../decorators/route';

@@ -1,5 +1,4 @@
 import { reflector, PropMeta } from '../di';
-
 import { route } from './route';
 import { controller } from './controller';
 import { CanActivate } from '../types/mix';
