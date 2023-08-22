@@ -12,8 +12,8 @@
     "example": "examples"
   },
   "scripts": {
-    "test": "jest",
-    "test-examples": "jest --config examples/jest.config.ts",
+    "test": "yarn build && jest",
+    "test-examples": "yarn build-examples && jest --config examples/jest.config.ts",
     "test-all": "yarn test && yarn test-examples && yarn build-examples && yarn build-vscode",
     "pub": "lerna publish from-package --no-git-tag-version",
     "build": "tsc -b packages",
