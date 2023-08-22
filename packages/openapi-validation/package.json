@@ -7,7 +7,7 @@
   },
   "description": "Ditsmod module to support simple OpenAPI validation",
   "main": "dist/index",
-  "typings": "dist/index",
+  "types": "dist/index",
   "directories": {
     "lib": "src"
   },

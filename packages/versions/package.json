@@ -8,7 +8,7 @@
   },
   "description": "Ditsmod module to support API versions",
   "main": "dist/index",
-  "typings": "dist/index",
+  "types": "dist/index",
   "directories": {
     "lib": "src"
   },

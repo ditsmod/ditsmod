@@ -7,7 +7,7 @@
   },
   "description": "Ditsmod module to simplify the building SQL queries to the database.",
   "main": "dist/index",
-  "typings": "dist/index",
+  "types": "dist/index",
   "directories": {
     "lib": "src"
   },
