@@ -1,0 +1,25 @@
+// This configuration is used to ensure that VS Code does not show errors.
+{
+  "files": [],
+  "references": [
+    { "path": "01-hello-world/tsconfig.json" },
+    { "path": "02-http-error-handler/tsconfig.json" },
+    { "path": "03-route-guards/tsconfig.json" },
+    { "path": "04-logger/tsconfig.json" },
+    { "path": "05-nested-routes/tsconfig.json" },
+    { "path": "06-body-parser/tsconfig.json" },
+    { "path": "07-dynamically-composing-modules/tsconfig.json" },
+    { "path": "08-http-interceptors/tsconfig.json" },
+    { "path": "09-one-extension/tsconfig.json" },
+    { "path": "10-openapi/tsconfig.json" },
+    { "path": "11-override-core-log-messages/tsconfig.json" },
+    { "path": "12-testing/tsconfig.json" },
+    { "path": "13-module-encapsulation/tsconfig.json" },
+    { "path": "14-auth-jwt/tsconfig.json" },
+    { "path": "15-i18n/tsconfig.json" },
+    { "path": "16-openapi-validation/tsconfig.json" },
+    { "path": "17-cors/tsconfig.json" },
+    { "path": "18-return/tsconfig.json" },
+    { "path": "19-session-cookie/tsconfig.json" },
+  ]
+}

@@ -1,3 +1,4 @@
+// This configuration is used by VS Code and ts-jest.
 {
   "compilerOptions": {
     "strict": true,
@@ -5,9 +6,10 @@
     "target": "es2022",
     "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "dist",
+    "outDir": "dist/tmp",
     "sourceMap": true,
     "baseUrl": "./",
+    "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "noImplicitOverride": true,

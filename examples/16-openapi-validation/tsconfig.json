@@ -1,8 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "dist/tmp",
     "baseUrl": "./",
+    "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
       "@ditsmod/core": ["../../packages/core/src"],
       "@ditsmod/router": ["../../packages/router/src"],

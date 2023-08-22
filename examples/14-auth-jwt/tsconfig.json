@@ -1,8 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "dist/tmp",
     "baseUrl": "./",
+    "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
       "@ditsmod/core": ["../../packages/core/src"],
       "@ditsmod/router": ["../../packages/router/src"],
@@ -11,5 +12,13 @@
       "@ditsmod/testing": ["../../packages/testing/src"],
     }
   },
-  "include": ["src", "test"]
+  "include": ["src", "test"],
+  "references": [
+    { "path": "../../packages/core/tsconfig.build.json" },
+    { "path": "../../packages/router/tsconfig.build.json" },
+    { "path": "../../packages/return/tsconfig.build.json" },
+    { "path": "../../packages/jwt/tsconfig.build.json" },
+    { "path": "../../packages/i18n/tsconfig.build.json" },
+    { "path": "../../packages/testing/tsconfig.build.json" },
+  ]
 }
