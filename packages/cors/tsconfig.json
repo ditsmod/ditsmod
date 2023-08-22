@@ -3,18 +3,17 @@
   "compilerOptions": {
     // "baseUrl": ".", // See https://github.com/microsoft/TypeScript/issues/47114#issuecomment-1004360864
     "outDir": "dist",
-    "rootDir": "src",
     "paths": {
       "@ditsmod/core": [
         "../core/src"
       ]
     }
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "files": [],
   "references": [
-    { "path": "../core/tsconfig.build.json" }
+    {
+      "path": "../core/tsconfig.build.json"
+    }
   ]
 }
