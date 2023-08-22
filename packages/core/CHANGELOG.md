@@ -1,9 +1,9 @@
-<a name="core-2.45.0"></a>
-# [core-2.45.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.45.0) (2023-08-22)
+<a name="core-2.45.1"></a>
+# [core-2.45.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.45.1) (2023-08-22)
 
-### Features
+### Bug fixes
 
-- Added new `logLevel`s: `all` (all events should be logged) and `off` (no events will be logged).
+- Fixed `types` field in `package.json`.
 
 <a name="core-2.45.0"></a>
 ## [core-2.45.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.45.0) (2023-08-20)
