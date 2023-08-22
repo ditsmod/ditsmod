@@ -1,7 +1,6 @@
 module.exports = {
-  preset: 'ts-jest',
   testEnvironment: 'node',
-  modulePathIgnorePatterns: ['<rootDir>.+dist/.+', '<rootDir>/packages/logger/*'],
+  modulePathIgnorePatterns: ['<rootDir>.+src/.+', '<rootDir>/packages/logger/*'],
   moduleNameMapper: {
     '@ditsmod/body-parser': '<rootDir>/packages/body-parser/src',
     '@ditsmod/core': '<rootDir>/packages/core/src',

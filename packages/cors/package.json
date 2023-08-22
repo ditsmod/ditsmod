@@ -6,7 +6,7 @@
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
   "description": "Ditsmod module to support CORS and OPTIONS requests",
-  "main": "dist/index",
+  "main": "dist/src/index",
   "types": "dist/index",
   "directories": {
     "lib": "src"
