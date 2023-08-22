@@ -1,4 +1,6 @@
-module.exports = {
+import type { Config } from 'jest';
+
+const config: Config = {
   testEnvironment: 'node',
   modulePathIgnorePatterns: ['<rootDir>/src/'],
   moduleNameMapper: {
@@ -7,3 +9,5 @@ module.exports = {
     '@ditsmod/i18n': '<rootDir>/../i18n/dist/src'
   }
 };
+
+export default config;

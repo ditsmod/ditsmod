@@ -1,8 +1,12 @@
-module.exports = {
+import type { Config } from 'jest';
+
+const config: Config = {
   testEnvironment: 'node',
-  testPathIgnorePatterns: ['<rootDir>/src/', '<rootDir>/test/.+ts'],
+  modulePathIgnorePatterns: ['<rootDir>/src/', '<rootDir>/test/.+ts'],
   moduleNameMapper: {
     '@ditsmod/core': '<rootDir>/../core/dist/src',
     '@ditsmod/router': '<rootDir>/../router/dist/src',
   },
 };
+
+export default config;
