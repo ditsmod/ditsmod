@@ -54,7 +54,6 @@
     "prettier": "^3.0.0",
     "reflect-metadata": "^0.1.13",
     "supertest": "^6.3.3",
-    "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.1",
     "typescript": "^5.0.2",

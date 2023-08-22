@@ -1,4 +1,4 @@
-// This configuration is used by VS Code and ts-jest.
+// This configuration is used by VS Code.
 {
   "compilerOptions": {
     "strict": true,
