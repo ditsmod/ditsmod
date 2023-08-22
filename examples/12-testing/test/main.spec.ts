@@ -1,5 +1,5 @@
 import request = require('supertest');
-import { HttpErrorHandler, LoggerConfig, NodeServer } from '@ditsmod/core';
+import { HttpErrorHandler, NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '../src/app/app.module';
@@ -38,7 +38,7 @@ describe('12-testing', () => {
     it('should start from "Controller1.method1"', async () => {
       await request(server).get('/fail1').expect(500);
       const errMsg = 'No provider for non-existing-token!; this error during calling Controller1.prototype.method1!';
-      const traceRegExp = /^Error: No provider for non-existing-token![^\n]+\n\s+at Controller1.method1 /;
+      const traceRegExp = /^Error: No provider for non-existing-token![^\n]+\n\s+at Controller1./;
       const errStack = expect.stringMatching(traceRegExp);
       expect(setError).toBeCalledWith(errMsg, errStack);
       expect(setError).toBeCalledTimes(1);

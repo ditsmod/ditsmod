@@ -6,6 +6,7 @@ const config: Config = {
   moduleNameMapper: {
     '@ditsmod/core': '<rootDir>/../../packages/core/dist/src',
     '@ditsmod/router': '<rootDir>/../../packages/router/dist/src',
+    '@ditsmod/session-cookie': '<rootDir>/../../packages/session-cookie/dist/src',
   },
 };
 

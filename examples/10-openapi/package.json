@@ -2,11 +2,12 @@
   "name": "examples10",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "dist/index",
+  "main": "dist/src/main",
   "types": "src/index",
   "scripts": {
-    "start": "yarn build && node dist/main.js",
-    "test": "jest",
+    "start": "yarn build && node dist/src/main.js",
+    "clean": "rimraf dist/*",
+    "test": "yarn build && jest dist",
     "build": "tsc -b tsconfig.build.json"
   }
 }

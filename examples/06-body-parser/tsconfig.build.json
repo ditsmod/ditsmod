@@ -2,17 +2,18 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src",
     "baseUrl": "./",
     "tsBuildInfoFile": "dist/build.tsbuildinfo",
     "paths": {
       "@ditsmod/core": ["../../packages/core/src"],
       "@ditsmod/router": ["../../packages/router/src"],
       "@ditsmod/testing": ["../../packages/testing/src"],
+      "@ditsmod/body-parser": ["../../packages/body-parser/src"],
     }
   },
-  "include": ["src"],
+  "include": ["src", "test"],
   "references": [
+    { "path": "../../packages/body-parser/tsconfig.build.json" },
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/router/tsconfig.build.json" },
     { "path": "../../packages/testing/tsconfig.build.json" },

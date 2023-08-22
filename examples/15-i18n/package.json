@@ -2,11 +2,11 @@
   "name": "examples15",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "dist/index",
+  "main": "dist/src/main",
   "types": "src/index",
   "scripts": {
     "start": "nodemon -e ts --exec ts-node -r tsconfig-paths/register src/main.ts",
-    "test": "jest",
+    "test": "yarn build && jest dist",
     "build": "tsc -b tsconfig.build.json"
   }
 }

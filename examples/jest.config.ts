@@ -1,4 +1,7 @@
-module.exports = {
+import type { Config } from 'jest';
+
+const config: Config = {
+  moduleFileExtensions: ['js'],
   testEnvironment: 'node',
   modulePathIgnorePatterns: ['<rootDir>/.+/dist'],
   moduleNameMapper: {
@@ -17,4 +20,7 @@ module.exports = {
     '@dict/second/second.dict': '<rootDir>/15-i18n/src/app/second/locales/current/_base-en/second.dict',
     '@dict/second/errors.dict': '<rootDir>/15-i18n/src/app/second/locales/current/_base-en/errors.dict',
   },
+  projects: ['<rootDir>/*/jest.config.ts'],
 };
+
+export default config;

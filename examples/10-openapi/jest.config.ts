@@ -6,6 +6,8 @@ const config: Config = {
   moduleNameMapper: {
     '@ditsmod/core': '<rootDir>/../../packages/core/dist/src',
     '@ditsmod/router': '<rootDir>/../../packages/router/dist/src',
+    '@ditsmod/openapi': '<rootDir>/../../packages/openapi/dist/src',
+    '@ditsmod/jwt': '<rootDir>/../../packages/jwt/dist/src',
   },
 };
 
