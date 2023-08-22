@@ -9,14 +9,15 @@
   "description": "REST framework",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "license": "MIT",
-  "main": "dist/index",
+  "main": "dist/src/index",
   "types": "dist/index",
   "directories": {
     "lib": "src"
   },
   "scripts": {
-    "test": "jest",
-    "build": "rm -rf dist/* && tsc -b tsconfig.build.json -f"
+    "test": "yarn build && jest dist",
+    "build": "tsc -b tsconfig.build.json",
+    "clean": "rm -rf dist/*"
   },
   "dependencies": {
     "@ts-stack/cookies": "^1.0.2"

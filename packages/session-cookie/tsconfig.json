@@ -3,16 +3,13 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist",
-    "rootDir": "src",
-    "paths": {
+      "paths": {
       "@ditsmod/core": [
         "../core/src"
       ]
     }
   },
-  "include": [
-    "./src/**/*.ts"
-  ],
+  "include": ["src"],
   "files": [],
   "references": [
     { "path": "../core/tsconfig.build.json" },
