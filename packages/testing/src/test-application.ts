@@ -29,8 +29,6 @@ export class TestApplication {
    * Overrides providers at any level if there are matching providers (they have the same tokens)
    * at those levels. Therefore, unlike the `setProvidersPerApp()` method,
    * this method does not always add providers to the DI.
-   *
-   * In most cases, this is the method you need.
    */
   overrideProviders(providers: TestProvider[]) {
     this.testModuleManager.overrideProviders(providers);

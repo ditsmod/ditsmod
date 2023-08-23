@@ -1,5 +1,5 @@
 import request = require('supertest');
-import { LoggerConfig, Providers, Res } from '@ditsmod/core';
+import { Providers, Res } from '@ditsmod/core';
 
 import { TestApplication } from '../src/test-application';
 import { AppModule } from './app/app.module';
