@@ -6,7 +6,7 @@
 ```bash
 git clone https://github.com/ditsmod/ditsmod.git
 cd ditsmod
-yarn
+npm i
 ```
 
 Після чого можете запустити один із застосунків, експерементувати з ними, і зразу бачити результат.

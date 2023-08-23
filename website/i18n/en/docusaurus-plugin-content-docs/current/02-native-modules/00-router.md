@@ -40,7 +40,7 @@ A ready-made example of using this module can be found in any example in the [Di
 Installation:
 
 ```bash
-yarn add @ditsmod/router
+npm run add @ditsmod/router
 ```
 
 Importing:

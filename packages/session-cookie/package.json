@@ -15,7 +15,7 @@
     "lib": "src"
   },
   "scripts": {
-    "test": "yarn build && jest dist",
+    "test": "npm run build && jest dist",
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist/*"
   },

@@ -7,7 +7,7 @@ sidebar_position: 40
 This module is related to [end-to-end testing][1], so you need to install it in `devDependencies`:
 
 ```bash
-yarn add -D @ditsmod/testing
+npm run add -D @ditsmod/testing
 ```
 
 We recommend keeping such tests in a separate directory called `tests`, at the same level as the `src` root directory.

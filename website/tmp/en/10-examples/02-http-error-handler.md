@@ -26,7 +26,7 @@ When you export a specific provider from the root module, you add it to every ap
 Launch the application from the first terminal:
 
 ```bash
-yarn start
+npm start
 ```
 
 From the second terminal check the work:

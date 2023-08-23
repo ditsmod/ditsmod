@@ -18,7 +18,7 @@ Currently, automatic validation only works for HTTP requests that have a media t
 After you create [OpenAPI documentation][2], you need to import two modules for automatic validation based on it:
 
 ```bash
-yarn add @ditsmod/openapi-validation @ditsmod/i18n
+npm run add @ditsmod/openapi-validation @ditsmod/i18n
 ```
 
 ## Enable validation and set options

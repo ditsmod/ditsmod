@@ -22,7 +22,7 @@ This module does not parse the request body when uploading files, for this you c
 ## Installation
 
 ```bash
-yarn add @ditsmod/body-parser
+npm run add @ditsmod/body-parser
 ```
 
 ## Importing

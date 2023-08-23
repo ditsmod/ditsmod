@@ -8,7 +8,7 @@ describe('SomeController', () => {
   let someController: SomeController;
 
   beforeEach(() => {
-    jest.restoreAllMocks();
+    send.mockRestore();
     const injector = Injector.resolveAndCreate([SomeController]);
     someController = injector.get(SomeController);
   });

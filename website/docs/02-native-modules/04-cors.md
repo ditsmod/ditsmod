@@ -9,7 +9,7 @@ sidebar_position: 4
 ## Встановлення
 
 ```bash
-yarn add @ditsmod/cors
+npm run add @ditsmod/cors
 ```
 
 ## Робота з дефолтними налаштуваннями

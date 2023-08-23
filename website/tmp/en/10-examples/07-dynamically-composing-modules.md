@@ -7,7 +7,7 @@ Ditsmod has the ability to add and remove modules after starting the web server,
 You can run the application from the first terminal:
 
 ```bash
-yarn start
+npm start
 ```
 
 From the second terminal check the work:

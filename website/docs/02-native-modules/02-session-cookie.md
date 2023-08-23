@@ -11,7 +11,7 @@ sidebar_position: 2
 Встановлення:
 
 ```bash
-yarn add @ditsmod/session-cookie
+npm run add @ditsmod/session-cookie
 ```
 
 Підключення:

@@ -18,7 +18,7 @@ sidebar_position: 21
 Після того, як ви створите [OpenAPI-документацію][2], необхідно доставити два модулі для автоматичної валідації на її основі:
 
 ```bash
-yarn add @ditsmod/openapi-validation @ditsmod/i18n
+npm run add @ditsmod/openapi-validation @ditsmod/i18n
 ```
 
 ## Підключення валідації та встановлення опцій

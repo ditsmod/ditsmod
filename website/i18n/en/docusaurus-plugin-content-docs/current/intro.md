@@ -31,13 +31,13 @@ The [ditsmod-seed][2] repository has the basic set for application operation. Cl
 ```bash
 git clone --depth 1 https://github.com/ditsmod/seed.git my-app
 cd my-app
-yarn
+npm i
 ```
 
 ## Run the application
 
 ```bash
-yarn start
+npm start
 ```
 
 This command cannot be used for production mode, but it is suitable for application development, because every time you save your code, the web server will automatically reboot to apply the latest changes.
@@ -53,8 +53,8 @@ Or just open the browser on [http://localhost:3000/](http://localhost:3000/).
 The application is compiled and the server is started in product mode using the command:
 
 ```bash
-yarn build
-yarn start-prod
+npm run build
+npm start-prod
 ```
 
 In addition, you can view more examples in the [examples][4] folder, as well as in the repository [RealWorld][13].

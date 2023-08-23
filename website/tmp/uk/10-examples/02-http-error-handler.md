@@ -26,7 +26,7 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
 Запустіть застосунок з першого терміналу:
 
 ```bash
-yarn start
+npm start
 ```
 
 З другого терміналу перевірте роботу:

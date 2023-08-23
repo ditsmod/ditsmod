@@ -5,9 +5,9 @@
   "main": "dist/src/main",
   "types": "src/index",
   "scripts": {
-    "start": "yarn build && node dist/src/main.js",
+    "start": "npm run build && node dist/src/main.js",
     "clean": "rimraf dist/*",
-    "test": "yarn build && jest dist",
+    "test": "npm run build && jest dist",
     "build": "tsc -b tsconfig.build.json"
   }
 }

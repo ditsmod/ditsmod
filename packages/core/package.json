@@ -18,7 +18,7 @@
     "node": ">= 18.0.0"
   },
   "scripts": {
-    "test": "yarn build && jest dist",
+    "test": "npm run build && jest dist",
     "build": "tsc -b tsconfig.build.json"
   },
   "dependencies": {

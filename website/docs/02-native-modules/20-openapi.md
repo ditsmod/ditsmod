@@ -9,7 +9,7 @@ sidebar_position: 20
 ## Встановлення
 
 ```bash
-yarn add @ditsmod/openapi
+npm run add @ditsmod/openapi
 ```
 
 ## Створення документації

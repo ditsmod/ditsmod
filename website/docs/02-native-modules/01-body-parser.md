@@ -22,7 +22,7 @@ sidebar_position: 1
 ## Встановлення
 
 ```bash
-yarn add @ditsmod/body-parser
+npm run add @ditsmod/body-parser
 ```
 
 ## Підключення

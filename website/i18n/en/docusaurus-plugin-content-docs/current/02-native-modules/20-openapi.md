@@ -9,7 +9,7 @@ You can use the `@ditsmod/openapi` module to create [OpenAPI][0] documentation.
 ## Installation
 
 ```bash
-yarn add @ditsmod/openapi
+npm run add @ditsmod/openapi
 ```
 
 ## Creation of documentation

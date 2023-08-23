@@ -15,9 +15,9 @@ The Ditsmod repository has an example [11-override-core-log-messages][1] that de
 ```bash
 git clone https://github.com/ditsmod/ditsmod.git
 cd ditsmod
-yarn
+npm i
 cd examples/11-override-core-log-messages
-yarn start
+npm start
 ```
 
 After that, you can directly view and experiment with this example in your editor.
@@ -59,7 +59,7 @@ export class MyLogMediator extends SystemLogMediator {
 
 As you can see, `MyLogMediator` extends `LogMediator` and the `serverListen()` method is marked with the `override` keyword because it overrides a parent method with the exact same name. The text of the message that will be recorded in the logs is written in the comments to the method. Almost all `SystemLogMediator` methods pass `this` of the class instance where `SystemLogMediator` is used as the first argument, so that you can easily get the name of that class. The rest of the arguments are arbitrary, everything depends on the context of using these methods.
 
-The result can be seen if you run the application with the `yarn start` command, after which you should receive exactly the message that was generated in this `myLogMediator.serverListen()` method.
+The result can be seen if you run the application with the `npm start` command, after which you should receive exactly the message that was generated in this `myLogMediator.serverListen()` method.
 
 ## Log filtering
 
@@ -80,7 +80,7 @@ The `InputLogFilter` instance is used as a configuration for further log filteri
 .useLogConfig({ level: 'trace' }, { modulesNames: ['OtherModule'] })
 ```
 
-Then run the application with the command `yarn start`, after which you should see logs only from the `OtherModule` module. If you remove the filter with `OtherModule`, you will see a lot of detailed information from all modules.
+Then run the application with the command `npm start`, after which you should see logs only from the `OtherModule` module. If you remove the filter with `OtherModule`, you will see a lot of detailed information from all modules.
 
 ## Application-level substitute of LogMediator
 

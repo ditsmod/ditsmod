@@ -6,7 +6,7 @@ The [examples][1] folder contains examples of using Ditsmod for typical cases. T
 ```bash
 git clone https://github.com/ditsmod/ditsmod.git
 cd ditsmod
-yarn
+npm i
 ```
 
 Then you can run one of the applications, experiment with them, and immediately see the result.

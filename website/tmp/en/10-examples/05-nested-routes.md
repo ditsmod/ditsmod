@@ -7,7 +7,7 @@ A simple example of how prefixes can be used at the application level and at the
 You can run the application from the first terminal:
 
 ```bash
-yarn start
+npm start
 ```
 
 From the second terminal check the work:
