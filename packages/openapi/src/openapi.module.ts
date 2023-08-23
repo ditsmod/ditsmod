@@ -5,15 +5,13 @@ import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extensio
 import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension';
 import { OAS_COMPILER_EXTENSIONS } from './di-tokens';
 import { OpenapiController } from './openapi.controller';
-import { SwaggerConfigManager } from './services/swagger-config-manager';
-import { SwaggerOAuthOptions } from './swagger-ui/swagger-o-auth-options';
 import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-options';
 import { OpenapiLogMediator } from './services/openapi-log-mediator';
 
 @featureModule({
   controllers: [OpenapiController],
   providersPerApp: [OasConfigFiles],
-  providersPerMod: [SwaggerConfigManager, OpenapiLogMediator],
+  providersPerMod: [OpenapiLogMediator],
   extensions: [
     { extension: OpenapiRoutesExtension, groupToken: ROUTES_EXTENSIONS, exported: true },
     {
@@ -30,10 +28,9 @@ export class OpenapiModule {
    * @param path This path used for OpenAPI module with params.
    * @param swaggerOAuthOptions This options used for OpenAPI per application.
    */
-  static withParams(oasObject: XOasObject<any>, path?: string, swaggerOAuthOptions?: SwaggerOAuthOptions) {
+  static withParams(oasObject: XOasObject<any>, path?: string) {
     const oasExtensionOptions: OasExtensionOptions = {
       oasObject,
-      swaggerOAuthOptions,
     };
 
     const moduleWithParams: ModuleWithParams<OpenapiModule> = {

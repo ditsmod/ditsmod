@@ -4,7 +4,6 @@ export { oasRoute, OasRouteMetadata1, OasRouteMetadata2 } from './decorators/oas
 export { property } from './decorators/property';
 export * from './di-tokens';
 export { OpenapiModule } from './openapi.module';
-export * from './swagger-ui/swagger-o-auth-options';
 export * from './types/media-types';
 export { OasOptions } from './types/oas-options';
 export { OasRouteMeta } from './types/oas-route-meta';
