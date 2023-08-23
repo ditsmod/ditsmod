@@ -14,7 +14,7 @@
   "scripts": {
     "test": "npm run build && jest",
     "test-examples": "npm run build-examples && jest --config examples/jest.config.ts",
-    "test-all": "npm run test && npm run test-examples && npm run build-examples && npm run build-vscode",
+    "test-all": "npm test && npm run test-examples && npm run build-examples && npm run build-vscode",
     "pub": "lerna publish from-package --no-git-tag-version",
     "build": "tsc -b packages",
     "build-examples": "tsc -b examples/tsconfig.build.json",
