@@ -10,7 +10,7 @@
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "license": "MIT",
   "main": "dist/src/index",
-  "types": "dist/index",
+  "types": "dist/src/index",
   "directories": {
     "lib": "src"
   },

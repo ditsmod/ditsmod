@@ -7,7 +7,7 @@
   },
   "description": "Ditsmod module to support CORS and OPTIONS requests",
   "main": "dist/src/index",
-  "types": "dist/index",
+  "types": "dist/src/index",
   "directories": {
     "lib": "src"
   },
