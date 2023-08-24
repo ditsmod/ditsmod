@@ -54,7 +54,7 @@ The application is compiled and the server is started in product mode using the 
 
 ```bash
 npm run build
-npm start-prod
+npm run start-prod
 ```
 
 In addition, you can view more examples in the [examples][4] folder, as well as in the repository [RealWorld][13].
@@ -67,7 +67,6 @@ Let's look at the `src/main.ts` file:
 
 ```ts
 import { Application } from '@ditsmod/core';
-
 import { AppModule } from './app/app.module';
 
 new Application().bootstrap(AppModule).then((app) => {

@@ -54,7 +54,7 @@ curl -isS localhost:3000
 
 ```bash
 npm run build
-npm start-prod
+npm run start-prod
 ```
 
 Більше прикладів застосунку є у теці [examples][4], а також у репозиторію [RealWorld][13].
@@ -67,7 +67,6 @@ npm start-prod
 
 ```ts
 import { Application } from '@ditsmod/core';
-
 import { AppModule } from './app/app.module';
 
 new Application().bootstrap(AppModule).then((app) => {
