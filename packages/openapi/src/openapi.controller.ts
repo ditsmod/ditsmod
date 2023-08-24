@@ -1,16 +1,5 @@
 import { readFile } from 'fs/promises';
-import {
-  controller,
-  Status,
-  Res,
-  ModuleExtract,
-  RootMetadata,
-  PATH_PARAMS,
-  inject,
-  AnyObj,
-  NODE_RES,
-  Injector,
-} from '@ditsmod/core';
+import { controller, Status, Res, PATH_PARAMS, inject, AnyObj, NODE_RES, Injector } from '@ditsmod/core';
 import { getAbsoluteFSPath } from 'swagger-ui-dist';
 import fs = require('fs');
 
@@ -31,18 +20,17 @@ export class OpenapiController {
       },
     },
   })
-  async getIndex(rootMeta: RootMetadata, moduleExtract: ModuleExtract) {
-    const path = this.getPath(rootMeta.path, moduleExtract.path, 'openapi');
+  async getIndex() {
     const map = [
-      ['href="./swagger-ui.css"', `href="${path}/swagger-ui.css"`],
-      ['href="index.css"', `href="${path}/index.css"`],
-      ['href="./index.css"', `href="${path}/index.css"`],
-      ['href="./favicon-32x32.png"', `href="${path}/favicon-32x32.png"`],
-      ['href="./favicon-16x16.png"', `href="${path}/favicon-16x16.png"`],
+      ['href="./swagger-ui.css"', 'href="./openapi/swagger-ui.css"'],
+      ['href="index.css"', 'href="./openapi/index.css"'],
+      ['href="./index.css"', 'href="./openapi/index.css"'],
+      ['href="./favicon-32x32.png"', 'href="./openapi/favicon-32x32.png"'],
+      ['href="./favicon-16x16.png"', 'href="./openapi/favicon-16x16.png"'],
 
-      ['src="./swagger-ui-bundle.js"', `src="${path}/swagger-ui-bundle.js"`],
-      ['src="./swagger-ui-standalone-preset.js"', `src="${path}/swagger-ui-standalone-preset.js"`],
-      ['src="./swagger-initializer.js"', `src="${path}/swagger-initializer.js"`],
+      ['src="./swagger-ui-bundle.js"', 'src="./openapi/swagger-ui-bundle.js"'],
+      ['src="./swagger-ui-standalone-preset.js"', 'src="./openapi/swagger-ui-standalone-preset.js"'],
+      ['src="./swagger-initializer.js"', 'src="./openapi/swagger-initializer.js"'],
     ];
 
     let indexHtml = await readFile(`${getAbsoluteFSPath()}/index.html`, 'utf8');
@@ -51,11 +39,6 @@ export class OpenapiController {
     }, indexHtml);
 
     this.res.setContentType('text/html; charset=utf-8').send(indexHtml);
-  }
-
-  protected getPath(rootPrefix: string, modulePrefix?: string, routePath?: string) {
-    const prefix = [rootPrefix, modulePrefix, routePath].filter((p) => p).join('/');
-    return prefix ? `./${prefix}` : '.';
   }
 
   @oasRoute('GET', 'openapi.yaml', {
