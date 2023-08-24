@@ -2,5 +2,5 @@
   "events": {
     "start": "clear"
   },
-  "ignore": ["*.spec.ts", "*.tsbuildinfo", "packages/openapi/src/swagger-ui/swagger.config.ts"]
+  "ignore": ["*.spec.ts", "*.tsbuildinfo"]
 }
