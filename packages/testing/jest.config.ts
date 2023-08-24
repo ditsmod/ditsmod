@@ -2,7 +2,7 @@ import type { Config } from 'jest';
 
 const config: Config = {
   testEnvironment: 'node',
-  modulePathIgnorePatterns: ['<rootDir>/src/', '<rootDir>/test/.+ts'],
+  modulePathIgnorePatterns: ['<rootDir>/src/', '<rootDir>/test/'],
   moduleNameMapper: {
     '@ditsmod/core': '<rootDir>/../core/dist/src',
     '@ditsmod/router': '<rootDir>/../router/dist/src',
