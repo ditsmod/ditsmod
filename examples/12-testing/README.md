@@ -13,5 +13,6 @@ npm i
 Run test:
 
 ```bash
-npm run test-examples examples/12
+cd examples/12*
+npm test
 ```

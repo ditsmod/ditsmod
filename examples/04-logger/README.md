@@ -13,6 +13,7 @@ npm i
 Start from first terminal:
 
 ```bash
+cd examples/04*
 npm start
 ```
 

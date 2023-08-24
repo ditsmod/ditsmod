@@ -19,6 +19,7 @@ this is because `AuthModule` is exported from `rootModule`;
 Start from first terminal:
 
 ```bash
+cd examples/03*
 npm start
 ```
 
