@@ -1,5 +1,5 @@
 .gitignore
-tests
+test
 docs
 examples
 spec

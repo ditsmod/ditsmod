@@ -1,7 +1,7 @@
 .gitignore
-tests
+test
 docs
-dist-tests
+dist-test
 examples
 dist-examples
 spec
