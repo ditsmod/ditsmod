@@ -270,17 +270,18 @@ As you might guess, when DI resolves a dependency, it takes tokens from the cons
 
 DI creates values in the registry for each token using what are called **providers**. So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. Therefore, if you specified a certain dependency in a class, but did not pass the corresponding provider, DI will not be able to resolve that dependency. The [next section][100] discusses how providers can be passed to DI. A provider can be either a class or an object:
 
-```ts {3-7}
+```ts {3-8}
 import { Class } from '@ditsmod/core';
 
 type Provider = Class<any> |
 { token: any, useClass: Class<any>, multi?: boolean } |
 { token: any, useValue: any, multi?: boolean } |
+{ token?: any, useFactory: (...args: any[]) => any, deps: any[], multi?: boolean } |
 { token?: any, useFactory: [Class<any>, Class<any>.prototype.methodName], multi?: boolean } |
 { token: any, useToken: any, multi?: boolean }
 ```
 
-Note that the token for the provider with the `useFactory` property is optional, since DI can use the method of the specified class as a token.
+Note that the token for the provider with the `useFactory` property is optional because DI can use a function or method of the specified class as the token.
 
 
 If the provider is represented as an object, the following values can be passed to its properties:
@@ -295,27 +296,40 @@ If the provider is represented as an object, the following values can be passed 
   ```ts
   { token: 'token2', useValue: 'some value' }
   ```
-- `useFactory` - a [tuple][11] is passed here, where the first place should be a class, and the second place should be a method of that class that returns some value for the given token. For example, if the class is like this:
-
-  ```ts
-  import { methodFactory } from '@ditsmod/core';
-
-  export class ClassWithFactory {
-    @methodFactory()
-    method1(dependecy1: Dependecy1, dependecy2: Dependecy2) {
+- `useFactory` - you can pass arguments here in two forms.
+  - The **first form** implies that you can pass a function to `useFactory` that can have parameters - that is, it can have a dependency. This dependency must be additionally manually specified in the `deps` property as an array of tokens, and the order in which the tokens are passed is important:
+    ```ts {6}
+    function fn1(service1: Service1, service2: Service2) {
       // ...
-      return '...';
+      return 'some value';
     }
-  }
-  ```
 
-  in this case, the provider must be transferred to the DI registry in the following format:
+    { token: 'token3', useFactory: fn1, deps: [Service1, Service2] }
+    ```
 
-  ```ts
-  { token: 'token3', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }
-  ```
+    Please note that it is the provider _tokens_ that are passed to the `deps` property, and DI perceives them as tokens, not providers. That is, for these tokens, the DI registry will still need to [transfer the corresponding providers][100]. Also note that no parameter decorators are passed via `deps` (such as `fromSelf` and `skipSelf`). If your factory requires parameter decorators, you need to use the second form of passing arguments to `useFactory`.
 
-  First, DI will create an instance of this class, then call its method and get the result, which will be associated with the specified token. A method of the specified class can return any value except `undefined`.
+  - The **second form** assumes that a [tuple][11] is passed to `useFactory`, where the first place should be a class, and the second place should be a method of this class that must return some value for the specified token. For example, if the class is like this:
+
+    ```ts
+    import { methodFactory } from '@ditsmod/core';
+
+    export class ClassWithFactory {
+      @methodFactory()
+      method1(dependecy1: Dependecy1, dependecy2: Dependecy2) {
+        // ...
+        return '...';
+      }
+    }
+    ```
+
+    in this case, the provider must be transferred to the DI registry in the following format:
+
+    ```ts
+    { token: 'token3', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }
+    ```
+
+    First, DI will create an instance of this class, then call its method and get the result, which will be associated with the specified token. A method of the specified class can return any value except `undefined`.
 
 - `useToken` - another token is passed to this provider property. If you write the following:
 

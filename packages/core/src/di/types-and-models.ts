@@ -367,7 +367,18 @@ const injector = Injector.resolveAndCreate([
 expect(injector.get(Hash)).toEqual('Hash for: null');
 ```
  */
-export interface FactoryProvider extends BaseNormalizedProvider {
+export type FactoryProvider = FunctionFactoryProvider | ClassFactoryProvider;
+
+export interface FunctionFactoryProvider extends BaseNormalizedProvider {
+  /**
+   * A function to invoke to create a value for this `token`.
+   * The function is invoked with resolved values of `token`s in the `deps` field.
+   */
+  useFactory: Func;
+  deps?: any[]
+}
+
+export interface ClassFactoryProvider extends BaseNormalizedProvider {
   /**
    * The tuple, where the class comes first, and the method of this class comes second:
    * `useFactory: [Class, Class.prototype.someMethod]`.
@@ -376,6 +387,7 @@ export interface FactoryProvider extends BaseNormalizedProvider {
    * resolved values of its parameters.
    */
   useFactory: UseFactoryTuple;
+  deps?: never;
 }
 
 export type UseFactoryTuple = [Class, Func];

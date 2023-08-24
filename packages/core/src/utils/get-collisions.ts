@@ -1,3 +1,4 @@
+import { isFunctionFactoryProvider } from '../di';
 import { ServiceProvider } from '../types/mix';
 import { getTokens } from './get-tokens';
 import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } from './type-guards';
@@ -6,7 +7,7 @@ import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } 
  * Returns array of uniq tokens.
  *
  * If you have a replacement for some provider - you have a collision.
- * 
+ *
  * @todo Add checks for FactoryProvider.
  */
 export function getCollisions(uniqDuplTokens: any[], providers: ServiceProvider[]) {
@@ -38,8 +39,15 @@ export function getCollisions(uniqDuplTokens: any[], providers: ServiceProvider[
             collisions.add(token);
           }
         } else if (isFactoryProvider(lastProvider) && isFactoryProvider(currProvider)) {
-          if (lastProvider.useFactory[1] !== currProvider.useFactory[1]) {
-            collisions.add(token);
+          if (!isFunctionFactoryProvider(lastProvider) && !isFunctionFactoryProvider(currProvider)) {
+            if (lastProvider.useFactory[1] !== currProvider.useFactory[1]) {
+              collisions.add(token);
+            }
+          }
+          if (isFunctionFactoryProvider(lastProvider) && isFunctionFactoryProvider(currProvider)) {
+            if (lastProvider.useFactory !== currProvider.useFactory) {
+              collisions.add(token);
+            }
           }
         } else if (lastProvider !== currProvider) {
           collisions.add(token);

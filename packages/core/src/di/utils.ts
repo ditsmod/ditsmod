@@ -3,6 +3,7 @@ import {
   ClassProvider,
   DecoratorAndValue,
   FactoryProvider,
+  FunctionFactoryProvider,
   NormalizedProvider,
   Provider,
   TokenProvider,
@@ -136,6 +137,10 @@ export function isTokenProvider(provider: Provider): provider is TokenProvider {
 
 export function isFactoryProvider(provider: Provider): provider is FactoryProvider {
   return (provider as FactoryProvider)?.useFactory !== undefined;
+}
+
+export function isFunctionFactoryProvider(provider: Provider): provider is FunctionFactoryProvider {
+  return typeof (provider as FactoryProvider)?.useFactory == 'function';
 }
 
 export type MultiProvider = Exclude<Provider, TypeProvider> & { multi: boolean };

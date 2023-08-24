@@ -148,6 +148,64 @@ describe('injector', () => {
     });
   });
 
+  it('should support function factory', () => {
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
+
+    function method1(engine: Engine) {
+      spy1();
+      return new SportsCar(engine);
+    }
+
+    function method2(engine: Engine, dashboard: Dashboard) {
+      spy2();
+      return new CarWithDashboard(engine, dashboard);
+    }
+
+    const myCarToken = new InjectionToken('myCar');
+    const injector = createInjector([
+      DashboardSoftware,
+      Engine,
+      Dashboard,
+      { token: Car, useFactory: method1, deps: [Engine] },
+      { token: myCarToken, useFactory: method2, deps: [Engine, Dashboard] },
+    ]);
+
+    const car: SportsCar = injector.get(Car);
+    expect(car).toBeInstanceOf(SportsCar);
+    expect(car.engine).toBeInstanceOf(Engine);
+    expect(spy1).toBeCalledTimes(1);
+    expect(spy2).toBeCalledTimes(0);
+
+    const myCar: CarWithDashboard = injector.get(myCarToken);
+    expect(myCar).toBeInstanceOf(CarWithDashboard);
+    expect(myCar.engine).toBeInstanceOf(Engine);
+    expect(myCar.dashboard).toBeInstanceOf(Dashboard);
+    expect(spy1).toBeCalledTimes(1);
+    expect(spy2).toBeCalledTimes(1);
+  });
+
+  it('should support function factory non-class tokens', () => {
+    const spy1 = jest.fn();
+
+    function method1(engine: Engine) {
+      spy1();
+      return new SportsCar(engine);
+    }
+
+    const token1 = new InjectionToken('token1');
+    const token2 = new InjectionToken('token2');
+    const injector = createInjector([
+      { token: token1, useFactory: method1, deps: [token2] },
+      { token: token2, useClass: Engine },
+    ]);
+
+    const car: SportsCar = injector.get(token1);
+    expect(car).toBeInstanceOf(SportsCar);
+    expect(car.engine).toBeInstanceOf(Engine);
+    expect(spy1).toBeCalledTimes(1);
+  });
+
   it('should support method factory', () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
@@ -208,6 +266,42 @@ describe('injector', () => {
     const [, container2] = propMetadata.method2;
     expect(container2.decorator).toBe(route);
     expect(container2.value).toEqual({ method: 'POST', path: 'other-path' });
+  });
+
+  it('should support function factory without token', () => {
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
+
+    function method1(engine: Engine) {
+      spy1();
+      return new SportsCar(engine);
+    }
+
+    function method2(engine: Engine, dashboard: Dashboard) {
+      spy2();
+      return new CarWithDashboard(engine, dashboard);
+    }
+
+    const injector = createInjector([
+      DashboardSoftware,
+      Engine,
+      Dashboard,
+      { useFactory: method1, deps: [Engine] },
+      { useFactory: method2, deps: [Engine, Dashboard] },
+    ]);
+
+    const car: SportsCar = injector.get(method1);
+    expect(car).toBeInstanceOf(SportsCar);
+    expect(car.engine).toBeInstanceOf(Engine);
+    expect(spy1).toBeCalledTimes(1);
+    expect(spy2).toBeCalledTimes(0);
+
+    const myCar: CarWithDashboard = injector.get(method2);
+    expect(myCar).toBeInstanceOf(CarWithDashboard);
+    expect(myCar.engine).toBeInstanceOf(Engine);
+    expect(myCar.dashboard).toBeInstanceOf(Dashboard);
+    expect(spy1).toBeCalledTimes(1);
+    expect(spy2).toBeCalledTimes(1);
   });
 
   it('should support method factory without token', () => {

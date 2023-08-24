@@ -29,6 +29,7 @@ import {
   DEBUG_NAME,
   stringify,
   isValueProvider,
+  isFunctionFactoryProvider,
 } from './utils';
 import { DualKey, KeyRegistry } from './key-registry';
 import { AnyFn } from '../types/mix';
@@ -222,6 +223,15 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     } else if (isValueProvider(provider)) {
       return [this.getResolvedProvider(provider.token, () => provider.useValue, [], provider.multi)];
     } else if (isFactoryProvider(provider)) {
+      if (isFunctionFactoryProvider(provider)) {
+        const token = provider.token || provider.useFactory;
+        const factoryFn = (...args: any[]) => provider.useFactory(...args);
+        const resolvedDeps = (provider.deps || []).map((d) => {
+          const dualKey = KeyRegistry.get(d);
+          return Dependency.fromDualKey(dualKey);
+        });
+        return [this.getResolvedProvider(token, factoryFn, resolvedDeps, provider.multi)];
+      }
       const [rawClass, rawFactory] = provider.useFactory;
       const Cls = resolveForwardRef(rawClass) as Class;
       const factory = resolveForwardRef(rawFactory) as AnyFn;
