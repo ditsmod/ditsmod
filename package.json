@@ -13,6 +13,7 @@
   },
   "scripts": {
     "test": "npm run build && jest",
+    "test1": "jest -c jest.config1.ts",
     "test-examples": "npm run build-examples && jest --config examples/jest.config.ts",
     "test-all": "npm test && npm run test-examples && npm run build-examples && npm run build-vscode",
     "pub": "lerna publish from-package --no-git-tag-version",
@@ -54,6 +55,7 @@
     "prettier": "^3.0.0",
     "reflect-metadata": "^0.1.13",
     "supertest": "^6.3.3",
+    "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.1",
     "typescript": "^5.0.2",
