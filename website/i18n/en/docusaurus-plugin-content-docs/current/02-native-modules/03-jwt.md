@@ -11,7 +11,7 @@ The `@ditsmod/jwt` module integrates [jsonwebtoken][1] into a Ditsmod authentica
 Installation:
 
 ```bash
-npm run add @ditsmod/jwt
+npm i @ditsmod/jwt
 ```
 
 Importing:

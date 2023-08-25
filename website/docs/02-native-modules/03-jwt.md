@@ -11,7 +11,7 @@ sidebar_position: 3
 Встановлення:
 
 ```bash
-npm run add @ditsmod/jwt
+npm i @ditsmod/jwt
 ```
 
 Підключення:

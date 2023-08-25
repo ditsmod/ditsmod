@@ -25,7 +25,7 @@ export class HelloWorldController {
 Встановлення:
 
 ```bash
-npm run add @ditsmod/return
+npm i @ditsmod/return
 ```
 
 При імпорті `ReturnModule` потрібно ще й [вирішувати колізію][2] в масиві `resolvedCollisionsPerReq`, оскільки `ReturnModule` підміняє провайдер для токена `HttpBackend`, який також під капотом підміняється у `@ditsmod/core`:

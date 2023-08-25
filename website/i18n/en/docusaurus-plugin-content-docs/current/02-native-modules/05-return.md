@@ -25,7 +25,7 @@ If you want such functionality to be available only in a separate module, you ca
 Installation:
 
 ```bash
-npm run add @ditsmod/return
+npm i @ditsmod/return
 ```
 
 When importing `ReturnModule`, you also need to [resolve a collision][2] in the `resolvedCollisionsPerReq` array, because `ReturnModule` substitutes the provider for the `HttpBackend` token, which is also substitutes under the hood in `@ditsmod/core`:

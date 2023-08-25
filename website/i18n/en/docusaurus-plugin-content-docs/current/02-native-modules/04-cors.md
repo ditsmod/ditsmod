@@ -9,7 +9,7 @@ If your application needs to use the [OPTIONS][1] HTTP method or the [CORS][2] o
 ## Install
 
 ```bash
-npm run add @ditsmod/cors
+npm i @ditsmod/cors
 ```
 
 ## Work with default settings

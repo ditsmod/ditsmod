@@ -40,7 +40,7 @@ interface PathParam {
 Встановлення:
 
 ```bash
-npm run add @ditsmod/router
+npm i @ditsmod/router
 ```
 
 Підключення:

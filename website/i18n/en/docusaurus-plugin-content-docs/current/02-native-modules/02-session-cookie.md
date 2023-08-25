@@ -11,7 +11,7 @@ The `@ditsmod/session-cookie` module simplifies working with the session cookie.
 Installation:
 
 ```bash
-npm run add @ditsmod/session-cookie
+npm i @ditsmod/session-cookie
 ```
 
 Importing:
