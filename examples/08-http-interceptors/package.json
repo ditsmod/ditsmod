@@ -7,7 +7,7 @@
   "scripts": {
     "start": "npm run build && node dist/src/main.js",
     "clean": "rimraf dist/*",
-    "test": "npm run build && jest dist",
+    "test": "npm run build && jest",
     "build": "tsc -b tsconfig.build.json"
   }
 }

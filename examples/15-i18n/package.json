@@ -6,7 +6,7 @@
   "types": "src/index",
   "scripts": {
     "start": "nodemon -e ts --exec ts-node -r tsconfig-paths/register src/main.ts",
-    "test": "npm run build && jest dist",
+    "test": "npm run build && jest",
     "build": "tsc -b tsconfig.build.json"
   }
 }

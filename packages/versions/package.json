@@ -13,7 +13,7 @@
     "lib": "src"
   },
   "scripts": {
-    "test": "npm run build && jest dist",
+    "test": "npm run build && jest",
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist/*"
   },
