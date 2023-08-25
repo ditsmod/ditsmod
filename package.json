@@ -21,8 +21,7 @@
     "build-examples": "tsc -b examples/tsconfig.build.json",
     "build-vscode": "tsc -b examples/tsconfig.vscode.json",
     "lint": "eslint . --ext .ts",
-    "clean": "rimraf packages/**/dist",
-    "clean-examples": "rimraf examples/**/dist"
+    "clean": "rimraf packages/*/dist* examples/*/dist*"
   },
   "repository": {
     "type": "git",
