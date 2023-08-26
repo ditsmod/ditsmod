@@ -8,14 +8,7 @@
   },
   "description": "Body parser module for Ditsmod applications",
   "module": "dist/index.js",
-  "exports": {
-    "./package.json": {
-      "default": "./package.json"
-    },
-    ".": {
-      "types": "./dist/index.d.ts"
-    }
-  },
+  "exports": "./dist/index.js",
   "main": "dist/index",
   "types": "dist/index",
   "directories": {

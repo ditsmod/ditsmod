@@ -7,14 +7,7 @@
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
   "description": "It's Ditsmod module to listen to value returned by a controller's route.",
-  "exports": {
-    "./package.json": {
-      "default": "./package.json"
-    },
-    ".": {
-      "types": "./dist/index.d.ts"
-    }
-  },
+  "exports": "./dist/index.js",
   "main": "dist/index",
   "types": "dist/index",
   "directories": {

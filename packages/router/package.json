@@ -6,14 +6,7 @@
   "homepage": "https://ditsmod.github.io/en/",
   "description": "Router module for Ditsmod applications",
   "module": "dist/index.js",
-  "exports": {
-    "./package.json": {
-      "default": "./package.json"
-    },
-    ".": {
-      "types": "./dist/index.d.ts"
-    }
-  },
+  "exports": "./dist/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
