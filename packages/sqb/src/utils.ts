@@ -1,6 +1,6 @@
 import { Class, reflector } from '@ditsmod/core';
 
-import { TableConfig } from './types';
+import { TableConfig } from './types.js';
 
 export function getTableMetadata<T extends Class>(Cls: T, alias: string, withoutAlias?: boolean): TableMetadata<T> {
   const config: TableConfig | undefined = reflector.getClassMetadata(Cls)[0]?.value;

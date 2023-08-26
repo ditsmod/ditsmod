@@ -1,19 +1,19 @@
-import { fromSelf, injectable, Injector, ResolvedProvider } from '../di';
-import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS, NODE_REQ, NODE_RES, QUERY_STRING, A_PATH_PARAMS } from '../constans';
-import { HttpBackend, HttpFrontend, HttpHandler } from '../types/http-interceptor';
-import { Extension, HttpMethod } from '../types/mix';
-import { PreparedRouteMeta, RouteMeta } from '../types/route-data';
-import { RouteHandler, Router } from '../types/router';
-import { ExtensionsManager } from '../services/extensions-manager';
-import { MetadataPerMod2 } from '../types/metadata-per-mod';
-import { ExtensionsContext } from '../services/extensions-context';
-import { getModule } from '../utils/get-module';
-import { PerAppService } from '../services/per-app.service';
-import { SystemLogMediator } from '../log-mediator/system-log-mediator';
-import { KeyRegistry } from '../di/key-registry';
-import { ChainMaker } from '../services/chain-maker';
-import { HttpErrorHandler } from '../services/http-error-handler';
-import { DepsChecker } from '../di/deps-checker';
+import { fromSelf, injectable, Injector, ResolvedProvider } from '../di/index.js';
+import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS, NODE_REQ, NODE_RES, QUERY_STRING, A_PATH_PARAMS } from '../constans.js';
+import { HttpBackend, HttpFrontend, HttpHandler } from '../types/http-interceptor.js';
+import { Extension, HttpMethod } from '../types/mix.js';
+import { PreparedRouteMeta, RouteMeta } from '../types/route-data.js';
+import { RouteHandler, Router } from '../types/router.js';
+import { ExtensionsManager } from '../services/extensions-manager.js';
+import { MetadataPerMod2 } from '../types/metadata-per-mod.js';
+import { ExtensionsContext } from '../services/extensions-context.js';
+import { getModule } from '../utils/get-module.js';
+import { PerAppService } from '../services/per-app.service.js';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator.js';
+import { KeyRegistry } from '../di/key-registry.js';
+import { ChainMaker } from '../services/chain-maker.js';
+import { HttpErrorHandler } from '../services/http-error-handler.js';
+import { DepsChecker } from '../di/deps-checker.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {

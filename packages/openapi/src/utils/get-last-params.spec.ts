@@ -1,6 +1,6 @@
 import { ParameterObject, ReferenceObject } from '@ts-stack/openapi-spec';
 
-import { getLastParameterObjects, getLastReferenceObjects } from './get-last-params';
+import { getLastParameterObjects, getLastReferenceObjects } from './get-last-params.js';
 
 describe('getLastReferenceObjects()', () => {
   it('uniq $ref', () => {

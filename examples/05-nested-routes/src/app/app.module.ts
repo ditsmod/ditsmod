@@ -1,7 +1,7 @@
 import { rootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
-import { PostsModule } from './posts/posts.module';
+import { PostsModule } from './posts/posts.module.js';
 
 @rootModule({
   imports: [RouterModule],

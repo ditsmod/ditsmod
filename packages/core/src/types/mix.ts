@@ -8,9 +8,9 @@ import {
   ValueProvider,
   ResolvedProvider,
   NormalizedProvider,
-} from '../di';
-import { MetadataPerMod1 } from './metadata-per-mod';
-import { ProvidersMetadata } from '../models/providers-metadata';
+} from '../di/index.js';
+import { MetadataPerMod1 } from './metadata-per-mod.js';
+import { ProvidersMetadata } from '../models/providers-metadata.js';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
 

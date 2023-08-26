@@ -1,4 +1,4 @@
-import { ModuleType, ModuleWithParams } from './mix';
+import { ModuleType, ModuleWithParams } from './mix.js';
 
 export interface RootModuleMetadata {
   /**

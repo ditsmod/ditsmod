@@ -1,9 +1,9 @@
-import { Visibility, ID } from './types-and-models';
-import { Dependency, ResolvedProvider } from './types-and-models';
-import { fromSelf, skipSelf } from './decorators';
-import { cyclicDependencyError, noProviderError } from './error-handling';
-import { DualKey, KeyRegistry } from './key-registry';
-import { Injector } from './injector';
+import { Visibility, ID } from './types-and-models.js';
+import { Dependency, ResolvedProvider } from './types-and-models.js';
+import { fromSelf, skipSelf } from './decorators.js';
+import { cyclicDependencyError, noProviderError } from './error-handling.js';
+import { DualKey, KeyRegistry } from './key-registry.js';
+import { Injector } from './injector.js';
 
 /**
  * Allow check dependecies for given provider.

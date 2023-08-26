@@ -1,6 +1,6 @@
 import { featureModule } from '@ditsmod/core';
 
-import { CommentsController } from './comments.controller';
+import { CommentsController } from './comments.controller.js';
 
 @featureModule({
   controllers: [CommentsController],

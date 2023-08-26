@@ -1,7 +1,7 @@
 import { Logger, featureModule, Providers } from '@ditsmod/core';
 
-import { PatchLogger } from './patch-logger';
-import { PinoController } from './pino.controller';
+import { PatchLogger } from './patch-logger.js';
+import { PinoController } from './pino.controller.js';
 
 @featureModule({
   controllers: [PinoController],

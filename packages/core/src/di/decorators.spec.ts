@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 
-import { CLASS_KEY, makeClassDecorator, makePropDecorator } from './decorator-factories';
-import { reflector } from './reflection';
-import { DecoratorAndValue, PropMetadataTuple } from './types-and-models';
+import { CLASS_KEY, makeClassDecorator, makePropDecorator } from './decorator-factories.js';
+import { reflector } from './reflection.js';
+import { DecoratorAndValue, PropMetadataTuple } from './types-and-models.js';
 
 class DecoratedParent {}
 class DecoratedChild extends DecoratedParent {}

@@ -1,8 +1,8 @@
 import { Logger, featureModule, Providers } from '@ditsmod/core';
 import BunyanLogger = require('bunyan');
 
-import { BunyanController } from './bunyan.controller';
-import { PatchLogger } from './patch-logger';
+import { BunyanController } from './bunyan.controller.js';
+import { PatchLogger } from './patch-logger.js';
 
 @featureModule({
   controllers: [BunyanController],

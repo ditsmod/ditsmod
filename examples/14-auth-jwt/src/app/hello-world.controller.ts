@@ -1,8 +1,8 @@
 import { controller, inject, Res, route } from '@ditsmod/core';
 import { JWT_PAYLOAD } from '@ditsmod/jwt';
 
-import { BearerGuard } from './modules/services/auth/bearer.guard';
-import { MyJwtPayload } from './modules/services/auth/types';
+import { BearerGuard } from './modules/services/auth/bearer.guard.js';
+import { MyJwtPayload } from './modules/services/auth/types.js';
 
 @controller()
 export class HelloWorldController {

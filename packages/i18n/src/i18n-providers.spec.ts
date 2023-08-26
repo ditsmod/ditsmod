@@ -1,12 +1,12 @@
 import { Providers } from '@ditsmod/core';
 
-import { I18nProviders } from './i18n-providers';
-import { CommonDict } from './test/current';
-import { CommonUkDict } from './test/current/common-uk.dict';
-import { I18nOptions, I18N_TRANSLATIONS, Translations } from './types/mix';
-import { DictService } from './dict.service';
-import { I18nLogMediator } from './i18n-log-mediator';
-import { I18nTransformer } from './i18n-transformer';
+import { I18nProviders } from './i18n-providers.js';
+import { CommonDict } from './test/current/index.js';
+import { CommonUkDict } from './test/current/common-uk.dict.js';
+import { I18nOptions, I18N_TRANSLATIONS, Translations } from './types/mix.js';
+import { DictService } from './dict.service.js';
+import { I18nLogMediator } from './i18n-log-mediator.js';
+import { I18nTransformer } from './i18n-transformer.js';
 
 describe('I18nProviders', () => {
   it('returns arrays with two elements of DI providers', () => {

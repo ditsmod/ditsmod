@@ -1,7 +1,7 @@
 
-import { getTableMetadata } from '../../utils';
-import { table } from '../../decorators/table';
-import { MySqlUpdateBuilder } from './mysql-update-builder';
+import { getTableMetadata } from '../../utils.js';
+import { table } from '../../decorators/table.js';
+import { MySqlUpdateBuilder } from './mysql-update-builder.js';
 
 describe('MySqlUpdateBuilder', () => {
   @table({ tableName: 'users' })

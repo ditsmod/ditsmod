@@ -1,24 +1,24 @@
-import { injectable } from './di';
+import { injectable } from './di/index.js';
 
-import type { AppendsWithParams } from './types/module-metadata';
-import type { ModuleManager } from './services/module-manager';
-import type { NormalizedModuleMetadata } from './models/normalized-module-metadata';
-import type { ControllerMetadata1 } from './types/controller-metadata';
-import type { GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod';
-import type { ExtensionProvider, ModuleType, ModuleWithParams, NormalizedGuard, Scope, ServiceProvider } from './types/mix';
+import type { AppendsWithParams } from './types/module-metadata.js';
+import type { ModuleManager } from './services/module-manager.js';
+import type { NormalizedModuleMetadata } from './models/normalized-module-metadata.js';
+import type { ControllerMetadata1 } from './types/controller-metadata.js';
+import type { GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod.js';
+import type { ExtensionProvider, ModuleType, ModuleWithParams, NormalizedGuard, Scope, ServiceProvider } from './types/mix.js';
 
-import { ImportObj } from './types/metadata-per-mod';
-import { ModuleExtract } from './models/module-extract';
-import { defaultProvidersPerMod } from './constans';
-import { defaultProvidersPerReq } from './services/default-providers-per-req';
-import { getCollisions } from './utils/get-collisions';
-import { getImportedProviders, getImportedTokens } from './utils/get-imports';
-import { getLastProviders } from './utils/get-last-providers';
-import { getModuleName } from './utils/get-module-name';
-import { getToken, getTokens } from './utils/get-tokens';
-import { throwProvidersCollisionError } from './utils/throw-providers-collision-error';
-import { transformControllersMetadata } from './utils/transform-controllers-metadata';
-import { isAppendsWithParams, isModuleWithParams, isNormRootModule } from './utils/type-guards';
+import { ImportObj } from './types/metadata-per-mod.js';
+import { ModuleExtract } from './models/module-extract.js';
+import { defaultProvidersPerMod } from './constans.js';
+import { defaultProvidersPerReq } from './services/default-providers-per-req.js';
+import { getCollisions } from './utils/get-collisions.js';
+import { getImportedProviders, getImportedTokens } from './utils/get-imports.js';
+import { getLastProviders } from './utils/get-last-providers.js';
+import { getModuleName } from './utils/get-module-name.js';
+import { getToken, getTokens } from './utils/get-tokens.js';
+import { throwProvidersCollisionError } from './utils/throw-providers-collision-error.js';
+import { transformControllersMetadata } from './utils/transform-controllers-metadata.js';
+import { isAppendsWithParams, isModuleWithParams, isNormRootModule } from './utils/type-guards.js';
 
 type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 

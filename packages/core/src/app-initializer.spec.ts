@@ -1,21 +1,22 @@
-import { injectable, InjectionToken } from './di';
+import { jest } from '@jest/globals';
 
-import { featureModule } from './decorators/module';
-import { rootModule } from './decorators/root-module';
-import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
-import { Logger, LogLevel } from './types/logger';
-import { Router } from './types/router';
-import { AppInitializer } from './app-initializer';
-import { LogMediator } from './log-mediator/log-mediator';
-import { OutputLogFilter } from './log-mediator/types';
-import { ModuleManager } from './services/module-manager';
-import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix';
-import { controller } from './decorators/controller';
-import { ModuleExtract } from './models/module-extract';
-import { ImportObj, MetadataPerMod1 } from './types/metadata-per-mod';
-import { RootMetadata } from './models/root-metadata';
-import { Providers } from './utils/providers';
-import { SystemLogMediator } from './log-mediator/system-log-mediator';
+import { injectable, InjectionToken } from './di/index.js';
+import { featureModule } from './decorators/module.js';
+import { rootModule } from './decorators/root-module.js';
+import { NormalizedModuleMetadata } from './models/normalized-module-metadata.js';
+import { Logger, LogLevel } from './types/logger.js';
+import { Router } from './types/router.js';
+import { AppInitializer } from './app-initializer.js';
+import { LogMediator } from './log-mediator/log-mediator.js';
+import { OutputLogFilter } from './log-mediator/types.js';
+import { ModuleManager } from './services/module-manager.js';
+import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix.js';
+import { controller } from './decorators/controller.js';
+import { ModuleExtract } from './models/module-extract.js';
+import { ImportObj, MetadataPerMod1 } from './types/metadata-per-mod.js';
+import { RootMetadata } from './models/root-metadata.js';
+import { Providers } from './utils/providers.js';
+import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
 
 describe('AppInitializer', () => {
   type AnyModule = ModuleType | ModuleWithParams;
@@ -27,7 +28,7 @@ describe('AppInitializer', () => {
     constructor(
       public override rootMeta: RootMetadata,
       public override moduleManager: ModuleManager,
-      public override systemLogMediator: SystemLogMediator
+      public override systemLogMediator: SystemLogMediator,
     ) {
       super(rootMeta, moduleManager, systemLogMediator);
     }
@@ -548,9 +549,7 @@ describe('AppInitializer', () => {
       @rootModule({
         providersPerApp: [
           Router,
-          ...new Providers()
-            .useLogConfig({ level: 'trace' })
-            .useSystemLogMediator(LogMediatorMock)
+          ...new Providers().useLogConfig({ level: 'trace' }).useSystemLogMediator(LogMediatorMock),
         ],
       })
       class AppModule {}

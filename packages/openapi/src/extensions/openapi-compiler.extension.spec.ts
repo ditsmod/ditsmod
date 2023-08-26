@@ -1,4 +1,4 @@
-import { CanActivate, PerAppService, ResolvedGuard, Status } from '@ditsmod/core';
+import { CanActivate, PerAppService, ResolvedGuard, Status, Injector } from '@ditsmod/core';
 import {
   ComponentsObject,
   OperationObject,
@@ -7,11 +7,10 @@ import {
   XOperationObject,
   XResponsesObject,
 } from '@ts-stack/openapi-spec';
-import { Injector } from '@ditsmod/core';
 
-import { OpenapiCompilerExtension } from './openapi-compiler.extension';
-import { DEFAULT_OAS_OBJECT } from '../constants';
-import { oasGuard } from '../decorators/oas-guard';
+import { OpenapiCompilerExtension } from './openapi-compiler.extension.js';
+import { DEFAULT_OAS_OBJECT } from '../constants.js';
+import { oasGuard } from '../decorators/oas-guard.js';
 
 describe('OpenapiCompilerExtension', () => {
   class MockOpenapiCompilerExtension extends OpenapiCompilerExtension {
@@ -135,7 +134,10 @@ describe('OpenapiCompilerExtension', () => {
         }
       }
 
-      const guards: ResolvedGuard[] = [{ guard: Injector.resolve([Guard1])[0] }, { guard: Injector.resolve([Guard1])[0] }];
+      const guards: ResolvedGuard[] = [
+        { guard: Injector.resolve([Guard1])[0] },
+        { guard: Injector.resolve([Guard1])[0] },
+      ];
       mock.setSecurityInfo(operationObject, guards);
       expect(mock.oasObject).not.toEqual(DEFAULT_OAS_OBJECT);
       const expectedcomponents: ComponentsObject = { securitySchemes: { guard1: securitySchemeObject } };

@@ -1,10 +1,10 @@
 import { AnyObj } from '@ditsmod/core';
 import { ReferenceObject } from '@ts-stack/openapi-spec';
-import { property, PropertyDecoratorItem } from '../decorators/property';
+import { property, PropertyDecoratorItem } from '../decorators/property.js';
 import { DecoratorAndValue } from '@ditsmod/core';
 
-import { oasGuard, OasGuardMetadata } from '../decorators/oas-guard';
-import { oasRoute, OasRouteDecoratorMetadata, OasRouteMetadata1, OasRouteMetadata2 } from '../decorators/oas-route';
+import { oasGuard, OasGuardMetadata } from '../decorators/oas-guard.js';
+import { oasRoute, OasRouteDecoratorMetadata, OasRouteMetadata1, OasRouteMetadata2 } from '../decorators/oas-route.js';
 
 export function isOasRoute(propMeatada: AnyObj): propMeatada is OasRouteDecoratorMetadata {
   return (propMeatada as OasRouteDecoratorMetadata).decorator === oasRoute;

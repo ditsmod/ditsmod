@@ -1,25 +1,35 @@
 {
   "name": "@ditsmod/sqb",
+  "type": "module",
   "version": "2.0.0-alpha.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
   "description": "Ditsmod module to simplify the building SQL queries to the database.",
-  "main": "dist/src/index",
-  "types": "dist/src/index",
+  "module": "dist/index.js",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "dist/index",
+  "types": "dist/index",
   "directories": {
     "lib": "src"
   },
   "scripts": {
-    "test": "npm run build && jest",
     "build": "tsc -b tsconfig.build.json",
-    "clean": "rm -rf dist/*"
+    "clean": "rm -rf dist*",
+    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^2.38.0"
+    "@ditsmod/core": "^2.46.0"
   }
 }

@@ -1,6 +1,6 @@
-import type { skipSelf, fromSelf } from './decorators';
-import type { InjectionToken } from './injection-token';
-import { DualKey } from './key-registry';
+import type { skipSelf, fromSelf } from './decorators.js';
+import type { InjectionToken } from './injection-token.js';
+import { DualKey } from './key-registry.js';
 
 type Func = (...args: any[]) => any;
 /**
@@ -348,7 +348,7 @@ export interface TokenProvider extends BaseNormalizedProvider {
  * ### Example
  *
 ```ts
-import { methodFactory } from './di';
+import { methodFactory } from './di/index.js';
 
 const Location = new InjectionToken('location');
 const Hash = new InjectionToken('hash');

@@ -29,7 +29,7 @@
 ```ts
 import { Application } from '@ditsmod/core';
 
-import { AppModule } from './app/app.module';
+import { AppModule } from './app/app.module.js';
 
 new Application().bootstrap(AppModule).then((app) => {
   app.server.listen(3000, 'localhost');
@@ -130,7 +130,7 @@ An example of creating a helper:
 ```ts
 // In guards-utils.ts
 import { createHelperForGuardWithParams } from '@ditsmod/core';
-import { Permission } from './types';
+import { Permission } from './types.js';
 
 export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
 ```
@@ -141,8 +141,8 @@ Usage:
 // In some-controller.ts
 import { controller, Res, route } from '@ditsmod/core';
 
-import { requirePermissions } from '../auth/guards-utils';
-import { Permission } from '../auth/types';
+import { requirePermissions } from '../auth/guards-utils.js';
+import { Permission } from '../auth/types.js';
 
 @controller()
 export class SomeController {
@@ -320,7 +320,7 @@ export class HelloWorldController {
 ```ts {6}
 import { Module } from '@ditsmod/core';
 
-import { FirstModule } from './first.module';
+import { FirstModule } from './first.module.js';
 
 @Module({
   appends: [FirstModule]
@@ -341,7 +341,7 @@ For more info see [Appending of the module](https://ditsmod.github.io/en/compone
 import request = require('supertest');
 import { Application } from '@ditsmod/core';
 
-import { AppModule } from '../src/app/app.module';
+import { AppModule } from '../src/app/app.module.js';
 
 it('controller should works', async () => {
   const { server } = await new Application().bootstrap(AppModule, false);

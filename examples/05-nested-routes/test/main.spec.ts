@@ -2,7 +2,7 @@ import request = require('supertest');
 import { TestApplication } from '@ditsmod/testing';
 import { NodeServer } from '@ditsmod/core';
 
-import { AppModule } from '../src/app/app.module';
+import { AppModule } from '@src/app/app.module.js';
 
 describe('05-nested-routes', () => {
   let server: NodeServer;

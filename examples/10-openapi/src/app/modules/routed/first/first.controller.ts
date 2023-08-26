@@ -1,9 +1,9 @@
 import { AnyObj, controller, inject, PATH_PARAMS, Req, Res, route, Status } from '@ditsmod/core';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 
-import { BasicGuard } from './basic.guard';
-import { Model2 } from './models';
-import { getMetaContent } from './overriden-helper';
+import { BasicGuard } from './basic.guard.js';
+import { Model2 } from './models.js';
+import { getMetaContent } from './overriden-helper.js';
 
 @controller({ providersPerReq: [BasicGuard] })
 export class FirstController {

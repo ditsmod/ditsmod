@@ -1,9 +1,9 @@
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
 import { optional } from '@ditsmod/core';
 
-import { SessionCookie } from './session-cookie';
-import { SessionLogMediator } from './session-log-mediator';
-import { SessionCookieOptions } from './types';
+import { SessionCookie } from './session-cookie.js';
+import { SessionLogMediator } from './session-log-mediator.js';
+import { SessionCookieOptions } from './types.js';
 
 @featureModule({
   providersPerMod: [SessionLogMediator],

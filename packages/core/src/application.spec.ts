@@ -2,15 +2,15 @@ import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
 
-import { AppInitializer } from './app-initializer';
-import { Application } from './application';
-import { rootModule } from './decorators/root-module';
-import { RootMetadata } from './models/root-metadata';
-import { ApplicationOptions } from './models/application-options';
-import { ModuleType } from './types/mix';
-import { Router } from './types/router';
-import { SystemLogMediator } from './log-mediator/system-log-mediator';
-import { ModuleManager } from './services/module-manager';
+import { AppInitializer } from './app-initializer.js';
+import { Application } from './application.js';
+import { rootModule } from './decorators/root-module.js';
+import { RootMetadata } from './models/root-metadata.js';
+import { ApplicationOptions } from './models/application-options.js';
+import { ModuleType } from './types/mix.js';
+import { Router } from './types/router.js';
+import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
+import { ModuleManager } from './services/module-manager.js';
 
 describe('Application', () => {
   class ApplicationMock extends Application {

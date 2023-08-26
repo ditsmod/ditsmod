@@ -1,5 +1,5 @@
-import { makePropDecorator } from '../di';
-import { GuardItem, HttpMethod } from '../types/mix';
+import { makePropDecorator } from '../di/index.js';
+import { GuardItem, HttpMethod } from '../types/mix.js';
 
 export interface RouteDecoratorMetadata {
   [key: string]: RouteMetadata[];

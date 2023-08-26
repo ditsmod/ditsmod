@@ -1,6 +1,6 @@
 import { injectable } from '@ditsmod/core';
 
-import { Permission } from './types';
+import { Permission } from './types.js';
 
 @injectable()
 export class AuthService {

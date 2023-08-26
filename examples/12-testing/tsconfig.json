@@ -1,10 +1,13 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "dist/tmp",
     "baseUrl": "./",
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
+      "@src/*": ["./src/*"],
       "@ditsmod/core": ["../../packages/core/src"],
       "@ditsmod/router": ["../../packages/router/src"],
       "@ditsmod/openapi": ["../../packages/openapi/src"],
@@ -16,8 +19,6 @@
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/router/tsconfig.build.json" },
     { "path": "../../packages/return/tsconfig.build.json" },
-    { "path": "../../packages/jwt/tsconfig.build.json" },
-    { "path": "../../packages/i18n/tsconfig.build.json" },
     { "path": "../../packages/testing/tsconfig.build.json" },
   ]
 }

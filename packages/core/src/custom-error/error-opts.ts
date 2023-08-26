@@ -1,5 +1,5 @@
-import { MethodLogLevel } from '../types/logger';
-import { Status } from '../utils/http-status-codes';
+import { MethodLogLevel } from '../types/logger.js';
+import { Status } from '../utils/http-status-codes.js';
 
 export class ErrorOpts {
   /**

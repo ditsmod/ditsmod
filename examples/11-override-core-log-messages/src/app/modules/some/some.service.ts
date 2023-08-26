@@ -1,6 +1,6 @@
 import { injectable } from '@ditsmod/core';
 
-import { SomeLogMediator } from './some-log-mediator';
+import { SomeLogMediator } from './some-log-mediator.js';
 
 @injectable()
 export class SomeService {

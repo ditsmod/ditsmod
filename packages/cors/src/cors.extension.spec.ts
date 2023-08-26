@@ -1,5 +1,5 @@
 
-import { CorsExtension } from './cors.extension';
+import { CorsExtension } from './cors.extension.js';
 
 describe('CorsExtension', () => {
   let candidate: CorsExtension;

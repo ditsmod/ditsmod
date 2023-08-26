@@ -1,7 +1,7 @@
 import { HttpBackend, featureModule } from '@ditsmod/core';
 import { ReturnModule } from '@ditsmod/return';
 
-import { SecondController } from './second.controller';
+import { SecondController } from './second.controller.js';
 
 @featureModule({
   imports: [ReturnModule],

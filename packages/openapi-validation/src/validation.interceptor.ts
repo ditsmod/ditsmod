@@ -16,9 +16,9 @@ import {
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { DictService } from '@ditsmod/i18n';
 
-import { ValidationRouteMeta } from './types';
-import { AssertDict } from './locales/current';
-import { AjvService } from './ajv.service';
+import { ValidationRouteMeta } from './types.js';
+import { AssertDict } from './locales/current/index.js';
+import { AjvService } from './ajv.service.js';
 
 @injectable()
 export class ValidationInterceptor implements HttpInterceptor {

@@ -9,13 +9,13 @@ export {
   SecretOrPublicKey,
   SecretOrPrivateKey,
 } from 'jsonwebtoken';
-export { JwtModule } from './jwt.module';
-export { JwtService } from './jwt.service';
+export { JwtModule } from './jwt.module.js';
+export { JwtService } from './jwt.service.js';
 export {
   SignWithSecretOptions,
   SignWithPrivateKeyOptions,
   VerifyWithSecretOptions,
   VerifyWithPublicKeyOptions,
-} from './types/mix';
-export { JwtServiceOptions } from './models/jwt-service-options';
-export { JWT_PAYLOAD } from './tokens';
+} from './types/mix.js';
+export { JwtServiceOptions } from './models/jwt-service-options.js';
+export { JWT_PAYLOAD } from './tokens.js';

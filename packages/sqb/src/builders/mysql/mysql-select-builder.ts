@@ -1,6 +1,6 @@
-import { NoSqlActions, TableAndAlias } from '../types';
-import { AndOrBuilder, ExpressionBuilder } from './and-or-builder';
-import { JoinBuilder } from './join-builder';
+import { NoSqlActions, TableAndAlias } from '../types.js';
+import { AndOrBuilder, ExpressionBuilder } from './and-or-builder.js';
+import { JoinBuilder } from './join-builder.js';
 
 class SelectQuery {
   select: string[] = [];

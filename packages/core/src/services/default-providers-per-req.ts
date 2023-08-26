@@ -1,13 +1,13 @@
-import { HttpErrorHandler } from './http-error-handler';
-import { ServiceProvider } from '../types/mix';
-import { DefaultHttpErrorHandler } from './default-http-error-handler';
-import { HttpBackend, HttpFrontend } from '../types/http-interceptor';
-import { DefaultHttpBackend } from './default-http-backend';
-import { DefaultHttpFrontend } from './default-http-frontend';
-import { Req } from './request';
-import { Res } from './response';
-import { A_PATH_PARAMS, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, QUERY_PARAMS } from '../constans';
-import { ChainMaker } from './chain-maker';
+import { HttpErrorHandler } from './http-error-handler.js';
+import { ServiceProvider } from '../types/mix.js';
+import { DefaultHttpErrorHandler } from './default-http-error-handler.js';
+import { HttpBackend, HttpFrontend } from '../types/http-interceptor.js';
+import { DefaultHttpBackend } from './default-http-backend.js';
+import { DefaultHttpFrontend } from './default-http-frontend.js';
+import { Req } from './request.js';
+import { Res } from './response.js';
+import { A_PATH_PARAMS, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_STRING, QUERY_PARAMS } from '../constans.js';
+import { ChainMaker } from './chain-maker.js';
 
 export const defaultProvidersPerReq: Readonly<ServiceProvider[]> = [
   { token: HttpErrorHandler, useClass: DefaultHttpErrorHandler },

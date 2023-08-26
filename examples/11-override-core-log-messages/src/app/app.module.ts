@@ -1,9 +1,9 @@
 import { rootModule, Providers, SystemLogMediator } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
-import { MyLogMediator } from './my-log-mediator';
-import { SomeModule } from './modules/some/some.module';
-import { OtherModule } from './modules/other/other.module';
+import { MyLogMediator } from './my-log-mediator.js';
+import { SomeModule } from './modules/some/some.module.js';
+import { OtherModule } from './modules/other/other.module.js';
 
 @rootModule({
   imports: [RouterModule, SomeModule],

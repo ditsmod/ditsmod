@@ -1,14 +1,14 @@
-import { inject, injectable } from '../di';
-import { HttpErrorHandler } from './http-error-handler';
-import { Logger } from '../types/logger';
-import { Status } from '../utils/http-status-codes';
-import { ErrorOpts } from '../custom-error/error-opts';
-import { isChainError } from '../utils/type-guards';
-import { Res } from './response';
-import { Req } from './request';
-import { NodeResponse } from '../types/server-options';
-import { NODE_RES } from '../constans';
-import { cleanErrorTrace } from '../utils/clean-error-trace';
+import { inject, injectable } from '../di/index.js';
+import { HttpErrorHandler } from './http-error-handler.js';
+import { Logger } from '../types/logger.js';
+import { Status } from '../utils/http-status-codes.js';
+import { ErrorOpts } from '../custom-error/error-opts.js';
+import { isChainError } from '../utils/type-guards.js';
+import { Res } from './response.js';
+import { Req } from './request.js';
+import { NodeResponse } from '../types/server-options.js';
+import { NODE_RES } from '../constans.js';
+import { cleanErrorTrace } from '../utils/clean-error-trace.js';
 
 @injectable()
 export class DefaultHttpErrorHandler implements HttpErrorHandler {

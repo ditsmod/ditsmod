@@ -1,5 +1,5 @@
-import { DecoratorAndValue, type Class } from './types-and-models';
-import { isType } from './utils';
+import { DecoratorAndValue, type Class } from './types-and-models.js';
+import { isType } from './utils.js';
 
 /**
  * The key used to store metadata in a static property of a class.

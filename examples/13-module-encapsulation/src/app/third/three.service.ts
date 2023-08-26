@@ -1,6 +1,6 @@
 import { injectable } from '@ditsmod/core';
 
-import { SecondService } from '../second/second.service';
+import { SecondService } from '../second/second.service.js';
 
 @injectable()
 export class ThirdService {

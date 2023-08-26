@@ -1,5 +1,5 @@
-import { Class } from '../di';
-import { CanActivate } from '../types/mix';
+import { Class } from '../di/index.js';
+import { CanActivate } from '../types/mix.js';
 
 
 /**
@@ -10,7 +10,7 @@ import { CanActivate } from '../types/mix';
 ```ts
 import { createHelperForGuardWithParams } from '@ditsmod/core';
 
-import { Permission } from './types';
+import { Permission } from './types.js';
 
 export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
 ```
@@ -20,8 +20,8 @@ export const requirePermissions = createHelperForGuardWithParams<Permission>(Per
 ```ts
 import { controller, Res, route } from '@ditsmod/core';
 
-import { requirePermissions } from '../auth/guards-utils';
-import { Permission } from '../auth/types';
+import { requirePermissions } from '../auth/guards-utils.js';
+import { Permission } from '../auth/types.js';
 
 @controller()
 export class SomeController {

@@ -1,6 +1,6 @@
-import { InjectionToken } from '../di';
-import { Extension, ExtensionProvider } from '../types/mix';
-import { ExtensionOptions, getExtensionProvider } from './get-extension-provider';
+import { InjectionToken } from '../di/index.js';
+import { Extension, ExtensionProvider } from '../types/mix.js';
+import { ExtensionOptions, getExtensionProvider } from './get-extension-provider.js';
 
 describe('getExtensionProvider', () => {
   const MY_EXTENSION = new InjectionToken('MY_EXTENSION');

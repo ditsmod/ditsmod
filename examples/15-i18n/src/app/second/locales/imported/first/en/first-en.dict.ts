@@ -1,7 +1,7 @@
 import { ISO639 } from '@ditsmod/i18n';
 import { injectable } from '@ditsmod/core';
 
-import { FirstDict } from '@dict/first/first.dict';
+import { FirstDict } from '@dict/first/first.dict.js';
 
 @injectable()
 export class FirstEnDict extends FirstDict {

@@ -1,6 +1,6 @@
 import { InputLogFilter } from '@ditsmod/core';
 
-import { SomeLogMediator } from '../some/some-log-mediator';
+import { SomeLogMediator } from '../some/some-log-mediator.js';
 
 export class OtherLogMediator extends SomeLogMediator {
   /**

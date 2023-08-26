@@ -5,6 +5,7 @@
     "baseUrl": "./",
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
+      "@src/*": ["./src/*"],
       "@ditsmod/core": ["../../packages/core/src"],
       "@ditsmod/router": ["../../packages/router/src"],
       "@ditsmod/testing": ["../../packages/testing/src"]

@@ -1,4 +1,4 @@
-import { Reflector } from './reflector';
+import { Reflector } from './reflector.js';
 
 /**
  * The `Reflector` used internally to access metadata

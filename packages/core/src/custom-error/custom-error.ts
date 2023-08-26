@@ -1,6 +1,6 @@
 import { ChainError } from '@ts-stack/chain-error';
 
-import { ErrorOpts } from './error-opts';
+import { ErrorOpts } from './error-opts.js';
 
 export class CustomError extends ChainError {
   constructor(info: ErrorOpts, cause?: Error) {

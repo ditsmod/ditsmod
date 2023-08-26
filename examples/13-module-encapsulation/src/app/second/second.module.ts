@@ -1,9 +1,9 @@
 import { featureModule } from '@ditsmod/core';
 
-import { FirstModule } from '../first/first.module';
-import { SecondMultiProviderService } from './second-multi-provider.service';
-import { SecondController } from './second.controler';
-import { SecondService } from './second.service';
+import { FirstModule } from '../first/first.module.js';
+import { SecondMultiProviderService } from './second-multi-provider.service.js';
+import { SecondController } from './second.controler.js';
+import { SecondService } from './second.service.js';
 
 @featureModule({
   imports: [FirstModule],

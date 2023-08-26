@@ -1,7 +1,7 @@
-import { reflector, Class } from '../di';
-import { ControllerMetadata1 } from '../types/controller-metadata';
-import { DecoratorMetadata } from '../types/mix';
-import { isController } from './type-guards';
+import { reflector, Class } from '../di/index.js';
+import { ControllerMetadata1 } from '../types/controller-metadata.js';
+import { DecoratorMetadata } from '../types/mix.js';
+import { isController } from './type-guards.js';
 
 export function transformControllersMetadata(controllers: Class[], moduleName: string) {
   const arrControllerMetadata: ControllerMetadata1[] = [];

@@ -1,4 +1,4 @@
-import { getDuplicates } from './get-duplicates';
+import { getDuplicates } from './get-duplicates.js';
 
 describe('getDuplicates()', () => {
   it('should return 3', () => {

@@ -1,5 +1,5 @@
-import { Class } from './types-and-models';
-import { stringify } from './utils';
+import { Class } from './types-and-models.js';
+import { stringify } from './utils.js';
 
 const FORWARD_REF = Symbol();
 

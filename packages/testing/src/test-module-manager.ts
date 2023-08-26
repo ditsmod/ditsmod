@@ -8,8 +8,8 @@ import {
   LogLevel,
 } from '@ditsmod/core';
 
-import { TestPreRouterExtension } from './test-pre-router.extensions';
-import { TestProvider } from './types';
+import { TestPreRouterExtension } from './test-pre-router.extensions.js';
+import { TestProvider } from './types.js';
 
 type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 

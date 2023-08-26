@@ -3,17 +3,17 @@ import type * as http2 from 'http2';
 import type * as https from 'https';
 import type { AddressInfo } from 'net';
 
-import { AppInitializer } from './app-initializer';
-import { RootMetadata } from './models/root-metadata';
-import { ApplicationOptions } from './models/application-options';
-import { LogMediator } from './log-mediator/log-mediator';
-import { SystemLogMediator } from './log-mediator/system-log-mediator';
-import { ModuleManager } from './services/module-manager';
-import { AnyFn, ModuleType } from './types/mix';
-import { Http2SecureServerOptions, RequestListener, NodeServer } from './types/server-options';
-import { isHttp2SecureServerOptions } from './utils/type-guards';
-import { cleanErrorTrace } from './utils/clean-error-trace';
-import { HttpServerModule, HttpsServerModule } from './types/http-module';
+import { AppInitializer } from './app-initializer.js';
+import { RootMetadata } from './models/root-metadata.js';
+import { ApplicationOptions } from './models/application-options.js';
+import { LogMediator } from './log-mediator/log-mediator.js';
+import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
+import { ModuleManager } from './services/module-manager.js';
+import { AnyFn, ModuleType } from './types/mix.js';
+import { Http2SecureServerOptions, RequestListener, NodeServer } from './types/server-options.js';
+import { isHttp2SecureServerOptions } from './utils/type-guards.js';
+import { cleanErrorTrace } from './utils/clean-error-trace.js';
+import { HttpServerModule, HttpsServerModule } from './types/http-module.js';
 
 export class Application {
   protected appOptions: ApplicationOptions;

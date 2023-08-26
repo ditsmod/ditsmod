@@ -1,4 +1,4 @@
-import { AppendsWithParams } from '../types/module-metadata';
+import { AppendsWithParams } from '../types/module-metadata.js';
 import {
   AnyObj,
   ModuleType,
@@ -7,10 +7,10 @@ import {
   ExtensionProvider,
   NormalizedGuard,
   AnyFn,
-} from '../types/mix';
-import { MultiProvider } from '../utils/type-guards';
-import { ProvidersMetadata } from './providers-metadata';
-import { Class } from '../di';
+} from '../types/mix.js';
+import { MultiProvider } from '../utils/type-guards.js';
+import { ProvidersMetadata } from './providers-metadata.js';
+import { Class } from '../di/index.js';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
   /**

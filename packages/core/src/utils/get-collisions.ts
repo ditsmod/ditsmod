@@ -1,7 +1,7 @@
-import { isFunctionFactoryProvider } from '../di';
-import { ServiceProvider } from '../types/mix';
-import { getTokens } from './get-tokens';
-import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } from './type-guards';
+import { isFunctionFactoryProvider } from '../di/index.js';
+import { ServiceProvider } from '../types/mix.js';
+import { getTokens } from './get-tokens.js';
+import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } from './type-guards.js';
 
 /**
  * Returns array of uniq tokens.

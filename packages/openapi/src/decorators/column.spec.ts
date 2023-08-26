@@ -1,6 +1,6 @@
 import { PropMeta, reflector } from '@ditsmod/core';
 
-import { property, PropertyDecoratorMetadata } from './property';
+import { property, PropertyDecoratorMetadata } from './property.js';
 
 describe('@Property', () => {
   it('model without properties', () => {

@@ -1,20 +1,30 @@
 {
   "name": "@ditsmod/body-parser",
+  "type": "module",
   "version": "2.11.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
-  "description": "",
-  "main": "dist/src/index",
-  "types": "dist/src/index",
+  "description": "Body parser module for Ditsmod applications",
+  "module": "dist/index.js",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "dist/index",
+  "types": "dist/index",
   "directories": {
     "lib": "src"
   },
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
-    "clean": "rm -rf dist/*",
-    "test": "npm run build && jest"
+    "clean": "rm -rf dist*",
+    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
   },
   "keywords": [],
   "author": "",

@@ -1,6 +1,6 @@
 import { featureModule, Providers } from '@ditsmod/core';
 
-import { SomeController } from './some.controller';
+import { SomeController } from './some.controller.js';
 
 @featureModule({
   controllers: [SomeController],

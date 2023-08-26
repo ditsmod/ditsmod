@@ -1,7 +1,7 @@
 import { featureModule } from '@ditsmod/core';
 
-import { SomeLogMediator } from './some-log-mediator';
-import { SomeService } from './some.service';
+import { SomeLogMediator } from './some-log-mediator.js';
+import { SomeService } from './some.service.js';
 
 @featureModule({
   providersPerMod: [SomeLogMediator, SomeService],

@@ -1,11 +1,8 @@
-import { mkdir } from 'fs/promises';
-import { join } from 'path';
 import {
   Extension,
   ExtensionsManager,
   ExtensionsMetaPerApp,
   HttpMethod,
-  isModuleWithParams,
   MetadataPerMod2,
   PerAppService,
   Providers,
@@ -24,25 +21,23 @@ import {
 } from '@ts-stack/openapi-spec';
 import { stringify } from 'yaml';
 
-import { OasRouteMeta } from '../types/oas-route-meta';
-import { DEFAULT_OAS_OBJECT } from '../constants';
-import { isOasGuard } from '../utils/type-guards';
-import { OpenapiModule } from '../openapi.module';
-import { OasConfigFiles, OasExtensionOptions } from '../types/oas-extension-options';
-import { OpenapiLogMediator } from '../services/openapi-log-mediator';
-import { OasOptions } from '../types/oas-options';
+import { OasRouteMeta } from '../types/oas-route-meta.js';
+import { DEFAULT_OAS_OBJECT } from '../constants.js';
+import { isOasGuard } from '../utils/type-guards.js';
+import { OasConfigFiles, OasExtensionOptions } from '../types/oas-extension-options.js';
+import { OpenapiLogMediator } from '../services/openapi-log-mediator.js';
+import { OasOptions } from '../types/oas-options.js';
 
 @injectable()
 export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   protected oasObject: XOasObject;
-  private swaggerUiDist = join(__dirname, '../../dist/swagger-ui');
 
   constructor(
     private perAppService: PerAppService,
     private injectorPerMod: Injector,
     private extensionsManager: ExtensionsManager,
     private log: OpenapiLogMediator,
-    @optional() private extensionsMetaPerApp?: ExtensionsMetaPerApp
+    @optional() private extensionsMetaPerApp?: ExtensionsMetaPerApp,
   ) {}
 
   async init() {
@@ -58,7 +53,6 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     this.log.applyingAccumulatedData(this);
 
     await this.compileOasObject(aMetadataPerMod2);
-    await mkdir(this.swaggerUiDist, { recursive: true });
     const json = JSON.stringify(this.oasObject);
     const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
     const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
@@ -73,13 +67,6 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     this.initOasObject();
     for (const metadataPerMod2 of aMetadataPerMod2) {
       const { aControllersMetadata2, module: modOrObj } = metadataPerMod2;
-
-      // Hide internal APIs for OpenAPI
-      if (isModuleWithParams(modOrObj) && modOrObj.module === OpenapiModule) {
-        continue;
-      } else if (modOrObj === OpenapiModule) {
-        continue;
-      }
 
       aControllersMetadata2.forEach(({ httpMethod, path, routeMeta }) => {
         const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;
@@ -144,7 +131,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     operationObject: XOperationObject,
     newSecurities: XSecurityRequirementObject[],
     newTags: string[],
-    responses: XResponsesObject
+    responses: XResponsesObject,
   ) {
     operationObject.tags = [...(operationObject.tags || [])];
     newTags.forEach((newTag) => {
@@ -166,7 +153,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     path: string,
     paths: XPathsObject,
     httpMethod: HttpMethod,
-    resolvedGuards: ResolvedGuard[]
+    resolvedGuards: ResolvedGuard[],
   ) {
     httpMethod = httpMethod.toLowerCase() as HttpMethod;
     const parameters: XParameterObject[] = [];

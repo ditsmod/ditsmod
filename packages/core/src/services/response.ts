@@ -1,10 +1,10 @@
 import { format } from 'util';
 
-import { Status } from '../utils/http-status-codes';
-import { RedirectStatusCodes } from '../types/mix';
-import { inject, injectable } from '../di';
-import { NODE_RES } from '../constans';
-import { NodeResponse } from '../types/server-options';
+import { Status } from '../utils/http-status-codes.js';
+import { RedirectStatusCodes } from '../types/mix.js';
+import { inject, injectable } from '../di/index.js';
+import { NODE_RES } from '../constans.js';
+import { NodeResponse } from '../types/server-options.js';
 
 @injectable()
 export class Res<T = any> {

@@ -2,7 +2,7 @@ import { Providers, rootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 import { SessionCookieModule } from '@ditsmod/session-cookie';
 
-import { HelloWorldController } from './hello-world.controller';
+import { HelloWorldController } from './hello-world.controller.js';
 
 const sessionModuleWithParams = SessionCookieModule.withParams({
   cookieName: 'custom-session-name',

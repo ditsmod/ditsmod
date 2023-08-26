@@ -1,7 +1,8 @@
 import { Injector, Res } from '@ditsmod/core';
 import { Logger as PinoLogger } from 'pino';
+import { jest } from '@jest/globals';
 
-import { PinoController } from './pino.controller';
+import { PinoController } from './pino.controller.js';
 
 describe('PinoController', () => {
   const send = jest.fn();

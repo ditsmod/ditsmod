@@ -1,5 +1,5 @@
-import { reflector } from '../di';
-import { featureModule } from './module';
+import { reflector } from '../di/index.js';
+import { featureModule } from './module.js';
 
 describe('Module decorator', () => {
   it('empty decorator', () => {

@@ -1,10 +1,10 @@
-import { InjectionToken } from './di';
+import { InjectionToken } from './di/index.js';
 
-import { ModuleExtract } from './models/module-extract';
-import { HttpInterceptor } from './types/http-interceptor';
-import { MetadataPerMod2 } from './types/metadata-per-mod';
-import { AnyObj, Extension, ServiceProvider } from './types/mix';
-import { NodeRequest, NodeResponse } from './types/server-options';
+import { ModuleExtract } from './models/module-extract.js';
+import { HttpInterceptor } from './types/http-interceptor.js';
+import { MetadataPerMod2 } from './types/metadata-per-mod.js';
+import { AnyObj, Extension, ServiceProvider } from './types/mix.js';
+import { NodeRequest, NodeResponse } from './types/server-options.js';
 /**
  * A group of extensions that setting routes for router.
  */

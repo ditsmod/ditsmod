@@ -1,8 +1,8 @@
 import { PRE_ROUTER_EXTENSIONS, rootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
-import { HelloWorldController } from './hello-world.controller';
-import { MyExtension } from './my-extension';
+import { HelloWorldController } from './hello-world.controller.js';
+import { MyExtension } from './my-extension.js';
 
 @rootModule({
   imports: [RouterModule],

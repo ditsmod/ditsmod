@@ -15,12 +15,12 @@ import {
 } from '@ditsmod/core';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
-import { isOasRoute, isOasRoute1, isReferenceObject } from '../utils/type-guards';
-import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '../utils/parameters';
-import { OasRouteMeta } from '../types/oas-route-meta';
-import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-last-params';
-import { OasOptions } from '../types/oas-options';
-import { OpenapiLogMediator } from '../services/openapi-log-mediator';
+import { isOasRoute, isOasRoute1, isReferenceObject } from '../utils/type-guards.js';
+import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '../utils/parameters.js';
+import { OasRouteMeta } from '../types/oas-route-meta.js';
+import { getLastParameterObjects, getLastReferenceObjects } from '../utils/get-last-params.js';
+import { OasOptions } from '../types/oas-options.js';
+import { OpenapiLogMediator } from '../services/openapi-log-mediator.js';
 
 @injectable()
 export class OpenapiRoutesExtension extends RoutesExtension implements Extension<MetadataPerMod2> {

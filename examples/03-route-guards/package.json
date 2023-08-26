@@ -1,13 +1,14 @@
 {
   "name": "examples3",
+  "type": "module",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "dist/src/main",
-  "types": "src/index",
+  "main": "dist/main",
+  "types": "dist/main",
   "scripts": {
-    "start": "npm run build && node dist/src/main.js",
-    "clean": "rimraf dist/*",
-    "test": "npm run build && jest",
-    "build": "tsc -b tsconfig.build.json"
+    "start": "npm run build && node dist/main.js",
+    "clean": "rimraf dist*",
+    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js",
+    "build": "tsc -b tsconfig.test.json"
   }
 }

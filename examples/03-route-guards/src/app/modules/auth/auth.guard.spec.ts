@@ -1,6 +1,6 @@
 import { Injector, NODE_REQ, NodeRequest } from '@ditsmod/core';
 
-import { AuthGuard } from './auth.guard';
+import { AuthGuard } from './auth.guard.js';
 
 describe('AuthGuard#canActivate()', () => {
   function getGuard(authorization: string) {

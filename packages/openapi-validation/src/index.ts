@@ -1,7 +1,7 @@
-export { AjvService } from './ajv.service';
-export { AssertDict, AssertUkDict } from './locales/current';
-export { ValidationModule } from './validation.module';
-export { VALIDATION_EXTENSIONS, AJV_OPTIONS } from './constants';
-export { ValidationOptions } from './validation-options';
-export { ParametersInterceptor } from './parameters.interceptor';
-export { RequestBodyInterceptor } from './request-body.interceptor';
+export { AjvService } from './ajv.service.js';
+export { AssertDict, AssertUkDict } from './locales/current/index.js';
+export { ValidationModule } from './validation.module.js';
+export { VALIDATION_EXTENSIONS, AJV_OPTIONS } from './constants.js';
+export { ValidationOptions } from './validation-options.js';
+export { ParametersInterceptor } from './parameters.interceptor.js';
+export { RequestBodyInterceptor } from './request-body.interceptor.js';

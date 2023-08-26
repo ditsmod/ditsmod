@@ -1,6 +1,6 @@
 import { ISO639 } from '@ditsmod/i18n';
 
-import { OpenapiModelsDict } from '../_base-en/openapi-models.dict';
+import { OpenapiModelsDict } from '../_base-en/openapi-models.dict.js';
 
 export class OpenapiUkModelsDict extends OpenapiModelsDict {
   override getLng(): ISO639 {

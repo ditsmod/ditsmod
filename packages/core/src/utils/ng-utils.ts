@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Provider, Class, ValueProvider, ClassProvider, TokenProvider, FactoryProvider } from '../di';
+import { Provider, Class, ValueProvider, ClassProvider, TokenProvider, FactoryProvider } from '../di/index.js';
 import { format } from 'util';
-import { isNormalizedProvider } from './type-guards';
+import { isNormalizedProvider } from './type-guards.js';
 
 /**
  * Flattens an array.

@@ -1,9 +1,9 @@
 import { Injector } from '@ditsmod/core';
 
-import { DefaultRouter } from './router';
-import { Fn } from './types';
-import { Tree } from './tree';
-import { RouterLogMediator } from './router-log-mediator';
+import { DefaultRouter } from './router.js';
+import { Fn } from './types.js';
+import { Tree } from './tree.js';
+import { RouterLogMediator } from './router-log-mediator.js';
 
 describe('Router', () => {
   const noop: Fn = () => {};

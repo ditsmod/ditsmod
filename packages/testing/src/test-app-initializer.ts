@@ -1,6 +1,6 @@
 import { AppInitializer, LogLevel, MetadataPerMod1 } from '@ditsmod/core';
 
-import { overrideLogLevel } from './utils';
+import { overrideLogLevel } from './utils.js';
 
 export class TestAppInitializer extends AppInitializer {
   protected logLevel: LogLevel;

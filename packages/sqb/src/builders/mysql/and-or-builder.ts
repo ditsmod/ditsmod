@@ -1,4 +1,4 @@
-import { OneSqlExpression } from '../../types';
+import { OneSqlExpression } from '../../types.js';
 
 type AndOrType = 'and' | 'or';
 

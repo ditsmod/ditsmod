@@ -2,7 +2,7 @@ import { AnyObj, controller, inject, PATH_PARAMS, Res } from '@ditsmod/core';
 import { HTTP_BODY } from '@ditsmod/body-parser';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 
-import { Model1, Model2 } from './models';
+import { Model1, Model2 } from './models.js';
 
 @controller()
 export class FirstController {

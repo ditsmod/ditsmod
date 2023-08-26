@@ -1,8 +1,8 @@
 import { injectable, CustomError } from '@ditsmod/core';
 import { HTTP_BODY } from '@ditsmod/body-parser';
 
-import { ValidationRouteMeta } from './types';
-import { ValidationInterceptor } from './validation.interceptor';
+import { ValidationRouteMeta } from './types.js';
+import { ValidationInterceptor } from './validation.interceptor.js';
 
 /**
  * Interceptor to validate OpenAPI `requestBody`.

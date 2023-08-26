@@ -1,6 +1,6 @@
-import { injectable, forwardRef } from '../di';
-import { featureModule } from '../decorators/module';
-import { Module3 } from './module-manager3.spec';
+import { injectable, forwardRef } from '../di/index.js';
+import { featureModule } from '../decorators/module.js';
+import { Module3 } from './module-manager3.spec.js';
 
 @injectable()
 class Provider1 {}

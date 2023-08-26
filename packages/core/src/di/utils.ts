@@ -9,7 +9,7 @@ import {
   TokenProvider,
   TypeProvider,
   ValueProvider,
-} from './types-and-models';
+} from './types-and-models.js';
 
 export const DEBUG_NAME = 'debugName';
 

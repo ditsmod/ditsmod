@@ -1,20 +1,30 @@
 {
   "name": "@ditsmod/openapi",
+  "type": "module",
   "version": "2.19.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
   "description": "This is module for Ditsmod framework to support OpenAPI",
-  "main": "dist/src/index",
-  "types": "dist/src/index",
+  "module": "dist/index.js",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "dist/index",
+  "types": "dist/index",
   "directories": {
     "lib": "src"
   },
   "scripts": {
-    "test": "npm run build && jest",
     "build": "tsc -b tsconfig.build.json",
-    "clean": "rm -rf dist/*"
+    "clean": "rm -rf dist*",
+    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
   },
   "keywords": [],
   "author": "",
@@ -26,7 +36,7 @@
     "yaml": "^2.3.1"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.44.0"
+    "@ditsmod/core": "^2.46.0"
   },
   "devDependencies": {
     "@types/swagger-ui-dist": "^3.30.1"

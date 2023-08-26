@@ -1,7 +1,7 @@
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
 
-import { API_VERSIONS_EXTENSIONS } from './types';
-import { VersionsExtension } from './versions.extension';
+import { API_VERSIONS_EXTENSIONS } from './types.js';
+import { VersionsExtension } from './versions.extension.js';
 
 @featureModule({
   extensions: [{ groupToken: API_VERSIONS_EXTENSIONS, extension: VersionsExtension, exported: true }],

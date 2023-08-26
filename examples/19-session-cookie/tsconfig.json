@@ -1,21 +1,17 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "dist/tmp",
     "baseUrl": "./",
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
+      "@src/*": ["./src/*"],
       "@ditsmod/core": ["../../packages/core/src"],
-      "@ditsmod/cors": ["../../packages/cors/src"],
-      "@ditsmod/return": ["../../packages/cors/return"],
       "@ditsmod/router": ["../../packages/router/src"],
-      "@ditsmod/openapi": ["../../packages/openapi/src"],
       "@ditsmod/session-cookie": ["../../packages/session-cookie/src"],
-      "@ditsmod/jwt": ["../../packages/jwt/src"],
-      "@ditsmod/i18n": ["../../packages/i18n/src"],
-      "@dict/first/*": ["./src/app/first/locales/current/_base-en/*"],
       "@ditsmod/testing": ["../../packages/testing/src"],
-      "@dict/second/*": ["./src/app/second/locales/current/_base-en/*"]
     }
   },
   "include": ["src", "test"],

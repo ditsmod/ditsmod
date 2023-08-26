@@ -1,9 +1,9 @@
-import { injectable } from '../di';
-import { HttpMethod } from '../types/mix';
-import { Router } from '../types/router';
-import { NodeResponse, RequestListener } from '../types/server-options';
-import { Status } from '../utils/http-status-codes';
-import { SystemLogMediator } from '../log-mediator/system-log-mediator';
+import { injectable } from '../di/index.js';
+import { HttpMethod } from '../types/mix.js';
+import { Router } from '../types/router.js';
+import { NodeResponse, RequestListener } from '../types/server-options.js';
+import { Status } from '../utils/http-status-codes.js';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator.js';
 
 @injectable()
 export class PreRouter {

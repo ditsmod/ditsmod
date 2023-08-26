@@ -1,15 +1,15 @@
 import * as http from 'http';
-import { injectable, forwardRef, InjectionToken } from '../di';
-import { rootModule } from '../decorators/root-module';
-import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
-import { ModuleManager } from './module-manager';
-import { featureModule } from '../decorators/module';
-import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj, Extension, ExtensionProvider } from '../types/mix';
-import { LoggerConfig } from '../types/logger';
-import { ConsoleLogger } from './console-logger';
-import { controller } from '../decorators/controller';
-import { isMultiProvider } from '../utils/type-guards';
-import { SystemLogMediator } from '../log-mediator/system-log-mediator';
+import { injectable, forwardRef, InjectionToken } from '../di/index.js';
+import { rootModule } from '../decorators/root-module.js';
+import { NormalizedModuleMetadata } from '../models/normalized-module-metadata.js';
+import { ModuleManager } from './module-manager.js';
+import { featureModule } from '../decorators/module.js';
+import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj, Extension, ExtensionProvider } from '../types/mix.js';
+import { LoggerConfig } from '../types/logger.js';
+import { ConsoleLogger } from './console-logger.js';
+import { controller } from '../decorators/controller.js';
+import { isMultiProvider } from '../utils/type-guards.js';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator.js';
 
 describe('ModuleManager', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;

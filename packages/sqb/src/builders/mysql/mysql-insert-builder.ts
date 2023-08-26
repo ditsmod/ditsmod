@@ -1,5 +1,5 @@
-import { NoSqlActions, TableAndAlias } from '../types';
-import { MySqlSelectBuilder } from './mysql-select-builder';
+import { NoSqlActions, TableAndAlias } from '../types.js';
+import { MySqlSelectBuilder } from './mysql-select-builder.js';
 
 class InsertQuery {
   table: string = '';

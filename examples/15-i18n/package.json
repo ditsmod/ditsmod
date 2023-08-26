@@ -1,12 +1,13 @@
 {
   "name": "examples15",
+  "type": "module",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "dist/src/main",
-  "types": "src/index",
+  "main": "dist/main",
+  "types": "dist/main",
   "scripts": {
-    "start": "nodemon -e ts --exec ts-node -r tsconfig-paths/register src/main.ts",
-    "test": "npm run build && jest",
-    "build": "tsc -b tsconfig.build.json"
+    "start": "nodemon -e ts --exec ts-node -r tsconfig-paths/register src/main.ts --project tsconfig.build.json",
+    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js",
+    "build": "tsc -b tsconfig.test.json"
   }
 }

@@ -1,11 +1,11 @@
 import request = require('supertest');
 import { TestApplication } from '@ditsmod/testing';
+import { jest } from '@jest/globals';
 
-import { AppModule } from '../src/app/app.module';
+import { AppModule } from '@src/app/app.module.js';
 
 
 describe('15-i18n', () => {
-  console.log = jest.fn(); // Hide logs
 
   it('controller works', async () => {
     const server = await new TestApplication(AppModule).getServer();

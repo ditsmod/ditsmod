@@ -1,5 +1,5 @@
-import { InjectionToken } from '../di';
-import { AnyObj, Extension, ExtensionProvider, ExtensionType } from '../types/mix';
+import { InjectionToken } from '../di/index.js';
+import { AnyObj, Extension, ExtensionProvider, ExtensionType } from '../types/mix.js';
 
 export class ExtensionObj {
   exports: any[];

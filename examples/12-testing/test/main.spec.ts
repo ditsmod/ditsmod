@@ -1,10 +1,11 @@
 import request = require('supertest');
 import { HttpErrorHandler, NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
+import { jest } from '@jest/globals';
 
-import { AppModule } from '../src/app/app.module';
-import { CustomHttpErrorHandler } from './custom-controller-error-handler';
-import { ErrorContainer } from './error-container';
+import { AppModule } from '@src/app/app.module.js';
+import { CustomHttpErrorHandler } from './custom-controller-error-handler.js';
+import { ErrorContainer } from './error-container.js';
 
 describe('12-testing', () => {
   it('controller works', async () => {

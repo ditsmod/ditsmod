@@ -1,7 +1,7 @@
 import { Cookies, NodeRequest, NodeResponse } from '@ts-stack/cookies';
 import { inject, injectable, NODE_REQ, NODE_RES, optional } from '@ditsmod/core';
 
-import { SessionCookieOptions } from './types';
+import { SessionCookieOptions } from './types.js';
 
 @injectable()
 export class SessionCookie {

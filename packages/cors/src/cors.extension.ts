@@ -20,8 +20,8 @@ import {
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
 
-import { CorsInterceptor } from './cors.interceptor';
-import { ALLOW_METHODS } from './constans';
+import { CorsInterceptor } from './cors.interceptor.js';
+import { ALLOW_METHODS } from './constans.js';
 
 @injectable()
 export class CorsExtension implements Extension<void | false> {

@@ -1,7 +1,7 @@
 import { Class } from '@ditsmod/core';
 
-import { OneSqlExpression } from '../../types';
-import { AndOrBuilder } from './and-or-builder';
+import { OneSqlExpression } from '../../types.js';
+import { AndOrBuilder } from './and-or-builder.js';
 
 export class JoinBuilder {
   on(...clause: OneSqlExpression) {

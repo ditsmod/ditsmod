@@ -3,10 +3,10 @@ import { DictGroup, Dictionary, I18nModule, I18nProviders, I18N_TRANSLATIONS } f
 import { Class } from '@ditsmod/core';
 import { Options } from 'ajv';
 
-import { AjvService } from './ajv.service';
-import { AJV_OPTIONS, VALIDATION_EXTENSIONS } from './constants';
-import { current } from './locales/current';
-import { ValidationExtension } from './validation.extension';
+import { AjvService } from './ajv.service.js';
+import { AJV_OPTIONS, VALIDATION_EXTENSIONS } from './constants.js';
+import { current } from './locales/current/index.js';
+import { ValidationExtension } from './validation.extension.js';
 
 @featureModule({
   imports: [I18nModule],

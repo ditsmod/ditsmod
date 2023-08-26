@@ -2,7 +2,7 @@ import { Providers, rootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 import { CorsModule } from '@ditsmod/cors';
 
-import { FirstController, SecondController } from './controllers';
+import { FirstController, SecondController } from './controllers.js';
 
 @rootModule({
   imports: [

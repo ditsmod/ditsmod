@@ -1,21 +1,21 @@
-import { Injector } from './di';
+import { Injector } from './di/index.js';
 
-import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
-import { RootMetadata } from './models/root-metadata';
-import { defaultExtensions, defaultExtensionsTokens } from './services/default-extensions';
-import { defaultProvidersPerApp } from './services/default-providers-per-app';
-import { defaultProvidersPerReq } from './services/default-providers-per-req';
-import { ModuleManager } from './services/module-manager';
-import { ImportedTokensMap } from './types/metadata-per-mod';
-import { AppMetadataMap, ModuleType, ModuleWithParams, Scope, ServiceProvider } from './types/mix';
-import { getDependencies, ReflectiveDependecy } from './utils/get-dependecies';
-import { getLastProviders } from './utils/get-last-providers';
-import { getModuleName } from './utils/get-module-name';
-import { getProviderName } from './utils/get-provider-name';
-import { getProvidersTargets, getTokens } from './utils/get-tokens';
-import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } from './utils/type-guards';
-import { SystemLogMediator } from './log-mediator/system-log-mediator';
-import { RouteMeta } from './types/route-data';
+import { NormalizedModuleMetadata } from './models/normalized-module-metadata.js';
+import { RootMetadata } from './models/root-metadata.js';
+import { defaultExtensions, defaultExtensionsTokens } from './services/default-extensions.js';
+import { defaultProvidersPerApp } from './services/default-providers-per-app.js';
+import { defaultProvidersPerReq } from './services/default-providers-per-req.js';
+import { ModuleManager } from './services/module-manager.js';
+import { ImportedTokensMap } from './types/metadata-per-mod.js';
+import { AppMetadataMap, ModuleType, ModuleWithParams, Scope, ServiceProvider } from './types/mix.js';
+import { getDependencies, ReflectiveDependecy } from './utils/get-dependecies.js';
+import { getLastProviders } from './utils/get-last-providers.js';
+import { getModuleName } from './utils/get-module-name.js';
+import { getProviderName } from './utils/get-provider-name.js';
+import { getProvidersTargets, getTokens } from './utils/get-tokens.js';
+import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } from './utils/type-guards.js';
+import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
+import { RouteMeta } from './types/route-data.js';
 
 type AnyModule = ModuleType | ModuleWithParams;
 

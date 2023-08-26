@@ -4,8 +4,10 @@ const config: Config = {
   testEnvironment: 'node',
   modulePathIgnorePatterns: ['<rootDir>/src/', '<rootDir>/test/', '<rootDir>/dist/tmp'],
   moduleNameMapper: {
-    '@ditsmod/core': '<rootDir>/../../packages/core/dist/src',
-    '@ditsmod/router': '<rootDir>/../../packages/router/dist/src',
+    '@src/(.+)': '<rootDir>/dist/$1',
+    '@ditsmod/core': '<rootDir>/../../packages/core/dist',
+    '@ditsmod/testing': '<rootDir>/../../packages/testing/dist',
+    '@ditsmod/router': '<rootDir>/../../packages/router/dist',
   },
 };
 

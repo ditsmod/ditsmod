@@ -1,10 +1,10 @@
-import { forwardRef } from '../di';
-import { rootModule } from '../decorators/root-module';
-import { ModuleManager } from './module-manager';
-import { featureModule } from '../decorators/module';
-import { controller } from '../decorators/controller';
-import { SystemLogMediator } from '../log-mediator/system-log-mediator';
-import { Module1 } from './module-manager4.spec';
+import { forwardRef } from '../di/index.js';
+import { rootModule } from '../decorators/root-module.js';
+import { ModuleManager } from './module-manager.js';
+import { featureModule } from '../decorators/module.js';
+import { controller } from '../decorators/controller.js';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator.js';
+import { Module1 } from './module-manager4.spec.js';
 
 @controller()
 class Controller1 {}

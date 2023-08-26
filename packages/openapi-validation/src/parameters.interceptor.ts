@@ -3,8 +3,8 @@ import { CustomError } from '@ditsmod/core';
 import { Cookies } from '@ts-stack/cookies';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 
-import { ValidationRouteMeta } from './types';
-import { ValidationInterceptor } from './validation.interceptor';
+import { ValidationRouteMeta } from './types.js';
+import { ValidationInterceptor } from './validation.interceptor.js';
 
 /**
  * Interceptor to validate OpenAPI parameters in:

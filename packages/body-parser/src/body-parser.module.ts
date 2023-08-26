@@ -1,7 +1,7 @@
 import { featureModule, ModuleWithParams, PRE_ROUTER_EXTENSIONS } from '@ditsmod/core';
 
-import { HTTP_BODY, BodyParserConfig } from './body-parser-config';
-import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.extension';
+import { HTTP_BODY, BodyParserConfig } from './body-parser-config.js';
+import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.extension.js';
 
 /**
  * Adds `BodyParserInterceptor` to all requests with HTTP methods specified in `bodyParserConfig.acceptMethods`.

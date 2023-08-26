@@ -1,4 +1,4 @@
-import { injectable, optional } from '../di';
+import { injectable, optional } from '../di/index.js';
 
 export class LoggerConfig {
   /**

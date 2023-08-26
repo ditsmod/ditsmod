@@ -1,4 +1,4 @@
-import { deepFreeze } from './deep-freeze';
+import { deepFreeze } from './deep-freeze.js';
 
 describe('deepFreeze', () => {
   it('case 1', () => {

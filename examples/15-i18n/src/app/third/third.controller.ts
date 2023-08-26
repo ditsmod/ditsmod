@@ -1,6 +1,6 @@
 import { controller, Res, route } from '@ditsmod/core';
 
-import { FirstService } from '../first/first.service';
+import { FirstService } from '../first/first.service.js';
 
 @controller()
 export class ThirdController {

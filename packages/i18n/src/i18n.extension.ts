@@ -9,10 +9,10 @@ import {
 } from '@ditsmod/core';
 import { injectable, Injector } from '@ditsmod/core';
 
-import { I18nTransformer } from './i18n-transformer';
-import { I18nLogMediator } from './i18n-log-mediator';
-import { I18N_TRANSLATIONS, Translations } from './types/mix';
-import { DictService } from './dict.service';
+import { I18nTransformer } from './i18n-transformer.js';
+import { I18nLogMediator } from './i18n-log-mediator.js';
+import { I18N_TRANSLATIONS, Translations } from './types/mix.js';
+import { DictService } from './dict.service.js';
 
 @injectable()
 export class I18nExtension implements Extension<void> {

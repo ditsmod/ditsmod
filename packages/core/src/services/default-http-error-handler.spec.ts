@@ -1,13 +1,15 @@
-import { Injector } from '../di';
-import { ErrorOpts } from '../custom-error/error-opts';
-import { DefaultHttpErrorHandler as ErrorHandler } from './default-http-error-handler';
-import { Req } from './request';
-import { Res } from './response';
-import { Logger } from '../types/logger';
-import { Status } from '../utils/http-status-codes';
-import { CustomError } from '../custom-error/custom-error';
-import { NodeResponse } from '../types/server-options';
-import { NODE_RES } from '../constans';
+import { jest } from '@jest/globals';
+
+import { Injector } from '../di/index.js';
+import { ErrorOpts } from '../custom-error/error-opts.js';
+import { DefaultHttpErrorHandler as ErrorHandler } from './default-http-error-handler.js';
+import { Req } from './request.js';
+import { Res } from './response.js';
+import { Logger } from '../types/logger.js';
+import { Status } from '../utils/http-status-codes.js';
+import { CustomError } from '../custom-error/custom-error.js';
+import { NodeResponse } from '../types/server-options.js';
+import { NODE_RES } from '../constans.js';
 
 describe('ErrorHandler', () => {
   type ErrorLog = ErrorOpts & { err?: any };

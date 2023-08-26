@@ -1,10 +1,11 @@
+import { jest } from '@jest/globals';
 
-import { Provider, Injector } from '../di';
-import { LogMediator } from './log-mediator';
-import { LogItem, OutputLogFilter } from './types';
-import { ModuleExtract } from '../models/module-extract';
-import { ConsoleLogger } from '../services/console-logger';
-import { LogLevel } from '../types/logger';
+import { Provider, Injector } from '../di/index.js';
+import { LogMediator } from './log-mediator.js';
+import { LogItem, OutputLogFilter } from './types.js';
+import { ModuleExtract } from '../models/module-extract.js';
+import { ConsoleLogger } from '../services/console-logger.js';
+import { LogLevel } from '../types/logger.js';
 
 describe('LogMediator', () => {
   class LogMediatorMock extends LogMediator {

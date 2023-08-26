@@ -7,9 +7,9 @@ import {
   getNewRegistry,
   RegistryOfInjector,
   ID,
-} from './types-and-models';
-import { Dependency, ResolvedFactory, ResolvedProvider, Class, DecoratorAndValue } from './types-and-models';
-import { fromSelf, skipSelf, inject, optional } from './decorators';
+} from './types-and-models.js';
+import { Dependency, ResolvedFactory, ResolvedProvider, Class, DecoratorAndValue } from './types-and-models.js';
+import { fromSelf, skipSelf, inject, optional } from './decorators.js';
 import {
   cyclicDependencyError,
   instantiationError,
@@ -17,10 +17,10 @@ import {
   invalidProviderError,
   noAnnotationError,
   mixMultiProvidersWithRegularProvidersError,
-} from './error-handling';
-import { reflector } from './reflection';
-import { resolveForwardRef } from './forward-ref';
-import { InjectionToken } from './injection-token';
+} from './error-handling.js';
+import { reflector } from './reflection.js';
+import { resolveForwardRef } from './forward-ref.js';
+import { InjectionToken } from './injection-token.js';
 import {
   isClassProvider,
   isFactoryProvider,
@@ -30,9 +30,9 @@ import {
   stringify,
   isValueProvider,
   isFunctionFactoryProvider,
-} from './utils';
-import { DualKey, KeyRegistry } from './key-registry';
-import { AnyFn } from '../types/mix';
+} from './utils.js';
+import { DualKey, KeyRegistry } from './key-registry.js';
+import { AnyFn } from '../types/mix.js';
 
 const NoDefaultValue = Symbol();
 

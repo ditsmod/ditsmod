@@ -1,6 +1,6 @@
 import { InputLogFilter, LogMediator } from '@ditsmod/core';
 
-import { ISO639 } from './types/iso-639';
+import { ISO639 } from './types/iso-639.js';
 
 export class I18nLogMediator extends LogMediator {
   /**

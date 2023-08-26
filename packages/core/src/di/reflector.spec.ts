@@ -1,7 +1,7 @@
 import 'reflect-metadata';
-import { Reflector, isDelegateCtor } from './reflector';
-import { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories';
-import { DecoratorAndValue, ParamsMeta, PropMeta, PropMetadataTuple } from './types-and-models';
+import { Reflector, isDelegateCtor } from './reflector.js';
+import { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
+import { DecoratorAndValue, ParamsMeta, PropMeta, PropMetadataTuple } from './types-and-models.js';
 
 const classDecorator = makeClassDecorator((data?: any) => data);
 const classDecoratorWithoutTransformator = makeClassDecorator();

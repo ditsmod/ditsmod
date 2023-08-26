@@ -1,7 +1,7 @@
 import { controller, Res } from '@ditsmod/core';
 import { oasRoute } from '@ditsmod/openapi';
 
-import { BearerGuard } from './bearer.guard';
+import { BearerGuard } from './bearer.guard.js';
 
 @controller()
 export class SecondController {

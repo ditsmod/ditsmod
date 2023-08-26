@@ -3,9 +3,9 @@ import { I18nProviders } from '@ditsmod/i18n';
 import { ValidationModule } from '@ditsmod/openapi-validation';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
-import { FirstController } from './first.controller';
-import { current } from './locales/current';
-import { imported } from './locales/imported';
+import { FirstController } from './first.controller.js';
+import { current } from './locales/current/index.js';
+import { imported } from './locales/imported/index.js';
 
 @featureModule({
   imports: [BodyParserModule, ValidationModule.withParams(current)],

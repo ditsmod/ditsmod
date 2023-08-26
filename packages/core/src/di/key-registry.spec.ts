@@ -1,4 +1,4 @@
-import { KeyRegistry } from './key-registry';
+import { KeyRegistry } from './key-registry.js';
 
 describe('KeyRegistry', () => {
   it('case 1', () => {

@@ -1,32 +1,42 @@
 {
   "name": "@ditsmod/openapi-validation",
+  "type": "module",
   "version": "2.8.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
   "description": "Ditsmod module to support simple OpenAPI validation",
-  "main": "dist/src/index",
-  "types": "dist/src/index",
+  "module": "dist/index.js",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "dist/index",
+  "types": "dist/index",
   "directories": {
     "lib": "src"
   },
   "scripts": {
-    "test": "npm run build && jest",
     "build": "tsc -b tsconfig.build.json",
-    "clean": "rm -rf dist/*"
+    "clean": "rm -rf dist*",
+    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
   },
   "keywords": [],
   "author": "Костя Третяк",
   "license": "MIT",
   "dependencies": {
-    "@ts-stack/cookies": "^1.0.2",
+    "@ts-stack/cookies": "^1.0.3",
     "ajv": "^8.11.0"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.38.0",
-    "@ditsmod/i18n": "^2.1.0",
-    "@ditsmod/openapi": "^2.7.0"
+    "@ditsmod/core": "^2.46.0",
+    "@ditsmod/i18n": "^2.7.0",
+    "@ditsmod/openapi": "^2.19.1"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }

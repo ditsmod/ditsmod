@@ -1,5 +1,5 @@
-import { ImportObj } from '../types/metadata-per-mod';
-import { ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
+import { ImportObj } from '../types/metadata-per-mod.js';
+import { ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix.js';
 
 export function getImportedTokens(map: Map<any, ImportObj<ServiceProvider>> | undefined) {
   return [...(map || [])].map(([key]) => key);

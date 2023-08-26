@@ -1,12 +1,12 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
 import { featureModule, ModuleWithParams, PRE_ROUTER_EXTENSIONS, Providers, ROUTES_EXTENSIONS } from '@ditsmod/core';
 
-import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension';
-import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension';
-import { OAS_COMPILER_EXTENSIONS } from './di-tokens';
-import { OpenapiController } from './openapi.controller';
-import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-options';
-import { OpenapiLogMediator } from './services/openapi-log-mediator';
+import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension.js';
+import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension.js';
+import { OAS_COMPILER_EXTENSIONS } from './di-tokens.js';
+import { OpenapiController } from './openapi.controller.js';
+import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-options.js';
+import { OpenapiLogMediator } from './services/openapi-log-mediator.js';
 
 @featureModule({
   controllers: [OpenapiController],
@@ -15,7 +15,7 @@ import { OpenapiLogMediator } from './services/openapi-log-mediator';
   extensions: [
     { extension: OpenapiRoutesExtension, groupToken: ROUTES_EXTENSIONS, exported: true },
     {
-      extension: OpenapiCompilerExtension,
+      extension: (OpenapiCompilerExtension as any),
       groupToken: OAS_COMPILER_EXTENSIONS,
       nextToken: PRE_ROUTER_EXTENSIONS,
       exported: true,

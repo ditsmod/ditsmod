@@ -1,8 +1,8 @@
 import { ServiceProvider } from '@ditsmod/core';
 import { injectable, Class } from '@ditsmod/core';
 
-import { I18nLogMediator } from './i18n-log-mediator';
-import { Dictionary, Translations } from './types/mix';
+import { I18nLogMediator } from './i18n-log-mediator.js';
+import { Dictionary, Translations } from './types/mix.js';
 
 /**
  * Transforms `Translations[]` to `ServiceProvider[]`.

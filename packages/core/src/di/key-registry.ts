@@ -1,4 +1,4 @@
-import { resolveForwardRef } from './forward-ref';
+import { resolveForwardRef } from './forward-ref.js';
 
 /**
  * A unique object used for retrieving items from the `Injector`.

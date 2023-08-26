@@ -1,8 +1,8 @@
 import { AnyObj, controller, inject, PATH_PARAMS, Res, route } from '@ditsmod/core';
 import { DictService } from '@ditsmod/i18n';
 
-import { FirstService } from '../first/first.service';
-import { SecondDict } from '@dict/second/second.dict';
+import { FirstService } from '../first/first.service.js';
+import { SecondDict } from '@dict/second/second.dict.js';
 
 @controller()
 export class SecondController {

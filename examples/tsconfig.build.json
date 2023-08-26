@@ -7,6 +7,7 @@
     { "path": "04-logger/tsconfig.build.json" },
     { "path": "05-nested-routes/tsconfig.build.json" },
     { "path": "06-body-parser/tsconfig.build.json" },
+    { "path": "06-body-parser/tsconfig.test.json" },
     { "path": "07-dynamically-composing-modules/tsconfig.build.json" },
     { "path": "08-http-interceptors/tsconfig.build.json" },
     { "path": "09-one-extension/tsconfig.build.json" },

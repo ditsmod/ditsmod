@@ -1,5 +1,5 @@
-import { ValueProvider } from '../di';
-import { getLastProviders } from './get-last-providers';
+import { ValueProvider } from '../di/index.js';
+import { getLastProviders } from './get-last-providers.js';
 
 describe('getLastProviders()', () => {
   it('case 1', () => {

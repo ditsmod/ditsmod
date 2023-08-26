@@ -1,7 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "dist",
+    "rootDir": "src",
     "baseUrl": "./",
     "tsBuildInfoFile": "dist/build.tsbuildinfo",
     "paths": {
@@ -12,7 +15,7 @@
       "@ditsmod/jwt": ["../../packages/jwt/src"],
     }
   },
-  "include": ["src", "test"],
+  "include": ["src"],
   "references": [
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/jwt/tsconfig.build.json" },

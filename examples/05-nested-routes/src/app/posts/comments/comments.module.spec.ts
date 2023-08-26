@@ -1,6 +1,7 @@
 import { Injector, Res } from '@ditsmod/core';
+import { jest } from '@jest/globals';
 
-import { CommentsController } from './comments.controller';
+import { CommentsController } from './comments.controller.js';
 
 describe('CommentsController', () => {
   const sendJson = jest.fn();

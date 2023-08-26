@@ -1,5 +1,5 @@
-import { Injector } from '../di';
-import { ServiceProvider } from '../types/mix';
+import { Injector } from '../di/index.js';
+import { ServiceProvider } from '../types/mix.js';
 
 export interface ReflectiveDependecy {
   token: any;

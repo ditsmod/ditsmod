@@ -1,5 +1,5 @@
-import { HttpMethod } from './mix';
-import { NodeRequest, NodeResponse } from './server-options';
+import { HttpMethod } from './mix.js';
+import { NodeRequest, NodeResponse } from './server-options.js';
 
 export class Router {
   on(method: HttpMethod, path: string, handle: RouteHandler): this {

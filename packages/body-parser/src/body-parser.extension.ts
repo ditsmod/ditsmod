@@ -1,8 +1,8 @@
 import { Extension, ExtensionsManager, HTTP_INTERCEPTORS, PerAppService, ROUTES_EXTENSIONS } from '@ditsmod/core';
 import { injectable, InjectionToken } from '@ditsmod/core';
 
-import { BodyParserConfig } from './body-parser-config';
-import { BodyParserInterceptor } from './body-parser.interceptor';
+import { BodyParserConfig } from './body-parser-config.js';
+import { BodyParserInterceptor } from './body-parser.interceptor.js';
 
 export const BODY_PARSER_EXTENSIONS = new InjectionToken<Extension<void>[]>('BODY_PARSER_EXTENSIONS');
 

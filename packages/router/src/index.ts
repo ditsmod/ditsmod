@@ -1,5 +1,5 @@
-export { DefaultRouter } from './router';
-export { Tree } from './tree';
-export { RouteParam } from './types';
-export { RouterModule } from './router.module';
-export { RouterLogMediator } from './router-log-mediator';
+export { DefaultRouter } from './router.js';
+export { Tree } from './tree.js';
+export { RouteParam } from './types.js';
+export { RouterModule } from './router.module.js';
+export { RouterLogMediator } from './router-log-mediator.js';

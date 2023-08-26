@@ -1,10 +1,10 @@
-import { DecoratorAndValue, reflector, resolveForwardRef } from '../di';
-import { ModuleMetadata } from '../types/module-metadata';
-import { AnyFn, ModuleType, ModuleWithParams } from '../types/mix';
-import { getModuleName } from './get-module-name';
-import { mergeArrays } from './merge-arrays';
-import { isFeatureModule, isModuleWithParams, isRootModule } from './type-guards';
-import { getLastProviders } from './get-last-providers';
+import { DecoratorAndValue, reflector, resolveForwardRef } from '../di/index.js';
+import { ModuleMetadata } from '../types/module-metadata.js';
+import { AnyFn, ModuleType, ModuleWithParams } from '../types/mix.js';
+import { getModuleName } from './get-module-name.js';
+import { mergeArrays } from './merge-arrays.js';
+import { isFeatureModule, isModuleWithParams, isRootModule } from './type-guards.js';
+import { getLastProviders } from './get-last-providers.js';
 
 export function getModuleMetadata(
   modOrObj: ModuleType | ModuleWithParams,

@@ -1,11 +1,11 @@
-import { inject, injectable, Injector, Class } from '../di';
-import { getProviderName } from '../utils/get-provider-name';
-import { isInjectionToken } from '../utils/type-guards';
-import { EXTENSIONS_COUNTERS } from '../constans';
-import { Extension, ExtensionsGroupToken } from '../types/mix';
-import { Counter } from './counter';
-import { ExtensionsContext } from './extensions-context';
-import { SystemLogMediator } from '../log-mediator/system-log-mediator';
+import { inject, injectable, Injector, Class } from '../di/index.js';
+import { getProviderName } from '../utils/get-provider-name.js';
+import { isInjectionToken } from '../utils/type-guards.js';
+import { EXTENSIONS_COUNTERS } from '../constans.js';
+import { Extension, ExtensionsGroupToken } from '../types/mix.js';
+import { Counter } from './counter.js';
+import { ExtensionsContext } from './extensions-context.js';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator.js';
 
 class Cache {
   constructor(

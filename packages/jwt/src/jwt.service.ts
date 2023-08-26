@@ -2,8 +2,6 @@ import { injectable } from '@ditsmod/core';
 import {
   SignPayload,
   SecretOrPrivateKey,
-  sign,
-  verify,
   SignOptions,
   SecretOrPublicKey,
   VerifyOptions,
@@ -11,14 +9,15 @@ import {
   DecodeOptions,
   decode,
 } from 'jsonwebtoken';
+import jwt = require('jsonwebtoken');
 
-import { JwtServiceOptions } from './models/jwt-service-options';
+import { JwtServiceOptions } from './models/jwt-service-options.js';
 import {
   SignWithPrivateKeyOptions,
   SignWithSecretOptions,
   VerifyWithPublicKeyOptions,
   VerifyWithSecretOptions,
-} from './types/mix';
+} from './types/mix.js';
 
 @injectable()
 export class JwtService {
@@ -67,7 +66,7 @@ export class JwtService {
 
   protected sign(payload: SignPayload, secretOrPrivateKey: SecretOrPrivateKey, options: SignOptions): Promise<string> {
     return new Promise((resolve, reject) => {
-      sign(payload, secretOrPrivateKey, options, (err, token) => {
+      jwt.sign(payload, secretOrPrivateKey, options, (err, token) => {
         err ? reject(err) : resolve(token);
       });
     });
@@ -129,7 +128,7 @@ export class JwtService {
 
   protected virify<T>(token: string, secretOrPublicKey: SecretOrPublicKey, options: VerifyOptions): Promise<T> {
     return new Promise((resolve, reject) => {
-      verify<T>(token, secretOrPublicKey, options, (err, decoded) => {
+      jwt.verify<T>(token, secretOrPublicKey, options, (err, decoded) => {
         err ? reject(err) : resolve(decoded);
       });
     });

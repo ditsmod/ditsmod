@@ -1,5 +1,5 @@
-import { Class, DiError } from './types-and-models';
-import { stringify } from './utils';
+import { Class, DiError } from './types-and-models.js';
+import { stringify } from './utils.js';
 
 function findFirstClosedCycle(tokens: any[]): any[] {
   const res: any[] = [];

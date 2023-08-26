@@ -8,7 +8,7 @@ import {
   ServicePerRou2,
   ServicePerReq2,
   ServicePerRou3
-} from './services';
+} from './services.js';
 
 @controller({
   providersPerRou: [ServicePerRou2],

@@ -1,10 +1,10 @@
-import { injectable } from '../di';
-import { RootMetadata } from '../models/root-metadata';
-import { ControllerMetadata2 } from '../types/controller-metadata';
-import { MetadataPerMod1, MetadataPerMod2 } from '../types/metadata-per-mod';
-import { GuardItem, NormalizedGuard, Extension, ServiceProvider } from '../types/mix';
-import { RouteMeta } from '../types/route-data';
-import { isController, isRoute } from '../utils/type-guards';
+import { injectable } from '../di/index.js';
+import { RootMetadata } from '../models/root-metadata.js';
+import { ControllerMetadata2 } from '../types/controller-metadata.js';
+import { MetadataPerMod1, MetadataPerMod2 } from '../types/metadata-per-mod.js';
+import { GuardItem, NormalizedGuard, Extension, ServiceProvider } from '../types/mix.js';
+import { RouteMeta } from '../types/route-data.js';
+import { isController, isRoute } from '../utils/type-guards.js';
 
 @injectable()
 export class RoutesExtension implements Extension<MetadataPerMod2> {

@@ -1,8 +1,8 @@
-import * as jwt from 'jsonwebtoken';
+import jwt = require('jsonwebtoken');
 import { SignOptions, SignPayload } from 'jsonwebtoken';
 
-import { JwtService } from './jwt.service';
-import { JwtServiceOptions } from './models/jwt-service-options';
+import { JwtService } from './jwt.service.js';
+import { JwtServiceOptions } from './models/jwt-service-options.js';
 
 describe('JwtService', () => {
   describe('when signing a token', function () {

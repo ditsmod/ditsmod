@@ -1,7 +1,7 @@
 import { controller, route, inject, Res, Req} from '@ditsmod/core';
 
-import { FirstPerRouService } from './first/first-per-rou.service';
-import { ThirdService } from './third/three.service';
+import { FirstPerRouService } from './first/first-per-rou.service.js';
+import { ThirdService } from './third/three.service.js';
 
 @controller()
 export class AppController {

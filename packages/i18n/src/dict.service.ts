@@ -1,9 +1,9 @@
 import { AnyObj, inject, QUERY_PARAMS } from '@ditsmod/core';
 import { injectable, Injector, optional, Class } from '@ditsmod/core';
 
-import { I18nLogMediator } from './i18n-log-mediator';
-import { ISO639 } from './types/iso-639';
-import { Dictionary, I18nOptions } from './types/mix';
+import { I18nLogMediator } from './i18n-log-mediator.js';
+import { ISO639 } from './types/iso-639.js';
+import { Dictionary, I18nOptions } from './types/mix.js';
 
 @injectable()
 export class DictService {

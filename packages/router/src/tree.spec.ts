@@ -1,5 +1,5 @@
-import { Tree } from './tree';
-import { RouteParam } from './types';
+import { Tree } from './tree.js';
+import { RouteParam } from './types.js';
 
 class TestTree extends Tree {
   printTree(prefix = '') {

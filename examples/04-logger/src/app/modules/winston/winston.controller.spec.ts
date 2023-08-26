@@ -1,7 +1,8 @@
 import { Injector, Res } from '@ditsmod/core';
 import { Logger as WinstonLogger } from 'winston';
+import { jest } from '@jest/globals';
 
-import { WinstonController } from './winston.controller';
+import { WinstonController } from './winston.controller.js';
 
 describe('WinstonController', () => {
   const send = jest.fn();

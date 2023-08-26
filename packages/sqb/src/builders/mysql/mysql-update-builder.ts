@@ -1,8 +1,8 @@
-import { OneSqlExpression } from '../../types';
-import { NoSqlActions, TableAndAlias } from '../types';
-import { AndOrBuilder } from './and-or-builder';
-import { JoinBuilder } from './join-builder';
-import { MySqlSelectBuilder } from './mysql-select-builder';
+import { OneSqlExpression } from '../../types.js';
+import { NoSqlActions, TableAndAlias } from '../types.js';
+import { AndOrBuilder } from './and-or-builder.js';
+import { JoinBuilder } from './join-builder.js';
+import { MySqlSelectBuilder } from './mysql-select-builder.js';
 
 class UpdateQuery {
   update: string[] = [];

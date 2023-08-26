@@ -1,1 +1,1 @@
-export { TestApplication } from './test-application';
+export { TestApplication } from './test-application.js';

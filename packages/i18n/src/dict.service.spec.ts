@@ -1,10 +1,11 @@
 import { AnyObj, Injector, QUERY_PARAMS } from '@ditsmod/core';
+import { jest } from '@jest/globals';
 
-import { I18nOptions } from './types/mix';
-import { DictService } from './dict.service';
-import { CommonDict } from './test/current';
-import { CommonUkDict } from './test/current/common-uk.dict';
-import { I18nLogMediator } from './i18n-log-mediator';
+import { I18nOptions } from './types/mix.js';
+import { DictService } from './dict.service.js';
+import { CommonDict } from './test/current/index.js';
+import { CommonUkDict } from './test/current/common-uk.dict.js';
+import { I18nLogMediator } from './i18n-log-mediator.js';
 
 describe('DictService', () => {
   function getService(queryParams?: AnyObj, i18nOptions?: I18nOptions) {

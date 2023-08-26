@@ -1,5 +1,5 @@
 import { Logger } from '@ditsmod/core';
-import { PatchLogger } from './patch-logger';
+import { PatchLogger } from './patch-logger.js';
 
 describe('PatchLogger Pino', () => {
   it('should have the necessary methods', () => {

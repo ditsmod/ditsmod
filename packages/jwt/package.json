@@ -1,29 +1,32 @@
 {
   "name": "@ditsmod/jwt",
+  "type": "module",
   "version": "2.3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
-  "description": "",
-  "main": "dist/src/index",
-  "types": "dist/src/index",
+  "description": "JWT module for Ditsmod application",
+  "module": "dist/index.js",
+  "exports": "./dist/index.js",
+  "main": "dist/index",
+  "types": "dist/index",
   "directories": {
     "lib": "src"
   },
   "scripts": {
-    "test": "npm run build && jest",
     "build": "tsc -b tsconfig.build.json",
-    "clean": "rm -rf dist/*"
+    "clean": "rm -rf dist*",
+    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "jsonwebtoken": "^9.0.0"
+    "jsonwebtoken": "^9.0.1"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.38.0"
+    "@ditsmod/core": "^2.46.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }

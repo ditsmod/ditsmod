@@ -1,7 +1,7 @@
-export * from './types/iso-639';
-export { I18nModule } from './i18n.module';
-export { I18N_EXTENSIONS, I18N_TRANSLATIONS, Dictionary, DictGroup, Translations, I18nOptions } from './types/mix';
-export { I18nLogMediator } from './i18n-log-mediator';
-export { DictService } from './dict.service';
-export { getDictGroup, I18nProviders } from './i18n-providers';
-export { I18nTransformer } from './i18n-transformer';
+export * from './types/iso-639.js';
+export { I18nModule } from './i18n.module.js';
+export { I18N_EXTENSIONS, I18N_TRANSLATIONS, Dictionary, DictGroup, Translations, I18nOptions } from './types/mix.js';
+export { I18nLogMediator } from './i18n-log-mediator.js';
+export { DictService } from './dict.service.js';
+export { getDictGroup, I18nProviders } from './i18n-providers.js';
+export { I18nTransformer } from './i18n-transformer.js';

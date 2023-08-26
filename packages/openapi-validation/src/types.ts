@@ -3,7 +3,7 @@ import { Dictionary } from '@ditsmod/i18n';
 import { OasRouteMeta } from '@ditsmod/openapi';
 import { XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
 
-import { ValidationOptions } from './validation-options';
+import { ValidationOptions } from './validation-options.js';
 
 export class ValidationRouteMeta extends OasRouteMeta {
   parameters: XParameterObject[];

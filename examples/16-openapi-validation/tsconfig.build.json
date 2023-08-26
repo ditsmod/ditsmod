@@ -1,7 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "dist",
+    "rootDir": "src",
     "baseUrl": "./",
     "tsBuildInfoFile": "dist/build.tsbuildinfo",
     "paths": {
@@ -14,7 +17,7 @@
       "@ditsmod/i18n": ["../../packages/i18n/src"]
     }
   },
-  "include": ["src", "test"],
+  "include": ["src"],
   "references": [
     { "path": "../../packages/body-parser/tsconfig.build.json" },
     { "path": "../../packages/core/tsconfig.build.json" },

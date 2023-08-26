@@ -1,7 +1,7 @@
 
-import { getTableMetadata } from '../../utils';
-import { table } from '../../decorators/table';
-import { MySqlDeleteBuilder } from './mysql-delete-builder';
+import { getTableMetadata } from '../../utils.js';
+import { table } from '../../decorators/table.js';
+import { MySqlDeleteBuilder } from './mysql-delete-builder.js';
 
 describe('MySqlDeleteBuilder', () => {
   @table({ tableName: 'users' })

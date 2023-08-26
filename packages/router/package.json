@@ -1,23 +1,33 @@
 {
   "name": "@ditsmod/router",
+  "type": "module",
   "version": "2.5.0",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "homepage": "https://ditsmod.github.io/en/",
   "description": "Router module for Ditsmod applications",
+  "module": "dist/index.js",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
-  "main": "dist/src/index",
-  "types": "dist/src/index",
+  "main": "dist/index",
+  "types": "dist/index",
   "directories": {
     "lib": "src"
   },
   "scripts": {
-    "test": "npm run build && jest",
     "build": "tsc -b tsconfig.build.json",
-    "clean": "rm -rf dist/*",
-    "bench": "npm run build && node --expose-gc dist/src/bench.js"
+    "clean": "rm -rf dist*",
+    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js",
+    "bench": "npm run build && node --expose-gc dist/bench.js"
   },
   "keywords": [
     "router",
@@ -27,8 +37,8 @@
     "typescript"
   ],
   "devDependencies": {
-    "find-my-way": "^7.6.0",
-    "koa-tree-router": "^0.12.0",
+    "find-my-way": "^7.6.2",
+    "koa-tree-router": "^0.12.1",
     "trek-router": "^1.2.0"
   },
   "peerDependencies": {

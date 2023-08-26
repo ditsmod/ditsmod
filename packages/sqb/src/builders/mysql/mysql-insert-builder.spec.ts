@@ -1,7 +1,7 @@
 
-import { table } from '../../decorators/table';
-import { getTableMetadata } from '../../utils';
-import { MysqlInsertBuilder } from './mysql-insert-builder';
+import { table } from '../../decorators/table.js';
+import { getTableMetadata } from '../../utils.js';
+import { MysqlInsertBuilder } from './mysql-insert-builder.js';
 
 describe('MysqlInsertBuilder', () => {
   @table({ tableName: 'users' })

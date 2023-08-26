@@ -1,17 +1,17 @@
-import { FactoryProvider, injectable, Provider, Injector } from './di';
+import { FactoryProvider, injectable, Provider, Injector } from './di/index.js';
 
-import { controller, ControllerMetadata } from './decorators/controller';
-import { featureModule } from './decorators/module';
-import { rootModule } from './decorators/root-module';
-import { route, RouteMetadata } from './decorators/route';
-import { ModuleExtract } from './models/module-extract';
-import { NormalizedModuleMetadata } from './models/normalized-module-metadata';
-import { ModuleFactory } from './module-factory';
-import { defaultProvidersPerApp } from './services/default-providers-per-app';
-import { ModuleManager } from './services/module-manager';
-import { Req } from './services/request';
-import { Logger } from './types/logger';
-import { GlobalProviders, ImportObj, MetadataPerMod1 } from './types/metadata-per-mod';
+import { controller, ControllerMetadata } from './decorators/controller.js';
+import { featureModule } from './decorators/module.js';
+import { rootModule } from './decorators/root-module.js';
+import { route, RouteMetadata } from './decorators/route.js';
+import { ModuleExtract } from './models/module-extract.js';
+import { NormalizedModuleMetadata } from './models/normalized-module-metadata.js';
+import { ModuleFactory } from './module-factory.js';
+import { defaultProvidersPerApp } from './services/default-providers-per-app.js';
+import { ModuleManager } from './services/module-manager.js';
+import { Req } from './services/request.js';
+import { Logger } from './types/logger.js';
+import { GlobalProviders, ImportObj, MetadataPerMod1 } from './types/metadata-per-mod.js';
 import {
   DecoratorMetadata,
   ExtensionProvider,
@@ -19,13 +19,13 @@ import {
   ModuleWithParams,
   NormalizedGuard,
   ServiceProvider,
-} from './types/mix';
-import { Router } from './types/router';
-import { getImportedProviders, getImportedTokens } from './utils/get-imports';
-import { SystemLogMediator } from './log-mediator/system-log-mediator';
-import { makePropDecorator } from './di';
-import { transformControllersMetadata } from './utils/transform-controllers-metadata';
-import { HttpBackend } from './types/http-interceptor';
+} from './types/mix.js';
+import { Router } from './types/router.js';
+import { getImportedProviders, getImportedTokens } from './utils/get-imports.js';
+import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
+import { makePropDecorator } from './di/index.js';
+import { transformControllersMetadata } from './utils/transform-controllers-metadata.js';
+import { HttpBackend } from './types/http-interceptor.js';
 
 type AnyModule = ModuleType | ModuleWithParams;
 

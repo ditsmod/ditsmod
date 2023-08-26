@@ -17,14 +17,14 @@ import {
   ServiceProvider,
 } from '@ditsmod/core';
 
-import { TestModuleManager } from './test-module-manager';
-import { Scope, Meta, TestProvider, TestFactoryProvider, TestClassProvider } from './types';
-import { overrideLogLevel } from './utils';
+import { TestModuleManager, type TestModuleManager as TestModuleManagerType } from './test-module-manager.js';
+import { Scope, Meta, TestProvider, TestFactoryProvider, TestClassProvider } from './types.js';
+import { overrideLogLevel } from './utils.js';
 
 @injectable()
 export class TestPreRouterExtension extends PreRouterExtension {
   constructor(
-    @inject(forwardRef(() => TestModuleManager)) protected testModuleManager: TestModuleManager,
+    @inject(forwardRef(() => TestModuleManager)) protected testModuleManager: TestModuleManagerType,
     perAppService: PerAppService,
     router: Router,
     extensionsManager: ExtensionsManager,

@@ -1,7 +1,7 @@
 import { featureModule, Router } from '@ditsmod/core';
 
-import { DefaultRouter } from './router';
-import { RouterLogMediator } from './router-log-mediator';
+import { DefaultRouter } from './router.js';
+import { RouterLogMediator } from './router-log-mediator.js';
 
 /**
  * Sets `Router` provider on application scope.

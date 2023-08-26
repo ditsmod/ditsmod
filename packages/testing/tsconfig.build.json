@@ -1,6 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "rootDir": "src",
     "outDir": "dist",
     "tsBuildInfoFile": "dist/build.tsbuildinfo",
     "paths": {
@@ -8,12 +11,9 @@
       "@ditsmod/router": ["../router/src"]
     }
   },
-  "include": ["src", "test"],
+  "include": ["src"],
   "files": [],
   "references": [
-    {
-      "path": "../core/tsconfig.build.json"
-    },
     {
       "path": "../router/tsconfig.build.json"
     },

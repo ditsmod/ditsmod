@@ -1,12 +1,11 @@
 import request = require('supertest');
 import { TestApplication } from '@ditsmod/testing';
 
-import { AppModule } from '../src/app/app.module';
+import { AppModule } from '@src/app/app.module.js';
 
 describe('16-openapi-validation', () => {
-  console.log = jest.fn(); // Hide logs
 
-  it('controller works', async () => {
+  it('endpoints works', async () => {
     const server = await new TestApplication(AppModule).getServer();
 
     await request(server).get('/users/Kostia').expect(200).expect({ username: 'Kostia' });

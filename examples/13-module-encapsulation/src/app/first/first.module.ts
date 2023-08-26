@@ -1,10 +1,10 @@
 import { featureModule } from '@ditsmod/core';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
-import { FirstController } from './first.controler';
-import { FirstPerRouService } from './first-per-rou.service';
-import { FirstService } from './first.service';
-import { FirstMultiProviderService } from './first-multi-provider.service';
+import { FirstController } from './first.controler.js';
+import { FirstPerRouService } from './first-per-rou.service.js';
+import { FirstService } from './first.service.js';
+import { FirstMultiProviderService } from './first-multi-provider.service.js';
 
 @featureModule({
   imports: [BodyParserModule],

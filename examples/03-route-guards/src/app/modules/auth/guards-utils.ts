@@ -1,6 +1,6 @@
 import { createHelperForGuardWithParams } from '@ditsmod/core';
 
-import { PermissionsGuard } from './permissions.guard';
-import { Permission } from './types';
+import { PermissionsGuard } from './permissions.guard.js';
+import { Permission } from './types.js';
 
 export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);

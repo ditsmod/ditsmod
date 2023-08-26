@@ -1,27 +1,27 @@
 import { NodeRequest, NodeResponse } from '@ts-stack/cookies';
 import { Injector, NODE_REQ, NODE_RES } from '@ditsmod/core';
+import { jest } from '@jest/globals';
 
-import { SessionCookie } from './session-cookie';
-import { SessionCookieOptions } from './types';
+import { SessionCookie } from './session-cookie.js';
+import { SessionCookieOptions } from './types.js';
 
 describe('@ditsmod/session-cookie', () => {
-  const setHeaderMock = jest.fn<(arg: string[]) => any, any>((() => {}) as any);
+  const setHeader = jest.fn();
   let nodeReq: NodeRequest;
   let nodeRes: NodeResponse;
   let session: SessionCookie;
   const config = new SessionCookieOptions();
   config.cookieName = 'session';
-  config.maxAge = 1000 * 3600 * 24 * 30; // 30 днів;
+  config.maxAge = 1000 * 3600 * 24 * 30; // 30 days;
 
   beforeEach(() => {
     nodeReq = { headers: { cookie: '' } } as NodeRequest;
     nodeRes = {
       getHeader: (): any => {},
-      setHeader: (headerName: string, headerValue: string[]): any => {
-        setHeaderMock(headerValue);
-      },
+      setHeader,
       writeHead: (): any => {},
     } as unknown as NodeResponse;
+
     const injector = Injector.resolveAndCreate([
       { token: SessionCookieOptions, useValue: config },
       { token: NODE_REQ, useValue: nodeReq },
@@ -61,13 +61,9 @@ describe('@ditsmod/session-cookie', () => {
   it('includes cookie headers', async () => {
     session.id = 'foobar';
     nodeRes.writeHead(200);
-    const calls = setHeaderMock.mock.calls;
-    expect(calls.length).toBe(1);
-    const cookie = calls[0][0][0];
-    expect(/foobar/.test(cookie)).toBe(true);
-    expect(/expires/.test(cookie)).toBe(true);
-    expect(/path/.test(cookie)).toBe(true);
-    expect(/httponly/.test(cookie)).toBe(true);
+    expect(setHeader).toBeCalledTimes(1);
+    expect(setHeader).toBeCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
+    expect(setHeader).toBeCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
   });
 
   it('set maxAge before setting session.id', async () => {
@@ -75,13 +71,9 @@ describe('@ditsmod/session-cookie', () => {
     session.setMaxAge(maxAge);
     session.id = 'foobar';
     nodeRes.writeHead(200);
-    const calls = setHeaderMock.mock.calls;
-    expect(calls.length).toBe(1);
-    const cookie = calls[0][0][0];
-    expect(/foobar/.test(cookie)).toBe(true);
-    expect(/expires/.test(cookie)).toBe(true);
-    expect(/path/.test(cookie)).toBe(true);
-    expect(/httponly/.test(cookie)).toBe(true);
+    expect(setHeader).toBeCalledTimes(1);
+    expect(setHeader).toBeCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
+    expect(setHeader).toBeCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
   });
 
   it('set maxAge after setting session.id', async () => {
@@ -89,12 +81,8 @@ describe('@ditsmod/session-cookie', () => {
     const maxAge = 1000 * 60 * 60 * 3;
     session.setMaxAge(maxAge);
     nodeRes.writeHead(200);
-    const calls = setHeaderMock.mock.calls;
-    expect(calls.length).toBe(1);
-    const cookie = calls[0][0][0];
-    expect(/foobar/.test(cookie)).toBe(true);
-    expect(/expires/.test(cookie)).toBe(true);
-    expect(/path/.test(cookie)).toBe(true);
-    expect(/httponly/.test(cookie)).toBe(true);
+    expect(setHeader).toBeCalledTimes(1);
+    expect(setHeader).toBeCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
+    expect(setHeader).toBeCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
   });
 });

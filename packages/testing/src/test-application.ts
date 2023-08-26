@@ -1,8 +1,8 @@
 import { ApplicationOptions, LogLevel, ModuleType } from '@ditsmod/core';
 
-import { PreTestApplication } from './pre-test-application';
-import { TestModuleManager } from './test-module-manager';
-import { TestProvider } from './types';
+import { PreTestApplication } from './pre-test-application.js';
+import { TestModuleManager } from './test-module-manager.js';
+import { TestProvider } from './types.js';
 
 // This class is only needed as a wrapper over the PreTestApplication
 // class to hide the bootstrap() method from the public API.

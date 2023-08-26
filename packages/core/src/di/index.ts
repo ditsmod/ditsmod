@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 
-export * from './decorators';
-export { forwardRef, resolveForwardRef, ForwardRefFn } from './forward-ref';
-export { Injector } from './injector';
+export * from './decorators.js';
+export { forwardRef, resolveForwardRef, ForwardRefFn } from './forward-ref.js';
+export { Injector } from './injector.js';
 export {
   Provider,
   TypeProvider,
@@ -13,11 +13,11 @@ export {
   Class,
   NormalizedProvider,
   RegistryOfInjector,
-} from './types-and-models';
-export { InjectionToken } from './injection-token';
-export { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories';
-export { reflector } from './reflection';
-export { DualKey, KeyRegistry } from './key-registry';
+} from './types-and-models.js';
+export { InjectionToken } from './injection-token.js';
+export { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
+export { reflector } from './reflection.js';
+export { DualKey, KeyRegistry } from './key-registry.js';
 export {
   PropMeta,
   ParamsMeta,
@@ -28,7 +28,7 @@ export {
   ResolvedFactory,
   ResolvedProvider,
   DiError,
-} from './types-and-models';
+} from './types-and-models.js';
 export {
   isDecoratorAndValue,
   isClassProvider,
@@ -39,4 +39,4 @@ export {
   isTokenProvider,
   isTypeProvider,
   isValueProvider,
-} from './utils';
+} from './utils.js';

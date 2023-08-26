@@ -1,4 +1,6 @@
+import { jest } from '@jest/globals';
 import 'reflect-metadata';
+
 import {
   fromSelf,
   inject,
@@ -12,13 +14,13 @@ import {
   ResolvedProvider,
   methodFactory,
   skipSelf,
-} from '.';
+} from './index.js';
 
-import { stringify } from './utils';
-import { makeClassDecorator, makePropDecorator } from './decorator-factories';
-import { KeyRegistry } from './key-registry';
-import { getNewRegistry } from './types-and-models';
-import { DepsChecker } from './deps-checker';
+import { stringify } from './utils.js';
+import { makeClassDecorator, makePropDecorator } from './decorator-factories.js';
+import { KeyRegistry } from './key-registry.js';
+import { getNewRegistry } from './types-and-models.js';
+import { DepsChecker } from './deps-checker.js';
 
 class Engine {}
 

@@ -1,11 +1,11 @@
-import { EXTENSIONS_COUNTERS, PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from '../constans';
-import { PreRouterExtension } from '../extensions/pre-router.extension';
-import { RoutesExtension } from '../extensions/routes.extension';
-import { MetadataPerMod1 } from '../types/metadata-per-mod';
-import { ExtensionProvider } from '../types/mix';
-import { ExtensionsContext } from './extensions-context';
-import { ExtensionsManager } from './extensions-manager';
-import { PerAppService } from './per-app.service';
+import { EXTENSIONS_COUNTERS, PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from '../constans.js';
+import { PreRouterExtension } from '../extensions/pre-router.extension.js';
+import { RoutesExtension } from '../extensions/routes.extension.js';
+import { MetadataPerMod1 } from '../types/metadata-per-mod.js';
+import { ExtensionProvider } from '../types/mix.js';
+import { ExtensionsContext } from './extensions-context.js';
+import { ExtensionsManager } from './extensions-manager.js';
+import { PerAppService } from './per-app.service.js';
 
 export const defaultExtensions: Readonly<ExtensionProvider[]> = [
   PreRouterExtension,

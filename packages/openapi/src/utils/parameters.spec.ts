@@ -1,7 +1,7 @@
 import { SchemaObject, XParameterObject } from '@ts-stack/openapi-spec';
 
-import { Parameters } from './parameters';
-import { property } from '../decorators/property';
+import { Parameters } from './parameters.js';
+import { property } from '../decorators/property.js';
 
 describe('Parameters', () => {
   describe('without data model', () => {

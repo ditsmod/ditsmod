@@ -1,7 +1,7 @@
 import { Extension } from '@ditsmod/core';
 import { InjectionToken, Class } from '@ditsmod/core';
 
-import { ISO639 } from './iso-639';
+import { ISO639 } from './iso-639.js';
 
 export interface Dictionary {
   getLng(): ISO639;

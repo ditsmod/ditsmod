@@ -2,7 +2,7 @@ import request = require('supertest');
 import { NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
-import { AppModule } from '../src/app/app.module';
+import { AppModule } from '@src/app/app.module.js';
 
 describe('03-route-guards', () => {
   let server: NodeServer;

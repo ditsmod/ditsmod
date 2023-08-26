@@ -1,5 +1,6 @@
 {
   "name": "@ditsmod/session-cookie",
+  "type": "module",
   "version": "2.5.1",
   "repository": {
     "type": "git",
@@ -7,23 +8,32 @@
   },
   "homepage": "https://ditsmod.github.io/en/",
   "description": "REST framework",
+  "module": "dist/index.js",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts"
+    }
+  },
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "license": "MIT",
-  "main": "dist/src/index",
-  "types": "dist/src/index",
+  "main": "dist/index",
+  "types": "dist/index",
   "directories": {
     "lib": "src"
   },
   "scripts": {
-    "test": "npm run build && jest",
     "build": "tsc -b tsconfig.build.json",
-    "clean": "rm -rf dist/*"
+    "clean": "rm -rf dist*",
+    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
   },
   "dependencies": {
-    "@ts-stack/cookies": "^1.0.2"
+    "@ts-stack/cookies": "^1.0.3"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.35.0"
+    "@ditsmod/core": "^2.46.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }

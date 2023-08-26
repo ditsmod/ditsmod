@@ -1,9 +1,9 @@
-import { Class } from '../di';
-import { LogMediator } from '../log-mediator/log-mediator';
-import { SystemLogMediator } from '../log-mediator/system-log-mediator';
-import { OutputLogFilter } from '../log-mediator/types';
-import { Logger, LoggerConfig } from '../types/logger';
-import { NormalizedProvider } from './ng-utils';
+import { Class } from '../di/index.js';
+import { LogMediator } from '../log-mediator/log-mediator.js';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator.js';
+import { OutputLogFilter } from '../log-mediator/types.js';
+import { Logger, LoggerConfig } from '../types/logger.js';
+import { NormalizedProvider } from './ng-utils.js';
 
 /**
  * This class has utilites to adding providers to DI in more type safe way.

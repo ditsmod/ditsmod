@@ -8,8 +8,8 @@ import {
   skipSelf,
 } from '@ditsmod/core';
 
-import { SecondModule } from '../second/second.module';
-import { ThirdModule } from '../third/third.module';
+import { SecondModule } from '../second/second.module.js';
+import { ThirdModule } from '../third/third.module.js';
 
 const secondModuleWithParams: ModuleWithParams = { path: '', module: SecondModule };
 const thirdModuleWithParams: ModuleWithParams = { path: '', module: ThirdModule };

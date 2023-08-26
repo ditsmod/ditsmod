@@ -1,7 +1,8 @@
 import { Injector, Status } from '@ditsmod/core';
+import { jest } from '@jest/globals';
 
-import { PermissionsGuard } from './permissions.guard';
-import { AuthService } from './auth.service';
+import { PermissionsGuard } from './permissions.guard.js';
+import { AuthService } from './auth.service.js';
 
 describe('PermissionsGuard#canActivate()', () => {
   const hasPermissions = jest.fn();

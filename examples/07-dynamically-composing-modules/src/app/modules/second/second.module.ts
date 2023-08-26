@@ -1,6 +1,6 @@
 import { featureModule, Providers } from '@ditsmod/core';
 
-import { SecondController } from './second.controller';
+import { SecondController } from './second.controller.js';
 
 @featureModule({
   controllers: [SecondController],

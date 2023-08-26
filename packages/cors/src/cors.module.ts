@@ -1,9 +1,9 @@
 import { featureModule, ModuleWithParams, PRE_ROUTER_EXTENSIONS, Providers } from '@ditsmod/core';
 import { CorsOptions as CorsOpts } from '@ts-stack/cors';
 
-import { CORS_EXTENSIONS } from './constans';
-import { CorsExtension } from './cors.extension';
-import { CorsService } from './cors.service';
+import { CORS_EXTENSIONS } from './constans.js';
+import { CorsExtension } from './cors.extension.js';
+import { CorsService } from './cors.service.js';
 
 @featureModule({
   providersPerReq: [CorsService],

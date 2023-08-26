@@ -8,10 +8,10 @@ import {
   XSchemaObject,
 } from '@ts-stack/openapi-spec';
 
-import { REQUIRED } from '../constants';
-import { AnyEnum, PropertyDecoratorMetadata, CustomType } from '../decorators/property';
-import { mediaTypeName } from '../types/media-types';
-import { isProperty } from './type-guards';
+import { REQUIRED } from '../constants.js';
+import { AnyEnum, PropertyDecoratorMetadata, CustomType } from '../decorators/property.js';
+import { mediaTypeName } from '../types/media-types.js';
+import { isProperty } from './type-guards.js';
 
 export interface ContentOptions<T extends mediaTypeName = mediaTypeName> {
   mediaType: T;

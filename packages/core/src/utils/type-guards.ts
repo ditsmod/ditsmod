@@ -10,11 +10,11 @@ import {
   TokenProvider,
   DecoratorAndValue,
   reflector,
-} from '../di';
-import { featureModule } from '../decorators/module';
-import { controller, ControllerMetadata } from '../decorators/controller';
-import { route } from '../decorators/route';
-import { rootModule } from '../decorators/root-module';
+} from '../di/index.js';
+import { featureModule } from '../decorators/module.js';
+import { controller, ControllerMetadata } from '../decorators/controller.js';
+import { route } from '../decorators/route.js';
+import { rootModule } from '../decorators/root-module.js';
 import {
   AnyObj,
   ModuleType,
@@ -23,12 +23,12 @@ import {
   Extension,
   AnyFn,
   DecoratorMetadata,
-} from '../types/mix';
-import { AppendsWithParams, ModuleMetadata } from '../types/module-metadata';
-import { RootModuleMetadata } from '../types/root-module-metadata';
-import { Http2SecureServerOptions, ServerOptions } from '../types/server-options';
-import { NormalizedProvider } from './ng-utils';
-import { NormalizedModuleMetadata } from '../models/normalized-module-metadata';
+} from '../types/mix.js';
+import { AppendsWithParams, ModuleMetadata } from '../types/module-metadata.js';
+import { RootModuleMetadata } from '../types/root-module-metadata.js';
+import { Http2SecureServerOptions, ServerOptions } from '../types/server-options.js';
+import { NormalizedProvider } from './ng-utils.js';
+import { NormalizedModuleMetadata } from '../models/normalized-module-metadata.js';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;

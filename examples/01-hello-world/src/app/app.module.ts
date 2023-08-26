@@ -1,7 +1,7 @@
 import { Providers, rootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
-import { HelloWorldController } from './hello-world.controller';
+import { HelloWorldController } from './hello-world.controller.js';
 
 @rootModule({
   imports: [RouterModule],

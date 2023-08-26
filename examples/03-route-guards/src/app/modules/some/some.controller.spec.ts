@@ -1,6 +1,7 @@
 import { Injector, Res } from '@ditsmod/core';
+import { jest } from '@jest/globals';
 
-import { SomeController } from './some.controller';
+import { SomeController } from './some.controller.js';
 
 describe('SomeController', () => {
   const send = jest.fn();

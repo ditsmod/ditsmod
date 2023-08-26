@@ -1,6 +1,6 @@
-import { Class } from '../di';
-import { getToken } from './get-tokens';
-import { isNormalizedProvider } from './type-guards';
+import { Class } from '../di/index.js';
+import { getToken } from './get-tokens.js';
+import { isNormalizedProvider } from './type-guards.js';
 
 /**
  * Returns provider or token name.

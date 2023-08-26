@@ -1,6 +1,6 @@
 import { controller, Res, route } from '@ditsmod/core';
 
-import { MyService } from './my.service';
+import { MyService } from './my.service.js';
 
 @controller()
 export class HelloWorldController {

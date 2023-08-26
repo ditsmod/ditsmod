@@ -2,7 +2,7 @@ import { HttpHandler, HttpInterceptor, inject, NODE_REQ, NodeRequest, Injector }
 import { injectable, optional } from '@ditsmod/core';
 import { parse, Headers, Options } from 'get-body';
 
-import { HTTP_BODY, BodyParserConfig } from './body-parser-config';
+import { HTTP_BODY, BodyParserConfig } from './body-parser-config.js';
 
 @injectable()
 export class BodyParserInterceptor implements HttpInterceptor {

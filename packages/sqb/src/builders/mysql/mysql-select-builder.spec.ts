@@ -1,7 +1,7 @@
 
-import { getTableMetadata } from '../../utils';
-import { MySqlSelectBuilder } from './mysql-select-builder';
-import { table } from '../../decorators/table';
+import { getTableMetadata } from '../../utils.js';
+import { MySqlSelectBuilder } from './mysql-select-builder.js';
+import { table } from '../../decorators/table.js';
 
 describe('MySqlSelectBuilder', () => {
   @table({ tableName: 'users' })

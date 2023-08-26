@@ -1,6 +1,6 @@
 
-import { table } from './decorators/table';
-import { getTableMetadata } from './utils';
+import { table } from './decorators/table.js';
+import { getTableMetadata } from './utils.js';
 
 describe('getTableMetadata()', () => {
   @table({ tableName: 'users' })

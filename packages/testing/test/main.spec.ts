@@ -1,8 +1,9 @@
 import request = require('supertest');
 import { Providers, Res } from '@ditsmod/core';
+import { jest } from '@jest/globals';
 
-import { TestApplication } from '../src/test-application';
-import { AppModule } from './app/app.module';
+import { TestApplication } from '@src/test-application.js';
+import { AppModule } from './app/app.module.js';
 import {
   ServicePerApp,
   ServicePerMod,
@@ -11,7 +12,7 @@ import {
   ServicePerRou2,
   ServicePerReq2,
   ServicePerRou3,
-} from './app/services';
+} from './app/services.js';
 
 describe('@ditsmod/testing', () => {
   const methodPerApp = jest.fn();

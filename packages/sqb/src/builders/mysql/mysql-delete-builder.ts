@@ -1,7 +1,7 @@
-import { NoSqlActions, TableAndAlias } from '../types';
-import { AndOrBuilder, ExpressionBuilder } from './and-or-builder';
-import { JoinBuilder } from './join-builder';
-import { MySqlSelectBuilder } from './mysql-select-builder';
+import { NoSqlActions, TableAndAlias } from '../types.js';
+import { AndOrBuilder, ExpressionBuilder } from './and-or-builder.js';
+import { JoinBuilder } from './join-builder.js';
+import { MySqlSelectBuilder } from './mysql-select-builder.js';
 
 class DeleteQuery {
   del: string[] = [];

@@ -3,11 +3,11 @@ import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 import { isReferenceObject } from '@ditsmod/openapi';
 import { injectable, optional } from '@ditsmod/core';
 
-import { ValidationRouteMeta } from './types';
-import { ParametersInterceptor } from './parameters.interceptor';
-import { AjvService } from './ajv.service';
-import { ValidationOptions } from './validation-options';
-import { RequestBodyInterceptor } from './request-body.interceptor';
+import { ValidationRouteMeta } from './types.js';
+import { ParametersInterceptor } from './parameters.interceptor.js';
+import { AjvService } from './ajv.service.js';
+import { ValidationOptions } from './validation-options.js';
+import { RequestBodyInterceptor } from './request-body.interceptor.js';
 
 @injectable()
 export class ValidationExtension implements Extension<void> {

@@ -1,7 +1,7 @@
 import { Injector } from '@ditsmod/core';
 
-import { MyService } from './my.service';
-import { OtherService } from './other.service';
+import { MyService } from './my.service.js';
+import { OtherService } from './other.service.js';
 
 describe('MyService', () => {
   let myService: MyService;

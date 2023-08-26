@@ -1,8 +1,8 @@
 import { controller, Res, route } from '@ditsmod/core';
 
-import { AuthGuard } from '../auth/auth.guard';
-import { requirePermissions } from '../auth/guards-utils';
-import { Permission } from '../auth/types';
+import { AuthGuard } from '../auth/auth.guard.js';
+import { requirePermissions } from '../auth/guards-utils.js';
+import { Permission } from '../auth/types.js';
 
 @controller()
 export class SomeController {

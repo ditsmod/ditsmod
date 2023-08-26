@@ -1,14 +1,14 @@
-import { injectable } from '../di';
-import { isInjectionToken } from '../utils/type-guards';
-import { GlobalProviders, ImportObj } from '../types/metadata-per-mod';
-import { Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix';
-import { getImportedTokens } from '../utils/get-imports';
-import { getModuleName } from '../utils/get-module-name';
-import { getProviderName } from '../utils/get-provider-name';
-import { LogMediator } from './log-mediator';
-import { InputLogFilter, OutputLogFilter } from './types';
-import { Logger, LogLevel } from '../types/logger';
-import { ConsoleLogger } from '../services/console-logger';
+import { injectable } from '../di/index.js';
+import { isInjectionToken } from '../utils/type-guards.js';
+import { GlobalProviders, ImportObj } from '../types/metadata-per-mod.js';
+import { Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceProvider } from '../types/mix.js';
+import { getImportedTokens } from '../utils/get-imports.js';
+import { getModuleName } from '../utils/get-module-name.js';
+import { getProviderName } from '../utils/get-provider-name.js';
+import { LogMediator } from './log-mediator.js';
+import { InputLogFilter, OutputLogFilter } from './types.js';
+import { Logger, LogLevel } from '../types/logger.js';
+import { ConsoleLogger } from '../services/console-logger.js';
 
 /**
  * Mediator between core logger and custom user's logger.

@@ -1,10 +1,11 @@
+import { jest } from '@jest/globals';
 
-import { Provider, Injector } from '../di';
-import { LogLevel } from '../types/logger';
-import { LogMediator } from './log-mediator';
-import { LogItem, OutputLogFilter } from './types';
-import { ModuleExtract } from '../models/module-extract';
-import { SystemLogMediator } from './system-log-mediator';
+import { Provider, Injector } from '../di/index.js';
+import { LogLevel } from '../types/logger.js';
+import { LogMediator } from './log-mediator.js';
+import { LogItem, OutputLogFilter } from './types.js';
+import { ModuleExtract } from '../models/module-extract.js';
+import { SystemLogMediator } from './system-log-mediator.js';
 
 describe('SystemLogMediator', () => {
   class SystemLogMediatorMock extends SystemLogMediator {

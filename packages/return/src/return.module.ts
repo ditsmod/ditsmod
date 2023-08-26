@@ -1,6 +1,6 @@
 import { HttpBackend, featureModule } from '@ditsmod/core';
 
-import { ReturnHttpBackend } from './return-http-backend';
+import { ReturnHttpBackend } from './return-http-backend.js';
 
 /**
  * Allow listen value returned by a controller's route.

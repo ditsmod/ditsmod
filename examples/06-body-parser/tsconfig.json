@@ -1,24 +1,24 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "dist/tmp",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
+      "@src/*": ["./src/*", "./dist/*"],
+      "@src/*": ["./src/*"],
       "@ditsmod/core": ["../../packages/core/src"],
       "@ditsmod/router": ["../../packages/router/src"],
       "@ditsmod/body-parser": ["../../packages/body-parser/src"],
-      "@ditsmod/testing": ["../../packages/testing/src"],
     }
   },
   "include": ["src", "test"],
   "references": [
+    { "path": "./tsconfig.build.json" },
     { "path": "../../packages/body-parser/tsconfig.build.json" },
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/router/tsconfig.build.json" },
-    { "path": "../../packages/return/tsconfig.build.json" },
-    { "path": "../../packages/jwt/tsconfig.build.json" },
-    { "path": "../../packages/i18n/tsconfig.build.json" },
-    { "path": "../../packages/testing/tsconfig.build.json" },
   ]
 }

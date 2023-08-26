@@ -1,5 +1,6 @@
 {
   "name": "@ditsmod/core",
+  "type": "module",
   "version": "2.46.0",
   "repository": {
     "type": "git",
@@ -7,10 +8,19 @@
   },
   "homepage": "https://ditsmod.github.io/en/",
   "description": "NodeJS web framework writen in TypeScript",
+  "module": "dist/index.js",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts"
+    }
+  },
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "license": "MIT",
-  "main": "dist/src/index",
-  "types": "dist/src/index",
+  "main": "dist/index",
+  "types": "dist/index",
   "directories": {
     "lib": "src"
   },
@@ -18,8 +28,9 @@
     "node": ">= 18.0.0"
   },
   "scripts": {
-    "test": "npm run build && jest",
-    "build": "tsc -b tsconfig.build.json"
+    "build": "tsc -b tsconfig.build.json",
+    "clean": "rm -rf dist*",
+    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
   },
   "dependencies": {
     "@ts-stack/chain-error": "^1.2.0",

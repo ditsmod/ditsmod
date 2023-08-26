@@ -1,9 +1,9 @@
 import * as path from 'path';
 import { Injector } from '@ditsmod/core';
 
-import { Fn } from './types';
-import { Tree } from './tree';
-import { DefaultRouter } from './router';
+import { Fn } from './types.js';
+import { Tree } from './tree.js';
+import { DefaultRouter } from './router.js';
 
 runBench();
 

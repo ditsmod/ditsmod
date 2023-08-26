@@ -1,7 +1,7 @@
 
-import { ServiceProvider } from '../types/mix';
-import { getCollisions } from './get-collisions';
-import { makePropDecorator } from '../di';
+import { ServiceProvider } from '../types/mix.js';
+import { getCollisions } from './get-collisions.js';
+import { makePropDecorator } from '../di/index.js';
 
 describe('getTokensCollisions()', () => {
   it('duplicates are identical', () => {

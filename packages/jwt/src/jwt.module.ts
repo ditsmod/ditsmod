@@ -1,8 +1,8 @@
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
 
-import { JWT_PAYLOAD } from './tokens';
-import { JwtService } from './jwt.service';
-import { JwtServiceOptions } from './models/jwt-service-options';
+import { JWT_PAYLOAD } from './tokens.js';
+import { JwtService } from './jwt.service.js';
+import { JwtServiceOptions } from './models/jwt-service-options.js';
 
 @featureModule({
   providersPerApp: [JwtServiceOptions],

@@ -1,7 +1,7 @@
 import { Application, ApplicationOptions, LogLevel, Server } from '@ditsmod/core';
 
-import { TestModuleManager } from './test-module-manager';
-import { TestAppInitializer } from './test-app-initializer';
+import { TestModuleManager } from './test-module-manager.js';
+import { TestAppInitializer } from './test-app-initializer.js';
 
 export class PreTestApplication extends Application {
   override init(rootModuleName: string, appOptions: ApplicationOptions) {

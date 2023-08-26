@@ -1,4 +1,4 @@
-import { makeClassDecorator, makePropDecorator, makeParamDecorator } from './decorator-factories';
+import { makeClassDecorator, makePropDecorator, makeParamDecorator } from './decorator-factories.js';
 
 /**
  * Allows you to use an alternative token for a specific dependency.

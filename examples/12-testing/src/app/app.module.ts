@@ -1,10 +1,10 @@
 import { rootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
-import { HelloWorldController } from './hello-world.controller';
-import { MyService } from './my.service';
-import { OtherService } from './other.service';
-import { Controller1 } from './bad.controllers';
+import { HelloWorldController } from './hello-world.controller.js';
+import { MyService } from './my.service.js';
+import { OtherService } from './other.service.js';
+import { Controller1 } from './bad.controllers.js';
 
 @rootModule({
   imports: [RouterModule],

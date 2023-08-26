@@ -1,7 +1,7 @@
 import { injectable, optional } from '@ditsmod/core';
 
-import { RouterLogMediator } from './router-log-mediator';
-import { Fn, TreeConfig, RouteType, RouteParam } from './types';
+import { RouterLogMediator } from './router-log-mediator.js';
+import { Fn, TreeConfig, RouteType, RouteParam } from './types.js';
 
 @injectable()
 export class Tree {

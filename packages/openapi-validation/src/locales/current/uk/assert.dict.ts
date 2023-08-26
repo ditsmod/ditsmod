@@ -1,5 +1,5 @@
 import { ISO639 } from '@ditsmod/i18n';
-import { AssertDict } from '..';
+import { AssertDict } from '../index.js';
 
 export class AssertUkDict extends AssertDict {
   override getLng(): ISO639 {

@@ -1,10 +1,12 @@
-import { Logger, LoggerConfig } from '../types/logger';
-import { ServiceProvider } from '../types/mix';
-import { ConsoleLogger } from '../services/console-logger';
-import { Providers } from './providers';
-import { LogMediator } from '../log-mediator/log-mediator';
-import { OutputLogFilter } from '../log-mediator/types';
-import { SystemLogMediator } from '../log-mediator/system-log-mediator';
+import { jest } from '@jest/globals';
+
+import { Logger, LoggerConfig } from '../types/logger.js';
+import { ServiceProvider } from '../types/mix.js';
+import { ConsoleLogger } from '../services/console-logger.js';
+import { Providers } from './providers.js';
+import { LogMediator } from '../log-mediator/log-mediator.js';
+import { OutputLogFilter } from '../log-mediator/types.js';
+import { SystemLogMediator } from '../log-mediator/system-log-mediator.js';
 
 describe('Providers', () => {
   it('call constuctor not to throw', () => {
