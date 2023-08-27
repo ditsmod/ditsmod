@@ -12,9 +12,10 @@
     "example": "examples"
   },
   "scripts": {
-    "test": "npm run build && node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "test1": "jest -c jest.config1.ts",
-    "test-examples": "npm run build-examples && node --experimental-vm-modules node_modules/jest/bin/jest.js --config examples/jest.config.ts",
+    "test": "npm run build && npm run esm-jest",
+    "test1": "npm run esm-jest -- -c jest.config1.ts",
+    "esm-jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test-examples": "npm run build-examples && npm run esm-jest -- -c examples/jest.config.ts",
     "test-all": "npm test && npm run test-examples && npm run build-examples && npm run build-vscode",
     "pub": "lerna publish from-package --no-git-tag-version",
     "build": "tsc -b packages",
@@ -55,8 +56,6 @@
     "reflect-metadata": "^0.1.13",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.1",
-    "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2",
     "winston": "^3.10.0"
   }
