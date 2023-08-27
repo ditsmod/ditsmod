@@ -20,6 +20,7 @@
   },
   "include": ["src"],
   "references": [
+    { "path": "./tsconfig.loader.json" }, // Need only to get aliase paths
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/router/tsconfig.build.json" },
     { "path": "../../packages/openapi/tsconfig.build.json" },

@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "tsBuildInfoFile": "dist/loader.tsbuildinfo",
+    "outDir": "dist"
+  },
+  "files": ["./loader.ts", "./loader.spec.ts", "./jest.config.ts"]
+}

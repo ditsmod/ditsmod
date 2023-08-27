@@ -18,6 +18,7 @@
       "@ditsmod/testing": ["../../packages/testing/src"],
     }
   },
+  "files": ["./loader.ts", "./loader.spec.ts", "./jest.config.ts"],
   "include": ["src", "test"],
   "references": [
     { "path": "../../packages/core/tsconfig.build.json" },

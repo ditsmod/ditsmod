@@ -6,8 +6,9 @@
   "main": "dist/main",
   "types": "dist/main",
   "scripts": {
-    "start": "nodemon -e ts --exec ts-node -r tsconfig-paths/register src/main.ts --project tsconfig.build.json",
+    "start": "npm run build && node --loader ./dist/loader.js dist/main.js",
     "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js",
-    "build": "tsc -b tsconfig.test.json"
+    "build": "tsc -b tsconfig.test.json",
+    "clean": "rimraf dist*"
   }
 }
