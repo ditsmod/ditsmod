@@ -1,4 +1,4 @@
 {
-  "watch": ["examples/**/dist/*", "packages/**/dist/*"],
+  "watch": ["examples/*/dist/*", "packages/*/dist/*"],
   "ignore": ["*.spec.ts", "*.tsbuildinfo", "packages/openapi/src/swagger-ui/swagger.config.ts"]
 }
