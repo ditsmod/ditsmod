@@ -29,7 +29,7 @@
     "yaml": "^2.3.1"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.46.0"
+    "@ditsmod/core": "^2.47.0"
   },
   "devDependencies": {
     "@types/swagger-ui-dist": "^3.30.1"

@@ -1,5 +1,5 @@
 import { GuardItem, HttpMethod } from '@ditsmod/core';
-import { AnyFn } from '@ditsmod/core/src/types/mix.js';
+import { AnyFn } from '@ditsmod/core';
 import { makePropDecorator } from '@ditsmod/core';
 import { XOperationObject } from '@ts-stack/openapi-spec';
 
