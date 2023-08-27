@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -10,13 +12,11 @@
     "noImplicitReturns": true,
     "skipLibCheck": true,
     "target": "es2022",
-    "module": "commonjs",
     "strictPropertyInitialization": false,
     "noImplicitAny": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "removeComments": false,
-    "moduleResolution": "node"
   },
   "exclude": [
     "**/node_modules/*"
