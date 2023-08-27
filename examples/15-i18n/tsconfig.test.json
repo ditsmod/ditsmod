@@ -8,7 +8,7 @@
     "baseUrl": ".",
     "tsBuildInfoFile": "dist-test/test.tsbuildinfo",
     "paths": {
-      "@src/*": ["./dist/*"],
+      "@src/*": ["./src/*"],
       "@ditsmod/core": ["../../packages/core/src"],
       "@ditsmod/router": ["../../packages/router/src"],
       "@ditsmod/testing": ["../../packages/testing/src"],
