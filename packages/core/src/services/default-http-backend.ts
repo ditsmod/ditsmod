@@ -1,6 +1,6 @@
-import { injectable, Injector, skipSelf } from '../di/index.js';
-import { HttpBackend } from '../types/http-interceptor.js';
-import { RouteMeta } from '../types/route-data.js';
+import { injectable, Injector, skipSelf } from '#di';
+import { HttpBackend } from '#types/http-interceptor.js';
+import { RouteMeta } from '#types/route-data.js';
 
 @injectable()
 export class DefaultHttpBackend implements HttpBackend {

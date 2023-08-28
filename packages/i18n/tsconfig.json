@@ -1,17 +1,24 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
     // "baseUrl": ".", // See https://github.com/microsoft/TypeScript/issues/47114#issuecomment-1004360864
     "outDir": "dist",
     "paths": {
       "@ditsmod/core": [
         "../core/src"
+      ],
+      "#types/*": [
+        "./src/types/*"
+      ],
+      "#src/*": [
+        "./src/*"
       ]
     }
   },
-  "include": ["src"],
+  "include": [
+    "src",
+    "test"
+  ],
   "files": [],
   "references": [
     {

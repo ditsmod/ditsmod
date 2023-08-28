@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-import { injectable, InjectionToken } from './di/index.js';
+import { injectable, InjectionToken } from '#di';
 import { featureModule } from './decorators/module.js';
 import { rootModule } from './decorators/root-module.js';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata.js';

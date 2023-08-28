@@ -1,5 +1,5 @@
-import { Class } from '../di/index.js';
-import { CanActivate } from '../types/mix.js';
+import { Class } from '#di';
+import { CanActivate } from '#types/mix.js';
 
 
 /**

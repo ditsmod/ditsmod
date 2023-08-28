@@ -2,7 +2,7 @@ import { ParameterObject, ReferenceObject, XParameterObject } from '@ts-stack/op
 
 import { OpenapiRoutesExtension } from './openapi-routes.extension.js';
 import { HttpMethod } from '@ditsmod/core';
-import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '../utils/parameters.js';
+import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '#utils/parameters.js';
 
 describe('OpenapiRoutesExtension', () => {
   class MockOpenapiRoutesExtension extends OpenapiRoutesExtension {

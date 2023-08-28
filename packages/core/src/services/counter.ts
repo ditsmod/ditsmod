@@ -1,5 +1,5 @@
-import { injectable } from '../di/index.js';
-import { Extension } from '../types/mix.js';
+import { injectable } from '#di';
+import { Extension } from '#types/mix.js';
 
 /**
  * Used to collect various statistics.

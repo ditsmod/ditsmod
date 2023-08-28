@@ -1,12 +1,13 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
     "baseUrl": ".",
     "outDir": "dist",
     "paths": {
-      "@ditsmod/core": ["../core/src"]
+      "#types/*": ["./src/types/*"],
+      "#utils/*": ["./src/utils/*"],
+      "#decorators/*": ["./src/decorators/*"],
+      "#constants": ["./src/constants.js"],
     }
   },
   "include": ["src"],

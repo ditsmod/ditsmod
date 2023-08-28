@@ -1,18 +1,19 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "rootDir": "src",
+    "rootDir": "test",
     // "baseUrl": ".", // See https://github.com/microsoft/TypeScript/issues/47114#issuecomment-1004360864
-    "outDir": "dist",
-    "tsBuildInfoFile": "dist/build.tsbuildinfo"
+    "outDir": "dist-test",
+    "tsBuildInfoFile": "dist-test/test.tsbuildinfo"
   },
-  "include": ["src"],
+  "include": ["test"],
   "files": [],
   "references": [
     {
-      "path": "../core/tsconfig.build.json"
+      "path": "../core/tsconfig.build.json",
+    },
+    {
+      "path": "./tsconfig.build.json",
     }
   ]
 }

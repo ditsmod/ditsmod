@@ -1,12 +1,12 @@
-import { inject, injectable, optional } from '../di/index.js';
-import { HTTP_INTERCEPTORS } from '../constans.js';
+import { inject, injectable, optional } from '#di';
 import {
   HttpFrontend,
   HttpBackend,
   HttpInterceptor,
   HttpInterceptorHandler,
   HttpHandler,
-} from '../types/http-interceptor.js';
+} from '#types/http-interceptor.js';
+import { HTTP_INTERCEPTORS } from '#constans';
 
 /**
  * An injectable `ChainMaker` that ties multiple interceptors in chain.

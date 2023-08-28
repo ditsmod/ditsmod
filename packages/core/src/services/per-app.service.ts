@@ -1,5 +1,5 @@
-import { injectable, Injector } from '../di/index.js';
-import { ServiceProvider } from '../types/mix.js';
+import { injectable, Injector } from '#di';
+import { ServiceProvider } from '#types/mix.js';
 
 /**
  * Used only for extensions.

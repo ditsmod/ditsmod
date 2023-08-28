@@ -1,4 +1,4 @@
-import { AnyObj } from '../types/mix.js';
+import { AnyObj } from '#types/mix.js';
 
 export function pickProperties<T extends AnyObj, S extends Partial<T>>(targetObject: T, ...sourceObjects: S[]) {
   sourceObjects.forEach((sourceObj) => {

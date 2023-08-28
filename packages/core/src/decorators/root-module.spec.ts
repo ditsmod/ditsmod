@@ -1,6 +1,6 @@
-import { reflector } from '../di/index.js';
+import { reflector } from '#di';
+import { AnyObj } from '#types/mix.js';
 import { rootModule } from './root-module.js';
-import { AnyObj } from '../types/mix.js';
 
 describe('RootModule decorator', () => {
   it('empty decorator', () => {

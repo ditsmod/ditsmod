@@ -1,6 +1,6 @@
 import { ChainError } from '@ts-stack/chain-error';
 
-import { Status } from '../utils/http-status-codes.js';
+import { Status } from '#utils/http-status-codes.js';
 import { CustomError } from './custom-error.js';
 
 

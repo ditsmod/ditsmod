@@ -1,4 +1,4 @@
-import { Logger, LogLevel } from '../types/logger.js';
+import { Logger, LogLevel } from '#types/logger.js';
 
 /**
  * This class is used to limit log output by certain options.

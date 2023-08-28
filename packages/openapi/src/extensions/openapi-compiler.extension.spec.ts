@@ -8,9 +8,9 @@ import {
   XResponsesObject,
 } from '@ts-stack/openapi-spec';
 
+import { oasGuard } from '#decorators/oas-guard.js';
 import { OpenapiCompilerExtension } from './openapi-compiler.extension.js';
-import { DEFAULT_OAS_OBJECT } from '../constants.js';
-import { oasGuard } from '../decorators/oas-guard.js';
+import { DEFAULT_OAS_OBJECT } from '#constants';
 
 describe('OpenapiCompilerExtension', () => {
   class MockOpenapiCompilerExtension extends OpenapiCompilerExtension {

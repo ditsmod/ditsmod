@@ -1,5 +1,5 @@
-import { isFunctionFactoryProvider } from '../di/index.js';
-import { ServiceProvider } from '../types/mix.js';
+import { isFunctionFactoryProvider } from '#di';
+import { ServiceProvider } from '#types/mix.js';
 import { getTokens } from './get-tokens.js';
 import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } from './type-guards.js';
 

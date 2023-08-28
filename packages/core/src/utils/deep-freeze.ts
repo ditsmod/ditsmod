@@ -1,4 +1,4 @@
-import { AnyObj } from '../types/mix.js';
+import { AnyObj } from '#types/mix.js';
 
 /**
  * @todo Check why `return Object.freeze(obj)` break module work in some cases.

@@ -1,4 +1,4 @@
-export * from './di/index.js';
+export * from '#di';
 export * from '@ts-stack/chain-error';
 
 export { AppInitializer } from './app-initializer.js';

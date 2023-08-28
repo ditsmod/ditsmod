@@ -1,6 +1,6 @@
-import { DecoratorAndValue, reflector, resolveForwardRef } from '../di/index.js';
-import { ModuleMetadata } from '../types/module-metadata.js';
-import { AnyFn, ModuleType, ModuleWithParams } from '../types/mix.js';
+import { DecoratorAndValue, reflector, resolveForwardRef } from '#di';
+import { ModuleMetadata } from '#types/module-metadata.js';
+import { AnyFn, ModuleType, ModuleWithParams } from '#types/mix.js';
 import { getModuleName } from './get-module-name.js';
 import { mergeArrays } from './merge-arrays.js';
 import { isFeatureModule, isModuleWithParams, isRootModule } from './type-guards.js';

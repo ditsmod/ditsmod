@@ -1,3 +1,4 @@
+import { AnyFn } from '#types/mix.js';
 import {
   Visibility,
   ParamsMeta,
@@ -32,7 +33,6 @@ import {
   isFunctionFactoryProvider,
 } from './utils.js';
 import { DualKey, KeyRegistry } from './key-registry.js';
-import { AnyFn } from '../types/mix.js';
 
 const NoDefaultValue = Symbol();
 

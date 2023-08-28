@@ -1,15 +1,15 @@
-import { injectable, Injector } from '../di/index.js';
-import { controller, ControllerMetadata } from '../decorators/controller.js';
-import { route } from '../decorators/route.js';
-import { rootModule } from '../decorators/root-module.js';
-import { CanActivate } from '../types/mix.js';
-import { defaultProvidersPerApp } from '../services/default-providers-per-app.js';
-import { RootMetadata } from '../models/root-metadata.js';
-import { ModuleManager } from '../services/module-manager.js';
+import { injectable, Injector } from '#di';
+import { CanActivate } from '#types/mix.js';
+import { controller, ControllerMetadata } from '#decorators/controller.js';
+import { route } from '#decorators/route.js';
+import { rootModule } from '#decorators/root-module.js';
+import { defaultProvidersPerApp } from '#services/default-providers-per-app.js';
+import { RootMetadata } from '#models/root-metadata.js';
+import { ModuleManager } from '#services/module-manager.js';
+import { NormalizedModuleMetadata } from '#models/normalized-module-metadata.js';
+import { PerAppService } from '#services/per-app.service.js';
+import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
 import { AppInitializer } from '../app-initializer.js';
-import { NormalizedModuleMetadata } from '../models/normalized-module-metadata.js';
-import { PerAppService } from '../services/per-app.service.js';
-import { SystemLogMediator } from '../log-mediator/system-log-mediator.js';
 
 xdescribe('RoutesExtension', () => {
   @injectable()

@@ -8,6 +8,16 @@
   },
   "description": "Ditsmod module to integration with i18n (internalization)",
   "module": "dist/index.js",
+  "scripts": {
+    "test": "tsc -b tsconfig.test.json && npm run esm-jest",
+    "esm-jest": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js",
+    "build": "tsc -b tsconfig.build.json",
+    "clean": "rm -rf dist*"
+  },
+  "imports": {
+    "#types/*": "./dist/types/*",
+    "#src/*": "./dist/*"
+  },
   "exports": {
     "./package.json": {
       "default": "./package.json"
@@ -21,11 +31,6 @@
   "types": "dist/index",
   "directories": {
     "lib": "src"
-  },
-  "scripts": {
-    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js",
-    "build": "tsc -b tsconfig.build.json",
-    "clean": "rm -rf dist*"
   },
   "keywords": [],
   "author": "Костя Третяк",

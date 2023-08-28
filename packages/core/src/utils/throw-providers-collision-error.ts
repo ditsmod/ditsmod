@@ -1,4 +1,4 @@
-import { Scope } from '../types/mix.js';
+import { Scope } from '#types/mix.js';
 
 export function throwProvidersCollisionError(
   moduleName: string,

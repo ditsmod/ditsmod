@@ -1,8 +1,6 @@
 import { format } from 'util';
 
-import { injectable, resolveForwardRef, Class } from '../di/index.js';
-import { HTTP_INTERCEPTORS } from '../constans.js';
-import { NormalizedModuleMetadata } from '../models/normalized-module-metadata.js';
+import { injectable, resolveForwardRef, Class } from '#di';
 import {
   AnyObj,
   Extension,
@@ -13,15 +11,17 @@ import {
   NormalizedGuard,
   Scope,
   ServiceProvider,
-} from '../types/mix.js';
-import { AppendsWithParams, ModuleMetadata } from '../types/module-metadata.js';
-import { getExtensionProvider } from '../utils/get-extension-provider.js';
-import { getModule } from '../utils/get-module.js';
-import { getModuleMetadata } from '../utils/get-module-metadata.js';
-import { getModuleName } from '../utils/get-module-name.js';
-import { getToken, getTokens } from '../utils/get-tokens.js';
-import { normalizeProviders } from '../utils/ng-utils.js';
-import { pickProperties } from '../utils/pick-properties.js';
+} from '#types/mix.js';
+import { AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
+import { getExtensionProvider } from '#utils/get-extension-provider.js';
+import { getModule } from '#utils/get-module.js';
+import { getModuleMetadata } from '#utils/get-module-metadata.js';
+import { getModuleName } from '#utils/get-module-name.js';
+import { getToken, getTokens } from '#utils/get-tokens.js';
+import { normalizeProviders } from '#utils/ng-utils.js';
+import { pickProperties } from '#utils/pick-properties.js';
+import { NormalizedModuleMetadata } from '#models/normalized-module-metadata.js';
+import { HTTP_INTERCEPTORS } from '#constans';
 import {
   isAppendsWithParams,
   isClassProvider,
@@ -34,8 +34,8 @@ import {
   isRawRootModule,
   isValueProvider,
   MultiProvider,
-} from '../utils/type-guards.js';
-import { SystemLogMediator } from '../log-mediator/system-log-mediator.js';
+} from '#utils/type-guards.js';
+import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
 
 export type ModulesMap = Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
 export type ModulesMapId = Map<string, ModuleType | ModuleWithParams>;

@@ -1,4 +1,4 @@
-import { InjectionToken } from './di/index.js';
+import { InjectionToken } from '#di';
 
 import { ModuleExtract } from './models/module-extract.js';
 import { HttpInterceptor } from './types/http-interceptor.js';

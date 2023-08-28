@@ -1,4 +1,4 @@
-import { Class, FactoryProvider, Injector, ResolvedProvider } from '../di/index.js';
+import { Class, FactoryProvider, Injector, ResolvedProvider } from '#di';
 import { DecoratorMetadata, HttpMethod, NormalizedGuard, ResolvedGuard } from './mix.js';
 import { RouteHandler } from './router.js';
 

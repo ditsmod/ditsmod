@@ -1,4 +1,4 @@
-import { ServiceProvider } from '../types/mix.js';
+import { ServiceProvider } from '#types/mix.js';
 import { normalizeProviders } from './ng-utils.js';
 import { isClassProvider, isTokenProvider, isFactoryProvider, isProvider, isValueProvider } from './type-guards.js';
 

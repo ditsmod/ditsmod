@@ -1,4 +1,4 @@
-import { NormalizedModuleMetadata } from '../models/normalized-module-metadata.js';
+import { NormalizedModuleMetadata } from '#models/normalized-module-metadata.js';
 import { ControllerMetadata1, ControllerMetadata2 } from './controller-metadata.js';
 import { ExtensionProvider, ModuleType, ModuleWithParams, NormalizedGuard, ServiceProvider } from './mix.js';
 

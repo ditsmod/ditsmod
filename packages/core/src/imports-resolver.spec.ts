@@ -1,4 +1,4 @@
-import { injectable } from './di/index.js';
+import { injectable } from '#di';
 
 import { ImportsResolver } from './imports-resolver.js';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata.js';

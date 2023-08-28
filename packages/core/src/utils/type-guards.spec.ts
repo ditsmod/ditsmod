@@ -1,5 +1,6 @@
-import { injectable, InjectionToken, makePropDecorator, reflector } from '../di/index.js';
-import { featureModule } from '../decorators/module.js';
+import { CanActivate, ServiceProvider, Extension } from '#types/mix.js';
+import { injectable, InjectionToken, makePropDecorator, reflector } from '#di';
+import { featureModule } from '#decorators/module.js';
 import {
   isController,
   isInjectionToken,
@@ -12,10 +13,9 @@ import {
   isMultiProvider,
   MultiProvider,
 } from './type-guards.js';
-import { rootModule } from '../decorators/root-module.js';
-import { controller } from '../decorators/controller.js';
-import { route } from '../decorators/route.js';
-import { CanActivate, ServiceProvider, Extension } from '../types/mix.js';
+import { rootModule } from '#decorators/root-module.js';
+import { controller } from '#decorators/controller.js';
+import { route } from '#decorators/route.js';
 
 describe('type guards', () => {
   describe('isModule()', () => {

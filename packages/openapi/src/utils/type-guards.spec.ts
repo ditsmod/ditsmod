@@ -1,5 +1,5 @@
 import { CanActivate, reflector } from '@ditsmod/core';
-import { oasGuard } from '../decorators/oas-guard.js';
+import { oasGuard } from '#decorators/oas-guard.js';
 import { isOasGuard } from './type-guards.js';
 
 describe('OAS type guards', () => {

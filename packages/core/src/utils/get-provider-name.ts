@@ -1,4 +1,4 @@
-import { Class } from '../di/index.js';
+import { Class } from '#di';
 import { getToken } from './get-tokens.js';
 import { isNormalizedProvider } from './type-guards.js';
 

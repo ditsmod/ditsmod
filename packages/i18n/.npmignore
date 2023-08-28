@@ -9,4 +9,4 @@ nodemon.json
 CHANGELOG.md
 *.tsbuildinfo
 tsconfig.json
-src/test
+test

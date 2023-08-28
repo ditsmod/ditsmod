@@ -1,4 +1,4 @@
-import { FactoryProvider, injectable, Provider, Injector } from './di/index.js';
+import { FactoryProvider, injectable, Provider, Injector } from '#di';
 
 import { controller, ControllerMetadata } from './decorators/controller.js';
 import { featureModule } from './decorators/module.js';
@@ -23,7 +23,7 @@ import {
 import { Router } from './types/router.js';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports.js';
 import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
-import { makePropDecorator } from './di/index.js';
+import { makePropDecorator } from '#di';
 import { transformControllersMetadata } from './utils/transform-controllers-metadata.js';
 import { HttpBackend } from './types/http-interceptor.js';
 

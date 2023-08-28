@@ -8,6 +8,12 @@
   },
   "description": "This is module for Ditsmod framework to support OpenAPI",
   "module": "dist/index.js",
+  "imports": {
+    "#types/*": "./dist/types/*",
+    "#utils/*": "./dist/utils/*",
+    "#decorators/*": "./dist/decorators/*",
+    "#constants": "./dist/constants.js"
+  },
   "exports": {
     "./package.json": {
       "default": "./package.json"
@@ -25,7 +31,8 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
-    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
+    "test": "npm run build && npm run esm-jest",
+    "esm-jest": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
   },
   "keywords": [],
   "author": "",

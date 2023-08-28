@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Provider, Class, ValueProvider, ClassProvider, TokenProvider, FactoryProvider } from '../di/index.js';
+import { Provider, Class, ValueProvider, ClassProvider, TokenProvider, FactoryProvider } from '#di';
 import { format } from 'util';
 import { isNormalizedProvider } from './type-guards.js';
 

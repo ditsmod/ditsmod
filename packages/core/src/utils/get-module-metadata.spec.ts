@@ -1,6 +1,6 @@
-import { forwardRef, injectable } from '../di/index.js';
-import { featureModule } from '../decorators/module.js';
-import { ModuleWithParams, ServiceProvider } from '../types/mix.js';
+import { forwardRef, injectable } from '#di';
+import { featureModule } from '#decorators/module.js';
+import { ModuleWithParams, ServiceProvider } from '#types/mix.js';
 import { getModuleMetadata } from './get-module-metadata.js';
 
 describe('getModuleMetadata', () => {

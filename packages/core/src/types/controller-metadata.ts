@@ -1,4 +1,4 @@
-import type { DecoratorAndValue, Class } from '../di/index.js';
+import type { DecoratorAndValue, Class } from '#di';
 import type { RouteMeta } from './route-data.js';
 import type { AnyObj, DecoratorMetadata, HttpMethod, ServiceProvider } from './mix.js';
 

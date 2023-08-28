@@ -348,7 +348,7 @@ export interface TokenProvider extends BaseNormalizedProvider {
  * ### Example
  *
 ```ts
-import { methodFactory } from './di/index.js';
+import { methodFactory } from '#di';
 
 const Location = new InjectionToken('location');
 const Hash = new InjectionToken('hash');

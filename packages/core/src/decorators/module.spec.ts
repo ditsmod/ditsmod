@@ -1,4 +1,4 @@
-import { reflector } from '../di/index.js';
+import { reflector } from '#di';
 import { featureModule } from './module.js';
 
 describe('Module decorator', () => {

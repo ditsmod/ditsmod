@@ -1,8 +1,8 @@
 import { MediaTypeObject } from '@ts-stack/openapi-spec';
 
-import { property } from '../decorators/property.js';
+import { property } from '#decorators/property.js';
 import { Content } from './content.js';
-import { REQUIRED } from '../constants.js';
+import { REQUIRED } from '#constants';
 import { inspect } from 'util';
 
 function print(obj: any) {

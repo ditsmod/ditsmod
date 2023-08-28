@@ -1,4 +1,4 @@
-import { ServiceProvider } from '../types/mix.js';
+import { ServiceProvider } from '#types/mix.js';
 
 export class ProvidersMetadata {
   /**

@@ -1,6 +1,6 @@
-import { reflector } from '../di/index.js';
+import { reflector } from '#di';
+import { AnyObj } from '#types/mix.js';
 import { controller } from './controller.js';
-import { AnyObj } from '../types/mix.js';
 
 describe('Controller decorator', () => {
   it('empty decorator', () => {

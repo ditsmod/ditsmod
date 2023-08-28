@@ -1,4 +1,4 @@
-import { ServiceProvider } from '../types/mix.js';
+import { ServiceProvider } from '#types/mix.js';
 import { getTokens } from './get-tokens.js';
 import { isMultiProvider } from './type-guards.js';
 

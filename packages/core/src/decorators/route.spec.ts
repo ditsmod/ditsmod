@@ -1,7 +1,7 @@
-import { reflector, PropMeta } from '../di/index.js';
+import { reflector, PropMeta } from '#di';
+import { CanActivate } from '#types/mix.js';
 import { route } from './route.js';
 import { controller } from './controller.js';
-import { CanActivate } from '../types/mix.js';
 
 describe('Route decorator', () => {
   it('controller without methods', () => {

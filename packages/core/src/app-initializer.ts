@@ -1,4 +1,4 @@
-import { InjectionToken } from './di/index.js';
+import { InjectionToken } from '#di';
 
 import { EXTENSIONS_COUNTERS } from './constans.js';
 import { ImportsResolver } from './imports-resolver.js';

@@ -1,4 +1,4 @@
-import { Injector } from './di/index.js';
+import { Injector } from '#di';
 
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata.js';
 import { RootMetadata } from './models/root-metadata.js';

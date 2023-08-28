@@ -4,7 +4,20 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "baseUrl": ".",
-    "outDir": "dist"
+    "outDir": "dist",
+    "paths": {
+      "#di": ["./src/di/index.js"],
+      "#di/*": ["./src/di/*"],
+      "#types/*": ["./src/types/*"],
+      "#utils/*": ["./src/utils/*"],
+      "#models/*": ["./src/models/*"],
+      "#decorators/*": ["./src/decorators/*"],
+      "#constans": ["./src/constans.js"],
+      "#log-mediator/*": ["./src/log-mediator/*"],
+      "#services/*": ["./src/services/*"],
+    }
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

@@ -1,13 +1,13 @@
 import { parse } from 'querystring';
 
-import { inject, injectable, Injector, skipSelf } from '../di/index.js';
-import { HttpFrontend, HttpHandler } from '../types/http-interceptor.js';
-import { AnyObj, CanActivate } from '../types/mix.js';
-import { Status } from '../utils/http-status-codes.js';
-import { RouteMeta } from '../types/route-data.js';
-import { SystemLogMediator } from '../log-mediator/system-log-mediator.js';
-import { A_PATH_PARAMS, QUERY_STRING, NODE_REQ, NODE_RES, QUERY_PARAMS, PATH_PARAMS } from '../constans.js';
-import { PathParam } from '../types/router.js';
+import { inject, injectable, Injector, skipSelf } from '#di';
+import { HttpFrontend, HttpHandler } from '#types/http-interceptor.js';
+import { AnyObj, CanActivate } from '#types/mix.js';
+import { RouteMeta } from '#types/route-data.js';
+import { PathParam } from '#types/router.js';
+import { Status } from '#utils/http-status-codes.js';
+import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
+import { A_PATH_PARAMS, QUERY_STRING, NODE_REQ, NODE_RES, QUERY_PARAMS, PATH_PARAMS } from '#constans';
 
 @injectable()
 export class DefaultHttpFrontend implements HttpFrontend {

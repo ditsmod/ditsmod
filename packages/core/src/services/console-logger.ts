@@ -1,6 +1,6 @@
-import { injectable } from '../di/index.js';
-import { AnyFn } from '../types/mix.js';
-import { Logger, LogLevel } from '../types/logger.js';
+import { injectable } from '#di';
+import { AnyFn } from '#types/mix.js';
+import { Logger, LogLevel } from '#types/logger.js';
 
 @injectable()
 export class ConsoleLogger extends Logger {

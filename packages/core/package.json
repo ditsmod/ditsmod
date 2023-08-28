@@ -9,6 +9,23 @@
   "homepage": "https://ditsmod.github.io/en/",
   "description": "NodeJS web framework writen in TypeScript",
   "module": "dist/index.js",
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "clean": "rm -rf dist*",
+    "test": "npm run build && npm run esm-jest",
+    "esm-jest": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
+  },
+  "imports": {
+    "#di": "./dist/di/index.js",
+    "#di/*": "./dist/di/*",
+    "#types/*": "./dist/types/*",
+    "#utils/*": "./dist/utils/*",
+    "#models/*": "./dist/models/*",
+    "#decorators/*": "./dist/decorators/*",
+    "#constans": "./dist/constans.js",
+    "#log-mediator/*": "./dist/log-mediator/*",
+    "#services/*": "./dist/services/*"
+  },
   "exports": {
     "./package.json": {
       "default": "./package.json"
@@ -27,11 +44,6 @@
   },
   "engines": {
     "node": ">= 18.0.0"
-  },
-  "scripts": {
-    "build": "tsc -b tsconfig.build.json",
-    "clean": "rm -rf dist*",
-    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
   },
   "dependencies": {
     "@ts-stack/chain-error": "^1.2.0",

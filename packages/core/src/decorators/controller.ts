@@ -1,5 +1,5 @@
-import { makeClassDecorator } from '../di/index.js';
-import { ServiceProvider } from '../types/mix.js';
+import { makeClassDecorator } from '#di';
+import { ServiceProvider } from '#types/mix.js';
 
 export interface ControllerMetadata {
   /**

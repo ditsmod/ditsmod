@@ -21,12 +21,12 @@ import {
 } from '@ts-stack/openapi-spec';
 import { stringify } from 'yaml';
 
-import { OasRouteMeta } from '../types/oas-route-meta.js';
-import { DEFAULT_OAS_OBJECT } from '../constants.js';
-import { isOasGuard } from '../utils/type-guards.js';
-import { OasConfigFiles, OasExtensionOptions } from '../types/oas-extension-options.js';
+import { OasRouteMeta } from '#types/oas-route-meta.js';
+import { DEFAULT_OAS_OBJECT } from '#constants';
+import { isOasGuard } from '#utils/type-guards.js';
+import { OasConfigFiles, OasExtensionOptions } from '#types/oas-extension-options.js';
+import { OasOptions } from '#types/oas-options.js';
 import { OpenapiLogMediator } from '../services/openapi-log-mediator.js';
-import { OasOptions } from '../types/oas-options.js';
 
 @injectable()
 export class OpenapiCompilerExtension implements Extension<XOasObject | false> {

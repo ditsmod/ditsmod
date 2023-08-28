@@ -1,4 +1,4 @@
-import { injectable } from './di/index.js';
+import { injectable } from '#di';
 
 import type { AppendsWithParams } from './types/module-metadata.js';
 import type { ModuleManager } from './services/module-manager.js';
