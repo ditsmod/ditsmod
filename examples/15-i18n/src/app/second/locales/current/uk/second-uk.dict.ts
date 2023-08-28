@@ -1,7 +1,7 @@
 import { ISO639 } from '@ditsmod/i18n';
 import { injectable } from '@ditsmod/core';
 
-import { SecondDict } from '@dict/second/second.dict.js';
+import { SecondDict } from '#dict/second/second.dict.js';
 
 @injectable()
 export class CommonUkDict extends SecondDict {

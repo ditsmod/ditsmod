@@ -1,7 +1,7 @@
 import { injectable } from '@ditsmod/core';
 import { DictService } from '@ditsmod/i18n';
 
-import { FirstDict } from '@dict/first/first.dict.js';
+import { FirstDict } from '#dict/first/first.dict.js';
 
 @injectable()
 export class FirstService {

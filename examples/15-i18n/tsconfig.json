@@ -13,12 +13,11 @@
       "@ditsmod/openapi": ["../../packages/openapi/src"],
       "@ditsmod/jwt": ["../../packages/jwt/src"],
       "@ditsmod/i18n": ["../../packages/i18n/src"],
-      "@dict/first/*": ["./src/app/first/locales/current/_base-en/*"],
-      "@dict/second/*": ["./src/app/second/locales/current/_base-en/*"],
+      "#dict/first/*": ["./src/app/first/locales/current/_base-en/*"],
+      "#dict/second/*": ["./src/app/second/locales/current/_base-en/*"],
       "@ditsmod/testing": ["../../packages/testing/src"],
     }
   },
-  "files": ["./loader.ts", "./loader.spec.ts", "./jest.config.ts"],
   "include": ["src", "test"],
   "references": [
     { "path": "../../packages/core/tsconfig.build.json" },

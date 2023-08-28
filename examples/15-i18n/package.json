@@ -5,10 +5,14 @@
   "license": "MIT",
   "main": "dist/main",
   "types": "dist/main",
+  "imports": {
+    "#dict/first/*": "./dist/app/first/locales/current/_base-en/*",
+    "#dict/second/*": "./dist/app/second/locales/current/_base-en/*"
+  },
   "scripts": {
-    "start": "npm run build && node --loader ./dist/loader.js dist/main.js",
-    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js",
-    "build": "tsc -b tsconfig.test.json",
+    "start": "npm run build && node dist/main.js",
+    "test": "tsc -b tsconfig.test.json && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js",
+    "build": "tsc -b tsconfig.build.json",
     "clean": "rimraf dist*"
   }
 }

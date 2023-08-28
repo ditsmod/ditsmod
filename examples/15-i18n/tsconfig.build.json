@@ -14,13 +14,12 @@
       "@ditsmod/jwt": ["../../packages/jwt/src"],
       "@ditsmod/i18n": ["../../packages/i18n/src"],
       "@ditsmod/testing": ["../../packages/testing/src"],
-      "@dict/first/*": ["./src/app/first/locales/current/_base-en/*"],
-      "@dict/second/*": ["./src/app/second/locales/current/_base-en/*"],
+      "#dict/first/*": ["./src/app/first/locales/current/_base-en/*"],
+      "#dict/second/*": ["./src/app/second/locales/current/_base-en/*"],
     }
   },
   "include": ["src"],
   "references": [
-    { "path": "./tsconfig.loader.json" }, // Need only to get aliase paths
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/router/tsconfig.build.json" },
     { "path": "../../packages/openapi/tsconfig.build.json" },

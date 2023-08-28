@@ -8,9 +8,7 @@ const config: Config = {
     '@ditsmod/core': '<rootDir>/../../packages/core/dist',
     '@ditsmod/testing': '<rootDir>/../../packages/testing/dist',
     '@ditsmod/i18n': '<rootDir>/../../packages/i18n/dist',
-    '@ditsmod/router': '<rootDir>/../../packages/router/dist',
-    '@dict/first/(.+)': '<rootDir>/dist/app/first/locales/current/_base-en/$1',
-    '@dict/second/(.+)': '<rootDir>/dist/app/second/locales/current/_base-en/$1',
+    '@ditsmod/router': '<rootDir>/../../packages/router/dist'
   },
 };
 

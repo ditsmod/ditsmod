@@ -2,7 +2,7 @@ import { AnyObj, controller, inject, PATH_PARAMS, Res, route } from '@ditsmod/co
 import { DictService } from '@ditsmod/i18n';
 
 import { FirstService } from '../first/first.service.js';
-import { SecondDict } from '@dict/second/second.dict.js';
+import { SecondDict } from '#dict/second/second.dict.js';
 
 @controller()
 export class SecondController {
