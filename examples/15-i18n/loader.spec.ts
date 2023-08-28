@@ -23,7 +23,7 @@ describe('Node.js loader', () => {
   describe('getModuleNameMap()', () => {
     it('should be prepared ModuleNameMap', () => {
       expect(getModuleNameMap).not.toThrow();
-      const rootDir = new URL(import.meta.url + '/../../').pathname;
+      const rootDir = '/srv/git/ditsmod/ditsmod/examples/15-i18n/';
       const map = getModuleNameMap(moduleNameMapper, rootDir);
       expect(map).toEqual(moduleNameMap);
     });
