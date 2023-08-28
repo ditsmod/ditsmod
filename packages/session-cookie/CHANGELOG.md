@@ -1,5 +1,12 @@
+<a name="session-cookie-2.6.0-beta.1"></a>
+# [session-cookie-2.6.0-beta.1](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.6.0-beta.1) (2023-08-28)
+
+### Features and Breaking changes
+
+- Migration to ESM.
+
 <a name="session-cookie-2.5.1"></a>
-# [session-cookie-2.5.1](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.5.1) (2023-07-14)
+## [session-cookie-2.5.1](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.5.1) (2023-07-14)
 
 ### Bug fix
 

@@ -1,5 +1,12 @@
+<a name="router-2.6.0-beta.1"></a>
+# [router-2.6.0-beta.1](https://github.com/ditsmod/ditsmod/releases/tag/router-2.6.0-beta.1) (2023-08-28)
+
+### Features and Breaking changes
+
+- Migration to ESM.
+
 <a name="router-2.5.0"></a>
-# [router-2.5.0](https://github.com/ditsmod/ditsmod/releases/tag/router-2.5.0) (2023-01-07)
+## [router-2.5.0](https://github.com/ditsmod/ditsmod/releases/tag/router-2.5.0) (2023-01-07)
 
 ### BREAKING CHANGES
 

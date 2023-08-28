@@ -1,5 +1,12 @@
+<a name="return-2.4.0-beta.1"></a>
+# [return-2.4.0-beta.1](https://github.com/ditsmod/ditsmod/releases/tag/return-2.4.0-beta.1) (2023-08-28)
+
+### Features and Breaking changes
+
+- Migration to ESM.
+
 <a name="return-2.3.0"></a>
-# [return-2.3.0](https://github.com/ditsmod/ditsmod/releases/tag/return-2.3.0) (2023-01-12)
+## [return-2.3.0](https://github.com/ditsmod/ditsmod/releases/tag/return-2.3.0) (2023-01-12)
 
 ### Breaking changes
 

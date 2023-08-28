@@ -1,5 +1,12 @@
+<a name="i18n-2.8.0-beta.1"></a>
+# [i18n-2.8.0-beta.1](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.8.0-beta.1) (2023-08-28)
+
+### Features and Breaking changes
+
+- Migration to ESM.
+
 <a name="i18n-2.7.0"></a>
-# [i18n-2.7.0](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.7.0) (2023-08-11)
+## [i18n-2.7.0](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.7.0) (2023-08-11)
 
 ### Migration
 

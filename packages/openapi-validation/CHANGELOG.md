@@ -1,5 +1,12 @@
+<a name="openapi-validation-2.9.0-beta.1"></a>
+# [openapi-validation-2.9.0-beta.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.9.0-beta.1) (2023-08-28)
+
+### Features and Breaking changes
+
+- Migration to ESM.
+
 <a name="openapi-validation-2.8.1"></a>
-# [openapi-validation-2.8.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.8.1) (2023-01-25)
+## [openapi-validation-2.8.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.8.1) (2023-01-25)
 
 ### BREAKING CHANGES
 

@@ -1,5 +1,12 @@
+<a name="body-parser-2.12.0-beta.1"></a>
+# [body-parser-2.12.0-beta.1](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.12.0-beta.1) (2023-08-28)
+
+### Features and Breaking changes
+
+- Migration to ESM.
+
 <a name="body-parser-2.11.0"></a>
-# [body-parser-2.11.0](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.11.0) (2023-01-25)
+## [body-parser-2.11.0](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.11.0) (2023-01-25)
 
 ### Breaking changes
 
