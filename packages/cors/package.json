@@ -10,7 +10,15 @@
   "main": "dist/index",
   "types": "dist/index",
   "module": "dist/index.js",
-  "exports": "./dist/index.js",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "directories": {
     "lib": "src"
   },

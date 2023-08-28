@@ -8,7 +8,15 @@
   },
   "description": "Ditsmod module to simplify the building SQL queries to the database.",
   "module": "dist/index.js",
-  "exports": "./dist/index.js",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "main": "dist/index",
   "types": "dist/index",
   "directories": {

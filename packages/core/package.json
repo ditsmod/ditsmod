@@ -9,7 +9,15 @@
   "homepage": "https://ditsmod.github.io/en/",
   "description": "NodeJS web framework writen in TypeScript",
   "module": "dist/index.js",
-  "exports": "./dist/index.js",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "license": "MIT",
   "main": "dist/index",
