@@ -69,9 +69,8 @@ npm run start-prod
 import { Application } from '@ditsmod/core';
 import { AppModule } from './app/app.module';
 
-new Application().bootstrap(AppModule).then((app) => {
-  app.server.listen(3000, 'localhost');
-});
+const app = await new Application().bootstrap(AppModule);
+app.server.listen(3000, 'localhost');
 ```
 
 Після компіляції, він перетворюється на `dist/src/main.js` (або просто `dist/main.js`, в залежності від конфігурації `tsconfig.json`) та стає вхідною точкою для запуску застосунку у продуктовому режимі, і саме тому ви будете його вказувати у якості аргументу для Node.js:

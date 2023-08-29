@@ -69,9 +69,8 @@ Let's look at the `src/main.ts` file:
 import { Application } from '@ditsmod/core';
 import { AppModule } from './app/app.module';
 
-new Application().bootstrap(AppModule).then((app) => {
-  app.server.listen(3000, 'localhost');
-});
+const app = await new Application().bootstrap(AppModule);
+app.server.listen(3000, 'localhost');
 ```
 
 After compilation, it becomes `dist/src/main.js` (or just `dist/main.js`, depending on your `tsconfig.json` configuration) and becomes the entry point for running the application in production mode, and so why you will specify it as an argument to Node.js:
