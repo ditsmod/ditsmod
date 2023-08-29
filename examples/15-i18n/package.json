@@ -6,6 +6,7 @@
   "main": "dist/main",
   "types": "dist/main",
   "imports": {
+    "#src/*": "./dist/*",
     "#dict/first/*": "./dist/app/first/locales/current/_base-en/*",
     "#dict/second/*": "./dist/app/second/locales/current/_base-en/*"
   },

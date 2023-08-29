@@ -9,7 +9,11 @@
   "scripts": {
     "start": "npm run build && node dist/main.js",
     "clean": "rimraf dist*",
-    "test": "npm run build && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js",
-    "build": "tsc -b tsconfig.test.json"
+    "test": "tsc -b tsconfig.test.json && npm run esm-jest",
+    "esm-jest": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js",
+    "build": "tsc -b tsconfig.build.json"
+  },
+  "imports": {
+    "#src/*": "./dist/*"
   }
 }

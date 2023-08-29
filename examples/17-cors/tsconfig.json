@@ -1,18 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
     "outDir": "dist/tmp",
     "baseUrl": "./",
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
-      "@src/*": ["./src/*"],
-      "@src/*": ["./src/*"],
-      "@ditsmod/core": ["../../packages/core/src"],
-      "@ditsmod/cors": ["../../packages/cors/src"],
-      "@ditsmod/router": ["../../packages/router/src"],
-      "@ditsmod/testing": ["../../packages/testing/src"],
+      "#src/*": ["./src/*"],
     }
   },
   "include": ["src", "test"],

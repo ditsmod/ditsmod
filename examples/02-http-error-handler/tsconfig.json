@@ -5,19 +5,13 @@
     "baseUrl": "./",
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
-      "@src/*": ["./src/*"],
-      "@ditsmod/core": ["../../packages/core/src"],
-      "@ditsmod/router": ["../../packages/router/src"],
-      "@ditsmod/testing": ["../../packages/testing/src"],
+      "#src/*": ["./src/*"],
     }
   },
   "include": ["src", "test"],
   "references": [
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/router/tsconfig.build.json" },
-    { "path": "../../packages/return/tsconfig.build.json" },
-    { "path": "../../packages/jwt/tsconfig.build.json" },
-    { "path": "../../packages/i18n/tsconfig.build.json" },
     { "path": "../../packages/testing/tsconfig.build.json" },
   ]
 }

@@ -2,7 +2,7 @@ import request = require('supertest');
 import { NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
-import { AppModule } from '@src/app/app.module.js';
+import { AppModule } from '#src/app/app.module.js';
 
 describe('04-logger', () => {
   let server: NodeServer;

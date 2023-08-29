@@ -15,21 +15,6 @@
     "removeComments": false,
     "noImplicitAny": true, // https://blogs.msdn.microsoft.com/typescript/2016/12/07/announcing-typescript-2-1/
     "declaration": true,
-    "allowJs": false,
-    "paths": {
-      "@ditsmod/core": ["../packages/core/src"],
-      "@ditsmod/cors": ["../packages/cors/src"],
-      "@ditsmod/return": ["../packages/return/src"],
-      "@ditsmod/router": ["../packages/router/src"],
-      "@ditsmod/session-cookie": ["../packages/session-cookie/src"],
-      "@ditsmod/body-parser": ["../packages/body-parser/src"],
-      "@ditsmod/openapi": ["../packages/openapi/src"],
-      "@ditsmod/openapi-validation": ["../packages/openapi-validation/src"],
-      "@ditsmod/jwt": ["../packages/jwt/src"],
-      "@ditsmod/i18n": ["../packages/i18n/src"],
-      "@ditsmod/testing": ["../packages/testing/src"],
-      "@dict/first/*": ["./15-i18n/src/app/first/locales/current/_base-en/*"],
-      "@dict/second/*": ["./15-i18n/src/app/second/locales/current/_base-en/*"]
-    }
+    "allowJs": false
   }
 }
