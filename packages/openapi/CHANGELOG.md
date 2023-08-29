@@ -1,5 +1,5 @@
-<a name="openapi-2.20.0-beta.1"></a>
-# [openapi-2.20.0-beta.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.20.0-beta.1) (2023-08-28)
+<a name="openapi-2.20.0"></a>
+# [openapi-2.20.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.20.0) (2023-08-28)
 
 ### Features and Breaking changes
 

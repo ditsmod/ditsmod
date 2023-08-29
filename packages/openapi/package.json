@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/openapi",
   "type": "module",
-  "version": "2.20.0-beta.2",
+  "version": "2.20.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -44,7 +44,7 @@
     "yaml": "^2.3.1"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.47.0-beta.1"
+    "@ditsmod/core": "^2.47.0"
   },
   "devDependencies": {
     "@types/swagger-ui-dist": "^3.30.1"
