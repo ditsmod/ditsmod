@@ -7,13 +7,6 @@ const config: JestConfigWithTsJest = {
   extensionsToTreatAsEsm: ['.ts'],
   testEnvironment: 'node',
   modulePathIgnorePatterns: [],
-  moduleNameMapper: {
-    '@ditsmod/body-parser': '<rootDir>/packages/body-parser/src',
-    '@ditsmod/core': '<rootDir>/packages/core/src',
-    '@ditsmod/openapi': '<rootDir>/packages/openapi/src',
-    '@ditsmod/router': '<rootDir>/packages/router/src',
-    '@ditsmod/session-cookie': '<rootDir>/packages/session-cookie/src',
-  },
   transform: {
     '^.+\\.tsx?$': [
       'ts-jest',
