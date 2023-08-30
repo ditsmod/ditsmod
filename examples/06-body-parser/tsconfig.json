@@ -10,6 +10,8 @@
   },
   "include": ["src", "test"],
   "references": [
-    { "path": "./tsconfig.build.json" },
+    { "path": "../../packages/body-parser/tsconfig.build.json" },
+    { "path": "../../packages/core/tsconfig.build.json" },
+    { "path": "../../packages/router/tsconfig.build.json" },
   ]
 }
