@@ -26,8 +26,8 @@ When importing, it is recommended not to mix import from local files and import 
 import { injectable } from '@ditsmod/core';
 import { CanActivate, Status } from '@ditsmod/core';
 
-import { AuthService } from './auth.service';
-import { Permission } from './permission';
+import { AuthService } from './auth.service.js';
+import { Permission } from './permission.js';
 ```
 
 Extension group token names must end in `_EXTENSIONS`, such as `MY_EXTENSIONS`.

@@ -89,7 +89,7 @@ class InputLogFilter {
 ```ts
 import { SystemLogMediator } from '@ditsmod/core';
 
-import { MyLogMediator } from './my-log-mediator';
+import { MyLogMediator } from './my-log-mediator.js';
 // ...
   providersPerApp: [
     { token: SystemLogMediator, useClass: MyLogMediator },
@@ -112,10 +112,10 @@ export class AppModule {}
 ```ts
 import { featureModule } from '@ditsmod/core';
 
-import { SomeModule } from '../some/some.module';
-import { SomeLogMediator } from '../some/some-log-mediator';
-import { OtherController } from './other.controller';
-import { OtherLogMediator } from './other-log-mediator';
+import { SomeModule } from '../some/some.module.js';
+import { SomeLogMediator } from '../some/some-log-mediator.js';
+import { OtherController } from './other.controller.js';
+import { OtherLogMediator } from './other-log-mediator.js';
 
 @featureModule({
   imports: [SomeModule],

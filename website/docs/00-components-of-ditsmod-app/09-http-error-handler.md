@@ -52,7 +52,7 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
 
 ```ts
 import { rootModule, HttpErrorHandler } from '@ditsmod/core';
-import { MyHttpErrorHandler } from './my-http-error-handler';
+import { MyHttpErrorHandler } from './my-http-error-handler.js';
 
 @rootModule({
   // ...
@@ -68,7 +68,7 @@ export class AppModule {}
 
 ```ts {8}
 import { featureModule, HttpErrorHandler } from '@ditsmod/core';
-import { ErrorHandlerModule } from './error-handler.module';
+import { ErrorHandlerModule } from './error-handler.module.js';
 
 @featureModule({
   // ...

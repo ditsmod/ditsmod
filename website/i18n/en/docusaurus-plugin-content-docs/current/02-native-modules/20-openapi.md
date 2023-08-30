@@ -142,7 +142,7 @@ The `getParams()` helper allows you to use models, and if you make a mistake in 
 import { controller } from '@ditsmod/core';
 import { oasRoute, getParams } from '@ditsmod/openapi';
 
-import { Params } from './params';
+import { Params } from './params.js';
 
 @controller()
 export class SomeController {
@@ -162,7 +162,7 @@ But the helper `getParams()` is not intended to be used simultaneously for manda
 import { controller } from '@ditsmod/core';
 import { oasRoute, Parameters } from '@ditsmod/openapi';
 
-import { Params } from './params';
+import { Params } from './params.js';
 
 @controller()
 export class SomeController {
@@ -214,7 +214,7 @@ To describe the content in `requestBody` and `responses`, there is also a helper
 import { controller, Status } from '@ditsmod/core';
 import { oasRoute, getContent } from '@ditsmod/openapi';
 
-import { SomeModel } from './some-model';
+import { SomeModel } from './some-model.js';
 
 @controller()
 export class SomeController {

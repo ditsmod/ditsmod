@@ -19,7 +19,7 @@ For example, it can be done like this:
 ```ts {9-11}
 import { injectable, CanActivate } from '@ditsmod/core';
 
-import { AuthService } from './auth.service';
+import { AuthService } from './auth.service.js';
 
 @injectable()
 export class AuthGuard implements CanActivate {
@@ -46,7 +46,7 @@ The guards are passed to the controllers in the array in the third parameter of 
 ```ts {7}
 import { controller, Res, route } from '@ditsmod/core';
 
-import { AuthGuard } from './auth.guard';
+import { AuthGuard } from './auth.guard.js';
 
 @controller()
 export class SomeController {
@@ -66,8 +66,8 @@ Let's consider such an example:
 ```ts {8}
 import { controller, Res, route } from '@ditsmod/core';
 
-import { PermissionsGuard } from './permissions.guard';
-import { Permission } from './permission';
+import { PermissionsGuard } from './permissions.guard.js';
+import { Permission } from './permission.js';
 
 @controller()
 export class SomeController {
@@ -83,8 +83,8 @@ As you can see, in place of the third parameter in `route`, an array of arrays i
 ```ts {10}
 import { injectable, CanActivate, Status } from '@ditsmod/core';
 
-import { AuthService } from './auth.service';
-import { Permission } from './permission';
+import { AuthService } from './auth.service.js';
+import { Permission } from './permission.js';
 
 @injectable()
 export class PermissionsGuard implements CanActivate {
@@ -106,8 +106,8 @@ Because parameter guards must be passed as an array within an array, this makes 
 
 ```ts {5}
 import { createHelperForGuardWithParams } from '@ditsmod/core';
-import { Permission } from './types';
-import { PermissionsGuard } from './permissions-guard';
+import { Permission } from './types.js';
+import { PermissionsGuard } from './permissions-guard.js';
 
 export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
 ```
@@ -119,8 +119,8 @@ In this example, `PermissionsGuard` is passed as an argument, which accepts para
 ```ts {8}
 import { controller, Res, route } from '@ditsmod/core';
 
-import { requirePermissions } from '../auth/guards-utils';
-import { Permission } from '../auth/types';
+import { requirePermissions } from '../auth/guards-utils.js';
+import { Permission } from '../auth/types.js';
 
 @controller()
 export class SomeController {
@@ -153,9 +153,9 @@ You can also centrally set guards at the module level:
 ```ts {10}
 import { featureModule } from '@ditsmod/core';
 
-import { OtherModule } from '../other/other.module';
-import { AuthModule } from '../auth/auth.module';
-import { AuthGuard } from '../auth/auth.guard';
+import { OtherModule } from '../other/other.module.js';
+import { AuthModule } from '../auth/auth.module.js';
+import { AuthGuard } from '../auth/auth.guard.js';
 
 @featureModule({
   imports: [

@@ -131,7 +131,7 @@ The controller is bound to the module through the `controllers` array:
 ```ts {6}
 import { featureModule } from '@ditsmod/core';
 
-import { SomeController } from './some.controller';
+import { SomeController } from './some.controller.js';
 
 @featureModule({
   controllers: [SomeController]
@@ -144,7 +144,7 @@ After binding controllers to a module, in order for Ditsmod to take these contro
 ```ts {6-8}
 import { featureModule } from '@ditsmod/core';
 
-import { SomeModule } from './some.module';
+import { SomeModule } from './some.module.js';
 
 @featureModule({
   appends: [SomeModule],
@@ -185,7 +185,7 @@ Often, some services depend on other services, and to get an instance of a certa
 ```ts {7}
 import { injectable } from '@ditsmod/core';
 
-import { FirstService } from './first.service';
+import { FirstService } from './first.service.js';
 
 @injectable()
 export class SecondService {
@@ -203,7 +203,7 @@ To be able to use the newly created service classes, they must be passed in the 
 
 ```ts {6}
 import { featureModule } from '@ditsmod/core';
-import { SomeService } from './some.service';
+import { SomeService } from './some.service.js';
 
 @featureModule({
   providersPerReq: [
@@ -217,7 +217,7 @@ Similarly, the service is passed in the controller metadata:
 
 ```ts {6}
 import { controller, route, Res } from '@ditsmod/core';
-import { SomeService } from './some.service';
+import { SomeService } from './some.service.js';
 
 @controller({
   providersPerReq: [

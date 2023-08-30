@@ -30,7 +30,7 @@ export class Service3 {
 Покищо `service3.doSomething()` використовується досить просто:
 
 ```ts {5-8}
-import { Service1, Service2, Service3 } from './services';
+import { Service1, Service2, Service3 } from './services.js';
 
 export class SomeService {
   method1() {
@@ -73,7 +73,7 @@ export class Service3 {
 
 ```ts {4,6,9}
 import { injectable } from '@ditsmod/core';
-import { Service3 } from './services';
+import { Service3 } from './services.js';
 
 @injectable()
 export class SomeService {
@@ -108,7 +108,7 @@ export class SomeService {
 ```ts {7}
 import { injectable } from '@ditsmod/core';
 
-import { FirstService } from './first.service';
+import { FirstService } from './first.service.js';
 
 @injectable()
 export class SecondService {
@@ -134,7 +134,7 @@ export class SecondService {
 ```ts {7}
 import { injectable } from '@ditsmod/core';
 
-import { FirstService } from './first.service';
+import { FirstService } from './first.service.js';
 
 @injectable()
 export class SecondService {
@@ -148,7 +148,7 @@ export class SecondService {
 ```ts {7}
 import { injectable, optional } from '@ditsmod/core';
 
-import { FirstService } from './first.service';
+import { FirstService } from './first.service.js';
 
 @injectable()
 export class SecondService {
@@ -208,7 +208,7 @@ JavaScript-значення, які приймає `setConstructorTokens`, на�
 ```ts {7}
 import { injectable } from '@ditsmod/core';
 
-import { FirstService } from './first.service';
+import { FirstService } from './first.service.js';
 
 @injectable()
 export class SecondService {
@@ -224,7 +224,7 @@ export class SecondService {
 ```ts {7}
 import { injectable, inject } from '@ditsmod/core';
 
-import { InterfaceOfItem } from './types';
+import { InterfaceOfItem } from './types.js';
 
 @injectable()
 export class SecondService {
@@ -240,14 +240,14 @@ export class SecondService {
 ```ts {5,14}
 // tokens.ts
 import { InjectionToken } from '@ditsmod/core';
-import { InterfaceOfItem } from './types';
+import { InterfaceOfItem } from './types.js';
 
 const SOME_TOKEN = new InjectionToken<InterfaceOfItem[]>('InterfaceOfItem');
 
 // second-service.ts
 import { injectable, inject } from '@ditsmod/core';
-import { InterfaceOfItem } from './types';
-import { SOME_TOKEN } from './tokens';
+import { InterfaceOfItem } from './types.js';
+import { SOME_TOKEN } from './tokens.js';
 
 @injectable()
 export class SecondService {
@@ -521,7 +521,7 @@ const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
 
 ```ts {6}
 import { injectable, Injector } from '@ditsmod/core';
-import { FirstService } from './first.service';
+import { FirstService } from './first.service.js';
 
 @injectable()
 export class SecondService {
@@ -542,7 +542,7 @@ export class SecondService {
 ```ts
 import { Injector } from '@ditsmod/core';
 
-import { LOCAL } from './tokens';
+import { LOCAL } from './tokens.js';
 
 const injector = Injector.resolveAndCreate([
   { token: LOCAL, useValue: 'uk', multi: true },
@@ -559,7 +559,7 @@ const locals = injector.get(LOCAL); // ['uk', 'en']
 ```ts {6-7}
 import { Injector } from '@ditsmod/core';
 
-import { LOCAL } from './tokens';
+import { LOCAL } from './tokens.js';
 
 const injector = Injector.resolveAndCreate([
   { token: LOCAL, useValue: 'uk' },
@@ -574,7 +574,7 @@ const locals = injector.get(LOCAL); // Error: Cannot mix multi providers and reg
 ```ts
 import { Injector } from '@ditsmod/core';
 
-import { LOCAL } from './tokens';
+import { LOCAL } from './tokens.js';
 
 const parent = Injector.resolveAndCreate([
   { token: LOCAL, useValue: 'uk', multi: true },
@@ -591,7 +591,7 @@ const locals = child.get(LOCAL); // ['uk', 'en']
 ```ts
 import { Injector } from '@ditsmod/core';
 
-import { LOCAL } from './tokens';
+import { LOCAL } from './tokens.js';
 
 const parent = Injector.resolveAndCreate([
   { token: LOCAL, useValue: 'uk', multi: true },
@@ -616,9 +616,9 @@ const locals = child.get(LOCAL); // ['аа']
 ```ts
 import { Injector } from '@ditsmod/core';
 
-import { HTTP_INTERCEPTORS } from './constants';
-import { DefaultInterceptor } from './default.interceptor';
-import { MyInterceptor } from './my.interceptor';
+import { HTTP_INTERCEPTORS } from './constants.js';
+import { DefaultInterceptor } from './default.interceptor.js';
+import { MyInterceptor } from './my.interceptor.js';
 
 const injector = Injector.resolveAndCreate([
   { token: HTTP_INTERCEPTORS, useToken: DefaultInterceptor, multi: true },
@@ -638,8 +638,8 @@ const locals = injector.get(HTTP_INTERCEPTORS); // [MyInterceptor]
 ```ts {9}
 import { featureModule } from '@ditsmod/core';
 
-import { SomeService } from './some.service';
-import { SomeController } from './some.controller';
+import { SomeService } from './some.service.js';
+import { SomeController } from './some.controller.js';
 
 @featureModule({
   controllers: [SomeController],
@@ -655,8 +655,8 @@ export class SomeModule {}
 ```ts {9}
 import { featureModule } from '@ditsmod/core';
 
-import { SomeService } from './some.service';
-import { SomeController } from './some.controller';
+import { SomeService } from './some.service.js';
+import { SomeController } from './some.controller.js';
 
 @featureModule({
   controllers: [SomeController],
@@ -672,8 +672,8 @@ export class SomeModule {}
 ```ts {8}
 import { controller } from '@ditsmod/core';
 
-import { SomeService } from './some.service';
-import { OtherService } from './other.service';
+import { SomeService } from './some.service.js';
+import { OtherService } from './other.service.js';
 
 @controller({
   providersPerReq: [
@@ -693,7 +693,7 @@ export class SomeController {
 ```ts {7}
 import { rootModule } from '@ditsmod/core';
 
-import { ConfigService } from './config.service';
+import { ConfigService } from './config.service.js';
 
 @rootModule({
   providersPerApp: [
@@ -708,7 +708,7 @@ export class AppModule {}
 ```ts {7}
 import { featureModule } from '@ditsmod/core';
 
-import { ConfigService } from './config.service';
+import { ConfigService } from './config.service.js';
 
 @featureModule({
   providersPerMod: [

@@ -11,8 +11,8 @@ By exporting providers from a particular module, you declare that they are avail
 ```ts {8}
 import { featureModule } from '@ditsmod/core';
 
-import { FirstService } from './first.service';
-import { SecondService } from './second.service';
+import { FirstService } from './first.service.js';
+import { SecondService } from './second.service.js';
 
 @featureModule({
   providersPerMod: [FirstService, { token: SecondService, useClass: SecondService }],
@@ -40,8 +40,8 @@ Exporting providers from the root module means that these providers will automat
 ```ts {9}
 import { rootModule } from '@ditsmod/core';
 
-import { SomeService } from './some.service';
-import { OtherModule } from './other.module';
+import { SomeService } from './some.service.js';
+import { OtherModule } from './other.module.js';
 
 @rootModule({
   imports: [OtherModule],
@@ -60,7 +60,7 @@ You cannot import a single provider into a Ditsmod module, but you can import an
 ```ts {7}
 import { featureModule } from '@ditsmod/core';
 
-import { FirstModule } from './first.module';
+import { FirstModule } from './first.module.js';
 
 @featureModule({
   imports: [
@@ -226,7 +226,7 @@ If you don't need to import providers and [extensions][2] into the current modul
 ```ts {6}
 import { featureModule } from '@ditsmod/core';
 
-import { FirstModule } from './first.module';
+import { FirstModule } from './first.module.js';
 
 @featureModule({
   appends: [FirstModule]
@@ -264,7 +264,7 @@ In addition to importing a specific module, the same module can be simultaneousl
 ```ts
 import { featureModule } from '@ditsmod/core';
 
-import { FirstModule } from './first.module';
+import { FirstModule } from './first.module.js';
 
 @featureModule({
   imports: [FirstModule],
@@ -280,7 +280,7 @@ Pay attention! If during re-export you import an object with `ModuleWithParams` 
 ```ts
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
 
-import { FirstModule } from './first.module';
+import { FirstModule } from './first.module.js';
 
 const firstModuleWithParams: ModuleWithParams = { path: 'some-path', module: FirstModule };
 

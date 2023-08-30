@@ -23,8 +23,8 @@ And since both of these modules are imported into `Module3`, this causes a "prov
 If `Module3` is declared in your application (it is not imported from `node_modules`), the collision is resolved by adding to `resolvedCollisionsPer*` an array of two elements, with the provider's token in the first place and the module from which the provider needs to be taken in the second place:
 
 ```ts {6}
-import { Module1, Service1 } from './module1';
-import { Module2 } from './module2';
+import { Module1, Service1 } from './module1.js';
+import { Module2 } from './module2.js';
 
 @featureModule({
   imports: [Module2, Module1],

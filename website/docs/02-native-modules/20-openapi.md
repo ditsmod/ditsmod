@@ -142,7 +142,7 @@ export class Model2 {
 import { controller } from '@ditsmod/core';
 import { oasRoute, getParams } from '@ditsmod/openapi';
 
-import { Params } from './params';
+import { Params } from './params.js';
 
 @controller()
 export class SomeController {
@@ -162,7 +162,7 @@ export class SomeController {
 import { controller } from '@ditsmod/core';
 import { oasRoute, Parameters } from '@ditsmod/openapi';
 
-import { Params } from './params';
+import { Params } from './params.js';
 
 @controller()
 export class SomeController {
@@ -214,7 +214,7 @@ class SomeController {
 import { controller, Status } from '@ditsmod/core';
 import { oasRoute, getContent } from '@ditsmod/openapi';
 
-import { SomeModel } from './some-model';
+import { SomeModel } from './some-model.js';
 
 @controller()
 export class SomeController {

@@ -111,16 +111,16 @@ npm run start-prod
 
 ```ts
 import { Application } from '@ditsmod/core';
-import { AppModule } from './app/app.module';
+import { AppModule } from './app/app.module.js';
 
 const app = await new Application().bootstrap(AppModule);
 app.server.listen(3000, 'localhost');
 ```
 
-Після компіляції, він перетворюється на `dist/src/main.js` (або просто `dist/main.js`, в залежності від конфігурації `tsconfig.json`) та стає вхідною точкою для запуску застосунку у продуктовому режимі, і саме тому ви будете його вказувати у якості аргументу для Node.js:
+Після компіляції, він перетворюється на `dist/main.js` та стає вхідною точкою для запуску застосунку у продуктовому режимі, і саме тому ви будете його вказувати у якості аргументу для Node.js:
 
 ```bash
-node dist/src/main.js
+node dist/main.js
 ```
 
 Проглядаючи далі файл `src/main.ts`, ви можете бачити, що створюється інстанс класу `Application`, а у якості аргументу для методу `bootstrap()` передається `AppModule`. Тут `AppModule` є кореневим модулем, до якого вже підв'язуються інші модулі застосунку.

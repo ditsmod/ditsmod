@@ -50,7 +50,7 @@ export class SomeModule {}
 import { featureModule } from '@ditsmod/core';
 import { ParametersInterceptor } from '@ditsmod/openapi-validation';
 
-import { MyInterceptor } from './my.interceptor';
+import { MyInterceptor } from './my.interceptor.js';
 
 @featureModule({
   // ...

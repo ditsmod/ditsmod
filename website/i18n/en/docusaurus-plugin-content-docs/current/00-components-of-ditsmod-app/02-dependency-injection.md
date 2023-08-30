@@ -30,7 +30,7 @@ export class Service3 {
 So far, `service3.doSomething()` is used quite simply:
 
 ```ts {5-8}
-import { Service1, Service2, Service3 } from './services';
+import { Service1, Service2, Service3 } from './services.js';
 
 export class SomeService {
   method1() {
@@ -73,7 +73,7 @@ For now, you may not know what exactly the `injectable` decorator does, it's mor
 
 ```ts {4,6,9}
 import { injectable } from '@ditsmod/core';
-import { Service3 } from './services';
+import { Service3 } from './services.js';
 
 @injectable()
 export class SomeService {
@@ -108,7 +108,7 @@ If creating an instance of a given class requires first creating instances of ot
 ```ts {7}
 import { injectable } from '@ditsmod/core';
 
-import { FirstService } from './first.service';
+import { FirstService } from './first.service.js';
 
 @injectable()
 export class SecondService {
@@ -134,7 +134,7 @@ Sometimes you may need to specify an optional dependency in the constructor. Let
 ```ts {7}
 import { injectable } from '@ditsmod/core';
 
-import { FirstService } from './first.service';
+import { FirstService } from './first.service.js';
 
 @injectable()
 export class SecondService {
@@ -148,7 +148,7 @@ But DI will ignore this optionality and generate an error if there is no possibi
 ```ts {7}
 import { injectable, optional } from '@ditsmod/core';
 
-import { FirstService } from './first.service';
+import { FirstService } from './first.service.js';
 
 @injectable()
 export class SecondService {
@@ -208,7 +208,7 @@ The JavaScript values accepted by `setConstructorTokens` are called **tokens**. 
 ```ts {7}
 import { injectable } from '@ditsmod/core';
 
-import { FirstService } from './first.service';
+import { FirstService } from './first.service.js';
 
 @injectable()
 export class SecondService {
@@ -224,7 +224,7 @@ And there is a **long form** of specifying a dependency using the `inject` decor
 ```ts {7}
 import { injectable, inject } from '@ditsmod/core';
 
-import { InterfaceOfItem } from './types';
+import { InterfaceOfItem } from './types.js';
 
 @injectable()
 export class SecondService {
@@ -240,14 +240,14 @@ A token can be a reference to a class, object, or function, and primitive values
 ```ts {5,14}
 // tokens.ts
 import { InjectionToken } from '@ditsmod/core';
-import { InterfaceOfItem } from './types';
+import { InterfaceOfItem } from './types.js';
 
 const SOME_TOKEN = new InjectionToken<InterfaceOfItem[]>('InterfaceOfItem');
 
 // second-service.ts
 import { injectable, inject } from '@ditsmod/core';
-import { InterfaceOfItem } from './types';
-import { SOME_TOKEN } from './tokens';
+import { InterfaceOfItem } from './types.js';
+import { SOME_TOKEN } from './tokens.js';
 
 @injectable()
 export class SecondService {
@@ -521,7 +521,7 @@ You may rarely need the service or controller injector itself, but you can get i
 
 ```ts {6}
 import { injectable, Injector } from '@ditsmod/core';
-import { FirstService } from './first.service';
+import { FirstService } from './first.service.js';
 
 @injectable()
 export class SecondService {
@@ -542,7 +542,7 @@ This type of provider exists only in the form of an object, and it differs from 
 ```ts
 import { Injector } from '@ditsmod/core';
 
-import { LOCAL } from './tokens';
+import { LOCAL } from './tokens.js';
 
 const injector = Injector.resolveAndCreate([
   { token: LOCAL, useValue: 'uk', multi: true },
@@ -559,7 +559,7 @@ It is not allowed that both ordinary and multi-providers have the same token in 
 ```ts {6-7}
 import { Injector } from '@ditsmod/core';
 
-import { LOCAL } from './tokens';
+import { LOCAL } from './tokens.js';
 
 const injector = Injector.resolveAndCreate([
   { token: LOCAL, useValue: 'uk' },
@@ -574,7 +574,7 @@ Child injectors can only return multi-provider values from the parent injector i
 ```ts
 import { Injector } from '@ditsmod/core';
 
-import { LOCAL } from './tokens';
+import { LOCAL } from './tokens.js';
 
 const parent = Injector.resolveAndCreate([
   { token: LOCAL, useValue: 'uk', multi: true },
@@ -591,7 +591,7 @@ If both the child and the parent injector have multi-providers with the same tok
 ```ts
 import { Injector } from '@ditsmod/core';
 
-import { LOCAL } from './tokens';
+import { LOCAL } from './tokens.js';
 
 const parent = Injector.resolveAndCreate([
   { token: LOCAL, useValue: 'uk', multi: true },
@@ -616,9 +616,9 @@ To make it possible to change a specific multi-provider, you can do the followin
 ```ts
 import { Injector } from '@ditsmod/core';
 
-import { HTTP_INTERCEPTORS } from './constants';
-import { DefaultInterceptor } from './default.interceptor';
-import { MyInterceptor } from './my.interceptor';
+import { HTTP_INTERCEPTORS } from './constants.js';
+import { DefaultInterceptor } from './default.interceptor.js';
+import { MyInterceptor } from './my.interceptor.js';
 
 const injector = Injector.resolveAndCreate([
   { token: HTTP_INTERCEPTORS, useToken: DefaultInterceptor, multi: true },
@@ -638,8 +638,8 @@ For one dependency, you need to transfer one or more providers to the DI registr
 ```ts {9}
 import { featureModule } from '@ditsmod/core';
 
-import { SomeService } from './some.service';
-import { SomeController } from './some.controller';
+import { SomeService } from './some.service.js';
+import { SomeController } from './some.controller.js';
 
 @featureModule({
   controllers: [SomeController],
@@ -655,8 +655,8 @@ After such a passing, consumers of providers can use `SomeService` within `SomeM
 ```ts {9}
 import { featureModule } from '@ditsmod/core';
 
-import { SomeService } from './some.service';
-import { SomeController } from './some.controller';
+import { SomeService } from './some.service.js';
+import { SomeController } from './some.controller.js';
 
 @featureModule({
   controllers: [SomeController],
@@ -672,8 +672,8 @@ And now let's additionally pass another provider with the same token, but this t
 ```ts {8}
 import { controller } from '@ditsmod/core';
 
-import { SomeService } from './some.service';
-import { OtherService } from './other.service';
+import { SomeService } from './some.service.js';
+import { OtherService } from './other.service.js';
 
 @controller({
   providersPerReq: [
@@ -693,7 +693,7 @@ Similar substitution can be done at the application level and at the module leve
 ```ts {7}
 import { rootModule } from '@ditsmod/core';
 
-import { ConfigService } from './config.service';
+import { ConfigService } from './config.service.js';
 
 @rootModule({
   providersPerApp: [
@@ -708,7 +708,7 @@ And in a certain module, we substitute `ConfigService` with an arbitrary value:
 ```ts {7}
 import { featureModule } from '@ditsmod/core';
 
-import { ConfigService } from './config.service';
+import { ConfigService } from './config.service.js';
 
 @featureModule({
   providersPerMod: [

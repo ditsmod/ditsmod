@@ -131,7 +131,7 @@ export class HelloWorldController {
 ```ts {6}
 import { featureModule } from '@ditsmod/core';
 
-import { SomeController } from './some.controller';
+import { SomeController } from './some.controller.js';
 
 @featureModule({
   controllers: [SomeController]
@@ -144,7 +144,7 @@ export class SomeModule {}
 ```ts {6-8}
 import { featureModule } from '@ditsmod/core';
 
-import { SomeModule } from './some.module';
+import { SomeModule } from './some.module.js';
 
 @featureModule({
   appends: [SomeModule],
@@ -185,7 +185,7 @@ export class SomeService {}
 ```ts {7}
 import { injectable } from '@ditsmod/core';
 
-import { FirstService } from './first.service';
+import { FirstService } from './first.service.js';
 
 @injectable()
 export class SecondService {
@@ -203,7 +203,7 @@ export class SecondService {
 
 ```ts {6}
 import { featureModule } from '@ditsmod/core';
-import { SomeService } from './some.service';
+import { SomeService } from './some.service.js';
 
 @featureModule({
   providersPerReq: [
@@ -217,7 +217,7 @@ export class SomeModule {}
 
 ```ts {6}
 import { controller, route, Res } from '@ditsmod/core';
-import { SomeService } from './some.service';
+import { SomeService } from './some.service.js';
 
 @controller({
   providersPerReq: [

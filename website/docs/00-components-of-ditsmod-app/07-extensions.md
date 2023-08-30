@@ -130,7 +130,7 @@ export class ExtensionOptions {
 ```ts
 import { featureModule, ROUTES_EXTENSIONS } from '@ditsmod/core';
 
-import { MY_EXTENSIONS, MyExtension } from './my.extension';
+import { MY_EXTENSIONS, MyExtension } from './my.extension.js';
 
 @featureModule({
   extensions: [
@@ -147,7 +147,7 @@ export class SomeModule {}
 ```ts
 import { featureModule } from '@ditsmod/core';
 
-import { MY_EXTENSIONS, MyExtension } from './my.extension';
+import { MY_EXTENSIONS, MyExtension } from './my.extension.js';
 
 @featureModule({
   extensions: [
@@ -167,7 +167,7 @@ export class SomeModule {}
 import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
-import { OTHER_EXTENSIONS } from './other.extensions';
+import { OTHER_EXTENSIONS } from './other.extensions.js';
 
 @injectable()
 export class MyExtension implements Extension<void> {
@@ -201,7 +201,7 @@ await this.extensionsManager.init(OTHER_EXTENSIONS, false);
 import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
-import { OTHER_EXTENSIONS } from './other.extensions';
+import { OTHER_EXTENSIONS } from './other.extensions.js';
 
 @injectable()
 export class MyExtension implements Extension<void | false> {

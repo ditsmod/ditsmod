@@ -67,7 +67,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
 ```ts
 import { HTTP_INTERCEPTORS, featureModule } from '@ditsmod/core';
 
-import { MyHttpInterceptor } from './my-http-interceptor';
+import { MyHttpInterceptor } from './my-http-interceptor.js';
 
 @featureModule({
   // ...

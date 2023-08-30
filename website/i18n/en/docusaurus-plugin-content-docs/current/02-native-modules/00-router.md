@@ -63,7 +63,7 @@ If you want to integrate a custom router for the Ditsmod application, it is enou
 ```ts
 import { featureModule, Router } from '@ditsmod/core';
 
-import { MyRouter } from './my-router';
+import { MyRouter } from './my-router.js';
 
 @featureModule({
   providersPerApp: [{ token: Router, useClass: MyRouter }],

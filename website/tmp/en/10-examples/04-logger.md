@@ -105,7 +105,7 @@ Let's go back to our previous (correct) setup where a `bunyan` instance can be i
 import { Logger, LoggerConfig, featureModule } from '@ditsmod/core';
 import BunyanLogger from 'bunyan';
 
-import { patchLogger } from './patch-logger';
+import { patchLogger } from './patch-logger.js';
 
 @featureModule({
   // ...

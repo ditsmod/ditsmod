@@ -43,8 +43,8 @@ Since `Service2` depends on `Service1`, we need to isolate this service from int
 
 ```ts
 import { Injector } from '@ditsmod/core';
-import { Service1 } from './service1';
-import { Service2 } from './service2';
+import { Service1 } from './service1.js';
+import { Service2 } from './service2.js';
 
 const injector = Injector.resolveAndCreate([Service1, Service2]);
 const service2 = injector.get(Service2);
@@ -56,8 +56,8 @@ In this case, to create `Service2`, the injector will first create an instance o
 
 ```ts {6}
 import { Injector } from '@ditsmod/core';
-import { Service1 } from './service1';
-import { Service2 } from './service2';
+import { Service1 } from './service1.js';
+import { Service2 } from './service2.js';
 
 const injector = Injector.resolveAndCreate([
   { token: Service1, useValue: { saySomething: jest.fn() } },
@@ -72,8 +72,8 @@ Now you can write a test using this technique of substituting providers:
 
 ```ts {6-7,14}
 import { Injector } from '@ditsmod/core';
-import { Service1 } from './service1';
-import { Service2 } from './service2';
+import { Service1 } from './service1.js';
+import { Service2 } from './service2.js';
 
 describe('Service2', () => {
   const saySomething = jest.fn();
@@ -114,9 +114,9 @@ import request = require('supertest');
 import { Server } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
-import { AppModule } from '../src/app/app.module';
-import { EmailService } from '../src/app/email.service';
-import { InterfaceOfEmailService } from '../src/app/types';
+import { AppModule } from '../src/app/app.module.js';
+import { EmailService } from '../src/app/email.service.js';
+import { InterfaceOfEmailService } from '../src/app/types.js';
 
 describe('End-to-end testing', () => {
   let server: Server;
@@ -199,7 +199,7 @@ In this case, you don't need nested providers. But not always a certain service 
 
 ```ts {8,14}
 import { inject, injectable, NODE_REQ, NodeRequest } from '@ditsmod/core';
-import { SpyService } from './spy.service';
+import { SpyService } from './spy.service.js';
 
 @injectable()
 export class MockService1 extends Service1 {

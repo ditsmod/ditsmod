@@ -23,8 +23,8 @@ sidebar_position: 9
 Якщо `Module3` оголошено у вашому застосунку (тобто не імпортовано з `node_modules`), колізія вирішується шляхом додавання до `resolvedCollisionsPer*` масиву з двох елементів, де на першому місці йде токен провайдера, а на другому - модуль, з якого потрібно брати відповідний провайдер:
 
 ```ts {6}
-import { Module1, Service1 } from './module1';
-import { Module2 } from './module2';
+import { Module1, Service1 } from './module1.js';
+import { Module2 } from './module2.js';
 
 @featureModule({
   imports: [Module2, Module1],

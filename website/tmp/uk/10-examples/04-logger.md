@@ -105,7 +105,7 @@ const logger = createLogger({ name: 'bunyan-test' });
 import { Logger, LoggerConfig, featureModule } from '@ditsmod/core';
 import BunyanLogger from 'bunyan';
 
-import { patchLogger } from './patch-logger';
+import { patchLogger } from './patch-logger.js';
 
 @featureModule({
   // ...

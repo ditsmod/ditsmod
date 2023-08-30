@@ -89,7 +89,7 @@ If you look at `AppModule`, you can see how `LogMediator` is substituted by `MyL
 ```ts
 import { LogMediator } from '@ditsmod/core';
 
-import { MyLogMediator } from './my-log-mediator';
+import { MyLogMediator } from './my-log-mediator.js';
 // ...
   providersPerApp: [
     { token: LogMediator, useClass: MyLogMediator },
@@ -112,10 +112,10 @@ To change messages from an external service, `SomeLogMediator` has been extended
 ```ts
 import { featureModule } from '@ditsmod/core';
 
-import { SomeModule } from '../some/some.module';
-import { SomeLogMediator } from '../some/some-log-mediator';
-import { OtherController } from './other.controller';
-import { OtherLogMediator } from './other-log-mediator';
+import { SomeModule } from '../some/some.module.js';
+import { SomeLogMediator } from '../some/some-log-mediator.js';
+import { OtherController } from './other.controller.js';
+import { OtherLogMediator } from './other-log-mediator.js';
 
 @featureModule({
   imports: [SomeModule],

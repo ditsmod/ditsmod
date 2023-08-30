@@ -130,7 +130,7 @@ The `nextToken` property is used when you want your extension group to run befor
 ```ts
 import { featureModule, ROUTES_EXTENSIONS } from '@ditsmod/core';
 
-import { MY_EXTENSIONS, MyExtension } from './my.extension';
+import { MY_EXTENSIONS, MyExtension } from './my.extension.js';
 
 @featureModule({
   extensions: [
@@ -147,7 +147,7 @@ If it doesn't matter which group of extensions your extension will work in front
 ```ts
 import { featureModule } from '@ditsmod/core';
 
-import { MY_EXTENSIONS, MyExtension } from './my.extension';
+import { MY_EXTENSIONS, MyExtension } from './my.extension.js';
 
 @featureModule({
   extensions: [
@@ -167,7 +167,7 @@ Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSION
 import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
-import { OTHER_EXTENSIONS } from './other.extensions';
+import { OTHER_EXTENSIONS } from './other.extensions.js';
 
 @injectable()
 export class MyExtension implements Extension<void> {
@@ -201,7 +201,7 @@ In case you need to accumulate the results of a certain extension from all modul
 import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
-import { OTHER_EXTENSIONS } from './other.extensions';
+import { OTHER_EXTENSIONS } from './other.extensions.js';
 
 @injectable()
 export class MyExtension implements Extension<void | false> {

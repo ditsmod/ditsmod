@@ -27,8 +27,8 @@ sidebar_position: 99
 import { injectable } from '@ditsmod/core';
 import { CanActivate, Status } from '@ditsmod/core';
 
-import { AuthService } from './auth.service';
-import { Permission } from './permission';
+import { AuthService } from './auth.service.js';
+import { Permission } from './permission.js';
 ```
 
 Токени груп розширень повинні мати закінчення `_EXTENSIONS`, наприклад `MY_EXTENSIONS`.

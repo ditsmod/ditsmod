@@ -11,8 +11,8 @@ sidebar_position: 1
 ```ts {8}
 import { featureModule } from '@ditsmod/core';
 
-import { FirstService } from './first.service';
-import { SecondService } from './second.service';
+import { FirstService } from './first.service.js';
+import { SecondService } from './second.service.js';
 
 @featureModule({
   providersPerMod: [FirstService, { token: SecondService, useClass: SecondService }],
@@ -40,8 +40,8 @@ export class SomeModule {}
 ```ts {9}
 import { rootModule } from '@ditsmod/core';
 
-import { SomeService } from './some.service';
-import { OtherModule } from './other.module';
+import { SomeService } from './some.service.js';
+import { OtherModule } from './other.module.js';
 
 @rootModule({
   imports: [OtherModule],
@@ -60,7 +60,7 @@ export class AppModule {}
 ```ts {7}
 import { featureModule } from '@ditsmod/core';
 
-import { FirstModule } from './first.module';
+import { FirstModule } from './first.module.js';
 
 @featureModule({
   imports: [
@@ -226,7 +226,7 @@ export class Module1 {}
 ```ts {6}
 import { featureModule } from '@ditsmod/core';
 
-import { FirstModule } from './first.module';
+import { FirstModule } from './first.module.js';
 
 @featureModule({
   appends: [FirstModule]
@@ -264,7 +264,7 @@ interface AppendsWithParams<T extends AnyObj = AnyObj> {
 ```ts
 import { featureModule } from '@ditsmod/core';
 
-import { FirstModule } from './first.module';
+import { FirstModule } from './first.module.js';
 
 @featureModule({
   imports: [FirstModule],
@@ -280,7 +280,7 @@ export class SecondModule {}
 ```ts
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
 
-import { FirstModule } from './first.module';
+import { FirstModule } from './first.module.js';
 
 const firstModuleWithParams: ModuleWithParams = { path: 'some-path', module: FirstModule };
 

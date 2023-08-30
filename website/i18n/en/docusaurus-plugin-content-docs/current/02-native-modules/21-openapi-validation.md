@@ -50,7 +50,7 @@ The `ParametersInterceptor` and `RequestBodyInterceptor` classes are responsible
 import { featureModule } from '@ditsmod/core';
 import { ParametersInterceptor } from '@ditsmod/openapi-validation';
 
-import { MyInterceptor } from './my.interceptor';
+import { MyInterceptor } from './my.interceptor.js';
 
 @featureModule({
   // ...

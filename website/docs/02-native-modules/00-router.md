@@ -63,7 +63,7 @@ export class AppModule {}
 ```ts
 import { featureModule, Router } from '@ditsmod/core';
 
-import { MyRouter } from './my-router';
+import { MyRouter } from './my-router.js';
 
 @featureModule({
   providersPerApp: [{ token: Router, useClass: MyRouter }],

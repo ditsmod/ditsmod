@@ -52,7 +52,7 @@ To add your new error handler centrally, you can do it directly in the root modu
 
 ```ts
 import { rootModule, HttpErrorHandler } from '@ditsmod/core';
-import { MyHttpErrorHandler } from './my-http-error-handler';
+import { MyHttpErrorHandler } from './my-http-error-handler.js';
 
 @rootModule({
   // ...
@@ -68,7 +68,7 @@ If you're adding such a handler to the metadata of a regular non-root module, yo
 
 ```ts {8}
 import { featureModule, HttpErrorHandler } from '@ditsmod/core';
-import { ErrorHandlerModule } from './error-handler.module';
+import { ErrorHandlerModule } from './error-handler.module.js';
 
 @featureModule({
   // ...
