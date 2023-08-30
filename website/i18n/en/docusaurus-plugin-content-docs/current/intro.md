@@ -24,9 +24,9 @@ Some concepts of Ditsmod architecture are taken from Angular concepts, and DI is
 
 Please make sure that Node.js >= v18.0.0 is installed on your operating system.
 
-## Install the Ditsmod seed
+## Installation
 
-The [ditsmod-seed][2] repository has the basic set for application operation. Clone it and install the dependencies:
+The basic set for running the application has a repository [ditsmod/seed][2]. Clone it and install the dependencies:
 
 ```bash
 git clone --depth 1 https://github.com/ditsmod/seed.git my-app
@@ -34,21 +34,65 @@ cd my-app
 npm i
 ```
 
-## Run the application
+## Start in Development Mode
+
+For development mode, you'll need two terminals. In one, TypeScript code will be compiled into JavaScript code, and in the other, a web server will be running. After each code change, the web server will pick up these changes and reload.
+
+Command for the first terminal:
+
+```bash
+npm run watch
+```
+
+Command for the second terminal:
 
 ```bash
 npm start
 ```
 
-This command cannot be used for production mode, but it is suitable for application development, because every time you save your code, the web server will automatically reboot to apply the latest changes.
-
-You can check the server with `curl`:
+You can check the server operation using `curl`:
 
 ```bash
 curl -isS localhost:3000
 ```
 
-Or just open the browser on [http://localhost:3000/](http://localhost:3000/).
+Or simply by going to [http://localhost:3000/](http://localhost:3000/) in your browser.
+
+Of course, instead of two terminals, you can use, for example, [ts-node][17] in one terminal, but this is a slower option, because after each change `ts-node` will recompile all the code on the fly, while in `tsc -w` only recompiles the changed file. In addition, thanks to [ditsmod/seed][2]'s use of the so-called [Project References][16] and `tsc -b` build mode, even very large projects compile very quickly.
+
+Note that there are three config files for TypeScript in the `ditsmod/seed` repository:
+
+- `tsconfig.json` - the basic configuration used by your IDE (in most cases it is probably VS Code).
+- `tsconfig.build.json` - this configuration is used to compile the code from the `src` folder to the `dist` folder. This is where your application code and the code for your unit tests reside.
+- `tsconfig.test.json` - this configuration is used to compile the code from the `test` folder into the `dist-test` folder. Here is the code for your end-to-end tests.
+
+Also, note that since `ditsmod/seed` is declared as an EcmaScript Module (ESM), you can use [native Node.js aliases][18] to shorten file paths. This is the counterpart to `compilerOptions.paths` in `tsconfig`. Such aliases are declared in `package.json` in the `imports` field:
+
+```json {2}
+"imports": {
+  "#src/*": "./dist/*"
+},
+```
+
+Now you can use it, for example in the `test` folder, like this:
+
+```ts
+import { AppModule } from '#src/app/app.module.js';
+```
+
+At the moment (2023-08-30) TypeScript does not yet fully support these aliases, so it is advisable to duplicate them in the `tsconfig.json` file:
+
+```json
+// ...
+  "paths": {
+    "#src/*": ["./src/*"]
+  }
+// ...
+```
+
+There is no point in doing this in other `tsconfig` files because it is only needed by your code editor. Note that in `package.json` the aliases point to `dist`, while in `tsconfig.json` they point to `src`.
+
+## Start in product mode
 
 The application is compiled and the server is started in product mode using the command:
 
@@ -92,3 +136,7 @@ Looking further at the file `src/main.ts`, you can see that an instance of the c
 [12]: https://en.wikipedia.org/wiki/Singleton_pattern
 [13]: https://github.com/ditsmod/realworld
 [14]: https://github.com/ditsmod/vs-webframework#readme
+[15]: https://github.com/remy/nodemon
+[16]: https://www.typescriptlang.org/docs/handbook/project-references.html
+[17]: https://github.com/TypeStrong/ts-node
+[18]: https://nodejs.org/api/packages.html#subpath-imports
