@@ -1,4 +1,12 @@
 See:
+- [CHANGELOG for body-parser](./packages/body-parser/CHANGELOG.md)
 - [CHANGELOG for core](./packages/core/CHANGELOG.md)
+- [CHANGELOG for cors](./packages/cors/CHANGELOG.md)
+- [CHANGELOG for i18n](./packages/i18n/CHANGELOG.md)
+- [CHANGELOG for jwt](./packages/jwt/CHANGELOG.md)
 - [CHANGELOG for openapi](./packages/openapi/CHANGELOG.md)
+- [CHANGELOG for openapi-validation](./packages/openapi-validation/CHANGELOG.md)
+- [CHANGELOG for return](./packages/return/CHANGELOG.md)
 - [CHANGELOG for router](./packages/router/CHANGELOG.md)
+- [CHANGELOG for session-cookie](./packages/session-cookie/CHANGELOG.md)
+- [CHANGELOG for testing](./packages/testing/CHANGELOG.md)
