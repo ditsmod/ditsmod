@@ -1,9 +1,9 @@
+import { EXTENSIONS_COUNTERS } from '#constans';
 import { injectable, InjectionToken, Injector } from '#di';
 import { Extension } from '#types/mix.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
-import { ExtensionsManager } from './extensions-manager.js';
 import { ExtensionsContext } from './extensions-context.js';
-import { EXTENSIONS_COUNTERS } from '#constans';
+import { ExtensionsManager } from './extensions-manager.js';
 
 describe('ExtensionsManager circular dependencies', () => {
   class MockExtensionsManager extends ExtensionsManager {

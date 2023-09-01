@@ -1,38 +1,42 @@
 import { AnyFn } from '#types/mix.js';
-import {
-  Visibility,
-  ParamsMeta,
-  Provider,
-  NormalizedProvider,
-  DiError,
-  getNewRegistry,
-  RegistryOfInjector,
-  ID,
-} from './types-and-models.js';
-import { Dependency, ResolvedFactory, ResolvedProvider, Class, DecoratorAndValue } from './types-and-models.js';
-import { fromSelf, skipSelf, inject, optional } from './decorators.js';
+import { fromSelf, inject, optional, skipSelf } from './decorators.js';
 import {
   cyclicDependencyError,
   instantiationError,
-  noProviderError,
   invalidProviderError,
-  noAnnotationError,
   mixMultiProvidersWithRegularProvidersError,
+  noAnnotationError,
+  noProviderError,
 } from './error-handling.js';
-import { reflector } from './reflection.js';
 import { resolveForwardRef } from './forward-ref.js';
 import { InjectionToken } from './injection-token.js';
+import { DualKey, KeyRegistry } from './key-registry.js';
+import { reflector } from './reflection.js';
 import {
+  Class,
+  DecoratorAndValue,
+  Dependency,
+  DiError,
+  ID,
+  NormalizedProvider,
+  ParamsMeta,
+  Provider,
+  RegistryOfInjector,
+  ResolvedFactory,
+  ResolvedProvider,
+  Visibility,
+  getNewRegistry,
+} from './types-and-models.js';
+import {
+  DEBUG_NAME,
   isClassProvider,
   isFactoryProvider,
+  isFunctionFactoryProvider,
   isNormalizedProvider,
   isTypeProvider,
-  DEBUG_NAME,
-  stringify,
   isValueProvider,
-  isFunctionFactoryProvider,
+  stringify,
 } from './utils.js';
-import { DualKey, KeyRegistry } from './key-registry.js';
 
 const NoDefaultValue = Symbol();
 
@@ -76,7 +80,11 @@ export class Injector {
   /**
    * @param injectorName Injector name. Useful for debugging.
    */
-  constructor(Registry: Class<RegistryOfInjector>, parent?: Injector, public readonly injectorName?: string) {
+  constructor(
+    Registry: Class<RegistryOfInjector>,
+    parent?: Injector,
+    public readonly injectorName?: string,
+  ) {
     this.#registry = new Registry();
     this.#parent = parent || null;
   }
@@ -125,7 +133,7 @@ console.log(providers[0].resolvedFactories[0].dependencies);
    */
   static prepareRegistry(
     providers: ResolvedProvider[],
-    Registry?: Class<RegistryOfInjector>
+    Registry?: Class<RegistryOfInjector>,
   ): Class<RegistryOfInjector> {
     if (!Registry) {
       Registry = getNewRegistry();
@@ -346,7 +354,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
    */
   private static mergeResolvedProviders(
     resolvedProviders: ResolvedProvider[],
-    normalizedProvidersMap: Map<number, ResolvedProvider>
+    normalizedProvidersMap: Map<number, ResolvedProvider>,
   ): Map<number, ResolvedProvider> {
     for (let i = 0; i < resolvedProviders.length; i++) {
       const provider = resolvedProviders[i];
@@ -542,7 +550,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     dualKey: DualKey,
     parentTokens: any[],
     defaultValue: any,
-    visibility?: Visibility
+    visibility?: Visibility,
   ): any {
     if (injector) {
       const meta = injector.#registry[dualKey.id];
@@ -609,7 +617,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         dep.dualKey,
         [token, ...parentTokens],
         dep.visibility,
-        dep.optional ? undefined : NoDefaultValue
+        dep.optional ? undefined : NoDefaultValue,
       );
     });
 

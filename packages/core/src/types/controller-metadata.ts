@@ -1,6 +1,6 @@
-import type { DecoratorAndValue, Class } from '#di';
-import type { RouteMeta } from './route-data.js';
+import type { Class, DecoratorAndValue } from '#di';
 import type { AnyObj, DecoratorMetadata, HttpMethod, ServiceProvider } from './mix.js';
+import type { RouteMeta } from './route-data.js';
 
 export interface ControllerMetadata1 {
   controller: Class;

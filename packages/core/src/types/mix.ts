@@ -1,16 +1,15 @@
 import {
+  Class,
   ClassProvider,
-  TokenProvider,
   FactoryProvider,
   InjectionToken,
-  Class,
-  TypeProvider,
-  ValueProvider,
   ResolvedProvider,
-  NormalizedProvider,
+  TokenProvider,
+  TypeProvider,
+  ValueProvider
 } from '#di';
-import { MetadataPerMod1 } from './metadata-per-mod.js';
 import { ProvidersMetadata } from '#models/providers-metadata.js';
+import { MetadataPerMod1 } from './metadata-per-mod.js';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
 

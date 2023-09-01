@@ -1,14 +1,14 @@
 import { injectable } from '#di';
+import { ConsoleLogger } from '#services/console-logger.js';
+import { LogLevel, Logger } from '#types/logger.js';
 import { GlobalProviders, ImportObj } from '#types/metadata-per-mod.js';
-import { Logger, LogLevel } from '#types/logger.js';
 import { Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceProvider } from '#types/mix.js';
-import { isInjectionToken } from '#utils/type-guards.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getModuleName } from '#utils/get-module-name.js';
 import { getProviderName } from '#utils/get-provider-name.js';
+import { isInjectionToken } from '#utils/type-guards.js';
 import { LogMediator } from './log-mediator.js';
 import { InputLogFilter, OutputLogFilter } from './types.js';
-import { ConsoleLogger } from '#services/console-logger.js';
 
 /**
  * Mediator between core logger and custom user's logger.
@@ -214,7 +214,7 @@ export class SystemLogMediator extends LogMediator {
     this.setLog(
       'debug',
       inputLogFilter,
-      `${className}: ${'='.repeat(20)} ${this.moduleExtract.moduleName} ${'='.repeat(20)}`
+      `${className}: ${'='.repeat(20)} ${this.moduleExtract.moduleName} ${'='.repeat(20)}`,
     );
   }
 
@@ -369,7 +369,7 @@ export class SystemLogMediator extends LogMediator {
     providersPerReq: ServiceProvider[],
     providersPerRou: ServiceProvider[],
     providersPerMod: ServiceProvider[],
-    providersPerApp?: ServiceProvider[]
+    providersPerApp?: ServiceProvider[],
   ) {
     const className = self.constructor.name;
     const inputLogFilter = new InputLogFilter();

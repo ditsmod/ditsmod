@@ -1,4 +1,4 @@
-import { injectable, Class } from '#di';
+import { Class, injectable } from '#di';
 import { Extension, ExtensionsGroupToken } from '#types/mix.js';
 
 @injectable()

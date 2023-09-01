@@ -1,18 +1,18 @@
-import { fromSelf, injectable, Injector, ResolvedProvider, KeyRegistry } from '#di';
+import { A_PATH_PARAMS, HTTP_INTERCEPTORS, NODE_REQ, NODE_RES, QUERY_STRING, ROUTES_EXTENSIONS } from '#constans';
+import { Injector, KeyRegistry, ResolvedProvider, fromSelf, injectable } from '#di';
 import { DepsChecker } from '#di/deps-checker.js';
-import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS, NODE_REQ, NODE_RES, QUERY_STRING, A_PATH_PARAMS } from '#constans';
+import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
+import { ChainMaker } from '#services/chain-maker.js';
+import { ExtensionsContext } from '#services/extensions-context.js';
+import { ExtensionsManager } from '#services/extensions-manager.js';
+import { HttpErrorHandler } from '#services/http-error-handler.js';
+import { PerAppService } from '#services/per-app.service.js';
 import { HttpBackend, HttpFrontend, HttpHandler } from '#types/http-interceptor.js';
+import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { Extension, HttpMethod } from '#types/mix.js';
 import { PreparedRouteMeta, RouteMeta } from '#types/route-data.js';
 import { RouteHandler, Router } from '#types/router.js';
-import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
-import { ExtensionsManager } from '#services/extensions-manager.js';
-import { ExtensionsContext } from '#services/extensions-context.js';
 import { getModule } from '#utils/get-module.js';
-import { PerAppService } from '#services/per-app.service.js';
-import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
-import { ChainMaker } from '#services/chain-maker.js';
-import { HttpErrorHandler } from '#services/http-error-handler.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -24,7 +24,7 @@ export class PreRouterExtension implements Extension<void> {
     protected router: Router,
     protected extensionsManager: ExtensionsManager,
     protected log: SystemLogMediator,
-    protected extensionsContext: ExtensionsContext
+    protected extensionsContext: ExtensionsContext,
   ) {}
 
   async init(isLastExtensionCall: boolean) {
@@ -101,7 +101,7 @@ export class PreRouterExtension implements Extension<void> {
     path: string,
     injectorPerRou: Injector,
     resolvedPerReq: ResolvedProvider[],
-    routeMeta: RouteMeta
+    routeMeta: RouteMeta,
   ) {
     const inj = injectorPerRou.createChildFromResolved(resolvedPerReq);
     if (!routeMeta?.resolvedFactory) {

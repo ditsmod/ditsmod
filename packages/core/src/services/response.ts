@@ -1,10 +1,10 @@
 import { format } from 'util';
 
+import { NODE_RES } from '#constans';
+import { inject, injectable } from '#di';
 import { RedirectStatusCodes } from '#types/mix.js';
 import { NodeResponse } from '#types/server-options.js';
-import { inject, injectable } from '#di';
 import { Status } from '#utils/http-status-codes.js';
-import { NODE_RES } from '#constans';
 
 @injectable()
 export class Res<T = any> {
@@ -12,7 +12,7 @@ export class Res<T = any> {
     /**
      * Native Node.js response.
      */
-    @inject(NODE_RES) private nodeRes: NodeResponse
+    @inject(NODE_RES) private nodeRes: NodeResponse,
   ) {}
 
   /**

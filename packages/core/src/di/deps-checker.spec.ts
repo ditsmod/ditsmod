@@ -1,26 +1,18 @@
 import { jest } from '@jest/globals';
 import 'reflect-metadata';
 
+import { makePropDecorator } from './decorator-factories.js';
+import { DepsChecker } from './deps-checker.js';
 import {
-  fromSelf,
-  inject,
-  injectable,
   InjectionToken,
   Injector,
-  optional,
   Provider,
-  forwardRef,
-  reflector,
-  ResolvedProvider,
+  inject,
+  injectable,
   methodFactory,
-  skipSelf,
+  optional,
+  skipSelf
 } from './index.js';
-
-import { stringify } from './utils.js';
-import { makeClassDecorator, makePropDecorator } from './decorator-factories.js';
-import { KeyRegistry } from './key-registry.js';
-import { getNewRegistry } from './types-and-models.js';
-import { DepsChecker } from './deps-checker.js';
 
 class Engine {}
 

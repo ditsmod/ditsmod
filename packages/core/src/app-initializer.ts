@@ -1,7 +1,8 @@
 import { InjectionToken } from '#di';
-
 import { EXTENSIONS_COUNTERS } from './constans.js';
 import { ImportsResolver } from './imports-resolver.js';
+import { LogMediator } from './log-mediator/log-mediator.js';
+import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata.js';
 import { RootMetadata } from './models/root-metadata.js';
 import { ModuleFactory } from './module-factory.js';
@@ -9,7 +10,6 @@ import { Counter } from './services/counter.js';
 import { defaultProvidersPerApp } from './services/default-providers-per-app.js';
 import { ExtensionsContext } from './services/extensions-context.js';
 import { ExtensionsManager } from './services/extensions-manager.js';
-import { LogMediator } from './log-mediator/log-mediator.js';
 import { ModuleManager } from './services/module-manager.js';
 import { PerAppService } from './services/per-app.service.js';
 import { PreRouter } from './services/pre-router.js';
@@ -20,13 +20,12 @@ import { RequestListener } from './types/server-options.js';
 import { getCollisions } from './utils/get-collisions.js';
 import { getDuplicates } from './utils/get-duplicates.js';
 import { getLastProviders } from './utils/get-last-providers.js';
-import { getModule } from './utils/get-module.js';
 import { getModuleName } from './utils/get-module-name.js';
+import { getModule } from './utils/get-module.js';
 import { getProvidersTargets, getToken, getTokens } from './utils/get-tokens.js';
 import { normalizeProviders } from './utils/ng-utils.js';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error.js';
 import { isMultiProvider, isNormRootModule } from './utils/type-guards.js';
-import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();

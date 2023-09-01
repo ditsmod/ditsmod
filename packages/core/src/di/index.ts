@@ -1,37 +1,35 @@
 import 'reflect-metadata';
 
-export * from './decorators.js';
-export { forwardRef, resolveForwardRef, ForwardRefFn } from './forward-ref.js';
-export { Injector } from './injector.js';
-export {
-  Provider,
-  TypeProvider,
-  ValueProvider,
-  ClassProvider,
-  TokenProvider,
-  FactoryProvider,
-  Class,
-  NormalizedProvider,
-  RegistryOfInjector,
-} from './types-and-models.js';
-export { InjectionToken } from './injection-token.js';
 export { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
-export { reflector } from './reflection.js';
+export * from './decorators.js';
+export { ForwardRefFn, forwardRef, resolveForwardRef } from './forward-ref.js';
+export { InjectionToken } from './injection-token.js';
+export { Injector } from './injector.js';
 export { DualKey, KeyRegistry } from './key-registry.js';
+export { reflector } from './reflection.js';
 export {
-  PropMeta,
-  ParamsMeta,
-  DecoratorAndValue,
-  UseFactoryTuple,
-  FunctionFactoryProvider,
+  Class,
   ClassFactoryProvider,
+  ClassProvider,
+  DecoratorAndValue,
+  DiError,
+  FactoryProvider,
+  FunctionFactoryProvider,
+  NormalizedProvider,
+  ParamsMeta,
+  PropMeta,
+  Provider,
+  RegistryOfInjector,
   ResolvedFactory,
   ResolvedProvider,
-  DiError,
+  TokenProvider,
+  TypeProvider,
+  UseFactoryTuple,
+  ValueProvider,
 } from './types-and-models.js';
 export {
-  isDecoratorAndValue,
   isClassProvider,
+  isDecoratorAndValue,
   isFactoryProvider,
   isFunctionFactoryProvider,
   isMultiProvider,

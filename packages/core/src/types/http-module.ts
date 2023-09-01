@@ -1,7 +1,7 @@
 import * as http from 'http';
-import * as https from 'https';
 import * as http2 from 'http2';
-import { Http2Server, Http2ServerRequest, Http2ServerResponse, Http2SecureServer, SecureServerOptions } from 'http2';
+import { Http2SecureServer, Http2Server, Http2ServerRequest, Http2ServerResponse, SecureServerOptions } from 'http2';
+import * as https from 'https';
 
 export type HttpModule = HttpServerModule | HttpsServerModule | Http2ServerModule;
 

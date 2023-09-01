@@ -1,16 +1,19 @@
 import { injectable } from '#di';
+import { RootMetadata } from '#models/root-metadata.js';
 import { ControllerMetadata2 } from '#types/controller-metadata.js';
 import { MetadataPerMod1, MetadataPerMod2 } from '#types/metadata-per-mod.js';
-import { GuardItem, NormalizedGuard, Extension, ServiceProvider } from '#types/mix.js';
+import { Extension, GuardItem, NormalizedGuard, ServiceProvider } from '#types/mix.js';
 import { RouteMeta } from '#types/route-data.js';
 import { isController, isRoute } from '#utils/type-guards.js';
-import { RootMetadata } from '#models/root-metadata.js';
 
 @injectable()
 export class RoutesExtension implements Extension<MetadataPerMod2> {
   protected metadataPerMod2: MetadataPerMod2;
 
-  constructor(protected rootMetadata: RootMetadata, protected metadataPerMod1: MetadataPerMod1) {}
+  constructor(
+    protected rootMetadata: RootMetadata,
+    protected metadataPerMod1: MetadataPerMod1,
+  ) {}
 
   async init() {
     if (this.metadataPerMod2) {

@@ -19,5 +19,5 @@ export const defaultExtensionsTokens: Readonly<any[]> = [
   ExtensionsContext,
   MetadataPerMod1,
   EXTENSIONS_COUNTERS,
-  PerAppService
+  PerAppService,
 ];

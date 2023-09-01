@@ -1,7 +1,7 @@
 import { injectable, optional } from '#di';
-import { Logger, LoggerConfig, LogLevel } from '#types/logger.js';
-import { ConsoleLogger } from '#services/console-logger.js';
 import { ModuleExtract } from '#models/module-extract.js';
+import { ConsoleLogger } from '#services/console-logger.js';
+import { LogLevel, Logger, LoggerConfig } from '#types/logger.js';
 import { InputLogFilter, LogItem, OutputLogFilter } from './types.js';
 
 /**

@@ -1,13 +1,13 @@
 import { jest } from '@jest/globals';
 
+import { HTTP_INTERCEPTORS } from '#constans';
 import { Injector } from '#di';
-import { HttpBackend, HttpHandler, HttpInterceptor, HttpFrontend } from './http-interceptor.js';
-import { defaultProvidersPerReq } from '#services/default-providers-per-req.js';
-import { defaultProvidersPerApp } from '#services/default-providers-per-app.js';
 import { ChainMaker } from '#services/chain-maker.js';
+import { defaultProvidersPerApp } from '#services/default-providers-per-app.js';
+import { defaultProvidersPerReq } from '#services/default-providers-per-req.js';
+import { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from './http-interceptor.js';
 import { ServiceProvider } from './mix.js';
 import { RouteMeta } from './route-data.js';
-import { HTTP_INTERCEPTORS } from '#constans';
 
 describe('HttpInterceptor', () => {
   const jestFn = jest.fn((interceptorName: string) => interceptorName);

@@ -1,14 +1,14 @@
-import { injectable, forwardRef, InjectionToken } from '#di';
-import { ModuleWithParams, ServiceProvider, ModuleType, AnyObj, Extension, ExtensionProvider } from '#types/mix.js';
-import { LoggerConfig } from '#types/logger.js';
-import { isMultiProvider } from '#utils/type-guards.js';
-import { rootModule } from '#decorators/root-module.js';
-import { NormalizedModuleMetadata } from '#models/normalized-module-metadata.js';
-import { ModuleManager } from './module-manager.js';
-import { featureModule } from '#decorators/module.js';
-import { ConsoleLogger } from './console-logger.js';
 import { controller } from '#decorators/controller.js';
+import { featureModule } from '#decorators/module.js';
+import { rootModule } from '#decorators/root-module.js';
+import { InjectionToken, forwardRef, injectable } from '#di';
 import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
+import { NormalizedModuleMetadata } from '#models/normalized-module-metadata.js';
+import { LoggerConfig } from '#types/logger.js';
+import { AnyObj, Extension, ExtensionProvider, ModuleType, ModuleWithParams, ServiceProvider } from '#types/mix.js';
+import { isMultiProvider } from '#utils/type-guards.js';
+import { ConsoleLogger } from './console-logger.js';
+import { ModuleManager } from './module-manager.js';
 
 describe('ModuleManager', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;
@@ -22,7 +22,7 @@ describe('ModuleManager', () => {
 
     override getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
-      throwErrOnNotFound?: boolean
+      throwErrOnNotFound?: boolean,
     ) {
       return super.getRawMetadata<T, A>(moduleId, throwErrOnNotFound);
     }
@@ -270,7 +270,7 @@ describe('ModuleManager', () => {
         return {
           module: this,
           providersPerMod: [{ token: Multi, useClass: Multi, multi: true }],
-          exports: [Multi]
+          exports: [Multi],
         };
       }
     }
@@ -769,7 +769,10 @@ describe('ModuleManager', () => {
     }
 
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
-    const extensionsProviders: ExtensionProvider[] = [Extension1, { token: GROUP_EXTENSIONS, useToken: Extension1, multi: true }];
+    const extensionsProviders: ExtensionProvider[] = [
+      Extension1,
+      { token: GROUP_EXTENSIONS, useToken: Extension1, multi: true },
+    ];
 
     @featureModule({
       extensions: [{ extension: Extension1 as any, groupToken: GROUP_EXTENSIONS, exported: true }],
@@ -808,7 +811,10 @@ describe('ModuleManager', () => {
     }
 
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
-    const extensionsProviders: ExtensionProvider[] = [Extension1, { token: GROUP_EXTENSIONS, useToken: Extension1, multi: true }];
+    const extensionsProviders: ExtensionProvider[] = [
+      Extension1,
+      { token: GROUP_EXTENSIONS, useToken: Extension1, multi: true },
+    ];
 
     @featureModule({
       extensions: [{ extension: Extension1 as any, groupToken: GROUP_EXTENSIONS, exported: true }],

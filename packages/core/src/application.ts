@@ -4,16 +4,16 @@ import type * as https from 'https';
 import type { AddressInfo } from 'net';
 
 import { AppInitializer } from './app-initializer.js';
-import { RootMetadata } from './models/root-metadata.js';
-import { ApplicationOptions } from './models/application-options.js';
 import { LogMediator } from './log-mediator/log-mediator.js';
 import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
+import { ApplicationOptions } from './models/application-options.js';
+import { RootMetadata } from './models/root-metadata.js';
 import { ModuleManager } from './services/module-manager.js';
-import { AnyFn, ModuleType } from './types/mix.js';
-import { Http2SecureServerOptions, RequestListener, NodeServer } from './types/server-options.js';
-import { isHttp2SecureServerOptions } from './utils/type-guards.js';
-import { cleanErrorTrace } from './utils/clean-error-trace.js';
 import { HttpServerModule, HttpsServerModule } from './types/http-module.js';
+import { AnyFn, ModuleType } from './types/mix.js';
+import { Http2SecureServerOptions, NodeServer, RequestListener } from './types/server-options.js';
+import { cleanErrorTrace } from './utils/clean-error-trace.js';
+import { isHttp2SecureServerOptions } from './utils/type-guards.js';
 
 export class Application {
   protected appOptions: ApplicationOptions;
@@ -43,7 +43,7 @@ export class Application {
 
   protected init(rootModuleName: string, appOptions: ApplicationOptions) {
     this.systemLogMediator = new SystemLogMediator({ moduleName: 'AppModule' });
-    this.appOptions = Object.assign(new ApplicationOptions(), appOptions);
+    this.appOptions = { ...new ApplicationOptions(), ...appOptions };
     this.rootMeta.path = this.appOptions.path || '';
     this.checkSecureServerOption(rootModuleName);
     return this.systemLogMediator;

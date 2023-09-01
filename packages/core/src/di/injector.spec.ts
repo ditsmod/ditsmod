@@ -1,25 +1,24 @@
 import { jest } from '@jest/globals';
 import 'reflect-metadata';
 
+import { makeClassDecorator, makePropDecorator } from './decorator-factories.js';
 import {
+  InjectionToken,
+  Injector,
+  Provider,
+  ResolvedProvider,
+  forwardRef,
   fromSelf,
   inject,
   injectable,
-  InjectionToken,
-  Injector,
-  optional,
-  Provider,
-  forwardRef,
-  reflector,
-  ResolvedProvider,
   methodFactory,
+  optional,
+  reflector,
   skipSelf,
 } from './index.js';
-
-import { stringify } from './utils.js';
-import { makeClassDecorator, makePropDecorator } from './decorator-factories.js';
 import { KeyRegistry } from './key-registry.js';
 import { getNewRegistry } from './types-and-models.js';
+import { stringify } from './utils.js';
 
 class Engine {}
 
@@ -50,7 +49,10 @@ class CarWithOptionalEngine {
 
 @injectable()
 class CarWithDashboard {
-  constructor(public engine: Engine, public dashboard: Dashboard) {}
+  constructor(
+    public engine: Engine,
+    public dashboard: Dashboard,
+  ) {}
 }
 
 @injectable()
@@ -593,7 +595,7 @@ describe('injector', () => {
 
   it('should throw when given invalid providers', () => {
     expect(() => createInjector(['blah'] as any)).toThrowError(
-      'Invalid provider - only instances of Provider and Class are allowed, got: blah'
+      'Invalid provider - only instances of Provider and Class are allowed, got: blah',
     );
   });
 
@@ -613,8 +615,8 @@ describe('injector', () => {
     const injector = createInjector([CarWithDashboard, Engine, Dashboard]);
     expect(() => injector.get(CarWithDashboard)).toThrowError(
       `No provider for DashboardSoftware! (${stringify(CarWithDashboard)} -> ${stringify(
-        Dashboard
-      )} -> DashboardSoftware)`
+        Dashboard,
+      )} -> DashboardSoftware)`,
     );
   });
 

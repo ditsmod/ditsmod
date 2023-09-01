@@ -1,6 +1,6 @@
-import { Class, PropMeta, ParamsMeta, PropMetadataTuple, DecoratorAndValue } from './types-and-models.js';
+import { CLASS_KEY, PARAMS_KEY, PROP_KEY, getMetaKey } from './decorator-factories.js';
+import { Class, DecoratorAndValue, ParamsMeta, PropMeta, PropMetadataTuple } from './types-and-models.js';
 import { isType, newArray } from './utils.js';
-import { CLASS_KEY, getMetaKey, PARAMS_KEY, PROP_KEY } from './decorator-factories.js';
 
 /**
  * Attention: These regex has to hold even if the code is minified!

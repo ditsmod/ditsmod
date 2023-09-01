@@ -1,15 +1,15 @@
 import { jest } from '@jest/globals';
 
+import { NODE_RES } from '#constans';
 import { Injector } from '#di';
 import { Logger } from '#types/logger.js';
 import { NodeResponse } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
-import { ErrorOpts } from '../custom-error/error-opts.js';
 import { CustomError } from '../custom-error/custom-error.js';
+import { ErrorOpts } from '../custom-error/error-opts.js';
 import { DefaultHttpErrorHandler as ErrorHandler } from './default-http-error-handler.js';
 import { Req } from './request.js';
 import { Res } from './response.js';
-import { NODE_RES } from '#constans';
 
 describe('ErrorHandler', () => {
   type ErrorLog = ErrorOpts & { err?: any };

@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import { Reflector, isDelegateCtor } from './reflector.js';
 import { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
+import { Reflector, isDelegateCtor } from './reflector.js';
 import { DecoratorAndValue, ParamsMeta, PropMeta, PropMetadataTuple } from './types-and-models.js';
 
 const classDecorator = makeClassDecorator((data?: any) => data);
@@ -55,7 +55,10 @@ class ClassWithoutDecorators {
 }
 
 class TestObj {
-  constructor(public a: any, public b: any) {}
+  constructor(
+    public a: any,
+    public b: any,
+  ) {}
 
   identity(arg: any) {
     return arg;
@@ -312,11 +315,7 @@ describe('Reflector', () => {
       // If we have no decorator, we don't get metadata about the ctor params.
       // But we should still get an array of the right length based on function.length.
       // TODO: Review use of `any` here (#19904)
-      expect(reflector.getParamsMetadata(ChildWithCtorNoDecorator)).toEqual<ParamsMeta[]>([
-        null,
-        null,
-        null,
-      ] as any[]);
+      expect(reflector.getParamsMetadata(ChildWithCtorNoDecorator)).toEqual<ParamsMeta[]>([null, null, null] as any[]);
 
       expect(reflector.getParamsMetadata(NoDecorators)).toEqual<ParamsMeta[]>([]);
       expect(reflector.getParamsMetadata({} as any)).toEqual<ParamsMeta[]>([]);

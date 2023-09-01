@@ -1,6 +1,9 @@
 import { format } from 'util';
 
-import { injectable, resolveForwardRef, Class } from '#di';
+import { HTTP_INTERCEPTORS } from '#constans';
+import { Class, injectable, resolveForwardRef } from '#di';
+import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
+import { NormalizedModuleMetadata } from '#models/normalized-module-metadata.js';
 import {
   AnyObj,
   Extension,
@@ -14,28 +17,25 @@ import {
 } from '#types/mix.js';
 import { AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { getExtensionProvider } from '#utils/get-extension-provider.js';
-import { getModule } from '#utils/get-module.js';
 import { getModuleMetadata } from '#utils/get-module-metadata.js';
 import { getModuleName } from '#utils/get-module-name.js';
+import { getModule } from '#utils/get-module.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { pickProperties } from '#utils/pick-properties.js';
-import { NormalizedModuleMetadata } from '#models/normalized-module-metadata.js';
-import { HTTP_INTERCEPTORS } from '#constans';
 import {
+  MultiProvider,
   isAppendsWithParams,
   isClassProvider,
-  isTokenProvider,
   isModuleWithParams,
   isMultiProvider,
-  isNormalizedProvider,
   isNormRootModule,
+  isNormalizedProvider,
   isProvider,
   isRawRootModule,
+  isTokenProvider,
   isValueProvider,
-  MultiProvider,
 } from '#utils/type-guards.js';
-import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
 
 export type ModulesMap = Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
 export type ModulesMapId = Map<string, ModuleType | ModuleWithParams>;
@@ -82,11 +82,11 @@ export class ModuleManager {
    */
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
-    throwErrIfNotFound?: false
+    throwErrIfNotFound?: false,
   ): NormalizedModuleMetadata<T, A> | undefined;
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
-    throwErrIfNotFound: true
+    throwErrIfNotFound: true,
   ): NormalizedModuleMetadata<T, A>;
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
     const meta = this.getRawMetadata<T, A>(moduleId, throwErrIfNotFound);
@@ -257,7 +257,7 @@ export class ModuleManager {
    */
   protected getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
-    throwErrIfNotFound?: boolean
+    throwErrIfNotFound?: boolean,
   ) {
     let meta: NormalizedModuleMetadata<T, A> | undefined;
     if (typeof moduleId == 'string') {
@@ -319,7 +319,7 @@ export class ModuleManager {
         ...targetMeta.importsWithParams,
         ...targetMeta.appendsWithParams,
         ...targetMeta.exportsModules,
-        ...targetMeta.exportsWithParams
+        ...targetMeta.exportsWithParams,
       );
     }
 
@@ -415,7 +415,7 @@ export class ModuleManager {
     rawMeta: ModuleMetadata,
     modName: string,
     providersTokens: any[],
-    meta: NormalizedModuleMetadata
+    meta: NormalizedModuleMetadata,
   ) {
     rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
@@ -465,7 +465,7 @@ export class ModuleManager {
       const type = typeof Guard?.prototype.canActivate;
       if (type != 'function') {
         throw new TypeError(
-          `Import ${moduleName} with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`
+          `Import ${moduleName} with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`,
         );
       }
     }
@@ -515,7 +515,7 @@ export class ModuleManager {
     modName: string,
     action: 'Imports' | 'Exports' | 'Appends',
     imp: AnyModule | ServiceProvider,
-    i: number
+    i: number,
   ) {
     if (imp === undefined) {
       const lowerAction = action.toLowerCase();

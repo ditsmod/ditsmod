@@ -1,15 +1,15 @@
 import { injectable } from '#di';
+import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
 import { HttpMethod } from '#types/mix.js';
 import { Router } from '#types/router.js';
 import { NodeResponse, RequestListener } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
-import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
 
 @injectable()
 export class PreRouter {
   constructor(
     protected router: Router,
-    protected systemLogMediator: SystemLogMediator
+    protected systemLogMediator: SystemLogMediator,
   ) {}
 
   requestListener: RequestListener = async (nodeReq, nodeRes) => {

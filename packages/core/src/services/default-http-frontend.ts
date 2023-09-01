@@ -1,13 +1,13 @@
 import { parse } from 'querystring';
 
+import { A_PATH_PARAMS, NODE_REQ, NODE_RES, PATH_PARAMS, QUERY_PARAMS, QUERY_STRING } from '#constans';
 import { inject, injectable, Injector, skipSelf } from '#di';
+import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
 import { HttpFrontend, HttpHandler } from '#types/http-interceptor.js';
 import { AnyObj, CanActivate } from '#types/mix.js';
 import { RouteMeta } from '#types/route-data.js';
 import { PathParam } from '#types/router.js';
 import { Status } from '#utils/http-status-codes.js';
-import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
-import { A_PATH_PARAMS, QUERY_STRING, NODE_REQ, NODE_RES, QUERY_PARAMS, PATH_PARAMS } from '#constans';
 
 @injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
@@ -15,7 +15,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
     protected injector: Injector,
     @skipSelf() private routeMeta: RouteMeta,
     @inject(A_PATH_PARAMS) private aPathParams?: PathParam[],
-    @inject(QUERY_STRING) private queryString?: string
+    @inject(QUERY_STRING) private queryString?: string,
   ) {}
 
   async intercept(next: HttpHandler) {

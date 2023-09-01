@@ -1,16 +1,14 @@
 import { injectable } from '#di';
-
-import type { AppendsWithParams } from './types/module-metadata.js';
-import type { ModuleManager } from './services/module-manager.js';
+import { defaultProvidersPerMod } from './constans.js';
+import { ModuleExtract } from './models/module-extract.js';
 import type { NormalizedModuleMetadata } from './models/normalized-module-metadata.js';
+import { defaultProvidersPerReq } from './services/default-providers-per-req.js';
+import type { ModuleManager } from './services/module-manager.js';
 import type { ControllerMetadata1 } from './types/controller-metadata.js';
 import type { GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod.js';
-import type { ExtensionProvider, ModuleType, ModuleWithParams, NormalizedGuard, Scope, ServiceProvider } from './types/mix.js';
-
 import { ImportObj } from './types/metadata-per-mod.js';
-import { ModuleExtract } from './models/module-extract.js';
-import { defaultProvidersPerMod } from './constans.js';
-import { defaultProvidersPerReq } from './services/default-providers-per-req.js';
+import type { ExtensionProvider, ModuleType, ModuleWithParams, NormalizedGuard, Scope, ServiceProvider } from './types/mix.js';
+import type { AppendsWithParams } from './types/module-metadata.js';
 import { getCollisions } from './utils/get-collisions.js';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports.js';
 import { getLastProviders } from './utils/get-last-providers.js';

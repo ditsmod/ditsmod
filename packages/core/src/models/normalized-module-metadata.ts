@@ -1,16 +1,16 @@
-import { AppendsWithParams } from '#types/module-metadata.js';
+import { Class } from '#di';
 import {
+  AnyFn,
   AnyObj,
+  ExtensionProvider,
   ModuleType,
   ModuleWithParams,
-  ServiceProvider,
-  ExtensionProvider,
   NormalizedGuard,
-  AnyFn,
+  ServiceProvider,
 } from '#types/mix.js';
+import { AppendsWithParams } from '#types/module-metadata.js';
 import { MultiProvider } from '#utils/type-guards.js';
 import { ProvidersMetadata } from './providers-metadata.js';
-import { Class } from '#di';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
   /**

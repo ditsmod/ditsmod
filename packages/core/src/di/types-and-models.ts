@@ -1,4 +1,4 @@
-import type { skipSelf, fromSelf } from './decorators.js';
+import type { fromSelf, skipSelf } from './decorators.js';
 import type { InjectionToken } from './injection-token.js';
 import { DualKey } from './key-registry.js';
 
@@ -50,7 +50,10 @@ export class DecoratorAndValue<Value = any> {
   /**
    * @param decorator The decorator factory function.
    */
-  constructor(public decorator: (...args: any[]) => any, public value: Value) {}
+  constructor(
+    public decorator: (...args: any[]) => any,
+    public value: Value,
+  ) {}
 }
 
 export type Visibility = typeof fromSelf | typeof skipSelf | null;
@@ -61,7 +64,11 @@ export type NormalizedProvider = ValueProvider | ClassProvider | TokenProvider |
  * This is internal and should not be used directly.
  */
 export class Dependency {
-  constructor(public dualKey: DualKey, public optional: boolean, public visibility: Visibility) {}
+  constructor(
+    public dualKey: DualKey,
+    public optional: boolean,
+    public visibility: Visibility,
+  ) {}
 
   static fromDualKey(dualKey: DualKey): Dependency {
     return new Dependency(dualKey, false, null);
@@ -70,7 +77,7 @@ export class Dependency {
 
 /**
  * This ID is used (instead `instanceof ResolvedProvider`) to quickly identify the type of values that the DI registry contains.
- * 
+ *
  */
 export const ID = Symbol();
 
@@ -93,7 +100,11 @@ expect(injector.get('message')).toEqual('Hello');
  */
 export class ResolvedProvider {
   [ID] = true;
-  constructor(public dualKey: DualKey, public resolvedFactories: ResolvedFactory[], public multi: boolean) {}
+  constructor(
+    public dualKey: DualKey,
+    public resolvedFactories: ResolvedFactory[],
+    public multi: boolean,
+  ) {}
 }
 
 export interface RegistryOfInjector {
@@ -123,7 +134,7 @@ export class ResolvedFactory {
     /**
      * Arguments (dependencies) to the `factory` function.
      */
-    public dependencies: Dependency[]
+    public dependencies: Dependency[],
   ) {}
 }
 
@@ -221,7 +232,7 @@ const injector =
 expect(injector.get(String)).toEqual('Hello');
 ```
  */
-export interface ValueProvider <T = any> extends BaseNormalizedProvider {
+export interface ValueProvider<T = any> extends BaseNormalizedProvider {
   token: any;
   /**
    * The value to inject.
@@ -375,7 +386,7 @@ export interface FunctionFactoryProvider extends BaseNormalizedProvider {
    * The function is invoked with resolved values of `token`s in the `deps` field.
    */
   useFactory: Func;
-  deps?: any[]
+  deps?: any[];
 }
 
 export interface ClassFactoryProvider extends BaseNormalizedProvider {
