@@ -42,11 +42,7 @@ export class ExtensionsManager {
     autoMergeArrays: boolean,
     ExtensionAwaiting: Class<Extension<any>>,
   ): Promise<T[] | false>;
-  async init<T>(
-    groupToken: ExtensionsGroupToken<T>,
-    autoMergeArrays?: boolean,
-    ExtensionAwaiting?: Class<Extension<any>>,
-  ): Promise<T[]>;
+  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays?: boolean): Promise<T[]>;
   async init<T>(
     groupToken: ExtensionsGroupToken<T>,
     autoMergeArrays = true,
