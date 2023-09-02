@@ -23,9 +23,10 @@ export class PatchLogger {
       },
       colors: {
         fatal: 'red',
-        error: 'yellow',
-        debug: 'green',
+        error: 'brown',
+        warn: 'yellow',
         info: 'blue',
+        debug: 'green',
         trace: 'grey',
         all: 'grey',
       },
