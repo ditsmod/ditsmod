@@ -1,0 +1,122 @@
+---
+sidebar_position: 8
+---
+
+# Logger
+
+Ditsmod використовує клас [Logger][100] у якості інтерфейсу, а також як DI-токен. Для записування логів, по-дефолту використовується [ConsoleLogger][101]. Усього є 8 рівнів логування (запозичено у [log4j][102]):
+
+- `off` - жодні логи не пишуться. Призначений для тестування, його не рекомендується використовувати в продуктовому режимі.
+- `fatal` - фатальна подія, яка перешкоджає продовженню роботи програми.
+- `error` - помилка в застосунку, яку можна виправити.
+- `warn` - подія, яка може призвести до помилки.
+- `info` - подія з інформаційною метою.
+- `debug` - загальна подія зневадження.
+- `trace` - детальне повідомлення про зневадження, яке зазвичай фіксує потік через програму.
+- `all` - усі події повинні реєструватися.
+
+Якщо ви хочете щоб системні логи, які пише Ditsmod, писались вашим власним логером, він повинен впроваджувати інтерфейс [Logger][100]. Після чого його можна передавати до DI на рівні застосунку:
+
+```ts
+import { Logger, rootModule } from '@ditsmod/core';
+import { MyLogger } from './my-loggegr.js';
+
+@rootModule({
+  // ...
+  providersPerApp: [
+    { token: Logger, useClass: MyLogger }
+  ],
+})
+export class AppModule {}
+```
+
+Але, швидше за все, ви захочете використовувати якийсь вже готовий, широко-відомий логер. І велика ймовірність, що його інтерфейс відрізняється від інтерфейсу [Logger][100]. Але, як правило, це теж не проблема, бо перед передачою інстанса логера до DI, його можна пропатчити таким чином, щоб він впроваджував необхідний інтерфейс. Для цього використовується провайдер з властивістю `useFactory`.
+
+Давайте спочатку напишемо код для цього провайдера. На даний момент (2023-09-02), одним із самих популярних серед Node.js-логерів є [winston][103]. Для патчінгу ми написали метод класу, перед яким додали декоратор `methodFactory`:
+
+```ts {42-44,47-49}
+import { Logger, LoggerConfig, LogLevel, methodFactory } from '@ditsmod/core';
+import { createLogger, addColors, format, transports } from 'winston';
+
+export class PatchLogger {
+  @methodFactory()
+  patchLogger(config: LoggerConfig) {
+    const logger = createLogger();
+
+    const transport = new transports.Console({
+      format: format.combine(format.colorize(), format.simple()),
+    });
+
+    const customLevels = {
+      levels: {
+        off: 0,
+        fatal: 1,
+        error: 2,
+        warn: 3,
+        info: 4,
+        debug: 5,
+        trace: 6,
+        all: 7,
+      },
+      colors: {
+        fatal: 'red',
+        error: 'brown',
+        warn: 'yellow',
+        info: 'blue',
+        debug: 'green',
+        trace: 'grey',
+        all: 'grey',
+      },
+    };
+
+    logger.configure({
+      levels: customLevels.levels,
+      level: config.level,
+      transports: [transport],
+    });
+
+    // Logger must have `setLevel` method.
+    (logger as unknown as Logger).setLevel = (value: LogLevel) => {
+      logger.level = value;
+    };
+
+    // Logger must have `getLevel` method.
+    (logger as unknown as Logger).getLevel = () => {
+      return logger.level as LogLevel;
+    };
+
+    addColors(customLevels.colors);
+
+    return logger;
+  }
+}
+```
+
+Як бачите, окрім звичних налаштувань для `winston`, у виділених рядках до його інстансу додаються два методи - `setLevel` та `getLevel` - які у нього відсутні, але які є необхідними для того, щоб Ditsmod правильно взаємодіяв з ним.
+
+І тепер вже цей клас можна передавати до DI на рівні застосунку:
+
+```ts
+import { Logger, rootModule } from '@ditsmod/core';
+import { PatchLogger } from './patch-logger.js';
+
+@rootModule({
+  // ...
+  providersPerApp: [
+    { token: Logger, useFactory: [PatchLogger, PatchLogger.prototype.patchLogger] }
+  ],
+})
+export class AppModule {}
+```
+
+Готові приклади з логерами ви можете проглянути [в репозиторії Ditsmod][104].
+
+
+
+
+
+[100]: https://github.com/ditsmod/ditsmod/blob/core-2.47.0/packages/core/src/types/logger.ts#L40
+[101]: https://github.com/ditsmod/ditsmod/blob/core-2.47.0/packages/core/src/services/console-logger.ts
+[102]: https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Level.html
+[103]: https://github.com/winstonjs/winston
+[104]: https://github.com/ditsmod/ditsmod/tree/core-2.47.0/examples/04-logger/src/app/modules
