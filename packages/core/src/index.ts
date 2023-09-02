@@ -89,6 +89,7 @@ export {
   isController,
   isExtensionProvider,
   isFactoryProvider,
+  isClassFactoryProvider,
   isModuleWithParams,
   isFeatureModule,
   isDecoratorAndValue,

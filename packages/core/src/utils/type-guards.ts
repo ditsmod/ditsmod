@@ -10,6 +10,7 @@ import {
   TokenProvider,
   DecoratorAndValue,
   reflector,
+  ClassFactoryProvider,
 } from '#di';
 import {
   AnyObj,
@@ -113,6 +114,10 @@ export function isTokenProvider(provider: Provider): provider is TokenProvider {
 
 export function isFactoryProvider(provider: Provider): provider is FactoryProvider {
   return (provider as FactoryProvider)?.useFactory !== undefined;
+}
+
+export function isClassFactoryProvider(provider: Provider): provider is ClassFactoryProvider {
+  return Array.isArray((provider as ClassFactoryProvider)?.useFactory);
 }
 
 export type MultiProvider = Exclude<ServiceProvider, TypeProvider> & { multi: boolean };
