@@ -1,8 +1,9 @@
 import { Logger, LoggerConfig } from '#types/logger.js';
-import { Class } from '#di';
+import { Class, FunctionFactoryProvider, UseFactoryTuple } from '#di';
 import { LogMediator } from '#log-mediator/log-mediator.js';
 import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
 import { OutputLogFilter } from '#log-mediator/types.js';
+import { AnyFn } from '#types/mix.js';
 import { NormalizedProvider } from './ng-utils.js';
 
 /**
@@ -70,8 +71,18 @@ export class Providers {
     return this;
   }
 
-  useFactory(token: any, useFactory: [Class, (...args: any[]) => unknown], multi?: boolean) {
-    this.pushProvider({ token, useFactory }, multi);
+  useFactory(token: any, useFactory: AnyFn, deps?: any[], multi?: boolean): this;
+  useFactory(token: any, useFactory: UseFactoryTuple, multi?: boolean): this;
+  useFactory(token: any, useFactory: UseFactoryTuple | AnyFn, depsOrMulti?: any[] | boolean, multi?: boolean) {
+    if (Array.isArray(useFactory)) {
+      this.pushProvider({ token, useFactory }, depsOrMulti as boolean);
+    } else {
+      if (depsOrMulti) {
+        this.pushProvider({ token, useFactory, deps: depsOrMulti } as FunctionFactoryProvider, multi);
+      } else {
+        this.pushProvider({ token, useFactory } as FunctionFactoryProvider, multi);
+      }
+    }
     return this;
   }
 
