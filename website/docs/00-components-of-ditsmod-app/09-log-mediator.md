@@ -86,20 +86,24 @@ class InputLogFilter {
 
 Якщо проглянути `AppModule`, можна побачити як підміняється `SystemLogMediator` на `MyLogMediator`:
 
-```ts
-import { SystemLogMediator } from '@ditsmod/core';
+```ts {8-9}
+import { SystemLogMediator, rootModule } from '@ditsmod/core';
 
 import { MyLogMediator } from './my-log-mediator.js';
+
+@rootModule({
 // ...
   providersPerApp: [
     { token: SystemLogMediator, useClass: MyLogMediator },
     MyLogMediator,
   ],
-// ...
+})
 export class AppModule {}
 ```
 
 У даному разі, перший елемент масиву `providersPerApp` дозволить використовувати `MyLogMediator` у коді Ditsmod core, другий елемент - дозволить запитувати інстанс `MyLogMediator` у конструкторах контролерів чи сервісів вашого застосунку.
+
+Майте на увазі, що така підміна на рівні застосунку працює без додаткових налаштувань тільки в кореневому модулі. Якщо ж ви це зробите не в кореневому модулі, вам додатково прийдеться вирішувати колізію провайдерів в кореневому модулі (хоча це і робиться досить просто).
 
 ## Підміна LogMediator на рівні модуля
 

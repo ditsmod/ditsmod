@@ -86,20 +86,24 @@ Then run the application with the command `npm start`, after which you should se
 
 If you look at `AppModule`, you can see how `LogMediator` is substituted by `MyLogMediator`:
 
-```ts
-import { LogMediator } from '@ditsmod/core';
+```ts {8-9}
+import { SystemLogMediator, rootModule } from '@ditsmod/core';
 
 import { MyLogMediator } from './my-log-mediator.js';
+
+@rootModule({
 // ...
   providersPerApp: [
-    { token: LogMediator, useClass: MyLogMediator },
+    { token: SystemLogMediator, useClass: MyLogMediator },
     MyLogMediator,
   ],
-// ...
+})
 export class AppModule {}
 ```
 
 In this case, the first element of the array `providersPerApp` will allow using `MyLogMediator` in the Ditsmod core code, the second element - will allow requesting the instance of `MyLogMediator` in the constructors of controllers or services of your application.
+
+Keep in mind that such an application-level substitution works without additional settings only in the root module. If you do this in a non-root module, you will additionally have to resolve the provider collision in the root module (although this is quite simple).
 
 ## Module-level substitute of LogMediator
 
