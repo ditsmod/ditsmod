@@ -75,14 +75,14 @@ export class PatchLogger {
       transports: [transport],
     });
 
-    // Logger must have `setLevel` method.
-    (logger as unknown as Logger).setLevel = (value: LogLevel) => {
-      logger.level = value;
+    // Logger must have `mergeConfig` method.
+    (logger as unknown as Logger).mergeConfig = (config: LoggerConfig) => {
+      logger.level = config.level;
     };
 
-    // Logger must have `getLevel` method.
-    (logger as unknown as Logger).getLevel = () => {
-      return logger.level as LogLevel;
+    // Logger must have `getConfig` method.
+    (logger as unknown as Logger).getConfig = () => {
+      return { level: logger.level as LogLevel };
     };
 
     addColors(customLevels.colors);
@@ -92,7 +92,7 @@ export class PatchLogger {
 }
 ```
 
-As you can see, in addition to the usual settings for `winston`, the highlighted lines add two methods to his instance - `setLevel` and `getLevel` - which it does not have, but which are necessary for Ditsmod to interact with it properly.
+As you can see, in addition to the usual settings for `winston`, the highlighted lines add two methods to his instance - `mergeConfig` and `getConfig` - which it does not have, but which are necessary for Ditsmod to interact with it properly.
 
 And now this class can be passed to DI at the application level:
 
@@ -125,9 +125,9 @@ import { Permission } from '../auth/types.js';
 export class SomeController {
   @route('GET', 'set-loglevel', [requirePermissions(Permission.canSetLogLevel)])
   setLogLevel(@inject(QUERY_PARAMS) queryParams: AnyObj, logger: Logger, res: Res) {
-    const logLevel = queryParams.logLevel as LogLevel;
+    const level = queryParams.logLevel as LogLevel;
     try {
-      logger.setLevel(logLevel);
+      logger.mergeConfig({ level });
       res.send('Setting logLevel successful!');
     } catch (error: any) {
       res.send(`Setting logLevel is failed: ${error.message}`);
