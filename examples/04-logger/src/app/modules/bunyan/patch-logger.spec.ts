@@ -9,7 +9,7 @@ describe('PatchLogger Bunyan', () => {
     const logger = patchLogger.patchLogger({ level: 'warn' }) as unknown as Logger;
     expect(logger).toBeDefined();
     expect(typeof logger.log).toBe('function');
-    expect(typeof logger.setLevel).toBe('function');
-    expect(typeof logger.getLevel).toBe('function');
+    expect(typeof logger.mergeConfig).toBe('function');
+    expect(typeof logger.getConfig).toBe('function');
   });
 });
