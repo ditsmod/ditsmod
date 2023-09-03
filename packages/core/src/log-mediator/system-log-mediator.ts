@@ -53,13 +53,13 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * @deprecated Use `mergeConfig()` instead.
+   * @deprecated Use `mergeLoggerConfig()` instead.
    */
   setLogLevel(logLevel: LogLevel) {
     this.logger.setLevel(logLevel);
   }
 
-  mergeConfig(config: LoggerConfig) {
+  mergeLoggerConfig(config: LoggerConfig) {
     this.logger.mergeConfig(config);
   }
 
