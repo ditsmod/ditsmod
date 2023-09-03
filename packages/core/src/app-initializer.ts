@@ -257,7 +257,7 @@ export class AppInitializer {
       injectorPerMod.get(mod); // Call module constructor.
       const systemLogMediator = injectorPerMod.get(SystemLogMediator) as SystemLogMediator;
       const loggerConfig = injectorPerMod.get(LoggerConfig, undefined, new LoggerConfig()) as LoggerConfig;
-      systemLogMediator.mergeConfig({ level: loggerConfig.level });
+      systemLogMediator.mergeConfig(loggerConfig);
       systemLogMediator.startExtensionsModuleInit(this);
       this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
