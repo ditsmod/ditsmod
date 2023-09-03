@@ -205,7 +205,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     return new Injector(this.prepareRegistry(providers), undefined, injectorName);
   }
 
-  private static normalizeProviders(providers: Provider[], normProviders: NormalizedProvider[]): NormalizedProvider[] {
+  protected static normalizeProviders(providers: Provider[], normProviders: NormalizedProvider[]): NormalizedProvider[] {
     providers.forEach((provider) => {
       if (isTypeProvider(provider)) {
         normProviders.push({ token: provider, useClass: provider });
@@ -222,7 +222,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   /**
    * Resolve a single provider.
    */
-  private static resolveProvider(provider: NormalizedProvider): ResolvedProvider[] {
+  protected static resolveProvider(provider: NormalizedProvider): ResolvedProvider[] {
     if (isClassProvider(provider)) {
       const Cls = resolveForwardRef(provider.useClass) as Class;
       const factoryFn = (...args: any[]) => new Cls(...args);
@@ -271,7 +271,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     }
   }
 
-  private static getResolvedProvider(token: any, factoryFn: AnyFn, resolvedDeps: Dependency[], isMulti?: boolean) {
+  protected static getResolvedProvider(token: any, factoryFn: AnyFn, resolvedDeps: Dependency[], isMulti?: boolean) {
     const dualKey = KeyRegistry.get(token);
     const resolvedFactory = new ResolvedFactory(factoryFn, resolvedDeps);
     isMulti = isMulti || false;
@@ -282,7 +282,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
    * When an user give a class factory provider (eg. `{ useFactory: [Class, Class.prototype.factoryKey] }`),
    * "factory key" means "property key in class that has factory".
    */
-  private static getFactoryKey(Cls: Class, factory: AnyFn): string | symbol {
+  protected static getFactoryKey(Cls: Class, factory: AnyFn): string | symbol {
     if (typeof factory == 'function') {
       const methods: (string | symbol)[] = Object.getOwnPropertyNames(Cls.prototype);
       const symMethods = Object.getOwnPropertySymbols(Cls.prototype);
@@ -305,7 +305,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     throw new DiError(msg);
   }
 
-  private static getDependencies(Cls: Class, propertyKey?: string | symbol): Dependency[] {
+  protected static getDependencies(Cls: Class, propertyKey?: string | symbol): Dependency[] {
     const aParamsMeta = reflector.getParamsMetadata(Cls, propertyKey);
     if (aParamsMeta.some((p) => p === null)) {
       throw noAnnotationError(Cls, aParamsMeta, propertyKey);
@@ -320,7 +320,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     });
   }
 
-  private static extractPayload(paramsMeta: ParamsMeta) {
+  protected static extractPayload(paramsMeta: ParamsMeta) {
     let token: any = null;
     let isOptional = false;
 
@@ -352,7 +352,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
    * each token is contained exactly once and multi providers
    * have been merged.
    */
-  private static mergeResolvedProviders(
+  protected static mergeResolvedProviders(
     resolvedProviders: ResolvedProvider[],
     normalizedProvidersMap: Map<number, ResolvedProvider>,
   ): Map<number, ResolvedProvider> {
@@ -544,7 +544,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, defaultValue);
   }
 
-  private selectInjectorAndGet(dualKey: DualKey, parentTokens: any[], visibility: Visibility, defaultValue: any) {
+  protected selectInjectorAndGet(dualKey: DualKey, parentTokens: any[], visibility: Visibility, defaultValue: any) {
     if (dualKey.token === Injector) {
       return this;
     }
@@ -553,7 +553,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     return this.getOrThrow(injector, dualKey, parentTokens, defaultValue, visibility);
   }
 
-  private getOrThrow(
+  protected getOrThrow(
     injector: Injector | null,
     dualKey: DualKey,
     parentTokens: any[],
@@ -619,7 +619,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     }
   }
 
-  private instantiate(token: any, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
+  protected instantiate(token: any, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
       return this.selectInjectorAndGet(
         dep.dualKey,
