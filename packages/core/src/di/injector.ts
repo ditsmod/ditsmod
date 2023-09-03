@@ -532,6 +532,14 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
   get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, defaultValue?: T): T;
   get<T extends AnyFn>(token: T, visibility?: Visibility, defaultValue?: T): ReturnType<T>;
   get(token: any, visibility?: Visibility, defaultValue?: any): any;
+  /**
+   * @todo Refactor function signature for abstract classes, because this is not work:
+   * 
+   * ```ts
+   * abstract class A {}
+   * injector.get(A) // Infer return type as "any".
+   * ```
+   */
   get(token: any, visibility: Visibility = null, defaultValue: any = NoDefaultValue): any {
     return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, defaultValue);
   }
