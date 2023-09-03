@@ -114,10 +114,12 @@ export abstract class LogMediator {
         return;
       }
       const { logger } = logItem;
+      const config = logger.getConfig();
       if (!previousLogLevels.has(logger)) {
-        previousLogLevels.set(logger, logger.getLevel());
+        previousLogLevels.set(logger, config.level);
       }
-      logger.setLevel(logLevel || logItem.outputLogLevel);
+      const level = logLevel || logItem.outputLogLevel;
+      logger.mergeConfig({ level });
 
       const partMsg = logItem.inputLogFilter.tags ? ` (Tags: ${logItem.inputLogFilter.tags.join(', ')})` : '';
       const msg = `${logItem.msg}${partMsg}`;
@@ -137,7 +139,7 @@ export abstract class LogMediator {
     });
 
     // Restore previous log level for each logger.
-    previousLogLevels.forEach((outputLogLevel, logger) => logger.setLevel(outputLogLevel));
+    previousLogLevels.forEach((outputLogLevel, logger) => logger.mergeConfig({ level: outputLogLevel }));
   }
 
   protected raiseLog(outputLogFilter: OutputLogFilter, logLevel: LogLevel) {

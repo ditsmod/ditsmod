@@ -6,7 +6,7 @@ export class LoggerConfig {
    * @param disabledRaisedLogs If `LogMediator` is used to throw an error,
    * this option allows you to raise the log level. For example,
    * if you set the log level to `info` and the router throws an error
-   * about duplicates in routes paths, allowRaisedLog allows you to filter
+   * about duplicates in routes paths, this parameter allows you to filter
    * and show relevant logs, even if they have log level `debug`.
    *
    * Default - false.
@@ -33,9 +33,6 @@ export type LogLevel = 'all' | 'trace' | 'debug' | 'info' | 'warn' | 'error' | '
  */
 export type MethodLogLevel = Exclude<LogLevel, 'off'>;
 
-/**
- * @todo reaplace setLevel() by setConfig() method.
- */
 @injectable()
 export class Logger {
   constructor(@optional() public config?: LoggerConfig) {
@@ -86,12 +83,26 @@ export class Logger {
   log(level: MethodLogLevel, ...args: any[]) {
     this[level](...args);
   }
-  setLevel(value: LogLevel) {
-    if (this.config?.level) {
-      this.config.level = value;
-    }
+
+  /**
+   * @deprecated Use `mergeConfig()` instead.
+   */
+  setLevel(level: LogLevel) {
+    this.mergeConfig({ level });
   }
+
+  mergeConfig(config: LoggerConfig) {
+    this.config = { ...this.config, ...config };
+  }
+
+  /**
+   * @deprecated Use `getConfig()` instead.
+   */
   getLevel(): LogLevel {
     return this.config?.level || 'info';
+  }
+
+  getConfig(): LoggerConfig {
+    return this.config || new LoggerConfig();
   }
 }
