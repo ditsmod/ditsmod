@@ -37,7 +37,7 @@ export { DefaultHttpFrontend } from './services/default-http-frontend.js';
 export { ExtensionsContext } from './services/extensions-context.js';
 export { ExtensionsManager } from './services/extensions-manager.js';
 export { LogMediator } from './log-mediator/log-mediator.js';
-export { InputLogFilter, OutputLogFilter, LogItem } from './log-mediator/types.js';
+export { LogItem } from './log-mediator/types.js';
 export { SystemLogMediator } from './log-mediator/system-log-mediator.js';
 export { ModuleManager } from './services/module-manager.js';
 export { PerAppService } from './services/per-app.service.js';

@@ -1,5 +1,4 @@
 import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
-import { OutputLogFilter } from '#log-mediator/types.js';
 import { ModuleExtract } from '#models/module-extract.js';
 import { Logger } from '#types/logger.js';
 import { ServiceProvider } from '#types/mix.js';
@@ -14,7 +13,6 @@ export const defaultProvidersPerApp: Readonly<ServiceProvider[]> = [
   Counter,
   ModuleManager,
   SystemLogMediator,
-  OutputLogFilter,
   ...new Providers()
     .useValue<ModuleExtract>(ModuleExtract, { moduleName: 'AppModule' })
     .useClass(Logger, ConsoleLogger),

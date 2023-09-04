@@ -2,7 +2,7 @@ import { injectable, optional } from '#di';
 import { ModuleExtract } from '#models/module-extract.js';
 import { ConsoleLogger } from '#services/console-logger.js';
 import { LogLevel, Logger, LoggerConfig } from '#types/logger.js';
-import { InputLogFilter, LogItem, OutputLogFilter } from './types.js';
+import { LogItem } from './types.js';
 
 /**
  * Mediator between core logger and custom user's logger.
@@ -21,11 +21,10 @@ export abstract class LogMediator {
   constructor(
     protected moduleExtract: ModuleExtract,
     @optional() protected logger: Logger = new ConsoleLogger(),
-    @optional() protected outputLogFilter: OutputLogFilter = new OutputLogFilter(),
-    @optional() protected loggerConfig: LoggerConfig = new LoggerConfig()
+    @optional() protected loggerConfig: LoggerConfig = new LoggerConfig(),
   ) {}
 
-  protected setLog<T extends InputLogFilter>(inputLogLevel: LogLevel, inputLogFilter: T, msg: any) {
+  protected setLog(inputLogLevel: LogLevel, msg: any) {
     if (LogMediator.bufferLogs) {
       const logLevel = this.getLogLevel();
 
@@ -33,9 +32,7 @@ export abstract class LogMediator {
         moduleName: this.moduleExtract.moduleName,
         logger: this.logger,
         outputLogLevel: logLevel,
-        outputLogFilter: this.outputLogFilter || new OutputLogFilter(),
         inputLogLevel,
-        inputLogFilter,
         date: new Date(),
         msg,
       });
@@ -47,58 +44,7 @@ export abstract class LogMediator {
   }
 
   protected getLogLevel(): LogLevel {
-    return typeof this.logger.getLevel == 'function' ? this.logger.getLevel() : this.loggerConfig!.level;
-  }
-
-  protected applyLogFilter(buffer: LogItem[]) {
-    const uniqFilters = new Map<OutputLogFilter, string>();
-
-    let filteredBuffer = buffer.filter((item) => {
-      if (!uniqFilters.has(item.outputLogFilter)) {
-        uniqFilters.set(item.outputLogFilter, item.moduleName);
-      }
-      return this.isFilteredLog(item, item.outputLogFilter);
-    });
-
-    if (uniqFilters.size > 1) {
-      this.detectedDifferentLogFilters(uniqFilters);
-    }
-
-    if (buffer.length && !filteredBuffer.length && uniqFilters.size) {
-      filteredBuffer = this.getWarnAboutEmptyFilteredLogs(uniqFilters);
-    }
-
-    return filteredBuffer;
-  }
-
-  protected applyCustomOutputLogFilter(buffer: LogItem[], outputLogFilter: OutputLogFilter, prefix?: string) {
-    return buffer.filter((item) => {
-      return this.isFilteredLog(item, outputLogFilter, prefix);
-    });
-  }
-
-  protected isFilteredLog(item: LogItem, outputLogFilter: OutputLogFilter, prefix?: string) {
-    const { inputLogFilter, moduleName } = item;
-    let hasModuleName: boolean | undefined = true;
-    let hasClassName: boolean | undefined = true;
-    let hasTags: boolean | undefined = true;
-    if (outputLogFilter.modulesNames) {
-      hasModuleName = outputLogFilter.modulesNames?.includes(moduleName);
-    }
-    if (outputLogFilter.classesNames) {
-      hasClassName = outputLogFilter.classesNames?.includes(inputLogFilter.className || '');
-    }
-    if (outputLogFilter.tags) {
-      hasTags = inputLogFilter.tags?.some((tag) => outputLogFilter.tags?.includes(tag));
-    }
-    this.transformMsgIfFilterApplied(item, outputLogFilter, prefix);
-    return hasModuleName && hasClassName && hasTags;
-  }
-
-  protected transformMsgIfFilterApplied(item: LogItem, outputLogFilter: OutputLogFilter, prefix?: string) {
-    if (outputLogFilter.modulesNames || outputLogFilter.classesNames || outputLogFilter.tags) {
-      item.msg = `${prefix || ''}${item.moduleName}: ${item.msg}`;
-    }
+    return this.logger.getConfig().level;
   }
 
   /**
@@ -121,8 +67,7 @@ export abstract class LogMediator {
       const level = logLevel || logItem.outputLogLevel;
       logger.mergeConfig({ level });
 
-      const partMsg = logItem.inputLogFilter.tags ? ` (Tags: ${logItem.inputLogFilter.tags.join(', ')})` : '';
-      const msg = `${logItem.msg}${partMsg}`;
+      const { msg } = logItem;
       if (!logger.log) {
         const loggerName = logger.constructor.name;
         const msg0 = `error: you need to implement "log" method in "${loggerName}";`;
@@ -140,47 +85,5 @@ export abstract class LogMediator {
 
     // Restore previous log level for each logger.
     previousLogLevels.forEach((outputLogLevel, logger) => logger.mergeConfig({ level: outputLogLevel }));
-  }
-
-  protected raiseLog(outputLogFilter: OutputLogFilter, logLevel: LogLevel) {
-    if (this.loggerConfig!.disabledRaisedLogs) {
-      return;
-    }
-    this.raisedLogs = this.applyCustomOutputLogFilter(LogMediator.buffer, outputLogFilter, 'raised log: ');
-    this.writeLogs(this.raisedLogs, logLevel);
-    this.raisedLogs = [];
-  }
-
-  protected getWarnAboutEmptyFilteredLogs(uniqFilters: Map<OutputLogFilter, string>): LogItem[] {
-    const filters = [...uniqFilters].map(([outputLogFilter, moduleName]) => {
-      return `${moduleName}: ${JSON.stringify(outputLogFilter)}`;
-    });
-
-    const msg = `There are no logs to display, the following filters are applied: ${filters.join(', ')}`;
-    return [
-      {
-        moduleName: this.moduleExtract.moduleName,
-        logger: this.logger,
-        outputLogLevel: 'info',
-        outputLogFilter: new OutputLogFilter(),
-        inputLogLevel: 'warn',
-        inputLogFilter: new InputLogFilter(),
-        date: new Date(),
-        msg,
-      },
-    ];
-  }
-
-  protected detectedDifferentLogFilters(uniqFilters: Map<OutputLogFilter, string>) {
-    const filtersStr: string[] = [];
-    uniqFilters.forEach((moduleName, filter) => {
-      filtersStr.push(`${moduleName} ${JSON.stringify(filter)}`);
-    });
-
-    this.logger.log.call(
-      this.logger,
-      'warn',
-      `LogMediator: detected ${uniqFilters.size} different OutputLogFilters: ${filtersStr.join(', ')}`
-    );
   }
 }

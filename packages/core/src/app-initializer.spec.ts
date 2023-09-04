@@ -8,7 +8,6 @@ import { Logger, LogLevel } from './types/logger.js';
 import { Router } from './types/router.js';
 import { AppInitializer } from './app-initializer.js';
 import { LogMediator } from './log-mediator/log-mediator.js';
-import { OutputLogFilter } from './log-mediator/types.js';
 import { ModuleManager } from './services/module-manager.js';
 import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix.js';
 import { controller } from './decorators/controller.js';
@@ -566,9 +565,9 @@ describe('AppInitializer', () => {
   describe('init()', () => {
     const testMethodSpy = jest.fn();
     class LogMediatorMock1 extends SystemLogMediator {
-      testMethod(level: LogLevel, outputLogFilter: OutputLogFilter = {}, ...args: any[]) {
+      testMethod(level: LogLevel, ...args: any[]) {
         testMethodSpy();
-        this.setLog(level, outputLogFilter, `${args}`);
+        this.setLog(level, `${args}`);
       }
     }
     class LogMediatorMock2 extends LogMediator {}
@@ -605,7 +604,7 @@ describe('AppInitializer', () => {
       await mock.init();
       const { buffer } = LogMediator;
       expect(mock.systemLogMediator).toBeInstanceOf(LogMediatorMock1);
-      (mock.systemLogMediator as LogMediatorMock1).testMethod('debug', {}, 'one', 'two');
+      (mock.systemLogMediator as LogMediatorMock1).testMethod('debug', 'one', 'two');
       const msgIndex1 = buffer.length - 1;
       expect(buffer[msgIndex1].inputLogLevel).toBe('debug');
       expect(buffer[msgIndex1].msg).toBe('one,two');
@@ -614,7 +613,7 @@ describe('AppInitializer', () => {
       // Second init
       await mock.init();
       expect(mock.systemLogMediator).toBeInstanceOf(LogMediatorMock1);
-      (mock.systemLogMediator as LogMediatorMock1).testMethod('info', {}, 'three', 'four');
+      (mock.systemLogMediator as LogMediatorMock1).testMethod('info', 'three', 'four');
       // Logs from first init() still here
       expect(buffer[msgIndex1].inputLogLevel).toBe('debug');
       expect(buffer[msgIndex1].msg).toBe('one,two');

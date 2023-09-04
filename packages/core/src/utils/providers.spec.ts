@@ -5,7 +5,6 @@ import { ServiceProvider } from '#types/mix.js';
 import { ConsoleLogger } from '#services/console-logger.js';
 import { Providers } from './providers.js';
 import { LogMediator } from '#log-mediator/log-mediator.js';
-import { OutputLogFilter } from '#log-mediator/types.js';
 import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
 
 describe('Providers', () => {
@@ -50,10 +49,9 @@ describe('Providers', () => {
     const config1 = new Providers().useLogConfig(loggerConfig);
     expect([...config1]).toEqual([{ token: LoggerConfig, useValue: loggerConfig }]);
 
-    const config2 = new Providers().useLogConfig(loggerConfig, { tags: ['one'] });
+    const config2 = new Providers().useLogConfig(loggerConfig);
     expect([...config2]).toEqual([
       { token: LoggerConfig, useValue: loggerConfig },
-      { token: OutputLogFilter, useValue: { tags: ['one'] } },
     ]);
   });
 

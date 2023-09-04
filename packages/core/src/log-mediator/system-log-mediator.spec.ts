@@ -5,24 +5,12 @@ import { ModuleExtract } from '#models/module-extract.js';
 import { LogLevel } from '#types/logger.js';
 import { LogMediator } from './log-mediator.js';
 import { SystemLogMediator } from './system-log-mediator.js';
-import { LogItem, OutputLogFilter } from './types.js';
+import { LogItem } from './types.js';
 
 describe('SystemLogMediator', () => {
   class SystemLogMediatorMock extends SystemLogMediator {
-    testMethod(level: LogLevel, tags: string[] = [], ...args: any[]) {
-      this.setLog(level, { tags }, `${args[0]}, ${args[1]}`);
-    }
-
-    override applyLogFilter(buffer: LogItem[]) {
-      return super.applyLogFilter(buffer);
-    }
-
-    override detectedDifferentLogFilters(uniqFilters: Map<OutputLogFilter, string>) {
-      return super.detectedDifferentLogFilters(uniqFilters);
-    }
-
-    override getWarnAboutEmptyFilteredLogs(uniqFilters: Map<OutputLogFilter, string>) {
-      return super.getWarnAboutEmptyFilteredLogs(uniqFilters);
+    testMethod(level: LogLevel, ...args: any[]) {
+      this.setLog(level, `${args[0]}, ${args[1]}`);
     }
   }
 
@@ -45,7 +33,7 @@ describe('SystemLogMediator', () => {
 
     it('passing message to the buffer', () => {
       const logMediator = getLogMediator();
-      logMediator.testMethod('trace', [], 'one', 'two');
+      logMediator.testMethod('trace', 'one', 'two');
       expect(LogMediator.buffer.length).toBe(1);
       expect(LogMediator.buffer[0].inputLogLevel).toEqual('trace');
       expect(LogMediator.buffer[0].msg).toEqual('one, two');
@@ -58,22 +46,22 @@ describe('SystemLogMediator', () => {
       const { logger } = logMediator as any;
       jest.spyOn(logger, 'log');
 
-      logMediator.testMethod('trace', [], 'one', 'two');
+      logMediator.testMethod('trace', 'one', 'two');
       expect(LogMediator.buffer.length).toBe(1);
       expect(logger.log).toBeCalledTimes(0);
       expect(LogMediator.buffer[0].inputLogLevel).toEqual('trace');
       expect(LogMediator.buffer[0].msg).toEqual('one, two');
 
-      logMediator.testMethod('trace', [], 'one', 'two');
+      logMediator.testMethod('trace', 'one', 'two');
       expect(LogMediator.buffer.length).toBe(2);
       expect(logger.log).toBeCalledTimes(0);
 
       LogMediator.bufferLogs = false;
-      logMediator.testMethod('trace', [], 'one', 'two');
+      logMediator.testMethod('trace', 'one', 'two');
       expect(LogMediator.buffer.length).toBe(2);
       expect(logger.log).toBeCalledTimes(1);
 
-      logMediator.testMethod('trace', [], 'one', 'two');
+      logMediator.testMethod('trace', 'one', 'two');
       expect(LogMediator.buffer.length).toBe(2);
       expect(logger.log).toBeCalledTimes(2);
 

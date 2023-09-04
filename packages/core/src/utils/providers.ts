@@ -2,7 +2,6 @@ import { Logger, LoggerConfig } from '#types/logger.js';
 import { Class, FunctionFactoryProvider, UseFactoryTuple } from '#di';
 import { LogMediator } from '#log-mediator/log-mediator.js';
 import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
-import { OutputLogFilter } from '#log-mediator/types.js';
 import { AnyFn } from '#types/mix.js';
 import { NormalizedProvider } from './ng-utils.js';
 
@@ -95,11 +94,8 @@ export class Providers {
     return this;
   }
 
-  useLogConfig(useConfig: LoggerConfig, outputLogFilter?: OutputLogFilter) {
+  useLogConfig(useConfig: LoggerConfig) {
     this.providers.push({ token: LoggerConfig, useValue: useConfig });
-    if (outputLogFilter) {
-      this.providers.push({ token: OutputLogFilter, useValue: outputLogFilter });
-    }
 
     return this;
   }
