@@ -29,7 +29,6 @@ export class SystemLogMediator extends LogMediator {
   updateLogsWithCurrentLogConfig() {
     LogMediator.buffer.forEach((logItem) => {
       logItem.logger = this.logger;
-      logItem.outputLogLevel = this.getLoggerConfig().level;
     });
   }
 

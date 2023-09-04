@@ -7,15 +7,15 @@ import { LogMediator } from './log-mediator.js';
 import { LogItem } from './types.js';
 
 describe('LogMediator', () => {
-  class LogMediatorMock extends LogMediator {
+  class MockLogMediator extends LogMediator {
     override writeLogs(logItems: LogItem[]) {
       return super.writeLogs(logItems);
     }
   }
 
-  function getLogMediator(providers?: Provider[]): LogMediatorMock {
-    const injector = Injector.resolveAndCreate([ModuleExtract, LogMediatorMock, ...(providers || [])]);
-    return injector.get(LogMediatorMock);
+  function getLogMediator(providers?: Provider[]): MockLogMediator {
+    const injector = Injector.resolveAndCreate([ModuleExtract, MockLogMediator, ...(providers || [])]);
+    return injector.get(MockLogMediator);
   }
 
   afterEach(() => {
@@ -26,7 +26,6 @@ describe('LogMediator', () => {
     const baseLogItem: LogItem = {
       moduleName: 'fakeName1',
       date: new Date(),
-      outputLogLevel: 'info',
       inputLogLevel: 'info',
       logger: new ConsoleLogger(),
       msg: 'fake messge 1',
@@ -45,7 +44,7 @@ describe('LogMediator', () => {
       expect(console.log).toBeCalledTimes(1);
       expect(baseLogItem.logger.log).toBeCalledTimes(1);
       expect(baseLogItem.logger.log).toBeCalledWith(item1.inputLogLevel, item1.msg);
-      expect(baseLogItem.logger.getConfig().level).toBe('info'); // Restored previous log level.
+      expect(baseLogItem.logger.getConfig().level).toBe('info');
     });
 
     it('inputLogLevel < outputLogLevel', () => {
@@ -53,7 +52,6 @@ describe('LogMediator', () => {
         ...baseLogItem,
         msg: 'fake message 2',
         inputLogLevel: 'debug',
-        outputLogLevel: 'error',
       };
 
       const logMediator = getLogMediator();
@@ -63,7 +61,7 @@ describe('LogMediator', () => {
       expect(console.log).toBeCalledTimes(0);
       expect(baseLogItem.logger.log).toBeCalledTimes(1);
       expect(baseLogItem.logger.log).toBeCalledWith(item1.inputLogLevel, item1.msg);
-      expect(baseLogItem.logger.getConfig().level).toBe('info'); // Restored previous log level.
+      expect(baseLogItem.logger.getConfig().level).toBe('info');
     });
   });
 });
