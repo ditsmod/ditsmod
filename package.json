@@ -14,7 +14,7 @@
   "scripts": {
     "test": "npm run build && npm run esm-jest",
     "test1": "npm run esm-jest -- -c jest.config1.ts",
-    "esm-jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning node_modules/jest/bin/jest.js",
     "test-examples": "npm run build-examples && npm run esm-jest -- -c examples/jest.config.ts",
     "test-all": "npm test && npm run test-examples && npm run build-examples && npm run build-vscode",
     "pub": "lerna publish from-package --no-git-tag-version",
