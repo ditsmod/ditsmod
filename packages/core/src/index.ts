@@ -46,7 +46,7 @@ export { Req } from './services/request.js';
 export { Res } from './services/response.js';
 export { ControllerMetadata1, ControllerMetadata2 } from './types/controller-metadata.js';
 export { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from './types/http-interceptor.js';
-export { Logger, LoggerConfig, LogLevel, MethodLogLevel } from './types/logger.js';
+export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from './types/logger.js';
 export { MetadataPerMod1, MetadataPerMod2 } from './types/metadata-per-mod.js';
 export {
   AnyObj,

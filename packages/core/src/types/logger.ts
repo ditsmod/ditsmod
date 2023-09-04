@@ -4,26 +4,24 @@ export class LoggerConfig {
   /**
    * @param level Log level (trace, debug, info etc.)
    */
-  constructor(
-    public level: LogLevel = 'info',
-  ) {}
+  constructor(public level: OutputLogLevel = 'info') {}
 }
 
 const msg = 'You need to implement "%s" method in "%s"';
-/**
- * Typically, configuring a level in a filter or on a logger will cause logging events
- * of that level and those that are more specific to pass through the filter.
- * A special level, ALL, is guaranteed to capture all levels when used in logging configurations.
- *
- * This log levels implements [log4j log levels](https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Level.html)
- */
-export type LogLevel = 'all' | 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'off';
 
 /**
+ * The log level for a particular message. This particular message may or may not be logged,
+ * it all depends on the `OutputLogLevel`.
  * This type is identical to the `LogLevel` type, except for the `off` level.
  * It is intended to define a list of logger methods that are intended for logging.
  */
-export type MethodLogLevel = Exclude<LogLevel, 'off'>;
+export type InputLogLevel = Exclude<OutputLogLevel, 'off'>;
+/**
+ * The Log level that is set for all log messages that should be logged at this time.
+ *
+ * Borrowed from [log4j log levels](https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Level.html)
+ */
+export type OutputLogLevel = 'all' | 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'off';
 
 @injectable()
 export class Logger {
@@ -72,7 +70,7 @@ export class Logger {
   fatal(...args: any[]): any {
     console.warn(msg, 'fatal', this.constructor.name);
   }
-  log(level: MethodLogLevel, ...args: any[]) {
+  log(level: InputLogLevel, ...args: any[]) {
     this[level](...args);
   }
 

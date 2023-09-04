@@ -2,13 +2,13 @@ import { jest } from '@jest/globals';
 
 import { Injector, Provider } from '#di';
 import { ModuleExtract } from '#models/module-extract.js';
-import { LogLevel } from '#types/logger.js';
+import { InputLogLevel } from '#types/logger.js';
 import { LogMediator } from './log-mediator.js';
 import { SystemLogMediator } from './system-log-mediator.js';
 
 describe('SystemLogMediator', () => {
   class SystemLogMediatorMock extends SystemLogMediator {
-    testMethod(level: LogLevel, ...args: any[]) {
+    testMethod(level: InputLogLevel, ...args: any[]) {
       this.setLog(level, `${args[0]}, ${args[1]}`);
     }
   }
@@ -20,7 +20,6 @@ describe('SystemLogMediator', () => {
   }
 
   afterEach(() => {
-    console.log = jest.fn();
     jest.restoreAllMocks();
   });
 

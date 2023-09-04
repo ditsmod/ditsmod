@@ -1,6 +1,6 @@
 import { injectable } from '#di';
 import { ConsoleLogger } from '#services/console-logger.js';
-import { LogLevel, Logger, LoggerConfig } from '#types/logger.js';
+import { Logger, LoggerConfig } from '#types/logger.js';
 import { GlobalProviders, ImportObj } from '#types/metadata-per-mod.js';
 import { Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceProvider } from '#types/mix.js';
 import { getImportedTokens } from '#utils/get-imports.js';

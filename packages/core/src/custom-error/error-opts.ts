@@ -1,4 +1,4 @@
-import { MethodLogLevel } from '#types/logger.js';
+import { InputLogLevel } from '#types/logger.js';
 import { Status } from '#utils/http-status-codes.js';
 
 export class ErrorOpts {
@@ -21,7 +21,7 @@ export class ErrorOpts {
   /**
    * Log level. By default - `debug`.
    */
-  level?: MethodLogLevel = 'debug';
+  level?: InputLogLevel = 'debug';
   /**
    * HTTP status.
    */

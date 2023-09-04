@@ -1,5 +1,5 @@
 import { injectable } from '#di';
-import { Logger, LogLevel } from '#types/logger.js';
+import { Logger, OutputLogLevel } from '#types/logger.js';
 import { AnyFn } from '#types/mix.js';
 
 @injectable()
@@ -12,9 +12,9 @@ export class ConsoleLogger extends Logger {
   override error = this.consoleLoggerFn('error');
   override fatal = this.consoleLoggerFn('fatal');
 
-  protected consoleLoggerFn(level: LogLevel) {
+  protected consoleLoggerFn(level: OutputLogLevel) {
     const callback: AnyFn = (...args: any[]) => {
-      const allLevels: LogLevel[] = ['all', 'trace', 'debug', 'info', 'warn', 'error', 'fatal', 'off'];
+      const allLevels: OutputLogLevel[] = ['all', 'trace', 'debug', 'info', 'warn', 'error', 'fatal', 'off'];
       const index = allLevels.indexOf(this.config!.level);
       const availableLevels = allLevels.slice(index);
       if (availableLevels.includes(level)) {

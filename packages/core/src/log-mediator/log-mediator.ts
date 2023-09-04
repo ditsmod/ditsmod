@@ -1,7 +1,7 @@
 import { injectable, optional } from '#di';
 import { ModuleExtract } from '#models/module-extract.js';
 import { ConsoleLogger } from '#services/console-logger.js';
-import { LogLevel, Logger, LoggerConfig } from '#types/logger.js';
+import { Logger, LoggerConfig, InputLogLevel } from '#types/logger.js';
 import { LogItem } from './types.js';
 
 /**
@@ -23,10 +23,9 @@ export abstract class LogMediator {
     @optional() protected loggerConfig: LoggerConfig = new LoggerConfig(),
   ) {}
 
-  protected setLog(inputLogLevel: LogLevel, msg: any) {
+  protected setLog(inputLogLevel: InputLogLevel, msg: any) {
+    const loggerConfig = this.getLoggerConfig();
     if (LogMediator.bufferLogs) {
-      const loggerConfig = this.getLoggerConfig();
-
       LogMediator.buffer.push({
         moduleName: this.moduleExtract.moduleName,
         logger: this.logger,
@@ -36,7 +35,7 @@ export abstract class LogMediator {
         msg,
       });
     } else {
-      if (inputLogLevel != 'off') {
+      if (loggerConfig.level != 'off') {
         this.logger.log(inputLogLevel, msg);
       }
     }
@@ -48,41 +47,12 @@ export abstract class LogMediator {
 
   /**
    * Writing of logs by loggers.
-   *
-   * @param logLevel come only from raiseLog() call.
    */
-  protected writeLogs(logItems: LogItem[], logLevel?: LogLevel) {
-    const previousLogLevels = new Map<Logger, LogLevel>();
-
+  protected writeLogs(logItems: LogItem[]) {
     logItems.forEach((logItem) => {
-      if (!logLevel) {
-        return;
-      }
-      const { logger } = logItem;
-      const config = logger.getConfig();
-      if (!previousLogLevels.has(logger)) {
-        previousLogLevels.set(logger, config.level);
-      }
-      const level = logLevel || logItem.outputLogLevel;
-      logger.mergeConfig({ level });
-
-      const { msg } = logItem;
-      if (!logger.log) {
-        const loggerName = logger.constructor.name;
-        const msg0 = `error: you need to implement "log" method in "${loggerName}";`;
-        if (logger.error) {
-          logger.error.call(logger, msg0, msg);
-        } else {
-          console.error(msg0, msg);
-        }
-      } else {
-        if (logItem.inputLogLevel != 'off') {
-          logger.log.call(logger, logItem.inputLogLevel, msg);
-        }
+      if (logItem.outputLogLevel != 'off') {
+        logItem.logger.log.call(logItem.logger, logItem.inputLogLevel, logItem.msg);
       }
     });
-
-    // Restore previous log level for each logger.
-    previousLogLevels.forEach((outputLogLevel, logger) => logger.mergeConfig({ level: outputLogLevel }));
   }
 }

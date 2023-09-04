@@ -3,14 +3,13 @@ import { jest } from '@jest/globals';
 import { Injector, Provider } from '#di';
 import { ModuleExtract } from '#models/module-extract.js';
 import { ConsoleLogger } from '#services/console-logger.js';
-import { LogLevel } from '#types/logger.js';
 import { LogMediator } from './log-mediator.js';
 import { LogItem } from './types.js';
 
 describe('LogMediator', () => {
   class LogMediatorMock extends LogMediator {
-    override writeLogs(logItems: LogItem[], logLevel?: LogLevel) {
-      return super.writeLogs(logItems, logLevel);
+    override writeLogs(logItems: LogItem[]) {
+      return super.writeLogs(logItems);
     }
   }
 
@@ -20,7 +19,6 @@ describe('LogMediator', () => {
   }
 
   afterEach(() => {
-    console.log = jest.fn();
     jest.restoreAllMocks();
   });
 
