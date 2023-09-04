@@ -8,8 +8,6 @@ In Ditsmod, you can substitute the default logger with your own logger, and this
 
 If you want to write a module for a Ditsmod application to publish on, for example, npmjs.com, it is recommended that you use `LogMediator` instead of `Logger`, as users will be able to modify the messages that your module writes.
 
-In addition to changing the messages and logging level, `LogMediator` also allows you to filter logs by various parameters. For example, if you enable the most verbose `trace` logs level for the logger, Ditsmod will output a lot of detailed information, and the configuration file for `LogMediator` will allow you to filter messages only for certain modules, or logs written by a certain class or with a certain tag.
-
 The Ditsmod repository has an example [11-override-core-log-messages][1] that demonstrates several uses of `LogMediator`. To try this example, you can first clone the repository and install the dependencies:
 
 ```bash
@@ -61,27 +59,6 @@ As you can see, `MyLogMediator` extends `LogMediator` and the `serverListen()` m
 
 The result can be seen if you run the application with the `npm start` command, after which you should receive exactly the message that was generated in this `myLogMediator.serverListen()` method.
 
-## Log filtering
-
-As you can see from the previous example, `myLogMediator.serverListen()` uses the `setLog()` method and the `InputLogFilter` class, which have the following types:
-
-```ts
-setLog<T extends InputLogFilter>(level: LogLevel, inputLogFilter: T, msg: any): void;
-
-class InputLogFilter {
-  className?: string;
-  tags?: string[];
-}
-```
-
-The `InputLogFilter` instance is used as a configuration for further log filtering. To see how this filter works, first change the log output level to `trace` in `AppModule`:
-
-```ts
-.useLogConfig({ level: 'trace' }, { modulesNames: ['OtherModule'] })
-```
-
-Then run the application with the command `npm start`, after which you should see logs only from the `OtherModule` module. If you remove the filter with `OtherModule`, you will see a lot of detailed information from all modules.
-
 ## Application-level substitute of LogMediator
 
 If you look at `AppModule`, you can see how `LogMediator` is substituted by `MyLogMediator`:
@@ -107,7 +84,7 @@ Keep in mind that such an application-level substitution works without additiona
 
 ## Module-level substitute of LogMediator
 
-As mentioned at the beginning, if you plan to publish your module to other users, it is recommended to use `LogMediator` instead of `Logger`. In this case, users will be able to change the messages written by your module, as well as filter them.
+As mentioned at the beginning, if you plan to publish your module to other users, it is recommended to use `LogMediator` instead of `Logger`. In this case, users will be able to change the messages written by your module.
 
 In this example, `SomeModule` has `SomeService`, which uses `SomeLogMediator`. You can imagine that `SomeModule` is an external module that is supposedly installed via a package manager (npm, yarn, etc.) and therefore you have "read-only" access to it. `SomeModule` is imported into `OtherModule`, which calls the external service `SomeService`, which in turn calls `SomeLogMediator`.
 
