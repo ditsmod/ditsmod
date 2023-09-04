@@ -1,4 +1,4 @@
-import { LogMediator, InputLogFilter } from '@ditsmod/core';
+import { LogMediator } from '@ditsmod/core';
 
 export class OpenapiLogMediator extends LogMediator {
   /**
@@ -6,40 +6,28 @@ export class OpenapiLogMediator extends LogMediator {
    */
   dataAccumulation(self: object) {
     const className = self.constructor.name;
-    const inputLogFilter = new InputLogFilter();
-    inputLogFilter.className = className;
-    inputLogFilter.tags = ['openapi'];
-    this.setLog('trace', inputLogFilter, `${className}: return false, waiting for last module with ${className}.`);
+    this.setLog('trace', `${className}: return false, waiting for last module with ${className}.`);
   }
   /**
    * applying accumulated data from the entire application.
    */
   applyingAccumulatedData(self: object) {
     const className = self.constructor.name;
-    const inputLogFilter = new InputLogFilter();
-    inputLogFilter.className = className;
-    inputLogFilter.tags = ['openapi'];
-    this.setLog('trace', inputLogFilter, `${className}: applying accumulated data from the entire application.`);
+    this.setLog('trace', `${className}: applying accumulated data from the entire application.`);
   }
   /**
    * config file (XOasObject) for OpenAPI not found, applying default.
    */
    oasObjectNotFound(self: object) {
     const className = self.constructor.name;
-    const inputLogFilter = new InputLogFilter();
-    inputLogFilter.className = className;
-    inputLogFilter.tags = ['openapi'];
-    this.setLog('trace', inputLogFilter, `${className}: config file (with XOasObject type) not found, applying default.`);
+    this.setLog('trace', `${className}: config file (with XOasObject type) not found, applying default.`);
   }
   /**
    * found config file (with XOasObject type), merge with default.
    */
    foundOasObject(self: object) {
     const className = self.constructor.name;
-    const inputLogFilter = new InputLogFilter();
-    inputLogFilter.className = className;
-    inputLogFilter.tags = ['openapi'];
-    this.setLog('trace', inputLogFilter, `${className}: found config file (with XOasObject type), merge with default.`);
+    this.setLog('trace', `${className}: found config file (with XOasObject type), merge with default.`);
   }
   /**
    * Settings OpenAPI parameters in ${moduleName} failed: parameter "${paramName}" not found in "${path}".
