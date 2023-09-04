@@ -31,7 +31,7 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
-    "test": "npm run build && npm run esm-jest",
+    "test": "yarn build && yarn esm-jest",
     "esm-jest": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
   },
   "keywords": [],

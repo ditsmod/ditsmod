@@ -12,11 +12,11 @@
     "example": "examples"
   },
   "scripts": {
-    "test": "npm run build && npm run esm-jest",
-    "test1": "npm run esm-jest -- -c jest.config1.ts",
+    "test": "yarn build && yarn esm-jest",
+    "test1": "yarn esm-jest -c jest.config1.ts",
     "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning node_modules/jest/bin/jest.js",
-    "test-examples": "npm run build-examples && npm run esm-jest -- -c examples/jest.config.ts",
-    "test-all": "npm test && npm run test-examples && npm run build-examples && npm run build-vscode",
+    "test-examples": "yarn build-examples && yarn esm-jest -c examples/jest.config.ts",
+    "test-all": "yarn test && yarn test-examples && yarn build-examples && yarn build-vscode",
     "pub": "lerna publish from-package --no-git-tag-version",
     "build": "tsc -b packages",
     "build-examples": "tsc -b examples/tsconfig.build.json",

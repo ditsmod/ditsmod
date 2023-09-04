@@ -13,8 +13,8 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "fetchSupporters": "node fetchSupporters.js",
-    "netlify:ci:deployPreview": "npm run netlify:prepare && npm run build -l en",
-    "netlify:prepare": "npm run fetchSupporters && npm run build:js"
+    "netlify:ci:deployPreview": "yarn netlify:prepare && yarn build -l en",
+    "netlify:prepare": "yarn fetchSupporters && yarn build:js"
   },
   "resolutions": {
     "trim": "^0.0.3"

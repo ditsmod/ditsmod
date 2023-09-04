@@ -9,7 +9,7 @@
   "description": "Ditsmod module to integration with i18n (internalization)",
   "module": "dist/index.js",
   "scripts": {
-    "test": "tsc -b tsconfig.test.json && npm run esm-jest",
+    "test": "tsc -b tsconfig.test.json && yarn esm-jest",
     "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning ../../node_modules/jest/bin/jest.js",
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*"
