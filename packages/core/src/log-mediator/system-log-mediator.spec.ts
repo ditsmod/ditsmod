@@ -25,11 +25,12 @@ describe('SystemLogMediator', () => {
 
   describe('testMethod()', () => {
     it("LogMediator's default state", () => {
-      expect(LogMediator.bufferLogs).toBe(true);
+      expect(LogMediator.bufferLogs).toBe(false);
       expect(LogMediator.buffer).toEqual([]);
     });
 
     it('passing message to the buffer', () => {
+      LogMediator.bufferLogs = true;
       const logMediator = getLogMediator();
       logMediator.testMethod('trace', 'one', 'two');
       expect(LogMediator.buffer.length).toBe(1);
@@ -40,6 +41,7 @@ describe('SystemLogMediator', () => {
     });
 
     it('passing message with switch between buffer and logger', () => {
+      LogMediator.bufferLogs = true;
       const logMediator = getLogMediator();
       const { logger } = logMediator as any;
       jest.spyOn(logger, 'log');
