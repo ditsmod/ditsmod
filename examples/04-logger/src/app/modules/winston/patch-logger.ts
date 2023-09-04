@@ -1,4 +1,4 @@
-import { Logger, LoggerConfig, LogLevel, methodFactory } from '@ditsmod/core';
+import { Logger, LoggerConfig, OutputLogLevel, methodFactory } from '@ditsmod/core';
 import { createLogger, addColors, format, transports } from 'winston';
 
 export class PatchLogger {
@@ -45,7 +45,7 @@ export class PatchLogger {
 
     // Logger must have `getConfig` method.
     (logger as unknown as Logger).getConfig = () => {
-      return { level: logger.level as LogLevel };
+      return { level: logger.level as OutputLogLevel };
     };
 
     addColors(customLevels.colors);

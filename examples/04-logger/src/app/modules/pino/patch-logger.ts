@@ -1,4 +1,4 @@
-import { Logger, LoggerConfig, LogLevel, methodFactory, MethodLogLevel } from '@ditsmod/core';
+import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel, methodFactory } from '@ditsmod/core';
 import pino = require('pino');
 
 export class PatchLogger {
@@ -8,7 +8,7 @@ export class PatchLogger {
     logger.level = config.level;
 
     // Logger must have `log` method.
-    (logger as unknown as Logger).log = (level: MethodLogLevel, ...args: any[]) => {
+    (logger as unknown as Logger).log = (level: InputLogLevel, ...args: any[]) => {
       const [arg1, ...rest] = args;
       logger[level](arg1, ...rest);
     };
@@ -20,7 +20,7 @@ export class PatchLogger {
 
     // Logger must have `getConfig` method.
     (logger as unknown as Logger).getConfig = () => {
-      return { level: logger.level as LogLevel };
+      return { level: logger.level as OutputLogLevel };
     };
 
     return logger;
