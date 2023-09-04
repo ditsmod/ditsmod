@@ -379,7 +379,7 @@ What the `injector.get()` does:
 - and lastly creates the `Service3` instance using the `Service2` instance;
 - if the `Service3` instance is requested again later, the `injector.get()` method will return the previously created `Service3` instance from the cache of this injector.
 
-Sometimes the last point (when the `Service3` instance is returned from the injector cache) is undesirable. In this case, you can use the `injector.resolveAndInstantiate()` method. In fact, it does everything that `injector.get()` does, but returns a new instance each time.
+Sometimes the last point (when the `Service3` instance is returned from the injector cache) is undesirable. In this case, you can use the `injector.resolveAndInstantiate()` method, which accepts a provider, resolves it in the context of the current injector, and returns a new instance of the given provider each time.
 
 When automatically resolving a class dependency (when the injector is not used directly), Ditsmod uses the `injector.get()` method under the hood.
 
