@@ -5,7 +5,6 @@ export class RouterLogMediator extends LogMediator {
    * Setting route '${fullPath}' in ${moduleName} failed: a handle is already registered for this path.
    */
   throwHandleAlreadyRegistered(fullPath: string) {
-    this.raiseLog({ tags: ['route'] }, 'debug');
     const msg = `Setting route '${fullPath}' in ${this.moduleExtract.moduleName} failed: a handle is already registered for this path.`;
     throw new Error(msg);
   }
