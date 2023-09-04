@@ -16,7 +16,6 @@ export abstract class LogMediator {
    */
   static bufferLogs: boolean = true;
   static buffer: LogItem[] = [];
-  protected raisedLogs: LogItem[] = [];
 
   constructor(
     protected moduleExtract: ModuleExtract,
@@ -56,7 +55,7 @@ export abstract class LogMediator {
     const previousLogLevels = new Map<Logger, LogLevel>();
 
     logItems.forEach((logItem) => {
-      if (!logLevel && this.raisedLogs.includes(logItem)) {
+      if (!logLevel) {
         return;
       }
       const { logger } = logItem;

@@ -3,17 +3,9 @@ import { injectable, optional } from '#di';
 export class LoggerConfig {
   /**
    * @param level Log level (trace, debug, info etc.)
-   * @param disabledRaisedLogs If `LogMediator` is used to throw an error,
-   * this option allows you to raise the log level. For example,
-   * if you set the log level to `info` and the router throws an error
-   * about duplicates in routes paths, this parameter allows you to filter
-   * and show relevant logs, even if they have log level `debug`.
-   *
-   * Default - false.
    */
   constructor(
     public level: LogLevel = 'info',
-    public disabledRaisedLogs?: boolean,
   ) {}
 }
 
