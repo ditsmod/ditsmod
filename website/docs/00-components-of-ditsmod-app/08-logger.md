@@ -35,7 +35,7 @@ export class AppModule {}
 Давайте спочатку напишемо код для цього провайдера. На даний момент (2023-09-02), одним із самих популярних серед Node.js-логерів є [winston][103]. Для патчінгу ми написали метод класу, перед яким додали декоратор `methodFactory`:
 
 ```ts {42-44,47-49}
-import { Logger, LoggerConfig, LogLevel, methodFactory } from '@ditsmod/core';
+import { Logger, LoggerConfig, OutputLogLevel, methodFactory } from '@ditsmod/core';
 import { createLogger, addColors, format, transports } from 'winston';
 
 export class PatchLogger {
@@ -82,7 +82,7 @@ export class PatchLogger {
 
     // Logger must have `getConfig` method.
     (logger as unknown as Logger).getConfig = () => {
-      return { level: logger.level as LogLevel };
+      return { level: logger.level as OutputLogLevel };
     };
 
     addColors(customLevels.colors);
