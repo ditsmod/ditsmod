@@ -29,7 +29,7 @@ export class SystemLogMediator extends LogMediator {
   updateLogsWithCurrentLogConfig() {
     LogMediator.buffer.forEach((logItem) => {
       logItem.logger = this.logger;
-      logItem.outputLogLevel = this.getLogLevel();
+      logItem.outputLogLevel = this.getLoggerConfig().level;
     });
   }
 
@@ -48,13 +48,6 @@ export class SystemLogMediator extends LogMediator {
       throw new TypeError('The logger was not previously seted.');
     }
     this.logger = SystemLogMediator.previousLogger;
-  }
-
-  /**
-   * @deprecated Use `mergeLoggerConfig()` instead.
-   */
-  setLogLevel(logLevel: LogLevel) {
-    this.logger.setLevel(logLevel);
   }
 
   mergeLoggerConfig(config: LoggerConfig) {

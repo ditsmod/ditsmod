@@ -25,12 +25,12 @@ export abstract class LogMediator {
 
   protected setLog(inputLogLevel: LogLevel, msg: any) {
     if (LogMediator.bufferLogs) {
-      const logLevel = this.getLogLevel();
+      const loggerConfig = this.getLoggerConfig();
 
       LogMediator.buffer.push({
         moduleName: this.moduleExtract.moduleName,
         logger: this.logger,
-        outputLogLevel: logLevel,
+        outputLogLevel: loggerConfig.level,
         inputLogLevel,
         date: new Date(),
         msg,
@@ -42,8 +42,8 @@ export abstract class LogMediator {
     }
   }
 
-  protected getLogLevel(): LogLevel {
-    return this.logger.getConfig().level;
+  protected getLoggerConfig(): LoggerConfig {
+    return this.logger.getConfig();
   }
 
   /**

@@ -76,22 +76,8 @@ export class Logger {
     this[level](...args);
   }
 
-  /**
-   * @deprecated Use `mergeConfig()` instead.
-   */
-  setLevel(level: LogLevel) {
-    this.mergeConfig({ level });
-  }
-
   mergeConfig(config: LoggerConfig) {
     this.config = { ...this.config, ...config };
-  }
-
-  /**
-   * @deprecated Use `getConfig()` instead.
-   */
-  getLevel(): LogLevel {
-    return this.config?.level || 'info';
   }
 
   getConfig(): LoggerConfig {

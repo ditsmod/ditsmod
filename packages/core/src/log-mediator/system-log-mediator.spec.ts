@@ -5,7 +5,6 @@ import { ModuleExtract } from '#models/module-extract.js';
 import { LogLevel } from '#types/logger.js';
 import { LogMediator } from './log-mediator.js';
 import { SystemLogMediator } from './system-log-mediator.js';
-import { LogItem } from './types.js';
 
 describe('SystemLogMediator', () => {
   class SystemLogMediatorMock extends SystemLogMediator {

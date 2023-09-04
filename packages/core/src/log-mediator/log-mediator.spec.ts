@@ -47,7 +47,7 @@ describe('LogMediator', () => {
       expect(console.log).toBeCalledTimes(1);
       expect(baseLogItem.logger.log).toBeCalledTimes(1);
       expect(baseLogItem.logger.log).toBeCalledWith(item1.inputLogLevel, item1.msg);
-      expect(baseLogItem.logger.getLevel()).toBe('info'); // Restored previous log level.
+      expect(baseLogItem.logger.getConfig().level).toBe('info'); // Restored previous log level.
     });
 
     it('inputLogLevel < outputLogLevel', () => {
@@ -65,7 +65,7 @@ describe('LogMediator', () => {
       expect(console.log).toBeCalledTimes(0);
       expect(baseLogItem.logger.log).toBeCalledTimes(1);
       expect(baseLogItem.logger.log).toBeCalledWith(item1.inputLogLevel, item1.msg);
-      expect(baseLogItem.logger.getLevel()).toBe('info'); // Restored previous log level.
+      expect(baseLogItem.logger.getConfig().level).toBe('info'); // Restored previous log level.
     });
   });
 });
