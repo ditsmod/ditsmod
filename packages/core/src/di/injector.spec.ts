@@ -109,6 +109,34 @@ function createInjector(providers: Provider[], parent?: Injector | null): Inject
 }
 
 describe('injector', () => {
+  describe('instantiate() method', () => {
+    it('instantiate only, no have cache', () => {
+      const injector = Injector.resolveAndCreate([Engine, Car]);
+      expect(injector.instantiate(Car)).toBeInstanceOf(Car);
+      expect(injector.instantiate(Car).engine).toBeInstanceOf(Engine);
+      expect(injector.instantiate(Car) !== injector.instantiate(Car)).toBe(true);
+      expect(injector.instantiate(Car).engine === injector.instantiate(Car).engine).toBe(true);
+    });
+
+    it('respect substitutes', () => {
+      const injector = Injector.resolveAndCreate([Engine, { token: Car, useClass: SportsCar }]);
+      expect(injector.instantiate(Car)).toBeInstanceOf(SportsCar);
+      expect(injector.instantiate(Car).engine).toBeInstanceOf(Engine);
+    });
+
+    it('instantiate providers from parent', () => {
+      const parent = Injector.resolveAndCreate([Engine, { token: Car, useClass: SportsCar }]);
+      const child = parent.resolveAndCreateChild([]);
+      expect(child.instantiate(Car)).toBeInstanceOf(SportsCar);
+      expect(child.instantiate(Car) !== child.instantiate(Car)).toBe(true);
+    });
+
+    it('allow default value', () => {
+      const injector = Injector.resolveAndCreate([]);
+      expect(injector.instantiate(Engine, 'defaultValue')).toBe('defaultValue');
+    });
+  });
+
   describe('class of registry', () => {
     it('getNewRegistry() should return different class on each call', () => {
       expect(getNewRegistry() !== getNewRegistry()).toBe(true);

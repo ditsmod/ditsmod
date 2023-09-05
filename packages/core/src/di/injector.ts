@@ -76,6 +76,7 @@ expect(car.engine instanceof Engine).toBe(true);
 export class Injector {
   #parent: Injector | null;
   #registry: RegistryOfInjector;
+  #Registry: Class<RegistryOfInjector>;
 
   /**
    * @param injectorName Injector name. Useful for debugging.
@@ -85,6 +86,7 @@ export class Injector {
     parent?: Injector,
     public readonly injectorName?: string,
   ) {
+    this.#Registry = Registry;
     this.#registry = new Registry();
     this.#parent = parent || null;
   }
@@ -491,6 +493,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
   }
 
   clear(): void {
+    this.#Registry = undefined as any;
     this.#registry = undefined as any;
     this.#parent = undefined as any;
   }
@@ -610,14 +613,14 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   instantiateResolved<T = any>(provider: ResolvedProvider, parentTokens: any[] = []): T {
     if (provider.multi) {
       return provider.resolvedFactories.map((factory) => {
-        return this.instantiate(provider.dualKey.token, parentTokens, factory);
+        return this.boostrap(provider.dualKey.token, parentTokens, factory);
       }) as T;
     } else {
-      return this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[0]);
+      return this.boostrap(provider.dualKey.token, parentTokens, provider.resolvedFactories[0]);
     }
   }
 
-  protected instantiate(token: any, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
+  protected boostrap(token: any, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
       return this.selectInjectorAndGet(
         dep.dualKey,
@@ -632,6 +635,44 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     } catch (e: any) {
       throw instantiationError(e, [token, ...parentTokens]);
     }
+  }
+
+  /**
+   * If the current injector has a provider with the requested `token`, then the current injector
+   * will instantiate the value for that provider. Otherwise, it may contact one of the parent injectors.
+   * If the required provider is found in the parent injectors, it will be pulled and instantiated
+   * in the context of the current injector.
+   */
+  instantiate<T>(token: Class<T> | InjectionToken<T>, defaultValue?: T): T;
+  instantiate<T extends AnyFn>(token: T, defaultValue?: T): ReturnType<T>;
+  instantiate(token: any, defaultValue?: any): any;
+  instantiate(token: any, defaultValue: any = NoDefaultValue): any {
+    const dualKey = KeyRegistry.get(token);
+    const { resolvedProvider, parentTokens } = this.getResolvedProvider(this, dualKey, []);
+    if (resolvedProvider) {
+      return this.instantiateResolved(resolvedProvider, parentTokens);
+    }
+    if (defaultValue === NoDefaultValue) {
+      throw noProviderError([dualKey.token, ...parentTokens]);
+    } else {
+      return defaultValue;
+    }
+  }
+
+  protected getResolvedProvider(
+    injector: Injector,
+    dualKey: DualKey,
+    parentTokens: any[],
+  ): { parentTokens: any[]; resolvedProvider?: ResolvedProvider } {
+    const resolvedProvider = injector.#Registry.prototype[dualKey.id] as ResolvedProvider | undefined;
+
+    if (resolvedProvider) {
+      return { resolvedProvider, parentTokens };
+    } else if (injector.#parent) {
+      return injector.#parent.getResolvedProvider(injector.#parent, dualKey, parentTokens);
+    }
+
+    return { parentTokens };
   }
 
   /**
