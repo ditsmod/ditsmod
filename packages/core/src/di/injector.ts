@@ -264,6 +264,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       const deps = [...resolvedDeps2, ...resolvedDeps1];
       return [this.getResolvedProvider(token, factoryFn, deps, provider.multi)];
     } else {
+      // Token provider.
       const factoryFn = (aliasInstance: any) => aliasInstance;
       const dualKey = KeyRegistry.get(provider.useToken);
       const resolvedDeps = [Dependency.fromDualKey(dualKey)];
@@ -609,11 +610,9 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
    */
   instantiateResolved<T = any>(provider: ResolvedProvider, parentTokens: any[] = []): T {
     if (provider.multi) {
-      const res = new Array(provider.resolvedFactories.length);
-      for (let i = 0; i < provider.resolvedFactories.length; ++i) {
-        res[i] = this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[i]);
-      }
-      return res as T;
+      return provider.resolvedFactories.map((factory) => {
+        return this.instantiate(provider.dualKey.token, parentTokens, factory);
+      }) as T;
     } else {
       return this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[0]);
     }
