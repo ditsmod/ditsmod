@@ -84,7 +84,7 @@ export class Injector {
   constructor(
     Registry: Class<RegistryOfInjector>,
     parent?: Injector,
-    public readonly injectorName?: string,
+    protected readonly injectorName?: string,
   ) {
     this.#Registry = Registry;
     this.#registry = new Registry();
@@ -206,7 +206,10 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     return new Injector(this.prepareRegistry(providers), undefined, injectorName);
   }
 
-  protected static normalizeProviders(providers: Provider[], normProviders: NormalizedProvider[]): NormalizedProvider[] {
+  protected static normalizeProviders(
+    providers: Provider[],
+    normProviders: NormalizedProvider[],
+  ): NormalizedProvider[] {
     providers.forEach((provider) => {
       if (isTypeProvider(provider)) {
         normProviders.push({ token: provider, useClass: provider });
@@ -530,14 +533,14 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
 
   /**
    * Retrieves an instance from the injector based on the provided token.
-   * If not found, returns the `defaultValue` otherwise
+   * If not found, returns the `defaultValue` otherwise.
    */
   get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, defaultValue?: T): T;
   get<T extends AnyFn>(token: T, visibility?: Visibility, defaultValue?: T): ReturnType<T>;
   get(token: any, visibility?: Visibility, defaultValue?: any): any;
   /**
    * @todo Refactor function signature for abstract classes, because this is not work:
-   * 
+   *
    * ```ts
    * abstract class A {}
    * injector.get(A) // Infer return type as "any".

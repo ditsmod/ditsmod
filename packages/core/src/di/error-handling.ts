@@ -30,6 +30,7 @@ function constructResolvingPath(tokens: any[]): string {
  * ### Example
  *
 ```ts
+@injectable()
 class A {
   constructor(b:B) {}
 }
