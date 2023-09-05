@@ -128,11 +128,11 @@ describe('injector', () => {
 
     it('prepared registry should allow extends it after creation', () => {
       const Registry = Injector.prepareRegistry(Injector.resolve([Engine]));
-      expect(new Registry()).toMatchObject({ countOfProviders: 1 });
+      expect(new Registry()).toMatchObject({});
 
       const resolvedDeps = Injector.resolve([DashboardSoftware]);
       Injector.prepareRegistry(resolvedDeps, Registry);
-      expect(new Registry()).toMatchObject({ countOfProviders: 2 });
+      expect(new Registry()).toMatchObject({});
 
       const injector = new Injector(Registry);
       const engine = injector.get(Engine);

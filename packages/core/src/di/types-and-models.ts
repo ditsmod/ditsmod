@@ -108,7 +108,6 @@ export class ResolvedProvider {
 }
 
 export interface RegistryOfInjector {
-  countOfProviders?: number;
   [id: number]: ResolvedProvider;
 }
 

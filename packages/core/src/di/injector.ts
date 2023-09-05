@@ -141,7 +141,6 @@ console.log(providers[0].resolvedFactories[0].dependencies);
     providers.forEach((p) => {
       Registry!.prototype[p.dualKey.id] = p;
     });
-    Registry.prototype.countOfProviders = (Registry.prototype.countOfProviders || 0) + providers.length;
     return Registry;
   }
 
