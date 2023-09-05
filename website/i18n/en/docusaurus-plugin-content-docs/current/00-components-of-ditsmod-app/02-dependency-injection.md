@@ -365,7 +365,7 @@ class Service3 {
 const injector = Injector.resolveAndCreate([Service1, Service2, Service3]);
 const service3 = injector.get(Service3);
 service3 === injector.get(Service3); // true
-service3 === injector.resolveAndInstantiate(Service3); // false
+service3 === injector.instantiate(Service3); // false
 ```
 
 The `Injector.resolveAndCreate()` method accepts an array of providers as input, and outputs a certain object, which is exactly what is called an **injector**. This injector obviously knows how to output the value of each provider by its token using the `injector.get()` method, taking into account the entire chain of dependencies (`Service3` -> `Service2` -> `Service1`).
@@ -379,7 +379,7 @@ What the `injector.get()` does:
 - and lastly creates the `Service3` instance using the `Service2` instance;
 - if the `Service3` instance is requested again later, the `injector.get()` method will return the previously created `Service3` instance from the cache of this injector.
 
-Sometimes the last point (when the `Service3` instance is returned from the injector cache) is undesirable. In this case, you can use the `injector.resolveAndInstantiate()` method, which accepts a provider, resolves it in the context of the current injector, and returns a new instance of the given provider each time.
+Sometimes the last point (when the `Service3` instance is returned from the injector cache) is undesirable. In this case, you can use the `injector.instantiate()` method, which is very similar to the work of `injector.get()`, but it creates a new instance of this provider each time, and will do it in the context of the current injector.
 
 When automatically resolving a class dependency (when the injector is not used directly), Ditsmod uses the `injector.get()` method under the hood.
 
