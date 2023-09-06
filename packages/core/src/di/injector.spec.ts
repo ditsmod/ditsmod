@@ -109,31 +109,60 @@ function createInjector(providers: Provider[], parent?: Injector | null): Inject
 }
 
 describe('injector', () => {
-  describe('instantiate() method', () => {
-    it('instantiate only, no have cache', () => {
+  describe('pull() method', () => {
+    it('for a provider from current injector, behaves like "injector.get()"', () => {
       const injector = Injector.resolveAndCreate([Engine, Car]);
-      expect(injector.instantiate(Car)).toBeInstanceOf(Car);
-      expect(injector.instantiate(Car).engine).toBeInstanceOf(Engine);
-      expect(injector.instantiate(Car) !== injector.instantiate(Car)).toBe(true);
-      expect(injector.instantiate(Car).engine === injector.instantiate(Car).engine).toBe(true);
+      expect(injector.pull(Car)).toBeInstanceOf(Car);
+      expect(injector.pull(Car).engine).toBeInstanceOf(Engine);
+      expect(injector.pull(Car) === injector.pull(Car)).toBe(true);
+      expect(injector.pull(Car) === injector.get(Car)).toBe(true);
+      expect(injector.pull(Car).engine === injector.pull(Car).engine).toBe(true);
     });
 
-    it('respect substitutes', () => {
-      const injector = Injector.resolveAndCreate([Engine, { token: Car, useClass: SportsCar }]);
-      expect(injector.instantiate(Car)).toBeInstanceOf(SportsCar);
-      expect(injector.instantiate(Car).engine).toBeInstanceOf(Engine);
-    });
-
-    it('instantiate providers from parent', () => {
-      const parent = Injector.resolveAndCreate([Engine, { token: Car, useClass: SportsCar }]);
-      const child = parent.resolveAndCreateChild([]);
-      expect(child.instantiate(Car)).toBeInstanceOf(SportsCar);
-      expect(child.instantiate(Car) !== child.instantiate(Car)).toBe(true);
+    it('child injector pull provider from parent injector, and instatiate it', () => {
+      const parent = Injector.resolveAndCreate([Car]);
+      const child = parent.resolveAndCreateChild([Engine]);
+      expect(() => child.get(Car)).toThrow('No provider for Engine! (Car -> Engine)');
+      expect(child.pull(Car)).toBeInstanceOf(Car);
+      expect(() => child.get(Car)).not.toThrow();
+      expect(child.pull(Car).engine).toBeInstanceOf(Engine);
+      expect(child.pull(Car) === child.pull(Car)).toBe(true);
     });
 
     it('allow default value', () => {
       const injector = Injector.resolveAndCreate([]);
-      expect(injector.instantiate(Engine, 'defaultValue')).toBe('defaultValue');
+      expect(injector.pull(Engine, 'defaultValue')).toBe('defaultValue');
+    });
+
+    it('cyclic dependency (A -> B -> A)', () => {
+      @injectable()
+      class A {
+        constructor(@inject(forwardRef(() => B)) b: any) {}
+      }
+      @injectable()
+      class B {
+        constructor(a: A) {}
+      }
+      const injector = Injector.resolveAndCreate([A, B]);
+      expect(() => injector.pull(A, 'defaultValue')).toThrow('Cannot instantiate cyclic dependency! (A -> B -> A)');
+    });
+
+    it('cyclic dependency (A -> B -> C -> A)', () => {
+      @injectable()
+      class A {
+        constructor(@inject(forwardRef(() => B)) b: any) {}
+      }
+      @injectable()
+      class B {
+        constructor(@inject(forwardRef(() => C)) c: any) {}
+      }
+      @injectable()
+      class C {
+        constructor(a: A) {}
+      }
+      const injector = Injector.resolveAndCreate([A, B, C]);
+      const msg = 'Cannot instantiate cyclic dependency! (A -> B -> C -> A)';
+      expect(() => injector.pull(A, 'defaultValue')).toThrow(msg);
     });
   });
 

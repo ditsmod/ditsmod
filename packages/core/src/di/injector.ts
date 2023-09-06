@@ -577,6 +577,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
         const value = injector.instantiateResolved(meta, parentTokens);
         return (injector.#registry[dualKey.id] = value);
       } else if (meta !== undefined) {
+        // Here "meta" - is a value for provider that has given `token`.
         return meta;
       } else if (visibility !== fromSelf && injector.#parent) {
         return injector.#parent.getOrThrow(injector.#parent, dualKey, parentTokens, defaultValue);
@@ -616,14 +617,14 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   instantiateResolved<T = any>(provider: ResolvedProvider, parentTokens: any[] = []): T {
     if (provider.multi) {
       return provider.resolvedFactories.map((factory) => {
-        return this.boostrap(provider.dualKey.token, parentTokens, factory);
+        return this.instantiate(provider.dualKey.token, parentTokens, factory);
       }) as T;
     } else {
-      return this.boostrap(provider.dualKey.token, parentTokens, provider.resolvedFactories[0]);
+      return this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[0]);
     }
   }
 
-  protected boostrap(token: any, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
+  protected instantiate(token: any, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
       return this.selectInjectorAndGet(
         dep.dualKey,
@@ -641,40 +642,75 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   }
 
   /**
-   * In the context of the current injector, it will always create new instances for the provider
-   * that has the specified `token`. Moreover, it does not matter where the provider with
-   * the specified `token` is located - in the current injector or in one of the parent injectors.
+   * If the nearest provider with the given `token` is in the parent injector, then
+   * this method pulls that provider into the current injector. After that, it works
+   * the same as `injector.get()`. If the nearest provider with the given `token`
+   * is in the current injector, then this method behaves exactly like `injector.get()`.
+   * 
+   * This method is primarily useful because it allows you, in the context of the current
+   * injector, to rebuild instances of providers that depend on a particular configuration
+   * that may be different in the current and parent injectors.
+   *
+   * ## Example
+   * 
+   * ```ts
+import { injectable, Injector } from '@ditsmod/core';
+
+class Config {
+  one: any;
+  two: any;
+}
+
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const parent = Injector.resolveAndCreate([Service, { token: Config, useValue: { one: 1, two: 2 } }]);
+const child = parent.resolveAndCreateChild([{ token: Config, useValue: { one: 11, two: 22 } }]);
+child.get(Service).config; // returns from parent injector: { one: 1, two: 2 }
+child.pull(Service).config; // pulls Service in current injector: { one: 11, two: 22 }
+child.get(Service).config; // now, in current injector, works cache: { one: 11, two: 22 }
+   * ```
    */
-  instantiate<T>(token: Class<T> | InjectionToken<T>, defaultValue?: T): T;
-  instantiate<T extends AnyFn>(token: T, defaultValue?: T): ReturnType<T>;
-  instantiate(token: any, defaultValue?: any): any;
-  instantiate(token: any, defaultValue: any = NoDefaultValue): any {
+  pull<T>(token: Class<T> | InjectionToken<T>, defaultValue?: T): T;
+  pull<T extends AnyFn>(token: T, defaultValue?: T): ReturnType<T>;
+  pull(token: any, defaultValue?: any): any;
+  pull(token: any, defaultValue: any = NoDefaultValue): any {
     const dualKey = KeyRegistry.get(token);
-    const { resolvedProvider, parentTokens } = this.getResolvedProvider(this, dualKey, []);
-    if (resolvedProvider) {
-      return this.instantiateResolved(resolvedProvider, parentTokens);
+    const meta = this.#registry[dualKey.id];
+
+    // This is an alternative to the "instanceof ResolvedProvider" expression.
+    if (meta?.[ID]) {
+      const value = this.instantiateResolved(meta, []);
+      return (this.#registry[dualKey.id] = value);
+    } else if (meta !== undefined) {
+      // Here "meta" - is a value for provider that has given `token`.
+      return meta;
+    }
+
+    if (this.#parent) {
+      const resolvedProvider = this.getResolvedProvider(this.#parent, dualKey);
+      if (resolvedProvider) {
+        const value = this.instantiateResolved(resolvedProvider, []);
+        return (this.#registry[dualKey.id] = value);
+      }
     }
     if (defaultValue === NoDefaultValue) {
-      throw noProviderError([dualKey.token, ...parentTokens]);
+      throw noProviderError([dualKey.token]);
     } else {
       return defaultValue;
     }
   }
 
-  protected getResolvedProvider(
-    injector: Injector,
-    dualKey: DualKey,
-    parentTokens: any[],
-  ): { parentTokens: any[]; resolvedProvider?: ResolvedProvider } {
+  protected getResolvedProvider(injector: Injector, dualKey: DualKey): ResolvedProvider | void {
     const resolvedProvider = injector.#Registry.prototype[dualKey.id] as ResolvedProvider | undefined;
 
     if (resolvedProvider) {
-      return { resolvedProvider, parentTokens };
+      return resolvedProvider;
     } else if (injector.#parent) {
-      return injector.#parent.getResolvedProvider(injector.#parent, dualKey, parentTokens);
+      return injector.#parent.getResolvedProvider(injector.#parent, dualKey);
     }
-
-    return { parentTokens };
   }
 
   /**
