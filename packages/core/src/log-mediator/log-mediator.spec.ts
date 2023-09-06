@@ -38,8 +38,8 @@ describe('LogMediator', () => {
       };
 
       const logMediator = getLogMediator();
+      console.log = jest.fn();
       jest.spyOn(baseLogItem.logger, 'log');
-      jest.spyOn(console, 'log');
       logMediator.writeLogs([item1]);
       expect(console.log).toBeCalledTimes(1);
       expect(baseLogItem.logger.log).toBeCalledTimes(1);
@@ -55,8 +55,8 @@ describe('LogMediator', () => {
       };
 
       const logMediator = getLogMediator();
+      console.log = jest.fn();
       jest.spyOn(baseLogItem.logger, 'log');
-      jest.spyOn(console, 'log');
       logMediator.writeLogs([item1]);
       expect(console.log).toBeCalledTimes(0);
       expect(baseLogItem.logger.log).toBeCalledTimes(1);

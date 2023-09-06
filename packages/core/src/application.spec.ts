@@ -11,6 +11,7 @@ import { ModuleType } from './types/mix.js';
 import { Router } from './types/router.js';
 import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
 import { ModuleManager } from './services/module-manager.js';
+import { LoggerConfig } from './index.js';
 
 describe('Application', () => {
   class ApplicationMock extends Application {
@@ -46,7 +47,7 @@ describe('Application', () => {
     class Provider2 {}
     @rootModule({
       controllers: [Provider1],
-      providersPerApp: [Provider2],
+      providersPerApp: [Provider2, { token: LoggerConfig, useValue: { level: 'off' }}],
     })
     class AppModule {}
 
@@ -88,7 +89,7 @@ describe('Application', () => {
 
   describe('bootstrapApplication()', () => {
     @rootModule({
-      providersPerApp: [{ token: Router, useValue: {}}]
+      providersPerApp: [{ token: Router, useValue: {}}, { token: LoggerConfig, useValue: { level: 'off' }}]
     })
     class AppModule {}
 

@@ -1,3 +1,5 @@
+import { jest } from '@jest/globals';
+
 import { controller } from '#decorators/controller.js';
 import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
@@ -11,6 +13,7 @@ import { ConsoleLogger } from './console-logger.js';
 import { ModuleManager } from './module-manager.js';
 
 describe('ModuleManager', () => {
+  console.log = jest.fn();
   type ModuleId = string | ModuleType | ModuleWithParams;
   type PartialMeta = Partial<NormalizedModuleMetadata>;
 
