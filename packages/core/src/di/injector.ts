@@ -641,10 +641,9 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   }
 
   /**
-   * If the current injector has a provider with the requested `token`, then the current injector
-   * will instantiate the value for that provider. Otherwise, it may contact one of the parent injectors.
-   * If the required provider is found in the parent injectors, it will be pulled and instantiated
-   * in the context of the current injector.
+   * In the context of the current injector, it will always create new instances for the provider
+   * that has the specified `token`. Moreover, it does not matter where the provider with
+   * the specified `token` is located - in the current injector or in one of the parent injectors.
    */
   instantiate<T>(token: Class<T> | InjectionToken<T>, defaultValue?: T): T;
   instantiate<T extends AnyFn>(token: T, defaultValue?: T): ReturnType<T>;
