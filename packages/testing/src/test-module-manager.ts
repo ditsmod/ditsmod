@@ -5,7 +5,7 @@ import {
   ModuleWithParams,
   NormalizedModuleMetadata,
   PreRouterExtension,
-  LogLevel,
+  OutputLogLevel,
 } from '@ditsmod/core';
 
 import { TestPreRouterExtension } from './test-pre-router.extensions.js';
@@ -15,7 +15,7 @@ type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 
 export class TestModuleManager extends ModuleManager {
   protected providersToOverride: TestProvider[] = [];
-  protected logLevel: LogLevel;
+  protected logLevel: OutputLogLevel;
 
   overrideProviders(providers: TestProvider[]) {
     this.providersToOverride = providers;
@@ -25,7 +25,7 @@ export class TestModuleManager extends ModuleManager {
    * This `logLevel` is set after the HTTP request handlers are installed.
    * It does not cover application initialization time.
    */
-  setLogLevel(logLevel: LogLevel) {
+  setLogLevel(logLevel: OutputLogLevel) {
     this.logLevel = logLevel;
   }
 

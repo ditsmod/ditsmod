@@ -1,4 +1,4 @@
-import { Application, ApplicationOptions, LogLevel, Server } from '@ditsmod/core';
+import { Application, ApplicationOptions, OutputLogLevel, Server } from '@ditsmod/core';
 
 import { TestModuleManager } from './test-module-manager.js';
 import { TestAppInitializer } from './test-app-initializer.js';
@@ -8,7 +8,7 @@ export class PreTestApplication extends Application {
     return super.init(rootModuleName, appOptions);
   }
 
-  bootstrapTestApplication(testModuleManager: TestModuleManager, logLevel: LogLevel) {
+  bootstrapTestApplication(testModuleManager: TestModuleManager, logLevel: OutputLogLevel) {
     return new Promise<{ server: Server }>(async (resolve, reject) => {
       try {
         const testAppInitializer = new TestAppInitializer(this.rootMeta, testModuleManager, this.systemLogMediator);

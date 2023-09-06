@@ -1,4 +1,4 @@
-import { ApplicationOptions, LogLevel, ModuleType } from '@ditsmod/core';
+import { ApplicationOptions, OutputLogLevel, ModuleType } from '@ditsmod/core';
 
 import { PreTestApplication } from './pre-test-application.js';
 import { TestModuleManager } from './test-module-manager.js';
@@ -9,7 +9,7 @@ import { TestProvider } from './types.js';
 export class TestApplication {
   protected preTestApplication: PreTestApplication;
   protected testModuleManager: TestModuleManager;
-  protected logLevel: LogLevel;
+  protected logLevel: OutputLogLevel;
   protected appModule: ModuleType;
 
   constructor(appModule: ModuleType, appOptions: ApplicationOptions = new ApplicationOptions()) {
@@ -38,7 +38,7 @@ export class TestApplication {
   /**
    * During testing, the logging level is set to `off` by default (any logs are disabled).
    */
-  setLogLevel(logLevel: LogLevel) {
+  setLogLevel(logLevel: OutputLogLevel) {
     this.logLevel = logLevel;
     this.testModuleManager.setLogLevel(logLevel);
     return this;
