@@ -35,9 +35,7 @@ describe('ModuleManager', () => {
   let mock: MockModuleManager;
 
   beforeEach(() => {
-    const config = new LoggerConfig();
-    const logger = new ConsoleLogger(config);
-    const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName', path: '' }, logger);
+    const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName', path: '' });
     mock = new MockModuleManager(systemLogMediator);
   });
 
