@@ -1,6 +1,7 @@
 import { InjectionToken } from '#di';
 import { EXTENSIONS_COUNTERS } from './constans.js';
 import { ImportsResolver } from './imports-resolver.js';
+import { Logger } from './index.js';
 import { LogMediator } from './log-mediator/log-mediator.js';
 import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata.js';
@@ -13,7 +14,6 @@ import { ExtensionsManager } from './services/extensions-manager.js';
 import { ModuleManager } from './services/module-manager.js';
 import { PerAppService } from './services/per-app.service.js';
 import { PreRouter } from './services/pre-router.js';
-import { LoggerConfig } from './types/logger.js';
 import { MetadataPerMod1 } from './types/metadata-per-mod.js';
 import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix.js';
 import { RequestListener } from './types/server-options.js';
@@ -21,7 +21,6 @@ import { getCollisions } from './utils/get-collisions.js';
 import { getDuplicates } from './utils/get-duplicates.js';
 import { getLastProviders } from './utils/get-last-providers.js';
 import { getModuleName } from './utils/get-module-name.js';
-import { getModule } from './utils/get-module.js';
 import { getProvidersTargets, getToken, getTokens } from './utils/get-tokens.js';
 import { normalizeProviders } from './utils/ng-utils.js';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error.js';
@@ -163,6 +162,7 @@ export class AppInitializer {
     const mExtensionsCounters = importsResolver.resolve();
     const aMetadataPerMod1 = [...appMetadataMap].map(([, metadataPerMod1]) => metadataPerMod1);
     await this.handleExtensions(aMetadataPerMod1, mExtensionsCounters);
+    this.systemLogMediator = this.perAppService.injector.get(SystemLogMediator) as SystemLogMediator;
     this.preRouter = this.perAppService.injector.get(PreRouter) as PreRouter;
     return appMetadataMap;
   }
@@ -251,13 +251,10 @@ export class AppInitializer {
     ]);
     for (let i = 0; i < aMetadataPerMod1.length; i++) {
       const metadataPerMod1 = this.prepareMetadataPerMod1(aMetadataPerMod1[i]);
-      const { extensionsProviders, providersPerMod, name: moduleName, module } = metadataPerMod1.meta;
-      const mod = getModule(module);
-      const injectorPerMod = injectorPerApp.resolveAndCreateChild([mod, SystemLogMediator, ...providersPerMod]);
-      injectorPerMod.get(mod); // Call module constructor.
-      const systemLogMediator = injectorPerMod.get(SystemLogMediator) as SystemLogMediator;
-      const loggerConfig = injectorPerMod.get(LoggerConfig, undefined, new LoggerConfig()) as LoggerConfig;
-      systemLogMediator.mergeLoggerConfig(loggerConfig);
+      const { extensionsProviders, providersPerMod, name: moduleName } = metadataPerMod1.meta;
+      const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
+      injectorPerMod.pull(Logger);
+      const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
       systemLogMediator.startExtensionsModuleInit(this);
       this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([

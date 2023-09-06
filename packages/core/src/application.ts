@@ -70,10 +70,12 @@ export class Application {
   protected async bootstrapApplication(appInitializer: AppInitializer) {
     // Here, before init custom logger, works default logger.
     appInitializer.bootstrapProvidersPerApp();
-    // Here, after init custom logger, works this custom logger.
+    // Here, after init providers per app, reinit Logger with new config.
     this.systemLogMediator = appInitializer.systemLogMediator;
     this.systemLogMediator.updateLogsWithCurrentLogConfig();
     await appInitializer.bootstrapModulesAndExtensions();
+    // Here, after init extensions, reinit Logger with new config.
+    this.systemLogMediator = appInitializer.systemLogMediator;
   }
 
   protected async createServerAndListen(appInitializer: AppInitializer, resolve: AnyFn) {
