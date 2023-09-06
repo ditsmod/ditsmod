@@ -1,6 +1,6 @@
 import { injectable } from '#di';
 import { ConsoleLogger } from '#services/console-logger.js';
-import { Logger, LoggerConfig } from '#types/logger.js';
+import { Logger } from '#types/logger.js';
 import { GlobalProviders, ImportObj } from '#types/metadata-per-mod.js';
 import { Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceProvider } from '#types/mix.js';
 import { getImportedTokens } from '#utils/get-imports.js';
@@ -47,10 +47,6 @@ export class SystemLogMediator extends LogMediator {
       throw new TypeError('The logger was not previously seted.');
     }
     this.logger = SystemLogMediator.previousLogger;
-  }
-
-  mergeLoggerConfig(config: LoggerConfig) {
-    this.logger.mergeConfig(config);
   }
 
   /**
