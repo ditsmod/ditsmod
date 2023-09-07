@@ -28,6 +28,7 @@ export class Logger {
   constructor(@optional() public config?: LoggerConfig) {
     this.config = config ? { ...config } : new LoggerConfig();
   }
+
   log(level: InputLogLevel, ...args: any[]) {
     console.warn(msg, 'log', this.constructor.name);
   }
