@@ -1,6 +1,6 @@
 *.tgz
 *.log
-*.spec.ts
+*.spec.*
 yarn.*
 jest.*
 .*
