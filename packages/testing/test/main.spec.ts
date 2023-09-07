@@ -2,7 +2,7 @@ import request = require('supertest');
 import { Providers, Res } from '@ditsmod/core';
 import { jest } from '@jest/globals';
 
-import { TestApplication } from '@src/test-application.js';
+import { TestApplication } from '#src/test-application.js';
 import { AppModule } from './app/app.module.js';
 import {
   ServicePerApp,

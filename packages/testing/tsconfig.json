@@ -4,7 +4,7 @@
     // "baseUrl": ".", // See https://github.com/microsoft/TypeScript/issues/47114#issuecomment-1004360864
     "outDir": "dist",
     "paths": {
-      "@src/*": ["./src/*"],
+      "#src/*": ["./src/*"],
       "@ditsmod/core": ["../core/src"],
       "@ditsmod/router": ["../router/src"]
     }

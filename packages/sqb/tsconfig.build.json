@@ -12,6 +12,7 @@
     }
   },
   "include": ["src"],
+  "exclude": ["src/**/*.spec.ts"],
   "files": [],
   "references": [
     { "path": "../core/tsconfig.build.json" },

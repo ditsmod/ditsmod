@@ -1,0 +1,18 @@
+{
+  "files": [],
+  "references": [
+    { "path": "body-parser/tsconfig.test.json" },
+    { "path": "core/tsconfig.test.json" },
+    { "path": "openapi/tsconfig.test.json" },
+    { "path": "router/tsconfig.test.json" },
+    { "path": "session-cookie/tsconfig.test.json" },
+    { "path": "jwt/tsconfig.test.json" },
+    { "path": "i18n/tsconfig.test.json" },
+    { "path": "cors/tsconfig.test.json" },
+    { "path": "return/tsconfig.test.json" },
+    { "path": "versions/tsconfig.test.json" },
+    { "path": "openapi-validation/tsconfig.test.json" },
+    { "path": "sqb/tsconfig.test.json" },
+    { "path": "testing/tsconfig.test.json" },
+  ]
+}

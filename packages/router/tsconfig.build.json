@@ -10,6 +10,7 @@
     }
   },
   "include": ["src"],
+  "exclude": ["src/**/*.spec.ts"],
   "references": [
     {
       "path": "../core/tsconfig.build.json"

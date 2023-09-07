@@ -1,15 +1,14 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist-test",
-    "rootDir": "test",
+    "outDir": "dist",
+    "rootDir": "src",
     "baseUrl": ".",
-    "tsBuildInfoFile": "dist-test/test.tsbuildinfo",
+    "tsBuildInfoFile": "dist/unit.tsbuildinfo",
   },
-  "include": ["test"],
+  "include": ["src/**/*.spec.ts", "src/**/*.d.ts"],
   "references": [
     { "path": "./tsconfig.build.json" },
-    { "path": "./tsconfig.unit.json" },
     { "path": "../core/tsconfig.build.json" },
   ]
 }

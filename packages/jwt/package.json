@@ -25,14 +25,14 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
-    "test": "yarn build && yarn esm-jest",
-    "esm-jest": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
+    "test": "tsc -b tsconfig.test.json && yarn esm-jest",
+    "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning ../../node_modules/jest/bin/jest.js"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "jsonwebtoken": "^9.0.1"
+    "jsonwebtoken": "^9.0.2"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.47.0"
