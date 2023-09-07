@@ -72,7 +72,6 @@ export class Application {
     appInitializer.bootstrapProvidersPerApp();
     // Here, after init providers per app, reinit Logger with new config.
     this.systemLogMediator = appInitializer.systemLogMediator;
-    this.systemLogMediator.updateLogsWithCurrentLogConfig();
     await appInitializer.bootstrapModulesAndExtensions();
     // Here, after init extensions, reinit Logger with new config.
     this.systemLogMediator = appInitializer.systemLogMediator;

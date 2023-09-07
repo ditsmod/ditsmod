@@ -14,7 +14,7 @@ export abstract class LogMediator {
    *
    * If you need logging all buffered messages, call `systemLogMediator.flush()`.
    */
-  static bufferLogs: boolean = false;
+  static bufferLogs: boolean = true;
   static buffer: LogItem[] = [];
 
   constructor(
@@ -27,7 +27,6 @@ export abstract class LogMediator {
     if (LogMediator.bufferLogs) {
       LogMediator.buffer.push({
         moduleName: this.moduleExtract.moduleName,
-        logger: this.logger,
         inputLogLevel,
         date: new Date(),
         msg,
@@ -37,16 +36,12 @@ export abstract class LogMediator {
     }
   }
 
-  protected getLoggerConfig(): LoggerConfig {
-    return this.logger.getConfig();
-  }
-
   /**
    * Writing of logs by loggers.
    */
   protected writeLogs(logItems: LogItem[]) {
     logItems.forEach((logItem) => {
-      logItem.logger.log.call(logItem.logger, logItem.inputLogLevel, logItem.msg);
+      this.logger.log(logItem.inputLogLevel, logItem.msg);
     });
   }
 }

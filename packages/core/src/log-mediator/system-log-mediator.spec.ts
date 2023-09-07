@@ -25,7 +25,7 @@ describe('SystemLogMediator', () => {
 
   describe('testMethod()', () => {
     it("LogMediator's default state", () => {
-      expect(LogMediator.bufferLogs).toBe(false);
+      expect(LogMediator.bufferLogs).toBe(true);
       expect(LogMediator.buffer).toEqual([]);
     });
 

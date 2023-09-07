@@ -20,18 +20,6 @@ import { LogMediator } from './log-mediator.js';
 export class SystemLogMediator extends LogMediator {
   protected static previousLogger: Logger;
 
-  /**
-   * Updates all logs with current:
-   * - logger;
-   * - outputLogLevel;
-   * - outputLogFilter.
-   */
-  updateLogsWithCurrentLogConfig() {
-    LogMediator.buffer.forEach((logItem) => {
-      logItem.logger = this.logger;
-    });
-  }
-
   flush() {
     const { buffer } = LogMediator;
     this.writeLogs(buffer);

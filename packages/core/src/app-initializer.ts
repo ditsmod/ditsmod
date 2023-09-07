@@ -47,7 +47,6 @@ export class AppInitializer {
     this.prepareProvidersPerApp();
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLogMediator();
-    this.systemLogMediator.updateLogsWithCurrentLogConfig();
   }
 
   /**

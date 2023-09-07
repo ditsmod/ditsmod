@@ -12,5 +12,4 @@ export interface LogItem {
    */
   inputLogLevel: InputLogLevel;
   msg: string;
-  logger: Logger;
 }

@@ -2,12 +2,13 @@ import { jest } from '@jest/globals';
 
 import { Injector, Provider } from '#di';
 import { ModuleExtract } from '#models/module-extract.js';
-import { ConsoleLogger } from '#services/console-logger.js';
+import { Logger } from '#types/logger.js';
 import { LogMediator } from './log-mediator.js';
 import { LogItem } from './types.js';
 
 describe('LogMediator', () => {
   class MockLogMediator extends LogMediator {
+    declare logger: Logger;
     override writeLogs(logItems: LogItem[]) {
       return super.writeLogs(logItems);
     }
@@ -27,7 +28,6 @@ describe('LogMediator', () => {
       moduleName: 'fakeName1',
       date: new Date(),
       inputLogLevel: 'info',
-      logger: new ConsoleLogger(),
       msg: 'fake messge 1',
     };
 
@@ -39,12 +39,12 @@ describe('LogMediator', () => {
 
       const logMediator = getLogMediator();
       console.log = jest.fn();
-      jest.spyOn(baseLogItem.logger, 'log');
+      jest.spyOn(logMediator.logger, 'log');
       logMediator.writeLogs([item1]);
       expect(console.log).toBeCalledTimes(1);
-      expect(baseLogItem.logger.log).toBeCalledTimes(1);
-      expect(baseLogItem.logger.log).toBeCalledWith(item1.inputLogLevel, item1.msg);
-      expect(baseLogItem.logger.getConfig().level).toBe('info');
+      expect(logMediator.logger.log).toBeCalledTimes(1);
+      expect(logMediator.logger.log).toBeCalledWith(item1.inputLogLevel, item1.msg);
+      expect(logMediator.logger.getConfig().level).toBe('info');
     });
 
     it('inputLogLevel < outputLogLevel', () => {
@@ -56,12 +56,12 @@ describe('LogMediator', () => {
 
       const logMediator = getLogMediator();
       console.log = jest.fn();
-      jest.spyOn(baseLogItem.logger, 'log');
+      jest.spyOn(logMediator.logger, 'log');
       logMediator.writeLogs([item1]);
       expect(console.log).toBeCalledTimes(0);
-      expect(baseLogItem.logger.log).toBeCalledTimes(1);
-      expect(baseLogItem.logger.log).toBeCalledWith(item1.inputLogLevel, item1.msg);
-      expect(baseLogItem.logger.getConfig().level).toBe('info');
+      expect(logMediator.logger.log).toBeCalledTimes(1);
+      expect(logMediator.logger.log).toBeCalledWith(item1.inputLogLevel, item1.msg);
+      expect(logMediator.logger.getConfig().level).toBe('info');
     });
   });
 });
