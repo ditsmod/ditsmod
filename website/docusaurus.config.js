@@ -11,6 +11,7 @@ module.exports = {
   favicon: 'img/favicon.ico',
   organizationName: 'ditsmod', // Usually your GitHub org/user name.
   projectName: 'ditsmod.github.io', // Usually your repo name.
+  trailingSlash: true,
   themeConfig: {
     navbar: {
       // title: 'Головна',
