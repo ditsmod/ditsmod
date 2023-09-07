@@ -6,13 +6,9 @@ import { AnyFn } from '#types/mix.js';
 export class ConsoleLogger extends Logger {
   protected allLevels: OutputLogLevel[] = ['all', 'trace', 'debug', 'info', 'warn', 'error', 'fatal', 'off'];
 
-  override all = this.consoleLoggerFn('all');
-  override trace = this.consoleLoggerFn('trace');
-  override debug = this.consoleLoggerFn('debug');
-  override info = this.consoleLoggerFn('info');
-  override warn = this.consoleLoggerFn('warn');
-  override error = this.consoleLoggerFn('error');
-  override fatal = this.consoleLoggerFn('fatal');
+  override log(level: InputLogLevel, ...args: any[]) {
+    this.consoleLoggerFn(level)(...args);
+  }
 
   protected consoleLoggerFn(level: InputLogLevel) {
     const callback: AnyFn = (...args: any[]) => {

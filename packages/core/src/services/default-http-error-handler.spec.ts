@@ -39,7 +39,6 @@ describe('ErrorHandler', () => {
 
   const logger = {
     log(...args: any[]) {},
-    error(...args: any[]) {},
   } as Logger;
 
   beforeEach(() => {
@@ -55,7 +54,6 @@ describe('ErrorHandler', () => {
 
     jest.spyOn(res, 'sendJson');
     jest.spyOn(logger, 'log');
-    jest.spyOn(logger, 'error');
   });
 
   afterEach(() => {
@@ -67,9 +65,8 @@ describe('ErrorHandler', () => {
     expect(() => errorHandler.handleError(err)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'Internal server error' }, Status.INTERNAL_SERVER_ERROR);
     expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.error).toBeCalledWith(err);
-    expect(logger.error).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledTimes(0);
+    expect(logger.log).toBeCalledWith('error', err);
+    expect(logger.log).toBeCalledTimes(1);
   });
 
   it('custom error with msg1', () => {
@@ -80,7 +77,6 @@ describe('ErrorHandler', () => {
     expect(res.sendJson).toBeCalledTimes(1);
     expect(logger.log).toBeCalledWith('debug', err);
     expect(logger.log).toBeCalledTimes(1);
-    expect(logger.error).toBeCalledTimes(0);
   });
 
   it('custom error with status and level changed', () => {
@@ -91,7 +87,6 @@ describe('ErrorHandler', () => {
     expect(res.sendJson).toBeCalledTimes(1);
     expect(logger.log).toBeCalledWith('fatal', err);
     expect(logger.log).toBeCalledTimes(1);
-    expect(logger.error).toBeCalledTimes(0);
   });
 
   it('custom error with msg1 and arguments for format', () => {
@@ -102,7 +97,6 @@ describe('ErrorHandler', () => {
     expect(res.sendJson).toBeCalledTimes(1);
     expect(logger.log).toBeCalledWith('debug', err);
     expect(logger.log).toBeCalledTimes(1);
-    expect(logger.error).toBeCalledTimes(0);
   });
 
   it('custom error with msg2', () => {
@@ -113,7 +107,6 @@ describe('ErrorHandler', () => {
     expect(res.sendJson).toBeCalledTimes(1);
     expect(logger.log).toBeCalledWith('debug', err);
     expect(logger.log).toBeCalledTimes(1);
-    expect(logger.error).toBeCalledTimes(0);
   });
 
   it('custom error with msg2 and arguments for format', () => {
@@ -123,7 +116,6 @@ describe('ErrorHandler', () => {
     expect(res.sendJson).toBeCalledWith({ error: 'Internal server error' }, Status.BAD_REQUEST);
     expect(logger.log).toBeCalledWith('debug', err);
     expect(logger.log).toBeCalledTimes(1);
-    expect(logger.error).toBeCalledTimes(0);
   });
 
   it('custom error with msg1, msg2 and arguments for format', () => {
@@ -135,6 +127,5 @@ describe('ErrorHandler', () => {
     expect(res.sendJson).toBeCalledTimes(1);
     expect(logger.log).toBeCalledWith('debug', err);
     expect(logger.log).toBeCalledTimes(1);
-    expect(logger.error).toBeCalledTimes(0);
   });
 });

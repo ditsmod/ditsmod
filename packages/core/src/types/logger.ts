@@ -28,50 +28,8 @@ export class Logger {
   constructor(@optional() public config?: LoggerConfig) {
     this.config = config ? { ...config } : new LoggerConfig();
   }
-  /**
-   * All events should be logged.
-   */
-  all(...args: any[]): any {
-    console.warn(msg, 'all', this.constructor.name);
-  }
-  /**
-   * A fine-grained debug message, typically capturing the flow through the application.
-   */
-  trace(...args: any[]): any {
-    console.warn(msg, 'trace', this.constructor.name);
-  }
-  /**
-   * A general debugging event.
-   */
-  debug(...args: any[]): any {
-    console.warn(msg, 'debug', this.constructor.name);
-  }
-  /**
-   * An event for informational purposes.
-   */
-  info(...args: any[]): any {
-    console.warn(msg, 'info', this.constructor.name);
-  }
-  /**
-   * An event that might possible lead to an error.
-   */
-  warn(...args: any[]): any {
-    console.warn(msg, 'warn', this.constructor.name);
-  }
-  /**
-   * An error in the application, possibly recoverable.
-   */
-  error(...args: any[]): any {
-    console.warn(msg, 'error', this.constructor.name);
-  }
-  /**
-   * A fatal event that will prevent the application from continuing.
-   */
-  fatal(...args: any[]): any {
-    console.warn(msg, 'fatal', this.constructor.name);
-  }
   log(level: InputLogLevel, ...args: any[]) {
-    this[level](...args);
+    console.warn(msg, 'log', this.constructor.name);
   }
 
   mergeConfig(config: LoggerConfig) {

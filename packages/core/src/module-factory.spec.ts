@@ -51,19 +51,12 @@ describe('ModuleFactory', () => {
     }
   }
 
-  class MyLogger extends Logger {
-    override debug = (...args: any[]): any => {
-      console.log(`debug:\n ${'*'.repeat(50)}\n`, ...args);
-    };
-  }
-
   let mock: MockModuleFactory;
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
     const injectorPerApp = Injector.resolveAndCreate([
       ...defaultProvidersPerApp,
-      { token: Logger, useClass: MyLogger },
       MockModuleFactory,
     ]);
     mock = injectorPerApp.get(MockModuleFactory);
@@ -411,7 +404,6 @@ describe('ModuleFactory', () => {
       it('case 1', () => {
         const injectorPerApp = Injector.resolveAndCreate([
           ...defaultProvidersPerApp,
-          { token: Logger, useClass: MyLogger },
         ]);
 
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
@@ -544,7 +536,6 @@ describe('ModuleFactory', () => {
 
         const injectorPerApp = Injector.resolveAndCreate([
           ...defaultProvidersPerApp,
-          { token: Logger, useClass: MyLogger },
         ]);
 
         mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;

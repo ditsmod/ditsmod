@@ -26,7 +26,7 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
       this.logger.log(level || 'debug', err);
       this.sendError(err.message, status);
     } else {
-      this.logger.error(err);
+      this.logger.log('error', err);
       this.sendError('Internal server error', Status.INTERNAL_SERVER_ERROR);
     }
   }
