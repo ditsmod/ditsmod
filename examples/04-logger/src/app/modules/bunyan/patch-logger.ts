@@ -11,7 +11,7 @@ export class PatchLogger {
     // Logger must have `log` method.
     (logger as unknown as Logger).log = (level: InputLogLevel, ...args: any[]) => {
       const [arg1, ...rest] = args;
-      (logger as unknown as Logger)[level](arg1, ...rest);
+      (logger as unknown as Logger).log(level, arg1, ...rest);
     };
 
     // Logger must have `mergeConfig` method.

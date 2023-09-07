@@ -5,6 +5,6 @@ export class SomeController {
   @route('GET')
   async ok(res: Res, logger: Logger) {
     res.send('ok');
-    logger.info("it's works!");
+    logger.log('info', "it's works!");
   }
 }

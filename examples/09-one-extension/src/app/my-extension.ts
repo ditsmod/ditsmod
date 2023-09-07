@@ -15,7 +15,7 @@ export class MyExtension implements Extension<void> {
     }
 
     const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS);
-    this.logger.info(aMetadataPerMod2[0]);
+    this.logger.log('info', aMetadataPerMod2[0]);
 
     this.#inited = true;
   }

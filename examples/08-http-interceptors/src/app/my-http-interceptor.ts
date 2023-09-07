@@ -12,9 +12,9 @@ export class MyHttpInterceptor implements HttpInterceptor {
     return next.handle().finally(() => {
       // You can to do something after, for example, log status:
       if (this.nodeRes.headersSent) {
-        this.logger.info(`MyHttpInterceptor works! Status code: ${this.nodeRes.statusCode}`);
+        this.logger.log('info', `MyHttpInterceptor works! Status code: ${this.nodeRes.statusCode}`);
       } else {
-        this.logger.info('MyHttpInterceptor works! But... Do you forgot send response or just an error occurred?');
+        this.logger.log('info', 'MyHttpInterceptor works! But... Do you forgot send response or just an error occurred?');
       }
     });
   }

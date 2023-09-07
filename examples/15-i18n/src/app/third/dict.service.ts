@@ -39,6 +39,6 @@ export class MyDictService extends DictService {
   protected getHeaderLng(): ISO639 | void {
     const acceptLanguage = this.nodeReq?.headers['accept-language']; // Here string like: uk,en-US;q=0.9,en;q=0.8
     // ... here your code for parsing acceptLanguage, after that you should returns result
-    this.logger.info('works custom DictService');
+    this.logger.log('info', 'works custom DictService');
   }
 }
