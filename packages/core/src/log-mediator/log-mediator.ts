@@ -14,7 +14,7 @@ export abstract class LogMediator {
    *
    * If you need logging all buffered messages, call `systemLogMediator.flush()`.
    */
-  static bufferLogs: boolean = true;
+  static bufferLogs: boolean = false;
   static buffer: LogItem[] = [];
 
   constructor(
