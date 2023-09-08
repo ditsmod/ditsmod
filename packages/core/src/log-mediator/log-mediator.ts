@@ -16,6 +16,8 @@ export abstract class LogMediator {
    */
   static bufferLogs: boolean = false;
   static buffer: LogItem[] = [];
+  protected static outputLogLevel: OutputLogLevel;
+  protected static hasDiffLogLevels: boolean;
 
   constructor(
     protected moduleExtract: ModuleExtract,
@@ -26,6 +28,7 @@ export abstract class LogMediator {
 
   protected setLog(inputLogLevel: InputLogLevel, msg: any) {
     if (LogMediator.bufferLogs) {
+      this.checkLogLevel();
       LogMediator.buffer.push({
         moduleName: this.moduleExtract.moduleName,
         inputLogLevel,
@@ -38,6 +41,19 @@ export abstract class LogMediator {
     }
   }
 
+  protected checkLogLevel() {
+    if (LogMediator.hasDiffLogLevels) {
+      return;
+    }
+    if (LogMediator.outputLogLevel) {
+      if (LogMediator.outputLogLevel != this.loggerConfig.level) {
+        LogMediator.hasDiffLogLevels = true;
+      }
+    } else {
+      LogMediator.outputLogLevel = this.loggerConfig.level;
+    }
+  }
+
   /**
    * Writing of logs by loggers.
    */
@@ -45,12 +61,12 @@ export abstract class LogMediator {
     // A separate instance of the logger is created so that changing the OutputLogLevel does not affect other loggers.
     const logger: Logger = this.injector?.resolveAndCreateChild([]).pull(Logger) || new ConsoleLogger();
 
-    let level: OutputLogLevel;
+    if (LogMediator.hasDiffLogLevels && logger === this.logger) {
+      logger.log('warn', "Either set 'bufferLogs = false', or don't pass a singleton for a logger that should output logs in the context of different OutputLogLevels.");
+    }
+
     logItems.forEach((logItem) => {
-      if (level != logItem.outputLogLevel) {
-        level = logItem.outputLogLevel;
-        logger.setLevel(level);
-      }
+      logger.setLevel(logItem.outputLogLevel);
       logger.log(logItem.inputLogLevel, logItem.msg);
     });
 

@@ -24,6 +24,7 @@ export class SystemLogMediator extends LogMediator {
     const { buffer } = LogMediator;
     this.writeLogs(buffer);
     buffer.splice(0);
+    LogMediator.hasDiffLogLevels = false;
   }
 
   preserveLogger() {
