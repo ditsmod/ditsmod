@@ -6,7 +6,7 @@
     "target": "es2022",
     "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "dist/tmp",
+    "noEmit": true,
     "sourceMap": true,
     "baseUrl": "./",
     "emitDecoratorMetadata": true,
