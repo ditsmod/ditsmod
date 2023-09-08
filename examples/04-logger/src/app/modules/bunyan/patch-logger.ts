@@ -14,13 +14,13 @@ export class PatchLogger {
       (logger as any)[level](arg1, ...rest);
     };
 
-    // Logger must have `mergeConfig` method.
-    (logger as unknown as Logger).mergeConfig = (config: LoggerConfig) => {
-      this.setLogLeveL(logger, config.level);
+    // Logger must have `setLevel` method.
+    (logger as unknown as Logger).setLevel = (value: OutputLogLevel) => {
+      this.setLogLeveL(logger, value);
     };
 
-    // Logger must have `getConfig` method.
-    (logger as unknown as Logger).getConfig = () => {
+    // Logger must have `getLevel` method.
+    (logger as unknown as Logger).getLevel = () => {
       const bunyanLevels: { level: number; name: OutputLogLevel }[] = [
         { level: 0, name: 'all' },
         { level: 10, name: 'trace' },
@@ -33,7 +33,7 @@ export class PatchLogger {
       ];
       const levelNumber = logger.level();
       const levelName = bunyanLevels.find((i) => i.level == levelNumber)?.name || config.level;
-      return { level: levelName };
+      return levelName;
     };
 
     return logger;

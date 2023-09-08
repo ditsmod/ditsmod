@@ -38,14 +38,14 @@ export class PatchLogger {
       transports: [transport],
     });
 
-    // Logger must have `mergeConfig` method.
-    (logger as unknown as Logger).mergeConfig = (config: LoggerConfig) => {
-      logger.level = config.level;
+    // Logger must have `setLevel` method.
+    (logger as unknown as Logger).setLevel = (value: OutputLogLevel) => {
+      logger.level = value;
     };
 
-    // Logger must have `getConfig` method.
-    (logger as unknown as Logger).getConfig = () => {
-      return { level: logger.level as OutputLogLevel };
+    // Logger must have `getLevel` method.
+    (logger as unknown as Logger).getLevel = () => {
+      return logger.level as OutputLogLevel;
     };
 
     addColors(customLevels.colors);
