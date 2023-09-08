@@ -647,9 +647,10 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
    * the same as `injector.get()`. If the nearest provider with the given `token`
    * is in the current injector, then this method behaves exactly like `injector.get()`.
    * 
-   * This method is primarily useful because it allows you, in the context of the current
-   * injector, to rebuild instances of providers that depend on a particular configuration
-   * that may be different in the current and parent injectors.
+   * This method is useful if you don't use `ValueProvider` for requested `token`. And this method
+   * is primarily useful because it allows you, in the context of the current injector, to create
+   * instances of providers that depend on a particular configuration that may be different in
+   * the current and parent injectors.
    *
    * ## Example
    * 
