@@ -6,14 +6,43 @@ sidebar_position: 8
 
 Ditsmod uses the [Logger][100] class as an interface as well as a DI token. By default, [ConsoleLogger][101] is used for logging. There are 8 logging levels in total (borrowed from [log4j][102]):
 
-- `off` - No events will be logged. Intended for testing, it is not recommended to use it in product mode.
-- `fatal` - A fatal event that will prevent the application from continuing.
-- `error` - An error in the application, possibly recoverable.
-- `warn` - An event that might possible lead to an error.
-- `info` - An event for informational purposes.
-- `debug` - A general debugging event.
-- `trace` - A fine-grained debug message, typically capturing the flow through the application.
 - `all`- All events should be logged.
+- `trace` - A fine-grained debug message, typically capturing the flow through the application.
+- `debug` - A general debugging event.
+- `info` - An event for informational purposes.
+- `warn` - An event that might possible lead to an error.
+- `error` - An error in the application, possibly recoverable.
+- `fatal` - A fatal event that will prevent the application from continuing.
+- `off` - No events will be logged. Intended for testing, it is not recommended to use it in product mode.
+
+In this documentation, when we talk about "logging levels", we mean "log level of detail". The highest level of detail is `all`, the lowest level of detail is `off`.
+
+Sometimes in this documentation, or in the Ditsmod system messages, you may come across two types indicating the logging level:
+
+- **InputLogLevel** - this type indicates the log level intended for a specific message. For example, the following entry uses the log level - `info`:
+  ```ts
+  logger.log('info', 'some message');
+  ```
+- **OutputLogLevel** - this type indicates the limit level of logs above which messages are ignored. For example, the following entry sets the logging level to `debug`:
+  ```ts
+  logger.setLevel('debug');
+  ```
+
+If `InputLogLevel` is equal to or lower than `OutputLogLevel`, the message is writed by the logger, otherwise it is ignored. For example, the following combination will write a message:
+
+```ts
+logger.setLevel('debug');
+logger.log('info', 'some message');
+```
+
+And in the following - it will be ignored:
+
+```ts
+logger.setLevel('warn');
+logger.log('info', 'some message');
+```
+
+## Substitution the system logger
 
 If you want the system logs written by Ditsmod to be written by your own logger, it must implement the [Logger][100] interface. It can then be passed to DI at the application level:
 
