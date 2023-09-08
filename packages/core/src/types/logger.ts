@@ -38,6 +38,6 @@ export class Logger {
   }
 
   getConfig(): LoggerConfig {
-    return this.config || new LoggerConfig();
+    return this.config!;
   }
 }

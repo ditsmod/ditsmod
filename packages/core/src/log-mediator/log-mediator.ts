@@ -1,7 +1,7 @@
-import { injectable, optional } from '#di';
+import { Injector, injectable, optional } from '#di';
 import { ModuleExtract } from '#models/module-extract.js';
 import { ConsoleLogger } from '#services/console-logger.js';
-import { Logger, LoggerConfig, InputLogLevel } from '#types/logger.js';
+import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#types/logger.js';
 import { LogItem } from './types.js';
 
 /**
@@ -19,6 +19,7 @@ export abstract class LogMediator {
 
   constructor(
     protected moduleExtract: ModuleExtract,
+    protected injector?: Injector,
     @optional() protected logger: Logger = new ConsoleLogger(),
     @optional() protected loggerConfig: LoggerConfig = new LoggerConfig(),
   ) {}
@@ -28,6 +29,7 @@ export abstract class LogMediator {
       LogMediator.buffer.push({
         moduleName: this.moduleExtract.moduleName,
         inputLogLevel,
+        outputLogLevel: this.loggerConfig.level,
         date: new Date(),
         msg,
       });
@@ -40,8 +42,18 @@ export abstract class LogMediator {
    * Writing of logs by loggers.
    */
   protected writeLogs(logItems: LogItem[]) {
+    // A separate instance of the logger is created so that changing the OutputLogLevel does not affect other loggers.
+    const logger: Logger = this.injector?.resolveAndCreateChild([]).pull(Logger) || new ConsoleLogger();
+
+    let level: OutputLogLevel;
     logItems.forEach((logItem) => {
-      this.logger.log(logItem.inputLogLevel, logItem.msg);
+      if (level != logItem.outputLogLevel) {
+        level = logItem.outputLogLevel;
+        logger.mergeConfig({ level });
+      }
+      logger.log(logItem.inputLogLevel, logItem.msg);
     });
+
+    return logger; // Needed for testing only.
   }
 }
