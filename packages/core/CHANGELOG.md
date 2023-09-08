@@ -27,7 +27,6 @@
   ```
 
 - Added `isClassFactoryProvider()` type guard.
-- For `Logger`, added `mergeConfig()` and `getConfig()`.
 - In `Providers` helper, added support for `FunctionFactoryProvider`.
 
 <a name="core-2.47.0"></a>

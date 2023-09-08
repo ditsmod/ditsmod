@@ -49,7 +49,7 @@ export abstract class LogMediator {
     logItems.forEach((logItem) => {
       if (level != logItem.outputLogLevel) {
         level = logItem.outputLogLevel;
-        logger.mergeConfig({ level });
+        logger.setLevel(level);
       }
       logger.log(logItem.inputLogLevel, logItem.msg);
     });

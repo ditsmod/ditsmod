@@ -37,7 +37,7 @@ describe('LogMediator', () => {
       it('works without log items', () => {
         expect(() => mock.writeLogs([])).not.toThrow();
         expect(mock.writeLogs([])).toBeInstanceOf(ConsoleLogger);
-        expect(mock.writeLogs([]).getConfig().level).toBe('info');
+        expect(mock.writeLogs([]).getLevel()).toBe('info');
         expect(mock.logger.log).toBeCalledTimes(0);
         expect(console.log).toBeCalledTimes(0);
       });
@@ -51,10 +51,10 @@ describe('LogMediator', () => {
 
       it('changes log level only for local logger', () => {
         const logger1 = mock.writeLogs([{ ...baseLogItem, outputLogLevel: 'debug' }]);
-        expect(logger1.getConfig().level).toBe('debug');
+        expect(logger1.getLevel()).toBe('debug');
         const logger2 = mock.writeLogs([{ ...baseLogItem, outputLogLevel: 'off' }]);
-        expect(logger2.getConfig().level).toBe('off');
-        expect(mock.logger.getConfig().level).toBe('info');
+        expect(logger2.getLevel()).toBe('off');
+        expect(mock.logger.getLevel()).toBe('info');
       });
     });
 
@@ -77,10 +77,10 @@ describe('LogMediator', () => {
 
       it('changes log level only for local logger', () => {
         const logger1 = mock.writeLogs([{ ...baseLogItem, outputLogLevel: 'debug' }]);
-        expect(logger1.getConfig().level).toBe('debug');
+        expect(logger1.getLevel()).toBe('debug');
         const logger2 = mock.writeLogs([{ ...baseLogItem, outputLogLevel: 'off' }]);
-        expect(logger2.getConfig().level).toBe('off');
-        expect(mock.logger.getConfig().level).toBe('info');
+        expect(logger2.getLevel()).toBe('off');
+        expect(mock.logger.getLevel()).toBe('info');
       });
     });
   });

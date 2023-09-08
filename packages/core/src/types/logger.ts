@@ -33,11 +33,11 @@ export class Logger {
     console.warn(msg, 'log', this.constructor.name);
   }
 
-  mergeConfig(config: LoggerConfig) {
-    this.config = { ...this.config, ...config };
+  setLevel(value: OutputLogLevel) {
+    this.config!.level = value;
   }
 
-  getConfig(): LoggerConfig {
-    return this.config!;
+  getLevel(): OutputLogLevel {
+    return this.config!.level || 'info';
   }
 }
