@@ -6,6 +6,9 @@
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
       "#src/*": ["./src/*"],
+      "@ditsmod/core": ["../../packages/core/src"],
+      "@ditsmod/router": ["../../packages/router/src"],
+      "@ditsmod/i18n": ["../../packages/i18n/src"],
     }
   },
   "include": ["src", "test"],

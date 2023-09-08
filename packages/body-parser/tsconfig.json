@@ -5,9 +5,7 @@
     "baseUrl": ".",
     "outDir": "dist",
     "paths": {
-      "@ditsmod/core": [
-        "../core/src"
-      ]
+      "@ditsmod/core": ["../core/src"]
     }
   },
   "include": ["src"],

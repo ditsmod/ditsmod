@@ -5,7 +5,10 @@
     "baseUrl": "./",
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
-      "#src/*": ["./src/*"]
+      "#src/*": ["./src/*"],
+      "@ditsmod/core": ["../../packages/core/src"],
+      "@ditsmod/session-cookie": ["../../packages/session-cookie/src"],
+      "@ditsmod/router": ["../../packages/router/src"],
     }
   },
   "include": ["src", "test"],
