@@ -63,8 +63,8 @@ export abstract class LogMediator {
 
     if (LogMediator.hasDiffLogLevels && logger === this.logger) {
       const msg =
-        'Either set "new Application().bootstrap(AppModule, { bufferLogs: true })" in main.ts, or don\'t pass the logger as a singleton ' +
-        'that should write logs in the context of different OutputLogLevels.';
+        'Either set "new Application().bootstrap(AppModule, { bufferLogs: true })" in main.ts, ' +
+        'or don\'t pass the logger as a singleton that should write logs in the context of different OutputLogLevels.';
       logger.log('warn', msg);
     }
 
