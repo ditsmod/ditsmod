@@ -14,7 +14,7 @@ export abstract class LogMediator {
    *
    * If you need logging all buffered messages, call `systemLogMediator.flush()`.
    */
-  static bufferLogs: boolean = false;
+  static bufferLogs?: boolean = false;
   static buffer: LogItem[] = [];
   protected static outputLogLevel: OutputLogLevel;
   protected static hasDiffLogLevels: boolean;
@@ -62,7 +62,10 @@ export abstract class LogMediator {
     const logger: Logger = this.injector?.resolveAndCreateChild([]).pull(Logger) || new ConsoleLogger();
 
     if (LogMediator.hasDiffLogLevels && logger === this.logger) {
-      logger.log('warn', "Either set 'bufferLogs = false', or don't pass a singleton for a logger that should output logs in the context of different OutputLogLevels.");
+      const msg =
+        'Either set "new Application().bootstrap(AppModule, { bufferLogs: true })" in main.ts, or don\'t pass the logger as a singleton ' +
+        'that should write logs in the context of different OutputLogLevels.';
+      logger.log('warn', msg);
     }
 
     logItems.forEach((logItem) => {
