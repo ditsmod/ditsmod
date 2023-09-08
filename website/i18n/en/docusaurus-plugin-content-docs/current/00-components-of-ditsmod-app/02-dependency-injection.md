@@ -434,7 +434,7 @@ child.get(Service4); // Error - No provider for Service4!
 parent.get(Service4); // Error - No provider for Service4!
 ```
 
-As you can see, when the child injector was created, `Service1` was not passed to it, so when an instance of that class is requested, it goes to the parent. By the way, there is one non-obvious but very important point here: child injectors only request certain instances of classes from parent injectors and do not create them on their own. That is why this expression returns `true`:
+As you can see, when the child injector was created, `Service1` was not passed to it, so when an instance of that class is requested, it goes to the parent. By the way, there is one non-obvious but very important point here: through the `get()` method, child injectors only request certain instances of classes from parent injectors, and they do not create them themselves. That is why this expression returns `true`:
 
 ```ts
 parent.get(Service1) === child.get(Service1); // true
