@@ -1079,10 +1079,10 @@
   resolved "https://registry.yarnpkg.com/@ts-stack/openapi-spec/-/openapi-spec-3.1.5.tgz#cabe3b83157fe60b2aa7cb4ce86e224e3d57764c"
   integrity sha512-IIalX7oLFYUU8HXY3bFTV6l/8OPyKRbtrt64Z0SM6H7ZfTxfy0e3fWeSYsWiKCIobXeFKL5QETG61PANB9tEHw==
 
-"@ts-stack/stack-utils@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@ts-stack/stack-utils/-/stack-utils-1.0.3.tgz#e76ce9b4c69b391fb150060bfb8dbc994dde5cf7"
-  integrity sha512-6lax55WpZM2XgvOwvFoeFcNRACXM3gA1jToJNcHcO9/hb9pnOR4YMiTyggVew+d8oEucgc1O7/sc+VYMgtFNUQ==
+"@ts-stack/stack-utils@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@ts-stack/stack-utils/-/stack-utils-1.1.0.tgz#7e8f0f40f738dc2c1051fdef5f32c50120ab9e86"
+  integrity sha512-AY8C34YGD8fR2n2rQRkDjkC8QiCkDAWKDEBtV7YrATzBlhzSzGFhGRwbr+Fv/TJALJVSwUNiGj8MqCva0lsvwQ==
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.9"
