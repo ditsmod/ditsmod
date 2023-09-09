@@ -10,15 +10,13 @@ export class TestApplication {
   protected preTestApplication: PreTestApplication;
   protected testModuleManager: TestModuleManager;
   protected logLevel: OutputLogLevel;
-  protected appModule: ModuleType;
 
   constructor(appModule: ModuleType, appOptions: ApplicationOptions = new ApplicationOptions()) {
-    this.appModule = appModule;
-    this.preTestApplication = new PreTestApplication();
     this.initRootModule(appModule, appOptions);
   }
 
   protected initRootModule(appModule: ModuleType, appOptions: ApplicationOptions) {
+    this.preTestApplication = new PreTestApplication();
     const systemLogMediator = this.preTestApplication.init(appModule.name, appOptions);
     this.testModuleManager = new TestModuleManager(systemLogMediator);
     this.testModuleManager.scanRootModule(appModule);
@@ -27,8 +25,7 @@ export class TestApplication {
 
   /**
    * Overrides providers at any level if there are matching providers (they have the same tokens)
-   * at those levels. Therefore, unlike the `setProvidersPerApp()` method,
-   * this method does not always add providers to the DI.
+   * at those levels. Therefore, this method does not always add providers to the DI.
    */
   overrideProviders(providers: TestProvider[]) {
     this.testModuleManager.overrideProviders(providers);
