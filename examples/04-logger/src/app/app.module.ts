@@ -10,5 +10,6 @@ import { WinstonModule } from './modules/winston/winston.module.js';
   imports: [RouterModule],
   appends: [SomeModule, WinstonModule, PinoModule, BunyanModule],
   providersPerApp: [...new Providers().useLogConfig({ level: 'info' })],
+  exports: [RouterModule]
 })
 export class AppModule {}

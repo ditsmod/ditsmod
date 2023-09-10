@@ -1,4 +1,4 @@
-import { rootModule } from '@ditsmod/core';
+import { Providers, rootModule } from '@ditsmod/core';
 import { RouterModule } from '@ditsmod/router';
 
 import { FirstModule } from './modules/routed/first/first.module.js';
@@ -9,5 +9,6 @@ import { openapiModuleWithParams } from './modules/services/openapi/openapi.modu
   imports: [RouterModule, openapiModuleWithParams],
   appends: [FirstModule, SecondModule],
   exports: [openapiModuleWithParams],
+  providersPerApp: [...new Providers().useLogConfig({ level: 'info' })],
 })
 export class AppModule {}
