@@ -7,8 +7,10 @@ import { OAS_COMPILER_EXTENSIONS } from './di-tokens.js';
 import { OpenapiController } from './openapi.controller.js';
 import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-options.js';
 import { OpenapiLogMediator } from './services/openapi-log-mediator.js';
+import { RouterModule } from '@ditsmod/router';
 
 @featureModule({
+  imports: [RouterModule],
   controllers: [OpenapiController],
   providersPerApp: [OasConfigFiles],
   providersPerMod: [OpenapiLogMediator],

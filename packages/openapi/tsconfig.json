@@ -4,6 +4,8 @@
     "baseUrl": ".",
     "outDir": "dist",
     "paths": {
+      "@ditsmod/core": ["../core/src"],
+      "@ditsmod/router": ["../router/src"],
       "#types/*": ["./src/types/*"],
       "#utils/*": ["./src/utils/*"],
       "#decorators/*": ["./src/decorators/*"],
@@ -14,5 +16,6 @@
   "files": [],
   "references": [
     { "path": "../core/tsconfig.build.json" },
+    { "path": "../router/tsconfig.build.json" },
   ]
 }

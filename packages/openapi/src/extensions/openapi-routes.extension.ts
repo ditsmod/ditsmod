@@ -10,9 +10,9 @@ import {
   NormalizedGuard,
   RootMetadata,
   RouteMeta,
-  RoutesExtension,
   ServiceProvider,
 } from '@ditsmod/core';
+import { RoutesExtension } from '@ditsmod/router';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { isOasRoute, isOasRoute1, isReferenceObject } from '#utils/type-guards.js';
