@@ -38,3 +38,4 @@ export {
   isTypeProvider,
   isValueProvider,
 } from './utils.js';
+export { DepsChecker } from './deps-checker.js';

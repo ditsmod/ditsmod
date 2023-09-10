@@ -1,8 +1,8 @@
 import { Injector } from '#di';
 
+import { defaultExtensionsProviders } from './services/default-extensions-providers.js';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata.js';
 import { RootMetadata } from './models/root-metadata.js';
-import { defaultExtensions, defaultExtensionsTokens } from './services/default-extensions.js';
 import { defaultProvidersPerApp } from './services/default-providers-per-app.js';
 import { defaultProvidersPerReq } from './services/default-providers-per-req.js';
 import { ModuleManager } from './services/module-manager.js';
@@ -40,7 +40,6 @@ export class ImportsResolver {
       this.meta = meta;
       this.resolveImportedProviders(importedTokensMap, meta);
       this.resolveProvidersForExtensions(importedTokensMap, meta);
-      meta.extensionsProviders.unshift(...defaultExtensions);
       meta.providersPerReq.unshift(...defaultProvidersPerReq);
     });
 
@@ -72,7 +71,7 @@ export class ImportsResolver {
     importedTokensMap.extensions.forEach((providers) => {
       currentExtensionsTokens.push(...getTokens(providers));
     });
-    this.extensionsTokens = getTokens([...defaultExtensionsTokens, ...currentExtensionsTokens]);
+    this.extensionsTokens = getTokens([...defaultExtensionsProviders, ...currentExtensionsTokens]);
 
     importedTokensMap.extensions.forEach((providers, module) => {
       const newProviders = providers.filter((np) => {
@@ -118,7 +117,7 @@ export class ImportsResolver {
   }
 
   protected increaseExtensionsCounters() {
-    const extensionsProviders = [...defaultExtensions, ...this.meta.extensionsProviders];
+    const extensionsProviders = [...this.meta.extensionsProviders];
     const uniqTargets = new Set<ServiceProvider>(getProvidersTargets(extensionsProviders));
 
     uniqTargets.forEach((target) => {
