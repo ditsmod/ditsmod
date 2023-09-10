@@ -13,8 +13,7 @@
   "exclude": ["src/**/*.spec.ts"],
   "files": [],
   "references": [
-    {
-      "path": "../router/tsconfig.build.json"
-    },
+    { "path": "../core/tsconfig.build.json" },
+    { "path": "../router/tsconfig.build.json" },
   ]
 }

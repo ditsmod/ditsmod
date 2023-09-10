@@ -4,9 +4,9 @@ import {
   ModuleType,
   ModuleWithParams,
   NormalizedModuleMetadata,
-  PreRouterExtension,
   OutputLogLevel,
 } from '@ditsmod/core';
+import { PreRouterExtension } from '@ditsmod/router';
 
 import { TestPreRouterExtension } from './test-pre-router.extensions.js';
 import { TestProvider } from './types.js';

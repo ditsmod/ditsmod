@@ -4,19 +4,15 @@
     // "baseUrl": ".", // See https://github.com/microsoft/TypeScript/issues/47114#issuecomment-1004360864
     "outDir": "dist",
     "paths": {
-      "#src/*": ["./src/*"],
       "@ditsmod/core": ["../core/src"],
-      "@ditsmod/router": ["../router/src"]
+      "@ditsmod/router": ["../router/src"],
+      "#src/*": ["./src/*"],
     }
   },
   "include": ["src", "test"],
   "files": [],
   "references": [
-    {
-      "path": "../core/tsconfig.build.json"
-    },
-    {
-      "path": "../router/tsconfig.build.json"
-    },
+    { "path": "../core/tsconfig.build.json" },
+    { "path": "../router/tsconfig.build.json" },
   ]
 }

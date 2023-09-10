@@ -4,7 +4,6 @@ import {
   MetadataPerMod2,
   normalizeProviders,
   PerAppService,
-  PreRouterExtension,
   ROUTES_EXTENSIONS,
   Router,
   SystemLogMediator,
@@ -16,6 +15,7 @@ import {
   getDependencies,
   ServiceProvider,
 } from '@ditsmod/core';
+import { PreRouterExtension } from '@ditsmod/router';
 
 import { TestModuleManager, type TestModuleManager as TestModuleManagerType } from './test-module-manager.js';
 import { Scope, Meta, TestProvider, TestFactoryProvider, TestClassProvider } from './types.js';
