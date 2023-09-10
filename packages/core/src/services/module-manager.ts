@@ -17,7 +17,7 @@ import {
 } from '#types/mix.js';
 import { AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { getExtensionProvider } from '#utils/get-extension-provider.js';
-import { getModuleMetadata } from '#utils/get-module-metadata.js';
+import { ModuleMetadataWithContext, getModuleMetadata } from '#utils/get-module-metadata.js';
 import { getModuleName } from '#utils/get-module-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
@@ -52,6 +52,10 @@ export class ModuleManager {
   protected oldMap: ModulesMap = new Map();
   protected oldMapId = new Map<string, AnyModule>();
   protected unfinishedScanModules = new Set<AnyModule>();
+  /**
+   * The directory in which the module was declared.
+   */
+  protected rootCallerDir: string;
 
   constructor(protected systemLogMediator: SystemLogMediator) {}
 
@@ -258,6 +262,14 @@ export class ModuleManager {
   protected getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,
+  ): NormalizedModuleMetadata<T, A> | undefined;
+  protected getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+    moduleId: ModuleId,
+    throwErrIfNotFound: true,
+  ): NormalizedModuleMetadata<T, A>;
+  protected getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+    moduleId: ModuleId,
+    throwErrIfNotFound?: boolean,
   ) {
     let meta: NormalizedModuleMetadata<T, A> | undefined;
     if (typeof moduleId == 'string') {
@@ -350,6 +362,8 @@ export class ModuleManager {
     meta.name = modName;
     meta.module = mod;
     meta.decoratorFactory = rawMeta.decoratorFactory;
+    meta.declaredInDir = rawMeta.declaredInDir;
+    this.checkWhetherIsExternalModule(rawMeta, meta);
 
     rawMeta.imports?.forEach((imp, i) => {
       imp = resolveForwardRef(imp);
@@ -409,6 +423,18 @@ export class ModuleManager {
     this.quickCheckMetadata(meta);
 
     return meta;
+  }
+
+  protected checkWhetherIsExternalModule(rawMeta: ModuleMetadataWithContext, meta: NormalizedModuleMetadata) {
+    if (isRawRootModule(rawMeta)) {
+      meta.isExternal = false;
+      this.rootCallerDir = meta.declaredInDir;
+    } else if (this.rootCallerDir) {
+      meta.isExternal = !meta.declaredInDir.startsWith(this.rootCallerDir);
+    } else {
+      const rootMeta = this.getRawMetadata('root');
+      meta.isExternal = !meta.declaredInDir.startsWith(rootMeta?.declaredInDir || '');
+    }
   }
 
   protected exportFromRawMeta(

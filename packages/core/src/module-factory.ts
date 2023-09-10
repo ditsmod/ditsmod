@@ -7,7 +7,14 @@ import type { ModuleManager } from './services/module-manager.js';
 import type { ControllerMetadata1 } from './types/controller-metadata.js';
 import type { GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod.js';
 import { ImportObj } from './types/metadata-per-mod.js';
-import type { ExtensionProvider, ModuleType, ModuleWithParams, NormalizedGuard, Scope, ServiceProvider } from './types/mix.js';
+import type {
+  ExtensionProvider,
+  ModuleType,
+  ModuleWithParams,
+  NormalizedGuard,
+  Scope,
+  ServiceProvider,
+} from './types/mix.js';
 import type { AppendsWithParams } from './types/module-metadata.js';
 import { getCollisions } from './utils/get-collisions.js';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports.js';
@@ -86,7 +93,7 @@ export class ModuleFactory {
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<AnyModule>,
     guardsPerMod?: NormalizedGuard[],
-    isAppends?: boolean
+    isAppends?: boolean,
   ) {
     const meta = moduleManager.getMetadata(modOrObj, true);
     this.moduleManager = moduleManager;
@@ -107,19 +114,45 @@ export class ModuleFactory {
       aControllerMetadata1 = transformControllersMetadata(this.meta.controllers, this.moduleName);
     }
 
+    let perMod: Map<any, ImportObj>;
+    let perRou: Map<any, ImportObj>;
+    let perReq: Map<any, ImportObj>;
+    let multiPerMod: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
+    let multiPerRou: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
+    let multiPerReq: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
+    let extensions: Map<ModuleType | ModuleWithParams, ExtensionProvider[]>;
+    if (meta.isExternal) {
+      // External modules do not require global providers from the application.
+      perMod = new Map([...this.importedProvidersPerMod]);
+      perRou = new Map([...this.importedProvidersPerRou]);
+      perReq = new Map([...this.importedProvidersPerReq]);
+      multiPerMod = new Map([...this.importedMultiProvidersPerMod]);
+      multiPerRou = new Map([...this.importedMultiProvidersPerRou]);
+      multiPerReq = new Map([...this.importedMultiProvidersPerReq]);
+      extensions = new Map([...this.importedExtensions]);
+    } else {
+      perMod = new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]);
+      perRou = new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]);
+      perReq = new Map([...this.glProviders.importedProvidersPerReq, ...this.importedProvidersPerReq]);
+      multiPerMod = new Map([...this.glProviders.importedMultiProvidersPerMod, ...this.importedMultiProvidersPerMod]);
+      multiPerRou = new Map([...this.glProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]);
+      multiPerReq = new Map([...this.glProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]);
+      extensions = new Map([...this.glProviders.importedExtensions, ...this.importedExtensions]);
+    }
+
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
       guardsPerMod: this.guardsPerMod,
       meta: this.meta,
       aControllersMetadata1: aControllerMetadata1,
       importedTokensMap: {
-        perMod: new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]),
-        perRou: new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]),
-        perReq: new Map([...this.glProviders.importedProvidersPerReq, ...this.importedProvidersPerReq]),
-        multiPerMod: new Map([...this.glProviders.importedMultiProvidersPerMod, ...this.importedMultiProvidersPerMod]),
-        multiPerRou: new Map([...this.glProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]),
-        multiPerReq: new Map([...this.glProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]),
-        extensions: new Map([...this.glProviders.importedExtensions, ...this.importedExtensions]),
+        perMod,
+        perRou,
+        perReq,
+        multiPerMod,
+        multiPerRou,
+        multiPerReq,
+        extensions,
       },
     });
   }
@@ -158,7 +191,7 @@ export class ModuleFactory {
         this.moduleManager,
         this.unfinishedScanModules,
         guardsPerMod,
-        !isImport
+        !isImport,
       );
       this.unfinishedScanModules.delete(input);
 
@@ -237,7 +270,7 @@ export class ModuleFactory {
     scope: Scope,
     token: any,
     provider: ServiceProvider,
-    importObj: ImportObj
+    importObj: ImportObj,
   ) {
     const declaredTokens = getTokens(this.meta[`providersPer${scope}`]);
     const resolvedTokens = this.meta[`resolvedCollisionsPer${scope}`].map(([token]) => token);
@@ -281,7 +314,7 @@ export class ModuleFactory {
     const mergedProvidersAndTokens = [
       ...this.meta.providersPerRou,
       ...getImportedProviders(this.importedProvidersPerRou),
-      ...defaultProvidersPerReq
+      ...defaultProvidersPerReq,
     ];
     this.checkCollisionsWithScopesMix(mergedProvidersAndTokens, ['Req']);
   }

@@ -43,8 +43,8 @@ export class Application {
 
   protected init(rootModuleName: string, appOptions: ApplicationOptions) {
     this.systemLogMediator = new SystemLogMediator({ moduleName: 'AppModule' });
-    LogMediator.bufferLogs = appOptions.bufferLogs;
     this.appOptions = { ...new ApplicationOptions(), ...appOptions };
+    LogMediator.bufferLogs = this.appOptions.bufferLogs;
     this.rootMeta.path = this.appOptions.path || '';
     this.checkSecureServerOption(rootModuleName);
     return this.systemLogMediator;

@@ -2,6 +2,7 @@ import { forwardRef, injectable } from '#di';
 import { featureModule } from '#decorators/module.js';
 import { ModuleWithParams, ServiceProvider } from '#types/mix.js';
 import { getModuleMetadata } from './get-module-metadata.js';
+import { getCallerDir } from './callsites.js';
 
 describe('getModuleMetadata', () => {
   it('module without decorator', () => {
@@ -16,7 +17,7 @@ describe('getModuleMetadata', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({ decoratorFactory: featureModule });
+    expect(metadata).toEqual({ decoratorFactory: featureModule, declaredInDir: getCallerDir() });
   });
 
   it('@Module() decorator with id', () => {
@@ -24,7 +25,7 @@ describe('getModuleMetadata', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({ decoratorFactory: featureModule, id: 'someId' });
+    expect(metadata).toEqual({ decoratorFactory: featureModule, id: 'someId', declaredInDir: getCallerDir() });
   });
 
   it('decorator with some data', () => {
@@ -35,6 +36,7 @@ describe('getModuleMetadata', () => {
     expect(metadata).toEqual({
       decoratorFactory: featureModule,
       controllers: [],
+      declaredInDir: getCallerDir()
     });
   });
 
@@ -55,6 +57,7 @@ describe('getModuleMetadata', () => {
     const metadata = getModuleMetadata(Module1.withParams([Provider1]));
     expect(metadata).toEqual({
       decoratorFactory: featureModule,
+      declaredInDir: getCallerDir(),
       extensionsMeta: {},
       providersPerApp: [],
       exports: [],
@@ -82,6 +85,7 @@ describe('getModuleMetadata', () => {
     const metadata = getModuleMetadata(forwardRef(fn));
     expect(metadata).toEqual({
       decoratorFactory: featureModule,
+      declaredInDir: getCallerDir(),
       extensionsMeta: {},
       providersPerApp: [],
       exports: [],

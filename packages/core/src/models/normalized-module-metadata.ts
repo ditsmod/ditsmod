@@ -31,6 +31,14 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   appendsWithParams: AppendsWithParams[] = [];
   controllers: Class[] = [];
   decoratorFactory: AnyFn;
+  /**
+   * The directory in which the module was declared.
+   */
+  declaredInDir: string;
+  /**
+   * Indicates whether this module is external to the application.
+   */
+  isExternal: boolean;
   exportsModules: ModuleType[] = [];
   exportsWithParams: ModuleWithParams[] = [];
   exportedProvidersPerMod: ServiceProvider[] = [];

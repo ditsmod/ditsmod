@@ -8,8 +8,8 @@ import { getLastProviders } from './get-last-providers.js';
 
 export function getModuleMetadata(
   modOrObj: ModuleType | ModuleWithParams,
-  isRoot?: boolean
-): (ModuleMetadata & { decoratorFactory: AnyFn }) | undefined {
+  isRoot?: boolean,
+): ModuleMetadataWithContext | undefined {
   const typeGuard = isRoot ? isRootModule : (m: DecoratorAndValue) => isFeatureModule(m) || isRootModule(m);
 
   modOrObj = resolveForwardRef(modOrObj);
@@ -17,10 +17,10 @@ export function getModuleMetadata(
   if (isModuleWithParams(modOrObj)) {
     const modWitParams = modOrObj;
     const container = reflector
-      .getClassMetadata<ModuleMetadata>(modWitParams.module)
+      .getClassMetadata<ModuleMetadataValue>(modWitParams.module)
       .find((container) => typeGuard(container));
 
-    const modMetadata = container?.value;
+    const modMetadata = container?.value.data;
     const modName = getModuleName(modWitParams.module);
     if (!modMetadata) {
       return modMetadata;
@@ -40,9 +40,26 @@ export function getModuleMetadata(
     metadata.providersPerReq = getLastProviders(mergeArrays(modMetadata.providersPerReq, modWitParams.providersPerReq));
     metadata.exports = getLastProviders(mergeArrays(modMetadata.exports, modWitParams.exports));
     metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
-    return { ...metadata, decoratorFactory: container.decorator };
+    const declaredInDir = container.value.declaredInDir;
+    return { ...metadata, decoratorFactory: container.decorator, declaredInDir };
   } else {
-    const container = reflector.getClassMetadata<ModuleMetadata>(modOrObj).find((container) => typeGuard(container));
-    return container ? { ...container.value, decoratorFactory: container.decorator } : undefined;
+    const container = reflector
+      .getClassMetadata<ModuleMetadataValue>(modOrObj)
+      .find((container) => typeGuard(container));
+    const declaredInDir = container?.value.declaredInDir || '';
+    return container ? { ...container.value.data, decoratorFactory: container.decorator, declaredInDir } : undefined;
   }
+}
+
+export interface ModuleMetadataValue {
+  data: ModuleMetadata;
+  /**
+   * The directory in which the module was declared.
+   */
+  declaredInDir: string;
+}
+
+export interface ModuleMetadataWithContext extends ModuleMetadata {
+  decoratorFactory: AnyFn;
+  declaredInDir: string;
 }
