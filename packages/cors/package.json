@@ -7,8 +7,7 @@
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
   "description": "Ditsmod module to support CORS and OPTIONS requests",
-  "main": "dist/index",
-  "types": "dist/index",
+
   "module": "dist/index.js",
   "exports": {
     "./package.json": {

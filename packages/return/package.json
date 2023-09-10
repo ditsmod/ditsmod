@@ -16,8 +16,6 @@
       "default": "./dist/index.js"
     }
   },
-  "main": "dist/index",
-  "types": "dist/index",
   "directories": {
     "lib": "src"
   },
