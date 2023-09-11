@@ -10,7 +10,8 @@ export interface ExtensionOptions1 {
   extension: ExtensionType;
   groupToken: InjectionToken<Extension<any>[]>;
   /**
-   * The token of the group before which this extension will be called.
+   * The token of the group before which this extension will be called. Use this option
+   * only if the extension group you place here does not expect your extension group to work.
    */
   nextToken?: InjectionToken<Extension<any>[]>;
   /**
