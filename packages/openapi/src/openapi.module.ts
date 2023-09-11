@@ -1,5 +1,6 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
 import { featureModule, ModuleWithParams, PRE_ROUTER_EXTENSIONS, Providers, ROUTES_EXTENSIONS } from '@ditsmod/core';
+import { RouterModule } from '@ditsmod/router';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension.js';
 import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension.js';
@@ -7,7 +8,6 @@ import { OAS_COMPILER_EXTENSIONS } from './di-tokens.js';
 import { OpenapiController } from './openapi.controller.js';
 import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-options.js';
 import { OpenapiLogMediator } from './services/openapi-log-mediator.js';
-import { RouterModule } from '@ditsmod/router';
 
 @featureModule({
   imports: [RouterModule],
@@ -17,12 +17,13 @@ import { RouterModule } from '@ditsmod/router';
   extensions: [
     { extension: OpenapiRoutesExtension, groupToken: ROUTES_EXTENSIONS, exported: true },
     {
-      extension: (OpenapiCompilerExtension as any),
+      extension: OpenapiCompilerExtension,
       groupToken: OAS_COMPILER_EXTENSIONS,
       nextToken: PRE_ROUTER_EXTENSIONS,
       exported: true,
     },
   ],
+  exports: [RouterModule]
 })
 export class OpenapiModule {
   /**
