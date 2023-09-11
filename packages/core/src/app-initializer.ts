@@ -84,6 +84,7 @@ export class AppInitializer {
    */
   protected collectProvidersPerApp(meta1: NormalizedModuleMetadata) {
     const modules = [
+      ...meta1.appendsWithParams,
       ...meta1.importsModules,
       ...meta1.importsWithParams,
       ...meta1.exportsModules,
