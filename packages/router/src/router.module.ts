@@ -2,11 +2,11 @@ import { featureModule, Router, PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from 
 
 import { DefaultRouter } from './router.js';
 import { RouterLogMediator } from './router-log-mediator.js';
-import { RoutesExtension } from './extensions/routes.extension.js';
-import { PreRouterExtension } from './extensions/pre-router.extension.js';
+import { RoutesExtension } from './routes.extension.js';
+import { PreRouterExtension } from './pre-router.extension.js';
 
 /**
- * Sets `Router` provider on application scope.
+ * Sets `Router` provider on application scope, and adds RoutesExtension with PreRouterExtension.
  */
 @featureModule({
   providersPerApp: [{ token: Router, useClass: DefaultRouter }, RouterLogMediator],
