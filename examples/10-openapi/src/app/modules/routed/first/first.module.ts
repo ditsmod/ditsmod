@@ -1,10 +1,10 @@
 import { featureModule } from '@ditsmod/core';
-import { RouterModule } from '@ditsmod/router';
 
+import { openapiModuleWithParams } from '#service/openapi/openapi.module.js';
 import { FirstController } from './first.controller.js';
 
 @featureModule({
-  imports: [RouterModule],
+  imports: [openapiModuleWithParams],
   controllers: [FirstController],
 })
 export class FirstModule {}
