@@ -11,7 +11,8 @@
     "clean": "rimraf dist*",
     "test": "tsc -b tsconfig.test.json && yarn esm-jest",
     "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning ../../node_modules/jest/bin/jest.js",
-    "build": "tsc -b tsconfig.build.json"
+    "build": "tsc -b tsconfig.build.json",
+    "watch": "yarn build -w"
   },
   "imports": {
     "#src/*": "./dist/*"
