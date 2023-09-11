@@ -12,7 +12,7 @@ For example, the [@ditsmod/body-parser][5] module has an extension that dynamica
 
 Another example. The [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without the extension working, Ditsmod will ignore the metadata from this new decorator.
 
-## What is Ditsmod extension
+## What is "Ditsmod extension"
 
 In Ditsmod, **extension** is a class that implements the `Extension` interface:
 
@@ -61,20 +61,18 @@ You can see a simple example in the folder [09-one-extension][1].
 
 ## Extensions groups
 
+Each extension should belong to one or more groups. Under the hood of Ditsmod, extension groups are essentially groups of [multi-providers][7] that typically work on the same metadata and also return other metadata that share the same basic interface.
+
 The concept of **extension groups** has been introduced so that:
 
 1. a set of extensions can work on the same metadata, and the order of work within that set is not important;
 2. it was possible to customize the order of work between different sets of extensions.
 
-In other words, to form a single group of extensions, the order of operation of each extension is not important (usually). On the other hand, if the order of operation between different extensions is important, you should consider splitting these extensions into different groups.
+In other words, to form a single group of extensions, the order of operation of each extension is not important. On the other hand, if the order of operation between different extensions is important, you should consider splitting these extensions into different groups.
 
-Each extension should belong to one or more groups. Under the hood of Ditsmod, extension groups are essentially groups of [multi-providers][7] that typically work on the same metadata and also return other metadata that share the same basic interface.
+For example, in `@ditsmod/router` there is a group `ROUTES_EXTENSIONS` which by default includes a single extension that processes metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can import the `@ditsmod/openapi` module, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for establishing the router's routes. These extensions are grouped together because they configure routes and their `init()` methods return data with the same basic interface.
 
-If you create an extension group in the current module, you can add other extensions to it in external modules without having to change the code in the current module. Sometimes you don't even need to call any services from the current module to integrate it into an external module, just import it.
-
-For example, in `@ditsmod/core` there is a group `ROUTES_EXTENSIONS` which by default includes a single extension that processes metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can import the `@ditsmod/openapi` module, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for establishing the router's routes. These extensions are grouped together because they configure routes and their `init()` methods return data with the same basic interface.
-
-Having a single base interface for all extensions in a group is important because other extensions can expect data from that group and they will rely on that base interface. Of course, the base interface can be expanded if necessary, but not narrowed.
+Having a single base data interface returned by each extension in a given group is an important requirement because other extensions may expect data from that group and will rely on that base interface. Of course, the base interface can be expanded if necessary, but not narrowed.
 
 In our example, after all the extensions from the `ROUTES_EXTENSIONS` group have worked, their data is collected in one array and passed to the `PRE_ROUTER_EXTENSIONS` group. Even if you later register more new extensions in the `ROUTES_EXTENSIONS` group, the `PRE_ROUTER_EXTENSIONS` group will still be started after absolutely all extensions from the `ROUTES_EXTENSIONS` group, including your new extensions, have been worked out.
 
