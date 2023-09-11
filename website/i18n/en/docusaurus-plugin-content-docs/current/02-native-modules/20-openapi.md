@@ -16,7 +16,7 @@ npm i @ditsmod/openapi
 
 To create individual routes, use the `oasRoute` decorator, in which the fourth or third parameter (if there are no guards) is the so-called [Operation Object][1]:
 
-```ts
+```ts {8-18}
 import { controller } from '@ditsmod/core';
 import { oasRoute } from '@ditsmod/openapi';
 
@@ -48,7 +48,7 @@ Ditsmod has good support for TypeScript models for OpenAPI v3.1.0, including Ope
 
 In the following example, with the helper `getParams()`, almost everything that we wrote manually for `parameters` in the previous example is recorded:
 
-```ts
+```ts {8}
 import { controller } from '@ditsmod/core';
 import { oasRoute, getParams } from '@ditsmod/openapi';
 
@@ -138,7 +138,7 @@ export class Model2 {
 
 The `getParams()` helper allows you to use models, and if you make a mistake in a parameter name, TypeScript will tell you about it:
 
-```ts
+```ts {10}
 import { controller } from '@ditsmod/core';
 import { oasRoute, getParams } from '@ditsmod/openapi';
 
@@ -156,9 +156,11 @@ export class SomeController {
 }
 ```
 
+Here `Params` is a class used as a parameter model.
+
 But the helper `getParams()` is not intended to be used simultaneously for mandatory and optional parameters. It also cannot pass a parameter description that differs from the parameter description in the parameter model. For such purposes, you can use another helper - `Parameters`:
 
-```ts
+```ts {10-13}
 import { controller } from '@ditsmod/core';
 import { oasRoute, Parameters } from '@ditsmod/openapi';
 
@@ -196,7 +198,7 @@ class Model1 {
 
 If this model will be used to describe `requestBody`, then `property2` in it will be required. But if this model is used to describe parameters, the `REQUIRED` marker will be ignored:
 
-```ts
+```ts {4}
 class SomeController {
   // ...
   @oasRoute('GET', 'users', {
@@ -210,11 +212,11 @@ class SomeController {
 
 To describe the content in `requestBody` and `responses`, there is also a helper `getContent()`:
 
-```ts
+```ts {12}
 import { controller, Status } from '@ditsmod/core';
 import { oasRoute, getContent } from '@ditsmod/openapi';
 
-import { SomeModel } from './some-model.js';
+import { SomeModel } from '#models/some.js';
 
 @controller()
 export class SomeController {
@@ -233,11 +235,11 @@ export class SomeController {
 
 The `getContent()` helper accepts a shortened version of the data when describing a single `mediaType` variant. If you need to describe a larger number of `mediaType`, you can use the `Content` class:
 
-```ts
+```ts {10-18}
 import { controller, Status } from '@ditsmod/core';
 import { oasRoute, Content } from '@ditsmod/openapi';
 
-import { SomeModel } from '@models/some';
+import { SomeModel } from '#models/some.js';
 
 @controller()
 export class SomeController {

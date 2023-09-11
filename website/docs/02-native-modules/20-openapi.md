@@ -16,7 +16,7 @@ npm i @ditsmod/openapi
 
 Щоб створювати окремі маршрути, користуйтесь декоратором `oasRoute`, в якому четвертим або третім параметром (якщо немає ґардів) йде так званий [Operation Object][1]:
 
-```ts
+```ts {8-18}
 import { controller } from '@ditsmod/core';
 import { oasRoute } from '@ditsmod/openapi';
 
@@ -48,7 +48,7 @@ Ditsmod має хорошу підтримку TypeScript-моделей для 
 
 В наступному прикладі за допомогою хелпера `getParams()` записано майже усе те, що у попередньому прикладі ми прописали вручну для `parameters`:
 
-```ts
+```ts {8}
 import { controller } from '@ditsmod/core';
 import { oasRoute, getParams } from '@ditsmod/openapi';
 
@@ -138,7 +138,7 @@ export class Model2 {
 
 Хелпер `getParams()` дозволяє використовувати моделі, і якщо ви зробите помилку у назві параметра, TypeScript скаже вам про це:
 
-```ts
+```ts {10}
 import { controller } from '@ditsmod/core';
 import { oasRoute, getParams } from '@ditsmod/openapi';
 
@@ -156,9 +156,11 @@ export class SomeController {
 }
 ```
 
+Тут `Params` - це клас, який використовується у якості моделі параметрів.
+
 Але хелпер `getParams()` не призначений щоб його використовували одночасно для обов'язкових та необов'язкових параметрів. Також через нього не можна передавати опис параметрів, який відрізняється від опису параметрів у моделі параметрів. Для таких цілей можна скористатись іншим хелпером - `Parameters`:
 
-```ts
+```ts {10-13}
 import { controller } from '@ditsmod/core';
 import { oasRoute, Parameters } from '@ditsmod/openapi';
 
@@ -196,7 +198,7 @@ class Model1 {
 
 Якщо дана модель буде використовуватись для опису `requestBody`, то `property2` в ній буде обов'язковою. Але якщо цю модель використовувати для опису параметрів, маркер `REQUIRED` буде ігноруватись:
 
-```ts
+```ts {4}
 class SomeController {
   // ...
   @oasRoute('GET', 'users', {
@@ -210,11 +212,11 @@ class SomeController {
 
 Для опису контента в `requestBody` та `responses` існує також хелпер `getContent()`:
 
-```ts
+```ts {12}
 import { controller, Status } from '@ditsmod/core';
 import { oasRoute, getContent } from '@ditsmod/openapi';
 
-import { SomeModel } from './some-model.js';
+import { SomeModel } from '#models/some.js';
 
 @controller()
 export class SomeController {
@@ -233,11 +235,11 @@ export class SomeController {
 
 Хелпер `getContent()` приймає скорочену версію даних, коли потрібно описати єдиний варіант `mediaType`. Якщо ж вам потрібно описати більшу кількість `mediaType`, можна скористатись класом `Content`:
 
-```ts
+```ts {10-18}
 import { controller, Status } from '@ditsmod/core';
 import { oasRoute, Content } from '@ditsmod/openapi';
 
-import { SomeModel } from '@models/some';
+import { SomeModel } from '#models/some.js';
 
 @controller()
 export class SomeController {
