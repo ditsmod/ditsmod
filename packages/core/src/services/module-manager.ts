@@ -55,7 +55,7 @@ export class ModuleManager {
   /**
    * The directory in which the module was declared.
    */
-  protected rootCallerDir: string;
+  protected rootDeclaredInDir: string;
 
   constructor(protected systemLogMediator: SystemLogMediator) {}
 
@@ -428,9 +428,9 @@ export class ModuleManager {
   protected checkWhetherIsExternalModule(rawMeta: ModuleMetadataWithContext, meta: NormalizedModuleMetadata) {
     if (isRawRootModule(rawMeta)) {
       meta.isExternal = false;
-      this.rootCallerDir = meta.declaredInDir;
-    } else if (this.rootCallerDir) {
-      meta.isExternal = !meta.declaredInDir.startsWith(this.rootCallerDir);
+      this.rootDeclaredInDir = meta.declaredInDir;
+    } else if (this.rootDeclaredInDir) {
+      meta.isExternal = !meta.declaredInDir.startsWith(this.rootDeclaredInDir);
     } else {
       const rootMeta = this.getRawMetadata('root');
       meta.isExternal = !meta.declaredInDir.startsWith(rootMeta?.declaredInDir || '');
