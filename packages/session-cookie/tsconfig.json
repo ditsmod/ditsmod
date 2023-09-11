@@ -3,10 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist",
-      "paths": {
-      "@ditsmod/core": [
-        "../core/src"
-      ]
+    "paths": {
+      "@ditsmod/core": ["../core/src"],
     }
   },
   "include": ["src"],
