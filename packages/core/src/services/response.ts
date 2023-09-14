@@ -12,7 +12,7 @@ export class Res<T = any> {
     /**
      * Native Node.js response.
      */
-    @inject(NODE_RES) private nodeRes: NodeResponse,
+    @inject(NODE_RES) public nodeRes: NodeResponse,
   ) {}
 
   /**
