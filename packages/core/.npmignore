@@ -9,4 +9,3 @@ CHANGELOG.md
 *.tsbuildinfo
 tsconfig.*
 test
-test
