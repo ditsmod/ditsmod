@@ -1,5 +1,12 @@
+<a name="openapi-2.22.0"></a>
+# [openapi-2.22.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.22.0) (2023-09-15)
+
+### Features
+
+- Migration to core-2.49.0.
+
 <a name="openapi-2.21.0"></a>
-# [openapi-2.21.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.21.0) (2023-09-07)
+## [openapi-2.21.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.21.0) (2023-09-07)
 
 ### Breaking changes
 
