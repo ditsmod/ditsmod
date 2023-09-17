@@ -12,7 +12,7 @@
   import { AppModule } from './app/app.module.js';
 
   const app = await new Application().bootstrap(AppModule, { bufferLogs: false });
-  app.server.listen(3000, 'localhost');
+  app.server.listen(3000, '0.0.0.0');
   ```
   If `{ bufferLogs: true }`, all messages are buffered during application initialization and flushed afterwards. This can be useful if you want all messages to be recorded by the final logger, which is configured after the application is fully initialized.
 

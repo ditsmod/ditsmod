@@ -18,7 +18,7 @@ describe('07-dynamically-composing-modules', () => {
   it('should works', async () => {
     await request(server).get('/').expect(200).expect('first module.\n');
 
-    await request(server).get('/get-2').expect(404);
+    await request(server).get('/get-2').expect(501);
 
     await request(server).get('/add-2').expect(200).expect('second successfully importing!\n');
 
@@ -32,7 +32,7 @@ describe('07-dynamically-composing-modules', () => {
 
     await request(server).get('/del-2').expect(200).expect('second successfully removing!\n');
 
-    await request(server).get('/get-2').expect(404);
+    await request(server).get('/get-2').expect(501);
 
     await request(server).get('/').expect(200).expect('first module.\n');
   });
