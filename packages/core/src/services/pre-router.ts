@@ -16,7 +16,7 @@ export class PreRouter {
     const [uri, queryString] = this.decodeUrl(nodeReq.url || '').split('?', 2);
     const { handle, params } = this.router.find(nodeReq.method as HttpMethod, uri);
     if (!handle) {
-      this.sendNotFound(nodeRes);
+      this.sendNotImplemented(nodeRes);
       return;
     }
     await handle(nodeReq, nodeRes, params!, queryString).catch((err) => {
@@ -39,8 +39,8 @@ export class PreRouter {
     nodeRes.end();
   }
 
-  protected sendNotFound(nodeRes: NodeResponse) {
-    nodeRes.statusCode = Status.NOT_FOUND;
+  protected sendNotImplemented(nodeRes: NodeResponse) {
+    nodeRes.statusCode = Status.NOT_IMPLEMENTED;
     nodeRes.end();
   }
 }
