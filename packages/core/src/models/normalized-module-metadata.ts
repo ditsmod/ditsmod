@@ -15,7 +15,7 @@ import { ProvidersMetadata } from './providers-metadata.js';
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
   /**
    * The module setted here must be identical to the module
-   * passed to "imports", "exports" or "appends" array of `@Module` metadata.
+   * passed to "imports", "exports" or "appends" array of `@featureModule` metadata.
    */
   module: ModuleType<T> | ModuleWithParams<T> | AppendsWithParams<T>;
   /**

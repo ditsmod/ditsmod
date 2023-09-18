@@ -352,7 +352,7 @@ export class ModuleManager {
     const rawMeta = getModuleMetadata(mod);
     const modName = getModuleName(mod);
     if (!rawMeta) {
-      throw new Error(`Module build failed: module "${modName}" does not have the "@Module()" decorator`);
+      throw new Error(`Module build failed: module "${modName}" does not have the "@featureModule()" decorator`);
     }
 
     /**

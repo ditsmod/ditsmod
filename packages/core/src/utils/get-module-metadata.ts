@@ -25,7 +25,7 @@ export function getModuleMetadata(
 
     if (modMetadata.id) {
       const msg =
-        `${modName} must not have an "id" in the metadata of the decorator @Module. ` +
+        `${modName} must not have an "id" in the metadata of the decorator @featureModule. ` +
         'Instead, you can specify the "id" in the object that contains the module parameters.';
       throw new Error(msg);
     }

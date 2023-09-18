@@ -20,7 +20,7 @@ describe('getModuleMetadata', () => {
     expect(metadata).toEqual({ decoratorFactory: featureModule, declaredInDir: getCallerDir() });
   });
 
-  it('@Module() decorator with id', () => {
+  it('@featureModule() decorator with id', () => {
     @featureModule({ id: 'someId' })
     class Module1 {}
 

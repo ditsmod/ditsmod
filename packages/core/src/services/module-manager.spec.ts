@@ -210,16 +210,16 @@ describe('ModuleManager', () => {
     expect(() => mock.scanRootModule(Module1)).toThrow('"Module1" does not have the "@rootModule()" decorator');
   });
 
-  it('root module imported module without @Module decorator', () => {
+  it('root module imported module without @featureModule decorator', () => {
     class Module1 {}
 
     @rootModule({ imports: [Module1] })
     class Module2 {}
 
-    expect(() => mock.scanRootModule(Module2)).toThrow('"Module1" does not have the "@Module()" decorator');
+    expect(() => mock.scanRootModule(Module2)).toThrow('"Module1" does not have the "@featureModule()" decorator');
   });
 
-  it('module reexported another module without @Module decorator', () => {
+  it('module reexported another module without @featureModule decorator', () => {
     class Module1 {}
 
     @featureModule({ imports: [Module1], exports: [Module1] })
