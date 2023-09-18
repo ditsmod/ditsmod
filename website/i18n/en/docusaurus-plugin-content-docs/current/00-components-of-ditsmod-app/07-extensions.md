@@ -233,11 +233,11 @@ This expression will return `false` until the last time the group `OTHER_EXTENSI
 
 ## Dynamic addition of providers
 
-Each extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynamically add providers at any level.
+Any extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynamically add providers at any level.
 
 You can see how it is done in [BodyParserExtension][3]:
 
-```ts {28}
+```ts {12,28}
 @injectable()
 export class BodyParserExtension implements Extension<void> {
   private inited: boolean;
@@ -275,7 +275,7 @@ export class BodyParserExtension implements Extension<void> {
 }
 ```
 
-Of course, such dynamic addition of providers is possible only before creating HTTP request handlers. As you can see, in this example, a [hierarchy of injectors][8] is created to obtain the correct data with the `RouteMeta` token.
+Of course, such dynamic addition of providers is possible only before creating HTTP request handlers. As you can see, in this example, a [hierarchy of injectors][8] is created to obtain the correct data.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
 [3]: https://github.com/ditsmod/ditsmod/blob/core-2.49.0/packages/body-parser/src/body-parser.extension.ts#L36

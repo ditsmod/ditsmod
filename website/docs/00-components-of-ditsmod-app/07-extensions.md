@@ -233,11 +233,11 @@ const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExten
 
 ## Динамічне додавання провайдерів
 
-Кожне розширення може вказати залежність від групи розширень `ROUTES_EXTENSIONS`, щоб динамічно додавати провайдери на будь-якому рівні.
+Будь-яке розширення може вказати залежність від групи розширень `ROUTES_EXTENSIONS`, щоб динамічно додавати провайдери на будь-якому рівні.
 
 Можна проглянути як це зроблено у [BodyParserExtension][3]:
 
-```ts {28}
+```ts {12,28}
 @injectable()
 export class BodyParserExtension implements Extension<void> {
   private inited: boolean;
@@ -275,7 +275,7 @@ export class BodyParserExtension implements Extension<void> {
 }
 ```
 
-Звичайно ж, таке динамічне додавання провайдерів можливе лише перед створенням обробників HTTP-запитів. Як бачите, у даному прикладі створюється [ієрархія інжекторів][8] для того, щоб отримати правильні дані з токеном `RouteMeta`.
+Звичайно ж, таке динамічне додавання провайдерів можливе лише перед створенням обробників HTTP-запитів. Як бачите, у даному прикладі створюється [ієрархія інжекторів][8] для того, щоб отримати правильні дані.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
 [3]: https://github.com/ditsmod/ditsmod/blob/core-2.49.0/packages/body-parser/src/body-parser.extension.ts#L36
