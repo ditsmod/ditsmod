@@ -4,13 +4,13 @@ import { reflector, Class } from '#di';
 import { isController } from './type-guards.js';
 
 export function transformControllersMetadata(controllers: Class[], moduleName: string) {
-  const arrControllerMetadata: ControllerMetadata1[] = [];
+  const aControllerMetadata: ControllerMetadata1[] = [];
   for (const controller of controllers) {
     const controllerMetadata1 = getControllerMetadata1(controller, moduleName);
-    arrControllerMetadata.push(controllerMetadata1);
+    aControllerMetadata.push(controllerMetadata1);
   }
 
-  return arrControllerMetadata;
+  return aControllerMetadata;
 }
 
 export function getControllerMetadata1(Controller: Class, moduleName: string) {
