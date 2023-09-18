@@ -275,7 +275,9 @@ export class BodyParserExtension implements Extension<void> {
 }
 ```
 
-Of course, such dynamic addition of providers is possible only before creating HTTP request handlers. As you can see, in this example, a [hierarchy of injectors][8] is created to obtain the correct data.
+In this case, the HTTP interceptor is added to the `providersPerReq` array in the controller's metadata. But before that, a [hierarchy of injectors][8] is created in order to get a certain configuration that tells us whether we need to add such an interceptor. If we didn't need to check any condition, we could avoid creating injector hierarchies and just add an interceptor at request level.
+
+Of course, such dynamic addition of providers is possible only before creating HTTP request handlers.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
 [3]: https://github.com/ditsmod/ditsmod/blob/core-2.49.0/packages/body-parser/src/body-parser.extension.ts#L36
