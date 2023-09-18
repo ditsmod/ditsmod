@@ -1,5 +1,12 @@
-import { Extension, ExtensionsManager, HTTP_INTERCEPTORS, PerAppService, ROUTES_EXTENSIONS } from '@ditsmod/core';
-import { injectable, InjectionToken } from '@ditsmod/core';
+import {
+  Extension,
+  ExtensionsManager,
+  HTTP_INTERCEPTORS,
+  PerAppService,
+  ROUTES_EXTENSIONS,
+  injectable,
+  InjectionToken,
+} from '@ditsmod/core';
 
 import { BodyParserConfig } from './body-parser-config.js';
 import { BodyParserInterceptor } from './body-parser.interceptor.js';
@@ -10,7 +17,10 @@ export const BODY_PARSER_EXTENSIONS = new InjectionToken<Extension<void>[]>('BOD
 export class BodyParserExtension implements Extension<void> {
   private inited: boolean;
 
-  constructor(protected extensionManager: ExtensionsManager, protected perAppService: PerAppService) {}
+  constructor(
+    protected extensionManager: ExtensionsManager,
+    protected perAppService: PerAppService,
+  ) {}
 
   async init() {
     if (this.inited) {
