@@ -233,49 +233,38 @@ This expression will return `false` until the last time the group `OTHER_EXTENSI
 
 ## Dynamic addition of providers
 
-Each extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynamically add providers at the level of:
-
-- module,
-- route,
-- request.
+Each extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynamically add providers at any level.
 
 You can see how it is done in [BodyParserExtension][3]:
 
-```ts
+```ts {28}
 @injectable()
 export class BodyParserExtension implements Extension<void> {
   private inited: boolean;
 
-  constructor(protected extensionManager: ExtensionsManager, protected injectorPerApp: InjectorPerApp) {}
+  constructor(protected extensionManager: ExtensionsManager, protected perAppService: PerAppService) {}
 
   async init() {
     if (this.inited) {
       return;
     }
 
-    // Getting the metadata collected using the ROUTES_EXTENSIONS group
     const aMetadataPerMod2 = await this.extensionManager.init(ROUTES_EXTENSIONS);
-
     aMetadataPerMod2.forEach((metadataPerMod2) => {
-      // First, extracting the metadata of a module
       const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
-
-      // Then, extracting the metadata of a controller
-      aControllersMetadata2.forEach(({ providersPerRou, providersPerReq }) => {
+      aControllersMetadata2.forEach(({ providersPerRou, providersPerReq, httpMethod }) => {
         // Merging the providers from a module and a controller
         const mergedProvidersPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const mergedProvidersPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
 
         // Creating a hierarchy of injectors.
-        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+        const injectorPerApp = this.perAppService.injector;
+        const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
         const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
-
-        // Extracting the metadata for a route,
-        // and based on it, we either add an interceptor to injectorPerReq, or not.
-        const routeMeta = injectorPerRou.get(RouteMeta) as RouteMeta;
-        const bodyParserConfig = injectorPerReq.resolveAndInstantiate(BodyParserConfig) as BodyParserConfig;
-        if (bodyParserConfig.acceptMethods.includes(routeMeta.httpMethod)) {
+        let bodyParserConfig = injectorPerReq.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
+        bodyParserConfig = Object.assign({}, new BodyParserConfig(), bodyParserConfig); // Merge with default.
+        if (bodyParserConfig.acceptMethods?.includes(httpMethod)) {
           providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
         }
       });
@@ -289,8 +278,7 @@ export class BodyParserExtension implements Extension<void> {
 Of course, such dynamic addition of providers is possible only before creating HTTP request handlers. As you can see, in this example, a [hierarchy of injectors][8] is created to obtain the correct data with the `RouteMeta` token.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
-[2]: #creating-an-extension-class
-[3]: https://github.com/ditsmod/ditsmod/blob/0c4660a77/packages/body-parser/src/body-parser.extension.ts#L27-L40
+[3]: https://github.com/ditsmod/ditsmod/blob/core-2.49.0/packages/body-parser/src/body-parser.extension.ts#L36
 [4]: #registering-an-extension-in-a-group
 [5]: /native-modules/body-parser
 [6]: /native-modules/openapi

@@ -233,49 +233,38 @@ const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExten
 
 ## Динамічне додавання провайдерів
 
-Кожне розширення може вказати залежність від групи розширень `ROUTES_EXTENSIONS`, щоб динамічно додавати провайдери на рівні:
-
-- модуля,
-- роуту,
-- запиту.
+Кожне розширення може вказати залежність від групи розширень `ROUTES_EXTENSIONS`, щоб динамічно додавати провайдери на будь-якому рівні.
 
 Можна проглянути як це зроблено у [BodyParserExtension][3]:
 
-```ts
+```ts {28}
 @injectable()
 export class BodyParserExtension implements Extension<void> {
   private inited: boolean;
 
-  constructor(protected extensionManager: ExtensionsManager, protected injectorPerApp: InjectorPerApp) {}
+  constructor(protected extensionManager: ExtensionsManager, protected perAppService: PerAppService) {}
 
   async init() {
     if (this.inited) {
       return;
     }
 
-    // Отримуємо метадані, зібрані за допомогою групи розширень ROUTES_EXTENSIONS
     const aMetadataPerMod2 = await this.extensionManager.init(ROUTES_EXTENSIONS);
-
     aMetadataPerMod2.forEach((metadataPerMod2) => {
-      // Спочатку витягуємо метадані модуля
       const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
-
-      // Тепер витягуємо метадані контролера
-      aControllersMetadata2.forEach(({ providersPerRou, providersPerReq }) => {
+      aControllersMetadata2.forEach(({ providersPerRou, providersPerReq, httpMethod }) => {
         // Зливаємо провайдери із модуля та контролера
         const mergedProvidersPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const mergedProvidersPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
 
         // Створюємо ієрархію інжекторів
-        const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(providersPerMod);
+        const injectorPerApp = this.perAppService.injector;
+        const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
         const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
-
-        // Отримуємо метадані для роуту,
-        // і на їх основі або додаємо інтерсептор до injectorPerReq, або - ні.
-        const routeMeta = injectorPerRou.get(RouteMeta) as RouteMeta;
-        const bodyParserConfig = injectorPerReq.resolveAndInstantiate(BodyParserConfig) as BodyParserConfig;
-        if (bodyParserConfig.acceptMethods.includes(routeMeta.httpMethod)) {
+        let bodyParserConfig = injectorPerReq.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
+        bodyParserConfig = Object.assign({}, new BodyParserConfig(), bodyParserConfig); // Merge with default.
+        if (bodyParserConfig.acceptMethods?.includes(httpMethod)) {
           providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
         }
       });
@@ -289,7 +278,7 @@ export class BodyParserExtension implements Extension<void> {
 Звичайно ж, таке динамічне додавання провайдерів можливе лише перед створенням обробників HTTP-запитів. Як бачите, у даному прикладі створюється [ієрархія інжекторів][8] для того, щоб отримати правильні дані з токеном `RouteMeta`.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
-[3]: https://github.com/ditsmod/ditsmod/blob/0c4660a77/packages/body-parser/src/body-parser.extension.ts#L27-L40
+[3]: https://github.com/ditsmod/ditsmod/blob/core-2.49.0/packages/body-parser/src/body-parser.extension.ts#L36
 [4]: #реєстрація-розширення-в-групі
 [5]: /native-modules/body-parser
 [6]: /native-modules/openapi
