@@ -1,6 +1,5 @@
 import {
   injectable,
-  RootMetadata,
   ControllerMetadata2,
   MetadataPerMod1,
   MetadataPerMod2,
@@ -11,6 +10,7 @@ import {
   RouteMeta,
   isController,
   isRoute,
+  AppOptions,
 } from '@ditsmod/core';
 
 @injectable()
@@ -18,7 +18,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
   protected metadataPerMod2: MetadataPerMod2;
 
   constructor(
-    protected rootMetadata: RootMetadata,
+    protected appOptions: AppOptions,
     protected metadataPerMod1: MetadataPerMod1,
   ) {}
 
@@ -27,7 +27,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
       return this.metadataPerMod2;
     }
 
-    const { path: prefixPerApp } = this.rootMetadata;
+    const { path: prefixPerApp } = this.appOptions;
     const { meta } = this.metadataPerMod1;
     this.metadataPerMod2 = new MetadataPerMod2();
     this.metadataPerMod2.module = meta.module;
@@ -40,7 +40,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
     return this.metadataPerMod2;
   }
 
-  protected getControllersMetadata2(prefixPerApp: string, metadataPerMod1: MetadataPerMod1) {
+  protected getControllersMetadata2(prefixPerApp: string = '', metadataPerMod1: MetadataPerMod1) {
     const { aControllersMetadata1, prefixPerMod, guardsPerMod } = metadataPerMod1;
 
     const controllersMetadata2: ControllerMetadata2[] = [];
