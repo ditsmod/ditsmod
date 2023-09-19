@@ -1,4 +1,4 @@
-import { ApplicationOptions, OutputLogLevel, ModuleType } from '@ditsmod/core';
+import { AppOptions, OutputLogLevel, ModuleType } from '@ditsmod/core';
 
 import { PreTestApplication } from './pre-test-application.js';
 import { TestModuleManager } from './test-module-manager.js';
@@ -11,11 +11,11 @@ export class TestApplication {
   protected testModuleManager: TestModuleManager;
   protected logLevel: OutputLogLevel;
 
-  constructor(appModule: ModuleType, appOptions: ApplicationOptions = new ApplicationOptions()) {
+  constructor(appModule: ModuleType, appOptions: AppOptions = new AppOptions()) {
     this.initRootModule(appModule, appOptions);
   }
 
-  protected initRootModule(appModule: ModuleType, appOptions: ApplicationOptions) {
+  protected initRootModule(appModule: ModuleType, appOptions: AppOptions) {
     this.preTestApplication = new PreTestApplication();
     const systemLogMediator = this.preTestApplication.init(appModule.name, appOptions);
     this.testModuleManager = new TestModuleManager(systemLogMediator);
