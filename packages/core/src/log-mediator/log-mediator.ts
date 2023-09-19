@@ -28,7 +28,7 @@ export abstract class LogMediator {
 
   protected setLog(inputLogLevel: InputLogLevel, msg: any) {
     if (LogMediator.bufferLogs) {
-      this.checkLogLevel();
+      LogMediator.checkDiffLogLevels(this.loggerConfig.level);
       LogMediator.buffer.push({
         moduleName: this.moduleExtract.moduleName,
         inputLogLevel,
@@ -41,16 +41,16 @@ export abstract class LogMediator {
     }
   }
 
-  protected checkLogLevel() {
-    if (LogMediator.hasDiffLogLevels) {
+  /**
+   * Sets `LogMediator.hasDiffLogLevels` to `true`, if `LogMediator.buffer` has logs with different `OutputLogLevel`s.
+   */
+  protected static checkDiffLogLevels(level: OutputLogLevel) {
+    if (this.hasDiffLogLevels) {
       return;
     }
-    if (LogMediator.outputLogLevel) {
-      if (LogMediator.outputLogLevel != this.loggerConfig.level) {
-        LogMediator.hasDiffLogLevels = true;
-      }
-    } else {
-      LogMediator.outputLogLevel = this.loggerConfig.level;
+    this.outputLogLevel ??= level;
+    if (this.outputLogLevel != level) {
+      this.hasDiffLogLevels = true;
     }
   }
 
@@ -64,7 +64,7 @@ export abstract class LogMediator {
     if (LogMediator.hasDiffLogLevels && logger === this.logger) {
       const msg =
         'Either set "new Application().bootstrap(AppModule, { bufferLogs: false })" in main.ts, ' +
-        'or don\'t pass the logger as a singleton that should write logs in the context of different OutputLogLevels.';
+        "or don't pass the logger as a singleton that should write logs in the context of different OutputLogLevels.";
       logger.log('warn', msg);
     }
 
