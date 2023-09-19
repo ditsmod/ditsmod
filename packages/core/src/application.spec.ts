@@ -5,8 +5,7 @@ import * as https from 'https';
 import { AppInitializer } from './app-initializer.js';
 import { Application } from './application.js';
 import { rootModule } from './decorators/root-module.js';
-import { RootMetadata } from './models/root-metadata.js';
-import { ApplicationOptions } from './models/application-options.js';
+import { AppOptions } from './models/app-options.js';
 import { ModuleType } from './types/mix.js';
 import { Router } from './types/router.js';
 import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
@@ -15,8 +14,7 @@ import { LoggerConfig } from './index.js';
 
 describe('Application', () => {
   class ApplicationMock extends Application {
-    override appOptions = new ApplicationOptions();
-    override rootMeta = new RootMetadata;
+    override appOptions = new AppOptions();
     declare systemLogMediator: SystemLogMediator;
 
     override checkSecureServerOption(rootModuleName: string) {
@@ -28,7 +26,7 @@ describe('Application', () => {
     }
 
     override getAppInitializer(moduleManager: ModuleManager) {
-      return new AppInitializer(this.rootMeta, moduleManager, this.systemLogMediator);
+      return new AppInitializer(this.appOptions, moduleManager, this.systemLogMediator);
     }
 
     override bootstrapApplication(appInitializer: AppInitializer) {

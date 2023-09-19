@@ -6,8 +6,7 @@ import type { AddressInfo } from 'net';
 import { AppInitializer } from './app-initializer.js';
 import { LogMediator } from './log-mediator/log-mediator.js';
 import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
-import { ApplicationOptions } from './models/application-options.js';
-import { RootMetadata } from './models/root-metadata.js';
+import { AppOptions } from './models/app-options.js';
 import { ModuleManager } from './services/module-manager.js';
 import { HttpServerModule, HttpsServerModule } from './types/http-module.js';
 import { AnyFn, ModuleType } from './types/mix.js';
@@ -16,15 +15,14 @@ import { cleanErrorTrace } from './utils/clean-error-trace.js';
 import { isHttp2SecureServerOptions } from './utils/type-guards.js';
 
 export class Application {
-  protected appOptions: ApplicationOptions;
+  protected appOptions: AppOptions;
   protected systemLogMediator: SystemLogMediator;
-  protected rootMeta = new RootMetadata();
 
   /**
    * @param appModule The root module of the application.
    * @param appOptions Application options.
    */
-  bootstrap(appModule: ModuleType, appOptions: ApplicationOptions = new ApplicationOptions()) {
+  bootstrap(appModule: ModuleType, appOptions: AppOptions = new AppOptions()) {
     return new Promise<{ server: NodeServer }>(async (resolve, reject) => {
       try {
         this.init(appModule.name, appOptions);
@@ -41,11 +39,10 @@ export class Application {
     });
   }
 
-  protected init(rootModuleName: string, appOptions: ApplicationOptions) {
+  protected init(rootModuleName: string, appOptions: AppOptions) {
     this.systemLogMediator = new SystemLogMediator({ moduleName: 'AppModule' });
-    this.appOptions = { ...new ApplicationOptions(), ...appOptions };
+    this.appOptions = { ...new AppOptions(), ...appOptions };
     LogMediator.bufferLogs = this.appOptions.bufferLogs;
-    this.rootMeta.path = this.appOptions.path || '';
     this.checkSecureServerOption(rootModuleName);
     return this.systemLogMediator;
   }
@@ -64,7 +61,7 @@ export class Application {
   }
 
   protected getAppInitializer(moduleManager: ModuleManager) {
-    return new AppInitializer(this.rootMeta, moduleManager, this.systemLogMediator);
+    return new AppInitializer(this.appOptions, moduleManager, this.systemLogMediator);
   }
 
   protected async bootstrapApplication(appInitializer: AppInitializer) {
@@ -82,7 +79,6 @@ export class Application {
     const server = await this.createServer(appInitializer.requestListener);
     server.on('listening', () => {
       const info = server.address() as AddressInfo;
-      this.rootMeta.addressInfo = info;
       this.systemLogMediator.serverListen(this, info.address, info.port);
     });
     resolve({ server });

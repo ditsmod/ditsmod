@@ -1,7 +1,7 @@
 import { HttpModule } from '#types/http-module.js';
 import { ServerOptions } from '#types/server-options.js';
 
-export class ApplicationOptions {
+export class AppOptions {
   httpModule?: HttpModule | null = null;
   serverOptions?: ServerOptions = {};
   path?: string = '';

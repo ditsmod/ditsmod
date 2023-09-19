@@ -13,9 +13,9 @@ import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from './type
 import { controller } from './decorators/controller.js';
 import { ModuleExtract } from './models/module-extract.js';
 import { ImportObj, MetadataPerMod1 } from './types/metadata-per-mod.js';
-import { RootMetadata } from './models/root-metadata.js';
 import { Providers } from './utils/providers.js';
 import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
+import { AppOptions } from './models/app-options.js';
 
 describe('AppInitializer', () => {
   type AnyModule = ModuleType | ModuleWithParams;
@@ -25,11 +25,11 @@ describe('AppInitializer', () => {
     override meta = new NormalizedModuleMetadata();
 
     constructor(
-      public override rootMeta: RootMetadata,
+      public override appOptions: AppOptions,
       public override moduleManager: ModuleManager,
       public override systemLogMediator: SystemLogMediator,
     ) {
-      super(rootMeta, moduleManager, systemLogMediator);
+      super(appOptions, moduleManager, systemLogMediator);
     }
 
     async init() {
@@ -69,8 +69,8 @@ describe('AppInitializer', () => {
     beforeEach(() => {
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(systemLogMediator);
-      const rootMeta = new RootMetadata();
-      mock = new AppInitializerMock(rootMeta, moduleManager, systemLogMediator);
+      const appOptions = new AppOptions();
+      mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
     });
 
     it('should throw an error about collision', () => {
@@ -303,8 +303,8 @@ describe('AppInitializer', () => {
     beforeEach(() => {
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(systemLogMediator);
-      const rootMeta = new RootMetadata();
-      mock = new AppInitializerMock(rootMeta, moduleManager, systemLogMediator);
+      const appOptions = new AppOptions();
+      mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
     });
 
     it('should collects providers from exports array without imports them', () => {
@@ -416,8 +416,8 @@ describe('AppInitializer', () => {
     beforeAll(() => {
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(systemLogMediator);
-      const rootMeta = new RootMetadata();
-      mock = new AppInitializerMock(rootMeta, moduleManager, systemLogMediator);
+      const appOptions = new AppOptions();
+      mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
       moduleManager.scanRootModule(AppModule);
       appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
     });
@@ -541,8 +541,8 @@ describe('AppInitializer', () => {
       // Simulation of a call from the Application
       const logMediator = new LogMediatorMock({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(logMediator);
-      const rootMeta = new RootMetadata();
-      mock = new AppInitializerMock(rootMeta, moduleManager, logMediator);
+      const appOptions = new AppOptions();
+      mock = new AppInitializerMock(appOptions, moduleManager, logMediator);
 
       // Simulation of a call from the AppModule
       @rootModule({
@@ -590,8 +590,8 @@ describe('AppInitializer', () => {
       LogMediator.buffer = [];
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(systemLogMediator);
-      const rootMeta = new RootMetadata();
-      mock = new AppInitializerMock(rootMeta, moduleManager, systemLogMediator);
+      const appOptions = new AppOptions();
+      mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
     });
 
     it('logs should collects between two init()', async () => {
@@ -633,8 +633,8 @@ describe('AppInitializer', () => {
       jest.restoreAllMocks();
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(systemLogMediator);
-      const rootMeta = new RootMetadata();
-      mock = new AppInitializerMock(rootMeta, moduleManager, systemLogMediator);
+      const appOptions = new AppOptions();
+      mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
     });
 
     interface MyInterface {

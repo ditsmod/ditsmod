@@ -5,7 +5,7 @@ import { Logger } from './index.js';
 import { LogMediator } from './log-mediator/log-mediator.js';
 import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
 import { NormalizedModuleMetadata } from './models/normalized-module-metadata.js';
-import { RootMetadata } from './models/root-metadata.js';
+import { AppOptions } from './models/app-options.js';
 import { ModuleFactory } from './module-factory.js';
 import { Counter } from './services/counter.js';
 import { defaultProvidersPerApp } from './services/default-providers-per-app.js';
@@ -33,7 +33,7 @@ export class AppInitializer {
   protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
 
   constructor(
-    protected rootMeta: RootMetadata,
+    protected appOptions: AppOptions,
     protected moduleManager: ModuleManager,
     public systemLogMediator: SystemLogMediator,
   ) {}
@@ -211,7 +211,7 @@ export class AppInitializer {
   protected addDefaultProvidersPerApp() {
     this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
-      { token: RootMetadata, useValue: this.rootMeta },
+      { token: AppOptions, useValue: this.appOptions },
       { token: ModuleManager, useValue: this.moduleManager },
       { token: AppInitializer, useValue: this },
     );
