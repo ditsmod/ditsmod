@@ -8,9 +8,9 @@ import {
   MetadataPerMod1,
   MetadataPerMod2,
   NormalizedGuard,
-  RootMetadata,
   RouteMeta,
   ServiceProvider,
+  AppOptions,
 } from '@ditsmod/core';
 import { RoutesExtension } from '@ditsmod/router';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
@@ -25,11 +25,11 @@ import { OpenapiLogMediator } from '../services/openapi-log-mediator.js';
 @injectable()
 export class OpenapiRoutesExtension extends RoutesExtension implements Extension<MetadataPerMod2> {
   constructor(
-    protected override rootMetadata: RootMetadata,
+    protected override appOptions: AppOptions,
     protected override metadataPerMod1: MetadataPerMod1,
     protected log: OpenapiLogMediator,
   ) {
-    super(rootMetadata, metadataPerMod1);
+    super(appOptions, metadataPerMod1);
   }
   protected override getControllersMetadata2(prefixPerApp: string, metadataPerMod1: MetadataPerMod1) {
     const { aControllersMetadata1, prefixPerMod, guardsPerMod, meta } = metadataPerMod1;
