@@ -5,7 +5,7 @@ import * as https from 'https';
 import { AppInitializer } from './app-initializer.js';
 import { Application } from './application.js';
 import { rootModule } from './decorators/root-module.js';
-import { AppOptions } from './models/app-options.js';
+import { AppOptions } from './types/app-options.js';
 import { ModuleType } from './types/mix.js';
 import { Router } from './types/router.js';
 import { SystemLogMediator } from './log-mediator/system-log-mediator.js';

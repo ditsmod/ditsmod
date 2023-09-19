@@ -3,7 +3,7 @@ import { format } from 'util';
 import { HTTP_INTERCEPTORS } from '#constans';
 import { Class, injectable, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
-import { NormalizedModuleMetadata } from '#models/normalized-module-metadata.js';
+import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import {
   AnyObj,
   Extension,

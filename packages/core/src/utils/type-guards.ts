@@ -29,7 +29,7 @@ import { controller, ControllerMetadata } from '#decorators/controller.js';
 import { route } from '#decorators/route.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedProvider } from './ng-utils.js';
-import { NormalizedModuleMetadata } from '#models/normalized-module-metadata.js';
+import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;

@@ -6,7 +6,7 @@ import type { AddressInfo } from 'net';
 import { AppInitializer } from './app-initializer.js';
 import { LogMediator } from './log-mediator/log-mediator.js';
 import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
-import { AppOptions } from './models/app-options.js';
+import { AppOptions } from './types/app-options.js';
 import { ModuleManager } from './services/module-manager.js';
 import { HttpServerModule, HttpsServerModule } from './types/http-module.js';
 import { AnyFn, ModuleType } from './types/mix.js';

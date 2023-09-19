@@ -5,7 +5,7 @@ import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { InjectionToken, forwardRef, injectable } from '#di';
 import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
-import { NormalizedModuleMetadata } from '#models/normalized-module-metadata.js';
+import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { AnyObj, Extension, ExtensionProvider, ModuleType, ModuleWithParams, ServiceProvider } from '#types/mix.js';
 import { isMultiProvider } from '#utils/type-guards.js';
 import { ModuleManager } from './module-manager.js';

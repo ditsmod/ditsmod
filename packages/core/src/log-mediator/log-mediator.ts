@@ -1,5 +1,5 @@
 import { Injector, injectable, optional } from '#di';
-import { ModuleExtract } from '#models/module-extract.js';
+import { ModuleExtract } from '#types/module-extract.js';
 import { ConsoleLogger } from '#services/console-logger.js';
 import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#types/logger.js';
 import { LogItem } from './types.js';

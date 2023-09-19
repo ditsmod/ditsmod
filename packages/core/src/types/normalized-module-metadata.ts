@@ -10,7 +10,7 @@ import {
 } from '#types/mix.js';
 import { AppendsWithParams } from '#types/module-metadata.js';
 import { MultiProvider } from '#utils/type-guards.js';
-import { ProvidersMetadata } from './providers-metadata.js';
+import { ProvidersMetadata } from '#types/providers-metadata.js';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
   /**

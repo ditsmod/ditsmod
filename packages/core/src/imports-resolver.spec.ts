@@ -1,7 +1,7 @@
 import { injectable } from '#di';
 
 import { ImportsResolver } from './imports-resolver.js';
-import { NormalizedModuleMetadata } from './models/normalized-module-metadata.js';
+import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { ImportedTokensMap } from './types/metadata-per-mod.js';
 import { ModuleType, ModuleWithParams, ServiceProvider } from './types/mix.js';
 

@@ -1,5 +1,5 @@
 import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
-import { ModuleExtract } from '#models/module-extract.js';
+import { ModuleExtract } from '#types/module-extract.js';
 import { Logger } from '#types/logger.js';
 import { ServiceProvider } from '#types/mix.js';
 import { Providers } from '#utils/providers.js';

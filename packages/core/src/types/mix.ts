@@ -8,7 +8,7 @@ import {
   TypeProvider,
   ValueProvider
 } from '#di';
-import { ProvidersMetadata } from '#models/providers-metadata.js';
+import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { MetadataPerMod1 } from './metadata-per-mod.js';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
@@ -91,6 +91,8 @@ export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
 export type ServiceProvider = TypeProvider | ValueProvider | ClassProvider | TokenProvider | FactoryProvider;
 
 export type Scope = 'Mod' | 'Rou' | 'Req';
+
+export type Override<T extends object, K extends { [P in keyof T]?: any }> = Omit<T, keyof K> & K;
 
 /**
  * `http.METHODS`

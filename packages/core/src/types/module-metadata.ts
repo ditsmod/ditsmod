@@ -1,5 +1,5 @@
 import { Class } from '#di';
-import { ProvidersMetadata } from '#models/providers-metadata.js';
+import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { AnyObj, GuardItem, ModuleType, ModuleWithParams } from '#types/mix.js';
 import { ExtensionOptions } from '#utils/get-extension-provider.js';
 

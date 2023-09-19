@@ -1,7 +1,7 @@
 import { Injector } from '#di';
 
 import { defaultExtensionsProviders } from './services/default-extensions-providers.js';
-import { NormalizedModuleMetadata } from './models/normalized-module-metadata.js';
+import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { defaultProvidersPerApp } from './services/default-providers-per-app.js';
 import { defaultProvidersPerReq } from './services/default-providers-per-req.js';
 import { ModuleManager } from './services/module-manager.js';
@@ -15,7 +15,7 @@ import { getProvidersTargets, getTokens } from './utils/get-tokens.js';
 import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } from './utils/type-guards.js';
 import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
 import { RouteMeta } from './types/route-data.js';
-import { AppOptions } from './models/app-options.js';
+import { AppOptions } from './types/app-options.js';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
