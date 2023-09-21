@@ -11,7 +11,7 @@
     "#dict/second/*": "./dist/app/second/locales/current/_base-en/*"
   },
   "scripts": {
-    "start": "yarn build && node dist/main.js",
+    "start": "yarn build && node --enable-source-maps dist/main.js",
     "test": "tsc -b tsconfig.test.json && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js",
     "build": "tsc -b tsconfig.build.json",
     "clean": "rimraf dist*"
