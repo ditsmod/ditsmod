@@ -11,7 +11,6 @@ import { ModuleManager } from './services/module-manager.js';
 import { HttpServerModule, HttpsServerModule } from './types/http-module.js';
 import { AnyFn, ModuleType } from './types/mix.js';
 import { Http2SecureServerOptions, NodeServer, RequestListener } from './types/server-options.js';
-import { cleanErrorTrace } from './utils/clean-error-trace.js';
 import { isHttp2SecureServerOptions } from './utils/type-guards.js';
 
 export class Application {
@@ -33,7 +32,6 @@ export class Application {
       } catch (err: any) {
         this.systemLogMediator.internalServerError(this, err, true);
         this.flushLogs();
-        cleanErrorTrace(err);
         reject(err);
       }
     });
