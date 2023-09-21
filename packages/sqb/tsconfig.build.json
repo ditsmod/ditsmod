@@ -2,7 +2,6 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "rootDir": "src",
-    // "baseUrl": ".", // See https://github.com/microsoft/TypeScript/issues/47114#issuecomment-1004360864
     "outDir": "dist",
     "tsBuildInfoFile": "dist/build.tsbuildinfo",
     "paths": {

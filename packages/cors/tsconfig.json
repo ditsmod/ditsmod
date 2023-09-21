@@ -1,11 +1,26 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    // "baseUrl": ".", // See https://github.com/microsoft/TypeScript/issues/47114#issuecomment-1004360864
     "outDir": "dist",
     "paths": {
       "@ditsmod/core": ["../core/src"],
-    }
+    },
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "noImplicitOverride": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "strictPropertyInitialization": false,
+    "noImplicitAny": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
   },
   "include": ["src"],
   "files": [],

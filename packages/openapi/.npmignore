@@ -12,5 +12,7 @@ yarn.lock
 .js
 jest.config.ts
 *.tsbuildinfo
+tsconfig.build.json
+tsconfig.test.json
+tsconfig.unit.json
 dist-*
-tsconfig.json

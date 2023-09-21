@@ -14,4 +14,6 @@ yarn.lock
 .js
 jest.config.ts
 *.tsbuildinfo
-tsconfig.json
+tsconfig.build.json
+tsconfig.test.json
+tsconfig.unit.json
