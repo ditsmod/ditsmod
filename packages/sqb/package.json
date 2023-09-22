@@ -30,6 +30,7 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^2.46.0"
+    "@ditsmod/core": "^2.50.0",
+    "@ditsmod/router": "^2.8.0"
   }
 }
