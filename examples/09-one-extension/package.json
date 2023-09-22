@@ -14,5 +14,9 @@
   },
   "imports": {
     "#src/*": "./dist/*"
+  },
+  "dependencies": {
+    "@ditsmod/core": "^2.50.0",
+    "@ditsmod/router": "^2.8.0"
   }
 }
