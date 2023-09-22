@@ -3,10 +3,10 @@ import {
   ExtensionsManager,
   HTTP_INTERCEPTORS,
   PerAppService,
-  ROUTES_EXTENSIONS,
   injectable,
   InjectionToken,
 } from '@ditsmod/core';
+import { ROUTES_EXTENSIONS } from '@ditsmod/router';
 
 import { BodyParserConfig } from './body-parser-config.js';
 import { BodyParserInterceptor } from './body-parser.interceptor.js';

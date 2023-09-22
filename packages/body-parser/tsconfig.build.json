@@ -5,16 +5,12 @@
     "outDir": "dist",
     "rootDir": "src",
     "tsBuildInfoFile": "dist/build.tsbuildinfo",
-    "paths": {
-      "@ditsmod/core": [
-        "../core/src"
-      ]
-    }
   },
   "include": ["src"],
   "exclude": ["src/**/*.spec.ts"],
   "files": [],
   "references": [
     { "path": "../core/tsconfig.build.json" },
+    { "path": "../router/tsconfig.build.json" },
   ]
 }

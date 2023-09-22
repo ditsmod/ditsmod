@@ -7,7 +7,6 @@
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
   "description": "Body parser module for Ditsmod applications",
-  "module": "dist/index.js",
   "exports": {
     "./package.json": {
       "default": "./package.json"
@@ -33,7 +32,8 @@
     "get-body": "^1.0.3"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.47.0"
+    "@ditsmod/core": "^2.50.0",
+    "@ditsmod/router": "^2.8.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }
