@@ -3,7 +3,6 @@ import { format } from 'util';
 import { HTTP_INTERCEPTORS } from '#constans';
 import { Class, injectable, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
-import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import {
   AnyObj,
   Extension,
@@ -16,6 +15,7 @@ import {
   ServiceProvider,
 } from '#types/mix.js';
 import { AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
+import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { getExtensionProvider } from '#utils/get-extension-provider.js';
 import { ModuleMetadataWithContext, getModuleMetadata } from '#utils/get-module-metadata.js';
 import { getModuleName } from '#utils/get-module-name.js';
