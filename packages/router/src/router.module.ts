@@ -1,9 +1,10 @@
-import { featureModule, Router, PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from '@ditsmod/core';
+import { featureModule, Router } from '@ditsmod/core';
 
 import { DefaultRouter } from './router.js';
 import { RouterLogMediator } from './router-log-mediator.js';
 import { RoutesExtension } from './routes.extension.js';
 import { PreRouterExtension } from './pre-router.extension.js';
+import { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS } from './types.js';
 
 /**
  * Sets `Router` provider on application scope, and adds RoutesExtension with PreRouterExtension.

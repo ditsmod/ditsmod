@@ -4,7 +4,6 @@ import {
   NODE_REQ,
   NODE_RES,
   QUERY_STRING,
-  ROUTES_EXTENSIONS,
   Injector,
   KeyRegistry,
   ResolvedProvider,
@@ -29,6 +28,7 @@ import {
   Router,
   getModule,
 } from '@ditsmod/core';
+import { ROUTES_EXTENSIONS } from './types.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
