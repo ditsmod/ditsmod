@@ -1,7 +1,7 @@
-import { Extension, ExtensionsManager, HTTP_INTERCEPTORS, PerAppService, ROUTES_EXTENSIONS } from '@ditsmod/core';
+import { Extension, ExtensionsManager, HTTP_INTERCEPTORS, PerAppService, injectable, optional } from '@ditsmod/core';
+import { ROUTES_EXTENSIONS } from '@ditsmod/router';
 import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 import { isReferenceObject } from '@ditsmod/openapi';
-import { injectable, optional } from '@ditsmod/core';
 
 import { ValidationRouteMeta } from './types.js';
 import { ParametersInterceptor } from './parameters.interceptor.js';
@@ -17,7 +17,7 @@ export class ValidationExtension implements Extension<void> {
     private perAppService: PerAppService,
     private extensionsManager: ExtensionsManager,
     private ajvService: AjvService,
-    @optional() private validationOptions?: ValidationOptions
+    @optional() private validationOptions?: ValidationOptions,
   ) {}
 
   async init() {

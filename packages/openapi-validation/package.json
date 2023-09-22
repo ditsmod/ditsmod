@@ -34,7 +34,8 @@
     "ajv": "^8.11.0"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.47.0",
+    "@ditsmod/core": "^2.50.0",
+    "@ditsmod/router": "^2.8.0",
     "@ditsmod/i18n": "^2.8.0",
     "@ditsmod/openapi": "^2.20.0"
   },
