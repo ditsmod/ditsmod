@@ -32,8 +32,8 @@ npm start
 From the second terminal check the work:
 
 ```bash
-curl -isS localhost:3000
-curl -isS localhost:3000/throw-error
+curl -i localhost:3000
+curl -i localhost:3000/throw-error
 ```
 
 [1]: /examples/prerequisite

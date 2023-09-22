@@ -20,7 +20,7 @@ npm start
 From second terminal:
 
 ```bash
-curl -isS localhost:3000
+curl -i localhost:3000
 ```
 
 and see in first terminal

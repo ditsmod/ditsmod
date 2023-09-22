@@ -20,5 +20,5 @@ npm start
 From second terminal:
 
 ```bash
-curl -isS localhost:3000 -d '{"one":1}' -H 'content-type: application/json'
+curl -i localhost:3000 -d '{"one":1}' -H 'content-type: application/json'
 ```

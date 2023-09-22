@@ -53,7 +53,7 @@ npm start
 Перевірити роботу сервера можна за допомогою `curl`:
 
 ```bash
-curl -isS localhost:3000
+curl -i localhost:3000
 ```
 
 Або просто перейшовши у браузері на [http://localhost:3000/](http://localhost:3000/).

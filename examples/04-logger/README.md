@@ -20,10 +20,10 @@ npm start
 From second terminal:
 
 ```bash
-curl -isS localhost:3000
-curl -isS localhost:3000/winston
-curl -isS localhost:3000/bunyan
-curl -isS localhost:3000/pino
+curl -i localhost:3000
+curl -i localhost:3000/winston
+curl -i localhost:3000/bunyan
+curl -i localhost:3000/pino
 ```
 
 As you can see, there are examples for [bunyan][1], [pino][2] and [winston][3] loggers.

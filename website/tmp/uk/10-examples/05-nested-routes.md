@@ -13,8 +13,8 @@ npm start
 З другого терміналу перевірити роботу:
 
 ```bash
-curl -isS localhost:3000/api/posts
-curl -isS localhost:3000/api/posts/123
-curl -isS localhost:3000/api/posts/123/comments
-curl -isS localhost:3000/api/posts/123/comments/456
+curl -i localhost:3000/api/posts
+curl -i localhost:3000/api/posts/123
+curl -i localhost:3000/api/posts/123/comments
+curl -i localhost:3000/api/posts/123/comments/456
 ```

@@ -13,32 +13,32 @@ npm start
 From the second terminal check the work:
 
 ```bash
-curl -isS localhost:3000
+curl -i localhost:3000
 
 # 404 from second module
-curl -isS localhost:3000/get-2
+curl -i localhost:3000/get-2
 
 # Adding second module
-curl -isS localhost:3000/add-2
+curl -i localhost:3000/add-2
 
 # 200 from second module
-curl -isS localhost:3000/get-2
+curl -i localhost:3000/get-2
 
 # During adding third module, should failed
-curl -isS localhost:3000/add-3
+curl -i localhost:3000/add-3
 
 # But other modules continue works
-curl -isS localhost:3000
-curl -isS localhost:3000/get-2
+curl -i localhost:3000
+curl -i localhost:3000/get-2
 
 # Removing second module
-curl -isS localhost:3000/del-2
+curl -i localhost:3000/del-2
 
 # 404 from second module
-curl -isS localhost:3000/get-2
+curl -i localhost:3000/get-2
 
 # But OK first module
-curl -isS localhost:3000
+curl -i localhost:3000
 ```
 
 

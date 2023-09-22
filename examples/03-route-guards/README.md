@@ -26,7 +26,7 @@ npm start
 From second terminal:
 
 ```bash
-curl -isS localhost:3000
-curl -isS localhost:3000/unauth
-curl -isS localhost:3000/forbidden
+curl -i localhost:3000
+curl -i localhost:3000/unauth
+curl -i localhost:3000/forbidden
 ```

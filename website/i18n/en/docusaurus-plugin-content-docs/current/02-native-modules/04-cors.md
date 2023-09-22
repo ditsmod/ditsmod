@@ -38,23 +38,23 @@ You can check the operation of this module with approximately the following quer
 
 ```bash
 # Simply OPTIONS request
-curl -isS localhost:3000 -X OPTIONS
+curl -i localhost:3000 -X OPTIONS
 
 # OPTIONS CORS request
-curl -isS localhost:3000 -X OPTIONS -H 'Origin: https://example.com'
+curl -i localhost:3000 -X OPTIONS -H 'Origin: https://example.com'
 
 # GET CORS request
-curl -isS localhost:3000 -H 'Origin: https://example.com'
+curl -i localhost:3000 -H 'Origin: https://example.com'
 
 # CORS Preflight request
-curl -isS localhost:3000 \
+curl -i localhost:3000 \
 -X OPTIONS \
 -H 'Origin: https://example.com' \
 -H 'Access-Control-Request-Method: POST' \
 -H 'Access-Control-Request-Headers: X-PINGOTHER, Content-Type'
 
 # CORS request with credentials
-curl -isS localhost:3000/credentials
+curl -i localhost:3000/credentials
 ```
 
 ## Work with custom settings

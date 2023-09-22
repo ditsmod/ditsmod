@@ -81,7 +81,7 @@ export class HelloWorldController {
 Модифікатор доступу в конструкторі може бути будь-яким (private, protected або public), але взагалі без модифікатора - `res` вже буде простим параметром з видимістю лише в конструкторі.
 :::
 
-Щоб отримати `pathParams` чи `queryParams` доведеться скористатись декоратором `inject` та токенами `PATH_PARAMS` і `QUERY_PARAMS`:
+Щоб отримати `pathParams` чи `queryParams`, доведеться скористатись декоратором `inject` та токенами `PATH_PARAMS` і `QUERY_PARAMS`:
 
 ```ts {7-8}
 import { controller, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';

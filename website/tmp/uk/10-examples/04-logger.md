@@ -25,10 +25,10 @@ npm start
 З другого терміналу перевірити роботу:
 
 ```bash
-curl -isS localhost:3000
-curl -isS localhost:3000/pino
-curl -isS localhost:3000/winston
-curl -isS localhost:3000/bunyan
+curl -i localhost:3000
+curl -i localhost:3000/pino
+curl -i localhost:3000/winston
+curl -i localhost:3000/bunyan
 ```
 
 ## SomeModule

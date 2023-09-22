@@ -32,6 +32,6 @@ npm start
 З другого терміналу перевірте роботу:
 
 ```bash
-curl -isS localhost:3000
-curl -isS localhost:3000/throw-error
+curl -i localhost:3000
+curl -i localhost:3000/throw-error
 ```

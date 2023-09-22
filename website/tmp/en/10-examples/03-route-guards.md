@@ -33,9 +33,9 @@ npm start
 From the second terminal check the work:
 
 ```bash
-curl -isS localhost:3000
-curl -isS localhost:3000/unauth
-curl -isS localhost:3000/forbidden
+curl -i localhost:3000
+curl -i localhost:3000/unauth
+curl -i localhost:3000/forbidden
 ```
 
 [1]: /examples/prerequisite

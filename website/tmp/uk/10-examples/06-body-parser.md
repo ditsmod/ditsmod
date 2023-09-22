@@ -11,5 +11,5 @@ npm start
 З другого терміналу перевірити роботу:
 
 ```bash
-curl -isS localhost:3000 -d '{"one":1}' -H 'content-type: application/json'
+curl -i localhost:3000 -d '{"one":1}' -H 'content-type: application/json'
 ```

@@ -20,14 +20,14 @@ npm start
 From second terminal:
 
 ```bash
-curl -isS localhost:3000
+curl -i localhost:3000
 
 # Returns token with encoded your name.
-curl -isS localhost:3000/get-token-for/:your-name
+curl -i localhost:3000/get-token-for/:your-name
 
 # Return response with 401 status.
-curl -isS localhost:3000/profile
+curl -i localhost:3000/profile
 
 # Input token here and you are in your "profile".
-curl -isS localhost:3000/profile -H 'Authorization: Bearer <you-token>'
+curl -i localhost:3000/profile -H 'Authorization: Bearer <you-token>'
 ```

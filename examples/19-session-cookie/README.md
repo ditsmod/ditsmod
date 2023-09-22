@@ -20,6 +20,6 @@ npm start
 From second terminal:
 
 ```bash
-curl -isS localhost:3000/set
-curl -isS localhost:3000/get -H 'cookie: custom-session-name=123'
+curl -i localhost:3000/set
+curl -i localhost:3000/get -H 'cookie: custom-session-name=123'
 ```

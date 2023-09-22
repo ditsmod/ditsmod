@@ -53,7 +53,7 @@ npm start
 You can check the server operation using `curl`:
 
 ```bash
-curl -isS localhost:3000
+curl -i localhost:3000
 ```
 
 Or simply by going to [http://localhost:3000/](http://localhost:3000/) in your browser.

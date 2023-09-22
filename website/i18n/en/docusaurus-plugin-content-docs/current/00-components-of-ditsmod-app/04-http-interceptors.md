@@ -24,7 +24,7 @@ HTTP request processing has the following workflow:
 
 1. Ditsmod creates an instance of [PreRouter][7] at the application level.
 2. `PreRouter` uses the router to search for the request handler according to the URI.
-3. If the request handler is not found, `PreRouter` issues a 404 error.
+3. If the request handler is not found, `PreRouter` issues a 501 error.
 4. If a request handler is found, Ditsmod creates a provider instance with the [HttpFrontend][2] token at the request level, places it first in the queue of interceptors, and automatically calls it. By default, this interceptor is responsible for calling guards and setting values for providers with `QUERY_PARAMS` and `PATH_PARAMS` tokens.
 5. The second and subsequent interceptors may not start, depending on whether the previous interceptor in the queue will start them.
 6. If all interceptors have worked, Ditsmod starts [HttpBackend][3], which is instantiated at the request level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
@@ -36,7 +36,7 @@ So, the approximate order of processing the request is as follows:
 response <- PreRouter <- HttpFrontend <- [other interceptors] <- HttpBackend <- [controller]
 ```
 
-As `PreRouter`, `HttpFrontend`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 404 status when the required route is missing, but also want to add some text or change headers, you can substitute [PreRouter][7] with your own class.
+As `PreRouter`, `HttpFrontend`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 501 status when the required route is missing, but also want to add some text or change headers, you can substitute [PreRouter][7] with your own class.
 
 Note that each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller. However, at the moment (Ditsmod v2.0.0), `HttpFrontend` and `HttpBackend` by default ignores everything that returns the controller or interceptors, so this promise resolve can be useful for other purposes - to collect metrics, logging, etc.
 

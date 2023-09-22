@@ -17,7 +17,7 @@ npm start
 З другого терміналу перевірте роботу:
 
 ```bash
-curl -isS localhost:3000
+curl -i localhost:3000
 ```
 
 [1]: /examples/prerequisite
