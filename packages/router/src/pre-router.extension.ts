@@ -96,9 +96,8 @@ export class PreRouterExtension implements Extension<void> {
             .catch((err) => {
               const errorHandler = injector.instantiateResolved(resolvedCtrlErrHandler) as HttpErrorHandler;
               return errorHandler.handleError(err);
-            });
-
-          injector.clear();
+            })
+            .finally(() => injector.clear());
         }) as RouteHandler;
 
         preparedRouteMeta.push({ moduleName, httpMethod, path, handle });
