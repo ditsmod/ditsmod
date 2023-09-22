@@ -4,10 +4,11 @@ import {
   MetadataPerMod2,
   ModuleExtract,
   PerAppService,
-  ROUTES_EXTENSIONS,
   ServiceProvider,
+  injectable,
+  Injector,
 } from '@ditsmod/core';
-import { injectable, Injector } from '@ditsmod/core';
+import { ROUTES_EXTENSIONS } from '@ditsmod/router';
 
 import { I18nTransformer } from './i18n-transformer.js';
 import { I18nLogMediator } from './i18n-log-mediator.js';
@@ -25,7 +26,7 @@ export class I18nExtension implements Extension<void> {
     private extensionsManager: ExtensionsManager,
     private moduleExtract: ModuleExtract,
     private i18nTransformer: I18nTransformer,
-    private perAppService: PerAppService
+    private perAppService: PerAppService,
   ) {}
 
   async init(isLastExtensionCall?: boolean) {
