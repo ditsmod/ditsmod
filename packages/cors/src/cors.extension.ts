@@ -9,7 +9,6 @@ import {
   ExtensionsManager,
   HTTP_INTERCEPTORS,
   RouteMeta,
-  ROUTES_EXTENSIONS,
   PerAppService,
   ControllerMetadata2,
   Status,
@@ -19,6 +18,7 @@ import {
   methodFactory,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
+import { ROUTES_EXTENSIONS } from '@ditsmod/router';
 
 import { CorsInterceptor } from './cors.interceptor.js';
 import { ALLOW_METHODS } from './constans.js';
