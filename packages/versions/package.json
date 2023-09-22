@@ -31,7 +31,8 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^2.29.1"
+    "@ditsmod/core": "^2.50.0",
+    "@ditsmod/router": "^2.8.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }
