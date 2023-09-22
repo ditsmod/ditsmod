@@ -5,8 +5,6 @@ export { AppInitializer } from './app-initializer.js';
 export { Application } from './application.js';
 export {
   HTTP_INTERCEPTORS,
-  PRE_ROUTER_EXTENSIONS,
-  ROUTES_EXTENSIONS,
   NODE_REQ,
   NODE_RES,
   A_PATH_PARAMS,
@@ -63,7 +61,7 @@ export {
   ResolvedGuard,
   RedirectStatusCodes,
   ServiceProvider,
-  AnyFn
+  AnyFn,
 } from './types/mix.js';
 export { ModuleMetadata, AppendsWithParams } from './types/module-metadata.js';
 export { RouteMeta } from './types/route-data.js';
