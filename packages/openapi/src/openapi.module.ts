@@ -1,6 +1,6 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
-import { featureModule, ModuleWithParams, PRE_ROUTER_EXTENSIONS, Providers, ROUTES_EXTENSIONS } from '@ditsmod/core';
-import { RouterModule } from '@ditsmod/router';
+import { featureModule, ModuleWithParams, Providers } from '@ditsmod/core';
+import { RouterModule, PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from '@ditsmod/router';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension.js';
 import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension.js';
