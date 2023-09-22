@@ -1,4 +1,5 @@
-import { featureModule, ModuleWithParams, PRE_ROUTER_EXTENSIONS, Providers } from '@ditsmod/core';
+import { featureModule, ModuleWithParams, Providers } from '@ditsmod/core';
+import { PRE_ROUTER_EXTENSIONS } from '@ditsmod/router';
 import { CorsOptions as CorsOpts } from '@ts-stack/cors';
 
 import { CORS_EXTENSIONS } from './constans.js';

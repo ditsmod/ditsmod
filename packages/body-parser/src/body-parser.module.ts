@@ -1,4 +1,5 @@
-import { featureModule, ModuleWithParams, PRE_ROUTER_EXTENSIONS } from '@ditsmod/core';
+import { featureModule, ModuleWithParams } from '@ditsmod/core';
+import { PRE_ROUTER_EXTENSIONS } from '@ditsmod/router';
 
 import { HTTP_BODY, BodyParserConfig } from './body-parser-config.js';
 import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.extension.js';
