@@ -25,7 +25,7 @@ export class HttpInterceptorHandler implements HttpHandler {
   constructor(private interceptor: HttpInterceptor, private next: HttpHandler) {}
 
   async handle(): Promise<any> {
-    await this.interceptor.intercept(this.next);
+    return this.interceptor.intercept(this.next);
   }
 }
 
