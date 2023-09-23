@@ -6,6 +6,18 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
+import { PathParam } from './router.js';
+import { NodeRequest, NodeResponse } from './server-options.js';
+
+export class InterceptorContext {
+  constructor(
+    public nodeReq: NodeRequest,
+    public nodeRes: NodeResponse,
+    public aPathParams: PathParam[],
+    public queryString: string = '',
+  ) {}
+}
+
 /**
  * `HttpHandler` is injectable. When injected, the handler instance dispatches requests to the
  * first interceptor in the chain, which dispatches to the second, etc, eventually reaching the
@@ -22,7 +34,10 @@ export interface HttpInterceptor {
 }
 
 export class HttpInterceptorHandler implements HttpHandler {
-  constructor(private interceptor: HttpInterceptor, private next: HttpHandler) {}
+  constructor(
+    private interceptor: HttpInterceptor,
+    private next: HttpHandler,
+  ) {}
 
   async handle(): Promise<any> {
     return this.interceptor.intercept(this.next);
