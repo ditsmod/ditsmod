@@ -14,7 +14,6 @@ import { ModuleManager } from './module-manager.js';
 describe('ModuleManager', () => {
   console.log = jest.fn();
   type ModuleId = string | ModuleType | ModuleWithParams;
-  type PartialMeta = Partial<NormalizedModuleMetadata>;
 
   class MockModuleManager extends ModuleManager {
     override map = new Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();

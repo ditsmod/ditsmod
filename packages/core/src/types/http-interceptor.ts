@@ -7,19 +7,15 @@
  */
 
 import { Injector } from '#di';
-import { RouteMeta } from './route-data.js';
 import { PathParam } from './router.js';
 import { NodeRequest, NodeResponse } from './server-options.js';
 
 export class InterceptorContext {
-  constructor(
-    public routeMeta: RouteMeta,
-    public injector: Injector,
-    public nodeReq: NodeRequest,
-    public nodeRes: NodeResponse,
-    public aPathParams: PathParam[],
-    public queryString: string = '',
-  ) {}
+  injector: Injector;
+  nodeReq: NodeRequest;
+  nodeRes: NodeResponse;
+  aPathParams: PathParam[];
+  queryString: string;
 }
 
 /**

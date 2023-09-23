@@ -101,7 +101,6 @@ export class PreRouterExtension implements Extension<void> {
             .setById(queryStringId, queryString || '')
             .instantiateResolved<ChainMaker>(resolvedChainMaker)
             .makeChain({
-              routeMeta,
               injector,
               nodeReq,
               nodeRes,

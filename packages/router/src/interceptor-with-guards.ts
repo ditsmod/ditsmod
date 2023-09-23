@@ -3,15 +3,19 @@ import {
   HttpHandler,
   HttpInterceptor,
   InterceptorContext,
+  RouteMeta,
   Status,
   SystemLogMediator,
   injectable,
+  skipSelf,
 } from '@ditsmod/core';
 
 @injectable()
 export class InterceptorWithGuards implements HttpInterceptor {
+  constructor(@skipSelf() protected routeMeta: RouteMeta) {}
+
   async intercept(next: HttpHandler, ctx: InterceptorContext) {
-    const preparedGuards = ctx.routeMeta.resolvedGuards.map<{ guard: CanActivate; params?: any[] }>((item) => {
+    const preparedGuards = this.routeMeta.resolvedGuards.map<{ guard: CanActivate; params?: any[] }>((item) => {
       return {
         guard: ctx.injector.instantiateResolved(item.guard),
         params: item.params,
