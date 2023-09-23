@@ -1,20 +1,19 @@
-import { injectable, HttpHandler, HttpInterceptor, Logger, inject, NodeResponse, NODE_RES } from '@ditsmod/core';
+import { injectable, HttpHandler, HttpInterceptor, Logger, InterceptorContext } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
-  constructor(
-    private logger: Logger,
-    @inject(NODE_RES) private nodeRes: NodeResponse,
-  ) {}
+  constructor(private logger: Logger) {}
 
-  intercept(next: HttpHandler) {
+  intercept(next: HttpHandler, ctx: InterceptorContext) {
     // Handling request to `HelloWorldController`
     return next.handle().finally(() => {
       // You can to do something after, for example, log status:
-      if (this.nodeRes.headersSent) {
-        this.logger.log('info', `MyHttpInterceptor works! Status code: ${this.nodeRes.statusCode}`);
+      if (ctx.nodeRes.headersSent) {
+        const msg = `MyHttpInterceptor works! Status code: ${ctx.nodeRes.statusCode}`;
+        this.logger.log('info', msg);
       } else {
-        this.logger.log('info', 'MyHttpInterceptor works! But... Do you forgot send response or just an error occurred?');
+        const msg = 'MyHttpInterceptor works! But... Do you forgot send response or just an error occurred?';
+        this.logger.log('info', msg);
       }
     });
   }
