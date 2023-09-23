@@ -64,10 +64,9 @@ describe('HttpInterceptor', () => {
     ]);
 
     const chainMaker = injector.get(ChainMaker) as ChainMaker;
-    const chain = chainMaker.makeChain({ nodeReq: {} as any, nodeRes: {} as any, aPathParams: [], queryString: '' });
+    const chain = chainMaker.makeChain({} as any);
     chain.handle();
     expect(jestFn.mock.calls).toEqual([
-      ['HttpFrontend'],
       ['Interceptor1'],
       ['Interceptor2'],
       ['Interceptor3'],
@@ -92,19 +91,17 @@ describe('HttpInterceptor', () => {
     ]);
 
     const chainMaker = injector.get(ChainMaker) as ChainMaker;
-    const chain = chainMaker.makeChain({ nodeReq: {} as any, nodeRes: {} as any, aPathParams: [], queryString: '' });
+    const chain = chainMaker.makeChain({} as any);
     chain.handle();
-    expect(jestFn.mock.calls).toEqual([['HttpFrontend'], ['Interceptor1'], ['Interceptor2'], ['Interceptor3']]);
+    expect(jestFn.mock.calls).toEqual([['Interceptor1'], ['Interceptor2'], ['Interceptor3']]);
   });
 
   it('without HTTP_INTERCEPTORS, chain should be HttpBackend', () => {
     const injector = Injector.resolveAndCreate([RouteMeta]).resolveAndCreateChild([...defaultProviders]);
 
     const chainMaker = injector.get(ChainMaker) as ChainMaker;
-    const chain = chainMaker.makeChain({ nodeReq: {} as any, nodeRes: {} as any, aPathParams: [], queryString: '' });
-    const frontend = injector.get(HttpFrontend) as HttpFrontend;
+    const chain = chainMaker.makeChain({} as any);
     const backend = injector.get(HttpBackend) as HttpBackend;
-    expect((chain as any).interceptor).toBe(frontend);
-    expect((chain as any).next).toBe(backend);
+    expect(chain).toBe(backend);
   });
 });

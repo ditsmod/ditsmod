@@ -20,6 +20,9 @@ export class RouteMeta {
     });
   }
 
+  /**
+   * Resolved a factory assigned to call a controller method that is bound to a specific route.
+   */
   resolvedFactory: ResolvedProvider;
   /**
    * An array of DI tokens used to look up `CanActivate()` handlers,

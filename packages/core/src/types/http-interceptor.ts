@@ -6,11 +6,13 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
+import { Injector } from '#di';
 import { PathParam } from './router.js';
 import { NodeRequest, NodeResponse } from './server-options.js';
 
 export class InterceptorContext {
   constructor(
+    public injector: Injector,
     public nodeReq: NodeRequest,
     public nodeRes: NodeResponse,
     public aPathParams: PathParam[],

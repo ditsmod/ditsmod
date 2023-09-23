@@ -26,6 +26,13 @@ import {
   RouteHandler,
   Router,
   getModule,
+  ResolvedGuard,
+  HttpInterceptor,
+  HttpHandler,
+  InterceptorContext,
+  CanActivate,
+  Status,
+  ServiceProvider,
 } from '@ditsmod/core';
 import { ROUTES_EXTENSIONS } from './types.js';
 
@@ -72,7 +79,13 @@ export class PreRouterExtension implements Extension<void> {
       aControllersMetadata2.forEach(({ httpMethod, path, providersPerRou, providersPerReq, routeMeta }) => {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'injectorPerRou');
-        const mergedPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
+        const mergedPerReq: ServiceProvider[] = [];
+        const InterceptorWithGuards = this.getInterceptorWithGuards(routeMeta.resolvedGuards);
+        if (InterceptorWithGuards) {
+          mergedPerReq.push({ token: HTTP_INTERCEPTORS, useClass: InterceptorWithGuards, multi: true });
+        }
+        mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
+        mergedPerReq.push(...metadataPerMod2.providersPerReq, ...providersPerReq);
         const resolvedPerReq = Injector.resolve(mergedPerReq);
         this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
         const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
@@ -92,6 +105,7 @@ export class PreRouterExtension implements Extension<void> {
             .setById(queryStringId, queryString || '')
             .instantiateResolved<ChainMaker>(resolvedChainMaker)
             .makeChain({
+              injector,
               nodeReq,
               nodeRes,
               aPathParams,
@@ -110,6 +124,43 @@ export class PreRouterExtension implements Extension<void> {
     });
 
     return preparedRouteMeta;
+  }
+
+  protected getInterceptorWithGuards(resolvedGuards: ResolvedGuard[]) {
+    if (!resolvedGuards.length) {
+      return;
+    }
+
+    @injectable()
+    class InterceptorWithGuards implements HttpInterceptor {
+      async intercept(next: HttpHandler, ctx: InterceptorContext) {
+        const preparedGuards = resolvedGuards.map<{ guard: CanActivate; params?: any[] }>((item) => {
+          return {
+            guard: ctx.injector.instantiateResolved(item.guard),
+            params: item.params,
+          };
+        });
+
+        for (const item of preparedGuards) {
+          const canActivate = await item.guard.canActivate(item.params);
+          if (canActivate !== true) {
+            const status = typeof canActivate == 'number' ? canActivate : undefined;
+            this.prohibitActivation(ctx, status);
+          }
+        }
+
+        return next.handle();
+      }
+
+      prohibitActivation(ctx: InterceptorContext, status?: Status) {
+        const systemLogMediator = ctx.injector.get(SystemLogMediator) as SystemLogMediator;
+        systemLogMediator.youCannotActivateRoute(this, ctx.nodeReq.method!, ctx.nodeReq.url!);
+        ctx.nodeRes.statusCode = status || Status.UNAUTHORIZED;
+        ctx.nodeRes.end();
+      }
+    }
+
+    return InterceptorWithGuards;
   }
 
   /**
