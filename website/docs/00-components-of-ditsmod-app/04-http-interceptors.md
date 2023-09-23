@@ -47,18 +47,17 @@ sidebar_position: 4
 Кожен інтерсептор повинен бути класом, що впроваджує інтерфейс [HttpInterceptor][1], та має анотацію з декоратором `injectable`:
 
 ```ts
-import { injectable } from '@ditsmod/core';
-import { HttpHandler, HttpInterceptor } from '@ditsmod/core';
+import { injectable, InterceptorContext, HttpHandler, HttpInterceptor } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
-  intercept(next: HttpHandler) {
+  intercept(next: HttpHandler, ctx: InterceptorContext) {
     return next.handle(); // Here returns Promise<any>;
   }
 }
 ```
 
-Як бачите, метод `intercept()` має єдиний параметр - це інстанс обробника, що викликає наступний інтерсептор. Якщо для своєї роботи інтерсептор потребує додаткових даних, їх можна отримати в конструкторі через DI, як і в будь-якому сервісі.
+Як бачите, метод `intercept()` має два параметри: у перший передається інстанс обробника, що викликає наступний інтерсептор, а у другий - `InterceptorContext` (нативні об'єкти запиту та відповіді від Node.js). Якщо для своєї роботи інтерсептор потребує додаткових даних, їх можна отримати в конструкторі через DI, як і в будь-якому сервісі.
 
 ## Передача інтерсептора в інжектор
 
