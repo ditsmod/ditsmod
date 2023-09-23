@@ -13,7 +13,7 @@ export const defaultProvidersPerReq: Readonly<ServiceProvider[]> = [
   { token: HttpErrorHandler, useClass: DefaultHttpErrorHandler },
   { token: HttpFrontend, useClass: DefaultHttpFrontend },
   { token: HttpBackend, useClass: DefaultHttpBackend },
-  { token: ChainMaker, useFactory: [ChainMaker, ChainMaker.prototype.makeChain] },
+  ChainMaker,
   { token: NODE_REQ, useValue: {} },
   { token: NODE_RES, useValue: {} },
   { token: A_PATH_PARAMS, useValue: undefined },

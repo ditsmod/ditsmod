@@ -6,6 +6,7 @@ import {
   HttpHandler,
   HttpInterceptor,
   HttpInterceptorHandler,
+  InterceptorContext,
 } from '#types/http-interceptor.js';
 
 /**
@@ -13,14 +14,16 @@ import {
  */
 @injectable()
 export class ChainMaker {
-  makeChain(
-    frontend: HttpFrontend,
-    backend: HttpBackend,
-    @inject(HTTP_INTERCEPTORS) @optional() interceptors: HttpInterceptor[] = [],
-  ): HttpHandler {
-    return [frontend, ...interceptors].reduceRight(
-      (next, interceptor) => new HttpInterceptorHandler(interceptor, next),
-      backend,
+  constructor(
+    private frontend: HttpFrontend,
+    private backend: HttpBackend,
+    @inject(HTTP_INTERCEPTORS) @optional() private interceptors: HttpInterceptor[] = [],
+  ) {}
+
+  makeChain(ctx: InterceptorContext): HttpHandler {
+    return [this.frontend, ...this.interceptors].reduceRight(
+      (next, interceptor) => new HttpInterceptorHandler(interceptor, ctx, next),
+      this.backend,
     );
   }
 }

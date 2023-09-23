@@ -26,21 +26,22 @@ export class InterceptorContext {
  * In an `HttpInterceptor`, the `HttpHandler` parameter is the next interceptor in the chain.
  */
 export abstract class HttpHandler {
-  abstract handle(...args: any[]): Promise<any>;
+  abstract handle(): Promise<any>;
 }
 
 export interface HttpInterceptor {
-  intercept(next?: HttpHandler): Promise<any>;
+  intercept(next: HttpHandler, ctx: InterceptorContext): Promise<any>;
 }
 
 export class HttpInterceptorHandler implements HttpHandler {
   constructor(
     private interceptor: HttpInterceptor,
+    private ctx: InterceptorContext,
     private next: HttpHandler,
   ) {}
 
   async handle(): Promise<any> {
-    return this.interceptor.intercept(this.next);
+    return this.interceptor.intercept(this.next, this.ctx);
   }
 }
 
@@ -50,7 +51,7 @@ export class HttpInterceptorHandler implements HttpHandler {
  * Interceptors sit between the `HttpFrontend` and the `HttpBackend`.
  */
 export abstract class HttpFrontend implements HttpInterceptor {
-  abstract intercept(next?: HttpHandler): Promise<any>;
+  abstract intercept(next: HttpHandler, ctx: InterceptorContext): Promise<any>;
 }
 
 /**
@@ -62,5 +63,5 @@ export abstract class HttpFrontend implements HttpInterceptor {
  * controller's route method, without going through the next interceptors in the chain.
  */
 export abstract class HttpBackend implements HttpHandler {
-  abstract handle(...args: any[]): any;
+  abstract handle(): any;
 }
