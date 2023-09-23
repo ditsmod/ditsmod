@@ -18,7 +18,6 @@ import {
   PerAppService,
   HttpBackend,
   HttpFrontend,
-  HttpHandler,
   MetadataPerMod2,
   Extension,
   HttpMethod,
@@ -91,7 +90,13 @@ export class PreRouterExtension implements Extension<void> {
             .setById(nodeResId, nodeRes)
             .setById(aPathParamsId, aPathParams)
             .setById(queryStringId, queryString || '')
-            .instantiateResolved<HttpHandler>(resolvedChainMaker)
+            .instantiateResolved<ChainMaker>(resolvedChainMaker)
+            .makeChain({
+              nodeReq,
+              nodeRes,
+              aPathParams,
+              queryString,
+            })
             .handle() // First HTTP handler in the chain of HTTP interceptors.
             .catch((err) => {
               const errorHandler = injector.instantiateResolved(resolvedCtrlErrHandler) as HttpErrorHandler;
