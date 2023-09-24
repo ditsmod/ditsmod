@@ -19,6 +19,7 @@ export class InterceptorWithGuards implements HttpInterceptor {
       if (canActivate !== true) {
         const status = typeof canActivate == 'number' ? canActivate : undefined;
         this.prohibitActivation(ctx, status);
+        return;
       }
     }
 
