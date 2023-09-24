@@ -9,7 +9,7 @@ import {
 } from '#types/http-interceptor.js';
 
 /**
- * An injectable `ChainMaker` that ties multiple interceptors in chain.
+ * An injectable service that ties multiple interceptors in chain.
  */
 @injectable()
 export class ChainMaker {
