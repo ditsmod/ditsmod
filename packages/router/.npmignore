@@ -16,3 +16,5 @@ jest.config.ts
 *.tsbuildinfo
 tsconfig.test.json
 tsconfig.unit.json
+src/bench.*
+dist/bench.*
