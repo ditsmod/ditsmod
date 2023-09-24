@@ -1,5 +1,4 @@
 import {
-  CanActivate,
   HttpHandler,
   HttpInterceptor,
   InterceptorContext,
@@ -15,15 +14,8 @@ export class InterceptorWithGuards implements HttpInterceptor {
   constructor(@skipSelf() protected routeMeta: RouteMeta) {}
 
   async intercept(next: HttpHandler, ctx: InterceptorContext) {
-    const preparedGuards = this.routeMeta.resolvedGuards.map<{ guard: CanActivate; params?: any[] }>((item) => {
-      return {
-        guard: ctx.injector.instantiateResolved(item.guard),
-        params: item.params,
-      };
-    });
-
-    for (const item of preparedGuards) {
-      const canActivate = await item.guard.canActivate(item.params);
+    for (const item of this.routeMeta.resolvedGuards) {
+      const canActivate = await ctx.injector.instantiateResolved(item.guard).canActivate(item.params);
       if (canActivate !== true) {
         const status = typeof canActivate == 'number' ? canActivate : undefined;
         this.prohibitActivation(ctx, status);
