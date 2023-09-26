@@ -133,7 +133,7 @@ export class PreRouterExtension implements Extension<void> {
     routeMeta: RouteMeta,
   ) {
     const inj = injectorPerRou.createChildFromResolved(resolvedPerReq);
-    if (!routeMeta?.resolvedFactory) {
+    if (!routeMeta?.resolvedProvider) {
       const msg =
         `Setting routes in ${moduleName} failed: can't instantiate RouteMeta with ` +
         `${httpMethod} "/${path}" in sandbox mode.`;
@@ -145,7 +145,7 @@ export class PreRouterExtension implements Extension<void> {
     DepsChecker.check(inj, SystemLogMediator, undefined, ignoreDeps);
     routeMeta.resolvedGuards.forEach((item) => DepsChecker.checkForResolved(inj, item.guard, ignoreDeps));
     DepsChecker.check(inj, HttpBackend, undefined, ignoreDeps);
-    DepsChecker.checkForResolved(inj, routeMeta.resolvedFactory, ignoreDeps);
+    DepsChecker.checkForResolved(inj, routeMeta.resolvedProvider, ignoreDeps);
     DepsChecker.check(inj, HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
   }
 
