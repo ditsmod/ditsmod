@@ -25,6 +25,7 @@ export { NormalizedModuleMetadata } from './types/normalized-module-metadata.js'
 export { ProvidersMetadata } from './types/providers-metadata.js';
 export { AppOptions } from './types/app-options.js';
 export { ModuleFactory } from './module-factory.js';
+export { InterceptorWithGuards } from './services/interceptor-with-guards.js';
 export { ConsoleLogger } from './services/console-logger.js';
 export { HttpErrorHandler } from './services/http-error-handler.js';
 export { DefaultHttpErrorHandler } from './services/default-http-error-handler.js';
