@@ -8,11 +8,6 @@ import { AnyObj } from '#types/mix.js';
 @injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
   async intercept(next: HttpHandler, ctx: InterceptorContext) {
-    this.setParams(ctx);
-    return next.handle();
-  }
-
-  protected setParams(ctx: InterceptorContext) {
     if (ctx.queryString) {
       ctx.injector.setByToken(QUERY_PARAMS, parse(ctx.queryString));
     }
@@ -21,5 +16,6 @@ export class DefaultHttpFrontend implements HttpFrontend {
       ctx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
       ctx.injector.setByToken(PATH_PARAMS, pathParams);
     }
+    return next.handle();
   }
 }
