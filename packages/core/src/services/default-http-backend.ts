@@ -7,6 +7,6 @@ export class DefaultHttpBackend implements HttpBackend {
   constructor(protected injector: Injector, @skipSelf() protected routeMeta: RouteMeta) {}
 
   async handle() {
-    return this.injector.instantiateResolved(this.routeMeta.resolvedFactory);
+    return this.injector.instantiateResolved(this.routeMeta.resolvedProvider);
   }
 }

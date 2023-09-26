@@ -7,9 +7,9 @@ import { RouteHandler } from './router.js';
  */
 export class RouteMeta {
   /**
-   * Useful to set `routeMeta.resolvedFactory`.
+   * Useful to set `routeMeta.ResolvedProvider`.
    */
-  static getResolvedFactory(controller: Class, propertyKey: string | symbol) {
+  static getResolvedProvider(controller: Class, propertyKey: string | symbol) {
     const factoryProvider: FactoryProvider = { useFactory: [controller, controller.prototype[propertyKey]] };
     return Injector.resolve([factoryProvider])[0];
   }
@@ -23,7 +23,7 @@ export class RouteMeta {
   /**
    * Resolved a factory assigned to call a controller method that is bound to a specific route.
    */
-  resolvedFactory: ResolvedProvider;
+  resolvedProvider: ResolvedProvider;
   /**
    * An array of DI tokens used to look up `CanActivate()` handlers,
    * in order to determine if the current user is allowed to activate the controller.
