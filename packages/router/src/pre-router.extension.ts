@@ -76,11 +76,11 @@ export class PreRouterExtension implements Extension<void> {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'injectorPerRou');
         const mergedPerReq: ServiceProvider[] = [];
+        mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
         if (routeMeta.resolvedGuards.length) {
           mergedPerReq.push(InterceptorWithGuards);
           mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
         }
-        mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
         mergedPerReq.push(...metadataPerMod2.providersPerReq, ...providersPerReq);
         const resolvedPerReq = Injector.resolve(mergedPerReq);
         this.checkDeps(moduleName, httpMethod, path, injectorPerRou, resolvedPerReq, routeMeta);
