@@ -27,10 +27,10 @@ import {
   Router,
   getModule,
   ServiceProvider,
+  InterceptorWithGuards
 } from '@ditsmod/core';
 
 import { ROUTES_EXTENSIONS } from './types.js';
-import { InterceptorWithGuards } from './interceptor-with-guards.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
