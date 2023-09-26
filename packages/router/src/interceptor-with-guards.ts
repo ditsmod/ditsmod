@@ -1,6 +1,7 @@
 import {
   HttpHandler,
   HttpInterceptor,
+  Injector,
   InterceptorContext,
   RouteMeta,
   Status,
@@ -11,11 +12,14 @@ import {
 
 @injectable()
 export class InterceptorWithGuards implements HttpInterceptor {
-  constructor(@skipSelf() protected routeMeta: RouteMeta) {}
+  constructor(
+    @skipSelf() protected routeMeta: RouteMeta,
+    private injector: Injector,
+  ) {}
 
   async intercept(next: HttpHandler, ctx: InterceptorContext) {
     for (const item of this.routeMeta.resolvedGuards) {
-      const canActivate = await ctx.injector.instantiateResolved(item.guard).canActivate(item.params);
+      const canActivate = await this.injector.instantiateResolved(item.guard).canActivate(item.params);
       if (canActivate !== true) {
         const status = typeof canActivate == 'number' ? canActivate : undefined;
         this.prohibitActivation(ctx, status);
@@ -27,7 +31,7 @@ export class InterceptorWithGuards implements HttpInterceptor {
   }
 
   prohibitActivation(ctx: InterceptorContext, status?: Status) {
-    const systemLogMediator = ctx.injector.get(SystemLogMediator) as SystemLogMediator;
+    const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
     systemLogMediator.youCannotActivateRoute(this, ctx.nodeReq.method!, ctx.nodeReq.url!);
     ctx.nodeRes.statusCode = status || Status.UNAUTHORIZED;
     ctx.nodeRes.end();
