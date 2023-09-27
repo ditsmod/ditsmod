@@ -24,7 +24,7 @@
     "lib": "src"
   },
   "scripts": {
-    "build": "tsc -b tsconfig.build.json && tsc -b tsconfig.test.json",
+    "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
     "test": "tsc -b tsconfig.test.json && yarn esm-jest",
     "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../node_modules/jest/bin/jest.js"
