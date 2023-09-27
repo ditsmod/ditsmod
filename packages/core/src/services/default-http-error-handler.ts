@@ -1,8 +1,7 @@
-import { NODE_RES } from '#constans';
-import { inject, injectable } from '#di';
+import { injectable } from '#di';
+import { InterceptorContext } from '#types/http-interceptor.js';
 import { Logger } from '#types/logger.js';
 import { NodeResponse } from '#types/server-options.js';
-import { cleanErrorTrace } from '#utils/clean-error-trace.js';
 import { Status } from '#utils/http-status-codes.js';
 import { isChainError } from '#utils/type-guards.js';
 import { ErrorOpts } from '../custom-error/error-opts.js';
@@ -12,15 +11,16 @@ import { Res } from './response.js';
 
 @injectable()
 export class DefaultHttpErrorHandler implements HttpErrorHandler {
+  protected nodeRes: NodeResponse;
+
   constructor(
     protected logger: Logger,
     protected res: Res,
     protected req: Req,
-    @inject(NODE_RES) protected nodeRes: NodeResponse,
   ) {}
 
-  async handleError(err: Error) {
-    cleanErrorTrace(err);
+  async handleError(err: Error, ctx: InterceptorContext) {
+    this.nodeRes = ctx.nodeRes;
     if (isChainError<ErrorOpts>(err)) {
       const { level, status } = err.info;
       this.logger.log(level || 'debug', err);
@@ -39,7 +39,6 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
   }
 
   protected addRequestIdToHeader() {
-    const header = 'x-requestId';
-    this.nodeRes.setHeader(header, this.req.requestId);
+    this.nodeRes.setHeader('x-requestId', this.req.requestId);
   }
 }

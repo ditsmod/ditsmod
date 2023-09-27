@@ -2,6 +2,7 @@ import { jest } from '@jest/globals';
 
 import { NODE_RES } from '#constans';
 import { Injector } from '#di';
+import { InterceptorContext } from '#types/http-interceptor.js';
 import { Logger } from '#types/logger.js';
 import { NodeResponse } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
@@ -27,6 +28,8 @@ describe('ErrorHandler', () => {
     hasHeader(...args: any[]) {},
     setHeader(...args: any[]) {},
   } as NodeResponse;
+
+  const ctx = { nodeRes } as InterceptorContext;
 
   const res = {
     nodeRes: {
@@ -62,7 +65,7 @@ describe('ErrorHandler', () => {
 
   it('default error with some message', () => {
     const err = new Error('one');
-    expect(() => errorHandler.handleError(err)).not.toThrow();
+    expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'Internal server error' }, Status.INTERNAL_SERVER_ERROR);
     expect(res.sendJson).toBeCalledTimes(1);
     expect(logger.log).toBeCalledWith('error', err);
@@ -72,7 +75,7 @@ describe('ErrorHandler', () => {
   it('custom error with msg1', () => {
     const msg1 = 'one';
     const err = new CustomError({ msg1 });
-    expect(() => errorHandler.handleError(err)).not.toThrow();
+    expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'one' }, Status.BAD_REQUEST);
     expect(res.sendJson).toBeCalledTimes(1);
     expect(logger.log).toBeCalledWith('debug', err);
@@ -82,7 +85,7 @@ describe('ErrorHandler', () => {
   it('custom error with status and level changed', () => {
     const msg1 = 'one';
     const err = new CustomError({ msg1, status: Status.CONFLICT, level: 'fatal' });
-    expect(() => errorHandler.handleError(err)).not.toThrow();
+    expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'one' }, Status.CONFLICT);
     expect(res.sendJson).toBeCalledTimes(1);
     expect(logger.log).toBeCalledWith('fatal', err);
@@ -92,7 +95,7 @@ describe('ErrorHandler', () => {
   it('custom error with msg1 and arguments for format', () => {
     const msg1 = 'one two';
     const err = new CustomError({ msg1 });
-    expect(() => errorHandler.handleError(err)).not.toThrow();
+    expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'one two' }, Status.BAD_REQUEST);
     expect(res.sendJson).toBeCalledTimes(1);
     expect(logger.log).toBeCalledWith('debug', err);
@@ -102,7 +105,7 @@ describe('ErrorHandler', () => {
   it('custom error with msg2', () => {
     const msg2 = 'one';
     const err = new CustomError({ msg2 });
-    expect(() => errorHandler.handleError(err)).not.toThrow();
+    expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'Internal server error' }, Status.BAD_REQUEST);
     expect(res.sendJson).toBeCalledTimes(1);
     expect(logger.log).toBeCalledWith('debug', err);
@@ -112,7 +115,7 @@ describe('ErrorHandler', () => {
   it('custom error with msg2 and arguments for format', () => {
     const msg2 = 'one %s three';
     const err = new CustomError({ msg2 });
-    expect(() => errorHandler.handleError(err)).not.toThrow();
+    expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'Internal server error' }, Status.BAD_REQUEST);
     expect(logger.log).toBeCalledWith('debug', err);
     expect(logger.log).toBeCalledTimes(1);
@@ -122,7 +125,7 @@ describe('ErrorHandler', () => {
     const msg1 = 'one two';
     const msg2 = 'four six';
     const err = new CustomError({ msg1, msg2 });
-    expect(() => errorHandler.handleError(err)).not.toThrow();
+    expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'one two' }, Status.BAD_REQUEST);
     expect(res.sendJson).toBeCalledTimes(1);
     expect(logger.log).toBeCalledWith('debug', err);
