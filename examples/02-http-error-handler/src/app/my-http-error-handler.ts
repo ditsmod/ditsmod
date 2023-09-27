@@ -1,34 +1,20 @@
-import {
-  Logger,
-  Status,
-  HttpErrorHandler,
-  injectable,
-  Res,
-  cleanErrorTrace,
-  Req,
-  InterceptorContext,
-} from '@ditsmod/core';
+import { Logger, Status, HttpErrorHandler, injectable, Req, InterceptorContext, NodeResponse } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpErrorHandler implements HttpErrorHandler {
   constructor(
     protected req: Req,
-    private res: Res,
     private logger: Logger,
   ) {}
 
-  handleError(err: Error, ctx: InterceptorContext) {
-    cleanErrorTrace(err);
+  handleError(err: Error, { nodeRes }: InterceptorContext) {
     const message = err.message;
     this.logger.log('error', { note: 'This is my implementation of HttpErrorHandler', err });
-    if (!ctx.nodeRes.headersSent) {
-      this.addRequestIdToHeader(ctx);
-      this.res.sendJson({ error: { message } }, Status.INTERNAL_SERVER_ERROR);
+    if (!nodeRes.headersSent) {
+      nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
+      nodeRes.setHeader('x-requestId', this.req.requestId);
+      nodeRes.setHeader('Content-Type', 'application/json; charset=utf-8');
+      nodeRes.end(JSON.stringify({ error: { message } }));
     }
-  }
-
-  protected addRequestIdToHeader(ctx: InterceptorContext) {
-    const header = 'x-requestId';
-    ctx.nodeRes.setHeader(header, this.req.requestId);
   }
 }
