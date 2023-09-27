@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 
 import { NODE_RES } from '#constans';
 import { Injector } from '#di';
-import { InterceptorContext } from '#types/http-interceptor.js';
+import { RequestContext } from '#types/http-interceptor.js';
 import { Logger } from '#types/logger.js';
 import { NodeResponse } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
@@ -29,7 +29,7 @@ describe('ErrorHandler', () => {
     setHeader(...args: any[]) {},
   } as NodeResponse;
 
-  const ctx = { nodeRes } as InterceptorContext;
+  const ctx = { nodeRes } as RequestContext;
 
   const res = {
     nodeRes: {

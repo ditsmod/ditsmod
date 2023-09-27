@@ -1,4 +1,4 @@
-import { DefaultHttpErrorHandler, injectable, Res, NodeResponse, inject, NODE_RES, Logger, Req, InterceptorContext } from '@ditsmod/core';
+import { DefaultHttpErrorHandler, injectable, Res, NodeResponse, inject, NODE_RES, Logger, Req, RequestContext } from '@ditsmod/core';
 
 import { ErrorContainer } from './error-container.js';
 
@@ -13,7 +13,7 @@ export class CustomHttpErrorHandler extends DefaultHttpErrorHandler {
     super(logger, res, req);
   }
 
-  override async handleError(err: Error, ctx: InterceptorContext) {
+  override async handleError(err: Error, ctx: RequestContext) {
     await super.handleError(err, ctx);
     this.errorContainer.setError(err.message, err.stack);
   }

@@ -1,4 +1,4 @@
-import { HttpHandler, HttpInterceptor, Injector, InterceptorContext } from '@ditsmod/core';
+import { HttpHandler, HttpInterceptor, Injector, RequestContext } from '@ditsmod/core';
 import { injectable, optional } from '@ditsmod/core';
 import { parse, Headers, Options } from 'get-body';
 
@@ -13,7 +13,7 @@ export class BodyParserInterceptor implements HttpInterceptor {
     this.config = Object.assign({}, new BodyParserConfig(), config); // Merge with default.
   }
 
-  async intercept(next: HttpHandler, ctx: InterceptorContext) {
+  async intercept(next: HttpHandler, ctx: RequestContext) {
     const contentType = ctx.nodeReq.headers['content-type'];
     const hasAcceptableHeaders = this.config?.acceptHeaders?.some((type) => contentType?.includes(type));
     if (!hasAcceptableHeaders) {

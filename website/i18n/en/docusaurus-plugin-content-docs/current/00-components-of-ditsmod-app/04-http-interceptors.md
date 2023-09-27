@@ -47,17 +47,17 @@ On the other hand, with DI you can easily replace `HttpFrontend` and `HttpBacken
 Each interceptor should be a class implementing the [HttpInterceptor][1] interface and annotated with the `injectable` decorator:
 
 ```ts
-import { injectable, InterceptorContext, HttpHandler, HttpInterceptor } from '@ditsmod/core';
+import { injectable, RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
-  intercept(next: HttpHandler, ctx: InterceptorContext) {
+  intercept(next: HttpHandler, ctx: RequestContext) {
     return next.handle(); // Here returns Promise<any>;
   }
 }
 ```
 
-As you can see, the `intercept()` method has two parameters: the first is the handler instance that calls the next interceptor, and the second is `InterceptorContext` (native Node.js request and response objects). If the interceptor needs additional data for its work, it can be obtained in the constructor through DI, as in any service.
+As you can see, the `intercept()` method has two parameters: the first is the handler instance that calls the next interceptor, and the second is `RequestContext` (native Node.js request and response objects). If the interceptor needs additional data for its work, it can be obtained in the constructor through DI, as in any service.
 
 ## Passing interceptor to the injector
 

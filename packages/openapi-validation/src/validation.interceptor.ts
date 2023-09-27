@@ -9,7 +9,7 @@ import {
   CustomError,
   NodeRequest,
   NodeResponse,
-  InterceptorContext,
+  RequestContext,
 } from '@ditsmod/core';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { DictService } from '@ditsmod/i18n';
@@ -29,7 +29,7 @@ export class ValidationInterceptor implements HttpInterceptor {
     @skipSelf() protected routeMeta: RouteMeta,
   ) {}
 
-  intercept(next: HttpHandler, ctx: InterceptorContext) {
+  intercept(next: HttpHandler, ctx: RequestContext) {
     this.nodeReq = ctx.nodeReq;
     this.nodeRes = ctx.nodeRes;
     this.prepareAndValidate();

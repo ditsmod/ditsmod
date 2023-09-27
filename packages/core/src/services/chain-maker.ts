@@ -5,7 +5,7 @@ import {
   HttpHandler,
   HttpInterceptor,
   HttpInterceptorHandler,
-  InterceptorContext,
+  RequestContext,
 } from '#types/http-interceptor.js';
 
 /**
@@ -18,7 +18,7 @@ export class ChainMaker {
     @inject(HTTP_INTERCEPTORS) @optional() private interceptors: HttpInterceptor[] = [],
   ) {}
 
-  makeChain(ctx: InterceptorContext): HttpHandler {
+  makeChain(ctx: RequestContext): HttpHandler {
     return this.interceptors.reduceRight(
       (next, interceptor) => new HttpInterceptorHandler(interceptor, ctx, next),
       this.backend,

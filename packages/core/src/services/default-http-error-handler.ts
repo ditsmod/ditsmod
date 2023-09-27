@@ -1,5 +1,5 @@
 import { injectable } from '#di';
-import { InterceptorContext } from '#types/http-interceptor.js';
+import { RequestContext } from '#types/http-interceptor.js';
 import { Logger } from '#types/logger.js';
 import { NodeResponse } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
@@ -19,7 +19,7 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
     protected req: Req,
   ) {}
 
-  async handleError(err: Error, ctx: InterceptorContext) {
+  async handleError(err: Error, ctx: RequestContext) {
     this.nodeRes = ctx.nodeRes;
     if (isChainError<ErrorOpts>(err)) {
       const { level, status } = err.info;

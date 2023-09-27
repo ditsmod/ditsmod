@@ -9,7 +9,7 @@
 import { PathParam } from './router.js';
 import { NodeRequest, NodeResponse } from './server-options.js';
 
-export class InterceptorContext {
+export class RequestContext {
   nodeReq: NodeRequest;
   nodeRes: NodeResponse;
   aPathParams: PathParam[];
@@ -28,13 +28,13 @@ export abstract class HttpHandler {
 }
 
 export interface HttpInterceptor {
-  intercept(next: HttpHandler, ctx: InterceptorContext): Promise<any>;
+  intercept(next: HttpHandler, ctx: RequestContext): Promise<any>;
 }
 
 export class HttpInterceptorHandler implements HttpHandler {
   constructor(
     private interceptor: HttpInterceptor,
-    private ctx: InterceptorContext,
+    private ctx: RequestContext,
     private next: HttpHandler,
   ) {}
 
@@ -49,7 +49,7 @@ export class HttpInterceptorHandler implements HttpHandler {
  * Interceptors sit between the `HttpFrontend` and the `HttpBackend`.
  */
 export abstract class HttpFrontend implements HttpInterceptor {
-  abstract intercept(next: HttpHandler, ctx: InterceptorContext): Promise<any>;
+  abstract intercept(next: HttpHandler, ctx: RequestContext): Promise<any>;
 }
 
 /**
