@@ -20,13 +20,14 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
   ) {}
 
   async handleError(err: Error, ctx: RequestContext) {
+    const errObj = { requestId: this.req.requestId, err };
     this.nodeRes = ctx.nodeRes;
     if (isChainError<ErrorOpts>(err)) {
       const { level, status } = err.info;
-      this.logger.log(level || 'debug', err);
+      this.logger.log(level || 'debug', errObj);
       this.sendError(err.message, status);
     } else {
-      this.logger.log('error', err);
+      this.logger.log('error', errObj);
       this.sendError('Internal server error', Status.INTERNAL_SERVER_ERROR);
     }
   }
