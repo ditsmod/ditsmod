@@ -1,4 +1,4 @@
-import { Logger, Status, HttpErrorHandler, injectable, Req, RequestContext, NodeResponse } from '@ditsmod/core';
+import { Logger, Status, HttpErrorHandler, injectable, Req, RequestContext } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpErrorHandler implements HttpErrorHandler {

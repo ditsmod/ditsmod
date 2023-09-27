@@ -9,7 +9,7 @@ Any errors that occur while processing an HTTP request that you have not caught 
 You can create your own error handler by creating a class that implements the [HttpErrorHandler][101] interface:
 
 ```ts
-import { Logger, Status, HttpErrorHandler, injectable, Req, RequestContext, NodeResponse } from '@ditsmod/core';
+import { Logger, Status, HttpErrorHandler, injectable, Req, RequestContext } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpErrorHandler implements HttpErrorHandler {
