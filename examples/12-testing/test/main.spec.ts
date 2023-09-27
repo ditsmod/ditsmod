@@ -15,7 +15,7 @@ describe('12-testing', () => {
     server.close();
   });
 
-  xdescribe('good error stack trace', () => {
+  describe('good error stack trace', () => {
     const setError = jest.fn();
     const errorContainer = { setError } as ErrorContainer;
     let server: NodeServer;
