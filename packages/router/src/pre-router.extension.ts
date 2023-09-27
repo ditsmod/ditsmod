@@ -27,7 +27,7 @@ import {
   Router,
   getModule,
   ServiceProvider,
-  InterceptorWithGuards
+  InterceptorWithGuards,
 } from '@ditsmod/core';
 
 import { ROUTES_EXTENSIONS } from './types.js';
@@ -109,7 +109,12 @@ export class PreRouterExtension implements Extension<void> {
             .handle() // First HTTP handler in the chain of HTTP interceptors.
             .catch((err) => {
               const errorHandler = injector.instantiateResolved(resolvedCtrlErrHandler) as HttpErrorHandler;
-              return errorHandler.handleError(err);
+              return errorHandler.handleError(err, {
+                nodeReq,
+                nodeRes,
+                aPathParams,
+                queryString,
+              });
             })
             .finally(() => injector.clear());
         }) as RouteHandler;
