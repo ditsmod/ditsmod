@@ -9,41 +9,24 @@ sidebar_position: 10
 Ви можете створити свій власний обробник помилок, для цього вам потрібно створити клас, що впроваджує інтерфейс [HttpErrorHandler][101]:
 
 ```ts
-import {
-  Logger,
-  Status,
-  HttpErrorHandler,
-  injectable,
-  Res,
-  NodeResponse,
-  inject,
-  NODE_RES,
-  cleanErrorTrace,
-  Req,
-} from '@ditsmod/core';
+import { Logger, Status, HttpErrorHandler, injectable, Req, InterceptorContext, NodeResponse } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpErrorHandler implements HttpErrorHandler {
   constructor(
-    @inject(NODE_RES) private nodeRes: NodeResponse,
     protected req: Req,
-    private res: Res,
     private logger: Logger,
   ) {}
 
-  handleError(err: Error) {
-    cleanErrorTrace(err);
+  handleError(err: Error, { nodeRes }: InterceptorContext) {
     const message = err.message;
-    this.logger.error({ note: 'This is my implementation of HttpErrorHandler', err });
-    if (!this.nodeRes.headersSent) {
-      this.addRequestIdToHeader();
-      this.res.sendJson({ error: { message } }, Status.INTERNAL_SERVER_ERROR);
+    this.logger.log('error', { note: 'This is my implementation of HttpErrorHandler', err });
+    if (!nodeRes.headersSent) {
+      nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
+      nodeRes.setHeader('x-requestId', this.req.requestId);
+      nodeRes.setHeader('Content-Type', 'application/json; charset=utf-8');
+      nodeRes.end(JSON.stringify({ error: { message } }));
     }
-  }
-
-  protected addRequestIdToHeader() {
-    const header = 'x-requestId';
-    this.nodeRes.setHeader(header, this.req.requestId);
   }
 }
 ```
