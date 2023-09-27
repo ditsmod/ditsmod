@@ -1,14 +1,8 @@
-import {
-  HttpHandler,
-  HttpInterceptor,
-  Injector,
-  InterceptorContext,
-  RouteMeta,
-  Status,
-  SystemLogMediator,
-  injectable,
-  skipSelf,
-} from '@ditsmod/core';
+import { injectable, skipSelf, Injector } from '#di';
+import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
+import { HttpInterceptor, HttpHandler, InterceptorContext } from '#types/http-interceptor.js';
+import { RouteMeta } from '#types/route-data.js';
+import { Status } from '#utils/http-status-codes.js';
 
 @injectable()
 export class InterceptorWithGuards implements HttpInterceptor {
