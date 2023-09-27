@@ -92,5 +92,5 @@ export class SomeModule {}
 
 [1]: /developer-guides/providers-collisions
 
-[100]: https://github.com/ditsmod/ditsmod/blob/core-2.44.0/packages/core/src/services/default-http-error-handler.ts
-[101]: https://github.com/ditsmod/ditsmod/blob/core-2.44.0/packages/core/src/services/http-error-handler.ts
+[100]: https://github.com/ditsmod/ditsmod/blob/core-2.49.0/packages/core/src/services/default-http-error-handler.ts
+[101]: https://github.com/ditsmod/ditsmod/blob/core-2.49.0/packages/core/src/services/http-error-handler.ts

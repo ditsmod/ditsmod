@@ -77,13 +77,13 @@ export class SomeModule {}
 
 В даному разі інтерсептори передаються в метадані модуля. Так само вони можуть передаватись у метадані контролера. Тобто інтерсептори можуть працювати або для усіх контролерів у модулі без виключень, або тільки для конкретного контролера. Якщо інтерсептори потрібно додати лише до окремих роутів у межах контролерів, це ви можете зробити за допомогою [розширень][108] (таким чином додаються [інтерсептори для парсингу тіла запиту][9]).
 
-[1]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/types/http-interceptor.ts#L20-L22
-[2]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/default-http-frontend.ts
-[3]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/default-http-backend.ts
+[1]: https://github.com/ditsmod/ditsmod/blob/core-2.49.0/packages/core/src/types/http-interceptor.ts#L20-L22
+[2]: https://github.com/ditsmod/ditsmod/blob/core-2.49.0/packages/core/src/services/default-http-frontend.ts
+[3]: https://github.com/ditsmod/ditsmod/blob/core-2.49.0/packages/core/src/services/default-http-backend.ts
 [5]: https://expressjs.com/en/guide/writing-middleware.html
-[7]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/pre-router.ts
-[8]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/types/route-data.ts
-[9]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/body-parser/src/body-parser.extension.ts#L36
+[7]: https://github.com/ditsmod/ditsmod/blob/core-2.49.0/packages/core/src/services/pre-router.ts
+[8]: https://github.com/ditsmod/ditsmod/blob/core-2.49.0/packages/core/src/types/route-data.ts
+[9]: https://github.com/ditsmod/ditsmod/blob/core-2.49.0/packages/body-parser/src/body-parser.extension.ts#L36
 
 [104]: /native-modules/return
 [106]: /components-of-ditsmod-app/dependency-injection

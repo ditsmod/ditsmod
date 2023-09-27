@@ -239,5 +239,5 @@ export class SomeController {
 [3]: /components-of-ditsmod-app/dependency-injection#провайдери
 [4]: /components-of-ditsmod-app/dependency-injection#токен-залежності
 [5]: /native-modules/body-parser#використання
-[6]: https://github.com/ditsmod/ditsmod/blob/core-2.38.1/packages/core/src/services/pre-router.ts
+[6]: https://github.com/ditsmod/ditsmod/blob/core-2.49.0/packages/core/src/services/pre-router.ts
 [7]: /components-of-ditsmod-app/dependency-injection
