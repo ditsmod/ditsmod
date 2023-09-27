@@ -7,7 +7,8 @@ import { StackUtils } from '@ts-stack/stack-utils';
 export function cleanErrorTrace(error: any, regExp: RegExp[] = []) {
   const internals: any[] = [
     ...StackUtils.nodeInternals(),
-    /ditsmod(:?\/packages)?\/core\//,
+    /@ditsmod/,
+    /ditsmod\/packages/,
     /^\s+at Array.forEach \(<anonymous>\)$/,
     ...regExp
   ];

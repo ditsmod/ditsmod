@@ -2,6 +2,7 @@ import { injectable } from '#di';
 import { RequestContext } from '#types/http-interceptor.js';
 import { Logger } from '#types/logger.js';
 import { NodeResponse } from '#types/server-options.js';
+import { cleanErrorTrace } from '#utils/clean-error-trace.js';
 import { Status } from '#utils/http-status-codes.js';
 import { isChainError } from '#utils/type-guards.js';
 import { ErrorOpts } from '../custom-error/error-opts.js';
@@ -20,6 +21,7 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
   ) {}
 
   async handleError(err: Error, ctx: RequestContext) {
+    cleanErrorTrace(err);
     const errObj = { requestId: this.req.requestId, err };
     this.nodeRes = ctx.nodeRes;
     if (isChainError<ErrorOpts>(err)) {
