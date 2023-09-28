@@ -1,9 +1,9 @@
-import * as path from 'path';
-import { Injector } from '@ditsmod/core';
+import { Injector, ModuleExtract } from '@ditsmod/core';
 
 import { Fn } from './types.js';
 import { Tree } from './tree.js';
 import { DefaultRouter } from './router.js';
+import { RouterLogMediator } from './router-log-mediator.js';
 
 runBench();
 
@@ -36,23 +36,16 @@ async function runBench() {
   console.log('='.repeat(widthTable));
 
   for (const lib of shuffle(benchmarks)) {
-    let loadFrom: string = lib.name;
-
-    if (lib.name == '@ditsmod/routing') {
-      loadFrom = path.resolve('./dist');
-    }
+    const loadFrom: string = lib.name;
 
     try {
-      /* eslint-disable  @typescript-eslint/no-var-requires */
-      const fullLib = require(loadFrom);
+      const imp = await import(loadFrom);
+      const fullLib = imp.default ? imp.default : imp;
       const Router = lib.routerClass ? fullLib[lib.routerClass] : fullLib;
       let router: any;
 
       if (lib.name == '@ditsmod/routing') {
-        const injector = Injector.resolveAndCreate([
-          Tree,
-          DefaultRouter,
-        ]);
+        const injector = Injector.resolveAndCreate([Tree, DefaultRouter, RouterLogMediator, ModuleExtract]);
         router = injector.get(DefaultRouter);
       } else {
         router = new Router();
@@ -94,16 +87,16 @@ export function bench(name: string, onMethod: Fn, findRoute: Fn): void {
     { method: 'GET', url: '/map/:location/events' },
     { method: 'GET', url: '/status' },
     { method: 'GET', url: '/very/deeply/nested/route/hello/there' },
-    { method: 'GET', url: '/static/*file' },
+    // { method: 'GET', url: '/static/*file' }, // find-my-way it's not supported anymore
 
     { method: 'GET', url: '/cmd/:tool/:sub' },
     { method: 'GET', url: '/cmd/:tool/' },
-    { method: 'GET', url: '/src/*filepath' },
+    // { method: 'GET', url: '/src/*filepath' }, // find-my-way it's not supported anymore
     { method: 'GET', url: '/search/' },
     { method: 'GET', url: '/search/:query' },
     { method: 'GET', url: '/user_:name' },
     { method: 'GET', url: '/user_:name/about' },
-    { method: 'GET', url: '/files/:dir/*filepath' },
+    // { method: 'GET', url: '/files/:dir/*filepath' }, // find-my-way it's not supported anymore
     { method: 'GET', url: '/doc/' },
     { method: 'GET', url: '/doc/node_faq.html' },
     { method: 'GET', url: '/doc/node1.html' },

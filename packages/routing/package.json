@@ -27,13 +27,12 @@
     "clean": "rm -rf dist*",
     "test": "tsc -b tsconfig.test.json && yarn esm-jest",
     "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../node_modules/jest/bin/jest.js",
-    "bench": "yarn build && node --expose-gc dist/bench.js"
+    "bench": "yarn build && node --enable-source-maps --expose-gc dist/bench.js"
   },
   "keywords": [
+    "ditsmod",
     "router",
-    "fast",
-    "radix",
-    "tree",
+    "routing",
     "typescript"
   ],
   "devDependencies": {
