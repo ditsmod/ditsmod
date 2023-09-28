@@ -32,7 +32,7 @@
     "test": "tsc -b tsconfig.test.json && yarn esm-jest",
     "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../node_modules/jest/bin/jest.js"
   },
-  "keywords": [],
+  "keywords": ["ditsmod"],
   "author": "",
   "license": "MIT",
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172",

@@ -30,7 +30,7 @@
   "directories": {
     "lib": "src"
   },
-  "keywords": [],
+  "keywords": ["ditsmod"],
   "author": "Костя Третяк",
   "license": "MIT",
   "peerDependencies": {

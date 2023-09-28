@@ -35,6 +35,7 @@
       "default": "./dist/index.js"
     }
   },
+  "keywords": ["ditsmod"],
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "license": "MIT",
   "directories": {
