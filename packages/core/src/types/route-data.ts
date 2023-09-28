@@ -21,7 +21,7 @@ export class RouteMeta {
   }
 
   /**
-   * Resolved a factory assigned to call a controller method that is bound to a specific route.
+   * A resolved provider that is assigned to call a method of a controller that is bound to a specific route.
    */
   resolvedProvider: ResolvedProvider;
   /**
@@ -35,6 +35,8 @@ export class RouteMeta {
    * on the same controller's method.
    */
   decoratorMetadata: DecoratorMetadata;
+  controller: Class;
+  methodName: string | symbol;
 }
 
 /**
