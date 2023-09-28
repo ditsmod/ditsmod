@@ -9,7 +9,7 @@ sidebar_position: 10
 Ви можете створити свій власний обробник помилок, для цього вам потрібно створити клас, що впроваджує інтерфейс [HttpErrorHandler][101]:
 
 ```ts
-import { Logger, Status, HttpErrorHandler, injectable, Req, RequestContext } from '@ditsmod/core';
+import { Logger, Status, HttpErrorHandler, injectable, Req, RequestContext, cleanErrorTrace } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpErrorHandler implements HttpErrorHandler {
@@ -19,6 +19,7 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
   ) {}
 
   handleError(err: Error, { nodeRes }: RequestContext) {
+    cleanErrorTrace(err);
     const message = err.message;
     this.logger.log('error', { note: 'This is my implementation of HttpErrorHandler', err });
     if (!nodeRes.headersSent) {
