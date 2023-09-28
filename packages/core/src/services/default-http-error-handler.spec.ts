@@ -12,7 +12,7 @@ import { DefaultHttpErrorHandler as ErrorHandler } from './default-http-error-ha
 import { Req } from './request.js';
 import { Res } from './response.js';
 
-describe('ErrorHandler', () => {
+describe('DefaultHttpErrorHandler', () => {
   type ErrorLog = ErrorOpts & { err?: any };
   let errorHandler: ErrorHandler;
 
@@ -68,7 +68,7 @@ describe('ErrorHandler', () => {
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'Internal server error' }, Status.INTERNAL_SERVER_ERROR);
     expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('error', err);
+    expect(logger.log).toBeCalledWith('error', { err, requestId: '' });
     expect(logger.log).toBeCalledTimes(1);
   });
 
@@ -78,7 +78,7 @@ describe('ErrorHandler', () => {
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'one' }, Status.BAD_REQUEST);
     expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('debug', err);
+    expect(logger.log).toBeCalledWith('debug', { err, requestId: '' });
     expect(logger.log).toBeCalledTimes(1);
   });
 
@@ -88,7 +88,7 @@ describe('ErrorHandler', () => {
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'one' }, Status.CONFLICT);
     expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('fatal', err);
+    expect(logger.log).toBeCalledWith('fatal', { err, requestId: '' });
     expect(logger.log).toBeCalledTimes(1);
   });
 
@@ -98,7 +98,7 @@ describe('ErrorHandler', () => {
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'one two' }, Status.BAD_REQUEST);
     expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('debug', err);
+    expect(logger.log).toBeCalledWith('debug', { err, requestId: '' });
     expect(logger.log).toBeCalledTimes(1);
   });
 
@@ -108,7 +108,7 @@ describe('ErrorHandler', () => {
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'Internal server error' }, Status.BAD_REQUEST);
     expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('debug', err);
+    expect(logger.log).toBeCalledWith('debug', { err, requestId: '' });
     expect(logger.log).toBeCalledTimes(1);
   });
 
@@ -117,7 +117,7 @@ describe('ErrorHandler', () => {
     const err = new CustomError({ msg2 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'Internal server error' }, Status.BAD_REQUEST);
-    expect(logger.log).toBeCalledWith('debug', err);
+    expect(logger.log).toBeCalledWith('debug', { err, requestId: '' });
     expect(logger.log).toBeCalledTimes(1);
   });
 
@@ -128,7 +128,7 @@ describe('ErrorHandler', () => {
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toBeCalledWith({ error: 'one two' }, Status.BAD_REQUEST);
     expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('debug', err);
+    expect(logger.log).toBeCalledWith('debug', { err, requestId: '' });
     expect(logger.log).toBeCalledTimes(1);
   });
 });
