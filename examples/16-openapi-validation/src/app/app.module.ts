@@ -1,12 +1,12 @@
 import { rootModule } from '@ditsmod/core';
-import { RouterModule } from '@ditsmod/router';
+import { RoutingModule } from '@ditsmod/routing';
 
 import { FirstModule } from './modules/routed/first/first.module.js';
 import { openapiModuleWithParams } from './modules/service/openapi/openapi.module.js';
 
 @rootModule({
   imports: [
-    RouterModule,
+    RoutingModule,
     { path: '', module: FirstModule },
     openapiModuleWithParams
   ],

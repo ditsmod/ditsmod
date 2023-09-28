@@ -17,7 +17,7 @@ export const NODE_REQ = new InjectionToken<NodeRequest>('NODE_REQ');
  */
 export const NODE_RES = new InjectionToken<NodeResponse>('NODE_RES');
 /**
- * DI token for path params that is returned by `@ditsmod/router`.
+ * DI token for path params that is returned by `@ditsmod/routing`.
  */
 export const A_PATH_PARAMS = new InjectionToken<NodeResponse>('A_PATH_PARAMS');
 export const PATH_PARAMS = new InjectionToken<AnyObj>('PATH_PARAMS');

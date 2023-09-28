@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@ditsmod/core": "^2.49.0",
-    "@ditsmod/router": "^2.7.0",
+    "@ditsmod/routing": "^2.0.0",
     "@ditsmod/openapi": "^2.22.0"
   }
 }

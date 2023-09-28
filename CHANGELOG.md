@@ -7,6 +7,6 @@ See:
 - [CHANGELOG for openapi](./packages/openapi/CHANGELOG.md)
 - [CHANGELOG for openapi-validation](./packages/openapi-validation/CHANGELOG.md)
 - [CHANGELOG for return](./packages/return/CHANGELOG.md)
-- [CHANGELOG for router](./packages/router/CHANGELOG.md)
+- [CHANGELOG for router](./packages/routing/CHANGELOG.md)
 - [CHANGELOG for session-cookie](./packages/session-cookie/CHANGELOG.md)
 - [CHANGELOG for testing](./packages/testing/CHANGELOG.md)

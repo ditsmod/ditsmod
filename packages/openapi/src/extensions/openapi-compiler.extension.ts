@@ -22,7 +22,7 @@ import {
   XSecurityRequirementObject,
 } from '@ts-stack/openapi-spec';
 import { stringify } from 'yaml';
-import { ROUTES_EXTENSIONS } from '@ditsmod/router';
+import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { DEFAULT_OAS_OBJECT } from '#constants';

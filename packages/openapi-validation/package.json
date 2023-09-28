@@ -35,7 +35,7 @@
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.50.0",
-    "@ditsmod/router": "^2.8.0",
+    "@ditsmod/routing": "^2.0.0",
     "@ditsmod/i18n": "^2.8.0",
     "@ditsmod/openapi": "^2.20.0"
   },

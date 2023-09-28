@@ -1,11 +1,11 @@
 import { rootModule } from '@ditsmod/core';
-import { RouterModule } from '@ditsmod/router';
+import { RoutingModule } from '@ditsmod/routing';
 
 import { HelloWorldController } from './hello-world.controller.js';
 import { AuthModule } from './modules/services/auth/auth.module.js';
 
 @rootModule({
-  imports: [RouterModule, { path: '', module: AuthModule }],
+  imports: [RoutingModule, { path: '', module: AuthModule }],
   controllers: [HelloWorldController],
 })
 export class AppModule {}

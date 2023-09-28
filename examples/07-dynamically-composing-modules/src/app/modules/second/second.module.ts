@@ -1,10 +1,10 @@
 import { featureModule, Providers } from '@ditsmod/core';
-import { RouterModule } from '@ditsmod/router';
+import { RoutingModule } from '@ditsmod/routing';
 
 import { SecondController } from './second.controller.js';
 
 @featureModule({
-  imports: [RouterModule],
+  imports: [RoutingModule],
   controllers: [SecondController],
   providersPerMod: [...new Providers().useLogConfig({ level: 'debug' })],
 })

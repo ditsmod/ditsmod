@@ -1,11 +1,11 @@
 import { Logger, featureModule, Providers } from '@ditsmod/core';
-import { RouterModule } from '@ditsmod/router';
+import { RoutingModule } from '@ditsmod/routing';
 
 import { PatchLogger } from './patch-logger.js';
 import { PinoController } from './pino.controller.js';
 
 @featureModule({
-  imports: [RouterModule],
+  imports: [RoutingModule],
   controllers: [PinoController],
   providersPerMod: [
     ...new Providers()

@@ -8,13 +8,13 @@
       "#src/*": ["./src/*"],
       "@ditsmod/core": ["../../packages/core/src"],
       "@ditsmod/session-cookie": ["../../packages/session-cookie/src"],
-      "@ditsmod/router": ["../../packages/router/src"],
+      "@ditsmod/routing": ["../../packages/routing/src"],
     }
   },
   "include": ["src", "test"],
   "references": [
     { "path": "../../packages/core/tsconfig.build.json" },
-    { "path": "../../packages/router/tsconfig.build.json" },
+    { "path": "../../packages/routing/tsconfig.build.json" },
     { "path": "../../packages/session-cookie/tsconfig.build.json" },
     { "path": "../../packages/testing/tsconfig.build.json" },
   ]

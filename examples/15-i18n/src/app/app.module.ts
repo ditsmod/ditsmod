@@ -1,5 +1,5 @@
 import { Providers, rootModule } from '@ditsmod/core';
-import { RouterModule } from '@ditsmod/router';
+import { RoutingModule } from '@ditsmod/routing';
 
 import { SecondModule } from './second/second.module.js';
 import { FirstModule } from './first/first.module.js';
@@ -7,7 +7,7 @@ import { ThirdModule } from './third/third.module.js';
 
 @rootModule({
   imports: [
-    RouterModule,
+    RoutingModule,
     { path: '', module: FirstModule },
     { path: '', module: SecondModule },
   ],

@@ -6,7 +6,7 @@ import {
   injectable,
   InjectionToken,
 } from '@ditsmod/core';
-import { ROUTES_EXTENSIONS } from '@ditsmod/router';
+import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { BodyParserConfig } from './body-parser-config.js';
 import { BodyParserInterceptor } from './body-parser.interceptor.js';

@@ -4,7 +4,7 @@
     { "path": "body-parser/tsconfig.build.json" },
     { "path": "core/tsconfig.build.json" },
     { "path": "openapi/tsconfig.build.json" },
-    { "path": "router/tsconfig.build.json" },
+    { "path": "routing/tsconfig.build.json" },
     { "path": "session-cookie/tsconfig.build.json" },
     { "path": "jwt/tsconfig.build.json" },
     { "path": "i18n/tsconfig.build.json" },

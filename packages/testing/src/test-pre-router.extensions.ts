@@ -14,7 +14,7 @@ import {
   getDependencies,
   ServiceProvider,
 } from '@ditsmod/core';
-import { PreRouterExtension, ROUTES_EXTENSIONS } from '@ditsmod/router';
+import { PreRouterExtension, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { TestModuleManager, type TestModuleManager as TestModuleManagerType } from './test-module-manager.js';
 import { Scope, Meta, TestProvider, TestFactoryProvider, TestClassProvider } from './types.js';

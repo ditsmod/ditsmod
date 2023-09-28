@@ -1,10 +1,10 @@
 import { Providers, rootModule } from '@ditsmod/core';
-import { RouterModule } from '@ditsmod/router';
+import { RoutingModule } from '@ditsmod/routing';
 
 import { HelloWorldController } from './hello-world.controller.js';
 
 @rootModule({
-  imports: [RouterModule],
+  imports: [RoutingModule],
   controllers: [HelloWorldController],
   providersPerApp: [...new Providers().useLogConfig({ level: 'info' })],
 })

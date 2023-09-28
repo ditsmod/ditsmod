@@ -2,9 +2,9 @@
 sidebar_position: 0
 ---
 
-# @ditsmod/router
+# @ditsmod/routing
 
-The `@ditsmod/router` module implements a router with the `Router` interface:
+The `@ditsmod/routing` module implements a router with the `Router` interface:
 
 ```ts
 interface Router {
@@ -40,17 +40,17 @@ A ready-made example of using this module can be found in any example in the [Di
 Installation:
 
 ```bash
-npm i @ditsmod/router
+npm i @ditsmod/routing
 ```
 
 Importing:
 
 ```ts
 import { rootModule } from '@ditsmod/core';
-import { RouterModule } from '@ditsmod/router';
+import { RoutingModule } from '@ditsmod/routing';
 
 @rootModule({
-  imports: [RouterModule],
+  imports: [RoutingModule],
   // ..
 })
 export class AppModule {}

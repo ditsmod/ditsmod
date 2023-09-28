@@ -1,12 +1,12 @@
 import { featureModule } from '@ditsmod/core';
-import { RouterModule } from '@ditsmod/router';
+import { RoutingModule } from '@ditsmod/routing';
 
 import { SecondModule } from '../second/second.module.js';
 import { ThirdController } from './third.controler.js';
 import { ThirdService } from './three.service.js';
 
 @featureModule({
-  imports: [RouterModule, SecondModule],
+  imports: [RoutingModule, SecondModule],
   controllers: [ThirdController],
   providersPerReq: [ThirdService],
   exports: [ThirdService],

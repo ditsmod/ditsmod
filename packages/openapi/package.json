@@ -43,7 +43,7 @@
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.50.0",
-    "@ditsmod/router": "^2.8.0"
+    "@ditsmod/routing": "^2.0.0"
   },
   "devDependencies": {
     "@types/swagger-ui-dist": "^3.30.1"

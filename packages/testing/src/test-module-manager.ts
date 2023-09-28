@@ -6,7 +6,7 @@ import {
   NormalizedModuleMetadata,
   OutputLogLevel,
 } from '@ditsmod/core';
-import { PreRouterExtension } from '@ditsmod/router';
+import { PreRouterExtension } from '@ditsmod/routing';
 
 import { TestPreRouterExtension } from './test-pre-router.extensions.js';
 import { TestProvider } from './types.js';

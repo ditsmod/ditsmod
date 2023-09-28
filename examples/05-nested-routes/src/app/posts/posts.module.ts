@@ -2,10 +2,10 @@ import { featureModule } from '@ditsmod/core';
 
 import { CommentsModule } from './comments/comments.module.js';
 import { PostsController } from './posts.controller.js';
-import { RouterModule } from '@ditsmod/router';
+import { RoutingModule } from '@ditsmod/routing';
 
 @featureModule({
-  imports: [RouterModule],
+  imports: [RoutingModule],
   appends: [{ path: 'comments/:commentId', module: CommentsModule }],
   controllers: [PostsController],
 })

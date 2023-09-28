@@ -1,10 +1,10 @@
 {
-  "name": "@ditsmod/router",
+  "name": "@ditsmod/routing",
   "type": "module",
-  "version": "2.7.1",
+  "version": "2.0.0",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "homepage": "https://ditsmod.github.io/en/",
-  "description": "Router module for Ditsmod applications",
+  "description": "Routing module for Ditsmod applications",
   "module": "dist/index.js",
   "exports": {
     "./package.json": {

@@ -1,11 +1,11 @@
 import { Logger, featureModule, Providers } from '@ditsmod/core';
-import { RouterModule } from '@ditsmod/router';
+import { RoutingModule } from '@ditsmod/routing';
 
 import { PatchLogger } from './patch-logger.js';
 import { WinstonController } from './winston.controller.js';
 
 @featureModule({
-  imports: [RouterModule],
+  imports: [RoutingModule],
   controllers: [WinstonController],
   providersPerMod: [
     ...new Providers()

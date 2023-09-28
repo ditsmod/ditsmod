@@ -8,7 +8,7 @@ import {
   injectable,
   Injector,
 } from '@ditsmod/core';
-import { ROUTES_EXTENSIONS } from '@ditsmod/router';
+import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { I18nTransformer } from './i18n-transformer.js';
 import { I18nLogMediator } from './i18n-log-mediator.js';

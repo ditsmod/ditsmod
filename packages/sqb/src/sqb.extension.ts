@@ -1,5 +1,5 @@
 import { Extension, ExtensionsManager, injectable } from '@ditsmod/core';
-import { ROUTES_EXTENSIONS } from '@ditsmod/router';
+import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 @injectable()
 export class SqbExtension implements Extension<void> {

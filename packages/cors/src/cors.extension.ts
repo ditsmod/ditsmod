@@ -18,7 +18,7 @@ import {
   methodFactory,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
-import { ROUTES_EXTENSIONS } from '@ditsmod/router';
+import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { CorsInterceptor } from './cors.interceptor.js';
 import { ALLOW_METHODS } from './constans.js';

@@ -12,7 +12,7 @@ import {
   ServiceProvider,
   AppOptions,
 } from '@ditsmod/core';
-import { RoutesExtension } from '@ditsmod/router';
+import { RoutesExtension } from '@ditsmod/routing';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { isOasRoute, isOasRoute1, isReferenceObject } from '#utils/type-guards.js';

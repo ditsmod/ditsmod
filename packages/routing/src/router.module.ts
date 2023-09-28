@@ -16,4 +16,4 @@ import { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS } from './types.js';
     { extension: PreRouterExtension, groupToken: PRE_ROUTER_EXTENSIONS, exported: true },
   ],
 })
-export class RouterModule {}
+export class RoutingModule {}

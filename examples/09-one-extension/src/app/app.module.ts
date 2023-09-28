@@ -1,11 +1,11 @@
 import { rootModule } from '@ditsmod/core';
-import { RouterModule, PRE_ROUTER_EXTENSIONS } from '@ditsmod/router';
+import { RoutingModule, PRE_ROUTER_EXTENSIONS } from '@ditsmod/routing';
 
 import { HelloWorldController } from './hello-world.controller.js';
 import { MyExtension } from './my-extension.js';
 
 @rootModule({
-  imports: [RouterModule],
+  imports: [RoutingModule],
   controllers: [HelloWorldController],
   extensions: [{ extension: MyExtension, groupToken: PRE_ROUTER_EXTENSIONS }],
 })

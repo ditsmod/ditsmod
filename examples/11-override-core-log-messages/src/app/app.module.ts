@@ -1,12 +1,12 @@
 import { rootModule, Providers } from '@ditsmod/core';
-import { RouterModule } from '@ditsmod/router';
+import { RoutingModule } from '@ditsmod/routing';
 
 import { MyLogMediator } from './my-log-mediator.js';
 import { SomeModule } from './modules/some/some.module.js';
 import { OtherModule } from './modules/other/other.module.js';
 
 @rootModule({
-  imports: [RouterModule, SomeModule],
+  imports: [RoutingModule, SomeModule],
   appends: [OtherModule],
   providersPerApp: [
     ...new Providers()
