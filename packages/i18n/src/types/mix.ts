@@ -1,6 +1,4 @@
-import { Extension } from '@ditsmod/core';
-import { InjectionToken, Class } from '@ditsmod/core';
-
+import { Extension, InjectionToken, Class } from '@ditsmod/core';
 import { ISO639 } from './iso-639.js';
 
 export interface Dictionary {

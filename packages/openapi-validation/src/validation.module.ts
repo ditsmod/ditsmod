@@ -1,7 +1,6 @@
-import { featureModule, ModuleWithParams, Providers } from '@ditsmod/core';
+import { featureModule, ModuleWithParams, Providers, Class } from '@ditsmod/core';
 import { PRE_ROUTER_EXTENSIONS } from '@ditsmod/routing';
 import { DictGroup, Dictionary, I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
-import { Class } from '@ditsmod/core';
 import { Options } from 'ajv';
 
 import { AjvService } from './ajv.service.js';

@@ -1,5 +1,4 @@
-import { AnyObj, inject, QUERY_PARAMS } from '@ditsmod/core';
-import { injectable, Injector, optional, Class } from '@ditsmod/core';
+import { AnyObj, inject, QUERY_PARAMS, injectable, Injector, optional, Class } from '@ditsmod/core';
 
 import { I18nLogMediator } from './i18n-log-mediator.js';
 import { ISO639 } from './types/iso-639.js';
@@ -45,7 +44,7 @@ export class DictService {
   getMethod<T extends Class<Dictionary>, K extends keyof Omit<T['prototype'], 'getLng'>>(
     token: T,
     methodName: K,
-    lng?: ISO639
+    lng?: ISO639,
   ) {
     const dictionary = this.getDictionary(token, lng);
     return dictionary[methodName].bind(dictionary) as T['prototype'][K];
@@ -69,7 +68,7 @@ export class DictService {
    * If you previously not set the locale,
    * then this getter will look at the `i18nOptions.lngQueryParam` in `this.req.queryParams`.
    */
-   get lng() {
+  get lng() {
     if (this._lng) {
       return this._lng;
     }

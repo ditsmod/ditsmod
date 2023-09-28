@@ -1,5 +1,4 @@
-import { HttpHandler, HttpInterceptor, Injector, RequestContext } from '@ditsmod/core';
-import { injectable, optional } from '@ditsmod/core';
+import { HttpHandler, HttpInterceptor, Injector, RequestContext, injectable, optional } from '@ditsmod/core';
 import { parse, Headers, Options } from 'get-body';
 
 import { HTTP_BODY, BodyParserConfig } from './body-parser-config.js';

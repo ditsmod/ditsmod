@@ -1,6 +1,4 @@
-import { PropMeta, reflector } from '@ditsmod/core';
-import { controller, CanActivate } from '@ditsmod/core';
-
+import { PropMeta, reflector, controller, CanActivate } from '@ditsmod/core';
 import { oasRoute } from './oas-route.js';
 
 // console.log(inspect(actualMeta, false, 5));

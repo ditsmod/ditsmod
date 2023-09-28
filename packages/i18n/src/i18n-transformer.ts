@@ -1,5 +1,4 @@
-import { ServiceProvider } from '@ditsmod/core';
-import { injectable, Class } from '@ditsmod/core';
+import { ServiceProvider, injectable, Class } from '@ditsmod/core';
 
 import { I18nLogMediator } from './i18n-log-mediator.js';
 import { Dictionary, Translations } from './types/mix.js';

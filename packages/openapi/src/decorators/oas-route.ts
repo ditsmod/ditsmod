@@ -1,6 +1,4 @@
-import { GuardItem, HttpMethod } from '@ditsmod/core';
-import { AnyFn } from '@ditsmod/core';
-import { makePropDecorator } from '@ditsmod/core';
+import { GuardItem, HttpMethod, AnyFn, makePropDecorator } from '@ditsmod/core';
 import { XOperationObject } from '@ts-stack/openapi-spec';
 
 export interface OasRouteDecoratorMetadata<T = (OasRouteMetadata1 | OasRouteMetadata2)> {

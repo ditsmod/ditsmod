@@ -1,5 +1,4 @@
-import { AnyObj } from '@ditsmod/core';
-import { reflector, Class } from '@ditsmod/core';
+import { AnyObj, reflector, Class } from '@ditsmod/core';
 import {
   SchemaObject,
   SchemaObjectType,

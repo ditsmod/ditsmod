@@ -1,6 +1,5 @@
 import { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
-import { AnyObj, HttpMethod } from '@ditsmod/core';
-import { Class, reflector, isDecoratorAndValue, DecoratorAndValue } from '@ditsmod/core';
+import { AnyObj, HttpMethod, Class, reflector, isDecoratorAndValue, DecoratorAndValue } from '@ditsmod/core';
 
 type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';
 type OptionalParamsIn = 'query' | 'header' | 'cookie';
@@ -92,9 +91,11 @@ export class Parameters {
   }
 
   use<T extends Class<Parameters>>(Plugin: T): T['prototype'] & this {
-    Object.getOwnPropertyNames(Plugin.prototype).filter(p => p != 'constructor').forEach(p => {
-      (this as any)[p] = Plugin.prototype[p];
-    });
+    Object.getOwnPropertyNames(Plugin.prototype)
+      .filter((p) => p != 'constructor')
+      .forEach((p) => {
+        (this as any)[p] = Plugin.prototype[p];
+      });
     return this;
   }
 
@@ -140,7 +141,9 @@ export class Parameters {
       const propertyDecorator = meta[paramObject.name];
       if (propertyDecorator) {
         const propertyType = propertyDecorator[0];
-        const schemas = propertyDecorator.filter(item => isDecoratorAndValue(item)).map(val => (val as DecoratorAndValue).value.schema);
+        const schemas = propertyDecorator
+          .filter((item) => isDecoratorAndValue(item))
+          .map((val) => (val as DecoratorAndValue).value.schema);
         paramObject.schema = Object.assign({}, ...schemas, paramObject.schema) as XSchemaObject<any>;
         if (paramObject.schema.description) {
           paramObject.description = paramObject.description || paramObject.schema.description;

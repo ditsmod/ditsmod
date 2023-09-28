@@ -1,6 +1,5 @@
-import { HttpHandler, HttpInterceptor, RequestContext } from '@ditsmod/core';
+import { HttpHandler, HttpInterceptor, RequestContext, injectable } from '@ditsmod/core';
 import { cors, CorsOptions } from '@ts-stack/cors';
-import { injectable } from '@ditsmod/core';
 
 @injectable()
 export class CorsInterceptor implements HttpInterceptor {

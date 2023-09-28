@@ -1,5 +1,4 @@
-import { featureModule, ModuleWithParams } from '@ditsmod/core';
-import { optional } from '@ditsmod/core';
+import { featureModule, ModuleWithParams, optional } from '@ditsmod/core';
 
 import { SessionCookie } from './session-cookie.js';
 import { SessionLogMediator } from './session-log-mediator.js';

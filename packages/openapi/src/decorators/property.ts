@@ -1,5 +1,4 @@
-import { AnyObj } from '@ditsmod/core';
-import { makePropDecorator, Class } from '@ditsmod/core';
+import { AnyObj, makePropDecorator, Class } from '@ditsmod/core';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 
 export type AnyEnum<T extends number | string = number | string> = Record<T, T>;

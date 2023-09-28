@@ -1,6 +1,5 @@
-import { AnyObj } from '@ditsmod/core';
+import { AnyObj, DecoratorAndValue } from '@ditsmod/core';
 import { ReferenceObject } from '@ts-stack/openapi-spec';
-import { DecoratorAndValue } from '@ditsmod/core';
 
 import { property, PropertyDecoratorItem } from '#decorators/property.js';
 import { oasGuard, OasGuardMetadata } from '#decorators/oas-guard.js';
