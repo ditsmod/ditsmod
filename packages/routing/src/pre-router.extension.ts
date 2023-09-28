@@ -28,6 +28,7 @@ import {
   getModule,
   ServiceProvider,
   InterceptorWithGuards,
+  RequestContext,
 } from '@ditsmod/core';
 
 import { ROUTES_EXTENSIONS } from './types.js';
@@ -94,27 +95,23 @@ export class PreRouterExtension implements Extension<void> {
 
         const handle = (async (nodeReq, nodeRes, aPathParams, queryString) => {
           const injector = new Injector(RegistryPerReq, injectorPerRou, 'injectorPerReq');
+          const ctx: RequestContext = {
+            nodeReq,
+            nodeRes,
+            aPathParams,
+            queryString,
+          };
           await injector
             .setById(nodeReqId, nodeReq)
             .setById(nodeResId, nodeRes)
             .setById(aPathParamsId, aPathParams)
             .setById(queryStringId, queryString || '')
             .instantiateResolved<ChainMaker>(resolvedChainMaker)
-            .makeChain({
-              nodeReq,
-              nodeRes,
-              aPathParams,
-              queryString,
-            })
+            .makeChain(ctx)
             .handle() // First HTTP handler in the chain of HTTP interceptors.
             .catch((err) => {
               const errorHandler = injector.instantiateResolved(resolvedCtrlErrHandler) as HttpErrorHandler;
-              return errorHandler.handleError(err, {
-                nodeReq,
-                nodeRes,
-                aPathParams,
-                queryString,
-              });
+              return errorHandler.handleError(err, ctx);
             })
             .finally(() => injector.clear());
         }) as RouteHandler;
