@@ -1,6 +1,5 @@
 import * as http from 'http';
-import { injectable, Injector } from '@ditsmod/core';
-import { Router, RouterReturns } from '@ditsmod/core';
+import { injectable, Injector, Router, RouterReturns } from '@ditsmod/core';
 
 import { Tree } from './tree.js';
 import { HttpMethod, MethodTree, Fn } from './types.js';
