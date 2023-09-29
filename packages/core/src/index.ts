@@ -31,6 +31,10 @@ export { HttpErrorHandler } from './services/http-error-handler.js';
 export { DefaultHttpErrorHandler } from './services/default-http-error-handler.js';
 export { DefaultHttpBackend } from './services/default-http-backend.js';
 export { DefaultHttpFrontend } from './services/default-http-frontend.js';
+export { SingletonHttpFrontend } from './services/singleton-http-frontend.js';
+export { SingletonHttpBackend } from './services/singleton-http-backend.js';
+export { SingletonChainMaker } from './services/singleton-chain-maker.js';
+export { SingletonHttpErrorHandler } from './services/singleton-http-error-handler.js';
 export { ExtensionsContext } from './services/extensions-context.js';
 export { ExtensionsManager } from './services/extensions-manager.js';
 export { LogMediator } from './log-mediator/log-mediator.js';
@@ -49,7 +53,8 @@ export {
   HttpHandler,
   HttpInterceptor,
   HttpInterceptorHandler,
-  RequestContext
+  RequestContext,
+  SingletonRequestContext
 } from './types/http-interceptor.js';
 export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from './types/logger.js';
 export { MetadataPerMod1, MetadataPerMod2 } from './types/metadata-per-mod.js';

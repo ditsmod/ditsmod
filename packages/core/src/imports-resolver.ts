@@ -1,21 +1,22 @@
 import { Injector } from '#di';
 
+import { defaultProvidersPerRou } from '#services/default-providers-per-rou.js';
+import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
 import { defaultExtensionsProviders } from './services/default-extensions-providers.js';
-import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { defaultProvidersPerApp } from './services/default-providers-per-app.js';
 import { defaultProvidersPerReq } from './services/default-providers-per-req.js';
 import { ModuleManager } from './services/module-manager.js';
+import { AppOptions } from './types/app-options.js';
 import { ImportedTokensMap } from './types/metadata-per-mod.js';
 import { AppMetadataMap, ModuleType, ModuleWithParams, Scope, ServiceProvider } from './types/mix.js';
-import { getDependencies, ReflectiveDependecy } from './utils/get-dependecies.js';
+import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
+import { RouteMeta } from './types/route-data.js';
+import { ReflectiveDependecy, getDependencies } from './utils/get-dependecies.js';
 import { getLastProviders } from './utils/get-last-providers.js';
 import { getModuleName } from './utils/get-module-name.js';
 import { getProviderName } from './utils/get-provider-name.js';
 import { getProvidersTargets, getTokens } from './utils/get-tokens.js';
-import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } from './utils/type-guards.js';
-import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
-import { RouteMeta } from './types/route-data.js';
-import { AppOptions } from './types/app-options.js';
+import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from './utils/type-guards.js';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -40,6 +41,7 @@ export class ImportsResolver {
       this.meta = meta;
       this.resolveImportedProviders(importedTokensMap, meta);
       this.resolveProvidersForExtensions(importedTokensMap, meta);
+      meta.providersPerRou.unshift(...defaultProvidersPerRou);
       meta.providersPerReq.unshift(...defaultProvidersPerReq);
     });
 

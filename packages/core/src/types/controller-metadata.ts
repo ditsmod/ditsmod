@@ -39,4 +39,5 @@ export interface ControllerMetadata2 {
   path: string;
   httpMethod: HttpMethod;
   routeMeta: RouteMeta;
+  isSingleton?: boolean;
 }

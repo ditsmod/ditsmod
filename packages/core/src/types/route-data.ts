@@ -1,5 +1,5 @@
 import { Class, FactoryProvider, Injector, ResolvedProvider } from '#di';
-import { DecoratorMetadata, HttpMethod, NormalizedGuard, ResolvedGuard } from './mix.js';
+import { AnyObj, DecoratorMetadata, HttpMethod, NormalizedGuard, ResolvedGuard } from './mix.js';
 import { RouteHandler } from './router.js';
 
 /**
@@ -23,7 +23,7 @@ export class RouteMeta {
   /**
    * A resolved provider that is assigned to call a method of a controller that is bound to a specific route.
    */
-  resolvedProvider: ResolvedProvider;
+  resolvedProvider?: ResolvedProvider;
   /**
    * An array of DI tokens used to look up `CanActivate()` handlers,
    * in order to determine if the current user is allowed to activate the controller.
@@ -37,6 +37,10 @@ export class RouteMeta {
   decoratorMetadata: DecoratorMetadata;
   controller: Class;
   methodName: string | symbol;
+  /**
+   * A controller instance.
+   */
+  ctrl?: AnyObj;
 }
 
 /**

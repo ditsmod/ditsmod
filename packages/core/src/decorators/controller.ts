@@ -10,6 +10,10 @@ export interface ControllerMetadata {
    * Providers per route.
    */
   providersPerRou?: ServiceProvider[];
+  /**
+   * Default - `false`.
+   */
+  isSingleton?: boolean;
 }
 
 export const controller = makeClassDecorator((data?: ControllerMetadata) => data || {});

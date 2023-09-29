@@ -6,6 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
+import { AnyObj } from './mix.js';
 import { PathParam } from './router.js';
 import { NodeRequest, NodeResponse } from './server-options.js';
 
@@ -14,6 +15,13 @@ export class RequestContext {
   nodeRes: NodeResponse;
   aPathParams: PathParam[];
   queryString: string;
+}
+
+export class SingletonRequestContext extends RequestContext {
+  pathParams?: AnyObj;
+  quetyParams?: AnyObj;
+  body?: AnyObj;
+  auth?: AnyObj;
 }
 
 /**
@@ -33,9 +41,9 @@ export interface HttpInterceptor {
 
 export class HttpInterceptorHandler implements HttpHandler {
   constructor(
-    private interceptor: HttpInterceptor,
-    private ctx: RequestContext,
-    private next: HttpHandler,
+    public interceptor: HttpInterceptor,
+    public ctx: RequestContext,
+    public next: HttpHandler,
   ) {}
 
   async handle(): Promise<any> {
@@ -61,5 +69,6 @@ export abstract class HttpFrontend implements HttpInterceptor {
  * controller's route method, without going through the next interceptors in the chain.
  */
 export abstract class HttpBackend implements HttpHandler {
+  abstract ctx?: SingletonRequestContext;
   abstract handle(): any;
 }
