@@ -50,11 +50,13 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
           const providersPerRou: ServiceProvider[] = [];
           const providersPerReq: ServiceProvider[] = [];
           const ctrlDecorator = container.find(isController);
+          const isSingleton = ctrlDecorator?.value.isSingleton;
           const guards: NormalizedGuard[] = [...guardsPerMod];
           if (isOasRoute1(decoratorMetadata)) {
             guards.push(...this.normalizeGuards(decoratorMetadata.value.guards));
           }
           const controllerFactory: FactoryProvider = { useFactory: [controller, controller.prototype[methodName]] };
+          const resolvedProvider = isSingleton ? undefined : RouteMeta.getResolvedProvider(controller, methodName);
           providersPerReq.push(...(ctrlDecorator?.value.providersPerReq || []), controllerFactory);
           const { httpMethod, path: controllerPath, operationObject } = oasRoute;
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
@@ -80,7 +82,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             controller,
             methodName,
             resolvedGuards: RouteMeta.resolveGuards(guards),
-            resolvedProvider: RouteMeta.getResolvedProvider(controller, methodName),
+            resolvedProvider,
           };
 
           providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
@@ -91,6 +93,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             path,
             httpMethod,
             routeMeta,
+            isSingleton
           });
         }
       }
