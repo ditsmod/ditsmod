@@ -1,5 +1,6 @@
 import { Class, FactoryProvider, Injector, ResolvedProvider } from '#di';
-import { AnyObj, DecoratorMetadata, HttpMethod, NormalizedGuard, ResolvedGuard } from './mix.js';
+import { SingletonRequestContext } from './http-interceptor.js';
+import { DecoratorMetadata, HttpMethod, NormalizedGuard, ResolvedGuard } from './mix.js';
 import { RouteHandler } from './router.js';
 
 /**
@@ -40,7 +41,7 @@ export class RouteMeta {
   /**
    * A controller instance.
    */
-  ctrl?: AnyObj;
+  routeHandler?: (ctx: SingletonRequestContext) => any;
 }
 
 /**

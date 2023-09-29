@@ -9,6 +9,6 @@ export class SingletonHttpBackend implements HttpBackend {
   constructor(protected routeMeta: RouteMeta) {}
 
   handle() {
-    return (this.routeMeta.ctrl as any)[this.routeMeta.methodName!](this.ctx);
+    return this.routeMeta.routeHandler!(this.ctx);
   }
 }
