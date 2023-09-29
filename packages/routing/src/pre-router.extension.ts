@@ -29,7 +29,8 @@ import {
   InterceptorWithGuards,
   RequestContext,
   ControllerMetadata2,
-  SingletonRequestContext,
+  SingletonChainMaker,
+  SingletonHttpErrorHandler,
 } from '@ditsmod/core';
 
 import { ROUTES_EXTENSIONS } from './types.js';
@@ -167,9 +168,10 @@ export class PreRouterExtension implements Extension<void> {
     this.checkDeps(metadataPerMod2.moduleName, httpMethod, path, injectorPerRou, routeMeta);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedCtrlErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
-    const chainMaker = injectorPerRou.instantiateResolved<ChainMaker>(resolvedChainMaker);
-    routeMeta.ctrl = injectorPerRou.resolveAndInstantiate(routeMeta.controller);
-    const errorHandler = injectorPerRou.instantiateResolved(resolvedCtrlErrHandler) as HttpErrorHandler;
+    const chainMaker = injectorPerRou.instantiateResolved<SingletonChainMaker>(resolvedChainMaker);
+    const controllerInstance = injectorPerRou.resolveAndInstantiate(routeMeta.controller);
+    routeMeta.routeHandler = controllerInstance[routeMeta.methodName].bind(controllerInstance);
+    const errorHandler = injectorPerRou.instantiateResolved(resolvedCtrlErrHandler) as SingletonHttpErrorHandler;
 
     return (async (nodeReq, nodeRes, aPathParams, queryString) => {
       const ctx: RequestContext = {
