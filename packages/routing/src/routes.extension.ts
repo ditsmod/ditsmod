@@ -55,13 +55,15 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           const providersPerReq: ServiceProvider[] = [];
           const route = decoratorMetadata.value;
           const ctrlDecorator = container.find(isController);
+          const isSingleton = ctrlDecorator?.value.isSingleton;
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
-          const resolvedProvider = RouteMeta.getResolvedProvider(controller, methodName);
+          const resolvedProvider = isSingleton ? undefined : RouteMeta.getResolvedProvider(controller, methodName);
           providersPerReq.push(...(ctrlDecorator?.value.providersPerReq || []));
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const { path: controllerPath, httpMethod } = route;
           const path = this.getPath(prefix, controllerPath);
+
           const routeMeta: RouteMeta = {
             decoratorMetadata,
             resolvedGuards: RouteMeta.resolveGuards(guards),
@@ -76,6 +78,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
             providersPerRou,
             providersPerReq,
             routeMeta,
+            isSingleton
           });
         }
       }
