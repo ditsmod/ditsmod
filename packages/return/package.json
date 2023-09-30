@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/return",
   "type": "module",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -25,11 +25,13 @@
     "test": "tsc -b tsconfig.test.json && yarn esm-jest",
     "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../node_modules/jest/bin/jest.js"
   },
-  "keywords": ["ditsmod"],
+  "keywords": [
+    "ditsmod"
+  ],
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^2.47.0"
+    "@ditsmod/core": "^2.50.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }
