@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/openapi-validation",
   "type": "module",
-  "version": "2.9.0",
+  "version": "2.10.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -26,7 +26,9 @@
     "test": "tsc -b tsconfig.test.json && yarn esm-jest",
     "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../node_modules/jest/bin/jest.js"
   },
-  "keywords": ["ditsmod"],
+  "keywords": [
+    "ditsmod"
+  ],
   "author": "Костя Третяк",
   "license": "MIT",
   "dependencies": {
@@ -35,9 +37,9 @@
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.50.0",
-    "@ditsmod/routing": "^2.0.0",
     "@ditsmod/i18n": "^2.8.0",
-    "@ditsmod/openapi": "^2.20.0"
+    "@ditsmod/openapi": "^2.20.0",
+    "@ditsmod/routing": "^2.0.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }
