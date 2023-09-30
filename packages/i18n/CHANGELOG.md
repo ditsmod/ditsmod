@@ -1,5 +1,12 @@
+<a name="i18n-2.10.0"></a>
+# [i18n-2.10.0](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.10.0) (2023-09-30)
+
+### Features
+
+- Migration to core-2.50.0.
+
 <a name="i18n-2.9.0"></a>
-# [i18n-2.9.0](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.9.0) (2023-09-07)
+## [i18n-2.9.0](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.9.0) (2023-09-07)
 
 ### Breaking changes
 
