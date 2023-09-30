@@ -1,5 +1,5 @@
-<a name="openapi-2.22.0"></a>
-# [openapi-2.22.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.22.0) (2023-09-15)
+<a name="openapi-2.23.0"></a>
+# [openapi-2.23.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.23.0) (2023-09-15)
 
 ### Features
 
