@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/core",
   "type": "module",
-  "version": "2.49.1",
+  "version": "2.50.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -35,7 +35,9 @@
       "default": "./dist/index.js"
     }
   },
-  "keywords": ["ditsmod"],
+  "keywords": [
+    "ditsmod"
+  ],
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "license": "MIT",
   "directories": {
