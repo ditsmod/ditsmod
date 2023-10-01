@@ -4,9 +4,7 @@ sidebar_position: 0
 
 # Modules
 
-## Ditsmod module
-
-Since Ditsmod is designed for good modularity, one of the main elements of its architecture is module. But what exactly is good about modular architecture? - It allows you to isolate in one module **several code files** that may have different roles, but **common specialization**. A module can be compared to an orchestra, in which there are different instruments, but they all create music together. On the other hand, the need to isolate different modules arises due to the fact that they may have different specializations and because of this - may interfere with each other. Continuing the analogy with people, if you put police and musicians, or brokers and translators in the same office, they will most likely interfere with each other. That is why **narrow specialization** is important for a module.
+One of the main elements of the Ditsmod architecture are its modules. But what exactly is good about modular architecture? - It allows you to isolate in one module **several code files** that may have different roles, but **common specialization**. A module can be compared to an orchestra, in which there are different instruments, but they all create music together. On the other hand, the need to isolate different modules arises due to the fact that they may have different specializations and because of this - may interfere with each other. Continuing the analogy with people, if you put police and musicians, or brokers and translators in the same office, they will most likely interfere with each other. That is why **narrow specialization** is important for a module.
 
 However, modules can also have different types. Two types are most often used:
 
@@ -18,6 +16,8 @@ Modules can contain:
 - services where the business logic of the application is described;
 - other classes, interfaces, helpers, data types intended for the operation of the current module.
 
+## Non-root module
+
 The TypeScript class becomes a Ditsmod module with `featureModule` decorator:
 
 ```ts
@@ -28,19 +28,6 @@ export class SomeModule {}
 ```
 
 It is recommended that module files end with `*.module.ts` and that their class names end with `*Module`.
-
-Ditsmod uses several decorators. But why decorators? Because they allow you to conveniently attach metadata to classes. Thanks to decorators (in combination with the [reflect-metadata][1] library), it is possible to programmatically recognize:
-- what conventional role is assigned to a certain class (role of module, controller, service, etc.);
-- whether the class has a constructor and what parameters it has;
-- whether the class has methods and what parameters they have;
-- whether there are other properties of the class;
-- other metadata is transferred to the decorator.
-
-:::tip Conventions class roles
-The class roles mentioned here - module, controller, service - are conventions (or declarative), since they have meaning only in the context of Ditsmod applications, and TypeScript itself does not have such concepts as "class role".
-:::
-
-Decorators allow you to declaratively describe the structure of the application, and therefore you can easily see what belongs to the module, as well as the connections of some modules with others.
 
 In general, an object with the following properties can be passed to the `featureModule` decorator:
 
@@ -66,7 +53,7 @@ import { featureModule } from '@ditsmod/core';
 export class SomeModule {}
 ```
 
-## Ditsmod root module
+## The root module
 
 Other modules are imported into the root module, it is the only one for the whole application, and its class is recommended to be called `AppModule`. The TypeScript class becomes the root module of Ditsmod with `rootModule` decorator:
 
@@ -77,29 +64,6 @@ import { rootModule } from '@ditsmod/core';
 export class AppModule {}
 ```
 
-It can contain exactly the same metadata as non-root modules:
-
-```ts
-import * as http from 'http';
-import { rootModule } from '@ditsmod/core';
-
-@rootModule({
-  appends: [],
-  imports: [],
-  controllers: [],
-  providersPerApp: [],
-  providersPerMod: [],
-  providersPerRou: [],
-  providersPerReq: [],
-  exports: [],
-  extensions: [],
-  extensionsMeta: {},
-  resolvedCollisionsPerApp: [],
-  resolvedCollisionsPerMod: [],
-  resolvedCollisionsPerRou: [],
-  resolvedCollisionsPerReq: [],
-})
-export class AppModule {}
-```
+It can contain exactly the same metadata as non-root modules.
 
 [1]: https://www.npmjs.com/package/reflect-metadata

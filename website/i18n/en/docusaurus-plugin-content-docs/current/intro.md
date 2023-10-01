@@ -63,8 +63,8 @@ Of course, instead of two terminals, you can use, for example, [ts-node][17] in 
 Note that there are three config files for TypeScript in the `ditsmod/seed` repository:
 
 - `tsconfig.json` - the basic configuration used by your IDE (in most cases it is probably VS Code).
-- `tsconfig.build.json` - this configuration is used to compile the code from the `src` folder to the `dist` folder. This is where your application code and the code for your unit tests reside.
-- `tsconfig.test.json` - this configuration is used to compile the code from the `test` folder into the `dist-test` folder. Here is the code for your end-to-end tests.
+- `tsconfig.build.json` - this configuration is used to compile the code from the `src` directory to the `dist` directory, it is intended for application code and unit tests.
+- `tsconfig.test.json` - this configuration is used to compile the code from the `test` folder into the `dist-test` folder, it is intended for end-to-end tests.
 
 Also, note that since `ditsmod/seed` is declared as an EcmaScript Module (ESM), you can use [native Node.js aliases][18] to shorten file paths. This is the counterpart to `compilerOptions.paths` in `tsconfig`. Such aliases are declared in `package.json` in the `imports` field:
 
