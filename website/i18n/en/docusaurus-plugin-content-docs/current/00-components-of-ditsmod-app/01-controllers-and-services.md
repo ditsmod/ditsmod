@@ -18,7 +18,7 @@ routes.set('/three', function() { /** request processing... **/ });
 
 Right after Node.js receives an HTTP request and passes it to Ditsmod, the request URL is split into two parts separated by a question mark (if present). The first part always contains the so-called _path_, while the second part contains the _query parameters_, if the URL included a question mark.
 
-The task of the router is to find the HTTP request handler by the _path_. After that, in most cases, the request handler calls the controller method. In a very simplified form, this process can be imagined as follows:
+The router's task is to find the HTTP request handler by _path_. In a very simplified form, this process can be imagined as follows:
 
 ```ts
 const path = '/two';
@@ -26,9 +26,11 @@ const handle = routes.get(path);
 handle();
 ```
 
-# What is a controller?
+In most cases, the request handler calls the controller method.
 
-A TypeScript class becomes a Ditsmod controller thanks to the `controller` decorator.
+## What is a controller
+
+The mapping between the URL and the request handler is formed on the basis of the controllers, or rather - on the basis of the methods of the controllers. A TypeScript class becomes a Ditsmod controller thanks to the `controller` decorator:
 
 ```ts
 import { controller } from '@ditsmod/core';
@@ -38,6 +40,24 @@ export class SomeController {}
 ```
 
 It is recommended that controller files end with `*.controller.ts` and their class names end with `*Controller`.
+
+Starting with v2.50.0, Ditsmod makes it possible to work with the controller in two modes:
+
+1. The controller is non-singleton (by default). Its instance is created for each request.
+2. Controller is singleton. Its instance is created only once during application initialization.
+
+The first mode is safer when you need to work in the context of the current request (the client provides a certain identifier that must be taken into account to form a response). The second mode is noticeably faster and consumes less memory, but the request context cannot be stored in the properties of the controller instance, because this instance can be used for other clients at the same time. In the second mode, the request context will have to be passed only as an argument to the methods.
+
+In order for Ditsmod to work with the controller as a singleton, `{ isSingleton: true }` must be specified in the metadata:
+
+```ts
+import { controller } from '@ditsmod/core';
+
+@controller({ isSingleton: true })
+export class SomeController {}
+```
+
+### The controller non-singleton
 
 As mentioned above, after the router finds the HTTP request handler, this handler can call the controller method. To make this possible, HTTP requests are first bound to controller methods through a routing system using the `route` decorator. In the following example, a single route is created that accepts a `GET` request at the address `/hello`:
 
@@ -123,6 +143,41 @@ export class HelloWorldController {
 ```
 
 You may also be interested in [how to get the HTTP request body][5].
+
+### The controller singleton
+
+Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the constructor, Ditsmod will throw an error:
+
+```ts {3,5}
+import { controller, route, Res } from '@ditsmod/core';
+
+@controller({ isSingleton: true })
+export class HelloWorldController {
+  constructor(private res: Res) {}
+
+  @route('GET', 'hello')
+  method1() {
+    this.res.send('Hello World!');
+  }
+}
+```
+
+The working case will be as follows:
+
+```ts {3,6}
+import { controller, route, RequestContext } from '@ditsmod/core';
+
+@controller({ isSingleton: true })
+export class HelloWorldController {
+  @route('GET', 'hello')
+  method1(ctx: RequestContext) {
+    ctx.nodeRes.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    ctx.nodeRes.end('Hello, World!');
+  }
+}
+```
+
+In the "controller singleton" mode, controller methods bound to specific routes receive a single argument - the request context. That is, in this mode, you will no longer be able to ask Ditsmod to pass instances of other classes to these methods. However, in the constructor you can still request instances of certain classes that are created only once.
 
 ## Binding of the controller to the module
 
