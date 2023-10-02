@@ -105,9 +105,8 @@ export class SomeService {
 
 Якщо для створення інстанса даного класа вам потрібно спочатку створити інстанси інших класів - значить даний клас має залежності. Наприклад, якщо в конструкторі сервісу ви прописуєте ось таке:
 
-```ts {7}
+```ts {6}
 import { injectable } from '@ditsmod/core';
-
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -131,9 +130,8 @@ export class SecondService {
 
 Інколи вам може знадобитись вказати опціональну (необов'язкову) залежність в конструкторі. Давайте розглянемо наступний приклад, де після властивості `firstService` поставлено знак питання, і таким чином вказано для TypeScript що ця властивість є опціональною:
 
-```ts {7}
+```ts {6}
 import { injectable } from '@ditsmod/core';
-
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -145,9 +143,8 @@ export class SecondService {
 
 Але DI проігнорує цю опціональність і видасть помилку у разі відсутності можливості для створення `FirstService`. Щоб даний код працював, необхідно скористатись декоратором `optional`:
 
-```ts {7}
+```ts {6}
 import { injectable, optional } from '@ditsmod/core';
-
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -205,9 +202,8 @@ setConstructorTokens([One, Two, Three]);
 
 JavaScript-значення, які приймає `setConstructorTokens`, називаються **токенами**. Передати токен можна у короткій або довгій формі вказання залежності. Давайте знову розглянемо попередній приклад:
 
-```ts {7}
+```ts {6}
 import { injectable } from '@ditsmod/core';
-
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -221,9 +217,8 @@ export class SecondService {
 
 А ще існує **довга форма** вказання залежності за допомогою декоратора `inject`, вона дозволяє використовувати альтернативний токен:
 
-```ts {7}
+```ts {6}
 import { injectable, inject } from '@ditsmod/core';
-
 import { InterfaceOfItem } from './types.js';
 
 @injectable()
@@ -541,7 +536,6 @@ export class SecondService {
 
 ```ts
 import { Injector } from '@ditsmod/core';
-
 import { LOCAL } from './tokens.js';
 
 const injector = Injector.resolveAndCreate([
@@ -556,9 +550,8 @@ const locals = injector.get(LOCAL); // ['uk', 'en']
 
 Не допускається щоб в одному інжекторі однаковий токен мали і звичайні, і мульти-провайдери:
 
-```ts {6-7}
+```ts {5-6}
 import { Injector } from '@ditsmod/core';
-
 import { LOCAL } from './tokens.js';
 
 const injector = Injector.resolveAndCreate([
@@ -573,7 +566,6 @@ const locals = injector.get(LOCAL); // Error: Cannot mix multi providers and reg
 
 ```ts
 import { Injector } from '@ditsmod/core';
-
 import { LOCAL } from './tokens.js';
 
 const parent = Injector.resolveAndCreate([
@@ -590,7 +582,6 @@ const locals = child.get(LOCAL); // ['uk', 'en']
 
 ```ts
 import { Injector } from '@ditsmod/core';
-
 import { LOCAL } from './tokens.js';
 
 const parent = Injector.resolveAndCreate([
@@ -690,9 +681,8 @@ export class SomeController {
 
 Аналогічну підміну можна робити на рівні застосунку та на рівні модуля. Це інколи може знадобитись, наприклад коли ви хочете мати дефолтні значення конфігурації на рівні застосунку, але кастомні значення цієї конфігурації на рівні конкретного модуля. В такому разі передамо спочатку дефолтний конфіг в кореневому модулі:
 
-```ts {7}
+```ts {6}
 import { rootModule } from '@ditsmod/core';
-
 import { ConfigService } from './config.service.js';
 
 @rootModule({
@@ -705,9 +695,8 @@ export class AppModule {}
 
 І вже у певному модулі підмінюємо `ConfigService` на довільне значення:
 
-```ts {7}
+```ts {6}
 import { featureModule } from '@ditsmod/core';
-
 import { ConfigService } from './config.service.js';
 
 @featureModule({

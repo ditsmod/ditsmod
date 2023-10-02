@@ -105,9 +105,8 @@ It's also worth noting that Ditsmod doesn't use [new decorators][14] because the
 
 If creating an instance of a given class requires first creating instances of other classes, then that class has dependencies. For example, if you write this in the service constructor:
 
-```ts {7}
+```ts {6}
 import { injectable } from '@ditsmod/core';
-
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -131,9 +130,8 @@ If you forget to write (or intentionally remove) the `injectable` decorator befo
 
 Sometimes you may need to specify an optional dependency in the constructor. Let's take a look at the following example, where a question mark is placed after the `firstService` property, thus indicating to TypeScript that this property is optional:
 
-```ts {7}
+```ts {6}
 import { injectable } from '@ditsmod/core';
-
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -145,9 +143,8 @@ export class SecondService {
 
 But DI will ignore this optionality and generate an error if there is no possibility to create `FirstService`. To make this code work, you need use the `optional` decorator:
 
-```ts {7}
+```ts {6}
 import { injectable, optional } from '@ditsmod/core';
-
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -205,9 +202,8 @@ That's pretty much how it works. The TypeScript compiler automatically generates
 
 The JavaScript values accepted by `setConstructorTokens` are called **tokens**. You can pass the token in the short or long form of the specifying a dependency. Let's go back to the previous example:
 
-```ts {7}
+```ts {6}
 import { injectable } from '@ditsmod/core';
-
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -221,9 +217,8 @@ This is a **short form** of specifying a dependency, it has significant limitati
 
 And there is a **long form** of specifying a dependency using the `inject` decorator, which allows you to use an alternative token:
 
-```ts {7}
+```ts {6}
 import { injectable, inject } from '@ditsmod/core';
-
 import { InterfaceOfItem } from './types.js';
 
 @injectable()
@@ -541,7 +536,6 @@ This type of provider exists only in the form of an object, and it differs from 
 
 ```ts
 import { Injector } from '@ditsmod/core';
-
 import { LOCAL } from './tokens.js';
 
 const injector = Injector.resolveAndCreate([
@@ -556,9 +550,8 @@ Basically, multi-providers allow you to create groups of providers that share a 
 
 It is not allowed that both ordinary and multi-providers have the same token in one injector:
 
-```ts {6-7}
+```ts {5-6}
 import { Injector } from '@ditsmod/core';
-
 import { LOCAL } from './tokens.js';
 
 const injector = Injector.resolveAndCreate([
@@ -573,7 +566,6 @@ Child injectors can only return multi-provider values from the parent injector i
 
 ```ts
 import { Injector } from '@ditsmod/core';
-
 import { LOCAL } from './tokens.js';
 
 const parent = Injector.resolveAndCreate([
@@ -590,7 +582,6 @@ If both the child and the parent injector have multi-providers with the same tok
 
 ```ts
 import { Injector } from '@ditsmod/core';
-
 import { LOCAL } from './tokens.js';
 
 const parent = Injector.resolveAndCreate([
@@ -690,9 +681,8 @@ Pay attention to the highlighted line. This is how we say DI: "If this controlle
 
 Similar substitution can be done at the application level and at the module level. This may sometimes be necessary, for example, when you want to have default configuration values at the application level, but custom values of this configuration at the level of a specific module. In this case, pass the default configuration in the root module first:
 
-```ts {7}
+```ts {6}
 import { rootModule } from '@ditsmod/core';
-
 import { ConfigService } from './config.service.js';
 
 @rootModule({
@@ -705,9 +695,8 @@ export class AppModule {}
 
 And in a certain module, we substitute `ConfigService` with an arbitrary value:
 
-```ts {7}
+```ts {6}
 import { featureModule } from '@ditsmod/core';
-
 import { ConfigService } from './config.service.js';
 
 @featureModule({
