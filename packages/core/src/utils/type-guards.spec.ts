@@ -16,6 +16,7 @@ import {
 import { rootModule } from '#decorators/root-module.js';
 import { controller } from '#decorators/controller.js';
 import { route } from '#decorators/route.js';
+import { RequestContext } from '#types/http-interceptor.js';
 
 describe('type guards', () => {
   describe('isModule()', () => {
@@ -66,7 +67,7 @@ describe('type guards', () => {
   describe('isRoute()', () => {
     @injectable()
     class Guard1 implements CanActivate {
-      canActivate() {
+      canActivate(ctx: RequestContext) {
         return true;
       }
 

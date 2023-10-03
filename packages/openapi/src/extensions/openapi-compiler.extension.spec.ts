@@ -1,4 +1,4 @@
-import { CanActivate, PerAppService, ResolvedGuard, Status, Injector } from '@ditsmod/core';
+import { CanActivate, PerAppService, ResolvedGuard, Status, Injector, RequestContext } from '@ditsmod/core';
 import {
   ComponentsObject,
   OperationObject,
@@ -61,7 +61,7 @@ describe('OpenapiCompilerExtension', () => {
         responses,
       })
       class Guard1 implements CanActivate {
-        canActivate() {
+        canActivate(ctx: RequestContext) {
           return true;
         }
       }
@@ -95,7 +95,7 @@ describe('OpenapiCompilerExtension', () => {
         responses,
       })
       class Guard1 implements CanActivate {
-        canActivate() {
+        canActivate(ctx: RequestContext) {
           return true;
         }
       }
@@ -129,7 +129,7 @@ describe('OpenapiCompilerExtension', () => {
         responses,
       })
       class Guard1 implements CanActivate {
-        canActivate() {
+        canActivate(ctx: RequestContext) {
           return true;
         }
       }

@@ -1,4 +1,5 @@
 import { PropMeta, reflector } from '#di';
+import { RequestContext } from '#types/http-interceptor.js';
 import { CanActivate } from '#types/mix.js';
 import { controller } from './controller.js';
 import { route } from './route.js';
@@ -68,7 +69,7 @@ describe('Route decorator', () => {
 
   it('one guard without params', () => {
     class Guard implements CanActivate {
-      canActivate() {
+      canActivate(ctx: RequestContext) {
         return true;
       }
     }
@@ -96,7 +97,7 @@ describe('Route decorator', () => {
 
   it('two guards without params', () => {
     class Guard implements CanActivate {
-      canActivate() {
+      canActivate(ctx: RequestContext) {
         return true;
       }
     }
@@ -124,7 +125,7 @@ describe('Route decorator', () => {
 
   it('two guard with params', () => {
     class Guard implements CanActivate {
-      canActivate() {
+      canActivate(ctx: RequestContext) {
         return true;
       }
     }

@@ -1,4 +1,4 @@
-import { PropMeta, reflector, controller, CanActivate } from '@ditsmod/core';
+import { PropMeta, reflector, controller, CanActivate, RequestContext } from '@ditsmod/core';
 import { oasRoute } from './oas-route.js';
 
 // console.log(inspect(actualMeta, false, 5));
@@ -33,7 +33,7 @@ describe('@OasRoute', () => {
 
   it('one method, with operation object', () => {
     class Guard implements CanActivate {
-      canActivate() {
+      canActivate(ctx: RequestContext) {
         return true;
       }
     }
