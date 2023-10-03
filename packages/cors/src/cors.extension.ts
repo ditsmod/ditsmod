@@ -1,10 +1,6 @@
 import {
-  inject,
   injectable,
   Injector,
-  NodeResponse,
-  NODE_RES,
-  Res,
   Extension,
   ExtensionsManager,
   HTTP_INTERCEPTORS,
@@ -15,7 +11,7 @@ import {
   HttpMethod,
   MetadataPerMod2,
   ServiceProvider,
-  methodFactory,
+  RequestContext,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
 import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
@@ -55,12 +51,16 @@ export class CorsExtension implements Extension<void | false> {
       const routesWithOptions = this.getRoutesWithOptions(aMetadataPerMod2, aControllersMetadata2);
       aControllersMetadata2.push(...routesWithOptions);
 
-      aControllersMetadata2.forEach(({ providersPerReq, providersPerRou }) => {
+      aControllersMetadata2.forEach(({ providersPerReq, providersPerRou, isSingleton }) => {
         const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
         const corsOptions = this.getCorsOptions(injectorPerMod, mergedPerRou);
         const mergedCorsOptions = mergeOptions(corsOptions);
         providersPerRou.unshift({ token: CorsOptions, useValue: mergedCorsOptions });
-        providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
+        if (isSingleton) {
+          providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
+        } else {
+          providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
+        }
       });
     });
   }
@@ -107,17 +107,16 @@ export class CorsExtension implements Extension<void | false> {
       this.registeredPathForOptions.set(path, httpMethods);
 
       class DynamicController {
-        @methodFactory()
-        [methodName](@inject(NODE_RES) nodeRes: NodeResponse, res: Res) {
-          nodeRes.setHeader('Allow', httpMethods.join());
-          res.send(undefined, Status.NO_CONTENT);
+        [methodName](ctx: RequestContext) {
+          ctx.nodeRes.setHeader('Allow', httpMethods.join());
+          ctx.nodeRes.statusCode = Status.NO_CONTENT;
+          ctx.nodeRes.end();
         }
       }
 
       const routeMeta: RouteMeta = {
         decoratorMetadata: {} as any,
         resolvedGuards: [],
-        resolvedHandler: RouteMeta.resolveHandler(DynamicController, methodName),
         guards: [],
         controller: DynamicController,
         methodName,
@@ -130,8 +129,9 @@ export class CorsExtension implements Extension<void | false> {
           { token: ALLOW_METHODS, useValue: httpMethods },
           { token: RouteMeta, useValue: routeMeta },
         ],
-        providersPerReq: [{ useFactory: [DynamicController, DynamicController.prototype[methodName]] }],
+        providersPerReq: [],
         routeMeta,
+        isSingleton: true,
       };
 
       newArrControllersMetadata2.push(controllersMetadata2);
