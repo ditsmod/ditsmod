@@ -1,5 +1,12 @@
+<a name="core-2.50.1"></a>
+# [core-2.50.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.50.1) (2023-10-03)
+
+### Bug fix
+
+- Added support for sigleton HTTP interceptors.
+
 <a name="core-2.50.0"></a>
-# [core-2.50.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.50.0) (2023-09-30)
+## [core-2.50.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.50.0) (2023-09-30)
 
 ### Features
 
