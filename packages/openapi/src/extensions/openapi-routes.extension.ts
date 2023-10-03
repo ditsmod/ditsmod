@@ -56,7 +56,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             guards.push(...this.normalizeGuards(decoratorMetadata.value.guards));
           }
           const controllerFactory: FactoryProvider = { useFactory: [controller, controller.prototype[methodName]] };
-          const resolvedHandler = isSingleton ? undefined : RouteMeta.getResolvedHandler(controller, methodName);
+          const resolvedHandler = isSingleton ? undefined : RouteMeta.resolveHandler(controller, methodName);
           providersPerReq.push(...(ctrlDecorator?.value.providersPerReq || []), controllerFactory);
           const { httpMethod, path: controllerPath, operationObject } = oasRoute;
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
