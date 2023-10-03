@@ -10,7 +10,7 @@ export class RouteMeta {
   /**
    * Useful to set `routeMeta.ResolvedProvider`.
    */
-  static getResolvedHandler(controller: Class, propertyKey: string | symbol) {
+  static resolveHandler(controller: Class, propertyKey: string | symbol) {
     const factoryProvider: FactoryProvider = { useFactory: [controller, controller.prototype[propertyKey]] };
     return Injector.resolve([factoryProvider])[0];
   }
