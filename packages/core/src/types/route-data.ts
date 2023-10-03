@@ -10,7 +10,7 @@ export class RouteMeta {
   /**
    * Useful to set `routeMeta.ResolvedProvider`.
    */
-  static getResolvedProvider(controller: Class, propertyKey: string | symbol) {
+  static getResolvedHandler(controller: Class, propertyKey: string | symbol) {
     const factoryProvider: FactoryProvider = { useFactory: [controller, controller.prototype[propertyKey]] };
     return Injector.resolve([factoryProvider])[0];
   }
@@ -24,7 +24,7 @@ export class RouteMeta {
   /**
    * A resolved provider that is assigned to call a method of a controller that is bound to a specific route.
    */
-  resolvedProvider?: ResolvedProvider;
+  resolvedHandler?: ResolvedProvider;
   /**
    * An array of DI tokens used to look up `CanActivate()` handlers,
    * in order to determine if the current user is allowed to activate the controller.
