@@ -9,6 +9,7 @@ import {
   ValueProvider
 } from '#di';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
+import { RequestContext } from './http-interceptor.js';
 import { MetadataPerMod1 } from './metadata-per-mod.js';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
@@ -51,7 +52,7 @@ export interface AnyObj {
 }
 
 export interface CanActivate {
-  canActivate(params?: any[]): boolean | number | Promise<boolean | number>;
+  canActivate(ctx: RequestContext, params?: any[]): boolean | number | Promise<boolean | number>;
 }
 
 export interface DecoratorMetadata<MV extends AnyObj = AnyObj> {

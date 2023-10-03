@@ -13,7 +13,7 @@ export class InterceptorWithGuards implements HttpInterceptor {
 
   async intercept(next: HttpHandler, ctx: RequestContext) {
     for (const item of this.routeMeta.resolvedGuards) {
-      const canActivate = await this.injector.instantiateResolved(item.guard).canActivate(item.params);
+      const canActivate = await this.injector.instantiateResolved(item.guard).canActivate(ctx, item.params);
       if (canActivate !== true) {
         const status = typeof canActivate == 'number' ? canActivate : undefined;
         this.prohibitActivation(ctx, status);
@@ -24,7 +24,7 @@ export class InterceptorWithGuards implements HttpInterceptor {
     return next.handle();
   }
 
-  prohibitActivation(ctx: RequestContext, status?: Status) {
+  protected prohibitActivation(ctx: RequestContext, status?: Status) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
     systemLogMediator.youCannotActivateRoute(this, ctx.nodeReq.method!, ctx.nodeReq.url!);
     ctx.nodeRes.statusCode = status || Status.UNAUTHORIZED;
