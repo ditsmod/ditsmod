@@ -38,9 +38,6 @@ export class RouteMeta {
   decoratorMetadata: DecoratorMetadata;
   controller: Class;
   methodName: string | symbol;
-  /**
-   * A controller instance.
-   */
   routeHandler?: (ctx: SingletonRequestContext) => any;
 }
 
