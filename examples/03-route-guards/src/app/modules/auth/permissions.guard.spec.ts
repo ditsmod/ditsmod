@@ -1,4 +1,4 @@
-import { Injector, Status } from '@ditsmod/core';
+import { Injector, RequestContext, Status } from '@ditsmod/core';
 import { jest } from '@jest/globals';
 
 import { PermissionsGuard } from './permissions.guard.js';
@@ -7,6 +7,7 @@ import { AuthService } from './auth.service.js';
 describe('PermissionsGuard#canActivate()', () => {
   const hasPermissions = jest.fn();
   let permissionsGuard: PermissionsGuard;
+  const ctx = new RequestContext();
 
   beforeEach(() => {
     const injector = Injector.resolveAndCreate([
@@ -18,13 +19,13 @@ describe('PermissionsGuard#canActivate()', () => {
 
   it('should return forbidden', async () => {
     hasPermissions.mockReturnValue(false);
-    await expect(permissionsGuard.canActivate()).resolves.not.toThrow();
-    await expect(permissionsGuard.canActivate()).resolves.toBe(Status.FORBIDDEN);
+    await expect(permissionsGuard.canActivate(ctx)).resolves.not.toThrow();
+    await expect(permissionsGuard.canActivate(ctx)).resolves.toBe(Status.FORBIDDEN);
   });
 
   it('should return true', async () => {
     hasPermissions.mockReturnValue(true);
-    await expect(permissionsGuard.canActivate()).resolves.not.toThrow();
-    await expect(permissionsGuard.canActivate()).resolves.toBe(true);
+    await expect(permissionsGuard.canActivate(ctx)).resolves.not.toThrow();
+    await expect(permissionsGuard.canActivate(ctx)).resolves.toBe(true);
   });
 });

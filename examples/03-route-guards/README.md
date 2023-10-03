@@ -26,7 +26,12 @@ npm start
 From second terminal:
 
 ```bash
-curl -i localhost:3000
+curl -i localhost:3000/hello
 curl -i localhost:3000/unauth
 curl -i localhost:3000/forbidden
+
+# check work controller singleton
+curl -i localhost:3000/hello2
+curl -i localhost:3000/unauth2
+curl -i localhost:3000/forbidden2
 ```

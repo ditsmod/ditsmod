@@ -1,11 +1,9 @@
-import { CanActivate, inject, injectable, NODE_REQ, NodeRequest } from '@ditsmod/core';
+import { CanActivate, injectable, RequestContext } from '@ditsmod/core';
 
 @injectable()
 export class AuthGuard implements CanActivate {
-  constructor(@inject(NODE_REQ) private nodeReq: NodeRequest) {}
-
-  async canActivate(params?: any[]) {
-    const authValue = this.nodeReq.headers.authorization?.split(' ');
+  async canActivate(ctx: RequestContext, params?: any[]) {
+    const authValue = ctx.nodeReq.headers.authorization?.split(' ');
     if (authValue?.[0] != 'Token') {
       return false;
     }

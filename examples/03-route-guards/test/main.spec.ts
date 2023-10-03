@@ -16,7 +16,7 @@ describe('03-route-guards', () => {
   });
 
   it('should works', async () => {
-    await request(server).get('/').expect(200).expect('ok');
+    await request(server).get('/hello').expect(200).expect('ok');
   });
 
   it('should throw 401', async () => {
@@ -25,5 +25,17 @@ describe('03-route-guards', () => {
 
   it('should throw 403', async () => {
     await request(server).get('/forbidden').expect(403);
+  });
+
+  it('should works', async () => {
+    await request(server).get('/hello2').expect(200).expect('ok');
+  });
+
+  it('should throw 401', async () => {
+    await request(server).get('/unauth2').expect(401);
+  });
+
+  it('should throw 403', async () => {
+    await request(server).get('/forbidden2').expect(403);
   });
 });
