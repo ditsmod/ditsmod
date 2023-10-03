@@ -6,26 +6,25 @@ sidebar_position: 5
 
 If you want to restrict access to certain routes, you can use guards. You can view a finished example of an application with guards in the [examples][1] folder or in [RealWorld example][2].
 
-Any guard is a [DI provider][3] passed to request-scoped injectors. Each guard must be a class implementing the `CanActivate` interface:
+Any guard is a [DI provider][3] passed to injectors at the route level (if the controller is [singleton][4]) or request level (if the controller is non-singleton) level. Each guard must be a class that implements the `CanActivate` interface:
 
 ```ts
 interface CanActivate {
-  canActivate(params?: any[]): boolean | number | Promise<boolean | number>;
+  canActivate(ctx: RequestContext, params?: any[]): boolean | number | Promise<boolean | number>;
 }
 ```
 
 For example, it can be done like this:
 
-```ts {9-11}
-import { injectable, CanActivate } from '@ditsmod/core';
-
+```ts {8-10}
+import { injectable, CanActivate, RequestContext } from '@ditsmod/core';
 import { AuthService } from './auth.service.js';
 
 @injectable()
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
-  async canActivate() {
+  async canActivate(ctx: RequestContext, params?: any[]) {
     return Boolean(await this.authService.updateAndGetSession());
   }
 }
@@ -43,23 +42,22 @@ If `canActivate()` returns:
 
 The guards are passed to the controllers in the array in the third parameter of the `route` decorator:
 
-```ts {7}
+```ts {6}
 import { controller, Res, route } from '@ditsmod/core';
-
 import { AuthGuard } from './auth.guard.js';
 
 @controller()
 export class SomeController {
   @route('GET', 'some-url', [AuthGuard])
   tellHello(res: Res) {
-    res.send('Hello admin!');
+    res.send('Hello, admin!');
   }
 }
 ```
 
 ## Guards with parameters
 
-The guard in the `canActivate()` method has one parameter. Arguments for this parameter can be passed in the `route` decorator in an array where a particular guard comes first.
+The guard in the `canActivate()` method has two parameters. The arguments for the first parameter are automatically passed with the `RequestContext` datatype, and the arguments for the second parameter can be passed to the `route` decorator in an array where a certain guard comes first.
 
 Let's consider such an example:
 
@@ -73,15 +71,15 @@ import { Permission } from './permission.js';
 export class SomeController {
   @route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
   tellHello(res: Res) {
-    res.send('Hello admin!');
+    res.send('Hello, admin!');
   }
 }
 ```
 
-As you can see, in place of the third parameter in `route`, an array of arrays is passed, where `PermissionsGuard` is specified in the first place, followed by arguments for it. In this case, `PermissionsGuard` will receive these arguments in its `canActivate()` method:
+As you can see, in place of the third parameter in `route`, an array is passed in an array, where `PermissionsGuard` is specified in the first place, followed by arguments for it. In this case, `PermissionsGuard` will receive these arguments in its `canActivate()` method:
 
 ```ts {10}
-import { injectable, CanActivate, Status } from '@ditsmod/core';
+import { injectable, CanActivate, Status, RequestContext } from '@ditsmod/core';
 
 import { AuthService } from './auth.service.js';
 import { Permission } from './permission.js';
@@ -90,7 +88,7 @@ import { Permission } from './permission.js';
 export class PermissionsGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
-  async canActivate(params?: Permission[]) {
+  async canActivate(ctx: RequestContext, params?: Permission[]) {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {
@@ -171,3 +169,4 @@ In this case, `AuthGuard` will be automatically added to each route in `OtherMod
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/03-route-guards
 [2]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
 [3]: /components-of-ditsmod-app/dependency-injection#providers
+[4]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller

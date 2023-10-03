@@ -6,26 +6,25 @@ sidebar_position: 5
 
 Якщо ви хочете обмежити доступ до певних маршрутів, ви можете скористатись ґардами. Готовий приклад застосунку з ґардами ви можете проглянути у теці [examples][1], або у [RealWorld example][2].
 
-Будь-який ґард є [DI провайдером][3], що передається в інжектори на рівні запиту. Кожен ґард повинен бути класом, що впроваджує інтерфейс `CanActivate`:
+Будь-який ґард є [DI провайдером][3], що передається в інжектори на рівні роуту (якщо контролер є [одинаком][4]) чи запиту (якщо контролер є неодинаком). Кожен ґард повинен бути класом, що впроваджує інтерфейс `CanActivate`:
 
 ```ts
 interface CanActivate {
-  canActivate(params?: any[]): boolean | number | Promise<boolean | number>;
+  canActivate(ctx: RequestContext, params?: any[]): boolean | number | Promise<boolean | number>;
 }
 ```
 
 Наприклад, це можна зробити так:
 
-```ts {9-11}
-import { injectable, CanActivate } from '@ditsmod/core';
-
+```ts {8-10}
+import { injectable, CanActivate, RequestContext } from '@ditsmod/core';
 import { AuthService } from './auth.service.js';
 
 @injectable()
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
-  async canActivate() {
+  async canActivate(ctx: RequestContext, params?: any[]) {
     return Boolean(await this.authService.updateAndGetSession());
   }
 }
@@ -43,23 +42,22 @@ export class AuthGuard implements CanActivate {
 
 Ґарди передаються до контролерів в масиві у третьому параметрі декоратора `route`:
 
-```ts {7}
+```ts {6}
 import { controller, Res, route } from '@ditsmod/core';
-
 import { AuthGuard } from './auth.guard.js';
 
 @controller()
 export class SomeController {
   @route('GET', 'some-url', [AuthGuard])
   tellHello(res: Res) {
-    res.send('Hello admin!');
+    res.send('Hello, admin!');
   }
 }
 ```
 
 ## Ґарди з параметрами
 
-Ґард у методі `canActivate()` має один параметр. Аргументи для цього параметру можна передавати у декораторі `route` у масиві, де на першому місці йде певний ґард.
+Ґард у методі `canActivate()` має два параметри. Аргументи для першого параметра з типом даних `RequestContext` підставляються автоматично, а для другого параметра аргументи можна передавати у декораторі `route` у масиві, де на першому місці йде певний ґард.
 
 Давайте розглянемо такий приклад:
 
@@ -73,15 +71,15 @@ import { Permission } from './permission.js';
 export class SomeController {
   @route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
   tellHello(res: Res) {
-    res.send('Hello admin!');
+    res.send('Hello, admin!');
   }
 }
 ```
 
-Як бачите, на місці третього параметра у `route` передається масив в масиві, де на першому місці указано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
+Як бачите, на місці третього параметра у `route` передається масив в масиві, де на першому місці вказано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
 
 ```ts {10}
-import { injectable, CanActivate, Status } from '@ditsmod/core';
+import { injectable, CanActivate, Status, RequestContext } from '@ditsmod/core';
 
 import { AuthService } from './auth.service.js';
 import { Permission } from './permission.js';
@@ -90,7 +88,7 @@ import { Permission } from './permission.js';
 export class PermissionsGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
-  async canActivate(params?: Permission[]) {
+  async canActivate(ctx: RequestContext, params?: Permission[]) {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {
@@ -171,3 +169,4 @@ export class SomeModule {}
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/03-route-guards
 [2]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
 [3]: /components-of-ditsmod-app/dependency-injection#провайдери
+[4]: /components-of-ditsmod-app/controllers-and-services/#що-являє-собою-контролер
