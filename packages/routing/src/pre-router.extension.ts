@@ -31,6 +31,7 @@ import {
   ControllerMetadata2,
   SingletonChainMaker,
   SingletonHttpErrorHandler,
+  SingletonInterceptorWithGuards,
 } from '@ditsmod/core';
 
 import { ROUTES_EXTENSIONS } from './types.js';
@@ -158,8 +159,8 @@ export class PreRouterExtension implements Extension<void> {
     const mergedPerRou: ServiceProvider[] = [];
     mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
     if (routeMeta.resolvedGuards.length) {
-      mergedPerRou.push(InterceptorWithGuards);
-      mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
+      mergedPerRou.push(SingletonInterceptorWithGuards);
+      mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: SingletonInterceptorWithGuards, multi: true });
     }
     mergedPerRou.push(...metadataPerMod2.providersPerRou, ...providersPerRou);
 
