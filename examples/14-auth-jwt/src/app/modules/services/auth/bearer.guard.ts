@@ -1,16 +1,15 @@
-import { CanActivate, inject, injectable, Injector, NodeRequest, NODE_REQ } from '@ditsmod/core';
+import { CanActivate, injectable, Injector, RequestContext } from '@ditsmod/core';
 import { JwtService, JWT_PAYLOAD, VerifyErrors } from '@ditsmod/jwt';
 
 @injectable()
 export class BearerGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    @inject(NODE_REQ) private nodeReq: NodeRequest,
     private injector: Injector
   ) {}
 
-  async canActivate() {
-    const authValue = this.nodeReq.headers.authorization?.split(' ');
+  async canActivate(ctx: RequestContext) {
+    const authValue = ctx.nodeReq.headers.authorization?.split(' ');
     if (authValue?.[0] != 'Bearer') {
       return false;
     }
