@@ -82,7 +82,6 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             controller,
             methodName,
             resolvedGuards: RouteMeta.resolveGuards(guards),
-            guards,
             resolvedHandler,
           };
 
