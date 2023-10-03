@@ -200,8 +200,8 @@ export class PreRouterExtension implements Extension<void> {
     DepsChecker.check(inj, SystemLogMediator, undefined, ignoreDeps);
     routeMeta.resolvedGuards.forEach((item) => DepsChecker.checkForResolved(inj, item.guard, ignoreDeps));
     DepsChecker.check(inj, HttpBackend, undefined, ignoreDeps);
-    if (routeMeta?.resolvedProvider) {
-      DepsChecker.checkForResolved(inj, routeMeta.resolvedProvider, ignoreDeps);
+    if (routeMeta?.resolvedHandler) {
+      DepsChecker.checkForResolved(inj, routeMeta.resolvedHandler, ignoreDeps);
     }
     DepsChecker.check(inj, HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
   }
