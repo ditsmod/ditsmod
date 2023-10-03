@@ -31,7 +31,6 @@ export class RouteMeta {
    * By default, any user can activate.
    */
   resolvedGuards: ResolvedGuard[];
-  guards: NormalizedGuard[];
   /**
    * Route decorator has value of the decorator and ref to other decorators
    * on the same controller's method.
