@@ -58,7 +58,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           const isSingleton = ctrlDecorator?.value.isSingleton;
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
-          const resolvedHandler = isSingleton ? undefined : RouteMeta.getResolvedHandler(controller, methodName);
+          const resolvedHandler = isSingleton ? undefined : RouteMeta.resolveHandler(controller, methodName);
           providersPerReq.push(...(ctrlDecorator?.value.providersPerReq || []));
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const { path: controllerPath, httpMethod } = route;
