@@ -73,6 +73,7 @@ export interface NormalizedGuard {
 
 export interface ResolvedGuard {
   guard: ResolvedProvider;
+  isSingleton?: boolean;
   params?: any[];
 }
 
