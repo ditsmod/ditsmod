@@ -15,6 +15,7 @@ export {
 export { CustomError } from './custom-error/custom-error.js';
 export { ErrorOpts } from './custom-error/error-opts.js';
 export { controller, ControllerMetadata } from './decorators/controller.js';
+export { guard } from './decorators/guard.js';
 export { featureModule } from './decorators/module.js';
 export { rootModule } from './decorators/root-module.js';
 export { route, RouteMetadata } from './decorators/route.js';
