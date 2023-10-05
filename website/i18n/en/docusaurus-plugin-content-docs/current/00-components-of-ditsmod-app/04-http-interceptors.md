@@ -16,9 +16,11 @@ Typically, interceptors are used to automate standard processing, such as:
 - caching;
 - etc.
 
-Interceptors can be centrally connected or disconnected without changing the method code of the controllers to which they are attached.
+Interceptors can be centrally connected or disconnected without changing the method code of the controllers to which they are attached. Like controllers, interceptors can be [singletons][109] or non-singletons. Unlike singletons, non-singletons have access to the request-level injector, so they can invoke request-level services. On the other hand, singletons are created at the route level - services are available to them at the route, module, or application level.
 
 ## HTTP request processing scheme
+
+### Non-singletons
 
 HTTP request processing has the following workflow:
 
@@ -42,6 +44,17 @@ Note that each call to the interceptor returns `Promise<any>`, and it eventually
 
 On the other hand, with DI you can easily replace `HttpFrontend` and `HttpBackend` with your own interceptors to take into account the return value of the controller method. One of the variants of this functionality is implemented in the [@ditsmod/return][104] module.
 
+### Singleton
+
+A singleton interceptor works very similarly to a non-singleton interceptor, except that it does not use an injector at the request level. The workflow with his participation differs in points 4 and 6:
+
+1. Ditsmod creates an instance of [PreRouter][7] at the application level.
+2. `PreRouter` uses the router to search for the request handler according to the URI.
+3. If the request handler is not found, `PreRouter` issues a 501 error.
+4. If a request handler is found, Ditsmod uses a provider instance with the [HttpFrontend][2] token at the route level, places it first in the interceptor queue, and automatically invokes it. By default, this interceptor is responsible for calling guards and setting `pathParams` and `queryParams` values for `SingletonRequestContext`.
+5. The second and subsequent interceptors may not start, depending on whether the previous interceptor in the queue will start them.
+6. If all interceptors have worked, Ditsmod starts [HttpBackend][3], the instance of which is used at the route level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
+
 ## Creating an interceptor
 
 Each interceptor should be a class implementing the [HttpInterceptor][1] interface and annotated with the `injectable` decorator:
@@ -61,11 +74,10 @@ As you can see, the `intercept()` method has two parameters: the first is the ha
 
 ## Passing interceptor to the injector
 
-Any interceptor is passed to the injector at the request level using [multi-providers][107] with the `HTTP_INTERCEPTORS` token:
+The non-singleton interceptor is passed to the injector at the request level using [multi-providers][107] with the `HTTP_INTERCEPTORS` token:
 
 ```ts
 import { HTTP_INTERCEPTORS, featureModule } from '@ditsmod/core';
-
 import { MyHttpInterceptor } from './my-http-interceptor.js';
 
 @featureModule({
@@ -74,6 +86,21 @@ import { MyHttpInterceptor } from './my-http-interceptor.js';
 })
 export class SomeModule {}
 ```
+
+Transmission of a singleton interceptor occurs in exactly the same way, but at the route, module, or application level:
+
+```ts
+import { HTTP_INTERCEPTORS, featureModule } from '@ditsmod/core';
+import { MyHttpInterceptor } from './my-http-interceptor.js';
+
+@featureModule({
+  // ...
+  providersPerApp: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
+})
+export class SomeModule {}
+```
+
+In this case, the interceptor is passed at the application level, but keep in mind that if you also pass interceptors at lower levels, this interceptor will be ignored. This is how [multi-providers][107] work.
 
 In this case, the interceptors are passed in the module's metadata. They can also be passed in the controller metadata. This means that interceptors can either work for all controllers in the module without exception, or only for a specific controller. If you only need to add interceptors to individual routes within controllers, you can do so with [extensions][108] (this is how [interceptors for parsing the request body][9] are added).
 
@@ -89,3 +116,4 @@ In this case, the interceptors are passed in the module's metadata. They can als
 [106]: /components-of-ditsmod-app/dependency-injection
 [107]: /components-of-ditsmod-app/dependency-injection#multi-providers
 [108]: /components-of-ditsmod-app/extensions
+[109]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
