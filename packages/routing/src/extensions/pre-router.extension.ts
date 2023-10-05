@@ -34,7 +34,7 @@ import {
   SingletonInterceptorWithGuards,
 } from '@ditsmod/core';
 
-import { ROUTES_EXTENSIONS } from './types.js';
+import { ROUTES_EXTENSIONS } from '../types.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
