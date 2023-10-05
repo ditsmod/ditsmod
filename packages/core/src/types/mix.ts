@@ -68,12 +68,12 @@ export type GuardItem = Class<CanActivate> | [Class<CanActivate>, any, ...any[]]
 
 export interface NormalizedGuard {
   guard: Class<CanActivate>;
+  isSingleton?: boolean;
   params?: any[];
 }
 
 export interface ResolvedGuard {
   guard: ResolvedProvider;
-  isSingleton?: boolean;
   params?: any[];
 }
 
