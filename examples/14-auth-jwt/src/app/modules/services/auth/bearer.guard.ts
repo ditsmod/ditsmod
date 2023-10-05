@@ -1,7 +1,7 @@
-import { CanActivate, injectable, Injector, RequestContext } from '@ditsmod/core';
+import { CanActivate, guard, Injector, RequestContext } from '@ditsmod/core';
 import { JwtService, JWT_PAYLOAD, VerifyErrors } from '@ditsmod/jwt';
 
-@injectable()
+@guard()
 export class BearerGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,

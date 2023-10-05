@@ -1,9 +1,9 @@
-import { CanActivate, RequestContext, Status, injectable } from '@ditsmod/core';
+import { CanActivate, RequestContext, Status, guard } from '@ditsmod/core';
 
 import { AuthService } from './auth.service.js';
 import { Permission } from './types.js';
 
-@injectable()
+@guard()
 export class PermissionsGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 

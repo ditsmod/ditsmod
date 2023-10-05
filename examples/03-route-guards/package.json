@@ -14,5 +14,8 @@
   },
   "imports": {
     "#src/*": "./dist/*"
+  },
+  "peerDependencies": {
+    "@ditsmod/core": "2.51.0"
   }
 }

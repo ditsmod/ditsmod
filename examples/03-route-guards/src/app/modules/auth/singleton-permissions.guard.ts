@@ -1,9 +1,9 @@
-import { CanActivate, RequestContext, Status, injectable } from '@ditsmod/core';
+import { CanActivate, RequestContext, Status, guard } from '@ditsmod/core';
 
 import { Permission } from './types.js';
 import { SingletonAuthService } from './singleton-auth.service.js';
 
-@injectable()
+@guard()
 export class SingletonPermissionsGuard implements CanActivate {
   constructor(private authService: SingletonAuthService) {}
 
