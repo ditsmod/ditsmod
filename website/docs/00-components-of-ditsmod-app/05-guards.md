@@ -6,7 +6,7 @@ sidebar_position: 5
 
 Якщо ви хочете обмежити доступ до певних маршрутів, ви можете скористатись ґардами. Готовий приклад застосунку з ґардами ви можете проглянути у теці [examples][1], або у [RealWorld example][2].
 
-Будь-який ґард є [DI провайдером][3], що передається в інжектори на рівні роуту (якщо контролер є [одинаком][4]) чи запиту (якщо контролер є неодинаком). Кожен ґард повинен бути класом, що впроваджує інтерфейс `CanActivate`:
+Будь-який ґард є [DI провайдером][3], що передається в інжектори на рівні запиту (якщо контролер є [неодинаком][4]), або на інших рівнях (якщо контролер є одинаком). Кожен ґард повинен бути класом, що впроваджує інтерфейс `CanActivate`:
 
 ```ts
 interface CanActivate {
@@ -17,10 +17,10 @@ interface CanActivate {
 Наприклад, це можна зробити так:
 
 ```ts {8-10}
-import { injectable, CanActivate, RequestContext } from '@ditsmod/core';
+import { guard, CanActivate, RequestContext } from '@ditsmod/core';
 import { AuthService } from './auth.service.js';
 
-@injectable()
+@guard({ isSingleton: false })
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
@@ -131,7 +131,7 @@ export class SomeController {
 
 ## Передача ґардів до інжекторів
 
-Ґарди передаються в DI лише для інжекторів на рівні запиту. Це можна зробити або в контролері, або у модулі:
+Ґарди можна передавати у метаданих модуля чи контролера:
 
 ```ts {6}
 import { featureModule } from '@ditsmod/core';
@@ -143,6 +143,8 @@ import { AuthGuard } from 'auth.guard';
 })
 export class SomeModule {}
 ```
+
+В даному разі ґард буде працювати на рівні запиту, для контролерів неодинаків.
 
 ## Встановлення ґардів на імпортований модуль
 

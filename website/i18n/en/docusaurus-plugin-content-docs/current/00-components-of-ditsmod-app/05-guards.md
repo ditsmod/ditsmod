@@ -6,7 +6,7 @@ sidebar_position: 5
 
 If you want to restrict access to certain routes, you can use guards. You can view a finished example of an application with guards in the [examples][1] folder or in [RealWorld example][2].
 
-Any guard is a [DI provider][3] passed to injectors at the route level (if the controller is [singleton][4]) or request level (if the controller is non-singleton) level. Each guard must be a class that implements the `CanActivate` interface:
+Any guard is a [DI provider][3] passed to injectors at the request level (if the controller is [non-singleton][4]), or at other levels (if the controller is singleton). Each guard must be a class that implements the `CanActivate` interface:
 
 ```ts
 interface CanActivate {
@@ -17,10 +17,10 @@ interface CanActivate {
 For example, it can be done like this:
 
 ```ts {8-10}
-import { injectable, CanActivate, RequestContext } from '@ditsmod/core';
+import { guard, CanActivate, RequestContext } from '@ditsmod/core';
 import { AuthService } from './auth.service.js';
 
-@injectable()
+@guard({ isSingleton: false })
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
@@ -131,7 +131,7 @@ export class SomeController {
 
 ## Passing guards to injectors
 
-Guards are passed to DI only for injectors at the request level. This can be done either in the controller or in the module:
+Guards can be passed in module or controller metadata:
 
 ```ts {6}
 import { featureModule } from '@ditsmod/core';
@@ -143,6 +143,8 @@ import { AuthGuard } from 'auth.guard';
 })
 export class SomeModule {}
 ```
+
+In this case, the guard will work at the request level, for non-singleton controllers.
 
 ## Setting guards on the imported module
 
