@@ -1,5 +1,12 @@
+<a name="core-2.51.0"></a>
+# [core-2.51.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.51.0) (2023-10-03)
+
+### Features
+
+- Introduced `@guard()` decorator.
+
 <a name="core-2.50.1"></a>
-# [core-2.50.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.50.1) (2023-10-03)
+## [core-2.50.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.50.1) (2023-10-03)
 
 ### Bug fix
 
