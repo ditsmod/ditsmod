@@ -8,7 +8,7 @@ import { AnyObj } from '#types/mix.js';
 export class SingletonHttpFrontend implements HttpFrontend {
   async intercept(next: HttpHandler, ctx: SingletonRequestContext) {
     if (ctx.queryString) {
-      ctx.quetyParams = parse(ctx.queryString);
+      ctx.queryParams = parse(ctx.queryString);
     }
     if (ctx.aPathParams?.length) {
       const pathParams: AnyObj = {};

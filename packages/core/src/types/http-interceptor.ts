@@ -19,7 +19,7 @@ export class RequestContext {
 
 export class SingletonRequestContext extends RequestContext {
   pathParams?: AnyObj;
-  quetyParams?: AnyObj;
+  queryParams?: AnyObj;
   body?: AnyObj;
   auth?: AnyObj;
 }
