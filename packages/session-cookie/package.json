@@ -23,7 +23,9 @@
   "directories": {
     "lib": "src"
   },
-  "keywords": ["ditsmod"],
+  "keywords": [
+    "ditsmod"
+  ],
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
@@ -31,7 +33,7 @@
     "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../node_modules/jest/bin/jest.js"
   },
   "dependencies": {
-    "@ts-stack/cookies": "^1.0.3"
+    "@ts-stack/cookies": "^1.1.1"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.47.0"
