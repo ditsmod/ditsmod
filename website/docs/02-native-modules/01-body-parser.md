@@ -17,7 +17,7 @@ sidebar_position: 1
 - `text/plain`
 - `text/html`
 
-Даний модуль не парсить тіло запиту при завантаженні файлів, для цього можете скористатись стороннім модулем [multiparty][2].
+Даний модуль не парсить тіло запиту при завантаженні файлів, для цього можете скористатись стороннім модулем [@ts-stack/multiparty][2].
 
 ## Встановлення
 
@@ -83,26 +83,41 @@ export class AppModule {}
 
 ## Використання
 
-Результат роботи інтерсептора можна отримати за допомогою токена `HTTP_BODY`:
+В залежності від того, чи є контролер [одинаком][3] чи ні, результат роботи інтерсептора можна отримати двома способами:
 
-```ts {11}
-import { controller, Res, route, inject } from '@ditsmod/core';
-import { HTTP_BODY } from '@ditsmod/body-parser';
+1. Якщо контролер не є одинаком, результат можна отримати за допомогою токена `HTTP_BODY`:
 
-interface Body {
-  one: number;
-}
+  ```ts {11}
+  import { controller, Res, route, inject } from '@ditsmod/core';
+  import { HTTP_BODY } from '@ditsmod/body-parser';
 
-@controller()
-export class SomeController {
-  @route('POST')
-  ok(@inject(HTTP_BODY) body: Body, res: Res) {
-    res.sendJson(body);
+  interface Body {
+    one: number;
   }
-}
-```
 
+  @controller()
+  export class SomeController {
+    @route('POST')
+    ok(@inject(HTTP_BODY) body: Body, res: Res) {
+      res.sendJson(body);
+    }
+  }
+  ```
+2. Якщо контролер є одинаком, результат можна отримати з контексту:
 
+  ```ts {6}
+  import { controller, route, SingletonRequestContext } from '@ditsmod/core';
+
+  @controller({ isSingleton: true })
+  export class SomeController {
+    @route('POST')
+    ok(ctx: SingletonRequestContext) {
+      const bodyStr = JSON.stringify(ctx.body);
+      ctx.nodeRes.end(bodyStr);
+    }
+  }
+  ```
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/06-body-parser
 [2]: https://www.npmjs.com/package/@ts-stack/multiparty
+[3]: /components-of-ditsmod-app/controllers-and-services/#що-являє-собою-контролер

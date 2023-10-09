@@ -17,7 +17,7 @@ The following data types are supported:
 - `text/plain`
 - `text/html`
 
-This module does not parse the request body when uploading files, for this you can use the third-party module [multiparty][2].
+This module does not parse the request body when uploading files, for this you can use the third-party module [@ts-stack/multiparty][2].
 
 ## Installation
 
@@ -83,26 +83,41 @@ export class AppModule {}
 
 ## Usage
 
-The result of the interceptor can be obtained by `HTTP_BODY` token:
+Depending on whether the controller is [singleton][3] or not, the result of the interceptor can be obtained in two ways:
 
-```ts {11}
-import { controller, Res, route, inject } from '@ditsmod/core';
-import { HTTP_BODY } from '@ditsmod/body-parser';
+1. If the controller is non-singleton, the result can be obtained using the `HTTP_BODY` token:
 
-interface Body {
-  one: number;
-}
+  ```ts {11}
+  import { controller, Res, route, inject } from '@ditsmod/core';
+  import { HTTP_BODY } from '@ditsmod/body-parser';
 
-@controller()
-export class SomeController {
-  @route('POST')
-  ok(@inject(HTTP_BODY) body: Body, res: Res) {
-    res.sendJson(body);
+  interface Body {
+    one: number;
   }
-}
-```
 
+  @controller()
+  export class SomeController {
+    @route('POST')
+    ok(@inject(HTTP_BODY) body: Body, res: Res) {
+      res.sendJson(body);
+    }
+  }
+  ```
+2. If the controller is singleton, the result can be obtained from the context:
 
+  ```ts {6}
+  import { controller, route, SingletonRequestContext } from '@ditsmod/core';
+
+  @controller({ isSingleton: true })
+  export class SomeController {
+    @route('POST')
+    ok(ctx: SingletonRequestContext) {
+      const bodyStr = JSON.stringify(ctx.body);
+      ctx.nodeRes.end(bodyStr);
+    }
+  }
+  ```
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/06-body-parser
 [2]: https://www.npmjs.com/package/@ts-stack/multiparty
+[3]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
