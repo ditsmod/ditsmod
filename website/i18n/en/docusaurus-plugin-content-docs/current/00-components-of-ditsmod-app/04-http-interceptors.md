@@ -27,7 +27,7 @@ HTTP request processing has the following workflow:
 1. Ditsmod creates an instance of [PreRouter][7] at the application level.
 2. `PreRouter` uses the router to search for the request handler according to the URI.
 3. If the request handler is not found, `PreRouter` issues a 501 error.
-4. If a request handler is found, Ditsmod creates a provider instance with the [HttpFrontend][2] token at the request level, places it first in the queue of interceptors, and automatically calls it. By default, this interceptor is responsible for calling guards and setting values for providers with `QUERY_PARAMS` and `PATH_PARAMS` tokens.
+4. If a request handler is found, Ditsmod creates a provider instance with the [HttpFrontend][2] token at the request level, places it first in the queue of interceptors, and automatically calls it. By default, this interceptor is responsible for setting values for providers with `QUERY_PARAMS` and `PATH_PARAMS` tokens.
 5. The second and subsequent interceptors may not start, depending on whether the previous interceptor in the queue will start them.
 6. If all interceptors have worked, Ditsmod starts [HttpBackend][3], which is instantiated at the request level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
@@ -51,7 +51,7 @@ A singleton interceptor works very similarly to a non-singleton interceptor, exc
 1. Ditsmod creates an instance of [PreRouter][7] at the application level.
 2. `PreRouter` uses the router to search for the request handler according to the URI.
 3. If the request handler is not found, `PreRouter` issues a 501 error.
-4. If a request handler is found, Ditsmod uses a provider instance with the [HttpFrontend][2] token at the route level, places it first in the interceptor queue, and automatically invokes it. By default, this interceptor is responsible for calling guards and setting `pathParams` and `queryParams` values for `SingletonRequestContext`.
+4. If a request handler is found, Ditsmod uses a provider instance with the [HttpFrontend][2] token at the route level, places it first in the interceptor queue, and automatically invokes it. By default, this interceptor is responsible for setting `pathParams` and `queryParams` values for `SingletonRequestContext`.
 5. The second and subsequent interceptors may not start, depending on whether the previous interceptor in the queue will start them.
 6. If all interceptors have worked, Ditsmod starts [HttpBackend][3], the instance of which is used at the route level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
