@@ -20,7 +20,8 @@ export class SessionCookieExtension implements Extension<void> {
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       metadataPerMod2.aControllersMetadata2.forEach(({ providersPerRou, isSingleton }) => {
         if (isSingleton) {
-          providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: SessionCookieInterceptor, multi: true });
+          providersPerRou.unshift(SessionCookieInterceptor);
+          providersPerRou.push({ token: HTTP_INTERCEPTORS, useToken: SessionCookieInterceptor, multi: true });
         }
       });
     });
