@@ -2,7 +2,7 @@ import { Providers, rootModule } from '@ditsmod/core';
 import { RoutingModule } from '@ditsmod/routing';
 import { SessionCookieModule } from '@ditsmod/session-cookie';
 
-import { HelloWorldController } from './hello-world.controller.js';
+import { HelloWorldController, HelloWorldController2 } from './hello-world.controller.js';
 
 const sessionModuleWithParams = SessionCookieModule.withParams({
   cookieName: 'custom-session-name',
@@ -11,7 +11,7 @@ const sessionModuleWithParams = SessionCookieModule.withParams({
 
 @rootModule({
   imports: [RoutingModule, sessionModuleWithParams],
-  controllers: [HelloWorldController],
+  controllers: [HelloWorldController, HelloWorldController2],
   providersPerApp: [...new Providers().useLogConfig({ level: 'info' })],
   exports: [sessionModuleWithParams],
 })

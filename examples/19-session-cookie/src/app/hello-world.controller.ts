@@ -1,5 +1,5 @@
 import { controller, Res, route } from '@ditsmod/core';
-import { SessionCookie } from '@ditsmod/session-cookie';
+import { RequestContextWithSession, SessionCookie } from '@ditsmod/session-cookie';
 
 @controller()
 export class HelloWorldController {
@@ -14,5 +14,19 @@ export class HelloWorldController {
   @route('GET', 'get')
   getCookie(res: Res) {
     res.send(`session ID: ${this.session.id}`);
+  }
+}
+
+@controller({ isSingleton: true })
+export class HelloWorldController2 {
+  @route('GET', 'set2')
+  setCookie(ctx: RequestContextWithSession) {
+    ctx.sessionCookie.id = '123';
+    ctx.nodeRes.end('Hello World!\n');
+  }
+
+  @route('GET', 'get2')
+  getCookie(ctx: RequestContextWithSession) {
+    ctx.nodeRes.end(`session ID: ${ctx.sessionCookie.id}`);
   }
 }
