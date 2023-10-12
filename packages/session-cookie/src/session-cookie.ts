@@ -39,7 +39,7 @@ export class SessionCookie {
 
   protected updateSessionCookie() {
     if (this.id || this.id === null) {
-      this.opts.expires = this.opts.expires || new Date(new Date().getTime() + this.maxAge);
+      this.opts.expires ??= new Date(new Date().getTime() + this.maxAge);
       this.cookies.set(this.opts.cookieName!, this.id, this.opts);
     }
   }
