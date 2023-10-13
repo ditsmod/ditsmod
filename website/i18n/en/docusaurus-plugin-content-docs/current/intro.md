@@ -63,10 +63,10 @@ Of course, instead of two terminals, you can use, for example, [ts-node][17] in 
 Note that there are three config files for TypeScript in the `ditsmod/seed` repository:
 
 - `tsconfig.json` - the basic configuration used by your IDE (in most cases it is probably VS Code).
-- `tsconfig.build.json` - this configuration is used to compile the code from the `src` directory to the `dist` directory, it is intended for application code and unit tests.
-- `tsconfig.test.json` - this configuration is used to compile the code from the `test` folder into the `dist-test` folder, it is intended for end-to-end tests.
+- `tsconfig.build.json` - this configuration is used to compile the code from the `src` directory to the `dist` directory, it is intended for application code.
+- `tsconfig.test.json` - this configuration is used to compile unit test code and end-to-end tests.
 
-Also, note that since `ditsmod/seed` is declared as an EcmaScript Module (ESM), you can use [native Node.js aliases][18] to shorten file paths. This is the counterpart to `compilerOptions.paths` in `tsconfig`. Such aliases are declared in `package.json` in the `imports` field:
+Also, note that since `ditsmod/seed` is declared as an EcmaScript Module (ESM), you can use [native Node.js aliases][18] to shorten file paths. This is analogous to `compilerOptions.paths` in `tsconfig`. Such aliases are declared in `package.json` in the `imports` field:
 
 ```json {2}
 "imports": {
@@ -80,7 +80,7 @@ Now you can use it, for example in the `test` folder, like this:
 import { AppModule } from '#src/app/app.module.js';
 ```
 
-At the moment (2023-08-30) TypeScript does not yet fully support these aliases, so it is advisable to duplicate them in the `tsconfig.json` file:
+At the moment (2023-10-13) TypeScript does not yet fully support these aliases, so it is advisable to duplicate them in the `tsconfig.json` file:
 
 ```json
 // ...
@@ -123,7 +123,7 @@ After compilation, it becomes `dist/main.js` and becomes the entry point for run
 node dist/main.js
 ```
 
-Looking further at the file `src/main.ts`, you can see that an instance of the class `Application` is created, and as an argument for the method `bootstrap()` is passed `AppModule`. Here `AppModule` is the root module to which other application modules then imports.
+Looking at the file `src/main.ts`, you can see that an instance of the class `Application` is created, and as an argument for the method `bootstrap()` is passed `AppModule`. Here `AppModule` is the root module to which other application modules then imports.
 
 
 [1]: #install-the-ditsmod-seed

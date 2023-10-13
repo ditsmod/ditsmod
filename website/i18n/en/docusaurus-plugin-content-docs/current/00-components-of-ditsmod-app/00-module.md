@@ -16,7 +16,7 @@ Modules can contain:
 - services where the business logic of the application is described;
 - other classes, interfaces, helpers, data types intended for the operation of the current module.
 
-## Non-root module
+## Feature module
 
 The TypeScript class becomes a Ditsmod module with `featureModule` decorator:
 
@@ -64,6 +64,6 @@ import { rootModule } from '@ditsmod/core';
 export class AppModule {}
 ```
 
-It can contain exactly the same metadata as non-root modules.
+It can contain exactly the same metadata as feature modules.
 
 [1]: https://www.npmjs.com/package/reflect-metadata
