@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## What does a router do?
 
-The router has a mapping between the URL and the HTTP request handler. Although you will not have to manually write this mapping, but for a general idea of how the router works, in a very simplified form, this mapping can be imagined as follows:
+The router has a mapping between the URL and the corresponding request handler. Although you will not have to manually write this mapping, but for a general idea of how the router works, in a very simplified form, this mapping can be imagined as follows:
 
 ```ts
 const routes = new Map<string, Function>();

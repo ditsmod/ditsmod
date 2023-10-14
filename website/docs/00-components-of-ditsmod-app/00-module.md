@@ -14,27 +14,27 @@ sidebar_position: 0
 Модулі можуть містити:
 - контролери, що приймають HTTP-запити та відправляють HTTP-відповіді;
 - сервіси, де описується бізнес логіка застосунку;
+- інтерсептори та ґарди, що дозволяють автоматизувати обробку HTTP-запитів по типовим патернам;
+- декоратори та розширення, що дозволяють доповнювати застосунок новими правилами та новою поведінкою;
 - інші класи, інтерфейси, хелпери, типи даних, що призначаються для роботи поточного модуля.
 
-## Некореневий модуль
+## Кореневий модуль
 
-TypeScript клас стає модулем Ditsmod завдяки декоратору `featureModule`:
+До кореневого модуля підв'язуються інші модулі, він є єдиним на увесь застосунок, а його клас рекомендовано називати `AppModule`. TypeScript клас стає кореневим модулем Ditsmod завдяки декоратору `rootModule`:
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 
-@featureModule()
-export class SomeModule {}
+@rootModule()
+export class AppModule {}
 ```
 
-Файли модулів рекомендується називати із закінченням `*.module.ts`, а назви їхніх класів - із закінченням `*Module`.
-
-Загалом, в декоратор `featureModule` можна передавати об'єкт з такими властивостями:
+Загалом, в декоратор `rootModule` можна передавати об'єкт з такими властивостями:
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 
-@featureModule({
+@rootModule({
   appends: [], // Прикріплені модулі (вони потрібні лише для успадкування префікса у поточного модуля)
   imports: [], // Імпорт модулів
   controllers: [], // Прив'язка контролерів до модуля
@@ -50,20 +50,22 @@ import { featureModule } from '@ditsmod/core';
   resolvedCollisionsPerReq: [], //                                    ...на рівні запиту
   id: '', // Може використовуватись для динамічного додавання чи видалення модулів
 })
-export class SomeModule {}
-```
-
-## Кореневий модуль
-
-До кореневого модуля підв'язуються інші модулі, він є єдиним на увесь застосунок, а його клас рекомендовано називати `AppModule`. TypeScript клас стає кореневим модулем Ditsmod завдяки декоратору `rootModule`:
-
-```ts
-import { rootModule } from '@ditsmod/core';
-
-@rootModule()
 export class AppModule {}
 ```
 
-Він може містити точно такі самі метадані як і некореневі модулі.
+## Некореневий модуль
+
+TypeScript клас стає некореневим модулем Ditsmod завдяки декоратору `featureModule`:
+
+```ts
+import { featureModule } from '@ditsmod/core';
+
+@featureModule()
+export class SomeModule {}
+```
+
+Файли модулів рекомендується називати із закінченням `*.module.ts`, а назви їхніх класів - із закінченням `*Module`.
+
+Він може містити точно такі самі метадані як і кореневі модулі.
 
 [1]: https://www.npmjs.com/package/reflect-metadata

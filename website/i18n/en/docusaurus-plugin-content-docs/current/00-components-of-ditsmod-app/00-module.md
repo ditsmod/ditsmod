@@ -14,27 +14,27 @@ However, modules can also have different types. Two types are most often used:
 Modules can contain:
 - controllers that accept HTTP requests and send HTTP responses;
 - services where the business logic of the application is described;
+- interceptors and guards that allow you to automate the processing of HTTP requests according to typical patterns;
+- decorators and extensions that allow you to add new rules and behaviors to the application;
 - other classes, interfaces, helpers, data types intended for the operation of the current module.
 
-## Feature module
+## Root module
 
-The TypeScript class becomes a Ditsmod module with `featureModule` decorator:
+Other modules are imported into the root module, it is the only one for the whole application, and its class is recommended to be called `AppModule`. The TypeScript class becomes the root module of Ditsmod with `rootModule` decorator:
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 
-@featureModule()
-export class SomeModule {}
+@rootModule()
+export class AppModule {}
 ```
 
-It is recommended that module files end with `*.module.ts` and that their class names end with `*Module`.
-
-In general, an object with the following properties can be passed to the `featureModule` decorator:
+In general, an object with the following properties can be passed to the `rootModule` decorator:
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 
-@featureModule({
+@rootModule({
   appends: [], // Appended modules (these are only needed to inherit the path prefix from the current module)
   imports: [], // Import modules
   controllers: [], // Binding controllers to the module
@@ -50,20 +50,22 @@ import { featureModule } from '@ditsmod/core';
   resolvedCollisionsPerReq: [], //                                    ...at the request level
   id: '', // Can be used to dynamically add or remove modules
 })
-export class SomeModule {}
-```
-
-## The root module
-
-Other modules are imported into the root module, it is the only one for the whole application, and its class is recommended to be called `AppModule`. The TypeScript class becomes the root module of Ditsmod with `rootModule` decorator:
-
-```ts
-import { rootModule } from '@ditsmod/core';
-
-@rootModule()
 export class AppModule {}
 ```
 
-It can contain exactly the same metadata as feature modules.
+## Feature module
+
+The TypeScript class becomes a non-root Ditsmod module with the `featureModule` decorator:
+
+```ts
+import { featureModule } from '@ditsmod/core';
+
+@featureModule()
+export class SomeModule {}
+```
+
+It is recommended that module files end with `*.module.ts` and that their class names end with `*Module`.
+
+It can contain exactly the same metadata as root modules.
 
 [1]: https://www.npmjs.com/package/reflect-metadata
