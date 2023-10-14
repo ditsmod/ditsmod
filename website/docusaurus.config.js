@@ -20,12 +20,12 @@ module.exports = {
         src: 'img/logo.svg',
       },
       items: [
-        {
-          type: 'doc',
-          docId: 'intro',
-          position: 'left',
-          label: 'Документація Ditsmod',
-        },
+        // {
+        //   type: 'doc',
+        //   docId: 'intro',
+        //   position: 'left',
+        //   label: 'Документація Ditsmod',
+        // },
         {
           href: 'https://github.com/ditsmod/ditsmod',
           position: 'right',
