@@ -95,7 +95,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
    * - If prefix `/api/posts` and route path `:postId`, this method returns `/api/posts/:postId`
    */
   protected getPath(prefix?: string, path?: string) {
-    const prefixLastPart = prefix?.split('/').slice(-1)[0];
+    const prefixLastPart = prefix?.split('/').at(-1);
     if (prefixLastPart?.charAt(0) == ':') {
       const reducedPrefix = prefix?.split('/').slice(0, -1).join('/');
       return [reducedPrefix, path].filter((s) => s).join('/');
