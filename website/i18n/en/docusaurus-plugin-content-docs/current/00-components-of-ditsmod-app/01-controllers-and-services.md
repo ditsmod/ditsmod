@@ -296,3 +296,4 @@ In the last two examples, the service is passed to the `providersPerReq` array, 
 [5]: /native-modules/body-parser#usage
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.50.0/packages/core/src/services/pre-router.ts
 [7]: /components-of-ditsmod-app/dependency-injection
+[8]: https://en.wikipedia.org/wiki/Singleton_pattern
