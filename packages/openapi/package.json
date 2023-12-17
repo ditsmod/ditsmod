@@ -41,13 +41,13 @@
   "dependencies": {
     "@ts-stack/openapi-spec": "^3.1.5",
     "swagger-ui-dist": "^5.4.2",
-    "yaml": "^2.3.1"
+    "yaml": "^2.3.4"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.50.1",
     "@ditsmod/routing": "^2.0.0"
   },
   "devDependencies": {
-    "@types/swagger-ui-dist": "^3.30.1"
+    "@types/swagger-ui-dist": "^3.30.4"
   }
 }
