@@ -207,6 +207,18 @@ import { SomeModule } from './some.module.js';
 export class OtherModule {}
 ```
 
+Якщо модуль імпортується без властивості `path`, Ditsmod буде імпортувати лише його модулі:
+
+```ts {5}
+import { featureModule } from '@ditsmod/core';
+import { SomeModule } from './some.module.js';
+
+@featureModule({
+  imports: [SomeModule]
+})
+export class OtherModule {}
+```
+
 Більш докладну інформацію ви можете прочитати у розділі [Експорт, імпорт та прикріплення модулів][1].
 
 ## Сервіси

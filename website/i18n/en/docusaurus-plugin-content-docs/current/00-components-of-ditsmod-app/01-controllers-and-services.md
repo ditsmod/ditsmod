@@ -207,11 +207,23 @@ import { SomeModule } from './some.module.js';
 export class OtherModule {}
 ```
 
+If the module is imported without the `path` property, Ditsmod will only import services from it:
+
+```ts {5}
+import { featureModule } from '@ditsmod/core';
+import { SomeModule } from './some.module.js';
+
+@featureModule({
+  imports: [SomeModule]
+})
+export class OtherModule {}
+```
+
 You can read more detailed information in the section [Export, import and appends of modules][1].
 
 ## Services
 
-Although from a technical point of view, it's possible to get by with just one controller to handle an HTTP request, it's better to separate the voluminous code with business logic into separate classes so that the code can be reused when needed and easier to test. These separate classes with business logic are usually called _services_.
+While it's technically possible to get by with just one controller to handle an HTTP request, it's better to separate the extensive business logic code into separate classes so that the code can be reused as needed and is easier to test. These separate classes with business logic are usually called _services_.
 
 What services can do:
 
