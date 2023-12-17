@@ -1,4 +1,4 @@
-import 'reflect-metadata';
+import 'reflect-metadata/lite';
 import { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
 import { Reflector, isDelegateCtor } from './reflector.js';
 import { DecoratorAndValue, ParamsMeta, PropMeta, PropMetadataTuple } from './types-and-models.js';

@@ -1,4 +1,4 @@
-import 'reflect-metadata';
+import 'reflect-metadata/lite';
 
 import { CLASS_KEY, makeClassDecorator, makePropDecorator } from './decorator-factories.js';
 import { reflector } from './reflection.js';

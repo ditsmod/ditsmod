@@ -1,4 +1,4 @@
-import 'reflect-metadata';
+import 'reflect-metadata/lite';
 
 export { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
 export * from './decorators.js';

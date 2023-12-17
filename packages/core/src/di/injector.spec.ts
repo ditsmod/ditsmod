@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import 'reflect-metadata';
+import 'reflect-metadata/lite';
 
 import { makeClassDecorator, makePropDecorator } from './decorator-factories.js';
 import {
