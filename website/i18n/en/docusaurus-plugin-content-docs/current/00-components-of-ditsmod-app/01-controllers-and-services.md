@@ -30,7 +30,7 @@ In most cases, the request handler calls the controller method.
 
 ## What is a controller
 
-The mapping between the URL and the request handler is formed on the basis of the controllers, or rather - on the basis of the methods of the controllers. A TypeScript class becomes a Ditsmod controller thanks to the `controller` decorator:
+The mapping between the URL and the request handler is based on the methods of the controllers. A TypeScript class becomes a Ditsmod controller thanks to the `controller` decorator:
 
 ```ts
 import { controller } from '@ditsmod/core';
@@ -59,7 +59,7 @@ export class SomeController {}
 
 ### The controller non-singleton
 
-As mentioned above, after the router finds the HTTP request handler, this handler can call the controller method. To make this possible, HTTP requests are first bound to controller methods through a routing system using the `route` decorator. In the following example, a single route is created that accepts a `GET` request at the address `/hello`:
+As mentioned above, after the router finds the HTTP request handler, this handler can call the controller method. To make this possible, HTTP requests are first bound to controller methods through a routing system using the `route` decorator. In the following example, a single route is created that accepts a `GET` request at the path `/hello`:
 
 ```ts {5}
 import { controller, route, Res } from '@ditsmod/core';
@@ -183,9 +183,8 @@ In the "controller singleton" mode, controller methods bound to specific routes 
 
 The controller is bound to the module through the `controllers` array:
 
-```ts {6}
+```ts {5}
 import { featureModule } from '@ditsmod/core';
-
 import { SomeController } from './some.controller.js';
 
 @featureModule({
@@ -194,11 +193,10 @@ import { SomeController } from './some.controller.js';
 export class SomeModule {}
 ```
 
-After binding controllers to a module, in order for Ditsmod to take these controllers into account, the module should be either appended or imported in an object that has the [ModuleWithParams][2] interface. The following example shows both the appendage and the full import of the module (this is done only to demonstrate the possibility, in practice it does not make sense to do simultaneous appendage and import):
+After binding controllers to a module, in order for Ditsmod to take these controllers into account, the module should be either appended or imported in an object that has the [ModuleWithParams][2] interface. The following example shows both the appending and the full import of the module (this is just to demonstrate the possibility, in practice it does not make sense to append and import at the same time):
 
-```ts {6-8}
+```ts {5-7}
 import { featureModule } from '@ditsmod/core';
-
 import { SomeModule } from './some.module.js';
 
 @featureModule({
@@ -237,9 +235,8 @@ It is recommended that service files end with `*.service.ts`, and their classes 
 
 Often, some services depend on other services, and to get an instance of a certain service, you need to specify its class in the constructor:
 
-```ts {7}
+```ts {6}
 import { injectable } from '@ditsmod/core';
-
 import { FirstService } from './first.service.js';
 
 @injectable()

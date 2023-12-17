@@ -30,7 +30,7 @@ handle();
 
 ## Що являє собою контролер
 
-Мапінг між URL та обробником запиту формується саме на основі контролерів, точніше - на основі методів контролерів. TypeScript клас стає контролером Ditsmod завдяки декоратору `controller`:
+Мапінг між URL та обробником запиту формується саме на основі методів контролерів. TypeScript клас стає контролером Ditsmod завдяки декоратору `controller`:
 
 ```ts
 import { controller } from '@ditsmod/core';
@@ -183,9 +183,8 @@ export class HelloWorldController {
 
 Прив'язується контролер до модуля через масив `controllers`:
 
-```ts {6}
+```ts {5}
 import { featureModule } from '@ditsmod/core';
-
 import { SomeController } from './some.controller.js';
 
 @featureModule({
@@ -196,9 +195,8 @@ export class SomeModule {}
 
 Після прив'язки контролерів до модуля, щоб Ditsmod брав до уваги ці контролери, даний модуль потрібно або прикріпити, або імпортувати в об'єкті, що має інтерфейс [ModuleWithParams][2]. В наступному прикладі показано і прикріплення, і повний імпорт модуля (це зроблено лише щоб продемонструвати можливість, на практиці немає сенсу робити одночасне прикріплення з імпортом):
 
-```ts {6-8}
+```ts {5-7}
 import { featureModule } from '@ditsmod/core';
-
 import { SomeModule } from './some.module.js';
 
 @featureModule({
@@ -237,9 +235,8 @@ export class SomeService {}
 
 Часто одні сервіси залежать від інших сервісів, і щоб отримати інстанс певного сервісу, необхідно указувати його клас в конструкторі:
 
-```ts {7}
+```ts {6}
 import { injectable } from '@ditsmod/core';
-
 import { FirstService } from './first.service.js';
 
 @injectable()
