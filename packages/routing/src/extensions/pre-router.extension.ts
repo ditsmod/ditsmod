@@ -121,7 +121,7 @@ export class PreRouterExtension implements Extension<void> {
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
     const nodeReqId = KeyRegistry.get(NODE_REQ).id;
     const nodeResId = KeyRegistry.get(NODE_RES).id;
-    const aPathParamsId = KeyRegistry.get(A_PATH_PARAMS).id;
+    const pathParamsId = KeyRegistry.get(A_PATH_PARAMS).id;
     const queryStringId = KeyRegistry.get(QUERY_STRING).id;
 
     return (async (nodeReq, nodeRes, aPathParams, queryString) => {
@@ -136,7 +136,7 @@ export class PreRouterExtension implements Extension<void> {
       await injector
         .setById(nodeReqId, nodeReq)
         .setById(nodeResId, nodeRes)
-        .setById(aPathParamsId, aPathParams)
+        .setById(pathParamsId, aPathParams)
         .setById(queryStringId, queryString || '')
         .instantiateResolved<ChainMaker>(resolvedChainMaker)
         .makeChain(ctx)
