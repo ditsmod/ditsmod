@@ -6,7 +6,7 @@ export class ProvidersMetadata {
    */
   providersPerApp: ServiceProvider[] = [];
   /**
-   * Providers per module.
+   * Providers per a module.
    */
   providersPerMod: ServiceProvider[] = [];
   /**
