@@ -93,18 +93,18 @@ describe('ExtensionsManager circular dependencies', () => {
   it('MY_EXTENSIONS2 has circular dependencies', async () => {
     const msg =
       'Detected circular dependencies: MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3. It is started from MY_EXTENSIONS2 -> Extension2.';
-    await expect(mock.init(MY_EXTENSIONS2)).rejects.toThrowError(msg);
+    await expect(mock.init(MY_EXTENSIONS2)).rejects.toThrow(msg);
   });
 
   it('MY_EXTENSIONS3 has circular dependencies', async () => {
     const msg =
       'Detected circular dependencies: MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3.';
-    await expect(mock.init(MY_EXTENSIONS3)).rejects.toThrowError(msg);
+    await expect(mock.init(MY_EXTENSIONS3)).rejects.toThrow(msg);
   });
 
   it('MY_EXTENSIONS4 has circular dependencies', async () => {
     const msg =
       'Detected circular dependencies: MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4.';
-    await expect(mock.init(MY_EXTENSIONS4)).rejects.toThrowError(msg);
+    await expect(mock.init(MY_EXTENSIONS4)).rejects.toThrow(msg);
   });
 });

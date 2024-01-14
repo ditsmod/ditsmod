@@ -17,11 +17,11 @@ describe('SomeController', () => {
 
   it('should say "Hello World!"', () => {
     expect(() => someController.tellHello(res)).not.toThrow();
-    expect(send).toBeCalledTimes(1);
+    expect(send).toHaveBeenCalledTimes(1);
   });
 
   it('should work with POST', () => {
     expect(() => someController.post(res, { one: 1 })).not.toThrow();
-    expect(sendJson).toBeCalledTimes(1);
+    expect(sendJson).toHaveBeenCalledTimes(1);
   });
 });

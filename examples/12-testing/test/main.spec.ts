@@ -41,8 +41,8 @@ describe('12-testing', () => {
       const errMsg = 'No provider for non-existing-token!; this error during calling Controller1.prototype.method1!';
       const traceRegExp = /^Error: No provider for non-existing-token![^\n]+\n\s+at Controller1./;
       const errStack = expect.stringMatching(traceRegExp);
-      expect(setError).toBeCalledWith(errMsg, errStack);
-      expect(setError).toBeCalledTimes(1);
+      expect(setError).toHaveBeenCalledWith(errMsg, errStack);
+      expect(setError).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -119,7 +119,7 @@ it('parent can create instance of Service2', () => {
 });
 
 it('child cannot create instance of Service2', () => {
-  expect(() => child.get(Service2)).toThrowError();
+  expect(() => child.get(Service2)).toThrow();
 });
 ```
  */
@@ -147,7 +147,7 @@ const parent = Injector.resolveAndCreate([Service1, Service2]);
 const child = parent.resolveAndCreateChild([Service2]);
 
 it('the parent cannot instantiate Service2', () => {
-  expect(() => parent.get(Service2)).toThrowError();
+  expect(() => parent.get(Service2)).toThrow();
 });
 
 it('the child can instantiate Service2', () => {

@@ -59,20 +59,20 @@ describe('Application', () => {
       mock.appOptions.serverOptions = { isHttp2SecureServer: true };
       mock.appOptions.httpModule = http;
       const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
-      expect(() => mock.checkSecureServerOption(AppModule.name)).toThrowError(msg);
+      expect(() => mock.checkSecureServerOption(AppModule.name)).toThrow(msg);
     });
 
     it('should not to throw with http and isHttp2SecureServer == false', () => {
       mock.appOptions.httpModule = http;
       const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
-      expect(() => mock.checkSecureServerOption(AppModule.name)).not.toThrowError(msg);
+      expect(() => mock.checkSecureServerOption(AppModule.name)).not.toThrow(msg);
     });
 
     it('should to throw with https and isHttp2SecureServer == true', () => {
       mock.appOptions.serverOptions = { isHttp2SecureServer: true };
       mock.appOptions.httpModule = https;
       const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
-      expect(() => mock.checkSecureServerOption(AppModule.name)).toThrowError(msg);
+      expect(() => mock.checkSecureServerOption(AppModule.name)).toThrow(msg);
     });
   });
 

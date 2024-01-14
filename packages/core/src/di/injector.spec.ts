@@ -235,15 +235,15 @@ describe('injector', () => {
     const car: SportsCar = injector.get(Car);
     expect(car).toBeInstanceOf(SportsCar);
     expect(car.engine).toBeInstanceOf(Engine);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy2).toBeCalledTimes(0);
+    expect(spy1).toHaveBeenCalledTimes(1);
+    expect(spy2).toHaveBeenCalledTimes(0);
 
     const myCar: CarWithDashboard = injector.get(myCarToken);
     expect(myCar).toBeInstanceOf(CarWithDashboard);
     expect(myCar.engine).toBeInstanceOf(Engine);
     expect(myCar.dashboard).toBeInstanceOf(Dashboard);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy2).toBeCalledTimes(1);
+    expect(spy1).toHaveBeenCalledTimes(1);
+    expect(spy2).toHaveBeenCalledTimes(1);
   });
 
   it('should support function factory non-class tokens', () => {
@@ -264,7 +264,7 @@ describe('injector', () => {
     const car: SportsCar = injector.get(token1);
     expect(car).toBeInstanceOf(SportsCar);
     expect(car.engine).toBeInstanceOf(Engine);
-    expect(spy1).toBeCalledTimes(1);
+    expect(spy1).toHaveBeenCalledTimes(1);
   });
 
   it('should support method factory', () => {
@@ -305,17 +305,17 @@ describe('injector', () => {
     const car: SportsCar = injector.get(Car);
     expect(car).toBeInstanceOf(SportsCar);
     expect(car.engine).toBeInstanceOf(Engine);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy2).toBeCalledTimes(1);
-    expect(spy3).toBeCalledTimes(0);
+    expect(spy1).toHaveBeenCalledTimes(1);
+    expect(spy2).toHaveBeenCalledTimes(1);
+    expect(spy3).toHaveBeenCalledTimes(0);
 
     const myCar: CarWithDashboard = injector.get(myCarToken);
     expect(myCar).toBeInstanceOf(CarWithDashboard);
     expect(myCar.engine).toBeInstanceOf(Engine);
     expect(myCar.dashboard).toBeInstanceOf(Dashboard);
-    expect(spy1).toBeCalledTimes(2);
-    expect(spy2).toBeCalledTimes(1);
-    expect(spy3).toBeCalledTimes(1);
+    expect(spy1).toHaveBeenCalledTimes(2);
+    expect(spy2).toHaveBeenCalledTimes(1);
+    expect(spy3).toHaveBeenCalledTimes(1);
 
     const classMetadata = reflector.getClassMetadata<[{ providers: [] }]>(Controller);
     expect(classMetadata[0].value).toEqual([{ providers: [] }]);
@@ -354,15 +354,15 @@ describe('injector', () => {
     const car: SportsCar = injector.get(method1);
     expect(car).toBeInstanceOf(SportsCar);
     expect(car.engine).toBeInstanceOf(Engine);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy2).toBeCalledTimes(0);
+    expect(spy1).toHaveBeenCalledTimes(1);
+    expect(spy2).toHaveBeenCalledTimes(0);
 
     const myCar: CarWithDashboard = injector.get(method2);
     expect(myCar).toBeInstanceOf(CarWithDashboard);
     expect(myCar.engine).toBeInstanceOf(Engine);
     expect(myCar.dashboard).toBeInstanceOf(Dashboard);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy2).toBeCalledTimes(1);
+    expect(spy1).toHaveBeenCalledTimes(1);
+    expect(spy2).toHaveBeenCalledTimes(1);
   });
 
   it('should support method factory without token', () => {
@@ -402,17 +402,17 @@ describe('injector', () => {
     const car: SportsCar = injector.get(Controller.prototype.method1);
     expect(car).toBeInstanceOf(SportsCar);
     expect(car.engine).toBeInstanceOf(Engine);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy2).toBeCalledTimes(1);
-    expect(spy3).toBeCalledTimes(0);
+    expect(spy1).toHaveBeenCalledTimes(1);
+    expect(spy2).toHaveBeenCalledTimes(1);
+    expect(spy3).toHaveBeenCalledTimes(0);
 
     const myCar: CarWithDashboard = injector.get(Controller.prototype.method2);
     expect(myCar).toBeInstanceOf(CarWithDashboard);
     expect(myCar.engine).toBeInstanceOf(Engine);
     expect(myCar.dashboard).toBeInstanceOf(Dashboard);
-    expect(spy1).toBeCalledTimes(2);
-    expect(spy2).toBeCalledTimes(1);
-    expect(spy3).toBeCalledTimes(1);
+    expect(spy1).toHaveBeenCalledTimes(2);
+    expect(spy2).toHaveBeenCalledTimes(1);
+    expect(spy3).toHaveBeenCalledTimes(1);
 
     const classMetadata = reflector.getClassMetadata<string>(Controller);
     expect(classMetadata[0].value).toEqual([{ providers: [] }]);
@@ -443,7 +443,7 @@ describe('injector', () => {
 
   it('should throw when no type and not @inject (class case)', () => {
     const msg = "Cannot resolve all parameters for 'NoAnnotations(?)";
-    expect(() => createInjector([NoAnnotations])).toThrowError(msg);
+    expect(() => createInjector([NoAnnotations])).toThrow(msg);
   });
 
   it('should throw when no type and not @inject (factory case)', () => {
@@ -471,7 +471,7 @@ describe('injector', () => {
       { token: 'someToken', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
     ];
     const msg = /Cannot resolve all parameters for 'ClassWithFactory.method1/;
-    expect(() => createInjector(providers)).toThrowError(msg);
+    expect(() => createInjector(providers)).toThrow(msg);
   });
 
   it('should throw when passing anonymous function to useFactory', () => {
@@ -485,7 +485,7 @@ describe('injector', () => {
 
     const providers: Provider[] = [{ token: 'someToken', useFactory: [ClassWithFactory, () => ({})] }];
     const msg = 'Cannot find "anonymous()" as method in "ClassWithFactory".';
-    expect(() => createInjector(providers)).toThrowError(msg);
+    expect(() => createInjector(providers)).toThrow(msg);
   });
 
   it('should throw when passing fake value to useFactory', () => {
@@ -499,7 +499,7 @@ describe('injector', () => {
 
     const providers: Provider[] = [{ token: 'someToken', useFactory: [ClassWithFactory, 'fakeValue' as any] }];
     const msg = 'Failed to create factory provider for someToken';
-    expect(() => createInjector(providers)).toThrowError(msg);
+    expect(() => createInjector(providers)).toThrow(msg);
   });
 
   it('should cache instances', () => {
@@ -585,7 +585,7 @@ describe('injector', () => {
     const carToken = new InjectionToken('carToken');
     const injector = createInjector([{ token: carToken, useToken: SportsCar }]);
     const msg = 'No provider for SportsCar! (InjectionToken carToken -> SportsCar)';
-    expect(() => injector.get(carToken)).toThrowError(msg);
+    expect(() => injector.get(carToken)).toThrow(msg);
   });
 
   it('should handle forwardRef in useToken', () => {
@@ -651,7 +651,7 @@ describe('injector', () => {
   });
 
   it('should throw when given invalid providers', () => {
-    expect(() => createInjector(['blah'] as any)).toThrowError(
+    expect(() => createInjector(['blah'] as any)).toThrow(
       'Invalid provider - only instances of Provider and Class are allowed, got: blah',
     );
   });
@@ -665,12 +665,12 @@ describe('injector', () => {
 
   it('should throw when no provider defined', () => {
     const injector = createInjector([]);
-    expect(() => injector.get('NonExisting')).toThrowError('No provider for NonExisting!');
+    expect(() => injector.get('NonExisting')).toThrow('No provider for NonExisting!');
   });
 
   it('should show the full path when no provider', () => {
     const injector = createInjector([CarWithDashboard, Engine, Dashboard]);
-    expect(() => injector.get(CarWithDashboard)).toThrowError(
+    expect(() => injector.get(CarWithDashboard)).toThrow(
       `No provider for DashboardSoftware! (${stringify(CarWithDashboard)} -> ${stringify(
         Dashboard,
       )} -> DashboardSoftware)`,
@@ -704,7 +704,7 @@ describe('injector', () => {
     ]);
 
     const msg = 'Broken Engine; this error during instantiation of Engine! (Car -> Engine)';
-    expect(() => injector.get(Car)).toThrowError(msg);
+    expect(() => injector.get(Car)).toThrow(msg);
 
     isBroken = false;
 
@@ -781,7 +781,7 @@ describe('resolveAndInstantiate', () => {
   it('should not store the instantiated object in the injector', () => {
     const injector = Injector.resolveAndCreate([Engine]);
     injector.resolveAndInstantiate(Car);
-    expect(() => injector.get(Car)).toThrowError();
+    expect(() => injector.get(Car)).toThrow();
   });
 });
 
@@ -828,7 +828,7 @@ describe('depedency resolution', () => {
       ]);
 
       const msg = 'No provider for Engine! (Car -> Engine)';
-      expect(() => child.get(Car)).toThrowError(msg);
+      expect(() => child.get(Car)).toThrow(msg);
     });
   });
 
@@ -898,11 +898,11 @@ describe('resolve', () => {
   it('should throw when mixing multi providers with regular providers', () => {
     expect(() => {
       Injector.resolve([{ token: Engine, useClass: BrokenEngine, multi: true }, Engine]);
-    }).toThrowError(/Cannot mix multi providers and regular providers/);
+    }).toThrow(/Cannot mix multi providers and regular providers/);
 
     expect(() => {
       Injector.resolve([Engine, { token: Engine, useClass: BrokenEngine, multi: true }]);
-    }).toThrowError(/Cannot mix multi providers and regular providers/);
+    }).toThrow(/Cannot mix multi providers and regular providers/);
   });
 
   it('should resolve forward references', () => {

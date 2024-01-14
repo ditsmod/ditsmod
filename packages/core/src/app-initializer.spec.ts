@@ -665,7 +665,7 @@ describe('AppInitializer', () => {
 
       expect(() => moduleManager.scanRootModule(AppModule)).not.toThrow();
       await expect(mock.init()).resolves.not.toThrow();
-      expect(jestFn).toBeCalledWith('Extension1');
+      expect(jestFn).toHaveBeenCalledWith('Extension1');
     });
   });
 });

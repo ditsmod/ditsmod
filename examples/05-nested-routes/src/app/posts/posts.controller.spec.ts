@@ -16,6 +16,6 @@ describe('PostsController', () => {
 
   it('should say "Hello World!"', () => {
     expect(() => postsController.sendPosts(res)).not.toThrow();
-    expect(sendJson).toBeCalledTimes(1);
+    expect(sendJson).toHaveBeenCalledTimes(1);
   });
 });

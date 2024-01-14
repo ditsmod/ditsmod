@@ -38,14 +38,14 @@ describe('LogMediator', () => {
         expect(() => mock.writeLogs([])).not.toThrow();
         expect(mock.writeLogs([])).toBeInstanceOf(ConsoleLogger);
         expect(mock.writeLogs([]).getLevel()).toBe('info');
-        expect(mock.logger.log).toBeCalledTimes(0);
-        expect(console.log).toBeCalledTimes(0);
+        expect(mock.logger.log).toHaveBeenCalledTimes(0);
+        expect(console.log).toHaveBeenCalledTimes(0);
       });
 
       it('works with log items', () => {
         expect(() => mock.writeLogs([baseLogItem])).not.toThrow();
-        expect(mock.logger.log).toBeCalledTimes(0); // writeLogs() creates a separate logger instance.
-        expect(console.log).toBeCalledTimes(1);
+        expect(mock.logger.log).toHaveBeenCalledTimes(0); // writeLogs() creates a separate logger instance.
+        expect(console.log).toHaveBeenCalledTimes(1);
         expect(mock.writeLogs([baseLogItem])).toBeInstanceOf(ConsoleLogger);
       });
 
@@ -67,8 +67,8 @@ describe('LogMediator', () => {
 
       it('works with log items', () => {
         expect(() => mock.writeLogs([baseLogItem])).not.toThrow();
-        expect(mock.logger.log).toBeCalledTimes(0); // writeLogs() creates a separate logger instance.
-        expect(console.log).toBeCalledTimes(1);
+        expect(mock.logger.log).toHaveBeenCalledTimes(0); // writeLogs() creates a separate logger instance.
+        expect(console.log).toHaveBeenCalledTimes(1);
       });
 
       it('always creates new instance of a logger', () => {

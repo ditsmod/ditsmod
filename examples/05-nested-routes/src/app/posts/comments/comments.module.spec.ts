@@ -16,6 +16,6 @@ describe('CommentsController', () => {
 
   it('should say "Hello World!"', () => {
     expect(() => commentsController.sendComments(res)).not.toThrow();
-    expect(sendJson).toBeCalledTimes(1);
+    expect(sendJson).toHaveBeenCalledTimes(1);
   });
 });

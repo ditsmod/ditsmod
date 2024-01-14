@@ -55,12 +55,12 @@ describe('@ditsmod/testing', () => {
     await request(server).get('/per-req').expect(200).expect(message);
     await request(server).get('/per-rou2').expect(200).expect(message);
     await request(server).get('/per-req2').expect(200).expect(message);
-    expect(methodPerApp).toBeCalledTimes(1);
-    expect(methodPerMod).toBeCalledTimes(1);
-    expect(methodPerRou).toBeCalledTimes(1);
-    expect(methodPerReq).toBeCalledTimes(1);
-    expect(methodPerRou2).toBeCalledTimes(1);
-    expect(methodPerReq2).toBeCalledTimes(1);
+    expect(methodPerApp).toHaveBeenCalledTimes(1);
+    expect(methodPerMod).toHaveBeenCalledTimes(1);
+    expect(methodPerRou).toHaveBeenCalledTimes(1);
+    expect(methodPerReq).toHaveBeenCalledTimes(1);
+    expect(methodPerRou2).toHaveBeenCalledTimes(1);
+    expect(methodPerReq2).toHaveBeenCalledTimes(1);
 
     server.close();
   });
@@ -76,7 +76,7 @@ describe('@ditsmod/testing', () => {
     const message = 'any-string';
     methodPerRou3.mockImplementation(() => message);
     await request(server).get('/per-rou3').expect(500).expect({ error: 'Internal server error' });
-    expect(methodPerRou3).toBeCalledTimes(0);
+    expect(methodPerRou3).toHaveBeenCalledTimes(0);
 
     server.close();
   });

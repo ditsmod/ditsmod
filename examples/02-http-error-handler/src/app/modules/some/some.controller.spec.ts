@@ -16,12 +16,12 @@ describe('SomeController', () => {
 
   it('should say "ok"', () => {
     expect(() => someController.ok(res)).not.toThrow();
-    expect(send).toBeCalledWith('ok');
-    expect(send).toBeCalledTimes(1);
+    expect(send).toHaveBeenCalledWith('ok');
+    expect(send).toHaveBeenCalledTimes(1);
   });
 
   it('should to throw an error', () => {
     expect(() => someController.throwError()).toThrow('Here some error occurred');
-    expect(send).toBeCalledTimes(0);
+    expect(send).toHaveBeenCalledTimes(0);
   });
 });

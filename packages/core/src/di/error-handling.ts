@@ -35,7 +35,7 @@ class A {
   constructor(b:B) {}
 }
 
-expect(() => Injector.resolveAndCreate([A])).toThrowError();
+expect(() => Injector.resolveAndCreate([A])).toThrow();
 ```
  */
 export function noProviderError(tokens: any[]) {
@@ -110,7 +110,7 @@ export function instantiationError(originalException: any, tokens: any[]) {
  * ### Example
  *
 ```ts
-expect(() => Injector.resolveAndCreate(["not a type"])).toThrowError();
+expect(() => Injector.resolveAndCreate(["not a type"])).toThrow();
 ```
  */
 export function invalidProviderError(provider: any) {
@@ -130,7 +130,7 @@ class A {
   constructor(b) {}
 }
 
-expect(() => Injector.resolveAndCreate([A])).toThrowError();
+expect(() => Injector.resolveAndCreate([A])).toThrow();
 ```
  *
  * This error is also thrown when the class not marked with `injectable` has parameter types.
@@ -142,7 +142,7 @@ class A {
   constructor(b:B) {} // no information about the parameter types of A is available at runtime.
 }
 
-expect(() => Injector.resolveAndCreate([A,B])).toThrowError();
+expect(() => Injector.resolveAndCreate([A,B])).toThrow();
 ```
  */
 export function noAnnotationError(Cls: Class, params: any[], propertyKey?: string | symbol): DiError {
@@ -184,7 +184,7 @@ function getSignature(params: any[]) {
 expect(() => Injector.resolveAndCreate([
   { provide: "Strings", useValue: "string1", multi: true},
   { provide: "Strings", useValue: "string2", multi: false}
-])).toThrowError();
+])).toThrow();
 ```
  */
 export function mixMultiProvidersWithRegularProvidersError(token: any): DiError {

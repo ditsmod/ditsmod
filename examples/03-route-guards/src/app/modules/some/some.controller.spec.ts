@@ -16,19 +16,19 @@ describe('SomeController', () => {
 
   it('should say "ok"', () => {
     expect(() => someController.ok(res)).not.toThrow();
-    expect(send).toBeCalledWith('ok');
-    expect(send).toBeCalledTimes(1);
+    expect(send).toHaveBeenCalledWith('ok');
+    expect(send).toHaveBeenCalledTimes(1);
   });
 
   it('should to throw an error', () => {
     expect(() => someController.throw401Error(res)).not.toThrow();
-    expect(send).toBeCalledWith('some secret');
-    expect(send).toBeCalledTimes(1);
+    expect(send).toHaveBeenCalledWith('some secret');
+    expect(send).toHaveBeenCalledTimes(1);
   });
 
   it('should to throw an error', () => {
     expect(() => someController.throw403Error(res)).not.toThrow();
-    expect(send).toBeCalledWith('some secret');
-    expect(send).toBeCalledTimes(1);
+    expect(send).toHaveBeenCalledWith('some secret');
+    expect(send).toHaveBeenCalledTimes(1);
   });
 });

@@ -106,9 +106,9 @@ describe('Providers', () => {
     }
 
     expect(callback).not.toThrow();
-    expect(Some.prototype.one).toBeCalledTimes(1);
-    expect(Other.prototype.two).toBeCalledTimes(2);
-    expect(Third.prototype.three).toBeCalledTimes(1);
+    expect(Some.prototype.one).toHaveBeenCalledTimes(1);
+    expect(Other.prototype.two).toHaveBeenCalledTimes(2);
+    expect(Third.prototype.three).toHaveBeenCalledTimes(1);
     expect([...providers]).toEqual([
       { token: 'Mostia', useValue: 'молоток' },
       { token: 'token', useValue: 'value' },

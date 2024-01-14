@@ -123,15 +123,15 @@ describe("null as provider's value", () => {
       const injector = Injector.resolveAndCreate([Dependecy2]);
       const msg = 'No provider for Dependecy1! (Dependecy2 -> Dependecy1)';
       expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(msg);
-      expect(spy).toBeCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(0);
     });
 
     it('should throw when trying to instantiate a cyclic dependency', () => {
       const injector = createInjector([Car, { token: Engine, useClass: CyclicEngine }]);
       const msg = 'Cannot instantiate cyclic dependency! (Car -> Engine -> Car)';
   
-      expect(() => DepsChecker.check(injector, Car)).toThrowError(msg);
-      expect(() => injector.get(Car)).toThrowError(msg);
+      expect(() => DepsChecker.check(injector, Car)).toThrow(msg);
+      expect(() => injector.get(Car)).toThrow(msg);
     });
 
     it('should work with simple dependency', () => {
@@ -150,7 +150,7 @@ describe("null as provider's value", () => {
 
       const injector = Injector.resolveAndCreate([Dependecy1, Dependecy2]);
       expect(() => DepsChecker.check(injector, Dependecy2)).not.toThrow();
-      expect(spy).toBeCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(0);
     });
 
     it('should throw with factory', () => {
@@ -176,7 +176,7 @@ describe("null as provider's value", () => {
       ]);
       const msg = 'No provider for Dependecy1! (Dependecy2 -> Dependecy1)';
       expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(msg);
-      expect(spy).toBeCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(0);
     });
 
     it('should throw with factory', () => {
@@ -209,7 +209,7 @@ describe("null as provider's value", () => {
       ]);
       const msg = 'No provider for Dependecy3! (Dependecy2 -> Dependecy3)';
       expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(msg);
-      expect(spy).toBeCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(0);
     });
 
     it('should work with factory', () => {
@@ -235,7 +235,7 @@ describe("null as provider's value", () => {
         { token: Dependecy2, useFactory: [Dependecy2, Dependecy2.prototype.method1] },
       ]);
       expect(() => DepsChecker.check(injector, Dependecy2)).not.toThrow();
-      expect(spy).toBeCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(0);
     });
 
     it('should work with factory and parent injector', () => {
@@ -261,7 +261,7 @@ describe("null as provider's value", () => {
         { token: Dependecy2, useFactory: [Dependecy2, Dependecy2.prototype.method1] },
       ]);
       expect(() => DepsChecker.check(child, Dependecy2)).not.toThrow();
-      expect(spy).toBeCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(0);
     });
 
     it('should throw with parent', () => {
@@ -282,7 +282,7 @@ describe("null as provider's value", () => {
       const injector = parent.resolveAndCreateChild([Dependecy2]);
       const msg = 'No provider for Dependecy1! (Dependecy2 -> Dependecy1)';
       expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(msg);
-      expect(spy).toBeCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(0);
     });
 
     it('should work with parent', () => {
@@ -302,7 +302,7 @@ describe("null as provider's value", () => {
       const parent = Injector.resolveAndCreate([Dependecy1]);
       const injector = parent.resolveAndCreateChild([Dependecy2]);
       expect(() => DepsChecker.check(injector, Dependecy2)).not.toThrow();
-      expect(spy).toBeCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(0);
     });
 
     it('@skipSelf() should cause return value from parent', () => {
@@ -316,7 +316,7 @@ describe("null as provider's value", () => {
       const parent = Injector.resolveAndCreate([{ token, useValue: "parent's value" }]);
       const child = parent.resolveAndCreateChild([A, { token, useValue: "child's value" }]);
       expect(() => DepsChecker.check(child, A)).not.toThrow();
-      expect(spy).toBeCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(0);
     });
 
     it('@skipSelf() should throw', () => {
@@ -331,7 +331,7 @@ describe("null as provider's value", () => {
       const child = parent.resolveAndCreateChild([A, { token, useValue: "child's value" }]);
       const msg = 'No provider for InjectionToken token! (A -> InjectionToken token)';
       expect(() => DepsChecker.check(child, A)).toThrow(msg);
-      expect(spy).toBeCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(0);
     });
 
     it('should ignore some deps even with parent injector', () => {
@@ -344,7 +344,7 @@ describe("null as provider's value", () => {
       const child = parent.resolveAndCreateChild([]);
       expect(() => DepsChecker.check(parent, Dependecy1, undefined, [Dependecy1])).not.toThrow();
       expect(() => DepsChecker.check(child, Dependecy1, undefined, [Dependecy1])).not.toThrow();
-      expect(spy).toBeCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(0);
     });
 
     it('should load instances from parent injector', () => {
@@ -357,12 +357,12 @@ describe("null as provider's value", () => {
       const child = parent.resolveAndCreateChild([]);
       expect(() => DepsChecker.check(parent, Dependecy1)).not.toThrow();
       expect(() => DepsChecker.check(child, Dependecy1)).not.toThrow();
-      expect(spy).toBeCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(0);
     });
 
     it('should throw when no provider defined', () => {
       const injector = createInjector([]);
-      expect(() => DepsChecker.check(injector, 'NonExisting')).toThrowError('No provider for NonExisting!');
+      expect(() => DepsChecker.check(injector, 'NonExisting')).toThrow('No provider for NonExisting!');
     });
   });
 });

@@ -171,7 +171,7 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    expect(() => mock.scanRootModule(AppModule)).toThrowError(/if "Provider1" is a provider, it must be included in/);
+    expect(() => mock.scanRootModule(AppModule)).toThrow(/if "Provider1" is a provider, it must be included in/);
   });
 
   it('root module with some metadata', () => {
@@ -551,7 +551,7 @@ describe('ModuleManager', () => {
     expect(mock.map.has(AppModule)).toBe(true);
     expect(mock.map.has(Module1)).toBe(true);
 
-    expect(() => mock.addImport(Module2, 'fakeId')).toThrowError(/Failed adding Module2 to imports/);
+    expect(() => mock.addImport(Module2, 'fakeId')).toThrow(/Failed adding Module2 to imports/);
     expect(mock.map.size).toBe(2);
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);

@@ -21,7 +21,7 @@ describe('WinstonController', () => {
 
   it('controller should send response', async () => {
     await expect(winstonController.ok(res, winstonLogger)).resolves.not.toThrow();
-    expect(send).toBeCalledTimes(1);
-    expect(info).toBeCalledTimes(1);
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(info).toHaveBeenCalledTimes(1);
   });
 });

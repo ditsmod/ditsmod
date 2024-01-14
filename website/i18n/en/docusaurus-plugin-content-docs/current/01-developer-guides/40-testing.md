@@ -96,7 +96,7 @@ describe('Service2', () => {
 
     expect(service2).toBeInstanceOf(Service2);
     expect(service2.method1()).toBe('Hello, World!');
-    expect(saySomething).toBeCalledTimes(1);
+    expect(saySomething).toHaveBeenCalledTimes(1);
   });
 });
 ```
@@ -142,7 +142,7 @@ describe('End-to-end testing', () => {
       .expect(200)
       .expect(values);
 
-    expect(query).toBeCalledTimes(1);
+    expect(query).toHaveBeenCalledTimes(1);
 
     server.close();
   });

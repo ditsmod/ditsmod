@@ -61,9 +61,9 @@ describe('@ditsmod/session-cookie', () => {
   it('includes cookie headers', async () => {
     session.id = 'foobar';
     nodeRes.writeHead(200);
-    expect(setHeader).toBeCalledTimes(1);
-    expect(setHeader).toBeCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
-    expect(setHeader).toBeCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
+    expect(setHeader).toHaveBeenCalledTimes(1);
+    expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
+    expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
   });
 
   it('set maxAge before setting session.id', async () => {
@@ -71,9 +71,9 @@ describe('@ditsmod/session-cookie', () => {
     session.setMaxAge(maxAge);
     session.id = 'foobar';
     nodeRes.writeHead(200);
-    expect(setHeader).toBeCalledTimes(1);
-    expect(setHeader).toBeCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
-    expect(setHeader).toBeCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
+    expect(setHeader).toHaveBeenCalledTimes(1);
+    expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
+    expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
   });
 
   it('set maxAge after setting session.id', async () => {
@@ -81,8 +81,8 @@ describe('@ditsmod/session-cookie', () => {
     const maxAge = 1000 * 60 * 60 * 3;
     session.setMaxAge(maxAge);
     nodeRes.writeHead(200);
-    expect(setHeader).toBeCalledTimes(1);
-    expect(setHeader).toBeCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
-    expect(setHeader).toBeCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
+    expect(setHeader).toHaveBeenCalledTimes(1);
+    expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
+    expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
   });
 });

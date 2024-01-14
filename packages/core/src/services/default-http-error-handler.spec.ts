@@ -66,59 +66,59 @@ describe('DefaultHttpErrorHandler', () => {
   it('default error with some message', () => {
     const err = new Error('one');
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(res.sendJson).toBeCalledWith({ error: 'Internal server error' }, Status.INTERNAL_SERVER_ERROR);
-    expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('error', { err, requestId: '' });
-    expect(logger.log).toBeCalledTimes(1);
+    expect(res.sendJson).toHaveBeenCalledWith({ error: 'Internal server error' }, Status.INTERNAL_SERVER_ERROR);
+    expect(res.sendJson).toHaveBeenCalledTimes(1);
+    expect(logger.log).toHaveBeenCalledWith('error', { err, requestId: '' });
+    expect(logger.log).toHaveBeenCalledTimes(1);
   });
 
   it('custom error with msg1', () => {
     const msg1 = 'one';
     const err = new CustomError({ msg1 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(res.sendJson).toBeCalledWith({ error: 'one' }, Status.BAD_REQUEST);
-    expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('debug', { err, requestId: '' });
-    expect(logger.log).toBeCalledTimes(1);
+    expect(res.sendJson).toHaveBeenCalledWith({ error: 'one' }, Status.BAD_REQUEST);
+    expect(res.sendJson).toHaveBeenCalledTimes(1);
+    expect(logger.log).toHaveBeenCalledWith('debug', { err, requestId: '' });
+    expect(logger.log).toHaveBeenCalledTimes(1);
   });
 
   it('custom error with status and level changed', () => {
     const msg1 = 'one';
     const err = new CustomError({ msg1, status: Status.CONFLICT, level: 'fatal' });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(res.sendJson).toBeCalledWith({ error: 'one' }, Status.CONFLICT);
-    expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('fatal', { err, requestId: '' });
-    expect(logger.log).toBeCalledTimes(1);
+    expect(res.sendJson).toHaveBeenCalledWith({ error: 'one' }, Status.CONFLICT);
+    expect(res.sendJson).toHaveBeenCalledTimes(1);
+    expect(logger.log).toHaveBeenCalledWith('fatal', { err, requestId: '' });
+    expect(logger.log).toHaveBeenCalledTimes(1);
   });
 
   it('custom error with msg1 and arguments for format', () => {
     const msg1 = 'one two';
     const err = new CustomError({ msg1 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(res.sendJson).toBeCalledWith({ error: 'one two' }, Status.BAD_REQUEST);
-    expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('debug', { err, requestId: '' });
-    expect(logger.log).toBeCalledTimes(1);
+    expect(res.sendJson).toHaveBeenCalledWith({ error: 'one two' }, Status.BAD_REQUEST);
+    expect(res.sendJson).toHaveBeenCalledTimes(1);
+    expect(logger.log).toHaveBeenCalledWith('debug', { err, requestId: '' });
+    expect(logger.log).toHaveBeenCalledTimes(1);
   });
 
   it('custom error with msg2', () => {
     const msg2 = 'one';
     const err = new CustomError({ msg2 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(res.sendJson).toBeCalledWith({ error: 'Internal server error' }, Status.BAD_REQUEST);
-    expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('debug', { err, requestId: '' });
-    expect(logger.log).toBeCalledTimes(1);
+    expect(res.sendJson).toHaveBeenCalledWith({ error: 'Internal server error' }, Status.BAD_REQUEST);
+    expect(res.sendJson).toHaveBeenCalledTimes(1);
+    expect(logger.log).toHaveBeenCalledWith('debug', { err, requestId: '' });
+    expect(logger.log).toHaveBeenCalledTimes(1);
   });
 
   it('custom error with msg2 and arguments for format', () => {
     const msg2 = 'one %s three';
     const err = new CustomError({ msg2 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(res.sendJson).toBeCalledWith({ error: 'Internal server error' }, Status.BAD_REQUEST);
-    expect(logger.log).toBeCalledWith('debug', { err, requestId: '' });
-    expect(logger.log).toBeCalledTimes(1);
+    expect(res.sendJson).toHaveBeenCalledWith({ error: 'Internal server error' }, Status.BAD_REQUEST);
+    expect(logger.log).toHaveBeenCalledWith('debug', { err, requestId: '' });
+    expect(logger.log).toHaveBeenCalledTimes(1);
   });
 
   it('custom error with msg1, msg2 and arguments for format', () => {
@@ -126,9 +126,9 @@ describe('DefaultHttpErrorHandler', () => {
     const msg2 = 'four six';
     const err = new CustomError({ msg1, msg2 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(res.sendJson).toBeCalledWith({ error: 'one two' }, Status.BAD_REQUEST);
-    expect(res.sendJson).toBeCalledTimes(1);
-    expect(logger.log).toBeCalledWith('debug', { err, requestId: '' });
-    expect(logger.log).toBeCalledTimes(1);
+    expect(res.sendJson).toHaveBeenCalledWith({ error: 'one two' }, Status.BAD_REQUEST);
+    expect(res.sendJson).toHaveBeenCalledTimes(1);
+    expect(logger.log).toHaveBeenCalledWith('debug', { err, requestId: '' });
+    expect(logger.log).toHaveBeenCalledTimes(1);
   });
 });
