@@ -91,7 +91,7 @@ export class SomeService {
 
 ## "Магія" роботи з метаданими
 
-З точки зору JavaScript-розробника, в тому, що DI якимось чином може проглядати параметри конструкторів класів і бачити там інші класи - це можна назвати "магією". Якщо проглянути репозиторій, що містить стартовий проект для Ditsmod-застосунків, можна побачити що:
+З точки зору JavaScript-розробника, в тому, що DI якимось чином може проглядати параметри конструкторів класів і бачити там інші класи - це можна назвати "магією". Якщо проглянути репозиторій `@ditsmod/core`, можна побачити що:
 
 1. у файлі `tsconfig.json` вказано ["emitDecoratorMetadata": true][12];
 2. у файлі `package.json` вказано залежність від бібліотеки [reflect-metadata][13];
@@ -812,8 +812,8 @@ service2.service1 instanceof Service1; // true
 
 [1]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
-[12]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/tsconfig.json#L11
-[13]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/package.json#L27
+[12]: https://github.com/ditsmod/ditsmod/blob/core-2.51.1/packages/core/tsconfig.json#L30
+[13]: https://github.com/ditsmod/ditsmod/blob/core-2.51.1/packages/core/package.json#L52
 [14]: https://github.com/tc39/proposal-decorators
 
 [107]: /developer-guides/exports-and-imports

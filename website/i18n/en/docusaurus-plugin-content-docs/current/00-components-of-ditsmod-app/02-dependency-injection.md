@@ -91,7 +91,7 @@ However, in order for DI to create an instance of the `Service3` class, we need 
 
 ## The "magic" of working with metadata
 
-From a JavaScript developer's point of view, the fact that DI can somehow look through the parameters of class constructors and see other classes there can be called "magic". If you look at the repository containing the starter project for Ditsmod applications, you can see that:
+From a JavaScript developer's point of view, the fact that DI can somehow look through the parameters of class constructors and see other classes there can be called "magic". If you look at the `@ditsmod/core` repository, you can see that:
 
 1. in the file `tsconfig.json` is specified ["emitDecoratorMetadata": true][12];
 2. the `package.json` file specifies the dependency on the [reflect-metadata][13] library;
@@ -812,8 +812,8 @@ Remember that when DI cannot find the right provider, there are only three possi
 
 [1]: https://en.wikipedia.org/wiki/Dependency_injection
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
-[12]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/tsconfig.json#L11
-[13]: https://github.com/ditsmod/seed/blob/29f5325f6d8b031d571ad7db190cab0d6ed81200/package.json#L27
+[12]: https://github.com/ditsmod/ditsmod/blob/core-2.51.1/packages/core/tsconfig.json#L30
+[13]: https://github.com/ditsmod/ditsmod/blob/core-2.51.1/packages/core/package.json#L52
 [14]: https://github.com/tc39/proposal-decorators
 
 [107]: /developer-guides/exports-and-imports
