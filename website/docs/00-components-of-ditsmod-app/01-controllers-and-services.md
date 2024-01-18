@@ -18,7 +18,7 @@ routes.set('/three', function() { /** обробка запиту... **/ });
 
 Зразу після того, як Node.js отримує HTTP-запит і передає його в Ditsmod, URL запиту розбивається на дві частини, які розділяються знаком питання (якщо він є). Перша частина завжди містить так званий _path_, а друга частина - _query-параметри_, якщо URL містить знак питання.
 
-Задача роутера полягає в тому, щоб знайти обробник HTTP-запиту по _path_. У дуже спрощеному вигляді цей процес можна уявити так:
+Задача роутера полягає в тому, щоб знайти обробник HTTP-запиту по _path_ і вкликати його. У дуже спрощеному вигляді цей процес можна уявити так:
 
 ```ts
 const path = '/two';
@@ -207,7 +207,7 @@ import { SomeModule } from './some.module.js';
 export class OtherModule {}
 ```
 
-Якщо модуль імпортується без властивості `path`, Ditsmod буде імпортувати лише його модулі:
+Якщо модуль імпортується без властивості `path`, Ditsmod буде імпортувати лише його [провайдери][3] та [розширення][9]:
 
 ```ts {5}
 import { featureModule } from '@ditsmod/core';
@@ -234,20 +234,9 @@ export class OtherModule {}
 - парцювати з базами даних, з поштою;
 - і т.п.
 
-TypeScript клас стає сервісом Ditsmod завдяки декоратору `injectable`:
+Будь-який TypeScript клас може бути сервісом Ditsmod, але якщо ви хочете щоб [DI][7] вирішував залежність, яку ви вказуєте в конструкторах даних класів, перед ними необхідно прописувати декоратор `injectable`:
 
-```ts
-import { injectable } from '@ditsmod/core';
-
-@injectable()
-export class SomeService {}
-```
-
-Файли сервісів рекомендується називати із закінченням `*.service.ts`, а їхні класи - із закінченням `*Service`.
-
-Часто одні сервіси залежать від інших сервісів, і щоб отримати інстанс певного сервісу, необхідно указувати його клас в конструкторі:
-
-```ts {6}
+```ts {4,6}
 import { injectable } from '@ditsmod/core';
 import { FirstService } from './first.service.js';
 
@@ -261,42 +250,48 @@ export class SecondService {
 }
 ```
 
+Файли сервісів рекомендується називати із закінченням `*.service.ts`, а їхні класи - із закінченням `*Service`.
+
 Як бачите, правила отримання інстансу класу в конструкторі такі ж, як і в контролерах: за допомогою модифікатора доступу `private` оголошуємо властивість класу `firstService` з типом даних `FirstService`.
 
-Щоб можна було користуватись новоствореними класами сервісів, їх потрібно передати у метадані **поточного** модуля чи контролера. Передати сервіс у метадані модуля можна наступним чином:
+Щоб можна було користуватись новоствореними класами сервісів, їх потрібно передати у метадані **поточного** модуля чи контролера. Передати сервіси у метадані модуля можна наступним чином:
 
-```ts {6}
+```ts {7-8}
 import { featureModule } from '@ditsmod/core';
-import { SomeService } from './some.service.js';
+import { FirstService } from './first.service.js';
+import { SecondService } from './second.service.js';
 
 @featureModule({
   providersPerReq: [
-    SomeService
+    FirstService,
+    SecondService
   ],
 })
 export class SomeModule {}
 ```
 
-Аналогічно сервіс передається у метадані контролера:
+Аналогічно сервіси передаються у метадані контролера:
 
-```ts {6}
+```ts {7-8}
 import { controller, route, Res } from '@ditsmod/core';
-import { SomeService } from './some.service.js';
+import { FirstService } from './first.service.js';
+import { SecondService } from './second.service.js';
 
 @controller({
   providersPerReq: [
-    SomeService
+    FirstService,
+    SecondService
   ],
 })
 export class SomeController {
   @route('GET', 'hello')
-  method1(res: Res, someService: SomeService) {
-    res.send(someService.sayHello());
+  method1(res: Res, secondService: SecondService) {
+    res.send(secondService.sayHello());
   }
 }
 ```
 
-В останніх двох прикладах сервіс передається у масив `providersPerReq`, але це не єдиний спосіб передачі сервісів. Більш докладну інформацію про правила роботи з DI можна отримати у розділі [Dependency Injection][7].
+В останніх двох прикладах сервіси передаються у масив `providersPerReq`, але це не єдиний спосіб передачі сервісів. Більш докладну інформацію про правила роботи з DI можна отримати у розділі [Dependency Injection][7].
 
 [1]: /developer-guides/exports-and-imports#імпорт-модуля
 [2]: /developer-guides/exports-and-imports#ModuleWithParams
@@ -306,3 +301,4 @@ export class SomeController {
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.50.0/packages/core/src/services/pre-router.ts
 [7]: /components-of-ditsmod-app/dependency-injection
 [8]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
+[9]: /components-of-ditsmod-app/extensions/
