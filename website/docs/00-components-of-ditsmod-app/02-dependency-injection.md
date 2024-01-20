@@ -6,72 +6,76 @@ sidebar_position: 2
 
 ## Для чого потрібен DI?
 
-Давайте спочатку ознайомимось із загальною картиною роботи [Dependency Injection][1] (або просто DI), а потім в деталях розглянемо кожен важливий компонент окремо.
+Давайте спочатку ознайомимось із загальною картиною роботи [Dependency Injection][1] (або просто DI), а потім в деталях розглянемо кожен важливий її компонент окремо.
 
-Мабуть найпростіше зрозуміти, що саме робить DI, на прикладах. В даному разі, нам потрібен метод `doSomething()`, який буде використовуватись у багатьох місцях нашої програми:
+Мабуть найпростіше зрозуміти, що саме робить DI, на прикладах. В даному разі нам потрібен інстанс класу `Service3` та його метод `doSomething()`:
 
-```ts {11-13}
-// services.ts
+```ts title='./services.ts'
 export class Service1 {}
 
 export class Service2 {
-  constructor(service1: Service1) {}
+  constructor(private service1: Service1) {}
+  // ...
+  // Використання this.service1 у якомусь із методів.
 }
 
 export class Service3 {
-  constructor(service2: Service2) {}
+  constructor(private service2: Service2) {}
 
   doSomething(param1: any) {
-    // ...
+    // Використання this.service2 у даному методі.
   }
+}
+
+export function getService3() {
+  const service1 = new Service1();
+  const service2 = new Service2(service1);
+  return new Service3(service2);
 }
 ```
 
-Покищо `service3.doSomething()` використовується досить просто:
+Як бачите, `Service3` залежить від `Service2`, який, у свою чергу, залежить від `Service1`. Покищо інстанс `Service3` отримати досить просто:
 
-```ts {5-8}
-import { Service1, Service2, Service3 } from './services.js';
+```ts {5} title='./some.service.ts'
+import { getService3 } from './services.js';
 
 export class SomeService {
   method1() {
-    const service1 = new Service1();
-    const service2 = new Service2(service1);
-    const service3 = new Service3(service2);
+    const service3 = getService3();
     service3.doSomething(123);
   }
 }
 ```
 
-Тепер уявіть задачу, яка вимагає щоб конструктор `Service3` приймав два параметри. Також уявіть, що `Service3` використовується у 20 інших файлах нашої програми. Нам прийдеться обійти усі ці файли, щоб внести відповідні корективи.
+У функції `getService3` захардкоджено створення інстансу `Service3`, і це є проблемою, тому що писати юніт-тести для цієї функції проблематично, особливо в контексті EcmaScript Module, оскільки ви не зможете підмінити `Service1` та `Service2` моками. Ще один серйозний мінус функції `getService3` в тому, що в реальному застосунку вона може стати досить складною через потребу враховувати конфігурацію кожної із залежностей. Тобто, наприклад, в одному випадку в тілі `getService3` може очікуватись, що вона буде створювати кожен раз нові інстанси `Service1` та `Service2`, в другому випадку - потрібно щоб вони були [одинаками][15] для усього застосунку, а в третьому - що тільки один із них повинен бути одинаком...
 
-Усієї цієї роботи могло і не бути, якщо б ми не опирались на конкретну реалізацію створення інстансу `Service3`. По-суті, нам не важливо скільки параметрів має конструктор `Service3`, головне для нас - це використання інстансу цього класу.
+Наступний приклад майже не відрізняється від попереднього прикладу, де ми також оголошували клас `Service3`, але тут ми дописали декоратор `injectable` над кожним класом, який має конструктор з параметрами, і не стали створювати функцію `getService3`:
 
-Наступний приклад майже не відрізняється від попереднього прикладу, де ми також оголошували клас `Service3`, але тут ми дописали декоратор `injectable` над кожним класом, який має конструктор з параметрами:
-
-```ts {6,11}
-// services.ts
+```ts {5,12} title='./services.ts'
 import { injectable } from '@ditsmod/core';
 
 export class Service1 {}
 
 @injectable()
 export class Service2 {
-  constructor(service1: Service1) {}
+  constructor(private service1: Service1) {}
+  // ...
+  // Використання this.service1 у якомусь із методів.
 }
 
 @injectable()
 export class Service3 {
-  constructor(service2: Service2) {}
+  constructor(private service2: Service2) {}
 
   doSomething(param1: any) {
-    // ...
+    // Використання this.service2 у даному методі.
   }
 }
 ```
 
 Покищо можна і не знати що саме робить декоратор `injectable`, зараз важливіше дізнатись, як тепер ми можемо запитувати інстанс `Service3` у будь-якому місці нашої програми:
 
-```ts {4,6,9}
+```ts {4,6,9} title='./some.service.ts'
 import { injectable } from '@ditsmod/core';
 import { Service3 } from './services.js';
 
@@ -815,6 +819,7 @@ service2.service1 instanceof Service1; // true
 [12]: https://github.com/ditsmod/ditsmod/blob/core-2.51.1/packages/core/tsconfig.json#L30
 [13]: https://github.com/ditsmod/ditsmod/blob/core-2.51.1/packages/core/package.json#L52
 [14]: https://github.com/tc39/proposal-decorators
+[15]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
 
 [107]: /developer-guides/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions

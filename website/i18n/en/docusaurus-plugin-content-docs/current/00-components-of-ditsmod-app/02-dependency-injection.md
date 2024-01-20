@@ -8,70 +8,74 @@ sidebar_position: 2
 
 Let's first get a general idea of how [Dependency Injection][1] (or just DI) works, and then look at each important component in detail.
 
-It's probably easiest to understand exactly what DI does with examples. In this case, we need a `doSomething()` method that will be used in many places in our program:
+It's probably easiest to understand exactly what DI does by looking at examples. In this case, we need an instance of the `Service3` class and its `doSomething()` method:
 
-```ts {11-13}
-// services.ts
+```ts title='./services.ts'
 export class Service1 {}
 
 export class Service2 {
-  constructor(service1: Service1) {}
+  constructor(private service1: Service1) {}
+  // ...
+  // Using this.service1 in one of the methods.
 }
 
 export class Service3 {
-  constructor(service2: Service2) {}
+  constructor(private service2: Service2) {}
 
   doSomething(param1: any) {
-    // ...
+    // Using this.service2 in one of the methods.
   }
+}
+
+export function getService3() {
+  const service1 = new Service1();
+  const service2 = new Service2(service1);
+  return new Service3(service2);
 }
 ```
 
-So far, `service3.doSomething()` is used quite simply:
+As you can see, `Service3` depends on `Service2`, which depends on `Service1`. While the `Service3` instance is quite easy to get:
 
-```ts {5-8}
-import { Service1, Service2, Service3 } from './services.js';
+```ts {5} title='./some.service.ts'
+import { getService3 } from './services.js';
 
 export class SomeService {
   method1() {
-    const service1 = new Service1();
-    const service2 = new Service2(service1);
-    const service3 = new Service3(service2);
+    const service3 = getService3();
     service3.doSomething(123);
   }
 }
 ```
 
-Now imagine a task that requires the `Service3` constructor to take two parameters. Also imagine that `Service3` is used in 20 other files in our program. We need to go through all of those files to make the appropriate update.
+The `getService3` function is hard-coded to create an instance of `Service3`, and this is a problem because writing unit tests for this function is problematic, especially in the context of an EcmaScript module, since you cannot substitute `Service1` and `Service2` with mocks. Another serious drawback of the `getService3` function is that it can become quite complex in a real application, since it has to consider the configuration of each of the dependencies. That is, in the first case in the `getService3` body, it can be expected to create new `Service1` and `Service2` instances each time, in the second case - they must be [singletons][15] for the entire application, and in the third case - only one of them should be singleton...
 
-All this work could not have happened, if we had not relied on the specific implementation of creating the `Service3` instance. In fact, it is not important to us how many parameters the `Service3` constructor has, the main thing for us is the use of an instance of this class.
+The following example is almost no different from the previous one, where we also declared the `Service3` class, but here we added an `injectable` decorator above each class that has a constructor with parameters, and did not create a `getService3` function:
 
-The following example is almost the same as the previous one, where we also declared the `Service3` class, but here we have added an `injectable` decorator above each class that has a constructor with parameters:
-
-```ts {6,11}
-// services.ts
+```ts {5,12} title='./services.ts'
 import { injectable } from '@ditsmod/core';
 
 export class Service1 {}
 
 @injectable()
 export class Service2 {
-  constructor(service1: Service1) {}
+  constructor(private service1: Service1) {}
+  // ...
+  // Using this.service1 in one of the methods.
 }
 
 @injectable()
 export class Service3 {
-  constructor(service2: Service2) {}
+  constructor(private service2: Service2) {}
 
   doSomething(param1: any) {
-    // ...
+    // Using this.service2 in one of the methods.
   }
 }
 ```
 
-For now, you may not know what exactly the `injectable` decorator does, it's more important to know how we can now request a `Service3` instance anywhere in our program:
+While you may not know exactly what the `injectable` decorator does, it is more important to learn how we can now get an instance of `Service3` anywhere in our program:
 
-```ts {4,6,9}
+```ts {4,6,9} title='./some.service.ts'
 import { injectable } from '@ditsmod/core';
 import { Service3 } from './services.js';
 
@@ -815,6 +819,7 @@ Remember that when DI cannot find the right provider, there are only three possi
 [12]: https://github.com/ditsmod/ditsmod/blob/core-2.51.1/packages/core/tsconfig.json#L30
 [13]: https://github.com/ditsmod/ditsmod/blob/core-2.51.1/packages/core/package.json#L52
 [14]: https://github.com/tc39/proposal-decorators
+[15]: https://en.wikipedia.org/wiki/Singleton_pattern
 
 [107]: /developer-guides/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions
