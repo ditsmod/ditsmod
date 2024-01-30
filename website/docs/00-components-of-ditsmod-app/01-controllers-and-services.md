@@ -23,7 +23,9 @@ routes.set('/three', function() { /** обробка запиту... **/ });
 ```ts
 const path = '/two';
 const handle = routes.get(path);
-handle();
+if (handle) {
+  handle();
+}
 ```
 
 У більшості випадків, обробник запиту викликає метод контролера. 

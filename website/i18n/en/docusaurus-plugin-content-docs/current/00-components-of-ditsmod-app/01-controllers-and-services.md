@@ -23,7 +23,9 @@ The router's task is to find the HTTP request handler by _path_ and invoke it. I
 ```ts
 const path = '/two';
 const handle = routes.get(path);
-handle();
+if (handle) {
+  handle();
+}
 ```
 
 In most cases, the request handler calls the controller method.
