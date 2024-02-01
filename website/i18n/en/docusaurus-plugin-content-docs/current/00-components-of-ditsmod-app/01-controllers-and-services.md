@@ -32,7 +32,7 @@ In most cases, the request handler calls the controller method.
 
 ## What is a controller
 
-The mapping between the URL and the request handler is based on the methods of the controllers. A TypeScript class becomes a Ditsmod controller thanks to the `controller` decorator:
+The mapping between the URL and the request handler is based on the metadata attached to the controller methods. A TypeScript class becomes a Ditsmod controller thanks to the `controller` decorator:
 
 ```ts
 import { controller } from '@ditsmod/core';
@@ -81,7 +81,7 @@ What we see here:
 2. In the class method, the parameter `res` is declared with the data type `Res`. So we ask Ditsmod to create an instance of the `Res` class and pass it to the corresponding variable. By the way, `res` is short for the word _response_.
 3. Text responses to HTTP requests are sent via `res.send()`.
 
-Although in the previous example, an instance of the `Res` class was requested through `method1()`, we can similarly request this instance in the constructor:
+Although in the previous example, an instance of the `Res` class was requested through `method1`, we can similarly request this instance in the constructor:
 
 ```ts {5}
 import { controller, route, Res } from '@ditsmod/core';
@@ -116,7 +116,7 @@ export class SomeController {
     @inject(QUERY_PARAMS) queryParams: AnyObj,
     res: Res
   ) {
-    res.sendJson(pathParams, queryParams);
+    res.sendJson({ pathParams, queryParams });
   }
 }
 ```
@@ -178,6 +178,8 @@ export class HelloWorldController {
   }
 }
 ```
+
+Where `ctx.nodeRes` is the native Node.js response object.
 
 In the "controller singleton" mode, controller methods bound to specific routes receive a single argument - the request context. That is, in this mode, you will no longer be able to ask Ditsmod to pass instances of other classes to these methods. However, in the constructor you can still request instances of certain classes that are created only once.
 
