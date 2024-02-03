@@ -234,7 +234,7 @@ export class SecondService {
 
 When `inject` is used, DI only considers the token passed to it. In this case, DI ignores the variable type - `InterfaceOfItem[]` - and uses the `some-string` as the token. Thus, DI allows you to separate token and variable type, so you can get any kind of dependency in the constructor, including different types of arrays or enums.
 
-A token can be a reference to a class, object, or function, and primitive values other than `undefined` can also be used as tokens. For the long form of specifying dependencies, we recommend using an instance of the `InjectionToken<T>` class as the token, since the `InjectionToken<T>` class has a parameterized type `T` that can be used to specify the type of data associated with that token:
+A token can be a reference to a class, object, or function, and string and numeric values can also be used as tokens. For the long form of specifying dependencies, we recommend using an instance of the `InjectionToken<T>` class as the token, since the `InjectionToken<T>` class has a parameterized type `T` that can be used to specify the type of data associated with that token:
 
 ```ts {5,14}
 // tokens.ts
