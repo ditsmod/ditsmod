@@ -160,51 +160,7 @@ export class SecondService {
 
 ## Dependency token
 
-Let's try to understand exactly how DI gets full information about the parameters of the class constructor. The following example shows a class whose constructor has three parameters, each of which has its own TypeScript type:
-
-```ts
-// ...
-class MyService {
-  constructor(
-    private one: One,
-    private two: Two,
-    private three: Three,
-  ) {
-    // ...
-  }
-}
-```
-
-Now let's see what this class looks like when compiled into JavaScript code:
-
-```ts
-// ...
-class MyService {
-  one;
-  two;
-  three;
-
-  constructor(one, two, three) {
-    this.one = one;
-    this.two = two;
-    this.three = three;
-  }
-}
-```
-
-This means that TypeScript types disappear from constructor parameters in JavaScript code. So during compilation, TypeScript needs to generate a special function that saves the TypeScript types that we pass to the constructor parameters. This function can be something like the following:
-
-```ts
-function setConstructorTokens(tokens) {
-  MyService.staticProperty = tokens;
-}
-
-setConstructorTokens([One, Two, Three]);
-```
-
-That's pretty much how it works. The TypeScript compiler automatically generates similar functions in any file that contains classes with decorators. Obviously, in our example, the `setConstructorTokens` function can only work with JavaScript values, it will not be able to take as arguments those types that we declare in the TypeScript code with the `interface`, `type`, etc. keywords, because they do not exist in the JavaScript code.
-
-The JavaScript values accepted by `setConstructorTokens` are called **tokens**. You can pass the token in the short or long form of the specifying a dependency. Let's go back to the previous example:
+You've seen the dependency token many times in previous examples, but we haven't formally introduced it yet. Let's go back to the previous example:
 
 ```ts {6}
 import { injectable } from '@ditsmod/core';
@@ -217,7 +173,11 @@ export class SecondService {
 }
 ```
 
-This is a **short form** of specifying a dependency, it has significant limitations because you can only specify a dependency on a specific _class_ this way. In this case, `FirstService` is used both as a variable type and as a token.
+This implies that `FirstService` is a class, and because of this it can be used both as a TypeScript type and as a **token**. Basically, a token is an identifier that is associated with the corresponding dependency. Here it is very important to understand that the token usage mechanism itself is required for the JavaScript runtime, so the types that we declare in the TypeScript code with the keywords `interface`, `type`, `enum`, etc. cannot be used as tokens, because they do not exist in the JavaScript code.
+
+Unlike a class, an array cannot be used both as a TypeScript type and as a token at the same time. On the other hand, a token can have a completely irrelevant data type relative to the dependency it is associated with, so for example a string token type can be associated with a dependency that has any TypeScript type, including arrays, interfaces, enums, etc.
+
+You can transfer the token in the short or long form of specifying the dependency. In the last example, a **short form** of specifying the dependency is used, it has significant limitations, because in this way it is possible to specify a dependency only on a certain _class_.
 
 And there is a **long form** of specifying a dependency using the `inject` decorator, which allows you to use an alternative token:
 
