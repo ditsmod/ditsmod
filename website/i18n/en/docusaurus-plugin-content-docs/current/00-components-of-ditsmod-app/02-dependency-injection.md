@@ -173,7 +173,7 @@ export class SecondService {
 }
 ```
 
-This implies that `FirstService` is a class, and because of this it can be used both as a TypeScript type and as a **token**. Basically, a token is an identifier that is associated with the corresponding dependency. Here it is very important to understand that the token usage mechanism itself is required for the JavaScript runtime, so the types that we declare in the TypeScript code with the keywords `interface`, `type`, `enum`, etc. cannot be used as tokens, because they do not exist in the JavaScript code.
+This implies that `FirstService` is a class, and because of this it can be used both as a TypeScript type and as a **token**. Basically, a token is an identifier that is associated with the corresponding dependency. It is very important to understand that the token usage mechanism itself is required for JavaScript runtime, therefore, as tokens, you cannot use the types that we declare in TypeScript code with the keywords `interface`, `type`, `enum`, etc., because they don't exist in JavaScript code.
 
 Unlike a class, an array cannot be used both as a TypeScript type and as a token at the same time. On the other hand, a token can have a completely irrelevant data type relative to the dependency it is associated with, so for example a string token type can be associated with a dependency that has any TypeScript type, including arrays, interfaces, enums, etc.
 
