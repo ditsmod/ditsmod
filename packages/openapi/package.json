@@ -40,7 +40,7 @@
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172",
   "dependencies": {
     "@ts-stack/openapi-spec": "^3.1.5",
-    "swagger-ui-dist": "^5.10.5",
+    "swagger-ui-dist": "^5.11.2",
     "yaml": "^2.3.4"
   },
   "peerDependencies": {
