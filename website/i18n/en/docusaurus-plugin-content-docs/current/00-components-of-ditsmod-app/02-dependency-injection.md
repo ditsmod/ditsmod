@@ -453,11 +453,10 @@ Any [non-singleton][103] controller, in addition to its own injector at the requ
 
 That is, the non-singleton controller can depend on services at any level.
 
-If the controller is [singleton][103], its own injector is at the route level, and it has two more parent injectors at the module and application levels:
+If the controller is [singleton][103], its own injector is at the module level, and it has one parent injector at the application levels:
 
 - `providersPerApp`;
-- `providersPerMod`;
-- `providersPerRou` (<-- this is the array from which the injector for the singleton controller is formed).
+- `providersPerMod` (<-- this is the array from which the injector for the singleton controller is formed).
 
 ### Hierarchy of service injectors
 

@@ -46,7 +46,7 @@ It is recommended that controller files end with `*.controller.ts` and their cla
 Starting with v2.50.0, Ditsmod makes it possible to work with the controller in two modes:
 
 1. Controller non-singleton (by default). Its instance is created for each HTTP request.
-2. Controller [singleton][8]. Its instance is created only once during application initialization.
+2. Controller [singleton][8]. Its instance is created once for each module during application initialization.
 
 The first mode is safer when you need to work in the context of the current HTTP request (the client provides a certain identifier that must be taken into account to form a response). The second mode is noticeably faster (about 15%) and consumes less memory, but the request context cannot be stored in the properties of the controller instance, because this instance can be used for other clients at the same time. In the second mode, the request context will have to be passed only as an argument to the methods.
 
