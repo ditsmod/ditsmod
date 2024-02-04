@@ -1,3 +1,10 @@
+<a name="routing-2.1.1"></a>
+# [routing-2.1.1](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.1.1) (2024-02-04)
+
+### Bug fix
+
+- Before this fix, the controllers singletons is created onece per each route. Now controllers singletons created only once.
+
 <a name="routing-2.1.0"></a>
 # [routing-2.1.0](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.1.0) (2023-10-07)
 

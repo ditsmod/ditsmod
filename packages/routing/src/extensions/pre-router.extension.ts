@@ -32,6 +32,7 @@ import {
   SingletonChainMaker,
   SingletonHttpErrorHandler,
   SingletonInterceptorWithGuards,
+  Class,
 } from '@ditsmod/core';
 
 import { ROUTES_EXTENSIONS } from '../types.js';
@@ -73,7 +74,15 @@ export class PreRouterExtension implements Extension<void> {
     aMetadataPerMod2.forEach((metadataPerMod2) => {
       const { moduleName, aControllersMetadata2, providersPerMod } = metadataPerMod2;
       const mod = getModule(metadataPerMod2.module);
-      const injectorPerMod = injectorPerApp.resolveAndCreateChild([mod, ...providersPerMod], 'injectorPerMod');
+
+      const singletons = new Set<Class>();
+      aControllersMetadata2.forEach((controllersMetadata2) => {
+        if (controllersMetadata2.isSingleton) {
+          singletons.add(controllersMetadata2.routeMeta.controller);
+        }
+      });
+      const extendedProvidersPerMod = [mod, ...singletons, ...providersPerMod];
+      const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
       injectorPerMod.get(mod); // Call module constructor.
 
       aControllersMetadata2.forEach((controllersMetadata2) => {
@@ -170,7 +179,7 @@ export class PreRouterExtension implements Extension<void> {
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedCtrlErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const chainMaker = injectorPerRou.instantiateResolved<SingletonChainMaker>(resolvedChainMaker);
-    const controllerInstance = injectorPerRou.resolveAndInstantiate(routeMeta.controller);
+    const controllerInstance = injectorPerMod.get(routeMeta.controller);
     routeMeta.routeHandler = controllerInstance[routeMeta.methodName].bind(controllerInstance);
     const errorHandler = injectorPerRou.instantiateResolved(resolvedCtrlErrHandler) as SingletonHttpErrorHandler;
 
