@@ -302,9 +302,9 @@ Now that you are familiar with the concept of **provider**, you can clarify that
 
 ## Injector
 
-The so-called **DI registry** has been mentioned above. Now that you know what DI uses this registry for, it's time to learn that these registries are in injectors, and there can be many such injectors in a Ditsmod application. But first, let's understand how injectors work.
+In the description of providers it was mentioned about _DI registers_, now let's understand how these registers are formed and where exactly they are located.
 
-If we greatly simplify the scheme of operation of DI, we can say that DI accepts an array of providers at the input, and at the output it issues an injector that is able to create values for each passed provider. It has approximately the following picture:
+If you greatly simplify the scheme of operation of DI, you can say that DI accepts an array of providers at the input, and at the output produces an **injector** that is able to create values for each transmitted provider. That is, DI registers are formed based on arrays of providers that are passed to the injector:
 
 ```ts {16}
 import { Injector, injectable } from '@ditsmod/core';
@@ -327,7 +327,7 @@ service3 === injector.get(Service3); // true
 service3 === injector.resolveAndInstantiate(Service3); // false
 ```
 
-The `Injector.resolveAndCreate()` method accepts an array of providers as input, and outputs a certain object, which is exactly what is called an **injector**. This injector obviously knows how to output the value of each provider by its token using the `injector.get()` method, taking into account the entire chain of dependencies (`Service3` -> `Service2` -> `Service1`).
+As you can see, the `Injector.resolveAndCreate()` method accepts an array of providers as an input, and outputs an injector that can output the value of each provider by its token using the `injector.get()` method, taking into account the entire chain of dependencies (`Service3` -> `Service2` -> `Service1`).
 
 What the `injector.get()` does:
 
