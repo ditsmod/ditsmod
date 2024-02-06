@@ -197,7 +197,7 @@ import { SomeController } from './some.controller.js';
 export class SomeModule {}
 ```
 
-After binding controllers to a module, in order for Ditsmod to take these controllers into account, the module should be either appended or imported in an object that has the [ModuleWithParams][2] interface. The following example shows both the appending and the full import of the module (this is just to demonstrate the possibility, in practice it does not make sense to append and import at the same time):
+After binding controllers to a module, in order for Ditsmod to take these controllers into account, the module should be either appended or imported as an object that has the [ModuleWithParams][2] interface. The following example shows both the appending and the full import of the module (this is just to demonstrate the possibility, in practice it does not make sense to append and import at the same time):
 
 ```ts {5-7}
 import { featureModule } from '@ditsmod/core';
