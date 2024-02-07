@@ -515,7 +515,7 @@ const injector = Injector.resolveAndCreate([
 const locals = injector.get(LOCAL); // ['uk', 'en']
 ```
 
-Basically, multi-providers allow you to create groups of providers that share a common token. This feature is particularly used to create the `HTTP_INTERCEPTORS` group, as well as to create various extension groups.
+Basically, multi-providers allow you to create groups of providers that share a common token. This feature is particularly used to create the `HTTP_INTERCEPTORS` group, as well as to create various [extension groups][104].
 
 It is not allowed that both ordinary and multi-providers have the same token in one injector:
 
@@ -792,3 +792,4 @@ Remember that when DI cannot find the right provider, there are only three possi
 [101]: #hierarchy-of-injectors
 [102]: #injector
 [103]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
+[104]: /components-of-ditsmod-app/extensions/#extensions-groups
