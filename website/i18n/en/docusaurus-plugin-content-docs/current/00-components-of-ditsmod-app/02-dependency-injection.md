@@ -565,13 +565,13 @@ const child = parent.resolveAndCreateChild([
 const locals = child.get(LOCAL); // ['аа']
 ```
 
-### Changing multi-providers
+### Substinuting multi-providers
 
-To make it possible to change a specific multi-provider, you can do the following:
+To make it possible to substinuting a specific multi-provider, you can do the following:
 
-1. first pass the multi-provider to the array to form the injector and use the `useToken` property;
-2. then transfer the class you want to replace;
-3. and at the end of the array, pass the class that replaces the class you need.
+1. transfer a certain class to the multi-provider object using the `useToken` property;
+2. then transfer this class as a regular provider;
+3. next, you need to transfer the provider to the array of providers to substitute this class.
 
 ```ts
 import { Injector } from '@ditsmod/core';
@@ -589,7 +589,7 @@ const injector = Injector.resolveAndCreate([
 const locals = injector.get(HTTP_INTERCEPTORS); // [MyInterceptor]
 ```
 
-This construction makes sense, for example, if the first two points are performed somewhere in an external module to which you do not have access to edit, and the third point is already performed by the user of this module.
+This construction makes sense, for example, if the first two points are performed somewhere in an external module to which you do not have access to edit, and the third point is already performed by the user of current module.
 
 ## Passing of providers to the DI registry
 
