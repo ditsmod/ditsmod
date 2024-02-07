@@ -501,7 +501,7 @@ Keep in mind that this way you get an injector that created an instance of this 
 
 ## Multi-providers
 
-This type of provider exists only in the form of an object, and it differs from ordinary DI providers by the presence of the `multi: true` property. Such providers are advisable to use when there is a need to transfer several providers with the same token to DI at once, so that DI returns the same number of values for these providers in one array:
+This type of provider exists only in the form of an object, and it differs from regular DI providers by the presence of the `multi: true` property. Such providers are advisable to use when there is a need to transfer several providers with the same token to DI at once, so that DI returns the same number of values for these providers in one array:
 
 ```ts
 import { Injector } from '@ditsmod/core';
@@ -517,7 +517,7 @@ const locals = injector.get(LOCAL); // ['uk', 'en']
 
 Basically, multi-providers allow you to create groups of providers that share a common token. This feature is particularly used to create the `HTTP_INTERCEPTORS` group, as well as to create various [extension groups][104].
 
-It is not allowed that both ordinary and multi-providers have the same token in one injector:
+It is not allowed that both regular and multi-providers have the same token in one injector:
 
 ```ts {5-6}
 import { Injector } from '@ditsmod/core';
