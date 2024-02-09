@@ -3,7 +3,7 @@ import { HttpBackend, SingletonRequestContext } from '#types/http-interceptor.js
 import { RouteMeta } from '#types/route-data.js';
 
 @injectable()
-export class SingletonHttpBackend implements HttpBackend {
+export class DefaultSingletonHttpBackend implements HttpBackend {
   ctx: SingletonRequestContext;
 
   constructor(protected routeMeta: RouteMeta) {}
