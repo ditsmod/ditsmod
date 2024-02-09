@@ -23,7 +23,7 @@ export class Service3 {
   constructor(private service2: Service2) {}
 
   doSomething(param1: any) {
-    // Using this.service2 in one of the methods.
+    // Using this.service2 in this method.
   }
 }
 
@@ -306,7 +306,7 @@ In the description of providers it was mentioned about _DI registers_, now let's
 
 If you greatly simplify the scheme of operation of DI, you can say that DI accepts an array of providers at the input, and at the output produces an **injector** that is able to create values for each transmitted provider. That is, DI registers are formed based on arrays of providers that are passed to the injector:
 
-```ts {16}
+```ts {15}
 import { Injector, injectable } from '@ditsmod/core';
 
 class Service1 {}
