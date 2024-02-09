@@ -1,4 +1,4 @@
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, RequestContext, Res, route } from '@ditsmod/core';
 
 @controller()
 export class HelloWorldController {
@@ -10,5 +10,13 @@ export class HelloWorldController {
   @route('GET', 'throw-error')
   throwError() {
     throw new Error('some error here!');
+  }
+}
+
+@controller({ isSingleton: true })
+export class HelloWorldController2 {
+  @route('GET', 'singleton')
+  tellHello(ctx: RequestContext) {
+    ctx.nodeRes.end('Hello World!\n');
   }
 }
