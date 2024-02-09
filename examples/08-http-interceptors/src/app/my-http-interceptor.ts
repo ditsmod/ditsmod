@@ -1,4 +1,4 @@
-import { injectable, HttpHandler, HttpInterceptor, Logger, RequestContext, SingletonHttpHandler } from '@ditsmod/core';
+import { injectable, HttpHandler, HttpInterceptor, Logger, RequestContext } from '@ditsmod/core';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
@@ -23,9 +23,9 @@ export class MyHttpInterceptor implements HttpInterceptor {
 export class MySingletonHttpInterceptor implements HttpInterceptor {
   constructor(private logger: Logger) {}
 
-  intercept(next: SingletonHttpHandler, ctx: RequestContext) {
+  intercept(next: HttpHandler, ctx: RequestContext) {
     // Handling request to `HelloWorldController`
-    return next.handle(ctx).finally(() => {
+    return next.handle().finally(() => {
       // You can to do something after, for example, log status:
       if (ctx.nodeRes.headersSent) {
         const msg = `MySingletonHttpInterceptor works! Status code: ${ctx.nodeRes.statusCode}`;
