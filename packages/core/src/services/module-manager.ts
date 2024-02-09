@@ -527,7 +527,7 @@ export class ModuleManager {
       // Don't autoformat this
       ...meta.providersPerApp,
       ...meta.providersPerMod,
-      ...meta.providersPerRou,
+      // ...meta.providersPerRou,
     ].filter(isNormalizedProvider);
     const moduleNames = [...this.unfinishedScanModules].map((mod) => getModuleName(mod)).join(' -> ') || meta.name;
 

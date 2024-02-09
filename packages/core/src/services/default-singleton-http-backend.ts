@@ -8,7 +8,7 @@ export class DefaultSingletonHttpBackend implements HttpBackend {
 
   constructor(protected routeMeta: RouteMeta) {}
 
-  handle() {
+  async handle() {
     return this.routeMeta.routeHandler!(this.ctx);
   }
 }
