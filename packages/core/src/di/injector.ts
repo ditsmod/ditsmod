@@ -532,8 +532,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
 ```
    */
   resolveAndInstantiate(provider: Provider): any {
-    const map = Injector.resolve([provider]).values();
-    const resolvedProvider = Array.from(map)[0];
+    const resolvedProvider = Injector.resolve([provider])[0];
     return this.instantiateResolved(resolvedProvider);
   }
 
