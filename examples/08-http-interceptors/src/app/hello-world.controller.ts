@@ -4,7 +4,7 @@ import { controller, RequestContext, Res, route } from '@ditsmod/core';
 export class HelloWorldController {
   @route('GET')
   tellHello(res: Res) {
-    res.send('Hello World!\n');
+    return 'Original message!';
   }
 
   @route('GET', 'throw-error')
@@ -17,6 +17,6 @@ export class HelloWorldController {
 export class HelloWorldController2 {
   @route('GET', 'singleton')
   tellHello(ctx: RequestContext) {
-    ctx.nodeRes.end('Hello World!\n');
+    return 'Original singleton message!';
   }
 }

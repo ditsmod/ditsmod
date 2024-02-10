@@ -6,14 +6,14 @@ export class MyHttpInterceptor implements HttpInterceptor {
 
   intercept(next: HttpHandler, ctx: RequestContext) {
     // Handling request to `HelloWorldController`
-    return next.handle().finally(() => {
+    return next.handle().then((originalMsg: string) => {
       // You can to do something after, for example, log status:
       if (ctx.nodeRes.headersSent) {
         const msg = `MyHttpInterceptor works! Status code: ${ctx.nodeRes.statusCode}`;
         this.logger.log('info', msg);
       } else {
-        const msg = 'MyHttpInterceptor works! But... Do you forgot send response or just an error occurred?';
-        this.logger.log('info', msg);
+        const msg = JSON.stringify({ originalMsg, msg: 'message that attached by regular interceptor' });
+        ctx.nodeRes.end(msg);
       }
     });
   }
@@ -25,14 +25,14 @@ export class MySingletonHttpInterceptor implements HttpInterceptor {
 
   intercept(next: HttpHandler, ctx: RequestContext) {
     // Handling request to `HelloWorldController`
-    return next.handle().finally(() => {
+    return next.handle().then((originalMsg: string) => {
       // You can to do something after, for example, log status:
       if (ctx.nodeRes.headersSent) {
         const msg = `MySingletonHttpInterceptor works! Status code: ${ctx.nodeRes.statusCode}`;
         this.logger.log('info', msg);
       } else {
-        const msg = 'MySingletonHttpInterceptor works! But... Do you forgot send response or just an error occurred?';
-        this.logger.log('info', msg);
+        const msg = JSON.stringify({ originalMsg, msg: 'message that attached by singleton interceptor' });
+        ctx.nodeRes.end(msg);
       }
     });
   }
