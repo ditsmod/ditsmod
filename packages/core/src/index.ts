@@ -61,6 +61,7 @@ export {
   HttpInterceptorHandler,
   RequestContext,
   SingletonRequestContext,
+  SingletonHttpBackend
 } from './types/http-interceptor.js';
 export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from './types/logger.js';
 export { MetadataPerMod1, MetadataPerMod2 } from './types/metadata-per-mod.js';
