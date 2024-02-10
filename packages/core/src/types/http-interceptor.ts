@@ -69,9 +69,9 @@ export abstract class HttpFrontend implements HttpInterceptor {
  * controller's route method, without going through the next interceptors in the chain.
  */
 export abstract class HttpBackend implements HttpHandler {
-  abstract handle(): any;
+  abstract handle(): Promise<any>;
 }
 
 export abstract class SingletonHttpBackend {
-  abstract handle(ctx: SingletonRequestContext): any;
+  abstract handle(ctx: SingletonRequestContext): Promise<any>;
 }
