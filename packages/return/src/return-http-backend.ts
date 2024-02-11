@@ -14,7 +14,7 @@ import {
 } from '@ditsmod/core';
 
 @injectable()
-export class ReturnHttpBackend extends DefaultHttpBackend implements HttpBackend {
+export class ReturnHttpBackend extends DefaultHttpBackend {
   constructor(
     @inject(NODE_REQ) protected nodeReq: NodeRequest,
     @skipSelf() protected override routeMeta: RouteMeta,
