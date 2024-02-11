@@ -17,6 +17,6 @@ export class HelloWorldController {
 export class HelloWorldController2 {
   @route('GET', 'singleton')
   tellHello(ctx: RequestContext) {
-    return 'Original singleton message!';
+    return 'Original message!';
   }
 }

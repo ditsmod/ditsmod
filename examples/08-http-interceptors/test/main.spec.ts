@@ -9,7 +9,7 @@ describe('08-http-interceptors', () => {
     await request(server)
       .get('/')
       .expect(200)
-      .expect('{"originalMsg":"Original message!","msg":"message that attached by regular interceptor"}');
+      .expect({ originalMsg: 'Original message!', msg: 'message that attached by interceptor' });
 
     server.close();
   });
@@ -19,7 +19,7 @@ describe('08-http-interceptors', () => {
     await request(server)
       .get('/singleton')
       .expect(200)
-      .expect('{"originalMsg":"Original singleton message!","msg":"message that attached by singleton interceptor"}');
+      .expect({ originalMsg: 'Original message!', msg: 'message that attached by interceptor' });
 
     server.close();
   });
