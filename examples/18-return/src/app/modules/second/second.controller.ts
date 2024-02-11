@@ -1,4 +1,4 @@
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, Res, route, SingletonRequestContext } from '@ditsmod/core';
 
 @controller()
 export class SecondController {
@@ -15,5 +15,23 @@ export class SecondController {
   @route('GET', 'second-string')
   async method3() {
     return 'Some string';
+  }
+}
+
+@controller({ isSingleton: true })
+export class SecondSingletonController {
+  @route('GET', 'second2')
+  async method1(ctx: SingletonRequestContext) {
+    ctx.nodeRes.end('default2 send');
+  }
+
+  @route('GET', 'second2-json')
+  async method2() {
+    return { msg: 'JSON2 object' };
+  }
+
+  @route('GET', 'second2-string')
+  async method3() {
+    return 'Some2 string';
   }
 }

@@ -7,7 +7,7 @@ import { AppModule } from '#src/app/app.module.js';
 describe('18-return', () => {
   // console.log = jest.fn(); // Hide logs
 
-  it('case 1', async () => {
+  it('regular controller', async () => {
     const server = await new TestApplication(AppModule).getServer();
     await request(server)
       .get('/first')
@@ -31,6 +31,30 @@ describe('18-return', () => {
       .get('/second-string')
       .expect(200)
       .expect('Some string')
+      ;
+
+    server.close();
+  });
+
+  it('singleton controller', async () => {
+    const server = await new TestApplication(AppModule).getServer();
+
+    await request(server)
+      .get('/second2')
+      .expect(200)
+      .expect('default2 send')
+      ;
+
+    await request(server)
+      .get('/second2-json')
+      .expect(200)
+      .expect({ msg: 'JSON2 object' })
+      ;
+
+    await request(server)
+      .get('/second2-string')
+      .expect(200)
+      .expect('Some2 string')
       ;
 
     server.close();
