@@ -1,5 +1,12 @@
+<a name="return-2.6.0"></a>
+# [return-2.6.0](https://github.com/ditsmod/ditsmod/releases/tag/return-2.6.0) (2024-02-11)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [85d5350c0](https://github.com/ditsmod/ditsmod/commit/85d5350c0d083248640ad968c07b30a4facc90ef) | feat | Added support for controllers singletons. |
+
 <a name="return-2.5.0"></a>
-# [return-2.5.0](https://github.com/ditsmod/ditsmod/releases/tag/return-2.5.0) (2023-09-30)
+## [return-2.5.0](https://github.com/ditsmod/ditsmod/releases/tag/return-2.5.0) (2023-09-30)
 
 ### Features
 
