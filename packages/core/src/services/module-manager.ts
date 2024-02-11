@@ -518,23 +518,6 @@ export class ModuleManager {
         ' or some controllers, or exports, or extensions.';
       throw new Error(msg);
     }
-
-    this.checkHttpInterceptors(meta);
-  }
-
-  protected checkHttpInterceptors(meta: NormalizedModuleMetadata) {
-    const normProviders = [
-      // Don't autoformat this
-      ...meta.providersPerApp,
-      ...meta.providersPerMod,
-      // ...meta.providersPerRou,
-    ].filter(isNormalizedProvider);
-    const moduleNames = [...this.unfinishedScanModules].map((mod) => getModuleName(mod)).join(' -> ') || meta.name;
-
-    if (normProviders.find((np) => np.token === HTTP_INTERCEPTORS)) {
-      const msg = `Validation ${moduleNames} failed: "HTTP_INTERCEPTORS" can be includes in the "providersPerReq" array only.`;
-      throw new Error(msg);
-    }
   }
 
   protected throwIfUndefined(
