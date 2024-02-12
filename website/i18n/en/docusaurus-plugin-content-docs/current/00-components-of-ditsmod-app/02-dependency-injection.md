@@ -839,5 +839,5 @@ Remember that when DI cannot find the right provider, there are only three possi
 [102]: #injector
 [103]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
 [104]: /components-of-ditsmod-app/extensions/#extensions-groups
-[105]: http://localhost:3001/components-of-ditsmod-app/http-interceptors/
+[105]: /components-of-ditsmod-app/http-interceptors/
 [106]: /components-of-ditsmod-app/guards/

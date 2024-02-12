@@ -839,5 +839,5 @@ service2.service1 instanceof Service1; // true
 [102]: #інжектор
 [103]: /components-of-ditsmod-app/controllers-and-services/#що-являє-собою-контролер "Singleton"
 [104]: /components-of-ditsmod-app/extensions/#групи-розширень
-[105]: http://localhost:3001/components-of-ditsmod-app/http-interceptors/
+[105]: /components-of-ditsmod-app/http-interceptors/
 [106]: /components-of-ditsmod-app/guards/
