@@ -712,6 +712,50 @@ In this case, within the `SomeModule`, `value3` will be returned at the request 
 
 Also, if you import a specific provider from an external module and you have a provider with the same token in the current module, the local provider will have higher priority, provided they were passed at the same level of the injector hierarchy.
 
+## Editing values in the DI registry
+
+As mentioned earlier, _providers_ are passed to the DI registry, from which _values_ are then formed to finally have a mapping between the token and its value:
+
+```
+token1 -> value15
+token2 -> value100
+...
+```
+
+There is also an option to edit the ready _values_ of the DI register:
+
+```ts {4}
+import { Injector } from '@ditsmod/core';
+
+const injector = Injector.resolveAndCreate([{ token: 'token1', useValue: undefined }]);
+injector.setByToken('token1', 'value1');
+injector.get('token1'); // value1
+```
+
+Note that in this case, the provider with `token1`, which has the value `undefined`, is transferred to the registry first, and only then do we change the value for that token. If you try to edit a value for a token that is not in the registry, DI will throw an error similar to the following:
+
+```text
+DiError: Setting value by token failed: cannot find token in register: "token1". Try adding a provider with the same token to the current injector via module or controller metadata.
+```
+
+In most cases, value editing is used by [interceptors][105] or [guards][106], as they thus transfer the result of their work to the registry:
+
+1. [BodyParserInterceptor][16];
+2. [BearerGuard][17].
+
+As an alternative to the `injector.setByToken()` method, an equivalent expression can be used:
+
+```ts {5}
+import { KeyRegistry } from '@ditsmod/core';
+
+// ...
+const { id } = KeyRegistry.get('token1');
+injector.setById(id, 'value1');
+// ...
+```
+
+The advantage of using the `injector.setById()` method is that it is faster than the `injector.setByToken()` method, but only if you get the ID from the `KeyRegistry` once and then use `injector.setById()` the many times.
+
 ## The fromSelf and skipSelf decorators
 
 These decorators are used to control the behavior of the injector when searching for values for a particular token. They make sense in the case where there is a certain hierarchy of injectors.
@@ -785,6 +829,8 @@ Remember that when DI cannot find the right provider, there are only three possi
 [13]: https://github.com/ditsmod/ditsmod/blob/core-2.51.1/packages/core/package.json#L52
 [14]: https://github.com/tc39/proposal-decorators
 [15]: https://en.wikipedia.org/wiki/Singleton_pattern
+[16]: https://github.com/ditsmod/ditsmod/blob/core-2.51.2/packages/body-parser/src/body-parser.interceptor.ts#L23
+[17]: https://github.com/ditsmod/ditsmod/blob/core-2.51.2/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L24
 
 [107]: /developer-guides/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions
@@ -793,3 +839,5 @@ Remember that when DI cannot find the right provider, there are only three possi
 [102]: #injector
 [103]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
 [104]: /components-of-ditsmod-app/extensions/#extensions-groups
+[105]: http://localhost:3001/components-of-ditsmod-app/http-interceptors/
+[106]: /components-of-ditsmod-app/guards/

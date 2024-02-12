@@ -712,6 +712,50 @@ export class SomeModule {}
 
 Також, якщо ви імпортуєте певний провайдер із зовнішнього модуля, і у вас у поточному модулі є провайдер з таким же токеном, то локальний провайдер матиме вищій пріоритет, при умові, що вони передавались на однаковому рівні ієрархії інжекторів.
 
+## Редагування значень в реєстрі DI
+
+Як вже було сказано раніше, в реєстр DI передаються _провайдери_, з яких потім формуються _значення_, щоб в кінцевому результаті мати мапінг між токеном та його значенням:
+
+```
+token1 -> value15
+token2 -> value100
+...
+```
+
+Окрім цього, існує можливість редагування готових _значень_ реєстра DI:
+
+```ts {4}
+import { Injector } from '@ditsmod/core';
+
+const injector = Injector.resolveAndCreate([{ token: 'token1', useValue: undefined }]);
+injector.setByToken('token1', 'value1');
+injector.get('token1'); // value1
+```
+
+Зверніть увагу, що в даному разі до реєстру спочатку передається провайдер з `token1`, який має значення `undefined`, і лише потім ми змінюємо значення для даного токена. Якщо ви спробуєте редагувати значення для токена, якого у реєстрі немає, DI кине приблизно таку помилку:
+
+```text
+DiError: Setting value by token failed: cannot find token in register: "token1". Try adding a provider with the same token to the current injector via module or controller metadata.
+```
+
+У більшості випадків, редагування значень використовують [інтерсептори][105] або [гарди][106], оскільки вони таким чином передають результат своєї роботи до реєстру:
+
+1. [BodyParserInterceptor][16];
+2. [BearerGuard][17].
+
+У якості альтернативи для методу `injector.setByToken()`, можна використовувати еквівалентний вираз:
+
+```ts {5}
+import { KeyRegistry } from '@ditsmod/core';
+
+// ...
+const { id } = KeyRegistry.get('token1');
+injector.setById(id, 'value1');
+// ...
+```
+
+Переваги використання методу `injector.setById()` в тому, що він швидший за метод `injector.setByToken()`, але лише при умові, якщо ви один раз отримуєте ID із `KeyRegistry`, а потім багато разів використовуєте `injector.setById()`.
+
 ## Декоратори fromSelf та skipSelf
 
 Ці декоратори використовуються для управління поведінкою інжектора під час пошуку значень для певного токена. Вони мають сенс у випадку, коли існує певна ієрархія інжекторів.
@@ -785,6 +829,8 @@ service2.service1 instanceof Service1; // true
 [13]: https://github.com/ditsmod/ditsmod/blob/core-2.51.1/packages/core/package.json#L52
 [14]: https://github.com/tc39/proposal-decorators
 [15]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
+[16]: https://github.com/ditsmod/ditsmod/blob/core-2.51.2/packages/body-parser/src/body-parser.interceptor.ts#L23
+[17]: https://github.com/ditsmod/ditsmod/blob/core-2.51.2/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L24
 
 [107]: /developer-guides/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions
@@ -793,3 +839,5 @@ service2.service1 instanceof Service1; // true
 [102]: #інжектор
 [103]: /components-of-ditsmod-app/controllers-and-services/#що-являє-собою-контролер "Singleton"
 [104]: /components-of-ditsmod-app/extensions/#групи-розширень
+[105]: http://localhost:3001/components-of-ditsmod-app/http-interceptors/
+[106]: /components-of-ditsmod-app/guards/
