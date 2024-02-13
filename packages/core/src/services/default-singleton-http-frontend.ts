@@ -5,7 +5,7 @@ import { HttpFrontend, HttpHandler, SingletonRequestContext } from '#types/http-
 import { AnyObj } from '#types/mix.js';
 
 @injectable()
-export class SingletonHttpFrontend implements HttpFrontend {
+export class DefaultSingletonHttpFrontend implements HttpFrontend {
   async intercept(next: HttpHandler, ctx: SingletonRequestContext) {
     if (ctx.queryString) {
       ctx.queryParams = parse(ctx.queryString);
