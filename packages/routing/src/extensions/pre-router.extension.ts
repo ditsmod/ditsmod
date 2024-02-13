@@ -29,7 +29,7 @@ import {
   InterceptorWithGuards,
   RequestContext,
   ControllerMetadata2,
-  SingletonChainMaker,
+  DefaultSingletonChainMaker,
   DefaultSingletonHttpErrorHandler,
   SingletonInterceptorWithGuards,
   Class,
@@ -178,7 +178,7 @@ export class PreRouterExtension implements Extension<void> {
     this.checkDeps(metadataPerMod2.moduleName, httpMethod, path, injectorPerRou, routeMeta);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedCtrlErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
-    const chainMaker = injectorPerRou.instantiateResolved<SingletonChainMaker>(resolvedChainMaker);
+    const chainMaker = injectorPerRou.instantiateResolved<DefaultSingletonChainMaker>(resolvedChainMaker);
     const controllerInstance = injectorPerMod.get(routeMeta.controller);
     routeMeta.routeHandler = controllerInstance[routeMeta.methodName].bind(controllerInstance);
     const errorHandler = injectorPerRou.instantiateResolved(resolvedCtrlErrHandler) as DefaultSingletonHttpErrorHandler;
