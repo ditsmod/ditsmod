@@ -4,11 +4,11 @@ import { ChainMaker } from './chain-maker.js';
 import { HttpErrorHandler } from './http-error-handler.js';
 import { SingletonChainMaker } from './singleton-chain-maker.js';
 import { DefaultSingletonHttpBackend } from './default-singleton-http-backend.js';
-import { SingletonHttpErrorHandler } from './singleton-http-error-handler.js';
+import { DefaultSingletonHttpErrorHandler } from './default-singleton-http-error-handler.js';
 import { SingletonHttpFrontend } from './singleton-http-frontend.js';
 
 export const defaultProvidersPerRou: ServiceProvider[] = [
-  { token: HttpErrorHandler, useClass: SingletonHttpErrorHandler },
+  { token: HttpErrorHandler, useClass: DefaultSingletonHttpErrorHandler },
   { token: ChainMaker, useClass: SingletonChainMaker },
   { token: HttpFrontend, useClass: SingletonHttpFrontend },
   { token: HttpBackend, useClass: DefaultSingletonHttpBackend },

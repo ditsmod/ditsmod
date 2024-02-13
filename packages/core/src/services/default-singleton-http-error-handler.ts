@@ -10,7 +10,7 @@ import { ErrorOpts } from '../custom-error/error-opts.js';
 import { HttpErrorHandler } from './http-error-handler.js';
 
 @injectable()
-export class SingletonHttpErrorHandler implements HttpErrorHandler {
+export class DefaultSingletonHttpErrorHandler implements HttpErrorHandler {
   constructor(protected logger: Logger) {}
 
   async handleError(err: Error, ctx: RequestContext) {
