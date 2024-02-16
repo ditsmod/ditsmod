@@ -35,8 +35,8 @@ HTTP request processing has the following workflow:
 So, the approximate order of processing the request is as follows:
 
 ```text
- request -> PreRouter -> HttpFrontend -> [guards] -> [other interceptors] -> HttpBackend -> [controller]
-response <- PreRouter <- HttpFrontend <- [guards] <- [other interceptors] <- HttpBackend <- [controller]
+ request -> PreRouter -> HttpFrontend -> guards -> [other interceptors] -> HttpBackend -> controller
+response <- PreRouter <- HttpFrontend <- guards <- [other interceptors] <- HttpBackend <- controller
 ```
 
 As `PreRouter`, `HttpFrontend`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 501 status when the required route is missing, but also want to add some text or change headers, you can substitute [PreRouter][7] with your own class.
@@ -47,14 +47,15 @@ On the other hand, with DI you can easily replace `HttpFrontend` and `HttpBacken
 
 ### Singleton
 
-A singleton interceptor works very similarly to a non-singleton interceptor, except that it does not use an injector at the request level. The workflow with his participation differs in points 4 and 6:
+A singleton interceptor works very similarly to a non-singleton interceptor, except that it does not use an injector at the request level. The workflow with his participation differs in points 4 and 7:
 
 1. Ditsmod creates an instance of [PreRouter][7] at the application level.
 2. `PreRouter` uses the router to search for the request handler according to the URI.
 3. If the request handler is not found, `PreRouter` issues a 501 error.
 4. If a request handler is found, Ditsmod uses a provider instance with the [HttpFrontend][2] token at the route level, places it first in the interceptor queue, and automatically invokes it. By default, this interceptor is responsible for setting `pathParams` and `queryParams` values for `SingletonRequestContext`.
-5. The second and subsequent interceptors may not start, depending on whether the previous interceptor in the queue will start them.
-6. If all interceptors have worked, Ditsmod starts [HttpBackend][3], the instance of which is used at the route level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
+5. If there are guards in the current route, they are started by default immediately after `HttpFrontend`.
+6. Other interceptors may be launched next, depending on whether the previous interceptor in the queue will launch them.
+7. If all interceptors have worked, Ditsmod starts [HttpBackend][3], the instance of which is used at the route level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
 ## Creating an interceptor
 
