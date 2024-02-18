@@ -41,13 +41,13 @@ response <- PreRouter <- HttpFrontend <- guards <- [other interceptors] <- HttpB
 
 As `PreRouter`, `HttpFrontend`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 501 status when the required route is missing, but also want to add some text or change headers, you can substitute [PreRouter][7] with your own class.
 
-Note that each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller. However, at the moment (Ditsmod v2.0.0), `HttpFrontend` and `HttpBackend` by default ignores everything that returns the controller or interceptors, so this promise resolve can be useful for other purposes - to collect metrics, logging, etc.
+Each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller. However, at the moment (Ditsmod v2.0.0), `HttpFrontend` and `HttpBackend` by default ignores everything that returns the controller or interceptors, so listening to the resolution of a promise can be useful only for collecting metrics.
 
-On the other hand, with DI you can easily replace `HttpFrontend` and `HttpBackend` with your own interceptors to take into account the return value of the controller method. One of the variants of this functionality is implemented in the [@ditsmod/return][104] module.
+On the other hand, with DI you can easily replace `HttpFrontend` or `HttpBackend` with your own interceptors to take into account the return value of the controller method. One of the variants of this functionality is implemented in the [@ditsmod/return][104] module.
 
 ### Singleton
 
-A singleton interceptor works very similarly to a non-singleton interceptor, except that it does not use an injector at the request level. The workflow with his participation differs in points 4 and 7:
+A singleton interceptor works very similarly to a non-singleton interceptor, except that it does not use an injector at the request level. The workflow with his participation differs in points 4 and 7, because a single interceptor instance is created at the route level:
 
 1. Ditsmod creates an instance of [PreRouter][7] at the application level.
 2. `PreRouter` uses the router to search for the request handler according to the URI.
