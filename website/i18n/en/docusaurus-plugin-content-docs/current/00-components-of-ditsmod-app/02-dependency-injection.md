@@ -418,7 +418,7 @@ Earlier in this documentation, you encountered the following object properties t
 - `providersPerRou` - providers at the route level;
 - `providersPerReq` - providers at the HTTP request level.
 
-Using these arrays, Ditsmod creates four different injectors, which are connected in a hierarchical relationship. Such a hierarchy can be simulated as follows:
+Using these arrays, Ditsmod creates different injectors that are connected in a hierarchical relationship. Such a hierarchy can be simulated as follows:
 
 ```ts
 import { Injector } from '@ditsmod/core';
