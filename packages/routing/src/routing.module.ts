@@ -7,7 +7,7 @@ import { PreRouterExtension } from './extensions/pre-router.extension.js';
 import { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS } from './types.js';
 
 /**
- * Sets `Router` provider on application scope, and adds RoutesExtension with PreRouterExtension.
+ * Sets `Router` provider on application scope, and adds `RoutesExtension` with `PreRouterExtension`.
  */
 @featureModule({
   providersPerApp: [{ token: Router, useClass: DefaultRouter }, RouterLogMediator],
