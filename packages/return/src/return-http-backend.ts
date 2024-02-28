@@ -7,7 +7,6 @@ import {
   Res,
   RouteMeta,
   skipSelf,
-  HttpBackend,
   DefaultHttpBackend,
   Status,
   HttpMethod,
@@ -40,10 +39,15 @@ export class ReturnHttpBackend extends DefaultHttpBackend {
       }
     }
 
-    if (typeof value == 'object' || this.res.nodeRes.getHeader('content-type') == 'application/json') {
+    if (
+      typeof value == 'object' ||
+      this.res.nodeRes.getHeader('content-type')?.toString().includes('application/json')
+    ) {
       this.res.sendJson(value, statusCode);
     } else {
       this.res.send(value, statusCode);
     }
+
+    return value;
   }
 }
