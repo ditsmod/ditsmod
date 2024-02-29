@@ -80,13 +80,11 @@ export class AppModule {}
 
 In this case, the first element of the array `providersPerApp` will allow using `MyLogMediator` in the Ditsmod core code, the second element - will allow requesting the instance of `MyLogMediator` in the constructors of controllers or services of your application.
 
-Keep in mind that such an application-level substitution works without additional settings only in the root module. If you do this in a non-root module, you will additionally have to resolve the provider collision in the root module (although this is quite simple).
+Keep in mind that such an application-level substitution works without additional settings only in the root module. If you do this in a non-root module, you will additionally have [to resolve the provider collision][100] in the root module (although this is quite simple).
 
 ## Module-level substitute of LogMediator
 
 As mentioned at the beginning, if you plan to publish your module to other users, it is recommended to use `LogMediator` instead of `Logger`. In this case, users will be able to change the messages written by your module.
-
-In this example, `SomeModule` has `SomeService`, which uses `SomeLogMediator`. You can imagine that `SomeModule` is an external module that is supposedly installed via a package manager (npm, yarn, etc.) and therefore you have "read-only" access to it. `SomeModule` is imported into `OtherModule`, which calls the external service `SomeService`, which in turn calls `SomeLogMediator`.
 
 To change messages from an external service, `SomeLogMediator` has been extended in `OtherModule` and the method that works in `SomeService` has been overrided. After that, `SomeLogMediator` was substituted to `OtherLogMediator`:
 
@@ -110,3 +108,5 @@ export class OtherModule {}
 
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/11-override-core-log-messages
+
+[100]: /developer-guides/providers-collisions/
