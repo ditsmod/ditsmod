@@ -45,7 +45,8 @@ import { rootModule } from '@ditsmod/core';
   exports: [], // Експорт модулів та провайдерів з поточного модуля
   extensions: [], // Розширення
   extensionsMeta: {}, // Дані для роботи розширень
-  resolvedCollisionsPerMod: [], // Вирішення колізій імпортованих класів на рівні модуля
+  resolvedCollisionsPerApp: [], // Вирішення колізій імпортованих класів на рівні застосунку
+  resolvedCollisionsPerMod: [], //                                    ...на рівні модуля
   resolvedCollisionsPerRou: [], //                                    ...на рівні роута
   resolvedCollisionsPerReq: [], //                                    ...на рівні запиту
   id: '', // Може використовуватись для динамічного додавання чи видалення модулів
@@ -66,6 +67,6 @@ export class SomeModule {}
 
 Файли модулів рекомендується називати із закінченням `*.module.ts`, а назви їхніх класів - із закінченням `*Module`.
 
-Він може містити точно такі самі метадані як і кореневі модулі.
+Він може містити точно такі самі метадані як і кореневі модулі, за виключенням властивості `resolvedCollisionsPerApp`.
 
 [1]: https://www.npmjs.com/package/reflect-metadata

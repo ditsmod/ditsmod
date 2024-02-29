@@ -45,7 +45,8 @@ import { rootModule } from '@ditsmod/core';
   exports: [], // Export modules and providers from the current module
   extensions: [],
   extensionsMeta: {}, // Data for extensions
-  resolvedCollisionsPerMod: [], // Collision resolution of imported classes at the module level
+  resolvedCollisionsPerApp: [], // Collision resolution of imported classes at the application level
+  resolvedCollisionsPerMod: [], //                                    ...at the route level
   resolvedCollisionsPerRou: [], //                                    ...at the route level
   resolvedCollisionsPerReq: [], //                                    ...at the request level
   id: '', // Can be used to dynamically add or remove modules
@@ -66,6 +67,6 @@ export class SomeModule {}
 
 It is recommended that module files end with `*.module.ts` and that their class names end with `*Module`.
 
-It can contain exactly the same metadata as root modules.
+It can contain exactly the same metadata as root modules, except for the `resolvedCollisionsPerApp` property.
 
 [1]: https://www.npmjs.com/package/reflect-metadata
