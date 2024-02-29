@@ -256,19 +256,8 @@ If the provider is represented as an object, the following values can be passed 
   { token: 'token2', useValue: 'some value' }
   ```
 - `useFactory` - you can pass arguments here in two forms.
-  - The **first form** implies that you can pass a function to `useFactory` that can have parameters - that is, it can have a dependency. This dependency must be additionally manually specified in the `deps` property as an array of tokens, and the order in which the tokens are passed is important:
-    ```ts {6}
-    function fn1(service1: Service1, service2: Service2) {
-      // ...
-      return 'some value';
-    }
 
-    { token: 'token3', useFactory: fn1, deps: [Service1, Service2] }
-    ```
-
-    Please note that it is the provider _tokens_ that are passed to the `deps` property, and DI perceives them as tokens, not providers. That is, for these tokens, the DI registry will still need to [transfer the corresponding providers][100]. Also note that no parameter decorators are passed via `deps` (such as `fromSelf` and `skipSelf`). If your factory requires parameter decorators, you need to use the second form of passing arguments to `useFactory`.
-
-  - The **second form** assumes that a [tuple][11] is passed to `useFactory`, where the first place should be a class, and the second place should be a method of this class that must return some value for the specified token. For example, if the class is like this:
+  - The **first form** (recommended because of its better encapsulation) assumes that a [tuple][11] is passed to `useFactory`, where the first place should be a class, and the second place should be a method of this class that must return some value for the specified token. For example, if the class is like this:
 
     ```ts
     import { methodFactory } from '@ditsmod/core';
@@ -289,6 +278,18 @@ If the provider is represented as an object, the following values can be passed 
     ```
 
     First, DI will create an instance of this class, then call its method and get the result, which will be associated with the specified token. A method of the specified class can return any value except `undefined`.
+
+  - The **second form** implies that you can pass a function to `useFactory` that can have parameters - that is, it can have a dependency. This dependency must be additionally manually specified in the `deps` property as an array of tokens, and the order in which the tokens are passed is important:
+    ```ts {6}
+    function fn1(service1: Service1, service2: Service2) {
+      // ...
+      return 'some value';
+    }
+
+    { token: 'token3', useFactory: fn1, deps: [Service1, Service2] }
+    ```
+
+    Please note that it is the provider _tokens_ that are passed to the `deps` property, and DI perceives them as tokens, not providers. That is, for these tokens, the DI registry will still need to [transfer the corresponding providers][100]. Also note that no parameter decorators are passed via `deps` (such as `fromSelf` and `skipSelf`). If your factory requires parameter decorators, you need to use the first form of passing arguments to `useFactory`.
 
 - `useToken` - another token is passed to this provider property. If you write the following:
 
