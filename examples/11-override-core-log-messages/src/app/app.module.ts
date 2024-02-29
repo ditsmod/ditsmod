@@ -11,7 +11,7 @@ import { OtherModule } from './modules/other/other.module.js';
   providersPerApp: [
     ...new Providers()
       .useSystemLogMediator(MyLogMediator) // This allow use MyLogMediator internaly in Ditsmod core
-      .useLogConfig({ level: 'info' }), // You can remove filter with modulesNames
+      .useLogConfig({ level: 'info' }),
   ],
 })
 export class AppModule {}
