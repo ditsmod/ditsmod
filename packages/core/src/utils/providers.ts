@@ -1,7 +1,7 @@
-import { Logger, LoggerConfig } from '#types/logger.js';
+import { Logger, LoggerConfig } from '#logger/logger.js';
 import { Class, FunctionFactoryProvider, UseFactoryTuple } from '#di';
-import { LogMediator } from '#log-mediator/log-mediator.js';
-import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
+import { LogMediator } from '#logger/log-mediator.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyFn } from '#types/mix.js';
 import { NormalizedProvider } from './ng-utils.js';
 

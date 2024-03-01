@@ -1,20 +1,20 @@
 import { jest } from '@jest/globals';
 
 import { injectable, InjectionToken } from '#di';
+import { InputLogLevel, Logger } from '#logger/logger.js';
+import { LogMediator } from '#logger/log-mediator.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { featureModule } from './decorators/module.js';
 import { rootModule } from './decorators/root-module.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
-import { InputLogLevel, Logger } from './types/logger.js';
 import { Router } from './types/router.js';
 import { AppInitializer } from './app-initializer.js';
-import { LogMediator } from './log-mediator/log-mediator.js';
 import { ModuleManager } from './services/module-manager.js';
 import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix.js';
 import { controller } from './decorators/controller.js';
 import { ModuleExtract } from './types/module-extract.js';
 import { ImportObj, MetadataPerMod1 } from './types/metadata-per-mod.js';
 import { Providers } from './utils/providers.js';
-import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
 import { AppOptions } from './types/app-options.js';
 
 describe('AppInitializer', () => {

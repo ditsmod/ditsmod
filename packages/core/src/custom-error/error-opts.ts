@@ -1,4 +1,4 @@
-import { InputLogLevel } from '#types/logger.js';
+import { InputLogLevel } from '#logger/logger.js';
 import { Status } from '#utils/http-status-codes.js';
 
 export class ErrorOpts {

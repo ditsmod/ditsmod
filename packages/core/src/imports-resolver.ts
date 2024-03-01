@@ -1,7 +1,7 @@
 import { Injector } from '#di';
 
 import { defaultProvidersPerRou } from '#services/default-providers-per-rou.js';
-import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { defaultExtensionsProviders } from './services/default-extensions-providers.js';
 import { defaultProvidersPerApp } from './services/default-providers-per-app.js';
 import { defaultProvidersPerReq } from './services/default-providers-per-req.js';

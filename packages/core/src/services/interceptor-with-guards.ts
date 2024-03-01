@@ -1,5 +1,5 @@
 import { injectable, skipSelf, Injector } from '#di';
-import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { HttpInterceptor, HttpHandler, RequestContext } from '#types/http-interceptor.js';
 import { RouteMeta } from '#types/route-data.js';
 import { Status } from '#utils/http-status-codes.js';

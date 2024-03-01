@@ -1,6 +1,6 @@
 import { EXTENSIONS_COUNTERS } from '#constans';
 import { Class, Injector, inject, injectable } from '#di';
-import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { Extension, ExtensionsGroupToken } from '#types/mix.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#utils/type-guards.js';

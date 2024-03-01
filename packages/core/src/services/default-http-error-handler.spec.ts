@@ -3,7 +3,7 @@ import { jest } from '@jest/globals';
 import { NODE_RES } from '#constans';
 import { Injector } from '#di';
 import { RequestContext } from '#types/http-interceptor.js';
-import { Logger } from '#types/logger.js';
+import { Logger } from '#logger/logger.js';
 import { NodeResponse } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
 import { CustomError } from '../custom-error/custom-error.js';

@@ -23,7 +23,7 @@
     "#models/*": "./dist/models/*",
     "#decorators/*": "./dist/decorators/*",
     "#constans": "./dist/constans.js",
-    "#log-mediator/*": "./dist/log-mediator/*",
+    "#logger/*": "./dist/logger/*",
     "#services/*": "./dist/services/*"
   },
   "exports": {

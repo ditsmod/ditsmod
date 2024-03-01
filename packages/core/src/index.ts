@@ -27,7 +27,7 @@ export { ProvidersMetadata } from './types/providers-metadata.js';
 export { AppOptions } from './types/app-options.js';
 export { ModuleFactory } from './module-factory.js';
 export { InterceptorWithGuards } from './services/interceptor-with-guards.js';
-export { ConsoleLogger } from './services/console-logger.js';
+export { ConsoleLogger } from './logger/console-logger.js';
 export { HttpErrorHandler } from './services/http-error-handler.js';
 export { DefaultHttpErrorHandler } from './services/default-http-error-handler.js';
 export { DefaultHttpBackend } from './services/default-http-backend.js';
@@ -43,9 +43,9 @@ export {
 } from './services/singleton-interceptor-with-guards.js';
 export { ExtensionsContext } from './services/extensions-context.js';
 export { ExtensionsManager } from './services/extensions-manager.js';
-export { LogMediator } from './log-mediator/log-mediator.js';
-export { LogItem } from './log-mediator/types.js';
-export { SystemLogMediator } from './log-mediator/system-log-mediator.js';
+export { LogMediator } from '#logger/log-mediator.js';
+export { LogItem } from '#logger/types.js';
+export { SystemLogMediator } from '#logger/system-log-mediator.js';
 export { ModuleManager } from './services/module-manager.js';
 export { PerAppService } from './services/per-app.service.js';
 export { PreRouter } from './services/pre-router.js';
@@ -63,7 +63,7 @@ export {
   SingletonRequestContext,
   SingletonHttpBackend
 } from './types/http-interceptor.js';
-export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from './types/logger.js';
+export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
 export { MetadataPerMod1, MetadataPerMod2 } from './types/metadata-per-mod.js';
 export {
   AnyObj,

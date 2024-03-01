@@ -10,7 +10,7 @@ import { ModuleFactory } from './module-factory.js';
 import { defaultProvidersPerApp } from './services/default-providers-per-app.js';
 import { ModuleManager } from './services/module-manager.js';
 import { Req } from './services/request.js';
-import { Logger } from './types/logger.js';
+import { Logger } from '#logger/logger.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from './types/metadata-per-mod.js';
 import {
   DecoratorMetadata,
@@ -22,7 +22,7 @@ import {
 } from './types/mix.js';
 import { Router } from './types/router.js';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports.js';
-import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { makePropDecorator } from '#di';
 import { transformControllersMetadata } from './utils/transform-controllers-metadata.js';
 import { HttpBackend } from './types/http-interceptor.js';

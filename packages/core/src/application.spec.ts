@@ -8,7 +8,7 @@ import { rootModule } from './decorators/root-module.js';
 import { AppOptions } from './types/app-options.js';
 import { ModuleType } from './types/mix.js';
 import { Router } from './types/router.js';
-import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleManager } from './services/module-manager.js';
 import { LoggerConfig } from './index.js';
 

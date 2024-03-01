@@ -4,8 +4,8 @@ import type * as https from 'https';
 import type { AddressInfo } from 'net';
 
 import { AppInitializer } from './app-initializer.js';
-import { LogMediator } from './log-mediator/log-mediator.js';
-import { SystemLogMediator } from './log-mediator/system-log-mediator.js';
+import { LogMediator } from '#logger/log-mediator.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AppOptions } from './types/app-options.js';
 import { ModuleManager } from './services/module-manager.js';
 import { HttpServerModule, HttpsServerModule } from './types/http-module.js';

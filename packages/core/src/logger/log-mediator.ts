@@ -1,8 +1,8 @@
 import { Injector, injectable, optional } from '#di';
 import { ModuleExtract } from '#types/module-extract.js';
-import { ConsoleLogger } from '#services/console-logger.js';
-import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#types/logger.js';
-import { LogItem } from './types.js';
+import { ConsoleLogger } from '#logger/console-logger.js';
+import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
+import { LogItem } from '#logger/types.js';
 
 /**
  * Mediator between core logger and custom user's logger.

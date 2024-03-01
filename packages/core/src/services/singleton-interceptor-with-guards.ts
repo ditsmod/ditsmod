@@ -1,5 +1,5 @@
 import { injectable, Injector } from '#di';
-import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { HttpInterceptor, HttpHandler, RequestContext } from '#types/http-interceptor.js';
 import { CanActivate } from '#types/mix.js';
 import { RouteMeta } from '#types/route-data.js';

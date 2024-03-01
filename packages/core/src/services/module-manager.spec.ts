@@ -4,7 +4,7 @@ import { controller } from '#decorators/controller.js';
 import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { InjectionToken, forwardRef, injectable } from '#di';
-import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, Extension, ExtensionProvider, ModuleType, ModuleWithParams, ServiceProvider } from '#types/mix.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { getCallerDir } from '#utils/callsites.js';

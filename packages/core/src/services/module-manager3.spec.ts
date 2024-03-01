@@ -2,7 +2,7 @@ import { controller } from '#decorators/controller.js';
 import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { forwardRef } from '#di';
-import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleManager } from './module-manager.js';
 import { Module1 } from './module-manager4.spec.js';
 

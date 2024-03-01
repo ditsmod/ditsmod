@@ -1,5 +1,5 @@
 import { injectable } from '#di';
-import { InputLogLevel, Logger, OutputLogLevel } from '#types/logger.js';
+import { InputLogLevel, Logger, OutputLogLevel } from '#logger/logger.js';
 import { AnyFn } from '#types/mix.js';
 
 @injectable()

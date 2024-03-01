@@ -1,5 +1,5 @@
 import { injectable } from '#di';
-import { SystemLogMediator } from '#log-mediator/system-log-mediator.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { HttpMethod } from '#types/mix.js';
 import { Router } from '#types/router.js';
 import { NodeResponse, RequestListener } from '#types/server-options.js';

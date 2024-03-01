@@ -1,13 +1,13 @@
 import { injectable } from '#di';
-import { ConsoleLogger } from '#services/console-logger.js';
-import { Logger } from '#types/logger.js';
+import { ConsoleLogger } from '#logger/console-logger.js';
+import { Logger } from '#logger/logger.js';
+import { LogMediator } from '#logger/log-mediator.js';
 import { GlobalProviders, ImportObj } from '#types/metadata-per-mod.js';
 import { Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceProvider } from '#types/mix.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getModuleName } from '#utils/get-module-name.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#utils/type-guards.js';
-import { LogMediator } from './log-mediator.js';
 
 /**
  * Mediator between core logger and custom user's logger.
