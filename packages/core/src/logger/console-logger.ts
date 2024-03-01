@@ -3,16 +3,15 @@ import { InputLogLevel, Logger, LoggerConfig, OutputLogLevel } from '#logger/log
 import { AnyFn } from '#types/mix.js';
 
 @injectable()
-export class ConsoleLogger extends Logger {
+export class ConsoleLogger implements Logger {
   protected config: LoggerConfig;
   protected allLevels: OutputLogLevel[] = ['all', 'trace', 'debug', 'info', 'warn', 'error', 'fatal', 'off'];
 
   constructor(@optional() config?: LoggerConfig) {
-    super();
     this.config = config ? { ...config } : new LoggerConfig();
   }
 
-  override log(level: InputLogLevel, ...args: any[]) {
+  log(level: InputLogLevel, ...args: any[]) {
     this.consoleLoggerFn(level)(...args);
   }
 
@@ -34,11 +33,11 @@ export class ConsoleLogger extends Logger {
     return callback;
   }
 
-  override setLevel(value: OutputLogLevel) {
+  setLevel(value: OutputLogLevel) {
     this.config.level = value;
   }
 
-  override getLevel(): OutputLogLevel {
+  getLevel(): OutputLogLevel {
     return this.config.level || 'info';
   }
 }
