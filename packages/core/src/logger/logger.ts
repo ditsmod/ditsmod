@@ -1,13 +1,9 @@
-import { injectable, optional } from '#di';
-
 export class LoggerConfig {
   /**
    * @param level Log level (trace, debug, info etc.)
    */
   constructor(public level: OutputLogLevel = 'info') {}
 }
-
-const msg = 'You need to implement "%s" method in "%s"';
 
 /**
  * The log level for a particular message. This particular message may or may not be logged,
@@ -23,21 +19,17 @@ export type InputLogLevel = Exclude<OutputLogLevel, 'off'>;
  */
 export type OutputLogLevel = 'all' | 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'off';
 
-@injectable()
 export class Logger {
-  constructor(@optional() public config?: LoggerConfig) {
-    this.config = config ? { ...config } : new LoggerConfig();
-  }
-
   log(level: InputLogLevel, ...args: any[]) {
-    console.warn(msg, 'log', this.constructor.name);
+    console.warn('You need to implement "log" method in "%s"', this.constructor.name);
   }
 
   setLevel(value: OutputLogLevel) {
-    this.config!.level = value;
+    console.warn('You need to implement "setLevel" method in "%s"', this.constructor.name);
   }
 
   getLevel(): OutputLogLevel {
-    return this.config!.level || 'info';
+    console.warn('You need to implement "getLevel" method in "%s"', this.constructor.name);
+    return 'info';
   }
 }
