@@ -5,7 +5,7 @@ import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/log
 import { LogItem } from '#logger/types.js';
 
 /**
- * Mediator between core logger and custom user's logger.
+ * Mediator between the core logger and the user's custom logger.
  */
 @injectable()
 export abstract class LogMediator {
