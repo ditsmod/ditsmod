@@ -3,7 +3,7 @@ import { Injector } from '@ditsmod/core';
 import { DefaultRouter } from './router.js';
 import { Fn } from './types.js';
 import { Tree } from './tree.js';
-import { RouterLogMediator } from './router-log-mediator.js';
+import { RouterErrorMediator } from './router-error-mediator.js';
 
 describe('Router', () => {
   const noop: Fn = () => {};
@@ -13,7 +13,7 @@ describe('Router', () => {
     injector = Injector.resolveAndCreate([
       Tree,
       DefaultRouter,
-      {token: RouterLogMediator, useValue: {}}
+      {token: RouterErrorMediator, useValue: {}}
     ]);
   });
 

@@ -1,6 +1,6 @@
-import { LogMediator } from '@ditsmod/core';
+import { ErrorMediator } from '@ditsmod/core';
 
-export class RouterLogMediator extends LogMediator {
+export class RouterErrorMediator extends ErrorMediator {
   /**
    * Setting route '${fullPath}' in ${moduleName} failed: a handle is already registered for this path.
    */

@@ -1,6 +1,6 @@
 import { injectable, optional } from '@ditsmod/core';
 
-import { RouterLogMediator } from './router-log-mediator.js';
+import { RouterErrorMediator } from './router-error-mediator.js';
 import { Fn, TreeConfig, RouteType, RouteParam } from './types.js';
 
 @injectable()
@@ -13,7 +13,10 @@ export class Tree {
   protected indices: string;
   protected priority: number;
 
-  constructor(private log: RouterLogMediator, @optional() treeConfig?: TreeConfig) {
+  constructor(
+    private errMediator: RouterErrorMediator,
+    @optional() treeConfig?: TreeConfig,
+  ) {
     Object.assign(this, new TreeConfig(), treeConfig);
   }
 
@@ -101,14 +104,14 @@ export class Tree {
     } else if (i == path.length) {
       // Make node a (in-path leaf)
       if (tree.handle !== null) {
-        this.log.throwHandleAlreadyRegistered(fullPath);
+        this.errMediator.throwHandleAlreadyRegistered(fullPath);
       }
       tree.handle = handle;
     }
   }
 
   protected insertChild(numParams: number, path: string, fullPath: string, handle: Fn) {
-      /* eslint-disable  @typescript-eslint/no-this-alias */
+    /* eslint-disable  @typescript-eslint/no-this-alias */
     let tree = this;
     let offset = 0; // Already handled chars of the path
 
@@ -123,7 +126,7 @@ export class Tree {
       let end = i + 1;
       while (end < max && path[end] != '/') {
         if (path[end] == ':' || path[end] == '*') {
-          this.log.throwOnlyOneWildcardPerPath(path.slice(i), fullPath);
+          this.errMediator.throwOnlyOneWildcardPerPath(path.slice(i), fullPath);
         } else {
           end++;
         }
@@ -132,12 +135,12 @@ export class Tree {
       // Check if this Tree existing children which would be unreachable
       // if we insert the wildcard here
       if (tree.children.length > 0) {
-        this.log.throwWildcardRouteConflicts(path.slice(i, end), fullPath);
+        this.errMediator.throwWildcardRouteConflicts(path.slice(i, end), fullPath);
       }
 
       // check if the wildcard has a name
       if (end - i < 2) {
-        this.log.throwWildcardsMustNonEmpty(fullPath);
+        this.errMediator.throwWildcardsMustNonEmpty(fullPath);
       }
 
       if (c == ':') {
@@ -173,16 +176,16 @@ export class Tree {
         }
       } else {
         if (end != max || numParams > 1) {
-          this.log.throwCatchAllRoutesOnlyAtEnd(fullPath);
+          this.errMediator.throwCatchAllRoutesOnlyAtEnd(fullPath);
         }
 
         if (tree.path.length > 0 && tree.path[tree.path.length - 1] == '/') {
-          this.log.throwCatchAllConflictWithExistingHandle(fullPath);
+          this.errMediator.throwCatchAllConflictWithExistingHandle(fullPath);
         }
 
         i--;
         if (path[i] != '/') {
-          this.log.throwNoBeforeCatchAll(fullPath);
+          this.errMediator.throwNoBeforeCatchAll(fullPath);
         }
 
         tree.path = path.slice(offset, i);
@@ -243,7 +246,7 @@ export class Tree {
       pathSeg = path.split('/')[0];
     }
     const prefix = fullPath.slice(0, fullPath.indexOf(pathSeg)) + tree.path;
-    this.log.throwConflictsWithExistingWildcard(pathSeg, fullPath, tree.path, prefix);
+    this.errMediator.throwConflictsWithExistingWildcard(pathSeg, fullPath, tree.path, prefix);
   }
 
   protected splitAdge(tree: this, path: string, i: number) {
@@ -271,7 +274,7 @@ export class Tree {
     const params: RouteParam[] = [];
     let tree: this = this;
 
-      /* eslint-disable no-constant-condition */
+    /* eslint-disable no-constant-condition */
     walk: while (true) {
       if (path.length > tree.path.length) {
         if (path.slice(0, tree.path.length) == tree.path) {
@@ -329,7 +332,7 @@ export class Tree {
               return { handle, params };
 
             default:
-              this.log.throwInvalidNodeType();
+              this.errMediator.throwInvalidNodeType();
           }
         }
       } else if (path == tree.path) {
@@ -341,7 +344,7 @@ export class Tree {
   }
 
   protected newTree(treeConfig?: TreeConfig) {
-    return new (this.constructor as typeof Tree)(this.log, treeConfig) as this;
+    return new (this.constructor as typeof Tree)(this.errMediator, treeConfig) as this;
   }
 
   protected addPriority(pos: number) {
