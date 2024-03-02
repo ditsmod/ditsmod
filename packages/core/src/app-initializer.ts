@@ -159,7 +159,7 @@ export class AppInitializer {
       appMetadataMap,
       this.meta.providersPerApp,
       this.systemLogMediator,
-      new SystemErrorMediator()
+      new SystemErrorMediator({ moduleName: this.meta.name }),
     );
     const mExtensionsCounters = importsResolver.resolve();
     const aMetadataPerMod1 = [...appMetadataMap].map(([, metadataPerMod1]) => metadataPerMod1);
