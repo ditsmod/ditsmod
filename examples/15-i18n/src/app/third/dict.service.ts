@@ -9,19 +9,20 @@ import {
   QUERY_PARAMS,
   Logger,
 } from '@ditsmod/core';
-import { DictService, I18nLogMediator, I18nOptions, ISO639 } from '@ditsmod/i18n';
+import { DictService, I18nErrorMediator, I18nLogMediator, I18nOptions, ISO639 } from '@ditsmod/i18n';
 
 @injectable()
 export class MyDictService extends DictService {
   constructor(
     protected override injector: Injector,
     protected override log: I18nLogMediator,
+    protected override errMediator: I18nErrorMediator,
     protected logger: Logger,
     @optional() protected override i18nOptions?: I18nOptions,
     @inject(QUERY_PARAMS) protected override queryParams?: AnyObj,
     @optional() @inject(NODE_REQ) protected nodeReq?: NodeRequest,
   ) {
-    super(injector, log, i18nOptions, queryParams);
+    super(injector, log, errMediator, i18nOptions, queryParams);
   }
 
   override set lng(lng: ISO639) {
