@@ -24,6 +24,7 @@
     "#decorators/*": "./dist/decorators/*",
     "#constans": "./dist/constans.js",
     "#logger/*": "./dist/logger/*",
+    "#error/*": "./dist/error/*",
     "#services/*": "./dist/services/*"
   },
   "exports": {

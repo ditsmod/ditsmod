@@ -11,6 +11,7 @@
       "#decorators/*": ["./src/decorators/*"],
       "#constans": ["./src/constans.js"],
       "#logger/*": ["./src/logger/*"],
+      "#error/*": ["./src/error/*"],
       "#services/*": ["./src/services/*"],
     },
     "module": "nodenext",
