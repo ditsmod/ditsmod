@@ -20,14 +20,14 @@ import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '#utils/parameters.js'
 import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { getLastParameterObjects, getLastReferenceObjects } from '#utils/get-last-params.js';
 import { OasOptions } from '#types/oas-options.js';
-import { OpenapiLogMediator } from '../services/openapi-log-mediator.js';
+import { OpenapiErrorMediator } from '../services/openapi-error-mediator.js';
 
 @injectable()
 export class OpenapiRoutesExtension extends RoutesExtension implements Extension<MetadataPerMod2> {
   constructor(
     protected override appOptions: AppOptions,
     protected override metadataPerMod1: MetadataPerMod1,
-    protected log: OpenapiLogMediator,
+    protected errMediator: OpenapiErrorMediator,
   ) {
     super(appOptions, metadataPerMod1);
   }
@@ -122,7 +122,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
           if (path.includes(paramName)) {
             paramsInPath.push(p);
           } else {
-            this.log.throwParamNotFoundInPath(controllerName, paramName, path);
+            this.errMediator.throwParamNotFoundInPath(controllerName, paramName, path);
           }
         } else {
           this.bindParams(httpMethod, path, paramsNonPath, p);

@@ -8,12 +8,13 @@ import { OAS_COMPILER_EXTENSIONS } from './di-tokens.js';
 import { OpenapiController } from './openapi.controller.js';
 import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-options.js';
 import { OpenapiLogMediator } from './services/openapi-log-mediator.js';
+import { OpenapiErrorMediator } from './services/openapi-error-mediator.js';
 
 @featureModule({
   imports: [RoutingModule],
   controllers: [OpenapiController],
   providersPerApp: [OasConfigFiles],
-  providersPerMod: [OpenapiLogMediator],
+  providersPerMod: [OpenapiLogMediator, OpenapiErrorMediator],
   extensions: [
     { extension: OpenapiRoutesExtension, groupToken: ROUTES_EXTENSIONS, exported: true },
     {
