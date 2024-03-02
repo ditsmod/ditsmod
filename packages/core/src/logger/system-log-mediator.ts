@@ -31,6 +31,9 @@ export class SystemLogMediator extends LogMediator {
     SystemLogMediator.previousLogger = this.logger;
   }
 
+  /**
+   * @todo Move throwing an error to ErrorMediator.
+   */
   restorePreviousLogger() {
     if (!SystemLogMediator.previousLogger) {
       throw new TypeError('The logger was not previously seted.');
