@@ -6,9 +6,9 @@ import { RequestContext } from '#types/http-interceptor.js';
 import { Logger } from '#logger/logger.js';
 import { NodeResponse } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
-import { CustomError } from '../error/custom-error.js';
-import { ErrorOpts } from '../error/error-opts.js';
-import { DefaultHttpErrorHandler as ErrorHandler } from './default-http-error-handler.js';
+import { CustomError } from '#error/custom-error.js';
+import { ErrorOpts } from '#error/error-opts.js';
+import { DefaultHttpErrorHandler as ErrorHandler } from '#error/default-http-error-handler.js';
 import { Req } from './request.js';
 import { Res } from './response.js';
 

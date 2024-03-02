@@ -5,10 +5,10 @@ import { NodeResponse } from '#types/server-options.js';
 import { cleanErrorTrace } from '#utils/clean-error-trace.js';
 import { Status } from '#utils/http-status-codes.js';
 import { isChainError } from '#utils/type-guards.js';
-import { ErrorOpts } from '../error/error-opts.js';
-import { HttpErrorHandler } from './http-error-handler.js';
-import { Req } from './request.js';
-import { Res } from './response.js';
+import { ErrorOpts } from '#error/error-opts.js';
+import { HttpErrorHandler } from '#error/http-error-handler.js';
+import { Req } from '#services/request.js';
+import { Res } from '#services/response.js';
 
 @injectable()
 export class DefaultHttpErrorHandler implements HttpErrorHandler {
