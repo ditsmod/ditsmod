@@ -22,7 +22,7 @@ describe('ImportsResolver', () => {
   let mock: ImportsResolverMock;
 
   beforeEach(() => {
-    mock = new ImportsResolverMock(null as any, null as any, null as any, null as any);
+    mock = new ImportsResolverMock(null as any, null as any, null as any, null as any, null as any);
   });
 
   describe('resolveImportedProviders', () => {

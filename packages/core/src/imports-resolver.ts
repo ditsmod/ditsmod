@@ -17,6 +17,7 @@ import { getModuleName } from './utils/get-module-name.js';
 import { getProviderName } from './utils/get-provider-name.js';
 import { getProvidersTargets, getTokens } from './utils/get-tokens.js';
 import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from './utils/type-guards.js';
+import { SystemErrorMediator } from '#error/system-error-mediator.js';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -31,7 +32,8 @@ export class ImportsResolver {
     private moduleManager: ModuleManager,
     protected appMetadataMap: AppMetadataMap,
     protected providersPerApp: ServiceProvider[],
-    protected log: SystemLogMediator
+    protected log: SystemLogMediator,
+    protected errorMediator: SystemErrorMediator,
   ) {}
 
   resolve() {
@@ -271,7 +273,7 @@ export class ImportsResolver {
       this.meta.providersPerMod
     );
 
-    this.log.throwNoProviderDuringResolveImports(this.meta.name, token.name || token, partMsg);
+    this.errorMediator.throwNoProviderDuringResolveImports(this.meta.name, token.name || token, partMsg);
   }
 
   protected getDependencies(provider: ServiceProvider) {

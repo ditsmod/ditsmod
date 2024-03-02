@@ -1,7 +1,8 @@
 import { InjectionToken } from '#di';
 import { EXTENSIONS_COUNTERS } from './constans.js';
 import { ImportsResolver } from './imports-resolver.js';
-import { Logger } from './index.js';
+import { Logger } from '#logger/logger.js';
+import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
@@ -158,6 +159,7 @@ export class AppInitializer {
       appMetadataMap,
       this.meta.providersPerApp,
       this.systemLogMediator,
+      new SystemErrorMediator()
     );
     const mExtensionsCounters = importsResolver.resolve();
     const aMetadataPerMod1 = [...appMetadataMap].map(([, metadataPerMod1]) => metadataPerMod1);
