@@ -12,8 +12,8 @@ export {
   PATH_PARAMS,
   QUERY_PARAMS,
 } from './constans.js';
-export { CustomError } from './custom-error/custom-error.js';
-export { ErrorOpts } from './custom-error/error-opts.js';
+export { CustomError } from './error/custom-error.js';
+export { ErrorOpts } from './error/error-opts.js';
 export { controller, ControllerMetadata } from './decorators/controller.js';
 export { guard } from './decorators/guard.js';
 export { featureModule } from './decorators/module.js';

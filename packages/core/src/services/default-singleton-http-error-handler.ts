@@ -6,7 +6,7 @@ import { Logger } from '#logger/logger.js';
 import { cleanErrorTrace } from '#utils/clean-error-trace.js';
 import { Status } from '#utils/http-status-codes.js';
 import { isChainError } from '#utils/type-guards.js';
-import { ErrorOpts } from '../custom-error/error-opts.js';
+import { ErrorOpts } from '../error/error-opts.js';
 import { HttpErrorHandler } from './http-error-handler.js';
 
 @injectable()
