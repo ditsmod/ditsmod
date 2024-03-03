@@ -14,7 +14,7 @@ import { isInjectionToken } from '#utils/type-guards.js';
  *
  * If you want to rewrite messages written by the core logger, you need:
  * 1. override the methods of this class in your own class;
- * 2. via DI, at the application level, substitute the `LogMediator` class with your class.
+ * 2. via DI, at the application level, substitute the `SystemLogMediator` class with your class.
  */
 @injectable()
 export class SystemLogMediator extends LogMediator {
@@ -168,10 +168,7 @@ export class SystemLogMediator extends LogMediator {
    */
   startExtensionsModuleInit(self: object) {
     const className = self.constructor.name;
-    this.setLog(
-      'debug',
-      `${className}: ${'='.repeat(20)} ${this.moduleExtract.moduleName} ${'='.repeat(20)}`,
-    );
+    this.setLog('debug', `${className}: ${'='.repeat(20)} ${this.moduleExtract.moduleName} ${'='.repeat(20)}`);
   }
 
   /**

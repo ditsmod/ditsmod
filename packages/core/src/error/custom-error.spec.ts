@@ -1,7 +1,7 @@
 import { ChainError } from '@ts-stack/chain-error';
 
 import { Status } from '#utils/http-status-codes.js';
-import { CustomError } from './custom-error.js';
+import { CustomError } from '#error/custom-error.js';
 
 
 describe('CustomError', () => {
