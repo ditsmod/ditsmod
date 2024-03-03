@@ -2,13 +2,22 @@ import { jest } from '@jest/globals';
 
 import { Injector } from '#di';
 import { ConsoleLogger } from '#logger/console-logger.js';
-import { Logger } from '#logger/logger.js';
+import { InputLogLevel, Logger, OutputLogLevel } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { LogItem } from '#logger/types.js';
 
 describe('LogMediator', () => {
   class MockLogMediator extends LogMediator {
     override logger: Logger = new ConsoleLogger();
+    static override hasDiffLogLevels: boolean;
+
+    override setLog(inputLogLevel: InputLogLevel, msg: any) {
+      return super.setLog(inputLogLevel, msg);
+    }
+
+    static override checkDiffLogLevels(level: OutputLogLevel) {
+      return super.checkDiffLogLevels(level);
+    }
 
     override writeLogs(logItems: LogItem[]) {
       return super.writeLogs(logItems);
@@ -17,6 +26,49 @@ describe('LogMediator', () => {
 
   beforeEach(() => {
     console.log = jest.fn();
+  });
+
+  describe('checkDiffLogLevels()', () => {
+    it('default: MockLogMediator.hasDiffLogLevels is undefined', () => {
+      expect(MockLogMediator.hasDiffLogLevels).toBeFalsy();
+    });
+
+    it('after seted one log level, still MockLogMediator.hasDiffLogLevels !== true', () => {
+      MockLogMediator.checkDiffLogLevels('all');
+      MockLogMediator.checkDiffLogLevels('all');
+      expect(MockLogMediator.hasDiffLogLevels).toBeFalsy();
+    });
+
+    it('after seted two diff log level, MockLogMediator.hasDiffLogLevels === true', () => {
+      MockLogMediator.checkDiffLogLevels('info');
+      expect(MockLogMediator.hasDiffLogLevels).toBe(true);
+    });
+  });
+
+  describe('setLog()', () => {
+    const mock = new MockLogMediator({ moduleName: 'fakeName' });
+    beforeEach(() => {
+      jest.resetAllMocks();
+      jest.spyOn(mock.logger, 'log');
+    });
+
+    it('default state', () => {
+      expect(LogMediator.buffer).toEqual([]);
+      expect(mock.logger.log).toHaveBeenCalledTimes(0);
+    });
+
+    it('logging some log', () => {
+      mock.setLog('all', 'some log');
+      expect(LogMediator.buffer.length).toBe(0);
+      expect(mock.logger.log).toHaveBeenCalledTimes(1);
+    });
+
+    it('buffering some log', () => {
+      LogMediator.bufferLogs = true;
+      mock.setLog('all', 'some log');
+      expect(LogMediator.buffer.length).toBe(1);
+      expect(mock.logger.log).toHaveBeenCalledTimes(0);
+    });
   });
 
   describe('writeLogs()', () => {
@@ -31,6 +83,7 @@ describe('LogMediator', () => {
     describe('without passing injector to the constructor', () => {
       const mock = new MockLogMediator({ moduleName: 'fakeName' });
       beforeEach(() => {
+        jest.resetAllMocks();
         jest.spyOn(mock.logger, 'log');
       });
 
@@ -62,6 +115,7 @@ describe('LogMediator', () => {
       const injector = Injector.resolveAndCreate([{ token: Logger, useClass: ConsoleLogger }]);
       const mock = new MockLogMediator({ moduleName: 'fakeName' }, injector);
       beforeEach(() => {
+        jest.resetAllMocks();
         jest.spyOn(mock.logger, 'log');
       });
 
