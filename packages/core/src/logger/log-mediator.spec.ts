@@ -29,17 +29,17 @@ describe('LogMediator', () => {
   });
 
   describe('checkDiffLogLevels()', () => {
-    it('default: MockLogMediator.hasDiffLogLevels is undefined', () => {
+    it('default: LogMediator.hasDiffLogLevels is undefined', () => {
       expect(MockLogMediator.hasDiffLogLevels).toBeFalsy();
     });
 
-    it('after seted one log level, still MockLogMediator.hasDiffLogLevels !== true', () => {
+    it('after seted one log level, still LogMediator.hasDiffLogLevels is undefined', () => {
       MockLogMediator.checkDiffLogLevels('all');
       MockLogMediator.checkDiffLogLevels('all');
       expect(MockLogMediator.hasDiffLogLevels).toBeFalsy();
     });
 
-    it('after seted two diff log level, MockLogMediator.hasDiffLogLevels === true', () => {
+    it('after seted two diff log level, LogMediator.hasDiffLogLevels === true', () => {
       MockLogMediator.checkDiffLogLevels('info');
       expect(MockLogMediator.hasDiffLogLevels).toBe(true);
     });

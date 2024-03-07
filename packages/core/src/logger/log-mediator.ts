@@ -62,10 +62,7 @@ export abstract class LogMediator {
     const logger: Logger = this.injector?.resolveAndCreateChild([]).pull(Logger) || new ConsoleLogger();
 
     if (LogMediator.hasDiffLogLevels && logger === this.logger) {
-      const msg =
-        'Either set "new Application().bootstrap(AppModule, { bufferLogs: false })" in main.ts, ' +
-        "or don't pass the logger as a singleton that should write logs in the context of different OutputLogLevels.";
-      logger.log('warn', msg);
+      logger.log('warn', this.msgAboutSingletonLogger);
     }
 
     logItems.forEach((logItem) => {
@@ -75,4 +72,8 @@ export abstract class LogMediator {
 
     return logger; // Needed for testing only.
   }
+
+  protected msgAboutSingletonLogger =
+    'Either set "new Application().bootstrap(AppModule, { bufferLogs: false })" in main.ts, ' +
+    "or don't pass the logger as a singleton that should write logs in the context of different OutputLogLevels.";
 }
