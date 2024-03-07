@@ -1,10 +1,10 @@
-import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel, methodFactory } from '@ditsmod/core';
+import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel, methodFactory, optional } from '@ditsmod/core';
 import { createLogger, LogLevel as BunyanLogLevel } from 'bunyan';
 import * as BunyanLogger from 'bunyan';
 
 export class PatchLogger {
   @methodFactory()
-  patchLogger(config: LoggerConfig) {
+  patchLogger(@optional() config: LoggerConfig = new LoggerConfig()) {
     const logger = createLogger({ name: 'bunyan-test' });
     this.setLogLeveL(logger, config.level);
 
