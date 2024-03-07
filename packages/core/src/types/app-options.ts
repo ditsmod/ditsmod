@@ -6,8 +6,8 @@ export class AppOptions {
   serverOptions?: ServerOptions = {};
   path?: string = '';
   /**
-   * If "{ bufferLogs: true }", all messages are buffered during application initialization
-   * and flushed afterwards. This can be useful if you want all messages to be recorded by
+   * If `{ bufferLogs: true }`, all messages are buffered during application initialization
+   * and flushed afterwards. This can be useful if you want all messages to be logged by
    * the final logger, which is configured after the application is fully initialized.
    * 
    * Default - `true`.
