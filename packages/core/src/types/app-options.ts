@@ -4,6 +4,9 @@ import { ServerOptions } from '#types/server-options.js';
 export class AppOptions {
   httpModule?: HttpModule | null = null;
   serverOptions?: ServerOptions = {};
+  /**
+   * This is the root prefix that will be added to all routes.
+   */
   path?: string = '';
   /**
    * If `{ bufferLogs: true }`, all messages are buffered during application initialization
