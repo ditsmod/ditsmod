@@ -1,4 +1,7 @@
 {
+  "events": {
+    "start": "clear"
+  },
   "watch": ["./dist/*", "../../packages/*/dist/*"],
   "ignore": ["*.spec.ts", "*.tsbuildinfo", "packages/openapi/src/swagger-ui/swagger.config.ts"]
 }
