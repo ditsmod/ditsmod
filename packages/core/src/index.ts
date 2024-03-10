@@ -35,7 +35,7 @@ export { DefaultHttpFrontend } from './services/default-http-frontend.js';
 export { DefaultSingletonHttpFrontend } from './services/default-singleton-http-frontend.js';
 export { DefaultSingletonHttpBackend } from './services/default-singleton-http-backend.js';
 export { DefaultSingletonChainMaker } from './services/default-singleton-chain-maker.js';
-export { DefaultSingletonHttpErrorHandler } from './services/default-singleton-http-error-handler.js';
+export { DefaultSingletonHttpErrorHandler } from './error/default-singleton-http-error-handler.js';
 export {
   ISingletonInterceptorWithGuards,
   SingletonInterceptorWithGuards,
