@@ -1,6 +1,5 @@
 import { format } from 'util';
 
-import { HTTP_INTERCEPTORS } from '#constans';
 import { Class, injectable, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import {
