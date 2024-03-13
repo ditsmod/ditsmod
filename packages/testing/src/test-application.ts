@@ -17,7 +17,7 @@ export class TestApplication {
 
   protected initRootModule(appModule: ModuleType, appOptions: AppOptions) {
     this.preTestApplication = new PreTestApplication();
-    const systemLogMediator = this.preTestApplication.init(appModule.name, appOptions);
+    const systemLogMediator = this.preTestApplication.init(appOptions);
     this.testModuleManager = new TestModuleManager(systemLogMediator);
     this.testModuleManager.scanRootModule(appModule);
     return this.testModuleManager;

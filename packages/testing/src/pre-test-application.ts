@@ -4,8 +4,8 @@ import { TestModuleManager } from './test-module-manager.js';
 import { TestAppInitializer } from './test-app-initializer.js';
 
 export class PreTestApplication extends Application {
-  override init(rootModuleName: string, appOptions: AppOptions) {
-    return super.init(rootModuleName, appOptions);
+  override init(appOptions: AppOptions) {
+    return super.init(appOptions);
   }
 
   bootstrapTestApplication(testModuleManager: TestModuleManager, logLevel: OutputLogLevel) {
