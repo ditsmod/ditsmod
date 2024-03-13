@@ -2,14 +2,14 @@ import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
 
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
+import { ModuleManager } from '#services/module-manager.js';
+import { Router } from '#types/router.js';
+import { AppOptions } from '#types/app-options.js';
+import { ModuleType } from '#types/mix.js';
 import { AppInitializer } from './app-initializer.js';
 import { Application } from './application.js';
 import { rootModule } from './decorators/root-module.js';
-import { AppOptions } from './types/app-options.js';
-import { ModuleType } from './types/mix.js';
-import { Router } from './types/router.js';
-import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { ModuleManager } from './services/module-manager.js';
 import { LoggerConfig } from './index.js';
 
 describe('Application', () => {
