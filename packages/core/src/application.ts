@@ -24,7 +24,7 @@ export class Application {
   bootstrap(appModule: ModuleType, appOptions: AppOptions = new AppOptions()) {
     return new Promise<{ server: NodeServer }>(async (resolve, reject) => {
       try {
-        this.init(appModule.name, appOptions);
+        this.init(appOptions);
         const moduleManager = this.scanRootModule(appModule);
         const appInitializer = this.getAppInitializer(moduleManager);
         await this.bootstrapApplication(appInitializer);
@@ -37,18 +37,18 @@ export class Application {
     });
   }
 
-  protected init(rootModuleName: string, appOptions: AppOptions) {
+  protected init(appOptions: AppOptions) {
     this.systemLogMediator = new SystemLogMediator({ moduleName: 'AppModule' });
     this.appOptions = { ...new AppOptions(), ...appOptions };
     LogMediator.bufferLogs = this.appOptions.bufferLogs;
-    this.checkSecureServerOption(rootModuleName);
+    this.checkSecureServerOption();
     return this.systemLogMediator;
   }
 
-  protected checkSecureServerOption(rootModuleName: string) {
+  protected checkSecureServerOption() {
     const serverOptions = this.appOptions.serverOptions as Http2SecureServerOptions;
     if (serverOptions?.isHttp2SecureServer && !(this.appOptions.httpModule as typeof http2).createSecureServer) {
-      throw new TypeError(`serverModule.createSecureServer() not found (see ${rootModuleName} settings)`);
+      throw new TypeError('http2.createSecureServer() not found (see the settings in main.ts)');
     }
   }
 

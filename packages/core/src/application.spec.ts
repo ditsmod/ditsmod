@@ -17,8 +17,8 @@ describe('Application', () => {
     override appOptions = new AppOptions();
     declare systemLogMediator: SystemLogMediator;
 
-    override checkSecureServerOption(rootModuleName: string) {
-      return super.checkSecureServerOption(rootModuleName);
+    override checkSecureServerOption() {
+      return super.checkSecureServerOption();
     }
 
     override scanRootModule(appModule: ModuleType) {
@@ -52,27 +52,27 @@ describe('Application', () => {
     it('should not to throw with http2 and isHttp2SecureServer == true', () => {
       mock.appOptions.serverOptions = { isHttp2SecureServer: true };
       mock.appOptions.httpModule = http2;
-      expect(() => mock.checkSecureServerOption(AppModule.name)).not.toThrow();
+      expect(() => mock.checkSecureServerOption()).not.toThrow();
     });
 
     it('should to throw with http and isHttp2SecureServer == true', () => {
       mock.appOptions.serverOptions = { isHttp2SecureServer: true };
       mock.appOptions.httpModule = http;
-      const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
-      expect(() => mock.checkSecureServerOption(AppModule.name)).toThrow(msg);
+      const msg = 'createSecureServer() not found';
+      expect(() => mock.checkSecureServerOption()).toThrow(msg);
     });
 
     it('should not to throw with http and isHttp2SecureServer == false', () => {
       mock.appOptions.httpModule = http;
-      const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
-      expect(() => mock.checkSecureServerOption(AppModule.name)).not.toThrow(msg);
+      const msg = 'createSecureServer() not found';
+      expect(() => mock.checkSecureServerOption()).not.toThrow(msg);
     });
 
     it('should to throw with https and isHttp2SecureServer == true', () => {
       mock.appOptions.serverOptions = { isHttp2SecureServer: true };
       mock.appOptions.httpModule = https;
-      const msg = 'serverModule.createSecureServer() not found (see AppModule settings)';
-      expect(() => mock.checkSecureServerOption(AppModule.name)).toThrow(msg);
+      const msg = 'createSecureServer() not found';
+      expect(() => mock.checkSecureServerOption()).toThrow(msg);
     });
   });
 
