@@ -43,9 +43,11 @@ describe('Application', () => {
   describe('checkSecureServerOption()', () => {
     class Provider1 {}
     class Provider2 {}
+    const msg = 'createSecureServer() not found';
+
     @rootModule({
       controllers: [Provider1],
-      providersPerApp: [Provider2, { token: LoggerConfig, useValue: { level: 'off' }}],
+      providersPerApp: [Provider2, { token: LoggerConfig, useValue: { level: 'off' } }],
     })
     class AppModule {}
 
@@ -58,20 +60,17 @@ describe('Application', () => {
     it('should to throw with http and isHttp2SecureServer == true', () => {
       mock.appOptions.serverOptions = { isHttp2SecureServer: true };
       mock.appOptions.httpModule = http;
-      const msg = 'createSecureServer() not found';
       expect(() => mock.checkSecureServerOption()).toThrow(msg);
     });
 
     it('should not to throw with http and isHttp2SecureServer == false', () => {
       mock.appOptions.httpModule = http;
-      const msg = 'createSecureServer() not found';
       expect(() => mock.checkSecureServerOption()).not.toThrow(msg);
     });
 
     it('should to throw with https and isHttp2SecureServer == true', () => {
       mock.appOptions.serverOptions = { isHttp2SecureServer: true };
       mock.appOptions.httpModule = https;
-      const msg = 'createSecureServer() not found';
       expect(() => mock.checkSecureServerOption()).toThrow(msg);
     });
   });
@@ -87,7 +86,10 @@ describe('Application', () => {
 
   describe('bootstrapApplication()', () => {
     @rootModule({
-      providersPerApp: [{ token: Router, useValue: {}}, { token: LoggerConfig, useValue: { level: 'off' }}]
+      providersPerApp: [
+        { token: Router, useValue: {} },
+        { token: LoggerConfig, useValue: { level: 'off' } },
+      ],
     })
     class AppModule {}
 
