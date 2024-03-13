@@ -13,7 +13,7 @@
     "build": "tsc -b tsconfig.build.json"
   },
   "imports": {
-    "#src/*": "./dist/*"
+    "#app/*": "./dist/app/*"
   },
   "dependencies": {
     "@ditsmod/core": "^2.50.0",

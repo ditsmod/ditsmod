@@ -9,7 +9,7 @@
       "@ditsmod/routing": ["../../packages/routing/src"],
       "@ditsmod/openapi": ["../../packages/openapi/src"],
       "@ditsmod/jwt": ["../../packages/jwt/src"],
-      "#src/*": ["./src/*"],
+      "#app/*": ["./src/app/*"],
       "#routed/*": ["./src/app/modules/routed/*"],
       "#service/*": ["./src/app/modules/service/*"]
     }

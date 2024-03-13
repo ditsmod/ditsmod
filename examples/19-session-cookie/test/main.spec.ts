@@ -1,7 +1,7 @@
 import request = require('supertest');
 import { TestApplication } from '@ditsmod/testing';
 
-import { AppModule } from '#src/app/app.module.js';
+import { AppModule } from '#app/app.module.js';
 
 describe('19-session-cookie', () => {
   describe('non-singleton', () => {

@@ -11,6 +11,6 @@
     "build": "tsc -b tsconfig.build.json"
   },
   "imports": {
-    "#src/*": "./dist/*"
+    "#app/*": "./dist/app/*"
   }
 }

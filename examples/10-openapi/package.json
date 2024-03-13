@@ -15,7 +15,7 @@
     "watch": "yarn build -w"
   },
   "imports": {
-    "#src/*": "./dist/*",
+    "#app/*": "./dist/app/*",
     "#routed/*": "./dist/app/modules/routed/*",
     "#service/*": "./dist/app/modules/service/*"
   },

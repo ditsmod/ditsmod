@@ -2,7 +2,7 @@ import request = require('supertest');
 import { TestApplication } from '@ditsmod/testing';
 import { NodeServer } from '@ditsmod/core';
 
-import { AppModule } from '#src/app/app.module.js';
+import { AppModule } from '#app/app.module.js';
 
 describe('07-dynamically-composing-modules', () => {
   let server: NodeServer;
