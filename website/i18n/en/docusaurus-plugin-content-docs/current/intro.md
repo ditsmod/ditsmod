@@ -34,6 +34,14 @@ cd my-app
 npm i
 ```
 
+Alternatively, you can use the starter monorepo:
+
+```bash
+git clone --depth 1 https://github.com/ditsmod/monorepo.git my-app
+cd my-app
+npm i
+```
+
 ## Start in Development Mode
 
 For development mode, you'll need two terminals. In one, TypeScript code will be compiled into JavaScript code, and in the other, a web server will be running. After each code change, the web server will pick up these changes and reload.
@@ -60,24 +68,25 @@ Or simply by going to [http://localhost:3000/](http://localhost:3000/) in your b
 
 Of course, instead of two terminals, you can use, for example, [ts-node][17] in one terminal, but this is a slower option, because after each change `ts-node` will recompile all the code on the fly, while in `tsc -w` only recompiles the changed file. In addition, thanks to [ditsmod/seed][2]'s use of the so-called [Project References][16] and `tsc -b` build mode, even very large projects compile very quickly.
 
-Note that there are three config files for TypeScript in the `ditsmod/seed` repository:
+Note that there are four config files for TypeScript in the `ditsmod/seed` repository:
 
 - `tsconfig.json` - the basic configuration used by your IDE (in most cases it is probably VS Code).
 - `tsconfig.build.json` - this configuration is used to compile the code from the `src` directory to the `dist` directory, it is intended for application code.
-- `tsconfig.test.json` - this configuration is used to compile unit test code and end-to-end tests.
+- `tsconfig.test.json` - this configuration is used to compile end-to-end tests.
+- `tsconfig.unit.json` - this configuration is used to compile unit tests.
 
 Also, note that since `ditsmod/seed` is declared as an EcmaScript Module (ESM), you can use [native Node.js aliases][18] to shorten file paths. This is analogous to `compilerOptions.paths` in `tsconfig`. Such aliases are declared in `package.json` in the `imports` field:
 
 ```json {2}
 "imports": {
-  "#src/*": "./dist/*"
+  "#app/*": "./dist/app/*"
 },
 ```
 
 Now you can use it, for example in the `test` folder, like this:
 
 ```ts
-import { AppModule } from '#src/app/app.module.js';
+import { AppModule } from '#app/app.module.js';
 ```
 
 At the moment (2023-10-13) TypeScript does not yet fully support these aliases, so it is advisable to duplicate them in the `tsconfig.json` file:
@@ -85,7 +94,7 @@ At the moment (2023-10-13) TypeScript does not yet fully support these aliases, 
 ```json
 // ...
   "paths": {
-    "#src/*": ["./src/*"]
+    "#app/*": ["./src/app/*"]
   }
 // ...
 ```
