@@ -10,7 +10,7 @@ import {
   isClassProvider,
   isFactoryProvider,
   getDependencies,
-  ServiceProvider,
+  Provider,
 } from '@ditsmod/core';
 import { PreRouterExtension, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
@@ -105,7 +105,7 @@ export class TestPreRouterExtension extends PreRouterExtension {
    */
   protected getAllowedDeps(provider: TestClassProvider | TestFactoryProvider) {
     const tokensOfDeps = getDependencies(provider).map((reflectiveDependecy) => reflectiveDependecy.token);
-    const allowedDeps: ServiceProvider[] = [];
+    const allowedDeps: Provider[] = [];
 
     (provider.providers || []).forEach((preparedProvider) => {
       const { token } = normalizeProviders([preparedProvider])[0];

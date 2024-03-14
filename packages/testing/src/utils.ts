@@ -1,9 +1,9 @@
-import { OutputLogLevel, LoggerConfig, ServiceProvider, ValueProvider, normalizeProviders } from '@ditsmod/core';
+import { OutputLogLevel, LoggerConfig, Provider, ValueProvider, normalizeProviders } from '@ditsmod/core';
 
 /**
  * Override only logLevel in existing `LoggerConfig`.
  */
-export function overrideLogLevel(providers: ServiceProvider[], logLevel: OutputLogLevel) {
+export function overrideLogLevel(providers: Provider[], logLevel: OutputLogLevel) {
   const aNormProviders = normalizeProviders(providers);
   const tokens = aNormProviders.map((p) => p.token);
   const index = tokens.lastIndexOf(LoggerConfig);

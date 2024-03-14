@@ -5,7 +5,7 @@ import {
   ModuleWithParams,
   NormalizedModuleMetadata,
   OutputLogLevel,
-  ServiceProvider,
+  Provider,
 } from '@ditsmod/core';
 
 import { TestProvider } from './types.js';
@@ -15,14 +15,14 @@ type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 export class TestModuleManager extends ModuleManager {
   protected providersToOverride: TestProvider[] = [];
   protected logLevel: OutputLogLevel;
-  protected providersPerApp: ServiceProvider[];
-  protected extensionsProviders: ServiceProvider[];
+  protected providersPerApp: Provider[];
+  protected extensionsProviders: Provider[];
 
-  setProvidersPerApp(providersPerApp: ServiceProvider[]) {
+  setProvidersPerApp(providersPerApp: Provider[]) {
     this.providersPerApp = providersPerApp;
   }
 
-  setExtensionProviders(extensionsProviders: ServiceProvider[]) {
+  setExtensionProviders(extensionsProviders: Provider[]) {
     this.extensionsProviders = extensionsProviders;
   }
 
