@@ -15,7 +15,7 @@
     "test": "yarn build-test && yarn esm-jest",
     "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps node_modules/jest/bin/jest.js",
     "test-examples": "tsc -b examples/tsconfig.test.json && yarn esm-jest -c examples/jest.config.ts",
-    "test-all": "yarn test && yarn test-examples && yarn build-examples && yarn build-vscode",
+    "test-all": "yarn test && yarn test-examples && yarn build-vscode",
     "pub": "lerna publish from-package --no-git-tag-version",
     "build": "tsc -b packages",
     "build-test": "tsc -b packages/tsconfig.test.json",
