@@ -9,7 +9,7 @@ import {
   MetadataPerMod2,
   NormalizedGuard,
   RouteMeta,
-  ServiceProvider,
+  Provider,
   AppOptions,
 } from '@ditsmod/core';
 import { RoutesExtension } from '@ditsmod/routing';
@@ -47,8 +47,8 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             continue;
           }
           const oasRoute = decoratorMetadata.value;
-          const providersPerRou: ServiceProvider[] = [];
-          const providersPerReq: ServiceProvider[] = [];
+          const providersPerRou: Provider[] = [];
+          const providersPerReq: Provider[] = [];
           const ctrlDecorator = container.find(isController);
           const isSingleton = ctrlDecorator?.value.isSingleton;
           const guards: NormalizedGuard[] = [...guardsPerMod];

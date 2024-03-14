@@ -44,7 +44,7 @@
     "yaml": "^2.3.4"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.50.1",
+    "@ditsmod/core": "^2.52.0",
     "@ditsmod/routing": "^2.0.0"
   },
   "devDependencies": {
