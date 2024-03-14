@@ -10,7 +10,7 @@ import {
   Status,
   HttpMethod,
   MetadataPerMod2,
-  ServiceProvider,
+  Provider,
   RequestContext,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
@@ -65,7 +65,7 @@ export class CorsExtension implements Extension<void | false> {
     });
   }
 
-  protected getCorsOptions(injectorPerMod: Injector, mergedPerRou: ServiceProvider[]) {
+  protected getCorsOptions(injectorPerMod: Injector, mergedPerRou: Provider[]) {
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou);
     const corsOptions = injectorPerRou.get(CorsOptions, undefined, {}) as CorsOptions;
     const clonedCorsOptions = { ...corsOptions };
