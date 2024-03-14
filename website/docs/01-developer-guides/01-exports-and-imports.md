@@ -102,10 +102,10 @@ interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
    * module.
    */
   exports?: any[];
-  providersPerApp?: ServiceProvider[];
-  providersPerMod?: ServiceProvider[];
-  providersPerRou?: ServiceProvider[];
-  providersPerReq?: ServiceProvider[];
+  providersPerApp?: Provider[];
+  providersPerMod?: Provider[];
+  providersPerRou?: Provider[];
+  providersPerReq?: Provider[];
   /**
    * This property allows you to pass any information to extensions.
    *
