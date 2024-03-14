@@ -15,13 +15,14 @@ import {
 } from './app/services.js';
 
 describe('@ditsmod/testing', () => {
-  const methodPerApp = jest.fn();
-  const methodPerMod = jest.fn();
-  const methodPerRou = jest.fn();
-  const methodPerReq = jest.fn();
-  const methodPerRou2 = jest.fn();
-  const methodPerReq2 = jest.fn();
-  const methodPerRou3 = jest.fn();
+  const message = 'any-string';
+  const methodPerApp = jest.fn(() => message);
+  const methodPerMod = jest.fn(() => message);
+  const methodPerRou = jest.fn(() => message);
+  const methodPerReq = jest.fn(() => message);
+  const methodPerRou2 = jest.fn(() => message);
+  const methodPerReq2 = jest.fn(() => message);
+  const methodPerRou3 = jest.fn(() => message);
 
   beforeEach(() => {
     jest.restoreAllMocks();
@@ -31,23 +32,14 @@ describe('@ditsmod/testing', () => {
     const server = await new TestApplication(AppModule)
       .overrideProviders([
         ...new Providers()
-          .useValue(ServicePerApp, { method: methodPerApp })
-          .useValue(ServicePerMod, { method: methodPerMod })
-          .useValue(ServicePerRou, { method: methodPerRou })
-          .useValue(ServicePerReq, { method: methodPerReq })
-          .useValue(ServicePerRou2, { method: methodPerRou2 })
-          .useValue(ServicePerReq2, { method: methodPerReq2 }),
+          .useValue<ServicePerApp>(ServicePerApp, { method: methodPerApp })
+          .useValue<ServicePerMod>(ServicePerMod, { method: methodPerMod })
+          .useValue<ServicePerRou>(ServicePerRou, { method: methodPerRou })
+          .useValue<ServicePerReq>(ServicePerReq, { method: methodPerReq })
+          .useValue<ServicePerRou2>(ServicePerRou2, { method: methodPerRou2 })
+          .useValue<ServicePerReq2>(ServicePerReq2, { method: methodPerReq2 }),
       ])
       .getServer();
-
-    const message = 'any-string';
-
-    methodPerApp.mockImplementation(() => message);
-    methodPerMod.mockImplementation(() => message);
-    methodPerRou.mockImplementation(() => message);
-    methodPerReq.mockImplementation(() => message);
-    methodPerRou2.mockImplementation(() => message);
-    methodPerReq2.mockImplementation(() => message);
 
     await request(server).get('/per-app').expect(200).expect(message);
     await request(server).get('/per-mod').expect(200).expect(message);

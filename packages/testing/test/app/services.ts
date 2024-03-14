@@ -22,12 +22,18 @@ export class ServicePerReq {
   }
 }
 
+/**
+ * A service that is passed to the DI via controller metadata.
+ */
 export class ServicePerRou2 {
   method() {
     return 'Rou2';
   }
 }
 
+/**
+ * A service that is passed to the DI via controller metadata.
+ */
 export class ServicePerReq2 {
   method() {
     return 'Req2';
