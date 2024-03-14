@@ -4,7 +4,7 @@ import {
   MetadataPerMod2,
   ModuleExtract,
   PerAppService,
-  ServiceProvider,
+  Provider,
   injectable,
   Injector,
 } from '@ditsmod/core';
@@ -69,7 +69,7 @@ export class I18nExtension implements Extension<void> {
     }
   }
 
-  protected addI18nProvidersToScope(providers: ServiceProvider[]) {
+  protected addI18nProvidersToScope(providers: Provider[]) {
     this.injector = this.injector.resolveAndCreateChild(providers);
     const translations = this.injector.get(I18N_TRANSLATIONS, undefined, null) as Translations[];
     if (translations !== this.translations) {

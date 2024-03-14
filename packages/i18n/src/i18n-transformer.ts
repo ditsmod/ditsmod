@@ -1,17 +1,17 @@
-import { ServiceProvider, injectable, Class } from '@ditsmod/core';
+import { Provider, injectable, Class } from '@ditsmod/core';
 
 import { I18nLogMediator } from './i18n-log-mediator.js';
 import { Dictionary, Translations } from './types/mix.js';
 
 /**
- * Transforms `Translations[]` to `ServiceProvider[]`.
+ * Transforms `Translations[]` to `Provider[]`.
  */
 @injectable()
 export class I18nTransformer {
   constructor(private log: I18nLogMediator) {}
 
   getProviders(translations: Translations[]) {
-    const providers: ServiceProvider[] = [];
+    const providers: Provider[] = [];
 
     if (!translations?.length) {
       this.log.translationNotFound(this);
@@ -37,7 +37,7 @@ export class I18nTransformer {
   }
 
   protected getCurrentOrImportedProviders(token: Class<Dictionary>, group: Class<Dictionary>[]) {
-    const providers: ServiceProvider[] = [];
+    const providers: Provider[] = [];
     for (const dict of group) {
       if (token !== dict) {
         this.logMissingMethodsIfExists(token, dict);
