@@ -25,7 +25,7 @@ import {
   RouteHandler,
   Router,
   getModule,
-  ServiceProvider,
+  Provider,
   InterceptorWithGuards,
   RequestContext,
   ControllerMetadata2,
@@ -114,7 +114,7 @@ export class PreRouterExtension implements Extension<void> {
     const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'injectorPerRou');
 
-    const mergedPerReq: ServiceProvider[] = [];
+    const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
     if (routeMeta.resolvedGuards.length) {
       mergedPerReq.push(InterceptorWithGuards);
@@ -165,7 +165,7 @@ export class PreRouterExtension implements Extension<void> {
   ) {
     const { httpMethod, path, providersPerRou, routeMeta } = controllersMetadata2;
 
-    const mergedPerRou: ServiceProvider[] = [];
+    const mergedPerRou: Provider[] = [];
     mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
     if (routeMeta.resolvedGuards.length) {
       mergedPerRou.push(SingletonInterceptorWithGuards);

@@ -6,7 +6,7 @@ import {
   Extension,
   GuardItem,
   NormalizedGuard,
-  ServiceProvider,
+  Provider,
   RouteMeta,
   isController,
   isRoute,
@@ -51,8 +51,8 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           if (!isRoute(decoratorMetadata)) {
             continue;
           }
-          const providersPerRou: ServiceProvider[] = [];
-          const providersPerReq: ServiceProvider[] = [];
+          const providersPerRou: Provider[] = [];
+          const providersPerReq: Provider[] = [];
           const route = decoratorMetadata.value;
           const ctrlDecorator = container.find(isController);
           const isSingleton = ctrlDecorator?.value.isSingleton;
