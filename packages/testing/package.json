@@ -8,9 +8,6 @@
   },
   "description": "This is a module for Ditsmod applications",
   "module": "dist/index.js",
-  "imports": {
-    "#src/*": "./dist/*"
-  },
   "exports": {
     "./package.json": {
       "default": "./package.json"

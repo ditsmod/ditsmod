@@ -4,7 +4,6 @@
     "paths": {
       "@ditsmod/core": ["../core/src"],
       "@ditsmod/routing": ["../routing/src"],
-      "#src/*": ["./src/*"],
     },
     "module": "nodenext",
     "moduleResolution": "nodenext",
@@ -29,5 +28,6 @@
   "references": [
     { "path": "../core/tsconfig.build.json" },
     { "path": "../routing/tsconfig.build.json" },
+    { "path": "./tsconfig.test.json" },
   ]
 }
