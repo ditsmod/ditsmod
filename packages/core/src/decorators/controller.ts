@@ -1,15 +1,15 @@
 import { makeClassDecorator } from '#di';
-import { ServiceProvider } from '#types/mix.js';
+import { Provider } from '#types/mix.js';
 
 export interface ControllerMetadata {
   /**
    * Providers per HTTP request.
    */
-  providersPerReq?: ServiceProvider[];
+  providersPerReq?: Provider[];
   /**
    * Providers per route.
    */
-  providersPerRou?: ServiceProvider[];
+  providersPerRou?: Provider[];
   /**
    * Default - `false`.
    */

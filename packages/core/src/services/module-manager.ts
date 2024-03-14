@@ -11,7 +11,7 @@ import {
   ModuleWithParams,
   NormalizedGuard,
   Scope,
-  ServiceProvider,
+  Provider,
 } from '#types/mix.js';
 import { AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
@@ -522,7 +522,7 @@ export class ModuleManager {
   protected throwIfUndefined(
     modName: string,
     action: 'Imports' | 'Exports' | 'Appends',
-    imp: AnyModule | ServiceProvider,
+    imp: AnyModule | Provider,
     i: number,
   ) {
     if (imp === undefined) {

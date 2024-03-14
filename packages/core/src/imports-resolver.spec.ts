@@ -3,19 +3,19 @@ import { injectable } from '#di';
 import { ImportsResolver } from './imports-resolver.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { ImportedTokensMap } from './types/metadata-per-mod.js';
-import { ModuleType, ModuleWithParams, ServiceProvider } from './types/mix.js';
+import { ModuleType, ModuleWithParams, Provider } from './types/mix.js';
 
 describe('ImportsResolver', () => {
   @injectable()
   class ImportsResolverMock extends ImportsResolver {
-    declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, ServiceProvider][];
+    declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, Provider][];
     override resolveImportedProviders(importedTokensMap: ImportedTokensMap, meta: NormalizedModuleMetadata) {
       return super.resolveImportedProviders(importedTokensMap, meta);
     }
-    override fixDependecy(module: ModuleType | ModuleWithParams, provider: ServiceProvider) {
+    override fixDependecy(module: ModuleType | ModuleWithParams, provider: Provider) {
       return super.fixDependecy(module, provider);
     }
-    override unfixDependecy(module: ModuleType | ModuleWithParams, provider: ServiceProvider) {
+    override unfixDependecy(module: ModuleType | ModuleWithParams, provider: Provider) {
       return super.unfixDependecy(module, provider);
     }
   }

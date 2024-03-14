@@ -1,12 +1,12 @@
 import { injectable, Injector } from '#di';
-import { ServiceProvider } from '#types/mix.js';
+import { Provider } from '#types/mix.js';
 
 /**
  * Used only for extensions.
  */
 @injectable()
 export class PerAppService {
-  providers: ServiceProvider[] = [];
+  providers: Provider[] = [];
   #injector: Injector;
 
   /**
@@ -14,7 +14,7 @@ export class PerAppService {
    * At the moment, it is used after the work of all extensions that may have been dynamically
    * added new providers.
    */
-  reinitInjector(providers?: ServiceProvider[]) {
+  reinitInjector(providers?: Provider[]) {
     if (providers) {
       this.providers.push(...providers);
     }

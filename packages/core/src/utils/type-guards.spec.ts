@@ -1,4 +1,4 @@
-import { CanActivate, ServiceProvider, Extension } from '#types/mix.js';
+import { CanActivate, Provider, Extension } from '#types/mix.js';
 import { injectable, InjectionToken, makePropDecorator, reflector } from '#di';
 import { featureModule } from '#decorators/module.js';
 import {
@@ -127,7 +127,7 @@ describe('type guards', () => {
 
   describe('isNormalizedProvider()', () => {
     it('should recognize all types of providers', () => {
-      const providers: ServiceProvider[] = [
+      const providers: Provider[] = [
         { token: '', useValue: '' },
         { token: '', useClass: class {} },
         { token: '', useToken: class {} },
@@ -137,12 +137,12 @@ describe('type guards', () => {
     });
 
     it('should fail class types of providers', () => {
-      const providers: ServiceProvider[] = [class {}];
+      const providers: Provider[] = [class {}];
       expect(providers.every(isNormalizedProvider)).toBe(false);
     });
 
     it('should fail check number', () => {
-      const providers: ServiceProvider[] = [5 as any];
+      const providers: Provider[] = [5 as any];
       expect(providers.every(isNormalizedProvider)).toBe(false);
     });
   });
@@ -193,17 +193,17 @@ describe('type guards', () => {
     });
 
     it('false ValueProvider', () => {
-      const provider: ServiceProvider = { token: 'token', useValue: 'fake' };
+      const provider: Provider = { token: 'token', useValue: 'fake' };
       expect(isMultiProvider(provider)).toBe(false);
     });
 
     it('false ClassProvider', () => {
-      const provider: ServiceProvider = { token: 'token', useClass: class {} };
+      const provider: Provider = { token: 'token', useClass: class {} };
       expect(isMultiProvider(provider)).toBe(false);
     });
 
     it('false TokenProvider', () => {
-      const provider: ServiceProvider = { token: 'token', useToken: class {} };
+      const provider: Provider = { token: 'token', useToken: class {} };
       expect(isMultiProvider(provider)).toBe(false);
     });
 
@@ -215,7 +215,7 @@ describe('type guards', () => {
           return '';
         }
       }
-      const provider: ServiceProvider = {
+      const provider: Provider = {
         token: 'token',
         useFactory: [ClassWithDecorators, ClassWithDecorators.prototype.method1],
       };

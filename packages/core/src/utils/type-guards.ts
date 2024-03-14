@@ -12,15 +12,7 @@ import {
   reflector,
   ClassFactoryProvider,
 } from '#di';
-import {
-  AnyObj,
-  ModuleType,
-  ModuleWithParams,
-  ServiceProvider,
-  Extension,
-  AnyFn,
-  DecoratorMetadata,
-} from '#types/mix.js';
+import { AnyObj, ModuleType, ModuleWithParams, Extension, AnyFn, DecoratorMetadata } from '#types/mix.js';
 import { AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { Http2SecureServerOptions, ServerOptions } from '#types/server-options.js';
@@ -40,19 +32,19 @@ export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
 }
 
 export function isFeatureModule(
-  decoratorAndValue: DecoratorAndValue
+  decoratorAndValue: DecoratorAndValue,
 ): decoratorAndValue is DecoratorAndValue<ModuleMetadata> {
   return decoratorAndValue?.decorator === featureModule;
 }
 
 export function isRootModule(
-  decoratorAndValue: DecoratorAndValue
+  decoratorAndValue: DecoratorAndValue,
 ): decoratorAndValue is DecoratorAndValue<RootModuleMetadata> {
   return decoratorAndValue?.decorator === rootModule;
 }
 
 export function isDecoratorAndValue(
-  decoratorAndValue: DecoratorAndValue | Class
+  decoratorAndValue: DecoratorAndValue | Class,
 ): decoratorAndValue is DecoratorAndValue {
   return (
     (decoratorAndValue as DecoratorAndValue)?.decorator !== undefined && decoratorAndValue?.hasOwnProperty('value')
@@ -60,13 +52,13 @@ export function isDecoratorAndValue(
 }
 
 export function isRawRootModule(
-  rawModule: RootModuleMetadata & { decoratorFactory?: AnyFn }
+  rawModule: RootModuleMetadata & { decoratorFactory?: AnyFn },
 ): rawModule is RootModuleMetadata {
   return rawModule.decoratorFactory === rootModule;
 }
 
 export function isNormRootModule(
-  rawModule: NormalizedModuleMetadata
+  rawModule: NormalizedModuleMetadata,
 ): rawModule is NormalizedModuleMetadata<RootModuleMetadata> {
   return rawModule.decoratorFactory === rootModule;
 }
@@ -79,7 +71,7 @@ export function isRoute(container: AnyObj): container is DecoratorMetadata {
   return (container as DecoratorMetadata)?.decorator === route;
 }
 
-export function isModuleWithParams(mod: ServiceProvider | ModuleWithParams | ModuleType): mod is ModuleWithParams {
+export function isModuleWithParams(mod: Provider | ModuleWithParams | ModuleType): mod is ModuleWithParams {
   return (mod as ModuleWithParams)?.module !== undefined;
 }
 
@@ -120,7 +112,7 @@ export function isClassFactoryProvider(provider: Provider): provider is ClassFac
   return Array.isArray((provider as ClassFactoryProvider)?.useFactory);
 }
 
-export type MultiProvider = Exclude<ServiceProvider, TypeProvider> & { multi: boolean };
+export type MultiProvider = Exclude<Provider, TypeProvider> & { multi: boolean };
 
 export function isMultiProvider(provider: Provider): provider is MultiProvider {
   return (
@@ -133,7 +125,7 @@ export function isMultiProvider(provider: Provider): provider is MultiProvider {
   );
 }
 
-export function isProvider(maybeProvider: any): maybeProvider is ServiceProvider {
+export function isProvider(maybeProvider: any): maybeProvider is Provider {
   if (isModuleWithParams(maybeProvider)) {
     return false;
   }

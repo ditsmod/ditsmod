@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 
 import { Logger, LoggerConfig } from '#logger/logger.js';
-import { ServiceProvider } from '#types/mix.js';
+import { Provider } from '#types/mix.js';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { Providers } from './providers.js';
 import { LogMediator } from '#logger/log-mediator.js';
@@ -68,7 +68,7 @@ describe('Providers', () => {
   it('works multi calling', () => {
     const logger = new ConsoleLogger();
     const value = new Providers().useLogger(logger).useValue('token', 'value');
-    const expectedArr: ServiceProvider[] = [
+    const expectedArr: Provider[] = [
       { token: Logger, useValue: logger },
       { token: 'token', useValue: 'value' },
     ];

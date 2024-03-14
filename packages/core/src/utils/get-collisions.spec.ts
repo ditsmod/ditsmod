@@ -1,5 +1,5 @@
 
-import { ServiceProvider } from '#types/mix.js';
+import { Provider } from '#types/mix.js';
 import { getCollisions } from './get-collisions.js';
 import { makePropDecorator } from '#di';
 
@@ -11,7 +11,7 @@ describe('getTokensCollisions()', () => {
     class Provider4 {}
     class Provider5 {}
     let duplTokens: any[] = [Provider1, Provider2];
-    const providers: ServiceProvider[] = [Provider1, Provider2, Provider4, Provider3, Provider5, Provider2, Provider1];
+    const providers: Provider[] = [Provider1, Provider2, Provider4, Provider3, Provider5, Provider2, Provider1];
     duplTokens = getCollisions(duplTokens, providers);
     expect(duplTokens).toEqual([]);
   });
@@ -23,7 +23,7 @@ describe('getTokensCollisions()', () => {
     class Provider6 {}
     class Provider7 {}
     let duplTokens: any[] = [Provider3, Provider7];
-    const providers: ServiceProvider[] = [
+    const providers: Provider[] = [
       Provider4,
       Provider3,
       Provider5,
@@ -43,7 +43,7 @@ describe('getTokensCollisions()', () => {
     class Provider6 {}
     class Provider7 {}
     let duplTokens: any[] = [Provider6];
-    const providers: ServiceProvider[] = [
+    const providers: Provider[] = [
       Provider4,
       Provider3,
       Provider5,
@@ -69,7 +69,7 @@ describe('getTokensCollisions()', () => {
       }
     }
     let duplTokens: any[] = [Provider6];
-    const providers: ServiceProvider[] = [
+    const providers: Provider[] = [
       Provider4,
       Provider3,
       Provider5,

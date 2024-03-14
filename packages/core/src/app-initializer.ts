@@ -16,7 +16,7 @@ import { ModuleManager } from './services/module-manager.js';
 import { PerAppService } from './services/per-app.service.js';
 import { PreRouter } from './services/pre-router.js';
 import { MetadataPerMod1 } from './types/metadata-per-mod.js';
-import { Extension, ModuleType, ModuleWithParams, ServiceProvider } from './types/mix.js';
+import { Extension, ModuleType, ModuleWithParams, Provider } from './types/mix.js';
 import { RequestListener } from './types/server-options.js';
 import { getCollisions } from './utils/get-collisions.js';
 import { getDuplicates } from './utils/get-duplicates.js';
@@ -91,7 +91,7 @@ export class AppInitializer {
       ...meta1.exportsModules,
       ...meta1.exportsWithParams,
     ];
-    const providersPerApp: ServiceProvider[] = [];
+    const providersPerApp: Provider[] = [];
     // Removes duplicate (because of reexports modules)
     for (const mod of new Set(modules)) {
       if (this.unfinishedScanModules.has(mod)) {
@@ -123,7 +123,7 @@ export class AppInitializer {
 
   protected getResolvedCollisionsPerApp() {
     const rootMeta = this.moduleManager.getMetadata('root', true);
-    const resolvedProviders: ServiceProvider[] = [];
+    const resolvedProviders: Provider[] = [];
     this.meta.resolvedCollisionsPerApp.forEach(([token, module]) => {
       const moduleName = getModuleName(module);
       const tokenName = token.name || token;
@@ -245,7 +245,7 @@ export class AppInitializer {
 
   protected async handleExtensions(
     aMetadataPerMod1: MetadataPerMod1[],
-    mExtensionsCounters: Map<ServiceProvider, number>,
+    mExtensionsCounters: Map<Provider, number>,
   ) {
     const extensionsContext = new ExtensionsContext();
     const injectorPerApp = this.perAppService.injector.resolveAndCreateChild([
@@ -295,10 +295,10 @@ export class AppInitializer {
   }
 
   protected decreaseExtensionsCounters(
-    mExtensionsCounters: Map<ServiceProvider, number>,
-    extensions: ServiceProvider[],
+    mExtensionsCounters: Map<Provider, number>,
+    extensions: Provider[],
   ) {
-    const uniqTargets = new Set<ServiceProvider>(getProvidersTargets(extensions));
+    const uniqTargets = new Set<Provider>(getProvidersTargets(extensions));
 
     uniqTargets.forEach((target) => {
       const counter = mExtensionsCounters.get(target)!;

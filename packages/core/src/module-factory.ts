@@ -13,7 +13,7 @@ import type {
   ModuleWithParams,
   NormalizedGuard,
   Scope,
-  ServiceProvider,
+  Provider,
 } from './types/mix.js';
 import type { AppendsWithParams } from './types/module-metadata.js';
 import { getCollisions } from './utils/get-collisions.js';
@@ -35,7 +35,7 @@ type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
  */
 @injectable()
 export class ModuleFactory {
-  protected providersPerApp: ServiceProvider[];
+  protected providersPerApp: Provider[];
   protected moduleName: string;
   protected prefixPerMod: string;
   protected guardsPerMod: NormalizedGuard[];
@@ -47,9 +47,9 @@ export class ModuleFactory {
   protected importedProvidersPerMod = new Map<any, ImportObj>();
   protected importedProvidersPerRou = new Map<any, ImportObj>();
   protected importedProvidersPerReq = new Map<any, ImportObj>();
-  protected importedMultiProvidersPerMod = new Map<AnyModule, ServiceProvider[]>();
-  protected importedMultiProvidersPerRou = new Map<AnyModule, ServiceProvider[]>();
-  protected importedMultiProvidersPerReq = new Map<AnyModule, ServiceProvider[]>();
+  protected importedMultiProvidersPerMod = new Map<AnyModule, Provider[]>();
+  protected importedMultiProvidersPerRou = new Map<AnyModule, Provider[]>();
+  protected importedMultiProvidersPerReq = new Map<AnyModule, Provider[]>();
   protected importedExtensions = new Map<AnyModule, ExtensionProvider[]>();
 
   /**
@@ -60,7 +60,7 @@ export class ModuleFactory {
   protected unfinishedScanModules = new Set<AnyModule>();
   protected moduleManager: ModuleManager;
 
-  exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: ServiceProvider[]) {
+  exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]) {
     this.moduleManager = moduleManager;
     const meta = moduleManager.getMetadata('root', true);
     this.moduleName = meta.name;
@@ -86,7 +86,7 @@ export class ModuleFactory {
    * @param modOrObj Module that will bootstrapped.
    */
   bootstrap(
-    providersPerApp: ServiceProvider[],
+    providersPerApp: Provider[],
     globalProviders: GlobalProviders,
     prefixPerMod: string,
     modOrObj: AnyModule,
@@ -117,9 +117,9 @@ export class ModuleFactory {
     let perMod: Map<any, ImportObj>;
     let perRou: Map<any, ImportObj>;
     let perReq: Map<any, ImportObj>;
-    let multiPerMod: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
-    let multiPerRou: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
-    let multiPerReq: Map<ModuleType | ModuleWithParams, ServiceProvider[]>;
+    let multiPerMod: Map<ModuleType | ModuleWithParams, Provider[]>;
+    let multiPerRou: Map<ModuleType | ModuleWithParams, Provider[]>;
+    let multiPerReq: Map<ModuleType | ModuleWithParams, Provider[]>;
     let extensions: Map<ModuleType | ModuleWithParams, ExtensionProvider[]>;
     if (meta.isExternal) {
       // External modules do not require global providers from the application.
@@ -269,7 +269,7 @@ export class ModuleFactory {
     module: AnyModule,
     scope: Scope,
     token: any,
-    provider: ServiceProvider,
+    provider: Provider,
     importObj: ImportObj,
   ) {
     const declaredTokens = getTokens(this.meta[`providersPer${scope}`]);

@@ -3,7 +3,7 @@ import { ConsoleLogger } from '#logger/console-logger.js';
 import { Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { GlobalProviders, ImportObj } from '#types/metadata-per-mod.js';
-import { Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, ServiceProvider } from '#types/mix.js';
+import { Extension, ExtensionsGroupToken, ModuleType, ModuleWithParams, Provider } from '#types/mix.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getModuleName } from '#utils/get-module-name.js';
 import { getProviderName } from '#utils/get-provider-name.js';
@@ -159,7 +159,7 @@ export class SystemLogMediator extends LogMediator {
     this.setLog('trace', `${prefix} request: [${globalProvidersPerReq}]`);
   }
 
-  protected getProvidersNames(providersMap: Map<any, ImportObj<ServiceProvider>>) {
+  protected getProvidersNames(providersMap: Map<any, ImportObj<Provider>>) {
     return getImportedTokens(providersMap).map(getProviderName).join(', ');
   }
 
@@ -287,10 +287,10 @@ export class SystemLogMediator extends LogMediator {
   showProvidersInLogs(
     self: object,
     moduleName: string,
-    providersPerReq: ServiceProvider[],
-    providersPerRou: ServiceProvider[],
-    providersPerMod: ServiceProvider[],
-    providersPerApp?: ServiceProvider[],
+    providersPerReq: Provider[],
+    providersPerRou: Provider[],
+    providersPerMod: Provider[],
+    providersPerApp?: Provider[],
   ) {
     const className = self.constructor.name;
 

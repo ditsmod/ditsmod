@@ -8,7 +8,7 @@ import { defaultProvidersPerReq } from './services/default-providers-per-req.js'
 import { ModuleManager } from './services/module-manager.js';
 import { AppOptions } from './types/app-options.js';
 import { ImportedTokensMap } from './types/metadata-per-mod.js';
-import { AppMetadataMap, ModuleType, ModuleWithParams, Scope, ServiceProvider } from './types/mix.js';
+import { AppMetadataMap, ModuleType, ModuleWithParams, Scope, Provider } from './types/mix.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { RouteMeta } from './types/route-data.js';
 import { ReflectiveDependecy, getDependencies } from './utils/get-dependecies.js';
@@ -22,16 +22,16 @@ import { SystemErrorMediator } from '#error/system-error-mediator.js';
 type AnyModule = ModuleType | ModuleWithParams;
 
 export class ImportsResolver {
-  protected unfinishedSearchDependecies: [AnyModule, ServiceProvider][] = [];
+  protected unfinishedSearchDependecies: [AnyModule, Provider][] = [];
   protected tokensPerApp: any[];
   protected meta: NormalizedModuleMetadata;
   protected extensionsTokens: any[] = [];
-  protected mExtensionsCounters = new Map<ServiceProvider, number>();
+  protected mExtensionsCounters = new Map<Provider, number>();
 
   constructor(
     private moduleManager: ModuleManager,
     protected appMetadataMap: AppMetadataMap,
-    protected providersPerApp: ServiceProvider[],
+    protected providersPerApp: Provider[],
     protected log: SystemLogMediator,
     protected errorMediator: SystemErrorMediator,
   ) {}
@@ -122,7 +122,7 @@ export class ImportsResolver {
 
   protected increaseExtensionsCounters() {
     const extensionsProviders = [...this.meta.extensionsProviders];
-    const uniqTargets = new Set<ServiceProvider>(getProvidersTargets(extensionsProviders));
+    const uniqTargets = new Set<Provider>(getProvidersTargets(extensionsProviders));
 
     uniqTargets.forEach((target) => {
       const counter = this.mExtensionsCounters.get(target) || 0;
@@ -135,7 +135,7 @@ export class ImportsResolver {
    * @param provider Imported provider.
    * @param scopes Search in this scopes. The scope order is important.
    */
-  protected grabDependecies(module: AnyModule, provider: ServiceProvider, scopes: Scope[], path: any[] = []) {
+  protected grabDependecies(module: AnyModule, provider: Provider, scopes: Scope[], path: any[] = []) {
     const meta = this.moduleManager.getMetadata(module, true);
 
     for (const dep of this.getDependencies(provider)) {
@@ -174,7 +174,7 @@ export class ImportsResolver {
   protected grabImportedDependecies(
     module1: AnyModule,
     scopes: Scope[],
-    provider: ServiceProvider,
+    provider: Provider,
     dep: ReflectiveDependecy,
     path: any[] = []
   ) {
@@ -202,7 +202,7 @@ export class ImportsResolver {
     }
   }
 
-  protected hasUnresolvedDependecies(module: AnyModule, provider: ServiceProvider, scopes: Scope[]) {
+  protected hasUnresolvedDependecies(module: AnyModule, provider: Provider, scopes: Scope[]) {
     const meta = this.moduleManager.getMetadata(module, true);
 
     for (const dep of this.getDependencies(provider)) {
@@ -258,7 +258,7 @@ export class ImportsResolver {
     return false;
   }
 
-  protected throwError(provider: ServiceProvider, path: any[], token: any) {
+  protected throwError(provider: Provider, path: any[], token: any) {
     path = [provider, ...path, token];
     const strPath = getTokens(path)
       .map((t) => t.name || t)
@@ -276,7 +276,7 @@ export class ImportsResolver {
     this.errorMediator.throwNoProviderDuringResolveImports(this.meta.name, token.name || token, partMsg);
   }
 
-  protected getDependencies(provider: ServiceProvider) {
+  protected getDependencies(provider: Provider) {
     const deps = getDependencies(provider);
 
     const defaultTokens = [
@@ -289,7 +289,7 @@ export class ImportsResolver {
     return deps.filter((d) => !defaultTokens.includes(d.token));
   }
 
-  protected fixDependecy(module: AnyModule, provider: ServiceProvider) {
+  protected fixDependecy(module: AnyModule, provider: Provider) {
     const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
     if (index != -1) {
       this.throwCircularDependencies(index);
@@ -297,7 +297,7 @@ export class ImportsResolver {
     this.unfinishedSearchDependecies.push([module, provider]);
   }
 
-  protected unfixDependecy(module: AnyModule, provider: ServiceProvider) {
+  protected unfixDependecy(module: AnyModule, provider: Provider) {
     const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
     this.unfinishedSearchDependecies.splice(index, 1);
   }

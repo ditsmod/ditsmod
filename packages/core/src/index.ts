@@ -82,7 +82,7 @@ export {
   NormalizedGuard,
   ResolvedGuard,
   RedirectStatusCodes,
-  ServiceProvider,
+  Provider,
   AnyFn,
 } from './types/mix.js';
 export { ModuleMetadata, AppendsWithParams } from './types/module-metadata.js';

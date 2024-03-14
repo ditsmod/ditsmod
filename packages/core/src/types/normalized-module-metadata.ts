@@ -6,7 +6,7 @@ import {
   ModuleType,
   ModuleWithParams,
   NormalizedGuard,
-  ServiceProvider,
+  Provider,
 } from '#types/mix.js';
 import { AppendsWithParams } from '#types/module-metadata.js';
 import { MultiProvider } from '#utils/type-guards.js';
@@ -41,9 +41,9 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   isExternal: boolean;
   exportsModules: ModuleType[] = [];
   exportsWithParams: ModuleWithParams[] = [];
-  exportedProvidersPerMod: ServiceProvider[] = [];
-  exportedProvidersPerRou: ServiceProvider[] = [];
-  exportedProvidersPerReq: ServiceProvider[] = [];
+  exportedProvidersPerMod: Provider[] = [];
+  exportedProvidersPerRou: Provider[] = [];
+  exportedProvidersPerReq: Provider[] = [];
   exportedMultiProvidersPerMod: MultiProvider[] = [];
   exportedMultiProvidersPerRou: MultiProvider[] = [];
   exportedMultiProvidersPerReq: MultiProvider[] = [];

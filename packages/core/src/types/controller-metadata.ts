@@ -1,5 +1,5 @@
 import type { Class, DecoratorAndValue } from '#di';
-import type { AnyObj, DecoratorMetadata, HttpMethod, ServiceProvider } from './mix.js';
+import type { AnyObj, DecoratorMetadata, HttpMethod, Provider } from './mix.js';
 import type { RouteMeta } from './route-data.js';
 
 export interface ControllerMetadata1 {
@@ -31,11 +31,11 @@ export interface ControllerMetadata2 {
   /**
    * Providers per a route.
    */
-  providersPerRou: ServiceProvider[];
+  providersPerRou: Provider[];
   /**
    * Providers per a request.
    */
-  providersPerReq: ServiceProvider[];
+  providersPerReq: Provider[];
   path: string;
   httpMethod: HttpMethod;
   routeMeta: RouteMeta;

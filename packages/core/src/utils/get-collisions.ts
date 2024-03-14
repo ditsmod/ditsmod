@@ -1,5 +1,5 @@
 import { isFunctionFactoryProvider } from '#di';
-import { ServiceProvider } from '#types/mix.js';
+import { Provider } from '#types/mix.js';
 import { getTokens } from './get-tokens.js';
 import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } from './type-guards.js';
 
@@ -10,10 +10,10 @@ import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } 
  *
  * @todo Add checks for FactoryProvider.
  */
-export function getCollisions(uniqDuplTokens: any[], providers: ServiceProvider[]) {
+export function getCollisions(uniqDuplTokens: any[], providers: Provider[]) {
   uniqDuplTokens = uniqDuplTokens || [];
   providers = providers || [];
-  const duplProviders: ServiceProvider[] = [];
+  const duplProviders: Provider[] = [];
   const duplTokens: any[] = [];
   const collisions = new Set<any>();
 

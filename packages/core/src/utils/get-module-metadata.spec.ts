@@ -1,6 +1,6 @@
 import { forwardRef, injectable } from '#di';
 import { featureModule } from '#decorators/module.js';
-import { ModuleWithParams, ServiceProvider } from '#types/mix.js';
+import { ModuleWithParams, Provider } from '#types/mix.js';
 import { getModuleMetadata } from './get-module-metadata.js';
 import { getCallerDir } from './callsites.js';
 
@@ -46,7 +46,7 @@ describe('getModuleMetadata', () => {
 
     @featureModule({})
     class Module1 {
-      static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module1> {
+      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module1> {
         return {
           module: Module1,
           providersPerMod,
@@ -73,7 +73,7 @@ describe('getModuleMetadata', () => {
 
     @featureModule({})
     class Module1 {
-      static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module1> {
+      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module1> {
         return {
           module: Module1,
           providersPerMod,
@@ -101,7 +101,7 @@ describe('getModuleMetadata', () => {
 
     @featureModule({ id: 'someId' })
     class Module1 {
-      static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module1> {
+      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module1> {
         return {
           module: Module1,
           providersPerMod,

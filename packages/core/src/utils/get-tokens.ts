@@ -1,12 +1,12 @@
-import { ServiceProvider } from '#types/mix.js';
+import { Provider } from '#types/mix.js';
 import { normalizeProviders } from './ng-utils.js';
 import { isClassProvider, isTokenProvider, isFactoryProvider, isProvider, isValueProvider } from './type-guards.js';
 
-export function getToken(provider: ServiceProvider): any {
+export function getToken(provider: Provider): any {
   return normalizeProviders([provider]).map((p) => p.token)[0];
 }
 
-export function getTokens(providers: ServiceProvider[] | ReadonlyArray<ServiceProvider>): any[] {
+export function getTokens(providers: Provider[] | ReadonlyArray<Provider>): any[] {
   const tokens: any[] = [];
   (providers || []).forEach((item) => {
     if (isProvider(item)) {
@@ -19,7 +19,7 @@ export function getTokens(providers: ServiceProvider[] | ReadonlyArray<ServicePr
   return tokens;
 }
 
-export function getProviderTarget(provider: ServiceProvider) {
+export function getProviderTarget(provider: Provider) {
   if (isClassProvider(provider)) {
     return provider.useClass;
   } else if (isTokenProvider(provider)) {
@@ -33,6 +33,6 @@ export function getProviderTarget(provider: ServiceProvider) {
   }
 }
 
-export function getProvidersTargets(providers: ServiceProvider[]) {
+export function getProvidersTargets(providers: Provider[]) {
   return providers.map(getProviderTarget);
 }

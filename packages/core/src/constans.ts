@@ -2,12 +2,12 @@ import { InjectionToken } from '#di';
 
 import { ModuleExtract } from './types/module-extract.js';
 import { HttpInterceptor } from './types/http-interceptor.js';
-import { AnyObj, ServiceProvider } from './types/mix.js';
+import { AnyObj, Provider } from './types/mix.js';
 import { NodeRequest, NodeResponse } from './types/server-options.js';
 
 export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INTERCEPTORS');
-export const defaultProvidersPerMod: ServiceProvider[] = [ModuleExtract];
-export const EXTENSIONS_COUNTERS = new InjectionToken<Map<ServiceProvider, number>>('EXTENSIONS_COUNTERS');
+export const defaultProvidersPerMod: Provider[] = [ModuleExtract];
+export const EXTENSIONS_COUNTERS = new InjectionToken<Map<Provider, number>>('EXTENSIONS_COUNTERS');
 /**
  * DI token for native Node.js request.
  */

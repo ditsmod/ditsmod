@@ -1,12 +1,12 @@
 import { Injector } from '#di';
-import { ServiceProvider } from '#types/mix.js';
+import { Provider } from '#types/mix.js';
 
 export interface ReflectiveDependecy {
   token: any;
   required: boolean;
 }
 
-export function getDependencies(provider: ServiceProvider) {
+export function getDependencies(provider: Provider) {
   const uniqDeps = new Set<any>();
   const required = new Set<any>();
 

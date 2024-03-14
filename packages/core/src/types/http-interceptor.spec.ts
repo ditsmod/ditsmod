@@ -6,7 +6,7 @@ import { ChainMaker } from '#services/chain-maker.js';
 import { defaultProvidersPerApp } from '#services/default-providers-per-app.js';
 import { defaultProvidersPerReq } from '#services/default-providers-per-req.js';
 import { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from './http-interceptor.js';
-import { ServiceProvider } from './mix.js';
+import { Provider } from './mix.js';
 import { RouteMeta } from './route-data.js';
 
 describe('HttpInterceptor', () => {
@@ -40,7 +40,7 @@ describe('HttpInterceptor', () => {
     }
   }
 
-  const defaultProviders: ServiceProvider[] = [...defaultProvidersPerApp, ...defaultProvidersPerReq];
+  const defaultProviders: Provider[] = [...defaultProvidersPerApp, ...defaultProvidersPerReq];
 
   beforeEach(() => {
     jestFn.mockRestore();

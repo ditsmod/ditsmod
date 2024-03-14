@@ -5,7 +5,7 @@ import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { InjectionToken, forwardRef, injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyObj, Extension, ExtensionProvider, ModuleType, ModuleWithParams, ServiceProvider } from '#types/mix.js';
+import { AnyObj, Extension, ExtensionProvider, ModuleType, ModuleWithParams, Provider } from '#types/mix.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { getCallerDir } from '#utils/callsites.js';
 import { isMultiProvider } from '#utils/type-guards.js';
@@ -398,7 +398,7 @@ describe('ModuleManager', () => {
 
     @featureModule({ controllers: [Controller1] })
     class Module4 {
-      static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module4> {
+      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
         return {
           module: Module4,
           providersPerMod,
@@ -498,7 +498,7 @@ describe('ModuleManager', () => {
 
     @featureModule({ controllers: [Controller1] })
     class Module3 {
-      static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module3> {
+      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
         return {
           module: Module3,
           providersPerMod,
@@ -638,7 +638,7 @@ describe('ModuleManager', () => {
 
     @featureModule({ controllers: [Controller1] })
     class Module3 {
-      static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module3> {
+      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
         return {
           module: Module3,
           providersPerMod,
@@ -654,7 +654,7 @@ describe('ModuleManager', () => {
     const moduleId = 'my-mix';
     @featureModule({ controllers: [Controller1] })
     class Module4 {
-      static withParams(providersPerMod: ServiceProvider[]): ModuleWithParams<Module4> {
+      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
         return {
           id: moduleId,
           module: Module4,
@@ -917,7 +917,7 @@ describe('ModuleManager', () => {
     class Provider2 {}
     class Provider3 {}
 
-    const providersPerReq: ServiceProvider[] = [
+    const providersPerReq: Provider[] = [
       { token: Provider2, useValue: 'val4', multi: true },
       { token: Provider1, useValue: 'val1', multi: true },
       { token: Provider1, useValue: 'val2', multi: true },

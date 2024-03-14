@@ -1,4 +1,4 @@
-import { ServiceProvider } from '#types/mix.js';
+import { Provider } from '#types/mix.js';
 import { getTokens } from './get-tokens.js';
 import { isMultiProvider } from './type-guards.js';
 
@@ -6,7 +6,7 @@ import { isMultiProvider } from './type-guards.js';
  * Returns last provider if the provider has the duplicate.
  * Multi providers returns untouched.
  */
-export function getLastProviders<T extends ServiceProvider = ServiceProvider>(providers: T[]) {
+export function getLastProviders<T extends Provider = Provider>(providers: T[]) {
   const tokens = getTokens(providers);
   const uniqProviders: T[] = [];
 
