@@ -16,13 +16,14 @@ import {
 
 describe('@ditsmod/testing', () => {
   const message = 'any-string';
-  const methodPerApp = jest.fn(() => message);
-  const methodPerMod = jest.fn(() => message);
-  const methodPerRou = jest.fn(() => message);
-  const methodPerReq = jest.fn(() => message);
-  const methodPerRou2 = jest.fn(() => message);
-  const methodPerReq2 = jest.fn(() => message);
-  const methodPerRou3 = jest.fn(() => message);
+  const implementation = () => message;
+  const methodPerApp = jest.fn(implementation);
+  const methodPerMod = jest.fn(implementation);
+  const methodPerRou = jest.fn(implementation);
+  const methodPerReq = jest.fn(implementation);
+  const methodPerRou2 = jest.fn(implementation);
+  const methodPerReq2 = jest.fn(implementation);
+  const methodPerRou3 = jest.fn(implementation);
 
   beforeEach(() => {
     jest.restoreAllMocks();
@@ -65,8 +66,7 @@ describe('@ditsmod/testing', () => {
       ])
       .getServer();
 
-    const message = 'any-string';
-    methodPerRou3.mockImplementation(() => message);
+    methodPerRou3.mockImplementation(implementation);
     await request(server).get('/per-rou3').expect(500).expect({ error: 'Internal server error' });
     expect(methodPerRou3).toHaveBeenCalledTimes(0);
 
