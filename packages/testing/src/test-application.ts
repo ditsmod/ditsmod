@@ -14,10 +14,10 @@ export class TestApplication {
   protected logLevel: OutputLogLevel;
 
   constructor(appModule: ModuleType, appOptions: AppOptions = new AppOptions()) {
-    this.initRootModule(appModule, appOptions);
+    this.initAndScanRootModule(appModule, appOptions);
   }
 
-  protected initRootModule(appModule: ModuleType, appOptions: AppOptions) {
+  protected initAndScanRootModule(appModule: ModuleType, appOptions: AppOptions) {
     this.preTestApplication = new PreTestApplication();
     const systemLogMediator = this.preTestApplication.init(appOptions);
     this.testModuleManager = new TestModuleManager(systemLogMediator);
