@@ -5,10 +5,9 @@ import {
   ModuleWithParams,
   NormalizedModuleMetadata,
   OutputLogLevel,
+  ServiceProvider,
 } from '@ditsmod/core';
-import { PreRouterExtension } from '@ditsmod/routing';
 
-import { TestPreRouterExtension } from './test-pre-router.extensions.js';
 import { TestProvider } from './types.js';
 
 type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
@@ -16,6 +15,16 @@ type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 export class TestModuleManager extends ModuleManager {
   protected providersToOverride: TestProvider[] = [];
   protected logLevel: OutputLogLevel;
+  protected providersPerApp: ServiceProvider[];
+  protected extensionsProviders: ServiceProvider[];
+
+  setProvidersPerApp(providersPerApp: ServiceProvider[]) {
+    this.providersPerApp = providersPerApp;
+  }
+
+  setExtensionProviders(extensionsProviders: ServiceProvider[]) {
+    this.extensionsProviders = extensionsProviders;
+  }
 
   overrideProviders(providers: TestProvider[]) {
     this.providersToOverride = providers;
@@ -39,8 +48,8 @@ export class TestModuleManager extends ModuleManager {
 
   protected override normalizeMetadata(mod: AnyModule): NormalizedModuleMetadata {
     const meta = super.normalizeMetadata(mod);
-    meta.extensionsProviders.push({ token: PreRouterExtension, useClass: TestPreRouterExtension });
-    meta.providersPerApp.push({ token: TestModuleManager, useToken: ModuleManager });
+    meta.providersPerApp.push(...this.providersPerApp);
+    meta.extensionsProviders.push(...this.extensionsProviders);
     return meta;
   }
 }

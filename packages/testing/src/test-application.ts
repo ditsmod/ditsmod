@@ -1,8 +1,10 @@
-import { AppOptions, OutputLogLevel, ModuleType } from '@ditsmod/core';
+import { AppOptions, OutputLogLevel, ModuleType, ModuleManager } from '@ditsmod/core';
+import { PreRouterExtension } from '@ditsmod/routing';
 
 import { PreTestApplication } from './pre-test-application.js';
 import { TestModuleManager } from './test-module-manager.js';
 import { TestProvider } from './types.js';
+import { TestPreRouterExtension } from './test-pre-router.extensions.js';
 
 // This class is only needed as a wrapper over the PreTestApplication
 // class to hide the bootstrap() method from the public API.
@@ -19,6 +21,8 @@ export class TestApplication {
     this.preTestApplication = new PreTestApplication();
     const systemLogMediator = this.preTestApplication.init(appOptions);
     this.testModuleManager = new TestModuleManager(systemLogMediator);
+    this.testModuleManager.setProvidersPerApp([{ token: TestModuleManager, useToken: ModuleManager }]);
+    this.testModuleManager.setExtensionProviders([{ token: PreRouterExtension, useClass: TestPreRouterExtension }]);
     this.testModuleManager.scanRootModule(appModule);
     return this.testModuleManager;
   }

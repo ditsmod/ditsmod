@@ -6,8 +6,6 @@ import {
   PerAppService,
   Router,
   SystemLogMediator,
-  forwardRef,
-  inject,
   injectable,
   isClassProvider,
   isFactoryProvider,
@@ -16,14 +14,14 @@ import {
 } from '@ditsmod/core';
 import { PreRouterExtension, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
-import { TestModuleManager, type TestModuleManager as TestModuleManagerType } from './test-module-manager.js';
+import { TestModuleManager } from './test-module-manager.js';
 import { Scope, Meta, TestProvider, TestFactoryProvider, TestClassProvider } from './types.js';
 import { overrideLogLevel } from './utils.js';
 
 @injectable()
 export class TestPreRouterExtension extends PreRouterExtension {
   constructor(
-    @inject(forwardRef(() => TestModuleManager)) protected testModuleManager: TestModuleManagerType,
+    protected testModuleManager: TestModuleManager,
     perAppService: PerAppService,
     router: Router,
     extensionsManager: ExtensionsManager,
