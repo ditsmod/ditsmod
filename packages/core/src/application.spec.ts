@@ -41,15 +41,7 @@ describe('Application', () => {
   });
 
   describe('checkSecureServerOption()', () => {
-    class Provider1 {}
-    class Provider2 {}
     const msg = 'createSecureServer() not found';
-
-    @rootModule({
-      controllers: [Provider1],
-      providersPerApp: [Provider2, { token: LoggerConfig, useValue: { level: 'off' } }],
-    })
-    class AppModule {}
 
     it('should not to throw with http2 and isHttp2SecureServer == true', () => {
       mock.appOptions.serverOptions = { isHttp2SecureServer: true };
