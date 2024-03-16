@@ -22,7 +22,7 @@ interface Extension<T> {
 }
 ```
 
-Each extension needs to be registered, this will be mentioned later, and now let's assume that such registration has taken place, the application is running, and then the following process goes on:
+Each extension needs to be registered, this will be mentioned later, and now let's assume that such registration has taken place, and then the following process goes on:
 
 1. metadata is collected from all decorators (`@rootModule`, `@featureModule`, `@controller`, `@route`...);
 2. this metadata is then passed to DI with token `MetadataPerMod1`, so - every extension can get this metadata in the constructor;
@@ -61,20 +61,13 @@ You can see a simple example in the folder [09-one-extension][1].
 
 ## Extensions groups
 
-Each extension should belong to one or more groups. Under the hood of Ditsmod, extension groups are essentially groups of [multi-providers][7] that typically work on the same metadata and also return other metadata that share the same basic interface.
-
-The concept of **extension groups** has been introduced so that:
-
-1. a set of extensions can work on the same metadata, and the order of work within that set is not important;
-2. it was possible to customize the order of work between different sets of extensions.
-
-In other words, to form a single group of extensions, the order of operation of each extension is not important. On the other hand, if the order of operation between different extensions is important, you should consider splitting these extensions into different groups.
+Any extension must be a member of one or more groups. The concept of **extensions groups** is similar to the concept of an [interceptors][10] group, but an interceptors group works on a specific route, while extensions groups prepare metadata for HTTP request handlers. As a rule, extensions in a particular group return metadata that has the same basic interface.
 
 For example, in `@ditsmod/routing` there is a group `ROUTES_EXTENSIONS` which by default includes a single extension that processes metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can import the `@ditsmod/openapi` module, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for establishing the router's routes. These extensions are grouped together because they configure routes and their `init()` methods return data with the same basic interface.
 
-Having a single base data interface returned by each extension in a given group is an important requirement because other extensions may expect data from that group and will rely on that base interface. Of course, the base interface can be expanded if necessary, but not narrowed.
+Having a common base data interface returned by each extension in a given group is an important requirement because other extensions may expect data from that group and will rely on that base interface. Of course, the base interface can be expanded if necessary, but not narrowed.
 
-In our example, after all the extensions from the `ROUTES_EXTENSIONS` group have worked, their data is collected in one array and passed to the `PRE_ROUTER_EXTENSIONS` group. Even if you later register more new extensions in the `ROUTES_EXTENSIONS` group, the `PRE_ROUTER_EXTENSIONS` group will still be started after absolutely all extensions from the `ROUTES_EXTENSIONS` group, including your new extensions, have been worked out.
+In addition to a common basic interface, the sequence in which extensions groups are launched and the dependency between them is also important. In our example, after all the extensions from the `ROUTES_EXTENSIONS` group have worked, their data is collected in one array and passed to the `PRE_ROUTER_EXTENSIONS` group. Even if you later register more new extensions in the `ROUTES_EXTENSIONS` group, the `PRE_ROUTER_EXTENSIONS` group will still be started after absolutely all extensions from the `ROUTES_EXTENSIONS` group, including your new extensions, have been worked out.
 
 This feature is very handy because it sometimes allows you to integrate external Ditsmod modules (for example, from npmjs.com) into your application without any customization, just by importing them into the desired module. Thanks to extension groups, the imported extensions will be executed in the correct order, even if they are imported from different external modules.
 
@@ -96,8 +89,7 @@ The extension group token must be an instance of the `InjectionToken` class.
 For example, to create a token for the group `MY_EXTENSIONS`, you need to do the following:
 
 ```ts
-import { InjectionToken } from '@ditsmod/core';
-import { Extension } from '@ditsmod/core';
+import { InjectionToken, Extension } from '@ditsmod/core';
 
 export const MY_EXTENSIONS = new InjectionToken<Extension<void>[]>('MY_EXTENSIONS');
 ```
@@ -127,7 +119,6 @@ The `nextToken` property is used when you want your extension group to run befor
 
 ```ts
 import { featureModule, ROUTES_EXTENSIONS } from '@ditsmod/core';
-
 import { MY_EXTENSIONS, MyExtension } from './my.extension.js';
 
 @featureModule({
@@ -138,7 +129,7 @@ import { MY_EXTENSIONS, MyExtension } from './my.extension.js';
 export class SomeModule {}
 ```
 
-That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `groupToken` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `nextToken` property. The `exported` property indicates whether this extension should be exported from the current module.
+That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `groupToken` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `nextToken` property. The `exported` property indicates whether this extension is required to work in an external module that will import this module.
 
 If it doesn't matter which group of extensions your extension will work in front of, you can simplify registration:
 
@@ -233,7 +224,7 @@ This expression will return `false` until the last time the group `OTHER_EXTENSI
 
 ## Dynamic addition of providers
 
-Any extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynamically add providers at any level.
+Any extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynamically add providers at any level. Extensions from this group use metadata with `MetadataPerMod1` interface and return metadata with `MetadataPerMod2` interface.
 
 You can see how it is done in [BodyParserExtension][3]:
 
@@ -287,3 +278,4 @@ Of course, such dynamic addition of providers is possible only before creating H
 [7]: /components-of-ditsmod-app/dependency-injection#multi-providers
 [8]: /components-of-ditsmod-app/dependency-injection#hierarchy-of-injectors
 [9]: /components-of-ditsmod-app/dependency-injection#providers
+[10]: /components-of-ditsmod-app/http-interceptors/
