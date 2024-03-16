@@ -35,7 +35,7 @@
   "license": "MIT",
   "dependencies": {
     "@ts-stack/cookies": "^1.1.1",
-    "@ts-stack/cors": "^1.3.0"
+    "@ts-stack/cors": "^1.4.2"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.52.0",
