@@ -71,6 +71,14 @@ import { MyRouter } from './my-router.js';
 export class MyCustomRouterModule {}
 ```
 
+## Група розширень `ROUTES_EXTENSIONS`
 
+З даного модуля експортується токен групи розширень `ROUTES_EXTENSIONS`. Розширення з цієї групи повертають метадані з інтерфейсом [`Array<MetadataPerMod2>`][2] - це масив динамічних метаданих, які призначені для створення обробників запитів. Кожен елемент цього масиву - це окремий роут.
+
+## Група розширень `PRE_ROUTER_EXTENSIONS`
+
+З даного модуля також експортується токен групи розширень `PRE_ROUTER_EXTENSIONS`. Розширення з цієї групи використовує метадані, які повертає група розширень `ROUTES_EXTENSIONS`, щоб створювати обробники HTTP-запитів.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples
+[2]: https://github.com/ditsmod/ditsmod/blob/core-2.51.2/packages/core/src/types/metadata-per-mod.ts#L58-L74
+[3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.13.1/packages/body-parser/src/body-parser.extension.ts#L54

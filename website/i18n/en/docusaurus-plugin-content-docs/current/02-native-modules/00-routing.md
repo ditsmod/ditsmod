@@ -71,6 +71,14 @@ import { MyRouter } from './my-router.js';
 export class MyCustomRouterModule {}
 ```
 
+## Extensions group `ROUTES_EXTENSIONS`
 
+The extensions group token `ROUTES_EXTENSIONS` is exported from this module. Extensions from this group return metadata with interface [`Array<MetadataPerMod2>`][2] is an array of dynamic metadata that is intended for creating request handlers. Each item of this array is a separate route.
+
+## Extensions group `PRE_ROUTER_EXTENSIONS`
+
+The extensions group token `PRE_ROUTER_EXTENSIONS` is also exported from this module. An extension from this group uses the metadata returned by the `ROUTES_EXTENSIONS` extension group to create HTTP request handlers.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples
+[2]: https://github.com/ditsmod/ditsmod/blob/core-2.51.2/packages/core/src/types/metadata-per-mod.ts#L58-L74
+[3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.13.1/packages/body-parser/src/body-parser.extension.ts#L54
