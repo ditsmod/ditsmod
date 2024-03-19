@@ -114,9 +114,9 @@ import request = require('supertest');
 import { Server } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
-import { AppModule } from '../src/app/app.module.js';
-import { EmailService } from '../src/app/email.service.js';
-import { InterfaceOfEmailService } from '../src/app/types.js';
+import { AppModule } from '#app/app.module.js';
+import { EmailService } from '#app/email.service.js';
+import { InterfaceOfEmailService } from '#app/types.js';
 
 describe('End-to-end testing', () => {
   let server: Server;
