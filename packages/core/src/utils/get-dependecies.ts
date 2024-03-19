@@ -6,6 +6,10 @@ export interface ReflectiveDependecy {
   required: boolean;
 }
 
+/**
+ * Returns an array, each element of which is of type `ReflectiveDependency`. Only those dependencies that
+ * are directly specified in the class constructor or in the `FactoryProvider` dependencies are taken into account.
+ */
 export function getDependencies(provider: Provider) {
   const uniqDeps = new Set<any>();
   const required = new Set<any>();
