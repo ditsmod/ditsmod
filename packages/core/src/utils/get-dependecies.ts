@@ -7,8 +7,7 @@ export interface ReflectiveDependecy {
 }
 
 /**
- * Returns an array, each element of which is of type `ReflectiveDependency`. Only those dependencies that
- * are directly specified in the class constructor or in the `FactoryProvider` dependencies are taken into account.
+ * This function outputs an array of direct dependencies.
  */
 export function getDependencies(provider: Provider) {
   const uniqDeps = new Set<any>();
