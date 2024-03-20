@@ -114,7 +114,7 @@ npm run start-prod
 
 ## Вхідний файл для Node.js
 
-Після [встановлення Ditsmod seed](#встановлення), перше, що необхідно знати: весь код застосунку знаходиться у теці `src`, він компілюється за допомогою TypeScript-утиліти `tsc`, після компіляції попадає у теку `dist`, і далі вже у вигляді JavaScript-коду його можна виконувати у Node.js.
+Після [встановлення Ditsmod seed][1], перше, що необхідно знати: весь код застосунку знаходиться у теці `src`, він компілюється за допомогою TypeScript-утиліти `tsc`, після компіляції попадає у теку `dist`, і далі вже у вигляді JavaScript-коду його можна виконувати у Node.js.
 
 Давайте розглянемо файл `src/main.ts`:
 
@@ -135,6 +135,7 @@ node dist/main.js
 Проглядаючи файл `src/main.ts`, ви можете бачити, що створюється інстанс класу `Application`, а у якості аргументу для методу `bootstrap()` передається `AppModule`. Тут `AppModule` є кореневим модулем, до якого вже підв'язуються інші модулі застосунку.
 
 
+[1]: #встановлення
 [2]: https://github.com/ditsmod/seed
 [4]: https://github.com/ditsmod/ditsmod/tree/main/examples
 [8]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
@@ -146,4 +147,4 @@ node dist/main.js
 [15]: https://github.com/remy/nodemon
 [16]: https://www.typescriptlang.org/docs/handbook/project-references.html
 [17]: https://github.com/TypeStrong/ts-node
-[18]: https://nodejs.org/api/packages.html#subpath-imports
+[18]: https://nodejs.org/api/packages.html#imports

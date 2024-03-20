@@ -141,11 +141,10 @@ Looking at the file `src/main.ts`, you can see that an instance of the class `Ap
 [8]: https://en.wikipedia.org/wiki/Dependency_injection
 [9]: https://github.com/angular/angular
 [10]: https://jestjs.io/en/
-[11]: https://github.com/ts-stack/di
 [12]: https://en.wikipedia.org/wiki/Singleton_pattern
 [13]: https://github.com/ditsmod/realworld
 [14]: https://github.com/ditsmod/vs-webframework#readme
 [15]: https://github.com/remy/nodemon
 [16]: https://www.typescriptlang.org/docs/handbook/project-references.html
 [17]: https://github.com/TypeStrong/ts-node
-[18]: https://nodejs.org/api/packages.html#subpath-imports
+[18]: https://nodejs.org/api/packages.html#imports
