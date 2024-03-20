@@ -159,6 +159,6 @@ it('the child can instantiate Service2', () => {
 export const skipSelf = makeParamDecorator(() => undefined);
 
 /**
- * Used to mark methods in a class for FactoryProvider.
+ * Used to mark methods in a class for `FactoryProvider`.
  */
 export const methodFactory = makePropDecorator(() => undefined);
