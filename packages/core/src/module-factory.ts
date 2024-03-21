@@ -2,7 +2,7 @@ import { injectable } from '#di';
 import { defaultProvidersPerMod } from './constans.js';
 import { ModuleExtract } from './types/module-extract.js';
 import type { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
-import { defaultProvidersPerReq } from './services/default-providers-per-req.js';
+import { defaultProvidersPerReq } from './default-providers-per-req.js';
 import type { ModuleManager } from './services/module-manager.js';
 import type { ControllerMetadata1 } from './types/controller-metadata.js';
 import type { GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod.js';

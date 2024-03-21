@@ -3,11 +3,11 @@ import { HttpBackend, HttpFrontend } from '#types/http-interceptor.js';
 import { Provider } from '#types/mix.js';
 import { DefaultHttpErrorHandler } from '#error/default-http-error-handler.js';
 import { HttpErrorHandler } from '#error/http-error-handler.js';
-import { ChainMaker } from './chain-maker.js';
-import { DefaultHttpBackend } from '../interceptors/default-http-backend.js';
-import { DefaultHttpFrontend } from '../interceptors/default-http-frontend.js';
-import { Req } from './request.js';
-import { Res } from './response.js';
+import { ChainMaker } from './services/chain-maker.js';
+import { DefaultHttpBackend } from './interceptors/default-http-backend.js';
+import { DefaultHttpFrontend } from './interceptors/default-http-frontend.js';
+import { Req } from './services/request.js';
+import { Res } from './services/response.js';
 
 export const defaultProvidersPerReq: Readonly<Provider[]> = [
   { token: HttpErrorHandler, useClass: DefaultHttpErrorHandler },

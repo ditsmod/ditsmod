@@ -7,7 +7,7 @@ import { route, RouteMetadata } from './decorators/route.js';
 import { ModuleExtract } from './types/module-extract.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { ModuleFactory } from './module-factory.js';
-import { defaultProvidersPerApp } from './services/default-providers-per-app.js';
+import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from './services/module-manager.js';
 import { Req } from './services/request.js';
 import { Logger } from '#logger/logger.js';

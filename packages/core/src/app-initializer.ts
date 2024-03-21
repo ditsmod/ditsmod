@@ -9,7 +9,7 @@ import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js'
 import { AppOptions } from './types/app-options.js';
 import { ModuleFactory } from './module-factory.js';
 import { Counter } from './services/counter.js';
-import { defaultProvidersPerApp } from './services/default-providers-per-app.js';
+import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionsContext } from './services/extensions-context.js';
 import { ExtensionsManager } from './services/extensions-manager.js';
 import { ModuleManager } from './services/module-manager.js';

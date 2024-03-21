@@ -1,10 +1,9 @@
 import { Injector } from '#di';
 
-import { defaultProvidersPerRou } from '#services/default-providers-per-rou.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { defaultExtensionsProviders } from './services/default-extensions-providers.js';
-import { defaultProvidersPerApp } from './services/default-providers-per-app.js';
-import { defaultProvidersPerReq } from './services/default-providers-per-req.js';
+import { defaultExtensionsProviders } from './default-extensions-providers.js';
+import { defaultProvidersPerApp } from './default-providers-per-app.js';
+import { defaultProvidersPerReq } from './default-providers-per-req.js';
 import { ModuleManager } from './services/module-manager.js';
 import { AppOptions } from './types/app-options.js';
 import { ImportedTokensMap } from './types/metadata-per-mod.js';
@@ -18,6 +17,7 @@ import { getProviderName } from './utils/get-provider-name.js';
 import { getProvidersTargets, getTokens } from './utils/get-tokens.js';
 import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from './utils/type-guards.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
+import { defaultProvidersPerRou } from './default-providers-per-rou.js';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
