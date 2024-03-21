@@ -26,21 +26,21 @@ export { NormalizedModuleMetadata } from './types/normalized-module-metadata.js'
 export { ProvidersMetadata } from './types/providers-metadata.js';
 export { AppOptions } from './types/app-options.js';
 export { ModuleFactory } from './module-factory.js';
-export { InterceptorWithGuards } from './services/interceptor-with-guards.js';
+export { InterceptorWithGuards } from './interceptors/interceptor-with-guards.js';
 export { ConsoleLogger } from './logger/console-logger.js';
 export { HttpErrorHandler } from './error/http-error-handler.js';
 export { DefaultHttpErrorHandler } from './error/default-http-error-handler.js';
-export { DefaultHttpBackend } from './services/default-http-backend.js';
-export { DefaultHttpFrontend } from './services/default-http-frontend.js';
-export { DefaultSingletonHttpFrontend } from './services/default-singleton-http-frontend.js';
-export { DefaultSingletonHttpBackend } from './services/default-singleton-http-backend.js';
+export { DefaultHttpBackend } from './interceptors/default-http-backend.js';
+export { DefaultHttpFrontend } from './interceptors/default-http-frontend.js';
+export { DefaultSingletonHttpFrontend } from './interceptors/default-singleton-http-frontend.js';
+export { DefaultSingletonHttpBackend } from './interceptors/default-singleton-http-backend.js';
 export { DefaultSingletonChainMaker } from './services/default-singleton-chain-maker.js';
 export { DefaultSingletonHttpErrorHandler } from './error/default-singleton-http-error-handler.js';
 export {
   ISingletonInterceptorWithGuards,
   SingletonInterceptorWithGuards,
   InstantiatedGuard,
-} from './services/singleton-interceptor-with-guards.js';
+} from './interceptors/singleton-interceptor-with-guards.js';
 export { ExtensionsContext } from './services/extensions-context.js';
 export { ExtensionsManager } from './services/extensions-manager.js';
 export { LogMediator } from '#logger/log-mediator.js';
