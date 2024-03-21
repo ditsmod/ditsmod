@@ -28,18 +28,22 @@ HTTP request processing has the following workflow:
 2. `PreRouter` uses the router to search for the request handler according to the URI.
 3. If the request handler is not found, `PreRouter` issues a 501 error.
 4. If a request handler is found, Ditsmod creates a provider instance with the [HttpFrontend][2] token at the request level, places it first in the queue of interceptors, and automatically calls it. By default, this interceptor is responsible for setting values for providers with `QUERY_PARAMS` and `PATH_PARAMS` tokens.
-5. If there are guards in the current route, they are started by default immediately after `HttpFrontend`.
+5. If there are guards in the current route, then by default `InterceptorWithGuards` is run immediately after `HttpFrontend`.
 6. Other interceptors may be launched next, depending on whether the previous interceptor in the queue will launch them.
 7. If all interceptors have worked, Ditsmod starts [HttpBackend][3], which is instantiated at the request level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
 So, the approximate order of processing the request is as follows:
 
-```text
- request -> PreRouter -> HttpFrontend -> guards -> [other interceptors] -> HttpBackend -> controller
-response <- PreRouter <- HttpFrontend <- guards <- [other interceptors] <- HttpBackend <- controller
-```
+1. `PreRouter`;
+2. `HttpFrontend`;
+3. `InterceptorWithGuards`;
+4. other interceptors;
+5. `HttpBackend`;
+6. controller method.
 
-As `PreRouter`, `HttpFrontend`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 501 status when the required route is missing, but also want to add some text or change headers, you can substitute [PreRouter][7] with your own class.
+Given that starting from `PreRouter` and to the controller method, a promise is passed, then the same promise will be resolved in the reverse order - from the controller method to `PreRouter`.
+
+As `PreRouter`, `HttpFrontend`, `InterceptorWithGuards`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 501 status when the required route is missing, but also want to add some text or change headers, you can substitute [PreRouter][7] with your own class.
 
 Each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller. However, at the moment (Ditsmod v2.0.0), `HttpFrontend` and `HttpBackend` by default ignores everything that returns the controller or interceptors, so listening to the resolution of a promise can be useful only for collecting metrics.
 
@@ -53,7 +57,7 @@ A singleton interceptor works very similarly to a non-singleton interceptor, exc
 2. `PreRouter` uses the router to search for the request handler according to the URI.
 3. If the request handler is not found, `PreRouter` issues a 501 error.
 4. If a request handler is found, Ditsmod uses a provider instance with the [HttpFrontend][2] token at the route level, places it first in the interceptor queue, and automatically invokes it. By default, this interceptor is responsible for setting `pathParams` and `queryParams` values for `SingletonRequestContext`.
-5. If there are guards in the current route, they are started by default immediately after `HttpFrontend`.
+5. If there are guards in the current route, then by default `SingletonInterceptorWithGuards` is run immediately after `HttpFrontend`.
 6. Other interceptors may be launched next, depending on whether the previous interceptor in the queue will launch them.
 7. If all interceptors have worked, Ditsmod starts [HttpBackend][3], the instance of which is used at the route level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
