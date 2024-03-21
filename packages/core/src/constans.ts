@@ -1,5 +1,6 @@
 import { InjectionToken } from '#di';
 
+import { PathParam } from '#types/router.js';
 import { ModuleExtract } from './types/module-extract.js';
 import { HttpInterceptor } from './types/http-interceptor.js';
 import { AnyObj, Provider } from './types/mix.js';
@@ -19,7 +20,7 @@ export const NODE_RES = new InjectionToken<NodeResponse>('NODE_RES');
 /**
  * DI token for path params that is returned by `@ditsmod/routing`.
  */
-export const A_PATH_PARAMS = new InjectionToken<NodeResponse>('A_PATH_PARAMS');
+export const A_PATH_PARAMS = new InjectionToken<PathParam[]>('A_PATH_PARAMS');
 export const PATH_PARAMS = new InjectionToken<AnyObj>('PATH_PARAMS');
 export const QUERY_PARAMS = new InjectionToken<AnyObj>('QUERY_PARAMS');
 /**
