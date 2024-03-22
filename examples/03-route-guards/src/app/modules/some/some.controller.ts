@@ -1,6 +1,6 @@
 import { controller, RequestContext, Res, route } from '@ditsmod/core';
 
-import { AuthGuard } from '../auth/auth.guard.js';
+import { BearerGuard } from '../auth/bearer.guard.js';
 import { requirePermissions, requirePermissionsSngl } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
 import { BasicGuard } from '../auth/basic.guard.js';
@@ -17,7 +17,7 @@ export class SomeController {
     res.send('You are now authorized with BasicGuard');
   }
 
-  @route('GET', 'unauth', [AuthGuard])
+  @route('GET', 'unauth', [BearerGuard])
   throw401Error(res: Res) {
     res.send('some secret');
   }
@@ -35,7 +35,7 @@ export class SingletonController {
     ctx.nodeRes.end('ok');
   }
 
-  @route('GET', 'unauth2', [AuthGuard])
+  @route('GET', 'unauth2', [BearerGuard])
   throw401Error(ctx: RequestContext) {
     ctx.nodeRes.end('some secret');
   }

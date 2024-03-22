@@ -1,9 +1,9 @@
 import { RequestContext } from '@ditsmod/core';
 
-import { AuthGuard } from './auth.guard.js';
+import { BearerGuard } from './bearer.guard.js';
 
 describe('AuthGuard#canActivate()', () => {
-  const authGuard = new AuthGuard();
+  const authGuard = new BearerGuard();
   function getCtx(authorization: string) {
     return { nodeReq: { headers: { authorization } } } as RequestContext;
   }
