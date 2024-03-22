@@ -3,12 +3,18 @@ import { controller, RequestContext, Res, route } from '@ditsmod/core';
 import { AuthGuard } from '../auth/auth.guard.js';
 import { requirePermissions, requirePermissionsSngl } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
+import { BasicGuard } from '../auth/basic.guard.js';
 
 @controller()
 export class SomeController {
   @route('GET', 'hello')
   ok(res: Res) {
     res.send('ok');
+  }
+
+  @route('GET', 'basic-auth', [BasicGuard])
+  basicAuth(res: Res) {
+    res.send('You are now authorized with BasicGuard');
   }
 
   @route('GET', 'unauth', [AuthGuard])

@@ -16,10 +16,16 @@ Note the following:
 - `SomeController` can use services from `AuthModule` without direct import `AuthModule`;
 this is because `AuthModule` is exported from `rootModule`;
 
-Start from first terminal:
+Prepare the example:
 
 ```bash
 cd examples/03*
+cp .env-example .env
+```
+
+Start from first terminal:
+
+```bash
 npm start
 ```
 
@@ -35,3 +41,5 @@ curl -i localhost:3000/hello2
 curl -i localhost:3000/unauth2
 curl -i localhost:3000/forbidden2
 ```
+
+To test authentication with BasicGuard, open a browser at [http://0.0.0.0:3000/basic-auth](http://0.0.0.0:3000/basic-auth) and enter username: `demo` and password: `p@55w0rd`. You can change the username and password in the `.env` file and then you need restart the application.
