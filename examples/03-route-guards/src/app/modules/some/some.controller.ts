@@ -1,9 +1,8 @@
 import { controller, RequestContext, Res, route } from '@ditsmod/core';
 
 import { BearerGuard } from '../auth/bearer.guard.js';
-import { requirePermissions, requirePermissionsSngl } from '../auth/guards-utils.js';
+import { basicAuth, requirePermissions, requirePermissionsSngl } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
-import { BasicGuard } from '../auth/basic.guard.js';
 
 @controller()
 export class SomeController {
@@ -12,7 +11,7 @@ export class SomeController {
     res.send('ok');
   }
 
-  @route('GET', 'basic-auth', [BasicGuard])
+  @route('GET', 'basic-auth', [basicAuth('Access to the API endpoint')])
   basicAuth(res: Res) {
     res.send('You are now authorized with BasicGuard');
   }

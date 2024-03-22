@@ -11,21 +11,22 @@ if (!basicAuth) {
  */
 @guard()
 export class BasicGuard implements CanActivate {
-  canActivate(ctx: RequestContext, params?: any[]) {
+  canActivate(ctx: RequestContext, [realm]: [string?] = []) {
     const { authorization } = ctx.nodeReq.headers;
     if (!authorization) {
-      return this.unauth(ctx);
+      return this.unauth(ctx, realm);
     }
     const expectBase64 = Buffer.from(basicAuth!, 'utf8').toString('base64');
     const [authType, actualBase64] = authorization.split(' ');
     if (authType != 'Basic' || actualBase64 != expectBase64) {
-      return this.unauth(ctx);
+      return this.unauth(ctx, realm);
     }
     return true;
   }
 
-  protected unauth(ctx: RequestContext) {
-    ctx.nodeRes.setHeader('WWW-Authenticate', 'Basic realm="Access to the API endpoint"');
+  protected unauth(ctx: RequestContext, realm?: string) {
+    realm ??= 'Access to the API endpoint';
+    ctx.nodeRes.setHeader('WWW-Authenticate', `Basic realm="${realm}"`);
     return Status.UNAUTHORIZED;
   }
 }
