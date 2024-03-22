@@ -15,7 +15,7 @@ describe('AuthGuard#canActivate()', () => {
   });
 
   it('should return true', async () => {
-    const ctx = getCtx('Token fake-toke-here');
+    const ctx = getCtx('Bearer fake-toke-here');
     await expect(authGuard.canActivate(ctx)).resolves.not.toThrow();
     await expect(authGuard.canActivate(ctx)).resolves.toBe(true);
   });

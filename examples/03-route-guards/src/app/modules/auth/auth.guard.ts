@@ -4,7 +4,7 @@ import { CanActivate, guard, RequestContext } from '@ditsmod/core';
 export class AuthGuard implements CanActivate {
   async canActivate(ctx: RequestContext, params?: any[]) {
     const authValue = ctx.nodeReq.headers.authorization?.split(' ');
-    if (authValue?.[0] != 'Token') {
+    if (authValue?.[0] != 'Bearer') {
       return false;
     }
 
