@@ -38,4 +38,26 @@ describe('03-route-guards', () => {
   it('should throw 403', async () => {
     await request(server).get('/forbidden2').expect(403);
   });
+
+  it('should works', async () => {
+    const expectBase64 = Buffer.from(process.env.BASIC_AUTH!, 'utf8').toString('base64');
+
+    await request(server)
+      .get('/basic-auth')
+      .set('Authorization', `Basic ${expectBase64}`)
+      .expect(200)
+      .expect('You are now authorized with BasicGuard');
+  });
+
+  it('should throw 401', async () => {
+    const expectBase64 = Buffer.from('fake-string', 'utf8').toString('base64');
+
+    await request(server)
+      .get('/basic-auth')
+      .set('Authorization', `Basic ${expectBase64}`).expect(401);
+  });
+
+  it('should throw 401', async () => {
+    await request(server).get('/basic-auth').expect(401);
+  });
 });
