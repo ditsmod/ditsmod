@@ -20,7 +20,6 @@ import {
   MetadataPerMod2,
   Extension,
   HttpMethod,
-  PreparedRouteMeta,
   RouteMeta,
   RouteHandler,
   Router,
@@ -35,7 +34,7 @@ import {
   Class,
 } from '@ditsmod/core';
 
-import { ROUTES_EXTENSIONS } from '../types.js';
+import { PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {

@@ -1,8 +1,8 @@
 import * as http from 'http';
-import { injectable, Injector, Router, RouterReturns } from '@ditsmod/core';
+import { HttpMethod, injectable, Injector, Router, RouterReturns } from '@ditsmod/core';
 
 import { Tree } from './tree.js';
-import { HttpMethod, MethodTree, Fn } from './types.js';
+import { MethodTree, Fn } from './types.js';
 
 @injectable()
 export class DefaultRouter implements Router {
