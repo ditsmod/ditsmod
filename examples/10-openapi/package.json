@@ -3,8 +3,6 @@
   "type": "module",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "dist/main",
-  "types": "dist/main",
   "module": "dist/index.js",
   "scripts": {
     "start": "yarn build && nodemon --enable-source-maps dist/main.js",

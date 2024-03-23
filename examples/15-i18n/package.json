@@ -3,8 +3,6 @@
   "type": "module",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "dist/main",
-  "types": "dist/main",
   "imports": {
     "#app/*": "./dist/app/*",
     "#dict/first/*": "./dist/app/first/locales/current/_base-en/*",
