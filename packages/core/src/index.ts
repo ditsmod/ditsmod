@@ -19,7 +19,6 @@ export { guard } from './decorators/guard.js';
 export { featureModule } from './decorators/module.js';
 export { rootModule } from './decorators/root-module.js';
 export { route, RouteMetadata } from './decorators/route.js';
-export { PreparedRouteMeta } from './types/route-data.js';
 export { ExtensionsMetaPerApp } from './types/extensions-meta-per-app.js';
 export { ModuleExtract } from './types/module-extract.js';
 export { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
