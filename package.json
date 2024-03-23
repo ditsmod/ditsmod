@@ -7,10 +7,6 @@
     "packages/*",
     "examples/*"
   ],
-  "directories": {
-    "doc": "docs",
-    "example": "examples"
-  },
   "scripts": {
     "test": "yarn build-test && yarn esm-jest",
     "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps node_modules/jest/bin/jest.js",
