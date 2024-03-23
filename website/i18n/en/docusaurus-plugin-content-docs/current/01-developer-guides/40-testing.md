@@ -105,7 +105,7 @@ We recommend that you place your unit test files close to the files they test. T
 
 ## End-to-end testing
 
-End-to-end testing checks the operation of the entire application. For this purpose, you can use, for example, [supertest][102]. Most often, for such tests, it is necessary to create mocks only for those services that work with external services: with sending email, with databases, etc. The rest of the application works as it would in production mode, so we will refer to it as "production" in this documentation.
+End-to-end testing checks the operation of the entire application. For this purpose, you can use, for example, [supertest][102]. Most often, for such tests, it is necessary to create mocks only for those services that work with external services: with sending email, with databases, etc. The rest of the application works as it would in production mode.
 
 Let's look at the situation when we make a mock for `EmailService`:
 
@@ -157,13 +157,13 @@ You can also import this library as follows: `import request from 'supertest'`, 
 
 As you can see in the test code, first, a test application is created based on the `TestApplication` class, then a mock is substituted for `EmailService`. At the very end, the `getServer()` method is called and thus creates and returns a web server that has not yet called the `server.listen()` method, so supertest can automatically do this by substituting a random port number, which is an important point when asynchronously calling several tests at once. Here `AppModule` is the root module of the application.
 
-Overriding mocks with the `testApplication.overrideProviders()` method works globally at any level of the injector hierarchy. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in production at that level.
+Overriding mocks with the `testApplication.overrideProviders()` method works globally at any level of the injector hierarchy. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
 
 We recommend keeping such tests in a separate directory called `test`, at the same level as the `src` root directory.
 
 ### Nested providers for testing
 
-Recall that in `testApplication.overrideProviders()` it makes sense to only pass the mocks of those providers that you have already passed to DI in production. It turns out that mocks cannot have dependencies on new providers that do not exist in production. That is, if production has providers `Service1` and `Service2`, then the mock that replaces one of those providers cannot have a dependency on, say, `SpyService`. Therefore, for end-to-end testing, the concept of "nested providers" is introduced, which resolve the dependency for new providers introduced in mocks:
+Recall that in `testApplication.overrideProviders()` it makes sense to only pass the mocks of those providers that you have already passed to DI in application. It turns out that mocks cannot have dependencies on new providers that do not exist in application. That is, if application has providers `Service1` and `Service2`, then the mock that replaces one of those providers cannot have a dependency on, say, `SpyService`. Therefore, for end-to-end testing, the concept of "nested providers" is introduced, which resolve the dependency for new providers introduced in mocks:
 
 ```ts {6}
 const server = await new TestApplication(AppModule)
