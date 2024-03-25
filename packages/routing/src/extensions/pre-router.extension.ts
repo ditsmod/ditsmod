@@ -125,7 +125,7 @@ export class PreRouterExtension implements Extension<void> {
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
     this.checkDeps(metadataPerMod2.moduleName, httpMethod, path, injPerReq, routeMeta);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
-    const resolvedCtrlErrHandler = resolvedPerReq.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
+    const resolvedErrHandler = resolvedPerReq.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
     const nodeReqId = KeyRegistry.get(NODE_REQ).id;
     const nodeResId = KeyRegistry.get(NODE_RES).id;
@@ -150,7 +150,7 @@ export class PreRouterExtension implements Extension<void> {
         .makeChain(ctx)
         .handle() // First HTTP handler in the chain of HTTP interceptors.
         .catch((err) => {
-          const errorHandler = injector.instantiateResolved(resolvedCtrlErrHandler) as HttpErrorHandler;
+          const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
           return errorHandler.handleError(err, ctx);
         })
         .finally(() => injector.clear());
@@ -176,11 +176,11 @@ export class PreRouterExtension implements Extension<void> {
     const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'injectorPerRou');
     this.checkDeps(metadataPerMod2.moduleName, httpMethod, path, injectorPerRou, routeMeta);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
-    const resolvedCtrlErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
+    const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const chainMaker = injectorPerRou.instantiateResolved<DefaultSingletonChainMaker>(resolvedChainMaker);
     const controllerInstance = injectorPerMod.get(routeMeta.controller);
     routeMeta.routeHandler = controllerInstance[routeMeta.methodName].bind(controllerInstance);
-    const errorHandler = injectorPerRou.instantiateResolved(resolvedCtrlErrHandler) as DefaultSingletonHttpErrorHandler;
+    const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as DefaultSingletonHttpErrorHandler;
 
     return (async (nodeReq, nodeRes, aPathParams, queryString) => {
       const ctx: RequestContext = {
