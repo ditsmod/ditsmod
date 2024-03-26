@@ -2,10 +2,10 @@
   "compilerOptions": {
     "outDir": "dist",
       "paths": {
-      "@ditsmod/core": ["../core/src"],
-      "@ditsmod/i18n": ["../i18n/src"],
-      "@ditsmod/body-parser": ["../body-parser/src"],
-      "@ditsmod/openapi": ["../openapi/src"]
+      "@ditsmod/core": ["../core/src/index.js"],
+      "@ditsmod/i18n": ["../i18n/src/index.js"],
+      "@ditsmod/body-parser": ["../body-parser/src/index.js"],
+      "@ditsmod/openapi": ["../openapi/src/index.js"]
     },
     "module": "nodenext",
     "moduleResolution": "nodenext",
