@@ -12,6 +12,7 @@
       "@ditsmod/i18n": ["../../packages/i18n/src/index.js"],
       "@ditsmod/openapi-validation": ["../../packages/openapi-validation/src/index.js"],
       "@ditsmod/body-parser": ["../../packages/body-parser/src/index.js"],
+      "@ditsmod/testing": ["../../packages/testing/src/index.js"],
     }
   },
   "include": ["src", "test"],

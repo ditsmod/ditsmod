@@ -9,6 +9,7 @@
       "@ditsmod/core": ["../../packages/core/src/index.js"],
       "@ditsmod/routing": ["../../packages/routing/src/index.js"],
       "@ditsmod/i18n": ["../../packages/i18n/src/index.js"],
+      "@ditsmod/testing": ["../../packages/testing/src/index.js"],
     }
   },
   "include": ["src", "test"],
