@@ -6,12 +6,12 @@
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
       "#app/*": ["./src/app/*"],
-      "@ditsmod/core": ["../../packages/core/src"],
-      "@ditsmod/routing": ["../../packages/routing/src"],
-      "@ditsmod/openapi": ["../../packages/openapi/src"],
-      "@ditsmod/i18n": ["../../packages/i18n/src"],
-      "@ditsmod/openapi-validation": ["../../packages/openapi-validation/src"],
-      "@ditsmod/body-parser": ["../../packages/body-parser/src"],
+      "@ditsmod/core": ["../../packages/core/src/index.js"],
+      "@ditsmod/routing": ["../../packages/routing/src/index.js"],
+      "@ditsmod/openapi": ["../../packages/openapi/src/index.js"],
+      "@ditsmod/i18n": ["../../packages/i18n/src/index.js"],
+      "@ditsmod/openapi-validation": ["../../packages/openapi-validation/src/index.js"],
+      "@ditsmod/body-parser": ["../../packages/body-parser/src/index.js"],
     }
   },
   "include": ["src", "test"],

@@ -5,10 +5,10 @@
     "baseUrl": "./",
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
-      "@ditsmod/core": ["../../packages/core/src"],
-      "@ditsmod/routing": ["../../packages/routing/src"],
-      "@ditsmod/openapi": ["../../packages/openapi/src"],
-      "@ditsmod/jwt": ["../../packages/jwt/src"],
+      "@ditsmod/core": ["../../packages/core/src/index.js"],
+      "@ditsmod/routing": ["../../packages/routing/src/index.js"],
+      "@ditsmod/openapi": ["../../packages/openapi/src/index.js"],
+      "@ditsmod/jwt": ["../../packages/jwt/src/index.js"],
       "#app/*": ["./src/app/*"],
       "#routed/*": ["./src/app/modules/routed/*"],
       "#service/*": ["./src/app/modules/service/*"]
