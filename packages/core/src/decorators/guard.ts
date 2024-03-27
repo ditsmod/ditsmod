@@ -1,4 +1,4 @@
-import { makeClassDecorator } from '@ditsmod/core';
+import { makeClassDecorator } from '#di';
 
 export interface GuardMetadata {
   /**
