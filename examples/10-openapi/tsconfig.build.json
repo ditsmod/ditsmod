@@ -4,7 +4,17 @@
     "outDir": "dist",
     "rootDir": "src",
     "baseUrl": "./",
-    "tsBuildInfoFile": "dist/build.tsbuildinfo"
+    "tsBuildInfoFile": "dist/build.tsbuildinfo",
+    "paths": {
+      "#app/*": ["./src/app/*"],
+      "#routed/*": ["./src/app/modules/routed/*"],
+      "#service/*": ["./src/app/modules/service/*"],
+      "@ditsmod/core": ["../../packages/core/src/index.js"],
+      "@ditsmod/routing": ["../../packages/routing/src/index.js"],
+      "@ditsmod/openapi": ["../../packages/openapi/src/index.js"],
+      "@ditsmod/jwt": ["../../packages/jwt/src/index.js"],
+      "@ditsmod/testing": ["../../packages/testing/src/index.js"],
+    }
   },
   "include": ["src"],
   "exclude": ["src/**/*.spec.ts"],
