@@ -19,9 +19,9 @@ export class ErrorOpts {
    */
   args2?: any;
   /**
-   * Log level. By default - `debug`.
+   * Log level. By default - `warn`.
    */
-  level?: InputLogLevel = 'debug';
+  level?: InputLogLevel = 'warn';
   /**
    * HTTP status.
    */

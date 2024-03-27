@@ -78,7 +78,7 @@ describe('DefaultHttpErrorHandler', () => {
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toHaveBeenCalledWith({ error: 'one' }, Status.BAD_REQUEST);
     expect(res.sendJson).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith('debug', { err, requestId: '' });
+    expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: '' });
     expect(logger.log).toHaveBeenCalledTimes(1);
   });
 
@@ -98,7 +98,7 @@ describe('DefaultHttpErrorHandler', () => {
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toHaveBeenCalledWith({ error: 'one two' }, Status.BAD_REQUEST);
     expect(res.sendJson).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith('debug', { err, requestId: '' });
+    expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: '' });
     expect(logger.log).toHaveBeenCalledTimes(1);
   });
 
@@ -108,7 +108,7 @@ describe('DefaultHttpErrorHandler', () => {
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toHaveBeenCalledWith({ error: 'Internal server error' }, Status.BAD_REQUEST);
     expect(res.sendJson).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith('debug', { err, requestId: '' });
+    expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: '' });
     expect(logger.log).toHaveBeenCalledTimes(1);
   });
 
@@ -117,7 +117,7 @@ describe('DefaultHttpErrorHandler', () => {
     const err = new CustomError({ msg2 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toHaveBeenCalledWith({ error: 'Internal server error' }, Status.BAD_REQUEST);
-    expect(logger.log).toHaveBeenCalledWith('debug', { err, requestId: '' });
+    expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: '' });
     expect(logger.log).toHaveBeenCalledTimes(1);
   });
 
@@ -128,7 +128,7 @@ describe('DefaultHttpErrorHandler', () => {
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(res.sendJson).toHaveBeenCalledWith({ error: 'one two' }, Status.BAD_REQUEST);
     expect(res.sendJson).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith('debug', { err, requestId: '' });
+    expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: '' });
     expect(logger.log).toHaveBeenCalledTimes(1);
   });
 });
