@@ -12,5 +12,13 @@
   },
   "imports": {
     "#app/*": "./dist/app/*"
+  },
+  "dependencies": {
+    "bunyan": "^1.8.15",
+    "pino": "^8.19.0",
+    "winston": "^3.13.0"
+  },
+  "devDependencies": {
+    "@types/bunyan": "^1.8.11"
   }
 }
