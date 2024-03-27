@@ -68,7 +68,7 @@ export class DictService {
 
   /**
    * If you previously not set the locale,
-   * then this getter will look at the `i18nOptions.lngQueryParam` in `this.req.queryParams`.
+   * then this getter will look at the `i18nOptions.lngQueryParam` from query params.
    */
   get lng() {
     if (this._lng) {

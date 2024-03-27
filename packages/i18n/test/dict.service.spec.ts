@@ -47,12 +47,12 @@ describe('DictService', () => {
     expect(i18nService.lng).toBe('uk'); // i18nService.lng is getter, so it's need for testing
   });
 
-  it('priorited number two for req.queryParams.lng', () => {
+  it('priorited number two for queryParams.lng', () => {
     const i18nService = getService({ lng: 'fr' }, { defaultLng: 'en' });
     expect(i18nService.lng).toBe('fr');
   });
 
-  it('custom param name for lng in req.queryParams', () => {
+  it('custom param name for lng in queryParams', () => {
     const i18nService = getService({ lng: 'de', mylng: 'fr' }, { lngParam: 'mylng' });
     expect(i18nService.lng).toBe('fr');
   });
