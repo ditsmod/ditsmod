@@ -135,7 +135,7 @@ node dist/main.js
 Looking at the file `src/main.ts`, you can see that an instance of the class `Application` is created, and as an argument for the method `bootstrap()` is passed `AppModule`. Here `AppModule` is the root module to which other application modules then imports.
 
 
-[1]: #install-the-ditsmod-seed
+[1]: #installation
 [2]: https://github.com/ditsmod/seed
 [4]: https://github.com/ditsmod/ditsmod/tree/main/examples
 [8]: https://en.wikipedia.org/wiki/Dependency_injection

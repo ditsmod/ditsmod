@@ -14,4 +14,4 @@ We recommend keeping such tests in a separate directory called `tests`, at the s
 
 
 
-[1]: /developer-guides/testing#end-to-end-тестування
+[1]: /developer-guides/testing#end-to-end-testing
