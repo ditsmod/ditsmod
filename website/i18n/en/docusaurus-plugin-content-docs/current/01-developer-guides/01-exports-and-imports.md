@@ -4,9 +4,11 @@ sidebar_position: 3
 
 # Export, import, append
 
+The module where you declare certain providers is called the **host module** for those providers. And when you use those providers in an external module, that external module is called the **consumer module** of those providers.
+
 ## Export providers from non-root module
 
-By exporting providers from a particular module, you declare that they are available for use in other modules that will import that module:
+From the host module, you can export only classes or tokens of providers that are [declared in the form of an object][4]. That is, you cannot directly export providers in the form of an object:
 
 ```ts {8}
 import { featureModule } from '@ditsmod/core';
@@ -21,17 +23,17 @@ import { SecondService } from './second.service.js';
 export class SomeModule {}
 ```
 
-Please note that only provider tokens or modules can be added to the `exports` array. In this case, the `{ token: SecondService, useClass: SecondService }` object cannot be added to the `exports` array, because this object is not a token or a module. Also, keep in mind that only the services that will be directly used in external modules need to be exported from a specific module. In this case, `SecondService` may depend on `FirstService`, but `FirstService` does not need to be exported if it is not directly used in an external module. This ensures module encapsulation.
-
-You can export providers only those that are transferred to the following arrays:
+In addition, you can export providers only those that are transferred to the following arrays:
 
 - `providersPerMod`;
 - `providersPerRou`;
 - `providersPerReq`.
 
-Exporting the providers passed in `providersPerApp` does not make sense, as using this array DI will generate an [injector][1] at the application level. That is, providers from this array will be available for any module, at any level, and without export.
+It makes no sense to export the providers that are passed to `providersPerApp`, since this array will be used to form the [injector][1] at the application level. That is, the providers from the `providersPerApp` array will be available for any module, at any level, and without exporting.
 
-It also doesn't make sense to export the controllers, because the export only affects the providers.
+Also keep in mind that only those services that will be directly used in the consumer modules need to be exported from the host module. In the example above, `SecondService` can depend on `FirstService`, but `FirstService` does not need to be exported if it is not directly used in the consumer module. This ensures module encapsulation.
+
+Exporting controllers does not make sense, since exporting only applies to providers.
 
 ## Export providers from the root module
 
@@ -295,3 +297,4 @@ export class SecondModule {}
 [1]: /components-of-ditsmod-app/dependency-injection#injector
 [2]: /components-of-ditsmod-app/extensions
 [3]: https://en.wikipedia.org/wiki/Singleton_pattern
+[4]: /components-of-ditsmod-app/dependency-injection/#providers
