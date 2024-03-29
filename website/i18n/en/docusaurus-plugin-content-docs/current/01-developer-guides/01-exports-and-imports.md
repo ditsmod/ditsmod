@@ -4,26 +4,31 @@ sidebar_position: 3
 
 # Export, import, append
 
-The module where you declare certain providers is called the **host module** for those providers. And when you use those providers in an external module, that external module is called the **consumer module** of those providers.
+The module where you declare certain [providers][4] is called the **host module** for those providers. And when you use those providers in an external module, that external module is called the **consumer module** of those providers.
 
-## Export providers from non-root module
+In order for the consumer module to be able to use the providers from the host module, it is first necessary to export the providers from the host module. This is done in the metadata that is passed to the `featureModule` or `rootModule` decorator.
 
-From the host module, you can export only classes or tokens of providers that are [declared in the form of an object][4]. That is, you cannot directly export providers in the form of an object:
+## Export providers from `featureModule`
 
-```ts {8}
+In the metadata of the host module, only provider [tokens][5] can be passed to the `exports` property. That is, you cannot directly pass providers in the form of an object to the `exports` property:
+
+```ts {9}
 import { featureModule } from '@ditsmod/core';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
+import { ThirdService } from './third.service.js';
 
 @featureModule({
-  providersPerMod: [FirstService, { token: SecondService, useClass: SecondService }],
+  providersPerMod: [FirstService, { token: SecondService, useClass: ThirdService }],
   exports: [SecondService],
 })
 export class SomeModule {}
 ```
 
-In addition, you can export providers only those that are transferred to the following arrays:
+In this case, `SecondService` is passed to the `exports` property, so Ditsmod will find the provider in the form of the object: `{ token: SecondService, useClass: ThirdService }` in the `providersPerMod` array and export it.
+
+Keep in mind that you can only export providers that are passed to the following arrays:
 
 - `providersPerMod`;
 - `providersPerRou`;
@@ -35,7 +40,7 @@ Also keep in mind that only those services that will be directly used in the con
 
 Exporting controllers does not make sense, since exporting only applies to providers.
 
-## Export providers from the root module
+## Export providers from `rootModule`
 
 Exporting providers from the root module means that these providers will automatically be added to every module in the application:
 
@@ -298,3 +303,4 @@ export class SecondModule {}
 [2]: /components-of-ditsmod-app/extensions
 [3]: https://en.wikipedia.org/wiki/Singleton_pattern
 [4]: /components-of-ditsmod-app/dependency-injection/#providers
+[5]: /components-of-ditsmod-app/dependency-injection/#dependency-token
