@@ -99,7 +99,7 @@ At the moment (2023-10-13) TypeScript does not yet fully support these aliases, 
 // ...
 ```
 
-There is no point in doing this in other `tsconfig` files because it is only needed by your code editor. Note that in `package.json` the aliases point to `dist`, while in `tsconfig.json` they point to `src`.
+Note that in `package.json` the aliases point to `dist`, while in `tsconfig.json` they point to `src`.
 
 ## Start in product mode
 
