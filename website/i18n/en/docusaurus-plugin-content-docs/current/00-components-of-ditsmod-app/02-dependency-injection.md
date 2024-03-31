@@ -575,9 +575,8 @@ To make it possible to substinuting a specific multi-provider, you can do the fo
 3. next, you need to transfer the provider to the array of providers to substitute this class.
 
 ```ts
-import { Injector } from '@ditsmod/core';
+import { Injector, HTTP_INTERCEPTORS } from '@ditsmod/core';
 
-import { HTTP_INTERCEPTORS } from './constants.js';
 import { DefaultInterceptor } from './default.interceptor.js';
 import { MyInterceptor } from './my.interceptor.js';
 

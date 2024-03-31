@@ -575,9 +575,8 @@ const locals = child.get(LOCAL); // ['аа']
 3. наступним в масив провайдерів потрібно передати провайдер для підміни даного класу.
 
 ```ts
-import { Injector } from '@ditsmod/core';
+import { Injector, HTTP_INTERCEPTORS } from '@ditsmod/core';
 
-import { HTTP_INTERCEPTORS } from './constants.js';
 import { DefaultInterceptor } from './default.interceptor.js';
 import { MyInterceptor } from './my.interceptor.js';
 
