@@ -1,4 +1,4 @@
-import request = require('supertest');
+import request from 'supertest';
 import { HttpErrorHandler, NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 import { jest } from '@jest/globals';
@@ -8,10 +8,14 @@ import { CustomHttpErrorHandler } from './custom-controller-error-handler.js';
 import { ErrorContainer } from './error-container.js';
 
 describe('12-testing', () => {
+  let server: NodeServer;
+  let testAgent: ReturnType<typeof request>;
+
   it('controller works', async () => {
     const server = await new TestApplication(AppModule).getServer();
-    await request(server).get('/').expect(200).expect('Hello, World!\n');
-    await request(server).get('/admin').expect(200).expect('Hello, admin!\n');
+    testAgent = request(server);
+    await testAgent.get('/').expect(200).expect('Hello, World!\n');
+    await testAgent.get('/admin').expect(200).expect('Hello, admin!\n');
     server.close();
   });
 

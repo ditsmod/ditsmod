@@ -1,26 +1,33 @@
-import request = require('supertest');
+import request from 'supertest';
+import { NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '#app/app.module.js';
 
 describe('08-http-interceptors', () => {
-  it('controller works', async () => {
-    const server = await new TestApplication(AppModule).getServer();
-    await request(server)
-      .get('/')
-      .expect(200)
-      .expect({ originalMsg: 'Original message!', msg: 'message that attached by interceptor' });
+  let server: NodeServer;
+  let testAgent: ReturnType<typeof request>;
 
+  beforeAll(async () => {
+    server = await new TestApplication(AppModule).getServer();
+    testAgent = request(server);
+  });
+
+  afterAll(() => {
     server.close();
   });
 
+  it('controller works', async () => {
+    await testAgent
+      .get('/')
+      .expect(200)
+      .expect({ originalMsg: 'Original message!', msg: 'message that attached by interceptor' });
+  });
+
   it('singleton controller works', async () => {
-    const server = await new TestApplication(AppModule).getServer();
-    await request(server)
+    await testAgent
       .get('/singleton')
       .expect(200)
       .expect({ originalMsg: 'Original message!', msg: 'message that attached by interceptor' });
-
-    server.close();
   });
 });

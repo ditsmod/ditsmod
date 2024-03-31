@@ -1,4 +1,4 @@
-import request = require('supertest');
+import request from 'supertest';
 import { Providers, Res } from '@ditsmod/core';
 import { jest } from '@jest/globals';
 import { TestApplication } from '@ditsmod/testing';

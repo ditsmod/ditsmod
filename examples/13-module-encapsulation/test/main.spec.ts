@@ -1,43 +1,51 @@
-import request = require('supertest');
+import request from 'supertest';
+import { NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '#app/app.module.js';
 
-
 describe('13-module-encapsulation', () => {
+  let server: NodeServer;
+  let testAgent: ReturnType<typeof request>;
+
+  beforeAll(async () => {
+    server = await new TestApplication(AppModule).getServer();
+    testAgent = request(server);
+  });
+
+  afterAll(() => {
+    server.close();
+  });
 
   it('controller works', async () => {
-    const server = await new TestApplication(AppModule).getServer();
-    await request(server)
+    await testAgent
       .get('/')
       .expect(200)
-      .expect(`per req counter: 1, per rou counter: 1`);
+      .expect('per req counter: 1, per rou counter: 1');
 
-    await request(server)
+    await testAgent
       .get('/')
       .expect(200)
-      .expect(`per req counter: 1, per rou counter: 2`);
+      .expect('per req counter: 1, per rou counter: 2');
 
-    await request(server)
+    await testAgent
       .get('/')
       .expect(200)
-      .expect(`per req counter: 1, per rou counter: 3`);
+      .expect('per req counter: 1, per rou counter: 3');
 
-    await request(server)
+    await testAgent
       .get('/first')
       .expect(200)
       .expect([{ prop: 'from FirstModule' }]);
 
-    await request(server)
+    await testAgent
       .get('/second')
       .expect(200)
       .expect([{ prop: 'from FirstModule' }, { prop: 'from SecondModule' }]);
 
-    await request(server)
+    await testAgent
       .get('/third')
       .expect(200)
       .expect([{ prop: 'from SecondModule' }]);
-
-    server.close();
   });
 });

@@ -1,4 +1,4 @@
-import request = require('supertest');
+import request from 'supertest';
 import { NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
@@ -6,11 +6,11 @@ import { AppModule } from '#app/app.module.js';
 
 describe('02-controller-error-handler', () => {
   let server: NodeServer;
+  let testAgent: ReturnType<typeof request>;
 
   beforeAll(async () => {
-    // The controller method is expected to throw an error, so we force the log level to "fatal"
-    // to avoid outputting an error to the console.
     server = await new TestApplication(AppModule).getServer();
+    testAgent = request(server);
   });
 
   afterAll(() => {
@@ -18,10 +18,10 @@ describe('02-controller-error-handler', () => {
   });
 
   it('should works', async () => {
-    await request(server).get('/').expect(200).expect('ok');
+    await testAgent.get('/').expect(200).expect('ok');
   });
 
   it('should throw an error', async () => {
-    await request(server).get('/throw-error').expect(500);
+    await testAgent.get('/throw-error').expect(500);
   });
 });

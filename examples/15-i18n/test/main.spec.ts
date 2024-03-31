@@ -1,59 +1,66 @@
-import request = require('supertest');
+import request from 'supertest';
 import { TestApplication } from '@ditsmod/testing';
-import { jest } from '@jest/globals';
+import { NodeServer } from '@ditsmod/core';
 
 import { AppModule } from '#app/app.module.js';
 
-
 describe('15-i18n', () => {
+  let server: NodeServer;
+  let testAgent: ReturnType<typeof request>;
+
+  beforeAll(async () => {
+    server = await new TestApplication(AppModule).getServer();
+    testAgent = request(server);
+  });
+
+  afterAll(() => {
+    server.close();
+  });
 
   it('controller works', async () => {
-    const server = await new TestApplication(AppModule).getServer();
-    await request(server)
+    await testAgent
       .get('/first?lng=en')
       .expect(200)
       .expect('one, two, three');
 
-      await request(server)
+      await testAgent
       .get('/first?lng=pl')
       .expect(200)
       .expect('nie, dwa, trzy');
 
-      await request(server)
+      await testAgent
       .get('/first-extended?lng=en')
       .expect(200)
       .expect('overrided: one, two, three');
 
-      await request(server)
+      await testAgent
       .get('/first-extended?lng=pl')
       .expect(200)
       .expect('nie, dwa, trzy');
 
-      await request(server)
+      await testAgent
       .get('/first-extended?lng=uk')
       .expect(200)
       .expect('extended: один, два, три');
 
-      await request(server)
+      await testAgent
       .get('/second/Kostia?lng=en')
       .expect(200)
       .expect('Hello, Kostia!');
 
-      await request(server)
+      await testAgent
       .get('/second/Kostia?lng=uk')
       .expect(200)
       .expect('Привіт, Kostia!');
 
-      await request(server)
+      await testAgent
       .get('/third?lng=en')
       .expect(200)
       .expect('one, two, three');
 
-      await request(server)
+      await testAgent
       .get('/third?lng=pl')
       .expect(200)
       .expect('nie, dwa, trzy');
-
-    server.close();
   });
 });
