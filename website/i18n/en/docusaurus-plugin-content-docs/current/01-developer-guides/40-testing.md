@@ -110,8 +110,8 @@ End-to-end testing checks the operation of the entire application. For this purp
 Let's look at the situation when we make a mock for `EmailService`:
 
 ```ts {12,19}
-import request = require('supertest');
-import { Server } from '@ditsmod/core';
+import request from 'supertest';
+import { NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '#app/app.module.js';
@@ -119,7 +119,7 @@ import { EmailService } from '#app/email.service.js';
 import { InterfaceOfEmailService } from '#app/types.js';
 
 describe('End-to-end testing', () => {
-  let server: Server;
+  let server: NodeServer;
   const query = jest.fn();
   const MockEmailService = { query } as InterfaceOfEmailService;
 
@@ -148,12 +148,6 @@ describe('End-to-end testing', () => {
   });
 });
 ```
-
-:::info Default import of supertest
-Note in the first line that when importing the `supertest` library, the keywords `import` and `reuire` are used at the same time. This feature occurs because `supertest` defaults to exporting a function rather than an object, which is against ES2015+ export standards. Therefore, one of the options for solving this issue is to change the standard import.
-
-You can also import this library as follows: `import request from 'supertest'`, while also setting [`"esModuleInterop": true`][103] in the `tsconfig` file.
-:::
 
 As you can see in the test code, first, a test application is created based on the `TestApplication` class, then a mock is substituted for `EmailService`. At the very end, the `getServer()` method is called and thus creates and returns a web server that has not yet called the `server.listen()` method, so supertest can automatically do this by substituting a random port number, which is an important point when asynchronously calling several tests at once. Here `AppModule` is the root module of the application.
 
@@ -245,4 +239,3 @@ const server = await new TestApplication(AppModule)
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions
 [102]: https://github.com/ladjs/supertest
-[103]: https://www.typescriptlang.org/tsconfig#esModuleInterop

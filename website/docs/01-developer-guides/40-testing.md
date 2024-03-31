@@ -110,8 +110,8 @@ describe('Service2', () => {
 Давайте розглянемо ситуацію, коли ми робимо мок для `EmailService`:
 
 ```ts {12,19}
-import request = require('supertest');
-import { Server } from '@ditsmod/core';
+import request from 'supertest';
+import { NodeServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '#app/app.module.js';
@@ -119,7 +119,7 @@ import { EmailService } from '#app/email.service.js';
 import { InterfaceOfEmailService } from '#app/types.js';
 
 describe('End-to-end testing', () => {
-  let server: Server;
+  let server: NodeServer;
   const query = jest.fn();
   const MockEmailService = { query } as InterfaceOfEmailService;
 
@@ -148,12 +148,6 @@ describe('End-to-end testing', () => {
   });
 });
 ```
-
-:::info Дефолтний імпорт supertest
-Перш за все, зверніть увагу на те, що у першому рядку при імпорті бібліотеки `supertest` одночасно використовується ключові слова `import` та `reuire`. Ця особливість виникає через те, що `supertest` по дефолту експортує функцію, а не об'єкт, і це протирічіть стандартам експорту ES2015+. Тому одним із варіантів вирішення цього питання є зміна стандартного імпорту.
-
-Також можна імпортувати цю бібліотеку ось так: `import request from 'supertest'`, при цьому потрібно також встановити [`"esModuleInterop": true`][103] у файлі `tsconfig`.
-:::
 
 Як бачите у коді тесту, спочатку створюється тестовий застосунок на базі класу `TestApplication`, потім робиться підстановка моку для `EmailService`. В самому кінці викликається метод `getServer()` і таким чином створюється та повертається вебсервер, який ще не викликав метод `server.listen()`, тому supertest має змогу автоматично це зробити підставляючи рандомний номер порту, що є важливим моментом під час асинхронного виклику зразу декількох тестів. Тут `AppModule` - це кореневий модуль застосунку.
 
@@ -245,4 +239,3 @@ const server = await new TestApplication(AppModule)
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions
 [102]: https://github.com/ladjs/supertest
-[103]: https://www.typescriptlang.org/tsconfig#esModuleInterop
