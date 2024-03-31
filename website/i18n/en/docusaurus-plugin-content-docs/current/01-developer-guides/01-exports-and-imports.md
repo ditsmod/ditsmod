@@ -62,7 +62,7 @@ In this case, `SomeService` will be added to absolutely all application modules 
 
 ## Import module
 
-You cannot import a single provider into a Ditsmod module, but you can import an entire module with all the providers and [extensions][2] exported in it:
+You cannot import a single provider into a module, but you can import an entire module with all the providers and [extensions][2] exported in it:
 
 ```ts {7}
 import { featureModule } from '@ditsmod/core';
@@ -77,7 +77,7 @@ import { FirstModule } from './first.module.js';
 export class SecondModule {}
 ```
 
-For example, if `SomeService` is exported in the `FirstModule`, then this service can now be used in the `SecondModule` in services and controllers. However, if `FirstModule` has controllers, they will be ignored in this import form. For Ditsmod to take into account controllers from an imported module, the module must be imported with a prefix passed in `path`:
+For example, if `SomeService` is exported from the `FirstModule`, then this service can now be used in the `SecondModule` in services and controllers. However, if `FirstModule` has controllers, they will be ignored in this import form. For Ditsmod to take into account controllers from an imported module, the module must be imported with a prefix passed in `path`:
 
 ```ts {4}
 // ...
