@@ -4,7 +4,7 @@ sidebar_position: 0
 
 # Modules
 
-One of the main elements of the Ditsmod architecture are its modules. But what exactly is good about modular architecture? - Modularity allows you to compose different autonomous elements and build a scalable application from them. Thanks to the autonomy of the modules, large projects are easier to develop, test, deploy and maintain.
+One of the main elements of the Ditsmod architecture are its modules. But what exactly is good about modular architecture? - Modularity allows you to compose different autonomous elements and assemble them into a scalable application. Thanks to the autonomy of the modules, large projects are easier to develop, test, deploy and maintain.
 
 Such architecture allows you to isolate in one module **several code files** that may have different roles, but **common specialization**. A module can be compared to an orchestra, in which there are different instruments, but they all create music together. On the other hand, the need to isolate different modules arises due to the fact that they may have different specializations and because of this - may interfere with each other. Continuing the analogy with people, if you put police and musicians, or brokers and translators in the same office, they will most likely interfere with each other. That is why **narrow specialization** is important for a module.
 
