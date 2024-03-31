@@ -119,11 +119,16 @@ After [installing Ditsmod seed][1], the first thing you need to know: all the ap
 Let's look at the `src/main.ts` file:
 
 ```ts
+import { ServerOptions } from 'node:http';
 import { Application } from '@ditsmod/core';
-import { AppModule } from './app/app.module.js';
 
-const app = await new Application().bootstrap(AppModule);
-app.server.listen(3000, '0.0.0.0');
+import { AppModule } from './app/app.module.js';
+import { checkCliAndSetPort } from './app/utils/check-cli-and-set-port.js';
+
+const serverOptions: ServerOptions = { keepAlive: true, keepAliveTimeout: 5000 };
+const app = await new Application().bootstrap(AppModule, { serverOptions });
+const port = checkCliAndSetPort(3000);
+app.server.listen(port, '0.0.0.0');
 ```
 
 After compilation, it becomes `dist/main.js` and becomes the entry point for running the application in production mode, and so why you will specify it as an argument to Node.js:
