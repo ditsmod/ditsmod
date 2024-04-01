@@ -2,7 +2,7 @@ import { format } from 'util';
 
 import { NODE_RES } from '#constans';
 import { inject, injectable } from '#di';
-import { RedirectStatusCodes } from '#types/mix.js';
+import { HttpHeaders, RedirectStatusCodes } from '#types/mix.js';
 import { NodeResponse } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
 
@@ -27,6 +27,11 @@ export class Res<T = any> {
     return this;
   }
 
+  setHeaders(headrs: HttpHeaders = {}) {
+    Object.entries(headrs).forEach(([key, value]) => this.nodeRes.setHeader(key, value));
+    return this;
+  }
+
   /**
    * Send data as is, without any transformation.
    */
@@ -46,8 +51,10 @@ export class Res<T = any> {
     this.send(format(data), statusCode);
   }
 
-  sendJson(data?: T, statusCode: Status = Status.OK): void {
-    this.setContentType('application/json; charset=utf-8').send(JSON.stringify(data), statusCode);
+  sendJson(data?: T, statusCode: Status = Status.OK, headrs?: HttpHeaders): void {
+    this
+      .setHeaders({ 'Content-Type': 'application/json; charset=utf-8', ...headrs })
+      .send(JSON.stringify(data), statusCode);
   }
 
   redirect(statusCode: RedirectStatusCodes, path: string) {
