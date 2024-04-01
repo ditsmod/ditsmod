@@ -112,8 +112,7 @@ Depending on whether the controller is [singleton][3] or not, the result of the 
   export class SomeController {
     @route('POST')
     ok(ctx: SingletonRequestContext) {
-      const bodyStr = JSON.stringify(ctx.body);
-      ctx.nodeRes.end(bodyStr);
+      ctx.sendJson(ctx.body);
     }
   }
   ```

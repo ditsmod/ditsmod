@@ -112,8 +112,7 @@ export class AppModule {}
   export class SomeController {
     @route('POST')
     ok(ctx: SingletonRequestContext) {
-      const bodyStr = JSON.stringify(ctx.body);
-      ctx.nodeRes.end(bodyStr);
+      ctx.sendJson(ctx.body);
     }
   }
   ```
