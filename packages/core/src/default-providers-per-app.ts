@@ -2,6 +2,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleExtract } from '#types/module-extract.js';
 import { Logger } from '#logger/logger.js';
 import { Provider } from '#types/mix.js';
+import { RequestContext } from '#types/http-interceptor.js';
 import { Providers } from '#utils/providers.js';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
@@ -15,6 +16,7 @@ export const defaultProvidersPerApp: Readonly<Provider[]> = [
   ModuleManager,
   SystemLogMediator,
   SystemErrorMediator,
+  { token: RequestContext, useValue: RequestContext },
   ...new Providers()
     .useValue<ModuleExtract>(ModuleExtract, { moduleName: 'AppModule' })
     .useClass(Logger, ConsoleLogger),
