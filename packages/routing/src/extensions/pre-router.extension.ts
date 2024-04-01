@@ -123,6 +123,7 @@ export class PreRouterExtension implements Extension<void> {
 
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
+    const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     this.checkDeps(metadataPerMod2.moduleName, httpMethod, path, injPerReq, routeMeta);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerReq.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
@@ -135,12 +136,8 @@ export class PreRouterExtension implements Extension<void> {
     return (async (nodeReq, nodeRes, aPathParams, queryString) => {
       const injector = new Injector(RegistryPerReq, injectorPerRou, 'injectorPerReq');
 
-      const ctx: RequestContext = {
-        nodeReq,
-        nodeRes,
-        aPathParams,
-        queryString,
-      };
+      const ctx = new RequestContextClass(nodeReq, nodeRes, aPathParams, queryString);
+
       await injector
         .setById(nodeReqId, nodeReq)
         .setById(nodeResId, nodeRes)
@@ -181,14 +178,10 @@ export class PreRouterExtension implements Extension<void> {
     const controllerInstance = injectorPerMod.get(routeMeta.controller);
     routeMeta.routeHandler = controllerInstance[routeMeta.methodName].bind(controllerInstance);
     const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as DefaultSingletonHttpErrorHandler;
+    const RequestContextClass = injectorPerRou.get(RequestContext) as typeof RequestContext;
 
     return (async (nodeReq, nodeRes, aPathParams, queryString) => {
-      const ctx: RequestContext = {
-        nodeReq,
-        nodeRes,
-        aPathParams,
-        queryString,
-      };
+      const ctx = new RequestContextClass(nodeReq, nodeRes, aPathParams, queryString);
       await chainMaker
         .makeChain(ctx)
         .handle() // First HTTP handler in the chain of HTTP interceptors.
