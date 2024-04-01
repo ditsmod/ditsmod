@@ -27,7 +27,6 @@ export class InterceptorWithGuards implements HttpInterceptor {
   protected prohibitActivation(ctx: RequestContext, status?: Status) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
     systemLogMediator.youCannotActivateRoute(this, ctx.nodeReq.method!, ctx.nodeReq.url!);
-    ctx.nodeRes.statusCode = status || Status.UNAUTHORIZED;
-    ctx.nodeRes.end();
+    ctx.send(undefined, status || Status.UNAUTHORIZED);
   }
 }

@@ -31,8 +31,7 @@ export class DefaultSingletonHttpErrorHandler implements HttpErrorHandler {
     if (!ctx.nodeRes.headersSent) {
       this.addRequestIdToHeader(requestId, ctx);
       const errStr = JSON.stringify({ error });
-      ctx.nodeRes.statusCode = status || Status.INTERNAL_SERVER_ERROR;
-      ctx.nodeRes.end(errStr);
+      ctx.send(errStr, status || Status.INTERNAL_SERVER_ERROR);
     }
   }
 
