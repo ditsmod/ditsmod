@@ -35,10 +35,10 @@ export class Res<T = any> {
   /**
    * Send data as is, without any transformation.
    */
-  send(data?: string | Buffer | Uint8Array, statusCode: Status = Status.OK): void {
+  send(data?: string | Buffer | Uint8Array, statusCode: Status = Status.OK, headrs?: HttpHeaders): void {
     const contentType = this.nodeRes.getHeader('Content-Type');
     if (!contentType) {
-      this.setContentType('text/plain; charset=utf-8');
+      this.setHeaders({ 'Content-Type': 'text/plain; charset=utf-8', ...headrs });
     }
     this.nodeRes.statusCode = statusCode;
     this.nodeRes.end(data || '');
