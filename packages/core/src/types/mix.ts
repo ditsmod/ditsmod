@@ -94,6 +94,10 @@ export type Provider = TypeProvider | ValueProvider | ClassProvider | TokenProvi
 
 export type Scope = 'Mod' | 'Rou' | 'Req';
 
+export interface HttpHeaders {
+  [key: string]: string | number | string[];
+}
+
 export type Override<T extends object, K extends { [P in keyof T]?: any }> = Omit<T, keyof K> & K;
 
 /**

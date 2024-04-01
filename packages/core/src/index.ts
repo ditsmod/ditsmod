@@ -83,6 +83,7 @@ export {
   RedirectStatusCodes,
   Provider,
   AnyFn,
+  HttpHeaders
 } from './types/mix.js';
 export { ModuleMetadata, AppendsWithParams } from './types/module-metadata.js';
 export { RouteMeta } from './types/route-data.js';
