@@ -31,16 +31,16 @@ export class SomeController {
 export class SingletonController {
   @route('GET', 'hello2')
   ok(ctx: RequestContext) {
-    ctx.nodeRes.end('ok');
+    ctx.send('ok');
   }
 
   @route('GET', 'unauth2', [BearerGuard])
   throw401Error(ctx: RequestContext) {
-    ctx.nodeRes.end('some secret');
+    ctx.send('some secret');
   }
 
   @route('GET', 'forbidden2', [requirePermissionsSngl(Permission.canActivateAdministration)])
   throw403Error(ctx: RequestContext) {
-    ctx.nodeRes.end('some secret');
+    ctx.send('some secret');
   }
 }

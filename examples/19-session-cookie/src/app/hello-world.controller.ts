@@ -22,11 +22,11 @@ export class HelloWorldController2 {
   @route('GET', 'set2')
   setCookie(ctx: RequestContextWithSession) {
     ctx.sessionCookie.id = '123';
-    ctx.nodeRes.end('Hello World!\n');
+    ctx.send('Hello World!\n');
   }
 
   @route('GET', 'get2')
   getCookie(ctx: RequestContextWithSession) {
-    ctx.nodeRes.end(`session ID: ${ctx.sessionCookie.id}`);
+    ctx.send(`session ID: ${ctx.sessionCookie.id}`);
   }
 }

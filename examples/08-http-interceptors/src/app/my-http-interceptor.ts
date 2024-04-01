@@ -14,7 +14,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
       } else {
         ctx.nodeRes.setHeader('Content-Type', 'application/json; charset=utf-8');
         const msg = JSON.stringify({ originalMsg, msg: 'message that attached by interceptor' });
-        ctx.nodeRes.end(msg);
+        ctx.send(msg);
       }
     });
   }

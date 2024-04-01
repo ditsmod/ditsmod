@@ -22,7 +22,7 @@ export class SecondController {
 export class SecondSingletonController {
   @route('GET', 'second2')
   async method1(ctx: SingletonRequestContext) {
-    ctx.nodeRes.end('default2 send');
+    ctx.send('default2 send');
   }
 
   @route('GET', 'second2-json')
