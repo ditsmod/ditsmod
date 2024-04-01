@@ -1,20 +1,17 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
+import { Res } from '#services/response.js';
 import { AnyObj } from './mix.js';
 import { PathParam } from './router.js';
 import { NodeRequest, NodeResponse } from './server-options.js';
 
-export class RequestContext {
-  nodeReq: NodeRequest;
-  nodeRes: NodeResponse;
-  aPathParams: PathParam[];
-  queryString: string;
+export class RequestContext extends Res {
+  constructor(
+    public nodeReq: NodeRequest,
+    public override nodeRes: NodeResponse,
+    public aPathParams: PathParam[],
+    public queryString: string,
+  ) {
+    super(nodeRes);
+  }
 }
 
 export class SingletonRequestContext extends RequestContext {

@@ -7,7 +7,7 @@ import { AuthService } from './auth.service.js';
 describe('PermissionsGuard#canActivate()', () => {
   const hasPermissions = jest.fn();
   let permissionsGuard: PermissionsGuard;
-  const ctx = new RequestContext();
+  const ctx = {} as RequestContext;
 
   beforeEach(() => {
     const injector = Injector.resolveAndCreate([
