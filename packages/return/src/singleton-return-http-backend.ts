@@ -20,10 +20,9 @@ export class SingletonReturnHttpBackend extends DefaultSingletonHttpBackend {
 
     ctx.nodeRes.statusCode = statusCode;
     if (typeof value == 'object' || ctx.nodeRes.getHeader('content-type') == 'application/json') {
-      ctx.nodeRes.setHeader('Content-Type', 'application/json; charset=utf-8');
-      ctx.nodeRes.end(JSON.stringify(value));
+      ctx.sendJson(value);
     } else {
-      ctx.nodeRes.end(value);
+      ctx.send(value);
     }
   }
 }
