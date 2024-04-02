@@ -3,6 +3,14 @@ import { AnyObj } from './mix.js';
 import { PathParam } from './router.js';
 import { NodeRequest, NodeResponse } from './server-options.js';
 
+/**
+ * The request context class, which you can substitute with your own class.
+ * You can do this at any level, but remember that your class must implement `RequestContext`
+ * and must also be passed to the DI registry as a `ValueProvider`
+ * like this: `{ token: RequestContext, useValue: MyRequestContext }`.
+ * 
+ * An instance of this class is created without DI.
+ */
 export class RequestContext extends Res {
   constructor(
     public nodeReq: NodeRequest,
