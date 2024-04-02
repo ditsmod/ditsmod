@@ -1,10 +1,11 @@
 {
   "name": "@ditsmod/openapi",
   "type": "module",
-  "version": "2.23.1",
+  "version": "2.24.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ditsmod/ditsmod.git"
+    "url": "https://github.com/ditsmod/ditsmod.git",
+    "directory": "packages/openapi"
   },
   "description": "This is module for Ditsmod framework to support OpenAPI",
   "module": "dist/index.js",
@@ -45,7 +46,7 @@
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.52.0",
-    "@ditsmod/routing": "^2.0.0"
+    "@ditsmod/routing": "^2.2.0"
   },
   "devDependencies": {
     "@types/swagger-ui-dist": "^3.30.4"

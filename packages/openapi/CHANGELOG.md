@@ -1,5 +1,12 @@
+<a name="openapi-2.24.0"></a>
+# [openapi-2.24.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.24.0) (2024-04-02)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [309ce44ee0](https://github.com/ditsmod/ditsmod/commit/309ce44ee0e0932fd487bb3cb0f27ed4b4c2cacc) | refactor | intoduced `OpenapiErrorMediator`. |
+
 <a name="openapi-2.23.1"></a>
-# [openapi-2.23.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.23.1) (2023-10-03)
+## [openapi-2.23.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.23.1) (2023-10-03)
 
 ### Bug fixes
 
