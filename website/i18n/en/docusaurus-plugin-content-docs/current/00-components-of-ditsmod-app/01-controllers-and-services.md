@@ -178,8 +178,6 @@ export class HelloWorldController {
 }
 ```
 
-Where `ctx.nodeRes` is the native Node.js response object.
-
 In the "controller singleton" mode, controller methods bound to specific routes receive a single argument - the request context. That is, in this mode, you will no longer be able to ask Ditsmod to pass instances of other classes to these methods. However, in the constructor you can still request instances of certain classes that are created only once.
 
 ## Binding of the controller to the module
