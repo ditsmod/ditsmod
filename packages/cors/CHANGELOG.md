@@ -1,5 +1,12 @@
+<a name="cors-2.6.0"></a>
+# [cors-2.6.0](https://github.com/ditsmod/ditsmod/releases/tag/cors-2.6.0) (2024-04-02)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [46ad9a08ad](https://github.com/ditsmod/ditsmod/commit/46ad9a08ad47176fc4886186b14ea656c019fea4) | refactor | apply new methods for `RequestContext`. |
+
 <a name="cors-2.5.1"></a>
-# [cors-2.5.1](https://github.com/ditsmod/ditsmod/releases/tag/cors-2.5.1) (2023-10-03)
+## [cors-2.5.1](https://github.com/ditsmod/ditsmod/releases/tag/cors-2.5.1) (2023-10-03)
 
 ### Bug fixes
 
