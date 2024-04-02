@@ -122,7 +122,7 @@ export class ModuleFactory {
     let multiPerReq: Map<ModuleType | ModuleWithParams, Provider[]>;
     let extensions: Map<ModuleType | ModuleWithParams, ExtensionProvider[]>;
     if (meta.isExternal) {
-      // External modules do not require global providers from the application.
+      // External modules do not require global providers and extensions from the application.
       perMod = new Map([...this.importedProvidersPerMod]);
       perRou = new Map([...this.importedProvidersPerRou]);
       perReq = new Map([...this.importedProvidersPerReq]);
