@@ -38,6 +38,23 @@ export class AuthGuard implements CanActivate {
 - `false` чи `Promise<false>`, значить відповідь на запит міститиме 401 статус і обробки маршруту з боку контролера не буде;
 - `number` чи `Promise<number>` Ditsmod інтерпретує як номер статусу (403, 401 і т.п.), який треба повернути у відповіді на HTTP-запит.
 
+## Передача ґардів до інжекторів
+
+Ґарди можна передавати у метаданих модуля чи контролера:
+
+```ts {6}
+import { featureModule } from '@ditsmod/core';
+
+import { AuthGuard } from 'auth.guard';
+
+@featureModule({
+  providersPerReq: [AuthGuard],
+})
+export class SomeModule {}
+```
+
+В даному разі ґард буде працювати на рівні запиту, для контролерів неодинаків.
+
 ## Використання ґардів
 
 Ґарди передаються до контролерів в масиві у третьому параметрі декоратора `route`:
@@ -128,23 +145,6 @@ export class SomeController {
   }
 }
 ```
-
-## Передача ґардів до інжекторів
-
-Ґарди можна передавати у метаданих модуля чи контролера:
-
-```ts {6}
-import { featureModule } from '@ditsmod/core';
-
-import { AuthGuard } from 'auth.guard';
-
-@featureModule({
-  providersPerReq: [AuthGuard],
-})
-export class SomeModule {}
-```
-
-В даному разі ґард буде працювати на рівні запиту, для контролерів неодинаків.
 
 ## Встановлення ґардів на імпортований модуль
 

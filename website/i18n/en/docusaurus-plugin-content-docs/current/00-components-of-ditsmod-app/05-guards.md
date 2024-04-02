@@ -38,6 +38,23 @@ If `canActivate()` returns:
 - `false` or `Promise<false>`, so the response to the request will contain a 401 status and the controller will not process the route;
 - `number` or `Promise<number>` is interpreted by Ditsmod as a status number (403, 401, etc.) that should be returned in response to an HTTP request.
 
+## Passing guards to injectors
+
+Guards can be passed in module or controller metadata:
+
+```ts {6}
+import { featureModule } from '@ditsmod/core';
+
+import { AuthGuard } from 'auth.guard';
+
+@featureModule({
+  providersPerReq: [AuthGuard],
+})
+export class SomeModule {}
+```
+
+In this case, the guard will work at the request level, for non-singleton controllers.
+
 ## Use of guards
 
 The guards are passed to the controllers in the array in the third parameter of the `route` decorator:
@@ -128,23 +145,6 @@ export class SomeController {
   }
 }
 ```
-
-## Passing guards to injectors
-
-Guards can be passed in module or controller metadata:
-
-```ts {6}
-import { featureModule } from '@ditsmod/core';
-
-import { AuthGuard } from 'auth.guard';
-
-@featureModule({
-  providersPerReq: [AuthGuard],
-})
-export class SomeModule {}
-```
-
-In this case, the guard will work at the request level, for non-singleton controllers.
 
 ## Setting guards on the imported module
 
