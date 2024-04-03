@@ -151,6 +151,12 @@ describe('End-to-end testing', () => {
 
 As you can see in the test code, first, a test application is created based on the `TestApplication` class, then a mock is substituted for `EmailService`. At the very end, the `getServer()` method is called and thus creates and returns a web server that has not yet called the `server.listen()` method, so supertest can automatically do this by substituting a random port number, which is an important point when asynchronously calling several tests at once. Here `AppModule` is the root module of the application.
 
+Note that these tests do not use the code from the `./src/main.ts` file, so any arguments you pass to this code must be duplicated for `TestApplication`. For example, if your application has an `api` prefix, then pass the same prefix to the test application:
+
+```ts
+server = await new TestApplication(AppModule, { path: 'api' }).getServer();
+```
+
 Overriding mocks with the `testApplication.overrideProviders()` method works globally at any level of the injector hierarchy. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
 
 We recommend keeping such tests in a separate directory called `test`, at the same level as the `src` root directory.
