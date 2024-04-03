@@ -20,6 +20,45 @@ Ditsmod є Node.js веб-фреймворком, його назва склад
 
 Деякі концепції архітектури Ditsmod взяті з [Angular][9] концепцій, а DI побудована на базі нативного модуля Angular DI.
 
+### ExpressJS vs. Ditsmod
+
+В наступних двох прикладах показано мінімальний код для запуску ExpressJS та Ditsmod застосунків.
+
+```js
+import express from 'express';
+const app = express();
+
+app.get('/hello', function (req, res) {
+  res.send('Hello, World!');
+});
+
+app.listen(3000, '0.0.0.0');
+```
+
+```ts
+import { controller, route, Res, rootModule, Application } from '@ditsmod/core';
+import { RoutingModule } from '@ditsmod/routing';
+
+@controller()
+export class ExampleController {
+  @route('GET', 'hello')
+  tellHello(res: Res) {
+    res.send('Hello, World!');
+  }
+}
+
+@rootModule({
+  imports: [RoutingModule],
+  controllers: [ExampleController],
+})
+export class AppModule {}
+
+const app = await new Application().bootstrap(AppModule);
+app.server.listen(3000, '0.0.0.0');
+```
+
+Оцінюючи об'єм коду, можна припустити, що через свою багатослівність, Ditsmod є повільнішим за ExpressJS. Але насправді трохи повільнішим є лише холодний старт Ditsmod (на моєму ноутбуку він стартує за 18 ms, тоді як ExpressJS стартує за 4 ms). Що стосується швидкості обробки запитів, то [Ditsmod більш ніж удвічі швидший за ExpressJS][14].
+
 ## Попередні умови
 
 Будь-ласка, переконайтесь що на вашій операційній системі встановлено Node.js >= v18.14.0.

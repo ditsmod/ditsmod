@@ -20,6 +20,45 @@ The main features of Ditsmod:
 
 Some concepts of Ditsmod architecture are taken from Angular concepts, and DI is built based on the native Angular DI module.
 
+### ExpressJS vs. Ditsmod
+
+The following two examples show minimal code to run ExpressJS and Ditsmod applications.
+
+```js
+import express from 'express';
+const app = express();
+
+app.get('/hello', function (req, res) {
+  res.send('Hello, World!');
+});
+
+app.listen(3000, '0.0.0.0');
+```
+
+```ts
+import { controller, route, Res, rootModule, Application } from '@ditsmod/core';
+import { RoutingModule } from '@ditsmod/routing';
+
+@controller()
+export class ExampleController {
+  @route('GET', 'hello')
+  tellHello(res: Res) {
+    res.send('Hello, World!');
+  }
+}
+
+@rootModule({
+  imports: [RoutingModule],
+  controllers: [ExampleController],
+})
+export class AppModule {}
+
+const app = await new Application().bootstrap(AppModule);
+app.server.listen(3000, '0.0.0.0');
+```
+
+Looking at the amount of code, you might think that Ditsmod is slower than ExpressJS because of its verbosity. But in fact, only Ditsmod's cold start is slightly slower (it starts in 18ms on my laptop, while ExpressJS starts in 4ms). In terms of request processing speed, [Ditsmod is more than twice as fast as ExpressJS][14].
+
 ## Prerequisites
 
 Please make sure that Node.js >= v18.14.0 is installed on your operating system.
