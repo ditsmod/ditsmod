@@ -1,16 +1,12 @@
 ---
-sidebar_position: 3
+sidebar_position: 1
 ---
 
 # Export, import, append
 
 The module where you declare certain [providers][4] is called the **host module** for those providers. And when you use those providers in an external module, that external module is called the **consumer module** of those providers.
 
-In order for the consumer module to be able to use the providers from the host module, it is first necessary to export the providers from the host module. This is done in the metadata that is passed to the `featureModule` or `rootModule` decorator.
-
-## Export providers from `featureModule`
-
-In the metadata of the host module, only provider [tokens][5] can be passed to the `exports` property. That is, you cannot directly pass providers in the form of an object to the `exports` property:
+In order for a consumer module to use providers from a host module, the corresponding provider [tokens][5] must first be exported from the host module. This is done in the metadata that is passed to the `featureModule` or `rootModule` decorator:
 
 ```ts {9}
 import { featureModule } from '@ditsmod/core';
@@ -26,9 +22,7 @@ import { ThirdService } from './third.service.js';
 export class SomeModule {}
 ```
 
-In this case, `SecondService` is passed to the `exports` property, so Ditsmod will find the provider in the form of the object: `{ token: SecondService, useClass: ThirdService }` in the `providersPerMod` array and export it.
-
-Keep in mind that you can only export providers that are passed to the following arrays:
+Taking into account the exported tokens, Ditsmod will export the corresponding providers from the arrays:
 
 - `providersPerMod`;
 - `providersPerRou`;
@@ -36,9 +30,15 @@ Keep in mind that you can only export providers that are passed to the following
 
 It makes no sense to export the providers that are passed to `providersPerApp`, since this array will be used to form the [injector][1] at the application level. That is, the providers from the `providersPerApp` array will be available for any module, at any level, and without exporting.
 
-Also keep in mind that only those services that will be directly used in the consumer modules need to be exported from the host module. In the example above, `SecondService` can depend on `FirstService`, but `FirstService` does not need to be exported if it is not directly used in the consumer module. This ensures module encapsulation.
+Since you only need to export provider tokens from the host module, not the providers themselves, you cannot directly pass providers in the form of an object to the `exports` property.
+
+Keep in mind that you only need to export providers from the host module that will be directly used in the consumer modules. In the example above, `SecondService` can depend on `FirstService`, but `FirstService` does not need to be exported if it is not directly used in the consumer module. This ensures module encapsulation.
 
 Exporting controllers does not make sense, since exporting only applies to providers.
+
+## Exporting providers from a `featureModule`
+
+By exporting tokens from a host module in the `featureModule` decorator metadata, you are declaring that the corresponding providers can be used in consumer modules if they import this host module.
 
 ## Export providers from `rootModule`
 
@@ -64,9 +64,8 @@ In this case, `SomeService` will be added to absolutely all application modules 
 
 You cannot import a single provider into a module, but you can import an entire module with all the providers and [extensions][2] exported in it:
 
-```ts {7}
+```ts {6}
 import { featureModule } from '@ditsmod/core';
-
 import { FirstModule } from './first.module.js';
 
 @featureModule({
@@ -270,7 +269,6 @@ In addition to importing a specific module, the same module can be simultaneousl
 
 ```ts
 import { featureModule } from '@ditsmod/core';
-
 import { FirstModule } from './first.module.js';
 
 @featureModule({
@@ -286,7 +284,6 @@ Pay attention! If during re-export you import an object with `ModuleWithParams` 
 
 ```ts
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
-
 import { FirstModule } from './first.module.js';
 
 const firstModuleWithParams: ModuleWithParams = { path: 'some-path', module: FirstModule };
