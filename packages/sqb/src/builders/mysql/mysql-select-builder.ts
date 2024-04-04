@@ -1,6 +1,7 @@
 import { NoSqlActions, TableAndAlias } from '../types.js';
 import { AndOrBuilder, ExpressionBuilder } from './and-or-builder.js';
 import { JoinBuilder } from './join-builder.js';
+import { defaultEscapeFn, defaultRunFn, mergeEscapeAndRun } from '../../utils.js';
 
 class SelectQuery {
   select: string[] = [];
@@ -11,8 +12,8 @@ class SelectQuery {
   having: string[] = [];
   orderBy: string[] = [];
   limit: string = '';
-  run: (query: string, opts: any, ...args: any[]) => any = (query) => query;
-  escape: (value: any) => string = (value) => value;
+  run = defaultRunFn;
+  escape = defaultEscapeFn;
 }
 
 class MySqlSelectBuilderConfig {
@@ -36,8 +37,7 @@ export class MySqlSelectBuilder<T extends object = any> implements NoSqlActions 
     this.#query.having.push(...(query.having || []));
     this.#query.orderBy.push(...(query.orderBy || []));
     this.#query.limit = query.limit || this.#query.limit;
-    this.#query.escape = query.escape || this.#query.escape;
-    this.#query.run = query.run || this.#query.run;
+    mergeEscapeAndRun(this.#query, query);
     return this.#query;
   }
 

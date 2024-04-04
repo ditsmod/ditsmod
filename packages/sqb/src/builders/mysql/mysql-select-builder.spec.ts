@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 
 import { table } from '#decorators/table.js';
 import { getTableMetadata } from '../../utils.js';
@@ -38,6 +39,20 @@ describe('MySqlSelectBuilder', () => {
   const [u, users_as_u, uAlias] = getTableMetadata(Users, 'u');
   const [p, posts_as_p, pAlias] = getTableMetadata(Posts, 'p');
   const [a, articles_as_a, aAlias] = getTableMetadata(Articles, 'a');
+
+  it('should apply and execute "run" callback', () => {
+    const cb = jest.fn();
+    const sql1 = new MySqlSelectBuilder<Tables>().$setRun(cb).select('field1');
+    const opts = { one: 'three' };
+    const args = [1, 2];
+
+    expect(() => sql1.$run(opts, ...args)).not.toThrow();
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb).toHaveBeenCalledWith('select\n  field1', opts, ...args);
+
+    expect(() => sql1.$if(true, sb => sb).$run(opts, ...args)).not.toThrow();
+    expect(cb).toHaveBeenCalledTimes(2);
+  });
 
   it('should not store state', () => {
     const sb = new MySqlSelectBuilder<Tables>();

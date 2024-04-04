@@ -2,6 +2,7 @@ import { NoSqlActions, TableAndAlias } from '../types.js';
 import { AndOrBuilder, ExpressionBuilder } from './and-or-builder.js';
 import { JoinBuilder } from './join-builder.js';
 import { MySqlSelectBuilder } from './mysql-select-builder.js';
+import { defaultEscapeFn, defaultRunFn, mergeEscapeAndRun } from '../../utils.js';
 
 class DeleteQuery {
   del: string[] = [];
@@ -11,8 +12,8 @@ class DeleteQuery {
   where: string[] = [];
   orderBy: string[] = [];
   limit: string = '';
-  run: (query: string, opts: any, ...args: any[]) => any = (query) => query;
-  escape: (value: any) => string = (value) => value;
+  run = defaultRunFn;
+  escape = defaultEscapeFn;
 }
 
 class DeleteBuilderConfig {
@@ -37,8 +38,7 @@ export class MySqlDeleteBuilder<Tables extends object = any, FromTable extends k
     this.#query.where.push(...(query.where || []));
     this.#query.orderBy.push(...(query.orderBy || []));
     this.#query.limit = query.limit || '';
-    this.#query.escape = query.escape || this.#query.escape;
-    this.#query.run = query.run || this.#query.run;
+    mergeEscapeAndRun(this.#query, query);
     return this.#query;
   }
 

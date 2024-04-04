@@ -1,4 +1,5 @@
 import { OneSqlExpression } from '../../types.js';
+import { defaultEscapeFn, defaultRunFn, mergeEscapeAndRun } from '../../utils.js';
 import { NoSqlActions, TableAndAlias } from '../types.js';
 import { AndOrBuilder } from './and-or-builder.js';
 import { JoinBuilder } from './join-builder.js';
@@ -11,8 +12,8 @@ class UpdateQuery {
   where: string[] = [];
   orderBy: string[] = [];
   limit: string = '';
-  run: (query: string, opts: any, ...args: any[]) => any = (query) => query;
-  escape: (value: any) => string = (value) => value;
+  run = defaultRunFn;
+  escape = defaultEscapeFn;
 }
 
 class UpdateBuilderConfig {
@@ -34,8 +35,7 @@ export class MySqlUpdateBuilder<Tables extends object = any> implements NoSqlAct
     this.#query.where.push(...(query.where || []));
     this.#query.orderBy.push(...(query.orderBy || []));
     this.#query.limit = query.limit || '';
-    this.#query.escape = query.escape || this.#query.escape;
-    this.#query.run = query.run || this.#query.run;
+    mergeEscapeAndRun(this.#query, query);
     return this.#query;
   }
 
@@ -61,13 +61,13 @@ export class MySqlUpdateBuilder<Tables extends object = any> implements NoSqlAct
     joinType: JoinType,
     alias: string,
     selectCallback: SelectCallback,
-    joinCallback: JoinCallback
+    joinCallback: JoinCallback,
   ): MySqlUpdateBuilder<Tables>;
   protected baseJoin(
     joinType: JoinType,
     tableOrAlias: string,
     selectOrJoinCallback: JoinCallback | SelectCallback,
-    joinCallback?: JoinCallback
+    joinCallback?: JoinCallback,
   ) {
     if (joinCallback) {
       const selectBuilder = new MySqlSelectBuilder().$setEscape(this.#query.escape);

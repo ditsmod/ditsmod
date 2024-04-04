@@ -1,5 +1,6 @@
 import { NoSqlActions, TableAndAlias } from '../types.js';
 import { MySqlSelectBuilder } from './mysql-select-builder.js';
+import { defaultEscapeFn, defaultRunFn, mergeEscapeAndRun } from '../../utils.js';
 
 class InsertQuery {
   table: string = '';
@@ -10,8 +11,8 @@ class InsertQuery {
   selectQuery: string = '';
   alias: string = '';
   onDuplicateKeyUpdate: string[] = [];
-  run: (query: string, opts: any, ...args: any[]) => any = (query) => query;
-  escape: (value: any) => string = (value) => value;
+  run = defaultRunFn;
+  escape = defaultEscapeFn;
 }
 
 export class MysqlInsertBuilder<Tables extends object = object> implements NoSqlActions {
@@ -26,8 +27,7 @@ export class MysqlInsertBuilder<Tables extends object = object> implements NoSql
     this.#query.selectQuery = query.selectQuery || '';
     this.#query.alias = query.alias || '';
     this.#query.onDuplicateKeyUpdate.push(...(query.onDuplicateKeyUpdate || []));
-    this.#query.escape = query.escape || this.#query.escape;
-    this.#query.run = query.run || this.#query.run;
+    mergeEscapeAndRun(this.#query, query);
     return this.#query;
   }
 
@@ -44,17 +44,17 @@ export class MysqlInsertBuilder<Tables extends object = object> implements NoSql
   insertFromValues<T extends keyof Tables>(
     table: T,
     fields: (keyof Tables[T])[],
-    values: (string | number)[][]
+    values: (string | number)[][],
   ): MysqlInsertBuilder<Tables>;
   insertFromValues<T extends keyof Tables>(
     table: T,
     fields: (keyof Tables[T])[],
-    valuesCallback: (valuesBuilder: ValuesBuilder) => ValuesBuilder
+    valuesCallback: (valuesBuilder: ValuesBuilder) => ValuesBuilder,
   ): MysqlInsertBuilder<Tables>;
   insertFromValues<T extends keyof Tables>(
     table: T,
     fields: Extract<keyof Tables[T], string>[],
-    arrayOrCallback: (string | number)[][] | ((valuesBuilder: ValuesBuilder) => ValuesBuilder)
+    arrayOrCallback: (string | number)[][] | ((valuesBuilder: ValuesBuilder) => ValuesBuilder),
   ) {
     const insertBuilder = new MysqlInsertBuilder<Tables>();
     const insertQuery = insertBuilder.mergeQuery(this.#query);
@@ -76,7 +76,7 @@ export class MysqlInsertBuilder<Tables extends object = object> implements NoSql
   insertFromSelect<T extends keyof Tables>(
     table: T,
     fields: Extract<keyof Tables[T], string>[],
-    selectCallback: (selectBuilder: MySqlSelectBuilder<Tables>) => MySqlSelectBuilder<Tables>
+    selectCallback: (selectBuilder: MySqlSelectBuilder<Tables>) => MySqlSelectBuilder<Tables>,
   ): MysqlInsertBuilder<Tables> {
     const insertBuilder = new MysqlInsertBuilder<Tables>();
     const insertQuery = insertBuilder.mergeQuery(this.#query);

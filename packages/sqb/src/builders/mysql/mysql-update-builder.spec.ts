@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 
 import { table } from '#decorators/table.js';
 import { getTableMetadata } from '../../utils.js';
@@ -40,26 +41,32 @@ describe('MySqlUpdateBuilder', () => {
   const [a, articles_as_a, aAlias] = getTableMetadata(Articles, 'a');
 
   it('should escape value', () => {
-    const sql1 = new MySqlUpdateBuilder<Tables>()
-      .$setEscape((value) => `'${value}'`)
-      .where({ one: 'two' });
+    const sql1 = new MySqlUpdateBuilder<Tables>().$setEscape((value) => `'${value}'`).where({ one: 'two' });
 
     expect(`${sql1}`).toBe("\nwhere one = 'two'");
   });
 
-  it('multi "where" should join with "and"', () => {
-    const sql1 = new MySqlUpdateBuilder<Tables>()
-      .where({ one: 'two' })
-      .where({ three: 'four' })
-      ;
+  it('should apply and execute "run" callback', () => {
+    const cb = jest.fn();
+    const sql1 = new MySqlUpdateBuilder<Tables>().$setRun(cb).update('articles');
+    const opts = { one: 'three' };
+    const args = [1, 2];
 
-      expect(`${sql1}`).toBe('\nwhere one = two\n  and three = four');
+    expect(() => sql1.$run(opts, ...args)).not.toThrow();
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(cb).toHaveBeenCalledWith('update articles', opts, ...args);
+
+    expect(() => sql1.$if(true, ub => ub).$run(opts, ...args)).not.toThrow();
+    expect(cb).toHaveBeenCalledTimes(2);
+  });
+
+  it('multi "where" should join with "and"', () => {
+    const sql1 = new MySqlUpdateBuilder<Tables>().where({ one: 'two' }).where({ three: 'four' });
+    expect(`${sql1}`).toBe('\nwhere one = two\n  and three = four');
   });
 
   it('$if with "where" should work', () => {
-    const sql1 = new MySqlUpdateBuilder<Tables>()
-      .where({ one: 'two' })
-      .$if(true, (b) => b.where({ three: 'four' }));
+    const sql1 = new MySqlUpdateBuilder<Tables>().where({ one: 'two' }).$if(true, (b) => b.where({ three: 'four' }));
 
     expect(`${sql1}`).toBe('\nwhere one = two\n  and three = four');
   });
@@ -72,7 +79,7 @@ describe('MySqlUpdateBuilder', () => {
       .join(
         'm',
         (selectBuilder) => selectBuilder.select('one').from('table1'),
-        (jb) => jb.on('m.five', '=', u.two).and('m.five', '>', 6).or('m.two', '<', 8)
+        (jb) => jb.on('m.five', '=', u.two).and('m.five', '>', 6).or('m.two', '<', 8),
       )
       .leftJoin(articles_as_a, (jb) => jb.on(p.four, '=', u.two).or(a.seven, '=', 7))
       .$if(true, (selectBuilder) => {
