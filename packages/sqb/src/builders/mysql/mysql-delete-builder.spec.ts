@@ -1,6 +1,5 @@
-
+import { table } from '#decorators/table.js';
 import { getTableMetadata } from '../../utils.js';
-import { table } from '../../decorators/table.js';
 import { MySqlDeleteBuilder } from './mysql-delete-builder.js';
 
 describe('MySqlDeleteBuilder', () => {
@@ -46,7 +45,7 @@ describe('MySqlDeleteBuilder', () => {
       .join(
         'm',
         (s) => s.select('one').from('table1'),
-        (jb) => jb.on('m.five', '=', u.two).and('m.five', '>', 6).or('m.two', '<', 8)
+        (jb) => jb.on('m.five', '=', u.two).and('m.five', '>', 6).or('m.two', '<', 8),
       )
       .leftJoin('articles as a', (jb) => jb.on(p.four, '=', u.two).or(a.seven, '=', 7))
       .$if(true, (selectBuilder) => {

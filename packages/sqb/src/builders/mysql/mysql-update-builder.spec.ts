@@ -1,6 +1,6 @@
 
+import { table } from '#decorators/table.js';
 import { getTableMetadata } from '../../utils.js';
-import { table } from '../../decorators/table.js';
 import { MySqlUpdateBuilder } from './mysql-update-builder.js';
 
 describe('MySqlUpdateBuilder', () => {

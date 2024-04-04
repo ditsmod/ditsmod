@@ -5,7 +5,7 @@ export { RunOptions } from './builders/types.js';
 export { JoinBuilder } from './builders/mysql/join-builder.js';
 export { AndOrBuilder } from './builders/mysql/and-or-builder.js';
 export { TableAndAlias } from './builders/types.js';
-export { table } from './decorators/table.js';
+export { table } from '#decorators/table.js';
 export { getTableMetadata } from './utils.js';
 export { MySqlSelectBuilder } from './builders/mysql/mysql-select-builder.js';
 export { MysqlInsertBuilder, ValuesBuilder } from './builders/mysql/mysql-insert-builder.js';

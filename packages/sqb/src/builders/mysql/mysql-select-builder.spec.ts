@@ -1,7 +1,7 @@
 
+import { table } from '#decorators/table.js';
 import { getTableMetadata } from '../../utils.js';
 import { MySqlSelectBuilder } from './mysql-select-builder.js';
-import { table } from '../../decorators/table.js';
 
 describe('MySqlSelectBuilder', () => {
   @table({ tableName: 'users' })

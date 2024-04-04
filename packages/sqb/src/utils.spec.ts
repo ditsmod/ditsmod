@@ -1,5 +1,5 @@
 
-import { table } from './decorators/table.js';
+import { table } from '#decorators/table.js';
 import { getTableMetadata } from './utils.js';
 
 describe('getTableMetadata()', () => {
