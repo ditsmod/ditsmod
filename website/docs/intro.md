@@ -40,7 +40,7 @@ import { controller, route, Res, rootModule, Application } from '@ditsmod/core';
 import { RoutingModule } from '@ditsmod/routing';
 
 @controller()
-export class ExampleController {
+class ExampleController {
   @route('GET', 'hello')
   tellHello(res: Res) {
     res.send('Hello, World!');
@@ -51,7 +51,7 @@ export class ExampleController {
   imports: [RoutingModule],
   controllers: [ExampleController],
 })
-export class AppModule {}
+class AppModule {}
 
 const app = await new Application().bootstrap(AppModule);
 app.server.listen(3000, '0.0.0.0');
@@ -165,7 +165,7 @@ import { AppModule } from './app/app.module.js';
 import { checkCliAndSetPort } from './app/utils/check-cli-and-set-port.js';
 
 const serverOptions: ServerOptions = { keepAlive: true, keepAliveTimeout: 5000 };
-const app = await new Application().bootstrap(AppModule, { serverOptions });
+const app = await new Application().bootstrap(AppModule, { serverOptions, path: 'api' });
 const port = checkCliAndSetPort(3000);
 app.server.listen(port, '0.0.0.0');
 ```
