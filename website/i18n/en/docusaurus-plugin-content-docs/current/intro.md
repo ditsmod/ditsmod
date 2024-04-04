@@ -22,7 +22,7 @@ Some concepts of Ditsmod architecture are taken from Angular concepts, and DI is
 
 ### ExpressJS vs. Ditsmod
 
-The following two examples show minimal code to run ExpressJS and Ditsmod applications.
+For comparison, the following two examples show the minimal code required to run ExpressJS and Ditsmod applications.
 
 ```js
 import express from 'express';
