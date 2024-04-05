@@ -810,7 +810,7 @@ const service2 = child.get(Service2) as Service2;
 service2.service1 instanceof Service1; // true
 ```
 
-As you can see, `Service2` depends on `Service1`, and the `skipSelf` decorator tells DI: "When creating an instance of `Service1`, skip the injector that will create an instance of `Service2` and immediately call the parent injector". When the parent injector is created, it is passed both required services, but because of `skipSelf`, it will not be able to contact the parent injector because it does not have one. Therefore, the parent injector will not be able to resolve the dependency.
+As you can see, `Service2` depends on `Service1`, and the `skipSelf` decorator tells DI: "When creating an instance of `Service1`, skip the injector that will create an instance of `Service2` and immediately call the parent injector". When the parent injector is created, it is passed both necessary services, but because of `skipSelf` it cannot use the value for `Service1` from its own registry, so it will not be able to resolve the specified dependency.
 
 And when creating a child injector, `Service1` was not passed to it, but it can turn to the parent injector for it. Therefore, the child injector will successfully resolve the `Service2` dependency.
 
