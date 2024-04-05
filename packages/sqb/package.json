@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/sqb",
   "type": "module",
-  "version": "2.0.0-alpha.3",
+  "version": "2.0.0-alpha.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git",
@@ -31,7 +31,9 @@
     "test": "tsc -b tsconfig.test.json && yarn esm-jest",
     "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../node_modules/jest/bin/jest.js"
   },
-  "keywords": ["ditsmod"],
+  "keywords": [
+    "ditsmod"
+  ],
   "author": "",
   "license": "MIT",
   "peerDependencies": {
