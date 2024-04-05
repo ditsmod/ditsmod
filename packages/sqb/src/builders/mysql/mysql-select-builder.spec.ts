@@ -42,15 +42,15 @@ describe('MySqlSelectBuilder', () => {
 
   it('should apply and execute "run" callback', () => {
     const cb = jest.fn();
-    const sql1 = new MySqlSelectBuilder<Tables>().$setRun(cb).select('field1');
+    const sql1 = new MySqlSelectBuilder<Tables>().$setHook(cb).select('field1');
     const opts = { one: 'three' };
     const args = [1, 2];
 
-    expect(() => sql1.$run(opts, ...args)).not.toThrow();
+    expect(() => sql1.$runHook(opts, ...args)).not.toThrow();
     expect(cb).toHaveBeenCalledTimes(1);
     expect(cb).toHaveBeenCalledWith('select\n  field1', opts, ...args);
 
-    expect(() => sql1.$if(true, sb => sb).$run(opts, ...args)).not.toThrow();
+    expect(() => sql1.$if(true, sb => sb).$runHook(opts, ...args)).not.toThrow();
     expect(cb).toHaveBeenCalledTimes(2);
   });
 

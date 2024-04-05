@@ -167,13 +167,13 @@ export class MySqlDeleteBuilder<Tables extends object = any, FromTable extends k
     return b;
   }
 
-  $setRun<R = string, O extends object = any>(callback: (query: string, opts: O, ...args: any[]) => R) {
+  $setHook<R = string, O extends object = any>(callback: (query: string, opts: O, ...args: any[]) => R) {
     const b = new MySqlDeleteBuilder<Tables>();
     b.mergeQuery(this.#query).run = callback;
     return b;
   }
 
-  $run<R = string, O extends object = any>(opts = {} as O, ...args: any[]): Promise<R> {
+  $runHook<R = string, O extends object = any>(opts = {} as O, ...args: any[]): Promise<R> {
     return this.#query.run(this.toString(), opts, ...args);
   }
 

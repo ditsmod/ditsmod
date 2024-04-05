@@ -48,15 +48,15 @@ describe('MySqlUpdateBuilder', () => {
 
   it('should apply and execute "run" callback', () => {
     const cb = jest.fn();
-    const sql1 = new MySqlUpdateBuilder<Tables>().$setRun(cb).update('articles');
+    const sql1 = new MySqlUpdateBuilder<Tables>().$setHook(cb).update('articles');
     const opts = { one: 'three' };
     const args = [1, 2];
 
-    expect(() => sql1.$run(opts, ...args)).not.toThrow();
+    expect(() => sql1.$runHook(opts, ...args)).not.toThrow();
     expect(cb).toHaveBeenCalledTimes(1);
     expect(cb).toHaveBeenCalledWith('update articles', opts, ...args);
 
-    expect(() => sql1.$if(true, ub => ub).$run(opts, ...args)).not.toThrow();
+    expect(() => sql1.$if(true, ub => ub).$runHook(opts, ...args)).not.toThrow();
     expect(cb).toHaveBeenCalledTimes(2);
   });
 
