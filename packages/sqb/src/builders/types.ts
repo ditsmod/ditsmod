@@ -15,7 +15,9 @@ export interface NoSqlActions {
    */
   $setHook(callback: (query: string, ...args: any[]) => any): unknown;
   /**
-   * Executed a hook that was set using the `$setHook()` method.
+   * Executed a hook that was set using the `$setHook()` method. Typically,
+   * this hook is used to implement integration with a database driver. For example,
+   * it can run an external service that makes a query to the database.
    *
    * @param opts Options for an SQL database.
    * @param args Arguments for an SQL query.
