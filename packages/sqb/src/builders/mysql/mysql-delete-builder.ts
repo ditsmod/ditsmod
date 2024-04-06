@@ -136,7 +136,7 @@ export class MySqlDeleteBuilder<Tables extends object = any, FromTable extends k
     return b;
   }
 
-  orderBy(...fields: [any, ...any[]]) {
+  orderBy(...fields: [string, ...string[]]) {
     const b = new MySqlDeleteBuilder<Tables>();
     b.mergeQuery(this.#query).orderBy.push(...fields);
     return b;

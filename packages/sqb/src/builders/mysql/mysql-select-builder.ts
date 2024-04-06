@@ -41,7 +41,7 @@ export class MySqlSelectBuilder<T extends object = any> implements NoSqlActions 
     return this.#query;
   }
 
-  select(...fields: [any, ...any[]]) {
+  select(...fields: [string, ...string[]]) {
     const b = new MySqlSelectBuilder<T>();
     b.mergeQuery(this.#query).select.push(...fields);
     return b;
@@ -128,7 +128,7 @@ export class MySqlSelectBuilder<T extends object = any> implements NoSqlActions 
     return b;
   }
 
-  groupBy(...fields: [any, ...any[]]) {
+  groupBy(...fields: [string, ...string[]]) {
     const b = new MySqlSelectBuilder<T>();
     b.mergeQuery(this.#query).groupBy.push(...fields);
     return b;
@@ -142,7 +142,7 @@ export class MySqlSelectBuilder<T extends object = any> implements NoSqlActions 
     return b;
   }
 
-  orderBy(...fields: [any, ...any[]]) {
+  orderBy(...fields: [string, ...string[]]) {
     const b = new MySqlSelectBuilder<T>();
     b.mergeQuery(this.#query).orderBy.push(...fields);
     return b;

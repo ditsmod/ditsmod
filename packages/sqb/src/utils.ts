@@ -29,7 +29,7 @@ export function getTableMetadata<T extends Class>(Cls: T, alias: string, without
   return [newObj, tableNameWithAlias, alias];
 }
 
-export type TableMetadata<T extends Class> = [InstanceType<T>, string, string];
+export type TableMetadata<T extends Class> = [Record<keyof InstanceType<T>, string>, string, string];
 export const defaultRunFn: (query: string, opts: any, ...args: any[]) => any = (query) => query;
 export const defaultEscapeFn: (value: any) => string = (value) => value;
 
