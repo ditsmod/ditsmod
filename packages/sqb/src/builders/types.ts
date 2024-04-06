@@ -6,9 +6,6 @@ export interface NoSqlActions {
   /**
    * Constructs an additional part of the SQL query that is passed to the `callback`
    * parameter if the `condition` parameter is a true expression.
-   *
-   * @param condition If `true` 
-   * @param callback
    */
   $if(condition: any, callback: (cb: unknown) => unknown): unknown;
   /**

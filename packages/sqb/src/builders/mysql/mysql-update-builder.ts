@@ -152,7 +152,7 @@ export class MySqlUpdateBuilder<Tables extends object = any> implements NoSqlAct
     return updateBuilder;
   }
 
-  orderBy(...fields: [string, ...string[]]) {
+  orderBy(...fields: [any, ...any[]]) {
     const b = new MySqlUpdateBuilder<Tables>();
     b.mergeQuery(this.#query).orderBy.push(...fields);
     return b;
