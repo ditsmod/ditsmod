@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/sqb",
   "type": "module",
-  "version": "2.0.0-alpha.4",
+  "version": "2.0.0-alpha.5",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git",
@@ -18,7 +18,8 @@
       "default": "./package.json"
     },
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./src/index.ts",
+      "import": "./dist/index.js",
       "default": "./dist/index.js"
     }
   },
