@@ -194,14 +194,14 @@ export class SecondService {
 
 Коли використовується `inject`, DI бере до уваги лише переданий в нього токен. В даному разі DI ігнорує тип змінної - `InterfaceOfItem[]`, використовуючи в якості токена текстовий рядок `some-string`. Таким чином, DI дає можливість розділяти токен та тип змінної, тому в конструкторі можна отримати будь-який тип залежності, включаючи різні типи масивів чи enum.
 
-Токеном може бути референс на клас, об'єкт чи функцію, також у якості токену можна використовувати текстові та числові значення. Для довгої форми вказання залежностей, у якості токена рекомендуємо використовувати інстанс класу `InjectionToken<T>`, оскільки клас `InjectionToken<T>` має параметризований тип `T`, за допомогою якого можна вказати тип даних, який асоціюється з даним токеном:
+Токеном може бути референс на клас, об'єкт чи функцію, також у якості токену можна використовувати текстові, числові значення, та символи. Для довгої форми вказання залежностей, у якості токена рекомендуємо використовувати інстанс класу `InjectionToken<T>`, оскільки клас `InjectionToken<T>` має параметризований тип `T`, за допомогою якого можна вказати тип даних, який асоціюється з даним токеном:
 
 ```ts {5,14}
 // tokens.ts
 import { InjectionToken } from '@ditsmod/core';
 import { InterfaceOfItem } from './types.js';
 
-const SOME_TOKEN = new InjectionToken<InterfaceOfItem[]>('InterfaceOfItem');
+const SOME_TOKEN = new InjectionToken<InterfaceOfItem[]>('SOME_TOKEN');
 
 // second-service.ts
 import { injectable, inject } from '@ditsmod/core';
@@ -235,8 +235,8 @@ import { Class } from '@ditsmod/core';
 type Provider = Class<any> |
 { token: any, useClass: Class<any>, multi?: boolean } |
 { token: any, useValue: any, multi?: boolean } |
-{ token?: any, useFactory: (...args: any[]) => any, deps: any[], multi?: boolean } |
 { token?: any, useFactory: [Class<any>, Class<any>.prototype.methodName], multi?: boolean } |
+{ token?: any, useFactory: (...args: any[]) => any, deps: any[], multi?: boolean } |
 { token: any, useToken: any, multi?: boolean }
 ```
 
