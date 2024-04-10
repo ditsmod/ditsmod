@@ -107,15 +107,18 @@ export class ResolvedProvider {
   ) {}
 }
 
-export interface RegistryOfInjector {
+export class RegistryOfInjector {
   [id: number]: ResolvedProvider;
 }
 
 /**
  * Returns new class with `RegistryOfInjector` interface.
  */
-export function getNewRegistry(): Class<RegistryOfInjector> {
-  return class RegistryOfInjector {
+export function getNewRegistry(): typeof RegistryOfInjector {
+  return class NewRegistryOfInjector {
+    /**
+     * This ID taken from `resolvedProvider.dualKey.id`.
+     */
     [id: number]: ResolvedProvider;
   };
 }

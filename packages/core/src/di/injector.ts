@@ -82,13 +82,13 @@ expect(car.engine instanceof Engine).toBe(true);
 export class Injector {
   #parent: Injector | null;
   #registry: RegistryOfInjector;
-  #Registry: Class<RegistryOfInjector>;
+  #Registry: typeof RegistryOfInjector;
 
   /**
    * @param injectorName Injector name. Useful for debugging.
    */
   constructor(
-    Registry: Class<RegistryOfInjector>,
+    Registry: typeof RegistryOfInjector,
     parent?: Injector,
     protected readonly injectorName?: string,
   ) {
@@ -141,8 +141,8 @@ console.log(providers[0].resolvedFactories[0].dependencies);
    */
   static prepareRegistry(
     providers: ResolvedProvider[],
-    Registry?: Class<RegistryOfInjector>,
-  ): Class<RegistryOfInjector> {
+    Registry?: typeof RegistryOfInjector,
+  ): typeof RegistryOfInjector {
     if (!Registry) {
       Registry = getNewRegistry();
     }
