@@ -40,7 +40,7 @@ Exporting controllers does not make sense, since exporting only applies to provi
 
 By exporting tokens from a host module in the `featureModule` decorator metadata, you are declaring that the corresponding providers can be used in consumer modules if they import this host module.
 
-## Export providers from `rootModule`
+## Exporting providers from `rootModule`
 
 Exporting providers from the root module means that these providers will automatically be added to every module in the application:
 
@@ -58,11 +58,11 @@ import { OtherModule } from './other.module.js';
 export class AppModule {}
 ```
 
-In this case, `SomeService` will be added to absolutely all application modules at the route level. As you can see, you can also export entire modules. In this case, all providers exported from `OtherModule` will also be added to each application module.
+In this case, `SomeService` will be added to all application modules at the route level. As you can see, you can also export entire modules. In this case, all providers exported from `OtherModule` will also be added to each application module.
 
 ## Import module
 
-You cannot import a single provider into a module, but you can import an entire module with all the providers and [extensions][2] exported in it:
+You cannot import a single provider into a module, but you can import an entire module with all the providers and [extensions][2] exported from it:
 
 ```ts {6}
 import { featureModule } from '@ditsmod/core';
@@ -76,7 +76,7 @@ import { FirstModule } from './first.module.js';
 export class SecondModule {}
 ```
 
-For example, if `SomeService` is exported from the `FirstModule`, then this service can now be used in the `SecondModule` in services and controllers. However, if `FirstModule` has controllers, they will be ignored in this import form. For Ditsmod to take into account controllers from an imported module, the module must be imported with a prefix passed in `path`:
+For example, if `SomeService` is exported from the `FirstModule`, then this service can now be used in the `SecondModule`. However, if `FirstModule` has controllers, they will be ignored in this import form. For Ditsmod to take into account controllers from an imported module, the module must be imported with a prefix passed in `path`:
 
 ```ts {4}
 // ...
@@ -161,7 +161,7 @@ Now the object returned by this method can be imported as follows:
 export class SecondModule {}
 ```
 
-In this case, the reduction of the code almost did not occur compared to the previous example, when we imported the object directly, and the readability also worsened. So when writing static import methods, consider whether they simplify the code.
+In this case, the reduction of the code almost did not occur compared to the previous example, when we imported the object directly, and the readability also worsened. So when you write static methods for import, consider whether they simplify the code.
 
 In order for TypeScript to control exactly what the static import method returns, it is recommended to use the `ModuleWithParams` interface:
 
@@ -227,11 +227,10 @@ Suppose `Provider3` has a dependency on `Provider1` and `Provider2`. What will D
 
 ## Appending of the module
 
-If you don't need to import providers and [extensions][2] into the current module, but just append the external module to the prefix of the current module, you can use the `appends` array:
+If you don't need to import providers and [extensions][2] into the current module, but just append the external module to the path prefix of the current module, you can use the `appends` array:
 
-```ts {6}
+```ts {5}
 import { featureModule } from '@ditsmod/core';
-
 import { FirstModule } from './first.module.js';
 
 @featureModule({
@@ -240,9 +239,9 @@ import { FirstModule } from './first.module.js';
 export class SecondModule {}
 ```
 
-In this case, if `SecondModule` has a prefix, it will be used as a prefix for all routes contained in `FirstModule`. Only those modules with controllers can be appending.
+In this case, if `SecondModule` has a path prefix, it will be used as a prefix for all routes contained in `FirstModule`. Only those modules with controllers can be appended.
 
-You can also attach an additional prefix to `FirstModule`:
+You can also attach an additional path prefix to `FirstModule`:
 
 ```ts {3}
 // ...
