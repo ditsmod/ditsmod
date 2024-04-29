@@ -12,5 +12,5 @@ export function getProviderName(provider: any) {
   } else {
     token = provider;
   }
-  return `${token.name || token}`;
+  return typeof token == 'symbol' ? token.toString() : `${token.name || token}`;
 }
