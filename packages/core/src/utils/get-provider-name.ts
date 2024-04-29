@@ -12,6 +12,5 @@ export function getProviderName(provider: any) {
   } else {
     token = provider;
   }
-  const tokenName = `${token.name || token}`;
-  return tokenName.replace('InjectionToken ', '');
+  return `${token.name || token}`;
 }

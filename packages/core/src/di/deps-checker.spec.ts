@@ -329,7 +329,7 @@ describe("null as provider's value", () => {
       }
       const parent = Injector.resolveAndCreate([]);
       const child = parent.resolveAndCreateChild([A, { token, useValue: "child's value" }]);
-      const msg = 'No provider for InjectionToken token! (A -> InjectionToken token)';
+      const msg = 'No provider for token! (A -> token)';
       expect(() => DepsChecker.check(child, A)).toThrow(msg);
       expect(spy).toHaveBeenCalledTimes(0);
     });

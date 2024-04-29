@@ -584,7 +584,7 @@ describe('injector', () => {
   it('should throw when the aliased provider does not exist', () => {
     const carToken = new InjectionToken('carToken');
     const injector = createInjector([{ token: carToken, useToken: SportsCar }]);
-    const msg = 'No provider for SportsCar! (InjectionToken carToken -> SportsCar)';
+    const msg = 'No provider for SportsCar! (carToken -> SportsCar)';
     expect(() => injector.get(carToken)).toThrow(msg);
   });
 
@@ -1055,7 +1055,7 @@ describe("null as provider's value", () => {
     }
     const parent = Injector.resolveAndCreate([]);
     const child = parent.resolveAndCreateChild([A, { token, useValue: "child's value" }]);
-    const msg = 'No provider for InjectionToken token! (A -> InjectionToken token)';
+    const msg = 'No provider for token! (A -> token)';
     expect(() => child.get(A)).toThrow(msg);
   });
 });
