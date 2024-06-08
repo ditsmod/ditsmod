@@ -8,7 +8,7 @@ sidebar_position: 2
 
 Let's first get a general idea of how [Dependency Injection][1] (or just DI) works, and then look at each important component in detail.
 
-It's probably easiest to understand exactly what DI does by looking at examples. In this case, we need an instance of the `Service3` class and its `doSomething()` method:
+It's probably easiest to understand exactly what DI does by looking at examples. Let's start with examples where DI is not used. In this case, we need an instance of the `Service3` class and its `doSomething()` method:
 
 ```ts title='./services.ts'
 export class Service1 {}
