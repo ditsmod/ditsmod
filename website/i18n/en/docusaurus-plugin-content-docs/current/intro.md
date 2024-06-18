@@ -59,7 +59,7 @@ app.server.listen(3000, '0.0.0.0');
 
 Looking at the amount of code, you might think that Ditsmod is slower than ExpressJS because of its verbosity. But in fact, only Ditsmod's cold start is slightly slower (it starts in 18ms on my laptop, while ExpressJS starts in 4ms). In terms of request processing speed, [Ditsmod is more than twice as fast as ExpressJS][14].
 
-More application examples are available in the [examples][4] folder and in the [RealWorld][13] repository.
+More application examples are available in the [Ditsmod][4] repository, as well as in the [RealWorld][13] repository.
 
 ## Prerequisites
 
