@@ -113,7 +113,7 @@ Note that there are four config files for TypeScript in the `ditsmod/seed` repos
 
 - `tsconfig.json` - the basic configuration used by your IDE (in most cases it is probably VS Code).
 - `tsconfig.build.json` - this configuration is used to compile the code from the `src` directory to the `dist` directory, it is intended for application code.
-- `tsconfig.test.json` - this configuration is used to compile end-to-end tests.
+- `tsconfig.e2e.json` - this configuration is used to compile end-to-end tests.
 - `tsconfig.unit.json` - this configuration is used to compile unit tests.
 
 Also, note that since `ditsmod/seed` is declared as an EcmaScript Module (ESM), you can use [native Node.js aliases][18] to shorten file paths. This is analogous to `compilerOptions.paths` in `tsconfig`. Such aliases are declared in `package.json` in the `imports` field:
@@ -124,7 +124,7 @@ Also, note that since `ditsmod/seed` is declared as an EcmaScript Module (ESM), 
 },
 ```
 
-Now you can use it, for example in the `test` folder, like this:
+Now you can use it, for example in the `e2e` folder, like this:
 
 ```ts
 import { AppModule } from '#app/app.module.js';
