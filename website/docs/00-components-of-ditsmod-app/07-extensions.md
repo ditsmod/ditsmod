@@ -34,9 +34,8 @@ interface Extension<T> {
 
 Метод `init()` певного розширення може викликатись стільки разів, скільки разів він прописаний у тілі інших розширень, які залежать від роботи даного розширення, +1. Цю особливість необхідно обов'язково враховувати, щоб не відбувалась зайва ініціалізація:
 
-```ts {9-11}
-import { injectable } from '@ditsmod/core';
-import { Extension } from '@ditsmod/core';
+```ts {8-10}
+import { injectable, Extension } from '@ditsmod/core';
 
 @injectable()
 export class MyExtension implements Extension<void> {

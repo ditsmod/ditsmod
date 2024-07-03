@@ -34,9 +34,8 @@ Each extension needs to be registered, this will be mentioned later, and now let
 
 The `init()` method of a given extension can be called as many times as it is written in the body of other extensions that depend on the operation of that extension, +1. This feature must be taken into account to avoid unnecessary initialization:
 
-```ts {9-11}
-import { injectable } from '@ditsmod/core';
-import { Extension } from '@ditsmod/core';
+```ts {8-10}
+import { injectable, Extension } from '@ditsmod/core';
 
 @injectable()
 export class MyExtension implements Extension<void> {
