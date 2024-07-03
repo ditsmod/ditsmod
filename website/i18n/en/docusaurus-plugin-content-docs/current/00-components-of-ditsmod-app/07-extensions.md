@@ -6,11 +6,19 @@ sidebar_position: 7
 
 ## The purpose of Ditsmod extension
 
-The extension does its work before creating HTTP request handlers, and it can dynamically add [providers][9]. To modify or extend the behavior of the application, an extension typically uses metadata attached to certain decorators. Extensions can be initialized asynchronously, and can depend on each other.
+Typically, an extension does its work before creating HTTP request handlers. To modify or extend the behavior of an application, an extension typically uses static metadata attached to certain decorators. On the other hand, an extension can also dynamically add metadata of the same type as static metadata collected from decorators. Extensions can be initialized asynchronously, and can depend on each other.
+
+Essentially, different extensions work on a multidimensional array of configuration data (metadata). This array reflects the structure of the application:
+
+1. it is divided into modules;
+2. each module contains controllers or providers;
+3. each controller has one or more routes.
+
+Typically, each extension makes some modifications to this array, like in a pipeline, and eventually, this array is used by the final extension, which creates routes and sets up the appropriate HTTP request handlers. However, extensions don't necessarily have to work on configuration and setting up HTTP request handlers; they can also write logs, collect metrics for monitoring, or perform any other tasks.
 
 For example, the [@ditsmod/body-parser][5] module has an extension that dynamically adds an HTTP interceptor for parsing the request body to any route that has the appropriate method (POST, PATCH, PUT). It does this once before creating HTTP request handlers, so there is no need to test the need for such parsing for each request.
 
-Another example. The [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without the extension working, Ditsmod will ignore the metadata from this new decorator.
+Another example. The [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without the extension working, Ditsmod will ignore the metadata from this new decorator. The extension from this module receives the aforementioned configuration array, finds the metadata from the `@oasRoute` decorator, and interprets this metadata by adding other metadata that will be used by another extension to set up routes.
 
 ## What is "Ditsmod extension"
 
@@ -38,7 +46,7 @@ The `init()` method of a given extension can be called as many times as it is wr
 import { injectable, Extension } from '@ditsmod/core';
 
 @injectable()
-export class MyExtension implements Extension<void> {
+export class MyExtension implements Extension<any> {
   private data: any;
 
   async init() {
@@ -60,7 +68,7 @@ You can see a simple example in the folder [09-one-extension][1].
 
 ## Extensions groups
 
-Any extension must be a member of one or more groups. The concept of **extensions groups** is similar to the concept of an [interceptors][10] group, but an interceptors group works on a specific route, while extensions groups prepare metadata for HTTP request handlers. As a rule, extensions in a particular group return metadata that has the same basic interface.
+Any extension must be a member of one or more groups. The concept of an **extensions group** is similar to the concept of an [interceptors][10] group. Note that  interceptors group performs a specific type of work: augmenting the processing of an HTTP request for a particular route. Similarly, each extensions group represents a distinct type of work on specific metadata. As a rule, extensions in a particular group return metadata that has the same basic interface. Essentially, extension groups allow abstraction from specific extensions; instead, they make only the type of work performed within these groups important.
 
 For example, in `@ditsmod/routing` there is a group `ROUTES_EXTENSIONS` which by default includes a single extension that processes metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can import the `@ditsmod/openapi` module, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for establishing the router's routes. These extensions are grouped together because they configure routes and their `init()` methods return data with the same basic interface.
 
@@ -118,7 +126,7 @@ The `nextToken` property is used when you want your extension group to run befor
 
 ```ts
 import { featureModule, ROUTES_EXTENSIONS } from '@ditsmod/core';
-import { MY_EXTENSIONS, MyExtension } from './my.extension.js';
+import { MyExtension, MY_EXTENSIONS } from './my.extension.js';
 
 @featureModule({
   extensions: [
@@ -134,8 +142,7 @@ If it doesn't matter which group of extensions your extension will work in front
 
 ```ts
 import { featureModule } from '@ditsmod/core';
-
-import { MY_EXTENSIONS, MyExtension } from './my.extension.js';
+import { MyExtension, MY_EXTENSIONS } from './my.extension.js';
 
 @featureModule({
   extensions: [
