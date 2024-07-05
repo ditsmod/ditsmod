@@ -31,7 +31,7 @@ export class TestModuleManager extends ModuleManager {
   }
 
   /**
-   * This `logLevel` is set after the HTTP request handlers are installed.
+   * This log level is set after the HTTP request handlers are installed.
    * It does not cover application initialization time.
    */
   setLogLevel(logLevel: OutputLogLevel) {
