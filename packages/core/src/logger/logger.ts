@@ -8,12 +8,12 @@ export class LoggerConfig {
 /**
  * The log level for a particular message. This particular message may or may not be logged,
  * it all depends on the `OutputLogLevel`.
- * This type is identical to the `LogLevel` type, except for the `off` level.
+ * This type is identical to the `OutputLogLevel` type, except for the `off` level.
  * It is intended to define a list of logger methods that are intended for logging.
  */
 export type InputLogLevel = Exclude<OutputLogLevel, 'off'>;
 /**
- * The Log level that is set for all log messages that should be logged at this time.
+ * The log level to set for all messages that should be logged at this time.
  *
  * Borrowed from [log4j log levels](https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Level.html)
  */
