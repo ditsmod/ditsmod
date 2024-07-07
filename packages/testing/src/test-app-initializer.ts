@@ -1,5 +1,4 @@
 import { AppInitializer, OutputLogLevel, MetadataPerMod1 } from '@ditsmod/core';
-
 import { overrideLogLevel } from './utils.js';
 
 export class TestAppInitializer extends AppInitializer {
