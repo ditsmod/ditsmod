@@ -59,7 +59,7 @@ export class ModuleManager {
   constructor(protected systemLogMediator: SystemLogMediator) {}
 
   /**
-   * Creates a snapshot of NormalizedModuleMetadata for the root module, stores locally and returns it.
+   * Creates a snapshot of `NormalizedModuleMetadata` for the root module, stores locally and returns it.
    * You can get the result this way: `moduleManager.getMetadata('root')`.
    */
   scanRootModule(appModule: ModuleType) {
@@ -73,7 +73,7 @@ export class ModuleManager {
   }
 
   /**
-   * Returns a snapshot of NormalizedModuleMetadata for a module.
+   * Returns a snapshot of `NormalizedModuleMetadata` for a module.
    */
   scanModule(modOrObj: ModuleType | ModuleWithParams) {
     const meta = this.scanRawModule(modOrObj);
@@ -81,7 +81,7 @@ export class ModuleManager {
   }
 
   /**
-   * Returns a snapshot of NormalizedModuleMetadata for given module or module ID.
+   * Returns a snapshot of `NormalizedModuleMetadata` for given module or module ID.
    */
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,

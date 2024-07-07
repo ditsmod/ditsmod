@@ -28,7 +28,7 @@ export class Application {
         const moduleManager = this.scanRootModule(appModule);
         const appInitializer = this.getAppInitializer(moduleManager);
         await this.bootstrapApplication(appInitializer);
-        await this.createServerAndListen(appInitializer, resolve);
+        await this.createServerAndBindToListening(appInitializer, resolve);
       } catch (err: any) {
         this.systemLogMediator.internalServerError(this, err, true);
         this.flushLogs();
@@ -72,7 +72,7 @@ export class Application {
     this.systemLogMediator = appInitializer.systemLogMediator;
   }
 
-  protected async createServerAndListen(appInitializer: AppInitializer, resolve: AnyFn) {
+  protected async createServerAndBindToListening(appInitializer: AppInitializer, resolve: AnyFn) {
     this.flushLogs();
     const server = await this.createServer(appInitializer.requestListener);
     server.on('listening', () => {
