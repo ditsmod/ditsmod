@@ -4,7 +4,7 @@ sidebar_position: 9
 
 # Collision of providers
 
-Imagine you have `Module3` where you imported `Module2` and `Module1`. You did this import because you need `Service2` and `Service1` from these modules, respectively. You are viewing how these services work, but for some reason `Service1` does not work as expected. You start debug and it turns out that `Service1` exports both modules: `Module2` and `Module1`. You expected that `Service1` would only be exported from `Module1`, but the version exported from `Module2` actually worked.
+Imagine you have `Module3` where you imported `Module2` and `Module1`. You did this import because you need `Service2` and `Service1` from these modules, respectively. You are viewing how these services work, but for some reason `Service1` does not work as expected. You start debugging and it turns out that `Service1` is exported from both modules: `Module2` and `Module1`. You expected that `Service1` would only be exported from `Module1`, but the version exported from `Module2` actually worked.
 
 To prevent this from happening, if you import two or more modules that export non-identical providers with the same token, Ditsmod will throw the following error:
 
