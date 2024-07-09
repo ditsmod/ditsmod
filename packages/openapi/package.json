@@ -41,14 +41,14 @@
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172",
   "dependencies": {
     "@ts-stack/openapi-spec": "^3.1.5",
-    "swagger-ui-dist": "^5.12.3",
-    "yaml": "^2.3.4"
+    "swagger-ui-dist": "^5.17.14",
+    "yaml": "^2.4.5"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.52.0",
     "@ditsmod/routing": "^2.2.0"
   },
   "devDependencies": {
-    "@types/swagger-ui-dist": "^3.30.4"
+    "@types/swagger-ui-dist": "^3.30.5"
   }
 }

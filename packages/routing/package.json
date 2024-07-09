@@ -36,7 +36,7 @@
     "typescript"
   ],
   "devDependencies": {
-    "find-my-way": "^8.1.0",
+    "find-my-way": "^8.2.0",
     "koa-tree-router": "^0.12.1",
     "trek-router": "^1.2.0"
   },
