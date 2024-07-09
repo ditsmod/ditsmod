@@ -18,11 +18,14 @@ routes.set('/three', function() { /** request processing... **/ });
 
 Right after Node.js receives an HTTP request and passes it to Ditsmod, the request URL is split into two parts separated by a question mark (if present). The first part always contains the so-called _path_, while the second part contains the _query parameters_, if the URL included a question mark.
 
-The router's task is to find the HTTP request handler by _path_ and invoke it. In a very simplified form, this process can be imagined as follows:
+The router's task is to find the HTTP request handler by _path_. In a very simplified form, this process can be imagined as follows:
 
 ```ts
 const path = '/two';
 const handle = routes.get(path);
+
+// ...
+// And then this handler is called in a function that listens for HTTP requests.
 if (handle) {
   handle();
 }
@@ -103,15 +106,15 @@ Of course, other instances of classes can be requested in the parameters, and th
 The access modifier in the constructor can be any (private, protected or public), but without a modifier - `res` will be just a simple parameter with visibility only in the constructor.
 :::
 
-To obtain `pathParams` or `queryParams`, we need to use the `inject` decorator and the `PATH_PARAMS` and `QUERY_PARAMS` tokens:
+To obtain `pathParams` or `queryParams`, you need to use the `inject` decorator and the `PATH_PARAMS` and `QUERY_PARAMS` tokens:
 
 ```ts {7-8}
 import { controller, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
 
 @controller()
 export class SomeController {
-  @route('POST', 'some-url/:param1/:param2')
-  postSomeUrl(
+  @route('GET', 'some-url/:param1/:param2')
+  method1(
     @inject(PATH_PARAMS) pathParams: AnyObj,
     @inject(QUERY_PARAMS) queryParams: AnyObj,
     res: Res
@@ -148,7 +151,7 @@ You may also be interested in [how to get the HTTP request body][5].
 
 ### The controller singleton
 
-Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the constructor, Ditsmod will throw an error:
+Because the controller is instantiated in this mode only once, you will not be able to query in its methods for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the methods, Ditsmod will throw an error:
 
 ```ts {3,6}
 import { controller, route, RequestContext } from '@ditsmod/core';

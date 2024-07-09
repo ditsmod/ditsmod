@@ -75,7 +75,7 @@ export class Service3 {
 
 It's important to understand that the `injectable` decorator is only needed because there is no way in JavaScript code to specify the type of the parameter in the constructor, as it is done in TypeScript code. As long as this decorator doesn't take any parameters in Ditsmod, it's not used as intended in JavaScript for class-level decorators. The role of the `injectable` decorator is very simple - its presence tells the TypeScript compiler that it is necessary to transfer to the JavaScript code those metadata that are in the TypeScript code in the class constructors. For example, the presence of the `injectable` decorator over the `Service2` class will signal to the TypeScript compiler that it should remember `Service1` as the first parameter in the constructor. This metadata is exported into JavaScript code using the TypeScript compiler and stored using the methods of the `Reflect` class from the `reflect-metadata` library.
 
-Later, when we pass classes with stored metadata to DI (more on this later), this metadata can be read by DI and used to automatically substitute the corresponding class instances, so we can request an instance of `Service3` in the constructor of any class in our program:
+Later, when we pass classes with stored metadata to DI, this metadata can be read by DI and used to automatically substitute the corresponding class instances, so we can request an instance of `Service3` in the constructor of any class in our program:
 
 ```ts {4,6,9} title='./some.service.ts'
 import { injectable } from '@ditsmod/core';
@@ -227,7 +227,7 @@ token2 -> value100
 
 As you might guess, when DI resolves a dependency, it takes tokens from the constructor parameters of a particular class and looks for their values in the DI registry. If all the required tokens are found in the registry, their values are passed to the constructor, successfully resolving the dependency of that class.
 
-DI creates values in the registry for each token using what are called **providers**. So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. Therefore, if you specified a certain dependency in a class, but did not pass the corresponding provider, DI will not be able to resolve that dependency. The [next section][100] discusses how providers can be passed to DI. A provider can be either a class or an object:
+DI creates values in the registry for each token using what are called **providers**. A provider can be either a class or an object:
 
 ```ts {3-8}
 import { Class } from '@ditsmod/core';
@@ -240,8 +240,9 @@ type Provider = Class<any> |
 { token: any, useToken: any, multi?: boolean }
 ```
 
-Note that the token for the provider with the `useFactory` property is optional because DI can use a function or method of the specified class as the token.
+_Note that the token for the provider with the `useFactory` property is optional because DI can use a function or method of the specified class as the token._
 
+So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. Therefore, if you specified a certain dependency in a class, but did not pass the corresponding provider, DI will not be able to resolve that dependency. The [next section][100] discusses how providers can be passed to DI.
 
 If the provider is represented as an object, the following values can be passed to its properties:
 
