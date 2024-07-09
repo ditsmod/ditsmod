@@ -44,6 +44,10 @@ export type ModulesMapId = Map<string, ModuleType | ModuleWithParams>;
 type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 type ModuleId = string | ModuleType | ModuleWithParams;
 
+/**
+ * Scans modules, normalizes, stores and checks their metadata for correctness,
+ * adds and removes imports of one module into another.
+ */
 @injectable()
 export class ModuleManager {
   protected map: ModulesMap = new Map();
@@ -60,7 +64,7 @@ export class ModuleManager {
 
   /**
    * Creates a snapshot of `NormalizedModuleMetadata` for the root module, stores locally and returns it.
-   * You can get the result this way: `moduleManager.getMetadata('root')`.
+   * You can also get the result this way: `moduleManager.getMetadata('root')`.
    */
   scanRootModule(appModule: ModuleType) {
     if (!getModuleMetadata(appModule, true)) {
