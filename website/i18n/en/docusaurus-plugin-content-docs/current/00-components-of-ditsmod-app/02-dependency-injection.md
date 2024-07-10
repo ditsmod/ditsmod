@@ -173,7 +173,7 @@ export class SecondService {
 }
 ```
 
-This implies that `FirstService` is a class, and because of this it can be used both as a TypeScript type and as a **token**. Basically, a token is an identifier that is associated with the corresponding dependency. It is very important to understand that the token usage mechanism itself is required for JavaScript runtime, therefore, as tokens, you cannot use the types that we declare in TypeScript code with the keywords `interface`, `type`, `enum`, etc., because they don't exist in JavaScript code.
+This implies that `FirstService` is a class, and because of this it can be used both as a TypeScript type and as a **token**. Basically, a token is an identifier that is associated with the corresponding dependency. It is very important to understand that the token usage mechanism itself is required for JavaScript runtime, therefore, as tokens, you cannot use the types that you declare in TypeScript code with the keywords `interface`, `type`, `enum`, etc., because they don't exist in JavaScript code.
 
 Unlike a class, an array cannot be used both as a TypeScript type and as a token at the same time. On the other hand, a token can have a completely irrelevant data type relative to the dependency it is associated with, so for example a string token type can be associated with a dependency that has any TypeScript type, including arrays, interfaces, enums, etc.
 
@@ -192,7 +192,7 @@ export class SecondService {
 }
 ```
 
-When `inject` is used, DI only considers the token passed to it. In this case, DI ignores the variable type - `InterfaceOfItem[]` - and uses the `some-string` as the token. Thus, DI allows you to separate token and variable type, so you can get any kind of dependency in the constructor, including different types of arrays or enums.
+When `inject` is used, DI only considers the token passed to it. In this case, DI ignores the variable type - `InterfaceOfItem[]` - and uses the `some-string` as the token. In other words, DI uses `some-string` as the key to find the corresponding value for the dependency of type `InterfaceOfItem[]`. Thus, DI allows you to separate token and variable type, so you can get any kind of dependency in the constructor, including different types of arrays or enums.
 
 A token can be a reference to a class, object or function, and text, numeric values, and symbols can also be used as a token. For the long form of specifying dependencies, we recommend using an instance of the `InjectionToken<T>` class as the token, since the `InjectionToken<T>` class has a parameterized type `T` that can be used to specify the type of data associated with that token:
 
@@ -240,7 +240,7 @@ type Provider = Class<any> |
 { token: any, useToken: any, multi?: boolean }
 ```
 
-_Note that the token for the provider with the `useFactory` property is optional because DI can use a function or method of the specified class as the token._
+*_note that the token for the provider with the `useFactory` property is optional because DI can use a function or method of the specified class as the token._
 
 So, in order for DI to resolve a certain dependency, the corresponding provider must first be passed to the DI registry, and then DI will issue the value of that provider by its token. Therefore, if you specified a certain dependency in a class, but did not pass the corresponding provider, DI will not be able to resolve that dependency. The [next section][100] discusses how providers can be passed to DI.
 
