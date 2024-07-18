@@ -290,7 +290,7 @@ If the provider is represented as an object, the following values can be passed 
     { token: 'token3', useFactory: fn1, deps: [Service1, Service2] }
     ```
 
-    Please note that it is the provider _tokens_ that are passed to the `deps` property, and DI perceives them as tokens, not providers. That is, for these tokens, the DI registry will still need to [transfer the corresponding providers][100]. Also note that no parameter decorators are passed via `deps` (such as `fromSelf` and `skipSelf`). If your factory requires parameter decorators, you need to use the first form of passing arguments to `useFactory`.
+    Please note that it is the provider _tokens_ that are passed to the `deps` property, and DI perceives them as tokens, not providers. That is, for these tokens, the DI registry will still need to [transfer the corresponding providers][100]. Also note that no parameter decorators are passed via `deps` (for example `optional`, `skipSelf`, etc.). If your factory requires parameter decorators, you need to use the first form of passing arguments to `useFactory`.
 
 - `useToken` - another token is passed to this provider property. If you write the following:
 
