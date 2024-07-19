@@ -481,6 +481,63 @@ const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
 
 В даному разі, якщо `SomeService` матиме залежність від `OtherService`, DI зможе створити інстанс `SomeService`, оскільки інжектор на рівні роуту може отримати інстанс `OtherService` від свого батьківського інжектора на рівні модуля. А от якщо навпаки - `OtherService` матиме залежність від `SomeService` - DI не зможе створити інстансу `OtherService`, оскільки інжектор на рівні модуля не бачить свого дочірнього інжектора на рівні роуту.
 
+В наступному прикладі показано чотири різні варіанти запиту інстансу `SomeService` за допомогою методу `injectorPer*.get()` напряму або через параметри методу класу:
+
+```ts
+injectorPerRou.get(SomeService); // Injector per route.
+// OR
+injectorPerReq.get(SomeService); // Injector per request.
+// OR
+@injectable()
+class Service1 {
+  constructor(private someService: SomeService) {} // Constructor's parameters.
+}
+// OR
+@controller()
+class controller1 {
+  @route('GET', 'some-path')
+  method1(someService: SomeService) {} // Method's parameters.
+}
+```
+
+Тут важливо пам'ятати про наступне правило: значення для `SomeService` створюється в тому інжекторі, в який передається даний провайдер, причому це значення створюється лише один раз при першому запиті. В нашому прикладі, клас `SomeService` фактично передається до `injectorPerRou`, отже саме в `injectorPerRou` буде створюватись інстанс класу `SomeService`, навіть якщо цей інстанс запитується у дочірньому `injectorPerReq`.
+
+Це правило є дуже важливим, оскільки воно чітко показує:
+
+1. в якому саме інжекторі створюється значення для певного провайдера;
+2. якщо взяти окремий інжектор, то лише один раз у ньому створюється значення для певного провайдера (за певним токеном);
+3. якщо у дочірнього інжектора бракує певного провайдера, то він може звернутись до батьківського інжектора за _значенням_ цього провайдера (тобто дочірній інжектор запитує у батьківсього інжектора _значення_ провайдера, а не сам провайдер).
+
+Це правило працює для методу `injector.get()`, але не для `injector.pull()` чи `injector.resolveAndInstantiate()`.
+
+### Метод `injector.pull()`
+
+Цей метод є сенс використовувати лише у дочірньому інжекторі, коли у нього бракує певного провайдера, який є у батьківському інжекторі. Метод `injector.pull()` спочатку зтягне потрібний провайдер у дочірній інжектор, а потім буде діяти точно так, як діє метод `injector.get()`.
+
+```ts {16}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Config {
+  one: any;
+  two: any;
+}
+
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const parent = Injector.resolveAndCreate([Service, { token: Config, useValue: { one: 1, two: 2 } }]);
+const child = parent.resolveAndCreateChild([{ token: Config, useValue: { one: 11, two: 22 } }]);
+child.get(Service).config; // returns from parent injector: { one: 1, two: 2 }
+child.pull(Service).config; // pulls Service in current injector: { one: 11, two: 22 }
+child.get(Service).config; // now, in current injector, works cache: { one: 11, two: 22 }
+```
+
+Як бачите, спочатку `child.get(Service)` повернув інстанс класу `Service`, який був створений у батьківському інжекторі. Саме тому залежність цього класу - `Config` - була вирішена зі значенням `{ one: 1, two: 2 }`. Коли ж було викликано `child.pull(Service)`, фактично дочірній інжектор зтягнув до себе `Service`, і вже в контексті дочірнього інжектора вирішив залежність `Config` зі значенням `{ one: 11, two: 22 }`.
+
+Метод `injector.pull()` є доцільним, коли ви не використовуєте `ValueProvider` для запитуваного токена. І цей метод є корисним тому, що він дозволяє вам у контексті поточного інжектора створювати екземпляри провайдерів, які залежать від конкретної конфігурації, яка може відрізнятися в поточному та батьківському інжекторах.
+
 ### Поточний інжектор
 
 Безпосередньо сам інжектор сервіса чи контролера вам рідко може знадобиться, але ви його можете отримати у конструкторі як і значення будь-якого іншого провайдера:

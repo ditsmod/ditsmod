@@ -481,6 +481,63 @@ const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
 
 In this case, if `SomeService` has a dependency on `OtherService`, DI will be able to create an instance of `SomeService` because a route-level injector can get an instance of `OtherService` from its parent module-level injector. But if on the contrary - `OtherService` will have a dependency on `SomeService` - DI will not be able to create an instance of `OtherService`, because the injector at the module level does not see its child injector at the route level.
 
+The following example shows four different cases for requesting a `SomeService` instance using the `injectorPer*.get()` method directly or via class method parameters:
+
+```ts
+injectorPerRou.get(SomeService); // Injector per route.
+// OR
+injectorPerReq.get(SomeService); // Injector per request.
+// OR
+@injectable()
+class Service1 {
+  constructor(private someService: SomeService) {} // Constructor's parameters.
+}
+// OR
+@controller()
+class controller1 {
+  @route('GET', 'some-path')
+  method1(someService: SomeService) {} // Method's parameters.
+}
+```
+
+Here it's important to remember the following rule: the value for `SomeService` is created in the injector where the provider is passed, and this value is created only once upon the first request. In our example, the `SomeService` class is actually passed to `injectorPerRou`, so the instance of the `SomeService` class will be created in `injectorPerRou`, even if this instance is requested in the child `injectorPerReq`.
+
+This rule is very important because it clearly shows:
+
+1. in which injector the value for a specific provider is created;
+2. if we take a separate injector, the value for a specific provider (for a specific token) is created only once within it;
+3. if a child injector lacks a specific provider, it can refer to the parent injector for the _value_ of that provider (i.e., the child injector requests the _value_ of the provider from the parent injector, not the provider itself).
+
+This rule works for `injector.get()`, but not for `injector.pull()` or `injector.resolveAndInstantiate()`.
+
+### The `injector.pull()` method
+
+This method only makes sense to use in a child injector if it lacks a specific provider that the parent injector has. The `injector.pull()` method will first pull the desired provider into the child injector and then act exactly like the `injector.get()` method.
+
+```ts {16}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Config {
+  one: any;
+  two: any;
+}
+
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const parent = Injector.resolveAndCreate([Service, { token: Config, useValue: { one: 1, two: 2 } }]);
+const child = parent.resolveAndCreateChild([{ token: Config, useValue: { one: 11, two: 22 } }]);
+child.get(Service).config; // returns from parent injector: { one: 1, two: 2 }
+child.pull(Service).config; // pulls Service in current injector: { one: 11, two: 22 }
+child.get(Service).config; // now, in current injector, works cache: { one: 11, two: 22 }
+```
+
+As you can see, initially `child.get(Service)` returned an instance of the `Service` class, which was created in the parent injector. That's why the dependency of this class - `Config` - was resolved with the value `{ one: 1, two: 2 }`. However, when `child.pull(Service)` was called, the child injector effectively pulled `Service` into itself and resolved the `Config` dependency with the value `{ one: 11, two: 22 }` within the context of the child injector.
+
+The `injector.pull()` method is appropriate when you are not using a `ValueProvider` for the requested token. This method is useful because it allows you to create instances of providers within the context of the current injector, which depend on a specific configuration that may differ between the current and parent injectors.
+
 ### Current injector
 
 You may rarely need the service or controller injector itself, but you can get it in the constructor, just like the values of any other provider:
