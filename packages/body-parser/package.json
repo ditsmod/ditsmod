@@ -31,7 +31,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "get-body": "^1.0.3"
+    "@ts-stack/body-parser": "^1.1.0"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.50.0",

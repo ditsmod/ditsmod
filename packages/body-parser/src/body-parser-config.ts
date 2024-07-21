@@ -1,9 +1,12 @@
 import { HttpMethod, InjectionToken } from '@ditsmod/core';
+import { JsonOptions, RawOptions, TextOptions, UrlencodedOptions } from '@ts-stack/body-parser';
 
 export class BodyParserConfig {
   acceptMethods?: HttpMethod[] = ['POST', 'PUT', 'PATCH'];
-  acceptHeaders?: string[] = ['application/json', 'application/x-www-form-urlencoded', 'text/plain', 'text/html'];
-  maxBodySize?: number = 1024 * 1024 * 5; // 5 MB
+  jsonOptions?: JsonOptions;
+  textOptions?: TextOptions;
+  urlencodedOptions?: UrlencodedOptions;
+  rawOptions?: RawOptions;
 }
 
 /**

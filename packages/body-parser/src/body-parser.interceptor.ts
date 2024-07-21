@@ -1,25 +1,17 @@
-import { HttpHandler, HttpInterceptor, Injector, RequestContext, injectable, optional } from '@ditsmod/core';
-import { parse, Headers, Options } from 'get-body';
+import { HttpHandler, HttpInterceptor, Injector, RequestContext, injectable } from '@ditsmod/core';
+import { BodyParserGroup } from '@ts-stack/body-parser';
 
-import { HTTP_BODY, BodyParserConfig } from './body-parser-config.js';
+import { HTTP_BODY } from './body-parser-config.js';
 
 @injectable()
 export class BodyParserInterceptor implements HttpInterceptor {
   constructor(
     private injector: Injector,
-    @optional() private config?: BodyParserConfig,
-  ) {
-    this.config = Object.assign({}, new BodyParserConfig(), config); // Merge with default.
-  }
+    private bodyParserGroup: BodyParserGroup,
+  ) {}
 
   async intercept(next: HttpHandler, ctx: RequestContext) {
-    const contentType = ctx.nodeReq.headers['content-type'];
-    const hasAcceptableHeaders = this.config?.acceptHeaders?.some((type) => contentType?.includes(type));
-    if (!hasAcceptableHeaders) {
-      return next.handle();
-    }
-    const options: Options = { limit: this.config?.maxBodySize };
-    const body = await parse(ctx.nodeReq, ctx.nodeReq.headers as Headers, options);
+    const body = await this.bodyParserGroup.parse(ctx.nodeReq, ctx.nodeReq.headers, {});
     this.injector.setByToken(HTTP_BODY, body);
 
     return next.handle();
