@@ -1116,7 +1116,7 @@ describe('ModuleFactory', () => {
         });
       });
 
-      describe('mix per app, per mod or per req', () => {
+      xdescribe('mix per app, per mod or per req', () => {
         class Provider0 {}
         class Provider1 {}
 

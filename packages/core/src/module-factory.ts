@@ -303,20 +303,27 @@ export class ModuleFactory {
     return { module2, providers };
   }
 
+  /**
+   * It turns out that sometimes there is a need for a mixin (see BodeParserModule) that disables this method.
+   * We need to think more deeply about which mix should not be allowed.
+   * 
+   * @todo Uncomment this after fixed issues with collisions,
+   * and remove "xdescribe" in apropriate tests (in module-factory.spec.ts).
+   */
   protected checkAllCollisionsWithScopesMix() {
-    this.checkCollisionsWithScopesMix(this.providersPerApp, ['Mod', 'Rou', 'Req']);
-    const providersPerMod = [
-      ...defaultProvidersPerMod,
-      ...this.meta.providersPerMod,
-      ...getImportedProviders(this.importedProvidersPerMod),
-    ];
-    this.checkCollisionsWithScopesMix(providersPerMod, ['Rou', 'Req']);
-    const mergedProvidersAndTokens = [
-      ...this.meta.providersPerRou,
-      ...getImportedProviders(this.importedProvidersPerRou),
-      ...defaultProvidersPerReq,
-    ];
-    this.checkCollisionsWithScopesMix(mergedProvidersAndTokens, ['Req']);
+    // this.checkCollisionsWithScopesMix(this.providersPerApp, ['Mod', 'Rou', 'Req']);
+    // const providersPerMod = [
+    //   ...defaultProvidersPerMod,
+    //   ...this.meta.providersPerMod,
+    //   ...getImportedProviders(this.importedProvidersPerMod),
+    // ];
+    // this.checkCollisionsWithScopesMix(providersPerMod, ['Rou', 'Req']);
+    // const mergedProvidersAndTokens = [
+    //   ...this.meta.providersPerRou,
+    //   ...getImportedProviders(this.importedProvidersPerRou),
+    //   ...defaultProvidersPerReq,
+    // ];
+    // this.checkCollisionsWithScopesMix(mergedProvidersAndTokens, ['Req']);
   }
 
   protected checkCollisionsWithScopesMix(providers: any[], scopes: Scope[]) {
