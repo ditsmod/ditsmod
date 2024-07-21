@@ -27,9 +27,19 @@ describe('06-body-parser', () => {
   it('should parsed post', async () => {
     await testAgent
       .post('/')
-      .send({ one: 1 })
+      .set('Content-Type', 'application/json')
+      .send('{"one":1}')
       .expect(200)
-      .expect({ one: 1 });
+      .expect('{"one":1}');
+  });
+
+  it('should not parse fake-content-type', async () => {
+    await testAgent
+      .post('/')
+      .set('Content-Type', 'fake-content-type')
+      .send('{"one":1}')
+      .expect(200)
+      .expect('{}');
   });
 
   it('controller singleton should works with get', async () => {
@@ -45,5 +55,14 @@ describe('06-body-parser', () => {
       .send({ one: 1 })
       .expect(200)
       .expect({ one: 1 });
+  });
+
+  it('controller singleton should not parse fake-content-type', async () => {
+    await testAgent
+      .post('/singleton')
+      .set('Content-Type', 'fake-content-type')
+      .send('{"one":1}')
+      .expect(200)
+      .expect('{}');
   });
 });
