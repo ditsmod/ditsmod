@@ -49,7 +49,7 @@ In this case, the default settings will work. If you need to change some options
 import { rootModule } from '@ditsmod/core';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
-const moduleWithBodyParserConfig = BodyParserModule.withParams({ maxBodySize: 1024 * 1024 });
+const moduleWithBodyParserConfig = BodyParserModule.withParams({ acceptMethods: ['POST'] });
 
 @rootModule({
   imports: [
@@ -74,7 +74,7 @@ import { BodyParserModule, BodyParserConfig } from '@ditsmod/body-parser';
   ],
   providersPerApp: [
     ...new Providers()
-      .useValue<BodyParserConfig>(BodyParserConfig,  { maxBodySize: 1024*1024 })
+      .useValue<BodyParserConfig>(BodyParserConfig,  { acceptMethods: ['POST'] })
   ],
   exports: [BodyParserModule]
 })
