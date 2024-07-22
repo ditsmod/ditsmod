@@ -4,7 +4,7 @@ import { BodyParserGroup } from '@ts-stack/body-parser';
 import { BodyParserConfig } from './body-parser-config.js';
 
 @injectable()
-export class BodyParsersFactory {
+export class BodyParserGroupFactory {
   @methodFactory()
   getBodyParser(@optional() config?: BodyParserConfig) {
     config = Object.assign({}, new BodyParserConfig(), config); // Merge with default.

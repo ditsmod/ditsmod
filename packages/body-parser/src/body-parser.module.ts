@@ -4,7 +4,7 @@ import { BodyParserGroup } from '@ts-stack/body-parser';
 
 import { HTTP_BODY, BodyParserConfig } from './body-parser-config.js';
 import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.extension.js';
-import { BodyParsersFactory } from './body-parsers.factory.js';
+import { BodyParserGroupFactory } from './body-parser-group.factory.js';
 
 /**
  * Adds `BodyParserInterceptor` to all requests with HTTP methods specified in `bodyParserConfig.acceptMethods`.
@@ -14,7 +14,7 @@ import { BodyParsersFactory } from './body-parsers.factory.js';
   providersPerRou: [
     {
       token: BodyParserGroup,
-      useFactory: [BodyParsersFactory, BodyParsersFactory.prototype.getBodyParser],
+      useFactory: [BodyParserGroupFactory, BodyParserGroupFactory.prototype.getBodyParser],
     },
   ],
   providersPerReq: [{ token: HTTP_BODY, useValue: {} }],
