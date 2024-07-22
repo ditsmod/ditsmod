@@ -14,7 +14,7 @@ import { BodyParserGroupFactory } from './body-parser-group.factory.js';
   providersPerRou: [
     {
       token: BodyParserGroup,
-      useFactory: [BodyParserGroupFactory, BodyParserGroupFactory.prototype.getBodyParser],
+      useFactory: [BodyParserGroupFactory, BodyParserGroupFactory.prototype.getBodyParserGroup],
     },
   ],
   providersPerReq: [{ token: HTTP_BODY, useValue: {} }],

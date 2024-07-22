@@ -6,7 +6,7 @@ import { BodyParserConfig } from './body-parser-config.js';
 @injectable()
 export class BodyParserGroupFactory {
   @methodFactory()
-  getBodyParser(@optional() config?: BodyParserConfig) {
+  getBodyParserGroup(@optional() config?: BodyParserConfig) {
     config = Object.assign({}, new BodyParserConfig(), config); // Merge with default.
 
     const bodyParserGroup = new BodyParserGroup({
