@@ -1,5 +1,12 @@
+<a name="testing-2.9.0"></a>
+# [testing-2.9.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.9.0) (2024-07-22)
+
+### Breaking changes
+
+- Migration to core-2.53.0.
+
 <a name="testing-2.8.0"></a>
-# [testing-2.8.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.8.0) (2024-04-02)
+## [testing-2.8.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.8.0) (2024-04-02)
 
 ### Features
 
