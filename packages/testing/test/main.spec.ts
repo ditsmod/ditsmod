@@ -67,7 +67,8 @@ describe('@ditsmod/testing', () => {
       .getServer();
 
     methodPerRou3.mockImplementation(implementation);
-    await request(server).get('/per-rou3').expect(500).expect({ error: 'Internal server error' });
+    const msg = 'No provider for ServicePerRou3!; this error during calling Controller1.prototype.perRou3!';
+    await request(server).get('/per-rou3').expect(500).expect({ error: msg });
     expect(methodPerRou3).toHaveBeenCalledTimes(0);
 
     server.close();
