@@ -22,7 +22,8 @@ describe('07-dynamically-composing-modules', () => {
     await testAgent.get('/get-2').expect(501);
     await testAgent.get('/add-2').expect(200).expect('second successfully importing!\n');
     await testAgent.get('/get-2').expect(200).expect('second module.\n');
-    await testAgent.get('/add-3').expect(500).expect({ error: 'Internal server error' });
+    const msg = 'Validation ThirdModule failed: this module should have "providersPerApp" or some controllers, or exports, or extensions.';
+    await testAgent.get('/add-3').expect(500).expect({ error: msg });
     await testAgent.get('/').expect(200).expect('first module.\n');
     await testAgent.get('/get-2').expect(200).expect('second module.\n');
     await testAgent.get('/del-2').expect(200).expect('second successfully removing!\n');
