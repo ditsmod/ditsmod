@@ -65,8 +65,9 @@ describe('DefaultHttpErrorHandler', () => {
 
   it('default error with some message', () => {
     const err = new Error('one');
+    (err as any).status = Status.PAYLOAD_TO_LARGE;
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(res.sendJson).toHaveBeenCalledWith({ error: 'Internal server error' }, Status.INTERNAL_SERVER_ERROR);
+    expect(res.sendJson).toHaveBeenCalledWith({ error: 'one' }, Status.PAYLOAD_TO_LARGE);
     expect(res.sendJson).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith('error', { err, requestId: '' });
     expect(logger.log).toHaveBeenCalledTimes(1);
