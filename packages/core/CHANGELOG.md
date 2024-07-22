@@ -1,5 +1,18 @@
+<a name="core-2.53.0"></a>
+# [core-2.53.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.53.0) (2024-07-22)
+
+**Breaking Changes**
+
+- renamed `createServerAndListen()` to `createServerAndBindToListening()` [faeb38a784](https://github.com/ditsmod/ditsmod/commit/faeb38a784fc96c8fc45ab4dce7f22d8c8e23961).
+
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [f6c97987ce](https://github.com/ditsmod/ditsmod/commit/f6c97987cec16) | refactor | refactoring sending unknow an error in `DefaultHttpErrorHandler`. |
+| [e3b4c8f48b](https://github.com/ditsmod/ditsmod/commit/e3b4c8f48b3d5) | refactor | refactoring `RegistryOfInjector`. |
+
 <a name="core-2.52.0"></a>
-# [core-2.52.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.52.0) (2024-04-02)
+## [core-2.52.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.52.0) (2024-04-02)
 
 **Breaking Changes**
 
