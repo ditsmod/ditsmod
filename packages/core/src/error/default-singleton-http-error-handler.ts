@@ -23,7 +23,9 @@ export class DefaultSingletonHttpErrorHandler implements HttpErrorHandler {
       this.sendError(err.message, ctx, requestId, status);
     } else {
       this.logger.log('error', errObj);
-      this.sendError('Internal server error', ctx, requestId, Status.INTERNAL_SERVER_ERROR);
+      const msg = err.message || 'Internal server error';
+      const status = (err as any).status || Status.INTERNAL_SERVER_ERROR;
+      this.sendError(msg, ctx, requestId, status);
     }
   }
 
