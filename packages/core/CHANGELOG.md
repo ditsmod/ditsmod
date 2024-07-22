@@ -1,5 +1,12 @@
+<a name="core-2.53.1"></a>
+# [core-2.53.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.53.1) (2024-07-22)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [7643ee3f2a](https://github.com/ditsmod/ditsmod/commit/7643ee3f2a) | fix | fixed `DefaultSingletonHttpErrorHandler`. |
+
 <a name="core-2.53.0"></a>
-# [core-2.53.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.53.0) (2024-07-22)
+## [core-2.53.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.53.0) (2024-07-22)
 
 **Breaking Changes**
 
