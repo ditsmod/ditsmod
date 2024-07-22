@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { TestApplication } from '@ditsmod/testing';
-import { NodeServer } from '@ditsmod/core';
+import { NodeServer, Providers, Status } from '@ditsmod/core';
+import { BodyParserConfig } from '@ditsmod/body-parser';
 
 import { AppModule } from '#app/app.module.js';
 
@@ -9,7 +10,9 @@ describe('06-body-parser', () => {
   let testAgent: ReturnType<typeof request>;
 
   beforeAll(async () => {
-    server = await new TestApplication(AppModule).getServer();
+    const providers = new Providers().useValue<BodyParserConfig>(BodyParserConfig, { jsonOptions: { limit: '9b' } });
+
+    server = await new TestApplication(AppModule).overrideProviders([...providers]).getServer();
     testAgent = request(server);
   });
 
@@ -31,6 +34,14 @@ describe('06-body-parser', () => {
       .send('{"one":1}')
       .expect(200)
       .expect('{"one":1}');
+  });
+
+  it('should parsed post', async () => {
+    await testAgent
+      .post('/')
+      .set('Content-Type', 'application/json')
+      .send({ one: 1, two: 2 })
+      .expect(Status.PAYLOAD_TO_LARGE);
   });
 
   it('should not parse fake-content-type', async () => {
@@ -55,6 +66,13 @@ describe('06-body-parser', () => {
       .send({ one: 1 })
       .expect(200)
       .expect({ one: 1 });
+  });
+
+  it('controller singleton should parsed post', async () => {
+    await testAgent
+      .post('/singleton')
+      .send({ one: 1, two: 2 })
+      .expect(Status.PAYLOAD_TO_LARGE);
   });
 
   it('controller singleton should not parse fake-content-type', async () => {
