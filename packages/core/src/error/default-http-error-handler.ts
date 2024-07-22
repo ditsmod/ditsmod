@@ -30,7 +30,9 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
       this.sendError(err.message, status);
     } else {
       this.logger.log('error', errObj);
-      this.sendError('Internal server error', Status.INTERNAL_SERVER_ERROR);
+      const msg = err.message || 'Internal server error';
+      const status = (err as any).status || Status.INTERNAL_SERVER_ERROR;
+      this.sendError(msg, status);
     }
   }
 
