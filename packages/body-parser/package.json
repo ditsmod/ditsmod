@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/body-parser",
   "type": "module",
-  "version": "2.13.1",
+  "version": "2.14.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
