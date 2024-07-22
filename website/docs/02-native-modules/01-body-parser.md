@@ -10,14 +10,14 @@ sidebar_position: 1
 - `PUT`
 - `PATCH`
 
-Підтримуються наступні типи даних:
+У цьому модулі зроблена інтеграція з [@ts-stack/body-parser][4]. По-дефолту, підтримуються наступні типи даних:
 
 - `application/json`
 - `application/x-www-form-urlencoded`
 - `text/plain`
-- `text/html`
+- `application/octet-stream`
 
-Даний модуль не парсить тіло запиту при завантаженні файлів, для цього можете скористатись стороннім модулем [@ts-stack/multiparty][2].
+Даний модуль не парсить тіло запиту при завантаженні файлів, для цього можете скористатись стороннім модулем [@ts-stack/multiparty][2] або [busboy][5].
 
 ## Встановлення
 
@@ -45,25 +45,29 @@ export class AppModule {}
 
 В такому разі будуть працювати дефолтні налаштування. Якщо ж вам потрібно змінити деякі опції, можете це зробити наступним чином:
 
-```ts {4}
+```ts {4-8,12,15}
 import { rootModule } from '@ditsmod/core';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
-const moduleWithBodyParserConfig = BodyParserModule.withParams({ acceptMethods: ['POST'] });
+const moduleWithBodyParserConfig = BodyParserModule.withParams({
+  acceptMethods: ['POST'],
+  jsonOptions: { limit: '500kb', strict: false },
+  urlencodedOptions: { extended: true },
+});
 
 @rootModule({
   imports: [
     moduleWithBodyParserConfig,
     // ...
   ],
-  exports: [moduleWithBodyParserConfig]
+  exports: [moduleWithBodyParserConfig],
 })
 export class AppModule {}
 ```
 
 Ще один варіант передачі конфігурації:
 
-```ts
+```ts {6,10-11,13}
 import { rootModule, Providers } from '@ditsmod/core';
 import { BodyParserModule, BodyParserConfig } from '@ditsmod/body-parser';
 
@@ -120,3 +124,5 @@ export class AppModule {}
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/06-body-parser
 [2]: https://www.npmjs.com/package/@ts-stack/multiparty
 [3]: /components-of-ditsmod-app/controllers-and-services/#що-являє-собою-контролер
+[4]: https://github.com/ts-stack/body-parser/
+[5]: https://github.com/mscdex/busboy

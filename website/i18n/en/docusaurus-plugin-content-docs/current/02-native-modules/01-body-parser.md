@@ -10,14 +10,14 @@ This module adds an interceptor for parsing the request body to all routes that 
 - `PUT`
 - `PATCH`
 
-The following data types are supported:
+This module integrates with [@ts-stack/body-parser][4]. By default, the following data types are supported:
 
 - `application/json`
 - `application/x-www-form-urlencoded`
 - `text/plain`
-- `text/html`
+- `application/octet-stream`
 
-This module does not parse the request body when uploading files, for this you can use the third-party module [@ts-stack/multiparty][2].
+This module does not parse the request body when downloading files, for this you can use the third-party module [@ts-stack/multiparty][2] or [busboy][5].
 
 ## Installation
 
@@ -45,25 +45,29 @@ export class AppModule {}
 
 In this case, the default settings will work. If you need to change some options, you can do it as follows:
 
-```ts {4}
+```ts {4-8,12,15}
 import { rootModule } from '@ditsmod/core';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
-const moduleWithBodyParserConfig = BodyParserModule.withParams({ acceptMethods: ['POST'] });
+const moduleWithBodyParserConfig = BodyParserModule.withParams({
+  acceptMethods: ['POST'],
+  jsonOptions: { limit: '500kb', strict: false },
+  urlencodedOptions: { extended: true },
+});
 
 @rootModule({
   imports: [
     moduleWithBodyParserConfig,
     // ...
   ],
-  exports: [moduleWithBodyParserConfig]
+  exports: [moduleWithBodyParserConfig],
 })
 export class AppModule {}
 ```
 
 Another option for passing the configuration:
 
-```ts
+```ts {6,10-11,13}
 import { rootModule, Providers } from '@ditsmod/core';
 import { BodyParserModule, BodyParserConfig } from '@ditsmod/body-parser';
 
@@ -120,3 +124,5 @@ Depending on whether the controller is [singleton][3] or not, the result of the 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/06-body-parser
 [2]: https://www.npmjs.com/package/@ts-stack/multiparty
 [3]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
+[4]: https://github.com/ts-stack/body-parser/
+[5]: https://github.com/mscdex/busboy
