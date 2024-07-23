@@ -1,6 +1,10 @@
 <a name="body-parser-2.14.0"></a>
 # [body-parser-2.14.0](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.14.0) (2024-07-22)
 
+### Breaking changes
+
+- Removed `acceptHeaders` and `maxBodySize` from `BodyParserConfig` (now similar options are available in individual parsers).
+
 ### Features
 
 - Added support for [@ts-stack/body-parser](https://github.com/ts-stack/body-parser).
