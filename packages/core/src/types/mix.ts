@@ -42,7 +42,7 @@ export interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = 
   extensionsMeta?: E;
 }
 
-export type AnyFn = (...args: any[]) => any;
+export type AnyFn<T = any> = (...args: any[]) => T;
 
 /**
  * It is just `{ [key: string]: any }` an object interface.
