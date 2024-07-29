@@ -1,4 +1,4 @@
-import { createWriteStream, rename } from 'node:fs';
+import { createWriteStream } from 'node:fs';
 import { controller, inject, Res, route } from '@ditsmod/core';
 import { MulterParsedForm, HTTP_BODY, MulterHelper } from '@ditsmod/body-parser';
 

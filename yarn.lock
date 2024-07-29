@@ -1252,16 +1252,15 @@
   dependencies:
     vary "^1.1.2"
 
-"@ts-stack/multer@^1.0.0-beta.1":
-  version "1.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@ts-stack/multer/-/multer-1.0.0-beta.1.tgz#7ea5bb43bc087fa9bab394f9be9d973d6ca2ce64"
-  integrity sha512-f3HAyPVsahSuslzblT6odJxoIYUPzKzQXilgZwzopK3TD0sNxPO5b85G50/s9jySWSa2NEanysY4paOi8ilxhA==
+"@ts-stack/multer@^1.0.0-beta.2":
+  version "1.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@ts-stack/multer/-/multer-1.0.0-beta.2.tgz#e765c7eff645d764587d2c2bb5fcb3c685243177"
+  integrity sha512-oXiv2h5cez1BgZMB9LdY9WlafT94+5NG7iMiVK8vsz1hnokGaNGKWUltFFuEe8jEclrkDqdhiYyi1Ti69bqC0g==
   dependencies:
     "@fastify/busboy" "^3.0.0"
     "@ts-stack/type-is" "^1.0.1"
     append-field "^2.0.0"
     bytes "^3.1.2"
-    on-finished "^2.4.1"
     stream-file-type "^0.6.1"
     tempy "^3.1.0"
 
@@ -2789,11 +2788,6 @@ ecdsa-sig-formatter@1.0.11:
   integrity sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==
   dependencies:
     safe-buffer "^5.0.1"
-
-ee-first@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
-  integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 ejs@^3.1.7:
   version "3.1.9"
@@ -5432,13 +5426,6 @@ on-exit-leak-free@^2.1.0:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/on-exit-leak-free/-/on-exit-leak-free-2.1.2.tgz#fed195c9ebddb7d9e4c3842f93f281ac8dadd3b8"
   integrity sha512-0eJJY6hXLGf1udHwfNftBqH+g73EU4B504nZeKpz1sYRKafAghwxEJunB2O7rDZkL4PGfsMVnTXZ2EjibbqcsA==
-
-on-finished@^2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/on-finished/-/on-finished-2.4.1.tgz#58c8c44116e54845ad57f14ab10b03533184ac3f"
-  integrity sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==
-  dependencies:
-    ee-first "1.1.1"
 
 once@^1.3.0, once@^1.4.0:
   version "1.4.0"
