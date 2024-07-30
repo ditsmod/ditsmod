@@ -24,6 +24,8 @@ export class MulterHelper {
    * Accepts an array of files from a form field with the name you pass in the `name` parameter.
    * Optionally error out if more than `maxCount` files are uploaded. The array of files will be
    * stored in `parsedForm.files` property.
+   * 
+   * __Note__: `maxCount` limit has precedence over `limits.files`.
    */
   array<F extends object = any>(name: string, maxCount?: number) {
     const result = this.multer.array<F>(name, maxCount)(this.nodeReq, this.nodeReq.headers);
@@ -43,6 +45,8 @@ export class MulterHelper {
   { name: 'gallery', maxCount: 8 }
 ]
 ```
+   * 
+   * __Note__: `maxCount` limit has precedence over `limits.files`.
    */
   groups<F extends object = any, G extends string = string>(groups: MulterGroup<G>[]) {
     const result = this.multer.groups<F, G>(groups)(this.nodeReq, this.nodeReq.headers);
