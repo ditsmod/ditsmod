@@ -1,19 +1,22 @@
-import { CustomError, inject, injectable, NODE_REQ, NodeRequest, Status } from '@ditsmod/core';
-import { Multer, MulterGroup, MulterParsedForm } from '@ts-stack/multer';
+import { CustomError, inject, injectable, NODE_REQ, NodeRequest, optional, Status } from '@ditsmod/core';
+import { Multer, MulterError, MulterGroup, MulterParsedForm } from '@ts-stack/multer';
+
+import { MulterExtendedOptions } from './multer-extended-options.js';
 
 @injectable()
 export class MulterHelper {
   constructor(
     @inject(NODE_REQ) protected nodeReq: NodeRequest,
     protected multer: Multer,
+    @optional() protected options?: MulterExtendedOptions,
   ) {}
 
   /**
    * Accepts a single file from a form field with the name you pass in the `name` parameter.
    * The single file will be stored in `parsedForm.file` property.
    */
-  async single<F extends object = any>(name: string) {
-    const result = await this.multer.single<F>(name)(this.nodeReq, this.nodeReq.headers);
+  single<F extends object = any>(name: string) {
+    const result = this.multer.single<F>(name)(this.nodeReq, this.nodeReq.headers);
     return this.checkResult(result);
   }
 
@@ -22,8 +25,8 @@ export class MulterHelper {
    * Optionally error out if more than `maxCount` files are uploaded. The array of files will be
    * stored in `parsedForm.files` property.
    */
-  async array<F extends object = any>(name: string, maxCount?: number) {
-    const result = await this.multer.array<F>(name, maxCount)(this.nodeReq, this.nodeReq.headers);
+  array<F extends object = any>(name: string, maxCount?: number) {
+    const result = this.multer.array<F>(name, maxCount)(this.nodeReq, this.nodeReq.headers);
     return this.checkResult(result);
   }
 
@@ -41,8 +44,8 @@ export class MulterHelper {
 ]
 ```
    */
-  async groups<F extends object = any, G extends string = string>(groups: MulterGroup<G>[]) {
-    const result = await this.multer.groups<F, G>(groups)(this.nodeReq, this.nodeReq.headers);
+  groups<F extends object = any, G extends string = string>(groups: MulterGroup<G>[]) {
+    const result = this.multer.groups<F, G>(groups)(this.nodeReq, this.nodeReq.headers);
     return this.checkResult(result);
   }
 
@@ -50,8 +53,8 @@ export class MulterHelper {
    * Accept only text fields. If any file upload is made, error with code
    * `LIMIT_UNEXPECTED_FILE` will be issued. This is the same as doing `upload.fields([])`.
    */
-  async none<F extends object = any>() {
-    const result = await this.multer.none<F>()(this.nodeReq, this.nodeReq.headers);
+  none<F extends object = any>() {
+    const result = this.multer.none<F>()(this.nodeReq, this.nodeReq.headers);
     return this.checkResult(result);
   }
 
@@ -64,21 +67,42 @@ export class MulterHelper {
    * files to a route that you didn't anticipate. Only use this function on routes
    * where you are handling the uploaded files.
    */
-  async any<F extends object = any>() {
-    const result = await this.multer.any<F>()(this.nodeReq, this.nodeReq.headers);
+  any<F extends object = any>() {
+    const result = this.multer.any<F>()(this.nodeReq, this.nodeReq.headers);
     return this.checkResult(result);
   }
 
-  protected checkResult<F extends object = any, G extends string = string>(
-    result: null | false | MulterParsedForm<F, G>,
+  protected async checkResult<F extends object = any, G extends string = string>(
+    promise: Promise<null | false | MulterParsedForm<F, G>>,
   ) {
+    let result: null | false | MulterParsedForm<F, G>;
+    try {
+      result = await promise;
+    } catch (err) {
+      if (err instanceof MulterError) {
+        const { level, status } = this.getErrorOptions();
+        throw new CustomError({ msg1: err.message, msg2: err.code, level, status });
+      } else {
+        const status = (err as any).status || Status.BAD_REQUEST;
+        throw new CustomError({ msg1: (err as any).message, status });
+      }
+    }
     if (result === null) {
       const msg1 = 'Multer failed to parse multipart/form-data: no body.';
-      throw new CustomError({ msg1, status: Status.LENGTH_REQUIRED });
+      const { level } = this.getErrorOptions();
+      throw new CustomError({ msg1, level, status: Status.LENGTH_REQUIRED });
     } else if (result === false) {
       const msg1 = 'Multer failed to parse multipart/form-data: no header with multipart/form-data content type.';
-      throw new CustomError({ msg1, status: Status.UNSUPPORTED_MEDIA_TYPE });
+      const { level } = this.getErrorOptions();
+      throw new CustomError({ msg1, level, status: Status.UNSUPPORTED_MEDIA_TYPE });
     }
     return result;
+  }
+
+  protected getErrorOptions() {
+    const extendedOptions = new MulterExtendedOptions();
+    const level = this.options?.errorLogLevel || extendedOptions.errorLogLevel!;
+    const status = this.options?.errorStatus || extendedOptions.errorStatus!;
+    return { level, status };
   }
 }
