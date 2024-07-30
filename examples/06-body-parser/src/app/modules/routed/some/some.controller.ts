@@ -42,13 +42,10 @@ export class SomeController {
 
   @route('POST', 'file-upload')
   async downloadFile(res: Res, parse: MulterHelper) {
-    try {
-      const parsedForm = await parse.array('files');
-      await this.saveFiles(parsedForm);
-      res.sendJson(parsedForm);
-    } catch (err: any) {
-      res.sendJson(err);
-    }
+    const parsedForm = await parse.array('files', 5);
+    await this.saveFiles(parsedForm);
+    res.nodeRes.writeHead(303, { Connection: 'close', Location: '/file-upload' });
+    res.nodeRes.end();
   }
 
   protected saveFiles(parsedForm: MulterParsedForm) {
