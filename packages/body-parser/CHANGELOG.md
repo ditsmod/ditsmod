@@ -3,7 +3,7 @@
 
 ### Features
 
-- Added integration for [@ts-stack/multer]. Is a node.js library for handling `multipart/form-data`, which is primarily used for uploading files.
+- Added integration with [@ts-stack/multer](https://github.com/ts-stack/multer). Is a node.js library for handling `multipart/form-data`, which is primarily used for uploading files.
 
 <a name="body-parser-2.14.0"></a>
 ## [body-parser-2.14.0](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.14.0) (2024-07-22)
