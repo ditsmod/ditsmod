@@ -1,13 +1,12 @@
-import { inject, injectable, NODE_REQ, NodeRequest, optional } from '@ditsmod/core';
+import { injectable, optional, RequestContext } from '@ditsmod/core';
 import { Multer, MulterGroup } from '@ts-stack/multer';
 
 import { MulterExtendedOptions } from './multer-extended-options.js';
 import { checkResult } from './multer-utils.js';
 
 @injectable()
-export class MulterParser {
+export class MulterSingletonParser {
   constructor(
-    @inject(NODE_REQ) protected nodeReq: NodeRequest,
     protected multer: Multer,
     @optional() protected options?: MulterExtendedOptions,
   ) {}
@@ -16,8 +15,8 @@ export class MulterParser {
    * Accepts a single file from a form field with the name you pass in the `name` parameter.
    * The single file will be stored in `parsedForm.file` property.
    */
-  single<F extends object = any>(name: string) {
-    const result = this.multer.single<F>(name)(this.nodeReq, this.nodeReq.headers);
+  single<F extends object = any>(ctx: RequestContext, name: string) {
+    const result = this.multer.single<F>(name)(ctx.nodeReq, ctx.nodeReq.headers);
     return checkResult(result);
   }
 
@@ -28,8 +27,8 @@ export class MulterParser {
    *
    * __Note__: `maxCount` limit has precedence over `limits.files`.
    */
-  array<F extends object = any>(name: string, maxCount?: number) {
-    const result = this.multer.array<F>(name, maxCount)(this.nodeReq, this.nodeReq.headers);
+  array<F extends object = any>(ctx: RequestContext, name: string, maxCount?: number) {
+    const result = this.multer.array<F>(name, maxCount)(ctx.nodeReq, ctx.nodeReq.headers);
     return checkResult(result);
   }
 
@@ -49,8 +48,8 @@ export class MulterParser {
    * 
    * __Note__: `maxCount` limit has precedence over `limits.files`.
    */
-  groups<F extends object = any, G extends string = string>(groups: MulterGroup<G>[]) {
-    const result = this.multer.groups<F, G>(groups)(this.nodeReq, this.nodeReq.headers);
+  groups<F extends object = any, G extends string = string>(ctx: RequestContext, groups: MulterGroup<G>[]) {
+    const result = this.multer.groups<F, G>(groups)(ctx.nodeReq, ctx.nodeReq.headers);
     return checkResult(result);
   }
 
@@ -58,8 +57,8 @@ export class MulterParser {
    * Accept only text fields. If any file upload is made, error with code
    * `LIMIT_UNEXPECTED_FILE` will be issued. This is the same as doing `upload.fields([])`.
    */
-  none<F extends object = any>() {
-    const result = this.multer.none<F>()(this.nodeReq, this.nodeReq.headers);
+  none<F extends object = any>(ctx: RequestContext) {
+    const result = this.multer.none<F>()(ctx.nodeReq, ctx.nodeReq.headers);
     return checkResult(result);
   }
 
@@ -72,8 +71,8 @@ export class MulterParser {
    * files to a route that you didn't anticipate. Only use this function on routes
    * where you are handling the uploaded files.
    */
-  any<F extends object = any>() {
-    const result = this.multer.any<F>()(this.nodeReq, this.nodeReq.headers);
+  any<F extends object = any>(ctx: RequestContext) {
+    const result = this.multer.any<F>()(ctx.nodeReq, ctx.nodeReq.headers);
     return checkResult(result);
   }
 }

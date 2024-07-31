@@ -8,24 +8,28 @@ import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.exten
 import { BodyParserGroupFactory } from './body-parser-group.factory.js';
 import { MulterFactory } from './multer.factory.js';
 import { MulterParser } from './multer.parser.js';
+import { MulterSingletonParser } from './multer-singleton.parser.js';
 
 /**
  * Adds `BodyParserInterceptor` to all requests with HTTP methods specified in `bodyParserConfig.acceptMethods`.
  * This is done using `BodyParserExtension` in `BODY_PARSER_EXTENSIONS` group.
  */
 @featureModule({
-  providersPerRou: [
-    {
-      token: BodyParserGroup,
-      useFactory: [BodyParserGroupFactory, BodyParserGroupFactory.prototype.getBodyParserGroup],
-    },
+  providersPerMod: [
+    MulterSingletonParser,
     {
       token: Multer,
       useFactory: [MulterFactory, MulterFactory.prototype.getMulter],
     },
   ],
+  providersPerRou: [
+    {
+      token: BodyParserGroup,
+      useFactory: [BodyParserGroupFactory, BodyParserGroupFactory.prototype.getBodyParserGroup],
+    },
+  ],
   providersPerReq: [{ token: HTTP_BODY, useValue: {} }, MulterParser],
-  exports: [HTTP_BODY, BodyParserGroup, MulterParser],
+  exports: [HTTP_BODY, BodyParserGroup, MulterParser, MulterSingletonParser],
   extensions: [
     {
       extension: BodyParserExtension,
