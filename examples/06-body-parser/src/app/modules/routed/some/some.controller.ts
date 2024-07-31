@@ -1,6 +1,6 @@
 import { createWriteStream } from 'node:fs';
 import { controller, inject, Res, route } from '@ditsmod/core';
-import { MulterParsedForm, HTTP_BODY, MulterHelper } from '@ditsmod/body-parser';
+import { MulterParsedForm, HTTP_BODY, MulterParser } from '@ditsmod/body-parser';
 
 interface Body {
   one: number;
@@ -41,7 +41,7 @@ export class SomeController {
   }
 
   @route('POST', 'file-upload')
-  async downloadFile(res: Res, parse: MulterHelper) {
+  async downloadFile(res: Res, parse: MulterParser) {
     const parsedForm = await parse.array('files', 5);
     await this.saveFiles(parsedForm);
     res.nodeRes.writeHead(303, { Connection: 'close', Location: '/file-upload' });
