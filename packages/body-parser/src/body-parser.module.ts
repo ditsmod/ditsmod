@@ -7,7 +7,7 @@ import { HTTP_BODY, BodyParserConfig } from './body-parser-config.js';
 import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.extension.js';
 import { BodyParserGroupFactory } from './body-parser-group.factory.js';
 import { MulterFactory } from './multer.factory.js';
-import { MulterHelper } from './multer-helper.js';
+import { MulterParser } from './multer.parser.js';
 
 /**
  * Adds `BodyParserInterceptor` to all requests with HTTP methods specified in `bodyParserConfig.acceptMethods`.
@@ -24,8 +24,8 @@ import { MulterHelper } from './multer-helper.js';
       useFactory: [MulterFactory, MulterFactory.prototype.getMulter],
     },
   ],
-  providersPerReq: [{ token: HTTP_BODY, useValue: {} }, MulterHelper],
-  exports: [HTTP_BODY, BodyParserGroup, MulterHelper],
+  providersPerReq: [{ token: HTTP_BODY, useValue: {} }, MulterParser],
+  exports: [HTTP_BODY, BodyParserGroup, MulterParser],
   extensions: [
     {
       extension: BodyParserExtension,

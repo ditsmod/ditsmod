@@ -4,7 +4,7 @@ import { Multer, MulterError, MulterGroup, MulterParsedForm } from '@ts-stack/mu
 import { MulterExtendedOptions } from './multer-extended-options.js';
 
 @injectable()
-export class MulterHelper {
+export class MulterParser {
   constructor(
     @inject(NODE_REQ) protected nodeReq: NodeRequest,
     protected multer: Multer,
