@@ -1,6 +1,6 @@
-import { createWriteStream } from 'node:fs';
-import { controller, inject, Res, route } from '@ditsmod/core';
-import { MulterParsedForm, HTTP_BODY, MulterParser } from '@ditsmod/body-parser';
+import { controller, inject, NODE_RES, NodeResponse, Res, route } from '@ditsmod/core';
+import { HTTP_BODY, MulterParser } from '@ditsmod/body-parser';
+import { saveFiles, sendHtmlForm } from './utils.js';
 
 interface Body {
   one: number;
@@ -19,48 +19,15 @@ export class SomeController {
   }
 
   @route('GET', 'file-upload')
-  getHtmlForm(res: Res) {
-    res.setContentType('text/html').send(`
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uploads files</title>
-</head>
-<body>
-    <form method="post" enctype="multipart/form-data">
-        <label for="files">Select files:</label>
-        <input type="file" id="files" name="files" multiple>
-        <br>
-        <input type="submit">
-    </form>
-</body>
-</html>
-      `);
+  getHtmlForm(@inject(NODE_RES) nodeRes: NodeResponse) {
+    sendHtmlForm(nodeRes);
   }
 
   @route('POST', 'file-upload')
   async downloadFile(res: Res, parse: MulterParser) {
     const parsedForm = await parse.array('files', 5);
-    await this.saveFiles(parsedForm);
+    await saveFiles(parsedForm);
     res.nodeRes.writeHead(303, { Connection: 'close', Location: '/file-upload' });
     res.nodeRes.end();
-  }
-
-  protected saveFiles(parsedForm: MulterParsedForm) {
-    const promises: Promise<void>[] = [];
-    parsedForm.files.forEach((file) => {
-      const promise = new Promise<void>((resolve, reject) => {
-        const path = `uploaded-files/${file.originalName}`;
-        const writableStream = createWriteStream(path);
-        file.stream.pipe(writableStream);
-        writableStream.on('finish', resolve);
-        writableStream.on('error', reject);
-      });
-      promises.push(promise);
-    });
-
-    return Promise.all(promises);
   }
 }
