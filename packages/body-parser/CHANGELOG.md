@@ -1,5 +1,12 @@
+<a name="body-parser-2.15.1"></a>
+# [body-parser-2.15.1](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.15.1) (2024-08-01)
+
+### Bug fixes
+
+- Now this class accepts MulterExtendedOptions instead MulterOptions.
+
 <a name="body-parser-2.15.0"></a>
-# [body-parser-2.15.0](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.15.0) (2024-07-31)
+## [body-parser-2.15.0](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.15.0) (2024-07-31)
 
 ### Features
 
