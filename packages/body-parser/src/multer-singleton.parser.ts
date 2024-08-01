@@ -33,6 +33,20 @@ export class MulterSingletonParser {
   }
 
   /**
+   * Accepts arrays of files from any form fields, with no limit on the number of files.
+   * An array of files will be stored in `parsedForm.files`.
+   *
+   * **WARNING:** Make sure that you always handle the files that a user uploads.
+   * Never use this method as a global parser since a malicious user could upload
+   * files to a route that you didn't anticipate. Only use this function on routes
+   * where you are handling the uploaded files.
+   */
+  any<F extends object = any>(ctx: RequestContext) {
+    const result = this.multer.any<F>()(ctx.nodeReq, ctx.nodeReq.headers);
+    return checkResult(result);
+  }
+
+  /**
    * Accepts groups of file arrays with fields of the form you specify with the `group` parameter.
    * An object with arrays of files will be stored in `parsedForm.groups` property.
    * 
@@ -50,20 +64,6 @@ export class MulterSingletonParser {
    */
   groups<F extends object = any, G extends string = string>(ctx: RequestContext, groups: MulterGroup<G>[]) {
     const result = this.multer.groups<F, G>(groups)(ctx.nodeReq, ctx.nodeReq.headers);
-    return checkResult(result);
-  }
-
-  /**
-   * Accepts arrays of files from any form fields, with no limit on the number of files.
-   * An array of files will be stored in `parsedForm.files`.
-   *
-   * **WARNING:** Make sure that you always handle the files that a user uploads.
-   * Never use this method as a global parser since a malicious user could upload
-   * files to a route that you didn't anticipate. Only use this function on routes
-   * where you are handling the uploaded files.
-   */
-  any<F extends object = any>(ctx: RequestContext) {
-    const result = this.multer.any<F>()(ctx.nodeReq, ctx.nodeReq.headers);
     return checkResult(result);
   }
 
