@@ -73,7 +73,7 @@ export class MulterParser {
    * `LIMIT_UNEXPECTED_FILE` will be issued. This is the same as doing `parse.fields([])`.
    */
   textFields<F extends object = any>() {
-    const result = this.multer.none<F>()(this.nodeReq, this.nodeReq.headers);
+    const result = this.multer.textFields<F>()(this.nodeReq, this.nodeReq.headers);
     return checkResult(result).then(parsedForm => parsedForm.textFields);
   }
 }

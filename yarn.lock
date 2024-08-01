@@ -1248,10 +1248,10 @@
   dependencies:
     vary "^1.1.2"
 
-"@ts-stack/multer@^1.0.0-beta.5":
-  version "1.0.0-beta.5"
-  resolved "https://registry.yarnpkg.com/@ts-stack/multer/-/multer-1.0.0-beta.5.tgz#e4cc31e26560aaaacdc7ea4e06e9101105a1dea1"
-  integrity sha512-iLXbmdfN57bx/dcDH/HMlMGxwnnPYEAHmAPdzlEzkSFvCwfNpxTOddTr/xA35Hl/tj3RaDPBDUbNfnvdZwgylw==
+"@ts-stack/multer@^1.0.0-beta.6":
+  version "1.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@ts-stack/multer/-/multer-1.0.0-beta.6.tgz#0abc440065eb53c98af7b8f8c6c5cbd028f1ce08"
+  integrity sha512-5pJD8gwEfE1hHEt167Le07nmEo2vjxydn/rnpc8Ol11JPWWWPZQNZH2HV8e/KkvTjENijUXtCNTOfRbkGpaQuw==
   dependencies:
     "@fastify/busboy" "^3.0.0"
     "@ts-stack/type-is" "^1.0.1"
