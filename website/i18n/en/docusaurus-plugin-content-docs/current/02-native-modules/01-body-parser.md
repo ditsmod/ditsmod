@@ -124,11 +124,11 @@ Depending on whether the controller is [singleton][3] or not, the result of the 
   }
   ```
 
-## Завантаження файлів
+## File Uploads
 
-В залежності від того, чи є контролер [одинаком][3] чи ні, спосіб отримання парсера, та сигнатури його методів трохи відрізняються:
+Depending on whether the controller is [singleton][3] or not, the method of obtaining the parser and the signatures of its methods differ slightly:
 
-1. Якщо контролер не є одинаком, через DI необхідно запитати `MulterParser`, після чого можете користуватись його методами:
+1. If the controller is not a singleton, you need to request `MulterParser` through DI, after which you can use its methods:
 
   ```ts {9}
   import { createWriteStream } from 'node:fs';
@@ -160,7 +160,7 @@ Depending on whether the controller is [singleton][3] or not, the result of the 
     }
   }
   ```
-2. Якщо контролер є одинаком, через DI необхідно запитати `MulterSingletonParser`, після чого можете користуватись його методами:
+2. If the controller is a singleton, you need to request `MulterSingletonParser` through DI, after which you can use its methods:
 
   ```ts {11}
   import { createWriteStream } from 'node:fs';
@@ -195,36 +195,36 @@ Depending on whether the controller is [singleton][3] or not, the result of the 
   }
   ```
 
-Об'єкт `parsedForm`, який повертають методи парсерів, матиме чотири властивості:
+The `parsedForm` object returned by the parser methods will have four properties:
 
-1. `textFields` міститиме об'єкт зі значеннями з текстових полів HTML-форми (якщо такі є);
-2. `file` міститиме об'єкт, де зокрема зберігатиметься файл у вигляді `Readable` потоку, який можна використовувати для збереження файлу.
-3. `files` міститиме масив об'єктів, кожен елемент якого має тип, указаний в другому пункті.
-4. `groups` міститиме об'єкт, де кожен ключ відповідає назві поля у HTML-формі, а вміст кожної властивості - це масив файлів, що має тип, указаний у третьому пункті.
+1. `textFields` will contain an object with values from the HTML form's text fields (if any);
+2. `file` will contain an object, which includes the file as a `Readable` stream that can be used to save the file.
+3. `files` will contain an array of objects, where each element has the type specified in the second point.
+4. `groups` will contain an object where each key corresponds to the name of a field in the HTML form, and the content of each property is an array of files with the type specified in the third point.
 
-За один парсинг може бути заповнено максимум дві властивості із чотирьох - це поле `textFields` і одна із властивостей: `file`, `files` або `groups`. Яка із властивостей буде заповнюватись, залежить від використаного методу парсера. 
+A maximum of two properties from these four can be filled in one parsing: the `textFields` field and one of the properties: `file`, `files`, or `groups`. Which property will be filled depends on the parser method used.
 
-- метод `single` приймає єдиний файл з указаного поля форми; зверніть увагу на назви властивостей під час деструкції об'єкта (інші властивості, в даному випадку, є незаповненими):
+- The `single` method accepts a single file from the specified form field; note the property names during object destructuring (other properties will be unfilled in this case):
   ```ts
   const { textFields, file } = await parse.single('fieldName');
   // OR
   const { textFields, file } = await parse.single(ctx, 'fieldName'); // For singleton.
   ```
 
-- метод `array` може приймати декілька файлів з указаного поля форми:
+- The `array` method can accept multiple files from the specified form field:
   ```ts
   const { textFields, files } = await parse.array('fieldName', 5);
   // OR
   const { textFields, files } = await parse.array(ctx, 'fieldName', 5); // For singleton.
   ```
-- метод `any` повертає такий самий тип даних, що і метод `array`, але він приймає файли з будь-якими назвами полів форми, а також він не має параметрів для обмеження максимальної кількості файлів (вона обмежується лише загальною конфігурацією, про яку буде йти мова згодом):
+- The `any` method returns the same type of data as the `array` method, but it accepts files with any form field names and does not have parameters to limit the maximum number of files (this limit is determined by the general configuration, which will be discussed later):
   ```ts
   const { textFields, files } = await parse.any();
   // OR
   const { textFields, files } = await parse.any(ctx); // For singleton.
   ```
 
-- метод `groups` приймає масиви файлів з указаними полями форми:
+- The `groups` method accepts arrays of files from specified form fields:
   ```ts
   const { textFields, groups } = await parse.groups([
     { name: 'avatar', maxCount: 1 },
@@ -236,16 +236,16 @@ Depending on whether the controller is [singleton][3] or not, the result of the 
     { name: 'gallery', maxCount: 8 },
   ]); // For singleton.
   ```
-- метод `textFields` повертає об'єкт лише з полів форми, що не мають `type="file"`; якщо у формі будуть поля з файлами, цей метод кине помилку:
+- The `textFields` method returns an object only with form fields that do not have `type="file"`; if there are file fields in the form, this method will throw an error:
   ```ts
   const textFields = await parse.textFields();
   // OR
   const textFields = await parse.textFields(ctx); // For singleton.
   ```
 
-### MulterOptions
+### MulterExtendedOptions
 
-У модулях, де буде працювати `@ditsmod/body-parser` для форм з даними у форматі `multipart/form-data`, можете передавати до DI провайдер з токеном `MulterExtendedOptions`. Цей клас має на дві опції більше, ніж рідний для `@ts-stack/multer` клас `MulterOptions`:
+In modules where `@ditsmod/body-parser` will be used for forms with data in `multipart/form-data` format, you can pass a provider with the token `MulterExtendedOptions` to DI. This class has two more options than the native `MulterOptions` class from `@ts-stack/multer`:
 
 ```ts
 import { InputLogLevel, Status } from '@ditsmod/core';
@@ -257,9 +257,9 @@ export class MulterExtendedOptions extends MulterOptions {
 }
 ```
 
-Рекомендуємо передавати провайдер з цим токеном на рівні модуля, щоб він діяв як для `MulterParser` так і для `MulterSingletonParser`:
+It is recommended to pass the provider with this token at the module level so that it applies to both `MulterParser` and `MulterSingletonParser`:
 
-```ts {5,13-14}
+```ts {5,13}
 import { featureModule } from '@ditsmod/core';
 import { RoutingModule } from '@ditsmod/routing';
 import { BodyParserModule, MulterExtendedOptions } from '@ditsmod/body-parser';

@@ -243,7 +243,7 @@ export class AppModule {}
   const textFields = await parse.textFields(ctx); // For singleton.
   ```
 
-### MulterOptions
+### MulterExtendedOptions
 
 У модулях, де буде працювати `@ditsmod/body-parser` для форм з даними у форматі `multipart/form-data`, можете передавати до DI провайдер з токеном `MulterExtendedOptions`. Цей клас має на дві опції більше, ніж рідний для `@ts-stack/multer` клас `MulterOptions`:
 
@@ -259,7 +259,7 @@ export class MulterExtendedOptions extends MulterOptions {
 
 Рекомендуємо передавати провайдер з цим токеном на рівні модуля, щоб він діяв як для `MulterParser` так і для `MulterSingletonParser`:
 
-```ts {5,13-14}
+```ts {5,13}
 import { featureModule } from '@ditsmod/core';
 import { RoutingModule } from '@ditsmod/routing';
 import { BodyParserModule, MulterExtendedOptions } from '@ditsmod/body-parser';
