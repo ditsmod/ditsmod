@@ -1,10 +1,12 @@
 import { injectable, methodFactory, optional } from '@ditsmod/core';
-import { Multer, MulterOptions } from '@ts-stack/multer';
+import { Multer } from '@ts-stack/multer';
+
+import { MulterExtendedOptions } from './multer-extended-options.js';
 
 @injectable()
 export class MulterFactory {
   @methodFactory()
-  getMulter(@optional() multerOptions?: MulterOptions) {
+  getMulter(@optional() multerOptions?: MulterExtendedOptions) {
     return new Multer(multerOptions);
   }
 }
