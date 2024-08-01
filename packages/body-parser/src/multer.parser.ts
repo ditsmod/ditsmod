@@ -70,7 +70,7 @@ export class MulterParser {
 
   /**
    * Accept only text fields. If any file upload is made, error with code
-   * `LIMIT_UNEXPECTED_FILE` will be issued. This is the same as doing `parse.fields([])`.
+   * `LIMIT_UNEXPECTED_FILE` will be issued. This is the same as doing `parse.groups([])`.
    */
   textFields<F extends object = any>() {
     const result = this.multer.textFields<F>()(this.nodeReq, this.nodeReq.headers);

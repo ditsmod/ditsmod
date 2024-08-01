@@ -68,8 +68,8 @@ export class MulterSingletonParser {
   }
 
   /**
-   * Accept only text fields. If any file upload is made, error with code
-   * `LIMIT_UNEXPECTED_FILE` will be issued. This is the same as doing `parse.fields([])`.
+   * Accept only text (non-file) fields. If any file upload is made, error with code
+   * `LIMIT_UNEXPECTED_FILE` will be issued. This is the same as doing `parse.groups([])`.
    */
   textFields<F extends object = any>(ctx: RequestContext) {
     const result = this.multer.textFields<F>()(ctx.nodeReq, ctx.nodeReq.headers);
