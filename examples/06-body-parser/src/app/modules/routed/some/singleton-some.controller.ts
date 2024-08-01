@@ -24,7 +24,7 @@ export class SingletonController {
 
   @route('POST', 'singleton-file-upload')
   async downloadFile(ctx: SingletonRequestContext) {
-    const parsedForm = await this.parse.array(ctx, 'files', 5);
+    const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
     await saveFiles(parsedForm);
     ctx.nodeRes.writeHead(303, { Connection: 'close', Location: '/singleton-file-upload' });
     ctx.nodeRes.end();

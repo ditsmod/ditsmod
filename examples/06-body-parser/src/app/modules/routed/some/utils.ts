@@ -7,10 +7,8 @@ export function saveFiles(parsedForm: MulterParsedForm) {
   parsedForm.files.forEach((file) => {
     const promise = new Promise<void>((resolve, reject) => {
       const path = `uploaded-files/${file.originalName}`;
-      const writableStream = createWriteStream(path);
+      const writableStream = createWriteStream(path).on('error', reject).on('finish', resolve);
       file.stream.pipe(writableStream);
-      writableStream.on('finish', resolve);
-      writableStream.on('error', reject);
     });
     promises.push(promise);
   });
@@ -30,8 +28,8 @@ export function sendHtmlForm(nodeRes: NodeResponse) {
 </head>
 <body>
   <form method="post" enctype="multipart/form-data">
-      <label for="files">Select files:</label>
-      <input type="file" id="files" name="files" multiple>
+      <label for="fieldId">Select files:</label>
+      <input type="file" id="fieldId" name="fieldName" multiple>
       <br>
       <input type="submit">
   </form>

@@ -25,7 +25,7 @@ export class SomeController {
 
   @route('POST', 'file-upload')
   async downloadFile(res: Res, parse: MulterParser) {
-    const parsedForm = await parse.array('files', 5);
+    const parsedForm = await parse.array('fieldName', 5);
     await saveFiles(parsedForm);
     res.nodeRes.writeHead(303, { Connection: 'close', Location: '/file-upload' });
     res.nodeRes.end();
