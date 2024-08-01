@@ -54,15 +54,6 @@ export class MulterSingletonParser {
   }
 
   /**
-   * Accept only text fields. If any file upload is made, error with code
-   * `LIMIT_UNEXPECTED_FILE` will be issued. This is the same as doing `upload.fields([])`.
-   */
-  none<F extends object = any>(ctx: RequestContext) {
-    const result = this.multer.none<F>()(ctx.nodeReq, ctx.nodeReq.headers);
-    return checkResult(result);
-  }
-
-  /**
    * Accepts arrays of files from any form fields, with no limit on the number of files.
    * An array of files will be stored in `parsedForm.files`.
    *
@@ -74,5 +65,14 @@ export class MulterSingletonParser {
   any<F extends object = any>(ctx: RequestContext) {
     const result = this.multer.any<F>()(ctx.nodeReq, ctx.nodeReq.headers);
     return checkResult(result);
+  }
+
+  /**
+   * Accept only text fields. If any file upload is made, error with code
+   * `LIMIT_UNEXPECTED_FILE` will be issued. This is the same as doing `parse.fields([])`.
+   */
+  textFields<F extends object = any>(ctx: RequestContext) {
+    const result = this.multer.none<F>()(ctx.nodeReq, ctx.nodeReq.headers);
+    return checkResult(result).then(parsedForm => parsedForm.textFields);
   }
 }

@@ -55,15 +55,6 @@ export class MulterParser {
   }
 
   /**
-   * Accept only text fields. If any file upload is made, error with code
-   * `LIMIT_UNEXPECTED_FILE` will be issued. This is the same as doing `upload.fields([])`.
-   */
-  none<F extends object = any>() {
-    const result = this.multer.none<F>()(this.nodeReq, this.nodeReq.headers);
-    return checkResult(result);
-  }
-
-  /**
    * Accepts arrays of files from any form fields, with no limit on the number of files.
    * An array of files will be stored in `parsedForm.files`.
    *
@@ -75,5 +66,14 @@ export class MulterParser {
   any<F extends object = any>() {
     const result = this.multer.any<F>()(this.nodeReq, this.nodeReq.headers);
     return checkResult(result);
+  }
+
+  /**
+   * Accept only text fields. If any file upload is made, error with code
+   * `LIMIT_UNEXPECTED_FILE` will be issued. This is the same as doing `parse.fields([])`.
+   */
+  textFields<F extends object = any>() {
+    const result = this.multer.none<F>()(this.nodeReq, this.nodeReq.headers);
+    return checkResult(result).then(parsedForm => parsedForm.textFields);
   }
 }
