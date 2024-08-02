@@ -202,7 +202,7 @@ export class AppModule {}
 3. `files` міститиме масив об'єктів, кожен елемент якого має тип, указаний в другому пункті.
 4. `groups` міститиме об'єкт, де кожен ключ відповідає назві поля у HTML-формі, а вміст кожної властивості - це масив файлів, що має тип, указаний у третьому пункті.
 
-За один парсинг може бути заповнено максимум дві властивості із чотирьох - це поле `textFields` і одна із властивостей: `file`, `files` або `groups`. Яка із властивостей буде заповнюватись, залежить від використаного методу парсера. 
+За один парсинг може бути заповнено максимум дві властивості із чотирьох - це властивість `textFields` і одна із властивостей: `file`, `files` або `groups`. Яка із властивостей буде заповнюватись, залежить від використаного методу парсера. 
 
 - метод `single` приймає єдиний файл з указаного поля форми; зверніть увагу на назви властивостей під час деструкції об'єкта (інші властивості, в даному випадку, є незаповненими):
   ```ts
@@ -259,9 +259,8 @@ export class MulterExtendedOptions extends MulterOptions {
 
 Рекомендуємо передавати провайдер з цим токеном на рівні модуля, щоб він діяв як для `MulterParser` так і для `MulterSingletonParser`:
 
-```ts {5,13}
+```ts {4,12}
 import { featureModule } from '@ditsmod/core';
-import { RoutingModule } from '@ditsmod/routing';
 import { BodyParserModule, MulterExtendedOptions } from '@ditsmod/body-parser';
 
 const multerOptions: MulterExtendedOptions = { limits: { files: 20 }, errorLogLevel: 'debug' };

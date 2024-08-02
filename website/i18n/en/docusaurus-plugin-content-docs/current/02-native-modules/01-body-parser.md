@@ -202,7 +202,7 @@ The `parsedForm` object returned by the parser methods will have four properties
 3. `files` will contain an array of objects, where each element has the type specified in the second point.
 4. `groups` will contain an object where each key corresponds to the name of a field in the HTML form, and the content of each property is an array of files with the type specified in the third point.
 
-A maximum of two properties from these four can be filled in one parsing: the `textFields` field and one of the properties: `file`, `files`, or `groups`. Which property will be filled depends on the parser method used.
+A maximum of two properties from these four can be filled in one parsing: the `textFields` property and one of the properties: `file`, `files`, or `groups`. Which property will be filled depends on the parser method used.
 
 - The `single` method accepts a single file from the specified form field; note the property names during object destructuring (other properties will be unfilled in this case):
   ```ts
@@ -259,9 +259,8 @@ export class MulterExtendedOptions extends MulterOptions {
 
 It is recommended to pass the provider with this token at the module level so that it applies to both `MulterParser` and `MulterSingletonParser`:
 
-```ts {5,13}
+```ts {4,12}
 import { featureModule } from '@ditsmod/core';
-import { RoutingModule } from '@ditsmod/routing';
 import { BodyParserModule, MulterExtendedOptions } from '@ditsmod/body-parser';
 
 const multerOptions: MulterExtendedOptions = { limits: { files: 20 }, errorLogLevel: 'debug' };
