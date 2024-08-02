@@ -14,7 +14,12 @@ export {
 } from './constans.js';
 export { CustomError } from './error/custom-error.js';
 export { ErrorOpts } from './error/error-opts.js';
-export { controller, ControllerMetadata } from './decorators/controller.js';
+export {
+  controller,
+  ControllerRawMetadata,
+  ControllerRawMetadata1,
+  ControllerRawMetadata2,
+} from './decorators/controller.js';
 export { guard } from './decorators/guard.js';
 export { featureModule } from './decorators/module.js';
 export { rootModule } from './decorators/root-module.js';
@@ -62,7 +67,7 @@ export {
   HttpInterceptorHandler,
   RequestContext,
   SingletonRequestContext,
-  SingletonHttpBackend
+  SingletonHttpBackend,
 } from './types/http-interceptor.js';
 export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
 export { MetadataPerMod1, MetadataPerMod2 } from './types/metadata-per-mod.js';
@@ -83,7 +88,7 @@ export {
   RedirectStatusCodes,
   Provider,
   AnyFn,
-  HttpHeaders
+  HttpHeaders,
 } from './types/mix.js';
 export { ModuleMetadata, AppendsWithParams } from './types/module-metadata.js';
 export { RouteMeta } from './types/route-data.js';

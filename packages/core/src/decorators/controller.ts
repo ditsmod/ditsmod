@@ -1,7 +1,10 @@
 import { makeClassDecorator } from '#di';
 import { Provider } from '#types/mix.js';
 
-export interface ControllerMetadata {
+/**
+ * Metadata accepted by the default (non-singleton) controller.
+ */
+export interface ControllerRawMetadata1 {
   /**
    * Providers per HTTP request.
    */
@@ -13,7 +16,23 @@ export interface ControllerMetadata {
   /**
    * Default - `false`.
    */
-  isSingleton?: boolean;
+  isSingleton?: false | undefined;
 }
 
-export const controller = makeClassDecorator((data?: ControllerMetadata) => data || {});
+/**
+ * Metadata accepted by the singleton controller.
+ */
+export interface ControllerRawMetadata2 {
+  /**
+   * Providers per route.
+   */
+  providersPerRou?: Provider[];
+  /**
+   * Default - `false`.
+   */
+  isSingleton: true;
+}
+
+export type ControllerRawMetadata = ControllerRawMetadata1 | ControllerRawMetadata2;
+
+export const controller = makeClassDecorator((data?: ControllerRawMetadata) => data || {});

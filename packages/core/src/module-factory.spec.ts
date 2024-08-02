@@ -1,6 +1,6 @@
 import { FactoryProvider, injectable, Provider, Injector } from '#di';
 
-import { controller, ControllerMetadata } from './decorators/controller.js';
+import { controller, ControllerRawMetadata } from './decorators/controller.js';
 import { featureModule } from './decorators/module.js';
 import { rootModule } from './decorators/root-module.js';
 import { route, RouteMetadata } from './decorators/route.js';
@@ -1387,7 +1387,7 @@ describe('ModuleFactory', () => {
     });
 
     it('controller with multiple @Route on single method', () => {
-      const ctrlMetadata = { providersPerReq: [] } as ControllerMetadata;
+      const ctrlMetadata = { providersPerReq: [] } as ControllerRawMetadata;
       @controller(ctrlMetadata)
       class Controller1 {
         @route('GET', 'url1')
