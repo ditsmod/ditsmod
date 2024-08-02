@@ -11,6 +11,7 @@ import {
   RouteMeta,
   Provider,
   AppOptions,
+  ControllerRawMetadata1,
 } from '@ditsmod/core';
 import { RoutesExtension } from '@ditsmod/routing';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
@@ -57,7 +58,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
           }
           const controllerFactory: FactoryProvider = { useFactory: [controller, controller.prototype[methodName]] };
           const resolvedHandler = isSingleton ? undefined : RouteMeta.resolveHandler(controller, methodName);
-          providersPerReq.push(...(ctrlDecorator?.value.providersPerReq || []), controllerFactory);
+          providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []), controllerFactory);
           const { httpMethod, path: controllerPath, operationObject } = oasRoute;
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const path = this.getPath(prefix, controllerPath);
