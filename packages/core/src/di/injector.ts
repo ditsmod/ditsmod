@@ -678,6 +678,11 @@ child.get(Service).config; // returns from parent injector: { one: 1, two: 2 }
 child.pull(Service).config; // pulls Service in current injector: { one: 11, two: 22 }
 child.get(Service).config; // now, in current injector, works cache: { one: 11, two: 22 }
    * ```
+   * __Attention:__ Try to avoid using the `child.pull()` method when you can easily achieve the same
+   * result with the `child.get()` method, by passing the appropriate provider to the child injector
+   * during its creation. Use `child.pull()` only in exceptional cases, such as when you dynamically
+   * create an injector and do not know the dependencies of a specific provider whose value you need
+   * to create.
    */
   pull<T>(token: Class<T> | InjectionToken<T>, defaultValue?: T): T;
   pull<T extends AnyFn>(token: T, defaultValue?: T): ReturnType<T>;
