@@ -536,7 +536,27 @@ child.get(Service).config; // now, in current injector, works cache: { one: 11, 
 
 As you can see, initially `child.get(Service)` returned an instance of the `Service` class, which was created in the parent injector. That's why the dependency of this class - `Config` - was resolved with the value `{ one: 1, two: 2 }`. However, when `child.pull(Service)` was called, the child injector effectively pulled `Service` into itself and resolved the `Config` dependency with the value `{ one: 11, two: 22 }` within the context of the child injector.
 
-The `injector.pull()` method is appropriate when you are not using a `ValueProvider` for the requested token. This method is useful because it allows you to create instances of providers within the context of the current injector, which depend on a specific configuration that may differ between the current and parent injectors.
+You can achieve an identical result with the `child.get()` method if you pass `Service` to the child injector:
+
+```ts {14-15}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Config {
+  one: any;
+  two: any;
+}
+
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const parent = Injector.resolveAndCreate([]);
+const child = parent.resolveAndCreateChild([Service, { token: Config, useValue: { one: 11, two: 22 } }]);
+child.get(Service).config; // now, in current injector, works cache: { one: 11, two: 22 }
+```
+
+__Attention:__ Try to avoid using the `child.pull()` method when you can easily achieve the same result with the `child.get()` method, by passing the appropriate provider to the child injector during its creation. Use `child.pull()` only in exceptional cases, such as when you dynamically create an injector and do not know the dependencies of a specific provider whose value you need to create. In addition, the `injector.pull()` method is appropriate when you are not using a `ValueProvider` for the requested token. This method is useful because it allows you to create instances of providers within the context of the current injector, which depend on a specific configuration that may differ between the current and parent injectors.
 
 ### Current injector
 
@@ -624,9 +644,9 @@ const child = parent.resolveAndCreateChild([
 const locals = child.get(LOCAL); // ['аа']
 ```
 
-### Substinuting multi-providers
+### Substituting multi-providers
 
-To make it possible to substinuting a specific multi-provider, you can do the following:
+To make it possible to substituting a specific multi-provider, you can do the following:
 
 1. transfer a certain class to the multi-provider object using the `useToken` property;
 2. then transfer this class as a regular provider;
