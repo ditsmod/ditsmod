@@ -139,7 +139,7 @@ export class AppModule {}
   export class SomeController {
     @route('POST', 'file-upload')
     async downloadFile(res: Res, parse: MulterParser) {
-      const parsedForm = await parse.array('files', 5);
+      const parsedForm = await parse.array('fieldName', 5);
       await this.saveFiles(parsedForm);
       // ...
       res.send('ok');
@@ -173,7 +173,7 @@ export class AppModule {}
 
     @route('POST', 'file-upload')
     async downloadFile(ctx: SingletonRequestContext) {
-      const parsedForm = await this.parse.array(ctx, 'files', 5);
+      const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
       await this.saveFiles(parsedForm);
       // ...
       ctx.nodeRes.end('ok');
