@@ -3,7 +3,7 @@
 
 ### Bug fixes
 
-- Now this class accepts MulterExtendedOptions instead MulterOptions.
+- Now `MulterFactory` class accepts `MulterExtendedOptions` instead `MulterOptions`.
 
 <a name="body-parser-2.15.0"></a>
 ## [body-parser-2.15.0](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.15.0) (2024-07-31)
