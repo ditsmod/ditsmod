@@ -151,16 +151,18 @@ export class HelloWorldController {
 
 ### Контролер одинак
 
-Через те, що інстанс контролера у цьому режимі створюється єдиний раз, ви не зможете запитувати у його методах інстанси класів, які створюються за кожним запитом. Наприклад, якщо в методі ви запросите інстанс класу `Res`, Ditsmod кине помилку:
+Через те, що інстанс контролера у цьому режимі створюється єдиний раз, ви не зможете запитувати у його конструкторі інстанси класів, які створюються за кожним запитом. Наприклад, якщо в конструкторі ви запросите інстанс класу `Res`, Ditsmod кине помилку:
 
-```ts {3,6}
+```ts {3,5}
 import { controller, route, RequestContext } from '@ditsmod/core';
 
 @controller({ isSingleton: true })
 export class HelloWorldController {
+  constructor(private res: Res) {}
+
   @route('GET', 'hello')
-  method1(res: Res) {
-    res.send('Hello, World!');
+  method1() {
+    this.res.send('Hello, World!');
   }
 }
 ```

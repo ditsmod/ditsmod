@@ -151,16 +151,18 @@ You may also be interested in [how to get the HTTP request body][5].
 
 ### The controller singleton
 
-Because the controller is instantiated in this mode only once, you will not be able to query in its methods for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the methods, Ditsmod will throw an error:
+Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the constructor, Ditsmod will throw an error:
 
-```ts {3,6}
+```ts {3,5}
 import { controller, route, RequestContext } from '@ditsmod/core';
 
 @controller({ isSingleton: true })
 export class HelloWorldController {
+  constructor(private res: Res) {}
+
   @route('GET', 'hello')
-  method1(res: Res) {
-    res.send('Hello, World!');
+  method1() {
+    this.res.send('Hello, World!');
   }
 }
 ```
