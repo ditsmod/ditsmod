@@ -1,5 +1,12 @@
+<a name="core-2.53.2"></a>
+# [core-2.53.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.53.2) (2024-08-04)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [291c08e8be](https://github.com/ditsmod/ditsmod/commit/291c08e8bee0fbb7) | fix | fixed `getCallerDir()`. |
+
 <a name="core-2.53.1"></a>
-# [core-2.53.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.53.1) (2024-07-22)
+## [core-2.53.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.53.1) (2024-07-22)
 
 | Commit | Type | Description |
 | -- | -- | -- |
