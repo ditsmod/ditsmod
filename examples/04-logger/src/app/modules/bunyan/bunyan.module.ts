@@ -1,5 +1,5 @@
 import { Logger, featureModule, Providers } from '@ditsmod/core';
-import BunyanLogger = require('bunyan');
+import BunyanLogger from 'bunyan';
 import { RoutingModule } from '@ditsmod/routing';
 
 import { BunyanController } from './bunyan.controller.js';

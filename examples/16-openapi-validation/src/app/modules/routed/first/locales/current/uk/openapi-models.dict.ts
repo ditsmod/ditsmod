@@ -9,5 +9,5 @@ export class OpenapiUkModelsDict extends OpenapiModelsDict {
   /**
    * Невірне ім'я користувача.
    */
-  override invalidUserName = `Невірне ім'я користувача.`;
+  override invalidUserName = "Невірне ім'я користувача.";
 }

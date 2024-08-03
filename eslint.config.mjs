@@ -11,6 +11,7 @@ export default tseslint.config(
       parserOptions: {
         project: [
           './packages/*/tsconfig.json',
+          './examples/*/tsconfig.json',
         ]
       },
     },
@@ -41,7 +42,6 @@ export default tseslint.config(
     ignores: [
       'node_modules/*',
       'packages/versions/*',
-      'examples/*',
       'website/*',
       '**/dist*',
       'coverage/*',

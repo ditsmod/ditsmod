@@ -7,5 +7,5 @@ export class OpenapiModelsDict implements Dictionary {
   /**
    * Invalid user name
    */
-  invalidUserName = `Invalid user name`;
+  invalidUserName = 'Invalid user name';
 }

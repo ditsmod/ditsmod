@@ -1,5 +1,5 @@
 import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel, methodFactory, optional } from '@ditsmod/core';
-import pino = require('pino');
+import pino from 'pino';
 
 export class PatchLogger {
   @methodFactory()
