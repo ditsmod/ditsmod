@@ -18,11 +18,11 @@ export default tseslint.config(
   },
   {
     rules: {
+      semi: ['error', 'always'],
+      quotes: ['error', 'single', { avoidEscape: true }],
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-misused-promises': 0,
       '@typescript-eslint/no-empty-object-type': 0,
-      semi: ['error', 'always'],
-      quotes: ['error', 'single', { avoidEscape: true }],
       '@typescript-eslint/no-non-null-assertion': 0,
       '@typescript-eslint/no-empty-function': 0,
       '@typescript-eslint/no-empty-interface': 0,
@@ -40,16 +40,12 @@ export default tseslint.config(
   },
   {
     ignores: [
-      'node_modules/*',
-      'packages/versions/*',
-      'website/*',
       '**/dist*',
-      'coverage/*',
       '**/*.d.ts',
+      'website/*',
+      'node_modules/*',
       'eslint.config.mjs',
       '**/jest.config.ts',
-      '**/*.spec.ts',
-      'packages/openapi/src/swagger-ui/swagger.config.ts',
     ],
   },
 );

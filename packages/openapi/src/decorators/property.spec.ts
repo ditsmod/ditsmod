@@ -83,6 +83,7 @@ describe('@Property', () => {
   it('array with one item', () => {
     class Model1 {
       @property({}, { array: Boolean })
+      // eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
       prop1: Boolean[];
     }
 
@@ -102,6 +103,7 @@ describe('@Property', () => {
   it('array with multi items', () => {
     class Model1 {
       @property({}, { array: [Boolean, String] })
+      // eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
       prop1: [Boolean, String];
     }
 

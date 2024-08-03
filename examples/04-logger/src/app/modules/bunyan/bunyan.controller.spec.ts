@@ -1,5 +1,5 @@
 import { Injector, Res } from '@ditsmod/core';
-import BunyanLogger = require('bunyan');
+import BunyanLogger from 'bunyan';
 import { jest } from '@jest/globals';
 
 import { BunyanController } from './bunyan.controller.js';

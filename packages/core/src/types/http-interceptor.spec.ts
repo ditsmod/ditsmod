@@ -46,7 +46,7 @@ describe('HttpInterceptor', () => {
     jestFn.mockRestore();
   });
 
-  it('each interceptor calls next.handle()', () => {
+  it('each interceptor calls next.handle()', async () => {
     class Interceptor3 implements HttpInterceptor {
       intercept(next: HttpHandler) {
         jestFn('Interceptor3');
@@ -65,7 +65,7 @@ describe('HttpInterceptor', () => {
 
     const chainMaker = injector.get(ChainMaker) as ChainMaker;
     const chain = chainMaker.makeChain({} as any);
-    chain.handle();
+    await chain.handle();
     expect(jestFn.mock.calls).toEqual([
       ['Interceptor1'],
       ['Interceptor2'],
@@ -74,7 +74,7 @@ describe('HttpInterceptor', () => {
     ]);
   });
 
-  it('last interceptor run without calls next.handle()', () => {
+  it('last interceptor run without calls next.handle()', async () => {
     class Interceptor3 implements HttpInterceptor {
       intercept() {
         jestFn('Interceptor3');
@@ -92,7 +92,7 @@ describe('HttpInterceptor', () => {
 
     const chainMaker = injector.get(ChainMaker) as ChainMaker;
     const chain = chainMaker.makeChain({} as any);
-    chain.handle();
+    await chain.handle();
     expect(jestFn.mock.calls).toEqual([['Interceptor1'], ['Interceptor2'], ['Interceptor3']]);
   });
 

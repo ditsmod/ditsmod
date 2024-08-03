@@ -1,4 +1,4 @@
-import jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 import { SignOptions, SignPayload } from 'jsonwebtoken';
 
 import { JwtService } from './jwt.service.js';
