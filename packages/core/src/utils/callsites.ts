@@ -6,8 +6,10 @@ import { dirname } from 'node:path';
 export function callerCallsite({ depth = 0 } = {}) {
   const callers = [];
   const callerFileSet = new Set();
+  const sliceOfCallsites = callsites();
 
-  for (const callsite of callsites()) {
+  for (let i = 0; i < sliceOfCallsites.length; i++) {
+    const callsite = sliceOfCallsites[i];
     const fileName = callsite.getFileName();
     const hasReceiver = callsite.getTypeName() !== null && fileName !== null;
 
@@ -16,7 +18,7 @@ export function callerCallsite({ depth = 0 } = {}) {
       callers.unshift(callsite);
     }
 
-    if (hasReceiver) {
+    if (hasReceiver || sliceOfCallsites.length == i + 1) {
       return callers[depth];
     }
   }

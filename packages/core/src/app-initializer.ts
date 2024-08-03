@@ -243,10 +243,7 @@ export class AppInitializer {
     );
   }
 
-  protected async handleExtensions(
-    aMetadataPerMod1: MetadataPerMod1[],
-    mExtensionsCounters: Map<Provider, number>,
-  ) {
+  protected async handleExtensions(aMetadataPerMod1: MetadataPerMod1[], mExtensionsCounters: Map<Provider, number>) {
     const extensionsContext = new ExtensionsContext();
     const injectorPerApp = this.perAppService.injector.resolveAndCreateChild([
       { token: PerAppService, useValue: this.perAppService },
@@ -294,10 +291,7 @@ export class AppInitializer {
     return metadataPerMod1;
   }
 
-  protected decreaseExtensionsCounters(
-    mExtensionsCounters: Map<Provider, number>,
-    extensions: Provider[],
-  ) {
+  protected decreaseExtensionsCounters(mExtensionsCounters: Map<Provider, number>, extensions: Provider[]) {
     const uniqTargets = new Set<Provider>(getProvidersTargets(extensions));
 
     uniqTargets.forEach((target) => {
