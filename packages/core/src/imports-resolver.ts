@@ -60,7 +60,6 @@ export class ImportsResolver {
           this.grabDependecies(importObj.module, provider, scopes.slice(i));
         });
       });
-      importedTokensMap.extensions;
       importedTokensMap[`multiPer${scope}`].forEach((multiProviders, module) => {
         meta[`providersPer${scope}`].unshift(...multiProviders);
         multiProviders.forEach((provider) => {

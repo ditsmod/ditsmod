@@ -274,7 +274,6 @@ export class Tree {
     const params: RouteParam[] = [];
     let tree: this = this;
 
-    /* eslint-disable no-constant-condition */
     walk: while (true) {
       if (path.length > tree.path.length) {
         if (path.slice(0, tree.path.length) == tree.path) {

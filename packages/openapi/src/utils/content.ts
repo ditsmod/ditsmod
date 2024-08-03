@@ -140,7 +140,7 @@ export class Content {
     originPropertySchema?: XSchemaObject,
     customType?: CustomType
   ) {
-    const propertySchema: SchemaObject = { ...originPropertySchema } || {};
+    const propertySchema: SchemaObject = { ...originPropertySchema };
 
     if (customType?.enum) {
       this.fillEnum(propertySchema, customType.enum);

@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises';
 import { controller, Status, Res, PATH_PARAMS, inject, AnyObj, NODE_RES, Injector } from '@ditsmod/core';
 import { getAbsoluteFSPath } from 'swagger-ui-dist';
-import fs = require('fs');
+import fs from 'node:fs';
 
 import { oasRoute } from './decorators/oas-route.js';
 import { OasConfigFiles } from './types/oas-extension-options.js';

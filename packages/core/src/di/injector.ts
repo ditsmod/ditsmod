@@ -302,7 +302,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
         if (typeof Cls.prototype[prop] != 'function' || prop == 'constructor') {
           continue;
         }
-        const fn = Cls.prototype[prop] as Function;
+        const fn = Cls.prototype[prop] as AnyFn;
         if (fn === factory) {
           return prop;
         }

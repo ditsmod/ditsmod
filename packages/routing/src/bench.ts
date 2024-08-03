@@ -5,7 +5,7 @@ import { Tree } from './tree.js';
 import { DefaultRouter } from './router.js';
 import { RouterErrorMediator } from './router-error-mediator.js';
 
-runBench();
+await runBench();
 
 async function runBench() {
   let isInited = false;

@@ -9,7 +9,7 @@ import {
   DecodeOptions,
   decode,
 } from 'jsonwebtoken';
-import jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 import { JwtServiceOptions } from './models/jwt-service-options.js';
 import {
@@ -67,7 +67,11 @@ export class JwtService {
   protected sign(payload: SignPayload, secretOrPrivateKey: SecretOrPrivateKey, options: SignOptions): Promise<string> {
     return new Promise((resolve, reject) => {
       jwt.sign(payload, secretOrPrivateKey, options, (err, token) => {
-        err ? reject(err) : resolve(token);
+        if (err) {
+          reject(err);
+        } else {
+          resolve(token);
+        }
       });
     });
   }
@@ -129,7 +133,11 @@ export class JwtService {
   protected virify<T>(token: string, secretOrPublicKey: SecretOrPublicKey, options: VerifyOptions): Promise<T> {
     return new Promise((resolve, reject) => {
       jwt.verify<T>(token, secretOrPublicKey, options, (err, decoded) => {
-        err ? reject(err) : resolve(decoded);
+        if (err) {
+          reject(err);
+        } else {
+          resolve(decoded);
+        }
       });
     });
   }

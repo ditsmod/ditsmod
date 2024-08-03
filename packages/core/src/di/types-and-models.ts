@@ -23,6 +23,7 @@ interface Class<T> extends Function {
  */
 export const Class = Function;
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export interface Class<T = any> extends Function {
   new (...args: any[]): T;
 }
