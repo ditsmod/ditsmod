@@ -3,7 +3,7 @@
 
 | Commit | Type | Description |
 | -- | -- | -- |
-| [291c08e8be](https://github.com/ditsmod/ditsmod/commit/291c08e8bee0fbb7) | fix | fixed `getCallerDir()`. |
+| [a9d97687f9](https://github.com/ditsmod/ditsmod/commit/a9d97687f989a6209c6eededbad48b872a4463e9) | fix | fixed `getCallerDir()`. |
 
 <a name="core-2.53.1"></a>
 ## [core-2.53.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.53.1) (2024-07-22)
