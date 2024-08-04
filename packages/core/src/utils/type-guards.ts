@@ -32,89 +32,89 @@ export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
 }
 
 export function isFeatureModule(
-  decoratorAndValue: DecoratorAndValue,
+  decoratorAndValue?: DecoratorAndValue,
 ): decoratorAndValue is DecoratorAndValue<ModuleMetadata> {
   return decoratorAndValue?.decorator === featureModule;
 }
 
 export function isRootModule(
-  decoratorAndValue: DecoratorAndValue,
+  decoratorAndValue?: DecoratorAndValue,
 ): decoratorAndValue is DecoratorAndValue<RootModuleMetadata> {
   return decoratorAndValue?.decorator === rootModule;
 }
 
 export function isDecoratorAndValue(
-  decoratorAndValue: DecoratorAndValue | Class,
+  decoratorAndValue?: DecoratorAndValue | Class,
 ): decoratorAndValue is DecoratorAndValue {
   return (
-    (decoratorAndValue as DecoratorAndValue)?.decorator !== undefined && decoratorAndValue?.hasOwnProperty('value')
+    (decoratorAndValue as DecoratorAndValue)?.decorator !== undefined && Boolean(decoratorAndValue?.hasOwnProperty('value'))
   );
 }
 
 export function isRawRootModule(
-  rawModule: RootModuleMetadata & { decoratorFactory?: AnyFn },
+  rawModule?: RootModuleMetadata & { decoratorFactory?: AnyFn },
 ): rawModule is RootModuleMetadata {
-  return rawModule.decoratorFactory === rootModule;
+  return rawModule?.decoratorFactory === rootModule;
 }
 
 export function isNormRootModule(
-  rawModule: NormalizedModuleMetadata,
+  rawModule?: NormalizedModuleMetadata,
 ): rawModule is NormalizedModuleMetadata<RootModuleMetadata> {
-  return rawModule.decoratorFactory === rootModule;
+  return rawModule?.decoratorFactory === rootModule;
 }
 
-export function isController(decoratorAndValue: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
+export function isController(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
   return decoratorAndValue?.decorator === controller;
 }
 
-export function isRoute(container: AnyObj): container is DecoratorMetadata {
+export function isRoute(container?: AnyObj): container is DecoratorMetadata {
   return (container as DecoratorMetadata)?.decorator === route;
 }
 
-export function isModuleWithParams(mod: Provider | ModuleWithParams | ModuleType): mod is ModuleWithParams {
+export function isModuleWithParams(mod?: Provider | ModuleWithParams | ModuleType): mod is ModuleWithParams {
   return (mod as ModuleWithParams)?.module !== undefined;
 }
 
-export function isAppendsWithParams(mod: ModuleType | ModuleWithParams | AppendsWithParams): mod is AppendsWithParams {
+export function isAppendsWithParams(mod?: ModuleType | ModuleWithParams | AppendsWithParams): mod is AppendsWithParams {
   return (mod as AppendsWithParams)?.module !== undefined && (mod as AppendsWithParams)?.path !== undefined;
 }
 
-export function isInjectionToken(token: any): token is InjectionToken<any> {
+export function isInjectionToken(token?: any): token is InjectionToken<any> {
   return token instanceof InjectionToken;
 }
 
-export function isExtensionProvider(provider: Provider): provider is Class<Extension<any>> {
+export function isExtensionProvider(provider?: Provider): provider is Class<Extension<any>> {
   const init = (provider as Class<Extension<any>>)?.prototype?.init;
   return typeof init == 'function';
 }
 
-export function isTypeProvider(provider: Provider): provider is TypeProvider {
+export function isTypeProvider(provider?: Provider): provider is TypeProvider {
   return provider instanceof Class;
 }
 
-export function isValueProvider(provider: Provider): provider is ValueProvider {
-  return provider.hasOwnProperty('useValue');
+export function isValueProvider(provider?: Provider): provider is ValueProvider {
+  return Boolean(provider?.hasOwnProperty('useValue'));
 }
 
-export function isClassProvider(provider: Provider): provider is ClassProvider {
+export function isClassProvider(provider?: Provider): provider is ClassProvider {
   return (provider as ClassProvider)?.useClass !== undefined;
 }
 
-export function isTokenProvider(provider: Provider): provider is TokenProvider {
+export function isTokenProvider(provider?: Provider): provider is TokenProvider {
   return (provider as TokenProvider)?.useToken !== undefined;
 }
 
-export function isFactoryProvider(provider: Provider): provider is FactoryProvider {
+export function isFactoryProvider(provider?: Provider): provider is FactoryProvider {
   return (provider as FactoryProvider)?.useFactory !== undefined;
 }
 
-export function isClassFactoryProvider(provider: Provider): provider is ClassFactoryProvider {
+export function isClassFactoryProvider(provider?: Provider): provider is ClassFactoryProvider {
   return Array.isArray((provider as ClassFactoryProvider)?.useFactory);
 }
 
 export type MultiProvider = Exclude<Provider, TypeProvider> & { multi: boolean };
 
-export function isMultiProvider(provider: Provider): provider is MultiProvider {
+export function isMultiProvider(provider?: Provider): provider is MultiProvider {
   return (
     (provider as ValueProvider)?.token !== undefined &&
     (provider as ValueProvider)?.multi !== undefined &&
@@ -125,7 +125,7 @@ export function isMultiProvider(provider: Provider): provider is MultiProvider {
   );
 }
 
-export function isProvider(maybeProvider: any): maybeProvider is Provider {
+export function isProvider(maybeProvider?: any): maybeProvider is Provider {
   if (isModuleWithParams(maybeProvider)) {
     return false;
   }
@@ -139,7 +139,7 @@ export function isProvider(maybeProvider: any): maybeProvider is Provider {
  * { token: SomeClas, useClass: OtherClass }
  * ```
  */
-export function isNormalizedProvider(provider: Provider): provider is NormalizedProvider {
+export function isNormalizedProvider(provider?: Provider): provider is NormalizedProvider {
   return (
     isValueProvider(provider) || isClassProvider(provider) || isTokenProvider(provider) || isFactoryProvider(provider)
   );

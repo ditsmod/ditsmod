@@ -12,11 +12,13 @@ import {
   isRoute,
   isMultiProvider,
   MultiProvider,
+  isRawRootModule,
 } from './type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
 import { controller } from '#decorators/controller.js';
 import { route } from '#decorators/route.js';
 import { RequestContext } from '#types/http-interceptor.js';
+import { getModuleMetadata } from './get-module-metadata.js';
 
 describe('type guards', () => {
   describe('isModule()', () => {
@@ -46,6 +48,21 @@ describe('type guards', () => {
       class Module1 {}
       const metadata = reflector.getClassMetadata(Module1)[0];
       expect(isRootModule(metadata)).toBe(false);
+    });
+  });
+
+  describe('isRawRootModule()', () => {
+    it('class with decorator', () => {
+      @rootModule({})
+      class Module1 {}
+      const rawMeta = getModuleMetadata(Module1)!;
+      expect(isRawRootModule(rawMeta)).toBe(true);
+    });
+
+    it('class without decorator', () => {
+      class Module1 {}
+      const rawMeta = getModuleMetadata(Module1)!;
+      expect(isRawRootModule(rawMeta)).toBe(false);
     });
   });
 
