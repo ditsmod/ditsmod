@@ -428,23 +428,16 @@ export class ModuleManager {
     return meta;
   }
 
-  /**
-   * @todo This method will work correctly only if the first module tested is the root module.
-   * Check whether this condition can be avoided.
-   */
   protected checkWhetherIsExternalModule(rawMeta: ModuleMetadataWithContext, meta: NormalizedModuleMetadata) {
+    meta.isExternal = false;
     if (isRawRootModule(rawMeta)) {
-      meta.isExternal = false;
       this.rootDeclaredInDir = meta.declaredInDir;
     } else if (this.rootDeclaredInDir) {
-      if (this.rootDeclaredInDir === '.') {
-        meta.isExternal = false; // If getCallerDir() does not work correctly.
-      } else {
-        meta.isExternal = !meta.declaredInDir.startsWith(this.rootDeclaredInDir);
+      const { declaredInDir } = meta;
+      if (this.rootDeclaredInDir !== '.' && declaredInDir !== '.') {
+        // Case when getCallerDir() works correctly.
+        meta.isExternal = !declaredInDir.startsWith(this.rootDeclaredInDir);
       }
-    } else {
-      const rootMeta = this.getRawMetadata('root');
-      meta.isExternal = !meta.declaredInDir.startsWith(rootMeta?.declaredInDir || '');
     }
   }
 
