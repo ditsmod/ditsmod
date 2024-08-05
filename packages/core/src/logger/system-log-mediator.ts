@@ -173,6 +173,14 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
+   * ${className}: No extensions found.
+   */
+  skippingStartExtensions(self: object) {
+    const className = self.constructor.name;
+    this.setLog('debug', `${className}: No extensions found.`);
+  }
+
+  /**
    * ${className}: Starting extensions...
    */
   startExtensions(self: object) {

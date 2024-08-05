@@ -254,6 +254,10 @@ export class AppInitializer {
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
       injectorPerMod.pull(Logger);
       const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
+      if (!extensionsProviders.length) {
+        systemLogMediator.skippingStartExtensions(this);
+        continue;
+      }
       systemLogMediator.startExtensions(this);
       this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
