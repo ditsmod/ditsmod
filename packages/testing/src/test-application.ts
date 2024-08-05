@@ -1,4 +1,4 @@
-import { AppOptions, OutputLogLevel, ModuleType, ModuleManager } from '@ditsmod/core';
+import { AppOptions, OutputLogLevel, ModuleType, ModuleManager, SystemLogMediator } from '@ditsmod/core';
 import { PreRouterExtension } from '@ditsmod/routing';
 
 import { PreTestApplication } from './pre-test-application.js';
@@ -19,7 +19,10 @@ export class TestApplication {
 
   protected initAndScanRootModule(appModule: ModuleType, appOptions: AppOptions) {
     this.preTestApplication = new PreTestApplication();
-    const systemLogMediator = this.preTestApplication.init(appOptions);
+    const systemLogMediator = new SystemLogMediator({ moduleName: 'TestAppModule' }, undefined, undefined, {
+      level: 'off',
+    });
+    this.preTestApplication.init(appOptions, systemLogMediator);
     this.testModuleManager = new TestModuleManager(systemLogMediator);
     this.testModuleManager.setProvidersPerApp([{ token: TestModuleManager, useToken: ModuleManager }]);
     this.testModuleManager.setExtensionProviders([{ token: PreRouterExtension, useClass: TestPreRouterExtension }]);

@@ -1,11 +1,11 @@
-import { Application, AppOptions, OutputLogLevel, Server } from '@ditsmod/core';
+import { Application, AppOptions, OutputLogLevel, Server, SystemLogMediator } from '@ditsmod/core';
 
 import { TestModuleManager } from './test-module-manager.js';
 import { TestAppInitializer } from './test-app-initializer.js';
 
 export class PreTestApplication extends Application {
-  override init(appOptions: AppOptions) {
-    return super.init(appOptions);
+  override init(appOptions: AppOptions, systemLogMediator?: SystemLogMediator) {
+    return super.init(appOptions, systemLogMediator);
   }
 
   bootstrapTestApplication(testModuleManager: TestModuleManager, logLevel: OutputLogLevel) {
