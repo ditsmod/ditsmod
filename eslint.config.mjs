@@ -21,6 +21,7 @@ export default tseslint.config(
       semi: ['error', 'always'],
       quotes: ['error', 'single', { avoidEscape: true }],
       '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-unused-expressions': 'warn',
       '@typescript-eslint/no-misused-promises': 0,
       '@typescript-eslint/no-empty-object-type': 0,
       '@typescript-eslint/no-non-null-assertion': 0,
