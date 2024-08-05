@@ -21,7 +21,7 @@ export class ConsoleLogger implements Logger {
       const availableLevels = this.allLevels.slice(index);
       if (availableLevels.includes(level)) {
         args = args.length == 1 ? args[0] : args;
-        console.log(`[ConsoleLogger:${level}]`, args);
+        console.log(`${level}`, args);
       } else if (!this.allLevels.includes(this.config.level)) {
         console.log(
           '[ConsoleLogger]',

@@ -67,7 +67,7 @@ export abstract class LogMediator {
 
     logItems.forEach((logItem) => {
       logger.setLevel(logItem.outputLogLevel);
-      logger.log(logItem.inputLogLevel, logItem.msg);
+      logger.log(logItem.inputLogLevel, `[${logItem.moduleName}]: ${logItem.msg}`);
     });
 
     return logger; // Needed for testing only.

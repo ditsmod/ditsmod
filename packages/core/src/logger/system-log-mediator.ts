@@ -44,6 +44,15 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `"${moduleName}" has already been imported into "${moduleId}".`
    */
+  startingDitsmod(self: object) {
+    const className = self.constructor.name;
+    const msg = `${className}: Starting Ditsmod application...`;
+    this.setLog('info', msg);
+  }
+
+  /**
+   * `"${moduleName}" has already been imported into "${moduleId}".`
+   */
   moduleAlreadyImported(self: object, inputModule: ModuleType | ModuleWithParams, targetModuleId: string) {
     const className = self.constructor.name;
     const inputModuleId = getModuleName(inputModule);
@@ -164,11 +173,11 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * ================== ModuleName ======================.
+   * ${className}: Starting extensions...
    */
-  startExtensionsModuleInit(self: object) {
+  startExtensions(self: object) {
     const className = self.constructor.name;
-    this.setLog('debug', `${className}: ${'='.repeat(20)} ${this.moduleExtract.moduleName} ${'='.repeat(20)}`);
+    this.setLog('debug', `${className}: Starting extensions...`);
   }
 
   /**

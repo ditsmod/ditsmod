@@ -21,7 +21,7 @@ export class Application {
    * @param appModule The root module of the application.
    * @param appOptions Application options.
    */
-  bootstrap(appModule: ModuleType, appOptions: AppOptions = new AppOptions()) {
+  bootstrap(appModule: ModuleType, appOptions = new AppOptions()) {
     return new Promise<{ server: NodeServer }>(async (resolve, reject) => {
       try {
         this.init(appOptions);
@@ -39,6 +39,7 @@ export class Application {
 
   protected init(appOptions: AppOptions) {
     this.systemLogMediator = new SystemLogMediator({ moduleName: 'AppModule' });
+    this.systemLogMediator.startingDitsmod(this);
     this.appOptions = { ...new AppOptions(), ...appOptions };
     LogMediator.bufferLogs = this.appOptions.bufferLogs;
     this.checkSecureServerOption();
