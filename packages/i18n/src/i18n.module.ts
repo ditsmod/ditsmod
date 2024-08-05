@@ -10,6 +10,8 @@ import { I18N_EXTENSIONS } from './types/mix.js';
 
 @featureModule({
   providersPerApp: [DictService, I18nTransformer, I18nLogMediator, I18nErrorMediator],
+  providersPerMod: [DictService, I18nTransformer, I18nLogMediator, I18nErrorMediator],
+  exports: [DictService, I18nTransformer, I18nLogMediator, I18nErrorMediator],
   extensions: [
     { extension: I18nExtension, groupToken: I18N_EXTENSIONS, nextToken: PRE_ROUTER_EXTENSIONS, exportedOnly: true },
   ]

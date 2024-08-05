@@ -1,7 +1,8 @@
-import { LogMediator } from '@ditsmod/core';
+import { injectable, LogMediator } from '@ditsmod/core';
 
 import { ISO639 } from './types/iso-639.js';
 
+@injectable()
 export class I18nLogMediator extends LogMediator {
   /**
    * className: in ${moduleName} translation not found.

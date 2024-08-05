@@ -1,7 +1,8 @@
-import { ErrorMediator } from '@ditsmod/core';
+import { ErrorMediator, injectable } from '@ditsmod/core';
 
 import { ISO639 } from './types/iso-639.js';
 
+@injectable()
 export class I18nErrorMediator extends ErrorMediator {
   /**
    * Dictionary "${tokenName}" not found for lng "${lng}"
