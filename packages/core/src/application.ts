@@ -37,11 +37,15 @@ export class Application {
     });
   }
 
-  protected init(appOptions: AppOptions) {
-    this.systemLogMediator = new SystemLogMediator({ moduleName: 'AppModule' });
-    this.systemLogMediator.startingDitsmod(this);
+  /**
+   * @param systemLogMediator This parameter was originally created for `@ditsmod/testing`.
+   */
+  protected init(appOptions: AppOptions, systemLogMediator?: SystemLogMediator) {
+    systemLogMediator ??= new SystemLogMediator({ moduleName: 'AppModule' });
+    this.systemLogMediator = systemLogMediator;
     this.appOptions = { ...new AppOptions(), ...appOptions };
     LogMediator.bufferLogs = this.appOptions.bufferLogs;
+    this.systemLogMediator.startingDitsmod(this);
     this.checkSecureServerOption();
     return this.systemLogMediator;
   }
