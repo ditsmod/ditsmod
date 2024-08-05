@@ -24,10 +24,10 @@ describe('ConsoleLogger', () => {
     expect(logger.getLevel() == 'info').toBe(true);
     inputLogLevels.forEach((level) => logger.log(level, 'test'));
     expect(console.log).toHaveBeenCalledTimes(4);
-    expect(console.log).toHaveBeenNthCalledWith(1, '[ConsoleLogger:info]', 'test');
-    expect(console.log).toHaveBeenNthCalledWith(2, '[ConsoleLogger:warn]', 'test');
-    expect(console.log).toHaveBeenNthCalledWith(3, '[ConsoleLogger:error]', 'test');
-    expect(console.log).toHaveBeenNthCalledWith(4, '[ConsoleLogger:fatal]', 'test');
+    expect(console.log).toHaveBeenNthCalledWith(1, 'info', 'test');
+    expect(console.log).toHaveBeenNthCalledWith(2, 'warn', 'test');
+    expect(console.log).toHaveBeenNthCalledWith(3, 'error', 'test');
+    expect(console.log).toHaveBeenNthCalledWith(4, 'fatal', 'test');
   });
 
   it('"error" log level', () => {
@@ -36,7 +36,7 @@ describe('ConsoleLogger', () => {
     expect(logger.getLevel() == 'error').toBe(true);
     inputLogLevels.forEach((level) => logger.log(level, 'test'));
     expect(console.log).toHaveBeenCalledTimes(2);
-    expect(console.log).toHaveBeenNthCalledWith(1, '[ConsoleLogger:error]', 'test');
-    expect(console.log).toHaveBeenNthCalledWith(2, '[ConsoleLogger:fatal]', 'test');
+    expect(console.log).toHaveBeenNthCalledWith(1, 'error', 'test');
+    expect(console.log).toHaveBeenNthCalledWith(2, 'fatal', 'test');
   });
 });
