@@ -1,4 +1,5 @@
-import { injectable } from '#di';
+import { injectable, reflector } from '#di';
+import { getModuleMetadata } from '#utils/get-module-metadata.js';
 import { defaultProvidersPerMod } from './constans.js';
 import { ModuleExtract } from './types/module-extract.js';
 import type { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
@@ -7,14 +8,7 @@ import type { ModuleManager } from './services/module-manager.js';
 import type { ControllerMetadata1 } from './types/controller-metadata.js';
 import type { GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod.js';
 import { ImportObj } from './types/metadata-per-mod.js';
-import type {
-  ExtensionProvider,
-  ModuleType,
-  ModuleWithParams,
-  NormalizedGuard,
-  Scope,
-  Provider,
-} from './types/mix.js';
+import type { ExtensionProvider, ModuleType, ModuleWithParams, NormalizedGuard, Scope, Provider } from './types/mix.js';
 import type { AppendsWithParams } from './types/module-metadata.js';
 import { getCollisions } from './utils/get-collisions.js';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports.js';
@@ -328,8 +322,18 @@ export class ModuleFactory {
         const collision = importedTokens.includes(token1) && ![...declaredTokens, ...resolvedTokens].includes(token1);
         if (collision) {
           const importObj = this[`importedProvidersPer${scope}`].get(token1)!;
-          const modulesName = getModuleName(importObj.module);
-          throwProvidersCollisionError(this.moduleName, [token1], [modulesName], scope);
+          const hostModuleName = getModuleName(importObj.module);
+          const hostModuleMeta = getModuleMetadata(importObj.module)!;
+          const collisionWithFile = reflector.getClassMetadata(token1).at(-1);
+          if (
+            hostModuleMeta?.declaredInDir !== '.' &&
+            collisionWithFile?.declaredInDir !== '.' &&
+            collisionWithFile?.declaredInDir?.startsWith(hostModuleMeta?.declaredInDir)
+          ) {
+            // Allow collisions in host modules.
+          } else {
+            throwProvidersCollisionError(this.moduleName, [token1], [hostModuleName], scope);
+          }
         }
         this.resolveCollisionsWithScopesMix(token1, scope, resolvedTokens);
       }
