@@ -2,7 +2,6 @@ import {
   Extension,
   ExtensionsManager,
   MetadataPerMod2,
-  ModuleExtract,
   PerAppService,
   Provider,
   injectable,
@@ -24,18 +23,12 @@ export class I18nExtension implements Extension<void> {
   constructor(
     private log: I18nLogMediator,
     private extensionsManager: ExtensionsManager,
-    private moduleExtract: ModuleExtract,
     private i18nTransformer: I18nTransformer,
     private perAppService: PerAppService,
   ) {}
 
   async init(isLastExtensionCall?: boolean) {
     if (this.#inited) {
-      return;
-    }
-
-    if (this.moduleExtract.moduleName == 'I18nModule') {
-      this.#inited = true;
       return;
     }
 
