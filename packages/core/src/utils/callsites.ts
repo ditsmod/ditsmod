@@ -48,5 +48,5 @@ export function callsites() {
 
 export function getCallerDir() {
   const callsites = callerCallsite({ depth: 0 });
-  return dirname(callsites?.getFileName() || '');
+  return dirname(callsites?.getFileName()?.slice(8) || '');
 }

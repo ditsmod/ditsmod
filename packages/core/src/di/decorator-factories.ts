@@ -1,3 +1,4 @@
+import { getCallerDir } from '#utils/callsites.js';
 import { DecoratorAndValue, type Class } from './types-and-models.js';
 import { isType } from './utils.js';
 
@@ -20,9 +21,11 @@ export const PROP_KEY = Symbol();
 export function makeClassDecorator<T extends (...args: any[]) => any>(transform?: T) {
   return function classDecorFactory(...args: Parameters<T>): any {
     const value = transform ? transform(...args) : [...args];
+    const declaredInDir = getCallerDir();
     return function classDecorator(Cls: Class): void {
-      const annotations = getMetadata(Cls, CLASS_KEY, []);
-      annotations.push(new DecoratorAndValue(classDecorFactory, value));
+      const annotations: any[] = getMetadata(Cls, CLASS_KEY, []);
+      const decoratorAndValue = new DecoratorAndValue(classDecorFactory, value, declaredInDir);
+      annotations.push(decoratorAndValue);
     };
   };
 }

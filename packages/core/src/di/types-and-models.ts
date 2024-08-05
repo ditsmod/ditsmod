@@ -54,6 +54,10 @@ export class DecoratorAndValue<Value = any> {
   constructor(
     public decorator: (...args: any[]) => any,
     public value: Value,
+    /**
+     * The directory in which the module was declared.
+     */
+    public declaredInDir?: string,
   ) {}
 }
 
