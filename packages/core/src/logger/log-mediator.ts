@@ -37,8 +37,19 @@ export abstract class LogMediator {
         msg,
       });
     } else {
-      this.logger.log(inputLogLevel, msg);
+      this.logger.log(inputLogLevel, `[${this.moduleExtract.moduleName}]: ${msg}`);
     }
+  }
+
+  /**
+   * This method is needed only for those cases when logs are written to the buffer before
+   * the `OutputLogLevel` is known. At the moment, it is needed only for the `Application`
+   * class, before initializing providers at the application level.
+   */
+  protected updateOutputLogLevel() {
+    LogMediator.buffer.forEach((logItem) => {
+      logItem.outputLogLevel = this.loggerConfig.level;
+    });
   }
 
   /**

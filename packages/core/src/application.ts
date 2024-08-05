@@ -72,6 +72,7 @@ export class Application {
     appInitializer.bootstrapProvidersPerApp();
     // Here, after init providers per app, reinit Logger with new config.
     this.systemLogMediator = appInitializer.systemLogMediator;
+    (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
     await appInitializer.bootstrapModulesAndExtensions();
     // Here, after init extensions, reinit Logger with new config.
     this.systemLogMediator = appInitializer.systemLogMediator;
@@ -103,5 +104,14 @@ export class Application {
       const serverOptions = this.appOptions.serverOptions as http.ServerOptions | https.ServerOptions;
       return serverModule.createServer(serverOptions, requestListener);
     }
+  }
+}
+
+/**
+ * This class is needed only to access the protected methods of the `LogMediator` class.
+ */
+class PublicLogMediator extends SystemLogMediator {
+  override updateOutputLogLevel() {
+    return super.updateOutputLogLevel();
   }
 }

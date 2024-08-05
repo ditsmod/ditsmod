@@ -47,7 +47,7 @@ export class SystemLogMediator extends LogMediator {
   startingDitsmod(self: object) {
     const className = self.constructor.name;
     const msg = `${className}: Starting Ditsmod application...`;
-    this.setLog('info', msg);
+    this.setLog('debug', msg);
   }
 
   /**
