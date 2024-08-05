@@ -412,8 +412,10 @@ export class ModuleManager {
 
     rawMeta.extensions?.forEach((extensionOptions) => {
       const extensionObj = getExtensionProvider(extensionOptions);
-      extensionObj.providers.forEach((p) => this.checkExtension(modName, p));
-      meta.extensionsProviders.push(...extensionObj.providers);
+      extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
+      if (!extensionObj.exportedOnly) {
+        meta.extensionsProviders.push(...extensionObj.providers);
+      }
       extensionObj.exports.forEach((token) => {
         this.throwExportsIfNormalizedProvider(modName, token);
         const exportedExtensions = extensionObj.providers.filter((provider) => getToken(provider) === token);
@@ -540,9 +542,9 @@ export class ModuleManager {
     }
   }
 
-  protected checkExtension(modName: string, extensionsProvider: ExtensionProvider) {
+  protected checkInitMethodForExtension(modName: string, extensionsProvider: ExtensionProvider) {
     const np = normalizeProviders([extensionsProvider])[0];
-    let extensionClass: Class<Extension<any>>;
+    let extensionClass: Class<Extension<any>> | undefined;
     if (isClassProvider(np)) {
       extensionClass = np.useClass;
     } else if (isTokenProvider(np) && np.useToken instanceof Class) {
@@ -551,7 +553,7 @@ export class ModuleManager {
       extensionClass = np.useValue.constructor;
     }
 
-    if (!extensionClass! || typeof extensionClass.prototype?.init != 'function') {
+    if (!extensionClass || typeof extensionClass.prototype?.init != 'function') {
       const token = getToken(extensionsProvider);
       const tokenName = token.name || token;
       const msg = `Exporting "${tokenName}" from "${modName}" failed: all extensions must have init() method.`;

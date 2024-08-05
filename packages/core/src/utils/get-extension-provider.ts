@@ -1,12 +1,13 @@
 import { InjectionToken } from '#di';
-import { AnyObj, Extension, ExtensionProvider, ExtensionType } from '#types/mix.js';
+import { Extension, ExtensionProvider, ExtensionType } from '#types/mix.js';
 
 export class ExtensionObj {
+  exportedOnly?: boolean;
   exports: any[];
   providers: ExtensionProvider[];
 }
 
-export interface ExtensionOptions1 {
+export interface ExtensionOptionsBase {
   extension: ExtensionType;
   groupToken: InjectionToken<Extension<any>[]>;
   /**
@@ -14,35 +15,52 @@ export interface ExtensionOptions1 {
    * only if the extension group you place here does not expect your extension group to work.
    */
   nextToken?: InjectionToken<Extension<any>[]>;
+  overrideExtension?: never;
+}
+
+export interface ExtensionOptions1 extends ExtensionOptionsBase {
   /**
    * Indicates whether this extension needs to be exported.
    */
   exported?: boolean;
-  overrideExtension?: never;
+  exportedOnly?: never;
 }
 
-export interface ExtensionOptions2 {
+export interface ExtensionOptions2 extends ExtensionOptionsBase {
+  exported?: never;
+  /**
+   * Indicates whether this extension needs to be exported without working in host module.
+   */
+  exportedOnly?: boolean;
+}
+
+export interface ExtensionOptions3 {
   extension: ExtensionType;
   overrideExtension: ExtensionType;
 }
 
-export type ExtensionOptions = ExtensionOptions1 | ExtensionOptions2;
+export type ExtensionOptions = ExtensionOptions1 | ExtensionOptions2 | ExtensionOptions3;
 
-function isExtensionOptions(extensionOptions: AnyObj): extensionOptions is ExtensionOptions2 {
-  return (extensionOptions as ExtensionOptions2).overrideExtension !== undefined;
+function isOptionWithOverrideExtension(extensionOptions: ExtensionOptions): extensionOptions is ExtensionOptions3 {
+  return (extensionOptions as ExtensionOptions3).overrideExtension !== undefined;
+}
+
+function isExportedOnlyExtension(extensionOptions: ExtensionOptions): extensionOptions is ExtensionOptions2 {
+  return Boolean((extensionOptions as ExtensionOptions2).exportedOnly);
 }
 
 export function getExtensionProvider(extensionOptions: ExtensionOptions): ExtensionObj {
-  if (isExtensionOptions(extensionOptions)) {
+  if (isOptionWithOverrideExtension(extensionOptions)) {
     const { extension, overrideExtension } = extensionOptions;
     return {
       exports: [],
       providers: [{ token: overrideExtension, useClass: extension }],
     };
   } else if (extensionOptions.nextToken) {
-    const { nextToken, exported, extension, groupToken } = extensionOptions;
-    const exports = exported ? [extension, groupToken, `BEFORE ${nextToken}`] : [];
+    const { nextToken, exported, exportedOnly, extension, groupToken } = extensionOptions;
+    const exports = (exported || exportedOnly) ? [extension, groupToken, `BEFORE ${nextToken}`] : [];
     return {
+      exportedOnly,
       exports,
       providers: [
         extension,
@@ -51,9 +69,10 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
       ],
     };
   } else {
-    const { exported, extension, groupToken } = extensionOptions;
-    const exports = exported ? [extension, groupToken] : [];
+    const { exported, exportedOnly, extension, groupToken } = extensionOptions;
+    const exports = (exported || exportedOnly) ? [extension, groupToken] : [];
     return {
+      exportedOnly,
       exports,
       providers: [extension, { token: groupToken, useToken: extension, multi: true }],
     };
