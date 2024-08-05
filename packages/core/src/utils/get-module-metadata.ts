@@ -37,21 +37,17 @@ export function getModuleMetadata(
     metadata.providersPerReq = getLastProviders(mergeArrays(modMetadata.providersPerReq, modWitParams.providersPerReq));
     metadata.exports = getLastProviders(mergeArrays(modMetadata.exports, modWitParams.exports));
     metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
-    const declaredInDir = container.value.declaredInDir;
+    const declaredInDir = container.declaredInDir || '';
     return { ...metadata, decoratorFactory: container.decorator, declaredInDir };
   } else {
     const container = reflector.getClassMetadata<ModuleMetadataValue>(modOrObj).find(typeGuard);
-    const declaredInDir = container?.value.declaredInDir || '';
+    const declaredInDir = container?.declaredInDir || '';
     return container ? { ...container.value.data, decoratorFactory: container.decorator, declaredInDir } : undefined;
   }
 }
 
 export interface ModuleMetadataValue {
   data: ModuleMetadata;
-  /**
-   * The directory in which the module was declared.
-   */
-  declaredInDir: string;
 }
 
 export interface ModuleMetadataWithContext extends ModuleMetadata {

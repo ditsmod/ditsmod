@@ -19,6 +19,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { makePropDecorator } from '#di';
 import { transformControllersMetadata } from './utils/transform-controllers-metadata.js';
 import { HttpBackend } from './types/http-interceptor.js';
+import { getCallerDir } from '#utils/callsites.js';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -1436,7 +1437,8 @@ describe('ModuleFactory', () => {
       };
       expect(metadata.length).toBe(1);
       expect(metadata[0].controller === Controller1).toBe(true);
-      expect(metadata[0].decoratorsAndValues).toEqual([{ decorator: controller, value: ctrlMetadata }]);
+      const declaredInDir = getCallerDir();
+      expect(metadata[0].decoratorsAndValues).toEqual([{ decorator: controller, value: ctrlMetadata, declaredInDir }]);
       expect(metadata[0].properties).toEqual(methods);
     });
   });

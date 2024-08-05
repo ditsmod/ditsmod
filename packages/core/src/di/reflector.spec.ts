@@ -2,6 +2,7 @@ import 'reflect-metadata/lite';
 import { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
 import { Reflector, isDelegateCtor } from './reflector.js';
 import { DecoratorAndValue, ParamsMeta, PropMeta, PropMetadataTuple } from './types-and-models.js';
+import { getCallerDir } from '#utils/callsites.js';
 
 const classDecorator = makeClassDecorator((data?: any) => data);
 const classDecoratorWithoutTransformator = makeClassDecorator();
@@ -125,22 +126,25 @@ describe('Reflector', () => {
 
   describe('annotations', () => {
     it('should return an array of annotations for a type', () => {
+      const declaredInDir = getCallerDir();
       const p = reflector.getClassMetadata(ClassWithDecorators);
-      expect(p).toEqual([new DecoratorAndValue(classDecorator, { value: 'class' })]);
+      expect(p).toEqual([new DecoratorAndValue(classDecorator, { value: 'class' }, declaredInDir)]);
     });
 
     it('should work for a class without metadata in annotation', () => {
+      const declaredInDir = getCallerDir();
       @classDecorator()
       class ClassWithoutMetadata {}
       const p = reflector.getClassMetadata(ClassWithoutMetadata);
-      expect(p).toEqual([new DecoratorAndValue(classDecorator, undefined)]);
+      expect(p).toEqual([new DecoratorAndValue(classDecorator, undefined, declaredInDir)]);
     });
 
     it('should work class decorator without metadata transformator', () => {
       @classDecoratorWithoutTransformator()
       class ClassWithoutMetadata {}
       const p = reflector.getClassMetadata(ClassWithoutMetadata);
-      expect(p).toEqual([new DecoratorAndValue(classDecoratorWithoutTransformator, [])]);
+      const declaredInDir = getCallerDir();
+      expect(p).toEqual([new DecoratorAndValue(classDecoratorWithoutTransformator, [], declaredInDir)]);
     });
 
     it('should work for a class without annotations', () => {
@@ -231,15 +235,18 @@ describe('Reflector', () => {
       class NoDecorators {}
 
       // Check that metadata for Parent was not changed!
-      expect(reflector.getClassMetadata(Parent)).toEqual([new DecoratorAndValue(classDecorator, { value: 'parent' })]);
+      const declaredInDir = getCallerDir();
+      expect(reflector.getClassMetadata(Parent)).toEqual([
+        new DecoratorAndValue(classDecorator, { value: 'parent' }, declaredInDir),
+      ]);
 
       expect(reflector.getClassMetadata(Child)).toEqual([
-        new DecoratorAndValue(classDecorator, { value: 'parent' }),
-        new DecoratorAndValue(classDecorator, { value: 'child' }),
+        new DecoratorAndValue(classDecorator, { value: 'parent' }, declaredInDir),
+        new DecoratorAndValue(classDecorator, { value: 'child' }, declaredInDir),
       ]);
 
       expect(reflector.getClassMetadata(ChildNoDecorators)).toEqual([
-        new DecoratorAndValue(classDecorator, { value: 'parent' }),
+        new DecoratorAndValue(classDecorator, { value: 'parent' }, declaredInDir),
       ]);
 
       expect(reflector.getClassMetadata(NoDecorators)).toEqual([]);
