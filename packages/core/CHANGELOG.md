@@ -1,5 +1,17 @@
+<a name="core-2.54.0"></a>
+# [core-2.54.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.54.0) (2024-08-06)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [7e2a5195f2](https://github.com/ditsmod/ditsmod/commit/7e2a5195f245d7) | refactor | Hide logs from external modules, by default. |
+| [83542addf2](https://github.com/ditsmod/ditsmod/commit/83542addf21412) | refactor | Now the name of the module where the logs were recorded is added to all logs. |
+| [41d6c2eeb2](https://github.com/ditsmod/ditsmod/commit/41d6c2eeb2fe24) | refactor | Allow collisions in host modules. |
+| [7823a7aa93](https://github.com/ditsmod/ditsmod/commit/7823a7aa93e3e1) | refactor | Introduced `DecoratorAndValue#declaredInDir` property. |
+| [2f1d6c6f0c](https://github.com/ditsmod/ditsmod/commit/2f1d6c6f0ccd6c) | refactor | Introduced `ExtensionObj#exportedOnly`. |
+| [c3910acae2](https://github.com/ditsmod/ditsmod/commit/c3910acae2989a) | refactor | Fixed `AppInitializer#logExtensionsStatistic()`, now counter works as expected. |
+
 <a name="core-2.53.2"></a>
-# [core-2.53.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.53.2) (2024-08-04)
+## [core-2.53.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.53.2) (2024-08-04)
 
 | Commit | Type | Description |
 | -- | -- | -- |
