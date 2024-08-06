@@ -80,5 +80,5 @@ export class MyCustomRouterModule {}
 З даного модуля також експортується токен групи розширень `PRE_ROUTER_EXTENSIONS`. Розширення з цієї групи використовує метадані, які повертає група розширень `ROUTES_EXTENSIONS`, щоб створювати обробники HTTP-запитів.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples
-[2]: https://github.com/ditsmod/ditsmod/blob/core-2.51.2/packages/core/src/types/metadata-per-mod.ts#L58-L74
-[3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.13.1/packages/body-parser/src/body-parser.extension.ts#L54
+[2]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/types/metadata-per-mod.ts#L58-L74
+[3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54

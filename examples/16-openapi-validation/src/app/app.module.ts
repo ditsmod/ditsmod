@@ -11,6 +11,6 @@ import { openapiModuleWithParams } from './modules/service/openapi/openapi.modul
     openapiModuleWithParams
   ],
   exports: [openapiModuleWithParams],
-  providersPerApp: [...new Providers().useLogConfig({ level: 'info' })]
+  providersPerApp: [...new Providers().useLogConfig({ level: 'info', showExternalLogs: true })]
 })
 export class AppModule {}

@@ -903,12 +903,12 @@ Remember that when DI cannot find the right provider, there are only three possi
 
 [1]: https://en.wikipedia.org/wiki/Dependency_injection
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
-[12]: https://github.com/ditsmod/ditsmod/blob/core-2.51.1/packages/core/tsconfig.json#L30
-[13]: https://github.com/ditsmod/ditsmod/blob/core-2.51.1/packages/core/package.json#L52
+[12]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/tsconfig.json#L31
+[13]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/package.json#L53
 [14]: https://github.com/tc39/proposal-decorators
 [15]: https://en.wikipedia.org/wiki/Singleton_pattern
-[16]: https://github.com/ditsmod/ditsmod/blob/core-2.51.2/packages/body-parser/src/body-parser.interceptor.ts#L23
-[17]: https://github.com/ditsmod/ditsmod/blob/core-2.51.2/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L24
+[16]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/body-parser/src/body-parser.interceptor.ts#L15
+[17]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L24
 
 [107]: /developer-guides/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions

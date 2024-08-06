@@ -277,7 +277,7 @@ export class BodyParserExtension implements Extension<void> {
 Звичайно ж, таке динамічне додавання провайдерів можливе лише перед створенням обробників HTTP-запитів.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
-[3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.13.1/packages/body-parser/src/body-parser.extension.ts#L54
+[3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54
 [4]: #реєстрація-розширення-в-групі
 [5]: /native-modules/body-parser
 [6]: /native-modules/openapi

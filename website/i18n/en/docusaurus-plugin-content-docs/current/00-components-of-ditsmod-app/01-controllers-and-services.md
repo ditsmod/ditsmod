@@ -302,7 +302,7 @@ In the last two examples, the services is passed to the `providersPerReq` array,
 [3]: /components-of-ditsmod-app/dependency-injection#providers
 [4]: /components-of-ditsmod-app/dependency-injection#dependency-token
 [5]: /native-modules/body-parser#retrieving-the-request-body
-[6]: https://github.com/ditsmod/ditsmod/blob/core-2.50.0/packages/core/src/services/pre-router.ts
+[6]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/services/pre-router.ts
 [7]: /components-of-ditsmod-app/dependency-injection
 [8]: https://en.wikipedia.org/wiki/Singleton_pattern
 [9]: /components-of-ditsmod-app/extensions/

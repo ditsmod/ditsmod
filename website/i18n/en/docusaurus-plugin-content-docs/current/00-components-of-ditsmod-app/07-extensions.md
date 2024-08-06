@@ -277,7 +277,7 @@ In this case, the HTTP interceptor is added to the `providersPerReq` array in th
 Of course, such dynamic addition of providers is possible only before creating HTTP request handlers.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
-[3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.13.1/packages/body-parser/src/body-parser.extension.ts#L54
+[3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54
 [4]: #registering-an-extension-in-a-group
 [5]: /native-modules/body-parser
 [6]: /native-modules/openapi

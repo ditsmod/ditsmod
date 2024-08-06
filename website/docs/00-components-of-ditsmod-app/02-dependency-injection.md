@@ -903,12 +903,12 @@ service2.service1 instanceof Service1; // true
 
 [1]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
-[12]: https://github.com/ditsmod/ditsmod/blob/core-2.51.1/packages/core/tsconfig.json#L30
-[13]: https://github.com/ditsmod/ditsmod/blob/core-2.51.1/packages/core/package.json#L52
+[12]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/tsconfig.json#L31
+[13]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/package.json#L53
 [14]: https://github.com/tc39/proposal-decorators
 [15]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
-[16]: https://github.com/ditsmod/ditsmod/blob/core-2.51.2/packages/body-parser/src/body-parser.interceptor.ts#L23
-[17]: https://github.com/ditsmod/ditsmod/blob/core-2.51.2/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L24
+[16]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/body-parser/src/body-parser.interceptor.ts#L15
+[17]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L24
 
 [107]: /developer-guides/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions
