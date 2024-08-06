@@ -64,12 +64,12 @@ But, most likely, you will want to use some ready-made, well-known logger. And t
 Let's write the code for this provider first. At the moment (2023-09-02), one of the most popular Node.js loggers is [winston][103]. For patching, we wrote a class method before which we added the `methodFactory` decorator:
 
 ```ts {42-44,47-49}
-import { Logger, LoggerConfig, OutputLogLevel, methodFactory } from '@ditsmod/core';
+import { Logger, LoggerConfig, OutputLogLevel, methodFactory, optional } from '@ditsmod/core';
 import { createLogger, addColors, format, transports } from 'winston';
 
 export class PatchLogger {
   @methodFactory()
-  patchLogger(config: LoggerConfig) {
+  patchLogger(@optional() config: LoggerConfig = new LoggerConfig()) {
     const logger = createLogger();
 
     const transport = new transports.Console({
