@@ -1,5 +1,6 @@
-import { SystemLogMediator } from '@ditsmod/core';
+import { injectable, SystemLogMediator } from '@ditsmod/core';
 
+@injectable()
 export class MyLogMediator extends SystemLogMediator {
   /**
    * Custom message: here host: "${host}", and here port: "${port}"
