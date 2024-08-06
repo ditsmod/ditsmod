@@ -1,5 +1,13 @@
+<a name="i18n-2.12.0"></a>
+# [i18n-2.12.0](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.12.0) (2024-08-06)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [5060b36bac](https://github.com/ditsmod/ditsmod/commit/5060b36bac09344) | fix | fixed symbols declaration. Declared symbols at app and mod levels. |
+| [81e4b543f6](https://github.com/ditsmod/ditsmod/commit/81e4b543f6065a8) | feat | added `exportedOnly` for the extension. |
+
 <a name="i18n-2.11.0"></a>
-# [i18n-2.11.0](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.11.0) (2024-04-02)
+## [i18n-2.11.0](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.11.0) (2024-04-02)
 
 | Commit | Type | Description |
 | -- | -- | -- |
