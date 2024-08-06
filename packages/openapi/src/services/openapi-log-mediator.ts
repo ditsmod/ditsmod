@@ -1,5 +1,6 @@
-import { LogMediator } from '@ditsmod/core';
+import { injectable, LogMediator } from '@ditsmod/core';
 
+@injectable()
 export class OpenapiLogMediator extends LogMediator {
   /**
    * return false, waiting for last module with ${className}.

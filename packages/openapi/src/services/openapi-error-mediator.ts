@@ -1,5 +1,6 @@
-import { ErrorMediator } from '@ditsmod/core';
+import { ErrorMediator, injectable } from '@ditsmod/core';
 
+@injectable()
 export class OpenapiErrorMediator extends ErrorMediator {
   /**
    * Settings OpenAPI parameters in ${moduleName} failed: parameter "${paramName}" not found in "${path}".
