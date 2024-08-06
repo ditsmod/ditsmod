@@ -1,5 +1,5 @@
 <a name="openapi-validation-2.11.0"></a>
-# [openapi-validation-2.11.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.11.0) (2023-09-30)
+# [openapi-validation-2.11.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.11.0) (2024-08-06)
 
 | Commit | Type | Description |
 | -- | -- | -- |
