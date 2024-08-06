@@ -45,7 +45,7 @@ export class Application {
     this.systemLogMediator = systemLogMediator;
     this.appOptions = { ...new AppOptions(), ...appOptions };
     LogMediator.bufferLogs = this.appOptions.bufferLogs;
-    this.systemLogMediator.startingDitsmod(this);
+    this.systemLogMediator.startingDitsmod(this); // OutputLogLevel is still unknown here.
     this.checkSecureServerOption();
     return this.systemLogMediator;
   }
