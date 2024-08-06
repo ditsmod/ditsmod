@@ -1,5 +1,13 @@
+<a name="session-cookie-2.8.0"></a>
+# [session-cookie-2.8.0](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.8.0) (2024-08-06)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [ffa1aef172](https://github.com/ditsmod/ditsmod/commit/ffa1aef172ada) | feat | added `exportedOnly` for the extension. |
+| [1c2c858918](https://github.com/ditsmod/ditsmod/commit/1c2c8589183dd) | feat | added ability to substitute `SessionCookieInterceptor`. |
+
 <a name="session-cookie-2.7.0"></a>
-# [session-cookie-2.7.0](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.7.0) (2023-10-12)
+## [session-cookie-2.7.0](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.7.0) (2023-10-12)
 
 ### Features
 
