@@ -401,18 +401,20 @@ describe('ModuleFactory', () => {
         mock.bootstrap([], new GlobalProviders(), '', Module3, moduleManager, new Set());
 
         const mod0 = mock.appMetadataMap.get(Module0);
+        const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module0', isExternal: false };
         const providerPerMod0: Provider = {
           token: ModuleExtract,
-          useValue: { path: '', moduleName: 'Module0' },
+          useValue: moduleExtract,
         };
         expect(mod0?.meta.providersPerMod).toEqual([providerPerMod0, Provider0]);
         expect(mod0?.meta.providersPerReq).toEqual([]);
         expect(mod0?.meta.decoratorFactory).toBe(featureModule);
 
         const mod1 = mock.appMetadataMap.get(Module1);
+        const moduleExtract2: ModuleExtract = { path: '', moduleName: 'Module1', isExternal: false };
         const providerPerMod1: Provider = {
           token: ModuleExtract,
-          useValue: { path: '', moduleName: 'Module1' },
+          useValue: moduleExtract2,
         };
         expect(mod1?.meta.providersPerMod).toEqual([providerPerMod1, Provider1, Provider2, Provider3]);
 
@@ -423,9 +425,10 @@ describe('ModuleFactory', () => {
         expect(mod1?.meta.decoratorFactory).toBe(featureModule);
 
         const mod2 = mock.appMetadataMap.get(Module2);
+        const moduleExtract3: ModuleExtract = { path: '', moduleName: 'Module2', isExternal: false };
         const providerPerMod2: Provider = {
           token: ModuleExtract,
-          useValue: { path: '', moduleName: 'Module2' },
+          useValue: moduleExtract3,
         };
         expect(mod2?.meta.providersPerMod).toEqual([providerPerMod2, Provider4, Provider5, Provider6]);
 
@@ -436,9 +439,10 @@ describe('ModuleFactory', () => {
         expect(mod2?.meta.decoratorFactory).toBe(featureModule);
 
         const mod3 = mock.appMetadataMap.get(Module3);
+        const moduleExtract4: ModuleExtract = { path: '', moduleName: 'Module3', isExternal: false };
         const providerPerMod3: Provider = {
           token: ModuleExtract,
-          useValue: { path: '', moduleName: 'Module3' },
+          useValue: moduleExtract4,
         };
         expect(mod3?.meta.providersPerMod).toEqual([providerPerMod3]);
 
@@ -461,9 +465,10 @@ describe('ModuleFactory', () => {
 
         expect(mock.prefixPerMod).toBe('other');
         // expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
+        const moduleExtract: ModuleExtract = { path: 'other', moduleName: 'Module4', isExternal: false };
         const providerPerMod: Provider = {
           token: ModuleExtract,
-          useValue: { path: 'other', moduleName: 'Module4' },
+          useValue: moduleExtract,
         };
         expect(mock.meta.providersPerMod).toEqual([providerPerMod]);
 

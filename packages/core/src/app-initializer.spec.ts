@@ -457,7 +457,8 @@ describe('AppInitializer', () => {
     it('Module0', async () => {
       const mod0 = appMetadataMap.get(Module0);
       expect(mod0?.meta.providersPerApp).toEqual([]);
-      const providerPerMod: Provider = { token: ModuleExtract, useValue: { path: '', moduleName: 'Module0' } };
+      const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module0', isExternal: false };
+      const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
       expect(mod0?.meta.providersPerMod).toEqual([providerPerMod, Provider0]);
       expect(mod0?.meta.providersPerReq).toEqual([]);
       checkGlobalProviders(mod0);
@@ -466,7 +467,8 @@ describe('AppInitializer', () => {
     it('Module1', async () => {
       const mod1 = appMetadataMap.get(Module1);
       expect(mod1?.meta.providersPerApp).toEqual([]);
-      const providerPerMod: Provider = { token: ModuleExtract, useValue: { path: '', moduleName: 'Module1' } };
+      const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module1', isExternal: false };
+      const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
       expect(mod1?.meta.providersPerMod).toEqual([providerPerMod, obj1, Provider2]);
       checkGlobalProviders(mod1);
     });
@@ -474,7 +476,8 @@ describe('AppInitializer', () => {
     it('Module2', async () => {
       const mod2 = appMetadataMap.get(module2WithParams);
       expect(mod2?.meta.providersPerApp).toEqual([]);
-      const providerPerMod: Provider = { token: ModuleExtract, useValue: { path: '', moduleName: 'Module2' } };
+      const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module2', isExternal: false };
+      const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
       expect(mod2?.meta.providersPerMod).toEqual([providerPerMod, Provider3, Provider4]);
       expect(mod2?.meta.providersPerReq).toEqual([]);
       checkGlobalProviders(mod2);
@@ -483,9 +486,10 @@ describe('AppInitializer', () => {
     it('Module3', async () => {
       const mod3 = appMetadataMap.get(module3WithParams);
       expect(mod3?.meta.providersPerApp).toEqual([]);
+      const moduleExtract: ModuleExtract = { path: 'one', moduleName: 'Module3', isExternal: false };
       const providerPerMod: Provider = {
         token: ModuleExtract,
-        useValue: { path: 'one', moduleName: 'Module3' },
+        useValue: moduleExtract,
       };
       expect(mod3?.meta.providersPerMod).toEqual([providerPerMod]);
       expect(mod3?.meta.providersPerReq).toEqual([Provider5, Provider6, Provider7]);
@@ -497,7 +501,8 @@ describe('AppInitializer', () => {
       const appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
       const mod4 = appMetadataMap.get(module4WithParams);
       expect(mod4?.meta.providersPerApp).toEqual([]);
-      const providerPerMod: Provider = { token: ModuleExtract, useValue: { path: '', moduleName: 'Module4' } };
+      const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module4', isExternal: false };
+      const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
       expect(mod4?.meta.providersPerMod).toEqual([providerPerMod]);
       expect(mod4?.meta.providersPerReq).toEqual([Provider8, Provider9]);
       checkGlobalProviders(mod4);
@@ -508,9 +513,10 @@ describe('AppInitializer', () => {
       const appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
       const root1 = appMetadataMap.get(AppModule);
       expect(root1?.meta.providersPerApp.slice(0, 2)).toEqual([Logger, { token: Router, useValue: 'fake' }]);
+      const moduleExtract: ModuleExtract = { path: '', moduleName: 'AppModule', isExternal: false };
       const providerPerMod: Provider = {
         token: ModuleExtract,
-        useValue: { path: '', moduleName: 'AppModule' },
+        useValue: moduleExtract,
       };
       expect(root1?.meta.providersPerMod).toEqual([providerPerMod]);
       expect(root1?.meta.providersPerReq).toEqual([]);
