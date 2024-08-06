@@ -1,5 +1,12 @@
+<a name="body-parser-2.16.0"></a>
+# [body-parser-2.16.0](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.16.0) (2024-08-06)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [b2dc4ad496](https://github.com/ditsmod/ditsmod/commit/b2dc4ad4961f0386) | feat | added `exportedOnly` for the extension. |
+
 <a name="body-parser-2.15.1"></a>
-# [body-parser-2.15.1](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.15.1) (2024-08-01)
+## [body-parser-2.15.1](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.15.1) (2024-08-01)
 
 ### Bug fixes
 
