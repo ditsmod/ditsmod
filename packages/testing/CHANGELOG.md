@@ -1,5 +1,12 @@
+<a name="testing-2.10.0"></a>
+# [testing-2.10.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.10.0) (2024-08-06)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [9523233fb1](https://github.com/ditsmod/ditsmod/commit/9523233fb1e8670) | feat | turn off log level at an application level. |
+
 <a name="testing-2.9.0"></a>
-# [testing-2.9.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.9.0) (2024-07-22)
+## [testing-2.9.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.9.0) (2024-07-22)
 
 ### Breaking changes
 
