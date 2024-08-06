@@ -100,7 +100,11 @@ export class ModuleFactory {
     this.meta = meta;
     this.checkImportsAndAppends(meta);
     this.importAndAppendModules();
-    const moduleExtract: ModuleExtract = { path: this.prefixPerMod, moduleName: meta.name };
+    const moduleExtract: ModuleExtract = {
+      path: this.prefixPerMod,
+      moduleName: meta.name,
+      isExternal: meta.isExternal,
+    };
     this.meta.providersPerMod.unshift({ token: ModuleExtract, useValue: moduleExtract });
 
     let aControllerMetadata1: ControllerMetadata1[] = [];

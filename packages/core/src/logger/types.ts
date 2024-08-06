@@ -4,6 +4,16 @@ import { InputLogLevel, OutputLogLevel } from '#logger/logger.js';
  * Default type for `LogMediator.buffer`.
  */
 export interface LogItem {
+  /**
+   * Specifies whether logs are written from an external module or not. An external module
+   * is a module that you install using package managers (npm, yarn, etc.).
+   */
+  isExternal?: boolean;
+  /**
+   * Specifies whether to show logs from external modules. An external module
+   * is a module that you install using package managers (npm, yarn, etc.).
+   */
+  showExternalLogs?: boolean;
   moduleName: string;
   date: Date;
   /**

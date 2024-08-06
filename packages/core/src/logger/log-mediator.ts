@@ -30,6 +30,8 @@ export abstract class LogMediator {
     if (LogMediator.bufferLogs) {
       LogMediator.checkDiffLogLevels(this.loggerConfig.level);
       LogMediator.buffer.push({
+        isExternal: this.moduleExtract.isExternal,
+        showExternalLogs: this.loggerConfig.showExternalLogs,
         moduleName: this.moduleExtract.moduleName,
         inputLogLevel,
         outputLogLevel: this.loggerConfig.level,
@@ -37,7 +39,9 @@ export abstract class LogMediator {
         msg,
       });
     } else {
-      this.logger.log(inputLogLevel, `[${this.moduleExtract.moduleName}]: ${msg}`);
+      if (!this.moduleExtract.isExternal || this.loggerConfig.showExternalLogs) {
+        this.logger.log(inputLogLevel, `[${this.moduleExtract.moduleName}]: ${msg}`);
+      }
     }
   }
 
@@ -78,7 +82,9 @@ export abstract class LogMediator {
 
     logItems.forEach((logItem) => {
       logger.setLevel(logItem.outputLogLevel);
-      logger.log(logItem.inputLogLevel, `[${logItem.moduleName}]: ${logItem.msg}`);
+      if (!logItem.isExternal || logItem.showExternalLogs) {
+        logger.log(logItem.inputLogLevel, `[${logItem.moduleName}]: ${logItem.msg}`);
+      }
     });
 
     return logger; // Needed for testing only.

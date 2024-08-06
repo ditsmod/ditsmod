@@ -1,8 +1,10 @@
 export class LoggerConfig {
   /**
    * @param level Log level (trace, debug, info etc.)
+   * @param showExternalLogs Specifies whether to show logs from external modules. An external module
+   * is a module that you install using package managers (npm, yarn, etc.).
    */
-  constructor(public level: OutputLogLevel = 'info') {}
+  constructor(public level: OutputLogLevel = 'info', public showExternalLogs?: boolean) {}
 }
 
 /**
