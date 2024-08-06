@@ -1,5 +1,6 @@
-import { ErrorMediator } from '@ditsmod/core';
+import { ErrorMediator, injectable } from '@ditsmod/core';
 
+@injectable()
 export class RouterErrorMediator extends ErrorMediator {
   /**
    * Setting route '${fullPath}' in ${moduleName} failed: a handle is already registered for this path.
