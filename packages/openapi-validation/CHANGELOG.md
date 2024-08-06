@@ -1,5 +1,12 @@
+<a name="openapi-validation-2.11.0"></a>
+# [openapi-validation-2.11.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.11.0) (2023-09-30)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [ec5435a250](https://github.com/ditsmod/ditsmod/commit/ec5435a250da2e7) | feat | added `exportedOnly` for the extension. |
+
 <a name="openapi-validation-2.10.0"></a>
-# [openapi-validation-2.10.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.10.0) (2023-09-30)
+## [openapi-validation-2.10.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.10.0) (2023-09-30)
 
 ### Features
 
