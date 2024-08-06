@@ -1,5 +1,14 @@
+<a name="routing-2.3.0"></a>
+# [routing-2.3.0](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.3.0) (2024-08-06)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [a26b4f7ef7](https://github.com/ditsmod/ditsmod/commit/a26b4f7ef75d99805) | fix | fixed `ControllerRawMetadatar`. |
+| [607859ef67](https://github.com/ditsmod/ditsmod/commit/607859ef677ddd728) | fix | added `exportedOnly` for extensions. |
+
+
 <a name="routing-2.2.0"></a>
-# [routing-2.2.0](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.2.0) (2024-04-02)
+## [routing-2.2.0](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.2.0) (2024-04-02)
 
 | Commit | Type | Description |
 | -- | -- | -- |
