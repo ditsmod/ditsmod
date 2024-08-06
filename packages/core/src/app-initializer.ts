@@ -1,4 +1,4 @@
-import { InjectionToken } from '#di';
+import { InjectionToken, Injector } from '#di';
 import { EXTENSIONS_COUNTERS } from './constans.js';
 import { ImportsResolver } from './imports-resolver.js';
 import { Logger } from '#logger/logger.js';
@@ -282,7 +282,7 @@ export class AppInitializer {
         extensionsManager.beforeTokens = beforeTokens;
         await extensionsManager.init(groupToken);
       }
-      this.logExtensionsStatistic(systemLogMediator);
+      this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
     }
   }
 
@@ -304,8 +304,8 @@ export class AppInitializer {
     });
   }
 
-  protected logExtensionsStatistic(systemLogMediator: SystemLogMediator) {
-    const counter = this.perAppService.injector.get(Counter) as Counter;
+  protected logExtensionsStatistic(injectorPerApp: Injector, systemLogMediator: SystemLogMediator) {
+    const counter = injectorPerApp.get(Counter);
     const extensions = counter.getInitedExtensions();
     const names = Array.from(extensions)
       .map((e) => e.constructor.name)
