@@ -1,4 +1,5 @@
-import { CanActivate, Provider, Extension } from '#types/mix.js';
+import { CanActivate, Provider } from '#types/mix.js';
+import { Extension } from '#types/extension-types.js';
 import { injectable, InjectionToken, makePropDecorator, reflector } from '#di';
 import { featureModule } from '#decorators/module.js';
 import {

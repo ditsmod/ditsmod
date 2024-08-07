@@ -2,12 +2,12 @@ import { Class } from '#di';
 import {
   AnyFn,
   AnyObj,
-  ExtensionProvider,
   ModuleType,
   ModuleWithParams,
   NormalizedGuard,
   Provider,
 } from '#types/mix.js';
+import { ExtensionProvider } from './extension-types.js';
 import { AppendsWithParams } from '#types/module-metadata.js';
 import { MultiProvider } from '#utils/type-guards.js';
 import { ProvidersMetadata } from '#types/providers-metadata.js';

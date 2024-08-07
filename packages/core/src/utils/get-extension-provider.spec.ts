@@ -1,5 +1,5 @@
 import { InjectionToken } from '#di';
-import { Extension, ExtensionProvider } from '#types/mix.js';
+import { ExtensionProvider, Extension } from '#types/extension-types.js';
 import { ExtensionOptions, getExtensionProvider } from './get-extension-provider.js';
 
 describe('getExtensionProvider', () => {

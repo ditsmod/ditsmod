@@ -1,7 +1,7 @@
 import { EXTENSIONS_COUNTERS } from '#constans';
 import { Class, Injector, inject, injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { Extension, ExtensionsGroupToken } from '#types/mix.js';
+import { ExtensionsGroupToken, Extension } from '#types/extension-types.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#utils/type-guards.js';
 import { Counter } from './counter.js';

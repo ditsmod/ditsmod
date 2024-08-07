@@ -1,5 +1,5 @@
 import { InjectionToken } from '#di';
-import { Extension, ExtensionProvider, ExtensionType } from '#types/mix.js';
+import { ExtensionType, ExtensionProvider, Extension } from '#types/extension-types.js';
 
 export class ExtensionObj {
   exportedOnly?: boolean;
@@ -58,7 +58,7 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
     };
   } else if (extensionOptions.nextToken) {
     const { nextToken, exported, exportedOnly, extension, groupToken } = extensionOptions;
-    const exports = (exported || exportedOnly) ? [extension, groupToken, `BEFORE ${nextToken}`] : [];
+    const exports = exported || exportedOnly ? [extension, groupToken, `BEFORE ${nextToken}`] : [];
     return {
       exportedOnly,
       exports,
@@ -70,7 +70,7 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
     };
   } else {
     const { exported, exportedOnly, extension, groupToken } = extensionOptions;
-    const exports = (exported || exportedOnly) ? [extension, groupToken] : [];
+    const exports = exported || exportedOnly ? [extension, groupToken] : [];
     return {
       exportedOnly,
       exports,

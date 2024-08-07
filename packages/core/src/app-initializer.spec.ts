@@ -10,7 +10,8 @@ import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js'
 import { Router } from './types/router.js';
 import { AppInitializer } from './app-initializer.js';
 import { ModuleManager } from './services/module-manager.js';
-import { Extension, ModuleType, ModuleWithParams, Provider } from './types/mix.js';
+import { ModuleType, ModuleWithParams, Provider } from './types/mix.js';
+import { Extension } from '#types/extension-types.js';
 import { controller } from './decorators/controller.js';
 import { ModuleExtract } from './types/module-extract.js';
 import { ImportObj, MetadataPerMod1 } from './types/metadata-per-mod.js';

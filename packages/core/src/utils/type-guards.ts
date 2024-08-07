@@ -12,7 +12,8 @@ import {
   reflector,
   ClassFactoryProvider,
 } from '#di';
-import { AnyObj, ModuleType, ModuleWithParams, Extension, AnyFn, DecoratorMetadata } from '#types/mix.js';
+import { AnyObj, ModuleType, ModuleWithParams, AnyFn, DecoratorMetadata } from '#types/mix.js';
+import { Extension } from '#types/extension-types.js';
 import { AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { Http2SecureServerOptions, ServerOptions } from '#types/server-options.js';

@@ -2,7 +2,6 @@ import {
   Class,
   ClassProvider,
   FactoryProvider,
-  InjectionToken,
   ResolvedProvider,
   TokenProvider,
   TypeProvider,
@@ -13,15 +12,6 @@ import { RequestContext } from './http-interceptor.js';
 import { MetadataPerMod1 } from './metadata-per-mod.js';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
-
-export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]> | `BEFORE ${string}`;
-export type ExtensionType<T = any> = Class<Extension<T>>;
-
-export interface Extension<T> {
-  init(isLastExtensionCall: boolean): Promise<T>;
-}
-
-export type ExtensionProvider = Provider;
 
 export interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
   extends Partial<ProvidersMetadata> {

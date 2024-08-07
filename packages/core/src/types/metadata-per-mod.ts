@@ -1,6 +1,7 @@
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { ControllerMetadata1, ControllerMetadata2 } from './controller-metadata.js';
-import { ExtensionProvider, ModuleType, ModuleWithParams, NormalizedGuard, Provider } from './mix.js';
+import { ModuleType, ModuleWithParams, NormalizedGuard, Provider } from './mix.js';
+import { ExtensionProvider } from './extension-types.js';
 
 /**
  * @todo Rename this.

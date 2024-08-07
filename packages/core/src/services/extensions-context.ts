@@ -1,5 +1,5 @@
 import { Class, injectable } from '#di';
-import { Extension, ExtensionsGroupToken } from '#types/mix.js';
+import { ExtensionsGroupToken, Extension } from '#types/extension-types.js';
 
 @injectable()
 export class ExtensionsContext {
