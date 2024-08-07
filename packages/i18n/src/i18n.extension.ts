@@ -6,6 +6,7 @@ import {
   Provider,
   injectable,
   Injector,
+  fromSelf,
 } from '@ditsmod/core';
 import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
@@ -18,7 +19,7 @@ import { DictService } from './dict.service.js';
 export class I18nExtension implements Extension<void> {
   #inited: boolean;
   protected injector: Injector;
-  protected translations: Translations[] | null;
+  protected hasTranslation: boolean;
 
   constructor(
     private log: I18nLogMediator,
@@ -46,29 +47,31 @@ export class I18nExtension implements Extension<void> {
       const providers = this.i18nTransformer.getProviders(translationsPerApp);
       this.perAppService.providers.push(...providers);
     }
-    this.translations = translationsPerApp;
 
     for (const metadataPerMod2 of aMetadataPerMod2) {
-      const { providersPerMod, providersPerRou, providersPerReq } = metadataPerMod2;
+      const { providersPerMod, providersPerRou, providersPerReq, aControllersMetadata2 } = metadataPerMod2;
+      if (!aControllersMetadata2.length) {
+        continue;
+      }
 
       this.injector = injectorPerApp;
       this.addI18nProvidersToScope(providersPerMod);
       this.addI18nProvidersToScope(providersPerRou);
       this.addI18nProvidersToScope(providersPerReq);
+    }
 
-      if (this.translations === translationsPerApp) {
-        this.log.translationNotFound(this);
-      }
+    if (!this.hasTranslation) {
+      this.log.translationNotFound(this);
     }
   }
 
   protected addI18nProvidersToScope(providers: Provider[]) {
     this.injector = this.injector.resolveAndCreateChild(providers);
-    const translations = this.injector.get(I18N_TRANSLATIONS, undefined, null) as Translations[];
-    if (translations !== this.translations) {
+    const translations = this.injector.get(I18N_TRANSLATIONS, fromSelf, null) as Translations[];
+    if (translations) {
+      this.hasTranslation = true;
       providers.push(...this.i18nTransformer.getProviders(translations));
     }
     providers.unshift(DictService);
-    this.translations = translations;
   }
 }
