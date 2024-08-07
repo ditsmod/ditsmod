@@ -1,5 +1,12 @@
+<a name="i18n-2.12.1"></a>
+# [i18n-2.12.1](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.12.1) (2024-08-07)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [d2e38582e6](https://github.com/ditsmod/ditsmod/commit/d2e38582e6af8) | fix | if there are no controllers, then there are no translations for them. |
+
 <a name="i18n-2.12.0"></a>
-# [i18n-2.12.0](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.12.0) (2024-08-06)
+## [i18n-2.12.0](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.12.0) (2024-08-06)
 
 | Commit | Type | Description |
 | -- | -- | -- |
