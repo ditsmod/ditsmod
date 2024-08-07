@@ -1,5 +1,12 @@
+<a name="i18n-2.12.2"></a>
+# [i18n-2.12.2](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.12.2) (2024-08-07)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [f31f4797e5](https://github.com/ditsmod/ditsmod/commit/f31f4797e54d) | fix | no warn about translation if at app level there are translation. |
+
 <a name="i18n-2.12.1"></a>
-# [i18n-2.12.1](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.12.1) (2024-08-07)
+## [i18n-2.12.1](https://github.com/ditsmod/ditsmod/releases/tag/i18n-2.12.1) (2024-08-07)
 
 | Commit | Type | Description |
 | -- | -- | -- |
