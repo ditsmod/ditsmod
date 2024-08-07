@@ -43,6 +43,7 @@ export class I18nExtension implements Extension<void> {
     const injectorPerApp = this.perAppService.injector;
 
     const translationsPerApp = injectorPerApp.get(I18N_TRANSLATIONS, undefined, null);
+    this.hasTranslation = Boolean(translationsPerApp);
     if (isLastExtensionCall && translationsPerApp) {
       const providers = this.i18nTransformer.getProviders(translationsPerApp);
       this.perAppService.providers.push(...providers);
