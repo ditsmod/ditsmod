@@ -249,41 +249,62 @@ export class AppInitializer {
     const injectorPerApp = this.perAppService.injector.resolveAndCreateChild([
       { token: PerAppService, useValue: this.perAppService },
     ]);
-    for (let i = 0; i < aMetadataPerMod1.length; i++) {
-      const metadataPerMod1 = this.prepareMetadataPerMod1(aMetadataPerMod1[i]);
-      const { extensionsProviders, providersPerMod, name: moduleName } = metadataPerMod1.meta;
-      const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
+
+    for (const metadataPerMod1 of aMetadataPerMod1) {
+      const preparedMetadataPerMod1 = this.prepareMetadataPerMod1(metadataPerMod1);
+      const injectorPerMod = injectorPerApp.resolveAndCreateChild(preparedMetadataPerMod1.meta.providersPerMod);
       injectorPerMod.pull(Logger);
       const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
-      if (!extensionsProviders.length) {
+      if (!preparedMetadataPerMod1.meta.extensionsProviders.length) {
         systemLogMediator.skippingStartExtensions(this);
         continue;
       }
+      const extensionsManager = this.getExtensionsManager(
+        preparedMetadataPerMod1,
+        mExtensionsCounters,
+        extensionsContext,
+        injectorPerMod,
+      );
       systemLogMediator.startExtensions(this);
-      this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
-      const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
-        ExtensionsManager,
-        { token: ExtensionsContext, useValue: extensionsContext },
-        { token: MetadataPerMod1, useValue: metadataPerMod1 },
-        { token: EXTENSIONS_COUNTERS, useValue: mExtensionsCounters },
-        ...extensionsProviders,
-      ]);
-      const extensionTokens = new Set<InjectionToken<Extension<any>[]>>();
-      const beforeTokens = new Set<string>();
-      for (const token of getTokens(extensionsProviders)) {
-        if (token instanceof InjectionToken) {
-          extensionTokens.add(token);
-        } else {
-          beforeTokens.add(token);
-        }
-      }
-      const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
-      for (const groupToken of extensionTokens) {
-        extensionsManager.moduleName = moduleName;
-        extensionsManager.beforeTokens = beforeTokens;
-        await extensionsManager.init(groupToken);
-      }
+
+      await this.handleExtensionsPerMod(preparedMetadataPerMod1, extensionsManager);
       this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
+    }
+  }
+
+  protected getExtensionsManager(
+    metadataPerMod1: MetadataPerMod1,
+    mExtensionsCounters: Map<Provider, number>,
+    extensionsContext: ExtensionsContext,
+    injectorPerMod: Injector,
+  ) {
+    const { extensionsProviders } = metadataPerMod1.meta;
+    this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
+    const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
+      ExtensionsManager,
+      { token: ExtensionsContext, useValue: extensionsContext },
+      { token: MetadataPerMod1, useValue: metadataPerMod1 },
+      { token: EXTENSIONS_COUNTERS, useValue: mExtensionsCounters },
+      ...extensionsProviders,
+    ]);
+    return injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
+  }
+
+  protected async handleExtensionsPerMod(metadataPerMod1: MetadataPerMod1, extensionsManager: ExtensionsManager) {
+    const { extensionsProviders, name: moduleName } = metadataPerMod1.meta;
+    const extensionTokens = new Set<InjectionToken<Extension<any>[]>>();
+    const beforeTokens = new Set<string>();
+    for (const token of getTokens(extensionsProviders)) {
+      if (token instanceof InjectionToken) {
+        extensionTokens.add(token);
+      } else {
+        beforeTokens.add(token);
+      }
+    }
+    for (const groupToken of extensionTokens) {
+      extensionsManager.moduleName = moduleName;
+      extensionsManager.beforeTokens = beforeTokens;
+      await extensionsManager.init(groupToken);
     }
   }
 
