@@ -25,7 +25,8 @@
     "#constans": "./dist/constans.js",
     "#logger/*": "./dist/logger/*",
     "#error/*": "./dist/error/*",
-    "#services/*": "./dist/services/*"
+    "#services/*": "./dist/services/*",
+    "#core/*": "./dist/*"
   },
   "exports": {
     "./package.json": {

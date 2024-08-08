@@ -13,6 +13,7 @@
       "#logger/*": ["./src/logger/*"],
       "#error/*": ["./src/error/*"],
       "#services/*": ["./src/services/*"],
+      "#core/*": ["./src/*"],
     },
     "module": "nodenext",
     "moduleResolution": "nodenext",

@@ -1,9 +1,16 @@
+import {
+  featureModule,
+  injectable,
+  InjectionToken,
+  Injector,
+  Extension,
+  Application,
+  ExtensionsContext,
+  ExtensionsManager,
+  rootModule,
+} from '@ditsmod/core';
+import { defaultProvidersPerApp } from '#core/default-providers-per-app.js';
 import { EXTENSIONS_COUNTERS } from '#constans';
-import { injectable, InjectionToken, Injector } from '#di';
-import { Extension } from '#types/extension-types.js';
-import { defaultProvidersPerApp } from '../default-providers-per-app.js';
-import { ExtensionsContext } from './extensions-context.js';
-import { ExtensionsManager } from './extensions-manager.js';
 
 describe('ExtensionsManager circular dependencies', () => {
   class MockExtensionsManager extends ExtensionsManager {
@@ -57,6 +64,7 @@ describe('ExtensionsManager circular dependencies', () => {
       this.inited = true;
     }
   }
+
   @injectable()
   class Extension4 implements Extension<any> {
     private inited: boolean;
@@ -72,15 +80,23 @@ describe('ExtensionsManager circular dependencies', () => {
     }
   }
 
-  beforeEach(() => {
+  @rootModule({
+    extensions: [
+      { groupToken: MY_EXTENSIONS1, extension: Extension1 },
+      { groupToken: MY_EXTENSIONS2, extension: Extension2 },
+      { groupToken: MY_EXTENSIONS3, extension: Extension3 },
+      { groupToken: MY_EXTENSIONS4, extension: Extension4 },
+    ],
+  })
+  class AppModule {}
+
+  beforeEach(async () => {
+    const app = await new Application().bootstrap(AppModule, {});
+
     const injector = Injector.resolveAndCreate([
       ...defaultProvidersPerApp,
       MockExtensionsManager,
       ExtensionsContext,
-      { token: MY_EXTENSIONS1, useClass: Extension1, multi: true },
-      { token: MY_EXTENSIONS2, useClass: Extension2, multi: true },
-      { token: MY_EXTENSIONS3, useClass: Extension3, multi: true },
-      { token: MY_EXTENSIONS4, useClass: Extension4, multi: true },
       { token: EXTENSIONS_COUNTERS, useValue: new Map() },
     ]);
     mock = injector.get(MockExtensionsManager) as MockExtensionsManager;
