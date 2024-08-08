@@ -33,6 +33,7 @@
     "removeComments": false,
   },
   "include": [
-    "src"
+    "src",
+    "e2e"
   ]
 }

@@ -2,7 +2,7 @@
   "files": [],
   "references": [
     { "path": "body-parser/tsconfig.test.json" },
-    { "path": "core/tsconfig.test.json" },
+    { "path": "core/tsconfig.e2e.json" },
     { "path": "openapi/tsconfig.test.json" },
     { "path": "routing/tsconfig.test.json" },
     { "path": "session-cookie/tsconfig.test.json" },
