@@ -1214,10 +1214,10 @@
   resolved "https://registry.yarnpkg.com/@tokenizer/token/-/token-0.3.0.tgz#fe98a93fe789247e998c75e74e9c7c63217aa276"
   integrity sha512-OvjF+z51L3ov0OyAU0duzsYuvO01PH7x4t6DJx+guahgTnBHkhJdG7soQeTSFLWN3efnHyibZ4Z8l2EuWwJN3A==
 
-"@ts-stack/body-parser@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@ts-stack/body-parser/-/body-parser-1.1.1.tgz#3a4346ae6bc0b65b4b5ec48bab4e5a36f40abba7"
-  integrity sha512-F7J5ZklvlKgx14Ssz5KNSffvjfB3A7JFL/DyjJElR2Ot7ugNvj39HLfO/idzeuwEnHI9edMLp5ZjKpRhRGarpQ==
+"@ts-stack/body-parser@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@ts-stack/body-parser/-/body-parser-1.2.0.tgz#d8c2fd15137a247d8c4ac91f504f857fc1c08dfb"
+  integrity sha512-sGIZh2at8EWzTTvcyB3Ph0RumlnU/v4zRvwbXVDtyhTNCvOvR4T/nbX6756VPMMPNb5PA9gqPogJxTltpw5xMg==
   dependencies:
     "@ts-stack/type-is" "^1.0.1"
     bytes "3.1.2"
@@ -1248,10 +1248,10 @@
   dependencies:
     vary "^1.1.2"
 
-"@ts-stack/multer@^1.0.0-beta.6":
-  version "1.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@ts-stack/multer/-/multer-1.0.0-beta.6.tgz#0abc440065eb53c98af7b8f8c6c5cbd028f1ce08"
-  integrity sha512-5pJD8gwEfE1hHEt167Le07nmEo2vjxydn/rnpc8Ol11JPWWWPZQNZH2HV8e/KkvTjENijUXtCNTOfRbkGpaQuw==
+"@ts-stack/multer@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@ts-stack/multer/-/multer-1.0.0.tgz#c905efa81ceff6149146e6ebe394e613a8c1911a"
+  integrity sha512-AugMhkKDP0qZMl6k6rMHsFMLRgt9cMke3neRQytysM0FSurtFB3Gmf+aOusOHT1SyjGP8PP6uqur5q9RG2vcaQ==
   dependencies:
     "@fastify/busboy" "^3.0.0"
     "@ts-stack/type-is" "^1.0.1"
