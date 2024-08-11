@@ -4,6 +4,53 @@ sidebar_position: 8
 
 # Logger
 
+The logging level can be set by passing a provider with the `LoggerConfig` token:
+
+```ts {6}
+import { rootModule } from '@ditsmod/core';
+// ...
+@rootModule({
+  // ...
+  providersPerApp: [
+    { token: LoggerConfig, useValue: { level: 'info' } }
+  ],
+})
+export class AppModule {}
+```
+
+However, better type support is provided by the `Providers` helper:
+
+```ts {6}
+import { rootModule, Providers } from '@ditsmod/core';
+// ...
+@rootModule({
+  // ...
+  providersPerApp: [
+    ...new Providers().useLogConfig({ level: 'info' })
+  ],
+})
+export class AppModule {}
+```
+
+As you can see, `LoggerConfig` is provided at the application level. If you need a different logging level in a specific module, you should provide both the logging configuration and a provider with the `Logger` token:
+
+```ts {7-9}
+import { Logger, featureModule, Providers } from '@ditsmod/core';
+import { PatchLogger } from './patch-logger.js';
+// ...
+@featureModule({
+  // ...
+  providersPerMod: [
+    ...new Providers()
+      .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
+      .useLogConfig({ level: 'debug' })
+  ],
+})
+export class SomeModule {}
+```
+
+Please note that these providers are passed at the module level.
+
 Ditsmod uses the [Logger][100] class as an interface as well as a DI token. By default, [ConsoleLogger][101] is used for logging. There are 8 logging levels in total (borrowed from [log4j][102]):
 
 - `all`- All events should be logged.

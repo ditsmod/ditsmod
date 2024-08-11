@@ -4,6 +4,53 @@ sidebar_position: 8
 
 # Logger
 
+Встановити рівень логування можна за допомогою передачі провайдера, що має токен `LoggerConfig`:
+
+```ts {6}
+import { rootModule } from '@ditsmod/core';
+// ...
+@rootModule({
+  // ...
+  providersPerApp: [
+    { token: LoggerConfig, useValue: { level: 'info' } }
+  ],
+})
+export class AppModule {}
+```
+
+Але кращу підтримку типів має хелпер `Providers`:
+
+```ts {6}
+import { rootModule, Providers } from '@ditsmod/core';
+// ...
+@rootModule({
+  // ...
+  providersPerApp: [
+    ...new Providers().useLogConfig({ level: 'info' })
+  ],
+})
+export class AppModule {}
+```
+
+Як бачите, тут `LoggerConfig` передається на рівні застосунку. Якщо вам потрібно щоб у певному модулі діяв інший рівень логування, разом з конфігом для логування необхідно передавати й провайдер з токеном `Logger`:
+
+```ts {7-9}
+import { Logger, featureModule, Providers } from '@ditsmod/core';
+import { PatchLogger } from './patch-logger.js';
+// ...
+@featureModule({
+  // ...
+  providersPerMod: [
+    ...new Providers()
+      .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
+      .useLogConfig({ level: 'debug' })
+  ],
+})
+export class SomeModule {}
+```
+
+Зверніть увагу, що ці провайдери передаються на рівні модуля.
+
 Ditsmod використовує клас [Logger][100] у якості інтерфейсу, а також як DI-токен. Для записування логів, по-дефолту використовується [ConsoleLogger][101]. Усього є 8 рівнів логування (запозичено у [log4j][102]):
 
 - `all` - усі події повинні реєструватися.
