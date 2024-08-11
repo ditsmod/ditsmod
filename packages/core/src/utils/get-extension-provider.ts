@@ -1,4 +1,4 @@
-import { InjectionToken } from '#di';
+import { InjectionToken, Provider } from '#di';
 import { ExtensionType, ExtensionProvider, Extension } from '#types/extension-types.js';
 
 export class ExtensionObj {
@@ -77,4 +77,10 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
       providers: [extension, { token: groupToken, useToken: extension, multi: true }],
     };
   }
+}
+
+export function getExtensionProviderList(extensionOptions: ExtensionOptions[]) {
+  const providers: Provider[] = [];
+  extensionOptions.map((obj) => providers.push(...getExtensionProvider(obj).providers));
+  return providers;
 }
