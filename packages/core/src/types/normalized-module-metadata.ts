@@ -32,7 +32,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   controllers: Class[] = [];
   decoratorFactory: AnyFn;
   /**
-   * The directory in which the module was declared.
+   * The directory in which the class was declared.
    */
   declaredInDir: string;
   /**

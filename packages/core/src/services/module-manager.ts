@@ -47,7 +47,7 @@ export class ModuleManager {
   protected oldMapId = new Map<string, AnyModule>();
   protected unfinishedScanModules = new Set<AnyModule>();
   /**
-   * The directory in which the module was declared.
+   * The directory in which the class was declared.
    */
   protected rootDeclaredInDir: string;
 
