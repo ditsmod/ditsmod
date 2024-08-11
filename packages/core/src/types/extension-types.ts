@@ -5,11 +5,13 @@ export class ExtensionsMetaPerApp {
   [key: string]: AnyObj;
 }
 
-export class ExtensionReturn<T> {
-  extension: Extension<T>;
-  result: T;
-  delay: boolean;
-  countdown: number;
+export class ExtensionManagerInitReturn<T> {
+  constructor(
+    public extension: Class<Extension<T>>,
+    public result: T,
+    public delay: boolean,
+    public countdown: number,
+  ) {}
 }
 
 export interface Extension<T> {
@@ -18,4 +20,3 @@ export interface Extension<T> {
 export type ExtensionProvider = Provider;
 export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]> | `BEFORE ${string}`;
 export type ExtensionType<T = any> = Class<Extension<T>>;
-
