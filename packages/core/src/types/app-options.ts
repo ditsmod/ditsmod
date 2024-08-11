@@ -13,6 +13,8 @@ export class AppOptions {
    * and flushed afterwards. This can be useful if you want all messages to be logged by
    * the final logger, which is configured after the application is fully initialized.
    * 
+   * Set this option to `false` if you are debugging and want logs to be written without delays.
+   * 
    * Default - `true`.
    */
   bufferLogs?: boolean = true;
