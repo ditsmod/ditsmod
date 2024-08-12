@@ -1,126 +1,64 @@
-import {
-  featureModule,
-  injectable,
-  InjectionToken,
-  Injector,
-  Extension,
-  Application,
-  ExtensionsContext,
-  ExtensionsManager,
-  rootModule,
-} from '@ditsmod/core';
-import { defaultProvidersPerApp } from '#core/default-providers-per-app.js';
-import { EXTENSIONS_COUNTERS } from '#constans';
+import { jest } from '@jest/globals';
+import { TestApplication } from '@ditsmod/testing';
 
-describe('ExtensionsManager circular dependencies', () => {
-  class MockExtensionsManager extends ExtensionsManager {
-    override unfinishedInit = new Set<Extension<any>>();
-  }
+import { InjectionToken, Router, featureModule, injectable } from '#core/index.js';
+import { rootModule } from '#decorators/root-module.js';
+import { Extension } from '#types/extension-types.js';
 
-  let mock: MockExtensionsManager;
+describe('ExtensionsManager', () => {
+  const extensionInit = jest.fn();
+
   const MY_EXTENSIONS1 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS1');
-  const MY_EXTENSIONS2 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS2');
-  const MY_EXTENSIONS3 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS3');
-  const MY_EXTENSIONS4 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS4');
+  class Provider1 {}
+  class Provider2 {}
+  class Provider3 {}
 
   @injectable()
   class Extension1 implements Extension<any> {
     private inited: boolean;
 
-    async init() {
+    async init(isLastExtensionCall: boolean) {
       if (this.inited) {
         return;
       }
+
+      extensionInit(isLastExtensionCall);
+
       this.inited = true;
     }
   }
 
-  @injectable()
-  class Extension2 implements Extension<any> {
-    private inited: boolean;
+  @featureModule({
+    providersPerMod: [Provider1],
+    extensions: [{ groupToken: MY_EXTENSIONS1, extension: Extension1, exportedOnly: true }],
+  })
+  class Module1 {}
 
-    constructor(public mockExtensionsManager: MockExtensionsManager) {}
+  @featureModule({
+    imports: [Module1],
+    providersPerMod: [Provider2],
+    exports: [Provider2],
+  })
+  class Module2 {}
 
-    async init() {
-      if (this.inited) {
-        return;
-      }
-      await this.mockExtensionsManager.init(MY_EXTENSIONS3);
-      this.inited = true;
-    }
-  }
-
-  @injectable()
-  class Extension3 implements Extension<any> {
-    private inited: boolean;
-
-    constructor(public mockExtensionsManager: MockExtensionsManager) {}
-
-    async init() {
-      if (this.inited) {
-        return;
-      }
-      await this.mockExtensionsManager.init(MY_EXTENSIONS4);
-      this.inited = true;
-    }
-  }
-
-  @injectable()
-  class Extension4 implements Extension<any> {
-    private inited: boolean;
-
-    constructor(public mockExtensionsManager: MockExtensionsManager) {}
-
-    async init() {
-      if (this.inited) {
-        return;
-      }
-      await this.mockExtensionsManager.init(MY_EXTENSIONS3);
-      this.inited = true;
-    }
-  }
+  @featureModule({
+    imports: [Module1],
+    providersPerMod: [Provider3],
+    exports: [Provider3],
+  })
+  class Module3 {}
 
   @rootModule({
-    extensions: [
-      { groupToken: MY_EXTENSIONS1, extension: Extension1 },
-      { groupToken: MY_EXTENSIONS2, extension: Extension2 },
-      { groupToken: MY_EXTENSIONS3, extension: Extension3 },
-      { groupToken: MY_EXTENSIONS4, extension: Extension4 },
-    ],
+    imports: [Module1, Module2, Module3],
+    providersPerApp: [{ token: Router, useValue: 'fake value' }],
   })
   class AppModule {}
 
-  beforeEach(async () => {
-    const app = await new Application().bootstrap(AppModule, {});
-
-    const injector = Injector.resolveAndCreate([
-      ...defaultProvidersPerApp,
-      MockExtensionsManager,
-      ExtensionsContext,
-      { token: EXTENSIONS_COUNTERS, useValue: new Map() },
-    ]);
-    mock = injector.get(MockExtensionsManager) as MockExtensionsManager;
-  });
-
-  it('MY_EXTENSIONS1 without deps', async () => {
-    await expect(mock.init(MY_EXTENSIONS1)).resolves.not.toThrow();
-  });
-
-  it('MY_EXTENSIONS2 has circular dependencies', async () => {
-    const msg =
-      'Detected circular dependencies: MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3. It is started from MY_EXTENSIONS2 -> Extension2.';
-    await expect(mock.init(MY_EXTENSIONS2)).rejects.toThrow(msg);
-  });
-
-  it('MY_EXTENSIONS3 has circular dependencies', async () => {
-    const msg =
-      'Detected circular dependencies: MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3.';
-    await expect(mock.init(MY_EXTENSIONS3)).rejects.toThrow(msg);
-  });
-
-  it('MY_EXTENSIONS4 has circular dependencies', async () => {
-    const msg =
-      'Detected circular dependencies: MY_EXTENSIONS4 -> Extension4 -> MY_EXTENSIONS3 -> Extension3 -> MY_EXTENSIONS4.';
-    await expect(mock.init(MY_EXTENSIONS4)).rejects.toThrow(msg);
+  it('case 1', async () => {
+    await new TestApplication(AppModule).getServer();
+    expect(extensionInit).toHaveBeenCalledTimes(3);
+    expect(extensionInit).toHaveBeenNthCalledWith(1, false);
+    expect(extensionInit).toHaveBeenNthCalledWith(2, false);
+    expect(extensionInit).toHaveBeenNthCalledWith(3, true);
   });
 });
