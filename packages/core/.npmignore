@@ -10,3 +10,5 @@ CHANGELOG.md
 tsconfig.test.json
 tsconfig.unit.json
 test
+e2e
+dist-e2e
