@@ -1234,10 +1234,10 @@
   dependencies:
     assert-plus "^1.0.0"
 
-"@ts-stack/cookies@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@ts-stack/cookies/-/cookies-1.1.1.tgz#dc864b1737a945e631e52f0593b9698c8b5dd6e2"
-  integrity sha512-J+jtQmJnv6TXaRQk312wfxGTz0Zi2PHM42b6DCQJiFhVxAXi51sGJG9dvoXEQ6Tzpw1pQl9iTzT6sZoChi+Zyg==
+"@ts-stack/cookies@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@ts-stack/cookies/-/cookies-1.2.2.tgz#31118858e1e7a6ad1b317e8e7c42973c6f6787f1"
+  integrity sha512-EYcetlHu5UWE4oJXHSGRAN2J0cNjc2RejUo8FrPoEW31W6ZCDMm7bo54WNADt97wiBAaNWDV3uzw2toAwHQ/8g==
   dependencies:
     keygrip "~1.1.0"
 

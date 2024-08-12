@@ -33,7 +33,7 @@
     "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../node_modules/jest/bin/jest.js"
   },
   "dependencies": {
-    "@ts-stack/cookies": "^1.1.1"
+    "@ts-stack/cookies": "^1.2.2"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.54.0"

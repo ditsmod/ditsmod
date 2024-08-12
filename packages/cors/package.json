@@ -34,7 +34,7 @@
   "author": "Костя Третяк",
   "license": "MIT",
   "dependencies": {
-    "@ts-stack/cookies": "^1.1.1",
+    "@ts-stack/cookies": "^1.2.2",
     "@ts-stack/cors": "^1.4.2"
   },
   "peerDependencies": {
