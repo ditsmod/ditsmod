@@ -565,7 +565,7 @@ describe('AppInitializer', () => {
       // Here logMediator used from Application
       logMediator.flush();
       // mock.flushLogs();
-      expect(loggerSpy).nthCalledWith(1, 'info');
+      expect(loggerSpy).toHaveBeenNthCalledWith(1, 'info');
     });
   });
 
