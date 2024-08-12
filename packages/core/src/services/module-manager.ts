@@ -507,6 +507,7 @@ export class ModuleManager {
       !meta.exportedMultiProvidersPerReq.length &&
       !meta.exportsModules.length &&
       !meta.exportsWithParams.length &&
+      !meta.exportedExtensions.length &&
       !meta.extensionsProviders.length
     ) {
       const moduleNames = [...this.unfinishedScanModules].map((mod) => getModuleName(mod)).join(' -> ') || meta.name;
