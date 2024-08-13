@@ -11,3 +11,4 @@ CHANGELOG.md
 tsconfig.test.json
 tsconfig.unit.json
 test/*
+dist-test
