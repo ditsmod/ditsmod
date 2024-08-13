@@ -61,6 +61,18 @@ Looking at the amount of code, you might think that Ditsmod is slower than Expre
 
 More application examples are available in the [Ditsmod][4] repository, as well as in the [RealWorld][13] repository.
 
+P.S. Although a link to the repository with all the necessary settings for Ditsmod applications is provided below, if you choose to use just this code, don't forget to include the following in your tsconfig files:
+
+```json {4-5}
+{
+  "compilerOptions": {
+    // ...
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}
+```
+
 ## Prerequisites
 
 Please make sure that Node.js >= v18.14.0 is installed on your operating system.
