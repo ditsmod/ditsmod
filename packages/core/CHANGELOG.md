@@ -1,9 +1,9 @@
-<a name="core-2.54.1"></a>
-# [core-2.54.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.54.1) (2024-08-12)
+<a name="core-2.54.2"></a>
+# [core-2.54.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.54.2) (2024-08-13)
 
 | Commit | Type | Description |
 | -- | -- | -- |
-| [f19921f880](https://github.com/ditsmod/ditsmod/commit/f19921f8800ff) | fix | Allow a module to have only exported extensions. |
+| [7773922c43](https://github.com/ditsmod/ditsmod/commit/7773922c43f) | fix | Fixed returning from `AppInitializer#requestListener()`. |
 
 <a name="core-2.54.0"></a>
 ## [core-2.54.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.54.0) (2024-08-06)

@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/core",
   "type": "module",
-  "version": "2.54.1",
+  "version": "2.54.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
