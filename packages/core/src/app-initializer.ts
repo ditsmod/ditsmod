@@ -336,7 +336,7 @@ export class AppInitializer {
     counter.resetInitedExtensionsSet();
   }
 
-  requestListener: RequestListener = async (nodeReq, nodeRes) => {
-    await this.preRouter.requestListener(nodeReq, nodeRes);
+  requestListener: RequestListener = (nodeReq, nodeRes) => {
+    return this.preRouter.requestListener(nodeReq, nodeRes);
   };
 }
