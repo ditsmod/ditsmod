@@ -1,20 +1,21 @@
 import { Provider } from '#types/mix.js';
+import { Providers } from '#utils/providers.js';
 
 export class ProvidersMetadata {
   /**
    * Providers per the application.
    */
-  providersPerApp: Provider[] = [];
+  providersPerApp: Providers | Provider[] = [];
   /**
    * Providers per a module.
    */
-  providersPerMod: Provider[] = [];
+  providersPerMod: Providers | Provider[] = [];
   /**
    * Providers per route.
    */
-  providersPerRou: Provider[] = [];
+  providersPerRou: Providers | Provider[] = [];
   /**
    * Providers per HTTP request.
    */
-  providersPerReq: Provider[] = [];
+  providersPerReq: Providers | Provider[] = [];
 }

@@ -12,7 +12,6 @@ import { getModuleName } from '#utils/get-module-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
-import { pickProperties } from '#utils/pick-properties.js';
 import {
   MultiProvider,
   isAppendsWithParams,
@@ -26,6 +25,7 @@ import {
   isTokenProvider,
   isValueProvider,
 } from '#utils/type-guards.js';
+import { Providers } from '#utils/providers.js';
 
 export type ModulesMap = Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
 export type ModulesMapId = Map<string, ModuleType | ModuleWithParams>;
@@ -414,11 +414,29 @@ export class ModuleManager {
       });
     });
 
-    pickProperties(meta, rawMeta);
+    this.pickMeta(meta, rawMeta);
     meta.extensionsMeta = { ...(meta.extensionsMeta || {}) };
     this.quickCheckMetadata(meta);
 
     return meta;
+  }
+
+  protected pickMeta(targetObject: NormalizedModuleMetadata, ...sourceObjects: ModuleMetadataWithContext[]) {
+    const trgtObj = targetObject as any;
+    sourceObjects.forEach((sourceObj: AnyObj) => {
+      sourceObj ??= {};
+      for (const prop in targetObject) {
+        if (Array.isArray(sourceObj[prop])) {
+          trgtObj[prop] = sourceObj[prop].slice();
+        } else if (sourceObj[prop] instanceof Providers) {
+          trgtObj[prop] = [...sourceObj[prop]];
+        } else if (sourceObj[prop] !== undefined) {
+          trgtObj[prop] = sourceObj[prop] as any;
+        }
+      }
+    });
+
+    return trgtObj;
   }
 
   protected checkWhetherIsExternalModule(rawMeta: ModuleMetadataWithContext, meta: NormalizedModuleMetadata) {
@@ -584,7 +602,8 @@ export class ModuleManager {
     const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
     let found = false;
     scopes.forEach((scope) => {
-      const providers = (rawMeta[`providersPer${scope}`] || []).filter((p) => getToken(p) === token);
+      const unfilteredProviders = [...(rawMeta[`providersPer${scope}`] || [])];
+      const providers = unfilteredProviders.filter((p) => getToken(p) === token);
       if (providers.length) {
         found = true;
         if (providers.some(isMultiProvider)) {
@@ -598,7 +617,8 @@ export class ModuleManager {
     if (!found) {
       const providerName = token.name || token;
       let msg = '';
-      if ((rawMeta.providersPerApp || []).some((p) => getToken(p) === token)) {
+      const providersPerApp = [...(rawMeta.providersPerApp || [])];
+      if (providersPerApp.some((p) => getToken(p) === token)) {
         msg =
           `Exported "${providerName}" includes in "providersPerApp" and "exports" of ${meta.name}. ` +
           'This is an error, because "providersPerApp" is always exported automatically.';

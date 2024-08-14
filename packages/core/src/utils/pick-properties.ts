@@ -2,7 +2,7 @@ import { AnyObj } from '#types/mix.js';
 
 export function pickProperties<T extends AnyObj, S extends Partial<T>>(targetObject: T, ...sourceObjects: S[]) {
   sourceObjects.forEach((sourceObj) => {
-    sourceObj = (sourceObj || {}) as S;
+    sourceObj ??= {} as S;
     for (const prop in targetObject) {
       if (Array.isArray(sourceObj[prop])) {
         targetObject[prop] = sourceObj[prop].slice();
