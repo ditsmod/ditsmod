@@ -13,20 +13,16 @@ export class PreRouter {
   ) {}
 
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
-    const [uri, queryString] = this.decodeUrl(nodeReq.url || '').split('?', 2);
-    const { handle, params } = this.router.find(nodeReq.method as HttpMethod, uri);
+    const [pathname, search] = (nodeReq.url || '').split('?');
+    const { handle, params } = this.router.find(nodeReq.method as HttpMethod, pathname);
     if (!handle) {
       this.sendNotImplemented(nodeRes);
       return;
     }
-    await handle(nodeReq, nodeRes, params!, queryString).catch((err) => {
+    await handle(nodeReq, nodeRes, params!, search).catch((err) => {
       this.sendInternalServerError(nodeRes, err);
     });
   };
-
-  protected decodeUrl(url: string) {
-    return decodeURI(url);
-  }
 
   /**
    * Logs an error and sends the user message about an internal server error (500).
