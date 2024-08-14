@@ -199,7 +199,7 @@ describe('Providers', () => {
     const providers = new Providers();
 
     function callback() {
-      providers.use(Some).use(Other).two().two().one('Mostia').use(Third).three().useValue('token', 'value');
+      providers.$use(Some).$use(Other).two().two().one('Mostia').$use(Third).three().useValue('token', 'value');
     }
 
     expect(callback).not.toThrow();

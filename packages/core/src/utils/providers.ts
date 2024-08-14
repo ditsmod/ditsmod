@@ -172,7 +172,7 @@ const value = new Providers()
     return this.self;
   }
 
-  use<T extends Class<Providers>>(Plugin: T): T['prototype'] & this {
+  $use<T extends Class<Providers>>(Plugin: T): T['prototype'] & this {
     Object.getOwnPropertyNames(Plugin.prototype)
       .filter((p) => p != 'constructor')
       .forEach((p) => {
