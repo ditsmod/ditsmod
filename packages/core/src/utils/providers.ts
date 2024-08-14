@@ -9,6 +9,7 @@ import { NormalizedProvider } from './ng-utils.js';
  * This class has utilites to adding providers to DI in more type safe way.
  * 
  * You can use this as follow:
+ * 
  * ```ts
   Module({
     // ...
@@ -20,76 +21,12 @@ import { NormalizedProvider } from './ng-utils.js';
   })
   export class SomeModule {}
  * ```
- * 
- * ### Plugins
- * 
- * You can even use plugins for this class:
- * 
- * ```ts
-  class Plugin1 extends Providers {
-    method1() {
-      if (this.true) {
-        // ...
-      }
-      return this.self;
-    }
-  }
-
-  class Plugin2 extends Providers {
-    method2() {
-      if (this.true) {
-        // ...
-      }
-      return this.self;
-    }
-  }
-
-  ...new Providers()
-    .use(Plugin1)
-    .use(Plugin2)
-    .method1()
-    .method2()
-    .useLogConfig({ level: 'trace' })
-    .useClass(SomeService, ExtendedService)
- * ```
- * 
- * That is, after using the use() method, you will be able to use plugin methods.
- * As you can see, each plugin method should only add providers if the`if (this.true)'
- * condition is truthy. Additionally, each method must return `this.self`.
- * 
- * This should be done so that the `providers.$if()` method works correctly.
  */
 export class Providers {
   protected providers: Provider[] = [];
   protected index = -1;
   protected setedIf?: boolean;
   protected ifCondition?: boolean;
-
-  /**
-   * If the `condition` is `true`, then the following expression will work.
-   * 
-   * __Example 1__
-   * 
-```ts
-const providers = new Providers().$if(true).useValue('token', 'value');
-[...providers]; // return [{ token: 'token', useValue: 'value' }]
-```
-   * 
-   * __Example 2__
-   * 
-```ts
-const value = new Providers()
-  .$if(false)
-  .useValue('token1', 'value1')
-  .useValue('token2', 'value2');
-[...providers]; // return [{ token: 'token2', useValue: 'value2' }]
-```
-   */
-  $if(condition: any) {
-    this.setedIf = true;
-    this.ifCondition = condition;
-    return this;
-  }
 
   passThrough(provider: Provider) {
     if (this.true) {
@@ -172,6 +109,73 @@ const value = new Providers()
     return this.self;
   }
 
+  /**
+   * ### Conditions
+   * 
+   * If the `condition` is `true`, then the following expression will work.
+   * 
+   * __Example 1__
+   * 
+```ts
+const providers = new Providers().$if(true).useValue('token', 'value');
+[...providers]; // return [{ token: 'token', useValue: 'value' }]
+```
+   * 
+   * __Example 2__
+   * 
+```ts
+const value = new Providers()
+  .$if(false)
+  .useValue('token1', 'value1')
+  .useValue('token2', 'value2');
+[...providers]; // return [{ token: 'token2', useValue: 'value2' }]
+```
+   */
+  $if(condition: any) {
+    this.setedIf = true;
+    this.ifCondition = condition;
+    return this;
+  }
+
+/**
+ * ### Plugins
+ * 
+ * You can even use plugins for this class:
+ * 
+ * ```ts
+  class Plugin1 extends Providers {
+    method1() {
+      if (this.true) {
+        // ...
+      }
+      return this.self;
+    }
+  }
+
+  class Plugin2 extends Providers {
+    method2() {
+      if (this.true) {
+        // ...
+      }
+      return this.self;
+    }
+  }
+
+  const providers = [...new Providers()
+    .use(Plugin1)
+    .use(Plugin2)
+    .method1()
+    .method2()
+    .useLogConfig({ level: 'trace' })
+    .useClass(SomeService, ExtendedService)];
+ * ```
+ * 
+ * That is, after using the use() method, you will be able to use plugin methods.
+ * As you can see, each plugin method should only add providers if the`if (this.true)'
+ * condition is truthy. Additionally, each method must return `this.self`.
+ * 
+ * This should be done so that the `providers.$if()` method works correctly.
+ */
   $use<T extends Class<Providers>>(Plugin: T): T['prototype'] & this {
     Object.getOwnPropertyNames(Plugin.prototype)
       .filter((p) => p != 'constructor')
