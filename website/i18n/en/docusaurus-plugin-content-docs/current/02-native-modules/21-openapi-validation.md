@@ -32,11 +32,9 @@ import { Options } from 'ajv';
 
 @featureModule({
   imports: [ValidationModule],
-  providersPerApp: [
-    ...new Providers()
-      .useValue<ValidationOptions>(ValidationOptions, { invalidStatus: Status.UNPROCESSABLE_ENTRY })
-      .useValue<Options>(AJV_OPTIONS, { allErrors: true })
-  ]
+  providersPerApp: new Providers()
+    .useValue<ValidationOptions>(ValidationOptions, { invalidStatus: Status.UNPROCESSABLE_ENTRY })
+    .useValue<Options>(AJV_OPTIONS, { allErrors: true }),
   // ...
 })
 export class SomeModule {}
