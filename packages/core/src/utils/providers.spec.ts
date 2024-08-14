@@ -12,12 +12,27 @@ describe('Providers', () => {
     expect(() => new Providers()).not.toThrow();
   });
 
-  it('works useValue()', () => {
+  it('works useValue() case 1', () => {
     const value = new Providers().useValue('token', 'value');
     expect([...value]).toEqual([{ token: 'token', useValue: 'value' }]);
   });
 
-  it('works useValue()', () => {
+  it('works useValue() case 2', () => {
+    const value = new Providers().$if(true).useValue('token', 'value');
+    expect([...value]).toEqual([{ token: 'token', useValue: 'value' }]);
+  });
+
+  it('works useValue() case 3', () => {
+    const value = new Providers().$if(false).useValue('token', 'value');
+    expect([...value]).toEqual([]);
+  });
+
+  it('works useValue() case 4', () => {
+    const value = new Providers().$if(false).useValue('token1', 'value1').useValue('token2', 'value2');
+    expect([...value]).toEqual([{ token: 'token2', useValue: 'value2' }]);
+  });
+
+  it('works useValue() case 5', () => {
     class A {
       one: string;
     }
@@ -25,7 +40,7 @@ describe('Providers', () => {
     expect([...value]).toEqual([{ token: A, useValue: { one: 'value' } }]);
   });
 
-  it('works useClass()', () => {
+  it('works useClass() case 1', () => {
     class A {
       one: string;
     }
@@ -37,25 +52,73 @@ describe('Providers', () => {
     expect([...value]).toEqual([{ token: A, useClass: B }]);
   });
 
-  it('works useLogger()', () => {
+  it('works useClass() case 2', () => {
+    class A {
+      one: string;
+    }
+    class B {
+      one: string;
+      two: number;
+    }
+    const value = new Providers().$if(true).useClass(A, B);
+    expect([...value]).toEqual([{ token: A, useClass: B }]);
+  });
+
+  it('works useClass() case 3', () => {
+    class A {
+      one: string;
+    }
+    class B {
+      one: string;
+      two: number;
+    }
+    const value = new Providers().$if(false).useClass(A, B);
+    expect([...value]).toEqual([]);
+  });
+
+  it('works useLogger() case 1', () => {
     const logger = new ConsoleLogger();
     const value = new Providers().useLogger(logger);
     expect([...value]).toEqual([{ token: Logger, useValue: logger }]);
   });
 
-  it('works useLogConfig()', () => {
+  it('works useLogger() case 2', () => {
+    const logger = new ConsoleLogger();
+    const value = new Providers().$if(true).useLogger(logger);
+    expect([...value]).toEqual([{ token: Logger, useValue: logger }]);
+  });
+
+  it('works useLogger() case 3', () => {
+    const logger = new ConsoleLogger();
+    const value = new Providers().$if(false).useLogger(logger);
+    expect([...value]).toEqual([]);
+  });
+
+  it('works useLogConfig() case 1', () => {
     const loggerConfig = new LoggerConfig();
 
     const config1 = new Providers().useLogConfig(loggerConfig);
     expect([...config1]).toEqual([{ token: LoggerConfig, useValue: loggerConfig }]);
 
     const config2 = new Providers().useLogConfig(loggerConfig);
-    expect([...config2]).toEqual([
-      { token: LoggerConfig, useValue: loggerConfig },
-    ]);
+    expect([...config2]).toEqual([{ token: LoggerConfig, useValue: loggerConfig }]);
   });
 
-  it('works useSystemLogMediator()', () => {
+  it('works useLogConfig() case 2', () => {
+    const loggerConfig = new LoggerConfig();
+
+    const config1 = new Providers().$if(true).useLogConfig(loggerConfig);
+    expect([...config1]).toEqual([{ token: LoggerConfig, useValue: loggerConfig }]);
+  });
+
+  it('works useLogConfig() case 3', () => {
+    const loggerConfig = new LoggerConfig();
+
+    const config1 = new Providers().$if(false).useLogConfig(loggerConfig);
+    expect([...config1]).toEqual([]);
+  });
+
+  it('works useSystemLogMediator() case 1', () => {
     class CustomLogMediator extends LogMediator {}
 
     const config1 = new Providers().useSystemLogMediator(CustomLogMediator);
@@ -65,13 +128,47 @@ describe('Providers', () => {
     ]);
   });
 
-  it('works multi calling', () => {
+  it('works useSystemLogMediator() case 2', () => {
+    class CustomLogMediator extends LogMediator {}
+
+    const config1 = new Providers().$if(true).useSystemLogMediator(CustomLogMediator);
+    expect([...config1]).toEqual([
+      { token: CustomLogMediator, useClass: CustomLogMediator },
+      { token: SystemLogMediator, useToken: CustomLogMediator },
+    ]);
+  });
+
+  it('works useSystemLogMediator() case 3', () => {
+    class CustomLogMediator extends LogMediator {}
+
+    const config1 = new Providers().$if(false).useSystemLogMediator(CustomLogMediator);
+    expect([...config1]).toEqual([]);
+  });
+
+  it('works multi calling case 1', () => {
     const logger = new ConsoleLogger();
     const value = new Providers().useLogger(logger).useValue('token', 'value');
     const expectedArr: Provider[] = [
       { token: Logger, useValue: logger },
       { token: 'token', useValue: 'value' },
     ];
+    expect([...value]).toEqual(expectedArr);
+  });
+
+  it('works multi calling case 2', () => {
+    const logger = new ConsoleLogger();
+    const value = new Providers().$if(true).useLogger(logger).useValue('token', 'value');
+    const expectedArr: Provider[] = [
+      { token: Logger, useValue: logger },
+      { token: 'token', useValue: 'value' },
+    ];
+    expect([...value]).toEqual(expectedArr);
+  });
+
+  it('works multi calling case 3', () => {
+    const logger = new ConsoleLogger();
+    const value = new Providers().$if(false).useLogger(logger).useValue('token', 'value');
+    const expectedArr: Provider[] = [{ token: 'token', useValue: 'value' }];
     expect([...value]).toEqual(expectedArr);
   });
 

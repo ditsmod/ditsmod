@@ -54,25 +54,65 @@ import { NormalizedProvider } from './ng-utils.js';
 export class Providers {
   protected providers: NormalizedProvider[] = [];
   protected index = -1;
+  protected setedIf?: boolean;
+  protected ifCondition?: boolean;
+
+  /**
+   * If the `condition` is `true`, then the following expression will work.
+   * 
+   * __Example 1__
+   * 
+```ts
+const providers = new Providers().$if(true).useValue('token', 'value');
+[...providers]; // return [{ token: 'token', useValue: 'value' }]
+```
+   * 
+   * __Example 2__
+   * 
+```ts
+const value = new Providers()
+  .$if(false)
+  .useValue('token1', 'value1')
+  .useValue('token2', 'value2');
+[...providers]; // return [{ token: 'token2', useValue: 'value2' }]
+```
+   */
+  $if(condition: any) {
+    this.setedIf = true;
+    this.ifCondition = condition;
+    return this;
+  }
 
   useValue<T>(token: any, useValue: T, multi?: boolean) {
-    this.pushProvider({ token, useValue }, multi);
-    return this;
+    if (this.true) {
+      this.pushProvider({ token, useValue }, multi);
+    }
+
+    return this.self;
   }
 
   useClass<A extends Class, B extends A>(token: A, useClass: B, multi?: boolean) {
-    this.pushProvider({ token, useClass }, multi);
-    return this;
+    if (this.true) {
+      this.pushProvider({ token, useClass }, multi);
+    }
+
+    return this.self;
   }
 
   useToken<T>(token: any, useToken: T, multi?: boolean) {
-    this.pushProvider({ token, useToken }, multi);
-    return this;
+    if (this.true) {
+      this.pushProvider({ token, useToken }, multi);
+    }
+
+    return this.self;
   }
 
   useFactory(token: any, useFactory: AnyFn, deps?: any[], multi?: boolean): this;
   useFactory(token: any, useFactory: UseFactoryTuple, multi?: boolean): this;
   useFactory(token: any, useFactory: UseFactoryTuple | AnyFn, depsOrMulti?: any[] | boolean, multi?: boolean) {
+    if (!this.true) {
+      return this.self;
+    }
     if (Array.isArray(useFactory)) {
       this.pushProvider({ token, useFactory }, depsOrMulti as boolean);
     } else {
@@ -82,31 +122,38 @@ export class Providers {
         this.pushProvider({ token, useFactory } as FunctionFactoryProvider, multi);
       }
     }
-    return this;
+
+    return this.self;
   }
 
   useLogger(useLogger: Partial<Logger>, useConfig?: LoggerConfig) {
-    this.providers.push({ token: Logger, useValue: useLogger });
-    if (useConfig) {
-      this.providers.push({ token: LoggerConfig, useValue: useConfig });
+    if (this.true) {
+      this.providers.push({ token: Logger, useValue: useLogger });
+      if (useConfig) {
+        this.providers.push({ token: LoggerConfig, useValue: useConfig });
+      }
     }
 
-    return this;
+    return this.self;
   }
 
   useLogConfig(useConfig: LoggerConfig) {
-    this.providers.push({ token: LoggerConfig, useValue: useConfig });
+    if (this.true) {
+      this.providers.push({ token: LoggerConfig, useValue: useConfig });
+    }
 
-    return this;
+    return this.self;
   }
 
   useSystemLogMediator<T extends Class<LogMediator>>(CustomLogMediator: T) {
-    this.providers.push(
-      { token: CustomLogMediator, useClass: CustomLogMediator },
-      { token: SystemLogMediator, useToken: CustomLogMediator },
-    );
+    if (this.true) {
+      this.providers.push(
+        { token: CustomLogMediator, useClass: CustomLogMediator },
+        { token: SystemLogMediator, useToken: CustomLogMediator },
+      );
+    }
 
-    return this;
+    return this.self;
   }
 
   use<T extends Class<Providers>>(Plugin: T): T['prototype'] & this {
@@ -115,6 +162,20 @@ export class Providers {
       .forEach((p) => {
         (this as any)[p] = Plugin.prototype[p];
       });
+    return this.self;
+  }
+
+  protected resetIfConditions() {
+    this.setedIf = undefined;
+    this.ifCondition = undefined;
+  }
+
+  protected get true() {
+    return !this.setedIf || this.ifCondition;
+  }
+
+  protected get self() {
+    this.resetIfConditions();
     return this;
   }
 
