@@ -10,12 +10,16 @@ export class I18nProviders extends Providers {
    * Helper that adds providers in a type safe way.
    */
   i18n(translations: Translations, i18nOptions?: I18nOptions) {
+    if (!this.true) {
+      return this.self;
+    }
+
     this.useValue<Translations>(I18N_TRANSLATIONS, translations, true);
 
     if (i18nOptions) {
       this.useValue(I18nOptions, i18nOptions);
     }
 
-    return this;
+    return this.self;
   }
 }
