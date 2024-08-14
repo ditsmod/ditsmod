@@ -14,4 +14,4 @@ export interface TestInlineProviders {
 }
 export type TestClassProvider = ClassProvider & TestInlineProviders;
 export type TestFactoryProvider = FactoryProvider & TestInlineProviders;
-export type TestProvider = TestClassProvider | TestFactoryProvider | ValueProvider | TokenProvider;
+export type TestProvider = TestClassProvider | TestFactoryProvider | ValueProvider | TokenProvider | Provider;

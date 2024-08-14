@@ -553,10 +553,10 @@ describe('AppInitializer', () => {
 
       // Simulation of a call from the AppModule
       @rootModule({
-        providersPerApp: [
-          Router,
-          ...new Providers().useLogConfig({ level: 'trace' }).useSystemLogMediator(LogMediatorMock),
-        ],
+        providersPerApp: new Providers()
+          .passThrough(Router)
+          .useLogConfig({ level: 'trace' })
+          .useSystemLogMediator(LogMediatorMock),
       })
       class AppModule {}
 

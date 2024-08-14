@@ -10,10 +10,7 @@ import { ValidationExtension } from './validation.extension.js';
 
 @featureModule({
   imports: [I18nModule],
-  providersPerApp: [
-    AjvService,
-    ...new Providers().useValue<Options>(AJV_OPTIONS, { coerceTypes: true }),
-  ],
+  providersPerApp: new Providers().passThrough(AjvService).useValue<Options>(AJV_OPTIONS, { coerceTypes: true }),
   providersPerMod: [...new I18nProviders().i18n({ current })],
   exports: [I18nModule, I18N_TRANSLATIONS],
   extensions: [
