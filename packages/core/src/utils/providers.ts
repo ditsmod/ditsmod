@@ -1,5 +1,5 @@
 import { Logger, LoggerConfig } from '#logger/logger.js';
-import { Class, FunctionFactoryProvider, UseFactoryTuple } from '#di';
+import { Class, FunctionFactoryProvider, Provider, UseFactoryTuple } from '#di';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyFn } from '#types/mix.js';
@@ -60,7 +60,7 @@ import { NormalizedProvider } from './ng-utils.js';
  * This should be done so that the `providers.$if()` method works correctly.
  */
 export class Providers {
-  protected providers: NormalizedProvider[] = [];
+  protected providers: Provider[] = [];
   protected index = -1;
   protected setedIf?: boolean;
   protected ifCondition?: boolean;
@@ -89,6 +89,14 @@ const value = new Providers()
     this.setedIf = true;
     this.ifCondition = condition;
     return this;
+  }
+
+  passThrough(provider: Provider) {
+    if (this.true) {
+      this.providers.push(provider);
+    }
+
+    return this.self;
   }
 
   useValue<T>(token: any, useValue: T, multi?: boolean) {
