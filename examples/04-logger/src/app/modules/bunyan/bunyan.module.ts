@@ -8,10 +8,8 @@ import { PatchLogger } from './patch-logger.js';
 @featureModule({
   imports: [RoutingModule],
   controllers: [BunyanController],
-  providersPerMod: [
-    ...new Providers()
-      .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
-      .useToken(BunyanLogger, Logger),
-  ],
+  providersPerMod: new Providers()
+    .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
+    .useToken(BunyanLogger, Logger),
 })
 export class BunyanModule {}

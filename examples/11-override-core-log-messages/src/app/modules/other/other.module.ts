@@ -9,9 +9,6 @@ import { OtherLogMediator } from './other-log-mediator.js';
 @featureModule({
   imports: [RoutingModule, SomeModule],
   controllers: [OtherController],
-  providersPerMod: [
-    ...new Providers()
-      .useClass(SomeLogMediator, OtherLogMediator)
-  ],
+  providersPerMod: new Providers().useClass(SomeLogMediator, OtherLogMediator),
 })
 export class OtherModule {}

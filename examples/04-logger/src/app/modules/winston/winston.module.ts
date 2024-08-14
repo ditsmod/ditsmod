@@ -7,10 +7,8 @@ import { WinstonController } from './winston.controller.js';
 @featureModule({
   imports: [RoutingModule],
   controllers: [WinstonController],
-  providersPerMod: [
-    ...new Providers()
-      .useLogConfig({ level: 'debug' })
-      .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
-  ],
+  providersPerMod: new Providers()
+    .useLogConfig({ level: 'debug' })
+    .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger]),
 })
 export class WinstonModule {}

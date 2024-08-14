@@ -86,11 +86,8 @@ import { CorsModule, CorsOpts } from '@ditsmod/cors';
     CorsModule,
     // ...
   ],
-  providersPerRou: [
-    ...new Providers()
-      .useValue<CorsOpts>(CorsOpts, { origin: 'https://example.com' }),
-    // ...
-  ],
+  providersPerRou: new Providers()
+    .useValue<CorsOpts>(CorsOpts, { origin: 'https://example.com' }),
   // ...
 })
 export class SomeModule {}

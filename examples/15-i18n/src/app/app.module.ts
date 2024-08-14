@@ -6,15 +6,8 @@ import { FirstModule } from './first/first.module.js';
 import { ThirdModule } from './third/third.module.js';
 
 @rootModule({
-  imports: [
-    RoutingModule,
-    { path: '', module: FirstModule },
-    { path: '', module: SecondModule },
-  ],
+  imports: [RoutingModule, { path: '', module: FirstModule }, { path: '', module: SecondModule }],
   appends: [ThirdModule],
-  providersPerApp: [
-    ...new Providers()
-      .useLogConfig({ level: 'info' }),
-  ],
+  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
 export class AppModule {}

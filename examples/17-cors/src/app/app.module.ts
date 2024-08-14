@@ -5,13 +5,8 @@ import { CorsModule } from '@ditsmod/cors';
 import { FirstController, SecondController } from './controllers.js';
 
 @rootModule({
-  imports: [
-    RoutingModule,
-    CorsModule.withParams({ origin: 'https://example.com' })
-  ],
+  imports: [RoutingModule, CorsModule.withParams({ origin: 'https://example.com' })],
   controllers: [FirstController, SecondController],
-  providersPerApp: [
-    ...new Providers().useLogConfig({ level: 'info' })
-  ]
+  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
 export class AppModule {}

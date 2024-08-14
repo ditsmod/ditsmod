@@ -70,7 +70,7 @@ export class AppModule {}
 
 Another option for passing the configuration:
 
-```ts {6,10-11,13}
+```ts {6,9-11}
 import { rootModule, Providers } from '@ditsmod/core';
 import { BodyParserModule, BodyParserConfig } from '@ditsmod/body-parser';
 
@@ -79,10 +79,8 @@ import { BodyParserModule, BodyParserConfig } from '@ditsmod/body-parser';
     BodyParserModule,
     // ...
   ],
-  providersPerApp: [
-    ...new Providers()
-      .useValue<BodyParserConfig>(BodyParserConfig,  { acceptMethods: ['POST'] })
-  ],
+  providersPerApp: new Providers()
+    .useValue<BodyParserConfig>(BodyParserConfig,  { acceptMethods: ['POST'] }),
   exports: [BodyParserModule]
 })
 export class AppModule {}

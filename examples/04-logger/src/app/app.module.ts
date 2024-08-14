@@ -7,6 +7,6 @@ import { WinstonModule } from './modules/winston/winston.module.js';
 
 @rootModule({
   appends: [SomeModule, WinstonModule, PinoModule, BunyanModule],
-  providersPerApp: [...new Providers().useLogConfig({ level: 'info' })],
+  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
 export class AppModule {}

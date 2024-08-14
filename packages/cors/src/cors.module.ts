@@ -17,10 +17,8 @@ export class CorsModule {
   static withParams(options: CorsOpts): ModuleWithParams<CorsModule> {
     return {
       module: this,
-      providersPerMod: [
-        ...new Providers().useValue<CorsOpts>(CorsOpts, options)
-      ],
-      exports: [CorsOpts]
+      providersPerMod: new Providers().useValue<CorsOpts>(CorsOpts, options),
+      exports: [CorsOpts],
     };
   }
 }

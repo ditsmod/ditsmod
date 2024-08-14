@@ -8,10 +8,8 @@ import { OtherModule } from './modules/other/other.module.js';
 @rootModule({
   imports: [RoutingModule, SomeModule],
   appends: [OtherModule],
-  providersPerApp: [
-    ...new Providers()
-      .useSystemLogMediator(MyLogMediator) // This allow use MyLogMediator internaly in Ditsmod core
-      .useLogConfig({ level: 'info' }),
-  ],
+  providersPerApp: new Providers()
+    .useSystemLogMediator(MyLogMediator) // This allow use MyLogMediator internaly in Ditsmod core
+    .useLogConfig({ level: 'info' }),
 })
 export class AppModule {}

@@ -5,6 +5,6 @@ import { SecondModule } from '#routed/second/second.module.js';
 
 @rootModule({
   appends: [FirstModule, SecondModule],
-  providersPerApp: [...new Providers().useLogConfig({ level: 'info' })],
+  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
 export class AppModule {}

@@ -24,7 +24,7 @@ import { OpenapiErrorMediator } from './services/openapi-error-mediator.js';
       exported: true,
     },
   ],
-  exports: [RoutingModule]
+  exports: [RoutingModule],
 })
 export class OpenapiModule {
   /**
@@ -39,7 +39,7 @@ export class OpenapiModule {
 
     const moduleWithParams: ModuleWithParams<OpenapiModule> = {
       module: OpenapiModule,
-      providersPerApp: [...new Providers().useValue<OasExtensionOptions>(OasExtensionOptions, oasExtensionOptions)],
+      providersPerApp: new Providers().useValue<OasExtensionOptions>(OasExtensionOptions, oasExtensionOptions),
     };
 
     if (typeof path == 'string') {

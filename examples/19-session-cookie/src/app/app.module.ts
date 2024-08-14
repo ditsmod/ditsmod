@@ -12,7 +12,7 @@ const sessionModuleWithParams = SessionCookieModule.withParams({
 @rootModule({
   imports: [RoutingModule, sessionModuleWithParams],
   controllers: [HelloWorldController, HelloWorldController2],
-  providersPerApp: [...new Providers().useLogConfig({ level: 'info' })],
+  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
   exports: [sessionModuleWithParams],
 })
 export class AppModule {}

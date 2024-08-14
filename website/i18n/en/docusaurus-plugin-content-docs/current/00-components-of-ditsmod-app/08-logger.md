@@ -6,45 +6,39 @@ sidebar_position: 8
 
 The logging level can be set by passing a provider with the `LoggerConfig` token:
 
-```ts {6}
+```ts {5}
 import { rootModule } from '@ditsmod/core';
 // ...
 @rootModule({
   // ...
-  providersPerApp: [
-    { token: LoggerConfig, useValue: { level: 'info' } }
-  ],
+  providersPerApp: [{ token: LoggerConfig, useValue: { level: 'info' } }],
 })
 export class AppModule {}
 ```
 
 However, better type support is provided by the `Providers` helper:
 
-```ts {6}
+```ts {5}
 import { rootModule, Providers } from '@ditsmod/core';
 // ...
 @rootModule({
   // ...
-  providersPerApp: [
-    ...new Providers().useLogConfig({ level: 'info' })
-  ],
+  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
 export class AppModule {}
 ```
 
 As you can see, `LoggerConfig` is provided at the application level. If you need a different logging level in a specific module, you should provide both the logging configuration and a provider with the `Logger` token:
 
-```ts {7-9}
+```ts {6-8}
 import { Logger, featureModule, Providers } from '@ditsmod/core';
 import { PatchLogger } from './patch-logger.js';
 // ...
 @featureModule({
   // ...
-  providersPerMod: [
-    ...new Providers()
-      .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
-      .useLogConfig({ level: 'debug' })
-  ],
+  providersPerMod: new Providers()
+    .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
+    .useLogConfig({ level: 'debug' }),
 })
 export class SomeModule {}
 ```
@@ -99,9 +93,7 @@ import { MyLogger } from './my-loggegr.js';
 
 @rootModule({
   // ...
-  providersPerApp: [
-    { token: Logger, useClass: MyLogger }
-  ],
+  providersPerApp: [{ token: Logger, useClass: MyLogger }],
 })
 export class AppModule {}
 ```

@@ -7,9 +7,6 @@ import { PinoController } from './pino.controller.js';
 @featureModule({
   imports: [RoutingModule],
   controllers: [PinoController],
-  providersPerMod: [
-    ...new Providers()
-    .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
-  ],
+  providersPerMod: new Providers().useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger]),
 })
 export class PinoModule {}

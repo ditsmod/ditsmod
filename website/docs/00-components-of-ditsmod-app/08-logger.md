@@ -6,45 +6,39 @@ sidebar_position: 8
 
 Встановити рівень логування можна за допомогою передачі провайдера, що має токен `LoggerConfig`:
 
-```ts {6}
+```ts {5}
 import { rootModule } from '@ditsmod/core';
 // ...
 @rootModule({
   // ...
-  providersPerApp: [
-    { token: LoggerConfig, useValue: { level: 'info' } }
-  ],
+  providersPerApp: [{ token: LoggerConfig, useValue: { level: 'info' } }],
 })
 export class AppModule {}
 ```
 
 Але кращу підтримку типів має хелпер `Providers`:
 
-```ts {6}
+```ts {5}
 import { rootModule, Providers } from '@ditsmod/core';
 // ...
 @rootModule({
   // ...
-  providersPerApp: [
-    ...new Providers().useLogConfig({ level: 'info' })
-  ],
+  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
 export class AppModule {}
 ```
 
 Як бачите, тут `LoggerConfig` передається на рівні застосунку. Якщо вам потрібно щоб у певному модулі діяв інший рівень логування, разом з конфігом для логування необхідно передавати й провайдер з токеном `Logger`:
 
-```ts {7-9}
+```ts {6-8}
 import { Logger, featureModule, Providers } from '@ditsmod/core';
 import { PatchLogger } from './patch-logger.js';
 // ...
 @featureModule({
   // ...
-  providersPerMod: [
-    ...new Providers()
-      .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
-      .useLogConfig({ level: 'debug' })
-  ],
+  providersPerMod: new Providers()
+    .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
+    .useLogConfig({ level: 'debug' }),
 })
 export class SomeModule {}
 ```
@@ -99,9 +93,7 @@ import { MyLogger } from './my-loggegr.js';
 
 @rootModule({
   // ...
-  providersPerApp: [
-    { token: Logger, useClass: MyLogger }
-  ],
+  providersPerApp: [{ token: Logger, useClass: MyLogger }],
 })
 export class AppModule {}
 ```
