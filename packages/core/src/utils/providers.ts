@@ -28,15 +28,19 @@ import { NormalizedProvider } from './ng-utils.js';
  * ```ts
   class Plugin1 extends Providers {
     method1() {
-      // ...
-      return this;
+      if (this.true) {
+        // ...
+      }
+      return this.self;
     }
   }
 
   class Plugin2 extends Providers {
     method2() {
-      // ...
-      return this;
+      if (this.true) {
+        // ...
+      }
+      return this.self;
     }
   }
 
@@ -50,6 +54,10 @@ import { NormalizedProvider } from './ng-utils.js';
  * ```
  * 
  * That is, after using the use() method, you will be able to use plugin methods.
+ * As you can see, each plugin method should only add providers if the`if (this.true)'
+ * condition is truthy. Additionally, each method must return `this.self`.
+ * 
+ * This should be done so that the `providers.$if()` method works correctly.
  */
 export class Providers {
   protected providers: NormalizedProvider[] = [];
