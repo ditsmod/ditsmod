@@ -18,7 +18,7 @@ export class Router {
 export type RouteHandler = (
   nodeReq: NodeRequest,
   nodeRes: NodeResponse,
-  params: PathParam[],
+  params: PathParam[] | null,
   queryString: string,
 ) => Promise<void>;
 

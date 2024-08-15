@@ -15,7 +15,7 @@ export class RequestContext extends Res {
   constructor(
     public nodeReq: NodeRequest,
     public override nodeRes: NodeResponse,
-    public aPathParams: PathParam[],
+    public aPathParams: PathParam[] | null,
     public queryString: string,
   ) {
     super(nodeRes);

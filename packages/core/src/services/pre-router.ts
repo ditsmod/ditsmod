@@ -19,7 +19,7 @@ export class PreRouter {
       this.sendNotImplemented(nodeRes);
       return;
     }
-    await handle(nodeReq, nodeRes, params!, search).catch((err) => {
+    await handle(nodeReq, nodeRes, params, search).catch((err) => {
       this.sendInternalServerError(nodeRes, err);
     });
   };
