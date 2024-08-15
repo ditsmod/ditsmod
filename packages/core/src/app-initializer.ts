@@ -255,39 +255,39 @@ export class AppInitializer {
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(preparedMetadataPerMod1.meta.providersPerMod);
       injectorPerMod.pull(Logger);
       const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
-      if (!preparedMetadataPerMod1.meta.extensionsProviders.length) {
+      const { extensionsProviders } = preparedMetadataPerMod1.meta;
+      if (!extensionsProviders.length) {
         systemLogMediator.skippingStartExtensions(this);
         continue;
       }
-      const extensionsManager = this.getExtensionsManager(
+      const injectorForExtensions = this.getInjectorForExtensions(
         preparedMetadataPerMod1,
         mExtensionsCounters,
         extensionsContext,
         injectorPerMod,
       );
+      const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
+      
       systemLogMediator.startExtensions(this);
-
+      this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
       await this.handleExtensionsPerMod(preparedMetadataPerMod1, extensionsManager);
       this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
     }
   }
 
-  protected getExtensionsManager(
+  protected getInjectorForExtensions(
     metadataPerMod1: MetadataPerMod1,
     mExtensionsCounters: Map<Provider, number>,
     extensionsContext: ExtensionsContext,
     injectorPerMod: Injector,
   ) {
-    const { extensionsProviders } = metadataPerMod1.meta;
-    this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
-    const injectorForExtensions = injectorPerMod.resolveAndCreateChild([
+    return injectorPerMod.resolveAndCreateChild([
       ExtensionsManager,
       { token: ExtensionsContext, useValue: extensionsContext },
       { token: MetadataPerMod1, useValue: metadataPerMod1 },
       { token: EXTENSIONS_COUNTERS, useValue: mExtensionsCounters },
-      ...extensionsProviders,
+      ...metadataPerMod1.meta.extensionsProviders,
     ]);
-    return injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
   }
 
   protected async handleExtensionsPerMod(metadataPerMod1: MetadataPerMod1, extensionsManager: ExtensionsManager) {

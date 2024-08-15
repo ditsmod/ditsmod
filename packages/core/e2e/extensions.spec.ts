@@ -163,8 +163,6 @@ describe('extensions e2e', () => {
     const MY_EXTENSIONS1 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS1');
     const MY_EXTENSIONS2 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS2');
     class Provider1 {}
-    class Provider2 {}
-    class Provider3 {}
 
     /**
      * This extension is declared in `Module1`, which is imported into three different modules.
@@ -203,6 +201,7 @@ describe('extensions e2e', () => {
         if (result === false) {
           return false;
         }
+
         extensionInit2(result);
         this.inited = true;
         return;
@@ -210,23 +209,20 @@ describe('extensions e2e', () => {
     }
 
     @featureModule({
-      providersPerMod: [Provider1],
       extensions: [{ groupToken: MY_EXTENSIONS1, extension: Extension1, exportedOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
       imports: [Module1],
-      providersPerMod: [Provider2],
       extensions: [{ groupToken: MY_EXTENSIONS2, extension: Extension2, exportedOnly: true }],
-      exports: [Provider2],
     })
     class Module2 {}
 
     @featureModule({
       imports: [Module1, Module2],
-      providersPerMod: [Provider3],
-      exports: [Provider3],
+      providersPerMod: [Provider1],
+      exports: [Provider1],
     })
     class Module3 {}
 
