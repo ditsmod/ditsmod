@@ -49,8 +49,8 @@ export class ExtensionsManager {
     ExtensionAwaiting?: Class<Extension<any>>,
   ): Promise<T[] | false> {
     /**
-     * Initializes pair of group extensions with `BEFORE ${someGroupToken}` and `someGroupToken`. After that,
-     * it returns the value from a group extensions with `someGroupToken`.
+     * Initializes pair of group extensions with `BEFORE ${groupToken}` and `groupToken`. After that,
+     * it returns the value from a group extensions with `groupToken`.
      */
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
