@@ -1,5 +1,22 @@
+<a name="core-2.55.0"></a>
+# [core-2.55.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.55.0) (2024-08-16)
+
+**Breaking Changes**
+
+- [removed](https://github.com/ditsmod/ditsmod/commit/25abab04601) `preRouter.decodeUrl()`.
+- [renamed](https://github.com/ditsmod/ditsmod/commit/cd9fec65f2e) `providers.use()` to `providers.$use()`.
+
+**Other changes**
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [6767399700](https://github.com/ditsmod/ditsmod/commit/6767399700) | fix | Introduced `$if()` method for Providers helper. |
+| [e1fa4f0024](https://github.com/ditsmod/ditsmod/commit/e1fa4f0024) | fix | Allow passing instance of Providers helper to `providersPer*`. |
+| [77ccff93a3](https://github.com/ditsmod/ditsmod/commit/77ccff93a3) | fix | Introduced `providers.passThrough()`. |
+| [9357078583](https://github.com/ditsmod/ditsmod/commit/9357078583) | fix | Fixed type for request handler. |
+
 <a name="core-2.54.2"></a>
-# [core-2.54.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.54.2) (2024-08-13)
+## [core-2.54.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.54.2) (2024-08-13)
 
 | Commit | Type | Description |
 | -- | -- | -- |
