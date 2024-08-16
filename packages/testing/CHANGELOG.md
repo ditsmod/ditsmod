@@ -1,5 +1,12 @@
+<a name="testing-2.10.1"></a>
+# [testing-2.10.1](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.10.1) (2024-08-16)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [6580de5b80](https://github.com/ditsmod/ditsmod/commit/https://github.com/ditsmod/ditsmod/commit/6580de5b8091a90#diff-0eca05e10e9cb7143453a3be68ba1617a04bb006cf58988be21b759143d4c339R17) | fix | fixed type for `TestProvider`. |
+
 <a name="testing-2.10.0"></a>
-# [testing-2.10.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.10.0) (2024-08-06)
+## [testing-2.10.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.10.0) (2024-08-06)
 
 | Commit | Type | Description |
 | -- | -- | -- |
