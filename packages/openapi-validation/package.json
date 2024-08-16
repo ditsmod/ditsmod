@@ -36,9 +36,9 @@
     "ajv": "^8.16.0"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.54.0",
+    "@ditsmod/core": "^2.55.0",
     "@ditsmod/i18n": "^2.12.0",
-    "@ditsmod/openapi": "^2.20.0",
+    "@ditsmod/openapi": "^2.21.0",
     "@ditsmod/routing": "^2.3.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
