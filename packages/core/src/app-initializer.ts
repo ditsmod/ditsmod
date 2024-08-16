@@ -267,7 +267,7 @@ export class AppInitializer {
         injectorPerMod,
       );
       const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
-      
+
       systemLogMediator.startExtensions(this);
       this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
       await this.handleExtensionsPerMod(preparedMetadataPerMod1, extensionsManager);

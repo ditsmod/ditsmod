@@ -130,13 +130,13 @@ export class ExtensionsManager {
 
   protected getDataFromAllModules<T>(
     groupToken: ExtensionsGroupToken<T>,
-    extension: Class<Extension<T>>,
+    ExtensionAwaiting: Class<Extension<T>>,
     aCurrentData: T[],
   ) {
     const { mExtensionsData: mAllExtensionsData } = this.extensionsContext;
-    const mExtensionData = mAllExtensionsData.get(extension);
+    const mExtensionData = mAllExtensionsData.get(ExtensionAwaiting);
     const aGroupData = mExtensionData?.get(groupToken);
-    const isLastExtensionCall = this.mExtensionsCounters.get(extension) === 0;
+    const isLastExtensionCall = this.mExtensionsCounters.get(ExtensionAwaiting) === 0;
 
     if (isLastExtensionCall) {
       if (aGroupData) {
@@ -146,7 +146,7 @@ export class ExtensionsManager {
       }
     } else {
       if (!mExtensionData) {
-        mAllExtensionsData.set(extension, new Map([[groupToken, aCurrentData]]));
+        mAllExtensionsData.set(ExtensionAwaiting, new Map([[groupToken, aCurrentData]]));
       } else {
         if (aGroupData) {
           aGroupData.push(...aCurrentData);
