@@ -1,4 +1,5 @@
 import { resolveForwardRef } from './forward-ref.js';
+import { InjectionToken } from './injection-token.js';
 
 /**
  * A unique object used for retrieving items from the `Injector`.
@@ -15,7 +16,10 @@ import { resolveForwardRef } from './forward-ref.js';
  * providers.
  */
 export class DualKey {
-  constructor(public token: any, public id: number) {}
+  constructor(
+    public token: any,
+    public id: number,
+  ) {}
 }
 
 export class KeyRegistry {
@@ -33,7 +37,7 @@ export class KeyRegistry {
     }
 
     if (!token) {
-      throw new Error('Token must be defined!');
+      throw new TypeError('Token must be defined!');
     }
     const newKey = new DualKey(token, this.numberOfKeys);
     this.#allKeys.set(token, newKey);
@@ -45,5 +49,40 @@ export class KeyRegistry {
    */
   static get numberOfKeys(): number {
     return this.#allKeys.size;
+  }
+}
+
+export class GroupInjectionToken extends InjectionToken {
+  isBeforeToken = true;
+}
+
+export class ExtensionGroupTokens {
+  static #groupTokens = new Map<InjectionToken, GroupInjectionToken>();
+  static #groupDebugKeys = new Map<string, number>();
+
+  /**
+   * Retrieves a `InjectionToken` for an `Extension`.
+   */
+  static get(groupToken: InjectionToken): InjectionToken {
+    const beforeGroupToken = this.#groupTokens.get(groupToken);
+    if (beforeGroupToken) {
+      return beforeGroupToken;
+    }
+
+    if (!(groupToken instanceof InjectionToken)) {
+      throw new TypeError('groupToken must be instance of InjectionToken!');
+    }
+    const groupDebugKey = groupToken.toString();
+    const count = this.#groupDebugKeys.get(groupDebugKey);
+    let newBeforeGroupToken: GroupInjectionToken;
+    if (count) {
+      newBeforeGroupToken = new GroupInjectionToken(`BEFORE ${groupDebugKey}-${count + 1}`);
+      this.#groupDebugKeys.set(groupDebugKey, count + 1);
+    } else {
+      newBeforeGroupToken = new GroupInjectionToken(`BEFORE ${groupDebugKey}`);
+      this.#groupDebugKeys.set(groupDebugKey, 1);
+    }
+    this.#groupTokens.set(groupToken, newBeforeGroupToken);
+    return newBeforeGroupToken;
   }
 }
