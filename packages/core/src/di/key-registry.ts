@@ -52,7 +52,7 @@ export class KeyRegistry {
   }
 }
 
-export class GroupInjectionToken extends InjectionToken {
+export class GroupInjectionToken<T = any> extends InjectionToken<T> {
   isBeforeToken = true;
 }
 
@@ -61,9 +61,9 @@ export class ExtensionGroupTokens {
   static #groupDebugKeys = new Map<string, number>();
 
   /**
-   * Retrieves a `InjectionToken` for an `Extension`.
+   * Retrieves a `GroupInjectionToken` for an `Extension`.
    */
-  static get(groupToken: InjectionToken): InjectionToken {
+  static get(groupToken: InjectionToken): GroupInjectionToken {
     const beforeGroupToken = this.#groupTokens.get(groupToken);
     if (beforeGroupToken) {
       return beforeGroupToken;
