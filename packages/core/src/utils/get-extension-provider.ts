@@ -1,4 +1,4 @@
-import { InjectionToken, Provider } from '#di';
+import { ExtensionGroupTokens, InjectionToken, Provider } from '#di';
 import { ExtensionType, ExtensionProvider, Extension } from '#types/extension-types.js';
 
 export class ExtensionObj {
@@ -58,14 +58,15 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
     };
   } else if (extensionOptions.nextToken) {
     const { nextToken, exported, exportedOnly, extension, groupToken } = extensionOptions;
-    const exports = exported || exportedOnly ? [extension, groupToken, `BEFORE ${nextToken}`] : [];
+    const beforeGroupToken = ExtensionGroupTokens.get(nextToken);
+    const exports = exported || exportedOnly ? [extension, groupToken, beforeGroupToken] : [];
     return {
       exportedOnly,
       exports,
       providers: [
         extension,
         { token: groupToken, useToken: extension, multi: true },
-        { token: `BEFORE ${nextToken}`, useToken: extension, multi: true },
+        { token: beforeGroupToken, useToken: extension, multi: true },
       ],
     };
   } else {

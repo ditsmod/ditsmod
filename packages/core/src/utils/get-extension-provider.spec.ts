@@ -1,4 +1,4 @@
-import { InjectionToken } from '#di';
+import { ExtensionGroupTokens, InjectionToken } from '#di';
 import { ExtensionProvider, Extension } from '#types/extension-types.js';
 import { ExtensionOptions, getExtensionProvider } from './get-extension-provider.js';
 
@@ -53,7 +53,7 @@ describe('getExtensionProvider', () => {
     const providers: ExtensionProvider[] = [
       Extension1,
       { token: MY_EXTENSION, useToken: Extension1, multi: true },
-      { token: `BEFORE ${OTHER_EXTENSION}`, useToken: Extension1, multi: true },
+      { token: ExtensionGroupTokens.get(OTHER_EXTENSION), useToken: Extension1, multi: true },
     ];
 
     it('extension without exports (three arguments)', () => {
@@ -85,7 +85,7 @@ describe('getExtensionProvider', () => {
         exported: true,
       };
       expect(getExtensionProvider(args)).toEqual({
-        exports: [Extension1, MY_EXTENSION, `BEFORE ${OTHER_EXTENSION}`],
+        exports: [Extension1, MY_EXTENSION, ExtensionGroupTokens.get(OTHER_EXTENSION)],
         providers,
       });
     });

@@ -1,4 +1,4 @@
-import { InjectionToken, Injector } from '#di';
+import { GroupInjectionToken, InjectionToken, Injector } from '#di';
 import { EXTENSIONS_COUNTERS } from './constans.js';
 import { ImportsResolver } from './imports-resolver.js';
 import { Logger } from '#logger/logger.js';
@@ -17,7 +17,7 @@ import { PerAppService } from './services/per-app.service.js';
 import { PreRouter } from './services/pre-router.js';
 import { MetadataPerMod1 } from './types/metadata-per-mod.js';
 import { ModuleType, ModuleWithParams, Provider } from './types/mix.js';
-import { Extension } from '#types/extension-types.js';
+import { Extension, ExtensionsGroupToken } from '#types/extension-types.js';
 import { RequestListener } from './types/server-options.js';
 import { getCollisions } from './utils/get-collisions.js';
 import { getDuplicates } from './utils/get-duplicates.js';
@@ -293,12 +293,12 @@ export class AppInitializer {
   protected async handleExtensionsPerMod(metadataPerMod1: MetadataPerMod1, extensionsManager: ExtensionsManager) {
     const { extensionsProviders, name: moduleName } = metadataPerMod1.meta;
     const extensionTokens = new Set<InjectionToken<Extension<any>[]>>();
-    const beforeTokens = new Set<string>();
-    for (const token of getTokens(extensionsProviders)) {
-      if (token instanceof InjectionToken) {
-        extensionTokens.add(token);
-      } else {
+    const beforeTokens = new Set<GroupInjectionToken>();
+    for (const token of getTokens<ExtensionsGroupToken>(extensionsProviders)) {
+      if (token instanceof GroupInjectionToken) {
         beforeTokens.add(token);
+      } else if (token instanceof InjectionToken) {
+        extensionTokens.add(token);
       }
     }
     for (const groupToken of extensionTokens) {
