@@ -6,8 +6,8 @@ export function getToken(provider: Provider): any {
   return normalizeProviders([provider]).map((p) => p.token)[0];
 }
 
-export function getTokens(providers: Provider[] | ReadonlyArray<Provider>): any[] {
-  const tokens: any[] = [];
+export function getTokens<T = any>(providers: Provider[] | ReadonlyArray<Provider>): T[] {
+  const tokens: T[] = [];
   (providers || []).forEach((item) => {
     if (isProvider(item)) {
       tokens.push(getToken(item));
