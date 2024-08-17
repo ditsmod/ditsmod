@@ -1,4 +1,4 @@
-import { ExtensionGroupTokens, InjectionToken, Provider } from '#di';
+import { KeyRegistry, InjectionToken, Provider } from '#di';
 import { ExtensionType, ExtensionProvider, Extension } from '#types/extension-types.js';
 
 export class ExtensionObj {
@@ -58,7 +58,7 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
     };
   } else if (extensionOptions.nextToken) {
     const { nextToken, exported, exportedOnly, extension, groupToken } = extensionOptions;
-    const beforeGroupToken = ExtensionGroupTokens.get(nextToken);
+    const beforeGroupToken = KeyRegistry.getBeforeToken(nextToken);
     const exports = exported || exportedOnly ? [extension, groupToken, beforeGroupToken] : [];
     return {
       exportedOnly,

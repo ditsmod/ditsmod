@@ -22,8 +22,14 @@ export class DualKey {
   ) {}
 }
 
+export class GroupInjectionToken<T = any> extends InjectionToken<T> {
+  readonly isBeforeToken = true as const;
+}
+
 export class KeyRegistry {
   static #allKeys = new Map<any, DualKey>();
+  static #groupTokens = new Map<InjectionToken, GroupInjectionToken>();
+  static #groupDebugKeys = new Map<string, number>();
 
   /**
    * Retrieves a `DualKey` for a token.
@@ -50,20 +56,12 @@ export class KeyRegistry {
   static get numberOfKeys(): number {
     return this.#allKeys.size;
   }
-}
-
-export class GroupInjectionToken<T = any> extends InjectionToken<T> {
-  isBeforeToken = true;
-}
-
-export class ExtensionGroupTokens {
-  static #groupTokens = new Map<InjectionToken, GroupInjectionToken>();
-  static #groupDebugKeys = new Map<string, number>();
 
   /**
-   * Retrieves a `GroupInjectionToken` for an `Extension`.
+   * Generates a unique token for `groupToken`. This token is used to automatically
+   * create an extension group, which should run before `groupToken`.
    */
-  static get(groupToken: InjectionToken): GroupInjectionToken {
+  static getBeforeToken(groupToken: InjectionToken): GroupInjectionToken {
     const beforeGroupToken = this.#groupTokens.get(groupToken);
     if (beforeGroupToken) {
       return beforeGroupToken;

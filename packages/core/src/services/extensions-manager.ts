@@ -1,5 +1,5 @@
 import { EXTENSIONS_COUNTERS } from '#constans';
-import { Class, ExtensionGroupTokens, GroupInjectionToken, Injector, inject, injectable } from '#di';
+import { Class, GroupInjectionToken, Injector, KeyRegistry, inject, injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ExtensionsGroupToken, Extension } from '#types/extension-types.js';
 import { getProviderName } from '#utils/get-provider-name.js';
@@ -55,7 +55,7 @@ export class ExtensionsManager {
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
     }
-    const beforeToken = ExtensionGroupTokens.get(groupToken);
+    const beforeToken = KeyRegistry.getBeforeToken(groupToken);
     let cache = this.getCache(beforeToken);
     if (!cache && this.beforeTokens.has(beforeToken)) {
       this.unfinishedInit.add(beforeToken);

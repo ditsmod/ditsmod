@@ -1,6 +1,6 @@
 import { Extension } from '#types/extension-types.js';
 import { InjectionToken } from './injection-token.js';
-import { ExtensionGroupTokens, KeyRegistry } from './key-registry.js';
+import { KeyRegistry } from './key-registry.js';
 
 describe('KeyRegistry', () => {
   it('case 1', () => {
@@ -21,18 +21,18 @@ describe('KeyRegistry', () => {
 describe('ExtensionGroupTokens', () => {
   it('creation group token with "SOME_EXTENSIONS" as groupDebugKey', () => {
     const SOME_EXTENSIONS = new InjectionToken<Extension<any>[]>('SOME_EXTENSIONS');
-    const BERORE_SOME_EXTENSIONS1 = ExtensionGroupTokens.get(SOME_EXTENSIONS);
+    const BERORE_SOME_EXTENSIONS1 = KeyRegistry.getBeforeToken(SOME_EXTENSIONS);
     expect(BERORE_SOME_EXTENSIONS1).toBeInstanceOf(InjectionToken);
     expect(BERORE_SOME_EXTENSIONS1).not.toBe(SOME_EXTENSIONS);
     expect(BERORE_SOME_EXTENSIONS1.toString()).toBe('BEFORE SOME_EXTENSIONS');
 
-    const BERORE_SOME_EXTENSIONS2 = ExtensionGroupTokens.get(SOME_EXTENSIONS);
+    const BERORE_SOME_EXTENSIONS2 = KeyRegistry.getBeforeToken(SOME_EXTENSIONS);
     expect(BERORE_SOME_EXTENSIONS1).toBe(BERORE_SOME_EXTENSIONS2);
   });
 
   it('duplicate "SOME_EXTENSIONS" as groupDebugKey', () => {
     const SOME_EXTENSIONS = new InjectionToken<Extension<any>[]>('SOME_EXTENSIONS');
-    const BERORE_SOME_EXTENSIONS = ExtensionGroupTokens.get(SOME_EXTENSIONS);
+    const BERORE_SOME_EXTENSIONS = KeyRegistry.getBeforeToken(SOME_EXTENSIONS);
     expect(BERORE_SOME_EXTENSIONS).toBeInstanceOf(InjectionToken);
     expect(BERORE_SOME_EXTENSIONS).not.toBe(SOME_EXTENSIONS);
     expect(BERORE_SOME_EXTENSIONS.toString()).toBe('BEFORE SOME_EXTENSIONS-2');
