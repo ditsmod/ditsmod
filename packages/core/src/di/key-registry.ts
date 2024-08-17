@@ -22,13 +22,16 @@ export class DualKey {
   ) {}
 }
 
-export class GroupInjectionToken<T = any> extends InjectionToken<T> {
+/**
+ * This class is used to automatically create an extension group, which should run before group token.
+ */
+export class BeforeToken<T = any> extends InjectionToken<T> {
   readonly isBeforeToken = true as const;
 }
 
 export class KeyRegistry {
   static #allKeys = new Map<any, DualKey>();
-  static #groupTokens = new Map<InjectionToken, GroupInjectionToken>();
+  static #groupTokens = new Map<InjectionToken, BeforeToken>();
   static #groupDebugKeys = new Map<string, number>();
 
   /**
@@ -61,7 +64,7 @@ export class KeyRegistry {
    * Generates a unique token for `groupToken`. This token is used to automatically
    * create an extension group, which should run before `groupToken`.
    */
-  static getBeforeToken(groupToken: InjectionToken): GroupInjectionToken {
+  static getBeforeToken(groupToken: InjectionToken): BeforeToken {
     const beforeGroupToken = this.#groupTokens.get(groupToken);
     if (beforeGroupToken) {
       return beforeGroupToken;
@@ -72,12 +75,12 @@ export class KeyRegistry {
     }
     const groupDebugKey = groupToken.toString();
     const count = this.#groupDebugKeys.get(groupDebugKey);
-    let newBeforeGroupToken: GroupInjectionToken;
+    let newBeforeGroupToken: BeforeToken;
     if (count) {
-      newBeforeGroupToken = new GroupInjectionToken(`BEFORE ${groupDebugKey}-${count + 1}`);
+      newBeforeGroupToken = new BeforeToken(`BEFORE ${groupDebugKey}-${count + 1}`);
       this.#groupDebugKeys.set(groupDebugKey, count + 1);
     } else {
-      newBeforeGroupToken = new GroupInjectionToken(`BEFORE ${groupDebugKey}`);
+      newBeforeGroupToken = new BeforeToken(`BEFORE ${groupDebugKey}`);
       this.#groupDebugKeys.set(groupDebugKey, 1);
     }
     this.#groupTokens.set(groupToken, newBeforeGroupToken);

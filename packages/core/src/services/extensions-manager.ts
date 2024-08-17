@@ -1,5 +1,5 @@
 import { EXTENSIONS_COUNTERS } from '#constans';
-import { Class, GroupInjectionToken, Injector, KeyRegistry, inject, injectable } from '#di';
+import { Class, BeforeToken, Injector, KeyRegistry, inject, injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ExtensionsGroupToken, Extension } from '#types/extension-types.js';
 import { getProviderName } from '#utils/get-provider-name.js';
@@ -25,7 +25,7 @@ export class ExtensionsManager {
   /**
    * Settings by AppInitializer.
    */
-  beforeTokens = new Set<GroupInjectionToken>();
+  beforeTokens = new Set<BeforeToken>();
   protected unfinishedInit = new Set<Extension<any> | ExtensionsGroupToken<any>>();
   protected cache: Cache[] = [];
 

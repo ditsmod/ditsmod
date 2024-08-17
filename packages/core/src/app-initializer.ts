@@ -1,4 +1,4 @@
-import { GroupInjectionToken, InjectionToken, Injector } from '#di';
+import { BeforeToken, InjectionToken, Injector } from '#di';
 import { EXTENSIONS_COUNTERS } from './constans.js';
 import { ImportsResolver } from './imports-resolver.js';
 import { Logger } from '#logger/logger.js';
@@ -293,9 +293,9 @@ export class AppInitializer {
   protected async handleExtensionsPerMod(metadataPerMod1: MetadataPerMod1, extensionsManager: ExtensionsManager) {
     const { extensionsProviders, name: moduleName } = metadataPerMod1.meta;
     const extensionTokens = new Set<InjectionToken<Extension<any>[]>>();
-    const beforeTokens = new Set<GroupInjectionToken>();
+    const beforeTokens = new Set<BeforeToken>();
     for (const token of getTokens<ExtensionsGroupToken>(extensionsProviders)) {
-      if (token instanceof GroupInjectionToken) {
+      if (token instanceof BeforeToken) {
         beforeTokens.add(token);
       } else if (token instanceof InjectionToken) {
         extensionTokens.add(token);
