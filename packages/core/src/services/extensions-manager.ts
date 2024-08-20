@@ -15,7 +15,7 @@ import { ExtensionsContext } from './extensions-context.js';
 class Cache {
   constructor(
     public groupToken: ExtensionsGroupToken<any>,
-    public extensionManagerInitMeta: ExtensionManagerInitMeta,
+    public totalInitMeta: ExtensionManagerInitMeta,
   ) {}
 }
 
@@ -53,31 +53,31 @@ export class ExtensionsManager {
     if (!cache && this.beforeTokens.has(beforeToken)) {
       this.unfinishedInit.add(beforeToken);
       this.systemLogMediator.startExtensionsGroupInit(this, this.unfinishedInit);
-      const value = await this.initGroup(beforeToken);
+      const totalInitMeta = await this.initGroup(beforeToken);
       this.systemLogMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
       this.unfinishedInit.delete(beforeToken);
-      const newCache = new Cache(beforeToken, value);
+      const newCache = new Cache(beforeToken, totalInitMeta);
       this.cache.push(newCache);
     }
 
     cache = this.getCache(groupToken);
     if (cache) {
-      return cache.extensionManagerInitMeta;
+      return cache.totalInitMeta;
     }
     this.unfinishedInit.add(groupToken);
     this.systemLogMediator.startExtensionsGroupInit(this, this.unfinishedInit);
-    const extensionManagerInitMeta = await this.initGroup(groupToken);
+    const totalInitMeta = await this.initGroup(groupToken);
     this.systemLogMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(groupToken);
-    const newCache = new Cache(groupToken, extensionManagerInitMeta);
+    const newCache = new Cache(groupToken, totalInitMeta);
     this.cache.push(newCache);
-    return extensionManagerInitMeta;
+    return totalInitMeta;
   }
 
   protected async initGroup<T>(groupToken: ExtensionsGroupToken<any>): Promise<ExtensionManagerInitMeta> {
     const extensions = this.injector.get(groupToken, undefined, []) as Extension<T>[];
-    const aInitMeta: ExtensionInitMeta<T>[] = [];
-    const extensionManagerInitMeta = new ExtensionManagerInitMeta(aInitMeta);
+    const groupInitMeta: ExtensionInitMeta<T>[] = [];
+    const totalInitMeta = new ExtensionManagerInitMeta(groupInitMeta);
 
     if (!extensions.length) {
       this.systemLogMediator.noExtensionsFound(this, groupToken);
@@ -96,15 +96,15 @@ export class ExtensionsManager {
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);
       this.unfinishedInit.delete(extension);
-      extensionManagerInitMeta.countdown = Math.max(extensionManagerInitMeta.countdown, countdown);
-      if (!extensionManagerInitMeta.delay && !isLastExtensionCall) {
-        extensionManagerInitMeta.delay = true;
+      totalInitMeta.countdown = Math.max(totalInitMeta.countdown, countdown);
+      if (!totalInitMeta.delay && !isLastExtensionCall) {
+        totalInitMeta.delay = true;
       }
       const initMeta = new ExtensionInitMeta(extension, data, !isLastExtensionCall, countdown);
-      aInitMeta.push(initMeta);
+      groupInitMeta.push(initMeta);
     }
 
-    return extensionManagerInitMeta;
+    return totalInitMeta;
   }
 
   protected getCache(groupToken: ExtensionsGroupToken) {

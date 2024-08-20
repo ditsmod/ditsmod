@@ -22,10 +22,13 @@ export class ExtensionInitMeta<T = any> {
 }
 
 export class ExtensionManagerInitMeta {
-  public delay?: boolean;
-  public countdown = 0;
-
-  constructor(public initMeta: ExtensionInitMeta[]) {}
+  delay?: boolean;
+  countdown = 0;
+  /**
+   *
+   * @param groupInitMeta Array of `ExtensionInitMeta`.
+   */
+  constructor(public groupInitMeta: ExtensionInitMeta[]) {}
 }
 
 export interface Extension<T> {

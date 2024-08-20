@@ -111,8 +111,8 @@ describe('extensions e2e', () => {
           return;
         }
 
-        const result = await this.extensionManager.init(MY_EXTENSIONS1);
-        extensionInit2(result);
+        const totalInitMeta = await this.extensionManager.init(MY_EXTENSIONS1);
+        extensionInit2(totalInitMeta);
         this.inited = true;
       }
     }
@@ -165,7 +165,7 @@ describe('extensions e2e', () => {
     expect(extensionInit2).toHaveBeenNthCalledWith(2, extensionManagerInitMeta);
   });
 
-  it('case 3', async () => {
+  it('extension depends on data from the entire application', async () => {
     const extensionInit1 = jest.fn();
     const extensionInit2 = jest.fn();
     const extensionPayload: string = 'Extension1 payload';
@@ -207,11 +207,13 @@ describe('extensions e2e', () => {
           return;
         }
 
-        const extensionManagerInitMeta = await this.extensionManager.init(MY_EXTENSIONS1);
-        extensionInit2(extensionManagerInitMeta);
-        if (extensionManagerInitMeta.delay) {
+        const totalInitMeta = await this.extensionManager.init(MY_EXTENSIONS1);
+        extensionInit2(totalInitMeta);
+        if (totalInitMeta.delay) {
           return;
         }
+
+        totalInitMeta.groupInitMeta.map((initMeta) => initMeta.payload);
 
         this.inited = true;
         return;
