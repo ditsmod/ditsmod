@@ -1,7 +1,12 @@
 import { EXTENSIONS_COUNTERS } from '#constans';
 import { Class, BeforeToken, Injector, KeyRegistry, inject, injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { ExtensionsGroupToken, Extension } from '#types/extension-types.js';
+import {
+  ExtensionsGroupToken,
+  Extension,
+  ExtensionInitMeta,
+  ExtensionManagerInitMeta,
+} from '#types/extension-types.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#utils/type-guards.js';
 import { Counter } from './counter.js';
@@ -10,9 +15,7 @@ import { ExtensionsContext } from './extensions-context.js';
 class Cache {
   constructor(
     public groupToken: ExtensionsGroupToken<any>,
-    public value: any[] | false,
-    public autoMergeArrays?: boolean,
-    public extension?: Class<Extension<any>>,
+    public extensionManagerInitMeta: ExtensionManagerInitMeta,
   ) {}
 }
 
@@ -37,17 +40,7 @@ export class ExtensionsManager {
     @inject(EXTENSIONS_COUNTERS) private mExtensionsCounters: Map<Class<Extension<any>>, number>,
   ) {}
 
-  async init<T>(
-    groupToken: ExtensionsGroupToken<T>,
-    autoMergeArrays: boolean,
-    ExtensionAwaiting: Class<Extension<any>>,
-  ): Promise<T[] | false>;
-  async init<T>(groupToken: ExtensionsGroupToken<T>, autoMergeArrays?: boolean): Promise<T[]>;
-  async init<T>(
-    groupToken: ExtensionsGroupToken<T>,
-    autoMergeArrays = true,
-    ExtensionAwaiting?: Class<Extension<any>>,
-  ): Promise<T[] | false> {
+  async init<T>(groupToken: ExtensionsGroupToken<T>): Promise<ExtensionManagerInitMeta> {
     /**
      * Initializes pair of group extensions with `BEFORE ${groupToken}` and `groupToken`. After that,
      * it returns the value from a group extensions with `groupToken`.
@@ -63,31 +56,28 @@ export class ExtensionsManager {
       const value = await this.initGroup(beforeToken);
       this.systemLogMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
       this.unfinishedInit.delete(beforeToken);
-      const newCache = new Cache(beforeToken, value, autoMergeArrays, ExtensionAwaiting);
+      const newCache = new Cache(beforeToken, value);
       this.cache.push(newCache);
     }
 
-    cache = this.getCache(groupToken, autoMergeArrays, ExtensionAwaiting);
+    cache = this.getCache(groupToken);
     if (cache) {
-      return cache.value;
+      return cache.extensionManagerInitMeta;
     }
     this.unfinishedInit.add(groupToken);
     this.systemLogMediator.startExtensionsGroupInit(this, this.unfinishedInit);
-    const value = await this.initGroup(groupToken, autoMergeArrays, ExtensionAwaiting);
+    const extensionManagerInitMeta = await this.initGroup(groupToken);
     this.systemLogMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(groupToken);
-    const newCache = new Cache(groupToken, value, autoMergeArrays, ExtensionAwaiting);
+    const newCache = new Cache(groupToken, extensionManagerInitMeta);
     this.cache.push(newCache);
-    return value;
+    return extensionManagerInitMeta;
   }
 
-  protected async initGroup<T>(
-    groupToken: ExtensionsGroupToken<any>,
-    autoMergeArrays?: boolean,
-    ExtensionAwaiting?: Class<Extension<any>>,
-  ): Promise<any[] | false> {
+  protected async initGroup<T>(groupToken: ExtensionsGroupToken<any>): Promise<ExtensionManagerInitMeta> {
     const extensions = this.injector.get(groupToken, undefined, []) as Extension<T>[];
-    const aCurrentData: T[] = [];
+    const aInitMeta: ExtensionInitMeta<T>[] = [];
+    const extensionManagerInitMeta = new ExtensionManagerInitMeta(aInitMeta);
 
     if (!extensions.length) {
       this.systemLogMediator.noExtensionsFound(this, groupToken);
@@ -100,62 +90,25 @@ export class ExtensionsManager {
 
       this.unfinishedInit.add(extension);
       this.systemLogMediator.startInitExtension(this, this.unfinishedInit);
-      const isLastExtensionCall = this.mExtensionsCounters.get(extension.constructor as Class<Extension<T>>) === 0;
+      const countdown = this.mExtensionsCounters.get(extension.constructor as Class<Extension<T>>) || 0;
+      const isLastExtensionCall = countdown === 0;
       const data = await extension.init(isLastExtensionCall);
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);
       this.unfinishedInit.delete(extension);
-      if (data === undefined) {
-        continue;
+      extensionManagerInitMeta.countdown = Math.max(extensionManagerInitMeta.countdown, countdown);
+      if (!extensionManagerInitMeta.delay && !isLastExtensionCall) {
+        extensionManagerInitMeta.delay = true;
       }
-      if (autoMergeArrays && Array.isArray(data)) {
-        aCurrentData.push(...data);
-      } else {
-        aCurrentData.push(data);
-      }
+      const initMeta = new ExtensionInitMeta(extension, data, !isLastExtensionCall, countdown);
+      aInitMeta.push(initMeta);
     }
 
-    if (ExtensionAwaiting) {
-      return this.getDataFromAllModules(groupToken, ExtensionAwaiting, aCurrentData);
-    } else {
-      return aCurrentData;
-    }
+    return extensionManagerInitMeta;
   }
 
-  protected getCache(groupToken: ExtensionsGroupToken, autoMergeArrays = true, extension?: Class<Extension<any>>) {
-    return this.cache.find((c) => {
-      return c.groupToken == groupToken && c.autoMergeArrays == autoMergeArrays && c.extension === extension;
-    });
-  }
-
-  protected getDataFromAllModules<T>(
-    groupToken: ExtensionsGroupToken<T>,
-    ExtensionAwaiting: Class<Extension<T>>,
-    aCurrentData: T[],
-  ) {
-    const { mExtensionsData: mAllExtensionsData } = this.extensionsContext;
-    const mExtensionData = mAllExtensionsData.get(ExtensionAwaiting);
-    const aGroupData = mExtensionData?.get(groupToken);
-    const isLastExtensionCall = this.mExtensionsCounters.get(ExtensionAwaiting) === 0;
-
-    if (isLastExtensionCall) {
-      if (aGroupData) {
-        return [...aGroupData, ...aCurrentData];
-      } else {
-        return aCurrentData;
-      }
-    } else {
-      if (!mExtensionData) {
-        mAllExtensionsData.set(ExtensionAwaiting, new Map([[groupToken, aCurrentData]]));
-      } else {
-        if (aGroupData) {
-          aGroupData.push(...aCurrentData);
-        } else {
-          mExtensionData.set(groupToken, aCurrentData);
-        }
-      }
-      return false;
-    }
+  protected getCache(groupToken: ExtensionsGroupToken) {
+    return this.cache.find((c) => c.groupToken == groupToken);
   }
 
   protected throwCircularDeps(item: Extension<any> | ExtensionsGroupToken<any>) {

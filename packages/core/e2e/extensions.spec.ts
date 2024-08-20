@@ -3,11 +3,11 @@ import { TestApplication } from '@ditsmod/testing';
 
 import { InjectionToken, Router, featureModule, injectable } from '#core/index.js';
 import { rootModule } from '#decorators/root-module.js';
-import { Extension } from '#types/extension-types.js';
+import { Extension, ExtensionInitMeta, ExtensionManagerInitMeta } from '#types/extension-types.js';
 import { ExtensionsManager } from '#services/extensions-manager.js';
 
 describe('extensions e2e', () => {
-  it('init one extension imported in multiple modules', async () => {
+  it('check isLastExtensionCall', async () => {
     const extensionInit = jest.fn();
 
     const MY_EXTENSIONS1 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS1');
@@ -87,7 +87,7 @@ describe('extensions e2e', () => {
      */
     @injectable()
     class Extension1 implements Extension<string> {
-      private data: any;
+      data: any;
 
       async init(isLastExtensionCall: boolean) {
         if (this.data) {
@@ -151,8 +151,18 @@ describe('extensions e2e', () => {
     expect(extensionInit1).toHaveBeenNthCalledWith(3, true);
 
     expect(extensionInit2).toHaveBeenCalledTimes(2);
-    expect(extensionInit2).toHaveBeenNthCalledWith(1, [extensionPayload]);
-    expect(extensionInit2).toHaveBeenNthCalledWith(2, [extensionPayload]);
+    const extension = new Extension1();
+    extension.data = extensionPayload;
+    const initMeta = new ExtensionInitMeta(extension, extensionPayload, true, 1);
+    const extensionManagerInitMeta = new ExtensionManagerInitMeta([initMeta]);
+    extensionManagerInitMeta.delay = true;
+    extensionManagerInitMeta.countdown = 1;
+    expect(extensionInit2).toHaveBeenNthCalledWith(1, extensionManagerInitMeta);
+    initMeta.delay = false;
+    initMeta.countdown = 0;
+    extensionManagerInitMeta.delay = undefined;
+    extensionManagerInitMeta.countdown = 0;
+    expect(extensionInit2).toHaveBeenNthCalledWith(2, extensionManagerInitMeta);
   });
 
   it('case 3', async () => {
@@ -167,13 +177,13 @@ describe('extensions e2e', () => {
     /**
      * This extension is declared in `Module1`, which is imported into three different modules.
      * A second extension that depends on this extension is declared below. The second extension
-     * is declared in `Module2`, it is imported into two different modules. The tests check exactly
+     * is declared in `Module2`, it is imported into one module. The tests check exactly
      * what the `ExtensionsManager` returns from the `MY_EXTENSIONS1` group, and how many times
      * the initialization of the second extension is called.
      */
     @injectable()
     class Extension1 implements Extension<string> {
-      private data: any;
+      data: any;
 
       async init(isLastExtensionCall: boolean) {
         if (this.data) {
@@ -197,12 +207,12 @@ describe('extensions e2e', () => {
           return;
         }
 
-        const result = await this.extensionManager.init(MY_EXTENSIONS1, false, Extension2);
-        if (result === false) {
-          return false;
+        const extensionManagerInitMeta = await this.extensionManager.init(MY_EXTENSIONS1);
+        extensionInit2(extensionManagerInitMeta);
+        if (extensionManagerInitMeta.delay) {
+          return;
         }
 
-        extensionInit2(result);
         this.inited = true;
         return;
       }
@@ -238,7 +248,18 @@ describe('extensions e2e', () => {
     expect(extensionInit1).toHaveBeenNthCalledWith(2, false);
     expect(extensionInit1).toHaveBeenNthCalledWith(3, true);
 
-    expect(extensionInit2).toHaveBeenCalledTimes(1);
-    expect(extensionInit2).toHaveBeenNthCalledWith(1, [extensionPayload]);
+    expect(extensionInit2).toHaveBeenCalledTimes(2);
+    const extension = new Extension1();
+    extension.data = extensionPayload;
+    const initMeta = new ExtensionInitMeta(extension, extensionPayload, true, 1);
+    const extensionManagerInitMeta = new ExtensionManagerInitMeta([initMeta]);
+    extensionManagerInitMeta.delay = true;
+    extensionManagerInitMeta.countdown = 1;
+    expect(extensionInit2).toHaveBeenNthCalledWith(1, extensionManagerInitMeta);
+    initMeta.delay = false;
+    initMeta.countdown = 0;
+    extensionManagerInitMeta.delay = undefined;
+    extensionManagerInitMeta.countdown = 0;
+    expect(extensionInit2).toHaveBeenNthCalledWith(2, extensionManagerInitMeta);
   });
 });
