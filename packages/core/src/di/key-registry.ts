@@ -29,6 +29,7 @@ export class BeforeToken<T = any> extends InjectionToken<T> {
   readonly isBeforeToken = true as const;
 }
 
+// @todo After the reinit application, check for memory leaks.
 export class KeyRegistry {
   static #allKeys = new Map<any, DualKey>();
   static #groupTokens = new Map<InjectionToken, BeforeToken>();

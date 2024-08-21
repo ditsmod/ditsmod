@@ -201,7 +201,7 @@ export class SystemLogMediator extends LogMediator {
   protected getExtentionPath(unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
     return [...unfinishedInit]
       .map((tokenOrExtension) => {
-        if (isInjectionToken(tokenOrExtension) || typeof tokenOrExtension == 'string') {
+        if (isInjectionToken(tokenOrExtension)) {
           return getProviderName(tokenOrExtension);
         } else {
           return tokenOrExtension.constructor.name;
