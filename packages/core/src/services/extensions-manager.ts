@@ -51,19 +51,17 @@ export class ExtensionsManager {
     const beforeToken = KeyRegistry.getBeforeToken(groupToken);
     let cache = this.getCache(beforeToken);
     if (!cache && this.beforeTokens.has(beforeToken)) {
-      this.unfinishedInit.add(beforeToken);
-      this.systemLogMediator.startExtensionsGroupInit(this, this.unfinishedInit);
-      const totalInitMeta = await this.initGroup(beforeToken);
-      this.systemLogMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
-      this.unfinishedInit.delete(beforeToken);
-      const newCache = new Cache(beforeToken, totalInitMeta);
-      this.cache.push(newCache);
+      await this.prepareAndInitGroup(beforeToken);
     }
 
     cache = this.getCache(groupToken);
     if (cache) {
       return cache.totalInitMeta;
     }
+    return this.prepareAndInitGroup(groupToken);
+  }
+
+  protected async prepareAndInitGroup<T>(groupToken: ExtensionsGroupToken<T>) {
     this.unfinishedInit.add(groupToken);
     this.systemLogMediator.startExtensionsGroupInit(this, this.unfinishedInit);
     const totalInitMeta = await this.initGroup(groupToken);
