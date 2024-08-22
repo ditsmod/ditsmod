@@ -12,13 +12,6 @@ import { isInjectionToken } from '#utils/type-guards.js';
 import { Counter } from './counter.js';
 import { ExtensionsContext } from './extensions-context.js';
 
-class Cache {
-  constructor(
-    public groupToken: ExtensionsGroupToken<any>,
-    public totalInitMeta: ExtensionManagerInitMeta,
-  ) {}
-}
-
 @injectable()
 export class ExtensionsManager {
   /**
@@ -30,7 +23,7 @@ export class ExtensionsManager {
    */
   beforeTokens = new Set<BeforeToken>();
   protected unfinishedInit = new Set<Extension<any> | ExtensionsGroupToken<any>>();
-  protected cache: Cache[] = [];
+  protected cache = new Map<ExtensionsGroupToken, ExtensionManagerInitMeta>();
 
   constructor(
     private injector: Injector,
@@ -41,24 +34,15 @@ export class ExtensionsManager {
   ) {}
 
   async init<T>(groupToken: ExtensionsGroupToken<T>): Promise<ExtensionManagerInitMeta> {
-    /**
-     * Initializes pair of group extensions with `BEFORE ${groupToken}` and `groupToken`. After that,
-     * it returns the value from a group extensions with `groupToken`.
-     */
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
     }
     const beforeToken = KeyRegistry.getBeforeToken(groupToken);
-    let cache = this.getCache(beforeToken);
-    if (!cache && this.beforeTokens.has(beforeToken)) {
-      await this.prepareAndInitGroup(beforeToken);
+    if (!this.cache.has(beforeToken) && this.beforeTokens.has(beforeToken)) {
+      await this.prepareAndInitGroup<T>(beforeToken);
     }
 
-    cache = this.getCache(groupToken);
-    if (cache) {
-      return cache.totalInitMeta;
-    }
-    return this.prepareAndInitGroup(groupToken);
+    return this.cache.get(groupToken) || this.prepareAndInitGroup<T>(groupToken);
   }
 
   protected async prepareAndInitGroup<T>(groupToken: ExtensionsGroupToken<T>) {
@@ -67,8 +51,7 @@ export class ExtensionsManager {
     const totalInitMeta = await this.initGroup(groupToken);
     this.systemLogMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(groupToken);
-    const newCache = new Cache(groupToken, totalInitMeta);
-    this.cache.push(newCache);
+    this.cache.set(groupToken, totalInitMeta);
     return totalInitMeta;
   }
 
@@ -103,10 +86,6 @@ export class ExtensionsManager {
     }
 
     return totalInitMeta;
-  }
-
-  protected getCache(groupToken: ExtensionsGroupToken) {
-    return this.cache.find((c) => c.groupToken == groupToken);
   }
 
   protected throwCircularDeps(item: Extension<any> | ExtensionsGroupToken<any>) {
