@@ -33,7 +33,7 @@ export class ExtensionsManager {
     @inject(EXTENSIONS_COUNTERS) private mExtensionsCounters: Map<Class<Extension<any>>, number>,
   ) {}
 
-  async init<T>(groupToken: ExtensionsGroupToken<T>): Promise<ExtensionManagerInitMeta> {
+  async init<T>(groupToken: ExtensionsGroupToken<T>): Promise<ExtensionManagerInitMeta<T>> {
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
     }

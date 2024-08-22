@@ -21,14 +21,14 @@ export class ExtensionInitMeta<T = any> {
   ) {}
 }
 
-export class ExtensionManagerInitMeta {
+export class ExtensionManagerInitMeta<T = any> {
   delay?: boolean;
   countdown = 0;
   /**
    *
    * @param groupInitMeta Array of `ExtensionInitMeta`.
    */
-  constructor(public groupInitMeta: ExtensionInitMeta[]) {}
+  constructor(public groupInitMeta: ExtensionInitMeta<T>[]) {}
 }
 
 export interface Extension<T> {
