@@ -69,7 +69,7 @@ export class DepsChecker {
         }
         this.checkMultiOrRegularProvider({ injector, provider: meta, parentTokens, ignoreDeps });
         return;
-      } else if (meta !== undefined) {
+      } else if (meta !== undefined || injector.hasId(dualKey.id)) {
         return;
       } else if (visibility !== fromSelf && injector.parent) {
         return this.findInRegistryCurrentProvider({
