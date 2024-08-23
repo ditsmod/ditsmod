@@ -1,5 +1,12 @@
+<a name="core-2.55.1"></a>
+# [core-2.55.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.55.1) (2024-08-23)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [039556c2e0](https://github.com/ditsmod/ditsmod/commit/039556c2e02) | fix | Allow `undefined` as providers value. |
+
 <a name="core-2.55.0"></a>
-# [core-2.55.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.55.0) (2024-08-16)
+## [core-2.55.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.55.0) (2024-08-16)
 
 **Breaking Changes**
 
