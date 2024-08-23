@@ -477,7 +477,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    * @param value New value for this ID.
    */
   setById(id: number, value: any) {
-    if (id in this.#registry) {
+    if (this.hasId(id)) {
       this.#registry[id] = value;
       return this;
     }
@@ -492,7 +492,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    */
   setByToken(token: any, value: any) {
     const { id } = KeyRegistry.get(token);
-    if (id in this.#registry) {
+    if (this.hasId(id)) {
       this.#registry[id] = value;
       return this;
     }
@@ -581,7 +581,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
         }
         const value = injector.instantiateResolved(meta, parentTokens);
         return (injector.#registry[dualKey.id] = value);
-      } else if (meta !== undefined) {
+      } else if (meta !== undefined || injector.hasId(dualKey.id)) {
         // Here "meta" - is a value for provider that has given `token`.
         return meta;
       } else if (visibility !== fromSelf && injector.#parent) {
@@ -729,5 +729,9 @@ child.get(Service).config; // now, in current injector, works cache: { one: 11, 
    */
   getValue(id: number) {
     return this.#registry[id];
+  }
+
+  hasId(id: number) {
+    return id in this.#registry;
   }
 }
