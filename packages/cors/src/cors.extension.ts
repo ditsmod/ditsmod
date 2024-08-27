@@ -12,6 +12,7 @@ import {
   MetadataPerMod2,
   Provider,
   RequestContext,
+  ExtensionInitMeta,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
 import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
@@ -34,21 +35,25 @@ export class CorsExtension implements Extension<void | false> {
       return;
     }
 
-    const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS, true, CorsExtension);
-    if (aMetadataPerMod2 === false) {
+    const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS, true);
+    if (totalInitMeta.delay) {
       return false;
     }
-    this.prepareDataAndSetInterceptors(aMetadataPerMod2, this.perAppService.injector);
+    this.prepareDataAndSetInterceptors(totalInitMeta.groupInitMeta, this.perAppService.injector);
 
     this.inited = true;
     return; // Make TypeScript happy
   }
 
-  protected prepareDataAndSetInterceptors(aMetadataPerMod2: MetadataPerMod2[], injectorPerApp: Injector) {
-    aMetadataPerMod2.forEach((metadataPerMod2) => {
+  protected prepareDataAndSetInterceptors(
+    groupInitMeta: ExtensionInitMeta<MetadataPerMod2>[],
+    injectorPerApp: Injector,
+  ) {
+    groupInitMeta.forEach((initMeta) => {
+      const metadataPerMod2 = initMeta.payload;
       const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
-      const routesWithOptions = this.getRoutesWithOptions(aMetadataPerMod2, aControllersMetadata2);
+      const routesWithOptions = this.getRoutesWithOptions(groupInitMeta, aControllersMetadata2);
       aControllersMetadata2.push(...routesWithOptions);
 
       aControllersMetadata2.forEach(({ providersPerReq, providersPerRou, isSingleton }) => {
@@ -76,10 +81,11 @@ export class CorsExtension implements Extension<void | false> {
     return clonedCorsOptions;
   }
 
-  protected getPathWtihOptions(aMetadataPerMod2: MetadataPerMod2[]) {
+  protected getPathWtihOptions(groupInitMeta: ExtensionInitMeta<MetadataPerMod2>[]) {
     const sPathWithOptions = new Set<string>();
 
-    aMetadataPerMod2.forEach((metadataPerMod2) => {
+    groupInitMeta.forEach((initMeta) => {
+      const metadataPerMod2 = initMeta.payload;
       metadataPerMod2.aControllersMetadata2
         .filter(({ httpMethod }) => httpMethod == 'OPTIONS')
         .forEach(({ path }) => sPathWithOptions.add(path));
@@ -88,8 +94,11 @@ export class CorsExtension implements Extension<void | false> {
     return sPathWithOptions;
   }
 
-  protected getRoutesWithOptions(aMetadataPerMod2: MetadataPerMod2[], aControllersMetadata2: ControllerMetadata2[]) {
-    const sPathWithOptions = this.getPathWtihOptions(aMetadataPerMod2);
+  protected getRoutesWithOptions(
+    groupInitMeta: ExtensionInitMeta<MetadataPerMod2>[],
+    aControllersMetadata2: ControllerMetadata2[],
+  ) {
+    const sPathWithOptions = this.getPathWtihOptions(groupInitMeta);
     const newArrControllersMetadata2: ControllerMetadata2[] = []; // Routes with OPTIONS methods
 
     aControllersMetadata2.forEach(({ httpMethod, path }) => {
