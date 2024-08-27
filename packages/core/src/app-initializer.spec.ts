@@ -651,7 +651,7 @@ describe('AppInitializer', () => {
     const MY_EXTENSIONS = new InjectionToken<Extension<MyInterface>[]>('MY_EXTENSIONS');
 
     @injectable()
-    class Extension1 implements Extension<any> {
+    class Extension1 implements Extension {
       #inited: boolean;
 
       async init() {

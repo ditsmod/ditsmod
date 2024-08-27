@@ -20,7 +20,7 @@ describe('KeyRegistry', () => {
 
 describe('ExtensionGroupTokens', () => {
   it('creation group token with "SOME_EXTENSIONS" as groupDebugKey', () => {
-    const SOME_EXTENSIONS = new InjectionToken<Extension<any>[]>('SOME_EXTENSIONS');
+    const SOME_EXTENSIONS = new InjectionToken<Extension[]>('SOME_EXTENSIONS');
     const BERORE_SOME_EXTENSIONS1 = KeyRegistry.getBeforeToken(SOME_EXTENSIONS);
     expect(BERORE_SOME_EXTENSIONS1).toBeInstanceOf(InjectionToken);
     expect(BERORE_SOME_EXTENSIONS1).not.toBe(SOME_EXTENSIONS);
@@ -31,7 +31,7 @@ describe('ExtensionGroupTokens', () => {
   });
 
   it('duplicate "SOME_EXTENSIONS" as groupDebugKey', () => {
-    const SOME_EXTENSIONS = new InjectionToken<Extension<any>[]>('SOME_EXTENSIONS');
+    const SOME_EXTENSIONS = new InjectionToken<Extension[]>('SOME_EXTENSIONS');
     const BERORE_SOME_EXTENSIONS = KeyRegistry.getBeforeToken(SOME_EXTENSIONS);
     expect(BERORE_SOME_EXTENSIONS).toBeInstanceOf(InjectionToken);
     expect(BERORE_SOME_EXTENSIONS).not.toBe(SOME_EXTENSIONS);

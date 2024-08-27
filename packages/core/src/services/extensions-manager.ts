@@ -22,7 +22,7 @@ export class ExtensionsManager {
    * Settings by AppInitializer.
    */
   beforeTokens = new Set<BeforeToken>();
-  protected unfinishedInit = new Set<Extension<any> | ExtensionsGroupToken<any>>();
+  protected unfinishedInit = new Set<Extension | ExtensionsGroupToken>();
   protected cache = new Map<ExtensionsGroupToken, ExtensionManagerInitMeta>();
 
   constructor(
@@ -30,7 +30,7 @@ export class ExtensionsManager {
     protected systemLogMediator: SystemLogMediator,
     protected counter: Counter,
     protected extensionsContext: ExtensionsContext,
-    @inject(EXTENSIONS_COUNTERS) protected mExtensionsCounters: Map<Class<Extension<any>>, number>,
+    @inject(EXTENSIONS_COUNTERS) protected mExtensionsCounters: Map<Class<Extension>, number>,
   ) {}
 
   async init<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<ExtensionManagerInitMeta<T>> {
@@ -42,7 +42,13 @@ export class ExtensionsManager {
       await this.prepareAndInitGroup<T>(beforeToken);
     }
 
-    return this.cache.get(groupToken) || this.prepareAndInitGroup<T>(groupToken);
+    const totalInitMeta = this.cache.get(groupToken) || (await this.prepareAndInitGroup<T>(groupToken));
+    if (perApp) {
+      const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
+      console.log('caller:', caller.constructor);
+      // totalInitMeta.delay = true;
+    }
+    return totalInitMeta;
   }
 
   protected async prepareAndInitGroup<T>(groupToken: ExtensionsGroupToken<T>) {
@@ -60,7 +66,7 @@ export class ExtensionsManager {
     return totalInitMeta;
   }
 
-  protected async initGroup<T>(groupToken: ExtensionsGroupToken<any>): Promise<ExtensionManagerInitMeta> {
+  protected async initGroup<T>(groupToken: ExtensionsGroupToken): Promise<ExtensionManagerInitMeta> {
     const extensions = this.injector.get(groupToken, undefined, []) as Extension<T>[];
     const groupInitMeta: ExtensionInitMeta<T>[] = [];
     const totalInitMeta = new ExtensionManagerInitMeta(this.moduleName, groupToken, groupInitMeta);
@@ -93,7 +99,7 @@ export class ExtensionsManager {
     return totalInitMeta;
   }
 
-  protected throwCircularDeps(item: Extension<any> | ExtensionsGroupToken<any>) {
+  protected throwCircularDeps(item: Extension | ExtensionsGroupToken) {
     const items = Array.from(this.unfinishedInit);
     const index = items.findIndex((ext) => ext === item);
     const prefixChain = items.slice(0, index);
@@ -108,7 +114,7 @@ export class ExtensionsManager {
     throw new Error(msg);
   }
 
-  protected getItemName(tokenOrExtension: Extension<any> | ExtensionsGroupToken<any>) {
+  protected getItemName(tokenOrExtension: Extension | ExtensionsGroupToken) {
     if (isInjectionToken(tokenOrExtension) || typeof tokenOrExtension == 'string') {
       return getProviderName(tokenOrExtension);
     } else {

@@ -7,7 +7,7 @@ import { Extension } from '#types/extension-types.js';
 @injectable()
 export class Counter {
   #extensionsManagerId = 0;
-  #initedExtensions = new Set<Extension<any>>();
+  #initedExtensions = new Set<Extension>();
 
   increaseExtensionsInitId() {
     return ++this.#extensionsManagerId;
@@ -21,7 +21,7 @@ export class Counter {
     this.#initedExtensions = new Set;
   }
 
-  addInitedExtensions(extension: Extension<any>) {
+  addInitedExtensions(extension: Extension) {
     this.#initedExtensions.add(extension);
   }
 

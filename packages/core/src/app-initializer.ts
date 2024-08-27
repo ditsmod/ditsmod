@@ -292,7 +292,7 @@ export class AppInitializer {
 
   protected async handleExtensionsPerMod(metadataPerMod1: MetadataPerMod1, extensionsManager: ExtensionsManager) {
     const { extensionsProviders, name: moduleName } = metadataPerMod1.meta;
-    const extensionTokens = new Set<InjectionToken<Extension<any>[]>>();
+    const extensionTokens = new Set<InjectionToken<Extension[]>>();
     const beforeTokens = new Set<BeforeToken>();
     for (const token of getTokens<ExtensionsGroupToken>(extensionsProviders)) {
       if (token instanceof BeforeToken) {

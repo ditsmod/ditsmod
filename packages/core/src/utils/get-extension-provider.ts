@@ -9,12 +9,12 @@ export class ExtensionObj {
 
 export interface ExtensionOptionsBase {
   extension: ExtensionType;
-  groupToken: InjectionToken<Extension<any>[]>;
+  groupToken: InjectionToken<Extension[]>;
   /**
    * The token of the group before which this extension will be called. Use this option
    * only if the extension group you place here does not expect your extension group to work.
    */
-  nextToken?: InjectionToken<Extension<any>[]>;
+  nextToken?: InjectionToken<Extension[]>;
   overrideExtension?: never;
 }
 

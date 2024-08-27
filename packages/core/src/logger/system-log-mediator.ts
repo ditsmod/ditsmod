@@ -192,13 +192,13 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `${tokenName} start init.`
    */
-  startExtensionsGroupInit(self: object, unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
+  startExtensionsGroupInit(self: object, unfinishedInit: Set<Extension | ExtensionsGroupToken>) {
     const className = self.constructor.name;
     const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', `${className}: ${path}: start init.`);
   }
 
-  protected getExtentionPath(unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
+  protected getExtentionPath(unfinishedInit: Set<Extension | ExtensionsGroupToken>) {
     return [...unfinishedInit]
       .map((tokenOrExtension) => {
         if (isInjectionToken(tokenOrExtension)) {
@@ -213,7 +213,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `finish init ${tokenName}.`
    */
-  finishExtensionsGroupInit(self: object, unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
+  finishExtensionsGroupInit(self: object, unfinishedInit: Set<Extension | ExtensionsGroupToken>) {
     const className = self.constructor.name;
     const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', `${className}: ${path}: finish init.`);
@@ -231,7 +231,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `${path}: start init.`
    */
-  startInitExtension(self: object, unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>) {
+  startInitExtension(self: object, unfinishedInit: Set<Extension | ExtensionsGroupToken>) {
     const className = self.constructor.name;
     const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', `${className}: ${path}: start init.`);
@@ -240,7 +240,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `${path}: finish init${withSomeValue}.`
    */
-  finishInitExtension(self: object, unfinishedInit: Set<Extension<any> | ExtensionsGroupToken<any>>, data: any) {
+  finishInitExtension(self: object, unfinishedInit: Set<Extension | ExtensionsGroupToken>, data: any) {
     const className = self.constructor.name;
     const path = this.getExtentionPath(unfinishedInit);
     const withSomeValue = data === undefined ? ', no value returned' : ', returned some value';

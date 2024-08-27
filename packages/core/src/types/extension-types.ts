@@ -41,7 +41,7 @@ export class ExtensionManagerInitMeta<T = any> {
   ) {}
 }
 
-export interface Extension<T> {
+export interface Extension<T = any> {
   init(isLastExtensionCall: boolean): Promise<T>;
 }
 export type ExtensionProvider = Provider;

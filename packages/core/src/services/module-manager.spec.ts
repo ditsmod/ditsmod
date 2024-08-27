@@ -62,7 +62,7 @@ describe('ModuleManager', () => {
     });
 
     it('should works with extension only', () => {
-      class Ext implements Extension<any> {
+      class Ext implements Extension {
         async init() {}
       }
       const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
@@ -354,7 +354,7 @@ describe('ModuleManager', () => {
   it('module exported invalid extension', () => {
     @injectable()
     class Extension1 {}
-    const TEST_EXTENSIONS = new InjectionToken<Extension<any>>('TEST_EXTENSIONS');
+    const TEST_EXTENSIONS = new InjectionToken<Extension>('TEST_EXTENSIONS');
 
     @featureModule({ extensions: [{ extension: Extension1 as any, groupToken: TEST_EXTENSIONS, exported: true }] })
     class Module2 {}
@@ -364,10 +364,10 @@ describe('ModuleManager', () => {
 
   it('module exported valid extension', () => {
     @injectable()
-    class Extension1 implements Extension<any> {
+    class Extension1 implements Extension {
       async init() {}
     }
-    const TEST_EXTENSIONS = new InjectionToken<Extension<any>>('TEST_EXTENSIONS');
+    const TEST_EXTENSIONS = new InjectionToken<Extension>('TEST_EXTENSIONS');
 
     @featureModule({ extensions: [{ extension: Extension1 as any, groupToken: TEST_EXTENSIONS, exported: true }] })
     class Module2 {}

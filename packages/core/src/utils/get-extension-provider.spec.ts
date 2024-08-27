@@ -5,10 +5,10 @@ import { ExtensionOptions, getExtensionProvider } from './get-extension-provider
 describe('getExtensionProvider', () => {
   const MY_EXTENSION = new InjectionToken('MY_EXTENSION');
   const OTHER_EXTENSION = new InjectionToken('OTHER_EXTENSION');
-  class Extension1 implements Extension<any> {
+  class Extension1 implements Extension {
     async init() {}
   }
-  class Extension2 implements Extension<any> {
+  class Extension2 implements Extension {
     async init() {}
   }
 

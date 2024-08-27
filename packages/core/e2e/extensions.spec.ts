@@ -10,7 +10,7 @@ describe('extensions e2e', () => {
   it('check isLastExtensionCall', async () => {
     const extensionInit = jest.fn();
 
-    const MY_EXTENSIONS1 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS1');
+    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
     class Provider1 {}
     class Provider2 {}
     class Provider3 {}
@@ -20,7 +20,7 @@ describe('extensions e2e', () => {
      * The tests check whether the `isLastExtensionCall` parameter is passed to the `init()` method.
      */
     @injectable()
-    class Extension1 implements Extension<any> {
+    class Extension1 implements Extension {
       private inited: boolean;
 
       async init(isLastExtensionCall: boolean) {
@@ -72,8 +72,8 @@ describe('extensions e2e', () => {
     const extensionInit2 = jest.fn();
     const extensionPayload: string = 'Extension1 payload';
 
-    const MY_EXTENSIONS1 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS1');
-    const MY_EXTENSIONS2 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS2');
+    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
+    const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
     class Provider1 {}
     class Provider2 {}
     class Provider3 {}
@@ -101,7 +101,7 @@ describe('extensions e2e', () => {
     }
 
     @injectable()
-    class Extension2 implements Extension<any> {
+    class Extension2 implements Extension {
       private inited: boolean;
 
       constructor(private extensionManager: ExtensionsManager) {}
@@ -171,8 +171,8 @@ describe('extensions e2e', () => {
     const extensionInit2 = jest.fn();
     const extensionPayload: string = 'Extension1 payload';
 
-    const MY_EXTENSIONS1 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS1');
-    const MY_EXTENSIONS2 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS2');
+    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
+    const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
     class Provider1 {}
 
     /**
@@ -198,7 +198,7 @@ describe('extensions e2e', () => {
     }
 
     @injectable()
-    class Extension2 implements Extension<any> {
+    class Extension2 implements Extension {
       private inited: boolean;
 
       constructor(private extensionManager: ExtensionsManager) {}
@@ -208,7 +208,7 @@ describe('extensions e2e', () => {
           return;
         }
 
-        const totalInitMeta = await this.extensionManager.init(MY_EXTENSIONS1);
+        const totalInitMeta = await this.extensionManager.init(MY_EXTENSIONS1, true);
         extensionInit2(totalInitMeta);
         if (totalInitMeta.delay) {
           return;

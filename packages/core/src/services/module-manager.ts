@@ -554,7 +554,7 @@ export class ModuleManager {
 
   protected checkInitMethodForExtension(modName: string, extensionsProvider: ExtensionProvider) {
     const np = normalizeProviders([extensionsProvider])[0];
-    let extensionClass: Class<Extension<any>> | undefined;
+    let extensionClass: Class<Extension> | undefined;
     if (isClassProvider(np)) {
       extensionClass = np.useClass;
     } else if (isTokenProvider(np) && np.useToken instanceof Class) {

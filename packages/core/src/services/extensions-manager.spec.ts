@@ -8,17 +8,17 @@ import { ExtensionsManager } from './extensions-manager.js';
 
 describe('ExtensionsManager circular dependencies', () => {
   class MockExtensionsManager extends ExtensionsManager {
-    override unfinishedInit = new Set<Extension<any>>();
+    override unfinishedInit = new Set<Extension>();
   }
 
   let mock: MockExtensionsManager;
-  const MY_EXTENSIONS1 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS1');
-  const MY_EXTENSIONS2 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS2');
-  const MY_EXTENSIONS3 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS3');
-  const MY_EXTENSIONS4 = new InjectionToken<Extension<any>[]>('MY_EXTENSIONS4');
+  const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
+  const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
+  const MY_EXTENSIONS3 = new InjectionToken<Extension[]>('MY_EXTENSIONS3');
+  const MY_EXTENSIONS4 = new InjectionToken<Extension[]>('MY_EXTENSIONS4');
 
   @injectable()
-  class Extension1 implements Extension<any> {
+  class Extension1 implements Extension {
     private inited: boolean;
 
     async init() {
@@ -30,7 +30,7 @@ describe('ExtensionsManager circular dependencies', () => {
   }
 
   @injectable()
-  class Extension2 implements Extension<any> {
+  class Extension2 implements Extension {
     private inited: boolean;
 
     constructor(public mockExtensionsManager: MockExtensionsManager) {}
@@ -45,7 +45,7 @@ describe('ExtensionsManager circular dependencies', () => {
   }
 
   @injectable()
-  class Extension3 implements Extension<any> {
+  class Extension3 implements Extension {
     private inited: boolean;
 
     constructor(public mockExtensionsManager: MockExtensionsManager) {}
@@ -59,7 +59,7 @@ describe('ExtensionsManager circular dependencies', () => {
     }
   }
   @injectable()
-  class Extension4 implements Extension<any> {
+  class Extension4 implements Extension {
     private inited: boolean;
 
     constructor(public mockExtensionsManager: MockExtensionsManager) {}
