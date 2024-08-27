@@ -32,6 +32,7 @@ import {
   DefaultSingletonHttpErrorHandler,
   SingletonInterceptorWithGuards,
   Class,
+  ExtensionInitMeta,
 } from '@ditsmod/core';
 
 import { PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -55,22 +56,23 @@ export class PreRouterExtension implements Extension<void> {
     }
 
     this.isLastExtensionCall = isLastExtensionCall;
-    const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS, true, PreRouterExtension);
-    if (aMetadataPerMod2 === false) {
+    const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS, true);
+    if (totalInitMeta.delay) {
       this.inited = true;
       return;
     }
-    const preparedRouteMeta = this.prepareRoutesMeta(aMetadataPerMod2);
+    const preparedRouteMeta = this.prepareRoutesMeta(totalInitMeta.groupInitMeta);
     this.setRoutes(preparedRouteMeta);
     this.inited = true;
   }
 
-  protected prepareRoutesMeta(aMetadataPerMod2: MetadataPerMod2[]) {
+  protected prepareRoutesMeta(groupInitMeta: ExtensionInitMeta<MetadataPerMod2>[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
     this.perAppService.providers.push({ token: Router, useValue: this.router });
     const injectorPerApp = this.perAppService.reinitInjector();
 
-    aMetadataPerMod2.forEach((metadataPerMod2) => {
+    groupInitMeta.forEach((initMeta) => {
+      const metadataPerMod2 = initMeta.payload;
       const { moduleName, aControllersMetadata2, providersPerMod } = metadataPerMod2;
       const mod = getModule(metadataPerMod2.module);
 
