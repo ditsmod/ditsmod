@@ -5,6 +5,9 @@ export class ExtensionsMetaPerApp {
   [key: string]: AnyObj;
 }
 
+/**
+ * As a rule, an instance of this class is set in a variable named `groupInitMeta`.
+ */
 export class ExtensionInitMeta<T = any> {
   /**
    *
@@ -21,6 +24,9 @@ export class ExtensionInitMeta<T = any> {
   ) {}
 }
 
+/**
+ * As a rule, an instance of this class is set in a variable named `totalInitMeta`.
+ */
 export class ExtensionManagerInitMeta<T = any> {
   delay?: boolean;
   countdown = 0;
@@ -28,7 +34,11 @@ export class ExtensionManagerInitMeta<T = any> {
    *
    * @param groupInitMeta Array of `ExtensionInitMeta`.
    */
-  constructor(public moduleName: string, public groupInitMeta: ExtensionInitMeta<T>[]) {}
+  constructor(
+    public moduleName: string,
+    public groupToken: ExtensionsGroupToken<T>,
+    public groupInitMeta: ExtensionInitMeta<T>[],
+  ) {}
 }
 
 export interface Extension<T> {

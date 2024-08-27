@@ -154,7 +154,7 @@ describe('extensions e2e', () => {
     const extension = new Extension1();
     extension.data = extensionPayload;
     const initMeta = new ExtensionInitMeta(extension, extensionPayload, true, 1);
-    const extensionManagerInitMeta = new ExtensionManagerInitMeta('TextModule', [initMeta]);
+    const extensionManagerInitMeta = new ExtensionManagerInitMeta('Module3', MY_EXTENSIONS1, [initMeta]);
     extensionManagerInitMeta.delay = true;
     extensionManagerInitMeta.countdown = 1;
     expect(extensionInit2).toHaveBeenNthCalledWith(1, extensionManagerInitMeta);
@@ -162,6 +162,7 @@ describe('extensions e2e', () => {
     initMeta.countdown = 0;
     extensionManagerInitMeta.delay = undefined;
     extensionManagerInitMeta.countdown = 0;
+    extensionManagerInitMeta.moduleName = 'AppModule';
     expect(extensionInit2).toHaveBeenNthCalledWith(2, extensionManagerInitMeta);
   });
 
@@ -254,7 +255,7 @@ describe('extensions e2e', () => {
     const extension = new Extension1();
     extension.data = extensionPayload;
     const initMeta = new ExtensionInitMeta(extension, extensionPayload, true, 1);
-    const extensionManagerInitMeta = new ExtensionManagerInitMeta('TextModule', [initMeta]);
+    const extensionManagerInitMeta = new ExtensionManagerInitMeta('TextModule', MY_EXTENSIONS2, [initMeta]);
     extensionManagerInitMeta.delay = true;
     extensionManagerInitMeta.countdown = 1;
     expect(extensionInit2).toHaveBeenNthCalledWith(1, extensionManagerInitMeta);

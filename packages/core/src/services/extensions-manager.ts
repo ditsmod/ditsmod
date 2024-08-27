@@ -52,14 +52,18 @@ export class ExtensionsManager {
     this.systemLogMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(groupToken);
     this.cache.set(groupToken, totalInitMeta);
-    this.extensionsContext.aTotalInitMeta.push(totalInitMeta);
+
+    const aTotalInitMeta = this.extensionsContext.mTotalInitMeta.get(groupToken) || [];
+    aTotalInitMeta.push(totalInitMeta);
+    this.extensionsContext.mTotalInitMeta.set(groupToken, aTotalInitMeta);
+
     return totalInitMeta;
   }
 
   protected async initGroup<T>(groupToken: ExtensionsGroupToken<any>): Promise<ExtensionManagerInitMeta> {
     const extensions = this.injector.get(groupToken, undefined, []) as Extension<T>[];
     const groupInitMeta: ExtensionInitMeta<T>[] = [];
-    const totalInitMeta = new ExtensionManagerInitMeta(this.moduleName, groupInitMeta);
+    const totalInitMeta = new ExtensionManagerInitMeta(this.moduleName, groupToken, groupInitMeta);
 
     if (!extensions.length) {
       this.systemLogMediator.noExtensionsFound(this, groupToken);
