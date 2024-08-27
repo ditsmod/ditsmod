@@ -37,6 +37,7 @@ export class ValidationExtension implements Extension<void> {
       const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
       providersPerMod.push({ token: AjvService, useValue: this.ajvService });
 
+      console.log('*'.repeat(20), this.extensionsManager.moduleName);
       aControllersMetadata2.forEach(({ providersPerReq, routeMeta }) => {
         const validationRouteMeta = routeMeta as ValidationRouteMeta;
         validationRouteMeta.parameters = [];
