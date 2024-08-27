@@ -11,6 +11,7 @@ import {
   isFactoryProvider,
   getDependencies,
   Provider,
+  ExtensionInitMeta,
 } from '@ditsmod/core';
 import { PreRouterExtension, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
@@ -37,21 +38,21 @@ export class TestPreRouterExtension extends PreRouterExtension {
     }
 
     this.isLastExtensionCall = isLastExtensionCall;
-    const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS, true, PreRouterExtension);
-    if (aMetadataPerMod2 === false) {
+    const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS, true);
+    if (totalInitMeta.delay) {
       this.inited = true;
       return;
     }
 
     // Added only this line to override super.init()
-    this.overrideAllProviders(aMetadataPerMod2);
+    this.overrideAllProviders(totalInitMeta.groupInitMeta);
 
-    const preparedRouteMeta = this.prepareRoutesMeta(aMetadataPerMod2);
+    const preparedRouteMeta = this.prepareRoutesMeta(totalInitMeta.groupInitMeta);
     this.setRoutes(preparedRouteMeta);
     this.inited = true;
   }
 
-  protected overrideAllProviders(aMetadataPerMod2: MetadataPerMod2[]) {
+  protected overrideAllProviders(groupInitMeta: ExtensionInitMeta<MetadataPerMod2>[]) {
     const providersToOverride = this.testModuleManager.getProvidersToOverride();
     const logLevel = this.testModuleManager.getLogLevel();
     overrideLogLevel(this.perAppService.providers, logLevel);
@@ -63,7 +64,8 @@ export class TestPreRouterExtension extends PreRouterExtension {
 
     this.perAppService.reinitInjector();
 
-    aMetadataPerMod2.forEach((metadataPerMod2) => {
+    groupInitMeta.forEach((initMeta) => {
+      const metadataPerMod2 = initMeta.payload;
       overrideLogLevel(metadataPerMod2.providersPerMod, logLevel);
       overrideLogLevel(metadataPerMod2.providersPerRou, logLevel);
       overrideLogLevel(metadataPerMod2.providersPerReq, logLevel);
