@@ -28,7 +28,7 @@ export class ExtensionManagerInitMeta<T = any> {
    *
    * @param groupInitMeta Array of `ExtensionInitMeta`.
    */
-  constructor(public groupInitMeta: ExtensionInitMeta<T>[]) {}
+  constructor(public moduleName: string, public groupInitMeta: ExtensionInitMeta<T>[]) {}
 }
 
 export interface Extension<T> {

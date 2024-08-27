@@ -26,14 +26,14 @@ export class ExtensionsManager {
   protected cache = new Map<ExtensionsGroupToken, ExtensionManagerInitMeta>();
 
   constructor(
-    private injector: Injector,
-    private systemLogMediator: SystemLogMediator,
-    private counter: Counter,
-    private extensionsContext: ExtensionsContext,
-    @inject(EXTENSIONS_COUNTERS) private mExtensionsCounters: Map<Class<Extension<any>>, number>,
+    protected injector: Injector,
+    protected systemLogMediator: SystemLogMediator,
+    protected counter: Counter,
+    protected extensionsContext: ExtensionsContext,
+    @inject(EXTENSIONS_COUNTERS) protected mExtensionsCounters: Map<Class<Extension<any>>, number>,
   ) {}
 
-  async init<T>(groupToken: ExtensionsGroupToken<T>): Promise<ExtensionManagerInitMeta<T>> {
+  async init<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<ExtensionManagerInitMeta<T>> {
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
     }
@@ -52,13 +52,14 @@ export class ExtensionsManager {
     this.systemLogMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(groupToken);
     this.cache.set(groupToken, totalInitMeta);
+    this.extensionsContext.aTotalInitMeta.push(totalInitMeta);
     return totalInitMeta;
   }
 
   protected async initGroup<T>(groupToken: ExtensionsGroupToken<any>): Promise<ExtensionManagerInitMeta> {
     const extensions = this.injector.get(groupToken, undefined, []) as Extension<T>[];
     const groupInitMeta: ExtensionInitMeta<T>[] = [];
-    const totalInitMeta = new ExtensionManagerInitMeta(groupInitMeta);
+    const totalInitMeta = new ExtensionManagerInitMeta(this.moduleName, groupInitMeta);
 
     if (!extensions.length) {
       this.systemLogMediator.noExtensionsFound(this, groupToken);
