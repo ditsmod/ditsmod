@@ -11,6 +11,7 @@ import {
   Injector,
   optional,
   reflector,
+  ExtensionInitMeta,
 } from '@ditsmod/core';
 import {
   PathItemObject,
@@ -48,14 +49,14 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
       return this.oasObject;
     }
 
-    const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS, true, OpenapiCompilerExtension);
-    if (!aMetadataPerMod2) {
+    const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS, true);
+    if (totalInitMeta.delay) {
       this.log.dataAccumulation(this);
       return false;
     }
     this.log.applyingAccumulatedData(this);
 
-    await this.compileOasObject(aMetadataPerMod2);
+    await this.compileOasObject(totalInitMeta.groupInitMeta);
     const json = JSON.stringify(this.oasObject);
     const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
     const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
@@ -65,11 +66,11 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     return this.oasObject;
   }
 
-  protected async compileOasObject(aMetadataPerMod2: MetadataPerMod2[]) {
+  protected async compileOasObject(groupInitMeta: ExtensionInitMeta<MetadataPerMod2>[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
-    for (const metadataPerMod2 of aMetadataPerMod2) {
-      const { aControllersMetadata2, module: modOrObj } = metadataPerMod2;
+    for (const initMeta of groupInitMeta) {
+      const { aControllersMetadata2, module: modOrObj } = initMeta.payload;
 
       aControllersMetadata2.forEach(({ httpMethod, path, routeMeta }) => {
         const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;
