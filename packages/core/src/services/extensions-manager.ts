@@ -44,6 +44,7 @@ export class ExtensionsManager {
 
     let totalInitMeta = this.cache.get(groupToken);
     if (totalInitMeta) {
+      this.updateCounters(groupToken, totalInitMeta);
       return totalInitMeta;
     }
 
@@ -74,6 +75,7 @@ export class ExtensionsManager {
     const extensions = this.injector.get(groupToken, undefined, []) as Extension<T>[];
     const groupInitMeta: ExtensionInitMeta<T>[] = [];
     const totalInitMeta = new ExtensionManagerInitMeta(this.moduleName, groupToken, groupInitMeta);
+    this.updateCounters(groupToken, totalInitMeta);
 
     if (!extensions.length) {
       this.systemLogMediator.noExtensionsFound(this, groupToken);
@@ -86,22 +88,22 @@ export class ExtensionsManager {
 
       this.unfinishedInit.add(extension);
       this.systemLogMediator.startInitExtension(this, this.unfinishedInit);
-      const countdown =
-        this.extensionCounters.mExtensions.get(extension.constructor as Class<Extension<T>>) || 0;
+      const countdown = this.extensionCounters.mExtensions.get(extension.constructor as Class<Extension<T>>) || 0;
       const isLastExtensionCall = countdown === 0;
       const data = await extension.init(isLastExtensionCall);
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);
       this.unfinishedInit.delete(extension);
-      totalInitMeta.countdown = Math.max(totalInitMeta.countdown, countdown);
-      if (!totalInitMeta.delay && !isLastExtensionCall) {
-        totalInitMeta.delay = true;
-      }
       const initMeta = new ExtensionInitMeta(extension, data, !isLastExtensionCall, countdown);
       groupInitMeta.push(initMeta);
     }
 
     return totalInitMeta;
+  }
+
+  protected updateCounters(groupToken: ExtensionsGroupToken, totalInitMeta: ExtensionManagerInitMeta) {
+    totalInitMeta.countdown = this.extensionCounters.mGroupTokens.get(groupToken)!;
+    totalInitMeta.delay = totalInitMeta.countdown > 0;
   }
 
   protected throwCircularDeps(item: Extension | ExtensionsGroupToken) {
