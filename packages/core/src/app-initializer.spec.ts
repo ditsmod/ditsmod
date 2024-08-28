@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-import { injectable, InjectionToken } from '#di';
+import { injectable, InjectionToken, KeyRegistry } from '#di';
 import { InputLogLevel, Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -11,7 +11,7 @@ import { Router } from './types/router.js';
 import { AppInitializer } from './app-initializer.js';
 import { ModuleManager } from './services/module-manager.js';
 import { ModuleType, ModuleWithParams, Provider } from './types/mix.js';
-import { Extension } from '#types/extension-types.js';
+import { Extension, ExtensionCounters } from '#types/extension-types.js';
 import { controller } from './decorators/controller.js';
 import { ModuleExtract } from './types/module-extract.js';
 import { ImportObj, MetadataPerMod1 } from './types/metadata-per-mod.js';
@@ -53,6 +53,10 @@ describe('AppInitializer', () => {
     override getResolvedCollisionsPerApp() {
       return super.getResolvedCollisionsPerApp();
     }
+
+    override decreaseExtensionsCounters(extensionCounters: ExtensionCounters, providers: Provider[]) {
+      return super.decreaseExtensionsCounters(extensionCounters, providers);
+    }
   }
 
   function getImportedTokens(map: Map<any, ImportObj<Provider>> | undefined) {
@@ -61,6 +65,60 @@ describe('AppInitializer', () => {
 
   let mock: AppInitializerMock;
   let moduleManager: ModuleManager;
+
+  describe('decreaseExtensionsCounters()', () => {
+    beforeEach(() => {
+      const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
+      moduleManager = new ModuleManager(systemLogMediator);
+      const appOptions = new AppOptions();
+      mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
+    });
+
+    const SOME_EXTENSIONS = new InjectionToken('SOME_EXTENSIONS');
+    const BEFORE_SOME_EXTENSIONS = KeyRegistry.getBeforeToken(SOME_EXTENSIONS);
+    class Extension1 {}
+    class Extension2 {}
+    class Extension3 {}
+
+    const extensionCounters = new ExtensionCounters();
+    extensionCounters.mGroupTokens.set(BEFORE_SOME_EXTENSIONS, 1);
+    extensionCounters.mGroupTokens.set(SOME_EXTENSIONS, 3);
+
+    extensionCounters.mExtensions.set(Extension1, 9);
+    extensionCounters.mExtensions.set(Extension2, 8);
+    extensionCounters.mExtensions.set(Extension3, 6);
+
+    it('counters should remain the same', () => {
+      mock.decreaseExtensionsCounters(extensionCounters, []);
+
+      expect(extensionCounters.mGroupTokens.get(BEFORE_SOME_EXTENSIONS)).toBe(1);
+      expect(extensionCounters.mGroupTokens.get(SOME_EXTENSIONS)).toBe(3);
+
+      expect(extensionCounters.mExtensions.get(Extension1)).toBe(9);
+      expect(extensionCounters.mExtensions.get(Extension2)).toBe(8);
+      expect(extensionCounters.mExtensions.get(Extension3)).toBe(6);
+    });
+
+    it('counter should be changed', () => {
+      const providers: Provider[] = [
+        Extension2,
+        Extension2,
+        { token: BEFORE_SOME_EXTENSIONS, useClass: Extension3 },
+        { token: BEFORE_SOME_EXTENSIONS, useClass: Extension3 },
+        { token: BEFORE_SOME_EXTENSIONS, useClass: Extension3 },
+        { token: SOME_EXTENSIONS, useClass: Extension1 },
+        Extension1,
+      ];
+      mock.decreaseExtensionsCounters(extensionCounters, providers);
+
+      expect(extensionCounters.mGroupTokens.get(BEFORE_SOME_EXTENSIONS)).toBe(0);
+      expect(extensionCounters.mGroupTokens.get(SOME_EXTENSIONS)).toBe(2);
+
+      expect(extensionCounters.mExtensions.get(Extension1)).toBe(8);
+      expect(extensionCounters.mExtensions.get(Extension2)).toBe(7);
+      expect(extensionCounters.mExtensions.get(Extension3)).toBe(5);
+    });
+  });
 
   describe('prepareProvidersPerApp()', () => {
     beforeAll(() => {
