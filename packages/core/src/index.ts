@@ -26,6 +26,7 @@ export { rootModule } from './decorators/root-module.js';
 export { route, RouteMetadata } from './decorators/route.js';
 export {
   ExtensionType,
+  ExtensionCounters,
   ExtensionsGroupToken,
   ExtensionProvider,
   ExtensionsMetaPerApp,

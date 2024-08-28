@@ -1,4 +1,4 @@
-import { Injector } from '#di';
+import { BeforeToken, InjectionToken, Injector } from '#di';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { defaultExtensionsProviders } from './default-extensions-providers.js';
@@ -18,6 +18,7 @@ import { getProvidersTargets, getTokens } from './utils/get-tokens.js';
 import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from './utils/type-guards.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { defaultProvidersPerRou } from './default-providers-per-rou.js';
+import { ExtensionCounters, ExtensionsGroupToken } from '#types/extension-types.js';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -26,7 +27,7 @@ export class ImportsResolver {
   protected tokensPerApp: any[];
   protected meta: NormalizedModuleMetadata;
   protected extensionsTokens: any[] = [];
-  protected mExtensionsCounters = new Map<Provider, number>();
+  protected extensionCounters = new ExtensionCounters();
 
   constructor(
     private moduleManager: ModuleManager,
@@ -47,7 +48,7 @@ export class ImportsResolver {
       meta.providersPerReq.unshift(...defaultProvidersPerReq);
     });
 
-    return this.mExtensionsCounters;
+    return this.extensionCounters;
   }
 
   protected resolveImportedProviders(importedTokensMap: ImportedTokensMap, meta: NormalizedModuleMetadata) {
@@ -116,16 +117,24 @@ export class ImportsResolver {
         }
       });
     });
-    this.increaseExtensionsCounters();
+    this.increaseExtensionCounters();
   }
 
-  protected increaseExtensionsCounters() {
+  protected increaseExtensionCounters() {
     const extensionsProviders = [...this.meta.extensionsProviders];
     const uniqTargets = new Set<Provider>(getProvidersTargets(extensionsProviders));
+    const uniqGroupTokens = new Set<ExtensionsGroupToken>(
+      getTokens(extensionsProviders).filter((token) => token instanceof InjectionToken || token instanceof BeforeToken),
+    );
+
+    uniqGroupTokens.forEach((groupToken) => {
+      const counter = this.extensionCounters.mGroupTokens.get(groupToken) || 0;
+      this.extensionCounters.mGroupTokens.set(groupToken, counter + 1);
+    });
 
     uniqTargets.forEach((target) => {
-      const counter = this.mExtensionsCounters.get(target) || 0;
-      this.mExtensionsCounters.set(target, counter + 1);
+      const counter = this.extensionCounters.mExtensions.get(target) || 0;
+      this.extensionCounters.mExtensions.set(target, counter + 1);
     });
   }
 
@@ -175,7 +184,7 @@ export class ImportsResolver {
     scopes: Scope[],
     provider: Provider,
     dep: ReflectiveDependecy,
-    path: any[] = []
+    path: any[] = [],
   ) {
     let found = false;
     for (const scope of scopes) {
@@ -269,7 +278,7 @@ export class ImportsResolver {
       this.meta.name,
       this.meta.providersPerReq,
       this.meta.providersPerRou,
-      this.meta.providersPerMod
+      this.meta.providersPerMod,
     );
 
     this.errorMediator.throwNoProviderDuringResolveImports(this.meta.name, token.name || token, partMsg);
@@ -282,7 +291,7 @@ export class ImportsResolver {
       ...getTokens([...defaultProvidersPerApp, ...defaultProvidersPerReq]),
       Injector,
       AppOptions,
-      RouteMeta
+      RouteMeta,
     ];
 
     return deps.filter((d) => !defaultTokens.includes(d.token));

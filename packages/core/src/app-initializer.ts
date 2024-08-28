@@ -1,5 +1,4 @@
 import { BeforeToken, InjectionToken, Injector } from '#di';
-import { EXTENSIONS_COUNTERS } from './constans.js';
 import { ImportsResolver } from './imports-resolver.js';
 import { Logger } from '#logger/logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
@@ -17,7 +16,7 @@ import { PerAppService } from './services/per-app.service.js';
 import { PreRouter } from './services/pre-router.js';
 import { MetadataPerMod1 } from './types/metadata-per-mod.js';
 import { ModuleType, ModuleWithParams, Provider } from './types/mix.js';
-import { Extension, ExtensionsGroupToken } from '#types/extension-types.js';
+import { Extension, ExtensionCounters, ExtensionsGroupToken } from '#types/extension-types.js';
 import { RequestListener } from './types/server-options.js';
 import { getCollisions } from './utils/get-collisions.js';
 import { getDuplicates } from './utils/get-duplicates.js';
@@ -162,9 +161,9 @@ export class AppInitializer {
       this.systemLogMediator,
       new SystemErrorMediator({ moduleName: this.meta.name }),
     );
-    const mExtensionsCounters = importsResolver.resolve();
+    const extensionCounters = importsResolver.resolve();
     const aMetadataPerMod1 = [...appMetadataMap].map(([, metadataPerMod1]) => metadataPerMod1);
-    await this.handleExtensions(aMetadataPerMod1, mExtensionsCounters);
+    await this.handleExtensions(aMetadataPerMod1, extensionCounters);
     this.systemLogMediator = this.perAppService.injector.get(SystemLogMediator) as SystemLogMediator;
     this.preRouter = this.perAppService.injector.get(PreRouter) as PreRouter;
     return appMetadataMap;
@@ -244,7 +243,7 @@ export class AppInitializer {
     );
   }
 
-  protected async handleExtensions(aMetadataPerMod1: MetadataPerMod1[], mExtensionsCounters: Map<Provider, number>) {
+  protected async handleExtensions(aMetadataPerMod1: MetadataPerMod1[], extensionCounters: ExtensionCounters) {
     const extensionsContext = new ExtensionsContext();
     const injectorPerApp = this.perAppService.injector.resolveAndCreateChild([
       { token: PerAppService, useValue: this.perAppService },
@@ -262,14 +261,14 @@ export class AppInitializer {
       }
       const injectorForExtensions = this.getInjectorForExtensions(
         preparedMetadataPerMod1,
-        mExtensionsCounters,
+        extensionCounters,
         extensionsContext,
         injectorPerMod,
       );
       const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
 
       systemLogMediator.startExtensions(this);
-      this.decreaseExtensionsCounters(mExtensionsCounters, extensionsProviders);
+      this.decreaseExtensionsCounters(extensionCounters, extensionsProviders);
       await this.handleExtensionsPerMod(preparedMetadataPerMod1, extensionsManager);
       this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
     }
@@ -277,7 +276,7 @@ export class AppInitializer {
 
   protected getInjectorForExtensions(
     metadataPerMod1: MetadataPerMod1,
-    mExtensionsCounters: Map<Provider, number>,
+    extensionCounters: ExtensionCounters,
     extensionsContext: ExtensionsContext,
     injectorPerMod: Injector,
   ) {
@@ -285,7 +284,7 @@ export class AppInitializer {
       ExtensionsManager,
       { token: ExtensionsContext, useValue: extensionsContext },
       { token: MetadataPerMod1, useValue: metadataPerMod1 },
-      { token: EXTENSIONS_COUNTERS, useValue: mExtensionsCounters },
+      { token: ExtensionCounters, useValue: extensionCounters },
       ...metadataPerMod1.meta.extensionsProviders,
     ]);
   }
@@ -317,12 +316,21 @@ export class AppInitializer {
     return metadataPerMod1;
   }
 
-  protected decreaseExtensionsCounters(mExtensionsCounters: Map<Provider, number>, extensions: Provider[]) {
-    const uniqTargets = new Set<Provider>(getProvidersTargets(extensions));
+  protected decreaseExtensionsCounters(extensionCounters: ExtensionCounters, providers: Provider[]) {
+    const { mGroupTokens, mExtensions } = extensionCounters;
+    const uniqGroupTokens = new Set<ExtensionsGroupToken>(
+      getTokens(providers).filter((token) => token instanceof InjectionToken || token instanceof BeforeToken),
+    );
+    const uniqTargets = new Set<Provider>(getProvidersTargets(providers));
+
+    uniqGroupTokens.forEach((groupToken) => {
+      const counter = mGroupTokens.get(groupToken)!;
+      mGroupTokens.set(groupToken, counter - 1);
+    });
 
     uniqTargets.forEach((target) => {
-      const counter = mExtensionsCounters.get(target)!;
-      mExtensionsCounters.set(target, counter - 1);
+      const counter = mExtensions.get(target)!;
+      mExtensions.set(target, counter - 1);
     });
   }
 

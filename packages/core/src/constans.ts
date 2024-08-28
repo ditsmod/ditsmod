@@ -8,7 +8,6 @@ import { NodeRequest, NodeResponse } from './types/server-options.js';
 
 export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INTERCEPTORS');
 export const defaultProvidersPerMod: Provider[] = [ModuleExtract];
-export const EXTENSIONS_COUNTERS = new InjectionToken<Map<Provider, number>>('EXTENSIONS_COUNTERS');
 /**
  * DI token for native Node.js request.
  */

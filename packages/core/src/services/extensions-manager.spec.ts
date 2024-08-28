@@ -1,6 +1,5 @@
-import { EXTENSIONS_COUNTERS } from '#constans';
 import { injectable, InjectionToken, Injector } from '#di';
-import { Extension } from '#types/extension-types.js';
+import { Extension, ExtensionCounters } from '#types/extension-types.js';
 import { getExtensionProviderList } from '#utils/get-extension-provider.js';
 import { defaultProvidersPerApp } from '../default-providers-per-app.js';
 import { ExtensionsContext } from './extensions-context.js';
@@ -84,7 +83,7 @@ describe('ExtensionsManager circular dependencies', () => {
       ]),
       MockExtensionsManager,
       ExtensionsContext,
-      { token: EXTENSIONS_COUNTERS, useValue: new Map() },
+      ExtensionCounters,
     ]);
     mock = injector.get(MockExtensionsManager) as MockExtensionsManager;
   });

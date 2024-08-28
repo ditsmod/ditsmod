@@ -1,11 +1,11 @@
-import { EXTENSIONS_COUNTERS } from '#constans';
-import { Class, BeforeToken, Injector, KeyRegistry, inject, injectable } from '#di';
+import { Class, BeforeToken, Injector, KeyRegistry, injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import {
   ExtensionsGroupToken,
   Extension,
   ExtensionInitMeta,
   ExtensionManagerInitMeta,
+  ExtensionCounters,
 } from '#types/extension-types.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#utils/type-guards.js';
@@ -30,7 +30,7 @@ export class ExtensionsManager {
     protected systemLogMediator: SystemLogMediator,
     protected counter: Counter,
     protected extensionsContext: ExtensionsContext,
-    @inject(EXTENSIONS_COUNTERS) protected mExtensionsCounters: Map<Class<Extension>, number>,
+    protected extensionCounters: ExtensionCounters,
   ) {}
 
   async init<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<ExtensionManagerInitMeta<T>> {
@@ -49,9 +49,9 @@ export class ExtensionsManager {
 
     totalInitMeta = await this.prepareAndInitGroup<T>(groupToken);
     totalInitMeta.totalInitMetaPerApp = this.extensionsContext.mTotalInitMeta.get(groupToken)!;
-    // if (perApp) {
-    //   const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
-    // }
+    if (perApp) {
+      const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
+    }
     return totalInitMeta;
   }
 
@@ -86,7 +86,8 @@ export class ExtensionsManager {
 
       this.unfinishedInit.add(extension);
       this.systemLogMediator.startInitExtension(this, this.unfinishedInit);
-      const countdown = this.mExtensionsCounters.get(extension.constructor as Class<Extension<T>>) || 0;
+      const countdown =
+        this.extensionCounters.mExtensions.get(extension.constructor as Class<Extension<T>>) || 0;
       const isLastExtensionCall = countdown === 0;
       const data = await extension.init(isLastExtensionCall);
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);

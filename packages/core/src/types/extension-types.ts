@@ -48,3 +48,10 @@ export interface Extension<T = any> {
 export type ExtensionProvider = Provider;
 export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]> | BeforeToken<Extension<T>[]>;
 export type ExtensionType<T = any> = Class<Extension<T>>;
+/**
+ * Used to count all extension groups and extensions that are in the application.
+ */
+export class ExtensionCounters {
+  mExtensions = new Map<Provider, number>();
+  mGroupTokens = new Map<ExtensionsGroupToken, number>();
+}
