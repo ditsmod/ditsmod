@@ -318,9 +318,8 @@ export class AppInitializer {
 
   protected decreaseExtensionsCounters(extensionCounters: ExtensionCounters, providers: Provider[]) {
     const { mGroupTokens, mExtensions } = extensionCounters;
-    const uniqGroupTokens = new Set<ExtensionsGroupToken>(
-      getTokens(providers).filter((token) => token instanceof InjectionToken || token instanceof BeforeToken),
-    );
+    const groupTokens = getTokens(providers).filter((token) => token instanceof InjectionToken || token instanceof BeforeToken);
+    const uniqGroupTokens = new Set<ExtensionsGroupToken>(groupTokens);
     const uniqTargets = new Set<Provider>(getProvidersTargets(providers));
 
     uniqGroupTokens.forEach((groupToken) => {
