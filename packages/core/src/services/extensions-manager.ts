@@ -42,12 +42,16 @@ export class ExtensionsManager {
       await this.prepareAndInitGroup<T>(beforeToken);
     }
 
-    const totalInitMeta = this.cache.get(groupToken) || (await this.prepareAndInitGroup<T>(groupToken));
-    if (perApp) {
-      const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
-      console.log('caller:', caller.constructor);
-      // totalInitMeta.delay = true;
+    let totalInitMeta = this.cache.get(groupToken);
+    if (totalInitMeta) {
+      return totalInitMeta;
     }
+
+    totalInitMeta = await this.prepareAndInitGroup<T>(groupToken);
+    totalInitMeta.totalInitMetaPerApp = this.extensionsContext.mTotalInitMeta.get(groupToken)!;
+    // if (perApp) {
+    //   const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
+    // }
     return totalInitMeta;
   }
 

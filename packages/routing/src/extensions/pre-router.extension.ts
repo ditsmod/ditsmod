@@ -32,7 +32,7 @@ import {
   DefaultSingletonHttpErrorHandler,
   SingletonInterceptorWithGuards,
   Class,
-  ExtensionInitMeta,
+  ExtensionManagerInitMeta,
 } from '@ditsmod/core';
 
 import { PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -61,44 +61,46 @@ export class PreRouterExtension implements Extension<void> {
       this.inited = true;
       return;
     }
-    const preparedRouteMeta = this.prepareRoutesMeta(totalInitMeta.groupInitMeta);
+    const preparedRouteMeta = this.prepareRoutesMeta(totalInitMeta.totalInitMetaPerApp);
     this.setRoutes(preparedRouteMeta);
     this.inited = true;
   }
 
-  protected prepareRoutesMeta(groupInitMeta: ExtensionInitMeta<MetadataPerMod2>[]) {
+  protected prepareRoutesMeta(totalInitMetaPerApp: ExtensionManagerInitMeta<MetadataPerMod2>[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
     this.perAppService.providers.push({ token: Router, useValue: this.router });
     const injectorPerApp = this.perAppService.reinitInjector();
 
-    groupInitMeta.forEach((initMeta) => {
-      const metadataPerMod2 = initMeta.payload;
-      const { moduleName, aControllersMetadata2, providersPerMod } = metadataPerMod2;
-      const mod = getModule(metadataPerMod2.module);
+    totalInitMetaPerApp.forEach((totalInitMeta) => {
+      totalInitMeta.groupInitMeta.forEach((initMeta) => {
+        const metadataPerMod2 = initMeta.payload;
+        const { moduleName, aControllersMetadata2, providersPerMod } = metadataPerMod2;
+        const mod = getModule(metadataPerMod2.module);
 
-      const singletons = new Set<Class>();
-      aControllersMetadata2.forEach((controllersMetadata2) => {
-        if (controllersMetadata2.isSingleton) {
-          singletons.add(controllersMetadata2.routeMeta.controller);
-        }
-      });
-      const extendedProvidersPerMod = [mod, ...singletons, ...providersPerMod];
-      const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
-      injectorPerMod.get(mod); // Call module constructor.
+        const singletons = new Set<Class>();
+        aControllersMetadata2.forEach((controllersMetadata2) => {
+          if (controllersMetadata2.isSingleton) {
+            singletons.add(controllersMetadata2.routeMeta.controller);
+          }
+        });
+        const extendedProvidersPerMod = [mod, ...singletons, ...providersPerMod];
+        const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
+        injectorPerMod.get(mod); // Call module constructor.
 
-      aControllersMetadata2.forEach((controllersMetadata2) => {
-        let handle: RouteHandler;
-        if (controllersMetadata2.isSingleton) {
-          handle = this.getHandlerWithSingleton(metadataPerMod2, injectorPerMod, controllersMetadata2);
-        } else {
-          handle = this.getDefaultHandler(metadataPerMod2, injectorPerMod, controllersMetadata2);
-        }
+        aControllersMetadata2.forEach((controllersMetadata2) => {
+          let handle: RouteHandler;
+          if (controllersMetadata2.isSingleton) {
+            handle = this.getHandlerWithSingleton(metadataPerMod2, injectorPerMod, controllersMetadata2);
+          } else {
+            handle = this.getDefaultHandler(metadataPerMod2, injectorPerMod, controllersMetadata2);
+          }
 
-        preparedRouteMeta.push({
-          moduleName,
-          httpMethod: controllersMetadata2.httpMethod,
-          path: controllersMetadata2.path,
-          handle,
+          preparedRouteMeta.push({
+            moduleName,
+            httpMethod: controllersMetadata2.httpMethod,
+            path: controllersMetadata2.path,
+            handle,
+          });
         });
       });
     });
