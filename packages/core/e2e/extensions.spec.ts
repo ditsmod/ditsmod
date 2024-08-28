@@ -157,6 +157,7 @@ describe('extensions e2e', () => {
     const extensionManagerInitMeta = new ExtensionManagerInitMeta('Module3', MY_EXTENSIONS1, [initMeta]);
     extensionManagerInitMeta.delay = true;
     extensionManagerInitMeta.countdown = 1;
+    extensionManagerInitMeta.totalInitMetaPerApp = expect.any(Array);
     expect(extensionInit2).toHaveBeenNthCalledWith(1, extensionManagerInitMeta);
     initMeta.delay = false;
     initMeta.countdown = 0;
