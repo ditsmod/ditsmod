@@ -37,6 +37,9 @@ export class ExtensionsManager {
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
     }
+    if (perApp) {
+      this.addExtensionToWaitingStack(groupToken);
+    }
     const beforeToken = KeyRegistry.getBeforeToken(groupToken);
     if (!this.cache.has(beforeToken) && this.beforeTokens.has(beforeToken)) {
       await this.prepareAndInitGroup<T>(beforeToken);
@@ -50,10 +53,21 @@ export class ExtensionsManager {
 
     totalInitMeta = await this.prepareAndInitGroup<T>(groupToken);
     totalInitMeta.totalInitMetaPerApp = this.extensionsContext.mTotalInitMeta.get(groupToken)!;
-    if (perApp) {
-      const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
-    }
     return totalInitMeta;
+  }
+
+  /**
+   * Adds to the waiting stack an extension that wants to receive
+   * the initialization result of `groupToken` from the entire application.
+   */
+  protected addExtensionToWaitingStack(groupToken: ExtensionsGroupToken) {
+    const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
+    const mExtensions = this.extensionsContext.mCaller.get(groupToken) || new Map<Class<Extension>, Extension>();
+    const ExtensionClass = caller.constructor as Class<Extension>;
+    if (!mExtensions.has(ExtensionClass)) {
+      mExtensions.set(ExtensionClass, caller);
+      this.extensionsContext.mCaller.set(groupToken, mExtensions);
+    }
   }
 
   protected async prepareAndInitGroup<T>(groupToken: ExtensionsGroupToken<T>) {
