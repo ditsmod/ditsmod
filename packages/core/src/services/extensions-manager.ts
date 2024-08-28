@@ -37,7 +37,7 @@ export class ExtensionsManager {
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
     }
-    if (perApp) {
+    if (perApp && this.unfinishedInit.size > 1) {
       this.addExtensionToWaitingStack(groupToken);
     }
     const beforeToken = KeyRegistry.getBeforeToken(groupToken);
