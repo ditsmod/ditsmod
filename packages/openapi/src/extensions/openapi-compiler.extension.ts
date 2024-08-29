@@ -11,7 +11,7 @@ import {
   Injector,
   optional,
   reflector,
-  ExtensionInitMeta,
+  ExtensionManagerInitMeta,
 } from '@ditsmod/core';
 import {
   PathItemObject,
@@ -56,7 +56,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     }
     this.log.applyingAccumulatedData(this);
 
-    await this.compileOasObject(totalInitMeta.groupInitMeta);
+    await this.compileOasObject(totalInitMeta.totalInitMetaPerApp);
     const json = JSON.stringify(this.oasObject);
     const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
     const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
@@ -66,26 +66,28 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     return this.oasObject;
   }
 
-  protected async compileOasObject(groupInitMeta: ExtensionInitMeta<MetadataPerMod2>[]) {
+  protected async compileOasObject(totalInitMetaPerApp: ExtensionManagerInitMeta<MetadataPerMod2>[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
-    for (const initMeta of groupInitMeta) {
-      const { aControllersMetadata2, module: modOrObj } = initMeta.payload;
+    for (const totalInitMeta of totalInitMetaPerApp) {
+      for (const initMeta of totalInitMeta.groupInitMeta) {
+        const { aControllersMetadata2, module: modOrObj } = initMeta.payload;
 
-      aControllersMetadata2.forEach(({ httpMethod, path, routeMeta }) => {
-        const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;
-        if (operationObject) {
-          const clonedOperationObject = { ...operationObject };
-          this.setSecurityInfo(clonedOperationObject, resolvedGuards);
-          const pathItemObject: PathItemObject = { [httpMethod.toLowerCase()]: clonedOperationObject };
-          paths[`/${oasPath}`] = { ...(paths[`/${oasPath}`] || {}), ...pathItemObject };
-        } else {
-          if (!httpMethod) {
-            throw new Error('OpenapiCompilerExtension: OasRouteMeta not found.');
+        aControllersMetadata2.forEach(({ httpMethod, path, routeMeta }) => {
+          const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;
+          if (operationObject) {
+            const clonedOperationObject = { ...operationObject };
+            this.setSecurityInfo(clonedOperationObject, resolvedGuards);
+            const pathItemObject: PathItemObject = { [httpMethod.toLowerCase()]: clonedOperationObject };
+            paths[`/${oasPath}`] = { ...(paths[`/${oasPath}`] || {}), ...pathItemObject };
+          } else {
+            if (!httpMethod) {
+              throw new Error('OpenapiCompilerExtension: OasRouteMeta not found.');
+            }
+            this.applyNonOasRoute(path, paths, httpMethod, resolvedGuards);
           }
-          this.applyNonOasRoute(path, paths, httpMethod, resolvedGuards);
-        }
-      });
+        });
+      }
     }
 
     this.oasObject.paths = paths;
