@@ -9,11 +9,8 @@ import {
 } from '#types/extension-types.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#utils/type-guards.js';
-import { RequireProps } from '#types/mix.js';
 import { Counter } from './counter.js';
 import { ExtensionsContext } from './extensions-context.js';
-
-type ExtensionManagerInitMetaPerApp<T> = RequireProps<ExtensionManagerInitMeta<T>, 'totalInitMetaPerApp'>;
 
 @injectable()
 export class ExtensionsManager {
@@ -39,8 +36,6 @@ export class ExtensionsManager {
     protected extensionCounters: ExtensionCounters,
   ) {}
 
-  async init<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<ExtensionManagerInitMeta<T>>;
-  async init<T>(groupToken: ExtensionsGroupToken<T>, perApp: true): Promise<ExtensionManagerInitMetaPerApp<T>>;
   async init<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<ExtensionManagerInitMeta<T>> {
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
