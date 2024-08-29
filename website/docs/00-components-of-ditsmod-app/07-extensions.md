@@ -26,7 +26,7 @@ sidebar_position: 7
 
 ```ts
 interface Extension<T> {
-  init(isLastExtensionCall: boolean): Promise<T>;
+  init(isLastModule: boolean): Promise<T>;
 }
 ```
 
