@@ -28,9 +28,9 @@ export class ExtensionInitMeta<T = any> {
  * As a rule, an instance of this class is set in a variable named `totalInitMeta`.
  */
 export class ExtensionManagerInitMeta<T = any> {
-  delay?: boolean;
-  totalInitMetaPerApp?: ExtensionManagerInitMeta<T>[] = [];
+  delay: boolean;
   countdown = 0;
+  totalInitMetaPerApp?: ExtensionManagerInitMeta<T>[] = [];
   /**
    *
    * @param groupInitMeta Array of `ExtensionInitMeta`.
