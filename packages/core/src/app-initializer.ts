@@ -272,6 +272,12 @@ export class AppInitializer {
       await this.handleExtensionsPerMod(preparedMetadataPerMod1, extensionsManager);
       this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
     }
+
+    for (const [groupToken, mExtensions] of extensionsContext.mCaller) {
+      for (const extension of mExtensions.values()) {
+        await extension.init(true);
+      }
+    }
   }
 
   protected getInjectorForExtensions(
