@@ -43,7 +43,11 @@ export class ExtensionManagerInitMeta<T = any> {
 }
 
 export interface Extension<T = any> {
-  init(isLastExtensionCall: boolean): Promise<T>;
+  /**
+   * @param isLastModule Indicates whether this call is made in the last
+   * module where this extension is imported or not.
+   */
+  init(isLastModule: boolean): Promise<T>;
 }
 export type ExtensionProvider = Provider;
 export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]> | BeforeToken<Extension<T>[]>;
