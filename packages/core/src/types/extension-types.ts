@@ -56,6 +56,11 @@ export type ExtensionType<T = any> = Class<Extension<T>>;
  * Used to count all extension groups and extensions that are in the application.
  */
 export class ExtensionCounters {
+  /**
+   * The pending list of extensions that wants to receive
+   * the initialization result of somem groups from the whole application.
+   */
+  pendingExtensions = new Set<Class<Extension>>();
   mExtensions = new Map<Provider, number>();
   mGroupTokens = new Map<ExtensionsGroupToken, number>();
 }

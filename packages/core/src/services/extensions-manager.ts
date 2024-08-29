@@ -41,7 +41,7 @@ export class ExtensionsManager {
       this.throwCircularDeps(groupToken);
     }
     if (perApp && this.unfinishedInit.size > 1) {
-      this.addExtensionToWaitingStack(groupToken);
+      this.addExtensionToPendingStack(groupToken);
     }
     const beforeToken = KeyRegistry.getBeforeToken(groupToken);
     if (!this.cache.has(beforeToken) && this.beforeTokens.has(beforeToken)) {
@@ -60,16 +60,17 @@ export class ExtensionsManager {
   }
 
   /**
-   * Adds to the waiting stack an extension that wants to receive
-   * the initialization result of `groupToken` from the entire application.
+   * Adds to the pending stack an extension that wants to receive
+   * the initialization result of `groupToken` from the whole application.
    */
-  protected addExtensionToWaitingStack(groupToken: ExtensionsGroupToken) {
+  protected addExtensionToPendingStack(groupToken: ExtensionsGroupToken) {
     const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
     const mExtensions = this.extensionsContext.mCaller.get(groupToken) || new Map<Class<Extension>, Extension>();
     const ExtensionClass = caller.constructor as Class<Extension>;
     if (!mExtensions.has(ExtensionClass)) {
       mExtensions.set(ExtensionClass, caller);
       this.extensionsContext.mCaller.set(groupToken, mExtensions);
+      this.extensionCounters.pendingExtensions.add(ExtensionClass);
     }
   }
 
@@ -105,7 +106,11 @@ export class ExtensionsManager {
 
       this.unfinishedInit.add(extension);
       this.systemLogMediator.startInitExtension(this, this.unfinishedInit);
-      const countdown = this.extensionCounters.mExtensions.get(extension.constructor as Class<Extension<T>>) || 0;
+      const ExtensionClass = extension.constructor as Class<Extension<T>>;
+      let countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
+      if (this.extensionCounters.pendingExtensions.has(ExtensionClass)) {
+        countdown += 1;
+      }
       const isLastExtensionCall = countdown === 0;
       const data = await extension.init(isLastExtensionCall);
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
