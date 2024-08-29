@@ -29,7 +29,7 @@ export class ExtensionInitMeta<T = any> {
  */
 export class ExtensionManagerInitMeta<T = any> {
   delay?: boolean;
-  totalInitMetaPerApp: ExtensionManagerInitMeta<T>[] = [];
+  totalInitMetaPerApp?: ExtensionManagerInitMeta<T>[] = [];
   countdown = 0;
   /**
    *
