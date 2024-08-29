@@ -95,7 +95,7 @@ export class ExtensionsManager {
     this.updateCounters(groupToken, totalInitMeta);
 
     if (!extensions.length) {
-      this.systemLogMediator.noExtensionsFound(this, groupToken);
+      this.systemLogMediator.noExtensionsFound(this, groupToken, this.unfinishedInit);
     }
 
     for (const extension of extensions) {
