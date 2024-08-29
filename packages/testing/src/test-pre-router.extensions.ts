@@ -11,7 +11,7 @@ import {
   isFactoryProvider,
   getDependencies,
   Provider,
-  ExtensionInitMeta,
+  ExtensionManagerInitMeta,
 } from '@ditsmod/core';
 import { PreRouterExtension, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
@@ -45,14 +45,14 @@ export class TestPreRouterExtension extends PreRouterExtension {
     }
 
     // Added only this line to override super.init()
-    this.overrideAllProviders(totalInitMeta.groupInitMeta);
+    this.overrideAllProviders(totalInitMeta.totalInitMetaPerApp);
 
-    const preparedRouteMeta = this.prepareRoutesMeta(totalInitMeta.groupInitMeta);
+    const preparedRouteMeta = this.prepareRoutesMeta(totalInitMeta.totalInitMetaPerApp);
     this.setRoutes(preparedRouteMeta);
     this.inited = true;
   }
 
-  protected overrideAllProviders(groupInitMeta: ExtensionInitMeta<MetadataPerMod2>[]) {
+  protected overrideAllProviders(totalInitMetaPerApp: ExtensionManagerInitMeta<MetadataPerMod2>[]) {
     const providersToOverride = this.testModuleManager.getProvidersToOverride();
     const logLevel = this.testModuleManager.getLogLevel();
     overrideLogLevel(this.perAppService.providers, logLevel);
@@ -64,19 +64,21 @@ export class TestPreRouterExtension extends PreRouterExtension {
 
     this.perAppService.reinitInjector();
 
-    groupInitMeta.forEach((initMeta) => {
-      const metadataPerMod2 = initMeta.payload;
-      overrideLogLevel(metadataPerMod2.providersPerMod, logLevel);
-      overrideLogLevel(metadataPerMod2.providersPerRou, logLevel);
-      overrideLogLevel(metadataPerMod2.providersPerReq, logLevel);
-      providersToOverride.forEach((provider) => {
-        this.overrideProvider(['Mod', 'Rou', 'Req'], metadataPerMod2, provider);
-      });
-      metadataPerMod2.aControllersMetadata2.forEach((controllerMetadata2) => {
-        overrideLogLevel(controllerMetadata2.providersPerRou, logLevel);
-        overrideLogLevel(controllerMetadata2.providersPerReq, logLevel);
+    totalInitMetaPerApp.forEach((totalInitMeta) => {
+      totalInitMeta.groupInitMeta.forEach((initMeta) => {
+        const metadataPerMod2 = initMeta.payload;
+        overrideLogLevel(metadataPerMod2.providersPerMod, logLevel);
+        overrideLogLevel(metadataPerMod2.providersPerRou, logLevel);
+        overrideLogLevel(metadataPerMod2.providersPerReq, logLevel);
         providersToOverride.forEach((provider) => {
-          this.overrideProvider(['Rou', 'Req'], controllerMetadata2, provider);
+          this.overrideProvider(['Mod', 'Rou', 'Req'], metadataPerMod2, provider);
+        });
+        metadataPerMod2.aControllersMetadata2.forEach((controllerMetadata2) => {
+          overrideLogLevel(controllerMetadata2.providersPerRou, logLevel);
+          overrideLogLevel(controllerMetadata2.providersPerReq, logLevel);
+          providersToOverride.forEach((provider) => {
+            this.overrideProvider(['Rou', 'Req'], controllerMetadata2, provider);
+          });
         });
       });
     });
