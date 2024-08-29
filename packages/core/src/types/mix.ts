@@ -12,7 +12,28 @@ import { RequestContext } from './http-interceptor.js';
 import { MetadataPerMod1 } from './metadata-per-mod.js';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
+/**
+ * Require only specified properties from the `K` list for `T`.
+ * 
+ * ### Example
+ * 
+```ts
+interface SomeInterface {
+  prop1?: string;
+  prop2?: number;
+  prop3?: boolean;
+}
 
+type ModifiedInterface = RequireProps<SomeInterface, 'prop1' | 'prop3'>;
+
+const obj: ModifiedInterface = {
+  prop1: 'Hello',  // Required
+  prop3: true,     // Required
+  // prop2 Remains optional
+};
+```
+ */
+export type RequireProps<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
 export interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
   extends Partial<ProvidersMetadata> {
   id?: string;
