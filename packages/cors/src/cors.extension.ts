@@ -13,6 +13,7 @@ import {
   Provider,
   RequestContext,
   ExtensionInitMeta,
+  TotalInitMetaPerApp,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
 import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
@@ -39,33 +40,35 @@ export class CorsExtension implements Extension<void | false> {
     if (totalInitMeta.delay) {
       return false;
     }
-    this.prepareDataAndSetInterceptors(totalInitMeta.groupInitMeta, this.perAppService.injector);
+    this.prepareDataAndSetInterceptors(totalInitMeta.totalInitMetaPerApp, this.perAppService.injector);
 
     this.inited = true;
     return; // Make TypeScript happy
   }
 
   protected prepareDataAndSetInterceptors(
-    groupInitMeta: ExtensionInitMeta<MetadataPerMod2>[],
+    totalInitMetaPerApp: TotalInitMetaPerApp<MetadataPerMod2>[],
     injectorPerApp: Injector,
   ) {
-    groupInitMeta.forEach((initMeta) => {
-      const metadataPerMod2 = initMeta.payload;
-      const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
-      const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
-      const routesWithOptions = this.getRoutesWithOptions(groupInitMeta, aControllersMetadata2);
-      aControllersMetadata2.push(...routesWithOptions);
+    totalInitMetaPerApp.forEach((totaInitMeta) => {
+      totaInitMeta.groupInitMeta.forEach((initMeta) => {
+        const metadataPerMod2 = initMeta.payload;
+        const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
+        const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
+        const routesWithOptions = this.getRoutesWithOptions(totaInitMeta.groupInitMeta, aControllersMetadata2);
+        aControllersMetadata2.push(...routesWithOptions);
 
-      aControllersMetadata2.forEach(({ providersPerReq, providersPerRou, isSingleton }) => {
-        const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
-        const corsOptions = this.getCorsOptions(injectorPerMod, mergedPerRou);
-        const mergedCorsOptions = mergeOptions(corsOptions);
-        providersPerRou.unshift({ token: CorsOptions, useValue: mergedCorsOptions });
-        if (isSingleton) {
-          providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
-        } else {
-          providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
-        }
+        aControllersMetadata2.forEach(({ providersPerReq, providersPerRou, isSingleton }) => {
+          const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
+          const corsOptions = this.getCorsOptions(injectorPerMod, mergedPerRou);
+          const mergedCorsOptions = mergeOptions(corsOptions);
+          providersPerRou.unshift({ token: CorsOptions, useValue: mergedCorsOptions });
+          if (isSingleton) {
+            providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
+          } else {
+            providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
+          }
+        });
       });
     });
   }
