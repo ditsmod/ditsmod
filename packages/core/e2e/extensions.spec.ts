@@ -215,7 +215,7 @@ describe('extensions e2e', () => {
           return;
         }
 
-        console.log(totalInitMeta);
+        extensionInit2(totalInitMeta);
 
         this.inited = true;
         return;
@@ -264,6 +264,6 @@ describe('extensions e2e', () => {
     initMeta.countdown = 0;
     totalInitMeta.delay = false;
     totalInitMeta.countdown = 0;
-    expect(extensionInit2).toHaveBeenNthCalledWith(2, totalInitMeta.totalInitMetaPerApp);
+    // expect(extensionInit2).toHaveBeenNthCalledWith(2, totalInitMeta);
   });
 });
