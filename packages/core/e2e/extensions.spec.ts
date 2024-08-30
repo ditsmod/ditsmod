@@ -3,7 +3,7 @@ import { TestApplication } from '@ditsmod/testing';
 
 import { InjectionToken, Router, featureModule, injectable } from '#core/index.js';
 import { rootModule } from '#decorators/root-module.js';
-import { Extension, ExtensionInitMeta, ExtensionManagerInitMeta } from '#types/extension-types.js';
+import { Extension, ExtensionInitMeta, TotalInitMeta } from '#types/extension-types.js';
 import { ExtensionsManager } from '#services/extensions-manager.js';
 
 describe('extensions e2e', () => {
@@ -154,17 +154,17 @@ describe('extensions e2e', () => {
     const extension = new Extension1();
     extension.data = extensionPayload;
     const initMeta = new ExtensionInitMeta(extension, extensionPayload, true, 1);
-    const extensionManagerInitMeta = new ExtensionManagerInitMeta('Module3', [initMeta]);
-    extensionManagerInitMeta.delay = true;
-    extensionManagerInitMeta.countdown = 1;
-    extensionManagerInitMeta.totalInitMetaPerApp = expect.any(Array);
-    expect(extensionInit2).toHaveBeenNthCalledWith(1, extensionManagerInitMeta);
+    const totalInitMeta = new TotalInitMeta('Module3', [initMeta]);
+    totalInitMeta.delay = true;
+    totalInitMeta.countdown = 1;
+    totalInitMeta.totalInitMetaPerApp = expect.any(Array);
+    expect(extensionInit2).toHaveBeenNthCalledWith(1, totalInitMeta);
     initMeta.delay = false;
     initMeta.countdown = 0;
-    extensionManagerInitMeta.delay = false;
-    extensionManagerInitMeta.countdown = 0;
-    extensionManagerInitMeta.moduleName = 'AppModule';
-    expect(extensionInit2).toHaveBeenNthCalledWith(2, extensionManagerInitMeta);
+    totalInitMeta.delay = false;
+    totalInitMeta.countdown = 0;
+    totalInitMeta.moduleName = 'AppModule';
+    expect(extensionInit2).toHaveBeenNthCalledWith(2, totalInitMeta);
   });
 
   it('extension depends on data from the entire application', async () => {
@@ -258,14 +258,14 @@ describe('extensions e2e', () => {
     const extension = new Extension1();
     extension.data = extensionPayload;
     const initMeta = new ExtensionInitMeta(extension, extensionPayload, true, 1);
-    const extensionManagerInitMeta = new ExtensionManagerInitMeta('TextModule', [initMeta]);
-    extensionManagerInitMeta.delay = true;
-    extensionManagerInitMeta.countdown = 1;
-    expect(extensionInit2).toHaveBeenNthCalledWith(1, extensionManagerInitMeta.groupInitMeta);
+    const totalInitMeta = new TotalInitMeta('TextModule', [initMeta]);
+    totalInitMeta.delay = true;
+    totalInitMeta.countdown = 1;
+    expect(extensionInit2).toHaveBeenNthCalledWith(1, totalInitMeta.groupInitMeta);
     initMeta.delay = false;
     initMeta.countdown = 0;
-    extensionManagerInitMeta.delay = false;
-    extensionManagerInitMeta.countdown = 0;
-    expect(extensionInit2).toHaveBeenNthCalledWith(2, extensionManagerInitMeta.totalInitMetaPerApp);
+    totalInitMeta.delay = false;
+    totalInitMeta.countdown = 0;
+    expect(extensionInit2).toHaveBeenNthCalledWith(2, totalInitMeta.totalInitMetaPerApp);
   });
 });

@@ -1,9 +1,9 @@
 import { Class, injectable } from '#di';
-import { ExtensionsGroupToken, ExtensionManagerInitMeta, Extension } from '#types/extension-types.js';
+import { ExtensionsGroupToken, TotalInitMeta, Extension } from '#types/extension-types.js';
 
 @injectable()
 export class ExtensionsContext {
-  mTotalInitMeta = new Map<ExtensionsGroupToken, ExtensionManagerInitMeta[]>();
+  mTotalInitMeta = new Map<ExtensionsGroupToken, TotalInitMeta[]>();
   /**
    * The pending list of extensions that want to receive the initialization result
    * of `groupToken` from the whole application.

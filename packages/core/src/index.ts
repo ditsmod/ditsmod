@@ -32,8 +32,8 @@ export {
   ExtensionsMetaPerApp,
   Extension,
   ExtensionInitMeta,
-  ExtensionManagerInitMeta,
-  ExtensionManagerInitMetaPerApp
+  TotalInitMeta,
+  TotalInitMetaPerApp
 } from './types/extension-types.js';
 export { ModuleExtract } from './types/module-extract.js';
 export { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';

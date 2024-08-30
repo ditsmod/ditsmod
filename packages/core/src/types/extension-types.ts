@@ -24,15 +24,12 @@ export class ExtensionInitMeta<T = any> {
   ) {}
 }
 
-export type ExtensionManagerInitMetaPerApp<T = any> = Omit<ExtensionManagerInitMeta<T>, 'totalInitMetaPerApp'>;
+export type TotalInitMetaPerApp<T = any> = Omit<TotalInitMeta<T>, 'totalInitMetaPerApp'>;
 
-/**
- * As a rule, an instance of this class is set in a variable named `totalInitMeta`.
- */
-export class ExtensionManagerInitMeta<T = any> {
+export class TotalInitMeta<T = any> {
   delay: boolean;
   countdown = 0;
-  totalInitMetaPerApp: ExtensionManagerInitMetaPerApp<T>[];
+  totalInitMetaPerApp: TotalInitMetaPerApp<T>[];
   /**
    *
    * @param groupInitMeta Array of `ExtensionInitMeta`.
