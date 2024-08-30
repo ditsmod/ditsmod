@@ -29,23 +29,23 @@ export class I18nExtension implements Extension<void> {
     private perAppService: PerAppService,
   ) {}
 
-  async init(isLastExtensionCall?: boolean) {
+  async init(isLastModule?: boolean) {
     if (this.#inited) {
       return;
     }
 
     const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
-    this.addI18nProviders(totalInitMeta, isLastExtensionCall);
+    this.addI18nProviders(totalInitMeta, isLastModule);
 
     this.#inited = true;
   }
 
-  protected addI18nProviders(totalInitMeta: TotalInitMeta<MetadataPerMod2>, isLastExtensionCall?: boolean) {
+  protected addI18nProviders(totalInitMeta: TotalInitMeta<MetadataPerMod2>, isLastModule?: boolean) {
     const injectorPerApp = this.perAppService.injector;
 
     const translationsPerApp = injectorPerApp.get(I18N_TRANSLATIONS, undefined, null);
     this.hasTranslation = Boolean(translationsPerApp);
-    if (isLastExtensionCall && translationsPerApp) {
+    if (isLastModule && translationsPerApp) {
       const providers = this.i18nTransformer.getProviders(translationsPerApp);
       this.perAppService.providers.push(...providers);
     }

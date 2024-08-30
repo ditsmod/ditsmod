@@ -151,12 +151,12 @@ export class ExtensionsManager {
       this.systemLogMediator.startInitExtension(this, this.unfinishedInit);
       const ExtensionClass = extension.constructor as Class<Extension<T>>;
       const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
-      const isLastExtensionCall = countdown === 0;
-      const data = await extension.init(isLastExtensionCall);
+      const isLastModule = countdown === 0;
+      const data = await extension.init(isLastModule);
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);
       this.unfinishedInit.delete(extension);
-      const initMeta = new ExtensionInitMeta(extension, data, !isLastExtensionCall, countdown);
+      const initMeta = new ExtensionInitMeta(extension, data, !isLastModule, countdown);
       groupInitMeta.push(initMeta);
     }
 

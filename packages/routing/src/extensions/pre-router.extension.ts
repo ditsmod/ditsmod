@@ -40,7 +40,7 @@ import { PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
 @injectable()
 export class PreRouterExtension implements Extension<void> {
   protected inited: boolean;
-  protected isLastExtensionCall: boolean;
+  protected isLastModule: boolean;
 
   constructor(
     protected perAppService: PerAppService,
@@ -50,12 +50,12 @@ export class PreRouterExtension implements Extension<void> {
     protected extensionsContext: ExtensionsContext,
   ) {}
 
-  async init(isLastExtensionCall: boolean) {
+  async init(isLastModule: boolean) {
     if (this.inited) {
       return;
     }
 
-    this.isLastExtensionCall = isLastExtensionCall;
+    this.isLastModule = isLastModule;
     const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS, true);
     if (totalInitMeta.delay) {
       this.inited = true;
@@ -214,7 +214,7 @@ export class PreRouterExtension implements Extension<void> {
 
   protected setRoutes(preparedRouteMeta: PreparedRouteMeta[]) {
     this.extensionsContext.appHasRoutes = this.extensionsContext.appHasRoutes || !!preparedRouteMeta.length;
-    if (this.isLastExtensionCall && !this.extensionsContext.appHasRoutes) {
+    if (this.isLastModule && !this.extensionsContext.appHasRoutes) {
       this.log.noRoutes(this);
       return;
     }

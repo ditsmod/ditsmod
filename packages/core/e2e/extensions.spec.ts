@@ -7,7 +7,7 @@ import { Extension, ExtensionInitMeta, TotalInitMeta } from '#types/extension-ty
 import { ExtensionsManager } from '#services/extensions-manager.js';
 
 describe('extensions e2e', () => {
-  it('check isLastExtensionCall', async () => {
+  it('check isLastModule', async () => {
     const extensionInit = jest.fn();
 
     const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
@@ -17,12 +17,12 @@ describe('extensions e2e', () => {
 
     /**
      * This extension is declared in `Module1`, which is imported into three different modules.
-     * The tests check whether the `isLastExtensionCall` parameter is passed to the `init()` method.
+     * The tests check whether the `isLastModule` parameter is passed to the `init()` method.
      */
     @injectable()
     class Extension1 implements Extension {
-      async init(isLastExtensionCall: boolean) {
-        extensionInit(isLastExtensionCall);
+      async init(isLastModule: boolean) {
+        extensionInit(isLastModule);
       }
     }
 
@@ -81,12 +81,12 @@ describe('extensions e2e', () => {
     class Extension1 implements Extension<string> {
       data: any;
 
-      async init(isLastExtensionCall: boolean) {
+      async init(isLastModule: boolean) {
         if (this.data) {
           return this.data;
         }
 
-        extensionInit1(isLastExtensionCall);
+        extensionInit1(isLastModule);
         this.data = extensionPayload;
         return this.data;
       }
@@ -172,12 +172,12 @@ describe('extensions e2e', () => {
     class Extension1 implements Extension<string> {
       data: any;
 
-      async init(isLastExtensionCall: boolean) {
+      async init(isLastModule: boolean) {
         if (this.data) {
           return this.data;
         }
 
-        extensionInit1(isLastExtensionCall);
+        extensionInit1(isLastModule);
         this.data = extensionPayload;
         return this.data;
       }
