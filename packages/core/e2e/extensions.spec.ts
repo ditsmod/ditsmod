@@ -217,8 +217,6 @@ describe('extensions e2e', () => {
 
         console.log(totalInitMeta);
 
-        totalInitMeta.groupInitMeta.map((initMeta) => initMeta.payload);
-
         this.inited = true;
         return;
       }

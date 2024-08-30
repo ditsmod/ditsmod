@@ -6,6 +6,7 @@ import {
   ExtensionInitMeta,
   TotalInitMeta,
   ExtensionCounters,
+  TotalInitMeta2,
 } from '#types/extension-types.js';
 import { OptionalProps, RequireProps } from '#types/mix.js';
 import { getProviderName } from '#utils/get-provider-name.js';
@@ -38,6 +39,8 @@ export class ExtensionsManager {
     protected extensionCounters: ExtensionCounters,
   ) {}
 
+  async init<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<TotalInitMeta<T>>;
+  async init<T>(groupToken: ExtensionsGroupToken<T>, perApp: true): Promise<TotalInitMeta2<T>>;
   async init<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<TotalInitMeta<T>> {
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
@@ -53,11 +56,17 @@ export class ExtensionsManager {
     let totalInitMeta = this.cache.get(groupToken);
     if (totalInitMeta) {
       this.updateGroupCounters(groupToken, totalInitMeta);
+      if (!totalInitMeta.delay) {
+        delete (totalInitMeta as TotalInitMeta2).groupInitMeta;
+      }
       return totalInitMeta;
     }
 
     totalInitMeta = await this.prepareAndInitGroup<T>(groupToken);
     totalInitMeta.totalInitMetaPerApp = this.extensionsContext.mTotalInitMeta.get(groupToken)!;
+    if (!totalInitMeta.delay) {
+      delete (totalInitMeta as any).groupInitMeta;
+    }
     if (perApp && !totalInitMeta.delay) {
       this.excludeExtensionFromPendingList(groupToken);
     }

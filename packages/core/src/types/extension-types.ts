@@ -1,5 +1,5 @@
 import { Class, BeforeToken, InjectionToken } from '#di';
-import { AnyObj, Provider } from '#types/mix.js';
+import { AnyObj, OptionalProps, Provider } from '#types/mix.js';
 
 export class ExtensionsMetaPerApp {
   [key: string]: AnyObj;
@@ -25,6 +25,7 @@ export class ExtensionInitMeta<T = any> {
 }
 
 export type TotalInitMetaPerApp<T = any> = Omit<TotalInitMeta<T>, 'totalInitMetaPerApp'>;
+export type TotalInitMeta2<T = any> = OptionalProps<TotalInitMeta<T>, 'groupInitMeta'>;
 
 export class TotalInitMeta<T = any> {
   delay: boolean;
