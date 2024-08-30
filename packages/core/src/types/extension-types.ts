@@ -25,7 +25,7 @@ export class ExtensionInitMeta<T = any> {
 }
 
 export type TotalInitMetaPerApp<T = any> = Omit<TotalInitMeta<T>, 'totalInitMetaPerApp'>;
-export type TotalInitMeta2<T = any> = OptionalProps<TotalInitMeta<T>, 'groupInitMeta'>;
+export type TotalInitMeta2<T = any> = OptionalProps<TotalInitMeta<T>, 'groupInitMeta' | 'moduleName'>;
 
 export class TotalInitMeta<T = any> {
   delay: boolean;

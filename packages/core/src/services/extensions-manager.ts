@@ -56,17 +56,13 @@ export class ExtensionsManager {
     let totalInitMeta = this.cache.get(groupToken);
     if (totalInitMeta) {
       this.updateGroupCounters(groupToken, totalInitMeta);
-      if (!totalInitMeta.delay) {
-        delete (totalInitMeta as TotalInitMeta2).groupInitMeta;
-      }
+      this.prepareTotalInitMetaPerApp(totalInitMeta, perApp);
       return totalInitMeta;
     }
 
     totalInitMeta = await this.prepareAndInitGroup<T>(groupToken);
     totalInitMeta.totalInitMetaPerApp = this.extensionsContext.mTotalInitMeta.get(groupToken)!;
-    if (!totalInitMeta.delay) {
-      delete (totalInitMeta as any).groupInitMeta;
-    }
+    this.prepareTotalInitMetaPerApp(totalInitMeta, perApp);
     if (perApp && !totalInitMeta.delay) {
       this.excludeExtensionFromPendingList(groupToken);
     }
@@ -79,6 +75,13 @@ export class ExtensionsManager {
         const mExtensions = this.extensionsContext.mExtensionPendingList.get(groupToken)!;
         mExtensions.delete(ExtensionClass);
       }
+    }
+  }
+
+  protected prepareTotalInitMetaPerApp(totalInitMeta: TotalInitMeta2, perApp?: boolean) {
+    if (perApp && !totalInitMeta.delay) {
+      delete (totalInitMeta as TotalInitMeta2).groupInitMeta;
+      delete (totalInitMeta as TotalInitMeta2).moduleName;
     }
   }
 
