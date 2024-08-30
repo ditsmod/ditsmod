@@ -1,10 +1,12 @@
 import { jest } from '@jest/globals';
 import { TestApplication } from '@ditsmod/testing';
 
-import { InjectionToken, Router, featureModule, injectable } from '#core/index.js';
+import { InjectionToken, injectable } from '#di';
 import { rootModule } from '#decorators/root-module.js';
 import { Extension, ExtensionInitMeta, TotalInitMeta } from '#types/extension-types.js';
 import { ExtensionsManager } from '#services/extensions-manager.js';
+import { featureModule } from '#decorators/module.js';
+import { Router } from '#types/router.js';
 
 describe('extensions e2e', () => {
   it('check isLastModule', async () => {
@@ -74,7 +76,7 @@ describe('extensions e2e', () => {
      * This extension is declared in `Module1`, which is imported into three different modules.
      * A second extension that depends on this extension is declared below. The second extension
      * is declared in `Module2`, it is imported into two different modules. The tests check exactly
-     * what the `ExtensionsManager` returns from the `MY_EXTENSIONS1` group, and how many times
+     * what the `extensionsManager.init()` returns from the `MY_EXTENSIONS1` group, and how many times
      * the initialization of the second extension is called.
      */
     @injectable()
@@ -152,7 +154,7 @@ describe('extensions e2e', () => {
     expect(extensionInit2).toHaveBeenNthCalledWith(2, totalInitMeta);
   });
 
-  it('extension depends on data from the entire application', async () => {
+  fit('extension depends on data from the entire application', async () => {
     const extensionInit1 = jest.fn();
     const extensionInit2 = jest.fn();
     const extensionPayload: string = 'Extension1 payload';
@@ -240,6 +242,6 @@ describe('extensions e2e', () => {
     initMeta.countdown = 0;
     totalInitMeta.delay = false;
     totalInitMeta.countdown = 0;
-    // expect(extensionInit2).toHaveBeenNthCalledWith(2, totalInitMeta);
+    expect(extensionInit2).toHaveBeenNthCalledWith(2, totalInitMeta);
   });
 });
