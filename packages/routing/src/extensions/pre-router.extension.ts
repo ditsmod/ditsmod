@@ -32,7 +32,7 @@ import {
   DefaultSingletonHttpErrorHandler,
   SingletonInterceptorWithGuards,
   Class,
-  ExtensionManagerInitMeta,
+  ExtensionManagerInitMetaPerApp,
 } from '@ditsmod/core';
 
 import { PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -66,7 +66,7 @@ export class PreRouterExtension implements Extension<void> {
     this.inited = true;
   }
 
-  protected prepareRoutesMeta(totalInitMetaPerApp: ExtensionManagerInitMeta<MetadataPerMod2>[]) {
+  protected prepareRoutesMeta(totalInitMetaPerApp: ExtensionManagerInitMetaPerApp<MetadataPerMod2>[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
     this.perAppService.providers.push({ token: Router, useValue: this.router });
     const injectorPerApp = this.perAppService.reinitInjector();
