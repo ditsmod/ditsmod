@@ -56,13 +56,13 @@ export class ExtensionsManager {
     let totalInitMeta = this.cache.get(groupToken);
     if (totalInitMeta) {
       this.updateGroupCounters(groupToken, totalInitMeta);
-      this.prepareTotalInitMetaPerApp(totalInitMeta, perApp);
+      totalInitMeta = this.prepareTotalInitMetaPerApp(totalInitMeta, perApp);
       return totalInitMeta;
     }
 
     totalInitMeta = await this.prepareAndInitGroup<T>(groupToken);
     totalInitMeta.totalInitMetaPerApp = this.extensionsContext.mTotalInitMeta.get(groupToken)!;
-    this.prepareTotalInitMetaPerApp(totalInitMeta, perApp);
+    totalInitMeta = this.prepareTotalInitMetaPerApp(totalInitMeta, perApp);
     if (perApp && !totalInitMeta.delay) {
       this.excludeExtensionFromPendingList(groupToken);
     }
@@ -78,11 +78,15 @@ export class ExtensionsManager {
     }
   }
 
-  protected prepareTotalInitMetaPerApp(totalInitMeta: TotalInitMeta2, perApp?: boolean) {
+  protected prepareTotalInitMetaPerApp(totalInitMeta: TotalInitMeta2, perApp?: boolean): TotalInitMeta {
     if (perApp && !totalInitMeta.delay) {
-      delete (totalInitMeta as TotalInitMeta2).groupInitMeta;
-      delete (totalInitMeta as TotalInitMeta2).moduleName;
+      const copytotalInitMeta = { ...totalInitMeta };
+      delete (copytotalInitMeta as TotalInitMeta2).groupInitMeta;
+      delete (copytotalInitMeta as TotalInitMeta2).moduleName;
+      delete (copytotalInitMeta as TotalInitMeta2).countdown;
+      return copytotalInitMeta as TotalInitMeta;
     }
+    return totalInitMeta as TotalInitMeta;
   }
 
   /**
