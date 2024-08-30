@@ -154,14 +154,14 @@ describe('extensions e2e', () => {
     const extension = new Extension1();
     extension.data = extensionPayload;
     const initMeta = new ExtensionInitMeta(extension, extensionPayload, true, 1);
-    const extensionManagerInitMeta = new ExtensionManagerInitMeta('Module3', MY_EXTENSIONS1, [initMeta]);
+    const extensionManagerInitMeta = new ExtensionManagerInitMeta('Module3', [initMeta]);
     extensionManagerInitMeta.delay = true;
     extensionManagerInitMeta.countdown = 1;
     extensionManagerInitMeta.totalInitMetaPerApp = expect.any(Array);
     expect(extensionInit2).toHaveBeenNthCalledWith(1, extensionManagerInitMeta);
     initMeta.delay = false;
     initMeta.countdown = 0;
-    extensionManagerInitMeta.delay = undefined;
+    extensionManagerInitMeta.delay = false;
     extensionManagerInitMeta.countdown = 0;
     extensionManagerInitMeta.moduleName = 'AppModule';
     expect(extensionInit2).toHaveBeenNthCalledWith(2, extensionManagerInitMeta);
@@ -210,10 +210,12 @@ describe('extensions e2e', () => {
         }
 
         const totalInitMeta = await this.extensionManager.init(MY_EXTENSIONS1, true);
-        extensionInit2(totalInitMeta);
         if (totalInitMeta.delay) {
+          extensionInit2(totalInitMeta.groupInitMeta);
           return;
         }
+
+        console.log(totalInitMeta);
 
         totalInitMeta.groupInitMeta.map((initMeta) => initMeta.payload);
 
@@ -256,14 +258,14 @@ describe('extensions e2e', () => {
     const extension = new Extension1();
     extension.data = extensionPayload;
     const initMeta = new ExtensionInitMeta(extension, extensionPayload, true, 1);
-    const extensionManagerInitMeta = new ExtensionManagerInitMeta('TextModule', MY_EXTENSIONS2, [initMeta]);
+    const extensionManagerInitMeta = new ExtensionManagerInitMeta('TextModule', [initMeta]);
     extensionManagerInitMeta.delay = true;
     extensionManagerInitMeta.countdown = 1;
-    expect(extensionInit2).toHaveBeenNthCalledWith(1, extensionManagerInitMeta);
+    expect(extensionInit2).toHaveBeenNthCalledWith(1, extensionManagerInitMeta.groupInitMeta);
     initMeta.delay = false;
     initMeta.countdown = 0;
-    extensionManagerInitMeta.delay = undefined;
+    extensionManagerInitMeta.delay = false;
     extensionManagerInitMeta.countdown = 0;
-    expect(extensionInit2).toHaveBeenNthCalledWith(2, extensionManagerInitMeta);
+    expect(extensionInit2).toHaveBeenNthCalledWith(2, extensionManagerInitMeta.totalInitMetaPerApp);
   });
 });

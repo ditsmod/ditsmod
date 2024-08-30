@@ -7,10 +7,13 @@ import {
   ExtensionManagerInitMeta,
   ExtensionCounters,
 } from '#types/extension-types.js';
+import { RequireProps } from '#types/mix.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#utils/type-guards.js';
 import { Counter } from './counter.js';
 import { ExtensionsContext } from './extensions-context.js';
+
+type InitMetaPerApp<T> = RequireProps<ExtensionManagerInitMeta<T>, 'totalInitMetaPerApp'>;
 
 @injectable()
 export class ExtensionsManager {
@@ -27,6 +30,7 @@ export class ExtensionsManager {
    * The cache for the current module.
    */
   protected cache = new Map<ExtensionsGroupToken, ExtensionManagerInitMeta>();
+  protected excludedExtensionPendingList = new Map<ExtensionsGroupToken, Set<Class<Extension>>>();
 
   constructor(
     protected injector: Injector,
@@ -36,12 +40,14 @@ export class ExtensionsManager {
     protected extensionCounters: ExtensionCounters,
   ) {}
 
+  async init<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<ExtensionManagerInitMeta<T>>;
+  async init<T>(groupToken: ExtensionsGroupToken<T>, perApp: true): Promise<InitMetaPerApp<T>>;
   async init<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<ExtensionManagerInitMeta<T>> {
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
     }
     if (perApp && this.unfinishedInit.size > 1) {
-      this.addExtensionToPendingStack(groupToken);
+      this.addExtensionToPendingList(groupToken);
     }
     const beforeToken = KeyRegistry.getBeforeToken(groupToken);
     if (!this.cache.has(beforeToken) && this.beforeTokens.has(beforeToken)) {
@@ -50,28 +56,49 @@ export class ExtensionsManager {
 
     let totalInitMeta = this.cache.get(groupToken);
     if (totalInitMeta) {
-      this.updateCounters(groupToken, totalInitMeta);
+      this.updateGroupCounters(groupToken, totalInitMeta);
       return totalInitMeta;
     }
 
     totalInitMeta = await this.prepareAndInitGroup<T>(groupToken);
     totalInitMeta.totalInitMetaPerApp = this.extensionsContext.mTotalInitMeta.get(groupToken)!;
+    if (perApp && !totalInitMeta.delay) {
+      this.excludeExtensionFromPendingList(groupToken);
+    }
     return totalInitMeta;
   }
 
+  updateExtensionPendingList() {
+    for (const [groupToken, sExtensions] of this.excludedExtensionPendingList) {
+      for (const ExtensionClass of sExtensions) {
+        const mExtensions = this.extensionsContext.mExtensionPendingList.get(groupToken)!;
+        mExtensions.delete(ExtensionClass);
+      }
+    }
+  }
+
   /**
-   * Adds to the pending stack an extension that wants to receive
-   * the initialization result of `groupToken` from the whole application.
+   * Adds to the pending list of extensions that want to receive the initialization
+   * result of `groupToken` from the whole application.
    */
-  protected addExtensionToPendingStack(groupToken: ExtensionsGroupToken) {
+  protected addExtensionToPendingList(groupToken: ExtensionsGroupToken) {
     const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
-    const mExtensions = this.extensionsContext.mCaller.get(groupToken) || new Map<Class<Extension>, Extension>();
     const ExtensionClass = caller.constructor as Class<Extension>;
+    const mExtensions =
+      this.extensionsContext.mExtensionPendingList.get(groupToken) || new Map<Class<Extension>, Extension>();
+
     if (!mExtensions.has(ExtensionClass)) {
       mExtensions.set(ExtensionClass, caller);
-      this.extensionsContext.mCaller.set(groupToken, mExtensions);
-      this.extensionCounters.pendingExtensions.add(ExtensionClass);
+      this.extensionsContext.mExtensionPendingList.set(groupToken, mExtensions);
     }
+  }
+
+  protected excludeExtensionFromPendingList(groupToken: ExtensionsGroupToken) {
+    const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
+    const ExtensionClass = caller.constructor as Class<Extension>;
+    const excludedExtensions = this.excludedExtensionPendingList.get(groupToken) || new Set<Class<Extension>>();
+    excludedExtensions.add(ExtensionClass);
+    this.excludedExtensionPendingList.set(groupToken, excludedExtensions);
   }
 
   protected async prepareAndInitGroup<T>(groupToken: ExtensionsGroupToken<T>) {
@@ -81,19 +108,23 @@ export class ExtensionsManager {
     this.systemLogMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(groupToken);
     this.cache.set(groupToken, totalInitMeta);
-
-    const aTotalInitMeta = this.extensionsContext.mTotalInitMeta.get(groupToken) || [];
-    aTotalInitMeta.push(totalInitMeta);
-    this.extensionsContext.mTotalInitMeta.set(groupToken, aTotalInitMeta);
-
+    this.setTotalInitMetaPerApp(groupToken, totalInitMeta);
     return totalInitMeta;
+  }
+
+  protected setTotalInitMetaPerApp(groupToken: ExtensionsGroupToken, totalInitMeta: ExtensionManagerInitMeta) {
+    const aTotalInitMeta = this.extensionsContext.mTotalInitMeta.get(groupToken) || [];
+    const copyTotalInitMeta = { ...totalInitMeta };
+    delete copyTotalInitMeta.totalInitMetaPerApp;
+    aTotalInitMeta.push(copyTotalInitMeta);
+    this.extensionsContext.mTotalInitMeta.set(groupToken, aTotalInitMeta);
   }
 
   protected async initGroup<T>(groupToken: ExtensionsGroupToken): Promise<ExtensionManagerInitMeta> {
     const extensions = this.injector.get(groupToken, undefined, []) as Extension<T>[];
     const groupInitMeta: ExtensionInitMeta<T>[] = [];
-    const totalInitMeta = new ExtensionManagerInitMeta(this.moduleName, groupToken, groupInitMeta);
-    this.updateCounters(groupToken, totalInitMeta);
+    const totalInitMeta = new ExtensionManagerInitMeta(this.moduleName, groupInitMeta);
+    this.updateGroupCounters(groupToken, totalInitMeta);
 
     if (!extensions.length) {
       this.systemLogMediator.noExtensionsFound(this, groupToken, this.unfinishedInit);
@@ -107,10 +138,7 @@ export class ExtensionsManager {
       this.unfinishedInit.add(extension);
       this.systemLogMediator.startInitExtension(this, this.unfinishedInit);
       const ExtensionClass = extension.constructor as Class<Extension<T>>;
-      let countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
-      if (this.extensionCounters.pendingExtensions.has(ExtensionClass)) {
-        countdown += 1;
-      }
+      const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
       const isLastExtensionCall = countdown === 0;
       const data = await extension.init(isLastExtensionCall);
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
@@ -123,7 +151,7 @@ export class ExtensionsManager {
     return totalInitMeta;
   }
 
-  protected updateCounters(groupToken: ExtensionsGroupToken, totalInitMeta: ExtensionManagerInitMeta) {
+  protected updateGroupCounters(groupToken: ExtensionsGroupToken, totalInitMeta: ExtensionManagerInitMeta) {
     totalInitMeta.countdown = this.extensionCounters.mGroupTokens.get(groupToken)!;
     totalInitMeta.delay = totalInitMeta.countdown > 0;
   }
