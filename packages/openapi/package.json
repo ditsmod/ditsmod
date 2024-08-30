@@ -42,7 +42,7 @@
   "dependencies": {
     "@ts-stack/openapi-spec": "^3.1.5",
     "swagger-ui-dist": "^5.17.14",
-    "yaml": "^2.4.5"
+    "yaml": "^2.5.0"
   },
   "peerDependencies": {
     "@ditsmod/core": "^2.56.0",
