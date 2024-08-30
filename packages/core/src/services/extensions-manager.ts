@@ -109,9 +109,9 @@ export class ExtensionsManager {
   }
 
   protected setTotalInitMetaPerApp(groupToken: ExtensionsGroupToken, totalInitMeta: TotalInitMeta) {
-    const aTotalInitMeta = this.extensionsContext.mTotalInitMeta.get(groupToken) || [];
     const copyTotalInitMeta = { ...totalInitMeta };
     delete (copyTotalInitMeta as OptionalProps<TotalInitMeta, 'totalInitMetaPerApp'>).totalInitMetaPerApp;
+    const aTotalInitMeta = this.extensionsContext.mTotalInitMeta.get(groupToken) || [];
     aTotalInitMeta.push(copyTotalInitMeta);
     this.extensionsContext.mTotalInitMeta.set(groupToken, aTotalInitMeta);
   }
