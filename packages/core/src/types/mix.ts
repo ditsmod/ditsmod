@@ -34,6 +34,7 @@ const obj: ModifiedInterface = {
 ```
  */
 export type RequireProps<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
+export type OptionalProps<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 export interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
   extends Partial<ProvidersMetadata> {
   id?: string;

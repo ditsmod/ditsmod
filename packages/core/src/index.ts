@@ -94,7 +94,8 @@ export {
   Provider,
   AnyFn,
   HttpHeaders,
-  RequireProps
+  RequireProps,
+  OptionalProps
 } from './types/mix.js';
 export { ModuleMetadata, AppendsWithParams } from './types/module-metadata.js';
 export { RouteMeta } from './types/route-data.js';
