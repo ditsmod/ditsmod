@@ -273,7 +273,7 @@ export class AppInitializer {
       this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
     }
 
-    for (const [groupToken, mExtensions] of extensionsContext.mCaller) {
+    for (const [groupToken, mExtensions] of extensionsContext.mExtensionPendingList) {
       for (const extension of mExtensions.values()) {
         await extension.init(true);
       }
@@ -310,6 +310,7 @@ export class AppInitializer {
       extensionsManager.moduleName = moduleName;
       extensionsManager.beforeTokens = beforeTokens;
       await extensionsManager.init(groupToken);
+      extensionsManager.updateExtensionPendingList();
     }
   }
 

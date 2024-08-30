@@ -5,9 +5,10 @@ import { ExtensionsGroupToken, ExtensionManagerInitMeta, Extension } from '#type
 export class ExtensionsContext {
   mTotalInitMeta = new Map<ExtensionsGroupToken, ExtensionManagerInitMeta[]>();
   /**
-   * Contains extensions that subscribe to a specific `groupToken` from across the application.
+   * The pending list of extensions that want to receive the initialization result
+   * of `groupToken` from the whole application.
    */
-  mCaller = new Map<ExtensionsGroupToken, Map<Class<Extension>, Extension>>();
+  mExtensionPendingList = new Map<ExtensionsGroupToken, Map<Class<Extension>, Extension>>();
   /**
    * Indicates whether the application has routes.
    */
