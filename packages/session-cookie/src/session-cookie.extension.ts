@@ -16,9 +16,9 @@ export class SessionCookieExtension implements Extension<void> {
       return;
     }
 
-    const aMetadataPerMod2 = await this.extensionManager.init(ROUTES_EXTENSIONS);
-    aMetadataPerMod2.forEach((metadataPerMod2) => {
-      metadataPerMod2.aControllersMetadata2.forEach(({ providersPerRou, isSingleton }) => {
+    const totalInitMeta = await this.extensionManager.init(ROUTES_EXTENSIONS);
+    totalInitMeta.groupInitMeta.forEach((initMeta) => {
+      initMeta.payload.aControllersMetadata2.forEach(({ providersPerRou, isSingleton }) => {
         if (isSingleton) {
           providersPerRou.unshift(SessionCookieInterceptor);
           providersPerRou.push({ token: HTTP_INTERCEPTORS, useToken: SessionCookieInterceptor, multi: true });

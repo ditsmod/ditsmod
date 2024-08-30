@@ -7,6 +7,7 @@ import {
   injectable,
   Injector,
   fromSelf,
+  TotalInitMeta,
 } from '@ditsmod/core';
 import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
@@ -33,13 +34,13 @@ export class I18nExtension implements Extension<void> {
       return;
     }
 
-    const aMetadataPerMod2 = await this.extensionsManager.init(ROUTES_EXTENSIONS);
-    this.addI18nProviders(aMetadataPerMod2, isLastExtensionCall);
+    const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    this.addI18nProviders(totalInitMeta, isLastExtensionCall);
 
     this.#inited = true;
   }
 
-  protected addI18nProviders(aMetadataPerMod2: MetadataPerMod2[], isLastExtensionCall?: boolean) {
+  protected addI18nProviders(totalInitMeta: TotalInitMeta<MetadataPerMod2>, isLastExtensionCall?: boolean) {
     const injectorPerApp = this.perAppService.injector;
 
     const translationsPerApp = injectorPerApp.get(I18N_TRANSLATIONS, undefined, null);
@@ -49,8 +50,8 @@ export class I18nExtension implements Extension<void> {
       this.perAppService.providers.push(...providers);
     }
 
-    for (const metadataPerMod2 of aMetadataPerMod2) {
-      const { providersPerMod, providersPerRou, providersPerReq, aControllersMetadata2 } = metadataPerMod2;
+    for (const initMeta of totalInitMeta.groupInitMeta) {
+      const { providersPerMod, providersPerRou, providersPerReq, aControllersMetadata2 } = initMeta.payload;
       if (!aControllersMetadata2.length) {
         continue;
       }

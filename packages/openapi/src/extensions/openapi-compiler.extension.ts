@@ -11,7 +11,7 @@ import {
   Injector,
   optional,
   reflector,
-  TotalInitMeta,
+  TotalInitMetaPerApp,
 } from '@ditsmod/core';
 import {
   PathItemObject,
@@ -66,7 +66,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     return this.oasObject;
   }
 
-  protected async compileOasObject(totalInitMetaPerApp: TotalInitMeta<MetadataPerMod2>[]) {
+  protected async compileOasObject(totalInitMetaPerApp: TotalInitMetaPerApp<MetadataPerMod2>[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
     for (const totalInitMeta of totalInitMetaPerApp) {

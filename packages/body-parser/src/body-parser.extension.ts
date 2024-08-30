@@ -28,13 +28,13 @@ export class BodyParserExtension implements Extension<void> {
       return;
     }
 
-    const aMetadataPerMod2 = await this.extensionManager.init(ROUTES_EXTENSIONS);
-    aMetadataPerMod2.forEach((metadataPerMod2) => {
-      const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
+    const totalInitMeta = await this.extensionManager.init(ROUTES_EXTENSIONS);
+    totalInitMeta.groupInitMeta.forEach((initMeta) => {
+      const { aControllersMetadata2, providersPerMod } = initMeta.payload;
       aControllersMetadata2.forEach(({ providersPerRou, providersPerReq, httpMethod, isSingleton }) => {
         // Merging the providers from a module and a controller
-        const mergedProvidersPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
-        const mergedProvidersPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
+        const mergedProvidersPerRou = [...initMeta.payload.providersPerRou, ...providersPerRou];
+        const mergedProvidersPerReq = [...initMeta.payload.providersPerReq, ...providersPerReq];
 
         // Creating a hierarchy of injectors.
         const injectorPerApp = this.perAppService.injector;

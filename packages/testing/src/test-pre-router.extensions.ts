@@ -11,7 +11,7 @@ import {
   isFactoryProvider,
   getDependencies,
   Provider,
-  TotalInitMeta,
+  TotalInitMetaPerApp,
 } from '@ditsmod/core';
 import { PreRouterExtension, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
@@ -52,7 +52,7 @@ export class TestPreRouterExtension extends PreRouterExtension {
     this.inited = true;
   }
 
-  protected overrideAllProviders(totalInitMetaPerApp: TotalInitMeta<MetadataPerMod2>[]) {
+  protected overrideAllProviders(totalInitMetaPerApp: TotalInitMetaPerApp<MetadataPerMod2>[]) {
     const providersToOverride = this.testModuleManager.getProvidersToOverride();
     const logLevel = this.testModuleManager.getLogLevel();
     overrideLogLevel(this.perAppService.providers, logLevel);
