@@ -21,16 +21,8 @@ describe('extensions e2e', () => {
      */
     @injectable()
     class Extension1 implements Extension {
-      private inited: boolean;
-
       async init(isLastExtensionCall: boolean) {
-        if (this.inited) {
-          return;
-        }
-
         extensionInit(isLastExtensionCall);
-
-        this.inited = true;
       }
     }
 
@@ -102,18 +94,11 @@ describe('extensions e2e', () => {
 
     @injectable()
     class Extension2 implements Extension {
-      private inited: boolean;
-
       constructor(private extensionManager: ExtensionsManager) {}
 
       async init() {
-        if (this.inited) {
-          return;
-        }
-
         const totalInitMeta = await this.extensionManager.init(MY_EXTENSIONS1);
         extensionInit2(totalInitMeta);
-        this.inited = true;
       }
     }
 
@@ -200,15 +185,9 @@ describe('extensions e2e', () => {
 
     @injectable()
     class Extension2 implements Extension {
-      private inited: boolean;
-
       constructor(private extensionManager: ExtensionsManager) {}
 
       async init() {
-        if (this.inited) {
-          return;
-        }
-
         const totalInitMeta = await this.extensionManager.init(MY_EXTENSIONS1, true);
         if (totalInitMeta.delay) {
           extensionInit2(totalInitMeta.groupInitMeta);
@@ -216,9 +195,6 @@ describe('extensions e2e', () => {
         }
 
         extensionInit2(totalInitMeta);
-
-        this.inited = true;
-        return;
       }
     }
 
