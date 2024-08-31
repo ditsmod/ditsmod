@@ -7,6 +7,7 @@ import { Extension, ExtensionInitMeta, TotalInitMeta } from '#types/extension-ty
 import { ExtensionsManager } from '#services/extensions-manager.js';
 import { featureModule } from '#decorators/module.js';
 import { Router } from '#types/router.js';
+import { inspect } from 'util';
 
 describe('extensions e2e', () => {
   it('check isLastModule', async () => {
@@ -191,12 +192,7 @@ describe('extensions e2e', () => {
 
       async init() {
         const totalInitMeta = await this.extensionManager.init(MY_EXTENSIONS1, true);
-        if (totalInitMeta.delay) {
-          extensionInit2(totalInitMeta.groupInitMeta);
-          return;
-        }
-
-        extensionInit2(totalInitMeta);
+        extensionInit2(structuredClone(totalInitMeta));
       }
     }
 
@@ -231,17 +227,92 @@ describe('extensions e2e', () => {
     expect(extensionInit1).toHaveBeenNthCalledWith(3, true);
 
     expect(extensionInit2).toHaveBeenCalledTimes(2);
-    const extension = new Extension1();
-    extension.data = extensionPayload;
-    const initMeta = new ExtensionInitMeta(extension, extensionPayload, true, 1);
-    const totalInitMeta = new TotalInitMeta('TextModule', [initMeta]);
-    totalInitMeta.delay = true;
-    totalInitMeta.countdown = 1;
-    expect(extensionInit2).toHaveBeenNthCalledWith(1, totalInitMeta.groupInitMeta);
-    initMeta.delay = false;
-    initMeta.countdown = 0;
-    totalInitMeta.delay = false;
-    totalInitMeta.countdown = 0;
-    // expect(extensionInit2).toHaveBeenNthCalledWith(2, totalInitMeta);
+    const expect1 = {
+      moduleName: 'Module3',
+      groupInitMeta: [
+        {
+          extension: { data: 'Extension1 payload' } as any,
+          payload: 'Extension1 payload',
+          delay: true,
+          countdown: 1,
+        },
+      ],
+      delay: true,
+      countdown: 1,
+      totalInitMetaPerApp: [
+        {
+          moduleName: 'Module2',
+          groupInitMeta: [
+            {
+              extension: { data: 'Extension1 payload' } as any,
+              payload: 'Extension1 payload',
+              delay: true,
+              countdown: 2,
+            },
+          ],
+          delay: true,
+          countdown: 2,
+        },
+        {
+          moduleName: 'Module3',
+          groupInitMeta: [
+            {
+              extension: { data: 'Extension1 payload' } as any,
+              payload: 'Extension1 payload',
+              delay: true,
+              countdown: 1,
+            },
+          ],
+          delay: true,
+          countdown: 1,
+        },
+      ],
+    } as TotalInitMeta;
+    expect(extensionInit2).toHaveBeenNthCalledWith(1, expect1);
+    const expect2 = {
+      delay: false,
+      totalInitMetaPerApp: [
+        {
+          moduleName: 'Module2',
+          groupInitMeta: [
+            {
+              extension: { data: 'Extension1 payload' } as any,
+              payload: 'Extension1 payload',
+              delay: true,
+              countdown: 2,
+            },
+          ],
+          delay: true,
+          countdown: 2,
+        },
+        {
+          moduleName: 'Module3',
+          groupInitMeta: [
+            {
+              extension: { data: 'Extension1 payload' } as any,
+              payload: 'Extension1 payload',
+              delay: true,
+              countdown: 1,
+            },
+          ],
+          delay: true,
+          countdown: 1,
+        },
+        {
+          moduleName: 'AppModule',
+          groupInitMeta: [
+            {
+              extension: { data: 'Extension1 payload' } as any,
+              payload: 'Extension1 payload',
+              delay: false,
+              countdown: 0,
+            },
+          ],
+          delay: false,
+          countdown: 0,
+        },
+      ],
+    } as TotalInitMeta;
+    expect(extensionInit2).toHaveBeenNthCalledWith(2, expect2);
   });
 });
