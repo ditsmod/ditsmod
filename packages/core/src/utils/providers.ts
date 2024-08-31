@@ -13,11 +13,9 @@ import { NormalizedProvider } from './ng-utils.js';
  * ```ts
   Module({
     // ...
-    providersPerMod: [
-      ...new Providers()
-        .useLogConfig({ level: 'debug' })
-        .useClass(SomeService, ExtendedService)
-    ],
+    providersPerMod: new Providers()
+      .useLogConfig({ level: 'debug' })
+      .useClass(SomeService, ExtendedService),
   })
   export class SomeModule {}
  * ```
@@ -137,7 +135,7 @@ const value = new Providers()
     return this;
   }
 
-/**
+  /**
  * ### Plugins
  * 
  * You can even use plugins for this class:

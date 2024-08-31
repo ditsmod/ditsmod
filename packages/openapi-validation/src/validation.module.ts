@@ -11,7 +11,7 @@ import { ValidationExtension } from './validation.extension.js';
 @featureModule({
   imports: [I18nModule],
   providersPerApp: new Providers().passThrough(AjvService).useValue<Options>(AJV_OPTIONS, { coerceTypes: true }),
-  providersPerMod: [...new I18nProviders().i18n({ current })],
+  providersPerMod: new I18nProviders().i18n({ current }),
   exports: [I18nModule, I18N_TRANSLATIONS],
   extensions: [
     {
@@ -26,7 +26,7 @@ export class ValidationModule {
   static withParams(current: DictGroup<Class<Dictionary>>[]): ModuleWithParams<ValidationModule> {
     return {
       module: this,
-      providersPerMod: [...new I18nProviders().i18n({ current })],
+      providersPerMod: new I18nProviders().i18n({ current }),
     };
   }
 }
