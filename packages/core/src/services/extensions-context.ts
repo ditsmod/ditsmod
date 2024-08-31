@@ -9,8 +9,4 @@ export class ExtensionsContext {
    * of `groupToken` from the whole application.
    */
   mExtensionPendingList = new Map<ExtensionsGroupToken, Map<Class<Extension>, Extension>>();
-  /**
-   * Indicates whether the application has routes.
-   */
-  appHasRoutes = false;
 }
