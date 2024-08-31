@@ -32,23 +32,18 @@ export class TestPreRouterExtension extends PreRouterExtension {
     super(perAppService, router, extensionsManager, log, extensionsContext);
   }
 
-  override async init(isLastModule: boolean) {
+  override async init() {
     if (this.inited) {
       return;
     }
 
-    this.isLastModule = isLastModule;
-    const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS, true);
-    if (totalInitMeta.delay) {
-      this.inited = true;
-      return;
-    }
+    const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
 
     // Added only this line to override super.init()
     this.overrideAllProviders(totalInitMeta.totalInitMetaPerApp);
 
-    const preparedRouteMeta = this.prepareRoutesMeta(totalInitMeta.totalInitMetaPerApp);
-    this.setRoutes(preparedRouteMeta);
+    const preparedRouteMeta = this.prepareRoutesMeta(totalInitMeta.groupInitMeta);
+    this.setRoutes(totalInitMeta, preparedRouteMeta);
     this.inited = true;
   }
 
