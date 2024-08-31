@@ -9,9 +9,7 @@ import { FirstController } from './first.controller.js';
 @featureModule({
   imports: [RoutingModule, I18nModule],
   controllers: [FirstController],
-  providersPerMod: [
-    ...new I18nProviders().i18n({ current }, { defaultLng: 'en' }),
-  ],
+  providersPerMod: new I18nProviders().i18n({ current }, { defaultLng: 'en' }),
   providersPerReq: [FirstService],
   exports: [I18nModule, FirstService, I18N_TRANSLATIONS],
 })

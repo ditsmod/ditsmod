@@ -10,10 +10,7 @@ import { imported } from './locales/imported/index.js';
 @featureModule({
   imports: [RoutingModule, I18nModule, FirstModule],
   controllers: [SecondController],
-  providersPerMod: [
-    ...new I18nProviders()
-      .i18n({ current, imported }, { defaultLng: 'uk' }),
-  ],
+  providersPerMod: new I18nProviders().i18n({ current, imported }, { defaultLng: 'uk' }),
   exports: [I18N_TRANSLATIONS],
 })
 export class SecondModule {}

@@ -11,6 +11,6 @@ import { imported } from './locales/imported/index.js';
 @featureModule({
   imports: [RoutingModule, BodyParserModule, ValidationModule.withParams(current)],
   controllers: [FirstController],
-  providersPerMod: [...new I18nProviders().i18n({ imported })],
+  providersPerMod: new I18nProviders().i18n({ imported }),
 })
 export class FirstModule {}
