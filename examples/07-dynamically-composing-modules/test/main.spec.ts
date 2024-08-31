@@ -14,7 +14,7 @@ describe('07-dynamically-composing-modules', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('should works', async () => {

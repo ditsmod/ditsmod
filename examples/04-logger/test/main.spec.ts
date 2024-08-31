@@ -14,7 +14,7 @@ describe('04-logger', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('should works', async () => {

@@ -14,7 +14,7 @@ describe('16-openapi-validation', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('endpoints works', async () => {

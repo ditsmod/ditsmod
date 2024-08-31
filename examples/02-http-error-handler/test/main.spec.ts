@@ -14,7 +14,7 @@ describe('02-controller-error-handler', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('should works', async () => {

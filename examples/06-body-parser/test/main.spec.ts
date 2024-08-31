@@ -17,7 +17,7 @@ describe('06-body-parser', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('should works with get', async () => {

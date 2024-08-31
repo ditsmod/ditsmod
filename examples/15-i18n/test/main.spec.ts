@@ -14,7 +14,7 @@ describe('15-i18n', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('controller works', async () => {

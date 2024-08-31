@@ -16,7 +16,7 @@ describe('12-testing', () => {
     testAgent = request(server);
     await testAgent.get('/').expect(200).expect('Hello, World!\n');
     await testAgent.get('/admin').expect(200).expect('Hello, admin!\n');
-    server.close();
+    server?.close();
   });
 
   describe('good error stack trace', () => {
@@ -37,7 +37,7 @@ describe('12-testing', () => {
     });
 
     afterEach(() => {
-      server.close();
+      server?.close();
     });
 
     it('should start from "Controller1.method1"', async () => {

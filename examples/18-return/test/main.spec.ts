@@ -15,7 +15,7 @@ describe('18-return', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('regular controller', async () => {

@@ -15,7 +15,7 @@ describe('09-one-extension', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('controller works', async () => {

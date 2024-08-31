@@ -15,7 +15,7 @@ describe('17-cors', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('simply GET request', async () => {

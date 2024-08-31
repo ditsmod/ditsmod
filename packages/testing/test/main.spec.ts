@@ -55,7 +55,7 @@ describe('@ditsmod/testing', () => {
     expect(methodPerRou2).toHaveBeenCalledTimes(1);
     expect(methodPerReq2).toHaveBeenCalledTimes(1);
 
-    server.close();
+    server?.close();
   });
 
   it('should failed because we trying to override non-passed provider', async () => {
@@ -71,6 +71,6 @@ describe('@ditsmod/testing', () => {
     await request(server).get('/per-rou3').expect(500).expect({ error: msg });
     expect(methodPerRou3).toHaveBeenCalledTimes(0);
 
-    server.close();
+    server?.close();
   });
 });

@@ -14,7 +14,7 @@ describe('08-http-interceptors', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('controller works', async () => {

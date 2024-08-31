@@ -14,7 +14,7 @@ describe('01-hello-world', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('controller works', async () => {

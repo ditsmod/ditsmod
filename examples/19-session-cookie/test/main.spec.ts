@@ -14,7 +14,7 @@ describe('19-session-cookie', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   describe('non-singleton', () => {

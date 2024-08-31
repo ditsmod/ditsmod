@@ -14,7 +14,7 @@ describe('11-override-core-log-messages', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('controller works', async () => {

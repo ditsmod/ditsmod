@@ -14,7 +14,7 @@ describe('03-route-guards', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('should works', async () => {

@@ -15,7 +15,7 @@ describe('10-openapi', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('controller works', async () => {

@@ -14,7 +14,7 @@ describe('14-auth-jwt', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('controller works', async () => {

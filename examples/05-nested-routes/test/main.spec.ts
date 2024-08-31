@@ -14,7 +14,7 @@ describe('05-nested-routes', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('should works with /api/posts', async () => {

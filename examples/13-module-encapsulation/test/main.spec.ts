@@ -14,7 +14,7 @@ describe('13-module-encapsulation', () => {
   });
 
   afterAll(() => {
-    server.close();
+    server?.close();
   });
 
   it('controller works', async () => {
