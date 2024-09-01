@@ -46,6 +46,7 @@ export class ModuleManager {
   protected oldMap: ModulesMap = new Map();
   protected oldMapId = new Map<string, AnyModule>();
   protected unfinishedScanModules = new Set<AnyModule>();
+  protected scanedModules = new Set<AnyModule>();
   /**
    * The directory in which the class was declared.
    */
@@ -63,6 +64,7 @@ export class ModuleManager {
     }
 
     const meta = this.scanRawModule(appModule);
+    this.scanedModules.clear();
     this.mapId.set('root', appModule);
     return this.copyMeta(meta);
   }
@@ -199,21 +201,22 @@ export class ModuleManager {
   protected scanRawModule(modOrObj: AnyModule) {
     const meta = this.normalizeMetadata(modOrObj);
 
-    const inputs = [
+    const inputs = new Set([
       ...meta.importsModules,
       ...meta.importsWithParams,
       ...meta.exportsModules,
       ...meta.exportsWithParams,
       ...meta.appendsWithParams,
-    ];
+    ]);
 
     for (const input of inputs) {
-      if (this.unfinishedScanModules.has(input)) {
+      if (this.unfinishedScanModules.has(input) || this.scanedModules.has(input)) {
         continue;
       }
       this.unfinishedScanModules.add(input);
       this.scanRawModule(input);
       this.unfinishedScanModules.delete(input);
+      this.scanedModules.add(input);
     }
 
     if (meta.id) {
