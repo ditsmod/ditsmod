@@ -1,5 +1,12 @@
+<a name="core-2.55.2"></a>
+# [core-2.55.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.55.2) (2024-09-01)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [fde5c079a9](https://github.com/ditsmod/ditsmod/commit/fde5c079a92a) | fix | Fixed `Symbol.iterator` in `Providers` helper. |
+
 <a name="core-2.55.1"></a>
-# [core-2.55.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.55.1) (2024-08-23)
+## [core-2.55.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.55.1) (2024-08-23)
 
 | Commit | Type | Description |
 | -- | -- | -- |
