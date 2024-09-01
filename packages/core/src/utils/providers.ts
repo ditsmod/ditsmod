@@ -24,7 +24,6 @@ import { NormalizedProvider } from './ng-utils.js';
  */
 export class Providers {
   protected providers: Provider[] = [];
-  protected index = -1;
   protected setedIf?: boolean;
   protected ifCondition?: boolean;
 
@@ -200,11 +199,15 @@ const value = new Providers()
   }
 
   protected [Symbol.iterator]() {
-    return this;
-  }
-
-  protected next() {
-    return { value: this.providers[++this.index], done: !(this.index in this.providers) };
+    let counter = 0;
+    return {
+      next: () => {
+        return {
+          done: !(counter in this.providers), 
+          value: this.providers[counter++], 
+        };
+      },
+    };
   }
 
   protected pushProvider(provider: NormalizedProvider, multi?: boolean) {
