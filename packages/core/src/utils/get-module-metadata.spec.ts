@@ -3,6 +3,7 @@ import { featureModule } from '#decorators/module.js';
 import { ModuleWithParams, Provider } from '#types/mix.js';
 import { getModuleMetadata } from './get-module-metadata.js';
 import { getCallerDir } from './callsites.js';
+import { Providers } from '#utils/providers.js';
 
 describe('getModuleMetadata', () => {
   it('module without decorator', () => {
@@ -36,7 +37,26 @@ describe('getModuleMetadata', () => {
     expect(metadata).toEqual({
       decoratorFactory: featureModule,
       controllers: [],
-      declaredInDir: getCallerDir()
+      declaredInDir: getCallerDir(),
+    });
+  });
+
+  it('decorator with some data', () => {
+    class Provider1 {}
+    const providers = new Providers().useValue('token2', 'value2');
+
+    @featureModule({
+      providersPerMod: [Provider1],
+      providersPerRou: providers,
+    })
+    class Module1 {}
+
+    const metadata = getModuleMetadata(Module1);
+    expect(metadata).toEqual({
+      decoratorFactory: featureModule,
+      providersPerMod: [Provider1],
+      providersPerRou: [{ token: 'token2', useValue: 'value2' }],
+      declaredInDir: getCallerDir(),
     });
   });
 

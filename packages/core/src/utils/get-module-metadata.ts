@@ -1,6 +1,6 @@
 import { DecoratorAndValue, reflector, resolveForwardRef } from '#di';
 import { ModuleMetadata } from '#types/module-metadata.js';
-import { AnyFn, ModuleType, ModuleWithParams } from '#types/mix.js';
+import { AnyFn, ModuleType, ModuleWithParams, Scope } from '#types/mix.js';
 import { getModuleName } from './get-module-name.js';
 import { mergeArrays } from './merge-arrays.js';
 import { isFeatureModule, isModuleWithParams, isRootModule } from './type-guards.js';
@@ -41,8 +41,19 @@ export function getModuleMetadata(
     return { ...metadata, decoratorFactory: container.decorator, declaredInDir };
   } else {
     const container = reflector.getClassMetadata<ModuleMetadataValue>(modOrObj).find(typeGuard);
+    const modMetadata = container?.value.data;
+    if (!modMetadata) {
+      return modMetadata;
+    }
+    const metadata = Object.assign({}, modMetadata);
+    (['App', 'Mod', 'Rou', 'Req'] as Scope[]).forEach((scope) => {
+      const arr = [...(modMetadata[`providersPer${scope}`] || [])];
+      if (arr.length) {
+        metadata[`providersPer${scope}`] = arr;
+      }
+    });
     const declaredInDir = container?.declaredInDir || '';
-    return container ? { ...container.value.data, decoratorFactory: container.decorator, declaredInDir } : undefined;
+    return container ? { ...metadata, decoratorFactory: container.decorator, declaredInDir } : undefined;
   }
 }
 
