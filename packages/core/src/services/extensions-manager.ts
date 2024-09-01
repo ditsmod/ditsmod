@@ -57,6 +57,9 @@ export class ExtensionsManager {
     if (totalInitMeta) {
       this.updateGroupCounters(groupToken, totalInitMeta);
       totalInitMeta = this.prepareTotalInitMetaPerApp(totalInitMeta, perApp);
+      if (perApp && !totalInitMeta.delay) {
+        this.excludeExtensionFromPendingList(groupToken);
+      }
       return totalInitMeta;
     }
 
@@ -107,6 +110,9 @@ export class ExtensionsManager {
 
   protected excludeExtensionFromPendingList(groupToken: ExtensionsGroupToken) {
     const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
+    if (!caller) {
+      return;
+    }
     const ExtensionClass = caller.constructor as Class<Extension>;
     const excludedExtensions = this.excludedExtensionPendingList.get(groupToken) || new Set<Class<Extension>>();
     excludedExtensions.add(ExtensionClass);
