@@ -40,6 +40,38 @@ describe('Providers', () => {
     expect([...value]).toEqual([{ token: A, useValue: { one: 'value' } }]);
   });
 
+  it('works with nested loops', () => {
+    const for1 = jest.fn();
+    const for2 = jest.fn();
+    const providers = new Providers()
+      .useValue('token1', 'value1')
+      .useValue('token2', 'value2')
+      .useValue('token3', 'value3');
+
+    for (const v of providers) {
+      for1(v);
+
+      for (const v of providers) {
+        for2(v);
+      }
+    }
+    expect(for1).toHaveBeenCalledTimes(3);
+    expect(for1).toHaveBeenNthCalledWith(1, { token: 'token1', useValue: 'value1' });
+    expect(for1).toHaveBeenNthCalledWith(2, { token: 'token2', useValue: 'value2' });
+    expect(for1).toHaveBeenNthCalledWith(3, { token: 'token3', useValue: 'value3' });
+
+    expect(for2).toHaveBeenCalledTimes(9);
+    expect(for2).toHaveBeenNthCalledWith(1, { token: 'token1', useValue: 'value1' });
+    expect(for2).toHaveBeenNthCalledWith(2, { token: 'token2', useValue: 'value2' });
+    expect(for2).toHaveBeenNthCalledWith(3, { token: 'token3', useValue: 'value3' });
+    expect(for2).toHaveBeenNthCalledWith(4, { token: 'token1', useValue: 'value1' });
+    expect(for2).toHaveBeenNthCalledWith(5, { token: 'token2', useValue: 'value2' });
+    expect(for2).toHaveBeenNthCalledWith(6, { token: 'token3', useValue: 'value3' });
+    expect(for2).toHaveBeenNthCalledWith(7, { token: 'token1', useValue: 'value1' });
+    expect(for2).toHaveBeenNthCalledWith(8, { token: 'token2', useValue: 'value2' });
+    expect(for2).toHaveBeenNthCalledWith(9, { token: 'token3', useValue: 'value3' });
+  });
+
   it('works useClass() case 1', () => {
     class A {
       one: string;
