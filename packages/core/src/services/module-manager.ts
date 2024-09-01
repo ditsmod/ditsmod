@@ -201,13 +201,13 @@ export class ModuleManager {
   protected scanRawModule(modOrObj: AnyModule) {
     const meta = this.normalizeMetadata(modOrObj);
 
-    const inputs = new Set([
+    const inputs = [
       ...meta.importsModules,
       ...meta.importsWithParams,
       ...meta.exportsModules,
       ...meta.exportsWithParams,
       ...meta.appendsWithParams,
-    ]);
+    ];
 
     for (const input of inputs) {
       if (this.unfinishedScanModules.has(input) || this.scanedModules.has(input)) {
