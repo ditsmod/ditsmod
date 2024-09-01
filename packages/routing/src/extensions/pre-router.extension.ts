@@ -64,8 +64,7 @@ export class PreRouterExtension implements Extension<void> {
 
   protected prepareRoutesMeta(groupInitMeta: ExtensionInitMeta<MetadataPerMod2>[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
-    this.perAppService.providers.push({ token: Router, useValue: this.router });
-    const injectorPerApp = this.perAppService.reinitInjector();
+    const injectorPerApp = this.perAppService.injector.setByToken(Router, this.router);
 
     groupInitMeta.forEach((initMeta) => {
       const metadataPerMod2 = initMeta.payload;
