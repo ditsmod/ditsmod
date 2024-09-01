@@ -574,10 +574,19 @@ export class ModuleManager {
   protected throwUnidentifiedToken(modName: string, token: any) {
     const tokenName = token.name || token;
     const msg =
-      `Exporting from "${modName}" failed: if "${tokenName}" is a token of a provider, this provider ` +
+      `Exporting from ${this.throwPath(modName)} failed: if "${tokenName}" is a token of a provider, this provider ` +
       'must be included in providersPerReq or in providersPerRou, or in providersPerMod. ' +
       `If "${tokenName}" is a token of extension, this extension must be included in "extensions" array.`;
     throw new TypeError(msg);
+  }
+
+  protected throwPath(modName: string) {
+    if (this.unfinishedScanModules.size) {
+      const path = [...this.unfinishedScanModules].map((mod) => getModuleName(mod)).join(' -> ');
+      return `${modName} (${path})`;
+    } else {
+      return modName;
+    }
   }
 
   protected throwIfNormalizedProvider(moduleName: string, provider: any) {
