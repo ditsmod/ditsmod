@@ -164,8 +164,9 @@ export class AppInitializer {
     const extensionCounters = importsResolver.resolve();
     const aMetadataPerMod1 = [...appMetadataMap].map(([, metadataPerMod1]) => metadataPerMod1);
     await this.handleExtensions(aMetadataPerMod1, extensionCounters);
-    this.systemLogMediator = this.perAppService.injector.get(SystemLogMediator) as SystemLogMediator;
-    this.preRouter = this.perAppService.injector.get(PreRouter) as PreRouter;
+    const injectorPerApp = this.perAppService.reinitInjector();
+    this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
+    this.preRouter = injectorPerApp.get(PreRouter) as PreRouter;
     return appMetadataMap;
   }
 
@@ -245,7 +246,7 @@ export class AppInitializer {
 
   protected async handleExtensions(aMetadataPerMod1: MetadataPerMod1[], extensionCounters: ExtensionCounters) {
     const extensionsContext = new ExtensionsContext();
-    const injectorPerApp = this.perAppService.injector.resolveAndCreateChild([
+    const injectorPerApp = this.perAppService.reinitInjector([
       { token: PerAppService, useValue: this.perAppService },
     ]);
 

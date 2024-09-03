@@ -60,7 +60,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     const json = JSON.stringify(this.oasObject);
     const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
     const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
-    this.perAppService.injector.setByToken(OasConfigFiles, { json, yaml });
+    this.perAppService.reinitInjector([{ token: OasConfigFiles, useValue: { json, yaml } }]);
 
     return this.oasObject;
   }

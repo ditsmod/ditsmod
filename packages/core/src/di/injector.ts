@@ -407,7 +407,16 @@ expect(child.parent).toBe(parent);
    *
    */
   get parent(): Injector | null {
+    return this.parentGetter();
+  }
+
+  protected parentGetter(): Injector | null {
     return this.#parent;
+  }
+
+  setParentGetter(parentGetter: () => Injector | null) {
+    this.parentGetter = parentGetter;
+    return this;
   }
 
   /**
@@ -505,6 +514,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
     this.#Registry = undefined as any;
     this.#registry = undefined as any;
     this.#parent = undefined as any;
+    this.setParentGetter(() => this.#parent);
   }
 
   /**
@@ -560,7 +570,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
       return this;
     }
 
-    const injector = visibility === skipSelf ? this.#parent : this;
+    const injector = visibility === skipSelf ? this.parent : this;
     return this.getOrThrow(injector, dualKey, parentTokens, defaultValue, visibility);
   }
 
@@ -584,8 +594,8 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
       } else if (meta !== undefined || injector.hasId(dualKey.id)) {
         // Here "meta" - is a value for provider that has given `token`.
         return meta;
-      } else if (visibility !== fromSelf && injector.#parent) {
-        return injector.#parent.getOrThrow(injector.#parent, dualKey, parentTokens, defaultValue);
+      } else if (visibility !== fromSelf && injector.parent) {
+        return injector.parent.getOrThrow(injector.parent, dualKey, parentTokens, defaultValue);
       }
     }
     if (defaultValue === NoDefaultValue) {
@@ -700,8 +710,8 @@ child.get(Service).config; // now, in current injector, works cache: { one: 11, 
       return meta;
     }
 
-    if (this.#parent) {
-      const resolvedProvider = this.getResolvedProvider(this.#parent, dualKey);
+    if (this.parent) {
+      const resolvedProvider = this.getResolvedProvider(this.parent, dualKey);
       if (resolvedProvider) {
         const value = this.instantiateResolved(resolvedProvider, []);
         return (this.#registry[dualKey.id] = value);
@@ -719,8 +729,8 @@ child.get(Service).config; // now, in current injector, works cache: { one: 11, 
 
     if (resolvedProvider) {
       return resolvedProvider;
-    } else if (injector.#parent) {
-      return injector.#parent.getResolvedProvider(injector.#parent, dualKey);
+    } else if (injector.parent) {
+      return injector.parent.getResolvedProvider(injector.parent, dualKey);
     }
   }
 

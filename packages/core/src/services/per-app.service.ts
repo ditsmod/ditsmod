@@ -23,10 +23,8 @@ export class PerAppService {
       this.providers.push(...providers);
     }
     this.#injector = Injector.resolveAndCreate(this.providers, 'injectorPerApp');
-    return this.#injector;
-  }
-
-  get injector() {
-    return this.#injector;
+    const child = this.#injector.createChildFromResolved([]);
+    child.setParentGetter(() => this.#injector);
+    return child;
   }
 }
