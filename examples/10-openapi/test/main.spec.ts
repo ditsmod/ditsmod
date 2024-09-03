@@ -25,6 +25,20 @@ describe('10-openapi', () => {
       .expect('Hello World!\n');
   });
 
+  it('serves main page for OpenAPI docs', async () => {
+    await testAgent
+      .get('/openapi')
+      .expect(200)
+      .responseType('text/html');
+  });
+
+  it('serves route with JSON response for OpenAPI docs', async () => {
+    const { status, type, headers } = await testAgent.get('/openapi.json');
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(Number(headers?.['content-length'])).toBeGreaterThan(0);
+  });
+
   it('controller works', async () => {
     await testAgent
       .get('/resource/123')
