@@ -43,7 +43,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `"${moduleName}" has already been imported into "${moduleId}".`
+   * `Starting Ditsmod application...`
    */
   startingDitsmod(self: object) {
     const className = self.constructor.name;
