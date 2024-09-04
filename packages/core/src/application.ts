@@ -76,6 +76,7 @@ export class Application {
     await appInitializer.bootstrapModulesAndExtensions();
     // Here, after init extensions, reinit Logger with new config.
     this.systemLogMediator = appInitializer.systemLogMediator;
+    (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
   }
 
   protected async createServerAndBindToListening(appInitializer: AppInitializer, resolve: AnyFn) {
