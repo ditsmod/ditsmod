@@ -9,6 +9,10 @@ export class PerAppService {
   providers: Provider[] = [];
   #injector: Injector;
 
+  get injector() {
+    return this.reinitInjector();
+  }
+
   /**
    * Applies providers per app to create new injector.
    */
