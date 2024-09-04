@@ -13,10 +13,10 @@ import { PreRouter } from '#services/pre-router.js';
 export const defaultProvidersPerApp: Readonly<Provider[]> = [
   ...new Providers()
     .passThrough(PreRouter)
-    .passThrough(Counter)
     .passThrough(ModuleManager)
     .passThrough(SystemLogMediator)
     .passThrough(SystemErrorMediator)
+    .useValue(Counter, new Counter())
     .useValue(RequestContext, RequestContext)
     .useValue<ModuleExtract>(ModuleExtract, { moduleName: 'AppModule' })
     .useClass(Logger, ConsoleLogger),
