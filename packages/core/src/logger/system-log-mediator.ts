@@ -305,9 +305,13 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `setted route ${httpMethod} "/${path}"`.
    */
-  printRoute(self: object, httpMethod: string, path: string) {
+  printRoute(self: object, httpMethod: string, path: string, countOfGuards: number) {
     const className = self.constructor.name;
-    this.setLog('debug', `${className}: setted route ${httpMethod} "/${path}".`);
+    let withGuards = '';
+    if (countOfGuards) {
+      withGuards = countOfGuards > 1 ? ` with ${countOfGuards} guards` : ' with 1 guard';
+    }
+    this.setLog('debug', `${className}: setted route ${httpMethod} "/${path}"${withGuards}.`);
   }
 
   /**

@@ -22,6 +22,7 @@ export interface PreparedRouteMeta {
   httpMethod: HttpMethod;
   path: string;
   handle: RouteHandler;
+  countOfGuards: number;
 }
 
 export type Fn = (...args: any[]) => any;

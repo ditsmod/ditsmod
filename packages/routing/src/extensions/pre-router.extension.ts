@@ -94,6 +94,7 @@ export class PreRouterExtension implements Extension<void> {
           httpMethod: controllersMetadata2.httpMethod,
           path: controllersMetadata2.path,
           handle,
+          countOfGuards: controllersMetadata2.routeMeta.resolvedGuards.length
         });
       });
     });
@@ -215,7 +216,7 @@ export class PreRouterExtension implements Extension<void> {
     }
 
     preparedRouteMeta.forEach((data) => {
-      const { moduleName, path, httpMethod, handle } = data;
+      const { moduleName, path, httpMethod, handle, countOfGuards } = data;
 
       if (path?.charAt(0) == '/') {
         let msg = `Invalid configuration of route '${path}'`;
@@ -223,7 +224,7 @@ export class PreRouterExtension implements Extension<void> {
         throw new Error(msg);
       }
 
-      this.log.printRoute(this, httpMethod, path);
+      this.log.printRoute(this, httpMethod, path, countOfGuards);
       if (httpMethod == 'ALL') {
         this.router.all(`/${path}`, handle);
       } else {
