@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/i18n",
   "type": "module",
-  "version": "2.12.2",
+  "version": "2.13.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -36,8 +36,8 @@
   "author": "Костя Третяк",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^2.55.0",
-    "@ditsmod/routing": "^2.3.0"
+    "@ditsmod/core": "^2.56.0",
+    "@ditsmod/routing": "^2.4.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }
