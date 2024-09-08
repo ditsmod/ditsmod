@@ -6,17 +6,17 @@ sidebar_position: 7
 
 ## The purpose of Ditsmod extension
 
-Typically, an extension does its work before creating HTTP request handlers. To modify or extend the behavior of an application, an extension typically uses static metadata attached to certain decorators. On the other hand, an extension can also dynamically add metadata of the same type as static metadata collected from decorators. Extensions can be initialized asynchronously, and can depend on each other.
+Typically, an extension does its work before the HTTP request handlers are created. To modify or extend the application's functionality, the extension uses static metadata that is attached to specific decorators. On the other hand, the extension can also dynamically add metadata of the same type as the static metadata. Extensions can initialize asynchronously, and can depend on each other.
 
-Essentially, different extensions work on a multidimensional array of configuration data (metadata). This array reflects the structure of the application:
+The task of most extensions is to act like a pipeline, taking a multidimensional array of configuration data (metadata) as input and producing another (or augmented) multidimensional array as output. This final array is ultimately interpreted by the target extension, e.g. to create routes and their handlers. However, extensions do not necessarily need to work with configuration or setting up HTTP request handlers; they can also write logs, collect metrics for monitoring, or perform other tasks.
 
-1. it is divided into modules;
+In most cases, these multidimensional arrays reflect the structure of the application:
+
+1. they are divided into modules;
 2. each module contains controllers or providers;
 3. each controller has one or more routes.
 
-Typically, each extension makes some modifications to this array, like in a pipeline, and eventually, this array is used by the final extension, which creates routes and sets up the appropriate HTTP request handlers. However, extensions don't necessarily have to work on configuration and setting up HTTP request handlers; they can also write logs, collect metrics for monitoring, or perform any other tasks.
-
-For example, the [@ditsmod/body-parser][5] module has an extension that dynamically adds an HTTP interceptor for parsing the request body to any route that has the appropriate method (POST, PATCH, PUT). It does this once before creating HTTP request handlers, so there is no need to test the need for such parsing for each request.
+For example, in the [@ditsmod/body-parser][5] module, there is an extension that dynamically adds an HTTP interceptor to parse the request body for each route that has the appropriate method (POST, PATCH, PUT). It does this once before the HTTP request handlers are created, so there is no need to check the need for parsing on every request.
 
 Another example. The [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without the extension working, Ditsmod will ignore the metadata from this new decorator. The extension from this module receives the aforementioned configuration array, finds the metadata from the `@oasRoute` decorator, and interprets this metadata by adding other metadata that will be used by another extension to set up routes.
 
