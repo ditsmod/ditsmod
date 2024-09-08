@@ -7,6 +7,6 @@ import { MyExtension } from './my-extension.js';
 @rootModule({
   imports: [RoutingModule],
   controllers: [HelloWorldController],
-  extensions: [{ extension: MyExtension, groupToken: PRE_ROUTER_EXTENSIONS }],
+  extensions: [{ extension: MyExtension, token: PRE_ROUTER_EXTENSIONS }],
 })
 export class AppModule {}

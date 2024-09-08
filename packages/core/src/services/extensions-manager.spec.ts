@@ -76,10 +76,10 @@ describe('ExtensionsManager circular dependencies', () => {
     const injector = Injector.resolveAndCreate([
       ...defaultProvidersPerApp,
       ...getExtensionProviderList([
-        { groupToken: MY_EXTENSIONS1, extension: Extension1 },
-        { groupToken: MY_EXTENSIONS2, extension: Extension2 },
-        { groupToken: MY_EXTENSIONS3, extension: Extension3 },
-        { groupToken: MY_EXTENSIONS4, extension: Extension4 },
+        { token: MY_EXTENSIONS1, extension: Extension1 },
+        { token: MY_EXTENSIONS2, extension: Extension2 },
+        { token: MY_EXTENSIONS3, extension: Extension3 },
+        { token: MY_EXTENSIONS4, extension: Extension4 },
       ]),
       MockExtensionsManager,
       ExtensionsContext,

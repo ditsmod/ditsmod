@@ -9,7 +9,10 @@ export class ExtensionObj {
 
 export interface ExtensionOptionsBase {
   extension: ExtensionType;
-  groupToken: InjectionToken<Extension[]>;
+  /**
+   * Extension group token.
+   */
+  token: InjectionToken<Extension[]>;
   /**
    * The token of the group before which this extension will be called. Use this option
    * only if the extension group you place here does not expect your extension group to work.
@@ -57,7 +60,7 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
       providers: [{ token: overrideExtension, useClass: extension }],
     };
   } else if (extensionOptions.nextToken) {
-    const { nextToken, exported, exportedOnly, extension, groupToken } = extensionOptions;
+    const { nextToken, exported, exportedOnly, extension, token: groupToken } = extensionOptions;
     const beforeGroupToken = KeyRegistry.getBeforeToken(nextToken);
     const exports = exported || exportedOnly ? [extension, groupToken, beforeGroupToken] : [];
     return {
@@ -70,7 +73,7 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
       ],
     };
   } else {
-    const { exported, exportedOnly, extension, groupToken } = extensionOptions;
+    const { exported, exportedOnly, extension, token: groupToken } = extensionOptions;
     const exports = exported || exportedOnly ? [extension, groupToken] : [];
     return {
       exportedOnly,

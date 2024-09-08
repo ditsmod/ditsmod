@@ -33,7 +33,7 @@ import { MulterSingletonParser } from './multer-singleton.parser.js';
   extensions: [
     {
       extension: BodyParserExtension,
-      groupToken: BODY_PARSER_EXTENSIONS,
+      token: BODY_PARSER_EXTENSIONS,
       nextToken: PRE_ROUTER_EXTENSIONS,
       exportedOnly: true,
     },

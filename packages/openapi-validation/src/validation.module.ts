@@ -16,7 +16,7 @@ import { ValidationExtension } from './validation.extension.js';
   extensions: [
     {
       extension: ValidationExtension,
-      groupToken: VALIDATION_EXTENSIONS,
+      token: VALIDATION_EXTENSIONS,
       nextToken: PRE_ROUTER_EXTENSIONS,
       exportedOnly: true,
     },

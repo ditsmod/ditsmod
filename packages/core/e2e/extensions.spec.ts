@@ -31,7 +31,7 @@ describe('extensions e2e', () => {
 
     @featureModule({
       providersPerMod: [Provider1],
-      extensions: [{ groupToken: MY_EXTENSIONS1, extension: Extension1, exportedOnly: true }],
+      extensions: [{ token: MY_EXTENSIONS1, extension: Extension1, exportedOnly: true }],
     })
     class Module1 {}
 
@@ -107,14 +107,14 @@ describe('extensions e2e', () => {
 
     @featureModule({
       providersPerMod: [Provider1],
-      extensions: [{ groupToken: MY_EXTENSIONS1, extension: Extension1, exportedOnly: true }],
+      extensions: [{ token: MY_EXTENSIONS1, extension: Extension1, exportedOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
       imports: [Module1],
       providersPerMod: [Provider2],
-      extensions: [{ groupToken: MY_EXTENSIONS2, extension: Extension2, exportedOnly: true }],
+      extensions: [{ token: MY_EXTENSIONS2, extension: Extension2, exportedOnly: true }],
       exports: [Provider2],
     })
     class Module2 {}
@@ -197,13 +197,13 @@ describe('extensions e2e', () => {
     }
 
     @featureModule({
-      extensions: [{ groupToken: MY_EXTENSIONS1, extension: Extension1, exportedOnly: true }],
+      extensions: [{ token: MY_EXTENSIONS1, extension: Extension1, exportedOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
       imports: [Module1],
-      extensions: [{ groupToken: MY_EXTENSIONS2, extension: Extension2, exportedOnly: true }],
+      extensions: [{ token: MY_EXTENSIONS2, extension: Extension2, exportedOnly: true }],
     })
     class Module2 {}
 

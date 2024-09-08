@@ -68,7 +68,7 @@ describe('ModuleManager', () => {
       const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
 
       @featureModule({
-        extensions: [{ extension: Ext, groupToken: GROUP1_EXTENSIONS, exported: true }],
+        extensions: [{ extension: Ext, token: GROUP1_EXTENSIONS, exported: true }],
       })
       class Module1 {}
 
@@ -356,7 +356,7 @@ describe('ModuleManager', () => {
     class Extension1 {}
     const TEST_EXTENSIONS = new InjectionToken<Extension>('TEST_EXTENSIONS');
 
-    @featureModule({ extensions: [{ extension: Extension1 as any, groupToken: TEST_EXTENSIONS, exported: true }] })
+    @featureModule({ extensions: [{ extension: Extension1 as any, token: TEST_EXTENSIONS, exported: true }] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).toThrow('must have init() method');
@@ -369,7 +369,7 @@ describe('ModuleManager', () => {
     }
     const TEST_EXTENSIONS = new InjectionToken<Extension>('TEST_EXTENSIONS');
 
-    @featureModule({ extensions: [{ extension: Extension1 as any, groupToken: TEST_EXTENSIONS, exported: true }] })
+    @featureModule({ extensions: [{ extension: Extension1 as any, token: TEST_EXTENSIONS, exported: true }] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).not.toThrow();
@@ -808,7 +808,7 @@ describe('ModuleManager', () => {
     ];
 
     @featureModule({
-      extensions: [{ extension: Extension1 as any, groupToken: GROUP_EXTENSIONS, exported: true }],
+      extensions: [{ extension: Extension1 as any, token: GROUP_EXTENSIONS, exported: true }],
     })
     class Module1 {}
 
@@ -854,7 +854,7 @@ describe('ModuleManager', () => {
     ];
 
     @featureModule({
-      extensions: [{ extension: Extension1 as any, groupToken: GROUP_EXTENSIONS, exported: true }],
+      extensions: [{ extension: Extension1 as any, token: GROUP_EXTENSIONS, exported: true }],
     })
     class Module1 {}
 

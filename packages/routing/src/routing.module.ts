@@ -12,8 +12,8 @@ import { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS } from './types.js';
 @featureModule({
   providersPerApp: [{ token: Router, useClass: DefaultRouter }, RouterErrorMediator],
   extensions: [
-    { extension: RoutesExtension, groupToken: ROUTES_EXTENSIONS, exportedOnly: true },
-    { extension: PreRouterExtension, groupToken: PRE_ROUTER_EXTENSIONS, exportedOnly: true },
+    { extension: RoutesExtension, token: ROUTES_EXTENSIONS, exportedOnly: true },
+    { extension: PreRouterExtension, token: PRE_ROUTER_EXTENSIONS, exportedOnly: true },
   ],
 })
 export class RoutingModule {}
