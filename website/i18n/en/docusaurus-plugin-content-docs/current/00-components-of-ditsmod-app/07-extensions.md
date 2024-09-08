@@ -108,9 +108,12 @@ As you can see, each extension group must specify that DI will return an array o
 Objects of the following type can be transferred to the `extensions` array, which is in the module's metadata:
 
 ```ts
-export class ExtensionOptions {
+class ExtensionOptions {
   extension: ExtensionType;
-  groupToken: InjectionToken<Extension<any>[]>;
+  /**
+   * Extension group token.
+   */
+  token: InjectionToken<Extension<any>[]>;
   /**
    * The token of the group before which this extension will be called.
    */
@@ -119,6 +122,10 @@ export class ExtensionOptions {
    * Indicates whether this extension needs to be exported.
    */
   exported?: boolean;
+  /**
+   * Indicates whether this extension needs to be exported without working in host module.
+   */
+  exportedOnly?: boolean;
 }
 ```
 
@@ -130,13 +137,13 @@ import { MyExtension, MY_EXTENSIONS } from './my.extension.js';
 
 @featureModule({
   extensions: [
-    { extension: MyExtension, groupToken: MY_EXTENSIONS, nextToken: ROUTES_EXTENSIONS, exported: true }
+    { extension: MyExtension, token: MY_EXTENSIONS, nextToken: ROUTES_EXTENSIONS, exported: true }
   ],
 })
 export class SomeModule {}
 ```
 
-That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `groupToken` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `nextToken` property. The `exported` property indicates whether this extension is required to work in an external module that will import this module.
+That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `token` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `nextToken` property. Optionally, you can use the `exported` or `exportedOnly` property to specify whether this extension should function in an external module that imports this module. Additionally, the `exportedOnly` property indicates that this extension should not be executed in the so-called host module (i.e., the module where this extension is declared).
 
 If it doesn't matter which group of extensions your extension will work in front of, you can simplify registration:
 
@@ -146,7 +153,7 @@ import { MyExtension, MY_EXTENSIONS } from './my.extension.js';
 
 @featureModule({
   extensions: [
-    { extension: MyExtension, groupToken: MY_EXTENSIONS, exported: true }
+    { extension: MyExtension, token: MY_EXTENSIONS, exported: true }
   ],
 })
 export class SomeModule {}

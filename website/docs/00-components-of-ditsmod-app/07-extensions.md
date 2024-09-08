@@ -103,14 +103,17 @@ export const MY_EXTENSIONS = new InjectionToken<Extension<void>[]>('MY_EXTENSION
 
 Як бачите, кожна група розширень повинна указувати, що DI повертатиме масив інстансів розширень: `Extension<void>[]`. Це треба робити обов'язково, відмінність може бути хіба що в типі даних для дженеріка `Extension<T>[]`.
 
-### Реєстрація розширення в групі
+### Реєстрація розширення у групі
 
 В масив `extensions`, що знаходиться в метаданих модуля, можуть передаватись об'єкти наступного типу:
 
 ```ts
-export class ExtensionOptions {
+class ExtensionOptions {
   extension: ExtensionType;
-  groupToken: InjectionToken<Extension<any>[]>;
+  /**
+   * Extension group token.
+   */
+  token: InjectionToken<Extension<any>[]>;
   /**
    * The token of the group before which this extension will be called.
    */
@@ -119,6 +122,10 @@ export class ExtensionOptions {
    * Indicates whether this extension needs to be exported.
    */
   exported?: boolean;
+  /**
+   * Indicates whether this extension needs to be exported without working in host module.
+   */
+  exportedOnly?: boolean;
 }
 ```
 
@@ -130,13 +137,13 @@ import { MyExtension, MY_EXTENSIONS } from './my.extension.js';
 
 @featureModule({
   extensions: [
-    { extension: MyExtension, groupToken: MY_EXTENSIONS, nextToken: ROUTES_EXTENSIONS, exported: true }
+    { extension: MyExtension, token: MY_EXTENSIONS, nextToken: ROUTES_EXTENSIONS, exported: true }
   ],
 })
 export class SomeModule {}
 ```
 
-Тобто у властивість `groupToken` передається токен групи `MY_EXTENSIONS`, до якої належить ваше розширення. У властивість `nextToken` передається токен групи розширень `ROUTES_EXTENSIONS`, перед якою потрібно запускати групу `MY_EXTENSIONS`. Властивість `exported` вказує на те, чи потрібно щоб дане розширення працювало у зовнішньому модулі, яке імпортуватиме цей модуль.
+Тобто у властивість `token` передається токен групи `MY_EXTENSIONS`, до якої належить ваше розширення. У властивість `nextToken` передається токен групи розширень `ROUTES_EXTENSIONS`, перед якою потрібно запускати групу `MY_EXTENSIONS`. Опціонально можна використовувати властивість `exported` або `exportedOnly` для того, щоб вказати, чи потрібно щоб дане розширення працювало у зовнішньому модулі, яке імпортуватиме цей модуль. Окрім цього, властивість `exportedOnly` ще й вказує на те, що дане розширення не потрібно запускати у так званому хост-модулі (тобто в модулі, де оголошується це розширення).
 
 Якщо ж для вашого розширення не важливо перед якою групою розширень воно працюватиме, можна спростити реєстрацію:
 
@@ -146,7 +153,7 @@ import { MyExtension, MY_EXTENSIONS } from './my.extension.js';
 
 @featureModule({
   extensions: [
-    { extension: MyExtension, groupToken: MY_EXTENSIONS, exported: true }
+    { extension: MyExtension, token: MY_EXTENSIONS, exported: true }
   ],
 })
 export class SomeModule {}
