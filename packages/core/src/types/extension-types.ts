@@ -10,7 +10,6 @@ export class ExtensionsMetaPerApp {
  */
 export class ExtensionInitMeta<T = any> {
   /**
-   *
    * @param extension Instance of an extension.
    * @param payload Value that `extension` returns from its `init` method.
    */

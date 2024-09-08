@@ -145,20 +145,6 @@ export class SomeModule {}
 
 That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `token` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `nextToken` property. Optionally, you can use the `exported` or `exportedOnly` property to specify whether this extension should function in an external module that imports this module. Additionally, the `exportedOnly` property indicates that this extension should not be executed in the so-called host module (i.e., the module where this extension is declared).
 
-If it doesn't matter which group of extensions your extension will work in front of, you can simplify registration:
-
-```ts
-import { featureModule } from '@ditsmod/core';
-import { MyExtension, MY_EXTENSIONS } from './my.extension.js';
-
-@featureModule({
-  extensions: [
-    { extension: MyExtension, token: MY_EXTENSIONS, exported: true }
-  ],
-})
-export class SomeModule {}
-```
-
 ## Using ExtensionsManager
 
 If a certain extension has a dependency on another extension, it is recommended to specify that dependency indirectly through the extension group. To do this, you need `ExtensionsManager`, which initializes extensions groups, throws errors about cyclic dependencies between extensions, and shows the entire chain of extensions that caused the loop. Additionally, `ExtensionsManager` allows you to collect extensions initialization results from the entire application, not just from a single module.
@@ -182,31 +168,66 @@ export class MyExtension implements Extension<void> {
       return;
     }
 
-    const result = await this.extensionsManager.init(OTHER_EXTENSIONS);
-    // Do something here.
+    const totalInitMeta = await this.extensionsManager.init(OTHER_EXTENSIONS);
+
+    totalInitMeta.groupInitMeta.forEach((initMeta) => {
+      const someData = initMeta.payload;
+      // Do something here.
+      // ...
+    });
+
     this.inited = true;
   }
 }
 ```
 
-`ExtensionsManager` will sequentially cause the initialization of all extensions from the specified group, and the result of their work will return as an array. If extensions return arrays, they will automatically merge into a single resulting array. This behavior can be changed if the second argument in `init()` pass `false`:
+The `ExtensionsManager` will sequentially initialize all extensions from a given group and return the result in an object that follows this interface:
 
 ```ts
-await this.extensionsManager.init(OTHER_EXTENSIONS, false);
+interface TotalInitMeta<T = any> {
+  delay: boolean;
+  countdown = 0;
+  totalInitMetaPerApp: TotalInitMetaPerApp<T>[];
+  groupInitMeta: ExtensionInitMeta<T>[],
+  moduleName: string;
+}
 ```
 
-It is important to remember that running `init()` a particular extension processes data only in the context of the current module. For example, if `MyExtension` is imported into three different modules, Ditsmod will sequentially process these three modules with three different `MyExtension` instances. This means that one extension instance will only be able to collect data from one module.
+If the `delay` property is `true`, it means that the `totalInitMetaPerApp` property does not yet contain data from all modules where this extension group (`OTHER_EXTENSIONS`) is imported. The `countdown` property indicates how many modules are left for this extension group to process before `totalInitMetaPerApp` will contain data from all modules. Thus, the `delay` and `countdown` properties only apply to `totalInitMetaPerApp`.
 
-In case you need to accumulate the results of a certain extension from all modules, you need to do the following:
+The `groupInitMeta` property holds an array of data collected from the current module by different extensions of this group. Each element of the `groupInitMeta` array follows this interface:
 
-```ts {17-20}
+```ts
+interface ExtensionInitMeta<T = any> {
+  /**
+   * Instance of an extension.
+   */
+  extension: Extension<T>;
+  /**
+   * Value that `extension` returns from its `init` method.
+   */
+  payload: T;
+  delay: boolean;
+  countdown: number;
+}
+```
+
+The `extension` property contains the instance of the extension, and the `payload` property holds the data returned by the extension's `init()` method.
+
+If `delay == true` and `countdown > 0`, it indicates that this extension has not yet finished its work in other modules where it was imported. In this case, the `delay` and `countdown` properties refer specifically to the extension, not the group of extensions (in this case, the `OTHER_EXTENSIONS` group).
+
+It's important to note that a separate instance of each extension is created for each module. For example, if `MyExtension` is imported into three different modules, Ditsmod will process these three modules sequentially with three different instances of `MyExtension`. Additionally, if `MyExtension` requires data from, say, the `OTHER_EXTENSIONS` group, which spans four modules, but `MyExtension` is only imported into three modules, it may not receive all the necessary data from one of the modules.
+
+In this case, you need to pass `true` as the second argument to the `extensionsManager.init` method:
+
+```ts {17}
 import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions.js';
 
 @injectable()
-export class MyExtension implements Extension<void | false> {
+export class MyExtension implements Extension<void> {
   private inited: boolean;
 
   constructor(private extensionsManager: ExtensionsManager) {}
@@ -216,24 +237,31 @@ export class MyExtension implements Extension<void | false> {
       return;
     }
 
-    const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExtension);
-    if (!result) {
-      return false;
+    const totalInitMeta = await this.extensionsManager.init(OTHER_EXTENSIONS, true);
+    if (totalInitMeta.delay) {
+      return;
     }
 
-    // Do something here.
+    totalInitMeta.totalInitMetaPerApp.forEach((totaInitMeta) => {
+      totaInitMeta.groupInitMeta.forEach((initMeta) => {
+        const someData = initMeta.payload;
+        // Do something here.
+        // ...
+      });
+    });
+
     this.inited = true;
   }
 }
 ```
 
-That is, when you need `MyExtension` to receive data from the `OTHER_EXTENSIONS` group from the entire application, you need to pass `MyExtension` as the third argument here:
+Thus, when you need `MyExtension` to receive data from the `OTHER_EXTENSIONS` group throughout the application, you need to pass `true` as the second argument to the `init` method:
 
 ```ts
-const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExtension);
+const totalInitMeta = await this.extensionsManager.init(OTHER_EXTENSIONS, true);
 ```
 
-This expression will return `false` until the last time the group `OTHER_EXTENSIONS` is called. For example, if the group `OTHER_EXTENSIONS` works in three different modules, then this expression in the first two modules will return `false`, and in the third - the value that this group of extensions should return.
+In this case, it is guaranteed that the `MyExtension` instance will receive data from all modules where `OTHER_EXTENSIONS` is imported. Even if `MyExtension` is imported into a module without any extensions from the `OTHER_EXTENSIONS` group, but these extensions exist in other modules, the `init` method of this extension will still be called after all extensions are initialized, ensuring that `MyExtension` receives data from `OTHER_EXTENSIONS` across all modules.
 
 ## Dynamic addition of providers
 
@@ -241,35 +269,46 @@ Any extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynam
 
 You can see how it is done in [BodyParserExtension][3]:
 
-```ts {12,28}
+```ts {15,31,38}
 @injectable()
 export class BodyParserExtension implements Extension<void> {
   private inited: boolean;
 
-  constructor(protected extensionManager: ExtensionsManager, protected perAppService: PerAppService) {}
+  constructor(
+    protected extensionManager: ExtensionsManager,
+    protected perAppService: PerAppService,
+  ) {}
 
   async init() {
     if (this.inited) {
       return;
     }
 
-    const aMetadataPerMod2 = await this.extensionManager.init(ROUTES_EXTENSIONS);
-    aMetadataPerMod2.forEach((metadataPerMod2) => {
-      const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
-      aControllersMetadata2.forEach(({ providersPerRou, providersPerReq, httpMethod }) => {
+    const totalInitMeta = await this.extensionManager.init(ROUTES_EXTENSIONS);
+    totalInitMeta.groupInitMeta.forEach((initMeta) => {
+      const { aControllersMetadata2, providersPerMod } = initMeta.payload;
+      aControllersMetadata2.forEach(({ providersPerRou, providersPerReq, httpMethod, isSingleton }) => {
         // Merging the providers from a module and a controller
-        const mergedProvidersPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
-        const mergedProvidersPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
+        const mergedProvidersPerRou = [...initMeta.payload.providersPerRou, ...providersPerRou];
+        const mergedProvidersPerReq = [...initMeta.payload.providersPerReq, ...providersPerReq];
 
         // Creating a hierarchy of injectors.
         const injectorPerApp = this.perAppService.injector;
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
-        const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
-        let bodyParserConfig = injectorPerReq.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
-        bodyParserConfig = Object.assign({}, new BodyParserConfig(), bodyParserConfig); // Merge with default.
-        if (bodyParserConfig.acceptMethods?.includes(httpMethod)) {
-          providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
+        if (isSingleton) {
+          let bodyParserConfig = injectorPerRou.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
+          bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
+          if (bodyParserConfig.acceptMethods!.includes(httpMethod)) {
+            providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: SingletonBodyParserInterceptor, multi: true });
+          }
+        } else {
+          const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
+          let bodyParserConfig = injectorPerReq.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
+          bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
+          if (bodyParserConfig.acceptMethods!.includes(httpMethod)) {
+            providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
+          }
         }
       });
     });
@@ -284,7 +323,7 @@ In this case, the HTTP interceptor is added to the `providersPerReq` array in th
 Of course, such dynamic addition of providers is possible only before creating HTTP request handlers.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
-[3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54
+[3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.17.0/packages/body-parser/src/body-parser.extension.ts#L54
 [4]: #registering-an-extension-in-a-group
 [5]: /native-modules/body-parser
 [6]: /native-modules/openapi

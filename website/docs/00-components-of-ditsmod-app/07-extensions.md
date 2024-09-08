@@ -145,20 +145,6 @@ export class SomeModule {}
 
 Тобто у властивість `token` передається токен групи `MY_EXTENSIONS`, до якої належить ваше розширення. У властивість `nextToken` передається токен групи розширень `ROUTES_EXTENSIONS`, перед якою потрібно запускати групу `MY_EXTENSIONS`. Опціонально можна використовувати властивість `exported` або `exportedOnly` для того, щоб вказати, чи потрібно щоб дане розширення працювало у зовнішньому модулі, яке імпортуватиме цей модуль. Окрім цього, властивість `exportedOnly` ще й вказує на те, що дане розширення не потрібно запускати у так званому хост-модулі (тобто в модулі, де оголошується це розширення).
 
-Якщо ж для вашого розширення не важливо перед якою групою розширень воно працюватиме, можна спростити реєстрацію:
-
-```ts
-import { featureModule } from '@ditsmod/core';
-import { MyExtension, MY_EXTENSIONS } from './my.extension.js';
-
-@featureModule({
-  extensions: [
-    { extension: MyExtension, token: MY_EXTENSIONS, exported: true }
-  ],
-})
-export class SomeModule {}
-```
-
 ## Використання ExtensionsManager
 
 Якщо певне розширення має залежність від іншого розширення, рекомендується вказувати таку залежність посередньо через групу розширень. Для цього вам знадобиться `ExtensionsManager`, який ініціалізує групи розширень, кидає помилки про циклічні залежності між розширеннями, і показує весь ланцюжок розширень, що призвів до зациклення. Окрім цього, `ExtensionsManager` дозволяє збирати результати ініціалізації розширень з усього застосунку, а не лише з одного модуля.
@@ -182,31 +168,66 @@ export class MyExtension implements Extension<void> {
       return;
     }
 
-    const result = await this.extensionsManager.init(OTHER_EXTENSIONS);
-    // Do something here.
+    const totalInitMeta = await this.extensionsManager.init(OTHER_EXTENSIONS);
+
+    totalInitMeta.groupInitMeta.forEach((initMeta) => {
+      const someData = initMeta.payload;
+      // Do something here.
+      // ...
+    });
+
     this.inited = true;
   }
 }
 ```
 
-`ExtensionsManager` буде послідовно викликати ініціалізацію усіх розширень з указаної групи, а результат їхньої роботи повертатиме у вигляді масиву. Якщо розширення повертатимуть масиви, вони будуть автоматично злиті у єдиний результуючий масив. Цю поведінку можна змінити, якщо другим аргументом у `init()` передати `false`:
+`ExtensionsManager` буде послідовно викликати ініціалізацію усіх розширень з указаної групи, а результат їхньої роботи повертатиме в об'єкті, що має наступний інтерфейс:
 
 ```ts
-await this.extensionsManager.init(OTHER_EXTENSIONS, false);
+interface TotalInitMeta<T = any> {
+  delay: boolean;
+  countdown = 0;
+  totalInitMetaPerApp: TotalInitMetaPerApp<T>[];
+  groupInitMeta: ExtensionInitMeta<T>[],
+  moduleName: string;
+}
 ```
 
-Важливо пам'ятати, що запуск `init()` певного розширення обробляє дані лише в контексті поточного модуля. Наприклад, якщо `MyExtension` імпортовано у три різні модулі, то Ditsmod буде послідовно обробляти ці три модулі із трьома різними інстансами `MyExtension`. Це означає, що один інстанс розширення зможе збирати дані лише з одного модуля.
+Якщо властивість `delay == true` - це означає, що властивість `totalInitMetaPerApp` містить дані ще не з усіх модулів, куди імпортовано дану групу розширень (`OTHER_EXTENSIONS`). Властивість `countdown` вказує, у скількох модулях ще залишилось відпрацювати даній групі розширень, щоб властивість `totalInitMetaPerApp` містила дані з усіх модулів. Тобто властивості `delay` та `countdown` стосуються лише властивості `totalInitMetaPerApp`.
 
-У випадку, коли вам потрібно накопичувати результати роботи певного розширення з усіх модулів, необхідно робити наступне:
+У властивості `groupInitMeta` знаходиться масив, де зібрані дані з поточного модуля від різних розширень з даної групи розширень. Кожен елемент масиву `groupInitMeta` має наступний інтерфейс:
 
-```ts {17-20}
+```ts
+interface ExtensionInitMeta<T = any> {
+  /**
+   * Instance of an extension.
+   */
+  extension: Extension<T>;
+  /**
+   * Value that `extension` returns from its `init` method.
+   */
+  payload: T;
+  delay: boolean;
+  countdown: number;
+}
+```
+
+Властивість `extension` містить інстанс розширення, а властивість `payload` - дані, які повертає метод `init()` цього розширення.
+
+Якщо властивість `delay == true` та `countdown > 0` - це означає, що дане розширення ще не відпрацювало в інших модулях, куди його імпортували. Тобто властивості `delay` та `countdown` стосуються самого розширення, і не стосуються даної групи розширень (в даному разі - групи `OTHER_EXTENSIONS`).
+
+Важливо пам'ятати, що для кожного модуля створюється окремий інстанс певного розширення. Наприклад, якщо `MyExtension` імпортовано у три різні модулі, то Ditsmod буде послідовно обробляти ці три модулі із трьома різними інстансами `MyExtension`. Окрім цього, якщо `MyExtension` потребує підсумкові дані, наприклад, від групи розширень `OTHER_EXTENSIONS` із чотирьох модулів, а саме `MyExtension` імпортовано лише у три модулі, це означає, що з одного модуля `MyExtension` може і не отримати необхідних даних.
+
+В такому випадку потрібно передавати `true` у якості аргументу для другого параметра методу `extensionsManager.init`:
+
+```ts {17}
 import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions.js';
 
 @injectable()
-export class MyExtension implements Extension<void | false> {
+export class MyExtension implements Extension<void> {
   private inited: boolean;
 
   constructor(private extensionsManager: ExtensionsManager) {}
@@ -216,24 +237,31 @@ export class MyExtension implements Extension<void | false> {
       return;
     }
 
-    const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExtension);
-    if (!result) {
-      return false;
+    const totalInitMeta = await this.extensionsManager.init(OTHER_EXTENSIONS, true);
+    if (totalInitMeta.delay) {
+      return;
     }
 
-    // Do something here.
+    totalInitMeta.totalInitMetaPerApp.forEach((totaInitMeta) => {
+      totaInitMeta.groupInitMeta.forEach((initMeta) => {
+        const someData = initMeta.payload;
+        // Do something here.
+        // ...
+      });
+    });
+
     this.inited = true;
   }
 }
 ```
 
-Тобто коли вам потрібно щоб `MyExtension` отримало дані з групи `OTHER_EXTENSIONS` з усього застосунку, третім аргументом тут потрібно передавати `MyExtension`:
+Тобто коли вам потрібно щоб `MyExtension` отримало дані з групи `OTHER_EXTENSIONS` з усього застосунку, другим аргументом для методу `init` потрібно передавати `true`:
 
 ```ts
-const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExtension);
+const totalInitMeta = await this.extensionsManager.init(OTHER_EXTENSIONS, true);
 ```
 
-Даний вираз буде повертати `false` до того часу, поки не буде викликано останній раз групу `OTHER_EXTENSIONS`. Наприклад, якщо група `OTHER_EXTENSIONS` працює у трьох різних модулях, то цей вираз у перших двох модулях повертатиме `false`, а у третьому - те значення, яке повинно повертати ця група розширень.
+В такому разі гарантується, що інстанс `MyExtension` отримає дані з усіх модулів, куди імпортовано `OTHER_EXTENSIONS`. Навіть якщо `MyExtension` буде імпортовано у певний модуль, в якому немає розширень із групи `OTHER_EXTENSIONS`, але ці розширення є в інших модулях, все-одно метод `init` даного розширення буде викликано після ініціалізації усіх розширень, тому `MyExtension` отримає дані від `OTHER_EXTENSIONS` з усіх модулів.
 
 ## Динамічне додавання провайдерів
 
@@ -241,35 +269,46 @@ const result = await this.extensionsManager.init(OTHER_EXTENSIONS, true, MyExten
 
 Можна проглянути як це зроблено у [BodyParserExtension][3]:
 
-```ts {12,28}
+```ts {15,31,38}
 @injectable()
 export class BodyParserExtension implements Extension<void> {
   private inited: boolean;
 
-  constructor(protected extensionManager: ExtensionsManager, protected perAppService: PerAppService) {}
+  constructor(
+    protected extensionManager: ExtensionsManager,
+    protected perAppService: PerAppService,
+  ) {}
 
   async init() {
     if (this.inited) {
       return;
     }
 
-    const aMetadataPerMod2 = await this.extensionManager.init(ROUTES_EXTENSIONS);
-    aMetadataPerMod2.forEach((metadataPerMod2) => {
-      const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
-      aControllersMetadata2.forEach(({ providersPerRou, providersPerReq, httpMethod }) => {
-        // Зливаємо провайдери із модуля та контролера
-        const mergedProvidersPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
-        const mergedProvidersPerReq = [...metadataPerMod2.providersPerReq, ...providersPerReq];
+    const totalInitMeta = await this.extensionManager.init(ROUTES_EXTENSIONS);
+    totalInitMeta.groupInitMeta.forEach((initMeta) => {
+      const { aControllersMetadata2, providersPerMod } = initMeta.payload;
+      aControllersMetadata2.forEach(({ providersPerRou, providersPerReq, httpMethod, isSingleton }) => {
+        // Merging the providers from a module and a controller
+        const mergedProvidersPerRou = [...initMeta.payload.providersPerRou, ...providersPerRou];
+        const mergedProvidersPerReq = [...initMeta.payload.providersPerReq, ...providersPerReq];
 
-        // Створюємо ієрархію інжекторів
+        // Creating a hierarchy of injectors.
         const injectorPerApp = this.perAppService.injector;
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
-        const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
-        let bodyParserConfig = injectorPerReq.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
-        bodyParserConfig = Object.assign({}, new BodyParserConfig(), bodyParserConfig); // Merge with default.
-        if (bodyParserConfig.acceptMethods?.includes(httpMethod)) {
-          providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
+        if (isSingleton) {
+          let bodyParserConfig = injectorPerRou.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
+          bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
+          if (bodyParserConfig.acceptMethods!.includes(httpMethod)) {
+            providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: SingletonBodyParserInterceptor, multi: true });
+          }
+        } else {
+          const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
+          let bodyParserConfig = injectorPerReq.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
+          bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
+          if (bodyParserConfig.acceptMethods!.includes(httpMethod)) {
+            providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
+          }
         }
       });
     });
@@ -284,7 +323,7 @@ export class BodyParserExtension implements Extension<void> {
 Звичайно ж, таке динамічне додавання провайдерів можливе лише перед створенням обробників HTTP-запитів.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
-[3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54
+[3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.17.0/packages/body-parser/src/body-parser.extension.ts#L54
 [4]: #реєстрація-розширення-в-групі
 [5]: /native-modules/body-parser
 [6]: /native-modules/openapi
