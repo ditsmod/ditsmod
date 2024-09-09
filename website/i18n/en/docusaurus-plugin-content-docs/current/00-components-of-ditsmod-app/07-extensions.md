@@ -6,7 +6,7 @@ sidebar_position: 7
 
 ## The purpose of Ditsmod extension
 
-Typically, an extension does its work before the HTTP request handlers are created. To modify or extend the application's functionality, the extension uses static metadata that is attached to specific decorators. On the other hand, the extension can also dynamically add metadata of the same type as the static metadata. Extensions can initialize asynchronously, and can depend on each other.
+Typically, an extension does its work before the HTTP request handlers are created. To modify or extend the application's functionality, an extension uses static metadata that is attached to specific decorators. On the other hand, an extension can also dynamically add metadata of the same type as the static metadata. Extensions can initialize asynchronously, and can depend on each other.
 
 The task of most extensions is to act like a pipeline, taking a multidimensional array of configuration data (metadata) as input and producing another (or augmented) multidimensional array as output. This final array is ultimately interpreted by the target extension, e.g. to create routes and their handlers. However, extensions do not necessarily need to work with configuration or setting up HTTP request handlers; they can also write logs, collect metrics for monitoring, or perform other tasks.
 
