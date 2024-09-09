@@ -1,5 +1,34 @@
+<a name="core-2.56.0"></a>
+# [core-2.56.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.56.0) (2024-09-05)
+
+**Breaking Changes**
+
+- [renamed](https://github.com/ditsmod/ditsmod/commit/00f56e2b481) `groupToken` to `token` for `ExtensionOptionsBase`.
+- now from `extensionManager.init()` returns `TotalInitMeta`:
+
+```ts
+interface TotalInitMeta<T = any> {
+  delay: boolean;
+  countdown = 0;
+  totalInitMetaPerApp: TotalInitMetaPerApp<T>[];
+  groupInitMeta: ExtensionInitMeta<T>[],
+  moduleName: string;
+}
+```
+
+**Other changes**
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [a66c32b7d8](https://github.com/ditsmod/ditsmod/commit/a66c32b7d869f) | feat | added `preparedRouteMeta.countOfGuards`. |
+| [09b1b75177](https://github.com/ditsmod/ditsmod/commit/09b1b75177939) | feat | added `OptionalProps` as type helper. |
+| [647c365ace](https://github.com/ditsmod/ditsmod/commit/647c365ace579) | feat | added `RequireProps` type helper. |
+| [16261f4119](https://github.com/ditsmod/ditsmod/commit/16261f4119be2) | feat | added typed parameter T for `getTokens<T>()`. |
+| [98ba0cfa18](https://github.com/ditsmod/ditsmod/commit/98ba0cfa186cf) | feat | allow passing `Extension` and `ExtensionsGroupToken` without type parameter. |
+| [1a32dbcf05](https://github.com/ditsmod/ditsmod/commit/1a32dbcf05373) | feat | introduced `parentGetter()` and `setParentGetter()` for `Injector`. |
+
 <a name="core-2.55.2"></a>
-# [core-2.55.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.55.2) (2024-09-01)
+## [core-2.55.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.55.2) (2024-09-01)
 
 | Commit | Type | Description |
 | -- | -- | -- |
