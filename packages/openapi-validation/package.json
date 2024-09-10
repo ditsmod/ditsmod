@@ -24,7 +24,7 @@
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
     "test": "tsc -b tsconfig.test.json && yarn esm-jest",
-    "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../node_modules/jest/bin/jest.js"
+    "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
   "keywords": [
     "ditsmod"

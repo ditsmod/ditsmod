@@ -10,7 +10,8 @@
   },
   "scripts": {
     "start": "yarn build && nodemon --enable-source-maps dist/main.js",
-    "test": "tsc -b tsconfig.test.json && node --experimental-vm-modules ../../node_modules/jest/bin/jest.js",
+    "test": "tsc -b tsconfig.test.json && yarn esm-jest",
+    "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build": "tsc -b tsconfig.build.json",
     "clean": "rimraf dist*"
   }

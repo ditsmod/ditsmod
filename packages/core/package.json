@@ -12,8 +12,8 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
-    "test": "tsc -b tsconfig.e2e.json && yarn esm-jest",
-    "esm-jest": "node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../node_modules/jest/bin/jest.js"
+    "test": "tsc -b tsconfig.test.json && yarn esm-jest",
+    "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
   "imports": {
     "#di": "./dist/di/index.js",
