@@ -19,29 +19,31 @@ describe('19-session-cookie', () => {
 
   describe('non-singleton', () => {
     it('should set cookie', async () => {
-      await testAgent
-        .get('/set')
-        .expect(200)
-        .expect('set-cookie', /custom-session-name=123/)
-        .expect('Hello World!\n');
+      const { status, headers, text } = await testAgent.get('/set');
+      expect(status).toBe(200);
+      expect(headers['set-cookie'][0]).toMatch(/custom-session-name=123/);
+      expect(text).toBe('Hello World!\n');
     });
 
     it('should read cookie', async () => {
-      await testAgent.get('/get').set('cookie', 'custom-session-name=123').expect(200).expect('session ID: 123');
+      const { status, text } = await testAgent.get('/get').set('cookie', 'custom-session-name=123');
+      expect(status).toBe(200);
+      expect(text).toBe('session ID: 123');
     });
   });
 
   describe('singleton', () => {
     it('should set cookie', async () => {
-      await testAgent
-        .get('/set2')
-        .expect(200)
-        .expect('set-cookie', /custom-session-name=123/)
-        .expect('Hello World!\n');
+      const { status, headers, text } = await testAgent.get('/set2');
+      expect(status).toBe(200);
+      expect(headers['set-cookie'][0]).toMatch(/custom-session-name=123/);
+      expect(text).toBe('Hello World!\n');
     });
 
     it('should read cookie', async () => {
-      await testAgent.get('/get2').set('cookie', 'custom-session-name=123').expect(200).expect('session ID: 123');
+      const { status, text } = await testAgent.get('/get2').set('cookie', 'custom-session-name=123');
+      expect(status).toBe(200);
+      expect(text).toBe('session ID: 123');
     });
   });
 });
