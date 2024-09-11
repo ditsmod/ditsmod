@@ -1,7 +1,7 @@
 {
   "files": [],
   "references": [
-    { "path": "01-hello-world/tsconfig.test.json" },
+    { "path": "01-hello-world/tsconfig.e2e.json" },
     { "path": "02-http-error-handler/tsconfig.test.json" },
     { "path": "03-route-guards/tsconfig.test.json" },
     { "path": "04-logger/tsconfig.test.json" },
