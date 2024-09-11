@@ -18,27 +18,30 @@ describe('05-nested-routes', () => {
   });
 
   it('should works with /api/posts', async () => {
-    await testAgent.get('/api/posts').expect(200).expect({ pathParams: {} });
+    const { status, body, type } = await testAgent.get('/api/posts');
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ pathParams: {} });
   });
 
   it('should works with /api/posts/123', async () => {
-    await testAgent
-      .get('/api/posts/123')
-      .expect(200)
-      .expect({ pathParams: { postId: '123' } });
+    const { status, body, type } = await testAgent.get('/api/posts/123');
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ pathParams: { postId: '123' } });
   });
 
   it('should works with /api/posts/123/comments', async () => {
-    await testAgent
-      .get('/api/posts/123/comments')
-      .expect(200)
-      .expect({ pathParams: { postId: '123' } });
+    const { status, body, type } = await testAgent.get('/api/posts/123/comments');
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ pathParams: { postId: '123' } });
   });
 
   it('should works with /api/posts/123/comments/456', async () => {
-    await testAgent
-      .get('/api/posts/123/comments/456')
-      .expect(200)
-      .expect({ pathParams: { postId: '123', commentId: '456' } });
+    const { status, body, type } = await testAgent.get('/api/posts/123/comments/456');
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ pathParams: { postId: '123', commentId: '456' } });
   });
 });

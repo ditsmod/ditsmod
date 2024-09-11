@@ -18,49 +18,56 @@ describe('18-return', () => {
     server?.close();
   });
 
-  it('regular controller', async () => {
-    await testAgent
-      .get('/first')
-      .expect(200)
-      .expect('first module.\n')
-      ;
+  describe('regular controller', () => {
+    it('case 1', async () => {
+      const { status, text, type } = await testAgent.get('/first');
+      expect(type).toBe('text/plain');
+      expect(status).toBe(200);
+      expect(text).toBe('first module.\n');
+    });
 
-    await testAgent
-      .get('/second')
-      .expect(200)
-      .expect('default send')
-      ;
+    it('case 2', async () => {
+      const { status, text, type } = await testAgent.get('/second');
+      expect(type).toBe('text/plain');
+      expect(status).toBe(200);
+      expect(text).toBe('default send');
+    });
 
-    await testAgent
-      .get('/second-json')
-      .expect(200)
-      .expect({ msg: 'JSON object' })
-      ;
+    it('case 3', async () => {
+      const { status, body, type } = await testAgent.get('/second-json');
+      expect(status).toBe(200);
+      expect(type).toBe('application/json');
+      expect(body).toEqual({ msg: 'JSON object' });
+    });
 
-    await testAgent
-      .get('/second-string')
-      .expect(200)
-      .expect('Some string')
-      ;
+    it('case 4', async () => {
+      const { status, text, type } = await testAgent.get('/second-string');
+      expect(type).toBe('text/plain');
+      expect(status).toBe(200);
+      expect(text).toBe('Some string');
+    });
   });
 
-  it('singleton controller', async () => {
-    await testAgent
-      .get('/second2')
-      .expect(200)
-      .expect('default2 send')
-      ;
+  describe('singleton controller', () => {
+    it('case 2', async () => {
+      const { status, text, type } = await testAgent.get('/second2');
+      expect(type).toBe('text/plain');
+      expect(status).toBe(200);
+      expect(text).toBe('default2 send');
+    });
 
-    await testAgent
-      .get('/second2-json')
-      .expect(200)
-      .expect({ msg: 'JSON2 object' })
-      ;
+    it('case 3', async () => {
+      const { status, body, type } = await testAgent.get('/second2-json');
+      expect(status).toBe(200);
+      expect(type).toBe('application/json');
+      expect(body).toEqual({ msg: 'JSON2 object' });
+    });
 
-    await testAgent
-      .get('/second2-string')
-      .expect(200)
-      .expect('Some2 string')
-      ;
+    it('case 4', async () => {
+      const { status, text, type } = await testAgent.get('/second2-string');
+      expect(type).toBe('text/plain');
+      expect(status).toBe(200);
+      expect(text).toBe('Some2 string');
+    });
   });
 });

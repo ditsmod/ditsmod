@@ -17,28 +17,39 @@ describe('16-openapi-validation', () => {
     server?.close();
   });
 
-  it('endpoints works', async () => {
-    await testAgent.get('/users/Kostia').expect(200).expect({ username: 'Kostia' });
+  it('case 1', async () => {
+    const { status, body, type } = await testAgent.get('/users/Kostia');
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ username: 'Kostia' });
+  });
 
-    await testAgent
+  it('case 2', async () => {
+    const { status, body, type } = await testAgent
       .post('/model1')
       .set('content-type', 'application/json')
-      .send({ numbers: [5] })
-      .expect(200)
-      .expect({ numbers: [5] });
+      .send({ numbers: [5] });
 
-    await testAgent
-      .post('/model1')
-      .set('content-type', 'application/json')
-      .send({})
-      .expect(400)
-      .expect({ error: "data must have required property 'numbers'" });
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ numbers: [5] });
+  });
 
-    await testAgent
+  it('case 3', async () => {
+    const { status, body, type } = await testAgent.post('/model1').set('content-type', 'application/json').send({});
+    expect(status).toBe(400);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ error: "data must have required property 'numbers'" });
+  });
+
+  it('case 4', async () => {
+    const { status, body, type } = await testAgent
       .post('/model2')
       .set('content-type', 'application/json')
-      .send({ model1: { numbers: ['d'] } })
-      .expect(400)
-      .expect({ error: 'data/model1/numbers/0 must be number' });
+      .send({ model1: { numbers: ['d'] } });
+
+    expect(status).toBe(400);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ error: 'data/model1/numbers/0 must be number' });
   });
 });

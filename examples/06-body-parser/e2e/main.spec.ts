@@ -21,66 +21,54 @@ describe('06-body-parser', () => {
   });
 
   it('should works with get', async () => {
-    await testAgent
-      .get('/')
-      .expect(200)
-      .expect('Hello, you need send POST request');
+    const { status, text, type } = await testAgent.get('/');
+    expect(status).toBe(200);
+    expect(type).toBe('text/plain');
+    expect(text).toBe('Hello, you need send POST request');
   });
 
   it('should parsed post', async () => {
-    await testAgent
-      .post('/')
-      .set('Content-Type', 'application/json')
-      .send('{"one":1}')
-      .expect(200)
-      .expect('{"one":1}');
+    const { status, body, type } = await testAgent.post('/').set('Content-Type', 'application/json').send({ one: 1 });
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ one: 1 });
   });
 
   it('should parsed post', async () => {
-    await testAgent
-      .post('/')
-      .set('Content-Type', 'application/json')
-      .send({ one: 1, two: 2 })
-      .expect(Status.PAYLOAD_TO_LARGE);
+    const { status } = await testAgent.post('/').set('Content-Type', 'application/json').send({ one: 1, two: 2 });
+    expect(status).toBe(Status.PAYLOAD_TO_LARGE);
   });
 
   it('should not parse fake-content-type', async () => {
-    await testAgent
-      .post('/')
-      .set('Content-Type', 'fake-content-type')
-      .send('{"one":1}')
-      .expect(200)
-      .expect('{}');
+    const { status, body, type } = await testAgent.post('/').set('Content-Type', 'fake-content-type').send('{ one: 1 }');
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({});
   });
 
   it('controller singleton should works with get', async () => {
-    await testAgent
-      .get('/singleton')
-      .expect(200)
-      .expect('Hello, you need send POST request');
+    const { status, text, type } = await testAgent.get('/singleton');
+    expect(status).toBe(200);
+    expect(type).toBe('text/plain');
+    expect(text).toBe('Hello, you need send POST request');
   });
 
   it('controller singleton should parsed post', async () => {
-    await testAgent
-      .post('/singleton')
-      .send({ one: 1 })
-      .expect(200)
-      .expect({ one: 1 });
+    const { status, body, type } = await testAgent.post('/singleton').set('Content-Type', 'application/json').send({ one: 1 });
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ one: 1 });
   });
 
   it('controller singleton should parsed post', async () => {
-    await testAgent
-      .post('/singleton')
-      .send({ one: 1, two: 2 })
-      .expect(Status.PAYLOAD_TO_LARGE);
+    const { status } = await testAgent.post('/singleton').set('Content-Type', 'application/json').send({ one: 1, two: 2 });
+    expect(status).toBe(Status.PAYLOAD_TO_LARGE);
   });
 
   it('controller singleton should not parse fake-content-type', async () => {
-    await testAgent
-      .post('/singleton')
-      .set('Content-Type', 'fake-content-type')
-      .send('{"one":1}')
-      .expect(200)
-      .expect('{}');
+    const { status, body, type } = await testAgent.post('/singleton').set('Content-Type', 'fake-content-type').send('{ one: 1 }');
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({});
   });
 });

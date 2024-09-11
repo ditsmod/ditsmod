@@ -18,48 +18,55 @@ describe('03-route-guards', () => {
   });
 
   it('should works', async () => {
-    await testAgent.get('/hello').expect(200).expect('ok');
+    const { status, text, type } = await testAgent.get('/hello');
+    expect(status).toBe(200);
+    expect(type).toBe('text/plain');
+    expect(text).toBe('ok');
   });
 
   it('should throw 401', async () => {
-    await testAgent.get('/unauth').expect(401);
+    const { status } = await testAgent.get('/unauth');
+    expect(status).toBe(401);
   });
 
   it('should throw 403', async () => {
-    await testAgent.get('/forbidden').expect(403);
+    const { status } = await testAgent.get('/forbidden');
+    expect(status).toBe(403);
   });
 
-  it('should works', async () => {
-    await testAgent.get('/hello2').expect(200).expect('ok');
+  it('should works with singleton', async () => {
+    const { status, text, type } = await testAgent.get('/hello2');
+    expect(status).toBe(200);
+    expect(type).toBe('text/plain');
+    expect(text).toBe('ok');
   });
 
-  it('should throw 401', async () => {
-    await testAgent.get('/unauth2').expect(401);
+  it('should throw 401 by singleton', async () => {
+    const { status } = await testAgent.get('/unauth2');
+    expect(status).toBe(401);
   });
 
-  it('should throw 403', async () => {
-    await testAgent.get('/forbidden2').expect(403);
+  it('should throw 403 by singleton', async () => {
+    const { status } = await testAgent.get('/forbidden2');
+    expect(status).toBe(403);
   });
 
   it('should works', async () => {
     const expectBase64 = Buffer.from(process.env.BASIC_AUTH!, 'utf8').toString('base64');
-
-    await testAgent
-      .get('/basic-auth')
-      .set('Authorization', `Basic ${expectBase64}`)
-      .expect(200)
-      .expect('You are now authorized with BasicGuard');
+    const { status, text, type } = await testAgent.get('/basic-auth').set('Authorization', `Basic ${expectBase64}`);
+    expect(status).toBe(200);
+    expect(type).toBe('text/plain');
+    expect(text).toBe('You are now authorized with BasicGuard');
   });
 
   it('should throw 401', async () => {
     const expectBase64 = Buffer.from('fake-string', 'utf8').toString('base64');
-
-    await testAgent
-      .get('/basic-auth')
-      .set('Authorization', `Basic ${expectBase64}`).expect(401);
+    const { status } = await testAgent.get('/basic-auth').set('Authorization', `Basic ${expectBase64}`);
+    expect(status).toBe(401);
   });
 
   it('should throw 401', async () => {
-    await testAgent.get('/basic-auth').expect(401);
+    const { status } = await testAgent.get('/basic-auth');
+    expect(status).toBe(401);
   });
 });

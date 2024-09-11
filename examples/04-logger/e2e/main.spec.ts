@@ -18,18 +18,24 @@ describe('04-logger', () => {
   });
 
   it('should works', async () => {
-    await testAgent.get('/').expect(200).expect('ok');
+    const { status, text, type } = await testAgent.get('/');
+    expect(status).toBe(200);
+    expect(type).toBe('text/plain');
+    expect(text).toBe('ok');
   });
 
   it('should works with winston', async () => {
-    await testAgent.get('/winston').expect(200);
+    const { status } = await testAgent.get('/winston');
+    expect(status).toBe(200);
   });
 
   it('should works with bunyan', async () => {
-    await testAgent.get('/bunyan').expect(200);
+    const { status } = await testAgent.get('/bunyan');
+    expect(status).toBe(200);
   });
 
   it('should works with pino', async () => {
-    await testAgent.get('/pino').expect(200);
+    const { status } = await testAgent.get('/pino');
+    expect(status).toBe(200);
   });
 });

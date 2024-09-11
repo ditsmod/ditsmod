@@ -18,16 +18,16 @@ describe('08-http-interceptors', () => {
   });
 
   it('controller works', async () => {
-    await testAgent
-      .get('/')
-      .expect(200)
-      .expect({ originalMsg: 'Original message!', msg: 'message that attached by interceptor' });
+    const { status, body, type } = await testAgent.get('/');
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ originalMsg: 'Original message!', msg: 'message that attached by interceptor' });
   });
 
   it('singleton controller works', async () => {
-    await testAgent
-      .get('/singleton')
-      .expect(200)
-      .expect({ originalMsg: 'Original message!', msg: 'message that attached by interceptor' });
+    const { status, body, type } = await testAgent.get('/singleton');
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ originalMsg: 'Original message!', msg: 'message that attached by interceptor' });
   });
 });

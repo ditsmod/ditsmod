@@ -6,7 +6,6 @@ import { HelloWorldController2 } from './hello-world.controller2.js';
 
 @rootModule({
   imports: [RoutingModule],
-  controllers: [HelloWorldController, HelloWorldController2],
-  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
+  controllers: [HelloWorldController, HelloWorldController2]
 })
 export class AppModule {}

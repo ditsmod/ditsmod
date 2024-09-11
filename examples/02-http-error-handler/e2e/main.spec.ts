@@ -18,10 +18,14 @@ describe('02-controller-error-handler', () => {
   });
 
   it('should works', async () => {
-    await testAgent.get('/').expect(200).expect('ok');
+    const { status, text, type } = await testAgent.get('/');
+    expect(type).toBe('text/plain');
+    expect(status).toBe(200);
+    expect(text).toBe('ok');
   });
 
   it('should throw an error', async () => {
-    await testAgent.get('/throw-error').expect(500);
+    const { status } = await testAgent.get('/throw-error');
+    expect(status).toBe(500);
   });
 });

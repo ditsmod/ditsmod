@@ -18,9 +18,9 @@ describe('11-override-core-log-messages', () => {
   });
 
   it('controller works', async () => {
-    await testAgent
-      .get('/')
-      .expect(200)
-      .expect("I'm OtherController\n");
+    const { status, text, type } = await testAgent.get('/');
+    expect(type).toBe('text/plain');
+    expect(status).toBe(200);
+    expect(text).toBe("I'm OtherController\n");
   });
 });

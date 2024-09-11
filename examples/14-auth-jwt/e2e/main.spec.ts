@@ -17,17 +17,25 @@ describe('14-auth-jwt', () => {
     server?.close();
   });
 
-  it('controller works', async () => {
-    await testAgent.get('/').expect(200).expect('Hello World!\n');
+  it('case 1', async () => {
+    const { status, text, type } = await testAgent.get('/');
+    expect(type).toBe('text/plain');
+    expect(status).toBe(200);
+    expect(text).toBe('Hello World!\n');
+  });
 
-    const response = await testAgent.get('/get-token-for/Kostia').expect(200);
+  it('case 2', async () => {
+    const response1 = await testAgent.get('/get-token-for/Kostia');
+    expect(response1.type).toBe('text/plain');
+    expect(response1.status).toBe(200);
+    expect(response1.text).toBeDefined();
 
-    await testAgent.get('/profile').expect(401);
+    const response2 = await testAgent.get('/profile');
+    expect(response2.status).toBe(401);
 
-    await testAgent
-      .get('/profile')
-      .set('Authorization', `Bearer ${response.text}`)
-      .expect(200)
-      .expect('Hello, Kostia! You have successfully authorized.');
+    const response3 = await testAgent.get('/profile').set('Authorization', `Bearer ${response1.text}`);
+    expect(response3.status).toBe(200);
+    expect(response3.type).toBe('text/plain');
+    expect(response3.text).toBe('Hello, Kostia! You have successfully authorized.');
   });
 });
