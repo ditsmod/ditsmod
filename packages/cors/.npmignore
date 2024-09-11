@@ -8,6 +8,6 @@ jest.config.ts
 nodemon.json
 CHANGELOG.md
 *.tsbuildinfo
-tsconfig.test.json
+tsconfig.e2e.json
 tsconfig.unit.json
 src/test

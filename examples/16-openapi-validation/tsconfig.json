@@ -15,7 +15,7 @@
       "@ditsmod/testing": ["../../packages/testing/src/index.js"],
     }
   },
-  "include": ["src", "test"],
+  "include": ["src", "e2e"],
   "references": [
     { "path": "../../packages/body-parser/tsconfig.build.json" },
     { "path": "../../packages/core/tsconfig.build.json" },

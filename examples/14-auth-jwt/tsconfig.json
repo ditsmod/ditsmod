@@ -12,7 +12,7 @@
       "@ditsmod/testing": ["../../packages/testing/src/index.js"],
     }
   },
-  "include": ["src", "test"],
+  "include": ["src", "e2e"],
   "references": [
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/routing/tsconfig.build.json" },

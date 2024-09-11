@@ -14,7 +14,7 @@ yarn.lock
 .js
 jest.config.ts
 *.tsbuildinfo
-tsconfig.test.json
+tsconfig.e2e.json
 tsconfig.unit.json
 src/bench.*
 dist/bench.*

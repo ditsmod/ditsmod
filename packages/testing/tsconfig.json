@@ -23,10 +23,10 @@
     "experimentalDecorators": true,
     "removeComments": false,
   },
-  "include": ["src", "test"],
+  "include": ["src", "e2e"],
   "references": [
     { "path": "../core/tsconfig.build.json" },
     { "path": "../routing/tsconfig.build.json" },
-    // { "path": "./tsconfig.test.json" }, // Trying to make ESlint happy.
+    // { "path": "./tsconfig.e2e.json" }, // Trying to make ESlint happy.
   ]
 }

@@ -7,7 +7,6 @@ import { Extension, ExtensionInitMeta, TotalInitMeta } from '#types/extension-ty
 import { ExtensionsManager } from '#services/extensions-manager.js';
 import { featureModule } from '#decorators/module.js';
 import { Router } from '#types/router.js';
-import { inspect } from 'util';
 
 describe('extensions e2e', () => {
   it('check isLastModule', async () => {
