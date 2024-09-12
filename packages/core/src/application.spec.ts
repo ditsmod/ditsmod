@@ -1,19 +1,16 @@
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
-import { jest } from '@jest/globals';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleManager } from '#services/module-manager.js';
 import { Router } from '#types/router.js';
 import { AppOptions } from '#types/app-options.js';
 import { ModuleType } from '#types/mix.js';
-import { Providers } from '#utils/providers.js';
-import { Injector } from '#di';
-import { LoggerConfig, OutputLogLevel } from '#logger/logger.js';
 import { AppInitializer } from './app-initializer.js';
 import { Application } from './application.js';
 import { rootModule } from './decorators/root-module.js';
+import { LoggerConfig } from './index.js';
 
 describe('Application', () => {
   class ApplicationMock extends Application {
@@ -81,7 +78,10 @@ describe('Application', () => {
 
   describe('bootstrapApplication()', () => {
     @rootModule({
-      providersPerApp: new Providers().useValue(Router, {}).useLogConfig({ level: 'off' }),
+      providersPerApp: [
+        { token: Router, useValue: {} },
+        { token: LoggerConfig, useValue: { level: 'off' } },
+      ],
     })
     class AppModule {}
 
@@ -91,26 +91,6 @@ describe('Application', () => {
       const { systemLogMediator } = mock;
       await mock.bootstrapApplication(appInitializer);
       expect(mock.systemLogMediator !== systemLogMediator).toBe(true);
-    });
-  });
-
-  describe('application options', () => {
-    console.log = jest.fn();
-
-    @rootModule({
-      providersPerApp: new Providers().useValue(Router, {}).useLogConfig({ level: 'all' }),
-    })
-    class AppModule {}
-
-    it('setting logLevel has higher priority in AppOptions than in providersPerApp', async () => {
-      const level: OutputLogLevel = 'debug';
-      mock.appOptions.loggerConfig = { level };
-      const moduleManager = mock.scanRootModule(AppModule);
-      const appInitializer = mock.getAppInitializer(moduleManager);
-      await mock.bootstrapApplication(appInitializer);
-      const injector = Injector.resolveAndCreate((appInitializer as any).meta.providersPerApp);
-      const loggerConfig = injector.get(LoggerConfig) as LoggerConfig;
-      expect(loggerConfig.level).toBe(level);
     });
   });
 });

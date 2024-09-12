@@ -1,6 +1,6 @@
 import { BeforeToken, InjectionToken, Injector } from '#di';
 import { ImportsResolver } from './imports-resolver.js';
-import { Logger, LoggerConfig } from '#logger/logger.js';
+import { Logger } from '#logger/logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -218,9 +218,6 @@ export class AppInitializer {
       { token: ModuleManager, useValue: this.moduleManager },
       { token: AppInitializer, useValue: this },
     );
-    if (this.appOptions.loggerConfig) {
-      this.meta.providersPerApp.push({ token: LoggerConfig, useValue: this.appOptions.loggerConfig });
-    }
   }
 
   /**
