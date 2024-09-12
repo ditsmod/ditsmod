@@ -311,7 +311,7 @@ export class SystemLogMediator extends LogMediator {
     if (countOfGuards) {
       withGuards = countOfGuards > 1 ? ` with ${countOfGuards} guards` : ' with 1 guard';
     }
-    this.setLog('debug', `${className}: setted route ${httpMethod} "/${path}"${withGuards}.`);
+    this.setLog('info', `${className}: setted route ${httpMethod} "/${path}"${withGuards}.`);
   }
 
   /**
