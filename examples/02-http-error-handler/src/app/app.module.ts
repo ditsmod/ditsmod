@@ -1,10 +1,11 @@
-import { rootModule, HttpErrorHandler } from '@ditsmod/core';
+import { rootModule, HttpErrorHandler, Providers } from '@ditsmod/core';
 
 import { MyHttpErrorHandler } from './my-http-error-handler.js';
 import { SomeModule } from './modules/some/some.module.js';
 
 @rootModule({
   appends: [SomeModule],
+  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
   providersPerReq: [{ token: HttpErrorHandler, useClass: MyHttpErrorHandler }],
   exports: [HttpErrorHandler],
 })
