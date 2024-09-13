@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "yarn build && nodemon --enable-source-maps dist/main.js",
+    "start": "yarn build && node --watch --enable-source-maps dist/main.js",
     "clean": "rimraf dist*",
     "test": "tsc -b tsconfig.e2e.json && yarn esm-jest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",

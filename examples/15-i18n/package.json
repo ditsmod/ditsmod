@@ -9,7 +9,7 @@
     "#dict/second/*": "./dist/app/second/locales/current/_base-en/*"
   },
   "scripts": {
-    "start": "yarn build && nodemon --enable-source-maps dist/main.js",
+    "start": "yarn build && node --watch --enable-source-maps dist/main.js",
     "test": "tsc -b tsconfig.e2e.json && yarn esm-jest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build": "tsc -b tsconfig.build.json",

@@ -1,7 +1,0 @@
-{
-  "events": {
-    "start": "clear"
-  },
-  "watch": ["./dist/*", "../../packages/*/dist/*"],
-  "ignore": ["*.spec.ts", "*.tsbuildinfo"]
-}
