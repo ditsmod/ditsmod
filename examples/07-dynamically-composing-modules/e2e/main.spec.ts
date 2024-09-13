@@ -18,7 +18,7 @@ describe('07-dynamically-composing-modules', () => {
   });
 
   it('case 1', async () => {
-    const { status, text, type } = await testAgent.get('/');
+    const { type, status, text } = await testAgent.get('/');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('first module.\n');
@@ -30,14 +30,14 @@ describe('07-dynamically-composing-modules', () => {
   });
 
   it('case 3', async () => {
-    const { status, text, type } = await testAgent.get('/add-2');
+    const { type, status, text } = await testAgent.get('/add-2');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('second successfully importing!\n');
   });
 
   it('case 4', async () => {
-    const { status, text, type } = await testAgent.get('/get-2');
+    const { type, status, text } = await testAgent.get('/get-2');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('second module.\n');
@@ -52,21 +52,21 @@ describe('07-dynamically-composing-modules', () => {
   });
 
   it('case 6', async () => {
-    const { status, text, type } = await testAgent.get('/');
+    const { type, status, text } = await testAgent.get('/');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('first module.\n');
   });
 
   it('case 7', async () => {
-    const { status, text, type } = await testAgent.get('/get-2');
+    const { type, status, text } = await testAgent.get('/get-2');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('second module.\n');
   });
 
   it('case 8', async () => {
-    const { status, text, type } = await testAgent.get('/del-2');
+    const { type, status, text } = await testAgent.get('/del-2');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('second successfully removing!\n');
@@ -78,7 +78,7 @@ describe('07-dynamically-composing-modules', () => {
   });
 
   it('case 10', async () => {
-    const { status, text, type } = await testAgent.get('/');
+    const { type, status, text } = await testAgent.get('/');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('first module.\n');

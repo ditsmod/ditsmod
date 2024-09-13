@@ -18,7 +18,7 @@ describe('02-controller-error-handler', () => {
   });
 
   it('should works', async () => {
-    const { status, text, type } = await testAgent.get('/');
+    const { type, status, text } = await testAgent.get('/');
     expect(type).toBe('text/plain');
     expect(status).toBe(200);
     expect(text).toBe('ok');

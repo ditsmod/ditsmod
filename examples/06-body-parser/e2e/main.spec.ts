@@ -21,7 +21,7 @@ describe('06-body-parser', () => {
   });
 
   it('should works with get', async () => {
-    const { status, text, type } = await testAgent.get('/');
+    const { type, status, text } = await testAgent.get('/');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('Hello, you need send POST request');
@@ -47,7 +47,7 @@ describe('06-body-parser', () => {
   });
 
   it('controller singleton should works with get', async () => {
-    const { status, text, type } = await testAgent.get('/singleton');
+    const { type, status, text } = await testAgent.get('/singleton');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('Hello, you need send POST request');

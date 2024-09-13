@@ -18,7 +18,7 @@ describe('04-logger', () => {
   });
 
   it('should works', async () => {
-    const { status, text, type } = await testAgent.get('/');
+    const { type, status, text } = await testAgent.get('/');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('ok');

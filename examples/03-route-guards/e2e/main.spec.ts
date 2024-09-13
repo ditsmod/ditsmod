@@ -18,7 +18,7 @@ describe('03-route-guards', () => {
   });
 
   it('should works', async () => {
-    const { status, text, type } = await testAgent.get('/hello');
+    const { type, status, text } = await testAgent.get('/hello');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('ok');
@@ -35,7 +35,7 @@ describe('03-route-guards', () => {
   });
 
   it('should works with singleton', async () => {
-    const { status, text, type } = await testAgent.get('/hello2');
+    const { type, status, text } = await testAgent.get('/hello2');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('ok');
@@ -53,7 +53,7 @@ describe('03-route-guards', () => {
 
   it('should works', async () => {
     const expectBase64 = Buffer.from(process.env.BASIC_AUTH!, 'utf8').toString('base64');
-    const { status, text, type } = await testAgent.get('/basic-auth').set('Authorization', `Basic ${expectBase64}`);
+    const { type, status, text } = await testAgent.get('/basic-auth').set('Authorization', `Basic ${expectBase64}`);
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('You are now authorized with BasicGuard');
