@@ -16,7 +16,7 @@ describe('SomeController', () => {
 
   it('should say "ok"', () => {
     expect(() => someController.ok(res)).not.toThrow();
-    expect(send).toHaveBeenCalledWith('ok');
+    expect(send).toHaveBeenCalledWith('Hello, World!');
     expect(send).toHaveBeenCalledTimes(1);
   });
 
