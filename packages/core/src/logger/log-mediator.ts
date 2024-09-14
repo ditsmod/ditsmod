@@ -26,7 +26,7 @@ export abstract class LogMediator {
     @optional() protected loggerConfig: LoggerConfig = new LoggerConfig(),
   ) {}
 
-  protected setLog(inputLogLevel: InputLogLevel, msg: any) {
+  protected setLog(inputLogLevel: InputLogLevel, msg: string) {
     if (LogMediator.bufferLogs) {
       LogMediator.checkDiffLogLevels(this.loggerConfig.level);
       LogMediator.buffer.push({

@@ -98,7 +98,7 @@ export class SystemLogMediator extends LogMediator {
    */
   printReinitError(self: object, err: any) {
     const className = self.constructor.name;
-    this.setLog('error', err);
+    this.setLog('error', err.stack || err.message);
   }
 
   /**
@@ -272,7 +272,7 @@ export class SystemLogMediator extends LogMediator {
    */
   controllerHasError(self: object, err: any) {
     const className = self.constructor.name;
-    this.setLog('error', err);
+    this.setLog('error', err.stack || err.message);
   }
 
   /**
@@ -283,7 +283,7 @@ export class SystemLogMediator extends LogMediator {
       return;
     }
     const className = self.constructor.name;
-    this.setLog('error', err);
+    this.setLog('error', err.stack || err.message);
   }
 
   /**
