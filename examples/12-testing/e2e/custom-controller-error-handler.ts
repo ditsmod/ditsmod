@@ -5,11 +5,9 @@ import { ErrorContainer } from './error-container.js';
 export class CustomHttpErrorHandler extends DefaultHttpErrorHandler {
   constructor(
     protected override logger: Logger,
-    protected override res: Res,
-    protected override req: Req,
     private errorContainer: ErrorContainer,
   ) {
-    super(logger, res, req);
+    super(logger);
   }
 
   override async handleError(err: Error, ctx: RequestContext) {
