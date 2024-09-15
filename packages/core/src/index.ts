@@ -49,7 +49,6 @@ export { DefaultHttpFrontend } from './interceptors/default-http-frontend.js';
 export { DefaultSingletonHttpFrontend } from './interceptors/default-singleton-http-frontend.js';
 export { DefaultSingletonHttpBackend } from './interceptors/default-singleton-http-backend.js';
 export { DefaultSingletonChainMaker } from './services/default-singleton-chain-maker.js';
-export { DefaultSingletonHttpErrorHandler } from './error/default-singleton-http-error-handler.js';
 export {
   ISingletonInterceptorWithGuards,
   SingletonInterceptorWithGuards,
