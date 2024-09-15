@@ -29,7 +29,6 @@ import {
   RequestContext,
   ControllerMetadata2,
   DefaultSingletonChainMaker,
-  DefaultSingletonHttpErrorHandler,
   SingletonInterceptorWithGuards,
   Class,
   ExtensionInitMeta,
@@ -120,11 +119,12 @@ export class PreRouterExtension implements Extension<void> {
     mergedPerReq.push(...metadataPerMod2.providersPerReq, ...providersPerReq);
 
     const resolvedPerReq = Injector.resolve(mergedPerReq);
+    const resolvedPerRou = Injector.resolve(mergedPerRou);
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     this.checkDeps(metadataPerMod2.moduleName, httpMethod, path, injPerReq, routeMeta);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
-    const resolvedErrHandler = resolvedPerReq.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
+    const resolvedErrHandler = resolvedPerReq.concat(resolvedPerRou).find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
     const nodeReqId = KeyRegistry.get(NODE_REQ).id;
     const nodeResId = KeyRegistry.get(NODE_RES).id;
@@ -175,7 +175,7 @@ export class PreRouterExtension implements Extension<void> {
     const chainMaker = injectorPerRou.instantiateResolved<DefaultSingletonChainMaker>(resolvedChainMaker);
     const controllerInstance = injectorPerMod.get(routeMeta.controller);
     routeMeta.routeHandler = controllerInstance[routeMeta.methodName].bind(controllerInstance);
-    const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as DefaultSingletonHttpErrorHandler;
+    const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
     const RequestContextClass = injectorPerRou.get(RequestContext) as typeof RequestContext;
 
     return (async (nodeReq, nodeRes, aPathParams, queryString) => {
