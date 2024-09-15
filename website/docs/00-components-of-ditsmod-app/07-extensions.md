@@ -324,7 +324,7 @@ export class BodyParserExtension implements Extension<void> {
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
 [3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.17.0/packages/body-parser/src/body-parser.extension.ts#L54
-[4]: #реєстрація-розширення-в-групі
+[4]: #реєстрація-розширення-у-групі
 [5]: /native-modules/body-parser
 [6]: /native-modules/openapi
 [7]: /components-of-ditsmod-app/dependency-injection#мульти-провайдери
