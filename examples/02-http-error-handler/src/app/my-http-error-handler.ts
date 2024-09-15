@@ -1,20 +1,44 @@
-import { Logger, Status, HttpErrorHandler, injectable, Req, RequestContext, cleanErrorTrace } from '@ditsmod/core';
+import {
+  cleanErrorTrace,
+  ErrorOpts,
+  HttpErrorHandler,
+  injectable,
+  isChainError,
+  Logger,
+  RequestContext,
+  Status,
+} from '@ditsmod/core';
+import { randomUUID } from 'node:crypto';
 
 @injectable()
 export class MyHttpErrorHandler implements HttpErrorHandler {
-  constructor(
-    protected req: Req,
-    private logger: Logger,
-  ) {}
+  constructor(protected logger: Logger) {}
 
-  handleError(err: Error, ctx: RequestContext) {
+  async handleError(err: Error, ctx: RequestContext) {
     cleanErrorTrace(err);
-    const message = err.message;
-    this.logger.log('error', { note: 'This is my implementation of HttpErrorHandler', err });
-    if (!ctx.nodeRes.headersSent) {
-      const error = { error: { message } };
-      const headers = { 'x-requestId': this.req.requestId };
-      ctx.sendJson(error, Status.INTERNAL_SERVER_ERROR, headers);
+    const requestId = randomUUID();
+    const errObj = { requestId, err, note: 'This is my implementation of HttpErrorHandler' };
+    if (isChainError<ErrorOpts>(err)) {
+      const { level, status } = err.info;
+      this.logger.log(level || 'debug', errObj);
+      this.sendError(err.message, ctx, requestId, status);
+    } else {
+      this.logger.log('error', errObj);
+      const msg = err.message || 'Internal server error';
+      const status = (err as any).status || Status.INTERNAL_SERVER_ERROR;
+      this.sendError(msg, ctx, requestId, status);
     }
+  }
+
+  protected sendError(error: string, ctx: RequestContext, requestId: string, status?: Status) {
+    if (!ctx.nodeRes.headersSent) {
+      this.addRequestIdToHeader(requestId, ctx);
+      const errStr = JSON.stringify({ error });
+      ctx.send(errStr, status || Status.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  protected addRequestIdToHeader(requestId: string, ctx: RequestContext) {
+    ctx.nodeRes.setHeader('x-requestId', requestId);
   }
 }
