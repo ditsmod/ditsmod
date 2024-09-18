@@ -18,12 +18,12 @@ export function getModuleMetadata(
     const modWitParams = modOrObj;
     const container = reflector.getClassMetadata<ModuleMetadataValue>(modWitParams.module).find(typeGuard);
     const modMetadata = container?.value.data;
-    const modName = getModuleName(modWitParams.module);
     if (!modMetadata) {
       return modMetadata;
     }
 
     if (modMetadata.id) {
+      const modName = getModuleName(modWitParams.module);
       const msg =
         `${modName} must not have an "id" in the metadata of the decorator @featureModule. ` +
         'Instead, you can specify the "id" in the object that contains the module parameters.';
