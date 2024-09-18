@@ -10,12 +10,16 @@ import { ModuleType } from '#types/mix.js';
 import { AppInitializer } from './app-initializer.js';
 import { Application } from './application.js';
 import { rootModule } from './decorators/root-module.js';
-import { LoggerConfig } from './index.js';
+import { LoggerConfig, LogMediator } from '#core/index.js';
 
 describe('Application', () => {
   class ApplicationMock extends Application {
     override appOptions = new AppOptions();
     declare systemLogMediator: SystemLogMediator;
+
+    override init(appOptions?: AppOptions, systemLogMediator?: SystemLogMediator) {
+      return super.init(appOptions, systemLogMediator);
+    }
 
     override checkSecureServerOption() {
       return super.checkSecureServerOption();
@@ -38,6 +42,20 @@ describe('Application', () => {
 
   beforeEach(() => {
     mock = new ApplicationMock();
+  });
+
+  describe('init()', () => {
+    it('should return instance of SystemLogMediator', () => {
+      expect(mock.init()).toBeInstanceOf(SystemLogMediator);
+    });
+
+    it('should merge AppOptions with default', () => {
+      mock.init({ bufferLogs: false });
+      expect(mock.appOptions.bufferLogs).toBe(false);
+      expect(LogMediator.bufferLogs).toBe(false);
+      expect(mock.appOptions.path).toBeDefined();
+      expect(mock.appOptions.serverOptions).toBeDefined();
+    });
   });
 
   describe('checkSecureServerOption()', () => {

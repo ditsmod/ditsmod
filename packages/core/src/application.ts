@@ -21,7 +21,7 @@ export class Application {
    * @param appModule The root module of the application.
    * @param appOptions Application options.
    */
-  bootstrap(appModule: ModuleType, appOptions = new AppOptions()) {
+  bootstrap(appModule: ModuleType, appOptions?: AppOptions) {
     return new Promise<{ server: NodeServer }>(async (resolve, reject) => {
       try {
         this.init(appOptions);
@@ -40,7 +40,7 @@ export class Application {
   /**
    * @param systemLogMediator This parameter was originally created for `@ditsmod/testing`.
    */
-  protected init(appOptions: AppOptions, systemLogMediator?: SystemLogMediator) {
+  protected init(appOptions?: AppOptions, systemLogMediator?: SystemLogMediator) {
     systemLogMediator ??= new SystemLogMediator({ moduleName: 'AppModule' });
     this.systemLogMediator = systemLogMediator;
     this.appOptions = { ...new AppOptions(), ...appOptions };
