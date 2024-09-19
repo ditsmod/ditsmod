@@ -40,7 +40,7 @@ export class AppInitializer {
   ) {}
 
   /**
-   * _Note:_ after call this method, you need call `this.flush()`.
+   * _Note:_ after call this method, you need call `this.systemLogMediator.flush()`.
    */
   bootstrapProvidersPerApp() {
     this.meta = this.moduleManager.getMetadata('root', true);
