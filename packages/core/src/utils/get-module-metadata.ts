@@ -6,6 +6,11 @@ import { mergeArrays } from './merge-arrays.js';
 import { isFeatureModule, isModuleWithParams, isRootModule } from './type-guards.js';
 import { getLastProviders } from './get-last-providers.js';
 
+/**
+ * Merges metadata passed in `rootModule` or `featureModule` decorators with metadata passed
+ * in `ModuleWithParams`. Additionally, converts the `Providers` instances passed in the `providersPer*`
+ * property to arrays.
+ */
 export function getModuleMetadata(
   modOrObj: ModuleType | ModuleWithParams,
   isRoot?: boolean,
