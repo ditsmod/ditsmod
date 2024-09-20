@@ -1,5 +1,12 @@
+<a name="core-2.56.1"></a>
+# [core-2.56.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.56.1) (2024-09-20)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [c9c1c14b40](https://github.com/ditsmod/ditsmod/commit/c9c1c14b40b2c0c) | fix |fixed passing error messages to `SystemLogMediator`. |
+
 <a name="core-2.56.0"></a>
-# [core-2.56.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.56.0) (2024-09-05)
+## [core-2.56.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.56.0) (2024-09-05)
 
 **Breaking Changes**
 
