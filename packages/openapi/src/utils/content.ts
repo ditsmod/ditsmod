@@ -128,9 +128,6 @@ export class Content {
         parentSchema.required.push(propertyName);
       }
     }
-    if (schema?.[REQUIRED] !== undefined) {
-      delete schema[REQUIRED];
-    }
   }
 
   protected fillPropertySchema(
