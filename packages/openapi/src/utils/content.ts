@@ -60,12 +60,18 @@ export class Content {
   protected getSchema(model: Class<AnyObj>) {
     const schema = this.getSchemaStubForModel(model);
     const modelMeta = reflector.getPropMetadata<PropertyDecoratorMetadata>(model);
-    
+
     for (const property in modelMeta) {
       const propertyMeta = modelMeta[property].find(isProperty);
       if (propertyMeta && (!propertyMeta.value.schema?.type || propertyMeta.value.schema.type == 'array')) {
         const propertyType = modelMeta[property][0];
-        this.checkTypeDefinitionConflict(model.name, property, propertyType, schema.type, propertyMeta.value.customType);
+        this.checkTypeDefinitionConflict(
+          model.name,
+          property,
+          propertyType,
+          schema.type,
+          propertyMeta.value.customType,
+        );
         if (!schema.properties) {
           schema.properties = {};
         }
@@ -74,7 +80,7 @@ export class Content {
           model,
           propertyType,
           propertyMeta.value.schema,
-          propertyMeta.value.customType
+          propertyMeta.value.customType,
         );
       }
     }
@@ -107,7 +113,7 @@ export class Content {
     property: string,
     propertyType: Class<AnyObj>,
     type?: SchemaObjectType | SchemaObjectType[],
-    customType?: CustomType
+    customType?: CustomType,
   ) {
     if ((type == 'array' || customType?.array) && propertyType.name != 'Array') {
       const msg = `Wrong definition for ${modelName}: property '${property}' is an array or not array?`;
@@ -134,7 +140,7 @@ export class Content {
     model: Class<AnyObj>,
     propertyType: Class<AnyObj>,
     originPropertySchema?: XSchemaObject,
-    customType?: CustomType
+    customType?: CustomType,
   ) {
     const propertySchema: SchemaObject = { ...originPropertySchema };
 
@@ -215,7 +221,7 @@ export class Content {
     modelName: string,
     propertySchema: SchemaObject,
     customItem: Class<AnyObj>,
-    whatIs: 'array' | 'object'
+    whatIs: 'array' | 'object',
   ) {
     let description = '';
     let schema: SchemaObject;
