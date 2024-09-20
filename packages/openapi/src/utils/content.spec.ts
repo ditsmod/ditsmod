@@ -28,12 +28,15 @@ describe('Content', () => {
           properties: {
             property1: {
               type: 'string',
+              'x-required': true
             },
             property2: {
               type: 'number',
+              'x-required': true
             },
             property3: {
               type: 'number',
+              'x-required': false,
             },
           },
           required: ['property1', 'property2'],
@@ -78,7 +81,7 @@ describe('Content', () => {
           maxItems: 5,
           items: { type: 'string', minLength: 3, maxLength: 50 },
         },
-        { array: String }
+        { array: String },
       )
       tagList: string[];
     }
@@ -92,9 +95,9 @@ describe('Content', () => {
             tagList: {
               type: 'array',
               maxItems: 5,
-              items: { type: 'string', minLength: 3, maxLength: 50 }
-            }
-          }
+              items: { type: 'string', minLength: 3, maxLength: 50 },
+            },
+          },
         },
         encoding: undefined,
       } as MediaTypeObject,
