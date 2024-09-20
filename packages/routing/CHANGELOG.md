@@ -1,5 +1,12 @@
+<a name="routing-2.4.1"></a>
+# [routing-2.4.1](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.4.1) (2024-08-20)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [0a713a9a39](https://github.com/ditsmod/ditsmod/commit/0a713a9a39273b) | refactor | refactoring `PreRouterExtension`. |
+
 <a name="routing-2.3.0"></a>
-# [routing-2.3.0](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.3.0) (2024-08-06)
+## [routing-2.3.0](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.3.0) (2024-08-06)
 
 | Commit | Type | Description |
 | -- | -- | -- |
