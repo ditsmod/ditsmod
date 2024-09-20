@@ -12,6 +12,6 @@ export class Model1 {
 }
 
 export class Model2 {
-  @property()
+  @property({ [REQUIRED]: true })
   model1: Model1;
 }

@@ -46,10 +46,53 @@ describe('16-openapi-validation', () => {
     const { status, body, type } = await testAgent
       .post('/model2')
       .set('content-type', 'application/json')
+      .send({});
+
+    expect(status).toBe(400);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ error: "data must have required property 'model1'" });
+  });
+
+  it('case 5', async () => {
+    const { status, body, type } = await testAgent
+      .post('/model2')
+      .set('content-type', 'application/json')
+      .send({ model1: {} });
+
+    expect(status).toBe(400);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ error: 'data/model1 must be object' });
+  });
+
+  it('case 6', async () => {
+    const { status, body, type } = await testAgent
+      .post('/model2')
+      .set('content-type', 'application/json')
       .send({ model1: { numbers: ['d'] } });
 
     expect(status).toBe(400);
     expect(type).toBe('application/json');
     expect(body).toEqual({ error: 'data/model1/numbers/0 must be number' });
+  });
+
+  it('case 7', async () => {
+    const { status, type } = await testAgent
+      .post('/model2')
+      .set('content-type', 'application/json')
+      .send({ model1: { numbers: [5] } });
+
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+  });
+
+  it('case 8', async () => {
+    const { status, body, type } = await testAgent
+      .post('/model2')
+      .set('content-type', 'application/json')
+      .send({ model1: { numbers: [5], username: [] } });
+
+    expect(status).toBe(400);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ error: 'data/model1/username must be string' });
   });
 });
