@@ -1,5 +1,12 @@
+<a name="openapi-2.25.1"></a>
+# [openapi-2.25.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.25.1) (2024-09-20)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [1e9dbbc325](https://github.com/ditsmod/ditsmod/commit/1e9dbbc3250132) | fix | now the "x-required" property is not removed. |
+
 <a name="openapi-2.24.0"></a>
-# [openapi-2.24.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.24.0) (2024-04-02)
+## [openapi-2.24.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.24.0) (2024-04-02)
 
 | Commit | Type | Description |
 | -- | -- | -- |
