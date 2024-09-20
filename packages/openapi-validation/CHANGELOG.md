@@ -1,5 +1,12 @@
+<a name="openapi-validation-2.12.1"></a>
+# [openapi-validation-2.12.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.12.1) (2024-09-20)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [d8d9670500](https://github.com/ditsmod/ditsmod/commit/d8d96705003fa4c8f97) | fix | added `x-required` property to ajv's vocabulary. |
+
 <a name="openapi-validation-2.11.0"></a>
-# [openapi-validation-2.11.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.11.0) (2024-08-06)
+## [openapi-validation-2.11.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-validation-2.11.0) (2024-08-06)
 
 | Commit | Type | Description |
 | -- | -- | -- |
