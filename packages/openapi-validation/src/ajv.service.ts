@@ -1,6 +1,7 @@
 import { inject, injectable, optional } from '@ditsmod/core';
 import Ajv, { Options, ValidateFunction } from 'ajv';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
+import { REQUIRED } from '@ditsmod/openapi';
 
 import { AJV_OPTIONS } from './constants.js';
 
@@ -11,6 +12,7 @@ export class AjvService {
 
   constructor(@optional() @inject(AJV_OPTIONS) ajvOptions?: Options | null) {
     this.ajv = new Ajv.default(ajvOptions || {});
+    this.ajv.addVocabulary([REQUIRED]);
   }
 
   addValidator(schema: XSchemaObject) {
