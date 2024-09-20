@@ -61,7 +61,7 @@ describe('16-openapi-validation', () => {
 
     expect(status).toBe(400);
     expect(type).toBe('application/json');
-    expect(body).toEqual({ error: 'data/model1 must be object' });
+    expect(body).toEqual({ error: "data/model1 must have required property 'numbers'" });
   });
 
   it('case 6', async () => {
