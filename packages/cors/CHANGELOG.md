@@ -1,5 +1,13 @@
+<a name="cors-2.7.1"></a>
+# [cors-2.7.1](https://github.com/ditsmod/ditsmod/releases/tag/cors-2.7.1) (2024-09-20)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [6df8cc63e2](https://github.com/ditsmod/ditsmod/commit/6df8cc63e2f5857) | fix | fixed `corsExtension.prepareDataAndSetInterceptors()`. |
+| [e62e7ddfb8](https://github.com/ditsmod/ditsmod/commit/e62e7ddfb8c690) | refactor | introduced `perApp` parameter for `extensionManager.init()`. |
+
 <a name="cors-2.6.0"></a>
-# [cors-2.6.0](https://github.com/ditsmod/ditsmod/releases/tag/cors-2.6.0) (2024-04-02)
+## [cors-2.6.0](https://github.com/ditsmod/ditsmod/releases/tag/cors-2.6.0) (2024-04-02)
 
 | Commit | Type | Description |
 | -- | -- | -- |
