@@ -3,7 +3,7 @@ import { oasRoute } from './oas-route.js';
 
 // console.log(inspect(actualMeta, false, 5));
 
-describe('@OasRoute', () => {
+describe('@oasRoute', () => {
   it('controller without methods', () => {
     @controller()
     class Controller1 {}

@@ -170,7 +170,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     this.setSecurityInfo(operationObject, resolvedGuards);
     if (['POST', 'PATCH', 'PUT'].includes(httpMethod)) {
       operationObject.requestBody = {
-        description: 'It is default content field for non-OasRoute',
+        description: 'It is default content field for non-oasRoute',
         content: { ['application/json']: {} },
       };
     }
