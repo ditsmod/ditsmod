@@ -26,7 +26,7 @@
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
     "test": "tsc -b tsconfig.e2e.json && yarn esm-jest",
-"esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
+    "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "bench": "yarn build && node --enable-source-maps --expose-gc dist/bench.js"
   },
   "keywords": [
@@ -36,7 +36,7 @@
     "typescript"
   ],
   "devDependencies": {
-    "find-my-way": "^9.0.0",
+    "find-my-way": "^9.0.1",
     "koa-tree-router": "^0.12.1",
     "trek-router": "^1.2.0"
   },
