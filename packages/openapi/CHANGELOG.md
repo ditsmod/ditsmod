@@ -1,5 +1,12 @@
+<a name="openapi-2.26.0"></a>
+# [openapi-2.26.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.26.0) (2024-09-22)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [ae55963fd3](https://github.com/ditsmod/ditsmod/commit/ae55963fd308a7) | feat | introduced `absolutePath` for `ModuleWithParams` and `AppendsWithParams`. |
+
 <a name="openapi-2.25.1"></a>
-# [openapi-2.25.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.25.1) (2024-09-20)
+## [openapi-2.25.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.25.1) (2024-09-20)
 
 | Commit | Type | Description |
 | -- | -- | -- |
