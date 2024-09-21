@@ -6,14 +6,25 @@ import { ExtensionOptions } from '#utils/get-extension-provider.js';
 /**
  * Used for module metadata, for `appends` array.
  */
-export interface AppendsWithParams<T extends AnyObj = AnyObj> {
+export type AppendsWithParams<T extends AnyObj = AnyObj> = AppendsWithParams1<T> | AppendsWithParams2<T>;
+
+export interface BaseAppendsWithParams<T extends AnyObj = AnyObj> {
   /**
    * The module ID.
    */
   id?: string;
-  path: string;
   module: ModuleType<T>;
   guards?: GuardItem[];
+}
+
+export interface AppendsWithParams1<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
+  path: string;
+  absolutePath?: never;
+}
+
+export interface AppendsWithParams2<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
+  absolutePath: string;
+  path?: never;
 }
 
 export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {

@@ -33,7 +33,7 @@ export {
   Extension,
   ExtensionInitMeta,
   TotalInitMeta,
-  TotalInitMetaPerApp
+  TotalInitMetaPerApp,
 } from './types/extension-types.js';
 export { ModuleExtract } from './types/module-extract.js';
 export { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
@@ -87,7 +87,10 @@ export {
   GuardItem,
   HttpMethod,
   ModuleType,
+  BaseModuleWithParams,
   ModuleWithParams,
+  ModuleWithParams1,
+  ModuleWithParams2,
   NormalizedGuard,
   ResolvedGuard,
   RedirectStatusCodes,
@@ -95,9 +98,15 @@ export {
   AnyFn,
   HttpHeaders,
   RequireProps,
-  OptionalProps
+  OptionalProps,
 } from './types/mix.js';
-export { ModuleMetadata, AppendsWithParams } from './types/module-metadata.js';
+export {
+  ModuleMetadata,
+  BaseAppendsWithParams,
+  AppendsWithParams,
+  AppendsWithParams1,
+  AppendsWithParams2,
+} from './types/module-metadata.js';
 export { RouteMeta } from './types/route-data.js';
 export { PathParam, RouteHandler, Router, RouterReturns } from './types/router.js';
 export { NodeRequest, NodeResponse, RequestListener, Server, NodeServer } from './types/server-options.js';

@@ -108,8 +108,11 @@ export class ModuleFactory {
     };
     this.meta.providersPerMod.unshift({ token: ModuleExtract, useValue: moduleExtract });
 
+    const hasPath =
+      isModuleWithParams(meta.module) && (meta.module.path !== undefined || meta.module.absolutePath !== undefined);
+
     let aControllerMetadata1: ControllerMetadata1[] = [];
-    if (isNormRootModule(meta) || isAppends || (isModuleWithParams(meta.module) && meta.module.path !== undefined)) {
+    if (isNormRootModule(meta) || isAppends || hasPath) {
       aControllerMetadata1 = transformControllersMetadata(this.meta.controllers, this.moduleName);
     }
 
@@ -172,7 +175,11 @@ export class ModuleFactory {
       let prefixPerMod = '';
       let guardsPerMod: NormalizedGuard[] = [];
       if ((isImport && isModuleWithParams(input)) || isAppendsWithParams(input)) {
-        prefixPerMod = [this.prefixPerMod, input.path].filter((s) => s).join('/');
+        if (typeof input.absolutePath == 'string') {
+          prefixPerMod = input.absolutePath;
+        } else {
+          prefixPerMod = [this.prefixPerMod, input.path].filter((s) => s).join('/');
+        }
         guardsPerMod = [...this.guardsPerMod, ...meta.normalizedGuardsPerMod];
       }
 

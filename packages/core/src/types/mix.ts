@@ -5,7 +5,7 @@ import {
   ResolvedProvider,
   TokenProvider,
   TypeProvider,
-  ValueProvider
+  ValueProvider,
 } from '#di';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { RequestContext } from './http-interceptor.js';
@@ -35,11 +35,15 @@ const obj: ModifiedInterface = {
  */
 export type RequireProps<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
 export type OptionalProps<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-export interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
+
+export type ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> =
+  | ModuleWithParams1<M, E>
+  | ModuleWithParams2<M, E>;
+
+export interface BaseModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
   extends Partial<ProvidersMetadata> {
   id?: string;
   module: ModuleType<M>;
-  path?: string;
   /**
    * List of modules, `ModuleWithParams` or tokens of providers exported by this
    * module.
@@ -52,6 +56,16 @@ export interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = 
    * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
    */
   extensionsMeta?: E;
+}
+export interface ModuleWithParams1<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
+  extends BaseModuleWithParams<M, E> {
+  path?: string;
+  absolutePath?: never;
+}
+export interface ModuleWithParams2<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
+  extends BaseModuleWithParams<M, E> {
+  absolutePath?: string;
+  path?: never;
 }
 
 export type AnyFn<T = any> = (...args: any[]) => T;
