@@ -27,23 +27,24 @@ import { OpenapiErrorMediator } from './services/openapi-error-mediator.js';
   exports: [RoutingModule],
 })
 export class OpenapiModule {
+  static module = OpenapiModule;
+  static absolutePath = '';
   /**
    * @param oasObject This object used for OpenAPI per application.
-   * @param path This path used for OpenAPI module with params.
-   * @param swaggerOAuthOptions This options used for OpenAPI per application.
+   * @param absolutePath This absolute path used for OpenAPI module with params.
    */
-  static withParams(oasObject: XOasObject<any>, path?: string) {
+  static withParams(oasObject: XOasObject<any>, absolutePath?: string) {
     const oasExtensionOptions: OasExtensionOptions = {
       oasObject,
     };
 
     const moduleWithParams: ModuleWithParams<OpenapiModule> = {
-      module: OpenapiModule,
+      module: this,
       providersPerApp: new Providers().useValue<OasExtensionOptions>(OasExtensionOptions, oasExtensionOptions),
     };
 
-    if (typeof path == 'string') {
-      moduleWithParams.path = path;
+    if (typeof absolutePath == 'string') {
+      moduleWithParams.absolutePath = absolutePath;
     }
 
     return moduleWithParams;
