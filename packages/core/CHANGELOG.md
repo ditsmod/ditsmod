@@ -1,5 +1,12 @@
+<a name="core-2.57.0"></a>
+# [core-2.57.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.57.0) (2024-09-22)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [79d0fbb92e](https://github.com/ditsmod/ditsmod/commit/79d0fbb92e0a2) | feat | introduced `absolutePath` for `ModuleWithParams` and `AppendsWithParams`. |
+
 <a name="core-2.56.1"></a>
-# [core-2.56.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.56.1) (2024-09-20)
+## [core-2.56.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.56.1) (2024-09-20)
 
 | Commit | Type | Description |
 | -- | -- | -- |
