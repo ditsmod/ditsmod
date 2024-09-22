@@ -1,6 +1,6 @@
 import { injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { HttpMethod } from '#types/mix.js';
+import { AnyFn, HttpMethod } from '#types/mix.js';
 import { Router } from '#types/router.js';
 import { NodeResponse, RequestListener } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
@@ -14,12 +14,10 @@ export class PreRouter {
 
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
     const [pathname, search] = (nodeReq.url || '').split('?');
-    let method: HttpMethod;
+    let method = nodeReq.method as HttpMethod;
     if (nodeReq.method == 'HEAD') {
       method = 'GET';
       this.handleHeadMethod(nodeRes);
-    } else {
-      method = nodeReq.method as HttpMethod;
     }
     const { handle, params } = this.router.find(method, pathname);
     if (!handle) {
@@ -48,15 +46,23 @@ export class PreRouter {
   }
 
   protected handleHeadMethod(nodeRes: NodeResponse) {
-    const originEnd = nodeRes.end.bind(nodeRes);
-    (nodeRes as any).end = (...args: any[]) => {
-      let contentLenght = 0;
-      if (args[0] && typeof args[0] != 'function') {
-        const encoding: BufferEncoding = !args[1] || typeof args[1] == 'function' ? 'utf8' : args[1];
-        contentLenght = Buffer.byteLength(args[0], encoding);
+    const nodeEnd = nodeRes.end.bind(nodeRes);
+    let contentLenght = 0;
+
+    (nodeRes as any).write = (chunk: any, cbOrEncoding?: AnyFn | BufferEncoding) => {
+      if (chunk) {
+        const encoding: BufferEncoding = !cbOrEncoding || typeof cbOrEncoding == 'function' ? 'utf8' : cbOrEncoding;
+        contentLenght += Buffer.byteLength(chunk, encoding);
+      }
+    };
+
+    (nodeRes as any).end = (chunkOrFn: AnyFn | string | Buffer, cbOrEncoding?: AnyFn | BufferEncoding) => {
+      if (chunkOrFn && typeof chunkOrFn != 'function') {
+        const encoding: BufferEncoding = !cbOrEncoding || typeof cbOrEncoding == 'function' ? 'utf8' : cbOrEncoding;
+        contentLenght += Buffer.byteLength(chunkOrFn, encoding);
       }
       nodeRes.setHeader('Content-Length', contentLenght);
-      originEnd();
+      nodeEnd();
     };
   }
 }
