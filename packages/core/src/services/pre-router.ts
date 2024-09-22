@@ -14,7 +14,14 @@ export class PreRouter {
 
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
     const [pathname, search] = (nodeReq.url || '').split('?');
-    const { handle, params } = this.router.find(nodeReq.method as HttpMethod, pathname);
+    let method: HttpMethod;
+    if (nodeReq.method == 'HEAD') {
+      method = 'GET';
+      this.handleHeadMethod(nodeRes);
+    } else {
+      method = nodeReq.method as HttpMethod;
+    }
+    const { handle, params } = this.router.find(method, pathname);
     if (!handle) {
       this.sendNotImplemented(nodeRes);
       return;
@@ -38,5 +45,18 @@ export class PreRouter {
   protected sendNotImplemented(nodeRes: NodeResponse) {
     nodeRes.statusCode = Status.NOT_IMPLEMENTED;
     nodeRes.end();
+  }
+
+  protected handleHeadMethod(nodeRes: NodeResponse) {
+    const originEnd = nodeRes.end.bind(nodeRes);
+    (nodeRes as any).end = (...args: any[]) => {
+      let contentLenght = 0;
+      if (args[0] && typeof args[0] != 'function') {
+        const encoding: BufferEncoding = !args[1] || typeof args[1] == 'function' ? 'utf8' : args[1];
+        contentLenght = Buffer.byteLength(args[0], encoding);
+      }
+      nodeRes.setHeader('Content-Length', contentLenght);
+      originEnd();
+    };
   }
 }
