@@ -15,7 +15,7 @@ export class PreRouter {
   requestListener: RequestListener = async (nodeReq, nodeRes) => {
     const [pathname, search] = (nodeReq.url || '').split('?');
     let method = nodeReq.method as HttpMethod;
-    if (nodeReq.method == 'HEAD') {
+    if (method == 'HEAD') {
       method = 'GET';
       this.handleHeadMethod(nodeRes);
     }
@@ -46,22 +46,21 @@ export class PreRouter {
   }
 
   protected handleHeadMethod(nodeRes: NodeResponse) {
+    let isChunked = false;
+    (nodeRes as any).write = () => (isChunked = true);
+    
     const nodeEnd = nodeRes.end.bind(nodeRes);
-    let contentLenght = 0;
-
-    (nodeRes as any).write = (chunk: any, cbOrEncoding?: AnyFn | BufferEncoding) => {
-      if (chunk) {
-        const encoding: BufferEncoding = !cbOrEncoding || typeof cbOrEncoding == 'function' ? 'utf8' : cbOrEncoding;
-        contentLenght += Buffer.byteLength(chunk, encoding);
-      }
-    };
-
     (nodeRes as any).end = (chunkOrFn: AnyFn | string | Buffer, cbOrEncoding?: AnyFn | BufferEncoding) => {
-      if (chunkOrFn && typeof chunkOrFn != 'function') {
-        const encoding: BufferEncoding = !cbOrEncoding || typeof cbOrEncoding == 'function' ? 'utf8' : cbOrEncoding;
-        contentLenght += Buffer.byteLength(chunkOrFn, encoding);
+      if (isChunked) {
+        nodeRes.setHeader('Transfer-Encoding', 'chunked');
+      } else {
+        let contentLenght = 0;
+        if (typeof chunkOrFn != 'function') {
+          const encoding: BufferEncoding = !cbOrEncoding || typeof cbOrEncoding == 'function' ? 'utf8' : cbOrEncoding;
+          contentLenght += Buffer.byteLength(chunkOrFn, encoding);
+        }
+        nodeRes.setHeader('Content-Length', contentLenght);
       }
-      nodeRes.setHeader('Content-Length', contentLenght);
       nodeEnd();
     };
   }
