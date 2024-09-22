@@ -5,7 +5,6 @@ import {
   HttpMethod,
   MetadataPerMod2,
   PerAppService,
-  Providers,
   ResolvedGuard,
   injectable,
   Injector,
