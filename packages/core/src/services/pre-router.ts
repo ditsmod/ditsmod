@@ -57,7 +57,7 @@ export class PreRouter {
         let contentLenght = 0;
         if (typeof chunkOrFn != 'function') {
           const encoding: BufferEncoding = !cbOrEncoding || typeof cbOrEncoding == 'function' ? 'utf8' : cbOrEncoding;
-          contentLenght += Buffer.byteLength(chunkOrFn, encoding);
+          contentLenght = Buffer.byteLength(chunkOrFn, encoding);
         }
         nodeRes.setHeader('Content-Length', contentLenght);
       }
