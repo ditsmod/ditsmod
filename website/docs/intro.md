@@ -192,6 +192,38 @@ node dist/main.js
 
 Проглядаючи файл `src/main.ts`, ви можете бачити, що створюється інстанс класу `Application`, а у якості аргументу для методу `bootstrap()` передається `AppModule`. Тут `AppModule` є кореневим модулем, до якого вже підв'язуються інші модулі застосунку.
 
+## Ditsmod на Bun
+
+Ditsmod може працювати на базі [Bun][19]. Щоправда, на даний момент (v1.1.29), [Bun має баг][20], через який він некоректно працює з TypeScript. Якщо ви скачаєте сіди Ditsmod, встановите залежності, і спробуєте запустити затосунок:
+
+```sh
+git clone --depth 1 https://github.com/ditsmod/seed.git my-app
+cd my-app
+bun install
+bun run build
+bun dist/main.js
+```
+
+Bun кине наступну помилку:
+
+```text
+1 | (function (entry, fetcher)
+    ^
+SyntaxError: export 'ValueProvider' not found in './types-and-models.js'
+```
+
+На даний момент, цей баг можна обійти, якщо видалити файли `tsconfig.json` з усіх пакетів Ditsmod:
+
+```sh
+rm node_modules/@ditsmod/*/tsconfig.json
+```
+
+Окрім цього, якщо ваш застосунок має конфігурацію `compilerOptions.paths` у `tsconfig.json`, Bun через це некоректно працює також. Просто закоментуйте або видаліть цю секцію з `tsconfig.json`. Після цього треба запускати скомпільовану версію вхідного файла:
+
+```sh
+bun dist/main.js
+```
+
 
 [1]: #встановлення
 [2]: https://github.com/ditsmod/seed
@@ -206,3 +238,5 @@ node dist/main.js
 [16]: https://www.typescriptlang.org/docs/handbook/project-references.html
 [17]: https://github.com/TypeStrong/ts-node
 [18]: https://nodejs.org/api/packages.html#imports
+[19]: https://bun.sh/
+[20]: https://github.com/oven-sh/bun/issues/10438
