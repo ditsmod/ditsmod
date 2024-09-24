@@ -27,18 +27,18 @@ export class Res<T = any> {
     return this;
   }
 
-  setHeaders(headrs: HttpHeaders = {}) {
-    Object.entries(headrs).forEach(([key, value]) => this.nodeRes.setHeader(key, value));
+  setHeader(key: string, value: string | number | string[]) {
+    this.nodeRes.setHeader(key, value);
     return this;
   }
 
   /**
    * Send data as is, without any transformation.
    */
-  send(data?: string | Buffer | Uint8Array, statusCode: Status = Status.OK, headrs?: HttpHeaders): void {
+  send(data?: string | Buffer | Uint8Array, statusCode: Status = Status.OK): void {
     const contentType = this.nodeRes.getHeader('Content-Type');
     if (!contentType) {
-      this.setHeaders({ 'Content-Type': 'text/plain; charset=utf-8', ...headrs });
+      this.setHeader('Content-Type', 'text/plain; charset=utf-8');
     }
     this.nodeRes.statusCode = statusCode;
     this.nodeRes.end(data || '');
@@ -51,10 +51,8 @@ export class Res<T = any> {
     this.send(format(data), statusCode);
   }
 
-  sendJson(data?: T, statusCode: Status = Status.OK, headrs?: HttpHeaders): void {
-    this
-      .setHeaders({ 'Content-Type': 'application/json; charset=utf-8', ...headrs })
-      .send(JSON.stringify(data), statusCode);
+  sendJson(data?: T, statusCode: Status = Status.OK): void {
+    this.setHeader('Content-Type', 'application/json; charset=utf-8').send(JSON.stringify(data), statusCode);
   }
 
   redirect(statusCode: RedirectStatusCodes, path: string) {
