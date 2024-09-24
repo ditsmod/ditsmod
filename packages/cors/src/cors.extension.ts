@@ -120,7 +120,7 @@ export class CorsExtension implements Extension<void | false> {
 
       class DynamicController {
         [methodName](ctx: RequestContext) {
-          ctx.send(undefined, Status.NO_CONTENT, { Allow: httpMethods.join() });
+          ctx.setHeader('Allow', httpMethods.join()).send(undefined, Status.NO_CONTENT);
         }
       }
 
