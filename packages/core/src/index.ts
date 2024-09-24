@@ -96,7 +96,6 @@ export {
   RedirectStatusCodes,
   Provider,
   AnyFn,
-  HttpHeaders,
   RequireProps,
   OptionalProps,
 } from './types/mix.js';

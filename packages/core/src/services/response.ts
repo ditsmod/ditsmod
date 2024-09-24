@@ -2,7 +2,7 @@ import { format } from 'util';
 
 import { NODE_RES } from '#constans';
 import { inject, injectable } from '#di';
-import { HttpHeaders, RedirectStatusCodes } from '#types/mix.js';
+import { RedirectStatusCodes } from '#types/mix.js';
 import { NodeResponse } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
 
