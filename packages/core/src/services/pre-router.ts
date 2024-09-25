@@ -48,7 +48,7 @@ export class PreRouter {
   protected handleHeadMethod(nodeRes: NodeResponse) {
     let isChunked = false;
     (nodeRes as any).write = () => (isChunked = true);
-    
+
     const nodeEnd = nodeRes.end.bind(nodeRes);
     (nodeRes as any).end = (chunkOrFn: AnyFn | string | Buffer, cbOrEncoding?: AnyFn | BufferEncoding) => {
       if (isChunked) {
