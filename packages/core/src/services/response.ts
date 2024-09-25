@@ -37,10 +37,11 @@ export class Res<T = any> {
    */
   send(data?: string | Buffer | Uint8Array, statusCode: Status = Status.OK): void {
     const contentType = this.nodeRes.getHeader('Content-Type');
-    if (!contentType) {
-      this.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    if (contentType) {
+      this.nodeRes.statusCode = statusCode;
+    } else {
+      this.nodeRes.writeHead(statusCode, { 'Content-Type': 'text/plain; charset=utf-8' });
     }
-    this.nodeRes.statusCode = statusCode;
     this.nodeRes.end(data || '');
   }
 
@@ -56,7 +57,6 @@ export class Res<T = any> {
   }
 
   redirect(statusCode: RedirectStatusCodes, path: string) {
-    this.nodeRes.writeHead(statusCode, { Location: path });
-    this.nodeRes.end();
+    this.nodeRes.writeHead(statusCode, { Location: path }).end();
   }
 }
