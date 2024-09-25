@@ -1,5 +1,12 @@
+<a name="return-2.6.1"></a>
+# [return-2.6.1](https://github.com/ditsmod/ditsmod/releases/tag/return-2.6.1) (2024-09-25)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [1a18c6ef0f](https://github.com/ditsmod/ditsmod/commit/1a18c6ef0ff98543040) | fix | Now `ReturnHttpBackend` checks `headersSent`. |
+
 <a name="return-2.6.0"></a>
-# [return-2.6.0](https://github.com/ditsmod/ditsmod/releases/tag/return-2.6.0) (2024-02-11)
+## [return-2.6.0](https://github.com/ditsmod/ditsmod/releases/tag/return-2.6.0) (2024-02-11)
 
 | Commit | Type | Description |
 | -- | -- | -- |
