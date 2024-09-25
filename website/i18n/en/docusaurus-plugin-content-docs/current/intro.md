@@ -97,18 +97,10 @@ npm i
 
 ## Start in Development Mode
 
-For development mode, you'll need two terminals. In one, TypeScript code will be compiled into JavaScript code, and in the other, a web server will be running. After each code change, the web server will pick up these changes and reload.
-
-Command for the first terminal:
+You can start the application in development mode with the following command:
 
 ```bash
-npm run watch
-```
-
-Command for the second terminal:
-
-```bash
-npm start
+npm run start:dev
 ```
 
 You can check the server operation using `curl`:
