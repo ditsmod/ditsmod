@@ -1,5 +1,3 @@
-import { format } from 'util';
-
 import { NODE_RES } from '#constans';
 import { inject, injectable } from '#di';
 import { RedirectStatusCodes } from '#types/mix.js';
@@ -43,13 +41,6 @@ export class Res<T = any> {
       this.nodeRes.writeHead(statusCode, { 'Content-Type': 'text/plain; charset=utf-8' });
     }
     this.nodeRes.end(data || '');
-  }
-
-  /**
-   * To convert `any` type to `string` type, the `util.format()` function is used here.
-   */
-  sendText(data?: any, statusCode: Status = Status.OK): void {
-    this.send(format(data), statusCode);
   }
 
   sendJson(data?: T, statusCode: Status = Status.OK): void {
