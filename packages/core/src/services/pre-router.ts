@@ -1,6 +1,7 @@
+import { IncomingMessage, ServerResponse } from 'node:http';
 import { injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyFn, HttpMethod } from '#types/mix.js';
+import { HttpMethod } from '#types/mix.js';
 import { Router } from '#types/router.js';
 import { NodeResponse, RequestListener } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
@@ -47,21 +48,26 @@ export class PreRouter {
 
   protected handleHeadMethod(nodeRes: NodeResponse) {
     let isChunked = false;
-    (nodeRes as any).write = () => (isChunked = true);
+    nodeRes.write = () => (isChunked = true);
+    type Callback = () => void;
 
     const nodeEnd = nodeRes.end.bind(nodeRes);
-    (nodeRes as any).end = (chunkOrFn: AnyFn | string | Buffer, cbOrEncoding?: AnyFn | BufferEncoding) => {
+    nodeRes.end = function (chunkOrFn?: Callback | string | Buffer, cbOrEncoding?: Callback | BufferEncoding) {
       if (isChunked) {
-        nodeRes.setHeader('Transfer-Encoding', 'chunked');
+        if (!nodeRes.headersSent) {
+          nodeRes.setHeader('Transfer-Encoding', 'chunked');
+        }
       } else {
         let contentLenght = 0;
-        if (typeof chunkOrFn != 'function') {
+        if (chunkOrFn && typeof chunkOrFn != 'function') {
           const encoding: BufferEncoding = !cbOrEncoding || typeof cbOrEncoding == 'function' ? 'utf8' : cbOrEncoding;
           contentLenght = Buffer.byteLength(chunkOrFn, encoding);
         }
-        nodeRes.setHeader('Content-Length', contentLenght);
+        if (!nodeRes.headersSent) {
+          nodeRes.setHeader('Content-Length', contentLenght);
+        }
       }
-      nodeEnd();
+      return nodeEnd() as ServerResponse<IncomingMessage>;
     };
   }
 }
