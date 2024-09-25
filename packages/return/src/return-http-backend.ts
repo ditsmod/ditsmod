@@ -25,6 +25,9 @@ export class ReturnHttpBackend extends DefaultHttpBackend {
 
   override async handle() {
     const value = await super.handle(); // Controller's route returned value.
+    if (this.res.nodeRes.headersSent) {
+      return value;
+    }
     let { statusCode } = this.res.nodeRes;
     if (!statusCode) {
       const httpMethod = this.nodeReq.method as HttpMethod;

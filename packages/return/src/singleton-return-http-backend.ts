@@ -4,6 +4,9 @@ import { injectable, Status, HttpMethod, DefaultSingletonHttpBackend, SingletonR
 export class SingletonReturnHttpBackend extends DefaultSingletonHttpBackend {
   override async handle(ctx: SingletonRequestContext) {
     const value = await super.handle(ctx); // Controller's route returned value.
+    if (ctx.nodeRes.headersSent) {
+      return value;
+    }
     let { statusCode } = ctx.nodeRes;
     if (!statusCode) {
       const httpMethod = ctx.nodeReq.method as HttpMethod;
