@@ -14,7 +14,7 @@ Start from first terminal:
 
 ```bash
 cd examples/10*
-npm start
+npm run start:dev
 ```
 
 Open your browser with http://localhost:3000/openapi and there

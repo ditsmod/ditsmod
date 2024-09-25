@@ -14,7 +14,7 @@ Start from first terminal:
 
 ```bash
 cd examples/01*
-npm start
+npm run start:dev
 ```
 
 From second terminal:
