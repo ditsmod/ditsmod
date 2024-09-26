@@ -160,7 +160,7 @@ Depending on whether the controller is [singleton][3] or not, the method of obta
   ```
 2. If the controller is a singleton, you need to request `MulterSingletonParser` through DI, after which you can use its methods:
 
-  ```ts {11}
+  ```ts {7,11}
   import { createWriteStream } from 'node:fs';
   import { controller, route, SingletonRequestContext } from '@ditsmod/core';
   import { MulterParsedForm, MulterSingletonParser } from '@ditsmod/body-parser';

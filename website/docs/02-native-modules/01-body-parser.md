@@ -160,7 +160,7 @@ export class AppModule {}
   ```
 2. Якщо контролер є одинаком, через DI необхідно запитати `MulterSingletonParser`, після чого можете користуватись його методами:
 
-  ```ts {11}
+  ```ts {7,11}
   import { createWriteStream } from 'node:fs';
   import { controller, route, SingletonRequestContext } from '@ditsmod/core';
   import { MulterParsedForm, MulterSingletonParser } from '@ditsmod/body-parser';
