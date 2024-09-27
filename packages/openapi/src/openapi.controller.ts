@@ -1,14 +1,13 @@
 import { readFile } from 'fs/promises';
-import { controller, Status, Res, PATH_PARAMS, inject, AnyObj, NODE_RES, Injector } from '@ditsmod/core';
-import { getAbsoluteFSPath } from 'swagger-ui-dist';
-import fs from 'node:fs';
+import { controller, Status, Res } from '@ditsmod/core';
 
 import { oasRoute } from './decorators/oas-route.js';
+import { SwaggerConfigManager } from './services/swagger-config-manager.js';
 import { OasConfigFiles } from './types/oas-extension-options.js';
 
 @controller()
 export class OpenapiController {
-  constructor(private res: Res) {}
+  constructor(private swaggerConfigManager: SwaggerConfigManager, private res: Res) {}
 
   @oasRoute('GET', 'openapi', {
     description: 'OpenAPI documentation',
@@ -21,23 +20,8 @@ export class OpenapiController {
     },
   })
   async getIndex() {
-    const map = [
-      ['href="./swagger-ui.css"', 'href="./openapi/swagger-ui.css"'],
-      ['href="index.css"', 'href="./openapi/index.css"'],
-      ['href="./index.css"', 'href="./openapi/index.css"'],
-      ['href="./favicon-32x32.png"', 'href="./openapi/favicon-32x32.png"'],
-      ['href="./favicon-16x16.png"', 'href="./openapi/favicon-16x16.png"'],
-
-      ['src="./swagger-ui-bundle.js"', 'src="./openapi/swagger-ui-bundle.js"'],
-      ['src="./swagger-ui-standalone-preset.js"', 'src="./openapi/swagger-ui-standalone-preset.js"'],
-      ['src="./swagger-initializer.js"', 'src="./openapi/swagger-initializer.js"'],
-    ];
-
-    let indexHtml = await readFile(`${getAbsoluteFSPath()}/index.html`, 'utf8');
-    indexHtml = map.reduce((str, [searchVal, replaceVal]) => {
-      return str.replace(searchVal, replaceVal);
-    }, indexHtml);
-
+    await this.swaggerConfigManager.applyConfig();
+    const indexHtml = await readFile(`${this.swaggerConfigManager.webpackDist}/index.html`, 'utf8');
     this.res.setContentType('text/html; charset=utf-8').send(indexHtml);
   }
 
@@ -69,42 +53,18 @@ export class OpenapiController {
     this.res.setContentType('application/json; charset=utf-8').send(configFiles.json);
   }
 
-  @oasRoute('GET', 'openapi/:file', {
-    description: 'SwaggerUI static files',
+  @oasRoute('GET', 'openapi.bundle.js', {
+    description: 'SwaggerUI JavaScript bundle',
     parameters: [],
     responses: {
       [Status.OK]: {
-        description: 'SwaggerUI static files',
-        content: {
-          ['text/javascript; charset=utf-8']: {},
-          ['text/css; charset=utf-8']: {},
-          ['image/png']: {},
-        },
+        description: 'JavaScript-file with SwaggerUI logic',
+        content: { ['text/javascript; charset=utf-8']: {} },
       },
     },
   })
-  async getStaticFiles(@inject(PATH_PARAMS) params: AnyObj, injector: Injector) {
-    const url = params.file as string;
-    let contentType = 'text/plain; charset=utf-8';
-    if (url.endsWith('.js')) {
-      contentType = 'text/javascript; charset=utf-8';
-    } else if (url.endsWith('.css')) {
-      contentType = 'text/css; charset=utf-8';
-    } else if (url.endsWith('.png')) {
-      const imagePath = `${getAbsoluteFSPath()}/${url}`;
-      const nodeRes = injector.get(NODE_RES);
-      nodeRes.writeHead(200, {
-        'Content-Type': 'image/png',
-        'Content-Length': fs.statSync(imagePath).size,
-      });
-      return new Promise<void>((resolve, reject) => {
-        fs.createReadStream(imagePath)
-          .pipe(nodeRes)
-          .on('end', () => nodeRes.end(resolve))
-          .on('error', reject);
-      });
-    }
-    const file = await readFile(`${getAbsoluteFSPath()}/${url}`, 'utf8');
-    this.res.setContentType(contentType).send(file);
+  async getJavaScript() {
+    const appBundle = await readFile(`${this.swaggerConfigManager.webpackDist}/openapi.bundle.js`, 'utf8');
+    this.res.setContentType('text/javascript; charset=utf-8').send(appBundle);
   }
 }
