@@ -341,9 +341,9 @@ export class SomeController {
 ```
 
 [0]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md
-[1]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#operationObject
-[2]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#referenceObject
-[3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#schemaObject
+[1]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#operation-object
+[2]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#reference-object
+[3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#schema-object
 [4]: https://github.com/ditsmod/realworld/blob/e8947f8767/packages/server/src/app/modules/routed/profiles/profiles.controller.ts#L24-L30
-[5]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#securitySchemeObject
-[6]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#responsesObject
+[5]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#security-scheme-object
+[6]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#responses-object
