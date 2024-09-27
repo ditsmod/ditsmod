@@ -1,7 +1,7 @@
-import type * as http from 'http';
-import type * as http2 from 'http2';
-import type * as https from 'https';
-import type { AddressInfo } from 'net';
+import type * as http from 'node:http';
+import type * as http2 from 'node:http2';
+import type * as https from 'node:https';
+import type { AddressInfo } from 'node:net';
 
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -16,6 +16,7 @@ import { AppInitializer } from './app-initializer.js';
 export class Application {
   protected appOptions: AppOptions;
   protected systemLogMediator: SystemLogMediator;
+  protected appInitializer: AppInitializer;
 
   /**
    * @param appModule The root module of the application.
@@ -64,7 +65,8 @@ export class Application {
   }
 
   protected getAppInitializer(moduleManager: ModuleManager) {
-    return new AppInitializer(this.appOptions, moduleManager, this.systemLogMediator);
+    this.appInitializer = new AppInitializer(this.appOptions, moduleManager, this.systemLogMediator);
+    return this.appInitializer;
   }
 
   protected async bootstrapApplication(appInitializer: AppInitializer) {
@@ -82,6 +84,7 @@ export class Application {
   protected async createServerAndBindToListening(appInitializer: AppInitializer, resolve: AnyFn) {
     this.flushLogs();
     const server = await this.createServer(appInitializer.requestListener);
+    (this.appInitializer as PublicAppInitializer).setServer(server);
     server.on('listening', () => {
       const info = server.address() as AddressInfo;
       this.systemLogMediator.serverListen(this, info.address, info.port);
@@ -114,5 +117,13 @@ export class Application {
 class PublicLogMediator extends SystemLogMediator {
   override updateOutputLogLevel() {
     return super.updateOutputLogLevel();
+  }
+}
+/**
+ * This class is needed only to access the protected methods of the `AppInitializer` class.
+ */
+class PublicAppInitializer extends AppInitializer {
+  override setServer(server: NodeServer) {
+    return super.setServer(server);
   }
 }

@@ -4,6 +4,7 @@ export * from '@ts-stack/chain-error';
 export { AppInitializer } from './app-initializer.js';
 export { Application } from './application.js';
 export {
+  SERVER,
   HTTP_INTERCEPTORS,
   NODE_REQ,
   NODE_RES,

@@ -26,12 +26,15 @@ import { getProvidersTargets, getToken, getTokens } from './utils/get-tokens.js'
 import { normalizeProviders } from './utils/ng-utils.js';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error.js';
 import { isMultiProvider, isNormRootModule } from './utils/type-guards.js';
+import { SERVER } from '#constans';
+import { NodeServer } from '#types/server-options.js';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();
   protected preRouter: PreRouter;
   protected meta: NormalizedModuleMetadata;
   protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
+  protected server: NodeServer;
 
   constructor(
     protected appOptions: AppOptions,
@@ -48,6 +51,10 @@ export class AppInitializer {
     this.prepareProvidersPerApp();
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLogMediator();
+  }
+
+  protected setServer(server: NodeServer) {
+    this.server = server;
   }
 
   /**
@@ -214,6 +221,7 @@ export class AppInitializer {
   protected addDefaultProvidersPerApp() {
     this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
+      { token: SERVER, useFactory: () => this.server },
       { token: AppOptions, useValue: this.appOptions },
       { token: ModuleManager, useValue: this.moduleManager },
       { token: AppInitializer, useValue: this },
@@ -246,9 +254,7 @@ export class AppInitializer {
 
   protected async handleExtensions(aMetadataPerMod1: MetadataPerMod1[], extensionCounters: ExtensionCounters) {
     const extensionsContext = new ExtensionsContext();
-    const injectorPerApp = this.perAppService.reinitInjector([
-      { token: PerAppService, useValue: this.perAppService },
-    ]);
+    const injectorPerApp = this.perAppService.reinitInjector([{ token: PerAppService, useValue: this.perAppService }]);
 
     for (const metadataPerMod1 of aMetadataPerMod1) {
       const preparedMetadataPerMod1 = this.prepareMetadataPerMod1(metadataPerMod1);
@@ -326,7 +332,9 @@ export class AppInitializer {
 
   protected decreaseExtensionsCounters(extensionCounters: ExtensionCounters, providers: Provider[]) {
     const { mGroupTokens, mExtensions } = extensionCounters;
-    const groupTokens = getTokens(providers).filter((token) => token instanceof InjectionToken || token instanceof BeforeToken);
+    const groupTokens = getTokens(providers).filter(
+      (token) => token instanceof InjectionToken || token instanceof BeforeToken,
+    );
     const uniqGroupTokens = new Set<ExtensionsGroupToken>(groupTokens);
     const uniqTargets = new Set<Provider>(getProvidersTargets(providers));
 
