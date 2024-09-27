@@ -6,13 +6,15 @@ sidebar_position: 1
 
 ## What does a router do?
 
-The router has a mapping between the URL and the corresponding request handler. Although you will not have to manually write this mapping, but for a general idea of how the router works, in a very simplified form, this mapping can be imagined as follows:
+A router maps URLs to the corresponding request handler. For example, when users navigates to `/some-path`, `/other-path`, or `/path-with/:parameter` on your website, they are signaling to the Ditsmod application that they want to access a particular resource or make a change on the site. To let the Ditsmod application know what to do when these URLs are requested, you need to define the appropriate request handlers in the code. So, if `/some-path` is requested, a certain function is executed; if `/other-path` is requested, a different function is executed, and so on. Defining this relationship between the URL and its handler is the process of mapping URLs to their respective request handlers.
+
+Although you won't have to manually write this mapping, for a general understanding of how a router works, it can be simplified like this:
 
 ```ts
 const routes = new Map<string, Function>();
-routes.set('/one', function() { /** request processing... **/ });
-routes.set('/two', function() { /** request processing... **/ });
-routes.set('/three', function() { /** request processing... **/ });
+routes.set('/some-path', function() { /** request handling... **/ });
+routes.set('/other-path', function() { /** request handling... **/ });
+routes.set('/path-with/:parameter', function() { /** request handling... **/ });
 // ...
 ```
 
@@ -21,7 +23,7 @@ Right after Node.js receives an HTTP request and passes it to Ditsmod, the reque
 The router's task is to find the HTTP request handler by _path_. In a very simplified form, this process can be imagined as follows:
 
 ```ts
-const path = '/two';
+const path = '/some-path';
 const handle = routes.get(path);
 
 // ...
