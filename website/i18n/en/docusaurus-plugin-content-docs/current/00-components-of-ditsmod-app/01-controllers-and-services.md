@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## What does a router do?
 
-A router maps URLs to the corresponding request handler. For example, when users navigates to `/some-path`, `/other-path`, or `/path-with/:parameter` on your website, they are signaling to the Ditsmod application that they want to access a particular resource or make a change on the site. To let the Ditsmod application know what to do when these URLs are requested, you need to define the appropriate request handlers in the code. So, if `/some-path` is requested, a certain function is executed; if `/other-path` is requested, a different function is executed, and so on. Defining this relationship between the URL and its handler is the process of mapping URLs to their respective request handlers.
+A router maps URLs to the appropriate request handler. For example, when users request URLs like `/some-path`, `/other-path`, or `/path-with/:parameter` from their browser, they are informing the Ditsmod application that they want to access a specific resource or perform an action on the website. To enable the Ditsmod application to respond appropriately in these cases, you need to define the corresponding request handlers in the code. So, if `/some-path` is requested, a specific function is executed; if `/other-path` is requested, a different function is triggered, and so on. This process of defining the relationship between a URL and its handler is known as URL-to-handler mapping.
 
 Although you won't have to manually write this mapping, for a general understanding of how a router works, it can be simplified like this:
 
