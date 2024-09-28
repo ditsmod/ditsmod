@@ -90,11 +90,10 @@ export class SwaggerConfigManager {
     const webpackConfig: webpack.Configuration = {
       mode: 'development',
       entry: {
-        openapi: fileURLToPath(import.meta.resolve(`${this.swaggerUiSrc}/index.js`)),
+        openapi: fileURLToPath(import.meta.resolve(`${this.swaggerUiSrc}/index`)),
       },
       resolve: {
-        extensions: ['.ts', '.js'],
-        fallback: { stream: fileURLToPath(import.meta.resolve('stream-browserify')) },
+        extensions: ['.js'],
       },
       devtool: 'inline-source-map',
       module: {
@@ -110,9 +109,6 @@ export class SwaggerConfigManager {
         ],
       },
       plugins: [
-        new webpack.ProvidePlugin({
-          Buffer: ['buffer', 'Buffer'],
-        }),
         new webpack.CleanPlugin(),
         new CopyWebpackPlugin({
           patterns: [
