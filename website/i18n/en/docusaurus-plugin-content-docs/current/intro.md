@@ -113,7 +113,7 @@ Or simply by going to [http://localhost:3000/api/hello](http://localhost:3000/ap
 
 By default, the application works with `info` log level. You can change it in the file `src/app/app.module.ts` or `apps/backend/src/app/app.module.ts` (in the monorepository).
 
-Of course, instead of two terminals, you can use, for example, [ts-node][17] in one terminal, but this is a slower option, because after each change `ts-node` will recompile all the code on the fly, while in `tsc -w` only recompiles the changed file. In addition, thanks to [ditsmod/seed][2]'s use of the so-called [Project References][16] and `tsc -b` build mode, even very large projects compile very quickly.
+Thanks to [ditsmod/seed][2]'s use of the so-called [Project References][16] and `tsc -b` build mode, even very large projects compile very quickly.
 
 Note that there are four config files for TypeScript in the `ditsmod/seed` repository:
 
