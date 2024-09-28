@@ -6,8 +6,7 @@ import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extensio
 import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension.js';
 import { OAS_COMPILER_EXTENSIONS } from './di-tokens.js';
 import { OpenapiController } from './openapi.controller.js';
-import { SwaggerConfigManager } from './services/swagger-config-manager.js';
-import { SwaggerOAuthOptions } from './swagger-ui/swagger-o-auth-options.js';
+import { SwaggerOAuthOptions } from './swagger-ui/o-auth-options.js';
 import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-options.js';
 import { OpenapiLogMediator } from './services/openapi-log-mediator.js';
 import { OpenapiErrorMediator } from './services/openapi-error-mediator.js';
@@ -16,7 +15,7 @@ import { OpenapiErrorMediator } from './services/openapi-error-mediator.js';
   imports: [RoutingModule],
   controllers: [OpenapiController],
   providersPerApp: [OasConfigFiles],
-  providersPerMod: [SwaggerConfigManager, OpenapiLogMediator, OpenapiErrorMediator],
+  providersPerMod: [OpenapiLogMediator, OpenapiErrorMediator],
   extensions: [
     { extension: OpenapiRoutesExtension, token: ROUTES_EXTENSIONS, exported: true },
     {

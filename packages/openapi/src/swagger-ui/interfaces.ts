@@ -1,17 +1,3 @@
-import { AnyObj } from '@ditsmod/core';
-import { SwaggerOAuthOptions } from './swagger-o-auth-options.js';
-
-export interface SwaggerOptions {
-  /**
-   * This options for `SwaggerUI({...})`
-   */
-  initUi: SwaggerUiOptions;
-  /**
-   * This options for `ui.initOAuth({...})`
-   */
-  oauthOptions?: SwaggerOAuthOptions;
-}
-
 export interface SwaggerUIOptionsBase {
   /**
    * URL to fetch external configuration document from.

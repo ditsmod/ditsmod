@@ -2,16 +2,13 @@ import { createReadStream } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { controller, Status, Res } from '@ditsmod/core';
 
+import { webpackDist } from './swagger-ui/constants.js';
 import { oasRoute } from './decorators/oas-route.js';
-import { SwaggerConfigManager } from './services/swagger-config-manager.js';
 import { OasConfigFiles } from './types/oas-extension-options.js';
 
 @controller()
 export class OpenapiController {
-  constructor(
-    private swaggerConfigManager: SwaggerConfigManager,
-    private res: Res,
-  ) {}
+  constructor(private res: Res) {}
 
   @oasRoute('GET', 'openapi', {
     description: 'OpenAPI documentation',
@@ -24,8 +21,7 @@ export class OpenapiController {
     },
   })
   async getIndex() {
-    await this.swaggerConfigManager.applyConfig();
-    const indexHtml = await readFile(`${this.swaggerConfigManager.webpackDist}/index.html`, 'utf8');
+    const indexHtml = await readFile(`${webpackDist}/index.html`, 'utf8');
     this.res.setContentType('text/html; charset=utf-8').send(indexHtml);
   }
 
@@ -69,6 +65,6 @@ export class OpenapiController {
   })
   async getJavaScript() {
     this.res.setContentType('text/javascript; charset=utf-8');
-    createReadStream(`${this.swaggerConfigManager.webpackDist}/openapi.bundle.js`).pipe(this.res.nodeRes);
+    createReadStream(`${webpackDist}/openapi.bundle.js`).pipe(this.res.nodeRes);
   }
 }

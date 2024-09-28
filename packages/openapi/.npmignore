@@ -15,3 +15,4 @@ jest.config.ts
 tsconfig.e2e.json
 tsconfig.unit.json
 dist-*
+!dist-webpack
