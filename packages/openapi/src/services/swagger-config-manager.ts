@@ -1,30 +1,32 @@
 import { dirname } from 'node:path';
+import { AddressInfo } from 'node:net';
 import { fileURLToPath } from 'node:url';
-import { AppOptions, ModuleExtract, NodeServer, injectable, Injector, inject, SERVER } from '@ditsmod/core';
+import { existsSync } from 'node:fs';
+import { readFile, writeFile } from 'node:fs/promises';
+import { AppOptions, NodeServer, injectable, Injector, inject, SERVER } from '@ditsmod/core';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import { existsSync } from 'fs';
-import { readFile, writeFile } from 'fs/promises';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import { join } from 'path';
 import webpack from 'webpack';
 
 import { SwaggerOptions } from '../swagger-ui/interfaces.js';
 import { OasExtensionOptions } from '../types/oas-extension-options.js';
-import { AddressInfo } from 'node:net';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const openapiRoot = dirname(fileURLToPath(import.meta.resolve('@ditsmod/openapi/package.json')));
 
 @injectable()
 export class SwaggerConfigManager {
-  readonly webpackDist = join(__dirname, '../../dist-webpack');
-  readonly swaggerDist = join(__dirname, '../../dist/swagger-ui');
-  private swaggerUiSrc = join(__dirname, '../swagger-ui');
+  /**
+   * `dist-webpack`
+   */
+  readonly webpackDist = `${openapiRoot}/dist-webpack`;
+  /**
+   * `dist/swagger-ui`
+   */
+  readonly swaggerDist = `${openapiRoot}/dist/swagger-ui`;
   private inited: boolean;
-  private openapiRoot = join(__dirname, '../..');
 
   constructor(
     private appOptions: AppOptions,
-    private moduleExtract: ModuleExtract,
     private injectorPerMod: Injector,
     @inject(SERVER) private server: NodeServer,
   ) {}
@@ -33,31 +35,30 @@ export class SwaggerConfigManager {
     if (this.inited) {
       return;
     }
-    const { path: prefixPerMod } = this.moduleExtract;
-    const { port } = this.server.address() as AddressInfo;
-    const path = [this.appOptions.path, prefixPerMod, 'openapi.yaml'].filter((p) => p).join('/');
+    const { port, address } = this.server.address() as AddressInfo;
+    const path = [this.appOptions.path, 'openapi.yaml'].filter((p) => p).join('/');
     const oasExtensionOptions = this.injectorPerMod.get(OasExtensionOptions, null);
     const oauthOptions = oasExtensionOptions?.swaggerOAuthOptions;
     const swaggerOptions: SwaggerOptions = {
-      initUi: { url: `http://0.0.0.0:${port}/${path}`, dom_id: '#swagger' },
+      initUi: { url: `http://${address}:${port}/${path}`, dom_id: '#swagger', queryConfigEnabled: true },
       oauthOptions: oauthOptions || {
-        appName: 'Swagger UI Webpack Demo',
+        appName: 'Swagger UI Webpack',
         // See https://demo.identityserver.io/ for configuration details.
         clientId: 'implicit',
       },
     };
     const futureFileContent = `export const swaggerOptions = ${JSON.stringify(swaggerOptions)};`;
-    const filePath = fileURLToPath(import.meta.resolve(`${this.swaggerUiSrc}/swagger.config.js`));
+    const filePath = `${this.swaggerDist}/swagger.config.js`;
     const currentFileContent = await readFile(filePath, 'utf8');
     const dirExists = existsSync(this.webpackDist);
     if (dirExists && currentFileContent == futureFileContent) {
       return;
     }
     await writeFile(filePath, futureFileContent, 'utf8');
-    await this.webpackCompile(filePath, currentFileContent, futureFileContent);
+    await this.webpackCompile(filePath, currentFileContent);
   }
 
-  protected webpackCompile(filePath: string, currentFileContent: string, futureFileContent: string) {
+  protected webpackCompile(filePath: string, currentFileContent: string) {
     const compiler = webpack(this.getWebpackConfig());
 
     const promise = new Promise<void>((resolve, reject) => {
@@ -88,9 +89,9 @@ export class SwaggerConfigManager {
 
   protected getWebpackConfig() {
     const webpackConfig: webpack.Configuration = {
-      mode: 'development',
+      mode: 'production',
       entry: {
-        openapi: fileURLToPath(import.meta.resolve(`${this.swaggerUiSrc}/index`)),
+        openapi: `${this.swaggerDist}/index`,
       },
       resolve: {
         extensions: ['.js'],
@@ -120,9 +121,7 @@ export class SwaggerConfigManager {
             },
           ],
         }),
-        new HtmlWebpackPlugin({
-          template: `${this.openapiRoot}/index.html`,
-        }),
+        new HtmlWebpackPlugin({ template: `${openapiRoot}/index.html` }),
       ],
       output: {
         filename: '[name].bundle.js',
