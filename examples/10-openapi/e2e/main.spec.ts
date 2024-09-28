@@ -19,15 +19,15 @@ describe('10-openapi', () => {
 
   it('controller works', async () => {
     const { type, status, text } = await testAgent.get('/');
-    expect(type).toBe('text/plain');
     expect(status).toBe(200);
+    expect(type).toBe('text/plain');
     expect(text).toBe('Hello World!\n');
   });
 
   it('serves main page for OpenAPI docs', async () => {
     const { status, type } = await testAgent.get('/openapi');
-    expect(type).toBe('text/html');
     expect(status).toBe(200);
+    expect(type).toBe('text/html');
   });
 
   it('serves route with JSON response for OpenAPI docs', async () => {
