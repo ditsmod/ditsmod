@@ -16,7 +16,7 @@ import { RequestContext } from '#types/http-interceptor.js';
 import { AppendsWithParams } from '#types/module-metadata.js';
 
 describe('ModuleManager', () => {
-  // console.log = jest.fn();
+  console.log = jest.fn();
   type ModuleId = string | ModuleType | ModuleWithParams;
 
   class MockModuleManager extends ModuleManager {
