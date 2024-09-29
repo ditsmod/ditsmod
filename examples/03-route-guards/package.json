@@ -6,6 +6,8 @@
   "scripts": {
     "start": "yarn build && node --watch --enable-source-maps -r dotenv/config dist/main.js",
     "clean": "rimraf dist*",
+    "start:dev": "concurrently -r 'npm:watch' 'npm:start'",
+    "watch": "npm run build -- --watch",
     "test": "tsc -b tsconfig.e2e.json && yarn esm-jest",
 "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build": "tsc -b tsconfig.build.json"

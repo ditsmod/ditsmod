@@ -29,6 +29,16 @@ describe('03-route-guards', () => {
     expect(status).toBe(401);
   });
 
+  it('should throw 401 for guards setted for a module', async () => {
+    const { status } = await testAgent.get('/group-guards/hello');
+    expect(status).toBe(401);
+  });
+
+  it('should throw 401 for guards setted for a module', async () => {
+    const { status } = await testAgent.get('/group-guards/hello2');
+    expect(status).toBe(401);
+  });
+
   it('should throw 403', async () => {
     const { status } = await testAgent.get('/forbidden');
     expect(status).toBe(403);
