@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/cors",
   "type": "module",
-  "version": "2.7.1",
+  "version": "2.8.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"

@@ -1,5 +1,12 @@
+<a name="cors-2.8.0"></a>
+# [cors-2.8.0](https://github.com/ditsmod/ditsmod/releases/tag/cors-2.8.0) (2024-09-29)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [14af3eb125](https://github.com/ditsmod/ditsmod/commit/14af3eb1256df917acf) | refactor | migration to core-2.58. |
+
 <a name="cors-2.7.1"></a>
-# [cors-2.7.1](https://github.com/ditsmod/ditsmod/releases/tag/cors-2.7.1) (2024-09-20)
+## [cors-2.7.1](https://github.com/ditsmod/ditsmod/releases/tag/cors-2.7.1) (2024-09-20)
 
 | Commit | Type | Description |
 | -- | -- | -- |
