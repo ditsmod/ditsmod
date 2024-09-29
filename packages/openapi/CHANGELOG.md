@@ -1,5 +1,12 @@
+<a name="openapi-2.27.0"></a>
+# [openapi-2.27.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.27.0) (2024-09-29)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [set of commits](https://github.com/ditsmod/ditsmod/commits/main/packages/openapi?since=2024-09-27&until=2024-09-29) | feat | migration to `swagger-ui`. |
+
 <a name="openapi-2.26.0"></a>
-# [openapi-2.26.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.26.0) (2024-09-22)
+## [openapi-2.26.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.26.0) (2024-09-22)
 
 | Commit | Type | Description |
 | -- | -- | -- |
