@@ -3,7 +3,7 @@ import { CanActivate, RequestContext, Status, guard } from '@ditsmod/core';
 import { Permission } from './types.js';
 import { SingletonAuthService } from './singleton-auth.service.js';
 
-@guard({ isSingleton: true })
+@guard()
 export class SingletonPermissionsGuard implements CanActivate {
   constructor(private authService: SingletonAuthService) {}
 
