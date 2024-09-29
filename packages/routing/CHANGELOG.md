@@ -1,5 +1,12 @@
+<a name="routing-2.5.0"></a>
+# [routing-2.5.0](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.5.0) (2024-08-29)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [c807842941](https://github.com/ditsmod/ditsmod/commit/c8078429411929d520) | refactor | fixed logic with guards. |
+
 <a name="routing-2.4.1"></a>
-# [routing-2.4.1](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.4.1) (2024-08-20)
+## [routing-2.4.1](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.4.1) (2024-08-20)
 
 | Commit | Type | Description |
 | -- | -- | -- |

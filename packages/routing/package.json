@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/routing",
   "type": "module",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "homepage": "https://ditsmod.github.io/en/",
   "description": "Routing module for Ditsmod applications",
