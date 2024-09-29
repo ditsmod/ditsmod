@@ -6,7 +6,7 @@ import { AnyObj, GuardItem, ModuleType, ModuleWithParams, NormalizedGuard, Scope
 import { ExtensionProvider, Extension } from '#types/extension-types.js';
 import { AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
-import { getExtensionProvider } from '#utils/get-extension-provider.js';
+import { ExtensionOptions, getExtensionProvider, isOptionWithOverrideExtension } from '#utils/get-extension-provider.js';
 import { ModuleMetadataWithContext, getModuleMetadata } from '#utils/get-module-metadata.js';
 import { getModuleName } from '#utils/get-module-name.js';
 import { getModule } from '#utils/get-module.js';
@@ -405,7 +405,8 @@ export class ModuleManager {
     this.exportFromRawMeta(rawMeta, modName, providersTokens, meta);
     this.checkReexportModules(meta);
 
-    rawMeta.extensions?.forEach((extensionOptions) => {
+    rawMeta.extensions?.forEach((extensionOptions, i) => {
+      this.checkExtensionOptions(modName, extensionOptions, i);
       const extensionObj = getExtensionProvider(extensionOptions);
       extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
       if (!extensionObj.exportedOnly) {
@@ -423,6 +424,16 @@ export class ModuleManager {
     this.quickCheckMetadata(meta);
 
     return meta;
+  }
+
+  protected checkExtensionOptions(modName: string, extensionOptions: ExtensionOptions, i: number) {
+    if (!isOptionWithOverrideExtension(extensionOptions)) {
+      // Previously, extensions had a `groupToken` property, which was renamed to `token`.
+      if (!extensionOptions.token) {
+        const msg = `Export of "${modName}" failed: extension in [${i}] index does not have "token" property.`;
+        throw new TypeError(msg);
+      }
+    }
   }
 
   protected pickMeta(targetObject: NormalizedModuleMetadata, ...sourceObjects: ModuleMetadataWithContext[]) {

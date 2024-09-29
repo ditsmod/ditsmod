@@ -44,7 +44,7 @@ export interface ExtensionOptions3 {
 
 export type ExtensionOptions = ExtensionOptions1 | ExtensionOptions2 | ExtensionOptions3;
 
-function isOptionWithOverrideExtension(extensionOptions: ExtensionOptions): extensionOptions is ExtensionOptions3 {
+export function isOptionWithOverrideExtension(extensionOptions: ExtensionOptions): extensionOptions is ExtensionOptions3 {
   return (extensionOptions as ExtensionOptions3).overrideExtension !== undefined;
 }
 
