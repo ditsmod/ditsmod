@@ -1,5 +1,24 @@
+<a name="core-2.58.0"></a>
+# [core-2.58.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.58.0) (2024-09-29)
+
+**Breaking changes**
+
+- renamed `res.setHeaders()` to `res.setHeader()`;
+- removed `res.sendText()`;
+- remove `isSingleton` for gurads;
+- removed `headers` parameter from `res.send()` and `res.sendJson()`.
+
+**Other changes**
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [e66c7d8942](https://github.com/ditsmod/ditsmod/commit/e66c7d8942f408aa) | feat | added DI token `SERVER`. |
+| [11c2f06bd8](https://github.com/ditsmod/ditsmod/commit/11c2f06bd8542da8) | feat | added support for `HEAD` method. |
+| [64c55ea8b6](https://github.com/ditsmod/ditsmod/commit/64c55ea8b6564cff) | fix | fixed settings guards per a module. |
+| [64c55ea8b6](https://github.com/ditsmod/ditsmod/commit/64c55ea8b6564cff) | fix | fixed settings guards per a module. |
+
 <a name="core-2.57.0"></a>
-# [core-2.57.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.57.0) (2024-09-22)
+## [core-2.57.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.57.0) (2024-09-22)
 
 | Commit | Type | Description |
 | -- | -- | -- |
