@@ -10,6 +10,6 @@ export const webpackDist = `${openapiRoot}/dist-webpack`;
 /**
  * `dist/swagger-ui`
  * 
- * Also see src/swagger-ui/index.ts
+ * Also see `./index.ts`
  */
 export const swaggerDist = `${openapiRoot}/dist/swagger-ui`;
