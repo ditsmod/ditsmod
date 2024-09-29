@@ -1,5 +1,12 @@
+<a name="session-cookie-2.9.1"></a>
+# [session-cookie-2.9.1](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.9.1) (2024-09-29)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [00f56e2b48](https://github.com/ditsmod/ditsmod/commit/00f56e2b481e2) | fix | renamed `groupToken` to `token` for `ExtensionOptionsBase`. |
+
 <a name="session-cookie-2.8.0"></a>
-# [session-cookie-2.8.0](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.8.0) (2024-08-06)
+## [session-cookie-2.8.0](https://github.com/ditsmod/ditsmod/releases/tag/session-cookie-2.8.0) (2024-08-06)
 
 | Commit | Type | Description |
 | -- | -- | -- |
