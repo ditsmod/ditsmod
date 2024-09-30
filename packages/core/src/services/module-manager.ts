@@ -362,7 +362,7 @@ export class ModuleManager {
     meta.decoratorFactory = rawMeta.decoratorFactory;
     meta.declaredInDir = rawMeta.declaredInDir;
     this.checkWhetherIsExternalModule(rawMeta, meta);
-    if (isModuleWithParams(mod) || isAppendsWithParams(mod)) {
+    if ((isModuleWithParams(mod) || isAppendsWithParams(mod)) && mod.guards) {
       meta.normalizedGuardsPerMod = this.normalizeGuards(mod.guards);
       this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
     }
