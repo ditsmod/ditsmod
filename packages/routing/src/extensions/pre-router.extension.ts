@@ -34,6 +34,7 @@ import {
   ExtensionInitMeta,
   TotalInitMeta,
   TotalInitMetaPerApp,
+  ChainError,
 } from '@ditsmod/core';
 
 import { PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -93,7 +94,7 @@ export class PreRouterExtension implements Extension<void> {
           httpMethod: controllersMetadata2.httpMethod,
           path: controllersMetadata2.path,
           handle,
-          countOfGuards: controllersMetadata2.routeMeta.resolvedGuards.length
+          countOfGuards: controllersMetadata2.routeMeta.resolvedGuards.length,
         });
       });
     });
@@ -124,7 +125,9 @@ export class PreRouterExtension implements Extension<void> {
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     this.checkDeps(metadataPerMod2.moduleName, httpMethod, path, injPerReq, routeMeta);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
-    const resolvedErrHandler = resolvedPerReq.concat(resolvedPerRou).find((rp) => rp.dualKey.token === HttpErrorHandler)!;
+    const resolvedErrHandler = resolvedPerReq
+      .concat(resolvedPerRou)
+      .find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
     const nodeReqId = KeyRegistry.get(NODE_REQ).id;
     const nodeResId = KeyRegistry.get(NODE_RES).id;
@@ -193,17 +196,21 @@ export class PreRouterExtension implements Extension<void> {
    * Used as "sandbox" to test resolvable of controllers and HTTP interceptors.
    */
   protected checkDeps(moduleName: string, httpMethod: HttpMethod, path: string, inj: Injector, routeMeta: RouteMeta) {
-    const ignoreDeps: any[] = [HTTP_INTERCEPTORS];
-    DepsChecker.check(inj, HttpErrorHandler, undefined, ignoreDeps);
-    DepsChecker.check(inj, ChainMaker, undefined, ignoreDeps);
-    DepsChecker.check(inj, HttpFrontend, undefined, ignoreDeps);
-    DepsChecker.check(inj, SystemLogMediator, undefined, ignoreDeps);
-    routeMeta.resolvedGuards.forEach((item) => DepsChecker.checkForResolved(inj, item.guard, ignoreDeps));
-    DepsChecker.check(inj, HttpBackend, undefined, ignoreDeps);
-    if (routeMeta?.resolvedHandler) {
-      DepsChecker.checkForResolved(inj, routeMeta.resolvedHandler, ignoreDeps);
+    try {
+      const ignoreDeps: any[] = [HTTP_INTERCEPTORS];
+      DepsChecker.check(inj, HttpErrorHandler, undefined, ignoreDeps);
+      DepsChecker.check(inj, ChainMaker, undefined, ignoreDeps);
+      DepsChecker.check(inj, HttpFrontend, undefined, ignoreDeps);
+      DepsChecker.check(inj, SystemLogMediator, undefined, ignoreDeps);
+      routeMeta.resolvedGuards.forEach((item) => DepsChecker.checkForResolved(inj, item.guard, ignoreDeps));
+      DepsChecker.check(inj, HttpBackend, undefined, ignoreDeps);
+      if (routeMeta?.resolvedHandler) {
+        DepsChecker.checkForResolved(inj, routeMeta.resolvedHandler, ignoreDeps);
+      }
+      DepsChecker.check(inj, HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
+    } catch (err: any) {
+      throw new ChainError(`[${moduleName}]`, err);
     }
-    DepsChecker.check(inj, HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
   }
 
   protected setRoutes(totalInitMeta: TotalInitMeta<MetadataPerMod2>, preparedRouteMeta: PreparedRouteMeta[]) {
