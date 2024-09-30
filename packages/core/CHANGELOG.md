@@ -1,5 +1,12 @@
+<a name="core-2.58.1"></a>
+# [core-2.58.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.58.1) (2024-09-30)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [03d83fcf4c](https://github.com/ditsmod/ditsmod/commit/03d83fcf4c0ffcd7) | fix | fixed adding guards per a module. |
+
 <a name="core-2.58.0"></a>
-# [core-2.58.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.58.0) (2024-09-29)
+## [core-2.58.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.58.0) (2024-09-29)
 
 **Breaking changes**
 
