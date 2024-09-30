@@ -31,6 +31,7 @@ export class Application {
         await this.bootstrapApplication(appInitializer);
         await this.createServerAndBindToListening(appInitializer, resolve);
       } catch (err: any) {
+        (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
         this.systemLogMediator.internalServerError(this, err, true);
         this.flushLogs();
         reject(err);
