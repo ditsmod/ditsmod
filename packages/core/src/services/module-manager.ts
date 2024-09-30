@@ -6,7 +6,11 @@ import { AnyObj, GuardItem, ModuleType, ModuleWithParams, NormalizedGuard, Scope
 import { ExtensionProvider, Extension } from '#types/extension-types.js';
 import { AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
-import { ExtensionOptions, getExtensionProvider, isOptionWithOverrideExtension } from '#utils/get-extension-provider.js';
+import {
+  ExtensionOptions,
+  getExtensionProvider,
+  isOptionWithOverrideExtension,
+} from '#utils/get-extension-provider.js';
 import { ModuleMetadataWithContext, getModuleMetadata } from '#utils/get-module-metadata.js';
 import { getModuleName } from '#utils/get-module-name.js';
 import { getModule } from '#utils/get-module.js';
