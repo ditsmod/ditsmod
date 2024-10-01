@@ -2,7 +2,7 @@ import { Injector } from '#di';
 import { Provider } from '#types/mix.js';
 
 export interface ReflectiveDependecy {
-  token: any;
+  token: NonNullable<unknown>;
   required: boolean;
 }
 

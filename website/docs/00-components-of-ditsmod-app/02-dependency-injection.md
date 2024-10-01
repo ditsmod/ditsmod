@@ -233,11 +233,11 @@ DI створює значення у реєстрі для кожного то�
 import { Class } from '@ditsmod/core';
 
 type Provider = Class<any> |
-{ token: any, useClass: Class<any>, multi?: boolean } |
-{ token: any, useValue: any, multi?: boolean } |
-{ token?: any, useFactory: [Class<any>, Class<any>.prototype.methodName], multi?: boolean } |
-{ token?: any, useFactory: (...args: any[]) => any, deps: any[], multi?: boolean } |
-{ token: any, useToken: any, multi?: boolean }
+{ token: NonNullable<unknown>, useClass: Class<any>, multi?: boolean } |
+{ token: NonNullable<unknown>, useValue: any, multi?: boolean } |
+{ token?: NonNullable<unknown>, useFactory: [Class<any>, Class<any>.prototype.methodName], multi?: boolean } |
+{ token?: NonNullable<unknown>, useFactory: (...args: any[]) => any, deps: any[], multi?: boolean } |
+{ token: NonNullable<unknown>, useToken: any, multi?: boolean }
 ```
 
 *_зверніть увагу, що токен для провайдера з властивістю `useFactory` є опціональним, оскільки DI може використати функцію чи метод вказаного класу у якості токена._

@@ -282,7 +282,12 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     }
   }
 
-  protected static getResolvedProvider(token: any, factoryFn: AnyFn, resolvedDeps: Dependency[], isMulti?: boolean) {
+  protected static getResolvedProvider(
+    token: NonNullable<unknown>,
+    factoryFn: AnyFn,
+    resolvedDeps: Dependency[],
+    isMulti?: boolean,
+  ) {
     const dualKey = KeyRegistry.get(token);
     const resolvedFactory = new ResolvedFactory(factoryFn, resolvedDeps);
     isMulti = isMulti || false;
@@ -499,7 +504,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    *
    * @param value New value for this ID.
    */
-  setByToken(token: any, value: any) {
+  setByToken(token: NonNullable<unknown>, value: any) {
     const { id } = KeyRegistry.get(token);
     if (this.hasId(id)) {
       this.#registry[id] = value;
@@ -552,7 +557,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    */
   get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, defaultValue?: T): T;
   get<T extends AnyFn>(token: T, visibility?: Visibility, defaultValue?: T): ReturnType<T>;
-  get(token: any, visibility?: Visibility, defaultValue?: any): any;
+  get(token: NonNullable<unknown>, visibility?: Visibility, defaultValue?: any): any;
   /**
    * @todo Refactor function signature for abstract classes, because this is not work:
    *
@@ -561,7 +566,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    * injector.get(A) // Infer return type as "any".
    * ```
    */
-  get(token: any, visibility: Visibility = null, defaultValue: any = NoDefaultValue): any {
+  get(token: NonNullable<unknown>, visibility: Visibility = null, defaultValue: any = NoDefaultValue): any {
     return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, defaultValue);
   }
 
@@ -639,7 +644,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     }
   }
 
-  protected instantiate(token: any, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
+  protected instantiate(token: NonNullable<unknown>, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
       return this.selectInjectorAndGet(
         dep.dualKey,
@@ -696,8 +701,8 @@ child.get(Service).config; // now, in current injector, works cache: { one: 11, 
    */
   pull<T>(token: Class<T> | InjectionToken<T>, defaultValue?: T): T;
   pull<T extends AnyFn>(token: T, defaultValue?: T): ReturnType<T>;
-  pull(token: any, defaultValue?: any): any;
-  pull(token: any, defaultValue: any = NoDefaultValue): any {
+  pull(token: NonNullable<unknown>, defaultValue?: any): any;
+  pull(token: NonNullable<unknown>, defaultValue: any = NoDefaultValue): any {
     const dualKey = KeyRegistry.get(token);
     const meta = this.#registry[dualKey.id];
 

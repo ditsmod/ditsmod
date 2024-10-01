@@ -274,7 +274,7 @@ export class ModuleFactory {
   protected checkCollisionsPerScope(
     module: AnyModule,
     scope: Scope,
-    token: any,
+    token: NonNullable<unknown>,
     provider: Provider,
     importObj: ImportObj,
   ) {

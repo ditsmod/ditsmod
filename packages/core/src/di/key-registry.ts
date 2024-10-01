@@ -39,7 +39,7 @@ export class KeyRegistry {
   /**
    * Retrieves a `DualKey` for a token.
    */
-  static get(token: any): DualKey {
+  static get(token: NonNullable<unknown>): DualKey {
     token = resolveForwardRef(token);
 
     const value = this.#allKeys.get(token);

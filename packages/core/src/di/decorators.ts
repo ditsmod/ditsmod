@@ -37,7 +37,7 @@ const injector = Injector.resolveAndCreate([Engine, Car]);
 expect(injector.get(Car).engine instanceof Engine).toBe(true);
 ```
    */
-export const inject = makeParamDecorator((token: any) => token);
+export const inject = makeParamDecorator((token: NonNullable<unknown>) => token);
 
 /**
  * A parameter metadata that marks a dependency as optional.

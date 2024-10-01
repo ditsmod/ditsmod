@@ -233,11 +233,11 @@ DI creates values in the registry for each token using what are called **provide
 import { Class } from '@ditsmod/core';
 
 type Provider = Class<any> |
-{ token: any, useClass: Class<any>, multi?: boolean } |
-{ token: any, useValue: any, multi?: boolean } |
-{ token?: any, useFactory: [Class<any>, Class<any>.prototype.methodName], multi?: boolean } |
-{ token?: any, useFactory: (...args: any[]) => any, deps: any[], multi?: boolean } |
-{ token: any, useToken: any, multi?: boolean }
+{ token: NonNullable<unknown>, useClass: Class<any>, multi?: boolean } |
+{ token: NonNullable<unknown>, useValue: any, multi?: boolean } |
+{ token?: NonNullable<unknown>, useFactory: [Class<any>, Class<any>.prototype.methodName], multi?: boolean } |
+{ token?: NonNullable<unknown>, useFactory: (...args: any[]) => any, deps: any[], multi?: boolean } |
+{ token: NonNullable<unknown>, useToken: any, multi?: boolean }
 ```
 
 *_note that the token for the provider with the `useFactory` property is optional because DI can use a function or method of the specified class as the token._

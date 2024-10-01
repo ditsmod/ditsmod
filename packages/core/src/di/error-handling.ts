@@ -187,7 +187,7 @@ expect(() => Injector.resolveAndCreate([
 ])).toThrow();
 ```
  */
-export function mixMultiProvidersWithRegularProvidersError(token: any): DiError {
+export function mixMultiProvidersWithRegularProvidersError(token: NonNullable<unknown>): DiError {
   const multiProvider = stringify(token);
   const msg = `Cannot mix multi providers and regular providers for "${multiProvider}"`;
   return new DiError(msg);

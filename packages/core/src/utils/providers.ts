@@ -33,7 +33,7 @@ export class Providers {
     return this.self;
   }
 
-  useValue<T>(token: any, useValue: T, multi?: boolean) {
+  useValue<T>(token: NonNullable<unknown>, useValue: T, multi?: boolean) {
     if (this.true) {
       this.pushProvider({ token, useValue }, multi);
     }
@@ -49,7 +49,7 @@ export class Providers {
     return this.self;
   }
 
-  useToken<T>(token: any, useToken: T, multi?: boolean) {
+  useToken<T>(token: NonNullable<unknown>, useToken: T, multi?: boolean) {
     if (this.true) {
       this.pushProvider({ token, useToken }, multi);
     }
@@ -57,9 +57,9 @@ export class Providers {
     return this.self;
   }
 
-  useFactory(token: any, useFactory: AnyFn, deps?: any[], multi?: boolean): this;
-  useFactory(token: any, useFactory: UseFactoryTuple, multi?: boolean): this;
-  useFactory(token: any, useFactory: UseFactoryTuple | AnyFn, depsOrMulti?: any[] | boolean, multi?: boolean) {
+  useFactory(token: NonNullable<unknown>, useFactory: AnyFn, deps?: any[], multi?: boolean): this;
+  useFactory(token: NonNullable<unknown>, useFactory: UseFactoryTuple, multi?: boolean): this;
+  useFactory(token: NonNullable<unknown>, useFactory: UseFactoryTuple | AnyFn, depsOrMulti?: any[] | boolean, multi?: boolean) {
     if (!this.true) {
       return this.self;
     }

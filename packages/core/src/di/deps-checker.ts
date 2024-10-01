@@ -19,7 +19,12 @@ export class DepsChecker {
    *
    * If there are problems with dependencies, throws the corresponding error.
    */
-  static check(injector: Injector, token: any, visibility: Visibility = null, ignoreDeps?: any[]): any {
+  static check(
+    injector: Injector,
+    token: NonNullable<unknown>,
+    visibility: Visibility = null,
+    ignoreDeps?: any[],
+  ): any {
     const dualKey = KeyRegistry.get(token);
     const parentTokens: any[] = [];
     return this.selectInjectorAndCheckDeps({ injector, dualKey, parentTokens, visibility, ignoreDeps });

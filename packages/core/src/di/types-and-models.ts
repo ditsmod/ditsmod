@@ -216,7 +216,7 @@ expect(locales).toEqual(['en', 'sk']);
  *
 ```ts
 interface ValueProvider {
-  token: any
+  token: NonNullable<unknown>
   useValue: any
   multi?: boolean
 }
@@ -240,7 +240,7 @@ expect(injector.get(String)).toEqual('Hello');
 ```
  */
 export interface ValueProvider<T = any> extends BaseNormalizedProvider {
-  token: any;
+  token: NonNullable<unknown>;
   /**
    * The value to inject.
    */
@@ -252,7 +252,7 @@ export interface ValueProvider<T = any> extends BaseNormalizedProvider {
  *
 ```ts
 interface ClassProvider {
-  token: any
+  token: NonNullable<unknown>
   useClass: Class
   multi?: boolean
 }
@@ -305,7 +305,7 @@ expect(injector.get(FormalGreeting)).not.toBe(injector.get(Greeting));
 ```
  */
 export interface ClassProvider extends BaseNormalizedProvider {
-  token: any;
+  token: NonNullable<unknown>;
 
   /**
    * Class to instantiate for the `token`.
@@ -318,7 +318,7 @@ export interface ClassProvider extends BaseNormalizedProvider {
  *
 ```ts
 interface TokenProvider {
-  token: any
+  token: NonNullable<unknown>
   useToken: any
   multi?: boolean
 }
@@ -352,7 +352,7 @@ expect(injector.get(FormalGreeting)).toBe(injector.get(Greeting));
 ```
  */
 export interface TokenProvider extends BaseNormalizedProvider {
-  token: any;
+  token: NonNullable<unknown>;
 
   /**
    * Pointing to other `token` to return its value. Equivalent to `injector.get(useToken)`.
