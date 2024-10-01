@@ -50,7 +50,7 @@
         "--no-warnings=ExperimentalWarning"
       ],
       "args": [
-        "${fileDirname}/${fileBasenameNoExtension}"
+        "${fileBasenameNoExtension}"
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
