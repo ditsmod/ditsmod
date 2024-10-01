@@ -19,6 +19,7 @@ export class DualKey {
   constructor(
     public token: any,
     public id: number,
+    public ctx?: NonNullable<unknown>,
   ) {}
 }
 
@@ -46,7 +47,7 @@ export class KeyRegistry {
   /**
    * Retrieves a `DualKey` for a token.
    */
-  static get(token: NonNullable<unknown>): DualKey {
+  static get(token: NonNullable<unknown>, ctx?: NonNullable<unknown>): DualKey {
     token = resolveForwardRef(token);
 
     const value = this.#allKeys.get(token);
@@ -57,7 +58,7 @@ export class KeyRegistry {
     if (!token) {
       throw new TypeError('Token must be defined!');
     }
-    const newKey = new DualKey(token, this.numberOfKeys);
+    const newKey = new DualKey(token, this.numberOfKeys, ctx);
     this.#allKeys.set(token, newKey);
     return newKey;
   }
@@ -103,23 +104,25 @@ export class KeyRegistry {
    * `@inject()` will be passed to the `getParamToken()` method to obtain a unique token for
    * further use by the `Injector`.
    */
-  static getParamToken(token: NonNullable<unknown>, ctx: NonNullable<unknown>) {
+  static getParamToken(token: any, ctx: NonNullable<unknown>) {
     if (token == null || ctx == null) {
       throw new TypeError('Token and context must not be nullable.');
     }
     const obj = this.#paramTokens.get(token);
+    let DEBUG_PREFIX = typeof token == 'symbol' ? token.toString() : `${token.name || token}`;
+    DEBUG_PREFIX = `${DEBUG_PREFIX}-with-inject-param`;
     if (obj) {
       const { index, mapTokens } = obj;
       let PARAM_TOKEN = mapTokens.get(ctx);
       if (!PARAM_TOKEN) {
         const id = `${index}-${mapTokens.size + 1}`;
-        PARAM_TOKEN = new ParamToken(`PARAM_TOKEN-${id}`);
+        PARAM_TOKEN = new ParamToken(`${DEBUG_PREFIX}-${id}`);
         mapTokens.set(ctx, PARAM_TOKEN);
       }
       return PARAM_TOKEN;
     } else {
       const index = this.#paramTokens.size + 1;
-      const PARAM_TOKEN = new ParamToken(`PARAM_TOKEN-${index}-1`);
+      const PARAM_TOKEN = new ParamToken(`${DEBUG_PREFIX}-${index}-1`);
       const mapTokens = new Map([[ctx, PARAM_TOKEN]]);
       this.#paramTokens.set(token, { index, mapTokens });
       return PARAM_TOKEN;

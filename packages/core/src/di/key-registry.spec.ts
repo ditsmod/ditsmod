@@ -59,11 +59,11 @@ describe('getParamToken()', () => {
     expect(PARAM_TOKEN1).not.toBe(PARAM_TOKEN2);
     expect(PARAM_TOKEN1).not.toBe(PARAM_TOKEN3);
     expect(PARAM_TOKEN2).not.toBe(PARAM_TOKEN3);
-    expect(PARAM_TOKEN1.toString()).toBe('PARAM_TOKEN-1-1');
-    expect(PARAM_TOKEN2.toString()).toBe('PARAM_TOKEN-2-1');
-    expect(PARAM_TOKEN3.toString()).toBe('PARAM_TOKEN-2-2');
-    expect(PARAM_TOKEN1_1.toString()).toBe('PARAM_TOKEN-1-2');
-    expect(PARAM_TOKEN1_2.toString()).toBe('PARAM_TOKEN-1-3');
+    expect(PARAM_TOKEN1.toString()).toBe('SOME_TOKEN1-with-inject-param-1-1');
+    expect(PARAM_TOKEN2.toString()).toBe('SOME_TOKEN2-with-inject-param-2-1');
+    expect(PARAM_TOKEN3.toString()).toBe('SOME_TOKEN2-with-inject-param-2-2');
+    expect(PARAM_TOKEN1_1.toString()).toBe('SOME_TOKEN1-with-inject-param-1-2');
+    expect(PARAM_TOKEN1_2.toString()).toBe('SOME_TOKEN1-with-inject-param-1-3');
 
     const PARAM_TOKEN4 = KeyRegistry.getParamToken(SOME_TOKEN1, 'ctx1');
     expect(PARAM_TOKEN1 === PARAM_TOKEN4).toBe(true);
