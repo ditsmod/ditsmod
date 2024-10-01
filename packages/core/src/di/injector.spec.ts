@@ -17,7 +17,7 @@ import {
   skipSelf,
 } from './index.js';
 import { KeyRegistry } from './key-registry.js';
-import { getNewRegistry } from './types-and-models.js';
+import { CTX_DATA, getNewRegistry } from './types-and-models.js';
 import { stringify } from './utils.js';
 
 class Engine {}
@@ -534,6 +534,30 @@ describe('injector', () => {
 
     const engine = injector.get(Engine) as string;
     expect(engine).toEqual('by token');
+  });
+
+  it('@inject(token, ctx)', () => {
+    @injectable()
+    class Dependecy1 {
+      constructor(@inject(CTX_DATA) public contextParameter: string) {}
+    }
+
+    @injectable()
+    class TargetClass {
+      constructor(
+        @inject(Dependecy1) public dependecy3: Dependecy1,
+        @inject(Dependecy1, 'ctx1') public dependecy1: Dependecy1,
+        public dependecy2: Dependecy1,
+      ) {}
+    }
+
+    const injector = Injector.resolveAndCreate([TargetClass, Dependecy1]);
+
+    const targetClass = injector.get(TargetClass) as TargetClass;
+    expect(targetClass.dependecy1.contextParameter).toBe('ctx1');
+    expect(targetClass.dependecy2.contextParameter).toBeUndefined();
+    expect(targetClass.dependecy1).not.toBe(targetClass.dependecy2);
+    expect(targetClass.dependecy2).toBe(targetClass.dependecy3);
   });
 
   it('should supporting provider to null', () => {

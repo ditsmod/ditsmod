@@ -1,6 +1,6 @@
 import { AnyFn } from '#types/mix.js';
 import type { fromSelf, skipSelf } from './decorators.js';
-import type { InjectionToken } from './injection-token.js';
+import { InjectionToken } from './injection-token.js';
 import { DualKey } from './key-registry.js';
 
 /**
@@ -65,6 +65,8 @@ export type Visibility = typeof fromSelf | typeof skipSelf | null;
 
 export type NormalizedProvider = ValueProvider | ClassProvider | TokenProvider | FactoryProvider;
 
+export const CTX_DATA = new InjectionToken('CTX_DATA');
+
 /**
  * This is internal and should not be used directly.
  */
@@ -73,10 +75,11 @@ export class Dependency {
     public dualKey: DualKey,
     public optional: boolean,
     public visibility: Visibility,
+    public ctx?: NonNullable<unknown>
   ) {}
 
-  static fromDualKey(dualKey: DualKey): Dependency {
-    return new Dependency(dualKey, false, null);
+  static fromDualKey(dualKey: DualKey, ctx?: NonNullable<unknown>): Dependency {
+    return new Dependency(dualKey, false, null, ctx);
   }
 }
 

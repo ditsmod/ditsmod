@@ -26,6 +26,7 @@ export {
   TypeProvider,
   UseFactoryTuple,
   ValueProvider,
+  CTX_DATA,
 } from './types-and-models.js';
 export {
   isClassProvider,

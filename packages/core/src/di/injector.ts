@@ -15,6 +15,7 @@ import { InjectionToken } from './injection-token.js';
 import { DualKey, KeyRegistry } from './key-registry.js';
 import { reflector } from './reflection.js';
 import {
+  CTX_DATA,
   Class,
   DecoratorAndValue,
   Dependency,
@@ -327,9 +328,9 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       throw noAnnotationError(Cls, aParamsMeta, propertyKey);
     }
     return aParamsMeta.map((paramsMeta) => {
-      const { token, isOptional, visibility } = this.extractPayload(paramsMeta!);
+      const { token, ctx, isOptional, visibility } = this.extractPayload(paramsMeta!);
       if (token != null) {
-        return new Dependency(KeyRegistry.get(token), isOptional, visibility);
+        return new Dependency(KeyRegistry.get(token), isOptional, visibility, ctx);
       } else {
         throw noAnnotationError(Cls, aParamsMeta, propertyKey);
       }
@@ -338,6 +339,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
 
   protected static extractPayload(paramsMeta: ParamsMeta) {
     let token: any = null;
+    let ctx: any = undefined;
     let isOptional = false;
 
     let visibility: Visibility = null;
@@ -348,7 +350,8 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       if (paramsItem instanceof DecoratorAndValue) {
         const { decorator } = paramsItem;
         if (decorator === inject) {
-          token = paramsItem.value;
+          token = paramsItem.value.token;
+          ctx = paramsItem.value.ctx;
         } else if (decorator === optional) {
           isOptional = true;
         } else if (decorator === fromSelf || decorator === skipSelf) {
@@ -360,7 +363,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     }
 
     token = resolveForwardRef(token);
-    return { token, isOptional, visibility };
+    return { token, ctx, isOptional, visibility };
   }
 
   /**
@@ -570,13 +573,19 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, defaultValue);
   }
 
-  protected selectInjectorAndGet(dualKey: DualKey, parentTokens: any[], visibility: Visibility, defaultValue: any) {
+  protected selectInjectorAndGet(
+    dualKey: DualKey,
+    parentTokens: any[],
+    visibility: Visibility,
+    defaultValue: any,
+    ctx?: NonNullable<unknown>,
+  ) {
     if (dualKey.token === Injector) {
       return this;
     }
 
     const injector = visibility === skipSelf ? this.parent : this;
-    return this.getOrThrow(injector, dualKey, parentTokens, defaultValue, visibility);
+    return this.getOrThrow(injector, dualKey, parentTokens, defaultValue, visibility, ctx);
   }
 
   protected getOrThrow(
@@ -585,6 +594,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     parentTokens: any[],
     defaultValue: any,
     visibility?: Visibility,
+    ctx?: NonNullable<unknown>,
   ): any {
     if (injector) {
       const meta = injector.#registry[dualKey.id];
@@ -594,13 +604,17 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
         if (parentTokens.includes(dualKey.token)) {
           throw cyclicDependencyError([dualKey.token, ...parentTokens]);
         }
-        const value = injector.instantiateResolved(meta, parentTokens);
-        return (injector.#registry[dualKey.id] = value);
+        const value = injector.instantiateResolved(meta, parentTokens, ctx);
+        if (ctx != null) {
+          return value;
+        } else {
+          return (injector.#registry[dualKey.id] = value);
+        }
       } else if (meta !== undefined || injector.hasId(dualKey.id)) {
         // Here "meta" - is a value for provider that has given `token`.
         return meta;
       } else if (visibility !== fromSelf && injector.parent) {
-        return injector.parent.getOrThrow(injector.parent, dualKey, parentTokens, defaultValue);
+        return injector.parent.getOrThrow(injector.parent, dualKey, parentTokens, defaultValue, undefined, ctx);
       }
     }
     if (defaultValue === NoDefaultValue) {
@@ -634,23 +648,32 @@ expect(car.engine).toBe(injector.get(Engine));
 expect(car).not.toBe(injector.instantiateResolved(carProvider));
 ```
    */
-  instantiateResolved<T = any>(provider: ResolvedProvider, parentTokens: any[] = []): T {
+  instantiateResolved<T = any>(provider: ResolvedProvider, parentTokens: any[] = [], ctx?: NonNullable<unknown>): T {
     if (provider.multi) {
       return provider.resolvedFactories.map((factory) => {
-        return this.instantiate(provider.dualKey.token, parentTokens, factory);
+        return this.instantiate(provider.dualKey.token, parentTokens, factory, ctx);
       }) as T;
     } else {
-      return this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[0]);
+      return this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[0], ctx);
     }
   }
 
-  protected instantiate(token: NonNullable<unknown>, parentTokens: any[], resolvedFactory: ResolvedFactory): any {
+  protected instantiate(
+    token: NonNullable<unknown>,
+    parentTokens: any[],
+    resolvedFactory: ResolvedFactory,
+    ctx?: NonNullable<unknown>,
+  ): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
+      if (dep.dualKey.token === CTX_DATA) {
+        return ctx;
+      }
       return this.selectInjectorAndGet(
         dep.dualKey,
         [token, ...parentTokens],
         dep.visibility,
         dep.optional ? undefined : NoDefaultValue,
+        dep.ctx,
       );
     });
 
@@ -710,7 +733,7 @@ child.get(Service).config; // now, in current injector, works cache: { one: 11, 
     if (meta?.[ID]) {
       const value = this.instantiateResolved(meta, []);
       return (this.#registry[dualKey.id] = value);
-    } else if (meta !== undefined) {
+    } else if (meta !== undefined || this.hasId(dualKey.id)) {
       // Here "meta" - is a value for provider that has given `token`.
       return meta;
     }

@@ -12,30 +12,24 @@ import { InjectionToken } from './injection-token.js';
  * the injector to store created objects in a more efficient way.
  *
  * `DualKey` should not be created directly. `Injector` creates keys automatically when
- * resolving
- * providers.
+ * resolving providers.
  */
 export class DualKey {
   constructor(
     public token: any,
     public id: number,
-    public ctx?: NonNullable<unknown>,
   ) {}
 }
 
 /**
  * This class is used to automatically create an extension group, which should run before group token.
  */
-export class BeforeToken<T = any> extends InjectionToken<T> {
-  readonly isBeforeToken = true as const;
-}
+export class BeforeToken<T = any> extends InjectionToken<T> {}
 
 /**
  * This class is used to automatically create a token for `@inject(token, ctx)`.
  */
-export class ParamToken<T = any> extends InjectionToken<T> {
-  readonly isParamToken = true as const;
-}
+export class ParamToken<T = any> extends InjectionToken<T> {}
 
 // @todo After the reinit application, check for memory leaks.
 export class KeyRegistry {
@@ -47,7 +41,7 @@ export class KeyRegistry {
   /**
    * Retrieves a `DualKey` for a token.
    */
-  static get(token: NonNullable<unknown>, ctx?: NonNullable<unknown>): DualKey {
+  static get(token: NonNullable<unknown>): DualKey {
     token = resolveForwardRef(token);
 
     const value = this.#allKeys.get(token);
@@ -58,7 +52,7 @@ export class KeyRegistry {
     if (!token) {
       throw new TypeError('Token must be defined!');
     }
-    const newKey = new DualKey(token, this.numberOfKeys, ctx);
+    const newKey = new DualKey(token, this.numberOfKeys);
     this.#allKeys.set(token, newKey);
     return newKey;
   }
@@ -110,7 +104,7 @@ export class KeyRegistry {
     }
     const obj = this.#paramTokens.get(token);
     let DEBUG_PREFIX = typeof token == 'symbol' ? token.toString() : `${token.name || token}`;
-    DEBUG_PREFIX = `${DEBUG_PREFIX}-with-inject-param`;
+    DEBUG_PREFIX = `${DEBUG_PREFIX}-with-ctx-data`;
     if (obj) {
       const { index, mapTokens } = obj;
       let PARAM_TOKEN = mapTokens.get(ctx);
