@@ -29,12 +29,19 @@ export class BeforeToken<T = any> extends InjectionToken<T> {
   readonly isBeforeToken = true as const;
 }
 
+/**
+ * This class is used to automatically create a token for `@inject(token, ctx)`.
+ */
+export class ParamToken<T = any> extends InjectionToken<T> {
+  readonly isParamToken = true as const;
+}
+
 // @todo After the reinit application, check for memory leaks.
 export class KeyRegistry {
   static #allKeys = new Map<any, DualKey>();
   static #groupTokens = new Map<InjectionToken, BeforeToken>();
   static #groupDebugKeys = new Map<string, number>();
-  static #paramTokens = new Map<any, { index: number; mapTokens: Map<any, InjectionToken> }>();
+  static #paramTokens = new Map<any, { index: number; mapTokens: Map<any, ParamToken> }>();
 
   /**
    * Retrieves a `DualKey` for a token.
@@ -91,9 +98,9 @@ export class KeyRegistry {
 
   /**
    * This method is needed to get a unique key from two keys. This is necessary
-   * so that `@Inject()` (decorator for parameters) can accept a specific context in addition to
-   * the token: `@Inject(SOME_TOKEN, 'certain contextual data')`. The arguments received by
-   * `@Inject()` will be passed to the `getParamToken()` method to obtain a unique token for
+   * so that `@inject()` (decorator for parameters) can accept a specific context in addition to
+   * the token: `@inject(SOME_TOKEN, 'certain contextual data')`. The arguments received by
+   * `@inject()` will be passed to the `getParamToken()` method to obtain a unique token for
    * further use by the `Injector`.
    */
   static getParamToken(token: NonNullable<unknown>, ctx: NonNullable<unknown>) {
@@ -106,13 +113,13 @@ export class KeyRegistry {
       let PARAM_TOKEN = mapTokens.get(ctx);
       if (!PARAM_TOKEN) {
         const id = `${index}-${mapTokens.size + 1}`;
-        PARAM_TOKEN = new InjectionToken(`PARAM_TOKEN-${id}`);
+        PARAM_TOKEN = new ParamToken(`PARAM_TOKEN-${id}`);
         mapTokens.set(ctx, PARAM_TOKEN);
       }
       return PARAM_TOKEN;
     } else {
       const index = this.#paramTokens.size + 1;
-      const PARAM_TOKEN = new InjectionToken(`PARAM_TOKEN-${index}-1`);
+      const PARAM_TOKEN = new ParamToken(`PARAM_TOKEN-${index}-1`);
       const mapTokens = new Map([[ctx, PARAM_TOKEN]]);
       this.#paramTokens.set(token, { index, mapTokens });
       return PARAM_TOKEN;
