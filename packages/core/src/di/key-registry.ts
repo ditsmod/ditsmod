@@ -36,7 +36,6 @@ export class KeyRegistry {
   static #allKeys = new Map<any, DualKey>();
   static #groupTokens = new Map<InjectionToken, BeforeToken>();
   static #groupDebugKeys = new Map<string, number>();
-  static #paramTokens = new Map<any, { index: number; mapTokens: Map<any, ParamToken> }>();
 
   /**
    * Retrieves a `DualKey` for a token.
@@ -89,37 +88,5 @@ export class KeyRegistry {
     }
     this.#groupTokens.set(groupToken, newBeforeGroupToken);
     return newBeforeGroupToken;
-  }
-
-  /**
-   * This method is needed to get a unique key from two keys. This is necessary
-   * so that `@inject()` (decorator for parameters) can accept a specific context in addition to
-   * the token: `@inject(SOME_TOKEN, 'certain contextual data')`. The arguments received by
-   * `@inject()` will be passed to the `getParamToken()` method to obtain a unique token for
-   * further use by the `Injector`.
-   */
-  static getParamToken(token: any, ctx: NonNullable<unknown>) {
-    if (token == null || ctx == null) {
-      throw new TypeError('Token and context must not be nullable.');
-    }
-    const obj = this.#paramTokens.get(token);
-    let DEBUG_PREFIX = typeof token == 'symbol' ? token.toString() : `${token.name || token}`;
-    DEBUG_PREFIX = `${DEBUG_PREFIX}-with-ctx-data`;
-    if (obj) {
-      const { index, mapTokens } = obj;
-      let PARAM_TOKEN = mapTokens.get(ctx);
-      if (!PARAM_TOKEN) {
-        const id = `${index}-${mapTokens.size + 1}`;
-        PARAM_TOKEN = new ParamToken(`${DEBUG_PREFIX}-${id}`);
-        mapTokens.set(ctx, PARAM_TOKEN);
-      }
-      return PARAM_TOKEN;
-    } else {
-      const index = this.#paramTokens.size + 1;
-      const PARAM_TOKEN = new ParamToken(`${DEBUG_PREFIX}-${index}-1`);
-      const mapTokens = new Map([[ctx, PARAM_TOKEN]]);
-      this.#paramTokens.set(token, { index, mapTokens });
-      return PARAM_TOKEN;
-    }
   }
 }
