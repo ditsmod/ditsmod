@@ -675,7 +675,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         [token, ...parentTokens],
         dep.visibility,
         dep.optional ? undefined : NoDefaultValue,
-        dep.ctx ?? ctx,
+        dep.ctx,
       );
     });
 
