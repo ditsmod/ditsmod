@@ -1,5 +1,12 @@
+<a name="core-2.59.1"></a>
+# [core-2.59.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.59.1) (2024-10-03)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [6e456bee9f](https://github.com/ditsmod/ditsmod/commit/6e456bee9f1331) | fix | fixed `injector.instantiate()`. The ability to pass `CTX_DATA` to child classes has been removed for now. |
+
 <a name="core-2.59.0"></a>
-# [core-2.59.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.59.0) (2024-10-02)
+## [core-2.59.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.59.0) (2024-10-02)
 
 | Commit | Type | Description |
 | -- | -- | -- |
