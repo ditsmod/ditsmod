@@ -7,6 +7,29 @@
 | [20f39fe4c3](https://github.com/ditsmod/ditsmod/commit/20f39fe4c31fec) | refactor | replaced `token: any` by `token: NonNullable<unknown>` for Injector. |
 | [c0c36cb380](https://github.com/ditsmod/ditsmod/commit/c0c36cb3805659) | fix | fixed error handling before the app is initialized. |
 
+Before v2.59.0, you could pass a single argument to the `@inject()` decorator - the provider token. Now you can pass `NonNullable` context as second argument:
+
+```ts
+import { injectable, inject } from '@ditsmod/core';
+import { Dependecy1 } from './dependecy1.js';
+
+@injectable()
+class TargetClass {
+  constructor(@inject(Dependecy1, 'ctx1') public dependecy1: Dependecy1) {}
+}
+```
+
+And then you can get this context in Dependecy1 thanks to the special token `CTX_DATA`:
+
+```ts
+import { injectable, inject, CTX_DATA } from '@ditsmod/core';
+
+@injectable()
+class Dependecy1 {
+  constructor(@inject(CTX_DATA) public contextParameter: string) {}
+}
+```
+
 <a name="core-2.58.1"></a>
 ## [core-2.58.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.58.1) (2024-09-30)
 
