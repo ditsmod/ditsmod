@@ -597,24 +597,26 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     ctx?: NonNullable<unknown>,
   ): any {
     if (injector) {
-      const meta = injector.#registry[dualKey.id];
-
-      // This is an alternative to the "instanceof ResolvedProvider" expression.
-      if (meta?.[ID]) {
-        if (parentTokens.includes(dualKey.token)) {
-          throw cyclicDependencyError([dualKey.token, ...parentTokens]);
-        }
-        const value = injector.instantiateResolved(meta, parentTokens, ctx);
-        if (ctx != null) {
-          return value;
-        } else {
+      if (ctx == null) {
+        const meta = injector.#registry[dualKey.id];
+        if (meta?.[ID]) {
+          // This is an alternative to the "instanceof ResolvedProvider" expression.
+          if (parentTokens.includes(dualKey.token)) {
+            throw cyclicDependencyError([dualKey.token, ...parentTokens]);
+          }
+          const value = injector.instantiateResolved(meta, parentTokens);
           return (injector.#registry[dualKey.id] = value);
+        } else if (meta !== undefined || injector.hasId(dualKey.id)) {
+          // Here "meta" - is a value for provider that has given `token`.
+          return meta;
+        } else if (visibility !== fromSelf && injector.parent) {
+          return injector.parent.getOrThrow(injector.parent, dualKey, parentTokens, defaultValue, undefined);
         }
-      } else if (meta !== undefined || injector.hasId(dualKey.id)) {
-        // Here "meta" - is a value for provider that has given `token`.
-        return meta;
-      } else if (visibility !== fromSelf && injector.parent) {
-        return injector.parent.getOrThrow(injector.parent, dualKey, parentTokens, defaultValue, undefined, ctx);
+      } else {
+        const resolvedProvider = this.getResolvedProvider(this, dualKey);
+        if (resolvedProvider) {
+          return this.instantiateResolved(resolvedProvider, [], ctx);
+        }
       }
     }
     if (defaultValue === NoDefaultValue) {
@@ -673,7 +675,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         [token, ...parentTokens],
         dep.visibility,
         dep.optional ? undefined : NoDefaultValue,
-        dep.ctx,
+        dep.ctx ?? ctx,
       );
     });
 

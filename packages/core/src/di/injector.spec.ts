@@ -536,28 +536,108 @@ describe('injector', () => {
     expect(engine).toEqual('by token');
   });
 
-  it('@inject(token, ctx)', () => {
-    @injectable()
-    class Dependecy1 {
-      constructor(@inject(CTX_DATA) public contextParameter: string) {}
-    }
+  describe('@inject(token, ctx)', () => {
+    it('first dependency', () => {
+      @injectable()
+      class Dependecy1 {
+        constructor(@inject(CTX_DATA) public contextParameter: string) {}
+      }
 
-    @injectable()
-    class TargetClass {
-      constructor(
-        @inject(Dependecy1) public dependecy3: Dependecy1,
-        @inject(Dependecy1, 'ctx1') public dependecy1: Dependecy1,
-        public dependecy2: Dependecy1,
-      ) {}
-    }
+      @injectable()
+      class TargetClass {
+        constructor(
+          @inject(Dependecy1, 'ctx1') public dependecy1: Dependecy1,
+          @inject(Dependecy1) public dependecy3: Dependecy1,
+          public dependecy2: Dependecy1,
+        ) {}
+      }
 
-    const injector = Injector.resolveAndCreate([TargetClass, Dependecy1]);
+      const injector = Injector.resolveAndCreate([TargetClass, Dependecy1]);
 
-    const targetClass = injector.get(TargetClass) as TargetClass;
-    expect(targetClass.dependecy1.contextParameter).toBe('ctx1');
-    expect(targetClass.dependecy2.contextParameter).toBeUndefined();
-    expect(targetClass.dependecy1).not.toBe(targetClass.dependecy2);
-    expect(targetClass.dependecy2).toBe(targetClass.dependecy3);
+      const targetClass = injector.get(TargetClass) as TargetClass;
+      expect(targetClass.dependecy1.contextParameter).toBe('ctx1');
+      expect(targetClass.dependecy2.contextParameter).toBeUndefined();
+      expect(targetClass.dependecy1).not.toBe(targetClass.dependecy2);
+      expect(targetClass.dependecy2).toBe(targetClass.dependecy3);
+    });
+
+    it('second dependency', () => {
+      @injectable()
+      class Dependecy1 {
+        constructor(@inject(CTX_DATA) public contextParameter: string) {}
+      }
+
+      @injectable()
+      class TargetClass {
+        constructor(
+          @inject(Dependecy1) public dependecy1: Dependecy1,
+          @inject(Dependecy1, 'ctx1') public dependecy2: Dependecy1,
+          public dependecy3: Dependecy1,
+        ) {}
+      }
+
+      const injector = Injector.resolveAndCreate([TargetClass, Dependecy1]);
+
+      const targetClass = injector.get(TargetClass) as TargetClass;
+      expect(targetClass.dependecy2.contextParameter).toBe('ctx1');
+      expect(targetClass.dependecy3.contextParameter).toBeUndefined();
+      expect(targetClass.dependecy2).not.toBe(targetClass.dependecy3);
+      expect(targetClass.dependecy3).toBe(targetClass.dependecy1);
+    });
+
+    it('dependencies in several contexts', () => {
+      @injectable()
+      class Dependecy1 {
+        constructor(@inject(CTX_DATA) public contextParameter: string) {}
+      }
+
+      @injectable()
+      class TargetClass {
+        constructor(
+          @inject(Dependecy1) public dependecy1: Dependecy1,
+          @inject(Dependecy1, 'ctx1') public dependecy2: Dependecy1,
+          @inject(Dependecy1, 'ctx2') public dependecy3: Dependecy1,
+        ) {}
+      }
+
+      const injector = Injector.resolveAndCreate([TargetClass, Dependecy1]);
+
+      const targetClass = injector.get(TargetClass) as TargetClass;
+      expect(targetClass.dependecy1.contextParameter).toBeUndefined();
+      expect(targetClass.dependecy2.contextParameter).toBe('ctx1');
+      expect(targetClass.dependecy3.contextParameter).toBe('ctx2');
+      expect(targetClass.dependecy1).not.toBe(targetClass.dependecy2);
+      expect(targetClass.dependecy2).not.toBe(targetClass.dependecy3);
+      expect(targetClass.dependecy1).not.toBe(targetClass.dependecy3);
+    });
+
+    it('for child dependency', () => {
+      @injectable()
+      class Dependecy1 {
+        constructor(@inject(CTX_DATA) public contextParameter: string | number) {}
+      }
+
+      @injectable()
+      class Dependecy2 {
+        constructor(public childDependecy1: Dependecy1) {}
+      }
+
+      @injectable()
+      class TargetClass {
+        constructor(
+          @inject(Dependecy2) public dependecy1: Dependecy2,
+          @inject(Dependecy2, 'ctx1') public dependecy2: Dependecy2,
+          @inject(Dependecy2, 0) public dependecy3: Dependecy2,
+        ) {}
+      }
+
+      const injector = Injector.resolveAndCreate([TargetClass, Dependecy1, Dependecy2]);
+
+      const targetClass = injector.get(TargetClass) as TargetClass;
+      expect(targetClass.dependecy2.childDependecy1.contextParameter).toBe('ctx1');
+      expect(targetClass.dependecy3.childDependecy1.contextParameter).toBe(0);
+      expect(targetClass.dependecy2).not.toBe(targetClass.dependecy3);
+    });
   });
 
   it('should supporting provider to null', () => {
