@@ -611,6 +611,37 @@ describe('injector', () => {
       expect(targetClass.dependecy1).not.toBe(targetClass.dependecy3);
     });
 
+    it('dependencies with factories', () => {
+      @injectable()
+      class Dependecy1 {
+        constructor(@inject(CTX_DATA) public contextParameter: string) {}
+      }
+
+      @injectable()
+      class TargetClass {
+        method1(
+          dependecy1: Dependecy1,
+          @inject(Dependecy1, 'ctx1') dependecy2: Dependecy1,
+          @inject(Dependecy1, 'ctx2') dependecy3: Dependecy1,
+        ) {
+          return { dependecy1, dependecy2, dependecy3 };
+        }
+      }
+
+      const injector = Injector.resolveAndCreate([
+        { useFactory: [TargetClass, TargetClass.prototype.method1] },
+        Dependecy1,
+      ]);
+
+      const targetClass = injector.get(TargetClass.prototype.method1);
+      expect(targetClass.dependecy1).toBeInstanceOf(Dependecy1);
+      expect(targetClass.dependecy2.contextParameter).toBe('ctx1');
+      expect(targetClass.dependecy3.contextParameter).toBe('ctx2');
+      expect(targetClass.dependecy1).not.toBe(targetClass.dependecy2);
+      expect(targetClass.dependecy2).not.toBe(targetClass.dependecy3);
+      expect(targetClass.dependecy1).not.toBe(targetClass.dependecy3);
+    });
+
     it('for child dependency', () => {
       @injectable()
       class Dependecy1 {
