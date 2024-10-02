@@ -35,6 +35,7 @@ import {
   TotalInitMeta,
   TotalInitMetaPerApp,
   ChainError,
+  CTX_DATA,
 } from '@ditsmod/core';
 
 import { PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -197,7 +198,7 @@ export class PreRouterExtension implements Extension<void> {
    */
   protected checkDeps(moduleName: string, httpMethod: HttpMethod, path: string, inj: Injector, routeMeta: RouteMeta) {
     try {
-      const ignoreDeps: any[] = [HTTP_INTERCEPTORS];
+      const ignoreDeps: any[] = [HTTP_INTERCEPTORS, CTX_DATA];
       DepsChecker.check(inj, HttpErrorHandler, undefined, ignoreDeps);
       DepsChecker.check(inj, ChainMaker, undefined, ignoreDeps);
       DepsChecker.check(inj, HttpFrontend, undefined, ignoreDeps);
