@@ -1,5 +1,14 @@
+<a name="core-2.59.0"></a>
+# [core-2.59.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.59.0) (2024-10-02)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [f63a4fca5...3d8aeb49](https://github.com/ditsmod/ditsmod/compare/f63a4fca5...3d8aeb49) | feat | allow passing context data as second argument for `@inject(token, ctx)` |
+| [20f39fe4c3](https://github.com/ditsmod/ditsmod/commit/20f39fe4c31fec) | refactor | replaced `token: any` by `token: NonNullable<unknown>` for Injector. |
+| [c0c36cb380](https://github.com/ditsmod/ditsmod/commit/c0c36cb3805659) | fix | fixed error handling before the app is initialized. |
+
 <a name="core-2.58.1"></a>
-# [core-2.58.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.58.1) (2024-09-30)
+## [core-2.58.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.58.1) (2024-09-30)
 
 | Commit | Type | Description |
 | -- | -- | -- |
