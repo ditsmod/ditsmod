@@ -1,5 +1,12 @@
+<a name="routing-2.5.1"></a>
+# [routing-2.5.1](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.5.1) (2024-10-02)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [7ba1baa1be](https://github.com/ditsmod/ditsmod/commit/7ba1baa1bea0e6173) | fix | added `CTX_DATA` to ignore list for `checkDeps()`. |
+
 <a name="routing-2.5.0"></a>
-# [routing-2.5.0](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.5.0) (2024-08-29)
+## [routing-2.5.0](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.5.0) (2024-09-29)
 
 | Commit | Type | Description |
 | -- | -- | -- |
