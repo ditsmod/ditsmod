@@ -1,5 +1,23 @@
+<a name="core-2.59.2"></a>
+# [core-2.59.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.59.2) (2024-10-03)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [47e5b4edef](https://github.com/ditsmod/ditsmod/commit/47e5b4edef1070c) | feat | added InjectDecorator interface for `@inject`. |
+
+Now you can add type for `@inject`'s second parameter:
+
+```ts
+interface SomeMetadata {
+  one: string;
+  two: number;
+}
+
+@inject<SomeMetadata>('token1', { one: 'value1', two: 5 })
+```
+
 <a name="core-2.59.1"></a>
-# [core-2.59.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.59.1) (2024-10-03)
+## [core-2.59.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.59.1) (2024-10-03)
 
 | Commit | Type | Description |
 | -- | -- | -- |
