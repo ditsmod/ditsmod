@@ -88,11 +88,6 @@ export interface BaseModuleWithParams<M extends AnyObj = AnyObj, E extends AnyOb
   id?: string;
   module: ModuleType<M>;
   /**
-   * List of modules or `ModuleWithParams` imported by this module.
-   * Also you can imports modules and set some prefix per each the module.
-   */
-  imports?: Array<ModuleType | ModuleWithParams>;
-  /**
    * List of modules, `ModuleWithParams` or tokens of providers exported by this
    * module.
    */

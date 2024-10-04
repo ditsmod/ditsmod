@@ -40,7 +40,6 @@ export function getModuleMetadata(
     metadata.providersPerMod = getLastProviders(mergeArrays(modMetadata.providersPerMod, modWitParams.providersPerMod));
     metadata.providersPerRou = getLastProviders(mergeArrays(modMetadata.providersPerRou, modWitParams.providersPerRou));
     metadata.providersPerReq = getLastProviders(mergeArrays(modMetadata.providersPerReq, modWitParams.providersPerReq));
-    metadata.imports = [...(modMetadata.imports || []), ...(modWitParams.imports || [])];
     metadata.exports = getLastProviders(mergeArrays(modMetadata.exports, modWitParams.exports));
     metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
     const declaredInDir = container.declaredInDir || '';
