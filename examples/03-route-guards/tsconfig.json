@@ -6,6 +6,7 @@
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
       "#app/*": ["./src/app/*"],
+      "#auth": ["./src/app/modules/auth/index.ts"],
       "@ditsmod/core": ["../../packages/core/src/index.js"],
       "@ditsmod/routing": ["../../packages/routing/src/index.js"],
       "@ditsmod/testing": ["../../packages/testing/src/index.js"],

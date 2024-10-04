@@ -13,7 +13,8 @@
     "build": "tsc -b tsconfig.build.json"
   },
   "imports": {
-    "#app/*": "./dist/app/*"
+    "#app/*": "./dist/app/*",
+    "#auth": "./dist/app/modules/auth/index.js"
   },
   "dependencies": {
     "dotenv": "^16.4.5"

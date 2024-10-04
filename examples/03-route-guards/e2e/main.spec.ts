@@ -17,11 +17,35 @@ describe('03-route-guards', () => {
     server?.close();
   });
 
+  it('controller in AppModule should works', async () => {
+    const { type, status, text } = await testAgent.get('/');
+    expect(status).toBe(200);
+    expect(type).toBe('text/plain');
+    expect(text).toBe('ok');
+  });
+
   it('should works', async () => {
     const { type, status, text } = await testAgent.get('/hello');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('ok');
+  });
+
+  it('in module3 Controller1 should works without gurad', async () => {
+    const { type, status, text } = await testAgent.get('/module3');
+    expect(status).toBe(200);
+    expect(type).toBe('text/plain');
+    expect(text).toBe('ok');
+  });
+
+  it('in module3 appended controller should works with guards', async () => {
+    const { status } = await testAgent.get('/module3/guards-2/hello');
+    expect(status).toBe(401);
+  });
+
+  it('in module3 appended singletor controller should works with guards', async () => {
+    const { status } = await testAgent.get('/module3/guards-2/hello2');
+    expect(status).toBe(401);
   });
 
   it('should throw 401', async () => {
@@ -30,12 +54,12 @@ describe('03-route-guards', () => {
   });
 
   it('should throw 401 for guards setted for a module', async () => {
-    const { status } = await testAgent.get('/group-guards/hello');
+    const { status } = await testAgent.get('/guards-1/hello');
     expect(status).toBe(401);
   });
 
   it('should throw 401 for guards setted for a module', async () => {
-    const { status } = await testAgent.get('/group-guards/hello2');
+    const { status } = await testAgent.get('/guards-1/hello2');
     expect(status).toBe(401);
   });
 
