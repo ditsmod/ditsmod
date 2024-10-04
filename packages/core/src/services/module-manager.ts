@@ -366,16 +366,14 @@ export class ModuleManager {
     meta.decoratorFactory = rawMeta.decoratorFactory;
     meta.declaredInDir = rawMeta.declaredInDir;
     this.checkWhetherIsExternalModule(rawMeta, meta);
-    if ((isModuleWithParams(mod) || isAppendsWithParams(mod)) && mod.guards) {
-      meta.normalizedGuardsPerMod = this.normalizeGuards(mod.guards);
-      this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
-    }
 
     rawMeta.imports?.forEach((imp, i) => {
       imp = resolveForwardRef(imp);
       this.throwIfUndefined(modName, 'Imports', imp, i);
       if (isModuleWithParams(imp)) {
         meta.importsWithParams.push(imp);
+        meta.normalizedGuardsPerMod = this.normalizeGuards(imp.guards);
+        this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
       } else {
         meta.importsModules.push(imp);
       }
@@ -386,6 +384,8 @@ export class ModuleManager {
       this.throwIfUndefined(modName, 'Appends', ap, i);
       if (isAppendsWithParams(ap)) {
         meta.appendsWithParams.push(ap);
+        meta.normalizedGuardsPerMod = this.normalizeGuards(ap.guards);
+        this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
       } else {
         meta.appendsWithParams.push({ path: '', module: ap });
       }
