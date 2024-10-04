@@ -1,5 +1,12 @@
+<a name="core-2.59.3"></a>
+# [core-2.59.3](https://github.com/ditsmod/ditsmod/releases/tag/core-2.59.3) (2024-10-04)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [a708237e89](https://github.com/ditsmod/ditsmod/commit/a708237e89ff90cb03c2) | feat | added merge `imports` field for `ModuleWithParams`. |
+
 <a name="core-2.59.2"></a>
-# [core-2.59.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.59.2) (2024-10-03)
+## [core-2.59.2](https://github.com/ditsmod/ditsmod/releases/tag/core-2.59.2) (2024-10-03)
 
 | Commit | Type | Description |
 | -- | -- | -- |
