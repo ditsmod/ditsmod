@@ -3,7 +3,8 @@ import { injectable } from '#di';
 import { ImportsResolver } from './imports-resolver.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { ImportedTokensMap } from './types/metadata-per-mod.js';
-import { ModuleType, ModuleWithParams, Provider } from './types/mix.js';
+import { ModuleType, Provider } from './types/mix.js';
+import { ModuleWithParams } from './types/module-metadata.js';
 
 describe('ImportsResolver', () => {
   @injectable()

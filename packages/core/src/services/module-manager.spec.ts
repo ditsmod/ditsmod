@@ -5,7 +5,8 @@ import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { InjectionToken, forwardRef, injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyObj, CanActivate, ModuleType, ModuleWithParams, Provider } from '#types/mix.js';
+import { AnyObj, CanActivate, ModuleType, Provider } from '#types/mix.js';
+import { ModuleWithParams, AppendsWithParams } from '#types/module-metadata.js';
 import { ExtensionProvider, Extension } from '#types/extension-types.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { getCallerDir } from '#utils/callsites.js';
@@ -13,7 +14,6 @@ import { isMultiProvider } from '#utils/type-guards.js';
 import { ModuleManager } from './module-manager.js';
 import { guard } from '#decorators/guard.js';
 import { RequestContext } from '#types/http-interceptor.js';
-import { AppendsWithParams } from '#types/module-metadata.js';
 
 describe('ModuleManager', () => {
   console.log = jest.fn();

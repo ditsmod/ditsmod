@@ -88,10 +88,7 @@ export {
   GuardItem,
   HttpMethod,
   ModuleType,
-  BaseModuleWithParams,
-  ModuleWithParams,
-  ModuleWithParams1,
-  ModuleWithParams2,
+
   NormalizedGuard,
   ResolvedGuard,
   RedirectStatusCodes,
@@ -106,6 +103,10 @@ export {
   AppendsWithParams,
   AppendsWithParams1,
   AppendsWithParams2,
+  BaseModuleWithParams,
+  ModuleWithParams,
+  ModuleWithParams1,
+  ModuleWithParams2,
 } from './types/module-metadata.js';
 export { RouteMeta } from './types/route-data.js';
 export { PathParam, RouteHandler, Router, RouterReturns } from './types/router.js';

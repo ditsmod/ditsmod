@@ -2,9 +2,9 @@ import { format } from 'util';
 
 import { Class, injectable, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyObj, GuardItem, ModuleType, ModuleWithParams, NormalizedGuard, Scope, Provider } from '#types/mix.js';
+import { AnyObj, GuardItem, ModuleType, NormalizedGuard, Scope, Provider } from '#types/mix.js';
+import { ModuleWithParams,AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { ExtensionProvider, Extension } from '#types/extension-types.js';
-import { AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import {
   ExtensionOptions,

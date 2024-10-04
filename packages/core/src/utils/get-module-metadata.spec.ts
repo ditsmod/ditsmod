@@ -1,6 +1,7 @@
 import { forwardRef, injectable } from '#di';
 import { featureModule } from '#decorators/module.js';
-import { ModuleWithParams, Provider } from '#types/mix.js';
+import { Provider } from '#types/mix.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 import { getModuleMetadata } from './get-module-metadata.js';
 import { getCallerDir } from './callsites.js';
 import { Providers } from '#utils/providers.js';
