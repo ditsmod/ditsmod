@@ -39,6 +39,7 @@ import {
   FactoryProvider,
   ResolvedGuard,
   ResolvedProvider,
+  NormalizedGuard,
 } from '@ditsmod/core';
 
 import { PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -117,15 +118,7 @@ export class PreRouterExtension implements Extension<void> {
 
     const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
-
-    routeMeta.resolvedGuards = controllersMetadata2.guards.map((g) => {
-      const resolvedGuard: ResolvedGuard = {
-        guard: Injector.resolve([g.guard])[0],
-        params: g.params,
-      };
-      return resolvedGuard;
-    });
-
+    routeMeta.resolvedGuards = this.getResolvedGuards(controllersMetadata2.guards, []);
     if (routeMeta.resolvedGuards.length) {
       mergedPerReq.push(InterceptorWithGuards);
       mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
@@ -169,13 +162,24 @@ export class PreRouterExtension implements Extension<void> {
     }) as RouteHandler;
   }
 
+  protected getResolvedGuards(guards: NormalizedGuard[], resolvedPerReq: ResolvedProvider[]) {
+    return guards.map((g) => {
+      const defaultResolvedGuard = Injector.resolve([g.guard])[0];
+
+      const resolvedGuard: ResolvedGuard = {
+        guard: resolvedPerReq.concat([defaultResolvedGuard]).find((rp) => rp.dualKey.token === g.guard)!,
+        params: g.params,
+      };
+
+      return resolvedGuard;
+    });
+  }
+
   protected getResolvedHandler(routeMeta: RouteMeta, resolvedPerReq: ResolvedProvider[]) {
     const { controller, methodName } = routeMeta;
     const factoryProvider: FactoryProvider = { useFactory: [controller, controller.prototype[methodName]] };
     const resolvedHandler = Injector.resolve([factoryProvider])[0];
-    return resolvedPerReq
-      .concat([resolvedHandler])
-      .find((rp) => rp.dualKey.token === controller.prototype[methodName]);
+    return resolvedPerReq.concat([resolvedHandler]).find((rp) => rp.dualKey.token === controller.prototype[methodName]);
   }
 
   protected getHandlerWithSingleton(
