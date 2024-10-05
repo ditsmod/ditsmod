@@ -141,6 +141,7 @@ export class CorsExtension implements Extension<void | false> {
         providersPerReq: [],
         routeMeta,
         isSingleton: true,
+        guards: []
       };
 
       newArrControllersMetadata2.push(controllersMetadata2);
