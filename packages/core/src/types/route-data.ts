@@ -13,7 +13,11 @@ export class RouteMeta {
 
   static resolveGuards(guards: NormalizedGuard[]): ResolvedGuard[] {
     return guards.map((g) => {
-      return { guard: Injector.resolve([g.guard])[0], params: g.params };
+      const resolvedGuard: ResolvedGuard = {
+        guard: Injector.resolve([g.guard])[0],
+        params: g.params,
+      };
+      return resolvedGuard;
     });
   }
 
