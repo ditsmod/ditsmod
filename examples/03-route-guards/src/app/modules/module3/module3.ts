@@ -7,7 +7,7 @@ import { Module2 } from '../module2/module2.js';
 
 @featureModule({
   imports: [RoutingModule, AuthModule],
-  appends: [{ path: 'guards-2', module: Module2, guards: [BearerGuard] }],
+  appends: [{ path: '', module: Module2, guards: [BearerGuard] }],
   controllers: [Controller1],
 })
 export class Module3 {}

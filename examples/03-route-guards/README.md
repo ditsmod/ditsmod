@@ -32,12 +32,12 @@ npm run start:dev
 From second terminal:
 
 ```bash
-curl -i localhost:3000/hello
+curl -i localhost:3000/controler1-of-module1
 curl -i localhost:3000/unauth
 curl -i localhost:3000/forbidden
 
 # check work controller singleton
-curl -i localhost:3000/hello2
+curl -i localhost:3000/controler2-of-module1
 curl -i localhost:3000/unauth2
 curl -i localhost:3000/forbidden2
 ```

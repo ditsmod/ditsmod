@@ -3,7 +3,7 @@ import { Permission, basicAuth, requirePermissions, BearerGuard } from '#auth';
 
 @controller()
 export class Controller1 {
-  @route('GET', 'hello')
+  @route('GET', 'controler1-of-module1')
   ok(res: Res) {
     res.send('ok');
   }
