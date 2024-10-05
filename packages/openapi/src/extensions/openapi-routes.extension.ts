@@ -57,7 +57,10 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             guards.push(...this.normalizeGuards(decoratorMetadata.value.guards));
           }
           const controllerFactory: FactoryProvider = { useFactory: [controller, controller.prototype[methodName]] };
-          providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []), controllerFactory);
+          providersPerReq.push(
+            ...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []),
+            controllerFactory,
+          );
           const { httpMethod, path: controllerPath, operationObject } = oasRoute;
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const path = this.getPath(prefix, controllerPath);
@@ -81,7 +84,6 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             decoratorMetadata,
             controller,
             methodName,
-            resolvedGuards: RouteMeta.resolveGuards(guards),
           };
 
           providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
@@ -92,7 +94,8 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             path,
             httpMethod,
             routeMeta,
-            isSingleton
+            isSingleton,
+            guards,
           });
         }
       }
