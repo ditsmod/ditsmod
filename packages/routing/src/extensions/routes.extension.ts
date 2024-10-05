@@ -60,7 +60,6 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           const guardsPerMod = metadataPerMod1.guardsPerMod.filter((g) => g.module === meta.module);
           const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
-          const resolvedHandler = isSingleton ? undefined : RouteMeta.resolveHandler(controller, methodName);
           providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []));
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
           const { path: controllerPath, httpMethod } = route;
@@ -69,7 +68,6 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           const routeMeta: RouteMeta = {
             decoratorMetadata,
             resolvedGuards: RouteMeta.resolveGuards(guards),
-            resolvedHandler,
             controller,
             methodName,
           };

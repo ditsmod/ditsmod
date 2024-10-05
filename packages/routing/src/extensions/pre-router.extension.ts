@@ -36,6 +36,7 @@ import {
   TotalInitMetaPerApp,
   ChainError,
   CTX_DATA,
+  FactoryProvider,
 } from '@ditsmod/core';
 
 import { PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -124,6 +125,12 @@ export class PreRouterExtension implements Extension<void> {
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
+    const { controller, methodName } = routeMeta;
+    const factoryProvider: FactoryProvider = { useFactory: [controller, controller.prototype[methodName]] };
+    const resolvedHandler = Injector.resolve([factoryProvider])[0];
+    routeMeta.resolvedHandler = resolvedPerReq
+      .concat([resolvedHandler])
+      .find((rp) => rp.dualKey.token === controller.prototype[methodName]);
     this.checkDeps(metadataPerMod2.moduleName, httpMethod, path, injPerReq, routeMeta);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerReq
