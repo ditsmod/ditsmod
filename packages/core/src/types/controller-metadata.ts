@@ -1,5 +1,5 @@
 import type { Class, DecoratorAndValue } from '#di';
-import type { AnyObj, DecoratorMetadata, HttpMethod, Provider } from './mix.js';
+import type { AnyObj, DecoratorMetadata, HttpMethod, NormalizedGuard, Provider } from './mix.js';
 import type { RouteMeta } from './route-data.js';
 
 export interface ControllerMetadata1 {
@@ -40,4 +40,5 @@ export interface ControllerMetadata2 {
   httpMethod: HttpMethod;
   routeMeta: RouteMeta;
   isSingleton?: boolean;
+  guards: NormalizedGuard[];
 }

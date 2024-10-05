@@ -30,7 +30,7 @@ export class SingletonInterceptorWithGuards implements ISingletonInterceptorWith
   }
 
   protected initGuards() {
-    this.routeMeta.resolvedGuards.forEach((item) => {
+    this.routeMeta.resolvedGuards!.forEach((item) => {
       const guard = this.injector.instantiateResolved(item.guard) as CanActivate;
       this.instantiatedGuards.push({ guard, params: item.params });
     });

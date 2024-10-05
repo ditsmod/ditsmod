@@ -12,7 +12,7 @@ export class InterceptorWithGuards implements HttpInterceptor {
   ) {}
 
   async intercept(next: HttpHandler, ctx: RequestContext) {
-    for (const item of this.routeMeta.resolvedGuards) {
+    for (const item of this.routeMeta.resolvedGuards!) {
       const canActivate = await this.injector.instantiateResolved(item.guard).canActivate(ctx, item.params);
       if (canActivate !== true) {
         const status = typeof canActivate == 'number' ? canActivate : undefined;
