@@ -242,14 +242,15 @@ export class AppInitializer {
     const globalProviders = moduleFactory1.exportGlobalProviders(moduleManager, this.meta.providersPerApp);
     this.systemLogMediator.printGlobalProviders(this, globalProviders);
     const moduleFactory2 = new ModuleFactory();
-    const appModule = moduleManager.getMetadata('root', true).module;
+    const { module, normalizedGuardsPerMod } = moduleManager.getMetadata('root', true);
     return moduleFactory2.bootstrap(
       this.meta.providersPerApp,
       globalProviders,
       '',
-      appModule,
+      module,
       moduleManager,
       new Set(),
+      normalizedGuardsPerMod,
     );
   }
 
