@@ -42,7 +42,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
   }
 
   protected getControllersMetadata2(prefixPerApp: string = '', metadataPerMod1: MetadataPerMod1) {
-    const { aControllersMetadata1, prefixPerMod } = metadataPerMod1;
+    const { aControllersMetadata1, prefixPerMod, meta } = metadataPerMod1;
 
     const controllersMetadata2: ControllerMetadata2[] = [];
     for (const { controller, decoratorsAndValues: container, properties: methods } of aControllersMetadata1) {
@@ -57,7 +57,8 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           const route = decoratorMetadata.value;
           const ctrlDecorator = container.find(isController);
           const isSingleton = ctrlDecorator?.value.isSingleton;
-          const guards = [...metadataPerMod1.guardsPerMod, ...this.normalizeGuards(route.guards)];
+          const guardsPerMod = metadataPerMod1.guardsPerMod.filter((g) => g.module === meta.module);
+          const guards = [...guardsPerMod, ...this.normalizeGuards(route.guards)];
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
           const resolvedHandler = isSingleton ? undefined : RouteMeta.resolveHandler(controller, methodName);
           providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []));

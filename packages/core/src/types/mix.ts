@@ -9,7 +9,7 @@ import {
 } from '#di';
 import { RequestContext } from './http-interceptor.js';
 import { MetadataPerMod1 } from './metadata-per-mod.js';
-import { ModuleWithParams } from './module-metadata.js';
+import { AppendsWithParams, ModuleWithParams } from './module-metadata.js';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
 /**
@@ -62,6 +62,7 @@ export type GuardItem = Class<CanActivate> | [Class<CanActivate>, any, ...any[]]
 
 export interface NormalizedGuard {
   guard: Class<CanActivate>;
+  module?: ModuleWithParams | AppendsWithParams;
   params?: any[];
 }
 

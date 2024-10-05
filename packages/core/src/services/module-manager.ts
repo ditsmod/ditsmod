@@ -372,7 +372,7 @@ export class ModuleManager {
       this.throwIfUndefined(modName, 'Imports', imp, i);
       if (isModuleWithParams(imp)) {
         meta.importsWithParams.push(imp);
-        meta.normalizedGuardsPerMod = this.normalizeGuards(imp.guards);
+        meta.normalizedGuardsPerMod = this.normalizeGuards(imp.guards, imp);
         this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
       } else {
         meta.importsModules.push(imp);
@@ -384,7 +384,7 @@ export class ModuleManager {
       this.throwIfUndefined(modName, 'Appends', ap, i);
       if (isAppendsWithParams(ap)) {
         meta.appendsWithParams.push(ap);
-        meta.normalizedGuardsPerMod = this.normalizeGuards(ap.guards);
+        meta.normalizedGuardsPerMod = this.normalizeGuards(ap.guards, ap);
         this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
       } else {
         meta.appendsWithParams.push({ path: '', module: ap });
@@ -510,12 +510,12 @@ export class ModuleManager {
     });
   }
 
-  protected normalizeGuards(guards?: GuardItem[]) {
+  protected normalizeGuards(guards?: GuardItem[], module?: ModuleWithParams | AppendsWithParams) {
     return (guards || []).map((item) => {
       if (Array.isArray(item)) {
-        return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
+        return { guard: item[0], module, params: item.slice(1) } as NormalizedGuard;
       } else {
-        return { guard: item } as NormalizedGuard;
+        return { guard: item, module } as NormalizedGuard;
       }
     });
   }
