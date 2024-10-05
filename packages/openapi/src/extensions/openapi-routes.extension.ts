@@ -33,7 +33,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
     super(appOptions, metadataPerMod1);
   }
   protected override getControllersMetadata2(prefixPerApp: string, metadataPerMod1: MetadataPerMod1) {
-    const { aControllersMetadata1, prefixPerMod, guardsPerMod, meta } = metadataPerMod1;
+    const { aControllersMetadata1, prefixPerMod, meta } = metadataPerMod1;
 
     const oasOptions = meta.extensionsMeta.oasOptions as OasOptions;
     const prefixParams = oasOptions?.paratemers;
@@ -52,7 +52,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
           const providersPerReq: Provider[] = [];
           const ctrlDecorator = container.find(isController);
           const isSingleton = ctrlDecorator?.value.isSingleton;
-          const guards: NormalizedGuard[] = [...guardsPerMod];
+          const guards = metadataPerMod1.guardsPerMod.filter((g) => g.module === meta.module);
           if (isOasRoute1(decoratorMetadata)) {
             guards.push(...this.normalizeGuards(decoratorMetadata.value.guards));
           }
