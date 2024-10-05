@@ -372,7 +372,7 @@ export class ModuleManager {
       this.throwIfUndefined(modName, 'Imports', imp, i);
       if (isModuleWithParams(imp)) {
         meta.importsWithParams.push(imp);
-        meta.normalizedGuardsPerMod = this.normalizeGuards(imp.guards, imp);
+        meta.normalizedGuardsPerMod.push(...this.normalizeGuards(imp.guards, imp));
         this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
       } else {
         meta.importsModules.push(imp);
@@ -384,7 +384,7 @@ export class ModuleManager {
       this.throwIfUndefined(modName, 'Appends', ap, i);
       if (isAppendsWithParams(ap)) {
         meta.appendsWithParams.push(ap);
-        meta.normalizedGuardsPerMod = this.normalizeGuards(ap.guards, ap);
+        meta.normalizedGuardsPerMod.push(...this.normalizeGuards(ap.guards, ap));
         this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
       } else {
         meta.appendsWithParams.push({ path: '', module: ap });
