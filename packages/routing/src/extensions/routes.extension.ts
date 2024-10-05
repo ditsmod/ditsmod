@@ -67,7 +67,6 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
 
           const routeMeta: RouteMeta = {
             decoratorMetadata,
-            resolvedGuards: RouteMeta.resolveGuards(guards),
             controller,
             methodName,
           };
@@ -79,6 +78,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
             providersPerReq,
             routeMeta,
             isSingleton,
+            guards
           });
         }
       }

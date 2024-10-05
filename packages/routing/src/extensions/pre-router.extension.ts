@@ -37,6 +37,7 @@ import {
   ChainError,
   CTX_DATA,
   FactoryProvider,
+  ResolvedGuard,
 } from '@ditsmod/core';
 
 import { PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -96,7 +97,7 @@ export class PreRouterExtension implements Extension<void> {
           httpMethod: controllersMetadata2.httpMethod,
           path: controllersMetadata2.path,
           handle,
-          countOfGuards: controllersMetadata2.routeMeta.resolvedGuards.length,
+          countOfGuards: controllersMetadata2.routeMeta.resolvedGuards!.length,
         });
       });
     });
@@ -115,6 +116,15 @@ export class PreRouterExtension implements Extension<void> {
 
     const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
+
+    routeMeta.resolvedGuards = controllersMetadata2.guards.map((g) => {
+      const resolvedGuard: ResolvedGuard = {
+        guard: Injector.resolve([g.guard])[0],
+        params: g.params,
+      };
+      return resolvedGuard;
+    });
+
     if (routeMeta.resolvedGuards.length) {
       mergedPerReq.push(InterceptorWithGuards);
       mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
@@ -172,6 +182,15 @@ export class PreRouterExtension implements Extension<void> {
 
     const mergedPerRou: Provider[] = [];
     mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
+
+    routeMeta.resolvedGuards = controllersMetadata2.guards.map((g) => {
+      const resolvedGuard: ResolvedGuard = {
+        guard: Injector.resolve([g.guard])[0],
+        params: g.params,
+      };
+      return resolvedGuard;
+    });
+
     if (routeMeta.resolvedGuards.length) {
       mergedPerRou.push(SingletonInterceptorWithGuards);
       mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: SingletonInterceptorWithGuards, multi: true });
@@ -210,7 +229,7 @@ export class PreRouterExtension implements Extension<void> {
       DepsChecker.check(inj, ChainMaker, undefined, ignoreDeps);
       DepsChecker.check(inj, HttpFrontend, undefined, ignoreDeps);
       DepsChecker.check(inj, SystemLogMediator, undefined, ignoreDeps);
-      routeMeta.resolvedGuards.forEach((item) => DepsChecker.checkForResolved(inj, item.guard, ignoreDeps));
+      routeMeta.resolvedGuards!.forEach((item) => DepsChecker.checkForResolved(inj, item.guard, ignoreDeps));
       DepsChecker.check(inj, HttpBackend, undefined, ignoreDeps);
       if (routeMeta?.resolvedHandler) {
         DepsChecker.checkForResolved(inj, routeMeta.resolvedHandler, ignoreDeps);
