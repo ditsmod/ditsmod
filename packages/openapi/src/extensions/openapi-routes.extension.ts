@@ -52,7 +52,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
           const providersPerReq: Provider[] = [];
           const ctrlDecorator = container.find(isController);
           const isSingleton = ctrlDecorator?.value.isSingleton;
-          const guards = metadataPerMod1.guardsPerMod.filter((g) => g.module === meta.module);
+          const guards = metadataPerMod1.guardsPerMod.slice();
           if (isOasRoute1(decoratorMetadata)) {
             guards.push(...this.normalizeGuards(decoratorMetadata.value.guards));
           }
