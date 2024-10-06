@@ -3,7 +3,7 @@ import { format } from 'util';
 import { Class, injectable, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, GuardItem, ModuleType, NormalizedGuard, Scope, Provider } from '#types/mix.js';
-import { ModuleWithParams,AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
+import { ModuleWithParams, AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { ExtensionProvider, Extension } from '#types/extension-types.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import {
@@ -366,14 +366,18 @@ export class ModuleManager {
     meta.decoratorFactory = rawMeta.decoratorFactory;
     meta.declaredInDir = rawMeta.declaredInDir;
     this.checkWhetherIsExternalModule(rawMeta, meta);
+    if ((isModuleWithParams(mod) || isAppendsWithParams(mod)) && mod.guards) {
+      meta.normalizedGuardsPerMod.push(...this.normalizeGuards(mod.guards, mod));
+      this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
+    }
 
     rawMeta.imports?.forEach((imp, i) => {
       imp = resolveForwardRef(imp);
       this.throwIfUndefined(modName, 'Imports', imp, i);
       if (isModuleWithParams(imp)) {
         meta.importsWithParams.push(imp);
-        meta.normalizedGuardsPerMod.push(...this.normalizeGuards(imp.guards, imp));
-        this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
+        meta.childGuardsPerMod.push(...this.normalizeGuards(imp.guards, imp));
+        this.checkGuardsPerMod(meta.childGuardsPerMod, modName);
       } else {
         meta.importsModules.push(imp);
       }
@@ -384,8 +388,8 @@ export class ModuleManager {
       this.throwIfUndefined(modName, 'Appends', ap, i);
       if (isAppendsWithParams(ap)) {
         meta.appendsWithParams.push(ap);
-        meta.normalizedGuardsPerMod.push(...this.normalizeGuards(ap.guards, ap));
-        this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
+        meta.childGuardsPerMod.push(...this.normalizeGuards(ap.guards, ap));
+        this.checkGuardsPerMod(meta.childGuardsPerMod, modName);
       } else {
         meta.appendsWithParams.push({ path: '', module: ap });
       }
