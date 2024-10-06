@@ -254,7 +254,7 @@ export class ModuleManager {
     meta.resolvedCollisionsPerMod = meta.resolvedCollisionsPerMod.slice();
     meta.resolvedCollisionsPerRou = meta.resolvedCollisionsPerRou.slice();
     meta.resolvedCollisionsPerReq = meta.resolvedCollisionsPerReq.slice();
-    meta.normalizedGuardsPerMod = meta.normalizedGuardsPerMod.slice();
+    meta.guardsPerMod = meta.guardsPerMod.slice();
     return meta;
   }
 
@@ -367,8 +367,8 @@ export class ModuleManager {
     meta.declaredInDir = rawMeta.declaredInDir;
     this.checkWhetherIsExternalModule(rawMeta, meta);
     if ((isModuleWithParams(mod) || isAppendsWithParams(mod)) && mod.guards) {
-      meta.normalizedGuardsPerMod.push(...this.normalizeGuards(mod.guards, mod));
-      this.checkGuardsPerMod(meta.normalizedGuardsPerMod, modName);
+      meta.guardsPerMod.push(...this.normalizeGuards(mod.guards, mod));
+      this.checkGuardsPerMod(meta.guardsPerMod, modName);
     }
 
     rawMeta.imports?.forEach((imp, i) => {

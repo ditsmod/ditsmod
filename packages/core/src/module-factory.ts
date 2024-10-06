@@ -180,7 +180,7 @@ export class ModuleFactory {
         } else {
           prefixPerMod = [this.prefixPerMod, input.path].filter((s) => s).join('/');
         }
-        guardsPerMod = [...this.guardsPerMod, ...meta.normalizedGuardsPerMod];
+        guardsPerMod = [...this.guardsPerMod, ...meta.guardsPerMod];
       }
 
       const moduleFactory = new ModuleFactory();
