@@ -55,8 +55,8 @@
     "yaml-loader": "^0.8.1"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.60.0",
-    "@ditsmod/routing": "^2.4.1"
+    "@ditsmod/core": "^2.61.0",
+    "@ditsmod/routing": "^2.6.0"
   },
   "resolutions": {
     "@swagger-api/apidom-ns-asyncapi-2": "npm:-@0.0.1",
