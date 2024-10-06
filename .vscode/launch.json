@@ -7,9 +7,16 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch tmp file",
-      "program": "${workspaceFolder}/examples/01-hello-world/src/tmp.js",
+      "name": "Launch example 03",
+      "program": "${workspaceFolder}/examples/03-route-guards/dist/main.js",
       "request": "launch",
+      "preLaunchTask": "npm: build - examples/03-route-guards",
+      "cwd": "${workspaceFolder}/examples/03-route-guards",
+      "runtimeArgs": [
+        "--enable-source-maps",
+        "-r",
+        "dotenv/config"
+      ],
       "skipFiles": [
         "<node_internals>/**"
       ],
