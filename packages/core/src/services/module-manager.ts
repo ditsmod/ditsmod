@@ -2,7 +2,7 @@ import { format } from 'util';
 
 import { Class, injectable, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyObj, GuardItem, ModuleType, NormalizedGuard, Scope, Provider } from '#types/mix.js';
+import { AnyObj, GuardItem, ModuleType, NormalizedGuard, Scope, Provider, ChildGuardPerMod } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { ExtensionProvider, Extension } from '#types/extension-types.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
@@ -517,9 +517,9 @@ export class ModuleManager {
   protected normalizeGuards(guards?: GuardItem[], module?: ModuleWithParams | AppendsWithParams) {
     return (guards || []).map((item) => {
       if (Array.isArray(item)) {
-        return { guard: item[0], module, params: item.slice(1) } as NormalizedGuard;
+        return { guard: item[0], module, params: item.slice(1) } as ChildGuardPerMod;
       } else {
-        return { guard: item, module } as NormalizedGuard;
+        return { guard: item, module } as ChildGuardPerMod;
       }
     });
   }

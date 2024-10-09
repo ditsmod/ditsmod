@@ -62,8 +62,12 @@ export type GuardItem = Class<CanActivate> | [Class<CanActivate>, any, ...any[]]
 
 export interface NormalizedGuard {
   guard: Class<CanActivate>;
-  module?: ModuleWithParams | AppendsWithParams;
   params?: any[];
+}
+
+export interface ChildGuardPerMod extends NormalizedGuard {
+  module: ModuleWithParams | AppendsWithParams;
+  providers: Provider[];
 }
 
 export interface ResolvedGuard {
