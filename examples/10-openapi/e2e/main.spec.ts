@@ -52,7 +52,9 @@ describe('10-openapi', () => {
   });
 
   it('guard works', async () => {
-    const { status } = await testAgent.get('/second');
-    expect(status).toBe(401);
+    const res1 = await testAgent.get('/second');
+    expect(res1.status).toBe(401);
+    const res2 = await testAgent.get('/guard');
+    expect(res2.status).toBe(401);
   });
 });
