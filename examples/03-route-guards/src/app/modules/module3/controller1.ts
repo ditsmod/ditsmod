@@ -7,12 +7,3 @@ export class Controller1 {
     res.send('ok');
   }
 }
-
-@controller()
-export class OverriddenController1 {
-  @route('GET', 'controler1-of-module3')
-  ok(res: Res) {
-    res.send('overridden-ok');
-  }
-}
-

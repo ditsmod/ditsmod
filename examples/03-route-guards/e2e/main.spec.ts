@@ -31,13 +31,6 @@ describe('03-route-guards', () => {
     expect(text).toBe('ok');
   });
 
-  it('in module3 Controller1 should works without gurad', async () => {
-    const { type, status, text } = await testAgent.get('/controler1-of-module3');
-    expect(status).toBe(200);
-    expect(type).toBe('text/plain');
-    expect(text).toBe('overridden-ok');
-  });
-
   it('in module3 appended controller should works with guards', async () => {
     const { status } = await testAgent.get('/controler1-of-module2');
     expect(status).toBe(401);
