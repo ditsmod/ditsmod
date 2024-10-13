@@ -10,8 +10,8 @@ describe('ImportsResolver', () => {
   @injectable()
   class ImportsResolverMock extends ImportsResolver {
     declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, Provider][];
-    override resolveImportedProviders(importedTokensMap: ImportedTokensMap, meta: NormalizedModuleMetadata) {
-      return super.resolveImportedProviders(importedTokensMap, meta);
+    override resolveImportedProviders(meta: NormalizedModuleMetadata, importedTokensMap: ImportedTokensMap) {
+      return super.resolveImportedProviders(meta, importedTokensMap);
     }
     override fixDependecy(module: ModuleType | ModuleWithParams, provider: Provider) {
       return super.fixDependecy(module, provider);

@@ -26,7 +26,6 @@ type AnyModule = ModuleType | ModuleWithParams;
 export class ImportsResolver {
   protected unfinishedSearchDependecies: [AnyModule, Provider][] = [];
   protected tokensPerApp: any[];
-  protected meta: NormalizedModuleMetadata;
   protected extensionsTokens: any[] = [];
   protected extensionCounters = new ExtensionCounters();
 
@@ -41,10 +40,9 @@ export class ImportsResolver {
   resolve() {
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.appMetadataMap.forEach((metadataPerMod1) => {
-      const { importedTokensMap, meta } = metadataPerMod1;
-      this.meta = meta;
-      this.resolveImportedProviders(importedTokensMap, meta);
-      this.resolveProvidersForExtensions(importedTokensMap, meta);
+      const { meta, importedTokensMap } = metadataPerMod1;
+      this.resolveImportedProviders(meta, importedTokensMap);
+      this.resolveProvidersForExtensions(meta, importedTokensMap);
       meta.providersPerRou.unshift(...defaultProvidersPerRou);
       meta.providersPerReq.unshift(...defaultProvidersPerReq);
     });
@@ -52,26 +50,26 @@ export class ImportsResolver {
     return this.extensionCounters;
   }
 
-  protected resolveImportedProviders(importedTokensMap: ImportedTokensMap, meta: NormalizedModuleMetadata) {
+  protected resolveImportedProviders(meta: NormalizedModuleMetadata, importedTokensMap: ImportedTokensMap) {
     const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
 
     scopes.forEach((scope, i) => {
       importedTokensMap[`per${scope}`].forEach((importObj) => {
         meta[`providersPer${scope}`].unshift(...importObj.providers);
         importObj.providers.forEach((provider) => {
-          this.grabDependecies(importObj.module, provider, scopes.slice(i));
+          this.grabDependecies(meta, importObj.module, provider, scopes.slice(i));
         });
       });
       importedTokensMap[`multiPer${scope}`].forEach((multiProviders, module) => {
         meta[`providersPer${scope}`].unshift(...multiProviders);
         multiProviders.forEach((provider) => {
-          this.grabDependecies(module, provider, scopes.slice(i));
+          this.grabDependecies(meta, module, provider, scopes.slice(i));
         });
       });
     });
   }
 
-  protected resolveProvidersForExtensions(importedTokensMap: ImportedTokensMap, meta: NormalizedModuleMetadata) {
+  protected resolveProvidersForExtensions(meta: NormalizedModuleMetadata, importedTokensMap: ImportedTokensMap) {
     const currentExtensionsTokens: any[] = [];
     importedTokensMap.extensions.forEach((providers) => {
       currentExtensionsTokens.push(...getTokens(providers));
@@ -114,15 +112,15 @@ export class ImportsResolver {
       meta.extensionsProviders.unshift(...newProviders);
       providers.forEach((provider) => {
         if (this.hasUnresolvedDependecies(meta.module, provider, ['Mod'])) {
-          this.grabDependecies(module, provider, ['Mod']);
+          this.grabDependecies(meta, module, provider, ['Mod']);
         }
       });
     });
-    this.increaseExtensionCounters();
+    this.increaseExtensionCounters(meta);
   }
 
-  protected increaseExtensionCounters() {
-    const extensionsProviders = [...this.meta.extensionsProviders];
+  protected increaseExtensionCounters(meta: NormalizedModuleMetadata) {
+    const extensionsProviders = [...meta.extensionsProviders];
     const uniqTargets = new Set<Provider>(getProvidersTargets(extensionsProviders));
     const uniqGroupTokens = new Set<ExtensionsGroupToken>(
       getTokens(extensionsProviders).filter((token) => token instanceof InjectionToken || token instanceof BeforeToken),
@@ -144,8 +142,14 @@ export class ImportsResolver {
    * @param provider Imported provider.
    * @param scopes Search in this scopes. The scope order is important.
    */
-  protected grabDependecies(module: AnyModule, provider: Provider, scopes: Scope[], path: any[] = []) {
-    const meta = this.moduleManager.getMetadata(module, true);
+  protected grabDependecies(
+    meta: NormalizedModuleMetadata,
+    module: AnyModule,
+    provider: Provider,
+    scopes: Scope[],
+    path: any[] = [],
+  ) {
+    const meta2 = this.moduleManager.getMetadata(module, true);
 
     for (const dep of this.getDependencies(provider)) {
       let found: boolean = false;
@@ -154,11 +158,11 @@ export class ImportsResolver {
       }
 
       for (const scope of scopes) {
-        const providers = getLastProviders(meta[`providersPer${scope}`]);
+        const providers = getLastProviders(meta2[`providersPer${scope}`]);
 
         getTokens(providers).forEach((token2, i) => {
           if (token2 === dep.token) {
-            this.meta[`providersPer${scope}`].unshift(providers[i]);
+            meta[`providersPer${scope}`].unshift(providers[i]);
             found = true;
             // The loop does not breaks because there may be multi providers.
           }
@@ -170,7 +174,7 @@ export class ImportsResolver {
       }
 
       if (!found && !this.tokensPerApp.includes(dep.token)) {
-        this.grabImportedDependecies(module, scopes, provider, dep, path);
+        this.grabImportedDependecies(meta, module, scopes, provider, dep, path);
       }
     }
   }
@@ -181,6 +185,7 @@ export class ImportsResolver {
    * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
   protected grabImportedDependecies(
+    meta: NormalizedModuleMetadata,
     module1: AnyModule,
     scopes: Scope[],
     provider: Provider,
@@ -194,12 +199,12 @@ export class ImportsResolver {
         found = true;
         path.push(dep.token);
         const { module: module2, providers } = importObj;
-        this.meta[`providersPer${scope}`].unshift(...providers);
+        meta[`providersPer${scope}`].unshift(...providers);
 
         // Loop for multi providers.
         for (const provider of providers) {
           this.fixDependecy(module2, provider);
-          this.grabDependecies(module2, provider, scopes, path);
+          this.grabDependecies(meta, module2, provider, scopes, path);
           this.unfixDependecy(module2, provider);
         }
         break;
@@ -207,7 +212,7 @@ export class ImportsResolver {
     }
 
     if (!found && dep.required) {
-      this.throwError(provider, path, dep.token);
+      this.throwError(meta, provider, path, dep.token);
     }
   }
 
@@ -267,22 +272,16 @@ export class ImportsResolver {
     return false;
   }
 
-  protected throwError(provider: Provider, path: any[], token: any) {
+  protected throwError(meta: NormalizedModuleMetadata, provider: Provider, path: any[], token: any) {
     path = [provider, ...path, token];
     const strPath = getTokens(path)
       .map((t) => t.name || t)
       .join(' -> ');
 
     const partMsg = path.length > 1 ? `(${strPath})` : '';
-    this.log.showProvidersInLogs(
-      this,
-      this.meta.name,
-      this.meta.providersPerReq,
-      this.meta.providersPerRou,
-      this.meta.providersPerMod,
-    );
+    this.log.showProvidersInLogs(this, meta.name, meta.providersPerReq, meta.providersPerRou, meta.providersPerMod);
 
-    this.errorMediator.throwNoProviderDuringResolveImports(this.meta.name, token.name || token, partMsg);
+    this.errorMediator.throwNoProviderDuringResolveImports(meta.name, token.name || token, partMsg);
   }
 
   protected getDependencies(provider: Provider) {
