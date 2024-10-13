@@ -1,5 +1,5 @@
 import { Class } from '#di';
-import { AnyFn, AnyObj, ChildGuardPerMod, ModuleType, NormalizedGuard, Provider } from '#types/mix.js';
+import { AnyFn, AnyObj, ModuleType, NormalizedGuard, Provider } from '#types/mix.js';
 import { AppendsWithParams, ModuleWithParams } from './module-metadata.js';
 import { ExtensionProvider } from './extension-types.js';
 import { MultiProvider } from '#utils/type-guards.js';
