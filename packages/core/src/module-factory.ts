@@ -220,9 +220,9 @@ export class ModuleFactory {
       this.importProvidersAndExtensions(meta2);
     }
 
-    this.addProviders('Mod', module, meta1);
-    this.addProviders('Rou', module, meta1);
-    this.addProviders('Req', module, meta1);
+    this.addProviders('Mod', meta1);
+    this.addProviders('Rou', meta1);
+    this.addProviders('Req', meta1);
     this.importedMultiProvidersPerMod.set(module, meta1.exportedMultiProvidersPerMod);
     this.importedMultiProvidersPerRou.set(module, meta1.exportedMultiProvidersPerRou);
     this.importedMultiProvidersPerReq.set(module, meta1.exportedMultiProvidersPerReq);
@@ -249,12 +249,12 @@ export class ModuleFactory {
     });
   }
 
-  protected addProviders(scope: Scope, module1: AnyModule, meta: NormalizedModuleMetadata) {
+  protected addProviders(scope: Scope, meta: NormalizedModuleMetadata) {
     meta[`exportedProvidersPer${scope}`].forEach((provider) => {
       const token1 = getToken(provider);
       const importObj = this[`importedProvidersPer${scope}`].get(token1);
       if (importObj) {
-        this.checkCollisionsPerScope(module1, scope, token1, provider, importObj);
+        this.checkCollisionsPerScope(meta.module, scope, token1, provider, importObj);
         const hasResolvedCollision = this.meta[`resolvedCollisionsPer${scope}`].some(([token2]) => token2 === token1);
         if (hasResolvedCollision) {
           const { providers, module2 } = this.getResolvedCollisionsPerScope(scope, token1);
@@ -265,7 +265,7 @@ export class ModuleFactory {
         }
       } else {
         const newImportObj = new ImportObj();
-        newImportObj.module = module1;
+        newImportObj.module = meta.module;
         newImportObj.providers.push(provider);
         this[`importedProvidersPer${scope}`].set(token1, newImportObj);
       }
