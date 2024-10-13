@@ -10,9 +10,8 @@ import { ModuleFactory } from './module-factory.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from './services/module-manager.js';
 import { Req } from './services/request.js';
-import { Logger } from '#logger/logger.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from './types/metadata-per-mod.js';
-import { DecoratorMetadata, ModuleType, NormalizedGuard } from './types/mix.js';
+import { DecoratorMetadata, GuardPerMod1, ModuleType } from './types/mix.js';
 import { ModuleWithParams } from './types/module-metadata.js';
 import { ExtensionProvider } from '#types/extension-types.js';
 import { Router } from './types/router.js';
@@ -40,7 +39,7 @@ describe('ModuleFactory', () => {
     override importedMultiProvidersPerRou = new Map<AnyModule, Provider[]>();
     override importedMultiProvidersPerReq = new Map<AnyModule, Provider[]>();
     override importedExtensions = new Map<AnyModule, ExtensionProvider[]>();
-    override guardsPerMod: NormalizedGuard[] = [];
+    override guardsPerMod: GuardPerMod1[] = [];
 
     override exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]) {
       return super.exportGlobalProviders(moduleManager, providersPerApp);

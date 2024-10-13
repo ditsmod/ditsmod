@@ -8,7 +8,7 @@ import type { ModuleManager } from './services/module-manager.js';
 import type { ControllerMetadata1 } from './types/controller-metadata.js';
 import type { GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod.js';
 import { ImportObj } from './types/metadata-per-mod.js';
-import type { ModuleType, NormalizedGuard, Scope, Provider } from './types/mix.js';
+import type { ModuleType, Scope, Provider, GuardPerMod1 } from './types/mix.js';
 import type { ModuleWithParams, AppendsWithParams } from './types/module-metadata.js';
 import type { ExtensionProvider } from '#types/extension-types.js';
 import { getCollisions } from './utils/get-collisions.js';
@@ -33,7 +33,7 @@ export class ModuleFactory {
   protected providersPerApp: Provider[];
   protected moduleName: string;
   protected prefixPerMod: string;
-  protected guardsPerMod: NormalizedGuard[];
+  protected guardsPerMod: GuardPerMod1[];
   /**
    * Module metadata.
    */
@@ -87,7 +87,7 @@ export class ModuleFactory {
     modOrObj: AnyModule,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<AnyModule>,
-    guardsPerMod?: NormalizedGuard[],
+    guardsPerMod?: GuardPerMod1[],
     isAppends?: boolean,
   ) {
     const meta = moduleManager.getMetadata(modOrObj, true);
@@ -173,21 +173,22 @@ export class ModuleFactory {
       }
 
       let prefixPerMod = '';
-      let guardsPerMod: NormalizedGuard[] = [];
+      let guardsPerMod: GuardPerMod1[] = [];
       if ((isImport && isModuleWithParams(input)) || isAppendsWithParams(input)) {
         if (typeof input.absolutePath == 'string') {
           prefixPerMod = input.absolutePath;
         } else {
           prefixPerMod = [this.prefixPerMod, input.path].filter((s) => s).join('/');
         }
-        guardsPerMod = [...this.guardsPerMod, ...meta.guardsPerMod];
+        const impGuradsPerMod = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, hostModule: this.meta.module }));
+        guardsPerMod = [...this.guardsPerMod, ...impGuradsPerMod];
       }
-
-      const moduleFactory = new ModuleFactory();
 
       if (this.unfinishedScanModules.has(input)) {
         continue;
       }
+
+      const moduleFactory = new ModuleFactory();
       this.unfinishedScanModules.add(input);
       const appMetadataMap = moduleFactory.bootstrap(
         this.providersPerApp,

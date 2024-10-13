@@ -65,9 +65,8 @@ export interface NormalizedGuard {
   params?: any[];
 }
 
-export interface ChildGuardPerMod extends NormalizedGuard {
-  module: ModuleWithParams | AppendsWithParams;
-  providers: Provider[];
+export interface GuardPerMod1 extends NormalizedGuard {
+  hostModule: ModuleType | ModuleWithParams | AppendsWithParams;
 }
 
 export interface ResolvedGuard {
