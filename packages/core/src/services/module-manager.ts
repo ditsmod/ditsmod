@@ -2,7 +2,7 @@ import { format } from 'util';
 
 import { Class, injectable, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyObj, GuardItem, ModuleType, NormalizedGuard, Scope, Provider, ChildGuardPerMod } from '#types/mix.js';
+import { AnyObj, GuardItem, ModuleType, NormalizedGuard, Scope, Provider } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { ExtensionProvider, Extension } from '#types/extension-types.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
@@ -367,7 +367,7 @@ export class ModuleManager {
     meta.declaredInDir = rawMeta.declaredInDir;
     this.checkWhetherIsExternalModule(rawMeta, meta);
     if ((isModuleWithParams(mod) || isAppendsWithParams(mod)) && mod.guards) {
-      meta.guardsPerMod.push(...this.normalizeGuards(mod.guards, mod));
+      meta.guardsPerMod.push(...this.normalizeGuards(mod.guards));
       this.checkGuardsPerMod(meta.guardsPerMod, modName);
     }
 
@@ -376,8 +376,6 @@ export class ModuleManager {
       this.throwIfUndefined(modName, 'Imports', imp, i);
       if (isModuleWithParams(imp)) {
         meta.importsWithParams.push(imp);
-        meta.childGuardsPerMod.push(...this.normalizeGuards(imp.guards, imp));
-        this.checkGuardsPerMod(meta.childGuardsPerMod, modName);
       } else {
         meta.importsModules.push(imp);
       }
@@ -388,8 +386,6 @@ export class ModuleManager {
       this.throwIfUndefined(modName, 'Appends', ap, i);
       if (isAppendsWithParams(ap)) {
         meta.appendsWithParams.push(ap);
-        meta.childGuardsPerMod.push(...this.normalizeGuards(ap.guards, ap));
-        this.checkGuardsPerMod(meta.childGuardsPerMod, modName);
       } else {
         meta.appendsWithParams.push({ path: '', module: ap });
       }
@@ -514,12 +510,12 @@ export class ModuleManager {
     });
   }
 
-  protected normalizeGuards(guards?: GuardItem[], module?: ModuleWithParams | AppendsWithParams) {
+  protected normalizeGuards(guards?: GuardItem[]) {
     return (guards || []).map((item) => {
       if (Array.isArray(item)) {
-        return { guard: item[0], module, params: item.slice(1) } as ChildGuardPerMod;
+        return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
       } else {
-        return { guard: item, module } as ChildGuardPerMod;
+        return { guard: item } as NormalizedGuard;
       }
     });
   }

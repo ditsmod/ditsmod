@@ -45,7 +45,6 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   exportedMultiProvidersPerRou: MultiProvider[] = [];
   exportedMultiProvidersPerReq: MultiProvider[] = [];
   guardsPerMod: NormalizedGuard[] = [];
-  childGuardsPerMod: ChildGuardPerMod[] = [];
   resolvedCollisionsPerApp: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerMod: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerRou: [any, ModuleType | ModuleWithParams][] = [];
