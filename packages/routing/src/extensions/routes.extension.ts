@@ -5,13 +5,13 @@ import {
   MetadataPerMod2,
   Extension,
   GuardItem,
-  NormalizedGuard,
   Provider,
   RouteMeta,
   isController,
   isRoute,
   AppOptions,
   ControllerRawMetadata1,
+  GuardPerMod1,
 } from '@ditsmod/core';
 
 @injectable()
@@ -102,12 +102,15 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
     }
   }
 
+  /**
+   * @todo Refactor this as this method actually returns `NormalisedGuard`.
+   */
   protected normalizeGuards(guards?: GuardItem[]) {
     return (guards || []).map((item) => {
       if (Array.isArray(item)) {
-        return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
+        return { guard: item[0], params: item.slice(1) } as GuardPerMod1;
       } else {
-        return { guard: item } as NormalizedGuard;
+        return { guard: item } as GuardPerMod1;
       }
     });
   }
