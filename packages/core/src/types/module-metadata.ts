@@ -39,8 +39,8 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
   imports?: Array<ModuleType | ModuleWithParams>;
   /**
    * List of modules that contain controllers. Providers and extensions from these modules
-   * are not imported into the current module. If the current module has a prefix,
-   * that prefix will be added to each controller route from the appended modules.
+   * are not imported into the current module. If the current module has a prefix path,
+   * that path will be added to each controller route from the appended modules.
    */
   appends?: Array<ModuleType | AppendsWithParams>;
   /**
