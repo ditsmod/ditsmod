@@ -242,16 +242,8 @@ export class AppInitializer {
     const globalProviders = moduleFactory1.exportGlobalProviders(moduleManager, this.meta.providersPerApp);
     this.systemLogMediator.printGlobalProviders(this, globalProviders);
     const moduleFactory2 = new ModuleFactory();
-    const { module, guardsPerMod: normalizedGuardsPerMod } = moduleManager.getMetadata('root', true);
-    return moduleFactory2.bootstrap(
-      this.meta.providersPerApp,
-      globalProviders,
-      '',
-      module,
-      moduleManager,
-      new Set(),
-      normalizedGuardsPerMod,
-    );
+    const { module } = moduleManager.getMetadata('root', true);
+    return moduleFactory2.bootstrap(this.meta.providersPerApp, globalProviders, '', module, moduleManager, new Set());
   }
 
   protected async handleExtensions(aMetadataPerMod1: MetadataPerMod1[], extensionCounters: ExtensionCounters) {
