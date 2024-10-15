@@ -42,10 +42,10 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
   }
 
   protected getControllersMetadata2(prefixPerApp: string = '', metadataPerMod1: MetadataPerMod1) {
-    const { aControllersMetadata1, prefixPerMod, meta } = metadataPerMod1;
+    const { aControllerMetadata1, prefixPerMod } = metadataPerMod1;
 
     const controllersMetadata2: ControllerMetadata2[] = [];
-    for (const { controller, decoratorsAndValues: container, properties: methods } of aControllersMetadata1) {
+    for (const { controller, decoratorsAndValues: container, properties: methods } of aControllerMetadata1) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
         for (const decoratorMetadata of methodWithDecorators) {
