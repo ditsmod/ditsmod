@@ -146,7 +146,7 @@ export class ModuleFactory {
       prefixPerMod,
       guardsPerMod: this.guardsPerMod,
       meta: this.meta,
-      aControllersMetadata1: aControllerMetadata1,
+      aControllerMetadata1,
       importedTokensMap: {
         perMod,
         perRou,

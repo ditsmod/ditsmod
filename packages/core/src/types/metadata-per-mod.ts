@@ -36,7 +36,7 @@ export class MetadataPerMod1 {
   /**
    * The controller metadata collected from all controllers of current module.
    */
-  aControllersMetadata1: ControllerMetadata1[];
+  aControllerMetadata1: ControllerMetadata1[];
   /**
    * Map between a token and its ImportObj per scope.
    */
