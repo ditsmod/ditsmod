@@ -33,14 +33,14 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
     super(appOptions, metadataPerMod1);
   }
   protected override getControllersMetadata2(prefixPerApp: string, metadataPerMod1: MetadataPerMod1) {
-    const { aControllersMetadata1, prefixPerMod, meta } = metadataPerMod1;
+    const { aControllerMetadata1, prefixPerMod, meta } = metadataPerMod1;
 
     const oasOptions = meta.extensionsMeta.oasOptions as OasOptions;
     const prefixParams = oasOptions?.paratemers;
     const prefixTags = oasOptions?.tags;
 
     const aControllersMetadata2: ControllerMetadata2[] = [];
-    for (const { controller, decoratorsAndValues: container, properties: methods } of aControllersMetadata1) {
+    for (const { controller, decoratorsAndValues: container, properties: methods } of aControllerMetadata1) {
       for (const methodName in methods) {
         const methodWithDecorators = methods[methodName];
         for (const decoratorMetadata of methodWithDecorators) {
