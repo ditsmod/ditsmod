@@ -13,7 +13,7 @@ import {
   Provider,
   TotalInitMetaPerApp,
 } from '@ditsmod/core';
-import { PreRouterExtension, RouterErrorMediator, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { PreRouterExtension, RoutingErrorMediator, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { TestModuleManager } from './test-module-manager.js';
 import { Scope, Meta, TestProvider, TestFactoryProvider, TestClassProvider } from './types.js';
@@ -28,7 +28,7 @@ export class TestPreRouterExtension extends PreRouterExtension {
     extensionsManager: ExtensionsManager,
     log: SystemLogMediator,
     extensionsContext: ExtensionsContext,
-    routerErrorMediator: RouterErrorMediator,
+    routerErrorMediator: RoutingErrorMediator,
   ) {
     super(perAppService, router, extensionsManager, log, extensionsContext, routerErrorMediator);
   }
