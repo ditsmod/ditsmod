@@ -1,7 +1,7 @@
 import { ChainError, ChainErrorOptions, ErrorMediator, injectable } from '@ditsmod/core';
 
 @injectable()
-export class RouterErrorMediator extends ErrorMediator {
+export class RoutingErrorMediator extends ErrorMediator {
   /**
    * `Checking deps in "sandbox" for ${moduleName} failed`.
    */

@@ -42,7 +42,7 @@ import {
 } from '@ditsmod/core';
 
 import { PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
-import { RouterErrorMediator } from '../router-error-mediator.js';
+import { RoutingErrorMediator } from '../router-error-mediator.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -54,7 +54,7 @@ export class PreRouterExtension implements Extension<void> {
     protected extensionsManager: ExtensionsManager,
     protected log: SystemLogMediator,
     protected extensionsContext: ExtensionsContext,
-    protected routerErrorMediator: RouterErrorMediator
+    protected routerErrorMediator: RoutingErrorMediator
   ) {}
 
   async init() {

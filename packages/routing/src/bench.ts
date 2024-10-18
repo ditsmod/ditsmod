@@ -3,7 +3,7 @@ import { Injector, ModuleExtract } from '@ditsmod/core';
 import { Fn } from './types.js';
 import { Tree } from './tree.js';
 import { DefaultRouter } from './router.js';
-import { RouterErrorMediator } from './router-error-mediator.js';
+import { RoutingErrorMediator } from './router-error-mediator.js';
 
 await runBench();
 
@@ -45,7 +45,7 @@ async function runBench() {
       let router: any;
 
       if (lib.name == '@ditsmod/routing') {
-        const injector = Injector.resolveAndCreate([Tree, DefaultRouter, RouterErrorMediator, ModuleExtract]);
+        const injector = Injector.resolveAndCreate([Tree, DefaultRouter, RoutingErrorMediator, ModuleExtract]);
         router = injector.get(DefaultRouter);
       } else {
         router = new Router();

@@ -1,6 +1,6 @@
 import { injectable, optional } from '@ditsmod/core';
 
-import { RouterErrorMediator } from './router-error-mediator.js';
+import { RoutingErrorMediator } from './router-error-mediator.js';
 import { Fn, TreeConfig, RouteType, RouteParam } from './types.js';
 
 @injectable()
@@ -14,7 +14,7 @@ export class Tree {
   protected priority: number;
 
   constructor(
-    private errMediator: RouterErrorMediator,
+    private errMediator: RoutingErrorMediator,
     @optional() treeConfig?: TreeConfig,
   ) {
     Object.assign(this, new TreeConfig(), treeConfig);
