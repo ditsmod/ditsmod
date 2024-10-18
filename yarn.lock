@@ -1493,10 +1493,10 @@
     iconv-lite "0.6.3"
     qs "6.12.3"
 
-"@ts-stack/chain-error@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@ts-stack/chain-error/-/chain-error-1.3.0.tgz#a8d9faa61a20a75f841ffb67f0052afdbcd97502"
-  integrity sha512-69xA4BeGOiHc/PqPxe2rIvHwt/Se9PHJaEjWcSjsHnJPMWFKE8wpD2DlZOXGahCnzjwLcS2UmAEx5W97vUc6rQ==
+"@ts-stack/chain-error@^1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@ts-stack/chain-error/-/chain-error-1.3.1.tgz#376e2dbe6f57b08a550236e4d0bf027d5a48b48c"
+  integrity sha512-hi0oxPS6EFObVKoVDBoIUu92WmtoDqGL5+oczkvZx+yuVsDZmgCccHk8WoTI3PnOsUzklNZ5NonZ2atr8XGgrg==
   dependencies:
     assert-plus "^1.0.0"
 
