@@ -3,7 +3,6 @@ import { randomUUID } from 'node:crypto';
 import { injectable } from '#di';
 import { RequestContext } from '#types/http-interceptor.js';
 import { Logger } from '#logger/logger.js';
-import { cleanErrorTrace } from '#utils/clean-error-trace.js';
 import { Status } from '#utils/http-status-codes.js';
 import { isChainError } from '#utils/type-guards.js';
 import { ErrorOpts } from '#error/error-opts.js';
@@ -14,7 +13,6 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
   constructor(protected logger: Logger) {}
 
   async handleError(err: Error, ctx: RequestContext) {
-    cleanErrorTrace(err);
     const requestId = randomUUID();
     const errObj = { requestId, err };
     if (isChainError<ErrorOpts>(err)) {

@@ -9,7 +9,7 @@ sidebar_position: 10
 Ви можете створити свій власний обробник помилок, для цього вам потрібно створити клас, що впроваджує інтерфейс [HttpErrorHandler][101]:
 
 ```ts
-import { Logger, Status, HttpErrorHandler, injectable, Req, RequestContext, cleanErrorTrace } from '@ditsmod/core';
+import { Logger, Status, HttpErrorHandler, injectable, Req, RequestContext } from '@ditsmod/core';
 import { randomUUID } from 'node:crypto';
 
 @injectable()
@@ -17,7 +17,6 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
   constructor(protected logger: Logger) {}
 
   handleError(err: Error, ctx: RequestContext) {
-    cleanErrorTrace(err);
     const message = err.message;
     this.logger.log('error', { err, note: 'This is my implementation of HttpErrorHandler' });
     if (!ctx.nodeRes.headersSent) {

@@ -40,7 +40,7 @@ export class ImportsResolver {
   resolve() {
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.appMetadataMap.forEach((metadataPerMod1) => {
-      const { meta, importedTokensMap } = metadataPerMod1;
+      const { meta, importedTokensMap, guardsPerMod } = metadataPerMod1;
       this.resolveImportedProviders(meta, importedTokensMap);
       this.resolveProvidersForExtensions(meta, importedTokensMap);
       meta.providersPerRou.unshift(...defaultProvidersPerRou);

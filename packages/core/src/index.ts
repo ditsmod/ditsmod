@@ -121,7 +121,6 @@ export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from './utils/http
 export { NormalizedProvider, normalizeProviders } from './utils/ng-utils.js';
 export { pickProperties } from './utils/pick-properties.js';
 export { Providers } from './utils/providers.js';
-export { cleanErrorTrace } from './utils/clean-error-trace.js';
 export * from './utils/get-tokens.js';
 export {
   MultiProvider,

@@ -1,13 +1,4 @@
-import {
-  cleanErrorTrace,
-  ErrorOpts,
-  HttpErrorHandler,
-  injectable,
-  isChainError,
-  Logger,
-  RequestContext,
-  Status,
-} from '@ditsmod/core';
+import { ErrorOpts, HttpErrorHandler, injectable, isChainError, Logger, RequestContext, Status } from '@ditsmod/core';
 import { randomUUID } from 'node:crypto';
 
 @injectable()
@@ -15,7 +6,6 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
   constructor(protected logger: Logger) {}
 
   async handleError(err: Error, ctx: RequestContext) {
-    cleanErrorTrace(err);
     const requestId = randomUUID();
     const errObj = { requestId, err, note: 'This is my implementation of HttpErrorHandler' };
     if (isChainError<ErrorOpts>(err)) {
