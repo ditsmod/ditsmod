@@ -34,7 +34,6 @@ import {
   ExtensionInitMeta,
   TotalInitMeta,
   TotalInitMetaPerApp,
-  ChainError,
   CTX_DATA,
   FactoryProvider,
   ResolvedGuard,
@@ -43,6 +42,7 @@ import {
 } from '@ditsmod/core';
 
 import { PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
+import { RouterErrorMediator } from '../router-error-mediator.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -54,6 +54,7 @@ export class PreRouterExtension implements Extension<void> {
     protected extensionsManager: ExtensionsManager,
     protected log: SystemLogMediator,
     protected extensionsContext: ExtensionsContext,
+    protected routerErrorMediator: RouterErrorMediator
   ) {}
 
   async init() {
@@ -123,7 +124,7 @@ export class PreRouterExtension implements Extension<void> {
       mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
     }
     mergedPerReq.push(...metadataPerMod2.providersPerReq, ...providersPerReq);
-    
+
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     routeMeta.resolvedGuards = this.getResolvedGuards(controllersMetadata2.guards, resolvedPerReq);
@@ -229,7 +230,7 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   /**
-   * Used as "sandbox" to test resolvable of controllers and HTTP interceptors.
+   * Used as "sandbox" to test resolvable of controllers, guards and HTTP interceptors.
    */
   protected checkDeps(moduleName: string, httpMethod: HttpMethod, path: string, inj: Injector, routeMeta: RouteMeta) {
     try {
@@ -244,8 +245,8 @@ export class PreRouterExtension implements Extension<void> {
         DepsChecker.checkForResolved(inj, routeMeta.resolvedHandler, ignoreDeps);
       }
       DepsChecker.check(inj, HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
-    } catch (err: any) {
-      throw new ChainError(`[${moduleName}]`, err);
+    } catch (cause: any) {
+      this.routerErrorMediator.checkingDepsInSandboxFailed(moduleName, cause);
     }
   }
 
