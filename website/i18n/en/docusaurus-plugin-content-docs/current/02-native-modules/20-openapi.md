@@ -129,7 +129,7 @@ export class Model2 {
   @property()
   model1: Model1;
 
-  @property({}, Model1)
+  @property({}, { array: Model1 })
   arrModel1: Model1[];
 }
 ```
@@ -282,7 +282,7 @@ export class I18nModule {}
 
 ## Helpers that return an entire Operation Object
 
-The previous examples showed helpers that return parts of the [Operation Object][2], but of course you can create your own helpers that return the entire Operation Object. One of the examples of the use of such helpers is shown in the [RealWorld][4] repository.
+The previous examples showed helpers that return parts of the [Operation Object][1], but of course you can create your own helpers that return the entire Operation Object. One of the examples of the use of such helpers is shown in the [RealWorld][4] repository.
 
 ## Special decorator for guards
 
