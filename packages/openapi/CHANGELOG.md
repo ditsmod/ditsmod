@@ -1,5 +1,12 @@
+<a name="openapi-2.27.1"></a>
+# [openapi-2.27.1](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.27.1) (2024-10-19)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [f513d0fbca](https://github.com/ditsmod/ditsmod/commit/f513d0fbcaf20ffb718373) | fix | fixed path for UI. |
+
 <a name="openapi-2.27.0"></a>
-# [openapi-2.27.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.27.0) (2024-09-29)
+## [openapi-2.27.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.27.0) (2024-09-29)
 
 | Commit | Type | Description |
 | -- | -- | -- |
