@@ -6,10 +6,89 @@ sidebar_position: 20
 
 You can use the `@ditsmod/openapi` module to create [OpenAPI][0] documentation.
 
-## Installation
+## Installation and Setup
 
 ```bash
 npm i @ditsmod/openapi
+```
+
+To get `OpenapiModule` with default settings, simply import it into any module:
+
+```ts {5}
+import { featureModule } from '@ditsmod/core';
+import { OpenapiModule } from '@ditsmod/openapi';
+
+@featureModule({
+  imports: [OpenapiModule],
+  // ...
+})
+export class SomeModule {}
+```
+
+In this case, the documentation will be generated for the entire application at a URL that depends on the application's path prefix. For example, if the application's path prefix is `/api`, the OpenAPI documentation will be available at `/api/openapi`.
+
+You can also use the static method `OpenapiModule.withParams` to specify additional parameters for importing `OpenapiModule`:
+
+```ts {11,14}
+import { featureModule } from '@ditsmod/core';
+import { OpenapiModule, SwaggerOAuthOptions } from '@ditsmod/openapi';
+import { oasObject } from './oas-object.js';
+
+const swaggerOAuthOptions: SwaggerOAuthOptions = {
+  appName: 'Swagger UI Demo',
+  // See https://demo.duendesoftware.com/ for configuration details.
+  clientId: 'implicit',
+};
+
+const moduleWithParams = OpenapiModule.withParams(oasObject, 'absolute-path', swaggerOAuthOptions);
+
+@featureModule({
+  imports: [moduleWithParams],
+  // ...
+})
+export class SomeModule {}
+```
+
+Here, `oasObject` is the root OpenAPI documentation object where some general metadata can be specified:
+
+```ts
+import { XOasObject, openapi } from '@ts-stack/openapi-spec';
+
+export const oasObject: XOasObject = {
+  openapi,
+  info: { title: 'Testing @ditsmod/openapi', version: '1.0.0' },
+  tags: [
+    {
+      name: 'NonOasRoutes',
+      description:
+        'Routes that used `@route()` decorator. If you want to change this description, ' +
+        '[use tags](https://swagger.io/docs/specification/grouping-operations-with-tags/) ' +
+        'for `@oasRoute()` imported from @ditsmod/openapi.',
+    },
+    {
+      name: 'withParameter',
+      description: 'Parameter in path.',
+    },
+    {
+      name: 'withBasicAuth',
+      description: 'Here you need username and password.',
+    },
+  ],
+  components: {
+    responses: {
+      UnauthorizedError: {
+        description: 'Authentication information is missing or invalid',
+        headers: {
+          WWW_Authenticate: {
+            schema: { type: 'string' },
+            description:
+              'Taken from [swagger.io](https://swagger.io/docs/specification/authentication/basic-authentication/)',
+          },
+        },
+      },
+    },
+  },
+};
 ```
 
 ## Creation of documentation

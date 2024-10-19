@@ -6,10 +6,89 @@ sidebar_position: 20
 
 Щоб створити документацію за специфікацією [OpenAPI][0], можна використовувати модуль `@ditsmod/openapi`.
 
-## Встановлення
+## Встановлення та підключення
 
 ```bash
 npm i @ditsmod/openapi
+```
+
+Щоб підключити `OpenapiModule` з дефолтними налаштуваннями, достатньо імпортувати його у будь-який модуль:
+
+```ts {5}
+import { featureModule } from '@ditsmod/core';
+import { OpenapiModule } from '@ditsmod/openapi';
+
+@featureModule({
+  imports: [OpenapiModule],
+  // ...
+})
+export class SomeModule {}
+```
+
+В такому разі, документація буде створюватись з усього застосунку за URL-адресою, яка буде залежати від path-префікса на рівні застосунку. Наприклад, якщо path-префікс на рівні застосунку буде `/api`, значить OpenAPI-документація буде за адресою `/api/openapi`.
+
+Також можна використовувати статичний метод `OpenapiModule.withParams` щоб вказати додаткові параметри для імпорту `OpenapiModule`:
+
+```ts {11,14}
+import { featureModule } from '@ditsmod/core';
+import { OpenapiModule, SwaggerOAuthOptions } from '@ditsmod/openapi';
+import { oasObject } from './oas-object.js';
+
+const swaggerOAuthOptions: SwaggerOAuthOptions = {
+  appName: 'Swagger UI Demo',
+  // See https://demo.duendesoftware.com/ for configuration details.
+  clientId: 'implicit',
+};
+
+const moduleWithParams = OpenapiModule.withParams(oasObject, 'absolute-path', swaggerOAuthOptions);
+
+@featureModule({
+  imports: [moduleWithParams],
+  // ...
+})
+export class SomeModule {}
+```
+
+Де `oasObject` - це кореневий документ OpenAPI-документації, в якому можна указати деякі загальні метадані:
+
+```ts
+import { XOasObject, openapi } from '@ts-stack/openapi-spec';
+
+export const oasObject: XOasObject = {
+  openapi,
+  info: { title: 'Testing @ditsmod/openapi', version: '1.0.0' },
+  tags: [
+    {
+      name: 'NonOasRoutes',
+      description:
+        'Routes that used `@route()` decorator. If you want to change this description, ' +
+        '[use tags](https://swagger.io/docs/specification/grouping-operations-with-tags/) ' +
+        'for `@oasRoute()` imported from @ditsmod/openapi.',
+    },
+    {
+      name: 'withParameter',
+      description: 'Parameter in path.',
+    },
+    {
+      name: 'withBasicAuth',
+      description: 'Here you need username and password.',
+    },
+  ],
+  components: {
+    responses: {
+      UnauthorizedError: {
+        description: 'Authentication information is missing or invalid',
+        headers: {
+          WWW_Authenticate: {
+            schema: { type: 'string' },
+            description:
+              'Taken from [swagger.io](https://swagger.io/docs/specification/authentication/basic-authentication/)',
+          },
+        },
+      },
+    },
+  },
+};
 ```
 
 ## Створення документації
