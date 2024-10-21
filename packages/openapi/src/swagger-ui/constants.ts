@@ -4,11 +4,11 @@ import { fileURLToPath } from 'node:url';
 export const openapiRoot = dirname(fileURLToPath(import.meta.resolve('@ditsmod/openapi/package.json')));
 
 /**
- * `dist-webpack`
+ * `${openapiRoot}/ui`
  */
-export const webpackDist = `${openapiRoot}/dist-webpack`;
+export const webpackDist = `${openapiRoot}/ui`;
 /**
- * `dist/swagger-ui`
+ * `${openapiRoot}/dist/swagger-ui`
  * 
  * Also see `./index.ts`
  */
