@@ -1,5 +1,12 @@
+<a name="routing-2.6.0"></a>
+# [routing-2.6.0](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.6.0) (2024-10-21)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [1f96386c5b](https://github.com/ditsmod/ditsmod/commit/1f96386c5b58b998) | refactor | migration to core-2.60.0. |
+
 <a name="routing-2.5.1"></a>
-# [routing-2.5.1](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.5.1) (2024-10-02)
+## [routing-2.5.1](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.5.1) (2024-10-02)
 
 | Commit | Type | Description |
 | -- | -- | -- |
