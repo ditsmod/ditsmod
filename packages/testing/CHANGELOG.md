@@ -1,5 +1,12 @@
+<a name="testing-2.12.0"></a>
+# [testing-2.12.0](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.12.0) (2024-10-21)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [ce1af86edb](https://github.com/ditsmod/ditsmod/commit/ce1af86edb1ff80389049ee) | fix | migration to core-2.60.0. |
+
 <a name="testing-2.11.1"></a>
-# [testing-2.11.1](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.11.1) (2024-10-02)
+## [testing-2.11.1](https://github.com/ditsmod/ditsmod/releases/tag/testing-2.11.1) (2024-10-02)
 
 | Commit | Type | Description |
 | -- | -- | -- |
