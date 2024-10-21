@@ -1,5 +1,23 @@
+<a name="core-2.60.0"></a>
+# [core-2.60.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.60.0) (2024-10-21)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [7b35b2c1ac](https://github.com/ditsmod/ditsmod/commit/7b35b2c1ac686bd975) | refactor | override default value to `Error.stackTraceLimit == 50`. |
+| [c763ccedfb](https://github.com/ditsmod/ditsmod/commit/c763ccedfb76416385) | refactor | removed `cleanErrorTrace()` helper. |
+| [2b2b8eecd6](https://github.com/ditsmod/ditsmod/commit/2b2b8eecd6b475716a) | refactor | removed "s" from `aControllersMetadata1`. |
+| [62fd95a63a](https://github.com/ditsmod/ditsmod/commit/62fd95a63aeaf25a3d) | refactor | refactoring `ImportsResolver`. |
+| [ded09792e5](https://github.com/ditsmod/ditsmod/commit/ded09792e566a828d2) | refactor | refactoring `moduleFactory.addProviders()`. |
+| [5ab6bb16ec](https://github.com/ditsmod/ditsmod/commit/5ab6bb16ec818826de) | refactor | introduced `GuardPerMod1`. |
+| [cecdec65c2](https://github.com/ditsmod/ditsmod/commit/cecdec65c2b1ba51b2) | refactor | fixed `getImported*` helpers. |
+| [865a115325](https://github.com/ditsmod/ditsmod/commit/865a115325c07388e2) | refactor | in PreRouterExtension moved part code to new method - `getResolvedGuards()`. |
+| [0cfb244d5c](https://github.com/ditsmod/ditsmod/commit/0cfb244d5c8313000f) | refactor | removed `RouteMeta.resolveGuards()`. |
+| [6535ded6c9](https://github.com/ditsmod/ditsmod/commit/6535ded6c983dab64f) | refactor | removed `RouteMeta.resolveHandler()`. |
+| [9e592b17a6](https://github.com/ditsmod/ditsmod/commit/9e592b17a63afe4b19) | refactor | renamed normalizedGuardsPerMod to guardsPerMod. |
+| [65202cd2d0](https://github.com/ditsmod/ditsmod/commit/65202cd2d09edf194b) | refactor | added `controllerMetadata2.guards` propetry. |
+
 <a name="core-2.59.3"></a>
-# [core-2.59.3](https://github.com/ditsmod/ditsmod/releases/tag/core-2.59.3) (2024-10-04)
+## [core-2.59.3](https://github.com/ditsmod/ditsmod/releases/tag/core-2.59.3) (2024-10-04)
 
 | Commit | Type | Description |
 | -- | -- | -- |
