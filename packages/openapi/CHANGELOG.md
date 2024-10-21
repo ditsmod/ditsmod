@@ -1,5 +1,12 @@
+<a name="openapi-2.28.0"></a>
+# [openapi-2.28.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.28.0) (2024-10-21)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [1f96386c5b](https://github.com/ditsmod/ditsmod/commit/1f96386c5b58b) | refactor | migration to core-2.60.0. |
+
 <a name="openapi-2.27.2"></a>
-# [openapi-2.27.2](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.27.2) (2024-10-20)
+## [openapi-2.27.2](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.27.2) (2024-10-20)
 
 | Commit | Type | Description |
 | -- | -- | -- |
