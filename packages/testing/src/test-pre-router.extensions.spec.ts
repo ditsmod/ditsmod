@@ -13,7 +13,15 @@ describe('TestPreRouterExtension', () => {
   let mock: MockTestPreRouterExtension;
 
   beforeEach(() => {
-    mock = new MockTestPreRouterExtension(null as any, null as any, null as any, null as any, null as any, null as any);
+    mock = new MockTestPreRouterExtension(
+      null as any,
+      null as any,
+      null as any,
+      null as any,
+      null as any,
+      null as any,
+      null as any,
+    );
   });
 
   describe('getAllowedDeps()', () => {
