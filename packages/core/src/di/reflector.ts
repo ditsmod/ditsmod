@@ -70,7 +70,7 @@ export class Reflector {
     const ownPropMetadata = this.getOwnPropMetadata(Cls);
     if (ownPropMetadata) {
       Object.keys(ownPropMetadata).forEach((propName) => {
-        const type = (this.reflect as any).getOwnMetadata('design:type', Cls.prototype, propName);
+        const type = this.reflect.getOwnMetadata('design:type', Cls.prototype, propName);
         const decorators: PropMetadataTuple = [type];
         if (propMetadata.hasOwnProperty(propName)) {
           decorators.push(...(propMetadata as any)[propName].slice(1));
@@ -152,8 +152,8 @@ export class Reflector {
   private getOwnParams(Cls: Class, propertyKey?: string | symbol): ParamsMeta[] | null[] {
     const key = getParamKey(PARAMS_KEY, propertyKey);
     const paramMetadata = Cls.hasOwnProperty(key) && (Cls as any)[key];
-    const args = propertyKey ? [Cls.prototype, propertyKey] : [Cls];
-    const paramTypes = (this.reflect as any).getOwnMetadata('design:paramtypes', ...args);
+    const args = (propertyKey ? [Cls.prototype, propertyKey] : [Cls]) as [Class];
+    const paramTypes = this.reflect.getOwnMetadata('design:paramtypes', ...args);
 
     if (paramTypes || paramMetadata) {
       return this.mergeTypesAndClassMeta(paramTypes, paramMetadata);
