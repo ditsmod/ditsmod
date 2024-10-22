@@ -49,7 +49,7 @@ export function makeParamDecorator<T extends (...args: any[]) => any>(transform?
         parameters.push(null);
       }
 
-      (parameters[index] = parameters[index] || []).push(new DecoratorAndValue(paramDecorFactory, value));
+      (parameters[index] ??= []).push(new DecoratorAndValue(paramDecorFactory, value));
     };
   };
 }
