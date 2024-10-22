@@ -16,7 +16,7 @@ export class SessionCookie {
   ) {
     this.opts = { ...(opts || {}) };
     this.cookies = new Cookies(nodeReq, nodeRes);
-    this.opts.cookieName = this.opts.cookieName || 'session_id';
+    this.opts.cookieName ??= 'session_id';
     this.maxAge = this.opts.maxAge === undefined ? 1000 * 60 * 60 * 24 : this.opts.maxAge; // By default - 24 hours
 
     const writeHead = nodeRes.writeHead as AnyFn;
