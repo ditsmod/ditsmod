@@ -11,8 +11,8 @@ import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } 
  * @todo Add checks for FactoryProvider.
  */
 export function getCollisions(uniqDuplTokens: any[], providers: Provider[]) {
-  uniqDuplTokens = uniqDuplTokens || [];
-  providers = providers || [];
+  uniqDuplTokens ??= [];
+  providers ??= [];
   const duplProviders: Provider[] = [];
   const duplTokens: any[] = [];
   const collisions = new Set<any>();

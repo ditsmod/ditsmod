@@ -50,7 +50,7 @@ export function pickPropertiesAsGetters<T extends AnyObj, K extends Extract<keyo
   properties: { includeProperties?: K[]; excludeProperties?: K[] },
   ...sourceObjects: AnyObj[]
 ) {
-  properties = properties || {};
+  properties ??= {};
   const incl = properties.includeProperties;
   const excl = properties.excludeProperties;
 
@@ -62,7 +62,7 @@ export function pickPropertiesAsGetters<T extends AnyObj, K extends Extract<keyo
   }
 
   sourceObjects.forEach((sourceObj) => {
-    sourceObj = sourceObj || {};
+    sourceObj ??= {};
     (Object.keys(targetObject) as K[])
       .filter(callback)
       .forEach((prop) => {

@@ -291,7 +291,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   ) {
     const dualKey = KeyRegistry.get(token);
     const resolvedFactory = new ResolvedFactory(factoryFn, resolvedDeps);
-    isMulti = isMulti || false;
+    isMulti ??= false;
     return new ResolvedProvider(dualKey, [resolvedFactory], isMulti);
   }
 
