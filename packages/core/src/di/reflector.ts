@@ -89,7 +89,7 @@ export class Reflector {
    * @param propertyKey If this method is called without `propertyKey`,
    * it's returns parameters of class constructor.
    */
-  getParamsMetadata(Cls: Class, propertyKey?: string | symbol): (ParamsMeta | null)[] {
+  getParamsMetadata<T extends object>(Cls: Class<T>, propertyKey?: Exclude<keyof T, number>): (ParamsMeta | null)[] {
     if (!isType(Cls)) {
       return [];
     }

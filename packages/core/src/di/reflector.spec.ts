@@ -108,7 +108,7 @@ describe('Reflector', () => {
     });
 
     it('should return an array of parameters for property "e"', () => {
-      const p = reflector.getParamsMetadata(ClassWithDecorators, 'e');
+      const p = reflector.getParamsMetadata(ClassWithDecorators, 'e' as any);
       expect(p).toEqual([]);
     });
 
