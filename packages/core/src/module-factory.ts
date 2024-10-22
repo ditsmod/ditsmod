@@ -223,10 +223,18 @@ export class ModuleFactory {
     this.addProviders('Mod', meta1);
     this.addProviders('Rou', meta1);
     this.addProviders('Req', meta1);
-    this.importedMultiProvidersPerMod.set(module, meta1.exportedMultiProvidersPerMod);
-    this.importedMultiProvidersPerRou.set(module, meta1.exportedMultiProvidersPerRou);
-    this.importedMultiProvidersPerReq.set(module, meta1.exportedMultiProvidersPerReq);
-    this.importedExtensions.set(meta1.module, meta1.exportedExtensions);
+    if (meta1.exportedMultiProvidersPerMod.length) {
+      this.importedMultiProvidersPerMod.set(module, meta1.exportedMultiProvidersPerMod);
+    }
+    if (meta1.exportedMultiProvidersPerRou.length) {
+      this.importedMultiProvidersPerRou.set(module, meta1.exportedMultiProvidersPerRou);
+    }
+    if (meta1.exportedMultiProvidersPerReq.length) {
+      this.importedMultiProvidersPerReq.set(module, meta1.exportedMultiProvidersPerReq);
+    }
+    if (meta1.exportedExtensions.length) {
+      this.importedExtensions.set(meta1.module, meta1.exportedExtensions);
+    }
     this.throwIfTryResolvingMultiprovidersCollisions(module);
   }
 
