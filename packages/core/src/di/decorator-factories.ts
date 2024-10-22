@@ -33,7 +33,11 @@ export function makeClassDecorator<T extends (...args: any[]) => any>(transform?
 export function makeParamDecorator<T extends (...args: any[]) => any>(transform?: T) {
   return function paramDecorFactory(...args: Parameters<T>) {
     const value = transform ? transform(...args) : [...args];
-    return function paramDecorator(clsOrObj: Class | object, propertyKey: string | symbol | undefined, index: number): void {
+    return function paramDecorator(
+      clsOrObj: Class | object,
+      propertyKey: string | symbol | undefined,
+      index: number,
+    ): void {
       // This function can be called for a class constructor and methods.
       const Cls = isType(clsOrObj) ? clsOrObj : (clsOrObj.constructor as Class);
       const key = getMetaKey(PARAMS_KEY, propertyKey);
@@ -70,8 +74,10 @@ export function getMetaKey(defaultKey: symbol, propertyKey?: string | symbol): s
   }
 }
 
-function getMetadata(cls: any, key: symbol, defaultValue: any) {
+function getMetadata(Cls: Class, key: symbol, defaultValue: any) {
   // Use of Object.defineProperty is important since it creates non-enumerable property which
   // prevents the property is copied during subclassing.
-  return cls.hasOwnProperty(key) ? cls[key] : Object.defineProperty(cls, key, { value: defaultValue })[key];
+  return Cls.hasOwnProperty(key)
+    ? Cls[key as keyof Class]
+    : Object.defineProperty(Cls, key, { value: defaultValue })[key as keyof Class];
 }
