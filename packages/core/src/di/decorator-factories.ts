@@ -40,7 +40,7 @@ export function makeParamDecorator<T extends (...args: any[]) => any>(transform?
     ): void {
       // This function can be called for a class constructor and methods.
       const Cls = isType(clsOrObj) ? clsOrObj : (clsOrObj.constructor as Class);
-      const key = getMetaKey(PARAMS_KEY, propertyKey);
+      const key = getParamKey(PARAMS_KEY, propertyKey);
       const parameters: any[] = getMetadata(Cls, key, []);
 
       // There might be gaps if some in between parameters do not have annotations.
@@ -66,9 +66,9 @@ export function makePropDecorator<T extends (...args: any[]) => any>(transform?:
   };
 }
 
-export function getMetaKey(defaultKey: symbol, propertyKey?: string | symbol): symbol {
+export function getParamKey(defaultKey: symbol, propertyKey?: string | symbol): symbol {
   if (propertyKey) {
-    return typeof propertyKey == 'symbol' ? propertyKey : Symbol.for(propertyKey);
+    return typeof propertyKey == 'symbol' ? propertyKey : Symbol.for(`ɵ${propertyKey}`);
   } else {
     return defaultKey;
   }

@@ -1,4 +1,4 @@
-import { CLASS_KEY, PARAMS_KEY, PROP_KEY, getMetaKey } from './decorator-factories.js';
+import { CLASS_KEY, PARAMS_KEY, PROP_KEY, getParamKey } from './decorator-factories.js';
 import { Class, DecoratorAndValue, ParamsMeta, PropMeta, PropMetadataTuple } from './types-and-models.js';
 import { isType, newArray } from './utils.js';
 
@@ -150,7 +150,7 @@ export class Reflector {
   }
 
   private getOwnParams(Cls: Class, propertyKey?: string | symbol): ParamsMeta[] | null[] {
-    const key = getMetaKey(PARAMS_KEY, propertyKey);
+    const key = getParamKey(PARAMS_KEY, propertyKey);
     const paramMetadata = Cls.hasOwnProperty(key) && (Cls as any)[key];
     const args = propertyKey ? [Cls.prototype, propertyKey] : [Cls];
     const paramTypes = (this.reflect as any).getOwnMetadata('design:paramtypes', ...args);
