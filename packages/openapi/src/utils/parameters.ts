@@ -146,7 +146,7 @@ export class Parameters {
           .map((val) => (val as DecoratorAndValue).value.schema);
         paramObject.schema = Object.assign({}, ...schemas, paramObject.schema) as XSchemaObject<any>;
         if (paramObject.schema.description) {
-          paramObject.description = paramObject.description || paramObject.schema.description;
+          paramObject.description ??= paramObject.schema.description;
         }
         this.setPropertyType(paramObject.schema, propertyType);
         if (paramObject.schema.type == 'array' && !paramObject.schema.items) {
