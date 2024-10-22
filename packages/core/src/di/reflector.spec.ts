@@ -43,7 +43,13 @@ class ClassWithDecorators {
   someMethod1(a: AType) {}
 
   @propDecorator('p5')
-  someMethod2(@paramDecorator('method param') b: BType, d: DType) {}
+  someMethod2(@paramDecorator('method2 param') b: BType, d: DType) {}
+
+  someMethod3(
+    @paramDecorator('method3 param1') c: CType,
+    @paramDecorator('method3 param2 value1') @paramDecorator('method3 param2 value2') b: BType,
+    a: AType,
+  ) {}
 
   constructor(@paramDecorator('a') a: AType, @paramDecorator('b') b: BType, d: DType) {
     this.a = a;
@@ -85,7 +91,20 @@ describe('Reflector', () => {
 
     it('should return an array of parameters for someMethod2', () => {
       const p = reflector.getParamsMetadata(ClassWithDecorators, 'someMethod2');
-      expect(p).toEqual([[BType, new DecoratorAndValue(paramDecorator, 'method param')], [DType]]);
+      expect(p).toEqual([[BType, new DecoratorAndValue(paramDecorator, 'method2 param')], [DType]]);
+    });
+
+    it('should return an array of parameters for someMethod3', () => {
+      const p = reflector.getParamsMetadata(ClassWithDecorators, 'someMethod3');
+      expect(p).toEqual([
+        [CType, new DecoratorAndValue(paramDecorator, 'method3 param1')],
+        [
+          BType,
+          new DecoratorAndValue(paramDecorator, 'method3 param2 value2'),
+          new DecoratorAndValue(paramDecorator, 'method3 param2 value1'),
+        ],
+        [AType],
+      ]);
     });
 
     it('should return an array of parameters for property "e"', () => {
