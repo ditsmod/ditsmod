@@ -54,7 +54,7 @@ export class PreRouterExtension implements Extension<void> {
     protected extensionsManager: ExtensionsManager,
     protected log: SystemLogMediator,
     protected extensionsContext: ExtensionsContext,
-    protected routerErrorMediator: RoutingErrorMediator
+    protected errorMediator: RoutingErrorMediator
   ) {}
 
   async init() {
@@ -246,7 +246,7 @@ export class PreRouterExtension implements Extension<void> {
       }
       DepsChecker.check(inj, HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
     } catch (cause: any) {
-      this.routerErrorMediator.checkingDepsInSandboxFailed(moduleName, cause);
+      this.errorMediator.checkingDepsInSandboxFailed(moduleName, cause);
     }
   }
 
