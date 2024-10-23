@@ -159,7 +159,7 @@ export class Reflector {
     if (!isType(Cls)) {
       return [];
     }
-    const parentClass = this.getParentClass(Cls);
+    const isConstructor = !propertyKey || propertyKey == 'constructor';
 
     /**
      * If we have no decorators, we only have function.length as metadata.
@@ -170,7 +170,8 @@ export class Reflector {
      * that sets 'design:paramtypes' to []
      * if a class inherits from another class but has no ctor declared itself.
      */
-    if (isDelegateCtor(Cls.toString())) {
+    if (isConstructor && isDelegateCtor(Cls.toString())) {
+      const parentClass = this.getParentClass(Cls);
       if (parentClass !== Object) {
         return this.getParamsMetadata(parentClass, propertyKey);
       }
