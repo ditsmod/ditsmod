@@ -14,7 +14,7 @@ export function transformControllersMetadata(controllers: Class[], moduleName: s
 }
 
 export function getControllerMetadata1(Controller: Class, moduleName: string) {
-  const decoratorsAndValues = reflector.getClassMetadata(Controller);
+  const decoratorsAndValues = reflector.getMetadata(Controller).constructor.decorators;
   if (!decoratorsAndValues.find(isController)) {
     throw new Error(
       `Collecting controller's metadata in ${moduleName} failed: class ` +
