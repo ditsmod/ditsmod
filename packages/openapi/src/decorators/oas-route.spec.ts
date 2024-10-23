@@ -1,5 +1,6 @@
-import { PropMeta, reflector, controller, CanActivate, RequestContext } from '@ditsmod/core';
+import { PropMeta, reflector, controller, CanActivate, RequestContext, DecoratorAndValue } from '@ditsmod/core';
 import { oasRoute } from './oas-route.js';
+import { property } from './property.js';
 
 // console.log(inspect(actualMeta, false, 5));
 
@@ -8,7 +9,11 @@ describe('@oasRoute', () => {
     @controller()
     class Controller1 {}
 
-    expect(reflector.getPropMetadata(Controller1)).toEqual({});
+    const actualMeta = reflector.getMetadata(Controller1);
+    expect(actualMeta.constructor.type).toBe(Function);
+    const decorator = new DecoratorAndValue(controller, {});
+    delete decorator.declaredInDir;
+    expect(actualMeta.constructor.decorators).toMatchObject<DecoratorAndValue[]>([decorator]);
   });
 
   it('one method, without operation object', () => {
@@ -18,17 +23,10 @@ describe('@oasRoute', () => {
       method() {}
     }
 
-    const actualMeta = reflector.getPropMetadata(Controller1);
-    const expectedMeta = {
-      method: [
-        Function,
-        {
-          decorator: oasRoute,
-          value: { httpMethod: 'GET', path: undefined },
-        },
-      ],
-    };
-    expect(actualMeta).toEqual(expectedMeta);
+    const actualMeta = reflector.getMetadata(Controller1);
+    expect(actualMeta.method.type).toBe(Function);
+    const value = { httpMethod: 'GET', path: undefined };
+    expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
   });
 
   it('one method, with operation object', () => {
@@ -43,17 +41,10 @@ describe('@oasRoute', () => {
       method() {}
     }
 
-    const actualMeta = reflector.getPropMetadata(Controller1);
-    const expectedMeta = {
-      method: [
-        Function,
-        {
-          decorator: oasRoute,
-          value: { httpMethod: 'GET', path: 'posts', guards: [Guard], operationObject: { operationId: 'someId' } },
-        },
-      ],
-    };
-    expect(actualMeta).toEqual(expectedMeta);
+    const actualMeta = reflector.getMetadata(Controller1);
+    expect(actualMeta.method.type).toBe(Function);
+    const value = { httpMethod: 'GET', path: 'posts', guards: [Guard], operationObject: { operationId: 'someId' } };
+    expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
   });
 
   it('route with operationObject as third argument', () => {
@@ -63,17 +54,10 @@ describe('@oasRoute', () => {
       method() {}
     }
 
-    const actualMeta = reflector.getPropMetadata(Controller1);
-    const expectedMeta: PropMeta<Controller1> = {
-      method: [
-        Function,
-        {
-          decorator: oasRoute,
-          value: { httpMethod: 'GET', path: 'path', operationObject: { operationId: 'someId' } },
-        },
-      ],
-    };
+    const actualMeta = reflector.getMetadata(Controller1);
 
-    expect(actualMeta).toEqual(expectedMeta);
+    expect(actualMeta.method.type).toBe(Function);
+    const value = { httpMethod: 'GET', path: 'path', operationObject: { operationId: 'someId' } };
+    expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
   });
 });

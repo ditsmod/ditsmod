@@ -1,12 +1,14 @@
-import { PropMeta, reflector } from '@ditsmod/core';
+import { DecoratorAndValue, reflector } from '@ditsmod/core';
 
-import { property, PropertyDecoratorMetadata } from './property.js';
+import { property } from './property.js';
 
 describe('@Property', () => {
   it('model without properties', () => {
     class Model1 {}
 
-    expect(reflector.getPropMetadata(Model1)).toEqual({});
+    const actualMeta = reflector.getMetadata(Model1);
+    expect(actualMeta.constructor.type).toBe(Function);
+    expect(actualMeta.constructor.decorators).toEqual([]);
   });
 
   it('empty value', () => {
@@ -14,42 +16,23 @@ describe('@Property', () => {
       @property()
       prop1: string;
       @property()
-      prop2: string;
+      prop2: number;
       @property()
       @property()
       prop3: string;
     }
 
-    const actualMeta = reflector.getPropMetadata(Model1);
-    // console.log(actualMeta);
-    const expectedMeta: PropMeta<PropertyDecoratorMetadata> = {
-      prop1: [
-        String,
-        {
-          decorator: property,
-          value: { schema: undefined, customType: undefined },
-        },
-      ],
-      prop2: [
-        String,
-        {
-          decorator: property,
-          value: { schema: undefined, customType: undefined },
-        },
-      ],
-      prop3: [
-        String,
-        {
-          decorator: property,
-          value: { schema: undefined, customType: undefined },
-        },
-        {
-          decorator: property,
-          value: { schema: undefined, customType: undefined },
-        },
-      ],
-    };
-    expect(actualMeta).toEqual(expectedMeta);
+    const actualMeta = reflector.getMetadata(Model1);
+    expect(actualMeta.prop1.type).toBe(String);
+    expect(actualMeta.prop2.type).toBe(Number);
+    expect(actualMeta.prop3.type).toBe(String);
+    const value = { schema: undefined, customType: undefined };
+    expect(actualMeta.prop1.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(property, value)]);
+    expect(actualMeta.prop2.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(property, value)]);
+    expect(actualMeta.prop3.decorators).toEqual<DecoratorAndValue[]>([
+      new DecoratorAndValue(property, value),
+      new DecoratorAndValue(property, value),
+    ]);
   });
 
   it('object', () => {
@@ -61,23 +44,16 @@ describe('@Property', () => {
       prop1: string;
     }
 
-    const actualMeta = reflector.getPropMetadata(Model1);
-    const expectedMeta: PropMeta<PropertyDecoratorMetadata> = {
-      prop1: [
-        String,
-        {
-          decorator: property,
-          value: {
-            schema: {
-              type: 'string',
-              minimum: 1,
-            },
-            customType: undefined,
-          },
-        },
-      ],
+    const actualMeta = reflector.getMetadata(Model1);
+    expect(actualMeta.prop1.type).toBe(String);
+    const value = {
+      schema: {
+        type: 'string',
+        minimum: 1,
+      },
+      customType: undefined,
     };
-    expect(actualMeta).toEqual(expectedMeta);
+    expect(actualMeta.prop1.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(property, value)]);
   });
 
   it('array with one item', () => {
@@ -87,17 +63,10 @@ describe('@Property', () => {
       prop1: Boolean[];
     }
 
-    const actualMeta = reflector.getPropMetadata(Model1);
-    const expectedMeta: PropMeta<PropertyDecoratorMetadata> = {
-      prop1: [
-        Array,
-        {
-          decorator: property,
-          value: { schema: {}, customType: { array: Boolean } },
-        },
-      ],
-    };
-    expect(actualMeta).toEqual(expectedMeta);
+    const actualMeta = reflector.getMetadata(Model1);
+    expect(actualMeta.prop1.type).toBe(Array);
+    const value = { schema: {}, customType: { array: Boolean } };
+    expect(actualMeta.prop1.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(property, value)]);
   });
 
   it('array with multi items', () => {
@@ -107,16 +76,9 @@ describe('@Property', () => {
       prop1: [Boolean, String];
     }
 
-    const actualMeta = reflector.getPropMetadata(Model1);
-    const expectedMeta: PropMeta<PropertyDecoratorMetadata> = {
-      prop1: [
-        Array,
-        {
-          decorator: property,
-          value: { schema: {}, customType: { array: [Boolean, String] } },
-        },
-      ],
-    };
-    expect(actualMeta).toEqual(expectedMeta);
+    const actualMeta = reflector.getMetadata(Model1);
+    expect(actualMeta.prop1.type).toBe(Array);
+    const value = { schema: {}, customType: { array: [Boolean, String] } };
+    expect(actualMeta.prop1.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(property, value)]);
   });
 });
