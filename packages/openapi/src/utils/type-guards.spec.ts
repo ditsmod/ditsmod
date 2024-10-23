@@ -13,7 +13,7 @@ describe('OAS type guards', () => {
     }
 
     it('should recognize class guard', () => {
-      const propMetadata = reflector.getClassMetadata(Guard1);
+      const propMetadata = reflector.getMetadata(Guard1).constructor.decorators;
       expect(isOasGuard(propMetadata[0])).toBe(true);
     });
   });
