@@ -59,7 +59,7 @@ export class Content {
 
   protected getSchema(model: Class<AnyObj>) {
     const schema = this.getSchemaStubForModel(model);
-    const modelMeta = reflector.getMetadata<PropertyDecoratorMetadata>(model);
+    const modelMeta = reflector.getMetadata(model);
 
     for (const property in modelMeta) {
       const propertyMeta = modelMeta[property].decorators.find(isProperty);
