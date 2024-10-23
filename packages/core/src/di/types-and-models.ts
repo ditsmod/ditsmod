@@ -38,17 +38,17 @@ export type PropMeta<Proto extends object = object> = {
 };
 
 /**
- * Metadata returned by the `reflector.getPropMetadata()` method.
+ * Metadata returned by the `reflector.getMetadata()` method.
  */
-export type PropMetaNew<Proto extends object = object> = {
-  [P in keyof Proto]: PropProto;
+export type ClassMeta<Proto extends object = object> = {
+  [P in keyof Proto]: ClassPropMeta;
 } & {
-  constructor: PropProto;
+  constructor: ClassPropMeta;
 };
 
-export interface PropProto {
+export interface ClassPropMeta<Value = any> {
   type: Class;
-  decorators: DecoratorAndValue[];
+  decorators: DecoratorAndValue<Value>[];
   params: (ParamsMeta | null)[];
 }
 
