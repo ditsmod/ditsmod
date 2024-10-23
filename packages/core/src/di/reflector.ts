@@ -95,8 +95,8 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  getMetadata<Proto extends object>(Cls: Class<Proto>): ClassMeta<Proto> {
-    const propMetadata = {} as ClassMeta<Proto>;
+  getMetadata<DecorValue = any, Proto extends object = object>(Cls: Class<Proto>): ClassMeta<DecorValue, Proto> {
+    const propMetadata = {} as ClassMeta<DecorValue, Proto>;
     if (!isType(Cls)) {
       return propMetadata;
     }
