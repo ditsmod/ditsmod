@@ -114,21 +114,19 @@ export class Reflector {
       ownMetaKeys = Object.keys(ownPropMetadata);
     }
     ownMetaKeys.forEach((propName) => {
-      const decorators = ownPropMetadata![propName];
-      const params = [] as PropMetadataTuple[];
       const type = this.reflect.getOwnMetadata('design:type', Cls.prototype, propName);
+      const decorators = ownPropMetadata![propName];
       if (propMetadata.hasOwnProperty(propName)) {
         const parentPropProto = (propMetadata as any)[propName] as PropProto;
         parentPropProto.type = type; // Override parent type.
         parentPropProto.decorators = [...decorators, ...parentPropProto.decorators];
       } else {
-        (propMetadata as any)[propName] = { type, decorators, params } as PropProto;
+        (propMetadata as any)[propName] = { type, decorators, params: [] } as PropProto;
       }
 
       if ((propMetadata as any)[propName].type === Function) {
-        const params = this.getParamsMetadata(Cls, propName as any);
         const propProto = (propMetadata as any)[propName] as PropProto;
-        propProto.params = [...(params as any), ...propProto.params];
+        propProto.params = this.getParamsMetadata(Cls, propName as any);
       }
     });
 
@@ -140,9 +138,8 @@ export class Reflector {
       if (!propMetadata.hasOwnProperty(propName)) {
         (propMetadata as any)[propName] = { type: Function, decorators: [], params: [] } as PropProto;
       }
-      const params = this.getParamsMetadata(Cls, propName as any);
       const propProto = (propMetadata as any)[propName] as PropProto;
-      propProto.params = [...(params as any), ...propProto.params];
+      propProto.params = this.getParamsMetadata(Cls, propName as any);
       if (propName == 'constructor') {
         propProto.decorators = this.getClassMetadata(Cls);
       }
@@ -194,7 +191,7 @@ export class Reflector {
   private mergeTypesAndClassMeta(paramTypes: any[], paramMetadata: any[]): ParamsMeta[] {
     let result: ParamsMeta[];
 
-    if (typeof paramTypes == 'undefined') {
+    if (paramTypes === undefined) {
       result = newArray(paramMetadata.length);
     } else {
       result = newArray(paramTypes.length);
@@ -204,7 +201,7 @@ export class Reflector {
       // TS outputs Object for parameters without types, while Traceur omits
       // the annotations. For now we preserve the Traceur behavior to aid
       // migration, but this can be revisited.
-      if (typeof paramTypes == 'undefined') {
+      if (paramTypes === undefined) {
         result[i] = [];
       } else if (paramTypes[i] && paramTypes[i] != Object) {
         result[i] = [paramTypes[i]] as unknown as ParamsMeta;

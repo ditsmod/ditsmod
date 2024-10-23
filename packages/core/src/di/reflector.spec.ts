@@ -191,7 +191,7 @@ describe('Reflector', () => {
       declare d: number;
 
       @propDecorator('child-p4')
-      override someMethod1(a: AType) {}
+      override someMethod1(a: BType) {}
 
       @propDecorator('child-p5')
       override someMethod2(@paramDecorator('child-method2 param1') b: BType, d: DType) {}
@@ -237,6 +237,45 @@ describe('Reflector', () => {
         [BType, new DecoratorAndValue(paramDecorator, 'b')],
         [DType],
       ]);
+    });
+
+    it('Child', () => {
+      const p = reflector.getMetadata(Child);
+      expect(p.someMethod1.type).toBe(Function);
+      expect(p.someMethod1.decorators).toEqual<DecoratorAndValue[]>([
+        new DecoratorAndValue(propDecorator, 'child-p4'),
+        new DecoratorAndValue(propDecorator, 'p4'),
+      ]);
+      expect(p.someMethod1.params).toEqual<PropMetadataTuple[]>([[BType]]);
+
+      // expect(p.someMethod2.type).toBe(Function);
+      // expect(p.someMethod2.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'p5')]);
+      // expect(p.someMethod2.params).toEqual<PropMetadataTuple[]>([
+      //   [BType, new DecoratorAndValue(paramDecorator, 'method2 param1')],
+      //   [DType],
+      // ]);
+
+      // expect(p.someMethod3.type).toBe(Function);
+      // expect(p.someMethod3.decorators).toEqual<DecoratorAndValue[]>([]);
+      // expect(p.someMethod3.params).toEqual<PropMetadataTuple[]>([
+      //   [CType, new DecoratorAndValue(paramDecorator, 'method3 param1')],
+      //   [
+      //     BType,
+      //     new DecoratorAndValue(paramDecorator, 'method3 param2 value2'),
+      //     new DecoratorAndValue(paramDecorator, 'method3 param2 value1'),
+      //   ],
+      //   [AType],
+      // ]);
+
+      // expect(p.constructor.type).toBe(Function);
+      // const decoratorAndValue = new DecoratorAndValue(classDecorator, { value: 'parent' });
+      // delete decoratorAndValue.declaredInDir;
+      // expect(p.constructor.decorators).toMatchObject<DecoratorAndValue[]>([decoratorAndValue]);
+      // expect(p.constructor.params).toEqual<PropMetadataTuple[]>([
+      //   [AType, new DecoratorAndValue(paramDecorator, 'a')],
+      //   [BType, new DecoratorAndValue(paramDecorator, 'b')],
+      //   [DType],
+      // ]);
     });
   });
 
