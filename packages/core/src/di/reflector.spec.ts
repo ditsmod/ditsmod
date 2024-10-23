@@ -1,7 +1,7 @@
 import 'reflect-metadata/lite';
 import { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
 import { Reflector, isDelegateCtor } from './reflector.js';
-import { DecoratorAndValue, ParamsMeta, PropMeta, PropMetadataTuple } from './types-and-models.js';
+import { Class, DecoratorAndValue, ParamsMeta, PropMeta, PropMetadataTuple } from './types-and-models.js';
 import { getCallerDir } from '#utils/callsites.js';
 
 const classDecorator = makeClassDecorator((data?: any) => data);
@@ -73,10 +73,16 @@ class TestObj {
 }
 
 describe('Reflector', () => {
-  let reflector: Reflector;
+  class MockReflector extends Reflector {
+    override getPropMetadata<Proto extends object>(Cls: Class<Proto>): PropMeta<Proto> {
+      return super.getPropMetadata(Cls);
+    }
+  }
+
+  let reflector: MockReflector;
 
   beforeEach(() => {
-    reflector = new Reflector();
+    reflector = new MockReflector();
   });
 
   describe('parameters', () => {

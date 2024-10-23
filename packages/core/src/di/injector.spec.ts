@@ -17,8 +17,15 @@ import {
   skipSelf,
 } from './index.js';
 import { KeyRegistry } from './key-registry.js';
-import { CTX_DATA, getNewRegistry } from './types-and-models.js';
+import { Class, CTX_DATA, getNewRegistry, PropMeta } from './types-and-models.js';
 import { stringify } from './utils.js';
+import { Reflector } from './reflector.js';
+
+class MockReflector extends Reflector {
+  override getPropMetadata<Proto extends object>(Cls: Class<Proto>): PropMeta<Proto> {
+    return super.getPropMetadata(Cls);
+  }
+}
 
 class Engine {}
 
@@ -320,7 +327,7 @@ describe('injector', () => {
     const classMetadata = reflector.getClassMetadata<[{ providers: [] }]>(Controller);
     expect(classMetadata[0].value).toEqual([{ providers: [] }]);
 
-    const propMetadata = reflector.getPropMetadata(Controller);
+    const propMetadata = (reflector as MockReflector).getPropMetadata(Controller);
     const [, container1] = propMetadata.method1;
     expect(container1.decorator).toBe(route);
     expect(container1.value).toEqual({ method: 'GET', path: 'some-path' });
@@ -417,7 +424,7 @@ describe('injector', () => {
     const classMetadata = reflector.getClassMetadata<string>(Controller);
     expect(classMetadata[0].value).toEqual([{ providers: [] }]);
 
-    const propMetadata = reflector.getPropMetadata(Controller);
+    const propMetadata = (reflector as MockReflector).getPropMetadata(Controller);
     const [, container1] = propMetadata.method1;
     expect(container1.decorator).toBe(route);
     expect(container1.value).toEqual({ method: 'GET', path: 'some-path' });

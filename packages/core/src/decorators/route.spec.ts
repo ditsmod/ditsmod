@@ -1,10 +1,19 @@
-import { PropMeta, reflector } from '#di';
+import { Class, PropMeta, reflector as originReflector } from '#di';
 import { RequestContext } from '#types/http-interceptor.js';
 import { CanActivate } from '#types/mix.js';
+import { Reflector } from '#di/reflector.js';
 import { controller } from './controller.js';
 import { route } from './route.js';
 
 describe('Route decorator', () => {
+  class MockReflector extends Reflector {
+    override getPropMetadata<Proto extends object>(Cls: Class<Proto>): PropMeta<Proto> {
+      return super.getPropMetadata(Cls);
+    }
+  }
+
+  const reflector = originReflector as MockReflector;
+  
   it('controller without methods', () => {
     @controller()
     class Controller1 {}

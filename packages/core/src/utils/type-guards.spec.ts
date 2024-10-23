@@ -1,6 +1,6 @@
 import { CanActivate, Provider } from '#types/mix.js';
 import { Extension } from '#types/extension-types.js';
-import { injectable, InjectionToken, makePropDecorator, reflector } from '#di';
+import { Class, injectable, InjectionToken, makePropDecorator, PropMeta, reflector } from '#di';
 import { featureModule } from '#decorators/module.js';
 import {
   isController,
@@ -20,8 +20,16 @@ import { controller } from '#decorators/controller.js';
 import { route } from '#decorators/route.js';
 import { RequestContext } from '#types/http-interceptor.js';
 import { getModuleMetadata } from './get-module-metadata.js';
+import { Reflector } from '#di/reflector.js';
 
 describe('type guards', () => {
+
+  class MockReflector extends Reflector {
+    override getPropMetadata<Proto extends object>(Cls: Class<Proto>): PropMeta<Proto> {
+      return super.getPropMetadata(Cls);
+    }
+  }
+
   describe('isModule()', () => {
     it('class with decorator', () => {
       @featureModule({})
@@ -99,7 +107,7 @@ describe('type guards', () => {
     }
 
     it('should recognize the route', () => {
-      const propMetadata = reflector.getPropMetadata(ClassWithDecorators);
+      const propMetadata = (reflector as MockReflector).getPropMetadata(ClassWithDecorators);
       expect(isRoute({ decorator: propMetadata.some[1].decorator, value: propMetadata.some[1].value })).toBe(true);
     });
   });

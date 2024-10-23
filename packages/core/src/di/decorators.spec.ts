@@ -2,12 +2,19 @@ import 'reflect-metadata/lite';
 
 import { CLASS_KEY, makeClassDecorator, makePropDecorator } from './decorator-factories.js';
 import { reflector } from './reflection.js';
-import { DecoratorAndValue, PropMetadataTuple } from './types-and-models.js';
+import { Class, DecoratorAndValue, PropMeta, PropMetadataTuple } from './types-and-models.js';
+import { Reflector } from './reflector.js';
 
 class DecoratedParent {}
 class DecoratedChild extends DecoratedParent {}
 
 const testDecorator = makeClassDecorator((data: any) => data);
+
+class MockReflector extends Reflector {
+  override getPropMetadata<Proto extends object>(Cls: Class<Proto>): PropMeta<Proto> {
+    return super.getPropMetadata(Cls);
+  }
+}
 
 describe('Property decorators', () => {
   // https://github.com/angular/angular/issues/12224
@@ -19,7 +26,7 @@ describe('Property decorators', () => {
       watch: any;
     }
 
-    const p = reflector.getPropMetadata(TestClass);
+    const p = (reflector as MockReflector).getPropMetadata(TestClass);
     expect(p.watch).toEqual<PropMetadataTuple>([Object, new DecoratorAndValue(prop, 'firefox!')]);
   });
 });

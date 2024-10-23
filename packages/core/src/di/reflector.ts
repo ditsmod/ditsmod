@@ -62,7 +62,7 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  getPropMetadata<Proto extends object>(Cls: Class<Proto>): PropMeta<Proto> {
+  protected getPropMetadata<Proto extends object>(Cls: Class<Proto>): PropMeta<Proto> {
     if (!isType(Cls)) {
       return {} as PropMeta<Proto>;
     }
