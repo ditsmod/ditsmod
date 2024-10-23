@@ -91,7 +91,7 @@ export class Reflector {
   }
 
   /**
-   * Returns the metadata for the properties of the passed class.
+   * Returns all the metadata for the passed class.
    *
    * @param Cls A class that has decorators.
    */
