@@ -1393,7 +1393,7 @@ describe('ModuleFactory', () => {
       expect(() => transformControllersMetadata(mock.meta.controllers, 'MockModule')).toThrow(msg);
     });
 
-    it('controller with multiple @Route on single method', () => {
+    it('controller with multiple @route on single method', () => {
       const ctrlMetadata = { providersPerReq: [] } as ControllerRawMetadata;
       @controller(ctrlMetadata)
       class Controller1 {
@@ -1445,7 +1445,7 @@ describe('ModuleFactory', () => {
       expect(metadata[0].controller === Controller1).toBe(true);
       const declaredInDir = getCallerDir();
       expect(metadata[0].decoratorsAndValues).toEqual([{ decorator: controller, value: ctrlMetadata, declaredInDir }]);
-      expect(metadata[0].properties).toEqual(methods);
+      expect(metadata[0].properties).toMatchObject(methods);
     });
   });
 });

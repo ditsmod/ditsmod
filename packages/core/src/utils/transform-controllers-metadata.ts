@@ -22,9 +22,9 @@ export function getControllerMetadata1(Controller: Class, moduleName: string) {
     );
   }
   const controllerMetadata: ControllerMetadata1 = { controller: Controller, decoratorsAndValues, properties: {} };
-  const propertyMetadata = reflector.getPropMetadata(Controller);
+  const propertyMetadata = reflector.getMetadata(Controller);
   for (const propertyKey in propertyMetadata) {
-    const [, ...methodDecorValues] = propertyMetadata[propertyKey];
+    const methodDecorValues = propertyMetadata[propertyKey].decorators;
     controllerMetadata.properties[propertyKey] = methodDecorValues.map<DecoratorMetadata>((decoratorPayload, i) => {
       const otherDecorators = methodDecorValues.slice();
       otherDecorators.splice(i, 1);
