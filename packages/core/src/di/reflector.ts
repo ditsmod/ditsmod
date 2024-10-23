@@ -143,6 +143,9 @@ export class Reflector {
       const params = this.getParamsMetadata(Cls, propName as any);
       const propProto = (propMetadata as any)[propName] as PropProto;
       propProto.params = [...(params as any), ...propProto.params];
+      if (propName == 'constructor') {
+        propProto.decorators = this.getClassMetadata(Cls);
+      }
     });
 
     return propMetadata;

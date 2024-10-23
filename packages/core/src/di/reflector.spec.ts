@@ -229,6 +229,9 @@ describe('Reflector', () => {
       ]);
 
       expect(p.constructor.type).toBe(Function);
+      const decoratorAndValue = new DecoratorAndValue(classDecorator, { value: 'parent' });
+      delete decoratorAndValue.declaredInDir;
+      expect(p.constructor.decorators).toMatchObject<DecoratorAndValue[]>([decoratorAndValue]);
       expect(p.constructor.params).toEqual<PropMetadataTuple[]>([
         [AType, new DecoratorAndValue(paramDecorator, 'a')],
         [BType, new DecoratorAndValue(paramDecorator, 'b')],
