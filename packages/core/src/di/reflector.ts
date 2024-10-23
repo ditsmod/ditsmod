@@ -54,7 +54,7 @@ export class Reflector {
     const parentClass = this.getParentClass(Cls);
     const ownClassAnnotations = this.getOwnClassAnnotations(Cls) || [];
     const parentAnnotations = parentClass !== Object ? this.getClassMetadata<T>(parentClass) : [];
-    return parentAnnotations.concat(ownClassAnnotations);
+    return ownClassAnnotations.concat(parentAnnotations);
   }
 
   /**
