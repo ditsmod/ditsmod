@@ -194,12 +194,12 @@ describe('Reflector', () => {
       override someMethod1(a: BType) {}
 
       @propDecorator('child-p5')
-      override someMethod2(@paramDecorator('child-method2 param1') b: BType, d: DType) {}
+      override someMethod2(@paramDecorator('child-method2 param1') b: BType, c: CType) {}
 
       override someMethod3(
         @paramDecorator('child-method3 param1') c: CType,
         @paramDecorator('child-method3 param2 value1') @paramDecorator('child-method3 param2 value2') b: BType,
-        a: AType,
+        d: DType,
       ) {}
     }
 
@@ -248,34 +248,39 @@ describe('Reflector', () => {
       ]);
       expect(p.someMethod1.params).toEqual<PropMetadataTuple[]>([[BType]]);
 
-      // expect(p.someMethod2.type).toBe(Function);
-      // expect(p.someMethod2.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'p5')]);
-      // expect(p.someMethod2.params).toEqual<PropMetadataTuple[]>([
-      //   [BType, new DecoratorAndValue(paramDecorator, 'method2 param1')],
-      //   [DType],
-      // ]);
+      expect(p.someMethod2.type).toBe(Function);
+      expect(p.someMethod2.decorators).toEqual<DecoratorAndValue[]>([
+        new DecoratorAndValue(propDecorator, 'child-p5'),
+        new DecoratorAndValue(propDecorator, 'p5'),
+      ]);
+      expect(p.someMethod2.params).toEqual<PropMetadataTuple[]>([
+        [BType, new DecoratorAndValue(paramDecorator, 'child-method2 param1')],
+        [CType],
+      ]);
 
-      // expect(p.someMethod3.type).toBe(Function);
-      // expect(p.someMethod3.decorators).toEqual<DecoratorAndValue[]>([]);
-      // expect(p.someMethod3.params).toEqual<PropMetadataTuple[]>([
-      //   [CType, new DecoratorAndValue(paramDecorator, 'method3 param1')],
-      //   [
-      //     BType,
-      //     new DecoratorAndValue(paramDecorator, 'method3 param2 value2'),
-      //     new DecoratorAndValue(paramDecorator, 'method3 param2 value1'),
-      //   ],
-      //   [AType],
-      // ]);
+      expect(p.someMethod3.type).toBe(Function);
+      expect(p.someMethod3.decorators).toEqual<DecoratorAndValue[]>([]);
+      expect(p.someMethod3.params).toEqual<PropMetadataTuple[]>([
+        [CType, new DecoratorAndValue(paramDecorator, 'child-method3 param1')],
+        [
+          BType,
+          new DecoratorAndValue(paramDecorator, 'child-method3 param2 value2'),
+          new DecoratorAndValue(paramDecorator, 'child-method3 param2 value1'),
+        ],
+        [DType],
+      ]);
 
-      // expect(p.constructor.type).toBe(Function);
-      // const decoratorAndValue = new DecoratorAndValue(classDecorator, { value: 'parent' });
-      // delete decoratorAndValue.declaredInDir;
-      // expect(p.constructor.decorators).toMatchObject<DecoratorAndValue[]>([decoratorAndValue]);
-      // expect(p.constructor.params).toEqual<PropMetadataTuple[]>([
-      //   [AType, new DecoratorAndValue(paramDecorator, 'a')],
-      //   [BType, new DecoratorAndValue(paramDecorator, 'b')],
-      //   [DType],
-      // ]);
+      expect(p.constructor.type).toBe(Function);
+      const parentDecorator = new DecoratorAndValue(classDecorator, { value: 'parent' });
+      delete parentDecorator.declaredInDir;
+      const childDecorator = new DecoratorAndValue(classDecorator, { value: 'child' });
+      delete childDecorator.declaredInDir;
+      expect(p.constructor.decorators).toMatchObject<DecoratorAndValue[]>([childDecorator, parentDecorator]);
+      expect(p.constructor.params).toEqual<PropMetadataTuple[]>([
+        [AType, new DecoratorAndValue(paramDecorator, 'a')],
+        [BType, new DecoratorAndValue(paramDecorator, 'b')],
+        [DType],
+      ]);
     });
   });
 
@@ -396,8 +401,8 @@ describe('Reflector', () => {
       ]);
 
       expect(reflector.getClassMetadata(Child)).toEqual([
-        new DecoratorAndValue(classDecorator, { value: 'parent' }, declaredInDir),
         new DecoratorAndValue(classDecorator, { value: 'child' }, declaredInDir),
+        new DecoratorAndValue(classDecorator, { value: 'parent' }, declaredInDir),
       ]);
 
       expect(reflector.getClassMetadata(ChildNoDecorators)).toEqual([
