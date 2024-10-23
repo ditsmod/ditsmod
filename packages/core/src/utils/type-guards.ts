@@ -48,7 +48,8 @@ export function isDecoratorAndValue(
   decoratorAndValue?: DecoratorAndValue | Class,
 ): decoratorAndValue is DecoratorAndValue {
   return (
-    (decoratorAndValue as DecoratorAndValue)?.decorator !== undefined && Boolean(decoratorAndValue?.hasOwnProperty('value'))
+    (decoratorAndValue as DecoratorAndValue)?.decorator !== undefined &&
+    Boolean(decoratorAndValue?.hasOwnProperty('value'))
   );
 }
 
@@ -64,7 +65,9 @@ export function isNormRootModule(
   return rawModule?.decoratorFactory === rootModule;
 }
 
-export function isController(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
+export function isController(
+  decoratorAndValue?: AnyObj,
+): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
   return decoratorAndValue?.decorator === controller;
 }
 
@@ -130,7 +133,9 @@ export function isProvider(maybeProvider?: any): maybeProvider is Provider {
   if (isModuleWithParams(maybeProvider)) {
     return false;
   }
-  const isSomeModule = reflector.getClassMetadata(maybeProvider).some((m) => isRootModule(m) || isFeatureModule(m));
+  const isSomeModule = reflector
+    .getMetadata(maybeProvider)
+    .constructor.decorators.some((m) => isRootModule(m) || isFeatureModule(m));
   return (maybeProvider instanceof Class && !isSomeModule) || isNormalizedProvider(maybeProvider);
 }
 
