@@ -49,7 +49,7 @@ export type PropMetaNew<Proto extends object = object> = {
 export interface PropProto {
   type: Class;
   decorators: DecoratorAndValue[];
-  params: PropMetadataTuple[];
+  params: (ParamsMeta | null)[];
 }
 
 export type ParamsItem<Value = any> = DecoratorAndValue<Value> | InjectionToken<any> | Class;
