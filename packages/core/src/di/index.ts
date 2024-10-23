@@ -17,7 +17,6 @@ export {
   FunctionFactoryProvider,
   NormalizedProvider,
   ParamsMeta,
-  PropMeta,
   Provider,
   RegistryOfInjector,
   ResolvedFactory,
@@ -27,6 +26,8 @@ export {
   UseFactoryTuple,
   ValueProvider,
   CTX_DATA,
+  ClassMeta,
+  ClassPropMeta
 } from './types-and-models.js';
 export {
   isClassProvider,

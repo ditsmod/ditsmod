@@ -5,8 +5,8 @@ import {
   ParamsMeta,
   PropMeta,
   PropMetadataTuple,
-  PropMetaNew,
-  PropProto,
+  ClassMeta,
+  ClassPropMeta,
 } from './types-and-models.js';
 import { isType, newArray } from './utils.js';
 
@@ -95,8 +95,8 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  getMetadata<Proto extends object>(Cls: Class<Proto>): PropMetaNew<Proto> {
-    const propMetadata = {} as PropMetaNew<Proto>;
+  getMetadata<Proto extends object>(Cls: Class<Proto>): ClassMeta<Proto> {
+    const propMetadata = {} as ClassMeta<Proto>;
     if (!isType(Cls)) {
       return propMetadata;
     }
@@ -117,33 +117,35 @@ export class Reflector {
       const type = this.reflect.getOwnMetadata('design:type', Cls.prototype, propName);
       const decorators = ownPropMetadata![propName];
       if (propMetadata.hasOwnProperty(propName)) {
-        const parentPropProto = (propMetadata as any)[propName] as PropProto;
+        const parentPropProto = (propMetadata as any)[propName] as ClassPropMeta;
         parentPropProto.type = type; // Override parent type.
         parentPropProto.decorators = [...decorators, ...parentPropProto.decorators];
       } else {
-        (propMetadata as any)[propName] = { type, decorators, params: [] } as PropProto;
+        (propMetadata as any)[propName] = { type, decorators, params: [] } as ClassPropMeta;
       }
 
       if ((propMetadata as any)[propName].type === Function) {
-        const propProto = (propMetadata as any)[propName] as PropProto;
+        const propProto = (propMetadata as any)[propName] as ClassPropMeta;
         propProto.params = this.getParamsMetadata(Cls, propName as any);
       }
     });
 
-    this.reflect.ownKeys(Cls.prototype).forEach((propName: any) => {
-      if (ownMetaKeys.includes(propName) || typeof Cls.prototype[propName as any] != 'function') {
-        return;
-      }
+    if (Cls.prototype) {
+      this.reflect.ownKeys(Cls.prototype).forEach((propName: any) => {
+        if (ownMetaKeys.includes(propName) || typeof Cls.prototype[propName as any] != 'function') {
+          return;
+        }
 
-      if (!propMetadata.hasOwnProperty(propName)) {
-        (propMetadata as any)[propName] = { type: Function, decorators: [], params: [] } as PropProto;
-      }
-      const propProto = (propMetadata as any)[propName] as PropProto;
-      propProto.params = this.getParamsMetadata(Cls, propName as any);
-      if (propName == 'constructor') {
-        propProto.decorators = this.getClassMetadata(Cls);
-      }
-    });
+        if (!propMetadata.hasOwnProperty(propName)) {
+          (propMetadata as any)[propName] = { type: Function, decorators: [], params: [] } as ClassPropMeta;
+        }
+        const propProto = (propMetadata as any)[propName] as ClassPropMeta;
+        propProto.params = this.getParamsMetadata(Cls, propName as any);
+        if (propName == 'constructor') {
+          propProto.decorators = this.getClassMetadata(Cls);
+        }
+      });
+    }
 
     return propMetadata;
   }
