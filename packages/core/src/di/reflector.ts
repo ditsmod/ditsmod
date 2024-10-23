@@ -127,7 +127,8 @@ export class Reflector {
 
       if ((propMetadata as any)[propName].type === Function) {
         const params = this.getParamsMetadata(Cls, propName as any);
-        ((propMetadata as any)[propName] as PropProto).params.unshift(...(params as any));
+        const propProto = ((propMetadata as any)[propName] as PropProto);
+        propProto.params = [...(params as any), ...propProto.params];
       }
     });
 
@@ -140,8 +141,10 @@ export class Reflector {
         (propMetadata as any)[propName] = { type: Function, decorators: [], params: [] } as PropProto;
       }
       const params = this.getParamsMetadata(Cls, propName as any);
-      ((propMetadata as any)[propName] as PropProto).params.unshift(...(params as any));
+      const propProto = ((propMetadata as any)[propName] as PropProto);
+      propProto.params = [...(params as any), ...propProto.params];
     });
+
     return propMetadata;
   }
 
