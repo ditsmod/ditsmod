@@ -1,6 +1,6 @@
 import { CanActivate, Provider } from '#types/mix.js';
 import { Extension } from '#types/extension-types.js';
-import { Class, injectable, InjectionToken, makePropDecorator, PropMeta, reflector } from '#di';
+import { Class, injectable, InjectionToken, makePropDecorator, reflector } from '#di';
 import { featureModule } from '#decorators/module.js';
 import {
   isController,
@@ -25,7 +25,7 @@ import { Reflector } from '#di/reflector.js';
 describe('type guards', () => {
 
   class MockReflector extends Reflector {
-    override getPropMetadata<Proto extends object>(Cls: Class<Proto>): PropMeta<Proto> {
+    override getPropMetadata<Proto extends object>(Cls: Class<Proto>) {
       return super.getPropMetadata(Cls);
     }
   }
