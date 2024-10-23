@@ -143,6 +143,93 @@ describe('Reflector', () => {
     });
   });
 
+  describe('getMetadata', () => {
+    @classDecorator({ value: 'parent' })
+    class Parent {
+      @propDecorator('p1')
+      @propDecorator('p2')
+      a: AType;
+
+      b: AType;
+
+      @propDecorator('p3')
+      set c(value: CType) {}
+
+      @propDecorator('type')
+      d: number;
+
+      @propDecorator('p4')
+      someMethod1(a: AType) {}
+
+      @propDecorator('p5')
+      someMethod2(@paramDecorator('method2 param1') b: BType, d: DType) {}
+
+      someMethod3(
+        @paramDecorator('method3 param1') c: CType,
+        @paramDecorator('method3 param2 value1') @paramDecorator('method3 param2 value2') b: BType,
+        a: AType,
+      ) {}
+
+      constructor(@paramDecorator('a') a: AType, @paramDecorator('b') b: BType, d: DType) {
+        this.a = a;
+        this.b = b;
+      }
+    }
+
+    @classDecorator({ value: 'child' })
+    class Child extends Parent {
+      @propDecorator('child-p1')
+      @propDecorator('child-p2')
+      declare a: AType;
+
+      declare b: AType;
+
+      @propDecorator('child-p3')
+      override set c(value: CType) {}
+
+      @propDecorator('child-type')
+      declare d: number;
+
+      @propDecorator('child-p4')
+      override someMethod1(a: AType) {}
+
+      @propDecorator('child-p5')
+      override someMethod2(@paramDecorator('child-method2 param1') b: BType, d: DType) {}
+
+      override someMethod3(
+        @paramDecorator('child-method3 param1') c: CType,
+        @paramDecorator('child-method3 param2 value1') @paramDecorator('child-method3 param2 value2') b: BType,
+        a: AType,
+      ) {}
+    }
+
+    it('Parent', () => {
+      const p = reflector.getMetadata(Parent);
+      expect(p.someMethod1.type).toBe(Function);
+      expect(p.someMethod1.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'p4')]);
+      expect(p.someMethod1.params).toEqual<PropMetadataTuple[]>([[AType]]);
+
+      expect(p.someMethod2.type).toBe(Function);
+      expect(p.someMethod2.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'p5')]);
+      expect(p.someMethod2.params).toEqual<PropMetadataTuple[]>([
+        [BType, new DecoratorAndValue(paramDecorator, 'method2 param1')],
+        [DType],
+      ]);
+
+      expect(p.someMethod3.type).toBe(Function);
+      expect(p.someMethod3.decorators).toEqual<DecoratorAndValue[]>([]);
+      expect(p.someMethod3.params).toEqual<PropMetadataTuple[]>([
+        [CType, new DecoratorAndValue(paramDecorator, 'method3 param1')],
+        [
+          BType,
+          new DecoratorAndValue(paramDecorator, 'method3 param2 value2'),
+          new DecoratorAndValue(paramDecorator, 'method3 param2 value1'),
+        ],
+        [AType],
+      ]);
+    });
+  });
+
   describe('annotations', () => {
     it('should return an array of annotations for a type', () => {
       const declaredInDir = getCallerDir();

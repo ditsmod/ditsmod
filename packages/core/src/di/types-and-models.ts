@@ -37,6 +37,19 @@ export type PropMeta<Proto extends object = object> = {
   [P in keyof Proto]: PropMetadataTuple;
 };
 
+/**
+ * Metadata returned by the `reflector.getPropMetadata()` method.
+ */
+export type PropMetaNew<Proto extends object = object> = {
+  [P in keyof Proto]: PropProto;
+};
+
+export interface PropProto {
+  type: Class;
+  decorators: DecoratorAndValue[];
+  params: PropMetadataTuple[];
+}
+
 export type ParamsItem<Value = any> = DecoratorAndValue<Value> | InjectionToken<any> | Class;
 
 /**
@@ -75,7 +88,7 @@ export class Dependency {
     public dualKey: DualKey,
     public optional: boolean,
     public visibility: Visibility,
-    public ctx?: NonNullable<unknown>
+    public ctx?: NonNullable<unknown>,
   ) {}
 
   static fromDualKey(dualKey: DualKey, ctx?: NonNullable<unknown>): Dependency {

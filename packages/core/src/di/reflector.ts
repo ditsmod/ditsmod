@@ -1,5 +1,13 @@
 import { CLASS_KEY, PARAMS_KEY, PROP_KEY, getParamKey } from './decorator-factories.js';
-import { Class, DecoratorAndValue, ParamsMeta, PropMeta, PropMetadataTuple } from './types-and-models.js';
+import {
+  Class,
+  DecoratorAndValue,
+  ParamsMeta,
+  PropMeta,
+  PropMetadataTuple,
+  PropMetaNew,
+  PropProto,
+} from './types-and-models.js';
 import { isType, newArray } from './utils.js';
 
 /**
@@ -79,6 +87,61 @@ export class Reflector {
         (propMetadata as any)[propName] = decorators;
       });
     }
+    return propMetadata;
+  }
+
+  /**
+   * Returns the metadata for the properties of the passed class.
+   *
+   * @param Cls A class that has decorators.
+   */
+  getMetadata<Proto extends object>(Cls: Class<Proto>): PropMetaNew<Proto> {
+    const propMetadata = {} as PropMetaNew<Proto>;
+    if (!isType(Cls)) {
+      return propMetadata;
+    }
+    const parentClass = this.getParentClass(Cls);
+    if (parentClass !== Object) {
+      const parentPropMetadata = this.getMetadata(parentClass);
+      // Merging current meta with parent meta
+      Object.keys(parentPropMetadata).forEach((propName) => {
+        (propMetadata as any)[propName] = parentPropMetadata[propName];
+      });
+    }
+    const ownPropMetadata = this.getOwnPropMetadata(Cls);
+    let ownMetaKeys: string[] = [];
+    if (ownPropMetadata) {
+      ownMetaKeys = Object.keys(ownPropMetadata);
+    }
+    ownMetaKeys.forEach((propName) => {
+      const decorators = ownPropMetadata![propName];
+      const params = [] as PropMetadataTuple[];
+      const type = this.reflect.getOwnMetadata('design:type', Cls.prototype, propName);
+      if (propMetadata.hasOwnProperty(propName)) {
+        const parentPropProto = (propMetadata as any)[propName] as PropProto;
+        parentPropProto.type = type; // Override parent type.
+        parentPropProto.decorators = [...decorators, ...parentPropProto.decorators];
+      } else {
+        (propMetadata as any)[propName] = { type, decorators, params } as PropProto;
+      }
+
+      if ((propMetadata as any)[propName].type === Function) {
+        const params = this.getParamsMetadata(Cls, propName as any);
+        ((propMetadata as any)[propName] as PropProto).params.unshift(...(params as any));
+      }
+    });
+
+    this.reflect.ownKeys(Cls.prototype).forEach((propName: any) => {
+      if (ownMetaKeys.includes(propName) || typeof Cls.prototype[propName as any] != 'function') {
+        return;
+      }
+
+      if (!propMetadata.hasOwnProperty(propName)) {
+        (propMetadata as any)[propName] = { type: Function, decorators: [], params: [] } as PropProto;
+      }
+      const params = this.getParamsMetadata(Cls, propName as any);
+      ((propMetadata as any)[propName] as PropProto).params.unshift(...(params as any));
+    });
     return propMetadata;
   }
 
