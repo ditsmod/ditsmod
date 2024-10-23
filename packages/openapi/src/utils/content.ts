@@ -59,12 +59,12 @@ export class Content {
 
   protected getSchema(model: Class<AnyObj>) {
     const schema = this.getSchemaStubForModel(model);
-    const modelMeta = reflector.getPropMetadata<PropertyDecoratorMetadata>(model);
+    const modelMeta = reflector.getMetadata<PropertyDecoratorMetadata>(model);
 
     for (const property in modelMeta) {
-      const propertyMeta = modelMeta[property].find(isProperty);
+      const propertyMeta = modelMeta[property].decorators.find(isProperty);
       if (propertyMeta && (!propertyMeta.value.schema?.type || propertyMeta.value.schema.type == 'array')) {
-        const propertyType = modelMeta[property][0];
+        const propertyType = modelMeta[property].type;
         this.checkTypeDefinitionConflict(
           model.name,
           property,
