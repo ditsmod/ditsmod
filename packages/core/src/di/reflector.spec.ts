@@ -227,6 +227,13 @@ describe('Reflector', () => {
         ],
         [AType],
       ]);
+
+      expect(p.constructor.type).toBe(Function);
+      expect(p.constructor.params).toEqual<PropMetadataTuple[]>([
+        [AType, new DecoratorAndValue(paramDecorator, 'a')],
+        [BType, new DecoratorAndValue(paramDecorator, 'b')],
+        [DType],
+      ]);
     });
   });
 

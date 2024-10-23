@@ -127,7 +127,7 @@ export class Reflector {
 
       if ((propMetadata as any)[propName].type === Function) {
         const params = this.getParamsMetadata(Cls, propName as any);
-        const propProto = ((propMetadata as any)[propName] as PropProto);
+        const propProto = (propMetadata as any)[propName] as PropProto;
         propProto.params = [...(params as any), ...propProto.params];
       }
     });
@@ -141,7 +141,7 @@ export class Reflector {
         (propMetadata as any)[propName] = { type: Function, decorators: [], params: [] } as PropProto;
       }
       const params = this.getParamsMetadata(Cls, propName as any);
-      const propProto = ((propMetadata as any)[propName] as PropProto);
+      const propProto = (propMetadata as any)[propName] as PropProto;
       propProto.params = [...(params as any), ...propProto.params];
     });
 
@@ -216,9 +216,10 @@ export class Reflector {
   }
 
   private getOwnParams(Cls: Class, propertyKey?: string | symbol): ParamsMeta[] | null[] {
-    const key = getParamKey(PARAMS_KEY, propertyKey);
+    const isConstructor = !propertyKey || propertyKey == 'constructor';
+    const key = isConstructor ? getParamKey(PARAMS_KEY) : getParamKey(PARAMS_KEY, propertyKey);
     const paramMetadata = Cls.hasOwnProperty(key) && (Cls as any)[key];
-    const args = (propertyKey ? [Cls.prototype, propertyKey] : [Cls]) as [Class];
+    const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
     const paramTypes = this.reflect.getOwnMetadata('design:paramtypes', ...args);
 
     if (paramTypes || paramMetadata) {
@@ -229,7 +230,7 @@ export class Reflector {
      * If a class or method has no decorators, at least create metadata
      * based on function.length.
      */
-    if (propertyKey) {
+    if (propertyKey && !isConstructor) {
       return newArray(Cls.prototype[propertyKey]?.length || 0, null);
     } else {
       return newArray(Cls.length, null);

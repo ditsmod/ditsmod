@@ -41,7 +41,7 @@ export type PropMeta<Proto extends object = object> = {
  * Metadata returned by the `reflector.getPropMetadata()` method.
  */
 export type PropMetaNew<Proto extends object = object> = {
-  [P in keyof Proto]: PropProto;
+  [P in (keyof Proto | 'constructor')]: PropProto;
 };
 
 export interface PropProto {
