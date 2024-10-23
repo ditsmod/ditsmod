@@ -34,13 +34,13 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @featureModule({})
       class Module1 {}
-      const metadata = reflector.getClassMetadata(Module1)[0];
+      const metadata = reflector.getMetadata(Module1).constructor.decorators[0];
       expect(isFeatureModule(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = reflector.getClassMetadata(Module1)[0];
+      const metadata = reflector.getMetadata(Module1).constructor.decorators[0];
       expect(isFeatureModule(metadata)).toBe(false);
     });
   });
@@ -49,13 +49,13 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @rootModule({})
       class Module1 {}
-      const metadata = reflector.getClassMetadata(Module1)[0];
+      const metadata = reflector.getMetadata(Module1).constructor.decorators[0];
       expect(isRootModule(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = reflector.getClassMetadata(Module1)[0];
+      const metadata = reflector.getMetadata(Module1).constructor.decorators[0];
       expect(isRootModule(metadata)).toBe(false);
     });
   });
@@ -79,13 +79,13 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @controller()
       class Module1 {}
-      const metadata = reflector.getClassMetadata(Module1)[0];
+      const metadata = reflector.getMetadata(Module1).constructor.decorators[0];
       expect(isController(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = reflector.getClassMetadata(Module1)[0];
+      const metadata = reflector.getMetadata(Module1).constructor.decorators[0];
       expect(isController(metadata)).toBe(false);
     });
   });

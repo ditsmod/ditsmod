@@ -293,7 +293,7 @@ describe('Reflector', () => {
   describe('annotations', () => {
     it('should return an array of annotations for a type', () => {
       const declaredInDir = getCallerDir();
-      const p = reflector.getClassMetadata(ClassWithDecorators);
+      const p = reflector.getMetadata(ClassWithDecorators).constructor.decorators;
       expect(p).toEqual([new DecoratorAndValue(classDecorator, { value: 'class' }, declaredInDir)]);
     });
 
@@ -301,20 +301,20 @@ describe('Reflector', () => {
       const declaredInDir = getCallerDir();
       @classDecorator()
       class ClassWithoutMetadata {}
-      const p = reflector.getClassMetadata(ClassWithoutMetadata);
+      const p = reflector.getMetadata(ClassWithoutMetadata).constructor.decorators;
       expect(p).toEqual([new DecoratorAndValue(classDecorator, undefined, declaredInDir)]);
     });
 
     it('should work class decorator without metadata transformator', () => {
       @classDecoratorWithoutTransformator()
       class ClassWithoutMetadata {}
-      const p = reflector.getClassMetadata(ClassWithoutMetadata);
+      const p = reflector.getMetadata(ClassWithoutMetadata).constructor.decorators;
       const declaredInDir = getCallerDir();
       expect(p).toEqual([new DecoratorAndValue(classDecoratorWithoutTransformator, [], declaredInDir)]);
     });
 
     it('should work for a class without annotations', () => {
-      const p = reflector.getClassMetadata(ClassWithoutDecorators);
+      const p = reflector.getMetadata(ClassWithoutDecorators).constructor.decorators;
       expect(p).toEqual([]);
     });
   });
@@ -344,7 +344,7 @@ describe('Reflector', () => {
       // Cannot test arrow function here due to the compilation
       const dummyArrowFn = function () {};
       Object.defineProperty(dummyArrowFn, 'prototype', { value: undefined });
-      expect(() => reflector.getClassMetadata(dummyArrowFn as any)).not.toThrow();
+      expect(() => reflector.getMetadata(dummyArrowFn as any).constructor.decorators).not.toThrow();
     });
 
     it('should support native class', () => {
@@ -402,23 +402,23 @@ describe('Reflector', () => {
 
       // Check that metadata for Parent was not changed!
       const declaredInDir = getCallerDir();
-      expect(reflector.getClassMetadata(Parent)).toEqual([
+      expect(reflector.getMetadata(Parent).constructor.decorators).toEqual([
         new DecoratorAndValue(classDecorator, { value: 'parent' }, declaredInDir),
       ]);
 
-      expect(reflector.getClassMetadata(Child)).toEqual([
+      expect(reflector.getMetadata(Child).constructor.decorators).toEqual([
         new DecoratorAndValue(classDecorator, { value: 'child' }, declaredInDir),
         new DecoratorAndValue(classDecorator, { value: 'parent' }, declaredInDir),
       ]);
 
-      expect(reflector.getClassMetadata(ChildNoDecorators)).toEqual([
+      expect(reflector.getMetadata(ChildNoDecorators).constructor.decorators).toEqual([
         new DecoratorAndValue(classDecorator, { value: 'parent' }, declaredInDir),
       ]);
 
-      expect(reflector.getClassMetadata(NoDecorators)).toEqual([]);
-      expect(reflector.getClassMetadata({} as any)).toEqual([]);
-      expect(reflector.getClassMetadata(1 as any)).toEqual([]);
-      expect(reflector.getClassMetadata(null!)).toEqual([]);
+      expect(reflector.getMetadata(NoDecorators).constructor.decorators).toEqual([]);
+      expect(reflector.getMetadata({} as any)).toEqual({});
+      expect(reflector.getMetadata(1 as any)).toEqual({});
+      expect(reflector.getMetadata(null!)).toEqual({});
     });
 
     it('should inherit parameters', () => {

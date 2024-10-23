@@ -324,7 +324,7 @@ describe('injector', () => {
     expect(spy2).toHaveBeenCalledTimes(1);
     expect(spy3).toHaveBeenCalledTimes(1);
 
-    const classMetadata = reflector.getClassMetadata<[{ providers: [] }]>(Controller);
+    const classMetadata = reflector.getMetadata<[{ providers: [] }]>(Controller).constructor.decorators;
     expect(classMetadata[0].value).toEqual([{ providers: [] }]);
 
     const propMetadata = (reflector as MockReflector).getPropMetadata(Controller);
@@ -421,7 +421,7 @@ describe('injector', () => {
     expect(spy2).toHaveBeenCalledTimes(1);
     expect(spy3).toHaveBeenCalledTimes(1);
 
-    const classMetadata = reflector.getClassMetadata<string>(Controller);
+    const classMetadata = reflector.getMetadata<string>(Controller).constructor.decorators;
     expect(classMetadata[0].value).toEqual([{ providers: [] }]);
 
     const propMetadata = (reflector as MockReflector).getPropMetadata(Controller);
