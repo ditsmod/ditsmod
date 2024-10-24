@@ -1,4 +1,4 @@
-import { reflector, controller, CanActivate, RequestContext, DecoratorAndValue } from '@ditsmod/core';
+import { reflector, controller, CanActivate, RequestContext, DecoratorAndValue, getCallerDir } from '@ditsmod/core';
 import { oasRoute } from './oas-route.js';
 
 // console.log(inspect(actualMeta, false, 5));
@@ -10,9 +10,9 @@ describe('@oasRoute', () => {
 
     const actualMeta = reflector.getMetadata(Controller1);
     expect(actualMeta.constructor.type).toBe(Function);
-    const decorator = new DecoratorAndValue(controller, {});
-    delete decorator.declaredInDir;
-    expect(actualMeta.constructor.decorators).toMatchObject<DecoratorAndValue[]>([decorator]);
+    expect(actualMeta.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
+      new DecoratorAndValue(controller, {}, getCallerDir()),
+    ]);
   });
 
   it('one method, without operation object', () => {

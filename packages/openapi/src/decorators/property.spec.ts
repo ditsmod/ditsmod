@@ -2,13 +2,11 @@ import { DecoratorAndValue, reflector } from '@ditsmod/core';
 
 import { property } from './property.js';
 
-describe('@Property', () => {
+describe('@property', () => {
   it('model without properties', () => {
     class Model1 {}
 
-    const actualMeta = reflector.getMetadata(Model1);
-    expect(actualMeta.constructor.type).toBe(Function);
-    expect(actualMeta.constructor.decorators).toEqual([]);
+    expect(reflector.getMetadata(Model1)).toEqual({});
   });
 
   it('empty value', () => {
