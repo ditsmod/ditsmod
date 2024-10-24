@@ -4,7 +4,6 @@ import { NodeServer } from '@ditsmod/core';
 
 import { AppModule } from '#app/app.module.js';
 
-
 describe('18-return', () => {
   let server: NodeServer;
   let testAgent: ReturnType<typeof request>;
@@ -21,15 +20,15 @@ describe('18-return', () => {
   describe('regular controller', () => {
     it('case 1', async () => {
       const { type, status, text } = await testAgent.get('/first');
-      expect(type).toBe('text/plain');
       expect(status).toBe(200);
+      expect(type).toBe('text/plain');
       expect(text).toBe('first module.\n');
     });
 
     it('case 2', async () => {
       const { type, status, text } = await testAgent.get('/second');
-      expect(type).toBe('text/plain');
       expect(status).toBe(200);
+      expect(type).toBe('text/plain');
       expect(text).toBe('default send');
     });
 
@@ -42,8 +41,8 @@ describe('18-return', () => {
 
     it('case 4', async () => {
       const { type, status, text } = await testAgent.get('/second-string');
-      expect(type).toBe('text/plain');
       expect(status).toBe(200);
+      expect(type).toBe('text/plain');
       expect(text).toBe('Some string');
     });
   });
@@ -51,8 +50,8 @@ describe('18-return', () => {
   describe('singleton controller', () => {
     it('case 2', async () => {
       const { type, status, text } = await testAgent.get('/second2');
-      expect(type).toBe('text/plain');
       expect(status).toBe(200);
+      expect(type).toBe('text/plain');
       expect(text).toBe('default2 send');
     });
 
@@ -65,8 +64,8 @@ describe('18-return', () => {
 
     it('case 4', async () => {
       const { type, status, text } = await testAgent.get('/second2-string');
-      expect(type).toBe('text/plain');
       expect(status).toBe(200);
+      expect(type).toBe('text/plain');
       expect(text).toBe('Some2 string');
     });
   });
