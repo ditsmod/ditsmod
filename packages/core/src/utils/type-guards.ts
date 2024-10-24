@@ -135,7 +135,7 @@ export function isProvider(maybeProvider?: any): maybeProvider is Provider {
   }
   const isSomeModule = reflector
     .getMetadata(maybeProvider)
-    .constructor.decorators.some((m) => isRootModule(m) || isFeatureModule(m));
+    .constructor?.decorators?.some((m) => isRootModule(m) || isFeatureModule(m));
   return (maybeProvider instanceof Class && !isSomeModule) || isNormalizedProvider(maybeProvider);
 }
 

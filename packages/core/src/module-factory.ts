@@ -345,7 +345,7 @@ export class ModuleFactory {
           const importObj = this[`importedProvidersPer${scope}`].get(token1)!;
           const hostModuleName = getModuleName(importObj.module);
           const hostModuleMeta = getModuleMetadata(importObj.module)!;
-          const collisionWithFile = reflector.getMetadata(token1).constructor.decorators.at(-1);
+          const collisionWithFile = reflector.getMetadata(token1).constructor?.decorators?.at(-1);
           if (
             hostModuleMeta?.declaredInDir !== '.' &&
             collisionWithFile?.declaredInDir !== '.' &&
