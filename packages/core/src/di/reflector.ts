@@ -39,9 +39,7 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  getMetadata<DecorValue = any, Proto extends object = object>(
-    Cls: Class<Proto>,
-  ): ClassMeta<DecorValue, Proto> | undefined {
+  getMetadata<DecorValue = any, Proto extends object = object>(Cls: Class<Proto>) {
     const propMetadata = {} as ClassMeta<DecorValue, Proto>;
     if (!isType(Cls)) {
       return;
@@ -77,6 +75,14 @@ export class Reflector {
       }
     });
 
+    return this.setPropertiesWithoutPropDecorators(Cls, propMetadata, ownMetaKeys);
+  }
+
+  protected setPropertiesWithoutPropDecorators<DecorValue = any, Proto extends object = object>(
+    Cls: Class<Proto>,
+    propMetadata = {} as ClassMeta<DecorValue, Proto>,
+    ownMetaKeys: string[],
+  ): ClassMeta<DecorValue, Proto> | undefined {
     if (Cls.prototype) {
       this.reflect.ownKeys(Cls.prototype).forEach((propName: any) => {
         const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, propName);
