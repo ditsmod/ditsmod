@@ -54,6 +54,13 @@ export class Reflector {
     }
 
     this.mergeClassMetaWithParent(Cls, classMeta);
+    return this.concatWithChildClassMeta(Cls, classMeta);
+  }
+
+  protected concatWithChildClassMeta<DecorValue = any, Proto extends AnyObj = object>(
+    Cls: Class<Proto>,
+    classMeta: ClassMeta<DecorValue, Proto>,
+  ) {
     const ownPropMetadata = this.getOwnPropMetadata(Cls);
     let ownMetaKeys: string[] = [];
     if (ownPropMetadata) {
