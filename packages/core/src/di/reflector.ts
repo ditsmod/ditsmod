@@ -103,7 +103,7 @@ export class Reflector {
     }
 
     if (
-      Object.keys(propMetadata).length == 1 &&
+      this.reflect.ownKeys(propMetadata).length == 1 &&
       !propMetadata.constructor.decorators.length &&
       !propMetadata.constructor.params.length
     ) {
