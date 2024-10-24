@@ -61,7 +61,7 @@ export function makePropDecorator<T extends (...args: any[]) => any>(transform?:
       const Cls = target.constructor as Class;
       const meta = getMetadata(Cls, PROP_KEY, {});
       meta[propertyKey] = (meta.hasOwnProperty(propertyKey) && meta[propertyKey]) || [];
-      meta[propertyKey].unshift(new DecoratorAndValue(propDecorFactory, value));
+      meta[propertyKey].push(new DecoratorAndValue(propDecorFactory, value));
     };
   };
 }
