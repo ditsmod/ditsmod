@@ -5,7 +5,6 @@ import { ModuleExtract } from './types/module-extract.js';
 import type { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { defaultProvidersPerReq } from './default-providers-per-req.js';
 import type { ModuleManager } from './services/module-manager.js';
-import type { ControllerMetadata1 } from './types/controller-metadata.js';
 import type { GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod.js';
 import { ImportObj } from './types/metadata-per-mod.js';
 import type { ModuleType, Scope, Provider, GuardPerMod1 } from './types/mix.js';
@@ -17,7 +16,6 @@ import { getLastProviders } from './utils/get-last-providers.js';
 import { getModuleName } from './utils/get-module-name.js';
 import { getToken, getTokens } from './utils/get-tokens.js';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error.js';
-import { transformControllersMetadata } from './utils/transform-controllers-metadata.js';
 import { isAppendsWithParams, isModuleWithParams, isNormRootModule } from './utils/type-guards.js';
 
 type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
@@ -111,9 +109,9 @@ export class ModuleFactory {
     const hasPath =
       isModuleWithParams(meta.module) && (meta.module.path !== undefined || meta.module.absolutePath !== undefined);
 
-    let aControllerMetadata1: ControllerMetadata1[] = [];
+    let applyControllers = false;
     if (isNormRootModule(meta) || isAppends || hasPath) {
-      aControllerMetadata1 = transformControllersMetadata(this.meta.controllers);
+      applyControllers = true;
     }
 
     let perMod: Map<any, ImportObj>;
@@ -146,7 +144,7 @@ export class ModuleFactory {
       prefixPerMod,
       guardsPerMod: this.guardsPerMod,
       meta: this.meta,
-      aControllerMetadata1,
+      applyControllers,
       importedTokensMap: {
         perMod,
         perRou,

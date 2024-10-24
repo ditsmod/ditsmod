@@ -1,5 +1,5 @@
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
-import { ControllerMetadata1, ControllerMetadata2 } from './controller-metadata.js';
+import { ControllerMetadata2 } from './controller-metadata.js';
 import { GuardPerMod1, ModuleType, Provider } from './mix.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionProvider } from './extension-types.js';
@@ -34,9 +34,9 @@ export class MetadataPerMod1 {
    */
   meta: NormalizedModuleMetadata;
   /**
-   * The controller metadata collected from all controllers of current module.
+   * Specifies whether to apply controllers in the current module.
    */
-  aControllerMetadata1: ControllerMetadata1[];
+  applyControllers: boolean;
   /**
    * Map between a token and its ImportObj per scope.
    */

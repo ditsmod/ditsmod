@@ -11,16 +11,14 @@ import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from './services/module-manager.js';
 import { Req } from './services/request.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from './types/metadata-per-mod.js';
-import { DecoratorMetadata, GuardPerMod1, ModuleType } from './types/mix.js';
+import { GuardPerMod1, ModuleType } from './types/mix.js';
 import { ModuleWithParams } from './types/module-metadata.js';
 import { ExtensionProvider } from '#types/extension-types.js';
 import { Router } from './types/router.js';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { makePropDecorator } from '#di';
-import { transformControllersMetadata } from './utils/transform-controllers-metadata.js';
 import { HttpBackend } from './types/http-interceptor.js';
-import { getCallerDir } from '#utils/callsites.js';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -1383,63 +1381,6 @@ describe('ModuleFactory', () => {
           ]);
         });
       });
-    });
-  });
-
-  describe('getControllersMetadata()', () => {
-    it('controller with multiple @route on single method', () => {
-      const ctrlMetadata = { providersPerReq: [] } as ControllerRawMetadata;
-      @controller(ctrlMetadata)
-      class Controller1 {
-        @route('GET', 'url1')
-        method1() {}
-
-        @route('POST', 'url2')
-        @route('GET', 'url3')
-        method2() {}
-      }
-      mock.meta.controllers = [Controller1];
-      const metadata = transformControllersMetadata(mock.meta.controllers);
-      const routeMeta2: RouteMetadata = {
-        httpMethod: 'POST',
-        path: 'url2',
-        guards: [],
-      };
-      const routeMeta3: RouteMetadata = {
-        httpMethod: 'GET',
-        path: 'url3',
-        guards: [],
-      };
-      const methods: { [methodName: string]: DecoratorMetadata<RouteMetadata>[] } = {
-        method1: [
-          {
-            decorator: route,
-            value: {
-              httpMethod: 'GET',
-              path: 'url1',
-              guards: [],
-            },
-            otherDecorators: [],
-          },
-        ],
-        method2: [
-          {
-            decorator: route,
-            value: routeMeta2,
-            otherDecorators: [{ decorator: route, value: routeMeta3 }],
-          },
-          {
-            decorator: route,
-            value: routeMeta3,
-            otherDecorators: [{ decorator: route, value: routeMeta2 }],
-          },
-        ],
-      };
-      expect(metadata.length).toBe(1);
-      expect(metadata[0].controller === Controller1).toBe(true);
-      const declaredInDir = getCallerDir();
-      expect(metadata[0].decoratorsAndValues).toEqual([{ decorator: controller, value: ctrlMetadata, declaredInDir }]);
-      expect(metadata[0].properties).toMatchObject(methods);
     });
   });
 });
