@@ -7,11 +7,11 @@ import {
   isController,
   MetadataPerMod1,
   MetadataPerMod2,
-  NormalizedGuard,
   RouteMeta,
   Provider,
   AppOptions,
   ControllerRawMetadata1,
+  reflector,
 } from '@ditsmod/core';
 import { RoutesExtension } from '@ditsmod/routing';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
@@ -33,24 +33,25 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
     super(appOptions, metadataPerMod1);
   }
   protected override getControllersMetadata2(prefixPerApp: string, metadataPerMod1: MetadataPerMod1) {
-    const { aControllerMetadata1, prefixPerMod, meta } = metadataPerMod1;
+    const { applyControllers, prefixPerMod, meta } = metadataPerMod1;
 
     const oasOptions = meta.extensionsMeta.oasOptions as OasOptions;
     const prefixParams = oasOptions?.paratemers;
     const prefixTags = oasOptions?.tags;
 
     const aControllersMetadata2: ControllerMetadata2[] = [];
-    for (const { controller, decoratorsAndValues: container, properties: methods } of aControllerMetadata1) {
-      for (const methodName in methods) {
-        const methodWithDecorators = methods[methodName];
-        for (const decoratorMetadata of methodWithDecorators) {
+    if (applyControllers)
+    for (const controller of meta.controllers) {
+      const classMeta = reflector.getMetadata(controller);
+      for (const methodName in classMeta) {
+        for (const decoratorMetadata of classMeta[methodName].decorators) {
           if (!isOasRoute(decoratorMetadata)) {
             continue;
           }
           const oasRoute = decoratorMetadata.value;
           const providersPerRou: Provider[] = [];
           const providersPerReq: Provider[] = [];
-          const ctrlDecorator = container.find(isController);
+          const ctrlDecorator = classMeta.constructor.decorators.find(isController);
           const isSingleton = ctrlDecorator?.value.isSingleton;
           const guards = metadataPerMod1.guardsPerMod.slice();
           if (isOasRoute1(decoratorMetadata)) {

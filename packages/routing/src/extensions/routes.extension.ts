@@ -12,6 +12,7 @@ import {
   AppOptions,
   ControllerRawMetadata1,
   GuardPerMod1,
+  reflector,
 } from '@ditsmod/core';
 
 @injectable()
@@ -42,20 +43,21 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
   }
 
   protected getControllersMetadata2(prefixPerApp: string = '', metadataPerMod1: MetadataPerMod1) {
-    const { aControllerMetadata1, prefixPerMod } = metadataPerMod1;
+    const { applyControllers, prefixPerMod, meta } = metadataPerMod1;
 
     const controllersMetadata2: ControllerMetadata2[] = [];
-    for (const { controller, decoratorsAndValues: container, properties: methods } of aControllerMetadata1) {
-      for (const methodName in methods) {
-        const methodWithDecorators = methods[methodName];
-        for (const decoratorMetadata of methodWithDecorators) {
+    if (applyControllers)
+    for (const controller of meta.controllers) {
+      const classMeta = reflector.getMetadata(controller);
+      for (const methodName in classMeta) {
+        for (const decoratorMetadata of classMeta[methodName].decorators) {
           if (!isRoute(decoratorMetadata)) {
             continue;
           }
           const providersPerRou: Provider[] = [];
           const providersPerReq: Provider[] = [];
           const route = decoratorMetadata.value;
-          const ctrlDecorator = container.find(isController);
+          const ctrlDecorator = classMeta.constructor.decorators.find(isController);
           const isSingleton = ctrlDecorator?.value.isSingleton;
           const guards = [...metadataPerMod1.guardsPerMod, ...this.normalizeGuards(route.guards)];
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
