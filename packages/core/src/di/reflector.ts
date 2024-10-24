@@ -132,7 +132,8 @@ export class Reflector {
 
     if (Cls.prototype) {
       this.reflect.ownKeys(Cls.prototype).forEach((propName: any) => {
-        if (ownMetaKeys.includes(propName) || typeof Cls.prototype[propName as any] != 'function') {
+        const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, propName);
+        if (ownMetaKeys.includes(propName) || typeof descriptor?.value != 'function') {
           return;
         }
 
@@ -145,6 +146,14 @@ export class Reflector {
           propProto.decorators = this.getClassMetadata(Cls);
         }
       });
+    }
+
+    if (
+      Object.keys(propMetadata).length == 1 &&
+      !propMetadata.constructor.decorators.length &&
+      !propMetadata.constructor.params.length
+    ) {
+      return {} as ClassMeta<DecorValue, Proto>;
     }
 
     return propMetadata;
@@ -234,7 +243,8 @@ export class Reflector {
      * based on function.length.
      */
     if (propertyKey && !isConstructor) {
-      return newArray(Cls.prototype[propertyKey]?.length || 0, null);
+      const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, propertyKey);
+      return newArray(descriptor?.value?.length || 0, null);
     } else {
       return newArray(Cls.length, null);
     }
