@@ -46,10 +46,6 @@ export interface ClassPropMeta<DecorValue = any> {
 }
 
 export type ParamsItem<Value = any> = DecoratorAndValue<Value> | InjectionToken<any> | Class;
-
-/**
- * Metadata returned by the `reflector.getParamsMetadata()` method.
- */
 export type ParamsMeta<Value = any> = [Class, ...ParamsItem<Value>[]] | [];
 
 /**

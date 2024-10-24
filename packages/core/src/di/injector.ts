@@ -323,7 +323,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   }
 
   protected static getDependencies(Cls: Class, propertyKey?: string | symbol): Dependency[] {
-    const aParamsMeta = reflector.getParamsMetadata(Cls, propertyKey);
+    const aParamsMeta = reflector.getMetadata(Cls)?.[propertyKey as any].params || [];
     if (aParamsMeta.some((p) => p === null)) {
       throw noAnnotationError(Cls, aParamsMeta, propertyKey);
     }

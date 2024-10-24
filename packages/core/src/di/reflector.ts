@@ -1,3 +1,4 @@
+import { AnyObj } from '#types/mix.js';
 import { CLASS_KEY, PARAMS_KEY, PROP_KEY, getParamKey } from './decorator-factories.js';
 import { Class, DecoratorAndValue, ParamsMeta, ClassMeta, ClassPropMeta } from './types-and-models.js';
 import { isType, newArray } from './utils.js';
@@ -78,7 +79,7 @@ export class Reflector {
     return this.setPropertiesWithoutPropDecorators(Cls, propMetadata, ownMetaKeys);
   }
 
-  protected setPropertiesWithoutPropDecorators<DecorValue = any, Proto extends object = object>(
+  protected setPropertiesWithoutPropDecorators<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     propMetadata = {} as ClassMeta<DecorValue, Proto>,
     ownMetaKeys: string[],
