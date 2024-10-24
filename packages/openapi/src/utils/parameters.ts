@@ -136,9 +136,8 @@ export class Parameters {
    * Sets metadata from a model to parameters.
    */
   protected setMetadata(model: Class, paramsObjects: XParameterObject[]): XParameterObject[] {
-    const meta = reflector.getMetadata(model);
     return paramsObjects.map((paramObject) => {
-      const propertyDecorator = meta[paramObject.name];
+      const propertyDecorator = reflector.getMetadata(model)?.[paramObject.name];
       if (propertyDecorator) {
         const schemas = propertyDecorator.decorators
           .filter((item) => isDecoratorAndValue(item))

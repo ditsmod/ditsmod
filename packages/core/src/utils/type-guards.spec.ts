@@ -26,7 +26,7 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @featureModule({})
       class Module1 {}
-      const metadata = reflector.getMetadata(Module1).constructor.decorators[0];
+      const metadata = reflector.getMetadata(Module1)!.constructor.decorators[0];
       expect(isFeatureModule(metadata)).toBe(true);
     });
 
@@ -41,7 +41,7 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @rootModule({})
       class Module1 {}
-      const metadata = reflector.getMetadata(Module1).constructor.decorators[0];
+      const metadata = reflector.getMetadata(Module1)!.constructor.decorators[0];
       expect(isRootModule(metadata)).toBe(true);
     });
 
@@ -71,7 +71,7 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @controller()
       class Module1 {}
-      const metadata = reflector.getMetadata(Module1).constructor.decorators[0];
+      const metadata = reflector.getMetadata(Module1)!.constructor.decorators[0];
       expect(isController(metadata)).toBe(true);
     });
 
@@ -99,8 +99,7 @@ describe('type guards', () => {
     }
 
     it('should recognize the route', () => {
-      const propMetadata = reflector.getMetadata(ClassWithDecorators);
-      const firstDecor = propMetadata.some.decorators[0];
+      const firstDecor = reflector.getMetadata(ClassWithDecorators)!.some.decorators[0];
       expect(isRoute({ decorator: firstDecor.decorator, value: firstDecor.value })).toBe(true);
     });
   });

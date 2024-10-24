@@ -8,7 +8,7 @@ describe('@oasRoute', () => {
     @controller()
     class Controller1 {}
 
-    const actualMeta = reflector.getMetadata(Controller1);
+    const actualMeta = reflector.getMetadata(Controller1)!;
     expect(actualMeta.constructor.type).toBe(Function);
     expect(actualMeta.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
       new DecoratorAndValue(controller, {}, getCallerDir()),
@@ -22,7 +22,7 @@ describe('@oasRoute', () => {
       method() {}
     }
 
-    const actualMeta = reflector.getMetadata(Controller1);
+    const actualMeta = reflector.getMetadata(Controller1)!;
     expect(actualMeta.method.type).toBe(Function);
     const value = { httpMethod: 'GET', path: undefined };
     expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
@@ -40,7 +40,7 @@ describe('@oasRoute', () => {
       method() {}
     }
 
-    const actualMeta = reflector.getMetadata(Controller1);
+    const actualMeta = reflector.getMetadata(Controller1)!;
     expect(actualMeta.method.type).toBe(Function);
     const value = { httpMethod: 'GET', path: 'posts', guards: [Guard], operationObject: { operationId: 'someId' } };
     expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
@@ -53,7 +53,7 @@ describe('@oasRoute', () => {
       method() {}
     }
 
-    const actualMeta = reflector.getMetadata(Controller1);
+    const actualMeta = reflector.getMetadata(Controller1)!;
 
     expect(actualMeta.method.type).toBe(Function);
     const value = { httpMethod: 'GET', path: 'path', operationObject: { operationId: 'someId' } };

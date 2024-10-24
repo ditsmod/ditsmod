@@ -433,7 +433,7 @@ export class ModuleManager {
   }
 
   protected checkController(modName: string, Controller: Class) {
-    const decoratorsAndValues = reflector.getMetadata(Controller).constructor?.decorators;
+    const decoratorsAndValues = reflector.getMetadata(Controller)?.constructor.decorators;
     if (!decoratorsAndValues?.find(isController)) {
       throw new Error(
         `Collecting controller's metadata in ${modName} failed: class ` +

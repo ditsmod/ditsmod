@@ -7,7 +7,7 @@ describe('Module decorator', () => {
     @featureModule({})
     class Module1 {}
 
-    const metadata = reflector.getMetadata<ModuleMetadataValue>(Module1).constructor.decorators;
+    const metadata = reflector.getMetadata<ModuleMetadataValue>(Module1)!.constructor.decorators;
     expect(metadata.length).toBe(1);
     expect(metadata[0].decorator).toBe(featureModule);
     expect(metadata[0].value.data).toEqual({});
@@ -17,7 +17,7 @@ describe('Module decorator', () => {
     @featureModule({ controllers: [] })
     class Module1 {}
 
-    const metadata = reflector.getMetadata<ModuleMetadataValue>(Module1).constructor.decorators;
+    const metadata = reflector.getMetadata<ModuleMetadataValue>(Module1)!.constructor.decorators;
     expect(metadata.length).toBe(1);
     expect(metadata[0].value.data).toEqual({ controllers: [] });
   });
@@ -27,7 +27,7 @@ describe('Module decorator', () => {
     @featureModule({ controllers: [] })
     class Module1 {}
 
-    const metadata = reflector.getMetadata<ModuleMetadataValue>(Module1).constructor.decorators;
+    const metadata = reflector.getMetadata<ModuleMetadataValue>(Module1)!.constructor.decorators;
     expect(metadata.length).toBe(2);
     expect(metadata[0].value.data).toEqual({ controllers: [] });
     expect(metadata[1].value.data).toEqual({ providersPerApp: [] });
@@ -45,7 +45,7 @@ describe('Module decorator', () => {
     })
     class Module1 {}
 
-    const metadata = reflector.getMetadata<ModuleMetadataValue>(Module1).constructor.decorators;
+    const metadata = reflector.getMetadata<ModuleMetadataValue>(Module1)!.constructor.decorators;
     expect(metadata.length).toBe(1);
     expect(metadata[0].value.data).toEqual({
       imports: [],

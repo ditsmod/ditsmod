@@ -39,18 +39,21 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  getMetadata<DecorValue = any, Proto extends object = object>(Cls: Class<Proto>): ClassMeta<DecorValue, Proto> {
+  getMetadata<DecorValue = any, Proto extends object = object>(
+    Cls: Class<Proto>,
+  ): ClassMeta<DecorValue, Proto> | undefined {
     const propMetadata = {} as ClassMeta<DecorValue, Proto>;
     if (!isType(Cls)) {
-      return propMetadata;
+      return;
     }
     const parentClass = this.getParentClass(Cls);
     if (parentClass !== Object) {
       const parentPropMetadata = this.getMetadata(parentClass);
       // Merging current meta with parent meta
-      Object.keys(parentPropMetadata).forEach((propName) => {
-        (propMetadata as any)[propName] = parentPropMetadata[propName];
-      });
+      if (parentPropMetadata)
+        Object.keys(parentPropMetadata).forEach((propName) => {
+          (propMetadata as any)[propName] = parentPropMetadata[propName];
+        });
     }
     const ownPropMetadata = this.getOwnPropMetadata(Cls);
     let ownMetaKeys: string[] = [];
@@ -97,7 +100,7 @@ export class Reflector {
       !propMetadata.constructor.decorators.length &&
       !propMetadata.constructor.params.length
     ) {
-      return {} as ClassMeta<DecorValue, Proto>;
+      return;
     }
 
     return propMetadata;

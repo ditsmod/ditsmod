@@ -10,7 +10,7 @@ describe('Route decorator', () => {
     @controller()
     class Controller1 {}
 
-    const actualMeta = reflector.getMetadata(Controller1);
+    const actualMeta = reflector.getMetadata(Controller1)!;
     expect(actualMeta.constructor.type).toBe(Function);
     expect(actualMeta.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
       new DecoratorAndValue(controller, {}, getCallerDir()),
@@ -24,7 +24,7 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = reflector.getMetadata(Controller1);
+    const metadata = reflector.getMetadata(Controller1)!;
     expect(metadata.method.type).toBe(Function);
     const decorator = new DecoratorAndValue(route, {
       httpMethod: 'GET',
@@ -42,7 +42,7 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = reflector.getMetadata(Controller1);
+    const metadata = reflector.getMetadata(Controller1)!;
     expect(metadata.method.type).toBe(Function);
     const decoratorGet = new DecoratorAndValue(route, {
       httpMethod: 'GET',
@@ -69,7 +69,7 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = reflector.getMetadata(Controller1);
+    const metadata = reflector.getMetadata(Controller1)!;
     expect(metadata.method.type).toBe(Function);
     const decorator = new DecoratorAndValue(route, {
       httpMethod: 'GET',
@@ -91,7 +91,7 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = reflector.getMetadata(Controller1);
+    const metadata = reflector.getMetadata(Controller1)!;
     expect(metadata.method.type).toBe(Function);
     const decorator = new DecoratorAndValue(route, {
       httpMethod: 'GET',
@@ -116,7 +116,7 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = reflector.getMetadata(Controller1);
+    const metadata = reflector.getMetadata(Controller1)!;
     expect(metadata.method.type).toBe(Function);
     expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([
       new DecoratorAndValue(route, {

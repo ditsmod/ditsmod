@@ -21,7 +21,7 @@ export function getModuleMetadata(
 
   if (isModuleWithParams(modOrObj)) {
     const modWitParams = modOrObj;
-    const container = reflector.getMetadata<ModuleMetadataValue>(modWitParams.module).constructor?.decorators?.find(typeGuard);
+    const container = reflector.getMetadata<ModuleMetadataValue>(modWitParams.module)?.constructor.decorators.find(typeGuard);
     const modMetadata = container?.value.data;
     if (!modMetadata) {
       return modMetadata;
@@ -45,7 +45,7 @@ export function getModuleMetadata(
     const declaredInDir = container.declaredInDir || '';
     return { ...metadata, decoratorFactory: container.decorator, declaredInDir };
   } else {
-    const container = reflector.getMetadata<ModuleMetadataValue>(modOrObj).constructor?.decorators?.find(typeGuard);
+    const container = reflector.getMetadata<ModuleMetadataValue>(modOrObj)?.constructor.decorators.find(typeGuard);
     const modMetadata = container?.value.data;
     if (!modMetadata) {
       return modMetadata;
