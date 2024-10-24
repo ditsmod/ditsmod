@@ -1,5 +1,5 @@
 import { AnyObj } from '#types/mix.js';
-import { CLASS_KEY, PARAMS_KEY, PROP_KEY, getParamKey } from './decorator-factories.js';
+import { CACHE_KEY, CLASS_KEY, PARAMS_KEY, PROP_KEY, getParamKey } from './decorator-factories.js';
 import { Class, DecoratorAndValue, ParamsMeta, ClassMeta, ClassPropMeta } from './types-and-models.js';
 import { isType, newArray } from './utils.js';
 
@@ -40,19 +40,31 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  getMetadata<DecorValue = any, Proto extends object = object>(Cls: Class<Proto>) {
-    const propMetadata = {} as ClassMeta<DecorValue, Proto>;
+  getMetadata<DecorValue = any, Proto extends object = object>(
+    Cls: Class<Proto>,
+  ): ClassMeta<DecorValue, Proto> | undefined {
+    const classMeta = {} as ClassMeta<DecorValue, Proto>;
     if (!isType(Cls)) {
       return;
     }
+
+    const cache = this.getOwnCacheMetadata<DecorValue, Proto>(Cls);
+    if (cache !== null) {
+      return cache;
+    }
+
     const parentClass = this.getParentClass(Cls);
     if (parentClass !== Object) {
-      const parentPropMetadata = this.getMetadata(parentClass);
+      const parentPropMeta = this.getMetadata(parentClass);
       // Merging current meta with parent meta
-      if (parentPropMetadata)
-        Object.keys(parentPropMetadata).forEach((propName) => {
-          (propMetadata as any)[propName] = parentPropMetadata[propName];
+      if (parentPropMeta) {
+        Object.keys(parentPropMeta).forEach((propName) => {
+          const classPropMeta = { ...parentPropMeta[propName] };
+          classPropMeta.decorators = classPropMeta.decorators.slice();
+          classPropMeta.params = classPropMeta.params.slice();
+          (classMeta as any)[propName] = classPropMeta;
         });
+      }
     }
     const ownPropMetadata = this.getOwnPropMetadata(Cls);
     let ownMetaKeys: string[] = [];
@@ -62,26 +74,26 @@ export class Reflector {
     ownMetaKeys.forEach((propName) => {
       const type = this.reflect.getOwnMetadata('design:type', Cls.prototype, propName);
       const decorators = ownPropMetadata![propName];
-      if (propMetadata.hasOwnProperty(propName)) {
-        const parentPropProto = (propMetadata as any)[propName] as ClassPropMeta;
-        parentPropProto.type = type; // Override parent type.
-        parentPropProto.decorators = [...decorators, ...parentPropProto.decorators];
+      if (classMeta.hasOwnProperty(propName)) {
+        const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
+        classPropMeta.type = type; // Override parent type.
+        classPropMeta.decorators.unshift(...decorators);
       } else {
-        (propMetadata as any)[propName] = { type, decorators, params: [] } as ClassPropMeta;
+        (classMeta as any)[propName] = { type, decorators, params: [] } as ClassPropMeta;
       }
 
-      if ((propMetadata as any)[propName].type === Function) {
-        const propProto = (propMetadata as any)[propName] as ClassPropMeta;
-        propProto.params = this.getParamsMetadata(Cls, propName as any);
+      if ((classMeta as any)[propName].type === Function) {
+        const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
+        classPropMeta.params = this.getParamsMetadata(Cls, propName as any);
       }
     });
 
-    return this.setPropertiesWithoutPropDecorators(Cls, propMetadata, ownMetaKeys);
+    return this.setPropertiesWithoutPropDecorators(Cls, classMeta, ownMetaKeys);
   }
 
   protected setPropertiesWithoutPropDecorators<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
-    propMetadata = {} as ClassMeta<DecorValue, Proto>,
+    classMeta: ClassMeta<DecorValue, Proto>,
     ownMetaKeys: string[],
   ): ClassMeta<DecorValue, Proto> | undefined {
     if (Cls.prototype) {
@@ -91,26 +103,54 @@ export class Reflector {
           return;
         }
 
-        if (!propMetadata.hasOwnProperty(propName)) {
-          (propMetadata as any)[propName] = { type: Function, decorators: [], params: [] } as ClassPropMeta;
+        if (!classMeta.hasOwnProperty(propName)) {
+          (classMeta as any)[propName] = { type: Function, decorators: [], params: [] } as ClassPropMeta;
         }
-        const propProto = (propMetadata as any)[propName] as ClassPropMeta;
-        propProto.params = this.getParamsMetadata(Cls, propName as any);
+        const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
+        classPropMeta.params = this.getParamsMetadata(Cls, propName as any);
         if (propName == 'constructor') {
-          propProto.decorators = this.getClassMetadata(Cls);
+          classPropMeta.decorators = this.getClassMetadata(Cls);
         }
       });
     }
 
     if (
-      this.reflect.ownKeys(propMetadata).length == 1 &&
-      !propMetadata.constructor.decorators.length &&
-      !propMetadata.constructor.params.length
+      this.reflect.ownKeys(classMeta).length == 1 &&
+      !classMeta.constructor.decorators.length &&
+      !classMeta.constructor.params.length
     ) {
+      this.setMetaCache(Cls, CACHE_KEY, undefined);
       return;
     }
 
-    return propMetadata;
+    const cache = this.getOwnCacheMetadata<DecorValue, Proto>(Cls);
+    if (cache) {
+      ((globalThis as any).classes as Set<string>).add(Cls.name);
+    }
+
+    this.setMetaCache(Cls, CACHE_KEY, classMeta);
+    return classMeta;
+  }
+
+  protected setMetaCache<DecorValue = any, Proto extends AnyObj = object>(
+    Cls: Class<Proto>,
+    key: string | symbol,
+    classMeta?: ClassMeta<DecorValue, Proto>,
+  ) {
+    // Use of Object.defineProperty is important since it creates non-enumerable property which
+    // prevents the property is copied during subclassing.
+    if (Cls.hasOwnProperty(key)) {
+      (Cls as any)[key] = classMeta;
+    } else {
+      Object.defineProperty(Cls, key, { value: classMeta });
+    }
+  }
+
+  protected getOwnCacheMetadata<DecorValue = any, Proto extends object = object>(Cls: any) {
+    if (Cls.hasOwnProperty(CACHE_KEY)) {
+      return Cls[CACHE_KEY] as ClassMeta<DecorValue, Proto> | undefined;
+    }
+    return null;
   }
 
   /**
@@ -164,7 +204,7 @@ export class Reflector {
     }
   }
 
-  private getParentClass(ctor: Class): Class {
+  protected getParentClass(ctor: Class): Class {
     const parentProto = ctor.prototype ? Object.getPrototypeOf(ctor.prototype) : null;
     const parentClass = parentProto ? parentProto.constructor : null;
     // Note: We always use `Object` as the null value
@@ -172,7 +212,7 @@ export class Reflector {
     return parentClass || Object;
   }
 
-  private mergeTypesAndClassMeta(paramTypes: any[], paramMetadata: any[]): ParamsMeta[] {
+  protected mergeTypesAndClassMeta(paramTypes: any[], paramMetadata: any[]): ParamsMeta[] {
     let result: ParamsMeta[];
 
     if (paramTypes === undefined) {
@@ -199,7 +239,7 @@ export class Reflector {
     return result;
   }
 
-  private getOwnParams(Cls: Class, propertyKey?: string | symbol): ParamsMeta[] | null[] {
+  protected getOwnParams(Cls: Class, propertyKey?: string | symbol): ParamsMeta[] | null[] {
     const isConstructor = !propertyKey || propertyKey == 'constructor';
     const key = isConstructor ? getParamKey(PARAMS_KEY) : getParamKey(PARAMS_KEY, propertyKey);
     const paramMetadata = Cls.hasOwnProperty(key) && (Cls as any)[key];
@@ -222,7 +262,7 @@ export class Reflector {
     }
   }
 
-  private getOwnClassAnnotations(typeOrFunc: Class): any[] | null {
+  protected getOwnClassAnnotations(typeOrFunc: Class): any[] | null {
     // API for metadata created by invoking the decorators.
     if (typeOrFunc.hasOwnProperty(CLASS_KEY)) {
       return (typeOrFunc as any)[CLASS_KEY];
@@ -230,10 +270,10 @@ export class Reflector {
     return null;
   }
 
-  private getOwnPropMetadata(typeOrFunc: any): { [key: string]: any[] } | null {
+  protected getOwnPropMetadata(typeOrFunc: any): { [key: string]: any[] } | null {
     // API for metadata created by invoking the decorators.
     if (typeOrFunc.hasOwnProperty(PROP_KEY)) {
-      return (typeOrFunc as any)[PROP_KEY];
+      return typeOrFunc[PROP_KEY];
     }
     return null;
   }

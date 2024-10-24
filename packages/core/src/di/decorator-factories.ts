@@ -17,6 +17,11 @@ export const PARAMS_KEY = Symbol();
  * This metadata is taken from the property-level decorator of a class.
  */
 export const PROP_KEY = Symbol();
+/**
+ * The key used to store cached metadata in a static property of a class.
+ * This metadata is taken from all decorators of a class.
+ */
+export const CACHE_KEY = Symbol();
 
 export function makeClassDecorator<T extends (...args: any[]) => any>(transform?: T) {
   return function classDecorFactory(...args: Parameters<T>): any {
