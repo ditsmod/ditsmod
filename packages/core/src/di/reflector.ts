@@ -3,7 +3,6 @@ import {
   Class,
   DecoratorAndValue,
   ParamsMeta,
-  PropMeta,
   PropMetadataTuple,
   ClassMeta,
   ClassPropMeta,
@@ -55,39 +54,6 @@ export class Reflector {
     const ownClassAnnotations = this.getOwnClassAnnotations(Cls) || [];
     const parentAnnotations = parentClass !== Object ? this.getClassMetadata<T>(parentClass) : [];
     return ownClassAnnotations.concat(parentAnnotations);
-  }
-
-  /**
-   * Returns the metadata for the properties of the passed class.
-   *
-   * @param Cls A class that has decorators.
-   */
-  protected getPropMetadata<Proto extends object>(Cls: Class<Proto>): PropMeta<Proto> {
-    if (!isType(Cls)) {
-      return {} as PropMeta<Proto>;
-    }
-    const parentClass = this.getParentClass(Cls);
-    const propMetadata = {} as PropMeta<Proto>;
-    if (parentClass !== Object) {
-      const parentPropMetadata = this.getPropMetadata(parentClass);
-      // Merging current meta with parent meta
-      Object.keys(parentPropMetadata).forEach((propName) => {
-        (propMetadata as any)[propName] = parentPropMetadata[propName];
-      });
-    }
-    const ownPropMetadata = this.getOwnPropMetadata(Cls);
-    if (ownPropMetadata) {
-      Object.keys(ownPropMetadata).forEach((propName) => {
-        const type = this.reflect.getOwnMetadata('design:type', Cls.prototype, propName);
-        const decorators: PropMetadataTuple = [type];
-        if (propMetadata.hasOwnProperty(propName)) {
-          decorators.push(...(propMetadata as any)[propName].slice(1));
-        }
-        decorators.push(...ownPropMetadata[propName]);
-        (propMetadata as any)[propName] = decorators;
-      });
-    }
-    return propMetadata;
   }
 
   /**
