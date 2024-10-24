@@ -341,16 +341,12 @@ export class ModuleFactory {
         const collision = importedTokens.includes(token1) && ![...declaredTokens, ...resolvedTokens].includes(token1);
         if (collision) {
           const importObj = this[`importedProvidersPer${scope}`].get(token1)!;
-          const hostModuleName = getModuleName(importObj.module);
-          const hostModuleMeta = getModuleMetadata(importObj.module)!;
-          const collisionWithFile = reflector.getMetadata(token1)?.constructor.decorators.at(-1);
-          if (
-            hostModuleMeta?.declaredInDir !== '.' &&
-            collisionWithFile?.declaredInDir !== '.' &&
-            collisionWithFile?.declaredInDir?.startsWith(hostModuleMeta?.declaredInDir)
-          ) {
+          const hostModulePath = getModuleMetadata(importObj.module)?.declaredInDir || '';
+          const collisionWithPath = reflector.getMetadata(token1)?.constructor.decorators.at(-1)?.declaredInDir || '';
+          if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.
           } else {
+            const hostModuleName = getModuleName(importObj.module);
             throwProvidersCollisionError(this.moduleName, [token1], [hostModuleName], scope);
           }
         }
