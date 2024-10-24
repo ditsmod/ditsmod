@@ -53,11 +53,11 @@ export class Reflector {
       return cache;
     }
 
-    this.mergeClassMetaWithParent(Cls, classMeta);
+    this.concatWithParentClassMeta(Cls, classMeta);
     return this.concatWithChildClassMeta(Cls, classMeta);
   }
 
-  protected mergeClassMetaWithParent<DecorValue = any, Proto extends AnyObj = object>(
+  protected concatWithParentClassMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
   ) {
