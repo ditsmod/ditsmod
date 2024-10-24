@@ -17,15 +17,8 @@ import {
   skipSelf,
 } from './index.js';
 import { KeyRegistry } from './key-registry.js';
-import { Class, CTX_DATA, getNewRegistry, PropMeta } from './types-and-models.js';
+import { CTX_DATA, getNewRegistry } from './types-and-models.js';
 import { stringify } from './utils.js';
-import { Reflector } from './reflector.js';
-
-class MockReflector extends Reflector {
-  override getPropMetadata<Proto extends object>(Cls: Class<Proto>): PropMeta<Proto> {
-    return super.getPropMetadata(Cls);
-  }
-}
 
 class Engine {}
 
@@ -327,11 +320,11 @@ describe('injector', () => {
     const classMetadata = reflector.getMetadata<[{ providers: [] }]>(Controller).constructor.decorators;
     expect(classMetadata[0].value).toEqual([{ providers: [] }]);
 
-    const propMetadata = (reflector as MockReflector).getPropMetadata(Controller);
-    const [, container1] = propMetadata.method1;
+    const propMetadata = reflector.getMetadata(Controller);
+    const [container1] = propMetadata.method1.decorators;
     expect(container1.decorator).toBe(route);
     expect(container1.value).toEqual({ method: 'GET', path: 'some-path' });
-    const [, container2] = propMetadata.method2;
+    const [container2] = propMetadata.method2.decorators;
     expect(container2.decorator).toBe(route);
     expect(container2.value).toEqual({ method: 'POST', path: 'other-path' });
   });
@@ -424,11 +417,11 @@ describe('injector', () => {
     const classMetadata = reflector.getMetadata<string>(Controller).constructor.decorators;
     expect(classMetadata[0].value).toEqual([{ providers: [] }]);
 
-    const propMetadata = (reflector as MockReflector).getPropMetadata(Controller);
-    const [, container1] = propMetadata.method1;
+    const propMetadata = reflector.getMetadata(Controller);
+    const [container1] = propMetadata.method1.decorators;
     expect(container1.decorator).toBe(route);
     expect(container1.value).toEqual({ method: 'GET', path: 'some-path' });
-    const [, container2] = propMetadata.method2;
+    const [container2] = propMetadata.method2.decorators;
     expect(container2.decorator).toBe(route);
     expect(container2.value).toEqual({ method: 'POST', path: 'other-path' });
   });

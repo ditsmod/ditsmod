@@ -1,24 +1,20 @@
-import { Class, PropMeta, reflector as originReflector } from '#di';
+import { DecoratorAndValue, reflector } from '#di';
 import { RequestContext } from '#types/http-interceptor.js';
 import { CanActivate } from '#types/mix.js';
-import { Reflector } from '#di/reflector.js';
+import { getCallerDir } from '../utils/callsites.js';
 import { controller } from './controller.js';
 import { route } from './route.js';
 
 describe('Route decorator', () => {
-  class MockReflector extends Reflector {
-    override getPropMetadata<Proto extends object>(Cls: Class<Proto>): PropMeta<Proto> {
-      return super.getPropMetadata(Cls);
-    }
-  }
-
-  const reflector = originReflector as MockReflector;
-  
   it('controller without methods', () => {
     @controller()
     class Controller1 {}
 
-    expect(reflector.getPropMetadata(Controller1)).toEqual({});
+    const actualMeta = reflector.getMetadata(Controller1);
+    expect(actualMeta.constructor.type).toBe(Function);
+    expect(actualMeta.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
+      new DecoratorAndValue(controller, {}, getCallerDir()),
+    ]);
   });
 
   it('one method, one decorator', () => {
@@ -28,20 +24,14 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = reflector.getPropMetadata(Controller1);
-    expect(metadata).toEqual<PropMeta<Controller1>>({
-      method: [
-        Function,
-        {
-          decorator: route,
-          value: {
-            httpMethod: 'GET',
-            path: '',
-            guards: [],
-          },
-        },
-      ],
+    const metadata = reflector.getMetadata(Controller1);
+    expect(metadata.method.type).toBe(Function);
+    const decorator = new DecoratorAndValue(route, {
+      httpMethod: 'GET',
+      path: '',
+      guards: [],
     });
+    expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([decorator]);
   });
 
   it('one method, two decorators', () => {
@@ -52,28 +42,19 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = reflector.getPropMetadata(Controller1);
-    expect(metadata).toEqual<PropMeta<Controller1>>({
-      method: [
-        Function,
-        {
-          decorator: route,
-          value: {
-            httpMethod: 'GET',
-            path: '',
-            guards: [],
-          },
-        },
-        {
-          decorator: route,
-          value: {
-            httpMethod: 'POST',
-            path: '',
-            guards: [],
-          },
-        },
-      ],
+    const metadata = reflector.getMetadata(Controller1);
+    expect(metadata.method.type).toBe(Function);
+    const decoratorGet = new DecoratorAndValue(route, {
+      httpMethod: 'GET',
+      path: '',
+      guards: [],
     });
+    const decoratorPost = new DecoratorAndValue(route, {
+      httpMethod: 'POST',
+      path: '',
+      guards: [],
+    });
+    expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([decoratorPost, decoratorGet]);
   });
 
   it('one guard without params', () => {
@@ -88,20 +69,14 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = reflector.getPropMetadata(Controller1);
-    expect(metadata).toEqual<PropMeta<Controller1>>({
-      method: [
-        Function,
-        {
-          decorator: route,
-          value: {
-            httpMethod: 'GET',
-            path: 'posts/:postId',
-            guards: [Guard],
-          },
-        },
-      ],
+    const metadata = reflector.getMetadata(Controller1);
+    expect(metadata.method.type).toBe(Function);
+    const decorator = new DecoratorAndValue(route, {
+      httpMethod: 'GET',
+      path: 'posts/:postId',
+      guards: [Guard],
     });
+    expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([decorator]);
   });
 
   it('two guards without params', () => {
@@ -116,20 +91,14 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = reflector.getPropMetadata(Controller1);
-    expect(metadata).toEqual<PropMeta<Controller1>>({
-      method: [
-        Function,
-        {
-          decorator: route,
-          value: {
-            httpMethod: 'GET',
-            path: 'posts/:postId',
-            guards: [Guard, Guard],
-          },
-        },
-      ],
+    const metadata = reflector.getMetadata(Controller1);
+    expect(metadata.method.type).toBe(Function);
+    const decorator = new DecoratorAndValue(route, {
+      httpMethod: 'GET',
+      path: 'posts/:postId',
+      guards: [Guard, Guard],
     });
+    expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([decorator]);
   });
 
   it('two guard with params', () => {
@@ -147,22 +116,17 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = reflector.getPropMetadata(Controller1);
-    expect(metadata).toEqual<PropMeta<Controller1>>({
-      method: [
-        Function,
-        {
-          decorator: route,
-          value: {
-            httpMethod: 'GET',
-            path: 'posts/:postId',
-            guards: [
-              [Guard, 'one', 123],
-              [Guard, []],
-            ],
-          },
-        },
-      ],
-    });
+    const metadata = reflector.getMetadata(Controller1);
+    expect(metadata.method.type).toBe(Function);
+    expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([
+      new DecoratorAndValue(route, {
+        httpMethod: 'GET',
+        path: 'posts/:postId',
+        guards: [
+          [Guard, 'one', 123],
+          [Guard, []],
+        ],
+      }),
+    ]);
   });
 });

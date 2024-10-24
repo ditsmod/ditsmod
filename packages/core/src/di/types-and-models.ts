@@ -31,13 +31,6 @@ export interface Class<T = any> extends Function {
 export type PropMetadataTuple<Value = any> = [Class, ...DecoratorAndValue<Value>[]];
 
 /**
- * Metadata returned by the `reflector.getPropMetadata()` method.
- */
-export type PropMeta<Proto extends object = object> = {
-  [P in keyof Proto]: PropMetadataTuple;
-};
-
-/**
  * Metadata returned by the `reflector.getMetadata()` method.
  */
 export type ClassMeta<DecorValue = any, Proto extends object = object> = {

@@ -1,6 +1,6 @@
 import { CanActivate, Provider } from '#types/mix.js';
 import { Extension } from '#types/extension-types.js';
-import { Class, injectable, InjectionToken, makePropDecorator, reflector } from '#di';
+import { injectable, InjectionToken, makePropDecorator, reflector } from '#di';
 import { featureModule } from '#decorators/module.js';
 import {
   isController,
@@ -20,16 +20,8 @@ import { controller } from '#decorators/controller.js';
 import { route } from '#decorators/route.js';
 import { RequestContext } from '#types/http-interceptor.js';
 import { getModuleMetadata } from './get-module-metadata.js';
-import { Reflector } from '#di/reflector.js';
 
 describe('type guards', () => {
-
-  class MockReflector extends Reflector {
-    override getPropMetadata<Proto extends object>(Cls: Class<Proto>) {
-      return super.getPropMetadata(Cls);
-    }
-  }
-
   describe('isModule()', () => {
     it('class with decorator', () => {
       @featureModule({})
@@ -40,7 +32,7 @@ describe('type guards', () => {
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = reflector.getMetadata(Module1).constructor.decorators[0];
+      const metadata = reflector.getMetadata(Module1) as any;
       expect(isFeatureModule(metadata)).toBe(false);
     });
   });
@@ -55,7 +47,7 @@ describe('type guards', () => {
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = reflector.getMetadata(Module1).constructor.decorators[0];
+      const metadata = reflector.getMetadata(Module1) as any;
       expect(isRootModule(metadata)).toBe(false);
     });
   });
@@ -85,7 +77,7 @@ describe('type guards', () => {
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = reflector.getMetadata(Module1).constructor.decorators[0];
+      const metadata = reflector.getMetadata(Module1);
       expect(isController(metadata)).toBe(false);
     });
   });
@@ -107,8 +99,9 @@ describe('type guards', () => {
     }
 
     it('should recognize the route', () => {
-      const propMetadata = (reflector as MockReflector).getPropMetadata(ClassWithDecorators);
-      expect(isRoute({ decorator: propMetadata.some[1].decorator, value: propMetadata.some[1].value })).toBe(true);
+      const propMetadata = reflector.getMetadata(ClassWithDecorators);
+      const firstDecor = propMetadata.some.decorators[0];
+      expect(isRoute({ decorator: firstDecor.decorator, value: firstDecor.value })).toBe(true);
     });
   });
 
