@@ -1,12 +1,5 @@
 import { CLASS_KEY, PARAMS_KEY, PROP_KEY, getParamKey } from './decorator-factories.js';
-import {
-  Class,
-  DecoratorAndValue,
-  ParamsMeta,
-  PropMetadataTuple,
-  ClassMeta,
-  ClassPropMeta,
-} from './types-and-models.js';
+import { Class, DecoratorAndValue, ParamsMeta, ClassMeta, ClassPropMeta } from './types-and-models.js';
 import { isType, newArray } from './utils.js';
 
 /**

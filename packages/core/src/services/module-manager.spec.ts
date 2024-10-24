@@ -3,7 +3,7 @@ import { jest } from '@jest/globals';
 import { controller } from '#decorators/controller.js';
 import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { InjectionToken, forwardRef, injectable } from '#di';
+import { Class, InjectionToken, forwardRef, injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, CanActivate, ModuleType, Provider } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams } from '#types/module-metadata.js';
@@ -41,6 +41,10 @@ describe('ModuleManager', () => {
 
     override quickCheckMetadata(meta: NormalizedModuleMetadata) {
       return super.quickCheckMetadata(meta);
+    }
+
+    override checkController(modName: string, Controller: Class) {
+      return super.checkController(modName, Controller);
     }
   }
 
@@ -110,6 +114,7 @@ describe('ModuleManager', () => {
     });
 
     it('should not throw an error, when declare some controller', () => {
+      @controller()
       class Provider1 {}
       class Provider2 {}
 
@@ -120,6 +125,11 @@ describe('ModuleManager', () => {
       class Module1 {}
 
       expect(() => mock.scanModule(Module1)).not.toThrow();
+    });
+
+    it('without @controller decorator', () => {
+      const msg = 'Collecting controller\'s metadata in TestModuleName failed: class "Controller1"';
+      expect(() => mock.checkController('TestModuleName', class Controller1 {})).toThrow(msg);
     });
   });
 

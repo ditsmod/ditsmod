@@ -1,6 +1,6 @@
 import { format } from 'util';
 
-import { Class, injectable, resolveForwardRef } from '#di';
+import { Class, injectable, reflector, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, GuardItem, ModuleType, NormalizedGuard, Scope, Provider } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
@@ -20,6 +20,7 @@ import {
   MultiProvider,
   isAppendsWithParams,
   isClassProvider,
+  isController,
   isModuleWithParams,
   isMultiProvider,
   isNormRootModule,
@@ -426,8 +427,19 @@ export class ModuleManager {
     this.pickMeta(meta, rawMeta);
     meta.extensionsMeta = { ...(meta.extensionsMeta || {}) };
     this.quickCheckMetadata(meta);
+    meta.controllers.forEach((Controller) => this.checkController(modName, Controller));
 
     return meta;
+  }
+
+  protected checkController(modName: string, Controller: Class) {
+    const decoratorsAndValues = reflector.getMetadata(Controller).constructor?.decorators;
+    if (!decoratorsAndValues?.find(isController)) {
+      throw new Error(
+        `Collecting controller's metadata in ${modName} failed: class ` +
+          `"${Controller.name}" does not have the "@controller()" decorator.`,
+      );
+    }
   }
 
   protected checkExtensionOptions(modName: string, extensionOptions: ExtensionOptions, i: number) {

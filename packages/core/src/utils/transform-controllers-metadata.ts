@@ -1,26 +1,19 @@
 import { ControllerMetadata1 } from '#types/controller-metadata.js';
 import { DecoratorMetadata } from '#types/mix.js';
 import { reflector, Class } from '#di';
-import { isController } from './type-guards.js';
 
-export function transformControllersMetadata(controllers: Class[], moduleName: string) {
+export function transformControllersMetadata(controllers: Class[]) {
   const aControllerMetadata: ControllerMetadata1[] = [];
   for (const controller of controllers) {
-    const controllerMetadata1 = getControllerMetadata1(controller, moduleName);
+    const controllerMetadata1 = getControllerMetadata1(controller);
     aControllerMetadata.push(controllerMetadata1);
   }
 
   return aControllerMetadata;
 }
 
-export function getControllerMetadata1(Controller: Class, moduleName: string) {
+export function getControllerMetadata1(Controller: Class) {
   const decoratorsAndValues = reflector.getMetadata(Controller).constructor?.decorators;
-  if (!decoratorsAndValues?.find(isController)) {
-    throw new Error(
-      `Collecting controller's metadata in ${moduleName} failed: class ` +
-        `"${Controller.name}" does not have the "@controller()" decorator.`
-    );
-  }
   const controllerMetadata: ControllerMetadata1 = { controller: Controller, decoratorsAndValues, properties: {} };
   const propertyMetadata = reflector.getMetadata(Controller);
   for (const propertyKey in propertyMetadata) {

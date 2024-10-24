@@ -1387,12 +1387,6 @@ describe('ModuleFactory', () => {
   });
 
   describe('getControllersMetadata()', () => {
-    it('without @Controller decorator', () => {
-      mock.meta.controllers = [class Controller1 {}];
-      const msg = 'Collecting controller\'s metadata in MockModule failed: class "Controller1"';
-      expect(() => transformControllersMetadata(mock.meta.controllers, 'MockModule')).toThrow(msg);
-    });
-
     it('controller with multiple @route on single method', () => {
       const ctrlMetadata = { providersPerReq: [] } as ControllerRawMetadata;
       @controller(ctrlMetadata)
@@ -1405,7 +1399,7 @@ describe('ModuleFactory', () => {
         method2() {}
       }
       mock.meta.controllers = [Controller1];
-      const metadata = transformControllersMetadata(mock.meta.controllers, 'MockModule');
+      const metadata = transformControllersMetadata(mock.meta.controllers);
       const routeMeta2: RouteMetadata = {
         httpMethod: 'POST',
         path: 'url2',

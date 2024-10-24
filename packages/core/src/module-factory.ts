@@ -113,7 +113,7 @@ export class ModuleFactory {
 
     let aControllerMetadata1: ControllerMetadata1[] = [];
     if (isNormRootModule(meta) || isAppends || hasPath) {
-      aControllerMetadata1 = transformControllersMetadata(this.meta.controllers, this.moduleName);
+      aControllerMetadata1 = transformControllersMetadata(this.meta.controllers);
     }
 
     let perMod: Map<any, ImportObj>;
