@@ -35,21 +35,6 @@ export class Reflector {
   }
 
   /**
-   * Returns the metadata for passed class.
-   *
-   * @param Cls A class that has decorators.
-   */
-  getClassMetadata<T = any>(Cls: Class): DecoratorAndValue<T>[] {
-    if (!isType(Cls)) {
-      return [];
-    }
-    const parentClass = this.getParentClass(Cls);
-    const ownClassAnnotations = this.getOwnClassAnnotations(Cls) || [];
-    const parentAnnotations = parentClass !== Object ? this.getClassMetadata<T>(parentClass) : [];
-    return ownClassAnnotations.concat(parentAnnotations);
-  }
-
-  /**
    * Returns all the metadata for the passed class.
    *
    * @param Cls A class that has decorators.
@@ -116,6 +101,21 @@ export class Reflector {
     }
 
     return propMetadata;
+  }
+
+  /**
+   * Returns the metadata for passed class.
+   *
+   * @param Cls A class that has decorators.
+   */
+  protected getClassMetadata<T = any>(Cls: Class): DecoratorAndValue<T>[] {
+    if (!isType(Cls)) {
+      return [];
+    }
+    const parentClass = this.getParentClass(Cls);
+    const ownClassAnnotations = this.getOwnClassAnnotations(Cls) || [];
+    const parentAnnotations = parentClass !== Object ? this.getClassMetadata<T>(parentClass) : [];
+    return ownClassAnnotations.concat(parentAnnotations);
   }
 
   /**
