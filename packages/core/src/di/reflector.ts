@@ -53,19 +53,7 @@ export class Reflector {
       return cache;
     }
 
-    const parentClass = this.getParentClass(Cls);
-    if (parentClass !== Object) {
-      const parentPropMeta = this.getMetadata(parentClass);
-      // Merging current meta with parent meta
-      if (parentPropMeta) {
-        Object.keys(parentPropMeta).forEach((propName) => {
-          const classPropMeta = { ...parentPropMeta[propName] };
-          classPropMeta.decorators = classPropMeta.decorators.slice();
-          classPropMeta.params = classPropMeta.params.slice();
-          (classMeta as any)[propName] = classPropMeta;
-        });
-      }
-    }
+    this.mergeClassMetaWithParent(Cls, classMeta);
     const ownPropMetadata = this.getOwnPropMetadata(Cls);
     let ownMetaKeys: string[] = [];
     if (ownPropMetadata) {
@@ -89,6 +77,25 @@ export class Reflector {
     });
 
     return this.setPropertiesWithoutPropDecorators(Cls, classMeta, ownMetaKeys);
+  }
+
+  protected mergeClassMetaWithParent<DecorValue = any, Proto extends AnyObj = object>(
+    Cls: Class<Proto>,
+    classMeta: ClassMeta<DecorValue, Proto>,
+  ) {
+    const parentClass = this.getParentClass(Cls);
+    if (parentClass !== Object) {
+      const parentPropMeta = this.getMetadata(parentClass);
+      // Merging current meta with parent meta
+      if (parentPropMeta) {
+        Object.keys(parentPropMeta).forEach((propName) => {
+          const classPropMeta = { ...parentPropMeta[propName] };
+          classPropMeta.decorators = classPropMeta.decorators.slice();
+          classPropMeta.params = classPropMeta.params.slice();
+          (classMeta as any)[propName] = classPropMeta;
+        });
+      }
+    }
   }
 
   protected setPropertiesWithoutPropDecorators<DecorValue = any, Proto extends AnyObj = object>(
