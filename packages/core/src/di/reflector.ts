@@ -102,10 +102,10 @@ export class Reflector {
       }
     });
 
-    return this.setPropertiesWithoutPropDecorators(Cls, classMeta, ownMetaKeys);
+    return this.concatWithParamsMeta(Cls, classMeta, ownMetaKeys);
   }
 
-  protected setPropertiesWithoutPropDecorators<DecorValue = any, Proto extends AnyObj = object>(
+  protected concatWithParamsMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
     ownMetaKeys: string[],
