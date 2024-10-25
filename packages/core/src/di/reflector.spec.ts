@@ -173,6 +173,12 @@ describe('Reflector', () => {
         @paramDecorator('child-method3 param2 value1') @paramDecorator('child-method3 param2 value2') b: BType,
         d: DType,
       ) {}
+
+      constructor(c: CType, @paramDecorator('b') b: BType, @paramDecorator('a') a: AType, d: DType) {
+        super(a, b, d);
+        this.a = a;
+        this.b = b;
+      }
     }
 
     it('Child', () => {
@@ -213,8 +219,9 @@ describe('Reflector', () => {
         new DecoratorAndValue(classDecorator, { value: 'parent' }, __dir),
       ]);
       expect(p2.constructor.params).toEqual<PropMetadataTuple[]>([
-        [AType, new DecoratorAndValue(paramDecorator, 'a')],
+        [CType],
         [BType, new DecoratorAndValue(paramDecorator, 'b')],
+        [AType, new DecoratorAndValue(paramDecorator, 'a')],
         [DType],
       ]);
     });
