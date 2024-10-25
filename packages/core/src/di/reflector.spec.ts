@@ -130,9 +130,6 @@ describe('Reflector', () => {
       @propDecorator('child-p4')
       override someMethod1(a: BType) {}
 
-      @propDecorator('child-p5')
-      override someMethod2(@paramDecorator('child-method2 param1') b: BType, c: CType) {}
-
       override someMethod3(
         @paramDecorator('child-method3 param1') c: CType,
         @paramDecorator('child-method3 param2 value1') @paramDecorator('child-method3 param2 value2') b: BType,
@@ -189,12 +186,11 @@ describe('Reflector', () => {
 
       expect(p.someMethod2.type).toBe(Function);
       expect(p.someMethod2.decorators).toEqual<DecoratorAndValue[]>([
-        new DecoratorAndValue(propDecorator, 'child-p5'),
         new DecoratorAndValue(propDecorator, 'p5'),
       ]);
       expect(p.someMethod2.params).toEqual<PropMetadataTuple[]>([
-        [BType, new DecoratorAndValue(paramDecorator, 'child-method2 param1')],
-        [CType],
+        [BType, new DecoratorAndValue(paramDecorator, 'method2 param1')],
+        [DType],
       ]);
 
       expect(p.someMethod3.type).toBe(Function);
