@@ -1,6 +1,6 @@
 import { injectable, methodFactory } from '@ditsmod/core';
 
-import { TestPreRouterExtension } from './test-pre-router.extensions.js';
+import { TestPreRouterExtension } from './test-pre-router.extension.js';
 import { TestClassProvider, TestFactoryProvider } from './types.js';
 
 describe('TestPreRouterExtension', () => {

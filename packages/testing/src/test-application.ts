@@ -4,7 +4,7 @@ import { PreRouterExtension } from '@ditsmod/routing';
 import { PreTestApplication } from './pre-test-application.js';
 import { TestModuleManager } from './test-module-manager.js';
 import { TestProvider } from './types.js';
-import { TestPreRouterExtension } from './test-pre-router.extensions.js';
+import { TestPreRouterExtension } from './test-pre-router.extension.js';
 
 // This class is only needed as a wrapper over the PreTestApplication
 // class to hide the bootstrap() method from the public API.
