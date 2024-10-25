@@ -40,6 +40,7 @@ import {
   isValueProvider,
   stringify,
 } from './utils.js';
+import { DEPS_KEY } from './decorator-factories.js';
 
 const NoDefaultValue = Symbol();
 const msg1 = 'Setting value by ID failed: cannot find ID in register: "%d". Try use injector.setByToken()';
@@ -323,11 +324,19 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   }
 
   protected static getDependencies(Cls: Class, propertyKey?: string | symbol): Dependency[] {
-    const aParamsMeta = reflector.getMetadata(Cls)?.[(propertyKey as any) || 'constructor'].params || [];
+    const classPropMeta = reflector.getMetadata(Cls)?.[(propertyKey as any) || 'constructor'];
+    if (!classPropMeta) {
+      return [];
+    }
+    const cache = (classPropMeta as any)[DEPS_KEY];
+    if (cache) {
+      return cache;
+    }
+    const aParamsMeta = classPropMeta.params;
     if (aParamsMeta.some((p) => p === null)) {
       throw noAnnotationError(Cls, aParamsMeta, propertyKey);
     }
-    return aParamsMeta.map((paramsMeta) => {
+    const deps = aParamsMeta.map((paramsMeta) => {
       const { token, ctx, isOptional, visibility } = this.extractPayload(paramsMeta!);
       if (token != null) {
         return new Dependency(KeyRegistry.get(token), isOptional, visibility, ctx);
@@ -335,6 +344,10 @@ expect(injector.get(Car) instanceof Car).toBe(true);
         throw noAnnotationError(Cls, aParamsMeta, propertyKey);
       }
     });
+
+    (classPropMeta as any)[DEPS_KEY] = deps;
+
+    return deps;
   }
 
   protected static extractPayload(paramsMeta: ParamsMeta) {

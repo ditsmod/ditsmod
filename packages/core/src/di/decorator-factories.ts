@@ -22,6 +22,11 @@ export const PROP_KEY = Symbol();
  * This metadata is taken from all decorators of a class.
  */
 export const CACHE_KEY = Symbol();
+/**
+ * The key used to store cached dependecies in a static property of a class.
+ * This dependecies is seted by Injector.
+ */
+export const DEPS_KEY = Symbol();
 
 export function makeClassDecorator<T extends (...args: any[]) => any>(transform?: T) {
   return function classDecorFactory(...args: Parameters<T>): any {
