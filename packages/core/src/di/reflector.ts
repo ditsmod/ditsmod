@@ -1,5 +1,5 @@
 import { AnyObj } from '#types/mix.js';
-import { CACHE_KEY, CLASS_KEY, PARAMS_KEY, PROP_KEY, getParamKey } from './decorator-factories.js';
+import { CACHE_KEY, CLASS_KEY, DEPS_KEY, PARAMS_KEY, PROP_KEY, getParamKey } from './decorator-factories.js';
 import { Class, DecoratorAndValue, ParamsMeta, ClassMeta, ClassPropMeta } from './types-and-models.js';
 import { isType, newArray } from './utils.js';
 
@@ -54,7 +54,7 @@ export class Reflector {
     }
 
     this.concatWithParentClassMeta(Cls, classMeta);
-    return this.concatWithChildClassMeta(Cls, classMeta);
+    return this.concatWithOwnClassMeta(Cls, classMeta);
   }
 
   protected concatWithParentClassMeta<DecorValue = any, Proto extends AnyObj = object>(
@@ -70,13 +70,16 @@ export class Reflector {
           const classPropMeta = { ...parentPropMeta[propName] };
           classPropMeta.decorators = classPropMeta.decorators.slice();
           classPropMeta.params = classPropMeta.params.slice();
+          if ((classPropMeta as any)[DEPS_KEY]) {
+            (classPropMeta as any)[DEPS_KEY] = (classPropMeta as any)[DEPS_KEY].slice();
+          }
           (classMeta as any)[propName] = classPropMeta;
         });
       }
     }
   }
 
-  protected concatWithChildClassMeta<DecorValue = any, Proto extends AnyObj = object>(
+  protected concatWithOwnClassMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
   ) {
@@ -91,6 +94,7 @@ export class Reflector {
       if (classMeta.hasOwnProperty(propName)) {
         const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
         classPropMeta.type = type; // Override parent type.
+        classPropMeta.params = []; // Remove parent params.
         classPropMeta.decorators.unshift(...decorators);
       } else {
         (classMeta as any)[propName] = { type, decorators, params: [] } as ClassPropMeta;
@@ -151,7 +155,7 @@ export class Reflector {
     if (Cls.hasOwnProperty(key)) {
       (Cls as any)[key] = classMeta;
     } else {
-      Object.defineProperty(Cls, key, { value: classMeta });
+      Object.defineProperty(Cls, key, { value: classMeta, writable: true });
     }
   }
 
@@ -271,18 +275,18 @@ export class Reflector {
     }
   }
 
-  protected getOwnClassAnnotations(typeOrFunc: Class): any[] | null {
+  protected getOwnClassAnnotations(Cls: Class): any[] | null {
     // API for metadata created by invoking the decorators.
-    if (typeOrFunc.hasOwnProperty(CLASS_KEY)) {
-      return (typeOrFunc as any)[CLASS_KEY];
+    if (Cls.hasOwnProperty(CLASS_KEY)) {
+      return (Cls as any)[CLASS_KEY];
     }
     return null;
   }
 
-  protected getOwnPropMetadata(typeOrFunc: any): { [key: string]: any[] } | null {
+  protected getOwnPropMetadata(Cls: any): { [key: string]: any[] } | null {
     // API for metadata created by invoking the decorators.
-    if (typeOrFunc.hasOwnProperty(PROP_KEY)) {
-      return typeOrFunc[PROP_KEY];
+    if (Cls.hasOwnProperty(PROP_KEY)) {
+      return Cls[PROP_KEY];
     }
     return null;
   }
