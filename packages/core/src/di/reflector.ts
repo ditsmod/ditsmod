@@ -137,11 +137,6 @@ export class Reflector {
       return;
     }
 
-    const cache = this.getOwnCacheMetadata<DecorValue, Proto>(Cls);
-    if (cache) {
-      ((globalThis as any).classes as Set<string>).add(Cls.name);
-    }
-
     this.setMetaCache(Cls, CACHE_KEY, classMeta);
     return classMeta;
   }
