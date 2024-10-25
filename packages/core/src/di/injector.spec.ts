@@ -1,24 +1,16 @@
 import { jest } from '@jest/globals';
 import 'reflect-metadata/lite';
 
-import { makeClassDecorator, makePropDecorator } from './decorator-factories.js';
-import {
-  InjectionToken,
-  Injector,
-  Provider,
-  ResolvedProvider,
-  forwardRef,
-  fromSelf,
-  inject,
-  injectable,
-  methodFactory,
-  optional,
-  reflector,
-  skipSelf,
-} from './index.js';
+import { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
+
 import { KeyRegistry } from './key-registry.js';
-import { CTX_DATA, getNewRegistry } from './types-and-models.js';
+import { Class, CTX_DATA, Dependency, getNewRegistry, Provider, ResolvedProvider } from './types-and-models.js';
 import { stringify } from './utils.js';
+import { fromSelf, inject, injectable, methodFactory, optional, skipSelf } from './decorators.js';
+import { InjectionToken } from './injection-token.js';
+import { Injector } from './injector.js';
+import { forwardRef } from './forward-ref.js';
+import { reflector } from './reflection.js';
 
 class Engine {}
 
@@ -109,6 +101,119 @@ function createInjector(providers: Provider[], parent?: Injector | null): Inject
 }
 
 describe('injector', () => {
+  describe('getDependencies() method', () => {
+    const classDecorator = makeClassDecorator((data?: any) => data);
+    const paramDecorator = makeParamDecorator((value: any) => value);
+    const propDecorator = makePropDecorator((value: string) => value);
+
+    class MockInjector extends Injector {
+      static override getDependencies(Cls: Class, propertyKey?: string | symbol) {
+        return super.getDependencies(Cls, propertyKey);
+      }
+    }
+
+    class AType {
+      constructor(public value: any) {}
+    }
+
+    class BType {
+      constructor(public value: any) {}
+    }
+
+    class CType {
+      constructor(public value: any) {}
+    }
+
+    class DType {
+      constructor(public value: any) {}
+    }
+
+    describe('inheritance with decorators', () => {
+      @classDecorator({ value: 'parent' })
+      class Parent {
+        @propDecorator('p1')
+        @propDecorator('p2')
+        a: AType;
+
+        b: AType;
+
+        @propDecorator('p3')
+        set c(value: CType) {}
+
+        @propDecorator('type')
+        d: number;
+
+        @propDecorator('p4')
+        someMethod1(a: AType) {}
+
+        @propDecorator('p5')
+        someMethod2(@paramDecorator('method2 param1') b: BType, d: DType) {}
+
+        someMethod3(
+          @paramDecorator('method3 param1') c: CType,
+          @paramDecorator('method3 param2 value1') @paramDecorator('method3 param2 value2') b: BType,
+          a: AType,
+        ) {}
+
+        constructor(@paramDecorator('a') a: AType, @paramDecorator('b') b: BType, d: DType) {
+          this.a = a;
+          this.b = b;
+        }
+      }
+
+      @classDecorator({ value: 'child' })
+      class Child extends Parent {
+        @propDecorator('child-p1')
+        @propDecorator('child-p2')
+        declare a: AType;
+
+        declare b: AType;
+
+        @propDecorator('child-p3')
+        override set c(value: DType) {}
+
+        @propDecorator('child-type')
+        declare d: number;
+
+        @propDecorator('child-p4')
+        override someMethod1(a: BType) {}
+
+        override someMethod3(
+          @paramDecorator('child-method3 param1') c: CType,
+          @paramDecorator('child-method3 param2 value1') @paramDecorator('child-method3 param2 value2') b: BType,
+          d: DType,
+        ) {}
+
+        constructor(c: CType, @paramDecorator('b') b: BType, @paramDecorator('a') a: AType, d: DType) {
+          super(a, b, d);
+          this.a = a;
+          this.b = b;
+        }
+      }
+
+      const rest = [false, null, undefined] as const;
+
+      it('Parent', () => {
+        const deps1 = (Injector as typeof MockInjector).getDependencies(Parent);
+        expect(deps1).toEqual([
+          new Dependency(KeyRegistry.get(AType), ...rest),
+          new Dependency(KeyRegistry.get(BType), ...rest),
+          new Dependency(KeyRegistry.get(DType), ...rest),
+        ]);
+      });
+      
+      it('Child', () => {
+        const deps2 = (Injector as typeof MockInjector).getDependencies(Child);
+        expect(deps2).toEqual([
+          new Dependency(KeyRegistry.get(CType), ...rest),
+          new Dependency(KeyRegistry.get(BType), ...rest),
+          new Dependency(KeyRegistry.get(AType), ...rest),
+          new Dependency(KeyRegistry.get(DType), ...rest),
+        ]);
+      });
+    });
+  });
+
   describe('pull() method', () => {
     it('for a provider from current injector, behaves like "injector.get()"', () => {
       const injector = Injector.resolveAndCreate([Engine, Car]);
