@@ -113,30 +113,6 @@ describe('Reflector', () => {
       }
     }
 
-    @classDecorator({ value: 'child' })
-    class Child extends Parent {
-      @propDecorator('child-p1')
-      @propDecorator('child-p2')
-      declare a: AType;
-
-      declare b: AType;
-
-      @propDecorator('child-p3')
-      override set c(value: DType) {}
-
-      @propDecorator('child-type')
-      declare d: number;
-
-      @propDecorator('child-p4')
-      override someMethod1(a: BType) {}
-
-      override someMethod3(
-        @paramDecorator('child-method3 param1') c: CType,
-        @paramDecorator('child-method3 param2 value1') @paramDecorator('child-method3 param2 value2') b: BType,
-        d: DType,
-      ) {}
-    }
-
     it('Parent', () => {
       const p = reflector.getMetadata(Parent)!;
       expect(p.someMethod1.type).toBe(Function);
@@ -175,27 +151,51 @@ describe('Reflector', () => {
       ]);
     });
 
+    @classDecorator({ value: 'child' })
+    class Child extends Parent {
+      @propDecorator('child-p1')
+      @propDecorator('child-p2')
+      declare a: AType;
+
+      declare b: AType;
+
+      @propDecorator('child-p3')
+      override set c(value: DType) {}
+
+      @propDecorator('child-type')
+      declare d: number;
+
+      @propDecorator('child-p4')
+      override someMethod1(a: BType) {}
+
+      override someMethod3(
+        @paramDecorator('child-method3 param1') c: CType,
+        @paramDecorator('child-method3 param2 value1') @paramDecorator('child-method3 param2 value2') b: BType,
+        d: DType,
+      ) {}
+    }
+
     it('Child', () => {
-      const p = reflector.getMetadata(Child)!;
-      expect(p.someMethod1.type).toBe(Function);
-      expect(p.someMethod1.decorators).toEqual<DecoratorAndValue[]>([
+      const p2 = reflector.getMetadata(Child)!;
+      expect(p2.someMethod1.type).toBe(Function);
+      expect(p2.someMethod1.decorators).toEqual<DecoratorAndValue[]>([
         new DecoratorAndValue(propDecorator, 'child-p4'),
         new DecoratorAndValue(propDecorator, 'p4'),
       ]);
-      expect(p.someMethod1.params).toEqual<PropMetadataTuple[]>([[BType]]);
+      expect(p2.someMethod1.params).toEqual<PropMetadataTuple[]>([[BType]]);
 
-      expect(p.someMethod2.type).toBe(Function);
-      expect(p.someMethod2.decorators).toEqual<DecoratorAndValue[]>([
+      expect(p2.someMethod2.type).toBe(Function);
+      expect(p2.someMethod2.decorators).toEqual<DecoratorAndValue[]>([
         new DecoratorAndValue(propDecorator, 'p5'),
       ]);
-      expect(p.someMethod2.params).toEqual<PropMetadataTuple[]>([
+      expect(p2.someMethod2.params).toEqual<PropMetadataTuple[]>([
         [BType, new DecoratorAndValue(paramDecorator, 'method2 param1')],
         [DType],
       ]);
 
-      expect(p.someMethod3.type).toBe(Function);
-      expect(p.someMethod3.decorators).toEqual<DecoratorAndValue[]>([]);
-      expect(p.someMethod3.params).toEqual<PropMetadataTuple[]>([
+      expect(p2.someMethod3.type).toBe(Function);
+      expect(p2.someMethod3.decorators).toEqual<DecoratorAndValue[]>([]);
+      expect(p2.someMethod3.params).toEqual<PropMetadataTuple[]>([
         [CType, new DecoratorAndValue(paramDecorator, 'child-method3 param1')],
         [
           BType,
@@ -205,14 +205,14 @@ describe('Reflector', () => {
         [DType],
       ]);
 
-      expect(p.c.type).toBe(DType);
+      expect(p2.c.type).toBe(DType);
 
-      expect(p.constructor.type).toBe(Function);
-      expect(p.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
+      expect(p2.constructor.type).toBe(Function);
+      expect(p2.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
         new DecoratorAndValue(classDecorator, { value: 'child' }, __dir),
         new DecoratorAndValue(classDecorator, { value: 'parent' }, __dir),
       ]);
-      expect(p.constructor.params).toEqual<PropMetadataTuple[]>([
+      expect(p2.constructor.params).toEqual<PropMetadataTuple[]>([
         [AType, new DecoratorAndValue(paramDecorator, 'a')],
         [BType, new DecoratorAndValue(paramDecorator, 'b')],
         [DType],
