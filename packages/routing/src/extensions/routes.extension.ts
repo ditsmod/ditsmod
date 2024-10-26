@@ -13,6 +13,7 @@ import {
   ControllerRawMetadata1,
   GuardPerMod1,
   reflector,
+  Class,
 } from '@ditsmod/core';
 
 @injectable()
@@ -47,9 +48,9 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
 
     const controllersMetadata2: ControllerMetadata2[] = [];
     if (applyControllers)
-    for (const controller of meta.controllers) {
-      const classMeta = reflector.getMetadata(controller);
-      for (const methodName in classMeta) {
+    for (const controller of (meta.controllers as Class<Record<string | symbol, any>>[])) {
+      const classMeta = reflector.getMetadata(controller)!;
+      for (const methodName of classMeta) {
         for (const decoratorMetadata of classMeta[methodName].decorators) {
           if (!isRoute(decoratorMetadata)) {
             continue;
