@@ -324,15 +324,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   }
 
   protected static getDependencies(Cls: Class, propertyKey?: string | symbol): Dependency[] {
-    const classPropMeta = reflector.getMetadata(Cls)?.[(propertyKey as any) || 'constructor'];
-    if (!classPropMeta) {
-      return [];
-    }
-    const cache = (classPropMeta as any)[DEPS_KEY];
-    if (cache) {
-      return cache;
-    }
-    const aParamsMeta = classPropMeta.params;
+    const aParamsMeta = reflector.getMetadata(Cls, propertyKey);
     if (aParamsMeta.some((p) => p === null)) {
       throw noAnnotationError(Cls, aParamsMeta, propertyKey);
     }
@@ -344,8 +336,6 @@ expect(injector.get(Car) instanceof Car).toBe(true);
         throw noAnnotationError(Cls, aParamsMeta, propertyKey);
       }
     });
-
-    (classPropMeta as any)[DEPS_KEY] = deps;
 
     return deps;
   }

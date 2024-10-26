@@ -75,7 +75,7 @@ export function makePropDecorator<T extends (...args: any[]) => any>(transform?:
     const value = transform ? transform(...args) : [...args];
     return function propDecorator(target: any, propertyKey: string | symbol): void {
       const Cls = target.constructor as Class;
-      const meta = getRawMetadata(Cls, PROP_KEY, {});
+      const meta = getRawMetadata(Cls, PROP_KEY, {} as { [key: string | symbol]: any});
       meta[propertyKey] = (meta.hasOwnProperty(propertyKey) && meta[propertyKey]) || [];
       meta[propertyKey].push(new DecoratorAndValue(propDecorFactory, value));
     };
@@ -90,7 +90,7 @@ export function getParamKey(defaultKey: symbol, propertyKey?: string | symbol): 
   }
 }
 
-export function getRawMetadata(Cls: Class, key: symbol, defaultValue: any) {
+export function getRawMetadata<T = any>(Cls: Class, key: symbol, defaultValue: T): T {
   // Use of Object.defineProperty is important since it creates non-enumerable property which
   // prevents the property is copied during subclassing.
   return Cls.hasOwnProperty(key)

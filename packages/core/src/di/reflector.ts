@@ -51,19 +51,53 @@ export class Reflector {
    */
   getMetadata<DecorValue = any, Proto extends object = object>(
     Cls: Class<Proto>,
-  ): ClassMeta<DecorValue, Proto> | undefined {
+  ): ClassMeta<DecorValue, Proto> | undefined;
+  /**
+   * Returns the metadata for the constructor or methods of the passed class.
+   *
+   * @param Cls A class that has decorators.
+   */
+  getMetadata<DecorValue = any, Proto extends object = object>(
+    Cls: Class<Proto>,
+    propertyKey?: string | symbol,
+  ): (ParamsMeta | null)[];
+  getMetadata<DecorValue = any, Proto extends object = object>(
+    Cls: Class<Proto>,
+    propertyKey?: string | symbol,
+  ): ClassMeta<DecorValue, Proto> | (ParamsMeta | null)[] | undefined {
     const classMeta = {} as ClassMeta<DecorValue, Proto>;
     if (!isType(Cls)) {
       return;
     }
 
-    const cache = this.getOwnCacheMetadata<DecorValue, Proto>(Cls);
-    if (cache !== null) {
-      return cache;
+    if (arguments.length == 2 && !propertyKey) {
+      propertyKey = 'constructor';
     }
 
-    this.concatWithParentClassMeta(Cls, classMeta);
-    return this.concatWithOwnClassMeta(Cls, classMeta);
+    let cache = this.getOwnCacheMetadata<DecorValue, Proto>(Cls);
+    if (cache === null) {
+      this.concatWithParentClassMeta(Cls, classMeta);
+      cache = this.concatWithOwnClassMeta(Cls, classMeta);
+    }
+    
+    return this.getClassMetaOrParamsMeta(Cls, cache!, propertyKey);
+  }
+
+  protected getClassMetaOrParamsMeta<DecorValue = any, Proto extends object = object>(
+    Cls: Class<Proto>,
+    classMeta: ClassMeta<DecorValue, Proto>,
+    propertyKey?: string | symbol,
+  ): ClassMeta<DecorValue, Proto> | (ParamsMeta | null)[] | undefined {
+    if (propertyKey) {
+      const classPropMeta = classMeta?.[propertyKey as keyof Proto];
+      if (classPropMeta) {
+        return classPropMeta.params;
+      } else {
+        return this.getParamsMetadata(Cls, propertyKey as Exclude<keyof Proto, number>);
+      }
+    } else {
+      return classMeta;
+    }
   }
 
   protected concatWithParentClassMeta<DecorValue = any, Proto extends AnyObj = object>(
