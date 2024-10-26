@@ -6,7 +6,7 @@ describe('@property', () => {
   it('model without properties', () => {
     class Model1 {}
 
-    expect(reflector.getMetadata(Model1)).toBe(undefined);
+    expect(reflector.getMetadata(Model1)).toBeUndefined();
   });
 
   it('empty value', () => {

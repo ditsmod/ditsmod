@@ -256,7 +256,7 @@ describe('Reflector', () => {
     });
 
     it('should work for a class without annotations', () => {
-      const p = reflector.getMetadata(ClassWithoutDecorators, 'constructor') || [];
+      const p = reflector.getMetadata(ClassWithoutDecorators, 'constructor');
       expect(p.length).toEqual(2);
     });
   });
@@ -417,10 +417,10 @@ describe('Reflector', () => {
         new DecoratorAndValue(classDecorator, { value: 'parent' }, declaredInDir),
       ]);
 
-      expect(reflector.getMetadata(NoDecorators)).toBe(undefined);
-      expect(reflector.getMetadata({} as any)).toBe(undefined);
-      expect(reflector.getMetadata(1 as any)).toBe(undefined);
-      expect(reflector.getMetadata(null!)).toBe(undefined);
+      expect(reflector.getMetadata(NoDecorators)).toBeUndefined();
+      expect(reflector.getMetadata({} as any)).toBeUndefined();
+      expect(reflector.getMetadata(1 as any)).toBeUndefined();
+      expect(reflector.getMetadata(null!)).toBeUndefined();
     });
 
     it('should inherit parameters', () => {
@@ -555,10 +555,10 @@ describe('Reflector', () => {
       ]);
       expect(child.c.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'c')]);
 
-      expect(reflector.getMetadata(NoDecorators)).toBe(undefined);
-      expect(reflector.getMetadata({} as any)).toBe(undefined);
-      expect(reflector.getMetadata(1 as any)).toBe(undefined);
-      expect(reflector.getMetadata(null!)).toBe(undefined);
+      expect(reflector.getMetadata(NoDecorators)).toBeUndefined();
+      expect(reflector.getMetadata({} as any)).toBeUndefined();
+      expect(reflector.getMetadata(1 as any)).toBeUndefined();
+      expect(reflector.getMetadata(null!)).toBeUndefined();
     });
   });
 });
