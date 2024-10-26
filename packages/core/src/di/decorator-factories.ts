@@ -24,7 +24,7 @@ export const PROP_KEY = Symbol();
 export const CACHE_KEY = Symbol();
 /**
  * The key used to store cached dependecies in a static property of a class.
- * This dependecies is seted by Injector.
+ * This dependecies is seted by `injector.getDependencies()`.
  */
 export const DEPS_KEY = Symbol();
 /**
