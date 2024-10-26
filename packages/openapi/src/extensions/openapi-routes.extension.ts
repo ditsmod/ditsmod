@@ -12,6 +12,7 @@ import {
   AppOptions,
   ControllerRawMetadata1,
   reflector,
+  Class,
 } from '@ditsmod/core';
 import { RoutesExtension } from '@ditsmod/routing';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
@@ -41,9 +42,9 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
 
     const aControllersMetadata2: ControllerMetadata2[] = [];
     if (applyControllers)
-    for (const controller of meta.controllers) {
-      const classMeta = reflector.getMetadata(controller);
-      for (const methodName in classMeta) {
+    for (const controller of (meta.controllers as Class<Record<string | symbol, any>>[])) {
+      const classMeta = reflector.getMetadata(controller)!;
+      for (const methodName of classMeta) {
         for (const decoratorMetadata of classMeta[methodName].decorators) {
           if (!isOasRoute(decoratorMetadata)) {
             continue;

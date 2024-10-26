@@ -55,7 +55,7 @@
     "yaml-loader": "^0.8.1"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.60.0",
+    "@ditsmod/core": "^2.61.0",
     "@ditsmod/routing": "^2.6.0"
   },
   "resolutions": {
