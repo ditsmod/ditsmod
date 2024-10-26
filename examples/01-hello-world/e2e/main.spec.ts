@@ -24,6 +24,13 @@ describe('01-hello-world', () => {
     expect(text).toBe('Hello, World!');
   });
 
+  it('method key as symbol', async () => {
+    const { type, status, text } = await testAgent.get('/symbol');
+    expect(type).toBe('text/plain');
+    expect(status).toBe(200);
+    expect(text).toBe('Hello, World!');
+  });
+
   it('controller handles HEAD method', async () => {
     const { type, status, text, headers } = await testAgent.head('/hello');
     expect(type).toBe('text/plain');

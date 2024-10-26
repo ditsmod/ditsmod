@@ -6,4 +6,9 @@ export class HelloWorldController {
   tellHello(res: Res) {
     res.send('Hello, World!');
   }
+
+  @route('GET', 'symbol')
+  [Symbol()](res: Res) {
+    res.send('Hello, World!');
+  }
 }
