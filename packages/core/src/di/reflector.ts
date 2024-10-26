@@ -1,5 +1,14 @@
 import { AnyObj } from '#types/mix.js';
-import { CACHE_KEY, CLASS_KEY, DEPS_KEY, PARAMS_KEY, PROP_KEY, getParamKey } from './decorator-factories.js';
+import {
+  CACHE_KEY,
+  CLASS_KEY,
+  DEPS_KEY,
+  PARAMS_KEY,
+  METHODS_WITH_PARAMS,
+  PROP_KEY,
+  getParamKey,
+  getRawMetadata,
+} from './decorator-factories.js';
 import { Class, DecoratorAndValue, ParamsMeta, ClassMeta, ClassPropMeta } from './types-and-models.js';
 import { isType, newArray } from './utils.js';
 
@@ -66,8 +75,8 @@ export class Reflector {
       const parentPropMeta = this.getMetadata(parentClass);
       // Merging current meta with parent meta
       if (parentPropMeta) {
-        Object.keys(parentPropMeta).forEach((propName) => {
-          const classPropMeta = { ...parentPropMeta[propName] };
+        this.reflect.ownKeys(parentPropMeta).forEach((propName) => {
+          const classPropMeta = { ...parentPropMeta[propName as any] };
           classPropMeta.decorators = classPropMeta.decorators.slice();
           classPropMeta.params = classPropMeta.params.slice();
           if ((classPropMeta as any)[DEPS_KEY]) {
@@ -84,9 +93,9 @@ export class Reflector {
     classMeta: ClassMeta<DecorValue, Proto>,
   ) {
     const ownPropMetadata = this.getOwnPropMetadata(Cls);
-    let ownMetaKeys: string[] = [];
+    let ownMetaKeys: (string | symbol)[] = [];
     if (ownPropMetadata) {
-      ownMetaKeys = Object.keys(ownPropMetadata);
+      ownMetaKeys = this.reflect.ownKeys(ownPropMetadata);
     }
     ownMetaKeys.forEach((propName) => {
       const type = this.reflect.getOwnMetadata('design:type', Cls.prototype, propName);
@@ -112,25 +121,24 @@ export class Reflector {
   protected concatWithParamsMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
-    ownMetaKeys: string[],
+    ownMetaKeys: (string | symbol)[],
   ): ClassMeta<DecorValue, Proto> | undefined {
-    if (Cls.prototype) {
-      this.reflect.ownKeys(Cls.prototype).forEach((propName: any) => {
-        const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, propName);
-        if (ownMetaKeys.includes(propName) || typeof descriptor?.value != 'function') {
-          return;
-        }
-
-        if (!classMeta.hasOwnProperty(propName)) {
-          (classMeta as any)[propName] = { type: Function, decorators: [], params: [] } as ClassPropMeta;
-        }
-        const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
-        classPropMeta.params = this.getParamsMetadata(Cls, propName as any);
-        if (propName == 'constructor') {
-          classPropMeta.decorators = this.getClassMetadata(Cls);
-        }
-      });
-    }
+    const methodNames = getRawMetadata(Cls, METHODS_WITH_PARAMS, new Set());
+    methodNames.add('constructor');
+    methodNames.forEach((propName: any) => {
+      if (ownMetaKeys.includes(propName)) {
+        return;
+      }
+      if (!classMeta.hasOwnProperty(propName)) {
+        (classMeta as any)[propName] = { type: Function, decorators: [], params: [] } as ClassPropMeta;
+      }
+      const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
+      classPropMeta.params = this.getParamsMetadata(Cls, propName as any);
+      delete (classPropMeta as any)[DEPS_KEY];
+      if (propName == 'constructor') {
+        classPropMeta.decorators = this.getClassMetadata(Cls);
+      }
+    });
 
     if (
       this.reflect.ownKeys(classMeta).length == 1 &&
@@ -283,7 +291,7 @@ export class Reflector {
     return null;
   }
 
-  protected getOwnPropMetadata(Cls: any): { [key: string]: any[] } | null {
+  protected getOwnPropMetadata(Cls: any): { [key: string | symbol]: any[] } | null {
     // API for metadata created by invoking the decorators.
     if (Cls.hasOwnProperty(PROP_KEY)) {
       return Cls[PROP_KEY];

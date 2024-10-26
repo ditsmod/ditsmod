@@ -27,13 +27,17 @@ export const CACHE_KEY = Symbol();
  * This dependecies is seted by Injector.
  */
 export const DEPS_KEY = Symbol();
+/**
+ * The key used to store registry of props where are params with metadata.
+ */
+export const METHODS_WITH_PARAMS = Symbol();
 
 export function makeClassDecorator<T extends (...args: any[]) => any>(transform?: T) {
   return function classDecorFactory(...args: Parameters<T>): any {
     const value = transform ? transform(...args) : [...args];
     const declaredInDir = getCallerDir();
     return function classDecorator(Cls: Class): void {
-      const annotations: any[] = getMetadata(Cls, CLASS_KEY, []);
+      const annotations: any[] = getRawMetadata(Cls, CLASS_KEY, []);
       const decoratorAndValue = new DecoratorAndValue(classDecorFactory, value, declaredInDir);
       annotations.push(decoratorAndValue);
     };
@@ -51,7 +55,9 @@ export function makeParamDecorator<T extends (...args: any[]) => any>(transform?
       // This function can be called for a class constructor and methods.
       const Cls = isType(clsOrObj) ? clsOrObj : (clsOrObj.constructor as Class);
       const key = getParamKey(PARAMS_KEY, propertyKey);
-      const parameters: any[] = getMetadata(Cls, key, []);
+      const parameters: any[] = getRawMetadata(Cls, key, []);
+      const methodNames: Set<string | symbol> = getRawMetadata(Cls, METHODS_WITH_PARAMS, new Set());
+      methodNames.add(propertyKey || 'constructor');
 
       // There might be gaps if some in between parameters do not have annotations.
       // we pad with nulls.
@@ -69,7 +75,7 @@ export function makePropDecorator<T extends (...args: any[]) => any>(transform?:
     const value = transform ? transform(...args) : [...args];
     return function propDecorator(target: any, propertyKey: string | symbol): void {
       const Cls = target.constructor as Class;
-      const meta = getMetadata(Cls, PROP_KEY, {});
+      const meta = getRawMetadata(Cls, PROP_KEY, {});
       meta[propertyKey] = (meta.hasOwnProperty(propertyKey) && meta[propertyKey]) || [];
       meta[propertyKey].push(new DecoratorAndValue(propDecorFactory, value));
     };
@@ -84,7 +90,7 @@ export function getParamKey(defaultKey: symbol, propertyKey?: string | symbol): 
   }
 }
 
-function getMetadata(Cls: Class, key: symbol, defaultValue: any) {
+export function getRawMetadata(Cls: Class, key: symbol, defaultValue: any) {
   // Use of Object.defineProperty is important since it creates non-enumerable property which
   // prevents the property is copied during subclassing.
   return Cls.hasOwnProperty(key)

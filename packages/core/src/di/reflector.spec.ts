@@ -346,7 +346,7 @@ describe('Reflector', () => {
       // Cannot test arrow function here due to the compilation
       const dummyArrowFn = function () {};
       Object.defineProperty(dummyArrowFn, 'prototype', { value: undefined });
-      expect(() => reflector.getMetadata(dummyArrowFn as any)!.constructor.decorators).not.toThrow();
+      expect(() => reflector.getMetadata(dummyArrowFn as any)?.constructor.decorators).not.toThrow();
     });
 
     it('should support native class', () => {
