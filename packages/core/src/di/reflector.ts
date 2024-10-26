@@ -1,4 +1,5 @@
 import { AnyObj } from '#types/mix.js';
+import { ClassMetaIterator } from './class-meta-iterator.js';
 import {
   CACHE_KEY,
   CLASS_KEY,
@@ -65,7 +66,7 @@ export class Reflector {
     Cls: Class<Proto>,
     propertyKey?: string | symbol,
   ): ClassMeta<DecorValue, Proto> | (ParamsMeta | null)[] | undefined {
-    const classMeta = {} as ClassMeta<DecorValue, Proto>;
+    const classMeta = new ClassMetaIterator() as unknown as ClassMeta<DecorValue, Proto>;
     if (!isType(Cls)) {
       return;
     }

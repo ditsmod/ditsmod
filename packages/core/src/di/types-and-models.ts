@@ -37,7 +37,9 @@ export type ClassMeta<DecorValue = any, Proto extends object = object> = {
   [P in keyof Proto]: ClassPropMeta<DecorValue>;
 } & {
   constructor: ClassPropMeta<DecorValue>;
-};
+} & {
+  [Symbol.iterator]: () => IterableIterator<string | symbol>;
+}
 
 export interface ClassPropMeta<DecorValue = any> {
   type: Class;
