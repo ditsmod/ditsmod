@@ -39,10 +39,10 @@ export type OptionalProps<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K
 export type AnyFn<T = any> = (...args: any[]) => T;
 
 /**
- * It is just `{ [key: string]: any }` an object interface.
+ * It is just `{ [key: string | symbol]: any }` an object interface.
  */
 export interface AnyObj {
-  [key: string]: any;
+  [key: string | symbol]: any;
 }
 
 export interface CanActivate {
