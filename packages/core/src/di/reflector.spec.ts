@@ -80,7 +80,9 @@ describe('Reflector', () => {
     reflector = new Reflector();
   });
 
-  describe('getMetadata', () => {
+  fdescribe('getMetadata', () => {
+    const methodNameAsSymbol = Symbol();
+
     @classDecorator({ value: 'parent' })
     class Parent {
       @propDecorator('p1')
@@ -88,6 +90,14 @@ describe('Reflector', () => {
       a: AType;
 
       b: AType;
+
+      @propDecorator('p1')
+      [methodNameAsSymbol](param1: AType) {}
+
+      @propDecorator('p11')
+      methodWithDecorators(param1: AType) {}
+
+      methodWithoutDecorators(param1: AType) {}
 
       @propDecorator('p3')
       set c(value: CType) {}
@@ -113,42 +123,78 @@ describe('Reflector', () => {
       }
     }
 
-    it('Parent', () => {
-      const p = reflector.getMetadata(Parent)!;
-      expect(p.someMethod1.type).toBe(Function);
-      expect(p.someMethod1.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'p4')]);
-      expect(p.someMethod1.params).toEqual<PropMetadataTuple[]>([[AType]]);
+    describe('Parent', () => {
+      it('should return array with null because of no decorators', () => {
+        expect(reflector.getMetadata(Parent, 'methodWithoutDecorators')).toEqual([null]);
+      });
+      it('should return empty array for non existen property name', () => {
+        expect(reflector.getMetadata(Parent, 'nonExistingPropName')).toEqual([]);
+      });
+      it('should return array with one dependency', () => {
+        expect(reflector.getMetadata(Parent, 'methodWithDecorators')).toEqual([[AType]]);
+      });
 
-      expect(p.someMethod2.type).toBe(Function);
-      expect(p.someMethod2.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'p5')]);
-      expect(p.someMethod2.params).toEqual<PropMetadataTuple[]>([
-        [BType, new DecoratorAndValue(paramDecorator, 'method2 param1')],
-        [DType],
-      ]);
+      it('should return properties with decorators', () => {
+        const p = reflector.getMetadata(Parent)!;
+        const properties = [];
+        for (const prop of p) {
+          properties.push(prop);
+        }
+        expect(properties.length).toBe(9);
+        expect(properties.includes('b')).toBe(false);
+        expect(properties.includes('methodWithoutDecorators')).toBe(false);
+        expect(properties.includes(methodNameAsSymbol)).toBe(true);
+      });
 
-      expect(p.someMethod3.type).toBe(Function);
-      expect(p.someMethod3.decorators).toEqual<DecoratorAndValue[]>([]);
-      expect(p.someMethod3.params).toEqual<PropMetadataTuple[]>([
-        [CType, new DecoratorAndValue(paramDecorator, 'method3 param1')],
-        [
-          BType,
-          new DecoratorAndValue(paramDecorator, 'method3 param2 value2'),
-          new DecoratorAndValue(paramDecorator, 'method3 param2 value1'),
-        ],
-        [AType],
-      ]);
+      it('someMethod1', () => {
+        const p = reflector.getMetadata(Parent)!;
+        expect(p.someMethod1.type).toBe(Function);
+        expect(p.someMethod1.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'p4')]);
+        expect(p.someMethod1.params).toEqual<PropMetadataTuple[]>([[AType]]);
+      });
 
-      expect(p.c.type).toBe(CType);
+      it('someMethod2', () => {
+        const p = reflector.getMetadata(Parent)!;
+        expect(p.someMethod2.type).toBe(Function);
+        expect(p.someMethod2.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'p5')]);
+        expect(p.someMethod2.params).toEqual<PropMetadataTuple[]>([
+          [BType, new DecoratorAndValue(paramDecorator, 'method2 param1')],
+          [DType],
+        ]);
+      });
 
-      expect(p.constructor.type).toBe(Function);
-      expect(p.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
-        new DecoratorAndValue(classDecorator, { value: 'parent' }, __dir),
-      ]);
-      expect(p.constructor.params).toEqual<PropMetadataTuple[]>([
-        [AType, new DecoratorAndValue(paramDecorator, 'a')],
-        [BType, new DecoratorAndValue(paramDecorator, 'b')],
-        [DType],
-      ]);
+      it('someMethod3', () => {
+        const p = reflector.getMetadata(Parent)!;
+        expect(p.someMethod3.type).toBe(Function);
+        expect(p.someMethod3.decorators).toEqual<DecoratorAndValue[]>([]);
+        expect(p.someMethod3.params).toEqual<PropMetadataTuple[]>([
+          [CType, new DecoratorAndValue(paramDecorator, 'method3 param1')],
+          [
+            BType,
+            new DecoratorAndValue(paramDecorator, 'method3 param2 value2'),
+            new DecoratorAndValue(paramDecorator, 'method3 param2 value1'),
+          ],
+          [AType],
+        ]);
+      });
+
+      it('c property should have CType', () => {
+        const p = reflector.getMetadata(Parent)!;
+        expect(p.c.type).toBe(CType);
+      });
+
+      it('constructor', () => {
+        const p = reflector.getMetadata(Parent)!;
+        expect(p.constructor.type).toBe(Function);
+        expect(p.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
+          new DecoratorAndValue(classDecorator, { value: 'parent' }, __dir),
+        ]);
+        expect(p.constructor.params).toEqual<PropMetadataTuple[]>([
+          [AType, new DecoratorAndValue(paramDecorator, 'a')],
+          [BType, new DecoratorAndValue(paramDecorator, 'b')],
+          [DType],
+        ]);
+      });
     });
 
     @classDecorator({ value: 'child' })
@@ -191,9 +237,7 @@ describe('Reflector', () => {
       expect(p2.someMethod1.params).toEqual<PropMetadataTuple[]>([[BType]]);
 
       expect(p2.someMethod2.type).toBe(Function);
-      expect(p2.someMethod2.decorators).toEqual<DecoratorAndValue[]>([
-        new DecoratorAndValue(propDecorator, 'p5'),
-      ]);
+      expect(p2.someMethod2.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'p5')]);
       expect(p2.someMethod2.params).toEqual<PropMetadataTuple[]>([
         [BType, new DecoratorAndValue(paramDecorator, 'method2 param1')],
         [DType],
