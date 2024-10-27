@@ -125,7 +125,7 @@ export class CorsExtension implements Extension<void | false> {
       }
 
       const routeMeta: RouteMeta = {
-        decoratorMetadata: {} as any,
+        decoratorAndValue: {} as any,
         resolvedGuards: [],
         controller: DynamicController,
         methodName,

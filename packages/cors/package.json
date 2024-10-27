@@ -38,8 +38,8 @@
     "@ts-stack/cors": "^1.4.2"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.60.0",
-    "@ditsmod/routing": "^2.4.1"
+    "@ditsmod/core": "^2.61.0",
+    "@ditsmod/routing": "^2.6.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }
