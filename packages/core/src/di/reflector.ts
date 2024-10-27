@@ -62,7 +62,7 @@ export class Reflector {
   getMetadata<DecorValue = any, Proto extends object = object>(
     Cls: Class<Proto>,
     propertyKey?: string | symbol,
-  ): ClassPropMeta<DecorValue>;
+  ): ClassPropMeta<DecorValue> | undefined;
   getMetadata<DecorValue = any, Proto extends object = object>(
     Cls: Class<Proto>,
     propertyKey?: string | symbol,
@@ -90,7 +90,7 @@ export class Reflector {
 
   protected getClassMetaOrParamsMeta<DecorValue = any, Proto extends object = object>(
     Cls: Class<Proto>,
-    classMeta: ClassMeta<DecorValue, Proto>,
+    classMeta: ClassMeta<DecorValue, Proto> | undefined,
     propertyKey?: string | symbol,
   ): ClassMeta<DecorValue, Proto> | ClassPropMeta<DecorValue> | undefined {
     if (propertyKey) {
