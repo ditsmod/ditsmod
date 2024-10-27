@@ -10,7 +10,7 @@ import {
   getParamKey,
   getRawMetadata,
 } from './decorator-factories.js';
-import { Class, DecoratorAndValue, ParamsMeta, ClassMeta, ClassPropMeta } from './types-and-models.js';
+import { Class, DecoratorAndValue, ParamsMeta, ClassMeta, ClassPropMeta, UnknownType } from './types-and-models.js';
 import { isType, newArray } from './utils.js';
 
 /**
@@ -61,11 +61,11 @@ export class Reflector {
   getMetadata<DecorValue = any, Proto extends object = object>(
     Cls: Class<Proto>,
     propertyKey?: string | symbol,
-  ): (ParamsMeta | null)[];
+  ): ClassPropMeta<DecorValue>;
   getMetadata<DecorValue = any, Proto extends object = object>(
     Cls: Class<Proto>,
     propertyKey?: string | symbol,
-  ): ClassMeta<DecorValue, Proto> | (ParamsMeta | null)[] | undefined {
+  ): ClassMeta<DecorValue, Proto> | ClassPropMeta<DecorValue> | undefined {
     const classMeta = new ClassMetaIterator() as unknown as ClassMeta<DecorValue, Proto>;
     if (!isType(Cls)) {
       return;
@@ -91,13 +91,15 @@ export class Reflector {
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
     propertyKey?: string | symbol,
-  ): ClassMeta<DecorValue, Proto> | (ParamsMeta | null)[] | undefined {
+  ): ClassMeta<DecorValue, Proto> | ClassPropMeta<DecorValue> | undefined {
     if (propertyKey) {
       const classPropMeta = classMeta?.[propertyKey as keyof Proto];
       if (classPropMeta) {
-        return classPropMeta.params;
+        return classPropMeta;
       } else {
-        return this.getParamsMetadata(Cls, propertyKey as Exclude<keyof Proto, number>);
+        const params = this.getParamsMetadata(Cls, propertyKey as Exclude<keyof Proto, number>);
+        const classPropMeta = { type: UnknownType, decorators: [], params } as ClassPropMeta;
+        return classPropMeta;
       }
     } else {
       return classMeta;

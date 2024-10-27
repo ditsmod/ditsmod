@@ -324,16 +324,16 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   }
 
   protected static getDependencies(Cls: Class, propertyKey?: string | symbol): Dependency[] {
-    const aParamsMeta = reflector.getMetadata(Cls, propertyKey);
-    if (aParamsMeta.some((p) => p === null)) {
-      throw noAnnotationError(Cls, aParamsMeta, propertyKey);
+    const classPropMeta = reflector.getMetadata(Cls, propertyKey);
+    if (classPropMeta.params.includes(null)) {
+      throw noAnnotationError(Cls, classPropMeta.params, propertyKey);
     }
-    const deps = aParamsMeta.map((paramsMeta) => {
+    const deps = classPropMeta.params.map((paramsMeta) => {
       const { token, ctx, isOptional, visibility } = this.extractPayload(paramsMeta!);
       if (token != null) {
         return new Dependency(KeyRegistry.get(token), isOptional, visibility, ctx);
       } else {
-        throw noAnnotationError(Cls, aParamsMeta, propertyKey);
+        throw noAnnotationError(Cls, classPropMeta.params, propertyKey);
       }
     });
 

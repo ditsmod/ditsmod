@@ -1,7 +1,7 @@
 import 'reflect-metadata/lite';
 import { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
 import { Reflector, isDelegateCtor } from './reflector.js';
-import { DecoratorAndValue, ParamsMeta, PropMetadataTuple } from './types-and-models.js';
+import { ClassPropMeta, DecoratorAndValue, ParamsMeta, PropMetadataTuple, UnknownType } from './types-and-models.js';
 import { getCallerDir } from '#utils/callsites.js';
 
 const classDecorator = makeClassDecorator((data?: any) => data);
@@ -80,7 +80,7 @@ describe('Reflector', () => {
     reflector = new Reflector();
   });
 
-  fdescribe('getMetadata', () => {
+  describe('getMetadata', () => {
     const methodNameAsSymbol = Symbol();
 
     @classDecorator({ value: 'parent' })
@@ -125,13 +125,26 @@ describe('Reflector', () => {
 
     describe('Parent', () => {
       it('should return array with null because of no decorators', () => {
-        expect(reflector.getMetadata(Parent, 'methodWithoutDecorators')).toEqual([null]);
+        expect(reflector.getMetadata(Parent, 'methodWithoutDecorators')).toEqual({
+          decorators: [],
+          params: [null],
+          type: UnknownType,
+        });
       });
       it('should return empty array for non existen property name', () => {
-        expect(reflector.getMetadata(Parent, 'nonExistingPropName')).toEqual([]);
+        expect(reflector.getMetadata(Parent, 'nonExistingPropName')).toEqual({
+          decorators: [],
+          params: [],
+          type: UnknownType,
+        });
       });
       it('should return array with one dependency', () => {
-        expect(reflector.getMetadata(Parent, 'methodWithDecorators')).toEqual([[AType]]);
+        const classPropMeta = {
+          type: Function,
+          decorators: [new DecoratorAndValue(propDecorator, 'p11')],
+          params: [[AType]],
+        } as ClassPropMeta;
+        expect(reflector.getMetadata(Parent, 'methodWithDecorators')).toEqual(classPropMeta);
       });
 
       it('should return properties with decorators', () => {
@@ -274,7 +287,7 @@ describe('Reflector', () => {
   describe('parameters', () => {
     it('should return an array of parameters for a type', () => {
       const p = reflector.getMetadata(ClassWithDecorators, 'constructor');
-      expect(p).toEqual<(ParamsMeta | [typeof DType])[]>([
+      expect(p.params).toEqual<(ParamsMeta | [typeof DType])[]>([
         [AType, new DecoratorAndValue(paramDecorator, 'a')],
         [BType, new DecoratorAndValue(paramDecorator, 'b')],
         [DType],
@@ -283,12 +296,12 @@ describe('Reflector', () => {
 
     it('should return an array of parameters for someMethod2', () => {
       const p = reflector.getMetadata(ClassWithDecorators, 'someMethod2');
-      expect(p).toEqual([[BType, new DecoratorAndValue(paramDecorator, 'method2 param')], [DType]]);
+      expect(p.params).toEqual([[BType, new DecoratorAndValue(paramDecorator, 'method2 param')], [DType]]);
     });
 
     it('should return an array of parameters for someMethod3', () => {
       const p = reflector.getMetadata(ClassWithDecorators, 'someMethod3');
-      expect(p).toEqual([
+      expect(p.params).toEqual([
         [CType, new DecoratorAndValue(paramDecorator, 'method3 param1')],
         [
           BType,
@@ -301,7 +314,7 @@ describe('Reflector', () => {
 
     it('should work for a class without annotations', () => {
       const p = reflector.getMetadata(ClassWithoutDecorators, 'constructor');
-      expect(p.length).toEqual(2);
+      expect(p.params.length).toEqual(2);
     });
   });
 
@@ -507,34 +520,34 @@ describe('Reflector', () => {
       class NoDecorators {}
 
       // Check that metadata for Parent was not changed!
-      expect(reflector.getMetadata(Parent, 'constructor')).toEqual<ParamsMeta[]>([
+      expect(reflector.getMetadata(Parent, 'constructor').params).toEqual<ParamsMeta[]>([
         [A, new DecoratorAndValue(paramDecorator, 'a')],
         [B, new DecoratorAndValue(paramDecorator, 'b')],
       ]);
 
-      expect(reflector.getMetadata(Child, 'constructor')).toEqual<ParamsMeta[]>([
+      expect(reflector.getMetadata(Child, 'constructor').params).toEqual<ParamsMeta[]>([
         [A, new DecoratorAndValue(paramDecorator, 'a')],
         [B, new DecoratorAndValue(paramDecorator, 'b')],
       ]);
 
-      expect(reflector.getMetadata(ChildWithDecorator, 'constructor')).toEqual<ParamsMeta[]>([
+      expect(reflector.getMetadata(ChildWithDecorator, 'constructor').params).toEqual<ParamsMeta[]>([
         [A, new DecoratorAndValue(paramDecorator, 'a')],
         [B, new DecoratorAndValue(paramDecorator, 'b')],
       ]);
 
-      expect(reflector.getMetadata(ChildWithDecoratorAndProps, 'constructor')).toEqual<ParamsMeta[]>([
+      expect(reflector.getMetadata(ChildWithDecoratorAndProps, 'constructor').params).toEqual<ParamsMeta[]>([
         [A, new DecoratorAndValue(paramDecorator, 'a')],
         [B, new DecoratorAndValue(paramDecorator, 'b')],
       ]);
 
-      expect(reflector.getMetadata(ChildWithCtor, 'constructor')).toEqual<ParamsMeta[]>([
+      expect(reflector.getMetadata(ChildWithCtor, 'constructor').params).toEqual<ParamsMeta[]>([
         [C, new DecoratorAndValue(paramDecorator, 'c')],
       ]);
 
       // If we have no decorator, we don't get metadata about the ctor params.
       // But we should still get an array of the right length based on function.length.
       // TODO: Review use of `any` here (#19904)
-      expect(reflector.getMetadata(ChildWithCtorNoDecorator, 'constructor')).toEqual<ParamsMeta[]>([
+      expect(reflector.getMetadata(ChildWithCtorNoDecorator, 'constructor').params).toEqual<ParamsMeta[]>([
         null,
         null,
         null,
