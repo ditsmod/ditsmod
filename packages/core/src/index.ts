@@ -84,7 +84,6 @@ export { MetadataPerMod1, MetadataPerMod2 } from './types/metadata-per-mod.js';
 export {
   AnyObj,
   CanActivate,
-  DecoratorMetadata,
   GuardItem,
   HttpMethod,
   ModuleType,

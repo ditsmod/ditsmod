@@ -12,7 +12,7 @@ import {
   reflector,
   ClassFactoryProvider,
 } from '#di';
-import { AnyObj, ModuleType, AnyFn, DecoratorMetadata } from '#types/mix.js';
+import { AnyObj, ModuleType, AnyFn } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { Extension } from '#types/extension-types.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
@@ -71,8 +71,8 @@ export function isController(
   return decoratorAndValue?.decorator === controller;
 }
 
-export function isRoute(container?: AnyObj): container is DecoratorMetadata {
-  return (container as DecoratorMetadata)?.decorator === route;
+export function isRoute(container?: DecoratorAndValue): container is DecoratorAndValue {
+  return (container as DecoratorAndValue)?.decorator === route;
 }
 
 export function isModuleWithParams(mod?: Provider | ModuleWithParams | ModuleType): mod is ModuleWithParams {

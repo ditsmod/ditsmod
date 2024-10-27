@@ -49,14 +49,6 @@ export interface CanActivate {
   canActivate(ctx: RequestContext, params?: any[]): boolean | number | Promise<boolean | number>;
 }
 
-export interface DecoratorMetadata<MV extends AnyObj = AnyObj> {
-  otherDecorators: any[];
-  /**
-   * Decorator value.
-   */
-  value: MV;
-  decorator: AnyFn;
-}
 export type AppMetadataMap = Map<ModuleType | ModuleWithParams, MetadataPerMod1>;
 export type GuardItem = Class<CanActivate> | [Class<CanActivate>, any, ...any[]];
 
