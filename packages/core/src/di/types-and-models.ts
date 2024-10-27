@@ -31,15 +31,33 @@ export interface Class<T = any> extends Function {
 export type PropMetadataTuple<Value = any> = [Class, ...DecoratorAndValue<Value>[]];
 
 /**
+ * It is used solely as a data type for TypeScript to recognize that a certain object has `Symbol.iterator`
+ * as a method name while keeping it hidden from the API of this object. For example, you can create the following type:
+```ts
+export type ObjectWithSymbolIterator = object & SymbolIterator<string | symbol>;
+
+declare const obj: ObjectWithSymbolIterator;
+for(const prop of obj) {
+  // Works.
+}
+```
+ */
+export abstract class SymbolIterator<T = any> {
+  #properties: Set<T>;
+
+  private [Symbol.iterator]() {
+    return this.#properties[Symbol.iterator]();
+  }
+}
+
+/**
  * Metadata returned by the `reflector.getMetadata()` method.
  */
 export type ClassMeta<DecorValue = any, Proto extends object = object> = {
   [P in keyof Proto]: ClassPropMeta<DecorValue>;
 } & {
   constructor: ClassPropMeta<DecorValue>;
-} & {
-  [Symbol.iterator]: () => IterableIterator<string | symbol>;
-}
+} & SymbolIterator<string | symbol>;
 
 export interface ClassPropMeta<DecorValue = any> {
   type: Class;

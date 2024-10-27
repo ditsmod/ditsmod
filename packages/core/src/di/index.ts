@@ -27,7 +27,8 @@ export {
   ValueProvider,
   CTX_DATA,
   ClassMeta,
-  ClassPropMeta
+  ClassPropMeta,
+  SymbolIterator
 } from './types-and-models.js';
 export {
   isClassProvider,
