@@ -1,13 +1,21 @@
 export class ClassMetaIterator {
-  #properties: Set<string | symbol>;
+  #properties: (string | symbol)[];
 
   [Symbol.iterator]() {
-    return this.#properties[Symbol.iterator]();
+    let counter = 0;
+    return {
+      next: () => {
+        return {
+          done: !(counter in this.#properties), 
+          value: this.#properties[counter++], 
+        };
+      },
+    };
   }
 
   init() {
-    const arr1 = Object.keys(this);
+    const arr1 = Object.keys(this) as (string | symbol)[];
     const arr2 = Object.getOwnPropertySymbols(this);
-    this.#properties = new Set([...arr1, ...arr2]);
+    this.#properties = arr1.concat(arr2);
   }
 }
