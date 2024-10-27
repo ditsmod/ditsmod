@@ -51,13 +51,13 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
     for (const controller of (meta.controllers as Class<Record<string | symbol, any>>[])) {
       const classMeta = reflector.getMetadata(controller)!;
       for (const methodName of classMeta) {
-        for (const decoratorMetadata of classMeta[methodName].decorators) {
-          if (!isRoute(decoratorMetadata)) {
+        for (const decoratorAndValue of classMeta[methodName].decorators) {
+          if (!isRoute(decoratorAndValue)) {
             continue;
           }
           const providersPerRou: Provider[] = [];
           const providersPerReq: Provider[] = [];
-          const route = decoratorMetadata.value;
+          const route = decoratorAndValue.value;
           const ctrlDecorator = classMeta.constructor.decorators.find(isController);
           const isSingleton = ctrlDecorator?.value.isSingleton;
           const guards = [...metadataPerMod1.guardsPerMod, ...this.normalizeGuards(route.guards)];
@@ -68,7 +68,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           const path = this.getPath(prefix, controllerPath);
 
           const routeMeta: RouteMeta = {
-            decoratorMetadata,
+            decoratorAndValue,
             controller,
             methodName,
           };

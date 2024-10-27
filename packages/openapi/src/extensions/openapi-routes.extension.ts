@@ -45,18 +45,18 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
     for (const controller of (meta.controllers as Class<Record<string | symbol, any>>[])) {
       const classMeta = reflector.getMetadata(controller)!;
       for (const methodName of classMeta) {
-        for (const decoratorMetadata of classMeta[methodName].decorators) {
-          if (!isOasRoute(decoratorMetadata)) {
+        for (const decoratorAndValue of classMeta[methodName].decorators) {
+          if (!isOasRoute(decoratorAndValue)) {
             continue;
           }
-          const oasRoute = decoratorMetadata.value;
+          const oasRoute = decoratorAndValue.value;
           const providersPerRou: Provider[] = [];
           const providersPerReq: Provider[] = [];
           const ctrlDecorator = classMeta.constructor.decorators.find(isController);
           const isSingleton = ctrlDecorator?.value.isSingleton;
           const guards = metadataPerMod1.guardsPerMod.slice();
-          if (isOasRoute1(decoratorMetadata)) {
-            guards.push(...this.normalizeGuards(decoratorMetadata.value.guards));
+          if (isOasRoute1(decoratorAndValue)) {
+            guards.push(...this.normalizeGuards(decoratorAndValue.value.guards));
           }
           const controllerFactory: FactoryProvider = { useFactory: [controller, controller.prototype[methodName]] };
           providersPerReq.push(
@@ -83,7 +83,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
           const routeMeta: OasRouteMeta = {
             oasPath,
             operationObject: clonedOperationObject,
-            decoratorMetadata,
+            decoratorAndValue,
             controller,
             methodName,
           };
