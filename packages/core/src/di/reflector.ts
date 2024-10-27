@@ -79,8 +79,11 @@ export class Reflector {
     if (cache === null) {
       this.concatWithParentClassMeta(Cls, classMeta);
       cache = this.concatWithOwnClassMeta(Cls, classMeta);
+      if (cache) {
+        (cache as unknown as ClassMetaIterator).init();
+      }
     }
-    
+
     return this.getClassMetaOrParamsMeta(Cls, cache!, propertyKey);
   }
 
