@@ -46,7 +46,8 @@ export class Reflector {
   }
 
   /**
-   * Returns all the metadata for the passed class.
+   * Returns an object with all the metadata for the passed class.
+   * This object implements [The iterable protocol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol).
    *
    * @param Cls A class that has decorators.
    */
