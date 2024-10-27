@@ -51,6 +51,12 @@ export abstract class SymbolIterator<T = any> {
 }
 
 /**
+ * Used to indicate the unknown data type of a particular
+ * class property returned by `Reflector`.
+ */
+export class UnknownType {}
+
+/**
  * Metadata returned by the `reflector.getMetadata()` method.
  */
 export type ClassMeta<DecorValue = any, Proto extends object = object> = {
