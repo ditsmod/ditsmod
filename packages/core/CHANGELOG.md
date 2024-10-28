@@ -1,3 +1,27 @@
+<a name="core-2.61.0"></a>
+# [core-2.61.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.61.0) (2024-10-28)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [f9eca5c13e](https://github.com/ditsmod/ditsmod/commit/f9eca5c13eb1f3a28) | feat | introduced `UnknownType`. |
+| [2875f6b3f8](https://github.com/ditsmod/ditsmod/commit/2875f6b3f868dbc6b) | feat | introduced `SymbolIterator` type. |
+| [cfb2cab193](https://github.com/ditsmod/ditsmod/commit/cfb2cab19334f6b01) | feat | introduced `ClassMetaIterator`. |
+| [9116d21241](https://github.com/ditsmod/ditsmod/commit/9116d21241ba23feb) | feat | added second params for `reflector.getMetadata()`. |
+| [0727914336](https://github.com/ditsmod/ditsmod/commit/0727914336d2855ab) | feat | introduced cache for class deps. |
+| [e5b5cc30a3](https://github.com/ditsmod/ditsmod/commit/e5b5cc30a301e237a) | feat | introduced cache for `reflestor.getMetadata()`. |
+| [3dc9eaac88](https://github.com/ditsmod/ditsmod/commit/3dc9eaac884d881d2) | feat | added `getCallerDir()` to imports from the module. |
+| [12998995ef](https://github.com/ditsmod/ditsmod/commit/12998995ef4b78c08) | feat | added `reflector.getMetadata()`. |
+| [1226874419](https://github.com/ditsmod/ditsmod/commit/12268744198186463) | refactor | allow symbol as index of `AnyObj`. |
+| [28269a1bcf](https://github.com/ditsmod/ditsmod/commit/28269a1bcfccc4d72) | refactor | removed `reflector.getPropMetadata()`. |
+| [dc39d28250](https://github.com/ditsmod/ditsmod/commit/dc39d282507d2d978) | refactor | used `reflector.getMetadata()` instead `reflector.getClassMetadata()`. |
+| [5edf7341a6](https://github.com/ditsmod/ditsmod/commit/5edf7341a613834b5) | refactor | hiding `reflector.getPropMetadata()` from public API. |
+| [dba8642af1](https://github.com/ditsmod/ditsmod/commit/dba8642af1b883230) | refactor | used `reflector.getMetadata()` instead `reflector.getPropMetadata()`. |
+| [1ab4a8c24a](https://github.com/ditsmod/ditsmod/commit/1ab4a8c24a6c6c4a6) | refactor | refactoring `makeParamDecorator()`. |
+| [e6ced33c65](https://github.com/ditsmod/ditsmod/commit/e6ced33c65a204d84) | fix | fixed `PropProto`. |
+| [d8c7f32383](https://github.com/ditsmod/ditsmod/commit/d8c7f323831fac085) | fix | fixed `PropMeta`. |
+| [59174f2593](https://github.com/ditsmod/ditsmod/commit/59174f2593d14b4e8) | fix | fixed `ParamsMeta`. |
+| [f4dfdfb12d](https://github.com/ditsmod/ditsmod/commit/f4dfdfb12d372436d) | fix | fixed `importProvidersAndExtensions()`. |
+
 <a name="core-2.60.0"></a>
 # [core-2.60.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.60.0) (2024-10-21)
 
