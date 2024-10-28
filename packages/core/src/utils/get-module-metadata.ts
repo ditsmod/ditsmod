@@ -21,8 +21,10 @@ export function getModuleMetadata(
 
   if (isModuleWithParams(modOrObj)) {
     const modWitParams = modOrObj;
-    const container = reflector.getMetadata<ModuleMetadataValue>(modWitParams.module)?.constructor.decorators.find(typeGuard);
-    const modMetadata = container?.value.data;
+    const decoratorAndValue = reflector
+      .getMetadata<ModuleMetadataValue>(modWitParams.module)
+      ?.constructor.decorators.find(typeGuard);
+    const modMetadata = decoratorAndValue?.value.data;
     if (!modMetadata) {
       return modMetadata;
     }
@@ -42,11 +44,13 @@ export function getModuleMetadata(
     metadata.providersPerReq = getLastProviders(mergeArrays(modMetadata.providersPerReq, modWitParams.providersPerReq));
     metadata.exports = getLastProviders(mergeArrays(modMetadata.exports, modWitParams.exports));
     metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
-    const declaredInDir = container.declaredInDir || '';
-    return { ...metadata, decoratorFactory: container.decorator, declaredInDir };
+    const declaredInDir = decoratorAndValue.declaredInDir || '';
+    return { ...metadata, decoratorFactory: decoratorAndValue.decorator, declaredInDir };
   } else {
-    const container = reflector.getMetadata<ModuleMetadataValue>(modOrObj)?.constructor.decorators.find(typeGuard);
-    const modMetadata = container?.value.data;
+    const decoratorAndValue = reflector
+      .getMetadata<ModuleMetadataValue>(modOrObj)
+      ?.constructor.decorators.find(typeGuard);
+    const modMetadata = decoratorAndValue?.value.data;
     if (!modMetadata) {
       return modMetadata;
     }
@@ -57,8 +61,10 @@ export function getModuleMetadata(
         metadata[`providersPer${scope}`] = arr;
       }
     });
-    const declaredInDir = container?.declaredInDir || '';
-    return container ? { ...metadata, decoratorFactory: container.decorator, declaredInDir } : undefined;
+    const declaredInDir = decoratorAndValue?.declaredInDir || '';
+    return decoratorAndValue
+      ? { ...metadata, decoratorFactory: decoratorAndValue.decorator, declaredInDir }
+      : undefined;
   }
 }
 
