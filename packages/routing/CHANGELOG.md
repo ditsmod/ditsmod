@@ -1,3 +1,11 @@
+<a name="routing-2.7.0"></a>
+# [routing-2.7.0](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.7.0) (2024-10-28)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [23793e9b50](https://github.com/ditsmod/ditsmod/commit/23793e9b50ff582048c) | refactor | removed `DecoratorMetadata`. |
+| [82fcfcbe1d](https://github.com/ditsmod/ditsmod/commit/82fcfcbe1d2fc4a91f1a) | refactor | refactoring `RoutesExtension` to use instance of `ClassMetaIterator`. |
+
 <a name="routing-2.6.0"></a>
 # [routing-2.6.0](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.6.0) (2024-10-21)
 
