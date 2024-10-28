@@ -1,3 +1,13 @@
+<a name="openapi-2.29.0"></a>
+# [openapi-2.29.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.29.0) (2024-10-28)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [7bc9b32340](https://github.com/ditsmod/ditsmod/commit/7bc9b3234032) | refactor | refactoring `OpenapiRoutesExtension` to use instance of `ClassMetaIterator`. |
+| [e0b9c77c5f](https://github.com/ditsmod/ditsmod/commit/e0b9c77c5f44) | fix | fixed `content.getSchema()`. |
+| [f46b10d7e2](https://github.com/ditsmod/ditsmod/commit/f46b10d7e2f4) | refactor | used `reflector.getMetadata()` instead `reflector.getClassMetadata()`. |
+| [f399f46a67](https://github.com/ditsmod/ditsmod/commit/f399f46a67a2) | refactor | used `reflector.getMetadata()` instead `reflector.getPropMetadata()`. |
+
 <a name="openapi-2.28.0"></a>
 # [openapi-2.28.0](https://github.com/ditsmod/ditsmod/releases/tag/openapi-2.28.0) (2024-10-21)
 
