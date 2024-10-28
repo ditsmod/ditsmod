@@ -44,7 +44,6 @@ type ModuleId = string | ModuleType | ModuleWithParams;
  * Scans modules, normalizes, stores and checks their metadata for correctness,
  * adds and removes imports of one module into another.
  */
-@injectable()
 export class ModuleManager {
   protected map: ModulesMap = new Map();
   protected mapId = new Map<string, AnyModule>();
