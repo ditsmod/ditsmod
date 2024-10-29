@@ -1,3 +1,10 @@
+<a name="core-2.61.1"></a>
+# [core-2.61.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.61.1) (2024-10-28)
+
+| Commit | Type | Description |
+| -- | -- | -- |
+| [0257a0441a](https://github.com/ditsmod/ditsmod/commit/0257a0441a5a7fed) | fix | fixed `moduleFactory.checkCollisionsWithScopesMix()`. |
+
 <a name="core-2.61.0"></a>
 # [core-2.61.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.61.0) (2024-10-28)
 
