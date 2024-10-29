@@ -147,4 +147,5 @@ export {
   isTokenProvider,
   isTypeProvider,
   isValueProvider,
+  hasDeclaredInDir
 } from './utils/type-guards.js';

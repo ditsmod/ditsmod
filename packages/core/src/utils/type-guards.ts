@@ -12,7 +12,7 @@ import {
   reflector,
   ClassFactoryProvider,
 } from '#di';
-import { AnyObj, ModuleType, AnyFn } from '#types/mix.js';
+import { AnyObj, ModuleType, AnyFn, RequireProps } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { Extension } from '#types/extension-types.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
@@ -48,6 +48,16 @@ export function isModule(
   decoratorAndValue?: DecoratorAndValue,
 ): decoratorAndValue is DecoratorAndValue<RootModuleMetadata> | DecoratorAndValue<ModuleMetadata> {
   return isRootModule(decoratorAndValue) || isFeatureModule(decoratorAndValue);
+}
+
+/**
+ * If this guard returns `true`, then the `DecoratorAndValue`
+ * instance passed to it has the `declaredInDir` property set.
+ */
+export function hasDeclaredInDir(
+  decoratorAndValue?: DecoratorAndValue,
+): decoratorAndValue is RequireProps<DecoratorAndValue, 'declaredInDir'> {
+  return Boolean(decoratorAndValue?.declaredInDir) && decoratorAndValue?.declaredInDir != '.';
 }
 
 export function isDecoratorAndValue(
