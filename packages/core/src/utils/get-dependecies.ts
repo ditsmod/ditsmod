@@ -1,7 +1,7 @@
 import { Injector } from '#di';
 import { Provider } from '#types/mix.js';
 
-export interface ReflectiveDependecy {
+export interface ReflectiveDependency {
   token: NonNullable<unknown>;
   required: boolean;
 }
@@ -24,7 +24,7 @@ export function getDependencies(provider: Provider) {
     });
   });
 
-  const deps: ReflectiveDependecy[] = [];
+  const deps: ReflectiveDependency[] = [];
   uniqDeps.forEach((token) => {
     deps.push({ token, required: required.has(token) });
   });

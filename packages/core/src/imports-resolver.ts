@@ -11,7 +11,7 @@ import { AppMetadataMap, ModuleType, Scope, Provider } from './types/mix.js';
 import { ModuleWithParams } from './types/module-metadata.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { RouteMeta } from './types/route-data.js';
-import { ReflectiveDependecy, getDependencies } from './utils/get-dependecies.js';
+import { ReflectiveDependency, getDependencies } from './utils/get-dependecies.js';
 import { getLastProviders } from './utils/get-last-providers.js';
 import { getModuleName } from './utils/get-module-name.js';
 import { getProviderName } from './utils/get-provider-name.js';
@@ -189,7 +189,7 @@ export class ImportsResolver {
     module1: AnyModule,
     scopes: Scope[],
     provider: Provider,
-    dep: ReflectiveDependecy,
+    dep: ReflectiveDependency,
     path: any[] = [],
   ) {
     let found = false;
@@ -245,7 +245,7 @@ export class ImportsResolver {
     return false;
   }
 
-  protected hasUnresolvedImportedDependecies(module1: AnyModule, scopes: Scope[], dep: ReflectiveDependecy) {
+  protected hasUnresolvedImportedDependecies(module1: AnyModule, scopes: Scope[], dep: ReflectiveDependency) {
     let found = false;
     for (const scope of scopes) {
       const importObj = this.appMetadataMap.get(module1)?.importedTokensMap[`per${scope}`].get(dep.token);
