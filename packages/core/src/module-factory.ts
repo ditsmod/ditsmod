@@ -291,7 +291,7 @@ export class ModuleFactory {
     const collisions = getCollisions(duplImpTokens, [...importObj.providers, provider]);
     if (collisions.length) {
       const modulesNames = [importObj.module, module].map(getModuleName);
-      throwProvidersCollisionError(this.moduleName, [token], modulesNames, scope);
+      throwProvidersCollisionError(this.moduleName, [token], modulesNames, scope, this.meta.isExternal);
     }
   }
 
@@ -347,7 +347,7 @@ export class ModuleFactory {
             // Allow collisions in host modules.
           } else {
             const hostModuleName = getModuleName(importObj.module);
-            throwProvidersCollisionError(this.moduleName, [token1], [hostModuleName], scope);
+            throwProvidersCollisionError(this.moduleName, [token1], [hostModuleName], scope, this.meta.isExternal);
           }
         }
         this.resolveCollisionsWithScopesMix(token1, scope, resolvedTokens);
