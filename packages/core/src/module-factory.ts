@@ -17,6 +17,7 @@ import { getModuleName } from './utils/get-module-name.js';
 import { getToken, getTokens } from './utils/get-tokens.js';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error.js';
 import { isAppendsWithParams, isModuleWithParams, isNormRootModule } from './utils/type-guards.js';
+import { hasDeclaredInDir } from '#utils/type-guards.js';
 
 type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 
@@ -341,8 +342,9 @@ export class ModuleFactory {
         const collision = importedTokens.includes(token1) && ![...declaredTokens, ...resolvedTokens].includes(token1);
         if (collision) {
           const importObj = this[`importedProvidersPer${scope}`].get(token1)!;
-          const hostModulePath = getModuleMetadata(importObj.module)?.declaredInDir || '';
-          const collisionWithPath = reflector.getMetadata(token1)?.constructor.decorators.at(0)?.declaredInDir || '';
+          const hostModulePath = getModuleMetadata(importObj.module)?.declaredInDir || '.';
+          const decorator = reflector.getMetadata(token1)?.constructor.decorators.find(hasDeclaredInDir);
+          const collisionWithPath = decorator?.declaredInDir || '.';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.
           } else {

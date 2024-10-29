@@ -8,7 +8,7 @@ import {
   ExtensionCounters,
   TotalInitMeta2,
 } from '#types/extension-types.js';
-import { OptionalProps, RequireProps } from '#types/mix.js';
+import { OptionalProps } from '#types/mix.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#utils/type-guards.js';
 import { Counter } from './counter.js';
