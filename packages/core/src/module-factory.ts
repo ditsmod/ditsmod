@@ -342,7 +342,7 @@ export class ModuleFactory {
         if (collision) {
           const importObj = this[`importedProvidersPer${scope}`].get(token1)!;
           const hostModulePath = getModuleMetadata(importObj.module)?.declaredInDir || '';
-          const collisionWithPath = reflector.getMetadata(token1)?.constructor.decorators.at(-1)?.declaredInDir || '';
+          const collisionWithPath = reflector.getMetadata(token1)?.constructor.decorators.at(0)?.declaredInDir || '';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.
           } else {
