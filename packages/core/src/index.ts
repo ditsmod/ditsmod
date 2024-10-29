@@ -133,6 +133,7 @@ export {
   isClassFactoryProvider,
   isModuleWithParams,
   isFeatureModule,
+  isModule,
   isDecoratorAndValue,
   isHttp2SecureServerOptions,
   isInjectionToken,

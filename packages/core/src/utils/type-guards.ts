@@ -44,6 +44,12 @@ export function isRootModule(
   return decoratorAndValue?.decorator === rootModule;
 }
 
+export function isModule(
+  decoratorAndValue?: DecoratorAndValue,
+): decoratorAndValue is DecoratorAndValue<RootModuleMetadata> | DecoratorAndValue<ModuleMetadata> {
+  return isRootModule(decoratorAndValue) || isFeatureModule(decoratorAndValue);
+}
+
 export function isDecoratorAndValue(
   decoratorAndValue?: DecoratorAndValue | Class,
 ): decoratorAndValue is DecoratorAndValue {
@@ -134,7 +140,8 @@ export function isProvider(maybeProvider?: any): maybeProvider is Provider {
     return false;
   }
   const isSomeModule = reflector
-    .getMetadata(maybeProvider)?.constructor.decorators.some((m) => isRootModule(m) || isFeatureModule(m));
+    .getMetadata(maybeProvider)
+    ?.constructor.decorators.some((m) => isRootModule(m) || isFeatureModule(m));
   return (maybeProvider instanceof Class && !isSomeModule) || isNormalizedProvider(maybeProvider);
 }
 
