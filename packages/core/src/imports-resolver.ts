@@ -202,7 +202,6 @@ export class ImportsResolver {
         found = true;
         path.push(dep.token);
         const { module: sourceModule2, providers: sourceProviders2 } = importObj;
-        targetMeta[`providersPer${scope}`].unshift(...sourceProviders2);
 
         // Loop for multi providers.
         for (const sourceProvider2 of sourceProviders2) {
