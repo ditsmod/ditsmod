@@ -377,25 +377,14 @@ export class ModuleFactory {
   }
 
   protected checkImportsAndAppends(meta: NormalizedModuleMetadata) {
-    const appendedModules: Array<ModuleType | ModuleWithParams> = [];
-
-    this.meta.appendsWithParams.forEach((mod) => {
-      const appendedMeta = this.moduleManager.getMetadata(mod, true);
+    meta.appendsWithParams.forEach((append) => {
+      const appendedMeta = this.moduleManager.getMetadata(append, true);
       if (!appendedMeta.controllers.length) {
         const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" must have controllers.`;
         throw new Error(msg);
       }
-      appendedModules.push(appendedMeta.module);
-    });
-
-    if (!appendedModules.length) {
-      return;
-    }
-
-    [...meta.importsModules, ...meta.importsWithParams].forEach((imp) => {
-      const importedMeta = this.moduleManager.getMetadata(imp, true);
-      if (appendedModules.includes(importedMeta.module)) {
-        const msg = `Appends to "${meta.name}" failed: "${importedMeta.name}" includes in both: imports and appends arrays.`;
+      if (meta.importsModules.includes(append.module) || meta.importsWithParams.some(imp => imp.module === append.module)) {
+        const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" includes in both: imports and appends arrays.`;
         throw new Error(msg);
       }
     });

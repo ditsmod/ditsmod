@@ -78,7 +78,7 @@ describe('ModuleFactory', () => {
       expect(() => bootstrap(Module3)).not.toThrow();
     });
 
-    xit('should throw an error during importing and appending same module', () => {
+    it('should throw an error during importing and appending same module', () => {
       @controller()
       class Controller1 {}
 
