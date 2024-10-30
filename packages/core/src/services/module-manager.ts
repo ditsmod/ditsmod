@@ -1,6 +1,6 @@
 import { format } from 'util';
 
-import { Class, injectable, reflector, resolveForwardRef } from '#di';
+import { Class, reflector, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, GuardItem, ModuleType, NormalizedGuard, Scope, Provider } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
