@@ -9,6 +9,9 @@ import { ExtensionProvider } from './extension-types.js';
  */
 export class ImportObj<T extends Provider = Provider> {
   module: ModuleType | ModuleWithParams;
+  /**
+   * This property can have more than one element for multi-providers only.
+   */
   providers: T[] = [];
 }
 
