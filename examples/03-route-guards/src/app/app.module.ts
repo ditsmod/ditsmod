@@ -7,9 +7,10 @@ import { Controller1 } from './controller1.js';
 import { Module3 } from './modules/module3/module3.js';
 import { Permission } from './modules/auth/types.js';
 import { requirePermissions } from './modules/auth/guards-utils.js';
+import { AuthModule } from './modules/auth/auth.module.js';
 
 @rootModule({
-  imports: [RoutingModule],
+  imports: [RoutingModule, AuthModule],
   controllers: [Controller1],
   appends: [
     Module1,
