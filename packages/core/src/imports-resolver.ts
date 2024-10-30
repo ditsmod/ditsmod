@@ -182,20 +182,20 @@ export class ImportsResolver {
 
   /**
    * @param targetMeta These are metadata of the module where providers are imported.
-   * @param sourceModule Module from where imports providers.
+   * @param sourceModule1 Module from where imports providers.
    * @param importedProvider Imported provider.
    * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
   protected grabImportedDependecies(
     targetMeta: NormalizedModuleMetadata,
-    sourceModule: AnyModule,
+    sourceModule1: AnyModule,
     scopes: Scope[],
     importedProvider: Provider,
     dep: ReflectiveDependency,
     path: any[] = [],
   ) {
     let found = false;
-    const metadataPerMod1 = this.appMetadataMap.get(sourceModule);
+    const metadataPerMod1 = this.appMetadataMap.get(sourceModule1);
     for (const scope of scopes) {
       const importObj = metadataPerMod1?.importedTokensMap[`per${scope}`].get(dep.token);
       if (importObj) {
@@ -206,9 +206,9 @@ export class ImportsResolver {
 
         // Loop for multi providers.
         for (const sourceProvider2 of sourceProviders2) {
-          this.fixDependecy(sourceModule2, sourceProvider2);
+          this.addToUnfinishedSearchDependecies(sourceModule2, sourceProvider2);
           this.grabDependecies(targetMeta, sourceModule2, sourceProvider2, scopes, path);
-          this.unfixDependecy(sourceModule2, sourceProvider2);
+          this.deleteFromUnfinishedSearchDependecies(sourceModule2, sourceProvider2);
         }
         break;
       }
@@ -258,9 +258,9 @@ export class ImportsResolver {
 
         // Loop for multi providers.
         for (const provider of providers) {
-          this.fixDependecy(module2, provider);
+          this.addToUnfinishedSearchDependecies(module2, provider);
           found = !this.hasUnresolvedDependecies(module2, provider, scopes);
-          this.unfixDependecy(module2, provider);
+          this.deleteFromUnfinishedSearchDependecies(module2, provider);
           if (!found) {
             return true;
           }
@@ -300,7 +300,7 @@ export class ImportsResolver {
     return deps.filter((d) => !defaultTokens.includes(d.token));
   }
 
-  protected fixDependecy(module: AnyModule, provider: Provider) {
+  protected addToUnfinishedSearchDependecies(module: AnyModule, provider: Provider) {
     const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
     if (index != -1) {
       this.throwCircularDependencies(index);
@@ -308,7 +308,7 @@ export class ImportsResolver {
     this.unfinishedSearchDependecies.push([module, provider]);
   }
 
-  protected unfixDependecy(module: AnyModule, provider: Provider) {
+  protected deleteFromUnfinishedSearchDependecies(module: AnyModule, provider: Provider) {
     const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
     this.unfinishedSearchDependecies.splice(index, 1);
   }

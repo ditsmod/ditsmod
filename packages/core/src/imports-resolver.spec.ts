@@ -13,11 +13,11 @@ describe('ImportsResolver', () => {
     override resolveImportedProviders(meta: NormalizedModuleMetadata, importedTokensMap: ImportedTokensMap) {
       return super.resolveImportedProviders(meta, importedTokensMap);
     }
-    override fixDependecy(module: ModuleType | ModuleWithParams, provider: Provider) {
-      return super.fixDependecy(module, provider);
+    override addToUnfinishedSearchDependecies(module: ModuleType | ModuleWithParams, provider: Provider) {
+      return super.addToUnfinishedSearchDependecies(module, provider);
     }
-    override unfixDependecy(module: ModuleType | ModuleWithParams, provider: Provider) {
-      return super.unfixDependecy(module, provider);
+    override deleteFromUnfinishedSearchDependecies(module: ModuleType | ModuleWithParams, provider: Provider) {
+      return super.deleteFromUnfinishedSearchDependecies(module, provider);
     }
   }
   let mock: ImportsResolverMock;
@@ -27,7 +27,7 @@ describe('ImportsResolver', () => {
   });
 
   describe('resolveImportedProviders', () => {
-    describe('fixDependecy(), unfixDependecy() and throwCircularDependencies()', () => {
+    describe('addToUnfinishedSearchDependecies(), deleteFromUnfinishedSearchDependecies() and throwCircularDependencies()', () => {
       class Module1 {}
       class Provider1 {}
       class Module2 {}
@@ -37,15 +37,15 @@ describe('ImportsResolver', () => {
 
       it('adding and removing dependecies', () => {
         expect(mock.unfinishedSearchDependecies).toEqual([]);
-        mock.fixDependecy(Module1, Provider1);
-        mock.fixDependecy(Module2, Provider2);
-        mock.fixDependecy(Module3, Provider3);
+        mock.addToUnfinishedSearchDependecies(Module1, Provider1);
+        mock.addToUnfinishedSearchDependecies(Module2, Provider2);
+        mock.addToUnfinishedSearchDependecies(Module3, Provider3);
         expect(mock.unfinishedSearchDependecies).toEqual([
           [Module1, Provider1],
           [Module2, Provider2],
           [Module3, Provider3],
         ]);
-        mock.unfixDependecy(Module2, Provider2);
+        mock.deleteFromUnfinishedSearchDependecies(Module2, Provider2);
         expect(mock.unfinishedSearchDependecies).toEqual([
           [Module1, Provider1],
           [Module3, Provider3],
@@ -54,12 +54,12 @@ describe('ImportsResolver', () => {
 
       it('throw properly message', () => {
         expect(mock.unfinishedSearchDependecies).toEqual([]);
-        mock.fixDependecy(Module1, Provider1);
-        mock.fixDependecy(Module2, Provider2);
-        mock.fixDependecy(Module3, Provider3);
+        mock.addToUnfinishedSearchDependecies(Module1, Provider1);
+        mock.addToUnfinishedSearchDependecies(Module2, Provider2);
+        mock.addToUnfinishedSearchDependecies(Module3, Provider3);
         const msg =
           'Detected circular dependencies: [Provider2 in Module2] -> [Provider3 in Module3] -> [Provider2 in Module2]. It is started from [Provider1 in Module1].';
-        expect(() => mock.fixDependecy(Module2, Provider2)).toThrow(msg);
+        expect(() => mock.addToUnfinishedSearchDependecies(Module2, Provider2)).toThrow(msg);
       });
     });
   });
