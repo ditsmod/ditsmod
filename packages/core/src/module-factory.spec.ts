@@ -1,9 +1,9 @@
 import { FactoryProvider, injectable, Provider, Injector } from '#di';
 
-import { controller, ControllerRawMetadata } from './decorators/controller.js';
+import { controller } from './decorators/controller.js';
 import { featureModule } from './decorators/module.js';
 import { rootModule } from './decorators/root-module.js';
-import { route, RouteMetadata } from './decorators/route.js';
+import { route } from './decorators/route.js';
 import { ModuleExtract } from './types/module-extract.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { ModuleFactory } from './module-factory.js';
@@ -19,6 +19,7 @@ import { getImportedProviders, getImportedTokens } from './utils/get-imports.js'
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { makePropDecorator } from '#di';
 import { HttpBackend } from './types/http-interceptor.js';
+import { AppendsWithParams } from '#types/module-metadata.js';
 
 type AnyModule = ModuleType | ModuleWithParams;
 
@@ -56,7 +57,7 @@ describe('ModuleFactory', () => {
   describe('appending modules', () => {
     function bootstrap(mod: ModuleType) {
       expect(() => moduleManager.scanModule(mod)).not.toThrow();
-      mock.bootstrap([], new GlobalProviders(), '', mod, moduleManager, new Set());
+      return mock.bootstrap([], new GlobalProviders(), '', mod, moduleManager, new Set());
     }
 
     it('should not throw an error during appending modules', () => {
@@ -70,12 +71,56 @@ describe('ModuleFactory', () => {
       class Module2 {}
 
       @featureModule({
-        appends: [Module1, { path: '', module: Module2 }],
+        appends: [Module1, { path: 'some-prefix', module: Module2 }],
         controllers: [Controller1],
       })
       class Module3 {}
 
       expect(() => bootstrap(Module3)).not.toThrow();
+    });
+
+    it('map should have some properties', () => {
+      @controller()
+      class Controller1 {}
+
+      @featureModule({ controllers: [Controller1] })
+      class Module1 {}
+
+      @featureModule({ controllers: [Controller1] })
+      class Module2 {}
+
+      const mod1: AppendsWithParams = { path: 'prefix1', module: Module1 };
+      const mod2: AppendsWithParams = { path: 'prefix2', module: Module2 };
+      @featureModule({
+        appends: [mod1, mod2],
+        controllers: [Controller1],
+      })
+      class Module3 {}
+
+      const map = bootstrap(Module3);
+      expect(map.size).toBe(3);
+
+      const metadataPerMod1 = map.get(mod1)!;
+      const metadataPerMod2 = map.get(mod2)!;
+      const metadataPerMod3 = map.get(Module3)!;
+      expect(metadataPerMod1).toBeDefined();
+      expect(metadataPerMod2).toBeDefined();
+      expect(metadataPerMod3).toBeDefined();
+
+      expect(metadataPerMod1.prefixPerMod).toBe('prefix1');
+      expect(metadataPerMod1.meta).toBeDefined();
+      expect(metadataPerMod1.applyControllers).toBe(true);
+      expect(metadataPerMod1.importedTokensMap.perMod).toEqual(new Map());
+      expect(metadataPerMod1.importedTokensMap.perRou).toEqual(new Map());
+      expect(metadataPerMod1.importedTokensMap.perReq).toEqual(new Map());
+      expect(metadataPerMod1.importedTokensMap.multiPerMod).toEqual(new Map());
+      expect(metadataPerMod1.importedTokensMap.multiPerRou).toEqual(new Map());
+      expect(metadataPerMod1.importedTokensMap.multiPerReq).toEqual(new Map());
+      
+      expect(metadataPerMod2.prefixPerMod).toBe('prefix2');
+      expect(metadataPerMod3.prefixPerMod).toBe('');
+      expect(metadataPerMod2.applyControllers).toBe(true);
+      expect(metadataPerMod3.applyControllers).toBe(false);
     });
 
     it('should throw an error during importing and appending same module', () => {
