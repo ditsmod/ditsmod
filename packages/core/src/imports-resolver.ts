@@ -21,7 +21,7 @@ import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { defaultProvidersPerRou } from './default-providers-per-rou.js';
 import { ExtensionCounters, ExtensionsGroupToken } from '#types/extension-types.js';
 
-type AnyModule = ModuleType | ModuleWithParams;
+export type AnyModule = ModuleType | ModuleWithParams;
 
 export class ImportsResolver {
   protected unfinishedSearchDependecies: [AnyModule, Provider][] = [];
@@ -195,9 +195,9 @@ export class ImportsResolver {
     path: any[] = [],
   ) {
     let found = false;
-    const metadataPerMod1 = this.appMetadataMap.get(sourceModule1);
+    const metadataPerMod1 = this.appMetadataMap.get(sourceModule1)!;
     for (const scope of scopes) {
-      const importObj = metadataPerMod1?.importedTokensMap[`per${scope}`].get(dep.token);
+      const importObj = metadataPerMod1.importedTokensMap[`per${scope}`].get(dep.token);
       if (importObj) {
         found = true;
         path.push(dep.token);
@@ -215,7 +215,7 @@ export class ImportsResolver {
     }
 
     if (!found && dep.required) {
-      this.throwError(targetMeta, importedProvider, path, dep.token);
+      this.throwError(metadataPerMod1.meta, importedProvider, path, dep.token);
     }
   }
 
