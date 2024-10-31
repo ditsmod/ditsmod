@@ -87,7 +87,6 @@ export {
   GuardItem,
   HttpMethod,
   ModuleType,
-
   NormalizedGuard,
   ResolvedGuard,
   RedirectStatusCodes,
@@ -95,7 +94,7 @@ export {
   AnyFn,
   RequireProps,
   OptionalProps,
-  GuardPerMod1
+  GuardPerMod1,
 } from './types/mix.js';
 export {
   ModuleMetadata,
