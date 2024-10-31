@@ -1,6 +1,6 @@
 import { DecoratorAndValue, reflector, resolveForwardRef } from '#di';
 import { ModuleWithParams, ModuleMetadata } from '#types/module-metadata.js';
-import { AnyFn, ModuleType, Scope } from '#types/mix.js';
+import { AnyFn, GuardItem, ModuleType, Scope } from '#types/mix.js';
 import { getModuleName } from './get-module-name.js';
 import { mergeArrays } from './merge-arrays.js';
 import { isFeatureModule, isModuleWithParams, isRootModule } from './type-guards.js';
@@ -45,7 +45,12 @@ export function getModuleMetadata(
     metadata.exports = getLastProviders(mergeArrays(modMetadata.exports, modWitParams.exports));
     metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
     const declaredInDir = decoratorAndValue.declaredInDir || '';
-    return { ...metadata, decoratorFactory: decoratorAndValue.decorator, declaredInDir };
+    return {
+      ...metadata,
+      decoratorFactory: decoratorAndValue.decorator,
+      declaredInDir,
+      guardsPerMod: modOrObj.guards || [],
+    };
   } else {
     const decoratorAndValue = reflector
       .getMetadata<ModuleMetadataValue>(modOrObj)
@@ -63,7 +68,7 @@ export function getModuleMetadata(
     });
     const declaredInDir = decoratorAndValue?.declaredInDir || '';
     return decoratorAndValue
-      ? { ...metadata, decoratorFactory: decoratorAndValue.decorator, declaredInDir }
+      ? { ...metadata, decoratorFactory: decoratorAndValue.decorator, declaredInDir, guardsPerMod: [] }
       : undefined;
   }
 }
@@ -75,4 +80,5 @@ export interface ModuleMetadataValue {
 export interface ModuleMetadataWithContext extends ModuleMetadata {
   decoratorFactory: AnyFn;
   declaredInDir: string;
+  guardsPerMod: GuardItem[];
 }

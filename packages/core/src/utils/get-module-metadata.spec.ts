@@ -19,7 +19,7 @@ describe('getModuleMetadata', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({ decoratorFactory: featureModule, declaredInDir: getCallerDir() });
+    expect(metadata).toEqual({ decoratorFactory: featureModule, guardsPerMod: [], declaredInDir: getCallerDir() });
   });
 
   it('@featureModule() decorator with id', () => {
@@ -27,7 +27,12 @@ describe('getModuleMetadata', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({ decoratorFactory: featureModule, id: 'someId', declaredInDir: getCallerDir() });
+    expect(metadata).toEqual({
+      decoratorFactory: featureModule,
+      id: 'someId',
+      guardsPerMod: [],
+      declaredInDir: getCallerDir(),
+    });
   });
 
   it('decorator with some data', () => {
@@ -37,6 +42,7 @@ describe('getModuleMetadata', () => {
     const metadata = getModuleMetadata(Module1);
     expect(metadata).toEqual({
       decoratorFactory: featureModule,
+      guardsPerMod: [],
       controllers: [],
       declaredInDir: getCallerDir(),
     });
@@ -55,6 +61,7 @@ describe('getModuleMetadata', () => {
     const metadata = getModuleMetadata(Module1);
     expect(metadata).toEqual({
       decoratorFactory: featureModule,
+      guardsPerMod: [],
       providersPerMod: [Provider1],
       providersPerRou: [{ token: 'token2', useValue: 'value2' }],
       declaredInDir: getCallerDir(),
@@ -80,6 +87,7 @@ describe('getModuleMetadata', () => {
       decoratorFactory: featureModule,
       declaredInDir: getCallerDir(),
       extensionsMeta: {},
+      guardsPerMod: [],
       providersPerApp: [],
       exports: [],
       providersPerMod: [Provider1],
@@ -108,6 +116,7 @@ describe('getModuleMetadata', () => {
       decoratorFactory: featureModule,
       declaredInDir: getCallerDir(),
       extensionsMeta: {},
+      guardsPerMod: [],
       providersPerApp: [],
       exports: [],
       providersPerMod: [Provider1],
