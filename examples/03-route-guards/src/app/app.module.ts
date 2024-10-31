@@ -14,7 +14,7 @@ import { AuthModule } from './modules/auth/auth.module.js';
   controllers: [Controller1],
   appends: [
     Module1,
-    { path: 'guards-1', module: Module2, guards: [requirePermissions(Permission.canActivateSomeResource)] },
+    { path: 'guards-1', module: Module2, guards: [requirePermissions(Permission.canActivateAdministration)] },
     { path: '', module: Module3 },
   ],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),

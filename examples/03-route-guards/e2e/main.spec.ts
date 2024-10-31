@@ -46,14 +46,14 @@ describe('03-route-guards', () => {
     expect(status).toBe(401);
   });
 
-  it('should throw 401 for guards setted for a module', async () => {
+  it('should throw 403 for guards setted for a module', async () => {
     const { status } = await testAgent.get('/guards-1/controler1-of-module2');
-    expect(status).toBe(401);
+    expect(status).toBe(403);
   });
 
-  it('should throw 401 for guards setted for a module', async () => {
+  it('should throw 403 for guards setted for a module', async () => {
     const { status } = await testAgent.get('/guards-1/controler2-of-module2');
-    expect(status).toBe(401);
+    expect(status).toBe(403);
   });
 
   it('should throw 403', async () => {
