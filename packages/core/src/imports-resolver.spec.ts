@@ -149,6 +149,109 @@ describe('ImportsResolver', () => {
       expect(meta.providersPerRou).toEqual([...defaultProvidersPerRou, Service2, Service3]);
       expect(meta.providersPerMod).toEqual([Service1, { token: ModuleExtract, useValue: moduleExtract }]);
     });
+
+    it('should throw an error because of lazy loading of Service1 without direct import of host module', () => {
+      @injectable()
+      class Service1 {}
+
+      @injectable()
+      class Service2 {
+        constructor(public injector: Injector) {
+          const service1 = this.injector.get(Service1); // Lazy loading here.
+        }
+      }
+
+      @injectable()
+      class Service3 {
+        constructor(public service2: Service2) {}
+      }
+
+      @featureModule({ providersPerRou: [Service1], exports: [Service1] })
+      class Module1 {}
+
+      @featureModule({ imports: [Module1], providersPerRou: [Service2], exports: [Service2] })
+      class Module2 {}
+
+      @featureModule({
+        imports: [Module2],
+        providersPerRou: [Service3],
+        exports: [Service3],
+      })
+      class Module3 {}
+
+      const appMetadataMap = bootstrap(Module3);
+      mock = new ImportsResolverMock(moduleManager, appMetadataMap, [], systemLogMediator, errorMediator);
+
+      expect(() => mock.resolve()).not.toThrow();
+      const { meta } = appMetadataMap.get(Module3)!;
+      const injector = Injector.resolveAndCreate(meta.providersPerRou);
+      const msg = 'No provider for Service1!; this error during instantiation of Service2! (Service3 -> Service2)';
+      expect(() => injector.get(Service3)).toThrow(msg);
+    });
+
+    it('should works with lazy loading of Service1 and direct import of host module (case1)', () => {
+      @injectable()
+      class Service1 {}
+
+      @injectable()
+      class Service2 {
+        constructor(public injector: Injector) {
+          const service1 = this.injector.get(Service1); // Lazy loading here.
+        }
+      }
+
+      @injectable()
+      class Service3 {
+        constructor(public service2: Service2) {}
+      }
+
+      @featureModule({ providersPerRou: [Service1], exports: [Service1] })
+      class Module1 {}
+
+      @featureModule({ imports: [Module1], providersPerRou: [Service2], exports: [Service2] })
+      class Module2 {}
+
+      @featureModule({
+        imports: [Module1, Module2],
+        providersPerRou: [Service3],
+        exports: [Service3],
+      })
+      class Module3 {}
+
+      const appMetadataMap = bootstrap(Module3);
+      mock = new ImportsResolverMock(moduleManager, appMetadataMap, [], systemLogMediator, errorMediator);
+
+      expect(() => mock.resolve()).not.toThrow();
+      const { meta } = appMetadataMap.get(Module3)!;
+      const injector = Injector.resolveAndCreate(meta.providersPerRou);
+      expect(() => injector.get(Service3)).not.toThrow();
+    });
+
+    it('should works with lazy loading of Service1 and direct import of host module (case2)', () => {
+      @injectable()
+      class Service1 {}
+
+      @injectable()
+      class Service2 {
+        constructor(public injector: Injector) {
+          const service1 = this.injector.get(Service1); // Lazy loading here.
+        }
+      }
+
+      @featureModule({ providersPerRou: [Service1], exports: [Service1] })
+      class Module1 {}
+
+      @featureModule({ imports: [Module1], providersPerRou: [Service2], exports: [Service2] })
+      class Module2 {}
+
+      const appMetadataMap = bootstrap(Module2);
+      mock = new ImportsResolverMock(moduleManager, appMetadataMap, [], systemLogMediator, errorMediator);
+
+      expect(() => mock.resolve()).not.toThrow();
+      const { meta } = appMetadataMap.get(Module2)!;
+      const injector = Injector.resolveAndCreate(meta.providersPerRou);
+      expect(() => injector.get(Service2)).not.toThrow();
+    });
   });
 
   describe('resolveImportedProviders', () => {
