@@ -147,7 +147,7 @@ describe('ImportsResolver', () => {
       const { meta } = appMetadataMap.get(Module3)!;
       expect(meta.providersPerReq).toEqual(defaultProvidersPerReq);
       expect(meta.providersPerRou).toEqual([...defaultProvidersPerRou, Service2, Service3]);
-      expect(meta.providersPerMod).toEqual([Service1, { token: ModuleExtract, useValue: moduleExtract }]);
+      expect(meta.providersPerMod).toEqual([Service1, Service1, { token: ModuleExtract, useValue: moduleExtract }]);
     });
 
     it('should throw an error because of lazy loading of Service1 without direct import of host module', () => {
