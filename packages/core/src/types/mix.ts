@@ -57,6 +57,12 @@ export interface NormalizedGuard {
   params?: any[];
 }
 
+export class ProvidersForMod {
+  providersPerMod: Provider[] = [];
+  providersPerRou: Provider[] = [];
+  providersPerReq: Provider[] = [];
+}
+
 export interface GuardPerMod1 extends NormalizedGuard {
   hostModule: ModuleType | ModuleWithParams | AppendsWithParams;
 }

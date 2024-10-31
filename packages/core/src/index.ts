@@ -95,6 +95,7 @@ export {
   RequireProps,
   OptionalProps,
   GuardPerMod1,
+  ProvidersForMod
 } from './types/mix.js';
 export {
   ModuleMetadata,
