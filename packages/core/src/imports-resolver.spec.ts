@@ -3,7 +3,7 @@ import { injectable, Injector } from '#di';
 import { AnyModule, ImportsResolver } from './imports-resolver.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { GlobalProviders, ImportedTokensMap } from './types/metadata-per-mod.js';
-import { ModuleType, Provider, Scope } from './types/mix.js';
+import { GuardPerMod1, ModuleType, Provider, Scope } from './types/mix.js';
 import { ModuleWithParams } from './types/module-metadata.js';
 import { ModuleFactory } from './module-factory.js';
 import { ModuleManager } from '#services/module-manager.js';
@@ -18,8 +18,12 @@ describe('ImportsResolver', () => {
   @injectable()
   class ImportsResolverMock extends ImportsResolver {
     declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, Provider][];
-    override resolveImportedProviders(meta: NormalizedModuleMetadata, importedTokensMap: ImportedTokensMap) {
-      return super.resolveImportedProviders(meta, importedTokensMap);
+    override resolveImportedProviders(
+      targetMeta: NormalizedModuleMetadata,
+      importedTokensMap: ImportedTokensMap,
+      guardsPerMod: GuardPerMod1[],
+    ) {
+      return super.resolveImportedProviders(targetMeta, importedTokensMap, guardsPerMod);
     }
     override addToUnfinishedSearchDependecies(module: ModuleType | ModuleWithParams, provider: Provider) {
       return super.addToUnfinishedSearchDependecies(module, provider);
@@ -98,7 +102,8 @@ describe('ImportsResolver', () => {
 
       const appMetadataMap = bootstrap(Module4);
       mock = new ImportsResolverMock(moduleManager, appMetadataMap, [], systemLogMediator, errorMediator);
-      const msg = 'Resolving imported dependecies for Module2 failed: no provider for Service1! (Service2 -> Service1)';
+      let msg = 'Resolving imported dependecies for Module2 failed: no provider for Service1! (Service2 -> Service1';
+      msg += ', searching in providersPerRou, providersPerMod)';
       expect(() => mock.resolve()).toThrow(msg);
     });
 
