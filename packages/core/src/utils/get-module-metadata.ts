@@ -49,7 +49,7 @@ export function getModuleMetadata(
       ...metadata,
       decoratorFactory: decoratorAndValue.decorator,
       declaredInDir,
-      guardsPerMod: modOrObj.guards || [],
+      guards: modOrObj.guards || [],
     };
   } else {
     const decoratorAndValue = reflector
@@ -68,7 +68,7 @@ export function getModuleMetadata(
     });
     const declaredInDir = decoratorAndValue?.declaredInDir || '';
     return decoratorAndValue
-      ? { ...metadata, decoratorFactory: decoratorAndValue.decorator, declaredInDir, guardsPerMod: [] }
+      ? { ...metadata, decoratorFactory: decoratorAndValue.decorator, declaredInDir, guards: [] }
       : undefined;
   }
 }
@@ -80,5 +80,5 @@ export interface ModuleMetadataValue {
 export interface ModuleMetadataWithContext extends ModuleMetadata {
   decoratorFactory: AnyFn;
   declaredInDir: string;
-  guardsPerMod: GuardItem[];
+  guards: GuardItem[];
 }

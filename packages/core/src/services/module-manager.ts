@@ -366,8 +366,8 @@ export class ModuleManager {
     meta.decoratorFactory = rawMeta.decoratorFactory;
     meta.declaredInDir = rawMeta.declaredInDir;
     this.checkWhetherIsExternalModule(rawMeta, meta);
-    if (rawMeta.guardsPerMod.length) {
-      meta.guardsPerMod.push(...this.normalizeGuards(rawMeta.guardsPerMod));
+    if (rawMeta.guards.length) {
+      meta.guardsPerMod.push(...this.normalizeGuards(rawMeta.guards));
       this.checkGuardsPerMod(meta.guardsPerMod, modName);
     }
 
@@ -423,6 +423,7 @@ export class ModuleManager {
       });
     });
 
+    // @todo Refactor the logic with the `pickMeta()` call, as it may override previously set values in `meta`.
     this.pickMeta(meta, rawMeta);
     meta.extensionsMeta = { ...(meta.extensionsMeta || {}) };
     this.quickCheckMetadata(meta);
