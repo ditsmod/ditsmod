@@ -87,8 +87,8 @@ export function isController(
   return decoratorAndValue?.decorator === controller;
 }
 
-export function isRoute(container?: DecoratorAndValue): container is DecoratorAndValue {
-  return (container as DecoratorAndValue)?.decorator === route;
+export function isRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
+  return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === route;
 }
 
 export function isModuleWithParams(mod?: Provider | ModuleWithParams | ModuleType): mod is ModuleWithParams {
