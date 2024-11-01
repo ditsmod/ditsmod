@@ -7,7 +7,15 @@ import { defaultProvidersPerReq } from './default-providers-per-req.js';
 import { ModuleManager } from './services/module-manager.js';
 import { AppOptions } from './types/app-options.js';
 import { ImportedTokensMap } from './types/metadata-per-mod.js';
-import { GuardPerMod1, AppMetadataMap, ModuleType, Scope, Provider, ProvidersForMod } from '#types/mix.js';
+import {
+  GuardPerMod1,
+  AppMetadataMap,
+  ModuleType,
+  Scope,
+  Provider,
+  ProvidersForMod,
+  NormalizedGuard,
+} from '#types/mix.js';
 import { ModuleWithParams } from './types/module-metadata.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { RouteMeta } from './types/route-data.js';
@@ -76,11 +84,15 @@ export class ImportsResolver {
   }
 
   protected getGuardsPerMod(targetProviders: NormalizedModuleMetadata, guardsPerMod: GuardPerMod1[], scopes: Scope[]) {
-    return guardsPerMod.map<GuardPerMod1 & ProvidersForMod>((g) => {
+    return guardsPerMod.map<NormalizedGuard & ProvidersForMod>((g) => {
       const providersForMod = new ProvidersForMod();
       const importedProvider: Provider = { token: `guardsPerMod of ${targetProviders.name}`, useToken: g.guard };
       this.grabDependecies(providersForMod, g.hostModule, importedProvider, scopes);
-      return { ...g, ...providersForMod };
+      if (g.params) {
+        return { guard: g.guard, params: g.params, ...providersForMod };
+      } else {
+        return { guard: g.guard, ...providersForMod };
+      }
     });
   }
 
@@ -299,7 +311,10 @@ export class ImportsResolver {
       .map((t) => t.name || t)
       .join(' -> ');
 
-    const scopesPath = scopes.concat('App' as any).map((scope) => `providersPer${scope}`).join(', ');
+    const scopesPath = scopes
+      .concat('App' as any)
+      .map((scope) => `providersPer${scope}`)
+      .join(', ');
     const partMsg = path.length > 1 ? `(${strPath}, searching in ${scopesPath})` : scopesPath;
     this.log.showProvidersInLogs(this, meta.name, meta.providersPerReq, meta.providersPerRou, meta.providersPerMod);
 
