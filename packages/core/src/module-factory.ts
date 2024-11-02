@@ -32,7 +32,7 @@ export class ModuleFactory {
   protected providersPerApp: Provider[];
   protected moduleName: string;
   protected prefixPerMod: string;
-  protected guardsPerMod: GuardPerMod1[];
+  protected guardsPerMod1: GuardPerMod1[];
   /**
    * Module metadata.
    */
@@ -86,7 +86,7 @@ export class ModuleFactory {
     modOrObj: AnyModule,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<AnyModule>,
-    guardsPerMod?: GuardPerMod1[],
+    guardsPerMod1?: GuardPerMod1[],
     isAppends?: boolean,
   ) {
     const meta = moduleManager.getMetadata(modOrObj, true);
@@ -95,7 +95,7 @@ export class ModuleFactory {
     this.glProviders = globalProviders;
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = meta.name;
-    this.guardsPerMod = guardsPerMod || [];
+    this.guardsPerMod1 = guardsPerMod1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
     this.meta = meta;
     this.checkImportsAndAppends(meta);
@@ -143,7 +143,7 @@ export class ModuleFactory {
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
-      guardsPerMod: this.guardsPerMod,
+      guardsPerMod1: this.guardsPerMod1,
       meta: this.meta,
       applyControllers,
       importedTokensMap: {
@@ -172,15 +172,15 @@ export class ModuleFactory {
       }
 
       let prefixPerMod = '';
-      let guardsPerMod: GuardPerMod1[] = [];
+      let guardsPerMod1: GuardPerMod1[] = [];
       if ((isImport && isModuleWithParams(input)) || isAppendsWithParams(input)) {
         if (typeof input.absolutePath == 'string') {
           prefixPerMod = input.absolutePath;
         } else {
           prefixPerMod = [this.prefixPerMod, input.path].filter((s) => s).join('/');
         }
-        const impGuradsPerMod = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, hostModule: this.meta.module }));
-        guardsPerMod = [...this.guardsPerMod, ...impGuradsPerMod];
+        const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, hostModule: this.meta.module }));
+        guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
       }
 
       if (this.unfinishedScanModules.has(input)) {
@@ -196,7 +196,7 @@ export class ModuleFactory {
         input,
         this.moduleManager,
         this.unfinishedScanModules,
-        guardsPerMod,
+        guardsPerMod1,
         !isImport,
       );
       this.unfinishedScanModules.delete(input);
