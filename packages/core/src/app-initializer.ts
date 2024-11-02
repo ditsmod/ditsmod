@@ -290,7 +290,7 @@ export class AppInitializer {
     return injectorPerMod.resolveAndCreateChild([
       ExtensionsManager,
       { token: ExtensionsContext, useValue: extensionsContext },
-      { token: MetadataPerMod20, useValue: metadataPerMod20.meta },
+      { token: MetadataPerMod20, useValue: metadataPerMod20 },
       { token: ExtensionCounters, useValue: extensionCounters },
       ...metadataPerMod20.meta.extensionsProviders,
     ]);
