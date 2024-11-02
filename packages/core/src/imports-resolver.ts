@@ -6,7 +6,7 @@ import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { defaultProvidersPerReq } from './default-providers-per-req.js';
 import { ModuleManager } from './services/module-manager.js';
 import { AppOptions } from './types/app-options.js';
-import { ImportedTokensMap } from './types/metadata-per-mod.js';
+import { ImportedTokensMap, MetadataPerMod20 } from './types/metadata-per-mod.js';
 import {
   GuardPerMod1,
   AppMetadataMap,
@@ -15,6 +15,7 @@ import {
   Provider,
   ProvidersForMod,
   NormalizedGuard,
+  GuardPerMod2,
 } from '#types/mix.js';
 import { ModuleWithParams } from './types/module-metadata.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
@@ -46,26 +47,27 @@ export class ImportsResolver {
   ) {}
 
   resolve() {
+    const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
+    const metadataPerMod20: MetadataPerMod20[] = [];
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.appMetadataMap.forEach((metadataPerMod1) => {
-      const { meta: targetProviders, importedTokensMap, guardsPerMod } = metadataPerMod1;
-      this.resolveImportedProviders(targetProviders, importedTokensMap, guardsPerMod);
+      const { meta: targetProviders, importedTokensMap, guardsPerMod1 } = metadataPerMod1;
+      const guardsPerMod2 = this.getGuardsPerMod2(targetProviders, guardsPerMod1, scopes);
+      metadataPerMod20.push({ meta: targetProviders, guardsPerMod2 });
+      this.resolveImportedProviders(targetProviders, importedTokensMap, scopes);
       this.resolveProvidersForExtensions(targetProviders, importedTokensMap);
       targetProviders.providersPerRou.unshift(...defaultProvidersPerRou);
       targetProviders.providersPerReq.unshift(...defaultProvidersPerReq);
     });
 
-    return this.extensionCounters;
+    return { extensionCounters: this.extensionCounters, metadataPerMod20 };
   }
 
   protected resolveImportedProviders(
     targetProviders: NormalizedModuleMetadata,
     importedTokensMap: ImportedTokensMap,
-    guardsPerMod: GuardPerMod1[],
+    scopes: Scope[],
   ) {
-    const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
-    const guards = this.getGuardsPerMod(targetProviders, guardsPerMod, scopes);
-
     scopes.forEach((scope, i) => {
       importedTokensMap[`per${scope}`].forEach((importObj) => {
         targetProviders[`providersPer${scope}`].unshift(...importObj.providers);
@@ -83,7 +85,11 @@ export class ImportsResolver {
     });
   }
 
-  protected getGuardsPerMod(targetProviders: NormalizedModuleMetadata, guardsPerMod: GuardPerMod1[], scopes: Scope[]) {
+  protected getGuardsPerMod2(
+    targetProviders: NormalizedModuleMetadata,
+    guardsPerMod: GuardPerMod1[],
+    scopes: Scope[],
+  ): GuardPerMod2[] {
     return guardsPerMod.map<NormalizedGuard & ProvidersForMod>((g) => {
       const providersForMod = new ProvidersForMod();
       const importedProvider: Provider = { token: `guardsPerMod of ${targetProviders.name}`, useToken: g.guard };
