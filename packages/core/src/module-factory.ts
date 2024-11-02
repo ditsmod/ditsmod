@@ -179,7 +179,7 @@ export class ModuleFactory {
         } else {
           prefixPerMod = [this.prefixPerMod, input.path].filter((s) => s).join('/');
         }
-        const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, hostModule: this.meta.module }));
+        const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, meta: this.meta }));
         guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
       }
 

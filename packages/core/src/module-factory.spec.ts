@@ -38,7 +38,7 @@ describe('ModuleFactory', () => {
     override importedMultiProvidersPerRou = new Map<AnyModule, Provider[]>();
     override importedMultiProvidersPerReq = new Map<AnyModule, Provider[]>();
     override importedExtensions = new Map<AnyModule, ExtensionProvider[]>();
-    override guardsPerMod: GuardPerMod1[] = [];
+    override guardsPerMod1: GuardPerMod1[] = [];
 
     override exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]) {
       return super.exportGlobalProviders(moduleManager, providersPerApp);

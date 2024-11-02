@@ -7,16 +7,7 @@ import { defaultProvidersPerReq } from './default-providers-per-req.js';
 import { ModuleManager } from './services/module-manager.js';
 import { AppOptions } from './types/app-options.js';
 import { ImportedTokensMap, MetadataPerMod20 } from './types/metadata-per-mod.js';
-import {
-  GuardPerMod1,
-  AppMetadataMap,
-  ModuleType,
-  Scope,
-  Provider,
-  ProvidersForMod,
-  NormalizedGuard,
-  GuardPerMod2,
-} from '#types/mix.js';
+import { AppMetadataMap, ModuleType, Scope, Provider, ProvidersForMod } from '#types/mix.js';
 import { ModuleWithParams } from './types/module-metadata.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { RouteMeta } from './types/route-data.js';
@@ -52,8 +43,7 @@ export class ImportsResolver {
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.appMetadataMap.forEach((metadataPerMod1) => {
       const { meta: targetProviders, importedTokensMap, guardsPerMod1 } = metadataPerMod1;
-      const guardsPerMod2 = this.getGuardsPerMod2(targetProviders, guardsPerMod1, scopes);
-      aMetadataPerMod20.push({ meta: targetProviders, guardsPerMod2 });
+      aMetadataPerMod20.push({ meta: targetProviders, guardsPerMod1 });
       this.resolveImportedProviders(targetProviders, importedTokensMap, scopes);
       this.resolveProvidersForExtensions(targetProviders, importedTokensMap);
       targetProviders.providersPerRou.unshift(...defaultProvidersPerRou);
@@ -82,23 +72,6 @@ export class ImportsResolver {
           this.grabDependecies(targetProviders, sourceModule, importedProvider, scopes.slice(i));
         });
       });
-    });
-  }
-
-  protected getGuardsPerMod2(
-    targetProviders: NormalizedModuleMetadata,
-    guardsPerMod: GuardPerMod1[],
-    scopes: Scope[],
-  ): GuardPerMod2[] {
-    return guardsPerMod.map<NormalizedGuard & ProvidersForMod>((g) => {
-      const providersForMod = new ProvidersForMod();
-      const importedProvider: Provider = { token: `guardsPerMod of ${targetProviders.name}`, useToken: g.guard };
-      this.grabDependecies(providersForMod, g.hostModule, importedProvider, scopes);
-      if (g.params) {
-        return { guard: g.guard, params: g.params, ...providersForMod };
-      } else {
-        return { guard: g.guard, ...providersForMod };
-      }
     });
   }
 
