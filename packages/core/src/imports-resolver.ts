@@ -48,19 +48,19 @@ export class ImportsResolver {
 
   resolve() {
     const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
-    const metadataPerMod20: MetadataPerMod20[] = [];
+    const aMetadataPerMod20: MetadataPerMod20[] = [];
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.appMetadataMap.forEach((metadataPerMod1) => {
       const { meta: targetProviders, importedTokensMap, guardsPerMod1 } = metadataPerMod1;
       const guardsPerMod2 = this.getGuardsPerMod2(targetProviders, guardsPerMod1, scopes);
-      metadataPerMod20.push({ meta: targetProviders, guardsPerMod2 });
+      aMetadataPerMod20.push({ meta: targetProviders, guardsPerMod2 });
       this.resolveImportedProviders(targetProviders, importedTokensMap, scopes);
       this.resolveProvidersForExtensions(targetProviders, importedTokensMap);
       targetProviders.providersPerRou.unshift(...defaultProvidersPerRou);
       targetProviders.providersPerReq.unshift(...defaultProvidersPerReq);
     });
 
-    return { extensionCounters: this.extensionCounters, metadataPerMod20 };
+    return { extensionCounters: this.extensionCounters, aMetadataPerMod20 };
   }
 
   protected resolveImportedProviders(

@@ -169,8 +169,8 @@ export class AppInitializer {
       this.systemLogMediator,
       new SystemErrorMediator({ moduleName: this.meta.name }),
     );
-    const { extensionCounters, metadataPerMod20 } = importsResolver.resolve();
-    await this.handleExtensions(metadataPerMod20, extensionCounters);
+    const { extensionCounters, aMetadataPerMod20 } = importsResolver.resolve();
+    await this.handleExtensions(aMetadataPerMod20, extensionCounters);
     const injectorPerApp = this.perAppService.reinitInjector();
     this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
     this.preRouter = injectorPerApp.get(PreRouter) as PreRouter;
