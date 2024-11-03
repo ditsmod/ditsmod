@@ -1,12 +1,12 @@
-import { AppInitializer, OutputLogLevel, MetadataPerMod1 } from '@ditsmod/core';
+import { AppInitializer, OutputLogLevel, NormalizedModuleMetadata } from '@ditsmod/core';
 import { overrideLogLevel } from './utils.js';
 
 export class TestAppInitializer extends AppInitializer {
   protected logLevel: OutputLogLevel;
 
-  protected override prepareMetadataPerMod1(metadataPerMod1: MetadataPerMod1) {
-    overrideLogLevel(metadataPerMod1.meta.providersPerMod, this.logLevel);
-    return metadataPerMod1;
+  protected override prepareMetadataPerMod1(meta: NormalizedModuleMetadata) {
+    overrideLogLevel(meta.providersPerMod, this.logLevel);
+    return meta;
   }
 
   /**
