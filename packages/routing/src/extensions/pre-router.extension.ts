@@ -73,6 +73,10 @@ export class PreRouterExtension implements Extension<void> {
     const injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
 
     groupInitMeta.forEach((initMeta) => {
+      if (!initMeta.payload.aControllerMetadata.length) {
+        // No routes from this extension (initMeta.extension.constructor.name).
+        return;
+      }
       const metadataPerMod3 = initMeta.payload;
       const { moduleName, aControllerMetadata, providersPerMod, guardsPerMod1 } = metadataPerMod3;
       const mod = getModule(metadataPerMod3.module);

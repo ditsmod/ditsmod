@@ -36,7 +36,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
     const { meta } = this.metadataPerMod2;
     this.metadataPerMod3.module = meta.module;
     this.metadataPerMod3.moduleName = meta.name;
-    this.metadataPerMod3.providersPerMod = meta.providersPerMod.slice();
+    this.metadataPerMod3.providersPerMod = meta.providersPerMod; // Here setting original array without slice().
     this.metadataPerMod3.providersPerRou = meta.providersPerRou.slice();
     this.metadataPerMod3.providersPerReq = meta.providersPerReq.slice();
     this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(prefixPerApp, this.metadataPerMod2);
