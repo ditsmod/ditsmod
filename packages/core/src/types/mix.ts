@@ -9,7 +9,8 @@ import {
 } from '#di';
 import { RequestContext } from './http-interceptor.js';
 import { MetadataPerMod1 } from './metadata-per-mod.js';
-import { AppendsWithParams, ModuleWithParams } from './module-metadata.js';
+import { ModuleWithParams } from './module-metadata.js';
+import { NormalizedModuleMetadata } from './normalized-module-metadata.js';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
 /**
@@ -64,7 +65,7 @@ export class ProvidersForMod {
 }
 
 export interface GuardPerMod1 extends NormalizedGuard {
-  hostModule: ModuleType | ModuleWithParams | AppendsWithParams;
+  meta: NormalizedModuleMetadata;
 }
 
 export interface ResolvedGuard {
