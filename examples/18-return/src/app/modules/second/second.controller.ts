@@ -18,7 +18,7 @@ export class SecondController {
   }
 }
 
-@controller({ isSingleton: true })
+@controller({ singleton: 'module' })
 export class SecondSingletonController {
   @route('GET', 'second2')
   async method1(ctx: SingletonRequestContext) {

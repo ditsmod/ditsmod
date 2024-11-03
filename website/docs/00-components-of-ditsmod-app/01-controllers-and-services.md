@@ -55,12 +55,12 @@ export class SomeController {}
 
 Перший варіант більш безпечний, коли потрібно працювати в контексті поточного HTTP-запиту (клієнт надає певний ідентифікатор, який необхідно враховувати для формування відповіді). Другий варіант роботи помітно швидший (приблизно на 15%) і споживає менше пам'яті, але контекст запиту не можна зберігати у властивостях інстансу контролера, бо цей інстанс може одночасно використовуватись для інших клієнтів. В другому варіанті контекст запиту прийдеться передавати лише як аргумент для методів.
 
-Щоб Ditsmod працював з контролером як з [одинаком][8], в метаданих потрібно вказати `{ isSingleton: true }`:
+Щоб Ditsmod працював з контролером як з [одинаком][8], в метаданих потрібно вказати `{ singleton: 'module' }`:
 
 ```ts
 import { controller } from '@ditsmod/core';
 
-@controller({ isSingleton: true })
+@controller({ singleton: 'module' })
 export class SomeController {}
 ```
 
@@ -158,7 +158,7 @@ export class HelloWorldController {
 ```ts {3,5}
 import { controller, route, RequestContext } from '@ditsmod/core';
 
-@controller({ isSingleton: true })
+@controller({ singleton: 'module' })
 export class HelloWorldController {
   constructor(private res: Res) {}
 
@@ -174,7 +174,7 @@ export class HelloWorldController {
 ```ts {3,6}
 import { controller, route, RequestContext } from '@ditsmod/core';
 
-@controller({ isSingleton: true })
+@controller({ singleton: 'module' })
 export class HelloWorldController {
   @route('GET', 'hello')
   method1(ctx: RequestContext) {

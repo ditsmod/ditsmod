@@ -113,7 +113,7 @@ Depending on whether the controller is [singleton][3] or not, the result of the 
   ```ts {6}
   import { controller, route, SingletonRequestContext } from '@ditsmod/core';
 
-  @controller({ isSingleton: true })
+  @controller({ singleton: 'module' })
   export class SomeController {
     @route('POST')
     ok(ctx: SingletonRequestContext) {
@@ -165,7 +165,7 @@ Depending on whether the controller is [singleton][3] or not, the method of obta
   import { controller, route, SingletonRequestContext } from '@ditsmod/core';
   import { MulterParsedForm, MulterSingletonParser } from '@ditsmod/body-parser';
 
-  @controller({ isSingleton: true })
+  @controller({ singleton: 'module' })
   export class SomeController {
     constructor(protected parse: MulterSingletonParser) {}
 

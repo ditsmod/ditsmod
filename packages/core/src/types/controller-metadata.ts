@@ -13,6 +13,13 @@ export interface ControllerMetadata {
   path: string;
   httpMethod: HttpMethod;
   routeMeta: RouteMeta;
-  isSingleton?: boolean;
+  /**
+   * Singleton per scope.
+   * 
+   * __Warn__: for now, is experimental support.
+   *
+   * Default - `module`.
+   */
+  singleton?: 'module';
   guards: NormalizedGuard[];
 }

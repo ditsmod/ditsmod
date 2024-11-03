@@ -61,7 +61,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
           const providersPerReq: Provider[] = [];
           const route = decoratorAndValue.value;
           const ctrlDecorator = classMeta.constructor.decorators.find(isController);
-          const isSingleton = ctrlDecorator?.value.isSingleton;
+          const singleton = ctrlDecorator?.value.singleton;
           const guards = this.normalizeGuards(route.guards).slice();
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
           providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []));
@@ -81,7 +81,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
             providersPerRou,
             providersPerReq,
             routeMeta,
-            isSingleton,
+            singleton,
             guards,
           });
         }

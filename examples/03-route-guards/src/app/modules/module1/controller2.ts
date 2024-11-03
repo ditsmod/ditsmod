@@ -1,7 +1,7 @@
 import { controller, RequestContext, route } from '@ditsmod/core';
 import { Permission, requirePermissionsSngl, BearerGuard } from '#auth';
 
-@controller({ isSingleton: true })
+@controller({ singleton: 'module' })
 export class Controller2 {
   @route('GET', 'controler2-of-module1')
   ok(ctx: RequestContext) {

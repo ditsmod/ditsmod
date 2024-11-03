@@ -20,7 +20,7 @@ For example, it can be done like this:
 import { guard, CanActivate, RequestContext } from '@ditsmod/core';
 import { AuthService } from './auth.service.js';
 
-@guard({ isSingleton: false })
+@guard({ singleton: false })
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 

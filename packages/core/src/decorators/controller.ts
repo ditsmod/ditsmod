@@ -14,9 +14,13 @@ export interface ControllerRawMetadata1 {
    */
   providersPerRou?: Provider[];
   /**
-   * Default - `false`.
+   * Singleton per scope.
+   * 
+   * __Warn__: for now, is experimental support.
+   *
+   * Default - `module`.
    */
-  isSingleton?: false | undefined;
+  singleton?: 'module';
 }
 
 /**
@@ -28,9 +32,9 @@ export interface ControllerRawMetadata2 {
    */
   providersPerRou?: Provider[];
   /**
-   * Default - `false`.
+   * Default - `module`.
    */
-  isSingleton: true;
+  singleton?: 'module';
 }
 
 export type ControllerRawMetadata = ControllerRawMetadata1 | ControllerRawMetadata2;

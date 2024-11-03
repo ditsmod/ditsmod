@@ -55,12 +55,12 @@ Starting with v2.50.0, Ditsmod makes it possible to work with the controller in 
 
 The first mode is safer when you need to work in the context of the current HTTP request (the client provides a certain identifier that must be taken into account to form a response). The second mode is noticeably faster (about 15%) and consumes less memory, but the request context cannot be stored in the properties of the controller instance, because this instance can be used for other clients at the same time. In the second mode, the request context will have to be passed only as an argument to the methods.
 
-In order for Ditsmod to work with the controller as a singleton, `{ isSingleton: true }` must be specified in the metadata:
+In order for Ditsmod to work with the controller as a singleton, `{ singleton: 'module' }` must be specified in the metadata:
 
 ```ts
 import { controller } from '@ditsmod/core';
 
-@controller({ isSingleton: true })
+@controller({ singleton: 'module' })
 export class SomeController {}
 ```
 
@@ -158,7 +158,7 @@ Because the controller is instantiated in this mode only once, you will not be a
 ```ts {3,5}
 import { controller, route, RequestContext } from '@ditsmod/core';
 
-@controller({ isSingleton: true })
+@controller({ singleton: 'module' })
 export class HelloWorldController {
   constructor(private res: Res) {}
 
@@ -174,7 +174,7 @@ The working case will be as follows:
 ```ts {3,6}
 import { controller, route, RequestContext } from '@ditsmod/core';
 
-@controller({ isSingleton: true })
+@controller({ singleton: 'module' })
 export class HelloWorldController {
   @route('GET', 'hello')
   method1(ctx: RequestContext) {

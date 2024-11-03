@@ -54,7 +54,7 @@ export class PreRouterExtension implements Extension<void> {
     protected extensionsManager: ExtensionsManager,
     protected log: SystemLogMediator,
     protected extensionsContext: ExtensionsContext,
-    protected errorMediator: RoutingErrorMediator
+    protected errorMediator: RoutingErrorMediator,
   ) {}
 
   async init() {
@@ -79,7 +79,7 @@ export class PreRouterExtension implements Extension<void> {
 
       const singletons = new Set<Class>();
       aControllerMetadata.forEach((controllerMetadata) => {
-        if (controllerMetadata.isSingleton) {
+        if (controllerMetadata.singleton) {
           singletons.add(controllerMetadata.routeMeta.controller);
         }
       });
@@ -89,7 +89,7 @@ export class PreRouterExtension implements Extension<void> {
 
       aControllerMetadata.forEach((controllerMetadata) => {
         let handle: RouteHandler;
-        if (controllerMetadata.isSingleton) {
+        if (controllerMetadata.singleton) {
           handle = this.getHandlerWithSingleton(metadataPerMod3, injectorPerMod, controllerMetadata);
         } else {
           handle = this.getDefaultHandler(metadataPerMod3, injectorPerMod, controllerMetadata);
@@ -285,10 +285,7 @@ export class PreRouterExtension implements Extension<void> {
     return totalInitMetaPerApp.reduce((prev1, curr1) => {
       return (
         prev1 ||
-        curr1.groupInitMeta.reduce(
-          (prev2, curr2) => prev2 || Boolean(curr2.payload.aControllerMetadata.length),
-          false,
-        )
+        curr1.groupInitMeta.reduce((prev2, curr2) => prev2 || Boolean(curr2.payload.aControllerMetadata.length), false)
       );
     }, false);
   }
