@@ -1,7 +1,6 @@
 import {
   ExtensionsContext,
   ExtensionsManager,
-  MetadataPerMod3,
   normalizeProviders,
   PerAppService,
   Router,
@@ -13,7 +12,7 @@ import {
   Provider,
   TotalInitMetaPerApp,
 } from '@ditsmod/core';
-import { PreRouterExtension, RoutingErrorMediator, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { PreRouterExtension, RoutingErrorMediator, ROUTES_EXTENSIONS, MetadataPerMod3 } from '@ditsmod/routing';
 
 import { TestModuleManager } from './test-module-manager.js';
 import { Scope, Meta, TestProvider, TestFactoryProvider, TestClassProvider } from './types.js';

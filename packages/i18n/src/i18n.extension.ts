@@ -1,7 +1,6 @@
 import {
   Extension,
   ExtensionsManager,
-  MetadataPerMod3,
   PerAppService,
   Provider,
   injectable,
@@ -9,7 +8,7 @@ import {
   fromSelf,
   TotalInitMeta,
 } from '@ditsmod/core';
-import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { I18nTransformer } from './i18n-transformer.js';
 import { I18nLogMediator } from './i18n-log-mediator.js';

@@ -80,7 +80,7 @@ export {
   SingletonHttpBackend,
 } from './types/http-interceptor.js';
 export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
-export { MetadataPerMod1, MetadataPerMod2, MetadataPerMod3 } from './types/metadata-per-mod.js';
+export { MetadataPerMod1, MetadataPerMod2 } from './types/metadata-per-mod.js';
 export {
   AnyObj,
   CanActivate,

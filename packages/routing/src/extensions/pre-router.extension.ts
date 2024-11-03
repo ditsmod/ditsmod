@@ -17,7 +17,6 @@ import {
   PerAppService,
   HttpBackend,
   HttpFrontend,
-  MetadataPerMod3,
   Extension,
   HttpMethod,
   RouteMeta,
@@ -41,7 +40,7 @@ import {
   NormalizedGuard,
 } from '@ditsmod/core';
 
-import { PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
+import { MetadataPerMod3, PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
 import { RoutingErrorMediator } from '../router-error-mediator.js';
 
 @injectable()

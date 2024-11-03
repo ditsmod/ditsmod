@@ -9,14 +9,13 @@ import {
   ControllerMetadata,
   Status,
   HttpMethod,
-  MetadataPerMod3,
   Provider,
   RequestContext,
   ExtensionInitMeta,
   TotalInitMetaPerApp,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
-import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { CorsInterceptor } from './cors.interceptor.js';
 import { ALLOW_METHODS } from './constans.js';

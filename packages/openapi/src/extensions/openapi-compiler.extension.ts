@@ -3,7 +3,6 @@ import {
   ExtensionsManager,
   ExtensionsMetaPerApp,
   HttpMethod,
-  MetadataPerMod3,
   PerAppService,
   injectable,
   Injector,
@@ -22,7 +21,7 @@ import {
   XSecurityRequirementObject,
 } from '@ts-stack/openapi-spec';
 import { stringify } from 'yaml';
-import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { DEFAULT_OAS_OBJECT } from '#constants';

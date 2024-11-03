@@ -5,7 +5,6 @@ import {
   Extension,
   HttpMethod,
   isController,
-  MetadataPerMod3,
   RouteMeta,
   Provider,
   AppOptions,
@@ -14,7 +13,7 @@ import {
   Class,
   MetadataPerMod2,
 } from '@ditsmod/core';
-import { RoutesExtension } from '@ditsmod/routing';
+import { MetadataPerMod3, RoutesExtension } from '@ditsmod/routing';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { isOasRoute, isOasRoute1, isReferenceObject } from '#utils/type-guards.js';

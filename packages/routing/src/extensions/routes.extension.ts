@@ -14,8 +14,9 @@ import {
   Class,
   RouteMetadata,
   MetadataPerMod2,
-  MetadataPerMod3,
 } from '@ditsmod/core';
+
+import { MetadataPerMod3 } from '../types.js';
 
 @injectable()
 export class RoutesExtension implements Extension<MetadataPerMod3> {
