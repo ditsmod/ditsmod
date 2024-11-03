@@ -36,7 +36,7 @@ describe('03-route-guards', () => {
     expect(status).toBe(401);
   });
 
-  it('in module3 appended singletor controller should works with guards', async () => {
+  it('controller singleton in module3 appended singletor controller should works with guards', async () => {
     const { status } = await testAgent.get('/controler2-of-module2');
     expect(status).toBe(401);
   });
@@ -51,7 +51,7 @@ describe('03-route-guards', () => {
     expect(status).toBe(403);
   });
 
-  it('should throw 403 for guards setted for a module', async () => {
+  it('controller singleton should throw 403 for guards setted for a module', async () => {
     const { status } = await testAgent.get('/guards-1/controler2-of-module2');
     expect(status).toBe(403);
   });
