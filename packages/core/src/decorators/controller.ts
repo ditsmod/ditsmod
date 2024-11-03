@@ -16,7 +16,7 @@ export interface ControllerRawMetadata1 {
   /**
    * Singleton per scope.
    * 
-   * __Warn__: for now, is experimental support.
+   * __Warn__: at the moment, this is an experimental feature.
    *
    * Default - `module`.
    */
@@ -32,6 +32,7 @@ export interface ControllerRawMetadata2 {
    */
   providersPerRou?: Provider[];
   /**
+   * __Warn__: at the moment, this is an experimental feature.
    * Default - `module`.
    */
   singleton?: 'module';

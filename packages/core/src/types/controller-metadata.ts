@@ -16,7 +16,7 @@ export interface ControllerMetadata {
   /**
    * Singleton per scope.
    * 
-   * __Warn__: for now, is experimental support.
+   * __Warn__: at the moment, this is an experimental feature.
    *
    * Default - `module`.
    */
