@@ -8,11 +8,11 @@ export class SqbExtension implements Extension<void> {
   async init() {
     const totalInitMeta = await this.extensionManager.init(ROUTES_EXTENSIONS);
     totalInitMeta.groupInitMeta.forEach((initMeta) => {
-      const { aControllerMetadata, providersPerMod } = initMeta.payload;
-      console.log('-'.repeat(50), initMeta.payload.moduleName);
+      const { aControllerMetadata } = initMeta.payload;
+      console.log('-'.repeat(50), initMeta.payload.meta.name);
 
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq }) => {
-        console.log(providersPerMod, providersPerRou, providersPerReq);
+        console.log(initMeta.payload.meta.providersPerMod, providersPerRou, providersPerReq);
       });
     });
   }

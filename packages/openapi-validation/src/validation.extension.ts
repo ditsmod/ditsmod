@@ -14,9 +14,9 @@ export class ValidationExtension implements Extension<void> {
   private inited: boolean;
 
   constructor(
-    private perAppService: PerAppService,
-    private extensionsManager: ExtensionsManager,
-    private ajvService: AjvService,
+    protected perAppService: PerAppService,
+    protected extensionsManager: ExtensionsManager,
+    protected ajvService: AjvService,
     @optional() private validationOptions?: ValidationOptions,
   ) {}
 
@@ -34,7 +34,8 @@ export class ValidationExtension implements Extension<void> {
     const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
 
     totalInitMeta.groupInitMeta.forEach((initMeta) => {
-      const { aControllerMetadata, providersPerMod } = initMeta.payload;
+      const { aControllerMetadata } = initMeta.payload;
+      const { providersPerMod } = initMeta.payload.meta;
       providersPerMod.push({ token: AjvService, useValue: this.ajvService });
 
       aControllerMetadata.forEach(({ providersPerReq, routeMeta }) => {
@@ -66,7 +67,7 @@ export class ValidationExtension implements Extension<void> {
         validationRouteMeta.options = this.validationOptions || new ValidationOptions();
 
         if (validationRouteMeta.parameters.length) {
-          initMeta.payload.providersPerReq.unshift(ParametersInterceptor);
+          initMeta.payload.meta.providersPerReq.unshift(ParametersInterceptor);
           providersPerReq.push({
             token: HTTP_INTERCEPTORS,
             useToken: ParametersInterceptor,
@@ -74,7 +75,7 @@ export class ValidationExtension implements Extension<void> {
           });
         }
         if (validationRouteMeta.requestBodySchema) {
-          initMeta.payload.providersPerReq.unshift(RequestBodyInterceptor);
+          initMeta.payload.meta.providersPerReq.unshift(RequestBodyInterceptor);
           providersPerReq.push({
             token: HTTP_INTERCEPTORS,
             useToken: RequestBodyInterceptor,

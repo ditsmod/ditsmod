@@ -53,13 +53,14 @@ export class CorsExtension implements Extension<void | false> {
     totalInitMetaPerApp.forEach((totaInitMeta) => {
       totaInitMeta.groupInitMeta.forEach((initMeta) => {
         const metadataPerMod3 = initMeta.payload;
-        const { aControllerMetadata, providersPerMod } = metadataPerMod3;
+        const { aControllerMetadata } = metadataPerMod3;
+        const { providersPerMod } = metadataPerMod3.meta;
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const routesWithOptions = this.getRoutesWithOptions(totaInitMeta.groupInitMeta, aControllerMetadata);
         aControllerMetadata.push(...routesWithOptions);
 
         aControllerMetadata.forEach(({ providersPerReq, providersPerRou, singleton }) => {
-          const mergedPerRou = [...metadataPerMod3.providersPerRou, ...providersPerRou];
+          const mergedPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
           const corsOptions = this.getCorsOptions(injectorPerMod, mergedPerRou);
           const mergedCorsOptions = mergeOptions(corsOptions);
           providersPerRou.unshift({ token: CorsOptions, useValue: mergedCorsOptions });

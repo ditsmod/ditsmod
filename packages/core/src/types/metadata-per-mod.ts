@@ -71,20 +71,7 @@ export class MetadataPerMod2 {
  * that need set routes.
  */
 export class MetadataPerMod3 {
-  module: ModuleType | ModuleWithParams;
-  moduleName: string;
-  /**
-   * Providers per a module.
-   */
-  providersPerMod: Provider[];
-  /**
-   * Providers per a route.
-   */
-  providersPerRou: Provider[];
-  /**
-   * Providers per a request.
-   */
-  providersPerReq: Provider[];
+  meta: NormalizedModuleMetadata;
   aControllerMetadata: ControllerMetadata[];
   guardsPerMod1: GuardPerMod1[];
 }

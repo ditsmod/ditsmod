@@ -63,11 +63,11 @@ export class TestPreRouterExtension extends PreRouterExtension {
     totalInitMetaPerApp.forEach((totalInitMeta) => {
       totalInitMeta.groupInitMeta.forEach((initMeta) => {
         const metadataPerMod3 = initMeta.payload;
-        overrideLogLevel(metadataPerMod3.providersPerMod, logLevel);
-        overrideLogLevel(metadataPerMod3.providersPerRou, logLevel);
-        overrideLogLevel(metadataPerMod3.providersPerReq, logLevel);
+        overrideLogLevel(metadataPerMod3.meta.providersPerMod, logLevel);
+        overrideLogLevel(metadataPerMod3.meta.providersPerRou, logLevel);
+        overrideLogLevel(metadataPerMod3.meta.providersPerReq, logLevel);
         providersToOverride.forEach((provider) => {
-          this.overrideProvider(['Mod', 'Rou', 'Req'], metadataPerMod3, provider);
+          this.overrideProvider(['Mod', 'Rou', 'Req'], metadataPerMod3.meta, provider);
         });
         metadataPerMod3.aControllerMetadata.forEach((controllerMetadata) => {
           overrideLogLevel(controllerMetadata.providersPerRou, logLevel);

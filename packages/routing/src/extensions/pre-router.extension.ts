@@ -78,8 +78,8 @@ export class PreRouterExtension implements Extension<void> {
         return;
       }
       const metadataPerMod3 = initMeta.payload;
-      const { moduleName, aControllerMetadata, providersPerMod, guardsPerMod1 } = metadataPerMod3;
-      const mod = getModule(metadataPerMod3.module);
+      const { aControllerMetadata, guardsPerMod1 } = metadataPerMod3;
+      const mod = getModule(metadataPerMod3.meta.module);
 
       const singletons = new Set<Class>();
       aControllerMetadata.forEach((controllerMetadata) => {
@@ -87,7 +87,7 @@ export class PreRouterExtension implements Extension<void> {
           singletons.add(controllerMetadata.routeMeta.controller);
         }
       });
-      const extendedProvidersPerMod = [mod, ...singletons, ...providersPerMod];
+      const extendedProvidersPerMod = [mod, ...singletons, ...metadataPerMod3.meta.providersPerMod];
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
       injectorPerMod.get(mod); // Call module constructor.
 
@@ -102,7 +102,7 @@ export class PreRouterExtension implements Extension<void> {
         const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guardsPerMod1.length;
 
         preparedRouteMeta.push({
-          moduleName,
+          moduleName: metadataPerMod3.meta.name,
           httpMethod: controllerMetadata.httpMethod,
           path: controllerMetadata.path,
           handle,
@@ -120,7 +120,7 @@ export class PreRouterExtension implements Extension<void> {
     controllerMetadata: ControllerMetadata,
   ) {
     const { httpMethod, path, providersPerRou, providersPerReq, routeMeta } = controllerMetadata;
-    const mergedPerRou = [...metadataPerMod3.providersPerRou, ...providersPerRou];
+    const mergedPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'injectorPerRou');
 
     const mergedPerReq: Provider[] = [];
@@ -129,7 +129,7 @@ export class PreRouterExtension implements Extension<void> {
       mergedPerReq.push(InterceptorWithGuards);
       mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
     }
-    mergedPerReq.push(...metadataPerMod3.providersPerReq, ...providersPerReq);
+    mergedPerReq.push(...metadataPerMod3.meta.providersPerReq, ...providersPerReq);
 
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const resolvedPerRou = Injector.resolve(mergedPerRou);
@@ -138,7 +138,7 @@ export class PreRouterExtension implements Extension<void> {
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
-    this.checkDeps(metadataPerMod3.moduleName, httpMethod, path, injPerReq, routeMeta);
+    this.checkDeps(metadataPerMod3.meta.name, httpMethod, path, injPerReq, routeMeta);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerReq
       .concat(resolvedPerRou)
@@ -213,11 +213,11 @@ export class PreRouterExtension implements Extension<void> {
       mergedPerRou.push(SingletonInterceptorWithGuards);
       mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: SingletonInterceptorWithGuards, multi: true });
     }
-    mergedPerRou.push(...metadataPerMod3.providersPerRou, ...providersPerRou);
+    mergedPerRou.push(...metadataPerMod3.meta.providersPerRou, ...providersPerRou);
 
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'injectorPerRou');
-    this.checkDeps(metadataPerMod3.moduleName, httpMethod, path, injectorPerRou, routeMeta);
+    this.checkDeps(metadataPerMod3.meta.name, httpMethod, path, injectorPerRou, routeMeta);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const chainMaker = injectorPerRou.instantiateResolved<DefaultSingletonChainMaker>(resolvedChainMaker);
