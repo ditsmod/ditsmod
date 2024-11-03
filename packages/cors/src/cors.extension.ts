@@ -9,7 +9,7 @@ import {
   ControllerMetadata2,
   Status,
   HttpMethod,
-  MetadataPerMod2,
+  MetadataPerMod3,
   Provider,
   RequestContext,
   ExtensionInitMeta,
@@ -47,19 +47,19 @@ export class CorsExtension implements Extension<void | false> {
   }
 
   protected prepareDataAndSetInterceptors(
-    totalInitMetaPerApp: TotalInitMetaPerApp<MetadataPerMod2>[],
+    totalInitMetaPerApp: TotalInitMetaPerApp<MetadataPerMod3>[],
     injectorPerApp: Injector,
   ) {
     totalInitMetaPerApp.forEach((totaInitMeta) => {
       totaInitMeta.groupInitMeta.forEach((initMeta) => {
-        const metadataPerMod2 = initMeta.payload;
-        const { aControllersMetadata2, providersPerMod } = metadataPerMod2;
+        const metadataPerMod3 = initMeta.payload;
+        const { aControllersMetadata2, providersPerMod } = metadataPerMod3;
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const routesWithOptions = this.getRoutesWithOptions(totaInitMeta.groupInitMeta, aControllersMetadata2);
         aControllersMetadata2.push(...routesWithOptions);
 
         aControllersMetadata2.forEach(({ providersPerReq, providersPerRou, isSingleton }) => {
-          const mergedPerRou = [...metadataPerMod2.providersPerRou, ...providersPerRou];
+          const mergedPerRou = [...metadataPerMod3.providersPerRou, ...providersPerRou];
           const corsOptions = this.getCorsOptions(injectorPerMod, mergedPerRou);
           const mergedCorsOptions = mergeOptions(corsOptions);
           providersPerRou.unshift({ token: CorsOptions, useValue: mergedCorsOptions });
@@ -84,12 +84,12 @@ export class CorsExtension implements Extension<void | false> {
     return clonedCorsOptions;
   }
 
-  protected getPathWtihOptions(groupInitMeta: ExtensionInitMeta<MetadataPerMod2>[]) {
+  protected getPathWtihOptions(groupInitMeta: ExtensionInitMeta<MetadataPerMod3>[]) {
     const sPathWithOptions = new Set<string>();
 
     groupInitMeta.forEach((initMeta) => {
-      const metadataPerMod2 = initMeta.payload;
-      metadataPerMod2.aControllersMetadata2
+      const metadataPerMod3 = initMeta.payload;
+      metadataPerMod3.aControllersMetadata2
         .filter(({ httpMethod }) => httpMethod == 'OPTIONS')
         .forEach(({ path }) => sPathWithOptions.add(path));
     });
@@ -98,7 +98,7 @@ export class CorsExtension implements Extension<void | false> {
   }
 
   protected getRoutesWithOptions(
-    groupInitMeta: ExtensionInitMeta<MetadataPerMod2>[],
+    groupInitMeta: ExtensionInitMeta<MetadataPerMod3>[],
     aControllersMetadata2: ControllerMetadata2[],
   ) {
     const sPathWithOptions = this.getPathWtihOptions(groupInitMeta);
@@ -141,7 +141,8 @@ export class CorsExtension implements Extension<void | false> {
         providersPerReq: [],
         routeMeta,
         isSingleton: true,
-        guards: []
+        guards: [],
+        guardsPerMod1: [],
       };
 
       newArrControllersMetadata2.push(controllersMetadata2);

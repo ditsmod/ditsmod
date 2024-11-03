@@ -265,7 +265,7 @@ In this case, it is guaranteed that the `MyExtension` instance will receive data
 
 ## Dynamic addition of providers
 
-Any extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynamically add providers at any level. Extensions from this group use metadata with `MetadataPerMod1` interface and return metadata with `MetadataPerMod2` interface.
+Any extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynamically add providers at any level. Extensions from this group use metadata with `MetadataPerMod1` interface and return metadata with `MetadataPerMod3` interface.
 
 You can see how it is done in [BodyParserExtension][3]:
 

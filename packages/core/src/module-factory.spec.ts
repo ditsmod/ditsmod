@@ -100,27 +100,27 @@ describe('ModuleFactory', () => {
       const map = bootstrap(Module3);
       expect(map.size).toBe(3);
 
-      const metadataPerMod1 = map.get(mod1)!;
-      const metadataPerMod2 = map.get(mod2)!;
-      const metadataPerMod3 = map.get(Module3)!;
-      expect(metadataPerMod1).toBeDefined();
-      expect(metadataPerMod2).toBeDefined();
-      expect(metadataPerMod3).toBeDefined();
+      const metadataPerMod1_1 = map.get(mod1)!;
+      const metadataPerMod1_2 = map.get(mod2)!;
+      const metadataPerMod1_3 = map.get(Module3)!;
+      expect(metadataPerMod1_1).toBeDefined();
+      expect(metadataPerMod1_2).toBeDefined();
+      expect(metadataPerMod1_3).toBeDefined();
 
-      expect(metadataPerMod1.prefixPerMod).toBe('prefix1');
-      expect(metadataPerMod1.meta).toBeDefined();
-      expect(metadataPerMod1.applyControllers).toBe(true);
-      expect(metadataPerMod1.importedTokensMap.perMod).toEqual(new Map());
-      expect(metadataPerMod1.importedTokensMap.perRou).toEqual(new Map());
-      expect(metadataPerMod1.importedTokensMap.perReq).toEqual(new Map());
-      expect(metadataPerMod1.importedTokensMap.multiPerMod).toEqual(new Map());
-      expect(metadataPerMod1.importedTokensMap.multiPerRou).toEqual(new Map());
-      expect(metadataPerMod1.importedTokensMap.multiPerReq).toEqual(new Map());
+      expect(metadataPerMod1_1.prefixPerMod).toBe('prefix1');
+      expect(metadataPerMod1_1.meta).toBeDefined();
+      expect(metadataPerMod1_1.applyControllers).toBe(true);
+      expect(metadataPerMod1_1.importedTokensMap.perMod).toEqual(new Map());
+      expect(metadataPerMod1_1.importedTokensMap.perRou).toEqual(new Map());
+      expect(metadataPerMod1_1.importedTokensMap.perReq).toEqual(new Map());
+      expect(metadataPerMod1_1.importedTokensMap.multiPerMod).toEqual(new Map());
+      expect(metadataPerMod1_1.importedTokensMap.multiPerRou).toEqual(new Map());
+      expect(metadataPerMod1_1.importedTokensMap.multiPerReq).toEqual(new Map());
       
-      expect(metadataPerMod2.prefixPerMod).toBe('prefix2');
-      expect(metadataPerMod3.prefixPerMod).toBe('');
-      expect(metadataPerMod2.applyControllers).toBe(true);
-      expect(metadataPerMod3.applyControllers).toBe(false);
+      expect(metadataPerMod1_2.prefixPerMod).toBe('prefix2');
+      expect(metadataPerMod1_3.prefixPerMod).toBe('');
+      expect(metadataPerMod1_2.applyControllers).toBe(true);
+      expect(metadataPerMod1_3.applyControllers).toBe(false);
     });
 
     it('should throw an error during importing and appending same module', () => {

@@ -73,7 +73,7 @@ export class MyCustomRouterModule {}
 
 ## Extensions group `ROUTES_EXTENSIONS`
 
-The extensions group token `ROUTES_EXTENSIONS` is exported from this module. Extensions from this group return metadata with interface [`Array<MetadataPerMod2>`][2] is an array of dynamic metadata that is intended for creating request handlers. Each item of this array is a separate route.
+The extensions group token `ROUTES_EXTENSIONS` is exported from this module. Extensions from this group return metadata with interface [`Array<MetadataPerMod3>`][2] is an array of dynamic metadata that is intended for creating request handlers. Each item of this array is a separate route.
 
 ## Extensions group `PRE_ROUTER_EXTENSIONS`
 

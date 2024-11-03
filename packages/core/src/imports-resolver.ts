@@ -6,7 +6,7 @@ import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { defaultProvidersPerReq } from './default-providers-per-req.js';
 import { ModuleManager } from './services/module-manager.js';
 import { AppOptions } from './types/app-options.js';
-import { ImportedTokensMap, MetadataPerMod20 } from './types/metadata-per-mod.js';
+import { ImportedTokensMap, MetadataPerMod2 } from './types/metadata-per-mod.js';
 import { AppMetadataMap, ModuleType, Scope, Provider, ProvidersForMod } from '#types/mix.js';
 import { ModuleWithParams } from './types/module-metadata.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
@@ -39,7 +39,7 @@ export class ImportsResolver {
 
   resolve() {
     const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
-    const aMetadataPerMod20: MetadataPerMod20[] = [];
+    const aMetadataPerMod2: MetadataPerMod2[] = [];
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.appMetadataMap.forEach((metadataPerMod1) => {
       const {
@@ -49,14 +49,14 @@ export class ImportsResolver {
         applyControllers,
         prefixPerMod,
       } = metadataPerMod1;
-      aMetadataPerMod20.push({ meta: targetProviders, guardsPerMod1, applyControllers, prefixPerMod });
+      aMetadataPerMod2.push({ meta: targetProviders, guardsPerMod1, applyControllers, prefixPerMod });
       this.resolveImportedProviders(targetProviders, importedTokensMap, scopes);
       this.resolveProvidersForExtensions(targetProviders, importedTokensMap);
       targetProviders.providersPerRou.unshift(...defaultProvidersPerRou);
       targetProviders.providersPerReq.unshift(...defaultProvidersPerReq);
     });
 
-    return { extensionCounters: this.extensionCounters, aMetadataPerMod20 };
+    return { extensionCounters: this.extensionCounters, aMetadataPerMod2 };
   }
 
   protected resolveImportedProviders(

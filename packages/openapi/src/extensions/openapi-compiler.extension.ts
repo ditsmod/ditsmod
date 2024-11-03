@@ -3,9 +3,8 @@ import {
   ExtensionsManager,
   ExtensionsMetaPerApp,
   HttpMethod,
-  MetadataPerMod2,
+  MetadataPerMod3,
   PerAppService,
-  ResolvedGuard,
   injectable,
   Injector,
   optional,
@@ -65,7 +64,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     return this.oasObject;
   }
 
-  protected async compileOasObject(totalInitMetaPerApp: TotalInitMetaPerApp<MetadataPerMod2>[]) {
+  protected async compileOasObject(totalInitMetaPerApp: TotalInitMetaPerApp<MetadataPerMod3>[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
     for (const totalInitMeta of totalInitMetaPerApp) {

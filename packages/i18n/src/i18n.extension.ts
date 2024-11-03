@@ -1,7 +1,7 @@
 import {
   Extension,
   ExtensionsManager,
-  MetadataPerMod2,
+  MetadataPerMod3,
   PerAppService,
   Provider,
   injectable,
@@ -40,7 +40,7 @@ export class I18nExtension implements Extension<void> {
     this.#inited = true;
   }
 
-  protected addI18nProviders(totalInitMeta: TotalInitMeta<MetadataPerMod2>, isLastModule?: boolean) {
+  protected addI18nProviders(totalInitMeta: TotalInitMeta<MetadataPerMod3>, isLastModule?: boolean) {
     const injectorPerApp = this.perAppService.injector;
 
     const translationsPerApp = injectorPerApp.get(I18N_TRANSLATIONS, undefined, null);

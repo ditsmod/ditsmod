@@ -28,7 +28,7 @@ import { throwProvidersCollisionError } from './utils/throw-providers-collision-
 import { isMultiProvider, isNormRootModule } from './utils/type-guards.js';
 import { SERVER } from '#constans';
 import { NodeServer } from '#types/server-options.js';
-import { MetadataPerMod20 } from './types/metadata-per-mod.js';
+import { MetadataPerMod2 } from './types/metadata-per-mod.js';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();
@@ -169,8 +169,8 @@ export class AppInitializer {
       this.systemLogMediator,
       new SystemErrorMediator({ moduleName: this.meta.name }),
     );
-    const { extensionCounters, aMetadataPerMod20 } = importsResolver.resolve();
-    await this.handleExtensions(aMetadataPerMod20, extensionCounters);
+    const { extensionCounters, aMetadataPerMod2 } = importsResolver.resolve();
+    await this.handleExtensions(aMetadataPerMod2, extensionCounters);
     const injectorPerApp = this.perAppService.reinitInjector();
     this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
     this.preRouter = injectorPerApp.get(PreRouter) as PreRouter;
@@ -245,12 +245,12 @@ export class AppInitializer {
     return moduleFactory2.bootstrap(this.meta.providersPerApp, globalProviders, '', module, moduleManager, new Set());
   }
 
-  protected async handleExtensions(aMetadataPerMod20: MetadataPerMod20[], extensionCounters: ExtensionCounters) {
+  protected async handleExtensions(aMetadataPerMod2: MetadataPerMod2[], extensionCounters: ExtensionCounters) {
     const extensionsContext = new ExtensionsContext();
     const injectorPerApp = this.perAppService.reinitInjector([{ token: PerAppService, useValue: this.perAppService }]);
 
-    for (const metadataPerMod20 of aMetadataPerMod20) {
-      const { meta } = metadataPerMod20;
+    for (const metadataPerMod2 of aMetadataPerMod2) {
+      const { meta } = metadataPerMod2;
       const preparedMetadataPerMod1 = this.prepareMetadataPerMod1(meta);
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(meta.providersPerMod);
       injectorPerMod.pull(Logger);
@@ -261,7 +261,7 @@ export class AppInitializer {
         continue;
       }
       const injectorForExtensions = this.getInjectorForExtensions(
-        metadataPerMod20,
+        metadataPerMod2,
         extensionCounters,
         extensionsContext,
         injectorPerMod,
@@ -282,7 +282,7 @@ export class AppInitializer {
   }
 
   protected getInjectorForExtensions(
-    metadataPerMod20: MetadataPerMod20,
+    metadataPerMod2: MetadataPerMod2,
     extensionCounters: ExtensionCounters,
     extensionsContext: ExtensionsContext,
     injectorPerMod: Injector,
@@ -290,9 +290,9 @@ export class AppInitializer {
     return injectorPerMod.resolveAndCreateChild([
       ExtensionsManager,
       { token: ExtensionsContext, useValue: extensionsContext },
-      { token: MetadataPerMod20, useValue: metadataPerMod20 },
+      { token: MetadataPerMod2, useValue: metadataPerMod2 },
       { token: ExtensionCounters, useValue: extensionCounters },
-      ...metadataPerMod20.meta.extensionsProviders,
+      ...metadataPerMod2.meta.extensionsProviders,
     ]);
   }
 
