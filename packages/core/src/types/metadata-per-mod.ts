@@ -1,5 +1,5 @@
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
-import { ControllerMetadata2 } from './controller-metadata.js';
+import { ControllerMetadata } from './controller-metadata.js';
 import { GuardPerMod1, ModuleType, Provider } from './mix.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionProvider } from './extension-types.js';
@@ -75,7 +75,7 @@ export class MetadataPerMod3 {
    * Providers per a request.
    */
   providersPerReq: Provider[];
-  aControllersMetadata2: ControllerMetadata2[];
+  aControllerMetadata: ControllerMetadata[];
   guardsPerMod1: GuardPerMod1[];
 }
 

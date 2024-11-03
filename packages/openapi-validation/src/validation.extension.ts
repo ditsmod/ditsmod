@@ -34,10 +34,10 @@ export class ValidationExtension implements Extension<void> {
     const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
 
     totalInitMeta.groupInitMeta.forEach((initMeta) => {
-      const { aControllersMetadata2, providersPerMod } = initMeta.payload;
+      const { aControllerMetadata, providersPerMod } = initMeta.payload;
       providersPerMod.push({ token: AjvService, useValue: this.ajvService });
 
-      aControllersMetadata2.forEach(({ providersPerReq, routeMeta }) => {
+      aControllerMetadata.forEach(({ providersPerReq, routeMeta }) => {
         const validationRouteMeta = routeMeta as ValidationRouteMeta;
         validationRouteMeta.parameters = [];
         if (validationRouteMeta.operationObject?.parameters?.length) {

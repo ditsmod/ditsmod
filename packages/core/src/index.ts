@@ -68,7 +68,7 @@ export { PreRouter } from './services/pre-router.js';
 export { Req } from './services/request.js';
 export { Res } from './services/response.js';
 export { ChainMaker } from './services/chain-maker.js';
-export { ControllerMetadata2 } from './types/controller-metadata.js';
+export { ControllerMetadata } from './types/controller-metadata.js';
 export {
   HttpBackend,
   HttpFrontend,

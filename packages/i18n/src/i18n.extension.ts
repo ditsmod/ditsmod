@@ -51,8 +51,8 @@ export class I18nExtension implements Extension<void> {
     }
 
     for (const initMeta of totalInitMeta.groupInitMeta) {
-      const { providersPerMod, providersPerRou, providersPerReq, aControllersMetadata2 } = initMeta.payload;
-      if (!aControllersMetadata2.length) {
+      const { providersPerMod, providersPerRou, providersPerReq, aControllerMetadata } = initMeta.payload;
+      if (!aControllerMetadata.length) {
         continue;
       }
 

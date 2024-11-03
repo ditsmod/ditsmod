@@ -1,7 +1,7 @@
 import type { HttpMethod, NormalizedGuard, Provider } from './mix.js';
 import type { RouteMeta } from './route-data.js';
 
-export interface ControllerMetadata2 {
+export interface ControllerMetadata {
   /**
    * Providers per a route.
    */

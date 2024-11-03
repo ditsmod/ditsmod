@@ -1,7 +1,7 @@
 import {
   FactoryProvider,
   injectable,
-  ControllerMetadata2,
+  ControllerMetadata,
   Extension,
   HttpMethod,
   isController,
@@ -40,7 +40,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
     const prefixParams = oasOptions?.paratemers;
     const prefixTags = oasOptions?.tags;
 
-    const aControllersMetadata2: ControllerMetadata2[] = [];
+    const aControllerMetadata: ControllerMetadata[] = [];
     if (applyControllers)
       for (const controller of meta.controllers as Class<Record<string | symbol, any>>[]) {
         const classMeta = reflector.getMetadata(controller)!;
@@ -90,7 +90,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
 
             providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
 
-            aControllersMetadata2.push({
+            aControllerMetadata.push({
               providersPerRou,
               providersPerReq,
               path,
@@ -103,7 +103,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
         }
       }
 
-    return aControllersMetadata2;
+    return aControllerMetadata;
   }
 
   protected mergeParams(

@@ -69,9 +69,9 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     this.initOasObject();
     for (const totalInitMeta of totalInitMetaPerApp) {
       for (const initMeta of totalInitMeta.groupInitMeta) {
-        const { aControllersMetadata2, module: modOrObj } = initMeta.payload;
+        const { aControllerMetadata, module: modOrObj } = initMeta.payload;
 
-        aControllersMetadata2.forEach(({ httpMethod, path, routeMeta, guards }) => {
+        aControllerMetadata.forEach(({ httpMethod, path, routeMeta, guards }) => {
           const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;
           if (operationObject) {
             const clonedOperationObject = { ...operationObject };

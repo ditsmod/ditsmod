@@ -1,6 +1,6 @@
 import {
   injectable,
-  ControllerMetadata2,
+  ControllerMetadata,
   Extension,
   GuardItem,
   Provider,
@@ -39,7 +39,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
     this.metadataPerMod3.providersPerMod = meta.providersPerMod.slice();
     this.metadataPerMod3.providersPerRou = meta.providersPerRou.slice();
     this.metadataPerMod3.providersPerReq = meta.providersPerReq.slice();
-    this.metadataPerMod3.aControllersMetadata2 = this.getControllersMetadata2(prefixPerApp, this.metadataPerMod2);
+    this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata2(prefixPerApp, this.metadataPerMod2);
     this.metadataPerMod3.guardsPerMod1 = this.metadataPerMod2.guardsPerMod1;
 
     return this.metadataPerMod3;
@@ -48,7 +48,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
   protected getControllersMetadata2(prefixPerApp: string = '', metadataPerMod2: MetadataPerMod2) {
     const { applyControllers, prefixPerMod } = metadataPerMod2;
 
-    const controllersMetadata2: ControllerMetadata2[] = [];
+    const aControllerMetadata: ControllerMetadata[] = [];
     if (applyControllers)
     for (const controller of (metadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[])) {
       const classMeta = reflector.getMetadata(controller)!;
@@ -75,7 +75,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
             methodName,
           };
           providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
-          controllersMetadata2.push({
+          aControllerMetadata.push({
             httpMethod,
             path,
             providersPerRou,
@@ -88,7 +88,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
       }
     }
 
-    return controllersMetadata2;
+    return aControllerMetadata;
   }
 
   /**

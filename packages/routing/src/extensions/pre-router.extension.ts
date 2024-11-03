@@ -27,7 +27,7 @@ import {
   Provider,
   InterceptorWithGuards,
   RequestContext,
-  ControllerMetadata2,
+  ControllerMetadata,
   DefaultSingletonChainMaker,
   SingletonInterceptorWithGuards,
   Class,
@@ -74,33 +74,33 @@ export class PreRouterExtension implements Extension<void> {
 
     groupInitMeta.forEach((initMeta) => {
       const metadataPerMod3 = initMeta.payload;
-      const { moduleName, aControllersMetadata2, providersPerMod, guardsPerMod1 } = metadataPerMod3;
+      const { moduleName, aControllerMetadata, providersPerMod, guardsPerMod1 } = metadataPerMod3;
       const mod = getModule(metadataPerMod3.module);
 
       const singletons = new Set<Class>();
-      aControllersMetadata2.forEach((controllersMetadata2) => {
-        if (controllersMetadata2.isSingleton) {
-          singletons.add(controllersMetadata2.routeMeta.controller);
+      aControllerMetadata.forEach((controllerMetadata) => {
+        if (controllerMetadata.isSingleton) {
+          singletons.add(controllerMetadata.routeMeta.controller);
         }
       });
       const extendedProvidersPerMod = [mod, ...singletons, ...providersPerMod];
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
       injectorPerMod.get(mod); // Call module constructor.
 
-      aControllersMetadata2.forEach((controllersMetadata2) => {
+      aControllerMetadata.forEach((controllerMetadata) => {
         let handle: RouteHandler;
-        if (controllersMetadata2.isSingleton) {
-          handle = this.getHandlerWithSingleton(metadataPerMod3, injectorPerMod, controllersMetadata2);
+        if (controllerMetadata.isSingleton) {
+          handle = this.getHandlerWithSingleton(metadataPerMod3, injectorPerMod, controllerMetadata);
         } else {
-          handle = this.getDefaultHandler(metadataPerMod3, injectorPerMod, controllersMetadata2);
+          handle = this.getDefaultHandler(metadataPerMod3, injectorPerMod, controllerMetadata);
         }
 
-        const countOfGuards = controllersMetadata2.routeMeta.resolvedGuards!.length + guardsPerMod1.length;
+        const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guardsPerMod1.length;
 
         preparedRouteMeta.push({
           moduleName,
-          httpMethod: controllersMetadata2.httpMethod,
-          path: controllersMetadata2.path,
+          httpMethod: controllerMetadata.httpMethod,
+          path: controllerMetadata.path,
           handle,
           countOfGuards,
         });
@@ -113,15 +113,15 @@ export class PreRouterExtension implements Extension<void> {
   protected getDefaultHandler(
     metadataPerMod3: MetadataPerMod3,
     injectorPerMod: Injector,
-    controllersMetadata2: ControllerMetadata2,
+    controllerMetadata: ControllerMetadata,
   ) {
-    const { httpMethod, path, providersPerRou, providersPerReq, routeMeta } = controllersMetadata2;
+    const { httpMethod, path, providersPerRou, providersPerReq, routeMeta } = controllerMetadata;
     const mergedPerRou = [...metadataPerMod3.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'injectorPerRou');
 
     const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
-    if (metadataPerMod3.guardsPerMod1.length || controllersMetadata2.guards.length) {
+    if (metadataPerMod3.guardsPerMod1.length || controllerMetadata.guards.length) {
       mergedPerReq.push(InterceptorWithGuards);
       mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
     }
@@ -129,7 +129,7 @@ export class PreRouterExtension implements Extension<void> {
 
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const resolvedPerRou = Injector.resolve(mergedPerRou);
-    routeMeta.resolvedGuards = this.getResolvedGuards(controllersMetadata2.guards, resolvedPerReq);
+    routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
     routeMeta.guardsPerMod1 = metadataPerMod3.guardsPerMod1;
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
@@ -189,14 +189,14 @@ export class PreRouterExtension implements Extension<void> {
   protected getHandlerWithSingleton(
     metadataPerMod3: MetadataPerMod3,
     injectorPerMod: Injector,
-    controllersMetadata2: ControllerMetadata2,
+    controllerMetadata: ControllerMetadata,
   ) {
-    const { httpMethod, path, providersPerRou, routeMeta } = controllersMetadata2;
+    const { httpMethod, path, providersPerRou, routeMeta } = controllerMetadata;
 
     const mergedPerRou: Provider[] = [];
     mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
 
-    routeMeta.resolvedGuards = controllersMetadata2.guards.map((g) => {
+    routeMeta.resolvedGuards = controllerMetadata.guards.map((g) => {
       const resolvedGuard: ResolvedGuard = {
         guard: Injector.resolve([g.guard])[0],
         params: g.params,
@@ -286,7 +286,7 @@ export class PreRouterExtension implements Extension<void> {
       return (
         prev1 ||
         curr1.groupInitMeta.reduce(
-          (prev2, curr2) => prev2 || Boolean(curr2.payload.aControllersMetadata2.length),
+          (prev2, curr2) => prev2 || Boolean(curr2.payload.aControllerMetadata.length),
           false,
         )
       );
