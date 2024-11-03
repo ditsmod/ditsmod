@@ -76,6 +76,7 @@ export class MetadataPerMod3 {
    */
   providersPerReq: Provider[];
   aControllersMetadata2: ControllerMetadata2[];
+  guardsPerMod1: GuardPerMod1[];
 }
 
 /**

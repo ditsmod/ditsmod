@@ -1,8 +1,6 @@
 import {
   injectable,
   ControllerMetadata2,
-  MetadataPerMod1,
-  MetadataPerMod2,
   Extension,
   GuardItem,
   Provider,
@@ -14,45 +12,49 @@ import {
   GuardPerMod1,
   reflector,
   Class,
+  RouteMetadata,
+  MetadataPerMod2,
+  MetadataPerMod3,
 } from '@ditsmod/core';
 
 @injectable()
-export class RoutesExtension implements Extension<MetadataPerMod2> {
-  protected metadataPerMod2: MetadataPerMod2;
+export class RoutesExtension implements Extension<MetadataPerMod3> {
+  protected metadataPerMod3: MetadataPerMod3;
 
   constructor(
     protected appOptions: AppOptions,
-    protected metadataPerMod1: MetadataPerMod1,
+    protected metadataPerMod2: MetadataPerMod2,
   ) {}
 
   async init() {
-    if (this.metadataPerMod2) {
-      return this.metadataPerMod2;
+    if (this.metadataPerMod3) {
+      return this.metadataPerMod3;
     }
 
     const { path: prefixPerApp } = this.appOptions;
-    const { meta } = this.metadataPerMod1;
-    this.metadataPerMod2 = new MetadataPerMod2();
-    this.metadataPerMod2.module = meta.module;
-    this.metadataPerMod2.moduleName = meta.name;
-    this.metadataPerMod2.providersPerMod = meta.providersPerMod.slice();
-    this.metadataPerMod2.providersPerRou = meta.providersPerRou.slice();
-    this.metadataPerMod2.providersPerReq = meta.providersPerReq.slice();
-    this.metadataPerMod2.aControllersMetadata2 = this.getControllersMetadata2(prefixPerApp, this.metadataPerMod1);
+    this.metadataPerMod3 = new MetadataPerMod3();
+    const { meta } = this.metadataPerMod2;
+    this.metadataPerMod3.module = meta.module;
+    this.metadataPerMod3.moduleName = meta.name;
+    this.metadataPerMod3.providersPerMod = meta.providersPerMod.slice();
+    this.metadataPerMod3.providersPerRou = meta.providersPerRou.slice();
+    this.metadataPerMod3.providersPerReq = meta.providersPerReq.slice();
+    this.metadataPerMod3.aControllersMetadata2 = this.getControllersMetadata2(prefixPerApp, this.metadataPerMod2);
+    this.metadataPerMod3.guardsPerMod1 = this.metadataPerMod2.guardsPerMod1;
 
-    return this.metadataPerMod2;
+    return this.metadataPerMod3;
   }
 
-  protected getControllersMetadata2(prefixPerApp: string = '', metadataPerMod1: MetadataPerMod1) {
-    const { applyControllers, prefixPerMod, meta } = metadataPerMod1;
+  protected getControllersMetadata2(prefixPerApp: string = '', metadataPerMod2: MetadataPerMod2) {
+    const { applyControllers, prefixPerMod } = metadataPerMod2;
 
     const controllersMetadata2: ControllerMetadata2[] = [];
     if (applyControllers)
-    for (const controller of (meta.controllers as Class<Record<string | symbol, any>>[])) {
+    for (const controller of (metadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[])) {
       const classMeta = reflector.getMetadata(controller)!;
       for (const methodName of classMeta) {
         for (const decoratorAndValue of classMeta[methodName].decorators) {
-          if (!isRoute(decoratorAndValue)) {
+          if (!isRoute<RouteMetadata>(decoratorAndValue)) {
             continue;
           }
           const providersPerRou: Provider[] = [];
@@ -60,7 +62,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
           const route = decoratorAndValue.value;
           const ctrlDecorator = classMeta.constructor.decorators.find(isController);
           const isSingleton = ctrlDecorator?.value.isSingleton;
-          const guards = [...metadataPerMod1.guardsPerMod, ...this.normalizeGuards(route.guards)];
+          const guards = this.normalizeGuards(route.guards).slice();
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
           providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []));
           const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
@@ -80,7 +82,7 @@ export class RoutesExtension implements Extension<MetadataPerMod2> {
             providersPerReq,
             routeMeta,
             isSingleton,
-            guards
+            guards,
           });
         }
       }

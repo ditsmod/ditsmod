@@ -142,7 +142,6 @@ export class CorsExtension implements Extension<void | false> {
         routeMeta,
         isSingleton: true,
         guards: [],
-        guardsPerMod1: [],
       };
 
       newArrControllersMetadata2.push(controllersMetadata2);

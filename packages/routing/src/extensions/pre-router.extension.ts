@@ -74,7 +74,7 @@ export class PreRouterExtension implements Extension<void> {
 
     groupInitMeta.forEach((initMeta) => {
       const metadataPerMod3 = initMeta.payload;
-      const { moduleName, aControllersMetadata2, providersPerMod } = metadataPerMod3;
+      const { moduleName, aControllersMetadata2, providersPerMod, guardsPerMod1 } = metadataPerMod3;
       const mod = getModule(metadataPerMod3.module);
 
       const singletons = new Set<Class>();
@@ -95,7 +95,7 @@ export class PreRouterExtension implements Extension<void> {
           handle = this.getDefaultHandler(metadataPerMod3, injectorPerMod, controllersMetadata2);
         }
 
-        const countOfGuards = controllersMetadata2.routeMeta.resolvedGuards!.length + controllersMetadata2.guardsPerMod1.length;
+        const countOfGuards = controllersMetadata2.routeMeta.resolvedGuards!.length + guardsPerMod1.length;
 
         preparedRouteMeta.push({
           moduleName,
@@ -121,7 +121,7 @@ export class PreRouterExtension implements Extension<void> {
 
     const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
-    if (controllersMetadata2.guardsPerMod1.length || controllersMetadata2.guards.length) {
+    if (metadataPerMod3.guardsPerMod1.length || controllersMetadata2.guards.length) {
       mergedPerReq.push(InterceptorWithGuards);
       mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
     }
@@ -130,7 +130,7 @@ export class PreRouterExtension implements Extension<void> {
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     routeMeta.resolvedGuards = this.getResolvedGuards(controllersMetadata2.guards, resolvedPerReq);
-    routeMeta.guardsPerMod1 = controllersMetadata2.guardsPerMod1;
+    routeMeta.guardsPerMod1 = metadataPerMod3.guardsPerMod1;
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
@@ -204,8 +204,8 @@ export class PreRouterExtension implements Extension<void> {
       return resolvedGuard;
     });
 
-    if (routeMeta.resolvedGuards.length || controllersMetadata2.guardsPerMod1.length) {
-      routeMeta.guardsPerMod1 = controllersMetadata2.guardsPerMod1;
+    if (routeMeta.resolvedGuards.length || metadataPerMod3.guardsPerMod1.length) {
+      routeMeta.guardsPerMod1 = metadataPerMod3.guardsPerMod1;
       mergedPerRou.push(SingletonInterceptorWithGuards);
       mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: SingletonInterceptorWithGuards, multi: true });
     }

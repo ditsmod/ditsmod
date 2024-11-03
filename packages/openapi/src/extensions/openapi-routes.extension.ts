@@ -5,14 +5,14 @@ import {
   Extension,
   HttpMethod,
   isController,
-  MetadataPerMod1,
-  MetadataPerMod2,
+  MetadataPerMod3,
   RouteMeta,
   Provider,
   AppOptions,
   ControllerRawMetadata1,
   reflector,
   Class,
+  MetadataPerMod2,
 } from '@ditsmod/core';
 import { RoutesExtension } from '@ditsmod/routing';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
@@ -25,16 +25,16 @@ import { OasOptions } from '#types/oas-options.js';
 import { OpenapiErrorMediator } from '../services/openapi-error-mediator.js';
 
 @injectable()
-export class OpenapiRoutesExtension extends RoutesExtension implements Extension<MetadataPerMod2> {
+export class OpenapiRoutesExtension extends RoutesExtension implements Extension<MetadataPerMod3> {
   constructor(
     protected override appOptions: AppOptions,
-    protected override metadataPerMod1: MetadataPerMod1,
+    protected override metadataPerMod2: MetadataPerMod2,
     protected errMediator: OpenapiErrorMediator,
   ) {
-    super(appOptions, metadataPerMod1);
+    super(appOptions, metadataPerMod2);
   }
-  protected override getControllersMetadata2(prefixPerApp: string, metadataPerMod1: MetadataPerMod1) {
-    const { applyControllers, prefixPerMod, meta } = metadataPerMod1;
+  protected override getControllersMetadata2(prefixPerApp: string, metadataPerMod2: MetadataPerMod2) {
+    const { applyControllers, prefixPerMod, meta } = metadataPerMod2;
 
     const oasOptions = meta.extensionsMeta.oasOptions as OasOptions;
     const prefixParams = oasOptions?.paratemers;
@@ -54,7 +54,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             const providersPerReq: Provider[] = [];
             const ctrlDecorator = classMeta.constructor.decorators.find(isController);
             const isSingleton = ctrlDecorator?.value.isSingleton;
-            const guards = metadataPerMod1.guardsPerMod.slice();
+            const guards = [];
             if (isOasRoute1(decoratorAndValue)) {
               guards.push(...this.normalizeGuards(decoratorAndValue.value.guards));
             }
