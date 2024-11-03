@@ -33,7 +33,7 @@ interface Extension<T> {
 Each extension needs to be registered, this will be mentioned later, and now let's assume that such registration has taken place, and then the following process goes on:
 
 1. metadata is collected from all decorators (`@rootModule`, `@featureModule`, `@controller`, `@route`...);
-2. this metadata is then passed to DI with token `MetadataPerMod1`, so - every extension can get this metadata in the constructor;
+2. this metadata is then passed to DI with token `MetadataPerMod2`, so - every extension can get this metadata in the constructor;
 3. the work on the extensions starts per module:
     - in each module, the extensions created within this module or imported into this module are collected;
     - each of these extensions gets metadata, also collected in this module, and the `init()` methods of given extensions are called.
@@ -265,7 +265,7 @@ In this case, it is guaranteed that the `MyExtension` instance will receive data
 
 ## Dynamic addition of providers
 
-Any extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynamically add providers at any level. Extensions from this group use metadata with `MetadataPerMod1` interface and return metadata with `MetadataPerMod3` interface.
+Any extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynamically add providers at any level. Extensions from this group use metadata with `MetadataPerMod2` interface and return metadata with `MetadataPerMod3` interface.
 
 You can see how it is done in [BodyParserExtension][3]:
 
