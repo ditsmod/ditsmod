@@ -49,3 +49,11 @@ export class FirstController {
     res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
   }
 }
+
+@controller({ singleton: 'module' })
+export class SingletonController {
+  @route('GET', 'singleton')
+  singleton(res: Res) {
+    res.send('ok');
+  }
+}
