@@ -3,7 +3,7 @@ import { MulterSingletonParser } from '@ditsmod/body-parser';
 
 import { saveFiles, sendHtmlForm } from './utils.js';
 
-@controller({ singleton: 'module' })
+@controller({ singletonPerScope: 'module' })
 export class SingletonController {
   constructor(protected parse: MulterSingletonParser) {}
 

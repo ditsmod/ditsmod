@@ -1,6 +1,6 @@
 import { controller, route, SingletonRequestContext } from '@ditsmod/core';
 
-@controller({ singleton: 'module' })
+@controller({ singletonPerScope: 'module' })
 export class HelloWorldController2 {
   @route('GET', 'hello2')
   tellHello(ctx: SingletonRequestContext) {

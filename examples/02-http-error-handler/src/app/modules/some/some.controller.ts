@@ -13,7 +13,7 @@ export class SomeController {
   }
 }
 
-@controller({ singleton: 'module' })
+@controller({ singletonPerScope: 'module' })
 export class SomeSingletonController {
   @route('GET', 'hello2')
   ok(ctx: RequestContext) {

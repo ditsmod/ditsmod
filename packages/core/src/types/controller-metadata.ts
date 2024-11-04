@@ -20,6 +20,6 @@ export interface ControllerMetadata {
    *
    * Default - `module`.
    */
-  singleton?: 'module';
+  singletonPerScope?: 'module';
   guards: NormalizedGuard[];
 }

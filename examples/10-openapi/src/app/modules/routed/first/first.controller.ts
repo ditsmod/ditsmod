@@ -50,7 +50,7 @@ export class FirstController {
   }
 }
 
-@controller({ singleton: 'module' })
+@controller({ singletonPerScope: 'module' })
 export class SingletonController {
   @route('GET', 'singleton')
   singleton(res: Res) {

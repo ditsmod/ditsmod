@@ -18,8 +18,8 @@ export class SessionCookieExtension implements Extension<void> {
 
     const totalInitMeta = await this.extensionManager.init(ROUTES_EXTENSIONS);
     totalInitMeta.groupInitMeta.forEach((initMeta) => {
-      initMeta.payload.aControllerMetadata.forEach(({ providersPerRou, singleton }) => {
-        if (singleton) {
+      initMeta.payload.aControllerMetadata.forEach(({ providersPerRou, singletonPerScope }) => {
+        if (singletonPerScope == 'module') {
           providersPerRou.unshift(SessionCookieInterceptor);
           providersPerRou.push({ token: HTTP_INTERCEPTORS, useToken: SessionCookieInterceptor, multi: true });
         }

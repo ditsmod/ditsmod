@@ -13,7 +13,7 @@ export class HelloWorldController {
   }
 }
 
-@controller({ singleton: 'module' })
+@controller({ singletonPerScope: 'module' })
 export class HelloWorldController2 {
   @route('GET', 'singleton')
   tellHello(ctx: RequestContext) {
