@@ -70,6 +70,7 @@ export class PreRouterExtension implements Extension<void> {
   protected prepareRoutesMeta(groupInitMeta: ExtensionInitMeta<MetadataPerMod3>[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
     const injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
+    const injectorPerMod = this.initModuleAndGetInjectorPerMod(injectorPerApp, groupInitMeta);
 
     groupInitMeta.forEach((initMeta) => {
       if (!initMeta.payload.aControllerMetadata.length) {
@@ -77,18 +78,8 @@ export class PreRouterExtension implements Extension<void> {
         return;
       }
       const metadataPerMod3 = initMeta.payload;
-      const { aControllerMetadata, guardsPerMod1 } = metadataPerMod3;
-      const mod = getModule(metadataPerMod3.meta.module);
 
-      const singletons = new Set<Class>();
-      aControllerMetadata.forEach((controllerMetadata) => {
-        if (controllerMetadata.singleton == 'module') {
-          singletons.add(controllerMetadata.routeMeta.controller);
-        }
-      });
-      const extendedProvidersPerMod = [mod, ...singletons, ...metadataPerMod3.meta.providersPerMod];
-      const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
-      injectorPerMod.get(mod); // Call module constructor.
+      const { aControllerMetadata, guardsPerMod1 } = metadataPerMod3;
 
       aControllerMetadata.forEach((controllerMetadata) => {
         let handle: RouteHandler;
@@ -111,6 +102,31 @@ export class PreRouterExtension implements Extension<void> {
     });
 
     return preparedRouteMeta;
+  }
+
+  protected initModuleAndGetInjectorPerMod(
+    injectorPerApp: Injector,
+    groupInitMeta: ExtensionInitMeta<MetadataPerMod3>[],
+  ): Injector {
+    const singletons = new Set<Class>();
+
+    groupInitMeta.forEach((initMeta) => {
+      initMeta.payload.aControllerMetadata.forEach((controllerMetadata) => {
+        if (controllerMetadata.singleton == 'module') {
+          singletons.add(controllerMetadata.routeMeta.controller);
+        }
+      });
+    });
+
+    // Since each extension received the same `meta` array and not a copy of it,
+    // we can take `meta` from any element in the `groupInitMeta` array.
+    const { meta } = groupInitMeta.at(0)!.payload;
+
+    const mod = getModule(meta.module);
+    const extendedProvidersPerMod = [mod, ...singletons, ...meta.providersPerMod];
+    const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
+    injectorPerMod.get(mod); // Call module constructor.
+    return injectorPerMod;
   }
 
   protected getDefaultHandler(
