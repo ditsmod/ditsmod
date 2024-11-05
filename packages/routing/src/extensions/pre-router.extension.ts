@@ -39,6 +39,7 @@ import {
   ResolvedProvider,
   NormalizedGuard,
   GuardPerMod1,
+  ModuleManager,
 } from '@ditsmod/core';
 
 import { MetadataPerMod3, PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -52,6 +53,7 @@ export class PreRouterExtension implements Extension<void> {
     protected perAppService: PerAppService,
     protected router: Router,
     protected extensionsManager: ExtensionsManager,
+    protected moduleManager: ModuleManager,
     protected log: SystemLogMediator,
     protected extensionsContext: ExtensionsContext,
     protected errorMediator: RoutingErrorMediator,
@@ -66,6 +68,12 @@ export class PreRouterExtension implements Extension<void> {
     const preparedRouteMeta = this.prepareRoutesMeta(totalInitMeta.groupInitMeta);
     this.setRoutes(totalInitMeta, preparedRouteMeta);
     this.inited = true;
+  }
+
+  protected getMeta(groupInitMeta: ExtensionInitMeta<MetadataPerMod3>[]) {
+    // Since each extension received the same `meta` array and not a copy of it,
+    // we can take `meta` from any element in the `groupInitMeta` array.
+    return groupInitMeta.at(0)!.payload.meta;
   }
 
   protected prepareRoutesMeta(groupInitMeta: ExtensionInitMeta<MetadataPerMod3>[]) {
@@ -119,10 +127,7 @@ export class PreRouterExtension implements Extension<void> {
       });
     });
 
-    // Since each extension received the same `meta` array and not a copy of it,
-    // we can take `meta` from any element in the `groupInitMeta` array.
-    const { meta } = groupInitMeta.at(0)!.payload;
-
+    const meta = this.getMeta(groupInitMeta);
     const mod = getModule(meta.module);
     const extendedProvidersPerMod = [mod, ...singletons, ...meta.providersPerMod];
     const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
