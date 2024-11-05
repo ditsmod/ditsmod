@@ -101,6 +101,9 @@ export class Injector {
 
   /**
    * Turns an array of provider definitions into an array of resolved providers.
+   * For this method, it does not matter if all dependencies are present in the passed array,
+   * but it is essential that the metadata of each provider can be read (so that each provider
+   * with dependencies in the constructor has a decorator).
    *
    * A resolution is a process of converting individual
    * providers into an array of `ResolvedProvider`.
