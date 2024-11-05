@@ -109,7 +109,7 @@ describe('ImportsResolver', () => {
     });
 
     it(`Module3 imports Module2, which has a dependency on Module1, but Module2 does not import Module1;
-      although Module3 imports Module1, but an error should be thrown`, () => {
+      although Module3 imports Module1, an error should be thrown`, () => {
       @injectable()
       class Service1 {}
 
@@ -131,71 +131,6 @@ describe('ImportsResolver', () => {
       let msg = 'Resolving imported dependecies for Module2 failed: no provider for Service1! (Service2 -> Service1';
       msg += ', searching in providersPerRou, providersPerMod';
       expect(() => mock.resolve()).toThrow(msg);
-    });
-
-    it('guards per a module', () => {
-      @injectable()
-      class Service0 {}
-
-      @injectable()
-      class Service1 {}
-
-      @featureModule({ providersPerMod: [Service1], exports: [Service1] })
-      class Module1 {}
-
-      @injectable()
-      class Service2 {
-        constructor(private service0: Service0) {}
-      }
-
-      /**
-       * This guard is used as token only.
-       */
-      @guard()
-      class BearerGuard1 implements CanActivate {
-        async canActivate(ctx: RequestContext, params?: any[]) {
-          return false;
-        }
-      }
-
-      /**
-       * This guard is used as substitution of BearerGuard1.
-       */
-      @guard()
-      class BearerGuard2 implements CanActivate {
-        constructor(private service2: Service2) {}
-
-        async canActivate(ctx: RequestContext, params?: any[]) {
-          return false;
-        }
-      }
-
-      const mod1WithParams = { module: Module1, guards: [BearerGuard1] };
-      const provider: Provider = { token: BearerGuard1, useClass: BearerGuard2 };
-
-      @rootModule({
-        imports: [mod1WithParams],
-        providersPerRou: [provider, Service0, Service2],
-      })
-      class Module2 {}
-
-      const appMetadataMap = bootstrap(Module2);
-      expect(() => mock.resolve()).not.toThrow();
-
-      const mod1 = appMetadataMap.get(mod1WithParams);
-      expect(mod1?.guardsPerMod1.at(0)?.guard).toBe(BearerGuard1);
-
-      // Guards per a module must have ref to host module meta.
-      expect(mod1?.guardsPerMod1.at(0)?.meta).toBe(appMetadataMap.get(Module2)!.meta);
-
-      // The injector must have enough providers to create a guard instance.
-      const injector = Injector.resolveAndCreate(mod1?.guardsPerMod1.at(0)?.meta.providersPerRou || []);
-      expect(() => injector.get(BearerGuard1)).not.toThrow();
-      expect(injector.get(BearerGuard1)).toBeInstanceOf(BearerGuard2);
-
-      // Corresponding values are created for the entire chain of dependencies.
-      const { id } = KeyRegistry.get(Service0);
-      expect(injector.getValue(id)).toBeInstanceOf(Service0);
     });
 
     it('Module3 imports Module2, which has a dependency on Module1, and Module2 import Module1', () => {
@@ -327,6 +262,71 @@ describe('ImportsResolver', () => {
       const { meta } = appMetadataMap.get(Module2)!;
       const injector = Injector.resolveAndCreate(meta.providersPerRou);
       expect(() => injector.get(Service2)).not.toThrow();
+    });
+
+    it('guards per a module', () => {
+      @injectable()
+      class Service0 {}
+
+      @injectable()
+      class Service1 {}
+
+      @featureModule({ providersPerMod: [Service1], exports: [Service1] })
+      class Module1 {}
+
+      @injectable()
+      class Service2 {
+        constructor(private service0: Service0) {}
+      }
+
+      /**
+       * This guard is used as token only.
+       */
+      @guard()
+      class BearerGuard1 implements CanActivate {
+        async canActivate(ctx: RequestContext, params?: any[]) {
+          return false;
+        }
+      }
+
+      /**
+       * This guard is used as substitution of BearerGuard1.
+       */
+      @guard()
+      class BearerGuard2 implements CanActivate {
+        constructor(private service2: Service2) {}
+
+        async canActivate(ctx: RequestContext, params?: any[]) {
+          return false;
+        }
+      }
+
+      const mod1WithParams = { module: Module1, guards: [BearerGuard1] };
+      const provider: Provider = { token: BearerGuard1, useClass: BearerGuard2 };
+
+      @rootModule({
+        imports: [mod1WithParams],
+        providersPerRou: [provider, Service0, Service2],
+      })
+      class Module2 {}
+
+      const appMetadataMap = bootstrap(Module2);
+      expect(() => mock.resolve()).not.toThrow();
+
+      const mod1 = appMetadataMap.get(mod1WithParams);
+      expect(mod1?.guardsPerMod1.at(0)?.guard).toBe(BearerGuard1);
+
+      // Guards per a module must have ref to host module meta.
+      expect(mod1?.guardsPerMod1.at(0)?.meta).toBe(appMetadataMap.get(Module2)!.meta);
+
+      // The injector must have enough providers to create a guard instance.
+      const injector = Injector.resolveAndCreate(mod1?.guardsPerMod1.at(0)?.meta.providersPerRou || []);
+      expect(() => injector.get(BearerGuard1)).not.toThrow();
+      expect(injector.get(BearerGuard1)).toBeInstanceOf(BearerGuard2);
+
+      // Corresponding values are created for the entire chain of dependencies.
+      const { id } = KeyRegistry.get(Service0);
+      expect(injector.getValue(id)).toBeInstanceOf(Service0);
     });
   });
 
