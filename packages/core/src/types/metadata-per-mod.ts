@@ -1,5 +1,4 @@
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
-import { ControllerMetadata } from './controller-metadata.js';
 import { GuardPerMod1, ModuleType, Provider } from './mix.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionProvider } from './extension-types.js';
@@ -26,7 +25,7 @@ export class GlobalProviders {
 }
 
 /**
- * Metadata collected using `ModuleFactory`.
+ * Metadata collected using `ModuleFactory`. The target for this metadata is `ImportsResolver`.
  */
 export class MetadataPerMod1 {
   prefixPerMod: string;
@@ -57,7 +56,7 @@ export interface ImportedTokensMap {
 }
 
 /**
- * This metadata returns from `ImportsResolver`.
+ * This metadata returns from `ImportsResolver`. The target for this metadata is `ROUTES_EXTENSIONS` group.
  */
 export class MetadataPerMod2 {
   applyControllers: boolean;
