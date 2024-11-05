@@ -178,8 +178,11 @@ export class ImportsResolver {
 
         getTokens(sourceProviders).forEach((sourceToken, i) => {
           if (sourceToken === dep.token) {
-            targetProviders[`providersPer${scope}`].unshift(sourceProviders[i]);
+            const importedProvider2 = sourceProviders[i];
+            targetProviders[`providersPer${scope}`].unshift(importedProvider2);
             found = true;
+            this.grabDependeciesAgain(targetProviders, sourceModule, importedProvider2, scopes, path);
+
             // The loop does not breaks because there may be multi providers.
           }
         });
@@ -221,9 +224,7 @@ export class ImportsResolver {
 
         // Loop for multi providers.
         for (const sourceProvider2 of sourceProviders2) {
-          this.addToUnfinishedSearchDependecies(sourceModule2, sourceProvider2);
-          this.grabDependecies(targetProviders, sourceModule2, sourceProvider2, scopes, path);
-          this.deleteFromUnfinishedSearchDependecies(sourceModule2, sourceProvider2);
+          this.grabDependeciesAgain(targetProviders, sourceModule2, sourceProvider2, scopes, path);
         }
         break;
       }
@@ -232,6 +233,18 @@ export class ImportsResolver {
     if (!found && dep.required) {
       this.throwError(metadataPerMod1.meta, importedProvider, path, dep.token, scopes);
     }
+  }
+
+  protected grabDependeciesAgain(
+    targetProviders: ProvidersForMod,
+    sourceModule: AnyModule,
+    importedProvider: Provider,
+    scopes: Scope[],
+    path: any[],
+  ) {
+    this.addToUnfinishedSearchDependecies(sourceModule, importedProvider);
+    this.grabDependecies(targetProviders, sourceModule, importedProvider, scopes, path);
+    this.deleteFromUnfinishedSearchDependecies(sourceModule, importedProvider);
   }
 
   protected hasUnresolvedDependecies(module: AnyModule, provider: Provider, scopes: Scope[]) {

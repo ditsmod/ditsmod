@@ -108,8 +108,7 @@ describe('ImportsResolver', () => {
       expect(() => mock.resolve()).toThrow(msg);
     });
 
-    it(`Module3 imports Module2, which has a dependency on Module1, but Module2 does not import Module1;
-      although Module3 imports Module1, an error should be thrown`, () => {
+    it('case 1', () => {
       @injectable()
       class Service1 {}
 
@@ -118,8 +117,44 @@ describe('ImportsResolver', () => {
         constructor(public service1: Service1) {}
       }
 
+      @injectable()
+      class Service3 {
+        constructor(public service2: Service2) {}
+      }
+
+      @featureModule({ providersPerMod: [Service1], providersPerRou: [Service2, Service3], exports: [Service3] })
+      class Module1 {}
+
+      @rootModule({
+        imports: [Module1],
+      })
+      class Module2 {}
+
+      const appMetadataMap = bootstrap(Module2);
+      expect(() => mock.resolve()).not.toThrow();
+      const { meta } = appMetadataMap.get(Module2)!;
+      expect(meta.providersPerReq).toEqual(defaultProvidersPerReq);
+      expect(meta.providersPerRou).toEqual([...defaultProvidersPerRou, Service2, Service3]);
+      const moduleExtract: ModuleExtract = {
+        path: '',
+        moduleName: 'Module2',
+        isExternal: false,
+      };
+      expect(meta.providersPerMod).toEqual([Service1, { token: ModuleExtract, useValue: moduleExtract }]);
+    });
+
+    it(`Module3 imports Module2, which has a dependency on Module1, but Module2 does not import Module1;
+      although Module3 imports Module1, an error should be thrown`, () => {
+      @injectable()
+      class Service1 {}
+
       @featureModule({ providersPerMod: [Service1], exports: [Service1] })
       class Module1 {}
+
+      @injectable()
+      class Service2 {
+        constructor(public service1: Service1) {}
+      }
 
       @featureModule({ providersPerRou: [Service2], exports: [Service2] })
       class Module2 {}
