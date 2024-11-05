@@ -6,7 +6,17 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Provider, Class, ValueProvider, ClassProvider, TokenProvider, FactoryProvider } from '#di';
+import {
+  Provider,
+  Class,
+  ValueProvider,
+  ClassProvider,
+  TokenProvider,
+  FactoryProvider,
+  forwardRef,
+  ForwardRefFn,
+  resolveForwardRef,
+} from '#di';
 import { format } from 'util';
 import { isNormalizedProvider } from './type-guards.js';
 
@@ -38,8 +48,12 @@ export function flatten<T = any>(list: any[], dst?: any[]): T[] {
 /**
  * Flatten and normalize an array of arrays DI Providers
  */
-export function normalizeProviders(providers: Provider[], arrayOfProviders: NormalizedProvider[] = []) {
+export function normalizeProviders(
+  providers: Provider[],
+  arrayOfProviders: NormalizedProvider[] = [],
+) {
   providers.forEach((provider) => {
+    provider = resolveForwardRef(provider);
     if (provider instanceof Class) {
       arrayOfProviders.push({ token: provider, useClass: provider });
     } else if (isNormalizedProvider(provider)) {
