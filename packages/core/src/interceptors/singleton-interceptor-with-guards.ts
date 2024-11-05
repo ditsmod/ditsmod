@@ -17,17 +17,17 @@ export class SingletonInterceptorWithGuards implements ISingletonInterceptorWith
   }
 
   async intercept(next: HttpHandler, ctx: RequestContext) {
-    if (this.routeMeta.guardsPerMod1) {
-      for (const item of this.routeMeta.guardsPerMod1) {
-        const injector = Injector.resolveAndCreate(item.meta.providersPerReq.concat(item.guard));
-        const canActivate = await injector.get(item.guard).canActivate(ctx, item.params);
-        if (canActivate !== true) {
-          const status = typeof canActivate == 'number' ? canActivate : undefined;
-          this.prohibitActivation(ctx, status);
-          return;
-        }
-      }
-    }
+    // if (this.routeMeta.guardsPerMod1) {
+    //   for (const item of this.routeMeta.guardsPerMod1) {
+    //     const injector = Injector.resolveAndCreate(item.meta.providersPerReq.concat(item.guard));
+    //     const canActivate = await injector.get(item.guard).canActivate(ctx, item.params);
+    //     if (canActivate !== true) {
+    //       const status = typeof canActivate == 'number' ? canActivate : undefined;
+    //       this.prohibitActivation(ctx, status);
+    //       return;
+    //     }
+    //   }
+    // }
     for (const item of this.instantiatedGuards) {
       const canActivate = await item.guard.canActivate(ctx, item.params);
       if (canActivate !== true) {

@@ -12,23 +12,25 @@ export class InterceptorWithGuards implements HttpInterceptor {
   ) {}
 
   async intercept(next: HttpHandler, ctx: RequestContext) {
-    if (this.routeMeta.guardsPerMod1) {
-      for (const item of this.routeMeta.guardsPerMod1) {
-        const injector = Injector.resolveAndCreate(item.meta.providersPerReq.concat(item.guard));
-        const canActivate = await injector.get(item.guard).canActivate(ctx, item.params);
+    // if (this.routeMeta.resolvedGuardsPerMod) {
+    //   for (const item of this.routeMeta.resolvedGuardsPerMod) {
+    //     const injector = Injector.resolveAndCreate(item.meta.providersPerReq.concat(item.guard));
+    //     const canActivate = await injector.get(item.guard).canActivate(ctx, item.params);
+    //     if (canActivate !== true) {
+    //       const status = typeof canActivate == 'number' ? canActivate : undefined;
+    //       this.prohibitActivation(ctx, status);
+    //       return;
+    //     }
+    //   }
+    // }
+    if (this.routeMeta.resolvedGuards) {
+      for (const item of this.routeMeta.resolvedGuards) {
+        const canActivate = await this.injector.instantiateResolved(item.guard).canActivate(ctx, item.params);
         if (canActivate !== true) {
           const status = typeof canActivate == 'number' ? canActivate : undefined;
           this.prohibitActivation(ctx, status);
           return;
         }
-      }
-    }
-    for (const item of this.routeMeta.resolvedGuards!) {
-      const canActivate = await this.injector.instantiateResolved(item.guard).canActivate(ctx, item.params);
-      if (canActivate !== true) {
-        const status = typeof canActivate == 'number' ? canActivate : undefined;
-        this.prohibitActivation(ctx, status);
-        return;
       }
     }
 
