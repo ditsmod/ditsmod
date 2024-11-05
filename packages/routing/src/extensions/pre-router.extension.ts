@@ -38,6 +38,7 @@ import {
   ResolvedGuard,
   ResolvedProvider,
   NormalizedGuard,
+  GuardPerMod1,
 } from '@ditsmod/core';
 
 import { MetadataPerMod3, PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -148,8 +149,8 @@ export class PreRouterExtension implements Extension<void> {
 
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const resolvedPerRou = Injector.resolve(mergedPerRou);
+    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(metadataPerMod3.guardsPerMod1);
     routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
-    routeMeta.guardsPerMod1 = metadataPerMod3.guardsPerMod1;
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
@@ -183,6 +184,22 @@ export class PreRouterExtension implements Extension<void> {
         })
         .finally(() => injector.clear());
     }) as RouteHandler;
+  }
+
+  /**
+   * @todo Refactor this.
+   */
+  protected getResolvedGuardsPerMod(guardsPerMod1: GuardPerMod1[]) {
+    return guardsPerMod1.map((g) => {
+      const defaultResolvedGuard = Injector.resolve([g.guard])[0];
+
+      const resolvedGuard: ResolvedGuard = {
+        guard: defaultResolvedGuard,
+        params: g.params,
+      };
+
+      return resolvedGuard;
+    });
   }
 
   protected getResolvedGuards(guards: NormalizedGuard[], resolvedPerReq: ResolvedProvider[]) {
@@ -224,7 +241,6 @@ export class PreRouterExtension implements Extension<void> {
     });
 
     if (routeMeta.resolvedGuards.length || metadataPerMod3.guardsPerMod1.length) {
-      routeMeta.guardsPerMod1 = metadataPerMod3.guardsPerMod1;
       mergedPerRou.push(SingletonInterceptorWithGuards);
       mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: SingletonInterceptorWithGuards, multi: true });
     }
