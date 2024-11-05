@@ -1,4 +1,4 @@
-import { injectable, Injector, KeyRegistry } from '#di';
+import { forwardRef, inject, injectable, Injector, KeyRegistry } from '#di';
 
 import { AnyModule, ImportsResolver } from './imports-resolver.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
@@ -157,6 +157,93 @@ describe('ImportsResolver', () => {
         isExternal: false,
       };
       expect(meta.providersPerMod).toEqual([Service1, Service2, { token: ModuleExtract, useValue: moduleExtract }]);
+    });
+
+    it('circular dependencies in one module', () => {
+      @injectable()
+      class Service1 {}
+
+      @featureModule({ providersPerMod: [Service1], exports: [Service1] })
+      class Module1 {}
+
+      @injectable()
+      class Service2 {
+        constructor(@inject(forwardRef(() => Service4)) public service4: any) {}
+      }
+
+      @injectable()
+      class Service3 {
+        constructor(public service2: Service2) {}
+      }
+
+      @injectable()
+      class Service4 {
+        constructor(public service3: Service3) {}
+      }
+
+      @featureModule({
+        imports: [Module1],
+        providersPerMod: [Service2],
+        providersPerRou: [Service3, Service4],
+        exports: [Service4],
+      })
+      class Module2 {}
+
+      @rootModule({
+        imports: [Module2],
+      })
+      class Module3 {}
+
+      bootstrap(Module3);
+      let msg = 'Detected circular dependencies: [Service3 in Module2] -> [Service2 in Module2]';
+      msg += ' -> [Service4 in Module2] -> [Service3 in Module2]';
+      expect(() => mock.resolve()).toThrow(msg);
+    });
+
+    it('circular dependencies in different modules', () => {
+      @injectable()
+      class Service1 {
+        constructor(@inject(forwardRef(() => Service4)) public service4: any) {}
+      }
+
+      @featureModule({
+        imports: [forwardRef(() => Module2)],
+        providersPerRou: [Service1],
+        exports: [Service1],
+      })
+      class Module1 {}
+
+      @injectable()
+      class Service2 {
+        constructor(public service1: Service1) {}
+      }
+
+      @injectable()
+      class Service3 {
+        constructor(public service2: Service2) {}
+      }
+
+      @injectable()
+      class Service4 {
+        constructor(public service3: Service3) {}
+      }
+
+      @featureModule({
+        imports: [Module1],
+        providersPerRou: [Service2, Service3, Service4],
+        exports: [Service4],
+      })
+      class Module2 {}
+
+      @rootModule({
+        imports: [Module2],
+      })
+      class Module3 {}
+
+      bootstrap(Module3);
+      let msg = 'Detected circular dependencies: [Service3 in Module2] -> [Service2 in Module2]';
+      msg += ' -> [Service1 in Module1] -> [Service4 in Module2] -> [Service3 in Module2]';
+      expect(() => mock.resolve()).toThrow(msg);
     });
 
     it(`Module3 imports Module2, which has a dependency on Module1, but Module2 does not import Module1;
