@@ -108,9 +108,15 @@ describe('ImportsResolver', () => {
       expect(() => mock.resolve()).toThrow(msg);
     });
 
-    it('case 1', () => {
+    it(`There is the following dependency chain: Service4 -> Service3 -> Service2 -> Service1;
+      Module3 imports Module2, which exports only Service4, but ImportsResolver imports
+      the entire dependency chain (both from Module2 and from Module1, which is imported
+      into Module2)`, () => {
       @injectable()
       class Service1 {}
+
+      @featureModule({ providersPerMod: [Service1], exports: [Service1] })
+      class Module1 {}
 
       @injectable()
       class Service2 {
@@ -122,25 +128,35 @@ describe('ImportsResolver', () => {
         constructor(public service2: Service2) {}
       }
 
-      @featureModule({ providersPerMod: [Service1], providersPerRou: [Service2, Service3], exports: [Service3] })
-      class Module1 {}
+      @injectable()
+      class Service4 {
+        constructor(public service3: Service3) {}
+      }
 
-      @rootModule({
+      @featureModule({
         imports: [Module1],
+        providersPerMod: [Service2],
+        providersPerRou: [Service3, Service4],
+        exports: [Service4],
       })
       class Module2 {}
 
-      const appMetadataMap = bootstrap(Module2);
+      @rootModule({
+        imports: [Module2],
+      })
+      class Module3 {}
+
+      const appMetadataMap = bootstrap(Module3);
       expect(() => mock.resolve()).not.toThrow();
-      const { meta } = appMetadataMap.get(Module2)!;
+      const { meta } = appMetadataMap.get(Module3)!;
       expect(meta.providersPerReq).toEqual(defaultProvidersPerReq);
-      expect(meta.providersPerRou).toEqual([...defaultProvidersPerRou, Service2, Service3]);
+      expect(meta.providersPerRou).toEqual([...defaultProvidersPerRou, Service3, Service4]);
       const moduleExtract: ModuleExtract = {
         path: '',
-        moduleName: 'Module2',
+        moduleName: 'Module3',
         isExternal: false,
       };
-      expect(meta.providersPerMod).toEqual([Service1, { token: ModuleExtract, useValue: moduleExtract }]);
+      expect(meta.providersPerMod).toEqual([Service1, Service2, { token: ModuleExtract, useValue: moduleExtract }]);
     });
 
     it(`Module3 imports Module2, which has a dependency on Module1, but Module2 does not import Module1;
