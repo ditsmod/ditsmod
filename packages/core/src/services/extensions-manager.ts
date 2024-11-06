@@ -11,6 +11,7 @@ import {
 import { OptionalProps } from '#types/mix.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#utils/type-guards.js';
+import { AnyModule } from '../imports-resolver.js';
 import { Counter } from './counter.js';
 import { ExtensionsContext } from './extensions-context.js';
 
@@ -30,6 +31,7 @@ export class ExtensionsManager {
    */
   protected cache = new Map<ExtensionsGroupToken, TotalInitMeta>();
   protected excludedExtensionPendingList = new Map<ExtensionsGroupToken, Set<Class<Extension>>>();
+  protected extensionsListForStage2 = new Set<Extension>();
 
   constructor(
     protected injector: Injector,
@@ -72,12 +74,6 @@ export class ExtensionsManager {
     return totalInitMeta;
   }
 
-  async stage2<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<TotalInitMeta<T>>;
-  async stage2<T>(groupToken: ExtensionsGroupToken<T>, perApp: true): Promise<TotalInitMeta2<T>>;
-  async stage2<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<TotalInitMeta<T>> {
-    return undefined as any;
-  }
-
   updateExtensionPendingList() {
     for (const [groupToken, sExtensions] of this.excludedExtensionPendingList) {
       for (const ExtensionClass of sExtensions) {
@@ -85,6 +81,10 @@ export class ExtensionsManager {
         mExtensions.delete(ExtensionClass);
       }
     }
+  }
+
+  setExtensionsToStage2(mod: AnyModule) {
+    this.extensionsContext.mStage2.set(mod, this.extensionsListForStage2);
   }
 
   protected prepareTotalInitMetaPerApp(totalInitMeta: TotalInitMeta2, perApp?: boolean): TotalInitMeta {
@@ -164,7 +164,8 @@ export class ExtensionsManager {
       const ExtensionClass = extension.constructor as Class<Extension<T>>;
       const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
       const isLastModule = countdown === 0;
-      const data = await extension.stage1?.(isLastModule);
+      const data = await extension.stage1(isLastModule);
+      this.extensionsListForStage2.add(extension);
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);
       this.unfinishedInit.delete(extension);

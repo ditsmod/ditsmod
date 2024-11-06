@@ -46,7 +46,7 @@ export interface Extension<T = any> {
    * @param isLastModule Indicates whether this call is made in the last
    * module where this extension is imported or not.
    */
-  stage1?(isLastModule: boolean): Promise<T>;
+  stage1(isLastModule: boolean): Promise<T>;
   /**
    * This method is called when the stage of dynamically adding providers has ended,
    * and the stage of creating injectors has begun.
@@ -54,7 +54,7 @@ export interface Extension<T = any> {
    * @param isLastModule Indicates whether this call is made in the last
    * module where this extension is imported or not.
    */
-  stage2?(isLastModule: boolean): Promise<T>;
+  stage2?(): Promise<void>;
 }
 export type Stage = 'stage1' | 'stage2';
 export type ExtensionProvider = Provider;

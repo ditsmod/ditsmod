@@ -249,40 +249,40 @@ export class AppInitializer {
     const extensionsContext = new ExtensionsContext();
     const injectorPerApp = this.perAppService.reinitInjector([{ token: PerAppService, useValue: this.perAppService }]);
 
-    for (const stage of ['stage1', 'stage2'] as Stage[]) {
-      const copyExtensionCounters = new ExtensionCounters();
-      copyExtensionCounters.mExtensions = new Map(extensionCounters.mExtensions);
-      copyExtensionCounters.mGroupTokens = new Map(extensionCounters.mGroupTokens);
-
-      for (const metadataPerMod2 of aMetadataPerMod2) {
-        const { meta } = metadataPerMod2;
-        const preparedMetadataPerMod1 = this.prepareMetadataPerMod1(meta);
-        const injectorPerMod = injectorPerApp.resolveAndCreateChild(meta.providersPerMod);
-        injectorPerMod.pull(Logger);
-        const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
-        const { extensionsProviders } = meta;
-        if (!extensionsProviders.length) {
-          systemLogMediator.skippingStartExtensions(this);
-          continue;
-        }
-        const injectorForExtensions = this.getInjectorForExtensions(
-          metadataPerMod2,
-          copyExtensionCounters,
-          extensionsContext,
-          injectorPerMod,
-        );
-        const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
-
-        systemLogMediator.startExtensions(this);
-        this.decreaseExtensionsCounters(copyExtensionCounters, extensionsProviders);
-        await this.handleExtensionsPerMod(stage, preparedMetadataPerMod1, extensionsManager);
-        this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
+    for (const metadataPerMod2 of aMetadataPerMod2) {
+      const { meta } = metadataPerMod2;
+      const preparedMetadataPerMod1 = this.prepareMetadataPerMod1(meta);
+      const injectorPerMod = injectorPerApp.resolveAndCreateChild(meta.providersPerMod);
+      injectorPerMod.pull(Logger);
+      const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
+      const { extensionsProviders } = meta;
+      if (!extensionsProviders.length) {
+        systemLogMediator.skippingStartExtensions(this);
+        continue;
       }
+      const injectorForExtensions = this.getInjectorForExtensions(
+        metadataPerMod2,
+        extensionCounters,
+        extensionsContext,
+        injectorPerMod,
+      );
+      const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
 
-      for (const [groupToken, mExtensions] of extensionsContext.mExtensionPendingList) {
-        for (const extension of mExtensions.values()) {
-          await extension[stage]?.(true);
-        }
+      systemLogMediator.startExtensions(this);
+      this.decreaseExtensionsCounters(extensionCounters, extensionsProviders);
+      await this.handleExtensionsPerMod(preparedMetadataPerMod1, extensionsManager);
+      this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
+    }
+
+    for (const [groupToken, mExtensions] of extensionsContext.mExtensionPendingList) {
+      for (const extension of mExtensions.values()) {
+        await extension.stage1(true);
+      }
+    }
+
+    for (const [, extensionSet] of extensionsContext.mStage2) {
+      for (const ext of extensionSet) {
+        await ext.stage2?.();
       }
     }
   }
@@ -302,11 +302,7 @@ export class AppInitializer {
     ]);
   }
 
-  protected async handleExtensionsPerMod(
-    stage: Stage,
-    meta: NormalizedModuleMetadata,
-    extensionsManager: ExtensionsManager,
-  ) {
+  protected async handleExtensionsPerMod(meta: NormalizedModuleMetadata, extensionsManager: ExtensionsManager) {
     const { extensionsProviders, name: moduleName } = meta;
     const extensionTokens = new Set<InjectionToken<Extension[]>>();
     const beforeTokens = new Set<BeforeToken>();
@@ -320,9 +316,11 @@ export class AppInitializer {
     for (const groupToken of extensionTokens) {
       extensionsManager.moduleName = moduleName;
       extensionsManager.beforeTokens = beforeTokens;
-      await extensionsManager[stage](groupToken);
+      await extensionsManager.stage1(groupToken);
       extensionsManager.updateExtensionPendingList();
     }
+
+    extensionsManager.setExtensionsToStage2(meta.module);
   }
 
   /**
