@@ -157,6 +157,7 @@ export class PreRouterExtension implements Extension<void> {
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
+    routeMeta.guardsPerMod1 = metadataPerMod3.guardsPerMod1;
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
@@ -222,6 +223,7 @@ export class PreRouterExtension implements Extension<void> {
     const mergedPerRou: Provider[] = [];
     mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
 
+    routeMeta.guardsPerMod1 = metadataPerMod3.guardsPerMod1;
     routeMeta.resolvedGuards = controllerMetadata.guards.map((g) => {
       const resolvedGuard: ResolvedGuard = {
         guard: Injector.resolve([g.guard])[0],
