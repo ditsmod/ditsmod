@@ -55,6 +55,7 @@ export interface Extension<T = any> {
    * module where this extension is imported or not.
    */
   stage2?(): Promise<void>;
+  stage3?(): Promise<void>;
 }
 export type Stage = 'stage1' | 'stage2';
 export type ExtensionProvider = Provider;

@@ -285,6 +285,12 @@ export class AppInitializer {
         await ext.stage2?.();
       }
     }
+
+    for (const [, extensionSet] of extensionsContext.mStage2) {
+      for (const ext of extensionSet) {
+        await ext.stage3?.();
+      }
+    }
   }
 
   protected getInjectorForExtensions(
