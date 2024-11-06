@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/jwt",
   "type": "module",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -33,7 +33,7 @@
     "jsonwebtoken": "^9.0.2"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.47.0"
+    "@ditsmod/core": "^3.0.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }

@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/body-parser",
   "type": "module",
-  "version": "2.17.1",
+  "version": "3.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -35,8 +35,8 @@
     "@ts-stack/multer": "^1.0.0"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.56.0",
-    "@ditsmod/routing": "^2.4.0"
+    "@ditsmod/core": "^3.0.0",
+    "@ditsmod/routing": "^3.0.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }

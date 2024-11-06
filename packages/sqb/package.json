@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/sqb",
   "type": "module",
-  "version": "2.0.0-alpha.5",
+  "version": "3.0.0-alpha.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git",
@@ -38,7 +38,7 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^2.50.0",
-    "@ditsmod/routing": "^2.0.0"
+    "@ditsmod/core": "^3.0.0",
+    "@ditsmod/routing": "^3.0.0"
   }
 }

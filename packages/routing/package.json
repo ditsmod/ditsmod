@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/routing",
   "type": "module",
-  "version": "2.7.0",
+  "version": "3.0.0",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "homepage": "https://ditsmod.github.io/en/",
   "description": "Routing module for Ditsmod applications",
@@ -41,7 +41,7 @@
     "trek-router": "^1.2.0"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^2.61.0"
+    "@ditsmod/core": "^3.0.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }
