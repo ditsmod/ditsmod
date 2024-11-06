@@ -72,6 +72,12 @@ export class ExtensionsManager {
     return totalInitMeta;
   }
 
+  async stage2<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<TotalInitMeta<T>>;
+  async stage2<T>(groupToken: ExtensionsGroupToken<T>, perApp: true): Promise<TotalInitMeta2<T>>;
+  async stage2<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<TotalInitMeta<T>> {
+    return undefined as any;
+  }
+
   updateExtensionPendingList() {
     for (const [groupToken, sExtensions] of this.excludedExtensionPendingList) {
       for (const ExtensionClass of sExtensions) {
@@ -140,7 +146,7 @@ export class ExtensionsManager {
 
   protected async initGroup<T>(groupToken: ExtensionsGroupToken): Promise<TotalInitMeta> {
     const extensions = this.injector.get(groupToken, undefined, []) as Extension<T>[];
-    const groupInitMeta: ExtensionInitMeta<T>[] = [];
+    const groupInitMeta: ExtensionInitMeta<T | undefined>[] = [];
     const totalInitMeta = new TotalInitMeta(this.moduleName, groupInitMeta);
     this.updateGroupCounters(groupToken, totalInitMeta);
 
@@ -158,7 +164,7 @@ export class ExtensionsManager {
       const ExtensionClass = extension.constructor as Class<Extension<T>>;
       const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
       const isLastModule = countdown === 0;
-      const data = await extension.stage1(isLastModule);
+      const data = await extension.stage1?.(isLastModule);
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);
       this.unfinishedInit.delete(extension);

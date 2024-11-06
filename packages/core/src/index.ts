@@ -35,6 +35,7 @@ export {
   ExtensionInitMeta,
   TotalInitMeta,
   TotalInitMetaPerApp,
+  Stage
 } from './types/extension-types.js';
 export { ModuleExtract } from './types/module-extract.js';
 export { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';

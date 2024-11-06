@@ -40,11 +40,23 @@ export class TotalInitMeta<T = any> {
 
 export interface Extension<T = any> {
   /**
+   * This method is called at the stage when providers are dynamically added,
+   * so any injector created at this stage may later be replaced by other extensions.
+   *
    * @param isLastModule Indicates whether this call is made in the last
    * module where this extension is imported or not.
    */
-  stage1(isLastModule: boolean): Promise<T>;
+  stage1?(isLastModule: boolean): Promise<T>;
+  /**
+   * This method is called when the stage of dynamically adding providers has ended,
+   * and the stage of creating injectors has begun.
+   *
+   * @param isLastModule Indicates whether this call is made in the last
+   * module where this extension is imported or not.
+   */
+  stage2?(isLastModule: boolean): Promise<T>;
 }
+export type Stage = 'stage1' | 'stage2';
 export type ExtensionProvider = Provider;
 export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]> | BeforeToken<Extension<T>[]>;
 export type ExtensionType<T = any> = Class<Extension<T>>;
