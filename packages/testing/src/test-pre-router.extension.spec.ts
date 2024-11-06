@@ -21,6 +21,7 @@ describe('TestPreRouterExtension', () => {
       null as any,
       null as any,
       null as any,
+      null as any,
     );
   });
 
