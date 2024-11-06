@@ -28,12 +28,12 @@ export class I18nExtension implements Extension<void> {
     private perAppService: PerAppService,
   ) {}
 
-  async init(isLastModule?: boolean) {
+  async stage1(isLastModule?: boolean) {
     if (this.#inited) {
       return;
     }
 
-    const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    const totalInitMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
     this.addI18nProviders(totalInitMeta, isLastModule);
 
     this.#inited = true;

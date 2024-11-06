@@ -19,11 +19,11 @@ describe('extensions e2e', () => {
 
     /**
      * This extension is declared in `Module1`, which is imported into three different modules.
-     * The tests check whether the `isLastModule` parameter is passed to the `init()` method.
+     * The tests check whether the `isLastModule` parameter is passed to the `stage1()` method.
      */
     @injectable()
     class Extension1 implements Extension {
-      async init(isLastModule: boolean) {
+      async stage1(isLastModule: boolean) {
         extensionInit(isLastModule);
       }
     }
@@ -76,14 +76,14 @@ describe('extensions e2e', () => {
      * This extension is declared in `Module1`, which is imported into three different modules.
      * A second extension that depends on this extension is declared below. The second extension
      * is declared in `Module2`, it is imported into two different modules. The tests check exactly
-     * what the `extensionsManager.init()` returns from the `MY_EXTENSIONS1` group, and how many times
+     * what the `extensionsManager.stage1()` returns from the `MY_EXTENSIONS1` group, and how many times
      * the initialization of the second extension is called.
      */
     @injectable()
     class Extension1 implements Extension<string> {
       data: any;
 
-      async init(isLastModule: boolean) {
+      async stage1(isLastModule: boolean) {
         if (this.data) {
           return this.data;
         }
@@ -98,8 +98,8 @@ describe('extensions e2e', () => {
     class Extension2 implements Extension {
       constructor(private extensionManager: ExtensionsManager) {}
 
-      async init() {
-        const totalInitMeta = await this.extensionManager.init(MY_EXTENSIONS1);
+      async stage1() {
+        const totalInitMeta = await this.extensionManager.stage1(MY_EXTENSIONS1);
         extensionInit2(totalInitMeta);
       }
     }
@@ -174,7 +174,7 @@ describe('extensions e2e', () => {
     class Extension1 implements Extension<string> {
       data: any;
 
-      async init(isLastModule: boolean) {
+      async stage1(isLastModule: boolean) {
         if (this.data) {
           return this.data;
         }
@@ -189,8 +189,8 @@ describe('extensions e2e', () => {
     class Extension2 implements Extension {
       constructor(private extensionManager: ExtensionsManager) {}
 
-      async init() {
-        const totalInitMeta = await this.extensionManager.init(MY_EXTENSIONS1, true);
+      async stage1() {
+        const totalInitMeta = await this.extensionManager.stage1(MY_EXTENSIONS1, true);
         extensionInit2(structuredClone(totalInitMeta));
       }
     }

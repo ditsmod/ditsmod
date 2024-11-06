@@ -26,7 +26,7 @@ In Ditsmod, **extension** is a class that implements the `Extension` interface:
 
 ```ts
 interface Extension<T> {
-  init(isLastModule: boolean): Promise<T>;
+  stage1(isLastModule: boolean): Promise<T>;
 }
 ```
 
@@ -36,11 +36,11 @@ Each extension needs to be registered, this will be mentioned later, and now let
 2. this metadata is then passed to DI with token `MetadataPerMod2`, so - every extension can get this metadata in the constructor;
 3. the work on the extensions starts per module:
     - in each module, the extensions created within this module or imported into this module are collected;
-    - each of these extensions gets metadata, also collected in this module, and the `init()` methods of given extensions are called.
+    - each of these extensions gets metadata, also collected in this module, and the `stage1()` methods of given extensions are called.
 4. HTTP request handlers are created;
 5. the application starts working in the usual mode, processing HTTP requests.
 
-The `init()` method of a given extension can be called as many times as it is written in the body of other extensions that depend on the operation of that extension, +1. This feature must be taken into account to avoid unnecessary initialization:
+The `stage1()` method of a given extension can be called as many times as it is written in the body of other extensions that depend on the operation of that extension, +1. This feature must be taken into account to avoid unnecessary initialization:
 
 ```ts {8-10}
 import { injectable, Extension } from '@ditsmod/core';
@@ -49,7 +49,7 @@ import { injectable, Extension } from '@ditsmod/core';
 export class MyExtension implements Extension<any> {
   private data: any;
 
-  async init() {
+  async stage1() {
     if (this.data) {
       return this.data;
     }
@@ -70,7 +70,7 @@ You can see a simple example in the folder [09-one-extension][1].
 
 Any extension must be a member of one or more groups. The concept of an **extensions group** is similar to the concept of an [interceptors][10] group. Note that  interceptors group performs a specific type of work: augmenting the processing of an HTTP request for a particular route. Similarly, each extensions group represents a distinct type of work on specific metadata. As a rule, extensions in a particular group return metadata that has the same basic interface. Essentially, extension groups allow abstraction from specific extensions; instead, they make only the type of work performed within these groups important.
 
-For example, in `@ditsmod/routing` there is a group `ROUTES_EXTENSIONS` which by default includes a single extension that processes metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can import the `@ditsmod/openapi` module, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for establishing the router's routes. These extensions are grouped together because they configure routes and their `init()` methods return data with the same basic interface.
+For example, in `@ditsmod/routing` there is a group `ROUTES_EXTENSIONS` which by default includes a single extension that processes metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can import the `@ditsmod/openapi` module, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for establishing the router's routes. These extensions are grouped together because they configure routes and their `stage1()` methods return data with the same basic interface.
 
 Having a common base data interface returned by each extension in a given group is an important requirement because other extensions may expect data from that group and will rely on that base interface. Of course, the base interface can be expanded if necessary, but not narrowed.
 
@@ -149,7 +149,7 @@ That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs
 
 If a certain extension has a dependency on another extension, it is recommended to specify that dependency indirectly through the extension group. To do this, you need `ExtensionsManager`, which initializes extensions groups, throws errors about cyclic dependencies between extensions, and shows the entire chain of extensions that caused the loop. Additionally, `ExtensionsManager` allows you to collect extensions initialization results from the entire application, not just from a single module.
 
-Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor, and in `init()` call `init()` of this service:
+Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor, and in `stage1()` call `stage1()` of this service:
 
 ```ts {17}
 import { injectable } from '@ditsmod/core';
@@ -163,12 +163,12 @@ export class MyExtension implements Extension<void> {
 
   constructor(private extensionsManager: ExtensionsManager) {}
 
-  async init() {
+  async stage1() {
     if (this.inited) {
       return;
     }
 
-    const totalInitMeta = await this.extensionsManager.init(OTHER_EXTENSIONS);
+    const totalInitMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
 
     totalInitMeta.groupInitMeta.forEach((initMeta) => {
       const someData = initMeta.payload;
@@ -212,7 +212,7 @@ interface ExtensionInitMeta<T = any> {
 }
 ```
 
-The `extension` property contains the instance of the extension, and the `payload` property holds the data returned by the extension's `init()` method.
+The `extension` property contains the instance of the extension, and the `payload` property holds the data returned by the extension's `stage1()` method.
 
 If `delay == true` and `countdown > 0`, it indicates that this extension has not yet finished its work in other modules where it was imported. In this case, the `delay` and `countdown` properties refer specifically to the extension, not the group of extensions (in this case, the `OTHER_EXTENSIONS` group).
 
@@ -232,12 +232,12 @@ export class MyExtension implements Extension<void> {
 
   constructor(private extensionsManager: ExtensionsManager) {}
 
-  async init() {
+  async stage1() {
     if (this.inited) {
       return;
     }
 
-    const totalInitMeta = await this.extensionsManager.init(OTHER_EXTENSIONS, true);
+    const totalInitMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
     if (totalInitMeta.delay) {
       return;
     }
@@ -258,7 +258,7 @@ export class MyExtension implements Extension<void> {
 Thus, when you need `MyExtension` to receive data from the `OTHER_EXTENSIONS` group throughout the application, you need to pass `true` as the second argument to the `init` method:
 
 ```ts
-const totalInitMeta = await this.extensionsManager.init(OTHER_EXTENSIONS, true);
+const totalInitMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
 ```
 
 In this case, it is guaranteed that the `MyExtension` instance will receive data from all modules where `OTHER_EXTENSIONS` is imported. Even if `MyExtension` is imported into a module without any extensions from the `OTHER_EXTENSIONS` group, but these extensions exist in other modules, the `init` method of this extension will still be called after all extensions are initialized, ensuring that `MyExtension` receives data from `OTHER_EXTENSIONS` across all modules.
@@ -279,12 +279,12 @@ export class BodyParserExtension implements Extension<void> {
     protected perAppService: PerAppService,
   ) {}
 
-  async init() {
+  async stage1() {
     if (this.inited) {
       return;
     }
 
-    const totalInitMeta = await this.extensionManager.init(ROUTES_EXTENSIONS);
+    const totalInitMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
     totalInitMeta.groupInitMeta.forEach((initMeta) => {
       const { aControllerMetadata, providersPerMod } = initMeta.payload;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, singleton }) => {

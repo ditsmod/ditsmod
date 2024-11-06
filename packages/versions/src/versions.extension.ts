@@ -5,8 +5,8 @@ import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
 export class VersionsExtension implements Extension<void> {
   constructor(protected extensionManager: ExtensionsManager) {}
 
-  async init() {
-    const totalInitMeta = await this.extensionManager.init(ROUTES_EXTENSIONS);
+  async stage1() {
+    const totalInitMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
     totalInitMeta.groupInitMeta.forEach((initMeta) => {
       const { aControllerMetadata } = initMeta.payload;
       console.log('-'.repeat(50), initMeta.payload.meta.name);

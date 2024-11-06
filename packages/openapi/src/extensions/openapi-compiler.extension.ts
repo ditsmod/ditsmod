@@ -42,12 +42,12 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     @optional() private extensionsMetaPerApp?: ExtensionsMetaPerApp,
   ) {}
 
-  async init() {
+  async stage1() {
     if (this.oasObject) {
       return this.oasObject;
     }
 
-    const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS, true);
+    const totalInitMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS, true);
     if (totalInitMeta.delay) {
       this.log.dataAccumulation(this);
       return false;

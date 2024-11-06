@@ -26,7 +26,7 @@ sidebar_position: 7
 
 ```ts
 interface Extension<T> {
-  init(isLastModule: boolean): Promise<T>;
+  stage1(isLastModule: boolean): Promise<T>;
 }
 ```
 
@@ -36,11 +36,11 @@ interface Extension<T> {
 2. зібрані метадані передаються в DI з токеном `MetadataPerMod2`, отже - будь-яке розширення може отримати ці метадані у себе в конструкторі;
 3. починається по-модульна робота розширень:
     - у кожному модулі збираються розширення, що створені в цому модулі, або імпортовані в цей модуль;
-    - кожне з цих розширень отримує метадані, зібрані теж у цьому модулі, і викликаються методи `init()` даних розширень.
+    - кожне з цих розширень отримує метадані, зібрані теж у цьому модулі, і викликаються методи `stage1()` даних розширень.
 4. створюються обробники HTTP-запитів;
 5. застосунок починає працювати у звичному режимі, обробляючи HTTP-запити.
 
-Метод `init()` певного розширення може викликатись стільки разів, скільки разів він прописаний у тілі інших розширень, які залежать від роботи даного розширення, +1. Цю особливість необхідно обов'язково враховувати, щоб не відбувалась зайва ініціалізація:
+Метод `stage1()` певного розширення може викликатись стільки разів, скільки разів він прописаний у тілі інших розширень, які залежать від роботи даного розширення, +1. Цю особливість необхідно обов'язково враховувати, щоб не відбувалась зайва ініціалізація:
 
 ```ts {8-10}
 import { injectable, Extension } from '@ditsmod/core';
@@ -49,7 +49,7 @@ import { injectable, Extension } from '@ditsmod/core';
 export class MyExtension implements Extension<any> {
   private data: any;
 
-  async init() {
+  async stage1() {
     if (this.data) {
       return this.data;
     }
@@ -70,7 +70,7 @@ export class MyExtension implements Extension<any> {
 
 Будь-яке розширення повинно входити в одну або декілька груп. Концепція **групи розширень** аналогічна до концепції групи [інтерсепторів][10]. Зверніть увагу, що група інтерсепторів виконує конкретний вид робіт: доповнення обробки HTTP-запиту для певного роута. Аналогічно, кожна група розширень - це окремий вид робіт над певними метаданими. Як правило, розширення в певній групі повертають метадані, що мають однаковий базовий інтерфейс. По-суті, групи розширень дозволяють абстрагуватись від конкретних розширень; натомість вони роблять важливими лише вид роботи, який виконується у даних групах.
 
-Наприклад, у `@ditsmod/routing` існує група `ROUTES_EXTENSIONS` в яку по-дефолту входить єдине розширення, що обробляє метадані, зібрані з декоратора `@route()`. Якщо в якомусь застосунку потрібна документація OpenAPI, можна підключити модуль `@ditsmod/openapi`, де також зареєстровано розширення у групі `ROUTES_EXTENSIONS`, але це розширення працює з декоратором `@oasRoute()`. В такому разі, у групі `ROUTES_EXTENSIONS` вже буде зареєстровано два розширення, кожне з яких готуватиме дані для встановлення маршрутів роутера. Ці розширення зібрані в одну групу, оскільки вони налаштовують роути, а їхні методи `init()` повертають дані з однаковим базовим інтерфейсом.
+Наприклад, у `@ditsmod/routing` існує група `ROUTES_EXTENSIONS` в яку по-дефолту входить єдине розширення, що обробляє метадані, зібрані з декоратора `@route()`. Якщо в якомусь застосунку потрібна документація OpenAPI, можна підключити модуль `@ditsmod/openapi`, де також зареєстровано розширення у групі `ROUTES_EXTENSIONS`, але це розширення працює з декоратором `@oasRoute()`. В такому разі, у групі `ROUTES_EXTENSIONS` вже буде зареєстровано два розширення, кожне з яких готуватиме дані для встановлення маршрутів роутера. Ці розширення зібрані в одну групу, оскільки вони налаштовують роути, а їхні методи `stage1()` повертають дані з однаковим базовим інтерфейсом.
 
 Спільний базовий інтерфейс даних, який повертає кожне з розширень у певній групі, - це важлива умова, оскільки інші розширення можуть очікувати дані із цієї групи, і вони будуть опиратись саме на цей базовий інтерфейс. Звичайно ж, базовий інтерфейс при потребі можна розширювати, але не звужувати.
 
@@ -149,7 +149,7 @@ export class SomeModule {}
 
 Якщо певне розширення має залежність від іншого розширення, рекомендується вказувати таку залежність посередньо через групу розширень. Для цього вам знадобиться `ExtensionsManager`, який ініціалізує групи розширень, кидає помилки про циклічні залежності між розширеннями, і показує весь ланцюжок розширень, що призвів до зациклення. Окрім цього, `ExtensionsManager` дозволяє збирати результати ініціалізації розширень з усього застосунку, а не лише з одного модуля.
 
-Припустимо `MyExtension` повинно дочекатись завершення ініціалізації групи `OTHER_EXTENSIONS`. Щоб зробити це, у конструкторі треба указувати залежність від `ExtensionsManager`, а у `init()` викликати `init()` цього сервісу:
+Припустимо `MyExtension` повинно дочекатись завершення ініціалізації групи `OTHER_EXTENSIONS`. Щоб зробити це, у конструкторі треба указувати залежність від `ExtensionsManager`, а у `stage1()` викликати `stage1()` цього сервісу:
 
 ```ts {17}
 import { injectable } from '@ditsmod/core';
@@ -163,12 +163,12 @@ export class MyExtension implements Extension<void> {
 
   constructor(private extensionsManager: ExtensionsManager) {}
 
-  async init() {
+  async stage1() {
     if (this.inited) {
       return;
     }
 
-    const totalInitMeta = await this.extensionsManager.init(OTHER_EXTENSIONS);
+    const totalInitMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
 
     totalInitMeta.groupInitMeta.forEach((initMeta) => {
       const someData = initMeta.payload;
@@ -212,7 +212,7 @@ interface ExtensionInitMeta<T = any> {
 }
 ```
 
-Властивість `extension` містить інстанс розширення, а властивість `payload` - дані, які повертає метод `init()` цього розширення.
+Властивість `extension` містить інстанс розширення, а властивість `payload` - дані, які повертає метод `stage1()` цього розширення.
 
 Якщо властивість `delay == true` та `countdown > 0` - це означає, що дане розширення ще не відпрацювало в інших модулях, куди його імпортували. Тобто властивості `delay` та `countdown` стосуються самого розширення, і не стосуються даної групи розширень (в даному разі - групи `OTHER_EXTENSIONS`).
 
@@ -232,12 +232,12 @@ export class MyExtension implements Extension<void> {
 
   constructor(private extensionsManager: ExtensionsManager) {}
 
-  async init() {
+  async stage1() {
     if (this.inited) {
       return;
     }
 
-    const totalInitMeta = await this.extensionsManager.init(OTHER_EXTENSIONS, true);
+    const totalInitMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
     if (totalInitMeta.delay) {
       return;
     }
@@ -258,7 +258,7 @@ export class MyExtension implements Extension<void> {
 Тобто коли вам потрібно щоб `MyExtension` отримало дані з групи `OTHER_EXTENSIONS` з усього застосунку, другим аргументом для методу `init` потрібно передавати `true`:
 
 ```ts
-const totalInitMeta = await this.extensionsManager.init(OTHER_EXTENSIONS, true);
+const totalInitMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
 ```
 
 В такому разі гарантується, що інстанс `MyExtension` отримає дані з усіх модулів, куди імпортовано `OTHER_EXTENSIONS`. Навіть якщо `MyExtension` буде імпортовано у певний модуль, в якому немає розширень із групи `OTHER_EXTENSIONS`, але ці розширення є в інших модулях, все-одно метод `init` даного розширення буде викликано після ініціалізації усіх розширень, тому `MyExtension` отримає дані від `OTHER_EXTENSIONS` з усіх модулів.
@@ -279,12 +279,12 @@ export class BodyParserExtension implements Extension<void> {
     protected perAppService: PerAppService,
   ) {}
 
-  async init() {
+  async stage1() {
     if (this.inited) {
       return;
     }
 
-    const totalInitMeta = await this.extensionManager.init(ROUTES_EXTENSIONS);
+    const totalInitMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
     totalInitMeta.groupInitMeta.forEach((initMeta) => {
       const { aControllerMetadata, providersPerMod } = initMeta.payload;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, singleton }) => {

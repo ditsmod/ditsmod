@@ -10,12 +10,12 @@ export class MyExtension implements Extension<void> {
     private logger: Logger
   ) {}
 
-  async init() {
+  async stage1() {
     if (this.#inited) {
       return;
     }
 
-    const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    const totalInitMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
     this.logger.log('info', totalInitMeta.groupInitMeta[0].payload.aControllerMetadata);
 
     this.#inited = true;

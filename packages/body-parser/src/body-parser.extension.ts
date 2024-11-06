@@ -23,12 +23,12 @@ export class BodyParserExtension implements Extension<void> {
     protected perAppService: PerAppService,
   ) {}
 
-  async init() {
+  async stage1() {
     if (this.inited) {
       return;
     }
 
-    const totalInitMeta = await this.extensionManager.init(ROUTES_EXTENSIONS);
+    const totalInitMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
     totalInitMeta.groupInitMeta.forEach((initMeta) => {
       const { aControllerMetadata } = initMeta.payload;
       const { providersPerMod } = initMeta.payload.meta;

@@ -59,12 +59,12 @@ export class PreRouterExtension implements Extension<void> {
     protected errorMediator: RoutingErrorMediator,
   ) {}
 
-  async init() {
+  async stage1() {
     if (this.inited) {
       return;
     }
 
-    const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    const totalInitMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
     const preparedRouteMeta = this.prepareRoutesMeta(totalInitMeta.groupInitMeta);
     this.setRoutes(totalInitMeta, preparedRouteMeta);
     this.inited = true;

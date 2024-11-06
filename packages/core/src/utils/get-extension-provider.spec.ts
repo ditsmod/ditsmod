@@ -6,10 +6,10 @@ describe('getExtensionProvider', () => {
   const MY_EXTENSION = new InjectionToken('MY_EXTENSION');
   const OTHER_EXTENSION = new InjectionToken('OTHER_EXTENSION');
   class Extension1 implements Extension {
-    async init() {}
+    async stage1() {}
   }
   class Extension2 implements Extension {
-    async init() {}
+    async stage1() {}
   }
 
   describe('without BEFORE group', () => {

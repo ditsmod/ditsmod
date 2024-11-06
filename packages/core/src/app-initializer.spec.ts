@@ -692,7 +692,7 @@ describe('AppInitializer', () => {
     });
   });
 
-  describe('extensions init', () => {
+  describe('extensions stage1', () => {
     const jestFn = jest.fn((extensionName: string) => extensionName);
 
     beforeEach(() => {
@@ -713,7 +713,7 @@ describe('AppInitializer', () => {
     class Extension1 implements Extension {
       #inited: boolean;
 
-      async init() {
+      async stage1() {
         if (this.#inited) {
           return;
         }

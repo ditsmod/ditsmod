@@ -20,18 +20,18 @@ export class ValidationExtension implements Extension<void> {
     @optional() private validationOptions?: ValidationOptions,
   ) {}
 
-  async init() {
+  async stage1() {
     if (this.inited) {
       return;
     }
 
-    await this.extensionsManager.init(BODY_PARSER_EXTENSIONS);
+    await this.extensionsManager.stage1(BODY_PARSER_EXTENSIONS);
     await this.filterParameters();
     this.inited = true;
   }
 
   protected async filterParameters() {
-    const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS);
+    const totalInitMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
 
     totalInitMeta.groupInitMeta.forEach((initMeta) => {
       const { aControllerMetadata } = initMeta.payload;

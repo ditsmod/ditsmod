@@ -39,9 +39,9 @@ export class ExtensionsManager {
     protected extensionCounters: ExtensionCounters,
   ) {}
 
-  async init<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<TotalInitMeta<T>>;
-  async init<T>(groupToken: ExtensionsGroupToken<T>, perApp: true): Promise<TotalInitMeta2<T>>;
-  async init<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<TotalInitMeta<T>> {
+  async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<TotalInitMeta<T>>;
+  async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp: true): Promise<TotalInitMeta2<T>>;
+  async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<TotalInitMeta<T>> {
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
     }
@@ -158,7 +158,7 @@ export class ExtensionsManager {
       const ExtensionClass = extension.constructor as Class<Extension<T>>;
       const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
       const isLastModule = countdown === 0;
-      const data = await extension.init(isLastModule);
+      const data = await extension.stage1(isLastModule);
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);
       this.unfinishedInit.delete(extension);

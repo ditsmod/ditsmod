@@ -11,12 +11,12 @@ export class SessionCookieExtension implements Extension<void> {
 
   constructor(protected extensionManager: ExtensionsManager) {}
 
-  async init() {
+  async stage1() {
     if (this.#inited) {
       return;
     }
 
-    const totalInitMeta = await this.extensionManager.init(ROUTES_EXTENSIONS);
+    const totalInitMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
     totalInitMeta.groupInitMeta.forEach((initMeta) => {
       initMeta.payload.aControllerMetadata.forEach(({ providersPerRou, singletonPerScope }) => {
         if (singletonPerScope == 'module') {

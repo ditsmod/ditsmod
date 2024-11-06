@@ -30,12 +30,12 @@ export class CorsExtension implements Extension<void | false> {
     private extensionsManager: ExtensionsManager,
   ) {}
 
-  async init() {
+  async stage1() {
     if (this.inited) {
       return;
     }
 
-    const totalInitMeta = await this.extensionsManager.init(ROUTES_EXTENSIONS, true);
+    const totalInitMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS, true);
     if (totalInitMeta.delay) {
       return false;
     }

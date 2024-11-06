@@ -168,7 +168,7 @@ describe('type guards', () => {
     const token1 = new InjectionToken('token1');
     const token2 = {};
     class token3 implements Extension {
-      async init() {}
+      async stage1() {}
     }
 
     it('should recognize the InjectionToken', () => {

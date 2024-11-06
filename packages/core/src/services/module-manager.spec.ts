@@ -70,7 +70,7 @@ describe('ModuleManager', () => {
 
     it('should works with extension only', () => {
       class Ext implements Extension {
-        async init() {}
+        async stage1() {}
       }
       const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
 
@@ -372,13 +372,13 @@ describe('ModuleManager', () => {
     @featureModule({ extensions: [{ extension: Extension1 as any, token: TEST_EXTENSIONS, exported: true }] })
     class Module2 {}
 
-    expect(() => mock.scanModule(Module2)).toThrow('must have init() method');
+    expect(() => mock.scanModule(Module2)).toThrow('must have stage1() method');
   });
 
   it('module exported valid extension', () => {
     @injectable()
     class Extension1 implements Extension {
-      async init() {}
+      async stage1() {}
     }
     const TEST_EXTENSIONS = new InjectionToken<Extension>('TEST_EXTENSIONS');
 
@@ -853,7 +853,7 @@ describe('ModuleManager', () => {
   it('root module with imported some extension', () => {
     @injectable()
     class Extension1 implements Extension<void> {
-      async init() {}
+      async stage1() {}
     }
 
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
@@ -899,7 +899,7 @@ describe('ModuleManager', () => {
   it('root module with exported globaly some extension', () => {
     @injectable()
     class Extension1 implements Extension<void> {
-      async init() {}
+      async stage1() {}
     }
 
     const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');

@@ -27,7 +27,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
     protected metadataPerMod2: MetadataPerMod2,
   ) {}
 
-  async init() {
+  async stage1() {
     if (this.metadataPerMod3) {
       return this.metadataPerMod3;
     }
