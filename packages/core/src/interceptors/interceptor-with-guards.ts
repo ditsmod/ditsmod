@@ -38,12 +38,9 @@ export class InterceptorWithGuards implements HttpInterceptor {
   }
 
   protected getInjectorPerReq(rg: ResolvedGuardPerMod) {
-    return rg.injectorPerRou
-      .createChildFromResolved(rg.resolvedPerReq!)
-      .setByToken(NODE_REQ, this.injector.get(NODE_REQ))
-      .setByToken(NODE_RES, this.injector.get(NODE_RES))
-      .setByToken(A_PATH_PARAMS, this.injector.get(A_PATH_PARAMS))
-      .setByToken(QUERY_STRING, this.injector.get(QUERY_STRING));
+    const inj = rg.injectorPerRou.createChildFromResolved(rg.resolvedPerReq!);
+    this.injector.fill(inj, [NODE_REQ, NODE_RES, A_PATH_PARAMS, QUERY_STRING]);
+    return inj;
   }
 
   protected prohibitActivation(ctx: RequestContext, status?: Status) {
