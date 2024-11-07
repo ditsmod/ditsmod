@@ -166,7 +166,7 @@ import { AuthGuard } from '../auth/auth.guard.js';
 export class SomeModule {}
 ```
 
-In this case, `AuthGuard` will be automatically added to each route in `OtherModule`.
+In this case, `AuthGuard` will be automatically added to each route in `OtherModule`. Note that the providers for the specified guard must provide the `SomeModule` module, which is why it imports the `AuthModule`.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/03-route-guards
 [2]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
