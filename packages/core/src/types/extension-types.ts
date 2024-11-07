@@ -38,23 +38,34 @@ export class TotalInitMeta<T = any> {
   ) {}
 }
 
+/**
+ * The concept of "stages" in extensions was introduced so that metadata or injectors
+ * from another module could be accessed in the current module without being tied
+ * to a particular group of extensions. The method of the next stage is not triggered
+ * until all modules in the application have completed the current stage.
+ * 
+ * The order of extension execution in a given module at the second and third stages
+ * is exactly the same as at the first stage.
+ */
 export interface Extension<T = any> {
   /**
-   * This method is called at the stage when providers are dynamically added,
-   * so any injector created at this stage may later be replaced by other extensions.
+   * This method is called at the stage when providers are dynamically added.
    *
    * @param isLastModule Indicates whether this call is made in the last
    * module where this extension is imported or not.
    */
   stage1?(isLastModule: boolean): Promise<T>;
   /**
-   * This method is called when the stage of dynamically adding providers has ended,
-   * and the stage of creating injectors has begun.
-   *
-   * @param isLastModule Indicates whether this call is made in the last
-   * module where this extension is imported or not.
+   * This method is called after the `stage1()` method has executed for all modules
+   * in the application. There is no strict role for this method, but it would be
+   * logical for it to create and set injector at the module level.
    */
   stage2?(): Promise<void>;
+  /**
+   * This method is called after the `stage2()` method has executed for all modules
+   * in the application. There is no strict role for this method, but it would be logical
+   * for it to retrieve and use previously stored injectors in `stage2()`.
+   */
   stage3?(): Promise<void>;
 }
 export type ExtensionProvider = Provider;
