@@ -16,7 +16,7 @@ import { PerAppService } from './services/per-app.service.js';
 import { PreRouter } from './services/pre-router.js';
 import { ModuleType, Provider } from './types/mix.js';
 import { ModuleWithParams } from './types/module-metadata.js';
-import { Extension, ExtensionCounters, ExtensionsGroupToken, Stage } from '#types/extension-types.js';
+import { Extension, ExtensionCounters, ExtensionsGroupToken } from '#types/extension-types.js';
 import { RequestListener } from './types/server-options.js';
 import { getCollisions } from './utils/get-collisions.js';
 import { getDuplicates } from './utils/get-duplicates.js';

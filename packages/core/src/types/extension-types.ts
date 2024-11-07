@@ -57,7 +57,6 @@ export interface Extension<T = any> {
   stage2?(): Promise<void>;
   stage3?(): Promise<void>;
 }
-export type Stage = 'stage1' | 'stage2';
 export type ExtensionProvider = Provider;
 export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]> | BeforeToken<Extension<T>[]>;
 export type ExtensionType<T = any> = Class<Extension<T>>;
