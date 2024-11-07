@@ -58,14 +58,14 @@ describe('Route decorator', () => {
   });
 
   it('one guard without params', () => {
-    class Guard implements CanActivate {
+    class Guard1 implements CanActivate {
       canActivate(ctx: RequestContext) {
         return true;
       }
     }
     @controller()
     class Controller1 {
-      @route('GET', 'posts/:postId', [Guard])
+      @route('GET', 'posts/:postId', [Guard1])
       method() {}
     }
 
@@ -74,20 +74,20 @@ describe('Route decorator', () => {
     const decorator = new DecoratorAndValue(route, {
       httpMethod: 'GET',
       path: 'posts/:postId',
-      guards: [Guard],
+      guards: [Guard1],
     });
     expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([decorator]);
   });
 
   it('two guards without params', () => {
-    class Guard implements CanActivate {
+    class Guard1 implements CanActivate {
       canActivate(ctx: RequestContext) {
         return true;
       }
     }
     @controller()
     class Controller1 {
-      @route('GET', 'posts/:postId', [Guard, Guard])
+      @route('GET', 'posts/:postId', [Guard1, Guard1])
       method() {}
     }
 
@@ -96,13 +96,13 @@ describe('Route decorator', () => {
     const decorator = new DecoratorAndValue(route, {
       httpMethod: 'GET',
       path: 'posts/:postId',
-      guards: [Guard, Guard],
+      guards: [Guard1, Guard1],
     });
     expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([decorator]);
   });
 
   it('two guard with params', () => {
-    class Guard implements CanActivate {
+    class Guard1 implements CanActivate {
       canActivate(ctx: RequestContext) {
         return true;
       }
@@ -110,8 +110,8 @@ describe('Route decorator', () => {
     @controller()
     class Controller1 {
       @route('GET', 'posts/:postId', [
-        [Guard, 'one', 123],
-        [Guard, []],
+        [Guard1, 'one', 123],
+        [Guard1, []],
       ])
       method() {}
     }
@@ -123,8 +123,8 @@ describe('Route decorator', () => {
         httpMethod: 'GET',
         path: 'posts/:postId',
         guards: [
-          [Guard, 'one', 123],
-          [Guard, []],
+          [Guard1, 'one', 123],
+          [Guard1, []],
         ],
       }),
     ]);

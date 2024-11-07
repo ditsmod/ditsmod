@@ -29,20 +29,20 @@ describe('@oasRoute', () => {
   });
 
   it('one method, with operation object', () => {
-    class Guard implements CanActivate {
+    class Guard1 implements CanActivate {
       canActivate(ctx: RequestContext) {
         return true;
       }
     }
     @controller()
     class Controller1 {
-      @oasRoute('GET', 'posts', [Guard], { operationId: 'someId' })
+      @oasRoute('GET', 'posts', [Guard1], { operationId: 'someId' })
       method() {}
     }
 
     const actualMeta = reflector.getMetadata(Controller1)!;
     expect(actualMeta.method.type).toBe(Function);
-    const value = { httpMethod: 'GET', path: 'posts', guards: [Guard], operationObject: { operationId: 'someId' } };
+    const value = { httpMethod: 'GET', path: 'posts', guards: [Guard1], operationObject: { operationId: 'someId' } };
     expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
   });
 
