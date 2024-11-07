@@ -19,7 +19,8 @@ export class SingletonInterceptorWithGuards implements ISingletonInterceptorWith
   async intercept(next: HttpHandler, ctx: RequestContext) {
     if (this.routeMeta.resolvedGuardsPerMod) {
       for (const item of this.routeMeta.resolvedGuardsPerMod) {
-        const canActivate = await item.injectorPerRou.instantiateResolved(item.guard).canActivate(ctx, item.params);
+        const guard = item.injectorPerRou.instantiateResolved(item.guard) as CanActivate;
+        const canActivate = await guard.canActivate(ctx, item.params);
         if (canActivate !== true) {
           const status = typeof canActivate == 'number' ? canActivate : undefined;
           this.prohibitActivation(ctx, status);

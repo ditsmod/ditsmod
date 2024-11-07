@@ -2,7 +2,7 @@ import { A_PATH_PARAMS, NODE_REQ, NODE_RES, QUERY_STRING } from '#constans';
 import { injectable, skipSelf, Injector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { HttpInterceptor, HttpHandler, RequestContext } from '#types/http-interceptor.js';
-import { ResolvedGuardPerMod } from '#types/mix.js';
+import { CanActivate, ResolvedGuardPerMod } from '#types/mix.js';
 import { RouteMeta } from '#types/route-data.js';
 import { Status } from '#utils/http-status-codes.js';
 
@@ -17,7 +17,8 @@ export class InterceptorWithGuards implements HttpInterceptor {
     if (this.routeMeta.resolvedGuardsPerMod)
       for (const item of this.routeMeta.resolvedGuardsPerMod) {
         const injectorPerReq = this.getInjectorPerReq(item);
-        const canActivate = await injectorPerReq.instantiateResolved(item.guard).canActivate(ctx, item.params);
+        const guard = injectorPerReq.instantiateResolved(item.guard) as CanActivate;
+        const canActivate = await guard.canActivate(ctx, item.params);
         if (canActivate !== true) {
           const status = typeof canActivate == 'number' ? canActivate : undefined;
           this.prohibitActivation(ctx, status);
@@ -26,7 +27,8 @@ export class InterceptorWithGuards implements HttpInterceptor {
       }
     if (this.routeMeta.resolvedGuards)
       for (const item of this.routeMeta.resolvedGuards) {
-        const canActivate = await this.injector.instantiateResolved(item.guard).canActivate(ctx, item.params);
+        const guard = this.injector.instantiateResolved(item.guard) as CanActivate;
+        const canActivate = await guard.canActivate(ctx, item.params);
         if (canActivate !== true) {
           const status = typeof canActivate == 'number' ? canActivate : undefined;
           this.prohibitActivation(ctx, status);
