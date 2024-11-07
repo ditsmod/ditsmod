@@ -2,6 +2,7 @@ import {
   Class,
   ClassProvider,
   FactoryProvider,
+  Injector,
   ResolvedProvider,
   TokenProvider,
   TypeProvider,
@@ -68,6 +69,13 @@ export interface GuardPerMod1 extends NormalizedGuard {
   meta: NormalizedModuleMetadata;
 }
 
+export interface ResolvedGuardPerMod {
+  guard: ResolvedProvider;
+  injectorPerRou: Injector;
+  resolvedPerReq?: ResolvedProvider[];
+  params?: any[];
+}
+
 export interface ResolvedGuard {
   guard: ResolvedProvider;
   params?: any[];
@@ -88,6 +96,9 @@ export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
  */
 export type Provider = TypeProvider | ValueProvider | ClassProvider | TokenProvider | FactoryProvider;
 
+/**
+ * Scope imports/exports.
+ */
 export type Scope = 'Mod' | 'Rou' | 'Req';
 
 export type Override<T extends object, K extends { [P in keyof T]?: any }> = Omit<T, keyof K> & K;

@@ -40,6 +40,8 @@ import {
   NormalizedGuard,
   GuardPerMod1,
   ModuleManager,
+  ResolvedGuardPerMod,
+  Scope,
 } from '@ditsmod/core';
 
 import { MetadataPerMod3, PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -48,6 +50,8 @@ import { RoutingErrorMediator } from '../router-error-mediator.js';
 @injectable()
 export class PreRouterExtension implements Extension<void> {
   protected inited: boolean;
+  protected totalInitMeta: TotalInitMeta<MetadataPerMod3>;
+  protected injectorPerMod: Injector;
 
   constructor(
     protected perAppService: PerAppService,
@@ -64,10 +68,20 @@ export class PreRouterExtension implements Extension<void> {
       return;
     }
 
-    const totalInitMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
-    const preparedRouteMeta = this.prepareRoutesMeta(totalInitMeta.groupInitMeta);
-    this.setRoutes(totalInitMeta, preparedRouteMeta);
+    this.totalInitMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
     this.inited = true;
+  }
+
+  async stage2() {
+    const injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
+    this.injectorPerMod = this.initModuleAndGetInjectorPerMod(injectorPerApp, this.totalInitMeta.groupInitMeta);
+    const meta = this.getMeta(this.totalInitMeta.groupInitMeta);
+    this.moduleManager.setInjectorPerMod(meta.module, this.injectorPerMod);
+  }
+
+  async stage3() {
+    const preparedRouteMeta = this.prepareRoutesMeta(this.totalInitMeta.groupInitMeta);
+    this.setRoutes(this.totalInitMeta, preparedRouteMeta);
   }
 
   protected getMeta(groupInitMeta: ExtensionInitMeta<MetadataPerMod3>[]) {
@@ -78,10 +92,6 @@ export class PreRouterExtension implements Extension<void> {
 
   protected prepareRoutesMeta(groupInitMeta: ExtensionInitMeta<MetadataPerMod3>[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
-    const injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
-    const injectorPerMod = this.initModuleAndGetInjectorPerMod(injectorPerApp, groupInitMeta);
-    const meta = this.getMeta(groupInitMeta);
-    this.moduleManager.setInjectorPerMod(meta.module, injectorPerMod);
 
     groupInitMeta.forEach((initMeta) => {
       if (!initMeta.payload.aControllerMetadata.length) {
@@ -95,9 +105,9 @@ export class PreRouterExtension implements Extension<void> {
       aControllerMetadata.forEach((controllerMetadata) => {
         let handle: RouteHandler;
         if (controllerMetadata.singletonPerScope == 'module') {
-          handle = this.getHandlerWithSingleton(metadataPerMod3, injectorPerMod, controllerMetadata);
+          handle = this.getHandlerWithSingleton(metadataPerMod3, this.injectorPerMod, controllerMetadata);
         } else {
-          handle = this.getDefaultHandler(metadataPerMod3, injectorPerMod, controllerMetadata);
+          handle = this.getDefaultHandler(metadataPerMod3, this.injectorPerMod, controllerMetadata);
         }
 
         const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guardsPerMod1.length;
@@ -157,7 +167,8 @@ export class PreRouterExtension implements Extension<void> {
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
-    routeMeta.guardsPerMod1 = metadataPerMod3.guardsPerMod1;
+    routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
+    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(metadataPerMod3.guardsPerMod1, true);
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
@@ -193,6 +204,41 @@ export class PreRouterExtension implements Extension<void> {
     }) as RouteHandler;
   }
 
+  protected getResolvedGuardsPerMod(guards: GuardPerMod1[], perReq?: boolean) {
+    return guards.map((g) => {
+      const resolvedPerMod = Injector.resolve(g.meta.providersPerMod);
+      const resolvedPerRou = Injector.resolve(g.meta.providersPerRou);
+      const resolvedPerReq = Injector.resolve(g.meta.providersPerReq);
+      const resolvedProviders = perReq
+        ? resolvedPerReq.concat(resolvedPerRou, resolvedPerMod)
+        : resolvedPerRou.concat(resolvedPerMod);
+
+      const guard = resolvedProviders.find((rp) => rp.dualKey.token === g.guard);
+
+      if (!guard) {
+        const scopes = ['providersPerRou', 'providersPerMod'];
+        if (perReq) {
+          scopes.push('providersPerReq');
+        }
+        const scopeNames = scopes.join(', ');
+        const msg = `Resolving guard for ${g.meta.name} failed: ${g.guard.name} not found in ${scopeNames}.`;
+        throw new Error(msg);
+      }
+
+      const injectorPerMod = this.moduleManager.getInjectorPerMod(g.meta.module);
+      const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou);
+
+      const resolvedGuard: ResolvedGuardPerMod = {
+        guard,
+        injectorPerRou,
+        resolvedPerReq,
+        params: g.params,
+      };
+
+      return resolvedGuard;
+    });
+  }
+
   protected getResolvedGuards(guards: NormalizedGuard[], resolvedPerReq: ResolvedProvider[]) {
     return guards.map((g) => {
       const defaultResolvedGuard = Injector.resolve([g.guard])[0];
@@ -223,7 +269,7 @@ export class PreRouterExtension implements Extension<void> {
     const mergedPerRou: Provider[] = [];
     mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
 
-    routeMeta.guardsPerMod1 = metadataPerMod3.guardsPerMod1;
+    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(metadataPerMod3.guardsPerMod1);
     routeMeta.resolvedGuards = controllerMetadata.guards.map((g) => {
       const resolvedGuard: ResolvedGuard = {
         guard: Injector.resolve([g.guard])[0],

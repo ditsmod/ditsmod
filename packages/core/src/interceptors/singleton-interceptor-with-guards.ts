@@ -1,8 +1,7 @@
 import { injectable, Injector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { ModuleManager } from '#services/module-manager.js';
 import { HttpInterceptor, HttpHandler, RequestContext } from '#types/http-interceptor.js';
-import { CanActivate, GuardPerMod1 } from '#types/mix.js';
+import { CanActivate } from '#types/mix.js';
 import { RouteMeta } from '#types/route-data.js';
 import { Status } from '#utils/http-status-codes.js';
 
@@ -18,12 +17,9 @@ export class SingletonInterceptorWithGuards implements ISingletonInterceptorWith
   }
 
   async intercept(next: HttpHandler, ctx: RequestContext) {
-    // @todo Refactor logic for guardsPerMod with resolved providers.
-    if (this.routeMeta.guardsPerMod1) {
-      const moduleManager = this.injector.get(ModuleManager) as ModuleManager;
-      for (const item of this.routeMeta.guardsPerMod1) {
-        const injectorPerReq = this.getInjectorPerReq(moduleManager, item);
-        const canActivate = await injectorPerReq.get(item.guard).canActivate(ctx, item.params);
+    if (this.routeMeta.resolvedGuardsPerMod) {
+      for (const item of this.routeMeta.resolvedGuardsPerMod) {
+        const canActivate = await item.injectorPerRou.instantiateResolved(item.guard).canActivate(ctx, item.params);
         if (canActivate !== true) {
           const status = typeof canActivate == 'number' ? canActivate : undefined;
           this.prohibitActivation(ctx, status);
@@ -41,13 +37,6 @@ export class SingletonInterceptorWithGuards implements ISingletonInterceptorWith
     }
 
     return next.handle();
-  }
-
-  protected getInjectorPerReq(moduleManager: ModuleManager, guardPerMod1: GuardPerMod1) {
-    const injectorPerMod = moduleManager.getInjectorPerMod(guardPerMod1.meta.module);
-    const injectorPerRou = injectorPerMod.resolveAndCreateChild(guardPerMod1.meta.providersPerRou);
-    const injectorPerReq = injectorPerRou.resolveAndCreateChild(guardPerMod1.meta.providersPerReq);
-    return injectorPerReq;
   }
 
   protected initGuards() {

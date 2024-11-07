@@ -35,7 +35,7 @@ export {
   ExtensionInitMeta,
   TotalInitMeta,
   TotalInitMetaPerApp,
-  Stage
+  Stage,
 } from './types/extension-types.js';
 export { ModuleExtract } from './types/module-extract.js';
 export { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
@@ -90,6 +90,7 @@ export {
   ModuleType,
   NormalizedGuard,
   ResolvedGuard,
+  ResolvedGuardPerMod,
   RedirectStatusCodes,
   Provider,
   AnyFn,
@@ -97,6 +98,7 @@ export {
   OptionalProps,
   GuardPerMod1,
   ProvidersForMod,
+  Scope,
 } from './types/mix.js';
 export {
   ModuleMetadata,
