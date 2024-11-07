@@ -8,7 +8,14 @@ import { SingletonPermissionsGuard } from './singleton-permissions.guard.js';
 import { BasicGuard } from './basic.guard.js';
 
 @featureModule({
-  providersPerRou: [SingletonAuthService, SingletonPermissionsGuard],
+  providersPerRou: [
+    SingletonAuthService,
+    SingletonPermissionsGuard,
+    BasicGuard,
+    BearerGuard,
+    PermissionsGuard,
+    AuthService,
+  ],
   providersPerReq: [BasicGuard, BearerGuard, PermissionsGuard, AuthService],
   exports: [BasicGuard, BearerGuard, PermissionsGuard, SingletonPermissionsGuard],
 })
