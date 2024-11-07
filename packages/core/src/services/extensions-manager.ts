@@ -164,7 +164,7 @@ export class ExtensionsManager {
       const ExtensionClass = extension.constructor as Class<Extension<T>>;
       const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
       const isLastModule = countdown === 0;
-      const data = await extension.stage1(isLastModule);
+      const data = await extension.stage1?.(isLastModule);
       this.extensionsListForStage2.add(extension);
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);

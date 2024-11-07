@@ -276,7 +276,7 @@ export class AppInitializer {
 
     for (const [groupToken, mExtensions] of extensionsContext.mExtensionPendingList) {
       for (const extension of mExtensions.values()) {
-        await extension.stage1(true);
+        await extension.stage1?.(true);
       }
     }
 
