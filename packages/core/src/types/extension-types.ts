@@ -57,14 +57,12 @@ export interface Extension<T = any> {
   stage1?(isLastModule: boolean): Promise<T>;
   /**
    * This method is called after the `stage1()` method has executed for all modules
-   * in the application. There is no strict role for this method, but it would be
-   * logical for it to create and set injector at the module level.
+   * in the application. There is no strict role for this method.
    */
   stage2?(): Promise<void>;
   /**
    * This method is called after the `stage2()` method has executed for all modules
-   * in the application. There is no strict role for this method, but it would be logical
-   * for it to retrieve and use previously stored injectors in `stage2()`.
+   * in the application. There is no strict role for this method.
    */
   stage3?(): Promise<void>;
 }
