@@ -41,7 +41,6 @@ import {
   GuardPerMod1,
   ModuleManager,
   ResolvedGuardPerMod,
-  Scope,
 } from '@ditsmod/core';
 
 import { MetadataPerMod3, PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -52,6 +51,7 @@ export class PreRouterExtension implements Extension<void> {
   protected inited: boolean;
   protected totalInitMeta: TotalInitMeta<MetadataPerMod3>;
   protected injectorPerMod: Injector;
+  protected injectorPerApp: Injector;
 
   constructor(
     protected perAppService: PerAppService,
@@ -69,12 +69,12 @@ export class PreRouterExtension implements Extension<void> {
     }
 
     this.totalInitMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
+    this.injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
     this.inited = true;
   }
 
   async stage2() {
-    const injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
-    this.injectorPerMod = this.initModuleAndGetInjectorPerMod(injectorPerApp, this.totalInitMeta.groupInitMeta);
+    this.injectorPerMod = this.initModuleAndGetInjectorPerMod(this.injectorPerApp, this.totalInitMeta.groupInitMeta);
     const meta = this.getMeta(this.totalInitMeta.groupInitMeta);
     this.moduleManager.setInjectorPerMod(meta.module, this.injectorPerMod);
   }
