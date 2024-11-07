@@ -84,7 +84,7 @@ export class ExtensionsManager {
   }
 
   setExtensionsToStage2(mod: AnyModule) {
-    this.extensionsContext.mStage2.set(mod, this.extensionsListForStage2);
+    this.extensionsContext.mStage.set(mod, this.extensionsListForStage2);
   }
 
   protected prepareTotalInitMetaPerApp(totalInitMeta: TotalInitMeta2, perApp?: boolean): TotalInitMeta {

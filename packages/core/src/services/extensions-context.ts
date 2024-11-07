@@ -11,5 +11,5 @@ export class ExtensionsContext {
    */
   mExtensionPendingList = new Map<ExtensionsGroupToken, Map<Class<Extension>, Extension>>();
 
-  mStage2 = new Map<AnyModule, Set<Extension>>();
+  mStage = new Map<AnyModule, Set<Extension>>();
 }

@@ -280,13 +280,13 @@ export class AppInitializer {
       }
     }
 
-    for (const [, extensionSet] of extensionsContext.mStage2) {
+    for (const [, extensionSet] of extensionsContext.mStage) {
       for (const ext of extensionSet) {
         await ext.stage2?.();
       }
     }
 
-    for (const [, extensionSet] of extensionsContext.mStage2) {
+    for (const [, extensionSet] of extensionsContext.mStage) {
       for (const ext of extensionSet) {
         await ext.stage3?.();
       }
