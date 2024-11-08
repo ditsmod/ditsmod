@@ -204,7 +204,7 @@ interface ExtensionStage1Meta<T = any> {
    */
   extension: Extension<T>;
   /**
-   * Value that `extension` returns from its `init` method.
+   * Value that `extension` returns from its `stage1` method.
    */
   payload: T;
   delay: boolean;
@@ -255,13 +255,13 @@ export class MyExtension implements Extension<void> {
 }
 ```
 
-Thus, when you need `MyExtension` to receive data from the `OTHER_EXTENSIONS` group throughout the application, you need to pass `true` as the second argument to the `init` method:
+Thus, when you need `MyExtension` to receive data from the `OTHER_EXTENSIONS` group throughout the application, you need to pass `true` as the second argument to the `stage1` method:
 
 ```ts
 const totalStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
 ```
 
-In this case, it is guaranteed that the `MyExtension` instance will receive data from all modules where `OTHER_EXTENSIONS` is imported. Even if `MyExtension` is imported into a module without any extensions from the `OTHER_EXTENSIONS` group, but these extensions exist in other modules, the `init` method of this extension will still be called after all extensions are initialized, ensuring that `MyExtension` receives data from `OTHER_EXTENSIONS` across all modules.
+In this case, it is guaranteed that the `MyExtension` instance will receive data from all modules where `OTHER_EXTENSIONS` is imported. Even if `MyExtension` is imported into a module without any extensions from the `OTHER_EXTENSIONS` group, but these extensions exist in other modules, the `stage1` method of this extension will still be called after all extensions are initialized, ensuring that `MyExtension` receives data from `OTHER_EXTENSIONS` across all modules.
 
 ## Dynamic addition of providers
 

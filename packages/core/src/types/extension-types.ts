@@ -11,7 +11,7 @@ export class ExtensionsMetaPerApp {
 export class ExtensionStage1Meta<T = any> {
   /**
    * @param extension Instance of an extension.
-   * @param payload Value that `extension` returns from its `init` method.
+   * @param payload Value that `extension` returns from its `stage1` method.
    */
   constructor(
     public extension: Extension<T>,
@@ -20,12 +20,6 @@ export class ExtensionStage1Meta<T = any> {
     public countdown: number,
   ) {}
 }
-
-export type TotalStage1MetaPerApp<T = any> = Omit<TotalStage1Meta<T>, 'totalStage1MetaPerApp'>;
-export type TotalStage1Meta2<T = any> = OptionalProps<
-  TotalStage1Meta<T>,
-  'groupStage1Meta' | 'moduleName' | 'countdown'
->;
 
 export class TotalStage1Meta<T = any> {
   delay: boolean;
@@ -40,6 +34,12 @@ export class TotalStage1Meta<T = any> {
     public groupStage1Meta: ExtensionStage1Meta<T>[],
   ) {}
 }
+
+export type TotalStage1MetaPerApp<T = any> = Omit<TotalStage1Meta<T>, 'totalStage1MetaPerApp'>;
+export type TotalStage1Meta2<T = any> = OptionalProps<
+  TotalStage1Meta<T>,
+  'groupStage1Meta' | 'moduleName' | 'countdown'
+>;
 
 /**
  * The concept of "stages" in extensions was introduced so that metadata or injectors

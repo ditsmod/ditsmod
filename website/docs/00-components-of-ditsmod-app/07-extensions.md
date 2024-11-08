@@ -204,7 +204,7 @@ interface ExtensionStage1Meta<T = any> {
    */
   extension: Extension<T>;
   /**
-   * Value that `extension` returns from its `init` method.
+   * Value that `extension` returns from its `stage1` method.
    */
   payload: T;
   delay: boolean;
@@ -255,13 +255,13 @@ export class MyExtension implements Extension<void> {
 }
 ```
 
-Тобто коли вам потрібно щоб `MyExtension` отримало дані з групи `OTHER_EXTENSIONS` з усього застосунку, другим аргументом для методу `init` потрібно передавати `true`:
+Тобто коли вам потрібно щоб `MyExtension` отримало дані з групи `OTHER_EXTENSIONS` з усього застосунку, другим аргументом для методу `stage1` потрібно передавати `true`:
 
 ```ts
 const totalStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
 ```
 
-В такому разі гарантується, що інстанс `MyExtension` отримає дані з усіх модулів, куди імпортовано `OTHER_EXTENSIONS`. Навіть якщо `MyExtension` буде імпортовано у певний модуль, в якому немає розширень із групи `OTHER_EXTENSIONS`, але ці розширення є в інших модулях, все-одно метод `init` даного розширення буде викликано після ініціалізації усіх розширень, тому `MyExtension` отримає дані від `OTHER_EXTENSIONS` з усіх модулів.
+В такому разі гарантується, що інстанс `MyExtension` отримає дані з усіх модулів, куди імпортовано `OTHER_EXTENSIONS`. Навіть якщо `MyExtension` буде імпортовано у певний модуль, в якому немає розширень із групи `OTHER_EXTENSIONS`, але ці розширення є в інших модулях, все-одно метод `stage1` даного розширення буде викликано після ініціалізації усіх розширень, тому `MyExtension` отримає дані від `OTHER_EXTENSIONS` з усіх модулів.
 
 ## Динамічне додавання провайдерів
 
