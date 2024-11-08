@@ -3,10 +3,10 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import {
   ExtensionsGroupToken,
   Extension,
-  ExtensionInitMeta,
-  TotalInitMeta,
+  ExtensionStage1Meta,
+  TotalStage1Meta,
   ExtensionCounters,
-  TotalInitMeta2,
+  TotalStage1Meta2,
 } from '#types/extension-types.js';
 import { OptionalProps } from '#types/mix.js';
 import { getProviderName } from '#utils/get-provider-name.js';
@@ -29,7 +29,7 @@ export class ExtensionsManager {
   /**
    * The cache for the current module.
    */
-  protected cache = new Map<ExtensionsGroupToken, TotalInitMeta>();
+  protected cache = new Map<ExtensionsGroupToken, TotalStage1Meta>();
   protected excludedExtensionPendingList = new Map<ExtensionsGroupToken, Set<Class<Extension>>>();
   protected extensionsListForStage2 = new Set<Extension>();
 
@@ -41,9 +41,9 @@ export class ExtensionsManager {
     protected extensionCounters: ExtensionCounters,
   ) {}
 
-  async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<TotalInitMeta<T>>;
-  async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp: true): Promise<TotalInitMeta2<T>>;
-  async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<TotalInitMeta<T>> {
+  async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<TotalStage1Meta<T>>;
+  async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp: true): Promise<TotalStage1Meta2<T>>;
+  async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<TotalStage1Meta<T>> {
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
     }
@@ -57,23 +57,23 @@ export class ExtensionsManager {
       await this.prepareAndInitGroup<T>(beforeToken);
     }
 
-    let totalInitMeta = this.cache.get(groupToken);
-    if (totalInitMeta) {
-      this.updateGroupCounters(groupToken, totalInitMeta);
-      totalInitMeta = this.prepareTotalInitMetaPerApp(totalInitMeta, perApp);
-      if (perApp && !totalInitMeta.delay) {
+    let totalStage1Meta = this.cache.get(groupToken);
+    if (totalStage1Meta) {
+      this.updateGroupCounters(groupToken, totalStage1Meta);
+      totalStage1Meta = this.prepareTotalStage1MetaPerApp(totalStage1Meta, perApp);
+      if (perApp && !totalStage1Meta.delay) {
         this.excludeExtensionFromPendingList(groupToken);
       }
-      return totalInitMeta;
+      return totalStage1Meta;
     }
 
-    totalInitMeta = await this.prepareAndInitGroup<T>(groupToken);
-    totalInitMeta.totalInitMetaPerApp = this.extensionsContext.mTotalInitMeta.get(groupToken)!;
-    totalInitMeta = this.prepareTotalInitMetaPerApp(totalInitMeta, perApp);
-    if (perApp && !totalInitMeta.delay) {
+    totalStage1Meta = await this.prepareAndInitGroup<T>(groupToken);
+    totalStage1Meta.totalStage1MetaPerApp = this.extensionsContext.mTotalStage1Meta.get(groupToken)!;
+    totalStage1Meta = this.prepareTotalStage1MetaPerApp(totalStage1Meta, perApp);
+    if (perApp && !totalStage1Meta.delay) {
       this.excludeExtensionFromPendingList(groupToken);
     }
-    return totalInitMeta;
+    return totalStage1Meta;
   }
 
   updateExtensionPendingList() {
@@ -89,15 +89,15 @@ export class ExtensionsManager {
     this.extensionsContext.mStage.set(mod, this.extensionsListForStage2);
   }
 
-  protected prepareTotalInitMetaPerApp(totalInitMeta: TotalInitMeta2, perApp?: boolean): TotalInitMeta {
-    if (perApp && !totalInitMeta.delay) {
-      const copytotalInitMeta = { ...totalInitMeta };
-      delete (copytotalInitMeta as TotalInitMeta2).groupInitMeta;
-      delete (copytotalInitMeta as TotalInitMeta2).moduleName;
-      delete (copytotalInitMeta as TotalInitMeta2).countdown;
-      return copytotalInitMeta as TotalInitMeta;
+  protected prepareTotalStage1MetaPerApp(totalStage1Meta: TotalStage1Meta2, perApp?: boolean): TotalStage1Meta {
+    if (perApp && !totalStage1Meta.delay) {
+      const copytotalStage1Meta = { ...totalStage1Meta };
+      delete (copytotalStage1Meta as TotalStage1Meta2).groupStage1Meta;
+      delete (copytotalStage1Meta as TotalStage1Meta2).moduleName;
+      delete (copytotalStage1Meta as TotalStage1Meta2).countdown;
+      return copytotalStage1Meta as TotalStage1Meta;
     }
-    return totalInitMeta as TotalInitMeta;
+    return totalStage1Meta as TotalStage1Meta;
   }
 
   /**
@@ -130,27 +130,27 @@ export class ExtensionsManager {
   protected async prepareAndInitGroup<T>(groupToken: ExtensionsGroupToken<T>) {
     this.unfinishedInit.add(groupToken);
     this.systemLogMediator.startExtensionsGroupInit(this, this.unfinishedInit);
-    const totalInitMeta = await this.initGroup(groupToken);
+    const totalStage1Meta = await this.initGroup(groupToken);
     this.systemLogMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(groupToken);
-    this.cache.set(groupToken, totalInitMeta);
-    this.setTotalInitMetaPerApp(groupToken, totalInitMeta);
-    return totalInitMeta;
+    this.cache.set(groupToken, totalStage1Meta);
+    this.setTotalStage1MetaPerApp(groupToken, totalStage1Meta);
+    return totalStage1Meta;
   }
 
-  protected setTotalInitMetaPerApp(groupToken: ExtensionsGroupToken, totalInitMeta: TotalInitMeta) {
-    const copyTotalInitMeta = { ...totalInitMeta } as TotalInitMeta;
-    delete (copyTotalInitMeta as OptionalProps<TotalInitMeta, 'totalInitMetaPerApp'>).totalInitMetaPerApp;
-    const aTotalInitMeta = this.extensionsContext.mTotalInitMeta.get(groupToken) || [];
-    aTotalInitMeta.push(copyTotalInitMeta);
-    this.extensionsContext.mTotalInitMeta.set(groupToken, aTotalInitMeta);
+  protected setTotalStage1MetaPerApp(groupToken: ExtensionsGroupToken, totalStage1Meta: TotalStage1Meta) {
+    const copyTotalStage1Meta = { ...totalStage1Meta } as TotalStage1Meta;
+    delete (copyTotalStage1Meta as OptionalProps<TotalStage1Meta, 'totalStage1MetaPerApp'>).totalStage1MetaPerApp;
+    const aTotalStage1Meta = this.extensionsContext.mTotalStage1Meta.get(groupToken) || [];
+    aTotalStage1Meta.push(copyTotalStage1Meta);
+    this.extensionsContext.mTotalStage1Meta.set(groupToken, aTotalStage1Meta);
   }
 
-  protected async initGroup<T>(groupToken: ExtensionsGroupToken): Promise<TotalInitMeta> {
+  protected async initGroup<T>(groupToken: ExtensionsGroupToken): Promise<TotalStage1Meta> {
     const extensions = this.injector.get(groupToken, undefined, []) as Extension<T>[];
-    const groupInitMeta: ExtensionInitMeta<T | undefined>[] = [];
-    const totalInitMeta = new TotalInitMeta(this.moduleName, groupInitMeta);
-    this.updateGroupCounters(groupToken, totalInitMeta);
+    const groupStage1Meta: ExtensionStage1Meta<T | undefined>[] = [];
+    const totalStage1Meta = new TotalStage1Meta(this.moduleName, groupStage1Meta);
+    this.updateGroupCounters(groupToken, totalStage1Meta);
 
     if (!extensions.length) {
       this.systemLogMediator.noExtensionsFound(this, groupToken, this.unfinishedInit);
@@ -171,16 +171,16 @@ export class ExtensionsManager {
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);
       this.unfinishedInit.delete(extension);
-      const initMeta = new ExtensionInitMeta(extension, data, !isLastModule, countdown);
-      groupInitMeta.push(initMeta);
+      const stage1Meta = new ExtensionStage1Meta(extension, data, !isLastModule, countdown);
+      groupStage1Meta.push(stage1Meta);
     }
 
-    return totalInitMeta;
+    return totalStage1Meta;
   }
 
-  protected updateGroupCounters(groupToken: ExtensionsGroupToken, totalInitMeta: TotalInitMeta) {
-    totalInitMeta.countdown = this.extensionCounters.mGroupTokens.get(groupToken)!;
-    totalInitMeta.delay = totalInitMeta.countdown > 0;
+  protected updateGroupCounters(groupToken: ExtensionsGroupToken, totalStage1Meta: TotalStage1Meta) {
+    totalStage1Meta.countdown = this.extensionCounters.mGroupTokens.get(groupToken)!;
+    totalStage1Meta.delay = totalStage1Meta.countdown > 0;
   }
 
   protected throwCircularDeps(item: Extension | ExtensionsGroupToken) {

@@ -168,10 +168,10 @@ export class MyExtension implements Extension<void> {
       return;
     }
 
-    const totalInitMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
+    const totalStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
 
-    totalInitMeta.groupInitMeta.forEach((initMeta) => {
-      const someData = initMeta.payload;
+    totalStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+      const someData = stage1Meta.payload;
       // Do something here.
       // ...
     });
@@ -184,21 +184,21 @@ export class MyExtension implements Extension<void> {
 The `ExtensionsManager` will sequentially initialize all extensions from a given group and return the result in an object that follows this interface:
 
 ```ts
-interface TotalInitMeta<T = any> {
+interface TotalStage1Meta<T = any> {
   delay: boolean;
   countdown = 0;
-  totalInitMetaPerApp: TotalInitMetaPerApp<T>[];
-  groupInitMeta: ExtensionInitMeta<T>[],
+  totalStage1MetaPerApp: TotalStage1MetaPerApp<T>[];
+  groupStage1Meta: ExtensionStage1Meta<T>[],
   moduleName: string;
 }
 ```
 
-If the `delay` property is `true`, it means that the `totalInitMetaPerApp` property does not yet contain data from all modules where this extension group (`OTHER_EXTENSIONS`) is imported. The `countdown` property indicates how many modules are left for this extension group to process before `totalInitMetaPerApp` will contain data from all modules. Thus, the `delay` and `countdown` properties only apply to `totalInitMetaPerApp`.
+If the `delay` property is `true`, it means that the `totalStage1MetaPerApp` property does not yet contain data from all modules where this extension group (`OTHER_EXTENSIONS`) is imported. The `countdown` property indicates how many modules are left for this extension group to process before `totalStage1MetaPerApp` will contain data from all modules. Thus, the `delay` and `countdown` properties only apply to `totalStage1MetaPerApp`.
 
-The `groupInitMeta` property holds an array of data collected from the current module by different extensions of this group. Each element of the `groupInitMeta` array follows this interface:
+The `groupStage1Meta` property holds an array of data collected from the current module by different extensions of this group. Each element of the `groupStage1Meta` array follows this interface:
 
 ```ts
-interface ExtensionInitMeta<T = any> {
+interface ExtensionStage1Meta<T = any> {
   /**
    * Instance of an extension.
    */
@@ -237,14 +237,14 @@ export class MyExtension implements Extension<void> {
       return;
     }
 
-    const totalInitMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
-    if (totalInitMeta.delay) {
+    const totalStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
+    if (totalStage1Meta.delay) {
       return;
     }
 
-    totalInitMeta.totalInitMetaPerApp.forEach((totaInitMeta) => {
-      totaInitMeta.groupInitMeta.forEach((initMeta) => {
-        const someData = initMeta.payload;
+    totalStage1Meta.totalStage1MetaPerApp.forEach((totaStage1Meta) => {
+      totaStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+        const someData = stage1Meta.payload;
         // Do something here.
         // ...
       });
@@ -258,7 +258,7 @@ export class MyExtension implements Extension<void> {
 Thus, when you need `MyExtension` to receive data from the `OTHER_EXTENSIONS` group throughout the application, you need to pass `true` as the second argument to the `init` method:
 
 ```ts
-const totalInitMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
+const totalStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
 ```
 
 In this case, it is guaranteed that the `MyExtension` instance will receive data from all modules where `OTHER_EXTENSIONS` is imported. Even if `MyExtension` is imported into a module without any extensions from the `OTHER_EXTENSIONS` group, but these extensions exist in other modules, the `init` method of this extension will still be called after all extensions are initialized, ensuring that `MyExtension` receives data from `OTHER_EXTENSIONS` across all modules.
@@ -284,13 +284,13 @@ export class BodyParserExtension implements Extension<void> {
       return;
     }
 
-    const totalInitMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-    totalInitMeta.groupInitMeta.forEach((initMeta) => {
-      const { aControllerMetadata, providersPerMod } = initMeta.payload;
+    const totalStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
+    totalStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+      const { aControllerMetadata, providersPerMod } = stage1Meta.payload;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, singleton }) => {
         // Merging the providers from a module and a controller
-        const mergedProvidersPerRou = [...initMeta.payload.providersPerRou, ...providersPerRou];
-        const mergedProvidersPerReq = [...initMeta.payload.providersPerReq, ...providersPerReq];
+        const mergedProvidersPerRou = [...stage1Meta.payload.providersPerRou, ...providersPerRou];
+        const mergedProvidersPerReq = [...stage1Meta.payload.providersPerReq, ...providersPerReq];
 
         // Creating a hierarchy of injectors.
         const injectorPerApp = this.perAppService.injector;

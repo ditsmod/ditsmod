@@ -6,9 +6,9 @@ export class ExtensionsMetaPerApp {
 }
 
 /**
- * As a rule, an instance of this class is set in a variable named `groupInitMeta`.
+ * As a rule, an instance of this class is set in a variable named `groupStage1Meta`.
  */
-export class ExtensionInitMeta<T = any> {
+export class ExtensionStage1Meta<T = any> {
   /**
    * @param extension Instance of an extension.
    * @param payload Value that `extension` returns from its `init` method.
@@ -21,20 +21,23 @@ export class ExtensionInitMeta<T = any> {
   ) {}
 }
 
-export type TotalInitMetaPerApp<T = any> = Omit<TotalInitMeta<T>, 'totalInitMetaPerApp'>;
-export type TotalInitMeta2<T = any> = OptionalProps<TotalInitMeta<T>, 'groupInitMeta' | 'moduleName' | 'countdown'>;
+export type TotalStage1MetaPerApp<T = any> = Omit<TotalStage1Meta<T>, 'totalStage1MetaPerApp'>;
+export type TotalStage1Meta2<T = any> = OptionalProps<
+  TotalStage1Meta<T>,
+  'groupStage1Meta' | 'moduleName' | 'countdown'
+>;
 
-export class TotalInitMeta<T = any> {
+export class TotalStage1Meta<T = any> {
   delay: boolean;
   countdown = 0;
-  totalInitMetaPerApp: TotalInitMetaPerApp<T>[];
+  totalStage1MetaPerApp: TotalStage1MetaPerApp<T>[];
   /**
    *
-   * @param groupInitMeta Array of `ExtensionInitMeta`.
+   * @param groupStage1Meta Array of `ExtensionStage1Meta`.
    */
   constructor(
     public moduleName: string,
-    public groupInitMeta: ExtensionInitMeta<T>[],
+    public groupStage1Meta: ExtensionStage1Meta<T>[],
   ) {}
 }
 
@@ -43,7 +46,7 @@ export class TotalInitMeta<T = any> {
  * from another module could be accessed in the current module without being tied
  * to a particular group of extensions. The method of the next stage is not triggered
  * until all modules in the application have completed the current stage.
- * 
+ *
  * The order of extension execution in a given module at the second and third stages
  * is exactly the same as at the first stage.
  */

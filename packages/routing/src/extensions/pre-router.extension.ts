@@ -30,9 +30,9 @@ import {
   DefaultSingletonChainMaker,
   SingletonInterceptorWithGuards,
   Class,
-  ExtensionInitMeta,
-  TotalInitMeta,
-  TotalInitMetaPerApp,
+  ExtensionStage1Meta,
+  TotalStage1Meta,
+  TotalStage1MetaPerApp,
   CTX_DATA,
   FactoryProvider,
   ResolvedGuard,
@@ -49,7 +49,7 @@ import { RoutingErrorMediator } from '../router-error-mediator.js';
 @injectable()
 export class PreRouterExtension implements Extension<void> {
   protected inited: boolean;
-  protected totalInitMeta: TotalInitMeta<MetadataPerMod3>;
+  protected totalStage1Meta: TotalStage1Meta<MetadataPerMod3>;
   protected injectorPerMod: Injector;
   protected injectorPerApp: Injector;
 
@@ -68,37 +68,40 @@ export class PreRouterExtension implements Extension<void> {
       return;
     }
 
-    this.totalInitMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
+    this.totalStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
     this.injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
     this.inited = true;
   }
 
   async stage2() {
-    this.injectorPerMod = this.initModuleAndGetInjectorPerMod(this.injectorPerApp, this.totalInitMeta.groupInitMeta);
-    const meta = this.getMeta(this.totalInitMeta.groupInitMeta);
+    this.injectorPerMod = this.initModuleAndGetInjectorPerMod(
+      this.injectorPerApp,
+      this.totalStage1Meta.groupStage1Meta,
+    );
+    const meta = this.getMeta(this.totalStage1Meta.groupStage1Meta);
     this.moduleManager.setInjectorPerMod(meta.module, this.injectorPerMod);
   }
 
   async stage3() {
-    const preparedRouteMeta = this.prepareRoutesMeta(this.totalInitMeta.groupInitMeta);
-    this.setRoutes(this.totalInitMeta, preparedRouteMeta);
+    const preparedRouteMeta = this.prepareRoutesMeta(this.totalStage1Meta.groupStage1Meta);
+    this.setRoutes(this.totalStage1Meta, preparedRouteMeta);
   }
 
-  protected getMeta(groupInitMeta: ExtensionInitMeta<MetadataPerMod3>[]) {
+  protected getMeta(groupStage1Meta: ExtensionStage1Meta<MetadataPerMod3>[]) {
     // Since each extension received the same `meta` array and not a copy of it,
-    // we can take `meta` from any element in the `groupInitMeta` array.
-    return groupInitMeta.at(0)!.payload.meta;
+    // we can take `meta` from any element in the `groupStage1Meta` array.
+    return groupStage1Meta.at(0)!.payload.meta;
   }
 
-  protected prepareRoutesMeta(groupInitMeta: ExtensionInitMeta<MetadataPerMod3>[]) {
+  protected prepareRoutesMeta(groupStage1Meta: ExtensionStage1Meta<MetadataPerMod3>[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
-    groupInitMeta.forEach((initMeta) => {
-      if (!initMeta.payload.aControllerMetadata.length) {
-        // No routes from this extension (initMeta.extension.constructor.name).
+    groupStage1Meta.forEach((stage1Meta) => {
+      if (!stage1Meta.payload.aControllerMetadata.length) {
+        // No routes from this extension (stage1Meta.extension.constructor.name).
         return;
       }
-      const metadataPerMod3 = initMeta.payload;
+      const metadataPerMod3 = stage1Meta.payload;
 
       const { aControllerMetadata, guardsPerMod1 } = metadataPerMod3;
 
@@ -127,19 +130,19 @@ export class PreRouterExtension implements Extension<void> {
 
   protected initModuleAndGetInjectorPerMod(
     injectorPerApp: Injector,
-    groupInitMeta: ExtensionInitMeta<MetadataPerMod3>[],
+    groupStage1Meta: ExtensionStage1Meta<MetadataPerMod3>[],
   ): Injector {
     const singletons = new Set<Class>();
 
-    groupInitMeta.forEach((initMeta) => {
-      initMeta.payload.aControllerMetadata.forEach((controllerMetadata) => {
+    groupStage1Meta.forEach((stage1Meta) => {
+      stage1Meta.payload.aControllerMetadata.forEach((controllerMetadata) => {
         if (controllerMetadata.singletonPerScope == 'module') {
           singletons.add(controllerMetadata.routeMeta.controller);
         }
       });
     });
 
-    const meta = this.getMeta(groupInitMeta);
+    const meta = this.getMeta(groupStage1Meta);
     const mod = getModule(meta.module);
     const extendedProvidersPerMod = [mod, ...singletons, ...meta.providersPerMod];
     const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
@@ -326,9 +329,9 @@ export class PreRouterExtension implements Extension<void> {
     }
   }
 
-  protected setRoutes(totalInitMeta: TotalInitMeta<MetadataPerMod3>, preparedRouteMeta: PreparedRouteMeta[]) {
-    if (!totalInitMeta.delay) {
-      const appHasRoutes = this.checkPresenceOfRoutesInApplication(totalInitMeta.totalInitMetaPerApp);
+  protected setRoutes(totalStage1Meta: TotalStage1Meta<MetadataPerMod3>, preparedRouteMeta: PreparedRouteMeta[]) {
+    if (!totalStage1Meta.delay) {
+      const appHasRoutes = this.checkPresenceOfRoutesInApplication(totalStage1Meta.totalStage1MetaPerApp);
       if (!appHasRoutes) {
         this.log.noRoutes(this);
         return;
@@ -353,11 +356,14 @@ export class PreRouterExtension implements Extension<void> {
     });
   }
 
-  protected checkPresenceOfRoutesInApplication(totalInitMetaPerApp: TotalInitMetaPerApp<MetadataPerMod3>[]) {
-    return totalInitMetaPerApp.reduce((prev1, curr1) => {
+  protected checkPresenceOfRoutesInApplication(totalStage1MetaPerApp: TotalStage1MetaPerApp<MetadataPerMod3>[]) {
+    return totalStage1MetaPerApp.reduce((prev1, curr1) => {
       return (
         prev1 ||
-        curr1.groupInitMeta.reduce((prev2, curr2) => prev2 || Boolean(curr2.payload.aControllerMetadata.length), false)
+        curr1.groupStage1Meta.reduce(
+          (prev2, curr2) => prev2 || Boolean(curr2.payload.aControllerMetadata.length),
+          false,
+        )
       );
     }, false);
   }

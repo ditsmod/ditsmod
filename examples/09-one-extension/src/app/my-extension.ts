@@ -7,7 +7,7 @@ export class MyExtension implements Extension<void> {
 
   constructor(
     private extensionsManager: ExtensionsManager,
-    private logger: Logger
+    private logger: Logger,
   ) {}
 
   async stage1() {
@@ -15,8 +15,8 @@ export class MyExtension implements Extension<void> {
       return;
     }
 
-    const totalInitMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
-    this.logger.log('info', totalInitMeta.groupInitMeta[0].payload.aControllerMetadata);
+    const totalStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
+    this.logger.log('info', totalStage1Meta.groupStage1Meta[0].payload.aControllerMetadata);
 
     this.#inited = true;
   }

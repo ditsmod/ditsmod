@@ -31,11 +31,11 @@ export class ValidationExtension implements Extension<void> {
   }
 
   protected async filterParameters() {
-    const totalInitMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
+    const totalStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
 
-    totalInitMeta.groupInitMeta.forEach((initMeta) => {
-      const { aControllerMetadata } = initMeta.payload;
-      const { providersPerMod } = initMeta.payload.meta;
+    totalStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+      const { aControllerMetadata } = stage1Meta.payload;
+      const { providersPerMod } = stage1Meta.payload.meta;
       providersPerMod.push({ token: AjvService, useValue: this.ajvService });
 
       aControllerMetadata.forEach(({ providersPerReq, routeMeta }) => {
@@ -67,7 +67,7 @@ export class ValidationExtension implements Extension<void> {
         validationRouteMeta.options = this.validationOptions || new ValidationOptions();
 
         if (validationRouteMeta.parameters.length) {
-          initMeta.payload.meta.providersPerReq.unshift(ParametersInterceptor);
+          stage1Meta.payload.meta.providersPerReq.unshift(ParametersInterceptor);
           providersPerReq.push({
             token: HTTP_INTERCEPTORS,
             useToken: ParametersInterceptor,
@@ -75,7 +75,7 @@ export class ValidationExtension implements Extension<void> {
           });
         }
         if (validationRouteMeta.requestBodySchema) {
-          initMeta.payload.meta.providersPerReq.unshift(RequestBodyInterceptor);
+          stage1Meta.payload.meta.providersPerReq.unshift(RequestBodyInterceptor);
           providersPerReq.push({
             token: HTTP_INTERCEPTORS,
             useToken: RequestBodyInterceptor,

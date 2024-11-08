@@ -168,10 +168,10 @@ export class MyExtension implements Extension<void> {
       return;
     }
 
-    const totalInitMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
+    const totalStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
 
-    totalInitMeta.groupInitMeta.forEach((initMeta) => {
-      const someData = initMeta.payload;
+    totalStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+      const someData = stage1Meta.payload;
       // Do something here.
       // ...
     });
@@ -184,21 +184,21 @@ export class MyExtension implements Extension<void> {
 `ExtensionsManager` буде послідовно викликати ініціалізацію усіх розширень з указаної групи, а результат їхньої роботи повертатиме в об'єкті, що має наступний інтерфейс:
 
 ```ts
-interface TotalInitMeta<T = any> {
+interface TotalStage1Meta<T = any> {
   delay: boolean;
   countdown = 0;
-  totalInitMetaPerApp: TotalInitMetaPerApp<T>[];
-  groupInitMeta: ExtensionInitMeta<T>[],
+  totalStage1MetaPerApp: TotalStage1MetaPerApp<T>[];
+  groupStage1Meta: ExtensionStage1Meta<T>[],
   moduleName: string;
 }
 ```
 
-Якщо властивість `delay == true` - це означає, що властивість `totalInitMetaPerApp` містить дані ще не з усіх модулів, куди імпортовано дану групу розширень (`OTHER_EXTENSIONS`). Властивість `countdown` вказує, у скількох модулях ще залишилось відпрацювати даній групі розширень, щоб властивість `totalInitMetaPerApp` містила дані з усіх модулів. Тобто властивості `delay` та `countdown` стосуються лише властивості `totalInitMetaPerApp`.
+Якщо властивість `delay == true` - це означає, що властивість `totalStage1MetaPerApp` містить дані ще не з усіх модулів, куди імпортовано дану групу розширень (`OTHER_EXTENSIONS`). Властивість `countdown` вказує, у скількох модулях ще залишилось відпрацювати даній групі розширень, щоб властивість `totalStage1MetaPerApp` містила дані з усіх модулів. Тобто властивості `delay` та `countdown` стосуються лише властивості `totalStage1MetaPerApp`.
 
-У властивості `groupInitMeta` знаходиться масив, де зібрані дані з поточного модуля від різних розширень з даної групи розширень. Кожен елемент масиву `groupInitMeta` має наступний інтерфейс:
+У властивості `groupStage1Meta` знаходиться масив, де зібрані дані з поточного модуля від різних розширень з даної групи розширень. Кожен елемент масиву `groupStage1Meta` має наступний інтерфейс:
 
 ```ts
-interface ExtensionInitMeta<T = any> {
+interface ExtensionStage1Meta<T = any> {
   /**
    * Instance of an extension.
    */
@@ -237,14 +237,14 @@ export class MyExtension implements Extension<void> {
       return;
     }
 
-    const totalInitMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
-    if (totalInitMeta.delay) {
+    const totalStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
+    if (totalStage1Meta.delay) {
       return;
     }
 
-    totalInitMeta.totalInitMetaPerApp.forEach((totaInitMeta) => {
-      totaInitMeta.groupInitMeta.forEach((initMeta) => {
-        const someData = initMeta.payload;
+    totalStage1Meta.totalStage1MetaPerApp.forEach((totaStage1Meta) => {
+      totaStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+        const someData = stage1Meta.payload;
         // Do something here.
         // ...
       });
@@ -258,7 +258,7 @@ export class MyExtension implements Extension<void> {
 Тобто коли вам потрібно щоб `MyExtension` отримало дані з групи `OTHER_EXTENSIONS` з усього застосунку, другим аргументом для методу `init` потрібно передавати `true`:
 
 ```ts
-const totalInitMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
+const totalStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
 ```
 
 В такому разі гарантується, що інстанс `MyExtension` отримає дані з усіх модулів, куди імпортовано `OTHER_EXTENSIONS`. Навіть якщо `MyExtension` буде імпортовано у певний модуль, в якому немає розширень із групи `OTHER_EXTENSIONS`, але ці розширення є в інших модулях, все-одно метод `init` даного розширення буде викликано після ініціалізації усіх розширень, тому `MyExtension` отримає дані від `OTHER_EXTENSIONS` з усіх модулів.
@@ -284,13 +284,13 @@ export class BodyParserExtension implements Extension<void> {
       return;
     }
 
-    const totalInitMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-    totalInitMeta.groupInitMeta.forEach((initMeta) => {
-      const { aControllerMetadata, providersPerMod } = initMeta.payload;
+    const totalStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
+    totalStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+      const { aControllerMetadata, providersPerMod } = stage1Meta.payload;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, singleton }) => {
         // Merging the providers from a module and a controller
-        const mergedProvidersPerRou = [...initMeta.payload.providersPerRou, ...providersPerRou];
-        const mergedProvidersPerReq = [...initMeta.payload.providersPerReq, ...providersPerReq];
+        const mergedProvidersPerRou = [...stage1Meta.payload.providersPerRou, ...providersPerRou];
+        const mergedProvidersPerReq = [...stage1Meta.payload.providersPerReq, ...providersPerReq];
 
         // Creating a hierarchy of injectors.
         const injectorPerApp = this.perAppService.injector;

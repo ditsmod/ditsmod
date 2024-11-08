@@ -156,14 +156,14 @@ class Dependecy1 {
 **Breaking Changes**
 
 - [renamed](https://github.com/ditsmod/ditsmod/commit/00f56e2b481) `groupToken` to `token` for `ExtensionOptionsBase`.
-- now from `extensionManager.init()` returns `TotalInitMeta`:
+- now from `extensionManager.init()` returns `TotalStage1Meta`:
 
 ```ts
-interface TotalInitMeta<T = any> {
+interface TotalStage1Meta<T = any> {
   delay: boolean;
   countdown = 0;
-  totalInitMetaPerApp: TotalInitMetaPerApp<T>[];
-  groupInitMeta: ExtensionInitMeta<T>[],
+  totalStage1MetaPerApp: TotalStage1MetaPerApp<T>[];
+  groupStage1Meta: ExtensionStage1Meta<T>[],
   moduleName: string;
 }
 ```
