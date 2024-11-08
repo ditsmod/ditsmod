@@ -35,11 +35,8 @@ export class TotalStage1Meta<T = any> {
   ) {}
 }
 
+export type TotalStage1Meta2<T = any> = OptionalProps<TotalStage1Meta<T>,'groupStage1Meta' | 'moduleName' | 'countdown'>;
 export type TotalStage1MetaPerApp<T = any> = Omit<TotalStage1Meta<T>, 'totalStage1MetaPerApp'>;
-export type TotalStage1Meta2<T = any> = OptionalProps<
-  TotalStage1Meta<T>,
-  'groupStage1Meta' | 'moduleName' | 'countdown'
->;
 
 /**
  * The concept of "stages" in extensions was introduced so that metadata or injectors
