@@ -6,6 +6,8 @@ import { ExtensionsContext } from './extensions-context.js';
 import { ExtensionsManager } from './extensions-manager.js';
 
 describe('ExtensionsManager', () => {
+  describe('stage1', () => {});
+
   describe('circular dependencies', () => {
     class MockExtensionsManager extends ExtensionsManager {
       override unfinishedInit = new Set<Extension>();

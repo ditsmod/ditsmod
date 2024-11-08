@@ -47,6 +47,8 @@ export class ExtensionsManager {
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
     }
+
+    // this.unfinishedInit is empty during metadata collection from all modules.
     if (perApp && this.unfinishedInit.size > 1) {
       this.addExtensionToPendingList(groupToken);
     }
