@@ -1,3 +1,5 @@
+import { ChainError } from '@ts-stack/chain-error';
+
 import { BeforeToken, InjectionToken, Injector } from '#di';
 import { ImportsResolver } from './imports-resolver.js';
 import { Logger } from '#logger/logger.js';
@@ -29,6 +31,7 @@ import { isMultiProvider, isNormRootModule } from './utils/type-guards.js';
 import { SERVER } from '#constans';
 import { NodeServer } from '#types/server-options.js';
 import { MetadataPerMod2 } from './types/metadata-per-mod.js';
+import { getProviderName } from './utils/get-provider-name.js';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();
@@ -273,22 +276,41 @@ export class AppInitializer {
       await this.handleExtensionsPerMod(preparedMetadataPerMod1, extensionsManager);
       this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
     }
+    await this.perAppHandling(extensionsContext);
+  }
 
+  protected async perAppHandling(extensionsContext: ExtensionsContext) {
     for (const [groupToken, mExtensions] of extensionsContext.mExtensionPendingList) {
       for (const extension of mExtensions.values()) {
-        await extension.stage1?.(true);
+        try {
+          await extension.stage1?.(true);
+        } catch (err: any) {
+          const groupName = getProviderName(groupToken);
+          const msg = `Metadata collection from all modules for ${groupName} failed`;
+          throw new ChainError(msg, { name: 'Error', cause: err });
+        }
       }
     }
 
-    for (const [, extensionSet] of extensionsContext.mStage) {
+    for (const [mod, extensionSet] of extensionsContext.mStage) {
       for (const ext of extensionSet) {
-        await ext.stage2?.();
+        try {
+          await ext.stage2?.();
+        } catch (err: any) {
+          const msg = `Stage2 in ${getModuleName(mod)} -> ${ext.constructor.name} failed`;
+          throw new ChainError(msg, err);
+        }
       }
     }
 
-    for (const [, extensionSet] of extensionsContext.mStage) {
+    for (const [mod, extensionSet] of extensionsContext.mStage) {
       for (const ext of extensionSet) {
-        await ext.stage3?.();
+        try {
+          await ext.stage3?.();
+        } catch (err: any) {
+          const msg = `Stage3 in ${getModuleName(mod)} -> ${ext.constructor.name} failed`;
+          throw new ChainError(msg, err);
+        }
       }
     }
   }
@@ -320,10 +342,14 @@ export class AppInitializer {
       }
     }
     for (const groupToken of extensionTokens) {
-      extensionsManager.moduleName = moduleName;
-      extensionsManager.beforeTokens = beforeTokens;
-      await extensionsManager.stage1(groupToken);
-      extensionsManager.updateExtensionPendingList();
+      try {
+        extensionsManager.moduleName = moduleName;
+        extensionsManager.beforeTokens = beforeTokens;
+        await extensionsManager.stage1(groupToken);
+        extensionsManager.updateExtensionPendingList();
+      } catch (error: any) {
+        throw new ChainError(moduleName, error);
+      }
     }
 
     extensionsManager.setExtensionsToStage2(meta.module);
