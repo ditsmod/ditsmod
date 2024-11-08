@@ -292,24 +292,15 @@ export class AppInitializer {
       }
     }
 
-    for (const [mod, extensionSet] of extensionsContext.mStage) {
-      for (const ext of extensionSet) {
-        try {
-          await ext.stage2?.();
-        } catch (err: any) {
-          const msg = `Stage2 in ${getModuleName(mod)} -> ${ext.constructor.name} failed`;
-          throw new ChainError(msg, err);
-        }
-      }
-    }
-
-    for (const [mod, extensionSet] of extensionsContext.mStage) {
-      for (const ext of extensionSet) {
-        try {
-          await ext.stage3?.();
-        } catch (err: any) {
-          const msg = `Stage3 in ${getModuleName(mod)} -> ${ext.constructor.name} failed`;
-          throw new ChainError(msg, err);
+    for (const num of [2, 3] as const) {
+      for (const [mod, extensionSet] of extensionsContext.mStage) {
+        for (const ext of extensionSet) {
+          try {
+            await ext[`stage${num}`]?.();
+          } catch (err: any) {
+            const msg = `Stage${num} in ${getModuleName(mod)} -> ${ext.constructor.name} failed`;
+            throw new ChainError(msg, { name: 'Error', cause: err });
+          }
         }
       }
     }
