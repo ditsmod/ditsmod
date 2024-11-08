@@ -10,7 +10,7 @@ import {
   isFactoryProvider,
   getDependencies,
   Provider,
-  TotalStage1MetaPerApp,
+  GroupStage1MetaPerApp,
   ModuleManager,
 } from '@ditsmod/core';
 import { PreRouterExtension, RoutingErrorMediator, MetadataPerMod3 } from '@ditsmod/routing';
@@ -36,12 +36,12 @@ export class TestPreRouterExtension extends PreRouterExtension {
 
   override async stage2() {
     // Added only this line to override super.stage3()
-    this.overrideAllProviders(this.totalStage1Meta.totalStage1MetaPerApp);
+    this.overrideAllProviders(this.groupStage1Meta.groupStage1MetaPerApp);
 
     await super.stage2();
   }
 
-  protected overrideAllProviders(totalStage1MetaPerApp: TotalStage1MetaPerApp<MetadataPerMod3>[]) {
+  protected overrideAllProviders(groupStage1MetaPerApp: GroupStage1MetaPerApp<MetadataPerMod3>[]) {
     const providersToOverride = this.testModuleManager.getProvidersToOverride();
     const logLevel = this.testModuleManager.getLogLevel();
     overrideLogLevel(this.perAppService.providers, logLevel);
@@ -53,8 +53,8 @@ export class TestPreRouterExtension extends PreRouterExtension {
 
     this.perAppService.reinitInjector();
 
-    totalStage1MetaPerApp.forEach((totalStage1Meta) => {
-      totalStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
+    groupStage1MetaPerApp.forEach((groupStage1Meta) => {
+      groupStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
         const metadataPerMod3 = stage1Meta.payload;
         overrideLogLevel(metadataPerMod3.meta.providersPerMod, logLevel);
         overrideLogLevel(metadataPerMod3.meta.providersPerRou, logLevel);

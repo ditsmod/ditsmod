@@ -168,9 +168,9 @@ export class MyExtension implements Extension<void> {
       return;
     }
 
-    const totalStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
+    const groupStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
 
-    totalStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
+    groupStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
       const someData = stage1Meta.payload;
       // Do something here.
       // ...
@@ -184,16 +184,16 @@ export class MyExtension implements Extension<void> {
 `ExtensionsManager` буде послідовно викликати ініціалізацію усіх розширень з указаної групи, а результат їхньої роботи повертатиме в об'єкті, що має наступний інтерфейс:
 
 ```ts
-interface TotalStage1Meta<T = any> {
+interface GroupStage1Meta<T = any> {
   delay: boolean;
   countdown = 0;
-  totalStage1MetaPerApp: TotalStage1MetaPerApp<T>[];
+  groupStage1MetaPerApp: GroupStage1MetaPerApp<T>[];
   aExtStage1Meta: ExtensionStage1Meta<T>[],
   moduleName: string;
 }
 ```
 
-Якщо властивість `delay == true` - це означає, що властивість `totalStage1MetaPerApp` містить дані ще не з усіх модулів, куди імпортовано дану групу розширень (`OTHER_EXTENSIONS`). Властивість `countdown` вказує, у скількох модулях ще залишилось відпрацювати даній групі розширень, щоб властивість `totalStage1MetaPerApp` містила дані з усіх модулів. Тобто властивості `delay` та `countdown` стосуються лише властивості `totalStage1MetaPerApp`.
+Якщо властивість `delay == true` - це означає, що властивість `groupStage1MetaPerApp` містить дані ще не з усіх модулів, куди імпортовано дану групу розширень (`OTHER_EXTENSIONS`). Властивість `countdown` вказує, у скількох модулях ще залишилось відпрацювати даній групі розширень, щоб властивість `groupStage1MetaPerApp` містила дані з усіх модулів. Тобто властивості `delay` та `countdown` стосуються лише властивості `groupStage1MetaPerApp`.
 
 У властивості `aExtStage1Meta` знаходиться масив, де зібрані дані з поточного модуля від різних розширень з даної групи розширень. Кожен елемент масиву `aExtStage1Meta` має наступний інтерфейс:
 
@@ -237,12 +237,12 @@ export class MyExtension implements Extension<void> {
       return;
     }
 
-    const totalStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
-    if (totalStage1Meta.delay) {
+    const groupStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
+    if (groupStage1Meta.delay) {
       return;
     }
 
-    totalStage1Meta.totalStage1MetaPerApp.forEach((totaStage1Meta) => {
+    groupStage1Meta.groupStage1MetaPerApp.forEach((totaStage1Meta) => {
       totaStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
         const someData = stage1Meta.payload;
         // Do something here.
@@ -258,7 +258,7 @@ export class MyExtension implements Extension<void> {
 Тобто коли вам потрібно щоб `MyExtension` отримало дані з групи `OTHER_EXTENSIONS` з усього застосунку, другим аргументом для методу `stage1` потрібно передавати `true`:
 
 ```ts
-const totalStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
+const groupStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
 ```
 
 В такому разі гарантується, що інстанс `MyExtension` отримає дані з усіх модулів, куди імпортовано `OTHER_EXTENSIONS`. Навіть якщо `MyExtension` буде імпортовано у певний модуль, в якому немає розширень із групи `OTHER_EXTENSIONS`, але ці розширення є в інших модулях, все-одно метод `stage1` даного розширення буде викликано після ініціалізації усіх розширень, тому `MyExtension` отримає дані від `OTHER_EXTENSIONS` з усіх модулів.
@@ -284,8 +284,8 @@ export class BodyParserExtension implements Extension<void> {
       return;
     }
 
-    const totalStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-    totalStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
+    const groupStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
+    groupStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
       const { aControllerMetadata, providersPerMod } = stage1Meta.payload;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, singleton }) => {
         // Merging the providers from a module and a controller

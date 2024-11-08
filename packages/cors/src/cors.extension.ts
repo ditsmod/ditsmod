@@ -12,7 +12,7 @@ import {
   Provider,
   RequestContext,
   ExtensionStage1Meta,
-  TotalStage1MetaPerApp,
+  GroupStage1MetaPerApp,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
 import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
@@ -35,21 +35,21 @@ export class CorsExtension implements Extension<void | false> {
       return;
     }
 
-    const totalStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS, true);
-    if (totalStage1Meta.delay) {
+    const groupStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS, true);
+    if (groupStage1Meta.delay) {
       return false;
     }
-    this.prepareDataAndSetInterceptors(totalStage1Meta.totalStage1MetaPerApp, this.perAppService.injector);
+    this.prepareDataAndSetInterceptors(groupStage1Meta.groupStage1MetaPerApp, this.perAppService.injector);
 
     this.inited = true;
     return; // Make TypeScript happy
   }
 
   protected prepareDataAndSetInterceptors(
-    totalStage1MetaPerApp: TotalStage1MetaPerApp<MetadataPerMod3>[],
+    groupStage1MetaPerApp: GroupStage1MetaPerApp<MetadataPerMod3>[],
     injectorPerApp: Injector,
   ) {
-    totalStage1MetaPerApp.forEach((totaStage1Meta) => {
+    groupStage1MetaPerApp.forEach((totaStage1Meta) => {
       totaStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
         const metadataPerMod3 = stage1Meta.payload;
         const { aControllerMetadata } = metadataPerMod3;

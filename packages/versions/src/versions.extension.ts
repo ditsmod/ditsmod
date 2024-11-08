@@ -6,8 +6,8 @@ export class VersionsExtension implements Extension<void> {
   constructor(protected extensionManager: ExtensionsManager) {}
 
   async stage1() {
-    const totalStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-    totalStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
+    const groupStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
+    groupStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
       const { aControllerMetadata } = stage1Meta.payload;
       console.log('-'.repeat(50), stage1Meta.payload.meta.name);
 

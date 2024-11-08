@@ -31,9 +31,9 @@ export class ValidationExtension implements Extension<void> {
   }
 
   protected async filterParameters() {
-    const totalStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
+    const groupStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
 
-    totalStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
+    groupStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
       const { aControllerMetadata } = stage1Meta.payload;
       const { providersPerMod } = stage1Meta.payload.meta;
       providersPerMod.push({ token: AjvService, useValue: this.ajvService });

@@ -31,8 +31,8 @@ import {
   SingletonInterceptorWithGuards,
   Class,
   ExtensionStage1Meta,
-  TotalStage1Meta,
-  TotalStage1MetaPerApp,
+  GroupStage1Meta,
+  GroupStage1MetaPerApp,
   CTX_DATA,
   FactoryProvider,
   ResolvedGuard,
@@ -49,7 +49,7 @@ import { RoutingErrorMediator } from '../router-error-mediator.js';
 @injectable()
 export class PreRouterExtension implements Extension<void> {
   protected inited: boolean;
-  protected totalStage1Meta: TotalStage1Meta<MetadataPerMod3>;
+  protected groupStage1Meta: GroupStage1Meta<MetadataPerMod3>;
   protected injectorPerMod: Injector;
   protected injectorPerApp: Injector;
 
@@ -68,7 +68,7 @@ export class PreRouterExtension implements Extension<void> {
       return;
     }
 
-    this.totalStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
+    this.groupStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
     this.injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
     this.inited = true;
   }
@@ -76,15 +76,15 @@ export class PreRouterExtension implements Extension<void> {
   async stage2() {
     this.injectorPerMod = this.initModuleAndGetInjectorPerMod(
       this.injectorPerApp,
-      this.totalStage1Meta.aExtStage1Meta,
+      this.groupStage1Meta.aExtStage1Meta,
     );
-    const meta = this.getMeta(this.totalStage1Meta.aExtStage1Meta);
+    const meta = this.getMeta(this.groupStage1Meta.aExtStage1Meta);
     this.moduleManager.setInjectorPerMod(meta.module, this.injectorPerMod);
   }
 
   async stage3() {
-    const preparedRouteMeta = this.prepareRoutesMeta(this.totalStage1Meta.aExtStage1Meta);
-    this.setRoutes(this.totalStage1Meta, preparedRouteMeta);
+    const preparedRouteMeta = this.prepareRoutesMeta(this.groupStage1Meta.aExtStage1Meta);
+    this.setRoutes(this.groupStage1Meta, preparedRouteMeta);
   }
 
   protected getMeta(aExtStage1Meta: ExtensionStage1Meta<MetadataPerMod3>[]) {
@@ -329,9 +329,9 @@ export class PreRouterExtension implements Extension<void> {
     }
   }
 
-  protected setRoutes(totalStage1Meta: TotalStage1Meta<MetadataPerMod3>, preparedRouteMeta: PreparedRouteMeta[]) {
-    if (!totalStage1Meta.delay) {
-      const appHasRoutes = this.checkPresenceOfRoutesInApplication(totalStage1Meta.totalStage1MetaPerApp);
+  protected setRoutes(groupStage1Meta: GroupStage1Meta<MetadataPerMod3>, preparedRouteMeta: PreparedRouteMeta[]) {
+    if (!groupStage1Meta.delay) {
+      const appHasRoutes = this.checkPresenceOfRoutesInApplication(groupStage1Meta.groupStage1MetaPerApp);
       if (!appHasRoutes) {
         this.log.noRoutes(this);
         return;
@@ -356,8 +356,8 @@ export class PreRouterExtension implements Extension<void> {
     });
   }
 
-  protected checkPresenceOfRoutesInApplication(totalStage1MetaPerApp: TotalStage1MetaPerApp<MetadataPerMod3>[]) {
-    return totalStage1MetaPerApp.reduce((prev1, curr1) => {
+  protected checkPresenceOfRoutesInApplication(groupStage1MetaPerApp: GroupStage1MetaPerApp<MetadataPerMod3>[]) {
+    return groupStage1MetaPerApp.reduce((prev1, curr1) => {
       return (
         prev1 ||
         curr1.aExtStage1Meta.reduce(

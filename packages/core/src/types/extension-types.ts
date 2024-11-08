@@ -21,10 +21,10 @@ export class ExtensionStage1Meta<T = any> {
   ) {}
 }
 
-export class TotalStage1Meta<T = any> {
+export class GroupStage1Meta<T = any> {
   delay: boolean;
   countdown = 0;
-  totalStage1MetaPerApp: TotalStage1MetaPerApp<T>[];
+  groupStage1MetaPerApp: GroupStage1MetaPerApp<T>[];
   /**
    *
    * @param aExtStage1Meta Array of `ExtensionStage1Meta`.
@@ -35,8 +35,8 @@ export class TotalStage1Meta<T = any> {
   ) {}
 }
 
-export type TotalStage1Meta2<T = any> = OptionalProps<TotalStage1Meta<T>,'aExtStage1Meta' | 'moduleName' | 'countdown'>;
-export type TotalStage1MetaPerApp<T = any> = Omit<TotalStage1Meta<T>, 'totalStage1MetaPerApp'>;
+export type GroupStage1Meta2<T = any> = OptionalProps<GroupStage1Meta<T>,'aExtStage1Meta' | 'moduleName' | 'countdown'>;
+export type GroupStage1MetaPerApp<T = any> = Omit<GroupStage1Meta<T>, 'groupStage1MetaPerApp'>;
 
 /**
  * The concept of "stages" in extensions was introduced so that metadata or injectors

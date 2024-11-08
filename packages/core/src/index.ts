@@ -33,8 +33,8 @@ export {
   ExtensionsMetaPerApp,
   Extension,
   ExtensionStage1Meta,
-  TotalStage1Meta,
-  TotalStage1MetaPerApp,
+  GroupStage1Meta,
+  GroupStage1MetaPerApp,
 } from './types/extension-types.js';
 export { ModuleExtract } from './types/module-extract.js';
 export { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
