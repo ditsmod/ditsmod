@@ -3,7 +3,7 @@ import { TestApplication } from '@ditsmod/testing';
 
 import { InjectionToken, injectable } from '#di';
 import { rootModule } from '#decorators/root-module.js';
-import { Extension, ExtensionStage1Meta, GroupStage1Meta } from '#types/extension-types.js';
+import { Extension, DebugStage1Meta, GroupStage1Meta } from '#types/extension-types.js';
 import { ExtensionsManager } from '#services/extensions-manager.js';
 import { featureModule } from '#decorators/module.js';
 import { Router } from '#types/router.js';
@@ -140,11 +140,11 @@ describe('extensions e2e', () => {
     expect(extensionInit2).toHaveBeenCalledTimes(2);
     const extension = new Extension1();
     extension.data = extensionPayload;
-    const stage1Meta = new ExtensionStage1Meta(extension, extensionPayload, true, 1);
-    const groupStage1Meta = new GroupStage1Meta('Module3', [stage1Meta]);
+    const stage1Meta = new DebugStage1Meta(extension, extensionPayload, true, 1);
+    const groupStage1Meta = new GroupStage1Meta('Module3', [stage1Meta], [extensionPayload]);
     groupStage1Meta.delay = true;
     groupStage1Meta.countdown = 1;
-    groupStage1Meta.groupStage1MetaPerApp = expect.any(Array);
+    groupStage1Meta.groupDataPerApp = expect.any(Array);
     expect(extensionInit2).toHaveBeenNthCalledWith(1, groupStage1Meta);
     stage1Meta.delay = false;
     stage1Meta.countdown = 0;
@@ -228,7 +228,7 @@ describe('extensions e2e', () => {
     expect(extensionInit2).toHaveBeenCalledTimes(2);
     const expect1 = {
       moduleName: 'Module3',
-      aExtStage1Meta: [
+      aDebugMeta: [
         {
           extension: { data: 'Extension1 payload' } as any,
           payload: 'Extension1 payload',
@@ -236,12 +236,13 @@ describe('extensions e2e', () => {
           countdown: 1,
         },
       ],
+      groupData: ['Extension1 payload'],
       delay: true,
       countdown: 1,
-      groupStage1MetaPerApp: [
+      groupDataPerApp: [
         {
           moduleName: 'Module2',
-          aExtStage1Meta: [
+          aDebugMeta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
@@ -249,12 +250,13 @@ describe('extensions e2e', () => {
               countdown: 2,
             },
           ],
+          groupData: ['Extension1 payload'],
           delay: true,
           countdown: 2,
         },
         {
           moduleName: 'Module3',
-          aExtStage1Meta: [
+          aDebugMeta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
@@ -262,6 +264,7 @@ describe('extensions e2e', () => {
               countdown: 1,
             },
           ],
+          groupData: ['Extension1 payload'],
           delay: true,
           countdown: 1,
         },
@@ -270,10 +273,10 @@ describe('extensions e2e', () => {
     expect(extensionInit2).toHaveBeenNthCalledWith(1, expect1);
     const expect2 = {
       delay: false,
-      groupStage1MetaPerApp: [
+      groupDataPerApp: [
         {
           moduleName: 'Module2',
-          aExtStage1Meta: [
+          aDebugMeta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
@@ -281,12 +284,13 @@ describe('extensions e2e', () => {
               countdown: 2,
             },
           ],
+          groupData: ['Extension1 payload'],
           delay: true,
           countdown: 2,
         },
         {
           moduleName: 'Module3',
-          aExtStage1Meta: [
+          aDebugMeta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
@@ -294,12 +298,13 @@ describe('extensions e2e', () => {
               countdown: 1,
             },
           ],
+          groupData: ['Extension1 payload'],
           delay: true,
           countdown: 1,
         },
         {
           moduleName: 'AppModule',
-          aExtStage1Meta: [
+          aDebugMeta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
@@ -307,6 +312,7 @@ describe('extensions e2e', () => {
               countdown: 0,
             },
           ],
+          groupData: ['Extension1 payload'],
           delay: false,
           countdown: 0,
         },

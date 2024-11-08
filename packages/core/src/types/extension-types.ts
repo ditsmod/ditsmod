@@ -6,9 +6,9 @@ export class ExtensionsMetaPerApp {
 }
 
 /**
- * As a rule, an instance of this class is set in a variable named `aExtStage1Meta`.
+ * As a rule, an instance of this class is set in a variable named `groupData`.
  */
-export class ExtensionStage1Meta<T = any> {
+export class DebugStage1Meta<T = any> {
   /**
    * @param extension Instance of an extension.
    * @param payload Value that `extension` returns from its `stage1` method.
@@ -24,19 +24,23 @@ export class ExtensionStage1Meta<T = any> {
 export class GroupStage1Meta<T = any> {
   delay: boolean;
   countdown = 0;
-  groupStage1MetaPerApp: GroupStage1MetaPerApp<T>[];
-  /**
-   *
-   * @param aExtStage1Meta Array of `ExtensionStage1Meta`.
-   */
+  groupDataPerApp: GroupStage1MetaPerApp<T>[];
+
   constructor(
     public moduleName: string,
-    public aExtStage1Meta: ExtensionStage1Meta<T>[],
+    public aDebugMeta: DebugStage1Meta<T>[],
+    public groupData: T[],
   ) {}
+
+  addDebugMeta(debugMeta: DebugStage1Meta<T>) {
+    this.aDebugMeta.push(debugMeta);
+    this.groupData.push(debugMeta.payload);
+  }
 }
 
-export type GroupStage1Meta2<T = any> = OptionalProps<GroupStage1Meta<T>,'aExtStage1Meta' | 'moduleName' | 'countdown'>;
-export type GroupStage1MetaPerApp<T = any> = Omit<GroupStage1Meta<T>, 'groupStage1MetaPerApp'>;
+// prettier-ignore
+export type GroupStage1Meta2<T = any> = OptionalProps<GroupStage1Meta<T>, 'aDebugMeta' | 'groupData' | 'moduleName' | 'countdown'>;
+export type GroupStage1MetaPerApp<T = any> = Omit<GroupStage1Meta<T>, 'groupDataPerApp'>;
 
 /**
  * The concept of "stages" in extensions was introduced so that metadata or injectors

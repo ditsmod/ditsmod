@@ -170,8 +170,8 @@ export class MyExtension implements Extension<void> {
 
     const groupStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
 
-    groupStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
-      const someData = stage1Meta.payload;
+    groupStage1Meta.groupData.forEach((stage1Meta) => {
+      const someData = stage1Meta;
       // Do something here.
       // ...
     });
@@ -187,34 +187,15 @@ The `ExtensionsManager` will sequentially initialize all extensions from a given
 interface GroupStage1Meta<T = any> {
   delay: boolean;
   countdown = 0;
-  groupStage1MetaPerApp: GroupStage1MetaPerApp<T>[];
-  aExtStage1Meta: ExtensionStage1Meta<T>[],
+  groupDataPerApp: GroupStage1MetaPerApp<T>[];
+  groupData: T[],
   moduleName: string;
 }
 ```
 
-If the `delay` property is `true`, it means that the `groupStage1MetaPerApp` property does not yet contain data from all modules where this extension group (`OTHER_EXTENSIONS`) is imported. The `countdown` property indicates how many modules are left for this extension group to process before `groupStage1MetaPerApp` will contain data from all modules. Thus, the `delay` and `countdown` properties only apply to `groupStage1MetaPerApp`.
+If the `delay` property is `true`, it means that the `groupDataPerApp` property does not yet contain data from all modules where this extension group (`OTHER_EXTENSIONS`) is imported. The `countdown` property indicates how many modules are left for this extension group to process before `groupDataPerApp` will contain data from all modules. Thus, the `delay` and `countdown` properties only apply to `groupDataPerApp`.
 
-The `aExtStage1Meta` property holds an array of data collected from the current module by different extensions of this group. Each element of the `aExtStage1Meta` array follows this interface:
-
-```ts
-interface ExtensionStage1Meta<T = any> {
-  /**
-   * Instance of an extension.
-   */
-  extension: Extension<T>;
-  /**
-   * Value that `extension` returns from its `stage1` method.
-   */
-  payload: T;
-  delay: boolean;
-  countdown: number;
-}
-```
-
-The `extension` property contains the instance of the extension, and the `payload` property holds the data returned by the extension's `stage1()` method.
-
-If `delay == true` and `countdown > 0`, it indicates that this extension has not yet finished its work in other modules where it was imported. In this case, the `delay` and `countdown` properties refer specifically to the extension, not the group of extensions (in this case, the `OTHER_EXTENSIONS` group).
+The `groupData` property holds an array of data collected from the current module by different extensions of this group.
 
 It's important to note that a separate instance of each extension is created for each module. For example, if `MyExtension` is imported into three different modules, Ditsmod will process these three modules sequentially with three different instances of `MyExtension`. Additionally, if `MyExtension` requires data from, say, the `OTHER_EXTENSIONS` group, which spans four modules, but `MyExtension` is only imported into three modules, it may not receive all the necessary data from one of the modules.
 
@@ -242,9 +223,8 @@ export class MyExtension implements Extension<void> {
       return;
     }
 
-    groupStage1Meta.groupStage1MetaPerApp.forEach((totaStage1Meta) => {
-      totaStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
-        const someData = stage1Meta.payload;
+    groupStage1Meta.groupDataPerApp.forEach((totaStage1Meta) => {
+      totaStage1Meta.groupData.forEach((metadataPerMod3) => {
         // Do something here.
         // ...
       });
@@ -285,12 +265,12 @@ export class BodyParserExtension implements Extension<void> {
     }
 
     const groupStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-    groupStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
-      const { aControllerMetadata, providersPerMod } = stage1Meta.payload;
+    groupStage1Meta.groupData.forEach((metadataPerMod3) => {
+      const { aControllerMetadata, providersPerMod } = metadataPerMod3;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, singleton }) => {
         // Merging the providers from a module and a controller
-        const mergedProvidersPerRou = [...stage1Meta.payload.providersPerRou, ...providersPerRou];
-        const mergedProvidersPerReq = [...stage1Meta.payload.providersPerReq, ...providersPerReq];
+        const mergedProvidersPerRou = [...metadataPerMod3.providersPerRou, ...providersPerRou];
+        const mergedProvidersPerReq = [...metadataPerMod3.providersPerReq, ...providersPerReq];
 
         // Creating a hierarchy of injectors.
         const injectorPerApp = this.perAppService.injector;

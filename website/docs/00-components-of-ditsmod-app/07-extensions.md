@@ -170,8 +170,8 @@ export class MyExtension implements Extension<void> {
 
     const groupStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
 
-    groupStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
-      const someData = stage1Meta.payload;
+    groupStage1Meta.groupData.forEach((stage1Meta) => {
+      const someData = stage1Meta;
       // Do something here.
       // ...
     });
@@ -187,34 +187,15 @@ export class MyExtension implements Extension<void> {
 interface GroupStage1Meta<T = any> {
   delay: boolean;
   countdown = 0;
-  groupStage1MetaPerApp: GroupStage1MetaPerApp<T>[];
-  aExtStage1Meta: ExtensionStage1Meta<T>[],
+  groupDataPerApp: GroupStage1MetaPerApp<T>[];
+  groupData: T[],
   moduleName: string;
 }
 ```
 
-Якщо властивість `delay == true` - це означає, що властивість `groupStage1MetaPerApp` містить дані ще не з усіх модулів, куди імпортовано дану групу розширень (`OTHER_EXTENSIONS`). Властивість `countdown` вказує, у скількох модулях ще залишилось відпрацювати даній групі розширень, щоб властивість `groupStage1MetaPerApp` містила дані з усіх модулів. Тобто властивості `delay` та `countdown` стосуються лише властивості `groupStage1MetaPerApp`.
+Якщо властивість `delay == true` - це означає, що властивість `groupDataPerApp` містить дані ще не з усіх модулів, куди імпортовано дану групу розширень (`OTHER_EXTENSIONS`). Властивість `countdown` вказує, у скількох модулях ще залишилось відпрацювати даній групі розширень, щоб властивість `groupDataPerApp` містила дані з усіх модулів. Тобто властивості `delay` та `countdown` стосуються лише властивості `groupDataPerApp`.
 
-У властивості `aExtStage1Meta` знаходиться масив, де зібрані дані з поточного модуля від різних розширень з даної групи розширень. Кожен елемент масиву `aExtStage1Meta` має наступний інтерфейс:
-
-```ts
-interface ExtensionStage1Meta<T = any> {
-  /**
-   * Instance of an extension.
-   */
-  extension: Extension<T>;
-  /**
-   * Value that `extension` returns from its `stage1` method.
-   */
-  payload: T;
-  delay: boolean;
-  countdown: number;
-}
-```
-
-Властивість `extension` містить інстанс розширення, а властивість `payload` - дані, які повертає метод `stage1()` цього розширення.
-
-Якщо властивість `delay == true` та `countdown > 0` - це означає, що дане розширення ще не відпрацювало в інших модулях, куди його імпортували. Тобто властивості `delay` та `countdown` стосуються самого розширення, і не стосуються даної групи розширень (в даному разі - групи `OTHER_EXTENSIONS`).
+У властивості `groupData` знаходиться масив, де зібрані дані з поточного модуля від різних розширень з даної групи розширень.
 
 Важливо пам'ятати, що для кожного модуля створюється окремий інстанс певного розширення. Наприклад, якщо `MyExtension` імпортовано у три різні модулі, то Ditsmod буде послідовно обробляти ці три модулі із трьома різними інстансами `MyExtension`. Окрім цього, якщо `MyExtension` потребує підсумкові дані, наприклад, від групи розширень `OTHER_EXTENSIONS` із чотирьох модулів, а саме `MyExtension` імпортовано лише у три модулі, це означає, що з одного модуля `MyExtension` може і не отримати необхідних даних.
 
@@ -242,9 +223,8 @@ export class MyExtension implements Extension<void> {
       return;
     }
 
-    groupStage1Meta.groupStage1MetaPerApp.forEach((totaStage1Meta) => {
-      totaStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
-        const someData = stage1Meta.payload;
+    groupStage1Meta.groupDataPerApp.forEach((totaStage1Meta) => {
+      totaStage1Meta.groupData.forEach((metadataPerMod3) => {
         // Do something here.
         // ...
       });
@@ -285,12 +265,12 @@ export class BodyParserExtension implements Extension<void> {
     }
 
     const groupStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-    groupStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
-      const { aControllerMetadata, providersPerMod } = stage1Meta.payload;
+    groupStage1Meta.groupData.forEach((metadataPerMod3) => {
+      const { aControllerMetadata, providersPerMod } = metadataPerMod3;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, singleton }) => {
         // Merging the providers from a module and a controller
-        const mergedProvidersPerRou = [...stage1Meta.payload.providersPerRou, ...providersPerRou];
-        const mergedProvidersPerReq = [...stage1Meta.payload.providersPerReq, ...providersPerReq];
+        const mergedProvidersPerRou = [...metadataPerMod3.providersPerRou, ...providersPerRou];
+        const mergedProvidersPerReq = [...metadataPerMod3.providersPerReq, ...providersPerReq];
 
         // Creating a hierarchy of injectors.
         const injectorPerApp = this.perAppService.injector;

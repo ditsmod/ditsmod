@@ -54,7 +54,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     }
     this.log.applyingAccumulatedData(this);
 
-    await this.compileOasObject(groupStage1Meta.groupStage1MetaPerApp);
+    await this.compileOasObject(groupStage1Meta.groupDataPerApp);
     const json = JSON.stringify(this.oasObject);
     const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
     const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
@@ -63,14 +63,12 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     return this.oasObject;
   }
 
-  protected async compileOasObject(groupStage1MetaPerApp: GroupStage1MetaPerApp<MetadataPerMod3>[]) {
+  protected async compileOasObject(groupDataPerApp: GroupStage1MetaPerApp<MetadataPerMod3>[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
-    for (const groupStage1Meta of groupStage1MetaPerApp) {
-      for (const stage1Meta of groupStage1Meta.aExtStage1Meta) {
-        const { aControllerMetadata } = stage1Meta.payload;
-
-        aControllerMetadata.forEach(({ httpMethod, path, routeMeta, guards }) => {
+    for (const groupStage1Meta of groupDataPerApp) {
+      for (const metadataPerMod3 of groupStage1Meta.groupData) {
+        metadataPerMod3.aControllerMetadata.forEach(({ httpMethod, path, routeMeta, guards }) => {
           const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;
           if (operationObject) {
             const clonedOperationObject = { ...operationObject };

@@ -32,7 +32,7 @@ export {
   ExtensionProvider,
   ExtensionsMetaPerApp,
   Extension,
-  ExtensionStage1Meta,
+  DebugStage1Meta,
   GroupStage1Meta,
   GroupStage1MetaPerApp,
 } from './types/extension-types.js';

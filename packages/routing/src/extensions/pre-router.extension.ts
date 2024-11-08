@@ -30,7 +30,6 @@ import {
   DefaultSingletonChainMaker,
   SingletonInterceptorWithGuards,
   Class,
-  ExtensionStage1Meta,
   GroupStage1Meta,
   GroupStage1MetaPerApp,
   CTX_DATA,
@@ -76,32 +75,31 @@ export class PreRouterExtension implements Extension<void> {
   async stage2() {
     this.injectorPerMod = this.initModuleAndGetInjectorPerMod(
       this.injectorPerApp,
-      this.groupStage1Meta.aExtStage1Meta,
+      this.groupStage1Meta.groupData,
     );
-    const meta = this.getMeta(this.groupStage1Meta.aExtStage1Meta);
+    const meta = this.getMeta(this.groupStage1Meta.groupData);
     this.moduleManager.setInjectorPerMod(meta.module, this.injectorPerMod);
   }
 
   async stage3() {
-    const preparedRouteMeta = this.prepareRoutesMeta(this.groupStage1Meta.aExtStage1Meta);
+    const preparedRouteMeta = this.prepareRoutesMeta(this.groupStage1Meta.groupData);
     this.setRoutes(this.groupStage1Meta, preparedRouteMeta);
   }
 
-  protected getMeta(aExtStage1Meta: ExtensionStage1Meta<MetadataPerMod3>[]) {
+  protected getMeta(aMetadataPerMod3: MetadataPerMod3[]) {
     // Since each extension received the same `meta` array and not a copy of it,
-    // we can take `meta` from any element in the `aExtStage1Meta` array.
-    return aExtStage1Meta.at(0)!.payload.meta;
+    // we can take `meta` from any element in the `groupData` array.
+    return aMetadataPerMod3.at(0)!.meta;
   }
 
-  protected prepareRoutesMeta(aExtStage1Meta: ExtensionStage1Meta<MetadataPerMod3>[]) {
+  protected prepareRoutesMeta(aMetadataPerMod3: MetadataPerMod3[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
-    aExtStage1Meta.forEach((stage1Meta) => {
-      if (!stage1Meta.payload.aControllerMetadata.length) {
+    aMetadataPerMod3.forEach((metadataPerMod3) => {
+      if (!metadataPerMod3.aControllerMetadata.length) {
         // No routes from this extension (stage1Meta.extension.constructor.name).
         return;
       }
-      const metadataPerMod3 = stage1Meta.payload;
 
       const { aControllerMetadata, guardsPerMod1 } = metadataPerMod3;
 
@@ -128,21 +126,18 @@ export class PreRouterExtension implements Extension<void> {
     return preparedRouteMeta;
   }
 
-  protected initModuleAndGetInjectorPerMod(
-    injectorPerApp: Injector,
-    aExtStage1Meta: ExtensionStage1Meta<MetadataPerMod3>[],
-  ): Injector {
+  protected initModuleAndGetInjectorPerMod(injectorPerApp: Injector, aMetadataPerMod3: MetadataPerMod3[]): Injector {
     const singletons = new Set<Class>();
 
-    aExtStage1Meta.forEach((stage1Meta) => {
-      stage1Meta.payload.aControllerMetadata.forEach((controllerMetadata) => {
+    aMetadataPerMod3.forEach((metadataPerMod3) => {
+      metadataPerMod3.aControllerMetadata.forEach((controllerMetadata) => {
         if (controllerMetadata.singletonPerScope == 'module') {
           singletons.add(controllerMetadata.routeMeta.controller);
         }
       });
     });
 
-    const meta = this.getMeta(aExtStage1Meta);
+    const meta = this.getMeta(aMetadataPerMod3);
     const mod = getModule(meta.module);
     const extendedProvidersPerMod = [mod, ...singletons, ...meta.providersPerMod];
     const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
@@ -331,7 +326,7 @@ export class PreRouterExtension implements Extension<void> {
 
   protected setRoutes(groupStage1Meta: GroupStage1Meta<MetadataPerMod3>, preparedRouteMeta: PreparedRouteMeta[]) {
     if (!groupStage1Meta.delay) {
-      const appHasRoutes = this.checkPresenceOfRoutesInApplication(groupStage1Meta.groupStage1MetaPerApp);
+      const appHasRoutes = this.checkPresenceOfRoutesInApplication(groupStage1Meta.groupDataPerApp);
       if (!appHasRoutes) {
         this.log.noRoutes(this);
         return;
@@ -356,14 +351,11 @@ export class PreRouterExtension implements Extension<void> {
     });
   }
 
-  protected checkPresenceOfRoutesInApplication(groupStage1MetaPerApp: GroupStage1MetaPerApp<MetadataPerMod3>[]) {
-    return groupStage1MetaPerApp.reduce((prev1, curr1) => {
+  protected checkPresenceOfRoutesInApplication(groupDataPerApp: GroupStage1MetaPerApp<MetadataPerMod3>[]) {
+    return groupDataPerApp.reduce((prev1, curr1) => {
       return (
         prev1 ||
-        curr1.aExtStage1Meta.reduce(
-          (prev2, curr2) => prev2 || Boolean(curr2.payload.aControllerMetadata.length),
-          false,
-        )
+        curr1.groupData.reduce((prev2, curr2) => prev2 || Boolean(curr2.aControllerMetadata.length), false)
       );
     }, false);
   }

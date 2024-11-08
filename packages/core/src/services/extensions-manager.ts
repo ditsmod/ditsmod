@@ -3,7 +3,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import {
   ExtensionsGroupToken,
   Extension,
-  ExtensionStage1Meta,
+  DebugStage1Meta,
   GroupStage1Meta,
   ExtensionCounters,
   GroupStage1Meta2,
@@ -68,7 +68,7 @@ export class ExtensionsManager {
     }
 
     groupStage1Meta = await this.prepareAndInitGroup<T>(groupToken);
-    groupStage1Meta.groupStage1MetaPerApp = this.extensionsContext.mGroupStage1Meta.get(groupToken)!;
+    groupStage1Meta.groupDataPerApp = this.extensionsContext.mGroupStage1Meta.get(groupToken)!;
     groupStage1Meta = this.prepareGroupStage1MetaPerApp(groupStage1Meta, perApp);
     if (perApp && !groupStage1Meta.delay) {
       this.excludeExtensionFromPendingList(groupToken);
@@ -92,7 +92,8 @@ export class ExtensionsManager {
   protected prepareGroupStage1MetaPerApp(groupStage1Meta: GroupStage1Meta2, perApp?: boolean): GroupStage1Meta {
     if (perApp && !groupStage1Meta.delay) {
       const copygroupStage1Meta = { ...groupStage1Meta };
-      delete (copygroupStage1Meta as GroupStage1Meta2).aExtStage1Meta;
+      delete (copygroupStage1Meta as GroupStage1Meta2).groupData;
+      delete (copygroupStage1Meta as GroupStage1Meta2).aDebugMeta;
       delete (copygroupStage1Meta as GroupStage1Meta2).moduleName;
       delete (copygroupStage1Meta as GroupStage1Meta2).countdown;
       return copygroupStage1Meta as GroupStage1Meta;
@@ -140,7 +141,7 @@ export class ExtensionsManager {
 
   protected setGroupStage1MetaPerApp(groupToken: ExtensionsGroupToken, groupStage1Meta: GroupStage1Meta) {
     const copyGroupStage1Meta = { ...groupStage1Meta } as GroupStage1Meta;
-    delete (copyGroupStage1Meta as OptionalProps<GroupStage1Meta, 'groupStage1MetaPerApp'>).groupStage1MetaPerApp;
+    delete (copyGroupStage1Meta as OptionalProps<GroupStage1Meta, 'groupDataPerApp'>).groupDataPerApp;
     const aGroupStage1Meta = this.extensionsContext.mGroupStage1Meta.get(groupToken) || [];
     aGroupStage1Meta.push(copyGroupStage1Meta);
     this.extensionsContext.mGroupStage1Meta.set(groupToken, aGroupStage1Meta);
@@ -148,8 +149,7 @@ export class ExtensionsManager {
 
   protected async initGroup<T>(groupToken: ExtensionsGroupToken): Promise<GroupStage1Meta> {
     const extensions = this.injector.get(groupToken, undefined, []) as Extension<T>[];
-    const aExtStage1Meta: ExtensionStage1Meta<T | undefined>[] = [];
-    const groupStage1Meta = new GroupStage1Meta(this.moduleName, aExtStage1Meta);
+    const groupStage1Meta = new GroupStage1Meta<T>(this.moduleName, [], []);
     this.updateGroupCounters(groupToken, groupStage1Meta);
 
     if (!extensions.length) {
@@ -166,13 +166,13 @@ export class ExtensionsManager {
       const ExtensionClass = extension.constructor as Class<Extension<T>>;
       const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
       const isLastModule = countdown === 0;
-      const data = await extension.stage1?.(isLastModule);
+      const data = (await extension.stage1?.(isLastModule)) as T;
       this.extensionsListForStage2.add(extension);
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);
       this.unfinishedInit.delete(extension);
-      const stage1Meta = new ExtensionStage1Meta(extension, data, !isLastModule, countdown);
-      aExtStage1Meta.push(stage1Meta);
+      const debugMeta = new DebugStage1Meta<T>(extension, data, !isLastModule, countdown);
+      groupStage1Meta.addDebugMeta(debugMeta);
     }
 
     return groupStage1Meta;

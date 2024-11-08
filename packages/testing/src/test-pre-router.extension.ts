@@ -36,12 +36,12 @@ export class TestPreRouterExtension extends PreRouterExtension {
 
   override async stage2() {
     // Added only this line to override super.stage3()
-    this.overrideAllProviders(this.groupStage1Meta.groupStage1MetaPerApp);
+    this.overrideAllProviders(this.groupStage1Meta.groupDataPerApp);
 
     await super.stage2();
   }
 
-  protected overrideAllProviders(groupStage1MetaPerApp: GroupStage1MetaPerApp<MetadataPerMod3>[]) {
+  protected overrideAllProviders(groupDataPerApp: GroupStage1MetaPerApp<MetadataPerMod3>[]) {
     const providersToOverride = this.testModuleManager.getProvidersToOverride();
     const logLevel = this.testModuleManager.getLogLevel();
     overrideLogLevel(this.perAppService.providers, logLevel);
@@ -53,9 +53,8 @@ export class TestPreRouterExtension extends PreRouterExtension {
 
     this.perAppService.reinitInjector();
 
-    groupStage1MetaPerApp.forEach((groupStage1Meta) => {
-      groupStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
-        const metadataPerMod3 = stage1Meta.payload;
+    groupDataPerApp.forEach((groupStage1Meta) => {
+      groupStage1Meta.groupData.forEach((metadataPerMod3) => {
         overrideLogLevel(metadataPerMod3.meta.providersPerMod, logLevel);
         overrideLogLevel(metadataPerMod3.meta.providersPerRou, logLevel);
         overrideLogLevel(metadataPerMod3.meta.providersPerReq, logLevel);
