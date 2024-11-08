@@ -54,7 +54,7 @@ export class TestPreRouterExtension extends PreRouterExtension {
     this.perAppService.reinitInjector();
 
     totalStage1MetaPerApp.forEach((totalStage1Meta) => {
-      totalStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+      totalStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
         const metadataPerMod3 = stage1Meta.payload;
         overrideLogLevel(metadataPerMod3.meta.providersPerMod, logLevel);
         overrideLogLevel(metadataPerMod3.meta.providersPerRou, logLevel);

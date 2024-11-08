@@ -7,7 +7,7 @@ export class SqbExtension implements Extension<void> {
 
   async stage1() {
     const totalStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-    totalStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+    totalStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
       const { aControllerMetadata } = stage1Meta.payload;
       console.log('-'.repeat(50), stage1Meta.payload.meta.name);
 

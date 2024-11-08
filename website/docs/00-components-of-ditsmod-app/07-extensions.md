@@ -170,7 +170,7 @@ export class MyExtension implements Extension<void> {
 
     const totalStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
 
-    totalStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+    totalStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
       const someData = stage1Meta.payload;
       // Do something here.
       // ...
@@ -188,14 +188,14 @@ interface TotalStage1Meta<T = any> {
   delay: boolean;
   countdown = 0;
   totalStage1MetaPerApp: TotalStage1MetaPerApp<T>[];
-  groupStage1Meta: ExtensionStage1Meta<T>[],
+  aExtStage1Meta: ExtensionStage1Meta<T>[],
   moduleName: string;
 }
 ```
 
 Якщо властивість `delay == true` - це означає, що властивість `totalStage1MetaPerApp` містить дані ще не з усіх модулів, куди імпортовано дану групу розширень (`OTHER_EXTENSIONS`). Властивість `countdown` вказує, у скількох модулях ще залишилось відпрацювати даній групі розширень, щоб властивість `totalStage1MetaPerApp` містила дані з усіх модулів. Тобто властивості `delay` та `countdown` стосуються лише властивості `totalStage1MetaPerApp`.
 
-У властивості `groupStage1Meta` знаходиться масив, де зібрані дані з поточного модуля від різних розширень з даної групи розширень. Кожен елемент масиву `groupStage1Meta` має наступний інтерфейс:
+У властивості `aExtStage1Meta` знаходиться масив, де зібрані дані з поточного модуля від різних розширень з даної групи розширень. Кожен елемент масиву `aExtStage1Meta` має наступний інтерфейс:
 
 ```ts
 interface ExtensionStage1Meta<T = any> {
@@ -243,7 +243,7 @@ export class MyExtension implements Extension<void> {
     }
 
     totalStage1Meta.totalStage1MetaPerApp.forEach((totaStage1Meta) => {
-      totaStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+      totaStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
         const someData = stage1Meta.payload;
         // Do something here.
         // ...
@@ -285,7 +285,7 @@ export class BodyParserExtension implements Extension<void> {
     }
 
     const totalStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-    totalStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+    totalStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
       const { aControllerMetadata, providersPerMod } = stage1Meta.payload;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, singleton }) => {
         // Merging the providers from a module and a controller

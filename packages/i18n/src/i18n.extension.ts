@@ -49,7 +49,7 @@ export class I18nExtension implements Extension<void> {
       this.perAppService.providers.push(...providers);
     }
 
-    for (const stage1Meta of totalStage1Meta.groupStage1Meta) {
+    for (const stage1Meta of totalStage1Meta.aExtStage1Meta) {
       const { aControllerMetadata } = stage1Meta.payload;
       const { providersPerMod, providersPerRou, providersPerReq } = stage1Meta.payload.meta;
       if (!aControllerMetadata.length) {

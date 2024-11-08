@@ -6,7 +6,7 @@ export class ExtensionsMetaPerApp {
 }
 
 /**
- * As a rule, an instance of this class is set in a variable named `groupStage1Meta`.
+ * As a rule, an instance of this class is set in a variable named `aExtStage1Meta`.
  */
 export class ExtensionStage1Meta<T = any> {
   /**
@@ -27,15 +27,15 @@ export class TotalStage1Meta<T = any> {
   totalStage1MetaPerApp: TotalStage1MetaPerApp<T>[];
   /**
    *
-   * @param groupStage1Meta Array of `ExtensionStage1Meta`.
+   * @param aExtStage1Meta Array of `ExtensionStage1Meta`.
    */
   constructor(
     public moduleName: string,
-    public groupStage1Meta: ExtensionStage1Meta<T>[],
+    public aExtStage1Meta: ExtensionStage1Meta<T>[],
   ) {}
 }
 
-export type TotalStage1Meta2<T = any> = OptionalProps<TotalStage1Meta<T>,'groupStage1Meta' | 'moduleName' | 'countdown'>;
+export type TotalStage1Meta2<T = any> = OptionalProps<TotalStage1Meta<T>,'aExtStage1Meta' | 'moduleName' | 'countdown'>;
 export type TotalStage1MetaPerApp<T = any> = Omit<TotalStage1Meta<T>, 'totalStage1MetaPerApp'>;
 
 /**

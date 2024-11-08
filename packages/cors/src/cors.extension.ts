@@ -50,12 +50,12 @@ export class CorsExtension implements Extension<void | false> {
     injectorPerApp: Injector,
   ) {
     totalStage1MetaPerApp.forEach((totaStage1Meta) => {
-      totaStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+      totaStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
         const metadataPerMod3 = stage1Meta.payload;
         const { aControllerMetadata } = metadataPerMod3;
         const { providersPerMod } = metadataPerMod3.meta;
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
-        const routesWithOptions = this.getRoutesWithOptions(totaStage1Meta.groupStage1Meta, aControllerMetadata);
+        const routesWithOptions = this.getRoutesWithOptions(totaStage1Meta.aExtStage1Meta, aControllerMetadata);
         aControllerMetadata.push(...routesWithOptions);
 
         aControllerMetadata.forEach(({ providersPerReq, providersPerRou, singletonPerScope }) => {
@@ -84,10 +84,10 @@ export class CorsExtension implements Extension<void | false> {
     return clonedCorsOptions;
   }
 
-  protected getPathWtihOptions(groupStage1Meta: ExtensionStage1Meta<MetadataPerMod3>[]) {
+  protected getPathWtihOptions(aExtStage1Meta: ExtensionStage1Meta<MetadataPerMod3>[]) {
     const sPathWithOptions = new Set<string>();
 
-    groupStage1Meta.forEach((stage1Meta) => {
+    aExtStage1Meta.forEach((stage1Meta) => {
       const metadataPerMod3 = stage1Meta.payload;
       metadataPerMod3.aControllerMetadata
         .filter(({ httpMethod }) => httpMethod == 'OPTIONS')
@@ -98,10 +98,10 @@ export class CorsExtension implements Extension<void | false> {
   }
 
   protected getRoutesWithOptions(
-    groupStage1Meta: ExtensionStage1Meta<MetadataPerMod3>[],
+    aExtStage1Meta: ExtensionStage1Meta<MetadataPerMod3>[],
     aControllerMetadata: ControllerMetadata[],
   ) {
-    const sPathWithOptions = this.getPathWtihOptions(groupStage1Meta);
+    const sPathWithOptions = this.getPathWtihOptions(aExtStage1Meta);
     const newArrControllersMetadata2: ControllerMetadata[] = []; // Routes with OPTIONS methods
 
     aControllerMetadata.forEach(({ httpMethod, path }) => {

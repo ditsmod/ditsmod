@@ -67,7 +67,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     const paths: XPathsObject = {};
     this.initOasObject();
     for (const totalStage1Meta of totalStage1MetaPerApp) {
-      for (const stage1Meta of totalStage1Meta.groupStage1Meta) {
+      for (const stage1Meta of totalStage1Meta.aExtStage1Meta) {
         const { aControllerMetadata } = stage1Meta.payload;
 
         aControllerMetadata.forEach(({ httpMethod, path, routeMeta, guards }) => {

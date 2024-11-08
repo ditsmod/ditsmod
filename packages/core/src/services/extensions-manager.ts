@@ -92,7 +92,7 @@ export class ExtensionsManager {
   protected prepareTotalStage1MetaPerApp(totalStage1Meta: TotalStage1Meta2, perApp?: boolean): TotalStage1Meta {
     if (perApp && !totalStage1Meta.delay) {
       const copytotalStage1Meta = { ...totalStage1Meta };
-      delete (copytotalStage1Meta as TotalStage1Meta2).groupStage1Meta;
+      delete (copytotalStage1Meta as TotalStage1Meta2).aExtStage1Meta;
       delete (copytotalStage1Meta as TotalStage1Meta2).moduleName;
       delete (copytotalStage1Meta as TotalStage1Meta2).countdown;
       return copytotalStage1Meta as TotalStage1Meta;
@@ -148,8 +148,8 @@ export class ExtensionsManager {
 
   protected async initGroup<T>(groupToken: ExtensionsGroupToken): Promise<TotalStage1Meta> {
     const extensions = this.injector.get(groupToken, undefined, []) as Extension<T>[];
-    const groupStage1Meta: ExtensionStage1Meta<T | undefined>[] = [];
-    const totalStage1Meta = new TotalStage1Meta(this.moduleName, groupStage1Meta);
+    const aExtStage1Meta: ExtensionStage1Meta<T | undefined>[] = [];
+    const totalStage1Meta = new TotalStage1Meta(this.moduleName, aExtStage1Meta);
     this.updateGroupCounters(groupToken, totalStage1Meta);
 
     if (!extensions.length) {
@@ -172,7 +172,7 @@ export class ExtensionsManager {
       this.counter.addInitedExtensions(extension);
       this.unfinishedInit.delete(extension);
       const stage1Meta = new ExtensionStage1Meta(extension, data, !isLastModule, countdown);
-      groupStage1Meta.push(stage1Meta);
+      aExtStage1Meta.push(stage1Meta);
     }
 
     return totalStage1Meta;

@@ -170,7 +170,7 @@ export class MyExtension implements Extension<void> {
 
     const totalStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
 
-    totalStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+    totalStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
       const someData = stage1Meta.payload;
       // Do something here.
       // ...
@@ -188,14 +188,14 @@ interface TotalStage1Meta<T = any> {
   delay: boolean;
   countdown = 0;
   totalStage1MetaPerApp: TotalStage1MetaPerApp<T>[];
-  groupStage1Meta: ExtensionStage1Meta<T>[],
+  aExtStage1Meta: ExtensionStage1Meta<T>[],
   moduleName: string;
 }
 ```
 
 If the `delay` property is `true`, it means that the `totalStage1MetaPerApp` property does not yet contain data from all modules where this extension group (`OTHER_EXTENSIONS`) is imported. The `countdown` property indicates how many modules are left for this extension group to process before `totalStage1MetaPerApp` will contain data from all modules. Thus, the `delay` and `countdown` properties only apply to `totalStage1MetaPerApp`.
 
-The `groupStage1Meta` property holds an array of data collected from the current module by different extensions of this group. Each element of the `groupStage1Meta` array follows this interface:
+The `aExtStage1Meta` property holds an array of data collected from the current module by different extensions of this group. Each element of the `aExtStage1Meta` array follows this interface:
 
 ```ts
 interface ExtensionStage1Meta<T = any> {
@@ -243,7 +243,7 @@ export class MyExtension implements Extension<void> {
     }
 
     totalStage1Meta.totalStage1MetaPerApp.forEach((totaStage1Meta) => {
-      totaStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+      totaStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
         const someData = stage1Meta.payload;
         // Do something here.
         // ...
@@ -285,7 +285,7 @@ export class BodyParserExtension implements Extension<void> {
     }
 
     const totalStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-    totalStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+    totalStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
       const { aControllerMetadata, providersPerMod } = stage1Meta.payload;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, singleton }) => {
         // Merging the providers from a module and a controller

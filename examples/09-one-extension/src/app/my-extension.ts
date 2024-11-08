@@ -16,7 +16,7 @@ export class MyExtension implements Extension<void> {
     }
 
     const totalStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
-    this.logger.log('info', totalStage1Meta.groupStage1Meta[0].payload.aControllerMetadata);
+    this.logger.log('info', totalStage1Meta.aExtStage1Meta[0].payload.aControllerMetadata);
 
     this.#inited = true;
   }

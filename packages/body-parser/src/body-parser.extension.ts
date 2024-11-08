@@ -29,7 +29,7 @@ export class BodyParserExtension implements Extension<void> {
     }
 
     const totalStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-    totalStage1Meta.groupStage1Meta.forEach((stage1Meta) => {
+    totalStage1Meta.aExtStage1Meta.forEach((stage1Meta) => {
       const { aControllerMetadata } = stage1Meta.payload;
       const { providersPerMod } = stage1Meta.payload.meta;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, singletonPerScope }) => {

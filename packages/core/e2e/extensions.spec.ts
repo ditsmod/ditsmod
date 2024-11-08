@@ -228,7 +228,7 @@ describe('extensions e2e', () => {
     expect(extensionInit2).toHaveBeenCalledTimes(2);
     const expect1 = {
       moduleName: 'Module3',
-      groupStage1Meta: [
+      aExtStage1Meta: [
         {
           extension: { data: 'Extension1 payload' } as any,
           payload: 'Extension1 payload',
@@ -241,7 +241,7 @@ describe('extensions e2e', () => {
       totalStage1MetaPerApp: [
         {
           moduleName: 'Module2',
-          groupStage1Meta: [
+          aExtStage1Meta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
@@ -254,7 +254,7 @@ describe('extensions e2e', () => {
         },
         {
           moduleName: 'Module3',
-          groupStage1Meta: [
+          aExtStage1Meta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
@@ -273,7 +273,7 @@ describe('extensions e2e', () => {
       totalStage1MetaPerApp: [
         {
           moduleName: 'Module2',
-          groupStage1Meta: [
+          aExtStage1Meta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
@@ -286,7 +286,7 @@ describe('extensions e2e', () => {
         },
         {
           moduleName: 'Module3',
-          groupStage1Meta: [
+          aExtStage1Meta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
@@ -299,7 +299,7 @@ describe('extensions e2e', () => {
         },
         {
           moduleName: 'AppModule',
-          groupStage1Meta: [
+          aExtStage1Meta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
