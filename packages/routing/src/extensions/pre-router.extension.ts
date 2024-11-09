@@ -47,7 +47,6 @@ import { RoutingErrorMediator } from '../router-error-mediator.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
-  protected inited: boolean;
   protected groupStage1Meta: GroupStage1Meta<MetadataPerMod3>;
   protected injectorPerMod: Injector;
   protected injectorPerApp: Injector;
@@ -63,13 +62,8 @@ export class PreRouterExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    if (this.inited) {
-      return;
-    }
-
     this.groupStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
     this.injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
-    this.inited = true;
   }
 
   async stage2() {
