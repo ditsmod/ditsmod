@@ -21,57 +21,33 @@ describe('ExtensionsManager', () => {
 
     @injectable()
     class Extension1 implements Extension {
-      private inited: boolean;
-
-      async stage1() {
-        if (this.inited) {
-          return;
-        }
-        this.inited = true;
-      }
+      async stage1() {}
     }
 
     @injectable()
     class Extension2 implements Extension {
-      private inited: boolean;
-
       constructor(public mockExtensionsManager: MockExtensionsManager) {}
 
       async stage1() {
-        if (this.inited) {
-          return;
-        }
         await this.mockExtensionsManager.stage1(MY_EXTENSIONS3);
-        this.inited = true;
       }
     }
 
     @injectable()
     class Extension3 implements Extension {
-      private inited: boolean;
-
       constructor(public mockExtensionsManager: MockExtensionsManager) {}
 
       async stage1() {
-        if (this.inited) {
-          return;
-        }
         await this.mockExtensionsManager.stage1(MY_EXTENSIONS4);
-        this.inited = true;
       }
     }
+
     @injectable()
     class Extension4 implements Extension {
-      private inited: boolean;
-
       constructor(public mockExtensionsManager: MockExtensionsManager) {}
 
       async stage1() {
-        if (this.inited) {
-          return;
-        }
         await this.mockExtensionsManager.stage1(MY_EXTENSIONS3);
-        this.inited = true;
       }
     }
 

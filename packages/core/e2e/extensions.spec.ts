@@ -7,7 +7,6 @@ import { Extension, DebugStage1Meta, GroupStage1Meta, GroupStage1Meta2 } from '#
 import { ExtensionsManager } from '#services/extensions-manager.js';
 import { featureModule } from '#decorators/module.js';
 import { Router } from '#types/router.js';
-import { inspect } from 'node:util';
 
 describe('extensions e2e', () => {
   it('check isLastModule', async () => {
@@ -65,7 +64,6 @@ describe('extensions e2e', () => {
   it('one extension depends on another', async () => {
     const extensionInit1 = jest.fn();
     const extensionInit2 = jest.fn();
-    const extensionPayload: string = 'Extension1 payload';
 
     const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
     const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
@@ -81,17 +79,9 @@ describe('extensions e2e', () => {
      * the initialization of the second extension is called.
      */
     @injectable()
-    class Extension1 implements Extension<string> {
-      data: any;
-
+    class Extension1 implements Extension<void> {
       async stage1(isLastModule: boolean) {
-        if (this.data) {
-          return this.data;
-        }
-
         extensionInit1(isLastModule);
-        this.data = extensionPayload;
-        return this.data;
       }
     }
 
@@ -140,9 +130,8 @@ describe('extensions e2e', () => {
 
     expect(extensionInit2).toHaveBeenCalledTimes(2);
     const extension = new Extension1();
-    extension.data = extensionPayload;
-    const stage1Meta = new DebugStage1Meta(extension, extensionPayload, true, 1);
-    const groupStage1Meta = new GroupStage1Meta('Module3', [stage1Meta], [extensionPayload]);
+    const stage1Meta = new DebugStage1Meta(extension, undefined, true, 1);
+    const groupStage1Meta = new GroupStage1Meta('Module3', [stage1Meta], [undefined]);
     groupStage1Meta.delay = true;
     groupStage1Meta.countdown = 1;
     groupStage1Meta.groupDataPerApp = expect.any(Array);
@@ -159,7 +148,6 @@ describe('extensions e2e', () => {
     const spyIsLastModule = jest.fn();
     const spyMetaFromAllModules = jest.fn();
     const spyMetaFromCurrentModule = jest.fn();
-    const extensionPayload: string = 'Extension1 payload';
 
     const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
     const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
@@ -173,17 +161,9 @@ describe('extensions e2e', () => {
      * the initialization of the second extension is called.
      */
     @injectable()
-    class Extension1 implements Extension<string> {
-      data: any;
-
+    class Extension1 implements Extension<void> {
       async stage1(isLastModule: boolean) {
-        if (this.data) {
-          return this.data;
-        }
-
         spyIsLastModule(isLastModule);
-        this.data = extensionPayload;
-        return this.data;
       }
     }
 
@@ -246,13 +226,13 @@ describe('extensions e2e', () => {
       moduleName: 'AppModule',
       groupDebugMeta: [
         {
-          extension: { data: 'Extension1 payload' } as any,
-          payload: 'Extension1 payload',
+          extension: {} as any,
+          payload: undefined,
           delay: false,
           countdown: 0,
         },
       ],
-      groupData: ['Extension1 payload'],
+      groupData: [undefined],
       delay: false,
       countdown: 0,
       groupDataPerApp: [
@@ -260,13 +240,13 @@ describe('extensions e2e', () => {
           moduleName: 'Module2',
           groupDebugMeta: [
             {
-              extension: { data: 'Extension1 payload' } as any,
-              payload: 'Extension1 payload',
+              extension: {} as any,
+              payload: undefined,
               delay: true,
               countdown: 2,
             },
           ],
-          groupData: ['Extension1 payload'],
+          groupData: [undefined],
           delay: true,
           countdown: 2,
         },
@@ -274,13 +254,13 @@ describe('extensions e2e', () => {
           moduleName: 'Module3',
           groupDebugMeta: [
             {
-              extension: { data: 'Extension1 payload' } as any,
-              payload: 'Extension1 payload',
+              extension: {} as any,
+              payload: undefined,
               delay: true,
               countdown: 1,
             },
           ],
-          groupData: ['Extension1 payload'],
+          groupData: [undefined],
           delay: true,
           countdown: 1,
         },
@@ -288,13 +268,13 @@ describe('extensions e2e', () => {
           moduleName: 'AppModule',
           groupDebugMeta: [
             {
-              extension: { data: 'Extension1 payload' } as any,
-              payload: 'Extension1 payload',
+              extension: {} as any,
+              payload: undefined,
               delay: false,
               countdown: 0,
             },
           ],
-          groupData: ['Extension1 payload'],
+          groupData: [undefined],
           delay: false,
           countdown: 0,
         },
