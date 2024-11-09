@@ -127,7 +127,7 @@ If a certain extension has a dependency on another extension, it is recommended 
 
 Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor, and in `stage1()` call `stage1()` of this service:
 
-```ts {17}
+```ts {11}
 import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
@@ -135,15 +135,9 @@ import { OTHER_EXTENSIONS } from './other.extensions.js';
 
 @injectable()
 export class MyExtension implements Extension<void> {
-  private inited: boolean;
-
   constructor(private extensionsManager: ExtensionsManager) {}
 
   async stage1() {
-    if (this.inited) {
-      return;
-    }
-
     const groupStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
 
     groupStage1Meta.groupData.forEach((stage1Meta) => {
@@ -151,8 +145,6 @@ export class MyExtension implements Extension<void> {
       // Do something here.
       // ...
     });
-
-    this.inited = true;
   }
 }
 ```
@@ -177,7 +169,7 @@ It's important to note that a separate instance of each extension is created for
 
 In this case, you need to pass `true` as the second argument to the `extensionsManager.init` method:
 
-```ts {17}
+```ts {11}
 import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionsManager } from '@ditsmod/core';
 
@@ -185,15 +177,9 @@ import { OTHER_EXTENSIONS } from './other.extensions.js';
 
 @injectable()
 export class MyExtension implements Extension<void> {
-  private inited: boolean;
-
   constructor(private extensionsManager: ExtensionsManager) {}
 
   async stage1() {
-    if (this.inited) {
-      return;
-    }
-
     const groupStage1Meta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
     if (groupStage1Meta.delay) {
       return;
@@ -205,8 +191,6 @@ export class MyExtension implements Extension<void> {
         // ...
       });
     });
-
-    this.inited = true;
   }
 }
 ```
@@ -225,21 +209,15 @@ Any extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynam
 
 You can see how it is done in [BodyParserExtension][3]:
 
-```ts {15,31,38}
+```ts {9,25,32}
 @injectable()
 export class BodyParserExtension implements Extension<void> {
-  private inited: boolean;
-
   constructor(
     protected extensionManager: ExtensionsManager,
     protected perAppService: PerAppService,
   ) {}
 
   async stage1() {
-    if (this.inited) {
-      return;
-    }
-
     const groupStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
     groupStage1Meta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata, providersPerMod } = metadataPerMod3;
@@ -268,8 +246,6 @@ export class BodyParserExtension implements Extension<void> {
         }
       });
     });
-
-    this.inited = true;
   }
 }
 ```
