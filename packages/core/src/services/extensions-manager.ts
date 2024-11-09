@@ -29,7 +29,7 @@ export class ExtensionsManager {
   /**
    * The cache for groupToken in the current module.
    */
-  protected cache = new Map<ExtensionsGroupToken, GroupStage1Meta>();
+  protected groupStage1MetaCache = new Map<ExtensionsGroupToken, GroupStage1Meta>();
   /**
    * The cache for extension in the current module.
    */
@@ -57,11 +57,11 @@ export class ExtensionsManager {
       this.addExtensionToPendingList(groupToken);
     }
     const beforeToken = KeyRegistry.getBeforeToken(groupToken);
-    if (!this.cache.has(beforeToken) && this.beforeTokens.has(beforeToken)) {
+    if (!this.groupStage1MetaCache.has(beforeToken) && this.beforeTokens.has(beforeToken)) {
       await this.prepareAndInitGroup<T>(beforeToken);
     }
 
-    let groupStage1Meta = this.cache.get(groupToken);
+    let groupStage1Meta = this.groupStage1MetaCache.get(groupToken);
     if (groupStage1Meta) {
       this.updateGroupCounters(groupToken, groupStage1Meta);
       groupStage1Meta = this.prepareGroupStage1MetaPerApp(groupStage1Meta, perApp);
@@ -138,7 +138,7 @@ export class ExtensionsManager {
     const groupStage1Meta = await this.initGroup(groupToken);
     this.systemLogMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(groupToken);
-    this.cache.set(groupToken, groupStage1Meta);
+    this.groupStage1MetaCache.set(groupToken, groupStage1Meta);
     this.setGroupStage1MetaPerApp(groupToken, groupStage1Meta);
     return groupStage1Meta;
   }
