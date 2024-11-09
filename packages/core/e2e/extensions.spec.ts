@@ -3,10 +3,11 @@ import { TestApplication } from '@ditsmod/testing';
 
 import { InjectionToken, injectable } from '#di';
 import { rootModule } from '#decorators/root-module.js';
-import { Extension, DebugStage1Meta, GroupStage1Meta } from '#types/extension-types.js';
+import { Extension, DebugStage1Meta, GroupStage1Meta, GroupStage1Meta2 } from '#types/extension-types.js';
 import { ExtensionsManager } from '#services/extensions-manager.js';
 import { featureModule } from '#decorators/module.js';
 import { Router } from '#types/router.js';
+import { inspect } from 'node:util';
 
 describe('extensions e2e', () => {
   it('check isLastModule', async () => {
@@ -155,8 +156,9 @@ describe('extensions e2e', () => {
   });
 
   it('extension depends on data from the entire application', async () => {
-    const extensionInit1 = jest.fn();
-    const extensionInit2 = jest.fn();
+    const spyIsLastModule = jest.fn();
+    const spyMetaFromAllModules = jest.fn();
+    const spyMetaFromCurrentModule = jest.fn();
     const extensionPayload: string = 'Extension1 payload';
 
     const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
@@ -179,7 +181,7 @@ describe('extensions e2e', () => {
           return this.data;
         }
 
-        extensionInit1(isLastModule);
+        spyIsLastModule(isLastModule);
         this.data = extensionPayload;
         return this.data;
       }
@@ -191,7 +193,17 @@ describe('extensions e2e', () => {
 
       async stage1() {
         const groupStage1Meta = await this.extensionManager.stage1(MY_EXTENSIONS1, true);
-        extensionInit2(structuredClone(groupStage1Meta));
+        spyMetaFromAllModules(structuredClone(groupStage1Meta));
+      }
+    }
+
+    @injectable()
+    class Extension3 implements Extension {
+      constructor(private extensionManager: ExtensionsManager) {}
+
+      async stage1() {
+        const groupStage1Meta = await this.extensionManager.stage1(MY_EXTENSIONS1);
+        spyMetaFromCurrentModule(structuredClone(groupStage1Meta));
       }
     }
 
@@ -207,6 +219,11 @@ describe('extensions e2e', () => {
     class Module2 {}
 
     @featureModule({
+      extensions: [{ token: MY_EXTENSIONS2, extension: Extension3, exportedOnly: true }],
+    })
+    class Module4 {}
+
+    @featureModule({
       imports: [Module1, Module2],
       providersPerMod: [Provider1],
       exports: [Provider1],
@@ -214,65 +231,30 @@ describe('extensions e2e', () => {
     class Module3 {}
 
     @rootModule({
-      imports: [Module1, Module3],
+      imports: [Module1, Module3, Module4],
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
     })
     class AppModule {}
 
     await new TestApplication(AppModule).getServer();
-    expect(extensionInit1).toHaveBeenCalledTimes(3);
-    expect(extensionInit1).toHaveBeenNthCalledWith(1, false);
-    expect(extensionInit1).toHaveBeenNthCalledWith(2, false);
-    expect(extensionInit1).toHaveBeenNthCalledWith(3, true);
+    expect(spyIsLastModule).toHaveBeenCalledTimes(3);
+    expect(spyIsLastModule).toHaveBeenNthCalledWith(1, false);
+    expect(spyIsLastModule).toHaveBeenNthCalledWith(2, false);
+    expect(spyIsLastModule).toHaveBeenNthCalledWith(3, true);
 
-    expect(extensionInit2).toHaveBeenCalledTimes(2);
-    const expect1 = {
-      moduleName: 'Module3',
+    const fullMeta = {
+      moduleName: 'AppModule',
       groupDebugMeta: [
         {
           extension: { data: 'Extension1 payload' } as any,
           payload: 'Extension1 payload',
-          delay: true,
-          countdown: 1,
+          delay: false,
+          countdown: 0,
         },
       ],
       groupData: ['Extension1 payload'],
-      delay: true,
-      countdown: 1,
-      groupDataPerApp: [
-        {
-          moduleName: 'Module2',
-          groupDebugMeta: [
-            {
-              extension: { data: 'Extension1 payload' } as any,
-              payload: 'Extension1 payload',
-              delay: true,
-              countdown: 2,
-            },
-          ],
-          groupData: ['Extension1 payload'],
-          delay: true,
-          countdown: 2,
-        },
-        {
-          moduleName: 'Module3',
-          groupDebugMeta: [
-            {
-              extension: { data: 'Extension1 payload' } as any,
-              payload: 'Extension1 payload',
-              delay: true,
-              countdown: 1,
-            },
-          ],
-          groupData: ['Extension1 payload'],
-          delay: true,
-          countdown: 1,
-        },
-      ],
-    } as GroupStage1Meta;
-    expect(extensionInit2).toHaveBeenNthCalledWith(1, expect1);
-    const expect2 = {
       delay: false,
+      countdown: 0,
       groupDataPerApp: [
         {
           moduleName: 'Module2',
@@ -318,6 +300,26 @@ describe('extensions e2e', () => {
         },
       ],
     } as GroupStage1Meta;
-    expect(extensionInit2).toHaveBeenNthCalledWith(2, expect2);
+
+    expect(spyMetaFromAllModules).toHaveBeenCalledTimes(2);
+    const firstCall = structuredClone(fullMeta);
+    firstCall.moduleName = 'Module3';
+    firstCall.delay = true;
+    firstCall.countdown = 1;
+    firstCall.groupDebugMeta.at(0)!.delay = true;
+    firstCall.groupDebugMeta.at(0)!.countdown = 1;
+    firstCall.groupDataPerApp.pop();
+    expect(spyMetaFromAllModules).toHaveBeenNthCalledWith(1, firstCall);
+
+    const secondCall = structuredClone(fullMeta) as GroupStage1Meta2;
+    secondCall.delay = false;
+    delete secondCall.groupDebugMeta;
+    delete secondCall.groupData;
+    delete secondCall.moduleName;
+    delete secondCall.countdown;
+    expect(spyMetaFromAllModules).toHaveBeenNthCalledWith(2, secondCall);
+
+    expect(spyMetaFromCurrentModule).toHaveBeenCalledTimes(1);
+    expect(spyMetaFromCurrentModule).toHaveBeenNthCalledWith(1, fullMeta);
   });
 });
