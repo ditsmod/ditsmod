@@ -1,6 +1,6 @@
 import { controller, RequestContext, route } from '@ditsmod/core';
 
-@controller({ singletonPerScope: 'module' })
+@controller({ scope: 'module' })
 export class Controller2 {
   @route('GET', 'controler2-of-module2')
   ok(ctx: RequestContext) {

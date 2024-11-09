@@ -50,12 +50,12 @@ export class CorsExtension implements Extension<void | false> {
         const routesWithOptions = this.getRoutesWithOptions(totaStage1Meta.groupData, aControllerMetadata);
         aControllerMetadata.push(...routesWithOptions);
 
-        aControllerMetadata.forEach(({ providersPerReq, providersPerRou, singletonPerScope }) => {
+        aControllerMetadata.forEach(({ providersPerReq, providersPerRou, scope }) => {
           const mergedPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
           const corsOptions = this.getCorsOptions(injectorPerMod, mergedPerRou);
           const mergedCorsOptions = mergeOptions(corsOptions);
           providersPerRou.unshift({ token: CorsOptions, useValue: mergedCorsOptions });
-          if (singletonPerScope == 'module') {
+          if (scope == 'module') {
             providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
           } else {
             providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
@@ -128,7 +128,7 @@ export class CorsExtension implements Extension<void | false> {
         ],
         providersPerReq: [],
         routeMeta,
-        singletonPerScope: 'module',
+        scope: 'module',
         guards: [],
       };
 

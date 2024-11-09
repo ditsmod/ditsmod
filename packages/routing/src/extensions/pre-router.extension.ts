@@ -99,7 +99,7 @@ export class PreRouterExtension implements Extension<void> {
 
       aControllerMetadata.forEach((controllerMetadata) => {
         let handle: RouteHandler;
-        if (controllerMetadata.singletonPerScope == 'module') {
+        if (controllerMetadata.scope == 'module') {
           handle = this.getHandlerWithSingleton(metadataPerMod3, this.injectorPerMod, controllerMetadata);
         } else {
           handle = this.getDefaultHandler(metadataPerMod3, this.injectorPerMod, controllerMetadata);
@@ -125,7 +125,7 @@ export class PreRouterExtension implements Extension<void> {
 
     aMetadataPerMod3.forEach((metadataPerMod3) => {
       metadataPerMod3.aControllerMetadata.forEach((controllerMetadata) => {
-        if (controllerMetadata.singletonPerScope == 'module') {
+        if (controllerMetadata.scope == 'module') {
           singletons.add(controllerMetadata.routeMeta.controller);
         }
       });

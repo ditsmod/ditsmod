@@ -20,7 +20,7 @@ export interface ControllerRawMetadata1 {
    *
    * Default - `module`.
    */
-  singletonPerScope?: 'module';
+  scope?: 'module';
 }
 
 /**
@@ -35,7 +35,7 @@ export interface ControllerRawMetadata2 {
    * __Warn__: at the moment, this is an experimental feature.
    * Default - `module`.
    */
-  singletonPerScope?: 'module';
+  scope?: 'module';
 }
 
 export type ControllerRawMetadata = ControllerRawMetadata1 | ControllerRawMetadata2;
