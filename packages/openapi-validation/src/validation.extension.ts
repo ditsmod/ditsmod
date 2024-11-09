@@ -11,8 +11,6 @@ import { RequestBodyInterceptor } from './request-body.interceptor.js';
 
 @injectable()
 export class ValidationExtension implements Extension<void> {
-  private inited: boolean;
-
   constructor(
     protected perAppService: PerAppService,
     protected extensionsManager: ExtensionsManager,
@@ -21,13 +19,8 @@ export class ValidationExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    if (this.inited) {
-      return;
-    }
-
     await this.extensionsManager.stage1(BODY_PARSER_EXTENSIONS);
     await this.filterParameters();
-    this.inited = true;
   }
 
   protected async filterParameters() {
