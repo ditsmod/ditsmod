@@ -66,8 +66,8 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   protected async compileOasObject(groupDataPerApp: GroupStage1MetaPerApp<MetadataPerMod3>[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
-    for (const groupStage1Meta of groupDataPerApp) {
-      for (const metadataPerMod3 of groupStage1Meta.groupData) {
+    for (const groupStage1MetaPerApp of groupDataPerApp) {
+      for (const metadataPerMod3 of groupStage1MetaPerApp.groupData) {
         metadataPerMod3.aControllerMetadata.forEach(({ httpMethod, path, routeMeta, guards }) => {
           const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;
           if (operationObject) {
@@ -77,7 +77,9 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
             paths[`/${oasPath}`] = { ...(paths[`/${oasPath}`] || {}), ...pathItemObject };
           } else {
             if (!httpMethod) {
-              throw new Error('OpenapiCompilerExtension: OasRouteMeta not found.');
+              const moduleName = metadataPerMod3.meta.name;
+              const msg = `[${moduleName}]: OpenapiCompilerExtension: OasRouteMeta not found.`;
+              throw new Error(msg);
             }
             this.applyNonOasRoute(path, paths, httpMethod, guards);
           }
