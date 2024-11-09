@@ -27,9 +27,13 @@ export class ExtensionsManager {
   beforeTokens = new Set<BeforeToken>();
   protected unfinishedInit = new Set<Extension | ExtensionsGroupToken>();
   /**
-   * The cache for the current module.
+   * The cache for groupToken in the current module.
    */
   protected cache = new Map<ExtensionsGroupToken, GroupStage1Meta>();
+  /**
+   * The cache for extension in the current module.
+   */
+  protected debugMetaCache = new Map<Extension, DebugStage1Meta>();
   protected excludedExtensionPendingList = new Map<ExtensionsGroupToken, Set<Class<Extension>>>();
   protected extensionsListForStage2 = new Set<Extension>();
 
@@ -48,7 +52,7 @@ export class ExtensionsManager {
       this.throwCircularDeps(groupToken);
     }
 
-    // this.unfinishedInit is empty during metadata collection from all modules.
+    // this.unfinishedInit is empty during calling extensions from panding list.
     if (perApp && this.unfinishedInit.size > 1) {
       this.addExtensionToPendingList(groupToken);
     }
@@ -160,6 +164,11 @@ export class ExtensionsManager {
       if (this.unfinishedInit.has(extension)) {
         this.throwCircularDeps(extension);
       }
+      const debugMetaCache = this.debugMetaCache.get(extension);
+      if (debugMetaCache) {
+        groupStage1Meta.addDebugMeta(debugMetaCache);
+        continue;
+      }
 
       this.unfinishedInit.add(extension);
       this.systemLogMediator.startInitExtension(this, this.unfinishedInit);
@@ -172,6 +181,7 @@ export class ExtensionsManager {
       this.counter.addInitedExtensions(extension);
       this.unfinishedInit.delete(extension);
       const debugMeta = new DebugStage1Meta<T>(extension, data, !isLastModule, countdown);
+      this.debugMetaCache.set(extension, debugMeta);
       groupStage1Meta.addDebugMeta(debugMeta);
     }
 
