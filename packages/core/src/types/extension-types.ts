@@ -28,18 +28,18 @@ export class GroupStage1Meta<T = any> {
 
   constructor(
     public moduleName: string,
-    public aDebugMeta: DebugStage1Meta<T>[],
+    public groupDebugMeta: DebugStage1Meta<T>[],
     public groupData: T[],
   ) {}
 
   addDebugMeta(debugMeta: DebugStage1Meta<T>) {
-    this.aDebugMeta.push(debugMeta);
+    this.groupDebugMeta.push(debugMeta);
     this.groupData.push(debugMeta.payload);
   }
 }
 
 // prettier-ignore
-export type GroupStage1Meta2<T = any> = OptionalProps<GroupStage1Meta<T>, 'aDebugMeta' | 'groupData' | 'moduleName' | 'countdown'>;
+export type GroupStage1Meta2<T = any> = OptionalProps<GroupStage1Meta<T>, 'groupDebugMeta' | 'groupData' | 'moduleName' | 'countdown'>;
 export type GroupStage1MetaPerApp<T = any> = Omit<GroupStage1Meta<T>, 'groupDataPerApp'>;
 
 /**

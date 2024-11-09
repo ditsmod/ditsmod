@@ -93,7 +93,7 @@ export class ExtensionsManager {
     if (perApp && !groupStage1Meta.delay) {
       const copygroupStage1Meta = { ...groupStage1Meta };
       delete (copygroupStage1Meta as GroupStage1Meta2).groupData;
-      delete (copygroupStage1Meta as GroupStage1Meta2).aDebugMeta;
+      delete (copygroupStage1Meta as GroupStage1Meta2).groupDebugMeta;
       delete (copygroupStage1Meta as GroupStage1Meta2).moduleName;
       delete (copygroupStage1Meta as GroupStage1Meta2).countdown;
       return copygroupStage1Meta as GroupStage1Meta;

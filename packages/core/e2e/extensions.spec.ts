@@ -228,7 +228,7 @@ describe('extensions e2e', () => {
     expect(extensionInit2).toHaveBeenCalledTimes(2);
     const expect1 = {
       moduleName: 'Module3',
-      aDebugMeta: [
+      groupDebugMeta: [
         {
           extension: { data: 'Extension1 payload' } as any,
           payload: 'Extension1 payload',
@@ -242,7 +242,7 @@ describe('extensions e2e', () => {
       groupDataPerApp: [
         {
           moduleName: 'Module2',
-          aDebugMeta: [
+          groupDebugMeta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
@@ -256,7 +256,7 @@ describe('extensions e2e', () => {
         },
         {
           moduleName: 'Module3',
-          aDebugMeta: [
+          groupDebugMeta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
@@ -276,7 +276,7 @@ describe('extensions e2e', () => {
       groupDataPerApp: [
         {
           moduleName: 'Module2',
-          aDebugMeta: [
+          groupDebugMeta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
@@ -290,7 +290,7 @@ describe('extensions e2e', () => {
         },
         {
           moduleName: 'Module3',
-          aDebugMeta: [
+          groupDebugMeta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
@@ -304,7 +304,7 @@ describe('extensions e2e', () => {
         },
         {
           moduleName: 'AppModule',
-          aDebugMeta: [
+          groupDebugMeta: [
             {
               extension: { data: 'Extension1 payload' } as any,
               payload: 'Extension1 payload',
