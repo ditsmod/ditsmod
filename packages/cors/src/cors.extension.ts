@@ -21,7 +21,6 @@ import { ALLOW_METHODS } from './constans.js';
 
 @injectable()
 export class CorsExtension implements Extension<void | false> {
-  private inited: boolean;
   private registeredPathForOptions = new Map<string, HttpMethod[]>();
 
   constructor(
@@ -30,17 +29,12 @@ export class CorsExtension implements Extension<void | false> {
   ) {}
 
   async stage1() {
-    if (this.inited) {
-      return;
-    }
-
     const groupStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS, true);
     if (groupStage1Meta.delay) {
       return false;
     }
     this.prepareDataAndSetInterceptors(groupStage1Meta.groupDataPerApp, this.perAppService.injector);
 
-    this.inited = true;
     return; // Make TypeScript happy
   }
 
