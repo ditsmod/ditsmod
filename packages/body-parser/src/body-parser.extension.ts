@@ -16,18 +16,12 @@ export const BODY_PARSER_EXTENSIONS = new InjectionToken<Extension<void>[]>('BOD
 
 @injectable()
 export class BodyParserExtension implements Extension<void> {
-  private inited: boolean;
-
   constructor(
     protected extensionManager: ExtensionsManager,
     protected perAppService: PerAppService,
   ) {}
 
   async stage1() {
-    if (this.inited) {
-      return;
-    }
-
     const groupStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
     groupStage1Meta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
@@ -57,7 +51,5 @@ export class BodyParserExtension implements Extension<void> {
         }
       });
     });
-
-    this.inited = true;
   }
 }
