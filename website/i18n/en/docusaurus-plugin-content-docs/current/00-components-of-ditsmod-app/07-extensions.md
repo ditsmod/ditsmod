@@ -40,30 +40,6 @@ Each extension needs to be registered, this will be mentioned later, and now let
 4. HTTP request handlers are created;
 5. the application starts working in the usual mode, processing HTTP requests.
 
-The `stage1()` method of a given extension can be called as many times as it is written in the body of other extensions that depend on the operation of that extension, +1. This feature must be taken into account to avoid unnecessary initialization:
-
-```ts {8-10}
-import { injectable, Extension } from '@ditsmod/core';
-
-@injectable()
-export class MyExtension implements Extension<any> {
-  private data: any;
-
-  async stage1() {
-    if (this.data) {
-      return this.data;
-    }
-
-    // ...
-    // Do something good
-    // ...
-
-    this.data = result;
-    return this.data;
-  }
-}
-```
-
 You can see a simple example in the folder [09-one-extension][1].
 
 ## Extensions groups

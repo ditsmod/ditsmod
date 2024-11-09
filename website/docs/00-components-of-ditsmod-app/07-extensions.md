@@ -40,30 +40,6 @@ interface Extension<T> {
 4. створюються обробники HTTP-запитів;
 5. застосунок починає працювати у звичному режимі, обробляючи HTTP-запити.
 
-Метод `stage1()` певного розширення може викликатись стільки разів, скільки разів він прописаний у тілі інших розширень, які залежать від роботи даного розширення, +1. Цю особливість необхідно обов'язково враховувати, щоб не відбувалась зайва ініціалізація:
-
-```ts {8-10}
-import { injectable, Extension } from '@ditsmod/core';
-
-@injectable()
-export class MyExtension implements Extension<any> {
-  private data: any;
-
-  async stage1() {
-    if (this.data) {
-      return this.data;
-    }
-
-    // ...
-    // Щось хороше робите
-    // ...
-
-    this.data = result;
-    return this.data;
-  }
-}
-```
-
 Готовий простий приклад ви можете проглянути у теці [09-one-extension][1].
 
 ## Групи розширень
